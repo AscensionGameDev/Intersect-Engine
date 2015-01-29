@@ -574,6 +574,7 @@ namespace Intersect_Editor
         //Lighting
         private static void GenerateLightTexture()
         {
+            //If we don't have a light texture, make a base/blank one.
             if (Globals.bnightColorArray == null)
             {
                 Globals.bnightColorArray = new SFML.Graphics.Color[30 * 32 * 3, 30 * 32 * 3];
@@ -585,9 +586,11 @@ namespace Intersect_Editor
                     }
                 }
             }
+
+            //Wipe our render array by cloning the blank one.
             Globals.nightColorArray = (SFML.Graphics.Color[,])Globals.bnightColorArray.Clone();
             double w = 1;
-
+            //Render each light.
             for (int i = 0; i < Globals.GameMaps[Globals.currentMap].Lights.Count; i++)
             {
                 w = CalcLightWidth(Globals.GameMaps[Globals.currentMap].Lights[i].range);
@@ -595,12 +598,14 @@ namespace Intersect_Editor
                 int y = (int)(30 * 32) + (int)(Globals.GameMaps[Globals.currentMap].Lights[i].tileY * 32 + Globals.GameMaps[Globals.currentMap].Lights[i].offsetY) - (int)w / 2 + 32 + 16;
                 AddLight(x, y, (int)w, Globals.GameMaps[Globals.currentMap].Lights[i].intensity, Globals.nightColorArray, Globals.GameMaps[Globals.currentMap].Lights[i]);
             }
+            //Convert our pixel array into a renderable image.
             SFML.Graphics.Image img = new SFML.Graphics.Image(Globals.nightColorArray);
             Globals.nightTex = new Texture(img);
             Globals.lightsChanged = false;
         }
         private static int CalcLightWidth(int range)
         {
+            //Formula that is ~equilivant to Unity spotlight widths, this is so future Unity lighting is possible.
             int[] xVals = { 0, 5, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120, 130, 140, 150, 160, 170, 180 };
             int[] yVals = { 1, 8, 18, 34, 50, 72, 92, 114, 135, 162, 196, 230, 268, 320, 394, 500, 658, 976, 1234, 1600 };
             int w = 0;
@@ -622,11 +627,12 @@ namespace Intersect_Editor
         }
         private static void AddLight(int x1, int y1, int size, double intensity, SFML.Graphics.Color[,] colorArr, Light light)
         {
-            Bitmap sp1;
+            Bitmap tmpLight;
+            //If not cached, create a radial gradent for the light.
             if (light.graphic == null)
             {
-                sp1 = new Bitmap(size, size);
-                Graphics g = Graphics.FromImage(sp1);
+                tmpLight = new Bitmap(size, size);
+                Graphics g = Graphics.FromImage(tmpLight);
                 GraphicsPath pth = new GraphicsPath();
                 pth.AddEllipse(0, 0, size - 1, size - 1);
                 PathGradientBrush pgb = new PathGradientBrush(pth);
@@ -635,15 +641,17 @@ namespace Intersect_Editor
                 pgb.FocusScales = new PointF(0.8f, 0.8f);
                 g.FillPath(pgb, pth);
                 g.Dispose();
-                light.graphic = sp1;
+                light.graphic = tmpLight;
             }
             else
             {
-                sp1 = light.graphic;
+                tmpLight = light.graphic;
             }
+
+            //Quickly subtract the inverse of light (darkness) from our darkness texture.
             SFML.Graphics.Color emptyBlack;
-            BitmapProcessing.FastBitmap FB1 = new BitmapProcessing.FastBitmap(sp1);
-            FB1.LockImage();
+            BitmapProcessing.FastBitmap fastBitmap = new BitmapProcessing.FastBitmap(tmpLight);
+            fastBitmap.LockImage();
             for (int x = x1; x < x1 + size; x++)
             {
                 for (int y = y1; y < y1 + size; y++)
@@ -651,7 +659,7 @@ namespace Intersect_Editor
                     if (y >= 0 && y < 30 * 32 * 3 && x >= 0 && x < 30 * 32 * 3)
                     {
                         emptyBlack = Globals.nightColorArray[y, x];
-                        System.Drawing.Color tmpPixel = FB1.GetPixel(x - x1, y - y1);
+                        System.Drawing.Color tmpPixel = fastBitmap.GetPixel(x - x1, y - y1);
                         int a = emptyBlack.A - tmpPixel.A;
                         int b = emptyBlack.R + tmpPixel.R;
                         int c = emptyBlack.G + tmpPixel.G;
@@ -665,7 +673,7 @@ namespace Intersect_Editor
                     }
                 }
             }
-            FB1.UnlockImage();
+            fastBitmap.UnlockImage();
         }
 
         //Extra

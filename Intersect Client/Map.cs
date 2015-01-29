@@ -201,6 +201,7 @@ namespace Intersect_Client
                 upperTextures[i].Display();
             }
             mapRendered = true;
+            Graphics.lightsChanged = true;
         }
 
         private void DrawMapLayer(RenderTexture tex, int l, int z)
@@ -331,6 +332,7 @@ namespace Intersect_Client
         public int tileY;
         public double intensity = 1;
         public int range = 20;
+        public System.Drawing.Bitmap graphic;
         public LightObj(ByteBuffer myBuffer)
         {
             offsetX = myBuffer.ReadInteger();

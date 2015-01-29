@@ -7,6 +7,7 @@ using SFML;
 using SFML.Graphics;
 using SFML.Window;
 using System.IO;
+using BitmapProcessing;
 
 
 namespace Intersect_Client
@@ -36,6 +37,12 @@ namespace Intersect_Client
         public static List<Texture> tilesets = new List<Texture>();
         public static List<Texture> entities = new List<Texture>();
         public static List<string> entityNames = new List<string>();
+
+        //DayNight Stuff
+        public static bool lightsChanged = true;
+        public static SFML.Graphics.Color[,] nightColorArray;
+        public static SFML.Graphics.Color[,] bnightColorArray;
+        public static Texture nightTex;
 
         private static long fadeTimer = 0;
 
@@ -165,6 +172,7 @@ namespace Intersect_Client
 
                 if (Globals.GameState == 1 && Globals.gameLoaded == true)
                 {
+                    if (lightsChanged) { GenerateLightTexture(); }
                     //Render players, names, maps, etc.
                     for (int i = 0; i < 9; i++)
                     {
@@ -249,6 +257,7 @@ namespace Intersect_Client
                             }
                         }
                     }
+                    DrawNight();
                 }
                 else {
                     if (menuBG != null) {
@@ -262,7 +271,7 @@ namespace Intersect_Client
                         renderWindow.Draw(tmpSprite);
                     }
                 }
-
+                
                 GUI.DrawGUI();
 
                 
@@ -387,6 +396,119 @@ namespace Intersect_Client
                 entities.Add(new Texture(entityPaths[i]));
             }
             
+        }
+
+        //Lighting
+        private static void GenerateLightTexture()
+        {
+            //If we don't have a light texture, make a base/blank one.
+            if (bnightColorArray == null)
+            {
+                bnightColorArray = new SFML.Graphics.Color[30 * 32 * 3, 30 * 32 * 3];
+                for (int x = 0; x < 30 * 32 * 3; x++)
+                {
+                    for (int y = 0; y < 30 * 32 * 3; y++)
+                    {
+                        bnightColorArray[x, y] = new SFML.Graphics.Color(0, 0, 0, 180);
+                    }
+                }
+            }
+
+            //Wipe our render array by cloning the blank one.
+            nightColorArray = (SFML.Graphics.Color[,])bnightColorArray.Clone();
+            double w = 1;
+            //Render each light.
+            for (int i = 0; i < Globals.GameMaps[Globals.currentMap].Lights.Count; i++)
+            {
+                w = CalcLightWidth(Globals.GameMaps[Globals.currentMap].Lights[i].range);
+                int x = (30 * 32) + (Globals.GameMaps[Globals.currentMap].Lights[i].tileX * 32 + Globals.GameMaps[Globals.currentMap].Lights[i].offsetX) - (int)w / 2 + 32 + 16;
+                int y = (int)(30 * 32) + (int)(Globals.GameMaps[Globals.currentMap].Lights[i].tileY * 32 + Globals.GameMaps[Globals.currentMap].Lights[i].offsetY) - (int)w / 2 + 32 + 16;
+                AddLight(x, y, (int)w, Globals.GameMaps[Globals.currentMap].Lights[i].intensity, nightColorArray, Globals.GameMaps[Globals.currentMap].Lights[i]);
+            }
+            //Convert our pixel array into a renderable image.
+            SFML.Graphics.Image img = new SFML.Graphics.Image(nightColorArray);
+            nightTex = new Texture(img);
+            lightsChanged = false;
+        }
+        private static int CalcLightWidth(int range)
+        {
+            //Formula that is ~equilivant to Unity spotlight widths, this is so future Unity lighting is possible.
+            int[] xVals = { 0, 5, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120, 130, 140, 150, 160, 170, 180 };
+            int[] yVals = { 1, 8, 18, 34, 50, 72, 92, 114, 135, 162, 196, 230, 268, 320, 394, 500, 658, 976, 1234, 1600 };
+            int w = 0;
+            int x = 0;
+            while (range >= xVals[x])
+            {
+                x++;
+            }
+            if (x > yVals.Length)
+            {
+                w = yVals[yVals.Length - 1];
+            }
+            else
+            {
+                w = yVals[x - 1];
+                w += (int)((float)(range - xVals[x - 1]) / ((float)xVals[x] - xVals[x - 1])) * (yVals[x] - yVals[x - 1]);
+            }
+            return w;
+        }
+        private static void DrawNight()
+        {
+            if (Globals.GameMaps[Globals.currentMap].isIndoors) { return; }
+            Sprite nightSprite = new Sprite(nightTex);
+            nightSprite.Position = new Vector2f(CalcMapOffsetX(4) + -32 * 30, CalcMapOffsetY(4) + -32 * 30);
+            nightSprite.Draw(renderWindow, RenderStates.Default);
+            nightSprite.Dispose();
+        }
+        private static void AddLight(int x1, int y1, int size, double intensity, SFML.Graphics.Color[,] colorArr, LightObj light)
+        {
+            System.Drawing.Bitmap tmpLight = null;
+            //If not cached, create a radial gradent for the light.
+            if (light.graphic == null)
+            {
+                tmpLight = new System.Drawing.Bitmap(size, size);
+                System.Drawing.Graphics g = System.Drawing.Graphics.FromImage(tmpLight);
+                System.Drawing.Drawing2D.GraphicsPath pth = new System.Drawing.Drawing2D.GraphicsPath();
+                pth.AddEllipse(0, 0, size - 1, size - 1);
+                System.Drawing.Drawing2D.PathGradientBrush pgb = new System.Drawing.Drawing2D.PathGradientBrush(pth);
+                pgb.CenterColor = System.Drawing.Color.FromArgb((int)((double)(255 * intensity)), 0, 0, 0);
+                pgb.SurroundColors = new System.Drawing.Color[] { System.Drawing.Color.Transparent };
+                pgb.FocusScales = new System.Drawing.PointF(0.8f, 0.8f);
+                g.FillPath(pgb, pth);
+                g.Dispose();
+                light.graphic = tmpLight;
+            }
+            else
+            {
+                tmpLight = light.graphic;
+            }
+
+            //Quickly subtract the inverse of light (darkness) from our darkness texture.
+            SFML.Graphics.Color emptyBlack;
+            FastBitmap fastBitmap = new FastBitmap(tmpLight);
+            fastBitmap.LockImage();
+            for (int x = x1; x < x1 + size; x++)
+            {
+                for (int y = y1; y < y1 + size; y++)
+                {
+                    if (y >= 0 && y < 30 * 32 * 3 && x >= 0 && x < 30 * 32 * 3)
+                    {
+                        emptyBlack = nightColorArray[y, x];
+                        System.Drawing.Color tmpPixel = fastBitmap.GetPixel(x - x1, y - y1);
+                        int a = emptyBlack.A - tmpPixel.A;
+                        int b = emptyBlack.R + tmpPixel.R;
+                        int c = emptyBlack.G + tmpPixel.G;
+                        int d = emptyBlack.B + tmpPixel.B;
+                        if (a > 255) { a = 255; }
+                        if (a < 0) { a = 0; }
+                        if (b > 255) { b = 255; }
+                        if (c > 255) { c = 255; }
+                        if (d > 255) { d = 255; }
+                        nightColorArray[y, x] = new SFML.Graphics.Color((byte)b, (byte)c, (byte)d, (byte)a);
+                    }
+                }
+            }
+            fastBitmap.UnlockImage();
         }
 
 

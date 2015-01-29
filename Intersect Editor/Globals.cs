@@ -46,7 +46,6 @@ namespace Intersect_Editor
         public static SFML.Graphics.Color[,] bnightColorArray;
         //Cached Texture for nighttime overlay
         public static Texture nightTex;
-        
         public static Light backupLight;
         public static Light editingLight;
 
