@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace IntersectEditor
+namespace Intersect_Editor
 {
     public partial class frmEvent : Form
     {
@@ -484,7 +484,7 @@ namespace IntersectEditor
                     break;
                 case 5:
                     int tmp = Convert.ToInt32(txtNewWarpMap.Text);
-                    if (tmp > -1 && tmp < GlobalVariables.MapRefs.Count())
+                    if (tmp > -1 && tmp < Globals.MapRefs.Count())
                     {
                         editingCommand.ints[0] = tmp;
                     }

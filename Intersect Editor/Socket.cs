@@ -7,7 +7,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.IO;
 
-namespace IntersectEditor
+namespace Intersect_Editor
 {
     public class Socket
     {
@@ -104,8 +104,8 @@ namespace IntersectEditor
             }
             catch (Exception)
             {
-                GlobalVariables.GameSocket.isConnected = false;
-                GlobalVariables.GameSocket.mySocket.Close();
+                Globals.GameSocket.isConnected = false;
+                Globals.GameSocket.mySocket.Close();
             }
         }
 

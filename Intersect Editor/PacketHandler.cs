@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace IntersectEditor
+namespace Intersect_Editor
 {
     public class PacketHandler
     {
@@ -57,8 +57,8 @@ namespace IntersectEditor
         {
             ByteBuffer bf = new ByteBuffer();
             bf.WriteBytes(packet);
-            GlobalVariables.myIndex = (int)bf.ReadLong();
-            GlobalVariables.loginForm.Hide();
+            Globals.myIndex = (int)bf.ReadLong();
+            Globals.loginForm.Hide();
         }
 
         private void HandleMapData(byte[] packet)
@@ -68,31 +68,31 @@ namespace IntersectEditor
             long mapNum = bf.ReadLong();
             long mapLength = bf.ReadLong();
             byte[] mapData = bf.ReadBytes((int)mapLength);
-            if (mapNum > GlobalVariables.mapCount-1)
+            if (mapNum > Globals.mapCount-1)
             {
-                GlobalVariables.mapCount = mapNum + 1;
-                Map[] tmpMap = (Map[])GlobalVariables.GameMaps.Clone();
-                GlobalVariables.GameMaps = new Map[GlobalVariables.mapCount];
-                tmpMap.CopyTo(GlobalVariables.GameMaps, 0);
+                Globals.mapCount = mapNum + 1;
+                Map[] tmpMap = (Map[])Globals.GameMaps.Clone();
+                Globals.GameMaps = new Map[Globals.mapCount];
+                tmpMap.CopyTo(Globals.GameMaps, 0);
             }
-            GlobalVariables.GameMaps[mapNum] = new Map((int)mapNum, mapData);
-            GlobalVariables.receivedGameData++;
-            if (GlobalVariables.receivedGameData == 3 && !GlobalVariables.inEditor)
+            Globals.GameMaps[mapNum] = new Map((int)mapNum, mapData);
+            Globals.receivedGameData++;
+            if (Globals.receivedGameData == 3 && !Globals.inEditor)
             {
-                GlobalVariables.mainForm = new frmMain();
-                GlobalVariables.mainForm.Show();
+                Globals.mainForm = new frmMain();
+                Globals.mainForm.Show();
             }
-            else if (GlobalVariables.inEditor)
+            else if (Globals.inEditor)
             {
-                if (mapNum == GlobalVariables.mainForm.currentMap)
+                if (mapNum == Globals.currentMap)
                 {
-                    if (GlobalVariables.mainForm.picMap.Visible == false)
+                    if (Globals.mainForm.picMap.Visible == false)
                     {
-                        GlobalVariables.mainForm.picMap.Visible = true;
-                        if (GlobalVariables.GameMaps[mapNum].up > -1) { PacketSender.SendNeedMap(GlobalVariables.GameMaps[mapNum].up); }
-                        if (GlobalVariables.GameMaps[mapNum].down > -1) { PacketSender.SendNeedMap(GlobalVariables.GameMaps[mapNum].down); }
-                        if (GlobalVariables.GameMaps[mapNum].left > -1) { PacketSender.SendNeedMap(GlobalVariables.GameMaps[mapNum].left); }
-                        if (GlobalVariables.GameMaps[mapNum].right > -1) { PacketSender.SendNeedMap(GlobalVariables.GameMaps[mapNum].right); }
+                        Globals.mainForm.picMap.Visible = true;
+                        if (Globals.GameMaps[mapNum].up > -1) { PacketSender.SendNeedMap(Globals.GameMaps[mapNum].up); }
+                        if (Globals.GameMaps[mapNum].down > -1) { PacketSender.SendNeedMap(Globals.GameMaps[mapNum].down); }
+                        if (Globals.GameMaps[mapNum].left > -1) { PacketSender.SendNeedMap(Globals.GameMaps[mapNum].left); }
+                        if (Globals.GameMaps[mapNum].right > -1) { PacketSender.SendNeedMap(Globals.GameMaps[mapNum].right); }
                     }
                 }
             }
@@ -102,14 +102,14 @@ namespace IntersectEditor
         {
             ByteBuffer bf = new ByteBuffer();
             bf.WriteBytes(packet);
-            GlobalVariables.mapCount = bf.ReadLong();
-            GlobalVariables.GameMaps = new Map[GlobalVariables.mapCount];
+            Globals.mapCount = bf.ReadLong();
+            Globals.GameMaps = new Map[Globals.mapCount];
             PacketSender.SendNeedMap(0);
-            GlobalVariables.receivedGameData++;
-            if (GlobalVariables.receivedGameData == 3 && !GlobalVariables.inEditor)
+            Globals.receivedGameData++;
+            if (Globals.receivedGameData == 3 && !Globals.inEditor)
             {
-                GlobalVariables.mainForm = new frmMain();
-                GlobalVariables.mainForm.Show();
+                Globals.mainForm = new frmMain();
+                Globals.mainForm.Show();
             }
         }
 
@@ -120,17 +120,17 @@ namespace IntersectEditor
             long tilesetCount = bf.ReadLong();
             if (tilesetCount > 0)
             {
-                GlobalVariables.tilesets = new string[tilesetCount];
+                Globals.tilesets = new string[tilesetCount];
                 for (int i = 0; i < tilesetCount; i++)
                 {
-                    GlobalVariables.tilesets[i] = bf.ReadString();
+                    Globals.tilesets[i] = bf.ReadString();
                 }
             }
-            GlobalVariables.receivedGameData++;
-            if (GlobalVariables.receivedGameData == 3 && !GlobalVariables.inEditor)
+            Globals.receivedGameData++;
+            if (Globals.receivedGameData == 3 && !Globals.inEditor)
             {
-                GlobalVariables.mainForm = new frmMain();
-                GlobalVariables.mainForm.Show();
+                Globals.mainForm = new frmMain();
+                Globals.mainForm.Show();
             }
         }
 
@@ -138,7 +138,7 @@ namespace IntersectEditor
         {
             ByteBuffer bf = new ByteBuffer();
             bf.WriteBytes(packet);
-            GlobalVariables.mainForm.EnterMap((int)bf.ReadLong());
+            Globals.mainForm.EnterMap((int)bf.ReadLong());
         }
 
         private void HandleMapList(byte[] packet)
@@ -146,12 +146,12 @@ namespace IntersectEditor
             ByteBuffer bf = new ByteBuffer();
             bf.WriteBytes(packet);
             int mapCount = bf.ReadInteger();
-            GlobalVariables.MapRefs = new MapRef[mapCount];
+            Globals.MapRefs = new MapRef[mapCount];
             for (int i = 0; i < mapCount; i++)
             {
-                GlobalVariables.MapRefs[i] = new MapRef();
-                GlobalVariables.MapRefs[i].MapName = bf.ReadString();
-                GlobalVariables.MapRefs[i].deleted = bf.ReadInteger();
+                Globals.MapRefs[i] = new MapRef();
+                Globals.MapRefs[i].MapName = bf.ReadString();
+                Globals.MapRefs[i].deleted = bf.ReadInteger();
             }
         }
     }

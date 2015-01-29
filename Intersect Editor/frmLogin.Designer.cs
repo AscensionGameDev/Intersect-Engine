@@ -1,4 +1,4 @@
-﻿namespace IntersectEditor
+﻿namespace Intersect_Editor
 {
     partial class frmLogin
     {

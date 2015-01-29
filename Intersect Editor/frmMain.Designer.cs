@@ -1,4 +1,4 @@
-﻿namespace IntersectEditor
+﻿namespace Intersect_Editor
 {
     partial class frmMain
     {
@@ -41,6 +41,7 @@
             this.viewToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.nightTimeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.mapListToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.hihiToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.grpMap = new System.Windows.Forms.GroupBox();
@@ -74,9 +75,8 @@
             this.txtLightOffsetX = new System.Windows.Forms.TextBox();
             this.lblOffsetY = new System.Windows.Forms.Label();
             this.lblOffsetX = new System.Windows.Forms.Label();
-            this.btnRevert = new System.Windows.Forms.Button();
-            this.btnClose = new System.Windows.Forms.Button();
-            this.hihiToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.btnLightEditorRevert = new System.Windows.Forms.Button();
+            this.btnLightEditorClose = new System.Windows.Forms.Button();
             this.menuStrip.SuspendLayout();
             this.grpMap.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.picMap)).BeginInit();
@@ -185,16 +185,21 @@
             // nightTimeToolStripMenuItem
             // 
             this.nightTimeToolStripMenuItem.Name = "nightTimeToolStripMenuItem";
-            this.nightTimeToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.nightTimeToolStripMenuItem.Size = new System.Drawing.Size(134, 22);
             this.nightTimeToolStripMenuItem.Text = "Night Time";
             this.nightTimeToolStripMenuItem.Click += new System.EventHandler(this.nightTimeToolStripMenuItem_Click);
             // 
             // mapListToolStripMenuItem
             // 
             this.mapListToolStripMenuItem.Name = "mapListToolStripMenuItem";
-            this.mapListToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.mapListToolStripMenuItem.Size = new System.Drawing.Size(134, 22);
             this.mapListToolStripMenuItem.Text = "Map List";
             this.mapListToolStripMenuItem.Click += new System.EventHandler(this.mapListToolStripMenuItem_Click);
+            // 
+            // hihiToolStripMenuItem
+            // 
+            this.hihiToolStripMenuItem.Name = "hihiToolStripMenuItem";
+            this.hihiToolStripMenuItem.Size = new System.Drawing.Size(134, 22);
             // 
             // helpToolStripMenuItem
             // 
@@ -463,8 +468,8 @@
             this.grpLightEditor.Controls.Add(this.txtLightOffsetX);
             this.grpLightEditor.Controls.Add(this.lblOffsetY);
             this.grpLightEditor.Controls.Add(this.lblOffsetX);
-            this.grpLightEditor.Controls.Add(this.btnRevert);
-            this.grpLightEditor.Controls.Add(this.btnClose);
+            this.grpLightEditor.Controls.Add(this.btnLightEditorRevert);
+            this.grpLightEditor.Controls.Add(this.btnLightEditorClose);
             this.grpLightEditor.Location = new System.Drawing.Point(13, 27);
             this.grpLightEditor.Name = "grpLightEditor";
             this.grpLightEditor.Size = new System.Drawing.Size(290, 632);
@@ -564,32 +569,25 @@
             this.lblOffsetX.TabIndex = 14;
             this.lblOffsetX.Text = "Offset X:";
             // 
-            // btnRevert
+            // btnLightEditorRevert
             // 
-            this.btnRevert.Location = new System.Drawing.Point(130, 218);
-            this.btnRevert.Name = "btnRevert";
-            this.btnRevert.Size = new System.Drawing.Size(75, 23);
-            this.btnRevert.TabIndex = 13;
-            this.btnRevert.Text = "Revert";
-            this.btnRevert.UseVisualStyleBackColor = true;
-            this.btnRevert.Click += new System.EventHandler(this.btnRevert_Click);
+            this.btnLightEditorRevert.Location = new System.Drawing.Point(130, 218);
+            this.btnLightEditorRevert.Name = "btnLightEditorRevert";
+            this.btnLightEditorRevert.Size = new System.Drawing.Size(75, 23);
+            this.btnLightEditorRevert.TabIndex = 13;
+            this.btnLightEditorRevert.Text = "Revert";
+            this.btnLightEditorRevert.UseVisualStyleBackColor = true;
+            this.btnLightEditorRevert.Click += new System.EventHandler(this.btnLightEditorRevert_Click);
             // 
-            // btnClose
+            // btnLightEditorClose
             // 
-            this.btnClose.Location = new System.Drawing.Point(211, 218);
-            this.btnClose.Name = "btnClose";
-            this.btnClose.Size = new System.Drawing.Size(75, 23);
-            this.btnClose.TabIndex = 12;
-            this.btnClose.Text = "Close";
-            this.btnClose.UseVisualStyleBackColor = true;
-            this.btnClose.Click += new System.EventHandler(this.btnClose_Click);
-            // 
-            // hihiToolStripMenuItem
-            // 
-            this.hihiToolStripMenuItem.Name = "hihiToolStripMenuItem";
-            this.hihiToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
-            this.hihiToolStripMenuItem.Text = "hihi";
-            this.hihiToolStripMenuItem.Click += new System.EventHandler(this.hihiToolStripMenuItem_Click);
+            this.btnLightEditorClose.Location = new System.Drawing.Point(211, 218);
+            this.btnLightEditorClose.Name = "btnLightEditorClose";
+            this.btnLightEditorClose.Size = new System.Drawing.Size(75, 23);
+            this.btnLightEditorClose.TabIndex = 12;
+            this.btnLightEditorClose.Text = "Close";
+            this.btnLightEditorClose.UseVisualStyleBackColor = true;
+            this.btnLightEditorClose.Click += new System.EventHandler(this.btnLightEditorClose_Click);
             // 
             // frmMain
             // 
@@ -645,8 +643,8 @@
         private System.Windows.Forms.HScrollBar hScrollTileset;
         private System.Windows.Forms.VScrollBar vScrollTileset;
         private System.Windows.Forms.GroupBox grpTileset;
-        private System.Windows.Forms.PictureBox picTileset;
-        private System.Windows.Forms.ComboBox cmbTilesets;
+        public System.Windows.Forms.PictureBox picTileset;
+        public System.Windows.Forms.ComboBox cmbTilesets;
         private System.Windows.Forms.Label lblCurLayer;
         private System.Windows.Forms.ToolStripMenuItem saveMapToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem exitToolStripMenuItem;
@@ -675,8 +673,8 @@
         private System.Windows.Forms.TextBox txtLightOffsetX;
         private System.Windows.Forms.Label lblOffsetY;
         private System.Windows.Forms.Label lblOffsetX;
-        private System.Windows.Forms.Button btnRevert;
-        private System.Windows.Forms.Button btnClose;
+        private System.Windows.Forms.Button btnLightEditorRevert;
+        private System.Windows.Forms.Button btnLightEditorClose;
         private System.Windows.Forms.CheckBox chkIndoors;
         private System.Windows.Forms.ToolStripMenuItem hihiToolStripMenuItem;
     }

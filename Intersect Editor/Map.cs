@@ -7,7 +7,7 @@ using System.IO;
 using System.Windows.Forms;
 using System.Runtime.Serialization.Formatters.Binary;
 
-namespace IntersectEditor
+namespace Intersect_Editor
 {
     public class Map
     {

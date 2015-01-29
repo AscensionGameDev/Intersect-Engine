@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace IntersectEditor
+namespace Intersect_Editor
 {
     public static class Constants
     {

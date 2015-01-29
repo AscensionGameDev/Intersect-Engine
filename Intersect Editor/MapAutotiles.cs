@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace IntersectEditor
+namespace Intersect_Editor
 {
     public class MapAutotiles
     {
@@ -689,7 +689,7 @@ namespace IntersectEditor
                     {
                         if (myMap.left > -1)
                         {
-                            otherMap = GlobalVariables.GameMaps[myMap.left];
+                            otherMap = Globals.GameMaps[myMap.left];
                             if (otherMap != null)
                             {
                                  targetTile = otherMap.Layers[layerNum].Tiles[Constants.MAP_WIDTH + x2, y2];
@@ -708,7 +708,7 @@ namespace IntersectEditor
                     {
                         if (myMap.right > -1)
                         {
-                            otherMap = GlobalVariables.GameMaps[myMap.right];
+                            otherMap = Globals.GameMaps[myMap.right];
                             if (otherMap != null)
                             {
                                  targetTile = otherMap.Layers[layerNum].Tiles[x2 - Constants.MAP_WIDTH, y2];
@@ -727,7 +727,7 @@ namespace IntersectEditor
                     {
                         if (myMap.up > -1)
                         {
-                            otherMap = GlobalVariables.GameMaps[myMap.up];
+                            otherMap = Globals.GameMaps[myMap.up];
                             if (otherMap != null)
                             {
                                  targetTile = otherMap.Layers[layerNum].Tiles[x2, Constants.MAP_HEIGHT + y2];
@@ -746,7 +746,7 @@ namespace IntersectEditor
                     {
                         if (myMap.down > -1)
                         {
-                            otherMap = GlobalVariables.GameMaps[myMap.down];
+                            otherMap = Globals.GameMaps[myMap.down];
                             if (otherMap != null)
                             {
                                  targetTile = otherMap.Layers[layerNum].Tiles[x2, y2 - Constants.MAP_HEIGHT];

@@ -76,6 +76,7 @@
   <ItemGroup>
     <Compile Include="ByteBuffer.cs" />
     <Compile Include="Constants.cs" />
+    <Compile Include="EditorLoop.cs" />
     <Compile Include="Event.cs" />
     <Compile Include="FastPixel.cs" />
     <Compile Include="frmEvent.cs">
@@ -96,7 +97,8 @@
     <Compile Include="frmMain.Designer.cs">
       <DependentUpon>frmMain.cs</DependentUpon>
     </Compile>
-    <Compile Include="GlobalVariables.cs" />
+    <Compile Include="Globals.cs" />
+    <Compile Include="GFX.cs" />
     <Compile Include="Map.cs" />
     <Compile Include="MapAutotiles.cs" />
     <Compile Include="PacketHandler.cs" />

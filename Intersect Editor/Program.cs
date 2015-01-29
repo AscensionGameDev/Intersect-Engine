@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace IntersectEditor
+namespace Intersect_Editor
 {
     static class Program
     {
@@ -16,8 +16,8 @@ namespace IntersectEditor
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            GlobalVariables.loginForm = new frmLogin();
-            Application.Run(GlobalVariables.loginForm);
+            Globals.loginForm = new frmLogin();
+            Application.Run(Globals.loginForm);
         }
     }
 }

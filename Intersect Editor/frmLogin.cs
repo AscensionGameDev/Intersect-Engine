@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace IntersectEditor
+namespace Intersect_Editor
 {
     public partial class frmLogin : Form
     {
@@ -19,33 +19,33 @@ namespace IntersectEditor
 
         private void frmLogin_Load(object sender, EventArgs e)
         {
-            GlobalVariables.GameSocket = new Socket();
+            Globals.GameSocket = new Socket();
             tmrSocket.Enabled = true;
             
         }
 
         private void tmrSocket_Tick(object sender, EventArgs e)
         {
-            GlobalVariables.GameSocket.Update();
+            Globals.GameSocket.Update();
             string statusString = "Connecting to server...";
-            if (GlobalVariables.GameSocket.isConnected)
+            if (Globals.GameSocket.isConnected)
             {
                 statusString = "Connected to server.";
             }
-            else if (GlobalVariables.GameSocket.isConnecting)
+            else if (Globals.GameSocket.isConnecting)
             {
 
             }
             else
             {
-                statusString = "Failed to connect, retrying in " + ((GlobalVariables.GameSocket.reconnectTime - Environment.TickCount)/1000).ToString("0") + " seconds.";
+                statusString = "Failed to connect, retrying in " + ((Globals.GameSocket.reconnectTime - Environment.TickCount)/1000).ToString("0") + " seconds.";
             }
-            GlobalVariables.loginForm.lblStatus.Text = statusString;
+            Globals.loginForm.lblStatus.Text = statusString;
         }
 
         private void btnLogin_Click(object sender, EventArgs e)
         {
-            if (GlobalVariables.GameSocket.isConnected)
+            if (Globals.GameSocket.isConnected)
             {
                 if (txtUsername.Text.Trim().Length > 0 && txtPassword.Text.Trim().Length > 0)
                 {
