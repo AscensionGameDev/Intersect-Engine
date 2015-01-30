@@ -89,7 +89,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="FastPixel.cs" />
     <Compile Include="ByteBuffer.cs" />
     <Compile Include="Constants.cs" />
     <Compile Include="Database.cs" />

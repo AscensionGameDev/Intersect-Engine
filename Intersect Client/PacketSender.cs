@@ -54,6 +54,7 @@ namespace Intersect_Client
             bf.WriteLong(9);
             bf.WriteLong(Globals.currentMap);
             Network.sendPacket(bf.ToArray());
+            Graphics.lightsChanged = true;
         }
 
         public static void SendAttack(int index)

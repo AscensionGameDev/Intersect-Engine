@@ -630,6 +630,23 @@ namespace Intersect_Client
             }
         }
 
+        //returns the point on the screen that is the center of the player sprite
+        public SFML.Window.Vector2f getCenterPos(int mapPos)
+        {
+            Sprite tmpSprite;
+            SFML.Window.Vector2f pos;
+            if (Graphics.entityNames.IndexOf(mySprite.ToLower() + ".png") >= 0)
+            {
+                tmpSprite = new Sprite(Graphics.entities[Graphics.entityNames.IndexOf(mySprite.ToLower() + ".png")]);
+                pos = new SFML.Window.Vector2f((int)Math.Ceiling(Graphics.CalcMapOffsetX(mapPos,true) + currentX * 32 + offsetX + tmpSprite.Texture.Size.X / 8f), (int)Math.Ceiling(Graphics.CalcMapOffsetY(mapPos,true) + currentY * 32 + offsetY - ((tmpSprite.Texture.Size.Y / 4) - 32) + tmpSprite.Texture.Size.Y / 8f)) ;
+            }
+            else
+            {
+                pos =  new SFML.Window.Vector2f((int)Math.Ceiling(Graphics.CalcMapOffsetX(mapPos,true) + currentX * 32 + offsetX), (int)Math.Ceiling(Graphics.CalcMapOffsetY(mapPos,true) + currentY * 32 + offsetY - 32));
+            }
+            return pos;
+        }
+
         public void DrawName(int i, bool isEvent)
         {
             if (hideName == 1) { return; }
