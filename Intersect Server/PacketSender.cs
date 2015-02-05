@@ -398,6 +398,24 @@ namespace IntersectServer
             client.SendPacket(bf.ToArray());
             bf.Dispose();
         }
+
+        public static void SendItem(Client client, long ItemNum)
+        {
+            ByteBuffer bf = new ByteBuffer();
+            bf.WriteLong(19);
+            bf.WriteLong(ItemNum);
+            bf.WriteBytes(GlobalVariables.GameItems[ItemNum].ItemData());
+            client.SendPacket(bf.ToArray());
+            bf.Dispose();
+        }
+
+        public static void SendItemEditor(Client client)
+        {
+            ByteBuffer bf = new ByteBuffer();
+            bf.WriteLong(18);
+            client.SendPacket(bf.ToArray());
+            bf.Dispose();
+        }
     }
 }
 

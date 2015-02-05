@@ -35,7 +35,7 @@ namespace Intersect_Editor
             {
                 reconnectTime = long.MaxValue ;
                 mySocket = new TcpClient();
-                mySocket.BeginConnect("ascensionforums.com", 6000, new AsyncCallback(connectCallback), mySocket);
+                mySocket.BeginConnect("127.0.0.1", 4500, new AsyncCallback(connectCallback), mySocket);
                 isConnecting = true;
             }
 
@@ -75,7 +75,7 @@ namespace Intersect_Editor
                 while (buff.Length() >= 4)
                 {
                     packetLen = buff.ReadInteger(false);
-                    if (buff.Length() >= packetLen)
+                    if (buff.Length() > packetLen)
                     {
                         //HandlePacket(buff.ReadBytes (packetLen));
                         buff.ReadInteger();

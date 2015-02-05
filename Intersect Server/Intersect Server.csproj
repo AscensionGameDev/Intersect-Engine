@@ -43,6 +43,7 @@
     <Reference Include="System.XML" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Item.cs" />
     <Compile Include="EntityInstance.cs" />
     <Compile Include="Event.cs" />
     <Compile Include="Main.cs" />

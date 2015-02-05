@@ -50,6 +50,12 @@ namespace Intersect_Editor
                 case 15:
                     HandleMapList(bf.ReadBytes(bf.Length()));
                     break;
+                case 18:
+                    HandleItemEditor();
+                    break;
+                case 19:
+                    HandleItemData(bf.ReadBytes(bf.Length()));
+                    break;
             }
         }
 
@@ -153,6 +159,23 @@ namespace Intersect_Editor
                 Globals.MapRefs[i].MapName = bf.ReadString();
                 Globals.MapRefs[i].deleted = bf.ReadInteger();
             }
+        }
+
+        private void HandleItemEditor()
+        {
+            frmItem tmpItemEditor;
+            tmpItemEditor = new frmItem();
+            tmpItemEditor.initEditor();
+            tmpItemEditor.Show();
+        }
+
+        private void HandleItemData(byte[] packet)
+        {
+            ByteBuffer bf = new ByteBuffer();
+            bf.WriteBytes(packet);
+            long itemnum = bf.ReadLong();
+            Globals.Items[itemnum] = new Item();
+            Globals.Items[itemnum].LoadByte(bf.ReadBytes(bf.Length()));
         }
     }
 }

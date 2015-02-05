@@ -11,7 +11,6 @@ namespace Intersect_Client
         public static bool isRunning = true;
         private static long animTimer = 0;
         private static long attackTimer;
-        private static long gameTimeUpdate;
         public static void StartGame()
         {
             //Load Content/Options
@@ -139,7 +138,6 @@ namespace Intersect_Client
                 if (Globals.animFrame == 3) { Globals.animFrame = 0; }
                 animTimer = Environment.TickCount + 500;
             }
-            UpdateGameTime();
         }
 
         private static bool TryAttack()
@@ -369,43 +367,6 @@ namespace Intersect_Client
 
             }
         }
-
-        private static void UpdateGameTime() {
-            if (gameTimeUpdate <= Environment.TickCount)
-            {
-                Globals.GameTime++;
-                if (Globals.currentMap == -1) { return; }
-                if (Globals.GameMaps == null) { return; }
-                if (Globals.currentMap >= Globals.GameMaps.Length) { return; }
-                if (Globals.GameMaps[Globals.currentMap] == null) { return; }
-                if (Globals.GameMaps[Globals.currentMap].isIndoors)
-                {
-                    Graphics.sunIntensity = 1f;
-                }
-                else
-                {
-                    if (Globals.GameTime >= 2400) { Globals.GameTime = 0; }
-                    if (Globals.GameTime > 1000 && Globals.GameTime < 1800)
-                    {
-                       Graphics.sunIntensity = 1f;
-                    }
-                    else if (Globals.GameTime > 2200 || Globals.GameTime < 600)
-                    {
-                        Graphics.sunIntensity = 0f;
-                    }
-                    else if (Globals.GameTime > 600 && Globals.GameTime < 1000)
-                    {
-                        Graphics.sunIntensity = 1f * ((Globals.GameTime - 600f) / 400f);
-                    }
-                    else if (Globals.GameTime > 1800 && Globals.GameTime < 2200)
-                    {
-                        Graphics.sunIntensity = 1f * ((400 - (Globals.GameTime - 1800f)) / 400f);
-                    }
-                }
-                gameTimeUpdate = Environment.TickCount + 10;
-            }
-        }
-        
     }
 
 

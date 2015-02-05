@@ -8,6 +8,9 @@ namespace Intersect_Editor
 {
     public static class Constants
     {
+        public const int MAX_STATS = 5;
+        public const int MAX_ITEMS = 255;
+
         public const int MAP_WIDTH = 30;
         public const int MAP_HEIGHT = 30;
         public const int LAYER_COUNT = 5;

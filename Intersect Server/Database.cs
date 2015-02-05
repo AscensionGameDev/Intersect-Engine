@@ -373,6 +373,7 @@ namespace IntersectServer
             }
             GenerateMapGrids();
         }
+
         public static void GenerateMapGrids()
         {
             MapGrid[] tmpGrids;
@@ -475,6 +476,29 @@ namespace IntersectServer
                 {
                     GlobalVariables.GameNpcs[i] = new NPCBase(i);
                     GlobalVariables.GameNpcs[i].Load(File.ReadAllBytes("Resources/Npcs/" + i + ".npc"));
+                }
+            }
+        }
+
+        //Items
+        public static void LoadItems()
+        {
+            if (!Directory.Exists("Resources/Items"))
+            {
+                Directory.CreateDirectory("Resources/Items");
+            }
+
+            GlobalVariables.GameItems = new Item[Constants.MAX_ITEMS];
+            for (int i = 0; i < Constants.MAX_ITEMS; i++)
+            {
+                GlobalVariables.GameItems[i] = new Item();
+                if (!File.Exists("Resources/Items/" + i + ".item"))
+                {
+                    GlobalVariables.GameItems[i].Save(i);
+                }
+                else
+                {
+                    GlobalVariables.GameItems[i].LoadByte(File.ReadAllBytes("Resources/Items/" + i + ".item"));
                 }
             }
         }

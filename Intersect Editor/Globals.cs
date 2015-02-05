@@ -19,6 +19,7 @@ namespace Intersect_Editor
         public static bool inEditor;
         public static string[] tilesets;
         public static MapRef[] MapRefs;
+        public static Item[] Items;
 
         //Animation Frame Variables
         public static int autotilemode = 0;

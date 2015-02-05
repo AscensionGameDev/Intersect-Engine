@@ -29,6 +29,7 @@ namespace Intersect_Editor
         }
         private void frmMain_Load(object sender, EventArgs e)
         {
+            Database.InitDatabase();
             InitEditor();
             this.Show();
             EditorLoop.startLoop(this);
@@ -973,6 +974,11 @@ namespace Intersect_Editor
             Globals.editingLight.graphic = null;
             Globals.lightsChanged = false;
             grpLightEditor.Hide();
+        }
+
+        private void itemEditorToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            PacketSender.SendItemEditor();
         }
     }
 }

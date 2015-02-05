@@ -7,6 +7,7 @@ using SFML;
 using SFML.Graphics;
 using SFML.Window;
 using System.IO;
+using BitmapProcessing;
 
 
 namespace Intersect_Client
@@ -39,21 +40,14 @@ namespace Intersect_Client
 
         //DayNight Stuff
         public static bool lightsChanged = true;
-        public static RenderTexture nightTex;
-        public static RenderTexture nightTex1;
-        public static Image nightImg;
-        public static Texture playerLightTex;
-        public static float sunIntensity;
-
-        //Player Spotlight Values
-        static float playerLightIntensity = .7f;
-        static int playerLightSize = 150;
-        static float playerLightScale = .6f;
+        public static SFML.Graphics.Color[,] nightColorArray;
+        public static SFML.Graphics.Color[,] bnightColorArray;
+        public static Texture nightTex;
 
         private static long fadeTimer = 0;
 
 
-        //Init Functions
+
         public static void InitGraphics()
         {
             InitSFML();
@@ -65,6 +59,7 @@ namespace Intersect_Client
                 //menuBG = new Texture("data\\graphics\\bg.png");
             }
         }
+
         private static void InitSFML()
         {
             if (DisplayMode < 0 || DisplayMode >= GetValidVideoModes().Count) { DisplayMode = 0; }
@@ -113,19 +108,21 @@ namespace Intersect_Client
             GUI.InitGwen();
         }
 
-        //GUI Input Events
         static void renderWindow_MouseButtonReleased(object sender, MouseButtonEventArgs e)
         {
             while (mouseState.Remove(e.Button)) { }
         }
+
         static void renderWindow_MouseButtonPressed(object sender, MouseButtonEventArgs e)
         {
             mouseState.Add(e.Button);
         }
+
         static void renderWindow_KeyReleased(object sender, KeyEventArgs e)
         {
             while (keyStates.Remove(e.Code)) { }
         }
+
         static void renderWindow_KeyPressed(object sender, KeyEventArgs e)
         {
             keyStates.Add(e.Code);
@@ -141,8 +138,20 @@ namespace Intersect_Client
             }
         }
 
-        
-        //Game Rendering
+        public static List<VideoMode> GetValidVideoModes()
+        {
+            List<VideoMode> myList = new List<VideoMode>();
+            for (int i = 0; i < VideoMode.FullscreenModes.Length; i++)
+            {
+                if (VideoMode.FullscreenModes[i].BitsPerPixel == 32)
+                {
+                    myList.Add(VideoMode.FullscreenModes[i]);
+                }
+            }
+            myList.Reverse();
+            return myList;
+        }
+
         public static void DrawGame()
         {
             RectangleShape myShape;
@@ -305,6 +314,7 @@ namespace Intersect_Client
                 }
             }
         }
+
         private static void DrawMap(int index, bool upper = false)
         {
             int mapoffsetx = CalcMapOffsetX(index);
@@ -322,8 +332,39 @@ namespace Intersect_Client
             }
         }
 
-        
-        //Graphic Loading
+        public static int CalcMapOffsetX(int i)
+        {
+            if (i < 3)
+            {
+                return ((-Constants.MAP_WIDTH * 32) + ((i) * (Constants.MAP_WIDTH * 32))) + (ScreenWidth / 2) - Globals.entities[Globals.myIndex].currentX * 32 - (int)Math.Ceiling(Globals.entities[Globals.myIndex].offsetX);
+            }
+            else if (i < 6)
+            {
+                return ((-Constants.MAP_WIDTH * 32) + ((i - 3) * (Constants.MAP_WIDTH * 32))) + (ScreenWidth/2) - Globals.entities[Globals.myIndex].currentX * 32 - (int)Math.Ceiling(Globals.entities[Globals.myIndex].offsetX);
+            }
+            else
+            {
+                return ((-Constants.MAP_WIDTH * 32) + ((i - 6) * (Constants.MAP_WIDTH * 32))) + (ScreenWidth / 2) - Globals.entities[Globals.myIndex].currentX * 32 - (int)Math.Ceiling(Globals.entities[Globals.myIndex].offsetX);
+            }
+        }
+
+        public static int CalcMapOffsetY(int i)
+        {
+            if (i < 3)
+            {
+
+                return -Constants.MAP_HEIGHT * 32 + (ScreenHeight / 2) - Globals.entities[Globals.myIndex].currentY * 32 - (int)Math.Ceiling(Globals.entities[Globals.myIndex].offsetY);
+            }
+            else if (i < 6)
+            {
+                return 0 + (ScreenHeight / 2) - Globals.entities[Globals.myIndex].currentY * 32 - (int)Math.Ceiling(Globals.entities[Globals.myIndex].offsetY);
+            }
+            else
+            {
+                return Constants.MAP_HEIGHT * 32 + (ScreenHeight / 2) - Globals.entities[Globals.myIndex].currentY * 32 - (int)Math.Ceiling(Globals.entities[Globals.myIndex].offsetY) ;
+            }
+        }
+
         public static void LoadTilesets(string[] tilesetnames)
         {
             for (int i = 0; i < tilesetnames.Length; i++)
@@ -345,6 +386,7 @@ namespace Intersect_Client
                 }
             }
         }
+
         public static void LoadEntities()
         {
             string[] entityPaths = Directory.GetFiles("data/graphics/entities/","*.png");
@@ -360,73 +402,32 @@ namespace Intersect_Client
         private static void GenerateLightTexture()
         {
             //If we don't have a light texture, make a base/blank one.
-            if (nightTex == null)
+            if (bnightColorArray == null)
             {
-                nightTex = new RenderTexture(Constants.MAP_WIDTH * 32 * 3, Constants.MAP_HEIGHT * 32 * 3);
-                nightTex1 = new RenderTexture(Constants.MAP_WIDTH * 32 * 3, Constants.MAP_HEIGHT * 32 * 3);
-                System.Drawing.Bitmap tmpLight = null;
-                int size = CalcLightWidth(playerLightSize);
-                tmpLight = new System.Drawing.Bitmap(size, size);
-                System.Drawing.Graphics g = System.Drawing.Graphics.FromImage(tmpLight);
-                System.Drawing.Drawing2D.GraphicsPath pth = new System.Drawing.Drawing2D.GraphicsPath();
-                pth.AddEllipse(0, 0, size - 1, size - 1);
-                System.Drawing.Drawing2D.PathGradientBrush pgb = new System.Drawing.Drawing2D.PathGradientBrush(pth);
-                pgb.CenterColor = System.Drawing.Color.FromArgb((int)((double)(255 * playerLightIntensity)), (int)(255 * playerLightIntensity), (int)(255 * playerLightIntensity), (int)(255 * playerLightIntensity));
-                pgb.SurroundColors = new System.Drawing.Color[] { System.Drawing.Color.Black };
-                pgb.FocusScales = new System.Drawing.PointF(playerLightScale, playerLightScale);
-                g.FillPath(pgb, pth);
-                g.Dispose();
-                playerLightTex = texFromBitmap(tmpLight);
-            }
-
-            //If loading maps still, dont make the texture, no point
-            for (int i = 0; i < 9; i++)
-            {
-                if (Globals.localMaps[i] > -1 && Globals.localMaps[i] < Globals.GameMaps.Count())
+                bnightColorArray = new SFML.Graphics.Color[30 * 32 * 3, 30 * 32 * 3];
+                for (int x = 0; x < 30 * 32 * 3; x++)
                 {
-                    if (Globals.GameMaps[Globals.localMaps[i]] != null)
+                    for (int y = 0; y < 30 * 32 * 3; y++)
                     {
-                        if (Globals.GameMaps[Globals.localMaps[i]].mapLoaded)
-                        {
-
-                        }
-                        else
-                        {
-                            return;
-                        }
-                    }
-                    else
-                    {
-                        return;
+                        bnightColorArray[x, y] = new SFML.Graphics.Color(0, 0, 0, 180);
                     }
                 }
             }
 
-            nightTex.Clear(new Color(30, 30, 30, 255));
-
+            //Wipe our render array by cloning the blank one.
+            nightColorArray = (SFML.Graphics.Color[,])bnightColorArray.Clone();
             double w = 1;
             //Render each light.
-            for (int z = 0; z < 9; z++)
+            for (int i = 0; i < Globals.GameMaps[Globals.currentMap].Lights.Count; i++)
             {
-                if (Globals.localMaps[z] > -1 && Globals.localMaps[z] < Globals.GameMaps.Count())
-                {
-                    if (Globals.GameMaps[Globals.localMaps[z]] != null)
-                    {
-                        if (Globals.GameMaps[Globals.localMaps[z]].mapLoaded)
-                        {
-                            for (int i = 0; i < Globals.GameMaps[Globals.localMaps[z]].Lights.Count; i++)
-                            {
-                                w = CalcLightWidth(Globals.GameMaps[Globals.localMaps[z]].Lights[i].range);
-                                int x = CalcMapOffsetX(z,true) + Constants.MAP_WIDTH * 32 + (Globals.GameMaps[Globals.localMaps[z]].Lights[i].tileX * 32 + Globals.GameMaps[Globals.localMaps[z]].Lights[i].offsetX) - (int)w / 2 + 32 + 16;
-                                int y = CalcMapOffsetY(z,true) + Constants.MAP_HEIGHT* 32 + (int)(Globals.GameMaps[Globals.localMaps[z]].Lights[i].tileY * 32 + Globals.GameMaps[Globals.localMaps[z]].Lights[i].offsetY) - (int)w / 2 + 32 + 16;
-                                AddLight(x, y, (int)w, Globals.GameMaps[Globals.localMaps[z]].Lights[i].intensity, Globals.GameMaps[Globals.localMaps[z]].Lights[i]);
-                            }
-                        }
-                    }
-                }
+                w = CalcLightWidth(Globals.GameMaps[Globals.currentMap].Lights[i].range);
+                int x = (30 * 32) + (Globals.GameMaps[Globals.currentMap].Lights[i].tileX * 32 + Globals.GameMaps[Globals.currentMap].Lights[i].offsetX) - (int)w / 2 + 32 + 16;
+                int y = (int)(30 * 32) + (int)(Globals.GameMaps[Globals.currentMap].Lights[i].tileY * 32 + Globals.GameMaps[Globals.currentMap].Lights[i].offsetY) - (int)w / 2 + 32 + 16;
+                AddLight(x, y, (int)w, Globals.GameMaps[Globals.currentMap].Lights[i].intensity, nightColorArray, Globals.GameMaps[Globals.currentMap].Lights[i]);
             }
-            nightTex.Display();
-            nightImg = nightTex.Texture.CopyToImage();
+            //Convert our pixel array into a renderable image.
+            SFML.Graphics.Image img = new SFML.Graphics.Image(nightColorArray);
+            nightTex = new Texture(img);
             lightsChanged = false;
         }
         private static int CalcLightWidth(int range)
@@ -453,24 +454,13 @@ namespace Intersect_Client
         }
         private static void DrawNight()
         {
-            if (Globals.GameMaps[Globals.currentMap].isIndoors) { return; } //Don't worry about day or night if indoors
-            Sprite tmpSprite;
-            RectangleShape rs = new RectangleShape(new Vector2f(3 * 32 * Constants.MAP_WIDTH, 3 * 32 * Constants.MAP_HEIGHT));
-            nightTex1.Clear(Color.Transparent);
-            nightTex1.Draw(new Sprite(nightTex.Texture));   //Draw our cached map lights
-            tmpSprite = new Sprite(playerLightTex);         //Draw the light around the player for his vision
-            tmpSprite.Position = new SFML.Window.Vector2f((int)Math.Ceiling(Globals.entities[Globals.myIndex].getCenterPos(4).X - playerLightTex.Size.X / 2 + Constants.MAP_WIDTH * 32), (int)Math.Ceiling(Globals.entities[Globals.myIndex].getCenterPos(4).Y - playerLightTex.Size.Y / 2 + Constants.MAP_HEIGHT* 32));
-            nightTex1.Draw(tmpSprite, new RenderStates(BlendMode.Add));
-            rs.FillColor = new Color(255, 255, 255, (byte)(sunIntensity * 255));    //Draw a rectangle, the opacity indicates if it is day or night.
-            nightTex1.Draw(rs, new RenderStates(BlendMode.Add));
-            nightTex1.Display();
-            Sprite nightSprite = new Sprite(nightTex1.Texture); //Copy our lightmap to another texture
-            nightSprite.Position = new Vector2f(CalcMapOffsetX(0),CalcMapOffsetY(0));
-            nightSprite.Draw(renderWindow, new RenderStates(BlendMode.Multiply));   //Render with multiply for the actual effect.
+            if (Globals.GameMaps[Globals.currentMap].isIndoors) { return; }
+            Sprite nightSprite = new Sprite(nightTex);
+            nightSprite.Position = new Vector2f(CalcMapOffsetX(4) + -32 * 30, CalcMapOffsetY(4) + -32 * 30);
+            nightSprite.Draw(renderWindow, RenderStates.Default);
             nightSprite.Dispose();
-            renderWindow.ResetGLStates();
         }
-        private static void AddLight(int x1, int y1, int size, double intensity, LightObj light)
+        private static void AddLight(int x1, int y1, int size, double intensity, SFML.Graphics.Color[,] colorArr, LightObj light)
         {
             System.Drawing.Bitmap tmpLight = null;
             //If not cached, create a radial gradent for the light.
@@ -481,7 +471,7 @@ namespace Intersect_Client
                 System.Drawing.Drawing2D.GraphicsPath pth = new System.Drawing.Drawing2D.GraphicsPath();
                 pth.AddEllipse(0, 0, size - 1, size - 1);
                 System.Drawing.Drawing2D.PathGradientBrush pgb = new System.Drawing.Drawing2D.PathGradientBrush(pth);
-                pgb.CenterColor = System.Drawing.Color.FromArgb((int)((double)(255 * intensity)),255, 255, 255);
+                pgb.CenterColor = System.Drawing.Color.FromArgb((int)((double)(255 * intensity)), 0, 0, 0);
                 pgb.SurroundColors = new System.Drawing.Color[] { System.Drawing.Color.Transparent };
                 pgb.FocusScales = new System.Drawing.PointF(0.8f, 0.8f);
                 g.FillPath(pgb, pth);
@@ -493,104 +483,35 @@ namespace Intersect_Client
                 tmpLight = light.graphic;
             }
 
-            Sprite tmpSprite = new Sprite(texFromBitmap(tmpLight));
-            tmpSprite.Position = new Vector2f(x1, y1);
-            nightTex.Draw(tmpSprite, new RenderStates(BlendMode.Add));
+            //Quickly subtract the inverse of light (darkness) from our darkness texture.
+            SFML.Graphics.Color emptyBlack;
+            FastBitmap fastBitmap = new FastBitmap(tmpLight);
+            fastBitmap.LockImage();
+            for (int x = x1; x < x1 + size; x++)
+            {
+                for (int y = y1; y < y1 + size; y++)
+                {
+                    if (y >= 0 && y < 30 * 32 * 3 && x >= 0 && x < 30 * 32 * 3)
+                    {
+                        emptyBlack = nightColorArray[y, x];
+                        System.Drawing.Color tmpPixel = fastBitmap.GetPixel(x - x1, y - y1);
+                        int a = emptyBlack.A - tmpPixel.A;
+                        int b = emptyBlack.R + tmpPixel.R;
+                        int c = emptyBlack.G + tmpPixel.G;
+                        int d = emptyBlack.B + tmpPixel.B;
+                        if (a > 255) { a = 255; }
+                        if (a < 0) { a = 0; }
+                        if (b > 255) { b = 255; }
+                        if (c > 255) { c = 255; }
+                        if (d > 255) { d = 255; }
+                        nightColorArray[y, x] = new SFML.Graphics.Color((byte)b, (byte)c, (byte)d, (byte)a);
+                    }
+                }
+            }
+            fastBitmap.UnlockImage();
         }
 
-        //Helper Functions
-        private static Texture texFromBitmap(System.Drawing.Bitmap bmp)
-        {
-            MemoryStream ms = new MemoryStream();
-            bmp.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
-            return new Texture(ms);
-        }
-        public static List<VideoMode> GetValidVideoModes()
-        {
-            List<VideoMode> myList = new List<VideoMode>();
-            for (int i = 0; i < VideoMode.FullscreenModes.Length; i++)
-            {
-                if (VideoMode.FullscreenModes[i].BitsPerPixel == 32)
-                {
-                    myList.Add(VideoMode.FullscreenModes[i]);
-                }
-            }
-            myList.Reverse();
-            return myList;
-        }
-        public static int CalcMapOffsetX(int i, bool ignorePlayerOffset = false)
-        {
-            if (i < 3)
-            {
-                if (ignorePlayerOffset)
-                {
-                    return ((-Constants.MAP_WIDTH * 32) + ((i) * (Constants.MAP_WIDTH * 32)));
-                }
-                else
-                {
-                    return ((-Constants.MAP_WIDTH * 32) + ((i) * (Constants.MAP_WIDTH * 32))) + (ScreenWidth / 2) - Globals.entities[Globals.myIndex].currentX * 32 - (int)Math.Ceiling(Globals.entities[Globals.myIndex].offsetX);
-                }
-            }
-            else if (i < 6)
-            {
-                if (ignorePlayerOffset)
-                {
-                    return ((-Constants.MAP_WIDTH * 32) + ((i - 3) * (Constants.MAP_WIDTH * 32)));
-                }
-                else
-                {
-                    return ((-Constants.MAP_WIDTH * 32) + ((i - 3) * (Constants.MAP_WIDTH * 32))) + (ScreenWidth / 2) - Globals.entities[Globals.myIndex].currentX * 32 - (int)Math.Ceiling(Globals.entities[Globals.myIndex].offsetX);
-                }
-            }
-            else
-            {
-                if (ignorePlayerOffset)
-                {
-                    return ((-Constants.MAP_WIDTH * 32) + ((i - 6) * (Constants.MAP_WIDTH * 32)));
-                }
-                else
-                {
-                    return ((-Constants.MAP_WIDTH * 32) + ((i - 6) * (Constants.MAP_WIDTH * 32))) + (ScreenWidth / 2) - Globals.entities[Globals.myIndex].currentX * 32 - (int)Math.Ceiling(Globals.entities[Globals.myIndex].offsetX);
-                }
 
-            }
-        }
-        public static int CalcMapOffsetY(int i, bool ignorePlayerOffset = false)
-        {
-            if (i < 3)
-            {
-                if (ignorePlayerOffset)
-                {
-                    return -Constants.MAP_HEIGHT * 32;
-                }
-                else
-                {
-                    return -Constants.MAP_HEIGHT * 32 + (ScreenHeight / 2) - Globals.entities[Globals.myIndex].currentY * 32 - (int)Math.Ceiling(Globals.entities[Globals.myIndex].offsetY);
-                }
-            }
-            else if (i < 6)
-            {
-                if (ignorePlayerOffset)
-                {
-                    return 0;
-                }
-                else
-                {
-                    return 0 + (ScreenHeight / 2) - Globals.entities[Globals.myIndex].currentY * 32 - (int)Math.Ceiling(Globals.entities[Globals.myIndex].offsetY);
-                }
-            }
-            else
-            {
-                if (ignorePlayerOffset)
-                {
-                    return Constants.MAP_HEIGHT * 32;
-                }
-                else
-                {
-                    return Constants.MAP_HEIGHT * 32 + (ScreenHeight / 2) - Globals.entities[Globals.myIndex].currentY * 32 - (int)Math.Ceiling(Globals.entities[Globals.myIndex].offsetY);
-                }
-            }
-        }
 
     }
 }
