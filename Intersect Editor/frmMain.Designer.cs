@@ -42,6 +42,8 @@
             this.nightTimeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.mapListToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.hihiToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.contentEditorsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.itemEditorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.grpMap = new System.Windows.Forms.GroupBox();
@@ -95,6 +97,7 @@
             this.editToolStripMenuItem,
             this.layerMenu,
             this.viewToolStripMenuItem,
+            this.contentEditorsToolStripMenuItem,
             this.helpToolStripMenuItem});
             this.menuStrip.Location = new System.Drawing.Point(0, 0);
             this.menuStrip.Name = "menuStrip";
@@ -200,6 +203,21 @@
             // 
             this.hihiToolStripMenuItem.Name = "hihiToolStripMenuItem";
             this.hihiToolStripMenuItem.Size = new System.Drawing.Size(134, 22);
+            // 
+            // contentEditorsToolStripMenuItem
+            // 
+            this.contentEditorsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.itemEditorToolStripMenuItem});
+            this.contentEditorsToolStripMenuItem.Name = "contentEditorsToolStripMenuItem";
+            this.contentEditorsToolStripMenuItem.Size = new System.Drawing.Size(101, 20);
+            this.contentEditorsToolStripMenuItem.Text = "Content Editors";
+            // 
+            // itemEditorToolStripMenuItem
+            // 
+            this.itemEditorToolStripMenuItem.Name = "itemEditorToolStripMenuItem";
+            this.itemEditorToolStripMenuItem.Size = new System.Drawing.Size(132, 22);
+            this.itemEditorToolStripMenuItem.Text = "Item Editor";
+            this.itemEditorToolStripMenuItem.Click += new System.EventHandler(this.itemEditorToolStripMenuItem_Click);
             // 
             // helpToolStripMenuItem
             // 
@@ -677,6 +695,8 @@
         private System.Windows.Forms.Button btnLightEditorClose;
         private System.Windows.Forms.CheckBox chkIndoors;
         private System.Windows.Forms.ToolStripMenuItem hihiToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem contentEditorsToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem itemEditorToolStripMenuItem;
     }
 }
 

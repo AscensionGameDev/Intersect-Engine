@@ -27,6 +27,9 @@ namespace IntersectServer
 		public static Map[] GameMaps;
 		public static int mapCount;
 
+        //Game Items
+        public static Item[] GameItems;
+
         //Game Npcs
         public static NPCBase[] GameNpcs;
         public static int npcCount;

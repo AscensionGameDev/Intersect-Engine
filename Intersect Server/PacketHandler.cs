@@ -80,6 +80,12 @@ namespace IntersectServer
                 case 15:
                     HandleCreateAccount(client, packet);
                     break;
+                case 16:
+                    HandleItemEditor(client);
+                    break;
+                case 17:
+                    HandleItemData(client, packet);
+                    break;
             }
 
         }
@@ -444,6 +450,25 @@ namespace IntersectServer
                 }
             }
             bf.Dispose();
+        }
+
+        private void HandleItemData(Client client, byte[] packet)
+        {
+            ByteBuffer bf = new ByteBuffer();
+            bf.WriteBytes(packet);
+            long itemNum = bf.ReadLong();
+            GlobalVariables.GameItems[itemNum].LoadItem(bf);
+            GlobalVariables.GameItems[itemNum].Save((int)itemNum);
+            bf.Dispose();
+        }
+
+        private void HandleItemEditor(Client client)
+        {
+            for (int i = 0; i < Constants.MAX_ITEMS; i++)
+            {
+                PacketSender.SendItem(client, i);
+            }
+            PacketSender.SendItemEditor(client);
         }
     }
 }

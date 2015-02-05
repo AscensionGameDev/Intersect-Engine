@@ -67,5 +67,21 @@ namespace Intersect_Editor
             }
             Globals.GameSocket.SendPacket(bf.ToArray());
         }
+
+        public static void SendItemEditor()
+        {
+            ByteBuffer bf = new ByteBuffer();
+            bf.WriteLong(16);
+            Globals.GameSocket.SendPacket(bf.ToArray());
+        }
+
+        public static void SendItem(int ItemNum, byte[] ItemData)
+        {
+            ByteBuffer bf = new ByteBuffer();
+            bf.WriteLong(17);
+            bf.WriteLong(ItemNum);
+            bf.WriteBytes(ItemData);
+            Globals.GameSocket.SendPacket(bf.ToArray());
+        }
     }
 }

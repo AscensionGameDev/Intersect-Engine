@@ -16,6 +16,8 @@ namespace IntersectServer
 			Database.LoadMaps ();
             Console.WriteLine("Loading npcs.");
             Database.LoadNpcs();
+            Console.WriteLine("Loading items.");
+            Database.LoadItems();
             Console.WriteLine("Opening MySQL connection.");
             Database.initMySQL();
 			if (File.Exists("Resources/Tilesets.dat")) {
