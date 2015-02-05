@@ -33,7 +33,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup>
-    <StartupObject>Intersect_Client.Program</StartupObject>
+    <StartupObject>Intersect_Client.Classes.Program</StartupObject>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
     <DebugSymbols>true</DebugSymbols>
@@ -89,31 +89,33 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Item.cs" />
-    <Compile Include="FastPixel.cs" />
-    <Compile Include="ByteBuffer.cs" />
-    <Compile Include="Constants.cs" />
-    <Compile Include="Database.cs" />
-    <Compile Include="Entity.cs" />
-    <Compile Include="EntityManager.cs" />
-    <Compile Include="EventDialog.cs" />
+    <Compile Include="Classes\GameGui.cs" />
+    <Compile Include="Classes\Item.cs" />
+    <Compile Include="Classes\ByteBuffer.cs" />
+    <Compile Include="Classes\Constants.cs" />
+    <Compile Include="Classes\Database.cs" />
+    <Compile Include="Classes\Entity.cs" />
+    <Compile Include="Classes\EntityManager.cs" />
+    <Compile Include="Classes\EventDialog.cs" />
+    <Compile Include="Classes\Enums.cs" />
     <Compile Include="frmGame.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="frmGame.Designer.cs">
       <DependentUpon>frmGame.cs</DependentUpon>
     </Compile>
-    <Compile Include="Globals.cs" />
-    <Compile Include="GameMain.cs" />
-    <Compile Include="Graphics.cs" />
-    <Compile Include="GUI.cs" />
-    <Compile Include="Map.cs" />
-    <Compile Include="MapAutotiles.cs" />
-    <Compile Include="Network.cs" />
-    <Compile Include="PacketHandler.cs" />
-    <Compile Include="PacketSender.cs" />
-    <Compile Include="Player.cs" />
-    <Compile Include="Program.cs" />
+    <Compile Include="Classes\Globals.cs" />
+    <Compile Include="Classes\GameMain.cs" />
+    <Compile Include="Classes\Graphics.cs" />
+    <Compile Include="Classes\Gui.cs" />
+    <Compile Include="Classes\Map.cs" />
+    <Compile Include="Classes\MapAutotiles.cs" />
+    <Compile Include="Classes\MenuGUI.cs" />
+    <Compile Include="Classes\Network.cs" />
+    <Compile Include="Classes\PacketHandler.cs" />
+    <Compile Include="Classes\PacketSender.cs" />
+    <Compile Include="Classes\Player.cs" />
+    <Compile Include="Classes\Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="frmGame.resx">
       <DependentUpon>frmGame.cs</DependentUpon>

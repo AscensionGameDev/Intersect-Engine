@@ -34,6 +34,9 @@
     <Externalconsole>True</Externalconsole>
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject>Intersect_Server.Classes.MainClass</StartupObject>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="MySql.Data">
       <HintPath>.\MySql.Data.dll</HintPath>
@@ -43,27 +46,27 @@
     <Reference Include="System.XML" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Item.cs" />
-    <Compile Include="EntityInstance.cs" />
-    <Compile Include="Event.cs" />
-    <Compile Include="Main.cs" />
-    <Compile Include="AssemblyInfo.cs" />
-    <Compile Include="NetworkBase.cs" />
-    <Compile Include="Client.cs" />
-    <Compile Include="ByteBuffer.cs" />
-    <Compile Include="NPC.cs" />
-    <Compile Include="NPCBase.cs" />
-    <Compile Include="PacketHandler.cs" />
-    <Compile Include="Map.cs" />
-    <Compile Include="GlobalVariables.cs" />
-    <Compile Include="Constants.cs" />
-    <Compile Include="PacketSender.cs" />
-    <Compile Include="MovementState.cs" />
-    <Compile Include="Player.cs" />
-    <Compile Include="Entity.cs" />
-    <Compile Include="Database.cs" />
-    <Compile Include="MapGrid.cs" />
-    <Compile Include="ServerLoop.cs" />
+    <Compile Include="Classes\Enums.cs" />
+    <Compile Include="Classes\Item.cs" />
+    <Compile Include="Classes\EntityInstance.cs" />
+    <Compile Include="Classes\Event.cs" />
+    <Compile Include="Classes\Main.cs" />
+    <Compile Include="Classes\AssemblyInfo.cs" />
+    <Compile Include="Classes\Network.cs" />
+    <Compile Include="Classes\Client.cs" />
+    <Compile Include="Classes\ByteBuffer.cs" />
+    <Compile Include="Classes\NPC.cs" />
+    <Compile Include="Classes\NPCBase.cs" />
+    <Compile Include="Classes\PacketHandler.cs" />
+    <Compile Include="Classes\Map.cs" />
+    <Compile Include="Classes\GlobalVariables.cs" />
+    <Compile Include="Classes\Constants.cs" />
+    <Compile Include="Classes\PacketSender.cs" />
+    <Compile Include="Classes\Player.cs" />
+    <Compile Include="Classes\Entity.cs" />
+    <Compile Include="Classes\Database.cs" />
+    <Compile Include="Classes\MapGrid.cs" />
+    <Compile Include="Classes\ServerLoop.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

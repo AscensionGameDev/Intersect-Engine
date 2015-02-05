@@ -1,11 +1,13 @@
-﻿namespace Intersect_Client
+﻿using System.ComponentModel;
+
+namespace Intersect_Client
 {
-    partial class frmGame
+    partial class FrmGame
     {
         /// <summary>
         /// Required designer variable.
         /// </summary>
-        private System.ComponentModel.IContainer components = null;
+        private IContainer components = null;
 
         /// <summary>
         /// Clean up any resources being used.
@@ -30,7 +32,7 @@
         {
             this.SuspendLayout();
             // 
-            // frmGame
+            // FrmGame
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -38,11 +40,10 @@
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.KeyPreview = true;
             this.MaximizeBox = false;
-            this.Name = "frmGame";
+            this.Name = "FrmGame";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "frmGame";
             this.Load += new System.EventHandler(this.frmGame_Load);
-            this.Activated += frmGame_Activated;
-            this.Click += frmGame_Click;
             this.ResumeLayout(false);
 
         }
