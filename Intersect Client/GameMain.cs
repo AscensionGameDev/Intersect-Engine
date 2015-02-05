@@ -57,6 +57,7 @@ namespace Intersect_Client
                     Globals.GameState = 1;
                     GUI.DestroyGwen();
                     GUI.InitGwen();
+                    Console.WriteLine("Sent enter game");
                     PacketSender.SendEnterGame();
                 }
             }

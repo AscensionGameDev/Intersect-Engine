@@ -1,9 +1,6 @@
-﻿using System;
+﻿using SFML.Graphics;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using SFML.Graphics;
 
 namespace Intersect_Client
 {
@@ -58,7 +55,6 @@ namespace Intersect_Client
 
             //CacheMap1 ();
             //CacheMapLayers();
-
         }
 
         private void Load()
@@ -107,10 +103,7 @@ namespace Intersect_Client
 
             //Globals.mapRevision[myMapNum] = revision;
             //Database.SaveMapRevisions();
-
         }
-
-
 
         public void ClearCache()
         {
@@ -128,7 +121,6 @@ namespace Intersect_Client
                         }
                         catch (Exception)
                         {
-
                         }
                         layerCache[i] = null;
                     }
@@ -140,7 +132,6 @@ namespace Intersect_Client
                         }
                         catch (Exception)
                         {
-
                         }
                         mySprite[z, i] = null;
                     }
@@ -160,9 +151,11 @@ namespace Intersect_Client
                 case Constants.AUTOTILE_WATERFALL:
                     yOffset = (forceFrame - 1) * 32;
                     break;
+
                 case Constants.AUTOTILE_ANIM:
                     xOffset = forceFrame * 64;
                     break;
+
                 case Constants.AUTOTILE_CLIFF:
                     yOffset = -32;
                     break;
@@ -182,19 +175,16 @@ namespace Intersect_Client
                 lowerTextures[i] = new RenderTexture(32 * Constants.MAP_WIDTH, 32 * Constants.MAP_HEIGHT);
                 if (upperTextures[i] != null) { upperTextures[i].Dispose(); }
                 upperTextures[i] = new RenderTexture(32 * Constants.MAP_WIDTH, 32 * Constants.MAP_HEIGHT);
-                for (int z = 0; z < 3; z++)
-                {
-                    for (int l = 0; l < Constants.LAYER_COUNT; l++)
-                    {
 
-                        if (l < 3)
-                        {
-                            DrawMapLayer(lowerTextures[i], l, z);
-                        }
-                        else
-                        {
-                            DrawMapLayer(upperTextures[i], l, z);
-                        }
+                for (int l = 0; l < Constants.LAYER_COUNT; l++)
+                {
+                    if (l < 3)
+                    {
+                        DrawMapLayer(lowerTextures[i], l, i);
+                    }
+                    else
+                    {
+                        DrawMapLayer(upperTextures[i], l, i);
                     }
                 }
                 lowerTextures[i].Display();
@@ -230,17 +220,15 @@ namespace Intersect_Client
                                         }
                                         else if (autotiles.Autotile[x, y].Layer[l].renderState == Constants.RENDER_STATE_AUTOTILE)
                                         {
-                                            DrawAutoTile(l, x * 32, y * 32, 1, x, y, Globals.animFrame, tex);
-                                            DrawAutoTile(l, x * 32 + 16, y * 32, 2, x, y, Globals.animFrame, tex);
-                                            DrawAutoTile(l, x * 32, y * 32 + 16, 3, x, y, Globals.animFrame, tex);
-                                            DrawAutoTile(l, +x * 32 + 16, y * 32 + 16, 4, x, y, Globals.animFrame, tex);
+                                            DrawAutoTile(l, x * 32, y * 32, 1, x, y, z, tex);
+                                            DrawAutoTile(l, x * 32 + 16, y * 32, 2, x, y, z, tex);
+                                            DrawAutoTile(l, x * 32, y * 32 + 16, 3, x, y, z, tex);
+                                            DrawAutoTile(l, +x * 32 + 16, y * 32 + 16, 4, x, y, z, tex);
                                         }
                                     }
                                     catch (Exception)
                                     {
-
                                     }
-
                                 }
                             }
                         }
@@ -265,8 +253,6 @@ namespace Intersect_Client
                 tmpSprite.Position = new SFML.Window.Vector2f(xoffset, yoffset);
                 Graphics.renderWindow.Draw(tmpSprite);
             }
-
-
         }
 
         public bool shouldLoad(int index)
@@ -281,26 +267,34 @@ namespace Intersect_Client
                         case 0:
                             if (Globals.entities[Globals.myIndex].currentX < 18 && Globals.entities[Globals.myIndex].currentY < 18) { return true; }
                             break;
+
                         case 1:
                             if (Globals.entities[Globals.myIndex].currentY < 18) { return true; }
                             break;
+
                         case 2:
                             if (Globals.entities[Globals.myIndex].currentX > 11 && Globals.entities[Globals.myIndex].currentY < 18) { return true; }
                             break;
+
                         case 3:
                             if (Globals.entities[Globals.myIndex].currentX < 18) { return true; }
                             break;
+
                         case 4:
                             return true;
+
                         case 5:
                             if (Globals.entities[Globals.myIndex].currentX > 11) { return true; }
                             break;
+
                         case 6:
                             if (Globals.entities[Globals.myIndex].currentX < 18 && Globals.entities[Globals.myIndex].currentY > 11) { return true; }
                             break;
+
                         case 7:
                             if (Globals.entities[Globals.myIndex].currentY > 11) { return true; }
                             break;
+
                         case 8:
                             if (Globals.entities[Globals.myIndex].currentX > 11 && Globals.entities[Globals.myIndex].currentY > 11) { return true; }
                             break;
@@ -333,6 +327,7 @@ namespace Intersect_Client
         public double intensity = 1;
         public int range = 20;
         public System.Drawing.Bitmap graphic;
+
         public LightObj(ByteBuffer myBuffer)
         {
             offsetX = myBuffer.ReadInteger();

@@ -417,8 +417,8 @@ namespace Intersect_Client
                             for (int i = 0; i < Globals.GameMaps[Globals.localMaps[z]].Lights.Count; i++)
                             {
                                 w = CalcLightWidth(Globals.GameMaps[Globals.localMaps[z]].Lights[i].range);
-                                int x = CalcMapOffsetX(z,true) + Constants.MAP_WIDTH * 32 + (Globals.GameMaps[Globals.localMaps[z]].Lights[i].tileX * 32 + Globals.GameMaps[Globals.localMaps[z]].Lights[i].offsetX) - (int)w / 2 + 32 + 16;
-                                int y = CalcMapOffsetY(z,true) + Constants.MAP_HEIGHT* 32 + (int)(Globals.GameMaps[Globals.localMaps[z]].Lights[i].tileY * 32 + Globals.GameMaps[Globals.localMaps[z]].Lights[i].offsetY) - (int)w / 2 + 32 + 16;
+                                int x = CalcMapOffsetX(z,true) + Constants.MAP_WIDTH * 32 + (Globals.GameMaps[Globals.localMaps[z]].Lights[i].tileX * 32 + Globals.GameMaps[Globals.localMaps[z]].Lights[i].offsetX) - (int)w / 2 + 16;
+                                int y = CalcMapOffsetY(z,true) + Constants.MAP_HEIGHT* 32 + (int)(Globals.GameMaps[Globals.localMaps[z]].Lights[i].tileY * 32 + Globals.GameMaps[Globals.localMaps[z]].Lights[i].offsetY) - (int)w / 2 + 16;
                                 AddLight(x, y, (int)w, Globals.GameMaps[Globals.localMaps[z]].Lights[i].intensity, Globals.GameMaps[Globals.localMaps[z]].Lights[i]);
                             }
                         }
@@ -453,6 +453,7 @@ namespace Intersect_Client
         }
         private static void DrawNight()
         {
+            //TODO: Calculate which areas will not be seen on screen and don't render them each frame.
             if (Globals.GameMaps[Globals.currentMap].isIndoors) { return; } //Don't worry about day or night if indoors
             Sprite tmpSprite;
             RectangleShape rs = new RectangleShape(new Vector2f(3 * 32 * Constants.MAP_WIDTH, 3 * 32 * Constants.MAP_HEIGHT));

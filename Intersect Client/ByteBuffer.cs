@@ -10,6 +10,8 @@ public class ByteBuffer
 
     List<byte> Buff;
     public int readpos;
+    private bool wasUpdated;
+    private byte[] readBytes;
     public ByteBuffer()
     {
         Buff = new List<byte>();
@@ -39,31 +41,38 @@ public class ByteBuffer
     public void WriteBytes(byte[] Input)
     {
         Buff.AddRange(Input);
+        wasUpdated = true;
     }
     public void WriteByte(byte Input)
     {
         Buff.Add(Input);
+        wasUpdated = true;
     }
     public void WriteShort(short Input)
     {
         Buff.AddRange(BitConverter.GetBytes(Input));
+        wasUpdated = true;
     }
     public void WriteInteger(int Input)
     {
         Buff.AddRange(BitConverter.GetBytes(Input));
+        wasUpdated = true;
     }
     public void WriteLong(long Input)
     {
         Buff.AddRange(BitConverter.GetBytes(Input));
+        wasUpdated = true;
     }
     public void WriteDouble(double Input)
     {
         Buff.AddRange(BitConverter.GetBytes(Input));
+        wasUpdated = true;
     }
     public void WriteString(string Input)
     {
         Buff.AddRange(BitConverter.GetBytes(Input.Length));
         Buff.AddRange(Encoding.ASCII.GetBytes(Input));
+        wasUpdated = true;
     }
     public string ReadString()
     {
@@ -72,7 +81,12 @@ public class ByteBuffer
     public string ReadString(bool Peek)
     {
         int Len = ReadInteger(true);
-        string ret = Encoding.ASCII.GetString(Buff.ToArray(), readpos, Len);
+        if (wasUpdated)
+        {
+            readBytes = Buff.ToArray();
+            wasUpdated = false;
+        }
+        string ret = Encoding.ASCII.GetString(readBytes, readpos, Len);
         if (Peek & Buff.Count > readpos)
         {
             if (ret.Length > 0)
@@ -124,7 +138,12 @@ public class ByteBuffer
         //check to see if this passes the byte count
         if (Buff.Count > readpos)
         {
-            short ret = BitConverter.ToInt16(Buff.ToArray(), readpos);
+            if (wasUpdated)
+            {
+                readBytes = Buff.ToArray();
+                wasUpdated = false;
+            }
+            short ret = BitConverter.ToInt16(readBytes, readpos);
             if (peek & Buff.Count > readpos)
             {
                 readpos += 2;
@@ -146,7 +165,12 @@ public class ByteBuffer
         //check to see if this passes the byte count
         if (Buff.Count > readpos)
         {
-            int ret = BitConverter.ToInt32(Buff.ToArray(), readpos);
+            if (wasUpdated)
+            {
+                readBytes = Buff.ToArray();
+                wasUpdated = false;
+            }
+            int ret = BitConverter.ToInt32(readBytes, readpos);
             if (peek & Buff.Count > readpos)
             {
                 readpos += 4;
@@ -168,7 +192,12 @@ public class ByteBuffer
         //check to see if this passes the byte count
         if (Buff.Count > readpos)
         {
-            long ret = BitConverter.ToInt64(Buff.ToArray(), readpos);
+            if (wasUpdated)
+            {
+                readBytes = Buff.ToArray();
+                wasUpdated = false;
+            }
+            long ret = BitConverter.ToInt64(readBytes, readpos);
             if (peek & Buff.Count > readpos)
             {
                 readpos += 8;
@@ -191,7 +220,12 @@ public class ByteBuffer
         //check to see if this passes the byte count
         if (Buff.Count > readpos)
         {
-            double ret = BitConverter.ToDouble(Buff.ToArray(), readpos);
+            if (wasUpdated)
+            {
+                readBytes = Buff.ToArray();
+                wasUpdated = false;
+            }
+            double ret = BitConverter.ToDouble(readBytes, readpos);
             if (peek & Buff.Count > readpos)
             {
                 readpos += 8;
@@ -221,6 +255,14 @@ public class ByteBuffer
         }
         this.disposedValue = true;
     }
+
+    #region " IDisposable Support "
+    public void Dispose()
+    {
+        Dispose(true);
+        GC.SuppressFinalize(this);
+    }
+    #endregion
 
 
 }

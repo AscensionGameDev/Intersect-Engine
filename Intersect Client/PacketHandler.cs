@@ -206,6 +206,7 @@ namespace Intersect_Client
 
         private static void HandleEnterMap(byte[] packet)
         {
+            Console.WriteLine("Got the map data");
             ByteBuffer bf = new ByteBuffer();
             bf.WriteBytes(packet);
             int mapNum = (int)bf.ReadLong();

@@ -12,6 +12,7 @@ using Gwen.Control;
 using KeyEventArgs = SFML.Window.KeyEventArgs;
 using MessageBox = System.Windows.Forms.MessageBox;
 using System.Text.RegularExpressions;
+using Base = Gwen.Control.Base;
 
 namespace Intersect_Client
 {
@@ -24,6 +25,7 @@ namespace Intersect_Client
         private static Canvas gameCanvas;
         private static Gwen.Renderer.SFML gwenRenderer;
         private static Gwen.Skin.TexturedBase gwenSkin;
+        private static Gwen.Skin.TexturedBase transSkin;
         private static Gwen.Font gwenFont;
         private static List<string> msgboxErrors = new List<string>();
         public static bool setupHandlers = false;
@@ -111,6 +113,18 @@ namespace Intersect_Client
         public static Gwen.Control.LabeledCheckBox g_oDisableMusic;
         public static Gwen.Control.Button g_oApplyBtn;
         public static Gwen.Control.Button g_oBackBtn;
+
+        //Player Box (HP/Mana)
+        public static Gwen.Control.WindowControl g_pBox;
+        public static Gwen.Control.Label g_pHPLbl;
+        public static Gwen.Control.Label g_pMPLbl;
+        public static Gwen.Control.Label g_pEXPLbl;
+        public static Gwen.Control.ImagePanel g_pHPBackground;
+        public static Gwen.Control.ImagePanel g_pHPBar;
+        public static Gwen.Control.ImagePanel g_pMPBackground;
+        public static Gwen.Control.ImagePanel g_pMPBar;
+        public static Gwen.Control.ImagePanel g_pEXPBackground;
+        public static Gwen.Control.ImagePanel g_pEXPBar;
 
 
         //Field Checking
@@ -940,6 +954,63 @@ namespace Intersect_Client
             g_oApplyBtn.SetPosition(g_oMenu.Width / 2 - 120 / 2, 136);
             g_oApplyBtn.SetSize(120, 32);
             g_oApplyBtn.Clicked += g_oApplyBtn_Clicked;
+
+            //Player Box (Hp/mana bars)
+            g_pBox = new Gwen.Control.WindowControl(gameCanvas);
+            g_pBox.Title = "Vitals";
+            g_pBox.SetSize(173, 80);
+            g_pBox.SetPosition(0, 0);
+            g_pBox.DisableResizing();
+            
+            g_pBox.Margin = Gwen.Margin.Zero;
+            g_pBox.Padding = Padding.Zero;
+            g_pBox.IsClosable = false;
+
+            g_pHPBackground = new Gwen.Control.ImagePanel(g_pBox);
+            g_pHPBackground.ImageName = "data/graphics/gui/HPBarEmpty.png";
+            g_pHPBackground.SetSize(169, 17);
+            g_pHPBackground.SetPosition(2, 0);
+
+            g_pHPBar = new Gwen.Control.ImagePanel(g_pBox);
+            g_pHPBar.ImageName = "data/graphics/gui/HPBar.png";
+            g_pHPBar.SetSize(169, 14);
+            g_pHPBar.SetPosition(2, 3);
+
+            g_pHPLbl = new Gwen.Control.Label(g_pBox);
+            g_pHPLbl.SetText("1000/1000");
+            g_pHPLbl.SetPosition(20, 3);
+            g_pHPLbl.TextColor = System.Drawing.Color.Black;
+
+            g_pMPBackground = new Gwen.Control.ImagePanel(g_pBox);
+            g_pMPBackground.ImageName = "data/graphics/gui/ManaBarEmpty.png";
+            g_pMPBackground.SetSize(169, 17);
+            g_pMPBackground.SetPosition(2, 18);
+
+            g_pMPBar = new Gwen.Control.ImagePanel(g_pBox);
+            g_pMPBar.ImageName = "data/graphics/gui/ManaBar.png";
+            g_pMPBar.SetSize(169, 14);
+            g_pMPBar.SetPosition(2, 21);
+
+            g_pMPLbl = new Gwen.Control.Label(g_pBox);
+            g_pMPLbl.SetText("1000/1000");
+            g_pMPLbl.SetPosition(20, 21);
+            g_pMPLbl.TextColor = System.Drawing.Color.Black;
+
+            g_pEXPBackground = new Gwen.Control.ImagePanel(g_pBox);
+            g_pEXPBackground.ImageName = "data/graphics/gui/EXPBarEmpty.png";
+            g_pEXPBackground.SetSize(169, 17);
+            g_pEXPBackground.SetPosition(2, 36);
+
+            g_pEXPBar = new Gwen.Control.ImagePanel(g_pBox);
+            g_pEXPBar.ImageName = "data/graphics/gui/EXPBar.png";
+            g_pEXPBar.SetSize(169, 14);
+            g_pEXPBar.SetPosition(2, 39);
+
+            g_pEXPLbl = new Gwen.Control.Label(g_pBox);
+            g_pEXPLbl.SetText("1000/1000");
+            g_pEXPLbl.SetPosition(20, 39);
+            g_pEXPLbl.TextColor = System.Drawing.Color.Black;
+
 
 
 
