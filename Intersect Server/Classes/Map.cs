@@ -18,7 +18,7 @@ namespace Intersect_Server.Classes
         public int Deleted;
         public byte[] MapGameData;
         public byte[] MapData;
-        public int[,] Blocked = new int[Constants.MapWidth, Constants.MapHeight];
+        public Attribute[,] Attributes = new Attribute[Constants.MapWidth, Constants.MapHeight];
         public int MapGrid;
         public int MapGridX;
         public int MapGridY;
@@ -75,7 +75,10 @@ namespace Intersect_Server.Classes
             {
                 for (var y = 0; y < Constants.MapHeight; y++)
                 {
-                    bf.WriteInteger(Blocked[x, y]);
+                    bf.WriteInteger(Attributes[x, y].value);
+                    bf.WriteInteger(Attributes[x, y].data1);
+                    bf.WriteInteger(Attributes[x, y].data2);
+                    bf.WriteInteger(Attributes[x, y].data3);
                 }
             }
             bf.WriteInteger(Lights.Count);
@@ -126,7 +129,10 @@ namespace Intersect_Server.Classes
             {
                 for (var y = 0; y < Constants.MapHeight; y++)
                 {
-                    Blocked[x, y] = bf.ReadInteger();
+                    Attributes[x, y].value = bf.ReadInteger();
+                    Attributes[x, y].data1 = bf.ReadInteger();
+                    Attributes[x, y].data2 = bf.ReadInteger();
+                    Attributes[x, y].data3 = bf.ReadInteger();
                 }
             }
             var lCount = bf.ReadInteger();
@@ -221,6 +227,14 @@ namespace Intersect_Server.Classes
             }
         }
 
+    }
+
+    public class Attribute
+    {
+        public int value;
+        public int data1;
+        public int data2;
+        public int data3;
     }
 
     class TileArray

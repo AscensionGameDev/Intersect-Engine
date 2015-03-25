@@ -64,5 +64,8 @@
             Mana,
             VitalCount
         }
+
+        // Map Attribtes
+        public enum MapAttributes : byte { Walkable = 0, Blocked, Item };
     }
 }

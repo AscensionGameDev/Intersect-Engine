@@ -81,6 +81,14 @@ namespace Intersect_Editor.Forms
             this.lblOffsetX = new System.Windows.Forms.Label();
             this.btnLightEditorRevert = new System.Windows.Forms.Button();
             this.btnLightEditorClose = new System.Windows.Forms.Button();
+            this.grpAttributes = new System.Windows.Forms.GroupBox();
+            this.grpItem = new System.Windows.Forms.GroupBox();
+            this.lblMaxItemAmount = new System.Windows.Forms.Label();
+            this.lblMapItem = new System.Windows.Forms.Label();
+            this.scrlMaxItemVal = new System.Windows.Forms.HScrollBar();
+            this.scrlMapItem = new System.Windows.Forms.HScrollBar();
+            this.rbItem = new System.Windows.Forms.RadioButton();
+            this.rbBlocked = new System.Windows.Forms.RadioButton();
             this.menuStrip.SuspendLayout();
             this.grpMap.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.picMap)).BeginInit();
@@ -90,6 +98,8 @@ namespace Intersect_Editor.Forms
             this.grpMapList.SuspendLayout();
             this.grpMapProperties.SuspendLayout();
             this.grpLightEditor.SuspendLayout();
+            this.grpAttributes.SuspendLayout();
+            this.grpItem.SuspendLayout();
             this.SuspendLayout();
             // 
             // menuStrip
@@ -103,7 +113,7 @@ namespace Intersect_Editor.Forms
             this.helpToolStripMenuItem});
             this.menuStrip.Location = new System.Drawing.Point(0, 0);
             this.menuStrip.Name = "menuStrip";
-            this.menuStrip.Size = new System.Drawing.Size(1350, 24);
+            this.menuStrip.Size = new System.Drawing.Size(1020, 24);
             this.menuStrip.TabIndex = 1;
             this.menuStrip.Text = "menuStrip1";
             // 
@@ -189,14 +199,14 @@ namespace Intersect_Editor.Forms
             // nightTimeToolStripMenuItem
             // 
             this.nightTimeToolStripMenuItem.Name = "nightTimeToolStripMenuItem";
-            this.nightTimeToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.nightTimeToolStripMenuItem.Size = new System.Drawing.Size(134, 22);
             this.nightTimeToolStripMenuItem.Text = "Night Time";
             this.nightTimeToolStripMenuItem.Click += new System.EventHandler(this.nightTimeToolStripMenuItem_Click);
             // 
             // mapListToolStripMenuItem
             // 
             this.mapListToolStripMenuItem.Name = "mapListToolStripMenuItem";
-            this.mapListToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.mapListToolStripMenuItem.Size = new System.Drawing.Size(134, 22);
             this.mapListToolStripMenuItem.Text = "Map List";
             this.mapListToolStripMenuItem.Click += new System.EventHandler(this.mapListToolStripMenuItem_Click);
             // 
@@ -240,7 +250,7 @@ namespace Intersect_Editor.Forms
             this.grpMap.Location = new System.Drawing.Point(305, 27);
             this.grpMap.MaximumSize = new System.Drawing.Size(1024, 1024);
             this.grpMap.Name = "grpMap";
-            this.grpMap.Size = new System.Drawing.Size(1024, 632);
+            this.grpMap.Size = new System.Drawing.Size(694, 632);
             this.grpMap.TabIndex = 2;
             this.grpMap.TabStop = false;
             // 
@@ -265,7 +275,7 @@ namespace Intersect_Editor.Forms
             this.hScrollMap.Location = new System.Drawing.Point(305, 662);
             this.hScrollMap.MaximumSize = new System.Drawing.Size(1024, 17);
             this.hScrollMap.Name = "hScrollMap";
-            this.hScrollMap.Size = new System.Drawing.Size(1024, 17);
+            this.hScrollMap.Size = new System.Drawing.Size(694, 17);
             this.hScrollMap.TabIndex = 3;
             this.hScrollMap.Scroll += new System.Windows.Forms.ScrollEventHandler(this.hScrollMap_Scroll);
             // 
@@ -274,7 +284,7 @@ namespace Intersect_Editor.Forms
             this.vScrollMap.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.vScrollMap.LargeChange = 1;
-            this.vScrollMap.Location = new System.Drawing.Point(1330, 27);
+            this.vScrollMap.Location = new System.Drawing.Point(1000, 27);
             this.vScrollMap.MaximumSize = new System.Drawing.Size(17, 960);
             this.vScrollMap.Name = "vScrollMap";
             this.vScrollMap.Size = new System.Drawing.Size(17, 632);
@@ -424,7 +434,7 @@ namespace Intersect_Editor.Forms
             this.grpMapProperties.Controls.Add(this.btnCloseProperties);
             this.grpMapProperties.Location = new System.Drawing.Point(305, 27);
             this.grpMapProperties.Name = "grpMapProperties";
-            this.grpMapProperties.Size = new System.Drawing.Size(1024, 632);
+            this.grpMapProperties.Size = new System.Drawing.Size(694, 632);
             this.grpMapProperties.TabIndex = 7;
             this.grpMapProperties.TabStop = false;
             this.grpMapProperties.Text = "Map Properties";
@@ -603,19 +613,109 @@ namespace Intersect_Editor.Forms
             this.btnLightEditorClose.UseVisualStyleBackColor = true;
             this.btnLightEditorClose.Click += new System.EventHandler(this.btnLightEditorClose_Click);
             // 
+            // grpAttributes
+            // 
+            this.grpAttributes.Controls.Add(this.grpItem);
+            this.grpAttributes.Controls.Add(this.rbItem);
+            this.grpAttributes.Controls.Add(this.rbBlocked);
+            this.grpAttributes.Location = new System.Drawing.Point(11, 27);
+            this.grpAttributes.Name = "grpAttributes";
+            this.grpAttributes.Size = new System.Drawing.Size(292, 632);
+            this.grpAttributes.TabIndex = 8;
+            this.grpAttributes.TabStop = false;
+            this.grpAttributes.Text = "Attributes";
+            this.grpAttributes.Visible = false;
+            // 
+            // grpItem
+            // 
+            this.grpItem.Controls.Add(this.lblMaxItemAmount);
+            this.grpItem.Controls.Add(this.lblMapItem);
+            this.grpItem.Controls.Add(this.scrlMaxItemVal);
+            this.grpItem.Controls.Add(this.scrlMapItem);
+            this.grpItem.Location = new System.Drawing.Point(6, 490);
+            this.grpItem.Name = "grpItem";
+            this.grpItem.Size = new System.Drawing.Size(278, 132);
+            this.grpItem.TabIndex = 3;
+            this.grpItem.TabStop = false;
+            this.grpItem.Text = "Map Item";
+            this.grpItem.Visible = false;
+            // 
+            // lblMaxItemAmount
+            // 
+            this.lblMaxItemAmount.AutoSize = true;
+            this.lblMaxItemAmount.Location = new System.Drawing.Point(11, 75);
+            this.lblMaxItemAmount.Name = "lblMaxItemAmount";
+            this.lblMaxItemAmount.Size = new System.Drawing.Size(63, 13);
+            this.lblMaxItemAmount.TabIndex = 3;
+            this.lblMaxItemAmount.Text = "Quantity: x1";
+            // 
+            // lblMapItem
+            // 
+            this.lblMapItem.AutoSize = true;
+            this.lblMapItem.Location = new System.Drawing.Point(11, 27);
+            this.lblMapItem.Name = "lblMapItem";
+            this.lblMapItem.Size = new System.Drawing.Size(39, 13);
+            this.lblMapItem.TabIndex = 2;
+            this.lblMapItem.Text = "Item: 1";
+            // 
+            // scrlMaxItemVal
+            // 
+            this.scrlMaxItemVal.Location = new System.Drawing.Point(14, 99);
+            this.scrlMaxItemVal.Maximum = 1000;
+            this.scrlMaxItemVal.Minimum = 1;
+            this.scrlMaxItemVal.Name = "scrlMaxItemVal";
+            this.scrlMaxItemVal.Size = new System.Drawing.Size(249, 17);
+            this.scrlMaxItemVal.TabIndex = 1;
+            this.scrlMaxItemVal.Value = 1;
+            this.scrlMaxItemVal.Scroll += new System.Windows.Forms.ScrollEventHandler(this.scrlMaxItemVal_Scroll);
+            // 
+            // scrlMapItem
+            // 
+            this.scrlMapItem.Location = new System.Drawing.Point(14, 49);
+            this.scrlMapItem.Minimum = 1;
+            this.scrlMapItem.Name = "scrlMapItem";
+            this.scrlMapItem.Size = new System.Drawing.Size(249, 17);
+            this.scrlMapItem.TabIndex = 0;
+            this.scrlMapItem.Value = 1;
+            // 
+            // rbItem
+            // 
+            this.rbItem.AutoSize = true;
+            this.rbItem.Location = new System.Drawing.Point(12, 42);
+            this.rbItem.Name = "rbItem";
+            this.rbItem.Size = new System.Drawing.Size(81, 17);
+            this.rbItem.TabIndex = 1;
+            this.rbItem.Text = "Item Spawn";
+            this.rbItem.UseVisualStyleBackColor = true;
+            this.rbItem.CheckedChanged += new System.EventHandler(this.rbItem_CheckedChanged);
+            // 
+            // rbBlocked
+            // 
+            this.rbBlocked.AutoSize = true;
+            this.rbBlocked.Checked = true;
+            this.rbBlocked.Location = new System.Drawing.Point(12, 20);
+            this.rbBlocked.Name = "rbBlocked";
+            this.rbBlocked.Size = new System.Drawing.Size(64, 17);
+            this.rbBlocked.TabIndex = 0;
+            this.rbBlocked.TabStop = true;
+            this.rbBlocked.Text = "Blocked";
+            this.rbBlocked.UseVisualStyleBackColor = true;
+            this.rbBlocked.CheckedChanged += new System.EventHandler(this.rbBlocked_CheckedChanged);
+            // 
             // FrmMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1350, 682);
+            this.ClientSize = new System.Drawing.Size(1020, 682);
+            this.Controls.Add(this.grpAttributes);
             this.Controls.Add(this.grpMapProperties);
-            this.Controls.Add(this.grpLightEditor);
-            this.Controls.Add(this.grpMapList);
-            this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.vScrollMap);
             this.Controls.Add(this.hScrollMap);
             this.Controls.Add(this.grpMap);
             this.Controls.Add(this.menuStrip);
+            this.Controls.Add(this.grpLightEditor);
+            this.Controls.Add(this.grpMapList);
+            this.Controls.Add(this.groupBox1);
             this.MainMenuStrip = this.menuStrip;
             this.Name = "FrmMain";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
@@ -635,6 +735,10 @@ namespace Intersect_Editor.Forms
             this.grpMapProperties.PerformLayout();
             this.grpLightEditor.ResumeLayout(false);
             this.grpLightEditor.PerformLayout();
+            this.grpAttributes.ResumeLayout(false);
+            this.grpAttributes.PerformLayout();
+            this.grpItem.ResumeLayout(false);
+            this.grpItem.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -642,56 +746,65 @@ namespace Intersect_Editor.Forms
 
         #endregion
 
-        private MenuStrip menuStrip;
-        private ToolStripMenuItem fileToolStripMenuItem;
-        private ToolStripMenuItem editToolStripMenuItem;
-        private ToolStripMenuItem layerMenu;
-        private ToolStripMenuItem viewToolStripMenuItem;
-        private ToolStripMenuItem helpToolStripMenuItem;
-        private ToolStripMenuItem aboutToolStripMenuItem;
-        private GroupBox grpMap;
-        public PictureBox picMap;
-        private HScrollBar hScrollMap;
-        private VScrollBar vScrollMap;
-        private GroupBox groupBox1;
-        private HScrollBar hScrollTileset;
-        private VScrollBar vScrollTileset;
-        private GroupBox grpTileset;
-        public PictureBox picTileset;
-        public ComboBox cmbTilesets;
-        private Label lblCurLayer;
-        private ToolStripMenuItem saveMapToolStripMenuItem;
-        private ToolStripMenuItem exitToolStripMenuItem;
-        private ToolStripMenuItem mapListToolStripMenuItem;
-        private ToolStripMenuItem fillToolStripMenuItem;
-        private ToolStripMenuItem eraseLayerToolStripMenuItem;
-        private ComboBox cmbAutotile;
-        private ToolStripMenuItem newMapToolStripMenuItem;
-        private GroupBox grpMapList;
-        private Label lblCloseMapList;
-        private ListBox lstGameMaps;
-        private ToolStripMenuItem mapPropertiesToolStripMenuItem;
-        private GroupBox grpMapProperties;
-        private Button btnCloseProperties;
-        private TextBox txtMapName;
-        private Label label1;
-        private ToolStripMenuItem nightTimeToolStripMenuItem;
-        private GroupBox grpLightEditor;
-        private HScrollBar scrlLightRange;
-        private Label label2;
-        private TextBox txtLightRange;
-        private HScrollBar scrlLightIntensity;
-        private Label label3;
-        private TextBox txtLightIntensity;
-        private TextBox txtLightOffsetY;
-        private TextBox txtLightOffsetX;
-        private Label lblOffsetY;
-        private Label lblOffsetX;
-        private Button btnLightEditorRevert;
-        private Button btnLightEditorClose;
-        private CheckBox chkIndoors;
-        private ToolStripMenuItem contentEditorsToolStripMenuItem;
-        private ToolStripMenuItem itemEditorToolStripMenuItem;
+        private System.Windows.Forms.MenuStrip menuStrip;
+        private System.Windows.Forms.ToolStripMenuItem fileToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem editToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem layerMenu;
+        private System.Windows.Forms.ToolStripMenuItem viewToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem helpToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem aboutToolStripMenuItem;
+        private System.Windows.Forms.GroupBox grpMap;
+        public System.Windows.Forms.PictureBox picMap;
+        private System.Windows.Forms.HScrollBar hScrollMap;
+        private System.Windows.Forms.VScrollBar vScrollMap;
+        private System.Windows.Forms.GroupBox groupBox1;
+        private System.Windows.Forms.HScrollBar hScrollTileset;
+        private System.Windows.Forms.VScrollBar vScrollTileset;
+        private System.Windows.Forms.GroupBox grpTileset;
+        public System.Windows.Forms.PictureBox picTileset;
+        public System.Windows.Forms.ComboBox cmbTilesets;
+        private System.Windows.Forms.Label lblCurLayer;
+        private System.Windows.Forms.ToolStripMenuItem saveMapToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem exitToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem mapListToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem fillToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem eraseLayerToolStripMenuItem;
+        private System.Windows.Forms.ComboBox cmbAutotile;
+        private System.Windows.Forms.ToolStripMenuItem newMapToolStripMenuItem;
+        private System.Windows.Forms.GroupBox grpMapList;
+        private System.Windows.Forms.Label lblCloseMapList;
+        private System.Windows.Forms.ListBox lstGameMaps;
+        private System.Windows.Forms.ToolStripMenuItem mapPropertiesToolStripMenuItem;
+        private System.Windows.Forms.GroupBox grpMapProperties;
+        private System.Windows.Forms.Button btnCloseProperties;
+        private System.Windows.Forms.TextBox txtMapName;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.ToolStripMenuItem nightTimeToolStripMenuItem;
+        private System.Windows.Forms.GroupBox grpLightEditor;
+        private System.Windows.Forms.HScrollBar scrlLightRange;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.TextBox txtLightRange;
+        private System.Windows.Forms.HScrollBar scrlLightIntensity;
+        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.TextBox txtLightIntensity;
+        private System.Windows.Forms.TextBox txtLightOffsetY;
+        private System.Windows.Forms.TextBox txtLightOffsetX;
+        private System.Windows.Forms.Label lblOffsetY;
+        private System.Windows.Forms.Label lblOffsetX;
+        private System.Windows.Forms.Button btnLightEditorRevert;
+        private System.Windows.Forms.Button btnLightEditorClose;
+        private System.Windows.Forms.CheckBox chkIndoors;
+        private System.Windows.Forms.ToolStripMenuItem hihiToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem contentEditorsToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem itemEditorToolStripMenuItem;
+        private System.Windows.Forms.GroupBox grpAttributes;
+        private System.Windows.Forms.GroupBox grpItem;
+        private System.Windows.Forms.Label lblMaxItemAmount;
+        private System.Windows.Forms.Label lblMapItem;
+        private System.Windows.Forms.HScrollBar scrlMaxItemVal;
+        private System.Windows.Forms.HScrollBar scrlMapItem;
+        private System.Windows.Forms.RadioButton rbItem;
+        private System.Windows.Forms.RadioButton rbBlocked;
     }
 }
 

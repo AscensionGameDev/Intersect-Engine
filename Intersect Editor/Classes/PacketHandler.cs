@@ -39,6 +39,9 @@ namespace Intersect_Editor.Classes
                 case Enums.ServerPackets.ItemData:
                     HandleItemData(bf.ReadBytes(bf.Length()));
                     break;
+                case Enums.ServerPackets.ItemList:
+                    HandleItemList(bf.ReadBytes(bf.Length()));
+                    break;
                 default:
                     Console.WriteLine(@"Non implemented packet received: " + packetHeader);
                     break;
@@ -151,6 +154,17 @@ namespace Intersect_Editor.Classes
             var itemnum = bf.ReadLong();
             Globals.Items[itemnum] = new Item();
             Globals.Items[itemnum].LoadByte(bf.ReadBytes(bf.Length()));
+        }
+
+        private void HandleItemList(byte[] packet)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteBytes(packet);
+            for (int i = 0; i < Constants.MaxItems; i++)
+            {
+                Globals.Items[i] = new Item();
+                Globals.Items[i].Name = bf.ReadString();
+            }
         }
     }
 }

@@ -392,6 +392,18 @@ namespace Intersect_Server.Classes
             bf.Dispose();
         }
 
+        public static void SendItemList(Client client)
+        {
+            ByteBuffer bf = new ByteBuffer();
+            bf.WriteLong((int)Enums.ServerPackets.ItemList);
+            for (int i = 0; i < Constants.MaxItems; i++)
+            {
+                bf.WriteString(Globals.GameItems[i].Name);
+            }
+            client.SendPacket(bf.ToArray());
+            bf.Dispose();
+        }
+
         public static void SendItem(Client client, long itemNum)
         {
             var bf = new ByteBuffer();

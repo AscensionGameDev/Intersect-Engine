@@ -98,10 +98,10 @@
     <Compile Include="Classes\EntityManager.cs" />
     <Compile Include="Classes\EventDialog.cs" />
     <Compile Include="Classes\Enums.cs" />
-    <Compile Include="frmGame.cs">
+    <Compile Include="Forms\frmGame.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="frmGame.Designer.cs">
+    <Compile Include="Forms\frmGame.Designer.cs">
       <DependentUpon>frmGame.cs</DependentUpon>
     </Compile>
     <Compile Include="Classes\Globals.cs" />
@@ -117,7 +117,7 @@
     <Compile Include="Classes\Player.cs" />
     <Compile Include="Classes\Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <EmbeddedResource Include="frmGame.resx">
+    <EmbeddedResource Include="Forms\frmGame.resx">
       <DependentUpon>frmGame.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>

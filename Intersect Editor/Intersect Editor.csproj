@@ -168,6 +168,7 @@
     <Content Include="openal32.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <None Include="Resources\attributes.png" />
     <Content Include="Resources\jce.png" />
     <None Include="Resources\jcl.png" />
     <Content Include="Resources\Tilesets\Tileset10.png">

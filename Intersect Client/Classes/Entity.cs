@@ -323,7 +323,7 @@ namespace Intersect_Client
                         tmpY = 29 - (y * -1);
                         if (Globals.LocalMaps[tmpI - 4] > -1)
                         {
-                            if (Globals.GameMaps[Globals.LocalMaps[tmpI - 4]].Blocked[tmpX, tmpY] == 1)
+                            if (Globals.GameMaps[Globals.LocalMaps[tmpI - 4]].Attributes[tmpX, tmpY].value == (int)Enums.MapAttributes.Blocked)
                             {
                                 return true;
                             }
@@ -339,7 +339,7 @@ namespace Intersect_Client
                         tmpY = y - 29;
                         if (Globals.LocalMaps[tmpI + 2] > -1)
                         {
-                            if (Globals.GameMaps[Globals.LocalMaps[tmpI + 2]].Blocked[tmpX, tmpY] == 1)
+                            if (Globals.GameMaps[Globals.LocalMaps[tmpI + 2]].Attributes[tmpX, tmpY].value == (int)Enums.MapAttributes.Blocked)
                             {
                                 return true;
                             }
@@ -354,7 +354,7 @@ namespace Intersect_Client
                     {
                         if (Globals.LocalMaps[tmpI - 1] > -1)
                         {
-                            if (Globals.GameMaps[Globals.LocalMaps[tmpI - 1]].Blocked[tmpX, tmpY] == 1)
+                            if (Globals.GameMaps[Globals.LocalMaps[tmpI - 1]].Attributes[tmpX, tmpY].value == (int)Enums.MapAttributes.Blocked)
                             {
                                 return true;
                             }
@@ -375,7 +375,7 @@ namespace Intersect_Client
                         tmpY = 29 - (y * -1);
                         if (Globals.LocalMaps[tmpI - 2] > -1)
                         {
-                            if (Globals.GameMaps[Globals.LocalMaps[tmpI - 2]].Blocked[tmpX, tmpY] == 1)
+                            if (Globals.GameMaps[Globals.LocalMaps[tmpI - 2]].Attributes[tmpX, tmpY].value == (int)Enums.MapAttributes.Blocked)
                             {
                                 return true;
                             }
@@ -391,7 +391,7 @@ namespace Intersect_Client
                         tmpY = y - 29;
                         if (Globals.LocalMaps[tmpI + 4] > -1)
                         {
-                            if (Globals.GameMaps[Globals.LocalMaps[tmpI + 4]].Blocked[tmpX, tmpY] == 1)
+                            if (Globals.GameMaps[Globals.LocalMaps[tmpI + 4]].Attributes[tmpX, tmpY].value == (int)Enums.MapAttributes.Blocked)
                             {
                                 return true;
                             }
@@ -406,7 +406,7 @@ namespace Intersect_Client
                     {
                         if (Globals.LocalMaps[tmpI + 1] > -1)
                         {
-                            if (Globals.GameMaps[Globals.LocalMaps[tmpI + 1]].Blocked[tmpX, tmpY] == 1)
+                            if (Globals.GameMaps[Globals.LocalMaps[tmpI + 1]].Attributes[tmpX, tmpY].value == (int)Enums.MapAttributes.Blocked)
                             {
                                 return true;
                             }
@@ -424,7 +424,7 @@ namespace Intersect_Client
                     tmpY = 29 - (y * -1);
                     if (Globals.LocalMaps[tmpI - 3] > -1)
                     {
-                        if (Globals.GameMaps[Globals.LocalMaps[tmpI - 3]].Blocked[tmpX, tmpY] == 1)
+                        if (Globals.GameMaps[Globals.LocalMaps[tmpI - 3]].Attributes[tmpX, tmpY].value == (int)Enums.MapAttributes.Blocked)
                         {
                             return true;
 
@@ -442,7 +442,7 @@ namespace Intersect_Client
                     tmpY = y - 29;
                     if (Globals.LocalMaps[tmpI + 3] > -1)
                     {
-                        if (Globals.GameMaps[Globals.LocalMaps[tmpI + 3]].Blocked[tmpX, tmpY] == 1)
+                        if (Globals.GameMaps[Globals.LocalMaps[tmpI + 3]].Attributes[tmpX, tmpY].value == (int)Enums.MapAttributes.Blocked)
                         {
                             return true;
                         }
@@ -459,7 +459,7 @@ namespace Intersect_Client
                     tmpY = y;
                     if (Globals.LocalMaps[tmpI] > -1)
                     {
-                        if (Globals.GameMaps[Globals.LocalMaps[tmpI]].Blocked[tmpX, tmpY] == 1)
+                        if (Globals.GameMaps[Globals.LocalMaps[tmpI]].Attributes[tmpX, tmpY].value == (int)Enums.MapAttributes.Blocked)
                         {
                             return true;
                         }

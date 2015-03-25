@@ -9,7 +9,7 @@ namespace Intersect_Editor.Forms
     {
         //General Editting Variables
         bool _tMouseDown;
-        
+
         //Initialization & Setup Functions
         public FrmMain()
         {
@@ -368,7 +368,7 @@ namespace Intersect_Editor.Forms
                     switch (Globals.CurrentLayer)
                     {
                         case Constants.LayerCount:
-                            tmpMap.Blocked[Globals.CurTileX, Globals.CurTileY] = 1;
+                            PlaceAttribute();
                             break;
                         case Constants.LayerCount + 1:
                             Light tmpLight;
@@ -432,7 +432,7 @@ namespace Intersect_Editor.Forms
                             }
                             else
                             {
-                                tmpEventEditor = new FrmEvent {MyEvent = tmpEvent};
+                                tmpEventEditor = new FrmEvent { MyEvent = tmpEvent };
                                 tmpEventEditor.InitEditor();
                                 tmpEventEditor.Show();
                             }
@@ -468,7 +468,7 @@ namespace Intersect_Editor.Forms
                     switch (Globals.CurrentLayer)
                     {
                         case Constants.LayerCount:
-                            tmpMap.Blocked[Globals.CurTileX, Globals.CurTileY] = 0;
+                            RemoveAttribute();
                             break;
                         case Constants.LayerCount + 1:
                             Light tmpLight;
@@ -550,7 +550,7 @@ namespace Intersect_Editor.Forms
                 {
                     if (Globals.CurrentLayer == Constants.LayerCount)
                     {
-                        tmpMap.Blocked[Globals.CurTileX, Globals.CurTileY] = 1;
+                        PlaceAttribute();
                     }
                     else if (Globals.CurrentLayer == Constants.LayerCount + 1)
                     {
@@ -626,7 +626,7 @@ namespace Intersect_Editor.Forms
                 {
                     if (Globals.CurrentLayer == Constants.LayerCount)
                     {
-                        tmpMap.Blocked[Globals.CurTileX, Globals.CurTileY] = 0;
+                        RemoveAttribute();
                     }
                     else if (Globals.CurrentLayer == Constants.LayerCount + 1)
                     {
@@ -815,7 +815,7 @@ namespace Intersect_Editor.Forms
         {
             picMap.Top = -vScrollMap.Value;
         }
-        
+
         //Map List Functions
         private void lblCloseMapList_Click(object sender, EventArgs e)
         {
@@ -931,7 +931,7 @@ namespace Intersect_Editor.Forms
                 Globals.EditingLight.Intensity = intensity;
                 Globals.EditingLight.Graphic = null;
                 txtLightIntensity.Text = "" + Globals.EditingLight.Intensity;
-                scrlLightIntensity.Value = (int) (intensity*10000.0);
+                scrlLightIntensity.Value = (int)(intensity * 10000.0);
                 Graphics.LightsChanged = true;
             }
             catch (Exception)
@@ -986,6 +986,54 @@ namespace Intersect_Editor.Forms
         private void itemEditorToolStripMenuItem_Click(object sender, EventArgs e)
         {
             PacketSender.SendItemEditor();
+        }
+
+        //Mapping Attribute Functions
+        /// <summary>
+        /// A method that hides all of the extra group boxes for tile data related to the map attributes.
+        /// </summary>
+        private void hideAttributeMenus()
+        {
+            grpItem.Visible = false;
+        }
+        private void rbItem_CheckedChanged(object sender, EventArgs e)
+        {
+            hideAttributeMenus();
+            grpItem.Visible = true;
+        }
+        private void rbBlocked_CheckedChanged(object sender, EventArgs e)
+        {
+            hideAttributeMenus();
+        }
+        private void scrlMapItem_Scroll(object sender, ScrollEventArgs e)
+        {
+            lblMapItem.Text = "Item: " + scrlMapItem.Value + " " + Globals.Items[scrlMapItem.Value - 1].Name;
+        }
+        private void scrlMaxItemVal_Scroll(object sender, ScrollEventArgs e)
+        {
+            lblMaxItemAmount.Text = "Quantity: x" + scrlMaxItemVal.Value;
+        }
+        private void PlaceAttribute()
+        {
+            var tmpMap = Globals.GameMaps[Globals.CurrentMap];
+            if (rbBlocked.Checked == true)
+            {
+                tmpMap.Attributes[Globals.CurTileX, Globals.CurTileY].value = (int)Enums.MapAttributes.Blocked;
+            }
+            else if (rbItem.Checked == true)
+            {
+                tmpMap.Attributes[Globals.CurTileX, Globals.CurTileY].value = (int)Enums.MapAttributes.Item;
+                tmpMap.Attributes[Globals.CurTileX, Globals.CurTileY].data1 = scrlMapItem.Value;
+                tmpMap.Attributes[Globals.CurTileX, Globals.CurTileY].data2 = scrlMaxItemVal.Value;
+            }
+        }
+        private void RemoveAttribute()
+        {
+            var tmpMap = Globals.GameMaps[Globals.CurrentMap];
+            tmpMap.Attributes[Globals.CurTileX, Globals.CurTileY].value = 0;
+            tmpMap.Attributes[Globals.CurTileX, Globals.CurTileY].data1 = 0;
+            tmpMap.Attributes[Globals.CurTileX, Globals.CurTileY].data2 = 0;
+            tmpMap.Attributes[Globals.CurTileX, Globals.CurTileY].data3 = 0;
         }
     }
 }

@@ -182,7 +182,7 @@ namespace Intersect_Server.Classes
                         {
                             for (var y1 = 0; y1 < 30; y1++)
                             {
-                                if (Globals.GameMaps[Database.MapGrids[myGrid].MyGrid[x, y]].Blocked[x1, y1] == 1)
+                                if (Globals.GameMaps[Database.MapGrids[myGrid].MyGrid[x, y]].Attributes[x1, y1].value == (int)Enums.MapAttributes.Blocked)
                                 {
                                     closedList.Add(new Point((x - Globals.GameMaps[CurrentMap].MapGridX + 1) * 30 + x1, (y - Globals.GameMaps[CurrentMap].MapGridY + 1) * 30 + y1, -1, 0));
                                 }

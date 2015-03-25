@@ -9,7 +9,7 @@ namespace Intersect_Client.Classes
     public class Map
     {
         public TileArray[] Layers = new TileArray[Constants.LayerCount];
-        public int[,] Blocked = new int[Constants.MapWidth, Constants.MapHeight];
+        public Attribute[,] Attributes = new Attribute[Constants.MapWidth, Constants.MapHeight];
         public int MyMapNum;
         public string MyName = "New Map";
         public int Up = -1;
@@ -86,7 +86,10 @@ namespace Intersect_Client.Classes
             {
                 for (var y = 0; y < Constants.MapHeight; y++)
                 {
-                    Blocked[x, y] = bf.ReadInteger();
+                    Attributes[x, y].value = bf.ReadInteger();
+                    Attributes[x, y].data1 = bf.ReadInteger();
+                    Attributes[x, y].data2 = bf.ReadInteger();
+                    Attributes[x, y].data3 = bf.ReadInteger();
                 }
             }
             var lCount = bf.ReadInteger();
@@ -281,6 +284,14 @@ namespace Intersect_Client.Classes
             }
             return false;
         }
+    }
+
+    public class Attribute
+    {
+        public int value;
+        public int data1;
+        public int data2;
+        public int data3;
     }
 
     public class TileArray

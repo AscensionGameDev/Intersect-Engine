@@ -51,6 +51,7 @@ namespace Intersect_Server.Classes
             GameTime,
             OpenItemEditor,
             ItemData,
+            ItemList,
         }
 
         public enum Stats
@@ -69,5 +70,8 @@ namespace Intersect_Server.Classes
             Mana,
             VitalCount
         }
+
+        // Map Attribtes
+        public enum MapAttributes : byte { Walkable = 0, Blocked, Item };
     }
 }

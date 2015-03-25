@@ -14,7 +14,7 @@ namespace Intersect_Editor.Classes
         public int Left = -1;
         public int Right = -1;
         public string Bgm;
-        public int[,] Blocked = new int[Constants.MapWidth, Constants.MapHeight];
+        public Attribute[,] Attributes = new Attribute[Constants.MapWidth, Constants.MapHeight];
         public MapAutotiles Autotiles;
         public int Revision;
         public List<Event> Events = new List<Event>();
@@ -64,7 +64,10 @@ namespace Intersect_Editor.Classes
             {
                 for (var y = 0; y < Constants.MapHeight; y++)
                 {
-                    bf.WriteInteger(Blocked[x,y]);
+                    bf.WriteInteger(Attributes[x, y].value);
+                    bf.WriteInteger(Attributes[x, y].data1);
+                    bf.WriteInteger(Attributes[x, y].data2);
+                    bf.WriteInteger(Attributes[x, y].data3);
                 }
             }
             bf.WriteInteger(Lights.Count);
@@ -110,7 +113,10 @@ namespace Intersect_Editor.Classes
             {
                 for (var y = 0; y < Constants.MapHeight; y++)
                 {
-                    Blocked[x,y] = bf.ReadInteger();
+                    Attributes[x, y].value = bf.ReadInteger();
+                    Attributes[x, y].data1 = bf.ReadInteger();
+                    Attributes[x, y].data2 = bf.ReadInteger();
+                    Attributes[x, y].data3 = bf.ReadInteger();
                 }
             }
             var lCount = bf.ReadInteger();
@@ -156,6 +162,14 @@ namespace Intersect_Editor.Classes
             }
             return null;
         }
+    }
+
+    public class Attribute
+    {
+        public int value;
+        public int data1;
+        public int data2;
+        public int data3;
     }
 
     public class TileArray {

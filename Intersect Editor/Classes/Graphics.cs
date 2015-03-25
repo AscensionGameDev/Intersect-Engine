@@ -28,7 +28,7 @@ namespace Intersect_Editor.Classes
         private static Texture _transH;
         private static Texture _transV;
         //Texture for blocked tiles
-        private static Texture _blockedTex;
+        private static Texture _attributesTex;
         //Texture for events
         private static Texture _eventTex;
         //Single tile texture for light placement
@@ -56,12 +56,8 @@ namespace Intersect_Editor.Classes
                 _transH = new Texture(s);
                 s.Dispose();
                 s = new MemoryStream();
-                Resources.jcb.Save(s, ImageFormat.Png);
-                _blockedTex = new Texture(s);
-                s.Dispose();
-                s = new MemoryStream();
-                Resources.jce.Save(s, ImageFormat.Png);
-                _eventTex = new Texture(s);
+                Resources.attributes.Save(s, ImageFormat.Png);
+                _attributesTex = new Texture(s);
                 s.Dispose();
                 s = new MemoryStream();
                 Resources.jcl.Save(s, ImageFormat.Png);
@@ -229,18 +225,18 @@ namespace Intersect_Editor.Classes
             switch (Globals.CurrentLayer)
             {
                 case Constants.LayerCount:
-                    //Draw Blocks
-                    for (var x = 0; x < Constants.MapWidth; x++)
+                    //Draw attributes
+                    for (int x = 0; x < Constants.MapWidth; x++)
                     {
-                        for (var y = 0; y < Constants.MapHeight; y++)
+                        for (int y = 0; y < Constants.MapHeight; y++)
                         {
-                            if (tmpMap.Blocked[x, y] != 1) continue;
-                            tmpSprite = new Sprite(_blockedTex)
+                            if (tmpMap.Attributes[x, y].value > 0)
                             {
-                                TextureRect = new IntRect(0, 0, 32, 32),
-                                Position = new Vector2f(x*32 + 32, y*32 + 32)
-                            };
-                            _renderwindow.Draw(tmpSprite);
+                                tmpSprite = new Sprite(_attributesTex);
+                                tmpSprite.TextureRect = new IntRect(0, (tmpMap.Attributes[x, y].value - 1) * 32, 32, 32);
+                                tmpSprite.Position = new Vector2f(x * 32 + 32, y * 32 + 32);
+                                _renderwindow.Draw(tmpSprite);
+                            }
                         }
 
                     }
