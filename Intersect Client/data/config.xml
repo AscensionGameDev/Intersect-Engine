@@ -1,0 +1,10 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!--Config.xml generated automatically by Intersect Client.-->
+<Config>
+  <Host>ascensiongamedev.com</Host>
+  <Port>6000</Port>
+  <DisplayMode>3</DisplayMode>
+  <FullScreen>False</FullScreen>
+  <Sound>True</Sound>
+  <Music>True</Music>
+</Config>

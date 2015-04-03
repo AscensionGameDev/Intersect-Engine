@@ -45,6 +45,7 @@ namespace Intersect_Client.Classes
                     for (var y = 0; y < Constants.MapHeight; y++)
                     {
                         Layers[i].Tiles[x, y] = new Tile();
+                        if (i == 0) { Attributes[x, y] = new Attribute(); }
                     }
                 }
             }

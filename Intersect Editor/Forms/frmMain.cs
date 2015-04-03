@@ -44,7 +44,7 @@ namespace Intersect_Editor.Forms
                 tmpTsi.Tag = i;
                 if (i == Constants.LayerCount)
                 {
-                    tmpTsi.Text = @"Blocks";
+                    tmpTsi.Text = @"Attributes";
                 }
                 if (i == Constants.LayerCount + 1)
                 {
@@ -147,9 +147,11 @@ namespace Intersect_Editor.Forms
             var tmpTsi = (ToolStripItem)sender;
             Globals.CurrentLayer = (int)tmpTsi.Tag;
             tmpTsi.Select();
+            grpAttributes.Hide();
             if (Globals.CurrentLayer == Constants.LayerCount)
             {
-                lblCurLayer.Text = @"Layer: Blocks";
+                lblCurLayer.Text = @"Layer: Attributes";
+                grpAttributes.Show();
             }
             else
             {

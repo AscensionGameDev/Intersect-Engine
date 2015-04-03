@@ -109,7 +109,7 @@ namespace Intersect_Server.Classes
                 {
                     mysqlConn.Open();
                     Console.WriteLine("Connected to MySQL successfully.");
-                    Console.WriteLine("Checking table integrety.");
+                    Console.WriteLine("Checking table integrity.");
                     CheckTables();
                     Console.WriteLine("Server has " + GetRegisteredPlayers() + " registered players.");
                 }

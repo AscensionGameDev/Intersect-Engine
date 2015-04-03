@@ -43,6 +43,7 @@ namespace Intersect_Server.Classes
                     for (var y = 0; y < Constants.MapHeight; y++)
                     {
                         _layers[i].Tiles[x, y] = new Tile();
+                        if (i == 0) { Attributes[x, y] = new Attribute(); }
                     }
                 }
             }
