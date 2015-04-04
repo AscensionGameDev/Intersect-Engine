@@ -8,7 +8,7 @@ namespace Intersect_Editor.Forms
 {
     public partial class FrmEvent : Form
     {
-        public Event MyEvent;
+        public EventStruct MyEvent;
         public int CurrentPageIndex;
         public EventPage CurrentPage;
         private ByteBuffer _eventBackup = new ByteBuffer();
@@ -17,7 +17,7 @@ namespace Intersect_Editor.Forms
         private EventCommand _editingCommand;
         private bool _isInsert;
         private bool _isEdit;
-        public Map MyMap;
+        public MapStruct MyMap;
         public bool NewEvent;
         public FrmEvent()
         {
@@ -230,7 +230,7 @@ namespace Intersect_Editor.Forms
             }
             else
             {
-                MyEvent = new Event(_eventBackup);
+                MyEvent = new EventStruct(_eventBackup);
             }
             Hide();
             Dispose();

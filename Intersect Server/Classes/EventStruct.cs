@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Intersect_Editor.Classes
+namespace Intersect_Server.Classes
 {
-    public class Event
+    public class EventStruct
     {
         public string MyName = "New Event";
         public int SpawnX;
@@ -11,14 +11,14 @@ namespace Intersect_Editor.Classes
         public int Deleted;
         public int PageCount = 1;
         public List<EventPage> MyPages = new List<EventPage>();
-        
-        public Event(int x, int y)
+
+        public EventStruct(int x, int y)
         {
             SpawnX = x;
             SpawnY = y;
             MyPages.Add(new EventPage());
         }
-        public Event(ByteBuffer myBuffer)
+        public EventStruct(ByteBuffer myBuffer)
         {
             MyName = myBuffer.ReadString();
             SpawnX = myBuffer.ReadInteger();
@@ -188,24 +188,24 @@ namespace Intersect_Editor.Classes
         public void WriteBytes(ByteBuffer myBuffer)
         {
             myBuffer.WriteInteger(Commands.Count);
-            foreach (var t in Commands)
+            for (var i = 0; i < Commands.Count; i++)
             {
-                myBuffer.WriteInteger(t.Type);
-                if (t.Type != 4)
+                myBuffer.WriteInteger(Commands[i].Type);
+                if (Commands[i].Type != 4)
                 {
                     for (var x = 0; x < 6; x++)
                     {
-                        myBuffer.WriteString(t.Strs[x]);
-                        myBuffer.WriteInteger(t.Ints[x]);
+                        myBuffer.WriteString(Commands[i].Strs[x]);
+                        myBuffer.WriteInteger(Commands[i].Ints[x]);
                     }
                 }
                 else
                 {
-                    t.MyConditions.WriteBytes(myBuffer);
+                    Commands[i].MyConditions.WriteBytes(myBuffer);
                     for (var x = 0; x < 6; x++)
                     {
-                        myBuffer.WriteString(t.Strs[x]);
-                        myBuffer.WriteInteger(t.Ints[x]);
+                        myBuffer.WriteString(Commands[i].Strs[x]);
+                        myBuffer.WriteInteger(Commands[i].Ints[x]);
                     }
                 }
             }
@@ -215,12 +215,11 @@ namespace Intersect_Editor.Classes
     public class EventCommand
     {
         public int Type;
-        public EventConditions MyConditions;
+        public EventConditions MyConditions = new EventConditions();
         public string[] Strs = new string[6];
         public int[] Ints = new int[6];
         public EventCommand()
         {
-            MyConditions = new EventConditions();
             for (var i = 0; i < 6; i++)
             {
                 Strs[i] = "";

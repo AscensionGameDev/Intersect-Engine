@@ -214,7 +214,7 @@ namespace Intersect_Server.Classes
         {
             var bf = new ByteBuffer();
             var newMap = -1;
-            var tmpMap = new Map(-1);
+            var tmpMap = new MapStruct(-1);
             bf.WriteBytes(packet);
             var location = (int)bf.ReadLong();
             if (location == -1)

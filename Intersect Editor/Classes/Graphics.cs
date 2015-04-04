@@ -293,7 +293,7 @@ namespace Intersect_Editor.Classes
 
 
         }
-        private static void DrawAutoTile(int layerNum, int destX, int destY, int quarterNum, int x, int y, Map map)
+        private static void DrawAutoTile(int layerNum, int destX, int destY, int quarterNum, int x, int y, MapStruct map)
         {
             int yOffset = 0, xOffset = 0;
 

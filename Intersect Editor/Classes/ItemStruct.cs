@@ -1,6 +1,6 @@
-﻿namespace Intersect_Client.Classes
+﻿namespace Intersect_Editor.Classes
 {
-    public class Item
+    public class ItemStruct
     {
         public string Name;
         public int Type;
@@ -21,12 +21,14 @@
         public int Data2;
         public int Data3;
 
-        public Item()
+        public ItemStruct()
         {
             Speed = 10; // Set to 10 by default.
+            StatsGiven = new int[Constants.MaxStats];
+            StatsReq = new int[Constants.MaxStats];
         }
 
-        public Item(ByteBuffer myBuffer)
+        public ItemStruct(ByteBuffer myBuffer)
         {
             LoadItem(myBuffer);
         }
@@ -42,7 +44,7 @@
             ClassReq = myBuffer.ReadInteger();
             LevelReq = myBuffer.ReadInteger();
 
-            for (var i = 1; i <= Constants.MaxStats; i++)
+            for (var i =0; i < Constants.MaxStats; i++)
             {
                 StatsReq[i] = myBuffer.ReadInteger();
                 StatsGiven[i] = myBuffer.ReadInteger();
@@ -70,7 +72,7 @@
             myBuffer.WriteInteger(ClassReq);
             myBuffer.WriteInteger(LevelReq);
 
-            for (var i = 1; i <= Constants.MaxStats; i++)
+            for (var i = 0; i < Constants.MaxStats; i++)
             {
                 myBuffer.WriteInteger(StatsReq[i]);
                 myBuffer.WriteInteger(StatsGiven[i]);
@@ -84,9 +86,15 @@
             myBuffer.WriteInteger(Data1);
             myBuffer.WriteInteger(Data2);
             myBuffer.WriteInteger(Data3);
-
+            
             return myBuffer.ToArray();
+        }
+
+        public void LoadByte(byte[] data)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteBytes(data);
+            LoadItem(bf);
         }
     }
 }
-

@@ -66,11 +66,11 @@ namespace Intersect_Editor.Classes
             if (mapNum > Globals.MapCount-1)
             {
                 Globals.MapCount = mapNum + 1;
-                var tmpMap = (Map[])Globals.GameMaps.Clone();
-                Globals.GameMaps = new Map[Globals.MapCount];
+                var tmpMap = (MapStruct[])Globals.GameMaps.Clone();
+                Globals.GameMaps = new MapStruct[Globals.MapCount];
                 tmpMap.CopyTo(Globals.GameMaps, 0);
             }
-            Globals.GameMaps[mapNum] = new Map((int)mapNum, mapData);
+            Globals.GameMaps[mapNum] = new MapStruct((int)mapNum, mapData);
             Globals.ReceivedGameData++;
             if (Globals.ReceivedGameData == 3 && !Globals.InEditor)
             {
@@ -94,7 +94,7 @@ namespace Intersect_Editor.Classes
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
             Globals.MapCount = bf.ReadLong();
-            Globals.GameMaps = new Map[Globals.MapCount];
+            Globals.GameMaps = new MapStruct[Globals.MapCount];
             PacketSender.SendNeedMap(0);
             Globals.ReceivedGameData++;
             if (Globals.ReceivedGameData != 3 || Globals.InEditor) return;
@@ -152,7 +152,7 @@ namespace Intersect_Editor.Classes
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
             var itemnum = bf.ReadLong();
-            Globals.Items[itemnum] = new Item();
+            Globals.Items[itemnum] = new ItemStruct();
             Globals.Items[itemnum].LoadByte(bf.ReadBytes(bf.Length()));
         }
 
@@ -162,7 +162,7 @@ namespace Intersect_Editor.Classes
             bf.WriteBytes(packet);
             for (int i = 0; i < Constants.MaxItems; i++)
             {
-                Globals.Items[i] = new Item();
+                Globals.Items[i] = new ItemStruct();
                 Globals.Items[i].Name = bf.ReadString();
             }
         }

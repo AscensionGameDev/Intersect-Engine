@@ -7,7 +7,7 @@ namespace Intersect_Editor.Classes
     {
         public static Network GameSocket;
         public static int MyIndex;
-        public static Map[] GameMaps = new Map[1];
+        public static MapStruct[] GameMaps = new MapStruct[1];
         public static FrmMain MainForm;
         public static FrmLogin LoginForm;
         public static long MapCount;
@@ -15,7 +15,7 @@ namespace Intersect_Editor.Classes
         public static bool InEditor;
         public static string[] Tilesets;
         public static MapRef[] MapRefs;
-        public static Item[] Items;
+        public static ItemStruct[] Items;
 
         //Animation Frame Variables
         public static int Autotilemode = 0;

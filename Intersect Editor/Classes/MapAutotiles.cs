@@ -10,10 +10,10 @@
         public Point[] AutoSw = new Point[6];
         public Point[] AutoSe = new Point[6];
 
-        private readonly Map _myMap;
+        private readonly MapStruct _myMap;
         public AutoTileCls[,] Autotile;
 
-        public MapAutotiles(Map map)
+        public MapAutotiles(MapStruct map)
         {
             _myMap = map;
         }
@@ -663,7 +663,7 @@
                 {
                     return true;
                 }
-                Map otherMap;
+                MapStruct otherMap;
                 if (x2 < 0)
                 {
                     if (_myMap.Left > -1)

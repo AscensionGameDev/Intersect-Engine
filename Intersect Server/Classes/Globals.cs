@@ -16,14 +16,14 @@ namespace Intersect_Server.Classes
         public static string MySqldb = "IntersectDB";
 
         //Game Maps
-		public static Map[] GameMaps;
+		public static MapStruct[] GameMaps;
 		public static int MapCount;
 
         //Game Items
-        public static Item[] GameItems;
+        public static ItemStruct[] GameItems;
 
         //Game Npcs
-        public static NpcBase[] GameNpcs;
+        public static NpcStruct[] GameNpcs;
         public static int NpcCount;
 
 		public static List<Client> Clients = new List<Client>();

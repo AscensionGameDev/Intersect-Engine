@@ -1,44 +1,55 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
-using System.Drawing;
+using System.IO;
+using System.Linq;
 
-namespace Intersect_Editor.Classes
+namespace Intersect_Server.Classes
 {
-    public class Map
+    public class MapStruct
     {
-        public TileArray[] Layers = new TileArray[Constants.LayerCount];
-        public int MyMapNum;
         public string MyName = "New Map";
         public int Up = -1;
         public int Down = -1;
         public int Left = -1;
         public int Right = -1;
-        public string Bgm;
+        private string _bgm = "";
+        private readonly TileArray[] _layers = new TileArray[Constants.LayerCount];
+        public int MyMapNum;
+        public int Deleted;
+        public byte[] MapGameData;
+        public byte[] MapData;
         public Attribute[,] Attributes = new Attribute[Constants.MapWidth, Constants.MapHeight];
-        public MapAutotiles Autotiles;
+        public int MapGrid;
+        public int MapGridX;
+        public int MapGridY;
+        public bool Active;
         public int Revision;
-        public List<Event> Events = new List<Event>();
+        public List<int> SurroundingMaps = new List<int>();
+        public List<EventStruct> Events = new List<EventStruct>();
         public List<Light> Lights = new List<Light>();
         public bool IsIndoors;
-        public Map(int mapNum, byte[] mapData)
+        public MapStruct(int mapNum)
         {
+            if (mapNum == -1)
+            {
+                return;
+            }
             MyMapNum = mapNum;
             for (var i = 0; i < Constants.LayerCount; i++)
             {
-                Layers[i] = new TileArray();
+                _layers[i] = new TileArray();
                 for (var x = 0; x < Constants.MapWidth; x++)
                 {
                     for (var y = 0; y < Constants.MapHeight; y++)
                     {
-                        Layers[i].Tiles[x, y] = new Tile();
+                        _layers[i].Tiles[x, y] = new Tile();
                         if (i == 0) { Attributes[x, y] = new Attribute(); }
                     }
                 }
             }
-            Load(mapData);
         }
 
-        public byte[] Save()
+        public void Save()
         {
             var bf = new ByteBuffer();
             bf.WriteString(MyName);
@@ -46,7 +57,7 @@ namespace Intersect_Editor.Classes
             bf.WriteInteger(Down);
             bf.WriteInteger(Left);
             bf.WriteInteger(Right);
-            bf.WriteString(Bgm);
+            bf.WriteString(_bgm);
             bf.WriteInteger(Convert.ToInt32(IsIndoors));
             for (var i = 0; i < Constants.LayerCount; i++)
             {
@@ -54,10 +65,10 @@ namespace Intersect_Editor.Classes
                 {
                     for (var y = 0; y < Constants.MapHeight; y++)
                     {
-                        bf.WriteInteger(Layers[i].Tiles[x, y].TilesetIndex);
-                        bf.WriteInteger(Layers[i].Tiles[x, y].X);
-                        bf.WriteInteger(Layers[i].Tiles[x, y].Y);
-                        bf.WriteByte(Layers[i].Tiles[x, y].Autotile);
+                        bf.WriteInteger(_layers[i].Tiles[x, y].TilesetIndex);
+                        bf.WriteInteger(_layers[i].Tiles[x, y].X);
+                        bf.WriteInteger(_layers[i].Tiles[x, y].Y);
+                        bf.WriteByte(_layers[i].Tiles[x, y].Autotile);
                     }
                 }
             }
@@ -76,26 +87,31 @@ namespace Intersect_Editor.Classes
             {
                 bf.WriteBytes(t.LightData());
             }
-            bf.WriteInteger(Revision + 1);
-            bf.WriteLong(0); //Never deleted.
+            bf.WriteInteger(Revision);
+            bf.WriteLong(Deleted);
+            MapGameData = bf.ToArray();
             bf.WriteInteger(Events.Count);
             foreach (var t in Events)
             {
                 bf.WriteBytes(t.EventData());
             }
-            return bf.ToArray();
+            Stream stream = File.Create("Resources/Maps/" + MyMapNum + ".map");
+            stream.Write(bf.ToArray(), 0, bf.ToArray().Length);
+            stream.Close();
+            MapData = bf.ToArray();
         }
 
-        public void Load(byte[] myArr)
+        public void Load(byte[] packet)
         {
             var bf = new ByteBuffer();
-            bf.WriteBytes(myArr);
+            bf.WriteBytes(packet);
+            MapData = bf.ToArray();
             MyName = bf.ReadString();
             Up = bf.ReadInteger();
             Down = bf.ReadInteger();
             Left = bf.ReadInteger();
             Right = bf.ReadInteger();
-            Bgm = bf.ReadString();
+            _bgm = bf.ReadString();
             IsIndoors = Convert.ToBoolean(bf.ReadInteger());
             for (var i = 0; i < Constants.LayerCount; i++)
             {
@@ -103,10 +119,10 @@ namespace Intersect_Editor.Classes
                 {
                     for (var y = 0; y < Constants.MapHeight; y++)
                     {
-                        Layers[i].Tiles[x, y].TilesetIndex = bf.ReadInteger();
-                        Layers[i].Tiles[x, y].X = bf.ReadInteger();
-                        Layers[i].Tiles[x, y].Y = bf.ReadInteger();
-                        Layers[i].Tiles[x, y].Autotile = bf.ReadByte();
+                        _layers[i].Tiles[x, y].TilesetIndex = bf.ReadInteger();
+                        _layers[i].Tiles[x, y].X = bf.ReadInteger();
+                        _layers[i].Tiles[x, y].Y = bf.ReadInteger();
+                        _layers[i].Tiles[x, y].Autotile = bf.ReadByte();
                     }
                 }
             }
@@ -121,48 +137,97 @@ namespace Intersect_Editor.Classes
                 }
             }
             var lCount = bf.ReadInteger();
+            Lights.Clear();
             for (var i = 0; i < lCount; i++)
             {
                 Lights.Add(new Light(bf));
             }
             Revision = bf.ReadInteger();
-            bf.ReadLong();
+            Deleted = (int)bf.ReadLong();
+            MapGameData = packet.Skip(0).Take(bf.Pos()).ToArray();
             Events.Clear();
             var eCount = bf.ReadInteger();
             for (var i = 0; i < eCount; i++)
             {
-                Events.Add(new Event(bf));
+                Events.Add(new EventStruct(bf));
             }
-            Autotiles = new MapAutotiles(this);
-            Autotiles.InitAutotiles();
+            Save();
         }
 
-        public Event FindEventAt(int x, int y)
+        public void Update()
         {
-            if (Events.Count <= 0) return null;
-            foreach (var t in Events)
+            if (CheckActive() == false) { return; }
+            foreach (var t in Globals.Entities)
             {
-                if (t.Deleted == 1) continue;
-                if (t.SpawnX == x && t.SpawnY == y)
+                if (t == null) continue;
+                if (t.GetType() == typeof(Npc))
                 {
-                    return t;
+                    if (t.CurrentMap == MyMapNum)
+                    {
+                        ((Npc)t).Update();
+                    }
+                }
+                else if (t.GetType() == typeof(Player))
+                {
+                    if (t.CurrentMap == MyMapNum)
+                    {
+                        ((Player)t).Update();
+                    }
+
                 }
             }
-            return null;
         }
 
-        public Light FindLightAt(int x, int y)
+        private bool CheckActive()
         {
-            if (Lights.Count <= 0) return null;
-            foreach (var t in Lights)
+            if (PlayersOnMap(MyMapNum))
             {
-                if (t.TileX == x && t.TileY == y)
+                return true;
+            }
+            else
+            {
+                if (SurroundingMaps.Count > 0)
                 {
-                    return t;
+                    foreach (var t in SurroundingMaps)
+                    {
+                        if (PlayersOnMap(t))
+                        {
+                            return true;
+                        }
+                    }
                 }
             }
-            return null;
+            Active = false;
+            return false;
         }
+
+        private static bool PlayersOnMap(int mapNum)
+        {
+            if (Globals.Clients.Count <= 0) return false;
+            foreach (var t in Globals.Clients)
+            {
+                if (t == null) continue;
+                if (t.entityIndex <= -1) continue;
+                if (((Player) Globals.Entities[t.entityIndex]) == null) continue;
+                if (!((Player) Globals.Entities[t.entityIndex]).InGame) continue;
+                if (Globals.Entities[t.entityIndex].CurrentMap == mapNum)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        public void PlayerEnteredMap()
+        {
+            Active = true;
+            if (SurroundingMaps.Count <= 0) return;
+            foreach (var t in SurroundingMaps)
+            {
+                Globals.GameMaps[t].Active = true;
+            }
+        }
+
     }
 
     public class Attribute
@@ -173,21 +238,17 @@ namespace Intersect_Editor.Classes
         public int data3;
     }
 
-    public class TileArray {
-        public Tile[,] Tiles = new Tile[Constants.MapWidth ,Constants.MapHeight];
+    class TileArray
+    {
+        public Tile[,] Tiles = new Tile[Constants.MapWidth, Constants.MapHeight];
     }
 
-    public class Tile {
+    class Tile
+    {
         public int TilesetIndex = -1;
         public int X;
         public int Y;
         public byte Autotile;
-    }
-
-    public class MapRef
-    {
-        public string MapName = "";
-        public int Deleted = 0;
     }
 
     public class Light
@@ -196,14 +257,8 @@ namespace Intersect_Editor.Classes
         public int OffsetY;
         public int TileX;
         public int TileY;
-        public double Intensity = 1;
-        public int Range = 20;
-        public Bitmap Graphic;
-        public Light(int x, int y)
-        {
-            TileX = x;
-            TileY = y;
-        }
+        public double Intensity;
+        public int Range;
         public Light(ByteBuffer myBuffer)
         {
             OffsetX = myBuffer.ReadInteger();
@@ -226,4 +281,5 @@ namespace Intersect_Editor.Classes
         }
     }
 }
+
 

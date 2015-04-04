@@ -24,7 +24,7 @@ namespace Intersect_Server.Classes
 
         }
 
-        public Npc(int index, NpcBase myBase) : base(index) {
+        public Npc(int index, NpcStruct myBase) : base(index) {
             MyName = myBase.MyName;
             MySprite = myBase.MySprite;
             myBase.Stat.CopyTo(Stat,0);

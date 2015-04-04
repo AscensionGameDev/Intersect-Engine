@@ -116,7 +116,7 @@ namespace Intersect_Editor.Forms
 
         private void btnDelete_Click(object sender, EventArgs e)
         {
-            var tempItem = new Item();
+            var tempItem = new ItemStruct();
             var tempBuff = new ByteBuffer();
             tempBuff.WriteBytes(tempItem.ItemData());
             Globals.Items[_editorIndex].LoadItem(tempBuff);

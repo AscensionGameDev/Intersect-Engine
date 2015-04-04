@@ -84,7 +84,7 @@ namespace Intersect_Client.Classes
             var mapNum = bf.ReadLong();
             var mapLength = bf.ReadLong();
             var mapData = bf.ReadBytes((int)mapLength);
-            Globals.GameMaps[mapNum] = new Map((int)mapNum, mapData);
+            Globals.GameMaps[mapNum] = new MapStruct((int)mapNum, mapData);
 
 
         }
@@ -174,7 +174,7 @@ namespace Intersect_Client.Classes
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
             var mapCount = (int)bf.ReadLong();
-            Globals.GameMaps = new Map[mapCount];
+            Globals.GameMaps = new MapStruct[mapCount];
             Globals.MapCount = mapCount;
             //Database.LoadMapRevisions();
         }

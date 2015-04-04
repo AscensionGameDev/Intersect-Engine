@@ -417,11 +417,11 @@ namespace Intersect_Editor.Forms
                             }
                             break;
                         case Constants.LayerCount + 2:
-                            Event tmpEvent;
+                            EventStruct tmpEvent;
                             FrmEvent tmpEventEditor;
                             if ((tmpEvent = Globals.GameMaps[Globals.CurrentMap].FindEventAt(Globals.CurTileX, Globals.CurTileY)) == null)
                             {
-                                tmpEvent = new Event(Globals.CurTileX, Globals.CurTileY);
+                                tmpEvent = new EventStruct(Globals.CurTileX, Globals.CurTileY);
                                 Globals.GameMaps[Globals.CurrentMap].Events.Add(tmpEvent);
                                 tmpEventEditor = new FrmEvent
                                 {
@@ -481,7 +481,7 @@ namespace Intersect_Editor.Forms
                             }
                             break;
                         case Constants.LayerCount + 2:
-                            Event tmpEvent;
+                            EventStruct tmpEvent;
                             if ((tmpEvent = Globals.GameMaps[Globals.CurrentMap].FindEventAt(Globals.CurTileX, Globals.CurTileY)) != null)
                             {
                                 Globals.GameMaps[Globals.CurrentMap].Events.Remove(tmpEvent);

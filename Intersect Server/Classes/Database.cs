@@ -503,20 +503,20 @@ namespace Intersect_Server.Classes
             }
             var mapNames = Directory.GetFiles("Resources/Maps", "*.map");
             Globals.MapCount = mapNames.Length;
-            Globals.GameMaps = new Map[mapNames.Length];
+            Globals.GameMaps = new MapStruct[mapNames.Length];
             if (Globals.MapCount == 0)
             {
                 Console.WriteLine("No maps found! - Creating empty first map!");
                 Globals.MapCount = 1;
-                Globals.GameMaps = new Map[1];
-                Globals.GameMaps[0] = new Map(0);
+                Globals.GameMaps = new MapStruct[1];
+                Globals.GameMaps[0] = new MapStruct(0);
                 Globals.GameMaps[0].Save();
             }
             else
             {
                 for (var i = 0; i < mapNames.Length; i++)
                 {
-                    Globals.GameMaps[i] = new Map(i);
+                    Globals.GameMaps[i] = new MapStruct(i);
                     Globals.GameMaps[i].Load(File.ReadAllBytes("Resources/Maps/" + i + ".map"));
                 }
             }
@@ -573,11 +573,11 @@ namespace Intersect_Server.Classes
         }
         public static int AddMap()
         {
-            var tmpMaps = (Map[])Globals.GameMaps.Clone();
+            var tmpMaps = (MapStruct[])Globals.GameMaps.Clone();
             Globals.MapCount++;
-            Globals.GameMaps = new Map[Globals.MapCount];
+            Globals.GameMaps = new MapStruct[Globals.MapCount];
             tmpMaps.CopyTo(Globals.GameMaps, 0);
-            Globals.GameMaps[Globals.MapCount - 1] = new Map(Globals.MapCount - 1);
+            Globals.GameMaps[Globals.MapCount - 1] = new MapStruct(Globals.MapCount - 1);
             Globals.GameMaps[Globals.MapCount - 1].Save();
             return Globals.MapCount - 1;
         }
@@ -586,8 +586,8 @@ namespace Intersect_Server.Classes
         public static void LoadFakeNpcs()
         {
             Globals.NpcCount = 1;
-            Globals.GameNpcs = new NpcBase[1];
-            Globals.GameNpcs[0] = new NpcBase(1) {MyName = "Slime", MySprite = "145"};
+            Globals.GameNpcs = new NpcStruct[1];
+            Globals.GameNpcs[0] = new NpcStruct(1) {MyName = "Slime", MySprite = "145"};
             Globals.GameNpcs[0].Vital[(int)Enums.Vitals.Health] = 80;
             Globals.GameNpcs[0].MaxVital[(int)Enums.Vitals.Health] = 80;
             Globals.GameNpcs[0].Stat[(int)Enums.Stats.Attack] = 8;
@@ -606,12 +606,12 @@ namespace Intersect_Server.Classes
             }
             npcNames = Directory.GetFiles("Resources/Npcs", "*.npc");
             Globals.NpcCount = npcNames.Length;
-            Globals.GameNpcs = new NpcBase[npcNames.Length];
+            Globals.GameNpcs = new NpcStruct[npcNames.Length];
             if (Globals.NpcCount > 0)
             {
                 for (var i = 0; i < npcNames.Length; i++)
                 {
-                    Globals.GameNpcs[i] = new NpcBase(i);
+                    Globals.GameNpcs[i] = new NpcStruct(i);
                     Globals.GameNpcs[i].Load(File.ReadAllBytes("Resources/Npcs/" + i + ".npc"));
                 }
             }
@@ -625,10 +625,10 @@ namespace Intersect_Server.Classes
                 Directory.CreateDirectory("Resources/Items");
             }
 
-            Globals.GameItems = new Item[Constants.MaxItems];
+            Globals.GameItems = new ItemStruct[Constants.MaxItems];
             for (var i = 0; i < Constants.MaxItems; i++)
             {
-                Globals.GameItems[i] = new Item();
+                Globals.GameItems[i] = new ItemStruct();
                 if (!File.Exists("Resources/Items/" + i + ".item"))
                 {
                     Globals.GameItems[i].Save(i);

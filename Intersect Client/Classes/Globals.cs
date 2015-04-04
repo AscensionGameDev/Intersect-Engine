@@ -14,7 +14,7 @@ namespace Intersect_Client.Classes
         public static bool JoiningGame = false;
 
         //Map/Chunk Array
-        public static Map[] GameMaps;
+        public static MapStruct[] GameMaps;
         public static int[] LocalMaps = new int[9];
         public static int[] MapRevision;
         public static int MapCount;

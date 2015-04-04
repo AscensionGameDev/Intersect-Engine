@@ -83,10 +83,10 @@
     <Compile Include="Forms\frmItem.Designer.cs">
       <DependentUpon>frmItem.cs</DependentUpon>
     </Compile>
-    <Compile Include="Classes\Item.cs" />
+    <Compile Include="Classes\ItemStruct.cs" />
     <Compile Include="Classes\Constants.cs" />
     <Compile Include="Classes\EditorLoop.cs" />
-    <Compile Include="Classes\Event.cs" />
+    <Compile Include="Classes\EventStruct.cs" />
     <Compile Include="Forms\frmEvent.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -107,7 +107,7 @@
     </Compile>
     <Compile Include="Classes\Globals.cs" />
     <Compile Include="Classes\Graphics.cs" />
-    <Compile Include="Classes\Map.cs" />
+    <Compile Include="Classes\MapStruct.cs" />
     <Compile Include="Classes\MapAutotiles.cs" />
     <Compile Include="Classes\PacketHandler.cs" />
     <Compile Include="Classes\PacketSender.cs" />

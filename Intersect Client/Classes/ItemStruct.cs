@@ -1,12 +1,10 @@
-﻿using System.IO;
-
-namespace Intersect_Server.Classes
+﻿namespace Intersect_Client.Classes
 {
-    public class Item
+    public class ItemStruct
     {
-        public string Name = "";
+        public string Name;
         public int Type;
-        public string Pic = "";
+        public string Pic;
         public int Price;
         public int Bound;
         public int Animation;
@@ -17,20 +15,18 @@ namespace Intersect_Server.Classes
         public int StatGrowth;
         public int Damage;
         public int Speed;
-        public string Paperdoll = "";
+        public string Paperdoll;
         public int Tool;
         public int Data1;
         public int Data2;
         public int Data3;
 
-        public Item()
+        public ItemStruct()
         {
             Speed = 10; // Set to 10 by default.
-            StatsReq = new int[Constants.MaxStats];
-            StatsGiven = new int[Constants.MaxStats];
         }
 
-        public Item(ByteBuffer myBuffer)
+        public ItemStruct(ByteBuffer myBuffer)
         {
             LoadItem(myBuffer);
         }
@@ -46,7 +42,7 @@ namespace Intersect_Server.Classes
             ClassReq = myBuffer.ReadInteger();
             LevelReq = myBuffer.ReadInteger();
 
-            for (var i = 0; i < Constants.MaxStats; i++)
+            for (var i = 1; i <= Constants.MaxStats; i++)
             {
                 StatsReq[i] = myBuffer.ReadInteger();
                 StatsGiven[i] = myBuffer.ReadInteger();
@@ -74,7 +70,7 @@ namespace Intersect_Server.Classes
             myBuffer.WriteInteger(ClassReq);
             myBuffer.WriteInteger(LevelReq);
 
-            for (var i = 0; i < Constants.MaxStats; i++)
+            for (var i = 1; i <= Constants.MaxStats; i++)
             {
                 myBuffer.WriteInteger(StatsReq[i]);
                 myBuffer.WriteInteger(StatsGiven[i]);
@@ -90,20 +86,6 @@ namespace Intersect_Server.Classes
             myBuffer.WriteInteger(Data3);
 
             return myBuffer.ToArray();
-        }
-
-        public void LoadByte(byte[] data)
-        {
-            var bf = new ByteBuffer();
-            bf.WriteBytes(data);
-            LoadItem(bf);
-        }
-
-        public void Save(int itemNum)
-        {
-            Stream stream = File.Create("Resources/Items/" + itemNum + ".item");
-            stream.Write(ItemData(), 0, ItemData().Length);
-            stream.Close();
         }
     }
 }

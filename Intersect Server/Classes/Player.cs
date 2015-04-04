@@ -67,7 +67,7 @@ namespace Intersect_Server.Classes
             Warp(Constants.SpawnMap, Constants.SpawnX, Constants.SpawnY, 1);
         }
 
-        public bool MeetsConditions(EventConditions ec, EventInstance ei){
+        public bool MeetsConditions(EventConditions ec, Event ei){
             if (ec.Switch1 - 1 > -1)
             {
                 if (Switches[ec.Switch1 - 1] != ec.Switch1Val)
@@ -108,7 +108,7 @@ namespace Intersect_Server.Classes
                                 SpawnY = t.SpawnY
                             };
                             MyEvents.Add(tmpEvent);
-                            tmpEvent.EventInstance = new EventInstance(t, pageIndex,
+                            tmpEvent.EventInstance = new Event(t, pageIndex,
                                 MyEvents.Count - 1, mapNum)
                             {
                                 Dir = t.MyPages[pageIndex].Graphicy
@@ -208,14 +208,14 @@ namespace Intersect_Server.Classes
             return true;
         }
 
-        private static int SpawnEventPage(Event myEvent)
+        private static int SpawnEventPage(EventStruct myEvent)
         {
             return 0;
         }
 
-        private bool CanSpawnEvent(Event myEvent, int myMap)
+        private bool CanSpawnEvent(EventStruct myEvent, int myMap)
         {
-            if (MeetsConditions(myEvent.MyPages[0].MyConditions, new EventInstance(myEvent, 0, 0, myMap))) return true;
+            if (MeetsConditions(myEvent.MyPages[0].MyConditions, new Event(myEvent, 0, 0, myMap))) return true;
             return false;
         }
 	}

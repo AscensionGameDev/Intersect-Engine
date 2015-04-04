@@ -1,6 +1,6 @@
 ﻿namespace Intersect_Server.Classes
 {
-    public class NpcBase
+    public class NpcStruct
     {
         //Core info
 		public string MyName = "";
@@ -16,7 +16,7 @@
 		public long Deleted;
 
 
-		public NpcBase(int npcNum)
+		public NpcStruct(int npcNum)
 		{
 			if (npcNum == -1) {
 				return;

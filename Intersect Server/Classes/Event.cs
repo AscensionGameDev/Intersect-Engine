@@ -3,228 +3,194 @@ using System.Collections.Generic;
 
 namespace Intersect_Server.Classes
 {
-    public class Event
+    public class Event : Entity
     {
-        public string MyName = "New Event";
+        public int Trigger;
+        public int MovementType;
+        public int MovementFreq;
+        public int MovementSpeed;
+        public EventStruct BaseEvent;
+        public Event(EventStruct myEvent, int pageIndex, int myIndex, int mapNum)
+            : base(myIndex)
+        {
+            BaseEvent = myEvent;
+            CurrentMap = mapNum;
+            IsEvent = 1;
+            CurrentX = myEvent.SpawnX;
+            CurrentY = myEvent.SpawnY;
+            MyName = myEvent.MyName;
+            MovementType = myEvent.MyPages[pageIndex].MovementType;
+            MovementFreq = myEvent.MyPages[pageIndex].MovementFreq;
+            MovementSpeed = myEvent.MyPages[pageIndex].MovementSpeed;
+            Trigger = myEvent.MyPages[pageIndex].Trigger;
+            Passable = myEvent.MyPages[pageIndex].Passable;
+            HideName = myEvent.MyPages[pageIndex].HideName;
+            CurrentX = myEvent.SpawnX;
+            CurrentY = myEvent.SpawnY;
+            CurrentMap = mapNum;
+            switch (MovementSpeed)
+            {
+                case 0:
+                    Stat[2] = 5;
+                    break;
+                case 1:
+                    Stat[2] = 10;
+                    break;
+                case 3:
+                    Stat[2] = 20;
+                    break;
+                case 4:
+                    Stat[2] = 30;
+                    break;
+                case 5:
+                    Stat[2] = 40;
+                    break;
+
+            }
+            MySprite = myEvent.MyPages[pageIndex].Graphic;
+        }
+        public void Update(Client client)
+        {
+            if (MoveTimer >= Environment.TickCount) return;
+            if (MovementType != 1) return;
+            var i = Globals.Rand.Next(0, 1);
+            if (i != 0) return;
+            i = Globals.Rand.Next(0, 4);
+            if (CanMove(i)) return;
+            Move(i, client);
+            switch (MovementFreq)
+            {
+                case 0:
+                    MoveTimer = Environment.TickCount + 4000;
+                    break;
+                case 1:
+                    MoveTimer = Environment.TickCount + 2000;
+                    break;
+                case 2:
+                    MoveTimer = Environment.TickCount + 1000;
+                    break;
+                case 3:
+                    MoveTimer = Environment.TickCount + 500;
+                    break;
+                case 4:
+                    MoveTimer = Environment.TickCount + 250;
+                    break;
+            }
+        }
+    }
+
+    public class EventIndex
+    {
+        public bool IsGlobal;
+        public int MapNum;
+        public int MyIndex;
+        public Client MyClient;
+        public Player MyPlayer;
         public int SpawnX;
         public int SpawnY;
-        public int Deleted;
-        public int PageCount = 1;
-        public List<EventPage> MyPages = new List<EventPage>();
+        public int PageIndex;
+        public Event EventInstance;
 
-        public Event(int x, int y)
+        public Stack<EventStack> CallStack = new Stack<EventStack>();
+
+        public EventIndex(int index, Client client)
         {
-            SpawnX = x;
-            SpawnY = y;
-            MyPages.Add(new EventPage());
+            MyIndex = index;
+            MyClient = client;
+            MyPlayer = (Player)Globals.Entities[MyClient.entityIndex];
         }
-        public Event(ByteBuffer myBuffer)
+
+        public void Update()
         {
-            MyName = myBuffer.ReadString();
-            SpawnX = myBuffer.ReadInteger();
-            SpawnY = myBuffer.ReadInteger();
-            Deleted = myBuffer.ReadInteger();
-            PageCount = myBuffer.ReadInteger();
-            for (var i = 0; i < PageCount; i++)
+            if (!IsGlobal) { EventInstance.Update(MyClient); }
+            if (CallStack.Count > 0)
             {
-                MyPages.Add(new EventPage(myBuffer));
+                while (CallStack.Peek().WaitingForResponse == 0)
+                {
+                    if (CallStack.Peek().CommandIndex >= EventInstance.BaseEvent.MyPages[PageIndex].CommandLists[CallStack.Peek().ListIndex].Commands.Count)
+                    {
+                        CallStack.Pop();
+                    }
+                    else
+                    {
+                        ProcessCommand(EventInstance.BaseEvent.MyPages[PageIndex].CommandLists[CallStack.Peek().ListIndex].Commands[CallStack.Peek().CommandIndex]);
+                    }
+                    if (CallStack.Count == 0) { break; }
+                }
+            }
+            else
+            {
+                if (EventInstance.Trigger != 1) return;
+                var newStack = new EventStack {CommandIndex = 0, ListIndex = 0};
+                CallStack.Push(newStack);
             }
         }
-        public byte[] EventData()
+
+        private void ProcessCommand(EventCommand ec)
         {
-            var myBuffer = new ByteBuffer();
-            myBuffer.WriteString(MyName);
-            myBuffer.WriteInteger(SpawnX);
-            myBuffer.WriteInteger(SpawnY);
-            myBuffer.WriteInteger(Deleted);
-            myBuffer.WriteInteger(PageCount);
-            for (var i = 0; i < PageCount; i++)
+            CallStack.Peek().WaitingForResponse = 0;
+            CallStack.Peek().ResponseType = 0;
+            switch (ec.Type)
             {
-                MyPages[i].WriteBytes(myBuffer);
-            }
-            return myBuffer.ToArray();
-        }
-    }
-
-    public class EventPage
-    {
-        public EventConditions MyConditions;
-        public int MovementType;
-        public int MovementSpeed;
-        public int MovementFreq;
-        public int Passable;
-        public int Layer;
-        public int Trigger;
-        public int GraphicType;
-        public string Graphic;
-        public int Graphicx;
-        public int Graphicy;
-        public int HideName;
-        public List<CommandList> CommandLists = new List<CommandList>();
-
-        public EventPage()
-        {
-            MyConditions = new EventConditions();
-            MovementType = 0;
-            MovementSpeed = 2;
-            MovementFreq = 2;
-            Passable = 0;
-            Layer = 1;
-            Trigger = 0;
-            GraphicType = 0;
-            Graphic = "";
-            Graphicx = -1;
-            Graphicy = -1;
-            HideName = 0;
-            CommandLists.Add(new CommandList());
-        }
-
-        public EventPage(ByteBuffer curBuffer)
-        {
-            MyConditions = new EventConditions();
-            MyConditions.Load(curBuffer);
-            MovementType = curBuffer.ReadInteger();
-            MovementSpeed = curBuffer.ReadInteger();
-            MovementFreq = curBuffer.ReadInteger();
-            Passable = curBuffer.ReadInteger();
-            Layer = curBuffer.ReadInteger();
-            Trigger = curBuffer.ReadInteger();
-            GraphicType = curBuffer.ReadInteger();
-            Graphic = curBuffer.ReadString();
-            Graphicx = curBuffer.ReadInteger();
-            Graphicy = curBuffer.ReadInteger();
-            HideName = curBuffer.ReadInteger();
-            var x = curBuffer.ReadInteger();
-            for (var i = 0; i < x; i++)
-            {
-                CommandLists.Add(new CommandList(curBuffer));
-            }
-
-        }
-
-        public void WriteBytes(ByteBuffer myBuffer)
-        {
-            MyConditions.WriteBytes(myBuffer);
-            myBuffer.WriteInteger(MovementType);
-            myBuffer.WriteInteger(MovementSpeed);
-            myBuffer.WriteInteger(MovementFreq);
-            myBuffer.WriteInteger(Passable);
-            myBuffer.WriteInteger(Layer);
-            myBuffer.WriteInteger(Trigger);
-            myBuffer.WriteInteger(GraphicType);
-            myBuffer.WriteString(Graphic);
-            myBuffer.WriteInteger(Graphicx);
-            myBuffer.WriteInteger(Graphicy);
-            myBuffer.WriteInteger(HideName);
-            myBuffer.WriteInteger(CommandLists.Count);
-            foreach (var t in CommandLists)
-            {
-                t.WriteBytes(myBuffer);
+                case 0:
+                    PacketSender.SendEventDialog(MyClient, ec.Strs[0], MyIndex);
+                    CallStack.Peek().WaitingForResponse = 1;
+                    CallStack.Peek().CommandIndex++;
+                    break;
+                case 1:
+                    PacketSender.SendEventDialog(MyClient, ec.Strs[0], ec.Strs[1], ec.Strs[2], ec.Strs[3], ec.Strs[4], MyIndex);
+                    CallStack.Peek().WaitingForResponse = 1;
+                    CallStack.Peek().ResponseType = 1;
+                    break;
+                case 2:
+                    MyPlayer.Switches[ec.Ints[0]-1] = Convert.ToBoolean(ec.Ints[1]);
+                    CallStack.Peek().CommandIndex++;
+                    break;
+                case 3:
+                    break;
+                case 4:
+                    if (MyPlayer.MeetsConditions(ec.MyConditions, EventInstance))
+                    {
+                        var tmpStack = new EventStack
+                        {
+                            CommandIndex = 0,
+                            ListIndex =
+                                EventInstance.BaseEvent.MyPages[PageIndex].CommandLists[CallStack.Peek().ListIndex]
+                                    .Commands[CallStack.Peek().CommandIndex].Ints[0]
+                        };
+                        CallStack.Peek().CommandIndex++;
+                        CallStack.Push(tmpStack);
+                    }
+                    else
+                    {
+                        var tmpStack = new EventStack
+                        {
+                            CommandIndex = 0,
+                            ListIndex =
+                                EventInstance.BaseEvent.MyPages[PageIndex].CommandLists[CallStack.Peek().ListIndex]
+                                    .Commands[CallStack.Peek().CommandIndex].Ints[1]
+                        };
+                        CallStack.Peek().CommandIndex++;
+                        CallStack.Push(tmpStack);
+                    }
+                    break;
+                case 5:
+                    MyPlayer.Warp(EventInstance.BaseEvent.MyPages[PageIndex].CommandLists[CallStack.Peek().ListIndex].Commands[CallStack.Peek().CommandIndex].Ints[0],
+                        EventInstance.BaseEvent.MyPages[PageIndex].CommandLists[CallStack.Peek().ListIndex].Commands[CallStack.Peek().CommandIndex].Ints[1],
+                        EventInstance.BaseEvent.MyPages[PageIndex].CommandLists[CallStack.Peek().ListIndex].Commands[CallStack.Peek().CommandIndex].Ints[2],
+                        EventInstance.BaseEvent.MyPages[PageIndex].CommandLists[CallStack.Peek().ListIndex].Commands[CallStack.Peek().CommandIndex].Ints[3]);
+                    CallStack.Peek().CommandIndex++;
+                    break;
             }
         }
 
     }
 
-    public class EventConditions
+    public class EventStack
     {
-        public int Switch1;
-        public bool Switch1Val;
-        public int Switch2;
-        public bool Switch2Val;
-
-        public void WriteBytes(ByteBuffer myBuffer)
-        {
-            myBuffer.WriteInteger(Switch1);
-            myBuffer.WriteInteger(Convert.ToInt32(Switch1Val));
-            myBuffer.WriteInteger(Switch2);
-            myBuffer.WriteInteger(Convert.ToInt32(Switch1Val));
-        }
-
-        public void Load(ByteBuffer myBuffer)
-        {
-            Switch1 = myBuffer.ReadInteger();
-            Switch1Val = Convert.ToBoolean(myBuffer.ReadInteger());
-            Switch2 = myBuffer.ReadInteger();
-            Switch2Val = Convert.ToBoolean(myBuffer.ReadInteger());
-        }
-    }
-
-    public class CommandList
-    {
-        public List<EventCommand> Commands = new List<EventCommand>();
-
-        public CommandList()
-        {
-
-        }
-
-        public CommandList(ByteBuffer myBuffer)
-        {
-            var y = myBuffer.ReadInteger();
-            for (var i = 0; i < y; i++)
-            {
-                Commands.Add(new EventCommand());
-                Commands[i].Type = myBuffer.ReadInteger();
-                if (Commands[i].Type != 4)
-                {
-                    for (var x = 0; x < 6; x++)
-                    {
-                        Commands[i].Strs[x] = myBuffer.ReadString();
-                        Commands[i].Ints[x] = myBuffer.ReadInteger();
-                    }
-                }
-                else
-                {
-                    Commands[i].MyConditions.Load(myBuffer);
-                    for (var x = 0; x < 6; x++)
-                    {
-                        Commands[i].Strs[x] = myBuffer.ReadString();
-                        Commands[i].Ints[x] = myBuffer.ReadInteger();
-                    }
-                }
-            }
-        }
-
-        public void WriteBytes(ByteBuffer myBuffer)
-        {
-            myBuffer.WriteInteger(Commands.Count);
-            for (var i = 0; i < Commands.Count; i++)
-            {
-                myBuffer.WriteInteger(Commands[i].Type);
-                if (Commands[i].Type != 4)
-                {
-                    for (var x = 0; x < 6; x++)
-                    {
-                        myBuffer.WriteString(Commands[i].Strs[x]);
-                        myBuffer.WriteInteger(Commands[i].Ints[x]);
-                    }
-                }
-                else
-                {
-                    Commands[i].MyConditions.WriteBytes(myBuffer);
-                    for (var x = 0; x < 6; x++)
-                    {
-                        myBuffer.WriteString(Commands[i].Strs[x]);
-                        myBuffer.WriteInteger(Commands[i].Ints[x]);
-                    }
-                }
-            }
-        }
-    }
-
-    public class EventCommand
-    {
-        public int Type;
-        public EventConditions MyConditions = new EventConditions();
-        public string[] Strs = new string[6];
-        public int[] Ints = new int[6];
-        public EventCommand()
-        {
-            for (var i = 0; i < 6; i++)
-            {
-                Strs[i] = "";
-                Ints[i] = 0;
-            }
-        }
+        public int ListIndex;
+        public int CommandIndex;
+        public int WaitingForResponse;
+        public int ResponseType;
     }
 }

@@ -6,7 +6,7 @@ using Color = SFML.Graphics.Color;
 
 namespace Intersect_Client.Classes
 {
-    public class Map
+    public class MapStruct
     {
         public TileArray[] Layers = new TileArray[Constants.LayerCount];
         public Attribute[,] Attributes = new Attribute[Constants.MapWidth, Constants.MapHeight];
@@ -34,7 +34,7 @@ namespace Intersect_Client.Classes
         public RenderTexture[] LowerTextures = new RenderTexture[3];
         public RenderTexture[] UpperTextures = new RenderTexture[3];
 
-        public Map(int mapNum, byte[] mapPacket)
+        public MapStruct(int mapNum, byte[] mapPacket)
         {
             MyMapNum = mapNum;
             for (var i = 0; i < Constants.LayerCount; i++)

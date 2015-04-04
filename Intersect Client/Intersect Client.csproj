@@ -90,7 +90,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Classes\GameGui.cs" />
-    <Compile Include="Classes\Item.cs" />
+    <Compile Include="Classes\ItemStruct.cs" />
     <Compile Include="Classes\ByteBuffer.cs" />
     <Compile Include="Classes\Constants.cs" />
     <Compile Include="Classes\Database.cs" />
@@ -108,7 +108,7 @@
     <Compile Include="Classes\GameMain.cs" />
     <Compile Include="Classes\Graphics.cs" />
     <Compile Include="Classes\Gui.cs" />
-    <Compile Include="Classes\Map.cs" />
+    <Compile Include="Classes\MapStruct.cs" />
     <Compile Include="Classes\MapAutotiles.cs" />
     <Compile Include="Classes\MenuGUI.cs" />
     <Compile Include="Classes\Network.cs" />

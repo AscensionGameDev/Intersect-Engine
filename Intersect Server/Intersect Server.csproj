@@ -47,19 +47,19 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Classes\Enums.cs" />
-    <Compile Include="Classes\Item.cs" />
-    <Compile Include="Classes\EntityInstance.cs" />
+    <Compile Include="Classes\ItemStruct.cs" />
     <Compile Include="Classes\Event.cs" />
+    <Compile Include="Classes\EventStruct.cs" />
     <Compile Include="Classes\Main.cs" />
     <Compile Include="Classes\AssemblyInfo.cs" />
     <Compile Include="Classes\Network.cs" />
     <Compile Include="Classes\Client.cs" />
     <Compile Include="Classes\ByteBuffer.cs" />
-    <Compile Include="Classes\NPC.cs" />
-    <Compile Include="Classes\NPCBase.cs" />
+    <Compile Include="Classes\Npc.cs" />
+    <Compile Include="Classes\NpcStruct.cs" />
     <Compile Include="Classes\PacketHandler.cs" />
-    <Compile Include="Classes\Map.cs" />
-    <Compile Include="Classes\GlobalVariables.cs" />
+    <Compile Include="Classes\MapStruct.cs" />
+    <Compile Include="Classes\Globals.cs" />
     <Compile Include="Classes\Constants.cs" />
     <Compile Include="Classes\PacketSender.cs" />
     <Compile Include="Classes\Player.cs" />

@@ -8,7 +8,7 @@
         }
         private static void InitItems()
         {
-            Globals.Items = new Item[Constants.MaxItems];
+            Globals.Items = new ItemStruct[Constants.MaxItems];
         }
     }
 }
