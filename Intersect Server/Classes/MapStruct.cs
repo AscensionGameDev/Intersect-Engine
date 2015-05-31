@@ -157,23 +157,26 @@ namespace Intersect_Server.Classes
         public void Update()
         {
             if (CheckActive() == false) { return; }
-            foreach (var t in Globals.Entities)
+            lock (Globals.Entities)
             {
-                if (t == null) continue;
-                if (t.GetType() == typeof(Npc))
+                foreach (var t in Globals.Entities)
                 {
-                    if (t.CurrentMap == MyMapNum)
+                    if (t == null) continue;
+                    if (t.GetType() == typeof(Npc))
                     {
-                        ((Npc)t).Update();
+                        if (t.CurrentMap == MyMapNum)
+                        {
+                            ((Npc)t).Update();
+                        }
                     }
-                }
-                else if (t.GetType() == typeof(Player))
-                {
-                    if (t.CurrentMap == MyMapNum)
+                    else if (t.GetType() == typeof(Player))
                     {
-                        ((Player)t).Update();
-                    }
+                        if (t.CurrentMap == MyMapNum)
+                        {
+                            ((Player)t).Update();
+                        }
 
+                    }
                 }
             }
         }
