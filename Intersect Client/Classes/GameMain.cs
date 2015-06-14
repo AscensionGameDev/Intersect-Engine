@@ -325,7 +325,7 @@ namespace Intersect_Client
         {
             var movex = 0f;
             var movey = 0f;
-            if (Gui._GameGui.HasInputFocus()) { return; }
+            if (Gui.HasInputFocus()) { return; }
             if (Graphics.KeyStates.IndexOf(Keyboard.Key.W) >= 0) { movey = 1; }
             if (Graphics.KeyStates.IndexOf(Keyboard.Key.S) >= 0) { movey = -1; }
             if (Graphics.KeyStates.IndexOf(Keyboard.Key.A) >= 0) { movex = -1; }

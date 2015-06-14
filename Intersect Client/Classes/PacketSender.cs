@@ -92,7 +92,6 @@
             bf.WriteInteger(ed.EventIndex);
             bf.WriteInteger(response);
             Globals.EventDialogs.Remove(ed);
-            Gui._GameGui.EventDialogWindow.Hide();
             Network.SendPacket(bf.ToArray());
         }
 

@@ -144,7 +144,7 @@ namespace Intersect_Client.Classes
             KeyStates.Add(e.Code);
             if (e.Code != Keyboard.Key.Return) return;
             if (Globals.GameState != 1) return;
-            if (Gui._GameGui.HasInputFocus() == false)
+            if (Gui.HasInputFocus() == false)
             {
                 Gui._GameGui.FocusChat = true;
             }

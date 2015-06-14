@@ -89,7 +89,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Classes\GameGui.cs" />
+    <Compile Include="Classes\FieldChecking.cs" />
+    <Compile Include="Classes\UI\Game\GameGuiBase.cs" />
     <Compile Include="Classes\ItemStruct.cs" />
     <Compile Include="Classes\ByteBuffer.cs" />
     <Compile Include="Classes\Constants.cs" />
@@ -98,6 +99,16 @@
     <Compile Include="Classes\EntityManager.cs" />
     <Compile Include="Classes\EventDialog.cs" />
     <Compile Include="Classes\Enums.cs" />
+    <Compile Include="Classes\UI\ErrorMessageHandler.cs" />
+    <Compile Include="Classes\UI\Game\Chatbox.cs" />
+    <Compile Include="Classes\UI\Game\EventWindow.cs" />
+    <Compile Include="Classes\UI\Game\GameMenu.cs" />
+    <Compile Include="Classes\UI\Game\PlayerBox.cs" />
+    <Compile Include="Classes\UI\Menu\LoginControls.cs" />
+    <Compile Include="Classes\UI\Menu\MainMenu.cs" />
+    <Compile Include="Classes\UI\Menu\RegisterControls.cs" />
+    <Compile Include="Classes\UI\OptionsWindow.cs" />
+    <Compile Include="Classes\UI\IGUIElement.cs" />
     <Compile Include="Forms\frmGame.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -110,7 +121,7 @@
     <Compile Include="Classes\Gui.cs" />
     <Compile Include="Classes\MapStruct.cs" />
     <Compile Include="Classes\MapAutotiles.cs" />
-    <Compile Include="Classes\MenuGUI.cs" />
+    <Compile Include="Classes\UI\Menu\MenuGuiBase.cs" />
     <Compile Include="Classes\Network.cs" />
     <Compile Include="Classes\PacketHandler.cs" />
     <Compile Include="Classes\PacketSender.cs" />
@@ -758,6 +769,7 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

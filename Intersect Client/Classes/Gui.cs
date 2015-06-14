@@ -7,6 +7,8 @@ using SFML.Graphics;
 using SFML.Window;
 using Color = System.Drawing.Color;
 using Font = Gwen.Font;
+using Intersect_Client.Classes.UI.Menu;
+using Intersect_Client.Classes.UI;
 
 namespace Intersect_Client.Classes
 {
@@ -22,8 +24,12 @@ namespace Intersect_Client.Classes
         private static Font _gwenFont;
         public static List<string> MsgboxErrors = new List<string>();
         public static bool SetupHandlers;
-        public static GameGui _GameGui;
-        public static MenuGui _MenuGui;
+        public static GameGuiBase _GameGui;
+        public static MenuGuiBase _MenuGui;
+        public static ErrorMessageHandler ErrorMsgHandler;
+
+        //Input Handling
+        public static List<Gwen.Control.Base> FocusElements;
 
         #region "Gwen Setup and Input"
         //Gwen Low Level Functions
@@ -100,17 +106,17 @@ namespace Intersect_Client.Classes
             }
 
 
-
+            ErrorMsgHandler = new ErrorMessageHandler(_menuCanvas, _gameCanvas);
             if (Globals.GameState == 0)
             {
-                _MenuGui = new MenuGui(_menuCanvas);
+                _MenuGui = new MenuGuiBase(_menuCanvas);
             }
             else
             {
-                _GameGui = new GameGui(_gameCanvas);
+                _GameGui = new GameGuiBase(_gameCanvas);
             }
 
-
+            FocusElements = new List<Gwen.Control.Base>();
         }
         public static void DestroyGwen()
         {
@@ -141,21 +147,24 @@ namespace Intersect_Client.Classes
                 
             }
         }
+        public static bool HasInputFocus()
+        {
+            for (var i = 0; i < FocusElements.Count; i++)
+            {
+                if (FocusElements[i].HasFocus)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
         #endregion
 
-        
-
-        
-
-
-
-
-        
         #region "GUI Functions"
         //Actual Drawing Function
         public static void DrawGui()
         {
-            
+            ErrorMsgHandler.Update();
             if (Globals.GameState == 0)
             {
                 _MenuGui.Draw();

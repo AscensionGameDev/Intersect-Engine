@@ -399,7 +399,8 @@ namespace Intersect_Client.Classes
             Graphics.FadeStage = 1;
             Graphics.FadeAmt = 250;
             Globals.WaitingOnServer = false;
-            Gui._MenuGui.AddError(error);
+            Gui.MsgboxErrors.Add(error);
+            Gui._MenuGui.Reset();
         }
 
         private static void HandleGameTime(byte[] packet)
