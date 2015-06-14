@@ -8,18 +8,6 @@ namespace Intersect_Server.Classes
         public ServerLoop(Network nb)
         {
             long timeUpdateTick = Environment.TickCount + 1000;
-            
-            for (var i = 0; i < 5; i++)
-            {
-                var slot = Globals.FindOpenEntity();
-                Globals.Entities[slot] = new Npc(slot, Globals.GameNpcs[0])
-                {
-                    CurrentMap = 0,
-                    CurrentX = 2 + i*2,
-                    CurrentY = 4,
-                    Dir = 1
-                };
-            }
             while (true)
             {
                 nb.RunServer();

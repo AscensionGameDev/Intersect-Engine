@@ -42,6 +42,33 @@ namespace Intersect_Editor.Classes
                 case Enums.ServerPackets.ItemList:
                     HandleItemList(bf.ReadBytes(bf.Length()));
                     break;
+                case Enums.ServerPackets.OpenNpcEditor:
+                    HandleNpcEditor();
+                    break;
+                case Enums.ServerPackets.NpcData:
+                    HandleNpcData(bf.ReadBytes(bf.Length()));
+                    break;
+                case Enums.ServerPackets.NpcList:
+                    HandleNpcList(bf.ReadBytes(bf.Length()));
+                    break;
+                case Enums.ServerPackets.OpenSpellEditor:
+                    HandleSpellEditor();
+                    break;
+                case Enums.ServerPackets.SpellData:
+                    HandleSpellData(bf.ReadBytes(bf.Length()));
+                    break;
+                case Enums.ServerPackets.SpellList:
+                    HandleSpellList(bf.ReadBytes(bf.Length()));
+                    break;
+                case Enums.ServerPackets.OpenAnimationEditor:
+                    HandleAnimationEditor();
+                    break;
+                case Enums.ServerPackets.AnimationData:
+                    HandleAnimationData(bf.ReadBytes(bf.Length()));
+                    break;
+                case Enums.ServerPackets.AnimationList:
+                    HandleAnimationList(bf.ReadBytes(bf.Length()));
+                    break;
                 default:
                     Console.WriteLine(@"Non implemented packet received: " + packetHeader);
                     break;
@@ -54,6 +81,7 @@ namespace Intersect_Editor.Classes
             bf.WriteBytes(packet);
             Globals.MyIndex = (int)bf.ReadLong();
             Globals.LoginForm.Hide();
+            Database.InitDatabase();
         }
 
         private static void HandleMapData(byte[] packet)
@@ -164,6 +192,87 @@ namespace Intersect_Editor.Classes
             {
                 Globals.Items[i] = new ItemStruct();
                 Globals.Items[i].Name = bf.ReadString();
+            }
+        }
+
+        private static void HandleNpcEditor()
+        {
+            var tmpNpcEditor = new frmNpc();
+            tmpNpcEditor.InitEditor();
+            tmpNpcEditor.Show();
+        }
+
+        private static void HandleNpcData(byte[] packet)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteBytes(packet);
+            var npcNum = bf.ReadInteger();
+            Globals.GameNpcs[npcNum] = new NpcStruct();
+            Globals.GameNpcs[npcNum].Load(bf.ReadBytes(bf.Length()));
+        }
+
+        private void HandleNpcList(byte[] packet)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteBytes(packet);
+            for (int i = 0; i < Constants.MaxNpcs; i++)
+            {
+                Globals.GameNpcs[i] = new NpcStruct();
+                Globals.GameNpcs[i].Name = bf.ReadString();
+            }
+        }
+
+        private static void HandleSpellEditor()
+        {
+            var tmpEditor = new frmSpell();
+            tmpEditor.InitEditor();
+            tmpEditor.Show();
+        }
+
+        private static void HandleSpellData(byte[] packet)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteBytes(packet);
+            var index = bf.ReadInteger();
+            Globals.GameSpells[index] = new SpellStruct();
+            Globals.GameSpells[index].Load(bf.ReadBytes(bf.Length()));
+        }
+
+        private void HandleSpellList(byte[] packet)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteBytes(packet);
+            for (int i = 0; i < Constants.MaxSpells; i++)
+            {
+                Globals.GameSpells[i] = new SpellStruct();
+                Globals.GameSpells[i].Name = bf.ReadString();
+            }
+        }
+
+        private static void HandleAnimationEditor()
+        {
+            var tmpEditor = new frmAnimation();
+            tmpEditor.InitEditor();
+            tmpEditor.Show();
+        }
+
+        private static void HandleAnimationData(byte[] packet)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteBytes(packet);
+            var index = bf.ReadInteger();
+            Globals.GameAnimations[index] = new AnimationStruct();
+            Globals.GameAnimations[index].Load(bf.ReadBytes(bf.Length()));
+        }
+
+        private void HandleAnimationList(byte[] packet)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteBytes(packet);
+            for (int i = 0; i < Constants.MaxAnimations; i++)
+            {
+                Globals.GameAnimations[i] = new AnimationStruct();
+                Globals.GameAnimations[i].Name = bf.ReadString();
             }
         }
     }

@@ -138,7 +138,7 @@ namespace Intersect_Client.Classes
             while (buff.Length() >= 4)
             {
                 var packetLen = buff.ReadInteger(false);
-                if (buff.Length() > packetLen)
+                if (buff.Length() >= packetLen + 4)
                 {
                     buff.ReadInteger();
                     PacketHandler.HandlePacket(buff.ReadBytes(packetLen));

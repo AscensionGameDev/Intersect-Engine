@@ -162,6 +162,10 @@ namespace Intersect_Server.Classes
                 {
                     bf.WriteString(Globals.GameMaps[i].MyName);
                 }
+                SendItemList(client);
+                SendNpcList(client);
+                SendSpellList(client);
+                
             }
             client.SendPacket(bf.ToArray());
             bf.Dispose();
@@ -404,7 +408,7 @@ namespace Intersect_Server.Classes
             bf.Dispose();
         }
 
-        public static void SendItem(Client client, long itemNum)
+        public static void SendItem(Client client, int itemNum)
         {
             var bf = new ByteBuffer();
             bf.WriteLong((int)Enums.ServerPackets.ItemData);
@@ -418,6 +422,96 @@ namespace Intersect_Server.Classes
         {
             var bf = new ByteBuffer();
             bf.WriteLong((int)Enums.ServerPackets.OpenItemEditor);
+            client.SendPacket(bf.ToArray());
+            bf.Dispose();
+        }
+
+        public static void SendNpcList(Client client)
+        {
+            ByteBuffer bf = new ByteBuffer();
+            bf.WriteLong((int)Enums.ServerPackets.NpcList);
+            for (int i = 0; i < Constants.MaxNpcs; i++)
+            {
+                bf.WriteString(Globals.GameNpcs[i].Name);
+            }
+            client.SendPacket(bf.ToArray());
+            bf.Dispose();
+        }
+
+        public static void SendNpc(Client client, int npcNum)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteLong((int)Enums.ServerPackets.NpcData);
+            bf.WriteInteger(npcNum);
+            bf.WriteBytes(Globals.GameNpcs[npcNum].NpcData());
+            client.SendPacket(bf.ToArray());
+            bf.Dispose();
+        }
+
+        public static void SendNpcEditor(Client client)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteLong((int)Enums.ServerPackets.OpenNpcEditor);
+            client.SendPacket(bf.ToArray());
+            bf.Dispose();
+        }
+
+        public static void SendSpellList(Client client)
+        {
+            ByteBuffer bf = new ByteBuffer();
+            bf.WriteLong((int)Enums.ServerPackets.SpellList);
+            for (int i = 0; i < Constants.MaxSpells; i++)
+            {
+                bf.WriteString(Globals.GameSpells[i].Name);
+            }
+            client.SendPacket(bf.ToArray());
+            bf.Dispose();
+        }
+
+        public static void SendSpell(Client client, int spellNum)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteLong((int)Enums.ServerPackets.SpellData);
+            bf.WriteInteger(spellNum);
+            bf.WriteBytes(Globals.GameSpells[spellNum].SpellData());
+            client.SendPacket(bf.ToArray());
+            bf.Dispose();
+        }
+
+        public static void SendSpellEditor(Client client)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteLong((int)Enums.ServerPackets.OpenSpellEditor);
+            client.SendPacket(bf.ToArray());
+            bf.Dispose();
+        }
+
+        public static void SendAnimationsList(Client client)
+        {
+            ByteBuffer bf = new ByteBuffer();
+            bf.WriteLong((int)Enums.ServerPackets.AnimationList);
+            for (int i = 0; i < Constants.MaxAnimations; i++)
+            {
+                bf.WriteString(Globals.GameAnimations[i].Name);
+            }
+            client.SendPacket(bf.ToArray());
+            bf.Dispose();
+        }
+
+        public static void SendAnimation(Client client, int animNum)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteLong((int)Enums.ServerPackets.AnimationData);
+            bf.WriteInteger(animNum);
+            bf.WriteBytes(Globals.GameAnimations[animNum].AnimData());
+            client.SendPacket(bf.ToArray());
+            bf.Dispose();
+        }
+
+        public static void SendAnimationEditor(Client client)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteLong((int)Enums.ServerPackets.OpenAnimationEditor);
             client.SendPacket(bf.ToArray());
             bf.Dispose();
         }

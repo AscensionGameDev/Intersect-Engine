@@ -25,10 +25,10 @@ namespace Intersect_Server.Classes
         }
 
         public Npc(int index, NpcStruct myBase) : base(index) {
-            MyName = myBase.MyName;
-            MySprite = myBase.MySprite;
+            MyName = myBase.Name;
+            MySprite = myBase.Sprite;
             myBase.Stat.CopyTo(Stat,0);
-            myBase.Vital.CopyTo(Vital, 0);
+            myBase.MaxVital.CopyTo(Vital, 0);
             myBase.MaxVital.CopyTo(MaxVital, 0);
         }
 

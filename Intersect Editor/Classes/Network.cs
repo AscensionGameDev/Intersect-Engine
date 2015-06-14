@@ -61,7 +61,7 @@ namespace Intersect_Editor.Classes
             while (buff.Length() >= 4)
             {
                 var packetLen = buff.ReadInteger(false);
-                if (buff.Length() > packetLen)
+                if (buff.Length() >= packetLen + 4)
                 {
                     buff.ReadInteger();
                     _packetHandler.HandlePacket(buff.ReadBytes(packetLen));

@@ -15,7 +15,11 @@ namespace Intersect_Editor.Classes
         public static bool InEditor;
         public static string[] Tilesets;
         public static MapRef[] MapRefs;
+
         public static ItemStruct[] Items;
+        public static NpcStruct[] GameNpcs;
+        public static SpellStruct[] GameSpells;
+        public static AnimationStruct[] GameAnimations;
 
         //Animation Frame Variables
         public static int Autotilemode = 0;
@@ -38,6 +42,23 @@ namespace Intersect_Editor.Classes
 
         public static Light BackupLight;
         public static Light EditingLight;
+
+        public static string IntToDir(int index)
+        {
+            switch (index)
+            {
+                case 0:
+                    return "Up";
+                case 1:
+                    return "Down";
+                case 2:
+                    return "Left";
+                case 3:
+                    return "Right";
+                default:
+                    return "Unknown Direction";
+            }
+        }
 
     }
 }

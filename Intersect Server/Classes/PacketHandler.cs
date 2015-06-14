@@ -69,6 +69,24 @@ namespace Intersect_Server.Classes
                 case Enums.ClientPackets.SaveItem:
                     HandleItemData(client, packet);
                     break;
+                case Enums.ClientPackets.OpenNpcEditor:
+                    HandleNpcEditor(client);
+                    break;
+                case Enums.ClientPackets.SaveNpc:
+                    HandleNpcData(client, packet);
+                    break;
+                case Enums.ClientPackets.OpenSpellEditor:
+                    HandleSpellEditor(client);
+                    break;
+                case Enums.ClientPackets.SaveSpell:
+                    HandleSpellData(client, packet);
+                    break;
+                case Enums.ClientPackets.OpenAnimationEditor:
+                    HandleAnimationEditor(client);
+                    break;
+                case Enums.ClientPackets.SaveAnimation:
+                    HandleAnimationData(client, packet);
+                    break;
                 default:
                     Console.WriteLine(@"Non implemented packet received: " + packetHeader);
                     break;
@@ -421,7 +439,7 @@ namespace Intersect_Server.Classes
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
             var itemNum = bf.ReadLong();
-            Globals.GameItems[itemNum].LoadItem(bf);
+            Globals.GameItems[itemNum].Load(bf.ReadBytes(bf.Length()));
             Globals.GameItems[itemNum].Save((int)itemNum);
             bf.Dispose();
         }
@@ -433,6 +451,63 @@ namespace Intersect_Server.Classes
                 PacketSender.SendItem(client, i);
             }
             PacketSender.SendItemEditor(client);
+        }
+
+        private static void HandleNpcData(Client client, byte[] packet)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteBytes(packet);
+            var npcNum = bf.ReadInteger();
+            Globals.GameNpcs[npcNum].Load(bf.ReadBytes(bf.Length()));
+            Globals.GameNpcs[npcNum].Save(npcNum);
+            bf.Dispose();
+        }
+
+        private static void HandleNpcEditor(Client client)
+        {
+            for (var i = 0; i < Constants.MaxNpcs; i++)
+            {
+                PacketSender.SendNpc(client, i);
+            }
+            PacketSender.SendNpcEditor(client);
+        }
+
+        private static void HandleSpellData(Client client, byte[] packet)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteBytes(packet);
+            var index = bf.ReadInteger();
+            Globals.GameSpells[index].Load(bf.ReadBytes(bf.Length()));
+            Globals.GameSpells[index].Save(index);
+            bf.Dispose();
+        }
+
+        private static void HandleSpellEditor(Client client)
+        {
+            for (var i = 0; i < Constants.MaxSpells; i++)
+            {
+                PacketSender.SendSpell(client, i);
+            }
+            PacketSender.SendSpellEditor(client);
+        }
+
+        private static void HandleAnimationData(Client client, byte[] packet)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteBytes(packet);
+            var index = bf.ReadInteger();
+            Globals.GameAnimations[index].Load(bf.ReadBytes(bf.Length()));
+            Globals.GameAnimations[index].Save(index);
+            bf.Dispose();
+        }
+
+        private static void HandleAnimationEditor(Client client)
+        {
+            for (var i = 0; i < Constants.MaxAnimations; i++)
+            {
+                PacketSender.SendAnimation(client, i);
+            }
+            PacketSender.SendAnimationEditor(client);
         }
     }
 }

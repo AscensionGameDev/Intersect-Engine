@@ -46,6 +46,7 @@
     <Reference Include="System.XML" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Classes\AnimationStruct.cs" />
     <Compile Include="Classes\Enums.cs" />
     <Compile Include="Classes\ItemStruct.cs" />
     <Compile Include="Classes\Event.cs" />
@@ -67,6 +68,7 @@
     <Compile Include="Classes\Database.cs" />
     <Compile Include="Classes\MapGrid.cs" />
     <Compile Include="Classes\ServerLoop.cs" />
+    <Compile Include="Classes\SpellStruct.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

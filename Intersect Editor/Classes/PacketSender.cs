@@ -77,5 +77,53 @@
             bf.WriteBytes(itemData);
             Globals.GameSocket.SendPacket(bf.ToArray());
         }
+
+        public static void SendNpcEditor()
+        {
+            var bf = new ByteBuffer();
+            bf.WriteLong((int)Enums.ClientPackets.OpenNpcEditor);
+            Globals.GameSocket.SendPacket(bf.ToArray());
+        }
+
+        public static void SendNpc(int npcNum, byte[] npcData)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteLong((int)Enums.ClientPackets.SaveNpc);
+            bf.WriteInteger(npcNum);
+            bf.WriteBytes(npcData);
+            Globals.GameSocket.SendPacket(bf.ToArray());
+        }
+
+        public static void SendSpellEditor()
+        {
+            var bf = new ByteBuffer();
+            bf.WriteLong((int)Enums.ClientPackets.OpenSpellEditor);
+            Globals.GameSocket.SendPacket(bf.ToArray());
+        }
+
+        public static void SendSpell(int index, byte[] data)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteLong((int)Enums.ClientPackets.SaveSpell);
+            bf.WriteInteger(index);
+            bf.WriteBytes(data);
+            Globals.GameSocket.SendPacket(bf.ToArray());
+        }
+
+        public static void SendAnimationEditor()
+        {
+            var bf = new ByteBuffer();
+            bf.WriteLong((int)Enums.ClientPackets.OpenAnimationEditor);
+            Globals.GameSocket.SendPacket(bf.ToArray());
+        }
+
+        public static void SendAnimation(int index, byte[] data)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteLong((int)Enums.ClientPackets.SaveAnimation);
+            bf.WriteInteger(index);
+            bf.WriteBytes(data);
+            Globals.GameSocket.SendPacket(bf.ToArray());
+        }
     }
 }

@@ -2,6 +2,7 @@
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
+using System.Collections.Generic;
 using System.IO;
 using Intersect_Editor.Forms;
 using Intersect_Editor.Properties;
@@ -23,6 +24,22 @@ namespace Intersect_Editor.Classes
         static bool _tilesetsLoaded;
         //Tileset Textures
         static Texture[] _tilesetTex;
+
+        //Item Textures
+        public static string[] ItemNames;
+        public static Texture[] ItemTextures;
+
+        //NPC Textures
+        public static string[] EntityFileNames;
+        public static Texture[] EntityTextures;
+
+        //Spell Textures
+        public static string[] SpellFileNames;
+        public static Texture[] SpellTextures;
+
+        //Anim Textures
+        public static string[] AnimationFileNames;
+        public static Texture[] AnimationTextures;
 
         //Basic Editor Textures
         private static Texture _transH;
@@ -64,6 +81,7 @@ namespace Intersect_Editor.Classes
                 _lightTex = new Texture(s);
                 s.Dispose();
                 LoadGraphics(myForm);
+                Audio.LoadAudio();
 
             }
             catch (Exception)
@@ -74,6 +92,10 @@ namespace Intersect_Editor.Classes
         private static void LoadGraphics(FrmMain myForm)
         {
             LoadTilesets(myForm);
+            LoadItems();
+            LoadEntities();
+            LoadSpells();
+            LoadAnimations();
         }
         private static void LoadTilesets(FrmMain myForm)
         {
@@ -150,6 +172,57 @@ namespace Intersect_Editor.Classes
                 }
                 _tilesetsLoaded = true;
                 InitTileset(0, myForm);
+            }
+        }
+        private static void LoadItems()
+        {
+            if (!Directory.Exists("Resources/Items")) { Directory.CreateDirectory("Resources/Items"); }
+            var items = Directory.GetFiles("Resources/Items", "*.png");
+            ItemNames = new string[items.Length];
+            ItemTextures = new Texture[items.Length];
+            for (int i = 0; i < items.Length; i++)
+            {
+                ItemNames[i] = items[i].Replace("Resources/Items\\","");
+                ItemTextures[i] = new Texture(new Image("Resources/Items/" + ItemNames[i]));
+            }
+        }
+
+        private static void LoadEntities()
+        {
+            if (!Directory.Exists("Resources/Entities")) { Directory.CreateDirectory("Resources/Entities"); }
+            var chars = Directory.GetFiles("Resources/Entities", "*.png");
+            EntityFileNames = new string[chars.Length];
+            EntityTextures = new Texture[chars.Length];
+            for (int i = 0; i < chars.Length; i++)
+            {
+                EntityFileNames[i] = chars[i].Replace("Resources/Entities\\", "");
+                EntityTextures[i] = new Texture(new Image("Resources/Entities/" + EntityFileNames[i]));
+            }
+        }
+
+        private static void LoadSpells()
+        {
+            if (!Directory.Exists("Resources/Spells")) { Directory.CreateDirectory("Resources/Spells"); }
+            var spells = Directory.GetFiles("Resources/Spells", "*.png");
+            SpellFileNames = new string[spells.Length];
+            SpellTextures = new Texture[spells.Length];
+            for (int i = 0; i < spells.Length; i++)
+            {
+                SpellFileNames[i] = spells[i].Replace("Resources/Spells\\", "");
+                SpellTextures[i] = new Texture(new Image("Resources/Spells/" + SpellFileNames[i]));
+            }
+        }
+
+        private static void LoadAnimations()
+        {
+            if (!Directory.Exists("Resources/Animations")) { Directory.CreateDirectory("Resources/Animations"); }
+            var animations = Directory.GetFiles("Resources/Animations", "*.png");
+            AnimationFileNames = new string[animations.Length];
+            AnimationTextures = new Texture[animations.Length];
+            for (int i = 0; i < animations.Length; i++)
+            {
+                AnimationFileNames[i] = animations[i].Replace("Resources/Animations\\", "");
+                AnimationTextures[i] = new Texture(new Image("Resources/Animations/" + AnimationFileNames[i]));
             }
         }
 

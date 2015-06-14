@@ -76,7 +76,7 @@ namespace Intersect_Server.Classes
                         {
                             break;
                         }
-                        if (buff.Length() >= packetLen)
+                        if (buff.Length() >= packetLen + 4)
                         {
                             buff.ReadInteger();
                             packetHandler.HandlePacket(this, buff.ReadBytes(packetLen));

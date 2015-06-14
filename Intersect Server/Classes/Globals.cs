@@ -22,9 +22,14 @@ namespace Intersect_Server.Classes
         //Game Items
         public static ItemStruct[] GameItems;
 
+        //Game Spells
+        public static SpellStruct[] GameSpells;
+
         //Game Npcs
         public static NpcStruct[] GameNpcs;
-        public static int NpcCount;
+
+        //Game Animations
+        public static AnimationStruct[] GameAnimations;
 
 		public static List<Client> Clients = new List<Client>();
 		public static List<Thread> ClientThread = new List<Thread>();
@@ -52,6 +57,12 @@ namespace Intersect_Server.Classes
             }
             Entities.Add(null);
             return Entities.Count - 1;
+        }
+
+        public static void AddEntity(Entity newEntity)
+        {
+            var slot = FindOpenEntity();
+            Entities[slot] = newEntity;
         }
 	}
 }

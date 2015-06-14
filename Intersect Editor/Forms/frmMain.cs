@@ -17,7 +17,6 @@ namespace Intersect_Editor.Forms
         }
         private void frmMain_Load(object sender, EventArgs e)
         {
-            Database.InitDatabase();
             InitEditor();
             Show();
             EditorLoop.StartLoop(this);
@@ -244,6 +243,23 @@ namespace Intersect_Editor.Forms
         }
         private void fileToolStripMenuItem_Click(object sender, EventArgs e)
         {
+        }
+
+        private void itemEditorToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            PacketSender.SendItemEditor();
+        }
+        private void npcEditorToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            PacketSender.SendNpcEditor();
+        }
+        private void spellEditorToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            PacketSender.SendSpellEditor();
+        }
+        private void animationEditorToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            PacketSender.SendAnimationEditor();
         }
 
         //Tileset Area
@@ -985,10 +1001,7 @@ namespace Intersect_Editor.Forms
             grpLightEditor.Hide();
         }
 
-        private void itemEditorToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            PacketSender.SendItemEditor();
-        }
+
 
         //Mapping Attribute Functions
         /// <summary>
@@ -1037,5 +1050,9 @@ namespace Intersect_Editor.Forms
             tmpMap.Attributes[Globals.CurTileX, Globals.CurTileY].data2 = 0;
             tmpMap.Attributes[Globals.CurTileX, Globals.CurTileY].data3 = 0;
         }
+
+
+
+        
     }
 }

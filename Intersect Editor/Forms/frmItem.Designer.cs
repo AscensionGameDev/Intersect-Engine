@@ -179,6 +179,7 @@ namespace Intersect_Editor.Forms
             // 
             // cmbPic
             // 
+            this.cmbPic.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbPic.FormattingEnabled = true;
             this.cmbPic.Items.AddRange(new object[] {
             "None"});
@@ -186,7 +187,6 @@ namespace Intersect_Editor.Forms
             this.cmbPic.Name = "cmbPic";
             this.cmbPic.Size = new System.Drawing.Size(135, 21);
             this.cmbPic.TabIndex = 11;
-            this.cmbPic.Text = "None";
             this.cmbPic.SelectedIndexChanged += new System.EventHandler(this.cmbPic_SelectedIndexChanged);
             // 
             // scrlAnim
@@ -253,6 +253,7 @@ namespace Intersect_Editor.Forms
             // 
             // cmbType
             // 
+            this.cmbType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbType.FormattingEnabled = true;
             this.cmbType.Items.AddRange(new object[] {
             "None",
@@ -268,7 +269,6 @@ namespace Intersect_Editor.Forms
             this.cmbType.Name = "cmbType";
             this.cmbType.Size = new System.Drawing.Size(135, 21);
             this.cmbType.TabIndex = 2;
-            this.cmbType.Text = "None";
             this.cmbType.SelectedIndexChanged += new System.EventHandler(this.cmbType_SelectedIndexChanged);
             // 
             // label1

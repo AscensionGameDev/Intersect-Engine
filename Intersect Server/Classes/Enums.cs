@@ -26,7 +26,13 @@ namespace Intersect_Server.Classes
             EventResponse,
             CreateAccount,
             OpenItemEditor,
-            SaveItem
+            SaveItem,
+            OpenNpcEditor,
+            SaveNpc,
+            OpenSpellEditor,
+            SaveSpell,
+            OpenAnimationEditor,
+            SaveAnimation,
         }
 
         public enum ServerPackets
@@ -52,6 +58,15 @@ namespace Intersect_Server.Classes
             OpenItemEditor,
             ItemData,
             ItemList,
+            OpenNpcEditor,
+            NpcData,
+            NpcList,
+            OpenSpellEditor,
+            SpellData,
+            SpellList,
+            OpenAnimationEditor,
+            AnimationData,
+            AnimationList,
         }
 
         public enum Stats

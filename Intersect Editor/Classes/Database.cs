@@ -4,11 +4,11 @@
     {
         public static void InitDatabase()
         {
-            InitItems();
-        }
-        private static void InitItems()
-        {
             Globals.Items = new ItemStruct[Constants.MaxItems];
+            Globals.GameNpcs = new NpcStruct[Constants.MaxNpcs];
+            Globals.GameSpells = new SpellStruct[Constants.MaxSpells];
+            Globals.GameAnimations = new AnimationStruct[Constants.MaxAnimations];
         }
+
     }
 }

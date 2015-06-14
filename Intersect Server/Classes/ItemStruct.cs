@@ -30,13 +30,10 @@ namespace Intersect_Server.Classes
             StatsGiven = new int[Constants.MaxStats];
         }
 
-        public ItemStruct(ByteBuffer myBuffer)
+        public void Load(byte[] data)
         {
-            LoadItem(myBuffer);
-        }
-
-        public void LoadItem(ByteBuffer myBuffer)
-        {
+            var myBuffer = new ByteBuffer();
+            myBuffer.WriteBytes(data);
             Name = myBuffer.ReadString();
             Type = myBuffer.ReadInteger();
             Pic = myBuffer.ReadString();
@@ -92,18 +89,9 @@ namespace Intersect_Server.Classes
             return myBuffer.ToArray();
         }
 
-        public void LoadByte(byte[] data)
-        {
-            var bf = new ByteBuffer();
-            bf.WriteBytes(data);
-            LoadItem(bf);
-        }
-
         public void Save(int itemNum)
         {
-            Stream stream = File.Create("Resources/Items/" + itemNum + ".item");
-            stream.Write(ItemData(), 0, ItemData().Length);
-            stream.Close();
+            File.WriteAllBytes("Resources/Items/" + itemNum + ".item",ItemData());
         }
     }
 }

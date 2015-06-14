@@ -25,7 +25,7 @@ namespace Intersect_Server.Classes
         {
             if (!Directory.Exists("resources")) { Directory.CreateDirectory("resources"); }
         }
-       
+
 
         //Options File
         public static bool LoadOptions()
@@ -33,7 +33,7 @@ namespace Intersect_Server.Classes
 
             if (!File.Exists("resources\\config.xml"))
             {
-                var settings = new XmlWriterSettings {Indent = true};
+                var settings = new XmlWriterSettings { Indent = true };
                 var writer = XmlWriter.Create("resources\\config.xml", settings);
                 writer.WriteStartDocument();
                 writer.WriteComment("Config.xml generated automatically by Intersect Client.");
@@ -97,7 +97,7 @@ namespace Intersect_Server.Classes
                     cmd.ExecuteNonQuery();
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 //ignore
             }
@@ -114,7 +114,7 @@ namespace Intersect_Server.Classes
                     Console.WriteLine("Server has " + GetRegisteredPlayers() + " registered players.");
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 Console.WriteLine("Could not connect to the MySQL database. Players will fail to login or create accounts.");
             }
@@ -122,7 +122,7 @@ namespace Intersect_Server.Classes
 
         private static void CheckTables()
         {
-            
+
             using (var mysqlConn = new MySqlConnection(ConnectionString))
             {
                 mysqlConn.Open();
@@ -150,7 +150,7 @@ namespace Intersect_Server.Classes
             reader.Close();
 
             //Work on each field
-            CheckTableField(mysqlConn,columns,"user",myTable,MySqlFields.m_string,45);
+            CheckTableField(mysqlConn, columns, "user", myTable, MySqlFields.m_string, 45);
             CheckTableField(mysqlConn, columns, "pass", myTable, MySqlFields.m_string, 45);
             CheckTableField(mysqlConn, columns, "email", myTable, MySqlFields.m_string, 100);
             CheckTableField(mysqlConn, columns, "map", myTable, MySqlFields.m_int);
@@ -158,7 +158,7 @@ namespace Intersect_Server.Classes
             CheckTableField(mysqlConn, columns, "y", myTable, MySqlFields.m_int);
             CheckTableField(mysqlConn, columns, "dir", myTable, MySqlFields.m_int);
             CheckTableField(mysqlConn, columns, "sprite", myTable, MySqlFields.m_string, 45);
-            for (var i = 0; i < (int) Enums.Vitals.VitalCount; i++)
+            for (var i = 0; i < (int)Enums.Vitals.VitalCount; i++)
             {
                 CheckTableField(mysqlConn, columns, "vital" + i, myTable, MySqlFields.m_int);
                 CheckTableField(mysqlConn, columns, "maxvital" + i, myTable, MySqlFields.m_int);
@@ -216,11 +216,11 @@ namespace Intersect_Server.Classes
         {
             var query = "";
             MySqlCommand cmd;
-            if (columns.Contains(fieldName)){return; }
+            if (columns.Contains(fieldName)) { return; }
             switch (fieldType)
             {
                 case MySqlFields.m_string:
-                    if (fieldLength <= 0){fieldLength = 100;}
+                    if (fieldLength <= 0) { fieldLength = 100; }
                     query = "ALTER TABLE `" + tableName + "` ADD " + fieldName + " varchar(" + fieldLength + ");";
                     cmd = new MySqlCommand(query, mysqlConn);
                     cmd.ExecuteNonQuery();
@@ -368,7 +368,7 @@ namespace Intersect_Server.Classes
                     en.CurrentY = reader.GetInt32(columns.IndexOf("y"));
                     en.Dir = reader.GetInt32(columns.IndexOf("dir"));
                     en.MySprite = reader.GetString(columns.IndexOf("sprite"));
-                    for (i = 0; i < (int) Enums.Vitals.VitalCount; i++)
+                    for (i = 0; i < (int)Enums.Vitals.VitalCount; i++)
                     {
                         en.Vital[i] = reader.GetInt32(columns.IndexOf("vital" + i));
                         en.MaxVital[i] = reader.GetInt32(columns.IndexOf("maxvital" + i));
@@ -421,7 +421,7 @@ namespace Intersect_Server.Classes
             query += "y=" + en.CurrentY + ",";
             query += "dir=" + en.Dir + ",";
             query += "sprite='" + en.MySprite + "',";
-            for (var i = 0; i < (int) Enums.Vitals.VitalCount; i++)
+            for (var i = 0; i < (int)Enums.Vitals.VitalCount; i++)
             {
                 query += "vital" + i + "=" + en.Vital[i] + ",";
                 query += "maxvital" + i + "=" + en.MaxVital[i] + ",";
@@ -582,38 +582,25 @@ namespace Intersect_Server.Classes
             return Globals.MapCount - 1;
         }
 
-        //Npcs
-        public static void LoadFakeNpcs()
-        {
-            Globals.NpcCount = 1;
-            Globals.GameNpcs = new NpcStruct[1];
-            Globals.GameNpcs[0] = new NpcStruct(1) {MyName = "Slime", MySprite = "145"};
-            Globals.GameNpcs[0].Vital[(int)Enums.Vitals.Health] = 80;
-            Globals.GameNpcs[0].MaxVital[(int)Enums.Vitals.Health] = 80;
-            Globals.GameNpcs[0].Stat[(int)Enums.Stats.Attack] = 8;
-            Globals.GameNpcs[0].Stat[(int)Enums.Stats.Defense] = 6;
-            Globals.GameNpcs[0].Stat[(int)Enums.Stats.Speed] = 20;
-        }
-
         public static void LoadNpcs()
         {
-            LoadFakeNpcs();
-            return;
-            string[] npcNames;
             if (!Directory.Exists("Resources/Npcs"))
             {
                 Directory.CreateDirectory("Resources/Npcs");
             }
-            npcNames = Directory.GetFiles("Resources/Npcs", "*.npc");
-            Globals.NpcCount = npcNames.Length;
-            Globals.GameNpcs = new NpcStruct[npcNames.Length];
-            if (Globals.NpcCount > 0)
+            Globals.GameNpcs = new NpcStruct[Constants.MaxNpcs];
+            for (var i = 0; i < Constants.MaxNpcs; i++)
             {
-                for (var i = 0; i < npcNames.Length; i++)
+                Globals.GameNpcs[i] = new NpcStruct();
+                if (!File.Exists("Resources/Npcs/" + i + ".npc"))
                 {
-                    Globals.GameNpcs[i] = new NpcStruct(i);
+                    Globals.GameNpcs[i].Save(i);
+                }
+                else
+                {
                     Globals.GameNpcs[i].Load(File.ReadAllBytes("Resources/Npcs/" + i + ".npc"));
                 }
+
             }
         }
 
@@ -635,7 +622,53 @@ namespace Intersect_Server.Classes
                 }
                 else
                 {
-                    Globals.GameItems[i].LoadByte(File.ReadAllBytes("Resources/Items/" + i + ".item"));
+                    Globals.GameItems[i].Load(File.ReadAllBytes("Resources/Items/" + i + ".item"));
+                }
+            }
+        }
+
+        //Spells
+        public static void LoadSpells()
+        {
+            if (!Directory.Exists("Resources/Spells"))
+            {
+                Directory.CreateDirectory("Resources/Spells");
+            }
+
+            Globals.GameSpells = new SpellStruct[Constants.MaxSpells];
+            for (var i = 0; i < Constants.MaxSpells; i++)
+            {
+                Globals.GameSpells[i] = new SpellStruct();
+                if (!File.Exists("Resources/Spells/" + i + ".spell"))
+                {
+                    Globals.GameSpells[i].Save(i);
+                }
+                else
+                {
+                    Globals.GameSpells[i].Load(File.ReadAllBytes("Resources/Spells/" + i + ".spell"));
+                }
+            }
+        }
+
+        //Animations
+        public static void LoadAnimations()
+        {
+            if (!Directory.Exists("Resources/Animations"))
+            {
+                Directory.CreateDirectory("Resources/Animations");
+            }
+
+            Globals.GameAnimations = new AnimationStruct[Constants.MaxAnimations];
+            for (var i = 0; i < Constants.MaxAnimations; i++)
+            {
+                Globals.GameAnimations[i] = new AnimationStruct();
+                if (!File.Exists("Resources/Animations/" + i + ".anim"))
+                {
+                    Globals.GameAnimations[i].Save(i);
+                }
+                else
+                {
+                    Globals.GameAnimations[i].Load(File.ReadAllBytes("Resources/Animations/" + i + ".anim"));
                 }
             }
         }

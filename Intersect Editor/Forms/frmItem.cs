@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Windows.Forms;
+using System.Drawing;
 using Intersect_Editor.Classes;
 
 namespace Intersect_Editor.Forms
@@ -13,6 +14,18 @@ namespace Intersect_Editor.Forms
         public FrmItem()
         {
             InitializeComponent();
+        }
+
+        private void frmItem_Load(object sender, EventArgs e)
+        {
+            lstItems.SelectedIndex = 0;
+            cmbPic.Items.Clear();
+            cmbPic.Items.Add("None");
+            for (int i = 0; i < Intersect_Editor.Classes.Graphics.ItemNames.Length; i++)
+            {
+                cmbPic.Items.Add(Intersect_Editor.Classes.Graphics.ItemNames[i]);
+            }
+            UpdateEditor();
         }
 
         public void InitEditor()
@@ -54,7 +67,8 @@ namespace Intersect_Editor.Forms
             scrlRange.Value = Globals.Items[_editorIndex].StatGrowth;
             scrlTool.Value = Globals.Items[_editorIndex].Tool;
             cmbPaperdoll.SelectedIndex = cmbPaperdoll.FindString(Globals.Items[_editorIndex].Paperdoll);
-
+            if (cmbPic.SelectedIndex > 0) { picItem.BackgroundImage = Bitmap.FromFile("Resources/Items/" + cmbPic.Text); }
+            else { picItem.BackgroundImage = null; }
             _changed[_editorIndex] = true;
         }
 
@@ -137,11 +151,14 @@ namespace Intersect_Editor.Forms
         private void txtName_TextChanged(object sender, EventArgs e)
         {
             Globals.Items[_editorIndex].Name = txtName.Text;
+            lstItems.Items[_editorIndex] = (_editorIndex + 1) + ") " + txtName.Text;
         }
 
         private void cmbPic_SelectedIndexChanged(object sender, EventArgs e)
         {
             Globals.Items[_editorIndex].Pic = cmbPic.Text;
+            if (cmbPic.SelectedIndex > 0) { picItem.BackgroundImage = Bitmap.FromFile("Resources/Items/" + cmbPic.Text); }
+            else { picItem.BackgroundImage = null; }
         }
 
         private void scrlPrice_Scroll(object sender, EventArgs e)
@@ -259,12 +276,6 @@ namespace Intersect_Editor.Forms
         private void cmbPaperdoll_SelectedIndexChanged(object sender, EventArgs e)
         {
             Globals.Items[_editorIndex].Paperdoll = cmbPaperdoll.Text;
-        }
-
-        private void frmItem_Load(object sender, EventArgs e)
-        {
-            lstItems.SelectedIndex = 0;
-            UpdateEditor();
         }
     }
 }
