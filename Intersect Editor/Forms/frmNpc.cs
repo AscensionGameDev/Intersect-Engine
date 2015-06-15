@@ -228,7 +228,7 @@ namespace Intersect_Editor.Forms
 
         private void scrlDropItem_Scroll(object sender, ScrollEventArgs e)
         {
-            lblDropItem.Text = @"Item " + (scrlDropItem.Value + 1) + @" - " + Globals.Items[scrlDropItem.Value].Name;
+            lblDropItem.Text = @"Item " + (scrlDropItem.Value + 1) + @" - " + Globals.GameItems[scrlDropItem.Value].Name;
             Globals.GameNpcs[_editorIndex].Drops[scrlDropIndex.Value - 1].ItemNum = scrlDropItem.Value;
         }
 
@@ -237,7 +237,7 @@ namespace Intersect_Editor.Forms
             int index = scrlDropIndex.Value - 1;
             lblDropIndex.Text = "Drop: " + (index + 1);
             scrlDropItem.Value = Globals.GameNpcs[_editorIndex].Drops[index].ItemNum;
-            lblDropItem.Text = @"Item " + (scrlDropItem.Value + 1) + @" - " + Globals.Items[scrlDropItem.Value].Name;
+            lblDropItem.Text = @"Item " + (scrlDropItem.Value + 1) + @" - " + Globals.GameItems[scrlDropItem.Value].Name;
             txtDropAmount.Text = Globals.GameNpcs[_editorIndex].Drops[index].Amount.ToString();
             scrlDropChance.Value = Globals.GameNpcs[_editorIndex].Drops[index].Chance;
             lblDropChance.Text = @"Chance (" + scrlDropChance.Value + @"/100)";

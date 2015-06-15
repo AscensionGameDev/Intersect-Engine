@@ -1022,7 +1022,7 @@ namespace Intersect_Editor.Forms
         }
         private void scrlMapItem_Scroll(object sender, ScrollEventArgs e)
         {
-            lblMapItem.Text = "Item: " + scrlMapItem.Value + " " + Globals.Items[scrlMapItem.Value - 1].Name;
+            lblMapItem.Text = "Item: " + scrlMapItem.Value + " " + Globals.GameItems[scrlMapItem.Value - 1].Name;
         }
         private void scrlMaxItemVal_Scroll(object sender, ScrollEventArgs e)
         {

@@ -20,9 +20,11 @@ namespace Intersect_Client.Classes.UI.Game
 
         //Window References
         private OptionsWindow _optionsWindow;
+        private InventoryWindow _inventoryWindow;
+        private SpellWindow _spellsWindow;
 
         //Init
-        public GameMenu(Canvas _gameCanvas, OptionsWindow optionsWindow) {
+        public GameMenu(Canvas _gameCanvas) {
             _gameMenu = new WindowControl(_gameCanvas, "Game Menu") { IsClosable = false };
             _gameMenu.DisableResizing();
             _gameMenu.SetSize(166, 84);
@@ -34,11 +36,13 @@ namespace Intersect_Client.Classes.UI.Game
             _inventoryButton.SetSize(50, 24);
             _inventoryButton.SetText("Inventory");
             _inventoryButton.SetPosition(4, 4);
+            _inventoryButton.Clicked += InventoryButton_Clicked;
 
             _skillsButton = new Button(_gameMenu);
             _skillsButton.SetSize(50, 24);
             _skillsButton.SetText("Skills");
             _skillsButton.SetPosition(58, 4);
+            _skillsButton.Clicked += SkillsButton_Clicked;
 
             _characterButton = new Button(_gameMenu);
             _characterButton.SetSize(50, 24);
@@ -63,7 +67,9 @@ namespace Intersect_Client.Classes.UI.Game
             _closeButton.Clicked += CloseBtn_Clicked;
 
             //Assign Window References
-            _optionsWindow = optionsWindow;
+            _optionsWindow = new OptionsWindow(_gameCanvas,true);
+            _inventoryWindow = new InventoryWindow(_gameCanvas);
+            _spellsWindow = new SpellWindow(_gameCanvas);
         }
 
         //Methods
@@ -80,7 +86,36 @@ namespace Intersect_Client.Classes.UI.Game
         }
         void OptionBtn_Clicked(Base sender, ClickedEventArgs arguments)
         {
-            _optionsWindow.Show();
+            if (_optionsWindow.IsVisible())
+            {
+                _optionsWindow.Hide();
+            }
+            else
+            {
+                _optionsWindow.Show();
+            }
+        }
+        void InventoryButton_Clicked(Base sender, ClickedEventArgs arguments)
+        {
+            if (_inventoryWindow.IsVisible())
+            {
+                _inventoryWindow.Hide();
+            }
+            else
+            {
+                _inventoryWindow.Show();
+            }
+        }
+        void SkillsButton_Clicked(Base sender, ClickedEventArgs arguments)
+        {
+            if (_spellsWindow.IsVisible())
+            {
+                _spellsWindow.Hide();
+            }
+            else
+            {
+                _spellsWindow.Show();
+            }
         }
         
     }

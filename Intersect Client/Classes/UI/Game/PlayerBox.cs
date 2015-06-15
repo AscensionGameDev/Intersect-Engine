@@ -34,11 +34,11 @@ namespace Intersect_Client.Classes.UI.Game
             _playerBox.Padding = Padding.Zero;
             _playerBox.IsClosable = false;
 
-            _hpBackground = new ImagePanel(_playerBox) { ImageName = "data/graphics/gui/HPBarEmpty.png" };
+            _hpBackground = new ImagePanel(_playerBox) { ImageName = "Resources/GUI/HPBarEmpty.png" };
             _hpBackground.SetSize(169, 17);
             _hpBackground.SetPosition(2, 0);
 
-            _hpBar = new ImagePanel(_playerBox) { ImageName = "data/graphics/gui/HPBar.png" };
+            _hpBar = new ImagePanel(_playerBox) { ImageName = "Resources/GUI/HPBar.png" };
             _hpBar.SetSize(169, 14);
             _hpBar.SetPosition(2, 3);
 
@@ -47,11 +47,11 @@ namespace Intersect_Client.Classes.UI.Game
             _hpLbl.SetPosition(20, 3);
             _hpLbl.TextColor = Color.Black;
 
-            _mpBackground = new ImagePanel(_playerBox) { ImageName = "data/graphics/gui/ManaBarEmpty.png" };
+            _mpBackground = new ImagePanel(_playerBox) { ImageName = "Resources/GUI/ManaBarEmpty.png" };
             _mpBackground.SetSize(169, 17);
             _mpBackground.SetPosition(2, 18);
 
-            _mpBar = new ImagePanel(_playerBox) { ImageName = "data/graphics/gui/ManaBar.png" };
+            _mpBar = new ImagePanel(_playerBox) { ImageName = "Resources/GUI/ManaBar.png" };
             _mpBar.SetSize(169, 14);
             _mpBar.SetPosition(2, 21);
 
@@ -60,11 +60,11 @@ namespace Intersect_Client.Classes.UI.Game
             _mpLbl.SetPosition(20, 21);
             _mpLbl.TextColor = Color.Black;
 
-            _expBackground = new ImagePanel(_playerBox) { ImageName = "data/graphics/gui/EXPBarEmpty.png" };
+            _expBackground = new ImagePanel(_playerBox) { ImageName = "Resources/GUI/EXPBarEmpty.png" };
             _expBackground.SetSize(169, 17);
             _expBackground.SetPosition(2, 36);
 
-            _expBar = new ImagePanel(_playerBox) { ImageName = "data/graphics/gui/EXPBar.png" };
+            _expBar = new ImagePanel(_playerBox) { ImageName = "Resources/GUI/EXPBar.png" };
             _expBar.SetSize(169, 14);
             _expBar.SetPosition(2, 39);
 

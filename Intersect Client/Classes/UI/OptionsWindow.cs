@@ -153,6 +153,11 @@ namespace Intersect_Client.Classes.UI
             if (!_gameWindow) { _backBtn.IsHidden = false; }
         }
 
+        public bool IsVisible()
+        {
+            return !_resolutionList.IsHidden;
+        }
+
         public void Hide()
         {
             if (_gameWindow) { _optionsMenu.IsHidden = true; }

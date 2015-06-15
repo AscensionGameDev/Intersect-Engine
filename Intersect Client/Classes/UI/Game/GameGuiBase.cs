@@ -22,7 +22,6 @@ namespace Intersect_Client.Classes
 
         private EventWindow _eventWindow;
         private Chatbox _chatBox;
-        private OptionsWindow _optionsWindow;
         private GameMenu _gameMenu;
         private PlayerBox _playerBox;
 
@@ -30,8 +29,7 @@ namespace Intersect_Client.Classes
         {
             _eventWindow = new EventWindow(_gameCanvas);
             _chatBox = new Chatbox(_gameCanvas);
-            _optionsWindow = new OptionsWindow(_gameCanvas,true);
-            _gameMenu = new GameMenu(_gameCanvas, _optionsWindow);
+            _gameMenu = new GameMenu(_gameCanvas);
             _playerBox = new PlayerBox(_gameCanvas);
         }
 

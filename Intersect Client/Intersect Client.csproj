@@ -89,21 +89,26 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Classes\FieldChecking.cs" />
+    <Compile Include="Classes\Game Objects\AnimationStruct.cs" />
+    <Compile Include="Classes\Misc\FieldChecking.cs" />
+    <Compile Include="Classes\Game Objects\ItemStruct.cs" />
+    <Compile Include="Classes\Game Objects\NpcStruct.cs" />
+    <Compile Include="Classes\Game Objects\SpellStruct.cs" />
     <Compile Include="Classes\UI\Game\GameGuiBase.cs" />
-    <Compile Include="Classes\ItemStruct.cs" />
-    <Compile Include="Classes\ByteBuffer.cs" />
-    <Compile Include="Classes\Constants.cs" />
-    <Compile Include="Classes\Database.cs" />
-    <Compile Include="Classes\Entity.cs" />
-    <Compile Include="Classes\EntityManager.cs" />
-    <Compile Include="Classes\EventDialog.cs" />
-    <Compile Include="Classes\Enums.cs" />
+    <Compile Include="Classes\Misc\ByteBuffer.cs" />
+    <Compile Include="Classes\General\Constants.cs" />
+    <Compile Include="Classes\Core\Database.cs" />
+    <Compile Include="Classes\Entities\Entity.cs" />
+    <Compile Include="Classes\Entities\EntityManager.cs" />
+    <Compile Include="Classes\Entities\EventDialog.cs" />
+    <Compile Include="Classes\General\Enums.cs" />
     <Compile Include="Classes\UI\ErrorMessageHandler.cs" />
     <Compile Include="Classes\UI\Game\Chatbox.cs" />
     <Compile Include="Classes\UI\Game\EventWindow.cs" />
     <Compile Include="Classes\UI\Game\GameMenu.cs" />
+    <Compile Include="Classes\UI\Game\InventoryWindow.cs" />
     <Compile Include="Classes\UI\Game\PlayerBox.cs" />
+    <Compile Include="Classes\UI\Game\SpellWindow.cs" />
     <Compile Include="Classes\UI\Menu\LoginControls.cs" />
     <Compile Include="Classes\UI\Menu\MainMenu.cs" />
     <Compile Include="Classes\UI\Menu\RegisterControls.cs" />
@@ -115,18 +120,18 @@
     <Compile Include="Forms\frmGame.Designer.cs">
       <DependentUpon>frmGame.cs</DependentUpon>
     </Compile>
-    <Compile Include="Classes\Globals.cs" />
-    <Compile Include="Classes\GameMain.cs" />
-    <Compile Include="Classes\Graphics.cs" />
-    <Compile Include="Classes\Gui.cs" />
-    <Compile Include="Classes\MapStruct.cs" />
-    <Compile Include="Classes\MapAutotiles.cs" />
+    <Compile Include="Classes\General\Globals.cs" />
+    <Compile Include="Classes\Core\GameMain.cs" />
+    <Compile Include="Classes\Core\Graphics.cs" />
+    <Compile Include="Classes\Core\Gui.cs" />
+    <Compile Include="Classes\Maps\MapStruct.cs" />
+    <Compile Include="Classes\Maps\MapAutotiles.cs" />
     <Compile Include="Classes\UI\Menu\MenuGuiBase.cs" />
-    <Compile Include="Classes\Network.cs" />
-    <Compile Include="Classes\PacketHandler.cs" />
-    <Compile Include="Classes\PacketSender.cs" />
-    <Compile Include="Classes\Player.cs" />
-    <Compile Include="Classes\Program.cs" />
+    <Compile Include="Classes\Networking\Network.cs" />
+    <Compile Include="Classes\Networking\PacketHandler.cs" />
+    <Compile Include="Classes\Networking\PacketSender.cs" />
+    <Compile Include="Classes\Entities\Player.cs" />
+    <Compile Include="Classes\Core\Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Forms\frmGame.resx">
       <DependentUpon>frmGame.cs</DependentUpon>
@@ -154,6 +159,9 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <None Include="Resources\Music\Banquet.ogg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -168,595 +176,700 @@
     <Content Include="csfml-window-2.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\graphics\bg.png">
+    <Content Include="Resources\Animations\Fire 4.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\graphics\entities\1.png">
+    <Content Include="Resources\Animations\Healing 2.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\graphics\entities\10.png">
+    <Content Include="Resources\Animations\Light 1.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\graphics\entities\100.png">
+    <Content Include="Resources\Animations\Magic 4.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\graphics\entities\101.png">
+    <Content Include="Resources\Animations\Time 10.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\graphics\entities\102.png">
+    <Content Include="Resources\Animations\Water 1.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\graphics\entities\103.png">
+    <Content Include="Resources\bg.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\graphics\entities\104.png">
+    <Content Include="Resources\Entities\1.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\graphics\entities\105.png">
+    <Content Include="Resources\Entities\10.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\graphics\entities\106.png">
+    <Content Include="Resources\Entities\100.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\graphics\entities\107.png">
+    <Content Include="Resources\Entities\101.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\graphics\entities\108.png">
+    <Content Include="Resources\Entities\102.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\graphics\entities\109.png">
+    <Content Include="Resources\Entities\103.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\graphics\entities\11.png">
+    <Content Include="Resources\Entities\104.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\graphics\entities\110.png">
+    <Content Include="Resources\Entities\105.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\graphics\entities\111.png">
+    <Content Include="Resources\Entities\106.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\graphics\entities\112.png">
+    <Content Include="Resources\Entities\107.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\graphics\entities\113.png">
+    <Content Include="Resources\Entities\108.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\graphics\entities\114.png">
+    <Content Include="Resources\Entities\109.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\graphics\entities\115.png">
+    <Content Include="Resources\Entities\11.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\graphics\entities\116.png">
+    <Content Include="Resources\Entities\110.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\graphics\entities\117.png">
+    <Content Include="Resources\Entities\111.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\graphics\entities\118.png">
+    <Content Include="Resources\Entities\112.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\graphics\entities\119.png">
+    <Content Include="Resources\Entities\113.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\graphics\entities\12.png">
+    <Content Include="Resources\Entities\114.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\graphics\entities\120.png">
+    <Content Include="Resources\Entities\115.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\graphics\entities\121.png">
+    <Content Include="Resources\Entities\116.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\graphics\entities\122.png">
+    <Content Include="Resources\Entities\117.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\graphics\entities\123.png">
+    <Content Include="Resources\Entities\118.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\graphics\entities\124.png">
+    <Content Include="Resources\Entities\119.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\graphics\entities\125.png">
+    <Content Include="Resources\Entities\12.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\graphics\entities\126.png">
+    <Content Include="Resources\Entities\120.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\graphics\entities\127.png">
+    <Content Include="Resources\Entities\121.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\graphics\entities\128.png">
+    <Content Include="Resources\Entities\122.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\graphics\entities\129.png">
+    <Content Include="Resources\Entities\123.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\graphics\entities\13.png">
+    <Content Include="Resources\Entities\124.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\graphics\entities\130.png">
+    <Content Include="Resources\Entities\125.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\graphics\entities\131.png">
+    <Content Include="Resources\Entities\126.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\graphics\entities\132.png">
+    <Content Include="Resources\Entities\127.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\graphics\entities\133.png">
+    <Content Include="Resources\Entities\128.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\graphics\entities\134.png">
+    <Content Include="Resources\Entities\129.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\graphics\entities\135.png">
+    <Content Include="Resources\Entities\13.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\graphics\entities\136.png">
+    <Content Include="Resources\Entities\130.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\graphics\entities\137.png">
+    <Content Include="Resources\Entities\131.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\graphics\entities\138.png">
+    <Content Include="Resources\Entities\132.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\graphics\entities\139.png">
+    <Content Include="Resources\Entities\133.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\graphics\entities\14.png">
+    <Content Include="Resources\Entities\134.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\graphics\entities\140.png">
+    <Content Include="Resources\Entities\135.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\graphics\entities\141.png">
+    <Content Include="Resources\Entities\136.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\graphics\entities\142.png">
+    <Content Include="Resources\Entities\137.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\graphics\entities\143.png">
+    <Content Include="Resources\Entities\138.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\graphics\entities\144.png">
+    <Content Include="Resources\Entities\139.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\graphics\entities\145.png">
+    <Content Include="Resources\Entities\14.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\graphics\entities\146.png">
+    <Content Include="Resources\Entities\140.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\graphics\entities\147.png">
+    <Content Include="Resources\Entities\141.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\graphics\entities\148.png">
+    <Content Include="Resources\Entities\142.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\graphics\entities\149.png">
+    <Content Include="Resources\Entities\143.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\graphics\entities\15.png">
+    <Content Include="Resources\Entities\144.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\graphics\entities\150.png">
+    <Content Include="Resources\Entities\145.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\graphics\entities\151.png">
+    <Content Include="Resources\Entities\146.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\graphics\entities\152.png">
+    <Content Include="Resources\Entities\147.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\graphics\entities\153.png">
+    <Content Include="Resources\Entities\148.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\graphics\entities\154.png">
+    <Content Include="Resources\Entities\149.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\graphics\entities\155.png">
+    <Content Include="Resources\Entities\15.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\graphics\entities\156.png">
+    <Content Include="Resources\Entities\150.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\graphics\entities\157.png">
+    <Content Include="Resources\Entities\151.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\graphics\entities\158.png">
+    <Content Include="Resources\Entities\152.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\graphics\entities\159.png">
+    <Content Include="Resources\Entities\153.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\graphics\entities\16.png">
+    <Content Include="Resources\Entities\154.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\graphics\entities\160.png">
+    <Content Include="Resources\Entities\155.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\graphics\entities\161.png">
+    <Content Include="Resources\Entities\156.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\graphics\entities\162.png">
+    <Content Include="Resources\Entities\157.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\graphics\entities\163.png">
+    <Content Include="Resources\Entities\158.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\graphics\entities\164.png">
+    <Content Include="Resources\Entities\159.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\graphics\entities\165.png">
+    <Content Include="Resources\Entities\16.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\graphics\entities\166.png">
+    <Content Include="Resources\Entities\160.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\graphics\entities\167.png">
+    <Content Include="Resources\Entities\161.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\graphics\entities\168.png">
+    <Content Include="Resources\Entities\162.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\graphics\entities\169.png">
+    <Content Include="Resources\Entities\163.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\graphics\entities\17.png">
+    <Content Include="Resources\Entities\164.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\graphics\entities\170.png">
+    <Content Include="Resources\Entities\165.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\graphics\entities\171.png">
+    <Content Include="Resources\Entities\166.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\graphics\entities\172.png">
+    <Content Include="Resources\Entities\167.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\graphics\entities\173.png">
+    <Content Include="Resources\Entities\168.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\graphics\entities\174.png">
+    <Content Include="Resources\Entities\169.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\graphics\entities\175.png">
+    <Content Include="Resources\Entities\17.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\graphics\entities\176.png">
+    <Content Include="Resources\Entities\170.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\graphics\entities\177.png">
+    <Content Include="Resources\Entities\171.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\graphics\entities\178.png">
+    <Content Include="Resources\Entities\172.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\graphics\entities\18.png">
+    <Content Include="Resources\Entities\173.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\graphics\entities\19.png">
+    <Content Include="Resources\Entities\174.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\graphics\entities\2.png">
+    <Content Include="Resources\Entities\175.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\graphics\entities\20.png">
+    <Content Include="Resources\Entities\176.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\graphics\entities\21.png">
+    <Content Include="Resources\Entities\177.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\graphics\entities\22.png">
+    <Content Include="Resources\Entities\178.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\graphics\entities\23.png">
+    <Content Include="Resources\Entities\18.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\graphics\entities\24.png">
+    <Content Include="Resources\Entities\19.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\graphics\entities\25.png">
+    <Content Include="Resources\Entities\2.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\graphics\entities\26.png">
+    <Content Include="Resources\Entities\20.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\graphics\entities\27.png">
+    <Content Include="Resources\Entities\21.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\graphics\entities\28.png">
+    <Content Include="Resources\Entities\22.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\graphics\entities\29.png">
+    <Content Include="Resources\Entities\23.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\graphics\entities\3.png">
+    <Content Include="Resources\Entities\24.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\graphics\entities\30.png">
+    <Content Include="Resources\Entities\25.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\graphics\entities\31.png">
+    <Content Include="Resources\Entities\26.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\graphics\entities\32.png">
+    <Content Include="Resources\Entities\27.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\graphics\entities\33.png">
+    <Content Include="Resources\Entities\28.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\graphics\entities\34.png">
+    <Content Include="Resources\Entities\29.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\graphics\entities\35.png">
+    <Content Include="Resources\Entities\3.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\graphics\entities\36.png">
+    <Content Include="Resources\Entities\30.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\graphics\entities\37.png">
+    <Content Include="Resources\Entities\31.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\graphics\entities\38.png">
+    <Content Include="Resources\Entities\32.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\graphics\entities\39.png">
+    <Content Include="Resources\Entities\33.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\graphics\entities\4.png">
+    <Content Include="Resources\Entities\34.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\graphics\entities\40.png">
+    <Content Include="Resources\Entities\35.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\graphics\entities\41.png">
+    <Content Include="Resources\Entities\36.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\graphics\entities\42.png">
+    <Content Include="Resources\Entities\37.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\graphics\entities\43.png">
+    <Content Include="Resources\Entities\38.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\graphics\entities\44.png">
+    <Content Include="Resources\Entities\39.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\graphics\entities\45.png">
+    <Content Include="Resources\Entities\4.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\graphics\entities\46.png">
+    <Content Include="Resources\Entities\40.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\graphics\entities\47.png">
+    <Content Include="Resources\Entities\41.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\graphics\entities\48.png">
+    <Content Include="Resources\Entities\42.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\graphics\entities\49.png">
+    <Content Include="Resources\Entities\43.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\graphics\entities\5.png">
+    <Content Include="Resources\Entities\44.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\graphics\entities\50.png">
+    <Content Include="Resources\Entities\45.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\graphics\entities\51.png">
+    <Content Include="Resources\Entities\46.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\graphics\entities\52.png">
+    <Content Include="Resources\Entities\47.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\graphics\entities\53.png">
+    <Content Include="Resources\Entities\48.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\graphics\entities\54.png">
+    <Content Include="Resources\Entities\49.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\graphics\entities\55.png">
+    <Content Include="Resources\Entities\5.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\graphics\entities\56.png">
+    <Content Include="Resources\Entities\50.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\graphics\entities\57.png">
+    <Content Include="Resources\Entities\51.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\graphics\entities\58.png">
+    <Content Include="Resources\Entities\52.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\graphics\entities\59.png">
+    <Content Include="Resources\Entities\53.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\graphics\entities\6.png">
+    <Content Include="Resources\Entities\54.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\graphics\entities\60.png">
+    <Content Include="Resources\Entities\55.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\graphics\entities\61.png">
+    <Content Include="Resources\Entities\56.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\graphics\entities\62.png">
+    <Content Include="Resources\Entities\57.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\graphics\entities\63.png">
+    <Content Include="Resources\Entities\58.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\graphics\entities\64.png">
+    <Content Include="Resources\Entities\59.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\graphics\entities\65.png">
+    <Content Include="Resources\Entities\6.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\graphics\entities\66.png">
+    <Content Include="Resources\Entities\60.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\graphics\entities\67.png">
+    <Content Include="Resources\Entities\61.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\graphics\entities\68.png">
+    <Content Include="Resources\Entities\62.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\graphics\entities\69.png">
+    <Content Include="Resources\Entities\63.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\graphics\entities\7.png">
+    <Content Include="Resources\Entities\64.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\graphics\entities\70.png">
+    <Content Include="Resources\Entities\65.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\graphics\entities\71.png">
+    <Content Include="Resources\Entities\66.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\graphics\entities\72.png">
+    <Content Include="Resources\Entities\67.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\graphics\entities\73.png">
+    <Content Include="Resources\Entities\68.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\graphics\entities\74.png">
+    <Content Include="Resources\Entities\69.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\graphics\entities\75.png">
+    <Content Include="Resources\Entities\7.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\graphics\entities\76.png">
+    <Content Include="Resources\Entities\70.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\graphics\entities\77.png">
+    <Content Include="Resources\Entities\71.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\graphics\entities\78.png">
+    <Content Include="Resources\Entities\72.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\graphics\entities\79.png">
+    <Content Include="Resources\Entities\73.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\graphics\entities\8.png">
+    <Content Include="Resources\Entities\74.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\graphics\entities\80.png">
+    <Content Include="Resources\Entities\75.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\graphics\entities\81.png">
+    <Content Include="Resources\Entities\76.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\graphics\entities\82.png">
+    <Content Include="Resources\Entities\77.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\graphics\entities\83.png">
+    <Content Include="Resources\Entities\78.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\graphics\entities\84.png">
+    <Content Include="Resources\Entities\79.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\graphics\entities\85.png">
+    <Content Include="Resources\Entities\8.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\graphics\entities\86.png">
+    <Content Include="Resources\Entities\80.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\graphics\entities\87.png">
+    <Content Include="Resources\Entities\81.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\graphics\entities\88.png">
+    <Content Include="Resources\Entities\82.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\graphics\entities\89.png">
+    <Content Include="Resources\Entities\83.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\graphics\entities\9.png">
+    <Content Include="Resources\Entities\84.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\graphics\entities\90.png">
+    <Content Include="Resources\Entities\85.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\graphics\entities\91.png">
+    <Content Include="Resources\Entities\86.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\graphics\entities\92.png">
+    <Content Include="Resources\Entities\87.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\graphics\entities\93.png">
+    <Content Include="Resources\Entities\88.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\graphics\entities\94.png">
+    <Content Include="Resources\Entities\89.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\graphics\entities\95.png">
+    <Content Include="Resources\Entities\9.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\graphics\entities\96.png">
+    <Content Include="Resources\Entities\90.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\graphics\entities\97.png">
+    <Content Include="Resources\Entities\91.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\graphics\entities\98.png">
+    <Content Include="Resources\Entities\92.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\graphics\entities\99.png">
+    <Content Include="Resources\Entities\93.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\graphics\gui\EXPBar.png">
+    <Content Include="Resources\Entities\94.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\graphics\gui\EXPBarEmpty.png">
+    <Content Include="Resources\Entities\95.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\graphics\gui\HPBar.png">
+    <Content Include="Resources\Entities\96.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\graphics\gui\HPBarEmpty.png">
+    <Content Include="Resources\Entities\97.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\graphics\gui\ManaBar.png">
+    <Content Include="Resources\Entities\98.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\graphics\gui\ManaBarEmpty.png">
+    <Content Include="Resources\Entities\99.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\graphics\tilesets\Tileset1.png">
+    <Content Include="Resources\GUI\EXPBar.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\graphics\tilesets\Tileset10.png">
+    <Content Include="Resources\GUI\EXPBarEmpty.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\graphics\tilesets\Tileset11.png">
+    <Content Include="Resources\GUI\HPBar.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\graphics\tilesets\Tileset12.png">
+    <Content Include="Resources\GUI\HPBarEmpty.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\graphics\tilesets\Tileset2.png">
+    <Content Include="Resources\GUI\ManaBar.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\graphics\tilesets\Tileset3.png">
+    <Content Include="Resources\GUI\ManaBarEmpty.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\graphics\tilesets\Tileset4.png">
+    <Content Include="Resources\Items\1.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\graphics\tilesets\Tileset5.png">
+    <Content Include="Resources\Items\10.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\graphics\tilesets\Tileset6.png">
+    <Content Include="Resources\Items\11.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\graphics\tilesets\Tileset7.png">
+    <Content Include="Resources\Items\12.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\graphics\tilesets\Tileset8.png">
+    <Content Include="Resources\Items\13.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\graphics\tilesets\Tileset9.png">
+    <Content Include="Resources\Items\14.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Items\15.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Items\16.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Items\2.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Items\3.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Items\4.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Items\5.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Items\6.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Items\7.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Items\8.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Items\9.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Sounds\013-Move01.wav">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Sounds\018-Teleport01.wav">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Sounds\024-Door01.wav">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Sounds\032-Switch01.wav">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Sounds\062-Swing01.wav">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Sounds\089-Attack01.wav">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Sounds\117-Fire01.wav">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Sounds\Flame1.wav">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Spells\1.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Spells\2.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Spells\3.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Spells\4.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Spells\5.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Tilesets\Tileset1.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Tilesets\Tileset10.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Tilesets\Tileset11.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Tilesets\Tileset12.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Tilesets\Tileset2.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Tilesets\Tileset3.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Tilesets\Tileset4.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Tilesets\Tileset5.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Tilesets\Tileset6.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Tilesets\Tileset7.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Tilesets\Tileset8.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Tilesets\Tileset9.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="DefaultSkin.png">

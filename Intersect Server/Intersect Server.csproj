@@ -46,29 +46,29 @@
     <Reference Include="System.XML" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Classes\AnimationStruct.cs" />
-    <Compile Include="Classes\Enums.cs" />
-    <Compile Include="Classes\ItemStruct.cs" />
-    <Compile Include="Classes\Event.cs" />
-    <Compile Include="Classes\EventStruct.cs" />
-    <Compile Include="Classes\Main.cs" />
-    <Compile Include="Classes\AssemblyInfo.cs" />
-    <Compile Include="Classes\Network.cs" />
-    <Compile Include="Classes\Client.cs" />
-    <Compile Include="Classes\ByteBuffer.cs" />
-    <Compile Include="Classes\Npc.cs" />
-    <Compile Include="Classes\NpcStruct.cs" />
-    <Compile Include="Classes\PacketHandler.cs" />
-    <Compile Include="Classes\MapStruct.cs" />
-    <Compile Include="Classes\Globals.cs" />
-    <Compile Include="Classes\Constants.cs" />
-    <Compile Include="Classes\PacketSender.cs" />
-    <Compile Include="Classes\Player.cs" />
-    <Compile Include="Classes\Entity.cs" />
-    <Compile Include="Classes\Database.cs" />
-    <Compile Include="Classes\MapGrid.cs" />
-    <Compile Include="Classes\ServerLoop.cs" />
-    <Compile Include="Classes\SpellStruct.cs" />
+    <Compile Include="Classes\Game Objects\AnimationStruct.cs" />
+    <Compile Include="Classes\General\Enums.cs" />
+    <Compile Include="Classes\Game Objects\ItemStruct.cs" />
+    <Compile Include="Classes\Entities\Event.cs" />
+    <Compile Include="Classes\Entities\EventStruct.cs" />
+    <Compile Include="Classes\Core\Main.cs" />
+    <Compile Include="Classes\Core\AssemblyInfo.cs" />
+    <Compile Include="Classes\Networking\Network.cs" />
+    <Compile Include="Classes\Networking\Client.cs" />
+    <Compile Include="Classes\Misc\ByteBuffer.cs" />
+    <Compile Include="Classes\Entities\Npc.cs" />
+    <Compile Include="Classes\Game Objects\NpcStruct.cs" />
+    <Compile Include="Classes\Networking\PacketHandler.cs" />
+    <Compile Include="Classes\Maps\MapStruct.cs" />
+    <Compile Include="Classes\General\Globals.cs" />
+    <Compile Include="Classes\General\Constants.cs" />
+    <Compile Include="Classes\Networking\PacketSender.cs" />
+    <Compile Include="Classes\Entities\Player.cs" />
+    <Compile Include="Classes\Entities\Entity.cs" />
+    <Compile Include="Classes\Core\Database.cs" />
+    <Compile Include="Classes\Maps\MapGrid.cs" />
+    <Compile Include="Classes\Core\ServerLoop.cs" />
+    <Compile Include="Classes\Game Objects\SpellStruct.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
