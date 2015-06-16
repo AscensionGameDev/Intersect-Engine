@@ -9,6 +9,7 @@ using Color = System.Drawing.Color;
 using Font = Gwen.Font;
 using Intersect_Client.Classes.UI.Menu;
 using Intersect_Client.Classes.UI;
+using Intersect_Client.Classes.UI.Game;
 
 namespace Intersect_Client.Classes
 {

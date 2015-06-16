@@ -129,7 +129,10 @@ namespace Intersect_Client.Classes
         {
             while (ReceivedBuffs.Count > 0)
             {
-                MyBuffer.AddRange(ReceivedBuffs[0]);
+                if (ReceivedBuffs[0] != null)
+                {
+                    MyBuffer.AddRange(ReceivedBuffs[0]);
+                }
                 ReceivedBuffs.RemoveAt(0);
             }
             if (MyBuffer.Count() < 4) return;

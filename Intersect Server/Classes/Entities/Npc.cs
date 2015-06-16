@@ -35,7 +35,7 @@ namespace Intersect_Server.Classes
         public override void Die()
         {
             base.Die();
-            PacketSender.SendEntityLeave(MyIndex,0);
+            PacketSender.SendEntityLeave(MyIndex,0,CurrentMap);
             Globals.Entities[MyIndex] = null;
         }
 

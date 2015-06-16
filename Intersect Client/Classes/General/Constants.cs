@@ -13,6 +13,10 @@
         public const int MapHeight = 30;
         public const int LayerCount = 5;
 
+        //Item Rendering
+        public static int ItemXPadding = 4;
+        public static int ItemYPadding = 4;
+
         //Player Constraints
         public const int MaxInvItems = 35;
         public const int MaxPlayerSkills = 35;

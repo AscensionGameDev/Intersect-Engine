@@ -40,7 +40,7 @@ namespace Intersect_Client.Classes
 
         //Game Textures
         public static List<Texture> Tilesets = new List<Texture>();
-        public static List<string> ItemNames;
+        public static List<string> ItemFileNames;
         public static Texture[] ItemTextures;
         public static List<string> EntityFileNames;
         public static Texture[] EntityTextures;
@@ -77,6 +77,9 @@ namespace Intersect_Client.Classes
         {
             InitSfml();
             LoadEntities();
+            LoadItems();
+            LoadAnimations();
+            LoadSpells();
             GameFont = new Font("Arvo-Regular.ttf");
 
             //Load menu bg
@@ -221,6 +224,7 @@ namespace Intersect_Client.Classes
                     if (Globals.LocalMaps[i] > -1)
                     {
                         DrawMap(i); //Lower only
+
                     }
                 }
 
@@ -362,12 +366,12 @@ namespace Intersect_Client.Classes
         {
             if (!Directory.Exists("Resources/Items")) { Directory.CreateDirectory("Resources/Items"); }
             var items = Directory.GetFiles("Resources/Items", "*.png");
-            ItemNames = new List<string>();
+            ItemFileNames = new List<string>();
             ItemTextures = new Texture[items.Length];
             for (int i = 0; i < items.Length; i++)
             {
-                ItemNames.Add(items[i].Replace("Resources/Items\\", ""));
-                ItemTextures[i] = new Texture(new Image("Resources/Items/" + ItemNames[i]));
+                ItemFileNames.Add(items[i].Replace("Resources/Items\\", ""));
+                ItemTextures[i] = new Texture(new Image("Resources/Items/" + ItemFileNames[i]));
             }
         }
         private static void LoadEntities()

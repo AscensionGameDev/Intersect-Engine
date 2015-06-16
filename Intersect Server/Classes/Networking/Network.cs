@@ -24,7 +24,7 @@ namespace Intersect_Server.Classes
 			var tempIndex = FindOpenSocket ();
 		    if (tempIndex > -1) {
 				Globals.Clients [tempIndex] = new Client (tempIndex, Globals.FindOpenEntity (), client);
-				var entityIndex = Globals.Clients [tempIndex].entityIndex;
+				var entityIndex = Globals.Clients [tempIndex].EntityIndex;
                 Globals.Entities[entityIndex] = new Player(entityIndex, Globals.Clients[tempIndex]);
 				Console.WriteLine ("Client connected using client index of " + tempIndex);
 			} else {
@@ -34,15 +34,6 @@ namespace Intersect_Server.Classes
 
 		public void RunServer ()
 		{
-			for (var i = 0; i < Globals.Clients.Count; i++)
-			{
-			    if (Globals.Clients[i] == null) continue;
-			    if (Globals.Clients [i].isConnected) {
-			    } else {
-			        Globals.Entities [Globals.Clients [i].entityIndex] = null;
-			        Globals.Clients [i] = null;
-			    }
-			}
 		}
 
 	    static int FindOpenSocket ()

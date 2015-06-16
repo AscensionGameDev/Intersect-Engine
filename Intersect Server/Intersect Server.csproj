@@ -53,6 +53,7 @@
     <Compile Include="Classes\Entities\EventStruct.cs" />
     <Compile Include="Classes\Core\Main.cs" />
     <Compile Include="Classes\Core\AssemblyInfo.cs" />
+    <Compile Include="Classes\Items\ItemInstance.cs" />
     <Compile Include="Classes\Networking\Network.cs" />
     <Compile Include="Classes\Networking\Client.cs" />
     <Compile Include="Classes\Misc\ByteBuffer.cs" />

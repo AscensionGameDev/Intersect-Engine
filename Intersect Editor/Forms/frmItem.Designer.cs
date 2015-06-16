@@ -262,7 +262,6 @@ namespace Intersect_Editor.Forms
             "Helmet",
             "Shield",
             "Consumable",
-            "Key",
             "Currency",
             "Spell"});
             this.cmbType.Location = new System.Drawing.Point(60, 45);

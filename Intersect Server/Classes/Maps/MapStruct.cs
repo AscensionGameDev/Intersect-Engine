@@ -24,10 +24,15 @@ namespace Intersect_Server.Classes
         public int MapGridY;
         public bool Active;
         public int Revision;
-        public List<int> SurroundingMaps = new List<int>();
         public List<EventStruct> Events = new List<EventStruct>();
         public List<Light> Lights = new List<Light>();
         public bool IsIndoors;
+
+        //Temporary Values
+        public List<int> SurroundingMaps = new List<int>();
+        public List<MapItemInstance> MapItems = new List<MapItemInstance>();
+        public List<MapItemRespawn> ItemRespawns = new List<MapItemRespawn>();
+        
         public MapStruct(int mapNum)
         {
             if (mapNum == -1)
@@ -151,7 +156,70 @@ namespace Intersect_Server.Classes
             {
                 Events.Add(new EventStruct(bf));
             }
+
+            //Clear Map Items
+            for (int i = 0; i < MapItems.Count; i++)
+            {
+                MapItems[i].ItemNum = -1;
+                PacketSender.SendMapItemUpdate(MyMapNum, i);
+                MapItems.RemoveAt(i);
+            }
+            ItemRespawns.Clear();
+            SpawnAttributeItems();
             Save();
+        }
+
+        private void SpawnAttributeItems()
+        {
+            for (int x = 0; x < Constants.MapWidth; x++)
+            {
+                for (int y = 0; y < Constants.MapHeight; y++)
+                {
+                    if (Attributes[x, y].value == (int)Enums.MapAttributes.Item)
+                    {
+                        SpawnAttributeItem(x, y);
+                    }
+                }
+            }
+        }
+
+        private void SpawnAttributeItem(int x, int y)
+        {
+            MapItems.Add(new MapItemInstance());
+            MapItems[MapItems.Count - 1].X = x;
+            MapItems[MapItems.Count - 1].Y = y;
+            MapItems[MapItems.Count - 1].ItemNum = Attributes[x, y].data1;
+            MapItems[MapItems.Count - 1].DespawnTime = Environment.TickCount + Constants.ItemDespawnTime;
+            MapItems[MapItems.Count - 1].AttributeSpawnX = x;
+            MapItems[MapItems.Count - 1].AttributeSpawnY = y;
+            if (Globals.GameItems[MapItems[MapItems.Count - 1].ItemNum].Type >= (int)Enums.ItemTypes.Weapon && Globals.GameItems[MapItems[MapItems.Count - 1].ItemNum].Type <= (int)Enums.ItemTypes.Shield)
+            {
+                MapItems[MapItems.Count - 1].ItemVal = 1;
+                Random r = new Random();
+                for (int i = 0; i < (int)Enums.Stats.StatCount; i++)
+                {
+                    MapItems[MapItems.Count - 1].StatBoost[i] = r.Next(-1 * Globals.GameItems[MapItems[MapItems.Count - 1].ItemNum].StatGrowth, Globals.GameItems[MapItems[MapItems.Count - 1].ItemNum].StatGrowth + 1);
+                }
+            }
+            else
+            {
+                MapItems[MapItems.Count - 1].ItemVal = Attributes[x, y].data2;
+            }
+            PacketSender.SendMapItemUpdate(MyMapNum, MapItems.Count - 1);
+        }
+
+        public void RemoveItem(int index)
+        {
+            MapItems[index].ItemNum = -1;
+            PacketSender.SendMapItemUpdate(MyMapNum, index);
+            if (MapItems[index].AttributeSpawnX > -1)
+            {
+                ItemRespawns.Add(new MapItemRespawn());
+                ItemRespawns[ItemRespawns.Count - 1].AttributeSpawnX = MapItems[index].AttributeSpawnX;
+                ItemRespawns[ItemRespawns.Count - 1].AttributeSpawnY = MapItems[index].AttributeSpawnY;
+                ItemRespawns[ItemRespawns.Count - 1].RespawnTime = Environment.TickCount + Constants.ItemRespawnTime;
+            }
+            MapItems.RemoveAt(index);
         }
 
         public void Update()
@@ -176,6 +244,26 @@ namespace Intersect_Server.Classes
                             ((Player)t).Update();
                         }
 
+                    }
+                }
+            }
+            
+            //Process Items
+            lock (MapItems)
+            {
+                for (int i = 0; i < MapItems.Count; i++)
+                {
+                    if (MapItems[i].DespawnTime < Environment.TickCount)
+                    {
+                        RemoveItem(i);
+                    }
+                }
+                for (int i = 0; i < ItemRespawns.Count; i++)
+                {
+                    if (ItemRespawns[i].RespawnTime < Environment.TickCount)
+                    {
+                        SpawnAttributeItem(ItemRespawns[i].AttributeSpawnX, ItemRespawns[i].AttributeSpawnY);
+                        ItemRespawns.RemoveAt(i);
                     }
                 }
             }
@@ -210,15 +298,33 @@ namespace Intersect_Server.Classes
             foreach (var t in Globals.Clients)
             {
                 if (t == null) continue;
-                if (t.entityIndex <= -1) continue;
-                if (((Player) Globals.Entities[t.entityIndex]) == null) continue;
-                if (!((Player) Globals.Entities[t.entityIndex]).InGame) continue;
-                if (Globals.Entities[t.entityIndex].CurrentMap == mapNum)
+                if (t.EntityIndex <= -1) continue;
+                if (((Player) Globals.Entities[t.EntityIndex]) == null) continue;
+                if (!((Player) Globals.Entities[t.EntityIndex]).InGame) continue;
+                if (Globals.Entities[t.EntityIndex].CurrentMap == mapNum)
                 {
                     return true;
                 }
             }
             return false;
+        }
+
+        public List<int> GetPlayersOnMap()
+        {
+            List<int> Players = new List<int>();
+            if (Globals.Clients.Count <= 0) return Players;
+            foreach (var t in Globals.Clients)
+            {
+                if (t == null) continue;
+                if (t.EntityIndex <= -1) continue;
+                if (((Player)Globals.Entities[t.EntityIndex]) == null) continue;
+                if (!((Player)Globals.Entities[t.EntityIndex]).InGame) continue;
+                if (Globals.Entities[t.EntityIndex].CurrentMap == MyMapNum)
+                {
+                    Players.Add(t.ClientIndex);
+                }
+            }
+            return Players;
         }
 
         public void PlayerEnteredMap()

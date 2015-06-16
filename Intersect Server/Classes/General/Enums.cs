@@ -33,6 +33,8 @@ namespace Intersect_Server.Classes
             SaveSpell,
             OpenAnimationEditor,
             SaveAnimation,
+            PickupItem,
+            SwapItems,
         }
 
         public enum ServerPackets
@@ -67,6 +69,9 @@ namespace Intersect_Server.Classes
             OpenAnimationEditor,
             AnimationData,
             AnimationList,
+            MapItems,
+            MapItemUpdate,
+            InventoryUpdate,
         }
 
         public enum Stats
@@ -84,6 +89,18 @@ namespace Intersect_Server.Classes
             Health,
             Mana,
             VitalCount
+        }
+
+        public enum ItemTypes : int
+        {
+            None = 0,
+            Weapon = 1,
+            Armor = 2,
+            Helmet = 3,
+            Shield = 4,
+            Consumable = 5,
+            Currency = 6,
+            Spell = 7
         }
 
         // Map Attribtes

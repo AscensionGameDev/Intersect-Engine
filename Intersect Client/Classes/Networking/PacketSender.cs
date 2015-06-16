@@ -104,5 +104,22 @@
             bf.WriteString(email.ToLower().Trim());
             Network.SendPacket(bf.ToArray());
         }
+
+        public static void SendPickupItem(int index)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteLong((int)Enums.ClientPackets.PickupItem);
+            bf.WriteInteger(index);
+            Network.SendPacket(bf.ToArray());
+        }
+
+        public static void SendSwapItems(int item1, int item2)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteLong((int)Enums.ClientPackets.SwapItems);
+            bf.WriteInteger(item1);
+            bf.WriteInteger(item2);
+            Network.SendPacket(bf.ToArray());
+        }
     }
 }

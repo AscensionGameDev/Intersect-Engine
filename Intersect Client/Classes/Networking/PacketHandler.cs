@@ -78,6 +78,15 @@ namespace Intersect_Client.Classes
                 case Enums.ServerPackets.AnimationData:
                     HandleAnimationData(bf.ReadBytes(bf.Length()));
                     break;
+                case Enums.ServerPackets.MapItems:
+                    HandleMapItems(bf.ReadBytes(bf.Length()));
+                    break;
+                case Enums.ServerPackets.MapItemUpdate:
+                    HandleMapItemUpdate(bf.ReadBytes(bf.Length()));
+                    break;
+                case Enums.ServerPackets.InventoryUpdate:
+                    HandleInventoryUpdate(bf.ReadBytes(bf.Length()));
+                    break;
                 default:
                     Console.WriteLine(@"Non implemented packet received: " + packetHeader);
                     break;
@@ -116,6 +125,7 @@ namespace Intersect_Client.Classes
                 if (i == Globals.MyIndex)
                 {
                     EntityManager.AddPlayer(i, bf.ReadString(), bf.ReadString(), true);
+                    Globals.Me = (Player)Globals.Entities[Globals.MyIndex];
                 }
                 else
                 {
@@ -467,6 +477,58 @@ namespace Intersect_Client.Classes
             var index = bf.ReadInteger();
             Globals.GameAnimations[index] = new AnimationStruct();
             Globals.GameAnimations[index].Load(bf.ReadBytes(bf.Length()));
+        }
+
+        private static void HandleMapItems(byte[] packet)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteBytes(packet);
+            int mapNum = bf.ReadInteger();
+            if (Globals.GameMaps[mapNum] != null)
+            {
+                Globals.GameMaps[mapNum].MapItems.Clear();
+                int itemCount = bf.ReadInteger();
+                for (int i = 0; i < itemCount; i++)
+                {
+                    var item = new MapItemInstance();
+                    item.Load(bf);
+                    Globals.GameMaps[mapNum].MapItems.Add(item);
+                }
+            }
+            bf.Dispose();
+        }
+
+        private static void HandleMapItemUpdate(byte[] packet)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteBytes(packet);
+            int mapNum = bf.ReadInteger();
+            int index = bf.ReadInteger();
+            if (Globals.GameMaps[mapNum] != null)
+            {
+                if (bf.ReadInteger() == -1)
+                {
+                    Globals.GameMaps[mapNum].MapItems.RemoveAt(index);
+                }
+                else
+                {
+                    while (index >= Globals.GameMaps[mapNum].MapItems.Count)
+                    {
+                        Globals.GameMaps[mapNum].MapItems.Add(new MapItemInstance());
+                    }
+                    Globals.GameMaps[mapNum].MapItems[index].Load(bf);
+                }
+            }
+            bf.Dispose();
+        }
+
+        private static void HandleInventoryUpdate(byte[] packet)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteBytes(packet);
+            int slot = bf.ReadInteger();
+            Globals.Me.Inventory[slot].Load(bf);
+            bf.Dispose();
         }
 
     }

@@ -87,6 +87,12 @@ namespace Intersect_Server.Classes
                 case Enums.ClientPackets.SaveAnimation:
                     HandleAnimationData(client, packet);
                     break;
+                case Enums.ClientPackets.PickupItem:
+                    HandlePickupItem(client, packet);
+                    break;
+                case Enums.ClientPackets.SwapItems:
+                    HandleSwapItems(client, packet);
+                    break;
                 default:
                     Console.WriteLine(@"Non implemented packet received: " + packetHeader);
                     break;
@@ -96,15 +102,15 @@ namespace Intersect_Server.Classes
 
         private static void HandlePing(Client client)
         {
-            client.connectionTimeout = -1;
-            client.pingTime = Environment.TickCount + 10000;
+            client.ConnectionTimeout = -1;
+            client.PingTime = Environment.TickCount + 10000;
         }
 
         private static void HandleLogin(Client client, byte[] packet)
         {
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
-            var index = client.entityIndex;
+            var index = client.EntityIndex;
             var username = bf.ReadString();
             var password = bf.ReadString();
             if (Database.AccountExists(username))
@@ -112,8 +118,9 @@ namespace Intersect_Server.Classes
                 if (Database.CheckPassword(username, password))
                 {
                     Globals.Entities[index] = new Player(index, client) {MyName = username};
+                    client.Entity = (Player)Globals.Entities[index];
                     Console.WriteLine(Globals.Entities[index].MyName + " logged in.");
-                    client.id = Database.GetUserId(username);
+                    client.Id = Database.GetUserId(username);
                     Database.LoadPlayer(client);
                     PacketSender.SendJoinGame(client);
                 }
@@ -138,7 +145,7 @@ namespace Intersect_Server.Classes
 
         private static void HandlePlayerMove(Client client, byte[] packet)
         {
-            var index = client.entityIndex;
+            var index = client.EntityIndex;
             var oldMap = Globals.Entities[index].CurrentMap;
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
@@ -158,13 +165,13 @@ namespace Intersect_Server.Classes
 
         private static void HandleLocalMsg(Client client, byte[] packet)
         {
-            var index = client.entityIndex;
+            var index = client.EntityIndex;
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
             var msg = bf.ReadString();
             if (msg == "killme")
             {
-                Globals.Entities[client.entityIndex].Die();
+                client.Entity.Die();
             }
             PacketSender.SendGlobalMsg(((Player)Globals.Entities[index]).MyName + ": " + msg);
             bf.Dispose();
@@ -177,7 +184,7 @@ namespace Intersect_Server.Classes
             var usr = bf.ReadString();
             var pass = bf.ReadString();
             if (usr != "jcsnider" && (usr != "kibbelz" || pass != "test")) return;
-            client.isEditor = true;
+            client.IsEditor = true;
             PacketSender.SendJoinGame(client);
             PacketSender.SendGameData(client);
             PacketSender.SendTilesets(client);
@@ -200,7 +207,7 @@ namespace Intersect_Server.Classes
             //Send the updated tilesets to all clients.
             for (var i = 0; i < Globals.Clients.Count; i++)
             {
-                if (i == client.clientIndex) continue;
+                if (i == client.ClientIndex) continue;
                 if (Globals.Clients[i] == null) continue;
                 if (Globals.Clients[i].isConnected)
                 {
@@ -220,7 +227,7 @@ namespace Intersect_Server.Classes
             foreach (var t in Globals.Clients)
             {
                 if (t == null) continue;
-                if (t.isEditor)
+                if (t.IsEditor)
                 {
                     PacketSender.SendMapList(t);
                 }
@@ -332,8 +339,9 @@ namespace Intersect_Server.Classes
         {
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
+            int chunkNum = (int)bf.ReadLong();
             //TODO See if the player is close enough to be switching chunks.
-            PacketSender.SendEnterMap(client, (int)bf.ReadLong());
+            PacketSender.SendEnterMap(client, chunkNum);
             bf.Dispose();
         }
 
@@ -341,7 +349,7 @@ namespace Intersect_Server.Classes
         {
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
-            Globals.Entities[client.entityIndex].TryAttack((int)bf.ReadLong());
+            client.Entity.TryAttack((int)bf.ReadLong());
             bf.Dispose();
         }
 
@@ -349,14 +357,14 @@ namespace Intersect_Server.Classes
         {
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
-            Globals.Entities[client.entityIndex].ChangeDir((int)bf.ReadLong());
+            client.Entity.ChangeDir((int)bf.ReadLong());
             bf.Dispose();
         }
 
         private static void HandleEnterGame(Client client, byte[] packet)
         {
-            var index = client.entityIndex;
-            ((Player)Globals.Entities[client.entityIndex]).InGame = true;
+            var index = client.EntityIndex;
+            ((Player)client.Entity).InGame = true;
             PacketSender.SendGameData(client);
             PacketSender.SendGameTime(client);
             PacketSender.SendPlayerMsg(client, "Welcome to the Intersect game server.");
@@ -371,12 +379,12 @@ namespace Intersect_Server.Classes
             }
             for (var i = 0; i < Globals.Clients.Count; i++)
             {
-                if (i == client.clientIndex) continue;
+                if (i == client.ClientIndex) continue;
                 if (Globals.Clients[i] == null) continue;
                 if (!Globals.Clients[i].isConnected) continue;
-                if (!Globals.Clients[i].isEditor)
+                if (!Globals.Clients[i].IsEditor)
                 {
-                    PacketSender.SendEntityData(Globals.Clients[i], client.entityIndex,0,Globals.Entities[client.entityIndex]);
+                    PacketSender.SendEntityData(Globals.Clients[i], client.EntityIndex,0,client.Entity);
                 }
             }
             Globals.Entities[index].Warp(Globals.Entities[index].CurrentMap, Globals.Entities[index].CurrentX, Globals.Entities[index].CurrentY, Globals.Entities[index].Dir);
@@ -387,7 +395,7 @@ namespace Intersect_Server.Classes
         {
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
-            ((Player)(Globals.Entities[client.entityIndex])).TryActivateEvent(bf.ReadInteger());
+            ((Player)(client.Entity)).TryActivateEvent(bf.ReadInteger());
             bf.Dispose();
         }
 
@@ -395,7 +403,7 @@ namespace Intersect_Server.Classes
         {
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
-            ((Player)(Globals.Entities[client.entityIndex])).RespondToEvent(bf.ReadInteger(), bf.ReadInteger());
+            ((Player)(client.Entity)).RespondToEvent(bf.ReadInteger(), bf.ReadInteger());
             bf.Dispose();
         }
 
@@ -406,7 +414,7 @@ namespace Intersect_Server.Classes
             var username = bf.ReadString();
             var password = bf.ReadString();
             var email = bf.ReadString();
-            var index = client.entityIndex;
+            var index = client.EntityIndex;
             if (Database.AccountExists(username))
             {
                 PacketSender.SendLoginError(client, "Account already exists!");
@@ -420,7 +428,7 @@ namespace Intersect_Server.Classes
                 else
                 {
                     Database.CreateAccount(username, password, email);
-                    client.id = Database.GetUserId(username);
+                    client.Id = Database.GetUserId(username);
                     Globals.Entities[index].MyName = username;
                     Console.WriteLine(Globals.Entities[index].MyName + " logged in.");
                     Globals.Entities[index].MySprite = "5";
@@ -508,6 +516,35 @@ namespace Intersect_Server.Classes
                 PacketSender.SendAnimation(client, i);
             }
             PacketSender.SendAnimationEditor(client);
+        }
+
+        private static void HandlePickupItem(Client client, byte[] packet)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteBytes(packet);
+            var index = bf.ReadInteger();
+            if (index < Globals.GameMaps[client.Entity.CurrentMap].MapItems.Count)
+            {
+                lock (Globals.GameMaps[client.Entity.CurrentMap].MapItems)
+                {
+                    if (client.Entity.TryGiveItem(((ItemInstance)Globals.GameMaps[client.Entity.CurrentMap].MapItems[index])))
+                    {
+                        //Remove Item From Map
+                        Globals.GameMaps[client.Entity.CurrentMap].RemoveItem(index);
+                    }
+                }
+            }
+            bf.Dispose();
+        }
+
+        private static void HandleSwapItems(Client client, byte[] packet)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteBytes(packet);
+            var item1 = bf.ReadInteger();
+            var item2 = bf.ReadInteger();
+            client.Entity.SwapItems(item1, item2);
+            bf.Dispose();
         }
     }
 }

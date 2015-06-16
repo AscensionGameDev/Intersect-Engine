@@ -11,8 +11,6 @@ namespace Intersect_Server.Classes
             Console.WriteLine("Starting server.");
             Database.CheckDirectories();
             Database.LoadOptions();
-            Console.WriteLine("Loading maps.");
-			Database.LoadMaps ();
             Console.WriteLine("Loading npcs.");
             Database.LoadNpcs();
             Console.WriteLine("Loading items.");
@@ -21,6 +19,8 @@ namespace Intersect_Server.Classes
             Database.LoadSpells();
             Console.WriteLine("Loading animations.");
             Database.LoadAnimations();
+            Console.WriteLine("Loading maps.");
+            Database.LoadMaps();
             Console.WriteLine("Opening MySQL connection.");
             Database.InitMySql();
 			if (File.Exists("Resources/Tilesets.dat")) {

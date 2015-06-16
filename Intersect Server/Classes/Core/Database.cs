@@ -129,6 +129,7 @@ namespace Intersect_Server.Classes
                 CheckUsersTable(mysqlConn);
                 CheckSwitchesTable(mysqlConn);
                 CheckVariablesTable(mysqlConn);
+                CheckInventoryTable(mysqlConn);
 
             }
         }
@@ -210,6 +211,32 @@ namespace Intersect_Server.Classes
             //Work on each field
             CheckTableField(mysqlConn, columns, "variablenum", myTable, MySqlFields.m_int);
             CheckTableField(mysqlConn, columns, "variableval", myTable, MySqlFields.m_int);
+        }
+
+        private static void CheckInventoryTable(MySqlConnection mysqlConn)
+        {
+            const string myTable = "inventories";
+            var query = "CREATE TABLE IF NOT EXISTS `" + myTable + "` (`id` int(11) NOT NULL)";
+            var cmd = new MySqlCommand(query, mysqlConn);
+            cmd.ExecuteNonQuery();
+            query = "SHOW COLUMNS FROM " + myTable + ";";
+            cmd = new MySqlCommand(query, mysqlConn);
+            var reader = cmd.ExecuteReader();
+            var columns = new List<string>();
+            while (reader.Read())
+            {
+                columns.Add(reader.GetValue(0).ToString());
+            }
+            reader.Close();
+
+            //Work on each field
+            CheckTableField(mysqlConn, columns, "slot", myTable, MySqlFields.m_int);
+            CheckTableField(mysqlConn, columns, "itemnum", myTable, MySqlFields.m_int);
+            CheckTableField(mysqlConn, columns, "itemval", myTable, MySqlFields.m_int);
+            for (int i = 0; i < (int)Enums.Stats.StatCount; i++)
+            {
+                CheckTableField(mysqlConn, columns, "statbuff" + i, myTable, MySqlFields.m_int);
+            }
         }
 
         private static void CheckTableField(MySqlConnection mysqlConn, List<string> columns, string fieldName, string tableName, MySqlFields fieldType, int fieldLength = -1)
@@ -352,13 +379,13 @@ namespace Intersect_Server.Classes
 
         public static void LoadPlayer(Client client)
         {
-            var stm = "SELECT * FROM Users WHERE id = " + client.id + "";
+            var stm = "SELECT * FROM Users WHERE id = " + client.Id + "";
             using (var mysqlConn = new MySqlConnection(ConnectionString))
             {
                 mysqlConn.Open();
                 var cmd = new MySqlCommand(stm, mysqlConn);
                 var reader = cmd.ExecuteReader();
-                var en = Globals.Entities[client.entityIndex];
+                var en = client.Entity;
                 var columns = Enumerable.Range(0, reader.FieldCount).Select(reader.GetName).ToList();
                 int i;
                 while (reader.Read())
@@ -377,13 +404,13 @@ namespace Intersect_Server.Classes
                     {
                         en.Stat[i] = reader.GetInt32(columns.IndexOf("stat" + i));
                     }
-                    client.power = reader.GetInt32(columns.IndexOf("power"));
+                    client.Power = reader.GetInt32(columns.IndexOf("power"));
                 }
                 reader.Close();
 
 
                 i = 0;
-                stm = "SELECT switchval from Switches WHERE id=" + client.id + ";";
+                stm = "SELECT switchval from Switches WHERE id=" + client.Id + ";";
                 cmd = new MySqlCommand(stm, mysqlConn);
                 reader = cmd.ExecuteReader();
                 while (reader.Read())
@@ -394,7 +421,7 @@ namespace Intersect_Server.Classes
                 }
                 reader.Close();
                 i = 0;
-                stm = "SELECT variableval from Variables WHERE id=" + client.id + ";";
+                stm = "SELECT variableval from Variables WHERE id=" + client.Id + ";";
                 cmd = new MySqlCommand(stm, mysqlConn);
                 reader = cmd.ExecuteReader();
                 while (reader.Read())
@@ -404,16 +431,33 @@ namespace Intersect_Server.Classes
                     i++;
                 }
                 reader.Close();
+                i = 0;
+                stm = "SELECT * from Inventories WHERE id=" + client.Id + ";";
+                cmd = new MySqlCommand(stm, mysqlConn);
+                reader = cmd.ExecuteReader();
+                columns = Enumerable.Range(0, reader.FieldCount).Select(reader.GetName).ToList();
+                while (reader.Read())
+                {
+                    if (reader.GetInt32(columns.IndexOf("slot")) < Constants.MaxInvItems) {
+                        ((Player)en).Inventory[reader.GetInt32(columns.IndexOf("slot"))].ItemNum = reader.GetInt32(columns.IndexOf("itemnum"));
+                        ((Player)en).Inventory[reader.GetInt32(columns.IndexOf("slot"))].ItemVal = reader.GetInt32(columns.IndexOf("itemval"));
+                        for (int x = 0; x <(int)Enums.Stats.StatCount; x++)
+                        {
+                            ((Player)en).Inventory[reader.GetInt32(columns.IndexOf("slot"))].StatBoost[x] = reader.GetInt32(columns.IndexOf("statbuff" + x));
+                        }
+                    }
+                }
+                reader.Close();
             }
         }
 
         public static void SavePlayer(Client client)
         {
             if (client == null) { return; }
-            if (client.entityIndex == -1) { return; }
-            if (client.entityIndex >= Globals.Entities.Count) { return; }
-            if (Globals.Entities[client.entityIndex] == null) { return; }
-            var en = Globals.Entities[client.entityIndex];
+            if (client.EntityIndex == -1) { return; }
+            if (client.EntityIndex >= Globals.Entities.Count) { return; }
+            if (client.Entity == null) { return; }
+            var en = (Player)client.Entity;
             var query = "UPDATE Users SET ";
             var id = GetUserId(en.MyName);
             query += "map=" + en.CurrentMap + ",";
@@ -430,7 +474,7 @@ namespace Intersect_Server.Classes
             {
                 query += "stat" + i + "=" + en.Stat[i] + ",";
             }
-            query += "power=" + client.power + "";
+            query += "power=" + client.Power + "";
             query += " WHERE user='" + en.MyName + "'";
             using (var mysqlConn = new MySqlConnection(ConnectionString))
             {
@@ -438,6 +482,7 @@ namespace Intersect_Server.Classes
                 var cmd = new MySqlCommand(query, mysqlConn);
                 cmd.ExecuteNonQuery();
 
+                //Save Switches
                 query = "SELECT COUNT(*) from Switches WHERE id=" + id;
                 cmd = new MySqlCommand(query, mysqlConn);
                 var reader = cmd.ExecuteReader();
@@ -464,6 +509,8 @@ namespace Intersect_Server.Classes
                 }
                 cmd = new MySqlCommand(query, mysqlConn);
                 cmd.ExecuteNonQuery();
+
+                //Save Variables
                 query = "SELECT COUNT(*) from Variables WHERE id=" + id;
                 cmd = new MySqlCommand(query, mysqlConn);
                 reader = cmd.ExecuteReader();
@@ -487,6 +534,47 @@ namespace Intersect_Server.Classes
                 for (var i = 0; i < Constants.VariableCount; i++)
                 {
                     query += "UPDATE Variables SET variableval=" + Convert.ToInt32(((Player)(en)).Variables[i]) + " WHERE id=" + id + " AND variablenum=" + i + ";\n";
+                }
+                cmd = new MySqlCommand(query, mysqlConn);
+                cmd.ExecuteNonQuery();
+
+                //Save Inventory
+                query = "SELECT COUNT(*) from Inventories WHERE id=" + id;
+                cmd = new MySqlCommand(query, mysqlConn);
+                reader = cmd.ExecuteReader();
+                result = 0;
+                while (reader.Read())
+                {
+                    result = reader.GetInt32(0);
+                }
+                reader.Close();
+                if (result < Constants.MaxInvItems)
+                {
+                    query = "";
+                    for (var i = result; i < Constants.MaxInvItems; i++)
+                    {
+                        query += "INSERT INTO Inventories (id,slot,itemnum,itemval";
+                        for (int x = 0; x < (int)Enums.Stats.StatCount; x++){
+                            query+= ", statbuff" + x;
+                        }
+                        query += ") VALUES (" + id + "," + i + ",-1,0";
+                        for (int x = 0; x < (int)Enums.Stats.StatCount; x++){
+                            query+= ", 0";
+                        }
+                        query += ");\n";
+                    }
+                    cmd = new MySqlCommand(query, mysqlConn);
+                    cmd.ExecuteNonQuery();
+                }
+                query = "";
+                for (var i = 0; i < Constants.MaxInvItems; i++)
+                {
+                    query += "UPDATE Inventories SET itemnum=" + en.Inventory[i].ItemNum + ", itemval=" + en.Inventory[i].ItemVal;
+                    for (int x = 0; x < (int)Enums.Stats.StatCount; x++ )
+                    {
+                        query += ", statbuff" + x + "=" + en.Inventory[i].StatBoost[x];
+                    }
+                    query += " WHERE id=" + id + " AND slot=" + i + ";\n";
                 }
                 cmd = new MySqlCommand(query, mysqlConn);
                 cmd.ExecuteNonQuery();

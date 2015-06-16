@@ -33,6 +33,7 @@ namespace Intersect_Client.Classes
 
         public RenderTexture[] LowerTextures = new RenderTexture[3];
         public RenderTexture[] UpperTextures = new RenderTexture[3];
+        public List<MapItemInstance> MapItems = new List<MapItemInstance>();
 
         public MapStruct(int mapNum, byte[] mapPacket)
         {
@@ -234,6 +235,14 @@ namespace Intersect_Client.Classes
             if (!upper)
             {
                 Graphics.RenderTexture(LowerTextures[Globals.AnimFrame].Texture,xoffset,yoffset,Graphics.RenderWindow);
+                
+                //Draw Map Items
+                for (int i = 0; i < MapItems.Count; i++)
+                {
+                    if (Graphics.ItemFileNames.IndexOf(Globals.GameItems[MapItems[i].ItemNum].Pic) > -1){
+                        Graphics.RenderTexture(Graphics.ItemTextures[Graphics.ItemFileNames.IndexOf(Globals.GameItems[MapItems[i].ItemNum].Pic)], xoffset + MapItems[i].X * 32, yoffset + MapItems[i].Y * 32, Graphics.RenderWindow);
+                    }
+                }
             }
             else
             {

@@ -9,6 +9,10 @@ namespace Intersect_Server.Classes
         public const int MaxSpells = 255;
         public const int MaxAnimations = 255;
 
+        //Item Processing
+        public const int ItemDespawnTime = 15000; //15 seconds
+        public const int ItemRespawnTime = 15000; //15 seconds
+
         //Player Constraints
         public const int MaxInvItems = 35;
         public const int MaxPlayerSkills = 35;

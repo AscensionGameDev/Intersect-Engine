@@ -48,6 +48,7 @@ namespace Intersect_Editor.Forms
             this.itemEditorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.npcEditorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.spellEditorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.animationEditorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.grpMap = new System.Windows.Forms.GroupBox();
@@ -91,7 +92,6 @@ namespace Intersect_Editor.Forms
             this.scrlMapItem = new System.Windows.Forms.HScrollBar();
             this.rbItem = new System.Windows.Forms.RadioButton();
             this.rbBlocked = new System.Windows.Forms.RadioButton();
-            this.animationEditorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip.SuspendLayout();
             this.grpMap.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.picMap)).BeginInit();
@@ -244,6 +244,13 @@ namespace Intersect_Editor.Forms
             this.spellEditorToolStripMenuItem.Size = new System.Drawing.Size(164, 22);
             this.spellEditorToolStripMenuItem.Text = "Spell Editor";
             this.spellEditorToolStripMenuItem.Click += new System.EventHandler(this.spellEditorToolStripMenuItem_Click);
+            // 
+            // animationEditorToolStripMenuItem
+            // 
+            this.animationEditorToolStripMenuItem.Name = "animationEditorToolStripMenuItem";
+            this.animationEditorToolStripMenuItem.Size = new System.Drawing.Size(164, 22);
+            this.animationEditorToolStripMenuItem.Text = "Animation Editor";
+            this.animationEditorToolStripMenuItem.Click += new System.EventHandler(this.animationEditorToolStripMenuItem_Click);
             // 
             // helpToolStripMenuItem
             // 
@@ -697,6 +704,7 @@ namespace Intersect_Editor.Forms
             this.scrlMapItem.Size = new System.Drawing.Size(249, 17);
             this.scrlMapItem.TabIndex = 0;
             this.scrlMapItem.Value = 1;
+            this.scrlMapItem.Scroll += new System.Windows.Forms.ScrollEventHandler(this.scrlMapItem_Scroll);
             // 
             // rbItem
             // 
@@ -721,13 +729,6 @@ namespace Intersect_Editor.Forms
             this.rbBlocked.Text = "Blocked";
             this.rbBlocked.UseVisualStyleBackColor = true;
             this.rbBlocked.CheckedChanged += new System.EventHandler(this.rbBlocked_CheckedChanged);
-            // 
-            // animationEditorToolStripMenuItem
-            // 
-            this.animationEditorToolStripMenuItem.Name = "animationEditorToolStripMenuItem";
-            this.animationEditorToolStripMenuItem.Size = new System.Drawing.Size(164, 22);
-            this.animationEditorToolStripMenuItem.Text = "Animation Editor";
-            this.animationEditorToolStripMenuItem.Click += new System.EventHandler(this.animationEditorToolStripMenuItem_Click);
             // 
             // FrmMain
             // 

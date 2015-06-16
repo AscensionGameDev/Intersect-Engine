@@ -75,7 +75,10 @@ namespace Intersect_Client.Classes.UI.Game
         }
 
         //Update
+        public void Update()
+        {
 
+        }
 
         //Input Handlers
     }

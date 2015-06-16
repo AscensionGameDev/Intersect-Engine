@@ -26,6 +26,7 @@ namespace Intersect_Client.Classes
 
 
         //Local player information
+        public static Player Me;
         public static int CurrentMap = -1;
         public static int MyIndex = -1;
         public static int MyX = 0;

@@ -16,23 +16,32 @@ namespace Intersect_Server.Classes
 {
 	public class Client
 	{
-		public int clientIndex;
-		public int entityIndex;
-		public bool isConnected;
-		private List<byte> myBuffer = new List<byte> ();
-		public string myName = "";
-		public long connectionTimeout;
-		public long timeoutLength = 10;
-		public long pingTime = 0;
-		public bool isEditor;
-        public string packets = "";
-        public int power = 0;
-        public int id = -1;
+
+        //Game Incorperation Variables
+		public int ClientIndex;
+		public int EntityIndex;
+        public Player Entity;
+
+        //Ping Values
+        public long ConnectionTimeout;
+        public long TimeoutLength = 10;
+		public long PingTime = 0;
+
+        //Client Properties
+		public bool IsEditor;
+        public int Power = 0;
+
+        //Database ID
+        public int Id = -1;
+
+        //Network Variables
         private byte[] readBuff = new byte[1];
-        public long connectTime;
-        public TcpClient mySocket;
-        public NetworkStream myStream;
+        private long connectTime;
+        private TcpClient mySocket;
+        private NetworkStream myStream;
         private PacketHandler packetHandler = new PacketHandler();
+        private List<byte> myBuffer = new List<byte>();
+        public bool isConnected;
 
 
         public Client(int myIndex, int entIndex, TcpClient  socket)
@@ -44,11 +53,12 @@ namespace Intersect_Server.Classes
             readBuff = new byte[mySocket.ReceiveBufferSize];
             connectTime = Environment.TickCount;
             myStream.BeginRead(readBuff, 0, mySocket.ReceiveBufferSize, OnReceiveData, connectTime);
-			clientIndex = myIndex;
-			entityIndex = entIndex;
+			ClientIndex = myIndex;
+			EntityIndex = entIndex;
+            Entity = (Player)Globals.Entities[EntityIndex];
 			PacketSender.SendPing (this);
 			isConnected = true;
-			connectionTimeout = -1;
+			ConnectionTimeout = -1;
 
 		}
 
@@ -115,14 +125,15 @@ namespace Intersect_Server.Classes
                 try
                 {
                     Console.WriteLine("Client disconnected.");
-                    if (entityIndex > -1)
+                    if (EntityIndex > -1 && Globals.Entities[EntityIndex] != null)
                     {
-                        Database.SavePlayer(Globals.Clients[clientIndex]);
-                        PacketSender.SendEntityLeave(entityIndex,0);
-                        if (Globals.Entities[entityIndex] == null) { return; }
-                        PacketSender.SendGlobalMsg(Globals.Entities[entityIndex].MyName + " has left the Intersect engine");
-                        Globals.Clients[clientIndex] = null;
-                        Globals.Entities[entityIndex] = null;
+                        Database.SavePlayer(Globals.Clients[ClientIndex]);
+                        PacketSender.SendEntityLeave(EntityIndex,0,Globals.Entities[EntityIndex].CurrentMap);
+                        if (Globals.Entities[EntityIndex] == null) { return; }
+                        PacketSender.SendGlobalMsg(Globals.Entities[EntityIndex].MyName + " has left the Intersect engine");
+                        Globals.Clients[ClientIndex] = null;
+                        Globals.Entities[EntityIndex] = null;
+                        Entity = null;
 
                     }
                 }
@@ -140,12 +151,12 @@ namespace Intersect_Server.Classes
 			do {
 				try {
 					if (IsConnected(mySocket)) {
-						if (connectionTimeout > -1 && connectionTimeout < Environment.TickCount) {
+						if (ConnectionTimeout > -1 && ConnectionTimeout < Environment.TickCount) {
 							//Disconnect
 							HandleDisconnect ();
 							return;
 						} else {
-							if (pingTime < Environment.TickCount) {
+							if (PingTime < Environment.TickCount) {
 								PacketSender.SendPing (this);
 							}
 						}

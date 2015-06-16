@@ -75,7 +75,8 @@ namespace Intersect_Client.Classes.UI.Game
         //Methods
         public void Update()
         {
-
+            _inventoryWindow.Update();
+            _spellsWindow.Update();
         }
 
 

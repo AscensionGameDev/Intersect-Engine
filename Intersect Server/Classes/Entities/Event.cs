@@ -97,7 +97,7 @@ namespace Intersect_Server.Classes
         {
             MyIndex = index;
             MyClient = client;
-            MyPlayer = (Player)Globals.Entities[MyClient.entityIndex];
+            MyPlayer = (Player)Globals.Entities[MyClient.EntityIndex];
         }
 
         public void Update()

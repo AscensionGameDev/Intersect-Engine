@@ -67,6 +67,8 @@ namespace Intersect_Editor.Classes
             OpenAnimationEditor,
             AnimationData,
             AnimationList,
+            MapItems,
+            MapItemUpdate,
         }
 
         public enum Stats

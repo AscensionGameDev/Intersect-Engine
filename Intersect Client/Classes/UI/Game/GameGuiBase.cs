@@ -11,12 +11,12 @@ namespace Intersect_Client.Classes
 {
     public class GameGuiBase
     {
-        private readonly Canvas _gameCanvas;
+        public Canvas GameCanvas;
         public bool FocusChat;
 
         public GameGuiBase(Canvas myCanvas)
         {
-            _gameCanvas = myCanvas;
+            GameCanvas = myCanvas;
             InitGameGui();
         }
 
@@ -27,23 +27,25 @@ namespace Intersect_Client.Classes
 
         public void InitGameGui()
         {
-            _eventWindow = new EventWindow(_gameCanvas);
-            _chatBox = new Chatbox(_gameCanvas);
-            _gameMenu = new GameMenu(_gameCanvas);
-            _playerBox = new PlayerBox(_gameCanvas);
+            _eventWindow = new EventWindow(GameCanvas);
+            _chatBox = new Chatbox(GameCanvas);
+            _gameMenu = new GameMenu(GameCanvas);
+            _playerBox = new PlayerBox(GameCanvas);
         }
 
         public void Draw()
         {
             _eventWindow.Update();
             _chatBox.Update();
+            _gameMenu.Update();
+            _playerBox.Update();
             if (FocusChat)
             {
                 _chatBox.Focus();
                 FocusChat = false;
             }
 
-            _gameCanvas.RenderCanvas();
+            GameCanvas.RenderCanvas();
         }
     }
 }

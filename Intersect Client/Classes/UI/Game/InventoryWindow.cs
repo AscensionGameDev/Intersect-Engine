@@ -1,5 +1,6 @@
 ﻿using Gwen;
 using Gwen.Control;
+using SFML.Window;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,16 +15,15 @@ namespace Intersect_Client.Classes.UI.Game
         private ScrollControl _itemContainer;
 
         //Item List
-        private int ItemXPadding = 4;
-        private int ItemYPadding = 4;
-        private List<ImagePanel> _items = new List<ImagePanel>();
+        public List<InventoryItem> Items = new List<InventoryItem>();
+        private List<Label> _values = new List<Label>();
 
         //Init
         public InventoryWindow(Canvas _gameCanvas)
         {
             _inventoryWindow = new WindowControl(_gameCanvas, "Inventory");
             _inventoryWindow.SetSize(200, 300);
-            _inventoryWindow.SetPosition(Graphics.ScreenWidth -210, Graphics.ScreenHeight - 500);
+            _inventoryWindow.SetPosition(Graphics.ScreenWidth - 210, Graphics.ScreenHeight - 500);
             _inventoryWindow.DisableResizing();
             _inventoryWindow.Margin = Margin.Zero;
             _inventoryWindow.Padding = Padding.Zero;
@@ -39,31 +39,70 @@ namespace Intersect_Client.Classes.UI.Game
         //Methods
         public void Update()
         {
+            if (_inventoryWindow.IsHidden == true) { return; }
+            for (int i = 0; i < Constants.MaxInvItems; i++)
+            {
+                    if (Globals.Me.Inventory[i].ItemNum > -1)
+                    {
+                        Items[i].pnl.IsHidden = false;
 
+                        if (Items[i].pnl.ImageName != "Resources/Items/" + Globals.GameItems[Globals.Me.Inventory[i].ItemNum].Pic)
+                        {
+                            Items[i].pnl.ImageName = "Resources/Items/" + Globals.GameItems[Globals.Me.Inventory[i].ItemNum].Pic;
+                        }
+                        
+                        if (Globals.GameItems[Globals.Me.Inventory[i].ItemNum].Type == (int)Enums.ItemTypes.Consumable || //Allow Stacking on Currency, Consumable, Spell, and item types of none.
+                            Globals.GameItems[Globals.Me.Inventory[i].ItemNum].Type == (int)Enums.ItemTypes.Currency ||
+                            Globals.GameItems[Globals.Me.Inventory[i].ItemNum].Type == (int)Enums.ItemTypes.None ||
+                            Globals.GameItems[Globals.Me.Inventory[i].ItemNum].Type == (int)Enums.ItemTypes.Spell)
+                        {
+                            _values[i].IsHidden = false;
+                            _values[i].Text = Globals.Me.Inventory[i].ItemVal.ToString();
+                        }
+                        else
+                        {
+                            _values[i].IsHidden = true;
+                        }
+
+                        if (Items[i].IsDragging)
+                        {
+                            Items[i].pnl.IsHidden = true;
+                            _values[i].IsHidden = true;
+                        }
+                        Items[i].Update();
+                    }
+                    else
+                    {
+                        Items[i].pnl.IsHidden = true;
+                        _values[i].IsHidden = true;
+                    }
+            }
         }
         private void InitItemContainer()
         {
-            int x = ItemXPadding;
-            int y = ItemYPadding;
 
             for (int i = 0; i < Constants.MaxInvItems; i++)
             {
-                _items.Add(new ImagePanel(_itemContainer) { ImageName = "Resources/Items/1.png" });
-                _items[i].SetSize(32, 32);
-                _items[i].SetPosition(x, y);
-                _items[i].Clicked += InventoryWindow_Clicked;
-                x += 32 + ItemXPadding;
-                if (x + 32 + 4 > _itemContainer.Width)
-                {
-                    x = ItemXPadding;
-                    y = y + 32 + ItemYPadding;
-                }
+                Items.Add(new InventoryItem(this, i));
+                Items[i].pnl = new ImagePanel(_itemContainer);
+                Items[i].pnl.SetSize(32, 32);
+                Items[i].pnl.SetPosition((i % (_itemContainer.Width / (32 + Constants.ItemXPadding))) * (32 + Constants.ItemXPadding) + Constants.ItemXPadding, (i / (_itemContainer.Width / (32 + Constants.ItemXPadding))) * (32 + Constants.ItemYPadding) + Constants.ItemYPadding);
+                Items[i].pnl.Clicked += InventoryWindow_Clicked;
+                Items[i].pnl.IsHidden = true;
+                Items[i].Setup();
+
+                _values.Add(new Label(_itemContainer));
+                _values[i].Text = "";
+                _values[i].SetPosition((i % (_itemContainer.Width / (32 + Constants.ItemXPadding))) * (32 + Constants.ItemXPadding) + Constants.ItemXPadding, (i / (_itemContainer.Width / (32 + Constants.ItemXPadding))) * (32 + Constants.ItemYPadding) + Constants.ItemYPadding + 24);
+                _values[i].TextColor = System.Drawing.Color.Black;
+                _values[i].MakeColorDark();
+                _values[i].IsHidden = true;
             }
         }
 
         void InventoryWindow_Clicked(Base sender, ClickedEventArgs arguments)
         {
-            
+
         }
         public void Show()
         {
@@ -76,6 +115,134 @@ namespace Intersect_Client.Classes.UI.Game
         public void Hide()
         {
             _inventoryWindow.IsHidden = true;
+        }
+        public System.Drawing.Rectangle RenderBounds()
+        {
+            System.Drawing.Rectangle rect = new System.Drawing.Rectangle();
+            rect.X = _inventoryWindow.LocalPosToCanvas(new System.Drawing.Point(0, 0)).X - Constants.ItemXPadding /2;
+            rect.Y = _inventoryWindow.LocalPosToCanvas(new System.Drawing.Point(0, 0)).Y - Constants.ItemYPadding / 2;
+            rect.Width = _inventoryWindow.Width + Constants.ItemXPadding;
+            rect.Height = _inventoryWindow.Height + Constants.ItemYPadding;
+            return rect;
+        }
+    }
+
+    public class InventoryItem
+    {
+        public ImagePanel pnl;
+        private bool MouseOver = false;
+        private int MouseX = -1;
+        private int MouseY = -1;
+        private bool CanDrag = false;
+        private Draggable dragIcon;
+        public bool IsDragging;
+        private int myindex;
+
+        //Drag/Drop References
+        private InventoryWindow _inventoryWindow;
+
+        public InventoryItem(InventoryWindow inventoryWindow, int index)
+        {
+            _inventoryWindow = inventoryWindow;
+            myindex = index;
+        }
+
+        public void Setup()
+        {
+            pnl.HoverEnter += pnl_HoverEnter;
+            pnl.HoverLeave += pnl_HoverLeave;
+        }
+
+        public System.Drawing.Rectangle RenderBounds()
+        {
+            System.Drawing.Rectangle rect = new System.Drawing.Rectangle();
+            rect.X = pnl.LocalPosToCanvas(new System.Drawing.Point(0, 0)).X;
+            rect.Y = pnl.LocalPosToCanvas(new System.Drawing.Point(0, 0)).Y;
+            rect.Width = pnl.Width;
+            rect.Height = pnl.Height;
+            return rect;
+        }
+
+        void pnl_HoverLeave(Base sender, EventArgs arguments)
+        {
+            MouseOver = false;
+            MouseX = -1;
+            MouseY = -1;
+        }
+
+        void pnl_HoverEnter(Base sender, EventArgs arguments)
+        {
+            MouseOver = true;
+            CanDrag = true;
+            if (Mouse.IsButtonPressed(Mouse.Button.Left)) { CanDrag = false; }
+        }
+
+        public void Update()
+        {
+            if (!IsDragging)
+            {
+                if (MouseOver)
+                {
+                    if (!Mouse.IsButtonPressed(Mouse.Button.Left))
+                    {
+                        CanDrag = true;
+                        MouseX = -1;
+                        MouseY = -1;
+                    }
+                    else
+                    {
+                        if (CanDrag)
+                        {
+                            if (MouseX == -1 || MouseY == -1)
+                            {
+                                MouseX = Gwen.Input.InputHandler.MousePosition.X - pnl.LocalPosToCanvas(new System.Drawing.Point(0, 0)).X;
+                                MouseY = Gwen.Input.InputHandler.MousePosition.Y - pnl.LocalPosToCanvas(new System.Drawing.Point(0, 0)).Y;
+
+                            }
+                            else
+                            {
+                                int xdiff = MouseX - (Gwen.Input.InputHandler.MousePosition.X - pnl.LocalPosToCanvas(new System.Drawing.Point(0, 0)).X);
+                                int ydiff = MouseY - (Gwen.Input.InputHandler.MousePosition.Y - pnl.LocalPosToCanvas(new System.Drawing.Point(0, 0)).Y);
+                                if (Math.Sqrt(Math.Pow(xdiff, 2) + Math.Pow(ydiff, 2)) > 5)
+                                {
+                                    IsDragging = true;
+                                    dragIcon = new Draggable(pnl.LocalPosToCanvas(new System.Drawing.Point(0, 0)).X + MouseX, pnl.LocalPosToCanvas(new System.Drawing.Point(0, 0)).X + MouseY, pnl.ImageName);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            else
+            {
+                if (dragIcon.Update())
+                {
+                    //Drug the item and now we stopped
+                    IsDragging = false;
+                    System.Drawing.Point dragPoint = new System.Drawing.Point(dragIcon.x, dragIcon.y);
+
+                    //So we picked up an item and then dropped it. Lets see where we dropped it to.
+                    //Check inventory first.
+                    if (_inventoryWindow.RenderBounds().Contains(dragPoint))
+                    {
+                        for (int i = 0; i < Constants.MaxInvItems; i++)
+                        {
+                            if (_inventoryWindow.Items[i].RenderBounds().Contains(dragPoint))
+                            {
+                                if (myindex != i)
+                                {
+                                    //Try to swap....
+                                    PacketSender.SendSwapItems(i, myindex);
+                                    Globals.Me.SwapItems(i, myindex);
+                                }
+                                break;
+                            }
+                        }
+                    }
+
+                    dragIcon.Dispose();
+                }
+            }
         }
     }
 }

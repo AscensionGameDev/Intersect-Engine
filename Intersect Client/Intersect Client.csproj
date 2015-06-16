@@ -90,10 +90,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Classes\Game Objects\AnimationStruct.cs" />
+    <Compile Include="Classes\Items\ItemInstance.cs" />
     <Compile Include="Classes\Misc\FieldChecking.cs" />
     <Compile Include="Classes\Game Objects\ItemStruct.cs" />
     <Compile Include="Classes\Game Objects\NpcStruct.cs" />
     <Compile Include="Classes\Game Objects\SpellStruct.cs" />
+    <Compile Include="Classes\UI\Game\Draggable.cs" />
     <Compile Include="Classes\UI\Game\GameGuiBase.cs" />
     <Compile Include="Classes\Misc\ByteBuffer.cs" />
     <Compile Include="Classes\General\Constants.cs" />
