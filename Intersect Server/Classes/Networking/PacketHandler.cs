@@ -93,6 +93,21 @@ namespace Intersect_Server.Classes
                 case Enums.ClientPackets.SwapItems:
                     HandleSwapItems(client, packet);
                     break;
+                case Enums.ClientPackets.DropItems:
+                    HandleDropItems(client, packet);
+                    break;
+                case Enums.ClientPackets.UseItem:
+                    HandleUseItem(client, packet);
+                    break;
+                case Enums.ClientPackets.SwapSpells:
+                    HandleSwapSpells(client, packet);
+                    break;
+                case Enums.ClientPackets.ForgetSpell:
+                    HandleForgetSpell(client, packet);
+                    break;
+                case Enums.ClientPackets.UseSpell:
+                    HandleUseSpell(client, packet);
+                    break;
                 default:
                     Console.WriteLine(@"Non implemented packet received: " + packetHeader);
                     break;
@@ -544,6 +559,53 @@ namespace Intersect_Server.Classes
             var item1 = bf.ReadInteger();
             var item2 = bf.ReadInteger();
             client.Entity.SwapItems(item1, item2);
+            bf.Dispose();
+        }
+
+        private static void HandleDropItems(Client client, byte[] packet)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteBytes(packet);
+            var slot = bf.ReadInteger();
+            var amount = bf.ReadInteger();
+            client.Entity.DropItems(slot, amount);
+            bf.Dispose();
+        }
+
+        private static void HandleUseItem(Client client, byte[] packet)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteBytes(packet);
+            var slot = bf.ReadInteger();
+            client.Entity.UseItem(slot);
+            bf.Dispose();
+        }
+
+        private static void HandleSwapSpells(Client client, byte[] packet)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteBytes(packet);
+            var spell1 = bf.ReadInteger();
+            var spell2 = bf.ReadInteger();
+            client.Entity.SwapSpells(spell1, spell2);
+            bf.Dispose();
+        }
+
+        private static void HandleForgetSpell(Client client, byte[] packet)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteBytes(packet);
+            var slot = bf.ReadInteger();
+            client.Entity.ForgetSpell(slot);
+            bf.Dispose();
+        }
+
+        private static void HandleUseSpell(Client client, byte[] packet)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteBytes(packet);
+            var slot = bf.ReadInteger();
+            client.Entity.UseSpell(slot);
             bf.Dispose();
         }
     }

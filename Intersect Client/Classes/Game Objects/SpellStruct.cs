@@ -9,6 +9,7 @@ namespace Intersect_Client.Classes.Spells
     {
         //Core Info
         public string Name = "";
+        public string Desc = "";
         public byte Type = 0;
         public int Cost = 0;
         public string Pic = "";
@@ -55,6 +56,7 @@ namespace Intersect_Client.Classes.Spells
             var myBuffer = new ByteBuffer();
             myBuffer.WriteBytes(packet);
             Name = myBuffer.ReadString();
+            Desc = myBuffer.ReadString();
             Type = myBuffer.ReadByte();
             Cost = myBuffer.ReadInteger();
             Pic = myBuffer.ReadString();

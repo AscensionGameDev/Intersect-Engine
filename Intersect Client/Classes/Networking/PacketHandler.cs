@@ -87,6 +87,9 @@ namespace Intersect_Client.Classes
                 case Enums.ServerPackets.InventoryUpdate:
                     HandleInventoryUpdate(bf.ReadBytes(bf.Length()));
                     break;
+                case Enums.ServerPackets.SpellUpdate:
+                    HandleSpellUpdate(bf.ReadBytes(bf.Length()));
+                    break;
                 default:
                     Console.WriteLine(@"Non implemented packet received: " + packetHeader);
                     break;
@@ -528,6 +531,15 @@ namespace Intersect_Client.Classes
             bf.WriteBytes(packet);
             int slot = bf.ReadInteger();
             Globals.Me.Inventory[slot].Load(bf);
+            bf.Dispose();
+        }
+
+        private static void HandleSpellUpdate(byte[] packet)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteBytes(packet);
+            int slot = bf.ReadInteger();
+            Globals.Me.Spells[slot].Load(bf);
             bf.Dispose();
         }
 

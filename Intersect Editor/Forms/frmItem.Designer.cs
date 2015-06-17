@@ -37,6 +37,8 @@ namespace Intersect_Editor.Forms
             this.btnSave = new System.Windows.Forms.Button();
             this.lstItems = new System.Windows.Forms.ListBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.label6 = new System.Windows.Forms.Label();
+            this.txtDesc = new System.Windows.Forms.TextBox();
             this.cmbPic = new System.Windows.Forms.ComboBox();
             this.scrlAnim = new System.Windows.Forms.HScrollBar();
             this.lblAnim = new System.Windows.Forms.Label();
@@ -159,6 +161,8 @@ namespace Intersect_Editor.Forms
             // 
             // groupBox2
             // 
+            this.groupBox2.Controls.Add(this.label6);
+            this.groupBox2.Controls.Add(this.txtDesc);
             this.groupBox2.Controls.Add(this.cmbPic);
             this.groupBox2.Controls.Add(this.scrlAnim);
             this.groupBox2.Controls.Add(this.lblAnim);
@@ -177,13 +181,30 @@ namespace Intersect_Editor.Forms
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "General";
             // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(19, 74);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(35, 13);
+            this.label6.TabIndex = 13;
+            this.label6.Text = "Desc:";
+            // 
+            // txtDesc
+            // 
+            this.txtDesc.Location = new System.Drawing.Point(60, 72);
+            this.txtDesc.Name = "txtDesc";
+            this.txtDesc.Size = new System.Drawing.Size(135, 20);
+            this.txtDesc.TabIndex = 12;
+            this.txtDesc.TextChanged += new System.EventHandler(this.txtDesc_TextChanged);
+            // 
             // cmbPic
             // 
             this.cmbPic.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbPic.FormattingEnabled = true;
             this.cmbPic.Items.AddRange(new object[] {
             "None"});
-            this.cmbPic.Location = new System.Drawing.Point(60, 90);
+            this.cmbPic.Location = new System.Drawing.Point(60, 119);
             this.cmbPic.Name = "cmbPic";
             this.cmbPic.Size = new System.Drawing.Size(135, 21);
             this.cmbPic.TabIndex = 11;
@@ -201,7 +222,7 @@ namespace Intersect_Editor.Forms
             // lblAnim
             // 
             this.lblAnim.AutoSize = true;
-            this.lblAnim.Location = new System.Drawing.Point(16, 164);
+            this.lblAnim.Location = new System.Drawing.Point(16, 177);
             this.lblAnim.Name = "lblAnim";
             this.lblAnim.Size = new System.Drawing.Size(94, 13);
             this.lblAnim.TabIndex = 9;
@@ -209,7 +230,7 @@ namespace Intersect_Editor.Forms
             // 
             // scrlPrice
             // 
-            this.scrlPrice.Location = new System.Drawing.Point(19, 136);
+            this.scrlPrice.Location = new System.Drawing.Point(19, 159);
             this.scrlPrice.Maximum = 1000;
             this.scrlPrice.Name = "scrlPrice";
             this.scrlPrice.Size = new System.Drawing.Size(176, 18);
@@ -219,7 +240,7 @@ namespace Intersect_Editor.Forms
             // lblPrice
             // 
             this.lblPrice.AutoSize = true;
-            this.lblPrice.Location = new System.Drawing.Point(16, 114);
+            this.lblPrice.Location = new System.Drawing.Point(16, 139);
             this.lblPrice.Name = "lblPrice";
             this.lblPrice.Size = new System.Drawing.Size(43, 13);
             this.lblPrice.TabIndex = 7;
@@ -228,7 +249,7 @@ namespace Intersect_Editor.Forms
             // lblPic
             // 
             this.lblPic.AutoSize = true;
-            this.lblPic.Location = new System.Drawing.Point(57, 74);
+            this.lblPic.Location = new System.Drawing.Point(57, 103);
             this.lblPic.Name = "lblPic";
             this.lblPic.Size = new System.Drawing.Size(25, 13);
             this.lblPic.TabIndex = 6;
@@ -236,7 +257,7 @@ namespace Intersect_Editor.Forms
             // 
             // picItem
             // 
-            this.picItem.Location = new System.Drawing.Point(15, 72);
+            this.picItem.Location = new System.Drawing.Point(15, 101);
             this.picItem.Name = "picItem";
             this.picItem.Size = new System.Drawing.Size(32, 32);
             this.picItem.TabIndex = 4;
@@ -660,7 +681,6 @@ namespace Intersect_Editor.Forms
             // 
             // gbConsumable
             // 
-            this.gbConsumable.Controls.Add(this.gbSpell);
             this.gbConsumable.Controls.Add(this.label4);
             this.gbConsumable.Controls.Add(this.cmbConsume);
             this.gbConsumable.Controls.Add(this.scrlInterval);
@@ -677,7 +697,7 @@ namespace Intersect_Editor.Forms
             // 
             this.gbSpell.Controls.Add(this.scrlSpell);
             this.gbSpell.Controls.Add(this.lblSpell);
-            this.gbSpell.Location = new System.Drawing.Point(0, 0);
+            this.gbSpell.Location = new System.Drawing.Point(225, 233);
             this.gbSpell.Name = "gbSpell";
             this.gbSpell.Size = new System.Drawing.Size(217, 67);
             this.gbSpell.TabIndex = 13;
@@ -692,6 +712,7 @@ namespace Intersect_Editor.Forms
             this.scrlSpell.Name = "scrlSpell";
             this.scrlSpell.Size = new System.Drawing.Size(176, 18);
             this.scrlSpell.TabIndex = 12;
+            this.scrlSpell.Scroll += new System.Windows.Forms.ScrollEventHandler(this.scrlSpell_Scroll);
             this.scrlSpell.ValueChanged += new System.EventHandler(this.scrlSpell_Scroll);
             // 
             // lblSpell
@@ -750,6 +771,7 @@ namespace Intersect_Editor.Forms
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(677, 450);
             this.ControlBox = false;
+            this.Controls.Add(this.gbSpell);
             this.Controls.Add(this.gbConsumable);
             this.Controls.Add(this.groupBox3);
             this.Controls.Add(this.groupBox2);
@@ -840,6 +862,8 @@ namespace Intersect_Editor.Forms
         private Label lblPic;
         private ComboBox cmbPaperdoll;
         private Label label5;
+        private Label label6;
+        private TextBox txtDesc;
 
     }
 }

@@ -3,6 +3,7 @@
     public class ItemStruct
     {
         public string Name;
+        public string Desc;
         public int Type;
         public string Pic;
         public int Price;
@@ -36,6 +37,7 @@
         public void LoadItem(ByteBuffer myBuffer)
         {
             Name = myBuffer.ReadString();
+            Desc = myBuffer.ReadString();
             Type = myBuffer.ReadInteger();
             Pic = myBuffer.ReadString();
             Price = myBuffer.ReadInteger();
@@ -64,6 +66,7 @@
         {
             var myBuffer = new ByteBuffer();
             myBuffer.WriteString(Name);
+            myBuffer.WriteString(Desc);
             myBuffer.WriteInteger(Type);
             myBuffer.WriteString(Pic);
             myBuffer.WriteInteger(Price);

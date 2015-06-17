@@ -51,13 +51,14 @@ namespace Intersect_Editor.Forms
             _editorIndex = lstSpells.SelectedIndex;
 
             txtName.Text = Globals.GameSpells[_editorIndex].Name;
+            txtDesc.Text = Globals.GameSpells[_editorIndex].Desc;
             cmbType.SelectedIndex = Globals.GameSpells[_editorIndex].Type;
             
             scrlCastDuration.Value = Globals.GameSpells[_editorIndex].CastDuration;
-            lblCastDuration.Text = "Cast Duration (seconds): " + ((double)scrlCastDuration.Value / 10);
+            lblCastDuration.Text = "Cast Time (secs): " + ((double)scrlCastDuration.Value / 10);
 
             scrlCooldownDuration.Value = Globals.GameSpells[_editorIndex].CooldownDuration;
-            lblCooldownDuration.Text = "Cooldown Duration (seconds): " + ((double)scrlCooldownDuration.Value / 10);
+            lblCooldownDuration.Text = "Cooldown (secs): " + ((double)scrlCooldownDuration.Value / 10);
 
             scrlCastAnimation.Value = Globals.GameSpells[_editorIndex].CastAnimation;
             if (scrlCastAnimation.Value == -1)
@@ -193,13 +194,13 @@ namespace Intersect_Editor.Forms
         private void scrlCastDuration_Scroll(object sender, ScrollEventArgs e)
         {
             Globals.GameSpells[_editorIndex].CastDuration = scrlCastDuration.Value;
-            lblCastDuration.Text = "Cast Duration (seconds): " + ((double)scrlCastDuration.Value / 10);
+            lblCastDuration.Text = "Cast Time (secs): " + ((double)scrlCastDuration.Value / 10);
         }
 
         private void scrlCooldownDuration_Scroll(object sender, ScrollEventArgs e)
         {
             Globals.GameSpells[_editorIndex].CooldownDuration = scrlCooldownDuration.Value;
-            lblCooldownDuration.Text = "Cooldown Duration (seconds): " + ((double)scrlCooldownDuration.Value / 10);
+            lblCooldownDuration.Text = "Cooldown (secs): " + ((double)scrlCooldownDuration.Value / 10);
         }
 
         private void scrlCastAnimation_Scroll(object sender, ScrollEventArgs e)
@@ -416,6 +417,11 @@ namespace Intersect_Editor.Forms
 
             Hide();
             Dispose();
+        }
+
+        private void txtDesc_TextChanged(object sender, EventArgs e)
+        {
+            Globals.GameSpells[_editorIndex].Desc = txtDesc.Text;
         }
 
     }

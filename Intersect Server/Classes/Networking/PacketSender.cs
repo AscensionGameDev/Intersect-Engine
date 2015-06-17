@@ -65,6 +65,7 @@ namespace Intersect_Server.Classes
             if (client.EntityIndex == sendIndex)
             {
                 PacketSender.SendInventory(client);
+                PacketSender.SendPlayerSpells(client);
             }
         }
 
@@ -202,6 +203,15 @@ namespace Intersect_Server.Classes
             bf.WriteLong((int)Enums.ServerPackets.ChatMessage);
             bf.WriteString(message);
             SendDataToAll(bf.ToArray());
+            bf.Dispose();
+        }
+
+        public static void SendProximityMsg(string message, int centerMap)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteLong((int)Enums.ServerPackets.ChatMessage);
+            bf.WriteString(message);
+            SendDataToProximity(centerMap, bf.ToArray());
             bf.Dispose();
         }
 
@@ -590,6 +600,22 @@ namespace Intersect_Server.Classes
             bf.WriteLong((int)Enums.ServerPackets.InventoryUpdate);
             bf.WriteInteger(slot);
             bf.WriteBytes(client.Entity.Inventory[slot].Data());
+            SendDataTo(client, bf.ToArray());
+            bf.Dispose();
+        }
+        public static void SendPlayerSpells(Client client)
+        {
+            for (int i = 0; i < Constants.MaxPlayerSkills; i++)
+            {
+                SendPlayerSpellUpdate(client, i);
+            }
+        }
+        public static void SendPlayerSpellUpdate(Client client, int slot)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteLong((int)Enums.ServerPackets.SpellUpdate);
+            bf.WriteInteger(slot);
+            bf.WriteBytes(client.Entity.Spells[slot].Data());
             SendDataTo(client, bf.ToArray());
             bf.Dispose();
         }

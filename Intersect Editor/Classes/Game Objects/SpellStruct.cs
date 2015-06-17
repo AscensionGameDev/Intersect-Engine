@@ -9,6 +9,7 @@ namespace Intersect_Editor.Classes
     {
         //Core Info
         public string Name = "";
+        public string Desc = "";
         public byte Type = 0;
         public int Cost = 0;
         public string Pic = "";
@@ -55,6 +56,7 @@ namespace Intersect_Editor.Classes
             var myBuffer = new ByteBuffer();
             myBuffer.WriteBytes(packet);
             Name = myBuffer.ReadString();
+            Desc = myBuffer.ReadString();
             Type = myBuffer.ReadByte();
             Cost = myBuffer.ReadInteger();
             Pic = myBuffer.ReadString();
@@ -102,6 +104,7 @@ namespace Intersect_Editor.Classes
         {
             var myBuffer = new ByteBuffer();
             myBuffer.WriteString(Name);
+            myBuffer.WriteString(Desc);
             myBuffer.WriteByte(Type);
             myBuffer.WriteInteger(Cost);
             myBuffer.WriteString(Pic);

@@ -5,6 +5,7 @@ namespace Intersect_Server.Classes
     public class ItemStruct
     {
         public string Name = "";
+        public string Desc = "";
         public int Type;
         public string Pic = "";
         public int Price;
@@ -35,6 +36,7 @@ namespace Intersect_Server.Classes
             var myBuffer = new ByteBuffer();
             myBuffer.WriteBytes(data);
             Name = myBuffer.ReadString();
+            Desc = myBuffer.ReadString();
             Type = myBuffer.ReadInteger();
             Pic = myBuffer.ReadString();
             Price = myBuffer.ReadInteger();
@@ -63,6 +65,7 @@ namespace Intersect_Server.Classes
         {
             var myBuffer = new ByteBuffer();
             myBuffer.WriteString(Name);
+            myBuffer.WriteString(Desc);
             myBuffer.WriteInteger(Type);
             myBuffer.WriteString(Pic);
             myBuffer.WriteInteger(Price);

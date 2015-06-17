@@ -102,6 +102,8 @@
             this.txtHPCost = new System.Windows.Forms.TextBox();
             this.label3 = new System.Windows.Forms.Label();
             this.label5 = new System.Windows.Forms.Label();
+            this.label6 = new System.Windows.Forms.Label();
+            this.txtDesc = new System.Windows.Forms.TextBox();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.picSpell)).BeginInit();
@@ -168,15 +170,13 @@
             // 
             // groupBox2
             // 
+            this.groupBox2.Controls.Add(this.label6);
+            this.groupBox2.Controls.Add(this.txtDesc);
             this.groupBox2.Controls.Add(this.scrlHitAnimation);
             this.groupBox2.Controls.Add(this.lblHitAnimation);
             this.groupBox2.Controls.Add(this.scrlCastAnimation);
             this.groupBox2.Controls.Add(this.lblCastAnimation);
-            this.groupBox2.Controls.Add(this.scrlCooldownDuration);
-            this.groupBox2.Controls.Add(this.lblCooldownDuration);
             this.groupBox2.Controls.Add(this.cmbSprite);
-            this.groupBox2.Controls.Add(this.scrlCastDuration);
-            this.groupBox2.Controls.Add(this.lblCastDuration);
             this.groupBox2.Controls.Add(this.lblPic);
             this.groupBox2.Controls.Add(this.picSpell);
             this.groupBox2.Controls.Add(this.label2);
@@ -235,21 +235,21 @@
             // scrlCooldownDuration
             // 
             this.scrlCooldownDuration.LargeChange = 1;
-            this.scrlCooldownDuration.Location = new System.Drawing.Point(6, 163);
+            this.scrlCooldownDuration.Location = new System.Drawing.Point(7, 140);
             this.scrlCooldownDuration.Maximum = 6000;
             this.scrlCooldownDuration.Name = "scrlCooldownDuration";
-            this.scrlCooldownDuration.Size = new System.Drawing.Size(186, 18);
+            this.scrlCooldownDuration.Size = new System.Drawing.Size(141, 18);
             this.scrlCooldownDuration.TabIndex = 13;
             this.scrlCooldownDuration.Scroll += new System.Windows.Forms.ScrollEventHandler(this.scrlCooldownDuration_Scroll);
             // 
             // lblCooldownDuration
             // 
             this.lblCooldownDuration.AutoSize = true;
-            this.lblCooldownDuration.Location = new System.Drawing.Point(6, 148);
+            this.lblCooldownDuration.Location = new System.Drawing.Point(7, 125);
             this.lblCooldownDuration.Name = "lblCooldownDuration";
-            this.lblCooldownDuration.Size = new System.Drawing.Size(170, 13);
+            this.lblCooldownDuration.Size = new System.Drawing.Size(109, 13);
             this.lblCooldownDuration.TabIndex = 12;
-            this.lblCooldownDuration.Text = "Cooldown Duration (seconds): 0.0 ";
+            this.lblCooldownDuration.Text = "Cooldown (secs): 0.0 ";
             // 
             // cmbSprite
             // 
@@ -266,21 +266,21 @@
             // scrlCastDuration
             // 
             this.scrlCastDuration.LargeChange = 1;
-            this.scrlCastDuration.Location = new System.Drawing.Point(6, 130);
+            this.scrlCastDuration.Location = new System.Drawing.Point(7, 107);
             this.scrlCastDuration.Maximum = 600;
             this.scrlCastDuration.Name = "scrlCastDuration";
-            this.scrlCastDuration.Size = new System.Drawing.Size(186, 18);
+            this.scrlCastDuration.Size = new System.Drawing.Size(141, 18);
             this.scrlCastDuration.TabIndex = 8;
             this.scrlCastDuration.Scroll += new System.Windows.Forms.ScrollEventHandler(this.scrlCastDuration_Scroll);
             // 
             // lblCastDuration
             // 
             this.lblCastDuration.AutoSize = true;
-            this.lblCastDuration.Location = new System.Drawing.Point(6, 117);
+            this.lblCastDuration.Location = new System.Drawing.Point(7, 94);
             this.lblCastDuration.Name = "lblCastDuration";
-            this.lblCastDuration.Size = new System.Drawing.Size(141, 13);
+            this.lblCastDuration.Size = new System.Drawing.Size(106, 13);
             this.lblCastDuration.TabIndex = 7;
-            this.lblCastDuration.Text = "Cast Duration (seconds): 0.0";
+            this.lblCastDuration.Text = "Cast Time (secs): 0.0";
             // 
             // lblPic
             // 
@@ -835,6 +835,10 @@
             this.groupBox4.Controls.Add(this.txtHPCost);
             this.groupBox4.Controls.Add(this.label3);
             this.groupBox4.Controls.Add(this.label5);
+            this.groupBox4.Controls.Add(this.scrlCooldownDuration);
+            this.groupBox4.Controls.Add(this.lblCastDuration);
+            this.groupBox4.Controls.Add(this.lblCooldownDuration);
+            this.groupBox4.Controls.Add(this.scrlCastDuration);
             this.groupBox4.Location = new System.Drawing.Point(509, 273);
             this.groupBox4.Name = "groupBox4";
             this.groupBox4.Size = new System.Drawing.Size(154, 170);
@@ -876,11 +880,29 @@
             this.label5.TabIndex = 22;
             this.label5.Text = "HP Cost:";
             // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(6, 118);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(35, 13);
+            this.label6.TabIndex = 19;
+            this.label6.Text = "Desc:";
+            // 
+            // txtDesc
+            // 
+            this.txtDesc.Location = new System.Drawing.Point(60, 117);
+            this.txtDesc.Multiline = true;
+            this.txtDesc.Name = "txtDesc";
+            this.txtDesc.Size = new System.Drawing.Size(135, 64);
+            this.txtDesc.TabIndex = 18;
+            this.txtDesc.TextChanged += new System.EventHandler(this.txtDesc_TextChanged);
+            // 
             // frmSpell
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(676, 453);
+            this.ClientSize = new System.Drawing.Size(676, 461);
             this.Controls.Add(this.groupBox4);
             this.Controls.Add(this.grpBuffDebuff);
             this.Controls.Add(this.grpTargetInfo);
@@ -987,5 +1009,7 @@
         private System.Windows.Forms.TextBox txtHPCost;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.TextBox txtDesc;
     }
 }

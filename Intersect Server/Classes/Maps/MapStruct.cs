@@ -183,6 +183,28 @@ namespace Intersect_Server.Classes
             }
         }
 
+        public void SpawnItem(int x, int y, ItemInstance item, int amount)
+        {
+            MapItems.Add(new MapItemInstance());
+            MapItems[MapItems.Count - 1].X = x;
+            MapItems[MapItems.Count - 1].Y = y;
+            MapItems[MapItems.Count - 1].ItemNum = item.ItemNum;
+            MapItems[MapItems.Count - 1].DespawnTime = Environment.TickCount + Constants.ItemDespawnTime;
+            if (Globals.GameItems[MapItems[MapItems.Count - 1].ItemNum].Type >= (int)Enums.ItemTypes.Weapon && Globals.GameItems[MapItems[MapItems.Count - 1].ItemNum].Type <= (int)Enums.ItemTypes.Shield)
+            {
+                MapItems[MapItems.Count - 1].ItemVal = 1;
+                for (int i = 0; i < (int)Enums.Stats.StatCount; i++)
+                {
+                    MapItems[MapItems.Count - 1].StatBoost[i] = item.StatBoost[i];
+                }
+            }
+            else
+            {
+                MapItems[MapItems.Count - 1].ItemVal = amount;
+            }
+            PacketSender.SendMapItemUpdate(MyMapNum, MapItems.Count - 1);
+        }
+
         private void SpawnAttributeItem(int x, int y)
         {
             MapItems.Add(new MapItemInstance());

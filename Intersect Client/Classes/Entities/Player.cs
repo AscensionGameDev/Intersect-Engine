@@ -1,4 +1,5 @@
-﻿using SFML.Window;
+﻿using Intersect_Client.Classes.UI.Game;
+using SFML.Window;
 using System;
 namespace Intersect_Client.Classes
 {
@@ -6,6 +7,7 @@ namespace Intersect_Client.Classes
     {
         private long _attackTimer;
         public ItemInstance[] Inventory = new ItemInstance[Constants.MaxInvItems];
+        public SpellInstance[] Spells = new SpellInstance[Constants.MaxPlayerSkills];
 
         public Player()
             : base()
@@ -13,6 +15,10 @@ namespace Intersect_Client.Classes
             for (int i = 0; i < Constants.MaxInvItems; i++)
             {
                 Inventory[i] = new ItemInstance();
+            }
+            for (int i = 0; i < Constants.MaxPlayerSkills; i++)
+            {
+                Spells[i] = new SpellInstance();
             }
         }
 
@@ -36,6 +42,56 @@ namespace Intersect_Client.Classes
             Inventory[item2] = Inventory[item1].Clone();
             Inventory[item1] = tmpInstance.Clone();
         }
+        public void TryDropItem(int index)
+        {
+            if (Inventory[index].ItemNum > -1)
+            {
+                if (Inventory[index].ItemVal > 1)
+                {
+                    InputBox iBox = new InputBox("Drop Item", "How many/much " + Globals.GameItems[Inventory[index].ItemNum].Name + " do you want to drop?", true, DropItemInputBoxOkay, null, index,true);
+                }
+                else
+                {
+                    PacketSender.SendDropItem(index, 1);
+                }
+            }
+        }
+        private void DropItemInputBoxOkay(Object sender, EventArgs e)
+        {
+            int value = (int)((InputBox)sender).Value;
+            if (value > 0)
+            {
+                PacketSender.SendDropItem(((InputBox)sender).Slot, value);
+            }
+        }
+        public void TryUseItem(int index)
+        {
+            PacketSender.SendUseItem(index);
+        }
+
+        //Spell Processing
+        public void SwapSpells(int spell1, int spell2)
+        {
+            SpellInstance tmpInstance = Spells[spell2].Clone();
+            Spells[spell2] = Spells[spell1].Clone();
+            Spells[spell1] = tmpInstance.Clone();
+        }
+        public void TryForgetSpell(int index)
+        {
+            if (Spells[index].SpellNum > -1)
+            {
+                InputBox iBox = new InputBox("Forget Spell", "Are you sure you want to forget " + Globals.GameSpells[Spells[index].SpellNum].Name + "?", true, ForgetSpellInputBoxOkay, null, index,false);
+            }
+        }
+        private void ForgetSpellInputBoxOkay(Object sender, EventArgs e)
+        {
+            PacketSender.SendForgetSpell(((InputBox)sender).Slot);
+        }
+        public void TryUseSpell(int index)
+        {
+            PacketSender.SendUseSpell(index);
+        }
+
 
         //Input Handling
         private void HandleInput()

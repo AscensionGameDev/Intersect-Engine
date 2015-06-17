@@ -70,6 +70,7 @@
     <Compile Include="Classes\Maps\MapGrid.cs" />
     <Compile Include="Classes\Core\ServerLoop.cs" />
     <Compile Include="Classes\Game Objects\SpellStruct.cs" />
+    <Compile Include="Classes\Spells\SpellInstance.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

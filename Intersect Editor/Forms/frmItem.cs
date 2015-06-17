@@ -46,6 +46,7 @@ namespace Intersect_Editor.Forms
             _editorIndex = lstItems.SelectedIndex;
 
             txtName.Text = Globals.GameItems[_editorIndex].Name;
+            txtDesc.Text = Globals.GameItems[_editorIndex].Desc;
             cmbType.SelectedIndex = Globals.GameItems[_editorIndex].Type;
             cmbPic.SelectedIndex = cmbPic.FindString(Globals.GameItems[_editorIndex].Pic);
             scrlPrice.Value = Globals.GameItems[_editorIndex].Price;
@@ -210,7 +211,7 @@ namespace Intersect_Editor.Forms
 
         private void scrlSpell_Scroll(object sender, EventArgs e)
         {
-            lblSpell.Text = @"Spell: " + scrlSpell.Value + @" None";
+            lblSpell.Text = @"Spell: " + scrlSpell.Value + Globals.GameSpells[scrlSpell.Value].Name;
             Globals.GameItems[_editorIndex].Data1 = scrlSpell.Value;
         }
 
@@ -276,6 +277,11 @@ namespace Intersect_Editor.Forms
         private void cmbPaperdoll_SelectedIndexChanged(object sender, EventArgs e)
         {
             Globals.GameItems[_editorIndex].Paperdoll = cmbPaperdoll.Text;
+        }
+
+        private void txtDesc_TextChanged(object sender, EventArgs e)
+        {
+            Globals.GameItems[_editorIndex].Desc = txtDesc.Text;
         }
     }
 }

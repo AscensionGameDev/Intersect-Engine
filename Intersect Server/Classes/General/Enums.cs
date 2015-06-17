@@ -35,6 +35,11 @@ namespace Intersect_Server.Classes
             SaveAnimation,
             PickupItem,
             SwapItems,
+            DropItems,
+            UseItem,
+            SwapSpells,
+            ForgetSpell,
+            UseSpell,
         }
 
         public enum ServerPackets
@@ -72,6 +77,7 @@ namespace Intersect_Server.Classes
             MapItems,
             MapItemUpdate,
             InventoryUpdate,
+            SpellUpdate,
         }
 
         public enum Stats

@@ -8,6 +8,7 @@ namespace Intersect_Client.Classes.Items
     public class ItemStruct
     {
         public string Name = "";
+        public string Desc = "";
         public int Type;
         public string Pic = "";
         public int Price;
@@ -38,6 +39,7 @@ namespace Intersect_Client.Classes.Items
             var myBuffer = new ByteBuffer();
             myBuffer.WriteBytes(data);
             Name = myBuffer.ReadString();
+            Desc = myBuffer.ReadString();
             Type = myBuffer.ReadInteger();
             Pic = myBuffer.ReadString();
             Price = myBuffer.ReadInteger();

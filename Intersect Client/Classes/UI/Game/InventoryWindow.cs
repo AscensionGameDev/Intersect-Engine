@@ -14,6 +14,10 @@ namespace Intersect_Client.Classes.UI.Game
         private WindowControl _inventoryWindow;
         private ScrollControl _itemContainer;
 
+        //Location
+        public int X;
+        public int Y;
+
         //Item List
         public List<InventoryItem> Items = new List<InventoryItem>();
         private List<Label> _values = new List<Label>();
@@ -40,6 +44,8 @@ namespace Intersect_Client.Classes.UI.Game
         public void Update()
         {
             if (_inventoryWindow.IsHidden == true) { return; }
+            X = _inventoryWindow.X;
+            Y = _inventoryWindow.Y;
             for (int i = 0; i < Constants.MaxInvItems; i++)
             {
                     if (Globals.Me.Inventory[i].ItemNum > -1)
@@ -130,6 +136,7 @@ namespace Intersect_Client.Classes.UI.Game
     public class InventoryItem
     {
         public ImagePanel pnl;
+        private ItemDescWindow _descWindow;
         private bool MouseOver = false;
         private int MouseX = -1;
         private int MouseY = -1;
@@ -137,6 +144,7 @@ namespace Intersect_Client.Classes.UI.Game
         private Draggable dragIcon;
         public bool IsDragging;
         private int myindex;
+        private long ClickTime = 0;
 
         //Drag/Drop References
         private InventoryWindow _inventoryWindow;
@@ -151,6 +159,34 @@ namespace Intersect_Client.Classes.UI.Game
         {
             pnl.HoverEnter += pnl_HoverEnter;
             pnl.HoverLeave += pnl_HoverLeave;
+            pnl.RightClicked += pnl_RightClicked;
+            pnl.Clicked += pnl_Clicked;
+        }
+
+        void pnl_Clicked(Base sender, ClickedEventArgs arguments)
+        {
+            ClickTime = Environment.TickCount + 500;
+        }
+
+        void pnl_RightClicked(Base sender, ClickedEventArgs arguments)
+        {
+            Globals.Me.TryDropItem(myindex);
+        }
+
+        void pnl_HoverLeave(Base sender, EventArgs arguments)
+        {
+            MouseOver = false;
+            MouseX = -1;
+            MouseY = -1;
+            _descWindow.Dispose();
+        }
+
+        void pnl_HoverEnter(Base sender, EventArgs arguments)
+        {
+            MouseOver = true;
+            CanDrag = true;
+            if (Mouse.IsButtonPressed(Mouse.Button.Left)) { CanDrag = false; }
+            _descWindow = new ItemDescWindow(Globals.Me.Inventory[myindex].ItemNum,Globals.Me.Inventory[myindex].ItemVal,  _inventoryWindow.X - 180, _inventoryWindow.Y, Globals.Me.Inventory[myindex].StatBoost);
         }
 
         public System.Drawing.Rectangle RenderBounds()
@@ -163,19 +199,7 @@ namespace Intersect_Client.Classes.UI.Game
             return rect;
         }
 
-        void pnl_HoverLeave(Base sender, EventArgs arguments)
-        {
-            MouseOver = false;
-            MouseX = -1;
-            MouseY = -1;
-        }
 
-        void pnl_HoverEnter(Base sender, EventArgs arguments)
-        {
-            MouseOver = true;
-            CanDrag = true;
-            if (Mouse.IsButtonPressed(Mouse.Button.Left)) { CanDrag = false; }
-        }
 
         public void Update()
         {
@@ -188,6 +212,11 @@ namespace Intersect_Client.Classes.UI.Game
                         CanDrag = true;
                         MouseX = -1;
                         MouseY = -1;
+                        if (Environment.TickCount < ClickTime)
+                        {
+                            Globals.Me.TryUseItem(myindex);
+                            ClickTime = 0;
+                        }
                     }
                     else
                     {
@@ -219,15 +248,15 @@ namespace Intersect_Client.Classes.UI.Game
                 {
                     //Drug the item and now we stopped
                     IsDragging = false;
-                    System.Drawing.Point dragPoint = new System.Drawing.Point(dragIcon.x, dragIcon.y);
+                    System.Drawing.Rectangle dragRect = new System.Drawing.Rectangle(dragIcon.x - Constants.ItemXPadding / 2, dragIcon.y - Constants.ItemYPadding / 2, Constants.ItemXPadding, Constants.ItemYPadding);
 
                     //So we picked up an item and then dropped it. Lets see where we dropped it to.
                     //Check inventory first.
-                    if (_inventoryWindow.RenderBounds().Contains(dragPoint))
+                    if (_inventoryWindow.RenderBounds().IntersectsWith(dragRect))
                     {
                         for (int i = 0; i < Constants.MaxInvItems; i++)
                         {
-                            if (_inventoryWindow.Items[i].RenderBounds().Contains(dragPoint))
+                            if (_inventoryWindow.Items[i].RenderBounds().IntersectsWith(dragRect))
                             {
                                 if (myindex != i)
                                 {

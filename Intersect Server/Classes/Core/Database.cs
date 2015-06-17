@@ -130,6 +130,7 @@ namespace Intersect_Server.Classes
                 CheckSwitchesTable(mysqlConn);
                 CheckVariablesTable(mysqlConn);
                 CheckInventoryTable(mysqlConn);
+                CheckSpellsTable(mysqlConn);
 
             }
         }
@@ -237,6 +238,28 @@ namespace Intersect_Server.Classes
             {
                 CheckTableField(mysqlConn, columns, "statbuff" + i, myTable, MySqlFields.m_int);
             }
+        }
+
+        private static void CheckSpellsTable(MySqlConnection mysqlConn)
+        {
+            const string myTable = "spells";
+            var query = "CREATE TABLE IF NOT EXISTS `" + myTable + "` (`id` int(11) NOT NULL)";
+            var cmd = new MySqlCommand(query, mysqlConn);
+            cmd.ExecuteNonQuery();
+            query = "SHOW COLUMNS FROM " + myTable + ";";
+            cmd = new MySqlCommand(query, mysqlConn);
+            var reader = cmd.ExecuteReader();
+            var columns = new List<string>();
+            while (reader.Read())
+            {
+                columns.Add(reader.GetValue(0).ToString());
+            }
+            reader.Close();
+
+            //Work on each field
+            CheckTableField(mysqlConn, columns, "slot", myTable, MySqlFields.m_int);
+            CheckTableField(mysqlConn, columns, "spellnum", myTable, MySqlFields.m_int);
+            CheckTableField(mysqlConn, columns, "spellcd", myTable, MySqlFields.m_int);
         }
 
         private static void CheckTableField(MySqlConnection mysqlConn, List<string> columns, string fieldName, string tableName, MySqlFields fieldType, int fieldLength = -1)
@@ -448,6 +471,20 @@ namespace Intersect_Server.Classes
                     }
                 }
                 reader.Close();
+                i = 0;
+                stm = "SELECT * from Spells WHERE id=" + client.Id + ";";
+                cmd = new MySqlCommand(stm, mysqlConn);
+                reader = cmd.ExecuteReader();
+                columns = Enumerable.Range(0, reader.FieldCount).Select(reader.GetName).ToList();
+                while (reader.Read())
+                {
+                    if (reader.GetInt32(columns.IndexOf("slot")) < Constants.MaxPlayerSkills)
+                    {
+                        ((Player)en).Spells[reader.GetInt32(columns.IndexOf("slot"))].SpellNum = reader.GetInt32(columns.IndexOf("spellnum"));
+                        ((Player)en).Spells[reader.GetInt32(columns.IndexOf("slot"))].SpellCD = reader.GetInt32(columns.IndexOf("spellcd"));
+                    }
+                }
+                reader.Close();
             }
         }
 
@@ -575,6 +612,34 @@ namespace Intersect_Server.Classes
                         query += ", statbuff" + x + "=" + en.Inventory[i].StatBoost[x];
                     }
                     query += " WHERE id=" + id + " AND slot=" + i + ";\n";
+                }
+                cmd = new MySqlCommand(query, mysqlConn);
+                cmd.ExecuteNonQuery();
+
+                //Save Spells
+                query = "SELECT COUNT(*) from Spells WHERE id=" + id;
+                cmd = new MySqlCommand(query, mysqlConn);
+                reader = cmd.ExecuteReader();
+                result = 0;
+                while (reader.Read())
+                {
+                    result = reader.GetInt32(0);
+                }
+                reader.Close();
+                if (result < Constants.MaxPlayerSkills)
+                {
+                    query = "";
+                    for (var i = result; i < Constants.MaxPlayerSkills; i++)
+                    {
+                        query += "INSERT INTO Spells (id,slot,spellnum,spellcd) VALUES (" + id + "," + i + ",-1,0);\n";
+                    }
+                    cmd = new MySqlCommand(query, mysqlConn);
+                    cmd.ExecuteNonQuery();
+                }
+                query = "";
+                for (var i = 0; i < Constants.MaxPlayerSkills; i++)
+                {
+                    query += "UPDATE Spells SET spellnum=" + en.Spells[i].SpellNum + ", spellcd=" + en.Spells[i].SpellCD + " WHERE id=" + id + " AND slot=" + i + ";\n";
                 }
                 cmd = new MySqlCommand(query, mysqlConn);
                 cmd.ExecuteNonQuery();

@@ -121,5 +121,47 @@
             bf.WriteInteger(item2);
             Network.SendPacket(bf.ToArray());
         }
+
+        public static void SendDropItem(int slot, int amount)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteLong((int)Enums.ClientPackets.DropItems);
+            bf.WriteInteger(slot);
+            bf.WriteInteger(amount);
+            Network.SendPacket(bf.ToArray());
+        }
+
+        public static void SendUseItem(int slot)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteLong((int)Enums.ClientPackets.UseItem);
+            bf.WriteInteger(slot);
+            Network.SendPacket(bf.ToArray());
+        }
+
+        public static void SendSwapSpells(int spell1, int spell2)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteLong((int)Enums.ClientPackets.SwapSpells);
+            bf.WriteInteger(spell1);
+            bf.WriteInteger(spell2);
+            Network.SendPacket(bf.ToArray());
+        }
+
+        public static void SendForgetSpell(int slot)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteLong((int)Enums.ClientPackets.ForgetSpell);
+            bf.WriteInteger(slot);
+            Network.SendPacket(bf.ToArray());
+        }
+
+        public static void SendUseSpell(int slot)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteLong((int)Enums.ClientPackets.UseSpell);
+            bf.WriteInteger(slot);
+            Network.SendPacket(bf.ToArray());
+        }
     }
 }

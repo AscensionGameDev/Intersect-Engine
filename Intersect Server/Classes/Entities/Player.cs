@@ -13,6 +13,7 @@ namespace Intersect_Server.Classes
         public bool[] Switches;
         public int[] Variables;
         public ItemInstance[] Inventory = new ItemInstance[Constants.MaxInvItems];
+        public SpellInstance[] Spells = new SpellInstance[Constants.MaxPlayerSkills];
 
         //Init
 		public Player (int index, Client newClient) : base(index)
@@ -23,6 +24,10 @@ namespace Intersect_Server.Classes
             for (int i = 0; i < Constants.MaxInvItems; i++)
             {
                 Inventory[i] = new ItemInstance();
+            }
+            for (int i = 0; i < Constants.MaxPlayerSkills; i++)
+            {
+                Spells[i] = new SpellInstance();
             }
 		}
 
@@ -192,7 +197,144 @@ namespace Intersect_Server.Classes
             PacketSender.SendInventoryItemUpdate(MyClient, item1);
             PacketSender.SendInventoryItemUpdate(MyClient, item2);
         }
-        
+        public void DropItems(int slot, int amount)
+        {
+            if (Inventory[slot].ItemNum > -1)
+            {
+                if (Globals.GameItems[Inventory[slot].ItemNum].Type == (int)Enums.ItemTypes.Consumable || //Allow Stacking on Currency, Consumable, Spell, and item types of none.
+                            Globals.GameItems[Inventory[slot].ItemNum].Type == (int)Enums.ItemTypes.Currency ||
+                            Globals.GameItems[Inventory[slot].ItemNum].Type == (int)Enums.ItemTypes.None ||
+                            Globals.GameItems[Inventory[slot].ItemNum].Type == (int)Enums.ItemTypes.Spell)
+                {
+                    if (amount >= Inventory[slot].ItemVal)
+                    {
+                        amount = Inventory[slot].ItemVal;
+                    }
+                    Globals.GameMaps[CurrentMap].SpawnItem(CurrentX, CurrentY, Inventory[slot], amount);
+                    if (amount == Inventory[slot].ItemVal)
+                    {
+                        Inventory[slot] = new ItemInstance();
+                    }
+                    else
+                    {
+                        Inventory[slot].ItemVal -= amount;
+                    }
+                }
+                else
+                {
+                    Globals.GameMaps[CurrentMap].SpawnItem(CurrentX, CurrentY, Inventory[slot], 1);
+                    Inventory[slot] = new ItemInstance();
+                }
+                PacketSender.SendInventoryItemUpdate(MyClient, slot);
+            }
+        }
+        public void UseItem(int slot)
+        {
+            //TO be implemented.
+            if (Inventory[slot].ItemNum > -1)
+            {
+                if (Globals.GameItems[Inventory[slot].ItemNum].Type == (int)Enums.ItemTypes.None || Globals.GameItems[Inventory[slot].ItemNum].Type == (int)Enums.ItemTypes.Currency)
+                {
+                    PacketSender.SendPlayerMsg(MyClient, "You cannot use this item!");
+                }
+                else
+                {
+                    //TO DO - CHECK REQUIREMENTS
+                    switch (Globals.GameItems[Inventory[slot].ItemNum].Type)
+                    {
+                        case (int)Enums.ItemTypes.Spell:
+                            if (Globals.GameItems[Inventory[slot].ItemNum].Data1 > -1)
+                            {
+                                TryTeachSpell(new SpellInstance(Globals.GameItems[Inventory[slot].ItemNum].Data1));
+                            }
+                            TakeItem(slot, 1);
+                            break;
+                        default:
+                            PacketSender.SendPlayerMsg(MyClient, "Use of this item type is not yet implemented.");
+                            break;
+                    }
+                }
+            }
+            
+        }
+        public bool TakeItem(int slot, int amount)
+        {
+            bool returnVal = false;
+            if (Inventory[slot].ItemNum > -1)
+            {
+                if (Globals.GameItems[Inventory[slot].ItemNum].Type == (int)Enums.ItemTypes.Consumable || //Allow Stacking on Currency, Consumable, Spell, and item types of none.
+                            Globals.GameItems[Inventory[slot].ItemNum].Type == (int)Enums.ItemTypes.Currency ||
+                            Globals.GameItems[Inventory[slot].ItemNum].Type == (int)Enums.ItemTypes.None ||
+                            Globals.GameItems[Inventory[slot].ItemNum].Type == (int)Enums.ItemTypes.Spell)
+                {
+                    if (amount > Inventory[slot].ItemVal)
+                    {
+                        amount = Inventory[slot].ItemVal;
+                    }
+                    else
+                    {
+                        if (amount == Inventory[slot].ItemVal)
+                        {
+                            Inventory[slot] = new ItemInstance();
+                            returnVal = true;
+                        }
+                        else
+                        {
+                            Inventory[slot].ItemVal -= amount;
+                            returnVal = true;
+                        }
+                    }
+                }
+                else
+                {
+                    Inventory[slot] = new ItemInstance();
+                    returnVal = true;
+                }
+                PacketSender.SendInventoryItemUpdate(MyClient, slot);
+            }
+            return returnVal;
+        }
+
+        //Skills
+        public bool TryTeachSpell(SpellInstance spell)
+        {
+            if (KnowsSpell(spell.SpellNum)) { return true; }
+            for (int i = 0; i < Constants.MaxPlayerSkills; i++)
+            {
+                if (Spells[i].SpellNum == -1)
+                {
+                    Spells[i] = spell.Clone();
+                    PacketSender.SendPlayerSpellUpdate(MyClient, i);
+                    return true;
+                }
+            }
+            return false;
+        }
+        public bool KnowsSpell(int spellnum)
+        {
+            for (int i = 0; i < Constants.MaxPlayerSkills; i++)
+            {
+                if (Spells[i].SpellNum == spellnum) { return true; }
+            }
+            return false;
+        }
+        public void SwapSpells(int spell1, int spell2)
+        {
+            SpellInstance tmpInstance = Spells[spell2].Clone();
+            Spells[spell2] = Spells[spell1].Clone();
+            Spells[spell1] = tmpInstance.Clone();
+            PacketSender.SendPlayerSpellUpdate(MyClient, spell1);
+            PacketSender.SendPlayerSpellUpdate(MyClient, spell2);
+        }
+        public void ForgetSpell(int spell)
+        {
+            Spells[spell] = new SpellInstance();
+            PacketSender.SendPlayerSpellUpdate(MyClient, spell);
+        }
+        public void UseSpell(int spell)
+        {
+            PacketSender.SendPlayerMsg(MyClient, "The use of spells is not yet implemented.");
+        }
 
 
         //Event Processing Methods

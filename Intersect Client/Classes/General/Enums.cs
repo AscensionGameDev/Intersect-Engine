@@ -30,6 +30,11 @@
             SaveAnimation,
             PickupItem,
             SwapItems,
+            DropItems,
+            UseItem,
+            SwapSpells,
+            ForgetSpell,
+            UseSpell,
         }
 
         public enum ServerPackets
@@ -67,6 +72,7 @@
             MapItems,
             MapItemUpdate,
             InventoryUpdate,
+            SpellUpdate,
         }
 
         public enum Stats
@@ -77,6 +83,25 @@
             MagicResist,
             Speed,
             StatCount
+        }
+
+        public static string GetStatName(int statnum)
+        {
+            switch (statnum)
+            {
+                case (int)Stats.Attack:
+                    return "Attack";
+                case (int)Stats.AbilityPower:
+                    return "Ability Power";
+                case (int)Stats.Defense:
+                    return "Defense";
+                case (int)Stats.MagicResist:
+                    return "Magic Resist";
+                case (int)Stats.Speed:
+                    return "Speed";
+                default:
+                    return "Invalid Stat";
+            }
         }
 
         public enum Vitals
