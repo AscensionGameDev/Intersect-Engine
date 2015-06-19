@@ -540,7 +540,7 @@ namespace Intersect_Server.Classes
             var index = bf.ReadInteger();
             if (index < Globals.GameMaps[client.Entity.CurrentMap].MapItems.Count)
             {
-                lock (Globals.GameMaps[client.Entity.CurrentMap].MapItems)
+                if (Globals.GameMaps[client.Entity.CurrentMap].MapItems[index].X == client.Entity.CurrentX && Globals.GameMaps[client.Entity.CurrentMap].MapItems[index].Y == client.Entity.CurrentY)
                 {
                     if (client.Entity.TryGiveItem(((ItemInstance)Globals.GameMaps[client.Entity.CurrentMap].MapItems[index])))
                     {

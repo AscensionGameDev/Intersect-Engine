@@ -109,7 +109,7 @@ namespace Intersect_Client.Classes.UI.Game
     public class SpellItem
     {
         public ImagePanel pnl;
-        //private ItemDescWindow _descWindow;
+        private SpellDescWindow _descWindow;
         private bool MouseOver = false;
         private int MouseX = -1;
         private int MouseY = -1;
@@ -151,7 +151,7 @@ namespace Intersect_Client.Classes.UI.Game
             MouseOver = false;
             MouseX = -1;
             MouseY = -1;
-            //_descWindow.Dispose();
+            _descWindow.Dispose();
         }
 
         void pnl_HoverEnter(Base sender, EventArgs arguments)
@@ -159,7 +159,7 @@ namespace Intersect_Client.Classes.UI.Game
             MouseOver = true;
             CanDrag = true;
             if (Mouse.IsButtonPressed(Mouse.Button.Left)) { CanDrag = false; }
-            //_descWindow = new ItemDescWindow(Globals.Me.Spell[myindex].ItemNum, Globals.Me.Spell[myindex].ItemVal, _spellWindow.X - 180, _spellWindow.Y, Globals.Me.Spell[myindex].StatBoost);
+            _descWindow = new SpellDescWindow(Globals.Me.Spells[myindex].SpellNum, _spellWindow.X - 220, _spellWindow.Y);
         }
 
         public System.Drawing.Rectangle RenderBounds()

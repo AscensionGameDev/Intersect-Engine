@@ -163,5 +163,6 @@
             bf.WriteInteger(slot);
             Network.SendPacket(bf.ToArray());
         }
+
     }
 }

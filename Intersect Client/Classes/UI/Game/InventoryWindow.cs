@@ -186,7 +186,7 @@ namespace Intersect_Client.Classes.UI.Game
             MouseOver = true;
             CanDrag = true;
             if (Mouse.IsButtonPressed(Mouse.Button.Left)) { CanDrag = false; }
-            _descWindow = new ItemDescWindow(Globals.Me.Inventory[myindex].ItemNum,Globals.Me.Inventory[myindex].ItemVal,  _inventoryWindow.X - 180, _inventoryWindow.Y, Globals.Me.Inventory[myindex].StatBoost);
+            _descWindow = new ItemDescWindow(Globals.Me.Inventory[myindex].ItemNum,Globals.Me.Inventory[myindex].ItemVal,  _inventoryWindow.X - 220, _inventoryWindow.Y, Globals.Me.Inventory[myindex].StatBoost);
         }
 
         public System.Drawing.Rectangle RenderBounds()

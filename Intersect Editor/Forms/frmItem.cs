@@ -20,7 +20,7 @@ namespace Intersect_Editor.Forms
         {
             lstItems.SelectedIndex = 0;
             cmbPic.Items.Clear();
-            cmbPic.Items.Add("None");
+            cmbPic.Items.Add("None");towa
             for (int i = 0; i < Intersect_Editor.Classes.Graphics.ItemNames.Length; i++)
             {
                 cmbPic.Items.Add(Intersect_Editor.Classes.Graphics.ItemNames[i]);
@@ -39,6 +39,11 @@ namespace Intersect_Editor.Forms
                 lstItems.Items.Add((i + 1) + ") " + Globals.GameItems[i].Name);
                 _changed[i] = false;
             }
+            cmbEquipmentSlot.Items.AddRange(Enums.EquipmentSlots.ToArray());
+            cmbToolType.Items.Add("None");
+            cmbToolType.Items.AddRange(Enums.ToolTypes.ToArray());
+            cmbEquipmentBonus.Items.Add("None");
+            cmbEquipmentBonus.Items.AddRange(Enums.ItemBonusEffects.ToArray());
         }
 
         private void UpdateEditor()
@@ -51,22 +56,25 @@ namespace Intersect_Editor.Forms
             cmbPic.SelectedIndex = cmbPic.FindString(Globals.GameItems[_editorIndex].Pic);
             scrlPrice.Value = Globals.GameItems[_editorIndex].Price;
             scrlAnim.Value = Globals.GameItems[_editorIndex].Animation;
-            scrlLevel.Value = Globals.GameItems[_editorIndex].LevelReq;
+            scrlLevelReq.Value = Globals.GameItems[_editorIndex].LevelReq;
             cmbClass.SelectedIndex = Globals.GameItems[_editorIndex].ClassReq;
-            scrlStrReq.Value = Globals.GameItems[_editorIndex].StatsReq[0];
-            scrlMagReq.Value = Globals.GameItems[_editorIndex].StatsReq[1];
-            scrlDefReq.Value = Globals.GameItems[_editorIndex].StatsReq[2];
-            scrlMRReq.Value = Globals.GameItems[_editorIndex].StatsReq[3];
-            scrlSpdReq.Value = Globals.GameItems[_editorIndex].StatsReq[4];
-            scrlStr.Value = Globals.GameItems[_editorIndex].StatsGiven[0];
-            scrlMag.Value = Globals.GameItems[_editorIndex].StatsGiven[1];
-            scrlDef.Value = Globals.GameItems[_editorIndex].StatsGiven[2];
-            scrlMR.Value = Globals.GameItems[_editorIndex].StatsGiven[3];
-            scrlSpd.Value = Globals.GameItems[_editorIndex].StatsGiven[4];
-            scrlDmg.Value = Globals.GameItems[_editorIndex].Damage;
-            ScrlAtkSpd.Value = Globals.GameItems[_editorIndex].Speed;
+            scrlAttackReq.Value = Globals.GameItems[_editorIndex].StatsReq[0];
+            scrlAbilityPowerReq.Value = Globals.GameItems[_editorIndex].StatsReq[1];
+            scrlDefenseReq.Value = Globals.GameItems[_editorIndex].StatsReq[2];
+            scrlMagicResistReq.Value = Globals.GameItems[_editorIndex].StatsReq[3];
+            scrlSpeedReq.Value = Globals.GameItems[_editorIndex].StatsReq[4];
+            scrlAttack.Value = Globals.GameItems[_editorIndex].StatsGiven[0];
+            scrlAbilityPower.Value = Globals.GameItems[_editorIndex].StatsGiven[1];
+            scrlDefense.Value = Globals.GameItems[_editorIndex].StatsGiven[2];
+            scrlMagicResist.Value = Globals.GameItems[_editorIndex].StatsGiven[3];
+            scrlSpeed.Value = Globals.GameItems[_editorIndex].StatsGiven[4];
+            scrlDamage.Value = Globals.GameItems[_editorIndex].Damage;
             scrlRange.Value = Globals.GameItems[_editorIndex].StatGrowth;
-            scrlTool.Value = Globals.GameItems[_editorIndex].Tool;
+            cmbEquipmentSlot.SelectedIndex = Globals.GameItems[_editorIndex].Data1;
+            cmbToolType.SelectedIndex = Globals.GameItems[_editorIndex].Tool;
+            cmbEquipmentBonus.SelectedIndex = Globals.GameItems[_editorIndex].Data2;
+            scrlEffectAmount.Value = Globals.GameItems[_editorIndex].Data3;
+            chk2Hand.Checked = Convert.ToBoolean(Globals.GameItems[_editorIndex].Data4);
             cmbPaperdoll.SelectedIndex = cmbPaperdoll.FindString(Globals.GameItems[_editorIndex].Paperdoll);
             if (cmbPic.SelectedIndex > 0) { picItem.BackgroundImage = Bitmap.FromFile("Resources/Items/" + cmbPic.Text); }
             else { picItem.BackgroundImage = null; }
@@ -100,8 +108,8 @@ namespace Intersect_Editor.Forms
 
         private void scrlLevel_Scroll(object sender, EventArgs e)
         {
-            lblLevel.Text = @"Level: " + scrlLevel.Value;
-            Globals.GameItems[_editorIndex].LevelReq = scrlLevel.Value;
+            lblLevelReq.Text = @"Level: " + scrlLevelReq.Value;
+            Globals.GameItems[_editorIndex].LevelReq = scrlLevelReq.Value;
         }
 
         private void cmbType_SelectedIndexChanged(object sender, EventArgs e)
@@ -109,6 +117,16 @@ namespace Intersect_Editor.Forms
             gbConsumable.Visible = false;
             gbSpell.Visible = false;
             gbEquipment.Visible = false;
+
+            if (Globals.GameItems[_editorIndex].Type != cmbType.SelectedIndex)
+            {
+                Globals.GameItems[_editorIndex].Damage = 0;
+                Globals.GameItems[_editorIndex].Tool = 0;
+                Globals.GameItems[_editorIndex].Data1 = 0;
+                Globals.GameItems[_editorIndex].Data2 = 0;
+                Globals.GameItems[_editorIndex].Data3 = 0;
+                Globals.GameItems[_editorIndex].Data4 = 0;
+            }
 
             if (cmbType.SelectedIndex == cmbType.Items.IndexOf("Consumable"))
             {
@@ -121,9 +139,10 @@ namespace Intersect_Editor.Forms
                 scrlSpell.Value = Globals.GameItems[_editorIndex].Data1;
                 gbSpell.Visible = true;
             }
-            else if (cmbType.SelectedIndex >= cmbType.Items.IndexOf("Weapon") && cmbType.SelectedIndex <= cmbType.Items.IndexOf("Shield"))
+            else if (cmbType.SelectedIndex == cmbType.Items.IndexOf("Equipment"))
             {
                 gbEquipment.Visible = true;
+                cmbEquipmentSlot.SelectedIndex = Globals.GameItems[_editorIndex].Data1;
             }
 
             Globals.GameItems[_editorIndex].Type = cmbType.SelectedIndex;
@@ -174,34 +193,34 @@ namespace Intersect_Editor.Forms
             Globals.GameItems[_editorIndex].Animation = scrlAnim.Value;
         }
 
-        private void scrlStrReq_Scroll(object sender, EventArgs e)
+        private void scrlAttackReq_Scroll(object sender, EventArgs e)
         {
-            lblStrReq.Text = @"Strength: " + scrlStrReq.Value;
-            Globals.GameItems[_editorIndex].StatsReq[0] = scrlStrReq.Value;
+            lblAttackReq.Text = @"Attack: " + scrlAttackReq.Value;
+            Globals.GameItems[_editorIndex].StatsReq[0] = scrlAttackReq.Value;
         }
 
-        private void scrlMagReq_Scroll(object sender, EventArgs e)
+        private void scrlAbilityPowerReq_Scroll(object sender, EventArgs e)
         {
-            lblMagReq.Text = @"Magic: " + scrlMagReq.Value;
-            Globals.GameItems[_editorIndex].StatsReq[1] = scrlMagReq.Value;
+            lblAbilityPowerReq.Text = @"Ability Pwr: " + scrlAbilityPowerReq.Value;
+            Globals.GameItems[_editorIndex].StatsReq[1] = scrlAbilityPowerReq.Value;
         }
 
-        private void scrlDefReq_Scroll(object sender, EventArgs e)
+        private void scrlDefenseReq_Scroll(object sender, EventArgs e)
         {
-            lblDefReq.Text = @"Armor: " + scrlDefReq.Value;
-            Globals.GameItems[_editorIndex].StatsReq[2] = scrlDefReq.Value;
+            lblDefenseReq.Text = @"Defense: " + scrlDefenseReq.Value;
+            Globals.GameItems[_editorIndex].StatsReq[2] = scrlDefenseReq.Value;
         }
 
-        private void scrlMRReq_Scroll(object sender, EventArgs e)
+        private void scrlMagicResistReq_Scroll(object sender, EventArgs e)
         {
-            lblMRReq.Text = @"Magic Resist: " + scrlMRReq.Value;
-            Globals.GameItems[_editorIndex].StatsReq[3] = scrlMRReq.Value;
+            lblMagicResistReq.Text = @"Magic Resist: " + scrlMagicResistReq.Value;
+            Globals.GameItems[_editorIndex].StatsReq[3] = scrlMagicResistReq.Value;
         }
 
-        private void scrlSpdReq_Scroll(object sender, EventArgs e)
+        private void scrlSpeedReq_Scroll(object sender, EventArgs e)
         {
-            lblSpdReq.Text = @"Move Speed: " + scrlSpdReq.Value;
-            Globals.GameItems[_editorIndex].StatsReq[4] = scrlSpdReq.Value;
+            lblSpeedReq.Text = @"Speed: " + scrlSpeedReq.Value;
+            Globals.GameItems[_editorIndex].StatsReq[4] = scrlSpeedReq.Value;
         }
 
         private void cmbClass_SelectedIndexChanged(object sender, EventArgs e)
@@ -220,52 +239,40 @@ namespace Intersect_Editor.Forms
             Globals.GameItems[_editorIndex].Data1 = cmbConsume.SelectedIndex;
         }
 
-        private void scrlStr_Scroll(object sender, EventArgs e)
+        private void scrlAttack_Scroll(object sender, EventArgs e)
         {
-            lblStr.Text = @"Strength: " + scrlStr.Value;
-            Globals.GameItems[_editorIndex].StatsGiven[0] = scrlStr.Value;
+            lblAttack.Text = @"Attack: " + scrlAttack.Value;
+            Globals.GameItems[_editorIndex].StatsGiven[0] = scrlAttack.Value;
         }
 
-        private void scrlMag_Scroll(object sender, EventArgs e)
+        private void scrlAbilityPower_Scroll(object sender, EventArgs e)
         {
-            lblMag.Text = @"Magic: " + scrlMag.Value;
-            Globals.GameItems[_editorIndex].StatsGiven[1] = scrlMag.Value;
+            lblAbilityPower.Text = @"Ability Pwr: " + scrlAbilityPower.Value;
+            Globals.GameItems[_editorIndex].StatsGiven[1] = scrlAbilityPower.Value;
         }
 
-        private void scrlDef_Scroll(object sender, EventArgs e)
+        private void scrlDefense_Scroll(object sender, EventArgs e)
         {
-            lblDef.Text = @"Armor: " + scrlDef.Value;
-            Globals.GameItems[_editorIndex].StatsGiven[2] = scrlDef.Value;
+            lblDefense.Text = @"Defense: " + scrlDefense.Value;
+            Globals.GameItems[_editorIndex].StatsGiven[2] = scrlDefense.Value;
         }
 
-        private void scrlMR_Scroll(object sender, EventArgs e)
+        private void scrlMagicResist_Scroll(object sender, EventArgs e)
         {
-            lblMR.Text = @"Magic Resist: " + scrlMR.Value;
-            Globals.GameItems[_editorIndex].StatsGiven[3] = scrlMR.Value;
+            lblMagicResist.Text = @"Magic Resist: " + scrlMagicResist.Value;
+            Globals.GameItems[_editorIndex].StatsGiven[3] = scrlMagicResist.Value;
         }
 
-        private void scrlSpd_Scroll(object sender, EventArgs e)
+        private void scrlSpeed_Scroll(object sender, EventArgs e)
         {
-            lblSpd.Text = @"Move Speed: " + scrlSpd.Value;
-            Globals.GameItems[_editorIndex].StatsGiven[4] = scrlSpd.Value;
+            lblSpeed.Text = @"Speed: " + scrlSpeed.Value;
+            Globals.GameItems[_editorIndex].StatsGiven[4] = scrlSpeed.Value;
         }
 
         private void scrlDmg_Scroll(object sender, EventArgs e)
         {
-            lblDmg.Text = @"Damage: " + scrlDmg.Value;
-            Globals.GameItems[_editorIndex].Damage = scrlDmg.Value;
-        }
-
-        private void ScrlAtkSpd_Scroll(object sender, EventArgs e)
-        {
-            lblAtkSpd.Text = @"Attack Speed: " + ((decimal)ScrlAtkSpd.Value / 10) + @" Sec";
-            Globals.GameItems[_editorIndex].Speed = ScrlAtkSpd.Value;
-        }
-
-        private void scrlTool_Scroll(object sender, EventArgs e)
-        {
-            lblTool.Text = @"Tool Index: " + scrlTool.Value;
-            Globals.GameItems[_editorIndex].Tool = scrlTool.Value;
+            lblDamage.Text = @"Damage: " + scrlDamage.Value;
+            Globals.GameItems[_editorIndex].Damage = scrlDamage.Value;
         }
 
         private void scrlRange_Scroll(object sender, EventArgs e)
@@ -283,5 +290,51 @@ namespace Intersect_Editor.Forms
         {
             Globals.GameItems[_editorIndex].Desc = txtDesc.Text;
         }
+
+        private void cmbEquipmentSlot_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            Globals.GameItems[_editorIndex].Data1 = cmbEquipmentSlot.SelectedIndex;
+            if (cmbEquipmentSlot.SelectedIndex == Enums.WeaponIndex)
+            {
+                chk2Hand.Visible = true;
+                cmbToolType.Visible = true;
+                lblToolType.Visible = true;
+                lblDamage.Visible = true;
+                scrlDamage.Visible = true;
+            }
+            else
+            {
+                chk2Hand.Visible = false;
+                cmbToolType.Visible = false;
+                lblToolType.Visible = false;
+                lblDamage.Visible = false;
+                scrlDamage.Visible = false;
+                Globals.GameItems[_editorIndex].Tool = -1;
+                Globals.GameItems[_editorIndex].Damage = 0;
+                Globals.GameItems[_editorIndex].Data4 = 0;
+            }
+        }
+
+        private void cmbToolType_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            Globals.GameItems[_editorIndex].Tool = cmbToolType.SelectedIndex;
+        }
+
+        private void cmbEquipmentBonus_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            Globals.GameItems[_editorIndex].Data2 = cmbEquipmentBonus.SelectedIndex;
+        }
+
+        private void chk2Hand_CheckedChanged(object sender, EventArgs e)
+        {
+            Globals.GameItems[_editorIndex].Data4 = Convert.ToInt32(chk2Hand.Checked);
+        }
+
+        void scrlEffectAmount_ValueChanged(object sender, System.EventArgs e)
+        {
+            Globals.GameItems[_editorIndex].Data3 = scrlEffectAmount.Value;
+            lblEffectPercent.Text = "Effect Amount: " + Globals.GameItems[_editorIndex].Data3 + "%";
+        }
+
     }
 }

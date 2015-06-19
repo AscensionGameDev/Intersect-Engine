@@ -53,48 +53,53 @@ namespace Intersect_Editor.Forms
             this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.label3 = new System.Windows.Forms.Label();
             this.cmbClass = new System.Windows.Forms.ComboBox();
-            this.lblLevel = new System.Windows.Forms.Label();
-            this.scrlLevel = new System.Windows.Forms.HScrollBar();
-            this.lblSpdReq = new System.Windows.Forms.Label();
-            this.lblMRReq = new System.Windows.Forms.Label();
-            this.lblDefReq = new System.Windows.Forms.Label();
-            this.lblMagReq = new System.Windows.Forms.Label();
-            this.lblStrReq = new System.Windows.Forms.Label();
-            this.scrlDefReq = new System.Windows.Forms.HScrollBar();
-            this.scrlSpdReq = new System.Windows.Forms.HScrollBar();
-            this.scrlMRReq = new System.Windows.Forms.HScrollBar();
-            this.scrlMagReq = new System.Windows.Forms.HScrollBar();
-            this.scrlStrReq = new System.Windows.Forms.HScrollBar();
+            this.lblLevelReq = new System.Windows.Forms.Label();
+            this.scrlLevelReq = new System.Windows.Forms.HScrollBar();
+            this.lblSpeedReq = new System.Windows.Forms.Label();
+            this.lblMagicResistReq = new System.Windows.Forms.Label();
+            this.lblDefenseReq = new System.Windows.Forms.Label();
+            this.lblAbilityPowerReq = new System.Windows.Forms.Label();
+            this.lblAttackReq = new System.Windows.Forms.Label();
+            this.scrlDefenseReq = new System.Windows.Forms.HScrollBar();
+            this.scrlSpeedReq = new System.Windows.Forms.HScrollBar();
+            this.scrlMagicResistReq = new System.Windows.Forms.HScrollBar();
+            this.scrlAbilityPowerReq = new System.Windows.Forms.HScrollBar();
+            this.scrlAttackReq = new System.Windows.Forms.HScrollBar();
             this.gbEquipment = new System.Windows.Forms.GroupBox();
+            this.lblEffectPercent = new System.Windows.Forms.Label();
+            this.scrlEffectAmount = new System.Windows.Forms.HScrollBar();
+            this.cmbEquipmentBonus = new System.Windows.Forms.ComboBox();
+            this.label9 = new System.Windows.Forms.Label();
+            this.cmbToolType = new System.Windows.Forms.ComboBox();
+            this.lblToolType = new System.Windows.Forms.Label();
+            this.chk2Hand = new System.Windows.Forms.CheckBox();
+            this.cmbEquipmentSlot = new System.Windows.Forms.ComboBox();
+            this.label7 = new System.Windows.Forms.Label();
             this.cmbPaperdoll = new System.Windows.Forms.ComboBox();
             this.label5 = new System.Windows.Forms.Label();
             this.lblRange = new System.Windows.Forms.Label();
             this.scrlRange = new System.Windows.Forms.HScrollBar();
             this.picPaperdoll = new System.Windows.Forms.PictureBox();
-            this.lblTool = new System.Windows.Forms.Label();
-            this.scrlTool = new System.Windows.Forms.HScrollBar();
-            this.lblAtkSpd = new System.Windows.Forms.Label();
-            this.ScrlAtkSpd = new System.Windows.Forms.HScrollBar();
-            this.lblDmg = new System.Windows.Forms.Label();
-            this.scrlDmg = new System.Windows.Forms.HScrollBar();
-            this.lblSpd = new System.Windows.Forms.Label();
-            this.lblMR = new System.Windows.Forms.Label();
-            this.lblDef = new System.Windows.Forms.Label();
-            this.lblMag = new System.Windows.Forms.Label();
-            this.lblStr = new System.Windows.Forms.Label();
-            this.scrlDef = new System.Windows.Forms.HScrollBar();
-            this.scrlSpd = new System.Windows.Forms.HScrollBar();
-            this.scrlMR = new System.Windows.Forms.HScrollBar();
-            this.scrlMag = new System.Windows.Forms.HScrollBar();
-            this.scrlStr = new System.Windows.Forms.HScrollBar();
+            this.lblDamage = new System.Windows.Forms.Label();
+            this.scrlDamage = new System.Windows.Forms.HScrollBar();
+            this.lblSpeed = new System.Windows.Forms.Label();
+            this.lblMagicResist = new System.Windows.Forms.Label();
+            this.lblDefense = new System.Windows.Forms.Label();
+            this.lblAbilityPower = new System.Windows.Forms.Label();
+            this.lblAttack = new System.Windows.Forms.Label();
+            this.scrlDefense = new System.Windows.Forms.HScrollBar();
+            this.scrlSpeed = new System.Windows.Forms.HScrollBar();
+            this.scrlMagicResist = new System.Windows.Forms.HScrollBar();
+            this.scrlAbilityPower = new System.Windows.Forms.HScrollBar();
+            this.scrlAttack = new System.Windows.Forms.HScrollBar();
             this.gbConsumable = new System.Windows.Forms.GroupBox();
-            this.gbSpell = new System.Windows.Forms.GroupBox();
-            this.scrlSpell = new System.Windows.Forms.HScrollBar();
-            this.lblSpell = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
             this.cmbConsume = new System.Windows.Forms.ComboBox();
             this.scrlInterval = new System.Windows.Forms.HScrollBar();
             this.lblInterval = new System.Windows.Forms.Label();
+            this.gbSpell = new System.Windows.Forms.GroupBox();
+            this.scrlSpell = new System.Windows.Forms.HScrollBar();
+            this.lblSpell = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.picItem)).BeginInit();
@@ -278,10 +283,7 @@ namespace Intersect_Editor.Forms
             this.cmbType.FormattingEnabled = true;
             this.cmbType.Items.AddRange(new object[] {
             "None",
-            "Weapon",
-            "Armor",
-            "Helmet",
-            "Shield",
+            "Equipment",
             "Consumable",
             "Currency",
             "Spell"});
@@ -312,18 +314,18 @@ namespace Intersect_Editor.Forms
             // 
             this.groupBox3.Controls.Add(this.label3);
             this.groupBox3.Controls.Add(this.cmbClass);
-            this.groupBox3.Controls.Add(this.lblLevel);
-            this.groupBox3.Controls.Add(this.scrlLevel);
-            this.groupBox3.Controls.Add(this.lblSpdReq);
-            this.groupBox3.Controls.Add(this.lblMRReq);
-            this.groupBox3.Controls.Add(this.lblDefReq);
-            this.groupBox3.Controls.Add(this.lblMagReq);
-            this.groupBox3.Controls.Add(this.lblStrReq);
-            this.groupBox3.Controls.Add(this.scrlDefReq);
-            this.groupBox3.Controls.Add(this.scrlSpdReq);
-            this.groupBox3.Controls.Add(this.scrlMRReq);
-            this.groupBox3.Controls.Add(this.scrlMagReq);
-            this.groupBox3.Controls.Add(this.scrlStrReq);
+            this.groupBox3.Controls.Add(this.lblLevelReq);
+            this.groupBox3.Controls.Add(this.scrlLevelReq);
+            this.groupBox3.Controls.Add(this.lblSpeedReq);
+            this.groupBox3.Controls.Add(this.lblMagicResistReq);
+            this.groupBox3.Controls.Add(this.lblDefenseReq);
+            this.groupBox3.Controls.Add(this.lblAbilityPowerReq);
+            this.groupBox3.Controls.Add(this.lblAttackReq);
+            this.groupBox3.Controls.Add(this.scrlDefenseReq);
+            this.groupBox3.Controls.Add(this.scrlSpeedReq);
+            this.groupBox3.Controls.Add(this.scrlMagicResistReq);
+            this.groupBox3.Controls.Add(this.scrlAbilityPowerReq);
+            this.groupBox3.Controls.Add(this.scrlAttackReq);
             this.groupBox3.Location = new System.Drawing.Point(438, 7);
             this.groupBox3.Name = "groupBox3";
             this.groupBox3.Size = new System.Drawing.Size(226, 220);
@@ -342,6 +344,7 @@ namespace Intersect_Editor.Forms
             // 
             // cmbClass
             // 
+            this.cmbClass.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbClass.FormattingEnabled = true;
             this.cmbClass.Items.AddRange(new object[] {
             "None"});
@@ -349,140 +352,144 @@ namespace Intersect_Editor.Forms
             this.cmbClass.Name = "cmbClass";
             this.cmbClass.Size = new System.Drawing.Size(194, 21);
             this.cmbClass.TabIndex = 12;
-            this.cmbClass.Text = "None";
             this.cmbClass.SelectedIndexChanged += new System.EventHandler(this.cmbClass_SelectedIndexChanged);
             // 
-            // lblLevel
+            // lblLevelReq
             // 
-            this.lblLevel.AutoSize = true;
-            this.lblLevel.Location = new System.Drawing.Point(124, 122);
-            this.lblLevel.Name = "lblLevel";
-            this.lblLevel.Size = new System.Drawing.Size(45, 13);
-            this.lblLevel.TabIndex = 11;
-            this.lblLevel.Text = "Level: 0";
+            this.lblLevelReq.AutoSize = true;
+            this.lblLevelReq.Location = new System.Drawing.Point(124, 122);
+            this.lblLevelReq.Name = "lblLevelReq";
+            this.lblLevelReq.Size = new System.Drawing.Size(45, 13);
+            this.lblLevelReq.TabIndex = 11;
+            this.lblLevelReq.Text = "Level: 0";
             // 
-            // scrlLevel
+            // scrlLevelReq
             // 
-            this.scrlLevel.Location = new System.Drawing.Point(127, 135);
-            this.scrlLevel.Name = "scrlLevel";
-            this.scrlLevel.Size = new System.Drawing.Size(80, 17);
-            this.scrlLevel.TabIndex = 10;
-            this.scrlLevel.ValueChanged += new System.EventHandler(this.scrlLevel_Scroll);
+            this.scrlLevelReq.Location = new System.Drawing.Point(127, 135);
+            this.scrlLevelReq.Name = "scrlLevelReq";
+            this.scrlLevelReq.Size = new System.Drawing.Size(80, 17);
+            this.scrlLevelReq.TabIndex = 10;
+            this.scrlLevelReq.ValueChanged += new System.EventHandler(this.scrlLevel_Scroll);
             // 
-            // lblSpdReq
+            // lblSpeedReq
             // 
-            this.lblSpdReq.AutoSize = true;
-            this.lblSpdReq.Location = new System.Drawing.Point(10, 121);
-            this.lblSpdReq.Name = "lblSpdReq";
-            this.lblSpdReq.Size = new System.Drawing.Size(80, 13);
-            this.lblSpdReq.TabIndex = 9;
-            this.lblSpdReq.Text = "Move Speed: 0";
+            this.lblSpeedReq.AutoSize = true;
+            this.lblSpeedReq.Location = new System.Drawing.Point(10, 121);
+            this.lblSpeedReq.Name = "lblSpeedReq";
+            this.lblSpeedReq.Size = new System.Drawing.Size(50, 13);
+            this.lblSpeedReq.TabIndex = 9;
+            this.lblSpeedReq.Text = "Speed: 0";
             // 
-            // lblMRReq
+            // lblMagicResistReq
             // 
-            this.lblMRReq.AutoSize = true;
-            this.lblMRReq.Location = new System.Drawing.Point(124, 70);
-            this.lblMRReq.Name = "lblMRReq";
-            this.lblMRReq.Size = new System.Drawing.Size(80, 13);
-            this.lblMRReq.TabIndex = 8;
-            this.lblMRReq.Text = "Magic Resist: 0";
+            this.lblMagicResistReq.AutoSize = true;
+            this.lblMagicResistReq.Location = new System.Drawing.Point(124, 70);
+            this.lblMagicResistReq.Name = "lblMagicResistReq";
+            this.lblMagicResistReq.Size = new System.Drawing.Size(80, 13);
+            this.lblMagicResistReq.TabIndex = 8;
+            this.lblMagicResistReq.Text = "Magic Resist: 0";
             // 
-            // lblDefReq
+            // lblDefenseReq
             // 
-            this.lblDefReq.AutoSize = true;
-            this.lblDefReq.Location = new System.Drawing.Point(10, 70);
-            this.lblDefReq.Name = "lblDefReq";
-            this.lblDefReq.Size = new System.Drawing.Size(46, 13);
-            this.lblDefReq.TabIndex = 7;
-            this.lblDefReq.Text = "Armor: 0";
+            this.lblDefenseReq.AutoSize = true;
+            this.lblDefenseReq.Location = new System.Drawing.Point(10, 70);
+            this.lblDefenseReq.Name = "lblDefenseReq";
+            this.lblDefenseReq.Size = new System.Drawing.Size(59, 13);
+            this.lblDefenseReq.TabIndex = 7;
+            this.lblDefenseReq.Text = "Defense: 0";
             // 
-            // lblMagReq
+            // lblAbilityPowerReq
             // 
-            this.lblMagReq.AutoSize = true;
-            this.lblMagReq.Location = new System.Drawing.Point(124, 20);
-            this.lblMagReq.Name = "lblMagReq";
-            this.lblMagReq.Size = new System.Drawing.Size(48, 13);
-            this.lblMagReq.TabIndex = 6;
-            this.lblMagReq.Text = "Magic: 0";
+            this.lblAbilityPowerReq.AutoSize = true;
+            this.lblAbilityPowerReq.Location = new System.Drawing.Point(124, 20);
+            this.lblAbilityPowerReq.Name = "lblAbilityPowerReq";
+            this.lblAbilityPowerReq.Size = new System.Drawing.Size(67, 13);
+            this.lblAbilityPowerReq.TabIndex = 6;
+            this.lblAbilityPowerReq.Text = "Ability Pwr: 0";
             // 
-            // lblStrReq
+            // lblAttackReq
             // 
-            this.lblStrReq.AutoSize = true;
-            this.lblStrReq.Location = new System.Drawing.Point(10, 20);
-            this.lblStrReq.Name = "lblStrReq";
-            this.lblStrReq.Size = new System.Drawing.Size(59, 13);
-            this.lblStrReq.TabIndex = 5;
-            this.lblStrReq.Text = "Strength: 0";
+            this.lblAttackReq.AutoSize = true;
+            this.lblAttackReq.Location = new System.Drawing.Point(10, 20);
+            this.lblAttackReq.Name = "lblAttackReq";
+            this.lblAttackReq.Size = new System.Drawing.Size(50, 13);
+            this.lblAttackReq.TabIndex = 5;
+            this.lblAttackReq.Text = "Attack: 0";
             // 
-            // scrlDefReq
+            // scrlDefenseReq
             // 
-            this.scrlDefReq.Location = new System.Drawing.Point(13, 85);
-            this.scrlDefReq.Maximum = 255;
-            this.scrlDefReq.Name = "scrlDefReq";
-            this.scrlDefReq.Size = new System.Drawing.Size(80, 17);
-            this.scrlDefReq.TabIndex = 4;
-            this.scrlDefReq.ValueChanged += new System.EventHandler(this.scrlDefReq_Scroll);
+            this.scrlDefenseReq.Location = new System.Drawing.Point(13, 85);
+            this.scrlDefenseReq.Maximum = 255;
+            this.scrlDefenseReq.Name = "scrlDefenseReq";
+            this.scrlDefenseReq.Size = new System.Drawing.Size(80, 17);
+            this.scrlDefenseReq.TabIndex = 4;
+            this.scrlDefenseReq.ValueChanged += new System.EventHandler(this.scrlDefenseReq_Scroll);
             // 
-            // scrlSpdReq
+            // scrlSpeedReq
             // 
-            this.scrlSpdReq.Location = new System.Drawing.Point(13, 134);
-            this.scrlSpdReq.Maximum = 255;
-            this.scrlSpdReq.Name = "scrlSpdReq";
-            this.scrlSpdReq.Size = new System.Drawing.Size(80, 17);
-            this.scrlSpdReq.TabIndex = 3;
-            this.scrlSpdReq.ValueChanged += new System.EventHandler(this.scrlSpdReq_Scroll);
+            this.scrlSpeedReq.Location = new System.Drawing.Point(13, 134);
+            this.scrlSpeedReq.Maximum = 255;
+            this.scrlSpeedReq.Name = "scrlSpeedReq";
+            this.scrlSpeedReq.Size = new System.Drawing.Size(80, 17);
+            this.scrlSpeedReq.TabIndex = 3;
+            this.scrlSpeedReq.ValueChanged += new System.EventHandler(this.scrlSpeedReq_Scroll);
             // 
-            // scrlMRReq
+            // scrlMagicResistReq
             // 
-            this.scrlMRReq.Location = new System.Drawing.Point(127, 85);
-            this.scrlMRReq.Maximum = 255;
-            this.scrlMRReq.Name = "scrlMRReq";
-            this.scrlMRReq.Size = new System.Drawing.Size(80, 17);
-            this.scrlMRReq.TabIndex = 2;
-            this.scrlMRReq.ValueChanged += new System.EventHandler(this.scrlMRReq_Scroll);
+            this.scrlMagicResistReq.Location = new System.Drawing.Point(127, 85);
+            this.scrlMagicResistReq.Maximum = 255;
+            this.scrlMagicResistReq.Name = "scrlMagicResistReq";
+            this.scrlMagicResistReq.Size = new System.Drawing.Size(80, 17);
+            this.scrlMagicResistReq.TabIndex = 2;
+            this.scrlMagicResistReq.ValueChanged += new System.EventHandler(this.scrlMagicResistReq_Scroll);
             // 
-            // scrlMagReq
+            // scrlAbilityPowerReq
             // 
-            this.scrlMagReq.Location = new System.Drawing.Point(127, 39);
-            this.scrlMagReq.Maximum = 255;
-            this.scrlMagReq.Name = "scrlMagReq";
-            this.scrlMagReq.Size = new System.Drawing.Size(80, 17);
-            this.scrlMagReq.TabIndex = 1;
-            this.scrlMagReq.ValueChanged += new System.EventHandler(this.scrlMagReq_Scroll);
+            this.scrlAbilityPowerReq.Location = new System.Drawing.Point(127, 39);
+            this.scrlAbilityPowerReq.Maximum = 255;
+            this.scrlAbilityPowerReq.Name = "scrlAbilityPowerReq";
+            this.scrlAbilityPowerReq.Size = new System.Drawing.Size(80, 17);
+            this.scrlAbilityPowerReq.TabIndex = 1;
+            this.scrlAbilityPowerReq.ValueChanged += new System.EventHandler(this.scrlAbilityPowerReq_Scroll);
             // 
-            // scrlStrReq
+            // scrlAttackReq
             // 
-            this.scrlStrReq.Location = new System.Drawing.Point(13, 39);
-            this.scrlStrReq.Maximum = 255;
-            this.scrlStrReq.Name = "scrlStrReq";
-            this.scrlStrReq.Size = new System.Drawing.Size(80, 17);
-            this.scrlStrReq.TabIndex = 0;
-            this.scrlStrReq.Scroll += new System.Windows.Forms.ScrollEventHandler(this.scrlStrReq_Scroll);
-            this.scrlStrReq.ValueChanged += new System.EventHandler(this.scrlStrReq_Scroll);
+            this.scrlAttackReq.Location = new System.Drawing.Point(13, 39);
+            this.scrlAttackReq.Maximum = 255;
+            this.scrlAttackReq.Name = "scrlAttackReq";
+            this.scrlAttackReq.Size = new System.Drawing.Size(80, 17);
+            this.scrlAttackReq.TabIndex = 0;
+            this.scrlAttackReq.Scroll += new System.Windows.Forms.ScrollEventHandler(this.scrlAttackReq_Scroll);
+            this.scrlAttackReq.ValueChanged += new System.EventHandler(this.scrlAttackReq_Scroll);
             // 
             // gbEquipment
             // 
+            this.gbEquipment.Controls.Add(this.lblEffectPercent);
+            this.gbEquipment.Controls.Add(this.scrlEffectAmount);
+            this.gbEquipment.Controls.Add(this.cmbEquipmentBonus);
+            this.gbEquipment.Controls.Add(this.label9);
+            this.gbEquipment.Controls.Add(this.cmbToolType);
+            this.gbEquipment.Controls.Add(this.lblToolType);
+            this.gbEquipment.Controls.Add(this.chk2Hand);
+            this.gbEquipment.Controls.Add(this.cmbEquipmentSlot);
+            this.gbEquipment.Controls.Add(this.label7);
             this.gbEquipment.Controls.Add(this.cmbPaperdoll);
             this.gbEquipment.Controls.Add(this.label5);
             this.gbEquipment.Controls.Add(this.lblRange);
             this.gbEquipment.Controls.Add(this.scrlRange);
             this.gbEquipment.Controls.Add(this.picPaperdoll);
-            this.gbEquipment.Controls.Add(this.lblTool);
-            this.gbEquipment.Controls.Add(this.scrlTool);
-            this.gbEquipment.Controls.Add(this.lblAtkSpd);
-            this.gbEquipment.Controls.Add(this.ScrlAtkSpd);
-            this.gbEquipment.Controls.Add(this.lblDmg);
-            this.gbEquipment.Controls.Add(this.scrlDmg);
-            this.gbEquipment.Controls.Add(this.lblSpd);
-            this.gbEquipment.Controls.Add(this.lblMR);
-            this.gbEquipment.Controls.Add(this.lblDef);
-            this.gbEquipment.Controls.Add(this.lblMag);
-            this.gbEquipment.Controls.Add(this.lblStr);
-            this.gbEquipment.Controls.Add(this.scrlDef);
-            this.gbEquipment.Controls.Add(this.scrlSpd);
-            this.gbEquipment.Controls.Add(this.scrlMR);
-            this.gbEquipment.Controls.Add(this.scrlMag);
-            this.gbEquipment.Controls.Add(this.scrlStr);
+            this.gbEquipment.Controls.Add(this.lblDamage);
+            this.gbEquipment.Controls.Add(this.scrlDamage);
+            this.gbEquipment.Controls.Add(this.lblSpeed);
+            this.gbEquipment.Controls.Add(this.lblMagicResist);
+            this.gbEquipment.Controls.Add(this.lblDefense);
+            this.gbEquipment.Controls.Add(this.lblAbilityPower);
+            this.gbEquipment.Controls.Add(this.lblAttack);
+            this.gbEquipment.Controls.Add(this.scrlDefense);
+            this.gbEquipment.Controls.Add(this.scrlSpeed);
+            this.gbEquipment.Controls.Add(this.scrlMagicResist);
+            this.gbEquipment.Controls.Add(this.scrlAbilityPower);
+            this.gbEquipment.Controls.Add(this.scrlAttack);
             this.gbEquipment.Location = new System.Drawing.Point(225, 233);
             this.gbEquipment.Name = "gbEquipment";
             this.gbEquipment.Size = new System.Drawing.Size(439, 205);
@@ -490,6 +497,94 @@ namespace Intersect_Editor.Forms
             this.gbEquipment.TabStop = false;
             this.gbEquipment.Text = "Equipment";
             this.gbEquipment.Visible = false;
+            // 
+            // lblEffectPercent
+            // 
+            this.lblEffectPercent.AutoSize = true;
+            this.lblEffectPercent.Location = new System.Drawing.Point(323, 60);
+            this.lblEffectPercent.Name = "lblEffectPercent";
+            this.lblEffectPercent.Size = new System.Drawing.Size(94, 13);
+            this.lblEffectPercent.TabIndex = 31;
+            this.lblEffectPercent.Text = "Effect Amount: 0%";
+            // 
+            // scrlEffectAmount
+            // 
+            this.scrlEffectAmount.LargeChange = 1;
+            this.scrlEffectAmount.Location = new System.Drawing.Point(326, 79);
+            this.scrlEffectAmount.Name = "scrlEffectAmount";
+            this.scrlEffectAmount.Size = new System.Drawing.Size(102, 17);
+            this.scrlEffectAmount.TabIndex = 30;
+            // 
+            // cmbEquipmentBonus
+            // 
+            this.cmbEquipmentBonus.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbEquipmentBonus.FormattingEnabled = true;
+            this.cmbEquipmentBonus.Location = new System.Drawing.Point(198, 76);
+            this.cmbEquipmentBonus.Name = "cmbEquipmentBonus";
+            this.cmbEquipmentBonus.Size = new System.Drawing.Size(108, 21);
+            this.cmbEquipmentBonus.TabIndex = 29;
+            this.cmbEquipmentBonus.SelectedIndexChanged += new System.EventHandler(this.cmbEquipmentBonus_SelectedIndexChanged);
+            // 
+            // label9
+            // 
+            this.label9.AutoSize = true;
+            this.label9.Location = new System.Drawing.Point(195, 60);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(71, 13);
+            this.label9.TabIndex = 28;
+            this.label9.Text = "Bonus Effect:";
+            // 
+            // cmbToolType
+            // 
+            this.cmbToolType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbToolType.FormattingEnabled = true;
+            this.cmbToolType.Location = new System.Drawing.Point(326, 35);
+            this.cmbToolType.Name = "cmbToolType";
+            this.cmbToolType.Size = new System.Drawing.Size(107, 21);
+            this.cmbToolType.TabIndex = 27;
+            this.cmbToolType.Visible = false;
+            this.cmbToolType.SelectedIndexChanged += new System.EventHandler(this.cmbToolType_SelectedIndexChanged);
+            // 
+            // lblToolType
+            // 
+            this.lblToolType.AutoSize = true;
+            this.lblToolType.Location = new System.Drawing.Point(323, 19);
+            this.lblToolType.Name = "lblToolType";
+            this.lblToolType.Size = new System.Drawing.Size(58, 13);
+            this.lblToolType.TabIndex = 26;
+            this.lblToolType.Text = "Tool Type:";
+            this.lblToolType.Visible = false;
+            // 
+            // chk2Hand
+            // 
+            this.chk2Hand.AutoSize = true;
+            this.chk2Hand.Location = new System.Drawing.Point(198, 107);
+            this.chk2Hand.Name = "chk2Hand";
+            this.chk2Hand.Size = new System.Drawing.Size(61, 17);
+            this.chk2Hand.TabIndex = 25;
+            this.chk2Hand.Text = "2 Hand";
+            this.chk2Hand.UseVisualStyleBackColor = true;
+            this.chk2Hand.Visible = false;
+            this.chk2Hand.CheckedChanged += new System.EventHandler(this.chk2Hand_CheckedChanged);
+            // 
+            // cmbEquipmentSlot
+            // 
+            this.cmbEquipmentSlot.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbEquipmentSlot.FormattingEnabled = true;
+            this.cmbEquipmentSlot.Location = new System.Drawing.Point(198, 35);
+            this.cmbEquipmentSlot.Name = "cmbEquipmentSlot";
+            this.cmbEquipmentSlot.Size = new System.Drawing.Size(108, 21);
+            this.cmbEquipmentSlot.TabIndex = 24;
+            this.cmbEquipmentSlot.SelectedIndexChanged += new System.EventHandler(this.cmbEquipmentSlot_SelectedIndexChanged);
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(195, 19);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(81, 13);
+            this.label7.TabIndex = 23;
+            this.label7.Text = "Equipment Slot:";
             // 
             // cmbPaperdoll
             // 
@@ -515,7 +610,7 @@ namespace Intersect_Editor.Forms
             // lblRange
             // 
             this.lblRange.AutoSize = true;
-            this.lblRange.Location = new System.Drawing.Point(220, 59);
+            this.lblRange.Location = new System.Drawing.Point(9, 154);
             this.lblRange.Name = "lblRange";
             this.lblRange.Size = new System.Drawing.Size(118, 13);
             this.lblRange.TabIndex = 20;
@@ -523,9 +618,9 @@ namespace Intersect_Editor.Forms
             // 
             // scrlRange
             // 
-            this.scrlRange.Location = new System.Drawing.Point(223, 78);
+            this.scrlRange.Location = new System.Drawing.Point(13, 172);
             this.scrlRange.Name = "scrlRange";
-            this.scrlRange.Size = new System.Drawing.Size(194, 18);
+            this.scrlRange.Size = new System.Drawing.Size(80, 18);
             this.scrlRange.TabIndex = 19;
             this.scrlRange.ValueChanged += new System.EventHandler(this.scrlRange_Scroll);
             // 
@@ -537,147 +632,114 @@ namespace Intersect_Editor.Forms
             this.picPaperdoll.TabIndex = 16;
             this.picPaperdoll.TabStop = false;
             // 
-            // lblTool
+            // lblDamage
             // 
-            this.lblTool.AutoSize = true;
-            this.lblTool.Location = new System.Drawing.Point(223, 20);
-            this.lblTool.Name = "lblTool";
-            this.lblTool.Size = new System.Drawing.Size(69, 13);
-            this.lblTool.TabIndex = 15;
-            this.lblTool.Text = "Tool Index: 0";
+            this.lblDamage.AutoSize = true;
+            this.lblDamage.Location = new System.Drawing.Point(101, 114);
+            this.lblDamage.Name = "lblDamage";
+            this.lblDamage.Size = new System.Drawing.Size(59, 13);
+            this.lblDamage.TabIndex = 11;
+            this.lblDamage.Text = "Damage: 0";
+            this.lblDamage.Visible = false;
             // 
-            // scrlTool
+            // scrlDamage
             // 
-            this.scrlTool.Location = new System.Drawing.Point(226, 39);
-            this.scrlTool.Name = "scrlTool";
-            this.scrlTool.Size = new System.Drawing.Size(194, 18);
-            this.scrlTool.TabIndex = 14;
-            this.scrlTool.ValueChanged += new System.EventHandler(this.scrlTool_Scroll);
+            this.scrlDamage.Location = new System.Drawing.Point(104, 128);
+            this.scrlDamage.Name = "scrlDamage";
+            this.scrlDamage.Size = new System.Drawing.Size(80, 17);
+            this.scrlDamage.TabIndex = 10;
+            this.scrlDamage.Visible = false;
+            this.scrlDamage.ValueChanged += new System.EventHandler(this.scrlDmg_Scroll);
             // 
-            // lblAtkSpd
+            // lblSpeed
             // 
-            this.lblAtkSpd.AutoSize = true;
-            this.lblAtkSpd.Location = new System.Drawing.Point(12, 164);
-            this.lblAtkSpd.Name = "lblAtkSpd";
-            this.lblAtkSpd.Size = new System.Drawing.Size(112, 13);
-            this.lblAtkSpd.TabIndex = 13;
-            this.lblAtkSpd.Text = "AttackSpeed: 0.0 Sec";
+            this.lblSpeed.AutoSize = true;
+            this.lblSpeed.Location = new System.Drawing.Point(9, 114);
+            this.lblSpeed.Name = "lblSpeed";
+            this.lblSpeed.Size = new System.Drawing.Size(50, 13);
+            this.lblSpeed.TabIndex = 9;
+            this.lblSpeed.Text = "Speed: 0";
             // 
-            // ScrlAtkSpd
+            // lblMagicResist
             // 
-            this.ScrlAtkSpd.Location = new System.Drawing.Point(13, 184);
-            this.ScrlAtkSpd.Maximum = 255;
-            this.ScrlAtkSpd.Name = "ScrlAtkSpd";
-            this.ScrlAtkSpd.Size = new System.Drawing.Size(194, 18);
-            this.ScrlAtkSpd.TabIndex = 12;
-            this.ScrlAtkSpd.ValueChanged += new System.EventHandler(this.ScrlAtkSpd_Scroll);
+            this.lblMagicResist.AutoSize = true;
+            this.lblMagicResist.Location = new System.Drawing.Point(101, 70);
+            this.lblMagicResist.Name = "lblMagicResist";
+            this.lblMagicResist.Size = new System.Drawing.Size(80, 13);
+            this.lblMagicResist.TabIndex = 8;
+            this.lblMagicResist.Text = "Magic Resist: 0";
             // 
-            // lblDmg
+            // lblDefense
             // 
-            this.lblDmg.AutoSize = true;
-            this.lblDmg.Location = new System.Drawing.Point(124, 121);
-            this.lblDmg.Name = "lblDmg";
-            this.lblDmg.Size = new System.Drawing.Size(59, 13);
-            this.lblDmg.TabIndex = 11;
-            this.lblDmg.Text = "Damage: 0";
+            this.lblDefense.AutoSize = true;
+            this.lblDefense.Location = new System.Drawing.Point(10, 70);
+            this.lblDefense.Name = "lblDefense";
+            this.lblDefense.Size = new System.Drawing.Size(59, 13);
+            this.lblDefense.TabIndex = 7;
+            this.lblDefense.Text = "Defense: 0";
             // 
-            // scrlDmg
+            // lblAbilityPower
             // 
-            this.scrlDmg.Location = new System.Drawing.Point(127, 135);
-            this.scrlDmg.Name = "scrlDmg";
-            this.scrlDmg.Size = new System.Drawing.Size(80, 17);
-            this.scrlDmg.TabIndex = 10;
-            this.scrlDmg.ValueChanged += new System.EventHandler(this.scrlDmg_Scroll);
+            this.lblAbilityPower.AutoSize = true;
+            this.lblAbilityPower.Location = new System.Drawing.Point(101, 20);
+            this.lblAbilityPower.Name = "lblAbilityPower";
+            this.lblAbilityPower.Size = new System.Drawing.Size(67, 13);
+            this.lblAbilityPower.TabIndex = 6;
+            this.lblAbilityPower.Text = "Ability Pwr: 0";
             // 
-            // lblSpd
+            // lblAttack
             // 
-            this.lblSpd.AutoSize = true;
-            this.lblSpd.Location = new System.Drawing.Point(9, 121);
-            this.lblSpd.Name = "lblSpd";
-            this.lblSpd.Size = new System.Drawing.Size(80, 13);
-            this.lblSpd.TabIndex = 9;
-            this.lblSpd.Text = "Move Speed: 0";
+            this.lblAttack.AutoSize = true;
+            this.lblAttack.Location = new System.Drawing.Point(10, 20);
+            this.lblAttack.Name = "lblAttack";
+            this.lblAttack.Size = new System.Drawing.Size(50, 13);
+            this.lblAttack.TabIndex = 5;
+            this.lblAttack.Text = "Attack: 0";
             // 
-            // lblMR
+            // scrlDefense
             // 
-            this.lblMR.AutoSize = true;
-            this.lblMR.Location = new System.Drawing.Point(124, 70);
-            this.lblMR.Name = "lblMR";
-            this.lblMR.Size = new System.Drawing.Size(80, 13);
-            this.lblMR.TabIndex = 8;
-            this.lblMR.Text = "Magic Resist: 0";
+            this.scrlDefense.Location = new System.Drawing.Point(13, 85);
+            this.scrlDefense.Maximum = 255;
+            this.scrlDefense.Name = "scrlDefense";
+            this.scrlDefense.Size = new System.Drawing.Size(80, 17);
+            this.scrlDefense.TabIndex = 4;
+            this.scrlDefense.ValueChanged += new System.EventHandler(this.scrlDefense_Scroll);
             // 
-            // lblDef
+            // scrlSpeed
             // 
-            this.lblDef.AutoSize = true;
-            this.lblDef.Location = new System.Drawing.Point(10, 70);
-            this.lblDef.Name = "lblDef";
-            this.lblDef.Size = new System.Drawing.Size(46, 13);
-            this.lblDef.TabIndex = 7;
-            this.lblDef.Text = "Armor: 0";
+            this.scrlSpeed.Location = new System.Drawing.Point(13, 127);
+            this.scrlSpeed.Maximum = 255;
+            this.scrlSpeed.Name = "scrlSpeed";
+            this.scrlSpeed.Size = new System.Drawing.Size(80, 17);
+            this.scrlSpeed.TabIndex = 3;
+            this.scrlSpeed.ValueChanged += new System.EventHandler(this.scrlSpeed_Scroll);
             // 
-            // lblMag
+            // scrlMagicResist
             // 
-            this.lblMag.AutoSize = true;
-            this.lblMag.Location = new System.Drawing.Point(124, 20);
-            this.lblMag.Name = "lblMag";
-            this.lblMag.Size = new System.Drawing.Size(48, 13);
-            this.lblMag.TabIndex = 6;
-            this.lblMag.Text = "Magic: 0";
+            this.scrlMagicResist.Location = new System.Drawing.Point(104, 85);
+            this.scrlMagicResist.Maximum = 255;
+            this.scrlMagicResist.Name = "scrlMagicResist";
+            this.scrlMagicResist.Size = new System.Drawing.Size(80, 17);
+            this.scrlMagicResist.TabIndex = 2;
+            this.scrlMagicResist.ValueChanged += new System.EventHandler(this.scrlMagicResist_Scroll);
             // 
-            // lblStr
+            // scrlAbilityPower
             // 
-            this.lblStr.AutoSize = true;
-            this.lblStr.Location = new System.Drawing.Point(10, 20);
-            this.lblStr.Name = "lblStr";
-            this.lblStr.Size = new System.Drawing.Size(59, 13);
-            this.lblStr.TabIndex = 5;
-            this.lblStr.Text = "Strength: 0";
+            this.scrlAbilityPower.Location = new System.Drawing.Point(104, 39);
+            this.scrlAbilityPower.Maximum = 255;
+            this.scrlAbilityPower.Name = "scrlAbilityPower";
+            this.scrlAbilityPower.Size = new System.Drawing.Size(80, 17);
+            this.scrlAbilityPower.TabIndex = 1;
+            this.scrlAbilityPower.ValueChanged += new System.EventHandler(this.scrlAbilityPower_Scroll);
             // 
-            // scrlDef
+            // scrlAttack
             // 
-            this.scrlDef.Location = new System.Drawing.Point(13, 85);
-            this.scrlDef.Maximum = 255;
-            this.scrlDef.Name = "scrlDef";
-            this.scrlDef.Size = new System.Drawing.Size(80, 17);
-            this.scrlDef.TabIndex = 4;
-            this.scrlDef.ValueChanged += new System.EventHandler(this.scrlDef_Scroll);
-            // 
-            // scrlSpd
-            // 
-            this.scrlSpd.Location = new System.Drawing.Point(13, 134);
-            this.scrlSpd.Maximum = 255;
-            this.scrlSpd.Name = "scrlSpd";
-            this.scrlSpd.Size = new System.Drawing.Size(80, 17);
-            this.scrlSpd.TabIndex = 3;
-            this.scrlSpd.ValueChanged += new System.EventHandler(this.scrlSpd_Scroll);
-            // 
-            // scrlMR
-            // 
-            this.scrlMR.Location = new System.Drawing.Point(127, 85);
-            this.scrlMR.Maximum = 255;
-            this.scrlMR.Name = "scrlMR";
-            this.scrlMR.Size = new System.Drawing.Size(80, 17);
-            this.scrlMR.TabIndex = 2;
-            this.scrlMR.ValueChanged += new System.EventHandler(this.scrlMR_Scroll);
-            // 
-            // scrlMag
-            // 
-            this.scrlMag.Location = new System.Drawing.Point(127, 39);
-            this.scrlMag.Maximum = 255;
-            this.scrlMag.Name = "scrlMag";
-            this.scrlMag.Size = new System.Drawing.Size(80, 17);
-            this.scrlMag.TabIndex = 1;
-            this.scrlMag.ValueChanged += new System.EventHandler(this.scrlMag_Scroll);
-            // 
-            // scrlStr
-            // 
-            this.scrlStr.Location = new System.Drawing.Point(13, 39);
-            this.scrlStr.Maximum = 255;
-            this.scrlStr.Name = "scrlStr";
-            this.scrlStr.Size = new System.Drawing.Size(80, 17);
-            this.scrlStr.TabIndex = 0;
-            this.scrlStr.ValueChanged += new System.EventHandler(this.scrlStr_Scroll);
+            this.scrlAttack.Location = new System.Drawing.Point(13, 39);
+            this.scrlAttack.Maximum = 255;
+            this.scrlAttack.Name = "scrlAttack";
+            this.scrlAttack.Size = new System.Drawing.Size(80, 17);
+            this.scrlAttack.TabIndex = 0;
+            this.scrlAttack.ValueChanged += new System.EventHandler(this.scrlAttack_Scroll);
             // 
             // gbConsumable
             // 
@@ -692,37 +754,6 @@ namespace Intersect_Editor.Forms
             this.gbConsumable.TabStop = false;
             this.gbConsumable.Text = "Consumable";
             this.gbConsumable.Visible = false;
-            // 
-            // gbSpell
-            // 
-            this.gbSpell.Controls.Add(this.scrlSpell);
-            this.gbSpell.Controls.Add(this.lblSpell);
-            this.gbSpell.Location = new System.Drawing.Point(225, 233);
-            this.gbSpell.Name = "gbSpell";
-            this.gbSpell.Size = new System.Drawing.Size(217, 67);
-            this.gbSpell.TabIndex = 13;
-            this.gbSpell.TabStop = false;
-            this.gbSpell.Text = "Spell";
-            this.gbSpell.Visible = false;
-            // 
-            // scrlSpell
-            // 
-            this.scrlSpell.Location = new System.Drawing.Point(12, 39);
-            this.scrlSpell.Maximum = 1000;
-            this.scrlSpell.Name = "scrlSpell";
-            this.scrlSpell.Size = new System.Drawing.Size(176, 18);
-            this.scrlSpell.TabIndex = 12;
-            this.scrlSpell.Scroll += new System.Windows.Forms.ScrollEventHandler(this.scrlSpell_Scroll);
-            this.scrlSpell.ValueChanged += new System.EventHandler(this.scrlSpell_Scroll);
-            // 
-            // lblSpell
-            // 
-            this.lblSpell.AutoSize = true;
-            this.lblSpell.Location = new System.Drawing.Point(12, 20);
-            this.lblSpell.Name = "lblSpell";
-            this.lblSpell.Size = new System.Drawing.Size(71, 13);
-            this.lblSpell.TabIndex = 11;
-            this.lblSpell.Text = "Spell: 0 None";
             // 
             // label4
             // 
@@ -765,18 +796,49 @@ namespace Intersect_Editor.Forms
             this.lblInterval.TabIndex = 9;
             this.lblInterval.Text = "Interval: 0";
             // 
+            // gbSpell
+            // 
+            this.gbSpell.Controls.Add(this.scrlSpell);
+            this.gbSpell.Controls.Add(this.lblSpell);
+            this.gbSpell.Location = new System.Drawing.Point(225, 233);
+            this.gbSpell.Name = "gbSpell";
+            this.gbSpell.Size = new System.Drawing.Size(217, 67);
+            this.gbSpell.TabIndex = 13;
+            this.gbSpell.TabStop = false;
+            this.gbSpell.Text = "Spell";
+            this.gbSpell.Visible = false;
+            // 
+            // scrlSpell
+            // 
+            this.scrlSpell.Location = new System.Drawing.Point(12, 39);
+            this.scrlSpell.Maximum = 1000;
+            this.scrlSpell.Name = "scrlSpell";
+            this.scrlSpell.Size = new System.Drawing.Size(176, 18);
+            this.scrlSpell.TabIndex = 12;
+            this.scrlSpell.Scroll += new System.Windows.Forms.ScrollEventHandler(this.scrlSpell_Scroll);
+            this.scrlSpell.ValueChanged += new System.EventHandler(this.scrlSpell_Scroll);
+            // 
+            // lblSpell
+            // 
+            this.lblSpell.AutoSize = true;
+            this.lblSpell.Location = new System.Drawing.Point(12, 20);
+            this.lblSpell.Name = "lblSpell";
+            this.lblSpell.Size = new System.Drawing.Size(71, 13);
+            this.lblSpell.TabIndex = 11;
+            this.lblSpell.Text = "Spell: 0 None";
+            // 
             // FrmItem
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(677, 450);
             this.ControlBox = false;
-            this.Controls.Add(this.gbSpell);
-            this.Controls.Add(this.gbConsumable);
             this.Controls.Add(this.groupBox3);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.gbEquipment);
+            this.Controls.Add(this.gbSpell);
+            this.Controls.Add(this.gbConsumable);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Name = "FrmItem";
             this.Text = "Item Editor";
@@ -817,35 +879,31 @@ namespace Intersect_Editor.Forms
         private GroupBox groupBox3;
         private Label label3;
         private ComboBox cmbClass;
-        private Label lblLevel;
-        private HScrollBar scrlLevel;
-        private Label lblSpdReq;
-        private Label lblMRReq;
-        private Label lblDefReq;
-        private Label lblMagReq;
-        private Label lblStrReq;
-        private HScrollBar scrlDefReq;
-        private HScrollBar scrlSpdReq;
-        private HScrollBar scrlMRReq;
-        private HScrollBar scrlMagReq;
-        private HScrollBar scrlStrReq;
+        private Label lblLevelReq;
+        private HScrollBar scrlLevelReq;
+        private Label lblSpeedReq;
+        private Label lblMagicResistReq;
+        private Label lblDefenseReq;
+        private Label lblAbilityPowerReq;
+        private Label lblAttackReq;
+        private HScrollBar scrlDefenseReq;
+        private HScrollBar scrlSpeedReq;
+        private HScrollBar scrlMagicResistReq;
+        private HScrollBar scrlAbilityPowerReq;
+        private HScrollBar scrlAttackReq;
         private GroupBox gbEquipment;
-        private Label lblTool;
-        private HScrollBar scrlTool;
-        private Label lblAtkSpd;
-        private HScrollBar ScrlAtkSpd;
-        private Label lblDmg;
-        private HScrollBar scrlDmg;
-        private Label lblSpd;
-        private Label lblMR;
-        private Label lblDef;
-        private Label lblMag;
-        private Label lblStr;
-        private HScrollBar scrlDef;
-        private HScrollBar scrlSpd;
-        private HScrollBar scrlMR;
-        private HScrollBar scrlMag;
-        private HScrollBar scrlStr;
+        private Label lblDamage;
+        private HScrollBar scrlDamage;
+        private Label lblSpeed;
+        private Label lblMagicResist;
+        private Label lblDefense;
+        private Label lblAbilityPower;
+        private Label lblAttack;
+        private HScrollBar scrlDefense;
+        private HScrollBar scrlSpeed;
+        private HScrollBar scrlMagicResist;
+        private HScrollBar scrlAbilityPower;
+        private HScrollBar scrlAttack;
         private PictureBox picPaperdoll;
         private GroupBox gbConsumable;
         private ComboBox cmbConsume;
@@ -864,6 +922,15 @@ namespace Intersect_Editor.Forms
         private Label label5;
         private Label label6;
         private TextBox txtDesc;
+        private CheckBox chk2Hand;
+        private ComboBox cmbEquipmentSlot;
+        private Label label7;
+        private Label lblEffectPercent;
+        private HScrollBar scrlEffectAmount;
+        private ComboBox cmbEquipmentBonus;
+        private Label label9;
+        private ComboBox cmbToolType;
+        private Label lblToolType;
 
     }
 }

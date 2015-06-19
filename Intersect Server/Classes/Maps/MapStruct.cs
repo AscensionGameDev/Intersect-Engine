@@ -190,7 +190,7 @@ namespace Intersect_Server.Classes
             MapItems[MapItems.Count - 1].Y = y;
             MapItems[MapItems.Count - 1].ItemNum = item.ItemNum;
             MapItems[MapItems.Count - 1].DespawnTime = Environment.TickCount + Constants.ItemDespawnTime;
-            if (Globals.GameItems[MapItems[MapItems.Count - 1].ItemNum].Type >= (int)Enums.ItemTypes.Weapon && Globals.GameItems[MapItems[MapItems.Count - 1].ItemNum].Type <= (int)Enums.ItemTypes.Shield)
+            if (Globals.GameItems[MapItems[MapItems.Count - 1].ItemNum].Type >= (int)Enums.ItemTypes.Equipment)
             {
                 MapItems[MapItems.Count - 1].ItemVal = 1;
                 for (int i = 0; i < (int)Enums.Stats.StatCount; i++)
@@ -214,7 +214,7 @@ namespace Intersect_Server.Classes
             MapItems[MapItems.Count - 1].DespawnTime = Environment.TickCount + Constants.ItemDespawnTime;
             MapItems[MapItems.Count - 1].AttributeSpawnX = x;
             MapItems[MapItems.Count - 1].AttributeSpawnY = y;
-            if (Globals.GameItems[MapItems[MapItems.Count - 1].ItemNum].Type >= (int)Enums.ItemTypes.Weapon && Globals.GameItems[MapItems[MapItems.Count - 1].ItemNum].Type <= (int)Enums.ItemTypes.Shield)
+            if (Globals.GameItems[MapItems[MapItems.Count - 1].ItemNum].Type == (int)Enums.ItemTypes.Equipment)
             {
                 MapItems[MapItems.Count - 1].ItemVal = 1;
                 Random r = new Random();

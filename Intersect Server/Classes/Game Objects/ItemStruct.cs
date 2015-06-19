@@ -23,6 +23,7 @@ namespace Intersect_Server.Classes
         public int Data1;
         public int Data2;
         public int Data3;
+        public int Data4;
 
         public ItemStruct()
         {
@@ -59,6 +60,7 @@ namespace Intersect_Server.Classes
             Data1 = myBuffer.ReadInteger();
             Data2 = myBuffer.ReadInteger();
             Data3 = myBuffer.ReadInteger();
+            Data4 = myBuffer.ReadInteger();
         }
 
         public byte[] ItemData()
@@ -88,7 +90,7 @@ namespace Intersect_Server.Classes
             myBuffer.WriteInteger(Data1);
             myBuffer.WriteInteger(Data2);
             myBuffer.WriteInteger(Data3);
-
+            myBuffer.WriteInteger(Data4);
             return myBuffer.ToArray();
         }
 

@@ -20,6 +20,10 @@ namespace Intersect_Client
         public bool InView = true;
         public int Passable = 0;
         public int HideName = 0;
+        public int Level = 1;
+
+        //Extras
+        public string Face = "";
 
         //Location Info
         public int CurrentX;
@@ -43,6 +47,15 @@ namespace Intersect_Client
         private long _walkTimer;
         private int _walkFrame;
 
+        //Deserializing
+        public void Load(ByteBuffer bf)
+        {
+            MyName = bf.ReadString();
+            MySprite = bf.ReadString();
+            Face = bf.ReadString();
+        }
+
+        //Movement Processing
         public void Update()
         {
             if (_lastUpdate == 0) { _lastUpdate = Environment.TickCount; }
@@ -102,6 +115,7 @@ namespace Intersect_Client
             _lastUpdate = Environment.TickCount;
         }
 
+        //Rendering Functions
         public void Draw(int i)
         {
             Rectangle srcRectangle = new Rectangle();
@@ -113,7 +127,7 @@ namespace Intersect_Client
                 srcTexture = Graphics.EntityTextures[Graphics.EntityFileNames.IndexOf(MySprite.ToLower() + ".png")];
                 if (srcTexture.Size.Y / 4 > 32)
                 {
-                    destRectangle.X = (int) Math.Ceiling(Graphics.CalcMapOffsetX(i) + CurrentX*32 + OffsetX);
+                    destRectangle.X = (int)Math.Ceiling(Graphics.CalcMapOffsetX(i) + CurrentX * 32 + OffsetX);
                     destRectangle.Y = (int)Math.Ceiling(Graphics.CalcMapOffsetY(i) + CurrentY * 32 + OffsetY - ((srcTexture.Size.Y / 4) - 32));
                 }
                 else
@@ -139,11 +153,10 @@ namespace Intersect_Client
                 srcRectangle = new Rectangle(_walkFrame * (int)srcTexture.Size.X / 4, d * (int)srcTexture.Size.Y / 4, (int)srcTexture.Size.X / 4, (int)srcTexture.Size.Y / 4);
                 destRectangle.Width = srcRectangle.Width;
                 destRectangle.Height = srcRectangle.Height;
-                Graphics.RenderTexture(srcTexture,srcRectangle,destRectangle,Graphics.RenderWindow );
+                Graphics.RenderTexture(srcTexture, srcRectangle, destRectangle, Graphics.RenderWindow);
 
             }
         }
-
         //returns the point on the screen that is the center of the player sprite
         public Vector2f GetCenterPos(int mapPos)
         {
@@ -160,7 +173,6 @@ namespace Intersect_Client
             }
             return pos;
         }
-
         public void DrawName(int i, bool isEvent)
         {
             if (HideName == 1) { return; }
@@ -183,7 +195,6 @@ namespace Intersect_Client
             nameText.Position = new Vector2f(x - nameText.GetLocalBounds().Width / 2, y);
             Graphics.RenderWindow.Draw(nameText);
         }
-
         public void DrawHpBar(int i)
         {
             var width = 32;

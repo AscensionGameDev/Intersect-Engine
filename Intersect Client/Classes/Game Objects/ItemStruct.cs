@@ -26,6 +26,7 @@ namespace Intersect_Client.Classes.Items
         public int Data1;
         public int Data2;
         public int Data3;
+        public int Data4;
 
         public ItemStruct()
         {
@@ -62,6 +63,7 @@ namespace Intersect_Client.Classes.Items
             Data1 = myBuffer.ReadInteger();
             Data2 = myBuffer.ReadInteger();
             Data3 = myBuffer.ReadInteger();
+            Data4 = myBuffer.ReadInteger();
         }
     }
 }

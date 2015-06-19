@@ -13,6 +13,9 @@ namespace Intersect_Server.Classes
         public int Passable = 0;
         public int HideName = 0;
 
+        //Extras
+        public string Face = "";
+
         //Location Info
         public int CurrentX;
         public int CurrentY;
@@ -26,7 +29,7 @@ namespace Intersect_Server.Classes
 
         public long MoveTimer;
         
-
+        //Initialization
         public Entity(int index)
         {
             MyIndex = index;
@@ -49,6 +52,7 @@ namespace Intersect_Server.Classes
 
         }
 
+        //Movement
         public bool CanMove(int moveDir)
         {
             var tmpX = CurrentX;
@@ -236,7 +240,6 @@ namespace Intersect_Server.Classes
 
             }
         }
-
         public void Move(int moveDir, Client client)
         {
             var tmpX = CurrentX;
@@ -381,7 +384,13 @@ namespace Intersect_Server.Classes
                 //ignore
             }
         }
+        public void ChangeDir(int dir)
+        {
+            Dir = dir;
+            PacketSender.SendEntityDir(MyIndex,IsEvent);
+        }
 
+        //Combat
         public void TryAttack(int enemyIndex)
         {
             if (Globals.Entities[enemyIndex] == null) return;
@@ -411,24 +420,17 @@ namespace Intersect_Server.Classes
                 }
             }
         }
-
         bool IsOneBlockAway(int enemyIndex)
         {
             //TODO
             return true;
         }
 
-        public void ChangeDir(int dir)
-        {
-            Dir = dir;
-            PacketSender.SendEntityDir(MyIndex,IsEvent);
-        }
-
+        //Spawning/Dying
         public virtual void Die()
         {
 
         }
-
         public void Reset()
         {
             for (var i = 0; i < (int) Enums.Vitals.VitalCount; i++)
@@ -437,14 +439,24 @@ namespace Intersect_Server.Classes
             }
         }
 
+        //Empty virtual functions for players
         public virtual void Warp(int newMap, int newX, int newY)
         {
             Warp(newMap, newX, newY, Dir);
         }
-
         public virtual void Warp(int newMap, int newX, int newY, int newDir)
         {
             
+        }
+
+        //Serializing Data
+        public byte[] Data()
+        {
+            var bf = new ByteBuffer();
+            bf.WriteString(MyName);
+            bf.WriteString(MySprite);
+            bf.WriteString(Face);
+            return bf.ToArray();
         }
     }
 

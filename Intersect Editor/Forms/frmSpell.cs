@@ -129,6 +129,7 @@ namespace Intersect_Editor.Forms
                 chkHOTDOT.Checked = Convert.ToBoolean(Globals.GameSpells[_editorIndex].Data1);
                 scrlBuffDuration.Value = Globals.GameSpells[_editorIndex].Data2;
                 lblBuffDuration.Text = "Duration (seconds): " + ((double)scrlBuffDuration.Value / 10);
+                cmbExtraEffect.SelectedIndex = Globals.GameSpells[_editorIndex].Data3;
             }
             else
             {
@@ -422,6 +423,11 @@ namespace Intersect_Editor.Forms
         private void txtDesc_TextChanged(object sender, EventArgs e)
         {
             Globals.GameSpells[_editorIndex].Desc = txtDesc.Text;
+        }
+
+        private void cmbExtraEffect_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            Globals.GameSpells[_editorIndex].Data3 = cmbExtraEffect.SelectedIndex;
         }
 
     }

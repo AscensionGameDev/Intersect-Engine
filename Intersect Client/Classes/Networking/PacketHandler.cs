@@ -123,23 +123,16 @@ namespace Intersect_Client.Classes
             bf.WriteBytes(packet);
             var i = (int)bf.ReadLong();
             var entityType = bf.ReadInteger();
+            Entity en;
             if (entityType == 0)
             {
-                if (i == Globals.MyIndex)
-                {
-                    EntityManager.AddPlayer(i, bf.ReadString(), bf.ReadString(), true);
-                    Globals.Me = (Player)Globals.Entities[Globals.MyIndex];
-                }
-                else
-                {
-                    EntityManager.AddPlayer(i, bf.ReadString(), bf.ReadString(), false);
-                }
+                en = EntityManager.AddPlayer(i);
             }
             else
             {
-                EntityManager.AddEvent(i, bf.ReadString(), bf.ReadString(), false);
+                en = EntityManager.AddEvent(i);
             }
-
+            en.Load(bf);
         }
 
         private static void HandlePositionInfo(byte[] packet)

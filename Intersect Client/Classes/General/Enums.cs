@@ -1,4 +1,5 @@
-﻿namespace Intersect_Client.Classes
+﻿using System.Collections.Generic;
+namespace Intersect_Client.Classes
 {
     public static class Enums
     {
@@ -111,19 +112,36 @@
             VitalCount
         }
 
-        public enum ItemTypes : int
+        public enum ItemTypes
         {
             None = 0,
-            Weapon = 1,
-            Armor = 2,
-            Helmet = 3,
-            Shield = 4,
-            Consumable = 5,
-            Currency = 6,
-            Spell = 7
+            Equipment = 1,
+            Consumable = 2,
+            Currency = 3,
+            Spell = 4
         }
 
+        public enum SpellTypes
+        {
+            Combat=0,
+            Warp=1,
+        }
+
+        public enum SpellTargetTypes
+        {
+            Self=0,
+            SingleTarget=1,
+            AOE=2,
+            Linear=3,
+        }
+
+        public static int WeaponIndex = 2;
+        public static int ShieldIndex = 3;
+        public static List<string> EquipmentSlots = new List<string>() { "Helmet", "Armor", "Weapon", "Shield", "Boots", "Armor", "Weapon", "Shield" };
+        public static List<string> ToolTypes = new List<string>() { "Axe", "Picaxe", "Shovel", "Fishing Rod" };
+        public static List<string> ItemBonusEffects = new List<string>() { "Cooldown Reduction", "Life Steal" };
+
         // Map Attribtes
-        public enum MapAttributes : byte { Walkable = 0, Blocked, Item };
+        public enum MapAttributes { Walkable = 0, Blocked, Item };
     }
 }

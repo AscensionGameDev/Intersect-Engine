@@ -34,21 +34,23 @@
             this.btnSave = new System.Windows.Forms.Button();
             this.lstSpells = new System.Windows.Forms.ListBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.label6 = new System.Windows.Forms.Label();
+            this.txtDesc = new System.Windows.Forms.TextBox();
             this.scrlHitAnimation = new System.Windows.Forms.HScrollBar();
             this.lblHitAnimation = new System.Windows.Forms.Label();
             this.scrlCastAnimation = new System.Windows.Forms.HScrollBar();
             this.lblCastAnimation = new System.Windows.Forms.Label();
-            this.scrlCooldownDuration = new System.Windows.Forms.HScrollBar();
-            this.lblCooldownDuration = new System.Windows.Forms.Label();
             this.cmbSprite = new System.Windows.Forms.ComboBox();
-            this.scrlCastDuration = new System.Windows.Forms.HScrollBar();
-            this.lblCastDuration = new System.Windows.Forms.Label();
             this.lblPic = new System.Windows.Forms.Label();
             this.picSpell = new System.Windows.Forms.PictureBox();
             this.label2 = new System.Windows.Forms.Label();
             this.cmbType = new System.Windows.Forms.ComboBox();
             this.label1 = new System.Windows.Forms.Label();
             this.txtName = new System.Windows.Forms.TextBox();
+            this.scrlCooldownDuration = new System.Windows.Forms.HScrollBar();
+            this.lblCooldownDuration = new System.Windows.Forms.Label();
+            this.scrlCastDuration = new System.Windows.Forms.HScrollBar();
+            this.lblCastDuration = new System.Windows.Forms.Label();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.lblLevelReq = new System.Windows.Forms.Label();
             this.scrlLevelReq = new System.Windows.Forms.HScrollBar();
@@ -102,8 +104,8 @@
             this.txtHPCost = new System.Windows.Forms.TextBox();
             this.label3 = new System.Windows.Forms.Label();
             this.label5 = new System.Windows.Forms.Label();
-            this.label6 = new System.Windows.Forms.Label();
-            this.txtDesc = new System.Windows.Forms.TextBox();
+            this.cmbExtraEffect = new System.Windows.Forms.ComboBox();
+            this.label7 = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.picSpell)).BeginInit();
@@ -190,6 +192,24 @@
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "General";
             // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(6, 118);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(35, 13);
+            this.label6.TabIndex = 19;
+            this.label6.Text = "Desc:";
+            // 
+            // txtDesc
+            // 
+            this.txtDesc.Location = new System.Drawing.Point(60, 117);
+            this.txtDesc.Multiline = true;
+            this.txtDesc.Name = "txtDesc";
+            this.txtDesc.Size = new System.Drawing.Size(135, 64);
+            this.txtDesc.TabIndex = 18;
+            this.txtDesc.TextChanged += new System.EventHandler(this.txtDesc_TextChanged);
+            // 
             // scrlHitAnimation
             // 
             this.scrlHitAnimation.LargeChange = 1;
@@ -232,25 +252,6 @@
             this.lblCastAnimation.TabIndex = 14;
             this.lblCastAnimation.Text = "Cast Animation: 0";
             // 
-            // scrlCooldownDuration
-            // 
-            this.scrlCooldownDuration.LargeChange = 1;
-            this.scrlCooldownDuration.Location = new System.Drawing.Point(7, 140);
-            this.scrlCooldownDuration.Maximum = 6000;
-            this.scrlCooldownDuration.Name = "scrlCooldownDuration";
-            this.scrlCooldownDuration.Size = new System.Drawing.Size(141, 18);
-            this.scrlCooldownDuration.TabIndex = 13;
-            this.scrlCooldownDuration.Scroll += new System.Windows.Forms.ScrollEventHandler(this.scrlCooldownDuration_Scroll);
-            // 
-            // lblCooldownDuration
-            // 
-            this.lblCooldownDuration.AutoSize = true;
-            this.lblCooldownDuration.Location = new System.Drawing.Point(7, 125);
-            this.lblCooldownDuration.Name = "lblCooldownDuration";
-            this.lblCooldownDuration.Size = new System.Drawing.Size(109, 13);
-            this.lblCooldownDuration.TabIndex = 12;
-            this.lblCooldownDuration.Text = "Cooldown (secs): 0.0 ";
-            // 
             // cmbSprite
             // 
             this.cmbSprite.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
@@ -262,25 +263,6 @@
             this.cmbSprite.Size = new System.Drawing.Size(135, 21);
             this.cmbSprite.TabIndex = 11;
             this.cmbSprite.SelectedIndexChanged += new System.EventHandler(this.cmbSprite_SelectedIndexChanged);
-            // 
-            // scrlCastDuration
-            // 
-            this.scrlCastDuration.LargeChange = 1;
-            this.scrlCastDuration.Location = new System.Drawing.Point(7, 107);
-            this.scrlCastDuration.Maximum = 600;
-            this.scrlCastDuration.Name = "scrlCastDuration";
-            this.scrlCastDuration.Size = new System.Drawing.Size(141, 18);
-            this.scrlCastDuration.TabIndex = 8;
-            this.scrlCastDuration.Scroll += new System.Windows.Forms.ScrollEventHandler(this.scrlCastDuration_Scroll);
-            // 
-            // lblCastDuration
-            // 
-            this.lblCastDuration.AutoSize = true;
-            this.lblCastDuration.Location = new System.Drawing.Point(7, 94);
-            this.lblCastDuration.Name = "lblCastDuration";
-            this.lblCastDuration.Size = new System.Drawing.Size(106, 13);
-            this.lblCastDuration.TabIndex = 7;
-            this.lblCastDuration.Text = "Cast Time (secs): 0.0";
             // 
             // lblPic
             // 
@@ -338,6 +320,44 @@
             this.txtName.Size = new System.Drawing.Size(135, 20);
             this.txtName.TabIndex = 0;
             this.txtName.TextChanged += new System.EventHandler(this.txtName_TextChanged);
+            // 
+            // scrlCooldownDuration
+            // 
+            this.scrlCooldownDuration.LargeChange = 1;
+            this.scrlCooldownDuration.Location = new System.Drawing.Point(7, 140);
+            this.scrlCooldownDuration.Maximum = 6000;
+            this.scrlCooldownDuration.Name = "scrlCooldownDuration";
+            this.scrlCooldownDuration.Size = new System.Drawing.Size(141, 18);
+            this.scrlCooldownDuration.TabIndex = 13;
+            this.scrlCooldownDuration.Scroll += new System.Windows.Forms.ScrollEventHandler(this.scrlCooldownDuration_Scroll);
+            // 
+            // lblCooldownDuration
+            // 
+            this.lblCooldownDuration.AutoSize = true;
+            this.lblCooldownDuration.Location = new System.Drawing.Point(7, 125);
+            this.lblCooldownDuration.Name = "lblCooldownDuration";
+            this.lblCooldownDuration.Size = new System.Drawing.Size(109, 13);
+            this.lblCooldownDuration.TabIndex = 12;
+            this.lblCooldownDuration.Text = "Cooldown (secs): 0.0 ";
+            // 
+            // scrlCastDuration
+            // 
+            this.scrlCastDuration.LargeChange = 1;
+            this.scrlCastDuration.Location = new System.Drawing.Point(7, 107);
+            this.scrlCastDuration.Maximum = 600;
+            this.scrlCastDuration.Name = "scrlCastDuration";
+            this.scrlCastDuration.Size = new System.Drawing.Size(141, 18);
+            this.scrlCastDuration.TabIndex = 8;
+            this.scrlCastDuration.Scroll += new System.Windows.Forms.ScrollEventHandler(this.scrlCastDuration_Scroll);
+            // 
+            // lblCastDuration
+            // 
+            this.lblCastDuration.AutoSize = true;
+            this.lblCastDuration.Location = new System.Drawing.Point(7, 94);
+            this.lblCastDuration.Name = "lblCastDuration";
+            this.lblCastDuration.Size = new System.Drawing.Size(106, 13);
+            this.lblCastDuration.TabIndex = 7;
+            this.lblCastDuration.Text = "Cast Time (secs): 0.0";
             // 
             // groupBox3
             // 
@@ -554,6 +574,8 @@
             // 
             // grpBuffDebuff
             // 
+            this.grpBuffDebuff.Controls.Add(this.cmbExtraEffect);
+            this.grpBuffDebuff.Controls.Add(this.label7);
             this.grpBuffDebuff.Controls.Add(this.scrlBuffDuration);
             this.grpBuffDebuff.Controls.Add(this.lblBuffDuration);
             this.grpBuffDebuff.Controls.Add(this.txtMagicResistBuff);
@@ -600,7 +622,7 @@
             // 
             // txtMagicResistBuff
             // 
-            this.txtMagicResistBuff.Location = new System.Drawing.Point(196, 71);
+            this.txtMagicResistBuff.Location = new System.Drawing.Point(196, 67);
             this.txtMagicResistBuff.Name = "txtMagicResistBuff";
             this.txtMagicResistBuff.Size = new System.Drawing.Size(55, 20);
             this.txtMagicResistBuff.TabIndex = 32;
@@ -616,7 +638,7 @@
             // 
             // txtSpeedBuff
             // 
-            this.txtSpeedBuff.Location = new System.Drawing.Point(120, 109);
+            this.txtSpeedBuff.Location = new System.Drawing.Point(120, 103);
             this.txtSpeedBuff.Name = "txtSpeedBuff";
             this.txtSpeedBuff.Size = new System.Drawing.Size(56, 20);
             this.txtSpeedBuff.TabIndex = 30;
@@ -624,7 +646,7 @@
             // 
             // txtDefenseBuff
             // 
-            this.txtDefenseBuff.Location = new System.Drawing.Point(120, 71);
+            this.txtDefenseBuff.Location = new System.Drawing.Point(120, 67);
             this.txtDefenseBuff.Name = "txtDefenseBuff";
             this.txtDefenseBuff.Size = new System.Drawing.Size(56, 20);
             this.txtDefenseBuff.TabIndex = 29;
@@ -641,7 +663,7 @@
             // label10
             // 
             this.label10.AutoSize = true;
-            this.label10.Location = new System.Drawing.Point(117, 94);
+            this.label10.Location = new System.Drawing.Point(117, 88);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(41, 13);
             this.label10.TabIndex = 27;
@@ -650,7 +672,7 @@
             // label11
             // 
             this.label11.AutoSize = true;
-            this.label11.Location = new System.Drawing.Point(193, 55);
+            this.label11.Location = new System.Drawing.Point(193, 51);
             this.label11.Name = "label11";
             this.label11.Size = new System.Drawing.Size(71, 13);
             this.label11.TabIndex = 26;
@@ -659,7 +681,7 @@
             // label12
             // 
             this.label12.AutoSize = true;
-            this.label12.Location = new System.Drawing.Point(117, 55);
+            this.label12.Location = new System.Drawing.Point(117, 51);
             this.label12.Name = "label12";
             this.label12.Size = new System.Drawing.Size(50, 13);
             this.label12.TabIndex = 25;
@@ -687,9 +709,9 @@
             // 
             this.chkHOTDOT.Location = new System.Drawing.Point(12, 92);
             this.chkHOTDOT.Name = "chkHOTDOT";
-            this.chkHOTDOT.Size = new System.Drawing.Size(110, 55);
+            this.chkHOTDOT.Size = new System.Drawing.Size(86, 24);
             this.chkHOTDOT.TabIndex = 22;
-            this.chkHOTDOT.Text = "Vital damage/heal over time?";
+            this.chkHOTDOT.Text = "HOT/DOT?";
             this.chkHOTDOT.UseVisualStyleBackColor = true;
             this.chkHOTDOT.CheckedChanged += new System.EventHandler(this.chkHOTDOT_CheckedChanged);
             // 
@@ -880,23 +902,28 @@
             this.label5.TabIndex = 22;
             this.label5.Text = "HP Cost:";
             // 
-            // label6
+            // cmbExtraEffect
             // 
-            this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(6, 118);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(35, 13);
-            this.label6.TabIndex = 19;
-            this.label6.Text = "Desc:";
+            this.cmbExtraEffect.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbExtraEffect.FormattingEnabled = true;
+            this.cmbExtraEffect.Items.AddRange(new object[] {
+            "None",
+            "Silence",
+            "Stun"});
+            this.cmbExtraEffect.Location = new System.Drawing.Point(12, 132);
+            this.cmbExtraEffect.Name = "cmbExtraEffect";
+            this.cmbExtraEffect.Size = new System.Drawing.Size(86, 21);
+            this.cmbExtraEffect.TabIndex = 36;
+            this.cmbExtraEffect.SelectedIndexChanged += new System.EventHandler(this.cmbExtraEffect_SelectedIndexChanged);
             // 
-            // txtDesc
+            // label7
             // 
-            this.txtDesc.Location = new System.Drawing.Point(60, 117);
-            this.txtDesc.Multiline = true;
-            this.txtDesc.Name = "txtDesc";
-            this.txtDesc.Size = new System.Drawing.Size(135, 64);
-            this.txtDesc.TabIndex = 18;
-            this.txtDesc.TextChanged += new System.EventHandler(this.txtDesc_TextChanged);
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(9, 116);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(65, 13);
+            this.label7.TabIndex = 35;
+            this.label7.Text = "Extra Effect:";
             // 
             // frmSpell
             // 
@@ -1011,5 +1038,7 @@
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.TextBox txtDesc;
+        private System.Windows.Forms.ComboBox cmbExtraEffect;
+        private System.Windows.Forms.Label label7;
     }
 }

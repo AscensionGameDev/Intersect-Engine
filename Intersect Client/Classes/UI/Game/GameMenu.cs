@@ -22,6 +22,7 @@ namespace Intersect_Client.Classes.UI.Game
         private OptionsWindow _optionsWindow;
         private InventoryWindow _inventoryWindow;
         private SpellWindow _spellsWindow;
+        private CharacterWindow _characterWindow;
 
         //Init
         public GameMenu(Canvas _gameCanvas) {
@@ -48,6 +49,7 @@ namespace Intersect_Client.Classes.UI.Game
             _characterButton.SetSize(50, 24);
             _characterButton.SetText("Character");
             _characterButton.SetPosition(112, 4);
+            _characterButton.Clicked += CharacterButton_Clicked;
 
             _questsButton = new Button(_gameMenu);
             _questsButton.SetSize(50, 24);
@@ -70,6 +72,7 @@ namespace Intersect_Client.Classes.UI.Game
             _optionsWindow = new OptionsWindow(_gameCanvas,true);
             _inventoryWindow = new InventoryWindow(_gameCanvas);
             _spellsWindow = new SpellWindow(_gameCanvas);
+            _characterWindow = new CharacterWindow(_gameCanvas);
         }
 
         //Methods
@@ -77,6 +80,7 @@ namespace Intersect_Client.Classes.UI.Game
         {
             _inventoryWindow.Update();
             _spellsWindow.Update();
+            _characterWindow.Update();
         }
 
 
@@ -116,6 +120,17 @@ namespace Intersect_Client.Classes.UI.Game
             else
             {
                 _spellsWindow.Show();
+            }
+        }
+        void CharacterButton_Clicked(Base sender, ClickedEventArgs arguments)
+        {
+            if (_characterWindow.IsVisible())
+            {
+                _characterWindow.Hide();
+            }
+            else
+            {
+                _characterWindow.Show();
             }
         }
         

@@ -170,6 +170,7 @@ namespace Intersect_Server.Classes
                 CheckTableField(mysqlConn, columns, "stat" + i, myTable, MySqlFields.m_int);
             }
             CheckTableField(mysqlConn, columns, "power", myTable, MySqlFields.m_int);
+            CheckTableField(mysqlConn, columns, "face", myTable, MySqlFields.m_string);
         }
 
         private static void CheckSwitchesTable(MySqlConnection mysqlConn)
@@ -428,6 +429,7 @@ namespace Intersect_Server.Classes
                         en.Stat[i] = reader.GetInt32(columns.IndexOf("stat" + i));
                     }
                     client.Power = reader.GetInt32(columns.IndexOf("power"));
+                    en.Face = reader.GetString(columns.IndexOf("face"));
                 }
                 reader.Close();
 
@@ -511,7 +513,8 @@ namespace Intersect_Server.Classes
             {
                 query += "stat" + i + "=" + en.Stat[i] + ",";
             }
-            query += "power=" + client.Power + "";
+            query += "power=" + client.Power + ",";
+            query += "face='" + en.Face + "' ";
             query += " WHERE user='" + en.MyName + "'";
             using (var mysqlConn = new MySqlConnection(ConnectionString))
             {
@@ -776,6 +779,7 @@ namespace Intersect_Server.Classes
                 else
                 {
                     Globals.GameItems[i].Load(File.ReadAllBytes("Resources/Items/" + i + ".item"));
+                    Globals.GameItems[i].Save(i);
                 }
             }
         }

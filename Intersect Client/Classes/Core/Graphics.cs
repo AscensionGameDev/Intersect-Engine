@@ -48,6 +48,8 @@ namespace Intersect_Client.Classes
         public static Texture[] SpellTextures;
         public static List<string> AnimationFileNames;
         public static Texture[] AnimationTextures;
+        public static List<string> FaceFileNames;
+        public static Texture[] FaceTextures;
 
 
         //DayNight Stuff
@@ -80,6 +82,7 @@ namespace Intersect_Client.Classes
             LoadItems();
             LoadAnimations();
             LoadSpells();
+            LoadFaces();
             GameFont = new Font("Arvo-Regular.ttf");
 
             //Load menu bg
@@ -408,6 +411,18 @@ namespace Intersect_Client.Classes
             {
                 AnimationFileNames.Add(animations[i].Replace("Resources/Animations\\", ""));
                 AnimationTextures[i] = new Texture(new Image("Resources/Animations/" + AnimationFileNames[i]));
+            }
+        }
+        private static void LoadFaces()
+        {
+            if (!Directory.Exists("Resources/Faces")) { Directory.CreateDirectory("Resources/Faces"); }
+            var faces = Directory.GetFiles("Resources/Faces", "*.png");
+            FaceFileNames = new List<string>();
+            FaceTextures = new Texture[faces.Length];
+            for (int i = 0; i < faces.Length; i++)
+            {
+                FaceFileNames.Add(faces[i].Replace("Resources/Faces\\", ""));
+                FaceTextures[i] = new Texture(new Image("Resources/Faces/" + FaceFileNames[i]));
             }
         }
 

@@ -10,6 +10,7 @@ using Font = Gwen.Font;
 using Intersect_Client.Classes.UI.Menu;
 using Intersect_Client.Classes.UI;
 using Intersect_Client.Classes.UI.Game;
+using System.IO;
 
 namespace Intersect_Client.Classes
 {
@@ -20,7 +21,7 @@ namespace Intersect_Client.Classes
         private static Gwen.Input.SFML _gwenInput;
         private static Canvas _gameCanvas;
         private static Canvas _menuCanvas;
-        private static Gwen.Renderer.SFML _gwenRenderer;
+        public static Gwen.Renderer.SFML _gwenRenderer;
         private static TexturedBase _gwenSkin;
         private static Font _gwenFont;
         public static List<string> MsgboxErrors = new List<string>();
@@ -128,8 +129,10 @@ namespace Intersect_Client.Classes
             _gwenSkin.Dispose();
             _gwenFont.Dispose();
         }
-        static void window_TextEntered(object sender, TextEventArgs e) { 
-            _gwenInput.ProcessMessage(e); }
+        static void window_TextEntered(object sender, TextEventArgs e)
+        {
+            _gwenInput.ProcessMessage(e);
+        }
         static void window_MouseMoved(object sender, MouseMoveEventArgs e) { _gwenInput.ProcessMessage(e); }
         static void window_MouseWheelMoved(object sender, MouseWheelEventArgs e) { _gwenInput.ProcessMessage(e); }
         static void window_MouseButtonPressed(object sender, MouseButtonEventArgs e) { _gwenInput.ProcessMessage(new SFMLMouseButtonEventArgs(e, true)); }
@@ -145,7 +148,7 @@ namespace Intersect_Client.Classes
             else
             {
                 _gwenInput.ProcessMessage(new SFMLKeyEventArgs(e, true));
-                
+
             }
         }
         public static bool HasInputFocus()
@@ -174,6 +177,16 @@ namespace Intersect_Client.Classes
             {
                 _GameGui.Draw();
             }
+        }
+        public static Gwen.Texture BitmapToGwenTexture(System.Drawing.Bitmap bmp)
+        {
+            Stream s = new MemoryStream();
+            Gwen.Texture tex;
+            bmp.Save(s, System.Drawing.Imaging.ImageFormat.Png);
+            tex = new Gwen.Texture(_gwenRenderer);
+            Gui._gwenRenderer.LoadTextureStream(tex, s);
+            s.Dispose();
+            return tex;
         }
         public static string[] WrapText(string input, int width)
         {
