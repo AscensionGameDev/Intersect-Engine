@@ -14,21 +14,21 @@ using System.Net.Sockets;
 
 namespace Intersect_Server.Classes
 {
-	public class Client
-	{
+    public class Client
+    {
 
         //Game Incorperation Variables
-		public int ClientIndex;
-		public int EntityIndex;
+        public int ClientIndex;
+        public int EntityIndex;
         public Player Entity;
 
         //Ping Values
         public long ConnectionTimeout;
         public long TimeoutLength = 10;
-		public long PingTime = 0;
+        public long PingTime = 0;
 
         //Client Properties
-		public bool IsEditor;
+        public bool IsEditor;
         public int Power = 0;
 
         //Database ID
@@ -40,12 +40,13 @@ namespace Intersect_Server.Classes
         private TcpClient mySocket;
         private NetworkStream myStream;
         private PacketHandler packetHandler = new PacketHandler();
-        private List<byte> myBuffer = new List<byte>();
+        private ByteBuffer _myBuffer = new ByteBuffer();
+        private Object _bufferLock = new Object();
         public bool isConnected;
 
 
-        public Client(int myIndex, int entIndex, TcpClient  socket)
-		{
+        public Client(int myIndex, int entIndex, TcpClient socket)
+        {
             mySocket = socket;
             mySocket.SendBufferSize = 4096;
             mySocket.ReceiveBufferSize = 4096;
@@ -53,68 +54,64 @@ namespace Intersect_Server.Classes
             readBuff = new byte[mySocket.ReceiveBufferSize];
             connectTime = Environment.TickCount;
             myStream.BeginRead(readBuff, 0, mySocket.ReceiveBufferSize, OnReceiveData, connectTime);
-			ClientIndex = myIndex;
-			EntityIndex = entIndex;
+            ClientIndex = myIndex;
+            EntityIndex = entIndex;
             Entity = (Player)Globals.Entities[EntityIndex];
-			PacketSender.SendPing (this);
-			isConnected = true;
-			ConnectionTimeout = -1;
+            PacketSender.SendPing(this);
+            isConnected = true;
+            ConnectionTimeout = -1;
 
-		}
+        }
 
         private void OnReceiveData(IAsyncResult ar)
         {
-            ByteBuffer buff;
             int packetLen;
             var newBytes = new byte[1];
             if ((long)ar.AsyncState != connectTime) { return; }
-            try
+            lock (_bufferLock)
             {
-                var readbytes = myStream.EndRead(ar);
-                if (readbytes <= 0) { Console.WriteLine("No bytes read, disconnecting."); HandleDisconnect(); return; }
-                newBytes = new byte[readbytes];
-                Buffer.BlockCopy(readBuff, 0, newBytes, 0, readbytes);
-                myBuffer.AddRange(newBytes);
-                if (myBuffer.Count >= 4)
+                try
                 {
-                    buff = new ByteBuffer();
-                    buff.WriteBytes(myBuffer.ToArray());
-                    while (buff.Length() >= 4)
-                    {
-                        packetLen = buff.ReadInteger(false);
-                        if (packetLen == 0)
+                    var readbytes = myStream.EndRead(ar);
+                    if (readbytes <= 0) { Console.WriteLine("No bytes read, disconnecting."); HandleDisconnect(); return; }
+                    newBytes = new byte[readbytes];
+                    Buffer.BlockCopy(readBuff, 0, newBytes, 0, readbytes);
+                    _myBuffer.WriteBytes(newBytes);
+                    while (_myBuffer.Length() >= 4)
                         {
-                            break;
+                            packetLen = _myBuffer.ReadInteger(false);
+                            if (packetLen == 0)
+                            {
+                                break;
+                            }
+                            if (_myBuffer.Length() >= packetLen + 4)
+                            {
+                                _myBuffer.ReadInteger();
+                                packetHandler.HandlePacket(this, _myBuffer.ReadBytes(packetLen));
+                            }
+                            else
+                            {
+                                break;
+                            }
                         }
-                        if (buff.Length() >= packetLen + 4)
+                        if (_myBuffer.Length() == 0)
                         {
-                            buff.ReadInteger();
-                            packetHandler.HandlePacket(this, buff.ReadBytes(packetLen));
+                            _myBuffer.Clear();
                         }
-                        else
-                        {
-                            break;
-                        }
-                    }
-                    myBuffer.Clear();
-                    if (buff.Length() > 0)
-                    {
-                        myBuffer.AddRange(buff.ReadBytes(buff.Length()));
-                    }
+                    readBuff = new byte[mySocket.ReceiveBufferSize];
+                    myStream.BeginRead(readBuff, 0, mySocket.ReceiveBufferSize, OnReceiveData, connectTime);
                 }
-                readBuff = new byte[mySocket.ReceiveBufferSize];
-                myStream.BeginRead(readBuff, 0, mySocket.ReceiveBufferSize, OnReceiveData, connectTime);
-            }
-            catch (Exception)
-            {
-                Console.WriteLine("Socket end read error.");
-                HandleDisconnect(); 
-                return;
+                catch (Exception)
+                {
+                    Console.WriteLine("Socket end read error.");
+                    HandleDisconnect();
+                    return;
+                }
             }
         }
 
-		public void HandleDisconnect ()
-		{
+        public void HandleDisconnect()
+        {
             if (isConnected)
             {
                 isConnected = false;
@@ -128,7 +125,7 @@ namespace Intersect_Server.Classes
                     if (EntityIndex > -1 && Globals.Entities[EntityIndex] != null)
                     {
                         Database.SavePlayer(Globals.Clients[ClientIndex]);
-                        PacketSender.SendEntityLeave(EntityIndex,0,Globals.Entities[EntityIndex].CurrentMap);
+                        PacketSender.SendEntityLeave(EntityIndex, 0, Globals.Entities[EntityIndex].CurrentMap);
                         if (Globals.Entities[EntityIndex] == null) { return; }
                         PacketSender.SendGlobalMsg(Globals.Entities[EntityIndex].MyName + " has left the Intersect engine");
                         Globals.Clients[ClientIndex] = null;
@@ -139,114 +136,84 @@ namespace Intersect_Server.Classes
                 }
                 catch (Exception) { }
             }
-			isConnected = false;
-		}
+            isConnected = false;
+        }
 
-		public void Update (PacketHandler packetHandler)
-		{
-			int readAmt;
-
-			var tempBuff = new byte[4096];
-
-			do {
-				try {
-					if (IsConnected(mySocket)) {
-						if (ConnectionTimeout > -1 && ConnectionTimeout < Environment.TickCount) {
-							//Disconnect
-							HandleDisconnect ();
-							return;
-						} else {
-							if (PingTime < Environment.TickCount) {
-								PacketSender.SendPing (this);
-							}
-						}
-						readAmt = myStream.Read (tempBuff, 0, 4096);
-						if (readAmt > 0) {
-							for (var i = 0; i < readAmt; i++) {
-								myBuffer.Add (tempBuff [i]);
-							}
-						} else {
-							HandleDisconnect ();
-							return;
-						}
-					} else {
-						HandleDisconnect ();
-						return;
-					}
-				} catch {
-					HandleDisconnect ();
-					return;
-				}
-				
-			} while (true);
-		}
-
-        public void HandleData(byte[] packet)
+        public void Update(PacketHandler packetHandler)
         {
-            ByteBuffer buff;
-			int packetLen;
-            myBuffer.AddRange(packet);
-            if (myBuffer.Count >= 4)
+            var tempBuff = new byte[4096];
+
+            do
             {
-                buff = new ByteBuffer();
-                buff.WriteBytes(myBuffer.ToArray());
-                while (buff.Length() >= 4)
+                try
                 {
-                    packetLen = buff.ReadInteger(false);
-                    if (packetLen == 0)
+                    if (IsConnected(mySocket))
                     {
-                        break;
-                    }
-                    if (buff.Length() >= packetLen)
-                    {
-                        buff.ReadInteger();
-                        packetHandler.HandlePacket(this, buff.ReadBytes(packetLen));
+                        if (ConnectionTimeout > -1 && ConnectionTimeout < Environment.TickCount)
+                        {
+                            //Disconnect
+                            HandleDisconnect();
+                            return;
+                        }
+                        else
+                        {
+                            if (PingTime < Environment.TickCount)
+                            {
+                                PacketSender.SendPing(this);
+                            }
+                        }
                     }
                     else
                     {
-                        break;
+                        HandleDisconnect();
+                        return;
                     }
                 }
-                myBuffer.Clear();
-                if (buff.Length() > 0)
+                catch
                 {
-                    myBuffer.AddRange(buff.ReadBytes(buff.Length()));
+                    HandleDisconnect();
+                    return;
                 }
-            }
+
+            } while (true);
         }
 
-		private void HandlePacket (byte[] packet)
-		{
-			var buff = new ByteBuffer ();
-			buff.WriteBytes (packet);
-			var tempStr = buff.ReadString ();
-			Console.WriteLine (tempStr);
-			SendPacket (packet);
-			buff.Dispose ();
-		}
+        private void HandlePacket(byte[] packet)
+        {
+            var buff = new ByteBuffer();
+            buff.WriteBytes(packet);
+            var tempStr = buff.ReadString();
+            Console.WriteLine(tempStr);
+            SendPacket(packet);
+            buff.Dispose();
+        }
 
-		public void SendPacket (byte[] packet)
-		{
-		    var buff = new ByteBuffer ();
-			try {
-				if (isConnected) {
-					buff.WriteInteger (packet.Length);
-					buff.WriteBytes (packet);
+        public void SendPacket(byte[] packet)
+        {
+            var buff = new ByteBuffer();
+            try
+            {
+                if (isConnected)
+                {
+                    buff.WriteInteger(packet.Length);
+                    buff.WriteBytes(packet);
                     myStream.Write(buff.ToArray(), 0, buff.Count());
-				}
-			} catch (Exception ex) {
+                }
+            }
+            catch (Exception ex)
+            {
                 Console.WriteLine("Send exception, disconnecting.");
                 Console.WriteLine(ex.InnerException);
                 Console.WriteLine(ex.ToString());
                 HandleDisconnect();
                 return;
-			}
-		}
+            }
+        }
 
-		public static bool IsConnected (TcpClient socket)
-		{
+        public static bool IsConnected(TcpClient socket)
+        {
             return socket.Connected;
-		}
-	}
+        }
+    }
 }
 

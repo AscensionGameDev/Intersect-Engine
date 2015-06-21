@@ -13,8 +13,8 @@ namespace Intersect_Client.Classes
         public static bool Connected;
         public static bool Connecting;
         private static byte[] _tempBuff;
-        private static readonly List<byte> MyBuffer = new List<byte>();
-        private static readonly List<byte[]> ReceivedBuffs = new List<byte[]>();
+        private static ByteBuffer _myBuffer = new ByteBuffer();
+        private static Object _bufferLock = new Object();
 
         public static void InitNetwork()
         {
@@ -23,13 +23,14 @@ namespace Intersect_Client.Classes
                 MySocket.Close();
             }
 
-            MySocket = new TcpClient {NoDelay = true};
+            MySocket = new TcpClient { NoDelay = true };
             _tempBuff = new byte[MySocket.ReceiveBufferSize];
             MySocket.BeginConnect(Globals.ServerHost, Globals.ServerPort, ConnectCb, null);
             Connecting = true;
         }
 
-        private static void ConnectCb(IAsyncResult result){
+        private static void ConnectCb(IAsyncResult result)
+        {
             try
             {
                 MySocket.EndConnect(result);
@@ -40,7 +41,8 @@ namespace Intersect_Client.Classes
                     _myStream = MySocket.GetStream();
                     _myStream.BeginRead(_tempBuff, 0, MySocket.ReceiveBufferSize, ReceiveCb, null);
                 }
-                else {
+                else
+                {
                     Connected = false;
                     Connecting = false;
                 }
@@ -82,7 +84,10 @@ namespace Intersect_Client.Classes
                 }
                 var receivedData = new byte[readAmt];
                 Buffer.BlockCopy(_tempBuff, 0, receivedData, 0, readAmt);
-                ReceivedBuffs.Add(receivedData);
+                lock (_bufferLock)
+                {
+                    _myBuffer.WriteBytes(receivedData);
+                }
                 _myStream.BeginRead(_tempBuff, 0, MySocket.ReceiveBufferSize, ReceiveCb, null);
             }
             catch (Exception)
@@ -127,32 +132,26 @@ namespace Intersect_Client.Classes
 
         private static void TryHandleData()
         {
-            while (ReceivedBuffs.Count > 0)
+            lock (_bufferLock)
             {
-                if (ReceivedBuffs[0] != null)
+                while (_myBuffer.Length() >= 4)
                 {
-                    MyBuffer.AddRange(ReceivedBuffs[0]);
+                    var packetLen = _myBuffer.ReadInteger(false);
+                    if (_myBuffer.Length() >= packetLen + 4)
+                    {
+                        _myBuffer.ReadInteger();
+                        PacketHandler.HandlePacket(_myBuffer.ReadBytes(packetLen));
+                    }
+                    else
+                    {
+                        break;
+                    }
                 }
-                ReceivedBuffs.RemoveAt(0);
-            }
-            if (MyBuffer.Count() < 4) return;
-            var buff = new ByteBuffer();
-            buff.WriteBytes(MyBuffer.ToArray());
-            while (buff.Length() >= 4)
-            {
-                var packetLen = buff.ReadInteger(false);
-                if (buff.Length() >= packetLen + 4)
+                if (_myBuffer.Length() == 0)
                 {
-                    buff.ReadInteger();
-                    PacketHandler.HandlePacket(buff.ReadBytes(packetLen));
-                }
-                else
-                {
-                    break;
+                    _myBuffer.Clear();
                 }
             }
-            MyBuffer.Clear();
-            if (buff.Length() > 0) { MyBuffer.AddRange(buff.ReadBytes(buff.Length())); }
         }
     }
 }
