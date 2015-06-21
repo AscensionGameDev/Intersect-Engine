@@ -164,5 +164,21 @@
             Network.SendPacket(bf.ToArray());
         }
 
+        public static void SendUnequipItem(int slot)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteLong((int)Enums.ClientPackets.UnequipItem);
+            bf.WriteInteger(slot);
+            Network.SendPacket(bf.ToArray());
+        }
+
+        public static void SendUpgradeStat(int stat)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteLong((int)Enums.ClientPackets.UpgradeStat);
+            bf.WriteInteger(stat);
+            Network.SendPacket(bf.ToArray());
+        }
+
     }
 }

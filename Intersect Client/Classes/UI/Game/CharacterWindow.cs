@@ -11,7 +11,7 @@ namespace Intersect_Client.Classes.UI.Game
 {
     public class CharacterWindow
     {
-         //Controls
+        //Controls
         private WindowControl _characterWindow;
         private ScrollControl _equipmentContainer;
 
@@ -25,6 +25,21 @@ namespace Intersect_Client.Classes.UI.Game
         private string _currentSprite = "";
 
         private System.Drawing.Bitmap _equipmentBG;
+        private int[] _emptyStatBoost = new int[Constants.MaxStats];
+
+        //Stats
+        Label _attackLabel;
+        Label _defenseLabel;
+        Label _speedLabel;
+        Label _abilityPwrLabel;
+        Label _magicRstLabel;
+        Label _pointsLabel;
+        Button _addAttackBtn;
+        Button _addDefenseBtn;
+        Button _addAbilityPwrBtn;
+        Button _addMagicResistBtn;
+        Button _addSpeedBtn;
+
 
         //Location
         public int X;
@@ -46,14 +61,20 @@ namespace Intersect_Client.Classes.UI.Game
 
             _characterName = new Label(_characterWindow);
             _characterName.SetPosition(4, 4);
+            _characterName.AutoSizeToContents = false;
+            _characterName.Alignment = Pos.Center;
+            _characterName.SetSize(200, 12);
             _characterName.SetText("Name");
 
             _characterLevel = new Label(_characterWindow);
             _characterLevel.SetPosition(4, 18);
+            _characterLevel.AutoSizeToContents = false;
+            _characterLevel.Alignment = Pos.Center;
+            _characterLevel.SetSize(200, 12);
             _characterLevel.SetText("Level: " + 1);
 
             _characterPortrait = new ImagePanel(_characterWindow);
-            _characterPortrait.SetSize(100,100);
+            _characterPortrait.SetSize(100, 100);
             _characterPortrait.SetPosition(200 / 2 - 100 / 2, 36);
 
             Label equipmentLabel = new Label(_characterWindow);
@@ -61,8 +82,67 @@ namespace Intersect_Client.Classes.UI.Game
             equipmentLabel.SetText("Equipment:");
 
             _equipmentContainer = new ScrollControl(_characterWindow);
-            _equipmentContainer.SetPosition(10, 156);
-            _equipmentContainer.SetSize(_characterWindow.Width - 20, 38);
+            _equipmentContainer.SetPosition(5, 156);
+            _equipmentContainer.SetSize(_characterWindow.Width - 10, 38);
+
+            Label statsLabel = new Label(_characterWindow);
+            statsLabel.SetPosition(4, 216);
+            statsLabel.SetText("Stats: ");
+
+            _attackLabel = new Label(_characterWindow);
+            _attackLabel.SetPosition(4, 230);
+            _attackLabel.SetText("Attack: ");
+
+            _addAttackBtn = new Button(_characterWindow);
+            _addAttackBtn.SetSize(12, 12);
+            _addAttackBtn.SetText("+");
+            _addAttackBtn.SetPosition(90 - 20, 230);
+            _addAttackBtn.Clicked += _addAttackBtn_Clicked;
+
+            _defenseLabel = new Label(_characterWindow);
+            _defenseLabel.SetPosition(4, 244);
+            _defenseLabel.SetText("Defense: ");
+
+            _addDefenseBtn = new Button(_characterWindow);
+            _addDefenseBtn.SetSize(12, 12);
+            _addDefenseBtn.SetText("+");
+            _addDefenseBtn.SetPosition(90 - 20, 244);
+            _addDefenseBtn.Clicked += _addDefenseBtn_Clicked;
+
+            _speedLabel = new Label(_characterWindow);
+            _speedLabel.SetPosition(4, 258);
+            _speedLabel.SetText("Speed: ");
+
+            _addSpeedBtn = new Button(_characterWindow);
+            _addSpeedBtn.SetSize(12, 12);
+            _addSpeedBtn.SetText("+");
+            _addSpeedBtn.SetPosition(90 - 20, 258);
+            _addSpeedBtn.Clicked += _addSpeedBtn_Clicked;
+
+            _abilityPwrLabel = new Label(_characterWindow);
+            _abilityPwrLabel.SetPosition(90, 230);
+            _abilityPwrLabel.SetText("Ability Pwr: ");
+
+            _addAbilityPwrBtn = new Button(_characterWindow);
+            _addAbilityPwrBtn.SetSize(12, 12);
+            _addAbilityPwrBtn.SetText("+");
+            _addAbilityPwrBtn.SetPosition(200 - 20, 230);
+            _addAbilityPwrBtn.Clicked += _addAbilityPwrBtn_Clicked;
+
+            _magicRstLabel = new Label(_characterWindow);
+            _magicRstLabel.SetPosition(90, 244);
+            _magicRstLabel.SetText("Magic Resist: ");
+
+            _addMagicResistBtn = new Button(_characterWindow);
+            _addMagicResistBtn.SetSize(12, 12);
+            _addMagicResistBtn.SetText("+");
+            _addMagicResistBtn.SetPosition(200 - 20, 244);
+            _addMagicResistBtn.Clicked += _addMagicResistBtn_Clicked;
+
+            _pointsLabel = new Label(_characterWindow);
+            _pointsLabel.SetPosition(90, 258);
+            _pointsLabel.SetText("Points: ");
+
 
             //Create equipment background image
             _equipmentBG = new System.Drawing.Bitmap(34, 34);
@@ -77,23 +157,50 @@ namespace Intersect_Client.Classes.UI.Game
             InitEquipmentContainer();
         }
 
+
+        //Update Button Event Handlers
+        void _addMagicResistBtn_Clicked(Base sender, ClickedEventArgs arguments)
+        {
+            PacketSender.SendUpgradeStat((int)Enums.Stats.MagicResist);
+        }
+
+        void _addAbilityPwrBtn_Clicked(Base sender, ClickedEventArgs arguments)
+        {
+            PacketSender.SendUpgradeStat((int)Enums.Stats.AbilityPower);
+        }
+
+        void _addSpeedBtn_Clicked(Base sender, ClickedEventArgs arguments)
+        {
+            PacketSender.SendUpgradeStat((int)Enums.Stats.Speed);
+        }
+
+        void _addDefenseBtn_Clicked(Base sender, ClickedEventArgs arguments)
+        {
+            PacketSender.SendUpgradeStat((int)Enums.Stats.Defense);
+        }
+
+        void _addAttackBtn_Clicked(Base sender, ClickedEventArgs arguments)
+        {
+            PacketSender.SendUpgradeStat((int)Enums.Stats.Attack);
+        }
+
         private void InitEquipmentContainer()
         {
             int x = 0;
             int w = 38 * Enums.EquipmentSlots.Count;
-            if (w > _characterWindow.Width - 20)
+            if (w > _characterWindow.Width - 10)
             {
                 _equipmentContainer.EnableScroll(true, false);
-                _equipmentContainer.SetSize(_characterWindow.Width - 20, 38 + 16);
+                _equipmentContainer.SetSize(_characterWindow.Width - 10, 38 + 16);
             }
             else
             {
-                x = (_characterWindow.Width - 20)/2 - (w - 4) / 2;
+                x = (_characterWindow.Width - 10) / 2 - (w - 4) / 2;
                 _equipmentContainer.EnableScroll(false, false);
             }
             for (int i = 0; i < Enums.EquipmentSlots.Count; i++)
             {
-                Items.Add(new EquipmentItem(i,_equipmentBG, _characterWindow));
+                Items.Add(new EquipmentItem(i, _equipmentBG, _characterWindow));
                 Items[i].pnl = new ImagePanel(_equipmentContainer);
                 Items[i].pnl.SetSize(34, 34);
                 Items[i].pnl.SetPosition(x + i * 36, 2);
@@ -125,9 +232,37 @@ namespace Intersect_Client.Classes.UI.Game
                     }
                 }
             }
+
+            _attackLabel.SetText("Attack: " + Globals.Me.Stat[(int)Enums.Stats.Attack]);
+            _defenseLabel.SetText("Defense: " + Globals.Me.Stat[(int)Enums.Stats.Defense]);
+            _speedLabel.SetText("Speed: " + Globals.Me.Stat[(int)Enums.Stats.Speed]);
+            _abilityPwrLabel.SetText("Ability Pwr: " + Globals.Me.Stat[(int)Enums.Stats.AbilityPower]);
+            _magicRstLabel.SetText("Magic Resist: " + Globals.Me.Stat[(int)Enums.Stats.MagicResist]);
+            _pointsLabel.SetText("Points: " + Globals.Me.StatPoints);
+            _addAbilityPwrBtn.IsHidden = (Globals.Me.StatPoints == 0 || Globals.Me.Stat[(int)Enums.Stats.AbilityPower] == Constants.MaxStatValue);
+            _addAttackBtn.IsHidden = (Globals.Me.StatPoints == 0 || Globals.Me.Stat[(int)Enums.Stats.Attack] == Constants.MaxStatValue);
+            _addDefenseBtn.IsHidden = (Globals.Me.StatPoints == 0 || Globals.Me.Stat[(int)Enums.Stats.Defense] == Constants.MaxStatValue);
+            _addMagicResistBtn.IsHidden = (Globals.Me.StatPoints == 0 || Globals.Me.Stat[(int)Enums.Stats.MagicResist] == Constants.MaxStatValue);
+            _addSpeedBtn.IsHidden = (Globals.Me.StatPoints == 0 || Globals.Me.Stat[(int)Enums.Stats.Speed] == Constants.MaxStatValue);
+
             for (int i = 0; i < Enums.EquipmentSlots.Count; i++)
             {
-                Items[i].Update();
+                if (Globals.Me.Equipment[i] > -1)
+                {
+                    if (Globals.Me.Inventory[Globals.Me.Equipment[i]].ItemNum > -1)
+                    {
+                        Items[i].Update(Globals.Me.Inventory[Globals.Me.Equipment[i]].ItemNum, Globals.Me.Inventory[Globals.Me.Equipment[i]].StatBoost);
+                    }
+                    else
+                    {
+                        Items[i].Update(-1,_emptyStatBoost);
+                    }
+                }
+                else
+                {
+                    Items[i].Update(-1, _emptyStatBoost);
+                }
+
             }
         }
         private Texture CreateTextureFromSprite()
@@ -159,14 +294,12 @@ namespace Intersect_Client.Classes.UI.Game
     {
         public ImagePanel pnl;
         private ItemDescWindow _descWindow;
-        private bool MouseOver = false;
-        private int MouseX = -1;
-        private int MouseY = -1;
         private int myindex;
-        private long ClickTime = 0;
         private int _currentItem = -1;
+        private int[] _statBoost = new int[Constants.MaxStats];
         private bool _texLoaded = false;
         private System.Drawing.Bitmap _equipmentBG;
+        private System.Drawing.Bitmap _texImg;
         private WindowControl _characterWindow;
 
         public EquipmentItem(int index, System.Drawing.Bitmap equipmentBG, WindowControl characterWindow)
@@ -181,31 +314,21 @@ namespace Intersect_Client.Classes.UI.Game
             pnl.HoverEnter += pnl_HoverEnter;
             pnl.HoverLeave += pnl_HoverLeave;
             pnl.RightClicked += pnl_RightClicked;
-            pnl.Clicked += pnl_Clicked;
-        }
-
-        void pnl_Clicked(Base sender, ClickedEventArgs arguments)
-        {
-            ClickTime = Environment.TickCount + 500;
         }
 
         void pnl_RightClicked(Base sender, ClickedEventArgs arguments)
         {
-            Globals.Me.TryDropItem(myindex);
+            PacketSender.SendUnequipItem(myindex);
         }
 
         void pnl_HoverLeave(Base sender, EventArgs arguments)
         {
-            MouseOver = false;
-            MouseX = -1;
-            MouseY = -1;
             _descWindow.Dispose();
         }
 
         void pnl_HoverEnter(Base sender, EventArgs arguments)
         {
-            MouseOver = true;
-            _descWindow = new ItemDescWindow(_currentItem, 1, _characterWindow.X - 220, _characterWindow.Y, Globals.Me.Inventory[0].StatBoost, "Equipment Slot: " + Enums.EquipmentSlots[myindex]);
+            _descWindow = new ItemDescWindow(_currentItem, 1, _characterWindow.X - 220, _characterWindow.Y, _statBoost, "Equipment Slot: " + Enums.EquipmentSlots[myindex]);
         }
 
         public System.Drawing.Rectangle RenderBounds()
@@ -218,14 +341,31 @@ namespace Intersect_Client.Classes.UI.Game
             return rect;
         }
 
-
-
-        public void Update()
+        private void CreateTexImage()
         {
-            //check if current item != the current equipment item
-            if (!_texLoaded)
+            _texImg = new System.Drawing.Bitmap(34, 34);
+            System.Drawing.Graphics g = System.Drawing.Graphics.FromImage(_texImg);
+            g.DrawImage(_equipmentBG, new System.Drawing.Point(0, 0));
+            if (_currentItem != -1)
             {
-                pnl.Texture = Gui.BitmapToGwenTexture(_equipmentBG);
+                if (File.Exists("Resources/Items/" + Globals.GameItems[_currentItem].Pic))
+                {
+                    g.DrawImage(System.Drawing.Bitmap.FromFile("Resources/Items/" + Globals.GameItems[_currentItem].Pic), new System.Drawing.Point(1, 1));
+                }
+            }
+            g.Dispose();
+        }
+
+
+
+        public void Update(int currentItem, int[] statBoost)
+        {
+            if (currentItem != _currentItem || !_texLoaded)
+            {
+                _currentItem = currentItem;
+                _statBoost = statBoost;
+                CreateTexImage();
+                pnl.Texture = Gui.BitmapToGwenTexture(_texImg);
                 _texLoaded = true;
             }
         }

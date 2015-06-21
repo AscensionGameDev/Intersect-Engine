@@ -8,6 +8,8 @@ namespace Intersect_Client.Classes
         private long _attackTimer;
         public ItemInstance[] Inventory = new ItemInstance[Constants.MaxInvItems];
         public SpellInstance[] Spells = new SpellInstance[Constants.MaxPlayerSkills];
+        public int[] Equipment = new int[Enums.EquipmentSlots.Count];
+        public int StatPoints = 0;
 
         public Player()
             : base()

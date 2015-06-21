@@ -108,6 +108,12 @@ namespace Intersect_Server.Classes
                 case Enums.ClientPackets.UseSpell:
                     HandleUseSpell(client, packet);
                     break;
+                case Enums.ClientPackets.UnequipItem:
+                    HandleUnequipItem(client, packet);
+                    break;
+                case Enums.ClientPackets.UpgradeStat:
+                    HandleUpgradeStat(client, packet);
+                    break;
                 default:
                     Console.WriteLine(@"Non implemented packet received: " + packetHeader);
                     break;
@@ -606,6 +612,24 @@ namespace Intersect_Server.Classes
             bf.WriteBytes(packet);
             var slot = bf.ReadInteger();
             client.Entity.UseSpell(slot);
+            bf.Dispose();
+        }
+
+        private static void HandleUnequipItem(Client client, byte[] packet)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteBytes(packet);
+            var slot = bf.ReadInteger();
+            client.Entity.UnequipItem(slot);
+            bf.Dispose();
+        }
+
+        private static void HandleUpgradeStat(Client client, byte[] packet)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteBytes(packet);
+            var stat = bf.ReadInteger();
+            client.Entity.UpgradeStat(stat);
             bf.Dispose();
         }
     }

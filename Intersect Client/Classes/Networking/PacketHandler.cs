@@ -90,6 +90,12 @@ namespace Intersect_Client.Classes
                 case Enums.ServerPackets.SpellUpdate:
                     HandleSpellUpdate(bf.ReadBytes(bf.Length()));
                     break;
+                case Enums.ServerPackets.PlayerEquipment:
+                    HandlePlayerEquipment(bf.ReadBytes(bf.Length()));
+                    break;
+                case Enums.ServerPackets.StatPoints:
+                    HandleStatPoints(bf.ReadBytes(bf.Length()));
+                    break;
                 default:
                     Console.WriteLine(@"Non implemented packet received: " + packetHeader);
                     break;
@@ -533,6 +539,26 @@ namespace Intersect_Client.Classes
             bf.WriteBytes(packet);
             int slot = bf.ReadInteger();
             Globals.Me.Spells[slot].Load(bf);
+            bf.Dispose();
+        }
+
+        private static void HandlePlayerEquipment(byte[] packet)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteBytes(packet);
+            int entityIndex = bf.ReadInteger();
+            for (int i = 0; i < Enums.EquipmentSlots.Count; i++ )
+            {
+                ((Player)Globals.Entities[entityIndex]).Equipment[i] = bf.ReadInteger();
+            }
+            bf.Dispose();
+        }
+
+        private static void HandleStatPoints(byte[] packet)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteBytes(packet);
+            Globals.Me.StatPoints = bf.ReadInteger();
             bf.Dispose();
         }
 

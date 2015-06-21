@@ -169,6 +169,11 @@ namespace Intersect_Server.Classes
             {
                 CheckTableField(mysqlConn, columns, "stat" + i, myTable, MySqlFields.m_int);
             }
+            CheckTableField(mysqlConn, columns, "statpoints", myTable, MySqlFields.m_int);
+            for (var i = 0; i < Enums.EquipmentSlots.Count; i++)
+            {
+                CheckTableField(mysqlConn, columns, "equipment" + i, myTable, MySqlFields.m_int);
+            }
             CheckTableField(mysqlConn, columns, "power", myTable, MySqlFields.m_int);
             CheckTableField(mysqlConn, columns, "face", myTable, MySqlFields.m_string);
         }
@@ -428,6 +433,11 @@ namespace Intersect_Server.Classes
                     {
                         en.Stat[i] = reader.GetInt32(columns.IndexOf("stat" + i));
                     }
+                    en.StatPoints = reader.GetInt32(columns.IndexOf("statpoints"));
+                    for (i = 0; i < Enums.EquipmentSlots.Count; i++)
+                    {
+                        en.Equipment[i] = reader.GetInt32(columns.IndexOf("equipment" + i));
+                    }
                     client.Power = reader.GetInt32(columns.IndexOf("power"));
                     en.Face = reader.GetString(columns.IndexOf("face"));
                 }
@@ -512,6 +522,11 @@ namespace Intersect_Server.Classes
             for (var i = 0; i < (int)Enums.Stats.StatCount; i++)
             {
                 query += "stat" + i + "=" + en.Stat[i] + ",";
+            }
+            query += "statpoints=" + client.Entity.StatPoints + ",";
+            for (var i = 0; i < Enums.EquipmentSlots.Count; i++)
+            {
+                query += "equipment" + i + "=" + en.Equipment[i] + ",";
             }
             query += "power=" + client.Power + ",";
             query += "face='" + en.Face + "' ";

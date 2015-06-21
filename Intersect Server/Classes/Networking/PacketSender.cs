@@ -6,6 +6,25 @@ namespace Intersect_Server.Classes
     public static class PacketSender
     {
 
+        private static void SendDataToMap(int mapNum, byte[] data)
+        {
+            if (mapNum < 0) { return; }
+            List<int> Players = Globals.GameMaps[mapNum].GetPlayersOnMap();
+            for (int i = 0; i < Players.Count; i++)
+            {
+                Globals.Clients[Players[i]].SendPacket(data);
+            }
+        }
+        private static void SendDataToProximity(int mapNum, byte[] data)
+        {
+            if (mapNum < 0) { return; }
+            SendDataToMap(mapNum, data);
+            for (int i = 0; i < Globals.GameMaps[mapNum].SurroundingMaps.Count; i++)
+            {
+                SendDataToMap(Globals.GameMaps[mapNum].SurroundingMaps[i], data);
+            }
+        }
+
         public static void SendPing(Client client)
         {
             var bf = new ByteBuffer();
@@ -65,10 +84,12 @@ namespace Intersect_Server.Classes
             {
                 PacketSender.SendInventory(client);
                 PacketSender.SendPlayerSpells(client);
+                PacketSender.SendPlayerEquipmentToProximity(client.Entity);
+                PacketSender.SendPointsTo(client);
             }
         }
 
-        public static void SendEntityDataToAll(int sendIndex, int isEvent, Entity en)
+        public static void SendEntityDataToProximity(int sendIndex, int isEvent, Entity en)
         {
             var bf = new ByteBuffer();
             bf.WriteLong((int)Enums.ServerPackets.EntityData);
@@ -617,25 +638,37 @@ namespace Intersect_Server.Classes
             SendDataTo(client, bf.ToArray());
             bf.Dispose();
         }
-
-
-        private static void SendDataToMap(int mapNum, byte[] data)
+        public static void SendPlayerEquipmentTo(Client client, Player en)
         {
-            if (mapNum < 0) { return; }
-            List<int> Players = Globals.GameMaps[mapNum].GetPlayersOnMap();
-            for (int i = 0; i < Players.Count; i++)
+            var bf = new ByteBuffer();
+            bf.WriteLong((int)Enums.ServerPackets.PlayerEquipment);
+            bf.WriteInteger(en.MyIndex);
+            for (int i = 0; i < Enums.EquipmentSlots.Count; i++ )
             {
-                Globals.Clients[Players[i]].SendPacket(data);
+                bf.WriteInteger(en.Equipment[i]);
             }
+            SendDataTo(client,bf.ToArray());
+            bf.Dispose();
         }
-        private static void SendDataToProximity(int mapNum, byte[] data)
+        public static void SendPlayerEquipmentToProximity(Player en)
         {
-            if (mapNum < 0) { return; }
-            SendDataToMap(mapNum, data);
-            for (int i = 0; i < Globals.GameMaps[mapNum].SurroundingMaps.Count; i++)
+            var bf = new ByteBuffer();
+            bf.WriteLong((int)Enums.ServerPackets.PlayerEquipment);
+            bf.WriteInteger(en.MyIndex);
+            for (int i = 0; i < Enums.EquipmentSlots.Count; i++ )
             {
-                SendDataToMap(Globals.GameMaps[mapNum].SurroundingMaps[i], data);
+                bf.WriteInteger(en.Equipment[i]);
             }
+            SendDataToProximity(en.CurrentMap,bf.ToArray());
+            bf.Dispose();
+        }
+        public static void SendPointsTo(Client client)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteLong((int)Enums.ServerPackets.StatPoints);
+            bf.WriteInteger(client.Entity.StatPoints);
+            SendDataTo(client, bf.ToArray());
+            bf.Dispose();
         }
     }
 }

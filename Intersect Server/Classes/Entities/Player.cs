@@ -14,6 +14,8 @@ namespace Intersect_Server.Classes
         public int[] Variables;
         public ItemInstance[] Inventory = new ItemInstance[Constants.MaxInvItems];
         public SpellInstance[] Spells = new SpellInstance[Constants.MaxPlayerSkills];
+        public int[] Equipment = new int[Enums.EquipmentSlots.Count];
+        public int StatPoints = 0;
 
         //Init
 		public Player (int index, Client newClient) : base(index)
@@ -28,6 +30,10 @@ namespace Intersect_Server.Classes
             for (int i = 0; i < Constants.MaxPlayerSkills; i++)
             {
                 Spells[i] = new SpellInstance();
+            }
+            for (int i = 0; i < Enums.EquipmentSlots.Count; i++)
+            {
+                Equipment[i] = -1;
             }
 		}
 
@@ -136,7 +142,7 @@ namespace Intersect_Server.Classes
                 Console.WriteLine("Sending warp to player.");
                 PacketSender.SendEntityLeave(MyIndex,0,CurrentMap);
                 CurrentMap = newMap;
-                PacketSender.SendEntityDataToAll(MyIndex, 0, Globals.Entities[MyIndex]);
+                PacketSender.SendEntityDataToProximity(MyIndex, 0, Globals.Entities[MyIndex]);
                 PacketSender.SendEntityPositionToAll(MyIndex,0,Globals.Entities[MyIndex]);
                 PacketSender.SendMap(MyClient,newMap);
                 PacketSender.SendEnterMap(MyClient,newMap);
@@ -196,6 +202,7 @@ namespace Intersect_Server.Classes
             Inventory[item1] = tmpInstance.Clone();
             PacketSender.SendInventoryItemUpdate(MyClient, item1);
             PacketSender.SendInventoryItemUpdate(MyClient, item2);
+            EquipmentProcessItemSwap(item1, item2);
         }
         public void DropItems(int slot, int amount)
         {
@@ -214,6 +221,7 @@ namespace Intersect_Server.Classes
                     if (amount == Inventory[slot].ItemVal)
                     {
                         Inventory[slot] = new ItemInstance();
+                        EquipmentProcessItemLoss(slot);
                     }
                     else
                     {
@@ -224,35 +232,72 @@ namespace Intersect_Server.Classes
                 {
                     Globals.GameMaps[CurrentMap].SpawnItem(CurrentX, CurrentY, Inventory[slot], 1);
                     Inventory[slot] = new ItemInstance();
+                    EquipmentProcessItemLoss(slot);
                 }
                 PacketSender.SendInventoryItemUpdate(MyClient, slot);
             }
         }
         public void UseItem(int slot)
         {
+            bool equipped = false;
             //TO be implemented.
             if (Inventory[slot].ItemNum > -1)
             {
-                if (Globals.GameItems[Inventory[slot].ItemNum].Type == (int)Enums.ItemTypes.None || Globals.GameItems[Inventory[slot].ItemNum].Type == (int)Enums.ItemTypes.Currency)
+                //TO DO - CHECK REQUIREMENTS
+                switch (Globals.GameItems[Inventory[slot].ItemNum].Type)
                 {
-                    PacketSender.SendPlayerMsg(MyClient, "You cannot use this item!");
-                }
-                else
-                {
-                    //TO DO - CHECK REQUIREMENTS
-                    switch (Globals.GameItems[Inventory[slot].ItemNum].Type)
-                    {
-                        case (int)Enums.ItemTypes.Spell:
-                            if (Globals.GameItems[Inventory[slot].ItemNum].Data1 > -1)
+                    case (int)Enums.ItemTypes.None:
+                    case(int)Enums.ItemTypes.Currency:
+                        PacketSender.SendPlayerMsg(MyClient, "You cannot use this item!");
+                        break;
+                    case (int)Enums.ItemTypes.Equipment:
+                        for (int i = 0; i < Enums.EquipmentSlots.Count; i++)
+                        {
+                            if (Equipment[i] == slot)
                             {
-                                TryTeachSpell(new SpellInstance(Globals.GameItems[Inventory[slot].ItemNum].Data1));
+                                Equipment[i] = -1;
+                                equipped = true;
                             }
-                            TakeItem(slot, 1);
-                            break;
-                        default:
-                            PacketSender.SendPlayerMsg(MyClient, "Use of this item type is not yet implemented.");
-                            break;
-                    }
+                        }
+                        if (!equipped){
+                            switch (Globals.GameItems[Inventory[slot].ItemNum].Data1)
+                            {
+                                case Enums.WeaponIndex:
+                                    if (Convert.ToBoolean(Globals.GameItems[Inventory[slot].ItemNum].Data4))
+                                    {
+                                        Equipment[Enums.ShieldIndex] = -1;
+                                    }
+                                    Equipment[Enums.WeaponIndex] = slot;
+                                    break;
+                                case Enums.ShieldIndex:
+                                    if (Equipment[Enums.WeaponIndex] > -1)
+                                    {
+                                        if (Convert.ToBoolean(Globals.GameItems[Inventory[Equipment[Enums.WeaponIndex]].ItemNum].Data4))
+                                        {
+                                            Equipment[Enums.WeaponIndex] = -1;
+                                        }
+                                    }
+                                    Equipment[Enums.ShieldIndex] = slot;
+                                    break;
+                                default:
+                                    Equipment[Globals.GameItems[Inventory[slot].ItemNum].Data1] = slot;
+                                    break;
+                            }
+                        }
+                        PacketSender.SendPlayerEquipmentToProximity(this);
+                        break;
+                    case (int)Enums.ItemTypes.Spell:
+                        if (Globals.GameItems[Inventory[slot].ItemNum].Data1 > -1)
+                        {
+                            if (TryTeachSpell(new SpellInstance(Globals.GameItems[Inventory[slot].ItemNum].Data1)))
+                            {
+                                TakeItem(slot, 1);
+                            }
+                        }
+                        break;
+                    default:
+                        PacketSender.SendPlayerMsg(MyClient, "Use of this item type is not yet implemented.");
+                        break;
                 }
             }
             
@@ -276,6 +321,7 @@ namespace Intersect_Server.Classes
                         if (amount == Inventory[slot].ItemVal)
                         {
                             Inventory[slot] = new ItemInstance();
+                            EquipmentProcessItemLoss(slot);
                             returnVal = true;
                         }
                         else
@@ -288,6 +334,7 @@ namespace Intersect_Server.Classes
                 else
                 {
                     Inventory[slot] = new ItemInstance();
+                    EquipmentProcessItemLoss(slot);
                     returnVal = true;
                 }
                 PacketSender.SendInventoryItemUpdate(MyClient, slot);
@@ -298,7 +345,7 @@ namespace Intersect_Server.Classes
         //Skills
         public bool TryTeachSpell(SpellInstance spell)
         {
-            if (KnowsSpell(spell.SpellNum)) { return true; }
+            if (KnowsSpell(spell.SpellNum)) { return false; }
             for (int i = 0; i < Constants.MaxPlayerSkills; i++)
             {
                 if (Spells[i].SpellNum == -1)
@@ -334,6 +381,46 @@ namespace Intersect_Server.Classes
         public void UseSpell(int spell)
         {
             PacketSender.SendPlayerMsg(MyClient, "The use of spells is not yet implemented.");
+        }
+
+        //Equipment
+        public void UnequipItem(int slot)
+        {
+            Equipment[slot] = -1;
+            PacketSender.SendPlayerEquipmentToProximity(this);
+        }
+        public void EquipmentProcessItemSwap(int item1, int item2)
+        {
+            for (int i = 0; i < Enums.EquipmentSlots.Count; i++)
+            {
+                if (Equipment[i] == item1)
+                    Equipment[i] = item2;
+                else if (Equipment[i] == item2)
+                    Equipment[i] = item1;
+            }
+            PacketSender.SendPlayerEquipmentToProximity(this);
+        }
+        public void EquipmentProcessItemLoss(int slot)
+        {
+            for (int i = 0; i < Enums.EquipmentSlots.Count; i++)
+            {
+                if (Equipment[i] == slot)
+                    Equipment[i] = -1;
+            }
+            PacketSender.SendPlayerEquipmentToProximity(this);
+        }
+
+
+        //Stats
+        public void UpgradeStat(int statIndex)
+        {
+            if (Stat[statIndex] < Constants.MaxStatValue)
+            {
+                Stat[statIndex]++;
+                StatPoints--;
+                PacketSender.SendEntityStats(MyIndex, 0, this);
+                PacketSender.SendPointsTo(MyClient);
+            }
         }
 
 

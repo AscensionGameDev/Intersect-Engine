@@ -36,6 +36,8 @@ namespace Intersect_Client.Classes
             SwapSpells,
             ForgetSpell,
             UseSpell,
+            UnequipItem,
+            UpgradeStat,
         }
 
         public enum ServerPackets
@@ -74,6 +76,8 @@ namespace Intersect_Client.Classes
             MapItemUpdate,
             InventoryUpdate,
             SpellUpdate,
+            PlayerEquipment,
+            StatPoints,
         }
 
         public enum Stats
@@ -137,7 +141,7 @@ namespace Intersect_Client.Classes
 
         public static int WeaponIndex = 2;
         public static int ShieldIndex = 3;
-        public static List<string> EquipmentSlots = new List<string>() { "Helmet", "Armor", "Weapon", "Shield", "Boots", "Armor", "Weapon", "Shield" };
+        public static List<string> EquipmentSlots = new List<string>() { "Helmet", "Armor", "Weapon", "Shield", "Boots"};
         public static List<string> ToolTypes = new List<string>() { "Axe", "Picaxe", "Shovel", "Fishing Rod" };
         public static List<string> ItemBonusEffects = new List<string>() { "Cooldown Reduction", "Life Steal" };
 

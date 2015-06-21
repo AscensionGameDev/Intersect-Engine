@@ -2,6 +2,7 @@
 {
     public static class Constants
     {
+        public const int MaxStatValue = 200;
         public const int MaxStats = 5;
         public const int MaxItems = 255;
         public const int MaxNpcs = 255;
