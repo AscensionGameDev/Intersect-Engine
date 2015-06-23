@@ -166,7 +166,7 @@ namespace Intersect_Server.Classes
             }
             ItemRespawns.Clear();
             SpawnAttributeItems();
-            Save();
+            //Save();
         }
 
         private void SpawnAttributeItems()

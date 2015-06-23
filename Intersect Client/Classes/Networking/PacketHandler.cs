@@ -129,16 +129,18 @@ namespace Intersect_Client.Classes
             bf.WriteBytes(packet);
             var i = (int)bf.ReadLong();
             var entityType = bf.ReadInteger();
-            Entity en;
+           
             if (entityType == 0)
             {
-                en = EntityManager.AddPlayer(i);
+                Entity en = EntityManager.AddPlayer(i);
+                en.Load(bf);
             }
             else
             {
-                en = EntityManager.AddEvent(i);
+                Event en = (Event)EntityManager.AddEvent(i);
+                ((Event)en).Load(bf);
             }
-            en.Load(bf);
+            
         }
 
         private static void HandlePositionInfo(byte[] packet)

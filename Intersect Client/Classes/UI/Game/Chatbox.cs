@@ -72,8 +72,11 @@ namespace Intersect_Client.Classes.UI.Game
         //Extra Methods
         public void Focus()
         {
-            _chatboxInput.Focus();
-            _chatboxInput.Text = "";
+            if (!_chatboxInput.HasFocus)
+            {
+                _chatboxInput.Focus();
+                _chatboxInput.Text = "";
+            }
         }
 
         //Input Handlers

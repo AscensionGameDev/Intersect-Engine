@@ -41,6 +41,10 @@ namespace Intersect_Editor.Classes
         public static string[] AnimationFileNames;
         public static Texture[] AnimationTextures;
 
+        //Face Textures
+        public static List<string> FaceFileNames;
+        public static Texture[] FaceTextures;
+
         //Basic Editor Textures
         private static Texture _transH;
         private static Texture _transV;
@@ -80,6 +84,10 @@ namespace Intersect_Editor.Classes
                 Resources.jcl.Save(s, ImageFormat.Png);
                 _lightTex = new Texture(s);
                 s.Dispose();
+                s = new MemoryStream();
+                Resources.jce.Save(s, ImageFormat.Png);
+                _eventTex = new Texture(s);
+                s.Dispose();
                 LoadGraphics(myForm);
                 Audio.LoadAudio();
 
@@ -96,6 +104,7 @@ namespace Intersect_Editor.Classes
             LoadEntities();
             LoadSpells();
             LoadAnimations();
+            LoadFaces();
         }
         private static void LoadTilesets(FrmMain myForm)
         {
@@ -223,6 +232,19 @@ namespace Intersect_Editor.Classes
             {
                 AnimationFileNames[i] = animations[i].Replace("Resources/Animations\\", "");
                 AnimationTextures[i] = new Texture(new Image("Resources/Animations/" + AnimationFileNames[i]));
+            }
+        }
+
+        private static void LoadFaces()
+        {
+            if (!Directory.Exists("Resources/Faces")) { Directory.CreateDirectory("Resources/Faces"); }
+            var faces = Directory.GetFiles("Resources/Faces", "*.png");
+            FaceFileNames = new List<string>();
+            FaceTextures = new Texture[faces.Length];
+            for (int i = 0; i < faces.Length; i++)
+            {
+                FaceFileNames.Add(faces[i].Replace("Resources/Faces\\", ""));
+                FaceTextures[i] = new Texture(new Image("Resources/Faces/" + FaceFileNames[i]));
             }
         }
 

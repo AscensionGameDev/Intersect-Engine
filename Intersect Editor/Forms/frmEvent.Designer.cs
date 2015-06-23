@@ -32,20 +32,24 @@ namespace Intersect_Editor.Forms
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            var listViewGroup4 = new System.Windows.Forms.ListViewGroup("Dialog", System.Windows.Forms.HorizontalAlignment.Left);
-            var listViewGroup5 = new System.Windows.Forms.ListViewGroup("Logic Flow", System.Windows.Forms.HorizontalAlignment.Left);
-            var listViewGroup6 = new System.Windows.Forms.ListViewGroup("Extra", System.Windows.Forms.HorizontalAlignment.Left);
-            var listViewItem7 = new System.Windows.Forms.ListViewItem("Show Text");
-            var listViewItem8 = new System.Windows.Forms.ListViewItem("Show Options");
-            var listViewItem9 = new System.Windows.Forms.ListViewItem("Set Switch");
-            var listViewItem10 = new System.Windows.Forms.ListViewItem("Set Variable");
-            var listViewItem11 = new System.Windows.Forms.ListViewItem("Conditional Branch");
-            var listViewItem12 = new System.Windows.Forms.ListViewItem("Warp Player");
+            System.Windows.Forms.ListViewGroup listViewGroup1 = new System.Windows.Forms.ListViewGroup("Dialog", System.Windows.Forms.HorizontalAlignment.Left);
+            System.Windows.Forms.ListViewGroup listViewGroup2 = new System.Windows.Forms.ListViewGroup("Logic Flow", System.Windows.Forms.HorizontalAlignment.Left);
+            System.Windows.Forms.ListViewGroup listViewGroup3 = new System.Windows.Forms.ListViewGroup("Extra", System.Windows.Forms.HorizontalAlignment.Left);
+            System.Windows.Forms.ListViewItem listViewItem1 = new System.Windows.Forms.ListViewItem("Show Text");
+            System.Windows.Forms.ListViewItem listViewItem2 = new System.Windows.Forms.ListViewItem("Show Options");
+            System.Windows.Forms.ListViewItem listViewItem3 = new System.Windows.Forms.ListViewItem("Set Switch");
+            System.Windows.Forms.ListViewItem listViewItem4 = new System.Windows.Forms.ListViewItem("Set Variable");
+            System.Windows.Forms.ListViewItem listViewItem5 = new System.Windows.Forms.ListViewItem("Conditional Branch");
+            System.Windows.Forms.ListViewItem listViewItem6 = new System.Windows.Forms.ListViewItem("Warp Player");
             this.label1 = new System.Windows.Forms.Label();
             this.txtEventname = new System.Windows.Forms.TextBox();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.groupBox7 = new System.Windows.Forms.GroupBox();
+            this.txtDesc = new System.Windows.Forms.TextBox();
+            this.groupBox6 = new System.Windows.Forms.GroupBox();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.chkDisablePreview = new System.Windows.Forms.CheckBox();
             this.chkHideName = new System.Windows.Forms.CheckBox();
             this.chkWalkThrough = new System.Windows.Forms.CheckBox();
             this.groupBox5 = new System.Windows.Forms.GroupBox();
@@ -61,7 +65,10 @@ namespace Intersect_Editor.Forms
             this.label2 = new System.Windows.Forms.Label();
             this.cmbMoveType = new System.Windows.Forms.ComboBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.txtPageGraphic = new System.Windows.Forms.TextBox();
+            this.cmbPreviewFace = new System.Windows.Forms.ComboBox();
+            this.label25 = new System.Windows.Forms.Label();
+            this.cmbEventSprite = new System.Windows.Forms.ComboBox();
+            this.cmbEventDir = new System.Windows.Forms.ComboBox();
             this.grpEventConditions = new System.Windows.Forms.GroupBox();
             this.cmbCond2Val = new System.Windows.Forms.ComboBox();
             this.label13 = new System.Windows.Forms.Label();
@@ -126,9 +133,9 @@ namespace Intersect_Editor.Forms
             this.btnInsert = new System.Windows.Forms.ToolStripMenuItem();
             this.btnEdit = new System.Windows.Forms.ToolStripMenuItem();
             this.btnDelete = new System.Windows.Forms.ToolStripMenuItem();
-            this.cmbEventDir = new System.Windows.Forms.ComboBox();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
+            this.groupBox7.SuspendLayout();
             this.groupBox3.SuspendLayout();
             this.groupBox5.SuspendLayout();
             this.groupBox4.SuspendLayout();
@@ -174,6 +181,8 @@ namespace Intersect_Editor.Forms
             // 
             // tabPage1
             // 
+            this.tabPage1.Controls.Add(this.groupBox7);
+            this.tabPage1.Controls.Add(this.groupBox6);
             this.tabPage1.Controls.Add(this.groupBox3);
             this.tabPage1.Controls.Add(this.groupBox2);
             this.tabPage1.Controls.Add(this.groupBox1);
@@ -189,8 +198,37 @@ namespace Intersect_Editor.Forms
             this.tabPage1.Text = "1";
             this.tabPage1.UseVisualStyleBackColor = true;
             // 
+            // groupBox7
+            // 
+            this.groupBox7.Controls.Add(this.txtDesc);
+            this.groupBox7.Location = new System.Drawing.Point(105, 149);
+            this.groupBox7.Name = "groupBox7";
+            this.groupBox7.Size = new System.Drawing.Size(178, 96);
+            this.groupBox7.TabIndex = 11;
+            this.groupBox7.TabStop = false;
+            this.groupBox7.Text = "Description (For entity inspector)";
+            // 
+            // txtDesc
+            // 
+            this.txtDesc.Location = new System.Drawing.Point(7, 19);
+            this.txtDesc.Multiline = true;
+            this.txtDesc.Name = "txtDesc";
+            this.txtDesc.Size = new System.Drawing.Size(165, 71);
+            this.txtDesc.TabIndex = 0;
+            this.txtDesc.TextChanged += new System.EventHandler(this.txtDesc_TextChanged);
+            // 
+            // groupBox6
+            // 
+            this.groupBox6.Location = new System.Drawing.Point(6, 149);
+            this.groupBox6.Name = "groupBox6";
+            this.groupBox6.Size = new System.Drawing.Size(93, 96);
+            this.groupBox6.TabIndex = 10;
+            this.groupBox6.TabStop = false;
+            this.groupBox6.Text = "Preview";
+            // 
             // groupBox3
             // 
+            this.groupBox3.Controls.Add(this.chkDisablePreview);
             this.groupBox3.Controls.Add(this.chkHideName);
             this.groupBox3.Controls.Add(this.chkWalkThrough);
             this.groupBox3.Controls.Add(this.groupBox5);
@@ -201,6 +239,16 @@ namespace Intersect_Editor.Forms
             this.groupBox3.TabIndex = 9;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Extra";
+            // 
+            // chkDisablePreview
+            // 
+            this.chkDisablePreview.Location = new System.Drawing.Point(6, 53);
+            this.chkDisablePreview.Name = "chkDisablePreview";
+            this.chkDisablePreview.Size = new System.Drawing.Size(97, 43);
+            this.chkDisablePreview.TabIndex = 4;
+            this.chkDisablePreview.Text = "Disable Targetting/Inspector";
+            this.chkDisablePreview.UseVisualStyleBackColor = true;
+            this.chkDisablePreview.CheckedChanged += new System.EventHandler(this.chkDisablePreview_CheckedChanged);
             // 
             // chkHideName
             // 
@@ -370,8 +418,10 @@ namespace Intersect_Editor.Forms
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.cmbPreviewFace);
+            this.groupBox1.Controls.Add(this.label25);
+            this.groupBox1.Controls.Add(this.cmbEventSprite);
             this.groupBox1.Controls.Add(this.cmbEventDir);
-            this.groupBox1.Controls.Add(this.txtPageGraphic);
             this.groupBox1.Location = new System.Drawing.Point(7, 251);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(93, 137);
@@ -379,13 +429,49 @@ namespace Intersect_Editor.Forms
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Graphic";
             // 
-            // txtPageGraphic
+            // cmbPreviewFace
             // 
-            this.txtPageGraphic.Location = new System.Drawing.Point(6, 22);
-            this.txtPageGraphic.Name = "txtPageGraphic";
-            this.txtPageGraphic.Size = new System.Drawing.Size(81, 20);
-            this.txtPageGraphic.TabIndex = 0;
-            this.txtPageGraphic.TextChanged += new System.EventHandler(this.txtPageGraphic_TextChanged);
+            this.cmbPreviewFace.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbPreviewFace.FormattingEnabled = true;
+            this.cmbPreviewFace.Location = new System.Drawing.Point(6, 94);
+            this.cmbPreviewFace.Name = "cmbPreviewFace";
+            this.cmbPreviewFace.Size = new System.Drawing.Size(81, 21);
+            this.cmbPreviewFace.TabIndex = 10;
+            this.cmbPreviewFace.SelectedIndexChanged += new System.EventHandler(this.cmbPreviewFace_SelectedIndexChanged);
+            // 
+            // label25
+            // 
+            this.label25.AutoSize = true;
+            this.label25.Location = new System.Drawing.Point(5, 78);
+            this.label25.Name = "label25";
+            this.label25.Size = new System.Drawing.Size(75, 13);
+            this.label25.TabIndex = 9;
+            this.label25.Text = "Preview Face:";
+            // 
+            // cmbEventSprite
+            // 
+            this.cmbEventSprite.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbEventSprite.FormattingEnabled = true;
+            this.cmbEventSprite.Location = new System.Drawing.Point(6, 18);
+            this.cmbEventSprite.Name = "cmbEventSprite";
+            this.cmbEventSprite.Size = new System.Drawing.Size(81, 21);
+            this.cmbEventSprite.TabIndex = 8;
+            this.cmbEventSprite.SelectedIndexChanged += new System.EventHandler(this.cmbEventSprite_SelectedIndexChanged);
+            // 
+            // cmbEventDir
+            // 
+            this.cmbEventDir.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbEventDir.FormattingEnabled = true;
+            this.cmbEventDir.Items.AddRange(new object[] {
+            "Up",
+            "Down",
+            "Left",
+            "Right"});
+            this.cmbEventDir.Location = new System.Drawing.Point(6, 45);
+            this.cmbEventDir.Name = "cmbEventDir";
+            this.cmbEventDir.Size = new System.Drawing.Size(81, 21);
+            this.cmbEventDir.TabIndex = 7;
+            this.cmbEventDir.SelectedIndexChanged += new System.EventHandler(this.cmbEventDir_SelectedIndexChanged);
             // 
             // grpEventConditions
             // 
@@ -399,7 +485,7 @@ namespace Intersect_Editor.Forms
             this.grpEventConditions.Controls.Add(this.label11);
             this.grpEventConditions.Location = new System.Drawing.Point(6, 7);
             this.grpEventConditions.Name = "grpEventConditions";
-            this.grpEventConditions.Size = new System.Drawing.Size(277, 237);
+            this.grpEventConditions.Size = new System.Drawing.Size(277, 139);
             this.grpEventConditions.TabIndex = 5;
             this.grpEventConditions.TabStop = false;
             this.grpEventConditions.Text = "Conditions";
@@ -495,35 +581,35 @@ namespace Intersect_Editor.Forms
             // 
             // lstCommands
             // 
-            listViewGroup4.Header = "Dialog";
-            listViewGroup4.Name = "Dialog";
-            listViewGroup5.Header = "Logic Flow";
-            listViewGroup5.Name = "Logic Flow";
-            listViewGroup6.Header = "Extra";
-            listViewGroup6.Name = "Extra";
+            listViewGroup1.Header = "Dialog";
+            listViewGroup1.Name = "Dialog";
+            listViewGroup2.Header = "Logic Flow";
+            listViewGroup2.Name = "Logic Flow";
+            listViewGroup3.Header = "Extra";
+            listViewGroup3.Name = "Extra";
             this.lstCommands.Groups.AddRange(new System.Windows.Forms.ListViewGroup[] {
-            listViewGroup4,
-            listViewGroup5,
-            listViewGroup6});
-            listViewItem7.Group = listViewGroup4;
-            listViewItem7.Tag = "0";
-            listViewItem8.Group = listViewGroup4;
-            listViewItem8.Tag = "1";
-            listViewItem9.Group = listViewGroup5;
-            listViewItem9.Tag = "2";
-            listViewItem10.Group = listViewGroup5;
-            listViewItem10.Tag = "3";
-            listViewItem11.Group = listViewGroup5;
-            listViewItem11.Tag = "4";
-            listViewItem12.Group = listViewGroup6;
-            listViewItem12.Tag = "5";
+            listViewGroup1,
+            listViewGroup2,
+            listViewGroup3});
+            listViewItem1.Group = listViewGroup1;
+            listViewItem1.Tag = "0";
+            listViewItem2.Group = listViewGroup1;
+            listViewItem2.Tag = "1";
+            listViewItem3.Group = listViewGroup2;
+            listViewItem3.Tag = "2";
+            listViewItem4.Group = listViewGroup2;
+            listViewItem4.Tag = "3";
+            listViewItem5.Group = listViewGroup2;
+            listViewItem5.Tag = "4";
+            listViewItem6.Group = listViewGroup3;
+            listViewItem6.Tag = "5";
             this.lstCommands.Items.AddRange(new System.Windows.Forms.ListViewItem[] {
-            listViewItem7,
-            listViewItem8,
-            listViewItem9,
-            listViewItem10,
-            listViewItem11,
-            listViewItem12});
+            listViewItem1,
+            listViewItem2,
+            listViewItem3,
+            listViewItem4,
+            listViewItem5,
+            listViewItem6});
             this.lstCommands.Location = new System.Drawing.Point(7, 19);
             this.lstCommands.MultiSelect = false;
             this.lstCommands.Name = "lstCommands";
@@ -1049,22 +1135,7 @@ namespace Intersect_Editor.Forms
             this.btnDelete.Text = "Delete";
             this.btnDelete.Click += new System.EventHandler(this.btnDelete_Click);
             // 
-            // cmbEventDir
-            // 
-            this.cmbEventDir.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cmbEventDir.FormattingEnabled = true;
-            this.cmbEventDir.Items.AddRange(new object[] {
-            "Up",
-            "Down",
-            "Left",
-            "Right"});
-            this.cmbEventDir.Location = new System.Drawing.Point(6, 50);
-            this.cmbEventDir.Name = "cmbEventDir";
-            this.cmbEventDir.Size = new System.Drawing.Size(81, 21);
-            this.cmbEventDir.TabIndex = 7;
-            this.cmbEventDir.SelectedIndexChanged += new System.EventHandler(this.cmbEventDir_SelectedIndexChanged);
-            // 
-            // frmEvent
+            // FrmEvent
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -1089,6 +1160,8 @@ namespace Intersect_Editor.Forms
             this.Load += new System.EventHandler(this.frmEvent_Load);
             this.tabControl1.ResumeLayout(false);
             this.tabPage1.ResumeLayout(false);
+            this.groupBox7.ResumeLayout(false);
+            this.groupBox7.PerformLayout();
             this.groupBox3.ResumeLayout(false);
             this.groupBox3.PerformLayout();
             this.groupBox5.ResumeLayout(false);
@@ -1194,7 +1267,6 @@ namespace Intersect_Editor.Forms
         private Label label19;
         private Label label18;
         private ComboBox cmbNewCond1Val;
-        private TextBox txtPageGraphic;
         private CheckBox chkHideName;
         private GroupBox grpCreateWarp;
         private TextBox txtNewWarpDir;
@@ -1206,5 +1278,12 @@ namespace Intersect_Editor.Forms
         private Label label21;
         private Label label24;
         private ComboBox cmbEventDir;
+        private CheckBox chkDisablePreview;
+        private ComboBox cmbPreviewFace;
+        private Label label25;
+        private ComboBox cmbEventSprite;
+        private GroupBox groupBox7;
+        private TextBox txtDesc;
+        private GroupBox groupBox6;
     }
 }

@@ -16,6 +16,7 @@
             {
                 Globals.Entities[i].IsLocal = true;
                 Globals.Me = (Player)Globals.Entities[i];
+                Gui._GameGui.TryAddPlayerBox();
             }
             return Globals.Entities[i];
         }
@@ -28,7 +29,7 @@
                 Globals.Events.Add(null);
             }
             if (Globals.Events[i] != null) { RemoveEntity(i, 1); }
-            Globals.Events[i] = new Player {CurrentMap = 0};
+            Globals.Events[i] = new Event {CurrentMap = 0};
             return Globals.Events[i];
         }
 

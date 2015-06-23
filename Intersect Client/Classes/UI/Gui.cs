@@ -107,7 +107,7 @@ namespace Intersect_Client.Classes
                 SetupHandlers = true;
             }
 
-
+            FocusElements = new List<Gwen.Control.Base>();
             ErrorMsgHandler = new ErrorMessageHandler(_menuCanvas, _gameCanvas);
             if (Globals.GameState == 0)
             {
@@ -117,8 +117,6 @@ namespace Intersect_Client.Classes
             {
                 _GameGui = new GameGuiBase(_gameCanvas);
             }
-
-            FocusElements = new List<Gwen.Control.Base>();
         }
         public static void DestroyGwen()
         {
@@ -187,6 +185,45 @@ namespace Intersect_Client.Classes
             Gui._gwenRenderer.LoadTextureStream(tex, s);
             s.Dispose();
             return tex;
+        }
+        public static Gwen.Texture CreateTextureFromSprite(string spritename, int w, int h)
+        {
+            System.Drawing.Bitmap sprite = new System.Drawing.Bitmap("Resources/Entities/" + spritename + ".png");
+            System.Drawing.Bitmap spriteImg = new System.Drawing.Bitmap(w, h);
+            spriteImg = new System.Drawing.Bitmap(sprite.Width / 4, sprite.Height / 4);
+            System.Drawing.Graphics g = System.Drawing.Graphics.FromImage(spriteImg);
+            g.DrawImage(sprite, new System.Drawing.Rectangle(0, 0, sprite.Width / 4, sprite.Height / 4), new System.Drawing.Rectangle(0, 0, sprite.Width / 4, sprite.Height / 4), System.Drawing.GraphicsUnit.Pixel);
+            g.Dispose();
+            sprite.Dispose();
+            return BitmapToGwenTexture(spriteImg);
+        }
+        public static bool MouseHitGUI()
+        {
+            for (int i = 0; i < _gameCanvas.Children.Count; i++)
+            {
+                if (MouseHitBase(_gameCanvas.Children[i]))
+                {
+                    return true;
+                }
+            }
+                return false;
+        }
+        public static bool MouseHitBase(Gwen.Control.Base obj)
+        {
+            if (obj.IsHidden == true)
+            {
+                return false;
+            }
+            else
+            {
+                System.Drawing.Rectangle rect = new System.Drawing.Rectangle(obj.LocalPosToCanvas(new System.Drawing.Point(0, 0)).X, obj.LocalPosToCanvas(new System.Drawing.Point(0, 0)).Y, obj.Width, obj.Height);
+                if (rect.Contains(Gwen.Input.InputHandler.MousePosition.X, Gwen.Input.InputHandler.MousePosition.Y))
+                {
+                    return true;
+                }
+                
+            }
+            return false;
         }
         public static string[] WrapText(string input, int width)
         {

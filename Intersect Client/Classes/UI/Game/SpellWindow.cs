@@ -151,14 +151,15 @@ namespace Intersect_Client.Classes.UI.Game
             MouseOver = false;
             MouseX = -1;
             MouseY = -1;
-            _descWindow.Dispose();
+            if (_descWindow != null) { _descWindow.Dispose(); _descWindow = null; }
         }
 
         void pnl_HoverEnter(Base sender, EventArgs arguments)
         {
             MouseOver = true;
             CanDrag = true;
-            if (Mouse.IsButtonPressed(Mouse.Button.Left)) { CanDrag = false; }
+            if (Mouse.IsButtonPressed(Mouse.Button.Left)) { CanDrag = false; return; }
+            if (_descWindow != null) { _descWindow.Dispose(); _descWindow = null; }
             _descWindow = new SpellDescWindow(Globals.Me.Spells[myindex].SpellNum, _spellWindow.X - 220, _spellWindow.Y);
         }
 
@@ -208,7 +209,7 @@ namespace Intersect_Client.Classes.UI.Game
                                 if (Math.Sqrt(Math.Pow(xdiff, 2) + Math.Pow(ydiff, 2)) > 5)
                                 {
                                     IsDragging = true;
-                                    dragIcon = new Draggable(pnl.LocalPosToCanvas(new System.Drawing.Point(0, 0)).X + MouseX, pnl.LocalPosToCanvas(new System.Drawing.Point(0, 0)).X + MouseY, pnl.ImageName);
+                                    dragIcon = new Draggable(pnl.LocalPosToCanvas(new System.Drawing.Point(0, 0)).X + MouseX, pnl.LocalPosToCanvas(new System.Drawing.Point(0, 0)).X + MouseY, pnl.Texture);
                                 }
                             }
                         }

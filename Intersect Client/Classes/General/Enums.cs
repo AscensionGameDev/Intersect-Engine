@@ -141,8 +141,10 @@ namespace Intersect_Client.Classes
 
         public static int WeaponIndex = 2;
         public static int ShieldIndex = 3;
+        //This is programming so indices work like this                  ---0---   ---1---  ---2---   ---3---   ---4---
         public static List<string> EquipmentSlots = new List<string>() { "Helmet", "Armor", "Weapon", "Shield", "Boots"};
         public static List<string> ToolTypes = new List<string>() { "Axe", "Picaxe", "Shovel", "Fishing Rod" };
+
         public static List<string> ItemBonusEffects = new List<string>() { "Cooldown Reduction", "Life Steal" };
 
         // Map Attribtes

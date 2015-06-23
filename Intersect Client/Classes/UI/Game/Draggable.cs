@@ -13,12 +13,12 @@ namespace Intersect_Client.Classes.UI.Game
         public int x;
         public int y;
 
-        public Draggable(int x, int y, string image)
+        public Draggable(int x, int y, Gwen.Texture tex)
         {
             pnl = new ImagePanel(Gui._GameGui.GameCanvas);
             pnl.SetPosition(x, y);
             pnl.SetSize(32, 32);
-            pnl.ImageName = image;
+            pnl.Texture = tex;
 
         }
 

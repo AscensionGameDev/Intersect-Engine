@@ -139,7 +139,6 @@ namespace Intersect_Editor.Forms
         //MenuBar Functions
         private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Globals.GameSocket.SendPacket(File.ReadAllBytes("c:\\tmp\\lastpacket.dat"));
         }
         private void HandleLayerClick(object sender, EventArgs e)
         {
@@ -571,6 +570,10 @@ namespace Intersect_Editor.Forms
                         PlaceAttribute();
                     }
                     else if (Globals.CurrentLayer == Constants.LayerCount + 1)
+                    {
+
+                    }
+                    else if (Globals.CurrentLayer == Constants.LayerCount + 2)
                     {
 
                     }

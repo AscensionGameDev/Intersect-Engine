@@ -10,10 +10,12 @@ namespace Intersect_Server.Classes
         public int MovementFreq;
         public int MovementSpeed;
         public EventStruct BaseEvent;
+        public int MyPage;
         public Event(EventStruct myEvent, int pageIndex, int myIndex, int mapNum)
             : base(myIndex)
         {
             BaseEvent = myEvent;
+            MyPage = pageIndex;
             CurrentMap = mapNum;
             IsEvent = 1;
             CurrentX = myEvent.SpawnX;
@@ -48,6 +50,16 @@ namespace Intersect_Server.Classes
 
             }
             MySprite = myEvent.MyPages[pageIndex].Graphic;
+            Face = myEvent.MyPages[pageIndex].FaceGraphic;
+        }
+        public byte[] Data()
+        {
+            var bf = new ByteBuffer();
+            bf.WriteBytes(base.Data());
+            bf.WriteInteger(BaseEvent.MyPages[MyPage].HideName);
+            bf.WriteInteger(BaseEvent.MyPages[MyPage].DisablePreview);
+            bf.WriteString(BaseEvent.MyPages[MyPage].Desc);
+            return bf.ToArray();
         }
         public void Update(Client client)
         {

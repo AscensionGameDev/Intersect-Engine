@@ -89,12 +89,14 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Classes\Entities\Event.cs" />
     <Compile Include="Classes\Game Objects\AnimationStruct.cs" />
     <Compile Include="Classes\Items\ItemInstance.cs" />
     <Compile Include="Classes\Misc\FieldChecking.cs" />
     <Compile Include="Classes\Game Objects\ItemStruct.cs" />
     <Compile Include="Classes\Game Objects\NpcStruct.cs" />
     <Compile Include="Classes\Game Objects\SpellStruct.cs" />
+    <Compile Include="Classes\Misc\MathHelper.cs" />
     <Compile Include="Classes\Spells\SpellInstance.cs" />
     <Compile Include="Classes\UI\Game\CharacterWindow.cs" />
     <Compile Include="Classes\UI\Game\Draggable.cs" />
@@ -113,7 +115,7 @@
     <Compile Include="Classes\UI\Game\InputBox.cs" />
     <Compile Include="Classes\UI\Game\InventoryWindow.cs" />
     <Compile Include="Classes\UI\Game\ItemDescWindow.cs" />
-    <Compile Include="Classes\UI\Game\PlayerBox.cs" />
+    <Compile Include="Classes\UI\Game\EntityBox.cs" />
     <Compile Include="Classes\UI\Game\SpellDescWindow.cs" />
     <Compile Include="Classes\UI\Game\SpellWindow.cs" />
     <Compile Include="Classes\UI\Menu\LoginControls.cs" />
@@ -130,7 +132,7 @@
     <Compile Include="Classes\General\Globals.cs" />
     <Compile Include="Classes\Core\GameMain.cs" />
     <Compile Include="Classes\Core\Graphics.cs" />
-    <Compile Include="Classes\Core\Gui.cs" />
+    <Compile Include="Classes\UI\Gui.cs" />
     <Compile Include="Classes\Maps\MapStruct.cs" />
     <Compile Include="Classes\Maps\MapAutotiles.cs" />
     <Compile Include="Classes\UI\Menu\MenuGuiBase.cs" />
@@ -1506,22 +1508,16 @@
     <Content Include="Resources\Faces\99.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Resources\GUI\EXPBar.png">
+    <Content Include="Resources\GUI\EmptyBar.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Resources\GUI\EXPBarEmpty.png">
+    <Content Include="Resources\GUI\EXPBar.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Resources\GUI\HPBar.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Resources\GUI\HPBarEmpty.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
     <Content Include="Resources\GUI\ManaBar.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Resources\GUI\ManaBarEmpty.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Resources\Items\1.png">

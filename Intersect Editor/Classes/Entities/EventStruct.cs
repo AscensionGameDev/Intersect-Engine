@@ -49,6 +49,7 @@ namespace Intersect_Editor.Classes
     public class EventPage
     {
         public EventConditions MyConditions;
+        public string Desc = "";
         public int MovementType;
         public int MovementSpeed;
         public int MovementFreq;
@@ -56,10 +57,12 @@ namespace Intersect_Editor.Classes
         public int Layer;
         public int Trigger;
         public int GraphicType;
-        public string Graphic;
+        public string Graphic = "";
+        public string FaceGraphic = "";
         public int Graphicx;
         public int Graphicy;
         public int HideName;
+        public int DisablePreview;
         public List<CommandList> CommandLists = new List<CommandList>();
 
         public EventPage()
@@ -83,6 +86,7 @@ namespace Intersect_Editor.Classes
         {
             MyConditions = new EventConditions();
             MyConditions.Load(curBuffer);
+            Desc = curBuffer.ReadString();
             MovementType = curBuffer.ReadInteger();
             MovementSpeed = curBuffer.ReadInteger();
             MovementFreq = curBuffer.ReadInteger();
@@ -91,9 +95,11 @@ namespace Intersect_Editor.Classes
             Trigger = curBuffer.ReadInteger();
             GraphicType = curBuffer.ReadInteger();
             Graphic = curBuffer.ReadString();
+            FaceGraphic = curBuffer.ReadString();
             Graphicx = curBuffer.ReadInteger();
             Graphicy = curBuffer.ReadInteger();
             HideName = curBuffer.ReadInteger();
+            DisablePreview = curBuffer.ReadInteger();
             var x = curBuffer.ReadInteger();
             for (var i = 0; i < x; i++)
             {
@@ -105,6 +111,7 @@ namespace Intersect_Editor.Classes
         public void WriteBytes(ByteBuffer myBuffer)
         {
             MyConditions.WriteBytes(myBuffer);
+            myBuffer.WriteString(Desc);
             myBuffer.WriteInteger(MovementType);
             myBuffer.WriteInteger(MovementSpeed);
             myBuffer.WriteInteger(MovementFreq);
@@ -113,9 +120,11 @@ namespace Intersect_Editor.Classes
             myBuffer.WriteInteger(Trigger);
             myBuffer.WriteInteger(GraphicType);
             myBuffer.WriteString(Graphic);
+            myBuffer.WriteString(FaceGraphic);
             myBuffer.WriteInteger(Graphicx);
             myBuffer.WriteInteger(Graphicy);
             myBuffer.WriteInteger(HideName);
+            myBuffer.WriteInteger(DisablePreview);
             myBuffer.WriteInteger(CommandLists.Count);
             foreach (var t in CommandLists)
             {

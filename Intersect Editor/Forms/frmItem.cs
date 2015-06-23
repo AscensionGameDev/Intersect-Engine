@@ -20,7 +20,7 @@ namespace Intersect_Editor.Forms
         {
             lstItems.SelectedIndex = 0;
             cmbPic.Items.Clear();
-            cmbPic.Items.Add("None");towa
+            cmbPic.Items.Add("None");
             for (int i = 0; i < Intersect_Editor.Classes.Graphics.ItemNames.Length; i++)
             {
                 cmbPic.Items.Add(Intersect_Editor.Classes.Graphics.ItemNames[i]);

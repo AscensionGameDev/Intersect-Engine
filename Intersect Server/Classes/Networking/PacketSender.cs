@@ -74,7 +74,14 @@ namespace Intersect_Server.Classes
             bf.WriteLong((int)Enums.ServerPackets.EntityData);
             bf.WriteLong(sendIndex);
             bf.WriteInteger(entityType);
-            bf.WriteBytes(en.Data());
+            if (entityType == 1)
+            {
+                bf.WriteBytes(((Event)en).Data());
+            }
+            else
+            {
+                bf.WriteBytes(en.Data());
+            }
             client.SendPacket(bf.ToArray());
             bf.Dispose();
             SendEntityVitalsTo(client, sendIndex,entityType,en);
@@ -95,7 +102,14 @@ namespace Intersect_Server.Classes
             bf.WriteLong((int)Enums.ServerPackets.EntityData);
             bf.WriteLong(sendIndex);
             bf.WriteInteger(isEvent);
-            bf.WriteBytes(en.Data());
+            if (isEvent == 1)
+            {
+                bf.WriteBytes(((Event)en).Data());
+            }
+            else
+            {
+                bf.WriteBytes(en.Data());
+            }
             SendDataToProximity(en.CurrentMap, bf.ToArray());
             bf.Dispose();
             SendEntityVitals(sendIndex,isEvent,en);

@@ -41,7 +41,7 @@ namespace Intersect_Client.Classes
 
         //Entities and stuff
         public static List<Entity> Entities = new List<Entity>();
-        public static List<Entity> Events = new List<Entity>();
+        public static List<Event> Events = new List<Event>();
 
         //Game Items
         public static ItemStruct[] GameItems;

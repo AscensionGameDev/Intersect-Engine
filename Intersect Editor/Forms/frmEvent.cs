@@ -28,6 +28,18 @@ namespace Intersect_Editor.Forms
         {
             grpNewCommands.BringToFront();
             grpCreateCommands.BringToFront();
+            cmbEventSprite.Items.Clear();
+            cmbEventSprite.Items.Add("None");
+            for (int i = 0; i < Graphics.EntityFileNames.Length; i++)
+            {
+                cmbEventSprite.Items.Add(Graphics.EntityFileNames[i]);
+            }
+            cmbPreviewFace.Items.Clear();
+            cmbPreviewFace.Items.Add("None");
+            for (int i = 0; i < Graphics.FaceFileNames.Count; i++)
+            {
+                cmbPreviewFace.Items.Add(Graphics.FaceFileNames[i]);
+            }
         }
 
         private void frmEvent_FormClosing(object sender, FormClosingEventArgs e)
@@ -74,9 +86,12 @@ namespace Intersect_Editor.Forms
             cmbCond2.SelectedIndex = CurrentPage.MyConditions.Switch2;
             cmbCond1Val.SelectedIndex = Convert.ToInt32(CurrentPage.MyConditions.Switch1Val);
             cmbCond2Val.SelectedIndex = Convert.ToInt32(CurrentPage.MyConditions.Switch2Val);
-            txtPageGraphic.Text = CurrentPage.Graphic;
+            cmbEventSprite.SelectedIndex = cmbEventSprite.Items.IndexOf(CurrentPage.Graphic);
+            cmbPreviewFace.SelectedIndex = cmbPreviewFace.Items.IndexOf(CurrentPage.FaceGraphic);
             cmbEventDir.SelectedIndex = CurrentPage.Graphicy;
             chkHideName.Checked = Convert.ToBoolean(CurrentPage.HideName);
+            chkDisablePreview.Checked = Convert.ToBoolean(CurrentPage.DisablePreview);
+            txtDesc.Text = CurrentPage.Desc;
             ListPageCommands();
         }
 
@@ -565,11 +580,6 @@ namespace Intersect_Editor.Forms
             CurrentPage.MyConditions.Switch2Val = Convert.ToBoolean(cmbCond2Val.SelectedIndex);
         }
 
-        private void txtPageGraphic_TextChanged(object sender, EventArgs e)
-        {
-            CurrentPage.Graphic = txtPageGraphic.Text;
-        }
-
         private void chkHideName_CheckedChanged(object sender, EventArgs e)
         {
             CurrentPage.HideName = Convert.ToInt32(chkHideName.Checked);
@@ -578,6 +588,26 @@ namespace Intersect_Editor.Forms
         private void cmbEventDir_SelectedIndexChanged(object sender, EventArgs e)
         {
             CurrentPage.Graphicy = cmbEventDir.SelectedIndex;
+        }
+
+        private void txtDesc_TextChanged(object sender, EventArgs e)
+        {
+            CurrentPage.Desc = txtDesc.Text;
+        }
+
+        private void chkDisablePreview_CheckedChanged(object sender, EventArgs e)
+        {
+            CurrentPage.DisablePreview = Convert.ToInt32(chkDisablePreview.Checked);
+        }
+
+        private void cmbEventSprite_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            CurrentPage.Graphic = cmbEventSprite.Text;
+        }
+
+        private void cmbPreviewFace_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            CurrentPage.FaceGraphic = cmbPreviewFace.Text;
         }
 
 

@@ -283,7 +283,7 @@ namespace Intersect_Client.Classes
                         }
                     }
                 }
-                DrawNight();
+                //DrawNight();
             }
 
             Gui.DrawGui();
@@ -326,7 +326,7 @@ namespace Intersect_Client.Classes
                 Fps = _fpsCount;
                 _fpsCount = 0;
                 _fpsTimer = Environment.TickCount + 1000;
-                RenderWindow.SetTitle("Intersect Engine - FPS: " + Fps);
+                RenderWindow.SetTitle("Intersect Engine - Brought to you by: http://ascensiongamedev.com - FPS: " + Fps);
             }
         }
         private static void DrawMap(int index, bool upper = false)

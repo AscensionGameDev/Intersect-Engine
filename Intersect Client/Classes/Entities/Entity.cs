@@ -122,9 +122,9 @@ namespace Intersect_Client
             Rectangle destRectangle = new Rectangle();
             Texture srcTexture;
             var d = 0;
-            if (Graphics.EntityFileNames.IndexOf(MySprite.ToLower() + ".png") >= 0)
+            if (Graphics.EntityFileNames.IndexOf(MySprite.ToLower()) >= 0)
             {
-                srcTexture = Graphics.EntityTextures[Graphics.EntityFileNames.IndexOf(MySprite.ToLower() + ".png")];
+                srcTexture = Graphics.EntityTextures[Graphics.EntityFileNames.IndexOf(MySprite.ToLower())];
                 if (srcTexture.Size.Y / 4 > 32)
                 {
                     destRectangle.X = (int)Math.Ceiling(Graphics.CalcMapOffsetX(i) + CurrentX * 32 + OffsetX);
@@ -162,9 +162,9 @@ namespace Intersect_Client
         {
             Sprite tmpSprite;
             Vector2f pos;
-            if (Graphics.EntityFileNames.IndexOf(MySprite.ToLower() + ".png") >= 0)
+            if (Graphics.EntityFileNames.IndexOf(MySprite.ToLower()) >= 0)
             {
-                tmpSprite = new Sprite(Graphics.EntityTextures[Graphics.EntityFileNames.IndexOf(MySprite.ToLower() + ".png")]);
+                tmpSprite = new Sprite(Graphics.EntityTextures[Graphics.EntityFileNames.IndexOf(MySprite.ToLower())]);
                 pos = new Vector2f((int)Math.Ceiling(Graphics.CalcMapOffsetX(mapPos, true) + CurrentX * 32 + OffsetX + tmpSprite.Texture.Size.X / 8f), (int)Math.Ceiling(Graphics.CalcMapOffsetY(mapPos, true) + CurrentY * 32 + OffsetY - ((tmpSprite.Texture.Size.Y / 4) - 32) + tmpSprite.Texture.Size.Y / 8f));
             }
             else
@@ -179,15 +179,15 @@ namespace Intersect_Client
             var nameText = new Text(MyName, Graphics.GameFont);
             var y = (int)Math.Ceiling(Graphics.CalcMapOffsetY(i) + CurrentY * 32 + OffsetY);
             var x = (int)Math.Ceiling(Graphics.CalcMapOffsetX(i) + CurrentX * 32 + OffsetX) + 16;
-            if (Graphics.EntityFileNames.IndexOf(MySprite.ToLower() + ".png") >= 0)
+            if (Graphics.EntityFileNames.IndexOf(MySprite.ToLower()) >= 0)
             {
-                if (Graphics.EntityTextures[Graphics.EntityFileNames.IndexOf(MySprite.ToLower() + ".png")].Size.Y / 4 > 32)
+                if (Graphics.EntityTextures[Graphics.EntityFileNames.IndexOf(MySprite.ToLower())].Size.Y / 4 > 32)
                 {
-                    y = (int)Math.Ceiling(Graphics.CalcMapOffsetY(i) + CurrentY * 32 + OffsetY - ((Graphics.EntityTextures[Graphics.EntityFileNames.IndexOf(MySprite.ToLower() + ".png")].Size.Y / 4) - 32)) - 14;
+                    y = (int)Math.Ceiling(Graphics.CalcMapOffsetY(i) + CurrentY * 32 + OffsetY - ((Graphics.EntityTextures[Graphics.EntityFileNames.IndexOf(MySprite.ToLower())].Size.Y / 4) - 32)) - 14;
                 }
-                if (Graphics.EntityTextures[Graphics.EntityFileNames.IndexOf(MySprite.ToLower() + ".png")].Size.X / 4 > 32)
+                if (Graphics.EntityTextures[Graphics.EntityFileNames.IndexOf(MySprite.ToLower())].Size.X / 4 > 32)
                 {
-                    x += (int)Math.Ceiling((Graphics.EntityTextures[Graphics.EntityFileNames.IndexOf(MySprite.ToLower() + ".png")].Size.Y / 4f) - 32) / 2;
+                    x += (int)Math.Ceiling((Graphics.EntityTextures[Graphics.EntityFileNames.IndexOf(MySprite.ToLower())].Size.Y / 4f) - 32) / 2;
                 }
             }
             if (!isEvent) { y -= 8; } //Need room for HP bar if not an event.
@@ -202,15 +202,15 @@ namespace Intersect_Client
             var fgRect = new RectangleShape(new Vector2f(width-2, 4));
             var y = (int)Math.Ceiling(Graphics.CalcMapOffsetY(i) + CurrentY * 32 + OffsetY) + 6;
             var x = (int)Math.Ceiling(Graphics.CalcMapOffsetX(i) + CurrentX * 32 + OffsetX) + 16;
-            if (Graphics.EntityFileNames.IndexOf(MySprite.ToLower() + ".png") >= 0)
+            if (Graphics.EntityFileNames.IndexOf(MySprite.ToLower()) >= 0)
             {
-                if (Graphics.EntityTextures[Graphics.EntityFileNames.IndexOf(MySprite.ToLower() + ".png")].Size.Y / 4 > 32)
+                if (Graphics.EntityTextures[Graphics.EntityFileNames.IndexOf(MySprite.ToLower())].Size.Y / 4 > 32)
                 {
-                    y = (int)Math.Ceiling(Graphics.CalcMapOffsetY(i) + CurrentY * 32 + OffsetY - ((Graphics.EntityTextures[Graphics.EntityFileNames.IndexOf(MySprite.ToLower() + ".png")].Size.Y / 4) - 32)) - 8;
+                    y = (int)Math.Ceiling(Graphics.CalcMapOffsetY(i) + CurrentY * 32 + OffsetY - ((Graphics.EntityTextures[Graphics.EntityFileNames.IndexOf(MySprite.ToLower())].Size.Y / 4) - 32)) - 8;
                 }
-                if (Graphics.EntityTextures[Graphics.EntityFileNames.IndexOf(MySprite.ToLower() + ".png")].Size.X / 4 > 32)
+                if (Graphics.EntityTextures[Graphics.EntityFileNames.IndexOf(MySprite.ToLower() )].Size.X / 4 > 32)
                 {
-                    x += (int)Math.Ceiling((Graphics.EntityTextures[Graphics.EntityFileNames.IndexOf(MySprite.ToLower() + ".png")].Size.Y / 4f) - 32) / 2;
+                    x += (int)Math.Ceiling((Graphics.EntityTextures[Graphics.EntityFileNames.IndexOf(MySprite.ToLower())].Size.Y / 4f) - 32) / 2;
                 }
             }
             bgRect.FillColor = Color.Black;

@@ -20,7 +20,6 @@ namespace Intersect_Client.Classes.UI.Game
 
         private string _characterPortraitImg = "";
         private ImagePanel _characterPortrait;
-        private System.Drawing.Bitmap _spriteImg;
         private Texture _spriteTex;
         private string _currentSprite = "";
 
@@ -228,7 +227,8 @@ namespace Intersect_Client.Classes.UI.Game
                 {
                     if (_currentSprite != Globals.Me.MySprite)
                     {
-                        _characterPortrait.Texture = CreateTextureFromSprite();
+                        _characterPortrait.Texture = Gui.CreateTextureFromSprite(Globals.Me.MySprite,_characterPortrait.Width,_characterPortrait.Height);
+                        _currentSprite = Globals.Me.MySprite;
                     }
                 }
             }
@@ -264,16 +264,6 @@ namespace Intersect_Client.Classes.UI.Game
                 }
 
             }
-        }
-        private Texture CreateTextureFromSprite()
-        {
-            System.Drawing.Bitmap sprite = new System.Drawing.Bitmap("Resources/Entities/" + Globals.Me.MySprite + ".png");
-            _spriteImg = new System.Drawing.Bitmap(sprite.Width / 4, sprite.Height / 4);
-            System.Drawing.Graphics g = System.Drawing.Graphics.FromImage(_spriteImg);
-            g.DrawImage(sprite, new System.Drawing.Rectangle(0, 0, sprite.Width / 4, sprite.Height / 4), new System.Drawing.Rectangle(0, 0, sprite.Width / 4, sprite.Height / 4), System.Drawing.GraphicsUnit.Pixel);
-            g.Dispose();
-            sprite.Dispose();
-            return Gui.BitmapToGwenTexture(_spriteImg);
         }
         public void Show()
         {
@@ -323,11 +313,13 @@ namespace Intersect_Client.Classes.UI.Game
 
         void pnl_HoverLeave(Base sender, EventArgs arguments)
         {
-            _descWindow.Dispose();
+            if (_descWindow != null) { _descWindow.Dispose(); _descWindow = null; }
         }
 
         void pnl_HoverEnter(Base sender, EventArgs arguments)
         {
+            if (Mouse.IsButtonPressed(Mouse.Button.Left)) { return; }
+            if (_descWindow != null) { _descWindow.Dispose(); _descWindow = null; }
             _descWindow = new ItemDescWindow(_currentItem, 1, _characterWindow.X - 220, _characterWindow.Y, _statBoost, "Equipment Slot: " + Enums.EquipmentSlots[myindex]);
         }
 
