@@ -104,9 +104,9 @@ namespace Intersect_Client.Classes
         // Change the dimension if the player is on a gateway
         private void TryToChangeDimension()
         {
-            if (CurrentX <= Constants.MapWidth || CurrentX >= 0)
+            if (CurrentX < Constants.MapWidth || CurrentX >= 0)
             {
-                if (CurrentY <= Constants.MapHeight || CurrentY >= 0)
+                if (CurrentY < Constants.MapHeight || CurrentY >= 0)
                 {
                     if(Globals.GameMaps[CurrentMap].Attributes[CurrentX, CurrentY].value == (int)Enums.MapAttributes.ZDimension);
                     {

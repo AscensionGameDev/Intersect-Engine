@@ -1051,14 +1051,6 @@ namespace Intersect_Editor.Forms
         {
             hideAttributeMenus();
         }
-        private void scrlMapItem_Scroll(object sender, ScrollEventArgs e)
-        {
-            lblMapItem.Text = "Item: " + scrlMapItem.Value + " " + Globals.GameItems[scrlMapItem.Value - 1].Name;
-        }
-        private void scrlMaxItemVal_Scroll(object sender, ScrollEventArgs e)
-        {
-            lblMaxItemAmount.Text = "Quantity: x" + scrlMaxItemVal.Value;
-        }
 
         // Used for returning an integer value depending on which radio button is selected on the forms. This is merely used to make PlaceAtrribute less messy.
         private int GetEditorDimensionGateway()
@@ -1149,33 +1141,41 @@ namespace Intersect_Editor.Forms
             grpWarp.Visible = true;
         }
 
-        private void scrlMap_Scroll(object sender, ScrollEventArgs e)
-        {
-            lblMap.Text = "Map: " + scrlMap.Value;
-        }
-
-        private void scrlX_Scroll(object sender, ScrollEventArgs e)
-        {
-            lblX.Text = "X: " + scrlX.Value;
-        }
-
-        private void scrlY_Scroll(object sender, ScrollEventArgs e)
-        {
-            lblY.Text = "Y: " + scrlY.Value;
-        }
-
-        private void scrlNpcSpawn_Scroll(object sender, ScrollEventArgs e)
-        {
-            lblNpcSpawn.Text = "Map Npc: " + scrlNpcSpawn.Value + " " + Globals.GameNpcs[scrlNpcSpawn.Value - 1].Name;
-        }
-
         private void rbNPCSpawn_CheckedChanged(object sender, EventArgs e)
         {
             hideAttributeMenus();
             grpNPCSpawn.Visible = true;
         }
 
+        private void scrlNpcSpawn_ValueChanged(object sender, EventArgs e)
+        {
+            lblNpcSpawn.Text = "Map Npc: " + scrlNpcSpawn.Value + " " + Globals.GameNpcs[scrlNpcSpawn.Value - 1].Name;
+        }
 
+        private void scrlMapItem_ValueChanged(object sender, EventArgs e)
+        {
+            lblMapItem.Text = "Item: " + scrlMapItem.Value + " " + Globals.GameItems[scrlMapItem.Value - 1].Name;
+        }
+
+        private void scrlMaxItemVal_ValueChanged(object sender, EventArgs e)
+        {
+            lblMaxItemAmount.Text = "Quantity: x" + scrlMaxItemVal.Value;
+        }
+
+        private void scrlMap_ValueChanged(object sender, EventArgs e)
+        {
+            lblMap.Text = "Map: " + scrlMap.Value;
+        }
+
+        private void scrlX_ValueChanged(object sender, EventArgs e)
+        {
+            lblX.Text = "X: " + scrlX.Value;
+        }
+
+        private void scrlY_ValueChanged(object sender, EventArgs e)
+        {
+            lblY.Text = "Y: " + scrlY.Value;
+        }
 
         
     }

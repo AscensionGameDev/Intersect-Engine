@@ -85,18 +85,6 @@ namespace Intersect_Editor.Forms
             this.btnLightEditorRevert = new System.Windows.Forms.Button();
             this.btnLightEditorClose = new System.Windows.Forms.Button();
             this.grpAttributes = new System.Windows.Forms.GroupBox();
-            this.grpZDimension = new System.Windows.Forms.GroupBox();
-            this.grpGateway = new System.Windows.Forms.GroupBox();
-            this.rbGateway2 = new System.Windows.Forms.RadioButton();
-            this.rbGateway1 = new System.Windows.Forms.RadioButton();
-            this.rbGatewayNone = new System.Windows.Forms.RadioButton();
-            this.grpDimBlock = new System.Windows.Forms.GroupBox();
-            this.rbBlock2 = new System.Windows.Forms.RadioButton();
-            this.rbBlock1 = new System.Windows.Forms.RadioButton();
-            this.rbBlockNone = new System.Windows.Forms.RadioButton();
-            this.grpNPCSpawn = new System.Windows.Forms.GroupBox();
-            this.scrlNpcSpawn = new System.Windows.Forms.HScrollBar();
-            this.lblNpcSpawn = new System.Windows.Forms.Label();
             this.rbNPCSpawn = new System.Windows.Forms.RadioButton();
             this.rbWarp = new System.Windows.Forms.RadioButton();
             this.rbNPCAvoid = new System.Windows.Forms.RadioButton();
@@ -115,6 +103,18 @@ namespace Intersect_Editor.Forms
             this.scrlX = new System.Windows.Forms.HScrollBar();
             this.scrlY = new System.Windows.Forms.HScrollBar();
             this.scrlMap = new System.Windows.Forms.HScrollBar();
+            this.grpZDimension = new System.Windows.Forms.GroupBox();
+            this.grpGateway = new System.Windows.Forms.GroupBox();
+            this.rbGateway2 = new System.Windows.Forms.RadioButton();
+            this.rbGateway1 = new System.Windows.Forms.RadioButton();
+            this.rbGatewayNone = new System.Windows.Forms.RadioButton();
+            this.grpDimBlock = new System.Windows.Forms.GroupBox();
+            this.rbBlock2 = new System.Windows.Forms.RadioButton();
+            this.rbBlock1 = new System.Windows.Forms.RadioButton();
+            this.rbBlockNone = new System.Windows.Forms.RadioButton();
+            this.grpNPCSpawn = new System.Windows.Forms.GroupBox();
+            this.scrlNpcSpawn = new System.Windows.Forms.HScrollBar();
+            this.lblNpcSpawn = new System.Windows.Forms.Label();
             this.menuStrip.SuspendLayout();
             this.grpMap.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.picMap)).BeginInit();
@@ -125,12 +125,12 @@ namespace Intersect_Editor.Forms
             this.grpMapProperties.SuspendLayout();
             this.grpLightEditor.SuspendLayout();
             this.grpAttributes.SuspendLayout();
+            this.grpItem.SuspendLayout();
+            this.grpWarp.SuspendLayout();
             this.grpZDimension.SuspendLayout();
             this.grpGateway.SuspendLayout();
             this.grpDimBlock.SuspendLayout();
             this.grpNPCSpawn.SuspendLayout();
-            this.grpItem.SuspendLayout();
-            this.grpWarp.SuspendLayout();
             this.SuspendLayout();
             // 
             // menuStrip
@@ -670,14 +670,14 @@ namespace Intersect_Editor.Forms
             // 
             // grpAttributes
             // 
-            this.grpAttributes.Controls.Add(this.grpZDimension);
-            this.grpAttributes.Controls.Add(this.grpNPCSpawn);
             this.grpAttributes.Controls.Add(this.rbNPCSpawn);
             this.grpAttributes.Controls.Add(this.rbWarp);
             this.grpAttributes.Controls.Add(this.rbNPCAvoid);
             this.grpAttributes.Controls.Add(this.rbZDimension);
             this.grpAttributes.Controls.Add(this.rbItem);
             this.grpAttributes.Controls.Add(this.rbBlocked);
+            this.grpAttributes.Controls.Add(this.grpZDimension);
+            this.grpAttributes.Controls.Add(this.grpNPCSpawn);
             this.grpAttributes.Controls.Add(this.grpItem);
             this.grpAttributes.Controls.Add(this.grpWarp);
             this.grpAttributes.Location = new System.Drawing.Point(11, 27);
@@ -687,6 +687,199 @@ namespace Intersect_Editor.Forms
             this.grpAttributes.TabStop = false;
             this.grpAttributes.Text = "Attributes";
             this.grpAttributes.Visible = false;
+            // 
+            // rbNPCSpawn
+            // 
+            this.rbNPCSpawn.AutoSize = true;
+            this.rbNPCSpawn.Location = new System.Drawing.Point(12, 138);
+            this.rbNPCSpawn.Name = "rbNPCSpawn";
+            this.rbNPCSpawn.Size = new System.Drawing.Size(83, 17);
+            this.rbNPCSpawn.TabIndex = 8;
+            this.rbNPCSpawn.Text = "NPC Spawn";
+            this.rbNPCSpawn.UseVisualStyleBackColor = true;
+            this.rbNPCSpawn.CheckedChanged += new System.EventHandler(this.rbNPCSpawn_CheckedChanged);
+            // 
+            // rbWarp
+            // 
+            this.rbWarp.AutoSize = true;
+            this.rbWarp.Location = new System.Drawing.Point(11, 89);
+            this.rbWarp.Name = "rbWarp";
+            this.rbWarp.Size = new System.Drawing.Size(51, 17);
+            this.rbWarp.TabIndex = 6;
+            this.rbWarp.Text = "Warp";
+            this.rbWarp.UseVisualStyleBackColor = true;
+            this.rbWarp.CheckedChanged += new System.EventHandler(this.rbWarp_CheckedChanged);
+            // 
+            // rbNPCAvoid
+            // 
+            this.rbNPCAvoid.AutoSize = true;
+            this.rbNPCAvoid.Location = new System.Drawing.Point(11, 66);
+            this.rbNPCAvoid.Name = "rbNPCAvoid";
+            this.rbNPCAvoid.Size = new System.Drawing.Size(77, 17);
+            this.rbNPCAvoid.TabIndex = 5;
+            this.rbNPCAvoid.Text = "NPC Avoid";
+            this.rbNPCAvoid.UseVisualStyleBackColor = true;
+            this.rbNPCAvoid.CheckedChanged += new System.EventHandler(this.rbNPCAvoid_CheckedChanged);
+            // 
+            // rbZDimension
+            // 
+            this.rbZDimension.AutoSize = true;
+            this.rbZDimension.Location = new System.Drawing.Point(11, 42);
+            this.rbZDimension.Name = "rbZDimension";
+            this.rbZDimension.Size = new System.Drawing.Size(84, 17);
+            this.rbZDimension.TabIndex = 4;
+            this.rbZDimension.Text = "Z-Dimension";
+            this.rbZDimension.UseVisualStyleBackColor = true;
+            this.rbZDimension.CheckedChanged += new System.EventHandler(this.rbZDimension_CheckedChanged);
+            // 
+            // rbItem
+            // 
+            this.rbItem.AutoSize = true;
+            this.rbItem.Location = new System.Drawing.Point(12, 113);
+            this.rbItem.Name = "rbItem";
+            this.rbItem.Size = new System.Drawing.Size(81, 17);
+            this.rbItem.TabIndex = 1;
+            this.rbItem.Text = "Item Spawn";
+            this.rbItem.UseVisualStyleBackColor = true;
+            this.rbItem.CheckedChanged += new System.EventHandler(this.rbItem_CheckedChanged);
+            // 
+            // rbBlocked
+            // 
+            this.rbBlocked.AutoSize = true;
+            this.rbBlocked.Checked = true;
+            this.rbBlocked.Location = new System.Drawing.Point(12, 20);
+            this.rbBlocked.Name = "rbBlocked";
+            this.rbBlocked.Size = new System.Drawing.Size(64, 17);
+            this.rbBlocked.TabIndex = 0;
+            this.rbBlocked.TabStop = true;
+            this.rbBlocked.Text = "Blocked";
+            this.rbBlocked.UseVisualStyleBackColor = true;
+            this.rbBlocked.CheckedChanged += new System.EventHandler(this.rbBlocked_CheckedChanged);
+            // 
+            // grpItem
+            // 
+            this.grpItem.Controls.Add(this.lblMaxItemAmount);
+            this.grpItem.Controls.Add(this.lblMapItem);
+            this.grpItem.Controls.Add(this.scrlMaxItemVal);
+            this.grpItem.Controls.Add(this.scrlMapItem);
+            this.grpItem.Location = new System.Drawing.Point(7, 487);
+            this.grpItem.Name = "grpItem";
+            this.grpItem.Size = new System.Drawing.Size(278, 132);
+            this.grpItem.TabIndex = 3;
+            this.grpItem.TabStop = false;
+            this.grpItem.Text = "Map Item";
+            this.grpItem.Visible = false;
+            // 
+            // lblMaxItemAmount
+            // 
+            this.lblMaxItemAmount.AutoSize = true;
+            this.lblMaxItemAmount.Location = new System.Drawing.Point(13, 72);
+            this.lblMaxItemAmount.Name = "lblMaxItemAmount";
+            this.lblMaxItemAmount.Size = new System.Drawing.Size(63, 13);
+            this.lblMaxItemAmount.TabIndex = 8;
+            this.lblMaxItemAmount.Text = "Quantity: x1";
+            // 
+            // lblMapItem
+            // 
+            this.lblMapItem.AutoSize = true;
+            this.lblMapItem.Location = new System.Drawing.Point(13, 21);
+            this.lblMapItem.Name = "lblMapItem";
+            this.lblMapItem.Size = new System.Drawing.Size(39, 13);
+            this.lblMapItem.TabIndex = 7;
+            this.lblMapItem.Text = "Item: 1";
+            // 
+            // scrlMaxItemVal
+            // 
+            this.scrlMaxItemVal.LargeChange = 1;
+            this.scrlMaxItemVal.Location = new System.Drawing.Point(16, 94);
+            this.scrlMaxItemVal.Maximum = 1000;
+            this.scrlMaxItemVal.Minimum = 1;
+            this.scrlMaxItemVal.Name = "scrlMaxItemVal";
+            this.scrlMaxItemVal.Size = new System.Drawing.Size(249, 17);
+            this.scrlMaxItemVal.TabIndex = 6;
+            this.scrlMaxItemVal.Value = 1;
+            this.scrlMaxItemVal.ValueChanged += new System.EventHandler(this.scrlMaxItemVal_ValueChanged);
+            // 
+            // scrlMapItem
+            // 
+            this.scrlMapItem.LargeChange = 1;
+            this.scrlMapItem.Location = new System.Drawing.Point(16, 44);
+            this.scrlMapItem.Minimum = 1;
+            this.scrlMapItem.Name = "scrlMapItem";
+            this.scrlMapItem.Size = new System.Drawing.Size(249, 17);
+            this.scrlMapItem.TabIndex = 5;
+            this.scrlMapItem.Value = 1;
+            this.scrlMapItem.ValueChanged += new System.EventHandler(this.scrlMapItem_ValueChanged);
+            // 
+            // grpWarp
+            // 
+            this.grpWarp.Controls.Add(this.lblY);
+            this.grpWarp.Controls.Add(this.lblX);
+            this.grpWarp.Controls.Add(this.lblMap);
+            this.grpWarp.Controls.Add(this.scrlX);
+            this.grpWarp.Controls.Add(this.scrlY);
+            this.grpWarp.Controls.Add(this.scrlMap);
+            this.grpWarp.Location = new System.Drawing.Point(4, 457);
+            this.grpWarp.Name = "grpWarp";
+            this.grpWarp.Size = new System.Drawing.Size(280, 162);
+            this.grpWarp.TabIndex = 9;
+            this.grpWarp.TabStop = false;
+            this.grpWarp.Text = "Warp";
+            this.grpWarp.Visible = false;
+            // 
+            // lblY
+            // 
+            this.lblY.AutoSize = true;
+            this.lblY.Location = new System.Drawing.Point(22, 106);
+            this.lblY.Name = "lblY";
+            this.lblY.Size = new System.Drawing.Size(26, 13);
+            this.lblY.TabIndex = 11;
+            this.lblY.Text = "Y: 0";
+            // 
+            // lblX
+            // 
+            this.lblX.AutoSize = true;
+            this.lblX.Location = new System.Drawing.Point(22, 65);
+            this.lblX.Name = "lblX";
+            this.lblX.Size = new System.Drawing.Size(26, 13);
+            this.lblX.TabIndex = 10;
+            this.lblX.Text = "X: 0";
+            // 
+            // lblMap
+            // 
+            this.lblMap.AutoSize = true;
+            this.lblMap.Location = new System.Drawing.Point(19, 21);
+            this.lblMap.Name = "lblMap";
+            this.lblMap.Size = new System.Drawing.Size(40, 13);
+            this.lblMap.TabIndex = 9;
+            this.lblMap.Text = "Map: 0";
+            // 
+            // scrlX
+            // 
+            this.scrlX.LargeChange = 1;
+            this.scrlX.Location = new System.Drawing.Point(19, 78);
+            this.scrlX.Name = "scrlX";
+            this.scrlX.Size = new System.Drawing.Size(242, 21);
+            this.scrlX.TabIndex = 8;
+            this.scrlX.ValueChanged += new System.EventHandler(this.scrlX_ValueChanged);
+            // 
+            // scrlY
+            // 
+            this.scrlY.LargeChange = 1;
+            this.scrlY.Location = new System.Drawing.Point(19, 121);
+            this.scrlY.Name = "scrlY";
+            this.scrlY.Size = new System.Drawing.Size(243, 21);
+            this.scrlY.TabIndex = 7;
+            this.scrlY.ValueChanged += new System.EventHandler(this.scrlY_ValueChanged);
+            // 
+            // scrlMap
+            // 
+            this.scrlMap.LargeChange = 1;
+            this.scrlMap.Location = new System.Drawing.Point(20, 34);
+            this.scrlMap.Name = "scrlMap";
+            this.scrlMap.Size = new System.Drawing.Size(242, 21);
+            this.scrlMap.TabIndex = 6;
+            this.scrlMap.ValueChanged += new System.EventHandler(this.scrlMap_ValueChanged);
             // 
             // grpZDimension
             // 
@@ -809,6 +1002,7 @@ namespace Intersect_Editor.Forms
             this.scrlNpcSpawn.Size = new System.Drawing.Size(246, 20);
             this.scrlNpcSpawn.TabIndex = 1;
             this.scrlNpcSpawn.Value = 1;
+            this.scrlNpcSpawn.ValueChanged += new System.EventHandler(this.scrlNpcSpawn_ValueChanged);
             // 
             // lblNpcSpawn
             // 
@@ -819,196 +1013,6 @@ namespace Intersect_Editor.Forms
             this.lblNpcSpawn.TabIndex = 0;
             this.lblNpcSpawn.Text = "Map Npc: 1";
             // 
-            // rbNPCSpawn
-            // 
-            this.rbNPCSpawn.AutoSize = true;
-            this.rbNPCSpawn.Location = new System.Drawing.Point(12, 138);
-            this.rbNPCSpawn.Name = "rbNPCSpawn";
-            this.rbNPCSpawn.Size = new System.Drawing.Size(83, 17);
-            this.rbNPCSpawn.TabIndex = 8;
-            this.rbNPCSpawn.Text = "NPC Spawn";
-            this.rbNPCSpawn.UseVisualStyleBackColor = true;
-            this.rbNPCSpawn.CheckedChanged += new System.EventHandler(this.rbNPCSpawn_CheckedChanged);
-            // 
-            // rbWarp
-            // 
-            this.rbWarp.AutoSize = true;
-            this.rbWarp.Location = new System.Drawing.Point(11, 89);
-            this.rbWarp.Name = "rbWarp";
-            this.rbWarp.Size = new System.Drawing.Size(51, 17);
-            this.rbWarp.TabIndex = 6;
-            this.rbWarp.Text = "Warp";
-            this.rbWarp.UseVisualStyleBackColor = true;
-            this.rbWarp.CheckedChanged += new System.EventHandler(this.rbWarp_CheckedChanged);
-            // 
-            // rbNPCAvoid
-            // 
-            this.rbNPCAvoid.AutoSize = true;
-            this.rbNPCAvoid.Location = new System.Drawing.Point(11, 66);
-            this.rbNPCAvoid.Name = "rbNPCAvoid";
-            this.rbNPCAvoid.Size = new System.Drawing.Size(77, 17);
-            this.rbNPCAvoid.TabIndex = 5;
-            this.rbNPCAvoid.Text = "NPC Avoid";
-            this.rbNPCAvoid.UseVisualStyleBackColor = true;
-            this.rbNPCAvoid.CheckedChanged += new System.EventHandler(this.rbNPCAvoid_CheckedChanged);
-            // 
-            // rbZDimension
-            // 
-            this.rbZDimension.AutoSize = true;
-            this.rbZDimension.Location = new System.Drawing.Point(11, 42);
-            this.rbZDimension.Name = "rbZDimension";
-            this.rbZDimension.Size = new System.Drawing.Size(84, 17);
-            this.rbZDimension.TabIndex = 4;
-            this.rbZDimension.Text = "Z-Dimension";
-            this.rbZDimension.UseVisualStyleBackColor = true;
-            this.rbZDimension.CheckedChanged += new System.EventHandler(this.rbZDimension_CheckedChanged);
-            // 
-            // rbItem
-            // 
-            this.rbItem.AutoSize = true;
-            this.rbItem.Location = new System.Drawing.Point(12, 113);
-            this.rbItem.Name = "rbItem";
-            this.rbItem.Size = new System.Drawing.Size(81, 17);
-            this.rbItem.TabIndex = 1;
-            this.rbItem.Text = "Item Spawn";
-            this.rbItem.UseVisualStyleBackColor = true;
-            this.rbItem.CheckedChanged += new System.EventHandler(this.rbItem_CheckedChanged);
-            // 
-            // rbBlocked
-            // 
-            this.rbBlocked.AutoSize = true;
-            this.rbBlocked.Checked = true;
-            this.rbBlocked.Location = new System.Drawing.Point(12, 20);
-            this.rbBlocked.Name = "rbBlocked";
-            this.rbBlocked.Size = new System.Drawing.Size(64, 17);
-            this.rbBlocked.TabIndex = 0;
-            this.rbBlocked.TabStop = true;
-            this.rbBlocked.Text = "Blocked";
-            this.rbBlocked.UseVisualStyleBackColor = true;
-            this.rbBlocked.CheckedChanged += new System.EventHandler(this.rbBlocked_CheckedChanged);
-            // 
-            // grpItem
-            // 
-            this.grpItem.Controls.Add(this.lblMaxItemAmount);
-            this.grpItem.Controls.Add(this.lblMapItem);
-            this.grpItem.Controls.Add(this.scrlMaxItemVal);
-            this.grpItem.Controls.Add(this.scrlMapItem);
-            this.grpItem.Location = new System.Drawing.Point(7, 487);
-            this.grpItem.Name = "grpItem";
-            this.grpItem.Size = new System.Drawing.Size(278, 132);
-            this.grpItem.TabIndex = 3;
-            this.grpItem.TabStop = false;
-            this.grpItem.Text = "Map Item";
-            this.grpItem.Visible = false;
-            // 
-            // lblMaxItemAmount
-            // 
-            this.lblMaxItemAmount.AutoSize = true;
-            this.lblMaxItemAmount.Location = new System.Drawing.Point(13, 72);
-            this.lblMaxItemAmount.Name = "lblMaxItemAmount";
-            this.lblMaxItemAmount.Size = new System.Drawing.Size(63, 13);
-            this.lblMaxItemAmount.TabIndex = 8;
-            this.lblMaxItemAmount.Text = "Quantity: x1";
-            // 
-            // lblMapItem
-            // 
-            this.lblMapItem.AutoSize = true;
-            this.lblMapItem.Location = new System.Drawing.Point(13, 21);
-            this.lblMapItem.Name = "lblMapItem";
-            this.lblMapItem.Size = new System.Drawing.Size(39, 13);
-            this.lblMapItem.TabIndex = 7;
-            this.lblMapItem.Text = "Item: 1";
-            // 
-            // scrlMaxItemVal
-            // 
-            this.scrlMaxItemVal.LargeChange = 1;
-            this.scrlMaxItemVal.Location = new System.Drawing.Point(16, 94);
-            this.scrlMaxItemVal.Maximum = 1000;
-            this.scrlMaxItemVal.Minimum = 1;
-            this.scrlMaxItemVal.Name = "scrlMaxItemVal";
-            this.scrlMaxItemVal.Size = new System.Drawing.Size(249, 17);
-            this.scrlMaxItemVal.TabIndex = 6;
-            this.scrlMaxItemVal.Value = 1;
-            // 
-            // scrlMapItem
-            // 
-            this.scrlMapItem.LargeChange = 1;
-            this.scrlMapItem.Location = new System.Drawing.Point(16, 44);
-            this.scrlMapItem.Minimum = 1;
-            this.scrlMapItem.Name = "scrlMapItem";
-            this.scrlMapItem.Size = new System.Drawing.Size(249, 17);
-            this.scrlMapItem.TabIndex = 5;
-            this.scrlMapItem.Value = 1;
-            // 
-            // grpWarp
-            // 
-            this.grpWarp.Controls.Add(this.lblY);
-            this.grpWarp.Controls.Add(this.lblX);
-            this.grpWarp.Controls.Add(this.lblMap);
-            this.grpWarp.Controls.Add(this.scrlX);
-            this.grpWarp.Controls.Add(this.scrlY);
-            this.grpWarp.Controls.Add(this.scrlMap);
-            this.grpWarp.Location = new System.Drawing.Point(4, 457);
-            this.grpWarp.Name = "grpWarp";
-            this.grpWarp.Size = new System.Drawing.Size(280, 162);
-            this.grpWarp.TabIndex = 9;
-            this.grpWarp.TabStop = false;
-            this.grpWarp.Text = "Warp";
-            this.grpWarp.Visible = false;
-            // 
-            // lblY
-            // 
-            this.lblY.AutoSize = true;
-            this.lblY.Location = new System.Drawing.Point(22, 106);
-            this.lblY.Name = "lblY";
-            this.lblY.Size = new System.Drawing.Size(26, 13);
-            this.lblY.TabIndex = 11;
-            this.lblY.Text = "Y: 0";
-            // 
-            // lblX
-            // 
-            this.lblX.AutoSize = true;
-            this.lblX.Location = new System.Drawing.Point(22, 65);
-            this.lblX.Name = "lblX";
-            this.lblX.Size = new System.Drawing.Size(26, 13);
-            this.lblX.TabIndex = 10;
-            this.lblX.Text = "X: 0";
-            // 
-            // lblMap
-            // 
-            this.lblMap.AutoSize = true;
-            this.lblMap.Location = new System.Drawing.Point(19, 21);
-            this.lblMap.Name = "lblMap";
-            this.lblMap.Size = new System.Drawing.Size(40, 13);
-            this.lblMap.TabIndex = 9;
-            this.lblMap.Text = "Map: 1";
-            // 
-            // scrlX
-            // 
-            this.scrlX.LargeChange = 1;
-            this.scrlX.Location = new System.Drawing.Point(19, 78);
-            this.scrlX.Name = "scrlX";
-            this.scrlX.Size = new System.Drawing.Size(242, 21);
-            this.scrlX.TabIndex = 8;
-            // 
-            // scrlY
-            // 
-            this.scrlY.LargeChange = 1;
-            this.scrlY.Location = new System.Drawing.Point(19, 121);
-            this.scrlY.Name = "scrlY";
-            this.scrlY.Size = new System.Drawing.Size(243, 21);
-            this.scrlY.TabIndex = 7;
-            // 
-            // scrlMap
-            // 
-            this.scrlMap.LargeChange = 1;
-            this.scrlMap.Location = new System.Drawing.Point(20, 34);
-            this.scrlMap.Minimum = 1;
-            this.scrlMap.Name = "scrlMap";
-            this.scrlMap.Size = new System.Drawing.Size(242, 21);
-            this.scrlMap.TabIndex = 6;
-            this.scrlMap.Value = 1;
-            // 
             // FrmMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1016,13 +1020,13 @@ namespace Intersect_Editor.Forms
             this.ClientSize = new System.Drawing.Size(1020, 682);
             this.Controls.Add(this.grpMapProperties);
             this.Controls.Add(this.vScrollMap);
-            this.Controls.Add(this.grpLightEditor);
             this.Controls.Add(this.hScrollMap);
             this.Controls.Add(this.grpMap);
             this.Controls.Add(this.menuStrip);
+            this.Controls.Add(this.grpAttributes);
+            this.Controls.Add(this.grpLightEditor);
             this.Controls.Add(this.grpMapList);
             this.Controls.Add(this.grpLayer);
-            this.Controls.Add(this.grpAttributes);
             this.MainMenuStrip = this.menuStrip;
             this.Name = "FrmMain";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
@@ -1044,6 +1048,10 @@ namespace Intersect_Editor.Forms
             this.grpLightEditor.PerformLayout();
             this.grpAttributes.ResumeLayout(false);
             this.grpAttributes.PerformLayout();
+            this.grpItem.ResumeLayout(false);
+            this.grpItem.PerformLayout();
+            this.grpWarp.ResumeLayout(false);
+            this.grpWarp.PerformLayout();
             this.grpZDimension.ResumeLayout(false);
             this.grpGateway.ResumeLayout(false);
             this.grpGateway.PerformLayout();
@@ -1051,10 +1059,6 @@ namespace Intersect_Editor.Forms
             this.grpDimBlock.PerformLayout();
             this.grpNPCSpawn.ResumeLayout(false);
             this.grpNPCSpawn.PerformLayout();
-            this.grpItem.ResumeLayout(false);
-            this.grpItem.PerformLayout();
-            this.grpWarp.ResumeLayout(false);
-            this.grpWarp.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
