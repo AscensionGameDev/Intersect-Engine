@@ -150,7 +150,7 @@ namespace Intersect_Client.Classes.UI.Game
             }
 
             //If not an event, update the hp/mana bars.
-            if (_myEntity.GetType() != typeof(Event))
+            if (_myEntity.GetType() != typeof(Event) && _myEntity.MaxVital[(int)Enums.Vitals.Health] > 0 && _myEntity.MaxVital[(int)Enums.Vitals.Mana] > 0)
             {
                 float targetHPWidth = _myEntity.Vital[(int)Enums.Vitals.Health] / _myEntity.MaxVital[(int)Enums.Vitals.Health];
                 float targetMPWidth = _myEntity.Vital[(int)Enums.Vitals.Mana] / _myEntity.MaxVital[(int)Enums.Vitals.Mana];
