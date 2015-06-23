@@ -180,6 +180,15 @@ namespace Intersect_Server.Classes
             Globals.Entities[index].Dir = bf.ReadInteger();
             bf.Dispose();
 
+            // Check for a warp, if so warp the player.
+            if (Globals.GameMaps[Globals.Entities[index].CurrentMap].Attributes[Globals.Entities[index].CurrentX, Globals.Entities[index].CurrentY].value == (int)Enums.MapAttributes.Warp)
+            {
+                Globals.Entities[index].Warp(Globals.GameMaps[Globals.Entities[index].CurrentMap].Attributes[Globals.Entities[index].CurrentX, Globals.Entities[index].CurrentY].data1,
+                    Globals.GameMaps[Globals.Entities[index].CurrentMap].Attributes[Globals.Entities[index].CurrentX, Globals.Entities[index].CurrentY].data2,
+                    Globals.GameMaps[Globals.Entities[index].CurrentMap].Attributes[Globals.Entities[index].CurrentX, Globals.Entities[index].CurrentY].data3,
+                    Globals.Entities[index].Dir);
+            }
+
             //TODO: Add Check if valid before sending the move to everyone.
             PacketSender.SendEntityMove(index, 0, Globals.Entities[index]);
         }

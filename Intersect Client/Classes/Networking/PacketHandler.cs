@@ -280,6 +280,16 @@ namespace Intersect_Client.Classes
                 Globals.Entities[index].CurrentY = bf.ReadInteger();
                 Globals.Entities[index].Dir = bf.ReadInteger();
                 Globals.Entities[index].IsMoving = true;
+
+                // Set the Z-Dimension if the player has moved up or down a dimension.
+                if (Globals.GameMaps[Globals.Entities[index].CurrentMap].Attributes[Globals.Entities[index].CurrentX, Globals.Entities[index].CurrentY].value == (int)Enums.MapAttributes.ZDimension)
+                {
+                    if (Globals.GameMaps[Globals.Entities[index].CurrentMap].Attributes[Globals.Entities[index].CurrentX, Globals.Entities[index].CurrentY].data1 > 0)
+                    {
+                        Globals.Entities[index].CurrentZ = Globals.GameMaps[Globals.Entities[index].CurrentMap].Attributes[Globals.Entities[index].CurrentX, Globals.Entities[index].CurrentY].data1 - 1;
+                    }
+                }
+
                 switch (Globals.Entities[index].Dir)
                 {
                     case 0:

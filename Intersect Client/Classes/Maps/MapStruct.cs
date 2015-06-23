@@ -33,6 +33,7 @@ namespace Intersect_Client.Classes
 
         public RenderTexture[] LowerTextures = new RenderTexture[3];
         public RenderTexture[] UpperTextures = new RenderTexture[3];
+        public RenderTexture[] PeakTextures = new RenderTexture[3];
         public List<MapItemInstance> MapItems = new List<MapItemInstance>();
 
         public MapStruct(int mapNum, byte[] mapPacket)
@@ -179,19 +180,26 @@ namespace Intersect_Client.Classes
                 LowerTextures[i].Clear(Color.Transparent);
                 if (UpperTextures[i] != null) { UpperTextures[i].Dispose(); }
                 UpperTextures[i] = new RenderTexture(32 * Constants.MapWidth, 32 * Constants.MapHeight);
+                if (PeakTextures[i] != null) { PeakTextures[i].Dispose(); }
+                PeakTextures[i] = new RenderTexture(32 * Constants.MapWidth, 32 * Constants.MapHeight);
                 for (var l = 0; l < Constants.LayerCount; l++)
                 {
                     if (l < 3)
                     {
                         DrawMapLayer(LowerTextures[i], l, i);
                     }
-                    else
+                    else if (l == 3)
                     {
                         DrawMapLayer(UpperTextures[i], l, i);
+                    }
+                    else
+                    {
+                        DrawMapLayer(PeakTextures[i], l, i);
                     }
                 }
                 LowerTextures[i].Display();
                 UpperTextures[i].Display();
+                PeakTextures[i].Display();
             }
             MapRendered = true;
             Graphics.LightsChanged = true;
@@ -229,24 +237,29 @@ namespace Intersect_Client.Classes
             }
         }
 
-        public void Draw(int xoffset, int yoffset, bool upper = false)
+        public void Draw(int xoffset, int yoffset, int layer = 0)
         {
             if (!MapRendered) { PreRenderMap(); }
-            if (!upper)
+            if (layer == 0)
             {
                 Graphics.RenderTexture(LowerTextures[Globals.AnimFrame].Texture,xoffset,yoffset,Graphics.RenderWindow);
                 
                 //Draw Map Items
                 for (int i = 0; i < MapItems.Count; i++)
                 {
-                    if (Graphics.ItemFileNames.IndexOf(Globals.GameItems[MapItems[i].ItemNum].Pic) > -1){
+                    if (Graphics.ItemFileNames.IndexOf(Globals.GameItems[MapItems[i].ItemNum].Pic) > -1)
+                    {
                         Graphics.RenderTexture(Graphics.ItemTextures[Graphics.ItemFileNames.IndexOf(Globals.GameItems[MapItems[i].ItemNum].Pic)], xoffset + MapItems[i].X * 32, yoffset + MapItems[i].Y * 32, Graphics.RenderWindow);
                     }
                 }
             }
-            else
+            else if (layer == 1)
             {
                 Graphics.RenderTexture(UpperTextures[Globals.AnimFrame].Texture, xoffset, yoffset, Graphics.RenderWindow);
+            }
+            else
+            {
+                Graphics.RenderTexture(PeakTextures[Globals.AnimFrame].Texture, xoffset, yoffset, Graphics.RenderWindow);
             }
         }
 

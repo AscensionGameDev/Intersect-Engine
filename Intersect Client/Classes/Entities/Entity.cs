@@ -28,6 +28,7 @@ namespace Intersect_Client
         //Location Info
         public int CurrentX;
         public int CurrentY;
+        public int CurrentZ = 0;
         public int CurrentMap = -1;
         public int Dir;
         public bool IsMoving;

@@ -226,7 +226,7 @@ namespace Intersect_Client.Classes
                 {
                     if (Globals.LocalMaps[i] > -1)
                     {
-                        DrawMap(i); //Lower only
+                        DrawMap(i, 0); //Lower only
 
                     }
                 }
@@ -240,7 +240,7 @@ namespace Intersect_Client.Classes
                         {
                             if (t == null) continue;
                             if (t.CurrentMap != Globals.LocalMaps[i]) continue;
-                            if (t.CurrentY == y)
+                            if (t.CurrentY == y && t.CurrentZ == 0)
                             {
                                 t.Draw(i);
                             }
@@ -257,10 +257,37 @@ namespace Intersect_Client.Classes
                     }
                 }
 
+                //Render the upper layer
+                for (var i = 0; i < 9; i++)
+                {
+                    if (Globals.LocalMaps[i] > -1)
+                    {
+                        DrawMap(i, 1); //Upper only
+
+                    }
+                }
+
                 for (var i = 0; i < 9; i++)
                 {
                     if (Globals.LocalMaps[i] <= -1) continue;
-                    DrawMap(i, true); //Upper Layers
+                    for (var y = 0; y < Constants.MapHeight; y++)
+                    {
+                        foreach (var t in Globals.Entities)
+                        {
+                            if (t == null) continue;
+                            if (t.CurrentMap != Globals.LocalMaps[i]) continue;
+                            if (t.CurrentY == y && t.CurrentZ == 1)
+                            {
+                                t.Draw(i);
+                            }
+                        }
+                    }
+                }
+
+                for (var i = 0; i < 9; i++)
+                {
+                    if (Globals.LocalMaps[i] <= -1) continue;
+                    DrawMap(i, 2); //Peak Layers
 
                     for (var y = 0; y < Constants.MapHeight; y++)
                     {
@@ -283,7 +310,7 @@ namespace Intersect_Client.Classes
                         }
                     }
                 }
-                //DrawNight();
+                DrawNight();
             }
 
             Gui.DrawGui();
@@ -329,7 +356,7 @@ namespace Intersect_Client.Classes
                 RenderWindow.SetTitle("Intersect Engine - Brought to you by: http://ascensiongamedev.com - FPS: " + Fps);
             }
         }
-        private static void DrawMap(int index, bool upper = false)
+        private static void DrawMap(int index, int layer = 0)
         {
             var mapoffsetx = CalcMapOffsetX(index);
             var mapoffsety = CalcMapOffsetY(index);
@@ -338,7 +365,7 @@ namespace Intersect_Client.Classes
             if (Globals.GameMaps[Globals.LocalMaps[index]] == null) return;
             if (Globals.GameMaps[Globals.LocalMaps[index]].MapLoaded)
             {
-                Globals.GameMaps[Globals.LocalMaps[index]].Draw(mapoffsetx, mapoffsety, upper);
+                Globals.GameMaps[Globals.LocalMaps[index]].Draw(mapoffsetx, mapoffsety, layer);
             }
         }
 

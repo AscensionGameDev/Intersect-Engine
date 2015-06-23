@@ -101,6 +101,23 @@ namespace Intersect_Client.Classes
             PacketSender.SendUseSpell(index);
         }
 
+        // Change the dimension if the player is on a gateway
+        private void TryToChangeDimension()
+        {
+            if (CurrentX <= Constants.MapWidth || CurrentX >= 0)
+            {
+                if (CurrentY <= Constants.MapHeight || CurrentY >= 0)
+                {
+                    if(Globals.GameMaps[CurrentMap].Attributes[CurrentX, CurrentY].value == (int)Enums.MapAttributes.ZDimension);
+                    {
+                        if (Globals.GameMaps[CurrentMap].Attributes[CurrentX, CurrentY].data1 > 0)
+                        {
+                            CurrentZ = Globals.GameMaps[CurrentMap].Attributes[CurrentX, CurrentY].data1 - 1;
+                        }
+                    }
+                }
+            }
+        }
 
         //Input Handling
         private void HandleInput()
@@ -422,43 +439,47 @@ namespace Intersect_Client.Classes
                     switch (MoveDir)
                     {
                         case 0:
-                            if (!IsTileBlocked(CurrentX, CurrentY - 1, CurrentMap))
+                            if (!IsTileBlocked(CurrentX, CurrentY - 1, CurrentZ, CurrentMap))
                             {
                                 CurrentY--;
                                 Dir = 0;
                                 IsMoving = true;
                                 OffsetY = 32;
                                 OffsetX = 0;
+                                TryToChangeDimension();
                             }
                             break;
                         case 1:
-                            if (!IsTileBlocked(CurrentX, CurrentY + 1, CurrentMap))
+                            if (!IsTileBlocked(CurrentX, CurrentY + 1, CurrentZ, CurrentMap))
                             {
                                 CurrentY++;
                                 Dir = 1;
                                 IsMoving = true;
                                 OffsetY = -32;
                                 OffsetX = 0;
+                                TryToChangeDimension();
                             }
                             break;
                         case 2:
-                            if (!IsTileBlocked(CurrentX - 1, CurrentY, CurrentMap))
+                            if (!IsTileBlocked(CurrentX - 1, CurrentY, CurrentZ, CurrentMap))
                             {
                                 CurrentX--;
                                 Dir = 2;
                                 IsMoving = true;
                                 OffsetY = 0;
                                 OffsetX = 32;
+                                TryToChangeDimension();
                             }
                             break;
                         case 3:
-                            if (!IsTileBlocked(CurrentX + 1, CurrentY, CurrentMap))
+                            if (!IsTileBlocked(CurrentX + 1, CurrentY, CurrentZ, CurrentMap))
                             {
                                 CurrentX++;
                                 Dir = 3;
                                 IsMoving = true;
                                 OffsetY = 0;
                                 OffsetX = -32;
+                                TryToChangeDimension();
                             }
                             break;
                     }
@@ -686,7 +707,7 @@ namespace Intersect_Client.Classes
                 }
             }
         }
-        bool IsTileBlocked(int x, int y, int map)
+        bool IsTileBlocked(int x, int y, int z, int map)
         {
             var tmpI = -1;
             for (var i = 0; i < 9; i++)
@@ -717,6 +738,13 @@ namespace Intersect_Client.Classes
                             {
                                 return true;
                             }
+                            else if (Globals.GameMaps[Globals.LocalMaps[tmpI - 4]].Attributes[tmpX, tmpY].value == (int)Enums.MapAttributes.ZDimension)
+                            {
+                                if (Globals.GameMaps[Globals.LocalMaps[tmpI - 4]].Attributes[tmpX, tmpY].data2 - 1 == z)
+                                {
+                                    return true;
+                                }
+                            }
                             tmpMap = Globals.LocalMaps[tmpI - 4];
                         }
                         else
@@ -733,6 +761,13 @@ namespace Intersect_Client.Classes
                             {
                                 return true;
                             }
+                            else if (Globals.GameMaps[Globals.LocalMaps[tmpI + 2]].Attributes[tmpX, tmpY].value == (int)Enums.MapAttributes.ZDimension)
+                            {
+                                if (Globals.GameMaps[Globals.LocalMaps[tmpI + 2]].Attributes[tmpX, tmpY].data2 - 1 == z)
+                                {
+                                    return true;
+                                }
+                            }
                             tmpMap = Globals.LocalMaps[tmpI + 2];
                         }
                         else
@@ -747,6 +782,13 @@ namespace Intersect_Client.Classes
                             if (Globals.GameMaps[Globals.LocalMaps[tmpI - 1]].Attributes[tmpX, tmpY].value == (int)Enums.MapAttributes.Blocked)
                             {
                                 return true;
+                            }
+                            else if (Globals.GameMaps[Globals.LocalMaps[tmpI - 1]].Attributes[tmpX, tmpY].value == (int)Enums.MapAttributes.ZDimension)
+                            {
+                                if (Globals.GameMaps[Globals.LocalMaps[tmpI - 1]].Attributes[tmpX, tmpY].data2 - 1 == z)
+                                {
+                                    return true;
+                                }
                             }
                             tmpMap = Globals.LocalMaps[tmpI - 1];
                         }
@@ -769,6 +811,13 @@ namespace Intersect_Client.Classes
                             {
                                 return true;
                             }
+                            else if (Globals.GameMaps[Globals.LocalMaps[tmpI - 2]].Attributes[tmpX, tmpY].value == (int)Enums.MapAttributes.ZDimension)
+                            {
+                                if (Globals.GameMaps[Globals.LocalMaps[tmpI - 2]].Attributes[tmpX, tmpY].data2 - 1 == z)
+                                {
+                                    return true;
+                                }
+                            }
                             tmpMap = Globals.LocalMaps[tmpI - 2];
                         }
                         else
@@ -785,6 +834,13 @@ namespace Intersect_Client.Classes
                             {
                                 return true;
                             }
+                            else if (Globals.GameMaps[Globals.LocalMaps[tmpI + 4]].Attributes[tmpX, tmpY].value == (int)Enums.MapAttributes.ZDimension)
+                            {
+                                if (Globals.GameMaps[Globals.LocalMaps[tmpI + 4]].Attributes[tmpX, tmpY].data2 - 1 == z)
+                                {
+                                    return true;
+                                }
+                            }
                             tmpMap = Globals.LocalMaps[tmpI + 4];
                         }
                         else
@@ -799,6 +855,13 @@ namespace Intersect_Client.Classes
                             if (Globals.GameMaps[Globals.LocalMaps[tmpI + 1]].Attributes[tmpX, tmpY].value == (int)Enums.MapAttributes.Blocked)
                             {
                                 return true;
+                            }
+                            else if (Globals.GameMaps[Globals.LocalMaps[tmpI + 1]].Attributes[tmpX, tmpY].value == (int)Enums.MapAttributes.ZDimension)
+                            {
+                                if (Globals.GameMaps[Globals.LocalMaps[tmpI + 1]].Attributes[tmpX, tmpY].data2 - 1 == z)
+                                {
+                                    return true;
+                                }
                             }
                             tmpMap = Globals.LocalMaps[tmpI + 1];
                         }
@@ -817,7 +880,13 @@ namespace Intersect_Client.Classes
                         if (Globals.GameMaps[Globals.LocalMaps[tmpI - 3]].Attributes[tmpX, tmpY].value == (int)Enums.MapAttributes.Blocked)
                         {
                             return true;
-
+                        }
+                        else if (Globals.GameMaps[Globals.LocalMaps[tmpI - 3]].Attributes[tmpX, tmpY].value == (int)Enums.MapAttributes.ZDimension)
+                        {
+                            if (Globals.GameMaps[Globals.LocalMaps[tmpI - 3]].Attributes[tmpX, tmpY].data2 - 1 == z)
+                            {
+                                return true;
+                            }
                         }
                         tmpMap = Globals.LocalMaps[tmpI - 3];
                     }
@@ -836,6 +905,13 @@ namespace Intersect_Client.Classes
                         {
                             return true;
                         }
+                        else if (Globals.GameMaps[Globals.LocalMaps[tmpI + 3]].Attributes[tmpX, tmpY].value == (int)Enums.MapAttributes.ZDimension)
+                        {
+                            if (Globals.GameMaps[Globals.LocalMaps[tmpI + 3]].Attributes[tmpX, tmpY].data2 - 1 == z)
+                            {
+                                return true;
+                            }
+                        }
                         tmpMap = Globals.LocalMaps[tmpI + 3];
                     }
                     else
@@ -852,6 +928,13 @@ namespace Intersect_Client.Classes
                         if (Globals.GameMaps[Globals.LocalMaps[tmpI]].Attributes[tmpX, tmpY].value == (int)Enums.MapAttributes.Blocked)
                         {
                             return true;
+                        }
+                        else if (Globals.GameMaps[Globals.LocalMaps[tmpI]].Attributes[tmpX, tmpY].value == (int)Enums.MapAttributes.ZDimension)
+                        {
+                            if (Globals.GameMaps[Globals.LocalMaps[tmpI]].Attributes[tmpX, tmpY].data2 - 1 == z)
+                            {
+                                return true;
+                            }
                         }
                         tmpMap = Globals.LocalMaps[tmpI];
                     }

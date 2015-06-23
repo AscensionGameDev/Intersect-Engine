@@ -17,10 +17,23 @@ namespace Intersect_Editor.Forms
         }
         private void frmMain_Load(object sender, EventArgs e)
         {
+            // Set form object properties based on constants to prevent user inputting invalid options.
+            InitFormObjects();
+
+            // Initilise the editor.
             InitEditor();
             Show();
             EditorLoop.StartLoop(this);
         }
+
+        private void InitFormObjects()
+        {
+            scrlMap.Maximum = Globals.GameMaps.Length;
+            scrlX.Maximum = Constants.MapWidth;
+            scrlY.Maximum = Constants.MapHeight;
+            scrlMapItem.Maximum = Constants.MaxItems;
+        }
+
         private void InitEditor()
         {
             EnterMap(0);
@@ -140,12 +153,21 @@ namespace Intersect_Editor.Forms
         private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
         {
         }
+
+        private void HideMenus()
+        {
+            grpLayer.Hide();
+            grpAttributes.Hide();
+            grpLightEditor.Hide();
+            grpMapList.Hide();
+        }
+
         private void HandleLayerClick(object sender, EventArgs e)
         {
             var tmpTsi = (ToolStripItem)sender;
             Globals.CurrentLayer = (int)tmpTsi.Tag;
             tmpTsi.Select();
-            grpAttributes.Hide();
+            HideMenus();
             if (Globals.CurrentLayer == Constants.LayerCount)
             {
                 lblCurLayer.Text = @"Layer: Attributes";
@@ -153,7 +175,8 @@ namespace Intersect_Editor.Forms
             }
             else
             {
-                lblCurLayer.Text = @"Layer #" + (int)tmpTsi.Tag;
+                lblCurLayer.Text = @"Layer #" + ((int)tmpTsi.Tag + 1);
+                grpLayer.Show();
             }
         }
         private void newMapToolStripMenuItem_Click(object sender, EventArgs e)
@@ -392,6 +415,7 @@ namespace Intersect_Editor.Forms
                             if ((tmpLight = Globals.GameMaps[Globals.CurrentMap].FindLightAt(Globals.CurTileX, Globals.CurTileY)) == null)
                             {
                                 tmpLight = new Light(Globals.CurTileX, Globals.CurTileY);
+                                HideMenus();
                                 grpLightEditor.BringToFront();
                                 grpLightEditor.Show();
                                 Globals.GameMaps[Globals.CurrentMap].Lights.Add(tmpLight);
@@ -413,6 +437,7 @@ namespace Intersect_Editor.Forms
                             }
                             else
                             {
+                                HideMenus();
                                 grpLightEditor.BringToFront();
                                 grpLightEditor.Show();
                                 Globals.BackupLight = new Light(tmpLight.TileX, tmpLight.TileY)
@@ -1013,6 +1038,9 @@ namespace Intersect_Editor.Forms
         private void hideAttributeMenus()
         {
             grpItem.Visible = false;
+            grpZDimension.Visible = false;
+            grpWarp.Visible = false;
+            grpNPCSpawn.Visible = false;
         }
         private void rbItem_CheckedChanged(object sender, EventArgs e)
         {
@@ -1031,6 +1059,34 @@ namespace Intersect_Editor.Forms
         {
             lblMaxItemAmount.Text = "Quantity: x" + scrlMaxItemVal.Value;
         }
+
+        // Used for returning an integer value depending on which radio button is selected on the forms. This is merely used to make PlaceAtrribute less messy.
+        private int GetEditorDimensionGateway()
+        {
+            if (rbGateway1.Checked == true)
+            {
+                return 1;
+            }
+            else if (rbGateway2.Checked == true)
+            {
+                return 2;
+            }
+            return 0;
+        }
+
+        private int GetEditorDimensionBlock()
+        {
+            if (rbBlock1.Checked == true)
+            {
+                return 1;
+            }
+            else if (rbBlock2.Checked == true)
+            {
+                return 2;
+            }
+            return 0;
+        }
+
         private void PlaceAttribute()
         {
             var tmpMap = Globals.GameMaps[Globals.CurrentMap];
@@ -1044,6 +1100,28 @@ namespace Intersect_Editor.Forms
                 tmpMap.Attributes[Globals.CurTileX, Globals.CurTileY].data1 = scrlMapItem.Value - 1;
                 tmpMap.Attributes[Globals.CurTileX, Globals.CurTileY].data2 = scrlMaxItemVal.Value;
             }
+            else if (rbZDimension.Checked == true)
+            {
+                tmpMap.Attributes[Globals.CurTileX, Globals.CurTileY].value = (int)Enums.MapAttributes.ZDimension;
+                tmpMap.Attributes[Globals.CurTileX, Globals.CurTileY].data1 = GetEditorDimensionGateway();
+                tmpMap.Attributes[Globals.CurTileX, Globals.CurTileY].data2 = GetEditorDimensionBlock();
+            }
+            else if (rbNPCAvoid.Checked == true)
+            {
+                tmpMap.Attributes[Globals.CurTileX, Globals.CurTileY].value = (int)Enums.MapAttributes.NPCAvoid;
+            }
+            else if (rbWarp.Checked == true)
+            {
+                tmpMap.Attributes[Globals.CurTileX, Globals.CurTileY].value = (int)Enums.MapAttributes.Warp;
+                tmpMap.Attributes[Globals.CurTileX, Globals.CurTileY].data1 = scrlMap.Value;
+                tmpMap.Attributes[Globals.CurTileX, Globals.CurTileY].data2 = scrlX.Value;
+                tmpMap.Attributes[Globals.CurTileX, Globals.CurTileY].data3 = scrlY.Value;
+            }
+            else if (rbNPCSpawn.Checked == true)
+            {
+                tmpMap.Attributes[Globals.CurTileX, Globals.CurTileY].value = (int)Enums.MapAttributes.NPCSpawn;
+                tmpMap.Attributes[Globals.CurTileX, Globals.CurTileY].data1 = scrlNpcSpawn.Value;
+            }
         }
         private void RemoveAttribute()
         {
@@ -1052,6 +1130,49 @@ namespace Intersect_Editor.Forms
             tmpMap.Attributes[Globals.CurTileX, Globals.CurTileY].data1 = 0;
             tmpMap.Attributes[Globals.CurTileX, Globals.CurTileY].data2 = 0;
             tmpMap.Attributes[Globals.CurTileX, Globals.CurTileY].data3 = 0;
+        }
+
+        private void rbZDimension_CheckedChanged(object sender, EventArgs e)
+        {
+            hideAttributeMenus();
+            grpZDimension.Visible = true;
+        }
+
+        private void rbNPCAvoid_CheckedChanged(object sender, EventArgs e)
+        {
+            hideAttributeMenus();
+        }
+
+        private void rbWarp_CheckedChanged(object sender, EventArgs e)
+        {
+            hideAttributeMenus();
+            grpWarp.Visible = true;
+        }
+
+        private void scrlMap_Scroll(object sender, ScrollEventArgs e)
+        {
+            lblMap.Text = "Map: " + scrlMap.Value;
+        }
+
+        private void scrlX_Scroll(object sender, ScrollEventArgs e)
+        {
+            lblX.Text = "X: " + scrlX.Value;
+        }
+
+        private void scrlY_Scroll(object sender, ScrollEventArgs e)
+        {
+            lblY.Text = "Y: " + scrlY.Value;
+        }
+
+        private void scrlNpcSpawn_Scroll(object sender, ScrollEventArgs e)
+        {
+            lblNpcSpawn.Text = "Map Npc: " + scrlNpcSpawn.Value + " " + Globals.GameNpcs[scrlNpcSpawn.Value - 1].Name;
+        }
+
+        private void rbNPCSpawn_CheckedChanged(object sender, EventArgs e)
+        {
+            hideAttributeMenus();
+            grpNPCSpawn.Visible = true;
         }
 
 
