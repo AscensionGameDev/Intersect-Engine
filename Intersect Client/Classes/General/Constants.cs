@@ -13,6 +13,7 @@
         public const int MaxStatValue = 200;
         public const int MaxStats = 5;
         public const int MaxLevel = 25;
+        public const int MaxHotbar = 10;
 
         //Map Maxes
         public const int MapWidth = 30;

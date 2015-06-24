@@ -114,6 +114,9 @@ namespace Intersect_Server.Classes
                 case Enums.ClientPackets.UpgradeStat:
                     HandleUpgradeStat(client, packet);
                     break;
+                case Enums.ClientPackets.HotbarChange:
+                    HandleHotbarChange(client, packet);
+                    break;
                 default:
                     Console.WriteLine(@"Non implemented packet received: " + packetHeader);
                     break;
@@ -639,6 +642,17 @@ namespace Intersect_Server.Classes
             bf.WriteBytes(packet);
             var stat = bf.ReadInteger();
             client.Entity.UpgradeStat(stat);
+            bf.Dispose();
+        }
+
+        private static void HandleHotbarChange(Client client, byte[] packet)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteBytes(packet);
+            var index = bf.ReadInteger();
+            var type = bf.ReadInteger();
+            var slot = bf.ReadInteger();
+            client.Entity.HotbarChange(index, type, slot);
             bf.Dispose();
         }
     }

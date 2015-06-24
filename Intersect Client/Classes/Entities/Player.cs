@@ -8,6 +8,7 @@ namespace Intersect_Client.Classes
         private long _attackTimer;
         public ItemInstance[] Inventory = new ItemInstance[Constants.MaxInvItems];
         public SpellInstance[] Spells = new SpellInstance[Constants.MaxPlayerSkills];
+        public HotbarInstance[] Hotbar = new HotbarInstance[Constants.MaxHotbar];
         public int[] Equipment = new int[Enums.EquipmentSlots.Count];
         public int StatPoints = 0;
         public int Experience = 0;
@@ -27,6 +28,10 @@ namespace Intersect_Client.Classes
             for (int i = 0; i < Constants.MaxPlayerSkills; i++)
             {
                 Spells[i] = new SpellInstance();
+            }
+            for (int i = 0; i < Constants.MaxHotbar; i++)
+            {
+                Hotbar[i] = new HotbarInstance();
             }
         }
 
@@ -77,6 +82,14 @@ namespace Intersect_Client.Classes
         {
             PacketSender.SendUseItem(index);
         }
+        public bool IsEquipped(int slot)
+        {
+            for (int i = 0; i < Enums.EquipmentSlots.Count; i++)
+            {
+                if (Equipment[i] == slot) { return true; }
+            }
+            return false;
+        }
 
         //Spell Processing
         public void SwapSpells(int spell1, int spell2)
@@ -101,14 +114,22 @@ namespace Intersect_Client.Classes
             PacketSender.SendUseSpell(index);
         }
 
+        //Hotbar Processing
+        public void AddToHotbar(int hotbarSlot, int itemType, int itemSlot)
+        {
+            Hotbar[hotbarSlot].Type = itemType;
+            Hotbar[hotbarSlot].Slot = itemSlot;
+            PacketSender.SendHotbarChange(hotbarSlot);
+        }
+
         // Change the dimension if the player is on a gateway
         private void TryToChangeDimension()
         {
-            if (CurrentX < Constants.MapWidth || CurrentX >= 0)
+            if (CurrentX < Constants.MapWidth && CurrentX >= 0)
             {
-                if (CurrentY < Constants.MapHeight || CurrentY >= 0)
+                if (CurrentY < Constants.MapHeight && CurrentY >= 0)
                 {
-                    if(Globals.GameMaps[CurrentMap].Attributes[CurrentX, CurrentY].value == (int)Enums.MapAttributes.ZDimension);
+                    if(Globals.GameMaps[CurrentMap].Attributes[CurrentX, CurrentY].value == (int)Enums.MapAttributes.ZDimension)
                     {
                         if (Globals.GameMaps[CurrentMap].Attributes[CurrentX, CurrentY].data1 > 0)
                         {
@@ -379,7 +400,7 @@ namespace Intersect_Client.Classes
                 {
                     if (Globals.Events[i] != null)
                     {
-                        if (Globals.Events[i].CurrentMap == map && Globals.Events[i].CurrentX == x && Globals.Events[i].CurrentY == y)
+                        if (Globals.Events[i].CurrentMap == map && Globals.Events[i].CurrentX == x && Globals.Events[i].CurrentY == y &&  Globals.Events[i].DisablePreview == 0)
                         {
                             if (_targetBox != null) { _targetBox.Dispose(); _targetBox = null; }
                             _targetBox = new EntityBox(Gui._GameGui.GameCanvas, Globals.Events[i], 0, 100);
@@ -971,6 +992,11 @@ namespace Intersect_Client.Classes
             }
 
         }
+    }
+
+    public class HotbarInstance {
+        public int Type = -1;
+        public int Slot = -1;
     }
 
 

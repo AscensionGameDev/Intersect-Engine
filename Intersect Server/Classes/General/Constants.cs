@@ -2,13 +2,18 @@ namespace Intersect_Server.Classes
 {
     public static class Constants
     {
-        public const int MaxStatValue = 200;
-        public const int MaxStats = 5;
+        //Game Object Maxes
         public const int MaxItems = 255;
         public const int MaxNpcs = 255;
         public const int MaxNpcDrops = 10;
         public const int MaxSpells = 255;
         public const int MaxAnimations = 255;
+
+        //Player Maxes
+        public const int MaxStatValue = 200;
+        public const int MaxStats = 5;
+        public const int MaxLevel = 25;
+        public const int MaxHotbar = 10;
 
         //Item Processing
         public const int ItemDespawnTime = 15000; //15 seconds

@@ -20,16 +20,21 @@ namespace Intersect_Client.Classes
             InitGameGui();
         }
 
+        //Public Components - For clicking/dragging
+        public HotBarWindow Hotbar;
+        private GameMenu GameMenu;
+
         private EventWindow _eventWindow;
         private Chatbox _chatBox;
-        private GameMenu _gameMenu;
         private EntityBox _playerBox;
+        
 
         public void InitGameGui()
         {
             _eventWindow = new EventWindow(GameCanvas);
             _chatBox = new Chatbox(GameCanvas);
-            _gameMenu = new GameMenu(GameCanvas);
+            GameMenu = new GameMenu(GameCanvas);
+            Hotbar = new HotBarWindow(GameCanvas);
             if (Globals.Me != null) { TryAddPlayerBox(); }
         }
 
@@ -43,7 +48,8 @@ namespace Intersect_Client.Classes
         {
             _eventWindow.Update();
             _chatBox.Update();
-            _gameMenu.Update();
+            GameMenu.Update();
+            Hotbar.Update();
             if (_playerBox != null) { _playerBox.Update(); }
             if (FocusChat)
             {

@@ -112,6 +112,7 @@
     <Compile Include="Classes\UI\Game\Chatbox.cs" />
     <Compile Include="Classes\UI\Game\EventWindow.cs" />
     <Compile Include="Classes\UI\Game\GameMenu.cs" />
+    <Compile Include="Classes\UI\Game\HotBar.cs" />
     <Compile Include="Classes\UI\Game\InputBox.cs" />
     <Compile Include="Classes\UI\Game\InventoryWindow.cs" />
     <Compile Include="Classes\UI\Game\ItemDescWindow.cs" />

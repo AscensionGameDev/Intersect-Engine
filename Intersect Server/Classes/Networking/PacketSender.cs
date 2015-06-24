@@ -93,6 +93,7 @@ namespace Intersect_Server.Classes
                 PacketSender.SendPlayerSpells(client);
                 PacketSender.SendPlayerEquipmentToProximity(client.Entity);
                 PacketSender.SendPointsTo(client);
+                PacketSender.SendHotbarSlots(client);
             }
         }
 
@@ -681,6 +682,19 @@ namespace Intersect_Server.Classes
             var bf = new ByteBuffer();
             bf.WriteLong((int)Enums.ServerPackets.StatPoints);
             bf.WriteInteger(client.Entity.StatPoints);
+            SendDataTo(client, bf.ToArray());
+            bf.Dispose();
+        }
+
+        public static void SendHotbarSlots(Client client)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteLong((int)Enums.ServerPackets.HotbarSlots);
+            for (int i = 0; i < Constants.MaxHotbar; i++)
+            {
+                bf.WriteInteger(client.Entity.Hotbar[i].Type);
+                bf.WriteInteger(client.Entity.Hotbar[i].Slot);
+            }
             SendDataTo(client, bf.ToArray());
             bf.Dispose();
         }

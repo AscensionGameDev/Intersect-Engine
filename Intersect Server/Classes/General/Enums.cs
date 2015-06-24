@@ -42,6 +42,7 @@ namespace Intersect_Server.Classes
             UseSpell,
             UnequipItem,
             UpgradeStat,
+            HotbarChange,
         }
 
         public enum ServerPackets
@@ -82,6 +83,7 @@ namespace Intersect_Server.Classes
             SpellUpdate,
             PlayerEquipment,
             StatPoints,
+            HotbarSlots,
         }
 
         public enum Stats

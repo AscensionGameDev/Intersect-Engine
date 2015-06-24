@@ -197,6 +197,88 @@ namespace Intersect_Client.Classes
             sprite.Dispose();
             return BitmapToGwenTexture(spriteImg);
         }
+        public static System.Drawing.Bitmap CreateImageTexBitmap(int itemnum, int xOffset = 0, int yOffset = 0, int width = 32, int height = 32, bool isEquipped = false, System.Drawing.Bitmap bg = null)
+        {
+            System.Drawing.Bitmap panelImg = new System.Drawing.Bitmap(width, height);
+            System.Drawing.Graphics g = System.Drawing.Graphics.FromImage(panelImg);
+            if (bg != null)
+            {
+                g.DrawImage(bg, new System.Drawing.Point(0, 0));
+            }
+            if (itemnum > -1)
+            {
+                if (File.Exists("Resources/Items/" + Globals.GameItems[itemnum].Pic))
+                {
+                    g.DrawImage(System.Drawing.Bitmap.FromFile("Resources/Items/" + Globals.GameItems[itemnum].Pic), new System.Drawing.Point(xOffset, yOffset));
+                }
+            }
+            if (isEquipped)
+            {
+                g.FillEllipse(System.Drawing.Brushes.Red, 26 + xOffset, 0 + yOffset, 5, 5);
+            }
+            g.Dispose();
+            return panelImg;
+        }
+        public static System.Drawing.Bitmap CreateSpellTexBitmap(int spellnum, int xOffset = 0, int yOffset = 0, int width = 32, int height = 32, bool onCD = false, System.Drawing.Bitmap bg = null)
+        {
+            System.Drawing.Bitmap panelImg = new System.Drawing.Bitmap(width, height);
+            System.Drawing.Graphics g = System.Drawing.Graphics.FromImage(panelImg);
+            if (bg != null)
+            {
+                g.DrawImage(bg, new System.Drawing.Point(0, 0));
+            }
+            if (spellnum > -1)
+            {
+                if (File.Exists("Resources/Spells/" + Globals.GameItems[spellnum].Pic))
+                {
+                    if (onCD)
+                    {
+                        g.DrawImage(MakeGrayscale3((System.Drawing.Bitmap)System.Drawing.Bitmap.FromFile("Resources/Spells/" + Globals.GameItems[spellnum].Pic)), new System.Drawing.Point(xOffset, yOffset));
+                    }
+                    else
+                    {
+                        g.DrawImage(System.Drawing.Bitmap.FromFile("Resources/Spells/" + Globals.GameItems[spellnum].Pic), new System.Drawing.Point(xOffset, yOffset));
+                    }
+                }
+            }
+            g.Dispose();
+            return panelImg;
+        }
+        //Code courtousy of http://tech.pro/tutorial/660/csharp-tutorial-convert-a-color-image-to-grayscale
+        public static System.Drawing.Bitmap MakeGrayscale3(System.Drawing.Bitmap original)
+        {
+            //create a blank bitmap the same size as original
+            System.Drawing.Bitmap newBitmap = new System.Drawing.Bitmap(original.Width, original.Height);
+
+            //get a graphics object from the new image
+            System.Drawing.Graphics g = System.Drawing.Graphics.FromImage(newBitmap);
+
+            //create the grayscale ColorMatrix
+            System.Drawing.Imaging.ColorMatrix colorMatrix = new System.Drawing.Imaging.ColorMatrix(
+               new float[][] 
+                  {
+                     new float[] {.3f, .3f, .3f, 0, 0},
+                     new float[] {.59f, .59f, .59f, 0, 0},
+                     new float[] {.11f, .11f, .11f, 0, 0},
+                     new float[] {0, 0, 0, 1, 0},
+                     new float[] {0, 0, 0, 0, 1}
+                  });
+
+            //create some image attributes
+            System.Drawing.Imaging.ImageAttributes attributes = new System.Drawing.Imaging.ImageAttributes();
+
+            //set the color matrix attribute
+            attributes.SetColorMatrix(colorMatrix);
+
+            //draw the original image on the new image
+            //using the grayscale color matrix
+            g.DrawImage(original, new System.Drawing.Rectangle(0, 0, original.Width, original.Height),
+               0, 0, original.Width, original.Height, System.Drawing.GraphicsUnit.Pixel, attributes);
+
+            //dispose the Graphics object
+            g.Dispose();
+            return newBitmap;
+        }
         public static bool MouseHitGUI()
         {
             for (int i = 0; i < _gameCanvas.Children.Count; i++)
@@ -206,7 +288,7 @@ namespace Intersect_Client.Classes
                     return true;
                 }
             }
-                return false;
+            return false;
         }
         public static bool MouseHitBase(Gwen.Control.Base obj)
         {
@@ -221,7 +303,7 @@ namespace Intersect_Client.Classes
                 {
                     return true;
                 }
-                
+
             }
             return false;
         }

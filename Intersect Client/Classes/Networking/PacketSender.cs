@@ -180,5 +180,15 @@
             Network.SendPacket(bf.ToArray());
         }
 
+        public static void SendHotbarChange(int slot)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteLong((int)Enums.ClientPackets.HotbarChange);
+            bf.WriteInteger(slot);
+            bf.WriteInteger(Globals.Me.Hotbar[slot].Type);
+            bf.WriteInteger(Globals.Me.Hotbar[slot].Slot);
+            Network.SendPacket(bf.ToArray());
+        }
+
     }
 }

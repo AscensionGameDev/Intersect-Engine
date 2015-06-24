@@ -14,6 +14,7 @@ namespace Intersect_Server.Classes
         public int[] Variables;
         public ItemInstance[] Inventory = new ItemInstance[Constants.MaxInvItems];
         public SpellInstance[] Spells = new SpellInstance[Constants.MaxPlayerSkills];
+        public HotbarInstance[] Hotbar = new HotbarInstance[Constants.MaxHotbar];
         public int[] Equipment = new int[Enums.EquipmentSlots.Count];
         public int StatPoints = 0;
 
@@ -34,6 +35,10 @@ namespace Intersect_Server.Classes
             for (int i = 0; i < Enums.EquipmentSlots.Count; i++)
             {
                 Equipment[i] = -1;
+            }
+            for (int i = 0; i < Constants.MaxHotbar; i++)
+            {
+                Hotbar[i] = new HotbarInstance();
             }
 		}
 
@@ -203,6 +208,7 @@ namespace Intersect_Server.Classes
             PacketSender.SendInventoryItemUpdate(MyClient, item1);
             PacketSender.SendInventoryItemUpdate(MyClient, item2);
             EquipmentProcessItemSwap(item1, item2);
+            HotbarProcessItemSwap(item1, item2);
         }
         public void DropItems(int slot, int amount)
         {
@@ -372,6 +378,7 @@ namespace Intersect_Server.Classes
             Spells[spell1] = tmpInstance.Clone();
             PacketSender.SendPlayerSpellUpdate(MyClient, spell1);
             PacketSender.SendPlayerSpellUpdate(MyClient, spell2);
+            HotbarProcessSpellSwap(spell1, spell2);
         }
         public void ForgetSpell(int spell)
         {
@@ -421,6 +428,35 @@ namespace Intersect_Server.Classes
                 PacketSender.SendEntityStats(MyIndex, 0, this);
                 PacketSender.SendPointsTo(MyClient);
             }
+        }
+
+        //Hotbar
+        public void HotbarChange(int index, int type, int slot)
+        {
+            Hotbar[index].Type = type;
+            Hotbar[index].Slot = slot;
+        }
+        public void HotbarProcessItemSwap(int item1, int item2)
+        {
+            for (int i = 0; i < Constants.MaxHotbar; i++)
+            {
+                if (Hotbar[i].Type == 0 && Hotbar[i].Slot == item1)
+                    Hotbar[i].Slot = item2;
+                else if (Hotbar[i].Type == 0 && Hotbar[i].Slot == item2)
+                    Hotbar[i].Slot = item1;
+            }
+            PacketSender.SendHotbarSlots(MyClient);
+        }
+        public void HotbarProcessSpellSwap(int spell1, int spell2)
+        {
+            for (int i = 0; i < Constants.MaxHotbar; i++)
+            {
+                if (Hotbar[i].Type == 1 && Hotbar[i].Slot == spell1)
+                    Hotbar[i].Slot = spell2;
+                else if (Hotbar[i].Type == 1 && Hotbar[i].Slot == spell2)
+                    Hotbar[i].Slot = spell1;
+            }
+            PacketSender.SendHotbarSlots(MyClient);
         }
 
 
@@ -497,5 +533,11 @@ namespace Intersect_Server.Classes
 
 
 	}
+
+    public class HotbarInstance
+    {
+        public int Type = -1;
+        public int Slot = -1;
+    }
 }
 

@@ -147,12 +147,12 @@ namespace Intersect_Client.Classes.UI.Game
 
         //Slot info
         private int _mySlot;
-        private System.Drawing.Bitmap _panelImg;
         private bool _isEquipped;
         private int _currentItem = -2;
 
         //Drag/Drop References
         private InventoryWindow _inventoryWindow;
+ 
 
         public InventoryItem(InventoryWindow inventoryWindow, int index)
         {
@@ -205,25 +205,6 @@ namespace Intersect_Client.Classes.UI.Game
             return rect;
         }
 
-        private void CreatePanelImg()
-        {
-            _panelImg = new System.Drawing.Bitmap(32, 32);
-            System.Drawing.Graphics g = System.Drawing.Graphics.FromImage(_panelImg);
-            if (_currentItem > -1)
-            {
-                if (File.Exists("Resources/Items/" + Globals.GameItems[_currentItem].Pic))
-                {
-                    g.DrawImage(System.Drawing.Bitmap.FromFile("Resources/Items/" + Globals.GameItems[_currentItem].Pic), new System.Drawing.Point(0, 0));
-                }
-            }
-            if (_isEquipped)
-            {
-                g.FillEllipse(System.Drawing.Brushes.Red, 26, 0, 5, 5);
-            }
-            g.Dispose();
-        }
-
-
         public void Update()
         {
             bool equipped = false;
@@ -238,8 +219,7 @@ namespace Intersect_Client.Classes.UI.Game
             {
                 _currentItem = Globals.Me.Inventory[_mySlot].ItemNum;
                 _isEquipped = equipped;
-                CreatePanelImg();
-                pnl.Texture = Gui.BitmapToGwenTexture(_panelImg);
+                pnl.Texture = Gui.BitmapToGwenTexture(Gui.CreateImageTexBitmap(_currentItem,0,0,32,32,_isEquipped,null));
             }
             if (!IsDragging)
             {
@@ -286,8 +266,10 @@ namespace Intersect_Client.Classes.UI.Game
                 {
                     //Drug the item and now we stopped
                     IsDragging = false;
-                    System.Drawing.Rectangle dragRect = new System.Drawing.Rectangle(dragIcon.x - Constants.ItemXPadding / 2, dragIcon.y - Constants.ItemYPadding / 2, Constants.ItemXPadding, Constants.ItemYPadding);
+                    System.Drawing.Rectangle dragRect = new System.Drawing.Rectangle(dragIcon.x - Constants.ItemXPadding / 2, dragIcon.y - Constants.ItemYPadding / 2, Constants.ItemXPadding/2 + 32, Constants.ItemYPadding / 2 + 32);
 
+                    int bestIntersect = 0;
+                    int bestIntersectIndex = -1;
                     //So we picked up an item and then dropped it. Lets see where we dropped it to.
                     //Check inventory first.
                     if (_inventoryWindow.RenderBounds().IntersectsWith(dragRect))
@@ -296,14 +278,39 @@ namespace Intersect_Client.Classes.UI.Game
                         {
                             if (_inventoryWindow.Items[i].RenderBounds().IntersectsWith(dragRect))
                             {
-                                if (_mySlot != i)
+                                if (System.Drawing.Rectangle.Intersect(_inventoryWindow.Items[i].RenderBounds(), dragRect).Width * System.Drawing.Rectangle.Intersect(_inventoryWindow.Items[i].RenderBounds(), dragRect).Height > bestIntersect)
                                 {
-                                    //Try to swap....
-                                    PacketSender.SendSwapItems(i, _mySlot);
-                                    Globals.Me.SwapItems(i, _mySlot);
+                                    bestIntersect = System.Drawing.Rectangle.Intersect(_inventoryWindow.Items[i].RenderBounds(), dragRect).Width * System.Drawing.Rectangle.Intersect(_inventoryWindow.Items[i].RenderBounds(), dragRect).Height;
+                                    bestIntersectIndex = i;
                                 }
-                                break;
                             }
+                        }
+                        if (bestIntersectIndex > -1)
+                        {
+                            if (_mySlot != bestIntersectIndex)
+                            {
+                                //Try to swap....
+                                PacketSender.SendSwapItems(bestIntersectIndex, _mySlot);
+                                Globals.Me.SwapItems(bestIntersectIndex, _mySlot);
+                            }
+                        }
+                    }
+                    else if (Gui._GameGui.Hotbar.RenderBounds().IntersectsWith(dragRect))
+                    {
+                        for (int i = 0; i < Constants.MaxHotbar; i++)
+                        {
+                            if (Gui._GameGui.Hotbar.Items[i].RenderBounds().IntersectsWith(dragRect))
+                            {
+                                if (System.Drawing.Rectangle.Intersect(Gui._GameGui.Hotbar.Items[i].RenderBounds(), dragRect).Width * System.Drawing.Rectangle.Intersect(Gui._GameGui.Hotbar.Items[i].RenderBounds(), dragRect).Height > bestIntersect)
+                                {
+                                    bestIntersect = System.Drawing.Rectangle.Intersect(Gui._GameGui.Hotbar.Items[i].RenderBounds(), dragRect).Width * System.Drawing.Rectangle.Intersect(Gui._GameGui.Hotbar.Items[i].RenderBounds(), dragRect).Height;
+                                    bestIntersectIndex = i;
+                                }
+                            }
+                        }
+                        if (bestIntersectIndex > -1)
+                        {
+                            Globals.Me.AddToHotbar(bestIntersectIndex, 0, _mySlot);
                         }
                     }
 

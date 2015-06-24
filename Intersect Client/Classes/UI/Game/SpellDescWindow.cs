@@ -12,6 +12,7 @@ namespace Intersect_Client.Classes.UI.Game
         WindowControl _descWindow;
         public SpellDescWindow(int spellnum, int x, int y)
         {
+            if (spellnum == -1) { return; }
             _descWindow = new WindowControl(Gui._GameGui.GameCanvas, Globals.GameSpells[spellnum].Name, false);
             _descWindow.SetSize(220, 100);
             _descWindow.IsClosable = false;
@@ -223,6 +224,7 @@ namespace Intersect_Client.Classes.UI.Game
 
         public void Dispose()
         {
+            if (_descWindow == null) { return; }
             _descWindow.Close();
             Gui._GameGui.GameCanvas.RemoveChild(_descWindow, false);
             _descWindow.Dispose();

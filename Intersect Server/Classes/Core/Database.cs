@@ -131,6 +131,7 @@ namespace Intersect_Server.Classes
                 CheckVariablesTable(mysqlConn);
                 CheckInventoryTable(mysqlConn);
                 CheckSpellsTable(mysqlConn);
+                CheckHotbarTable(mysqlConn);
 
             }
         }
@@ -266,6 +267,28 @@ namespace Intersect_Server.Classes
             CheckTableField(mysqlConn, columns, "slot", myTable, MySqlFields.m_int);
             CheckTableField(mysqlConn, columns, "spellnum", myTable, MySqlFields.m_int);
             CheckTableField(mysqlConn, columns, "spellcd", myTable, MySqlFields.m_int);
+        }
+
+        private static void CheckHotbarTable(MySqlConnection mysqlConn)
+        {
+            const string myTable = "hotbar";
+            var query = "CREATE TABLE IF NOT EXISTS `" + myTable + "` (`id` int(11) NOT NULL)";
+            var cmd = new MySqlCommand(query, mysqlConn);
+            cmd.ExecuteNonQuery();
+            query = "SHOW COLUMNS FROM " + myTable + ";";
+            cmd = new MySqlCommand(query, mysqlConn);
+            var reader = cmd.ExecuteReader();
+            var columns = new List<string>();
+            while (reader.Read())
+            {
+                columns.Add(reader.GetValue(0).ToString());
+            }
+            reader.Close();
+
+            //Work on each field
+            CheckTableField(mysqlConn, columns, "slot", myTable, MySqlFields.m_int);
+            CheckTableField(mysqlConn, columns, "itemtype", myTable, MySqlFields.m_int);
+            CheckTableField(mysqlConn, columns, "itemslot", myTable, MySqlFields.m_int);
         }
 
         private static void CheckTableField(MySqlConnection mysqlConn, List<string> columns, string fieldName, string tableName, MySqlFields fieldType, int fieldLength = -1)
@@ -497,6 +520,20 @@ namespace Intersect_Server.Classes
                     }
                 }
                 reader.Close();
+                i = 0;
+                stm = "SELECT * from hotbar WHERE id=" + client.Id + ";";
+                cmd = new MySqlCommand(stm, mysqlConn);
+                reader = cmd.ExecuteReader();
+                columns = Enumerable.Range(0, reader.FieldCount).Select(reader.GetName).ToList();
+                while (reader.Read())
+                {
+                    if (reader.GetInt32(columns.IndexOf("slot")) < Constants.MaxHotbar)
+                    {
+                        ((Player)en).Hotbar[reader.GetInt32(columns.IndexOf("slot"))].Type = reader.GetInt32(columns.IndexOf("itemtype"));
+                        ((Player)en).Hotbar[reader.GetInt32(columns.IndexOf("slot"))].Slot = reader.GetInt32(columns.IndexOf("itemslot"));
+                    }
+                }
+                reader.Close();
             }
         }
 
@@ -658,6 +695,34 @@ namespace Intersect_Server.Classes
                 for (var i = 0; i < Constants.MaxPlayerSkills; i++)
                 {
                     query += "UPDATE Spells SET spellnum=" + en.Spells[i].SpellNum + ", spellcd=" + en.Spells[i].SpellCD + " WHERE id=" + id + " AND slot=" + i + ";\n";
+                }
+                cmd = new MySqlCommand(query, mysqlConn);
+                cmd.ExecuteNonQuery();
+
+                //Save Hotbar Slots
+                query = "SELECT COUNT(*) from hotbar WHERE id=" + id;
+                cmd = new MySqlCommand(query, mysqlConn);
+                reader = cmd.ExecuteReader();
+                result = 0;
+                while (reader.Read())
+                {
+                    result = reader.GetInt32(0);
+                }
+                reader.Close();
+                if (result < Constants.MaxHotbar)
+                {
+                    query = "";
+                    for (var i = result; i < Constants.MaxPlayerSkills; i++)
+                    {
+                        query += "INSERT INTO hotbar (id,slot,itemtype,itemslot) VALUES (" + id + "," + i + ",-1,-1);\n";
+                    }
+                    cmd = new MySqlCommand(query, mysqlConn);
+                    cmd.ExecuteNonQuery();
+                }
+                query = "";
+                for (var i = 0; i < Constants.MaxHotbar; i++)
+                {
+                    query += "UPDATE hotbar SET itemtype=" + en.Hotbar[i].Type + ", itemslot=" + en.Hotbar[i].Slot + " WHERE id=" + id + " AND slot=" + i + ";\n";
                 }
                 cmd = new MySqlCommand(query, mysqlConn);
                 cmd.ExecuteNonQuery();

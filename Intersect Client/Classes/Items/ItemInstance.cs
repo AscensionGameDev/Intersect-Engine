@@ -43,6 +43,10 @@ namespace Intersect_Client.Classes
         public int X = 0;
         public int Y = 0;
 
+        public MapItemInstance() : base() {
+
+        }
+
         public void Load(ByteBuffer bf)
         {
             X = bf.ReadInteger();

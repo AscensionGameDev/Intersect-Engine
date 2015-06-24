@@ -50,11 +50,6 @@ namespace Intersect_Client.Classes.UI.Game
                 if (Globals.Me.Spells[i].SpellNum > -1)
                 {
                     Items[i].pnl.IsHidden = false;
-
-                    if (Items[i].pnl.ImageName != "Resources/Spells/" + Globals.GameSpells[Globals.Me.Spells[i].SpellNum].Pic)
-                    {
-                        Items[i].pnl.ImageName = "Resources/Spells/" + Globals.GameSpells[Globals.Me.Spells[i].SpellNum].Pic;
-                    }
                     Items[i].Update();
                     if (Items[i].IsDragging) { Items[i].pnl.IsHidden = true; }
                 }
@@ -110,14 +105,21 @@ namespace Intersect_Client.Classes.UI.Game
     {
         public ImagePanel pnl;
         private SpellDescWindow _descWindow;
+
         private bool MouseOver = false;
         private int MouseX = -1;
         private int MouseY = -1;
+
         private bool CanDrag = false;
         private Draggable dragIcon;
         public bool IsDragging;
+
         private int myindex;
         private long ClickTime = 0;
+
+        private bool texLoaded = false;
+        private bool iconCD = false;
+        private int currentSpell = -1;
 
         //Drag/Drop References
         private SpellWindow _spellWindow;
@@ -173,10 +175,18 @@ namespace Intersect_Client.Classes.UI.Game
             return rect;
         }
 
-
-
         public void Update()
         {
+            if (texLoaded == false || currentSpell != Globals.Me.Spells[myindex].SpellNum || iconCD != (Globals.Me.Spells[myindex].SpellCD > 0))
+            {
+                if (Globals.Me.Spells[myindex].SpellNum > -1)
+                {
+                    pnl.Texture = Gui.BitmapToGwenTexture(Gui.CreateSpellTexBitmap(Globals.Me.Spells[myindex].SpellNum, 0, 0, 32, 32, (Globals.Me.Spells[myindex].SpellCD > 0), null));
+                    texLoaded = true;
+                    currentSpell = Globals.Me.Spells[myindex].SpellNum;
+                    iconCD = (Globals.Me.Spells[myindex].SpellCD > 0);
+                }
+            }
             if (!IsDragging)
             {
                 if (MouseOver)
@@ -222,8 +232,10 @@ namespace Intersect_Client.Classes.UI.Game
                 {
                     //Drug the item and now we stopped
                     IsDragging = false;
-                    System.Drawing.Rectangle dragRect = new System.Drawing.Rectangle(dragIcon.x - Constants.ItemXPadding / 2, dragIcon.y - Constants.ItemYPadding / 2, Constants.ItemXPadding, Constants.ItemYPadding);
+                    System.Drawing.Rectangle dragRect = new System.Drawing.Rectangle(dragIcon.x - Constants.ItemXPadding / 2, dragIcon.y - Constants.ItemYPadding / 2, Constants.ItemXPadding/2 + 32, Constants.ItemYPadding/2 + 32);
 
+                    int bestIntersect = 0;
+                    int bestIntersectIndex = -1;
                     //So we picked up an item and then dropped it. Lets see where we dropped it to.
                     //Check spell first.
                     if (_spellWindow.RenderBounds().IntersectsWith(dragRect))
@@ -232,17 +244,41 @@ namespace Intersect_Client.Classes.UI.Game
                         {
                             if (_spellWindow.Items[i].RenderBounds().IntersectsWith(dragRect))
                             {
-                                if (myindex != i)
+                                if (System.Drawing.Rectangle.Intersect(_spellWindow.Items[i].RenderBounds(), dragRect).Width * System.Drawing.Rectangle.Intersect(_spellWindow.Items[i].RenderBounds(), dragRect).Height > bestIntersect)
                                 {
-                                    //Try to swap....
-                                    PacketSender.SendSwapSpells(i, myindex);
-                                    Globals.Me.SwapSpells(i, myindex);
+                                    bestIntersect = System.Drawing.Rectangle.Intersect(_spellWindow.Items[i].RenderBounds(), dragRect).Width * System.Drawing.Rectangle.Intersect(_spellWindow.Items[i].RenderBounds(), dragRect).Height;
+                                    bestIntersectIndex = i;
                                 }
-                                break;
+                            }
+                        }
+                        if (bestIntersectIndex > -1)
+                        {
+                            if (myindex != bestIntersectIndex)
+                            {
+                                //Try to swap....
+                                PacketSender.SendSwapSpells(bestIntersectIndex, myindex);
+                                Globals.Me.SwapSpells(bestIntersectIndex, myindex);
                             }
                         }
                     }
-
+                    else if (Gui._GameGui.Hotbar.RenderBounds().IntersectsWith(dragRect))
+                    {
+                        for (int i = 0; i < Constants.MaxHotbar; i++)
+                        {
+                            if (Gui._GameGui.Hotbar.Items[i].RenderBounds().IntersectsWith(dragRect))
+                            {
+                                if (System.Drawing.Rectangle.Intersect(Gui._GameGui.Hotbar.Items[i].RenderBounds(), dragRect).Width * System.Drawing.Rectangle.Intersect(Gui._GameGui.Hotbar.Items[i].RenderBounds(), dragRect).Height > bestIntersect)
+                                {
+                                    bestIntersect = System.Drawing.Rectangle.Intersect(Gui._GameGui.Hotbar.Items[i].RenderBounds(), dragRect).Width * System.Drawing.Rectangle.Intersect(Gui._GameGui.Hotbar.Items[i].RenderBounds(), dragRect).Height;
+                                    bestIntersectIndex = i;
+                                } 
+                            }
+                        }
+                        if (bestIntersectIndex > -1)
+                        {
+                            Globals.Me.AddToHotbar(bestIntersectIndex, 1, myindex);
+                        }
+                    }
                     dragIcon.Dispose();
                 }
             }

@@ -16,6 +16,10 @@ namespace Intersect_Client.Classes
         public int Graphicy;
         public int DisablePreview;
 
+        public Event() : base() {
+
+        }
+
         public void Load(ByteBuffer bf)
         {
             base.Load(bf);
