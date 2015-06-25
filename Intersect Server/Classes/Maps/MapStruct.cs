@@ -7,32 +7,46 @@ namespace Intersect_Server.Classes
 {
     public class MapStruct
     {
+        //Core
         public string MyName = "New Map";
         public int Up = -1;
         public int Down = -1;
         public int Left = -1;
         public int Right = -1;
-        private string _bgm = "";
-        private readonly TileArray[] _layers = new TileArray[Constants.LayerCount];
         public int MyMapNum;
         public int Deleted;
-        public byte[] MapGameData;
-        public byte[] MapData;
-        public Attribute[,] Attributes = new Attribute[Constants.MapWidth, Constants.MapHeight];
-        public int MapGrid;
-        public int MapGridX;
-        public int MapGridY;
-        public bool Active;
         public int Revision;
-        public List<EventStruct> Events = new List<EventStruct>();
+        
+        //Core Data
+        private readonly TileArray[] _layers = new TileArray[Constants.LayerCount];
+        public Attribute[,] Attributes = new Attribute[Constants.MapWidth, Constants.MapHeight];
         public List<Light> Lights = new List<Light>();
+        public List<EventStruct> Events = new List<EventStruct>();
+
+        //Properties
+        private string _bgm = "";
+        public List<NpcSpawn> Spawns = new List<NpcSpawn>();
         public bool IsIndoors;
 
         //Temporary Values
         public List<int> SurroundingMaps = new List<int>();
         public List<MapItemInstance> MapItems = new List<MapItemInstance>();
         public List<MapItemRespawn> ItemRespawns = new List<MapItemRespawn>();
+        public List<Npc> Npcs = new List<Npc>();
+
+        //Location of Map in the current grid
+        public int MapGrid;
+        public int MapGridX;
+        public int MapGridY;
+
+        //Does the map have a player on or nearby it?
+        public bool Active;
+
+        //Data Caching
+        public byte[] MapGameData;
+        public byte[] MapData;
         
+        //Init
         public MapStruct(int mapNum)
         {
             if (mapNum == -1)
@@ -54,6 +68,7 @@ namespace Intersect_Server.Classes
             }
         }
 
+        //Saving/Loading
         public void Save()
         {
             var bf = new ByteBuffer();
@@ -105,7 +120,6 @@ namespace Intersect_Server.Classes
             stream.Close();
             MapData = bf.ToArray();
         }
-
         public void Load(byte[] packet)
         {
             var bf = new ByteBuffer();
@@ -169,6 +183,7 @@ namespace Intersect_Server.Classes
             //Save();
         }
 
+        //Items
         private void SpawnAttributeItems()
         {
             for (int x = 0; x < Constants.MapWidth; x++)
@@ -182,7 +197,6 @@ namespace Intersect_Server.Classes
                 }
             }
         }
-
         public void SpawnItem(int x, int y, ItemInstance item, int amount)
         {
             MapItems.Add(new MapItemInstance());
@@ -204,7 +218,6 @@ namespace Intersect_Server.Classes
             }
             PacketSender.SendMapItemUpdate(MyMapNum, MapItems.Count - 1);
         }
-
         private void SpawnAttributeItem(int x, int y)
         {
             MapItems.Add(new MapItemInstance());
@@ -229,7 +242,6 @@ namespace Intersect_Server.Classes
             }
             PacketSender.SendMapItemUpdate(MyMapNum, MapItems.Count - 1);
         }
-
         public void RemoveItem(int index)
         {
             MapItems[index].ItemNum = -1;
@@ -244,32 +256,16 @@ namespace Intersect_Server.Classes
             MapItems.RemoveAt(index);
         }
 
+        //Npcs
+        private void SpawnMapNpcs()
+        {
+
+        }
+
+        //Update + Related Functions
         public void Update()
         {
             if (CheckActive() == false) { return; }
-            lock (Globals.Entities)
-            {
-                foreach (var t in Globals.Entities)
-                {
-                    if (t == null) continue;
-                    if (t.GetType() == typeof(Npc))
-                    {
-                        if (t.CurrentMap == MyMapNum)
-                        {
-                            ((Npc)t).Update();
-                        }
-                    }
-                    else if (t.GetType() == typeof(Player))
-                    {
-                        if (t.CurrentMap == MyMapNum)
-                        {
-                            ((Player)t).Update();
-                        }
-
-                    }
-                }
-            }
-            
             //Process Items
             lock (MapItems)
             {
@@ -289,8 +285,8 @@ namespace Intersect_Server.Classes
                     }
                 }
             }
-        }
 
+        }
         private bool CheckActive()
         {
             if (PlayersOnMap(MyMapNum))
@@ -313,7 +309,6 @@ namespace Intersect_Server.Classes
             Active = false;
             return false;
         }
-
         private static bool PlayersOnMap(int mapNum)
         {
             if (Globals.Clients.Count <= 0) return false;
@@ -330,7 +325,6 @@ namespace Intersect_Server.Classes
             }
             return false;
         }
-
         public List<int> GetPlayersOnMap()
         {
             List<int> Players = new List<int>();
@@ -348,7 +342,6 @@ namespace Intersect_Server.Classes
             }
             return Players;
         }
-
         public void PlayerEnteredMap()
         {
             Active = true;
@@ -361,6 +354,7 @@ namespace Intersect_Server.Classes
 
     }
 
+    #region "Extra Classes - Just for maps"
     public class Attribute
     {
         public int value;
@@ -411,6 +405,15 @@ namespace Intersect_Server.Classes
             return myBuffer.ToArray();
         }
     }
+
+    public class NpcSpawn
+    {
+        public int NpcNum;
+        public int X;
+        public int Y;
+        public int Dir;
+    }
+#endregion
 }
 
 

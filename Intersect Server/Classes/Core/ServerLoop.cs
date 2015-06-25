@@ -11,13 +11,22 @@ namespace Intersect_Server.Classes
             while (true)
             {
                 nb.RunServer();
-                foreach (var t in Globals.GameMaps)
+                foreach (var map in Globals.GameMaps)
                 {
-                    if (t.Active)
+                    if (map.Active)
                     {
-                        t.Update();
+                        map.Update();
                     }
                 }
+
+                foreach (var player in Globals.Clients)
+                {
+                    if (player != null && player.Entity != null)
+                    {
+                        player.Entity.Update();
+                    }
+                }
+
                 if (timeUpdateTick < Environment.TickCount)
                 {
                     Globals.GameTime++;

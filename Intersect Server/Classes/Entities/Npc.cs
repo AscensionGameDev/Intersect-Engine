@@ -4,7 +4,7 @@ using System.Threading;
 
 namespace Intersect_Server.Classes
 {
-    class Npc : Entity
+    public class Npc : Entity
     {
         //Targetting
         public Entity MyTarget = null;

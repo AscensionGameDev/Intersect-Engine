@@ -6,20 +6,31 @@ namespace Intersect_Editor.Classes
 {
     public class MapStruct
     {
-        public TileArray[] Layers = new TileArray[Constants.LayerCount];
-        public int MyMapNum;
+        //Core 
         public string MyName = "New Map";
         public int Up = -1;
         public int Down = -1;
         public int Left = -1;
         public int Right = -1;
-        public string Bgm;
-        public Attribute[,] Attributes = new Attribute[Constants.MapWidth, Constants.MapHeight];
-        public MapAutotiles Autotiles;
+        public int MyMapNum;
+        public int Deleted;
         public int Revision;
+        
+        //Core Data
+        public TileArray[] Layers = new TileArray[Constants.LayerCount];
+        public Attribute[,] Attributes = new Attribute[Constants.MapWidth, Constants.MapHeight];
         public List<EventStruct> Events = new List<EventStruct>();
         public List<Light> Lights = new List<Light>();
+
+        //Properties
+        public List<NpcSpawn> Spawns = new List<NpcSpawn>();
+        public string Bgm;
         public bool IsIndoors;
+
+        //Temporary Values
+        public MapAutotiles Autotiles;
+
+        //Init
         public MapStruct(int mapNum, byte[] mapData)
         {
             MyMapNum = mapNum;
@@ -38,6 +49,7 @@ namespace Intersect_Editor.Classes
             Load(mapData);
         }
 
+        //Saving/Loading
         public byte[] Save()
         {
             var bf = new ByteBuffer();
@@ -85,7 +97,6 @@ namespace Intersect_Editor.Classes
             }
             return bf.ToArray();
         }
-
         public void Load(byte[] myArr)
         {
             var bf = new ByteBuffer();
@@ -137,6 +148,7 @@ namespace Intersect_Editor.Classes
             Autotiles.InitAutotiles();
         }
 
+        //Helper Functions
         public EventStruct FindEventAt(int x, int y)
         {
             if (Events.Count <= 0) return null;
@@ -150,7 +162,6 @@ namespace Intersect_Editor.Classes
             }
             return null;
         }
-
         public Light FindLightAt(int x, int y)
         {
             if (Lights.Count <= 0) return null;
@@ -224,6 +235,14 @@ namespace Intersect_Editor.Classes
             myBuffer.WriteInteger(Range);
             return myBuffer.ToArray();
         }
+    }
+
+    public class NpcSpawn
+    {
+        public int NpcNum;
+        public int X;
+        public int Y;
+        public int Dir;
     }
 }
 

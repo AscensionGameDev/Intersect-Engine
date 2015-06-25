@@ -8,8 +8,7 @@ namespace Intersect_Client.Classes
 {
     public class MapStruct
     {
-        public TileArray[] Layers = new TileArray[Constants.LayerCount];
-        public Attribute[,] Attributes = new Attribute[Constants.MapWidth, Constants.MapHeight];
+        //Core
         public int MyMapNum;
         public string MyName = "New Map";
         public int Up = -1;
@@ -17,25 +16,29 @@ namespace Intersect_Client.Classes
         public int Left = -1;
         public int Right = -1;
         public int Revision;
+
+        //Core Data
+        public TileArray[] Layers = new TileArray[Constants.LayerCount];
+        public Attribute[,] Attributes = new Attribute[Constants.MapWidth, Constants.MapHeight];
+        public List<LightObj> Lights = new List<LightObj>();
+
+        //Properties
         public string Bgm;
+        public bool IsIndoors;
+
+        //Temporary Values
         public bool MapLoaded;
-
-        //public Texture2D[] layerCache = new Texture2D[2];
-        //public Sprite[,] mySprite = new Sprite[3, 2];
-
         public bool MapRendered;
         public bool MapRendering = false;
         public byte[] MyPacket;
         public MapAutotiles Autotiles;
         public bool CacheCleared = true;
-        public List<LightObj> Lights = new List<LightObj>();
-        public bool IsIndoors;
-
         public RenderTexture[] LowerTextures = new RenderTexture[3];
         public RenderTexture[] UpperTextures = new RenderTexture[3];
         public RenderTexture[] PeakTextures = new RenderTexture[3];
         public List<MapItemInstance> MapItems = new List<MapItemInstance>();
-
+        
+        //Init
         public MapStruct(int mapNum, byte[] mapPacket)
         {
             MyMapNum = mapNum;
@@ -61,6 +64,7 @@ namespace Intersect_Client.Classes
             //CacheMapLayers();
         }
 
+        //Load
         private void Load()
         {
             var bf = new ByteBuffer();
@@ -111,158 +115,6 @@ namespace Intersect_Client.Classes
             //Globals.mapRevision[myMapNum] = revision;
             //Database.SaveMapRevisions();
         }
-
-        public void ClearCache()
-        {
-            //Map is no longer in bounds or in use, lets clear the stuff we simply do not need.
-            if (CacheCleared == false) { return; }
-            /*for (int z = 0; z < 3; z++)
-            {
-                for (int i = 0; i < 1; i++)
-                {
-                    if (layerCache[i] != null)
-                    {
-                        try
-                        {
-                            Texture2D.Destroy(layerCache[i]);
-                        }
-                        catch (Exception)
-                        {
-                        }
-                        layerCache[i] = null;
-                    }
-                    if (mySprite[z, i] != null)
-                    {
-                        try
-                        {
-                            Sprite.Destroy(mySprite[z, i]);
-                        }
-                        catch (Exception)
-                        {
-                        }
-                        mySprite[z, i] = null;
-                    }
-                }
-            }*/
-            CacheCleared = true;
-        }
-
-        private void DrawAutoTile(int layerNum, int destX, int destY, int quarterNum, int x, int y, int forceFrame, RenderTexture tex)
-        {
-            int yOffset = 0, xOffset = 0;
-
-            // calculate the offset
-            switch (Layers[layerNum].Tiles[x, y].Autotile)
-            {
-                case Constants.AutotileWaterfall:
-                    yOffset = (forceFrame - 1) * 32;
-                    break;
-
-                case Constants.AutotileAnim:
-                    xOffset = forceFrame * 64;
-                    break;
-
-                case Constants.AutotileCliff:
-                    yOffset = -32;
-                    break;
-            }
-            Graphics.RenderTexture(Graphics.Tilesets[Layers[layerNum].Tiles[x, y].TilesetIndex], destX, destY,
-                (int)Autotiles.Autotile[x, y].Layer[layerNum].SrcX[quarterNum] + xOffset,
-                (int)Autotiles.Autotile[x, y].Layer[layerNum].SrcY[quarterNum] + yOffset, 16, 16, tex);
-        }
-
-        private void PreRenderMap()
-        {
-            for (var i = 0; i < 3; i++)
-            {
-                if (LowerTextures[i] != null) { LowerTextures[i].Dispose(); }
-                LowerTextures[i] = new RenderTexture(32 * Constants.MapWidth, 32 * Constants.MapHeight);
-                LowerTextures[i].Clear(Color.Transparent);
-                if (UpperTextures[i] != null) { UpperTextures[i].Dispose(); }
-                UpperTextures[i] = new RenderTexture(32 * Constants.MapWidth, 32 * Constants.MapHeight);
-                if (PeakTextures[i] != null) { PeakTextures[i].Dispose(); }
-                PeakTextures[i] = new RenderTexture(32 * Constants.MapWidth, 32 * Constants.MapHeight);
-                for (var l = 0; l < Constants.LayerCount; l++)
-                {
-                    if (l < 3)
-                    {
-                        DrawMapLayer(LowerTextures[i], l, i);
-                    }
-                    else if (l == 3)
-                    {
-                        DrawMapLayer(UpperTextures[i], l, i);
-                    }
-                    else
-                    {
-                        DrawMapLayer(PeakTextures[i], l, i);
-                    }
-                }
-                LowerTextures[i].Display();
-                UpperTextures[i].Display();
-                PeakTextures[i].Display();
-            }
-            MapRendered = true;
-            Graphics.LightsChanged = true;
-        }
-
-        private void DrawMapLayer(RenderTexture tex, int l, int z)
-        {
-            for (var x = 0; x < Constants.MapWidth; x++)
-            {
-                for (var y = 0; y < Constants.MapHeight; y++)
-                {
-                    if (Globals.Tilesets == null) continue;
-                    if (Layers[l].Tiles[x, y].TilesetIndex < 0) continue;
-                    if (Layers[l].Tiles[x, y].TilesetIndex >= Globals.Tilesets.Length) continue;
-                    try
-                    {
-                        switch (Autotiles.Autotile[x, y].Layer[l].RenderState)
-                        {
-                            case Constants.RenderStateNormal:
-                                Graphics.RenderTexture(Graphics.Tilesets[Layers[l].Tiles[x, y].TilesetIndex], x * 32, y * 32, Layers[l].Tiles[x, y].X * 32, Layers[l].Tiles[x, y].Y * 32,32,32,tex);
-                                break;
-                            case Constants.RenderStateAutotile:
-                                DrawAutoTile(l, x * 32, y * 32, 1, x, y, z, tex);
-                                DrawAutoTile(l, x * 32 + 16, y * 32, 2, x, y, z, tex);
-                                DrawAutoTile(l, x * 32, y * 32 + 16, 3, x, y, z, tex);
-                                DrawAutoTile(l, +x * 32 + 16, y * 32 + 16, 4, x, y, z, tex);
-                                break;
-                        }
-                    }
-                    catch (Exception)
-                    {
-                        // ignored
-                    }
-                }
-            }
-        }
-
-        public void Draw(int xoffset, int yoffset, int layer = 0)
-        {
-            if (!MapRendered) { PreRenderMap(); }
-            if (layer == 0)
-            {
-                Graphics.RenderTexture(LowerTextures[Globals.AnimFrame].Texture,xoffset,yoffset,Graphics.RenderWindow);
-                
-                //Draw Map Items
-                for (int i = 0; i < MapItems.Count; i++)
-                {
-                    if (Graphics.ItemFileNames.IndexOf(Globals.GameItems[MapItems[i].ItemNum].Pic) > -1)
-                    {
-                        Graphics.RenderTexture(Graphics.ItemTextures[Graphics.ItemFileNames.IndexOf(Globals.GameItems[MapItems[i].ItemNum].Pic)], xoffset + MapItems[i].X * 32, yoffset + MapItems[i].Y * 32, Graphics.RenderWindow);
-                    }
-                }
-            }
-            else if (layer == 1)
-            {
-                Graphics.RenderTexture(UpperTextures[Globals.AnimFrame].Texture, xoffset, yoffset, Graphics.RenderWindow);
-            }
-            else
-            {
-                Graphics.RenderTexture(PeakTextures[Globals.AnimFrame].Texture, xoffset, yoffset, Graphics.RenderWindow);
-            }
-        }
-
         public bool ShouldLoad(int index)
         {
             return true;
@@ -306,6 +158,122 @@ namespace Intersect_Client.Classes
                     break;
             }
             return false;
+        }
+
+        //Caching Functions
+        private void PreRenderMap()
+        {
+            for (var i = 0; i < 3; i++)
+            {
+                if (LowerTextures[i] != null) { LowerTextures[i].Dispose(); }
+                LowerTextures[i] = new RenderTexture(32 * Constants.MapWidth, 32 * Constants.MapHeight);
+                LowerTextures[i].Clear(Color.Transparent);
+                if (UpperTextures[i] != null) { UpperTextures[i].Dispose(); }
+                UpperTextures[i] = new RenderTexture(32 * Constants.MapWidth, 32 * Constants.MapHeight);
+                if (PeakTextures[i] != null) { PeakTextures[i].Dispose(); }
+                PeakTextures[i] = new RenderTexture(32 * Constants.MapWidth, 32 * Constants.MapHeight);
+                for (var l = 0; l < Constants.LayerCount; l++)
+                {
+                    if (l < 3)
+                    {
+                        DrawMapLayer(LowerTextures[i], l, i);
+                    }
+                    else if (l == 3)
+                    {
+                        DrawMapLayer(UpperTextures[i], l, i);
+                    }
+                    else
+                    {
+                        DrawMapLayer(PeakTextures[i], l, i);
+                    }
+                }
+                LowerTextures[i].Display();
+                UpperTextures[i].Display();
+                PeakTextures[i].Display();
+            }
+            MapRendered = true;
+            Graphics.LightsChanged = true;
+        }
+        private void DrawAutoTile(int layerNum, int destX, int destY, int quarterNum, int x, int y, int forceFrame, RenderTexture tex)
+        {
+            int yOffset = 0, xOffset = 0;
+
+            // calculate the offset
+            switch (Layers[layerNum].Tiles[x, y].Autotile)
+            {
+                case Constants.AutotileWaterfall:
+                    yOffset = (forceFrame - 1) * 32;
+                    break;
+
+                case Constants.AutotileAnim:
+                    xOffset = forceFrame * 64;
+                    break;
+
+                case Constants.AutotileCliff:
+                    yOffset = -32;
+                    break;
+            }
+            Graphics.RenderTexture(Graphics.Tilesets[Layers[layerNum].Tiles[x, y].TilesetIndex], destX, destY,
+                (int)Autotiles.Autotile[x, y].Layer[layerNum].SrcX[quarterNum] + xOffset,
+                (int)Autotiles.Autotile[x, y].Layer[layerNum].SrcY[quarterNum] + yOffset, 16, 16, tex);
+        }
+        private void DrawMapLayer(RenderTexture tex, int l, int z)
+        {
+            for (var x = 0; x < Constants.MapWidth; x++)
+            {
+                for (var y = 0; y < Constants.MapHeight; y++)
+                {
+                    if (Globals.Tilesets == null) continue;
+                    if (Layers[l].Tiles[x, y].TilesetIndex < 0) continue;
+                    if (Layers[l].Tiles[x, y].TilesetIndex >= Globals.Tilesets.Length) continue;
+                    try
+                    {
+                        switch (Autotiles.Autotile[x, y].Layer[l].RenderState)
+                        {
+                            case Constants.RenderStateNormal:
+                                Graphics.RenderTexture(Graphics.Tilesets[Layers[l].Tiles[x, y].TilesetIndex], x * 32, y * 32, Layers[l].Tiles[x, y].X * 32, Layers[l].Tiles[x, y].Y * 32,32,32,tex);
+                                break;
+                            case Constants.RenderStateAutotile:
+                                DrawAutoTile(l, x * 32, y * 32, 1, x, y, z, tex);
+                                DrawAutoTile(l, x * 32 + 16, y * 32, 2, x, y, z, tex);
+                                DrawAutoTile(l, x * 32, y * 32 + 16, 3, x, y, z, tex);
+                                DrawAutoTile(l, +x * 32 + 16, y * 32 + 16, 4, x, y, z, tex);
+                                break;
+                        }
+                    }
+                    catch (Exception)
+                    {
+                        // ignored
+                    }
+                }
+            }
+        }
+
+        //Rendering Functions
+        public void Draw(int xoffset, int yoffset, int layer = 0)
+        {
+            if (!MapRendered) { PreRenderMap(); }
+            if (layer == 0)
+            {
+                Graphics.RenderTexture(LowerTextures[Globals.AnimFrame].Texture,xoffset,yoffset,Graphics.RenderWindow);
+                
+                //Draw Map Items
+                for (int i = 0; i < MapItems.Count; i++)
+                {
+                    if (Graphics.ItemFileNames.IndexOf(Globals.GameItems[MapItems[i].ItemNum].Pic) > -1)
+                    {
+                        Graphics.RenderTexture(Graphics.ItemTextures[Graphics.ItemFileNames.IndexOf(Globals.GameItems[MapItems[i].ItemNum].Pic)], xoffset + MapItems[i].X * 32, yoffset + MapItems[i].Y * 32, Graphics.RenderWindow);
+                    }
+                }
+            }
+            else if (layer == 1)
+            {
+                Graphics.RenderTexture(UpperTextures[Globals.AnimFrame].Texture, xoffset, yoffset, Graphics.RenderWindow);
+            }
+            else
+            {
+                Graphics.RenderTexture(PeakTextures[Globals.AnimFrame].Texture, xoffset, yoffset, Graphics.RenderWindow);
+            }
         }
     }
 

@@ -537,7 +537,6 @@ namespace Intersect_Client.Classes
         }
         private static void DrawNight()
         {
-            //TODO: Calculate which areas will not be seen on screen and don't render them each frame.
             if (Globals.GameMaps[Globals.CurrentMap].IsIndoors) { return; } //Don't worry about day or night if indoors
             var rs = new RectangleShape(new Vector2f(3 * 32 * Constants.MapWidth, 3 * 32 * Constants.MapHeight));
             if (CurrentNightTexture == null) { return; }
