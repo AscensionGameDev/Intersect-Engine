@@ -1177,6 +1177,11 @@ namespace Intersect_Editor.Forms
             lblY.Text = "Y: " + scrlY.Value;
         }
 
+        private void lblCloseMapProperties_Click(object sender, EventArgs e)
+        {
+            grpMapProperties.Visible = false;
+        }
+
         
     }
 }
