@@ -1576,6 +1576,7 @@
     <None Include="Resources\jcl.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <Content Include="Resources\MapSpawn.png" />
     <Content Include="Resources\Sounds\013-Move01.wav">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

@@ -69,12 +69,14 @@ namespace Intersect_Editor.Classes
         //Basic Editor Textures
         private static Texture _transH;
         private static Texture _transV;
-        //Texture for blocked tiles
+        //Texture for attributes
         private static Texture _attributesTex;
         //Texture for events
         private static Texture _eventTex;
         //Single tile texture for light placement
         private static Texture _lightTex;
+        //Texture for NPC Spawns
+        private static Texture _spawnTex;
 
         //DayNight Stuff
         public static bool NightEnabled = false;
@@ -104,6 +106,10 @@ namespace Intersect_Editor.Classes
                 s = new MemoryStream();
                 Resources.jcl.Save(s, ImageFormat.Png);
                 _lightTex = new Texture(s);
+                s.Dispose();
+                s = new MemoryStream();
+                Resources.MapSpawn.Save(s, ImageFormat.Png);
+                _spawnTex = new Texture(s);
                 s.Dispose();
                 s = new MemoryStream();
                 Resources.jce.Save(s, ImageFormat.Png);
@@ -338,6 +344,22 @@ namespace Intersect_Editor.Classes
 
             }
             RectangleShape tileSelectionRect;
+
+            // Draw Npc Spawns from Map Editor
+            if (Globals.ViewingMapProperties == true)
+            {
+                for (int i = 0; i < Globals.GameMaps[Globals.CurrentMap].Spawns.Count; i++)
+                {
+                    if (Globals.GameMaps[Globals.CurrentMap].Spawns[i].X >= 0 && Globals.GameMaps[Globals.CurrentMap].Spawns[i].Y >= 0)
+                    {
+                        tmpSprite = new Sprite(_spawnTex);
+                        tmpSprite.TextureRect = new IntRect(0, 0, 32, 32);
+                        tmpSprite.Position = new Vector2f(Globals.GameMaps[Globals.CurrentMap].Spawns[i].X * 32 + 32, Globals.GameMaps[Globals.CurrentMap].Spawns[i].Y * 32 + 32);
+                        _renderwindow.Draw(tmpSprite);
+                    }
+                }
+            }
+
             switch (Globals.CurrentLayer)
             {
                 case Constants.LayerCount:

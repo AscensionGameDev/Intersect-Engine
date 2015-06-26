@@ -66,21 +66,6 @@ namespace Intersect_Editor.Forms
             this.grpMapList = new System.Windows.Forms.GroupBox();
             this.lstGameMaps = new System.Windows.Forms.ListBox();
             this.lblCloseMapList = new System.Windows.Forms.Label();
-            this.grpMapProperties = new System.Windows.Forms.GroupBox();
-            this.lblCloseMapProperties = new System.Windows.Forms.Label();
-            this.grpMapNPCS = new System.Windows.Forms.GroupBox();
-            this.grpManage = new System.Windows.Forms.GroupBox();
-            this.btnRemoveMapNpc = new System.Windows.Forms.Button();
-            this.btnAddMapNpc = new System.Windows.Forms.Button();
-            this.cmbNpc = new System.Windows.Forms.ComboBox();
-            this.grpSpawnLoc = new System.Windows.Forms.GroupBox();
-            this.rbRandom = new System.Windows.Forms.RadioButton();
-            this.rbDeclared = new System.Windows.Forms.RadioButton();
-            this.lstMapNpcs = new System.Windows.Forms.ListBox();
-            this.chkIndoors = new System.Windows.Forms.CheckBox();
-            this.txtMapName = new System.Windows.Forms.TextBox();
-            this.label1 = new System.Windows.Forms.Label();
-            this.btnCloseProperties = new System.Windows.Forms.Button();
             this.grpLightEditor = new System.Windows.Forms.GroupBox();
             this.scrlLightRange = new System.Windows.Forms.HScrollBar();
             this.label2 = new System.Windows.Forms.Label();
@@ -95,24 +80,11 @@ namespace Intersect_Editor.Forms
             this.btnLightEditorRevert = new System.Windows.Forms.Button();
             this.btnLightEditorClose = new System.Windows.Forms.Button();
             this.grpAttributes = new System.Windows.Forms.GroupBox();
-            this.rbNPCSpawn = new System.Windows.Forms.RadioButton();
             this.rbWarp = new System.Windows.Forms.RadioButton();
             this.rbNPCAvoid = new System.Windows.Forms.RadioButton();
             this.rbZDimension = new System.Windows.Forms.RadioButton();
             this.rbItem = new System.Windows.Forms.RadioButton();
             this.rbBlocked = new System.Windows.Forms.RadioButton();
-            this.grpZDimension = new System.Windows.Forms.GroupBox();
-            this.grpGateway = new System.Windows.Forms.GroupBox();
-            this.rbGateway2 = new System.Windows.Forms.RadioButton();
-            this.rbGateway1 = new System.Windows.Forms.RadioButton();
-            this.rbGatewayNone = new System.Windows.Forms.RadioButton();
-            this.grpDimBlock = new System.Windows.Forms.GroupBox();
-            this.rbBlock2 = new System.Windows.Forms.RadioButton();
-            this.rbBlock1 = new System.Windows.Forms.RadioButton();
-            this.rbBlockNone = new System.Windows.Forms.RadioButton();
-            this.grpNPCSpawn = new System.Windows.Forms.GroupBox();
-            this.scrlNpcSpawn = new System.Windows.Forms.HScrollBar();
-            this.lblNpcSpawn = new System.Windows.Forms.Label();
             this.grpItem = new System.Windows.Forms.GroupBox();
             this.lblMaxItemAmount = new System.Windows.Forms.Label();
             this.lblMapItem = new System.Windows.Forms.Label();
@@ -125,10 +97,36 @@ namespace Intersect_Editor.Forms
             this.scrlX = new System.Windows.Forms.HScrollBar();
             this.scrlY = new System.Windows.Forms.HScrollBar();
             this.scrlMap = new System.Windows.Forms.HScrollBar();
-            this.label4 = new System.Windows.Forms.Label();
-            this.cmbMapMusic = new System.Windows.Forms.ComboBox();
+            this.grpZDimension = new System.Windows.Forms.GroupBox();
+            this.grpGateway = new System.Windows.Forms.GroupBox();
+            this.rbGateway2 = new System.Windows.Forms.RadioButton();
+            this.rbGateway1 = new System.Windows.Forms.RadioButton();
+            this.rbGatewayNone = new System.Windows.Forms.RadioButton();
+            this.grpDimBlock = new System.Windows.Forms.GroupBox();
+            this.rbBlock2 = new System.Windows.Forms.RadioButton();
+            this.rbBlock1 = new System.Windows.Forms.RadioButton();
+            this.rbBlockNone = new System.Windows.Forms.RadioButton();
+            this.grpMapProperties = new System.Windows.Forms.GroupBox();
             this.cmbMapSound = new System.Windows.Forms.ComboBox();
             this.label5 = new System.Windows.Forms.Label();
+            this.cmbMapMusic = new System.Windows.Forms.ComboBox();
+            this.label4 = new System.Windows.Forms.Label();
+            this.lblCloseMapProperties = new System.Windows.Forms.Label();
+            this.grpMapNPCS = new System.Windows.Forms.GroupBox();
+            this.grpManage = new System.Windows.Forms.GroupBox();
+            this.btnRemoveMapNpc = new System.Windows.Forms.Button();
+            this.btnAddMapNpc = new System.Windows.Forms.Button();
+            this.cmbNpc = new System.Windows.Forms.ComboBox();
+            this.grpSpawnLoc = new System.Windows.Forms.GroupBox();
+            this.cmbDir = new System.Windows.Forms.ComboBox();
+            this.lblDir = new System.Windows.Forms.Label();
+            this.rbRandom = new System.Windows.Forms.RadioButton();
+            this.rbDeclared = new System.Windows.Forms.RadioButton();
+            this.lstMapNpcs = new System.Windows.Forms.ListBox();
+            this.chkIndoors = new System.Windows.Forms.CheckBox();
+            this.txtMapName = new System.Windows.Forms.TextBox();
+            this.label1 = new System.Windows.Forms.Label();
+            this.btnCloseProperties = new System.Windows.Forms.Button();
             this.menuStrip.SuspendLayout();
             this.grpMap.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.picMap)).BeginInit();
@@ -136,18 +134,17 @@ namespace Intersect_Editor.Forms
             this.grpTileset.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.picTileset)).BeginInit();
             this.grpMapList.SuspendLayout();
+            this.grpLightEditor.SuspendLayout();
+            this.grpAttributes.SuspendLayout();
+            this.grpItem.SuspendLayout();
+            this.grpWarp.SuspendLayout();
+            this.grpZDimension.SuspendLayout();
+            this.grpGateway.SuspendLayout();
+            this.grpDimBlock.SuspendLayout();
             this.grpMapProperties.SuspendLayout();
             this.grpMapNPCS.SuspendLayout();
             this.grpManage.SuspendLayout();
             this.grpSpawnLoc.SuspendLayout();
-            this.grpLightEditor.SuspendLayout();
-            this.grpAttributes.SuspendLayout();
-            this.grpZDimension.SuspendLayout();
-            this.grpGateway.SuspendLayout();
-            this.grpDimBlock.SuspendLayout();
-            this.grpNPCSpawn.SuspendLayout();
-            this.grpItem.SuspendLayout();
-            this.grpWarp.SuspendLayout();
             this.SuspendLayout();
             // 
             // menuStrip
@@ -333,7 +330,6 @@ namespace Intersect_Editor.Forms
             this.picMap.Size = new System.Drawing.Size(1024, 1024);
             this.picMap.TabIndex = 1;
             this.picMap.TabStop = false;
-            this.picMap.Click += new System.EventHandler(this.picMap_Click);
             this.picMap.DoubleClick += new System.EventHandler(this.picMap_DoubleClick);
             this.picMap.MouseDown += new System.Windows.Forms.MouseEventHandler(this.picMap_MouseDown);
             this.picMap.MouseMove += new System.Windows.Forms.MouseEventHandler(this.picMap_MouseMove);
@@ -495,168 +491,6 @@ namespace Intersect_Editor.Forms
             this.lblCloseMapList.Text = "X";
             this.lblCloseMapList.Click += new System.EventHandler(this.lblCloseMapList_Click);
             // 
-            // grpMapProperties
-            // 
-            this.grpMapProperties.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.grpMapProperties.Controls.Add(this.cmbMapSound);
-            this.grpMapProperties.Controls.Add(this.label5);
-            this.grpMapProperties.Controls.Add(this.cmbMapMusic);
-            this.grpMapProperties.Controls.Add(this.label4);
-            this.grpMapProperties.Controls.Add(this.lblCloseMapProperties);
-            this.grpMapProperties.Controls.Add(this.grpMapNPCS);
-            this.grpMapProperties.Controls.Add(this.chkIndoors);
-            this.grpMapProperties.Controls.Add(this.txtMapName);
-            this.grpMapProperties.Controls.Add(this.label1);
-            this.grpMapProperties.Controls.Add(this.btnCloseProperties);
-            this.grpMapProperties.Location = new System.Drawing.Point(11, 27);
-            this.grpMapProperties.Name = "grpMapProperties";
-            this.grpMapProperties.Size = new System.Drawing.Size(292, 632);
-            this.grpMapProperties.TabIndex = 7;
-            this.grpMapProperties.TabStop = false;
-            this.grpMapProperties.Text = "Map Properties";
-            this.grpMapProperties.Visible = false;
-            // 
-            // lblCloseMapProperties
-            // 
-            this.lblCloseMapProperties.AutoSize = true;
-            this.lblCloseMapProperties.Location = new System.Drawing.Point(276, 7);
-            this.lblCloseMapProperties.Name = "lblCloseMapProperties";
-            this.lblCloseMapProperties.Size = new System.Drawing.Size(14, 13);
-            this.lblCloseMapProperties.TabIndex = 6;
-            this.lblCloseMapProperties.Text = "X";
-            this.lblCloseMapProperties.Click += new System.EventHandler(this.lblCloseMapProperties_Click);
-            // 
-            // grpMapNPCS
-            // 
-            this.grpMapNPCS.Controls.Add(this.grpManage);
-            this.grpMapNPCS.Controls.Add(this.grpSpawnLoc);
-            this.grpMapNPCS.Controls.Add(this.lstMapNpcs);
-            this.grpMapNPCS.Location = new System.Drawing.Point(9, 124);
-            this.grpMapNPCS.Name = "grpMapNPCS";
-            this.grpMapNPCS.Size = new System.Drawing.Size(200, 312);
-            this.grpMapNPCS.TabIndex = 4;
-            this.grpMapNPCS.TabStop = false;
-            this.grpMapNPCS.Text = "Map NPCs";
-            // 
-            // grpManage
-            // 
-            this.grpManage.Controls.Add(this.btnRemoveMapNpc);
-            this.grpManage.Controls.Add(this.btnAddMapNpc);
-            this.grpManage.Controls.Add(this.cmbNpc);
-            this.grpManage.Location = new System.Drawing.Point(6, 230);
-            this.grpManage.Name = "grpManage";
-            this.grpManage.Size = new System.Drawing.Size(188, 76);
-            this.grpManage.TabIndex = 9;
-            this.grpManage.TabStop = false;
-            this.grpManage.Text = "Add/Remove Map NPCs";
-            // 
-            // btnRemoveMapNpc
-            // 
-            this.btnRemoveMapNpc.Location = new System.Drawing.Point(107, 47);
-            this.btnRemoveMapNpc.Name = "btnRemoveMapNpc";
-            this.btnRemoveMapNpc.Size = new System.Drawing.Size(75, 23);
-            this.btnRemoveMapNpc.TabIndex = 6;
-            this.btnRemoveMapNpc.Text = "Remove";
-            this.btnRemoveMapNpc.UseVisualStyleBackColor = true;
-            // 
-            // btnAddMapNpc
-            // 
-            this.btnAddMapNpc.Location = new System.Drawing.Point(9, 47);
-            this.btnAddMapNpc.Name = "btnAddMapNpc";
-            this.btnAddMapNpc.Size = new System.Drawing.Size(75, 23);
-            this.btnAddMapNpc.TabIndex = 5;
-            this.btnAddMapNpc.Text = "Add";
-            this.btnAddMapNpc.UseVisualStyleBackColor = true;
-            // 
-            // cmbNpc
-            // 
-            this.cmbNpc.FormattingEnabled = true;
-            this.cmbNpc.Location = new System.Drawing.Point(6, 13);
-            this.cmbNpc.Name = "cmbNpc";
-            this.cmbNpc.Size = new System.Drawing.Size(176, 21);
-            this.cmbNpc.TabIndex = 4;
-            // 
-            // grpSpawnLoc
-            // 
-            this.grpSpawnLoc.Controls.Add(this.rbRandom);
-            this.grpSpawnLoc.Controls.Add(this.rbDeclared);
-            this.grpSpawnLoc.Location = new System.Drawing.Point(6, 173);
-            this.grpSpawnLoc.Name = "grpSpawnLoc";
-            this.grpSpawnLoc.Size = new System.Drawing.Size(188, 51);
-            this.grpSpawnLoc.TabIndex = 7;
-            this.grpSpawnLoc.TabStop = false;
-            this.grpSpawnLoc.Text = "Spawn Location: Random";
-            // 
-            // rbRandom
-            // 
-            this.rbRandom.AutoSize = true;
-            this.rbRandom.Checked = true;
-            this.rbRandom.Location = new System.Drawing.Point(117, 20);
-            this.rbRandom.Name = "rbRandom";
-            this.rbRandom.Size = new System.Drawing.Size(65, 17);
-            this.rbRandom.TabIndex = 1;
-            this.rbRandom.TabStop = true;
-            this.rbRandom.Text = "Random";
-            this.rbRandom.UseVisualStyleBackColor = true;
-            // 
-            // rbDeclared
-            // 
-            this.rbDeclared.AutoSize = true;
-            this.rbDeclared.Location = new System.Drawing.Point(9, 20);
-            this.rbDeclared.Name = "rbDeclared";
-            this.rbDeclared.Size = new System.Drawing.Size(68, 17);
-            this.rbDeclared.TabIndex = 0;
-            this.rbDeclared.Text = "Declared";
-            this.rbDeclared.UseVisualStyleBackColor = true;
-            // 
-            // lstMapNpcs
-            // 
-            this.lstMapNpcs.FormattingEnabled = true;
-            this.lstMapNpcs.Location = new System.Drawing.Point(6, 19);
-            this.lstMapNpcs.Name = "lstMapNpcs";
-            this.lstMapNpcs.Size = new System.Drawing.Size(188, 147);
-            this.lstMapNpcs.TabIndex = 0;
-            // 
-            // chkIndoors
-            // 
-            this.chkIndoors.AutoSize = true;
-            this.chkIndoors.Location = new System.Drawing.Point(9, 101);
-            this.chkIndoors.Name = "chkIndoors";
-            this.chkIndoors.Size = new System.Drawing.Size(106, 17);
-            this.chkIndoors.TabIndex = 3;
-            this.chkIndoors.Text = "Is an Indoor Map";
-            this.chkIndoors.UseVisualStyleBackColor = true;
-            this.chkIndoors.CheckedChanged += new System.EventHandler(this.chkIndoors_CheckedChanged);
-            // 
-            // txtMapName
-            // 
-            this.txtMapName.Location = new System.Drawing.Point(74, 17);
-            this.txtMapName.Name = "txtMapName";
-            this.txtMapName.Size = new System.Drawing.Size(129, 20);
-            this.txtMapName.TabIndex = 2;
-            this.txtMapName.TextChanged += new System.EventHandler(this.txtMapName_TextChanged);
-            // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(6, 20);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(62, 13);
-            this.label1.TabIndex = 1;
-            this.label1.Text = "Map Name:";
-            // 
-            // btnCloseProperties
-            // 
-            this.btnCloseProperties.Location = new System.Drawing.Point(943, 603);
-            this.btnCloseProperties.Name = "btnCloseProperties";
-            this.btnCloseProperties.Size = new System.Drawing.Size(75, 23);
-            this.btnCloseProperties.TabIndex = 0;
-            this.btnCloseProperties.Text = "Close";
-            this.btnCloseProperties.UseVisualStyleBackColor = true;
-            this.btnCloseProperties.Click += new System.EventHandler(this.btnCloseProperties_Click);
-            // 
             // grpLightEditor
             // 
             this.grpLightEditor.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
@@ -794,16 +628,14 @@ namespace Intersect_Editor.Forms
             // 
             // grpAttributes
             // 
-            this.grpAttributes.Controls.Add(this.rbNPCSpawn);
             this.grpAttributes.Controls.Add(this.rbWarp);
             this.grpAttributes.Controls.Add(this.rbNPCAvoid);
             this.grpAttributes.Controls.Add(this.rbZDimension);
             this.grpAttributes.Controls.Add(this.rbItem);
             this.grpAttributes.Controls.Add(this.rbBlocked);
-            this.grpAttributes.Controls.Add(this.grpZDimension);
-            this.grpAttributes.Controls.Add(this.grpNPCSpawn);
             this.grpAttributes.Controls.Add(this.grpItem);
             this.grpAttributes.Controls.Add(this.grpWarp);
+            this.grpAttributes.Controls.Add(this.grpZDimension);
             this.grpAttributes.Location = new System.Drawing.Point(11, 27);
             this.grpAttributes.Name = "grpAttributes";
             this.grpAttributes.Size = new System.Drawing.Size(292, 632);
@@ -811,17 +643,6 @@ namespace Intersect_Editor.Forms
             this.grpAttributes.TabStop = false;
             this.grpAttributes.Text = "Attributes";
             this.grpAttributes.Visible = false;
-            // 
-            // rbNPCSpawn
-            // 
-            this.rbNPCSpawn.AutoSize = true;
-            this.rbNPCSpawn.Location = new System.Drawing.Point(12, 138);
-            this.rbNPCSpawn.Name = "rbNPCSpawn";
-            this.rbNPCSpawn.Size = new System.Drawing.Size(83, 17);
-            this.rbNPCSpawn.TabIndex = 8;
-            this.rbNPCSpawn.Text = "NPC Spawn";
-            this.rbNPCSpawn.UseVisualStyleBackColor = true;
-            this.rbNPCSpawn.CheckedChanged += new System.EventHandler(this.rbNPCSpawn_CheckedChanged);
             // 
             // rbWarp
             // 
@@ -879,138 +700,6 @@ namespace Intersect_Editor.Forms
             this.rbBlocked.Text = "Blocked";
             this.rbBlocked.UseVisualStyleBackColor = true;
             this.rbBlocked.CheckedChanged += new System.EventHandler(this.rbBlocked_CheckedChanged);
-            // 
-            // grpZDimension
-            // 
-            this.grpZDimension.Controls.Add(this.grpGateway);
-            this.grpZDimension.Controls.Add(this.grpDimBlock);
-            this.grpZDimension.Location = new System.Drawing.Point(2, 490);
-            this.grpZDimension.Name = "grpZDimension";
-            this.grpZDimension.Size = new System.Drawing.Size(281, 132);
-            this.grpZDimension.TabIndex = 13;
-            this.grpZDimension.TabStop = false;
-            this.grpZDimension.Text = "Z-Dimension";
-            this.grpZDimension.Visible = false;
-            // 
-            // grpGateway
-            // 
-            this.grpGateway.Controls.Add(this.rbGateway2);
-            this.grpGateway.Controls.Add(this.rbGateway1);
-            this.grpGateway.Controls.Add(this.rbGatewayNone);
-            this.grpGateway.Location = new System.Drawing.Point(10, 25);
-            this.grpGateway.Name = "grpGateway";
-            this.grpGateway.Size = new System.Drawing.Size(119, 91);
-            this.grpGateway.TabIndex = 9;
-            this.grpGateway.TabStop = false;
-            this.grpGateway.Text = "Gateway";
-            // 
-            // rbGateway2
-            // 
-            this.rbGateway2.AutoSize = true;
-            this.rbGateway2.Location = new System.Drawing.Point(6, 64);
-            this.rbGateway2.Name = "rbGateway2";
-            this.rbGateway2.Size = new System.Drawing.Size(60, 17);
-            this.rbGateway2.TabIndex = 12;
-            this.rbGateway2.Text = "Level 2";
-            this.rbGateway2.UseVisualStyleBackColor = true;
-            // 
-            // rbGateway1
-            // 
-            this.rbGateway1.AutoSize = true;
-            this.rbGateway1.Location = new System.Drawing.Point(6, 41);
-            this.rbGateway1.Name = "rbGateway1";
-            this.rbGateway1.Size = new System.Drawing.Size(60, 17);
-            this.rbGateway1.TabIndex = 11;
-            this.rbGateway1.Text = "Level 1";
-            this.rbGateway1.UseVisualStyleBackColor = true;
-            // 
-            // rbGatewayNone
-            // 
-            this.rbGatewayNone.AutoSize = true;
-            this.rbGatewayNone.Checked = true;
-            this.rbGatewayNone.Location = new System.Drawing.Point(6, 19);
-            this.rbGatewayNone.Name = "rbGatewayNone";
-            this.rbGatewayNone.Size = new System.Drawing.Size(51, 17);
-            this.rbGatewayNone.TabIndex = 10;
-            this.rbGatewayNone.TabStop = true;
-            this.rbGatewayNone.Text = "None";
-            this.rbGatewayNone.UseVisualStyleBackColor = true;
-            // 
-            // grpDimBlock
-            // 
-            this.grpDimBlock.Controls.Add(this.rbBlock2);
-            this.grpDimBlock.Controls.Add(this.rbBlock1);
-            this.grpDimBlock.Controls.Add(this.rbBlockNone);
-            this.grpDimBlock.Location = new System.Drawing.Point(141, 25);
-            this.grpDimBlock.Name = "grpDimBlock";
-            this.grpDimBlock.Size = new System.Drawing.Size(122, 91);
-            this.grpDimBlock.TabIndex = 8;
-            this.grpDimBlock.TabStop = false;
-            this.grpDimBlock.Text = "Block";
-            // 
-            // rbBlock2
-            // 
-            this.rbBlock2.AutoSize = true;
-            this.rbBlock2.Location = new System.Drawing.Point(6, 64);
-            this.rbBlock2.Name = "rbBlock2";
-            this.rbBlock2.Size = new System.Drawing.Size(60, 17);
-            this.rbBlock2.TabIndex = 15;
-            this.rbBlock2.Text = "Level 2";
-            this.rbBlock2.UseVisualStyleBackColor = true;
-            // 
-            // rbBlock1
-            // 
-            this.rbBlock1.AutoSize = true;
-            this.rbBlock1.Location = new System.Drawing.Point(6, 41);
-            this.rbBlock1.Name = "rbBlock1";
-            this.rbBlock1.Size = new System.Drawing.Size(60, 17);
-            this.rbBlock1.TabIndex = 14;
-            this.rbBlock1.Text = "Level 1";
-            this.rbBlock1.UseVisualStyleBackColor = true;
-            // 
-            // rbBlockNone
-            // 
-            this.rbBlockNone.AutoSize = true;
-            this.rbBlockNone.Checked = true;
-            this.rbBlockNone.Location = new System.Drawing.Point(6, 19);
-            this.rbBlockNone.Name = "rbBlockNone";
-            this.rbBlockNone.Size = new System.Drawing.Size(51, 17);
-            this.rbBlockNone.TabIndex = 13;
-            this.rbBlockNone.TabStop = true;
-            this.rbBlockNone.Text = "None";
-            this.rbBlockNone.UseVisualStyleBackColor = true;
-            // 
-            // grpNPCSpawn
-            // 
-            this.grpNPCSpawn.Controls.Add(this.scrlNpcSpawn);
-            this.grpNPCSpawn.Controls.Add(this.lblNpcSpawn);
-            this.grpNPCSpawn.Location = new System.Drawing.Point(6, 519);
-            this.grpNPCSpawn.Name = "grpNPCSpawn";
-            this.grpNPCSpawn.Size = new System.Drawing.Size(278, 100);
-            this.grpNPCSpawn.TabIndex = 12;
-            this.grpNPCSpawn.TabStop = false;
-            this.grpNPCSpawn.Text = "NPC Spawn";
-            this.grpNPCSpawn.Visible = false;
-            // 
-            // scrlNpcSpawn
-            // 
-            this.scrlNpcSpawn.LargeChange = 1;
-            this.scrlNpcSpawn.Location = new System.Drawing.Point(12, 51);
-            this.scrlNpcSpawn.Minimum = 1;
-            this.scrlNpcSpawn.Name = "scrlNpcSpawn";
-            this.scrlNpcSpawn.Size = new System.Drawing.Size(246, 20);
-            this.scrlNpcSpawn.TabIndex = 1;
-            this.scrlNpcSpawn.Value = 1;
-            this.scrlNpcSpawn.ValueChanged += new System.EventHandler(this.scrlNpcSpawn_ValueChanged);
-            // 
-            // lblNpcSpawn
-            // 
-            this.lblNpcSpawn.AutoSize = true;
-            this.lblNpcSpawn.Location = new System.Drawing.Point(9, 26);
-            this.lblNpcSpawn.Name = "lblNpcSpawn";
-            this.lblNpcSpawn.Size = new System.Drawing.Size(63, 13);
-            this.lblNpcSpawn.TabIndex = 0;
-            this.lblNpcSpawn.Text = "Map Npc: 1";
             // 
             // grpItem
             // 
@@ -1137,24 +826,128 @@ namespace Intersect_Editor.Forms
             this.scrlMap.TabIndex = 6;
             this.scrlMap.ValueChanged += new System.EventHandler(this.scrlMap_ValueChanged);
             // 
-            // label4
+            // grpZDimension
             // 
-            this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(6, 44);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(62, 13);
-            this.label4.TabIndex = 7;
-            this.label4.Text = "Map Music:";
+            this.grpZDimension.Controls.Add(this.grpGateway);
+            this.grpZDimension.Controls.Add(this.grpDimBlock);
+            this.grpZDimension.Location = new System.Drawing.Point(2, 490);
+            this.grpZDimension.Name = "grpZDimension";
+            this.grpZDimension.Size = new System.Drawing.Size(281, 132);
+            this.grpZDimension.TabIndex = 13;
+            this.grpZDimension.TabStop = false;
+            this.grpZDimension.Text = "Z-Dimension";
+            this.grpZDimension.Visible = false;
             // 
-            // cmbMapMusic
+            // grpGateway
             // 
-            this.cmbMapMusic.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cmbMapMusic.FormattingEnabled = true;
-            this.cmbMapMusic.Location = new System.Drawing.Point(74, 41);
-            this.cmbMapMusic.Name = "cmbMapMusic";
-            this.cmbMapMusic.Size = new System.Drawing.Size(129, 21);
-            this.cmbMapMusic.TabIndex = 8;
-            this.cmbMapMusic.SelectedIndexChanged += new System.EventHandler(this.cmbMapMusic_SelectedIndexChanged);
+            this.grpGateway.Controls.Add(this.rbGateway2);
+            this.grpGateway.Controls.Add(this.rbGateway1);
+            this.grpGateway.Controls.Add(this.rbGatewayNone);
+            this.grpGateway.Location = new System.Drawing.Point(10, 25);
+            this.grpGateway.Name = "grpGateway";
+            this.grpGateway.Size = new System.Drawing.Size(119, 91);
+            this.grpGateway.TabIndex = 9;
+            this.grpGateway.TabStop = false;
+            this.grpGateway.Text = "Gateway";
+            // 
+            // rbGateway2
+            // 
+            this.rbGateway2.AutoSize = true;
+            this.rbGateway2.Location = new System.Drawing.Point(6, 64);
+            this.rbGateway2.Name = "rbGateway2";
+            this.rbGateway2.Size = new System.Drawing.Size(60, 17);
+            this.rbGateway2.TabIndex = 12;
+            this.rbGateway2.Text = "Level 2";
+            this.rbGateway2.UseVisualStyleBackColor = true;
+            // 
+            // rbGateway1
+            // 
+            this.rbGateway1.AutoSize = true;
+            this.rbGateway1.Location = new System.Drawing.Point(6, 41);
+            this.rbGateway1.Name = "rbGateway1";
+            this.rbGateway1.Size = new System.Drawing.Size(60, 17);
+            this.rbGateway1.TabIndex = 11;
+            this.rbGateway1.Text = "Level 1";
+            this.rbGateway1.UseVisualStyleBackColor = true;
+            // 
+            // rbGatewayNone
+            // 
+            this.rbGatewayNone.AutoSize = true;
+            this.rbGatewayNone.Checked = true;
+            this.rbGatewayNone.Location = new System.Drawing.Point(6, 19);
+            this.rbGatewayNone.Name = "rbGatewayNone";
+            this.rbGatewayNone.Size = new System.Drawing.Size(51, 17);
+            this.rbGatewayNone.TabIndex = 10;
+            this.rbGatewayNone.TabStop = true;
+            this.rbGatewayNone.Text = "None";
+            this.rbGatewayNone.UseVisualStyleBackColor = true;
+            // 
+            // grpDimBlock
+            // 
+            this.grpDimBlock.Controls.Add(this.rbBlock2);
+            this.grpDimBlock.Controls.Add(this.rbBlock1);
+            this.grpDimBlock.Controls.Add(this.rbBlockNone);
+            this.grpDimBlock.Location = new System.Drawing.Point(141, 25);
+            this.grpDimBlock.Name = "grpDimBlock";
+            this.grpDimBlock.Size = new System.Drawing.Size(122, 91);
+            this.grpDimBlock.TabIndex = 8;
+            this.grpDimBlock.TabStop = false;
+            this.grpDimBlock.Text = "Block";
+            // 
+            // rbBlock2
+            // 
+            this.rbBlock2.AutoSize = true;
+            this.rbBlock2.Location = new System.Drawing.Point(6, 64);
+            this.rbBlock2.Name = "rbBlock2";
+            this.rbBlock2.Size = new System.Drawing.Size(60, 17);
+            this.rbBlock2.TabIndex = 15;
+            this.rbBlock2.Text = "Level 2";
+            this.rbBlock2.UseVisualStyleBackColor = true;
+            // 
+            // rbBlock1
+            // 
+            this.rbBlock1.AutoSize = true;
+            this.rbBlock1.Location = new System.Drawing.Point(6, 41);
+            this.rbBlock1.Name = "rbBlock1";
+            this.rbBlock1.Size = new System.Drawing.Size(60, 17);
+            this.rbBlock1.TabIndex = 14;
+            this.rbBlock1.Text = "Level 1";
+            this.rbBlock1.UseVisualStyleBackColor = true;
+            // 
+            // rbBlockNone
+            // 
+            this.rbBlockNone.AutoSize = true;
+            this.rbBlockNone.Checked = true;
+            this.rbBlockNone.Location = new System.Drawing.Point(6, 19);
+            this.rbBlockNone.Name = "rbBlockNone";
+            this.rbBlockNone.Size = new System.Drawing.Size(51, 17);
+            this.rbBlockNone.TabIndex = 13;
+            this.rbBlockNone.TabStop = true;
+            this.rbBlockNone.Text = "None";
+            this.rbBlockNone.UseVisualStyleBackColor = true;
+            // 
+            // grpMapProperties
+            // 
+            this.grpMapProperties.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.grpMapProperties.Controls.Add(this.cmbMapSound);
+            this.grpMapProperties.Controls.Add(this.label5);
+            this.grpMapProperties.Controls.Add(this.cmbMapMusic);
+            this.grpMapProperties.Controls.Add(this.label4);
+            this.grpMapProperties.Controls.Add(this.lblCloseMapProperties);
+            this.grpMapProperties.Controls.Add(this.grpMapNPCS);
+            this.grpMapProperties.Controls.Add(this.chkIndoors);
+            this.grpMapProperties.Controls.Add(this.txtMapName);
+            this.grpMapProperties.Controls.Add(this.label1);
+            this.grpMapProperties.Controls.Add(this.btnCloseProperties);
+            this.grpMapProperties.Location = new System.Drawing.Point(9, 27);
+            this.grpMapProperties.Name = "grpMapProperties";
+            this.grpMapProperties.Size = new System.Drawing.Size(292, 632);
+            this.grpMapProperties.TabIndex = 9;
+            this.grpMapProperties.TabStop = false;
+            this.grpMapProperties.Text = "Map Properties";
+            this.grpMapProperties.Visible = false;
             // 
             // cmbMapSound
             // 
@@ -1164,7 +957,6 @@ namespace Intersect_Editor.Forms
             this.cmbMapSound.Name = "cmbMapSound";
             this.cmbMapSound.Size = new System.Drawing.Size(129, 21);
             this.cmbMapSound.TabIndex = 10;
-            this.cmbMapSound.SelectedIndexChanged += new System.EventHandler(this.cmbMapSound_SelectedIndexChanged);
             // 
             // label5
             // 
@@ -1175,16 +967,200 @@ namespace Intersect_Editor.Forms
             this.label5.TabIndex = 9;
             this.label5.Text = "Map Sound:";
             // 
+            // cmbMapMusic
+            // 
+            this.cmbMapMusic.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbMapMusic.FormattingEnabled = true;
+            this.cmbMapMusic.Location = new System.Drawing.Point(74, 41);
+            this.cmbMapMusic.Name = "cmbMapMusic";
+            this.cmbMapMusic.Size = new System.Drawing.Size(129, 21);
+            this.cmbMapMusic.TabIndex = 8;
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(6, 44);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(62, 13);
+            this.label4.TabIndex = 7;
+            this.label4.Text = "Map Music:";
+            // 
+            // lblCloseMapProperties
+            // 
+            this.lblCloseMapProperties.AutoSize = true;
+            this.lblCloseMapProperties.Location = new System.Drawing.Point(276, 7);
+            this.lblCloseMapProperties.Name = "lblCloseMapProperties";
+            this.lblCloseMapProperties.Size = new System.Drawing.Size(14, 13);
+            this.lblCloseMapProperties.TabIndex = 6;
+            this.lblCloseMapProperties.Text = "X";
+            // 
+            // grpMapNPCS
+            // 
+            this.grpMapNPCS.Controls.Add(this.grpManage);
+            this.grpMapNPCS.Controls.Add(this.grpSpawnLoc);
+            this.grpMapNPCS.Controls.Add(this.lstMapNpcs);
+            this.grpMapNPCS.Location = new System.Drawing.Point(9, 124);
+            this.grpMapNPCS.Name = "grpMapNPCS";
+            this.grpMapNPCS.Size = new System.Drawing.Size(200, 342);
+            this.grpMapNPCS.TabIndex = 4;
+            this.grpMapNPCS.TabStop = false;
+            this.grpMapNPCS.Text = "Map NPCs";
+            // 
+            // grpManage
+            // 
+            this.grpManage.Controls.Add(this.btnRemoveMapNpc);
+            this.grpManage.Controls.Add(this.btnAddMapNpc);
+            this.grpManage.Controls.Add(this.cmbNpc);
+            this.grpManage.Location = new System.Drawing.Point(8, 260);
+            this.grpManage.Name = "grpManage";
+            this.grpManage.Size = new System.Drawing.Size(188, 76);
+            this.grpManage.TabIndex = 9;
+            this.grpManage.TabStop = false;
+            this.grpManage.Text = "Add/Remove Map NPCs";
+            // 
+            // btnRemoveMapNpc
+            // 
+            this.btnRemoveMapNpc.Location = new System.Drawing.Point(107, 47);
+            this.btnRemoveMapNpc.Name = "btnRemoveMapNpc";
+            this.btnRemoveMapNpc.Size = new System.Drawing.Size(75, 23);
+            this.btnRemoveMapNpc.TabIndex = 6;
+            this.btnRemoveMapNpc.Text = "Remove";
+            this.btnRemoveMapNpc.UseVisualStyleBackColor = true;
+            this.btnRemoveMapNpc.Click += new System.EventHandler(this.btnRemoveMapNpc_Click);
+            // 
+            // btnAddMapNpc
+            // 
+            this.btnAddMapNpc.Location = new System.Drawing.Point(9, 47);
+            this.btnAddMapNpc.Name = "btnAddMapNpc";
+            this.btnAddMapNpc.Size = new System.Drawing.Size(75, 23);
+            this.btnAddMapNpc.TabIndex = 5;
+            this.btnAddMapNpc.Text = "Add";
+            this.btnAddMapNpc.UseVisualStyleBackColor = true;
+            this.btnAddMapNpc.Click += new System.EventHandler(this.btnAddMapNpc_Click);
+            // 
+            // cmbNpc
+            // 
+            this.cmbNpc.FormattingEnabled = true;
+            this.cmbNpc.Location = new System.Drawing.Point(6, 13);
+            this.cmbNpc.Name = "cmbNpc";
+            this.cmbNpc.Size = new System.Drawing.Size(176, 21);
+            this.cmbNpc.TabIndex = 4;
+            this.cmbNpc.SelectedIndexChanged += new System.EventHandler(this.cmbNpc_SelectedIndexChanged);
+            // 
+            // grpSpawnLoc
+            // 
+            this.grpSpawnLoc.Controls.Add(this.cmbDir);
+            this.grpSpawnLoc.Controls.Add(this.lblDir);
+            this.grpSpawnLoc.Controls.Add(this.rbRandom);
+            this.grpSpawnLoc.Controls.Add(this.rbDeclared);
+            this.grpSpawnLoc.Location = new System.Drawing.Point(6, 173);
+            this.grpSpawnLoc.Name = "grpSpawnLoc";
+            this.grpSpawnLoc.Size = new System.Drawing.Size(188, 81);
+            this.grpSpawnLoc.TabIndex = 7;
+            this.grpSpawnLoc.TabStop = false;
+            this.grpSpawnLoc.Text = "Spawn Location: Random";
+            // 
+            // cmbDir
+            // 
+            this.cmbDir.FormattingEnabled = true;
+            this.cmbDir.Items.AddRange(new object[] {
+            "Random",
+            "Up",
+            "Down",
+            "Left",
+            "Right"});
+            this.cmbDir.Location = new System.Drawing.Point(5, 54);
+            this.cmbDir.Name = "cmbDir";
+            this.cmbDir.Size = new System.Drawing.Size(177, 21);
+            this.cmbDir.TabIndex = 3;
+            this.cmbDir.SelectedIndexChanged += new System.EventHandler(this.cmbDir_SelectedIndexChanged);
+            // 
+            // lblDir
+            // 
+            this.lblDir.AutoSize = true;
+            this.lblDir.Location = new System.Drawing.Point(5, 40);
+            this.lblDir.Name = "lblDir";
+            this.lblDir.Size = new System.Drawing.Size(52, 13);
+            this.lblDir.TabIndex = 2;
+            this.lblDir.Text = "Direction:";
+            // 
+            // rbRandom
+            // 
+            this.rbRandom.AutoSize = true;
+            this.rbRandom.Checked = true;
+            this.rbRandom.Location = new System.Drawing.Point(117, 20);
+            this.rbRandom.Name = "rbRandom";
+            this.rbRandom.Size = new System.Drawing.Size(65, 17);
+            this.rbRandom.TabIndex = 1;
+            this.rbRandom.TabStop = true;
+            this.rbRandom.Text = "Random";
+            this.rbRandom.UseVisualStyleBackColor = true;
+            this.rbRandom.Click += new System.EventHandler(this.rbRandom_Click);
+            // 
+            // rbDeclared
+            // 
+            this.rbDeclared.AutoSize = true;
+            this.rbDeclared.Location = new System.Drawing.Point(9, 20);
+            this.rbDeclared.Name = "rbDeclared";
+            this.rbDeclared.Size = new System.Drawing.Size(68, 17);
+            this.rbDeclared.TabIndex = 0;
+            this.rbDeclared.Text = "Declared";
+            this.rbDeclared.UseVisualStyleBackColor = true;
+            // 
+            // lstMapNpcs
+            // 
+            this.lstMapNpcs.FormattingEnabled = true;
+            this.lstMapNpcs.Location = new System.Drawing.Point(6, 19);
+            this.lstMapNpcs.Name = "lstMapNpcs";
+            this.lstMapNpcs.Size = new System.Drawing.Size(188, 147);
+            this.lstMapNpcs.TabIndex = 0;
+            this.lstMapNpcs.Click += new System.EventHandler(this.lstMapNpcs_Click);
+            // 
+            // chkIndoors
+            // 
+            this.chkIndoors.AutoSize = true;
+            this.chkIndoors.Location = new System.Drawing.Point(9, 101);
+            this.chkIndoors.Name = "chkIndoors";
+            this.chkIndoors.Size = new System.Drawing.Size(106, 17);
+            this.chkIndoors.TabIndex = 3;
+            this.chkIndoors.Text = "Is an Indoor Map";
+            this.chkIndoors.UseVisualStyleBackColor = true;
+            // 
+            // txtMapName
+            // 
+            this.txtMapName.Location = new System.Drawing.Point(74, 17);
+            this.txtMapName.Name = "txtMapName";
+            this.txtMapName.Size = new System.Drawing.Size(129, 20);
+            this.txtMapName.TabIndex = 2;
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(6, 20);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(62, 13);
+            this.label1.TabIndex = 1;
+            this.label1.Text = "Map Name:";
+            // 
+            // btnCloseProperties
+            // 
+            this.btnCloseProperties.Location = new System.Drawing.Point(943, 603);
+            this.btnCloseProperties.Name = "btnCloseProperties";
+            this.btnCloseProperties.Size = new System.Drawing.Size(75, 23);
+            this.btnCloseProperties.TabIndex = 0;
+            this.btnCloseProperties.Text = "Close";
+            this.btnCloseProperties.UseVisualStyleBackColor = true;
+            // 
             // FrmMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1020, 682);
-            this.Controls.Add(this.grpMapProperties);
             this.Controls.Add(this.vScrollMap);
             this.Controls.Add(this.hScrollMap);
             this.Controls.Add(this.grpMap);
             this.Controls.Add(this.menuStrip);
+            this.Controls.Add(this.grpMapProperties);
             this.Controls.Add(this.grpAttributes);
             this.Controls.Add(this.grpLightEditor);
             this.Controls.Add(this.grpMapList);
@@ -1204,27 +1180,25 @@ namespace Intersect_Editor.Forms
             ((System.ComponentModel.ISupportInitialize)(this.picTileset)).EndInit();
             this.grpMapList.ResumeLayout(false);
             this.grpMapList.PerformLayout();
+            this.grpLightEditor.ResumeLayout(false);
+            this.grpLightEditor.PerformLayout();
+            this.grpAttributes.ResumeLayout(false);
+            this.grpAttributes.PerformLayout();
+            this.grpItem.ResumeLayout(false);
+            this.grpItem.PerformLayout();
+            this.grpWarp.ResumeLayout(false);
+            this.grpWarp.PerformLayout();
+            this.grpZDimension.ResumeLayout(false);
+            this.grpGateway.ResumeLayout(false);
+            this.grpGateway.PerformLayout();
+            this.grpDimBlock.ResumeLayout(false);
+            this.grpDimBlock.PerformLayout();
             this.grpMapProperties.ResumeLayout(false);
             this.grpMapProperties.PerformLayout();
             this.grpMapNPCS.ResumeLayout(false);
             this.grpManage.ResumeLayout(false);
             this.grpSpawnLoc.ResumeLayout(false);
             this.grpSpawnLoc.PerformLayout();
-            this.grpLightEditor.ResumeLayout(false);
-            this.grpLightEditor.PerformLayout();
-            this.grpAttributes.ResumeLayout(false);
-            this.grpAttributes.PerformLayout();
-            this.grpZDimension.ResumeLayout(false);
-            this.grpGateway.ResumeLayout(false);
-            this.grpGateway.PerformLayout();
-            this.grpDimBlock.ResumeLayout(false);
-            this.grpDimBlock.PerformLayout();
-            this.grpNPCSpawn.ResumeLayout(false);
-            this.grpNPCSpawn.PerformLayout();
-            this.grpItem.ResumeLayout(false);
-            this.grpItem.PerformLayout();
-            this.grpWarp.ResumeLayout(false);
-            this.grpWarp.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -1261,10 +1235,6 @@ namespace Intersect_Editor.Forms
         private System.Windows.Forms.Label lblCloseMapList;
         private System.Windows.Forms.ListBox lstGameMaps;
         private System.Windows.Forms.ToolStripMenuItem mapPropertiesToolStripMenuItem;
-        private System.Windows.Forms.GroupBox grpMapProperties;
-        private System.Windows.Forms.Button btnCloseProperties;
-        private System.Windows.Forms.TextBox txtMapName;
-        private System.Windows.Forms.Label label1;
         private System.Windows.Forms.ToolStripMenuItem nightTimeToolStripMenuItem;
         private System.Windows.Forms.GroupBox grpLightEditor;
         private System.Windows.Forms.HScrollBar scrlLightRange;
@@ -1279,7 +1249,6 @@ namespace Intersect_Editor.Forms
         private System.Windows.Forms.Label lblOffsetX;
         private System.Windows.Forms.Button btnLightEditorRevert;
         private System.Windows.Forms.Button btnLightEditorClose;
-        private System.Windows.Forms.CheckBox chkIndoors;
         private System.Windows.Forms.ToolStripMenuItem hihiToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem contentEditorsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem itemEditorToolStripMenuItem;
@@ -1290,7 +1259,6 @@ namespace Intersect_Editor.Forms
         private ToolStripMenuItem npcEditorToolStripMenuItem;
         private ToolStripMenuItem spellEditorToolStripMenuItem;
         private ToolStripMenuItem animationEditorToolStripMenuItem;
-        private RadioButton rbNPCSpawn;
         private RadioButton rbWarp;
         private RadioButton rbNPCAvoid;
         private RadioButton rbZDimension;
@@ -1314,9 +1282,11 @@ namespace Intersect_Editor.Forms
         private RadioButton rbBlock2;
         private RadioButton rbBlock1;
         private RadioButton rbBlockNone;
-        private GroupBox grpNPCSpawn;
-        private HScrollBar scrlNpcSpawn;
-        private Label lblNpcSpawn;
+        private GroupBox grpMapProperties;
+        private ComboBox cmbMapSound;
+        private Label label5;
+        private ComboBox cmbMapMusic;
+        private Label label4;
         private Label lblCloseMapProperties;
         private GroupBox grpMapNPCS;
         private GroupBox grpManage;
@@ -1327,10 +1297,12 @@ namespace Intersect_Editor.Forms
         private RadioButton rbRandom;
         private RadioButton rbDeclared;
         private ListBox lstMapNpcs;
-        private ComboBox cmbMapMusic;
-        private Label label4;
-        private ComboBox cmbMapSound;
-        private Label label5;
+        private CheckBox chkIndoors;
+        private TextBox txtMapName;
+        private Label label1;
+        private Button btnCloseProperties;
+        private ComboBox cmbDir;
+        private Label lblDir;
     }
 }
 

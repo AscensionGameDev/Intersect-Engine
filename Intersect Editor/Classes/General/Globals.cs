@@ -60,6 +60,7 @@ namespace Intersect_Editor.Classes
         public static int MouseY;
         public static int MouseButton = -1;
         public static int CurrentLayer = 0;
+        public static bool ViewingMapProperties = false;
 
         public static Light BackupLight;
         public static Light EditingLight;

@@ -51,6 +51,7 @@ namespace Intersect_Client.Classes
         //Properties
         public string Music = "";
         public string Sound = "";
+        public List<NpcSpawn> Spawns = new List<NpcSpawn>();
         public bool IsIndoors;
 
         //Temporary Values
@@ -94,6 +95,9 @@ namespace Intersect_Client.Classes
         //Load
         private void Load()
         {
+            var npcCount = 0;
+            NpcSpawn TempNpc = new NpcSpawn();
+
             var bf = new ByteBuffer();
             bf.WriteBytes(MyPacket);
             MyName = bf.ReadString();
@@ -104,6 +108,20 @@ namespace Intersect_Client.Classes
             Music = bf.ReadString();
             Sound = bf.ReadString();
             IsIndoors = Convert.ToBoolean(bf.ReadInteger());
+
+            // Load Map Npcs
+            Spawns.Clear();
+            npcCount = bf.ReadInteger();
+            for (var i = 0; i < npcCount; i++)
+            {
+                TempNpc = new NpcSpawn();
+                TempNpc.NpcNum = bf.ReadInteger();
+                TempNpc.X = bf.ReadInteger();
+                TempNpc.Y = bf.ReadInteger();
+                TempNpc.Dir = bf.ReadInteger();
+                Spawns.Add(TempNpc);
+            }
+
             for (var i = 0; i < Constants.LayerCount; i++)
             {
                 for (var x = 0; x < Constants.MapWidth; x++)
@@ -345,5 +363,13 @@ namespace Intersect_Client.Classes
             Intensity = myBuffer.ReadDouble();
             Range = myBuffer.ReadInteger();
         }
+    }
+
+    public class NpcSpawn
+    {
+        public int NpcNum;
+        public int X;
+        public int Y;
+        public int Dir;
     }
 }

@@ -83,6 +83,17 @@ namespace Intersect_Editor.Classes
             bf.WriteString(Music);
             bf.WriteString(Sound);
             bf.WriteInteger(Convert.ToInt32(IsIndoors));
+
+            // Save Map Npcs
+            bf.WriteInteger(Spawns.Count);
+            for (var i = 0; i < Spawns.Count; i++)
+            {
+                bf.WriteInteger(Spawns[i].NpcNum);
+                bf.WriteInteger(Spawns[i].X);
+                bf.WriteInteger(Spawns[i].Y);
+                bf.WriteInteger(Spawns[i].Dir);
+            }
+
             for (var i = 0; i < Constants.LayerCount; i++)
             {
                 for (var x = 0; x < Constants.MapWidth; x++)
@@ -122,6 +133,9 @@ namespace Intersect_Editor.Classes
         }
         public void Load(byte[] myArr)
         {
+            var npcCount = 0;
+            NpcSpawn TempNpc = new NpcSpawn();
+
             var bf = new ByteBuffer();
             bf.WriteBytes(myArr);
             MyName = bf.ReadString();
@@ -132,6 +146,20 @@ namespace Intersect_Editor.Classes
             Music = bf.ReadString();
             Sound = bf.ReadString();
             IsIndoors = Convert.ToBoolean(bf.ReadInteger());
+
+            // Load Map Npcs
+            Spawns.Clear();
+            npcCount = bf.ReadInteger();
+            for (var i = 0; i < npcCount; i++)
+            {
+                TempNpc = new NpcSpawn();
+                TempNpc.NpcNum = bf.ReadInteger();
+                TempNpc.X = bf.ReadInteger();
+                TempNpc.Y = bf.ReadInteger();
+                TempNpc.Dir = bf.ReadInteger();
+                Spawns.Add(TempNpc);
+            }
+
             for (var i = 0; i < Constants.LayerCount; i++)
             {
                 for (var x = 0; x < Constants.MapWidth; x++)
