@@ -45,7 +45,8 @@ namespace Intersect_Server.Classes
         public List<EventStruct> Events = new List<EventStruct>();
 
         //Properties
-        private string _bgm = "";
+        private string _music = "None";
+        private string _sound = "None";
         public List<NpcSpawn> Spawns = new List<NpcSpawn>();
         public bool IsIndoors;
 
@@ -98,7 +99,8 @@ namespace Intersect_Server.Classes
             bf.WriteInteger(Down);
             bf.WriteInteger(Left);
             bf.WriteInteger(Right);
-            bf.WriteString(_bgm);
+            bf.WriteString(_music);
+            bf.WriteString(_sound);
             bf.WriteInteger(Convert.ToInt32(IsIndoors));
             for (var i = 0; i < Constants.LayerCount; i++)
             {
@@ -151,7 +153,8 @@ namespace Intersect_Server.Classes
             Down = bf.ReadInteger();
             Left = bf.ReadInteger();
             Right = bf.ReadInteger();
-            _bgm = bf.ReadString();
+            _music = bf.ReadString();
+            _sound = bf.ReadString();
             IsIndoors = Convert.ToBoolean(bf.ReadInteger());
             for (var i = 0; i < Constants.LayerCount; i++)
             {

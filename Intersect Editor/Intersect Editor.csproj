@@ -74,6 +74,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Classes\Core\Sounds.cs" />
     <Compile Include="Classes\Game Objects\AnimationStruct.cs" />
     <Compile Include="Classes\Core\Audio.cs" />
     <Compile Include="Classes\Misc\ByteBuffer.cs" />

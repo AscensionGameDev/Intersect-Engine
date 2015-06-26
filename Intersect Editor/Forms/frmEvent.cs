@@ -49,18 +49,6 @@ namespace Intersect_Editor.Forms
         {
             grpNewCommands.BringToFront();
             grpCreateCommands.BringToFront();
-            cmbEventSprite.Items.Clear();
-            cmbEventSprite.Items.Add("None");
-            for (int i = 0; i < Graphics.EntityFileNames.Length; i++)
-            {
-                cmbEventSprite.Items.Add(Graphics.EntityFileNames[i]);
-            }
-            cmbPreviewFace.Items.Clear();
-            cmbPreviewFace.Items.Add("None");
-            for (int i = 0; i < Graphics.FaceFileNames.Count; i++)
-            {
-                cmbPreviewFace.Items.Add(Graphics.FaceFileNames[i]);
-            }
         }
 
         private void frmEvent_FormClosing(object sender, FormClosingEventArgs e)
@@ -89,6 +77,18 @@ namespace Intersect_Editor.Forms
             {
                 cmbCond1.Items.Add("Switch " + (i + 1));
                 cmbCond2.Items.Add("Switch " + (i + 1));
+            }
+            cmbEventSprite.Items.Clear();
+            cmbEventSprite.Items.Add("None");
+            for (int i = 0; i < Graphics.EntityFileNames.Length; i++)
+            {
+                cmbEventSprite.Items.Add(Graphics.EntityFileNames[i]);
+            }
+            cmbPreviewFace.Items.Clear();
+            cmbPreviewFace.Items.Add("None");
+            for (int i = 0; i < Graphics.FaceFileNames.Count; i++)
+            {
+                cmbPreviewFace.Items.Add(Graphics.FaceFileNames[i]);
             }
             LoadPage(0);
         }

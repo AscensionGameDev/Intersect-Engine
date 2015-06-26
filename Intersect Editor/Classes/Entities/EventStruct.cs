@@ -83,7 +83,7 @@ namespace Intersect_Editor.Classes
         public int Graphicx;
         public int Graphicy;
         public int HideName;
-        public int DisablePreview;
+        public int DisablePreview = 1;
         public List<CommandList> CommandLists = new List<CommandList>();
 
         public EventPage()

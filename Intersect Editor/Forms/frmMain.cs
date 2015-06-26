@@ -59,6 +59,8 @@ namespace Intersect_Editor.Forms
         {
             EnterMap(0);
             Graphics.InitSfml(this);
+            Sounds.Init();
+            UpdateSoundLists();
             UpdateScrollBars();
             InitLayerMenu();
             cmbAutotile.SelectedIndex = 0;
@@ -144,6 +146,21 @@ namespace Intersect_Editor.Forms
                 vScrollTileset.Enabled = false;
             }
         }
+        private void UpdateSoundLists()
+        {
+            cmbMapMusic.Items.Clear();
+            cmbMapMusic.Items.Add("None");
+            for (int i = 0; i < Sounds.MusicFiles.Count; i++)
+            {
+                cmbMapMusic.Items.Add(Sounds.MusicFiles[i]);
+            }
+            cmbMapSound.Items.Clear();
+            cmbMapSound.Items.Add("None");
+            for (int i = 0; i < Sounds.SoundFiles.Count; i++)
+            {
+                cmbMapSound.Items.Add(Sounds.SoundFiles[i]);
+            }
+        }
         protected override void OnResize(EventArgs e)
         {
             base.OnResize(e);
@@ -220,6 +237,8 @@ namespace Intersect_Editor.Forms
             grpMapProperties.BringToFront();
             txtMapName.Text = Globals.GameMaps[Globals.CurrentMap].MyName;
             chkIndoors.Checked = Globals.GameMaps[Globals.CurrentMap].IsIndoors;
+            cmbMapMusic.SelectedIndex = cmbMapMusic.Items.IndexOf(Globals.GameMaps[Globals.CurrentMap].Music);
+            cmbMapSound.SelectedIndex = cmbMapSound.Items.IndexOf(Globals.GameMaps[Globals.CurrentMap].Sound);
             grpMapProperties.Show();
         }
         private void nightTimeToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1201,6 +1220,16 @@ namespace Intersect_Editor.Forms
         private void lblCloseMapProperties_Click(object sender, EventArgs e)
         {
             grpMapProperties.Visible = false;
+        }
+
+        private void cmbMapMusic_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            Globals.GameMaps[Globals.CurrentMap].Music = cmbMapMusic.Text;
+        }
+
+        private void cmbMapSound_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            Globals.GameMaps[Globals.CurrentMap].Sound = cmbMapSound.Text;
         }
 
         

@@ -1,4 +1,4 @@
-/*
+﻿/*
     Intersect Game Engine (Server)
     Copyright (C) 2015  JC Snider, Joe Bridges
     
@@ -20,28 +20,35 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 using System.Reflection;
+using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 
-// Information about this assembly is defined by the following attributes. 
-// Change them to the values specific to your project.
-
+// General Information about an assembly is controlled through the following 
+// set of attributes. Change these attribute values to modify the information
+// associated with an assembly.
 [assembly: AssemblyTitle("Intersect Server")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("2D ORPG Server - Part of the Intersect Game Creation Suite")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("")]
-[assembly: AssemblyCopyright("JC Snider")]
+[assembly: AssemblyCompany("Ascension Game Development")]
+[assembly: AssemblyProduct("Intersect Server")]
+[assembly: AssemblyCopyright("Copyright ©  2015 JC Snider, Joe Bridges")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
-// The assembly version has the format "{Major}.{Minor}.{Build}.{Revision}".
-// The form "{Major}.{Minor}.*" will automatically update the build and revision,
-// and "{Major}.{Minor}.{Build}.*" will update just the revision.
+// Setting ComVisible to false makes the types in this assembly not visible 
+// to COM components.  If you need to access a type in this assembly from 
+// COM, set the ComVisible attribute to true on that type.
+[assembly: ComVisible(false)]
 
-[assembly: AssemblyVersion("1.0.*")]
+// The following GUID is for the ID of the typelib if this project is exposed to COM
+[assembly: Guid("d9a84016-2d74-4a16-9ccd-30a85bec071d")]
 
-// The following attributes are used to specify the signing key for the assembly, 
-// if desired. See the Mono documentation for more information about signing.
-
-//[assembly: AssemblyDelaySign(false)]
-//[assembly: AssemblyKeyFile("")]
-
+// Version information for an assembly consists of the following four values:
+//
+//      Major Version
+//      Minor Version 
+//      Build Number
+//      Revision
+//
+[assembly: AssemblyVersion("1.0.0.0")]
+[assembly: AssemblyFileVersion("1.0.0.0")]

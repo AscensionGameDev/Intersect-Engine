@@ -46,6 +46,10 @@ namespace Intersect_Client
             //Load Graphics
             Graphics.InitGraphics();
 
+            //Load Sounds
+            Sounds.Init();
+            Sounds.PlayMusic(Globals.MenuBGM,3,3,true);
+
             //Init Network
             Network.InitNetwork();
 
@@ -54,6 +58,7 @@ namespace Intersect_Client
             {
                 Network.CheckNetwork();
                 Graphics.DrawGame();
+                Sounds.Update();
                 if (Globals.GameState == 0)
                 {
                     ProcessMenu();
@@ -146,6 +151,12 @@ namespace Intersect_Client
                 if (Globals.AnimFrame == 3) { Globals.AnimFrame = 0; }
                 _animTimer = Environment.TickCount + 500;
             }
+        }
+
+        public static void JoinGame()
+        {
+            Globals.LoggedIn = true;
+            Sounds.StopMusic(3f);
         }
 
         

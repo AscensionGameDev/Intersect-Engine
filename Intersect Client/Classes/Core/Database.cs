@@ -56,6 +56,7 @@ namespace Intersect_Client.Classes
                 writer.WriteElementString("FullScreen", "False");
                 writer.WriteElementString("Sound", "True");
                 writer.WriteElementString("Music", "True");
+                writer.WriteElementString("MenuBGM", "");
                 writer.WriteEndElement();
                 writer.WriteEndDocument();
                 writer.Flush();
@@ -85,6 +86,9 @@ namespace Intersect_Client.Classes
                     selectSingleNode = options.SelectSingleNode("//Config/Music");
                     if (selectSingleNode != null)
                         Globals.MusicEnabled = Boolean.Parse(selectSingleNode.InnerText);
+                    selectSingleNode = options.SelectSingleNode("//Config/MenuBGM");
+                    if (selectSingleNode != null)
+                        Globals.MenuBGM = selectSingleNode.InnerText;
                 }
                 catch (Exception)
                 {
@@ -107,6 +111,7 @@ namespace Intersect_Client.Classes
                 writer.WriteElementString("FullScreen", Graphics.FullScreen.ToString());
                 writer.WriteElementString("Sound", Globals.SoundEnabled.ToString());
                 writer.WriteElementString("Music", Globals.MusicEnabled.ToString());
+                writer.WriteElementString("MenuBGM", Globals.MenuBGM);
                 writer.WriteEndElement();
                 writer.WriteEndDocument();
                 writer.Flush();

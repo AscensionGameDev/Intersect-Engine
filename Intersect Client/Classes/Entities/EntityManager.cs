@@ -59,11 +59,6 @@ namespace Intersect_Client.Classes
             return Globals.Events[i];
         }
 
-        public static void JoinGame()
-        {
-            Globals.LoggedIn = true;
-        }
-
         public static void RemoveEntity(int index, int isEvent)
         {
             if (isEvent == 1)

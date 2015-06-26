@@ -49,7 +49,8 @@ namespace Intersect_Client.Classes
         public List<LightObj> Lights = new List<LightObj>();
 
         //Properties
-        public string Bgm;
+        public string Music = "";
+        public string Sound = "";
         public bool IsIndoors;
 
         //Temporary Values
@@ -100,7 +101,8 @@ namespace Intersect_Client.Classes
             Down = bf.ReadInteger();
             Left = bf.ReadInteger();
             Right = bf.ReadInteger();
-            Bgm = bf.ReadString();
+            Music = bf.ReadString();
+            Sound = bf.ReadString();
             IsIndoors = Convert.ToBoolean(bf.ReadInteger());
             for (var i = 0; i < Constants.LayerCount; i++)
             {

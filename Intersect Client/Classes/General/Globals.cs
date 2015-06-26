@@ -36,10 +36,14 @@ namespace Intersect_Client.Classes
     public static class Globals
     {
 
+        //Game Options
         public static string ServerHost = "localhost";
         public static int ServerPort = 4500;
         public static bool SoundEnabled;
         public static bool MusicEnabled;
+        public static string MenuBGM = "";
+
+        //Scene management
         public static bool WaitingOnServer = false;
         public static bool JoiningGame = false;
 

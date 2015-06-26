@@ -136,7 +136,7 @@ namespace Intersect_Client.Classes
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
             Globals.MyIndex = (int)bf.ReadLong();
-            EntityManager.JoinGame();
+            GameMain.JoinGame();
             Globals.JoiningGame = true;
         }
 
@@ -148,7 +148,8 @@ namespace Intersect_Client.Classes
             var mapLength = bf.ReadLong();
             var mapData = bf.ReadBytes((int)mapLength);
             Globals.GameMaps[mapNum] = new MapStruct((int)mapNum, mapData);
-
+            if ((mapNum) == Globals.LocalMaps[4]) { 
+                Sounds.PlayMusic(Globals.GameMaps[mapNum].Music, 3,3, true); }
 
         }
 
@@ -275,6 +276,13 @@ namespace Intersect_Client.Classes
                 {
                     PacketSender.SendNeedMap(Globals.LocalMaps[i]);
                 }
+                else
+                {
+                    if (i == 4)
+                    {
+                        Sounds.PlayMusic(Globals.GameMaps[Globals.LocalMaps[i]].Music, 3,3, true);
+                    }
+                }
             }
             for (var i = 0; i < Globals.GameMaps.Length; i++)
             {
@@ -288,7 +296,7 @@ namespace Intersect_Client.Classes
                     }
                     if (x == 8)
                     {
-                        Globals.GameMaps[i].ClearCache();
+                        //Globals.GameMaps[i].ClearCache();
                     }
                 }
             }

@@ -45,7 +45,8 @@ namespace Intersect_Editor.Classes
 
         //Properties
         public List<NpcSpawn> Spawns = new List<NpcSpawn>();
-        public string Bgm;
+        public string Music = "";
+        public string Sound = "";
         public bool IsIndoors;
 
         //Temporary Values
@@ -79,7 +80,8 @@ namespace Intersect_Editor.Classes
             bf.WriteInteger(Down);
             bf.WriteInteger(Left);
             bf.WriteInteger(Right);
-            bf.WriteString(Bgm);
+            bf.WriteString(Music);
+            bf.WriteString(Sound);
             bf.WriteInteger(Convert.ToInt32(IsIndoors));
             for (var i = 0; i < Constants.LayerCount; i++)
             {
@@ -127,7 +129,8 @@ namespace Intersect_Editor.Classes
             Down = bf.ReadInteger();
             Left = bf.ReadInteger();
             Right = bf.ReadInteger();
-            Bgm = bf.ReadString();
+            Music = bf.ReadString();
+            Sound = bf.ReadString();
             IsIndoors = Convert.ToBoolean(bf.ReadInteger());
             for (var i = 0; i < Constants.LayerCount; i++)
             {

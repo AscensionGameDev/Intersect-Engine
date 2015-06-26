@@ -108,7 +108,7 @@ namespace Intersect_Server.Classes
             SendEntityVitalsTo(client, sendIndex,entityType,en);
             SendEntityStatsTo(client, sendIndex,entityType,en);
 
-            if (client.EntityIndex == sendIndex)
+            if (en == client.Entity)
             {
                 PacketSender.SendInventory(client);
                 PacketSender.SendPlayerSpells(client);

@@ -52,7 +52,6 @@
     <Compile Include="Classes\Entities\Event.cs" />
     <Compile Include="Classes\Entities\EventStruct.cs" />
     <Compile Include="Classes\Core\Main.cs" />
-    <Compile Include="Classes\Core\AssemblyInfo.cs" />
     <Compile Include="Classes\Items\ItemInstance.cs" />
     <Compile Include="Classes\Networking\Network.cs" />
     <Compile Include="Classes\Networking\Client.cs" />
@@ -71,10 +70,13 @@
     <Compile Include="Classes\Core\ServerLoop.cs" />
     <Compile Include="Classes\Game Objects\SpellStruct.cs" />
     <Compile Include="Classes\Spells\SpellInstance.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Classes\Core\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Properties\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>
