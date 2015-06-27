@@ -47,6 +47,18 @@ namespace Intersect_Client.Classes
             return Globals.Entities[i];
         }
 
+        public static Entity AddEntity(int index)
+        {
+            var i = index;
+            while (Globals.Entities.Count <= index)
+            {
+                Globals.Entities.Add(null);
+            }
+            if (Globals.Entities[i] != null) { RemoveEntity(i, 0); }
+            Globals.Entities[i] = new Entity();
+            return Globals.Entities[i];
+        }
+
         public static Entity AddEvent(int index)
         {
             var i = index;

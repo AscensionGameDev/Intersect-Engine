@@ -29,7 +29,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Intersect_Client.Classes.NPCs
+namespace Intersect_Client.Classes
 {
     public class NpcStruct
     {

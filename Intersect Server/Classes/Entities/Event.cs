@@ -32,8 +32,7 @@ namespace Intersect_Server.Classes
         public int MovementSpeed;
         public EventStruct BaseEvent;
         public int MyPage;
-        public Event(EventStruct myEvent, int pageIndex, int myIndex, int mapNum)
-            : base(myIndex)
+        public Event(EventStruct myEvent, int pageIndex, int myIndex, int mapNum) : base()
         {
             BaseEvent = myEvent;
             MyPage = pageIndex;

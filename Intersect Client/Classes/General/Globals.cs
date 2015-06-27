@@ -26,7 +26,6 @@
 */
 using Intersect_Client.Classes.Animations;
 using Intersect_Client.Classes.Items;
-using Intersect_Client.Classes.NPCs;
 using Intersect_Client.Classes.Spells;
 using System.Collections;
 using System.Collections.Generic;

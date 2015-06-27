@@ -52,9 +52,8 @@ namespace Intersect_Server.Classes
         public long MoveTimer;
         
         //Initialization
-        public Entity(int index)
+        public Entity()
         {
-            MyIndex = index;
             //HP
             MaxVital[(int)Enums.Vitals.Health] = 100;
             Vital[(int)Enums.Vitals.Health] = 100;

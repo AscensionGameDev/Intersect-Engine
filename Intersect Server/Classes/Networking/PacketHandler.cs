@@ -429,7 +429,14 @@ namespace Intersect_Server.Classes
             {
                 if (Globals.Entities[i] != null)
                 {
-                    PacketSender.SendEntityData(client, i, 0, Globals.Entities[i]);
+                    if (Globals.Entities[i].GetType() == typeof (Npc) )
+                    {
+                        PacketSender.SendEntityData(client, i, 2, Globals.Entities[i]);
+                    }
+                    else
+                    {
+                        PacketSender.SendEntityData(client, i, 0, Globals.Entities[i]);
+                    }
                 }
             }
             for (var i = 0; i < Globals.Clients.Count; i++)

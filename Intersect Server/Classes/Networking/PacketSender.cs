@@ -678,7 +678,7 @@ namespace Intersect_Server.Classes
         {
             var bf = new ByteBuffer();
             bf.WriteLong((int)Enums.ServerPackets.PlayerEquipment);
-            bf.WriteInteger(en.MyIndex);
+            bf.WriteInteger(en.MyClient.EntityIndex);
             for (int i = 0; i < Enums.EquipmentSlots.Count; i++ )
             {
                 bf.WriteInteger(en.Equipment[i]);
@@ -690,7 +690,7 @@ namespace Intersect_Server.Classes
         {
             var bf = new ByteBuffer();
             bf.WriteLong((int)Enums.ServerPackets.PlayerEquipment);
-            bf.WriteInteger(en.MyIndex);
+            bf.WriteInteger(en.MyClient.EntityIndex);
             for (int i = 0; i < Enums.EquipmentSlots.Count; i++ )
             {
                 bf.WriteInteger(en.Equipment[i]);
@@ -717,6 +717,25 @@ namespace Intersect_Server.Classes
                 bf.WriteInteger(client.Entity.Hotbar[i].Slot);
             }
             SendDataTo(client, bf.ToArray());
+            bf.Dispose();
+        }
+
+        public static void SendMapNpcUpdate(int mapNum, int index)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteLong((int)Enums.ServerPackets.MapNpcUpdate);
+            bf.WriteInteger(mapNum);
+            bf.WriteInteger(index);
+            if (Globals.GameMaps[mapNum].Npcs[index].Vital[(int)Enums.Vitals.Health] <= 0)
+            {
+                bf.WriteInteger(0);
+            }
+            else
+            {
+                bf.WriteInteger(1);
+                bf.WriteBytes(Globals.GameMaps[mapNum].Npcs[index].Data());
+            }
+            SendDataToProximity(mapNum, bf.ToArray());
             bf.Dispose();
         }
     }

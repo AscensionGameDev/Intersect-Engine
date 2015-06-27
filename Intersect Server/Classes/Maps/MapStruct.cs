@@ -233,6 +233,15 @@ namespace Intersect_Server.Classes
             }
             ItemRespawns.Clear();
             SpawnAttributeItems();
+
+            //Clear Map Npcs
+            for (int i = 0; i < Npcs.Count; i++)
+            {
+                Npcs[i].Vital[(int)Enums.Vitals.Health] = 0;
+                PacketSender.SendMapNpcUpdate(MyMapNum, i);
+                MapItems.RemoveAt(i);
+            }
+            SpawnMapNpcs();
             //Save();
         }
 
@@ -312,7 +321,51 @@ namespace Intersect_Server.Classes
         //Npcs
         private void SpawnMapNpcs()
         {
+            for (int i = 0; i < Spawns.Count; i++)
+            {
+                spawnMapNpc(i);
+            }
+        }
 
+        private void spawnMapNpc(int i)
+        {
+            int X = 0;
+            int Y = 0;
+            Random rnd = new Random();
+
+            Npcs.Add(new Npc(Globals.GameNpcs[Spawns[i].NpcNum]));
+            if (Spawns[i].X >= 0 && Spawns[i].Y >= 0)
+            {
+                Npcs[i].CurrentX = Spawns[i].X;
+                Npcs[i].CurrentY = Spawns[i].Y;
+            }
+            else
+            {
+                for (int n = 0; n < 100; n++)
+                {
+                    X = rnd.Next(1, Constants.MapWidth);
+                    Y = rnd.Next(1, Constants.MapHeight);
+                    if (Attributes[X, Y].value == (int)Enums.MapAttributes.Walkable)
+                    {
+                        break;
+                    }
+                    X = 0;
+                    Y = 0;
+                }
+                Npcs[i].CurrentX = X;
+                Npcs[i].CurrentY = Y;
+            }
+            if (Spawns[i].Dir >= 0)
+            {
+                Npcs[i].Dir = Spawns[i].Dir;
+            }
+            else
+            {
+                Npcs[i].Dir = rnd.Next(0, 4);
+            }
+            Npcs[i].CurrentMap = MyMapNum;
+            Globals.AddEntity(Npcs[i]);
+            PacketSender.SendMapNpcUpdate(MyMapNum, i);
         }
 
         //Update + Related Functions
@@ -335,6 +388,16 @@ namespace Intersect_Server.Classes
                     {
                         SpawnAttributeItem(ItemRespawns[i].AttributeSpawnX, ItemRespawns[i].AttributeSpawnY);
                         ItemRespawns.RemoveAt(i);
+                    }
+                }
+                for (int i = 0; i < Spawns.Count; i++)
+                {
+                    if (Npcs[i] == null)
+                    {
+                        if (Npcs[i].RespawnTime < Environment.TickCount)
+                        {
+                            spawnMapNpc(i);
+                        }
                     }
                 }
             }

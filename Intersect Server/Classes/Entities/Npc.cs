@@ -39,13 +39,11 @@ namespace Intersect_Server.Classes
 
         //Moving
         public long LastRandomMove;
+        
+        //Respawn
+        public long RespawnTime;
 
-        public Npc(int index): base(index)
-        {
-
-        }
-
-        public Npc(int index, NpcStruct myBase) : base(index) {
+        public Npc(NpcStruct myBase) : base() {
             MyName = myBase.Name;
             MySprite = myBase.Sprite;
             myBase.Stat.CopyTo(Stat,0);

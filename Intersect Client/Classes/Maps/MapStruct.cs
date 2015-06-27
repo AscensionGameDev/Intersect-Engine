@@ -65,6 +65,7 @@ namespace Intersect_Client.Classes
         public RenderTexture[] UpperTextures = new RenderTexture[3];
         public RenderTexture[] PeakTextures = new RenderTexture[3];
         public List<MapItemInstance> MapItems = new List<MapItemInstance>();
+        public List<Npc> Npcs = new List<Npc>();
         public MapSound BackgroundSound;
         public List<MapSound> AttributeSounds = new List<MapSound>();
         

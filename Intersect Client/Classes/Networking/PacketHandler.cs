@@ -26,7 +26,6 @@
 */
 using Intersect_Client.Classes.Animations;
 using Intersect_Client.Classes.Items;
-using Intersect_Client.Classes.NPCs;
 using Intersect_Client.Classes.Spells;
 using System;
 
@@ -125,6 +124,9 @@ namespace Intersect_Client.Classes
                 case Enums.ServerPackets.HotbarSlots:
                     HandleHotbarSlots(bf.ReadBytes(bf.Length()));
                     break;
+                case Enums.ServerPackets.MapNpcUpdate:
+                    HandleMapNpcUpdate(bf.ReadBytes(bf.Length()));
+                    break;
                 default:
                     Console.WriteLine(@"Non implemented packet received: " + packetHeader);
                     break;
@@ -165,10 +167,15 @@ namespace Intersect_Client.Classes
                 Entity en = EntityManager.AddPlayer(i);
                 en.Load(bf);
             }
-            else
+            else if (entityType == 1)
             {
                 Event en = (Event)EntityManager.AddEvent(i);
                 ((Event)en).Load(bf);
+            }
+            else
+            {
+                Entity en = EntityManager.AddEntity(i);
+                en.Load(bf);
             }
             
         }
@@ -196,7 +203,7 @@ namespace Intersect_Client.Classes
                 Graphics.FadeStage = 2;
                 Graphics.FadeAmt = 255.0f;
                 Globals.GameLoaded = false;
-                Globals.LocalMaps[4] = -1;
+                //Globals.LocalMaps[4] = -1;
             }
             else
             {
@@ -619,6 +626,33 @@ namespace Intersect_Client.Classes
             {
                 Globals.Me.Hotbar[i].Type = bf.ReadInteger();
                 Globals.Me.Hotbar[i].Slot = bf.ReadInteger();
+            }
+            bf.Dispose();
+        }
+
+        private static void HandleMapNpcUpdate(byte[] packet)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteBytes(packet);
+            int mapNum = bf.ReadInteger();
+            int index = bf.ReadInteger();
+            if (Globals.GameMaps[mapNum] != null)
+            {
+                if (bf.ReadInteger() == 0)
+                {
+                    if (index < Globals.GameMaps[mapNum].Npcs.Count)
+                    {
+                        Globals.GameMaps[mapNum].Npcs.RemoveAt(index);
+                    }
+                }
+                else
+                {
+                    while (index >= Globals.GameMaps[mapNum].Npcs.Count)
+                    {
+                        Globals.GameMaps[mapNum].Npcs.Add(new Npc(Globals.GameNpcs[0]));
+                    }
+                    Globals.GameMaps[mapNum].Npcs[index].Load(bf);
+                }
             }
             bf.Dispose();
         }
