@@ -160,6 +160,12 @@ namespace Intersect_Editor.Forms
             {
                 cmbMapSound.Items.Add(Sounds.SoundFiles[i]);
             }
+            cmbMapAttributeSound.Items.Clear();
+            cmbMapAttributeSound.Items.Add("None");
+            for (int i = 0; i < Sounds.SoundFiles.Count; i++)
+            {
+                cmbMapAttributeSound.Items.Add(Sounds.SoundFiles[i]);
+            }
         }
         protected override void OnResize(EventArgs e)
         {
@@ -239,17 +245,18 @@ namespace Intersect_Editor.Forms
             txtMapName.Text = Globals.GameMaps[Globals.CurrentMap].MyName;
             chkIndoors.Checked = Globals.GameMaps[Globals.CurrentMap].IsIndoors;
 
-            cmbMapMusic.SelectedIndex = 0;
             if (Globals.GameMaps[Globals.CurrentMap].Music.Length > 0)
             {
                 cmbMapMusic.SelectedIndex = cmbMapMusic.Items.IndexOf(Globals.GameMaps[Globals.CurrentMap].Music);
             }
+            if (cmbMapMusic.SelectedIndex == -1) { cmbMapMusic.SelectedIndex = 0; }
 
-            cmbMapSound.SelectedIndex = 0;
+
             if (Globals.GameMaps[Globals.CurrentMap].Sound.Length > 0)
             {
                 cmbMapSound.SelectedIndex = cmbMapSound.Items.IndexOf(Globals.GameMaps[Globals.CurrentMap].Sound);
             }
+            if (cmbMapSound.SelectedIndex == -1) { cmbMapSound.SelectedIndex = 0; }
 
             // Update the list incase npcs have been modified since form load.
             cmbNpc.Items.Clear();
@@ -1147,6 +1154,7 @@ namespace Intersect_Editor.Forms
             grpItem.Visible = false;
             grpZDimension.Visible = false;
             grpWarp.Visible = false;
+            grpSound.Visible = false;
         }
         private void rbItem_CheckedChanged(object sender, EventArgs e)
         {
@@ -1156,6 +1164,25 @@ namespace Intersect_Editor.Forms
         private void rbBlocked_CheckedChanged(object sender, EventArgs e)
         {
             hideAttributeMenus();
+        }
+        private void rbNPCAvoid_CheckedChanged(object sender, EventArgs e)
+        {
+            hideAttributeMenus();
+        }
+        private void rbZDimension_CheckedChanged(object sender, EventArgs e)
+        {
+            hideAttributeMenus();
+            grpZDimension.Visible = true;
+        }
+        private void rbWarp_CheckedChanged(object sender, EventArgs e)
+        {
+            hideAttributeMenus();
+            grpWarp.Visible = true;
+        }
+        private void rbSound_CheckedChanged(object sender, EventArgs e)
+        {
+            hideAttributeMenus();
+            grpSound.Visible = true;
         }
 
         // Used for returning an integer value depending on which radio button is selected on the forms. This is merely used to make PlaceAtrribute less messy.
@@ -1171,7 +1198,6 @@ namespace Intersect_Editor.Forms
             }
             return 0;
         }
-
         private int GetEditorDimensionBlock()
         {
             if (rbBlock1.Checked == true)
@@ -1184,7 +1210,6 @@ namespace Intersect_Editor.Forms
             }
             return 0;
         }
-
         private void PlaceAttribute()
         {
             var tmpMap = Globals.GameMaps[Globals.CurrentMap];
@@ -1215,6 +1240,14 @@ namespace Intersect_Editor.Forms
                 tmpMap.Attributes[Globals.CurTileX, Globals.CurTileY].data2 = scrlX.Value;
                 tmpMap.Attributes[Globals.CurTileX, Globals.CurTileY].data3 = scrlY.Value;
             }
+            else if (rbSound.Checked == true)
+            {
+                tmpMap.Attributes[Globals.CurTileX, Globals.CurTileY].value = (int)Enums.MapAttributes.Sound;
+                tmpMap.Attributes[Globals.CurTileX, Globals.CurTileY].data1 = scrlSoundDistance.Value;
+                tmpMap.Attributes[Globals.CurTileX, Globals.CurTileY].data2 = 0;
+                tmpMap.Attributes[Globals.CurTileX, Globals.CurTileY].data3 = 0;
+                tmpMap.Attributes[Globals.CurTileX, Globals.CurTileY].data4 = cmbMapAttributeSound.Text;
+            }
         }
         private void RemoveAttribute()
         {
@@ -1223,24 +1256,11 @@ namespace Intersect_Editor.Forms
             tmpMap.Attributes[Globals.CurTileX, Globals.CurTileY].data1 = 0;
             tmpMap.Attributes[Globals.CurTileX, Globals.CurTileY].data2 = 0;
             tmpMap.Attributes[Globals.CurTileX, Globals.CurTileY].data3 = 0;
+            tmpMap.Attributes[Globals.CurTileX, Globals.CurTileY].data4 = "";
         }
 
-        private void rbZDimension_CheckedChanged(object sender, EventArgs e)
-        {
-            hideAttributeMenus();
-            grpZDimension.Visible = true;
-        }
 
-        private void rbNPCAvoid_CheckedChanged(object sender, EventArgs e)
-        {
-            hideAttributeMenus();
-        }
 
-        private void rbWarp_CheckedChanged(object sender, EventArgs e)
-        {
-            hideAttributeMenus();
-            grpWarp.Visible = true;
-        }
 
         private void scrlMapItem_ValueChanged(object sender, EventArgs e)
         {
@@ -1370,6 +1390,13 @@ namespace Intersect_Editor.Forms
                 lstMapNpcs.SelectedIndex = n;
             }
         }
+
+        private void scrlSoundDistance_Scroll(object sender, ScrollEventArgs e)
+        {
+            lblSoundDistance.Text = "Distance: " + scrlSoundDistance.Value + " Tile(s)";
+        }
+
+
         
     }
 }

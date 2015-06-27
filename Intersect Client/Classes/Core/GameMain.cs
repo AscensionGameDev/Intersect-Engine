@@ -144,6 +144,19 @@ namespace Intersect_Client
                 }
             }
 
+            //Update Maps
+            for (var i = 0; i < 9; i++)
+            {
+                if (Globals.LocalMaps[i] <= -1) continue;
+                if (Globals.GameMaps[Globals.LocalMaps[i]] != null)
+                {
+                    if (Globals.GameMaps[Globals.LocalMaps[i]].MapLoaded != false)
+                    {
+                        Globals.GameMaps[Globals.LocalMaps[i]].Update();
+                    }
+                }
+            }
+
             //Update Game Animations
             if (_animTimer < Environment.TickCount)
             {

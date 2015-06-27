@@ -115,6 +115,7 @@ namespace Intersect_Editor.Classes
                     bf.WriteInteger(Attributes[x, y].data1);
                     bf.WriteInteger(Attributes[x, y].data2);
                     bf.WriteInteger(Attributes[x, y].data3);
+                    bf.WriteString(Attributes[x, y].data4);
                 }
             }
             bf.WriteInteger(Lights.Count);
@@ -181,6 +182,7 @@ namespace Intersect_Editor.Classes
                     Attributes[x, y].data1 = bf.ReadInteger();
                     Attributes[x, y].data2 = bf.ReadInteger();
                     Attributes[x, y].data3 = bf.ReadInteger();
+                    Attributes[x, y].data4 = bf.ReadString();
                 }
             }
             var lCount = bf.ReadInteger();
@@ -234,6 +236,7 @@ namespace Intersect_Editor.Classes
         public int data1;
         public int data2;
         public int data3;
+        public string data4 = "";
     }
 
     public class TileArray {

@@ -65,6 +65,8 @@ namespace Intersect_Client.Classes
         public RenderTexture[] UpperTextures = new RenderTexture[3];
         public RenderTexture[] PeakTextures = new RenderTexture[3];
         public List<MapItemInstance> MapItems = new List<MapItemInstance>();
+        public MapSound BackgroundSound;
+        public List<MapSound> AttributeSounds = new List<MapSound>();
         
         //Init
         public MapStruct(int mapNum, byte[] mapPacket)
@@ -143,6 +145,7 @@ namespace Intersect_Client.Classes
                     Attributes[x, y].data1 = bf.ReadInteger();
                     Attributes[x, y].data2 = bf.ReadInteger();
                     Attributes[x, y].data3 = bf.ReadInteger();
+                    Attributes[x, y].data4 = bf.ReadString();
                 }
             }
             var lCount = bf.ReadInteger();
@@ -156,6 +159,7 @@ namespace Intersect_Client.Classes
             Globals.ShouldUpdateLights = true;
             Autotiles = new MapAutotiles(this);
             Autotiles.InitAutotiles();
+            CreateMapSounds();
             MapRendered = false;
 
             //Globals.mapRevision[myMapNum] = revision;
@@ -296,6 +300,13 @@ namespace Intersect_Client.Classes
         }
 
         //Rendering Functions
+        public void Update()
+        {
+            if (BackgroundSound == null && Sound != "None" && Sound !="")
+            {
+                BackgroundSound = Sounds.AddMapSound(Sound, -1, -1, MyMapNum, true, 10);
+            }
+        }
         public void Draw(int xoffset, int yoffset, int layer = 0)
         {
             if (!MapRendered) { PreRenderMap(); }
@@ -321,6 +332,33 @@ namespace Intersect_Client.Classes
                 Graphics.RenderTexture(PeakTextures[Globals.AnimFrame].Texture, xoffset, yoffset, Graphics.RenderWindow);
             }
         }
+
+        //Sound Functions
+        private void CreateMapSounds()
+        {
+            ClearAttributeSounds();
+            for (int x = 0; x < Constants.MapWidth; x++)
+            {
+                for (int y = 0; y < Constants.MapHeight; y++)
+                {
+                    if (Attributes[x, y].value == (int)Enums.MapAttributes.Sound)
+                    {
+                        if (Attributes[x, y].data4 != "None" && Attributes[x, y].data4 != "")
+                        {
+                            AttributeSounds.Add(Sounds.AddMapSound(Attributes[x, y].data4, x, y, MyMapNum, true, Attributes[x, y].data1));
+                        }
+                    }
+                }
+            }
+        }
+        private void ClearAttributeSounds()
+        {
+            for (int i = 0; i < AttributeSounds.Count; i++)
+            {
+                Sounds.StopSound(AttributeSounds[i]);
+            }
+            AttributeSounds.Clear();
+        }
     }
 
     public class Attribute
@@ -329,6 +367,7 @@ namespace Intersect_Client.Classes
         public int data1;
         public int data2;
         public int data3;
+        public string data4 = "";
     }
 
     public class TileArray
