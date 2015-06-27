@@ -201,6 +201,7 @@ namespace Intersect_Server.Classes
             }
             Globals.Entities[index].CurrentX = bf.ReadInteger();
             Globals.Entities[index].CurrentY = bf.ReadInteger();
+            Globals.Entities[index].TryToChangeDimension();
             Globals.Entities[index].Dir = bf.ReadInteger();
             bf.Dispose();
 

@@ -180,6 +180,7 @@ namespace Intersect_Server.Classes
             CheckTableField(mysqlConn, columns, "map", myTable, MySqlFields.m_int);
             CheckTableField(mysqlConn, columns, "x", myTable, MySqlFields.m_int);
             CheckTableField(mysqlConn, columns, "y", myTable, MySqlFields.m_int);
+            CheckTableField(mysqlConn, columns, "z", myTable, MySqlFields.m_int);
             CheckTableField(mysqlConn, columns, "dir", myTable, MySqlFields.m_int);
             CheckTableField(mysqlConn, columns, "sprite", myTable, MySqlFields.m_string, 45);
             for (var i = 0; i < (int)Enums.Vitals.VitalCount; i++)
@@ -466,6 +467,7 @@ namespace Intersect_Server.Classes
                     en.CurrentMap = reader.GetInt32(columns.IndexOf("map"));
                     en.CurrentX = reader.GetInt32(columns.IndexOf("x"));
                     en.CurrentY = reader.GetInt32(columns.IndexOf("y"));
+                    en.CurrentZ = reader.GetInt32(columns.IndexOf("z"));
                     en.Dir = reader.GetInt32(columns.IndexOf("dir"));
                     en.MySprite = reader.GetString(columns.IndexOf("sprite"));
                     for (i = 0; i < (int)Enums.Vitals.VitalCount; i++)
@@ -570,6 +572,7 @@ namespace Intersect_Server.Classes
             query += "map=" + en.CurrentMap + ",";
             query += "x=" + en.CurrentX + ",";
             query += "y=" + en.CurrentY + ",";
+            query += "z=" + en.CurrentZ + ",";
             query += "dir=" + en.Dir + ",";
             query += "sprite='" + en.MySprite + "',";
             for (var i = 0; i < (int)Enums.Vitals.VitalCount; i++)

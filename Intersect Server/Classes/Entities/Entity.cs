@@ -40,6 +40,7 @@ namespace Intersect_Server.Classes
         //Location Info
         public int CurrentX;
         public int CurrentY;
+        public int CurrentZ = 0;
         public int CurrentMap = -1;
         public int Dir;
         
@@ -405,6 +406,25 @@ namespace Intersect_Server.Classes
                 //ignore
             }
         }
+
+        // Change the dimension if the player is on a gateway
+        public void TryToChangeDimension()
+        {
+            if (CurrentX < Constants.MapWidth && CurrentX >= 0)
+            {
+                if (CurrentY < Constants.MapHeight && CurrentY >= 0)
+                {
+                    if (Globals.GameMaps[CurrentMap].Attributes[CurrentX, CurrentY].value == (int)Enums.MapAttributes.ZDimension)
+                    {
+                        if (Globals.GameMaps[CurrentMap].Attributes[CurrentX, CurrentY].data1 > 0)
+                        {
+                            CurrentZ = Globals.GameMaps[CurrentMap].Attributes[CurrentX, CurrentY].data1 - 1;
+                        }
+                    }
+                }
+            }
+        }
+
         public void ChangeDir(int dir)
         {
             Dir = dir;
@@ -477,6 +497,7 @@ namespace Intersect_Server.Classes
             bf.WriteString(MyName);
             bf.WriteString(MySprite);
             bf.WriteString(Face);
+            bf.WriteInteger(CurrentZ);
             return bf.ToArray();
         }
     }

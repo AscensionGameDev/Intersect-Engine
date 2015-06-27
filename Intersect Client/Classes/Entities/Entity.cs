@@ -80,6 +80,7 @@ namespace Intersect_Client
             MyName = bf.ReadString();
             MySprite = bf.ReadString();
             Face = bf.ReadString();
+            CurrentZ = bf.ReadInteger();
         }
 
         //Movement Processing
