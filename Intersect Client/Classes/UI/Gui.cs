@@ -214,7 +214,7 @@ namespace Intersect_Client.Classes
         }
         public static Gwen.Texture CreateTextureFromSprite(string spritename, int w, int h)
         {
-            System.Drawing.Bitmap sprite = new System.Drawing.Bitmap("Resources/Entities/" + spritename + ".png");
+            System.Drawing.Bitmap sprite = new System.Drawing.Bitmap("Resources/Entities/" + spritename);
             System.Drawing.Bitmap spriteImg = new System.Drawing.Bitmap(w, h);
             spriteImg = new System.Drawing.Bitmap(sprite.Width / 4, sprite.Height / 4);
             System.Drawing.Graphics g = System.Drawing.Graphics.FromImage(spriteImg);

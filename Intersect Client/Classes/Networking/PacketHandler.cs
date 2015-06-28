@@ -161,23 +161,25 @@ namespace Intersect_Client.Classes
             bf.WriteBytes(packet);
             var i = (int)bf.ReadLong();
             var entityType = bf.ReadInteger();
+            Entity en;
            
-            if (entityType == 0)
+            if (entityType != 1)
             {
-                Entity en = EntityManager.AddPlayer(i);
+                if (i == Globals.MyIndex)
+                {
+                     en = EntityManager.AddPlayer(i);
+                }
+                else
+                {
+                     en = EntityManager.AddEntity(i);
+                }
                 en.Load(bf);
             }
             else if (entityType == 1)
             {
-                Event en = (Event)EntityManager.AddEvent(i);
+                 en = EntityManager.AddEvent(i);
                 ((Event)en).Load(bf);
             }
-            else
-            {
-                Entity en = EntityManager.AddEntity(i);
-                en.Load(bf);
-            }
-            
         }
 
         private static void HandlePositionInfo(byte[] packet)
@@ -186,7 +188,7 @@ namespace Intersect_Client.Classes
             bf.WriteBytes(packet);
             var index = (int)bf.ReadLong();
             var isEvent = bf.ReadInteger();
-            if (isEvent == 0)
+            if (isEvent != 1)
             {
                 if (index >= Globals.Entities.Count) { return; }
                 if (Globals.Entities[index] == null) { return; }
@@ -315,8 +317,9 @@ namespace Intersect_Client.Classes
             bf.WriteBytes(packet);
             var index = (int)bf.ReadLong();
             var isEvent = bf.ReadInteger();
-            if (isEvent == 0)
+            if (isEvent != 1)
             {
+                if (Globals.GameMaps[Globals.Entities[index].CurrentMap] == null) { return; }
                 if (index >= Globals.Entities.Count) { return; }
                 if (Globals.Entities[index] == null) { return; }
                 Globals.Entities[index].CurrentMap = bf.ReadInteger();
@@ -391,7 +394,7 @@ namespace Intersect_Client.Classes
             bf.WriteBytes(packet);
             var index = (int)bf.ReadLong();
             var isEvent = bf.ReadInteger();
-            if (isEvent == 0)
+            if (isEvent != 1)
             {
                 if (index >= Globals.Entities.Count) { return; }
                 if (Globals.Entities[index] == null) { return; }
@@ -419,7 +422,7 @@ namespace Intersect_Client.Classes
             bf.WriteBytes(packet);
             var index = (int)bf.ReadLong();
             var isEvent = bf.ReadInteger();
-            if (isEvent == 0)
+            if (isEvent != 1)
             {
                 if (index >= Globals.Entities.Count) { return; }
                 if (Globals.Entities[index] == null) { return; }
@@ -445,7 +448,7 @@ namespace Intersect_Client.Classes
             bf.WriteBytes(packet);
             var index = (int)bf.ReadLong();
             var isEvent = bf.ReadInteger();
-            if (isEvent == 0)
+            if (isEvent != 1)
             {
                 if (index >= Globals.Entities.Count) { return; }
                 if (Globals.Entities[index] == null) { return; }

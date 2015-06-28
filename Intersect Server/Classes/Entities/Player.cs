@@ -40,7 +40,7 @@ namespace Intersect_Server.Classes
         public int StatPoints = 0;
 
         //Init
-		public Player (int index, Client newClient) : base()
+		public Player (int index, Client newClient) : base(index)
 		{
             MyClient = newClient;
             Switches = new bool[Constants.SwitchCount];

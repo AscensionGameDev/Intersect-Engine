@@ -107,6 +107,7 @@ namespace Intersect_Server.Classes
             bf.Dispose();
             SendEntityVitalsTo(client, sendIndex,entityType,en);
             SendEntityStatsTo(client, sendIndex,entityType,en);
+            SendEntityPositionTo(client, sendIndex, entityType, en);
 
             if (en == client.Entity)
             {

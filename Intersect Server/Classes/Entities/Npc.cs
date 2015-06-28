@@ -43,7 +43,7 @@ namespace Intersect_Server.Classes
         //Respawn
         public long RespawnTime;
 
-        public Npc(NpcStruct myBase) : base() {
+        public Npc(int index, NpcStruct myBase) : base(index) {
             MyName = myBase.Name;
             MySprite = myBase.Sprite;
             myBase.Stat.CopyTo(Stat,0);

@@ -206,7 +206,7 @@ namespace Intersect_Client.Classes
             RenderWindow.DispatchEvents();
             RenderWindow.Clear(Color.Black);
 
-            if (Globals.GameState == 1 && Globals.GameLoaded)
+            if (Globals.GameState == 1 && Globals.GameLoaded && Globals.CurrentMap > -1)
             {
                 if (LightsChanged)
                 {

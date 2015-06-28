@@ -365,8 +365,8 @@ namespace Intersect_Server.Classes
             int X = 0;
             int Y = 0;
             Random rnd = new Random();
-
-            Npcs.Add(new Npc(Globals.GameNpcs[Spawns[i].NpcNum]));
+            int index = Globals.FindOpenEntity();
+            Npcs.Add(new Npc(index,Globals.GameNpcs[Spawns[i].NpcNum]));
             if (Spawns[i].X >= 0 && Spawns[i].Y >= 0)
             {
                 Npcs[i].CurrentX = Spawns[i].X;
@@ -398,7 +398,7 @@ namespace Intersect_Server.Classes
             }
             Npcs[i].CurrentMap = MyMapNum;
             Globals.AddEntity(Npcs[i]);
-            PacketSender.SendMapNpcUpdate(MyMapNum, i);
+            //PacketSender.SendMapNpcUpdate(MyMapNum, i);
         }
 
         //Update + Related Functions
@@ -431,6 +431,10 @@ namespace Intersect_Server.Classes
                         {
                             spawnMapNpc(i);
                         }
+                    }
+                    else
+                    {
+                        Npcs[i].Update();
                     }
                 }
             }

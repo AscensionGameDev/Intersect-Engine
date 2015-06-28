@@ -32,19 +32,22 @@ namespace Intersect_Server.Classes
             while (true)
             {
                 nb.RunServer();
-                foreach (var map in Globals.GameMaps)
+                for (int i = 0; i < Globals.GameMaps.Length; i++)
                 {
-                    if (map.Active)
+                    if (Globals.GameMaps[i] != null)
                     {
-                        map.Update();
+                        if (Globals.GameMaps[i].Active)
+                        {
+                            Globals.GameMaps[i].Update();
+                        }
                     }
                 }
 
-                foreach (var player in Globals.Clients)
+                for (int i = 0; i < Globals.Clients.Count; i++)
                 {
-                    if (player != null && player.Entity != null)
+                    if (Globals.Clients[i] != null && Globals.Clients[i].Entity != null)
                     {
-                        player.Entity.Update();
+                        Globals.Clients[i].Entity.Update();
                     }
                 }
 
