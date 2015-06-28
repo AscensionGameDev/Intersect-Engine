@@ -270,9 +270,11 @@ namespace Intersect_Server.Classes
             //Clear Map Npcs
             for (int i = 0; i < Npcs.Count; i++)
             {
-                Npcs[i].Vital[(int)Enums.Vitals.Health] = 0;
-                PacketSender.SendMapNpcUpdate(MyMapNum, i);
-                MapItems.RemoveAt(i);
+                if (Npcs[i] != null)
+                {
+                    Npcs[i].Die();
+                }
+                Npcs.RemoveAt(i);
             }
             SpawnMapNpcs();
             //Save();

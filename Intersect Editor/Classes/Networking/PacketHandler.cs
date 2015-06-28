@@ -124,7 +124,7 @@ namespace Intersect_Editor.Classes
             if (Globals.ReceivedGameData == 3 && !Globals.InEditor)
             {
                 Globals.MainForm = new FrmMain();
-                Globals.MainForm.Show();
+                Globals.MainForm.Visible = true;
             }
             else if (Globals.InEditor)
             {

@@ -31,6 +31,7 @@ using SFML.Graphics;
 using SFML.Window;
 using Color = SFML.Graphics.Color;
 using Graphics = Intersect_Client.Classes.Graphics;
+using SFML.System;
 
 // ReSharper disable All
 

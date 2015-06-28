@@ -43,6 +43,9 @@ namespace Intersect_Client.Classes
         public static string MenuBGM = "";
         public static string MenuBG = "";
 
+        //Game Lock
+        public static object GameLock = new object();
+
         //Scene management
         public static bool WaitingOnServer = false;
         public static bool JoiningGame = false;

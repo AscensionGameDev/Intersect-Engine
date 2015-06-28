@@ -31,6 +31,7 @@ using SFML.Graphics;
 using SFML.Window;
 using Color = SFML.Graphics.Color;
 using Image = SFML.Graphics.Image;
+using SFML.System;
 
 namespace Intersect_Editor.Classes
 {

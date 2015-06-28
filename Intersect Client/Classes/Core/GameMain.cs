@@ -56,16 +56,19 @@ namespace Intersect_Client
             //Start Game Loop
             while (IsRunning)
             {
-                Network.CheckNetwork();
-                Graphics.DrawGame();
-                Sounds.Update();
-                if (Globals.GameState == 0)
+                lock (Globals.GameLock)
                 {
-                    ProcessMenu();
-                }
-                else
-                {
-                    ProcessGame();
+                    Network.CheckNetwork();
+                    Graphics.DrawGame();
+                    Sounds.Update();
+                    if (Globals.GameState == 0)
+                    {
+                        ProcessMenu();
+                    }
+                    else
+                    {
+                        ProcessGame();
+                    }
                 }
                 Application.DoEvents();
             }

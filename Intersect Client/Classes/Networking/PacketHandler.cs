@@ -38,98 +38,101 @@ namespace Intersect_Client.Classes
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
             var packetHeader = (Enums.ServerPackets)bf.ReadLong();
-            switch (packetHeader)
+            lock (Globals.GameLock)
             {
-                case Enums.ServerPackets.RequestPing:
-                    PacketSender.SendPing();
-                    break;
-                case Enums.ServerPackets.JoinGame:
-                    HandleJoinGame(bf.ReadBytes(bf.Length()));
-                    break;
-                case Enums.ServerPackets.MapData:
-                    HandleMapData(bf.ReadBytes(bf.Length()));
-                    break;
-                case Enums.ServerPackets.EntityData:
-                    HandleEntityData(bf.ReadBytes(bf.Length()));
-                    break;
-                case Enums.ServerPackets.EntityPosition:
-                    HandlePositionInfo(bf.ReadBytes(bf.Length()));
-                    break;
-                case Enums.ServerPackets.EntityLeave:
-                    HandleLeave(bf.ReadBytes(bf.Length()));
-                    break;
-                case Enums.ServerPackets.ChatMessage:
-                    HandleMsg(bf.ReadBytes(bf.Length()));
-                    break;
-                case Enums.ServerPackets.GameData:
-                    HandleGameData(bf.ReadBytes(bf.Length()));
-                    break;
-                case Enums.ServerPackets.TilesetArray:
-                    HandleTilesets(bf.ReadBytes(bf.Length()));
-                    break;
-                case Enums.ServerPackets.EnterMap:
-                    HandleEnterMap(bf.ReadBytes(bf.Length()));
-                    break;
-                case Enums.ServerPackets.EntityMove:
-                    HandleEntityMove(bf.ReadBytes(bf.Length()));
-                    break;
-                case Enums.ServerPackets.EntityVitals:
-                    HandleVitals(bf.ReadBytes(bf.Length()));
-                    break;
-                case Enums.ServerPackets.EntityStats:
-                    HandleStats(bf.ReadBytes(bf.Length()));
-                    break;
-                case Enums.ServerPackets.EntityDir:
-                    HandleEntityDir(bf.ReadBytes(bf.Length()));
-                    break;
-                case Enums.ServerPackets.EventDialog:
-                    HandleEventDialog(bf.ReadBytes(bf.Length()));
-                    break;
-                case Enums.ServerPackets.LoginError:
-                    HandleLoginError(bf.ReadBytes(bf.Length()));
-                    break;
-                case Enums.ServerPackets.GameTime:
-                    HandleGameTime(bf.ReadBytes(bf.Length()));
-                    break;
-                case Enums.ServerPackets.ItemData:
-                    HandleItemData(bf.ReadBytes(bf.Length()));
-                    break;
-                case Enums.ServerPackets.NpcData:
-                    HandleNpcData(bf.ReadBytes(bf.Length()));
-                    break;
-                case Enums.ServerPackets.SpellData:
-                    HandleSpellData(bf.ReadBytes(bf.Length()));
-                    break;
-                case Enums.ServerPackets.AnimationData:
-                    HandleAnimationData(bf.ReadBytes(bf.Length()));
-                    break;
-                case Enums.ServerPackets.MapItems:
-                    HandleMapItems(bf.ReadBytes(bf.Length()));
-                    break;
-                case Enums.ServerPackets.MapItemUpdate:
-                    HandleMapItemUpdate(bf.ReadBytes(bf.Length()));
-                    break;
-                case Enums.ServerPackets.InventoryUpdate:
-                    HandleInventoryUpdate(bf.ReadBytes(bf.Length()));
-                    break;
-                case Enums.ServerPackets.SpellUpdate:
-                    HandleSpellUpdate(bf.ReadBytes(bf.Length()));
-                    break;
-                case Enums.ServerPackets.PlayerEquipment:
-                    HandlePlayerEquipment(bf.ReadBytes(bf.Length()));
-                    break;
-                case Enums.ServerPackets.StatPoints:
-                    HandleStatPoints(bf.ReadBytes(bf.Length()));
-                    break;
-                case Enums.ServerPackets.HotbarSlots:
-                    HandleHotbarSlots(bf.ReadBytes(bf.Length()));
-                    break;
-                case Enums.ServerPackets.MapNpcUpdate:
-                    HandleMapNpcUpdate(bf.ReadBytes(bf.Length()));
-                    break;
-                default:
-                    Console.WriteLine(@"Non implemented packet received: " + packetHeader);
-                    break;
+                switch (packetHeader)
+                {
+                    case Enums.ServerPackets.RequestPing:
+                        PacketSender.SendPing();
+                        break;
+                    case Enums.ServerPackets.JoinGame:
+                        HandleJoinGame(bf.ReadBytes(bf.Length()));
+                        break;
+                    case Enums.ServerPackets.MapData:
+                        HandleMapData(bf.ReadBytes(bf.Length()));
+                        break;
+                    case Enums.ServerPackets.EntityData:
+                        HandleEntityData(bf.ReadBytes(bf.Length()));
+                        break;
+                    case Enums.ServerPackets.EntityPosition:
+                        HandlePositionInfo(bf.ReadBytes(bf.Length()));
+                        break;
+                    case Enums.ServerPackets.EntityLeave:
+                        HandleLeave(bf.ReadBytes(bf.Length()));
+                        break;
+                    case Enums.ServerPackets.ChatMessage:
+                        HandleMsg(bf.ReadBytes(bf.Length()));
+                        break;
+                    case Enums.ServerPackets.GameData:
+                        HandleGameData(bf.ReadBytes(bf.Length()));
+                        break;
+                    case Enums.ServerPackets.TilesetArray:
+                        HandleTilesets(bf.ReadBytes(bf.Length()));
+                        break;
+                    case Enums.ServerPackets.EnterMap:
+                        HandleEnterMap(bf.ReadBytes(bf.Length()));
+                        break;
+                    case Enums.ServerPackets.EntityMove:
+                        HandleEntityMove(bf.ReadBytes(bf.Length()));
+                        break;
+                    case Enums.ServerPackets.EntityVitals:
+                        HandleVitals(bf.ReadBytes(bf.Length()));
+                        break;
+                    case Enums.ServerPackets.EntityStats:
+                        HandleStats(bf.ReadBytes(bf.Length()));
+                        break;
+                    case Enums.ServerPackets.EntityDir:
+                        HandleEntityDir(bf.ReadBytes(bf.Length()));
+                        break;
+                    case Enums.ServerPackets.EventDialog:
+                        HandleEventDialog(bf.ReadBytes(bf.Length()));
+                        break;
+                    case Enums.ServerPackets.LoginError:
+                        HandleLoginError(bf.ReadBytes(bf.Length()));
+                        break;
+                    case Enums.ServerPackets.GameTime:
+                        HandleGameTime(bf.ReadBytes(bf.Length()));
+                        break;
+                    case Enums.ServerPackets.ItemData:
+                        HandleItemData(bf.ReadBytes(bf.Length()));
+                        break;
+                    case Enums.ServerPackets.NpcData:
+                        HandleNpcData(bf.ReadBytes(bf.Length()));
+                        break;
+                    case Enums.ServerPackets.SpellData:
+                        HandleSpellData(bf.ReadBytes(bf.Length()));
+                        break;
+                    case Enums.ServerPackets.AnimationData:
+                        HandleAnimationData(bf.ReadBytes(bf.Length()));
+                        break;
+                    case Enums.ServerPackets.MapItems:
+                        HandleMapItems(bf.ReadBytes(bf.Length()));
+                        break;
+                    case Enums.ServerPackets.MapItemUpdate:
+                        HandleMapItemUpdate(bf.ReadBytes(bf.Length()));
+                        break;
+                    case Enums.ServerPackets.InventoryUpdate:
+                        HandleInventoryUpdate(bf.ReadBytes(bf.Length()));
+                        break;
+                    case Enums.ServerPackets.SpellUpdate:
+                        HandleSpellUpdate(bf.ReadBytes(bf.Length()));
+                        break;
+                    case Enums.ServerPackets.PlayerEquipment:
+                        HandlePlayerEquipment(bf.ReadBytes(bf.Length()));
+                        break;
+                    case Enums.ServerPackets.StatPoints:
+                        HandleStatPoints(bf.ReadBytes(bf.Length()));
+                        break;
+                    case Enums.ServerPackets.HotbarSlots:
+                        HandleHotbarSlots(bf.ReadBytes(bf.Length()));
+                        break;
+                    case Enums.ServerPackets.MapNpcUpdate:
+                        HandleMapNpcUpdate(bf.ReadBytes(bf.Length()));
+                        break;
+                    default:
+                        Console.WriteLine(@"Non implemented packet received: " + packetHeader);
+                        break;
+                }
             }
         }
 
@@ -149,6 +152,7 @@ namespace Intersect_Client.Classes
             var mapNum = bf.ReadLong();
             var mapLength = bf.ReadLong();
             var mapData = bf.ReadBytes((int)mapLength);
+            if (Globals.GameMaps[mapNum] != null) { Globals.GameMaps[mapNum].Dispose(); }
             Globals.GameMaps[mapNum] = new MapStruct((int)mapNum, mapData);
             if ((mapNum) == Globals.LocalMaps[4]) { 
                 Sounds.PlayMusic(Globals.GameMaps[mapNum].Music, 3,3, true); }
@@ -319,14 +323,41 @@ namespace Intersect_Client.Classes
             var isEvent = bf.ReadInteger();
             if (isEvent != 1)
             {
-                if (Globals.GameMaps[Globals.Entities[index].CurrentMap] == null) { return; }
                 if (index >= Globals.Entities.Count) { return; }
                 if (Globals.Entities[index] == null) { return; }
-                Globals.Entities[index].CurrentMap = bf.ReadInteger();
-                Globals.Entities[index].CurrentX = bf.ReadInteger();
-                Globals.Entities[index].CurrentY = bf.ReadInteger();
-                Globals.Entities[index].Dir = bf.ReadInteger();
-                Globals.Entities[index].IsMoving = true;
+                if (Globals.GameMaps[Globals.Entities[index].CurrentMap] == null) { return; }
+                int map = bf.ReadInteger();
+                int x = bf.ReadInteger();
+                int y = bf.ReadInteger();
+                int dir = bf.ReadInteger();
+                if (Globals.Entities[index].CurrentMap != map || Globals.Entities[index].CurrentX != x || Globals.Entities[index].CurrentY != y)
+                {
+                    Globals.Entities[index].CurrentMap = map;
+                    Globals.Entities[index].CurrentX = x;
+                    Globals.Entities[index].CurrentY = y;
+                    Globals.Entities[index].Dir = dir;
+                    Globals.Entities[index].IsMoving = true;
+
+                    switch (Globals.Entities[index].Dir)
+                    {
+                        case 0:
+                            Globals.Entities[index].OffsetY = 32;
+                            Globals.Entities[index].OffsetX = 0;
+                            break;
+                        case 1:
+                            Globals.Entities[index].OffsetY = -32;
+                            Globals.Entities[index].OffsetX = 0;
+                            break;
+                        case 2:
+                            Globals.Entities[index].OffsetY = 0;
+                            Globals.Entities[index].OffsetX = 32;
+                            break;
+                        case 3:
+                            Globals.Entities[index].OffsetY = 0;
+                            Globals.Entities[index].OffsetX = -32;
+                            break;
+                    }
+                }
 
                 // Set the Z-Dimension if the player has moved up or down a dimension.
                 if (Globals.GameMaps[Globals.Entities[index].CurrentMap].Attributes[Globals.Entities[index].CurrentX, Globals.Entities[index].CurrentY].value == (int)Enums.MapAttributes.ZDimension)
@@ -336,26 +367,7 @@ namespace Intersect_Client.Classes
                         Globals.Entities[index].CurrentZ = Globals.GameMaps[Globals.Entities[index].CurrentMap].Attributes[Globals.Entities[index].CurrentX, Globals.Entities[index].CurrentY].data1 - 1;
                     }
                 }
-
-                switch (Globals.Entities[index].Dir)
-                {
-                    case 0:
-                        Globals.Entities[index].OffsetY = 32;
-                        Globals.Entities[index].OffsetX = 0;
-                        break;
-                    case 1:
-                        Globals.Entities[index].OffsetY = -32;
-                        Globals.Entities[index].OffsetX = 0;
-                        break;
-                    case 2:
-                        Globals.Entities[index].OffsetY = 0;
-                        Globals.Entities[index].OffsetX = 32;
-                        break;
-                    case 3:
-                        Globals.Entities[index].OffsetY = 0;
-                        Globals.Entities[index].OffsetX = -32;
-                        break;
-                }
+                
             }
             else
             {

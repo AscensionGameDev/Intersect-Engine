@@ -209,6 +209,16 @@ namespace Intersect_Client.Classes
         {
             sound.Stop();
         }
+        public static void StopAllSounds()
+        {
+            for (int i = 0; i < _gameSounds.Count; i++)
+            {
+                if (_gameSounds[i] != null)
+                {
+                    _gameSounds[i].Stop();
+                }
+            }
+        }
 
 
     }

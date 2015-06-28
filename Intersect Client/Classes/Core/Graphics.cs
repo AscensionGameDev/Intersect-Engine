@@ -40,6 +40,7 @@ using Font = SFML.Graphics.Font;
 using Image = SFML.Graphics.Image;
 using KeyEventArgs = SFML.Window.KeyEventArgs;
 using View = SFML.Graphics.View;
+using SFML.System;
 
 namespace Intersect_Client.Classes
 {
@@ -202,7 +203,7 @@ namespace Intersect_Client.Classes
                 InitSfml();
                 MustReInit = false;
             }
-            if (!RenderWindow.IsOpen()) return;
+            //if (!RenderWindow.HasFocus()) return;
             RenderWindow.DispatchEvents();
             RenderWindow.Clear(Color.Black);
 
@@ -236,15 +237,8 @@ namespace Intersect_Client.Classes
                             g.Dispose();
                             PlayerLightTex = TexFromBitmap(tmpLight);
                         }
-                    }
-                    if (LightThread.ThreadState == ThreadState.Running) { LightThread.Abort(); }
-                    if (LightThread.ThreadState == ThreadState.Stopped || LightThread.ThreadState == ThreadState.Aborted || LightThread.ThreadState == ThreadState.Suspended || LightThread.ThreadState == ThreadState.Unstarted)
-                    {
-                        LightThread = new Thread(InitLighting);
                         LightThread.Start();
-                        LightsChanged = false;
                     }
-
                 }
                 //Render players, names, maps, etc.
                 for (var i = 0; i < 9; i++)
@@ -346,14 +340,16 @@ namespace Intersect_Client.Classes
                     int bgw = (int)ImageTextures[ImageFileNames.IndexOf(Globals.MenuBG)].Size.X;
                     int bgh = (int)ImageTextures[ImageFileNames.IndexOf(Globals.MenuBG)].Size.Y;
                     int diff = 0;
-                    if (bgw < RenderWindow.Size.X){
+                    if (bgw < RenderWindow.Size.X)
+                    {
                         diff = (int)(RenderWindow.Size.X - bgw);
-                        bgx -= diff/2;
+                        bgx -= diff / 2;
                         bgw += diff;
                     }
-                    if (bgh < RenderWindow.Size.Y){
+                    if (bgh < RenderWindow.Size.Y)
+                    {
                         diff = (int)(RenderWindow.Size.Y - bgh);
-                        bgy -= diff/2;
+                        bgy -= diff / 2;
                         bgh += diff;
                     }
                     RenderTexture(ImageTextures[ImageFileNames.IndexOf(Globals.MenuBG)], new Rectangle(0, 0, (int)ImageTextures[ImageFileNames.IndexOf(Globals.MenuBG)].Size.X, (int)ImageTextures[ImageFileNames.IndexOf(Globals.MenuBG)].Size.Y),
@@ -516,7 +512,7 @@ namespace Intersect_Client.Classes
             if (!Directory.Exists("Resources/Fogs")) { Directory.CreateDirectory("Resources/Fogs"); }
             var fogs = Directory.GetFiles("Resources/Fogs", "*.png");
             FogFileNames = new List<string>();
-            FogTextures  = new Texture[fogs.Length];
+            FogTextures = new Texture[fogs.Length];
             for (int i = 0; i < fogs.Length; i++)
             {
                 FogFileNames.Add(fogs[i].Replace("Resources/Fogs\\", ""));
@@ -528,61 +524,73 @@ namespace Intersect_Client.Classes
         private static void InitLighting()
         {
             RenderTexture tmpTex;
-            if (UseNightBackup)
+            do
             {
-                tmpTex = NightCacheTexture;
-            }
-            else
-            {
-                tmpTex = NightCacheTextureBackup;
-            }
-
-            lock (tmpTex)
-            {
-                tmpTex.SetActive(true);
-                //If loading maps still, dont make the texture, no point
-                for (var i = 0; i < 9; i++)
+                if (LightsChanged)
                 {
-                    if (Globals.LocalMaps[i] <= -1 || Globals.LocalMaps[i] >= Globals.GameMaps.Count()) continue;
-                    if (Globals.GameMaps[Globals.LocalMaps[i]] != null)
+                    LightsChanged = false;
+                    if (UseNightBackup)
                     {
-                        if (Globals.GameMaps[Globals.LocalMaps[i]].MapLoaded)
-                        {
-
-                        }
-                        else
-                        {
-                            LightsChanged = true;
-                            return;
-                        }
+                        tmpTex = NightCacheTexture;
                     }
                     else
                     {
-                        LightsChanged = true;
-                        return;
+                        tmpTex = NightCacheTextureBackup;
                     }
-                }
-                tmpTex.Clear(new Color(30, 30, 30, 255));
 
-                //Render each light.
-                for (var z = 0; z < 9; z++)
-                {
-                    if (Globals.LocalMaps[z] <= -1 || Globals.LocalMaps[z] >= Globals.GameMaps.Count()) continue;
-                    if (Globals.GameMaps[Globals.LocalMaps[z]] == null) continue;
-                    if (!Globals.GameMaps[Globals.LocalMaps[z]].MapLoaded) continue;
-                    foreach (var t in Globals.GameMaps[Globals.LocalMaps[z]].Lights)
+                    lock (tmpTex)
                     {
-                        double w = CalcLightWidth(t.Range);
-                        var x = CalcMapOffsetX(z, true) + Constants.MapWidth * 32 + (t.TileX * 32 + t.OffsetX) - (int)w / 2 + 16;
-                        var y = CalcMapOffsetY(z, true) + Constants.MapHeight * 32 + (t.TileY * 32 + t.OffsetY) - (int)w / 2 + 16;
-                        AddLight(x, y, (int)w, t.Intensity, t, tmpTex);
+                        tmpTex.SetActive(true);
+                        //If loading maps still, dont make the texture, no point
+                        for (var i = 0; i < 9; i++)
+                        {
+                            if (Globals.LocalMaps[i] <= -1 || Globals.LocalMaps[i] >= Globals.GameMaps.Count()) continue;
+                            if (Globals.GameMaps[Globals.LocalMaps[i]] != null)
+                            {
+                                if (Globals.GameMaps[Globals.LocalMaps[i]].MapLoaded)
+                                {
+
+                                }
+                                else
+                                {
+                                    LightsChanged = true;
+                                    break;
+                                }
+                            }
+                            else
+                            {
+                                LightsChanged = true;
+                                break;
+                            }
+                        }
+                        tmpTex.Clear(new Color(30, 30, 30, 255));
+
+                        if (!LightsChanged)
+                        {
+                            //Render each light.
+                            for (var z = 0; z < 9; z++)
+                            {
+                                if (Globals.LocalMaps[z] <= -1 || Globals.LocalMaps[z] >= Globals.GameMaps.Count()) continue;
+                                if (Globals.GameMaps[Globals.LocalMaps[z]] == null) continue;
+                                if (!Globals.GameMaps[Globals.LocalMaps[z]].MapLoaded) continue;
+                                foreach (var t in Globals.GameMaps[Globals.LocalMaps[z]].Lights)
+                                {
+                                    if (LightsChanged) { break; }
+                                    double w = CalcLightWidth(t.Range);
+                                    var x = CalcMapOffsetX(z, true) + Constants.MapWidth * 32 + (t.TileX * 32 + t.OffsetX) - (int)w / 2 + 16;
+                                    var y = CalcMapOffsetY(z, true) + Constants.MapHeight * 32 + (t.TileY * 32 + t.OffsetY) - (int)w / 2 + 16;
+                                    AddLight(x, y, (int)w, t.Intensity, t, tmpTex);
+                                }
+                            }
+                            tmpTex.Display();
+                            tmpTex.SetActive(false);
+                        }
                     }
+                    SwapNightTextures = true;
+                    UseNightBackup = !UseNightBackup;
                 }
-                tmpTex.Display();
-                tmpTex.SetActive(false);
-            }
-            SwapNightTextures = true;
-            UseNightBackup = !UseNightBackup;
+                if (!LightsChanged) { System.Threading.Thread.Sleep(1); }
+            } while (true);
         }
         private static int CalcLightWidth(int range)
         {
@@ -772,7 +780,11 @@ namespace Intersect_Client.Classes
             var srcRectangle = new Rectangle(sx, sy, w, h);
             RenderTexture(tex, srcRectangle, destRectangle, renderTarget);
         }
-        public static void RenderTexture(Texture tex, Rectangle srcRectangle, Rectangle targetRect, RenderTarget renderTarget, BlendMode blendMode = BlendMode.Alpha)
+        public static void RenderTexture(Texture tex, Rectangle srcRectangle, Rectangle targetRect, RenderTarget renderTarget)
+        {
+            RenderTexture(tex, srcRectangle, targetRect, renderTarget, BlendMode.Alpha);
+        }
+        public static void RenderTexture(Texture tex, Rectangle srcRectangle, Rectangle targetRect, RenderTarget renderTarget, BlendMode blendMode)
         {
             var vertexCache = new Vertex[4];
             var u1 = (float)srcRectangle.X / tex.Size.X;

@@ -29,6 +29,8 @@ using System.Collections.Generic;
 using System.Drawing;
 using SFML.Graphics;
 using Color = SFML.Graphics.Color;
+using SFML.Window;
+using SFML.System;
 
 namespace Intersect_Client.Classes
 {
@@ -80,6 +82,12 @@ namespace Intersect_Client.Classes
         public List<Npc> Npcs = new List<Npc>();
         public MapSound BackgroundSound;
         public List<MapSound> AttributeSounds = new List<MapSound>();
+        private long _fogUpdateTime = Environment.TickCount;
+        private float _curFogIntensity;
+        private float _fogCurrentX;
+        private float _fogCurrentY;
+        private float _lastFogX;
+        private float _lastFogY;
         
         //Init
         public MapStruct(int mapNum, byte[] mapPacket)
@@ -184,9 +192,6 @@ namespace Intersect_Client.Classes
             Autotiles.InitAutotiles();
             CreateMapSounds();
             MapRendered = false;
-
-            //Globals.mapRevision[myMapNum] = revision;
-            //Database.SaveMapRevisions();
         }
         public bool ShouldLoad(int index)
         {
@@ -353,6 +358,64 @@ namespace Intersect_Client.Classes
             else
             {
                 Graphics.RenderTexture(PeakTextures[Globals.AnimFrame].Texture, xoffset, yoffset, Graphics.RenderWindow);
+                //DrawFog();
+            }
+
+        }
+
+        //Fogs
+        private void DrawFog()
+        {
+            float ecTime = Environment.TickCount - _fogUpdateTime;
+            _fogUpdateTime = Environment.TickCount;
+            if (MyMapNum == Globals.LocalMaps[4])
+            {
+                if (_curFogIntensity != 1)
+                {
+                    _curFogIntensity += (ecTime / 2000f);
+                    if (_curFogIntensity > 1) { _curFogIntensity = 1; }
+                }
+            }
+            else
+            {
+                if (_curFogIntensity != 0)
+                {
+                    _curFogIntensity -= (ecTime / 2000f);
+                    if (_curFogIntensity < 0) { _curFogIntensity = 0; }
+                }
+            }
+            if (Globals.GameMaps[MyMapNum].Fog.Length > 0)
+            {
+                if (Graphics.FogFileNames.IndexOf(Globals.GameMaps[MyMapNum].Fog) > -1)
+                {
+                    int fogIndex = Graphics.FogFileNames.IndexOf(Globals.GameMaps[MyMapNum].Fog);
+                    int xCount = (int)(Graphics.RenderWindow.Size.X / Graphics.FogTextures[fogIndex].Size.X) + 1;
+                    int yCount = (int)(Graphics.RenderWindow.Size.Y / Graphics.FogTextures[fogIndex].Size.Y) + 1;
+
+                    _fogCurrentX += (ecTime / 1000f) * Globals.GameMaps[MyMapNum].FogXSpeed * -6;
+                    _fogCurrentY += (ecTime / 1000f) * Globals.GameMaps[MyMapNum].FogYSpeed * 2;
+                    float deltaX = _lastFogX - Graphics.CalcMapOffsetX(0);
+                    _fogCurrentX -= deltaX;
+                    float deltaY = _lastFogY - Graphics.CalcMapOffsetY(0);
+                    _fogCurrentY -= deltaY;
+
+                    if (_fogCurrentX < Graphics.FogTextures[fogIndex].Size.X) { _fogCurrentX += Graphics.FogTextures[fogIndex].Size.X; }
+                    if (_fogCurrentX > Graphics.FogTextures[fogIndex].Size.X) { _fogCurrentX -= Graphics.FogTextures[fogIndex].Size.X; }
+                    if (_fogCurrentY < Graphics.FogTextures[fogIndex].Size.Y) { _fogCurrentY += Graphics.FogTextures[fogIndex].Size.Y; }
+                    if (_fogCurrentY > Graphics.FogTextures[fogIndex].Size.Y) { _fogCurrentY -= Graphics.FogTextures[fogIndex].Size.Y; }
+
+                    for (int x = -1; x < xCount; x++)
+                    {
+                        for (int y = -1; y < yCount; y++)
+                        {
+                            var fogSprite = new Sprite(Graphics.FogTextures[fogIndex]) { Position = new Vector2f(x * Graphics.FogTextures[fogIndex].Size.X + _fogCurrentX, y * Graphics.FogTextures[fogIndex].Size.Y + _fogCurrentY) };
+                            fogSprite.Color = new Color(255, 255, 255, (byte)(Globals.GameMaps[MyMapNum].FogTransaprency * _curFogIntensity));
+                            Graphics.RenderWindow.Draw(fogSprite);
+                        }
+                    }
+                    _lastFogX = Graphics.CalcMapOffsetX(0);
+                    _lastFogY = Graphics.CalcMapOffsetY(0);
+                }
             }
         }
 
@@ -381,6 +444,18 @@ namespace Intersect_Client.Classes
                 Sounds.StopSound(AttributeSounds[i]);
             }
             AttributeSounds.Clear();
+        }
+
+        //Dispose
+        public void Dispose()
+        {
+            //Clean up all map stuff.
+            for (int i = 0; i < 3; i++)
+            {
+                if (LowerTextures[i] != null) { LowerTextures[i].Dispose(); }
+                if (UpperTextures[i] != null) { UpperTextures[i].Dispose(); }
+                if (PeakTextures[i] != null) { PeakTextures[i].Dispose(); }
+            }
         }
     }
 

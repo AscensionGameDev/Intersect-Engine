@@ -86,6 +86,9 @@
     <Reference Include="sfmlnet-graphics-2">
       <HintPath>.\sfmlnet-graphics-2.dll</HintPath>
     </Reference>
+    <Reference Include="sfmlnet-system-2">
+      <HintPath>.\sfmlnet-system-2.dll</HintPath>
+    </Reference>
     <Reference Include="sfmlnet-window-2">
       <HintPath>.\sfmlnet-window-2.dll</HintPath>
     </Reference>
@@ -429,13 +432,25 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="csfml-audio-2.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="csfml-graphics-2.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="csfml-network-2.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="csfml-system-2.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="csfml-window-2.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Gwen.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Gwen.Renderer.SFML.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="LICENSE.txt" />
     <Content Include="Resources\Animations\Fire 4.png">
@@ -1906,10 +1921,10 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="libsndfile-1.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="openal32.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
   <ItemGroup>
