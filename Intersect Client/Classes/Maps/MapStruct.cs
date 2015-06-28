@@ -54,6 +54,18 @@ namespace Intersect_Client.Classes
         public List<NpcSpawn> Spawns = new List<NpcSpawn>();
         public bool IsIndoors;
 
+        //Visual Effect Properties
+        public string Panorama = "None";
+        public string Fog = "None";
+        public int FogXSpeed = 0;
+        public int FogYSpeed = 0;
+        public int FogTransaprency = 0;
+        public int RHue = 0;
+        public int GHue = 0;
+        public int BHue = 0;
+        public int AHue = 0;
+        public int Brightness = 0;
+
         //Temporary Values
         public bool MapLoaded;
         public bool MapRendered;
@@ -111,6 +123,16 @@ namespace Intersect_Client.Classes
             Music = bf.ReadString();
             Sound = bf.ReadString();
             IsIndoors = Convert.ToBoolean(bf.ReadInteger());
+            Panorama = bf.ReadString();
+            Fog = bf.ReadString();
+            FogXSpeed = bf.ReadInteger();
+            FogYSpeed = bf.ReadInteger();
+            FogTransaprency = bf.ReadInteger();
+            RHue = bf.ReadInteger();
+            GHue = bf.ReadInteger();
+            BHue = bf.ReadInteger();
+            AHue = bf.ReadInteger();
+            Brightness = bf.ReadInteger();
 
             // Load Map Npcs
             Spawns.Clear();

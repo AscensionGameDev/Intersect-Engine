@@ -61,6 +61,8 @@ namespace Intersect_Editor.Forms
             Graphics.InitSfml(this);
             Sounds.Init();
             UpdateSoundLists();
+            UpdateFogLists();
+            UpdateImageLists();
             UpdateScrollBars();
             InitLayerMenu();
             cmbAutotile.SelectedIndex = 0;
@@ -167,6 +169,24 @@ namespace Intersect_Editor.Forms
                 cmbMapAttributeSound.Items.Add(Sounds.SoundFiles[i]);
             }
         }
+        private void UpdateFogLists()
+        {
+            cmbFogs.Items.Clear();
+            cmbFogs.Items.Add("None");
+            for (int i = 0; i < Graphics.FogFileNames.Count; i++)
+            {
+                cmbFogs.Items.Add(Graphics.FogFileNames[i]);
+            }
+        }
+        private void UpdateImageLists()
+        {
+            cmbPanorama.Items.Clear();
+            cmbPanorama.Items.Add("None");
+            for (int i = 0; i < Graphics.ImageFileNames.Count; i++)
+            {
+                cmbPanorama.Items.Add(Graphics.ImageFileNames[i]);
+            }
+        }
         protected override void OnResize(EventArgs e)
         {
             base.OnResize(e);
@@ -245,18 +265,56 @@ namespace Intersect_Editor.Forms
             txtMapName.Text = Globals.GameMaps[Globals.CurrentMap].MyName;
             chkIndoors.Checked = Globals.GameMaps[Globals.CurrentMap].IsIndoors;
 
+            //Music
             if (Globals.GameMaps[Globals.CurrentMap].Music.Length > 0)
             {
                 cmbMapMusic.SelectedIndex = cmbMapMusic.Items.IndexOf(Globals.GameMaps[Globals.CurrentMap].Music);
             }
             if (cmbMapMusic.SelectedIndex == -1) { cmbMapMusic.SelectedIndex = 0; }
 
-
+            //Sound
             if (Globals.GameMaps[Globals.CurrentMap].Sound.Length > 0)
             {
                 cmbMapSound.SelectedIndex = cmbMapSound.Items.IndexOf(Globals.GameMaps[Globals.CurrentMap].Sound);
             }
             if (cmbMapSound.SelectedIndex == -1) { cmbMapSound.SelectedIndex = 0; }
+
+            //Panorama
+            if (Globals.GameMaps[Globals.CurrentMap].Panorama.Length > 0)
+            {
+                cmbPanorama.SelectedIndex = cmbPanorama.Items.IndexOf(Globals.GameMaps[Globals.CurrentMap].Panorama);
+            }
+            if (cmbPanorama.SelectedIndex == -1) { cmbPanorama.SelectedIndex = 0; }
+
+
+            //Fog Values
+            if (Globals.GameMaps[Globals.CurrentMap].Fog.Length > 0)
+            {
+                cmbFogs.SelectedIndex = cmbPanorama.Items.IndexOf(Globals.GameMaps[Globals.CurrentMap].Fog);
+            }
+            if (cmbFogs.SelectedIndex == -1) { cmbFogs.SelectedIndex = 0; }
+
+            scrlFogHorizontal.Value = Globals.GameMaps[Globals.CurrentMap].FogXSpeed;
+            lblFogHorizontalSpeed.Text = "Fog Horitonzal Speed: " + scrlFogHorizontal.Value;
+            scrlFogVertical.Value = Globals.GameMaps[Globals.CurrentMap].FogYSpeed;
+            lblFogVerticalSpeed.Text = "Fog Vertical Speed: " + scrlFogVertical.Value;
+            scrlFogIntensity.Value = Globals.GameMaps[Globals.CurrentMap].FogTransaprency;
+            lblFogIntensity.Text = "Fog Intensity: " + scrlFogIntensity.Value;
+
+            //Map Hue
+            scrlMapRed.Value = Globals.GameMaps[Globals.CurrentMap].RHue;
+            lblMapRed.Text = "Red: " + scrlMapRed.Value;
+            scrlMapGreen.Value = Globals.GameMaps[Globals.CurrentMap].GHue;
+            lblMapGreen.Text = "Green: " + scrlMapGreen.Value;
+            scrlMapBlue.Value = Globals.GameMaps[Globals.CurrentMap].BHue;
+            lblMapBlue.Text = "Blue: " + scrlMapBlue.Value;
+            scrlMapAlpha.Value = Globals.GameMaps[Globals.CurrentMap].AHue;
+            lblMapAlpha.Text = "Intensity: " + scrlMapAlpha.Value;
+
+            //Brightness
+            scrlBrightness.Value = Globals.GameMaps[Globals.CurrentMap].Brightness;
+            lblBrightness.Text = "Brightness: " + scrlBrightness.Value;
+            
 
             // Update the list incase npcs have been modified since form load.
             cmbNpc.Items.Clear();
@@ -290,10 +348,20 @@ namespace Intersect_Editor.Forms
 
             grpMapProperties.Show();
         }
-        private void nightTimeToolStripMenuItem_Click(object sender, EventArgs e)
+        private void hideDarknessToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Graphics.NightEnabled = !Graphics.NightEnabled;
-            nightTimeToolStripMenuItem.Checked = Graphics.NightEnabled;
+            Graphics.HideDarkness = !Graphics.HideDarkness;
+            hideDarknessToolStripMenuItem.Checked = Graphics.HideDarkness;
+        }
+        private void hideFogToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Graphics.HideFog = !Graphics.HideFog;
+            hideFogToolStripMenuItem.Checked = Graphics.HideFog;
+        }
+        private void hideOverlayToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Graphics.HideOverlay = !Graphics.HideOverlay;
+            hideOverlayToolStripMenuItem.Checked = Graphics.HideOverlay;
         }
         private void exitToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -1006,6 +1074,11 @@ namespace Intersect_Editor.Forms
         }
 
         //Map Properties Functions
+        private void lblCloseMapProperties_Click(object sender, EventArgs e)
+        {
+            grpMapProperties.Visible = false;
+            Globals.ViewingMapProperties = false;
+        }
         private void btnCloseProperties_Click(object sender, EventArgs e)
         {
             grpMapProperties.Hide();
@@ -1017,6 +1090,145 @@ namespace Intersect_Editor.Forms
         private void chkIndoors_CheckedChanged(object sender, EventArgs e)
         {
             Globals.GameMaps[Globals.CurrentMap].IsIndoors = chkIndoors.Checked;
+        }
+        private void cmbPanorama_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            Globals.GameMaps[Globals.CurrentMap].Panorama = cmbPanorama.Text;
+        }
+        private void cmbFogs_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            Globals.GameMaps[Globals.CurrentMap].Fog = cmbFogs.Text;
+        }
+        private void scrlFogHorizontal_Scroll(object sender, ScrollEventArgs e)
+        {
+            lblFogHorizontalSpeed.Text = "Fog Horizontal Speed: " + scrlFogHorizontal.Value;
+            Globals.GameMaps[Globals.CurrentMap].FogXSpeed = scrlFogHorizontal.Value;
+        }
+        private void scrlFogVertical_Scroll(object sender, ScrollEventArgs e)
+        {
+            lblFogVerticalSpeed.Text = "Fog Vertical Speed: " + scrlFogVertical.Value;
+            Globals.GameMaps[Globals.CurrentMap].FogYSpeed = scrlFogVertical.Value;
+        }
+        private void scrlFogIntensity_Scroll(object sender, ScrollEventArgs e)
+        {
+            lblFogIntensity.Text = "Fog Intensity: " + scrlFogIntensity.Value;
+            Globals.GameMaps[Globals.CurrentMap].FogTransaprency = scrlFogIntensity.Value;
+        }
+        private void scrlMapRed_Scroll(object sender, ScrollEventArgs e)
+        {
+            lblMapRed.Text = "Red: " + scrlMapRed.Value;
+            Globals.GameMaps[Globals.CurrentMap].RHue = scrlMapRed.Value;
+        }
+        private void scrlMapGreen_Scroll(object sender, ScrollEventArgs e)
+        {
+            lblMapGreen.Text = "Green: " + scrlMapGreen.Value;
+            Globals.GameMaps[Globals.CurrentMap].GHue = scrlMapGreen.Value;
+        }
+        private void scrlMapBlue_Scroll(object sender, ScrollEventArgs e)
+        {
+            lblMapBlue.Text = "Blue: " + scrlMapBlue.Value;
+            Globals.GameMaps[Globals.CurrentMap].BHue = scrlMapBlue.Value;
+        }
+        private void scrlMapAlpha_Scroll(object sender, ScrollEventArgs e)
+        {
+            lblMapAlpha.Text = "Intensity: " + scrlMapAlpha.Value;
+            Globals.GameMaps[Globals.CurrentMap].AHue = scrlMapAlpha.Value;
+        }
+        private void scrlBrightness_Scroll(object sender, ScrollEventArgs e)
+        {
+            lblBrightness.Text = "Brightness: " + scrlBrightness.Value;
+            Globals.GameMaps[Globals.CurrentMap].Brightness = scrlBrightness.Value;
+        }
+        private void cmbMapMusic_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            Globals.GameMaps[Globals.CurrentMap].Music = cmbMapMusic.Text;
+        }
+        private void cmbMapSound_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            Globals.GameMaps[Globals.CurrentMap].Sound = cmbMapSound.Text;
+        }
+        //Map NPC List
+        private void btnAddMapNpc_Click(object sender, EventArgs e)
+        {
+            var n = new NpcSpawn();
+
+            //Don't add nothing
+            if (cmbNpc.SelectedIndex > 0)
+            {
+                n.NpcNum = cmbNpc.SelectedIndex - 1;
+                n.X = -1;
+                n.Y = -1;
+                n.Dir = -1;
+
+                Globals.GameMaps[Globals.CurrentMap].Spawns.Add(n);
+
+                lstMapNpcs.Items.Add(Convert.ToString(lstMapNpcs.Items.Count + 1) + ") " + Globals.GameNpcs[cmbNpc.SelectedIndex - 1].Name);
+                lstMapNpcs.SelectedIndex = lstMapNpcs.Items.Count - 1;
+            }
+        }
+        private void btnRemoveMapNpc_Click(object sender, EventArgs e)
+        {
+            Globals.GameMaps[Globals.CurrentMap].Spawns.RemoveAt(lstMapNpcs.SelectedIndex);
+            lstMapNpcs.Items.RemoveAt(lstMapNpcs.SelectedIndex);
+
+            // Refresh List
+            lstMapNpcs.Items.Clear();
+            for (int i = 0; i < Globals.GameMaps[Globals.CurrentMap].Spawns.Count; i++)
+            {
+                lstMapNpcs.Items.Add(Convert.ToString(i + 1) + ") " + Globals.GameNpcs[Globals.GameMaps[Globals.CurrentMap].Spawns[i].NpcNum].Name);
+            }
+
+            if (lstMapNpcs.Items.Count > 0)
+            {
+                lstMapNpcs.SelectedIndex = 0;
+            }
+        }
+        private void lstMapNpcs_Click(object sender, EventArgs e)
+        {
+            if (lstMapNpcs.Items.Count > 0)
+            {
+                cmbNpc.SelectedIndex = Globals.GameMaps[Globals.CurrentMap].Spawns[lstMapNpcs.SelectedIndex].NpcNum + 1;
+                cmbDir.SelectedIndex = Globals.GameMaps[Globals.CurrentMap].Spawns[lstMapNpcs.SelectedIndex].Dir + 1;
+                if (Globals.GameMaps[Globals.CurrentMap].Spawns[lstMapNpcs.SelectedIndex].X >= 0)
+                {
+                    rbDeclared.Checked = true;
+                }
+                else
+                {
+                    rbRandom.Checked = true;
+                }
+            }
+        }
+        private void rbRandom_Click(object sender, EventArgs e)
+        {
+            Globals.GameMaps[Globals.CurrentMap].Spawns[lstMapNpcs.SelectedIndex].X = -1;
+            Globals.GameMaps[Globals.CurrentMap].Spawns[lstMapNpcs.SelectedIndex].Y = -1;
+            Globals.GameMaps[Globals.CurrentMap].Spawns[lstMapNpcs.SelectedIndex].Dir = -1;
+        }
+        private void cmbDir_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (lstMapNpcs.SelectedIndex >= 0)
+            {
+                Globals.GameMaps[Globals.CurrentMap].Spawns[lstMapNpcs.SelectedIndex].Dir = cmbDir.SelectedIndex - 1;
+            }
+        }
+        private void cmbNpc_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            int n = 0;
+
+            if (lstMapNpcs.SelectedIndex >= 0)
+            {
+                Globals.GameMaps[Globals.CurrentMap].Spawns[lstMapNpcs.SelectedIndex].NpcNum = cmbNpc.SelectedIndex - 1;
+
+                // Refresh List
+                n = lstMapNpcs.SelectedIndex;
+                lstMapNpcs.Items.Clear();
+                for (int i = 0; i < Globals.GameMaps[Globals.CurrentMap].Spawns.Count; i++)
+                {
+                    lstMapNpcs.Items.Add(Convert.ToString(i + 1) + ") " + Globals.GameNpcs[Globals.GameMaps[Globals.CurrentMap].Spawns[i].NpcNum].Name);
+                }
+                lstMapNpcs.SelectedIndex = n;
+            }
         }
 
         //Light Editor
@@ -1258,143 +1470,37 @@ namespace Intersect_Editor.Forms
             tmpMap.Attributes[Globals.CurTileX, Globals.CurTileY].data3 = 0;
             tmpMap.Attributes[Globals.CurTileX, Globals.CurTileY].data4 = "";
         }
-
-
-
-
+        //Item Attribute
         private void scrlMapItem_ValueChanged(object sender, EventArgs e)
         {
             lblMapItem.Text = "Item: " + scrlMapItem.Value + " " + Globals.GameItems[scrlMapItem.Value - 1].Name;
         }
-
         private void scrlMaxItemVal_ValueChanged(object sender, EventArgs e)
         {
             lblMaxItemAmount.Text = "Quantity: x" + scrlMaxItemVal.Value;
         }
-
+        //Warp Attribute
         private void scrlMap_ValueChanged(object sender, EventArgs e)
         {
             lblMap.Text = "Map: " + scrlMap.Value;
         }
-
         private void scrlX_ValueChanged(object sender, EventArgs e)
         {
             lblX.Text = "X: " + scrlX.Value;
         }
-
         private void scrlY_ValueChanged(object sender, EventArgs e)
         {
             lblY.Text = "Y: " + scrlY.Value;
         }
-
-        private void lblCloseMapProperties_Click(object sender, EventArgs e)
-        {
-            grpMapProperties.Visible = false;
-            Globals.ViewingMapProperties = false;
-        }
-
-        private void cmbMapMusic_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            Globals.GameMaps[Globals.CurrentMap].Music = cmbMapMusic.Text;
-        }
-
-        private void cmbMapSound_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            Globals.GameMaps[Globals.CurrentMap].Sound = cmbMapSound.Text;
-        }
-
-        private void btnAddMapNpc_Click(object sender, EventArgs e)
-        {
-            var n = new NpcSpawn();
-
-            //Don't add nothing
-            if (cmbNpc.SelectedIndex > 0)
-            {
-                n.NpcNum = cmbNpc.SelectedIndex - 1;
-                n.X = -1;
-                n.Y = -1;
-                n.Dir = -1;
-
-                Globals.GameMaps[Globals.CurrentMap].Spawns.Add(n);
-
-                lstMapNpcs.Items.Add(Convert.ToString(lstMapNpcs.Items.Count + 1) + ") " + Globals.GameNpcs[cmbNpc.SelectedIndex - 1].Name);
-                lstMapNpcs.SelectedIndex = lstMapNpcs.Items.Count - 1;
-            }
-        }
-
-        private void btnRemoveMapNpc_Click(object sender, EventArgs e)
-        {
-            Globals.GameMaps[Globals.CurrentMap].Spawns.RemoveAt(lstMapNpcs.SelectedIndex);
-            lstMapNpcs.Items.RemoveAt(lstMapNpcs.SelectedIndex);
-
-            // Refresh List
-            lstMapNpcs.Items.Clear();
-            for (int i = 0; i < Globals.GameMaps[Globals.CurrentMap].Spawns.Count; i++)
-            {
-                lstMapNpcs.Items.Add(Convert.ToString(i + 1) + ") " + Globals.GameNpcs[Globals.GameMaps[Globals.CurrentMap].Spawns[i].NpcNum].Name);
-            }
-
-            if (lstMapNpcs.Items.Count > 0)
-            {
-                lstMapNpcs.SelectedIndex = 0;
-            }
-        }
-
-        private void lstMapNpcs_Click(object sender, EventArgs e)
-        {
-            if (lstMapNpcs.Items.Count > 0)
-            {
-                cmbNpc.SelectedIndex = Globals.GameMaps[Globals.CurrentMap].Spawns[lstMapNpcs.SelectedIndex].NpcNum + 1;
-                cmbDir.SelectedIndex = Globals.GameMaps[Globals.CurrentMap].Spawns[lstMapNpcs.SelectedIndex].Dir + 1;
-                if (Globals.GameMaps[Globals.CurrentMap].Spawns[lstMapNpcs.SelectedIndex].X >= 0)
-                {
-                    rbDeclared.Checked = true;
-                }
-                else
-                {
-                    rbRandom.Checked = true;
-                }
-            }
-        }
-
-        private void rbRandom_Click(object sender, EventArgs e)
-        {
-            Globals.GameMaps[Globals.CurrentMap].Spawns[lstMapNpcs.SelectedIndex].X = -1;
-            Globals.GameMaps[Globals.CurrentMap].Spawns[lstMapNpcs.SelectedIndex].Y = -1;
-            Globals.GameMaps[Globals.CurrentMap].Spawns[lstMapNpcs.SelectedIndex].Dir = -1;
-        }
-
-        private void cmbDir_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            if (lstMapNpcs.SelectedIndex >= 0)
-            {
-                Globals.GameMaps[Globals.CurrentMap].Spawns[lstMapNpcs.SelectedIndex].Dir = cmbDir.SelectedIndex - 1;
-            }
-        }
-
-        private void cmbNpc_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            int n = 0;
-
-            if (lstMapNpcs.SelectedIndex >= 0)
-            {
-                Globals.GameMaps[Globals.CurrentMap].Spawns[lstMapNpcs.SelectedIndex].NpcNum = cmbNpc.SelectedIndex - 1;
-
-                // Refresh List
-                n = lstMapNpcs.SelectedIndex;
-                lstMapNpcs.Items.Clear();
-                for (int i = 0; i < Globals.GameMaps[Globals.CurrentMap].Spawns.Count; i++)
-                {
-                    lstMapNpcs.Items.Add(Convert.ToString(i + 1) + ") " + Globals.GameNpcs[Globals.GameMaps[Globals.CurrentMap].Spawns[i].NpcNum].Name);
-                }
-                lstMapNpcs.SelectedIndex = n;
-            }
-        }
-
+        //Sound Attribute
         private void scrlSoundDistance_Scroll(object sender, ScrollEventArgs e)
         {
             lblSoundDistance.Text = "Distance: " + scrlSoundDistance.Value + " Tile(s)";
         }
+
+
+
+
 
 
         

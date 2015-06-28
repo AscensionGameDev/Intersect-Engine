@@ -43,24 +43,19 @@ namespace Intersect_Editor.Classes
 
         //Game Graphics
         static bool _tilesetsLoaded;
-        //Tileset Textures
         static Texture[] _tilesetTex;
-
-        //Item Textures
         public static string[] ItemNames;
         public static Texture[] ItemTextures;
-
-        //NPC Textures
         public static string[] EntityFileNames;
         public static Texture[] EntityTextures;
-
-        //Spell Textures
         public static string[] SpellFileNames;
         public static Texture[] SpellTextures;
-
-        //Anim Textures
         public static string[] AnimationFileNames;
         public static Texture[] AnimationTextures;
+        public static List<string> ImageFileNames;
+        public static Texture[] ImageTextures;
+        public static List<string> FogFileNames;
+        public static Texture[] FogTextures;
 
         //Face Textures
         public static List<string> FaceFileNames;
@@ -78,10 +73,22 @@ namespace Intersect_Editor.Classes
         //Texture for NPC Spawns
         private static Texture _spawnTex;
 
-        //DayNight Stuff
-        public static bool NightEnabled = false;
+        //Light Stuff
+        public static byte CurrentBrightness = 100;
+        public static bool HideDarkness = false;
         public static bool LightsChanged = true;
-        public static RenderTexture NightCacheTexture;
+        public static RenderTexture DarkCacheTexture;
+
+        //Overlay Stuff
+        public static Color OverlayColor = Color.Transparent;
+        public static bool HideOverlay = false;
+        public static RenderTexture OverlayTexture = new RenderTexture(Constants.MapWidth * 32 * 3, Constants.MapHeight * 32 * 3);
+
+        //Fog Stuff
+        public static bool HideFog = false;
+        private static long _fogUpdateTime = Environment.TickCount;
+        private static float _fogCurrentX = 0;
+        private static float _fogCurrentY = 0;
 
         //Setup and Loading
         public static void InitSfml(FrmMain myForm)
@@ -132,6 +139,8 @@ namespace Intersect_Editor.Classes
             LoadSpells();
             LoadAnimations();
             LoadFaces();
+            LoadImages();
+            LoadFogs();
         }
         private static void LoadTilesets(FrmMain myForm)
         {
@@ -222,7 +231,6 @@ namespace Intersect_Editor.Classes
                 ItemTextures[i] = new Texture(new Image("Resources/Items/" + ItemNames[i]));
             }
         }
-
         private static void LoadEntities()
         {
             if (!Directory.Exists("Resources/Entities")) { Directory.CreateDirectory("Resources/Entities"); }
@@ -235,7 +243,6 @@ namespace Intersect_Editor.Classes
                 EntityTextures[i] = new Texture(new Image("Resources/Entities/" + EntityFileNames[i]));
             }
         }
-
         private static void LoadSpells()
         {
             if (!Directory.Exists("Resources/Spells")) { Directory.CreateDirectory("Resources/Spells"); }
@@ -248,7 +255,6 @@ namespace Intersect_Editor.Classes
                 SpellTextures[i] = new Texture(new Image("Resources/Spells/" + SpellFileNames[i]));
             }
         }
-
         private static void LoadAnimations()
         {
             if (!Directory.Exists("Resources/Animations")) { Directory.CreateDirectory("Resources/Animations"); }
@@ -261,7 +267,6 @@ namespace Intersect_Editor.Classes
                 AnimationTextures[i] = new Texture(new Image("Resources/Animations/" + AnimationFileNames[i]));
             }
         }
-
         private static void LoadFaces()
         {
             if (!Directory.Exists("Resources/Faces")) { Directory.CreateDirectory("Resources/Faces"); }
@@ -272,6 +277,30 @@ namespace Intersect_Editor.Classes
             {
                 FaceFileNames.Add(faces[i].Replace("Resources/Faces\\", ""));
                 FaceTextures[i] = new Texture(new Image("Resources/Faces/" + FaceFileNames[i]));
+            }
+        }
+        private static void LoadImages()
+        {
+            if (!Directory.Exists("Resources/Images")) { Directory.CreateDirectory("Resources/Images"); }
+            var images = Directory.GetFiles("Resources/Images", "*.png");
+            ImageFileNames = new List<string>();
+            ImageTextures = new Texture[images.Length];
+            for (int i = 0; i < images.Length; i++)
+            {
+                ImageFileNames.Add(images[i].Replace("Resources/Images\\", ""));
+                ImageTextures[i] = new Texture(new Image("Resources/Images/" + ImageFileNames[i]));
+            }
+        }
+        private static void LoadFogs()
+        {
+            if (!Directory.Exists("Resources/Fogs")) { Directory.CreateDirectory("Resources/Fogs"); }
+            var fogs = Directory.GetFiles("Resources/Fogs", "*.png");
+            FogFileNames = new List<string>();
+            FogTextures = new Texture[fogs.Length];
+            for (int i = 0; i < fogs.Length; i++)
+            {
+                FogFileNames.Add(fogs[i].Replace("Resources/Fogs\\", ""));
+                FogTextures[i] = new Texture(new Image("Resources/Fogs/" + FogFileNames[i]));
             }
         }
 
@@ -292,7 +321,9 @@ namespace Intersect_Editor.Classes
             DrawMapLeft();
             DrawMapRight();
             DrawMapBorders();
-            if (NightEnabled || Globals.CurrentLayer == Constants.LayerCount + 1) { DrawNight(); }
+            if (!HideFog) { DrawFog(); }
+            if (!HideOverlay) { DrawMapOverlay(); }
+            if (!HideDarkness || Globals.CurrentLayer == Constants.LayerCount + 1) { DrawDarkness(); }
             _renderwindow.Display(); // display what SFML has drawn to the screen
             _tilesetwindow.Display();
         }
@@ -662,12 +693,24 @@ namespace Intersect_Editor.Classes
             _renderwindow.Draw(mapBorderLine);
             mapBorderLine.Dispose();
         }
-        private static void DrawNight()
+        private static void DrawMapOverlay()
         {
-            if (LightsChanged) { InitLighting(); }
-            var nightSprite = new Sprite(NightCacheTexture.Texture) {Position = new Vector2f(-32*30, -32*30)};
-            _renderwindow.Draw(nightSprite, new RenderStates(BlendMode.Multiply));
-            nightSprite.Dispose();
+            if (OverlayColor.A != Globals.GameMaps[Globals.CurrentMap].AHue || OverlayColor.R != Globals.GameMaps[Globals.CurrentMap].RHue || OverlayColor.G != Globals.GameMaps[Globals.CurrentMap].GHue || OverlayColor.B != Globals.GameMaps[Globals.CurrentMap].BHue)
+            {
+                OverlayColor = new Color((byte)Globals.GameMaps[Globals.CurrentMap].RHue, (byte)Globals.GameMaps[Globals.CurrentMap].GHue, (byte)Globals.GameMaps[Globals.CurrentMap].BHue, (byte)( Globals.GameMaps[Globals.CurrentMap].AHue));
+                OverlayTexture.Clear(OverlayColor);
+                OverlayTexture.Display();
+            }
+            var overlaySprite = new Sprite(OverlayTexture.Texture) { Position = new Vector2f(-32 * 30, -32 * 30) };
+            _renderwindow.Draw(overlaySprite);
+            overlaySprite.Dispose();
+        }
+        private static void DrawDarkness()
+        {
+            if (LightsChanged || CurrentBrightness != Globals.GameMaps[Globals.CurrentMap].Brightness) { InitLighting(); }
+            var darkSprite = new Sprite(DarkCacheTexture.Texture) {Position = new Vector2f(-32*30, -32*30)};
+            _renderwindow.Draw(darkSprite, new RenderStates(BlendMode.Multiply));
+            darkSprite.Dispose();
             if (Globals.CurrentLayer != Constants.LayerCount + 1) return;
             for (var x = 0; x < Constants.MapWidth; x++)
             {
@@ -692,16 +735,50 @@ namespace Intersect_Editor.Classes
             _renderwindow.Draw(tileSelectionRect);
         }
 
+        //Fogs
+        private static void DrawFog()
+        {
+            float ecTime = Environment.TickCount - _fogUpdateTime;
+            _fogUpdateTime = Environment.TickCount;
+            if (Globals.GameMaps[Globals.CurrentMap].Fog.Length > 0)
+            {
+                if (FogFileNames.IndexOf(Globals.GameMaps[Globals.CurrentMap].Fog) > -1)
+                {
+                    int fogIndex = FogFileNames.IndexOf(Globals.GameMaps[Globals.CurrentMap].Fog);
+                    int xCount = (int)(_renderwindow.Size.X / FogTextures[fogIndex].Size.X) + 1;
+                    int yCount = (int)(_renderwindow.Size.Y / FogTextures[fogIndex].Size.Y) + 1;
+
+                    _fogCurrentX += (ecTime / 1000f) * Globals.GameMaps[Globals.CurrentMap].FogXSpeed * 2;
+                    _fogCurrentY += (ecTime / 1000f) * Globals.GameMaps[Globals.CurrentMap].FogYSpeed * 2;
+
+                    if (_fogCurrentX < FogTextures[fogIndex].Size.X) { _fogCurrentX += FogTextures[fogIndex].Size.X; }
+                    if (_fogCurrentX > FogTextures[fogIndex].Size.X) { _fogCurrentX -= FogTextures[fogIndex].Size.X; }
+                    if (_fogCurrentY < FogTextures[fogIndex].Size.Y) { _fogCurrentY += FogTextures[fogIndex].Size.Y; }
+                    if (_fogCurrentY > FogTextures[fogIndex].Size.Y) { _fogCurrentY -= FogTextures[fogIndex].Size.Y; }
+
+                    for (int x = -1; x < xCount; x++)
+                    {
+                        for (int y = -1; y < yCount; y++)
+                        {
+                            var fogSprite = new Sprite(FogTextures[fogIndex]) { Position = new Vector2f(x * FogTextures[fogIndex].Size.X + _fogCurrentX, y * FogTextures[fogIndex].Size.Y + _fogCurrentY) };
+                            fogSprite.Color = new Color(255, 255, 255, (byte)Globals.GameMaps[Globals.CurrentMap].FogTransaprency);
+                            _renderwindow.Draw(fogSprite);
+                        }
+                    }
+                }
+            }
+        }
+
         //Lighting
         private static void InitLighting()
         {
             //If we don't have a light texture, make a base/blank one.
-            if (NightCacheTexture == null)
+            if (DarkCacheTexture == null)
             {
-                NightCacheTexture = new RenderTexture(Constants.MapWidth * 32 * 3, Constants.MapHeight * 32 * 3);
+                DarkCacheTexture = new RenderTexture(Constants.MapWidth * 32 * 3, Constants.MapHeight * 32 * 3);
             }
-
-            NightCacheTexture.Clear(new Color(30, 30, 30, 255));
+            CurrentBrightness = (byte)(((float)Globals.GameMaps[Globals.CurrentMap].Brightness / 100f) * 255f);
+            DarkCacheTexture.Clear(new Color(CurrentBrightness, CurrentBrightness, CurrentBrightness, 255));
 
             foreach (var t in Globals.GameMaps[Globals.CurrentMap].Lights)
             {
@@ -710,8 +787,9 @@ namespace Intersect_Editor.Classes
                 var y = 30 * 32 + (t.TileY * 32 + t.OffsetY) - (int)w / 2 + 32 + 16;
                 AddLight(x, y, (int)w, t.Intensity,  t);
             }
-            NightCacheTexture.Display();
+            DarkCacheTexture.Display();
             LightsChanged = false;
+            CurrentBrightness = (byte)Globals.GameMaps[Globals.CurrentMap].Brightness;
         }
         private static int CalcLightWidth(int range)
         {
@@ -734,15 +812,6 @@ namespace Intersect_Editor.Classes
                 w += (int)((range - xVals[x - 1]) / ((float)xVals[x] - xVals[x - 1])) * (yVals[x] - yVals[x - 1]);
             }
             return w;
-        }
-        private static void DrawNightTex()
-        {
-            //TODO: Calculate which areas will not be seen on screen and don't render them each frame.
-            if (Globals.GameMaps[Globals.CurrentMap].IsIndoors) { return; } //Don't worry about day or night if indoors
-            _renderwindow.Draw(new Sprite(NightCacheTexture.Texture)
-            {
-                Position = new Vector2f(-Constants.MapWidth*32, -Constants.MapHeight*32),
-            },new RenderStates(BlendMode.Multiply));
         }
         private static void AddLight(int x1, int y1, int size, double intensity, Light light)
         {
@@ -770,7 +839,7 @@ namespace Intersect_Editor.Classes
             }
 
             var tmpSprite = new Sprite(TexFromBitmap(tmpLight)) { Position = new Vector2f(x1, y1) };
-            NightCacheTexture.Draw(tmpSprite, new RenderStates(BlendMode.Add));
+            DarkCacheTexture.Draw(tmpSprite, new RenderStates(BlendMode.Add));
         }
         private static Texture TexFromBitmap(Bitmap bmp)
         {
@@ -778,88 +847,6 @@ namespace Intersect_Editor.Classes
             bmp.Save(ms, ImageFormat.Png);
             return new Texture(ms);
         }
-        /*old
-        private static void GenerateLightTexture()
-        {
-            //If we don't have a light texture, make a base/blank one.
-            if (Globals.BnightColorArray == null)
-            {
-                Globals.BnightColorArray = new Color[30 * 32 * 3, 30 * 32 * 3];
-                for (var x = 0; x < 30 * 32 * 3; x++)
-                {
-                    for (var y = 0; y < 30 * 32 * 3; y++)
-                    {
-                        Globals.BnightColorArray[x, y] = new Color(0, 0, 0, 180);
-                    }
-                }
-            }
-
-            //Wipe our render array by cloning the blank one.
-            Globals.NightColorArray = (Color[,])Globals.BnightColorArray.Clone();
-            //Render each light.
-            foreach (var t in Globals.GameMaps[Globals.CurrentMap].Lights)
-            {
-                double w = CalcLightWidth(t.Range);
-                var x = (30 * 32) + (t.TileX * 32 + t.OffsetX) - (int)w / 2 + 32 + 16;
-                var y = 30 * 32 + (t.TileY * 32 + t.OffsetY) - (int)w / 2 + 32 + 16;
-                AddLight(x, y, (int)w, t.Intensity, Globals.NightColorArray, t);
-            }
-            //Convert our pixel array into a renderable image.
-            var img = new Image(Globals.NightColorArray);
-            Globals.NightTex = new Texture(img);
-            LightsChanged = false;
-        }
-        private static int CalcLightWidth(int range)
-        {
-            //Formula that is ~equilivant to Unity spotlight widths, this is so future Unity lighting is possible.
-            int[] xVals = { 0, 5, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120, 130, 140, 150, 160, 170, 180 };
-            int[] yVals = { 1, 8, 18, 34, 50, 72, 92, 114, 135, 162, 196, 230, 268, 320, 394, 500, 658, 976, 1234, 1600 };
-            int w;
-            var x = 0;
-            while (range >= xVals[x])
-            {
-                x++;
-            }
-            if (x > yVals.Length)
-            {
-                w = yVals[yVals.Length - 1];
-            }
-            else
-            {
-                w = yVals[x - 1];
-                w += (int)((range - xVals[x - 1]) / ((float)xVals[x] - xVals[x - 1])) * (yVals[x] - yVals[x - 1]);
-            }
-            return w;
-        }
-        private static void AddLight(int x1, int y1, int size, double intensity, Color[,] colorArr, Light light)
-        {
-            Bitmap tmpLight;
-            //If not cached, create a radial gradent for the light.
-            if (light.Graphic == null)
-            {
-                tmpLight = new Bitmap(size, size);
-                var g = Graphics.FromImage(tmpLight);
-                var pth = new GraphicsPath();
-                pth.AddEllipse(0, 0, size - 1, size - 1);
-                var pgb = new PathGradientBrush(pth)
-                {
-                    CenterColor = System.Drawing.Color.FromArgb((int) (255*intensity), 0, 0, 0),
-                    SurroundColors = new[] {System.Drawing.Color.Transparent},
-                    FocusScales = new PointF(0.8f, 0.8f)
-                };
-                g.FillPath(pgb, pth);
-                g.Dispose();
-                light.Graphic = tmpLight;
-            }
-            else
-            {
-                tmpLight = light.Graphic;
-            }
-
-            //COPY LIGHTING CODE FROM CLIENT
-        }*/
-
-
 
         //Extra
         public static void InitTileset(int index,FrmMain myForm)

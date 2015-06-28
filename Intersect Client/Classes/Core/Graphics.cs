@@ -76,6 +76,10 @@ namespace Intersect_Client.Classes
         public static Texture[] AnimationTextures;
         public static List<string> FaceFileNames;
         public static Texture[] FaceTextures;
+        public static List<string> ImageFileNames;
+        public static Texture[] ImageTextures;
+        public static List<string> FogFileNames;
+        public static Texture[] FogTextures;
 
 
         //DayNight Stuff
@@ -109,13 +113,9 @@ namespace Intersect_Client.Classes
             LoadAnimations();
             LoadSpells();
             LoadFaces();
+            LoadImages();
+            LoadFogs();
             GameFont = new Font("Arvo-Regular.ttf");
-
-            //Load menu bg
-            if (File.Exists("Resources\\graphics\\bg.png"))
-            {
-                //menuBG = new Texture("data\\graphics\\bg.png");
-            }
         }
         private static void InitSfml()
         {
@@ -188,7 +188,6 @@ namespace Intersect_Client.Classes
                 Gui._GameGui.FocusChat = true;
             }
         }
-
 
         //Game Rendering
         public static void DrawGame()
@@ -338,6 +337,29 @@ namespace Intersect_Client.Classes
                 }
                 DrawNight();
             }
+            else
+            {
+                if (ImageFileNames.IndexOf(Globals.MenuBG) > -1)
+                {
+                    int bgx = (int)(RenderWindow.Size.X / 2 - ImageTextures[ImageFileNames.IndexOf(Globals.MenuBG)].Size.X / 2);
+                    int bgy = (int)(RenderWindow.Size.Y / 2 - ImageTextures[ImageFileNames.IndexOf(Globals.MenuBG)].Size.Y / 2);
+                    int bgw = (int)ImageTextures[ImageFileNames.IndexOf(Globals.MenuBG)].Size.X;
+                    int bgh = (int)ImageTextures[ImageFileNames.IndexOf(Globals.MenuBG)].Size.Y;
+                    int diff = 0;
+                    if (bgw < RenderWindow.Size.X){
+                        diff = (int)(RenderWindow.Size.X - bgw);
+                        bgx -= diff/2;
+                        bgw += diff;
+                    }
+                    if (bgh < RenderWindow.Size.Y){
+                        diff = (int)(RenderWindow.Size.Y - bgh);
+                        bgy -= diff/2;
+                        bgh += diff;
+                    }
+                    RenderTexture(ImageTextures[ImageFileNames.IndexOf(Globals.MenuBG)], new Rectangle(0, 0, (int)ImageTextures[ImageFileNames.IndexOf(Globals.MenuBG)].Size.X, (int)ImageTextures[ImageFileNames.IndexOf(Globals.MenuBG)].Size.Y),
+                        new Rectangle(bgx, bgy, bgw, bgh), RenderWindow);
+                }
+            }
 
             Gui.DrawGui();
 
@@ -394,7 +416,6 @@ namespace Intersect_Client.Classes
                 Globals.GameMaps[Globals.LocalMaps[index]].Draw(mapoffsetx, mapoffsety, layer);
             }
         }
-
 
         //Graphic Loading
         public static void LoadTilesets(string[] tilesetnames)
@@ -476,6 +497,30 @@ namespace Intersect_Client.Classes
             {
                 FaceFileNames.Add(faces[i].Replace("Resources/Faces\\", ""));
                 FaceTextures[i] = new Texture(new Image("Resources/Faces/" + FaceFileNames[i]));
+            }
+        }
+        private static void LoadImages()
+        {
+            if (!Directory.Exists("Resources/Images")) { Directory.CreateDirectory("Resources/Images"); }
+            var images = Directory.GetFiles("Resources/Images", "*.png");
+            ImageFileNames = new List<string>();
+            ImageTextures = new Texture[images.Length];
+            for (int i = 0; i < images.Length; i++)
+            {
+                ImageFileNames.Add(images[i].Replace("Resources/Images\\", ""));
+                ImageTextures[i] = new Texture(new Image("Resources/Images/" + ImageFileNames[i]));
+            }
+        }
+        private static void LoadFogs()
+        {
+            if (!Directory.Exists("Resources/Fogs")) { Directory.CreateDirectory("Resources/Fogs"); }
+            var fogs = Directory.GetFiles("Resources/Fogs", "*.png");
+            FogFileNames = new List<string>();
+            FogTextures  = new Texture[fogs.Length];
+            for (int i = 0; i < fogs.Length; i++)
+            {
+                FogFileNames.Add(fogs[i].Replace("Resources/Fogs\\", ""));
+                FogTextures[i] = new Texture(new Image("Resources/Fogs/" + FogFileNames[i]));
             }
         }
 
@@ -707,7 +752,6 @@ namespace Intersect_Client.Classes
             }
             return Constants.MapHeight * 32 + (ScreenHeight / 2) - Globals.Entities[Globals.MyIndex].CurrentY * 32 - (int)Math.Ceiling(Globals.Entities[Globals.MyIndex].OffsetY);
         }
-
 
         //Rendering Functions
         public static void RenderTexture(Texture tex, int x, int y, RenderTarget renderTarget)

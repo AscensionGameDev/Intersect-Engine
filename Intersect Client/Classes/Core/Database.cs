@@ -89,6 +89,9 @@ namespace Intersect_Client.Classes
                     selectSingleNode = options.SelectSingleNode("//Config/MenuBGM");
                     if (selectSingleNode != null)
                         Globals.MenuBGM = selectSingleNode.InnerText;
+                    selectSingleNode = options.SelectSingleNode("//Config/MenuBG");
+                    if (selectSingleNode != null)
+                        Globals.MenuBG = selectSingleNode.InnerText;
                 }
                 catch (Exception)
                 {
@@ -112,6 +115,7 @@ namespace Intersect_Client.Classes
                 writer.WriteElementString("Sound", Globals.SoundEnabled.ToString());
                 writer.WriteElementString("Music", Globals.MusicEnabled.ToString());
                 writer.WriteElementString("MenuBGM", Globals.MenuBGM);
+                writer.WriteElementString("MenuBG", Globals.MenuBG);
                 writer.WriteEndElement();
                 writer.WriteEndDocument();
                 writer.Flush();

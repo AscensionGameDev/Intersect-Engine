@@ -70,7 +70,7 @@ namespace Intersect_Server.Classes
             Stat[(int)Enums.Stats.MagicResist] = 16;
             //SPD
             Stat[(int)Enums.Stats.Speed] = 20;
-
+            
         }
 
         //Movement

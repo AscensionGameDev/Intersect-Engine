@@ -42,7 +42,7 @@ namespace Intersect_Editor.Forms
             this.mapPropertiesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.layerMenu = new System.Windows.Forms.ToolStripMenuItem();
             this.viewToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.nightTimeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.hideDarknessToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.mapListToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.contentEditorsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.itemEditorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -80,6 +80,12 @@ namespace Intersect_Editor.Forms
             this.btnLightEditorRevert = new System.Windows.Forms.Button();
             this.btnLightEditorClose = new System.Windows.Forms.Button();
             this.grpAttributes = new System.Windows.Forms.GroupBox();
+            this.grpSound = new System.Windows.Forms.GroupBox();
+            this.cmbMapAttributeSound = new System.Windows.Forms.ComboBox();
+            this.lblSoundDistance = new System.Windows.Forms.Label();
+            this.label7 = new System.Windows.Forms.Label();
+            this.scrlSoundDistance = new System.Windows.Forms.HScrollBar();
+            this.rbSound = new System.Windows.Forms.RadioButton();
             this.rbWarp = new System.Windows.Forms.RadioButton();
             this.rbNPCAvoid = new System.Windows.Forms.RadioButton();
             this.rbZDimension = new System.Windows.Forms.RadioButton();
@@ -107,6 +113,27 @@ namespace Intersect_Editor.Forms
             this.rbBlock1 = new System.Windows.Forms.RadioButton();
             this.rbBlockNone = new System.Windows.Forms.RadioButton();
             this.grpMapProperties = new System.Windows.Forms.GroupBox();
+            this.scrlBrightness = new System.Windows.Forms.HScrollBar();
+            this.lblBrightness = new System.Windows.Forms.Label();
+            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.scrlMapAlpha = new System.Windows.Forms.HScrollBar();
+            this.lblMapAlpha = new System.Windows.Forms.Label();
+            this.scrlMapBlue = new System.Windows.Forms.HScrollBar();
+            this.lblMapBlue = new System.Windows.Forms.Label();
+            this.scrlMapGreen = new System.Windows.Forms.HScrollBar();
+            this.lblMapGreen = new System.Windows.Forms.Label();
+            this.scrlMapRed = new System.Windows.Forms.HScrollBar();
+            this.lblMapRed = new System.Windows.Forms.Label();
+            this.scrlFogIntensity = new System.Windows.Forms.HScrollBar();
+            this.lblFogIntensity = new System.Windows.Forms.Label();
+            this.scrlFogVertical = new System.Windows.Forms.HScrollBar();
+            this.scrlFogHorizontal = new System.Windows.Forms.HScrollBar();
+            this.lblFogVerticalSpeed = new System.Windows.Forms.Label();
+            this.lblFogHorizontalSpeed = new System.Windows.Forms.Label();
+            this.cmbFogs = new System.Windows.Forms.ComboBox();
+            this.label8 = new System.Windows.Forms.Label();
+            this.cmbPanorama = new System.Windows.Forms.ComboBox();
+            this.label6 = new System.Windows.Forms.Label();
             this.cmbMapSound = new System.Windows.Forms.ComboBox();
             this.label5 = new System.Windows.Forms.Label();
             this.cmbMapMusic = new System.Windows.Forms.ComboBox();
@@ -127,12 +154,8 @@ namespace Intersect_Editor.Forms
             this.txtMapName = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.btnCloseProperties = new System.Windows.Forms.Button();
-            this.rbSound = new System.Windows.Forms.RadioButton();
-            this.grpSound = new System.Windows.Forms.GroupBox();
-            this.lblSoundDistance = new System.Windows.Forms.Label();
-            this.label7 = new System.Windows.Forms.Label();
-            this.scrlSoundDistance = new System.Windows.Forms.HScrollBar();
-            this.cmbMapAttributeSound = new System.Windows.Forms.ComboBox();
+            this.hideFogToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.hideOverlayToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip.SuspendLayout();
             this.grpMap.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.picMap)).BeginInit();
@@ -142,16 +165,17 @@ namespace Intersect_Editor.Forms
             this.grpMapList.SuspendLayout();
             this.grpLightEditor.SuspendLayout();
             this.grpAttributes.SuspendLayout();
+            this.grpSound.SuspendLayout();
             this.grpItem.SuspendLayout();
             this.grpWarp.SuspendLayout();
             this.grpZDimension.SuspendLayout();
             this.grpGateway.SuspendLayout();
             this.grpDimBlock.SuspendLayout();
             this.grpMapProperties.SuspendLayout();
+            this.groupBox1.SuspendLayout();
             this.grpMapNPCS.SuspendLayout();
             this.grpManage.SuspendLayout();
             this.grpSpawnLoc.SuspendLayout();
-            this.grpSound.SuspendLayout();
             this.SuspendLayout();
             // 
             // menuStrip
@@ -242,23 +266,25 @@ namespace Intersect_Editor.Forms
             // viewToolStripMenuItem
             // 
             this.viewToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.nightTimeToolStripMenuItem,
+            this.hideDarknessToolStripMenuItem,
+            this.hideFogToolStripMenuItem,
+            this.hideOverlayToolStripMenuItem,
             this.mapListToolStripMenuItem});
             this.viewToolStripMenuItem.Name = "viewToolStripMenuItem";
             this.viewToolStripMenuItem.Size = new System.Drawing.Size(44, 20);
             this.viewToolStripMenuItem.Text = "View";
             // 
-            // nightTimeToolStripMenuItem
+            // hideDarknessToolStripMenuItem
             // 
-            this.nightTimeToolStripMenuItem.Name = "nightTimeToolStripMenuItem";
-            this.nightTimeToolStripMenuItem.Size = new System.Drawing.Size(134, 22);
-            this.nightTimeToolStripMenuItem.Text = "Night Time";
-            this.nightTimeToolStripMenuItem.Click += new System.EventHandler(this.nightTimeToolStripMenuItem_Click);
+            this.hideDarknessToolStripMenuItem.Name = "hideDarknessToolStripMenuItem";
+            this.hideDarknessToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.hideDarknessToolStripMenuItem.Text = "Hide Darkness";
+            this.hideDarknessToolStripMenuItem.Click += new System.EventHandler(this.hideDarknessToolStripMenuItem_Click);
             // 
             // mapListToolStripMenuItem
             // 
             this.mapListToolStripMenuItem.Name = "mapListToolStripMenuItem";
-            this.mapListToolStripMenuItem.Size = new System.Drawing.Size(134, 22);
+            this.mapListToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.mapListToolStripMenuItem.Text = "Map List";
             this.mapListToolStripMenuItem.Click += new System.EventHandler(this.mapListToolStripMenuItem_Click);
             // 
@@ -653,6 +679,70 @@ namespace Intersect_Editor.Forms
             this.grpAttributes.Text = "Attributes";
             this.grpAttributes.Visible = false;
             // 
+            // grpSound
+            // 
+            this.grpSound.Controls.Add(this.cmbMapAttributeSound);
+            this.grpSound.Controls.Add(this.lblSoundDistance);
+            this.grpSound.Controls.Add(this.label7);
+            this.grpSound.Controls.Add(this.scrlSoundDistance);
+            this.grpSound.Location = new System.Drawing.Point(7, 484);
+            this.grpSound.Name = "grpSound";
+            this.grpSound.Size = new System.Drawing.Size(278, 132);
+            this.grpSound.TabIndex = 15;
+            this.grpSound.TabStop = false;
+            this.grpSound.Text = "Map Sound";
+            this.grpSound.Visible = false;
+            // 
+            // cmbMapAttributeSound
+            // 
+            this.cmbMapAttributeSound.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbMapAttributeSound.FormattingEnabled = true;
+            this.cmbMapAttributeSound.Location = new System.Drawing.Point(16, 41);
+            this.cmbMapAttributeSound.Name = "cmbMapAttributeSound";
+            this.cmbMapAttributeSound.Size = new System.Drawing.Size(249, 21);
+            this.cmbMapAttributeSound.TabIndex = 9;
+            // 
+            // lblSoundDistance
+            // 
+            this.lblSoundDistance.AutoSize = true;
+            this.lblSoundDistance.Location = new System.Drawing.Point(13, 72);
+            this.lblSoundDistance.Name = "lblSoundDistance";
+            this.lblSoundDistance.Size = new System.Drawing.Size(92, 13);
+            this.lblSoundDistance.TabIndex = 8;
+            this.lblSoundDistance.Text = "Distance: 1 Tile(s)";
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(13, 21);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(41, 13);
+            this.label7.TabIndex = 7;
+            this.label7.Text = "Sound:";
+            // 
+            // scrlSoundDistance
+            // 
+            this.scrlSoundDistance.LargeChange = 1;
+            this.scrlSoundDistance.Location = new System.Drawing.Point(16, 94);
+            this.scrlSoundDistance.Maximum = 15;
+            this.scrlSoundDistance.Minimum = 1;
+            this.scrlSoundDistance.Name = "scrlSoundDistance";
+            this.scrlSoundDistance.Size = new System.Drawing.Size(249, 17);
+            this.scrlSoundDistance.TabIndex = 6;
+            this.scrlSoundDistance.Value = 1;
+            this.scrlSoundDistance.Scroll += new System.Windows.Forms.ScrollEventHandler(this.scrlSoundDistance_Scroll);
+            // 
+            // rbSound
+            // 
+            this.rbSound.AutoSize = true;
+            this.rbSound.Location = new System.Drawing.Point(12, 136);
+            this.rbSound.Name = "rbSound";
+            this.rbSound.Size = new System.Drawing.Size(80, 17);
+            this.rbSound.TabIndex = 14;
+            this.rbSound.Text = "Map Sound";
+            this.rbSound.UseVisualStyleBackColor = true;
+            this.rbSound.CheckedChanged += new System.EventHandler(this.rbSound_CheckedChanged);
+            // 
             // rbWarp
             // 
             this.rbWarp.AutoSize = true;
@@ -939,6 +1029,19 @@ namespace Intersect_Editor.Forms
             // 
             this.grpMapProperties.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
+            this.grpMapProperties.Controls.Add(this.scrlBrightness);
+            this.grpMapProperties.Controls.Add(this.lblBrightness);
+            this.grpMapProperties.Controls.Add(this.groupBox1);
+            this.grpMapProperties.Controls.Add(this.scrlFogIntensity);
+            this.grpMapProperties.Controls.Add(this.lblFogIntensity);
+            this.grpMapProperties.Controls.Add(this.scrlFogVertical);
+            this.grpMapProperties.Controls.Add(this.scrlFogHorizontal);
+            this.grpMapProperties.Controls.Add(this.lblFogVerticalSpeed);
+            this.grpMapProperties.Controls.Add(this.lblFogHorizontalSpeed);
+            this.grpMapProperties.Controls.Add(this.cmbFogs);
+            this.grpMapProperties.Controls.Add(this.label8);
+            this.grpMapProperties.Controls.Add(this.cmbPanorama);
+            this.grpMapProperties.Controls.Add(this.label6);
             this.grpMapProperties.Controls.Add(this.cmbMapSound);
             this.grpMapProperties.Controls.Add(this.label5);
             this.grpMapProperties.Controls.Add(this.cmbMapMusic);
@@ -957,32 +1060,242 @@ namespace Intersect_Editor.Forms
             this.grpMapProperties.Text = "Map Properties";
             this.grpMapProperties.Visible = false;
             // 
+            // scrlBrightness
+            // 
+            this.scrlBrightness.LargeChange = 1;
+            this.scrlBrightness.Location = new System.Drawing.Point(168, 55);
+            this.scrlBrightness.Minimum = 10;
+            this.scrlBrightness.Name = "scrlBrightness";
+            this.scrlBrightness.Size = new System.Drawing.Size(117, 17);
+            this.scrlBrightness.TabIndex = 23;
+            this.scrlBrightness.Value = 100;
+            this.scrlBrightness.Scroll += new System.Windows.Forms.ScrollEventHandler(this.scrlBrightness_Scroll);
+            // 
+            // lblBrightness
+            // 
+            this.lblBrightness.AutoSize = true;
+            this.lblBrightness.Location = new System.Drawing.Point(165, 41);
+            this.lblBrightness.Name = "lblBrightness";
+            this.lblBrightness.Size = new System.Drawing.Size(80, 13);
+            this.lblBrightness.TabIndex = 22;
+            this.lblBrightness.Text = "Brightness: 100";
+            // 
+            // groupBox1
+            // 
+            this.groupBox1.Controls.Add(this.scrlMapAlpha);
+            this.groupBox1.Controls.Add(this.lblMapAlpha);
+            this.groupBox1.Controls.Add(this.scrlMapBlue);
+            this.groupBox1.Controls.Add(this.lblMapBlue);
+            this.groupBox1.Controls.Add(this.scrlMapGreen);
+            this.groupBox1.Controls.Add(this.lblMapGreen);
+            this.groupBox1.Controls.Add(this.scrlMapRed);
+            this.groupBox1.Controls.Add(this.lblMapRed);
+            this.groupBox1.Location = new System.Drawing.Point(168, 85);
+            this.groupBox1.Name = "groupBox1";
+            this.groupBox1.Size = new System.Drawing.Size(117, 169);
+            this.groupBox1.TabIndex = 21;
+            this.groupBox1.TabStop = false;
+            this.groupBox1.Text = "Map Overlay";
+            // 
+            // scrlMapAlpha
+            // 
+            this.scrlMapAlpha.LargeChange = 1;
+            this.scrlMapAlpha.Location = new System.Drawing.Point(10, 137);
+            this.scrlMapAlpha.Maximum = 255;
+            this.scrlMapAlpha.Name = "scrlMapAlpha";
+            this.scrlMapAlpha.Size = new System.Drawing.Size(96, 17);
+            this.scrlMapAlpha.TabIndex = 7;
+            this.scrlMapAlpha.Scroll += new System.Windows.Forms.ScrollEventHandler(this.scrlMapAlpha_Scroll);
+            // 
+            // lblMapAlpha
+            // 
+            this.lblMapAlpha.AutoSize = true;
+            this.lblMapAlpha.Location = new System.Drawing.Point(7, 123);
+            this.lblMapAlpha.Name = "lblMapAlpha";
+            this.lblMapAlpha.Size = new System.Drawing.Size(58, 13);
+            this.lblMapAlpha.TabIndex = 6;
+            this.lblMapAlpha.Text = "Intensity: 0";
+            // 
+            // scrlMapBlue
+            // 
+            this.scrlMapBlue.LargeChange = 1;
+            this.scrlMapBlue.Location = new System.Drawing.Point(10, 101);
+            this.scrlMapBlue.Maximum = 255;
+            this.scrlMapBlue.Name = "scrlMapBlue";
+            this.scrlMapBlue.Size = new System.Drawing.Size(96, 17);
+            this.scrlMapBlue.TabIndex = 5;
+            this.scrlMapBlue.Scroll += new System.Windows.Forms.ScrollEventHandler(this.scrlMapBlue_Scroll);
+            // 
+            // lblMapBlue
+            // 
+            this.lblMapBlue.AutoSize = true;
+            this.lblMapBlue.Location = new System.Drawing.Point(7, 87);
+            this.lblMapBlue.Name = "lblMapBlue";
+            this.lblMapBlue.Size = new System.Drawing.Size(40, 13);
+            this.lblMapBlue.TabIndex = 4;
+            this.lblMapBlue.Text = "Blue: 0";
+            // 
+            // scrlMapGreen
+            // 
+            this.scrlMapGreen.LargeChange = 1;
+            this.scrlMapGreen.Location = new System.Drawing.Point(10, 64);
+            this.scrlMapGreen.Maximum = 255;
+            this.scrlMapGreen.Name = "scrlMapGreen";
+            this.scrlMapGreen.Size = new System.Drawing.Size(96, 17);
+            this.scrlMapGreen.TabIndex = 3;
+            this.scrlMapGreen.Scroll += new System.Windows.Forms.ScrollEventHandler(this.scrlMapGreen_Scroll);
+            // 
+            // lblMapGreen
+            // 
+            this.lblMapGreen.AutoSize = true;
+            this.lblMapGreen.Location = new System.Drawing.Point(7, 50);
+            this.lblMapGreen.Name = "lblMapGreen";
+            this.lblMapGreen.Size = new System.Drawing.Size(48, 13);
+            this.lblMapGreen.TabIndex = 2;
+            this.lblMapGreen.Text = "Green: 0";
+            // 
+            // scrlMapRed
+            // 
+            this.scrlMapRed.LargeChange = 1;
+            this.scrlMapRed.Location = new System.Drawing.Point(10, 27);
+            this.scrlMapRed.Maximum = 255;
+            this.scrlMapRed.Name = "scrlMapRed";
+            this.scrlMapRed.Size = new System.Drawing.Size(96, 17);
+            this.scrlMapRed.TabIndex = 1;
+            this.scrlMapRed.Scroll += new System.Windows.Forms.ScrollEventHandler(this.scrlMapRed_Scroll);
+            // 
+            // lblMapRed
+            // 
+            this.lblMapRed.AutoSize = true;
+            this.lblMapRed.Location = new System.Drawing.Point(7, 13);
+            this.lblMapRed.Name = "lblMapRed";
+            this.lblMapRed.Size = new System.Drawing.Size(39, 13);
+            this.lblMapRed.TabIndex = 0;
+            this.lblMapRed.Text = "Red: 0";
+            // 
+            // scrlFogIntensity
+            // 
+            this.scrlFogIntensity.LargeChange = 1;
+            this.scrlFogIntensity.Location = new System.Drawing.Point(11, 231);
+            this.scrlFogIntensity.Maximum = 255;
+            this.scrlFogIntensity.Name = "scrlFogIntensity";
+            this.scrlFogIntensity.Size = new System.Drawing.Size(145, 16);
+            this.scrlFogIntensity.TabIndex = 20;
+            this.scrlFogIntensity.Scroll += new System.Windows.Forms.ScrollEventHandler(this.scrlFogIntensity_Scroll);
+            // 
+            // lblFogIntensity
+            // 
+            this.lblFogIntensity.AutoSize = true;
+            this.lblFogIntensity.Location = new System.Drawing.Point(6, 218);
+            this.lblFogIntensity.Name = "lblFogIntensity";
+            this.lblFogIntensity.Size = new System.Drawing.Size(79, 13);
+            this.lblFogIntensity.TabIndex = 19;
+            this.lblFogIntensity.Text = "Fog Intensity: 0";
+            // 
+            // scrlFogVertical
+            // 
+            this.scrlFogVertical.LargeChange = 1;
+            this.scrlFogVertical.Location = new System.Drawing.Point(11, 198);
+            this.scrlFogVertical.Maximum = 5;
+            this.scrlFogVertical.Minimum = -5;
+            this.scrlFogVertical.Name = "scrlFogVertical";
+            this.scrlFogVertical.Size = new System.Drawing.Size(145, 16);
+            this.scrlFogVertical.TabIndex = 18;
+            this.scrlFogVertical.Scroll += new System.Windows.Forms.ScrollEventHandler(this.scrlFogVertical_Scroll);
+            // 
+            // scrlFogHorizontal
+            // 
+            this.scrlFogHorizontal.LargeChange = 1;
+            this.scrlFogHorizontal.Location = new System.Drawing.Point(11, 166);
+            this.scrlFogHorizontal.Maximum = 5;
+            this.scrlFogHorizontal.Minimum = -5;
+            this.scrlFogHorizontal.Name = "scrlFogHorizontal";
+            this.scrlFogHorizontal.Size = new System.Drawing.Size(145, 16);
+            this.scrlFogHorizontal.TabIndex = 17;
+            this.scrlFogHorizontal.Scroll += new System.Windows.Forms.ScrollEventHandler(this.scrlFogHorizontal_Scroll);
+            // 
+            // lblFogVerticalSpeed
+            // 
+            this.lblFogVerticalSpeed.AutoSize = true;
+            this.lblFogVerticalSpeed.Location = new System.Drawing.Point(6, 185);
+            this.lblFogVerticalSpeed.Name = "lblFogVerticalSpeed";
+            this.lblFogVerticalSpeed.Size = new System.Drawing.Size(109, 13);
+            this.lblFogVerticalSpeed.TabIndex = 16;
+            this.lblFogVerticalSpeed.Text = "Fog Vertical Speed: 0";
+            // 
+            // lblFogHorizontalSpeed
+            // 
+            this.lblFogHorizontalSpeed.AutoSize = true;
+            this.lblFogHorizontalSpeed.Location = new System.Drawing.Point(6, 149);
+            this.lblFogHorizontalSpeed.Name = "lblFogHorizontalSpeed";
+            this.lblFogHorizontalSpeed.Size = new System.Drawing.Size(121, 13);
+            this.lblFogHorizontalSpeed.TabIndex = 15;
+            this.lblFogHorizontalSpeed.Text = "Fog Horizontal Speed: 0";
+            // 
+            // cmbFogs
+            // 
+            this.cmbFogs.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbFogs.FormattingEnabled = true;
+            this.cmbFogs.Location = new System.Drawing.Point(74, 121);
+            this.cmbFogs.Name = "cmbFogs";
+            this.cmbFogs.Size = new System.Drawing.Size(82, 21);
+            this.cmbFogs.TabIndex = 14;
+            this.cmbFogs.SelectedIndexChanged += new System.EventHandler(this.cmbFogs_SelectedIndexChanged);
+            // 
+            // label8
+            // 
+            this.label8.AutoSize = true;
+            this.label8.Location = new System.Drawing.Point(6, 124);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(28, 13);
+            this.label8.TabIndex = 13;
+            this.label8.Text = "Fog:";
+            // 
+            // cmbPanorama
+            // 
+            this.cmbPanorama.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbPanorama.FormattingEnabled = true;
+            this.cmbPanorama.Location = new System.Drawing.Point(74, 94);
+            this.cmbPanorama.Name = "cmbPanorama";
+            this.cmbPanorama.Size = new System.Drawing.Size(82, 21);
+            this.cmbPanorama.TabIndex = 12;
+            this.cmbPanorama.SelectedIndexChanged += new System.EventHandler(this.cmbPanorama_SelectedIndexChanged);
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(6, 97);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(58, 13);
+            this.label6.TabIndex = 11;
+            this.label6.Text = "Panorama:";
+            // 
             // cmbMapSound
             // 
             this.cmbMapSound.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbMapSound.FormattingEnabled = true;
-            this.cmbMapSound.Location = new System.Drawing.Point(74, 67);
+            this.cmbMapSound.Location = new System.Drawing.Point(63, 65);
             this.cmbMapSound.Name = "cmbMapSound";
-            this.cmbMapSound.Size = new System.Drawing.Size(129, 21);
+            this.cmbMapSound.Size = new System.Drawing.Size(93, 21);
             this.cmbMapSound.TabIndex = 10;
             this.cmbMapSound.SelectedIndexChanged += new System.EventHandler(this.cmbMapSound_SelectedIndexChanged);
             // 
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(6, 70);
+            this.label5.Location = new System.Drawing.Point(6, 68);
             this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(65, 13);
+            this.label5.Size = new System.Drawing.Size(59, 13);
             this.label5.TabIndex = 9;
-            this.label5.Text = "Map Sound:";
+            this.label5.Text = "BG Sound:";
             // 
             // cmbMapMusic
             // 
             this.cmbMapMusic.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbMapMusic.FormattingEnabled = true;
-            this.cmbMapMusic.Location = new System.Drawing.Point(74, 41);
+            this.cmbMapMusic.Location = new System.Drawing.Point(63, 41);
             this.cmbMapMusic.Name = "cmbMapMusic";
-            this.cmbMapMusic.Size = new System.Drawing.Size(129, 21);
+            this.cmbMapMusic.Size = new System.Drawing.Size(93, 21);
             this.cmbMapMusic.TabIndex = 8;
             this.cmbMapMusic.SelectedIndexChanged += new System.EventHandler(this.cmbMapMusic_SelectedIndexChanged);
             // 
@@ -991,9 +1304,9 @@ namespace Intersect_Editor.Forms
             this.label4.AutoSize = true;
             this.label4.Location = new System.Drawing.Point(6, 44);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(62, 13);
+            this.label4.Size = new System.Drawing.Size(56, 13);
             this.label4.TabIndex = 7;
-            this.label4.Text = "Map Music:";
+            this.label4.Text = "BG Music:";
             // 
             // lblCloseMapProperties
             // 
@@ -1010,7 +1323,7 @@ namespace Intersect_Editor.Forms
             this.grpMapNPCS.Controls.Add(this.grpManage);
             this.grpMapNPCS.Controls.Add(this.grpSpawnLoc);
             this.grpMapNPCS.Controls.Add(this.lstMapNpcs);
-            this.grpMapNPCS.Location = new System.Drawing.Point(9, 124);
+            this.grpMapNPCS.Location = new System.Drawing.Point(9, 260);
             this.grpMapNPCS.Name = "grpMapNPCS";
             this.grpMapNPCS.Size = new System.Drawing.Size(200, 342);
             this.grpMapNPCS.TabIndex = 4;
@@ -1130,7 +1443,7 @@ namespace Intersect_Editor.Forms
             // chkIndoors
             // 
             this.chkIndoors.AutoSize = true;
-            this.chkIndoors.Location = new System.Drawing.Point(9, 101);
+            this.chkIndoors.Location = new System.Drawing.Point(168, 19);
             this.chkIndoors.Name = "chkIndoors";
             this.chkIndoors.Size = new System.Drawing.Size(106, 17);
             this.chkIndoors.TabIndex = 3;
@@ -1141,7 +1454,7 @@ namespace Intersect_Editor.Forms
             // 
             this.txtMapName.Location = new System.Drawing.Point(74, 17);
             this.txtMapName.Name = "txtMapName";
-            this.txtMapName.Size = new System.Drawing.Size(129, 20);
+            this.txtMapName.Size = new System.Drawing.Size(82, 20);
             this.txtMapName.TabIndex = 2;
             // 
             // label1
@@ -1162,69 +1475,19 @@ namespace Intersect_Editor.Forms
             this.btnCloseProperties.Text = "Close";
             this.btnCloseProperties.UseVisualStyleBackColor = true;
             // 
-            // rbSound
+            // hideFogToolStripMenuItem
             // 
-            this.rbSound.AutoSize = true;
-            this.rbSound.Location = new System.Drawing.Point(12, 136);
-            this.rbSound.Name = "rbSound";
-            this.rbSound.Size = new System.Drawing.Size(80, 17);
-            this.rbSound.TabIndex = 14;
-            this.rbSound.Text = "Map Sound";
-            this.rbSound.UseVisualStyleBackColor = true;
-            this.rbSound.CheckedChanged += new System.EventHandler(this.rbSound_CheckedChanged);
+            this.hideFogToolStripMenuItem.Name = "hideFogToolStripMenuItem";
+            this.hideFogToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.hideFogToolStripMenuItem.Text = "Hide Fog";
+            this.hideFogToolStripMenuItem.Click += new System.EventHandler(this.hideFogToolStripMenuItem_Click);
             // 
-            // grpSound
+            // hideOverlayToolStripMenuItem
             // 
-            this.grpSound.Controls.Add(this.cmbMapAttributeSound);
-            this.grpSound.Controls.Add(this.lblSoundDistance);
-            this.grpSound.Controls.Add(this.label7);
-            this.grpSound.Controls.Add(this.scrlSoundDistance);
-            this.grpSound.Location = new System.Drawing.Point(7, 484);
-            this.grpSound.Name = "grpSound";
-            this.grpSound.Size = new System.Drawing.Size(278, 132);
-            this.grpSound.TabIndex = 15;
-            this.grpSound.TabStop = false;
-            this.grpSound.Text = "Map Sound";
-            this.grpSound.Visible = false;
-            // 
-            // lblSoundDistance
-            // 
-            this.lblSoundDistance.AutoSize = true;
-            this.lblSoundDistance.Location = new System.Drawing.Point(13, 72);
-            this.lblSoundDistance.Name = "lblSoundDistance";
-            this.lblSoundDistance.Size = new System.Drawing.Size(92, 13);
-            this.lblSoundDistance.TabIndex = 8;
-            this.lblSoundDistance.Text = "Distance: 1 Tile(s)";
-            // 
-            // label7
-            // 
-            this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(13, 21);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(41, 13);
-            this.label7.TabIndex = 7;
-            this.label7.Text = "Sound:";
-            // 
-            // scrlSoundDistance
-            // 
-            this.scrlSoundDistance.LargeChange = 1;
-            this.scrlSoundDistance.Location = new System.Drawing.Point(16, 94);
-            this.scrlSoundDistance.Maximum = 15;
-            this.scrlSoundDistance.Minimum = 1;
-            this.scrlSoundDistance.Name = "scrlSoundDistance";
-            this.scrlSoundDistance.Size = new System.Drawing.Size(249, 17);
-            this.scrlSoundDistance.TabIndex = 6;
-            this.scrlSoundDistance.Value = 1;
-            this.scrlSoundDistance.Scroll += new System.Windows.Forms.ScrollEventHandler(this.scrlSoundDistance_Scroll);
-            // 
-            // cmbMapAttributeSound
-            // 
-            this.cmbMapAttributeSound.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cmbMapAttributeSound.FormattingEnabled = true;
-            this.cmbMapAttributeSound.Location = new System.Drawing.Point(16, 41);
-            this.cmbMapAttributeSound.Name = "cmbMapAttributeSound";
-            this.cmbMapAttributeSound.Size = new System.Drawing.Size(249, 21);
-            this.cmbMapAttributeSound.TabIndex = 9;
+            this.hideOverlayToolStripMenuItem.Name = "hideOverlayToolStripMenuItem";
+            this.hideOverlayToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.hideOverlayToolStripMenuItem.Text = "Hide Overlay";
+            this.hideOverlayToolStripMenuItem.Click += new System.EventHandler(this.hideOverlayToolStripMenuItem_Click);
             // 
             // FrmMain
             // 
@@ -1235,11 +1498,11 @@ namespace Intersect_Editor.Forms
             this.Controls.Add(this.hScrollMap);
             this.Controls.Add(this.grpMap);
             this.Controls.Add(this.menuStrip);
+            this.Controls.Add(this.grpMapProperties);
             this.Controls.Add(this.grpAttributes);
             this.Controls.Add(this.grpLightEditor);
             this.Controls.Add(this.grpMapList);
             this.Controls.Add(this.grpLayer);
-            this.Controls.Add(this.grpMapProperties);
             this.MainMenuStrip = this.menuStrip;
             this.Name = "FrmMain";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
@@ -1259,6 +1522,8 @@ namespace Intersect_Editor.Forms
             this.grpLightEditor.PerformLayout();
             this.grpAttributes.ResumeLayout(false);
             this.grpAttributes.PerformLayout();
+            this.grpSound.ResumeLayout(false);
+            this.grpSound.PerformLayout();
             this.grpItem.ResumeLayout(false);
             this.grpItem.PerformLayout();
             this.grpWarp.ResumeLayout(false);
@@ -1270,12 +1535,12 @@ namespace Intersect_Editor.Forms
             this.grpDimBlock.PerformLayout();
             this.grpMapProperties.ResumeLayout(false);
             this.grpMapProperties.PerformLayout();
+            this.groupBox1.ResumeLayout(false);
+            this.groupBox1.PerformLayout();
             this.grpMapNPCS.ResumeLayout(false);
             this.grpManage.ResumeLayout(false);
             this.grpSpawnLoc.ResumeLayout(false);
             this.grpSpawnLoc.PerformLayout();
-            this.grpSound.ResumeLayout(false);
-            this.grpSound.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -1312,7 +1577,7 @@ namespace Intersect_Editor.Forms
         private System.Windows.Forms.Label lblCloseMapList;
         private System.Windows.Forms.ListBox lstGameMaps;
         private System.Windows.Forms.ToolStripMenuItem mapPropertiesToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem nightTimeToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem hideDarknessToolStripMenuItem;
         private System.Windows.Forms.GroupBox grpLightEditor;
         private System.Windows.Forms.HScrollBar scrlLightRange;
         private System.Windows.Forms.Label label2;
@@ -1386,6 +1651,29 @@ namespace Intersect_Editor.Forms
         private Label label7;
         private HScrollBar scrlSoundDistance;
         private ComboBox cmbMapAttributeSound;
+        private GroupBox groupBox1;
+        private HScrollBar scrlMapAlpha;
+        private Label lblMapAlpha;
+        private HScrollBar scrlMapBlue;
+        private Label lblMapBlue;
+        private HScrollBar scrlMapGreen;
+        private Label lblMapGreen;
+        private HScrollBar scrlMapRed;
+        private Label lblMapRed;
+        private HScrollBar scrlFogIntensity;
+        private Label lblFogIntensity;
+        private HScrollBar scrlFogVertical;
+        private HScrollBar scrlFogHorizontal;
+        private Label lblFogVerticalSpeed;
+        private Label lblFogHorizontalSpeed;
+        private ComboBox cmbFogs;
+        private Label label8;
+        private ComboBox cmbPanorama;
+        private Label label6;
+        private HScrollBar scrlBrightness;
+        private Label lblBrightness;
+        private ToolStripMenuItem hideFogToolStripMenuItem;
+        private ToolStripMenuItem hideOverlayToolStripMenuItem;
     }
 }
 

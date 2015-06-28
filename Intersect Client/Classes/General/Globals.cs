@@ -41,6 +41,7 @@ namespace Intersect_Client.Classes
         public static bool SoundEnabled;
         public static bool MusicEnabled;
         public static string MenuBGM = "";
+        public static string MenuBG = "";
 
         //Scene management
         public static bool WaitingOnServer = false;

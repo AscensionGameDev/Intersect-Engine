@@ -50,6 +50,19 @@ namespace Intersect_Server.Classes
         public List<NpcSpawn> Spawns = new List<NpcSpawn>();
         public bool IsIndoors;
 
+        //Visual Effect Properties
+        public string Panorama = "None";
+        public string Fog = "None";
+        public int FogXSpeed = 0;
+        public int FogYSpeed = 0;
+        public int FogTransaprency = 0;
+        public int RHue = 0;
+        public int GHue = 0;
+        public int BHue = 0;
+        public int AHue = 0;
+        public int Brightness = 100;
+
+
         //Temporary Values
         public List<int> SurroundingMaps = new List<int>();
         public List<MapItemInstance> MapItems = new List<MapItemInstance>();
@@ -102,6 +115,16 @@ namespace Intersect_Server.Classes
             bf.WriteString(_music);
             bf.WriteString(_sound);
             bf.WriteInteger(Convert.ToInt32(IsIndoors));
+            bf.WriteString(Panorama);
+            bf.WriteString(Fog);
+            bf.WriteInteger(FogXSpeed);
+            bf.WriteInteger(FogYSpeed);
+            bf.WriteInteger(FogTransaprency);
+            bf.WriteInteger(RHue);
+            bf.WriteInteger(GHue);
+            bf.WriteInteger(BHue);
+            bf.WriteInteger(AHue);
+            bf.WriteInteger(Brightness);
 
             // Save Map Npcs
             bf.WriteInteger(Spawns.Count);
@@ -170,6 +193,16 @@ namespace Intersect_Server.Classes
             _music = bf.ReadString();
             _sound = bf.ReadString();
             IsIndoors = Convert.ToBoolean(bf.ReadInteger());
+            Panorama = bf.ReadString();
+            Fog = bf.ReadString();
+            FogXSpeed = bf.ReadInteger();
+            FogYSpeed = bf.ReadInteger();
+            FogTransaprency = bf.ReadInteger();
+            RHue = bf.ReadInteger();
+            GHue = bf.ReadInteger();
+            BHue = bf.ReadInteger();
+            AHue = bf.ReadInteger();
+            Brightness = bf.ReadInteger();
 
             // Load Map Npcs
             Spawns.Clear();
