@@ -83,19 +83,27 @@ namespace Intersect_Client.Classes
         public static Texture[] FogTextures;
 
 
-        //DayNight Stuff
+        //Darkness Stuff
         public static bool LightsChanged = true;
-        public static int NightOffsetX = 0;
-        public static int NightOffsetY = 0;
+        public static int DarkOffsetX = 0;
+        public static int DarkOffsetY = 0;
         private static Thread LightThread;
-        public static RenderTexture NightCacheTexture;
-        private static RenderTexture NightCacheTextureBackup;
-        private static bool UseNightBackup = true;
-        private static bool SwapNightTextures = false;
-        public static RenderTexture CurrentNightTexture;
-        public static Image NightImg;
+        public static RenderTexture DarkCacheTexture;
+        private static RenderTexture DarkCacheTextureBackup;
+        private static bool UseDarknessBackup = true;
+        private static bool SwapDarknessTextures = false;
+        public static RenderTexture CurrentDarknexxTexture;
         public static Texture PlayerLightTex;
         public static float SunIntensity;
+
+        //Fog Stuff
+        public static int FogOffsetX = 0;
+        public static int FogOffsetY = 0;
+
+        //Overlay Stuff
+        public static Color OverlayColor = Color.Transparent;
+        public static RenderTexture OverlayTexture;
+        private static long _overlayUpdate = Environment.TickCount;
 
         //Player Spotlight Values
         private const float PlayerLightIntensity = .7f;
@@ -215,11 +223,11 @@ namespace Intersect_Client.Classes
                     {
                         LightThread = new Thread(InitLighting);
                         //If we don't have a light texture, make a base/blank one.
-                        if (NightCacheTexture == null)
+                        if (DarkCacheTexture == null)
                         {
-                            NightCacheTexture = new RenderTexture(Constants.MapWidth * 32 * 3, Constants.MapHeight * 32 * 3);
-                            NightCacheTextureBackup = new RenderTexture(Constants.MapWidth * 32 * 3, Constants.MapHeight * 32 * 3);
-                            CurrentNightTexture = new RenderTexture(Constants.MapWidth * 32 * 3, Constants.MapHeight * 32 * 3);
+                            DarkCacheTexture = new RenderTexture(Constants.MapWidth * 32 * 3, Constants.MapHeight * 32 * 3);
+                            DarkCacheTextureBackup = new RenderTexture(Constants.MapWidth * 32 * 3, Constants.MapHeight * 32 * 3);
+                            CurrentDarknexxTexture = new RenderTexture(Constants.MapWidth * 32 * 3, Constants.MapHeight * 32 * 3);
                             var size = CalcLightWidth(PlayerLightSize);
                             var tmpLight = new Bitmap(size, size);
                             var g = System.Drawing.Graphics.FromImage(tmpLight);
@@ -240,13 +248,24 @@ namespace Intersect_Client.Classes
                         LightThread.Start();
                     }
                 }
+
+                if (Globals.CurrentMap > -1)
+                {
+                    if (Globals.GameMaps[Globals.CurrentMap] != null)
+                    {
+                        if (ImageFileNames.IndexOf(Globals.GameMaps[Globals.CurrentMap].Panorama) > -1)
+                        {
+                            DrawFullScreenTexture(ImageTextures[ImageFileNames.IndexOf(Globals.GameMaps[Globals.CurrentMap].Panorama)]);
+                        }
+                    }
+                }
+
                 //Render players, names, maps, etc.
                 for (var i = 0; i < 9; i++)
                 {
                     if (Globals.LocalMaps[i] > -1)
                     {
                         DrawMap(i, 0); //Lower only
-
                     }
                 }
 
@@ -282,7 +301,6 @@ namespace Intersect_Client.Classes
                     if (Globals.LocalMaps[i] > -1)
                     {
                         DrawMap(i, 1); //Upper only
-
                     }
                 }
 
@@ -307,7 +325,14 @@ namespace Intersect_Client.Classes
                 {
                     if (Globals.LocalMaps[i] <= -1) continue;
                     DrawMap(i, 2); //Peak Layers
+                }
 
+                DrawOverlay();
+
+
+                for (var i = 0; i < 9; i++)
+                {
+                    if (Globals.LocalMaps[i] <= -1) continue;
                     for (var y = 0; y < Constants.MapHeight; y++)
                     {
                         foreach (var t in Globals.Entities)
@@ -329,31 +354,13 @@ namespace Intersect_Client.Classes
                         }
                     }
                 }
-                DrawNight();
+                DrawDarkness();
             }
             else
             {
                 if (ImageFileNames.IndexOf(Globals.MenuBG) > -1)
                 {
-                    int bgx = (int)(RenderWindow.Size.X / 2 - ImageTextures[ImageFileNames.IndexOf(Globals.MenuBG)].Size.X / 2);
-                    int bgy = (int)(RenderWindow.Size.Y / 2 - ImageTextures[ImageFileNames.IndexOf(Globals.MenuBG)].Size.Y / 2);
-                    int bgw = (int)ImageTextures[ImageFileNames.IndexOf(Globals.MenuBG)].Size.X;
-                    int bgh = (int)ImageTextures[ImageFileNames.IndexOf(Globals.MenuBG)].Size.Y;
-                    int diff = 0;
-                    if (bgw < RenderWindow.Size.X)
-                    {
-                        diff = (int)(RenderWindow.Size.X - bgw);
-                        bgx -= diff / 2;
-                        bgw += diff;
-                    }
-                    if (bgh < RenderWindow.Size.Y)
-                    {
-                        diff = (int)(RenderWindow.Size.Y - bgh);
-                        bgy -= diff / 2;
-                        bgh += diff;
-                    }
-                    RenderTexture(ImageTextures[ImageFileNames.IndexOf(Globals.MenuBG)], new Rectangle(0, 0, (int)ImageTextures[ImageFileNames.IndexOf(Globals.MenuBG)].Size.X, (int)ImageTextures[ImageFileNames.IndexOf(Globals.MenuBG)].Size.Y),
-                        new Rectangle(bgx, bgy, bgw, bgh), RenderWindow);
+                    DrawFullScreenTexture(ImageTextures[ImageFileNames.IndexOf(Globals.MenuBG)]);
                 }
             }
 
@@ -411,6 +418,85 @@ namespace Intersect_Client.Classes
             {
                 Globals.GameMaps[Globals.LocalMaps[index]].Draw(mapoffsetx, mapoffsety, layer);
             }
+        }
+        public static void DrawOverlay()
+        {
+            float ecTime = Environment.TickCount - _overlayUpdate;
+            if (OverlayTexture == null)
+            {
+                //Init Overlay
+                OverlayTexture = new RenderTexture(1, 1);
+                OverlayTexture.Clear(OverlayColor);
+                OverlayTexture.Display();
+            }
+
+            if (OverlayColor.A != Globals.GameMaps[Globals.CurrentMap].AHue || OverlayColor.R != Globals.GameMaps[Globals.CurrentMap].RHue ||
+                OverlayColor.G != Globals.GameMaps[Globals.CurrentMap].GHue || OverlayColor.B != Globals.GameMaps[Globals.CurrentMap].BHue)
+            {
+                if (OverlayColor.A < Globals.GameMaps[Globals.CurrentMap].AHue) { 
+                    OverlayColor.A += (byte)(255 * ecTime/ 2000f);
+                    if (OverlayColor.A > Globals.GameMaps[Globals.CurrentMap].AHue) { OverlayColor.A = (byte)Globals.GameMaps[Globals.CurrentMap].AHue; }
+                }
+                if (OverlayColor.A > Globals.GameMaps[Globals.CurrentMap].AHue) { 
+                    OverlayColor.A -= (byte)(255 * ecTime / 2000f);
+                    if (OverlayColor.A < Globals.GameMaps[Globals.CurrentMap].AHue) { OverlayColor.A = (byte)Globals.GameMaps[Globals.CurrentMap].AHue; }
+                }
+                if (OverlayColor.R < Globals.GameMaps[Globals.CurrentMap].RHue) { 
+                    OverlayColor.R += (byte)(255 * ecTime / 2000f);
+                    if (OverlayColor.R > Globals.GameMaps[Globals.CurrentMap].RHue) { OverlayColor.R = (byte)Globals.GameMaps[Globals.CurrentMap].RHue; }
+                }
+                if (OverlayColor.R > Globals.GameMaps[Globals.CurrentMap].RHue) { 
+                    OverlayColor.R -= (byte)(255 * ecTime / 2000f);
+                    if (OverlayColor.R < Globals.GameMaps[Globals.CurrentMap].RHue) { OverlayColor.R = (byte)Globals.GameMaps[Globals.CurrentMap].RHue; }
+                }
+                if (OverlayColor.G < Globals.GameMaps[Globals.CurrentMap].GHue)
+                {
+                    OverlayColor.G += (byte)(255 * ecTime / 2000f);
+                    if (OverlayColor.G > Globals.GameMaps[Globals.CurrentMap].GHue) { OverlayColor.G = (byte)Globals.GameMaps[Globals.CurrentMap].GHue; }
+                }
+                if (OverlayColor.G > Globals.GameMaps[Globals.CurrentMap].GHue)
+                {
+                    OverlayColor.G -= (byte)(255 * ecTime / 2000f);
+                    if (OverlayColor.G < Globals.GameMaps[Globals.CurrentMap].GHue) { OverlayColor.G = (byte)Globals.GameMaps[Globals.CurrentMap].GHue; }
+                }
+                if (OverlayColor.B < Globals.GameMaps[Globals.CurrentMap].BHue)
+                {
+                    OverlayColor.B += (byte)(255 * ecTime / 2000f);
+                    if (OverlayColor.B > Globals.GameMaps[Globals.CurrentMap].BHue) { OverlayColor.B = (byte)Globals.GameMaps[Globals.CurrentMap].BHue; }
+                }
+                if (OverlayColor.B > Globals.GameMaps[Globals.CurrentMap].BHue)
+                {
+                    OverlayColor.B -= (byte)(255 * ecTime / 2000f);
+                    if (OverlayColor.B < Globals.GameMaps[Globals.CurrentMap].BHue) { OverlayColor.B = (byte)Globals.GameMaps[Globals.CurrentMap].BHue; }
+                }
+                OverlayTexture.Clear(OverlayColor);
+                OverlayTexture.Display();
+            }
+
+            RenderTexture(OverlayTexture.Texture, new Rectangle(0, 0, 1, 1), new Rectangle(0, 0, (int)RenderWindow.Size.X, (int)RenderWindow.Size.Y), RenderWindow);
+            _overlayUpdate = Environment.TickCount;
+        }
+        public static void DrawFullScreenTexture(Texture tex)
+        {
+            int bgx = (int)(RenderWindow.Size.X / 2 - tex.Size.X / 2);
+            int bgy = (int)(RenderWindow.Size.Y / 2 - tex.Size.Y / 2);
+            int bgw = (int)tex.Size.X;
+            int bgh = (int)tex.Size.Y;
+            int diff = 0;
+            if (bgw < RenderWindow.Size.X)
+            {
+                diff = (int)(RenderWindow.Size.X - bgw);
+                bgx -= diff / 2;
+                bgw += diff;
+            }
+            if (bgh < RenderWindow.Size.Y)
+            {
+                diff = (int)(RenderWindow.Size.Y - bgh);
+                bgy -= diff / 2;
+                bgh += diff;
+            }
+            RenderTexture(tex, new Rectangle(0, 0, (int)tex.Size.X, (int)tex.Size.Y),
+                new Rectangle(bgx, bgy, bgw, bgh), RenderWindow);
         }
 
         //Graphic Loading
@@ -529,13 +615,13 @@ namespace Intersect_Client.Classes
                 if (LightsChanged)
                 {
                     LightsChanged = false;
-                    if (UseNightBackup)
+                    if (UseDarknessBackup)
                     {
-                        tmpTex = NightCacheTexture;
+                        tmpTex = DarkCacheTexture;
                     }
                     else
                     {
-                        tmpTex = NightCacheTextureBackup;
+                        tmpTex = DarkCacheTextureBackup;
                     }
 
                     lock (tmpTex)
@@ -586,8 +672,8 @@ namespace Intersect_Client.Classes
                             tmpTex.SetActive(false);
                         }
                     }
-                    SwapNightTextures = true;
-                    UseNightBackup = !UseNightBackup;
+                    SwapDarknessTextures = true;
+                    UseDarknessBackup = !UseDarknessBackup;
                 }
                 if (!LightsChanged) { System.Threading.Thread.Sleep(1); }
             } while (true);
@@ -614,37 +700,37 @@ namespace Intersect_Client.Classes
             }
             return w;
         }
-        private static void DrawNight()
+        private static void DrawDarkness()
         {
             if (Globals.GameMaps[Globals.CurrentMap].IsIndoors) { return; } //Don't worry about day or night if indoors
             var rs = new RectangleShape(new Vector2f(3 * 32 * Constants.MapWidth, 3 * 32 * Constants.MapHeight));
-            if (CurrentNightTexture == null) { return; }
-            CurrentNightTexture.Clear(Color.Transparent);
+            if (CurrentDarknexxTexture == null) { return; }
+            CurrentDarknexxTexture.Clear(Color.Transparent);
 
-            if (UseNightBackup)
+            if (UseDarknessBackup)
             {
-                if (SwapNightTextures)
+                if (SwapDarknessTextures)
                 {
-                    NightCacheTextureBackup.SetActive(true);
-                    NightCacheTexture.SetActive(false);
-                    SwapNightTextures = false;
-                    NightOffsetX = 0;
-                    NightOffsetY = 0;
+                    DarkCacheTextureBackup.SetActive(true);
+                    DarkCacheTexture.SetActive(false);
+                    SwapDarknessTextures = false;
+                    DarkOffsetX = 0;
+                    DarkOffsetY = 0;
                 }
-                RenderTexture(NightCacheTextureBackup.Texture, 0, 0, CurrentNightTexture); //Draw our cached map lights
+                RenderTexture(DarkCacheTextureBackup.Texture, 0, 0, CurrentDarknexxTexture); //Draw our cached map lights
 
             }
             else
             {
-                if (SwapNightTextures)
+                if (SwapDarknessTextures)
                 {
-                    NightCacheTextureBackup.SetActive(false);
-                    NightCacheTexture.SetActive(true);
-                    SwapNightTextures = false;
-                    NightOffsetX = 0;
-                    NightOffsetY = 0;
+                    DarkCacheTextureBackup.SetActive(false);
+                    DarkCacheTexture.SetActive(true);
+                    SwapDarknessTextures = false;
+                    DarkOffsetX = 0;
+                    DarkOffsetY = 0;
                 }
-                RenderTexture(NightCacheTexture.Texture, 0, 0, CurrentNightTexture); //Draw our cached map lights
+                RenderTexture(DarkCacheTexture.Texture, 0, 0, CurrentDarknexxTexture); //Draw our cached map lights
 
             }
 
@@ -653,15 +739,15 @@ namespace Intersect_Client.Classes
             if (PlayerLightTex != null)
             {
                 RenderTexture(PlayerLightTex, (int)
-                                Math.Ceiling(-NightOffsetX + Globals.Entities[Globals.MyIndex].GetCenterPos(4).X - PlayerLightTex.Size.X / 2 +
+                                Math.Ceiling(-DarkOffsetX + Globals.Entities[Globals.MyIndex].GetCenterPos(4).X - PlayerLightTex.Size.X / 2 +
                                              Constants.MapWidth * 32), (int)
-                                Math.Ceiling(-NightOffsetY + Globals.Entities[Globals.MyIndex].GetCenterPos(4).Y - PlayerLightTex.Size.Y / 2 +
-                                             Constants.MapHeight * 32), CurrentNightTexture, BlendMode.Add);
+                                Math.Ceiling(-DarkOffsetY + Globals.Entities[Globals.MyIndex].GetCenterPos(4).Y - PlayerLightTex.Size.Y / 2 +
+                                             Constants.MapHeight * 32), CurrentDarknexxTexture, BlendMode.Add);
             }
             rs.FillColor = new Color(255, 255, 255, (byte)(SunIntensity * 255));    //Draw a rectangle, the opacity indicates if it is day or night.
-            CurrentNightTexture.Draw(rs, new RenderStates(BlendMode.Add));
-            CurrentNightTexture.Display();
-            RenderTexture(CurrentNightTexture.Texture, CalcMapOffsetX(0) + NightOffsetX, CalcMapOffsetY(0) + NightOffsetY, RenderWindow, BlendMode.Multiply);
+            CurrentDarknexxTexture.Draw(rs, new RenderStates(BlendMode.Add));
+            CurrentDarknexxTexture.Display();
+            RenderTexture(CurrentDarknexxTexture.Texture, CalcMapOffsetX(0) + DarkOffsetX, CalcMapOffsetY(0) + DarkOffsetY, RenderWindow, BlendMode.Multiply);
         }
         private static void AddLight(int x1, int y1, int size, double intensity, LightObj light, RenderTexture myTex)
         {
@@ -716,7 +802,7 @@ namespace Intersect_Client.Classes
         {
             if (i < 3)
             {
-                if (ignorePlayerOffset)
+                if (ignorePlayerOffset || Globals.Entities[Globals.MyIndex] == null)
                 {
                     return ((-Constants.MapWidth * 32) + ((i) * (Constants.MapWidth * 32)));
                 }
@@ -724,13 +810,13 @@ namespace Intersect_Client.Classes
             }
             if (i < 6)
             {
-                if (ignorePlayerOffset)
+                if (ignorePlayerOffset || Globals.Entities[Globals.MyIndex] == null)
                 {
                     return ((-Constants.MapWidth * 32) + ((i - 3) * (Constants.MapWidth * 32)));
                 }
                 return ((-Constants.MapWidth * 32) + ((i - 3) * (Constants.MapWidth * 32))) + (ScreenWidth / 2) - Globals.Entities[Globals.MyIndex].CurrentX * 32 - (int)Math.Ceiling(Globals.Entities[Globals.MyIndex].OffsetX);
             }
-            if (ignorePlayerOffset)
+            if (ignorePlayerOffset || Globals.Entities[Globals.MyIndex] == null)
             {
                 return ((-Constants.MapWidth * 32) + ((i - 6) * (Constants.MapWidth * 32)));
             }
@@ -740,7 +826,7 @@ namespace Intersect_Client.Classes
         {
             if (i < 3)
             {
-                if (ignorePlayerOffset)
+                if (ignorePlayerOffset || Globals.Entities[Globals.MyIndex] == null)
                 {
                     return -Constants.MapHeight * 32;
                 }
@@ -748,13 +834,13 @@ namespace Intersect_Client.Classes
             }
             if (i < 6)
             {
-                if (ignorePlayerOffset)
+                if (ignorePlayerOffset || Globals.Entities[Globals.MyIndex] == null)
                 {
                     return 0;
                 }
                 return 0 + (ScreenHeight / 2) - Globals.Entities[Globals.MyIndex].CurrentY * 32 - (int)Math.Ceiling(Globals.Entities[Globals.MyIndex].OffsetY);
             }
-            if (ignorePlayerOffset)
+            if (ignorePlayerOffset || Globals.Entities[Globals.MyIndex] == null)
             {
                 return Constants.MapHeight * 32;
             }

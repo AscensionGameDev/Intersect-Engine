@@ -118,6 +118,10 @@ namespace Intersect_Client
                 return;
             }
 
+            //Reset Single-Frame Variables
+            Graphics.FogOffsetX = 0;
+            Graphics.FogOffsetY = 0;
+
 
             //Update All Entities
             for (var i = 0; i < 9; i++)

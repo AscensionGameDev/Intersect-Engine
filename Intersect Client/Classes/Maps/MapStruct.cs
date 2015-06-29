@@ -358,7 +358,7 @@ namespace Intersect_Client.Classes
             else
             {
                 Graphics.RenderTexture(PeakTextures[Globals.AnimFrame].Texture, xoffset, yoffset, Graphics.RenderWindow);
-                //DrawFog();
+                DrawFog();
             }
 
         }
@@ -394,9 +394,9 @@ namespace Intersect_Client.Classes
 
                     _fogCurrentX += (ecTime / 1000f) * Globals.GameMaps[MyMapNum].FogXSpeed * -6;
                     _fogCurrentY += (ecTime / 1000f) * Globals.GameMaps[MyMapNum].FogYSpeed * 2;
-                    float deltaX = _lastFogX - Graphics.CalcMapOffsetX(0);
+                    float deltaX = _lastFogX - Graphics.CalcMapOffsetX(0) - Graphics.FogOffsetX;
                     _fogCurrentX -= deltaX;
-                    float deltaY = _lastFogY - Graphics.CalcMapOffsetY(0);
+                    float deltaY = _lastFogY - Graphics.CalcMapOffsetY(0) - Graphics.FogOffsetY;
                     _fogCurrentY -= deltaY;
 
                     if (_fogCurrentX < Graphics.FogTextures[fogIndex].Size.X) { _fogCurrentX += Graphics.FogTextures[fogIndex].Size.X; }

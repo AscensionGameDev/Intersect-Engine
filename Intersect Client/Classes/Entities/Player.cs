@@ -688,7 +688,7 @@ namespace Intersect_Client.Classes
                     Globals.LocalMaps[6] = -1;
                     Globals.CurrentMap = Globals.LocalMaps[4];
                     CurrentMap = Globals.LocalMaps[4];
-                    Graphics.NightOffsetX = 32 * Constants.MapWidth;
+                    Graphics.DarkOffsetX = 32 * Constants.MapWidth;
                     PacketSender.SendEnterMap();
                 }
             }
@@ -708,7 +708,7 @@ namespace Intersect_Client.Classes
                     Globals.LocalMaps[8] = -1;
                     Globals.CurrentMap = Globals.LocalMaps[4];
                     CurrentMap = Globals.LocalMaps[4];
-                    Graphics.NightOffsetX = -32 * Constants.MapWidth;
+                    Graphics.DarkOffsetX = -32 * Constants.MapWidth;
                     PacketSender.SendEnterMap();
                 }
 
@@ -729,7 +729,7 @@ namespace Intersect_Client.Classes
                     Globals.LocalMaps[8] = -1;
                     Globals.CurrentMap = Globals.LocalMaps[4];
                     CurrentMap = Globals.LocalMaps[4];
-                    Graphics.NightOffsetY = -32 * Constants.MapHeight;
+                    Graphics.DarkOffsetY = -32 * Constants.MapHeight;
                     PacketSender.SendEnterMap();
                 }
             }
@@ -749,10 +749,12 @@ namespace Intersect_Client.Classes
                     Globals.LocalMaps[2] = -1;
                     Globals.CurrentMap = Globals.LocalMaps[4];
                     CurrentMap = Globals.LocalMaps[4];
-                    Graphics.NightOffsetY = 32 * Constants.MapHeight;
+                    Graphics.DarkOffsetY = 32 * Constants.MapHeight;
                     PacketSender.SendEnterMap();
                 }
             }
+            Graphics.FogOffsetX = Graphics.DarkOffsetX;
+            Graphics.FogOffsetY = Graphics.DarkOffsetY;
         }
         bool IsTileBlocked(int x, int y, int z, int map)
         {

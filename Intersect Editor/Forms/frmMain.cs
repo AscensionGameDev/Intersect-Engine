@@ -290,7 +290,7 @@ namespace Intersect_Editor.Forms
             //Fog Values
             if (Globals.GameMaps[Globals.CurrentMap].Fog.Length > 0)
             {
-                cmbFogs.SelectedIndex = cmbPanorama.Items.IndexOf(Globals.GameMaps[Globals.CurrentMap].Fog);
+                cmbFogs.SelectedIndex = cmbFogs.Items.IndexOf(Globals.GameMaps[Globals.CurrentMap].Fog);
             }
             if (cmbFogs.SelectedIndex == -1) { cmbFogs.SelectedIndex = 0; }
 

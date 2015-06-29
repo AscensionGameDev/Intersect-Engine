@@ -79,7 +79,6 @@ namespace Intersect_Client.Classes.UI
             _resolutionLabel = new Label(_optionsMenu);
             _resolutionLabel.SetText("Resolution:");
             _resolutionLabel.SetPosition(_optionsMenu.Width / 2 - 120 / 2, 12);
-            _resolutionLabel.IsHidden = true;
 
             _resolutionList = new ComboBox(_optionsMenu);
             var myModes = Graphics.GetValidVideoModes();
@@ -89,6 +88,7 @@ namespace Intersect_Client.Classes.UI
             }
             _resolutionList.SetSize(120, 14);
             _resolutionList.SetPosition(_optionsMenu.Width / 2 - 120 / 2, 28);
+            _resolutionList.IsHidden = true;
 
             //Options - Fullscreen Checkbox
             _fullscreen = new LabeledCheckBox(_optionsMenu) { Text = "Fullscreen" };
