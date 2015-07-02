@@ -126,9 +126,6 @@ namespace Intersect_Client.Classes
                     case Enums.ServerPackets.HotbarSlots:
                         HandleHotbarSlots(bf.ReadBytes(bf.Length()));
                         break;
-                    case Enums.ServerPackets.MapNpcUpdate:
-                        HandleMapNpcUpdate(bf.ReadBytes(bf.Length()));
-                        break;
                     default:
                         Console.WriteLine(@"Non implemented packet received: " + packetHeader);
                         break;
@@ -641,33 +638,6 @@ namespace Intersect_Client.Classes
             {
                 Globals.Me.Hotbar[i].Type = bf.ReadInteger();
                 Globals.Me.Hotbar[i].Slot = bf.ReadInteger();
-            }
-            bf.Dispose();
-        }
-
-        private static void HandleMapNpcUpdate(byte[] packet)
-        {
-            var bf = new ByteBuffer();
-            bf.WriteBytes(packet);
-            int mapNum = bf.ReadInteger();
-            int index = bf.ReadInteger();
-            if (Globals.GameMaps[mapNum] != null)
-            {
-                if (bf.ReadInteger() == 0)
-                {
-                    if (index < Globals.GameMaps[mapNum].Npcs.Count)
-                    {
-                        Globals.GameMaps[mapNum].Npcs.RemoveAt(index);
-                    }
-                }
-                else
-                {
-                    while (index >= Globals.GameMaps[mapNum].Npcs.Count)
-                    {
-                        Globals.GameMaps[mapNum].Npcs.Add(new Npc(Globals.GameNpcs[0]));
-                    }
-                    Globals.GameMaps[mapNum].Npcs[index].Load(bf);
-                }
             }
             bf.Dispose();
         }

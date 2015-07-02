@@ -720,25 +720,6 @@ namespace Intersect_Server.Classes
             SendDataTo(client, bf.ToArray());
             bf.Dispose();
         }
-
-        public static void SendMapNpcUpdate(int mapNum, int index)
-        {
-            var bf = new ByteBuffer();
-            bf.WriteLong((int)Enums.ServerPackets.MapNpcUpdate);
-            bf.WriteInteger(mapNum);
-            bf.WriteInteger(index);
-            if (Globals.GameMaps[mapNum].Npcs[index].Vital[(int)Enums.Vitals.Health] <= 0)
-            {
-                bf.WriteInteger(0);
-            }
-            else
-            {
-                bf.WriteInteger(1);
-                bf.WriteBytes(Globals.GameMaps[mapNum].Npcs[index].Data());
-            }
-            SendDataToProximity(mapNum, bf.ToArray());
-            bf.Dispose();
-        }
     }
 }
 

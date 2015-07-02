@@ -67,7 +67,7 @@ namespace Intersect_Server.Classes
         public List<int> SurroundingMaps = new List<int>();
         public List<MapItemInstance> MapItems = new List<MapItemInstance>();
         public List<MapItemRespawn> ItemRespawns = new List<MapItemRespawn>();
-        public List<Npc> Npcs = new List<Npc>();
+        public List<int> Npcs = new List<int>();
 
         //Location of Map in the current grid
         public int MapGrid;
@@ -270,9 +270,9 @@ namespace Intersect_Server.Classes
             //Clear Map Npcs
             for (int i = 0; i < Npcs.Count; i++)
             {
-                if (Npcs[i] != null)
+                if (((Npc)Globals.Entities[Npcs[i]]) != null)
                 {
-                    Npcs[i].Die();
+                    ((Npc)Globals.Entities[Npcs[i]]).Die();
                 }
                 Npcs.RemoveAt(i);
             }
@@ -366,13 +366,15 @@ namespace Intersect_Server.Classes
         {
             int X = 0;
             int Y = 0;
+
             Random rnd = new Random();
             int index = Globals.FindOpenEntity();
-            Npcs.Add(new Npc(index,Globals.GameNpcs[Spawns[i].NpcNum]));
+            Globals.Entities.Add(new Npc(index, Globals.GameNpcs[Spawns[i].NpcNum]));
+            Npcs.Add(index);
             if (Spawns[i].X >= 0 && Spawns[i].Y >= 0)
             {
-                Npcs[i].CurrentX = Spawns[i].X;
-                Npcs[i].CurrentY = Spawns[i].Y;
+                ((Npc)Globals.Entities[Npcs[i]]).CurrentX = Spawns[i].X;
+                ((Npc)Globals.Entities[Npcs[i]]).CurrentY = Spawns[i].Y;
             }
             else
             {
@@ -387,20 +389,19 @@ namespace Intersect_Server.Classes
                     X = 0;
                     Y = 0;
                 }
-                Npcs[i].CurrentX = X;
-                Npcs[i].CurrentY = Y;
+                ((Npc)Globals.Entities[Npcs[i]]).CurrentX = X;
+                ((Npc)Globals.Entities[Npcs[i]]).CurrentY = Y;
             }
             if (Spawns[i].Dir >= 0)
             {
-                Npcs[i].Dir = Spawns[i].Dir;
+                ((Npc)Globals.Entities[Npcs[i]]).Dir = Spawns[i].Dir;
             }
             else
             {
-                Npcs[i].Dir = rnd.Next(0, 4);
+                ((Npc)Globals.Entities[Npcs[i]]).Dir = rnd.Next(0, 4);
             }
-            Npcs[i].CurrentMap = MyMapNum;
-            Globals.AddEntity(Npcs[i]);
-            //PacketSender.SendMapNpcUpdate(MyMapNum, i);
+            ((Npc)Globals.Entities[Npcs[i]]).CurrentMap = MyMapNum;
+            Globals.AddEntity(((Npc)Globals.Entities[Npcs[i]]));
         }
 
         //Update + Related Functions
@@ -429,14 +430,14 @@ namespace Intersect_Server.Classes
                 {
                     if (Npcs[i] == null)
                     {
-                        if (Npcs[i].RespawnTime < Environment.TickCount)
+                        if (((Npc)Globals.Entities[Npcs[i]]).RespawnTime < Environment.TickCount)
                         {
                             spawnMapNpc(i);
                         }
                     }
                     else
                     {
-                        Npcs[i].Update();
+                        ((Npc)Globals.Entities[Npcs[i]]).Update();
                     }
                 }
             }

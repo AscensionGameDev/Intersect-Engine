@@ -106,7 +106,6 @@ namespace Intersect_Client.Classes
             PlayerEquipment,
             StatPoints,
             HotbarSlots,
-            MapNpcUpdate,
         }
 
         public enum Stats
