@@ -366,22 +366,21 @@ namespace Intersect_Server.Classes
         {
             int X = 0;
             int Y = 0;
-
-            Random rnd = new Random();
             int index = Globals.FindOpenEntity();
-            Globals.Entities.Add(new Npc(index, Globals.GameNpcs[Spawns[i].NpcNum]));
+            Globals.Entities[index] = new Npc(index, Globals.GameNpcs[Spawns[i].NpcNum]);
             Npcs.Add(index);
+            Spawns[i].EntityIndex = index;
             if (Spawns[i].X >= 0 && Spawns[i].Y >= 0)
             {
-                ((Npc)Globals.Entities[Npcs[i]]).CurrentX = Spawns[i].X;
-                ((Npc)Globals.Entities[Npcs[i]]).CurrentY = Spawns[i].Y;
+                ((Npc)Globals.Entities[index]).CurrentX = Spawns[i].X;
+                ((Npc)Globals.Entities[index]).CurrentY = Spawns[i].Y;
             }
             else
             {
                 for (int n = 0; n < 100; n++)
                 {
-                    X = rnd.Next(1, Constants.MapWidth);
-                    Y = rnd.Next(1, Constants.MapHeight);
+                    X = Globals.Rand.Next(1, Constants.MapWidth);
+                    Y = Globals.Rand.Next(1, Constants.MapHeight);
                     if (Attributes[X, Y].value == (int)Enums.MapAttributes.Walkable)
                     {
                         break;
@@ -389,19 +388,19 @@ namespace Intersect_Server.Classes
                     X = 0;
                     Y = 0;
                 }
-                ((Npc)Globals.Entities[Npcs[i]]).CurrentX = X;
-                ((Npc)Globals.Entities[Npcs[i]]).CurrentY = Y;
+                ((Npc)Globals.Entities[index]).CurrentX = X;
+                ((Npc)Globals.Entities[index]).CurrentY = Y;
             }
             if (Spawns[i].Dir >= 0)
             {
-                ((Npc)Globals.Entities[Npcs[i]]).Dir = Spawns[i].Dir;
+                ((Npc)Globals.Entities[index]).Dir = Spawns[i].Dir;
             }
             else
             {
-                ((Npc)Globals.Entities[Npcs[i]]).Dir = rnd.Next(0, 4);
+                ((Npc)Globals.Entities[index]).Dir = Globals.Rand.Next(0, 4);
             }
-            ((Npc)Globals.Entities[Npcs[i]]).CurrentMap = MyMapNum;
-            Globals.AddEntity(((Npc)Globals.Entities[Npcs[i]]));
+            ((Npc)Globals.Entities[index]).CurrentMap = MyMapNum;
+            PacketSender.SendEntityDataToProximity(index, 2, Globals.Entities[index]);
         }
 
         //Update + Related Functions
@@ -426,18 +425,32 @@ namespace Intersect_Server.Classes
                         ItemRespawns.RemoveAt(i);
                     }
                 }
-                for (int i = 0; i < Spawns.Count; i++)
+                //Process All Active Npcs On the Map
+                for (int i = 0; i < Npcs.Count; i++)
                 {
-                    if (Npcs[i] == null)
-                    {
-                        if (((Npc)Globals.Entities[Npcs[i]]).RespawnTime < Environment.TickCount)
+                    if (Npcs[i] > -1){
+                        if (Globals.Entities[Npcs[i]] != null)
                         {
-                            spawnMapNpc(i);
+                            ((Npc)Globals.Entities[Npcs[i]]).Update();
                         }
                     }
-                    else
+                }
+                for (int i = 0; i < Spawns.Count; i++)
+                {
+                    if (Spawns[i].EntityIndex > -1)
                     {
-                        ((Npc)Globals.Entities[Npcs[i]]).Update();
+                        if (Globals.Entities[Spawns[i].EntityIndex] == null)
+                        {
+                            if (Spawns[i].RespawnTime == -1)
+                            {
+                                Spawns[i].RespawnTime = Environment.TickCount + Globals.GameNpcs[Spawns[i].NpcNum].SpawnDuration * 1000;
+                            }
+                            else if (Spawns[i].RespawnTime < Environment.TickCount)
+                            {
+                                spawnMapNpc(i);
+                                Spawns[i].RespawnTime = -1;
+                            }
+                        }
                     }
                 }
             }
@@ -569,6 +582,11 @@ namespace Intersect_Server.Classes
         public int X;
         public int Y;
         public int Dir;
+
+        //Temporary Values
+        //Npc Index
+        public int EntityIndex;
+        public long RespawnTime = -1;
     }
 #endregion
 }

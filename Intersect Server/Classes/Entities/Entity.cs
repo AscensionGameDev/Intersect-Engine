@@ -497,6 +497,9 @@ namespace Intersect_Server.Classes
             bf.WriteString(MyName);
             bf.WriteString(MySprite);
             bf.WriteString(Face);
+            bf.WriteInteger(CurrentX);
+            bf.WriteInteger(CurrentY);
+            bf.WriteInteger(CurrentMap);
             bf.WriteInteger(CurrentZ);
             return bf.ToArray();
         }

@@ -81,6 +81,9 @@ namespace Intersect_Client
             MyName = bf.ReadString();
             MySprite = bf.ReadString();
             Face = bf.ReadString();
+            CurrentX = bf.ReadInteger();
+            CurrentY = bf.ReadInteger();
+            CurrentMap = bf.ReadInteger();
             CurrentZ = bf.ReadInteger();
         }
 
