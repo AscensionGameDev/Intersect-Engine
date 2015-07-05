@@ -119,6 +119,5 @@ namespace Intersect_Editor.Classes
         public int ItemNum;
         public int Amount;
         public int Chance;
-
     }
 }

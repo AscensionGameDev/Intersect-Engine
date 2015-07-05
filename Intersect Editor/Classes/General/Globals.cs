@@ -41,6 +41,7 @@ namespace Intersect_Editor.Classes
         public static NpcStruct[] GameNpcs;
         public static SpellStruct[] GameSpells;
         public static AnimationStruct[] GameAnimations;
+        public static ResourceStruct[] GameResources;
 
         //Animation Frame Variables
         public static int Autotilemode = 0;

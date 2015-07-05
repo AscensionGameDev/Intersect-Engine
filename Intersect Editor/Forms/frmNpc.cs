@@ -129,7 +129,7 @@ namespace Intersect_Editor.Forms
 
         private void btnCancel_Click(object sender, EventArgs e)
         {
-            for (var i = 0; i < Constants.MaxItems; i++)
+            for (var i = 0; i < Constants.MaxNpcs; i++)
             {
                 Globals.GameNpcs[i].Load(_npcsBackup[i].ToArray());
             }

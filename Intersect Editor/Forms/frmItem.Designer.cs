@@ -45,7 +45,6 @@ namespace Intersect_Editor.Forms
             this.scrlPrice = new System.Windows.Forms.HScrollBar();
             this.lblPrice = new System.Windows.Forms.Label();
             this.lblPic = new System.Windows.Forms.Label();
-            this.picItem = new System.Windows.Forms.PictureBox();
             this.label2 = new System.Windows.Forms.Label();
             this.cmbType = new System.Windows.Forms.ComboBox();
             this.label1 = new System.Windows.Forms.Label();
@@ -79,7 +78,6 @@ namespace Intersect_Editor.Forms
             this.label5 = new System.Windows.Forms.Label();
             this.lblRange = new System.Windows.Forms.Label();
             this.scrlRange = new System.Windows.Forms.HScrollBar();
-            this.picPaperdoll = new System.Windows.Forms.PictureBox();
             this.lblDamage = new System.Windows.Forms.Label();
             this.scrlDamage = new System.Windows.Forms.HScrollBar();
             this.lblSpeed = new System.Windows.Forms.Label();
@@ -100,14 +98,16 @@ namespace Intersect_Editor.Forms
             this.gbSpell = new System.Windows.Forms.GroupBox();
             this.scrlSpell = new System.Windows.Forms.HScrollBar();
             this.lblSpell = new System.Windows.Forms.Label();
+            this.picItem = new System.Windows.Forms.PictureBox();
+            this.picPaperdoll = new System.Windows.Forms.PictureBox();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.picItem)).BeginInit();
             this.groupBox3.SuspendLayout();
             this.gbEquipment.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.picPaperdoll)).BeginInit();
             this.gbConsumable.SuspendLayout();
             this.gbSpell.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.picItem)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.picPaperdoll)).BeginInit();
             this.SuspendLayout();
             // 
             // groupBox1
@@ -259,14 +259,6 @@ namespace Intersect_Editor.Forms
             this.lblPic.Size = new System.Drawing.Size(25, 13);
             this.lblPic.TabIndex = 6;
             this.lblPic.Text = "Pic:";
-            // 
-            // picItem
-            // 
-            this.picItem.Location = new System.Drawing.Point(15, 101);
-            this.picItem.Name = "picItem";
-            this.picItem.Size = new System.Drawing.Size(32, 32);
-            this.picItem.TabIndex = 4;
-            this.picItem.TabStop = false;
             // 
             // label2
             // 
@@ -624,14 +616,6 @@ namespace Intersect_Editor.Forms
             this.scrlRange.TabIndex = 19;
             this.scrlRange.ValueChanged += new System.EventHandler(this.scrlRange_Scroll);
             // 
-            // picPaperdoll
-            // 
-            this.picPaperdoll.Location = new System.Drawing.Point(292, 103);
-            this.picPaperdoll.Name = "picPaperdoll";
-            this.picPaperdoll.Size = new System.Drawing.Size(128, 64);
-            this.picPaperdoll.TabIndex = 16;
-            this.picPaperdoll.TabStop = false;
-            // 
             // lblDamage
             // 
             this.lblDamage.AutoSize = true;
@@ -827,6 +811,22 @@ namespace Intersect_Editor.Forms
             this.lblSpell.TabIndex = 11;
             this.lblSpell.Text = "Spell: 0 None";
             // 
+            // picItem
+            // 
+            this.picItem.Location = new System.Drawing.Point(15, 101);
+            this.picItem.Name = "picItem";
+            this.picItem.Size = new System.Drawing.Size(32, 32);
+            this.picItem.TabIndex = 4;
+            this.picItem.TabStop = false;
+            // 
+            // picPaperdoll
+            // 
+            this.picPaperdoll.Location = new System.Drawing.Point(292, 103);
+            this.picPaperdoll.Name = "picPaperdoll";
+            this.picPaperdoll.Size = new System.Drawing.Size(128, 64);
+            this.picPaperdoll.TabIndex = 16;
+            this.picPaperdoll.TabStop = false;
+            // 
             // FrmItem
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -846,16 +846,16 @@ namespace Intersect_Editor.Forms
             this.groupBox1.ResumeLayout(false);
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.picItem)).EndInit();
             this.groupBox3.ResumeLayout(false);
             this.groupBox3.PerformLayout();
             this.gbEquipment.ResumeLayout(false);
             this.gbEquipment.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.picPaperdoll)).EndInit();
             this.gbConsumable.ResumeLayout(false);
             this.gbConsumable.PerformLayout();
             this.gbSpell.ResumeLayout(false);
             this.gbSpell.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.picItem)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.picPaperdoll)).EndInit();
             this.ResumeLayout(false);
 
         }

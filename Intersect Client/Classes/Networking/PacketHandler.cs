@@ -105,6 +105,9 @@ namespace Intersect_Client.Classes
                     case Enums.ServerPackets.AnimationData:
                         HandleAnimationData(bf.ReadBytes(bf.Length()));
                         break;
+                    case Enums.ServerPackets.ResourceData:
+                        HandleResourceData(bf.ReadBytes(bf.Length()));
+                        break;
                     case Enums.ServerPackets.MapItems:
                         HandleMapItems(bf.ReadBytes(bf.Length()));
                         break;
@@ -252,6 +255,7 @@ namespace Intersect_Client.Classes
             Globals.GameNpcs = new NpcStruct[Constants.MaxNpcs];
             Globals.GameAnimations = new AnimationStruct[Constants.MaxAnimations];
             Globals.GameSpells = new SpellStruct[Constants.MaxSpells];
+            Globals.GameResources = new ResourceStruct[Constants.MaxResources];
 
             //Database.LoadMapRevisions();
         }
@@ -547,6 +551,15 @@ namespace Intersect_Client.Classes
             var index = bf.ReadInteger();
             Globals.GameAnimations[index] = new AnimationStruct();
             Globals.GameAnimations[index].Load(bf.ReadBytes(bf.Length()));
+        }
+
+        private static void HandleResourceData(byte[] packet)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteBytes(packet);
+            var resourceNum = bf.ReadInteger();
+            Globals.GameResources[resourceNum] = new ResourceStruct();
+            Globals.GameResources[resourceNum].Load(bf.ReadBytes(bf.Length()));
         }
 
         private static void HandleMapItems(byte[] packet)

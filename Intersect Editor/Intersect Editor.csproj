@@ -88,6 +88,7 @@
     <Compile Include="Classes\Core\Sounds.cs" />
     <Compile Include="Classes\Game Objects\AnimationStruct.cs" />
     <Compile Include="Classes\Core\Audio.cs" />
+    <Compile Include="Classes\Game Objects\ResourceStruct.cs" />
     <Compile Include="Classes\Misc\ByteBuffer.cs" />
     <Compile Include="Classes\Core\Database.cs" />
     <Compile Include="Classes\General\Enums.cs" />
@@ -140,6 +141,12 @@
     <Compile Include="Forms\frmNpc.Designer.cs">
       <DependentUpon>frmNpc.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\frmResource.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\frmResource.Designer.cs">
+      <DependentUpon>frmResource.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\frmSpell.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -165,6 +172,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\frmNpc.resx">
       <DependentUpon>frmNpc.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\frmResource.resx">
+      <DependentUpon>frmResource.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\frmSpell.resx">
       <DependentUpon>frmSpell.cs</DependentUpon>

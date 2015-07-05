@@ -65,6 +65,8 @@ namespace Intersect_Client.Classes
             UnequipItem,
             UpgradeStat,
             HotbarChange,
+            OpenResourceEditor,
+            SaveResource,
         }
 
         public enum ServerPackets
@@ -106,6 +108,8 @@ namespace Intersect_Client.Classes
             PlayerEquipment,
             StatPoints,
             HotbarSlots,
+            OpenResourceEditor,
+            ResourceData,
         }
 
         public enum Stats
@@ -176,6 +180,6 @@ namespace Intersect_Client.Classes
         public static List<string> ItemBonusEffects = new List<string>() { "Cooldown Reduction", "Life Steal" };
 
         // Map Attribtes
-        public enum MapAttributes : byte { Walkable = 0, Blocked, Item, ZDimension, NPCAvoid, Warp, Sound };
+        public enum MapAttributes : byte { Walkable = 0, Blocked, Item, ZDimension, NPCAvoid, Warp, Sound, Resource };
     }
 }

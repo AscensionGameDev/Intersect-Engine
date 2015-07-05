@@ -454,6 +454,7 @@ namespace Intersect_Editor.Forms
                 cmbTilesets.SelectedIndex = Globals.CurrentTileset;
             }
         }
+
         private void picTileset_MouseDown(object sender, MouseEventArgs e)
         {
             if (e.X > picTileset.Width || e.Y > picTileset.Height) { return; }
@@ -1367,7 +1368,9 @@ namespace Intersect_Editor.Forms
             grpZDimension.Visible = false;
             grpWarp.Visible = false;
             grpSound.Visible = false;
+            grpResource.Visible = false;
         }
+
         private void rbItem_CheckedChanged(object sender, EventArgs e)
         {
             hideAttributeMenus();
@@ -1395,6 +1398,12 @@ namespace Intersect_Editor.Forms
         {
             hideAttributeMenus();
             grpSound.Visible = true;
+        }
+
+        private void rbResource_CheckedChanged(object sender, EventArgs e)
+        {
+            hideAttributeMenus();
+            grpResource.Visible = true;
         }
 
         // Used for returning an integer value depending on which radio button is selected on the forms. This is merely used to make PlaceAtrribute less messy.
@@ -1460,6 +1469,11 @@ namespace Intersect_Editor.Forms
                 tmpMap.Attributes[Globals.CurTileX, Globals.CurTileY].data3 = 0;
                 tmpMap.Attributes[Globals.CurTileX, Globals.CurTileY].data4 = cmbMapAttributeSound.Text;
             }
+            else if (rbResource.Checked == true)
+            {
+                tmpMap.Attributes[Globals.CurTileX, Globals.CurTileY].value = (int)Enums.MapAttributes.Resource;
+                tmpMap.Attributes[Globals.CurTileX, Globals.CurTileY].data1 = scrlResource.Value;
+            }
         }
         private void RemoveAttribute()
         {
@@ -1498,11 +1512,22 @@ namespace Intersect_Editor.Forms
             lblSoundDistance.Text = "Distance: " + scrlSoundDistance.Value + " Tile(s)";
         }
 
+        private void resourceEditorToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            PacketSender.SendResourceEditor();
+        }
 
-
-
-
-
+        private void scrlResource_Scroll(object sender, ScrollEventArgs e)
+        {
+            if (scrlResource.Value >= 0)
+            {
+                lblResource.Text = "Resource: " + (scrlResource.Value + 1) + " " + Globals.GameResources[scrlResource.Value].Name;
+            }
+            else
+            {
+                lblResource.Text = "Resource: 0 None";
+            }
+        }
         
     }
 }

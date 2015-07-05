@@ -47,6 +47,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Classes\Game Objects\AnimationStruct.cs" />
+    <Compile Include="Classes\Game Objects\ResourceStruct.cs" />
     <Compile Include="Classes\General\Enums.cs" />
     <Compile Include="Classes\Game Objects\ItemStruct.cs" />
     <Compile Include="Classes\Entities\Event.cs" />

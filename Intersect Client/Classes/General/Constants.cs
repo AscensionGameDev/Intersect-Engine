@@ -34,6 +34,7 @@ namespace Intersect_Client.Classes
         public const int MaxNpcDrops = 10;
         public const int MaxSpells = 255;
         public const int MaxAnimations = 255;
+        public const int MaxResources = 255;
 
         //Player Maxes
         public const int MaxStatValue = 200;

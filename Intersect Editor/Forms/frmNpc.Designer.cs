@@ -536,6 +536,7 @@
             this.MaximizeBox = false;
             this.Name = "frmNpc";
             this.Text = "NPC Editor";
+            this.TopMost = true;
             this.Load += new System.EventHandler(this.frmNpc_Load);
             this.groupBox1.ResumeLayout(false);
             this.groupBox2.ResumeLayout(false);

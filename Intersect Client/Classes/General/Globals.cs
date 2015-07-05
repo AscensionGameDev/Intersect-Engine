@@ -85,6 +85,9 @@ namespace Intersect_Client.Classes
         //Game Npcs
         public static NpcStruct[] GameNpcs;
 
+        //Game Resources
+        public static ResourceStruct[] GameResources;
+
         //Game Animations
         public static AnimationStruct[] GameAnimations;
 

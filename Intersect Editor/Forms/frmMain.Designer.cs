@@ -43,12 +43,15 @@ namespace Intersect_Editor.Forms
             this.layerMenu = new System.Windows.Forms.ToolStripMenuItem();
             this.viewToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.hideDarknessToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.hideFogToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.hideOverlayToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.mapListToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.contentEditorsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.itemEditorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.npcEditorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.spellEditorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.animationEditorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.resourceEditorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.grpMap = new System.Windows.Forms.GroupBox();
@@ -154,8 +157,10 @@ namespace Intersect_Editor.Forms
             this.txtMapName = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.btnCloseProperties = new System.Windows.Forms.Button();
-            this.hideFogToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.hideOverlayToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.rbResource = new System.Windows.Forms.RadioButton();
+            this.grpResource = new System.Windows.Forms.GroupBox();
+            this.lblResource = new System.Windows.Forms.Label();
+            this.scrlResource = new System.Windows.Forms.HScrollBar();
             this.menuStrip.SuspendLayout();
             this.grpMap.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.picMap)).BeginInit();
@@ -176,6 +181,7 @@ namespace Intersect_Editor.Forms
             this.grpMapNPCS.SuspendLayout();
             this.grpManage.SuspendLayout();
             this.grpSpawnLoc.SuspendLayout();
+            this.grpResource.SuspendLayout();
             this.SuspendLayout();
             // 
             // menuStrip
@@ -277,14 +283,28 @@ namespace Intersect_Editor.Forms
             // hideDarknessToolStripMenuItem
             // 
             this.hideDarknessToolStripMenuItem.Name = "hideDarknessToolStripMenuItem";
-            this.hideDarknessToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.hideDarknessToolStripMenuItem.Size = new System.Drawing.Size(149, 22);
             this.hideDarknessToolStripMenuItem.Text = "Hide Darkness";
             this.hideDarknessToolStripMenuItem.Click += new System.EventHandler(this.hideDarknessToolStripMenuItem_Click);
+            // 
+            // hideFogToolStripMenuItem
+            // 
+            this.hideFogToolStripMenuItem.Name = "hideFogToolStripMenuItem";
+            this.hideFogToolStripMenuItem.Size = new System.Drawing.Size(149, 22);
+            this.hideFogToolStripMenuItem.Text = "Hide Fog";
+            this.hideFogToolStripMenuItem.Click += new System.EventHandler(this.hideFogToolStripMenuItem_Click);
+            // 
+            // hideOverlayToolStripMenuItem
+            // 
+            this.hideOverlayToolStripMenuItem.Name = "hideOverlayToolStripMenuItem";
+            this.hideOverlayToolStripMenuItem.Size = new System.Drawing.Size(149, 22);
+            this.hideOverlayToolStripMenuItem.Text = "Hide Overlay";
+            this.hideOverlayToolStripMenuItem.Click += new System.EventHandler(this.hideOverlayToolStripMenuItem_Click);
             // 
             // mapListToolStripMenuItem
             // 
             this.mapListToolStripMenuItem.Name = "mapListToolStripMenuItem";
-            this.mapListToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.mapListToolStripMenuItem.Size = new System.Drawing.Size(149, 22);
             this.mapListToolStripMenuItem.Text = "Map List";
             this.mapListToolStripMenuItem.Click += new System.EventHandler(this.mapListToolStripMenuItem_Click);
             // 
@@ -294,7 +314,8 @@ namespace Intersect_Editor.Forms
             this.itemEditorToolStripMenuItem,
             this.npcEditorToolStripMenuItem,
             this.spellEditorToolStripMenuItem,
-            this.animationEditorToolStripMenuItem});
+            this.animationEditorToolStripMenuItem,
+            this.resourceEditorToolStripMenuItem});
             this.contentEditorsToolStripMenuItem.Name = "contentEditorsToolStripMenuItem";
             this.contentEditorsToolStripMenuItem.Size = new System.Drawing.Size(101, 20);
             this.contentEditorsToolStripMenuItem.Text = "Content Editors";
@@ -326,6 +347,13 @@ namespace Intersect_Editor.Forms
             this.animationEditorToolStripMenuItem.Size = new System.Drawing.Size(164, 22);
             this.animationEditorToolStripMenuItem.Text = "Animation Editor";
             this.animationEditorToolStripMenuItem.Click += new System.EventHandler(this.animationEditorToolStripMenuItem_Click);
+            // 
+            // resourceEditorToolStripMenuItem
+            // 
+            this.resourceEditorToolStripMenuItem.Name = "resourceEditorToolStripMenuItem";
+            this.resourceEditorToolStripMenuItem.Size = new System.Drawing.Size(164, 22);
+            this.resourceEditorToolStripMenuItem.Text = "Resource Editor";
+            this.resourceEditorToolStripMenuItem.Click += new System.EventHandler(this.resourceEditorToolStripMenuItem_Click);
             // 
             // helpToolStripMenuItem
             // 
@@ -661,6 +689,8 @@ namespace Intersect_Editor.Forms
             // 
             // grpAttributes
             // 
+            this.grpAttributes.Controls.Add(this.grpResource);
+            this.grpAttributes.Controls.Add(this.rbResource);
             this.grpAttributes.Controls.Add(this.grpSound);
             this.grpAttributes.Controls.Add(this.rbSound);
             this.grpAttributes.Controls.Add(this.rbWarp);
@@ -735,7 +765,7 @@ namespace Intersect_Editor.Forms
             // rbSound
             // 
             this.rbSound.AutoSize = true;
-            this.rbSound.Location = new System.Drawing.Point(12, 136);
+            this.rbSound.Location = new System.Drawing.Point(11, 136);
             this.rbSound.Name = "rbSound";
             this.rbSound.Size = new System.Drawing.Size(80, 17);
             this.rbSound.TabIndex = 14;
@@ -779,7 +809,7 @@ namespace Intersect_Editor.Forms
             // rbItem
             // 
             this.rbItem.AutoSize = true;
-            this.rbItem.Location = new System.Drawing.Point(12, 113);
+            this.rbItem.Location = new System.Drawing.Point(11, 112);
             this.rbItem.Name = "rbItem";
             this.rbItem.Size = new System.Drawing.Size(81, 17);
             this.rbItem.TabIndex = 1;
@@ -795,7 +825,6 @@ namespace Intersect_Editor.Forms
             this.rbBlocked.Name = "rbBlocked";
             this.rbBlocked.Size = new System.Drawing.Size(64, 17);
             this.rbBlocked.TabIndex = 0;
-            this.rbBlocked.TabStop = true;
             this.rbBlocked.Text = "Blocked";
             this.rbBlocked.UseVisualStyleBackColor = true;
             this.rbBlocked.CheckedChanged += new System.EventHandler(this.rbBlocked_CheckedChanged);
@@ -1475,19 +1504,49 @@ namespace Intersect_Editor.Forms
             this.btnCloseProperties.Text = "Close";
             this.btnCloseProperties.UseVisualStyleBackColor = true;
             // 
-            // hideFogToolStripMenuItem
+            // rbResource
             // 
-            this.hideFogToolStripMenuItem.Name = "hideFogToolStripMenuItem";
-            this.hideFogToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
-            this.hideFogToolStripMenuItem.Text = "Hide Fog";
-            this.hideFogToolStripMenuItem.Click += new System.EventHandler(this.hideFogToolStripMenuItem_Click);
+            this.rbResource.AutoSize = true;
+            this.rbResource.Location = new System.Drawing.Point(11, 159);
+            this.rbResource.Name = "rbResource";
+            this.rbResource.Size = new System.Drawing.Size(71, 17);
+            this.rbResource.TabIndex = 17;
+            this.rbResource.Text = "Resource";
+            this.rbResource.UseVisualStyleBackColor = true;
+            this.rbResource.CheckedChanged += new System.EventHandler(this.rbResource_CheckedChanged);
             // 
-            // hideOverlayToolStripMenuItem
+            // grpResource
             // 
-            this.hideOverlayToolStripMenuItem.Name = "hideOverlayToolStripMenuItem";
-            this.hideOverlayToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
-            this.hideOverlayToolStripMenuItem.Text = "Hide Overlay";
-            this.hideOverlayToolStripMenuItem.Click += new System.EventHandler(this.hideOverlayToolStripMenuItem_Click);
+            this.grpResource.Controls.Add(this.lblResource);
+            this.grpResource.Controls.Add(this.scrlResource);
+            this.grpResource.Location = new System.Drawing.Point(1, 522);
+            this.grpResource.Name = "grpResource";
+            this.grpResource.Size = new System.Drawing.Size(280, 100);
+            this.grpResource.TabIndex = 19;
+            this.grpResource.TabStop = false;
+            this.grpResource.Text = "Resource";
+            this.grpResource.Visible = false;
+            // 
+            // lblResource
+            // 
+            this.lblResource.AutoSize = true;
+            this.lblResource.Location = new System.Drawing.Point(14, 31);
+            this.lblResource.Name = "lblResource";
+            this.lblResource.Size = new System.Drawing.Size(94, 13);
+            this.lblResource.TabIndex = 10;
+            this.lblResource.Text = "Resource: 0 None";
+            // 
+            // scrlResource
+            // 
+            this.scrlResource.LargeChange = 1;
+            this.scrlResource.Location = new System.Drawing.Point(17, 53);
+            this.scrlResource.Maximum = 255;
+            this.scrlResource.Minimum = -1;
+            this.scrlResource.Name = "scrlResource";
+            this.scrlResource.Size = new System.Drawing.Size(249, 17);
+            this.scrlResource.TabIndex = 9;
+            this.scrlResource.Value = -1;
+            this.scrlResource.Scroll += new System.Windows.Forms.ScrollEventHandler(this.scrlResource_Scroll);
             // 
             // FrmMain
             // 
@@ -1498,11 +1557,11 @@ namespace Intersect_Editor.Forms
             this.Controls.Add(this.hScrollMap);
             this.Controls.Add(this.grpMap);
             this.Controls.Add(this.menuStrip);
-            this.Controls.Add(this.grpMapProperties);
             this.Controls.Add(this.grpAttributes);
             this.Controls.Add(this.grpLightEditor);
             this.Controls.Add(this.grpMapList);
             this.Controls.Add(this.grpLayer);
+            this.Controls.Add(this.grpMapProperties);
             this.MainMenuStrip = this.menuStrip;
             this.Name = "FrmMain";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
@@ -1541,6 +1600,8 @@ namespace Intersect_Editor.Forms
             this.grpManage.ResumeLayout(false);
             this.grpSpawnLoc.ResumeLayout(false);
             this.grpSpawnLoc.PerformLayout();
+            this.grpResource.ResumeLayout(false);
+            this.grpResource.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -1674,6 +1735,11 @@ namespace Intersect_Editor.Forms
         private Label lblBrightness;
         private ToolStripMenuItem hideFogToolStripMenuItem;
         private ToolStripMenuItem hideOverlayToolStripMenuItem;
+        private ToolStripMenuItem resourceEditorToolStripMenuItem;
+        private RadioButton rbResource;
+        private GroupBox grpResource;
+        private Label lblResource;
+        private HScrollBar scrlResource;
     }
 }
 

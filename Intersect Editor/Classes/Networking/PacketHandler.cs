@@ -90,6 +90,12 @@ namespace Intersect_Editor.Classes
                 case Enums.ServerPackets.AnimationList:
                     HandleAnimationList(bf.ReadBytes(bf.Length()));
                     break;
+                case Enums.ServerPackets.OpenResourceEditor:
+                    HandleResourceEditor();
+                    break;
+                case Enums.ServerPackets.ResourceData:
+                    HandleResourceData(bf.ReadBytes(bf.Length()));
+                    break;
                 default:
                     Console.WriteLine(@"Non implemented packet received: " + packetHeader);
                     break;
@@ -295,6 +301,22 @@ namespace Intersect_Editor.Classes
                 Globals.GameAnimations[i] = new AnimationStruct();
                 Globals.GameAnimations[i].Name = bf.ReadString();
             }
+        }
+
+        private static void HandleResourceEditor()
+        {
+            var tmpResourceEditor = new frmResource();
+            tmpResourceEditor.InitEditor();
+            tmpResourceEditor.Show();
+        }
+
+        private static void HandleResourceData(byte[] packet)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteBytes(packet);
+            var resourceNum = bf.ReadInteger();
+            Globals.GameResources[resourceNum] = new ResourceStruct();
+            Globals.GameResources[resourceNum].Load(bf.ReadBytes(bf.Length()));
         }
     }
 }

@@ -251,6 +251,10 @@ namespace Intersect_Server.Classes
             {
                 SendSpell(client, i);
             }
+            for (int i = 0; i < Constants.MaxResources; i++)
+            {
+                SendResource(client, i);
+            }
         }
 
         public static void SendGlobalMsg(string message)
@@ -718,6 +722,24 @@ namespace Intersect_Server.Classes
                 bf.WriteInteger(client.Entity.Hotbar[i].Slot);
             }
             SendDataTo(client, bf.ToArray());
+            bf.Dispose();
+        }
+
+        public static void SendResource(Client client, int resourceNum)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteLong((int)Enums.ServerPackets.ResourceData);
+            bf.WriteInteger(resourceNum);
+            bf.WriteBytes(Globals.GameResources[resourceNum].ResourceData());
+            client.SendPacket(bf.ToArray());
+            bf.Dispose();
+        }
+
+        public static void SendResourceEditor(Client client)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteLong((int)Enums.ServerPackets.OpenResourceEditor);
+            client.SendPacket(bf.ToArray());
             bf.Dispose();
         }
     }

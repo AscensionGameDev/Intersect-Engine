@@ -40,6 +40,8 @@ namespace Intersect_Server.Classes
             Database.LoadSpells();
             Console.WriteLine("Loading animations.");
             Database.LoadAnimations();
+            Console.WriteLine("Loading resources.");
+            Database.LoadResources();
             Console.WriteLine("Loading maps.");
             Database.LoadMaps();
             Console.WriteLine("Opening MySQL connection.");

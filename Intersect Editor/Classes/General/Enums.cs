@@ -54,6 +54,18 @@ namespace Intersect_Editor.Classes
             SaveSpell,
             OpenAnimationEditor,
             SaveAnimation,
+            PickupItem,
+            SwapItems,
+            DropItems,
+            UseItem,
+            SwapSpells,
+            ForgetSpell,
+            UseSpell,
+            UnequipItem,
+            UpgradeStat,
+            HotbarChange,
+            OpenResourceEditor,
+            SaveResource,
         }
 
         public enum ServerPackets
@@ -90,6 +102,13 @@ namespace Intersect_Editor.Classes
             AnimationList,
             MapItems,
             MapItemUpdate,
+            InventoryUpdate,
+            SpellUpdate,
+            PlayerEquipment,
+            StatPoints,
+            HotbarSlots,
+            OpenResourceEditor,
+            ResourceData,
         }
 
         public enum Stats
@@ -125,6 +144,6 @@ namespace Intersect_Editor.Classes
         public static List<string> ItemBonusEffects = new List<string>() {  "Cooldown Reduction", "Life Steal" };
 
         // Map Attribtes
-        public enum MapAttributes : byte { Walkable = 0, Blocked, Item, ZDimension, NPCAvoid, Warp, Sound };
+        public enum MapAttributes : byte { Walkable = 0, Blocked, Item, ZDimension, NPCAvoid, Warp, Sound, Resource };
     }
 }

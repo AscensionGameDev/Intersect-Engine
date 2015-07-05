@@ -138,6 +138,12 @@ namespace Intersect_Server.Classes
                 case Enums.ClientPackets.HotbarChange:
                     HandleHotbarChange(client, packet);
                     break;
+                case Enums.ClientPackets.OpenResourceEditor:
+                    HandleResourceEditor(client);
+                    break;
+                case Enums.ClientPackets.SaveResource:
+                    HandleResourceData(client, packet);
+                    break;
                 default:
                     Console.WriteLine(@"Non implemented packet received: " + packetHeader);
                     break;
@@ -683,6 +689,25 @@ namespace Intersect_Server.Classes
             var slot = bf.ReadInteger();
             client.Entity.HotbarChange(index, type, slot);
             bf.Dispose();
+        }
+
+        private static void HandleResourceData(Client client, byte[] packet)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteBytes(packet);
+            var resourceNum = bf.ReadInteger();
+            Globals.GameResources[resourceNum].Load(bf.ReadBytes(bf.Length()));
+            Globals.GameResources[resourceNum].Save(resourceNum);
+            bf.Dispose();
+        }
+
+        private static void HandleResourceEditor(Client client)
+        {
+            for (var i = 0; i < Constants.MaxResources; i++)
+            {
+                PacketSender.SendResource(client, i);
+            }
+            PacketSender.SendResourceEditor(client);
         }
     }
 }

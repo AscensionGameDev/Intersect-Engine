@@ -933,6 +933,29 @@ namespace Intersect_Server.Classes
                 }
             }
         }
+
+        // Resources
+        public static void LoadResources()
+        {
+            if (!Directory.Exists("Resources/Resources"))
+            {
+                Directory.CreateDirectory("Resources/Resources");
+            }
+            Globals.GameResources = new ResourceStruct[Constants.MaxResources];
+            for (var i = 0; i < Constants.MaxResources; i++)
+            {
+                Globals.GameResources[i] = new ResourceStruct();
+                if (!File.Exists("Resources/Resources/" + i + ".res"))
+                {
+                    Globals.GameResources[i].Save(i);
+                }
+                else
+                {
+                    Globals.GameResources[i].Load(File.ReadAllBytes("Resources/Resources/" + i + ".res"));
+                }
+
+            }
+        }
     }
 }
 

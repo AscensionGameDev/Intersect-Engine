@@ -146,5 +146,21 @@ namespace Intersect_Editor.Classes
             bf.WriteBytes(data);
             Globals.GameSocket.SendPacket(bf.ToArray());
         }
+
+        public static void SendResourceEditor()
+        {
+            var bf = new ByteBuffer();
+            bf.WriteLong((int)Enums.ClientPackets.OpenResourceEditor);
+            Globals.GameSocket.SendPacket(bf.ToArray());
+        }
+
+        public static void SendResource(int ResourceNum, byte[] ResourceData)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteLong((int)Enums.ClientPackets.SaveResource);
+            bf.WriteInteger(ResourceNum);
+            bf.WriteBytes(ResourceData);
+            Globals.GameSocket.SendPacket(bf.ToArray());
+        }
     }
 }

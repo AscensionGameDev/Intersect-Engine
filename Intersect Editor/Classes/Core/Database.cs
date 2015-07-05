@@ -29,6 +29,7 @@ namespace Intersect_Editor.Classes
             Globals.GameNpcs = new NpcStruct[Constants.MaxNpcs];
             Globals.GameSpells = new SpellStruct[Constants.MaxSpells];
             Globals.GameAnimations = new AnimationStruct[Constants.MaxAnimations];
+            Globals.GameResources = new ResourceStruct[Constants.MaxResources];
         }
 
     }

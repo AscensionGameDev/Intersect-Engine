@@ -110,6 +110,7 @@
     <Compile Include="Classes\Core\Sounds.cs" />
     <Compile Include="Classes\Entities\Event.cs" />
     <Compile Include="Classes\Game Objects\AnimationStruct.cs" />
+    <Compile Include="Classes\Game Objects\ResourceStruct.cs" />
     <Compile Include="Classes\Items\ItemInstance.cs" />
     <Compile Include="Classes\Misc\FieldChecking.cs" />
     <Compile Include="Classes\Game Objects\ItemStruct.cs" />
