@@ -34,6 +34,10 @@
             this.btnSave = new System.Windows.Forms.Button();
             this.lstResources = new System.Windows.Forms.ListBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.scrlAnimation = new System.Windows.Forms.HScrollBar();
+            this.lblAnimation = new System.Windows.Forms.Label();
+            this.txtMaxHp = new System.Windows.Forms.TextBox();
+            this.lblMaxHp = new System.Windows.Forms.Label();
             this.scrlSpawnDuration = new System.Windows.Forms.HScrollBar();
             this.lblSpawnDuration = new System.Windows.Forms.Label();
             this.chkWalkableAfter = new System.Windows.Forms.CheckBox();
@@ -84,7 +88,7 @@
             this.groupBox1.Controls.Add(this.lstResources);
             this.groupBox1.Location = new System.Drawing.Point(12, 12);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(203, 373);
+            this.groupBox1.Size = new System.Drawing.Size(203, 437);
             this.groupBox1.TabIndex = 14;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Resources";
@@ -92,7 +96,7 @@
             // btnCancel
             // 
             this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.btnCancel.Location = new System.Drawing.Point(7, 334);
+            this.btnCancel.Location = new System.Drawing.Point(7, 396);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(190, 27);
             this.btnCancel.TabIndex = 4;
@@ -103,7 +107,7 @@
             // btnDelete
             // 
             this.btnDelete.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.btnDelete.Location = new System.Drawing.Point(7, 301);
+            this.btnDelete.Location = new System.Drawing.Point(7, 363);
             this.btnDelete.Name = "btnDelete";
             this.btnDelete.Size = new System.Drawing.Size(190, 27);
             this.btnDelete.TabIndex = 3;
@@ -113,7 +117,7 @@
             // 
             // btnSave
             // 
-            this.btnSave.Location = new System.Drawing.Point(7, 270);
+            this.btnSave.Location = new System.Drawing.Point(7, 330);
             this.btnSave.Name = "btnSave";
             this.btnSave.Size = new System.Drawing.Size(190, 27);
             this.btnSave.TabIndex = 2;
@@ -126,12 +130,16 @@
             this.lstResources.FormattingEnabled = true;
             this.lstResources.Location = new System.Drawing.Point(6, 19);
             this.lstResources.Name = "lstResources";
-            this.lstResources.Size = new System.Drawing.Size(191, 238);
+            this.lstResources.Size = new System.Drawing.Size(191, 303);
             this.lstResources.TabIndex = 1;
             this.lstResources.Click += new System.EventHandler(this.lstResources_Click);
             // 
             // groupBox2
             // 
+            this.groupBox2.Controls.Add(this.scrlAnimation);
+            this.groupBox2.Controls.Add(this.lblAnimation);
+            this.groupBox2.Controls.Add(this.txtMaxHp);
+            this.groupBox2.Controls.Add(this.lblMaxHp);
             this.groupBox2.Controls.Add(this.scrlSpawnDuration);
             this.groupBox2.Controls.Add(this.lblSpawnDuration);
             this.groupBox2.Controls.Add(this.chkWalkableAfter);
@@ -144,24 +152,62 @@
             this.groupBox2.Controls.Add(this.txtName);
             this.groupBox2.Location = new System.Drawing.Point(221, 12);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(223, 200);
+            this.groupBox2.Size = new System.Drawing.Size(223, 264);
             this.groupBox2.TabIndex = 15;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "General";
             // 
+            // scrlAnimation
+            // 
+            this.scrlAnimation.LargeChange = 1;
+            this.scrlAnimation.Location = new System.Drawing.Point(9, 186);
+            this.scrlAnimation.Maximum = 3600;
+            this.scrlAnimation.Minimum = -1;
+            this.scrlAnimation.Name = "scrlAnimation";
+            this.scrlAnimation.Size = new System.Drawing.Size(201, 18);
+            this.scrlAnimation.TabIndex = 37;
+            this.scrlAnimation.Value = -1;
+            this.scrlAnimation.Scroll += new System.Windows.Forms.ScrollEventHandler(this.scrlAnimation_Scroll);
+            // 
+            // lblAnimation
+            // 
+            this.lblAnimation.AutoSize = true;
+            this.lblAnimation.Location = new System.Drawing.Point(6, 173);
+            this.lblAnimation.Name = "lblAnimation";
+            this.lblAnimation.Size = new System.Drawing.Size(94, 13);
+            this.lblAnimation.TabIndex = 36;
+            this.lblAnimation.Text = "Animation: 0 None";
+            // 
+            // txtMaxHp
+            // 
+            this.txtMaxHp.Location = new System.Drawing.Point(75, 103);
+            this.txtMaxHp.Name = "txtMaxHp";
+            this.txtMaxHp.Size = new System.Drawing.Size(135, 20);
+            this.txtMaxHp.TabIndex = 34;
+            this.txtMaxHp.TextChanged += new System.EventHandler(this.txtMaxHp_TextChanged);
+            // 
+            // lblMaxHp
+            // 
+            this.lblMaxHp.AutoSize = true;
+            this.lblMaxHp.Location = new System.Drawing.Point(6, 106);
+            this.lblMaxHp.Name = "lblMaxHp";
+            this.lblMaxHp.Size = new System.Drawing.Size(48, 13);
+            this.lblMaxHp.TabIndex = 35;
+            this.lblMaxHp.Text = "Max HP:";
+            // 
             // scrlSpawnDuration
             // 
-            this.scrlSpawnDuration.Location = new System.Drawing.Point(14, 120);
+            this.scrlSpawnDuration.Location = new System.Drawing.Point(9, 151);
             this.scrlSpawnDuration.Maximum = 3600;
             this.scrlSpawnDuration.Name = "scrlSpawnDuration";
-            this.scrlSpawnDuration.Size = new System.Drawing.Size(196, 18);
+            this.scrlSpawnDuration.Size = new System.Drawing.Size(201, 18);
             this.scrlSpawnDuration.TabIndex = 33;
             this.scrlSpawnDuration.Scroll += new System.Windows.Forms.ScrollEventHandler(this.scrlSpawnDuration_Scroll);
             // 
             // lblSpawnDuration
             // 
             this.lblSpawnDuration.AutoSize = true;
-            this.lblSpawnDuration.Location = new System.Drawing.Point(11, 106);
+            this.lblSpawnDuration.Location = new System.Drawing.Point(6, 138);
             this.lblSpawnDuration.Name = "lblSpawnDuration";
             this.lblSpawnDuration.Size = new System.Drawing.Size(95, 13);
             this.lblSpawnDuration.TabIndex = 32;
@@ -170,7 +216,7 @@
             // chkWalkableAfter
             // 
             this.chkWalkableAfter.AutoSize = true;
-            this.chkWalkableAfter.Location = new System.Drawing.Point(16, 176);
+            this.chkWalkableAfter.Location = new System.Drawing.Point(6, 240);
             this.chkWalkableAfter.Name = "chkWalkableAfter";
             this.chkWalkableAfter.Size = new System.Drawing.Size(185, 17);
             this.chkWalkableAfter.TabIndex = 31;
@@ -181,7 +227,7 @@
             // chkWalkableBefore
             // 
             this.chkWalkableBefore.AutoSize = true;
-            this.chkWalkableBefore.Location = new System.Drawing.Point(16, 153);
+            this.chkWalkableBefore.Location = new System.Drawing.Point(6, 217);
             this.chkWalkableBefore.Name = "chkWalkableBefore";
             this.chkWalkableBefore.Size = new System.Drawing.Size(194, 17);
             this.chkWalkableBefore.TabIndex = 30;
@@ -193,7 +239,7 @@
             // 
             this.cmbToolType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbToolType.FormattingEnabled = true;
-            this.cmbToolType.Location = new System.Drawing.Point(75, 78);
+            this.cmbToolType.Location = new System.Drawing.Point(75, 46);
             this.cmbToolType.Name = "cmbToolType";
             this.cmbToolType.Size = new System.Drawing.Size(135, 21);
             this.cmbToolType.TabIndex = 29;
@@ -202,7 +248,7 @@
             // lblToolType
             // 
             this.lblToolType.AutoSize = true;
-            this.lblToolType.Location = new System.Drawing.Point(11, 81);
+            this.lblToolType.Location = new System.Drawing.Point(6, 49);
             this.lblToolType.Name = "lblToolType";
             this.lblToolType.Size = new System.Drawing.Size(58, 13);
             this.lblToolType.TabIndex = 28;
@@ -210,7 +256,7 @@
             // 
             // txtHP
             // 
-            this.txtHP.Location = new System.Drawing.Point(74, 47);
+            this.txtHP.Location = new System.Drawing.Point(75, 77);
             this.txtHP.Name = "txtHP";
             this.txtHP.Size = new System.Drawing.Size(135, 20);
             this.txtHP.TabIndex = 15;
@@ -219,16 +265,16 @@
             // lblHP
             // 
             this.lblHP.AutoSize = true;
-            this.lblHP.Location = new System.Drawing.Point(11, 50);
+            this.lblHP.Location = new System.Drawing.Point(6, 80);
             this.lblHP.Name = "lblHP";
-            this.lblHP.Size = new System.Drawing.Size(25, 13);
+            this.lblHP.Size = new System.Drawing.Size(45, 13);
             this.lblHP.TabIndex = 16;
-            this.lblHP.Text = "HP:";
+            this.lblHP.Text = "Min HP:";
             // 
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(11, 20);
+            this.label1.Location = new System.Drawing.Point(6, 20);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(38, 13);
             this.label1.TabIndex = 3;
@@ -236,7 +282,7 @@
             // 
             // txtName
             // 
-            this.txtName.Location = new System.Drawing.Point(74, 20);
+            this.txtName.Location = new System.Drawing.Point(75, 20);
             this.txtName.Name = "txtName";
             this.txtName.Size = new System.Drawing.Size(135, 20);
             this.txtName.TabIndex = 2;
@@ -256,7 +302,7 @@
             this.groupBox3.Controls.Add(this.lblPic);
             this.groupBox3.Location = new System.Drawing.Point(450, 12);
             this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(476, 373);
+            this.groupBox3.Size = new System.Drawing.Size(476, 437);
             this.groupBox3.TabIndex = 16;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Graphics";
@@ -268,7 +314,7 @@
             this.grpEndTileset.Controls.Add(this.picEndResource);
             this.grpEndTileset.Location = new System.Drawing.Point(248, 62);
             this.grpEndTileset.Name = "grpEndTileset";
-            this.grpEndTileset.Size = new System.Drawing.Size(195, 277);
+            this.grpEndTileset.Size = new System.Drawing.Size(195, 341);
             this.grpEndTileset.TabIndex = 23;
             this.grpEndTileset.TabStop = false;
             // 
@@ -276,7 +322,7 @@
             // 
             this.picEndResource.Location = new System.Drawing.Point(0, 0);
             this.picEndResource.Name = "picEndResource";
-            this.picEndResource.Size = new System.Drawing.Size(195, 277);
+            this.picEndResource.Size = new System.Drawing.Size(195, 341);
             this.picEndResource.TabIndex = 2;
             this.picEndResource.TabStop = false;
             this.picEndResource.MouseDown += new System.Windows.Forms.MouseEventHandler(this.picEndResource_MouseDown);
@@ -290,7 +336,7 @@
             this.grpInitialTileset.Controls.Add(this.picInitialResource);
             this.grpInitialTileset.Location = new System.Drawing.Point(13, 62);
             this.grpInitialTileset.Name = "grpInitialTileset";
-            this.grpInitialTileset.Size = new System.Drawing.Size(195, 277);
+            this.grpInitialTileset.Size = new System.Drawing.Size(195, 341);
             this.grpInitialTileset.TabIndex = 22;
             this.grpInitialTileset.TabStop = false;
             // 
@@ -298,7 +344,7 @@
             // 
             this.picInitialResource.Location = new System.Drawing.Point(0, 0);
             this.picInitialResource.Name = "picInitialResource";
-            this.picInitialResource.Size = new System.Drawing.Size(195, 277);
+            this.picInitialResource.Size = new System.Drawing.Size(195, 341);
             this.picInitialResource.TabIndex = 2;
             this.picInitialResource.TabStop = false;
             this.picInitialResource.MouseDown += new System.Windows.Forms.MouseEventHandler(this.picInitialResource_MouseDown);
@@ -310,7 +356,7 @@
             this.hScrollEndTileset.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.hScrollEndTileset.LargeChange = 1;
-            this.hScrollEndTileset.Location = new System.Drawing.Point(248, 342);
+            this.hScrollEndTileset.Location = new System.Drawing.Point(248, 406);
             this.hScrollEndTileset.MaximumSize = new System.Drawing.Size(960, 17);
             this.hScrollEndTileset.Name = "hScrollEndTileset";
             this.hScrollEndTileset.Size = new System.Drawing.Size(199, 17);
@@ -325,7 +371,7 @@
             this.vScrollEndTileset.Location = new System.Drawing.Point(451, 59);
             this.vScrollEndTileset.MaximumSize = new System.Drawing.Size(17, 960);
             this.vScrollEndTileset.Name = "vScrollEndTileset";
-            this.vScrollEndTileset.Size = new System.Drawing.Size(17, 280);
+            this.vScrollEndTileset.Size = new System.Drawing.Size(17, 344);
             this.vScrollEndTileset.TabIndex = 20;
             this.vScrollEndTileset.Scroll += new System.Windows.Forms.ScrollEventHandler(this.vScrollEndTileset_Scroll);
             // 
@@ -334,7 +380,7 @@
             this.hScrollStartTileset.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.hScrollStartTileset.LargeChange = 1;
-            this.hScrollStartTileset.Location = new System.Drawing.Point(13, 342);
+            this.hScrollStartTileset.Location = new System.Drawing.Point(13, 406);
             this.hScrollStartTileset.MaximumSize = new System.Drawing.Size(960, 17);
             this.hScrollStartTileset.Name = "hScrollStartTileset";
             this.hScrollStartTileset.Size = new System.Drawing.Size(199, 17);
@@ -349,7 +395,7 @@
             this.vScrollStartTileset.Location = new System.Drawing.Point(216, 59);
             this.vScrollStartTileset.MaximumSize = new System.Drawing.Size(17, 960);
             this.vScrollStartTileset.Name = "vScrollStartTileset";
-            this.vScrollStartTileset.Size = new System.Drawing.Size(17, 280);
+            this.vScrollStartTileset.Size = new System.Drawing.Size(17, 344);
             this.vScrollStartTileset.TabIndex = 18;
             this.vScrollStartTileset.Scroll += new System.Windows.Forms.ScrollEventHandler(this.vScrollStartTileset_Scroll);
             // 
@@ -406,7 +452,7 @@
             this.groupBox4.Controls.Add(this.lblDropItem);
             this.groupBox4.Controls.Add(this.scrlDropIndex);
             this.groupBox4.Controls.Add(this.lblDropIndex);
-            this.groupBox4.Location = new System.Drawing.Point(224, 218);
+            this.groupBox4.Location = new System.Drawing.Point(224, 282);
             this.groupBox4.Name = "groupBox4";
             this.groupBox4.Size = new System.Drawing.Size(220, 167);
             this.groupBox4.TabIndex = 17;
@@ -492,7 +538,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(936, 393);
+            this.ClientSize = new System.Drawing.Size(936, 460);
             this.ControlBox = false;
             this.Controls.Add(this.groupBox4);
             this.Controls.Add(this.groupBox3);
@@ -557,5 +603,9 @@
         public System.Windows.Forms.PictureBox picEndResource;
         private System.Windows.Forms.GroupBox grpInitialTileset;
         public System.Windows.Forms.PictureBox picInitialResource;
+        private System.Windows.Forms.TextBox txtMaxHp;
+        private System.Windows.Forms.Label lblMaxHp;
+        private System.Windows.Forms.HScrollBar scrlAnimation;
+        private System.Windows.Forms.Label lblAnimation;
     }
 }

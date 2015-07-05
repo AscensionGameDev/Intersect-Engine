@@ -30,9 +30,11 @@ namespace Intersect_Server.Classes
     {
         // General
         public string Name = "";
-        public int HP = 0;
+        public int MinHP = 0;
+        public int MaxHP = 0;
         public int Tool = 0;
         public int SpawnDuration = 0;
+        public int Animation = 0;
         public bool WalkableBefore = false;
         public bool WalkableAfter = false;
 
@@ -67,9 +69,11 @@ namespace Intersect_Server.Classes
             EndGraphic.Y = myBuffer.ReadInteger();
             EndGraphic.Width = myBuffer.ReadInteger();
             EndGraphic.Height = myBuffer.ReadInteger();
-            HP = myBuffer.ReadInteger();
+            MinHP = myBuffer.ReadInteger();
+            MaxHP = myBuffer.ReadInteger();
             Tool = myBuffer.ReadInteger();
             SpawnDuration = myBuffer.ReadInteger();
+            Animation = myBuffer.ReadInteger();
             WalkableBefore = Convert.ToBoolean(myBuffer.ReadInteger());
             WalkableAfter = Convert.ToBoolean(myBuffer.ReadInteger());
 
@@ -97,9 +101,11 @@ namespace Intersect_Server.Classes
             myBuffer.WriteInteger(EndGraphic.Y);
             myBuffer.WriteInteger(EndGraphic.Width);
             myBuffer.WriteInteger(EndGraphic.Height);
-            myBuffer.WriteInteger(HP);
+            myBuffer.WriteInteger(MinHP);
+            myBuffer.WriteInteger(MaxHP);
             myBuffer.WriteInteger(Tool);
             myBuffer.WriteInteger(SpawnDuration);
+            myBuffer.WriteInteger(Animation);
             myBuffer.WriteInteger(Convert.ToInt32(WalkableBefore));
             myBuffer.WriteInteger(Convert.ToInt32(WalkableAfter));
 

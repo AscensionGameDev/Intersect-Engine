@@ -93,8 +93,11 @@ namespace Intersect_Editor.Classes
             txtName.Text = Globals.GameResources[_editorIndex].Name;
             cmbToolType.SelectedIndex = Globals.GameResources[_editorIndex].Tool;
             scrlSpawnDuration.Value = Globals.GameResources[_editorIndex].SpawnDuration;
-            txtHP.Text = Globals.GameResources[_editorIndex].HP.ToString();
+            scrlAnimation.Value = Globals.GameResources[_editorIndex].Animation;
+            txtHP.Text = Globals.GameResources[_editorIndex].MinHP.ToString();
+            txtMaxHp.Text = Globals.GameResources[_editorIndex].MaxHP.ToString();
             lblSpawnDuration.Text = @"Spawn Duration: " + scrlSpawnDuration.Value;
+            lblAnimation.Text = @"Animation: " + (scrlAnimation.Value + 1) + " " + Globals.GameAnimations[scrlAnimation.Value].Name;
             chkWalkableBefore.Checked = Globals.GameResources[_editorIndex].WalkableBefore;
             chkWalkableAfter.Checked = Globals.GameResources[_editorIndex].WalkableAfter;
             cmbInitialSprite.SelectedIndex = cmbInitialSprite.FindString(Globals.GameResources[_editorIndex].InitialGraphic.Sprite);
@@ -476,7 +479,27 @@ namespace Intersect_Editor.Classes
         {
             int x = 0;
             int.TryParse(txtHP.Text, out x);
-            Globals.GameResources[_editorIndex].HP = x;
+            Globals.GameResources[_editorIndex].MinHP = x;
+        }
+
+        private void txtMaxHp_TextChanged(object sender, EventArgs e)
+        {
+            int x = 0;
+            int.TryParse(txtMaxHp.Text, out x);
+            Globals.GameResources[_editorIndex].MaxHP = x;
+        }
+
+        private void scrlAnimation_Scroll(object sender, ScrollEventArgs e)
+        {
+            if (scrlAnimation.Value >= 0)
+            {
+                lblAnimation.Text = "Animation: " + (scrlAnimation.Value + 1) + " " + Globals.GameAnimations[scrlAnimation.Value].Name;
+            }
+            else
+            {
+                lblAnimation.Text = "Animation: 0 None";
+            }
+            Globals.GameResources[_editorIndex].Animation = scrlAnimation.Value;
         }
     }
 }
