@@ -37,16 +37,21 @@ namespace Intersect_Server.Classes
         List<int> _directions = new List<int>();
         bool _pathfinding;
 
+        //Temporary Values
+        private int _curMapLink = -1;
+
         //Moving
         public long LastRandomMove;
-        
+
         //Respawn
         public long RespawnTime;
 
-        public Npc(int index, NpcStruct myBase) : base(index) {
+        public Npc(int index, NpcStruct myBase)
+            : base(index)
+        {
             MyName = myBase.Name;
             MySprite = myBase.Sprite;
-            myBase.Stat.CopyTo(Stat,0);
+            myBase.Stat.CopyTo(Stat, 0);
             myBase.MaxVital.CopyTo(Vital, 0);
             myBase.MaxVital.CopyTo(MaxVital, 0);
         }
@@ -54,79 +59,89 @@ namespace Intersect_Server.Classes
         public override void Die()
         {
             base.Die();
-            PacketSender.SendEntityLeave(MyIndex,0,CurrentMap);
+            Globals.GameMaps[CurrentMap].RemoveEntity(this);
+            PacketSender.SendEntityLeave(MyIndex, 0, CurrentMap);
             Globals.Entities[MyIndex] = null;
         }
 
         public void Update()
         {
-            if (MoveTimer >= Environment.TickCount) return;
-            var targetMap = -1;
-            var targetX = 0;
-            var targetY = 0;
-            //Check if there is a target, if so, run their ass down.
-            if (MyTarget != null)
+            if (MoveTimer < Environment.TickCount)
             {
-                targetMap = MyTarget.CurrentMap;
-                targetX = MyTarget.CurrentX;
-                targetY = MyTarget.CurrentY;
-
-            }
-
-            if (targetMap == -1) {
-                if (_tileTarget != null) {
+                var targetMap = -1;
+                var targetX = 0;
+                var targetY = 0;
+                //Check if there is a target, if so, run their ass down.
+                if (MyTarget != null)
+                {
+                    targetMap = MyTarget.CurrentMap;
+                    targetX = MyTarget.CurrentX;
+                    targetY = MyTarget.CurrentY;
 
                 }
-            }
 
-            if (targetMap > - 1)
-            {
-                //Check if target map is on one of the surrounding maps, if not then we are not even going to look.
-                if (targetMap != CurrentMap)
+                if (targetMap == -1)
                 {
-                    if (Globals.GameMaps[CurrentMap].SurroundingMaps.Count > 0)
+                    if (_tileTarget != null)
                     {
-                        for (var x = 0; x < Globals.GameMaps[CurrentMap].SurroundingMaps.Count; x++)
+
+                    }
+                }
+
+                if (targetMap > -1)
+                {
+                    //Check if target map is on one of the surrounding maps, if not then we are not even going to look.
+                    if (targetMap != CurrentMap)
+                    {
+                        if (Globals.GameMaps[CurrentMap].SurroundingMaps.Count > 0)
                         {
-                            if (Globals.GameMaps[CurrentMap].SurroundingMaps[x] == targetMap)
+                            for (var x = 0; x < Globals.GameMaps[CurrentMap].SurroundingMaps.Count; x++)
                             {
-                                break;
-                            }
-                            if (x == Globals.GameMaps[CurrentMap].SurroundingMaps.Count - 1)
-                            {
-                                targetMap = -1;
+                                if (Globals.GameMaps[CurrentMap].SurroundingMaps[x] == targetMap)
+                                {
+                                    break;
+                                }
+                                if (x == Globals.GameMaps[CurrentMap].SurroundingMaps.Count - 1)
+                                {
+                                    targetMap = -1;
+                                }
                             }
                         }
-                    }
-                    else
-                    {
-                        targetMap = -1;
-                    }
-                }
-            }
-
-            if (targetMap > -1){
-                if (_pathFindingLocation != null)
-                {
-                    if (targetMap != _pathFindingLocation.TargetMap || targetX != _pathFindingLocation.TargetX || targetY != _pathFindingLocation.TargetY)
-                    {
-                        _pathFindingLocation = null;
-                    }
-                }
-
-                if (_pathFindingLocation != null)
-                {
-                    if (!_pathfinding)
-                    {
-                        if (_directions != null)
+                        else
                         {
-                            if (_directions.Count > 0)
+                            targetMap = -1;
+                        }
+                    }
+                }
+
+                if (targetMap > -1)
+                {
+                    if (_pathFindingLocation != null)
+                    {
+                        if (targetMap != _pathFindingLocation.TargetMap || targetX != _pathFindingLocation.TargetX || targetY != _pathFindingLocation.TargetY)
+                        {
+                            _pathFindingLocation = null;
+                        }
+                    }
+
+                    if (_pathFindingLocation != null)
+                    {
+                        if (!_pathfinding)
+                        {
+                            if (_directions != null)
                             {
-                                if (!CanMove(_directions[0]))
+                                if (_directions.Count > 0)
                                 {
-                                    Move(_directions[0],null);
-                                    _directions.RemoveAt(0);
-                                    if (_directions.Count == 0)
+                                    if (!CanMove(_directions[0]))
+                                    {
+                                        Move(_directions[0], null);
+                                        _directions.RemoveAt(0);
+                                        if (_directions.Count == 0)
+                                        {
+                                            _pathFindingLocation = null;
+                                        }
+                                    }
+                                    else
                                     {
                                         _pathFindingLocation = null;
                                     }
@@ -136,35 +151,44 @@ namespace Intersect_Server.Classes
                                     _pathFindingLocation = null;
                                 }
                             }
-                            else
-                            {
-                                _pathFindingLocation = null;
-                            }
                         }
                     }
+                    else
+                    {
+                        _pathFindingLocation = new TargetLocation(targetMap, targetX, targetY);
+                        _findPath = new Thread(PathFind);
+                        _findPath.Start();
+                        _pathfinding = true;
+                    }
                 }
-                else
-                {
-                    _pathFindingLocation = new TargetLocation(targetMap, targetX, targetY);
-                    _findPath = new Thread(PathFind);
-                    _findPath.Start();
-                    _pathfinding = true;
-                }
-            }
 
-            //Move randomly
-            if (targetMap != -1) return;
-            if (LastRandomMove >= Environment.TickCount) return;
-            var i = Globals.Rand.Next(0, 1);
-            if (i == 0)
-            {
-                i = Globals.Rand.Next(0, 4);
-                if (!CanMove(i))
+                //Move randomly
+                if (targetMap != -1) return;
+                if (LastRandomMove >= Environment.TickCount) return;
+                var i = Globals.Rand.Next(0, 1);
+                if (i == 0)
                 {
-                    Move(i,null);
+                    i = Globals.Rand.Next(0, 4);
+                    if (!CanMove(i))
+                    {
+                        Move(i, null);
+                    }
                 }
+                LastRandomMove = Environment.TickCount + Globals.Rand.Next(1000, 3000);
             }
-            LastRandomMove = Environment.TickCount + Globals.Rand.Next(1000, 3000);
+            //If we switched maps, lets update the maps
+            if (_curMapLink != CurrentMap)
+            {
+                if (_curMapLink != -1)
+                {
+                    Globals.GameMaps[_curMapLink].RemoveEntity(this);
+                }
+                if (CurrentMap > -1)
+                {
+                    Globals.GameMaps[CurrentMap].AddEntity(this);
+                }
+                _curMapLink = CurrentMap;
+            }
         }
 
         private void PathFind()
@@ -224,7 +248,7 @@ namespace Intersect_Server.Classes
                         {
                             for (var y1 = 0; y1 < 30; y1++)
                             {
-                                closedList.Add(new Point((x - Globals.GameMaps[CurrentMap].MapGridX + 1) * 30 + x1, (y - Globals.GameMaps[CurrentMap].MapGridY + 1) * 30 + y1,-1,0));
+                                closedList.Add(new Point((x - Globals.GameMaps[CurrentMap].MapGridX + 1) * 30 + x1, (y - Globals.GameMaps[CurrentMap].MapGridY + 1) * 30 + y1, -1, 0));
                             }
                         }
                     }
@@ -281,7 +305,7 @@ namespace Intersect_Server.Classes
                     }
                     if (currentTile.Y > 0)
                     {
-                        adjSquares.Add(new Point(currentTile.X , currentTile.Y - 1, 0, 0));
+                        adjSquares.Add(new Point(currentTile.X, currentTile.Y - 1, 0, 0));
                     }
                     if (currentTile.X < 89)
                     {
@@ -289,7 +313,7 @@ namespace Intersect_Server.Classes
                     }
                     if (currentTile.Y < 89)
                     {
-                        adjSquares.Add(new Point(currentTile.X , currentTile.Y + 1, 0, 0));
+                        adjSquares.Add(new Point(currentTile.X, currentTile.Y + 1, 0, 0));
                     }
 
                     foreach (var t in adjSquares)
@@ -351,11 +375,13 @@ namespace Intersect_Server.Classes
         }
     }
 
-    class TargetLocation {
+    class TargetLocation
+    {
         public int TargetX;
         public int TargetY;
         public int TargetMap;
-        public TargetLocation(int map, int x, int y) {
+        public TargetLocation(int map, int x, int y)
+        {
             TargetMap = map;
             TargetX = x;
             TargetY = y;

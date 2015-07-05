@@ -39,6 +39,10 @@ namespace Intersect_Server.Classes
         public int[] Equipment = new int[Enums.EquipmentSlots.Count];
         public int StatPoints = 0;
 
+        //Temporary Values
+        private int _curMapLink = -1;
+
+
         //Init
 		public Player (int index, Client newClient) : base(index)
 		{
@@ -66,7 +70,20 @@ namespace Intersect_Server.Classes
         //Update
         public void Update()
         {
-            if (!InGame) { return; }
+            if (!InGame || CurrentMap == -1) { return; }
+            //If we switched maps, lets update the maps
+            if (_curMapLink != CurrentMap)
+            {
+                if (_curMapLink != -1)
+                {
+                    Globals.GameMaps[_curMapLink].RemoveEntity(this);
+                }
+                if (CurrentMap > -1)
+                {
+                    Globals.GameMaps[CurrentMap].AddEntity(this);
+                }
+                _curMapLink = CurrentMap;
+            }
             //Check to see if we can spawn events, if already spawned.. update them.
             for (var i = 0; i < Globals.GameMaps[CurrentMap].SurroundingMaps.Count + 1; i++)
             {
