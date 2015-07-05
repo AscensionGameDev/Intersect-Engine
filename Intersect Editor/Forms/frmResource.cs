@@ -28,8 +28,9 @@ using Color = SFML.Graphics.Color;
 using Image = SFML.Graphics.Image;
 using SFML.System;
 using Intersect_Editor.Classes;
+using System.IO;
 
-namespace Intersect_Editor.Forms
+namespace Intersect_Editor.Classes
 {
     public partial class frmResource : Form
     {
@@ -40,6 +41,11 @@ namespace Intersect_Editor.Forms
         private bool[] _changed;
         private int _editorIndex;
 
+        private Bitmap _initialTileset;
+        private Bitmap _endTileset;
+        private Bitmap _initialBitmap;
+        private Bitmap _endBitmap;
+
         public frmResource()
         {
             InitializeComponent();
@@ -47,18 +53,21 @@ namespace Intersect_Editor.Forms
 
         private void frmResource_Load(object sender, EventArgs e)
         {
+            _initialBitmap = new Bitmap(picInitialResource.Width, picInitialResource.Height);
+            _endBitmap = new Bitmap(picInitialResource.Width, picInitialResource.Height);
             lstResources.SelectedIndex = 0;
             cmbInitialSprite.Items.Clear();
             cmbEndSprite.Items.Clear();
             cmbInitialSprite.Items.Add("None");
             cmbEndSprite.Items.Add("None");
-            for (int i = 0; i < Intersect_Editor.Classes.Graphics.EntityFileNames.Length; i++)
+            for (int i = 0; i < Globals.Tilesets.Length; i++)
             {
-                cmbInitialSprite.Items.Add(Intersect_Editor.Classes.Graphics.EntityFileNames[i]);
-                cmbEndSprite.Items.Add(Intersect_Editor.Classes.Graphics.EntityFileNames[i]);
+                cmbInitialSprite.Items.Add(Globals.Tilesets[i]);
+                cmbEndSprite.Items.Add(Globals.Tilesets[i]);
             }
             scrlDropItem.Maximum = Constants.MaxItems - 1;
             UpdateEditor();
+
         }
 
         public void InitEditor()
@@ -74,7 +83,8 @@ namespace Intersect_Editor.Forms
             }
             cmbToolType.Items.Add("None");
             cmbToolType.Items.AddRange(Enums.ToolTypes.ToArray());
-            UpdateScrollBars();
+            UpdateInitialScrollBars();
+            UpdateFinalScrollBars();
         }
 
         private void UpdateEditor()
@@ -91,7 +101,7 @@ namespace Intersect_Editor.Forms
             cmbEndSprite.SelectedIndex = cmbEndSprite.FindString(Globals.GameResources[_editorIndex].EndGraphic.Sprite);
             scrlDropIndex.Value = 1;
             UpdateDropValues();
-            DrawResourceSprites();
+            Render();
             _changed[_editorIndex] = true;
         }
 
@@ -156,12 +166,25 @@ namespace Intersect_Editor.Forms
             if (cmbInitialSprite.SelectedIndex > 0)
             {
                 Globals.GameResources[_editorIndex].InitialGraphic.Sprite = cmbInitialSprite.Text;
+                if (File.Exists("Resources/Tilesets/" + cmbInitialSprite.Text))
+                {
+                    _initialTileset = (Bitmap)Bitmap.FromFile("Resources/Tilesets/" + cmbInitialSprite.Text);
+                    picInitialResource.Width = _initialTileset.Width;
+                    picInitialResource.Height = _initialTileset.Height;
+                    _initialBitmap = new Bitmap(picInitialResource.Width, picInitialResource.Height);
+                    UpdateInitialScrollBars();
+                }
+                else
+                {
+                    _initialTileset = null;
+                }
             }
             else
             {
                 Globals.GameResources[_editorIndex].InitialGraphic.Sprite = "";
+                _initialTileset = null;
             }
-            DrawResourceSprites();
+            Render();
         }
 
         private void cmbEndSprite_SelectedIndexChanged(object sender, EventArgs e)
@@ -169,12 +192,25 @@ namespace Intersect_Editor.Forms
             if (cmbEndSprite.SelectedIndex > 0)
             {
                 Globals.GameResources[_editorIndex].EndGraphic.Sprite = cmbEndSprite.Text;
+                if (File.Exists("Resources/Tilesets/" + cmbEndSprite.Text))
+                {
+                    _endTileset = (Bitmap)Bitmap.FromFile("Resources/Tilesets/" + cmbEndSprite.Text);
+                    picEndResource.Width = _endTileset.Width;
+                    picEndResource.Height = _endTileset.Height;
+                    _endBitmap = new Bitmap(picInitialResource.Width, picInitialResource.Height);
+                    UpdateFinalScrollBars();
+                }
+                else
+                {
+                    _endTileset = null;
+                }
             }
             else
             {
                 Globals.GameResources[_editorIndex].EndGraphic.Sprite = "";
+                _endTileset = null;
             }
-            DrawResourceSprites();
+            Render();
         }
 
         private void btnSave_Click(object sender, EventArgs e)
@@ -212,42 +248,40 @@ namespace Intersect_Editor.Forms
             Dispose();
         }
 
-        private void DrawResourceSprites()
+        public void Render()
         {
             Rectangle tileSelection;
             Pen whitePen = new Pen(System.Drawing.Color.Red, 1);
 
             // Initial Sprite
-            var picSpriteBmp = new Bitmap(picInitialResource.Width, picInitialResource.Height);
-            var gfx = System.Drawing.Graphics.FromImage(picSpriteBmp);
+            var gfx = System.Drawing.Graphics.FromImage(_initialBitmap);
             gfx.FillRectangle(Brushes.Black, new Rectangle(0, 0, picInitialResource.Width, picInitialResource.Height));
-            if (cmbInitialSprite.SelectedIndex > 0)
+            if (cmbInitialSprite.SelectedIndex > 0 && _initialTileset != null)
             {
-                var img = Bitmap.FromFile("Resources/Tilesets/" + cmbInitialSprite.Text);
-                gfx.DrawImage(img, new Rectangle(0, 0, img.Width, img.Height), new Rectangle(0, 0, img.Width, img.Height), GraphicsUnit.Pixel);
-                img.Dispose();
+                gfx.DrawImage(_initialTileset, new Rectangle(0, 0, _initialTileset.Width, _initialTileset.Height), new Rectangle(0, 0, _initialTileset.Width, _initialTileset.Height), GraphicsUnit.Pixel);
 
-                tileSelection = new Rectangle(Globals.GameResources[_editorIndex].InitialGraphic.X * 32, Globals.GameResources[_editorIndex].InitialGraphic.Y * 32, Globals.GameResources[_editorIndex].InitialGraphic.Width * 32, Globals.GameResources[_editorIndex].InitialGraphic.Height * 32);
+                tileSelection = new Rectangle(Globals.GameResources[_editorIndex].InitialGraphic.X * 32, Globals.GameResources[_editorIndex].InitialGraphic.Y * 32, (Globals.GameResources[_editorIndex].InitialGraphic.Width + 1) * 32, (Globals.GameResources[_editorIndex].InitialGraphic.Height + 1) * 32);
                 gfx.DrawRectangle(whitePen, tileSelection);
             }
             gfx.Dispose();
-            picInitialResource.BackgroundImage = picSpriteBmp;
+            gfx = picInitialResource.CreateGraphics();
+            gfx.DrawImageUnscaled(_initialBitmap, new System.Drawing.Point(0, 0));
+            gfx.Dispose();
 
             // End Sprite
-            picSpriteBmp = new Bitmap(picEndResource.Width, picEndResource.Height);
-            gfx = System.Drawing.Graphics.FromImage(picSpriteBmp);
+            gfx = System.Drawing.Graphics.FromImage(_endBitmap);
             gfx.FillRectangle(Brushes.Black, new Rectangle(0, 0, picEndResource.Width, picEndResource.Height));
-            if (cmbEndSprite.SelectedIndex > 0)
+            if (cmbEndSprite.SelectedIndex > 0 && _endTileset != null)
             {
-                var img = Bitmap.FromFile("Resources/Tilesets/" + cmbEndSprite.Text);
-                gfx.DrawImage(img, new Rectangle(0, 0, img.Width, img.Height), new Rectangle(0, 0, img.Width, img.Height), GraphicsUnit.Pixel);
-                img.Dispose();
+                gfx.DrawImage(_endTileset, new Rectangle(0, 0, _endTileset.Width, _endTileset.Height), new Rectangle(0, 0, _endTileset.Width, _endTileset.Height), GraphicsUnit.Pixel);
 
-                tileSelection = new Rectangle(Globals.GameResources[_editorIndex].EndGraphic.X * 32, Globals.GameResources[_editorIndex].EndGraphic.Y * 32, Globals.GameResources[_editorIndex].EndGraphic.Width * 32, Globals.GameResources[_editorIndex].EndGraphic.Height * 32);
+                tileSelection = new Rectangle(Globals.GameResources[_editorIndex].EndGraphic.X * 32, Globals.GameResources[_editorIndex].EndGraphic.Y * 32, (Globals.GameResources[_editorIndex].EndGraphic.Width + 1) * 32, (Globals.GameResources[_editorIndex].EndGraphic.Height + 1) * 32);
                 gfx.DrawRectangle(whitePen, tileSelection);
             }
             gfx.Dispose();
-            picEndResource.BackgroundImage = picSpriteBmp;
+            gfx = picEndResource.CreateGraphics();
+            gfx.DrawImageUnscaled(_endBitmap, new System.Drawing.Point(0, 0));
+            gfx.Dispose();
         }
 
         private void picInitialResource_MouseDown(object sender, MouseEventArgs e)
@@ -269,7 +303,7 @@ namespace Intersect_Editor.Forms
             {
                 var tmpX = (int)Math.Floor((double)e.X / 32);
                 var tmpY = (int)Math.Floor((double)e.Y / 32);
-                Globals.GameResources[_editorIndex].InitialGraphic.Height = tmpX - Globals.GameResources[_editorIndex].InitialGraphic.X;
+                Globals.GameResources[_editorIndex].InitialGraphic.Width = tmpX - Globals.GameResources[_editorIndex].InitialGraphic.X;
                 Globals.GameResources[_editorIndex].InitialGraphic.Height = tmpY - Globals.GameResources[_editorIndex].InitialGraphic.Y;
             }
         }
@@ -316,7 +350,7 @@ namespace Intersect_Editor.Forms
             {
                 var tmpX = (int)Math.Floor((double)e.X / 32);
                 var tmpY = (int)Math.Floor((double)e.Y / 32);
-                Globals.GameResources[_editorIndex].EndGraphic.Height = tmpX - Globals.GameResources[_editorIndex].EndGraphic.X;
+                Globals.GameResources[_editorIndex].EndGraphic.Width = tmpX - Globals.GameResources[_editorIndex].EndGraphic.X;
                 Globals.GameResources[_editorIndex].EndGraphic.Height = tmpY - Globals.GameResources[_editorIndex].EndGraphic.Y;
             }
         }
@@ -344,7 +378,7 @@ namespace Intersect_Editor.Forms
             _tMouseDown = false;
         }
 
-        private void UpdateScrollBars()
+        private void UpdateInitialScrollBars()
         {
             vScrollStartTileset.Minimum = 0;
             vScrollStartTileset.Maximum = 1;
@@ -354,15 +388,6 @@ namespace Intersect_Editor.Forms
             vScrollStartTileset.Value = 0;
             picInitialResource.Left = 0;
             picInitialResource.Top = 0;
-
-            vScrollEndTileset.Minimum = 0;
-            vScrollEndTileset.Maximum = 1;
-            vScrollEndTileset.Value = 0;
-            vScrollEndTileset.Minimum = 0;
-            vScrollEndTileset.Maximum = 1;
-            vScrollEndTileset.Value = 0;
-            picEndResource.Left = 0;
-            picEndResource.Top = 0;
 
             if (picInitialResource.Width > grpInitialTileset.Width)
             {
@@ -382,6 +407,18 @@ namespace Intersect_Editor.Forms
             {
                 vScrollStartTileset.Enabled = false;
             }
+        }
+
+        private void UpdateFinalScrollBars()
+        {
+            vScrollEndTileset.Minimum = 0;
+            vScrollEndTileset.Maximum = 1;
+            vScrollEndTileset.Value = 0;
+            vScrollEndTileset.Minimum = 0;
+            vScrollEndTileset.Maximum = 1;
+            vScrollEndTileset.Value = 0;
+            picEndResource.Left = 0;
+            picEndResource.Top = 0;
 
             if (picEndResource.Width > grpEndTileset.Width)
             {
@@ -431,6 +468,8 @@ namespace Intersect_Editor.Forms
         private void txtName_TextChanged(object sender, EventArgs e)
         {
             Globals.GameResources[_editorIndex].Name = txtName.Text;
+            lstResources.Items[lstResources.SelectedIndex] = (lstResources.SelectedIndex + 1) + ". " + txtName.Text;
+
         }
 
         private void txtHP_TextChanged(object sender, EventArgs e)

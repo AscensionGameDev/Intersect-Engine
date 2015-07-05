@@ -305,9 +305,12 @@ namespace Intersect_Editor.Classes
 
         private static void HandleResourceEditor()
         {
-            var tmpResourceEditor = new frmResource();
-            tmpResourceEditor.InitEditor();
-            tmpResourceEditor.Show();
+            if (Globals.ResourceEditor == null)
+            {
+                Globals.ResourceEditor = new frmResource();
+                Globals.ResourceEditor.InitEditor();
+                Globals.ResourceEditor.Show();
+            }
         }
 
         private static void HandleResourceData(byte[] packet)

@@ -83,6 +83,10 @@ namespace Intersect_Editor.Forms
             this.btnLightEditorRevert = new System.Windows.Forms.Button();
             this.btnLightEditorClose = new System.Windows.Forms.Button();
             this.grpAttributes = new System.Windows.Forms.GroupBox();
+            this.grpResource = new System.Windows.Forms.GroupBox();
+            this.lblResource = new System.Windows.Forms.Label();
+            this.scrlResource = new System.Windows.Forms.HScrollBar();
+            this.rbResource = new System.Windows.Forms.RadioButton();
             this.grpSound = new System.Windows.Forms.GroupBox();
             this.cmbMapAttributeSound = new System.Windows.Forms.ComboBox();
             this.lblSoundDistance = new System.Windows.Forms.Label();
@@ -157,10 +161,6 @@ namespace Intersect_Editor.Forms
             this.txtMapName = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.btnCloseProperties = new System.Windows.Forms.Button();
-            this.rbResource = new System.Windows.Forms.RadioButton();
-            this.grpResource = new System.Windows.Forms.GroupBox();
-            this.lblResource = new System.Windows.Forms.Label();
-            this.scrlResource = new System.Windows.Forms.HScrollBar();
             this.menuStrip.SuspendLayout();
             this.grpMap.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.picMap)).BeginInit();
@@ -170,6 +170,7 @@ namespace Intersect_Editor.Forms
             this.grpMapList.SuspendLayout();
             this.grpLightEditor.SuspendLayout();
             this.grpAttributes.SuspendLayout();
+            this.grpResource.SuspendLayout();
             this.grpSound.SuspendLayout();
             this.grpItem.SuspendLayout();
             this.grpWarp.SuspendLayout();
@@ -181,7 +182,6 @@ namespace Intersect_Editor.Forms
             this.grpMapNPCS.SuspendLayout();
             this.grpManage.SuspendLayout();
             this.grpSpawnLoc.SuspendLayout();
-            this.grpResource.SuspendLayout();
             this.SuspendLayout();
             // 
             // menuStrip
@@ -709,6 +709,50 @@ namespace Intersect_Editor.Forms
             this.grpAttributes.Text = "Attributes";
             this.grpAttributes.Visible = false;
             // 
+            // grpResource
+            // 
+            this.grpResource.Controls.Add(this.lblResource);
+            this.grpResource.Controls.Add(this.scrlResource);
+            this.grpResource.Location = new System.Drawing.Point(1, 522);
+            this.grpResource.Name = "grpResource";
+            this.grpResource.Size = new System.Drawing.Size(280, 100);
+            this.grpResource.TabIndex = 19;
+            this.grpResource.TabStop = false;
+            this.grpResource.Text = "Resource";
+            this.grpResource.Visible = false;
+            // 
+            // lblResource
+            // 
+            this.lblResource.AutoSize = true;
+            this.lblResource.Location = new System.Drawing.Point(14, 31);
+            this.lblResource.Name = "lblResource";
+            this.lblResource.Size = new System.Drawing.Size(94, 13);
+            this.lblResource.TabIndex = 10;
+            this.lblResource.Text = "Resource: 0 None";
+            // 
+            // scrlResource
+            // 
+            this.scrlResource.LargeChange = 1;
+            this.scrlResource.Location = new System.Drawing.Point(17, 53);
+            this.scrlResource.Maximum = 255;
+            this.scrlResource.Minimum = -1;
+            this.scrlResource.Name = "scrlResource";
+            this.scrlResource.Size = new System.Drawing.Size(249, 17);
+            this.scrlResource.TabIndex = 9;
+            this.scrlResource.Value = -1;
+            this.scrlResource.Scroll += new System.Windows.Forms.ScrollEventHandler(this.scrlResource_Scroll);
+            // 
+            // rbResource
+            // 
+            this.rbResource.AutoSize = true;
+            this.rbResource.Location = new System.Drawing.Point(11, 159);
+            this.rbResource.Name = "rbResource";
+            this.rbResource.Size = new System.Drawing.Size(71, 17);
+            this.rbResource.TabIndex = 17;
+            this.rbResource.Text = "Resource";
+            this.rbResource.UseVisualStyleBackColor = true;
+            this.rbResource.CheckedChanged += new System.EventHandler(this.rbResource_CheckedChanged);
+            // 
             // grpSound
             // 
             this.grpSound.Controls.Add(this.cmbMapAttributeSound);
@@ -825,6 +869,7 @@ namespace Intersect_Editor.Forms
             this.rbBlocked.Name = "rbBlocked";
             this.rbBlocked.Size = new System.Drawing.Size(64, 17);
             this.rbBlocked.TabIndex = 0;
+            this.rbBlocked.TabStop = true;
             this.rbBlocked.Text = "Blocked";
             this.rbBlocked.UseVisualStyleBackColor = true;
             this.rbBlocked.CheckedChanged += new System.EventHandler(this.rbBlocked_CheckedChanged);
@@ -1504,50 +1549,6 @@ namespace Intersect_Editor.Forms
             this.btnCloseProperties.Text = "Close";
             this.btnCloseProperties.UseVisualStyleBackColor = true;
             // 
-            // rbResource
-            // 
-            this.rbResource.AutoSize = true;
-            this.rbResource.Location = new System.Drawing.Point(11, 159);
-            this.rbResource.Name = "rbResource";
-            this.rbResource.Size = new System.Drawing.Size(71, 17);
-            this.rbResource.TabIndex = 17;
-            this.rbResource.Text = "Resource";
-            this.rbResource.UseVisualStyleBackColor = true;
-            this.rbResource.CheckedChanged += new System.EventHandler(this.rbResource_CheckedChanged);
-            // 
-            // grpResource
-            // 
-            this.grpResource.Controls.Add(this.lblResource);
-            this.grpResource.Controls.Add(this.scrlResource);
-            this.grpResource.Location = new System.Drawing.Point(1, 522);
-            this.grpResource.Name = "grpResource";
-            this.grpResource.Size = new System.Drawing.Size(280, 100);
-            this.grpResource.TabIndex = 19;
-            this.grpResource.TabStop = false;
-            this.grpResource.Text = "Resource";
-            this.grpResource.Visible = false;
-            // 
-            // lblResource
-            // 
-            this.lblResource.AutoSize = true;
-            this.lblResource.Location = new System.Drawing.Point(14, 31);
-            this.lblResource.Name = "lblResource";
-            this.lblResource.Size = new System.Drawing.Size(94, 13);
-            this.lblResource.TabIndex = 10;
-            this.lblResource.Text = "Resource: 0 None";
-            // 
-            // scrlResource
-            // 
-            this.scrlResource.LargeChange = 1;
-            this.scrlResource.Location = new System.Drawing.Point(17, 53);
-            this.scrlResource.Maximum = 255;
-            this.scrlResource.Minimum = -1;
-            this.scrlResource.Name = "scrlResource";
-            this.scrlResource.Size = new System.Drawing.Size(249, 17);
-            this.scrlResource.TabIndex = 9;
-            this.scrlResource.Value = -1;
-            this.scrlResource.Scroll += new System.Windows.Forms.ScrollEventHandler(this.scrlResource_Scroll);
-            // 
             // FrmMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1581,6 +1582,8 @@ namespace Intersect_Editor.Forms
             this.grpLightEditor.PerformLayout();
             this.grpAttributes.ResumeLayout(false);
             this.grpAttributes.PerformLayout();
+            this.grpResource.ResumeLayout(false);
+            this.grpResource.PerformLayout();
             this.grpSound.ResumeLayout(false);
             this.grpSound.PerformLayout();
             this.grpItem.ResumeLayout(false);
@@ -1600,8 +1603,6 @@ namespace Intersect_Editor.Forms
             this.grpManage.ResumeLayout(false);
             this.grpSpawnLoc.ResumeLayout(false);
             this.grpSpawnLoc.PerformLayout();
-            this.grpResource.ResumeLayout(false);
-            this.grpResource.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 

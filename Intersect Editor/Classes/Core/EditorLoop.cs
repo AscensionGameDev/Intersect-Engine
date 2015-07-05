@@ -54,6 +54,11 @@ namespace Intersect_Editor.Classes
                     if (Globals.AutotileFrame == 3) { Globals.AutotileFrame = 0; }
                     animationTimer = Environment.TickCount + 600;
                 }
+                //Check Editors
+                if (Globals.ResourceEditor != null && Globals.ResourceEditor.IsDisposed == false)
+                {
+                    Globals.ResourceEditor.Render();
+                }
                 Graphics.Render();
                 Application.DoEvents(); // handle form events
                 Thread.Sleep(10);

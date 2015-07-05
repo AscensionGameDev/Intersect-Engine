@@ -1,4 +1,4 @@
-﻿namespace Intersect_Editor.Forms
+﻿namespace Intersect_Editor.Classes
 {
     partial class frmResource
     {
@@ -46,7 +46,9 @@
             this.txtName = new System.Windows.Forms.TextBox();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.grpEndTileset = new System.Windows.Forms.GroupBox();
+            this.picEndResource = new System.Windows.Forms.PictureBox();
             this.grpInitialTileset = new System.Windows.Forms.GroupBox();
+            this.picInitialResource = new System.Windows.Forms.PictureBox();
             this.hScrollEndTileset = new System.Windows.Forms.HScrollBar();
             this.vScrollEndTileset = new System.Windows.Forms.VScrollBar();
             this.hScrollStartTileset = new System.Windows.Forms.HScrollBar();
@@ -64,16 +66,14 @@
             this.lblDropItem = new System.Windows.Forms.Label();
             this.scrlDropIndex = new System.Windows.Forms.HScrollBar();
             this.lblDropIndex = new System.Windows.Forms.Label();
-            this.picEndResource = new System.Windows.Forms.PictureBox();
-            this.picInitialResource = new System.Windows.Forms.PictureBox();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
             this.grpEndTileset.SuspendLayout();
-            this.grpInitialTileset.SuspendLayout();
-            this.groupBox4.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.picEndResource)).BeginInit();
+            this.grpInitialTileset.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.picInitialResource)).BeginInit();
+            this.groupBox4.SuspendLayout();
             this.SuspendLayout();
             // 
             // groupBox1
@@ -272,6 +272,17 @@
             this.grpEndTileset.TabIndex = 23;
             this.grpEndTileset.TabStop = false;
             // 
+            // picEndResource
+            // 
+            this.picEndResource.Location = new System.Drawing.Point(0, 0);
+            this.picEndResource.Name = "picEndResource";
+            this.picEndResource.Size = new System.Drawing.Size(195, 277);
+            this.picEndResource.TabIndex = 2;
+            this.picEndResource.TabStop = false;
+            this.picEndResource.MouseDown += new System.Windows.Forms.MouseEventHandler(this.picEndResource_MouseDown);
+            this.picEndResource.MouseMove += new System.Windows.Forms.MouseEventHandler(this.picEndResource_MouseMove);
+            this.picEndResource.MouseUp += new System.Windows.Forms.MouseEventHandler(this.picEndResource_MouseUp);
+            // 
             // grpInitialTileset
             // 
             this.grpInitialTileset.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
@@ -282,6 +293,17 @@
             this.grpInitialTileset.Size = new System.Drawing.Size(195, 277);
             this.grpInitialTileset.TabIndex = 22;
             this.grpInitialTileset.TabStop = false;
+            // 
+            // picInitialResource
+            // 
+            this.picInitialResource.Location = new System.Drawing.Point(0, 0);
+            this.picInitialResource.Name = "picInitialResource";
+            this.picInitialResource.Size = new System.Drawing.Size(195, 277);
+            this.picInitialResource.TabIndex = 2;
+            this.picInitialResource.TabStop = false;
+            this.picInitialResource.MouseDown += new System.Windows.Forms.MouseEventHandler(this.picInitialResource_MouseDown);
+            this.picInitialResource.MouseMove += new System.Windows.Forms.MouseEventHandler(this.picInitialResource_MouseMove);
+            this.picInitialResource.MouseUp += new System.Windows.Forms.MouseEventHandler(this.picInitialResource_MouseUp);
             // 
             // hScrollEndTileset
             // 
@@ -466,22 +488,6 @@
             this.lblDropIndex.TabIndex = 9;
             this.lblDropIndex.Text = "Drop Index: 1";
             // 
-            // picEndResource
-            // 
-            this.picEndResource.Location = new System.Drawing.Point(0, 0);
-            this.picEndResource.Name = "picEndResource";
-            this.picEndResource.Size = new System.Drawing.Size(1024, 1024);
-            this.picEndResource.TabIndex = 2;
-            this.picEndResource.TabStop = false;
-            // 
-            // picInitialResource
-            // 
-            this.picInitialResource.Location = new System.Drawing.Point(0, 0);
-            this.picInitialResource.Name = "picInitialResource";
-            this.picInitialResource.Size = new System.Drawing.Size(1024, 1024);
-            this.picInitialResource.TabIndex = 2;
-            this.picInitialResource.TabStop = false;
-            // 
             // frmResource
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -502,11 +508,11 @@
             this.groupBox3.ResumeLayout(false);
             this.groupBox3.PerformLayout();
             this.grpEndTileset.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.picEndResource)).EndInit();
             this.grpInitialTileset.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.picInitialResource)).EndInit();
             this.groupBox4.ResumeLayout(false);
             this.groupBox4.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.picEndResource)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.picInitialResource)).EndInit();
             this.ResumeLayout(false);
 
         }

@@ -63,6 +63,10 @@ namespace Intersect_Editor.Classes
         public static int CurrentLayer = 0;
         public static bool ViewingMapProperties = false;
 
+        //Game Object Editors
+        public static frmResource ResourceEditor;
+
+
         public static Light BackupLight;
         public static Light EditingLight;
 

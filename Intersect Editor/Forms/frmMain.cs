@@ -454,7 +454,6 @@ namespace Intersect_Editor.Forms
                 cmbTilesets.SelectedIndex = Globals.CurrentTileset;
             }
         }
-
         private void picTileset_MouseDown(object sender, MouseEventArgs e)
         {
             if (e.X > picTileset.Width || e.Y > picTileset.Height) { return; }
