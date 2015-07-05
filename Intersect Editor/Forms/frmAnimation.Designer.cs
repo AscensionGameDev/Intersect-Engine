@@ -40,21 +40,20 @@
             this.label1 = new System.Windows.Forms.Label();
             this.txtName = new System.Windows.Forms.TextBox();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
-            this.groupBox4 = new System.Windows.Forms.GroupBox();
-            this.picLowerAnimation = new System.Windows.Forms.PictureBox();
-            this.picUpperAnimation = new System.Windows.Forms.PictureBox();
-            this.label3 = new System.Windows.Forms.Label();
-            this.cmbLowerGraphic = new System.Windows.Forms.ComboBox();
-            this.lblLowerHorizontalFrames = new System.Windows.Forms.Label();
-            this.lblLowerVerticalFrames = new System.Windows.Forms.Label();
-            this.scrlLowerHorizontalFrames = new System.Windows.Forms.HScrollBar();
-            this.scrlLowerVerticalFrames = new System.Windows.Forms.HScrollBar();
-            this.scrlLowerFrameCount = new System.Windows.Forms.HScrollBar();
-            this.lblLowerFrameCount = new System.Windows.Forms.Label();
-            this.scrlLowerFrameDuration = new System.Windows.Forms.HScrollBar();
-            this.lblLowerFrameDuration = new System.Windows.Forms.Label();
             this.scrlLowerLoopCount = new System.Windows.Forms.HScrollBar();
             this.lblLowerLoopCount = new System.Windows.Forms.Label();
+            this.scrlLowerFrameDuration = new System.Windows.Forms.HScrollBar();
+            this.lblLowerFrameDuration = new System.Windows.Forms.Label();
+            this.scrlLowerFrameCount = new System.Windows.Forms.HScrollBar();
+            this.lblLowerFrameCount = new System.Windows.Forms.Label();
+            this.scrlLowerVerticalFrames = new System.Windows.Forms.HScrollBar();
+            this.scrlLowerHorizontalFrames = new System.Windows.Forms.HScrollBar();
+            this.lblLowerVerticalFrames = new System.Windows.Forms.Label();
+            this.lblLowerHorizontalFrames = new System.Windows.Forms.Label();
+            this.cmbLowerGraphic = new System.Windows.Forms.ComboBox();
+            this.label3 = new System.Windows.Forms.Label();
+            this.picLowerAnimation = new System.Windows.Forms.PictureBox();
+            this.groupBox4 = new System.Windows.Forms.GroupBox();
             this.scrlUpperLoopCount = new System.Windows.Forms.HScrollBar();
             this.lblUpperLoopCount = new System.Windows.Forms.Label();
             this.scrlUpperFrameDuration = new System.Windows.Forms.HScrollBar();
@@ -67,13 +66,14 @@
             this.lblUpperHorizontalFrames = new System.Windows.Forms.Label();
             this.cmbUpperGraphic = new System.Windows.Forms.ComboBox();
             this.label14 = new System.Windows.Forms.Label();
+            this.picUpperAnimation = new System.Windows.Forms.PictureBox();
             this.tmrUpperAnimation = new System.Windows.Forms.Timer(this.components);
             this.tmrLowerAnimation = new System.Windows.Forms.Timer(this.components);
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
-            this.groupBox4.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.picLowerAnimation)).BeginInit();
+            this.groupBox4.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.picUpperAnimation)).BeginInit();
             this.SuspendLayout();
             // 
@@ -203,126 +203,26 @@
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Lower Layer (Below Target)";
             // 
-            // groupBox4
+            // scrlLowerLoopCount
             // 
-            this.groupBox4.Controls.Add(this.scrlUpperLoopCount);
-            this.groupBox4.Controls.Add(this.lblUpperLoopCount);
-            this.groupBox4.Controls.Add(this.scrlUpperFrameDuration);
-            this.groupBox4.Controls.Add(this.lblUpperFrameDuration);
-            this.groupBox4.Controls.Add(this.scrlUpperFrameCount);
-            this.groupBox4.Controls.Add(this.lblUpperFrameCount);
-            this.groupBox4.Controls.Add(this.scrlUpperVerticalFrames);
-            this.groupBox4.Controls.Add(this.scrlUpperHorizontalFrames);
-            this.groupBox4.Controls.Add(this.lblUpperVerticalFrames);
-            this.groupBox4.Controls.Add(this.lblUpperHorizontalFrames);
-            this.groupBox4.Controls.Add(this.cmbUpperGraphic);
-            this.groupBox4.Controls.Add(this.label14);
-            this.groupBox4.Controls.Add(this.picUpperAnimation);
-            this.groupBox4.Location = new System.Drawing.Point(436, 85);
-            this.groupBox4.Name = "groupBox4";
-            this.groupBox4.Size = new System.Drawing.Size(214, 421);
-            this.groupBox4.TabIndex = 20;
-            this.groupBox4.TabStop = false;
-            this.groupBox4.Text = "Upper Layer (Above Target)";
+            this.scrlLowerLoopCount.LargeChange = 1;
+            this.scrlLowerLoopCount.Location = new System.Drawing.Point(7, 395);
+            this.scrlLowerLoopCount.Maximum = 10;
+            this.scrlLowerLoopCount.Minimum = 1;
+            this.scrlLowerLoopCount.Name = "scrlLowerLoopCount";
+            this.scrlLowerLoopCount.Size = new System.Drawing.Size(197, 17);
+            this.scrlLowerLoopCount.TabIndex = 13;
+            this.scrlLowerLoopCount.Value = 1;
+            this.scrlLowerLoopCount.Scroll += new System.Windows.Forms.ScrollEventHandler(this.scrlLowerLoopCount_Scroll);
             // 
-            // picLowerAnimation
+            // lblLowerLoopCount
             // 
-            this.picLowerAnimation.Location = new System.Drawing.Point(7, 19);
-            this.picLowerAnimation.Name = "picLowerAnimation";
-            this.picLowerAnimation.Size = new System.Drawing.Size(200, 200);
-            this.picLowerAnimation.TabIndex = 0;
-            this.picLowerAnimation.TabStop = false;
-            // 
-            // picUpperAnimation
-            // 
-            this.picUpperAnimation.Location = new System.Drawing.Point(6, 19);
-            this.picUpperAnimation.Name = "picUpperAnimation";
-            this.picUpperAnimation.Size = new System.Drawing.Size(200, 200);
-            this.picUpperAnimation.TabIndex = 1;
-            this.picUpperAnimation.TabStop = false;
-            // 
-            // label3
-            // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(7, 226);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(50, 13);
-            this.label3.TabIndex = 1;
-            this.label3.Text = "Graphic: ";
-            // 
-            // cmbLowerGraphic
-            // 
-            this.cmbLowerGraphic.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cmbLowerGraphic.FormattingEnabled = true;
-            this.cmbLowerGraphic.Items.AddRange(new object[] {
-            "None"});
-            this.cmbLowerGraphic.Location = new System.Drawing.Point(58, 223);
-            this.cmbLowerGraphic.Name = "cmbLowerGraphic";
-            this.cmbLowerGraphic.Size = new System.Drawing.Size(149, 21);
-            this.cmbLowerGraphic.TabIndex = 3;
-            this.cmbLowerGraphic.SelectedIndexChanged += new System.EventHandler(this.cmbLowerGraphic_SelectedIndexChanged);
-            // 
-            // lblLowerHorizontalFrames
-            // 
-            this.lblLowerHorizontalFrames.AutoSize = true;
-            this.lblLowerHorizontalFrames.Location = new System.Drawing.Point(7, 247);
-            this.lblLowerHorizontalFrames.Name = "lblLowerHorizontalFrames";
-            this.lblLowerHorizontalFrames.Size = new System.Drawing.Size(143, 13);
-            this.lblLowerHorizontalFrames.TabIndex = 4;
-            this.lblLowerHorizontalFrames.Text = "Graphic Horizontal Frames: 1";
-            // 
-            // lblLowerVerticalFrames
-            // 
-            this.lblLowerVerticalFrames.AutoSize = true;
-            this.lblLowerVerticalFrames.Location = new System.Drawing.Point(7, 283);
-            this.lblLowerVerticalFrames.Name = "lblLowerVerticalFrames";
-            this.lblLowerVerticalFrames.Size = new System.Drawing.Size(131, 13);
-            this.lblLowerVerticalFrames.TabIndex = 5;
-            this.lblLowerVerticalFrames.Text = "Graphic Vertical Frames: 1";
-            // 
-            // scrlLowerHorizontalFrames
-            // 
-            this.scrlLowerHorizontalFrames.LargeChange = 1;
-            this.scrlLowerHorizontalFrames.Location = new System.Drawing.Point(7, 260);
-            this.scrlLowerHorizontalFrames.Maximum = 10;
-            this.scrlLowerHorizontalFrames.Minimum = 1;
-            this.scrlLowerHorizontalFrames.Name = "scrlLowerHorizontalFrames";
-            this.scrlLowerHorizontalFrames.Size = new System.Drawing.Size(197, 17);
-            this.scrlLowerHorizontalFrames.TabIndex = 6;
-            this.scrlLowerHorizontalFrames.Value = 1;
-            this.scrlLowerHorizontalFrames.Scroll += new System.Windows.Forms.ScrollEventHandler(this.scrlLowerHorizontalFrames_Scroll);
-            // 
-            // scrlLowerVerticalFrames
-            // 
-            this.scrlLowerVerticalFrames.LargeChange = 1;
-            this.scrlLowerVerticalFrames.Location = new System.Drawing.Point(7, 296);
-            this.scrlLowerVerticalFrames.Maximum = 10;
-            this.scrlLowerVerticalFrames.Minimum = 1;
-            this.scrlLowerVerticalFrames.Name = "scrlLowerVerticalFrames";
-            this.scrlLowerVerticalFrames.Size = new System.Drawing.Size(197, 17);
-            this.scrlLowerVerticalFrames.TabIndex = 7;
-            this.scrlLowerVerticalFrames.Value = 1;
-            this.scrlLowerVerticalFrames.Scroll += new System.Windows.Forms.ScrollEventHandler(this.scrlLowerVerticalFrames_Scroll);
-            // 
-            // scrlLowerFrameCount
-            // 
-            this.scrlLowerFrameCount.LargeChange = 1;
-            this.scrlLowerFrameCount.Location = new System.Drawing.Point(7, 330);
-            this.scrlLowerFrameCount.Minimum = 1;
-            this.scrlLowerFrameCount.Name = "scrlLowerFrameCount";
-            this.scrlLowerFrameCount.Size = new System.Drawing.Size(197, 17);
-            this.scrlLowerFrameCount.TabIndex = 9;
-            this.scrlLowerFrameCount.Value = 1;
-            this.scrlLowerFrameCount.Scroll += new System.Windows.Forms.ScrollEventHandler(this.scrlLowerFrameCount_Scroll);
-            // 
-            // lblLowerFrameCount
-            // 
-            this.lblLowerFrameCount.AutoSize = true;
-            this.lblLowerFrameCount.Location = new System.Drawing.Point(7, 317);
-            this.lblLowerFrameCount.Name = "lblLowerFrameCount";
-            this.lblLowerFrameCount.Size = new System.Drawing.Size(119, 13);
-            this.lblLowerFrameCount.TabIndex = 8;
-            this.lblLowerFrameCount.Text = "Graphic Frame Count: 1";
+            this.lblLowerLoopCount.AutoSize = true;
+            this.lblLowerLoopCount.Location = new System.Drawing.Point(7, 382);
+            this.lblLowerLoopCount.Name = "lblLowerLoopCount";
+            this.lblLowerLoopCount.Size = new System.Drawing.Size(74, 13);
+            this.lblLowerLoopCount.TabIndex = 12;
+            this.lblLowerLoopCount.Text = "Loop Count: 1";
             // 
             // scrlLowerFrameDuration
             // 
@@ -345,26 +245,118 @@
             this.lblLowerFrameDuration.TabIndex = 10;
             this.lblLowerFrameDuration.Text = "Frame Duration (ms): 100";
             // 
-            // scrlLowerLoopCount
+            // scrlLowerFrameCount
             // 
-            this.scrlLowerLoopCount.LargeChange = 1;
-            this.scrlLowerLoopCount.Location = new System.Drawing.Point(7, 395);
-            this.scrlLowerLoopCount.Maximum = 10;
-            this.scrlLowerLoopCount.Minimum = 1;
-            this.scrlLowerLoopCount.Name = "scrlLowerLoopCount";
-            this.scrlLowerLoopCount.Size = new System.Drawing.Size(197, 17);
-            this.scrlLowerLoopCount.TabIndex = 13;
-            this.scrlLowerLoopCount.Value = 1;
-            this.scrlLowerLoopCount.Scroll += new System.Windows.Forms.ScrollEventHandler(this.scrlLowerLoopCount_Scroll);
+            this.scrlLowerFrameCount.LargeChange = 1;
+            this.scrlLowerFrameCount.Location = new System.Drawing.Point(7, 330);
+            this.scrlLowerFrameCount.Minimum = 1;
+            this.scrlLowerFrameCount.Name = "scrlLowerFrameCount";
+            this.scrlLowerFrameCount.Size = new System.Drawing.Size(197, 17);
+            this.scrlLowerFrameCount.TabIndex = 9;
+            this.scrlLowerFrameCount.Value = 1;
+            this.scrlLowerFrameCount.Scroll += new System.Windows.Forms.ScrollEventHandler(this.scrlLowerFrameCount_Scroll);
             // 
-            // lblLowerLoopCount
+            // lblLowerFrameCount
             // 
-            this.lblLowerLoopCount.AutoSize = true;
-            this.lblLowerLoopCount.Location = new System.Drawing.Point(7, 382);
-            this.lblLowerLoopCount.Name = "lblLowerLoopCount";
-            this.lblLowerLoopCount.Size = new System.Drawing.Size(74, 13);
-            this.lblLowerLoopCount.TabIndex = 12;
-            this.lblLowerLoopCount.Text = "Loop Count: 1";
+            this.lblLowerFrameCount.AutoSize = true;
+            this.lblLowerFrameCount.Location = new System.Drawing.Point(7, 317);
+            this.lblLowerFrameCount.Name = "lblLowerFrameCount";
+            this.lblLowerFrameCount.Size = new System.Drawing.Size(119, 13);
+            this.lblLowerFrameCount.TabIndex = 8;
+            this.lblLowerFrameCount.Text = "Graphic Frame Count: 1";
+            // 
+            // scrlLowerVerticalFrames
+            // 
+            this.scrlLowerVerticalFrames.LargeChange = 1;
+            this.scrlLowerVerticalFrames.Location = new System.Drawing.Point(7, 296);
+            this.scrlLowerVerticalFrames.Maximum = 10;
+            this.scrlLowerVerticalFrames.Minimum = 1;
+            this.scrlLowerVerticalFrames.Name = "scrlLowerVerticalFrames";
+            this.scrlLowerVerticalFrames.Size = new System.Drawing.Size(197, 17);
+            this.scrlLowerVerticalFrames.TabIndex = 7;
+            this.scrlLowerVerticalFrames.Value = 1;
+            this.scrlLowerVerticalFrames.Scroll += new System.Windows.Forms.ScrollEventHandler(this.scrlLowerVerticalFrames_Scroll);
+            // 
+            // scrlLowerHorizontalFrames
+            // 
+            this.scrlLowerHorizontalFrames.LargeChange = 1;
+            this.scrlLowerHorizontalFrames.Location = new System.Drawing.Point(7, 260);
+            this.scrlLowerHorizontalFrames.Maximum = 10;
+            this.scrlLowerHorizontalFrames.Minimum = 1;
+            this.scrlLowerHorizontalFrames.Name = "scrlLowerHorizontalFrames";
+            this.scrlLowerHorizontalFrames.Size = new System.Drawing.Size(197, 17);
+            this.scrlLowerHorizontalFrames.TabIndex = 6;
+            this.scrlLowerHorizontalFrames.Value = 1;
+            this.scrlLowerHorizontalFrames.Scroll += new System.Windows.Forms.ScrollEventHandler(this.scrlLowerHorizontalFrames_Scroll);
+            // 
+            // lblLowerVerticalFrames
+            // 
+            this.lblLowerVerticalFrames.AutoSize = true;
+            this.lblLowerVerticalFrames.Location = new System.Drawing.Point(7, 283);
+            this.lblLowerVerticalFrames.Name = "lblLowerVerticalFrames";
+            this.lblLowerVerticalFrames.Size = new System.Drawing.Size(131, 13);
+            this.lblLowerVerticalFrames.TabIndex = 5;
+            this.lblLowerVerticalFrames.Text = "Graphic Vertical Frames: 1";
+            // 
+            // lblLowerHorizontalFrames
+            // 
+            this.lblLowerHorizontalFrames.AutoSize = true;
+            this.lblLowerHorizontalFrames.Location = new System.Drawing.Point(7, 247);
+            this.lblLowerHorizontalFrames.Name = "lblLowerHorizontalFrames";
+            this.lblLowerHorizontalFrames.Size = new System.Drawing.Size(143, 13);
+            this.lblLowerHorizontalFrames.TabIndex = 4;
+            this.lblLowerHorizontalFrames.Text = "Graphic Horizontal Frames: 1";
+            // 
+            // cmbLowerGraphic
+            // 
+            this.cmbLowerGraphic.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbLowerGraphic.FormattingEnabled = true;
+            this.cmbLowerGraphic.Items.AddRange(new object[] {
+            "None"});
+            this.cmbLowerGraphic.Location = new System.Drawing.Point(58, 223);
+            this.cmbLowerGraphic.Name = "cmbLowerGraphic";
+            this.cmbLowerGraphic.Size = new System.Drawing.Size(149, 21);
+            this.cmbLowerGraphic.TabIndex = 3;
+            this.cmbLowerGraphic.SelectedIndexChanged += new System.EventHandler(this.cmbLowerGraphic_SelectedIndexChanged);
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(7, 226);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(50, 13);
+            this.label3.TabIndex = 1;
+            this.label3.Text = "Graphic: ";
+            // 
+            // picLowerAnimation
+            // 
+            this.picLowerAnimation.Location = new System.Drawing.Point(7, 19);
+            this.picLowerAnimation.Name = "picLowerAnimation";
+            this.picLowerAnimation.Size = new System.Drawing.Size(200, 200);
+            this.picLowerAnimation.TabIndex = 0;
+            this.picLowerAnimation.TabStop = false;
+            // 
+            // groupBox4
+            // 
+            this.groupBox4.Controls.Add(this.scrlUpperLoopCount);
+            this.groupBox4.Controls.Add(this.lblUpperLoopCount);
+            this.groupBox4.Controls.Add(this.scrlUpperFrameDuration);
+            this.groupBox4.Controls.Add(this.lblUpperFrameDuration);
+            this.groupBox4.Controls.Add(this.scrlUpperFrameCount);
+            this.groupBox4.Controls.Add(this.lblUpperFrameCount);
+            this.groupBox4.Controls.Add(this.scrlUpperVerticalFrames);
+            this.groupBox4.Controls.Add(this.scrlUpperHorizontalFrames);
+            this.groupBox4.Controls.Add(this.lblUpperVerticalFrames);
+            this.groupBox4.Controls.Add(this.lblUpperHorizontalFrames);
+            this.groupBox4.Controls.Add(this.cmbUpperGraphic);
+            this.groupBox4.Controls.Add(this.label14);
+            this.groupBox4.Controls.Add(this.picUpperAnimation);
+            this.groupBox4.Location = new System.Drawing.Point(436, 85);
+            this.groupBox4.Name = "groupBox4";
+            this.groupBox4.Size = new System.Drawing.Size(214, 421);
+            this.groupBox4.TabIndex = 20;
+            this.groupBox4.TabStop = false;
+            this.groupBox4.Text = "Upper Layer (Above Target)";
             // 
             // scrlUpperLoopCount
             // 
@@ -491,6 +483,14 @@
             this.label14.TabIndex = 14;
             this.label14.Text = "Graphic: ";
             // 
+            // picUpperAnimation
+            // 
+            this.picUpperAnimation.Location = new System.Drawing.Point(6, 19);
+            this.picUpperAnimation.Name = "picUpperAnimation";
+            this.picUpperAnimation.Size = new System.Drawing.Size(200, 200);
+            this.picUpperAnimation.TabIndex = 1;
+            this.picUpperAnimation.TabStop = false;
+            // 
             // tmrUpperAnimation
             // 
             this.tmrUpperAnimation.Enabled = true;
@@ -520,9 +520,9 @@
             this.groupBox2.PerformLayout();
             this.groupBox3.ResumeLayout(false);
             this.groupBox3.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.picLowerAnimation)).EndInit();
             this.groupBox4.ResumeLayout(false);
             this.groupBox4.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.picLowerAnimation)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.picUpperAnimation)).EndInit();
             this.ResumeLayout(false);
 
