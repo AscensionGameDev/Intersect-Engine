@@ -129,6 +129,10 @@ namespace Intersect_Server.Classes
             {
                 bf.WriteBytes(((Event)en).Data());
             }
+            else if (isEvent == 3) //Resources
+            {
+                bf.WriteBytes(((Resource)en).Data());
+            }
             else
             {
                 bf.WriteBytes(en.Data());

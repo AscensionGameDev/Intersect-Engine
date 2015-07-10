@@ -167,22 +167,27 @@ namespace Intersect_Client.Classes
             var entityType = bf.ReadInteger();
             Entity en;
            
-            if (entityType != 1)
-            {
-                if (i == Globals.MyIndex)
-                {
-                     en = EntityManager.AddPlayer(i);
-                }
-                else
-                {
-                     en = EntityManager.AddEntity(i);
-                }
-                en.Load(bf);
-            }
-            else if (entityType == 1)
+            if (entityType == 1)
             {
                  en = EntityManager.AddEvent(i);
                 ((Event)en).Load(bf);
+            }
+            else if (entityType == 3)
+            {
+                en = EntityManager.AddResource(i);
+                ((Resource)en).Load(bf);
+            }
+            else
+            {
+                if (i == Globals.MyIndex)
+                {
+                    en = EntityManager.AddPlayer(i);
+                }
+                else
+                {
+                    en = EntityManager.AddEntity(i);
+                }
+                en.Load(bf);
             }
         }
 

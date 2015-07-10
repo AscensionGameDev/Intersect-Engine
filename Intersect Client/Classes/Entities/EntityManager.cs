@@ -71,6 +71,18 @@ namespace Intersect_Client.Classes
             return Globals.Events[i];
         }
 
+        public static Entity AddResource(int index)
+        {
+            var i = index;
+            while (Globals.Entities.Count <= index)
+            {
+                Globals.Entities.Add(null);
+            }
+            if (Globals.Entities[i] != null) { RemoveEntity(i, 0); }
+            Globals.Entities[i] = new Resource();
+            return Globals.Entities[i];
+        }
+
         public static void RemoveEntity(int index, int isEvent)
         {
             if (isEvent == 1)

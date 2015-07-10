@@ -439,6 +439,10 @@ namespace Intersect_Server.Classes
                     {
                         PacketSender.SendEntityData(client, i, 2, Globals.Entities[i]);
                     }
+                    else if (Globals.Entities[i].GetType() == typeof(Resource))
+                    {
+                        PacketSender.SendEntityData(client, i, 3, Globals.Entities[i]);
+                    }
                     else
                     {
                         PacketSender.SendEntityData(client, i, 0, Globals.Entities[i]);

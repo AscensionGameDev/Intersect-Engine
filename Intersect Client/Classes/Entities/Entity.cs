@@ -148,7 +148,7 @@ namespace Intersect_Client
         }
 
         //Rendering Functions
-        public void Draw(int i)
+        public virtual void Draw(int i)
         {
             Rectangle srcRectangle = new Rectangle();
             Rectangle destRectangle = new Rectangle();
@@ -189,6 +189,7 @@ namespace Intersect_Client
 
             }
         }
+
         //returns the point on the screen that is the center of the player sprite
         public Vector2f GetCenterPos(int mapPos)
         {
@@ -229,6 +230,7 @@ namespace Intersect_Client
         }
         public void DrawHpBar(int i)
         {
+            if (HideName == 1 && Vital[(int)Enums.Vitals.Health] == MaxVital[(int)Enums.Vitals.Health]) { return; }
             var width = 32;
             var bgRect = new RectangleShape(new Vector2f(width, 6));
             var fgRect = new RectangleShape(new Vector2f(width-2, 4));

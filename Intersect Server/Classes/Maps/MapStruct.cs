@@ -50,6 +50,9 @@ namespace Intersect_Server.Classes
         public List<NpcSpawn> Spawns = new List<NpcSpawn>();
         public bool IsIndoors;
 
+        //Resources
+        public List<int> ResourceSpawns = new List<int>();
+
         //Visual Effect Properties
         public string Panorama = "None";
         public string Fog = "None";
@@ -282,9 +285,10 @@ namespace Intersect_Server.Classes
             //Save();
         }
 
-        //Items
+        //Items & Resources
         private void SpawnAttributeItems()
         {
+            ResourceSpawns.Clear();
             for (int x = 0; x < Constants.MapWidth; x++)
             {
                 for (int y = 0; y < Constants.MapHeight; y++)
@@ -292,6 +296,11 @@ namespace Intersect_Server.Classes
                     if (Attributes[x, y].value == (int)Enums.MapAttributes.Item)
                     {
                         SpawnAttributeItem(x, y);
+                    }
+                    else if (Attributes[x, y].value == (int)Enums.MapAttributes.Resource)
+                    {
+                        ResourceSpawns.Add(new int());
+                        SpawnAttributeResource(x, y);
                     }
                 }
             }
@@ -317,6 +326,7 @@ namespace Intersect_Server.Classes
             }
             PacketSender.SendMapItemUpdate(MyMapNum, MapItems.Count - 1);
         }
+
         private void SpawnAttributeItem(int x, int y)
         {
             MapItems.Add(new MapItemInstance());
@@ -341,6 +351,7 @@ namespace Intersect_Server.Classes
             }
             PacketSender.SendMapItemUpdate(MyMapNum, MapItems.Count - 1);
         }
+
         public void RemoveItem(int index)
         {
             MapItems[index].ItemNum = -1;
@@ -353,6 +364,20 @@ namespace Intersect_Server.Classes
                 ItemRespawns[ItemRespawns.Count - 1].RespawnTime = Environment.TickCount + Constants.ItemRespawnTime;
             }
             MapItems.RemoveAt(index);
+        }
+
+        // Resources
+        private void SpawnAttributeResource(int x, int y)
+        {
+            int index = Globals.FindOpenEntity();
+            Globals.Entities[index] = new Resource(index, Attributes[x, y].data1);
+            ResourceSpawns[ResourceSpawns.Count - 1] = index;
+            ((Resource)Globals.Entities[index]).IsEvent = 3;
+            ((Resource)Globals.Entities[index]).CurrentX = x;
+            ((Resource)Globals.Entities[index]).CurrentY = y;
+            ((Resource)Globals.Entities[index]).CurrentMap = MyMapNum;
+            Entities.Add((Resource)Globals.Entities[index]);
+            PacketSender.SendEntityDataToProximity(index, 3, Globals.Entities[index]);
         }
 
         //Npcs
@@ -601,6 +626,7 @@ namespace Intersect_Server.Classes
         public int EntityIndex = -1;
         public long RespawnTime = -1;
     }
+
 #endregion
 }
 
