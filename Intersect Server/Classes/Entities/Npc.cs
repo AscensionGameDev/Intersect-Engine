@@ -59,6 +59,16 @@ namespace Intersect_Server.Classes
         public override void Die()
         {
             base.Die();
+
+            // Drop items
+            for (int i = 0; i < Constants.MaxInvItems; i++)
+            {
+                if (Inventory[i].ItemNum >= 0)
+                {
+                    Globals.GameMaps[CurrentMap].SpawnItem(CurrentX, CurrentY, Inventory[i], Inventory[i].ItemVal);
+                }
+            }
+
             Globals.GameMaps[CurrentMap].RemoveEntity(this);
             PacketSender.SendEntityLeave(MyIndex, 0, CurrentMap);
             Globals.Entities[MyIndex] = null;

@@ -28,10 +28,10 @@ namespace Intersect_Server.Classes
     public class Resource : Entity
     {
         // Resource Number
-        public int ResourceNum;
+        public int ResourceNum = 0;
 
         //Respawn
-        public long RespawnTime;
+        public long RespawnTime = 0;
 
         //Tileset Locations
         public int X;
@@ -39,8 +39,9 @@ namespace Intersect_Server.Classes
         public int Width;
         public int Height;
         
-        public Resource(int index, int ResourceNum) : base(index)
+        public Resource(int index, int resourceNum) : base(index)
         {
+            ResourceNum = resourceNum;
             ResourceStruct myBase = Globals.GameResources[ResourceNum];
             MyName = myBase.Name;
             MySprite = myBase.InitialGraphic.Sprite;
@@ -63,7 +64,47 @@ namespace Intersect_Server.Classes
             Y = myBase.EndGraphic.Y;
             Width = myBase.EndGraphic.Width;
             Height = myBase.EndGraphic.Height;
-            Passable = Convert.ToInt32(myBase.WalkableAfter);  
+            Passable = Convert.ToInt32(myBase.WalkableAfter);
+            RespawnTime = Environment.TickCount + myBase.SpawnDuration * 1000;
+            PacketSender.SendEntityDataToProximity(MyIndex, 3, Globals.Entities[MyIndex]);
+            PacketSender.SendEntityPositionToAll(MyIndex, 3, Globals.Entities[MyIndex]);
+            PacketSender.SendEntityVitals(MyIndex, 3, Globals.Entities[MyIndex]);
+        }
+
+        public void Respawn()
+        {
+            ResourceStruct myBase = Globals.GameResources[ResourceNum];
+            MySprite = myBase.InitialGraphic.Sprite;
+            X = myBase.InitialGraphic.X;
+            Y = myBase.InitialGraphic.Y;
+            Width = myBase.InitialGraphic.Width;
+            Height = myBase.InitialGraphic.Height;
+            Vital[(int)Enums.Vitals.Health] = Globals.Rand.Next(myBase.MinHP, myBase.MaxHP + 1);
+            MaxVital[(int)Enums.Vitals.Health] = Vital[(int)Enums.Vitals.Health];
+            Passable = Convert.ToInt32(myBase.WalkableBefore);
+            PacketSender.SendEntityDataToProximity(MyIndex, 3, Globals.Entities[MyIndex]);
+            PacketSender.SendEntityPositionToAll(MyIndex, 3, Globals.Entities[MyIndex]);
+            PacketSender.SendEntityVitals(MyIndex, 3, Globals.Entities[MyIndex]);
+        }
+
+        public void SpawnResourceItems(int KillerIndex)
+        {
+            // Drop items
+            for (int i = 0; i < Constants.MaxInvItems; i++)
+            {
+                if (Inventory[i].ItemNum >= 0)
+                {
+                    // If the resource isn't walkable, spawn it underneath the killer otherwise loot will be unobtainable.
+                    if (Globals.GameResources[ResourceNum].WalkableAfter == true)
+                    {
+                        Globals.GameMaps[CurrentMap].SpawnItem(CurrentX, CurrentY, Inventory[i], Inventory[i].ItemVal);
+                    }
+                    else
+                    {
+                        Globals.GameMaps[CurrentMap].SpawnItem(Globals.Entities[KillerIndex].CurrentX, Globals.Entities[KillerIndex].CurrentY, Inventory[i], Inventory[i].ItemVal);
+                    }
+                }
+            }
         }
 
         public byte[] Data()

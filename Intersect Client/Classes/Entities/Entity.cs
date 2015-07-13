@@ -231,6 +231,7 @@ namespace Intersect_Client
         public void DrawHpBar(int i)
         {
             if (HideName == 1 && Vital[(int)Enums.Vitals.Health] == MaxVital[(int)Enums.Vitals.Health]) { return; }
+            if (Vital[(int)Enums.Vitals.Health] <= 0) { return; }
             var width = 32;
             var bgRect = new RectangleShape(new Vector2f(width, 6));
             var fgRect = new RectangleShape(new Vector2f(width-2, 4));

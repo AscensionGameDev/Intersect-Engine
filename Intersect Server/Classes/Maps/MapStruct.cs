@@ -369,13 +369,27 @@ namespace Intersect_Server.Classes
         // Resources
         private void SpawnAttributeResource(int x, int y)
         {
+            int Z = 0;
             int index = Globals.FindOpenEntity();
+
             Globals.Entities[index] = new Resource(index, Attributes[x, y].data1);
             ResourceSpawns[ResourceSpawns.Count - 1] = index;
             ((Resource)Globals.Entities[index]).IsEvent = 3;
             ((Resource)Globals.Entities[index]).CurrentX = x;
             ((Resource)Globals.Entities[index]).CurrentY = y;
             ((Resource)Globals.Entities[index]).CurrentMap = MyMapNum;
+
+            //Give Resource Drops
+            for (int n = 0; n < Constants.MaxNpcDrops; n++)
+            {
+                if (Globals.Rand.Next(1, 101) <= Globals.GameResources[Attributes[x, y].data1].Drops[n].Chance)
+                {
+                    Globals.Entities[index].Inventory[Z].ItemNum = Globals.GameResources[Attributes[x, y].data1].Drops[n].ItemNum;
+                    Globals.Entities[index].Inventory[Z].ItemVal = Globals.GameResources[Attributes[x, y].data1].Drops[n].Amount;
+                    Z = Z + 1;
+                }
+            }
+
             Entities.Add((Resource)Globals.Entities[index]);
             PacketSender.SendEntityDataToProximity(index, 3, Globals.Entities[index]);
         }
@@ -392,6 +406,7 @@ namespace Intersect_Server.Classes
         {
             int X = 0;
             int Y = 0;
+            int Z = 0;
             int index = Globals.FindOpenEntity();
             Globals.Entities[index] = new Npc(index, Globals.GameNpcs[Spawns[i].NpcNum]);
             Spawns[i].EntityIndex = index;
@@ -425,6 +440,18 @@ namespace Intersect_Server.Classes
                 ((Npc)Globals.Entities[index]).Dir = Globals.Rand.Next(0, 4);
             }
             ((Npc)Globals.Entities[index]).CurrentMap = MyMapNum;
+
+            //Give NPC Drops
+            for (int n = 0; n < Constants.MaxNpcDrops; n++)
+            {
+                if (Globals.Rand.Next(1, 101) <= Globals.GameNpcs[Spawns[i].NpcNum].Drops[n].Chance)
+                {
+                    Globals.Entities[index].Inventory[Z].ItemNum = Globals.GameNpcs[Spawns[i].NpcNum].Drops[n].ItemNum;
+                    Globals.Entities[index].Inventory[Z].ItemVal = Globals.GameNpcs[Spawns[i].NpcNum].Drops[n].Amount;
+                    Z = Z + 1;
+                }
+            }
+
             Entities.Add((Npc)Globals.Entities[index]);
             PacketSender.SendEntityDataToProximity(index, 2, Globals.Entities[index]);
         }
@@ -462,6 +489,17 @@ namespace Intersect_Server.Classes
                     {
                         SpawnAttributeItem(ItemRespawns[i].AttributeSpawnX, ItemRespawns[i].AttributeSpawnY);
                         ItemRespawns.RemoveAt(i);
+                    }
+                }
+                //Respawn all resources
+                for (int i = 0; i < ResourceSpawns.Count; i++)
+                {
+                    if (Globals.Entities[ResourceSpawns[i]].Vital[(int)Enums.Vitals.Health] <= 0)
+                    {
+                        if (((Resource)Globals.Entities[ResourceSpawns[i]]).RespawnTime < Environment.TickCount)
+                        {
+                            ((Resource)Globals.Entities[ResourceSpawns[i]]).Respawn();
+                        }
                     }
                 }
                 //Process All Active Npcs On the Map

@@ -49,6 +49,9 @@ namespace Intersect_Server.Classes
         public int[] Vital = new int[(int)Enums.Vitals.VitalCount];
         public int[] Stat = new int[(int)Enums.Stats.StatCount];
 
+        //Inventory
+        public ItemInstance[] Inventory = new ItemInstance[Constants.MaxInvItems];
+
         public long MoveTimer;
         
         //Initialization
@@ -71,7 +74,11 @@ namespace Intersect_Server.Classes
             Stat[(int)Enums.Stats.MagicResist] = 16;
             //SPD
             Stat[(int)Enums.Stats.Speed] = 20;
-            
+
+            for (int i = 0; i < Constants.MaxInvItems; i++)
+            {
+                Inventory[i] = new ItemInstance();
+            }
         }
 
         //Movement
@@ -471,29 +478,49 @@ namespace Intersect_Server.Classes
         {
             if (Globals.Entities[enemyIndex] == null) return;
             if (!IsOneBlockAway(enemyIndex)) return;
+            //If Entity is resource, check for the correct tool.
+            if (Globals.Entities[enemyIndex].GetType() == typeof(Resource))
+            {
+                // Check that a resource is actually required.
+                if (Globals.GameResources[((Resource)Globals.Entities[enemyIndex]).ResourceNum].Tool > 0)
+                {
+                    if (((Player)Globals.Entities[MyIndex]).Equipment[2] < 0)
+                    {
+                        PacketSender.SendPlayerMsg(((Player)Globals.Entities[MyIndex]).MyClient, "You require a " + Enums.ToolTypes[Globals.GameResources[((Resource)Globals.Entities[enemyIndex]).ResourceNum].Tool] + " to interact with this resource.");
+                        return;
+                    }
+                    if (Globals.GameResources[((Resource)Globals.Entities[enemyIndex]).ResourceNum].Tool != Globals.GameItems[Inventory[((Player)Globals.Entities[MyIndex]).Equipment[2]].ItemNum].Tool)
+                    {
+                        PacketSender.SendPlayerMsg(((Player)Globals.Entities[MyIndex]).MyClient, "You require a " + Enums.ToolTypes[Globals.GameResources[((Resource)Globals.Entities[enemyIndex]).ResourceNum].Tool] + " to interact with this resource.");
+                        return;
+                    }
+                }
+            }
             //No Matter what, if we attack the entitiy, make them chase us
             if (Globals.Entities[enemyIndex].GetType() == typeof(Npc))
             {
                 ((Npc)Globals.Entities[enemyIndex]).MyTarget = this;
             }
-            var dmg = Globals.Entities[enemyIndex].Stat[(int)Enums.Stats.Defense] - Stat[(int)Enums.Stats.Attack];
-            if (dmg >= 0)
+            double dmg = (Stat[(int)Enums.Stats.Attack] * ((double)100 / (100 + (double)(Globals.Entities[enemyIndex].Stat[(int)Enums.Stats.Defense] * 2)))) + Globals.Rand.Next(0, 3);
+
+            if (dmg <= 0) dmg = 1; // Always do damage.
+
+            Globals.Entities[enemyIndex].Vital[(int)Enums.Vitals.Health] -= (int)dmg;
+
+            //Dead entity check
+            if (Globals.Entities[enemyIndex].Vital[(int)Enums.Vitals.Health] <= 0)
             {
-                //Did nothing
+                //Check if a resource, if so spawn item drops differently.
+                if (Globals.Entities[enemyIndex].GetType() == typeof(Resource))
+                {
+                    ((Resource)Globals.Entities[enemyIndex]).SpawnResourceItems(MyIndex);
+                }
+                Globals.Entities[enemyIndex].Die();
             }
             else
             {
-                Globals.Entities[enemyIndex].Vital[(int)Enums.Vitals.Health] += dmg;
-                if (Globals.Entities[enemyIndex].Vital[(int)Enums.Vitals.Health] <= 0)
-                {
-                    //Dead entity
-                    Globals.Entities[enemyIndex].Die();
-                }
-                else
-                {
-                    //Hit him, make him mad and send the vital update.
-                    PacketSender.SendEntityVitals(enemyIndex,0, Globals.Entities[enemyIndex]);
-                }
+                //Hit him, make him mad and send the vital update.
+                PacketSender.SendEntityVitals(enemyIndex,0, Globals.Entities[enemyIndex]);
             }
         }
         bool IsOneBlockAway(int enemyIndex)

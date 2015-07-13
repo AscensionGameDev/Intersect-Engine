@@ -33,7 +33,6 @@ namespace Intersect_Server.Classes
         public List<EventIndex> MyEvents = new List<EventIndex>();
         public bool[] Switches;
         public int[] Variables;
-        public ItemInstance[] Inventory = new ItemInstance[Constants.MaxInvItems];
         public SpellInstance[] Spells = new SpellInstance[Constants.MaxPlayerSkills];
         public HotbarInstance[] Hotbar = new HotbarInstance[Constants.MaxHotbar];
         public int[] Equipment = new int[Enums.EquipmentSlots.Count];
@@ -49,10 +48,6 @@ namespace Intersect_Server.Classes
             MyClient = newClient;
             Switches = new bool[Constants.SwitchCount];
             Variables = new int[Constants.VariableCount];
-            for (int i = 0; i < Constants.MaxInvItems; i++)
-            {
-                Inventory[i] = new ItemInstance();
-            }
             for (int i = 0; i < Constants.MaxPlayerSkills; i++)
             {
                 Spells[i] = new SpellInstance();
