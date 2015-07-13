@@ -55,6 +55,7 @@ namespace Intersect_Editor.Classes
         public void Clear()
         {
             _buff.Clear();
+            _readBytes = new byte[0];
             Readpos = 0;
         }
         public void WriteBytes(byte[] input)

@@ -22,128 +22,160 @@
 using System;
 using System.Collections.Generic;
 using System.Net.Sockets;
+using System.Windows.Forms;
 
 namespace Intersect_Editor.Classes
 {
-    public class Network
+    public static class Network
     {
-        TcpClient _mySocket;
-        NetworkStream _myStream;
-        readonly PacketHandler _packetHandler = new PacketHandler();
-        readonly List<byte> _myBuffer = new List<byte>();
-        public long ReconnectTime;
-        public bool IsConnected;
-        public bool IsConnecting;
+        public static TcpClient MySocket;
+        private static NetworkStream _myStream;
+        public static bool Connected;
+        public static bool Connecting;
+        private static byte[] _tempBuff;
+        private static ByteBuffer _myBuffer = new ByteBuffer();
+        private static Object _bufferLock = new Object();
 
-
-        // Update is called once per frame
-        public void Update()
+        public static void InitNetwork()
         {
-            var shouldInitSocket = false;
-            if (ReconnectTime == -1) { ReconnectTime = Environment.TickCount + 10000; }
-            if (_mySocket == null) { shouldInitSocket = true; }
-            if (shouldInitSocket == false && _mySocket.Connected == false) { shouldInitSocket = true; }
-            if (shouldInitSocket && Environment.TickCount > ReconnectTime)
+            if (MySocket != null)
             {
-                ReconnectTime = long.MaxValue ;
-                _mySocket = new TcpClient();
-                _mySocket.BeginConnect("127.0.0.1", 6000, ConnectCallback, _mySocket);
-                IsConnecting = true;
+                MySocket.Close();
             }
 
-            if (!IsConnected) { return; }
+            MySocket = new TcpClient { NoDelay = true };
+            _tempBuff = new byte[MySocket.ReceiveBufferSize];
+            MySocket.BeginConnect(Globals.ServerHost, Globals.ServerPort, ConnectCb, null);
+            Connecting = true;
+        }
 
+        public static void Update()
+        {
+            if (Connected) { TryHandleData(); }
+            if (!Connected && !Connecting)
+            {
+                InitNetwork();
+            }
+        }
 
+        private static void ConnectCb(IAsyncResult result)
+        {
             try
             {
-                var tempBuff = new byte[4096];
-                if (_myStream.DataAvailable)
+                MySocket.EndConnect(result);
+                if (MySocket.Connected)
                 {
-                    var readAmt = _myStream.Read(tempBuff, 0, 4096);
-                    if (readAmt > 0)
-                    {
-                        for (var i = 0; i < readAmt; i++)
-                        {
-                            _myBuffer.Add(tempBuff[i]);
-                        }
-                    }
-                }
-            }
-            catch
-            {
-                _mySocket = null;
-                IsConnected = false;
-                return;
-            }
-
-            if (_myBuffer.Count < 4) return;
-            var buff = new ByteBuffer();
-            buff.WriteBytes(_myBuffer.ToArray());
-            while (buff.Length() >= 4)
-            {
-                var packetLen = buff.ReadInteger(false);
-                if (buff.Length() >= packetLen + 4)
-                {
-                    buff.ReadInteger();
-                    _packetHandler.HandlePacket(buff.ReadBytes(packetLen));
+                    Connected = true;
+                    Connecting = false;
+                    _myStream = MySocket.GetStream();
+                    _myStream.BeginRead(_tempBuff, 0, MySocket.ReceiveBufferSize, ReceiveCb, null);
                 }
                 else
                 {
-                    break;
+                    Connected = false;
+                    Connecting = false;
                 }
             }
-            _myBuffer.Clear();
-            if (buff.Length() > 0) { _myBuffer.AddRange(buff.ReadBytes(buff.Length())); }
+            catch (Exception)
+            {
+                Connected = false;
+                Connecting = false;
+            }
         }
 
+        public static void CheckNetwork()
+        {
+            if (Connected == false && Connecting == false)
+            {
+                InitNetwork();
+            }
+            else
+            {
+                if (!Connected)
+                {
+                    //PROBLEM!
+                }
+            }
+        }
 
-        public void SendPacket(byte[] packet)
+        private static void ReceiveCb(IAsyncResult result)
+        {
+            try
+            {
+                var readAmt = _myStream.EndRead(result);
+                if (readAmt <= 0)
+                {
+                    HandleDc();
+                }
+                var receivedData = new byte[readAmt];
+                Buffer.BlockCopy(_tempBuff, 0, receivedData, 0, readAmt);
+                lock (_bufferLock)
+                {
+                    _myBuffer.WriteBytes(receivedData);
+                }
+                _myStream.BeginRead(_tempBuff, 0, MySocket.ReceiveBufferSize, ReceiveCb, null);
+            }
+            catch (Exception)
+            {
+                HandleDc();
+            }
+        }
+
+        public static void DestroyNetwork()
+        {
+            try
+            {
+                _myStream.Close();
+                MySocket.Close();
+            }
+            catch (Exception)
+            {
+                // ignored
+            }
+        }
+
+        private static void HandleDc()
+        {
+            MessageBox.Show(@"Disconnected!");
+            Application.Exit();
+        }
+
+        public static void SendPacket(byte[] data)
         {
             try
             {
                 var buff = new ByteBuffer();
-                buff.WriteInteger(packet.Length);
-                buff.WriteBytes(packet);
-                
+                buff.WriteInteger(data.Length);
+                buff.WriteBytes(data);
                 _myStream.Write(buff.ToArray(), 0, buff.Count());
             }
             catch (Exception)
             {
-                Globals.GameSocket.IsConnected = false;
-                Globals.GameSocket._mySocket.Close();
+                HandleDc();
             }
         }
 
-        /*mySocket.NoDelay = true;
-                myStream = mySocket.GetStream();
-                isConnected = true;*/
-        void ConnectCallback(IAsyncResult asyncConnect)
+        private static void TryHandleData()
         {
-            try
+            lock (_bufferLock)
             {
-                _mySocket.EndConnect(asyncConnect);
-                // arriving here means the operation completed
-                // (asyncConnect.IsCompleted = true) but not
-                // necessarily successfully
-                if (_mySocket.Connected == false)
+                while (_myBuffer.Length() >= 4)
                 {
-                    IsConnecting = false;
-                    IsConnected = false;
-                    ReconnectTime = -1;
+                    var packetLen = _myBuffer.ReadInteger(false);
+                    if (_myBuffer.Length() >= packetLen + 4)
+                    {
+                        _myBuffer.ReadInteger();
+                        PacketHandler.HandlePacket(_myBuffer.ReadBytes(packetLen));
+                    }
+                    else
+                    {
+                        break;
+                    }
                 }
-                else
+                if (_myBuffer.Length() == 0)
                 {
-                    _mySocket.NoDelay = true;
-                    _myStream = _mySocket.GetStream();
-                    IsConnected = true;
-                    IsConnecting = false;
+                    _myBuffer.Clear();
                 }
-            }
-            catch (Exception)
-            {
-                IsConnecting = false;
-                IsConnected = false;
-                ReconnectTime = -1;
             }
         }
     }

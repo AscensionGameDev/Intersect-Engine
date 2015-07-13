@@ -34,33 +34,31 @@ namespace Intersect_Editor.Forms
 
         private void frmLogin_Load(object sender, EventArgs e)
         {
-            Globals.GameSocket = new Network();
-            tmrSocket.Enabled = true;
-            
+
         }
 
         private void tmrSocket_Tick(object sender, EventArgs e)
         {
-            Globals.GameSocket.Update();
+            Network.Update();
             var statusString = "Connecting to server...";
-            if (Globals.GameSocket.IsConnected)
+            if (Network.Connected)
             {
                 statusString = "Connected to server.";
             }
-            else if (Globals.GameSocket.IsConnecting)
+            else if (Network.Connecting)
             {
 
             }
             else
             {
-                statusString = "Failed to connect, retrying in " + ((Globals.GameSocket.ReconnectTime - Environment.TickCount)/1000).ToString("0") + " seconds.";
+                statusString = "Failed to connect, retrying in " + ((Globals.ReconnectTime - Environment.TickCount)/1000).ToString("0") + " seconds.";
             }
             Globals.LoginForm.lblStatus.Text = statusString;
         }
 
         private void btnLogin_Click(object sender, EventArgs e)
         {
-            if (!Globals.GameSocket.IsConnected) return;
+            if (!Network.Connected) return;
             if (txtUsername.Text.Trim().Length > 0 && txtPassword.Text.Trim().Length > 0)
             {
                 PacketSender.SendLogin(txtUsername.Text.Trim(), txtPassword.Text.Trim());

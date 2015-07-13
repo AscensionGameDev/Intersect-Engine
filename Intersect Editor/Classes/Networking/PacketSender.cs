@@ -28,7 +28,8 @@ namespace Intersect_Editor.Classes
         {
             var bf = new ByteBuffer();
             bf.WriteLong((int)Enums.ClientPackets.Ping);
-            Globals.GameSocket.SendPacket(bf.ToArray());
+            Network.SendPacket(bf.ToArray());
+            
         }
 
         public static void SendLogin(string username, string password)
@@ -37,7 +38,7 @@ namespace Intersect_Editor.Classes
             bf.WriteLong((int)Enums.ClientPackets.EditorLogin);
             bf.WriteString(username);
             bf.WriteString(password);
-            Globals.GameSocket.SendPacket(bf.ToArray());
+            Network.SendPacket(bf.ToArray());
         }
 
         public static void SendNeedMap(int mapNum)
@@ -45,7 +46,7 @@ namespace Intersect_Editor.Classes
             var bf = new ByteBuffer();
             bf.WriteLong((int)Enums.ClientPackets.NeedMap);
             bf.WriteLong(mapNum);
-            Globals.GameSocket.SendPacket(bf.ToArray());
+            Network.SendPacket(bf.ToArray());
         }
 
         public static void SendTilesets()
@@ -57,7 +58,7 @@ namespace Intersect_Editor.Classes
             {
                 bf.WriteString(t);
             }
-            Globals.GameSocket.SendPacket(bf.ToArray());
+            Network.SendPacket(bf.ToArray());
         }
 
         public static void SendMap(int mapnum)
@@ -68,7 +69,7 @@ namespace Intersect_Editor.Classes
             bf.WriteLong(mapnum);
             bf.WriteLong(mapData.Length);
             bf.WriteBytes(mapData);
-            Globals.GameSocket.SendPacket(bf.ToArray());
+            Network.SendPacket(bf.ToArray());
         }
 
         public static void SendCreateMap(int location, int currentMap)
@@ -80,14 +81,14 @@ namespace Intersect_Editor.Classes
             {
                 bf.WriteLong(currentMap);
             }
-            Globals.GameSocket.SendPacket(bf.ToArray());
+            Network.SendPacket(bf.ToArray());
         }
 
         public static void SendItemEditor()
         {
             var bf = new ByteBuffer();
             bf.WriteLong((int)Enums.ClientPackets.OpenItemEditor);
-            Globals.GameSocket.SendPacket(bf.ToArray());
+            Network.SendPacket(bf.ToArray());
         }
 
         public static void SendItem(int itemNum, byte[] itemData)
@@ -96,14 +97,14 @@ namespace Intersect_Editor.Classes
             bf.WriteLong((int)Enums.ClientPackets.SaveItem);
             bf.WriteLong(itemNum);
             bf.WriteBytes(itemData);
-            Globals.GameSocket.SendPacket(bf.ToArray());
+            Network.SendPacket(bf.ToArray());
         }
 
         public static void SendNpcEditor()
         {
             var bf = new ByteBuffer();
             bf.WriteLong((int)Enums.ClientPackets.OpenNpcEditor);
-            Globals.GameSocket.SendPacket(bf.ToArray());
+            Network.SendPacket(bf.ToArray());
         }
 
         public static void SendNpc(int npcNum, byte[] npcData)
@@ -112,14 +113,14 @@ namespace Intersect_Editor.Classes
             bf.WriteLong((int)Enums.ClientPackets.SaveNpc);
             bf.WriteInteger(npcNum);
             bf.WriteBytes(npcData);
-            Globals.GameSocket.SendPacket(bf.ToArray());
+            Network.SendPacket(bf.ToArray());
         }
 
         public static void SendSpellEditor()
         {
             var bf = new ByteBuffer();
             bf.WriteLong((int)Enums.ClientPackets.OpenSpellEditor);
-            Globals.GameSocket.SendPacket(bf.ToArray());
+            Network.SendPacket(bf.ToArray());
         }
 
         public static void SendSpell(int index, byte[] data)
@@ -128,14 +129,14 @@ namespace Intersect_Editor.Classes
             bf.WriteLong((int)Enums.ClientPackets.SaveSpell);
             bf.WriteInteger(index);
             bf.WriteBytes(data);
-            Globals.GameSocket.SendPacket(bf.ToArray());
+            Network.SendPacket(bf.ToArray());
         }
 
         public static void SendAnimationEditor()
         {
             var bf = new ByteBuffer();
             bf.WriteLong((int)Enums.ClientPackets.OpenAnimationEditor);
-            Globals.GameSocket.SendPacket(bf.ToArray());
+            Network.SendPacket(bf.ToArray());
         }
 
         public static void SendAnimation(int index, byte[] data)
@@ -144,14 +145,14 @@ namespace Intersect_Editor.Classes
             bf.WriteLong((int)Enums.ClientPackets.SaveAnimation);
             bf.WriteInteger(index);
             bf.WriteBytes(data);
-            Globals.GameSocket.SendPacket(bf.ToArray());
+            Network.SendPacket(bf.ToArray());
         }
 
         public static void SendResourceEditor()
         {
             var bf = new ByteBuffer();
             bf.WriteLong((int)Enums.ClientPackets.OpenResourceEditor);
-            Globals.GameSocket.SendPacket(bf.ToArray());
+            Network.SendPacket(bf.ToArray());
         }
 
         public static void SendResource(int ResourceNum, byte[] ResourceData)
@@ -160,7 +161,7 @@ namespace Intersect_Editor.Classes
             bf.WriteLong((int)Enums.ClientPackets.SaveResource);
             bf.WriteInteger(ResourceNum);
             bf.WriteBytes(ResourceData);
-            Globals.GameSocket.SendPacket(bf.ToArray());
+            Network.SendPacket(bf.ToArray());
         }
     }
 }

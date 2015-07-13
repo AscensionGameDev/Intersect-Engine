@@ -44,7 +44,6 @@ namespace Intersect_Editor.Forms
             // Initilise the editor.
             InitEditor();
             Show();
-            EditorLoop.StartLoop(this);
         }
 
         private void InitFormObjects()

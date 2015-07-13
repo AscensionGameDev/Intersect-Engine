@@ -92,10 +92,6 @@ namespace Intersect_Client.Classes
                 {
                     //PROBLEM!
                 }
-                else
-                {
-                    TryHandleData();
-                }
             }
         }
 
@@ -114,6 +110,7 @@ namespace Intersect_Client.Classes
                 {
                     _myBuffer.WriteBytes(receivedData);
                 }
+                TryHandleData();
                 _myStream.BeginRead(_tempBuff, 0, MySocket.ReceiveBufferSize, ReceiveCb, null);
             }
             catch (Exception)

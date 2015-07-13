@@ -50,6 +50,7 @@ namespace Intersect_Editor.Forms
             // 
             // tmrSocket
             // 
+            this.tmrSocket.Enabled = true;
             this.tmrSocket.Tick += new System.EventHandler(this.tmrSocket_Tick);
             // 
             // txtUsername
@@ -77,7 +78,7 @@ namespace Intersect_Editor.Forms
             this.btnLogin.UseVisualStyleBackColor = true;
             this.btnLogin.Click += new System.EventHandler(this.btnLogin_Click);
             // 
-            // frmLogin
+            // FrmLogin
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;

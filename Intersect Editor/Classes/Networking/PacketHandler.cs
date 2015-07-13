@@ -21,12 +21,13 @@
 */
 using System;
 using Intersect_Editor.Forms;
+using System.Threading;
 
 namespace Intersect_Editor.Classes
 {
-    public class PacketHandler
+    public static class PacketHandler
     {
-        public void HandlePacket(byte[] packet)
+        public static void HandlePacket(byte[] packet)
         {
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
@@ -129,8 +130,8 @@ namespace Intersect_Editor.Classes
             Globals.ReceivedGameData++;
             if (Globals.ReceivedGameData == 3 && !Globals.InEditor)
             {
-                Globals.MainForm = new FrmMain();
-                Globals.MainForm.Visible = true;
+                Globals.EditorThread = new Thread(EditorLoop.StartLoop);
+                Globals.EditorThread.Start();
             }
             else if (Globals.InEditor)
             {
@@ -148,7 +149,8 @@ namespace Intersect_Editor.Classes
         {
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
-            Globals.MapCount = bf.ReadLong();
+            Globals.Ma
+                = bf.ReadLong();
             Globals.GameMaps = new MapStruct[Globals.MapCount];
             PacketSender.SendNeedMap(0);
             Globals.ReceivedGameData++;
@@ -211,7 +213,7 @@ namespace Intersect_Editor.Classes
             Globals.GameItems[itemnum].LoadByte(bf.ReadBytes(bf.Length()));
         }
 
-        private void HandleItemList(byte[] packet)
+        private static void HandleItemList(byte[] packet)
         {
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
@@ -238,7 +240,7 @@ namespace Intersect_Editor.Classes
             Globals.GameNpcs[npcNum].Load(bf.ReadBytes(bf.Length()));
         }
 
-        private void HandleNpcList(byte[] packet)
+        private static void HandleNpcList(byte[] packet)
         {
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
@@ -265,7 +267,7 @@ namespace Intersect_Editor.Classes
             Globals.GameSpells[index].Load(bf.ReadBytes(bf.Length()));
         }
 
-        private void HandleSpellList(byte[] packet)
+        private static void HandleSpellList(byte[] packet)
         {
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
@@ -292,7 +294,7 @@ namespace Intersect_Editor.Classes
             Globals.GameAnimations[index].Load(bf.ReadBytes(bf.Length()));
         }
 
-        private void HandleAnimationList(byte[] packet)
+        private static void HandleAnimationList(byte[] packet)
         {
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);

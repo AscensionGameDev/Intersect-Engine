@@ -59,8 +59,6 @@ namespace Intersect_Server.Classes
         public Client(int myIndex, int entIndex, TcpClient socket)
         {
             mySocket = socket;
-            mySocket.SendBufferSize = 4096;
-            mySocket.ReceiveBufferSize = 4096;
             myStream = mySocket.GetStream();
             readBuff = new byte[mySocket.ReceiveBufferSize];
             connectTime = Environment.TickCount;

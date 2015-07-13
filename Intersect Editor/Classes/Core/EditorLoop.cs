@@ -28,8 +28,11 @@ namespace Intersect_Editor.Classes
 {
     public static class EditorLoop
     {
-        public static void StartLoop(FrmMain myForm)
+        public static void StartLoop()
         {
+            Globals.MainForm = new FrmMain();
+            Globals.MainForm.Visible = true;
+            FrmMain myForm = Globals.MainForm;
             long animationTimer = Environment.TickCount;
             long waterfallTimer = Environment.TickCount;
             // drawing loop
@@ -60,6 +63,7 @@ namespace Intersect_Editor.Classes
                     Globals.ResourceEditor.Render();
                 }
                 Graphics.Render();
+                Network.Update();
                 Application.DoEvents(); // handle form events
                 Thread.Sleep(10);
             }

@@ -21,12 +21,20 @@
 */
 using Intersect_Editor.Forms;
 using SFML.Graphics;
+using System.Threading;
 
 namespace Intersect_Editor.Classes
 {
     public static class Globals
     {
-        public static Network GameSocket;
+        //Network Variables
+        public static string ServerHost = "localhost";
+        public static int ServerPort = 6000;
+        public static int ReconnectTime = 3000;
+
+        //Editor Loop Variables
+        public static Thread EditorThread;
+
         public static int MyIndex;
         public static MapStruct[] GameMaps = new MapStruct[1];
         public static FrmMain MainForm;
