@@ -27,6 +27,7 @@ using SFML.Window;
 using Color = SFML.Graphics.Color;
 using Graphics = Intersect_Client.Classes.Graphics;
 using SFML.System;
+using System.IO;
 
 namespace Intersect_Client.Classes
 {
@@ -59,28 +60,34 @@ namespace Intersect_Client.Classes
             Rectangle srcRectangle = new Rectangle();
             Rectangle destRectangle = new Rectangle();
             Texture srcTexture;
-            if (Graphics.EntityFileNames.IndexOf(MySprite.ToLower()) >= 0)
+            if (File.Exists("Resources/Tilesets/" + MySprite.ToLower()))
             {
-                srcTexture = Graphics.EntityTextures[Graphics.EntityFileNames.IndexOf(MySprite.ToLower())];
-
-                if (Height * 32 > 32)
+                var str = MySprite.ToLower();
+                var charsToRemove = new string[] { "tileset", ".png"};
+                foreach (var c in charsToRemove)
                 {
-                    destRectangle.Y = (int)Math.Ceiling(Graphics.CalcMapOffsetY(i) + CurrentY * 32 + OffsetY - ((Height * 32) - 32));
+                    str = str.Replace(c, string.Empty);
+                }
+                srcTexture = Graphics.Tilesets[Convert.ToInt32(str) - 1];
+
+                if ((Height + 1) * 32 > 32)
+                {
+                    destRectangle.Y = (int)Math.Ceiling(Graphics.CalcMapOffsetY(i) + CurrentY * 32 + OffsetY - (((Height + 1) * 32) - 32));
                 }
                 else
                 {
                     destRectangle.Y = (int)Math.Ceiling(Graphics.CalcMapOffsetY(i) + CurrentY * 32 + OffsetY);
                 }
-                if (Width * 32 > 32)
+                if ((Width + 1) * 32 > 32)
                 {
-                    destRectangle.X = (int)Math.Ceiling(Graphics.CalcMapOffsetX(i) + CurrentX * 32 + OffsetX - ((Width * 32) - 32));
+                    destRectangle.X = (int)Math.Ceiling(Graphics.CalcMapOffsetX(i) + CurrentX * 32 + OffsetX - (((Width + 1) * 16) - 16));
                 }
                 else
                 {
                     destRectangle.X = (int)Math.Ceiling(Graphics.CalcMapOffsetX(i) + CurrentX * 32 + OffsetX);
                 }
 
-                srcRectangle = new Rectangle(X * 32, Y * 32, Width * 32, Height * 32);
+                srcRectangle = new Rectangle(X * 32, Y * 32, (Width + 1) * 32, (Height + 1) * 32);
                 destRectangle.Width = srcRectangle.Width;
                 destRectangle.Height = srcRectangle.Height;
                 Graphics.RenderTexture(srcTexture, srcRectangle, destRectangle, Graphics.RenderWindow);

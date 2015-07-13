@@ -50,7 +50,8 @@ namespace Intersect_Server.Classes
             Height = myBase.InitialGraphic.Height;
             Vital[(int)Enums.Vitals.Health] = Globals.Rand.Next(myBase.MinHP, myBase.MaxHP + 1);
             MaxVital[(int)Enums.Vitals.Health] = Vital[(int)Enums.Vitals.Health];
-            Passable = Convert.ToInt32(myBase.WalkableBefore);   
+            Passable = Convert.ToInt32(myBase.WalkableBefore);
+            HideName = 1;
         }
 
         public override void Die()

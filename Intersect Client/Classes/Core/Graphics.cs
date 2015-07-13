@@ -269,31 +269,36 @@ namespace Intersect_Client.Classes
                     }
                 }
 
-                for (var i = 0; i < 9; i++)
+                for (var n = 0; n <= 1; n++)
                 {
-                    if (Globals.LocalMaps[i] <= -1) continue;
-                    for (var y = 0; y < Constants.MapHeight; y++)
+                    for (var i = 0; i < 9; i++)
                     {
-                        foreach (var t in Globals.Entities)
+                        if (Globals.LocalMaps[i] <= -1) continue;
+                        for (var y = 0; y < Constants.MapHeight; y++)
                         {
-                            if (t == null) continue;
-                            if (t.CurrentMap != Globals.LocalMaps[i]) continue;
-                            if (t.CurrentY == y && t.CurrentZ == 0)
+                            foreach (var t in Globals.Entities)
                             {
-                                t.Draw(i);
+                                if (t == null) continue;
+                                if (t.CurrentMap != Globals.LocalMaps[i]) continue;
+                                if (t.Passable == n) continue;
+                                if (t.CurrentY == y && t.CurrentZ == 0)
+                                {
+                                    t.Draw(i);
+                                }
                             }
-                        }
-                        foreach (var t in Globals.Events)
-                        {
-                            if (t == null) continue;
-                            if (t.CurrentMap != Globals.LocalMaps[i]) continue;
-                            if (t.CurrentY == y)
+                            foreach (var t in Globals.Events)
                             {
-                                t.Draw(i);
+                                if (t == null) continue;
+                                if (t.CurrentMap != Globals.LocalMaps[i]) continue;
+                                if (t.Passable == n) continue;
+                                if (t.CurrentY == y)
+                                {
+                                    t.Draw(i);
+                                }
                             }
                         }
                     }
-                }
+                }   
 
                 //Render the upper layer
                 for (var i = 0; i < 9; i++)
