@@ -500,6 +500,36 @@ namespace Intersect_Server.Classes
             if (Globals.Entities[enemyIndex].GetType() == typeof(Npc))
             {
                 ((Npc)Globals.Entities[enemyIndex]).MyTarget = this;
+
+                //Check if there are any guards nearby
+                for (int n = 0; n < Globals.GameMaps[CurrentMap].Entities.Count; n++)
+                {
+                    if (Globals.GameMaps[CurrentMap].Entities[n].GetType() == typeof(Npc))
+                    {
+                        if (((Npc)Globals.GameMaps[CurrentMap].Entities[n]).Behaviour == 3) // Type guard
+                        {
+                            int x = Globals.GameMaps[CurrentMap].Entities[n].CurrentX - ((Npc)Globals.GameMaps[CurrentMap].Entities[n]).Range;
+                            int y = Globals.GameMaps[CurrentMap].Entities[n].CurrentY - ((Npc)Globals.GameMaps[CurrentMap].Entities[n]).Range;
+                            int xMax = Globals.GameMaps[CurrentMap].Entities[n].CurrentX + ((Npc)Globals.GameMaps[CurrentMap].Entities[n]).Range;
+                            int yMax = Globals.GameMaps[CurrentMap].Entities[n].CurrentY + ((Npc)Globals.GameMaps[CurrentMap].Entities[n]).Range;
+
+                            //Check that not going out of the map boundaries
+                            if (x < 0) x = 0;
+                            if (y < 0) y = 0;
+                            if (xMax >= Constants.MapWidth) xMax = Constants.MapWidth;
+                            if (yMax >= Constants.MapHeight) yMax = Constants.MapHeight;
+
+                            if (x < CurrentX && xMax > CurrentX)
+                            {
+                                if (y < CurrentY && yMax > CurrentY)
+                                {
+                                    // In range, so make a target
+                                    ((Npc)Globals.GameMaps[CurrentMap].Entities[n]).MyTarget = this;
+                                }
+                            }
+                        }
+                    }
+                }
             }
             double dmg = (Stat[(int)Enums.Stats.Attack] * ((double)100 / (100 + (double)(Globals.Entities[enemyIndex].Stat[(int)Enums.Stats.Defense] * 2)))) + Globals.Rand.Next(0, 3);
 
@@ -521,6 +551,11 @@ namespace Intersect_Server.Classes
             {
                 //Hit him, make him mad and send the vital update.
                 PacketSender.SendEntityVitals(enemyIndex,0, Globals.Entities[enemyIndex]);
+            }
+            // Add a timer before able to make the next move.
+            if (Globals.Entities[MyIndex].GetType() == typeof(Npc))
+            {
+                ((Npc)Globals.Entities[MyIndex]).MoveTimer = Environment.TickCount + (int)((1.0 / (Stat[2] / 10f)) * 1000);
             }
         }
         bool IsOneBlockAway(int enemyIndex)

@@ -320,7 +320,8 @@
             this.cmbBehavior.Items.AddRange(new object[] {
             "Attack When Attacked",
             "Attack On Sight",
-            "Friendly"});
+            "Friendly",
+            "Guard"});
             this.cmbBehavior.Location = new System.Drawing.Point(60, 45);
             this.cmbBehavior.Name = "cmbBehavior";
             this.cmbBehavior.Size = new System.Drawing.Size(135, 21);

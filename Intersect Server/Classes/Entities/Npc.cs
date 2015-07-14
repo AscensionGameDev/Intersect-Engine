@@ -47,8 +47,8 @@ namespace Intersect_Server.Classes
         public long RespawnTime;
 
         //Behaviour
-        private byte Behaviour = 0;
-        private byte Range = 0;
+        public byte Behaviour = 0;
+        public byte Range = 0;
 
         public Npc(int index, NpcStruct myBase)
             : base(index)
@@ -119,6 +119,7 @@ namespace Intersect_Server.Classes
                                     {
                                         // In range, so make a target
                                         MyTarget = Globals.GameMaps[CurrentMap].Entities[n];
+                                        break;
                                     }
                                 }
                             }
@@ -205,6 +206,7 @@ namespace Intersect_Server.Classes
                         _findPath = new Thread(PathFind);
                         _findPath.Start();
                         _pathfinding = true;
+                        TryAttack(MyTarget.MyIndex);
                     }
                 }
 
