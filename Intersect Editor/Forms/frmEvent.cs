@@ -631,6 +631,11 @@ namespace Intersect_Editor.Forms
             CurrentPage.FaceGraphic = cmbPreviewFace.Text;
         }
 
+        private void FrmEvent_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            Globals.CurrentEditor = -1;
+        }
+
 
 
     }

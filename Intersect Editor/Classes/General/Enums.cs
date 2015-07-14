@@ -137,6 +137,16 @@ namespace Intersect_Editor.Classes
             Spell = 4
         }
 
+        public enum EditorTypes
+        {
+            Animation = 0,
+            Item = 1,
+            Npc = 2,
+            Resource = 3,
+            Spell = 4,
+            Event = 5,
+        }
+
         public static int WeaponIndex = 2;
         public static int ShieldIndex = 3;
         public static List<string> EquipmentSlots = new List<string>() { "Helmet", "Armor", "Weapon", "Shield", "Boots" };

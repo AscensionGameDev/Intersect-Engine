@@ -1157,6 +1157,7 @@ namespace Intersect_Editor.Forms
             this.Text = "Event Editor";
             this.TopMost = true;
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.frmEvent_FormClosing);
+            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.FrmEvent_FormClosed);
             this.Load += new System.EventHandler(this.frmEvent_Load);
             this.tabControl1.ResumeLayout(false);
             this.tabPage1.ResumeLayout(false);

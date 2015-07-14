@@ -424,6 +424,7 @@ namespace Intersect_Editor.Forms
             }
 
             Hide();
+            Globals.CurrentEditor = -1;
             Dispose();
         }
 
@@ -438,6 +439,7 @@ namespace Intersect_Editor.Forms
             }
 
             Hide();
+            Globals.CurrentEditor = -1;
             Dispose();
         }
 
@@ -449,6 +451,11 @@ namespace Intersect_Editor.Forms
         private void cmbExtraEffect_SelectedIndexChanged(object sender, EventArgs e)
         {
             Globals.GameSpells[_editorIndex].Data3 = cmbExtraEffect.SelectedIndex;
+        }
+
+        private void frmSpell_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            Globals.CurrentEditor = -1;
         }
 
     }

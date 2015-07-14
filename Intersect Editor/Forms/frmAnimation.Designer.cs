@@ -506,6 +506,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(662, 518);
+            this.ControlBox = false;
             this.Controls.Add(this.groupBox4);
             this.Controls.Add(this.groupBox3);
             this.Controls.Add(this.groupBox1);
@@ -514,6 +515,7 @@
             this.MaximizeBox = false;
             this.Name = "frmAnimation";
             this.Text = "Animation Editor";
+            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.frmAnimation_FormClosed);
             this.Load += new System.EventHandler(this.frmAnimation_Load);
             this.groupBox1.ResumeLayout(false);
             this.groupBox2.ResumeLayout(false);

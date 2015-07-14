@@ -31,6 +31,17 @@ namespace Intersect_Editor.Forms
         //General Editting Variables
         bool _tMouseDown;
 
+        //Cross Thread Delegates
+        public delegate void TryOpenEditor(int editorIndex);
+        public TryOpenEditor EditorDelegate;
+
+        //Editor References
+        private frmAnimation _animationEditor;
+        private FrmItem _itemEditor;
+        private frmNpc _npcEditor;
+        private frmResource _resourceEditor;
+        private frmSpell _spellEditor;
+
         //Initialization & Setup Functions
         public FrmMain()
         {
@@ -41,11 +52,13 @@ namespace Intersect_Editor.Forms
             // Set form object properties based on constants to prevent user inputting invalid options.
             InitFormObjects();
 
+            //Init Delegates
+            EditorDelegate = new TryOpenEditor(TryOpenEditorMethod);
+
             // Initilise the editor.
             InitEditor();
             Show();
         }
-
         private void InitFormObjects()
         {
             scrlMap.Maximum = Globals.GameMaps.Length;
@@ -55,7 +68,6 @@ namespace Intersect_Editor.Forms
             picMap.Height = (Constants.MapHeight + 2) * Constants.TileHeight;
             scrlMapItem.Maximum = Constants.MaxItems;
         }
-
         private void InitEditor()
         {
             EnterMap(0);
@@ -378,6 +390,10 @@ namespace Intersect_Editor.Forms
         private void animationEditorToolStripMenuItem_Click(object sender, EventArgs e)
         {
             PacketSender.SendAnimationEditor();
+        }
+        private void resourceEditorToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            PacketSender.SendResourceEditor();
         }
 
         //Tileset Area
@@ -964,15 +980,9 @@ namespace Intersect_Editor.Forms
                 }
             }
         }
-
-        private void hScrollMap_Scroll(object sender, ScrollEventArgs e)
+        private void picMap_MouseEnter(object sender, EventArgs e)
         {
-            //picMap.Left = -hScrollMap.Value;
-
-        }
-        private void vScrollMap_Scroll(object sender, ScrollEventArgs e)
-        {
-            //picMap.Top = -vScrollMap.Value;
+            spltContainer.Panel2.Focus();
         }
 
         //Map List Functions
@@ -1441,12 +1451,7 @@ namespace Intersect_Editor.Forms
         {
             lblSoundDistance.Text = "Distance: " + scrlSoundDistance.Value + " Tile(s)";
         }
-
-        private void resourceEditorToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            PacketSender.SendResourceEditor();
-        }
-
+        //Resource Attribute
         private void scrlResource_Scroll(object sender, ScrollEventArgs e)
         {
             if (scrlResource.Value >= 0)
@@ -1458,11 +1463,66 @@ namespace Intersect_Editor.Forms
                 lblResource.Text = "Resource: 0 None";
             }
         }
-
-        private void picMap_MouseEnter(object sender, EventArgs e)
+        
+        //Cross Threading Delegate Methods
+        private void TryOpenEditorMethod(int editorIndex)
         {
-            spltContainer.Panel2.Focus();
+            if (Globals.CurrentEditor == -1)
+            {
+                switch (editorIndex)
+                {
+                    case (int)Enums.EditorTypes.Animation:
+                        if (_animationEditor == null || _animationEditor.Visible == false)
+                        {
+                            _animationEditor = new frmAnimation();
+                            _animationEditor.InitEditor();
+                            _animationEditor.Show();
+                        }
+                        break;
+                    case (int)Enums.EditorTypes.Item:
+                        if (_itemEditor == null || _itemEditor.Visible == false)
+                        {
+                            _itemEditor = new FrmItem();
+                            _itemEditor.InitEditor();
+                            _itemEditor.Show();
+                        }
+                        break;
+                    case (int)Enums.EditorTypes.Npc:
+                        if (_npcEditor == null || _npcEditor.Visible == false)
+                        {
+                            _npcEditor = new frmNpc();
+                            _npcEditor.InitEditor();
+                            _npcEditor.Show();
+                        }
+                        break;
+                    case (int)Enums.EditorTypes.Resource:
+                        if (_resourceEditor == null || _resourceEditor.Visible == false)
+                        {
+                            _resourceEditor = new frmResource();
+                            _resourceEditor.InitEditor();
+                            _resourceEditor.Show();
+                        }
+                        break;
+                    case (int)Enums.EditorTypes.Spell:
+                        if (_spellEditor == null || _spellEditor.Visible == false)
+                        {
+                            _spellEditor = new frmSpell();
+                            _spellEditor.InitEditor();
+                            _spellEditor.Show();
+                        }
+                        break;
+                    default:
+                        return;
+                }
+                Globals.CurrentEditor = editorIndex;
+            }
+            
         }
+
+
+
+
+
         
     }
 }

@@ -72,6 +72,8 @@
             this.lblCastRange = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
             this.grpBuffDebuff = new System.Windows.Forms.GroupBox();
+            this.cmbExtraEffect = new System.Windows.Forms.ComboBox();
+            this.label7 = new System.Windows.Forms.Label();
             this.scrlBuffDuration = new System.Windows.Forms.HScrollBar();
             this.lblBuffDuration = new System.Windows.Forms.Label();
             this.txtMagicResistBuff = new System.Windows.Forms.TextBox();
@@ -104,8 +106,6 @@
             this.txtHPCost = new System.Windows.Forms.TextBox();
             this.label3 = new System.Windows.Forms.Label();
             this.label5 = new System.Windows.Forms.Label();
-            this.cmbExtraEffect = new System.Windows.Forms.ComboBox();
-            this.label7 = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.picSpell)).BeginInit();
@@ -602,6 +602,29 @@
             this.grpBuffDebuff.Text = "Combat Spell";
             this.grpBuffDebuff.Visible = false;
             // 
+            // cmbExtraEffect
+            // 
+            this.cmbExtraEffect.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbExtraEffect.FormattingEnabled = true;
+            this.cmbExtraEffect.Items.AddRange(new object[] {
+            "None",
+            "Silence",
+            "Stun"});
+            this.cmbExtraEffect.Location = new System.Drawing.Point(12, 132);
+            this.cmbExtraEffect.Name = "cmbExtraEffect";
+            this.cmbExtraEffect.Size = new System.Drawing.Size(86, 21);
+            this.cmbExtraEffect.TabIndex = 36;
+            this.cmbExtraEffect.SelectedIndexChanged += new System.EventHandler(this.cmbExtraEffect_SelectedIndexChanged);
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(9, 116);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(65, 13);
+            this.label7.TabIndex = 35;
+            this.label7.Text = "Extra Effect:";
+            // 
             // scrlBuffDuration
             // 
             this.scrlBuffDuration.LargeChange = 1;
@@ -902,34 +925,12 @@
             this.label5.TabIndex = 22;
             this.label5.Text = "HP Cost:";
             // 
-            // cmbExtraEffect
-            // 
-            this.cmbExtraEffect.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cmbExtraEffect.FormattingEnabled = true;
-            this.cmbExtraEffect.Items.AddRange(new object[] {
-            "None",
-            "Silence",
-            "Stun"});
-            this.cmbExtraEffect.Location = new System.Drawing.Point(12, 132);
-            this.cmbExtraEffect.Name = "cmbExtraEffect";
-            this.cmbExtraEffect.Size = new System.Drawing.Size(86, 21);
-            this.cmbExtraEffect.TabIndex = 36;
-            this.cmbExtraEffect.SelectedIndexChanged += new System.EventHandler(this.cmbExtraEffect_SelectedIndexChanged);
-            // 
-            // label7
-            // 
-            this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(9, 116);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(65, 13);
-            this.label7.TabIndex = 35;
-            this.label7.Text = "Extra Effect:";
-            // 
             // frmSpell
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(676, 461);
+            this.ControlBox = false;
             this.Controls.Add(this.groupBox4);
             this.Controls.Add(this.grpBuffDebuff);
             this.Controls.Add(this.grpTargetInfo);
@@ -941,6 +942,7 @@
             this.MaximizeBox = false;
             this.Name = "frmSpell";
             this.Text = "Spell Editor                       ";
+            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.frmSpell_FormClosed);
             this.Load += new System.EventHandler(this.frmSpell_Load);
             this.groupBox1.ResumeLayout(false);
             this.groupBox2.ResumeLayout(false);

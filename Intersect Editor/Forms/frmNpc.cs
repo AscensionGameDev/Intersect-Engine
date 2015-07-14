@@ -109,6 +109,7 @@ namespace Intersect_Editor.Forms
             }
 
             Hide();
+            Globals.CurrentEditor = -1;
             Dispose();
         }
 
@@ -135,6 +136,7 @@ namespace Intersect_Editor.Forms
             }
 
             Hide();
+            Globals.CurrentEditor = -1;
             Dispose();
         }
 
@@ -273,6 +275,11 @@ namespace Intersect_Editor.Forms
         private void scrlDropIndex_Scroll(object sender, ScrollEventArgs e)
         {
             UpdateDropValues();
+        }
+
+        private void frmNpc_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            Globals.CurrentEditor = -1;
         }
     }
 }

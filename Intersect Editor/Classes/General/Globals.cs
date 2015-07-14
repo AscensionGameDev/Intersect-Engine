@@ -34,6 +34,7 @@ namespace Intersect_Editor.Classes
 
         //Editor Loop Variables
         public static Thread EditorThread;
+        public static int CurrentEditor = -1;
 
         public static int MyIndex;
         public static MapStruct[] GameMaps = new MapStruct[1];

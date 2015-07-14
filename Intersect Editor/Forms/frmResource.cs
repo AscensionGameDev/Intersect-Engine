@@ -227,6 +227,7 @@ namespace Intersect_Editor.Classes
             }
 
             Hide();
+            Globals.CurrentEditor = -1;
             Dispose();
         }
 
@@ -248,6 +249,7 @@ namespace Intersect_Editor.Classes
             }
 
             Hide();
+            Globals.CurrentEditor = -1;
             Dispose();
         }
 
@@ -500,6 +502,11 @@ namespace Intersect_Editor.Classes
                 lblAnimation.Text = "Animation: 0 None";
             }
             Globals.GameResources[_editorIndex].Animation = scrlAnimation.Value;
+        }
+
+        private void frmResource_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            Globals.CurrentEditor = -1;
         }
     }
 }

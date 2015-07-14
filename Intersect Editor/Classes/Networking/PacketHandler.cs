@@ -198,9 +198,7 @@ namespace Intersect_Editor.Classes
 
         private static void HandleItemEditor()
         {
-            var tmpItemEditor = new FrmItem();
-            tmpItemEditor.InitEditor();
-            tmpItemEditor.Show();
+            Globals.MainForm.Invoke(Globals.MainForm.EditorDelegate, (int)Enums.EditorTypes.Item);
         }
 
         private static void HandleItemData(byte[] packet)
@@ -225,9 +223,7 @@ namespace Intersect_Editor.Classes
 
         private static void HandleNpcEditor()
         {
-            var tmpNpcEditor = new frmNpc();
-            tmpNpcEditor.InitEditor();
-            tmpNpcEditor.Show();
+            Globals.MainForm.Invoke(Globals.MainForm.EditorDelegate, (int)Enums.EditorTypes.Npc);
         }
 
         private static void HandleNpcData(byte[] packet)
@@ -252,9 +248,7 @@ namespace Intersect_Editor.Classes
 
         private static void HandleSpellEditor()
         {
-            var tmpEditor = new frmSpell();
-            tmpEditor.InitEditor();
-            tmpEditor.Show();
+            Globals.MainForm.Invoke(Globals.MainForm.EditorDelegate, (int)Enums.EditorTypes.Spell);
         }
 
         private static void HandleSpellData(byte[] packet)
@@ -279,9 +273,7 @@ namespace Intersect_Editor.Classes
 
         private static void HandleAnimationEditor()
         {
-            var tmpEditor = new frmAnimation();
-            tmpEditor.InitEditor();
-            tmpEditor.Show();
+            Globals.MainForm.Invoke(Globals.MainForm.EditorDelegate, (int)Enums.EditorTypes.Animation);
         }
 
         private static void HandleAnimationData(byte[] packet)
@@ -306,12 +298,7 @@ namespace Intersect_Editor.Classes
 
         private static void HandleResourceEditor()
         {
-            if (Globals.ResourceEditor == null)
-            {
-                Globals.ResourceEditor = new frmResource();
-                Globals.ResourceEditor.InitEditor();
-                Globals.ResourceEditor.Show();
-            }
+            Globals.MainForm.Invoke(Globals.MainForm.EditorDelegate, (int)Enums.EditorTypes.Resource);
         }
 
         private static void HandleResourceData(byte[] packet)

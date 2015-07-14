@@ -239,6 +239,7 @@ namespace Intersect_Editor.Forms
             }
 
             Hide();
+            Globals.CurrentEditor = -1;
             Dispose();
         }
 
@@ -257,6 +258,7 @@ namespace Intersect_Editor.Forms
             }
 
             Hide();
+            Globals.CurrentEditor = -1;
             Dispose();
         }
 
@@ -294,6 +296,11 @@ namespace Intersect_Editor.Forms
             _upperFrame++;
             if (_upperFrame >= scrlUpperFrameCount.Value) { _upperFrame = 0; }
             gfx.Dispose();
+        }
+
+        private void frmAnimation_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            Globals.CurrentEditor = -1;
         }
     }
 }
