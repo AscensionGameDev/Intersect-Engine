@@ -51,6 +51,8 @@ namespace Intersect_Editor.Forms
             scrlMap.Maximum = Globals.GameMaps.Length;
             scrlX.Maximum = Constants.MapWidth;
             scrlY.Maximum = Constants.MapHeight;
+            picMap.Width = (Constants.MapWidth + 2) * Constants.TileWidth;
+            picMap.Height = (Constants.MapHeight + 2) * Constants.TileHeight;
             scrlMapItem.Maximum = Constants.MaxItems;
         }
 
@@ -62,7 +64,6 @@ namespace Intersect_Editor.Forms
             UpdateSoundLists();
             UpdateFogLists();
             UpdateImageLists();
-            UpdateScrollBars();
             InitLayerMenu();
             cmbAutotile.SelectedIndex = 0;
             Globals.InEditor = true;
@@ -90,61 +91,6 @@ namespace Intersect_Editor.Forms
                 {
                     tmpTsi.Text = @"Events";
                 }
-            }
-        }
-        private void UpdateScrollBars()
-        {
-            vScrollMap.Minimum = 0;
-            vScrollMap.Maximum = 1;
-            vScrollMap.Value = 0;
-            hScrollMap.Minimum = 0;
-            hScrollMap.Maximum = 1;
-            hScrollMap.Value = 0;
-            vScrollTileset.Minimum = 0;
-            vScrollTileset.Maximum = 1;
-            vScrollTileset.Value = 0;
-            hScrollTileset.Minimum = 0;
-            hScrollTileset.Maximum = 1;
-            hScrollTileset.Value = 0;
-            picMap.Left = 0;
-            picMap.Top = 0;
-            picTileset.Left = 0;
-            picTileset.Top = 0;
-            if (picMap.Height > grpMap.Height)
-            {
-                vScrollMap.Enabled = true;
-                vScrollMap.Maximum = picMap.Height - grpMap.Height;
-            }
-            else
-            {
-                vScrollMap.Enabled = false;
-            }
-            if (picMap.Width > grpMap.Width)
-            {
-                hScrollMap.Enabled = true;
-                hScrollMap.Maximum = picMap.Width - grpMap.Width;
-            }
-            else
-            {
-                hScrollMap.Enabled = false;
-            }
-            if (picTileset.Width > grpTileset.Width)
-            {
-                hScrollTileset.Enabled = true;
-                hScrollTileset.Maximum = picTileset.Width - grpTileset.Width;
-            }
-            else
-            {
-                hScrollTileset.Enabled = false;
-            }
-            if (picTileset.Height > grpTileset.Height)
-            {
-                vScrollTileset.Enabled = true;
-                vScrollTileset.Maximum = picTileset.Height - grpTileset.Height;
-            }
-            else
-            {
-                vScrollTileset.Enabled = false;
             }
         }
         private void UpdateSoundLists()
@@ -186,12 +132,6 @@ namespace Intersect_Editor.Forms
                 cmbPanorama.Items.Add(Graphics.ImageFileNames[i]);
             }
         }
-        protected override void OnResize(EventArgs e)
-        {
-            base.OnResize(e);
-            UpdateScrollBars();
-
-        }
         protected override void OnClosed(EventArgs e)
         {
             base.OnClosed(e);
@@ -205,8 +145,8 @@ namespace Intersect_Editor.Forms
                 Text = @"Intersect Editor - Map# " + mapNum + @" " + Globals.GameMaps[mapNum].MyName + @" Revision: " + Globals.GameMaps[mapNum].Revision;
             }
             picMap.Visible = false;
-            vScrollMap.Value = 0;
-            hScrollMap.Value = 0;
+            //vScrollMap.Value = 0;
+            //hScrollMap.Value = 0;
             picMap.Left = 0;
             picMap.Top = 0;
             PacketSender.SendNeedMap(Globals.CurrentMap);
@@ -542,14 +482,6 @@ namespace Intersect_Editor.Forms
                     break;
 
             }
-        }
-        private void vScrollTileset_Scroll(object sender, ScrollEventArgs e)
-        {
-            picTileset.Top = -vScrollTileset.Value;
-        }
-        private void hScrollTileset_Scroll(object sender, ScrollEventArgs e)
-        {
-            picTileset.Left = -hScrollTileset.Value;
         }
 
         //Map Area
@@ -1035,12 +967,12 @@ namespace Intersect_Editor.Forms
 
         private void hScrollMap_Scroll(object sender, ScrollEventArgs e)
         {
-            picMap.Left = -hScrollMap.Value;
+            //picMap.Left = -hScrollMap.Value;
 
         }
         private void vScrollMap_Scroll(object sender, ScrollEventArgs e)
         {
-            picMap.Top = -vScrollMap.Value;
+            //picMap.Top = -vScrollMap.Value;
         }
 
         //Map List Functions
@@ -1525,6 +1457,11 @@ namespace Intersect_Editor.Forms
             {
                 lblResource.Text = "Resource: 0 None";
             }
+        }
+
+        private void picMap_MouseEnter(object sender, EventArgs e)
+        {
+            spltContainer.Panel2.Focus();
         }
         
     }

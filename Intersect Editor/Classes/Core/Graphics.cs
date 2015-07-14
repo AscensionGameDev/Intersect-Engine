@@ -332,11 +332,11 @@ namespace Intersect_Editor.Classes
         {
             var tmpSprite = new Sprite(_transH);
             _renderwindow.Draw(tmpSprite);
-            tmpSprite.Position = new Vector2f(0, 1024 - 32);
+            tmpSprite.Position = new Vector2f(0, (Constants.MapHeight + 2) * Constants.TileHeight - Constants.TileHeight);
             _renderwindow.Draw(tmpSprite);
             tmpSprite = new Sprite(_transV) {Position = new Vector2f(0, 0)};
             _renderwindow.Draw(tmpSprite);
-            tmpSprite.Position = new Vector2f(1024 - 32, 0);
+            tmpSprite.Position = new Vector2f((Constants.MapWidth + 2) * Constants.TileWidth - Constants.TileWidth, 0);
             _renderwindow.Draw(tmpSprite);
         }
         private static void DrawMap()
@@ -679,18 +679,18 @@ namespace Intersect_Editor.Classes
         }
         private static void DrawMapBorders()
         {
-            var mapBorderLine = new RectangleShape(new Vector2f(1024, 1))
+            var mapBorderLine = new RectangleShape(new Vector2f((Constants.MapWidth + 2) * Constants.TileWidth, 1))
             {
                 Position = new Vector2f(0, 32),
                 FillColor = Color.White
             };
             _renderwindow.Draw(mapBorderLine);
-            mapBorderLine.Position = new Vector2f(0, 1024 - 32);
+            mapBorderLine.Position = new Vector2f(0, (Constants.MapHeight + 2) * Constants.TileHeight - Constants.TileHeight);
             _renderwindow.Draw(mapBorderLine);
-            mapBorderLine.Size = new Vector2f(1, 1024);
-            mapBorderLine.Position = new Vector2f(32, 0);
+            mapBorderLine.Size = new Vector2f(1, (Constants.MapHeight + 2) * Constants.TileHeight);
+            mapBorderLine.Position = new Vector2f(Constants.TileWidth, 0);
             _renderwindow.Draw(mapBorderLine);
-            mapBorderLine.Position = new Vector2f(1024 - 32, 0);
+            mapBorderLine.Position = new Vector2f((Constants.MapWidth + 2) * Constants.TileWidth - Constants.TileWidth, 0);
             _renderwindow.Draw(mapBorderLine);
             mapBorderLine.Dispose();
         }

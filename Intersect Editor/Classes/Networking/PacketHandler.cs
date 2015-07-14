@@ -149,8 +149,7 @@ namespace Intersect_Editor.Classes
         {
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
-            Globals.Ma
-                = bf.ReadLong();
+            Globals.MapCount = bf.ReadLong();
             Globals.GameMaps = new MapStruct[Globals.MapCount];
             PacketSender.SendNeedMap(0);
             Globals.ReceivedGameData++;

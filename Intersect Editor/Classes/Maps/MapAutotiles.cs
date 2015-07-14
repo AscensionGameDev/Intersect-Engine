@@ -168,7 +168,7 @@ namespace Intersect_Editor.Classes
         public void CacheRenderState(int x, int y, int layerNum)
         {
             // exit out early
-            if (x < 0 || x > Constants.MapHeight || y < 0 || y > Constants.MapHeight) { return; }
+            if (x < 0 || x > Constants.MapWidth || y < 0 || y > Constants.MapHeight) { return; }
 
             // check if it needs to be rendered as an autotile
             if (_myMap.Layers[layerNum].Tiles[x, y].Autotile == Constants.AutotileNone || _myMap.Layers[layerNum].Tiles[x, y].Autotile == Constants.AutotileFake)

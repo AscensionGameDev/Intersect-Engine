@@ -54,18 +54,10 @@ namespace Intersect_Editor.Forms
             this.resourceEditorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.grpMap = new System.Windows.Forms.GroupBox();
-            this.picMap = new System.Windows.Forms.PictureBox();
-            this.hScrollMap = new System.Windows.Forms.HScrollBar();
-            this.vScrollMap = new System.Windows.Forms.VScrollBar();
             this.grpLayer = new System.Windows.Forms.GroupBox();
             this.cmbAutotile = new System.Windows.Forms.ComboBox();
             this.lblCurLayer = new System.Windows.Forms.Label();
             this.cmbTilesets = new System.Windows.Forms.ComboBox();
-            this.hScrollTileset = new System.Windows.Forms.HScrollBar();
-            this.vScrollTileset = new System.Windows.Forms.VScrollBar();
-            this.grpTileset = new System.Windows.Forms.GroupBox();
-            this.picTileset = new System.Windows.Forms.PictureBox();
             this.grpMapList = new System.Windows.Forms.GroupBox();
             this.lstGameMaps = new System.Windows.Forms.ListBox();
             this.lblCloseMapList = new System.Windows.Forms.Label();
@@ -161,12 +153,12 @@ namespace Intersect_Editor.Forms
             this.txtMapName = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.btnCloseProperties = new System.Windows.Forms.Button();
+            this.spltContainer = new System.Windows.Forms.SplitContainer();
+            this.picMap = new System.Windows.Forms.PictureBox();
+            this.picTileset = new System.Windows.Forms.PictureBox();
+            this.pnlTilesetContainer = new System.Windows.Forms.Panel();
             this.menuStrip.SuspendLayout();
-            this.grpMap.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.picMap)).BeginInit();
             this.grpLayer.SuspendLayout();
-            this.grpTileset.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.picTileset)).BeginInit();
             this.grpMapList.SuspendLayout();
             this.grpLightEditor.SuspendLayout();
             this.grpAttributes.SuspendLayout();
@@ -182,6 +174,13 @@ namespace Intersect_Editor.Forms
             this.grpMapNPCS.SuspendLayout();
             this.grpManage.SuspendLayout();
             this.grpSpawnLoc.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.spltContainer)).BeginInit();
+            this.spltContainer.Panel1.SuspendLayout();
+            this.spltContainer.Panel2.SuspendLayout();
+            this.spltContainer.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.picMap)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.picTileset)).BeginInit();
+            this.pnlTilesetContainer.SuspendLayout();
             this.SuspendLayout();
             // 
             // menuStrip
@@ -370,69 +369,18 @@ namespace Intersect_Editor.Forms
             this.aboutToolStripMenuItem.Text = "About";
             this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
             // 
-            // grpMap
-            // 
-            this.grpMap.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.grpMap.BackColor = System.Drawing.Color.Black;
-            this.grpMap.Controls.Add(this.picMap);
-            this.grpMap.Location = new System.Drawing.Point(305, 27);
-            this.grpMap.MaximumSize = new System.Drawing.Size(1024, 1024);
-            this.grpMap.Name = "grpMap";
-            this.grpMap.Size = new System.Drawing.Size(694, 632);
-            this.grpMap.TabIndex = 2;
-            this.grpMap.TabStop = false;
-            // 
-            // picMap
-            // 
-            this.picMap.Location = new System.Drawing.Point(0, 0);
-            this.picMap.Name = "picMap";
-            this.picMap.Size = new System.Drawing.Size(1024, 1024);
-            this.picMap.TabIndex = 1;
-            this.picMap.TabStop = false;
-            this.picMap.DoubleClick += new System.EventHandler(this.picMap_DoubleClick);
-            this.picMap.MouseDown += new System.Windows.Forms.MouseEventHandler(this.picMap_MouseDown);
-            this.picMap.MouseMove += new System.Windows.Forms.MouseEventHandler(this.picMap_MouseMove);
-            this.picMap.MouseUp += new System.Windows.Forms.MouseEventHandler(this.picMap_MouseUp);
-            // 
-            // hScrollMap
-            // 
-            this.hScrollMap.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.hScrollMap.LargeChange = 1;
-            this.hScrollMap.Location = new System.Drawing.Point(305, 662);
-            this.hScrollMap.MaximumSize = new System.Drawing.Size(1024, 17);
-            this.hScrollMap.Name = "hScrollMap";
-            this.hScrollMap.Size = new System.Drawing.Size(694, 17);
-            this.hScrollMap.TabIndex = 3;
-            this.hScrollMap.Scroll += new System.Windows.Forms.ScrollEventHandler(this.hScrollMap_Scroll);
-            // 
-            // vScrollMap
-            // 
-            this.vScrollMap.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.vScrollMap.LargeChange = 1;
-            this.vScrollMap.Location = new System.Drawing.Point(1000, 27);
-            this.vScrollMap.MaximumSize = new System.Drawing.Size(17, 960);
-            this.vScrollMap.Name = "vScrollMap";
-            this.vScrollMap.Size = new System.Drawing.Size(17, 632);
-            this.vScrollMap.TabIndex = 4;
-            this.vScrollMap.Scroll += new System.Windows.Forms.ScrollEventHandler(this.vScrollMap_Scroll);
-            // 
             // grpLayer
             // 
-            this.grpLayer.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left)));
+            this.grpLayer.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.grpLayer.Controls.Add(this.pnlTilesetContainer);
             this.grpLayer.Controls.Add(this.cmbAutotile);
             this.grpLayer.Controls.Add(this.lblCurLayer);
             this.grpLayer.Controls.Add(this.cmbTilesets);
-            this.grpLayer.Controls.Add(this.hScrollTileset);
-            this.grpLayer.Controls.Add(this.vScrollTileset);
-            this.grpLayer.Controls.Add(this.grpTileset);
-            this.grpLayer.Location = new System.Drawing.Point(13, 27);
+            this.grpLayer.Location = new System.Drawing.Point(0, 0);
             this.grpLayer.Name = "grpLayer";
-            this.grpLayer.Size = new System.Drawing.Size(290, 632);
+            this.grpLayer.Size = new System.Drawing.Size(290, 652);
             this.grpLayer.TabIndex = 5;
             this.grpLayer.TabStop = false;
             this.grpLayer.Text = "Tileset Container";
@@ -473,61 +421,15 @@ namespace Intersect_Editor.Forms
             this.cmbTilesets.TabIndex = 7;
             this.cmbTilesets.SelectedIndexChanged += new System.EventHandler(this.cmbTilesets_SelectedIndexChanged);
             // 
-            // hScrollTileset
-            // 
-            this.hScrollTileset.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.hScrollTileset.LargeChange = 1;
-            this.hScrollTileset.Location = new System.Drawing.Point(7, 609);
-            this.hScrollTileset.MaximumSize = new System.Drawing.Size(960, 17);
-            this.hScrollTileset.Name = "hScrollTileset";
-            this.hScrollTileset.Size = new System.Drawing.Size(198, 17);
-            this.hScrollTileset.TabIndex = 6;
-            this.hScrollTileset.Scroll += new System.Windows.Forms.ScrollEventHandler(this.hScrollTileset_Scroll);
-            // 
-            // vScrollTileset
-            // 
-            this.vScrollTileset.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.vScrollTileset.LargeChange = 1;
-            this.vScrollTileset.Location = new System.Drawing.Point(269, 74);
-            this.vScrollTileset.MaximumSize = new System.Drawing.Size(17, 960);
-            this.vScrollTileset.Name = "vScrollTileset";
-            this.vScrollTileset.Size = new System.Drawing.Size(17, 532);
-            this.vScrollTileset.TabIndex = 5;
-            this.vScrollTileset.Scroll += new System.Windows.Forms.ScrollEventHandler(this.vScrollTileset_Scroll);
-            // 
-            // grpTileset
-            // 
-            this.grpTileset.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left)));
-            this.grpTileset.Controls.Add(this.picTileset);
-            this.grpTileset.Location = new System.Drawing.Point(7, 74);
-            this.grpTileset.Name = "grpTileset";
-            this.grpTileset.Size = new System.Drawing.Size(258, 532);
-            this.grpTileset.TabIndex = 0;
-            this.grpTileset.TabStop = false;
-            // 
-            // picTileset
-            // 
-            this.picTileset.Location = new System.Drawing.Point(0, 0);
-            this.picTileset.Name = "picTileset";
-            this.picTileset.Size = new System.Drawing.Size(1024, 1024);
-            this.picTileset.TabIndex = 2;
-            this.picTileset.TabStop = false;
-            this.picTileset.MouseDown += new System.Windows.Forms.MouseEventHandler(this.picTileset_MouseDown);
-            this.picTileset.MouseMove += new System.Windows.Forms.MouseEventHandler(this.picTileset_MouseMove);
-            this.picTileset.MouseUp += new System.Windows.Forms.MouseEventHandler(this.picTileset_MouseUp);
-            // 
             // grpMapList
             // 
             this.grpMapList.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
             this.grpMapList.Controls.Add(this.lstGameMaps);
             this.grpMapList.Controls.Add(this.lblCloseMapList);
-            this.grpMapList.Location = new System.Drawing.Point(11, 27);
+            this.grpMapList.Location = new System.Drawing.Point(0, 0);
             this.grpMapList.Name = "grpMapList";
-            this.grpMapList.Size = new System.Drawing.Size(290, 632);
+            this.grpMapList.Size = new System.Drawing.Size(290, 630);
             this.grpMapList.TabIndex = 6;
             this.grpMapList.TabStop = false;
             this.grpMapList.Text = "Map List";
@@ -568,9 +470,9 @@ namespace Intersect_Editor.Forms
             this.grpLightEditor.Controls.Add(this.lblOffsetX);
             this.grpLightEditor.Controls.Add(this.btnLightEditorRevert);
             this.grpLightEditor.Controls.Add(this.btnLightEditorClose);
-            this.grpLightEditor.Location = new System.Drawing.Point(12, 27);
+            this.grpLightEditor.Location = new System.Drawing.Point(0, 0);
             this.grpLightEditor.Name = "grpLightEditor";
-            this.grpLightEditor.Size = new System.Drawing.Size(290, 632);
+            this.grpLightEditor.Size = new System.Drawing.Size(290, 630);
             this.grpLightEditor.TabIndex = 7;
             this.grpLightEditor.TabStop = false;
             this.grpLightEditor.Text = "Light Editor";
@@ -701,7 +603,7 @@ namespace Intersect_Editor.Forms
             this.grpAttributes.Controls.Add(this.grpItem);
             this.grpAttributes.Controls.Add(this.grpWarp);
             this.grpAttributes.Controls.Add(this.grpZDimension);
-            this.grpAttributes.Location = new System.Drawing.Point(11, 27);
+            this.grpAttributes.Location = new System.Drawing.Point(0, 0);
             this.grpAttributes.Name = "grpAttributes";
             this.grpAttributes.Size = new System.Drawing.Size(292, 632);
             this.grpAttributes.TabIndex = 8;
@@ -1126,9 +1028,9 @@ namespace Intersect_Editor.Forms
             this.grpMapProperties.Controls.Add(this.txtMapName);
             this.grpMapProperties.Controls.Add(this.label1);
             this.grpMapProperties.Controls.Add(this.btnCloseProperties);
-            this.grpMapProperties.Location = new System.Drawing.Point(9, 27);
+            this.grpMapProperties.Location = new System.Drawing.Point(0, 0);
             this.grpMapProperties.Name = "grpMapProperties";
-            this.grpMapProperties.Size = new System.Drawing.Size(292, 632);
+            this.grpMapProperties.Size = new System.Drawing.Size(292, 630);
             this.grpMapProperties.TabIndex = 9;
             this.grpMapProperties.TabStop = false;
             this.grpMapProperties.Text = "Map Properties";
@@ -1549,20 +1451,77 @@ namespace Intersect_Editor.Forms
             this.btnCloseProperties.Text = "Close";
             this.btnCloseProperties.UseVisualStyleBackColor = true;
             // 
+            // spltContainer
+            // 
+            this.spltContainer.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.spltContainer.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.spltContainer.FixedPanel = System.Windows.Forms.FixedPanel.Panel1;
+            this.spltContainer.Location = new System.Drawing.Point(0, 29);
+            this.spltContainer.Name = "spltContainer";
+            // 
+            // spltContainer.Panel1
+            // 
+            this.spltContainer.Panel1.Controls.Add(this.grpLayer);
+            this.spltContainer.Panel1.Controls.Add(this.grpLightEditor);
+            this.spltContainer.Panel1.Controls.Add(this.grpAttributes);
+            this.spltContainer.Panel1.Controls.Add(this.grpMapProperties);
+            this.spltContainer.Panel1.Controls.Add(this.grpMapList);
+            this.spltContainer.Panel1MinSize = 292;
+            // 
+            // spltContainer.Panel2
+            // 
+            this.spltContainer.Panel2.AutoScroll = true;
+            this.spltContainer.Panel2.Controls.Add(this.picMap);
+            this.spltContainer.Panel2MinSize = 600;
+            this.spltContainer.Size = new System.Drawing.Size(1020, 653);
+            this.spltContainer.SplitterDistance = 292;
+            this.spltContainer.TabIndex = 2;
+            // 
+            // picMap
+            // 
+            this.picMap.Location = new System.Drawing.Point(3, 1);
+            this.picMap.Name = "picMap";
+            this.picMap.Size = new System.Drawing.Size(32, 32);
+            this.picMap.TabIndex = 1;
+            this.picMap.TabStop = false;
+            this.picMap.DoubleClick += new System.EventHandler(this.picMap_DoubleClick);
+            this.picMap.MouseDown += new System.Windows.Forms.MouseEventHandler(this.picMap_MouseDown);
+            this.picMap.MouseEnter += new System.EventHandler(this.picMap_MouseEnter);
+            this.picMap.MouseMove += new System.Windows.Forms.MouseEventHandler(this.picMap_MouseMove);
+            this.picMap.MouseUp += new System.Windows.Forms.MouseEventHandler(this.picMap_MouseUp);
+            // 
+            // picTileset
+            // 
+            this.picTileset.Location = new System.Drawing.Point(1, 1);
+            this.picTileset.Name = "picTileset";
+            this.picTileset.Size = new System.Drawing.Size(193, 152);
+            this.picTileset.TabIndex = 2;
+            this.picTileset.TabStop = false;
+            this.picTileset.MouseDown += new System.Windows.Forms.MouseEventHandler(this.picTileset_MouseDown);
+            this.picTileset.MouseMove += new System.Windows.Forms.MouseEventHandler(this.picTileset_MouseMove);
+            this.picTileset.MouseUp += new System.Windows.Forms.MouseEventHandler(this.picTileset_MouseUp);
+            // 
+            // pnlTilesetContainer
+            // 
+            this.pnlTilesetContainer.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.pnlTilesetContainer.AutoScroll = true;
+            this.pnlTilesetContainer.Controls.Add(this.picTileset);
+            this.pnlTilesetContainer.Location = new System.Drawing.Point(7, 75);
+            this.pnlTilesetContainer.Name = "pnlTilesetContainer";
+            this.pnlTilesetContainer.Size = new System.Drawing.Size(277, 573);
+            this.pnlTilesetContainer.TabIndex = 10;
+            // 
             // FrmMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1020, 682);
-            this.Controls.Add(this.vScrollMap);
-            this.Controls.Add(this.hScrollMap);
-            this.Controls.Add(this.grpMap);
             this.Controls.Add(this.menuStrip);
-            this.Controls.Add(this.grpAttributes);
-            this.Controls.Add(this.grpLightEditor);
-            this.Controls.Add(this.grpMapList);
-            this.Controls.Add(this.grpLayer);
-            this.Controls.Add(this.grpMapProperties);
+            this.Controls.Add(this.spltContainer);
             this.MainMenuStrip = this.menuStrip;
             this.Name = "FrmMain";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
@@ -1570,12 +1529,8 @@ namespace Intersect_Editor.Forms
             this.Load += new System.EventHandler(this.frmMain_Load);
             this.menuStrip.ResumeLayout(false);
             this.menuStrip.PerformLayout();
-            this.grpMap.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.picMap)).EndInit();
             this.grpLayer.ResumeLayout(false);
             this.grpLayer.PerformLayout();
-            this.grpTileset.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.picTileset)).EndInit();
             this.grpMapList.ResumeLayout(false);
             this.grpMapList.PerformLayout();
             this.grpLightEditor.ResumeLayout(false);
@@ -1603,6 +1558,13 @@ namespace Intersect_Editor.Forms
             this.grpManage.ResumeLayout(false);
             this.grpSpawnLoc.ResumeLayout(false);
             this.grpSpawnLoc.PerformLayout();
+            this.spltContainer.Panel1.ResumeLayout(false);
+            this.spltContainer.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.spltContainer)).EndInit();
+            this.spltContainer.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.picMap)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.picTileset)).EndInit();
+            this.pnlTilesetContainer.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -1617,15 +1579,7 @@ namespace Intersect_Editor.Forms
         private System.Windows.Forms.ToolStripMenuItem viewToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem helpToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem aboutToolStripMenuItem;
-        private System.Windows.Forms.GroupBox grpMap;
-        public System.Windows.Forms.PictureBox picMap;
-        private System.Windows.Forms.HScrollBar hScrollMap;
-        private System.Windows.Forms.VScrollBar vScrollMap;
         private System.Windows.Forms.GroupBox grpLayer;
-        private System.Windows.Forms.HScrollBar hScrollTileset;
-        private System.Windows.Forms.VScrollBar vScrollTileset;
-        private System.Windows.Forms.GroupBox grpTileset;
-        public System.Windows.Forms.PictureBox picTileset;
         public System.Windows.Forms.ComboBox cmbTilesets;
         private System.Windows.Forms.Label lblCurLayer;
         private System.Windows.Forms.ToolStripMenuItem saveMapToolStripMenuItem;
@@ -1741,6 +1695,10 @@ namespace Intersect_Editor.Forms
         private GroupBox grpResource;
         private Label lblResource;
         private HScrollBar scrlResource;
+        private SplitContainer spltContainer;
+        public PictureBox picMap;
+        private Panel pnlTilesetContainer;
+        public PictureBox picTileset;
     }
 }
 

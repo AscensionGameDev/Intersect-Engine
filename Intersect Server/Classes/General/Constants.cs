@@ -46,7 +46,7 @@ namespace Intersect_Server.Classes
         public const int MaxPlayerSkills = 35;
 
         public const int MapWidth = 30;
-        public const int MapHeight = 30;
+        public const int MapHeight = 26;
         public const int LayerCount = 5;
 
         public const int SpawnMap = 0;
