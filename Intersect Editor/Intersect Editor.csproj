@@ -100,6 +100,12 @@
     <Compile Include="Forms\frmAnimation.Designer.cs">
       <DependentUpon>frmAnimation.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\frmClass.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\frmClass.Designer.cs">
+      <DependentUpon>frmClass.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\frmItem.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -157,6 +163,9 @@
     <Compile Include="Classes\Networking\Network.cs" />
     <EmbeddedResource Include="Forms\frmAnimation.resx">
       <DependentUpon>frmAnimation.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\frmClass.resx">
+      <DependentUpon>frmClass.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\frmEvent.resx">
       <DependentUpon>frmEvent.cs</DependentUpon>

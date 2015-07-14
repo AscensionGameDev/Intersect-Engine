@@ -46,6 +46,10 @@ namespace Intersect_Server.Classes
         //Respawn
         public long RespawnTime;
 
+        //Behaviour
+        private byte Behaviour = 0;
+        private byte Range = 0;
+
         public Npc(int index, NpcStruct myBase)
             : base(index)
         {
@@ -54,6 +58,8 @@ namespace Intersect_Server.Classes
             myBase.Stat.CopyTo(Stat, 0);
             myBase.MaxVital.CopyTo(Vital, 0);
             myBase.MaxVital.CopyTo(MaxVital, 0);
+            Behaviour = myBase.Behavior;
+            Range = (byte)myBase.SightRange;
         }
 
         public override void Die()
@@ -87,7 +93,37 @@ namespace Intersect_Server.Classes
                     targetMap = MyTarget.CurrentMap;
                     targetX = MyTarget.CurrentX;
                     targetY = MyTarget.CurrentY;
+                }
+                else //Find a target if able
+                {
+                    if (Behaviour == 1) // Check if attack on sight
+                    {
+                        int x = CurrentX - Range;
+                        int y = CurrentY - Range;
+                        int xMax = CurrentX + Range;
+                        int yMax = CurrentY + Range;
 
+                        //Check that not going out of the map boundaries
+                        if (x < 0) x = 0;
+                        if (y < 0) y = 0;
+                        if (xMax >= Constants.MapWidth) xMax = Constants.MapWidth;
+                        if (yMax >= Constants.MapHeight) yMax = Constants.MapHeight;
+
+                        for (int n = 0; n < Globals.GameMaps[CurrentMap].Entities.Count; n++)
+                        {
+                            if (Globals.GameMaps[CurrentMap].Entities[n].GetType() == typeof(Player))
+                            {
+                                if (x < Globals.GameMaps[CurrentMap].Entities[n].CurrentX && xMax > Globals.GameMaps[CurrentMap].Entities[n].CurrentX)
+                                {
+                                    if (y < Globals.GameMaps[CurrentMap].Entities[n].CurrentY && yMax > Globals.GameMaps[CurrentMap].Entities[n].CurrentY)
+                                    {
+                                        // In range, so make a target
+                                        MyTarget = Globals.GameMaps[CurrentMap].Entities[n];
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }
 
                 if (targetMap == -1)
@@ -226,39 +262,39 @@ namespace Intersect_Server.Classes
                                 {
                                     if (Globals.Entities[i].CurrentMap == Database.MapGrids[myGrid].MyGrid[x, y])
                                     {
-                                        closedList.Add(new Point((x - Globals.GameMaps[CurrentMap].MapGridX + 1) * 30 + Globals.Entities[i].CurrentX, (y - Globals.GameMaps[CurrentMap].MapGridY + 1) * 30 + Globals.Entities[i].CurrentY, -1, 0));
+                                        closedList.Add(new Point((x - Globals.GameMaps[CurrentMap].MapGridX + 1) * Constants.MapWidth + Globals.Entities[i].CurrentX, (y - Globals.GameMaps[CurrentMap].MapGridY + 1) * Constants.MapHeight + Globals.Entities[i].CurrentY, -1, 0));
                                     }
                                 }
                             }
                         }
-                        for (var x1 = 0; x1 < 30; x1++)
+                        for (var x1 = 0; x1 < Constants.MapWidth; x1++)
                         {
-                            for (var y1 = 0; y1 < 30; y1++)
+                            for (var y1 = 0; y1 < Constants.MapHeight; y1++)
                             {
                                 if (Globals.GameMaps[Database.MapGrids[myGrid].MyGrid[x, y]].Attributes[x1, y1].value == (int)Enums.MapAttributes.Blocked || Globals.GameMaps[Database.MapGrids[myGrid].MyGrid[x, y]].Attributes[x1, y1].value == (int)Enums.MapAttributes.NPCAvoid)
                                 {
-                                    closedList.Add(new Point((x - Globals.GameMaps[CurrentMap].MapGridX + 1) * 30 + x1, (y - Globals.GameMaps[CurrentMap].MapGridY + 1) * 30 + y1, -1, 0));
+                                    closedList.Add(new Point((x - Globals.GameMaps[CurrentMap].MapGridX + 1) * Constants.MapWidth + x1, (y - Globals.GameMaps[CurrentMap].MapGridY + 1) * Constants.MapHeight + y1, -1, 0));
                                 }
                                 if (Database.MapGrids[myGrid].MyGrid[x, y] == _pathFindingLocation.TargetMap && x1 == _pathFindingLocation.TargetX && y1 == _pathFindingLocation.TargetY)
                                 {
-                                    targetX = (x - Globals.GameMaps[CurrentMap].MapGridX + 1) * 30 + x1;
-                                    targetY = (y - Globals.GameMaps[CurrentMap].MapGridY + 1) * 30 + y1;
+                                    targetX = (x - Globals.GameMaps[CurrentMap].MapGridX + 1) * Constants.MapWidth + x1;
+                                    targetY = (y - Globals.GameMaps[CurrentMap].MapGridY + 1) * Constants.MapHeight + y1;
                                 }
                                 if (Database.MapGrids[myGrid].MyGrid[x, y] == CurrentMap && x1 == CurrentX && y1 == CurrentY)
                                 {
-                                    startX = (x - Globals.GameMaps[CurrentMap].MapGridX + 1) * 30 + x1;
-                                    startY = (y - Globals.GameMaps[CurrentMap].MapGridY + 1) * 30 + y1;
+                                    startX = (x - Globals.GameMaps[CurrentMap].MapGridX + 1) * Constants.MapWidth + x1;
+                                    startY = (y - Globals.GameMaps[CurrentMap].MapGridY + 1) * Constants.MapHeight + y1;
                                 }
                             }
                         }
                     }
                     else
                     {
-                        for (var x1 = 0; x1 < 30; x1++)
+                        for (var x1 = 0; x1 < Constants.MapWidth; x1++)
                         {
-                            for (var y1 = 0; y1 < 30; y1++)
+                            for (var y1 = 0; y1 < Constants.MapHeight; y1++)
                             {
-                                closedList.Add(new Point((x - Globals.GameMaps[CurrentMap].MapGridX + 1) * 30 + x1, (y - Globals.GameMaps[CurrentMap].MapGridY + 1) * 30 + y1, -1, 0));
+                                closedList.Add(new Point((x - Globals.GameMaps[CurrentMap].MapGridX + 1) * Constants.MapWidth + x1, (y - Globals.GameMaps[CurrentMap].MapGridY + 1) * Constants.MapHeight + y1, -1, 0));
                             }
                         }
                     }

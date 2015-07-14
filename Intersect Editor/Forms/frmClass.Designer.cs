@@ -1,0 +1,664 @@
+﻿namespace Intersect_Editor.Forms
+{
+    partial class frmClass
+    {
+        /// <summary>
+        /// Required designer variable.
+        /// </summary>
+        private System.ComponentModel.IContainer components = null;
+
+        /// <summary>
+        /// Clean up any resources being used.
+        /// </summary>
+        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing && (components != null))
+            {
+                components.Dispose();
+            }
+            base.Dispose(disposing);
+        }
+
+        #region Windows Form Designer generated code
+
+        /// <summary>
+        /// Required method for Designer support - do not modify
+        /// the contents of this method with the code editor.
+        /// </summary>
+        private void InitializeComponent()
+        {
+            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.btnCancel = new System.Windows.Forms.Button();
+            this.btnDelete = new System.Windows.Forms.Button();
+            this.btnSave = new System.Windows.Forms.Button();
+            this.lstClasses = new System.Windows.Forms.ListBox();
+            this.groupBox4 = new System.Windows.Forms.GroupBox();
+            this.txtDropAmount = new System.Windows.Forms.TextBox();
+            this.lblDropAmount = new System.Windows.Forms.Label();
+            this.scrlDropChance = new System.Windows.Forms.HScrollBar();
+            this.lblDropChance = new System.Windows.Forms.Label();
+            this.scrlDropItem = new System.Windows.Forms.HScrollBar();
+            this.lblDropItem = new System.Windows.Forms.Label();
+            this.scrlDropIndex = new System.Windows.Forms.HScrollBar();
+            this.lblDropIndex = new System.Windows.Forms.Label();
+            this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.txtMana = new System.Windows.Forms.TextBox();
+            this.txtHP = new System.Windows.Forms.TextBox();
+            this.lblMana = new System.Windows.Forms.Label();
+            this.lblHP = new System.Windows.Forms.Label();
+            this.lblSpd = new System.Windows.Forms.Label();
+            this.lblMR = new System.Windows.Forms.Label();
+            this.lblDef = new System.Windows.Forms.Label();
+            this.lblMag = new System.Windows.Forms.Label();
+            this.lblStr = new System.Windows.Forms.Label();
+            this.scrlDef = new System.Windows.Forms.HScrollBar();
+            this.scrlSpd = new System.Windows.Forms.HScrollBar();
+            this.scrlMR = new System.Windows.Forms.HScrollBar();
+            this.scrlMag = new System.Windows.Forms.HScrollBar();
+            this.scrlStr = new System.Windows.Forms.HScrollBar();
+            this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.btnRemove = new System.Windows.Forms.Button();
+            this.btnAdd = new System.Windows.Forms.Button();
+            this.rbFemale = new System.Windows.Forms.RadioButton();
+            this.rbMale = new System.Windows.Forms.RadioButton();
+            this.lstSprites = new System.Windows.Forms.ListBox();
+            this.cmbSprite = new System.Windows.Forms.ComboBox();
+            this.lblPic = new System.Windows.Forms.Label();
+            this.picNpc = new System.Windows.Forms.PictureBox();
+            this.label1 = new System.Windows.Forms.Label();
+            this.txtName = new System.Windows.Forms.TextBox();
+            this.groupBox6 = new System.Windows.Forms.GroupBox();
+            this.lblLevel = new System.Windows.Forms.Label();
+            this.scrlLevel = new System.Windows.Forms.HScrollBar();
+            this.lblSpellNum = new System.Windows.Forms.Label();
+            this.scrlSpell = new System.Windows.Forms.HScrollBar();
+            this.btnRemoveSpell = new System.Windows.Forms.Button();
+            this.btnAddSpell = new System.Windows.Forms.Button();
+            this.lstSpells = new System.Windows.Forms.ListBox();
+            this.lblPoints = new System.Windows.Forms.Label();
+            this.scrlPoints = new System.Windows.Forms.HScrollBar();
+            this.groupBox1.SuspendLayout();
+            this.groupBox4.SuspendLayout();
+            this.groupBox3.SuspendLayout();
+            this.groupBox2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.picNpc)).BeginInit();
+            this.groupBox6.SuspendLayout();
+            this.SuspendLayout();
+            // 
+            // groupBox1
+            // 
+            this.groupBox1.Controls.Add(this.btnCancel);
+            this.groupBox1.Controls.Add(this.btnDelete);
+            this.groupBox1.Controls.Add(this.btnSave);
+            this.groupBox1.Controls.Add(this.lstClasses);
+            this.groupBox1.Location = new System.Drawing.Point(12, 12);
+            this.groupBox1.Name = "groupBox1";
+            this.groupBox1.Size = new System.Drawing.Size(203, 447);
+            this.groupBox1.TabIndex = 15;
+            this.groupBox1.TabStop = false;
+            this.groupBox1.Text = "Classes";
+            // 
+            // btnCancel
+            // 
+            this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            this.btnCancel.Location = new System.Drawing.Point(7, 413);
+            this.btnCancel.Name = "btnCancel";
+            this.btnCancel.Size = new System.Drawing.Size(190, 27);
+            this.btnCancel.TabIndex = 4;
+            this.btnCancel.Text = "Cancel";
+            this.btnCancel.UseVisualStyleBackColor = true;
+            // 
+            // btnDelete
+            // 
+            this.btnDelete.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            this.btnDelete.Location = new System.Drawing.Point(6, 380);
+            this.btnDelete.Name = "btnDelete";
+            this.btnDelete.Size = new System.Drawing.Size(190, 27);
+            this.btnDelete.TabIndex = 3;
+            this.btnDelete.Text = "Delete";
+            this.btnDelete.UseVisualStyleBackColor = true;
+            // 
+            // btnSave
+            // 
+            this.btnSave.Location = new System.Drawing.Point(6, 347);
+            this.btnSave.Name = "btnSave";
+            this.btnSave.Size = new System.Drawing.Size(190, 27);
+            this.btnSave.TabIndex = 2;
+            this.btnSave.Text = "Save";
+            this.btnSave.UseVisualStyleBackColor = true;
+            // 
+            // lstClasses
+            // 
+            this.lstClasses.FormattingEnabled = true;
+            this.lstClasses.Location = new System.Drawing.Point(6, 19);
+            this.lstClasses.Name = "lstClasses";
+            this.lstClasses.Size = new System.Drawing.Size(191, 316);
+            this.lstClasses.TabIndex = 1;
+            // 
+            // groupBox4
+            // 
+            this.groupBox4.BackColor = System.Drawing.SystemColors.Control;
+            this.groupBox4.Controls.Add(this.txtDropAmount);
+            this.groupBox4.Controls.Add(this.lblDropAmount);
+            this.groupBox4.Controls.Add(this.scrlDropChance);
+            this.groupBox4.Controls.Add(this.lblDropChance);
+            this.groupBox4.Controls.Add(this.scrlDropItem);
+            this.groupBox4.Controls.Add(this.lblDropItem);
+            this.groupBox4.Controls.Add(this.scrlDropIndex);
+            this.groupBox4.Controls.Add(this.lblDropIndex);
+            this.groupBox4.Location = new System.Drawing.Point(465, 293);
+            this.groupBox4.Name = "groupBox4";
+            this.groupBox4.Size = new System.Drawing.Size(156, 166);
+            this.groupBox4.TabIndex = 18;
+            this.groupBox4.TabStop = false;
+            this.groupBox4.Text = "Starting Items";
+            // 
+            // txtDropAmount
+            // 
+            this.txtDropAmount.Location = new System.Drawing.Point(9, 99);
+            this.txtDropAmount.Name = "txtDropAmount";
+            this.txtDropAmount.Size = new System.Drawing.Size(138, 20);
+            this.txtDropAmount.TabIndex = 16;
+            // 
+            // lblDropAmount
+            // 
+            this.lblDropAmount.AutoSize = true;
+            this.lblDropAmount.Location = new System.Drawing.Point(6, 82);
+            this.lblDropAmount.Name = "lblDropAmount";
+            this.lblDropAmount.Size = new System.Drawing.Size(46, 13);
+            this.lblDropAmount.TabIndex = 15;
+            this.lblDropAmount.Text = "Amount:";
+            // 
+            // scrlDropChance
+            // 
+            this.scrlDropChance.LargeChange = 1;
+            this.scrlDropChance.Location = new System.Drawing.Point(6, 135);
+            this.scrlDropChance.Name = "scrlDropChance";
+            this.scrlDropChance.Size = new System.Drawing.Size(141, 18);
+            this.scrlDropChance.TabIndex = 14;
+            // 
+            // lblDropChance
+            // 
+            this.lblDropChance.AutoSize = true;
+            this.lblDropChance.Location = new System.Drawing.Point(6, 120);
+            this.lblDropChance.Name = "lblDropChance";
+            this.lblDropChance.Size = new System.Drawing.Size(85, 13);
+            this.lblDropChance.TabIndex = 13;
+            this.lblDropChance.Text = "Chance (0/100):";
+            // 
+            // scrlDropItem
+            // 
+            this.scrlDropItem.LargeChange = 1;
+            this.scrlDropItem.Location = new System.Drawing.Point(6, 64);
+            this.scrlDropItem.Maximum = 3600;
+            this.scrlDropItem.Name = "scrlDropItem";
+            this.scrlDropItem.Size = new System.Drawing.Size(141, 18);
+            this.scrlDropItem.TabIndex = 12;
+            // 
+            // lblDropItem
+            // 
+            this.lblDropItem.AutoSize = true;
+            this.lblDropItem.Location = new System.Drawing.Point(6, 49);
+            this.lblDropItem.Name = "lblDropItem";
+            this.lblDropItem.Size = new System.Drawing.Size(39, 13);
+            this.lblDropItem.TabIndex = 11;
+            this.lblDropItem.Text = "Item: 1";
+            // 
+            // scrlDropIndex
+            // 
+            this.scrlDropIndex.LargeChange = 1;
+            this.scrlDropIndex.Location = new System.Drawing.Point(6, 31);
+            this.scrlDropIndex.Maximum = 10;
+            this.scrlDropIndex.Minimum = 1;
+            this.scrlDropIndex.Name = "scrlDropIndex";
+            this.scrlDropIndex.Size = new System.Drawing.Size(141, 18);
+            this.scrlDropIndex.TabIndex = 10;
+            this.scrlDropIndex.Value = 1;
+            // 
+            // lblDropIndex
+            // 
+            this.lblDropIndex.AutoSize = true;
+            this.lblDropIndex.Location = new System.Drawing.Point(6, 16);
+            this.lblDropIndex.Name = "lblDropIndex";
+            this.lblDropIndex.Size = new System.Drawing.Size(68, 13);
+            this.lblDropIndex.TabIndex = 9;
+            this.lblDropIndex.Text = "Item Index: 1";
+            // 
+            // groupBox3
+            // 
+            this.groupBox3.Controls.Add(this.lblPoints);
+            this.groupBox3.Controls.Add(this.scrlPoints);
+            this.groupBox3.Controls.Add(this.txtMana);
+            this.groupBox3.Controls.Add(this.txtHP);
+            this.groupBox3.Controls.Add(this.lblMana);
+            this.groupBox3.Controls.Add(this.lblHP);
+            this.groupBox3.Controls.Add(this.lblSpd);
+            this.groupBox3.Controls.Add(this.lblMR);
+            this.groupBox3.Controls.Add(this.lblDef);
+            this.groupBox3.Controls.Add(this.lblMag);
+            this.groupBox3.Controls.Add(this.lblStr);
+            this.groupBox3.Controls.Add(this.scrlDef);
+            this.groupBox3.Controls.Add(this.scrlSpd);
+            this.groupBox3.Controls.Add(this.scrlMR);
+            this.groupBox3.Controls.Add(this.scrlMag);
+            this.groupBox3.Controls.Add(this.scrlStr);
+            this.groupBox3.Location = new System.Drawing.Point(221, 239);
+            this.groupBox3.Name = "groupBox3";
+            this.groupBox3.Size = new System.Drawing.Size(238, 220);
+            this.groupBox3.TabIndex = 17;
+            this.groupBox3.TabStop = false;
+            this.groupBox3.Text = "Base Stats:";
+            // 
+            // txtMana
+            // 
+            this.txtMana.Location = new System.Drawing.Point(141, 35);
+            this.txtMana.Name = "txtMana";
+            this.txtMana.Size = new System.Drawing.Size(77, 20);
+            this.txtMana.TabIndex = 16;
+            // 
+            // txtHP
+            // 
+            this.txtHP.Location = new System.Drawing.Point(13, 35);
+            this.txtHP.Name = "txtHP";
+            this.txtHP.Size = new System.Drawing.Size(77, 20);
+            this.txtHP.TabIndex = 14;
+            // 
+            // lblMana
+            // 
+            this.lblMana.AutoSize = true;
+            this.lblMana.Location = new System.Drawing.Point(138, 16);
+            this.lblMana.Name = "lblMana";
+            this.lblMana.Size = new System.Drawing.Size(37, 13);
+            this.lblMana.TabIndex = 15;
+            this.lblMana.Text = "Mana:";
+            // 
+            // lblHP
+            // 
+            this.lblHP.AutoSize = true;
+            this.lblHP.Location = new System.Drawing.Point(10, 19);
+            this.lblHP.Name = "lblHP";
+            this.lblHP.Size = new System.Drawing.Size(25, 13);
+            this.lblHP.TabIndex = 14;
+            this.lblHP.Text = "HP:";
+            // 
+            // lblSpd
+            // 
+            this.lblSpd.AutoSize = true;
+            this.lblSpd.Location = new System.Drawing.Point(10, 173);
+            this.lblSpd.Name = "lblSpd";
+            this.lblSpd.Size = new System.Drawing.Size(80, 13);
+            this.lblSpd.TabIndex = 9;
+            this.lblSpd.Text = "Move Speed: 0";
+            // 
+            // lblMR
+            // 
+            this.lblMR.AutoSize = true;
+            this.lblMR.Location = new System.Drawing.Point(141, 122);
+            this.lblMR.Name = "lblMR";
+            this.lblMR.Size = new System.Drawing.Size(80, 13);
+            this.lblMR.TabIndex = 8;
+            this.lblMR.Text = "Magic Resist: 0";
+            // 
+            // lblDef
+            // 
+            this.lblDef.AutoSize = true;
+            this.lblDef.Location = new System.Drawing.Point(10, 122);
+            this.lblDef.Name = "lblDef";
+            this.lblDef.Size = new System.Drawing.Size(46, 13);
+            this.lblDef.TabIndex = 7;
+            this.lblDef.Text = "Armor: 0";
+            // 
+            // lblMag
+            // 
+            this.lblMag.AutoSize = true;
+            this.lblMag.Location = new System.Drawing.Point(138, 70);
+            this.lblMag.Name = "lblMag";
+            this.lblMag.Size = new System.Drawing.Size(48, 13);
+            this.lblMag.TabIndex = 6;
+            this.lblMag.Text = "Magic: 0";
+            // 
+            // lblStr
+            // 
+            this.lblStr.AutoSize = true;
+            this.lblStr.Location = new System.Drawing.Point(10, 72);
+            this.lblStr.Name = "lblStr";
+            this.lblStr.Size = new System.Drawing.Size(59, 13);
+            this.lblStr.TabIndex = 5;
+            this.lblStr.Text = "Strength: 0";
+            // 
+            // scrlDef
+            // 
+            this.scrlDef.LargeChange = 1;
+            this.scrlDef.Location = new System.Drawing.Point(13, 137);
+            this.scrlDef.Maximum = 255;
+            this.scrlDef.Name = "scrlDef";
+            this.scrlDef.Size = new System.Drawing.Size(80, 17);
+            this.scrlDef.TabIndex = 4;
+            // 
+            // scrlSpd
+            // 
+            this.scrlSpd.LargeChange = 1;
+            this.scrlSpd.Location = new System.Drawing.Point(13, 186);
+            this.scrlSpd.Maximum = 255;
+            this.scrlSpd.Name = "scrlSpd";
+            this.scrlSpd.Size = new System.Drawing.Size(80, 17);
+            this.scrlSpd.TabIndex = 3;
+            // 
+            // scrlMR
+            // 
+            this.scrlMR.LargeChange = 1;
+            this.scrlMR.Location = new System.Drawing.Point(141, 136);
+            this.scrlMR.Maximum = 255;
+            this.scrlMR.Name = "scrlMR";
+            this.scrlMR.Size = new System.Drawing.Size(80, 17);
+            this.scrlMR.TabIndex = 2;
+            // 
+            // scrlMag
+            // 
+            this.scrlMag.LargeChange = 1;
+            this.scrlMag.Location = new System.Drawing.Point(141, 85);
+            this.scrlMag.Maximum = 255;
+            this.scrlMag.Name = "scrlMag";
+            this.scrlMag.Size = new System.Drawing.Size(80, 17);
+            this.scrlMag.TabIndex = 1;
+            // 
+            // scrlStr
+            // 
+            this.scrlStr.LargeChange = 1;
+            this.scrlStr.Location = new System.Drawing.Point(13, 91);
+            this.scrlStr.Maximum = 255;
+            this.scrlStr.Name = "scrlStr";
+            this.scrlStr.Size = new System.Drawing.Size(80, 17);
+            this.scrlStr.TabIndex = 0;
+            // 
+            // groupBox2
+            // 
+            this.groupBox2.Controls.Add(this.btnRemove);
+            this.groupBox2.Controls.Add(this.btnAdd);
+            this.groupBox2.Controls.Add(this.rbFemale);
+            this.groupBox2.Controls.Add(this.rbMale);
+            this.groupBox2.Controls.Add(this.lstSprites);
+            this.groupBox2.Controls.Add(this.cmbSprite);
+            this.groupBox2.Controls.Add(this.lblPic);
+            this.groupBox2.Controls.Add(this.picNpc);
+            this.groupBox2.Controls.Add(this.label1);
+            this.groupBox2.Controls.Add(this.txtName);
+            this.groupBox2.Location = new System.Drawing.Point(221, 12);
+            this.groupBox2.Name = "groupBox2";
+            this.groupBox2.Size = new System.Drawing.Size(238, 221);
+            this.groupBox2.TabIndex = 19;
+            this.groupBox2.TabStop = false;
+            this.groupBox2.Text = "General";
+            // 
+            // btnRemove
+            // 
+            this.btnRemove.Location = new System.Drawing.Point(164, 186);
+            this.btnRemove.Name = "btnRemove";
+            this.btnRemove.Size = new System.Drawing.Size(66, 23);
+            this.btnRemove.TabIndex = 21;
+            this.btnRemove.Text = "Remove";
+            this.btnRemove.UseVisualStyleBackColor = true;
+            // 
+            // btnAdd
+            // 
+            this.btnAdd.Location = new System.Drawing.Point(92, 186);
+            this.btnAdd.Name = "btnAdd";
+            this.btnAdd.Size = new System.Drawing.Size(66, 23);
+            this.btnAdd.TabIndex = 20;
+            this.btnAdd.Text = "Add";
+            this.btnAdd.UseVisualStyleBackColor = true;
+            // 
+            // rbFemale
+            // 
+            this.rbFemale.AutoSize = true;
+            this.rbFemale.Location = new System.Drawing.Point(11, 159);
+            this.rbFemale.Name = "rbFemale";
+            this.rbFemale.Size = new System.Drawing.Size(59, 17);
+            this.rbFemale.TabIndex = 19;
+            this.rbFemale.Text = "Female";
+            this.rbFemale.UseVisualStyleBackColor = true;
+            // 
+            // rbMale
+            // 
+            this.rbMale.AutoSize = true;
+            this.rbMale.Checked = true;
+            this.rbMale.Location = new System.Drawing.Point(11, 136);
+            this.rbMale.Name = "rbMale";
+            this.rbMale.Size = new System.Drawing.Size(48, 17);
+            this.rbMale.TabIndex = 18;
+            this.rbMale.TabStop = true;
+            this.rbMale.Text = "Male";
+            this.rbMale.UseVisualStyleBackColor = true;
+            // 
+            // lstSprites
+            // 
+            this.lstSprites.FormattingEnabled = true;
+            this.lstSprites.Location = new System.Drawing.Point(92, 46);
+            this.lstSprites.Name = "lstSprites";
+            this.lstSprites.Size = new System.Drawing.Size(138, 134);
+            this.lstSprites.TabIndex = 17;
+            // 
+            // cmbSprite
+            // 
+            this.cmbSprite.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbSprite.FormattingEnabled = true;
+            this.cmbSprite.Items.AddRange(new object[] {
+            "None"});
+            this.cmbSprite.Location = new System.Drawing.Point(6, 188);
+            this.cmbSprite.Name = "cmbSprite";
+            this.cmbSprite.Size = new System.Drawing.Size(80, 21);
+            this.cmbSprite.TabIndex = 16;
+            // 
+            // lblPic
+            // 
+            this.lblPic.AutoSize = true;
+            this.lblPic.Location = new System.Drawing.Point(8, 50);
+            this.lblPic.Name = "lblPic";
+            this.lblPic.Size = new System.Drawing.Size(42, 13);
+            this.lblPic.TabIndex = 15;
+            this.lblPic.Text = "Sprites:";
+            // 
+            // picNpc
+            // 
+            this.picNpc.BackColor = System.Drawing.Color.Black;
+            this.picNpc.Location = new System.Drawing.Point(11, 66);
+            this.picNpc.Name = "picNpc";
+            this.picNpc.Size = new System.Drawing.Size(64, 64);
+            this.picNpc.TabIndex = 14;
+            this.picNpc.TabStop = false;
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(6, 19);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(38, 13);
+            this.label1.TabIndex = 13;
+            this.label1.Text = "Name:";
+            // 
+            // txtName
+            // 
+            this.txtName.Location = new System.Drawing.Point(92, 19);
+            this.txtName.Name = "txtName";
+            this.txtName.Size = new System.Drawing.Size(138, 20);
+            this.txtName.TabIndex = 12;
+            // 
+            // groupBox6
+            // 
+            this.groupBox6.Controls.Add(this.lblLevel);
+            this.groupBox6.Controls.Add(this.scrlLevel);
+            this.groupBox6.Controls.Add(this.lblSpellNum);
+            this.groupBox6.Controls.Add(this.scrlSpell);
+            this.groupBox6.Controls.Add(this.btnRemoveSpell);
+            this.groupBox6.Controls.Add(this.btnAddSpell);
+            this.groupBox6.Controls.Add(this.lstSpells);
+            this.groupBox6.Location = new System.Drawing.Point(465, 12);
+            this.groupBox6.Name = "groupBox6";
+            this.groupBox6.Size = new System.Drawing.Size(156, 269);
+            this.groupBox6.TabIndex = 21;
+            this.groupBox6.TabStop = false;
+            this.groupBox6.Text = "Spells";
+            // 
+            // lblLevel
+            // 
+            this.lblLevel.AutoSize = true;
+            this.lblLevel.Location = new System.Drawing.Point(6, 196);
+            this.lblLevel.Name = "lblLevel";
+            this.lblLevel.Size = new System.Drawing.Size(45, 13);
+            this.lblLevel.TabIndex = 25;
+            this.lblLevel.Text = "Level: 0";
+            // 
+            // scrlLevel
+            // 
+            this.scrlLevel.LargeChange = 1;
+            this.scrlLevel.Location = new System.Drawing.Point(9, 209);
+            this.scrlLevel.Maximum = 255;
+            this.scrlLevel.Name = "scrlLevel";
+            this.scrlLevel.Size = new System.Drawing.Size(138, 17);
+            this.scrlLevel.TabIndex = 24;
+            // 
+            // lblSpellNum
+            // 
+            this.lblSpellNum.AutoSize = true;
+            this.lblSpellNum.Location = new System.Drawing.Point(6, 161);
+            this.lblSpellNum.Name = "lblSpellNum";
+            this.lblSpellNum.Size = new System.Drawing.Size(71, 13);
+            this.lblSpellNum.TabIndex = 23;
+            this.lblSpellNum.Text = "Spell: 0 None";
+            // 
+            // scrlSpell
+            // 
+            this.scrlSpell.LargeChange = 1;
+            this.scrlSpell.Location = new System.Drawing.Point(9, 174);
+            this.scrlSpell.Maximum = 255;
+            this.scrlSpell.Name = "scrlSpell";
+            this.scrlSpell.Size = new System.Drawing.Size(138, 17);
+            this.scrlSpell.TabIndex = 22;
+            // 
+            // btnRemoveSpell
+            // 
+            this.btnRemoveSpell.Location = new System.Drawing.Point(81, 236);
+            this.btnRemoveSpell.Name = "btnRemoveSpell";
+            this.btnRemoveSpell.Size = new System.Drawing.Size(66, 23);
+            this.btnRemoveSpell.TabIndex = 21;
+            this.btnRemoveSpell.Text = "Remove";
+            this.btnRemoveSpell.UseVisualStyleBackColor = true;
+            // 
+            // btnAddSpell
+            // 
+            this.btnAddSpell.Location = new System.Drawing.Point(6, 236);
+            this.btnAddSpell.Name = "btnAddSpell";
+            this.btnAddSpell.Size = new System.Drawing.Size(66, 23);
+            this.btnAddSpell.TabIndex = 20;
+            this.btnAddSpell.Text = "Add";
+            this.btnAddSpell.UseVisualStyleBackColor = true;
+            // 
+            // lstSpells
+            // 
+            this.lstSpells.FormattingEnabled = true;
+            this.lstSpells.Location = new System.Drawing.Point(9, 19);
+            this.lstSpells.Name = "lstSpells";
+            this.lstSpells.Size = new System.Drawing.Size(138, 134);
+            this.lstSpells.TabIndex = 17;
+            // 
+            // lblPoints
+            // 
+            this.lblPoints.AutoSize = true;
+            this.lblPoints.Location = new System.Drawing.Point(138, 173);
+            this.lblPoints.Name = "lblPoints";
+            this.lblPoints.Size = new System.Drawing.Size(48, 13);
+            this.lblPoints.TabIndex = 18;
+            this.lblPoints.Text = "Points: 0";
+            // 
+            // scrlPoints
+            // 
+            this.scrlPoints.LargeChange = 1;
+            this.scrlPoints.Location = new System.Drawing.Point(141, 186);
+            this.scrlPoints.Maximum = 255;
+            this.scrlPoints.Name = "scrlPoints";
+            this.scrlPoints.Size = new System.Drawing.Size(80, 17);
+            this.scrlPoints.TabIndex = 17;
+            // 
+            // frmClass
+            // 
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.ClientSize = new System.Drawing.Size(633, 467);
+            this.ControlBox = false;
+            this.Controls.Add(this.groupBox6);
+            this.Controls.Add(this.groupBox2);
+            this.Controls.Add(this.groupBox4);
+            this.Controls.Add(this.groupBox3);
+            this.Controls.Add(this.groupBox1);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+            this.Name = "frmClass";
+            this.Text = "Class Editor";
+            this.groupBox1.ResumeLayout(false);
+            this.groupBox4.ResumeLayout(false);
+            this.groupBox4.PerformLayout();
+            this.groupBox3.ResumeLayout(false);
+            this.groupBox3.PerformLayout();
+            this.groupBox2.ResumeLayout(false);
+            this.groupBox2.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.picNpc)).EndInit();
+            this.groupBox6.ResumeLayout(false);
+            this.groupBox6.PerformLayout();
+            this.ResumeLayout(false);
+
+        }
+
+        #endregion
+
+        private System.Windows.Forms.GroupBox groupBox1;
+        private System.Windows.Forms.Button btnCancel;
+        private System.Windows.Forms.Button btnDelete;
+        private System.Windows.Forms.Button btnSave;
+        private System.Windows.Forms.ListBox lstClasses;
+        private System.Windows.Forms.GroupBox groupBox4;
+        private System.Windows.Forms.TextBox txtDropAmount;
+        private System.Windows.Forms.Label lblDropAmount;
+        private System.Windows.Forms.HScrollBar scrlDropChance;
+        private System.Windows.Forms.Label lblDropChance;
+        private System.Windows.Forms.HScrollBar scrlDropItem;
+        private System.Windows.Forms.Label lblDropItem;
+        private System.Windows.Forms.HScrollBar scrlDropIndex;
+        private System.Windows.Forms.Label lblDropIndex;
+        private System.Windows.Forms.GroupBox groupBox3;
+        private System.Windows.Forms.TextBox txtMana;
+        private System.Windows.Forms.TextBox txtHP;
+        private System.Windows.Forms.Label lblMana;
+        private System.Windows.Forms.Label lblHP;
+        private System.Windows.Forms.Label lblSpd;
+        private System.Windows.Forms.Label lblMR;
+        private System.Windows.Forms.Label lblDef;
+        private System.Windows.Forms.Label lblMag;
+        private System.Windows.Forms.Label lblStr;
+        private System.Windows.Forms.HScrollBar scrlDef;
+        private System.Windows.Forms.HScrollBar scrlSpd;
+        private System.Windows.Forms.HScrollBar scrlMR;
+        private System.Windows.Forms.HScrollBar scrlMag;
+        private System.Windows.Forms.HScrollBar scrlStr;
+        private System.Windows.Forms.GroupBox groupBox2;
+        private System.Windows.Forms.ListBox lstSprites;
+        private System.Windows.Forms.ComboBox cmbSprite;
+        private System.Windows.Forms.Label lblPic;
+        private System.Windows.Forms.PictureBox picNpc;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.TextBox txtName;
+        private System.Windows.Forms.Button btnRemove;
+        private System.Windows.Forms.Button btnAdd;
+        private System.Windows.Forms.RadioButton rbFemale;
+        private System.Windows.Forms.RadioButton rbMale;
+        private System.Windows.Forms.GroupBox groupBox6;
+        private System.Windows.Forms.Label lblLevel;
+        private System.Windows.Forms.HScrollBar scrlLevel;
+        private System.Windows.Forms.Label lblSpellNum;
+        private System.Windows.Forms.HScrollBar scrlSpell;
+        private System.Windows.Forms.Button btnRemoveSpell;
+        private System.Windows.Forms.Button btnAddSpell;
+        private System.Windows.Forms.ListBox lstSpells;
+        private System.Windows.Forms.Label lblPoints;
+        private System.Windows.Forms.HScrollBar scrlPoints;
+    }
+}

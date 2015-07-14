@@ -510,6 +510,15 @@ namespace Intersect_Editor.Forms
             {
                 case MouseButtons.Left:
                     Globals.MouseButton = 0;
+
+                    // Check for adding NPC Spawns in map properties
+                    if (grpMapProperties.Visible == true && rbDeclared.Checked == true && lstMapNpcs.Items.Count > 0)
+                    {
+                        Globals.GameMaps[Globals.CurrentMap].Spawns[lstMapNpcs.SelectedIndex].X = Globals.CurTileX;
+                        Globals.GameMaps[Globals.CurrentMap].Spawns[lstMapNpcs.SelectedIndex].Y = Globals.CurTileY;
+                        break;
+                    }
+
                     switch (Globals.CurrentLayer)
                     {
                         case Constants.LayerCount:
@@ -585,37 +594,27 @@ namespace Intersect_Editor.Forms
                             }
                             break;
                         default:
-
-                            // Check for adding NPC Spawns in map properties
-                            if (grpMapProperties.Visible == true && rbDeclared.Checked == true && lstMapNpcs.Items.Count > 0)
+                            if (Globals.Autotilemode == 0)
                             {
-                                Globals.GameMaps[Globals.CurrentMap].Spawns[lstMapNpcs.SelectedIndex].X = Globals.CurTileX;
-                                Globals.GameMaps[Globals.CurrentMap].Spawns[lstMapNpcs.SelectedIndex].Y = Globals.CurTileY;
-                            }
-                            else // Add tiles normally.
-                            {
-                                if (Globals.Autotilemode == 0)
+                                for (var x = 0; x <= Globals.CurSelW; x++)
                                 {
-                                    for (var x = 0; x <= Globals.CurSelW; x++)
+                                    for (var y = 0; y <= Globals.CurSelH; y++)
                                     {
-                                        for (var y = 0; y <= Globals.CurSelH; y++)
-                                        {
-                                            tmpMap.Layers[Globals.CurrentLayer].Tiles[Globals.CurTileX + x, Globals.CurTileY + y].TilesetIndex = Globals.CurrentTileset;
-                                            tmpMap.Layers[Globals.CurrentLayer].Tiles[Globals.CurTileX + x, Globals.CurTileY + y].X = Globals.CurSelX + x;
-                                            tmpMap.Layers[Globals.CurrentLayer].Tiles[Globals.CurTileX + x, Globals.CurTileY + y].Y = Globals.CurSelY + y;
-                                            tmpMap.Layers[Globals.CurrentLayer].Tiles[Globals.CurTileX + x, Globals.CurTileY + y].Autotile = 0;
-                                            tmpMap.Autotiles.InitAutotiles();
-                                        }
+                                        tmpMap.Layers[Globals.CurrentLayer].Tiles[Globals.CurTileX + x, Globals.CurTileY + y].TilesetIndex = Globals.CurrentTileset;
+                                        tmpMap.Layers[Globals.CurrentLayer].Tiles[Globals.CurTileX + x, Globals.CurTileY + y].X = Globals.CurSelX + x;
+                                        tmpMap.Layers[Globals.CurrentLayer].Tiles[Globals.CurTileX + x, Globals.CurTileY + y].Y = Globals.CurSelY + y;
+                                        tmpMap.Layers[Globals.CurrentLayer].Tiles[Globals.CurTileX + x, Globals.CurTileY + y].Autotile = 0;
+                                        tmpMap.Autotiles.InitAutotiles();
                                     }
                                 }
-                                else
-                                {
-                                    tmpMap.Layers[Globals.CurrentLayer].Tiles[Globals.CurTileX, Globals.CurTileY].TilesetIndex = Globals.CurrentTileset;
-                                    tmpMap.Layers[Globals.CurrentLayer].Tiles[Globals.CurTileX, Globals.CurTileY].X = Globals.CurSelX;
-                                    tmpMap.Layers[Globals.CurrentLayer].Tiles[Globals.CurTileX, Globals.CurTileY].Y = Globals.CurSelY;
-                                    tmpMap.Layers[Globals.CurrentLayer].Tiles[Globals.CurTileX, Globals.CurTileY].Autotile = (byte)Globals.Autotilemode;
-                                    tmpMap.Autotiles.InitAutotiles();
-                                }
+                            }
+                            else
+                            {
+                                tmpMap.Layers[Globals.CurrentLayer].Tiles[Globals.CurTileX, Globals.CurTileY].TilesetIndex = Globals.CurrentTileset;
+                                tmpMap.Layers[Globals.CurrentLayer].Tiles[Globals.CurTileX, Globals.CurTileY].X = Globals.CurSelX;
+                                tmpMap.Layers[Globals.CurrentLayer].Tiles[Globals.CurTileX, Globals.CurTileY].Y = Globals.CurSelY;
+                                tmpMap.Layers[Globals.CurrentLayer].Tiles[Globals.CurTileX, Globals.CurTileY].Autotile = (byte)Globals.Autotilemode;
+                                tmpMap.Autotiles.InitAutotiles();
                             }
                             break;
                     }
