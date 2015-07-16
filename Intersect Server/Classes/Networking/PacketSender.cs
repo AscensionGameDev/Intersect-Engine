@@ -750,6 +750,24 @@ namespace Intersect_Server.Classes
             client.SendPacket(bf.ToArray());
             bf.Dispose();
         }
+
+        public static void SendClass(Client client, int classNum)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteLong((int)Enums.ServerPackets.ClassData);
+            bf.WriteInteger(classNum);
+            bf.WriteBytes(Globals.GameClasses[classNum].ClassData());
+            client.SendPacket(bf.ToArray());
+            bf.Dispose();
+        }
+
+        public static void SendClassEditor(Client client)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteLong((int)Enums.ServerPackets.OpenClassEditor);
+            client.SendPacket(bf.ToArray());
+            bf.Dispose();
+        }
     }
 }
 

@@ -55,6 +55,9 @@ namespace Intersect_Server.Classes
         //Game Animations
         public static AnimationStruct[] GameAnimations;
 
+        //Game Classes
+        public static ClassStruct[] GameClasses;
+
 		public static List<Client> Clients = new List<Client>();
 		public static List<Thread> ClientThread = new List<Thread>();
 		public static List<Entity> Entities = new List<Entity>();

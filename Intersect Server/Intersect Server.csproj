@@ -48,6 +48,7 @@
   <ItemGroup>
     <Compile Include="Classes\Entities\Resource.cs" />
     <Compile Include="Classes\Game Objects\AnimationStruct.cs" />
+    <Compile Include="Classes\Game Objects\ClassStruct.cs" />
     <Compile Include="Classes\Game Objects\ResourceStruct.cs" />
     <Compile Include="Classes\General\Enums.cs" />
     <Compile Include="Classes\Game Objects\ItemStruct.cs" />

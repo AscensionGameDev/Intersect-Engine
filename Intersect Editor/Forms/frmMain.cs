@@ -41,6 +41,7 @@ namespace Intersect_Editor.Forms
         private frmNpc _npcEditor;
         private frmResource _resourceEditor;
         private frmSpell _spellEditor;
+        private frmClass _classEditor;
 
         //Initialization & Setup Functions
         public FrmMain()
@@ -394,6 +395,10 @@ namespace Intersect_Editor.Forms
         private void resourceEditorToolStripMenuItem_Click(object sender, EventArgs e)
         {
             PacketSender.SendResourceEditor();
+        }
+        private void classEditorToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            PacketSender.SendClassEditor();
         }
 
         //Tileset Area
@@ -1141,9 +1146,12 @@ namespace Intersect_Editor.Forms
         }
         private void rbRandom_Click(object sender, EventArgs e)
         {
-            Globals.GameMaps[Globals.CurrentMap].Spawns[lstMapNpcs.SelectedIndex].X = -1;
-            Globals.GameMaps[Globals.CurrentMap].Spawns[lstMapNpcs.SelectedIndex].Y = -1;
-            Globals.GameMaps[Globals.CurrentMap].Spawns[lstMapNpcs.SelectedIndex].Dir = -1;
+            if (lstMapNpcs.Items.Count > 0)
+            {
+                Globals.GameMaps[Globals.CurrentMap].Spawns[lstMapNpcs.SelectedIndex].X = -1;
+                Globals.GameMaps[Globals.CurrentMap].Spawns[lstMapNpcs.SelectedIndex].Y = -1;
+                Globals.GameMaps[Globals.CurrentMap].Spawns[lstMapNpcs.SelectedIndex].Dir = -1;
+            }
         }
         private void cmbDir_SelectedIndexChanged(object sender, EventArgs e)
         {
@@ -1510,6 +1518,14 @@ namespace Intersect_Editor.Forms
                             _spellEditor.Show();
                         }
                         break;
+                    case (int)Enums.EditorTypes.Class:
+                        if (_classEditor == null || _classEditor.Visible == false)
+                        {
+                            _classEditor = new frmClass();
+                            _classEditor.InitEditor();
+                            _classEditor.Show();
+                        }
+                        break;
                     default:
                         return;
                 }
@@ -1517,11 +1533,5 @@ namespace Intersect_Editor.Forms
             }
             
         }
-
-
-
-
-
-        
     }
 }

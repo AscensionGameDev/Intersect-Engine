@@ -55,6 +55,8 @@ namespace Intersect_Editor.Forms
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.grpLayer = new System.Windows.Forms.GroupBox();
+            this.pnlTilesetContainer = new System.Windows.Forms.Panel();
+            this.picTileset = new System.Windows.Forms.PictureBox();
             this.cmbAutotile = new System.Windows.Forms.ComboBox();
             this.lblCurLayer = new System.Windows.Forms.Label();
             this.cmbTilesets = new System.Windows.Forms.ComboBox();
@@ -155,10 +157,11 @@ namespace Intersect_Editor.Forms
             this.btnCloseProperties = new System.Windows.Forms.Button();
             this.spltContainer = new System.Windows.Forms.SplitContainer();
             this.picMap = new System.Windows.Forms.PictureBox();
-            this.picTileset = new System.Windows.Forms.PictureBox();
-            this.pnlTilesetContainer = new System.Windows.Forms.Panel();
+            this.classEditorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip.SuspendLayout();
             this.grpLayer.SuspendLayout();
+            this.pnlTilesetContainer.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.picTileset)).BeginInit();
             this.grpMapList.SuspendLayout();
             this.grpLightEditor.SuspendLayout();
             this.grpAttributes.SuspendLayout();
@@ -179,8 +182,6 @@ namespace Intersect_Editor.Forms
             this.spltContainer.Panel2.SuspendLayout();
             this.spltContainer.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.picMap)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.picTileset)).BeginInit();
-            this.pnlTilesetContainer.SuspendLayout();
             this.SuspendLayout();
             // 
             // menuStrip
@@ -314,7 +315,8 @@ namespace Intersect_Editor.Forms
             this.npcEditorToolStripMenuItem,
             this.spellEditorToolStripMenuItem,
             this.animationEditorToolStripMenuItem,
-            this.resourceEditorToolStripMenuItem});
+            this.resourceEditorToolStripMenuItem,
+            this.classEditorToolStripMenuItem});
             this.contentEditorsToolStripMenuItem.Name = "contentEditorsToolStripMenuItem";
             this.contentEditorsToolStripMenuItem.Size = new System.Drawing.Size(101, 20);
             this.contentEditorsToolStripMenuItem.Text = "Content Editors";
@@ -384,6 +386,29 @@ namespace Intersect_Editor.Forms
             this.grpLayer.TabIndex = 5;
             this.grpLayer.TabStop = false;
             this.grpLayer.Text = "Tileset Container";
+            // 
+            // pnlTilesetContainer
+            // 
+            this.pnlTilesetContainer.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.pnlTilesetContainer.AutoScroll = true;
+            this.pnlTilesetContainer.Controls.Add(this.picTileset);
+            this.pnlTilesetContainer.Location = new System.Drawing.Point(7, 75);
+            this.pnlTilesetContainer.Name = "pnlTilesetContainer";
+            this.pnlTilesetContainer.Size = new System.Drawing.Size(277, 573);
+            this.pnlTilesetContainer.TabIndex = 10;
+            // 
+            // picTileset
+            // 
+            this.picTileset.Location = new System.Drawing.Point(1, 1);
+            this.picTileset.Name = "picTileset";
+            this.picTileset.Size = new System.Drawing.Size(193, 152);
+            this.picTileset.TabIndex = 2;
+            this.picTileset.TabStop = false;
+            this.picTileset.MouseDown += new System.Windows.Forms.MouseEventHandler(this.picTileset_MouseDown);
+            this.picTileset.MouseMove += new System.Windows.Forms.MouseEventHandler(this.picTileset_MouseMove);
+            this.picTileset.MouseUp += new System.Windows.Forms.MouseEventHandler(this.picTileset_MouseUp);
             // 
             // cmbAutotile
             // 
@@ -1463,11 +1488,11 @@ namespace Intersect_Editor.Forms
             // 
             // spltContainer.Panel1
             // 
+            this.spltContainer.Panel1.Controls.Add(this.grpMapProperties);
+            this.spltContainer.Panel1.Controls.Add(this.grpMapList);
             this.spltContainer.Panel1.Controls.Add(this.grpLayer);
             this.spltContainer.Panel1.Controls.Add(this.grpLightEditor);
             this.spltContainer.Panel1.Controls.Add(this.grpAttributes);
-            this.spltContainer.Panel1.Controls.Add(this.grpMapProperties);
-            this.spltContainer.Panel1.Controls.Add(this.grpMapList);
             this.spltContainer.Panel1MinSize = 292;
             // 
             // spltContainer.Panel2
@@ -1492,28 +1517,12 @@ namespace Intersect_Editor.Forms
             this.picMap.MouseMove += new System.Windows.Forms.MouseEventHandler(this.picMap_MouseMove);
             this.picMap.MouseUp += new System.Windows.Forms.MouseEventHandler(this.picMap_MouseUp);
             // 
-            // picTileset
+            // classEditorToolStripMenuItem
             // 
-            this.picTileset.Location = new System.Drawing.Point(1, 1);
-            this.picTileset.Name = "picTileset";
-            this.picTileset.Size = new System.Drawing.Size(193, 152);
-            this.picTileset.TabIndex = 2;
-            this.picTileset.TabStop = false;
-            this.picTileset.MouseDown += new System.Windows.Forms.MouseEventHandler(this.picTileset_MouseDown);
-            this.picTileset.MouseMove += new System.Windows.Forms.MouseEventHandler(this.picTileset_MouseMove);
-            this.picTileset.MouseUp += new System.Windows.Forms.MouseEventHandler(this.picTileset_MouseUp);
-            // 
-            // pnlTilesetContainer
-            // 
-            this.pnlTilesetContainer.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.pnlTilesetContainer.AutoScroll = true;
-            this.pnlTilesetContainer.Controls.Add(this.picTileset);
-            this.pnlTilesetContainer.Location = new System.Drawing.Point(7, 75);
-            this.pnlTilesetContainer.Name = "pnlTilesetContainer";
-            this.pnlTilesetContainer.Size = new System.Drawing.Size(277, 573);
-            this.pnlTilesetContainer.TabIndex = 10;
+            this.classEditorToolStripMenuItem.Name = "classEditorToolStripMenuItem";
+            this.classEditorToolStripMenuItem.Size = new System.Drawing.Size(164, 22);
+            this.classEditorToolStripMenuItem.Text = "Class Editor";
+            this.classEditorToolStripMenuItem.Click += new System.EventHandler(this.classEditorToolStripMenuItem_Click);
             // 
             // FrmMain
             // 
@@ -1531,6 +1540,8 @@ namespace Intersect_Editor.Forms
             this.menuStrip.PerformLayout();
             this.grpLayer.ResumeLayout(false);
             this.grpLayer.PerformLayout();
+            this.pnlTilesetContainer.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.picTileset)).EndInit();
             this.grpMapList.ResumeLayout(false);
             this.grpMapList.PerformLayout();
             this.grpLightEditor.ResumeLayout(false);
@@ -1563,8 +1574,6 @@ namespace Intersect_Editor.Forms
             ((System.ComponentModel.ISupportInitialize)(this.spltContainer)).EndInit();
             this.spltContainer.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.picMap)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.picTileset)).EndInit();
-            this.pnlTilesetContainer.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -1699,6 +1708,7 @@ namespace Intersect_Editor.Forms
         public PictureBox picMap;
         private Panel pnlTilesetContainer;
         public PictureBox picTileset;
+        private ToolStripMenuItem classEditorToolStripMenuItem;
     }
 }
 

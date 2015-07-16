@@ -36,13 +36,13 @@
             this.groupBox4 = new System.Windows.Forms.GroupBox();
             this.txtDropAmount = new System.Windows.Forms.TextBox();
             this.lblDropAmount = new System.Windows.Forms.Label();
-            this.scrlDropChance = new System.Windows.Forms.HScrollBar();
-            this.lblDropChance = new System.Windows.Forms.Label();
             this.scrlDropItem = new System.Windows.Forms.HScrollBar();
             this.lblDropItem = new System.Windows.Forms.Label();
             this.scrlDropIndex = new System.Windows.Forms.HScrollBar();
             this.lblDropIndex = new System.Windows.Forms.Label();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.lblPoints = new System.Windows.Forms.Label();
+            this.scrlPoints = new System.Windows.Forms.HScrollBar();
             this.txtMana = new System.Windows.Forms.TextBox();
             this.txtHP = new System.Windows.Forms.TextBox();
             this.lblMana = new System.Windows.Forms.Label();
@@ -65,7 +65,7 @@
             this.lstSprites = new System.Windows.Forms.ListBox();
             this.cmbSprite = new System.Windows.Forms.ComboBox();
             this.lblPic = new System.Windows.Forms.Label();
-            this.picNpc = new System.Windows.Forms.PictureBox();
+            this.picSprite = new System.Windows.Forms.PictureBox();
             this.label1 = new System.Windows.Forms.Label();
             this.txtName = new System.Windows.Forms.TextBox();
             this.groupBox6 = new System.Windows.Forms.GroupBox();
@@ -76,13 +76,11 @@
             this.btnRemoveSpell = new System.Windows.Forms.Button();
             this.btnAddSpell = new System.Windows.Forms.Button();
             this.lstSpells = new System.Windows.Forms.ListBox();
-            this.lblPoints = new System.Windows.Forms.Label();
-            this.scrlPoints = new System.Windows.Forms.HScrollBar();
             this.groupBox1.SuspendLayout();
             this.groupBox4.SuspendLayout();
             this.groupBox3.SuspendLayout();
             this.groupBox2.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.picNpc)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.picSprite)).BeginInit();
             this.groupBox6.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -94,7 +92,7 @@
             this.groupBox1.Controls.Add(this.lstClasses);
             this.groupBox1.Location = new System.Drawing.Point(12, 12);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(203, 447);
+            this.groupBox1.Size = new System.Drawing.Size(203, 403);
             this.groupBox1.TabIndex = 15;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Classes";
@@ -102,54 +100,56 @@
             // btnCancel
             // 
             this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.btnCancel.Location = new System.Drawing.Point(7, 413);
+            this.btnCancel.Location = new System.Drawing.Point(6, 360);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(190, 27);
             this.btnCancel.TabIndex = 4;
             this.btnCancel.Text = "Cancel";
             this.btnCancel.UseVisualStyleBackColor = true;
+            this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
             // 
             // btnDelete
             // 
             this.btnDelete.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.btnDelete.Location = new System.Drawing.Point(6, 380);
+            this.btnDelete.Location = new System.Drawing.Point(6, 327);
             this.btnDelete.Name = "btnDelete";
             this.btnDelete.Size = new System.Drawing.Size(190, 27);
             this.btnDelete.TabIndex = 3;
             this.btnDelete.Text = "Delete";
             this.btnDelete.UseVisualStyleBackColor = true;
+            this.btnDelete.Click += new System.EventHandler(this.btnDelete_Click);
             // 
             // btnSave
             // 
-            this.btnSave.Location = new System.Drawing.Point(6, 347);
+            this.btnSave.Location = new System.Drawing.Point(6, 293);
             this.btnSave.Name = "btnSave";
             this.btnSave.Size = new System.Drawing.Size(190, 27);
             this.btnSave.TabIndex = 2;
             this.btnSave.Text = "Save";
             this.btnSave.UseVisualStyleBackColor = true;
+            this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
             // 
             // lstClasses
             // 
             this.lstClasses.FormattingEnabled = true;
             this.lstClasses.Location = new System.Drawing.Point(6, 19);
             this.lstClasses.Name = "lstClasses";
-            this.lstClasses.Size = new System.Drawing.Size(191, 316);
+            this.lstClasses.Size = new System.Drawing.Size(191, 264);
             this.lstClasses.TabIndex = 1;
+            this.lstClasses.Click += new System.EventHandler(this.lstClasses_Click);
             // 
             // groupBox4
             // 
             this.groupBox4.BackColor = System.Drawing.SystemColors.Control;
             this.groupBox4.Controls.Add(this.txtDropAmount);
             this.groupBox4.Controls.Add(this.lblDropAmount);
-            this.groupBox4.Controls.Add(this.scrlDropChance);
-            this.groupBox4.Controls.Add(this.lblDropChance);
             this.groupBox4.Controls.Add(this.scrlDropItem);
             this.groupBox4.Controls.Add(this.lblDropItem);
             this.groupBox4.Controls.Add(this.scrlDropIndex);
             this.groupBox4.Controls.Add(this.lblDropIndex);
-            this.groupBox4.Location = new System.Drawing.Point(465, 293);
+            this.groupBox4.Location = new System.Drawing.Point(465, 283);
             this.groupBox4.Name = "groupBox4";
-            this.groupBox4.Size = new System.Drawing.Size(156, 166);
+            this.groupBox4.Size = new System.Drawing.Size(156, 132);
             this.groupBox4.TabIndex = 18;
             this.groupBox4.TabStop = false;
             this.groupBox4.Text = "Starting Items";
@@ -160,6 +160,7 @@
             this.txtDropAmount.Name = "txtDropAmount";
             this.txtDropAmount.Size = new System.Drawing.Size(138, 20);
             this.txtDropAmount.TabIndex = 16;
+            this.txtDropAmount.TextChanged += new System.EventHandler(this.txtDropAmount_TextChanged);
             // 
             // lblDropAmount
             // 
@@ -170,23 +171,6 @@
             this.lblDropAmount.TabIndex = 15;
             this.lblDropAmount.Text = "Amount:";
             // 
-            // scrlDropChance
-            // 
-            this.scrlDropChance.LargeChange = 1;
-            this.scrlDropChance.Location = new System.Drawing.Point(6, 135);
-            this.scrlDropChance.Name = "scrlDropChance";
-            this.scrlDropChance.Size = new System.Drawing.Size(141, 18);
-            this.scrlDropChance.TabIndex = 14;
-            // 
-            // lblDropChance
-            // 
-            this.lblDropChance.AutoSize = true;
-            this.lblDropChance.Location = new System.Drawing.Point(6, 120);
-            this.lblDropChance.Name = "lblDropChance";
-            this.lblDropChance.Size = new System.Drawing.Size(85, 13);
-            this.lblDropChance.TabIndex = 13;
-            this.lblDropChance.Text = "Chance (0/100):";
-            // 
             // scrlDropItem
             // 
             this.scrlDropItem.LargeChange = 1;
@@ -195,6 +179,7 @@
             this.scrlDropItem.Name = "scrlDropItem";
             this.scrlDropItem.Size = new System.Drawing.Size(141, 18);
             this.scrlDropItem.TabIndex = 12;
+            this.scrlDropItem.Scroll += new System.Windows.Forms.ScrollEventHandler(this.scrlDropItem_Scroll);
             // 
             // lblDropItem
             // 
@@ -215,6 +200,7 @@
             this.scrlDropIndex.Size = new System.Drawing.Size(141, 18);
             this.scrlDropIndex.TabIndex = 10;
             this.scrlDropIndex.Value = 1;
+            this.scrlDropIndex.Scroll += new System.Windows.Forms.ScrollEventHandler(this.scrlDropIndex_Scroll);
             // 
             // lblDropIndex
             // 
@@ -245,29 +231,50 @@
             this.groupBox3.Controls.Add(this.scrlStr);
             this.groupBox3.Location = new System.Drawing.Point(221, 239);
             this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(238, 220);
+            this.groupBox3.Size = new System.Drawing.Size(238, 176);
             this.groupBox3.TabIndex = 17;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Base Stats:";
             // 
+            // lblPoints
+            // 
+            this.lblPoints.AutoSize = true;
+            this.lblPoints.Location = new System.Drawing.Point(128, 130);
+            this.lblPoints.Name = "lblPoints";
+            this.lblPoints.Size = new System.Drawing.Size(48, 13);
+            this.lblPoints.TabIndex = 18;
+            this.lblPoints.Text = "Points: 0";
+            // 
+            // scrlPoints
+            // 
+            this.scrlPoints.LargeChange = 1;
+            this.scrlPoints.Location = new System.Drawing.Point(131, 143);
+            this.scrlPoints.Maximum = 255;
+            this.scrlPoints.Name = "scrlPoints";
+            this.scrlPoints.Size = new System.Drawing.Size(90, 17);
+            this.scrlPoints.TabIndex = 17;
+            this.scrlPoints.Scroll += new System.Windows.Forms.ScrollEventHandler(this.scrlPoints_Scroll);
+            // 
             // txtMana
             // 
-            this.txtMana.Location = new System.Drawing.Point(141, 35);
+            this.txtMana.Location = new System.Drawing.Point(131, 35);
             this.txtMana.Name = "txtMana";
-            this.txtMana.Size = new System.Drawing.Size(77, 20);
+            this.txtMana.Size = new System.Drawing.Size(87, 20);
             this.txtMana.TabIndex = 16;
+            this.txtMana.TextChanged += new System.EventHandler(this.txtMana_TextChanged);
             // 
             // txtHP
             // 
             this.txtHP.Location = new System.Drawing.Point(13, 35);
             this.txtHP.Name = "txtHP";
-            this.txtHP.Size = new System.Drawing.Size(77, 20);
+            this.txtHP.Size = new System.Drawing.Size(90, 20);
             this.txtHP.TabIndex = 14;
+            this.txtHP.TextChanged += new System.EventHandler(this.txtHP_TextChanged);
             // 
             // lblMana
             // 
             this.lblMana.AutoSize = true;
-            this.lblMana.Location = new System.Drawing.Point(138, 16);
+            this.lblMana.Location = new System.Drawing.Point(128, 19);
             this.lblMana.Name = "lblMana";
             this.lblMana.Size = new System.Drawing.Size(37, 13);
             this.lblMana.TabIndex = 15;
@@ -285,7 +292,7 @@
             // lblSpd
             // 
             this.lblSpd.AutoSize = true;
-            this.lblSpd.Location = new System.Drawing.Point(10, 173);
+            this.lblSpd.Location = new System.Drawing.Point(13, 130);
             this.lblSpd.Name = "lblSpd";
             this.lblSpd.Size = new System.Drawing.Size(80, 13);
             this.lblSpd.TabIndex = 9;
@@ -294,7 +301,7 @@
             // lblMR
             // 
             this.lblMR.AutoSize = true;
-            this.lblMR.Location = new System.Drawing.Point(141, 122);
+            this.lblMR.Location = new System.Drawing.Point(128, 95);
             this.lblMR.Name = "lblMR";
             this.lblMR.Size = new System.Drawing.Size(80, 13);
             this.lblMR.TabIndex = 8;
@@ -303,7 +310,7 @@
             // lblDef
             // 
             this.lblDef.AutoSize = true;
-            this.lblDef.Location = new System.Drawing.Point(10, 122);
+            this.lblDef.Location = new System.Drawing.Point(10, 95);
             this.lblDef.Name = "lblDef";
             this.lblDef.Size = new System.Drawing.Size(46, 13);
             this.lblDef.TabIndex = 7;
@@ -312,7 +319,7 @@
             // lblMag
             // 
             this.lblMag.AutoSize = true;
-            this.lblMag.Location = new System.Drawing.Point(138, 70);
+            this.lblMag.Location = new System.Drawing.Point(128, 59);
             this.lblMag.Name = "lblMag";
             this.lblMag.Size = new System.Drawing.Size(48, 13);
             this.lblMag.TabIndex = 6;
@@ -321,7 +328,7 @@
             // lblStr
             // 
             this.lblStr.AutoSize = true;
-            this.lblStr.Location = new System.Drawing.Point(10, 72);
+            this.lblStr.Location = new System.Drawing.Point(10, 58);
             this.lblStr.Name = "lblStr";
             this.lblStr.Size = new System.Drawing.Size(59, 13);
             this.lblStr.TabIndex = 5;
@@ -330,47 +337,52 @@
             // scrlDef
             // 
             this.scrlDef.LargeChange = 1;
-            this.scrlDef.Location = new System.Drawing.Point(13, 137);
+            this.scrlDef.Location = new System.Drawing.Point(13, 108);
             this.scrlDef.Maximum = 255;
             this.scrlDef.Name = "scrlDef";
-            this.scrlDef.Size = new System.Drawing.Size(80, 17);
+            this.scrlDef.Size = new System.Drawing.Size(90, 17);
             this.scrlDef.TabIndex = 4;
+            this.scrlDef.Scroll += new System.Windows.Forms.ScrollEventHandler(this.scrlDef_Scroll);
             // 
             // scrlSpd
             // 
             this.scrlSpd.LargeChange = 1;
-            this.scrlSpd.Location = new System.Drawing.Point(13, 186);
+            this.scrlSpd.Location = new System.Drawing.Point(13, 143);
             this.scrlSpd.Maximum = 255;
             this.scrlSpd.Name = "scrlSpd";
-            this.scrlSpd.Size = new System.Drawing.Size(80, 17);
+            this.scrlSpd.Size = new System.Drawing.Size(90, 17);
             this.scrlSpd.TabIndex = 3;
+            this.scrlSpd.Scroll += new System.Windows.Forms.ScrollEventHandler(this.scrlSpd_Scroll);
             // 
             // scrlMR
             // 
             this.scrlMR.LargeChange = 1;
-            this.scrlMR.Location = new System.Drawing.Point(141, 136);
+            this.scrlMR.Location = new System.Drawing.Point(131, 108);
             this.scrlMR.Maximum = 255;
             this.scrlMR.Name = "scrlMR";
-            this.scrlMR.Size = new System.Drawing.Size(80, 17);
+            this.scrlMR.Size = new System.Drawing.Size(90, 17);
             this.scrlMR.TabIndex = 2;
+            this.scrlMR.Scroll += new System.Windows.Forms.ScrollEventHandler(this.scrlMR_Scroll);
             // 
             // scrlMag
             // 
             this.scrlMag.LargeChange = 1;
-            this.scrlMag.Location = new System.Drawing.Point(141, 85);
+            this.scrlMag.Location = new System.Drawing.Point(131, 72);
             this.scrlMag.Maximum = 255;
             this.scrlMag.Name = "scrlMag";
-            this.scrlMag.Size = new System.Drawing.Size(80, 17);
+            this.scrlMag.Size = new System.Drawing.Size(90, 17);
             this.scrlMag.TabIndex = 1;
+            this.scrlMag.Scroll += new System.Windows.Forms.ScrollEventHandler(this.scrlMag_Scroll);
             // 
             // scrlStr
             // 
             this.scrlStr.LargeChange = 1;
-            this.scrlStr.Location = new System.Drawing.Point(13, 91);
+            this.scrlStr.Location = new System.Drawing.Point(13, 71);
             this.scrlStr.Maximum = 255;
             this.scrlStr.Name = "scrlStr";
-            this.scrlStr.Size = new System.Drawing.Size(80, 17);
+            this.scrlStr.Size = new System.Drawing.Size(90, 18);
             this.scrlStr.TabIndex = 0;
+            this.scrlStr.Scroll += new System.Windows.Forms.ScrollEventHandler(this.scrlStr_Scroll);
             // 
             // groupBox2
             // 
@@ -381,7 +393,7 @@
             this.groupBox2.Controls.Add(this.lstSprites);
             this.groupBox2.Controls.Add(this.cmbSprite);
             this.groupBox2.Controls.Add(this.lblPic);
-            this.groupBox2.Controls.Add(this.picNpc);
+            this.groupBox2.Controls.Add(this.picSprite);
             this.groupBox2.Controls.Add(this.label1);
             this.groupBox2.Controls.Add(this.txtName);
             this.groupBox2.Location = new System.Drawing.Point(221, 12);
@@ -399,6 +411,7 @@
             this.btnRemove.TabIndex = 21;
             this.btnRemove.Text = "Remove";
             this.btnRemove.UseVisualStyleBackColor = true;
+            this.btnRemove.Click += new System.EventHandler(this.btnRemove_Click);
             // 
             // btnAdd
             // 
@@ -408,6 +421,7 @@
             this.btnAdd.TabIndex = 20;
             this.btnAdd.Text = "Add";
             this.btnAdd.UseVisualStyleBackColor = true;
+            this.btnAdd.Click += new System.EventHandler(this.btnAdd_Click);
             // 
             // rbFemale
             // 
@@ -418,6 +432,7 @@
             this.rbFemale.TabIndex = 19;
             this.rbFemale.Text = "Female";
             this.rbFemale.UseVisualStyleBackColor = true;
+            this.rbFemale.Click += new System.EventHandler(this.rbFemale_Click);
             // 
             // rbMale
             // 
@@ -430,6 +445,7 @@
             this.rbMale.TabStop = true;
             this.rbMale.Text = "Male";
             this.rbMale.UseVisualStyleBackColor = true;
+            this.rbMale.Click += new System.EventHandler(this.rbMale_Click);
             // 
             // lstSprites
             // 
@@ -438,6 +454,7 @@
             this.lstSprites.Name = "lstSprites";
             this.lstSprites.Size = new System.Drawing.Size(138, 134);
             this.lstSprites.TabIndex = 17;
+            this.lstSprites.Click += new System.EventHandler(this.lstSprites_Click);
             // 
             // cmbSprite
             // 
@@ -449,6 +466,7 @@
             this.cmbSprite.Name = "cmbSprite";
             this.cmbSprite.Size = new System.Drawing.Size(80, 21);
             this.cmbSprite.TabIndex = 16;
+            this.cmbSprite.SelectedIndexChanged += new System.EventHandler(this.cmbSprite_SelectedIndexChanged);
             // 
             // lblPic
             // 
@@ -459,14 +477,14 @@
             this.lblPic.TabIndex = 15;
             this.lblPic.Text = "Sprites:";
             // 
-            // picNpc
+            // picSprite
             // 
-            this.picNpc.BackColor = System.Drawing.Color.Black;
-            this.picNpc.Location = new System.Drawing.Point(11, 66);
-            this.picNpc.Name = "picNpc";
-            this.picNpc.Size = new System.Drawing.Size(64, 64);
-            this.picNpc.TabIndex = 14;
-            this.picNpc.TabStop = false;
+            this.picSprite.BackColor = System.Drawing.Color.Black;
+            this.picSprite.Location = new System.Drawing.Point(11, 66);
+            this.picSprite.Name = "picSprite";
+            this.picSprite.Size = new System.Drawing.Size(64, 64);
+            this.picSprite.TabIndex = 14;
+            this.picSprite.TabStop = false;
             // 
             // label1
             // 
@@ -483,6 +501,7 @@
             this.txtName.Name = "txtName";
             this.txtName.Size = new System.Drawing.Size(138, 20);
             this.txtName.TabIndex = 12;
+            this.txtName.TextChanged += new System.EventHandler(this.txtName_TextChanged);
             // 
             // groupBox6
             // 
@@ -517,15 +536,16 @@
             this.scrlLevel.Name = "scrlLevel";
             this.scrlLevel.Size = new System.Drawing.Size(138, 17);
             this.scrlLevel.TabIndex = 24;
+            this.scrlLevel.Scroll += new System.Windows.Forms.ScrollEventHandler(this.scrlLevel_Scroll);
             // 
             // lblSpellNum
             // 
             this.lblSpellNum.AutoSize = true;
             this.lblSpellNum.Location = new System.Drawing.Point(6, 161);
             this.lblSpellNum.Name = "lblSpellNum";
-            this.lblSpellNum.Size = new System.Drawing.Size(71, 13);
+            this.lblSpellNum.Size = new System.Drawing.Size(42, 13);
             this.lblSpellNum.TabIndex = 23;
-            this.lblSpellNum.Text = "Spell: 0 None";
+            this.lblSpellNum.Text = "Spell: 0";
             // 
             // scrlSpell
             // 
@@ -535,6 +555,7 @@
             this.scrlSpell.Name = "scrlSpell";
             this.scrlSpell.Size = new System.Drawing.Size(138, 17);
             this.scrlSpell.TabIndex = 22;
+            this.scrlSpell.Scroll += new System.Windows.Forms.ScrollEventHandler(this.scrlSpell_Scroll);
             // 
             // btnRemoveSpell
             // 
@@ -544,6 +565,7 @@
             this.btnRemoveSpell.TabIndex = 21;
             this.btnRemoveSpell.Text = "Remove";
             this.btnRemoveSpell.UseVisualStyleBackColor = true;
+            this.btnRemoveSpell.Click += new System.EventHandler(this.btnRemoveSpell_Click);
             // 
             // btnAddSpell
             // 
@@ -553,6 +575,7 @@
             this.btnAddSpell.TabIndex = 20;
             this.btnAddSpell.Text = "Add";
             this.btnAddSpell.UseVisualStyleBackColor = true;
+            this.btnAddSpell.Click += new System.EventHandler(this.btnAddSpell_Click);
             // 
             // lstSpells
             // 
@@ -561,30 +584,13 @@
             this.lstSpells.Name = "lstSpells";
             this.lstSpells.Size = new System.Drawing.Size(138, 134);
             this.lstSpells.TabIndex = 17;
-            // 
-            // lblPoints
-            // 
-            this.lblPoints.AutoSize = true;
-            this.lblPoints.Location = new System.Drawing.Point(138, 173);
-            this.lblPoints.Name = "lblPoints";
-            this.lblPoints.Size = new System.Drawing.Size(48, 13);
-            this.lblPoints.TabIndex = 18;
-            this.lblPoints.Text = "Points: 0";
-            // 
-            // scrlPoints
-            // 
-            this.scrlPoints.LargeChange = 1;
-            this.scrlPoints.Location = new System.Drawing.Point(141, 186);
-            this.scrlPoints.Maximum = 255;
-            this.scrlPoints.Name = "scrlPoints";
-            this.scrlPoints.Size = new System.Drawing.Size(80, 17);
-            this.scrlPoints.TabIndex = 17;
+            this.lstSpells.Click += new System.EventHandler(this.lstSpells_Click);
             // 
             // frmClass
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(633, 467);
+            this.ClientSize = new System.Drawing.Size(633, 426);
             this.ControlBox = false;
             this.Controls.Add(this.groupBox6);
             this.Controls.Add(this.groupBox2);
@@ -594,6 +600,7 @@
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Name = "frmClass";
             this.Text = "Class Editor";
+            this.Load += new System.EventHandler(this.frmClass_Load);
             this.groupBox1.ResumeLayout(false);
             this.groupBox4.ResumeLayout(false);
             this.groupBox4.PerformLayout();
@@ -601,7 +608,7 @@
             this.groupBox3.PerformLayout();
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.picNpc)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.picSprite)).EndInit();
             this.groupBox6.ResumeLayout(false);
             this.groupBox6.PerformLayout();
             this.ResumeLayout(false);
@@ -618,8 +625,6 @@
         private System.Windows.Forms.GroupBox groupBox4;
         private System.Windows.Forms.TextBox txtDropAmount;
         private System.Windows.Forms.Label lblDropAmount;
-        private System.Windows.Forms.HScrollBar scrlDropChance;
-        private System.Windows.Forms.Label lblDropChance;
         private System.Windows.Forms.HScrollBar scrlDropItem;
         private System.Windows.Forms.Label lblDropItem;
         private System.Windows.Forms.HScrollBar scrlDropIndex;
@@ -643,7 +648,7 @@
         private System.Windows.Forms.ListBox lstSprites;
         private System.Windows.Forms.ComboBox cmbSprite;
         private System.Windows.Forms.Label lblPic;
-        private System.Windows.Forms.PictureBox picNpc;
+        private System.Windows.Forms.PictureBox picSprite;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.TextBox txtName;
         private System.Windows.Forms.Button btnRemove;

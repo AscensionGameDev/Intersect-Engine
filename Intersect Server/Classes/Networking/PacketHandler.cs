@@ -144,6 +144,12 @@ namespace Intersect_Server.Classes
                 case Enums.ClientPackets.SaveResource:
                     HandleResourceData(client, packet);
                     break;
+                case Enums.ClientPackets.OpenClassEditor:
+                    HandleClassEditor(client);
+                    break;
+                case Enums.ClientPackets.SaveClass:
+                    HandleClassData(client, packet);
+                    break;
                 default:
                     Console.WriteLine(@"Non implemented packet received: " + packetHeader);
                     break;
@@ -712,6 +718,25 @@ namespace Intersect_Server.Classes
                 PacketSender.SendResource(client, i);
             }
             PacketSender.SendResourceEditor(client);
+        }
+
+        private static void HandleClassData(Client client, byte[] packet)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteBytes(packet);
+            var classNum = bf.ReadInteger();
+            Globals.GameClasses[classNum].Load(bf.ReadBytes(bf.Length()));
+            Globals.GameClasses[classNum].Save(classNum);
+            bf.Dispose();
+        }
+
+        private static void HandleClassEditor(Client client)
+        {
+            for (var i = 0; i < Constants.MaxClasses; i++)
+            {
+                PacketSender.SendClass(client, i);
+            }
+            PacketSender.SendClassEditor(client);
         }
     }
 }

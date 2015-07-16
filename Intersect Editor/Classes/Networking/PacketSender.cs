@@ -163,5 +163,21 @@ namespace Intersect_Editor.Classes
             bf.WriteBytes(ResourceData);
             Network.SendPacket(bf.ToArray());
         }
+
+        public static void SendClassEditor()
+        {
+            var bf = new ByteBuffer();
+            bf.WriteLong((int)Enums.ClientPackets.OpenClassEditor);
+            Network.SendPacket(bf.ToArray());
+        }
+
+        public static void SendClass(int ClassNum, byte[] ClassData)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteLong((int)Enums.ClientPackets.SaveClass);
+            bf.WriteInteger(ClassNum);
+            bf.WriteBytes(ClassData);
+            Network.SendPacket(bf.ToArray());
+        }
     }
 }
