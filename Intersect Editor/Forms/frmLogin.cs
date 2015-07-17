@@ -27,6 +27,10 @@ namespace Intersect_Editor.Forms
 {
     public partial class FrmLogin : Form
     {
+        //Cross Thread Delegates
+        public delegate void BeginEditorLoop();
+        public BeginEditorLoop EditorLoopDelegate;
+
         public FrmLogin()
         {
             InitializeComponent();
@@ -34,7 +38,7 @@ namespace Intersect_Editor.Forms
 
         private void frmLogin_Load(object sender, EventArgs e)
         {
-
+            EditorLoopDelegate = new BeginEditorLoop(EditorLoop.StartLoop);
         }
 
         private void tmrSocket_Tick(object sender, EventArgs e)

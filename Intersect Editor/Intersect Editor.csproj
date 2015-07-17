@@ -83,43 +83,71 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>.\Tao.OpenGl.dll</HintPath>
     </Reference>
+    <Reference Include="WeifenLuo.WinFormsUI.Docking">
+      <HintPath>.\WeifenLuo.WinFormsUI.Docking.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Classes\Core\Sounds.cs" />
     <Compile Include="Classes\Game Objects\AnimationStruct.cs" />
     <Compile Include="Classes\Core\Audio.cs" />
     <Compile Include="Classes\Game Objects\ResourceStruct.cs" />
+    <Compile Include="Classes\Maps\MapProperties.cs" />
     <Compile Include="Classes\Misc\ByteBuffer.cs" />
     <Compile Include="Classes\Core\Database.cs" />
     <Compile Include="Classes\General\Enums.cs" />
     <Compile Include="Classes\Game Objects\NpcStruct.cs" />
     <Compile Include="Classes\Game Objects\SpellStruct.cs" />
-    <Compile Include="Forms\frmAnimation.cs">
+    <Compile Include="Forms\DockingElements\frmMapEditor.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Forms\frmAnimation.Designer.cs">
+    <Compile Include="Forms\DockingElements\frmMapEditor.Designer.cs">
+      <DependentUpon>frmMapEditor.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\DockingElements\frmMapLayers.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\DockingElements\frmMapLayers.Designer.cs">
+      <DependentUpon>frmMapLayers.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\DockingElements\frmMapList.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\DockingElements\frmMapList.Designer.cs">
+      <DependentUpon>frmMapList.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\DockingElements\frmMapProperties.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\DockingElements\frmMapProperties.Designer.cs">
+      <DependentUpon>frmMapProperties.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\Editors\frmAnimation.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\Editors\frmAnimation.Designer.cs">
       <DependentUpon>frmAnimation.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\frmClass.cs">
+    <Compile Include="Forms\Editors\frmClass.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Forms\frmClass.Designer.cs">
+    <Compile Include="Forms\Editors\frmClass.Designer.cs">
       <DependentUpon>frmClass.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\frmItem.cs">
+    <Compile Include="Forms\Editors\frmItem.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Forms\frmItem.Designer.cs">
+    <Compile Include="Forms\Editors\frmItem.Designer.cs">
       <DependentUpon>frmItem.cs</DependentUpon>
     </Compile>
     <Compile Include="Classes\Game Objects\ItemStruct.cs" />
     <Compile Include="Classes\General\Constants.cs" />
     <Compile Include="Classes\Core\EditorLoop.cs" />
     <Compile Include="Classes\Entities\EventStruct.cs" />
-    <Compile Include="Forms\frmEvent.cs">
+    <Compile Include="Forms\Editors\frmEvent.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Forms\frmEvent.Designer.cs">
+    <Compile Include="Forms\Editors\frmEvent.Designer.cs">
       <DependentUpon>frmEvent.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\frmLogin.cs">
@@ -141,36 +169,48 @@
     <Compile Include="Classes\Networking\PacketHandler.cs" />
     <Compile Include="Classes\Networking\PacketSender.cs" />
     <Compile Include="Classes\Core\Program.cs" />
-    <Compile Include="Forms\frmNpc.cs">
+    <Compile Include="Forms\Editors\frmNpc.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Forms\frmNpc.Designer.cs">
+    <Compile Include="Forms\Editors\frmNpc.Designer.cs">
       <DependentUpon>frmNpc.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\frmResource.cs">
+    <Compile Include="Forms\Editors\frmResource.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Forms\frmResource.Designer.cs">
+    <Compile Include="Forms\Editors\frmResource.Designer.cs">
       <DependentUpon>frmResource.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\frmSpell.cs">
+    <Compile Include="Forms\Editors\frmSpell.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Forms\frmSpell.Designer.cs">
+    <Compile Include="Forms\Editors\frmSpell.Designer.cs">
       <DependentUpon>frmSpell.cs</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Classes\Networking\Network.cs" />
-    <EmbeddedResource Include="Forms\frmAnimation.resx">
+    <EmbeddedResource Include="Forms\DockingElements\frmMapEditor.resx">
+      <DependentUpon>frmMapEditor.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\DockingElements\frmMapLayers.resx">
+      <DependentUpon>frmMapLayers.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\DockingElements\frmMapList.resx">
+      <DependentUpon>frmMapList.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\DockingElements\frmMapProperties.resx">
+      <DependentUpon>frmMapProperties.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Editors\frmAnimation.resx">
       <DependentUpon>frmAnimation.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\frmClass.resx">
+    <EmbeddedResource Include="Forms\Editors\frmClass.resx">
       <DependentUpon>frmClass.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\frmEvent.resx">
+    <EmbeddedResource Include="Forms\Editors\frmEvent.resx">
       <DependentUpon>frmEvent.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\frmItem.resx">
+    <EmbeddedResource Include="Forms\Editors\frmItem.resx">
       <DependentUpon>frmItem.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\frmLogin.resx">
@@ -179,13 +219,13 @@
     <EmbeddedResource Include="Forms\frmMain.resx">
       <DependentUpon>frmMain.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\frmNpc.resx">
+    <EmbeddedResource Include="Forms\Editors\frmNpc.resx">
       <DependentUpon>frmNpc.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\frmResource.resx">
+    <EmbeddedResource Include="Forms\Editors\frmResource.resx">
       <DependentUpon>frmResource.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\frmSpell.resx">
+    <EmbeddedResource Include="Forms\Editors\frmSpell.resx">
       <DependentUpon>frmSpell.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">

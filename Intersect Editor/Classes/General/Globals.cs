@@ -75,6 +75,12 @@ namespace Intersect_Editor.Classes
         //Game Object Editors
         public static frmResource ResourceEditor;
 
+        //Docking Window References
+        public static frmMapLayers MapLayersWindow;
+        public static frmMapEditor MapEditorWindow;
+        public static frmMapList MapListWindow;
+        public static frmMapProperties MapPropertiesWindow;
+
 
         public static Light BackupLight;
         public static Light EditingLight;

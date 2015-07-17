@@ -130,14 +130,14 @@ namespace Intersect_Editor.Classes
             Globals.ReceivedGameData++;
             if (Globals.ReceivedGameData == 3 && !Globals.InEditor)
             {
-                Globals.EditorThread = new Thread(EditorLoop.StartLoop);
-                Globals.EditorThread.Start();
+                Globals.LoginForm.Invoke(Globals.LoginForm.EditorLoopDelegate);
             }
             else if (Globals.InEditor)
             {
                 if (mapNum != Globals.CurrentMap) return;
-                if (Globals.MainForm.picMap.Visible) return;
-                Globals.MainForm.picMap.Visible = true;
+                Globals.MapPropertiesWindow.Init(Globals.GameMaps[mapNum]);
+                if (Globals.MapEditorWindow.picMap.Visible) return;
+                Globals.MapEditorWindow.picMap.Visible = true;
                 if (Globals.GameMaps[mapNum].Up > -1) { PacketSender.SendNeedMap(Globals.GameMaps[mapNum].Up); }
                 if (Globals.GameMaps[mapNum].Down > -1) { PacketSender.SendNeedMap(Globals.GameMaps[mapNum].Down); }
                 if (Globals.GameMaps[mapNum].Left > -1) { PacketSender.SendNeedMap(Globals.GameMaps[mapNum].Left); }

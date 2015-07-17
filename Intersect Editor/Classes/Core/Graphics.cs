@@ -38,9 +38,9 @@ namespace Intersect_Editor.Classes
     public static class Graphics
     {
         //Main render area - map window
-        private static RenderWindow _renderwindow;
+        public static RenderWindow RenderWindow;
         //Tileset render widow
-        private static RenderWindow _tilesetwindow;
+        public static RenderWindow TilesetWindow;
 
         //Game Graphics
         static bool _tilesetsLoaded;
@@ -98,8 +98,8 @@ namespace Intersect_Editor.Classes
             {
                 Stream s = new MemoryStream();
 
-                _renderwindow = new RenderWindow(myForm.picMap.Handle); // creates our SFML RenderWindow on our surface control
-                _tilesetwindow = new RenderWindow(myForm.picTileset.Handle);
+                RenderWindow = new RenderWindow(Globals.MapEditorWindow.picMap.Handle); // creates our SFML RenderWindow on our surface control
+                TilesetWindow = new RenderWindow(Globals.MapLayersWindow.picTileset.Handle);
                 Resources.transV.Save(s, ImageFormat.Png);
                 _transV = new Texture(s);
                 s.Dispose();
@@ -193,19 +193,19 @@ namespace Intersect_Editor.Classes
                     PacketSender.SendTilesets();
                 }
 
-                myForm.cmbTilesets.Items.Clear();
+                Globals.MapLayersWindow.cmbTilesets.Items.Clear();
                 foreach (var t in Globals.Tilesets)
                 {
                     if (File.Exists("Resources/Tilesets/" + t))
                     {
-                        myForm.cmbTilesets.Items.Add(t);
+                        Globals.MapLayersWindow.cmbTilesets.Items.Add(t);
                     }
                     else
                     {
-                        myForm.cmbTilesets.Items.Add(t + " - [MISSING]");
+                        Globals.MapLayersWindow.cmbTilesets.Items.Add(t + " - [MISSING]");
                     }
                 }
-                myForm.cmbTilesets.SelectedIndex = 0;
+                Globals.MapLayersWindow.cmbTilesets.SelectedIndex = 0;
                 Globals.CurrentTileset = 0;
 
                 _tilesetTex = new Texture[Globals.Tilesets.Length];
@@ -308,10 +308,10 @@ namespace Intersect_Editor.Classes
         //Rendering
         public static void Render()
         {
-            _renderwindow.DispatchEvents(); // handle SFML events - NOTE this is still required when SFML is hosted in another window
-            _renderwindow.Clear(Color.Black); // clear our SFML RenderWindow
-            _tilesetwindow.DispatchEvents();
-            _tilesetwindow.Clear(Color.Black);
+            RenderWindow.DispatchEvents(); // handle SFML events - NOTE this is still required when SFML is hosted in another window
+            RenderWindow.Clear(Color.Black); // clear our SFML RenderWindow
+            TilesetWindow.DispatchEvents();
+            TilesetWindow.Clear(Color.Black);
             DrawTileset();
 
             //Draw Current Map
@@ -325,19 +325,20 @@ namespace Intersect_Editor.Classes
             if (!HideFog) { DrawFog(); }
             if (!HideOverlay) { DrawMapOverlay(); }
             if (!HideDarkness || Globals.CurrentLayer == Constants.LayerCount + 1) { DrawDarkness(); }
-            _renderwindow.Display(); // display what SFML has drawn to the screen
-            _tilesetwindow.Display();
+            RenderWindow.Display(); // display what SFML has drawn to the screen
+            
+            TilesetWindow.Display();
         }
         private static void DrawTransparentBorders()
         {
             var tmpSprite = new Sprite(_transH);
-            _renderwindow.Draw(tmpSprite);
+            RenderWindow.Draw(tmpSprite);
             tmpSprite.Position = new Vector2f(0, (Constants.MapHeight + 2) * Constants.TileHeight - Constants.TileHeight);
-            _renderwindow.Draw(tmpSprite);
+            RenderWindow.Draw(tmpSprite);
             tmpSprite = new Sprite(_transV) {Position = new Vector2f(0, 0)};
-            _renderwindow.Draw(tmpSprite);
+            RenderWindow.Draw(tmpSprite);
             tmpSprite.Position = new Vector2f((Constants.MapWidth + 2) * Constants.TileWidth - Constants.TileWidth, 0);
-            _renderwindow.Draw(tmpSprite);
+            RenderWindow.Draw(tmpSprite);
         }
         private static void DrawMap()
         {
@@ -362,7 +363,7 @@ namespace Intersect_Editor.Classes
                                             32, 32),
                                     Position = new Vector2f(x*32 + 32, y*32 + 32)
                                 };
-                                _renderwindow.Draw(tmpSprite);
+                                RenderWindow.Draw(tmpSprite);
                                 break;
                             case Constants.RenderStateAutotile:
                                 DrawAutoTile(z, x * 32 + 32, y * 32 + 32, 1, x, y, tmpMap);
@@ -378,7 +379,7 @@ namespace Intersect_Editor.Classes
             RectangleShape tileSelectionRect;
 
             // Draw Npc Spawns from Map Editor
-            if (Globals.ViewingMapProperties == true)
+            if (Globals.CurrentLayer == Constants.LayerCount + 3)
             {
                 for (int i = 0; i < Globals.GameMaps[Globals.CurrentMap].Spawns.Count; i++)
                 {
@@ -387,7 +388,7 @@ namespace Intersect_Editor.Classes
                         tmpSprite = new Sprite(_spawnTex);
                         tmpSprite.TextureRect = new IntRect(0, 0, 32, 32);
                         tmpSprite.Position = new Vector2f(Globals.GameMaps[Globals.CurrentMap].Spawns[i].X * 32 + 32, Globals.GameMaps[Globals.CurrentMap].Spawns[i].Y * 32 + 32);
-                        _renderwindow.Draw(tmpSprite);
+                        RenderWindow.Draw(tmpSprite);
                     }
                 }
             }
@@ -405,7 +406,7 @@ namespace Intersect_Editor.Classes
                                 tmpSprite = new Sprite(_attributesTex);
                                 tmpSprite.TextureRect = new IntRect(0, (tmpMap.Attributes[x, y].value - 1) * 32, 32, 32);
                                 tmpSprite.Position = new Vector2f(x * 32 + 32, y * 32 + 32);
-                                _renderwindow.Draw(tmpSprite);
+                                RenderWindow.Draw(tmpSprite);
                             }
                         }
 
@@ -418,7 +419,7 @@ namespace Intersect_Editor.Classes
                     tileSelectionRect.FillColor = Color.Transparent;
                     tileSelectionRect.OutlineColor = Color.White;
                     tileSelectionRect.OutlineThickness = 1;
-                    _renderwindow.Draw(tileSelectionRect);
+                    RenderWindow.Draw(tileSelectionRect);
                     break;
                 case Constants.LayerCount + 1:
 
@@ -435,7 +436,7 @@ namespace Intersect_Editor.Classes
                                 TextureRect = new IntRect(0, 0, 32, 32),
                                 Position = new Vector2f(x*32 + 32, y*32 + 32)
                             };
-                            _renderwindow.Draw(tmpSprite);
+                            RenderWindow.Draw(tmpSprite);
                         }
 
                     }
@@ -447,7 +448,7 @@ namespace Intersect_Editor.Classes
                     tileSelectionRect.FillColor = Color.Transparent;
                     tileSelectionRect.OutlineColor = Color.White;
                     tileSelectionRect.OutlineThickness = 1;
-                    _renderwindow.Draw(tileSelectionRect);
+                    RenderWindow.Draw(tileSelectionRect);
                     break;
                 default:
                     tileSelectionRect = new RectangleShape(new Vector2f(32, 32));
@@ -457,7 +458,7 @@ namespace Intersect_Editor.Classes
                     tileSelectionRect.FillColor = Color.Transparent;
                     tileSelectionRect.OutlineColor = Color.White;
                     tileSelectionRect.OutlineThickness = 1;
-                    _renderwindow.Draw(tileSelectionRect);
+                    RenderWindow.Draw(tileSelectionRect);
                     break;
             }
 
@@ -489,7 +490,7 @@ namespace Intersect_Editor.Classes
                         (int) map.Autotiles.Autotile[x, y].Layer[layerNum].SrcY[quarterNum] + yOffset, 16, 16),
                 Position = new Vector2f(destX, destY)
             };
-            _renderwindow.Draw(tmpSprite);
+            RenderWindow.Draw(tmpSprite);
         }
         private static void DrawMapUp()
         {
@@ -523,7 +524,7 @@ namespace Intersect_Editor.Classes
                                     tmpMap.Layers[z].Tiles[x, y].Y*32, 32, 32),
                                 Position = new Vector2f(x*32 + 32, (y - Constants.MapHeight + 1)*32)
                             };
-                            _renderwindow.Draw(tmpSprite);
+                            RenderWindow.Draw(tmpSprite);
                         }
                     }
                 }
@@ -555,7 +556,7 @@ namespace Intersect_Editor.Classes
                                             32, 32),
                                     Position = new Vector2f(x*32 + 32, 32 + Constants.MapHeight*32)
                                 };
-                                _renderwindow.Draw(tmpSprite);
+                                RenderWindow.Draw(tmpSprite);
                                 break;
                             case Constants.RenderStateAutotile:
                                 DrawAutoTile(z, x * 32 + 32, 32 + Constants.MapHeight * 32, 1, x, y, tmpMap);
@@ -594,7 +595,7 @@ namespace Intersect_Editor.Classes
                                             32, 32),
                                     Position = new Vector2f(0, y*32 + 32)
                                 };
-                                _renderwindow.Draw(tmpSprite);
+                                RenderWindow.Draw(tmpSprite);
                                 break;
                             case Constants.RenderStateAutotile:
                                 DrawAutoTile(z, 0, y * 32 + 32, 1, x, y, tmpMap);
@@ -633,7 +634,7 @@ namespace Intersect_Editor.Classes
                                             32, 32),
                                     Position = new Vector2f(32 + Constants.MapWidth*32, 32 + y*32)
                                 };
-                                _renderwindow.Draw(tmpSprite);
+                                RenderWindow.Draw(tmpSprite);
                                 break;
                             case Constants.RenderStateAutotile:
                                 DrawAutoTile(z, 32 + Constants.MapWidth * 32, 32 + y * 32, 1, x, y, tmpMap);
@@ -652,7 +653,7 @@ namespace Intersect_Editor.Classes
             //Draw Current Tileset
             if (Globals.CurrentTileset <= -1) return;
             var tmpSprite = new Sprite(_tilesetTex[Globals.CurrentTileset]);
-            _tilesetwindow.Draw(tmpSprite);
+            TilesetWindow.Draw(tmpSprite);
             var selX = Globals.CurSelX;
             var selY = Globals.CurSelY;
             var selW = Globals.CurSelW;
@@ -675,7 +676,7 @@ namespace Intersect_Editor.Classes
             tileSelectionRect.FillColor = Color.Transparent;
             tileSelectionRect.OutlineColor = Color.White;
             tileSelectionRect.OutlineThickness = 1;
-            _tilesetwindow.Draw(tileSelectionRect);
+            TilesetWindow.Draw(tileSelectionRect);
         }
         private static void DrawMapBorders()
         {
@@ -684,14 +685,14 @@ namespace Intersect_Editor.Classes
                 Position = new Vector2f(0, 32),
                 FillColor = Color.White
             };
-            _renderwindow.Draw(mapBorderLine);
+            RenderWindow.Draw(mapBorderLine);
             mapBorderLine.Position = new Vector2f(0, (Constants.MapHeight + 2) * Constants.TileHeight - Constants.TileHeight);
-            _renderwindow.Draw(mapBorderLine);
+            RenderWindow.Draw(mapBorderLine);
             mapBorderLine.Size = new Vector2f(1, (Constants.MapHeight + 2) * Constants.TileHeight);
             mapBorderLine.Position = new Vector2f(Constants.TileWidth, 0);
-            _renderwindow.Draw(mapBorderLine);
+            RenderWindow.Draw(mapBorderLine);
             mapBorderLine.Position = new Vector2f((Constants.MapWidth + 2) * Constants.TileWidth - Constants.TileWidth, 0);
-            _renderwindow.Draw(mapBorderLine);
+            RenderWindow.Draw(mapBorderLine);
             mapBorderLine.Dispose();
         }
         private static void DrawMapOverlay()
@@ -703,14 +704,14 @@ namespace Intersect_Editor.Classes
                 OverlayTexture.Display();
             }
             var overlaySprite = new Sprite(OverlayTexture.Texture) { Position = new Vector2f(-32 * 30, -32 * 30) };
-            _renderwindow.Draw(overlaySprite);
+            RenderWindow.Draw(overlaySprite);
             overlaySprite.Dispose();
         }
         private static void DrawDarkness()
         {
             if (LightsChanged || CurrentBrightness != Globals.GameMaps[Globals.CurrentMap].Brightness) { InitLighting(); }
             var darkSprite = new Sprite(DarkCacheTexture.Texture) {Position = new Vector2f(-32*30, -32*30)};
-            _renderwindow.Draw(darkSprite, new RenderStates(BlendMode.Multiply));
+            RenderWindow.Draw(darkSprite, new RenderStates(BlendMode.Multiply));
             darkSprite.Dispose();
             if (Globals.CurrentLayer != Constants.LayerCount + 1) return;
             for (var x = 0; x < Constants.MapWidth; x++)
@@ -723,7 +724,7 @@ namespace Intersect_Editor.Classes
                         TextureRect = new IntRect(0, 0, 32, 32),
                         Position = new Vector2f(x*32 + 32, y*32 + 32)
                     };
-                    _renderwindow.Draw(tmpSprite);
+                    RenderWindow.Draw(tmpSprite);
                 }
 
             }
@@ -733,7 +734,7 @@ namespace Intersect_Editor.Classes
             tileSelectionRect.FillColor = Color.Transparent;
             tileSelectionRect.OutlineColor = Color.White;
             tileSelectionRect.OutlineThickness = 1;
-            _renderwindow.Draw(tileSelectionRect);
+            RenderWindow.Draw(tileSelectionRect);
         }
 
         //Fogs
@@ -746,8 +747,8 @@ namespace Intersect_Editor.Classes
                 if (FogFileNames.IndexOf(Globals.GameMaps[Globals.CurrentMap].Fog) > -1)
                 {
                     int fogIndex = FogFileNames.IndexOf(Globals.GameMaps[Globals.CurrentMap].Fog);
-                    int xCount = (int)(_renderwindow.Size.X / FogTextures[fogIndex].Size.X) + 1;
-                    int yCount = (int)(_renderwindow.Size.Y / FogTextures[fogIndex].Size.Y) + 1;
+                    int xCount = (int)(RenderWindow.Size.X / FogTextures[fogIndex].Size.X) + 1;
+                    int yCount = (int)(RenderWindow.Size.Y / FogTextures[fogIndex].Size.Y) + 1;
 
                     _fogCurrentX += (ecTime / 1000f) * Globals.GameMaps[Globals.CurrentMap].FogXSpeed * 2;
                     _fogCurrentY += (ecTime / 1000f) * Globals.GameMaps[Globals.CurrentMap].FogYSpeed * 2;
@@ -763,7 +764,7 @@ namespace Intersect_Editor.Classes
                         {
                             var fogSprite = new Sprite(FogTextures[fogIndex]) { Position = new Vector2f(x * FogTextures[fogIndex].Size.X + _fogCurrentX, y * FogTextures[fogIndex].Size.Y + _fogCurrentY) };
                             fogSprite.Color = new Color(255, 255, 255, (byte)Globals.GameMaps[Globals.CurrentMap].FogTransaprency);
-                            _renderwindow.Draw(fogSprite);
+                            RenderWindow.Draw(fogSprite);
                         }
                     }
                 }
@@ -856,9 +857,9 @@ namespace Intersect_Editor.Classes
             Globals.CurrentTileset = index;
             Globals.CurSelX = 0;
             Globals.CurSelY = 0;
-            myForm.picTileset.Width = (int)_tilesetTex[index].Size.X;
-            myForm.picTileset.Height = (int)_tilesetTex[index].Size.Y;
-            _tilesetwindow.SetView(new View(new Vector2f(myForm.picTileset.Width / 2f, myForm.picTileset.Height / 2f), new Vector2f(myForm.picTileset.Width, myForm.picTileset.Height)));
+            Globals.MapLayersWindow.picTileset.Width = (int)_tilesetTex[index].Size.X;
+            Globals.MapLayersWindow.picTileset.Height = (int)_tilesetTex[index].Size.Y;
+            TilesetWindow.SetView(new View(new Vector2f(Globals.MapLayersWindow.picTileset.Width / 2f, Globals.MapLayersWindow.picTileset.Height / 2f), new Vector2f(Globals.MapLayersWindow.picTileset.Width, Globals.MapLayersWindow.picTileset.Height)));
         }
     }
 }
