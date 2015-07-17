@@ -30,6 +30,7 @@ namespace Intersect_Editor.Classes
         public const int MaxSpells = 255;
         public const int MaxAnimations = 255;
         public const int MaxResources = 255;
+        public const int MaxClasses = 20;
 
         public const int MapWidth = 30;
         public const int MapHeight = 26;
@@ -37,6 +38,8 @@ namespace Intersect_Editor.Classes
         public const int TileHeight = 32;
         public const int LayerCount = 5;
 
+        //Player maxes
+        public const int MaxLevel = 100;
 
         // Autotiles
         public const byte AutoInner = 1;

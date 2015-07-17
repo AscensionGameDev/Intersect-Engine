@@ -59,7 +59,7 @@ namespace Intersect_Editor.Forms
         {
             _npcsBackup = new ByteBuffer[Constants.MaxNpcs];
             _changed = new bool[Constants.MaxNpcs];
-            for (var i = 0; i < Constants.MaxItems; i++)
+            for (var i = 0; i < Constants.MaxNpcs; i++)
             {
                 _npcsBackup[i] = new ByteBuffer();
                 _npcsBackup[i].WriteBytes(Globals.GameNpcs[i].NpcData());

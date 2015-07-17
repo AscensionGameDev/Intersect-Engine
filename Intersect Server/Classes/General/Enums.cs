@@ -66,6 +66,8 @@ namespace Intersect_Server.Classes
             HotbarChange,
             OpenResourceEditor,
             SaveResource,
+            OpenClassEditor,
+            SaveClass,
         }
 
         public enum ServerPackets
@@ -109,6 +111,8 @@ namespace Intersect_Server.Classes
             HotbarSlots,
             OpenResourceEditor,
             ResourceData,
+            OpenClassEditor,
+            ClassData,
         }
 
         public enum Stats

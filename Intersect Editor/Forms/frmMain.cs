@@ -42,6 +42,7 @@ namespace Intersect_Editor.Forms
         private frmNpc _npcEditor;
         private frmResource _resourceEditor;
         private frmSpell _spellEditor;
+        private frmClass _classEditor;
 
         //Initialization & Setup Functions
         public FrmMain()
@@ -227,6 +228,10 @@ namespace Intersect_Editor.Forms
         {
             PacketSender.SendResourceEditor();
         }
+        private void classEditorToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            PacketSender.SendClassEditor();
+        }
 
         /*Map List Functions
         private void lblCloseMapList_Click(object sender, EventArgs e)
@@ -255,6 +260,7 @@ namespace Intersect_Editor.Forms
                 PacketSender.SendMap(Globals.CurrentMap);
             }
             EnterMap(mapNum);
+<<<<<<< HEAD
         }*/
 
         //Cross Threading Delegate Methods
@@ -304,6 +310,14 @@ namespace Intersect_Editor.Forms
                             _spellEditor.Show();
                         }
                         break;
+                    case (int)Enums.EditorTypes.Class:
+                        if (_classEditor == null || _classEditor.Visible == false)
+                        {
+                            _classEditor = new frmClass();
+                            _classEditor.InitEditor();
+                            _classEditor.Show();
+                        }
+                        break;
                     default:
                         return;
                 }
@@ -311,6 +325,5 @@ namespace Intersect_Editor.Forms
             }
 
         }
-
     }
 }

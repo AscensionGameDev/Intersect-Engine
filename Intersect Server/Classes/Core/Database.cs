@@ -956,6 +956,29 @@ namespace Intersect_Server.Classes
 
             }
         }
+
+        // Classes
+        public static void LoadClasses()
+        {
+            if (!Directory.Exists("Resources/Classes"))
+            {
+                Directory.CreateDirectory("Resources/Classes");
+            }
+            Globals.GameClasses = new ClassStruct[Constants.MaxClasses];
+            for (var i = 0; i < Constants.MaxClasses; i++)
+            {
+                Globals.GameClasses[i] = new ClassStruct();
+                if (!File.Exists("Resources/Classes/" + i + ".cls"))
+                {
+                    Globals.GameClasses[i].Save(i);
+                }
+                else
+                {
+                    Globals.GameClasses[i].Load(File.ReadAllBytes("Resources/Classes/" + i + ".cls"));
+                }
+
+            }
+        }
     }
 }
 

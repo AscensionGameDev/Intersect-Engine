@@ -91,6 +91,7 @@
     <Compile Include="Classes\Core\Sounds.cs" />
     <Compile Include="Classes\Game Objects\AnimationStruct.cs" />
     <Compile Include="Classes\Core\Audio.cs" />
+    <Compile Include="Classes\Game Objects\ClassStruct.cs" />
     <Compile Include="Classes\Game Objects\ResourceStruct.cs" />
     <Compile Include="Classes\Maps\MapProperties.cs" />
     <Compile Include="Classes\Misc\ByteBuffer.cs" />

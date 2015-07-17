@@ -66,6 +66,8 @@ namespace Intersect_Editor.Classes
             HotbarChange,
             OpenResourceEditor,
             SaveResource,
+            OpenClassEditor,
+            SaveClass,
         }
 
         public enum ServerPackets
@@ -109,6 +111,8 @@ namespace Intersect_Editor.Classes
             HotbarSlots,
             OpenResourceEditor,
             ResourceData,
+            OpenClassEditor,
+            ClassData,
         }
 
         public enum Stats
@@ -144,7 +148,8 @@ namespace Intersect_Editor.Classes
             Npc = 2,
             Resource = 3,
             Spell = 4,
-            Event = 5,
+            Class = 5,
+            Event = 6,
         }
 
         public static int WeaponIndex = 2;

@@ -30,11 +30,12 @@ namespace Intersect_Server.Classes
         public const int MaxSpells = 255;
         public const int MaxAnimations = 255;
         public const int MaxResources = 255;
+        public const int MaxClasses = 20;
 
         //Player Maxes
         public const int MaxStatValue = 200;
         public const int MaxStats = 5;
-        public const int MaxLevel = 25;
+        public const int MaxLevel = 100;
         public const int MaxHotbar = 10;
 
         //Item Processing

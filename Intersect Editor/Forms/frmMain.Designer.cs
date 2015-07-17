@@ -80,6 +80,7 @@ namespace Intersect_Editor.Forms
             this.dockLeft = new WeifenLuo.WinFormsUI.Docking.DockPanel();
             this.menuStrip.SuspendLayout();
             this.toolStrip1.SuspendLayout();
+            this.classEditorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.SuspendLayout();
             // 
             // menuStrip
@@ -198,7 +199,8 @@ namespace Intersect_Editor.Forms
             this.npcEditorToolStripMenuItem,
             this.spellEditorToolStripMenuItem,
             this.animationEditorToolStripMenuItem,
-            this.resourceEditorToolStripMenuItem});
+            this.resourceEditorToolStripMenuItem,
+            this.classEditorToolStripMenuItem});
             this.contentEditorsToolStripMenuItem.Name = "contentEditorsToolStripMenuItem";
             this.contentEditorsToolStripMenuItem.Size = new System.Drawing.Size(101, 20);
             this.contentEditorsToolStripMenuItem.Text = "Content Editors";
@@ -252,6 +254,13 @@ namespace Intersect_Editor.Forms
             this.aboutToolStripMenuItem.Size = new System.Drawing.Size(107, 22);
             this.aboutToolStripMenuItem.Text = "About";
             this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
+            // 
+            // classEditorToolStripMenuItem
+            // 
+            this.classEditorToolStripMenuItem.Name = "classEditorToolStripMenuItem";
+            this.classEditorToolStripMenuItem.Size = new System.Drawing.Size(164, 22);
+            this.classEditorToolStripMenuItem.Text = "Class Editor";
+            this.classEditorToolStripMenuItem.Click += new System.EventHandler(this.classEditorToolStripMenuItem_Click);
             // 
             // toolStrip1
             // 
@@ -443,6 +452,7 @@ namespace Intersect_Editor.Forms
         private ToolStripButton toolStripButton6;
         private WeifenLuo.WinFormsUI.Docking.VS2012LightTheme vS2012LightTheme1;
         private WeifenLuo.WinFormsUI.Docking.DockPanel dockLeft;
+        private ToolStripMenuItem classEditorToolStripMenuItem;
     }
 }
 
