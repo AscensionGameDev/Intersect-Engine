@@ -558,10 +558,36 @@ namespace Intersect_Server.Classes
                 ((Npc)Globals.Entities[MyIndex]).MoveTimer = Environment.TickCount + (int)((1.0 / (Stat[2] / 10f)) * 1000);
             }
         }
+
+        //Check if the target is either up, down, left or right of the target on the correct Z dimension.
         bool IsOneBlockAway(int enemyIndex)
         {
-            //TODO
-            return true;
+            if (Globals.Entities[enemyIndex].CurrentZ == CurrentZ)
+            {
+                if (Globals.Entities[enemyIndex].CurrentY == CurrentY)
+                {
+                    if (Globals.Entities[enemyIndex].CurrentX == CurrentX - 1)
+                    {
+                        return true;
+                    }
+                    else if (Globals.Entities[enemyIndex].CurrentX == CurrentX + 1)
+                    {
+                        return true;
+                    }
+                }
+                if (Globals.Entities[enemyIndex].CurrentX == CurrentX)
+                {
+                    if (Globals.Entities[enemyIndex].CurrentY == CurrentY - 1)
+                    {
+                        return true;
+                    }
+                    else if (Globals.Entities[enemyIndex].CurrentY == CurrentY + 1)
+                    {
+                        return true;
+                    }
+                }
+            }
+            return false;
         }
 
         //Spawning/Dying

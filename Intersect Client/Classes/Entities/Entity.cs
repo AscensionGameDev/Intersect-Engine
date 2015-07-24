@@ -120,22 +120,22 @@ namespace Intersect_Client
                 switch (Dir)
                 {
                     case 0:
-                        OffsetY -= ecTime * (Stat[(int)Enums.Stats.Speed] / 10f * 32) / 1000;
+                        OffsetY -= ecTime * (10 / 10f * 32) / 1000;
                         if (OffsetY < 0) { OffsetY = 0; }
                         break;
 
                     case 1:
-                        OffsetY += ecTime * (Stat[(int)Enums.Stats.Speed] / 10f * 32) / 1000;
+                        OffsetY += ecTime * (10 / 10f * 32) / 1000;
                         if (OffsetY > 0) { OffsetY = 0; }
                         break;
 
                     case 2:
-                        OffsetX -= ecTime * (Stat[(int)Enums.Stats.Speed] / 10f * 32) / 1000;
+                        OffsetX -= ecTime * (10 / 10f * 32) / 1000;
                         if (OffsetX < 0) { OffsetX = 0; }
                         break;
 
                     case 3:
-                        OffsetX += ecTime * (Stat[(int)Enums.Stats.Speed] / 10f * 32) / 1000;
+                        OffsetX += ecTime * (10 / 10f * 32) / 1000;
                         if (OffsetX > 0) { OffsetX = 0; }
                         break;
                 }

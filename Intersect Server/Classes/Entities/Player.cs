@@ -37,10 +37,14 @@ namespace Intersect_Server.Classes
         public HotbarInstance[] Hotbar = new HotbarInstance[Constants.MaxHotbar];
         public int[] Equipment = new int[Enums.EquipmentSlots.Count];
         public int StatPoints = 0;
+        public string MyAccount = "";
+        public int Class = 0;
+        public int Gender = 0;
+        public int Level = 0;
+        public int Experience = 0;
 
         //Temporary Values
         private int _curMapLink = -1;
-
 
         //Init
 		public Player (int index, Client newClient) : base(index)
@@ -203,7 +207,7 @@ namespace Intersect_Server.Classes
         }
 
         //Inventory
-        public bool TryGiveItem(ItemInstance item)
+        public bool TryGiveItem(ItemInstance item, bool SendUpdate = true)
         {
             if (Globals.GameItems[item.ItemNum].Type == (int)Enums.ItemTypes.Consumable || //Allow Stacking on Currency, Consumable, Spell, and item types of none.
                 Globals.GameItems[item.ItemNum].Type == (int)Enums.ItemTypes.Currency || 
@@ -215,7 +219,10 @@ namespace Intersect_Server.Classes
                     if (Inventory[i].ItemNum == item.ItemNum)
                     {
                         Inventory[i].ItemVal += item.ItemVal;
-                        PacketSender.SendInventoryItemUpdate(MyClient, i);
+                        if (SendUpdate)
+                        {
+                            PacketSender.SendInventoryItemUpdate(MyClient, i);
+                        }
                         return true;
                     }
                 }
@@ -226,7 +233,10 @@ namespace Intersect_Server.Classes
             {
                 if (Inventory[i].ItemNum == -1){
                     Inventory[i] = item.Clone();
-                    PacketSender.SendInventoryItemUpdate(MyClient, i);
+                    if (SendUpdate)
+                    {
+                        PacketSender.SendInventoryItemUpdate(MyClient, i);
+                    }
                     return true;
                 }
             }
@@ -382,7 +392,7 @@ namespace Intersect_Server.Classes
         }
 
         //Skills
-        public bool TryTeachSpell(SpellInstance spell)
+        public bool TryTeachSpell(SpellInstance spell, bool SendUpdate = true)
         {
             if (KnowsSpell(spell.SpellNum)) { return false; }
             for (int i = 0; i < Constants.MaxPlayerSkills; i++)
@@ -390,7 +400,10 @@ namespace Intersect_Server.Classes
                 if (Spells[i].SpellNum == -1)
                 {
                     Spells[i] = spell.Clone();
-                    PacketSender.SendPlayerSpellUpdate(MyClient, i);
+                    if (SendUpdate)
+                    {
+                        PacketSender.SendPlayerSpellUpdate(MyClient, i);
+                    }
                     return true;
                 }
             }

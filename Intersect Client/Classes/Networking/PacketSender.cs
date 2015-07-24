@@ -131,6 +131,16 @@ namespace Intersect_Client.Classes
             Network.SendPacket(bf.ToArray());
         }
 
+        public static void SendCreateCharacter(string Name, int Class, int Sprite)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteLong((int)Enums.ClientPackets.CreateCharacter);
+            bf.WriteString(Name.ToLower().Trim());
+            bf.WriteInteger(Class);
+            bf.WriteInteger(Sprite);
+            Network.SendPacket(bf.ToArray());
+        }
+
         public static void SendPickupItem(int index)
         {
             var bf = new ByteBuffer();

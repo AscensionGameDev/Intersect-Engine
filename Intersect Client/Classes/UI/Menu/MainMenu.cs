@@ -46,6 +46,10 @@ namespace Intersect_Client.Classes.UI.Menu
         private OptionsWindow _optionControls;
         private LoginControls _loginControls;
         private RegisterControls _registerControls;
+        private CreateCharControls _CreateCharControls;
+
+        //Character creation feild check
+        private bool HasMadeCharacterCreation = false;
 
         //Init
         public MainMenu(Canvas _menuCanvas)
@@ -121,8 +125,23 @@ namespace Intersect_Client.Classes.UI.Menu
 
             //Hide option elements
             _optionControls.Hide();
+
+            //Hide Create Char Elements
+            if (HasMadeCharacterCreation == true)
+            {
+                _CreateCharControls.Hide();
+            }
         }
 
+        public void CreateCharacterCreation()
+        {
+            _menuWindow.Title = "Create Character";
+            _registerControls.Hide();
+            _loginControls.Hide();
+            _CreateCharControls = new CreateCharControls(_menuWindow);
+            _CreateCharControls.Show();
+            HasMadeCharacterCreation = true;
+        }
 
         //Input Handlers
         void LoginButton_Clicked(Base sender, ClickedEventArgs arguments)

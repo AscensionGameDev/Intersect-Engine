@@ -91,6 +91,9 @@ namespace Intersect_Client.Classes
         //Game Animations
         public static AnimationStruct[] GameAnimations;
 
+        //Game Classes
+        public static ClassStruct[] GameClasses;
+
         //GUI Varaibles
         public static ArrayList ChatboxContent = new ArrayList();
 

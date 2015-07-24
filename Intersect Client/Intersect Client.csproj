@@ -111,6 +111,7 @@
     <Compile Include="Classes\Entities\Event.cs" />
     <Compile Include="Classes\Entities\Resource.cs" />
     <Compile Include="Classes\Game Objects\AnimationStruct.cs" />
+    <Compile Include="Classes\Game Objects\ClassStruct.cs" />
     <Compile Include="Classes\Game Objects\ResourceStruct.cs" />
     <Compile Include="Classes\Items\ItemInstance.cs" />
     <Compile Include="Classes\Misc\FieldChecking.cs" />
@@ -140,6 +141,7 @@
     <Compile Include="Classes\UI\Game\EntityBox.cs" />
     <Compile Include="Classes\UI\Game\SpellDescWindow.cs" />
     <Compile Include="Classes\UI\Game\SpellWindow.cs" />
+    <Compile Include="Classes\UI\Menu\CreateCharControls.cs" />
     <Compile Include="Classes\UI\Menu\LoginControls.cs" />
     <Compile Include="Classes\UI\Menu\MainMenu.cs" />
     <Compile Include="Classes\UI\Menu\RegisterControls.cs" />

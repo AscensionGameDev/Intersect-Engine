@@ -68,6 +68,7 @@ namespace Intersect_Server.Classes
             SaveResource,
             OpenClassEditor,
             SaveClass,
+            CreateCharacter,
         }
 
         public enum ServerPackets
@@ -113,6 +114,7 @@ namespace Intersect_Server.Classes
             ResourceData,
             OpenClassEditor,
             ClassData,
+            CreateCharacter,
         }
 
         public enum Stats

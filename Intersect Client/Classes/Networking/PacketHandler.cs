@@ -129,6 +129,12 @@ namespace Intersect_Client.Classes
                     case Enums.ServerPackets.HotbarSlots:
                         HandleHotbarSlots(bf.ReadBytes(bf.Length()));
                         break;
+                    case Enums.ServerPackets.ClassData:
+                        HandleClassData(bf.ReadBytes(bf.Length()));
+                        break;
+                    case Enums.ServerPackets.CreateCharacter:
+                        HandleCreateCharacter();
+                        break;
                     default:
                         Console.WriteLine(@"Non implemented packet received: " + packetHeader);
                         break;
@@ -261,6 +267,7 @@ namespace Intersect_Client.Classes
             Globals.GameAnimations = new AnimationStruct[Constants.MaxAnimations];
             Globals.GameSpells = new SpellStruct[Constants.MaxSpells];
             Globals.GameResources = new ResourceStruct[Constants.MaxResources];
+            Globals.GameClasses = new ClassStruct[Constants.MaxClasses];
 
             //Database.LoadMapRevisions();
         }
@@ -660,5 +667,26 @@ namespace Intersect_Client.Classes
             bf.Dispose();
         }
 
+        private static void HandleClassData(byte[] packet)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteBytes(packet);
+            var classNum = bf.ReadInteger();
+
+            if (classNum == 0) //Initilise the classes if the first one.
+            {
+                Globals.GameClasses = new ClassStruct[Constants.MaxClasses];
+            }
+
+            Globals.GameClasses[classNum] = new ClassStruct();
+            Globals.GameClasses[classNum].Load(bf.ReadBytes(bf.Length()));
+        }
+
+        private static void HandleCreateCharacter()
+        {
+            Globals.WaitingOnServer = false;
+            Graphics.FadeStage = 1;
+            Gui._MenuGui._mainMenu.CreateCharacterCreation();
+        }
     }
 }
