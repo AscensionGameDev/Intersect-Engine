@@ -285,6 +285,10 @@ namespace Intersect_Server.Classes
             {
                 SendResource(client, i);
             }
+            for (int i = 0; i < Constants.MaxClasses; i++)
+            {
+                SendClass(client, i);
+            }
         }
 
         public static void SendGlobalMsg(string message)
@@ -783,6 +787,14 @@ namespace Intersect_Server.Classes
         {
             var bf = new ByteBuffer();
             bf.WriteLong((int)Enums.ServerPackets.OpenClassEditor);
+            client.SendPacket(bf.ToArray());
+            bf.Dispose();
+        }
+
+        public static void SendCreateCharacter(Client client)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteLong((int)Enums.ServerPackets.CreateCharacter);
             client.SendPacket(bf.ToArray());
             bf.Dispose();
         }

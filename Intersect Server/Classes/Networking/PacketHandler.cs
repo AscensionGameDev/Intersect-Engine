@@ -153,6 +153,9 @@ namespace Intersect_Server.Classes
                 case Enums.ClientPackets.MapListUpdate:
                     HandleMapListUpdate(client, packet);
                     break;
+                case Enums.ClientPackets.CreateCharacter:
+                    HandleCreateCharacter(client, packet);
+                    break;
                 default:
                     Console.WriteLine(@"Non implemented packet received: " + packetHeader);
                     break;
@@ -177,12 +180,23 @@ namespace Intersect_Server.Classes
             {
                 if (Database.CheckPassword(username, password))
                 {
-                    Globals.Entities[index] = new Player(index, client) { MyName = username };
+                    Globals.Entities[index] = new Player(index, client) { MyAccount = username };
                     client.Entity = (Player)Globals.Entities[index];
-                    Console.WriteLine(Globals.Entities[index].MyName + " logged in.");
+                    Console.WriteLine((((Player)Globals.Entities[index]).MyAccount) + " logged in.");
                     client.Id = Database.GetUserId(username);
-                    Database.LoadPlayer(client);
-                    PacketSender.SendJoinGame(client);
+
+                    if (Database.LoadPlayer(client))
+                    {
+                        PacketSender.SendJoinGame(client);
+                    }
+                    else
+                    {
+                        for (int i = 0; i < Constants.MaxClasses; i++)
+                        {
+                            PacketSender.SendClass(client, i);
+                        }
+                        PacketSender.SendCreateCharacter(client);
+                    }
                 }
                 else
                 {
@@ -551,15 +565,71 @@ namespace Intersect_Server.Classes
                 {
                     Database.CreateAccount(username, password, email);
                     client.Id = Database.GetUserId(username);
-                    Globals.Entities[index].MyName = username;
+                    ((Player)Globals.Entities[index]).MyAccount = username;
                     Console.WriteLine(Globals.Entities[index].MyName + " logged in.");
-                    Globals.Entities[index].MySprite = "5";
-                    Globals.Entities[index].CurrentMap = Constants.SpawnMap;
-                    Globals.Entities[index].CurrentX = Constants.SpawnX;
-                    Globals.Entities[index].CurrentY = Constants.SpawnY;
-                    Database.SavePlayer(client);
-                    PacketSender.SendJoinGame(client);
+                    for (int i = 0; i < Constants.MaxClasses; i++)
+                    {
+                        PacketSender.SendClass(client, i);
+                    }
+                    PacketSender.SendCreateCharacter(client);
                 }
+            }
+            bf.Dispose();
+        }
+
+        private static void HandleCreateCharacter(Client client, byte[] packet)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteBytes(packet);
+            var Name = bf.ReadString();
+            var Class = bf.ReadInteger();
+            var Sprite = bf.ReadInteger();
+            var index = client.EntityIndex;
+            if (Database.CharacterNameInUse(Name))
+            {
+                PacketSender.SendLoginError(client, "An account with this character name exists. Please choose another.");
+            }
+            else
+            {
+                Globals.Entities[index].MyName = Name;
+                ((Player)Globals.Entities[index]).Class = Class;
+                Globals.Entities[index].MySprite = Globals.GameClasses[Class].Sprites[Sprite].Sprite;
+                ((Player)Globals.Entities[index]).Gender = Globals.GameClasses[Class].Sprites[Sprite].Gender;
+                Globals.Entities[index].CurrentMap = Constants.SpawnMap;
+                Globals.Entities[index].CurrentX = Constants.SpawnX;
+                Globals.Entities[index].CurrentY = Constants.SpawnY;
+                Globals.Entities[index].Vital[(int)Enums.Vitals.Health] = Globals.GameClasses[Class].MaxVital[(int)Enums.Vitals.Health];
+                Globals.Entities[index].Vital[(int)Enums.Vitals.Mana] = Globals.GameClasses[Class].MaxVital[(int)Enums.Vitals.Mana];
+
+                for (int i = 0; i < (int)Enums.Stats.StatCount; i++)
+                {
+                    Globals.Entities[index].Stat[i] = Globals.GameClasses[Class].Stat[i];
+                }
+                ((Player)Globals.Entities[index]).StatPoints = Globals.GameClasses[Class].Points;
+
+                client.Entity = (Player)Globals.Entities[index];
+
+                for (int i = 0; i < Globals.GameClasses[Class].Spells.Count; i++)
+                {
+                    if (Globals.GameClasses[Class].Spells[i].Level <= 1)
+                    {
+                        SpellInstance TempSpell = new SpellInstance();
+                        TempSpell.SpellNum = Globals.GameClasses[Class].Spells[i].SpellNum;
+                        ((Player)Globals.Entities[index]).TryTeachSpell(TempSpell, false);
+                    }
+                }
+
+                for (int i = 0; i < Constants.MaxNpcDrops; i++)
+                {
+                    ItemInstance TempItem = new ItemInstance();
+                    TempItem.ItemNum = Globals.GameClasses[Class].Items[i].ItemNum;
+                    TempItem.ItemVal = Globals.GameClasses[Class].Items[i].Amount;
+                    ((Player)Globals.Entities[index]).TryGiveItem(TempItem, false);
+                }
+
+                Database.SavePlayer(client);
+                Console.WriteLine((((Player)Globals.Entities[index]).MyAccount) + " has created a character.");
+                PacketSender.SendJoinGame(client);
             }
             bf.Dispose();
         }

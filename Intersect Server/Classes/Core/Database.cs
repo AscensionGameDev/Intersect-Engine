@@ -176,12 +176,17 @@ namespace Intersect_Server.Classes
             CheckTableField(mysqlConn, columns, "user", myTable, MySqlFields.m_string, 45);
             CheckTableField(mysqlConn, columns, "pass", myTable, MySqlFields.m_string, 45);
             CheckTableField(mysqlConn, columns, "email", myTable, MySqlFields.m_string, 100);
+            CheckTableField(mysqlConn, columns, "name", myTable, MySqlFields.m_string, 45);
             CheckTableField(mysqlConn, columns, "map", myTable, MySqlFields.m_int);
             CheckTableField(mysqlConn, columns, "x", myTable, MySqlFields.m_int);
             CheckTableField(mysqlConn, columns, "y", myTable, MySqlFields.m_int);
             CheckTableField(mysqlConn, columns, "z", myTable, MySqlFields.m_int);
             CheckTableField(mysqlConn, columns, "dir", myTable, MySqlFields.m_int);
             CheckTableField(mysqlConn, columns, "sprite", myTable, MySqlFields.m_string, 45);
+            CheckTableField(mysqlConn, columns, "class", myTable, MySqlFields.m_int);
+            CheckTableField(mysqlConn, columns, "gender", myTable, MySqlFields.m_int);
+            CheckTableField(mysqlConn, columns, "level", myTable, MySqlFields.m_int);
+            CheckTableField(mysqlConn, columns, "experience", myTable, MySqlFields.m_int);
             for (var i = 0; i < (int)Enums.Vitals.VitalCount; i++)
             {
                 CheckTableField(mysqlConn, columns, "vital" + i, myTable, MySqlFields.m_int);
@@ -374,6 +379,27 @@ namespace Intersect_Server.Classes
             }
             return false;
         }
+        public static bool CharacterNameInUse(string name)
+        {
+            var stm = "SELECT COUNT(*) from Users WHERE name='" + name.ToLower() + "'";
+            using (var mysqlConn = new MySqlConnection(ConnectionString))
+            {
+                mysqlConn.Open();
+                var cmd = new MySqlCommand(stm, mysqlConn);
+                var reader = cmd.ExecuteReader();
+                var count = 0;
+                while (reader.Read())
+                {
+                    count = reader.GetInt32(0);
+                }
+                reader.Close();
+                if (count > 0)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
         private static int GetRegisteredPlayers()
         {
             const string query = "SELECT COUNT(*) from Users";
@@ -438,7 +464,8 @@ namespace Intersect_Server.Classes
                 return result;
             }
         }
-        public static void LoadPlayer(Client client)
+
+        public static bool LoadPlayer(Client client)
         {
             var stm = "SELECT * FROM Users WHERE id = " + client.Id + "";
             using (var mysqlConn = new MySqlConnection(ConnectionString))
@@ -449,101 +476,114 @@ namespace Intersect_Server.Classes
                 var en = client.Entity;
                 var columns = Enumerable.Range(0, reader.FieldCount).Select(reader.GetName).ToList();
                 int i;
-                while (reader.Read())
+                try
                 {
-                    en.CurrentMap = reader.GetInt32(columns.IndexOf("map"));
-                    en.CurrentX = reader.GetInt32(columns.IndexOf("x"));
-                    en.CurrentY = reader.GetInt32(columns.IndexOf("y"));
-                    en.CurrentZ = reader.GetInt32(columns.IndexOf("z"));
-                    en.Dir = reader.GetInt32(columns.IndexOf("dir"));
-                    en.MySprite = reader.GetString(columns.IndexOf("sprite"));
-                    for (i = 0; i < (int)Enums.Vitals.VitalCount; i++)
+                    while (reader.Read())
                     {
-                        en.Vital[i] = reader.GetInt32(columns.IndexOf("vital" + i));
-                        en.MaxVital[i] = reader.GetInt32(columns.IndexOf("maxvital" + i));
-                    }
-                    for (i = 0; i < (int)Enums.Stats.StatCount; i++)
-                    {
-                        en.Stat[i] = reader.GetInt32(columns.IndexOf("stat" + i));
-                    }
-                    en.StatPoints = reader.GetInt32(columns.IndexOf("statpoints"));
-                    for (i = 0; i < Enums.EquipmentSlots.Count; i++)
-                    {
-                        en.Equipment[i] = reader.GetInt32(columns.IndexOf("equipment" + i));
-                    }
-                    client.Power = reader.GetInt32(columns.IndexOf("power"));
-                    en.Face = reader.GetString(columns.IndexOf("face"));
-                }
-                reader.Close();
-
-
-                i = 0;
-                stm = "SELECT switchval from Switches WHERE id=" + client.Id + ";";
-                cmd = new MySqlCommand(stm, mysqlConn);
-                reader = cmd.ExecuteReader();
-                while (reader.Read())
-                {
-                    if (i >= Constants.SwitchCount) continue;
-                    ((Player)en).Switches[i] = Convert.ToBoolean(reader.GetInt32(0));
-                    i++;
-                }
-                reader.Close();
-                i = 0;
-                stm = "SELECT variableval from Variables WHERE id=" + client.Id + ";";
-                cmd = new MySqlCommand(stm, mysqlConn);
-                reader = cmd.ExecuteReader();
-                while (reader.Read())
-                {
-                    if (i >= Constants.VariableCount) continue;
-                    ((Player)en).Variables[i] = reader.GetInt32(0);
-                    i++;
-                }
-                reader.Close();
-                i = 0;
-                stm = "SELECT * from Inventories WHERE id=" + client.Id + ";";
-                cmd = new MySqlCommand(stm, mysqlConn);
-                reader = cmd.ExecuteReader();
-                columns = Enumerable.Range(0, reader.FieldCount).Select(reader.GetName).ToList();
-                while (reader.Read())
-                {
-                    if (reader.GetInt32(columns.IndexOf("slot")) < Constants.MaxInvItems) {
-                        ((Player)en).Inventory[reader.GetInt32(columns.IndexOf("slot"))].ItemNum = reader.GetInt32(columns.IndexOf("itemnum"));
-                        ((Player)en).Inventory[reader.GetInt32(columns.IndexOf("slot"))].ItemVal = reader.GetInt32(columns.IndexOf("itemval"));
-                        for (int x = 0; x <(int)Enums.Stats.StatCount; x++)
+                        en.MyName = reader.GetString(columns.IndexOf("name"));
+                        en.CurrentMap = reader.GetInt32(columns.IndexOf("map"));
+                        en.CurrentX = reader.GetInt32(columns.IndexOf("x"));
+                        en.CurrentY = reader.GetInt32(columns.IndexOf("y"));
+                        en.CurrentZ = reader.GetInt32(columns.IndexOf("z"));
+                        en.Dir = reader.GetInt32(columns.IndexOf("dir"));
+                        en.MySprite = reader.GetString(columns.IndexOf("sprite"));
+                        en.Class = reader.GetInt32(columns.IndexOf("class"));
+                        en.Gender = reader.GetInt32(columns.IndexOf("gender"));
+                        en.Level = reader.GetInt32(columns.IndexOf("level"));
+                        en.Experience = reader.GetInt32(columns.IndexOf("experience"));
+                        for (i = 0; i < (int)Enums.Vitals.VitalCount; i++)
                         {
-                            ((Player)en).Inventory[reader.GetInt32(columns.IndexOf("slot"))].StatBoost[x] = reader.GetInt32(columns.IndexOf("statbuff" + x));
+                            en.Vital[i] = reader.GetInt32(columns.IndexOf("vital" + i));
+                            en.MaxVital[i] = reader.GetInt32(columns.IndexOf("maxvital" + i));
+                        }
+                        for (i = 0; i < (int)Enums.Stats.StatCount; i++)
+                        {
+                            en.Stat[i] = reader.GetInt32(columns.IndexOf("stat" + i));
+                        }
+                        en.StatPoints = reader.GetInt32(columns.IndexOf("statpoints"));
+                        for (i = 0; i < Enums.EquipmentSlots.Count; i++)
+                        {
+                            en.Equipment[i] = reader.GetInt32(columns.IndexOf("equipment" + i));
+                        }
+                        client.Power = reader.GetInt32(columns.IndexOf("power"));
+                        en.Face = reader.GetString(columns.IndexOf("face"));
+                    }
+                    reader.Close();
+
+                    i = 0;
+                    stm = "SELECT switchval from Switches WHERE id=" + client.Id + ";";
+                    cmd = new MySqlCommand(stm, mysqlConn);
+                    reader = cmd.ExecuteReader();
+                    while (reader.Read())
+                    {
+                        if (i >= Constants.SwitchCount) continue;
+                        ((Player)en).Switches[i] = Convert.ToBoolean(reader.GetInt32(0));
+                        i++;
+                    }
+                    reader.Close();
+                    i = 0;
+                    stm = "SELECT variableval from Variables WHERE id=" + client.Id + ";";
+                    cmd = new MySqlCommand(stm, mysqlConn);
+                    reader = cmd.ExecuteReader();
+                    while (reader.Read())
+                    {
+                        if (i >= Constants.VariableCount) continue;
+                        ((Player)en).Variables[i] = reader.GetInt32(0);
+                        i++;
+                    }
+                    reader.Close();
+                    i = 0;
+                    stm = "SELECT * from Inventories WHERE id=" + client.Id + ";";
+                    cmd = new MySqlCommand(stm, mysqlConn);
+                    reader = cmd.ExecuteReader();
+                    columns = Enumerable.Range(0, reader.FieldCount).Select(reader.GetName).ToList();
+                    while (reader.Read())
+                    {
+                        if (reader.GetInt32(columns.IndexOf("slot")) < Constants.MaxInvItems)
+                        {
+                            ((Player)en).Inventory[reader.GetInt32(columns.IndexOf("slot"))].ItemNum = reader.GetInt32(columns.IndexOf("itemnum"));
+                            ((Player)en).Inventory[reader.GetInt32(columns.IndexOf("slot"))].ItemVal = reader.GetInt32(columns.IndexOf("itemval"));
+                            for (int x = 0; x < (int)Enums.Stats.StatCount; x++)
+                            {
+                                ((Player)en).Inventory[reader.GetInt32(columns.IndexOf("slot"))].StatBoost[x] = reader.GetInt32(columns.IndexOf("statbuff" + x));
+                            }
                         }
                     }
-                }
-                reader.Close();
-                i = 0;
-                stm = "SELECT * from Spells WHERE id=" + client.Id + ";";
-                cmd = new MySqlCommand(stm, mysqlConn);
-                reader = cmd.ExecuteReader();
-                columns = Enumerable.Range(0, reader.FieldCount).Select(reader.GetName).ToList();
-                while (reader.Read())
-                {
-                    if (reader.GetInt32(columns.IndexOf("slot")) < Constants.MaxPlayerSkills)
+                    reader.Close();
+                    i = 0;
+                    stm = "SELECT * from Spells WHERE id=" + client.Id + ";";
+                    cmd = new MySqlCommand(stm, mysqlConn);
+                    reader = cmd.ExecuteReader();
+                    columns = Enumerable.Range(0, reader.FieldCount).Select(reader.GetName).ToList();
+                    while (reader.Read())
                     {
-                        ((Player)en).Spells[reader.GetInt32(columns.IndexOf("slot"))].SpellNum = reader.GetInt32(columns.IndexOf("spellnum"));
-                        ((Player)en).Spells[reader.GetInt32(columns.IndexOf("slot"))].SpellCD = reader.GetInt32(columns.IndexOf("spellcd"));
+                        if (reader.GetInt32(columns.IndexOf("slot")) < Constants.MaxPlayerSkills)
+                        {
+                            ((Player)en).Spells[reader.GetInt32(columns.IndexOf("slot"))].SpellNum = reader.GetInt32(columns.IndexOf("spellnum"));
+                            ((Player)en).Spells[reader.GetInt32(columns.IndexOf("slot"))].SpellCD = reader.GetInt32(columns.IndexOf("spellcd"));
+                        }
                     }
-                }
-                reader.Close();
-                i = 0;
-                stm = "SELECT * from hotbar WHERE id=" + client.Id + ";";
-                cmd = new MySqlCommand(stm, mysqlConn);
-                reader = cmd.ExecuteReader();
-                columns = Enumerable.Range(0, reader.FieldCount).Select(reader.GetName).ToList();
-                while (reader.Read())
-                {
-                    if (reader.GetInt32(columns.IndexOf("slot")) < Constants.MaxHotbar)
+                    reader.Close();
+                    i = 0;
+                    stm = "SELECT * from hotbar WHERE id=" + client.Id + ";";
+                    cmd = new MySqlCommand(stm, mysqlConn);
+                    reader = cmd.ExecuteReader();
+                    columns = Enumerable.Range(0, reader.FieldCount).Select(reader.GetName).ToList();
+                    while (reader.Read())
                     {
-                        ((Player)en).Hotbar[reader.GetInt32(columns.IndexOf("slot"))].Type = reader.GetInt32(columns.IndexOf("itemtype"));
-                        ((Player)en).Hotbar[reader.GetInt32(columns.IndexOf("slot"))].Slot = reader.GetInt32(columns.IndexOf("itemslot"));
+                        if (reader.GetInt32(columns.IndexOf("slot")) < Constants.MaxHotbar)
+                        {
+                            ((Player)en).Hotbar[reader.GetInt32(columns.IndexOf("slot"))].Type = reader.GetInt32(columns.IndexOf("itemtype"));
+                            ((Player)en).Hotbar[reader.GetInt32(columns.IndexOf("slot"))].Slot = reader.GetInt32(columns.IndexOf("itemslot"));
+                        }
                     }
+                    reader.Close();
                 }
-                reader.Close();
+                catch (Exception ex)
+                {
+                    return false;
+                }
+                return true;
             }
         }
         public static void SavePlayer(Client client)
@@ -554,13 +594,18 @@ namespace Intersect_Server.Classes
             if (client.Entity == null) { return; }
             var en = (Player)client.Entity;
             var query = "UPDATE Users SET ";
-            var id = GetUserId(en.MyName);
+            var id = GetUserId(en.MyAccount);
+            query += "name='" + en.MyName + "',";
             query += "map=" + en.CurrentMap + ",";
             query += "x=" + en.CurrentX + ",";
             query += "y=" + en.CurrentY + ",";
             query += "z=" + en.CurrentZ + ",";
             query += "dir=" + en.Dir + ",";
             query += "sprite='" + en.MySprite + "',";
+            query += "class=" + en.Class + ",";
+            query += "gender=" + en.Gender + ",";
+            query += "level=" + en.Level + ",";
+            query += "experience=" + en.Experience + ",";
             for (var i = 0; i < (int)Enums.Vitals.VitalCount; i++)
             {
                 query += "vital" + i + "=" + en.Vital[i] + ",";

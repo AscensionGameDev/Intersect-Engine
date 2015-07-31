@@ -41,7 +41,7 @@ namespace Intersect_Client.Classes.UI.Menu
             InitMenuGui();
         }
 
-        private MainMenu _mainMenu;
+        public MainMenu _mainMenu;
 
         private void InitMenuGui()
         {
