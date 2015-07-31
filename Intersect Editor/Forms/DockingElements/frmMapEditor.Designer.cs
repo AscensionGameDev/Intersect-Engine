@@ -46,6 +46,7 @@
             this.pnlMapContainer.Name = "pnlMapContainer";
             this.pnlMapContainer.Size = new System.Drawing.Size(204, 101);
             this.pnlMapContainer.TabIndex = 1;
+            this.pnlMapContainer.Paint += new System.Windows.Forms.PaintEventHandler(this.pnlMapContainer_Paint);
             // 
             // picMap
             // 
@@ -54,6 +55,7 @@
             this.picMap.Size = new System.Drawing.Size(32, 32);
             this.picMap.TabIndex = 2;
             this.picMap.TabStop = false;
+            this.picMap.Visible = false;
             this.picMap.DoubleClick += new System.EventHandler(this.picMap_DoubleClick);
             this.picMap.MouseDown += new System.Windows.Forms.MouseEventHandler(this.picMap_MouseDown);
             this.picMap.MouseEnter += new System.EventHandler(this.picMap_MouseEnter);

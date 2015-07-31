@@ -34,6 +34,7 @@ namespace Intersect_Server.Classes
     {
         public static MapGrid[] MapGrids;
         public static string ConnectionString = "";
+        public static MapList MapStructure = new MapList();
 
         private enum MySqlFields
         {
@@ -140,7 +141,6 @@ namespace Intersect_Server.Classes
                 Console.WriteLine("Could not connect to the MySQL database. Players will fail to login or create accounts.");
             }
         }
-
         private static void CheckTables()
         {
 
@@ -156,7 +156,6 @@ namespace Intersect_Server.Classes
 
             }
         }
-
         private static void CheckUsersTable(MySqlConnection mysqlConn)
         {
             const string myTable = "users";
@@ -200,7 +199,6 @@ namespace Intersect_Server.Classes
             CheckTableField(mysqlConn, columns, "power", myTable, MySqlFields.m_int);
             CheckTableField(mysqlConn, columns, "face", myTable, MySqlFields.m_string);
         }
-
         private static void CheckSwitchesTable(MySqlConnection mysqlConn)
         {
             const string myTable = "switches";
@@ -221,7 +219,6 @@ namespace Intersect_Server.Classes
             CheckTableField(mysqlConn, columns, "switchnum", myTable, MySqlFields.m_int);
             CheckTableField(mysqlConn, columns, "switchval", myTable, MySqlFields.m_int);
         }
-
         private static void CheckVariablesTable(MySqlConnection mysqlConn)
         {
             const string myTable = "variables";
@@ -242,7 +239,6 @@ namespace Intersect_Server.Classes
             CheckTableField(mysqlConn, columns, "variablenum", myTable, MySqlFields.m_int);
             CheckTableField(mysqlConn, columns, "variableval", myTable, MySqlFields.m_int);
         }
-
         private static void CheckInventoryTable(MySqlConnection mysqlConn)
         {
             const string myTable = "inventories";
@@ -268,7 +264,6 @@ namespace Intersect_Server.Classes
                 CheckTableField(mysqlConn, columns, "statbuff" + i, myTable, MySqlFields.m_int);
             }
         }
-
         private static void CheckSpellsTable(MySqlConnection mysqlConn)
         {
             const string myTable = "spells";
@@ -290,7 +285,6 @@ namespace Intersect_Server.Classes
             CheckTableField(mysqlConn, columns, "spellnum", myTable, MySqlFields.m_int);
             CheckTableField(mysqlConn, columns, "spellcd", myTable, MySqlFields.m_int);
         }
-
         private static void CheckHotbarTable(MySqlConnection mysqlConn)
         {
             const string myTable = "hotbar";
@@ -312,7 +306,6 @@ namespace Intersect_Server.Classes
             CheckTableField(mysqlConn, columns, "itemtype", myTable, MySqlFields.m_int);
             CheckTableField(mysqlConn, columns, "itemslot", myTable, MySqlFields.m_int);
         }
-
         private static void CheckTableField(MySqlConnection mysqlConn, List<string> columns, string fieldName, string tableName, MySqlFields fieldType, int fieldLength = -1)
         {
             var query = "";
@@ -360,7 +353,6 @@ namespace Intersect_Server.Classes
             }
             return false;
         }
-
         public static bool EmailInUse(string email)
         {
             var stm = "SELECT COUNT(*) from Users WHERE email='" + email.ToLower() + "'";
@@ -382,7 +374,6 @@ namespace Intersect_Server.Classes
             }
             return false;
         }
-
         private static int GetRegisteredPlayers()
         {
             const string query = "SELECT COUNT(*) from Users";
@@ -400,7 +391,6 @@ namespace Intersect_Server.Classes
                 return result;
             }
         }
-
         public static void CreateAccount(string username, string password, string email)
         {
             using (var mysqlConn = new MySqlConnection(ConnectionString))
@@ -411,7 +401,6 @@ namespace Intersect_Server.Classes
                 cmd.ExecuteNonQuery();
             }
         }
-
         public static bool CheckPassword(string username, string password)
         {
             var stm = "SELECT pass FROM Users WHERE user = '" + username + "'";
@@ -432,7 +421,6 @@ namespace Intersect_Server.Classes
                 return result;
             }
         }
-
         public static int GetUserId(string username)
         {
             var stm = "SELECT id FROM Users WHERE user = '" + username + "'";
@@ -450,7 +438,6 @@ namespace Intersect_Server.Classes
                 return result;
             }
         }
-
         public static void LoadPlayer(Client client)
         {
             var stm = "SELECT * FROM Users WHERE id = " + client.Id + "";
@@ -559,7 +546,6 @@ namespace Intersect_Server.Classes
                 reader.Close();
             }
         }
-
         public static void SavePlayer(Client client)
         {
             if (client == null) { return; }
@@ -781,8 +767,40 @@ namespace Intersect_Server.Classes
                 }
             }
             GenerateMapGrids();
+            LoadMapFolders();
+            CheckAllMapConnections();
         }
-
+        public static void CheckAllMapConnections()
+        {
+            for (int i = 0; i < Globals.GameMaps.Length; i++)
+            {
+                if (Globals.GameMaps[i] != null)
+                {
+                    CheckMapConnections(i);
+                }
+            }
+        }
+        public static void CheckMapConnections(int mapNum)
+        {
+            bool updated = false;
+            if (!CheckMapExistance(Globals.GameMaps[mapNum].Up)) { Globals.GameMaps[mapNum].Up = -1; updated = true; }
+            if (!CheckMapExistance(Globals.GameMaps[mapNum].Down)) { Globals.GameMaps[mapNum].Down = -1; updated = true; }
+            if (!CheckMapExistance(Globals.GameMaps[mapNum].Left)) { Globals.GameMaps[mapNum].Left = -1; updated = true; } 
+            if (!CheckMapExistance(Globals.GameMaps[mapNum].Right)) { Globals.GameMaps[mapNum].Right = -1; updated = true; }
+            if (updated)
+            {
+                Globals.GameMaps[mapNum].Save();
+                PacketSender.SendMapToEditors(mapNum);
+            }
+        }
+        private static bool CheckMapExistance(int mapNum)
+        {
+            if (mapNum == -1) { return true; }
+            if (mapNum >= Globals.GameMaps.Length) { return false; }
+            if (Globals.GameMaps[mapNum] == null) { return false; }
+            if (Globals.GameMaps[mapNum].Deleted == 1) { return false; }
+            return true;
+        }
         public static void GenerateMapGrids()
         {
             for (var i = 0; i < Globals.MapCount; i++)
@@ -841,7 +859,6 @@ namespace Intersect_Server.Classes
             Globals.GameMaps[Globals.MapCount - 1].Save();
             return Globals.MapCount - 1;
         }
-
         public static void LoadNpcs()
         {
             if (!Directory.Exists("Resources/Npcs"))
@@ -977,6 +994,40 @@ namespace Intersect_Server.Classes
                     Globals.GameClasses[i].Load(File.ReadAllBytes("Resources/Classes/" + i + ".cls"));
                 }
 
+            }
+        }
+
+        //Map Folders
+        private static void LoadMapFolders()
+        {
+            if (File.Exists("Resources/Maps/MapStructure.dat"))
+            {
+                ByteBuffer myBuffer = new ByteBuffer();
+                myBuffer.WriteBytes(File.ReadAllBytes("Resources/Maps/MapStructure.dat"));
+                MapStructure.Load(myBuffer);
+                for (int i = 0; i < Globals.GameMaps.Length; i++)
+                {
+                    if (Globals.GameMaps[i].Deleted == 0)
+                    {
+                        if (MapStructure.FindMap(i) == null)
+                        {
+                            MapStructure.AddMap(i);
+                        }
+                    }
+                }
+                File.WriteAllBytes("Resources/Maps/MapStructure.dat", MapStructure.Data());
+                PacketSender.SendMapListToEditors();
+            }
+            else
+            {
+                for (int i = 0; i < Globals.GameMaps.Length; i++)
+                {
+                    if (Globals.GameMaps[i].Deleted == 0)
+                    {
+                        MapStructure.AddMap(i);
+                    }
+                }
+                File.WriteAllBytes("Resources/Maps/MapStructure.dat",MapStructure.Data());
             }
         }
     }

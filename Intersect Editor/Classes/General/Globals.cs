@@ -59,7 +59,7 @@ namespace Intersect_Editor.Classes
         public static int AutotileFrame = 0;
 
         //Editor Variables
-        public static int CurrentMap;
+        public static int CurrentMap = -1;
         public static int CurrentTileset = -1;
         public static int CurSelX;
         public static int CurSelY;

@@ -17,15 +17,15 @@ namespace Intersect_Editor.Forms
             InitializeComponent();
         }
 
-        public void Init(MapStruct map)
+        public void Init(int mapNum)
         {
-            if (map == null)
+            if (mapNum == -1 || Globals.GameMaps[mapNum] == null)
             {
                 gridMapProperties.SelectedObject = null;
             }
             else
             {
-                gridMapProperties.SelectedObject = new MapProperties(map);
+                gridMapProperties.SelectedObject = new MapProperties(Globals.GameMaps[mapNum]);
             }
         }
     }

@@ -45,6 +45,18 @@ namespace Intersect_Server.Classes
                 SendDataToMap(Globals.GameMaps[mapNum].SurroundingMaps[i], data);
             }
         }
+        private static void SendDataToEditors(byte[] data)
+        {
+            for (var i = 0; i < Globals.Clients.Count; i++)
+            {
+                if (Globals.Clients[i] == null) continue;
+                if (!Globals.Clients[i].isConnected) continue;
+                if (Globals.Clients[i].IsEditor)
+                {
+                    Globals.Clients[i].SendPacket(data);
+                }
+            }
+        }
 
         public static void SendPing(Client client)
         {
@@ -86,7 +98,17 @@ namespace Intersect_Server.Classes
                 PacketSender.SendMapItems(client, mapNum);
             }
             bf.Dispose();
+        }
 
+        public static void SendMapToEditors(int mapNum)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteLong((int)Enums.ServerPackets.MapData);
+            bf.WriteLong(mapNum);
+            bf.WriteLong(Globals.GameMaps[mapNum].MapData.Length);
+            bf.WriteBytes(Globals.GameMaps[mapNum].MapData);
+            SendDataToEditors(bf.ToArray());
+            bf.Dispose();
         }
 
         public static void SendEntityData(Client client, int sendIndex, int entityType, Entity en)
@@ -467,21 +489,17 @@ namespace Intersect_Server.Classes
         {
             var bf = new ByteBuffer();
             bf.WriteLong((int)Enums.ServerPackets.MapList);
-            bf.WriteInteger(Globals.GameMaps.Length);
-            foreach (var t in Globals.GameMaps)
-            {
-                if (t != null)
-                {
-                    bf.WriteString(t.MyName);
-                    bf.WriteInteger(t.Deleted);
-                }
-                else
-                {
-                    bf.WriteString("");
-                    bf.WriteInteger(1);
-                }
-            }
+            bf.WriteBytes(Database.MapStructure.Data());
             client.SendPacket(bf.ToArray());
+            bf.Dispose();
+        }
+
+        public static void SendMapListToEditors()
+        {
+            var bf = new ByteBuffer();
+            bf.WriteLong((int)Enums.ServerPackets.MapList);
+            bf.WriteBytes(Database.MapStructure.Data());
+            SendDataToEditors(bf.ToArray());
             bf.Dispose();
         }
 

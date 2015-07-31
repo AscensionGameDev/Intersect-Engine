@@ -141,13 +141,21 @@ namespace Intersect_Editor.Classes
             else if (Globals.InEditor)
             {
                 if (mapNum != Globals.CurrentMap) return;
-                Globals.MapPropertiesWindow.Init(Globals.GameMaps[mapNum]);
-                if (Globals.MapEditorWindow.picMap.Visible) return;
-                Globals.MapEditorWindow.picMap.Visible = true;
-                if (Globals.GameMaps[mapNum].Up > -1) { PacketSender.SendNeedMap(Globals.GameMaps[mapNum].Up); }
-                if (Globals.GameMaps[mapNum].Down > -1) { PacketSender.SendNeedMap(Globals.GameMaps[mapNum].Down); }
-                if (Globals.GameMaps[mapNum].Left > -1) { PacketSender.SendNeedMap(Globals.GameMaps[mapNum].Left); }
-                if (Globals.GameMaps[mapNum].Right > -1) { PacketSender.SendNeedMap(Globals.GameMaps[mapNum].Right); }
+                if (Globals.GameMaps[mapNum].Deleted == 1)
+                {
+                    Globals.CurrentMap = -1;
+                    Globals.MainForm.EnterMap(Database.MapStructure.FindFirstMap());
+                }
+                else
+                {
+                    Globals.MapPropertiesWindow.Init((int)mapNum);
+                    if (Globals.MapEditorWindow.picMap.Visible) return;
+                    Globals.MapEditorWindow.picMap.Visible = true;
+                    if (Globals.GameMaps[mapNum].Up > -1) { PacketSender.SendNeedMap(Globals.GameMaps[mapNum].Up); }
+                    if (Globals.GameMaps[mapNum].Down > -1) { PacketSender.SendNeedMap(Globals.GameMaps[mapNum].Down); }
+                    if (Globals.GameMaps[mapNum].Left > -1) { PacketSender.SendNeedMap(Globals.GameMaps[mapNum].Left); }
+                    if (Globals.GameMaps[mapNum].Right > -1) { PacketSender.SendNeedMap(Globals.GameMaps[mapNum].Right); }
+                }
             }
         }
 
@@ -194,17 +202,19 @@ namespace Intersect_Editor.Classes
         {
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
-            var mapCount = bf.ReadInteger();
-            Globals.MapRefs = new MapRef[mapCount];
-            for (var i = 0; i < mapCount; i++)
+            Database.OrderedMaps.Clear();
+            Database.MapStructure.Load(bf);
+            if (Globals.CurrentMap == -1)
             {
-                Globals.MapRefs[i] = new MapRef {MapName = bf.ReadString(), Deleted = bf.ReadInteger()};
+                Globals.MainForm.EnterMap(Database.MapStructure.FindFirstMap());
             }
+            Globals.MapListWindow.BeginInvoke(Globals.MapListWindow.MapListDelegate);
+            bf.Dispose();
         }
 
         private static void HandleItemEditor()
         {
-            Globals.MainForm.Invoke(Globals.MainForm.EditorDelegate, (int)Enums.EditorTypes.Item);
+            Globals.MainForm.BeginInvoke(Globals.MainForm.EditorDelegate, (int)Enums.EditorTypes.Item);
         }
 
         private static void HandleItemData(byte[] packet)
@@ -229,7 +239,7 @@ namespace Intersect_Editor.Classes
 
         private static void HandleNpcEditor()
         {
-            Globals.MainForm.Invoke(Globals.MainForm.EditorDelegate, (int)Enums.EditorTypes.Npc);
+            Globals.MainForm.BeginInvoke(Globals.MainForm.EditorDelegate, (int)Enums.EditorTypes.Npc);
         }
 
         private static void HandleNpcData(byte[] packet)
@@ -254,7 +264,7 @@ namespace Intersect_Editor.Classes
 
         private static void HandleSpellEditor()
         {
-            Globals.MainForm.Invoke(Globals.MainForm.EditorDelegate, (int)Enums.EditorTypes.Spell);
+            Globals.MainForm.BeginInvoke(Globals.MainForm.EditorDelegate, (int)Enums.EditorTypes.Spell);
         }
 
         private static void HandleSpellData(byte[] packet)
@@ -279,7 +289,7 @@ namespace Intersect_Editor.Classes
 
         private static void HandleAnimationEditor()
         {
-            Globals.MainForm.Invoke(Globals.MainForm.EditorDelegate, (int)Enums.EditorTypes.Animation);
+            Globals.MainForm.BeginInvoke(Globals.MainForm.EditorDelegate, (int)Enums.EditorTypes.Animation);
         }
 
         private static void HandleAnimationData(byte[] packet)
@@ -304,7 +314,7 @@ namespace Intersect_Editor.Classes
 
         private static void HandleResourceEditor()
         {
-            Globals.MainForm.Invoke(Globals.MainForm.EditorDelegate, (int)Enums.EditorTypes.Resource);
+            Globals.MainForm.BeginInvoke(Globals.MainForm.EditorDelegate, (int)Enums.EditorTypes.Resource);
         }
 
         private static void HandleResourceData(byte[] packet)
@@ -318,7 +328,7 @@ namespace Intersect_Editor.Classes
 
         private static void HandleClassEditor()
         {
-            Globals.MainForm.Invoke(Globals.MainForm.EditorDelegate, (int)Enums.EditorTypes.Class);
+            Globals.MainForm.BeginInvoke(Globals.MainForm.EditorDelegate, (int)Enums.EditorTypes.Class);
         }
 
         private static void HandleClassData(byte[] packet)

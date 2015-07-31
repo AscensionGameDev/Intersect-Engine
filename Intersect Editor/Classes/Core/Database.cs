@@ -19,10 +19,13 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+using System.Collections.Generic;
 namespace Intersect_Editor.Classes
 {
     public static class Database
     {
+        public static MapList MapStructure = new MapList();
+        public static List<FolderMap> OrderedMaps = new List<FolderMap>();
         public static void InitDatabase()
         {
             Globals.GameItems = new ItemStruct[Constants.MaxItems];

@@ -224,7 +224,12 @@ namespace Intersect_Editor.Classes
                 Lights.Add(new Light(bf));
             }
             Revision = bf.ReadInteger();
-            bf.ReadLong();
+            Deleted = bf.ReadInteger();
+            if (Deleted == 1)
+            {
+                Layers = null;
+                return;
+            }
             Events.Clear();
             var eCount = bf.ReadInteger();
             for (var i = 0; i < eCount; i++)

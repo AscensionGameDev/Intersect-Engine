@@ -84,18 +84,13 @@ namespace Intersect_Editor.Forms
             DockPane unhiddenPane = dockLeft.Panes[0];
             Globals.MapPropertiesWindow = new frmMapProperties();
             Globals.MapPropertiesWindow.Show(unhiddenPane, DockAlignment.Bottom, .4);
-            Globals.MapPropertiesWindow.Init(Globals.GameMaps[Globals.CurrentMap]);
+            Globals.MapPropertiesWindow.Init(Globals.CurrentMap);
         }
         private void InitEditor()
         {
-            EnterMap(0);
             Graphics.InitSfml(this);
             Sounds.Init();
             Globals.InEditor = true;
-            if (Globals.GameMaps[Globals.CurrentMap].Up > -1) { PacketSender.SendNeedMap(Globals.GameMaps[Globals.CurrentMap].Up); }
-            if (Globals.GameMaps[Globals.CurrentMap].Down > -1) { PacketSender.SendNeedMap(Globals.GameMaps[Globals.CurrentMap].Down); }
-            if (Globals.GameMaps[Globals.CurrentMap].Left > -1) { PacketSender.SendNeedMap(Globals.GameMaps[Globals.CurrentMap].Left); }
-            if (Globals.GameMaps[Globals.CurrentMap].Right > -1) { PacketSender.SendNeedMap(Globals.GameMaps[Globals.CurrentMap].Right); }
         }
         protected override void OnClosed(EventArgs e)
         {
@@ -105,13 +100,21 @@ namespace Intersect_Editor.Forms
         public void EnterMap(int mapNum)
         {
             Globals.CurrentMap = mapNum;
-            if (Globals.MapPropertiesWindow != null) { Globals.MapPropertiesWindow.Init(Globals.GameMaps[Globals.CurrentMap]); }
-            if (Globals.GameMaps[mapNum] != null)
+            if (Globals.MapPropertiesWindow != null) { Globals.MapPropertiesWindow.Init(Globals.CurrentMap); }
+            if (mapNum > -1)
             {
-                Text = @"Intersect Editor - Map# " + mapNum + @" " + Globals.GameMaps[mapNum].MyName + @" Revision: " + Globals.GameMaps[mapNum].Revision;
+                if (Globals.GameMaps[mapNum] != null)
+                {
+                    Text = @"Intersect Editor - Map# " + mapNum + @" " + Globals.GameMaps[mapNum].MyName + @" Revision: " + Globals.GameMaps[mapNum].Revision;
+                }
+                Globals.MapEditorWindow.picMap.Visible = false;
+                PacketSender.SendNeedMap(Globals.CurrentMap);
             }
-            Globals.MapEditorWindow.picMap.Visible = false;
-            PacketSender.SendNeedMap(Globals.CurrentMap);
+            else
+            {
+                Text = @"Intersect Editor";
+                Globals.MapEditorWindow.picMap.Visible = false;
+            }
         }
 
         //MenuBar Functions
@@ -127,10 +130,7 @@ namespace Intersect_Editor.Forms
             {
                 PacketSender.SendMap(Globals.CurrentMap);
             }
-            else
-            {
-                PacketSender.SendCreateMap(-1, Globals.CurrentMap);
-            }
+            PacketSender.SendCreateMap(-1, Globals.CurrentMap, null);
         }
         private void hideDarknessToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -324,6 +324,16 @@ namespace Intersect_Editor.Forms
                 Globals.CurrentEditor = editorIndex;
             }
 
+        }
+
+        private void toolStripButton1_Click(object sender, EventArgs e)
+        {
+            newMapToolStripMenuItem_Click(null, null);
+        }
+
+        private void toolStripButton3_Click(object sender, EventArgs e)
+        {
+            saveMapToolStripMenuItem_Click(null, null);
         }
     }
 }

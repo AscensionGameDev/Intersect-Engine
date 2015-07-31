@@ -387,7 +387,7 @@ namespace Intersect_Editor.Forms
         }
         private void picMap_DoubleClick(object sender, EventArgs e)
         {
-            if (Globals.MouseX >= 32 && Globals.MouseX <= 1024 - 32)
+            if (Globals.MouseX >= 32 && Globals.MouseX <= (Constants.MapWidth + 2) * 32 - 32)
             {
                 if (Globals.MouseY >= 0 && Globals.MouseY <= 32)
                 {
@@ -401,7 +401,7 @@ namespace Intersect_Editor.Forms
                             }
                             else
                             {
-                                PacketSender.SendCreateMap(0, Globals.CurrentMap);
+                                PacketSender.SendCreateMap(0, Globals.CurrentMap,null);
                             }
                         }
                     }
@@ -415,7 +415,7 @@ namespace Intersect_Editor.Forms
                         Globals.MainForm.EnterMap(Globals.GameMaps[Globals.CurrentMap].Up);
                     }
                 }
-                else if (Globals.MouseY >= 1024 - 32 && Globals.MouseY <= 1024)
+                else if (Globals.MouseY >= (Constants.MapHeight + 2) * 32 - 32 && Globals.MouseY <= (Constants.MapHeight + 2) * 32)
                 {
                     if (Globals.GameMaps[Globals.CurrentMap].Down == -1)
                     {
@@ -427,7 +427,7 @@ namespace Intersect_Editor.Forms
                             }
                             else
                             {
-                                PacketSender.SendCreateMap(1, Globals.CurrentMap);
+                                PacketSender.SendCreateMap(1, Globals.CurrentMap,null);
                             }
                         }
                     }
@@ -442,7 +442,7 @@ namespace Intersect_Editor.Forms
                     }
                 }
             }
-            if (Globals.MouseY < 32 || Globals.MouseY > 1024 - 32) return;
+            if (Globals.MouseY < 32 || Globals.MouseY > (Constants.MapHeight + 2) * 32 - 32) return;
             if (Globals.MouseX >= 0 & Globals.MouseX <= 32)
             {
                 if (Globals.GameMaps[Globals.CurrentMap].Left == -1)
@@ -456,7 +456,7 @@ namespace Intersect_Editor.Forms
                     }
                     else
                     {
-                        PacketSender.SendCreateMap(2, Globals.CurrentMap);
+                        PacketSender.SendCreateMap(2, Globals.CurrentMap,null);
                     }
                 }
                 else
@@ -469,7 +469,7 @@ namespace Intersect_Editor.Forms
                     Globals.MainForm.EnterMap(Globals.GameMaps[Globals.CurrentMap].Left);
                 }
             }
-            else if (Globals.MouseX >= 1024 - 32 && Globals.MouseX <= 1024)
+            else if (Globals.MouseX >= (Constants.MapWidth + 2) * 32 - 32 && Globals.MouseX <= (Constants.MapWidth + 2) * 32)
             {
                 if (Globals.GameMaps[Globals.CurrentMap].Right == -1)
                 {
@@ -482,7 +482,7 @@ namespace Intersect_Editor.Forms
                     }
                     else
                     {
-                        PacketSender.SendCreateMap(3, Globals.CurrentMap);
+                        PacketSender.SendCreateMap(3, Globals.CurrentMap,null);
                     }
                 }
                 else
@@ -513,6 +513,11 @@ namespace Intersect_Editor.Forms
                 Graphics.RenderWindow.Dispose();
                 Graphics.RenderWindow = new RenderWindow(Globals.MapEditorWindow.picMap.Handle);
             }
+        }
+
+        private void pnlMapContainer_Paint(object sender, PaintEventArgs e)
+        {
+
         }
     }
 }

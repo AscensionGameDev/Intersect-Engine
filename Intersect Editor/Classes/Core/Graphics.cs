@@ -315,16 +315,19 @@ namespace Intersect_Editor.Classes
             DrawTileset();
 
             //Draw Current Map
-            DrawTransparentBorders();
-            DrawMap();
-            DrawMapUp();
-            DrawMapDown();
-            DrawMapLeft();
-            DrawMapRight();
-            DrawMapBorders();
-            if (!HideFog) { DrawFog(); }
-            if (!HideOverlay) { DrawMapOverlay(); }
-            if (!HideDarkness || Globals.CurrentLayer == Constants.LayerCount + 1) { DrawDarkness(); }
+            if (Globals.MapEditorWindow.picMap.Visible && Globals.CurrentMap > -1 && Globals.GameMaps[Globals.CurrentMap] != null)
+            {
+                DrawTransparentBorders();
+                DrawMap();
+                DrawMapUp();
+                DrawMapDown();
+                DrawMapLeft();
+                DrawMapRight();
+                DrawMapBorders();
+                if (!HideFog) { DrawFog(); }
+                if (!HideOverlay) { DrawMapOverlay(); }
+                if (!HideDarkness || Globals.CurrentLayer == Constants.LayerCount + 1) { DrawDarkness(); }
+            }
             RenderWindow.Display(); // display what SFML has drawn to the screen
             
             TilesetWindow.Display();

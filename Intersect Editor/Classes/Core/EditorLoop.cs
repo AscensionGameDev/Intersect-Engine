@@ -37,13 +37,17 @@ namespace Intersect_Editor.Classes
             // drawing loop
             while (myForm.Visible) // loop while the window is open
             {
-                if (Globals.GameMaps[Globals.CurrentMap] != null)
+                if (Globals.CurrentMap > -1)
                 {
-                    if (myForm.Text != @"Intersect Editor - Map# " + Globals.CurrentMap + @" " + Globals.GameMaps[Globals.CurrentMap].MyName + @" Revision: " + Globals.GameMaps[Globals.CurrentMap].Revision + @" CurX: " + Globals.CurTileX + @" CurY: " + Globals.CurTileY)
+                    if (Globals.GameMaps[Globals.CurrentMap] != null)
                     {
-                        myForm.Text = @"Intersect Editor - Map# " + Globals.CurrentMap + @" " + Globals.GameMaps[Globals.CurrentMap].MyName + @" Revision: " + Globals.GameMaps[Globals.CurrentMap].Revision + @" CurX: " + Globals.CurTileX + @" CurY: " + Globals.CurTileY;
+                        if (myForm.Text != @"Intersect Editor - Map# " + Globals.CurrentMap + @" " + Globals.GameMaps[Globals.CurrentMap].MyName + @" Revision: " + Globals.GameMaps[Globals.CurrentMap].Revision + @" CurX: " + Globals.CurTileX + @" CurY: " + Globals.CurTileY)
+                        {
+                            myForm.Text = @"Intersect Editor - Map# " + Globals.CurrentMap + @" " + Globals.GameMaps[Globals.CurrentMap].MyName + @" Revision: " + Globals.GameMaps[Globals.CurrentMap].Revision + @" CurX: " + Globals.CurTileX + @" CurY: " + Globals.CurTileY;
+                        }
                     }
                 }
+                
                 if (waterfallTimer < Environment.TickCount)
                 {
                     Globals.WaterfallFrame++;

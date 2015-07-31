@@ -29,7 +29,7 @@ namespace Intersect_Editor.Classes
             var bf = new ByteBuffer();
             bf.WriteLong((int)Enums.ClientPackets.Ping);
             Network.SendPacket(bf.ToArray());
-            
+
         }
 
         public static void SendLogin(string username, string password)
@@ -72,14 +72,35 @@ namespace Intersect_Editor.Classes
             Network.SendPacket(bf.ToArray());
         }
 
-        public static void SendCreateMap(int location, int currentMap)
+        public static void SendCreateMap(int location, int currentMap, FolderItem parent)
         {
             var bf = new ByteBuffer();
             bf.WriteLong((int)Enums.ClientPackets.CreateMap);
-            bf.WriteLong(location);
+            bf.WriteInteger(location);
             if (location > -1)
             {
                 bf.WriteLong(currentMap);
+            }
+            else
+            {
+                if (parent == null)
+                {
+                    bf.WriteInteger(-1);
+                    bf.WriteInteger(-1);
+                }
+                else
+                {
+                    if (parent.GetType() == typeof(FolderMap))
+                    {
+                        bf.WriteInteger(1);
+                        bf.WriteInteger(((FolderMap)parent).MapNum);
+                    }
+                    else
+                    {
+                        bf.WriteInteger(0);
+                        bf.WriteInteger(((FolderDirectory)parent).FolderId);
+                    }
+                }
             }
             Network.SendPacket(bf.ToArray());
         }
@@ -177,6 +198,81 @@ namespace Intersect_Editor.Classes
             bf.WriteLong((int)Enums.ClientPackets.SaveClass);
             bf.WriteInteger(ClassNum);
             bf.WriteBytes(ClassData);
+            Network.SendPacket(bf.ToArray());
+        }
+
+        public static void SendMapListMove(int srcType, int srcId, int destType, int destId)
+        {
+            ByteBuffer bf = new ByteBuffer();
+            bf.WriteLong((int)Enums.ClientPackets.MapListUpdate);
+            bf.WriteInteger((int)Enums.MapListUpdates.MoveItem);
+            bf.WriteInteger(srcType);
+            bf.WriteInteger(srcId);
+            bf.WriteInteger(destType);
+            bf.WriteInteger(destId);
+            Network.SendPacket(bf.ToArray());
+        }
+
+        public static void SendAddFolder(FolderItem parent)
+        {
+            ByteBuffer bf = new ByteBuffer();
+            bf.WriteLong((int)Enums.ClientPackets.MapListUpdate);
+            bf.WriteInteger((int)Enums.MapListUpdates.AddFolder);
+            if (parent == null)
+            {
+                bf.WriteInteger(-1);
+                bf.WriteInteger(-1);
+            }
+            else
+            {
+                if (parent.GetType() == typeof(FolderMap))
+                {
+                    bf.WriteInteger(1);
+                    bf.WriteInteger(((FolderMap)parent).MapNum);
+                }
+                else
+                {
+                    bf.WriteInteger(0);
+                    bf.WriteInteger(((FolderDirectory)parent).FolderId);
+                }
+            }
+            Network.SendPacket(bf.ToArray());
+        }
+
+        public static void SendRename(FolderItem parent, string name)
+        {
+            ByteBuffer bf = new ByteBuffer();
+            bf.WriteLong((int)Enums.ClientPackets.MapListUpdate);
+            bf.WriteInteger((int)Enums.MapListUpdates.Rename);
+            if (parent.GetType() == typeof(FolderMap))
+            {
+                bf.WriteInteger(1);
+                bf.WriteInteger(((FolderMap)parent).MapNum);
+            }
+            else
+            {
+                bf.WriteInteger(0);
+                bf.WriteInteger(((FolderDirectory)parent).FolderId);
+            }
+            bf.WriteString(name);
+            Network.SendPacket(bf.ToArray());
+        }
+
+        public static void SendDelete(FolderItem target)
+        {
+            ByteBuffer bf = new ByteBuffer();
+            bf.WriteLong((int)Enums.ClientPackets.MapListUpdate);
+            bf.WriteInteger((int)Enums.MapListUpdates.Delete);
+            if (target.GetType() == typeof(FolderMap))
+            {
+                bf.WriteInteger(1);
+                bf.WriteInteger(((FolderMap)target).MapNum);
+            }
+            else
+            {
+                bf.WriteInteger(0);
+                bf.WriteInteger(((FolderDirectory)target).FolderId);
+            }
             Network.SendPacket(bf.ToArray());
         }
     }

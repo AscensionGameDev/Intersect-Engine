@@ -68,6 +68,7 @@ namespace Intersect_Editor.Classes
             SaveResource,
             OpenClassEditor,
             SaveClass,
+            MapListUpdate,
         }
 
         public enum ServerPackets
@@ -150,6 +151,14 @@ namespace Intersect_Editor.Classes
             Spell = 4,
             Class = 5,
             Event = 6,
+        }
+
+        public enum MapListUpdates
+        {
+            MoveItem = 0,
+            AddFolder = 1,
+            Rename = 2,
+            Delete = 3,
         }
 
         public static int WeaponIndex = 2;

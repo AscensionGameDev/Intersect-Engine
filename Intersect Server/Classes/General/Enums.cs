@@ -68,6 +68,7 @@ namespace Intersect_Server.Classes
             SaveResource,
             OpenClassEditor,
             SaveClass,
+            MapListUpdate,
         }
 
         public enum ServerPackets
@@ -139,6 +140,14 @@ namespace Intersect_Server.Classes
             Consumable = 2,
             Currency = 3,
             Spell = 4
+        }
+
+        public enum MapListUpdates
+        {
+            MoveItem = 0,
+            AddFolder = 1,
+            Rename = 2,
+            Delete = 3,
         }
 
         public const int WeaponIndex = 2;

@@ -150,6 +150,9 @@ namespace Intersect_Server.Classes
                 case Enums.ClientPackets.SaveClass:
                     HandleClassData(client, packet);
                     break;
+                case Enums.ClientPackets.MapListUpdate:
+                    HandleMapListUpdate(client, packet);
+                    break;
                 default:
                     Console.WriteLine(@"Non implemented packet received: " + packetHeader);
                     break;
@@ -308,15 +311,47 @@ namespace Intersect_Server.Classes
             var newMap = -1;
             var tmpMap = new MapStruct(-1);
             bf.WriteBytes(packet);
-            var location = (int)bf.ReadLong();
+            var location = (int)bf.ReadInteger();
             if (location == -1)
             {
+                var folder = bf.ReadInteger();
                 newMap = Database.AddMap();
                 tmpMap = Globals.GameMaps[newMap];
                 tmpMap.Save();
                 Database.GenerateMapGrids();
                 PacketSender.SendMap(client, newMap);
                 PacketSender.SendEnterMap(client, newMap);
+                var destType = bf.ReadInteger();
+                FolderDirectory parent = null;
+                if (destType == -1)
+                {
+                    Database.MapStructure.AddMap(newMap);
+                }
+                else if (destType == 0)
+                {
+                    parent = Database.MapStructure.FindDir(bf.ReadInteger());
+                    if (parent == null)
+                    {
+                        Database.MapStructure.AddMap(newMap);
+                    }
+                    else
+                    {
+                        parent.Children.AddMap(newMap);
+                    }
+                }
+                else if (destType == 1)
+                {
+                    var mapNum = bf.ReadInteger();
+                    parent = Database.MapStructure.FindMapParent(mapNum, null);
+                    if (parent == null)
+                    {
+                        Database.MapStructure.AddMap(newMap);
+                    }
+                    else
+                    {
+                        parent.Children.AddMap(newMap);
+                    }
+                }
             }
             else
             {
@@ -397,6 +432,15 @@ namespace Intersect_Server.Classes
                     Database.GenerateMapGrids();
                     PacketSender.SendMap(client, newMap);
                     PacketSender.SendEnterMap(client, newMap);
+                    var folderDir = Database.MapStructure.FindMapParent(relativeMap, null);
+                    if (folderDir != null)
+                    {
+                        folderDir.Children.AddMap(newMap);
+                    }
+                    else
+                    {
+                        Database.MapStructure.AddMap(newMap);
+                    }
                 }
             }
             bf.Dispose();
@@ -441,7 +485,7 @@ namespace Intersect_Server.Classes
             {
                 if (Globals.Entities[i] != null)
                 {
-                    if (Globals.Entities[i].GetType() == typeof (Npc) )
+                    if (Globals.Entities[i].GetType() == typeof(Npc))
                     {
                         PacketSender.SendEntityData(client, i, 2, Globals.Entities[i]);
                     }
@@ -737,6 +781,95 @@ namespace Intersect_Server.Classes
                 PacketSender.SendClass(client, i);
             }
             PacketSender.SendClassEditor(client);
+        }
+
+        private static void HandleMapListUpdate(Client client, byte[] packet)
+        {
+            var bf = new ByteBuffer();
+            int destType = -1;
+            FolderDirectory parent = null;
+            int mapNum = -1;
+            bf.WriteBytes(packet);
+            var type = bf.ReadInteger();
+            switch (type)
+            {
+                case (int)Enums.MapListUpdates.MoveItem:
+                    Database.MapStructure.HandleMove(bf.ReadInteger(), bf.ReadInteger(), bf.ReadInteger(), bf.ReadInteger());
+                    break;
+                case (int)Enums.MapListUpdates.AddFolder:
+                    destType = bf.ReadInteger();
+                    parent = null;
+                    if (destType == -1)
+                    {
+                        Database.MapStructure.AddFolder("New Folder");
+                    }
+                    else if (destType == 0)
+                    {
+                        parent = Database.MapStructure.FindDir(bf.ReadInteger());
+                        if (parent == null)
+                        {
+                            Database.MapStructure.AddFolder("New Folder");
+                        }
+                        else
+                        {
+                            parent.Children.AddFolder("New Folder");
+                        }
+                    }
+                    else if (destType == 1)
+                    {
+                        mapNum = bf.ReadInteger();
+                        parent = Database.MapStructure.FindMapParent(mapNum, null);
+                        if (parent == null)
+                        {
+                            Database.MapStructure.AddFolder("New Folder");
+                        }
+                        else
+                        {
+                            parent.Children.AddFolder("New Folder");
+                        }
+                    }
+                    break;
+                case (int)Enums.MapListUpdates.Rename:
+                    destType = bf.ReadInteger();
+                    parent = null;
+                    if (destType == 0)
+                    {
+                        parent = Database.MapStructure.FindDir(bf.ReadInteger());
+                        parent.Name = bf.ReadString();
+                        PacketSender.SendMapListToEditors();
+                    }
+                    else if (destType == 1)
+                    {
+                        mapNum = bf.ReadInteger();
+                        Globals.GameMaps[mapNum].MyName = bf.ReadString();
+                        Globals.GameMaps[mapNum].Save();
+                        PacketSender.SendMapListToEditors();
+
+                    }
+                    break;
+                case (int)Enums.MapListUpdates.Delete:
+                    destType = bf.ReadInteger();
+                    parent = null;
+                    if (destType == 0)
+                    {
+                        Database.MapStructure.DeleteFolder(bf.ReadInteger());
+                        PacketSender.SendMapListToEditors();
+                    }
+                    else if (destType == 1)
+                    {
+                        mapNum = bf.ReadInteger();
+                        Globals.GameMaps[mapNum].Deleted = 1;
+                        Database.CheckAllMapConnections();
+                        Database.MapStructure.DeleteMap(mapNum);
+                        Database.GenerateMapGrids();
+                        Globals.GameMaps[mapNum].Save();
+                        PacketSender.SendMapToEditors(mapNum);
+                        PacketSender.SendMapListToEditors();
+                    }
+                    break;
+            }
+            File.WriteAllBytes("Resources/Maps/MapStructure.dat", Database.MapStructure.Data());
+            bf.Dispose();
         }
     }
 }
