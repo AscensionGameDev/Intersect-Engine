@@ -323,19 +323,19 @@ namespace Intersect_Client.Classes
                     Point player = new Point();
                     player.X = playerx;
                     player.Y = playery;
-                    Rectangle mapRect = new Rectangle(Graphics.CalcMapOffsetX(_localMap,true), Graphics.CalcMapOffsetY(_localMap,true), Constants.MapWidth * 32, Constants.MapHeight * 32);
+                    Rectangle mapRect = new Rectangle(Graphics.CalcMapOffsetX(_localMap,true), Graphics.CalcMapOffsetY(_localMap,true), Constants.MapWidth * Constants.TileWidth, Constants.MapHeight * Constants.TileHeight);
                     distance = (float)DistancePointToRectangle(player,mapRect) / 32f;
                 }
                 else
                 {
-                    soundx = Graphics.CalcMapOffsetX(_localMap, true) + _x * 32 + 16;
-                    soundy = Graphics.CalcMapOffsetY(_localMap, true) + _y * 32 + 16;
+                    soundx = Graphics.CalcMapOffsetX(_localMap, true) + _x * Constants.TileWidth + 16;
+                    soundy = Graphics.CalcMapOffsetY(_localMap, true) + _y * Constants.TileHeight + 16;
                     distance = (float)Math.Sqrt(Math.Pow(playerx - soundx, 2) + Math.Pow(playery - soundy, 2)) / 32f;
                 }
             }
             else {
-                soundx = Graphics.CalcMapOffsetX(4, true) + _x * 32 + 16;
-                soundy = Graphics.CalcMapOffsetY(4, true) + _y * 32 + 16;
+                soundx = Graphics.CalcMapOffsetX(4, true) + _x * Constants.TileWidth + 16;
+                soundy = Graphics.CalcMapOffsetY(4, true) + _y * Constants.TileHeight + 16;
                 distance = (float)Math.Sqrt(Math.Pow(playerx - soundx, 2) + Math.Pow(playery - soundy, 2)) / 32f;
             }
             return distance;

@@ -170,7 +170,7 @@ namespace Intersect_Editor.Forms
                     {
                         Globals.CurTileX = x;
                         Globals.CurTileY = y;
-                        Globals.MapEditorWindow.picMap_MouseDown(null, new MouseEventArgs(MouseButtons.Left, 1, x * 32 + 32, y * 32 + 32, 0));
+                        Globals.MapEditorWindow.picMap_MouseDown(null, new MouseEventArgs(MouseButtons.Left, 1, x * Constants.TileWidth + Constants.TileWidth, y * Constants.TileHeight + Constants.TileHeight, 0));
                         Globals.MapEditorWindow.picMap_MouseUp(null, new MouseEventArgs(MouseButtons.None, 0, 0, 0, 0));
                     }
                 }
@@ -189,7 +189,7 @@ namespace Intersect_Editor.Forms
                 {
                     Globals.CurTileX = x;
                     Globals.CurTileY = y;
-                    Globals.MapEditorWindow.picMap_MouseDown(null, new MouseEventArgs(MouseButtons.Right, 1, x * 32 + 32, y * 32 + 32, 0));
+                    Globals.MapEditorWindow.picMap_MouseDown(null, new MouseEventArgs(MouseButtons.Right, 1, x * Constants.TileWidth + Constants.TileWidth, y * Constants.TileHeight + Constants.TileHeight, 0));
                     Globals.MapEditorWindow.picMap_MouseUp(null, new MouseEventArgs(MouseButtons.None, 0, 0, 0, 0));
                 }
             }

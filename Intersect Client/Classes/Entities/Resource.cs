@@ -70,24 +70,24 @@ namespace Intersect_Client.Classes
                 }
                 srcTexture = Graphics.Tilesets[Convert.ToInt32(str) - 1];
 
-                if ((Height + 1) * 32 > 32)
+                if ((Height + 1) * Constants.TileHeight > Constants.TileHeight)
                 {
-                    destRectangle.Y = (int)Math.Ceiling(Graphics.CalcMapOffsetY(i) + CurrentY * 32 + OffsetY - (((Height + 1) * 32) - 32));
+                    destRectangle.Y = (int)Math.Ceiling(Graphics.CalcMapOffsetY(i) + CurrentY * Constants.TileHeight + OffsetY - (((Height + 1) * Constants.TileHeight) - Constants.TileHeight));
                 }
                 else
                 {
-                    destRectangle.Y = (int)Math.Ceiling(Graphics.CalcMapOffsetY(i) + CurrentY * 32 + OffsetY);
+                    destRectangle.Y = (int)Math.Ceiling(Graphics.CalcMapOffsetY(i) + CurrentY * Constants.TileHeight + OffsetY);
                 }
-                if ((Width + 1) * 32 > 32)
+                if ((Width + 1) * Constants.TileWidth > Constants.TileWidth)
                 {
-                    destRectangle.X = (int)Math.Ceiling(Graphics.CalcMapOffsetX(i) + CurrentX * 32 + OffsetX - (((Width + 1) * 16) - 16));
+                    destRectangle.X = (int)Math.Ceiling(Graphics.CalcMapOffsetX(i) + CurrentX * Constants.TileWidth + OffsetX - (((Width + 1) * 16) - 16));
                 }
                 else
                 {
-                    destRectangle.X = (int)Math.Ceiling(Graphics.CalcMapOffsetX(i) + CurrentX * 32 + OffsetX);
+                    destRectangle.X = (int)Math.Ceiling(Graphics.CalcMapOffsetX(i) + CurrentX * Constants.TileWidth + OffsetX);
                 }
 
-                srcRectangle = new Rectangle(X * 32, Y * 32, (Width + 1) * 32, (Height + 1) * 32);
+                srcRectangle = new Rectangle(X * Constants.TileWidth, Y * Constants.TileHeight, (Width + 1) * Constants.TileWidth, (Height + 1) * Constants.TileHeight);
                 destRectangle.Width = srcRectangle.Width;
                 destRectangle.Height = srcRectangle.Height;
                 Graphics.RenderTexture(srcTexture, srcRectangle, destRectangle, Graphics.RenderWindow);

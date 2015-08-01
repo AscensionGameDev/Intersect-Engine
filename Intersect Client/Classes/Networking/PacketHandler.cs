@@ -354,20 +354,20 @@ namespace Intersect_Client.Classes
                     switch (Globals.Entities[index].Dir)
                     {
                         case 0:
-                            Globals.Entities[index].OffsetY = 32;
+                            Globals.Entities[index].OffsetY = Constants.TileWidth;
                             Globals.Entities[index].OffsetX = 0;
                             break;
                         case 1:
-                            Globals.Entities[index].OffsetY = -32;
+                            Globals.Entities[index].OffsetY = -Constants.TileWidth;
                             Globals.Entities[index].OffsetX = 0;
                             break;
                         case 2:
                             Globals.Entities[index].OffsetY = 0;
-                            Globals.Entities[index].OffsetX = 32;
+                            Globals.Entities[index].OffsetX = Constants.TileWidth;
                             break;
                         case 3:
                             Globals.Entities[index].OffsetY = 0;
-                            Globals.Entities[index].OffsetX = -32;
+                            Globals.Entities[index].OffsetX = -Constants.TileWidth;
                             break;
                     }
                 }
@@ -394,20 +394,20 @@ namespace Intersect_Client.Classes
                 switch (Globals.Events[index].Dir)
                 {
                     case 0:
-                        Globals.Events[index].OffsetY = 32;
+                        Globals.Events[index].OffsetY = Constants.TileWidth;
                         Globals.Events[index].OffsetX = 0;
                         break;
                     case 1:
-                        Globals.Events[index].OffsetY = -32;
+                        Globals.Events[index].OffsetY = -Constants.TileWidth;
                         Globals.Events[index].OffsetX = 0;
                         break;
                     case 2:
                         Globals.Events[index].OffsetY = 0;
-                        Globals.Events[index].OffsetX = 32;
+                        Globals.Events[index].OffsetX = Constants.TileWidth;
                         break;
                     case 3:
                         Globals.Events[index].OffsetY = 0;
-                        Globals.Events[index].OffsetX = -32;
+                        Globals.Events[index].OffsetX = -Constants.TileWidth;
                         break;
                 }
             }

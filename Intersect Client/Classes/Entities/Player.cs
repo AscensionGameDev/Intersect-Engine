@@ -402,8 +402,8 @@ namespace Intersect_Client.Classes
         }
         private bool TryTarget()
         {
-            var x = (int)Math.Floor((SFML.Window.Mouse.GetPosition(Graphics.RenderWindow).X - (float)Graphics.CalcMapOffsetX(4)) / 32);
-            var y = (int)Math.Floor((SFML.Window.Mouse.GetPosition(Graphics.RenderWindow).Y - (float)Graphics.CalcMapOffsetY(4)) / 32);
+            var x = (int)Math.Floor((SFML.Window.Mouse.GetPosition(Graphics.RenderWindow).X - (float)Graphics.CalcMapOffsetX(4)) / Constants.TileWidth);
+            var y = (int)Math.Floor((SFML.Window.Mouse.GetPosition(Graphics.RenderWindow).Y - (float)Graphics.CalcMapOffsetY(4)) / Constants.TileHeight);
             var map = Globals.Entities[Globals.MyIndex].CurrentMap;
             if (GetRealLocation(ref x, ref y, ref map))
             {
@@ -491,7 +491,7 @@ namespace Intersect_Client.Classes
                                 CurrentY--;
                                 Dir = 0;
                                 IsMoving = true;
-                                OffsetY = 32;
+                                OffsetY = Constants.TileHeight;
                                 OffsetX = 0;
                                 TryToChangeDimension();
                             }
@@ -502,7 +502,7 @@ namespace Intersect_Client.Classes
                                 CurrentY++;
                                 Dir = 1;
                                 IsMoving = true;
-                                OffsetY = -32;
+                                OffsetY = -Constants.TileHeight;
                                 OffsetX = 0;
                                 TryToChangeDimension();
                             }
@@ -514,7 +514,7 @@ namespace Intersect_Client.Classes
                                 Dir = 2;
                                 IsMoving = true;
                                 OffsetY = 0;
-                                OffsetX = 32;
+                                OffsetX = Constants.TileWidth;
                                 TryToChangeDimension();
                             }
                             break;
@@ -525,7 +525,7 @@ namespace Intersect_Client.Classes
                                 Dir = 3;
                                 IsMoving = true;
                                 OffsetY = 0;
-                                OffsetX = -32;
+                                OffsetX = -Constants.TileWidth;
                                 TryToChangeDimension();
                             }
                             break;
@@ -688,7 +688,7 @@ namespace Intersect_Client.Classes
                     Globals.LocalMaps[6] = -1;
                     Globals.CurrentMap = Globals.LocalMaps[4];
                     CurrentMap = Globals.LocalMaps[4];
-                    Graphics.DarkOffsetX = 32 * Constants.MapWidth;
+                    Graphics.DarkOffsetX = Constants.TileWidth * Constants.MapWidth;
                     PacketSender.SendEnterMap();
                 }
             }
@@ -708,7 +708,7 @@ namespace Intersect_Client.Classes
                     Globals.LocalMaps[8] = -1;
                     Globals.CurrentMap = Globals.LocalMaps[4];
                     CurrentMap = Globals.LocalMaps[4];
-                    Graphics.DarkOffsetX = -32 * Constants.MapWidth;
+                    Graphics.DarkOffsetX = -Constants.TileWidth * Constants.MapWidth;
                     PacketSender.SendEnterMap();
                 }
 
@@ -729,7 +729,7 @@ namespace Intersect_Client.Classes
                     Globals.LocalMaps[8] = -1;
                     Globals.CurrentMap = Globals.LocalMaps[4];
                     CurrentMap = Globals.LocalMaps[4];
-                    Graphics.DarkOffsetY = -32 * Constants.MapHeight;
+                    Graphics.DarkOffsetY = -Constants.TileHeight * Constants.MapHeight;
                     PacketSender.SendEnterMap();
                 }
             }
@@ -749,7 +749,7 @@ namespace Intersect_Client.Classes
                     Globals.LocalMaps[2] = -1;
                     Globals.CurrentMap = Globals.LocalMaps[4];
                     CurrentMap = Globals.LocalMaps[4];
-                    Graphics.DarkOffsetY = 32 * Constants.MapHeight;
+                    Graphics.DarkOffsetY = Constants.TileHeight * Constants.MapHeight;
                     PacketSender.SendEnterMap();
                 }
             }

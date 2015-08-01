@@ -72,88 +72,88 @@ namespace Intersect_Client.Classes
 
             // Inner tiles (Top right subtile region)
             // NW - a
-            AutoInner[1].X = 32;
+            AutoInner[1].X = Constants.TileWidth;
             AutoInner[1].Y = 0;
 
             // NE - b
-            AutoInner[2].X = 48;
+            AutoInner[2].X = (2 * Constants.TileWidth) - (Constants.TileWidth / 2);
             AutoInner[2].Y = 0;
 
             // SW - c
-            AutoInner[3].X = 32;
-            AutoInner[3].Y = 16;
+            AutoInner[3].X = Constants.TileWidth;
+            AutoInner[3].Y = Constants.TileHeight / 2;
 
             // SE - d
-            AutoInner[4].X = 48;
-            AutoInner[4].Y = 16;
+            AutoInner[4].X = (2 * Constants.TileWidth) - (Constants.TileWidth / 2);
+            AutoInner[4].Y = Constants.TileHeight / 2;
 
             // Outer Tiles - NW (bottom subtile region)
             // NW - e
             AutoNw[1].X = 0;
-            AutoNw[1].Y = 32;
+            AutoNw[1].Y = Constants.TileHeight;
 
             // NE - f
-            AutoNw[2].X = 16;
-            AutoNw[2].Y = 32;
+            AutoNw[2].X = Constants.TileWidth / 2;
+            AutoNw[2].Y = Constants.TileHeight;
 
             // SW - g
             AutoNw[3].X = 0;
-            AutoNw[3].Y = 48;
+            AutoNw[3].Y = (2 * Constants.TileHeight) - (Constants.TileHeight / 2);
 
             // SE - h
-            AutoNw[4].X = 16;
-            AutoNw[4].Y = 48;
+            AutoNw[4].X = Constants.TileWidth / 2;
+            AutoNw[4].Y = (2 * Constants.TileHeight) - (Constants.TileHeight / 2);
 
             // Outer Tiles - NE (bottom subtile region)
             // NW - i
-            AutoNe[1].X = 32;
-            AutoNe[1].Y = 32;
+            AutoNe[1].X = Constants.TileWidth;
+            AutoNe[1].Y = Constants.TileHeight;
 
             // NE - g
-            AutoNe[2].X = 48;
-            AutoNe[2].Y = 32;
+            AutoNe[2].X = (2 * Constants.TileWidth) - (Constants.TileWidth / 2);
+            AutoNe[2].Y = Constants.TileHeight;
 
             // SW - k
-            AutoNe[3].X = 32;
-            AutoNe[3].Y = 48;
+            AutoNe[3].X = Constants.TileWidth;
+            AutoNe[3].Y = (2 * Constants.TileHeight) - (Constants.TileHeight / 2);
 
             // SE - l
-            AutoNe[4].X = 48;
-            AutoNe[4].Y = 48;
+            AutoNe[4].X = (2 * Constants.TileWidth) - (Constants.TileWidth / 2);
+            AutoNe[4].Y = (2 * Constants.TileHeight) - (Constants.TileHeight / 2);
 
             // Outer Tiles - SW (bottom subtile region)
             // NW - m
             AutoSw[1].X = 0;
-            AutoSw[1].Y = 64;
+            AutoSw[1].Y = 2 * Constants.TileHeight;
 
             // NE - n
-            AutoSw[2].X = 16;
-            AutoSw[2].Y = 64;
+            AutoSw[2].X = Constants.TileWidth / 2;
+            AutoSw[2].Y = 2 * Constants.TileHeight;
 
             // SW - o
             AutoSw[3].X = 0;
-            AutoSw[3].Y = 80;
+            AutoSw[3].Y = (2 * Constants.TileHeight) + (Constants.TileHeight / 2);
 
             // SE - p
-            AutoSw[4].X = 16;
-            AutoSw[4].Y = 80;
+            AutoSw[4].X = Constants.TileWidth / 2;
+            AutoSw[4].Y = (2 * Constants.TileHeight) + (Constants.TileHeight / 2);
 
             // Outer Tiles - SE (bottom subtile region)
             // NW - q
-            AutoSe[1].X = 32;
-            AutoSe[1].Y = 64;
+            AutoSe[1].X = Constants.TileWidth;
+            AutoSe[1].Y = 2 * Constants.TileHeight;
 
             // NE - r
-            AutoSe[2].X = 48;
-            AutoSe[2].Y = 64;
+            AutoSe[2].X = (2 * Constants.TileWidth) - (Constants.TileWidth / 2);
+            AutoSe[2].Y = 2 * Constants.TileHeight;
 
             // SW - s
-            AutoSe[3].X = 32;
-            AutoSe[3].Y = 80;
+            AutoSe[3].X = Constants.TileWidth;
+            AutoSe[3].Y = (2 * Constants.TileHeight) + (Constants.TileHeight / 2);
 
             // SE - t
-            AutoSe[4].X = 48;
-            AutoSe[4].Y = 80;
+            AutoSe[4].X = (2 * Constants.TileWidth) - (Constants.TileWidth / 2);
+            AutoSe[4].Y = (2 * Constants.TileHeight) + (Constants.TileHeight / 2);
 
             for (var i = 0; i < Constants.LayerCount; i++)
             {
@@ -188,8 +188,8 @@ namespace Intersect_Client.Classes
                 int quarterNum;
                 for (quarterNum = 1; quarterNum < 5; quarterNum++)
                 {
-                    Autotile[x, y].Layer[layerNum].SrcX[quarterNum] = (_myMap.Layers[layerNum].Tiles[x, y].X * 32) + Autotile[x, y].Layer[layerNum].QuarterTile[quarterNum].X;
-                    Autotile[x, y].Layer[layerNum].SrcY[quarterNum] = (_myMap.Layers[layerNum].Tiles[x, y].Y * 32) + Autotile[x, y].Layer[layerNum].QuarterTile[quarterNum].Y;
+                    Autotile[x, y].Layer[layerNum].SrcX[quarterNum] = (_myMap.Layers[layerNum].Tiles[x, y].X * Constants.TileWidth) + Autotile[x, y].Layer[layerNum].QuarterTile[quarterNum].X;
+                    Autotile[x, y].Layer[layerNum].SrcY[quarterNum] = (_myMap.Layers[layerNum].Tiles[x, y].Y * Constants.TileHeight) + Autotile[x, y].Layer[layerNum].QuarterTile[quarterNum].Y;
                 }
             }
         }
