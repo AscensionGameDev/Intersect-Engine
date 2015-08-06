@@ -55,6 +55,21 @@ namespace Intersect_Client.Classes
             Connecting = true;
         }
 
+        public static void Close()
+        {
+            try
+            {
+                Connected = false;
+                Connecting = false;
+                MySocket.Close();
+                MySocket = null;
+            }
+            catch (Exception)
+            {
+
+            }
+        }
+
         private static void ConnectCb(IAsyncResult result)
         {
             try

@@ -172,16 +172,20 @@ namespace Intersect_Server.Classes
         //Warping
         public override void Warp(int newMap, int newX, int newY)
         {
-            Warp(newMap, newX, newY);
+            Warp(newMap, newX, newY,1);
         }
         public override void Warp(int newMap, int newX, int newY, int newDir)
         {
-            
+            if (newMap < 0 || newMap >= Globals.GameMaps.Length || Globals.GameMaps[newMap] == null || Globals.GameMaps[newMap].Deleted == 1)
+            {
+                Console.WriteLine("Failed to warp player to new map -- warping to /spawn/.");
+                WarpToSpawn(true);
+                return;
+            }
             CurrentX = newX;
             CurrentY = newY;
             if (newMap != CurrentMap || _sentMap == false)
             {
-                Console.WriteLine("Sending warp to player.");
                 PacketSender.SendEntityLeave(MyIndex,0,CurrentMap);
                 CurrentMap = newMap;
                 PacketSender.SendEntityDataToProximity(MyIndex, 0, Globals.Entities[MyIndex]);
@@ -204,6 +208,27 @@ namespace Intersect_Server.Classes
                 PacketSender.SendEntityStats(MyIndex, IsEvent, Globals.Entities[MyIndex]);
             }
             
+        }
+        public void WarpToSpawn(bool sendWarp = false)
+        {
+            if (Constants.SpawnMap >= 0 && Constants.SpawnMap < Globals.GameMaps.Length && Globals.GameMaps[Constants.SpawnMap] != null && Globals.GameMaps[Constants.SpawnMap].Deleted == 0)
+            {
+               CurrentMap = Constants.SpawnMap;
+            }
+            else
+            {
+                for (int i = 0; i < Globals.GameMaps.Length; i++)
+                {
+                    if (Globals.GameMaps[i] != null && Globals.GameMaps[i].Deleted == 0)
+                    {
+                        CurrentMap = i;
+                        break;
+                    }
+                }
+            }
+            CurrentX = Constants.SpawnX;
+            CurrentY = Constants.SpawnY;
+            if (sendWarp) { Warp(CurrentMap, CurrentX, CurrentY); }
         }
 
         //Inventory

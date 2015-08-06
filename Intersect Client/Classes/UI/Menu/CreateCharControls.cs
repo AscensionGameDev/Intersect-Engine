@@ -161,9 +161,12 @@ namespace Intersect_Client.Classes.UI.Menu
             }
 
             _characterPortrait.ImageName = "Resources/Faces/" + GetSprite(i);
-            string test = Globals.GameClasses[GetClass()].Sprites[GetSprite(i)].Sprite;
-            _characterPortrait.Texture = Gui.CreateTextureFromSprite(Globals.GameClasses[GetClass()].Sprites[GetSprite(i)].Sprite, _characterPortrait.Width, _characterPortrait.Height);
-            _currentSprite = Globals.GameClasses[GetClass()].Sprites[GetSprite(i)].Sprite;
+            if (Globals.GameClasses[GetClass()].Sprites.Count > 0)
+            {
+                string test = Globals.GameClasses[GetClass()].Sprites[GetSprite(i)].Sprite;
+                _characterPortrait.Texture = Gui.CreateTextureFromSprite(Globals.GameClasses[GetClass()].Sprites[GetSprite(i)].Sprite, _characterPortrait.Width, _characterPortrait.Height);
+                _currentSprite = Globals.GameClasses[GetClass()].Sprites[GetSprite(i)].Sprite;
+            }
         }
 
         public void Show()

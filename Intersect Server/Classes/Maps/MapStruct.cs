@@ -74,8 +74,8 @@ namespace Intersect_Server.Classes
 
         //Location of Map in the current grid
         public int MapGrid;
-        public int MapGridX;
-        public int MapGridY;
+        public int MapGridX = -1;
+        public int MapGridY = -1;
 
         //Does the map have a player on or nearby it?
         public bool Active;
@@ -207,6 +207,17 @@ namespace Intersect_Server.Classes
             AHue = bf.ReadInteger();
             Brightness = bf.ReadInteger();
 
+            //Clear Map Npcs
+            for (int i = 0; i < Spawns.Count; i++)
+            {
+                if (Spawns[i].EntityIndex > -1)
+                {
+                    if (Globals.Entities[Spawns[i].EntityIndex] != null)
+                    {
+                        Globals.Entities[Spawns[i].EntityIndex].Die();
+                    }
+                }
+            }
             // Load Map Npcs
             Spawns.Clear();
             npcCount = bf.ReadInteger();
@@ -269,18 +280,6 @@ namespace Intersect_Server.Classes
             }
             ItemRespawns.Clear();
             SpawnAttributeItems();
-
-            //Clear Map Npcs
-            for (int i = 0; i < Spawns.Count; i++)
-            {
-                if (Spawns[i].EntityIndex > -1)
-                {
-                    if (Globals.Entities[Spawns[i].EntityIndex] != null)
-                    {
-                        Globals.Entities[Spawns[i].EntityIndex].Die();
-                    }
-                }
-            }
             SpawnMapNpcs();
             //Save();
         }

@@ -681,7 +681,7 @@ namespace Intersect_Client.Classes
                     UseDarknessBackup = !UseDarknessBackup;
                 }
                 if (!LightsChanged) { System.Threading.Thread.Sleep(1); }
-            } while (true);
+            } while (GameMain.IsRunning);
         }
         private static int CalcLightWidth(int range)
         {

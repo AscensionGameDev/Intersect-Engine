@@ -593,11 +593,12 @@ namespace Intersect_Server.Classes
             {
                 Globals.Entities[index].MyName = Name;
                 ((Player)Globals.Entities[index]).Class = Class;
-                Globals.Entities[index].MySprite = Globals.GameClasses[Class].Sprites[Sprite].Sprite;
-                ((Player)Globals.Entities[index]).Gender = Globals.GameClasses[Class].Sprites[Sprite].Gender;
-                Globals.Entities[index].CurrentMap = Constants.SpawnMap;
-                Globals.Entities[index].CurrentX = Constants.SpawnX;
-                Globals.Entities[index].CurrentY = Constants.SpawnY;
+                if (Globals.GameClasses[Class].Sprites.Count > 0)
+                {
+                    Globals.Entities[index].MySprite = Globals.GameClasses[Class].Sprites[Sprite].Sprite;
+                    ((Player)Globals.Entities[index]).Gender = Globals.GameClasses[Class].Sprites[Sprite].Gender;
+                }
+                ((Player)Globals.Entities[index]).WarpToSpawn();
                 Globals.Entities[index].Vital[(int)Enums.Vitals.Health] = Globals.GameClasses[Class].MaxVital[(int)Enums.Vitals.Health];
                 Globals.Entities[index].Vital[(int)Enums.Vitals.Mana] = Globals.GameClasses[Class].MaxVital[(int)Enums.Vitals.Mana];
 

@@ -1020,8 +1020,9 @@ namespace Intersect_Server.Classes
         }
 
         // Classes
-        public static void LoadClasses()
+        public static int LoadClasses()
         {
+            int x = 0;
             if (!Directory.Exists("Resources/Classes"))
             {
                 Directory.CreateDirectory("Resources/Classes");
@@ -1038,8 +1039,20 @@ namespace Intersect_Server.Classes
                 {
                     Globals.GameClasses[i].Load(File.ReadAllBytes("Resources/Classes/" + i + ".cls"));
                 }
-
+                if (String.IsNullOrEmpty(Globals.GameClasses[i].Name)){x++;}
             }
+            return x;
+        }
+        public static void CreateDefaultClass()
+        {
+            Globals.GameClasses[0].Name = "Default";
+            for (int i = 0; i < (int)Enums.Vitals.VitalCount; i++) {
+                Globals.GameClasses[0].MaxVital[i] = 20;
+            }
+            for (int i = 0; i < (int)Enums.Stats.StatCount; i++) {
+                Globals.GameClasses[0].Stat[i] = 10;
+            }
+            Globals.GameClasses[0].Save(0);
         }
 
         //Map Folders

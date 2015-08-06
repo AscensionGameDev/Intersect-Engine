@@ -75,6 +75,7 @@ namespace Intersect_Client
 
             //Destroy Game
             //TODO - Destroy Graphics and Networking peacefully
+            //Network.Close();
             Gui.DestroyGwen();
             Graphics.RenderWindow.Close();
             Application.Exit();

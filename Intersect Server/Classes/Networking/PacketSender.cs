@@ -333,23 +333,25 @@ namespace Intersect_Server.Classes
             var bf = new ByteBuffer();
             bf.WriteLong((int)Enums.ServerPackets.EnterMap);
             bf.WriteLong(mapNum);
-            Globals.GameMaps[mapNum].PlayerEnteredMap();
-            for (var y = Globals.GameMaps[mapNum].MapGridY - 1; y < Globals.GameMaps[mapNum].MapGridY + 2; y++)
+            if (!(Globals.GameMaps[mapNum].MapGridX == -1 || Globals.GameMaps[mapNum].MapGridY == -1))
             {
-                for (var x = Globals.GameMaps[mapNum].MapGridX - 1; x < Globals.GameMaps[mapNum].MapGridX + 2; x++)
+                Globals.GameMaps[mapNum].PlayerEnteredMap();
+                for (var y = Globals.GameMaps[mapNum].MapGridY - 1; y < Globals.GameMaps[mapNum].MapGridY + 2; y++)
                 {
-                    bf.WriteLong(Database.MapGrids[Globals.GameMaps[mapNum].MapGrid].MyGrid[x, y]);
+                    for (var x = Globals.GameMaps[mapNum].MapGridX - 1; x < Globals.GameMaps[mapNum].MapGridX + 2; x++)
+                    {
+                        bf.WriteLong(Database.MapGrids[Globals.GameMaps[mapNum].MapGrid].MyGrid[x, y]);
+                    }
+                }
+                client.SendPacket(bf.ToArray());
+
+                //Send Map Info
+                for (int i = 0; i < Globals.GameMaps[mapNum].SurroundingMaps.Count; i++)
+                {
+                    PacketSender.SendMapItems(client, Globals.GameMaps[mapNum].SurroundingMaps[i]);
                 }
             }
-            client.SendPacket(bf.ToArray());
             bf.Dispose();
-
-            //Send Map Info
-            for (int i = 0; i < Globals.GameMaps[mapNum].SurroundingMaps.Count; i++)
-            {
-                PacketSender.SendMapItems(client, Globals.GameMaps[mapNum].SurroundingMaps[i]);
-            }
-            
         }
 
         public static void SendDataToAllBut(int index, byte[] packet, bool entityId)

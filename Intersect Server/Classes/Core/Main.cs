@@ -43,7 +43,11 @@ namespace Intersect_Server.Classes
             Console.WriteLine("Loading resources.");
             Database.LoadResources();
             Console.WriteLine("Loading classes.");
-            Database.LoadClasses();
+            if (Database.LoadClasses() == Constants.MaxClasses)
+            {
+                Console.WriteLine("Failed to load classes. Creating default class.");
+                Database.CreateDefaultClass();
+            }
             Console.WriteLine("Loading maps.");
             Database.LoadMaps();
             Console.WriteLine("Opening MySQL connection.");
