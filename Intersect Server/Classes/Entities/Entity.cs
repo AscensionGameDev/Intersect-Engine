@@ -106,10 +106,10 @@ namespace Intersect_Server.Classes
             {
                 if (tmpX < 0)
                 {
-                    tmpX = 29 - (tmpX * -1);
+                    tmpX = (Constants.MapWidth - 1) - (tmpX * -1);
                     if (tmpY < 0)
                     {
-                        tmpY = 29 - (tmpY * -1);
+                        tmpY = (Constants.MapHeight - 1) - (tmpY * -1);
                         if (Database.MapGrids[Globals.GameMaps[tmpMap].MapGrid].MyGrid[Globals.GameMaps[tmpMap].MapGridX - 1, Globals.GameMaps[tmpMap].MapGridY - 1] > -1)
                         {
                             if (Globals.GameMaps[Database.MapGrids[Globals.GameMaps[tmpMap].MapGrid].MyGrid[Globals.GameMaps[tmpMap].MapGridX - 1, Globals.GameMaps[tmpMap].MapGridY - 1]].Attributes[tmpX, tmpY].value == (int)Enums.MapAttributes.Blocked)
@@ -127,9 +127,9 @@ namespace Intersect_Server.Classes
                             return true;
                         }
                     }
-                    else if (tmpY > 29)
+                    else if (tmpY > (Constants.MapHeight - 1))
                     {
-                        tmpY = tmpY - 29;
+                        tmpY = tmpY - (Constants.MapHeight - 1);
                         if (Database.MapGrids[Globals.GameMaps[tmpMap].MapGrid].MyGrid[Globals.GameMaps[tmpMap].MapGridX - 1, Globals.GameMaps[tmpMap].MapGridY + 1] > -1)
                         {
                             if (Globals.GameMaps[Database.MapGrids[Globals.GameMaps[tmpMap].MapGrid].MyGrid[Globals.GameMaps[tmpMap].MapGridX - 1, Globals.GameMaps[tmpMap].MapGridY + 1]].Attributes[tmpX, tmpY].value == (int)Enums.MapAttributes.Blocked)
@@ -167,12 +167,12 @@ namespace Intersect_Server.Classes
                         }
                     }
                 }
-                else if (tmpX > 29)
+                else if (tmpX > (Constants.MapWidth - 1))
                 {
-                    tmpX = tmpX - 29;
+                    tmpX = tmpX - (Constants.MapWidth - 1);
                     if (tmpY < 0)
                     {
-                        tmpY = 29 - (tmpY * -1);
+                        tmpY = (Constants.MapHeight - 1) - (tmpY * -1);
                         if (Database.MapGrids[Globals.GameMaps[tmpMap].MapGrid].MyGrid[Globals.GameMaps[tmpMap].MapGridX + 1, Globals.GameMaps[tmpMap].MapGridY - 1] > -1)
                         {
                             if (Globals.GameMaps[Database.MapGrids[Globals.GameMaps[tmpMap].MapGrid].MyGrid[Globals.GameMaps[tmpMap].MapGridX + 1, Globals.GameMaps[tmpMap].MapGridY - 1]].Attributes[tmpX, tmpY].value == (int)Enums.MapAttributes.Blocked)
@@ -190,9 +190,9 @@ namespace Intersect_Server.Classes
                             return true;
                         }
                     }
-                    else if (tmpY > 29)
+                    else if (tmpY > (Constants.MapHeight - 1))
                     {
-                        tmpY = tmpY - 29;
+                        tmpY = tmpY - (Constants.MapHeight - 1);
                         if (Database.MapGrids[Globals.GameMaps[tmpMap].MapGrid].MyGrid[Globals.GameMaps[tmpMap].MapGridX + 1, Globals.GameMaps[tmpMap].MapGridY + 1] > -1)
                         {
                             if (Globals.GameMaps[Database.MapGrids[Globals.GameMaps[tmpMap].MapGrid].MyGrid[Globals.GameMaps[tmpMap].MapGridX + 1, Globals.GameMaps[tmpMap].MapGridY + 1]].Attributes[tmpX, tmpY].value == (int)Enums.MapAttributes.Blocked)
@@ -232,7 +232,7 @@ namespace Intersect_Server.Classes
                 }
                 else if (tmpY < 0)
                 {
-                    tmpY = 29 - (tmpY * -1);
+                    tmpY = (Constants.MapHeight - 1) - (tmpY * -1);
                     if (Database.MapGrids[Globals.GameMaps[tmpMap].MapGrid].MyGrid[Globals.GameMaps[tmpMap].MapGridX, Globals.GameMaps[tmpMap].MapGridY - 1] > -1)
                     {
                         if (Globals.GameMaps[Database.MapGrids[Globals.GameMaps[tmpMap].MapGrid].MyGrid[Globals.GameMaps[tmpMap].MapGridX, Globals.GameMaps[tmpMap].MapGridY - 1]].Attributes[tmpX, tmpY].value == (int)Enums.MapAttributes.Blocked)
@@ -250,9 +250,9 @@ namespace Intersect_Server.Classes
                         return true;
                     }
                 }
-                else if (tmpY > 29)
+                else if (tmpY > (Constants.MapHeight - 1))
                 {
-                    tmpY = tmpY - 29;
+                    tmpY = tmpY - (Constants.MapHeight - 1);
                     if (Database.MapGrids[Globals.GameMaps[tmpMap].MapGrid].MyGrid[Globals.GameMaps[tmpMap].MapGridX, Globals.GameMaps[tmpMap].MapGridY + 1] > -1)
                     {
                         if (Globals.GameMaps[Database.MapGrids[Globals.GameMaps[tmpMap].MapGrid].MyGrid[Globals.GameMaps[tmpMap].MapGridX, Globals.GameMaps[tmpMap].MapGridY + 1]].Attributes[tmpX, tmpY].value == (int)Enums.MapAttributes.Blocked)
@@ -328,10 +328,10 @@ namespace Intersect_Server.Classes
             {
                 if (tmpX < 0)
                 {
-                    tmpX = 29 - (tmpX * -1);
+                    tmpX = (Constants.MapWidth - 1) - (tmpX * -1);
                     if (tmpY < 0)
                     {
-                        tmpY = 29 - (tmpY * -1);
+                        tmpY = (Constants.MapHeight - 1) - (tmpY * -1);
                         if (Database.MapGrids[Globals.GameMaps[tmpMap].MapGrid].MyGrid[Globals.GameMaps[tmpMap].MapGridX - 1, Globals.GameMaps[tmpMap].MapGridY - 1] > -1)
                         {
                             tmpMap = Database.MapGrids[Globals.GameMaps[tmpMap].MapGrid].MyGrid[Globals.GameMaps[tmpMap].MapGridX - 1, Globals.GameMaps[tmpMap].MapGridY - 1];
@@ -341,9 +341,9 @@ namespace Intersect_Server.Classes
                             return ;
                         }
                     }
-                    else if (tmpY > 29)
+                    else if (tmpY > (Constants.MapHeight - 1))
                     {
-                        tmpY = tmpY - 29;
+                        tmpY = tmpY - (Constants.MapHeight - 1);
                         if (Database.MapGrids[Globals.GameMaps[tmpMap].MapGrid].MyGrid[Globals.GameMaps[tmpMap].MapGridX - 1, Globals.GameMaps[tmpMap].MapGridY + 1] > -1)
                         {
                             tmpMap = Database.MapGrids[Globals.GameMaps[tmpMap].MapGrid].MyGrid[Globals.GameMaps[tmpMap].MapGridX - 1, Globals.GameMaps[tmpMap].MapGridY + 1];
@@ -365,12 +365,12 @@ namespace Intersect_Server.Classes
                         }
                     }
                 }
-                else if (tmpX > 29)
+                else if (tmpX > (Constants.MapWidth - 1))
                 {
-                    tmpX = tmpX - 29;
+                    tmpX = tmpX - (Constants.MapWidth - 1);
                     if (tmpY < 0)
                     {
-                        tmpY = 29 - (tmpY * -1);
+                        tmpY = (Constants.MapHeight - 1) - (tmpY * -1);
                         if (Database.MapGrids[Globals.GameMaps[tmpMap].MapGrid].MyGrid[Globals.GameMaps[tmpMap].MapGridX + 1, Globals.GameMaps[tmpMap].MapGridY - 1] > -1)
                         {
                             tmpMap = Database.MapGrids[Globals.GameMaps[tmpMap].MapGrid].MyGrid[Globals.GameMaps[tmpMap].MapGridX + 1, Globals.GameMaps[tmpMap].MapGridY - 1];
@@ -380,9 +380,9 @@ namespace Intersect_Server.Classes
                             return ;
                         }
                     }
-                    else if (tmpY > 29)
+                    else if (tmpY > (Constants.MapHeight - 1))
                     {
-                        tmpY = tmpY - 29;
+                        tmpY = tmpY - (Constants.MapHeight - 1);
                         if (Database.MapGrids[Globals.GameMaps[tmpMap].MapGrid].MyGrid[Globals.GameMaps[tmpMap].MapGridX + 1, Globals.GameMaps[tmpMap].MapGridY + 1] > -1)
                         {
                             tmpMap = Database.MapGrids[Globals.GameMaps[tmpMap].MapGrid].MyGrid[Globals.GameMaps[tmpMap].MapGridX + 1, Globals.GameMaps[tmpMap].MapGridY + 1];
@@ -406,7 +406,7 @@ namespace Intersect_Server.Classes
                 }
                 else if (tmpY < 0)
                 {
-                    tmpY = 29 - (tmpY * -1);
+                    tmpY = (Constants.MapHeight - 1) - (tmpY * -1);
                     if (Database.MapGrids[Globals.GameMaps[tmpMap].MapGrid].MyGrid[Globals.GameMaps[tmpMap].MapGridX, Globals.GameMaps[tmpMap].MapGridY - 1] > -1)
                     {
                         tmpMap = Database.MapGrids[Globals.GameMaps[tmpMap].MapGrid].MyGrid[Globals.GameMaps[tmpMap].MapGridX, Globals.GameMaps[tmpMap].MapGridY - 1];
@@ -416,9 +416,9 @@ namespace Intersect_Server.Classes
                         return ;
                     }
                 }
-                else if (tmpY > 29)
+                else if (tmpY > (Constants.MapHeight - 1))
                 {
-                    tmpY = tmpY - 29;
+                    tmpY = tmpY - (Constants.MapHeight - 1);
                     if (Database.MapGrids[Globals.GameMaps[tmpMap].MapGrid].MyGrid[Globals.GameMaps[tmpMap].MapGridX, Globals.GameMaps[tmpMap].MapGridY + 1] > -1)
                     {
                         tmpMap = Database.MapGrids[Globals.GameMaps[tmpMap].MapGrid].MyGrid[Globals.GameMaps[tmpMap].MapGridX, Globals.GameMaps[tmpMap].MapGridY + 1];

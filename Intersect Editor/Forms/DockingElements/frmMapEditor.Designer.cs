@@ -46,7 +46,6 @@
             this.pnlMapContainer.Name = "pnlMapContainer";
             this.pnlMapContainer.Size = new System.Drawing.Size(204, 101);
             this.pnlMapContainer.TabIndex = 1;
-            this.pnlMapContainer.Paint += new System.Windows.Forms.PaintEventHandler(this.pnlMapContainer_Paint);
             // 
             // picMap
             // 

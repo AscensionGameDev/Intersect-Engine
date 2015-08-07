@@ -34,8 +34,6 @@ namespace Intersect_Editor.Classes
 
         public const int MapWidth = 30;
         public const int MapHeight = 26;
-        public const int TileWidth = 32;
-        public const int TileHeight = 32;
         public const int LayerCount = 5;
 
         //Player maxes

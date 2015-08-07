@@ -265,7 +265,7 @@ namespace Intersect_Editor.Classes
             {
                 gfx.DrawImage(_initialTileset, new Rectangle(0, 0, _initialTileset.Width, _initialTileset.Height), new Rectangle(0, 0, _initialTileset.Width, _initialTileset.Height), GraphicsUnit.Pixel);
 
-                tileSelection = new Rectangle(Globals.GameResources[_editorIndex].InitialGraphic.X * Constants.TileWidth, Globals.GameResources[_editorIndex].InitialGraphic.Y * Constants.TileHeight, (Globals.GameResources[_editorIndex].InitialGraphic.Width + 1) * Constants.TileWidth, (Globals.GameResources[_editorIndex].InitialGraphic.Height + 1) * Constants.TileHeight);
+                tileSelection = new Rectangle(Globals.GameResources[_editorIndex].InitialGraphic.X * Globals.TileWidth, Globals.GameResources[_editorIndex].InitialGraphic.Y * Globals.TileHeight, (Globals.GameResources[_editorIndex].InitialGraphic.Width + 1) * Globals.TileWidth, (Globals.GameResources[_editorIndex].InitialGraphic.Height + 1) * Globals.TileHeight);
                 gfx.DrawRectangle(whitePen, tileSelection);
             }
             gfx.Dispose();
@@ -280,7 +280,7 @@ namespace Intersect_Editor.Classes
             {
                 gfx.DrawImage(_endTileset, new Rectangle(0, 0, _endTileset.Width, _endTileset.Height), new Rectangle(0, 0, _endTileset.Width, _endTileset.Height), GraphicsUnit.Pixel);
 
-                tileSelection = new Rectangle(Globals.GameResources[_editorIndex].EndGraphic.X * Constants.TileWidth, Globals.GameResources[_editorIndex].EndGraphic.Y * Constants.TileHeight, (Globals.GameResources[_editorIndex].EndGraphic.Width + 1) * Constants.TileWidth, (Globals.GameResources[_editorIndex].EndGraphic.Height + 1) * Constants.TileHeight);
+                tileSelection = new Rectangle(Globals.GameResources[_editorIndex].EndGraphic.X * Globals.TileWidth, Globals.GameResources[_editorIndex].EndGraphic.Y * Globals.TileHeight, (Globals.GameResources[_editorIndex].EndGraphic.Width + 1) * Globals.TileWidth, (Globals.GameResources[_editorIndex].EndGraphic.Height + 1) * Globals.TileHeight);
                 gfx.DrawRectangle(whitePen, tileSelection);
             }
             gfx.Dispose();
@@ -293,8 +293,8 @@ namespace Intersect_Editor.Classes
         {
             if (e.X > picInitialResource.Width || e.Y > picInitialResource.Height) { return; }
             _tMouseDown = true;
-            Globals.GameResources[_editorIndex].InitialGraphic.X = (int)Math.Floor((double)e.X / Constants.TileWidth);
-            Globals.GameResources[_editorIndex].InitialGraphic.Y = (int)Math.Floor((double)e.Y / Constants.TileWidth);
+            Globals.GameResources[_editorIndex].InitialGraphic.X = (int)Math.Floor((double)e.X / Globals.TileWidth);
+            Globals.GameResources[_editorIndex].InitialGraphic.Y = (int)Math.Floor((double)e.Y / Globals.TileWidth);
             Globals.GameResources[_editorIndex].InitialGraphic.Width = 0;
             Globals.GameResources[_editorIndex].InitialGraphic.Height = 0;
             if (Globals.GameResources[_editorIndex].InitialGraphic.X < 0) { Globals.GameResources[_editorIndex].InitialGraphic.X = 0; }
@@ -306,8 +306,8 @@ namespace Intersect_Editor.Classes
             if (e.X > picInitialResource.Width || e.Y > picInitialResource.Height) { return; }
             if (_tMouseDown)
             {
-                var tmpX = (int)Math.Floor((double)e.X / Constants.TileWidth);
-                var tmpY = (int)Math.Floor((double)e.Y / Constants.TileHeight);
+                var tmpX = (int)Math.Floor((double)e.X / Globals.TileWidth);
+                var tmpY = (int)Math.Floor((double)e.Y / Globals.TileHeight);
                 Globals.GameResources[_editorIndex].InitialGraphic.Width = tmpX - Globals.GameResources[_editorIndex].InitialGraphic.X;
                 Globals.GameResources[_editorIndex].InitialGraphic.Height = tmpY - Globals.GameResources[_editorIndex].InitialGraphic.Y;
             }
@@ -340,8 +340,8 @@ namespace Intersect_Editor.Classes
         {
             if (e.X > picEndResource.Width || e.Y > picEndResource.Height) { return; }
             _tMouseDown = true;
-            Globals.GameResources[_editorIndex].EndGraphic.X = (int)Math.Floor((double)e.X / Constants.TileWidth);
-            Globals.GameResources[_editorIndex].EndGraphic.Y = (int)Math.Floor((double)e.Y / Constants.TileHeight);
+            Globals.GameResources[_editorIndex].EndGraphic.X = (int)Math.Floor((double)e.X / Globals.TileWidth);
+            Globals.GameResources[_editorIndex].EndGraphic.Y = (int)Math.Floor((double)e.Y / Globals.TileHeight);
             Globals.GameResources[_editorIndex].EndGraphic.Width = 0;
             Globals.GameResources[_editorIndex].EndGraphic.Height = 0;
             if (Globals.GameResources[_editorIndex].EndGraphic.X < 0) { Globals.GameResources[_editorIndex].EndGraphic.X = 0; }
@@ -353,8 +353,8 @@ namespace Intersect_Editor.Classes
             if (e.X > picEndResource.Width || e.Y > picEndResource.Height) { return; }
             if (_tMouseDown)
             {
-                var tmpX = (int)Math.Floor((double)e.X / Constants.TileWidth);
-                var tmpY = (int)Math.Floor((double)e.Y / Constants.TileHeight);
+                var tmpX = (int)Math.Floor((double)e.X / Globals.TileWidth);
+                var tmpY = (int)Math.Floor((double)e.Y / Globals.TileHeight);
                 Globals.GameResources[_editorIndex].EndGraphic.Width = tmpX - Globals.GameResources[_editorIndex].EndGraphic.X;
                 Globals.GameResources[_editorIndex].EndGraphic.Height = tmpY - Globals.GameResources[_editorIndex].EndGraphic.Y;
             }

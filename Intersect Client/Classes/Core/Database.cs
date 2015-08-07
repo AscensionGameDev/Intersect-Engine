@@ -57,6 +57,8 @@ namespace Intersect_Client.Classes
                 writer.WriteElementString("Sound", "True");
                 writer.WriteElementString("Music", "True");
                 writer.WriteElementString("MenuBGM", "");
+                writer.WriteElementString("TileWidth", "32");
+                writer.WriteElementString("TileHeight", "32");
                 writer.WriteEndElement();
                 writer.WriteEndDocument();
                 writer.Flush();
@@ -92,6 +94,12 @@ namespace Intersect_Client.Classes
                     selectSingleNode = options.SelectSingleNode("//Config/MenuBG");
                     if (selectSingleNode != null)
                         Globals.MenuBG = selectSingleNode.InnerText;
+                    selectSingleNode = options.SelectSingleNode("//Config/TileWidth");
+                    if (selectSingleNode != null)
+                        Globals.TileWidth = Int32.Parse(selectSingleNode.InnerText);
+                    selectSingleNode = options.SelectSingleNode("//Config/TileHeight");
+                    if (selectSingleNode != null)
+                        Globals.TileHeight = Int32.Parse(selectSingleNode.InnerText);
                 }
                 catch (Exception)
                 {
@@ -116,6 +124,8 @@ namespace Intersect_Client.Classes
                 writer.WriteElementString("Music", Globals.MusicEnabled.ToString());
                 writer.WriteElementString("MenuBGM", Globals.MenuBGM);
                 writer.WriteElementString("MenuBG", Globals.MenuBG);
+                writer.WriteElementString("TileWidth", Globals.TileWidth.ToString());
+                writer.WriteElementString("TileHeight", Globals.TileHeight.ToString());
                 writer.WriteEndElement();
                 writer.WriteEndDocument();
                 writer.Flush();

@@ -70,24 +70,24 @@ namespace Intersect_Client.Classes
                 }
                 srcTexture = Graphics.Tilesets[Convert.ToInt32(str) - 1];
 
-                if ((Height + 1) * Constants.TileHeight > Constants.TileHeight)
+                if ((Height + 1) * Globals.TileHeight > Globals.TileHeight)
                 {
-                    destRectangle.Y = (int)Math.Ceiling(Graphics.CalcMapOffsetY(i) + CurrentY * Constants.TileHeight + OffsetY - (((Height + 1) * Constants.TileHeight) - Constants.TileHeight));
+                    destRectangle.Y = (int)Math.Ceiling(Graphics.CalcMapOffsetY(i) + CurrentY * Globals.TileHeight + OffsetY - (((Height + 1) * Globals.TileHeight) - Globals.TileHeight));
                 }
                 else
                 {
-                    destRectangle.Y = (int)Math.Ceiling(Graphics.CalcMapOffsetY(i) + CurrentY * Constants.TileHeight + OffsetY);
+                    destRectangle.Y = (int)Math.Ceiling(Graphics.CalcMapOffsetY(i) + CurrentY * Globals.TileHeight + OffsetY);
                 }
-                if ((Width + 1) * Constants.TileWidth > Constants.TileWidth)
+                if ((Width + 1) * Globals.TileWidth > Globals.TileWidth)
                 {
-                    destRectangle.X = (int)Math.Ceiling(Graphics.CalcMapOffsetX(i) + CurrentX * Constants.TileWidth + OffsetX - (((Width + 1) * 16) - 16));
+                    destRectangle.X = (int)Math.Ceiling(Graphics.CalcMapOffsetX(i) + CurrentX * Globals.TileWidth + OffsetX - (((Width + 1) * 16) - 16));
                 }
                 else
                 {
-                    destRectangle.X = (int)Math.Ceiling(Graphics.CalcMapOffsetX(i) + CurrentX * Constants.TileWidth + OffsetX);
+                    destRectangle.X = (int)Math.Ceiling(Graphics.CalcMapOffsetX(i) + CurrentX * Globals.TileWidth + OffsetX);
                 }
 
-                srcRectangle = new Rectangle(X * Constants.TileWidth, Y * Constants.TileHeight, (Width + 1) * Constants.TileWidth, (Height + 1) * Constants.TileHeight);
+                srcRectangle = new Rectangle(X * Globals.TileWidth, Y * Globals.TileHeight, (Width + 1) * Globals.TileWidth, (Height + 1) * Globals.TileHeight);
                 destRectangle.Width = srcRectangle.Width;
                 destRectangle.Height = srcRectangle.Height;
                 Graphics.RenderTexture(srcTexture, srcRectangle, destRectangle, Graphics.RenderWindow);

@@ -243,12 +243,12 @@ namespace Intersect_Client.Classes
             for (var i = 0; i < 3; i++)
             {
                 if (LowerTextures[i] != null) { LowerTextures[i].Dispose(); }
-                LowerTextures[i] = new RenderTexture(Constants.TileWidth * Constants.MapWidth, Constants.TileHeight * Constants.MapHeight);
+                LowerTextures[i] = new RenderTexture((uint)Globals.TileWidth * Constants.MapWidth, (uint)Globals.TileHeight * Constants.MapHeight);
                 LowerTextures[i].Clear(Color.Transparent);
                 if (UpperTextures[i] != null) { UpperTextures[i].Dispose(); }
-                UpperTextures[i] = new RenderTexture(Constants.TileWidth * Constants.MapWidth, Constants.TileHeight * Constants.MapHeight);
+                UpperTextures[i] = new RenderTexture((uint)Globals.TileWidth * Constants.MapWidth, (uint)Globals.TileHeight * Constants.MapHeight);
                 if (PeakTextures[i] != null) { PeakTextures[i].Dispose(); }
-                PeakTextures[i] = new RenderTexture(Constants.TileWidth * Constants.MapWidth, Constants.TileHeight * Constants.MapHeight);
+                PeakTextures[i] = new RenderTexture((uint)Globals.TileWidth * Constants.MapWidth, (uint)Globals.TileHeight * Constants.MapHeight);
                 for (var l = 0; l < Constants.LayerCount; l++)
                 {
                     if (l < 3)
@@ -279,7 +279,7 @@ namespace Intersect_Client.Classes
             switch (Layers[layerNum].Tiles[x, y].Autotile)
             {
                 case Constants.AutotileWaterfall:
-                    yOffset = (forceFrame - 1) * Constants.TileHeight;
+                    yOffset = (forceFrame - 1) * Globals.TileHeight;
                     break;
 
                 case Constants.AutotileAnim:
@@ -287,7 +287,7 @@ namespace Intersect_Client.Classes
                     break;
 
                 case Constants.AutotileCliff:
-                    yOffset = -Constants.TileHeight;
+                    yOffset = -Globals.TileHeight;
                     break;
             }
             Graphics.RenderTexture(Graphics.Tilesets[Layers[layerNum].Tiles[x, y].TilesetIndex], destX, destY,
@@ -308,13 +308,13 @@ namespace Intersect_Client.Classes
                         switch (Autotiles.Autotile[x, y].Layer[l].RenderState)
                         {
                             case Constants.RenderStateNormal:
-                                Graphics.RenderTexture(Graphics.Tilesets[Layers[l].Tiles[x, y].TilesetIndex], x * Constants.TileWidth, y * Constants.TileHeight, Layers[l].Tiles[x, y].X * Constants.TileWidth, Layers[l].Tiles[x, y].Y * Constants.TileHeight,Constants.TileWidth,Constants.TileHeight,tex);
+                                Graphics.RenderTexture(Graphics.Tilesets[Layers[l].Tiles[x, y].TilesetIndex], x * Globals.TileWidth, y * Globals.TileHeight, Layers[l].Tiles[x, y].X * Globals.TileWidth, Layers[l].Tiles[x, y].Y * Globals.TileHeight,Globals.TileWidth,Globals.TileHeight,tex);
                                 break;
                             case Constants.RenderStateAutotile:
-                                DrawAutoTile(l, x * Constants.TileWidth, y * Constants.TileHeight, 1, x, y, z, tex);
-                                DrawAutoTile(l, x * Constants.TileWidth + 16, y * Constants.TileHeight, 2, x, y, z, tex);
-                                DrawAutoTile(l, x * Constants.TileWidth, y * Constants.TileHeight + 16, 3, x, y, z, tex);
-                                DrawAutoTile(l, +x * Constants.TileWidth + 16, y * Constants.TileHeight + 16, 4, x, y, z, tex);
+                                DrawAutoTile(l, x * Globals.TileWidth, y * Globals.TileHeight, 1, x, y, z, tex);
+                                DrawAutoTile(l, x * Globals.TileWidth + 16, y * Globals.TileHeight, 2, x, y, z, tex);
+                                DrawAutoTile(l, x * Globals.TileWidth, y * Globals.TileHeight + 16, 3, x, y, z, tex);
+                                DrawAutoTile(l, +x * Globals.TileWidth + 16, y * Globals.TileHeight + 16, 4, x, y, z, tex);
                                 break;
                         }
                     }
@@ -346,7 +346,7 @@ namespace Intersect_Client.Classes
                 {
                     if (Graphics.ItemFileNames.IndexOf(Globals.GameItems[MapItems[i].ItemNum].Pic) > -1)
                     {
-                        Graphics.RenderTexture(Graphics.ItemTextures[Graphics.ItemFileNames.IndexOf(Globals.GameItems[MapItems[i].ItemNum].Pic)], xoffset + MapItems[i].X * Constants.TileWidth, yoffset + MapItems[i].Y * Constants.TileHeight, Graphics.RenderWindow);
+                        Graphics.RenderTexture(Graphics.ItemTextures[Graphics.ItemFileNames.IndexOf(Globals.GameItems[MapItems[i].ItemNum].Pic)], xoffset + MapItems[i].X * Globals.TileWidth, yoffset + MapItems[i].Y * Globals.TileHeight, Graphics.RenderWindow);
                     }
                 }
             }

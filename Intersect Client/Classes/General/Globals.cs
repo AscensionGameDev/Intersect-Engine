@@ -42,6 +42,8 @@ namespace Intersect_Client.Classes
         public static bool MusicEnabled;
         public static string MenuBGM = "";
         public static string MenuBG = "";
+        public static int TileWidth = 32;
+        public static int TileHeight = 32;
 
         //Game Lock
         public static object GameLock = new object();

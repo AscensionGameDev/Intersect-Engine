@@ -1,4 +1,5 @@
-﻿/*
+﻿using System;
+/*
     Intersect Game Engine (Server)
     Copyright (C) 2015  JC Snider, Joe Bridges
     
@@ -20,6 +21,8 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 using System.Collections.Generic;
+using System.IO;
+using System.Xml;
 namespace Intersect_Editor.Classes
 {
     public static class Database
@@ -34,6 +37,54 @@ namespace Intersect_Editor.Classes
             Globals.GameAnimations = new AnimationStruct[Constants.MaxAnimations];
             Globals.GameResources = new ResourceStruct[Constants.MaxResources];
             Globals.GameClasses = new ClassStruct[Constants.MaxClasses];
+            LoadOptions();
+        }
+
+        //Options File
+        public static bool LoadOptions()
+        {
+
+            if (!File.Exists("resources\\config.xml"))
+            {
+                var settings = new XmlWriterSettings { Indent = true };
+                var writer = XmlWriter.Create("resources\\config.xml", settings);
+                writer.WriteStartDocument();
+                writer.WriteComment("Config.xml generated automatically by Intersect Client.");
+                writer.WriteStartElement("Config");
+                writer.WriteElementString("Host", "localhost");
+                writer.WriteElementString("Port", "4500");
+                writer.WriteElementString("TileWidth", "32");
+                writer.WriteElementString("TileHeight", "32");
+                writer.WriteEndElement();
+                writer.WriteEndDocument();
+                writer.Flush();
+                writer.Close();
+            }
+            else
+            {
+                var options = new XmlDocument();
+                try
+                {
+                    options.Load("resources\\config.xml");
+                    var selectSingleNode = options.SelectSingleNode("//Config/Port");
+                    if (selectSingleNode != null)
+                        Globals.ServerPort = Int32.Parse(selectSingleNode.InnerText);
+                    selectSingleNode = options.SelectSingleNode("//Config/Host");
+                    if (selectSingleNode != null)
+                        Globals.ServerHost = selectSingleNode.InnerText;
+                    selectSingleNode = options.SelectSingleNode("//Config/TileWidth");
+                    if (selectSingleNode != null)
+                        Globals.TileWidth = Int32.Parse(selectSingleNode.InnerText);
+                    selectSingleNode = options.SelectSingleNode("//Config/TileHeight");
+                    if (selectSingleNode != null)
+                        Globals.TileHeight = Int32.Parse(selectSingleNode.InnerText);
+                }
+                catch (Exception)
+                {
+                    return false;
+                }
+            }
+            return true;
         }
 
     }

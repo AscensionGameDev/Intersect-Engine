@@ -159,7 +159,10 @@ namespace Intersect_Client.Classes.UI
         }
         public void Show()
         {
-            _resolutionList.SelectByText(Graphics.GetValidVideoModes()[Graphics.DisplayMode].Width + "x" + Graphics.GetValidVideoModes()[Graphics.DisplayMode].Height);
+            if (Graphics.GetValidVideoModes().Count > 0)
+            {
+                _resolutionList.SelectByText(Graphics.GetValidVideoModes()[Graphics.DisplayMode].Width + "x" + Graphics.GetValidVideoModes()[Graphics.DisplayMode].Height);
+            }
             _fullscreen.IsChecked = Graphics.FullScreen;
             _enableSound.IsChecked = Globals.SoundEnabled;
             _disableSound.IsChecked = !Globals.SoundEnabled;

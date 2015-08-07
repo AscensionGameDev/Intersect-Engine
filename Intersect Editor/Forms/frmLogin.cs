@@ -38,6 +38,7 @@ namespace Intersect_Editor.Forms
 
         private void frmLogin_Load(object sender, EventArgs e)
         {
+            Database.InitDatabase();
             EditorLoopDelegate = new BeginEditorLoop(EditorLoop.StartLoop);
         }
 

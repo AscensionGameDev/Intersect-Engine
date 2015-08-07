@@ -275,11 +275,11 @@ namespace Intersect_Client.Classes
             {
                 if (x < 0)
                 {
-                    tmpX = 29 - (x * -1);
+                    tmpX = (Constants.MapWidth - 1) - (x * -1);
                     tmpY = y;
                     if (y < 0)
                     {
-                        tmpY = 29 - (y * -1);
+                        tmpY = (Constants.MapHeight - 1) - (y * -1);
                         if (Globals.LocalMaps[tmpI - 4] > -1)
                         {
                             tmpMap = Globals.LocalMaps[tmpI - 4];
@@ -289,9 +289,9 @@ namespace Intersect_Client.Classes
                             return false;
                         }
                     }
-                    else if (y > 29)
+                    else if (y > (Constants.MapHeight - 1))
                     {
-                        tmpY = y - 29;
+                        tmpY = y - (Constants.MapHeight - 1);
                         if (Globals.LocalMaps[tmpI + 2] > -1)
                         {
                             tmpMap = Globals.LocalMaps[tmpI + 2];
@@ -313,13 +313,13 @@ namespace Intersect_Client.Classes
                         }
                     }
                 }
-                else if (x > 29)
+                else if (x > (Constants.MapWidth - 1))
                 {
-                    tmpX = x - 29;
+                    tmpX = x - (Constants.MapWidth - 1);
                     tmpY = y;
                     if (y < 0)
                     {
-                        tmpY = 29 - (y * -1);
+                        tmpY = (Constants.MapHeight - 1) - (y * -1);
                         if (Globals.LocalMaps[tmpI - 2] > -1)
                         {
                             tmpMap = Globals.LocalMaps[tmpI - 2];
@@ -329,9 +329,9 @@ namespace Intersect_Client.Classes
                             return false;
                         }
                     }
-                    else if (y > 29)
+                    else if (y > (Constants.MapHeight - 1))
                     {
-                        tmpY = y - 29;
+                        tmpY = y - (Constants.MapHeight - 1);
                         if (Globals.LocalMaps[tmpI + 4] > -1)
                         {
                             tmpMap = Globals.LocalMaps[tmpI + 4];
@@ -356,7 +356,7 @@ namespace Intersect_Client.Classes
                 else if (y < 0)
                 {
                     tmpX = x;
-                    tmpY = 29 - (y * -1);
+                    tmpY = (Constants.MapHeight - 1) - (y * -1);
                     if (Globals.LocalMaps[tmpI - 3] > -1)
                     {
                         tmpMap = Globals.LocalMaps[tmpI - 3];
@@ -366,10 +366,10 @@ namespace Intersect_Client.Classes
                         return false;
                     }
                 }
-                else if (y > 29)
+                else if (y > (Constants.MapHeight - 1))
                 {
                     tmpX = x;
-                    tmpY = y - 29;
+                    tmpY = y - (Constants.MapHeight - 1);
                     if (Globals.LocalMaps[tmpI + 3] > -1)
                     {
                         tmpMap = Globals.LocalMaps[tmpI + 3];
@@ -402,8 +402,8 @@ namespace Intersect_Client.Classes
         }
         private bool TryTarget()
         {
-            var x = (int)Math.Floor((SFML.Window.Mouse.GetPosition(Graphics.RenderWindow).X - (float)Graphics.CalcMapOffsetX(4)) / Constants.TileWidth);
-            var y = (int)Math.Floor((SFML.Window.Mouse.GetPosition(Graphics.RenderWindow).Y - (float)Graphics.CalcMapOffsetY(4)) / Constants.TileHeight);
+            var x = (int)Math.Floor((SFML.Window.Mouse.GetPosition(Graphics.RenderWindow).X - (float)Graphics.CalcMapOffsetX(4)) / Globals.TileWidth);
+            var y = (int)Math.Floor((SFML.Window.Mouse.GetPosition(Graphics.RenderWindow).Y - (float)Graphics.CalcMapOffsetY(4)) / Globals.TileHeight);
             var map = Globals.Entities[Globals.MyIndex].CurrentMap;
             if (GetRealLocation(ref x, ref y, ref map))
             {
@@ -491,7 +491,7 @@ namespace Intersect_Client.Classes
                                 CurrentY--;
                                 Dir = 0;
                                 IsMoving = true;
-                                OffsetY = Constants.TileHeight;
+                                OffsetY = Globals.TileHeight;
                                 OffsetX = 0;
                                 TryToChangeDimension();
                             }
@@ -502,7 +502,7 @@ namespace Intersect_Client.Classes
                                 CurrentY++;
                                 Dir = 1;
                                 IsMoving = true;
-                                OffsetY = -Constants.TileHeight;
+                                OffsetY = -Globals.TileHeight;
                                 OffsetX = 0;
                                 TryToChangeDimension();
                             }
@@ -514,7 +514,7 @@ namespace Intersect_Client.Classes
                                 Dir = 2;
                                 IsMoving = true;
                                 OffsetY = 0;
-                                OffsetX = Constants.TileWidth;
+                                OffsetX = Globals.TileWidth;
                                 TryToChangeDimension();
                             }
                             break;
@@ -525,7 +525,7 @@ namespace Intersect_Client.Classes
                                 Dir = 3;
                                 IsMoving = true;
                                 OffsetY = 0;
-                                OffsetX = -Constants.TileWidth;
+                                OffsetX = -Globals.TileWidth;
                                 TryToChangeDimension();
                             }
                             break;
@@ -535,7 +535,7 @@ namespace Intersect_Client.Classes
                     {
                         MoveTimer = Environment.TickCount + (Stat[(int)Enums.Stats.Speed] / 10f);
                         didMove = true;
-                        if (CurrentX < 0 || CurrentY < 0 || CurrentX > 29 || CurrentY > 29)
+                        if (CurrentX < 0 || CurrentY < 0 || CurrentX > (Constants.MapWidth - 1) || CurrentY > (Constants.MapHeight - 1))
                         {
                             if (tmpI != -1)
                             {
@@ -550,18 +550,18 @@ namespace Intersect_Client.Classes
                                             if (Globals.LocalMaps[tmpI - 4] > -1)
                                             {
                                                 CurrentMap = Globals.LocalMaps[tmpI - 4];
-                                                CurrentX = 29;
-                                                CurrentY = 29;
+                                                CurrentX = (Constants.MapWidth - 1);
+                                                CurrentY = (Constants.MapHeight - 1);
                                                 UpdateMapRenderers(0);
                                                 UpdateMapRenderers(2);
                                             }
                                         }
-                                        else if (CurrentY > 29)
+                                        else if (CurrentY > (Constants.MapHeight - 1))
                                         {
                                             if (Globals.LocalMaps[tmpI + 2] > -1)
                                             {
                                                 CurrentMap = Globals.LocalMaps[tmpI + 2];
-                                                CurrentX = 29;
+                                                CurrentX = (Constants.MapWidth - 1);
                                                 CurrentY = 0;
                                                 UpdateMapRenderers(1);
                                                 UpdateMapRenderers(2);
@@ -573,13 +573,13 @@ namespace Intersect_Client.Classes
                                             if (Globals.LocalMaps[tmpI - 1] > -1)
                                             {
                                                 CurrentMap = Globals.LocalMaps[tmpI - 1];
-                                                CurrentX = 29;
+                                                CurrentX = (Constants.MapWidth - 1);
                                                 UpdateMapRenderers(2);
                                             }
                                         }
 
                                     }
-                                    else if (CurrentX > 29)
+                                    else if (CurrentX > (Constants.MapWidth - 1))
                                     {
                                         if (CurrentY < 0)
                                         {
@@ -587,12 +587,12 @@ namespace Intersect_Client.Classes
                                             {
                                                 CurrentMap = Globals.LocalMaps[tmpI - 2];
                                                 CurrentX = 0;
-                                                CurrentY = 29;
+                                                CurrentY = (Constants.MapHeight - 1);
                                                 UpdateMapRenderers(0);
                                                 UpdateMapRenderers(3);
                                             }
                                         }
-                                        else if (CurrentY > 29)
+                                        else if (CurrentY > (Constants.MapHeight - 1))
                                         {
                                             if (Globals.LocalMaps[tmpI + 4] > -1)
                                             {
@@ -618,12 +618,12 @@ namespace Intersect_Client.Classes
                                     {
                                         if (Globals.LocalMaps[tmpI - 3] > -1)
                                         {
-                                            CurrentY = 29;
+                                            CurrentY = (Constants.MapHeight - 1);
                                             CurrentMap = Globals.LocalMaps[tmpI - 3];
                                             UpdateMapRenderers(0);
                                         }
                                     }
-                                    else if (CurrentY > 29)
+                                    else if (CurrentY > (Constants.MapHeight - 1))
                                     {
                                         if (Globals.LocalMaps[tmpI + 3] > -1)
                                         {
@@ -688,7 +688,7 @@ namespace Intersect_Client.Classes
                     Globals.LocalMaps[6] = -1;
                     Globals.CurrentMap = Globals.LocalMaps[4];
                     CurrentMap = Globals.LocalMaps[4];
-                    Graphics.DarkOffsetX = Constants.TileWidth * Constants.MapWidth;
+                    Graphics.DarkOffsetX = Globals.TileWidth * Constants.MapWidth;
                     PacketSender.SendEnterMap();
                 }
             }
@@ -708,7 +708,7 @@ namespace Intersect_Client.Classes
                     Globals.LocalMaps[8] = -1;
                     Globals.CurrentMap = Globals.LocalMaps[4];
                     CurrentMap = Globals.LocalMaps[4];
-                    Graphics.DarkOffsetX = -Constants.TileWidth * Constants.MapWidth;
+                    Graphics.DarkOffsetX = -Globals.TileWidth * Constants.MapWidth;
                     PacketSender.SendEnterMap();
                 }
 
@@ -729,7 +729,7 @@ namespace Intersect_Client.Classes
                     Globals.LocalMaps[8] = -1;
                     Globals.CurrentMap = Globals.LocalMaps[4];
                     CurrentMap = Globals.LocalMaps[4];
-                    Graphics.DarkOffsetY = -Constants.TileHeight * Constants.MapHeight;
+                    Graphics.DarkOffsetY = -Globals.TileHeight * Constants.MapHeight;
                     PacketSender.SendEnterMap();
                 }
             }
@@ -749,7 +749,7 @@ namespace Intersect_Client.Classes
                     Globals.LocalMaps[2] = -1;
                     Globals.CurrentMap = Globals.LocalMaps[4];
                     CurrentMap = Globals.LocalMaps[4];
-                    Graphics.DarkOffsetY = Constants.TileHeight * Constants.MapHeight;
+                    Graphics.DarkOffsetY = Globals.TileHeight * Constants.MapHeight;
                     PacketSender.SendEnterMap();
                 }
             }
@@ -776,11 +776,11 @@ namespace Intersect_Client.Classes
                 int tmpMap;
                 if (x < 0)
                 {
-                    tmpX = 29 - (x * -1);
+                    tmpX = (Constants.MapWidth - 1) - (x * -1);
                     tmpY = y;
                     if (y < 0)
                     {
-                        tmpY = 29 - (y * -1);
+                        tmpY = (Constants.MapHeight - 1) - (y * -1);
                         if (Globals.LocalMaps[tmpI - 4] > -1)
                         {
                             if (Globals.GameMaps[Globals.LocalMaps[tmpI - 4]].Attributes[tmpX, tmpY].value == (int)Enums.MapAttributes.Blocked)
@@ -801,9 +801,9 @@ namespace Intersect_Client.Classes
                             return true;
                         }
                     }
-                    else if (y > 29)
+                    else if (y > (Constants.MapHeight - 1))
                     {
-                        tmpY = y - 29;
+                        tmpY = y - (Constants.MapHeight - 1);
                         if (Globals.LocalMaps[tmpI + 2] > -1)
                         {
                             if (Globals.GameMaps[Globals.LocalMaps[tmpI + 2]].Attributes[tmpX, tmpY].value == (int)Enums.MapAttributes.Blocked)
@@ -847,13 +847,13 @@ namespace Intersect_Client.Classes
                         }
                     }
                 }
-                else if (x > 29)
+                else if (x > (Constants.MapWidth - 1))
                 {
-                    tmpX = x - 29;
+                    tmpX = x - (Constants.MapWidth - 1);
                     tmpY = y;
                     if (y < 0)
                     {
-                        tmpY = 29 - (y * -1);
+                        tmpY = (Constants.MapHeight - 1) - (y * -1);
                         if (Globals.LocalMaps[tmpI - 2] > -1)
                         {
                             if (Globals.GameMaps[Globals.LocalMaps[tmpI - 2]].Attributes[tmpX, tmpY].value == (int)Enums.MapAttributes.Blocked)
@@ -874,9 +874,9 @@ namespace Intersect_Client.Classes
                             return true;
                         }
                     }
-                    else if (y > 29)
+                    else if (y > (Constants.MapHeight - 1))
                     {
-                        tmpY = y - 29;
+                        tmpY = y - (Constants.MapHeight - 1);
                         if (Globals.LocalMaps[tmpI + 4] > -1)
                         {
                             if (Globals.GameMaps[Globals.LocalMaps[tmpI + 4]].Attributes[tmpX, tmpY].value == (int)Enums.MapAttributes.Blocked)
@@ -923,7 +923,7 @@ namespace Intersect_Client.Classes
                 else if (y < 0)
                 {
                     tmpX = x;
-                    tmpY = 29 - (y * -1);
+                    tmpY = (Constants.MapHeight - 1) - (y * -1);
                     if (Globals.LocalMaps[tmpI - 3] > -1)
                     {
                         if (Globals.GameMaps[Globals.LocalMaps[tmpI - 3]].Attributes[tmpX, tmpY].value == (int)Enums.MapAttributes.Blocked)
@@ -944,10 +944,10 @@ namespace Intersect_Client.Classes
                         return true;
                     }
                 }
-                else if (y > 29)
+                else if (y > (Constants.MapHeight - 1))
                 {
                     tmpX = x;
-                    tmpY = y - 29;
+                    tmpY = y - (Constants.MapHeight - 1);
                     if (Globals.LocalMaps[tmpI + 3] > -1)
                     {
                         if (Globals.GameMaps[Globals.LocalMaps[tmpI + 3]].Attributes[tmpX, tmpY].value == (int)Enums.MapAttributes.Blocked)

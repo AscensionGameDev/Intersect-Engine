@@ -209,10 +209,10 @@ namespace Intersect_Editor.Forms
             if (Globals.EditingLight != null) { return; }
             Globals.MouseX = e.X;
             Globals.MouseY = e.Y;
-            if (e.X >= picMap.Width - Constants.TileWidth || e.Y >= picMap.Height - Constants.TileHeight) { return; }
-            if (e.X < Constants.TileWidth || e.Y < Constants.TileHeight) { return; }
-            Globals.CurTileX = (int)Math.Floor((double)(e.X - Constants.TileWidth) / Constants.TileWidth);
-            Globals.CurTileY = (int)Math.Floor((double)(e.Y - Constants.TileHeight) / Constants.TileHeight);
+            if (e.X >= picMap.Width - Globals.TileWidth || e.Y >= picMap.Height - Globals.TileHeight) { return; }
+            if (e.X < Globals.TileWidth || e.Y < Globals.TileHeight) { return; }
+            Globals.CurTileX = (int)Math.Floor((double)(e.X - Globals.TileWidth) / Globals.TileWidth);
+            Globals.CurTileY = (int)Math.Floor((double)(e.Y - Globals.TileHeight) / Globals.TileHeight);
             if (Globals.CurTileX < 0) { Globals.CurTileX = 0; }
             if (Globals.CurTileY < 0) { Globals.CurTileY = 0; }
 
@@ -387,9 +387,9 @@ namespace Intersect_Editor.Forms
         }
         private void picMap_DoubleClick(object sender, EventArgs e)
         {
-            if (Globals.MouseX >= Constants.TileWidth && Globals.MouseX <= (Constants.MapWidth + 2) * Constants.TileWidth - Constants.TileWidth)
+            if (Globals.MouseX >= Globals.TileWidth && Globals.MouseX <= (Constants.MapWidth + 2) * Globals.TileWidth - Globals.TileWidth)
             {
-                if (Globals.MouseY >= 0 && Globals.MouseY <= Constants.TileHeight)
+                if (Globals.MouseY >= 0 && Globals.MouseY <= Globals.TileHeight)
                 {
                     if (Globals.GameMaps[Globals.CurrentMap].Up == -1)
                     {
@@ -399,10 +399,7 @@ namespace Intersect_Editor.Forms
                             {
                                 PacketSender.SendMap(Globals.CurrentMap);
                             }
-                            else
-                            {
-                                PacketSender.SendCreateMap(0, Globals.CurrentMap,null);
-                            }
+                            PacketSender.SendCreateMap(0, Globals.CurrentMap,null);
                         }
                     }
                     else
@@ -415,7 +412,7 @@ namespace Intersect_Editor.Forms
                         Globals.MainForm.EnterMap(Globals.GameMaps[Globals.CurrentMap].Up);
                     }
                 }
-                else if (Globals.MouseY >= (Constants.MapHeight + 2) * Constants.TileHeight - Constants.TileHeight && Globals.MouseY <= (Constants.MapHeight + 2) * Constants.TileHeight)
+                else if (Globals.MouseY >= (Constants.MapHeight + 2) * Globals.TileHeight - Globals.TileHeight && Globals.MouseY <= (Constants.MapHeight + 2) * Globals.TileHeight)
                 {
                     if (Globals.GameMaps[Globals.CurrentMap].Down == -1)
                     {
@@ -425,10 +422,7 @@ namespace Intersect_Editor.Forms
                             {
                                 PacketSender.SendMap(Globals.CurrentMap);
                             }
-                            else
-                            {
-                                PacketSender.SendCreateMap(1, Globals.CurrentMap,null);
-                            }
+                            PacketSender.SendCreateMap(1, Globals.CurrentMap,null);
                         }
                     }
                     else
@@ -442,8 +436,8 @@ namespace Intersect_Editor.Forms
                     }
                 }
             }
-            if (Globals.MouseY < Constants.TileHeight || Globals.MouseY > (Constants.MapHeight + 2) * Constants.TileHeight - Constants.TileHeight) return;
-            if (Globals.MouseX >= 0 & Globals.MouseX <= Constants.TileWidth)
+            if (Globals.MouseY < Globals.TileHeight || Globals.MouseY > (Constants.MapHeight + 2) * Globals.TileHeight - Globals.TileHeight) return;
+            if (Globals.MouseX >= 0 & Globals.MouseX <= Globals.TileWidth)
             {
                 if (Globals.GameMaps[Globals.CurrentMap].Left == -1)
                 {
@@ -454,10 +448,7 @@ namespace Intersect_Editor.Forms
                     {
                         PacketSender.SendMap(Globals.CurrentMap);
                     }
-                    else
-                    {
-                        PacketSender.SendCreateMap(2, Globals.CurrentMap,null);
-                    }
+                    PacketSender.SendCreateMap(2, Globals.CurrentMap,null);
                 }
                 else
                 {
@@ -469,7 +460,7 @@ namespace Intersect_Editor.Forms
                     Globals.MainForm.EnterMap(Globals.GameMaps[Globals.CurrentMap].Left);
                 }
             }
-            else if (Globals.MouseX >= (Constants.MapWidth + 2) * Constants.TileWidth - Constants.TileWidth && Globals.MouseX <= (Constants.MapWidth + 2) * Constants.TileWidth)
+            else if (Globals.MouseX >= (Constants.MapWidth + 2) * Globals.TileWidth - Globals.TileWidth && Globals.MouseX <= (Constants.MapWidth + 2) * Globals.TileWidth)
             {
                 if (Globals.GameMaps[Globals.CurrentMap].Right == -1)
                 {
@@ -480,10 +471,7 @@ namespace Intersect_Editor.Forms
                     {
                         PacketSender.SendMap(Globals.CurrentMap);
                     }
-                    else
-                    {
-                        PacketSender.SendCreateMap(3, Globals.CurrentMap,null);
-                    }
+                    PacketSender.SendCreateMap(3, Globals.CurrentMap,null);
                 }
                 else
                 {
@@ -502,8 +490,8 @@ namespace Intersect_Editor.Forms
         }
         private void frmMapEditor_Load(object sender, EventArgs e)
         {
-            picMap.Width = (Constants.MapWidth + 2) * Constants.TileWidth;
-            picMap.Height = (Constants.MapHeight + 2) * Constants.TileHeight;
+            picMap.Width = (Constants.MapWidth + 2) * Globals.TileWidth;
+            picMap.Height = (Constants.MapHeight + 2) * Globals.TileHeight;
         }
         private void frmMapEditor_DockStateChanged(object sender, EventArgs e)
         {
@@ -513,11 +501,6 @@ namespace Intersect_Editor.Forms
                 Graphics.RenderWindow.Dispose();
                 Graphics.RenderWindow = new RenderWindow(Globals.MapEditorWindow.picMap.Handle);
             }
-        }
-
-        private void pnlMapContainer_Paint(object sender, PaintEventArgs e)
-        {
-
         }
     }
 }

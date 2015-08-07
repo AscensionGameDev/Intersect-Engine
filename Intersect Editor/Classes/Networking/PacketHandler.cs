@@ -115,7 +115,6 @@ namespace Intersect_Editor.Classes
             bf.WriteBytes(packet);
             Globals.MyIndex = (int)bf.ReadLong();
             Globals.LoginForm.Hide();
-            Database.InitDatabase();
         }
 
         private static void HandleMapData(byte[] packet)

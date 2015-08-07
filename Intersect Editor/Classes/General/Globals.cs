@@ -72,6 +72,8 @@ namespace Intersect_Editor.Classes
         public static int MouseButton = -1;
         public static int CurrentLayer = 0;
         public static bool ViewingMapProperties = false;
+        public static int TileWidth = 32;
+        public static int TileHeight = 32;
 
         //Game Object Editors
         public static frmResource ResourceEditor;

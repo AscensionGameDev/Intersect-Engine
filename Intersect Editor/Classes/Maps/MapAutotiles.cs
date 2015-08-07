@@ -67,88 +67,88 @@ namespace Intersect_Editor.Classes
 
             // Inner tiles (Top right subtile region)
             // NW - a
-            AutoInner[1].X = Constants.TileWidth;
+            AutoInner[1].X = Globals.TileWidth;
             AutoInner[1].Y = 0;
 
             // NE - b
-            AutoInner[2].X = (2 * Constants.TileWidth) - (Constants.TileWidth / 2);
+            AutoInner[2].X = (2 * Globals.TileWidth) - (Globals.TileWidth / 2);
             AutoInner[2].Y = 0;
 
             // SW - c
-            AutoInner[3].X = Constants.TileWidth;
-            AutoInner[3].Y = Constants.TileHeight / 2;
+            AutoInner[3].X = Globals.TileWidth;
+            AutoInner[3].Y = Globals.TileHeight / 2;
 
             // SE - d
-            AutoInner[4].X = (2 * Constants.TileWidth) - (Constants.TileWidth / 2);
-            AutoInner[4].Y = Constants.TileHeight / 2;
+            AutoInner[4].X = (2 * Globals.TileWidth) - (Globals.TileWidth / 2);
+            AutoInner[4].Y = Globals.TileHeight / 2;
 
             // Outer Tiles - NW (bottom subtile region)
             // NW - e
             AutoNw[1].X = 0;
-            AutoNw[1].Y = Constants.TileHeight;
+            AutoNw[1].Y = Globals.TileHeight;
 
             // NE - f
-            AutoNw[2].X = Constants.TileWidth / 2;
-            AutoNw[2].Y = Constants.TileHeight;
+            AutoNw[2].X = Globals.TileWidth / 2;
+            AutoNw[2].Y = Globals.TileHeight;
 
             // SW - g
             AutoNw[3].X = 0;
-            AutoNw[3].Y = (2 * Constants.TileHeight) - (Constants.TileHeight / 2);
+            AutoNw[3].Y = (2 * Globals.TileHeight) - (Globals.TileHeight / 2);
 
             // SE - h
-            AutoNw[4].X = Constants.TileWidth / 2;
-            AutoNw[4].Y = (2 * Constants.TileHeight) - (Constants.TileHeight / 2);
+            AutoNw[4].X = Globals.TileWidth / 2;
+            AutoNw[4].Y = (2 * Globals.TileHeight) - (Globals.TileHeight / 2);
 
             // Outer Tiles - NE (bottom subtile region)
             // NW - i
-            AutoNe[1].X = Constants.TileWidth;
-            AutoNe[1].Y = Constants.TileHeight;
+            AutoNe[1].X = Globals.TileWidth;
+            AutoNe[1].Y = Globals.TileHeight;
 
             // NE - g
-            AutoNe[2].X = (2 * Constants.TileWidth) - (Constants.TileWidth / 2);
-            AutoNe[2].Y = Constants.TileHeight;
+            AutoNe[2].X = (2 * Globals.TileWidth) - (Globals.TileWidth / 2);
+            AutoNe[2].Y = Globals.TileHeight;
 
             // SW - k
-            AutoNe[3].X = Constants.TileWidth;
-            AutoNe[3].Y = (2 * Constants.TileHeight) - (Constants.TileHeight / 2);
+            AutoNe[3].X = Globals.TileWidth;
+            AutoNe[3].Y = (2 * Globals.TileHeight) - (Globals.TileHeight / 2);
 
             // SE - l
-            AutoNe[4].X = (2 * Constants.TileWidth) - (Constants.TileWidth / 2);
-            AutoNe[4].Y = (2 * Constants.TileHeight) - (Constants.TileHeight / 2);
+            AutoNe[4].X = (2 * Globals.TileWidth) - (Globals.TileWidth / 2);
+            AutoNe[4].Y = (2 * Globals.TileHeight) - (Globals.TileHeight / 2);
 
             // Outer Tiles - SW (bottom subtile region)
             // NW - m
             AutoSw[1].X = 0;
-            AutoSw[1].Y = 2 * Constants.TileHeight;
+            AutoSw[1].Y = 2 * Globals.TileHeight;
 
             // NE - n
-            AutoSw[2].X = Constants.TileWidth / 2;
-            AutoSw[2].Y = 2 * Constants.TileHeight;
+            AutoSw[2].X = Globals.TileWidth / 2;
+            AutoSw[2].Y = 2 * Globals.TileHeight;
 
             // SW - o
             AutoSw[3].X = 0;
-            AutoSw[3].Y = (2 * Constants.TileHeight) + (Constants.TileHeight / 2);
+            AutoSw[3].Y = (2 * Globals.TileHeight) + (Globals.TileHeight / 2);
 
             // SE - p
-            AutoSw[4].X = Constants.TileWidth / 2;
-            AutoSw[4].Y = (2 * Constants.TileHeight) + (Constants.TileHeight / 2);
+            AutoSw[4].X = Globals.TileWidth / 2;
+            AutoSw[4].Y = (2 * Globals.TileHeight) + (Globals.TileHeight / 2);
 
             // Outer Tiles - SE (bottom subtile region)
             // NW - q
-            AutoSe[1].X = Constants.TileWidth;
-            AutoSe[1].Y = 2 * Constants.TileHeight;
+            AutoSe[1].X = Globals.TileWidth;
+            AutoSe[1].Y = 2 * Globals.TileHeight;
 
             // NE - r
-            AutoSe[2].X = (2 * Constants.TileWidth) - (Constants.TileWidth / 2);
-            AutoSe[2].Y = 2 * Constants.TileHeight;
+            AutoSe[2].X = (2 * Globals.TileWidth) - (Globals.TileWidth / 2);
+            AutoSe[2].Y = 2 * Globals.TileHeight;
 
             // SW - s
-            AutoSe[3].X = Constants.TileWidth;
-            AutoSe[3].Y = (2 * Constants.TileHeight) + (Constants.TileHeight / 2);
+            AutoSe[3].X = Globals.TileWidth;
+            AutoSe[3].Y = (2 * Globals.TileHeight) + (Globals.TileHeight / 2);
 
             // SE - t
-            AutoSe[4].X = (2 * Constants.TileWidth) - (Constants.TileWidth / 2);
-            AutoSe[4].Y = (2 * Constants.TileHeight) + (Constants.TileHeight / 2);
+            AutoSe[4].X = (2 * Globals.TileWidth) - (Globals.TileWidth / 2);
+            AutoSe[4].Y = (2 * Globals.TileHeight) + (Globals.TileHeight / 2);
 
             for (var i = 0; i < Constants.LayerCount; i++)
             {
@@ -183,8 +183,8 @@ namespace Intersect_Editor.Classes
                 int quarterNum;
                 for (quarterNum = 1; quarterNum < 5; quarterNum++)
                 {
-                    Autotile[x, y].Layer[layerNum].SrcX[quarterNum] = (_myMap.Layers[layerNum].Tiles[x, y].X * Constants.TileWidth) + Autotile[x, y].Layer[layerNum].QuarterTile[quarterNum].X;
-                    Autotile[x, y].Layer[layerNum].SrcY[quarterNum] = (_myMap.Layers[layerNum].Tiles[x, y].Y * Constants.TileHeight) + Autotile[x, y].Layer[layerNum].QuarterTile[quarterNum].Y;
+                    Autotile[x, y].Layer[layerNum].SrcX[quarterNum] = (_myMap.Layers[layerNum].Tiles[x, y].X * Globals.TileWidth) + Autotile[x, y].Layer[layerNum].QuarterTile[quarterNum].X;
+                    Autotile[x, y].Layer[layerNum].SrcY[quarterNum] = (_myMap.Layers[layerNum].Tiles[x, y].Y * Globals.TileHeight) + Autotile[x, y].Layer[layerNum].QuarterTile[quarterNum].Y;
                 }
             }
         }

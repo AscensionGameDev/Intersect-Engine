@@ -43,8 +43,8 @@ namespace Intersect_Editor.Forms
         {
             if (e.X > picTileset.Width || e.Y > picTileset.Height) { return; }
             _tMouseDown = true;
-            Globals.CurSelX = (int)Math.Floor((double)e.X / Constants.TileWidth);
-            Globals.CurSelY = (int)Math.Floor((double)e.Y / Constants.TileHeight);
+            Globals.CurSelX = (int)Math.Floor((double)e.X / Globals.TileWidth);
+            Globals.CurSelY = (int)Math.Floor((double)e.Y / Globals.TileHeight);
             Globals.CurSelW = 0;
             Globals.CurSelH = 0;
             if (Globals.CurSelX < 0) { Globals.CurSelX = 0; }
@@ -76,8 +76,8 @@ namespace Intersect_Editor.Forms
             if (e.X > picTileset.Width || e.Y > picTileset.Height) { return; }
             if (_tMouseDown && Globals.Autotilemode == 0)
             {
-                var tmpX = (int)Math.Floor((double)e.X / Constants.TileWidth);
-                var tmpY = (int)Math.Floor((double)e.Y / Constants.TileHeight);
+                var tmpX = (int)Math.Floor((double)e.X / Globals.TileWidth);
+                var tmpY = (int)Math.Floor((double)e.Y / Globals.TileHeight);
                 Globals.CurSelW = tmpX - Globals.CurSelX;
                 Globals.CurSelH = tmpY - Globals.CurSelY;
             }
