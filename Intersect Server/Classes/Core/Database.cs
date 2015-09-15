@@ -58,7 +58,7 @@ namespace Intersect_Server.Classes
                 var settings = new XmlWriterSettings { Indent = true };
                 var writer = XmlWriter.Create("resources\\config.xml", settings);
                 writer.WriteStartDocument();
-                writer.WriteComment("Config.xml generated automatically by Intersect Client.");
+                writer.WriteComment("Config.xml generated automatically by Intersect Server.");
                 writer.WriteStartElement("Config");
                 writer.WriteElementString("ServerPort", "4500");
                 writer.WriteElementString("DBHost", "localhost");

@@ -47,6 +47,23 @@ namespace Intersect_Editor.Classes
                         }
                     }
                 }
+
+                //Process the Undo/Redo Buttons
+                if (Globals.MapEditorWindow.MapUndoStates.Count > 0)  {
+                    myForm.toolStripBtnUndo.Enabled = true;
+                }
+                else
+                {
+                    myForm.toolStripBtnUndo.Enabled = false;
+                }
+                if (Globals.MapEditorWindow.MapRedoStates.Count > 0)
+                {
+                    myForm.toolStripBtnRedo.Enabled = true;
+                }
+                else
+                {
+                    myForm.toolStripBtnRedo.Enabled = false;
+                }
                 
                 if (waterfallTimer < Environment.TickCount)
                 {

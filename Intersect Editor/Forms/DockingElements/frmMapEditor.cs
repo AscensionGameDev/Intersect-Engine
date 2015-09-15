@@ -13,15 +13,50 @@ namespace Intersect_Editor.Forms
 {
     public partial class frmMapEditor : DockContent
     {
+        //Map States
+        public List<byte[]> MapUndoStates = new List<byte[]>();
+        public List<byte[]> MapRedoStates = new List<byte[]>();
+        public byte[] CurrentMapState;
+
+        //Init/Form Functions
         public frmMapEditor()
         {
             InitializeComponent();
         }
-        //Map Area
+        private void frmMapEditor_Load(object sender, EventArgs e)
+        {
+            picMap.Width = (Constants.MapWidth + 2) * Globals.TileWidth;
+            picMap.Height = (Constants.MapHeight + 2) * Globals.TileHeight;
+        }
+        private void frmMapEditor_DockStateChanged(object sender, EventArgs e)
+        {
+            if (Graphics.RenderWindow != null && !Globals.MapEditorWindow.picMap.IsDisposed)
+            {
+                Graphics.RenderWindow.Close();
+                Graphics.RenderWindow.Dispose();
+                Graphics.RenderWindow = new RenderWindow(Globals.MapEditorWindow.picMap.Handle);
+            }
+        }
+
+        //Undo/Redo Functions
+        public void ResetUndoRedoStates()
+        {
+            MapUndoStates.Clear();
+            MapRedoStates.Clear();
+            CurrentMapState = null;
+        }
+        
+        //PicMap Functions
         public void picMap_MouseDown(object sender, MouseEventArgs e)
         {
+            bool changed = false;
             if (Globals.EditingLight != null) { return; }
             var tmpMap = Globals.GameMaps[Globals.CurrentMap];
+
+            if (CurrentMapState == null)
+            {
+                CurrentMapState = tmpMap.Save();
+            }
 
             switch (e.Button)
             {
@@ -32,6 +67,7 @@ namespace Intersect_Editor.Forms
                     {
                         case Constants.LayerCount:
                             Globals.MapLayersWindow.PlaceAttribute();
+                            changed = true;
                             break;
                         case Constants.LayerCount + 1:
                             Light tmpLight;
@@ -56,6 +92,7 @@ namespace Intersect_Editor.Forms
                                 Globals.MapLayersWindow.scrlLightIntensity.Value = (int)(tmpLight.Intensity * 10000.0);
                                 Globals.MapLayersWindow.scrlLightRange.Value = tmpLight.Range;
                                 Globals.EditingLight = tmpLight;
+                                changed = true;
                             }
                             else
                             {
@@ -92,6 +129,7 @@ namespace Intersect_Editor.Forms
                                 };
                                 tmpEventEditor.InitEditor();
                                 tmpEventEditor.Show();
+                                changed = true;
                             }
                             else
                             {
@@ -105,6 +143,7 @@ namespace Intersect_Editor.Forms
                             {
                                 Globals.GameMaps[Globals.CurrentMap].Spawns[Globals.MapLayersWindow.lstMapNpcs.SelectedIndex].X = Globals.CurTileX;
                                 Globals.GameMaps[Globals.CurrentMap].Spawns[Globals.MapLayersWindow.lstMapNpcs.SelectedIndex].Y = Globals.CurTileY;
+                                changed = true;
                             }
                             break;
                         default:
@@ -121,6 +160,7 @@ namespace Intersect_Editor.Forms
                                         tmpMap.Autotiles.InitAutotiles();
                                     }
                                 }
+                                changed = true;
                             }
                             else
                             {
@@ -129,6 +169,7 @@ namespace Intersect_Editor.Forms
                                 tmpMap.Layers[Globals.CurrentLayer].Tiles[Globals.CurTileX, Globals.CurTileY].Y = Globals.CurSelY;
                                 tmpMap.Layers[Globals.CurrentLayer].Tiles[Globals.CurTileX, Globals.CurTileY].Autotile = (byte)Globals.Autotilemode;
                                 tmpMap.Autotiles.InitAutotiles();
+                                changed = true;
                             }
                             break;
                     }
@@ -139,7 +180,7 @@ namespace Intersect_Editor.Forms
                     switch (Globals.CurrentLayer)
                     {
                         case Constants.LayerCount:
-                            Globals.MapLayersWindow.RemoveAttribute();
+                            if (Globals.MapLayersWindow.RemoveAttribute()) { changed = true; }
                             break;
                         case Constants.LayerCount + 1:
                             Light tmpLight;
@@ -147,6 +188,7 @@ namespace Intersect_Editor.Forms
                             {
                                 Globals.GameMaps[Globals.CurrentMap].Lights.Remove(tmpLight);
                                 Graphics.LightsChanged = true;
+                                changed = true;
                             }
                             break;
                         case Constants.LayerCount + 2:
@@ -155,6 +197,7 @@ namespace Intersect_Editor.Forms
                             {
                                 Globals.GameMaps[Globals.CurrentMap].Events.Remove(tmpEvent);
                                 tmpEvent.Deleted = 1;
+                                changed = true;
                             }
                             break;
                         case Constants.LayerCount + 3:
@@ -163,9 +206,15 @@ namespace Intersect_Editor.Forms
                                 tmpMap.Layers[Globals.CurrentLayer].Tiles[Globals.CurTileX, Globals.CurTileY].TilesetIndex = -1;
                                 tmpMap.Layers[Globals.CurrentLayer].Tiles[Globals.CurTileX, Globals.CurTileY].Autotile = 0;
                                 tmpMap.Autotiles.InitAutotiles();
+                                changed = true;
                             break;
                     }
                     break;
+            }
+            if (changed)
+            {
+                MapUndoStates.Add(CurrentMapState);
+                CurrentMapState = tmpMap.Save();
             }
             if (Globals.CurTileX == 0)
             {
@@ -488,19 +537,6 @@ namespace Intersect_Editor.Forms
         {
             pnlMapContainer.Focus();
         }
-        private void frmMapEditor_Load(object sender, EventArgs e)
-        {
-            picMap.Width = (Constants.MapWidth + 2) * Globals.TileWidth;
-            picMap.Height = (Constants.MapHeight + 2) * Globals.TileHeight;
-        }
-        private void frmMapEditor_DockStateChanged(object sender, EventArgs e)
-        {
-            if (Graphics.RenderWindow != null && !Globals.MapEditorWindow.picMap.IsDisposed)
-            {
-                Graphics.RenderWindow.Close();
-                Graphics.RenderWindow.Dispose();
-                Graphics.RenderWindow = new RenderWindow(Globals.MapEditorWindow.picMap.Handle);
-            }
-        }
+
     }
 }

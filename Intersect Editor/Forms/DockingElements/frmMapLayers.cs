@@ -369,14 +369,19 @@ namespace Intersect_Editor.Forms
                 tmpMap.Attributes[Globals.CurTileX, Globals.CurTileY].data1 = scrlResource.Value;
             }
         }
-        public void RemoveAttribute()
+        public bool RemoveAttribute()
         {
             var tmpMap = Globals.GameMaps[Globals.CurrentMap];
-            tmpMap.Attributes[Globals.CurTileX, Globals.CurTileY].value = 0;
-            tmpMap.Attributes[Globals.CurTileX, Globals.CurTileY].data1 = 0;
-            tmpMap.Attributes[Globals.CurTileX, Globals.CurTileY].data2 = 0;
-            tmpMap.Attributes[Globals.CurTileX, Globals.CurTileY].data3 = 0;
-            tmpMap.Attributes[Globals.CurTileX, Globals.CurTileY].data4 = "";
+            if (tmpMap.Attributes[Globals.CurTileX, Globals.CurTileY].value > 0)
+            {
+                tmpMap.Attributes[Globals.CurTileX, Globals.CurTileY].value = 0;
+                tmpMap.Attributes[Globals.CurTileX, Globals.CurTileY].data1 = 0;
+                tmpMap.Attributes[Globals.CurTileX, Globals.CurTileY].data2 = 0;
+                tmpMap.Attributes[Globals.CurTileX, Globals.CurTileY].data3 = 0;
+                tmpMap.Attributes[Globals.CurTileX, Globals.CurTileY].data4 = "";
+                return true;
+            }
+            return false;
         }
         //Item Attribute
         private void scrlMapItem_ValueChanged(object sender, EventArgs e)

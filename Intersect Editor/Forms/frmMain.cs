@@ -24,6 +24,7 @@ using System.IO;
 using System.Windows.Forms;
 using Intersect_Editor.Classes;
 using WeifenLuo.WinFormsUI.Docking;
+using System.Collections.Generic;
 
 namespace Intersect_Editor.Forms
 {
@@ -233,35 +234,37 @@ namespace Intersect_Editor.Forms
             PacketSender.SendClassEditor();
         }
 
-        /*Map List Functions
-        private void lblCloseMapList_Click(object sender, EventArgs e)
+        //ToolStrip Functions
+        private void toolStripBtnNewMap_Click(object sender, EventArgs e)
         {
-            grpMapList.Hide();
-            mapListToolStripMenuItem.Checked = grpMapList.Visible;
+            newMapToolStripMenuItem_Click(null, null);
         }
-        private void UpdateMapList()
+        private void toolStripBtnSaveMap_Click(object sender, EventArgs e)
         {
-            lstGameMaps.Items.Clear();
-            if (Globals.MapRefs == null) return;
-            for (var i = 0; i < Globals.MapRefs.Length; i++)
+            saveMapToolStripMenuItem_Click(null, null);
+        }
+        private void toolStripBtnUndo_Click(object sender, EventArgs e)
+        {
+            var tmpMap = Globals.GameMaps[Globals.CurrentMap];
+            if (Globals.MapEditorWindow.MapUndoStates.Count > 0)
             {
-                if (Globals.MapRefs[i].Deleted == 0)
-                {
-                    lstGameMaps.Items.Add(i + ". " + Globals.MapRefs[i].MapName);
-                }
+                tmpMap.Load(Globals.MapEditorWindow.MapUndoStates[Globals.MapEditorWindow.MapUndoStates.Count - 1]);
+                Globals.MapEditorWindow.MapRedoStates.Add(Globals.MapEditorWindow.CurrentMapState);
+                Globals.MapEditorWindow.CurrentMapState = Globals.MapEditorWindow.MapUndoStates[Globals.MapEditorWindow.MapUndoStates.Count - 1];
+                Globals.MapEditorWindow.MapUndoStates.RemoveAt(Globals.MapEditorWindow.MapUndoStates.Count - 1);
             }
         }
-        private void lstGameMaps_DoubleClick(object sender, EventArgs e)
+        private void toolStripBtnRedo_Click(object sender, EventArgs e)
         {
-            if (lstGameMaps.SelectedIndex <= -1) return;
-            var mapNum = Convert.ToInt32(((String)(lstGameMaps.Items[lstGameMaps.SelectedIndex])).Split('.')[0]);
-            if (MessageBox.Show(@"Do you want to save your current map?", @"Save current map?", MessageBoxButtons.YesNo) == DialogResult.Yes)
+            var tmpMap = Globals.GameMaps[Globals.CurrentMap];
+            if (Globals.MapEditorWindow.MapRedoStates.Count > 0)
             {
-                PacketSender.SendMap(Globals.CurrentMap);
+                tmpMap.Load(Globals.MapEditorWindow.MapRedoStates[Globals.MapEditorWindow.MapRedoStates.Count - 1]);
+                Globals.MapEditorWindow.MapUndoStates.Add(Globals.MapEditorWindow.CurrentMapState);
+                Globals.MapEditorWindow.CurrentMapState = Globals.MapEditorWindow.MapRedoStates[Globals.MapEditorWindow.MapRedoStates.Count - 1];
+                Globals.MapEditorWindow.MapRedoStates.RemoveAt(Globals.MapEditorWindow.MapRedoStates.Count - 1);
             }
-            EnterMap(mapNum);
-<<<<<<< HEAD
-        }*/
+        }
 
         //Cross Threading Delegate Methods
         private void TryOpenEditorMethod(int editorIndex)
@@ -326,14 +329,6 @@ namespace Intersect_Editor.Forms
 
         }
 
-        private void toolStripButton1_Click(object sender, EventArgs e)
-        {
-            newMapToolStripMenuItem_Click(null, null);
-        }
 
-        private void toolStripButton3_Click(object sender, EventArgs e)
-        {
-            saveMapToolStripMenuItem_Click(null, null);
-        }
     }
 }
