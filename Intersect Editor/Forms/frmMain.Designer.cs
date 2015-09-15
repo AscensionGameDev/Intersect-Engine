@@ -437,6 +437,7 @@ namespace Intersect_Editor.Forms
             this.toolStripBtnFill.Name = "toolStripBtnFill";
             this.toolStripBtnFill.Size = new System.Drawing.Size(23, 22);
             this.toolStripBtnFill.Text = "Fill Layer";
+            this.toolStripBtnFill.Click += new System.EventHandler(this.toolStripBtnFill_Click);
             // 
             // toolStripBtnErase
             // 
@@ -446,6 +447,7 @@ namespace Intersect_Editor.Forms
             this.toolStripBtnErase.Name = "toolStripBtnErase";
             this.toolStripBtnErase.Size = new System.Drawing.Size(23, 22);
             this.toolStripBtnErase.Text = "Clear Layer";
+            this.toolStripBtnErase.Click += new System.EventHandler(this.toolStripBtnErase_Click);
             // 
             // toolStripSeparator5
             // 
@@ -564,8 +566,8 @@ namespace Intersect_Editor.Forms
         private System.Windows.Forms.ToolStripMenuItem saveMapToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem exitToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem mapListToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem fillToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem eraseLayerToolStripMenuItem;
+        public System.Windows.Forms.ToolStripMenuItem fillToolStripMenuItem;
+        public System.Windows.Forms.ToolStripMenuItem eraseLayerToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem newMapToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem hideDarknessToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem hihiToolStripMenuItem;
@@ -596,8 +598,8 @@ namespace Intersect_Editor.Forms
         private ToolStripButton toolStripBtnSelect;
         private ToolStripButton toolStripBtnRect;
         private ToolStripSeparator toolStripSeparator4;
-        private ToolStripButton toolStripBtnFill;
-        private ToolStripButton toolStripBtnErase;
+        public ToolStripButton toolStripBtnFill;
+        public ToolStripButton toolStripBtnErase;
         private ToolStripSeparator toolStripSeparator5;
         private ToolStripButton toolStripBtnRun;
     }

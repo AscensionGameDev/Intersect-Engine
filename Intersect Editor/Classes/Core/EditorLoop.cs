@@ -64,6 +64,22 @@ namespace Intersect_Editor.Classes
                 {
                     myForm.toolStripBtnRedo.Enabled = false;
                 }
+
+                //Process the Fill/Erase Buttons
+                if (Globals.CurrentLayer <= Constants.LayerCount)
+                {
+                    myForm.toolStripBtnFill.Enabled = true;
+                    myForm.fillToolStripMenuItem.Enabled = true;
+                    myForm.toolStripBtnErase.Enabled = true;
+                    myForm.eraseLayerToolStripMenuItem.Enabled = true;
+                }
+                else
+                {
+                    myForm.toolStripBtnFill.Enabled = false;
+                    myForm.fillToolStripMenuItem.Enabled = false;
+                    myForm.toolStripBtnErase.Enabled = false;
+                    myForm.eraseLayerToolStripMenuItem.Enabled = false;
+                }
                 
                 if (waterfallTimer < Environment.TickCount)
                 {

@@ -45,7 +45,7 @@ namespace Intersect_Editor.Forms
             MapRedoStates.Clear();
             CurrentMapState = null;
         }
-        
+
         //PicMap Functions
         public void picMap_MouseDown(object sender, MouseEventArgs e)
         {
@@ -203,10 +203,10 @@ namespace Intersect_Editor.Forms
                         case Constants.LayerCount + 3:
                             break;
                         default:
-                                tmpMap.Layers[Globals.CurrentLayer].Tiles[Globals.CurTileX, Globals.CurTileY].TilesetIndex = -1;
-                                tmpMap.Layers[Globals.CurrentLayer].Tiles[Globals.CurTileX, Globals.CurTileY].Autotile = 0;
-                                tmpMap.Autotiles.InitAutotiles();
-                                changed = true;
+                            tmpMap.Layers[Globals.CurrentLayer].Tiles[Globals.CurTileX, Globals.CurTileY].TilesetIndex = -1;
+                            tmpMap.Layers[Globals.CurrentLayer].Tiles[Globals.CurTileX, Globals.CurTileY].Autotile = 0;
+                            tmpMap.Autotiles.InitAutotiles();
+                            changed = true;
                             break;
                     }
                     break;
@@ -214,6 +214,7 @@ namespace Intersect_Editor.Forms
             if (changed)
             {
                 MapUndoStates.Add(CurrentMapState);
+                MapRedoStates.Clear();
                 CurrentMapState = tmpMap.Save();
             }
             if (Globals.CurTileX == 0)
@@ -381,9 +382,9 @@ namespace Intersect_Editor.Forms
                     }
                     else
                     {
-                            tmpMap.Layers[Globals.CurrentLayer].Tiles[Globals.CurTileX, Globals.CurTileY].TilesetIndex = -1;
-                            tmpMap.Layers[Globals.CurrentLayer].Tiles[Globals.CurTileX, Globals.CurTileY].Autotile = 0;
-                            tmpMap.Autotiles.InitAutotiles();
+                        tmpMap.Layers[Globals.CurrentLayer].Tiles[Globals.CurTileX, Globals.CurTileY].TilesetIndex = -1;
+                        tmpMap.Layers[Globals.CurrentLayer].Tiles[Globals.CurTileX, Globals.CurTileY].Autotile = 0;
+                        tmpMap.Autotiles.InitAutotiles();
                     }
                     if (Globals.CurTileX == 0)
                     {
@@ -448,7 +449,7 @@ namespace Intersect_Editor.Forms
                             {
                                 PacketSender.SendMap(Globals.CurrentMap);
                             }
-                            PacketSender.SendCreateMap(0, Globals.CurrentMap,null);
+                            PacketSender.SendCreateMap(0, Globals.CurrentMap, null);
                         }
                     }
                     else
@@ -471,7 +472,7 @@ namespace Intersect_Editor.Forms
                             {
                                 PacketSender.SendMap(Globals.CurrentMap);
                             }
-                            PacketSender.SendCreateMap(1, Globals.CurrentMap,null);
+                            PacketSender.SendCreateMap(1, Globals.CurrentMap, null);
                         }
                     }
                     else
@@ -497,7 +498,7 @@ namespace Intersect_Editor.Forms
                     {
                         PacketSender.SendMap(Globals.CurrentMap);
                     }
-                    PacketSender.SendCreateMap(2, Globals.CurrentMap,null);
+                    PacketSender.SendCreateMap(2, Globals.CurrentMap, null);
                 }
                 else
                 {
@@ -520,7 +521,7 @@ namespace Intersect_Editor.Forms
                     {
                         PacketSender.SendMap(Globals.CurrentMap);
                     }
-                    PacketSender.SendCreateMap(3, Globals.CurrentMap,null);
+                    PacketSender.SendCreateMap(3, Globals.CurrentMap, null);
                 }
                 else
                 {
@@ -536,6 +537,166 @@ namespace Intersect_Editor.Forms
         private void picMap_MouseEnter(object sender, EventArgs e)
         {
             pnlMapContainer.Focus();
+        }
+
+        //Fill/Erase Functions
+        public void FillLayer()
+        {
+            var oldCurSelX = Globals.CurTileX;
+            var oldCurSelY = Globals.CurTileY;
+            var tmpMap = Globals.GameMaps[Globals.CurrentMap];
+            if (CurrentMapState == null)
+            {
+                CurrentMapState = tmpMap.Save();
+            }
+            if (MessageBox.Show(@"Are you sure you want to fill this layer?", @"Fill Layer", MessageBoxButtons.YesNo) == DialogResult.Yes)
+            {
+                for (var x = 0; x < Constants.MapWidth; x++)
+                {
+                    for (var y = 0; y < Constants.MapHeight; y++)
+                    {
+                        Globals.CurTileX = x;
+                        Globals.CurTileY = y;
+
+                        if (Globals.CurrentLayer == Constants.LayerCount)
+                        {
+                            Globals.MapLayersWindow.PlaceAttribute();
+                        }
+                        else if (Globals.CurrentLayer < Constants.LayerCount)
+                        {
+                            if (Globals.Autotilemode == 0)
+                            {
+                                for (var x1 = 0; x1 <= Globals.CurSelW; x1++)
+                                {
+                                    for (var y1 = 0; y1 <= Globals.CurSelH; y1++)
+                                    {
+                                        tmpMap.Layers[Globals.CurrentLayer].Tiles[Globals.CurTileX + x1, Globals.CurTileY + y1].TilesetIndex = Globals.CurrentTileset;
+                                        tmpMap.Layers[Globals.CurrentLayer].Tiles[Globals.CurTileX + x1, Globals.CurTileY + y1].X = Globals.CurSelX + x1;
+                                        tmpMap.Layers[Globals.CurrentLayer].Tiles[Globals.CurTileX + x1, Globals.CurTileY + y1].Y = Globals.CurSelY + y1;
+                                        tmpMap.Layers[Globals.CurrentLayer].Tiles[Globals.CurTileX + x1, Globals.CurTileY + y1].Autotile = 0;
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                tmpMap.Layers[Globals.CurrentLayer].Tiles[Globals.CurTileX, Globals.CurTileY].TilesetIndex = Globals.CurrentTileset;
+                                tmpMap.Layers[Globals.CurrentLayer].Tiles[Globals.CurTileX, Globals.CurTileY].X = Globals.CurSelX;
+                                tmpMap.Layers[Globals.CurrentLayer].Tiles[Globals.CurTileX, Globals.CurTileY].Y = Globals.CurSelY;
+                                tmpMap.Layers[Globals.CurrentLayer].Tiles[Globals.CurTileX, Globals.CurTileY].Autotile = (byte)Globals.Autotilemode;
+                            }
+                        }
+                    }
+                }
+                tmpMap.Autotiles.InitAutotiles();
+                Globals.CurTileX = oldCurSelX;
+                Globals.CurTileY = oldCurSelY;
+                if (tmpMap.Left > -1)
+                {
+                    if (Globals.GameMaps[tmpMap.Left] != null)
+                    {
+                        Globals.GameMaps[tmpMap.Left].Autotiles.InitAutotiles();
+                    }
+                }
+                if (tmpMap.Up > -1)
+                {
+                    if (Globals.GameMaps[tmpMap.Up] != null)
+                    {
+                        Globals.GameMaps[tmpMap.Up].Autotiles.InitAutotiles();
+                    }
+                }
+                if (tmpMap.Right > -1)
+                {
+                    if (Globals.GameMaps[tmpMap.Right] != null)
+                    {
+                        Globals.GameMaps[tmpMap.Right].Autotiles.InitAutotiles();
+                    }
+                }
+                if (tmpMap.Down > -1)
+                {
+                    if (Globals.GameMaps[tmpMap.Down] != null)
+                    {
+                        Globals.GameMaps[tmpMap.Down].Autotiles.InitAutotiles();
+                    }
+                }
+
+                if (!CurrentMapState.SequenceEqual(tmpMap.Save()))
+                {
+                    MapUndoStates.Add(CurrentMapState);
+                    MapRedoStates.Clear();
+                    CurrentMapState = tmpMap.Save();
+                }
+            }
+        }
+        public void EraseLayer()
+        {
+            var oldCurSelX = Globals.CurTileX;
+            var oldCurSelY = Globals.CurTileY;
+            var tmpMap = Globals.GameMaps[Globals.CurrentMap];
+            if (CurrentMapState == null)
+            {
+                CurrentMapState = tmpMap.Save();
+            }
+            if (MessageBox.Show(@"Are you sure you want to erase this layer?", @"Fill Layer", MessageBoxButtons.YesNo) == DialogResult.Yes)
+            {
+                for (var x = 0; x < Constants.MapWidth; x++)
+                {
+                    for (var y = 0; y < Constants.MapHeight; y++)
+                    {
+                        Globals.CurTileX = x;
+                        Globals.CurTileY = y;
+
+                        if (Globals.CurrentLayer == Constants.LayerCount)
+                        {
+                            Globals.MapLayersWindow.RemoveAttribute();
+                        }
+                        else if (Globals.CurrentLayer < Constants.LayerCount)
+                        {
+                            tmpMap.Layers[Globals.CurrentLayer].Tiles[Globals.CurTileX, Globals.CurTileY].TilesetIndex = -1;
+                            tmpMap.Layers[Globals.CurrentLayer].Tiles[Globals.CurTileX, Globals.CurTileY].X = -1;
+                            tmpMap.Layers[Globals.CurrentLayer].Tiles[Globals.CurTileX, Globals.CurTileY].Y = -1;
+                            tmpMap.Layers[Globals.CurrentLayer].Tiles[Globals.CurTileX, Globals.CurTileY].Autotile = 0;
+                        }
+                    }
+                }
+                tmpMap.Autotiles.InitAutotiles();
+                Globals.CurTileX = oldCurSelX;
+                Globals.CurTileY = oldCurSelY;
+                if (tmpMap.Left > -1)
+                {
+                    if (Globals.GameMaps[tmpMap.Left] != null)
+                    {
+                        Globals.GameMaps[tmpMap.Left].Autotiles.InitAutotiles();
+                    }
+                }
+                if (tmpMap.Up > -1)
+                {
+                    if (Globals.GameMaps[tmpMap.Up] != null)
+                    {
+                        Globals.GameMaps[tmpMap.Up].Autotiles.InitAutotiles();
+                    }
+                }
+                if (tmpMap.Right > -1)
+                {
+                    if (Globals.GameMaps[tmpMap.Right] != null)
+                    {
+                        Globals.GameMaps[tmpMap.Right].Autotiles.InitAutotiles();
+                    }
+                }
+                if (tmpMap.Down > -1)
+                {
+                    if (Globals.GameMaps[tmpMap.Down] != null)
+                    {
+                        Globals.GameMaps[tmpMap.Down].Autotiles.InitAutotiles();
+                    }
+                }
+
+                if (!CurrentMapState.SequenceEqual(tmpMap.Save()))
+                {
+                    MapUndoStates.Add(CurrentMapState);
+                    MapRedoStates.Clear();
+                    CurrentMapState = tmpMap.Save();
+                }
+            }
         }
 
     }

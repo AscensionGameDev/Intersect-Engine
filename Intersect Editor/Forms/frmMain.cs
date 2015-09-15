@@ -161,26 +161,18 @@ namespace Intersect_Editor.Forms
         }
         private void fillToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var oldCurSelX = Globals.CurTileX;
-            var oldCurSelY = Globals.CurTileY;
-            if (MessageBox.Show(@"Are you sure you want to fill this layer?", @"Fill Layer", MessageBoxButtons.YesNo) == DialogResult.Yes)
+            if (Globals.CurrentLayer <= Constants.LayerCount)
             {
-                for (var x = 0; x < Constants.MapWidth; x++)
-                {
-                    for (var y = 0; y < Constants.MapHeight; y++)
-                    {
-                        Globals.CurTileX = x;
-                        Globals.CurTileY = y;
-                        Globals.MapEditorWindow.picMap_MouseDown(null, new MouseEventArgs(MouseButtons.Left, 1, x * Globals.TileWidth + Globals.TileWidth, y * Globals.TileHeight + Globals.TileHeight, 0));
-                        Globals.MapEditorWindow.picMap_MouseUp(null, new MouseEventArgs(MouseButtons.None, 0, 0, 0, 0));
-                    }
-                }
-                Globals.CurTileX = oldCurSelX;
-                Globals.CurTileY = oldCurSelY;
+                Globals.MapEditorWindow.FillLayer();
             }
         }
         private void eraseLayerToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            if (Globals.CurrentLayer <= Constants.LayerCount)
+            {
+                Globals.MapEditorWindow.EraseLayer();
+            }
+            return;
             if (
                 MessageBox.Show(@"Are you sure you want to erase this layer?", @"Erase Layer", MessageBoxButtons.YesNo) !=
                 DialogResult.Yes) return;
@@ -265,6 +257,20 @@ namespace Intersect_Editor.Forms
                 Globals.MapEditorWindow.MapRedoStates.RemoveAt(Globals.MapEditorWindow.MapRedoStates.Count - 1);
             }
         }
+        private void toolStripBtnFill_Click(object sender, EventArgs e)
+        {
+            if (Globals.CurrentLayer <= Constants.LayerCount)
+            {
+                Globals.MapEditorWindow.FillLayer();
+            }
+        }
+        private void toolStripBtnErase_Click(object sender, EventArgs e)
+        {
+            if (Globals.CurrentLayer <= Constants.LayerCount)
+            {
+                Globals.MapEditorWindow.EraseLayer();
+            }
+        }
 
         //Cross Threading Delegate Methods
         private void TryOpenEditorMethod(int editorIndex)
@@ -328,6 +334,8 @@ namespace Intersect_Editor.Forms
             }
 
         }
+
+
 
 
     }
