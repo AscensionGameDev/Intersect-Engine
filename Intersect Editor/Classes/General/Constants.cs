@@ -31,6 +31,7 @@ namespace Intersect_Editor.Classes
         public const int MaxAnimations = 255;
         public const int MaxResources = 255;
         public const int MaxClasses = 20;
+        public const int MaxQuests = 255;
 
         public const int MapWidth = 30;
         public const int MapHeight = 26;
