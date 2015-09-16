@@ -73,6 +73,17 @@ namespace Intersect_Editor.Forms
             InitMapProperties();
             Show();
         }
+        private void FrmMain_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyData == (Keys.Control | Keys.Z))
+            {
+                toolStripBtnUndo_Click(null, null);
+            }
+            else if (e.KeyData == (Keys.Control | Keys.Y))
+            {
+                toolStripBtnRedo_Click(null, null);
+            }
+        }
         private void InitFormObjects()
         {
             Globals.MapLayersWindow.scrlMap.Maximum = Globals.GameMaps.Length;
@@ -147,6 +158,11 @@ namespace Intersect_Editor.Forms
         {
             Graphics.HideOverlay = !Graphics.HideOverlay;
             hideOverlayToolStripMenuItem.Checked = Graphics.HideOverlay;
+        }
+        private void hideTilePreviewToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Graphics.HideTilePreview = !Graphics.HideTilePreview;
+            hideTilePreviewToolStripMenuItem.Checked = Graphics.HideTilePreview;
         }
         private void exitToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -334,9 +350,5 @@ namespace Intersect_Editor.Forms
             }
 
         }
-
-
-
-
     }
 }

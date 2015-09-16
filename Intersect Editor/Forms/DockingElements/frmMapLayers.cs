@@ -325,9 +325,8 @@ namespace Intersect_Editor.Forms
             }
             return 0;
         }
-        public void PlaceAttribute()
+        public void PlaceAttribute(MapStruct tmpMap)
         {
-            var tmpMap = Globals.GameMaps[Globals.CurrentMap];
             if (rbBlocked.Checked == true)
             {
                 tmpMap.Attributes[Globals.CurTileX, Globals.CurTileY].value = (int)Enums.MapAttributes.Blocked;
@@ -427,19 +426,24 @@ namespace Intersect_Editor.Forms
         {
             if (tabControl.SelectedIndex == tabControl.TabPages.IndexOf(tabTiles)) {
                 Globals.CurrentLayer = 0;
+                Graphics.TilePreviewUpdated = true;
             }
             else if (tabControl.SelectedIndex == tabControl.TabPages.IndexOf(tabAttributes)) {
                 Globals.CurrentLayer = Constants.LayerCount;
+                Graphics.TilePreviewUpdated = true;
             }  
             else if (tabControl.SelectedIndex == tabControl.TabPages.IndexOf(tabEvents)) {
                 Globals.CurrentLayer = Constants.LayerCount + 2;
+                Graphics.TilePreviewUpdated = true;
             }  
             else if (tabControl.SelectedIndex == tabControl.TabPages.IndexOf(tabLights)) {
                 Globals.CurrentLayer =  Constants.LayerCount + 1;
+                Graphics.TilePreviewUpdated = true;
             }
             else if (tabControl.SelectedIndex == tabControl.TabPages.IndexOf(tabNPCs ))
             {
                 Globals.CurrentLayer = Constants.LayerCount + 3;
+                Graphics.TilePreviewUpdated = true;
                 // Update the list incase npcs have been modified since form load.
                 cmbNpc.Items.Clear();
                 cmbNpc.Items.Add("None");
@@ -479,6 +483,7 @@ namespace Intersect_Editor.Forms
         private void cmbMapLayer_SelectedIndexChanged(object sender, EventArgs e)
         {
             Globals.CurrentLayer = cmbMapLayer.SelectedIndex;
+            Graphics.TilePreviewUpdated = true;
         }
 
         private void frmMapLayers_DockStateChanged(object sender, EventArgs e)

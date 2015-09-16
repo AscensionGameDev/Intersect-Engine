@@ -66,7 +66,7 @@ namespace Intersect_Editor.Forms
                     switch (Globals.CurrentLayer)
                     {
                         case Constants.LayerCount:
-                            Globals.MapLayersWindow.PlaceAttribute();
+                            Globals.MapLayersWindow.PlaceAttribute(Globals.GameMaps[Globals.CurrentMap]);
                             changed = true;
                             break;
                         case Constants.LayerCount + 1:
@@ -153,11 +153,14 @@ namespace Intersect_Editor.Forms
                                 {
                                     for (var y = 0; y <= Globals.CurSelH; y++)
                                     {
-                                        tmpMap.Layers[Globals.CurrentLayer].Tiles[Globals.CurTileX + x, Globals.CurTileY + y].TilesetIndex = Globals.CurrentTileset;
-                                        tmpMap.Layers[Globals.CurrentLayer].Tiles[Globals.CurTileX + x, Globals.CurTileY + y].X = Globals.CurSelX + x;
-                                        tmpMap.Layers[Globals.CurrentLayer].Tiles[Globals.CurTileX + x, Globals.CurTileY + y].Y = Globals.CurSelY + y;
-                                        tmpMap.Layers[Globals.CurrentLayer].Tiles[Globals.CurTileX + x, Globals.CurTileY + y].Autotile = 0;
-                                        tmpMap.Autotiles.InitAutotiles();
+                                        if (Globals.CurTileX + x >= 0 && Globals.CurTileX + x < Constants.MapWidth && Globals.CurTileY + y >= 0 && Globals.CurTileY + y < Constants.MapHeight)
+                                        {
+                                            tmpMap.Layers[Globals.CurrentLayer].Tiles[Globals.CurTileX + x, Globals.CurTileY + y].TilesetIndex = Globals.CurrentTileset;
+                                            tmpMap.Layers[Globals.CurrentLayer].Tiles[Globals.CurTileX + x, Globals.CurTileY + y].X = Globals.CurSelX + x;
+                                            tmpMap.Layers[Globals.CurrentLayer].Tiles[Globals.CurTileX + x, Globals.CurTileY + y].Y = Globals.CurSelY + y;
+                                            tmpMap.Layers[Globals.CurrentLayer].Tiles[Globals.CurTileX + x, Globals.CurTileY + y].Autotile = 0;
+                                            tmpMap.Autotiles.InitAutotiles();
+                                        }
                                     }
                                 }
                                 changed = true;
@@ -261,10 +264,17 @@ namespace Intersect_Editor.Forms
             Globals.MouseY = e.Y;
             if (e.X >= picMap.Width - Globals.TileWidth || e.Y >= picMap.Height - Globals.TileHeight) { return; }
             if (e.X < Globals.TileWidth || e.Y < Globals.TileHeight) { return; }
+            int oldx = Globals.CurTileX;
+            int oldy = Globals.CurTileY;
             Globals.CurTileX = (int)Math.Floor((double)(e.X - Globals.TileWidth) / Globals.TileWidth);
             Globals.CurTileY = (int)Math.Floor((double)(e.Y - Globals.TileHeight) / Globals.TileHeight);
             if (Globals.CurTileX < 0) { Globals.CurTileX = 0; }
             if (Globals.CurTileY < 0) { Globals.CurTileY = 0; }
+
+            if (oldx != Globals.CurTileX || oldy != Globals.CurTileY)
+            {
+                Graphics.TilePreviewUpdated = true;
+            }
 
             if (Globals.MouseButton > -1)
             {
@@ -273,7 +283,7 @@ namespace Intersect_Editor.Forms
                 {
                     if (Globals.CurrentLayer == Constants.LayerCount)
                     {
-                        Globals.MapLayersWindow.PlaceAttribute();
+                        Globals.MapLayersWindow.PlaceAttribute(tmpMap);
                     }
                     else if (Globals.CurrentLayer == Constants.LayerCount + 1)
                     {
@@ -560,7 +570,7 @@ namespace Intersect_Editor.Forms
 
                         if (Globals.CurrentLayer == Constants.LayerCount)
                         {
-                            Globals.MapLayersWindow.PlaceAttribute();
+                            Globals.MapLayersWindow.PlaceAttribute(tmpMap);
                         }
                         else if (Globals.CurrentLayer < Constants.LayerCount)
                         {

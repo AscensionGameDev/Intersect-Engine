@@ -91,6 +91,11 @@ namespace Intersect_Editor.Classes
         private static float _fogCurrentX = 0;
         private static float _fogCurrentY = 0;
 
+        //Advanced Editing Features
+        public static bool HideTilePreview = false;
+        public static bool TilePreviewUpdated = false;
+        public static MapStruct TilePreviewStruct;
+
         //Setup and Loading
         public static void InitSfml(FrmMain myForm)
         {
@@ -346,7 +351,61 @@ namespace Intersect_Editor.Classes
         private static void DrawMap()
         {
             Sprite tmpSprite;
-            var tmpMap = Globals.GameMaps[Globals.CurrentMap];
+            MapStruct tmpMap;
+            if (!HideTilePreview)
+            {
+                tmpMap = TilePreviewStruct;
+                if (TilePreviewUpdated || TilePreviewStruct == null)
+                {
+                    TilePreviewStruct = new MapStruct(Globals.CurrentMap, Globals.GameMaps[Globals.CurrentMap].Save());
+                    //Lets Create the Preview
+                    //Mimic Mouse Down
+                    tmpMap = TilePreviewStruct;
+                    switch (Globals.CurrentLayer)
+                    {
+                        case Constants.LayerCount:
+                            Globals.MapLayersWindow.PlaceAttribute(tmpMap);
+                            break;
+                        case Constants.LayerCount + 1:
+                            break;
+                        case Constants.LayerCount + 2:
+                            break;
+                        case Constants.LayerCount + 3:
+                            break;
+                        default:
+                            if (Globals.Autotilemode == 0)
+                            {
+                                for (var x = 0; x <= Globals.CurSelW; x++)
+                                {
+                                    for (var y = 0; y <= Globals.CurSelH; y++)
+                                    {
+                                        if (Globals.CurTileX + x >= 0 && Globals.CurTileX + x < Constants.MapWidth && Globals.CurTileY + y >= 0 && Globals.CurTileY + y < Constants.MapHeight)
+                                        {
+                                            tmpMap.Layers[Globals.CurrentLayer].Tiles[Globals.CurTileX + x, Globals.CurTileY + y].TilesetIndex = Globals.CurrentTileset;
+                                            tmpMap.Layers[Globals.CurrentLayer].Tiles[Globals.CurTileX + x, Globals.CurTileY + y].X = Globals.CurSelX + x;
+                                            tmpMap.Layers[Globals.CurrentLayer].Tiles[Globals.CurTileX + x, Globals.CurTileY + y].Y = Globals.CurSelY + y;
+                                            tmpMap.Layers[Globals.CurrentLayer].Tiles[Globals.CurTileX + x, Globals.CurTileY + y].Autotile = 0;
+                                            tmpMap.Autotiles.InitAutotiles();
+                                        }
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                tmpMap.Layers[Globals.CurrentLayer].Tiles[Globals.CurTileX, Globals.CurTileY].TilesetIndex = Globals.CurrentTileset;
+                                tmpMap.Layers[Globals.CurrentLayer].Tiles[Globals.CurTileX, Globals.CurTileY].X = Globals.CurSelX;
+                                tmpMap.Layers[Globals.CurrentLayer].Tiles[Globals.CurTileX, Globals.CurTileY].Y = Globals.CurSelY;
+                                tmpMap.Layers[Globals.CurrentLayer].Tiles[Globals.CurTileX, Globals.CurTileY].Autotile = (byte)Globals.Autotilemode;
+                                tmpMap.Autotiles.InitAutotiles();
+                            }
+                            break;
+                    }
+                }
+            }
+            else
+            {
+                 tmpMap = Globals.GameMaps[Globals.CurrentMap];
+            }
             if (tmpMap == null) { return; }
             for (var x = 0; x < Constants.MapWidth; x++)
             {
@@ -428,7 +487,7 @@ namespace Intersect_Editor.Classes
 
                     break;
                 case Constants.LayerCount + 2:
-                    //Draw Blocks
+                    //Draw Attributes
                     for (var x = 0; x < Constants.MapWidth; x++)
                     {
                         for (var y = 0; y < Constants.MapHeight; y++)
