@@ -350,5 +350,18 @@ namespace Intersect_Editor.Forms
             }
 
         }
+
+        private void toolStripBtnScreenshot_Click(object sender, EventArgs e)
+        {
+            SaveFileDialog fileDialog = new SaveFileDialog();
+            fileDialog.Filter = "Png Image|*.png|JPeg Image|*.jpg|Bitmap Image|*.bmp|Gif Image|*.gif";
+            fileDialog.Title = "Save a screenshot of the map";
+            fileDialog.ShowDialog();
+
+            if (fileDialog.FileName != "")
+            {
+                Graphics.ScreenShotMap().SaveToFile(fileDialog.FileName);
+            }
+        }
     }
 }
