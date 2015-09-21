@@ -24,9 +24,9 @@ using System.Threading;
 
 namespace Intersect_Server.Classes
 {
-    class ServerLoop
+    public static class ServerLoop
     {
-        public ServerLoop(Network nb)
+        public static void RunServerLoop(Network nb)
         {
             long timeUpdateTick = Environment.TickCount + 1000;
             while (true)
