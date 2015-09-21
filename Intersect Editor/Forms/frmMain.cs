@@ -1,5 +1,5 @@
 ﻿/*
-    Intersect Game Engine (Server)
+    Intersect Game Engine (Editor)
     Copyright (C) 2015  JC Snider, Joe Bridges
     
     Website: http://ascensiongamedev.com
@@ -282,6 +282,8 @@ namespace Intersect_Editor.Forms
         //Help
         private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            frmAbout aboutfrm = new frmAbout();
+            aboutfrm.ShowDialog();
         }
 
         //ToolStrip Functions

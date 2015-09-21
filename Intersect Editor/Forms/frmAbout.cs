@@ -19,25 +19,33 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-using System;
-using System.Windows.Forms;
-using Intersect_Editor.Forms;
 
-namespace Intersect_Editor.Classes
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Windows.Forms;
+
+namespace Intersect_Editor.Forms
 {
-    static class Program
+    public partial class frmAbout : Form
     {
-        /// <summary>
-        /// The main entry point for the application.
-        /// </summary>
-        [STAThread]
-        static void Main()
+        public frmAbout()
         {
-            Application.EnableVisualStyles();
-            Application.SetCompatibleTextRenderingDefault(false);
-            Globals.LoginForm = new FrmLogin();
-            Globals.MainForm = new frmMain();
-            Application.Run(Globals.LoginForm);
+            InitializeComponent();
+        }
+
+        private void lblWebsite_Click(object sender, EventArgs e)
+        {
+            System.Diagnostics.Process.Start("http://ascensiongamedev.com");
+        }
+
+        private void frmAbout_Load(object sender, EventArgs e)
+        {
+            lblVersion.Text = @"v. " + Application.ProductVersion;
         }
     }
 }
