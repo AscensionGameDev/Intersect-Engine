@@ -3,7 +3,7 @@ using System.Windows.Forms;
 
 namespace Intersect_Editor.Forms
 {
-    partial class FrmMain
+    partial class frmMain
     {
         /// <summary>
         /// Required designer variable.
@@ -31,7 +31,7 @@ namespace Intersect_Editor.Forms
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmMain));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmMain));
             WeifenLuo.WinFormsUI.Docking.DockPanelSkin dockPanelSkin2 = new WeifenLuo.WinFormsUI.Docking.DockPanelSkin();
             WeifenLuo.WinFormsUI.Docking.AutoHideStripSkin autoHideStripSkin2 = new WeifenLuo.WinFormsUI.Docking.AutoHideStripSkin();
             WeifenLuo.WinFormsUI.Docking.DockPanelGradient dockPanelGradient4 = new WeifenLuo.WinFormsUI.Docking.DockPanelGradient();
@@ -51,6 +51,8 @@ namespace Intersect_Editor.Forms
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveMapToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.newMapToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.importMapToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.exportMapToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.editToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.fillToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -59,7 +61,6 @@ namespace Intersect_Editor.Forms
             this.hideDarknessToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.hideFogToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.hideOverlayToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.mapListToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.hideTilePreviewToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.contentEditorsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.itemEditorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -88,12 +89,12 @@ namespace Intersect_Editor.Forms
             this.toolStripBtnFill = new System.Windows.Forms.ToolStripButton();
             this.toolStripBtnErase = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
+            this.toolStripBtnScreenshot = new System.Windows.Forms.ToolStripButton();
+            this.toolStripSeparator6 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripBtnRun = new System.Windows.Forms.ToolStripButton();
             this.vS2012LightTheme1 = new WeifenLuo.WinFormsUI.Docking.VS2012LightTheme();
             this.dockLeft = new WeifenLuo.WinFormsUI.Docking.DockPanel();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
-            this.toolStripBtnScreenshot = new System.Windows.Forms.ToolStripButton();
-            this.toolStripSeparator6 = new System.Windows.Forms.ToolStripSeparator();
             this.menuStrip.SuspendLayout();
             this.toolStrip1.SuspendLayout();
             this.SuspendLayout();
@@ -118,31 +119,46 @@ namespace Intersect_Editor.Forms
             this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.saveMapToolStripMenuItem,
             this.newMapToolStripMenuItem,
+            this.importMapToolStripMenuItem,
+            this.exportMapToolStripMenuItem,
             this.exitToolStripMenuItem});
             this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
             this.fileToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
             this.fileToolStripMenuItem.Text = "File";
-            this.fileToolStripMenuItem.Click += new System.EventHandler(this.fileToolStripMenuItem_Click);
             // 
             // saveMapToolStripMenuItem
             // 
             this.saveMapToolStripMenuItem.Name = "saveMapToolStripMenuItem";
-            this.saveMapToolStripMenuItem.Size = new System.Drawing.Size(125, 22);
+            this.saveMapToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.saveMapToolStripMenuItem.Text = "Save Map";
             this.saveMapToolStripMenuItem.Click += new System.EventHandler(this.saveMapToolStripMenuItem_Click);
             // 
             // newMapToolStripMenuItem
             // 
             this.newMapToolStripMenuItem.Name = "newMapToolStripMenuItem";
-            this.newMapToolStripMenuItem.Size = new System.Drawing.Size(125, 22);
+            this.newMapToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.newMapToolStripMenuItem.Text = "New Map";
             this.newMapToolStripMenuItem.ToolTipText = "Create a new, unconnected map.";
             this.newMapToolStripMenuItem.Click += new System.EventHandler(this.newMapToolStripMenuItem_Click);
             // 
+            // importMapToolStripMenuItem
+            // 
+            this.importMapToolStripMenuItem.Name = "importMapToolStripMenuItem";
+            this.importMapToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.importMapToolStripMenuItem.Text = "Import Map";
+            this.importMapToolStripMenuItem.Click += new System.EventHandler(this.importMapToolStripMenuItem_Click);
+            // 
+            // exportMapToolStripMenuItem
+            // 
+            this.exportMapToolStripMenuItem.Name = "exportMapToolStripMenuItem";
+            this.exportMapToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.exportMapToolStripMenuItem.Text = "Export Map";
+            this.exportMapToolStripMenuItem.Click += new System.EventHandler(this.exportMapToolStripMenuItem_Click);
+            // 
             // exitToolStripMenuItem
             // 
             this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            this.exitToolStripMenuItem.Size = new System.Drawing.Size(125, 22);
+            this.exitToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.exitToolStripMenuItem.Text = "Exit";
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
             // 
@@ -158,14 +174,14 @@ namespace Intersect_Editor.Forms
             // fillToolStripMenuItem
             // 
             this.fillToolStripMenuItem.Name = "fillToolStripMenuItem";
-            this.fillToolStripMenuItem.Size = new System.Drawing.Size(132, 22);
+            this.fillToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.fillToolStripMenuItem.Text = "Fill";
             this.fillToolStripMenuItem.Click += new System.EventHandler(this.fillToolStripMenuItem_Click);
             // 
             // eraseLayerToolStripMenuItem
             // 
             this.eraseLayerToolStripMenuItem.Name = "eraseLayerToolStripMenuItem";
-            this.eraseLayerToolStripMenuItem.Size = new System.Drawing.Size(132, 22);
+            this.eraseLayerToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.eraseLayerToolStripMenuItem.Text = "Erase Layer";
             this.eraseLayerToolStripMenuItem.Click += new System.EventHandler(this.eraseLayerToolStripMenuItem_Click);
             // 
@@ -175,7 +191,6 @@ namespace Intersect_Editor.Forms
             this.hideDarknessToolStripMenuItem,
             this.hideFogToolStripMenuItem,
             this.hideOverlayToolStripMenuItem,
-            this.mapListToolStripMenuItem,
             this.hideTilePreviewToolStripMenuItem});
             this.viewToolStripMenuItem.Name = "viewToolStripMenuItem";
             this.viewToolStripMenuItem.Size = new System.Drawing.Size(44, 20);
@@ -201,13 +216,6 @@ namespace Intersect_Editor.Forms
             this.hideOverlayToolStripMenuItem.Size = new System.Drawing.Size(165, 22);
             this.hideOverlayToolStripMenuItem.Text = "Hide Overlay";
             this.hideOverlayToolStripMenuItem.Click += new System.EventHandler(this.hideOverlayToolStripMenuItem_Click);
-            // 
-            // mapListToolStripMenuItem
-            // 
-            this.mapListToolStripMenuItem.Name = "mapListToolStripMenuItem";
-            this.mapListToolStripMenuItem.Size = new System.Drawing.Size(165, 22);
-            this.mapListToolStripMenuItem.Text = "Map List";
-            this.mapListToolStripMenuItem.Click += new System.EventHandler(this.mapListToolStripMenuItem_Click);
             // 
             // hideTilePreviewToolStripMenuItem
             // 
@@ -282,7 +290,7 @@ namespace Intersect_Editor.Forms
             // aboutToolStripMenuItem
             // 
             this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
-            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(107, 22);
+            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.aboutToolStripMenuItem.Text = "About";
             this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
             // 
@@ -467,6 +475,21 @@ namespace Intersect_Editor.Forms
             this.toolStripSeparator5.Name = "toolStripSeparator5";
             this.toolStripSeparator5.Size = new System.Drawing.Size(6, 25);
             // 
+            // toolStripBtnScreenshot
+            // 
+            this.toolStripBtnScreenshot.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toolStripBtnScreenshot.Image = ((System.Drawing.Image)(resources.GetObject("toolStripBtnScreenshot.Image")));
+            this.toolStripBtnScreenshot.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripBtnScreenshot.Name = "toolStripBtnScreenshot";
+            this.toolStripBtnScreenshot.Size = new System.Drawing.Size(23, 22);
+            this.toolStripBtnScreenshot.Text = "Screenshot Map";
+            this.toolStripBtnScreenshot.Click += new System.EventHandler(this.toolStripBtnScreenshot_Click);
+            // 
+            // toolStripSeparator6
+            // 
+            this.toolStripSeparator6.Name = "toolStripSeparator6";
+            this.toolStripSeparator6.Size = new System.Drawing.Size(6, 25);
+            // 
             // toolStripBtnRun
             // 
             this.toolStripBtnRun.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
@@ -544,22 +567,7 @@ namespace Intersect_Editor.Forms
             this.statusStrip1.TabIndex = 10;
             this.statusStrip1.Text = "statusStrip1";
             // 
-            // toolStripBtnScreenshot
-            // 
-            this.toolStripBtnScreenshot.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.toolStripBtnScreenshot.Image = ((System.Drawing.Image)(resources.GetObject("toolStripBtnScreenshot.Image")));
-            this.toolStripBtnScreenshot.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripBtnScreenshot.Name = "toolStripBtnScreenshot";
-            this.toolStripBtnScreenshot.Size = new System.Drawing.Size(23, 22);
-            this.toolStripBtnScreenshot.Text = "Screenshot Map";
-            this.toolStripBtnScreenshot.Click += new System.EventHandler(this.toolStripBtnScreenshot_Click);
-            // 
-            // toolStripSeparator6
-            // 
-            this.toolStripSeparator6.Name = "toolStripSeparator6";
-            this.toolStripSeparator6.Size = new System.Drawing.Size(6, 25);
-            // 
-            // FrmMain
+            // frmMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -571,7 +579,7 @@ namespace Intersect_Editor.Forms
             this.IsMdiContainer = true;
             this.KeyPreview = true;
             this.MainMenuStrip = this.menuStrip;
-            this.Name = "FrmMain";
+            this.Name = "frmMain";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Intersect Editor";
             this.Load += new System.EventHandler(this.frmMain_Load);
@@ -595,7 +603,6 @@ namespace Intersect_Editor.Forms
         private System.Windows.Forms.ToolStripMenuItem aboutToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem saveMapToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem exitToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem mapListToolStripMenuItem;
         public System.Windows.Forms.ToolStripMenuItem fillToolStripMenuItem;
         public System.Windows.Forms.ToolStripMenuItem eraseLayerToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem newMapToolStripMenuItem;
@@ -635,6 +642,8 @@ namespace Intersect_Editor.Forms
         private ToolStripMenuItem hideTilePreviewToolStripMenuItem;
         private ToolStripButton toolStripBtnScreenshot;
         private ToolStripSeparator toolStripSeparator6;
+        private ToolStripMenuItem importMapToolStripMenuItem;
+        private ToolStripMenuItem exportMapToolStripMenuItem;
     }
 }
 

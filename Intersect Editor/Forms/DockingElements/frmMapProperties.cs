@@ -28,5 +28,10 @@ namespace Intersect_Editor.Forms
                 gridMapProperties.SelectedObject = new MapProperties(Globals.GameMaps[mapNum]);
             }
         }
+
+        public void Update()
+        {
+            gridMapProperties.Refresh();
+        }
     }
 }

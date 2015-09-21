@@ -31,7 +31,7 @@ namespace Intersect_Editor.Classes
         public static void StartLoop()
         {
             Globals.MainForm.Visible = true;
-            FrmMain myForm = Globals.MainForm;
+            frmMain myForm = Globals.MainForm;
             long animationTimer = Environment.TickCount;
             long waterfallTimer = Environment.TickCount;
             // drawing loop

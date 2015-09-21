@@ -136,6 +136,11 @@ namespace Intersect_Editor.Classes
 
         private static void HandleDc()
         {
+            if (Globals.MainForm != null)
+            {
+                Globals.MainForm.BeginInvoke(Globals.MainForm.DisconnectDelegate);
+                return;
+            }
             MessageBox.Show(@"Disconnected!");
             Application.Exit();
         }

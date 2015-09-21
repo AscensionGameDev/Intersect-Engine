@@ -38,7 +38,7 @@ namespace Intersect_Editor.Classes
 
         public static int MyIndex;
         public static MapStruct[] GameMaps = new MapStruct[1];
-        public static FrmMain MainForm;
+        public static frmMain MainForm;
         public static FrmLogin LoginForm;
         public static long MapCount;
         public static int ReceivedGameData;

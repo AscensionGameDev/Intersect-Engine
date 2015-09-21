@@ -36,7 +36,7 @@ namespace Intersect_Editor.Classes
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Globals.LoginForm = new FrmLogin();
-            Globals.MainForm = new FrmMain();
+            Globals.MainForm = new frmMain();
             Application.Run(Globals.LoginForm);
         }
     }

@@ -167,7 +167,7 @@ namespace Intersect_Editor.Classes
             PacketSender.SendNeedMap(0);
             Globals.ReceivedGameData++;
             if (Globals.ReceivedGameData != 3 || Globals.InEditor) return;
-            Globals.MainForm = new FrmMain();
+            Globals.MainForm = new frmMain();
             Globals.MainForm.Show();
         }
 
@@ -186,7 +186,7 @@ namespace Intersect_Editor.Classes
             }
             Globals.ReceivedGameData++;
             if (Globals.ReceivedGameData != 3 || Globals.InEditor) return;
-            Globals.MainForm = new FrmMain();
+            Globals.MainForm = new frmMain();
             Globals.MainForm.Show();
         }
 

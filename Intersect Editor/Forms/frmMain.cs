@@ -28,7 +28,7 @@ using System.Collections.Generic;
 
 namespace Intersect_Editor.Forms
 {
-    public partial class FrmMain : Form
+    public partial class frmMain : Form
     {
         //General Editting Variables
         bool _tMouseDown;
@@ -36,6 +36,8 @@ namespace Intersect_Editor.Forms
         //Cross Thread Delegates
         public delegate void TryOpenEditor(int editorIndex);
         public TryOpenEditor EditorDelegate;
+        public delegate void HandleDisconnect();
+        public HandleDisconnect DisconnectDelegate;
 
         //Editor References
         private frmAnimation _animationEditor;
@@ -46,15 +48,15 @@ namespace Intersect_Editor.Forms
         private frmClass _classEditor;
 
         //Initialization & Setup Functions
-        public FrmMain()
+        public frmMain()
         {
             InitializeComponent();
             Globals.MapListWindow = new frmMapList();
             Globals.MapListWindow.Show(dockLeft, DockState.DockRight);
             Globals.MapLayersWindow = new frmMapLayers();
             Globals.MapLayersWindow.Init();
-            Globals.MapLayersWindow.Show(dockLeft,DockState.DockLeft);
-            
+            Globals.MapLayersWindow.Show(dockLeft, DockState.DockLeft);
+
             Globals.MapEditorWindow = new frmMapEditor();
             Globals.MapEditorWindow.Show(dockLeft, DockState.Document);
         }
@@ -65,6 +67,7 @@ namespace Intersect_Editor.Forms
 
             //Init Delegates
             EditorDelegate = new TryOpenEditor(TryOpenEditorMethod);
+            DisconnectDelegate = new HandleDisconnect(HandleServerDisconnect);
 
             // Initilise the editor.
             InitEditor();
@@ -129,9 +132,36 @@ namespace Intersect_Editor.Forms
             }
         }
 
-        //MenuBar Functions
-        private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
+        //Disconnection
+        private void HandleServerDisconnect()
         {
+            //Offer to export map
+            if (Globals.CurrentMap > -1 && Globals.GameMaps[Globals.CurrentMap] != null)
+            {
+                if (MessageBox.Show("You have been disconnected from the server! Would you like to export this map before closing this editor?", "Disconnected -- Export Map?", MessageBoxButtons.YesNo) == System.Windows.Forms.DialogResult.Yes)
+                {
+                    exportMapToolStripMenuItem_Click(null, null);
+                    Application.Exit();
+                }
+                else
+                {
+                    Application.Exit();
+                }
+            }
+            else
+            {
+                MessageBox.Show(@"Disconnected!");
+                Application.Exit();
+            }
+        }
+
+        //MenuBar Functions -- File
+        private void saveMapToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (MessageBox.Show(@"Are you sure you want to save this map?", @"Save Map", MessageBoxButtons.YesNo) == DialogResult.Yes)
+            {
+                PacketSender.SendMap(Globals.CurrentMap);
+            }
         }
         private void newMapToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -144,37 +174,37 @@ namespace Intersect_Editor.Forms
             }
             PacketSender.SendCreateMap(-1, Globals.CurrentMap, null);
         }
-        private void hideDarknessToolStripMenuItem_Click(object sender, EventArgs e)
+        private void exportMapToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Graphics.HideDarkness = !Graphics.HideDarkness;
-            hideDarknessToolStripMenuItem.Checked = Graphics.HideDarkness;
+            SaveFileDialog fileDialog = new SaveFileDialog();
+            fileDialog.Filter = "Intersect Map|*.imap";
+            fileDialog.Title = "Export Map";
+            fileDialog.ShowDialog();
+
+            if (fileDialog.FileName != "")
+            {
+                File.WriteAllBytes(fileDialog.FileName, Globals.GameMaps[Globals.CurrentMap].Save());
+            }
         }
-        private void hideFogToolStripMenuItem_Click(object sender, EventArgs e)
+        private void importMapToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Graphics.HideFog = !Graphics.HideFog;
-            hideFogToolStripMenuItem.Checked = Graphics.HideFog;
-        }
-        private void hideOverlayToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            Graphics.HideOverlay = !Graphics.HideOverlay;
-            hideOverlayToolStripMenuItem.Checked = Graphics.HideOverlay;
-        }
-        private void hideTilePreviewToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            Graphics.HideTilePreview = !Graphics.HideTilePreview;
-            hideTilePreviewToolStripMenuItem.Checked = Graphics.HideTilePreview;
+            OpenFileDialog fileDialog = new OpenFileDialog();
+            fileDialog.Filter = "Intersect Map|*.imap";
+            fileDialog.Title = "Import Map";
+            fileDialog.ShowDialog();
+
+            if (fileDialog.FileName != "")
+            {
+                Globals.MapEditorWindow.PrepUndoState();
+                Globals.GameMaps[Globals.CurrentMap].Load(File.ReadAllBytes(fileDialog.FileName));
+                Globals.MapEditorWindow.AddUndoState();
+            }
         }
         private void exitToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Application.Exit();
         }
-        private void saveMapToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            if (MessageBox.Show(@"Are you sure you want to save this map?", @"Save Map", MessageBoxButtons.YesNo) == DialogResult.Yes)
-            {
-                PacketSender.SendMap(Globals.CurrentMap);
-            }
-        }
+        //Edit
         private void fillToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (Globals.CurrentLayer <= Constants.LayerCount)
@@ -203,20 +233,28 @@ namespace Intersect_Editor.Forms
                 }
             }
         }
-
-        private void mapListToolStripMenuItem_Click(object sender, EventArgs e)
+        //View
+        private void hideDarknessToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            //grpMapList.Visible = !grpMapList.Visible;
-            //mapListToolStripMenuItem.Checked = grpMapList.Visible;
-            //if (grpMapList.Visible)
-            //{
-                //UpdateMapList();
-            //}
+            Graphics.HideDarkness = !Graphics.HideDarkness;
+            hideDarknessToolStripMenuItem.Checked = Graphics.HideDarkness;
         }
-        private void fileToolStripMenuItem_Click(object sender, EventArgs e)
+        private void hideFogToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            Graphics.HideFog = !Graphics.HideFog;
+            hideFogToolStripMenuItem.Checked = Graphics.HideFog;
         }
-
+        private void hideOverlayToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Graphics.HideOverlay = !Graphics.HideOverlay;
+            hideOverlayToolStripMenuItem.Checked = Graphics.HideOverlay;
+        }
+        private void hideTilePreviewToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Graphics.HideTilePreview = !Graphics.HideTilePreview;
+            hideTilePreviewToolStripMenuItem.Checked = Graphics.HideTilePreview;
+        }
+        //Content Editors
         private void itemEditorToolStripMenuItem_Click(object sender, EventArgs e)
         {
             PacketSender.SendItemEditor();
@@ -241,6 +279,10 @@ namespace Intersect_Editor.Forms
         {
             PacketSender.SendClassEditor();
         }
+        //Help
+        private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+        }
 
         //ToolStrip Functions
         private void toolStripBtnNewMap_Click(object sender, EventArgs e)
@@ -260,6 +302,7 @@ namespace Intersect_Editor.Forms
                 Globals.MapEditorWindow.MapRedoStates.Add(Globals.MapEditorWindow.CurrentMapState);
                 Globals.MapEditorWindow.CurrentMapState = Globals.MapEditorWindow.MapUndoStates[Globals.MapEditorWindow.MapUndoStates.Count - 1];
                 Globals.MapEditorWindow.MapUndoStates.RemoveAt(Globals.MapEditorWindow.MapUndoStates.Count - 1);
+                Globals.MapPropertiesWindow.Update();
             }
         }
         private void toolStripBtnRedo_Click(object sender, EventArgs e)
@@ -271,6 +314,7 @@ namespace Intersect_Editor.Forms
                 Globals.MapEditorWindow.MapUndoStates.Add(Globals.MapEditorWindow.CurrentMapState);
                 Globals.MapEditorWindow.CurrentMapState = Globals.MapEditorWindow.MapRedoStates[Globals.MapEditorWindow.MapRedoStates.Count - 1];
                 Globals.MapEditorWindow.MapRedoStates.RemoveAt(Globals.MapEditorWindow.MapRedoStates.Count - 1);
+                Globals.MapPropertiesWindow.Update();
             }
         }
         private void toolStripBtnFill_Click(object sender, EventArgs e)
@@ -285,6 +329,18 @@ namespace Intersect_Editor.Forms
             if (Globals.CurrentLayer <= Constants.LayerCount)
             {
                 Globals.MapEditorWindow.EraseLayer();
+            }
+        }
+        private void toolStripBtnScreenshot_Click(object sender, EventArgs e)
+        {
+            SaveFileDialog fileDialog = new SaveFileDialog();
+            fileDialog.Filter = "Png Image|*.png|JPeg Image|*.jpg|Bitmap Image|*.bmp|Gif Image|*.gif";
+            fileDialog.Title = "Save a screenshot of the map";
+            fileDialog.ShowDialog();
+
+            if (fileDialog.FileName != "")
+            {
+                Graphics.ScreenShotMap().SaveToFile(fileDialog.FileName);
             }
         }
 
@@ -349,19 +405,6 @@ namespace Intersect_Editor.Forms
                 Globals.CurrentEditor = editorIndex;
             }
 
-        }
-
-        private void toolStripBtnScreenshot_Click(object sender, EventArgs e)
-        {
-            SaveFileDialog fileDialog = new SaveFileDialog();
-            fileDialog.Filter = "Png Image|*.png|JPeg Image|*.jpg|Bitmap Image|*.bmp|Gif Image|*.gif";
-            fileDialog.Title = "Save a screenshot of the map";
-            fileDialog.ShowDialog();
-
-            if (fileDialog.FileName != "")
-            {
-                Graphics.ScreenShotMap().SaveToFile(fileDialog.FileName);
-            }
         }
     }
 }

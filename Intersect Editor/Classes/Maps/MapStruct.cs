@@ -54,7 +54,7 @@ namespace Intersect_Editor.Classes
         public string Fog = "None";
         public int FogXSpeed = 0;
         public int FogYSpeed = 0;
-        public int FogTransaprency = 0;
+        public int FogTransparency = 0;
         public int RHue = 0;
         public int GHue = 0;
         public int BHue = 0;
@@ -100,7 +100,7 @@ namespace Intersect_Editor.Classes
             bf.WriteString(Fog);
             bf.WriteInteger(FogXSpeed);
             bf.WriteInteger(FogYSpeed);
-            bf.WriteInteger(FogTransaprency);
+            bf.WriteInteger(FogTransparency);
             bf.WriteInteger(RHue);
             bf.WriteInteger(GHue);
             bf.WriteInteger(BHue);
@@ -174,7 +174,7 @@ namespace Intersect_Editor.Classes
             Fog = bf.ReadString();
             FogXSpeed = bf.ReadInteger();
             FogYSpeed = bf.ReadInteger();
-            FogTransaprency = bf.ReadInteger();
+            FogTransparency = bf.ReadInteger();
             RHue = bf.ReadInteger();
             GHue = bf.ReadInteger();
             BHue = bf.ReadInteger();

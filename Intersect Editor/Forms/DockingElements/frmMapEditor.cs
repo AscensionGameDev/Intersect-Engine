@@ -46,6 +46,25 @@ namespace Intersect_Editor.Forms
             MapRedoStates.Clear();
             CurrentMapState = null;
         }
+        public void PrepUndoState()
+        {
+            var tmpMap = Globals.GameMaps[Globals.CurrentMap];
+            if (CurrentMapState == null)
+            {
+                CurrentMapState = tmpMap.Save();
+            }
+        }
+        public void AddUndoState()
+        {
+            var tmpMap = Globals.GameMaps[Globals.CurrentMap];
+            if (CurrentMapState != null)
+            {
+                MapUndoStates.Add(CurrentMapState);
+                MapRedoStates.Clear();
+                CurrentMapState = tmpMap.Save();
+            }
+            MapChanged = false;
+        }
 
         //PicMap Functions
         public void picMap_MouseDown(object sender, MouseEventArgs e)

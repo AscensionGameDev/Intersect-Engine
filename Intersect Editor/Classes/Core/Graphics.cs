@@ -97,7 +97,7 @@ namespace Intersect_Editor.Classes
         public static MapStruct TilePreviewStruct;
 
         //Setup and Loading
-        public static void InitSfml(FrmMain myForm)
+        public static void InitSfml(frmMain myForm)
         {
             try
             {
@@ -137,7 +137,7 @@ namespace Intersect_Editor.Classes
                 // ignored
             }
         }
-        private static void LoadGraphics(FrmMain myForm)
+        private static void LoadGraphics(frmMain myForm)
         {
             LoadTilesets(myForm);
             LoadItems();
@@ -148,7 +148,7 @@ namespace Intersect_Editor.Classes
             LoadImages();
             LoadFogs();
         }
-        private static void LoadTilesets(FrmMain myForm)
+        private static void LoadTilesets(frmMain myForm)
         {
             if (!Directory.Exists("Resources/Tilesets")) { Directory.CreateDirectory("Resources/Tilesets"); }
             var tilesets = Directory.GetFiles("Resources/Tilesets", "*.png");
@@ -848,7 +848,7 @@ namespace Intersect_Editor.Classes
                         for (int y = -1; y < yCount; y++)
                         {
                             var fogSprite = new Sprite(FogTextures[fogIndex]) { Position = new Vector2f(x * FogTextures[fogIndex].Size.X + _fogCurrentX, y * FogTextures[fogIndex].Size.Y + _fogCurrentY) };
-                            fogSprite.Color = new Color(255, 255, 255, (byte)Globals.GameMaps[Globals.CurrentMap].FogTransaprency);
+                            fogSprite.Color = new Color(255, 255, 255, (byte)Globals.GameMaps[Globals.CurrentMap].FogTransparency);
                             target.Draw(fogSprite);
                         }
                     }
@@ -936,7 +936,7 @@ namespace Intersect_Editor.Classes
         }
 
         //Extra
-        public static void InitTileset(int index,FrmMain myForm)
+        public static void InitTileset(int index,frmMain myForm)
         {
             if (!_tilesetsLoaded) { return; }
             Globals.CurrentTileset = index;
