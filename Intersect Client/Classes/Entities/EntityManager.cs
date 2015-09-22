@@ -87,18 +87,24 @@ namespace Intersect_Client.Classes
         {
             if (isEvent == 1)
             {
-                Globals.Events[index] = null;
+                if (Globals.Events.Count > index)
+                {
+                    Globals.Events[index] = null;
+                }
             }
             else
             {
-                if (index == Globals.MyIndex)
+                if (Globals.Entities.Count > index)
                 {
-                    Globals.Entities[index] = null;
-                }
+                    if (index == Globals.MyIndex)
+                    {
+                        Globals.Entities[index] = null;
+                    }
 
-                else
-                {
-                    Globals.Entities[index] = null;
+                    else
+                    {
+                        Globals.Entities[index] = null;
+                    }
                 }
             }
         }

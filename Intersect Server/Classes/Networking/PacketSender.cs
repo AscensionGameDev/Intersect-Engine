@@ -29,7 +29,7 @@ namespace Intersect_Server.Classes
 
         private static void SendDataToMap(int mapNum, byte[] data)
         {
-            if (mapNum < 0) { return; }
+            if (mapNum < 0 || mapNum >= Globals.GameMaps.Length || Globals.GameMaps[mapNum] == null) { return; }
             List<int> Players = Globals.GameMaps[mapNum].GetPlayersOnMap();
             for (int i = 0; i < Players.Count; i++)
             {
@@ -38,7 +38,7 @@ namespace Intersect_Server.Classes
         }
         private static void SendDataToProximity(int mapNum, byte[] data)
         {
-            if (mapNum < 0) { return; }
+            if (mapNum < 0 || mapNum >= Globals.GameMaps.Length || Globals.GameMaps[mapNum] == null) { return; }
             SendDataToMap(mapNum, data);
             for (int i = 0; i < Globals.GameMaps[mapNum].SurroundingMaps.Count; i++)
             {
