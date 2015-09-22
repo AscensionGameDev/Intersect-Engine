@@ -136,13 +136,21 @@ namespace Intersect_Editor.Classes
 
         private static void HandleDc()
         {
-            if (Globals.MainForm != null)
+            if (Globals.MainForm != null && Globals.MainForm.Visible)
             {
                 Globals.MainForm.BeginInvoke(Globals.MainForm.DisconnectDelegate);
-                return;
             }
-            MessageBox.Show(@"Disconnected!");
-            Application.Exit();
+            else if (Globals.LoginForm.Visible)
+            {
+                Connected = false;
+                Connecting = false;
+                InitNetwork();
+            }
+            else
+            {
+                MessageBox.Show(@"Disconnected!");
+                Application.Exit();
+            }
         }
 
         public static void SendPacket(byte[] data)
