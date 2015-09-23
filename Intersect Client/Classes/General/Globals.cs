@@ -109,7 +109,6 @@ namespace Intersect_Client.Classes
         //Control Objects
 
         public static List<EventDialog> EventDialogs = new List<EventDialog>();
-        public static int GameTime = 0;
         public static float DirLightIntensity = .5f;
         public static bool ShouldUpdateLights = false;
 

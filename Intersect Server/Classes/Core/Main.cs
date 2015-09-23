@@ -38,8 +38,7 @@ namespace Intersect_Server.Classes
             Console.WriteLine(@"  _| |_| | | | ||  __/ |  \__ \  __/ (__| |_ ");
             Console.WriteLine(@" |_____|_| |_|\__\___|_|  |___/\___|\___|\__|");
             Console.WriteLine(@"                          free 2d orpg engine");
-            Console.Write("Copyright (C) 2015  JC Snider, Joe Bridges\nFor help, support, and updates visit: http://ascensiongamedev.com");
-            Console.WriteLine();
+            Console.Write("Copyright (C) 2015  JC Snider, Joe Bridges\nFor help, support, and updates visit: http://ascensiongamedev.com\n");
             Console.WriteLine("Loading, please wait.");
             Database.CheckDirectories();
             Database.LoadOptions();
@@ -61,8 +60,6 @@ namespace Intersect_Server.Classes
                 Globals.Tilesets = File.ReadAllLines("Resources/Tilesets.dat");
             }
             var networkBase = new Network();
-            Globals.GameTime = Globals.Rand.Next(0, 2400);
-            Console.WriteLine("Randomly set game time to " + Globals.GameTime);
             Console.WriteLine("Server Started.");
             logicThread = new Thread(() => ServerLoop.RunServerLoop(networkBase));
             logicThread.Start();

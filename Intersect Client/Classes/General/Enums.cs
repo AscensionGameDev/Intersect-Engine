@@ -94,7 +94,6 @@ namespace Intersect_Client.Classes
             EventDialog,
             MapList,
             LoginError,
-            GameTime,
             OpenItemEditor,
             ItemData,
             ItemList,

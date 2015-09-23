@@ -93,7 +93,6 @@ namespace Intersect_Editor.Classes
             EventDialog,
             MapList,
             LoginError,
-            GameTime,
             OpenItemEditor,
             ItemData,
             ItemList,

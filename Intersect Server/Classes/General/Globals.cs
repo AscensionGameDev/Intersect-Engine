@@ -72,8 +72,6 @@ namespace Intersect_Server.Classes
         //Game helping stuff
         public static Random Rand = new Random();
 
-        public static int GameTime = 0;
-
         public static int FindOpenEntity()
         {
             for (var i = 0; i < Entities.Count; i++)

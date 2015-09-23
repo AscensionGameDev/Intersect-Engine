@@ -90,9 +90,6 @@ namespace Intersect_Client.Classes
                     case Enums.ServerPackets.LoginError:
                         HandleLoginError(bf.ReadBytes(bf.Length()));
                         break;
-                    case Enums.ServerPackets.GameTime:
-                        HandleGameTime(bf.ReadBytes(bf.Length()));
-                        break;
                     case Enums.ServerPackets.ItemData:
                         HandleItemData(bf.ReadBytes(bf.Length()));
                         break;
@@ -524,13 +521,6 @@ namespace Intersect_Client.Classes
             Globals.WaitingOnServer = false;
             Gui.MsgboxErrors.Add(error);
             Gui._MenuGui.Reset();
-        }
-
-        private static void HandleGameTime(byte[] packet)
-        {
-            var bf = new ByteBuffer();
-            bf.WriteBytes(packet);
-            Globals.GameTime = bf.ReadInteger();
         }
 
         private static void HandleItemData(byte[] packet)

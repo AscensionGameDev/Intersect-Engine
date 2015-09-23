@@ -522,15 +522,6 @@ namespace Intersect_Server.Classes
             bf.Dispose();
         }
 
-        public static void SendGameTime(Client client)
-        {
-            var bf = new ByteBuffer();
-            bf.WriteLong((int)Enums.ServerPackets.GameTime);
-            bf.WriteInteger(Globals.GameTime);
-            client.SendPacket(bf.ToArray());
-            bf.Dispose();
-        }
-
         public static void SendItemList(Client client)
         {
             ByteBuffer bf = new ByteBuffer();

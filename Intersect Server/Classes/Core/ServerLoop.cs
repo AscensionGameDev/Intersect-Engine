@@ -28,7 +28,6 @@ namespace Intersect_Server.Classes
     {
         public static void RunServerLoop(Network nb)
         {
-            long timeUpdateTick = Environment.TickCount + 1000;
             while (true)
             {
                 nb.RunServer();
@@ -50,14 +49,6 @@ namespace Intersect_Server.Classes
                         Globals.Clients[i].Entity.Update();
                     }
                 }
-
-                if (timeUpdateTick < Environment.TickCount)
-                {
-                    Globals.GameTime++;
-                    if (Globals.GameTime >= 2400) { Globals.GameTime = 0; }
-                    timeUpdateTick = Environment.TickCount + 1000;
-                }
-
                 Thread.Sleep(10);
 
             }
