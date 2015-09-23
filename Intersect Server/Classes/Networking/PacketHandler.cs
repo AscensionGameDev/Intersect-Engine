@@ -498,7 +498,6 @@ namespace Intersect_Server.Classes
             ((Player)client.Entity).InGame = true;
             PacketSender.SendTilesets(client);
             PacketSender.SendGameData(client);
-            PacketSender.SendGameTime(client);
             PacketSender.SendPlayerMsg(client, "Welcome to the Intersect game server.");
             PacketSender.SendGlobalMsg(Globals.Entities[index].MyName + " has joined the Intersect engine");
             for (var i = 0; i < Globals.Entities.Count; i++)

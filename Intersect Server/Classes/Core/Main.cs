@@ -91,6 +91,41 @@ namespace Intersect_Server.Classes
                             Console.WriteLine(@"    Syntax Error: Expected parameter not found type " + commandsplit[0] + " /? for usage information.");
                         }
                         break;
+                    case "cps":
+                        if (commandsplit.Length > 1)
+                        {
+                            switch (commandsplit[1])
+                            {
+                                case "/?":
+                                    Console.WriteLine(@"    Usage: cps [status] [lock] [unlock] [/?]");
+                                    Console.WriteLine(@"    Desc: Prints the current CPS. The status flag tells if the server loop is locked or unlocked. The lock flag locks the cps while the unlock flag unlocks it.");
+                                    break;
+                                case "lock":
+                                    Globals.CPSLock = true;
+                                    break;
+                                case "unlock":
+                                    Globals.CPSLock = false;
+                                    break;
+                                case "status":
+                                    if (Globals.CPSLock)
+                                    {
+                                        Console.WriteLine(@"CPS Locked.");
+                                    }
+                                    else
+                                    {
+                                        Console.WriteLine(@"CPS Unlocked.");
+                                    }
+                                    break;
+                                default:
+                                    //Try to admin the player
+                                    break;
+                            }
+                        }
+                        else
+                        {
+                            Console.WriteLine("Current CPS: " + Globals.CPS);
+                        }
+                        break;
                     case "deadmin":
                         if (commandsplit.Length > 1)
                         {
@@ -148,6 +183,7 @@ namespace Intersect_Server.Classes
                         {
                             Console.WriteLine(@"    List of available commands:");
                             Console.WriteLine(@"    admin    -   makes a specified user an admin");
+                            Console.WriteLine(@"    cps    -   prints the current server cps");
                             Console.WriteLine(@"    deadmin    -   removes admin powers from a specified user");
                             Console.WriteLine(@"    exit    -   closes the server");
                             Console.WriteLine(@"    help    -   displays list of available commands");

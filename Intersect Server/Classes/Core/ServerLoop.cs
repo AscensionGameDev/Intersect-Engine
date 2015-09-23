@@ -28,6 +28,8 @@ namespace Intersect_Server.Classes
     {
         public static void RunServerLoop(Network nb)
         {
+            long cpsTimer = Environment.TickCount + 1000;
+            long cps = 0;
             while (true)
             {
                 nb.RunServer();
@@ -49,8 +51,14 @@ namespace Intersect_Server.Classes
                         Globals.Clients[i].Entity.Update();
                     }
                 }
-                Thread.Sleep(10);
-
+                cps++;
+                if (Environment.TickCount >= cpsTimer)
+                {
+                    Globals.CPS = cps;
+                    cps = 0;
+                    cpsTimer = Environment.TickCount + 1000;
+                }
+                if (Globals.CPSLock) { Thread.Sleep(10); }
             }
         }
     }

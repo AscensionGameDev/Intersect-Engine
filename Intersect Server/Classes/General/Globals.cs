@@ -30,6 +30,8 @@ namespace Intersect_Server.Classes
 
         //Console Variables
         public static List<string> GeneralLogs = new List<string>();
+        public static long CPS = 0;
+        public static Boolean CPSLock = true;
 
         //Options
         public static int ServerPort = 4501;
