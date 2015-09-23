@@ -1,5 +1,5 @@
 ﻿/*
-    Intersect Game Engine (Server)
+    Intersect Game Engine (Editor)
     Copyright (C) 2015  JC Snider, Joe Bridges
     
     Website: http://ascensiongamedev.com
@@ -39,6 +39,7 @@ namespace Intersect_Editor.Forms
         private void frmLogin_Load(object sender, EventArgs e)
         {
             Database.InitDatabase();
+            lblVersion.Text = "Editor v." + Application.ProductVersion;
             EditorLoopDelegate = new BeginEditorLoop(EditorLoop.StartLoop);
         }
 
@@ -77,6 +78,7 @@ namespace Intersect_Editor.Forms
             e.Handled = true;
             if (txtUsername.Text.Trim().Length > 0 && txtPassword.Text.Trim().Length > 0)
             {
+                if (!Network.Connected) return;
                 PacketSender.SendLogin(txtUsername.Text.Trim(), txtPassword.Text.Trim());
             }
         }

@@ -79,7 +79,14 @@ namespace Intersect_Server.Classes
                 }
                 if (CurrentMap > -1)
                 {
-                    Globals.GameMaps[CurrentMap].AddEntity(this);
+                    if (CurrentMap > Globals.GameMaps.Length || Globals.GameMaps[CurrentMap] == null)
+                    {
+                        WarpToSpawn(true);
+                    }
+                    else
+                    {
+                        Globals.GameMaps[CurrentMap].AddEntity(this);
+                    }
                 }
                 _curMapLink = CurrentMap;
             }
@@ -211,9 +218,10 @@ namespace Intersect_Server.Classes
         }
         public void WarpToSpawn(bool sendWarp = false)
         {
+            int map = 0, x = 0, y = 0;
             if (Constants.SpawnMap >= 0 && Constants.SpawnMap < Globals.GameMaps.Length && Globals.GameMaps[Constants.SpawnMap] != null && Globals.GameMaps[Constants.SpawnMap].Deleted == 0)
             {
-               CurrentMap = Constants.SpawnMap;
+               map = Constants.SpawnMap;
             }
             else
             {
@@ -221,14 +229,14 @@ namespace Intersect_Server.Classes
                 {
                     if (Globals.GameMaps[i] != null && Globals.GameMaps[i].Deleted == 0)
                     {
-                        CurrentMap = i;
+                        map = i;
                         break;
                     }
                 }
             }
-            CurrentX = Constants.SpawnX;
-            CurrentY = Constants.SpawnY;
-            if (sendWarp) { Warp(CurrentMap, CurrentX, CurrentY); }
+            x = Constants.SpawnX;
+            y = Constants.SpawnY;
+            if (sendWarp) { Warp(map, x, y); }
         }
 
         //Inventory

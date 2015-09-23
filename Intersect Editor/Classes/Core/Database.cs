@@ -1,5 +1,5 @@
-﻿/*
-    Intersect Game Engine (Server)
+/*
+    Intersect Game Engine (Editor)
     Copyright (C) 2015  JC Snider, Joe Bridges
     
     Website: http://ascensiongamedev.com

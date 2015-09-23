@@ -1,5 +1,5 @@
 ﻿/*
-    Intersect Game Engine (Server)
+    Intersect Game Engine (Editor)
     Copyright (C) 2015  JC Snider, Joe Bridges
     
     Website: http://ascensiongamedev.com
@@ -136,8 +136,21 @@ namespace Intersect_Editor.Classes
 
         private static void HandleDc()
         {
-            MessageBox.Show(@"Disconnected!");
-            Application.Exit();
+            if (Globals.MainForm != null && Globals.MainForm.Visible)
+            {
+                Globals.MainForm.BeginInvoke(Globals.MainForm.DisconnectDelegate);
+            }
+            else if (Globals.LoginForm.Visible)
+            {
+                Connected = false;
+                Connecting = false;
+                InitNetwork();
+            }
+            else
+            {
+                MessageBox.Show(@"Disconnected!");
+                Application.Exit();
+            }
         }
 
         public static void SendPacket(byte[] data)

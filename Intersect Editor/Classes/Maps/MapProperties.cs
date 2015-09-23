@@ -22,7 +22,13 @@ namespace Intersect_Editor.Classes.Maps
         public string Name
         {
             get { return _myMap.MyName; }
-            set { _myMap.MyName = value; }
+            set {
+                if (_myMap.MyName != value) {
+                    Globals.MapEditorWindow.PrepUndoState();
+                    _myMap.MyName = value;
+                    Globals.MapEditorWindow.AddUndoState();
+                }
+            }
         }
 
         [CategoryAttribute("Audio"),
@@ -42,7 +48,15 @@ namespace Intersect_Editor.Classes.Maps
                 }
                 return _myMap.Music;
             }
-            set { _myMap.Music = value; }
+            set
+            {
+                if (_myMap.Music != value)
+                {
+                    Globals.MapEditorWindow.PrepUndoState();
+                    _myMap.Music = value;
+                    Globals.MapEditorWindow.AddUndoState();
+                }
+            }
         }
 
         [CategoryAttribute("Audio"),
@@ -63,7 +77,15 @@ namespace Intersect_Editor.Classes.Maps
                 }
                 return _myMap.Sound;
             }
-            set { _myMap.Sound = value; }
+            set
+            {
+                if (_myMap.Sound != value)
+                {
+                    Globals.MapEditorWindow.PrepUndoState();
+                    _myMap.Sound = value;
+                    Globals.MapEditorWindow.AddUndoState();
+                }
+            }
         }
 
         [CategoryAttribute("Lighting"),
@@ -72,7 +94,15 @@ namespace Intersect_Editor.Classes.Maps
         public bool IsIndoors
         {
             get { return _myMap.IsIndoors; }
-            set { _myMap.IsIndoors = value; }
+            set
+            {
+                if (_myMap.IsIndoors != value)
+                {
+                    Globals.MapEditorWindow.PrepUndoState();
+                    _myMap.IsIndoors = value;
+                    Globals.MapEditorWindow.AddUndoState();
+                }
+            }
         }
         [CategoryAttribute("Lighting"),
         Description("How bright is this map? (Range: 10 to 100)."), 
@@ -82,8 +112,13 @@ namespace Intersect_Editor.Classes.Maps
             get { return _myMap.Brightness; }
             set
             {
-                _myMap.Brightness = Math.Max(value, 10);
-                _myMap.Brightness = Math.Min(_myMap.Brightness, 100);
+                if (_myMap.Brightness != value)
+                {
+                    Globals.MapEditorWindow.PrepUndoState();
+                    _myMap.Brightness = Math.Max(value, 10);
+                    _myMap.Brightness = Math.Min(_myMap.Brightness, 100);
+                    Globals.MapEditorWindow.AddUndoState();
+                }
             }
         }
 
@@ -95,8 +130,13 @@ namespace Intersect_Editor.Classes.Maps
             get { return _myMap.RHue; }
             set
             {
-                _myMap.RHue = Math.Max(value, 0);
-                _myMap.RHue = Math.Min(_myMap.RHue, 255);
+                if (_myMap.RHue != value)
+                {
+                    Globals.MapEditorWindow.PrepUndoState();
+                    _myMap.RHue = Math.Max(value, 0);
+                    _myMap.RHue = Math.Min(_myMap.RHue, 255);
+                    Globals.MapEditorWindow.AddUndoState();
+                }
             }
         }
         [CategoryAttribute("Overlay"),
@@ -107,8 +147,13 @@ namespace Intersect_Editor.Classes.Maps
             get { return _myMap.GHue; }
             set
             {
-                _myMap.GHue = Math.Max(value, 0);
-                _myMap.GHue = Math.Min(_myMap.GHue, 255);
+                if (_myMap.GHue != value)
+                {
+                    Globals.MapEditorWindow.PrepUndoState();
+                    _myMap.GHue = Math.Max(value, 0);
+                    _myMap.GHue = Math.Min(_myMap.GHue, 255);
+                    Globals.MapEditorWindow.AddUndoState();
+                }
             }
         }
         [CategoryAttribute("Overlay"),
@@ -119,8 +164,13 @@ namespace Intersect_Editor.Classes.Maps
             get { return _myMap.BHue; }
             set
             {
-                _myMap.BHue = Math.Max(value, 0);
-                _myMap.BHue = Math.Min(_myMap.BHue, 255);
+                if (_myMap.BHue != value)
+                {
+                    Globals.MapEditorWindow.PrepUndoState();
+                    _myMap.BHue = Math.Max(value, 0);
+                    _myMap.BHue = Math.Min(_myMap.BHue, 255);
+                    Globals.MapEditorWindow.AddUndoState();
+                }
             }
         }
         [CategoryAttribute("Overlay"),
@@ -131,8 +181,13 @@ namespace Intersect_Editor.Classes.Maps
             get { return _myMap.AHue; }
             set
             {
-                _myMap.AHue = Math.Max(value, 0);
-                _myMap.AHue = Math.Min(_myMap.AHue, 255);
+                if (_myMap.AHue != value)
+                {
+                    Globals.MapEditorWindow.PrepUndoState();
+                    _myMap.AHue = Math.Max(value, 0);
+                    _myMap.AHue = Math.Min(_myMap.AHue, 255);
+                    Globals.MapEditorWindow.AddUndoState();
+                }
             }
         }
 
@@ -154,7 +209,15 @@ namespace Intersect_Editor.Classes.Maps
                 }
                 return _myMap.Fog;
             }
-            set { _myMap.Fog = value; }
+            set
+            {
+                if (_myMap.Fog != value)
+                {
+                    Globals.MapEditorWindow.PrepUndoState();
+                    _myMap.Fog = value;
+                    Globals.MapEditorWindow.AddUndoState();
+                }
+            }
         }
         [CategoryAttribute("Fog"),
         Description("Fog Horizontal Speed (Range: -5 to 5)"),
@@ -164,8 +227,13 @@ namespace Intersect_Editor.Classes.Maps
             get { return _myMap.FogXSpeed; }
             set
             {
-                _myMap.FogXSpeed = Math.Max(value, -5);
-                _myMap.FogXSpeed = Math.Min(_myMap.FogXSpeed, 5);
+                if (_myMap.FogXSpeed != value)
+                {
+                    Globals.MapEditorWindow.PrepUndoState();
+                    _myMap.FogXSpeed = Math.Max(value, -5);
+                    _myMap.FogXSpeed = Math.Min(_myMap.FogXSpeed, 5);
+                    Globals.MapEditorWindow.AddUndoState();
+                }
             }
         }
         [CategoryAttribute("Fog"),
@@ -176,8 +244,13 @@ namespace Intersect_Editor.Classes.Maps
             get { return _myMap.FogYSpeed; }
             set
             {
-                _myMap.FogYSpeed = Math.Max(value, -5);
-                _myMap.FogYSpeed = Math.Min(_myMap.FogYSpeed, 5);
+                if (_myMap.FogYSpeed != value)
+                {
+                    Globals.MapEditorWindow.PrepUndoState();
+                    _myMap.FogYSpeed = Math.Max(value, -5);
+                    _myMap.FogYSpeed = Math.Min(_myMap.FogYSpeed, 5);
+                    Globals.MapEditorWindow.AddUndoState();
+                }
             }
         }
         [CategoryAttribute("Fog"),
@@ -185,11 +258,16 @@ namespace Intersect_Editor.Classes.Maps
                 DefaultValueAttribute(0)]
         public int FogAlpha
         {
-            get { return _myMap.FogTransaprency; }
+            get { return _myMap.FogTransparency; }
             set
             {
-                _myMap.FogTransaprency = Math.Max(value, 0);
-                _myMap.FogTransaprency = Math.Min(_myMap.FogTransaprency, 255);
+                if (_myMap.FogTransparency != value)
+                {
+                    Globals.MapEditorWindow.PrepUndoState();
+                    _myMap.FogTransparency = Math.Max(value, 0);
+                    _myMap.FogTransparency = Math.Min(_myMap.FogTransparency, 255);
+                    Globals.MapEditorWindow.AddUndoState();
+                }
             }
         }
 
@@ -211,7 +289,15 @@ namespace Intersect_Editor.Classes.Maps
                 }
                 return _myMap.Panorama;
             }
-            set { _myMap.Panorama = value; }
+            set
+            {
+                if (_myMap.Panorama != value)
+                {
+                    Globals.MapEditorWindow.PrepUndoState();
+                    _myMap.Panorama = value; 
+                    Globals.MapEditorWindow.AddUndoState();
+                }
+            }
         }
     }
 

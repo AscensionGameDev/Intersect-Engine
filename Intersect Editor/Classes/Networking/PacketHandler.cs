@@ -1,5 +1,5 @@
 ﻿/*
-    Intersect Game Engine (Server)
+    Intersect Game Engine (Editor)
     Copyright (C) 2015  JC Snider, Joe Bridges
     
     Website: http://ascensiongamedev.com
@@ -173,7 +173,7 @@ namespace Intersect_Editor.Classes
             PacketSender.SendNeedMap(0);
             Globals.ReceivedGameData++;
             if (Globals.ReceivedGameData != 3 || Globals.InEditor) return;
-            Globals.MainForm = new FrmMain();
+            Globals.MainForm = new frmMain();
             Globals.MainForm.Show();
         }
 
@@ -192,7 +192,7 @@ namespace Intersect_Editor.Classes
             }
             Globals.ReceivedGameData++;
             if (Globals.ReceivedGameData != 3 || Globals.InEditor) return;
-            Globals.MainForm = new FrmMain();
+            Globals.MainForm = new frmMain();
             Globals.MainForm.Show();
         }
 

@@ -21,51 +21,72 @@
 */
 using System;
 using System.IO;
+using System.Threading;
 
 namespace Intersect_Server.Classes
 {
-	class MainClass
-	{
+    class MainClass
+    {
 
-		public static void Main (string[] args)
-		{
-            Console.WriteLine("Starting server.");
+        public static void Main(string[] args)
+        {
+            Thread logicThread;
+            Console.WriteLine(@"  _____       _                          _   ");
+            Console.WriteLine(@" |_   _|     | |                        | |  ");
+            Console.WriteLine(@"   | |  _ __ | |_ ___ _ __ ___  ___  ___| |_ ");
+            Console.WriteLine(@"   | | | '_ \| __/ _ \ '__/ __|/ _ \/ __| __|");
+            Console.WriteLine(@"  _| |_| | | | ||  __/ |  \__ \  __/ (__| |_ ");
+            Console.WriteLine(@" |_____|_| |_|\__\___|_|  |___/\___|\___|\__|");
+            Console.WriteLine(@"                          free 2d orpg engine");
+            Console.Write("Copyright (C) 2015  JC Snider, Joe Bridges\nFor help, support, and updates visit: http://ascensiongamedev.com");
+            Console.WriteLine();
+            Console.WriteLine("Loading, please wait.");
             Database.CheckDirectories();
             Database.LoadOptions();
-            Console.WriteLine("Loading npcs.");
             Database.LoadNpcs();
-            Console.WriteLine("Loading items.");
             Database.LoadItems();
-            Console.WriteLine("Loading spells.");
             Database.LoadSpells();
-            Console.WriteLine("Loading animations.");
             Database.LoadAnimations();
-            Console.WriteLine("Loading resources.");
             Database.LoadResources();
-            Console.WriteLine("Loading quests.");
             Database.LoadQuests();
-            Console.WriteLine("Loading classes.");
             if (Database.LoadClasses() == Constants.MaxClasses)
             {
                 Console.WriteLine("Failed to load classes. Creating default class.");
                 Database.CreateDefaultClass();
             }
-            Console.WriteLine("Loading maps.");
             Database.LoadMaps();
-            Console.WriteLine("Opening MySQL connection.");
             Database.InitMySql();
-			if (File.Exists("Resources/Tilesets.dat")) {
-				Globals.Tilesets = File.ReadAllLines("Resources/Tilesets.dat");
-			}
-            Console.WriteLine("Starting network.");
+            if (File.Exists("Resources/Tilesets.dat"))
+            {
+                Globals.Tilesets = File.ReadAllLines("Resources/Tilesets.dat");
+            }
             var networkBase = new Network();
             Globals.GameTime = Globals.Rand.Next(0, 2400);
             Console.WriteLine("Randomly set game time to " + Globals.GameTime);
             Console.WriteLine("Server Started.");
-            var serverLoop = new ServerLoop(networkBase);
+            logicThread = new Thread(() => ServerLoop.RunServerLoop(networkBase));
+            logicThread.Start();
+            Console.WriteLine("Type exit to shutdown the server, or help for a list of commands.");
+            Console.Write("> ");
+            string command = Console.ReadLine();
+            while (command != "exit")
+            {
+                switch (command)
+                {
+                    case "help":
+                        Console.WriteLine("To be implemented.");
+                        break;
+                    default:
+                        Console.WriteLine("Command not recoginized. Enter help for a list of commands.");
+                        break;
+                }
+                Console.Write("> ");
+                command = Console.ReadLine();
+            }
+            logicThread.Abort();
+            return;
+        }
 
-		}
 
-
-	}
+    }
 }
