@@ -185,7 +185,7 @@ namespace Intersect_Server.Classes
         {
             if (newMap < 0 || newMap >= Globals.GameMaps.Length || Globals.GameMaps[newMap] == null || Globals.GameMaps[newMap].Deleted == 1)
             {
-                Console.WriteLine("Failed to warp player to new map -- warping to /spawn/.");
+                Globals.GeneralLogs.Add("Failed to warp player to new map -- warping to /spawn/.");
                 WarpToSpawn(true);
                 return;
             }

@@ -82,7 +82,7 @@ namespace Intersect_Server.Classes
                 try
                 {
                     var readbytes = myStream.EndRead(ar);
-                    if (readbytes <= 0) { Console.WriteLine("No bytes read, disconnecting."); HandleDisconnect(); return; }
+                    if (readbytes <= 0) { Globals.GeneralLogs.Add("No bytes read, disconnecting."); HandleDisconnect(); return; }
                     newBytes = new byte[readbytes];
                     Buffer.BlockCopy(readBuff, 0, newBytes, 0, readbytes);
                     _myBuffer.WriteBytes(newBytes);
@@ -112,7 +112,7 @@ namespace Intersect_Server.Classes
                 }
                 catch (Exception)
                 {
-                    Console.WriteLine("Socket end read error.");
+                    Globals.GeneralLogs.Add("Socket end read error.");
                     HandleDisconnect();
                     return;
                 }
@@ -130,7 +130,7 @@ namespace Intersect_Server.Classes
                 mySocket = null;
                 try
                 {
-                    Console.WriteLine("Client disconnected.");
+                    Globals.GeneralLogs.Add("Client disconnected.");
                     if (EntityIndex > -1 && Globals.Entities[EntityIndex] != null)
                     {
                         Database.SavePlayer(Globals.Clients[ClientIndex]);
@@ -187,16 +187,6 @@ namespace Intersect_Server.Classes
             } while (true);
         }
 
-        private void HandlePacket(byte[] packet)
-        {
-            var buff = new ByteBuffer();
-            buff.WriteBytes(packet);
-            var tempStr = buff.ReadString();
-            Console.WriteLine(tempStr);
-            SendPacket(packet);
-            buff.Dispose();
-        }
-
         public void SendPacket(byte[] packet)
         {
             var buff = new ByteBuffer();
@@ -211,9 +201,9 @@ namespace Intersect_Server.Classes
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Send exception, disconnecting.");
-                Console.WriteLine(ex.InnerException);
-                Console.WriteLine(ex.ToString());
+                Globals.GeneralLogs.Add("Send exception, disconnecting.");
+                Globals.GeneralLogs.Add(ex.InnerException.ToString());
+                Globals.GeneralLogs.Add(ex.ToString());
                 HandleDisconnect();
                 return;
             }

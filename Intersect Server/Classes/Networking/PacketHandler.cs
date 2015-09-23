@@ -163,7 +163,7 @@ namespace Intersect_Server.Classes
                     HandleQuestData(client, packet);
                     break;
                 default:
-                    Console.WriteLine(@"Non implemented packet received: " + packetHeader);
+                    Globals.GeneralLogs.Add(@"Non implemented packet received: " + packetHeader);
                     break;
             }
 
@@ -188,7 +188,7 @@ namespace Intersect_Server.Classes
                 {
                     Globals.Entities[index] = new Player(index, client) { MyAccount = username };
                     client.Entity = (Player)Globals.Entities[index];
-                    Console.WriteLine((((Player)Globals.Entities[index]).MyAccount) + " logged in.");
+                    Globals.GeneralLogs.Add((((Player)Globals.Entities[index]).MyAccount) + " logged in.");
                     client.Id = Database.GetUserId(username);
 
                     if (Database.LoadPlayer(client))
@@ -572,7 +572,7 @@ namespace Intersect_Server.Classes
                     Database.CreateAccount(username, password, email);
                     client.Id = Database.GetUserId(username);
                     ((Player)Globals.Entities[index]).MyAccount = username;
-                    Console.WriteLine(Globals.Entities[index].MyName + " logged in.");
+                    Globals.GeneralLogs.Add(Globals.Entities[index].MyName + " logged in.");
                     for (int i = 0; i < Constants.MaxClasses; i++)
                     {
                         PacketSender.SendClass(client, i);
@@ -635,7 +635,7 @@ namespace Intersect_Server.Classes
                 }
 
                 Database.SavePlayer(client);
-                Console.WriteLine((((Player)Globals.Entities[index]).MyAccount) + " has created a character.");
+                Globals.GeneralLogs.Add((((Player)Globals.Entities[index]).MyAccount) + " has created a character.");
                 PacketSender.SendJoinGame(client);
             }
             bf.Dispose();

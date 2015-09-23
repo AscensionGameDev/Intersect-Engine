@@ -69,22 +69,101 @@ namespace Intersect_Server.Classes
             Console.WriteLine("Type exit to shutdown the server, or help for a list of commands.");
             Console.Write("> ");
             string command = Console.ReadLine();
-            while (command != "exit")
+            while (true)
             {
-                switch (command)
+                command = command.Trim();
+                string[] commandsplit = command.Split(' ');
+                switch (commandsplit[0])
                 {
+                    case "admin":
+                        if (commandsplit.Length > 1)
+                        {
+                            switch (commandsplit[1])
+                            {
+                                case "/?":
+                                    Console.WriteLine(@"    Usage: admin [login] [/?]");
+                                    Console.WriteLine(@"    Desc: Turns a selected player into an admin with access to logon through the editor.");
+                                    break;
+                                default:
+                                    //Try to admin the player
+                                    break;
+                            }
+                        }
+                        else
+                        {
+                            Console.WriteLine(@"    Syntax Error: Expected parameter not found type " + commandsplit[0] + " /? for usage information.");
+                        }
+                        break;
+                    case "deadmin":
+                        if (commandsplit.Length > 1)
+                        {
+                            switch (commandsplit[1])
+                            {
+                                case "/?":
+                                    Console.WriteLine(@"    Usage: deadmin [login] [/?]");
+                                    Console.WriteLine(@"    Desc: Removes admin access to a specific account revoking editor access.");
+                                    break;
+                                default:
+                                    //Try to deadmin the player
+                                    break;
+                            }
+                        }
+                        else
+                        {
+                            Console.WriteLine(@"    Syntax Error: Expected parameter not found type " + commandsplit[0] + " /? for usage information.");
+                        }
+                        break;
+                    case "exit":
+                        if (commandsplit.Length > 1)
+                        {
+                            switch (commandsplit[1])
+                            {
+                                case "/?":
+                                    Console.WriteLine(@"    Usage: exit [/?]");
+                                    Console.WriteLine(@"    Desc: Closes down the server.");
+                                    break;
+                                default:
+                                    Console.WriteLine(@"    Syntax Error: Parameter not recoginized. Type " + commandsplit[0] + " /? for usage information.");
+                                    break;
+                            }
+                        }
+                        else
+                        {
+                            logicThread.Abort();
+                            return;
+                        }
+                        break;
                     case "help":
-                        Console.WriteLine("To be implemented.");
+                        if (commandsplit.Length > 1)
+                        {
+                            switch (commandsplit[1])
+                            {
+                                case "/?":
+                                    Console.WriteLine(@"    Usage: help [/?]");
+                                    Console.WriteLine(@"    Desc: Displays the list of available commands.");
+                                    break;
+                                default:
+                                    Console.WriteLine(@"    Syntax Error: Parameter not recoginized. Type " + commandsplit[0] + " /? for usage information.");
+                                    break;
+                            }
+                        }
+                        else
+                        {
+                            Console.WriteLine(@"    List of available commands:");
+                            Console.WriteLine(@"    admin    -   makes a specified user an admin");
+                            Console.WriteLine(@"    deadmin    -   removes admin powers from a specified user");
+                            Console.WriteLine(@"    exit    -   closes the server");
+                            Console.WriteLine(@"    help    -   displays list of available commands");
+                            Console.WriteLine(@"    Type in any command followed by /? for parameters and usage information.");
+                        }
                         break;
                     default:
-                        Console.WriteLine("Command not recoginized. Enter help for a list of commands.");
+                        Console.WriteLine("    Command not recoginized. Enter help for a list of commands.");
                         break;
                 }
                 Console.Write("> ");
                 command = Console.ReadLine();
             }
-            logicThread.Abort();
-            return;
         }
 
 

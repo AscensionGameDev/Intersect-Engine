@@ -28,6 +28,9 @@ namespace Intersect_Server.Classes
 	public static class Globals
 	{
 
+        //Console Variables
+        public static List<string> GeneralLogs = new List<string>();
+
         //Options
         public static int ServerPort = 4501;
         public static string MySqlHost = "localhost";

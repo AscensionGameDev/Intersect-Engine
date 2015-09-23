@@ -47,9 +47,9 @@ namespace Intersect_Server.Classes
 				Globals.Clients [tempIndex] = new Client (tempIndex, Globals.FindOpenEntity (), client);
 				var entityIndex = Globals.Clients [tempIndex].EntityIndex;
                 Globals.Entities[entityIndex] = new Player(entityIndex, Globals.Clients[tempIndex]);
-				Console.WriteLine ("Client connected using client index of " + tempIndex);
+                Globals.GeneralLogs.Add("Client connected using client index of " + tempIndex);
 			} else {
-				Console.WriteLine ("Rejecting client due to lack of space.");
+                Globals.GeneralLogs.Add("Rejecting client due to lack of space.");
 			}
 		}
 

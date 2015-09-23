@@ -130,15 +130,17 @@ namespace Intersect_Server.Classes
                 using (var mysqlConn = new MySqlConnection(ConnectionString))
                 {
                     mysqlConn.Open();
-                    Console.WriteLine("Connected to MySQL successfully.");
-                    Console.WriteLine("Checking table integrity.");
+                    Globals.GeneralLogs.Add("Connected to MySQL successfully.");
+                    Globals.GeneralLogs.Add("Checking table integrity.");
                     CheckTables();
-                    Console.WriteLine("Server has " + GetRegisteredPlayers() + " registered players.");
+                    Globals.GeneralLogs.Add("Server has " + GetRegisteredPlayers() + " registered players.");
                 }
             }
             catch (Exception)
             {
+                Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine("Could not connect to the MySQL database. Players will fail to login or create accounts.");
+                Console.ForegroundColor = ConsoleColor.White;
             }
         }
         private static void CheckTables()
