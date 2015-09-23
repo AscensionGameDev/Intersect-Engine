@@ -60,6 +60,7 @@ namespace Intersect_Editor.Forms
             this.hideFogToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.hideOverlayToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.mapListToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.hideTilePreviewToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.contentEditorsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.itemEditorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.npcEditorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -67,6 +68,7 @@ namespace Intersect_Editor.Forms
             this.animationEditorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.resourceEditorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.classEditorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.questEditorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
@@ -91,7 +93,6 @@ namespace Intersect_Editor.Forms
             this.vS2012LightTheme1 = new WeifenLuo.WinFormsUI.Docking.VS2012LightTheme();
             this.dockLeft = new WeifenLuo.WinFormsUI.Docking.DockPanel();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
-            this.hideTilePreviewToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip.SuspendLayout();
             this.toolStrip1.SuspendLayout();
             this.SuspendLayout();
@@ -207,6 +208,13 @@ namespace Intersect_Editor.Forms
             this.mapListToolStripMenuItem.Text = "Map List";
             this.mapListToolStripMenuItem.Click += new System.EventHandler(this.mapListToolStripMenuItem_Click);
             // 
+            // hideTilePreviewToolStripMenuItem
+            // 
+            this.hideTilePreviewToolStripMenuItem.Name = "hideTilePreviewToolStripMenuItem";
+            this.hideTilePreviewToolStripMenuItem.Size = new System.Drawing.Size(165, 22);
+            this.hideTilePreviewToolStripMenuItem.Text = "Hide Tile Preview";
+            this.hideTilePreviewToolStripMenuItem.Click += new System.EventHandler(this.hideTilePreviewToolStripMenuItem_Click);
+            // 
             // contentEditorsToolStripMenuItem
             // 
             this.contentEditorsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -215,7 +223,8 @@ namespace Intersect_Editor.Forms
             this.spellEditorToolStripMenuItem,
             this.animationEditorToolStripMenuItem,
             this.resourceEditorToolStripMenuItem,
-            this.classEditorToolStripMenuItem});
+            this.classEditorToolStripMenuItem,
+            this.questEditorToolStripMenuItem});
             this.contentEditorsToolStripMenuItem.Name = "contentEditorsToolStripMenuItem";
             this.contentEditorsToolStripMenuItem.Size = new System.Drawing.Size(101, 20);
             this.contentEditorsToolStripMenuItem.Text = "Content Editors";
@@ -261,6 +270,13 @@ namespace Intersect_Editor.Forms
             this.classEditorToolStripMenuItem.Size = new System.Drawing.Size(164, 22);
             this.classEditorToolStripMenuItem.Text = "Class Editor";
             this.classEditorToolStripMenuItem.Click += new System.EventHandler(this.classEditorToolStripMenuItem_Click);
+            // 
+            // questEditorToolStripMenuItem
+            // 
+            this.questEditorToolStripMenuItem.Name = "questEditorToolStripMenuItem";
+            this.questEditorToolStripMenuItem.Size = new System.Drawing.Size(164, 22);
+            this.questEditorToolStripMenuItem.Text = "Quest Editor";
+            this.questEditorToolStripMenuItem.Click += new System.EventHandler(this.questEditorToolStripMenuItem_Click);
             // 
             // helpToolStripMenuItem
             // 
@@ -533,13 +549,6 @@ namespace Intersect_Editor.Forms
             this.statusStrip1.TabIndex = 10;
             this.statusStrip1.Text = "statusStrip1";
             // 
-            // hideTilePreviewToolStripMenuItem
-            // 
-            this.hideTilePreviewToolStripMenuItem.Name = "hideTilePreviewToolStripMenuItem";
-            this.hideTilePreviewToolStripMenuItem.Size = new System.Drawing.Size(165, 22);
-            this.hideTilePreviewToolStripMenuItem.Text = "Hide Tile Preview";
-            this.hideTilePreviewToolStripMenuItem.Click += new System.EventHandler(this.hideTilePreviewToolStripMenuItem_Click);
-            // 
             // FrmMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -614,6 +623,7 @@ namespace Intersect_Editor.Forms
         private ToolStripSeparator toolStripSeparator5;
         private ToolStripButton toolStripBtnRun;
         private ToolStripMenuItem hideTilePreviewToolStripMenuItem;
+        private ToolStripMenuItem questEditorToolStripMenuItem;
     }
 }
 

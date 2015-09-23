@@ -201,6 +201,22 @@ namespace Intersect_Editor.Classes
             Network.SendPacket(bf.ToArray());
         }
 
+        public static void SendQuestEditor()
+        {
+            var bf = new ByteBuffer();
+            bf.WriteLong((int)Enums.ClientPackets.OpenQuestEditor);
+            Network.SendPacket(bf.ToArray());
+        }
+
+        public static void SendQuest(int QuestNum, byte[] QuestData)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteLong((int)Enums.ClientPackets.SaveQuest);
+            bf.WriteInteger(QuestNum);
+            bf.WriteBytes(QuestData);
+            Network.SendPacket(bf.ToArray());
+        }
+
         public static void SendMapListMove(int srcType, int srcId, int destType, int destId)
         {
             ByteBuffer bf = new ByteBuffer();

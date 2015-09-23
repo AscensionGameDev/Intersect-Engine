@@ -44,6 +44,7 @@ namespace Intersect_Editor.Forms
         private frmResource _resourceEditor;
         private frmSpell _spellEditor;
         private frmClass _classEditor;
+        private frmQuest _questEditor;
 
         //Initialization & Setup Functions
         public FrmMain()
@@ -241,6 +242,10 @@ namespace Intersect_Editor.Forms
         {
             PacketSender.SendClassEditor();
         }
+        private void questEditorToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            PacketSender.SendQuestEditor();
+        }
 
         //ToolStrip Functions
         private void toolStripBtnNewMap_Click(object sender, EventArgs e)
@@ -341,6 +346,14 @@ namespace Intersect_Editor.Forms
                             _classEditor = new frmClass();
                             _classEditor.InitEditor();
                             _classEditor.Show();
+                        }
+                        break;
+                    case (int)Enums.EditorTypes.Quest:
+                        if (_questEditor == null || _questEditor.Visible == false)
+                        {
+                            _questEditor = new frmQuest();
+                            _questEditor.InitEditor();
+                            _questEditor.Show();
                         }
                         break;
                     default:

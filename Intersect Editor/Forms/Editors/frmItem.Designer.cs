@@ -222,6 +222,7 @@ namespace Intersect_Editor.Forms
             this.scrlAnim.Name = "scrlAnim";
             this.scrlAnim.Size = new System.Drawing.Size(176, 18);
             this.scrlAnim.TabIndex = 10;
+            this.scrlAnim.Scroll += new System.Windows.Forms.ScrollEventHandler(this.scrlAnim_Scroll);
             this.scrlAnim.ValueChanged += new System.EventHandler(this.scrlAnim_Scroll);
             // 
             // lblAnim

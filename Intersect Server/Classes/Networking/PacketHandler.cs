@@ -156,6 +156,12 @@ namespace Intersect_Server.Classes
                 case Enums.ClientPackets.CreateCharacter:
                     HandleCreateCharacter(client, packet);
                     break;
+                case Enums.ClientPackets.OpenQuestEditor:
+                    HandleQuestEditor(client);
+                    break;
+                case Enums.ClientPackets.SaveQuest:
+                    HandleQuestData(client, packet);
+                    break;
                 default:
                     Console.WriteLine(@"Non implemented packet received: " + packetHeader);
                     break;
@@ -852,6 +858,25 @@ namespace Intersect_Server.Classes
                 PacketSender.SendClass(client, i);
             }
             PacketSender.SendClassEditor(client);
+        }
+
+        private static void HandleQuestData(Client client, byte[] packet)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteBytes(packet);
+            var questNum = bf.ReadInteger();
+            Globals.GameQuests[questNum].Load(bf.ReadBytes(bf.Length()));
+            Globals.GameQuests[questNum].Save(questNum);
+            bf.Dispose();
+        }
+
+        private static void HandleQuestEditor(Client client)
+        {
+            for (var i = 0; i < Constants.MaxQuests; i++)
+            {
+                PacketSender.SendQuest(client, i);
+            }
+            PacketSender.SendQuestEditor(client);
         }
 
         private static void HandleMapListUpdate(Client client, byte[] packet)

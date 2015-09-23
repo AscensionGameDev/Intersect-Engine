@@ -289,6 +289,10 @@ namespace Intersect_Server.Classes
             {
                 SendClass(client, i);
             }
+            for (int i = 0; i < Constants.MaxQuests; i++)
+            {
+                SendQuest(client, i);
+            }
         }
 
         public static void SendGlobalMsg(string message)
@@ -797,6 +801,24 @@ namespace Intersect_Server.Classes
         {
             var bf = new ByteBuffer();
             bf.WriteLong((int)Enums.ServerPackets.CreateCharacter);
+            client.SendPacket(bf.ToArray());
+            bf.Dispose();
+        }
+
+        public static void SendQuest(Client client, int questNum)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteLong((int)Enums.ServerPackets.QuestData);
+            bf.WriteInteger(questNum);
+            bf.WriteBytes(Globals.GameQuests[questNum].QuestData());
+            client.SendPacket(bf.ToArray());
+            bf.Dispose();
+        }
+
+        public static void SendQuestEditor(Client client)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteLong((int)Enums.ServerPackets.OpenQuestEditor);
             client.SendPacket(bf.ToArray());
             bf.Dispose();
         }

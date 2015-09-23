@@ -42,6 +42,8 @@ namespace Intersect_Server.Classes
             Database.LoadAnimations();
             Console.WriteLine("Loading resources.");
             Database.LoadResources();
+            Console.WriteLine("Loading quests.");
+            Database.LoadQuests();
             Console.WriteLine("Loading classes.");
             if (Database.LoadClasses() == Constants.MaxClasses)
             {

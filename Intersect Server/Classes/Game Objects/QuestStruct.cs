@@ -24,7 +24,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 
-namespace Intersect_Editor.Classes
+namespace Intersect_Server.Classes
 {
     public class QuestStruct
     {
@@ -77,7 +77,6 @@ namespace Intersect_Editor.Classes
                 }
                 Tasks.Add(Q);
             }
-            if (Tasks.Count == 0) { Tasks.Add(new QuestTask()); }
 
             myBuffer.Dispose();
         }
@@ -112,6 +111,14 @@ namespace Intersect_Editor.Classes
             }
 
             return myBuffer.ToArray();
+        }
+
+        public void Save(int questNum)
+        {
+            byte[] data = QuestData();
+            Stream stream = new FileStream("Resources/Quests/" + questNum + ".qst", FileMode.OpenOrCreate);
+            stream.Write(data, 0, data.Length);
+            stream.Close();
         }
 
         public class QuestTask

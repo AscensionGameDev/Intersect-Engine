@@ -1,4 +1,4 @@
-﻿namespace Intersect_Editor.Forms.Editors
+﻿namespace Intersect_Editor.Forms
 {
     partial class frmQuest
     {
@@ -40,10 +40,11 @@
             this.label2 = new System.Windows.Forms.Label();
             this.txtName = new System.Windows.Forms.TextBox();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
-            this.label8 = new System.Windows.Forms.Label();
-            this.hScrollBar4 = new System.Windows.Forms.HScrollBar();
-            this.label7 = new System.Windows.Forms.Label();
-            this.hScrollBar3 = new System.Windows.Forms.HScrollBar();
+            this.cmbClass = new System.Windows.Forms.ComboBox();
+            this.lblVariableValue = new System.Windows.Forms.Label();
+            this.scrlVariableValue = new System.Windows.Forms.HScrollBar();
+            this.lblVariable = new System.Windows.Forms.Label();
+            this.scrlVariable = new System.Windows.Forms.HScrollBar();
             this.lblSwitch = new System.Windows.Forms.Label();
             this.scrlSwitch = new System.Windows.Forms.HScrollBar();
             this.lblQuest = new System.Windows.Forms.Label();
@@ -59,14 +60,14 @@
             this.lblObjective1 = new System.Windows.Forms.Label();
             this.scrlObjective2 = new System.Windows.Forms.HScrollBar();
             this.scrlObjective1 = new System.Windows.Forms.HScrollBar();
-            this.radioButton3 = new System.Windows.Forms.RadioButton();
-            this.radioButton2 = new System.Windows.Forms.RadioButton();
-            this.radioButton1 = new System.Windows.Forms.RadioButton();
+            this.rbEvent = new System.Windows.Forms.RadioButton();
+            this.rbNpc = new System.Windows.Forms.RadioButton();
+            this.rbItem = new System.Windows.Forms.RadioButton();
             this.groupBox5 = new System.Windows.Forms.GroupBox();
             this.txtAmount = new System.Windows.Forms.TextBox();
             this.lblAmount = new System.Windows.Forms.Label();
-            this.scrlDropChance = new System.Windows.Forms.HScrollBar();
-            this.lblExperience = new System.Windows.Forms.Label();
+            this.scrlExp = new System.Windows.Forms.HScrollBar();
+            this.lblExp = new System.Windows.Forms.Label();
             this.scrlItemReward = new System.Windows.Forms.HScrollBar();
             this.lblItemReward = new System.Windows.Forms.Label();
             this.scrlIndex = new System.Windows.Forms.HScrollBar();
@@ -74,11 +75,10 @@
             this.groupBox6 = new System.Windows.Forms.GroupBox();
             this.txtDesc = new System.Windows.Forms.TextBox();
             this.label4 = new System.Windows.Forms.Label();
-            this.label3 = new System.Windows.Forms.Label();
-            this.hScrollBar1 = new System.Windows.Forms.HScrollBar();
+            this.lblTask = new System.Windows.Forms.Label();
+            this.scrlTask = new System.Windows.Forms.HScrollBar();
             this.lblMaxTasks = new System.Windows.Forms.Label();
             this.scrlMaxTasks = new System.Windows.Forms.HScrollBar();
-            this.cmbClass = new System.Windows.Forms.ComboBox();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -109,6 +109,7 @@
             this.btnCancel.TabIndex = 4;
             this.btnCancel.Text = "Cancel";
             this.btnCancel.UseVisualStyleBackColor = true;
+            this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
             // 
             // btnDelete
             // 
@@ -119,6 +120,7 @@
             this.btnDelete.TabIndex = 3;
             this.btnDelete.Text = "Delete";
             this.btnDelete.UseVisualStyleBackColor = true;
+            this.btnDelete.Click += new System.EventHandler(this.btnDelete_Click);
             // 
             // btnSave
             // 
@@ -128,6 +130,7 @@
             this.btnSave.TabIndex = 2;
             this.btnSave.Text = "Save";
             this.btnSave.UseVisualStyleBackColor = true;
+            this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
             // 
             // lstQuests
             // 
@@ -136,6 +139,7 @@
             this.lstQuests.Name = "lstQuests";
             this.lstQuests.Size = new System.Drawing.Size(191, 251);
             this.lstQuests.TabIndex = 1;
+            this.lstQuests.Click += new System.EventHandler(this.lstQuests_Click);
             // 
             // groupBox2
             // 
@@ -162,6 +166,7 @@
             this.txtEndDesc.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.txtEndDesc.Size = new System.Drawing.Size(151, 51);
             this.txtEndDesc.TabIndex = 28;
+            this.txtEndDesc.TextChanged += new System.EventHandler(this.txtEndDesc_TextChanged);
             // 
             // label5
             // 
@@ -181,6 +186,7 @@
             this.txtStartDesc.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.txtStartDesc.Size = new System.Drawing.Size(151, 51);
             this.txtStartDesc.TabIndex = 26;
+            this.txtStartDesc.TextChanged += new System.EventHandler(this.txtStartDesc_TextChanged);
             // 
             // label2
             // 
@@ -197,14 +203,15 @@
             this.txtName.Name = "txtName";
             this.txtName.Size = new System.Drawing.Size(151, 20);
             this.txtName.TabIndex = 1;
+            this.txtName.TextChanged += new System.EventHandler(this.txtName_TextChanged);
             // 
             // groupBox3
             // 
             this.groupBox3.Controls.Add(this.cmbClass);
-            this.groupBox3.Controls.Add(this.label8);
-            this.groupBox3.Controls.Add(this.hScrollBar4);
-            this.groupBox3.Controls.Add(this.label7);
-            this.groupBox3.Controls.Add(this.hScrollBar3);
+            this.groupBox3.Controls.Add(this.lblVariableValue);
+            this.groupBox3.Controls.Add(this.scrlVariableValue);
+            this.groupBox3.Controls.Add(this.lblVariable);
+            this.groupBox3.Controls.Add(this.scrlVariable);
             this.groupBox3.Controls.Add(this.lblSwitch);
             this.groupBox3.Controls.Add(this.scrlSwitch);
             this.groupBox3.Controls.Add(this.lblQuest);
@@ -221,56 +228,71 @@
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Requirements";
             // 
-            // label8
+            // cmbClass
             // 
-            this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(10, 175);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(87, 13);
-            this.label8.TabIndex = 13;
-            this.label8.Text = "Variable Value: 0";
+            this.cmbClass.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbClass.FormattingEnabled = true;
+            this.cmbClass.Items.AddRange(new object[] {
+            "None"});
+            this.cmbClass.Location = new System.Drawing.Point(159, 15);
+            this.cmbClass.Name = "cmbClass";
+            this.cmbClass.Size = new System.Drawing.Size(81, 21);
+            this.cmbClass.TabIndex = 14;
+            this.cmbClass.Click += new System.EventHandler(this.cmbClass_Click);
             // 
-            // hScrollBar4
+            // lblVariableValue
             // 
-            this.hScrollBar4.LargeChange = 1;
-            this.hScrollBar4.Location = new System.Drawing.Point(134, 175);
-            this.hScrollBar4.Name = "hScrollBar4";
-            this.hScrollBar4.Size = new System.Drawing.Size(106, 17);
-            this.hScrollBar4.TabIndex = 12;
+            this.lblVariableValue.AutoSize = true;
+            this.lblVariableValue.Location = new System.Drawing.Point(10, 175);
+            this.lblVariableValue.Name = "lblVariableValue";
+            this.lblVariableValue.Size = new System.Drawing.Size(87, 13);
+            this.lblVariableValue.TabIndex = 13;
+            this.lblVariableValue.Text = "Variable Value: 0";
             // 
-            // label7
+            // scrlVariableValue
             // 
-            this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(10, 150);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(86, 13);
-            this.label7.TabIndex = 11;
-            this.label7.Text = "Variable: 0 None";
+            this.scrlVariableValue.LargeChange = 1;
+            this.scrlVariableValue.Location = new System.Drawing.Point(159, 175);
+            this.scrlVariableValue.Name = "scrlVariableValue";
+            this.scrlVariableValue.Size = new System.Drawing.Size(81, 17);
+            this.scrlVariableValue.TabIndex = 12;
+            this.scrlVariableValue.ValueChanged += new System.EventHandler(this.scrlVariableValue_ValueChanged);
             // 
-            // hScrollBar3
+            // lblVariable
             // 
-            this.hScrollBar3.LargeChange = 1;
-            this.hScrollBar3.Location = new System.Drawing.Point(134, 150);
-            this.hScrollBar3.Name = "hScrollBar3";
-            this.hScrollBar3.Size = new System.Drawing.Size(106, 17);
-            this.hScrollBar3.TabIndex = 10;
+            this.lblVariable.AutoSize = true;
+            this.lblVariable.Location = new System.Drawing.Point(10, 150);
+            this.lblVariable.Name = "lblVariable";
+            this.lblVariable.Size = new System.Drawing.Size(57, 13);
+            this.lblVariable.TabIndex = 11;
+            this.lblVariable.Text = "Variable: 0";
+            // 
+            // scrlVariable
+            // 
+            this.scrlVariable.LargeChange = 1;
+            this.scrlVariable.Location = new System.Drawing.Point(159, 150);
+            this.scrlVariable.Name = "scrlVariable";
+            this.scrlVariable.Size = new System.Drawing.Size(81, 17);
+            this.scrlVariable.TabIndex = 10;
+            this.scrlVariable.ValueChanged += new System.EventHandler(this.scrlVariable_ValueChanged);
             // 
             // lblSwitch
             // 
             this.lblSwitch.AutoSize = true;
             this.lblSwitch.Location = new System.Drawing.Point(10, 123);
             this.lblSwitch.Name = "lblSwitch";
-            this.lblSwitch.Size = new System.Drawing.Size(80, 13);
+            this.lblSwitch.Size = new System.Drawing.Size(51, 13);
             this.lblSwitch.TabIndex = 9;
-            this.lblSwitch.Text = "Switch: 0 None";
+            this.lblSwitch.Text = "Switch: 0";
             // 
             // scrlSwitch
             // 
             this.scrlSwitch.LargeChange = 1;
-            this.scrlSwitch.Location = new System.Drawing.Point(134, 123);
+            this.scrlSwitch.Location = new System.Drawing.Point(159, 123);
             this.scrlSwitch.Name = "scrlSwitch";
-            this.scrlSwitch.Size = new System.Drawing.Size(106, 17);
+            this.scrlSwitch.Size = new System.Drawing.Size(81, 17);
             this.scrlSwitch.TabIndex = 8;
+            this.scrlSwitch.ValueChanged += new System.EventHandler(this.scrlSwitch_ValueChanged);
             // 
             // lblQuest
             // 
@@ -284,10 +306,11 @@
             // scrlQuest
             // 
             this.scrlQuest.LargeChange = 1;
-            this.scrlQuest.Location = new System.Drawing.Point(134, 98);
+            this.scrlQuest.Location = new System.Drawing.Point(159, 98);
             this.scrlQuest.Name = "scrlQuest";
-            this.scrlQuest.Size = new System.Drawing.Size(106, 17);
+            this.scrlQuest.Size = new System.Drawing.Size(81, 17);
             this.scrlQuest.TabIndex = 6;
+            this.scrlQuest.ValueChanged += new System.EventHandler(this.scrlQuest_ValueChanged);
             // 
             // lblLevel
             // 
@@ -319,18 +342,20 @@
             // scrlLevel
             // 
             this.scrlLevel.LargeChange = 1;
-            this.scrlLevel.Location = new System.Drawing.Point(134, 73);
+            this.scrlLevel.Location = new System.Drawing.Point(159, 73);
             this.scrlLevel.Name = "scrlLevel";
-            this.scrlLevel.Size = new System.Drawing.Size(106, 17);
+            this.scrlLevel.Size = new System.Drawing.Size(81, 17);
             this.scrlLevel.TabIndex = 2;
+            this.scrlLevel.ValueChanged += new System.EventHandler(this.scrlLevel_ValueChanged);
             // 
             // scrlItem
             // 
             this.scrlItem.LargeChange = 1;
-            this.scrlItem.Location = new System.Drawing.Point(134, 47);
+            this.scrlItem.Location = new System.Drawing.Point(159, 47);
             this.scrlItem.Name = "scrlItem";
-            this.scrlItem.Size = new System.Drawing.Size(106, 17);
+            this.scrlItem.Size = new System.Drawing.Size(81, 17);
             this.scrlItem.TabIndex = 1;
+            this.scrlItem.ValueChanged += new System.EventHandler(this.scrlItem_ValueChanged);
             // 
             // label1
             // 
@@ -347,9 +372,9 @@
             this.groupBox4.Controls.Add(this.lblObjective1);
             this.groupBox4.Controls.Add(this.scrlObjective2);
             this.groupBox4.Controls.Add(this.scrlObjective1);
-            this.groupBox4.Controls.Add(this.radioButton3);
-            this.groupBox4.Controls.Add(this.radioButton2);
-            this.groupBox4.Controls.Add(this.radioButton1);
+            this.groupBox4.Controls.Add(this.rbEvent);
+            this.groupBox4.Controls.Add(this.rbNpc);
+            this.groupBox4.Controls.Add(this.rbItem);
             this.groupBox4.Location = new System.Drawing.Point(6, 135);
             this.groupBox4.Name = "groupBox4";
             this.groupBox4.Size = new System.Drawing.Size(246, 93);
@@ -382,6 +407,7 @@
             this.scrlObjective2.Name = "scrlObjective2";
             this.scrlObjective2.Size = new System.Drawing.Size(106, 17);
             this.scrlObjective2.TabIndex = 4;
+            this.scrlObjective2.Scroll += new System.Windows.Forms.ScrollEventHandler(this.scrlObjective2_Scroll);
             // 
             // scrlObjective1
             // 
@@ -390,46 +416,50 @@
             this.scrlObjective1.Name = "scrlObjective1";
             this.scrlObjective1.Size = new System.Drawing.Size(106, 17);
             this.scrlObjective1.TabIndex = 3;
+            this.scrlObjective1.ValueChanged += new System.EventHandler(this.scrlObjective1_ValueChanged);
             // 
-            // radioButton3
+            // rbEvent
             // 
-            this.radioButton3.AutoSize = true;
-            this.radioButton3.Location = new System.Drawing.Point(13, 66);
-            this.radioButton3.Name = "radioButton3";
-            this.radioButton3.Size = new System.Drawing.Size(93, 17);
-            this.radioButton3.TabIndex = 2;
-            this.radioButton3.Text = "Event Defined";
-            this.radioButton3.UseVisualStyleBackColor = true;
+            this.rbEvent.AutoSize = true;
+            this.rbEvent.Location = new System.Drawing.Point(13, 66);
+            this.rbEvent.Name = "rbEvent";
+            this.rbEvent.Size = new System.Drawing.Size(93, 17);
+            this.rbEvent.TabIndex = 2;
+            this.rbEvent.Text = "Event Defined";
+            this.rbEvent.UseVisualStyleBackColor = true;
+            this.rbEvent.Click += new System.EventHandler(this.rbEvent_Click);
             // 
-            // radioButton2
+            // rbNpc
             // 
-            this.radioButton2.AutoSize = true;
-            this.radioButton2.Location = new System.Drawing.Point(13, 43);
-            this.radioButton2.Name = "radioButton2";
-            this.radioButton2.Size = new System.Drawing.Size(66, 17);
-            this.radioButton2.TabIndex = 1;
-            this.radioButton2.Text = "Kill Npcs";
-            this.radioButton2.UseVisualStyleBackColor = true;
+            this.rbNpc.AutoSize = true;
+            this.rbNpc.Location = new System.Drawing.Point(13, 43);
+            this.rbNpc.Name = "rbNpc";
+            this.rbNpc.Size = new System.Drawing.Size(66, 17);
+            this.rbNpc.TabIndex = 1;
+            this.rbNpc.Text = "Kill Npcs";
+            this.rbNpc.UseVisualStyleBackColor = true;
+            this.rbNpc.Click += new System.EventHandler(this.rbNpc_Click);
             // 
-            // radioButton1
+            // rbItem
             // 
-            this.radioButton1.AutoSize = true;
-            this.radioButton1.Checked = true;
-            this.radioButton1.Location = new System.Drawing.Point(13, 20);
-            this.radioButton1.Name = "radioButton1";
-            this.radioButton1.Size = new System.Drawing.Size(85, 17);
-            this.radioButton1.TabIndex = 0;
-            this.radioButton1.TabStop = true;
-            this.radioButton1.Text = "Gather Items";
-            this.radioButton1.UseVisualStyleBackColor = true;
+            this.rbItem.AutoSize = true;
+            this.rbItem.Checked = true;
+            this.rbItem.Location = new System.Drawing.Point(13, 20);
+            this.rbItem.Name = "rbItem";
+            this.rbItem.Size = new System.Drawing.Size(85, 17);
+            this.rbItem.TabIndex = 0;
+            this.rbItem.TabStop = true;
+            this.rbItem.Text = "Gather Items";
+            this.rbItem.UseVisualStyleBackColor = true;
+            this.rbItem.Click += new System.EventHandler(this.rbItem_Click);
             // 
             // groupBox5
             // 
             this.groupBox5.BackColor = System.Drawing.SystemColors.Control;
             this.groupBox5.Controls.Add(this.txtAmount);
             this.groupBox5.Controls.Add(this.lblAmount);
-            this.groupBox5.Controls.Add(this.scrlDropChance);
-            this.groupBox5.Controls.Add(this.lblExperience);
+            this.groupBox5.Controls.Add(this.scrlExp);
+            this.groupBox5.Controls.Add(this.lblExp);
             this.groupBox5.Controls.Add(this.scrlItemReward);
             this.groupBox5.Controls.Add(this.lblItemReward);
             this.groupBox5.Controls.Add(this.scrlIndex);
@@ -447,6 +477,7 @@
             this.txtAmount.Name = "txtAmount";
             this.txtAmount.Size = new System.Drawing.Size(106, 20);
             this.txtAmount.TabIndex = 16;
+            this.txtAmount.TextChanged += new System.EventHandler(this.txtAmount_TextChanged);
             // 
             // lblAmount
             // 
@@ -457,23 +488,24 @@
             this.lblAmount.TabIndex = 15;
             this.lblAmount.Text = "Amount:";
             // 
-            // scrlDropChance
+            // scrlExp
             // 
-            this.scrlDropChance.LargeChange = 1;
-            this.scrlDropChance.Location = new System.Drawing.Point(134, 107);
-            this.scrlDropChance.Maximum = 10000;
-            this.scrlDropChance.Name = "scrlDropChance";
-            this.scrlDropChance.Size = new System.Drawing.Size(106, 18);
-            this.scrlDropChance.TabIndex = 14;
+            this.scrlExp.LargeChange = 1;
+            this.scrlExp.Location = new System.Drawing.Point(134, 107);
+            this.scrlExp.Maximum = 10000;
+            this.scrlExp.Name = "scrlExp";
+            this.scrlExp.Size = new System.Drawing.Size(106, 18);
+            this.scrlExp.TabIndex = 14;
+            this.scrlExp.ValueChanged += new System.EventHandler(this.scrlExp_ValueChanged);
             // 
-            // lblExperience
+            // lblExp
             // 
-            this.lblExperience.AutoSize = true;
-            this.lblExperience.Location = new System.Drawing.Point(10, 107);
-            this.lblExperience.Name = "lblExperience";
-            this.lblExperience.Size = new System.Drawing.Size(72, 13);
-            this.lblExperience.TabIndex = 13;
-            this.lblExperience.Text = "Experience: 0";
+            this.lblExp.AutoSize = true;
+            this.lblExp.Location = new System.Drawing.Point(10, 107);
+            this.lblExp.Name = "lblExp";
+            this.lblExp.Size = new System.Drawing.Size(72, 13);
+            this.lblExp.TabIndex = 13;
+            this.lblExp.Text = "Experience: 0";
             // 
             // scrlItemReward
             // 
@@ -483,6 +515,7 @@
             this.scrlItemReward.Name = "scrlItemReward";
             this.scrlItemReward.Size = new System.Drawing.Size(106, 18);
             this.scrlItemReward.TabIndex = 12;
+            this.scrlItemReward.ValueChanged += new System.EventHandler(this.scrlItemReward_ValueChanged);
             // 
             // lblItemReward
             // 
@@ -503,6 +536,7 @@
             this.scrlIndex.Size = new System.Drawing.Size(106, 18);
             this.scrlIndex.TabIndex = 10;
             this.scrlIndex.Value = 1;
+            this.scrlIndex.ValueChanged += new System.EventHandler(this.scrlIndex_ValueChanged);
             // 
             // lblIndex
             // 
@@ -517,8 +551,8 @@
             // 
             this.groupBox6.Controls.Add(this.txtDesc);
             this.groupBox6.Controls.Add(this.label4);
-            this.groupBox6.Controls.Add(this.label3);
-            this.groupBox6.Controls.Add(this.hScrollBar1);
+            this.groupBox6.Controls.Add(this.lblTask);
+            this.groupBox6.Controls.Add(this.scrlTask);
             this.groupBox6.Controls.Add(this.lblMaxTasks);
             this.groupBox6.Controls.Add(this.scrlMaxTasks);
             this.groupBox6.Controls.Add(this.groupBox4);
@@ -539,6 +573,7 @@
             this.txtDesc.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.txtDesc.Size = new System.Drawing.Size(151, 51);
             this.txtDesc.TabIndex = 24;
+            this.txtDesc.TextChanged += new System.EventHandler(this.txtDesc_TextChanged);
             // 
             // label4
             // 
@@ -549,34 +584,35 @@
             this.label4.TabIndex = 23;
             this.label4.Text = "Description:";
             // 
-            // label3
+            // lblTask
             // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(13, 48);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(88, 13);
-            this.label3.TabIndex = 22;
-            this.label3.Text = "Task Selected: 1";
+            this.lblTask.AutoSize = true;
+            this.lblTask.Location = new System.Drawing.Point(13, 48);
+            this.lblTask.Name = "lblTask";
+            this.lblTask.Size = new System.Drawing.Size(88, 13);
+            this.lblTask.TabIndex = 22;
+            this.lblTask.Text = "Task Selected: 1";
             // 
-            // hScrollBar1
+            // scrlTask
             // 
-            this.hScrollBar1.LargeChange = 1;
-            this.hScrollBar1.Location = new System.Drawing.Point(122, 48);
-            this.hScrollBar1.Maximum = 1;
-            this.hScrollBar1.Minimum = 1;
-            this.hScrollBar1.Name = "hScrollBar1";
-            this.hScrollBar1.Size = new System.Drawing.Size(124, 17);
-            this.hScrollBar1.TabIndex = 21;
-            this.hScrollBar1.Value = 1;
+            this.scrlTask.LargeChange = 1;
+            this.scrlTask.Location = new System.Drawing.Point(122, 48);
+            this.scrlTask.Maximum = 1;
+            this.scrlTask.Minimum = 1;
+            this.scrlTask.Name = "scrlTask";
+            this.scrlTask.Size = new System.Drawing.Size(124, 17);
+            this.scrlTask.TabIndex = 21;
+            this.scrlTask.Value = 1;
+            this.scrlTask.ValueChanged += new System.EventHandler(this.scrlTask_ValueChanged);
             // 
             // lblMaxTasks
             // 
             this.lblMaxTasks.AutoSize = true;
             this.lblMaxTasks.Location = new System.Drawing.Point(13, 20);
             this.lblMaxTasks.Name = "lblMaxTasks";
-            this.lblMaxTasks.Size = new System.Drawing.Size(95, 13);
+            this.lblMaxTasks.Size = new System.Drawing.Size(71, 13);
             this.lblMaxTasks.TabIndex = 20;
-            this.lblMaxTasks.Text = "Maximum Tasks: 1";
+            this.lblMaxTasks.Text = "Max Tasks: 1";
             // 
             // scrlMaxTasks
             // 
@@ -588,17 +624,7 @@
             this.scrlMaxTasks.Size = new System.Drawing.Size(124, 17);
             this.scrlMaxTasks.TabIndex = 19;
             this.scrlMaxTasks.Value = 1;
-            // 
-            // cmbClass
-            // 
-            this.cmbClass.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cmbClass.FormattingEnabled = true;
-            this.cmbClass.Items.AddRange(new object[] {
-            "None"});
-            this.cmbClass.Location = new System.Drawing.Point(134, 15);
-            this.cmbClass.Name = "cmbClass";
-            this.cmbClass.Size = new System.Drawing.Size(106, 21);
-            this.cmbClass.TabIndex = 14;
+            this.scrlMaxTasks.ValueChanged += new System.EventHandler(this.scrlMaxTasks_ValueChanged);
             // 
             // frmQuest
             // 
@@ -650,14 +676,14 @@
         private System.Windows.Forms.Label lblObjective1;
         private System.Windows.Forms.HScrollBar scrlObjective2;
         private System.Windows.Forms.HScrollBar scrlObjective1;
-        private System.Windows.Forms.RadioButton radioButton3;
-        private System.Windows.Forms.RadioButton radioButton2;
-        private System.Windows.Forms.RadioButton radioButton1;
+        private System.Windows.Forms.RadioButton rbEvent;
+        private System.Windows.Forms.RadioButton rbNpc;
+        private System.Windows.Forms.RadioButton rbItem;
         private System.Windows.Forms.GroupBox groupBox5;
         private System.Windows.Forms.TextBox txtAmount;
         private System.Windows.Forms.Label lblAmount;
-        private System.Windows.Forms.HScrollBar scrlDropChance;
-        private System.Windows.Forms.Label lblExperience;
+        private System.Windows.Forms.HScrollBar scrlExp;
+        private System.Windows.Forms.Label lblExp;
         private System.Windows.Forms.HScrollBar scrlItemReward;
         private System.Windows.Forms.Label lblItemReward;
         private System.Windows.Forms.HScrollBar scrlIndex;
@@ -667,18 +693,18 @@
         private System.Windows.Forms.GroupBox groupBox6;
         private System.Windows.Forms.TextBox txtDesc;
         private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.HScrollBar hScrollBar1;
+        private System.Windows.Forms.Label lblTask;
+        private System.Windows.Forms.HScrollBar scrlTask;
         private System.Windows.Forms.Label lblMaxTasks;
         private System.Windows.Forms.HScrollBar scrlMaxTasks;
         private System.Windows.Forms.TextBox txtEndDesc;
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.TextBox txtStartDesc;
         private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.Label label8;
-        private System.Windows.Forms.HScrollBar hScrollBar4;
-        private System.Windows.Forms.Label label7;
-        private System.Windows.Forms.HScrollBar hScrollBar3;
+        private System.Windows.Forms.Label lblVariableValue;
+        private System.Windows.Forms.HScrollBar scrlVariableValue;
+        private System.Windows.Forms.Label lblVariable;
+        private System.Windows.Forms.HScrollBar scrlVariable;
         private System.Windows.Forms.Label lblSwitch;
         private System.Windows.Forms.HScrollBar scrlSwitch;
         private System.Windows.Forms.ComboBox cmbClass;

@@ -39,13 +39,27 @@ namespace Intersect_Editor.Forms
 
         private void frmItem_Load(object sender, EventArgs e)
         {
+            int i = 0;
+
             lstItems.SelectedIndex = 0;
             cmbPic.Items.Clear();
             cmbPic.Items.Add("None");
-            for (int i = 0; i < Intersect_Editor.Classes.Graphics.ItemNames.Length; i++)
+
+            for (int n = 0; i < Intersect_Editor.Classes.Graphics.ItemNames.Length; i++)
             {
-                cmbPic.Items.Add(Intersect_Editor.Classes.Graphics.ItemNames[i]);
+                cmbPic.Items.Add(Intersect_Editor.Classes.Graphics.ItemNames[n]);
             }
+
+            while (Globals.GameClasses[i].Name != "")
+            {
+                cmbClass.Items.Add(Globals.GameClasses[i].Name);
+                i = i + 1;
+                if (i >= Constants.MaxClasses)
+                {
+                    break;
+                }
+            }
+
             UpdateEditor();
         }
 

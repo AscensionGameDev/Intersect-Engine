@@ -24,7 +24,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 
-namespace Intersect_Editor.Classes
+namespace Intersect_Client.Classes
 {
     public class QuestStruct
     {
@@ -77,7 +77,6 @@ namespace Intersect_Editor.Classes
                 }
                 Tasks.Add(Q);
             }
-            if (Tasks.Count == 0) { Tasks.Add(new QuestTask()); }
 
             myBuffer.Dispose();
         }

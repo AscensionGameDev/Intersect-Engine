@@ -58,6 +58,9 @@ namespace Intersect_Server.Classes
         //Game Classes
         public static ClassStruct[] GameClasses;
 
+        //Game Quests
+        public static QuestStruct[] GameQuests;
+
 		public static List<Client> Clients = new List<Client>();
 		public static List<Thread> ClientThread = new List<Thread>();
 		public static List<Entity> Entities = new List<Entity>();

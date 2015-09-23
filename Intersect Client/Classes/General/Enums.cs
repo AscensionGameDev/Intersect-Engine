@@ -71,6 +71,8 @@ namespace Intersect_Client.Classes
             SaveClass,
             MapListUpdate,
             CreateCharacter,
+            OpenQuestEditor,
+            SaveQuest,
         }
 
         public enum ServerPackets
@@ -117,6 +119,8 @@ namespace Intersect_Client.Classes
             OpenClassEditor,
             ClassData,
             CreateCharacter,
+            OpenQuestEditor,
+            QuestData,
         }
 
         public enum Stats

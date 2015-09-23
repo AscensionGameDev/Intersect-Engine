@@ -1019,6 +1019,29 @@ namespace Intersect_Server.Classes
             }
         }
 
+        // Quests
+        public static void LoadQuests()
+        {
+            if (!Directory.Exists("Resources/Quests"))
+            {
+                Directory.CreateDirectory("Resources/Quests");
+            }
+            Globals.GameQuests = new QuestStruct[Constants.MaxQuests];
+            for (var i = 0; i < Constants.MaxQuests; i++)
+            {
+                Globals.GameQuests[i] = new QuestStruct();
+                if (!File.Exists("Resources/Quests/" + i + ".qst"))
+                {
+                    Globals.GameQuests[i].Save(i);
+                }
+                else
+                {
+                    Globals.GameQuests[i].Load(File.ReadAllBytes("Resources/Quests/" + i + ".qst"));
+                }
+
+            }
+        }
+
         // Classes
         public static int LoadClasses()
         {

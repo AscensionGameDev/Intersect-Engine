@@ -135,6 +135,9 @@ namespace Intersect_Client.Classes
                     case Enums.ServerPackets.CreateCharacter:
                         HandleCreateCharacter();
                         break;
+                    case Enums.ServerPackets.QuestData:
+                        HandleQuestData(bf.ReadBytes(bf.Length()));
+                        break;
                     default:
                         Console.WriteLine(@"Non implemented packet received: " + packetHeader);
                         break;
@@ -268,6 +271,7 @@ namespace Intersect_Client.Classes
             Globals.GameSpells = new SpellStruct[Constants.MaxSpells];
             Globals.GameResources = new ResourceStruct[Constants.MaxResources];
             Globals.GameClasses = new ClassStruct[Constants.MaxClasses];
+            Globals.GameQuests = new QuestStruct[Constants.MaxQuests];
 
             //Database.LoadMapRevisions();
         }
@@ -687,6 +691,15 @@ namespace Intersect_Client.Classes
             Globals.WaitingOnServer = false;
             Graphics.FadeStage = 1;
             Gui._MenuGui._mainMenu.CreateCharacterCreation();
+        }
+
+        private static void HandleQuestData(byte[] packet)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteBytes(packet);
+            var questNum = bf.ReadInteger();
+            Globals.GameQuests[questNum] = new QuestStruct();
+            Globals.GameQuests[questNum].Load(bf.ReadBytes(bf.Length()));
         }
     }
 }

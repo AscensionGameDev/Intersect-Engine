@@ -1,5 +1,4 @@
-﻿using System;
-/*
+﻿/*
     Intersect Game Engine (Server)
     Copyright (C) 2015  JC Snider, Joe Bridges
     
@@ -20,6 +19,7 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Xml;
@@ -37,6 +37,7 @@ namespace Intersect_Editor.Classes
             Globals.GameAnimations = new AnimationStruct[Constants.MaxAnimations];
             Globals.GameResources = new ResourceStruct[Constants.MaxResources];
             Globals.GameClasses = new ClassStruct[Constants.MaxClasses];
+            Globals.GameQuests = new QuestStruct[Constants.MaxQuests];
             LoadOptions();
         }
 

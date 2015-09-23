@@ -103,6 +103,12 @@ namespace Intersect_Editor.Classes
                 case Enums.ServerPackets.ClassData:
                     HandleClassData(bf.ReadBytes(bf.Length()));
                     break;
+                case Enums.ServerPackets.OpenQuestEditor:
+                    HandleQuestEditor();
+                    break;
+                case Enums.ServerPackets.QuestData:
+                    HandleQuestData(bf.ReadBytes(bf.Length()));
+                    break;
                 default:
                     Console.WriteLine(@"Non implemented packet received: " + packetHeader);
                     break;
@@ -337,6 +343,20 @@ namespace Intersect_Editor.Classes
             var classNum = bf.ReadInteger();
             Globals.GameClasses[classNum] = new ClassStruct();
             Globals.GameClasses[classNum].Load(bf.ReadBytes(bf.Length()));
+        }
+
+        private static void HandleQuestEditor()
+        {
+            Globals.MainForm.BeginInvoke(Globals.MainForm.EditorDelegate, (int)Enums.EditorTypes.Quest);
+        }
+
+        private static void HandleQuestData(byte[] packet)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteBytes(packet);
+            var questNum = bf.ReadInteger();
+            Globals.GameQuests[questNum] = new QuestStruct();
+            Globals.GameQuests[questNum].Load(bf.ReadBytes(bf.Length()));
         }
     }
 }
