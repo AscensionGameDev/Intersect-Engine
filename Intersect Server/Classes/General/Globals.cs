@@ -35,11 +35,11 @@ namespace Intersect_Server.Classes
 
         //Options
         public static int ServerPort = 4501;
-        public static string MySqlHost = "localhost";
+        public static string MySqlHost = "";
         public static int MySqlPort = 3306;
-        public static string MySqlUser = "root";
-        public static string MySqlPass = "pass";
-        public static string MySqldb = "IntersectDB";
+        public static string MySqlUser = "";
+        public static string MySqlPass = "";
+        public static string MySqldb = "";
 
         //Game Maps
 		public static MapStruct[] GameMaps;

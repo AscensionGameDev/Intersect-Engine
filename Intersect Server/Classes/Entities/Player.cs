@@ -38,6 +38,9 @@ namespace Intersect_Server.Classes
         public int[] Equipment = new int[Enums.EquipmentSlots.Count];
         public int StatPoints = 0;
         public string MyAccount = "";
+        public string MyEmail = "";
+        public string MyPassword = "";
+        public string MySalt = "";
         public int Class = 0;
         public int Gender = 0;
         public int Level = 0;

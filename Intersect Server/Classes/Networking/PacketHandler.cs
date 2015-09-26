@@ -568,9 +568,8 @@ namespace Intersect_Server.Classes
                 }
                 else
                 {
-                    Database.CreateAccount(username, password, email);
+                    Database.CreateAccount(((Player)Globals.Entities[index]), username, password, email);
                     client.Id = Database.GetUserId(username);
-                    ((Player)Globals.Entities[index]).MyAccount = username;
                     Globals.GeneralLogs.Add(Globals.Entities[index].MyName + " logged in.");
                     for (int i = 0; i < Constants.MaxClasses; i++)
                     {

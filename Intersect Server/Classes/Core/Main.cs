@@ -54,7 +54,8 @@ namespace Intersect_Server.Classes
                 Database.CreateDefaultClass();
             }
             Database.LoadMaps();
-            Database.InitMySql();
+            Database.LoadPlayerDatabase();
+            Console.WriteLine("Server has " + Database.GetRegisteredPlayers() + " registered players.");
             if (File.Exists("Resources/Tilesets.dat"))
             {
                 Globals.Tilesets = File.ReadAllLines("Resources/Tilesets.dat");

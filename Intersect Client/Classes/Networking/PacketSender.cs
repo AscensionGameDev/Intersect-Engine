@@ -1,4 +1,5 @@
-﻿/*
+﻿using System;
+/*
     The MIT License (MIT)
 
     Copyright (c) 2015 JC Snider, Joe Bridges
@@ -24,6 +25,8 @@
     OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
     SOFTWARE.
 */
+using System.Security.Cryptography;
+using System.Text;
 namespace Intersect_Client.Classes
 {
     public static class PacketSender
@@ -38,9 +41,10 @@ namespace Intersect_Client.Classes
         public static void SendLogin(string username, string password)
         {
             var bf = new ByteBuffer();
+            var sha = new SHA256Managed();
             bf.WriteLong((int)Enums.ClientPackets.Login);
             bf.WriteString(username.ToLower().Trim());
-            bf.WriteString(password.Trim());
+            bf.WriteString(BitConverter.ToString(sha.ComputeHash(Encoding.UTF8.GetBytes(password.Trim()))).Replace("-", ""));
             Network.SendPacket(bf.ToArray());
         }
 
@@ -124,9 +128,10 @@ namespace Intersect_Client.Classes
         public static void SendCreateAccount(string username, string password, string email)
         {
             var bf = new ByteBuffer();
+            var sha = new SHA256Managed();
             bf.WriteLong((int)Enums.ClientPackets.CreateAccount);
             bf.WriteString(username.ToLower().Trim());
-            bf.WriteString(password.Trim());
+            bf.WriteString(BitConverter.ToString(sha.ComputeHash(Encoding.UTF8.GetBytes(password.Trim()))).Replace("-", ""));
             bf.WriteString(email.ToLower().Trim());
             Network.SendPacket(bf.ToArray());
         }

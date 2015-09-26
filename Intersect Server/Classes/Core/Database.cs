@@ -26,15 +26,21 @@ using System.Linq.Expressions;
 using System.Collections.Generic;
 using System.Security.Cryptography.X509Certificates;
 using System.Xml;
+using System.Security.Cryptography;
+using System.Text;
 using MySql.Data.MySqlClient;
-
 namespace Intersect_Server.Classes
 {
     public static class Database
     {
+        public static bool MySQLConnected;
         public static MapGrid[] MapGrids;
         public static string ConnectionString = "";
         public static MapList MapStructure = new MapList();
+
+        public static List<string> Emails = new List<string>();
+        public static List<string> Accounts = new List<string>();
+        public static List<string> Characters = new List<string>();
 
         private enum MySqlFields
         {
@@ -46,8 +52,8 @@ namespace Intersect_Server.Classes
         public static void CheckDirectories()
         {
             if (!Directory.Exists("resources")) { Directory.CreateDirectory("resources"); }
+            if (!Directory.Exists("resources/accounts")) { Directory.CreateDirectory("resources/accounts"); }
         }
-
 
         //Options File
         public static bool LoadOptions()
@@ -61,11 +67,11 @@ namespace Intersect_Server.Classes
                 writer.WriteComment("Config.xml generated automatically by Intersect Server.");
                 writer.WriteStartElement("Config");
                 writer.WriteElementString("ServerPort", "4500");
-                writer.WriteElementString("DBHost", "localhost");
-                writer.WriteElementString("DBPort", "3306");
-                writer.WriteElementString("DBUser", "root");
-                writer.WriteElementString("DBPass", "pass");
-                writer.WriteElementString("DBName", "IntersectDB");
+                writer.WriteElementString("DBHost", "");
+                writer.WriteElementString("DBPort", "");
+                writer.WriteElementString("DBUser", "");
+                writer.WriteElementString("DBPass", "");
+                writer.WriteElementString("DBName", "");
                 writer.WriteEndElement();
                 writer.WriteEndDocument();
                 writer.Flush();
@@ -104,8 +110,129 @@ namespace Intersect_Server.Classes
             return true;
         }
 
-        //MySql
-        public static void InitMySql()
+        //Players General
+        public static void LoadPlayerDatabase()
+        {
+            //This function determines if players should be saved and loaded via XML or MySQL
+            if (Globals.MySqlHost != "")
+            {
+                //Try MySQL
+                if (InitMySql())
+                {
+                    MySQLConnected = true;
+                    Console.WriteLine("Connected to the MySQL database successfully.");
+                    return;
+                }
+                else
+                {
+                    Console.WriteLine("Failed to connect to the MySQL database.");
+                }
+            }
+            Console.WriteLine("Using local file system for account database.");
+            LoadAccounts();
+        }
+        public static bool AccountExists(string accountname)
+        {
+            if (MySQLConnected)
+            {
+                return AccountExistsSQL(accountname);
+            }
+            else
+            {
+                return AccountExistsXML(accountname);
+            }
+        }
+        public static bool EmailInUse(string email)
+        {
+            if (MySQLConnected)
+            {
+                return EmailInUseSQL(email);
+            }
+            else
+            {
+                return EmailInUseXML(email);
+            }
+        }
+        public static bool CharacterNameInUse(string name)
+        {
+            if (MySQLConnected)
+            {
+                return CharacterNameInUseSQL(name);
+            }
+            else
+            {
+                return CharacterNameInUseXML(name);
+            }
+        }
+        public static int GetRegisteredPlayers()
+        {
+            if (MySQLConnected)
+            {
+                return GetRegisteredPlayersSQL();
+            }
+            else
+            {
+                return GetRegisteredPlayersXML();
+            }
+        }
+        public static bool CheckPassword(string username, string password)
+        {
+            if (MySQLConnected)
+            {
+                return CheckPasswordSQL(username,password);
+            }
+            else
+            {
+                return CheckPasswordXML(username,password);
+            }
+        }
+        public static void CreateAccount(Player en, string username, string password, string email)
+        {
+            if (MySQLConnected)
+            {
+                CreateAccountSQL(en,username, password,email);
+            }
+            else
+            {
+                CreateAccountXML(en, username, password, email);
+            }
+        }
+        public static bool LoadPlayer(Client client)
+        {
+            if (MySQLConnected)
+            {
+                return LoadPlayerSQL(client);
+            }
+            else
+            {
+                return LoadPlayerXML(client);
+            }
+        }
+        public static void SavePlayer(Client client)
+        {
+            if (MySQLConnected)
+            {
+                SavePlayerSQL(client);
+            }
+            else
+            {
+                SavePlayerXML(client);
+            }
+        }
+        public static int GetUserId(string username)
+        {
+            if (MySQLConnected)
+            {
+                return GetUserIdSQL(username);
+            }
+            else
+            {
+                return -1;
+            }
+        }
+
+        //Players_MySQL
+        public static bool InitMySql()
         {
             ConnectionString = @"server=" + Globals.MySqlHost + ";userid=" + Globals.MySqlUser + ";"
             + "password=" + Globals.MySqlPass + ";";
@@ -133,15 +260,17 @@ namespace Intersect_Server.Classes
                     Globals.GeneralLogs.Add("Connected to MySQL successfully.");
                     Globals.GeneralLogs.Add("Checking table integrity.");
                     CheckTables();
-                    Globals.GeneralLogs.Add("Server has " + GetRegisteredPlayers() + " registered players.");
+                    Globals.GeneralLogs.Add("Server has " + GetRegisteredPlayersSQL() + " registered players.");
+                    return true;
                 }
             }
             catch (Exception)
             {
                 Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("Could not connect to the MySQL database. Players will fail to login or create accounts.");
+                Console.WriteLine("Could not connect to the MySQL database. Reverting to XML Accounts!");
                 Console.ForegroundColor = ConsoleColor.White;
             }
+            return false;
         }
         private static void CheckTables()
         {
@@ -176,7 +305,8 @@ namespace Intersect_Server.Classes
 
             //Work on each field
             CheckTableField(mysqlConn, columns, "user", myTable, MySqlFields.m_string, 45);
-            CheckTableField(mysqlConn, columns, "pass", myTable, MySqlFields.m_string, 45);
+            CheckTableField(mysqlConn, columns, "pass", myTable, MySqlFields.m_string, 64);
+            CheckTableField(mysqlConn, columns, "salt", myTable, MySqlFields.m_string, 64);
             CheckTableField(mysqlConn, columns, "email", myTable, MySqlFields.m_string, 100);
             CheckTableField(mysqlConn, columns, "name", myTable, MySqlFields.m_string, 45);
             CheckTableField(mysqlConn, columns, "map", myTable, MySqlFields.m_int);
@@ -335,9 +465,7 @@ namespace Intersect_Server.Classes
             }
 
         }
-
-        //Players
-        public static bool AccountExists(string accountname)
+        public static bool AccountExistsSQL(string accountname)
         {
             var stm = "SELECT COUNT(*) from Users WHERE user='" + accountname.ToLower() + "'";
             using (var mysqlConn = new MySqlConnection(ConnectionString))
@@ -360,7 +488,7 @@ namespace Intersect_Server.Classes
             }
             return false;
         }
-        public static bool EmailInUse(string email)
+        public static bool EmailInUseSQL(string email)
         {
             var stm = "SELECT COUNT(*) from Users WHERE email='" + email.ToLower() + "'";
             using (var mysqlConn = new MySqlConnection(ConnectionString))
@@ -381,7 +509,7 @@ namespace Intersect_Server.Classes
             }
             return false;
         }
-        public static bool CharacterNameInUse(string name)
+        public static bool CharacterNameInUseSQL(string name)
         {
             var stm = "SELECT COUNT(*) from Users WHERE name='" + name.ToLower() + "'";
             using (var mysqlConn = new MySqlConnection(ConnectionString))
@@ -402,7 +530,7 @@ namespace Intersect_Server.Classes
             }
             return false;
         }
-        private static int GetRegisteredPlayers()
+        private static int GetRegisteredPlayersSQL()
         {
             const string query = "SELECT COUNT(*) from Users";
             using (var mysqlConn = new MySqlConnection(ConnectionString))
@@ -419,19 +547,33 @@ namespace Intersect_Server.Classes
                 return result;
             }
         }
-        public static void CreateAccount(string username, string password, string email)
+        public static void CreateAccountSQL(Player en, string username, string password, string email)
         {
+            var sha = new SHA256Managed();
+            en.MyAccount = username;
+
+            //Generate a Salt
+            RNGCryptoServiceProvider rng = new RNGCryptoServiceProvider();
+            byte[] buff = new byte[20];
+            rng.GetBytes(buff);
+            en.MySalt = BitConverter.ToString(sha.ComputeHash(Encoding.UTF8.GetBytes(Convert.ToBase64String(buff)))).Replace("-", "");
+
+            //Hash the Password
+            en.MyPassword = BitConverter.ToString(sha.ComputeHash(Encoding.UTF8.GetBytes(password + en.MySalt))).Replace("-", "");
+
+            en.MyEmail = email;
             using (var mysqlConn = new MySqlConnection(ConnectionString))
             {
                 mysqlConn.Open();
-                var stm = "INSERT INTO Users (user,pass,email) VALUES ('" + username.ToLower() + "','" + password + "','" + email.ToLower() + "');";
+                var stm = "INSERT INTO Users (user,pass,salt,email) VALUES ('" + username.ToLower() + "','" + en.MyPassword + "','" + en.MySalt + "','" + email.ToLower() + "');";
                 var cmd = new MySqlCommand(stm, mysqlConn);
                 cmd.ExecuteNonQuery();
             }
         }
-        public static bool CheckPassword(string username, string password)
+        public static bool CheckPasswordSQL(string username, string password)
         {
-            var stm = "SELECT pass FROM Users WHERE user = '" + username + "'";
+            var sha = new SHA256Managed();
+            var stm = "SELECT pass,salt FROM Users WHERE user = '" + username + "'";
             using (var mysqlConn = new MySqlConnection(ConnectionString))
             {
                 mysqlConn.Open();
@@ -440,16 +582,16 @@ namespace Intersect_Server.Classes
                 var result = false;
                 while (reader.Read())
                 {
-                    if (reader.GetString(0) == password)
-                    {
-                        result = true;
-                    }
+                    string pass = reader.GetString(0);
+                    string salt = reader.GetString(1);
+                    string temppass = BitConverter.ToString(sha.ComputeHash(Encoding.UTF8.GetBytes(password + salt))).Replace("-", "");
+                    if (temppass == pass) { result = true; }
                 }
                 reader.Close();
                 return result;
             }
         }
-        public static int GetUserId(string username)
+        public static int GetUserIdSQL(string username)
         {
             var stm = "SELECT id FROM Users WHERE user = '" + username + "'";
             using (var mysqlConn = new MySqlConnection(ConnectionString))
@@ -466,8 +608,7 @@ namespace Intersect_Server.Classes
                 return result;
             }
         }
-
-        public static bool LoadPlayer(Client client)
+        public static bool LoadPlayerSQL(Client client)
         {
             var stm = "SELECT * FROM Users WHERE id = " + client.Id + "";
             using (var mysqlConn = new MySqlConnection(ConnectionString))
@@ -588,7 +729,7 @@ namespace Intersect_Server.Classes
                 return true;
             }
         }
-        public static void SavePlayer(Client client)
+        public static void SavePlayerSQL(Client client)
         {
             if (client == null) { return; }
             if (client.EntityIndex == -1) { return; }
@@ -703,12 +844,14 @@ namespace Intersect_Server.Classes
                     for (var i = result; i < Constants.MaxInvItems; i++)
                     {
                         query += "INSERT INTO Inventories (id,slot,itemnum,itemval";
-                        for (int x = 0; x < (int)Enums.Stats.StatCount; x++){
-                            query+= ", statbuff" + x;
+                        for (int x = 0; x < (int)Enums.Stats.StatCount; x++)
+                        {
+                            query += ", statbuff" + x;
                         }
                         query += ") VALUES (" + id + "," + i + ",-1,0";
-                        for (int x = 0; x < (int)Enums.Stats.StatCount; x++){
-                            query+= ", 0";
+                        for (int x = 0; x < (int)Enums.Stats.StatCount; x++)
+                        {
+                            query += ", 0";
                         }
                         query += ");\n";
                     }
@@ -719,7 +862,7 @@ namespace Intersect_Server.Classes
                 for (var i = 0; i < Constants.MaxInvItems; i++)
                 {
                     query += "UPDATE Inventories SET itemnum=" + en.Inventory[i].ItemNum + ", itemval=" + en.Inventory[i].ItemVal;
-                    for (int x = 0; x < (int)Enums.Stats.StatCount; x++ )
+                    for (int x = 0; x < (int)Enums.Stats.StatCount; x++)
                     {
                         query += ", statbuff" + x + "=" + en.Inventory[i].StatBoost[x];
                     }
@@ -786,6 +929,243 @@ namespace Intersect_Server.Classes
             }
         }
 
+        //Players_XML
+        public static void LoadAccounts()
+        {
+            string[] accounts = Directory.GetDirectories("resources\\accounts");
+            for (int i = 0; i < accounts.Length; i++)
+            {
+                var playerdata = new XmlDocument();
+                playerdata.Load(accounts[i] + "\\" + accounts[i].Replace("resources\\accounts", "") + ".xml");
+                Accounts.Add(playerdata.SelectSingleNode("//PlayerData/Username").InnerText);
+                Emails.Add(playerdata.SelectSingleNode("//PlayerData/Email").InnerText);
+                Characters.Add(playerdata.SelectSingleNode("//PlayerData//CharacterInfo/Name").InnerText);
+            }
+        }
+        public static bool AccountExistsXML(string accountname)
+        {
+            if (Accounts.IndexOf(accountname) > -1) { return true; }
+            return false;
+        }
+        public static bool EmailInUseXML(string email)
+        {
+            if (Emails.IndexOf(email) > -1) { return true; }
+            return false;
+        }
+        public static bool CharacterNameInUseXML(string name)
+        {
+            if (Characters.IndexOf(name) > -1) { return true; }
+            return false;
+        }
+        private static int GetRegisteredPlayersXML()
+        {
+            return Accounts.Count;
+        }
+        public static void CreateAccountXML(Player en, string username, string password, string email)
+        {
+            var sha = new SHA256Managed();
+            Directory.CreateDirectory("resources\\accounts\\" + username);
+            en.MyAccount = username;
+
+            //Generate a Salt
+            RNGCryptoServiceProvider rng = new RNGCryptoServiceProvider();
+            byte[] buff = new byte[20];
+            rng.GetBytes(buff);
+            en.MySalt = BitConverter.ToString(sha.ComputeHash(Encoding.UTF8.GetBytes(Convert.ToBase64String(buff)))).Replace("-", "");
+
+            //Hash the Password
+            en.MyPassword = BitConverter.ToString(sha.ComputeHash(Encoding.UTF8.GetBytes(password + en.MySalt))).Replace("-", "");
+
+            en.MyEmail = email;
+        }
+        public static bool CheckPasswordXML(string username, string password)
+        {
+            var playerdata = new XmlDocument();
+            var sha = new SHA256Managed();
+            playerdata.Load("resources\\accounts\\" + username + "\\" + username + ".xml");
+            string salt = playerdata.SelectSingleNode("//PlayerData/Salt").InnerText;
+            string pass = playerdata.SelectSingleNode("//PlayerData/Pass").InnerText;
+            string temppass = BitConverter.ToString(sha.ComputeHash(Encoding.UTF8.GetBytes(password + salt))).Replace("-", "");
+            if (temppass == pass) { return true; }
+            return false;
+        }
+        public static bool LoadPlayerXML(Client client)
+        {
+            var en = client.Entity;
+            try
+            {
+                var playerdata = new XmlDocument();
+                playerdata.Load("resources\\accounts\\" + ((Player)en).MyAccount + "\\" + ((Player)en).MyAccount + ".xml");
+                en.MyEmail = playerdata.SelectSingleNode("//PlayerData/Email").InnerText;
+                en.MySalt = playerdata.SelectSingleNode("//PlayerData/Salt").InnerText;
+                en.MyPassword = playerdata.SelectSingleNode("//PlayerData/Pass").InnerText;
+
+                en.MyName = playerdata.SelectSingleNode("//PlayerData//CharacterInfo/Name").InnerText;
+                en.CurrentMap = Int32.Parse(playerdata.SelectSingleNode("//PlayerData//CharacterInfo/Map").InnerText);
+                en.CurrentX = Int32.Parse(playerdata.SelectSingleNode("//PlayerData//CharacterInfo/X").InnerText);
+                en.CurrentY = Int32.Parse(playerdata.SelectSingleNode("//PlayerData//CharacterInfo/Y").InnerText);
+                en.CurrentZ = Int32.Parse(playerdata.SelectSingleNode("//PlayerData//CharacterInfo/Z").InnerText);
+                en.Dir = Int32.Parse(playerdata.SelectSingleNode("//PlayerData//CharacterInfo/Dir").InnerText);
+                en.MySprite = playerdata.SelectSingleNode("//PlayerData//CharacterInfo/Sprite").InnerText;
+                en.Class = Int32.Parse(playerdata.SelectSingleNode("//PlayerData//CharacterInfo/Class").InnerText);
+                en.Gender = Int32.Parse(playerdata.SelectSingleNode("//PlayerData//CharacterInfo/Gender").InnerText);
+                en.Level = Int32.Parse(playerdata.SelectSingleNode("//PlayerData//CharacterInfo/Level").InnerText);
+                en.Experience = Int32.Parse(playerdata.SelectSingleNode("//PlayerData//CharacterInfo/Experience").InnerText);
+                for (var i = 0; i < (int)Enums.Vitals.VitalCount; i++)
+                {
+                    en.Vital[i] = Int32.Parse(playerdata.SelectSingleNode("//PlayerData//CharacterInfo/Vital" + i).InnerText);
+                    en.MaxVital[i] = Int32.Parse(playerdata.SelectSingleNode("//PlayerData//CharacterInfo/MaxVital" + i).InnerText);
+                }
+                for (var i = 0; i < (int)Enums.Stats.StatCount; i++)
+                {
+                    en.Stat[i] = Int32.Parse(playerdata.SelectSingleNode("//PlayerData//CharacterInfo/Stat" + i).InnerText);
+                }
+                en.StatPoints = Int32.Parse(playerdata.SelectSingleNode("//PlayerData//CharacterInfo/StatPoints").InnerText);
+                for (var i = 0; i < Enums.EquipmentSlots.Count; i++)
+                {
+                    en.Equipment[i] = Int32.Parse(playerdata.SelectSingleNode("//PlayerData//CharacterInfo/Equipment" + i).InnerText);
+                }
+                client.Power = Int32.Parse(playerdata.SelectSingleNode("//PlayerData//CharacterInfo/Power").InnerText);
+                en.Face = playerdata.SelectSingleNode("//PlayerData//CharacterInfo/Face").InnerText;
+
+                for (int i = 0; i < Constants.SwitchCount; i++)
+                {
+                    ((Player)(en)).Switches[i] = Convert.ToBoolean(Int32.Parse(playerdata.SelectSingleNode("//PlayerData//CharacterInfo//Switches/Switch" + i).InnerText));
+                }
+
+                for (int i = 0; i < Constants.VariableCount; i++)
+                {
+                    ((Player)(en)).Variables[i] = Int32.Parse(playerdata.SelectSingleNode("//PlayerData//CharacterInfo//Variables/Variable" + i).InnerText);
+                }
+
+                for (int i = 0; i < Constants.MaxInvItems; i++)
+                {
+                    en.Inventory[i].ItemNum = Int32.Parse(playerdata.SelectSingleNode("//PlayerData//CharacterInfo//Inventory/Slot" + i + "Num").InnerText);
+                    en.Inventory[i].ItemVal = Int32.Parse(playerdata.SelectSingleNode("//PlayerData//CharacterInfo//Inventory/Slot" + i + "Val").InnerText);
+                    for (int x = 0; x < (int)Enums.Stats.StatCount; x++)
+                    {
+                        en.Inventory[i].StatBoost[x] = Int32.Parse(playerdata.SelectSingleNode("//PlayerData//CharacterInfo//Inventory/Slot" + i + "Buff" + x).InnerText);
+                    }
+                }
+
+                for (int i = 0; i < Constants.MaxPlayerSkills; i++)
+                {
+                    en.Spells[i].SpellNum = Int32.Parse(playerdata.SelectSingleNode("//PlayerData//CharacterInfo//Spells/Slot" + i + "Num").InnerText);
+                    en.Spells[i].SpellCD = Int32.Parse(playerdata.SelectSingleNode("//PlayerData//CharacterInfo//Spells/Slot" + i + "CD").InnerText);
+                }
+
+                for (int i = 0; i < Constants.MaxHotbar; i++)
+                {
+                    en.Hotbar[i].Type = Int32.Parse(playerdata.SelectSingleNode("//PlayerData//CharacterInfo//Hotbar/Slot" + i + "Type").InnerText);
+                    en.Hotbar[i].Slot = Int32.Parse(playerdata.SelectSingleNode("//PlayerData//CharacterInfo//Hotbar/Slot" + i + "Slot").InnerText);
+                }
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+        }
+        public static void SavePlayerXML(Client client)
+        {
+            if (client == null) { return; }
+            if (client.EntityIndex == -1) { return; }
+            if (client.EntityIndex >= Globals.Entities.Count) { return; }
+            if (client.Entity == null) { return; }
+            var en = (Player)client.Entity;
+
+            var playerdata = new XmlWriterSettings { Indent = true };
+            playerdata.ConformanceLevel = ConformanceLevel.Auto;
+            var writer = XmlWriter.Create("resources\\accounts\\" + ((Player)en).MyAccount + "\\" + ((Player)en).MyAccount + ".xml", playerdata);
+            writer.WriteStartDocument();
+            writer.WriteStartElement("PlayerData");
+            writer.WriteElementString("Username", ((Player)en).MyAccount);
+            writer.WriteElementString("Email", ((Player)en).MyEmail);
+            writer.WriteElementString("Pass", ((Player)en).MyPassword);
+            writer.WriteElementString("Salt", ((Player)en).MySalt);
+
+            writer.WriteStartElement("CharacterInfo");
+            writer.WriteElementString("Name", en.MyName);
+            writer.WriteElementString("Map", en.CurrentMap.ToString());
+            writer.WriteElementString("X", en.CurrentX.ToString());
+            writer.WriteElementString("Y", en.CurrentY.ToString());
+            writer.WriteElementString("Z", en.CurrentZ.ToString());
+            writer.WriteElementString("Dir", en.Dir.ToString());
+            writer.WriteElementString("Sprite", en.MySprite);
+            writer.WriteElementString("Class", en.Class.ToString());
+            writer.WriteElementString("Gender", en.Gender.ToString());
+            writer.WriteElementString("Level", en.Level.ToString());
+            writer.WriteElementString("Experience", en.Experience.ToString());
+            for (var i = 0; i < (int)Enums.Vitals.VitalCount; i++)
+            {
+                writer.WriteElementString("Vital" + i, en.Vital[i].ToString());
+                writer.WriteElementString("MaxVital" + i, en.MaxVital[i].ToString());
+            }
+            for (var i = 0; i < (int)Enums.Stats.StatCount; i++)
+            {
+                writer.WriteElementString("Stat" + i, en.Stat[i].ToString());
+            }
+            writer.WriteElementString("StatPoints", en.StatPoints.ToString());
+            for (var i = 0; i < Enums.EquipmentSlots.Count; i++)
+            {
+                writer.WriteElementString("Equipment" + i, en.Equipment[i].ToString());
+            }
+            writer.WriteElementString("Power", client.Power.ToString());
+            writer.WriteElementString("Face", en.Face);
+
+            writer.WriteStartElement("Switches");
+            for (int i = 0; i < Constants.SwitchCount; i++)
+            {
+                writer.WriteElementString("Switch" + i, Convert.ToInt32(((Player)(en)).Switches[i]).ToString());
+            }
+            writer.WriteEndElement();
+
+            writer.WriteStartElement("Variables");
+            for (int i = 0; i < Constants.VariableCount; i++)
+            {
+                writer.WriteElementString("Variable" + i, ((Player)(en)).Variables[i].ToString());
+            }
+            writer.WriteEndElement();
+
+            writer.WriteStartElement("Inventory");
+            for (int i = 0; i < Constants.MaxInvItems; i++)
+            {
+                writer.WriteElementString("Slot" + i + "Num", en.Inventory[i].ItemNum.ToString());
+                writer.WriteElementString("Slot" + i + "Val", en.Inventory[i].ItemVal.ToString());
+                for (int x = 0; x < (int)Enums.Stats.StatCount; x++)
+                {
+                    writer.WriteElementString("Slot" + i + "Buff" + x, en.Inventory[i].StatBoost[x].ToString());
+                }
+
+            }
+            writer.WriteEndElement();
+
+            writer.WriteStartElement("Spells");
+            for (int i = 0; i < Constants.MaxPlayerSkills; i++)
+            {
+                writer.WriteElementString("Slot" + i + "Num", en.Spells[i].SpellNum.ToString());
+                writer.WriteElementString("Slot" + i + "CD", en.Spells[i].SpellCD.ToString());
+            }
+            writer.WriteEndElement();
+
+
+            writer.WriteStartElement("Hotbar");
+            for (int i = 0; i < Constants.MaxHotbar; i++)
+            {
+                writer.WriteElementString("Slot" + i + "Type", en.Hotbar[i].Type.ToString());
+                writer.WriteElementString("Slot" + i + "Slot", en.Hotbar[i].Slot.ToString());
+            }
+            writer.WriteEndElement();
+
+
+
+            writer.WriteEndElement();
+            writer.WriteEndElement();
+            writer.WriteEndDocument();
+            writer.Flush();
+            writer.Close();
+        }
 
         //Maps
         public static void LoadMaps()
@@ -832,7 +1212,7 @@ namespace Intersect_Server.Classes
             bool updated = false;
             if (!CheckMapExistance(Globals.GameMaps[mapNum].Up)) { Globals.GameMaps[mapNum].Up = -1; updated = true; }
             if (!CheckMapExistance(Globals.GameMaps[mapNum].Down)) { Globals.GameMaps[mapNum].Down = -1; updated = true; }
-            if (!CheckMapExistance(Globals.GameMaps[mapNum].Left)) { Globals.GameMaps[mapNum].Left = -1; updated = true; } 
+            if (!CheckMapExistance(Globals.GameMaps[mapNum].Left)) { Globals.GameMaps[mapNum].Left = -1; updated = true; }
             if (!CheckMapExistance(Globals.GameMaps[mapNum].Right)) { Globals.GameMaps[mapNum].Right = -1; updated = true; }
             if (updated)
             {
@@ -1064,17 +1444,19 @@ namespace Intersect_Server.Classes
                 {
                     Globals.GameClasses[i].Load(File.ReadAllBytes("Resources/Classes/" + i + ".cls"));
                 }
-                if (String.IsNullOrEmpty(Globals.GameClasses[i].Name)){x++;}
+                if (String.IsNullOrEmpty(Globals.GameClasses[i].Name)) { x++; }
             }
             return x;
         }
         public static void CreateDefaultClass()
         {
             Globals.GameClasses[0].Name = "Default";
-            for (int i = 0; i < (int)Enums.Vitals.VitalCount; i++) {
+            for (int i = 0; i < (int)Enums.Vitals.VitalCount; i++)
+            {
                 Globals.GameClasses[0].MaxVital[i] = 20;
             }
-            for (int i = 0; i < (int)Enums.Stats.StatCount; i++) {
+            for (int i = 0; i < (int)Enums.Stats.StatCount; i++)
+            {
                 Globals.GameClasses[0].Stat[i] = 10;
             }
             Globals.GameClasses[0].Save(0);
@@ -1110,7 +1492,7 @@ namespace Intersect_Server.Classes
                         MapStructure.AddMap(i);
                     }
                 }
-                File.WriteAllBytes("Resources/Maps/MapStructure.dat",MapStructure.Data());
+                File.WriteAllBytes("Resources/Maps/MapStructure.dat", MapStructure.Data());
             }
         }
     }
