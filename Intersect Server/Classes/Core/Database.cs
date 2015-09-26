@@ -230,6 +230,56 @@ namespace Intersect_Server.Classes
                 return -1;
             }
         }
+        public static int CheckPower(string username)
+        {
+            if (MySQLConnected)
+            {
+                return CheckPowerSQL(username);
+            }
+            else
+            {
+                return CheckPowerXML(username);
+            }
+        }
+        public static Client GetPlayerClient(string username)
+        {
+            //Try to fetch a player entity by username, online or offline.
+            //Check Online First
+            for (int i = 0; i < Globals.Clients.Count; i++)
+            {
+                if (Globals.Clients[i] != null && Globals.Clients[i].isConnected && Globals.Clients[i].Entity != null)
+                {
+                    if (Globals.Clients[i].Entity.MyAccount == username) { return Globals.Clients[i]; }
+                }
+            }
+
+            //Didn't find the player online, lets load him from our database.
+            Client fakeClient = new Client(-1, -1, new System.Net.Sockets.TcpClient());
+            Player en = new Player(-1, fakeClient);
+            fakeClient.Entity = en;
+            en.MyAccount = username;
+            fakeClient.Id = GetUserId(username);
+            LoadPlayer(fakeClient);
+            return fakeClient;
+        }
+        public static void SetPlayerPower(string username, int power)
+        {
+            if (AccountExists(username))
+            {
+                Client player = GetPlayerClient(username);
+                player.Power = power;
+                SavePlayer(player);
+                if (player.ClientIndex > -1)
+                {
+                    PacketSender.SendPlayerMsg(player, "You're power has been modified!");
+                }
+                Console.WriteLine(username + "'s power has been set to " + power + "!");
+            }
+            else
+            {
+                Console.WriteLine("Account does not exist!");
+            }
+        }
 
         //Players_MySQL
         public static bool InitMySql()
@@ -266,9 +316,6 @@ namespace Intersect_Server.Classes
             }
             catch (Exception)
             {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("Could not connect to the MySQL database. Reverting to XML Accounts!");
-                Console.ForegroundColor = ConsoleColor.White;
             }
             return false;
         }
@@ -608,6 +655,23 @@ namespace Intersect_Server.Classes
                 return result;
             }
         }
+        public static int CheckPowerSQL(string username)
+        {
+            var stm = "SELECT power FROM Users WHERE user = '" + username + "'";
+            using (var mysqlConn = new MySqlConnection(ConnectionString))
+            {
+                mysqlConn.Open();
+                var cmd = new MySqlCommand(stm, mysqlConn);
+                var reader = cmd.ExecuteReader();
+                var result = -1;
+                while (reader.Read())
+                {
+                    result = reader.GetInt32(0);
+                }
+                reader.Close();
+                return result;
+            }
+        }
         public static bool LoadPlayerSQL(Client client)
         {
             var stm = "SELECT * FROM Users WHERE id = " + client.Id + "";
@@ -732,8 +796,6 @@ namespace Intersect_Server.Classes
         public static void SavePlayerSQL(Client client)
         {
             if (client == null) { return; }
-            if (client.EntityIndex == -1) { return; }
-            if (client.EntityIndex >= Globals.Entities.Count) { return; }
             if (client.Entity == null) { return; }
             var en = (Player)client.Entity;
             var query = "UPDATE Users SET ";
@@ -1070,8 +1132,6 @@ namespace Intersect_Server.Classes
         public static void SavePlayerXML(Client client)
         {
             if (client == null) { return; }
-            if (client.EntityIndex == -1) { return; }
-            if (client.EntityIndex >= Globals.Entities.Count) { return; }
             if (client.Entity == null) { return; }
             var en = (Player)client.Entity;
 
@@ -1165,6 +1225,14 @@ namespace Intersect_Server.Classes
             writer.WriteEndDocument();
             writer.Flush();
             writer.Close();
+        }
+        public static int CheckPowerXML(string username)
+        {
+            var playerdata = new XmlDocument();
+            var sha = new SHA256Managed();
+            playerdata.Load("resources\\accounts\\" + username + "\\" + username + ".xml");
+            int power = Int32.Parse(playerdata.SelectSingleNode("//PlayerData//CharacterInfo/Power").InnerText);
+            return power;
         }
 
         //Maps

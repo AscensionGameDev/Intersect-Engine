@@ -22,6 +22,8 @@
 using System;
 using System.Windows.Forms;
 using Intersect_Editor.Classes;
+using System.Text;
+using System.Security.Cryptography;
 
 namespace Intersect_Editor.Forms
 {
@@ -67,7 +69,8 @@ namespace Intersect_Editor.Forms
             if (!Network.Connected) return;
             if (txtUsername.Text.Trim().Length > 0 && txtPassword.Text.Trim().Length > 0)
             {
-                PacketSender.SendLogin(txtUsername.Text.Trim(), txtPassword.Text.Trim());
+                var sha = new SHA256Managed();
+                PacketSender.SendLogin(txtUsername.Text.Trim(), BitConverter.ToString(sha.ComputeHash(Encoding.UTF8.GetBytes(txtPassword.Text.Trim()))).Replace("-", ""));
             }
         }
 
@@ -76,11 +79,7 @@ namespace Intersect_Editor.Forms
             base.OnKeyPress(e);
             if (e.KeyChar != 13) return;
             e.Handled = true;
-            if (txtUsername.Text.Trim().Length > 0 && txtPassword.Text.Trim().Length > 0)
-            {
-                if (!Network.Connected) return;
-                PacketSender.SendLogin(txtUsername.Text.Trim(), txtPassword.Text.Trim());
-            }
+            btnLogin_Click(null, null);
         }
 
         protected override void OnClosed(EventArgs e)

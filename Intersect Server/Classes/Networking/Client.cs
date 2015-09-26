@@ -59,17 +59,16 @@ namespace Intersect_Server.Classes
         public Client(int myIndex, int entIndex, TcpClient socket)
         {
             mySocket = socket;
-            myStream = mySocket.GetStream();
+            if (mySocket.Connected) { myStream = mySocket.GetStream(); }
             readBuff = new byte[mySocket.ReceiveBufferSize];
             connectTime = Environment.TickCount;
-            myStream.BeginRead(readBuff, 0, mySocket.ReceiveBufferSize, OnReceiveData, connectTime);
+            if (myStream != null) { myStream.BeginRead(readBuff, 0, mySocket.ReceiveBufferSize, OnReceiveData, connectTime); }
             ClientIndex = myIndex;
             EntityIndex = entIndex;
-            Entity = (Player)Globals.Entities[EntityIndex];
-            PacketSender.SendPing(this);
+            if (EntityIndex > -1) { Entity = (Player)Globals.Entities[EntityIndex]; }
+            if (mySocket.Connected) { PacketSender.SendPing(this); }
             isConnected = true;
             ConnectionTimeout = -1;
-
         }
 
         private void OnReceiveData(IAsyncResult ar)

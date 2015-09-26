@@ -55,6 +55,9 @@ namespace Intersect_Editor.Classes
                 case Enums.ServerPackets.MapList:
                     HandleMapList(bf.ReadBytes(bf.Length()));
                     break;
+                case Enums.ServerPackets.LoginError:
+                    HandleLoginError(bf.ReadBytes(bf.Length()));
+                    break;
                 case Enums.ServerPackets.OpenItemEditor:
                     HandleItemEditor();
                     break;
@@ -214,6 +217,15 @@ namespace Intersect_Editor.Classes
                 Globals.MainForm.EnterMap(Database.MapStructure.FindFirstMap());
             }
             Globals.MapListWindow.BeginInvoke(Globals.MapListWindow.MapListDelegate);
+            bf.Dispose();
+        }
+
+        private static void HandleLoginError(byte[] packet)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteBytes(packet);
+            string error = bf.ReadString();
+            System.Windows.Forms.MessageBox.Show(error, "Login Error!", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Error);
             bf.Dispose();
         }
 

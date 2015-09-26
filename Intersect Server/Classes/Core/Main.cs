@@ -73,23 +73,38 @@ namespace Intersect_Server.Classes
                 string[] commandsplit = command.Split(' ');
                 switch (commandsplit[0])
                 {
-                    case "admin":
+                    case "power":
                         if (commandsplit.Length > 1)
                         {
                             switch (commandsplit[1])
                             {
                                 case "/?":
-                                    Console.WriteLine(@"    Usage: admin [login] [/?]");
-                                    Console.WriteLine(@"    Desc: Turns a selected player into an admin with access to logon through the editor.");
+                                    Console.WriteLine(@"    Usage: power [login] [level] [/?]");
+                                    Console.WriteLine(@"    Desc: Sets the power or access of a selected account. Power 0 is regular user. Power 1 is in-game moderator. Power 2 is owner/designer and allows editor access.");
                                     break;
                                 default:
                                     //Try to admin the player
+                                    if (commandsplit.Length > 2)
+                                    {
+                                        try
+                                        {
+                                            Database.SetPlayerPower(commandsplit[1], Int32.Parse(commandsplit[2]));
+                                        }
+                                        catch (Exception)
+                                        {
+                                            Console.WriteLine(@"    Parse Error: Parameter could not be read. Type " + commandsplit[0] + " /? for usage information.");
+                                        }
+                                    }
+                                    else
+                                    {
+                                        Console.WriteLine(@"    Syntax Error: Expected parameter not found. Type " + commandsplit[0] + " /? for usage information.");
+                                    }
                                     break;
                             }
                         }
                         else
                         {
-                            Console.WriteLine(@"    Syntax Error: Expected parameter not found type " + commandsplit[0] + " /? for usage information.");
+                            Console.WriteLine(@"    Syntax Error: Expected parameter not found. Type " + commandsplit[0] + " /? for usage information.");
                         }
                         break;
                     case "cps":
@@ -125,25 +140,6 @@ namespace Intersect_Server.Classes
                         else
                         {
                             Console.WriteLine("Current CPS: " + Globals.CPS);
-                        }
-                        break;
-                    case "deadmin":
-                        if (commandsplit.Length > 1)
-                        {
-                            switch (commandsplit[1])
-                            {
-                                case "/?":
-                                    Console.WriteLine(@"    Usage: deadmin [login] [/?]");
-                                    Console.WriteLine(@"    Desc: Removes admin access to a specific account revoking editor access.");
-                                    break;
-                                default:
-                                    //Try to deadmin the player
-                                    break;
-                            }
-                        }
-                        else
-                        {
-                            Console.WriteLine(@"    Syntax Error: Expected parameter not found type " + commandsplit[0] + " /? for usage information.");
                         }
                         break;
                     case "exit":
@@ -183,11 +179,10 @@ namespace Intersect_Server.Classes
                         else
                         {
                             Console.WriteLine(@"    List of available commands:");
-                            Console.WriteLine(@"    admin    -   makes a specified user an admin");
                             Console.WriteLine(@"    cps    -   prints the current server cps");
-                            Console.WriteLine(@"    deadmin    -   removes admin powers from a specified user");
                             Console.WriteLine(@"    exit    -   closes the server");
                             Console.WriteLine(@"    help    -   displays list of available commands");
+                            Console.WriteLine(@"    power    -   sets the administrative access of an account");
                             Console.WriteLine(@"    Type in any command followed by /? for parameters and usage information.");
                         }
                         break;

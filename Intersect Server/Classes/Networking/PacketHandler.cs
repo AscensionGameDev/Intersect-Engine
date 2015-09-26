@@ -273,12 +273,21 @@ namespace Intersect_Server.Classes
             bf.WriteBytes(packet);
             var usr = bf.ReadString();
             var pass = bf.ReadString();
-            if (usr != "jcsnider" && (usr != "kibbelz" || pass != "test")) return;
-            client.IsEditor = true;
-            PacketSender.SendJoinGame(client);
-            PacketSender.SendGameData(client);
-            PacketSender.SendTilesets(client);
-            PacketSender.SendMapList(client);
+            if (Database.CheckPassword(usr,pass)) {
+                if (Database.CheckPower(usr) == 2) {
+                    client.IsEditor = true;
+                    PacketSender.SendJoinGame(client);
+                    PacketSender.SendGameData(client);
+                    PacketSender.SendTilesets(client);
+                    PacketSender.SendMapList(client);
+                }
+                else {
+                    PacketSender.SendLoginError(client, "Access denied! Invalid power level!");
+                }
+            }
+            else {
+                PacketSender.SendLoginError(client, "Username or password invalid.");
+            }
         }
 
         private static void HandleTilesets(Client client, byte[] packet)
