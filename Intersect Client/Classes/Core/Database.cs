@@ -85,10 +85,10 @@ namespace Intersect_Client.Classes
                         Graphics.FullScreen = Boolean.Parse(selectSingleNode.InnerText);
                     selectSingleNode = options.SelectSingleNode("//Config/Sound");
                     if (selectSingleNode != null)
-                        Globals.SoundEnabled = Boolean.Parse(selectSingleNode.InnerText);
+                        Globals.SoundVolume = Int32.Parse(selectSingleNode.InnerText);
                     selectSingleNode = options.SelectSingleNode("//Config/Music");
                     if (selectSingleNode != null)
-                        Globals.MusicEnabled = Boolean.Parse(selectSingleNode.InnerText);
+                        Globals.MusicVolume = Int32.Parse(selectSingleNode.InnerText);
                     selectSingleNode = options.SelectSingleNode("//Config/MenuBGM");
                     if (selectSingleNode != null)
                         Globals.MenuBGM = selectSingleNode.InnerText;
@@ -124,8 +124,8 @@ namespace Intersect_Client.Classes
                 writer.WriteElementString("Port", Globals.ServerPort.ToString());
                 writer.WriteElementString("DisplayMode", Graphics.DisplayMode.ToString());
                 writer.WriteElementString("FullScreen", Graphics.FullScreen.ToString());
-                writer.WriteElementString("Sound", Globals.SoundEnabled.ToString());
-                writer.WriteElementString("Music", Globals.MusicEnabled.ToString());
+                writer.WriteElementString("Sound", Globals.SoundVolume.ToString());
+                writer.WriteElementString("Music", Globals.MusicVolume.ToString());
                 writer.WriteElementString("MenuBGM", Globals.MenuBGM);
                 writer.WriteElementString("MenuBG", Globals.MenuBG);
                 writer.WriteElementString("TileWidth", Globals.TileWidth.ToString());

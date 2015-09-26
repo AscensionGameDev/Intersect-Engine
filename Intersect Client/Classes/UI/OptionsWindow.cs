@@ -42,11 +42,9 @@ namespace Intersect_Client.Classes.UI
         private ComboBox _resolutionList;
         private LabeledCheckBox _fullscreen;
         private Label _soundLabel;
-        private LabeledCheckBox _enableSound;
-        private LabeledCheckBox _disableSound;
+        private HorizontalSlider _soundSlider;
         private Label _musicLabel;
-        private LabeledCheckBox _enableMusic;
-        private LabeledCheckBox _disableMusic;
+        private HorizontalSlider _musicSlider;
         private Button _applyBtn;
         private Button _backBtn;
 
@@ -97,37 +95,29 @@ namespace Intersect_Client.Classes.UI
 
             //Options - Sound Label
             _soundLabel = new Label(_optionsMenu);
-            _soundLabel.SetText("Sound:");
+            _soundLabel.SetText("Sound Volume: 100%");
             _soundLabel.SetPosition(_optionsMenu.Width / 2 - 120 / 2, 64);
 
-            //Options - Sound On Checkbox
-            _enableSound = new LabeledCheckBox(_optionsMenu) { Text = "On" };
-            _enableSound.SetSize(56, 14);
-            _enableSound.SetPosition(_optionsMenu.Width / 2 - 120 / 2, 82);
-            _enableSound.Checked += EnableSound_Checked;
-
-            //Options - Sound Off Checkbox
-            _disableSound = new LabeledCheckBox(_optionsMenu) { Text = "Off" };
-            _disableSound.SetSize(56, 14);
-            _disableSound.SetPosition(_optionsMenu.Width / 2 + 4, 82);
-            _disableSound.Checked += DisableSound_Checked;
+            //Options - Sound Slider
+            _soundSlider = new HorizontalSlider(_optionsMenu);
+            _soundSlider.SetSize(120, 14);
+            _soundSlider.SetPosition(_optionsMenu.Width / 2 - 120 / 2, 82);
+            _soundSlider.Min = 0;
+            _soundSlider.Max = 100;
+            _soundSlider.ValueChanged += _soundSlider_ValueChanged;
 
             //Options - Music Label
             _musicLabel = new Label(_optionsMenu);
-            _musicLabel.SetText("Music:");
+            _musicLabel.SetText("Music Volume: 100%");
             _musicLabel.SetPosition(_optionsMenu.Width / 2 - 120 / 2, 100);
 
-            //Options - Music On Checkbox
-            _enableMusic = new LabeledCheckBox(_optionsMenu) { Text = "On" };
-            _enableMusic.SetSize(56, 14);
-            _enableMusic.SetPosition(_optionsMenu.Width / 2 - 120 / 2, 118);
-            _enableMusic.Checked += EnableMusic_Checked;
-
-            //Options - Music Off Checkbox
-            _disableMusic = new LabeledCheckBox(_optionsMenu) { Text = "Off" };
-            _disableMusic.SetSize(56, 14);
-            _disableMusic.SetPosition(_optionsMenu.Width / 2 + 4, 118);
-            _disableMusic.Checked += DisableMusic_Checked;
+            //Options - Music Slider
+            _musicSlider = new HorizontalSlider(_optionsMenu);
+            _musicSlider.SetSize(120, 14);
+            _musicSlider.SetPosition(_optionsMenu.Width / 2 - 120 / 2, 118);
+            _musicSlider.Min = 0;
+            _musicSlider.Max = 100;
+            _musicSlider.ValueChanged += _musicSlider_ValueChanged;
 
             //Options - Apply Button
             _applyBtn = new Button(_optionsMenu);
@@ -152,6 +142,7 @@ namespace Intersect_Client.Classes.UI
             }
         }
 
+
         //Methods
         public void Update()
         {
@@ -164,20 +155,16 @@ namespace Intersect_Client.Classes.UI
                 _resolutionList.SelectByText(Graphics.GetValidVideoModes()[Graphics.DisplayMode].Width + "x" + Graphics.GetValidVideoModes()[Graphics.DisplayMode].Height);
             }
             _fullscreen.IsChecked = Graphics.FullScreen;
-            _enableSound.IsChecked = Globals.SoundEnabled;
-            _disableSound.IsChecked = !Globals.SoundEnabled;
-            _enableMusic.IsChecked = Globals.MusicEnabled;
-            _disableMusic.IsChecked = !Globals.MusicEnabled;
+            _musicSlider.Value = Globals.MusicVolume;
+            _soundSlider.Value = Globals.SoundVolume;
             if (_gameWindow) { _optionsMenu.IsHidden = false; }
             _resolutionLabel.IsHidden = false;
             _resolutionList.IsHidden = false;
             _fullscreen.IsHidden = false;
             _soundLabel.IsHidden = false;
-            _enableSound.IsHidden = false;
-            _disableSound.IsHidden = false;
+            _soundSlider.IsHidden = false;
             _musicLabel.IsHidden = false;
-            _enableMusic.IsHidden = false;
-            _disableMusic.IsHidden = false;
+            _musicSlider.IsHidden = false;
             _applyBtn.IsHidden = false;
             if (!_gameWindow) { _backBtn.IsHidden = false; }
         }
@@ -194,35 +181,26 @@ namespace Intersect_Client.Classes.UI
             _resolutionList.IsHidden = true;
             _fullscreen.IsHidden = true;
             _soundLabel.IsHidden = true;
-            _enableSound.IsHidden = true;
-            _disableSound.IsHidden = true;
+            _soundSlider.IsHidden = true;
             _musicLabel.IsHidden = true;
-            _enableMusic.IsHidden = true;
-            _disableMusic.IsHidden = true;
+            _musicSlider.IsHidden = true;
             _applyBtn.IsHidden = true;
             if (!_gameWindow) { _backBtn.IsHidden = true; }
         }
 
         //Input Handlers
-        void DisableMusic_Checked(Base sender, EventArgs arguments)
-        {
-            _enableMusic.IsChecked = false;
-        }
-        void EnableMusic_Checked(Base sender, EventArgs arguments)
-        {
-            _disableMusic.IsChecked = false;
-        }
-        void DisableSound_Checked(Base sender, EventArgs arguments)
-        {
-            _enableSound.IsChecked = false;
-        }
-        void EnableSound_Checked(Base sender, EventArgs arguments)
-        {
-            _disableSound.IsChecked = false;
-        }
         void BackBtn_Clicked(Base sender, ClickedEventArgs arguments)
         {
             _mainMenu.Reset();
+        }
+        void _musicSlider_ValueChanged(Base sender, EventArgs arguments)
+        {
+            _musicLabel.Text = "Music Volume: " + (int)_musicSlider.Value + "%";
+        }
+
+        void _soundSlider_ValueChanged(Base sender, EventArgs arguments)
+        {
+            _soundLabel.Text = "Sound Volume: " + (int)_soundSlider.Value + "%";
         }
         void ApplyBtn_Clicked(Base sender, ClickedEventArgs arguments)
         {
@@ -239,8 +217,8 @@ namespace Intersect_Client.Classes.UI
                 Graphics.FullScreen = _fullscreen.IsChecked;
                 Graphics.MustReInit = true;
             }
-            Globals.MusicEnabled = _enableMusic.IsChecked;
-            Globals.SoundEnabled = _enableSound.IsChecked;
+            Globals.MusicVolume = (int)_musicSlider.Value;
+            Globals.SoundVolume = (int)_soundSlider.Value;
             Database.SaveOptions();
         }
     }

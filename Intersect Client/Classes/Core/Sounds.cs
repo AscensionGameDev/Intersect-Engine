@@ -132,7 +132,7 @@ namespace Intersect_Client.Classes
         //Music
         public static void PlayMusic(string filename, float fadeout = 0f, float fadein = 0f, bool loop = false)
         {
-            if (Globals.MusicEnabled == false) { return; }
+            if (Globals.MusicVolume == 0) { return; }
             if (_myMusic != null)
             {
                 if (fadeout == 0 || _myMusic.Status == SoundStatus.Stopped || _myMusic.Status == SoundStatus.Paused || _myMusic.Volume == 0)
@@ -160,7 +160,7 @@ namespace Intersect_Client.Classes
         }
         private static void StartMusic(string filename, float fadein = 0f)
         {
-            if (Globals.MusicEnabled == false) { return; }
+            if (Globals.MusicVolume == 0) { return; }
             if (MusicFiles.IndexOf(filename.ToLower()) > -1)
             {
                 _myMusic = new Music("Resources/Music/" + filename);
@@ -245,7 +245,7 @@ namespace Intersect_Client.Classes
             _map = map;
             _loop = loop;
             _distance = distance;
-            if (Sounds.SoundFiles.IndexOf(filename) > -1 && Globals.SoundEnabled)
+            if (Sounds.SoundFiles.IndexOf(filename) > -1 && Globals.SoundVolume > 0)
             {
                 _soundBuffer = new SoundBuffer("Resources/Sounds/" + filename);
                 _sound = new Sound(_soundBuffer);

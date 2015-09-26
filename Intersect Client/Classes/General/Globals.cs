@@ -38,8 +38,8 @@ namespace Intersect_Client.Classes
         //Game Options
         public static string ServerHost = "localhost";
         public static int ServerPort = 4500;
-        public static bool SoundEnabled;
-        public static bool MusicEnabled;
+        public static int SoundVolume = 100;
+        public static int MusicVolume = 100;
         public static string MenuBGM = "";
         public static string MenuBG = "";
         public static int TileWidth = 32;
