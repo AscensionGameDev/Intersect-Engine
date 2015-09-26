@@ -44,6 +44,7 @@ namespace Intersect_Client.Classes
         public static string MenuBG = "";
         public static int TileWidth = 32;
         public static int TileHeight = 32;
+        public static List<string> IntroBG = new List<string>();
 
         //Game Lock
         public static object GameLock = new object();
@@ -71,7 +72,7 @@ namespace Intersect_Client.Classes
         public static string DebugInfo = "";
 
         //Crucial game variables
-        public static int GameState = 0; //0 for main menu, 1 for in game
+        public static int GameState = 0; //0 for Intro, 1 to Menu, 2 for in game
         public static bool GameLoaded;
 
         //Entities and stuff

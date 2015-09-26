@@ -110,7 +110,7 @@ namespace Intersect_Client.Classes
 
             // Create GWEN input processor
             _gwenInput = new Gwen.Input.SFML();
-            if (Globals.GameState == 0)
+            if (Globals.GameState == (int)Enums.GameStates.Intro || Globals.GameState == (int)Enums.GameStates.Menu)
             {
                 _gwenInput.Initialize(_menuCanvas, Graphics.RenderWindow);
             }
@@ -135,7 +135,7 @@ namespace Intersect_Client.Classes
 
             FocusElements = new List<Gwen.Control.Base>();
             ErrorMsgHandler = new ErrorMessageHandler(_menuCanvas, _gameCanvas);
-            if (Globals.GameState == 0)
+            if (Globals.GameState == (int)Enums.GameStates.Intro || Globals.GameState == (int)Enums.GameStates.Menu)
             {
                 _MenuGui = new MenuGuiBase(_menuCanvas);
             }
@@ -193,11 +193,11 @@ namespace Intersect_Client.Classes
         public static void DrawGui()
         {
             ErrorMsgHandler.Update();
-            if (Globals.GameState == 0)
+            if (Globals.GameState == (int)Enums.GameStates.Menu)
             {
                 _MenuGui.Draw();
             }
-            else
+            else if (Globals.GameState == (int)Enums.GameStates.InGame)
             {
                 _GameGui.Draw();
             }

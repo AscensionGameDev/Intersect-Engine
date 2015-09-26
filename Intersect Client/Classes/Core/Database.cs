@@ -57,6 +57,7 @@ namespace Intersect_Client.Classes
                 writer.WriteElementString("Sound", "True");
                 writer.WriteElementString("Music", "True");
                 writer.WriteElementString("MenuBGM", "");
+                writer.WriteElementString("IntroBG", "");
                 writer.WriteElementString("TileWidth", "32");
                 writer.WriteElementString("TileHeight", "32");
                 writer.WriteEndElement();
@@ -94,6 +95,9 @@ namespace Intersect_Client.Classes
                     selectSingleNode = options.SelectSingleNode("//Config/MenuBG");
                     if (selectSingleNode != null)
                         Globals.MenuBG = selectSingleNode.InnerText;
+                    selectSingleNode = options.SelectSingleNode("//Config/IntroBG");
+                    if (selectSingleNode != null)
+                        Globals.IntroBG.AddRange(selectSingleNode.InnerText.Split(','));
                     selectSingleNode = options.SelectSingleNode("//Config/TileWidth");
                     if (selectSingleNode != null)
                         Globals.TileWidth = Int32.Parse(selectSingleNode.InnerText);

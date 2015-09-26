@@ -29,6 +29,14 @@ namespace Intersect_Client.Classes
 {
     public static class Enums
     {
+
+        public enum GameStates
+        {
+            Intro = 0,
+            Menu,
+            InGame
+        }
+
         public enum ClientPackets
         {
             Ping = 0,

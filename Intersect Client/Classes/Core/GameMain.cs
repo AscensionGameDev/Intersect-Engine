@@ -43,6 +43,11 @@ namespace Intersect_Client
             Database.CheckDirectories();
             Database.LoadOptions();
 
+            if (Globals.IntroBG.Count == 0)
+            {
+                Globals.GameState = (int)Enums.GameStates.Menu;
+            }
+
             //Load Graphics
             Graphics.InitGraphics();
 
@@ -61,7 +66,7 @@ namespace Intersect_Client
                     Network.CheckNetwork();
                     Graphics.DrawGame();
                     Sounds.Update();
-                    if (Globals.GameState == 0)
+                    if (Globals.GameState == (int)Enums.GameStates.Menu)
                     {
                         ProcessMenu();
                     }
@@ -86,7 +91,7 @@ namespace Intersect_Client
             if (!Globals.JoiningGame) return;
             if (Graphics.FadeAmt != 255f) return;
             //Check if maps are loaded and ready
-            Globals.GameState = 1;
+            Globals.GameState = (int)Enums.GameStates.InGame;
             Gui.DestroyGwen();
             Gui.InitGwen();
             PacketSender.SendEnterGame();

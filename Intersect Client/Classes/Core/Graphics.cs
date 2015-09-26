@@ -112,6 +112,12 @@ namespace Intersect_Client.Classes
 
         private static long _fadeTimer;
 
+        //Intro Variables
+        private static int IntroIndex = 0;
+        private static long IntroTime = -1;
+        private static long IntroDelay = 3000;
+
+
 
         //Init Functions
         public static void InitGraphics()
@@ -191,7 +197,7 @@ namespace Intersect_Client.Classes
         {
             KeyStates.Add(e.Code);
             if (e.Code != Keyboard.Key.Return) return;
-            if (Globals.GameState != 1) return;
+            if (Globals.GameState != (int)Enums.GameStates.InGame) return;
             if (Gui.HasInputFocus() == false)
             {
                 Gui._GameGui.FocusChat = true;
@@ -215,7 +221,40 @@ namespace Intersect_Client.Classes
             RenderWindow.DispatchEvents();
             RenderWindow.Clear(Color.Black);
 
-            if (Globals.GameState == 1 && Globals.GameLoaded && Globals.CurrentMap > -1)
+            if (Globals.GameState == (int)Enums.GameStates.Intro)
+            {
+                if (ImageFileNames.IndexOf(Globals.IntroBG[IntroIndex]) > -1)
+                {
+                    DrawFullScreenTextureStretched(ImageTextures[ImageFileNames.IndexOf(Globals.IntroBG[IntroIndex])]);
+                }
+                if (FadeStage == 0 && IntroTime == -1)
+                {
+                    IntroTime = Environment.TickCount + IntroDelay;
+                }
+                else if (FadeStage == 0 && IntroTime > 0)
+                {
+                    if (IntroTime <= Environment.TickCount)
+                    {
+                        FadeStage = 2;
+                        IntroTime = 0;
+                    }
+                }
+                else if (FadeStage == 2 && FadeAmt == 255 && IntroTime == 0)
+                {
+                    IntroIndex++;
+                    FadeStage = 1;
+                    IntroTime = -1;
+                    if (IntroIndex >= Globals.IntroBG.Count) { Globals.GameState = (int)Enums.GameStates.Menu; }
+                }
+            }
+            else if (Globals.GameState == (int)Enums.GameStates.Menu)
+            {
+                if (ImageFileNames.IndexOf(Globals.MenuBG) > -1)
+                {
+                    DrawFullScreenTexture(ImageTextures[ImageFileNames.IndexOf(Globals.MenuBG)]);
+                }
+            }
+            if (Globals.GameState == (int)Enums.GameStates.InGame && Globals.GameLoaded && Globals.CurrentMap > -1)
             {
                 if (LightsChanged)
                 {
@@ -361,13 +400,7 @@ namespace Intersect_Client.Classes
                 }
                 DrawDarkness();
             }
-            else
-            {
-                if (ImageFileNames.IndexOf(Globals.MenuBG) > -1)
-                {
-                    DrawFullScreenTexture(ImageTextures[ImageFileNames.IndexOf(Globals.MenuBG)]);
-                }
-            }
+            
 
             Gui.DrawGui();
 
@@ -502,6 +535,11 @@ namespace Intersect_Client.Classes
             }
             RenderTexture(tex, new Rectangle(0, 0, (int)tex.Size.X, (int)tex.Size.Y),
                 new Rectangle(bgx, bgy, bgw, bgh), RenderWindow);
+        }
+        public static void DrawFullScreenTextureStretched(Texture tex)
+        {
+            RenderTexture(tex, new Rectangle(0, 0, (int)tex.Size.X, (int)tex.Size.Y),
+                new Rectangle(0, 0, ScreenWidth, ScreenHeight), RenderWindow);
         }
 
         //Graphic Loading
