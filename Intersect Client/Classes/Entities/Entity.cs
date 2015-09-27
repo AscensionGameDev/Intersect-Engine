@@ -202,7 +202,7 @@ namespace Intersect_Client
             }
             else
             {
-                pos = new Vector2f((int)Math.Ceiling(Graphics.CalcMapOffsetX(mapPos, true) + CurrentX * Globals.TileWidth + OffsetX), (int)Math.Ceiling(Graphics.CalcMapOffsetY(mapPos, true) + CurrentY * Globals.TileHeight + OffsetY - Globals.TileHeight));
+                pos = new Vector2f((int)Math.Ceiling(Graphics.CalcMapOffsetX(mapPos, true) + CurrentX * Globals.TileWidth + OffsetX + 16), (int)Math.Ceiling(Graphics.CalcMapOffsetY(mapPos, true) + CurrentY * Globals.TileHeight + OffsetY - Globals.TileHeight + 32));
             }
             return pos;
         }
