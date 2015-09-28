@@ -81,6 +81,8 @@ namespace Intersect_Client.Classes
         public static Texture[] ImageTextures;
         public static List<string> FogFileNames;
         public static Texture[] FogTextures;
+        public static List<string> ResourceFileNames;
+        public static Texture[] ResourceTextures;
 
 
         //Darkness Stuff
@@ -130,6 +132,7 @@ namespace Intersect_Client.Classes
             LoadFaces();
             LoadImages();
             LoadFogs();
+            LoadResources();
             GameFont = new Font("Arvo-Regular.ttf");
         }
         private static void InitSfml()
@@ -254,7 +257,7 @@ namespace Intersect_Client.Classes
                     DrawFullScreenTexture(ImageTextures[ImageFileNames.IndexOf(Globals.MenuBG)]);
                 }
             }
-            if (Globals.GameState == (int)Enums.GameStates.InGame && Globals.GameLoaded && Globals.CurrentMap > -1)
+            if (Globals.GameState == (int)Enums.GameStates.InGame && Globals.GameLoaded && Globals.CurrentMap > -1 && Globals.GameMaps[Globals.CurrentMap] != null)
             {
                 if (LightsChanged)
                 {
@@ -264,9 +267,9 @@ namespace Intersect_Client.Classes
                         //If we don't have a light texture, make a base/blank one.
                         if (DarkCacheTexture == null)
                         {
-                            DarkCacheTexture = new RenderTexture(Constants.MapWidth * (uint)Globals.TileWidth * 3, Constants.MapHeight * (uint)Globals.TileHeight * 3);
-                            DarkCacheTextureBackup = new RenderTexture(Constants.MapWidth * (uint)Globals.TileWidth * 3, Constants.MapHeight * (uint)Globals.TileHeight * 3);
-                            CurrentDarknexxTexture = new RenderTexture(Constants.MapWidth * (uint)Globals.TileWidth * 3, Constants.MapHeight * (uint)Globals.TileHeight * 3);
+                            DarkCacheTexture = new RenderTexture((uint)Globals.MapWidth * (uint)Globals.TileWidth * 3, (uint)Globals.MapHeight * (uint)Globals.TileHeight * 3);
+                            DarkCacheTextureBackup = new RenderTexture((uint)Globals.MapWidth * (uint)Globals.TileWidth * 3, (uint)Globals.MapHeight * (uint)Globals.TileHeight * 3);
+                            CurrentDarknexxTexture = new RenderTexture((uint)Globals.MapWidth * (uint)Globals.TileWidth * 3, (uint)Globals.MapHeight * (uint)Globals.TileHeight * 3);
                             var size = CalcLightWidth(PlayerLightSize);
                             var tmpLight = new Bitmap(size, size);
                             var g = System.Drawing.Graphics.FromImage(tmpLight);
@@ -313,7 +316,7 @@ namespace Intersect_Client.Classes
                     for (var i = 0; i < 9; i++)
                     {
                         if (Globals.LocalMaps[i] <= -1) continue;
-                        for (var y = 0; y < Constants.MapHeight; y++)
+                        for (var y = 0; y < Globals.MapHeight; y++)
                         {
                             foreach (var t in Globals.Entities)
                             {
@@ -351,7 +354,7 @@ namespace Intersect_Client.Classes
                 for (var i = 0; i < 9; i++)
                 {
                     if (Globals.LocalMaps[i] <= -1) continue;
-                    for (var y = 0; y < Constants.MapHeight; y++)
+                    for (var y = 0; y < Globals.MapHeight; y++)
                     {
                         foreach (var t in Globals.Entities)
                         {
@@ -377,7 +380,7 @@ namespace Intersect_Client.Classes
                 for (var i = 0; i < 9; i++)
                 {
                     if (Globals.LocalMaps[i] <= -1) continue;
-                    for (var y = 0; y < Constants.MapHeight; y++)
+                    for (var y = 0; y < Globals.MapHeight; y++)
                     {
                         foreach (var t in Globals.Entities)
                         {
@@ -648,6 +651,18 @@ namespace Intersect_Client.Classes
                 FogTextures[i] = new Texture(new Image("Resources/Fogs/" + FogFileNames[i]));
             }
         }
+        private static void LoadResources()
+        {
+            if (!Directory.Exists("Resources/Resources")) { Directory.CreateDirectory("Resources/Resources"); }
+            var resources = Directory.GetFiles("Resources/Resources", "*.png");
+            ResourceFileNames = new List<string>();
+            ResourceTextures = new Texture[resources.Length];
+            for (int i = 0; i < resources.Length; i++)
+            {
+                ResourceFileNames.Add(resources[i].Replace("Resources/Resources\\", ""));
+                ResourceTextures[i] = new Texture(new Image("Resources/Resources/" + ResourceFileNames[i]));
+            }
+        }
 
         //Lighting
         private static void InitLighting()
@@ -692,7 +707,8 @@ namespace Intersect_Client.Classes
                                 break;
                             }
                         }
-                        tmpTex.Clear(new Color(30, 30, 30, 255));
+                        byte val = (byte)(((float)Globals.GameMaps[Globals.LocalMaps[4]].Brightness / 100f) * 255f);
+                        tmpTex.Clear(new Color(val, val, val, 255));
 
                         if (!LightsChanged)
                         {
@@ -706,8 +722,8 @@ namespace Intersect_Client.Classes
                                 {
                                     if (LightsChanged) { break; }
                                     double w = CalcLightWidth(t.Range);
-                                    var x = CalcMapOffsetX(z, true) + Constants.MapWidth * Globals.TileWidth + (t.TileX * Globals.TileWidth + t.OffsetX) - (int)w / 2 + 16;
-                                    var y = CalcMapOffsetY(z, true) + Constants.MapHeight * Globals.TileHeight + (t.TileY * Globals.TileHeight + t.OffsetY) - (int)w / 2 + 16;
+                                    var x = CalcMapOffsetX(z, true) + Globals.MapWidth * Globals.TileWidth + (t.TileX * Globals.TileWidth + t.OffsetX) - (int)w / 2 + 16;
+                                    var y = CalcMapOffsetY(z, true) + Globals.MapHeight * Globals.TileHeight + (t.TileY * Globals.TileHeight + t.OffsetY) - (int)w / 2 + 16;
                                     AddLight(x, y, (int)w, t.Intensity, t, tmpTex);
                                 }
                             }
@@ -745,8 +761,8 @@ namespace Intersect_Client.Classes
         }
         private static void DrawDarkness()
         {
-            if (Globals.GameMaps[Globals.CurrentMap].IsIndoors) { return; } //Don't worry about day or night if indoors
-            var rs = new RectangleShape(new Vector2f(3 * Globals.TileWidth * Constants.MapWidth, 3 * Globals.TileHeight * Constants.MapHeight));
+            if (Globals.GameMaps[Globals.CurrentMap].IsIndoors) { return; }
+            var rs = new RectangleShape(new Vector2f(3 * Globals.TileWidth * Globals.MapWidth, 3 * Globals.TileHeight * Globals.MapHeight));
             if (CurrentDarknexxTexture == null) { return; }
             CurrentDarknexxTexture.Clear(Color.Transparent);
 
@@ -783,9 +799,9 @@ namespace Intersect_Client.Classes
             {
                 RenderTexture(PlayerLightTex, (int)
                                 Math.Ceiling(-DarkOffsetX + Globals.Entities[Globals.MyIndex].GetCenterPos(4).X - PlayerLightTex.Size.X / 2 +
-                                             Constants.MapWidth * Globals.TileWidth), (int)
+                                             Globals.MapWidth * Globals.TileWidth), (int)
                                 Math.Ceiling(-DarkOffsetY + Globals.Entities[Globals.MyIndex].GetCenterPos(4).Y - PlayerLightTex.Size.Y / 2 +
-                                             Constants.MapHeight * Globals.TileHeight), CurrentDarknexxTexture, BlendMode.Add);
+                                             Globals.MapHeight * Globals.TileHeight), CurrentDarknexxTexture, BlendMode.Add);
             }
             rs.FillColor = new Color(255, 255, 255, (byte)(SunIntensity * 255));    //Draw a rectangle, the opacity indicates if it is day or night.
             CurrentDarknexxTexture.Draw(rs, new RenderStates(BlendMode.Add));
@@ -844,23 +860,23 @@ namespace Intersect_Client.Classes
             {
                 if (ignorePlayerOffset || Globals.Entities[Globals.MyIndex] == null)
                 {
-                    return ((-Constants.MapWidth * Globals.TileWidth) + ((i) * (Constants.MapWidth * Globals.TileWidth)));
+                    return ((-Globals.MapWidth * Globals.TileWidth) + ((i) * (Globals.MapWidth * Globals.TileWidth)));
                 }
-                return ((-Constants.MapWidth * Globals.TileWidth) + ((i) * (Constants.MapWidth * Globals.TileWidth))) + (ScreenWidth / 2) - Globals.Entities[Globals.MyIndex].CurrentX * Globals.TileWidth - (int)Math.Ceiling(Globals.Entities[Globals.MyIndex].OffsetX);
+                return ((-Globals.MapWidth * Globals.TileWidth) + ((i) * (Globals.MapWidth * Globals.TileWidth))) + (ScreenWidth / 2) - Globals.Entities[Globals.MyIndex].CurrentX * Globals.TileWidth - (int)Math.Ceiling(Globals.Entities[Globals.MyIndex].OffsetX);
             }
             if (i < 6)
             {
                 if (ignorePlayerOffset || Globals.Entities[Globals.MyIndex] == null)
                 {
-                    return ((-Constants.MapWidth * Globals.TileWidth) + ((i - 3) * (Constants.MapWidth * Globals.TileWidth)));
+                    return ((-Globals.MapWidth * Globals.TileWidth) + ((i - 3) * (Globals.MapWidth * Globals.TileWidth)));
                 }
-                return ((-Constants.MapWidth * Globals.TileWidth) + ((i - 3) * (Constants.MapWidth * Globals.TileWidth))) + (ScreenWidth / 2) - Globals.Entities[Globals.MyIndex].CurrentX * Globals.TileWidth - (int)Math.Ceiling(Globals.Entities[Globals.MyIndex].OffsetX);
+                return ((-Globals.MapWidth * Globals.TileWidth) + ((i - 3) * (Globals.MapWidth * Globals.TileWidth))) + (ScreenWidth / 2) - Globals.Entities[Globals.MyIndex].CurrentX * Globals.TileWidth - (int)Math.Ceiling(Globals.Entities[Globals.MyIndex].OffsetX);
             }
             if (ignorePlayerOffset || Globals.Entities[Globals.MyIndex] == null)
             {
-                return ((-Constants.MapWidth * Globals.TileWidth) + ((i - 6) * (Constants.MapWidth * Globals.TileWidth)));
+                return ((-Globals.MapWidth * Globals.TileWidth) + ((i - 6) * (Globals.MapWidth * Globals.TileWidth)));
             }
-            return ((-Constants.MapWidth * Globals.TileWidth) + ((i - 6) * (Constants.MapWidth * Globals.TileWidth))) + (ScreenWidth / 2) - Globals.Entities[Globals.MyIndex].CurrentX * Globals.TileWidth - (int)Math.Ceiling(Globals.Entities[Globals.MyIndex].OffsetX);
+            return ((-Globals.MapWidth * Globals.TileWidth) + ((i - 6) * (Globals.MapWidth * Globals.TileWidth))) + (ScreenWidth / 2) - Globals.Entities[Globals.MyIndex].CurrentX * Globals.TileWidth - (int)Math.Ceiling(Globals.Entities[Globals.MyIndex].OffsetX);
         }
         public static int CalcMapOffsetY(int i, bool ignorePlayerOffset = false)
         {
@@ -868,9 +884,9 @@ namespace Intersect_Client.Classes
             {
                 if (ignorePlayerOffset || Globals.Entities[Globals.MyIndex] == null)
                 {
-                    return -Constants.MapHeight * Globals.TileHeight;
+                    return -Globals.MapHeight * Globals.TileHeight;
                 }
-                return -Constants.MapHeight * Globals.TileHeight + (ScreenHeight / 2) - Globals.Entities[Globals.MyIndex].CurrentY * Globals.TileHeight - (int)Math.Ceiling(Globals.Entities[Globals.MyIndex].OffsetY);
+                return -Globals.MapHeight * Globals.TileHeight + (ScreenHeight / 2) - Globals.Entities[Globals.MyIndex].CurrentY * Globals.TileHeight - (int)Math.Ceiling(Globals.Entities[Globals.MyIndex].OffsetY);
             }
             if (i < 6)
             {
@@ -882,9 +898,9 @@ namespace Intersect_Client.Classes
             }
             if (ignorePlayerOffset || Globals.Entities[Globals.MyIndex] == null)
             {
-                return Constants.MapHeight * Globals.TileHeight;
+                return Globals.MapHeight * Globals.TileHeight;
             }
-            return Constants.MapHeight * Globals.TileHeight + (ScreenHeight / 2) - Globals.Entities[Globals.MyIndex].CurrentY * Globals.TileHeight - (int)Math.Ceiling(Globals.Entities[Globals.MyIndex].OffsetY);
+            return Globals.MapHeight * Globals.TileHeight + (ScreenHeight / 2) - Globals.Entities[Globals.MyIndex].CurrentY * Globals.TileHeight - (int)Math.Ceiling(Globals.Entities[Globals.MyIndex].OffsetY);
         }
 
         //Rendering Functions

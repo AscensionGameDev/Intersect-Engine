@@ -72,6 +72,9 @@ namespace Intersect_Client.Classes
                     case Enums.ServerPackets.EnterMap:
                         HandleEnterMap(bf.ReadBytes(bf.Length()));
                         break;
+                    case Enums.ServerPackets.MapList:
+                        HandleMapList(bf.ReadBytes(bf.Length()));
+                        break;
                     case Enums.ServerPackets.EntityMove:
                         HandleEntityMove(bf.ReadBytes(bf.Length()));
                         break;
@@ -134,6 +137,9 @@ namespace Intersect_Client.Classes
                         break;
                     case Enums.ServerPackets.QuestData:
                         HandleQuestData(bf.ReadBytes(bf.Length()));
+                        break;
+                    case Enums.ServerPackets.OpenAdminWindow:
+                        HandleOpenAdminWindow();
                         break;
                     default:
                         Console.WriteLine(@"Non implemented packet received: " + packetHeader);
@@ -241,6 +247,7 @@ namespace Intersect_Client.Classes
             bf.WriteBytes(packet);
             var index = (int)bf.ReadLong();
             var isEvent = bf.ReadInteger();
+            if (index == Globals.MyIndex && isEvent == 0) { return; }
             EntityManager.RemoveEntity(index, isEvent);
 
         }
@@ -327,6 +334,16 @@ namespace Intersect_Client.Classes
                     }
                 }
             }
+        }
+
+        private static void HandleMapList(byte[] packet)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteBytes(packet);
+            Database.OrderedMaps.Clear();
+            Database.MapStructure.Load(bf);
+            //If admin window is open update it
+            bf.Dispose();
         }
 
         private static void HandleEntityMove(byte[] packet)
@@ -690,6 +707,11 @@ namespace Intersect_Client.Classes
             var questNum = bf.ReadInteger();
             Globals.GameQuests[questNum] = new QuestStruct();
             Globals.GameQuests[questNum].Load(bf.ReadBytes(bf.Length()));
+        }
+
+        private static void HandleOpenAdminWindow()
+        {
+            Gui.OpenAdminWindow();
         }
     }
 }

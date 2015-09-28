@@ -160,7 +160,10 @@ namespace Intersect_Client.Classes.UI.Menu
                 i = 1;
             }
 
-            _characterPortrait.ImageName = "Resources/Faces/" + GetSprite(i);
+            if (System.IO.File.Exists("Resources/Faces/" + GetSprite(i)))
+            {
+                _characterPortrait.ImageName = "Resources/Faces/" + GetSprite(i);
+            }
             if (Globals.GameClasses[GetClass()].Sprites.Count > 0)
             {
                 string test = Globals.GameClasses[GetClass()].Sprites[GetSprite(i)].Sprite;

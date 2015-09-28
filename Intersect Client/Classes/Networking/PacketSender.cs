@@ -231,5 +231,21 @@ namespace Intersect_Client.Classes
             Network.SendPacket(bf.ToArray());
         }
 
+        public static void SendOpenAdminWindow()
+        {
+            var bf = new ByteBuffer();
+            bf.WriteLong((int)Enums.ClientPackets.OpenAdminWindow);
+            Network.SendPacket(bf.ToArray());
+        }
+
+        public static void SendAdminAction(int action, int val)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteLong((int)Enums.ClientPackets.AdminAction);
+            bf.WriteInteger(action);
+            bf.WriteInteger(val);
+            Network.SendPacket(bf.ToArray());
+        }
+
     }
 }

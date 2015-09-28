@@ -162,6 +162,12 @@ namespace Intersect_Server.Classes
                 case Enums.ClientPackets.SaveQuest:
                     HandleQuestData(client, packet);
                     break;
+                case Enums.ClientPackets.OpenAdminWindow:
+                    HandleOpenAdminWindow(client);
+                    break;
+                case Enums.ClientPackets.AdminAction:
+                    HandleAdminAction(client, packet);
+                    break;
                 default:
                     Globals.GeneralLogs.Add(@"Non implemented packet received: " + packetHeader);
                     break;
@@ -232,7 +238,7 @@ namespace Intersect_Server.Classes
             Globals.Entities[index].CurrentMap = bf.ReadInteger();
             if (oldMap != Globals.Entities[index].CurrentMap)
             {
-                Globals.GameMaps[Globals.Entities[index].CurrentMap].PlayerEnteredMap();
+                Globals.GameMaps[Globals.Entities[index].CurrentMap].PlayerEnteredMap(client);
             }
             Globals.Entities[index].CurrentX = bf.ReadInteger();
             Globals.Entities[index].CurrentY = bf.ReadInteger();
@@ -509,34 +515,6 @@ namespace Intersect_Server.Classes
             PacketSender.SendGameData(client);
             PacketSender.SendPlayerMsg(client, "Welcome to the Intersect game server.");
             PacketSender.SendGlobalMsg(Globals.Entities[index].MyName + " has joined the Intersect engine");
-            for (var i = 0; i < Globals.Entities.Count; i++)
-            {
-                if (Globals.Entities[i] != null)
-                {
-                    if (Globals.Entities[i].GetType() == typeof(Npc))
-                    {
-                        PacketSender.SendEntityData(client, i, 2, Globals.Entities[i]);
-                    }
-                    else if (Globals.Entities[i].GetType() == typeof(Resource))
-                    {
-                        PacketSender.SendEntityData(client, i, 3, Globals.Entities[i]);
-                    }
-                    else
-                    {
-                        PacketSender.SendEntityData(client, i, 0, Globals.Entities[i]);
-                    }
-                }
-            }
-            for (var i = 0; i < Globals.Clients.Count; i++)
-            {
-                if (i == client.ClientIndex) continue;
-                if (Globals.Clients[i] == null) continue;
-                if (!Globals.Clients[i].isConnected) continue;
-                if (!Globals.Clients[i].IsEditor)
-                {
-                    PacketSender.SendEntityData(Globals.Clients[i], client.EntityIndex, 0, client.Entity);
-                }
-            }
             Globals.Entities[index].Warp(Globals.Entities[index].CurrentMap, Globals.Entities[index].CurrentX, Globals.Entities[index].CurrentY, Globals.Entities[index].Dir);
 
         }
@@ -605,6 +583,7 @@ namespace Intersect_Server.Classes
             else
             {
                 Globals.Entities[index].MyName = Name;
+                Database.Characters.Add(Name);
                 ((Player)Globals.Entities[index]).Class = Class;
                 if (Globals.GameClasses[Class].Sprites.Count > 0)
                 {
@@ -614,6 +593,8 @@ namespace Intersect_Server.Classes
                 ((Player)Globals.Entities[index]).WarpToSpawn();
                 Globals.Entities[index].Vital[(int)Enums.Vitals.Health] = Globals.GameClasses[Class].MaxVital[(int)Enums.Vitals.Health];
                 Globals.Entities[index].Vital[(int)Enums.Vitals.Mana] = Globals.GameClasses[Class].MaxVital[(int)Enums.Vitals.Mana];
+                Globals.Entities[index].MaxVital[(int)Enums.Vitals.Health] = Globals.GameClasses[Class].MaxVital[(int)Enums.Vitals.Health];
+                Globals.Entities[index].MaxVital[(int)Enums.Vitals.Mana] = Globals.GameClasses[Class].MaxVital[(int)Enums.Vitals.Mana];
 
                 for (int i = 0; i < (int)Enums.Stats.StatCount; i++)
                 {
@@ -973,6 +954,29 @@ namespace Intersect_Server.Classes
             }
             File.WriteAllBytes("Resources/Maps/MapStructure.dat", Database.MapStructure.Data());
             bf.Dispose();
+        }
+
+        private static void HandleOpenAdminWindow(Client client)
+        {
+            if (client.Power > 0)
+            {
+                PacketSender.SendMapList(client);
+                PacketSender.SendOpenAdminWindow(client);
+            }
+        }
+
+        private static void HandleAdminAction(Client client, byte[] packet)
+        {
+            if (client.Power == 0) { return; }
+            var bf = new ByteBuffer();
+            bf.WriteBytes(packet);
+            var type = bf.ReadInteger();
+            switch (type)
+            {
+                case (int)Enums.AdminActions.WarpTo:
+                    client.Entity.Warp(bf.ReadInteger(), client.Entity.CurrentX, client.Entity.CurrentY);
+                    break;
+            }
         }
     }
 }

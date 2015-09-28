@@ -32,23 +32,13 @@ namespace Intersect_Server.Classes
 
         //Respawn
         public long RespawnTime = 0;
-
-        //Tileset Locations
-        public int X;
-        public int Y;
-        public int Width;
-        public int Height;
         
         public Resource(int index, int resourceNum) : base(index)
         {
             ResourceNum = resourceNum;
             ResourceStruct myBase = Globals.GameResources[ResourceNum];
             MyName = myBase.Name;
-            MySprite = myBase.InitialGraphic.Sprite;
-            X = myBase.InitialGraphic.X;
-            Y = myBase.InitialGraphic.Y;
-            Width = myBase.InitialGraphic.Width;
-            Height = myBase.InitialGraphic.Height;
+            MySprite = myBase.InitialGraphic;
             Vital[(int)Enums.Vitals.Health] = Globals.Rand.Next(myBase.MinHP, myBase.MaxHP + 1);
             MaxVital[(int)Enums.Vitals.Health] = Vital[(int)Enums.Vitals.Health];
             Passable = Convert.ToInt32(myBase.WalkableBefore);
@@ -59,11 +49,7 @@ namespace Intersect_Server.Classes
         {
             ResourceStruct myBase = Globals.GameResources[ResourceNum];
             RespawnTime = Environment.TickCount + Globals.GameResources[ResourceNum].SpawnDuration * 1000;
-            MySprite = myBase.EndGraphic.Sprite;
-            X = myBase.EndGraphic.X;
-            Y = myBase.EndGraphic.Y;
-            Width = myBase.EndGraphic.Width;
-            Height = myBase.EndGraphic.Height;
+            MySprite = myBase.EndGraphic;
             Passable = Convert.ToInt32(myBase.WalkableAfter);
             RespawnTime = Environment.TickCount + myBase.SpawnDuration * 1000;
             PacketSender.SendEntityDataToProximity(MyIndex, 3, Globals.Entities[MyIndex]);
@@ -74,11 +60,8 @@ namespace Intersect_Server.Classes
         public void Respawn()
         {
             ResourceStruct myBase = Globals.GameResources[ResourceNum];
-            MySprite = myBase.InitialGraphic.Sprite;
-            X = myBase.InitialGraphic.X;
-            Y = myBase.InitialGraphic.Y;
-            Width = myBase.InitialGraphic.Width;
-            Height = myBase.InitialGraphic.Height;
+            if (myBase.Name == "" || myBase.MaxHP == 0) { return; }
+            MySprite = myBase.InitialGraphic;
             Vital[(int)Enums.Vitals.Health] = Globals.Rand.Next(myBase.MinHP, myBase.MaxHP + 1);
             MaxVital[(int)Enums.Vitals.Health] = Vital[(int)Enums.Vitals.Health];
             Passable = Convert.ToInt32(myBase.WalkableBefore);
@@ -109,13 +92,7 @@ namespace Intersect_Server.Classes
 
         public byte[] Data()
         {
-            var bf = new ByteBuffer();
-            bf.WriteBytes(base.Data());
-            bf.WriteInteger(X);
-            bf.WriteInteger(Y);
-            bf.WriteInteger(Width);
-            bf.WriteInteger(Height);
-            return bf.ToArray();
+            return base.Data();
         }
     }
 }

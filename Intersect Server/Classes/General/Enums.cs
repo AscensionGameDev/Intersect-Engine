@@ -72,6 +72,8 @@ namespace Intersect_Server.Classes
             CreateCharacter,
             OpenQuestEditor,
             SaveQuest,
+            OpenAdminWindow,
+            AdminAction,
         }
 
         public enum ServerPackets
@@ -119,6 +121,7 @@ namespace Intersect_Server.Classes
             CreateCharacter,
             OpenQuestEditor,
             QuestData,
+            OpenAdminWindow,
         }
 
         public enum Stats
@@ -153,6 +156,11 @@ namespace Intersect_Server.Classes
             AddFolder = 1,
             Rename = 2,
             Delete = 3,
+        }
+
+        public enum AdminActions
+        {
+            WarpTo = 0,
         }
 
         public const int WeaponIndex = 2;

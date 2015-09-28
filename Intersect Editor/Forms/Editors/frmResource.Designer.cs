@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.btnCancel = new System.Windows.Forms.Button();
             this.btnDelete = new System.Windows.Forms.Button();
@@ -70,6 +71,7 @@
             this.lblDropItem = new System.Windows.Forms.Label();
             this.scrlDropIndex = new System.Windows.Forms.HScrollBar();
             this.lblDropIndex = new System.Windows.Forms.Label();
+            this.tmrRender = new System.Windows.Forms.Timer(this.components);
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -325,9 +327,6 @@
             this.picEndResource.Size = new System.Drawing.Size(195, 341);
             this.picEndResource.TabIndex = 2;
             this.picEndResource.TabStop = false;
-            this.picEndResource.MouseDown += new System.Windows.Forms.MouseEventHandler(this.picEndResource_MouseDown);
-            this.picEndResource.MouseMove += new System.Windows.Forms.MouseEventHandler(this.picEndResource_MouseMove);
-            this.picEndResource.MouseUp += new System.Windows.Forms.MouseEventHandler(this.picEndResource_MouseUp);
             // 
             // grpInitialTileset
             // 
@@ -347,9 +346,6 @@
             this.picInitialResource.Size = new System.Drawing.Size(195, 341);
             this.picInitialResource.TabIndex = 2;
             this.picInitialResource.TabStop = false;
-            this.picInitialResource.MouseDown += new System.Windows.Forms.MouseEventHandler(this.picInitialResource_MouseDown);
-            this.picInitialResource.MouseMove += new System.Windows.Forms.MouseEventHandler(this.picInitialResource_MouseMove);
-            this.picInitialResource.MouseUp += new System.Windows.Forms.MouseEventHandler(this.picInitialResource_MouseUp);
             // 
             // hScrollEndTileset
             // 
@@ -534,6 +530,12 @@
             this.lblDropIndex.TabIndex = 9;
             this.lblDropIndex.Text = "Drop Index: 1";
             // 
+            // tmrRender
+            // 
+            this.tmrRender.Enabled = true;
+            this.tmrRender.Interval = 10;
+            this.tmrRender.Tick += new System.EventHandler(this.tmrRender_Tick);
+            // 
             // frmResource
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -608,5 +610,6 @@
         private System.Windows.Forms.Label lblMaxHp;
         private System.Windows.Forms.HScrollBar scrlAnimation;
         private System.Windows.Forms.Label lblAnimation;
+        private System.Windows.Forms.Timer tmrRender;
     }
 }

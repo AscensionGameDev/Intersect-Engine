@@ -106,8 +106,8 @@ namespace Intersect_Server.Classes
                         //Check that not going out of the map boundaries
                         if (x < 0) x = 0;
                         if (y < 0) y = 0;
-                        if (xMax >= Constants.MapWidth) xMax = Constants.MapWidth;
-                        if (yMax >= Constants.MapHeight) yMax = Constants.MapHeight;
+                        if (xMax >= Globals.MapWidth) xMax = Globals.MapWidth;
+                        if (yMax >= Globals.MapHeight) yMax = Globals.MapHeight;
 
                         for (int n = 0; n < Globals.GameMaps[CurrentMap].Entities.Count; n++)
                         {
@@ -264,39 +264,39 @@ namespace Intersect_Server.Classes
                                 {
                                     if (Globals.Entities[i].CurrentMap == Database.MapGrids[myGrid].MyGrid[x, y])
                                     {
-                                        closedList.Add(new Point((x - Globals.GameMaps[CurrentMap].MapGridX + 1) * Constants.MapWidth + Globals.Entities[i].CurrentX, (y - Globals.GameMaps[CurrentMap].MapGridY + 1) * Constants.MapHeight + Globals.Entities[i].CurrentY, -1, 0));
+                                        closedList.Add(new Point((x - Globals.GameMaps[CurrentMap].MapGridX + 1) * Globals.MapWidth + Globals.Entities[i].CurrentX, (y - Globals.GameMaps[CurrentMap].MapGridY + 1) * Globals.MapHeight + Globals.Entities[i].CurrentY, -1, 0));
                                     }
                                 }
                             }
                         }
-                        for (var x1 = 0; x1 < Constants.MapWidth; x1++)
+                        for (var x1 = 0; x1 < Globals.MapWidth; x1++)
                         {
-                            for (var y1 = 0; y1 < Constants.MapHeight; y1++)
+                            for (var y1 = 0; y1 < Globals.MapHeight; y1++)
                             {
                                 if (Globals.GameMaps[Database.MapGrids[myGrid].MyGrid[x, y]].Attributes[x1, y1].value == (int)Enums.MapAttributes.Blocked || Globals.GameMaps[Database.MapGrids[myGrid].MyGrid[x, y]].Attributes[x1, y1].value == (int)Enums.MapAttributes.NPCAvoid)
                                 {
-                                    closedList.Add(new Point((x - Globals.GameMaps[CurrentMap].MapGridX + 1) * Constants.MapWidth + x1, (y - Globals.GameMaps[CurrentMap].MapGridY + 1) * Constants.MapHeight + y1, -1, 0));
+                                    closedList.Add(new Point((x - Globals.GameMaps[CurrentMap].MapGridX + 1) * Globals.MapWidth + x1, (y - Globals.GameMaps[CurrentMap].MapGridY + 1) * Globals.MapHeight + y1, -1, 0));
                                 }
                                 if (Database.MapGrids[myGrid].MyGrid[x, y] == _pathFindingLocation.TargetMap && x1 == _pathFindingLocation.TargetX && y1 == _pathFindingLocation.TargetY)
                                 {
-                                    targetX = (x - Globals.GameMaps[CurrentMap].MapGridX + 1) * Constants.MapWidth + x1;
-                                    targetY = (y - Globals.GameMaps[CurrentMap].MapGridY + 1) * Constants.MapHeight + y1;
+                                    targetX = (x - Globals.GameMaps[CurrentMap].MapGridX + 1) * Globals.MapWidth + x1;
+                                    targetY = (y - Globals.GameMaps[CurrentMap].MapGridY + 1) * Globals.MapHeight + y1;
                                 }
                                 if (Database.MapGrids[myGrid].MyGrid[x, y] == CurrentMap && x1 == CurrentX && y1 == CurrentY)
                                 {
-                                    startX = (x - Globals.GameMaps[CurrentMap].MapGridX + 1) * Constants.MapWidth + x1;
-                                    startY = (y - Globals.GameMaps[CurrentMap].MapGridY + 1) * Constants.MapHeight + y1;
+                                    startX = (x - Globals.GameMaps[CurrentMap].MapGridX + 1) * Globals.MapWidth + x1;
+                                    startY = (y - Globals.GameMaps[CurrentMap].MapGridY + 1) * Globals.MapHeight + y1;
                                 }
                             }
                         }
                     }
                     else
                     {
-                        for (var x1 = 0; x1 < Constants.MapWidth; x1++)
+                        for (var x1 = 0; x1 < Globals.MapWidth; x1++)
                         {
-                            for (var y1 = 0; y1 < Constants.MapHeight; y1++)
+                            for (var y1 = 0; y1 < Globals.MapHeight; y1++)
                             {
-                                closedList.Add(new Point((x - Globals.GameMaps[CurrentMap].MapGridX + 1) * Constants.MapWidth + x1, (y - Globals.GameMaps[CurrentMap].MapGridY + 1) * Constants.MapHeight + y1, -1, 0));
+                                closedList.Add(new Point((x - Globals.GameMaps[CurrentMap].MapGridX + 1) * Globals.MapWidth + x1, (y - Globals.GameMaps[CurrentMap].MapGridY + 1) * Globals.MapHeight + y1, -1, 0));
                             }
                         }
                     }

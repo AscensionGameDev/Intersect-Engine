@@ -56,6 +56,9 @@ namespace Intersect_Editor.Classes
                 writer.WriteElementString("Port", "4500");
                 writer.WriteElementString("TileWidth", "32");
                 writer.WriteElementString("TileHeight", "32");
+                writer.WriteComment("Do NOT touch these values will resize the maps in the engine. If you have existing maps and change these values you MUST delete them or else the engine will crash on launch.");
+                writer.WriteElementString("MapWidth", "30");
+                writer.WriteElementString("MapHeight", "26");
                 writer.WriteEndElement();
                 writer.WriteEndDocument();
                 writer.Flush();
@@ -68,17 +71,23 @@ namespace Intersect_Editor.Classes
                 {
                     options.Load("resources\\config.xml");
                     var selectSingleNode = options.SelectSingleNode("//Config/Port");
-                    if (selectSingleNode != null)
+                    if (selectSingleNode != null && selectSingleNode.InnerText != "")
                         Globals.ServerPort = Int32.Parse(selectSingleNode.InnerText);
                     selectSingleNode = options.SelectSingleNode("//Config/Host");
-                    if (selectSingleNode != null)
+                    if (selectSingleNode != null && selectSingleNode.InnerText != "")
                         Globals.ServerHost = selectSingleNode.InnerText;
                     selectSingleNode = options.SelectSingleNode("//Config/TileWidth");
-                    if (selectSingleNode != null)
+                    if (selectSingleNode != null && selectSingleNode.InnerText != "")
                         Globals.TileWidth = Int32.Parse(selectSingleNode.InnerText);
                     selectSingleNode = options.SelectSingleNode("//Config/TileHeight");
-                    if (selectSingleNode != null)
+                    if (selectSingleNode != null && selectSingleNode.InnerText != "")
                         Globals.TileHeight = Int32.Parse(selectSingleNode.InnerText);
+                    selectSingleNode = options.SelectSingleNode("//Config/MapWidth");
+                    if (selectSingleNode != null && selectSingleNode.InnerText != "")
+                        Globals.MapWidth = Int32.Parse(selectSingleNode.InnerText);
+                    selectSingleNode = options.SelectSingleNode("//Config/MapHeight");
+                    if (selectSingleNode != null && selectSingleNode.InnerText != "")
+                        Globals.MapHeight = Int32.Parse(selectSingleNode.InnerText);
                 }
                 catch (Exception)
                 {

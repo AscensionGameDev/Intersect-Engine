@@ -72,6 +72,8 @@ namespace Intersect_Editor.Classes
             CreateCharacter,
             OpenQuestEditor,
             SaveQuest,
+            OpenAdminWindow,
+            AdminAction,
         }
 
         public enum ServerPackets
@@ -119,6 +121,7 @@ namespace Intersect_Editor.Classes
             CreateCharacter,
             OpenQuestEditor,
             QuestData,
+            OpenAdminWindow
         }
 
         public enum Stats

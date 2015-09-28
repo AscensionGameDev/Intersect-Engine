@@ -91,8 +91,8 @@ namespace Intersect_Editor.Forms
         private void InitFormObjects()
         {
             Globals.MapLayersWindow.scrlMap.Maximum = Globals.GameMaps.Length;
-            Globals.MapLayersWindow.scrlX.Maximum = Constants.MapWidth;
-            Globals.MapLayersWindow.scrlY.Maximum = Constants.MapHeight;
+            Globals.MapLayersWindow.scrlX.Maximum = Globals.MapWidth;
+            Globals.MapLayersWindow.scrlY.Maximum = Globals.MapHeight;
             Globals.MapLayersWindow.scrlMapItem.Maximum = Constants.MaxItems;
         }
         private void InitMapProperties()
@@ -124,12 +124,14 @@ namespace Intersect_Editor.Forms
                     Text = @"Intersect Editor - Map# " + mapNum + @" " + Globals.GameMaps[mapNum].MyName + @" Revision: " + Globals.GameMaps[mapNum].Revision;
                 }
                 Globals.MapEditorWindow.picMap.Visible = false;
+                Globals.MapEditorWindow.ResetUndoRedoStates();
                 PacketSender.SendNeedMap(Globals.CurrentMap);
             }
             else
             {
                 Text = @"Intersect Editor";
                 Globals.MapEditorWindow.picMap.Visible = false;
+                Globals.MapEditorWindow.ResetUndoRedoStates();
             }
         }
 
@@ -223,9 +225,9 @@ namespace Intersect_Editor.Forms
             if (
                 MessageBox.Show(@"Are you sure you want to erase this layer?", @"Erase Layer", MessageBoxButtons.YesNo) !=
                 DialogResult.Yes) return;
-            for (var x = 0; x < Constants.MapWidth; x++)
+            for (var x = 0; x < Globals.MapWidth; x++)
             {
-                for (var y = 0; y < Constants.MapHeight; y++)
+                for (var y = 0; y < Globals.MapHeight; y++)
                 {
                     Globals.CurTileX = x;
                     Globals.CurTileY = y;

@@ -32,6 +32,7 @@ namespace Intersect_Editor.Classes
         public static int ServerPort = 6000;
         public static int ReconnectTime = 3000;
 
+
         //Editor Loop Variables
         public static Thread EditorThread;
         public static int CurrentEditor = -1;
@@ -75,6 +76,8 @@ namespace Intersect_Editor.Classes
         public static bool ViewingMapProperties = false;
         public static int TileWidth = 32;
         public static int TileHeight = 32;
+        public static int MapWidth = 30;
+        public static int MapHeight = 26;
 
         //Game Object Editors
         public static frmResource ResourceEditor;

@@ -124,7 +124,7 @@ namespace Intersect_Server.Classes
                                 Dir = t.MyPages[pageIndex].Graphicy
                             };
                             //Send Spawn Event to Player
-                            PacketSender.SendEntityData(MyClient, MyEvents.Count - 1, 1, MyEvents[MyEvents.Count - 1].EventInstance);
+                            PacketSender.SendEntityData(MyClient, MyEvents[MyEvents.Count - 1].EventInstance);
                             PacketSender.SendEntityPositionTo(MyClient, MyEvents.Count - 1, 1, MyEvents[MyEvents.Count - 1].EventInstance);
 
                         }
@@ -610,6 +610,19 @@ namespace Intersect_Server.Classes
         {
             if (MeetsConditions(myEvent.MyPages[0].MyConditions, new Event(myEvent, 0, 0, myMap))) return true;
             return false;
+        }
+        public int FindEvent(Event en)
+        {
+            int id = -1;
+            for (int i = 0; i < MyEvents.Count; i++)
+            {
+                if (MyEvents[i].EventInstance == en)
+                {
+                    id = i;
+                    return id;
+                }
+            }
+                return id;
         }
         
 

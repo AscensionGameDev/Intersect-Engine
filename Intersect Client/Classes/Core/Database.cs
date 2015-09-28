@@ -25,6 +25,7 @@
     SOFTWARE.
 */
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Xml;
 
@@ -32,6 +33,9 @@ namespace Intersect_Client.Classes
 {
     public static class Database
     {
+        public static MapList MapStructure = new MapList();
+        public static List<FolderMap> OrderedMaps = new List<FolderMap>();
+
         public static void CheckDirectories()
         {
             if (!Directory.Exists("Resources")) { Directory.CreateDirectory("Resources"); }
@@ -54,12 +58,15 @@ namespace Intersect_Client.Classes
                 writer.WriteElementString("Port", "4500");
                 writer.WriteElementString("DisplayMode", "0");
                 writer.WriteElementString("FullScreen", "False");
-                writer.WriteElementString("Sound", "True");
-                writer.WriteElementString("Music", "True");
+                writer.WriteElementString("Sound", "100");
+                writer.WriteElementString("Music", "100");
                 writer.WriteElementString("MenuBGM", "");
                 writer.WriteElementString("IntroBG", "");
                 writer.WriteElementString("TileWidth", "32");
                 writer.WriteElementString("TileHeight", "32");
+                writer.WriteComment("Do NOT touch these values will resize the maps in the engine. If you have existing maps and change these values you MUST delete them or else the engine will crash on launch.");
+                writer.WriteElementString("MapWidth", "30");
+                writer.WriteElementString("MapHeight", "26");
                 writer.WriteEndElement();
                 writer.WriteEndDocument();
                 writer.Flush();
@@ -72,38 +79,44 @@ namespace Intersect_Client.Classes
                 {
                     options.Load("Resources\\config.xml");
                     var selectSingleNode = options.SelectSingleNode("//Config/Port");
-                    if (selectSingleNode != null)
+                    if (selectSingleNode != null && selectSingleNode.InnerText != "")
                         Globals.ServerPort = Int32.Parse(selectSingleNode.InnerText);
                     selectSingleNode = options.SelectSingleNode("//Config/Host");
-                    if (selectSingleNode != null)
+                    if (selectSingleNode != null && selectSingleNode.InnerText != "")
                         Globals.ServerHost = selectSingleNode.InnerText;
                     selectSingleNode = options.SelectSingleNode("//Config/DisplayMode");
-                    if (selectSingleNode != null)
+                    if (selectSingleNode != null && selectSingleNode.InnerText != "")
                         Graphics.DisplayMode = Int32.Parse(selectSingleNode.InnerText);
                     selectSingleNode = options.SelectSingleNode("//Config/FullScreen");
-                    if (selectSingleNode != null)
+                    if (selectSingleNode != null && selectSingleNode.InnerText != "")
                         Graphics.FullScreen = Boolean.Parse(selectSingleNode.InnerText);
                     selectSingleNode = options.SelectSingleNode("//Config/Sound");
-                    if (selectSingleNode != null)
+                    if (selectSingleNode != null && selectSingleNode.InnerText != "")
                         Globals.SoundVolume = Int32.Parse(selectSingleNode.InnerText);
                     selectSingleNode = options.SelectSingleNode("//Config/Music");
-                    if (selectSingleNode != null)
+                    if (selectSingleNode != null && selectSingleNode.InnerText != "")
                         Globals.MusicVolume = Int32.Parse(selectSingleNode.InnerText);
                     selectSingleNode = options.SelectSingleNode("//Config/MenuBGM");
-                    if (selectSingleNode != null)
+                    if (selectSingleNode != null && selectSingleNode.InnerText != "")
                         Globals.MenuBGM = selectSingleNode.InnerText;
                     selectSingleNode = options.SelectSingleNode("//Config/MenuBG");
-                    if (selectSingleNode != null)
+                    if (selectSingleNode != null && selectSingleNode.InnerText != "")
                         Globals.MenuBG = selectSingleNode.InnerText;
                     selectSingleNode = options.SelectSingleNode("//Config/IntroBG");
-                    if (selectSingleNode != null)
+                    if (selectSingleNode != null && selectSingleNode.InnerText != "")
                         Globals.IntroBG.AddRange(selectSingleNode.InnerText.Split(','));
                     selectSingleNode = options.SelectSingleNode("//Config/TileWidth");
-                    if (selectSingleNode != null)
+                    if (selectSingleNode != null && selectSingleNode.InnerText != "")
                         Globals.TileWidth = Int32.Parse(selectSingleNode.InnerText);
                     selectSingleNode = options.SelectSingleNode("//Config/TileHeight");
-                    if (selectSingleNode != null)
+                    if (selectSingleNode != null && selectSingleNode.InnerText != "")
                         Globals.TileHeight = Int32.Parse(selectSingleNode.InnerText);
+                    selectSingleNode = options.SelectSingleNode("//Config/MapWidth");
+                    if (selectSingleNode != null && selectSingleNode.InnerText != "")
+                        Globals.MapWidth = Int32.Parse(selectSingleNode.InnerText);
+                    selectSingleNode = options.SelectSingleNode("//Config/MapHeight");
+                    if (selectSingleNode != null && selectSingleNode.InnerText != "")
+                        Globals.MapHeight = Int32.Parse(selectSingleNode.InnerText);
                 }
                 catch (Exception)
                 {
@@ -130,6 +143,9 @@ namespace Intersect_Client.Classes
                 writer.WriteElementString("MenuBG", Globals.MenuBG);
                 writer.WriteElementString("TileWidth", Globals.TileWidth.ToString());
                 writer.WriteElementString("TileHeight", Globals.TileHeight.ToString());
+                writer.WriteComment("Do NOT touch these values will resize the maps in the engine. If you have existing maps and change these values you MUST delete them or else the engine will crash on launch.");
+                writer.WriteElementString("MapWidth", Globals.MapWidth.ToString());
+                writer.WriteElementString("MapHeight", Globals.MapHeight.ToString());
                 writer.WriteEndElement();
                 writer.WriteEndDocument();
                 writer.Flush();

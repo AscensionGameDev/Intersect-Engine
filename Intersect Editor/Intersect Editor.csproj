@@ -1717,42 +1717,18 @@
     <Content Include="Resources\Spells\5.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Resources\Tilesets\Tileset10.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Resources\Tilesets\Tileset11.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Resources\Tilesets\Tileset12.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Resources\Tilesets\Tileset2.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Resources\Tilesets\Tileset3.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Resources\Tilesets\Tileset4.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Resources\Tilesets\Tileset5.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Resources\Tilesets\Tileset6.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Resources\Tilesets\Tileset7.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Resources\Tilesets\Tileset8.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Resources\Tilesets\Tileset9.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Resources\Tilesets\Tileset1.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
+    <Content Include="Resources\Tilesets\Tileset1.png" />
+    <Content Include="Resources\Tilesets\Tileset10.png" />
+    <Content Include="Resources\Tilesets\Tileset11.png" />
+    <Content Include="Resources\Tilesets\Tileset12.png" />
+    <Content Include="Resources\Tilesets\Tileset2.png" />
+    <Content Include="Resources\Tilesets\Tileset3.png" />
+    <Content Include="Resources\Tilesets\Tileset4.png" />
+    <Content Include="Resources\Tilesets\Tileset5.png" />
+    <Content Include="Resources\Tilesets\Tileset6.png" />
+    <Content Include="Resources\Tilesets\Tileset7.png" />
+    <Content Include="Resources\Tilesets\Tileset8.png" />
+    <Content Include="Resources\Tilesets\Tileset9.png" />
     <Content Include="Resources\transH.png" />
     <Content Include="Resources\transV.png" />
     <Content Include="sfmlnet-audio-2.dll">

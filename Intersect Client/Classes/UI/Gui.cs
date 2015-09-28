@@ -169,6 +169,14 @@ namespace Intersect_Client.Classes
             {
                 GameMain.IsRunning = false;
             }
+            else if (e.Code == Keyboard.Key.Insert)
+            {
+                //Try to open admin panel!
+                if (Globals.GameState == (int)Enums.GameStates.InGame)
+                {
+                    PacketSender.SendOpenAdminWindow();
+                }
+            }
             else
             {
                 _gwenInput.ProcessMessage(new SFMLKeyEventArgs(e, true));
@@ -185,6 +193,11 @@ namespace Intersect_Client.Classes
                 }
             }
             return false;
+        }
+
+        public static void OpenAdminWindow()
+        {
+            AdminWindow adminWindow = new AdminWindow(_gameCanvas);
         }
         #endregion
 

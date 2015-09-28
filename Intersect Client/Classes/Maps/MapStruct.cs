@@ -47,7 +47,7 @@ namespace Intersect_Client.Classes
 
         //Core Data
         public TileArray[] Layers = new TileArray[Constants.LayerCount];
-        public Attribute[,] Attributes = new Attribute[Constants.MapWidth, Constants.MapHeight];
+        public Attribute[,] Attributes = new Attribute[Globals.MapWidth, Globals.MapHeight];
         public List<LightObj> Lights = new List<LightObj>();
 
         //Properties
@@ -95,9 +95,9 @@ namespace Intersect_Client.Classes
             for (var i = 0; i < Constants.LayerCount; i++)
             {
                 Layers[i] = new TileArray();
-                for (var x = 0; x < Constants.MapWidth; x++)
+                for (var x = 0; x < Globals.MapWidth; x++)
                 {
-                    for (var y = 0; y < Constants.MapHeight; y++)
+                    for (var y = 0; y < Globals.MapHeight; y++)
                     {
                         Layers[i].Tiles[x, y] = new Tile();
                         if (i == 0) { Attributes[x, y] = new Attribute(); }
@@ -156,9 +156,9 @@ namespace Intersect_Client.Classes
 
             for (var i = 0; i < Constants.LayerCount; i++)
             {
-                for (var x = 0; x < Constants.MapWidth; x++)
+                for (var x = 0; x < Globals.MapWidth; x++)
                 {
-                    for (var y = 0; y < Constants.MapHeight; y++)
+                    for (var y = 0; y < Globals.MapHeight; y++)
                     {
                         Layers[i].Tiles[x, y].TilesetIndex = bf.ReadInteger();
                         Layers[i].Tiles[x, y].X = bf.ReadInteger();
@@ -167,9 +167,9 @@ namespace Intersect_Client.Classes
                     }
                 }
             }
-            for (var x = 0; x < Constants.MapWidth; x++)
+            for (var x = 0; x < Globals.MapWidth; x++)
             {
-                for (var y = 0; y < Constants.MapHeight; y++)
+                for (var y = 0; y < Globals.MapHeight; y++)
                 {
                     Attributes[x, y].value = bf.ReadInteger();
                     Attributes[x, y].data1 = bf.ReadInteger();
@@ -243,12 +243,12 @@ namespace Intersect_Client.Classes
             for (var i = 0; i < 3; i++)
             {
                 if (LowerTextures[i] != null) { LowerTextures[i].Dispose(); }
-                LowerTextures[i] = new RenderTexture((uint)Globals.TileWidth * Constants.MapWidth, (uint)Globals.TileHeight * Constants.MapHeight);
+                LowerTextures[i] = new RenderTexture((uint)Globals.TileWidth * (uint)Globals.MapWidth, (uint)Globals.TileHeight * (uint)Globals.MapHeight);
                 LowerTextures[i].Clear(Color.Transparent);
                 if (UpperTextures[i] != null) { UpperTextures[i].Dispose(); }
-                UpperTextures[i] = new RenderTexture((uint)Globals.TileWidth * Constants.MapWidth, (uint)Globals.TileHeight * Constants.MapHeight);
+                UpperTextures[i] = new RenderTexture((uint)Globals.TileWidth * (uint)Globals.MapWidth, (uint)Globals.TileHeight * (uint)Globals.MapHeight);
                 if (PeakTextures[i] != null) { PeakTextures[i].Dispose(); }
-                PeakTextures[i] = new RenderTexture((uint)Globals.TileWidth * Constants.MapWidth, (uint)Globals.TileHeight * Constants.MapHeight);
+                PeakTextures[i] = new RenderTexture((uint)Globals.TileWidth * (uint)Globals.MapWidth, (uint)Globals.TileHeight * (uint)Globals.MapHeight);
                 for (var l = 0; l < Constants.LayerCount; l++)
                 {
                     if (l < 3)
@@ -296,9 +296,9 @@ namespace Intersect_Client.Classes
         }
         private void DrawMapLayer(RenderTexture tex, int l, int z)
         {
-            for (var x = 0; x < Constants.MapWidth; x++)
+            for (var x = 0; x < Globals.MapWidth; x++)
             {
-                for (var y = 0; y < Constants.MapHeight; y++)
+                for (var y = 0; y < Globals.MapHeight; y++)
                 {
                     if (Globals.Tilesets == null) continue;
                     if (Layers[l].Tiles[x, y].TilesetIndex < 0) continue;
@@ -422,9 +422,9 @@ namespace Intersect_Client.Classes
         private void CreateMapSounds()
         {
             ClearAttributeSounds();
-            for (int x = 0; x < Constants.MapWidth; x++)
+            for (int x = 0; x < Globals.MapWidth; x++)
             {
-                for (int y = 0; y < Constants.MapHeight; y++)
+                for (int y = 0; y < Globals.MapHeight; y++)
                 {
                     if (Attributes[x, y].value == (int)Enums.MapAttributes.Sound)
                     {
@@ -469,7 +469,7 @@ namespace Intersect_Client.Classes
 
     public class TileArray
     {
-        public Tile[,] Tiles = new Tile[Constants.MapWidth, Constants.MapHeight];
+        public Tile[,] Tiles = new Tile[Globals.MapWidth, Globals.MapHeight];
     }
 
     public class Tile

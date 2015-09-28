@@ -68,10 +68,10 @@ namespace Intersect_Client.Classes.UI.Game
         public EntityBox(Canvas _gameCanvas, Entity myEntity, int x, int y)
         {
             _myEntity = myEntity;
-            
-            _entityBox = new WindowControl(_gameCanvas) { Title = "EntityBox"};
+
+            _entityBox = new WindowControl(_gameCanvas) { Title = "EntityBox" };
             _entityBox.SetSize(244, 94);
-            _entityBox.SetPosition(x,y);
+            _entityBox.SetPosition(x, y);
             _entityBox.DisableResizing();
 
             _entityBox.Margin = Margin.Zero;
@@ -87,7 +87,7 @@ namespace Intersect_Client.Classes.UI.Game
                 _eventDesc = new RichLabel(_entityBox);
                 _eventDesc.SetPosition(70, 2);
                 _eventDesc.Width = 159;
-                _eventDesc.AddText("Desc: " + ((Event)_myEntity).Desc,Color.Black);
+                _eventDesc.AddText("Desc: " + ((Event)_myEntity).Desc, Color.Black);
                 _eventDesc.SizeToChildren(false, true);
             }
 
@@ -146,10 +146,10 @@ namespace Intersect_Client.Classes.UI.Game
         //Update
         public void Update()
         {
-            float elapsedTime = ((float)(Environment.TickCount - lastUpdateTime))/1000.0f;
+            float elapsedTime = ((float)(Environment.TickCount - lastUpdateTime)) / 1000.0f;
 
             //Update the window title
-            _entityBox.Title = _myEntity.MyName + ((_myEntity.Level == 0 || _myEntity.GetType() == typeof(Event)) ? "" : " Lv: " + _myEntity.Level) ;
+            _entityBox.Title = _myEntity.MyName + ((_myEntity.Level == 0 || _myEntity.GetType() == typeof(Event)) ? "" : " Lv: " + _myEntity.Level);
 
             //Update the event/entity face.
             if (_myEntity.Face != "")
@@ -176,27 +176,30 @@ namespace Intersect_Client.Classes.UI.Game
             }
 
             //If not an event, update the hp/mana bars.
-            if (_myEntity.GetType() != typeof(Event) && _myEntity.MaxVital[(int)Enums.Vitals.Health] > 0 && _myEntity.MaxVital[(int)Enums.Vitals.Mana] > 0)
+            if (_myEntity.GetType() != typeof(Event))
             {
-                float targetHPWidth = _myEntity.Vital[(int)Enums.Vitals.Health] / _myEntity.MaxVital[(int)Enums.Vitals.Health];
-                float targetMPWidth = _myEntity.Vital[(int)Enums.Vitals.Mana] / _myEntity.MaxVital[(int)Enums.Vitals.Mana];
-
-                //Fix the Labels
-                _hpLbl.Text = "HP: " + _myEntity.Vital[(int)Enums.Vitals.Health] + " / " + _myEntity.MaxVital[(int)Enums.Vitals.Health];
-                _hpLbl.X = _hpBackground.X + _hpBackground.Width / 2 - _hpLbl.Width / 2;
-                _mpLbl.Text = "MP: " + _myEntity.Vital[(int)Enums.Vitals.Mana] + " / " + _myEntity.MaxVital[(int)Enums.Vitals.Mana];
-                _mpLbl.X = _mpBackground.X + _mpBackground.Width / 2 - _mpLbl.Width / 2;
-
-                //Multiply by the width of the bars.
-                targetHPWidth *= 169;
-                targetMPWidth *= 169;
-
+                float targetHPWidth = 0f;
+                if (_myEntity.MaxVital[(int)Enums.Vitals.Health] > 0)
+                {
+                    targetHPWidth = (float)((float)_myEntity.Vital[(int)Enums.Vitals.Health] / (float)_myEntity.MaxVital[(int)Enums.Vitals.Health]);
+                    //Fix the Labels
+                    _hpLbl.Text = "HP: " + _myEntity.Vital[(int)Enums.Vitals.Health] + " / " + _myEntity.MaxVital[(int)Enums.Vitals.Health];
+                    _hpLbl.X = _hpBackground.X + _hpBackground.Width / 2 - _hpLbl.Width / 2;
+                    //Multiply by the width of the bars.
+                    targetHPWidth *= 169;
+                }
+                else
+                {
+                    _hpLbl.Text = "HP: " + "0 / 0";
+                    _hpLbl.X = _hpBackground.X + _hpBackground.Width / 2 - _hpLbl.Width / 2;
+                    targetHPWidth = 169;
+                }
                 if ((int)targetHPWidth != _curHPWidth)
                 {
                     if ((int)targetHPWidth > _curHPWidth)
                     {
                         _curHPWidth += (100f * elapsedTime);
-                        if (_curHPWidth > (int)targetHPWidth) { _curHPWidth = targetHPWidth;}
+                        if (_curHPWidth > (int)targetHPWidth) { _curHPWidth = targetHPWidth; }
                     }
                     else
                     {
@@ -214,13 +217,26 @@ namespace Intersect_Client.Classes.UI.Game
                         _hpBar.IsHidden = false;
                     }
                 }
-
+                float targetMPWidth = 0f;
+                if (_myEntity.MaxVital[(int)Enums.Vitals.Mana] > 0)
+                {
+                    targetMPWidth = _myEntity.Vital[(int)Enums.Vitals.Mana] / _myEntity.MaxVital[(int)Enums.Vitals.Mana];
+                    _mpLbl.Text = "MP: " + _myEntity.Vital[(int)Enums.Vitals.Mana] + " / " + _myEntity.MaxVital[(int)Enums.Vitals.Mana];
+                    _mpLbl.X = _mpBackground.X + _mpBackground.Width / 2 - _mpLbl.Width / 2;
+                    targetMPWidth *= 169;
+                }
+                else
+                {
+                    _mpLbl.Text = "MP: " + "0 / 0";
+                    _mpLbl.X = _mpBackground.X + _mpBackground.Width / 2 - _mpLbl.Width / 2;
+                    targetMPWidth = 169;
+                }
                 if ((int)targetMPWidth != _curMPWidth)
                 {
                     if ((int)targetMPWidth > _curMPWidth)
                     {
                         _curMPWidth += (100f * elapsedTime);
-                        if (_curMPWidth > (int)targetMPWidth) { _curMPWidth = targetMPWidth;}
+                        if (_curMPWidth > (int)targetMPWidth) { _curMPWidth = targetMPWidth; }
                     }
                     else
                     {
@@ -238,6 +254,13 @@ namespace Intersect_Client.Classes.UI.Game
                         _mpBar.IsHidden = false;
                     }
                 }
+
+
+
+
+
+
+
             }
 
             //If player draw exp bar

@@ -81,6 +81,8 @@ namespace Intersect_Client.Classes
             CreateCharacter,
             OpenQuestEditor,
             SaveQuest,
+            OpenAdminWindow,
+            AdminAction,
         }
 
         public enum ServerPackets
@@ -128,6 +130,7 @@ namespace Intersect_Client.Classes
             CreateCharacter,
             OpenQuestEditor,
             QuestData,
+            OpenAdminWindow,
         }
 
         public enum Stats
@@ -187,6 +190,11 @@ namespace Intersect_Client.Classes
             SingleTarget=1,
             AOE=2,
             Linear=3,
+        }
+
+        public enum AdminActions
+        {
+            WarpTo = 0,
         }
 
         public static int WeaponIndex = 2;

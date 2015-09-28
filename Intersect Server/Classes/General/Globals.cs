@@ -41,6 +41,10 @@ namespace Intersect_Server.Classes
         public static string MySqlPass = "";
         public static string MySqldb = "";
 
+        //Map Options
+        public static int MapWidth = 30;
+        public static int MapHeight = 26;
+
         //Game Maps
 		public static MapStruct[] GameMaps;
 		public static int MapCount;

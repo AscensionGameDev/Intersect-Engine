@@ -44,6 +44,8 @@ namespace Intersect_Client.Classes
         public static string MenuBG = "";
         public static int TileWidth = 32;
         public static int TileHeight = 32;
+        public static int MapWidth = 30;
+        public static int MapHeight = 26;
         public static List<string> IntroBG = new List<string>();
 
         //Game Lock

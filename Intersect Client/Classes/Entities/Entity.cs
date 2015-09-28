@@ -120,22 +120,22 @@ namespace Intersect_Client
                 switch (Dir)
                 {
                     case 0:
-                        OffsetY -= ecTime * (10 / 10f * Globals.TileHeight) / 1000;
+                        OffsetY -= ecTime * (20 / 10f * Globals.TileHeight) / 1000;
                         if (OffsetY < 0) { OffsetY = 0; }
                         break;
 
                     case 1:
-                        OffsetY += ecTime * (10 / 10f * Globals.TileHeight) / 1000;
+                        OffsetY += ecTime * (20 / 10f * Globals.TileHeight) / 1000;
                         if (OffsetY > 0) { OffsetY = 0; }
                         break;
 
                     case 2:
-                        OffsetX -= ecTime * (10 / 10f * Globals.TileWidth) / 1000;
+                        OffsetX -= ecTime * (20 / 10f * Globals.TileWidth) / 1000;
                         if (OffsetX < 0) { OffsetX = 0; }
                         break;
 
                     case 3:
-                        OffsetX += ecTime * (10 / 10f * Globals.TileWidth) / 1000;
+                        OffsetX += ecTime * (20 / 10f * Globals.TileWidth) / 1000;
                         if (OffsetX > 0) { OffsetX = 0; }
                         break;
                 }

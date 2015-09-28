@@ -39,14 +39,14 @@ namespace Intersect_Server.Classes
         public int Revision;
         
         //Core Data
-        private readonly TileArray[] _layers = new TileArray[Constants.LayerCount];
-        public Attribute[,] Attributes = new Attribute[Constants.MapWidth, Constants.MapHeight];
+        public TileArray[] _layers = new TileArray[Constants.LayerCount];
+        public Attribute[,] Attributes = new Attribute[Globals.MapWidth, Globals.MapHeight];
         public List<Light> Lights = new List<Light>();
         public List<EventStruct> Events = new List<EventStruct>();
 
         //Properties
-        private string _music = "None";
-        private string _sound = "None";
+        public string _music = "None";
+        public string _sound = "None";
         public List<NpcSpawn> Spawns = new List<NpcSpawn>();
         public bool IsIndoors;
 
@@ -95,9 +95,9 @@ namespace Intersect_Server.Classes
             for (var i = 0; i < Constants.LayerCount; i++)
             {
                 _layers[i] = new TileArray();
-                for (var x = 0; x < Constants.MapWidth; x++)
+                for (var x = 0; x < Globals.MapWidth; x++)
                 {
-                    for (var y = 0; y < Constants.MapHeight; y++)
+                    for (var y = 0; y < Globals.MapHeight; y++)
                     {
                         _layers[i].Tiles[x, y] = new Tile();
                         if (i == 0) { Attributes[x, y] = new Attribute(); }
@@ -141,9 +141,9 @@ namespace Intersect_Server.Classes
 
             for (var i = 0; i < Constants.LayerCount; i++)
             {
-                for (var x = 0; x < Constants.MapWidth; x++)
+                for (var x = 0; x < Globals.MapWidth; x++)
                 {
-                    for (var y = 0; y < Constants.MapHeight; y++)
+                    for (var y = 0; y < Globals.MapHeight; y++)
                     {
                         bf.WriteInteger(_layers[i].Tiles[x, y].TilesetIndex);
                         bf.WriteInteger(_layers[i].Tiles[x, y].X);
@@ -152,9 +152,9 @@ namespace Intersect_Server.Classes
                     }
                 }
             }
-            for (var x = 0; x < Constants.MapWidth; x++)
+            for (var x = 0; x < Globals.MapWidth; x++)
             {
-                for (var y = 0; y < Constants.MapHeight; y++)
+                for (var y = 0; y < Globals.MapHeight; y++)
                 {
                     bf.WriteInteger(Attributes[x, y].value);
                     bf.WriteInteger(Attributes[x, y].data1);
@@ -233,9 +233,9 @@ namespace Intersect_Server.Classes
 
             for (var i = 0; i < Constants.LayerCount; i++)
             {
-                for (var x = 0; x < Constants.MapWidth; x++)
+                for (var x = 0; x < Globals.MapWidth; x++)
                 {
-                    for (var y = 0; y < Constants.MapHeight; y++)
+                    for (var y = 0; y < Globals.MapHeight; y++)
                     {
                         _layers[i].Tiles[x, y].TilesetIndex = bf.ReadInteger();
                         _layers[i].Tiles[x, y].X = bf.ReadInteger();
@@ -244,9 +244,9 @@ namespace Intersect_Server.Classes
                     }
                 }
             }
-            for (var x = 0; x < Constants.MapWidth; x++)
+            for (var x = 0; x < Globals.MapWidth; x++)
             {
-                for (var y = 0; y < Constants.MapHeight; y++)
+                for (var y = 0; y < Globals.MapHeight; y++)
                 {
                     Attributes[x, y].value = bf.ReadInteger();
                     Attributes[x, y].data1 = bf.ReadInteger();
@@ -288,9 +288,9 @@ namespace Intersect_Server.Classes
         private void SpawnAttributeItems()
         {
             ResourceSpawns.Clear();
-            for (int x = 0; x < Constants.MapWidth; x++)
+            for (int x = 0; x < Globals.MapWidth; x++)
             {
-                for (int y = 0; y < Constants.MapHeight; y++)
+                for (int y = 0; y < Globals.MapHeight; y++)
                 {
                     if (Attributes[x, y].value == (int)Enums.MapAttributes.Item)
                     {
@@ -418,8 +418,8 @@ namespace Intersect_Server.Classes
             {
                 for (int n = 0; n < 100; n++)
                 {
-                    X = Globals.Rand.Next(1, Constants.MapWidth);
-                    Y = Globals.Rand.Next(1, Constants.MapHeight);
+                    X = Globals.Rand.Next(1, Globals.MapWidth);
+                    Y = Globals.Rand.Next(1, Globals.MapHeight);
                     if (Attributes[X, Y].value == (int)Enums.MapAttributes.Walkable)
                     {
                         break;
@@ -586,13 +586,29 @@ namespace Intersect_Server.Classes
             }
             return Players;
         }
-        public void PlayerEnteredMap()
+        public void PlayerEnteredMap(Client client)
         {
             Active = true;
+            //Send Entity Info to Everyone and Everyone to the Entity
+            SendMapEntitiesTo(client);
+            Entities.Add(client.Entity);
             if (SurroundingMaps.Count <= 0) return;
             foreach (var t in SurroundingMaps)
             {
                 Globals.GameMaps[t].Active = true;
+                Globals.GameMaps[t].SendMapEntitiesTo(client);
+            }
+        }
+        public void SendMapEntitiesTo(Client client)
+        {
+            for (int i = 0; i < Entities.Count; i++)
+            {
+                if (Entities[i] != null) {
+                    if (Globals.Entities.IndexOf(Entities[i]) > -1)
+                    {
+                        PacketSender.SendEntityData(client, Entities[i]);
+                    }
+                }
             }
         }
 
@@ -608,12 +624,12 @@ namespace Intersect_Server.Classes
         public string data4 = "";
     }
 
-    class TileArray
+    public class TileArray
     {
-        public Tile[,] Tiles = new Tile[Constants.MapWidth, Constants.MapHeight];
+        public Tile[,] Tiles = new Tile[Globals.MapWidth, Globals.MapHeight];
     }
 
-    class Tile
+    public class Tile
     {
         public int TilesetIndex = -1;
         public int X;

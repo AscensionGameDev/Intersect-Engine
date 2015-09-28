@@ -60,10 +60,10 @@ namespace Intersect_Editor.Classes
             cmbEndSprite.Items.Clear();
             cmbInitialSprite.Items.Add("None");
             cmbEndSprite.Items.Add("None");
-            for (int i = 0; i < Globals.Tilesets.Length; i++)
+            for (int i = 0; i < Graphics.ResourceFileNames.Count; i++)
             {
-                cmbInitialSprite.Items.Add(Globals.Tilesets[i]);
-                cmbEndSprite.Items.Add(Globals.Tilesets[i]);
+                cmbInitialSprite.Items.Add(Graphics.ResourceFileNames[i]);
+                cmbEndSprite.Items.Add(Graphics.ResourceFileNames[i]);
             }
             scrlDropItem.Maximum = Constants.MaxItems - 1;
             UpdateEditor();
@@ -97,11 +97,18 @@ namespace Intersect_Editor.Classes
             txtHP.Text = Globals.GameResources[_editorIndex].MinHP.ToString();
             txtMaxHp.Text = Globals.GameResources[_editorIndex].MaxHP.ToString();
             lblSpawnDuration.Text = @"Spawn Duration: " + scrlSpawnDuration.Value;
-            lblAnimation.Text = @"Animation: " + (scrlAnimation.Value + 1) + " " + Globals.GameAnimations[scrlAnimation.Value].Name;
+            if (scrlAnimation.Value == -1)
+            {
+                lblAnimation.Text = @"Animation: None";
+            }
+            else
+            {
+                lblAnimation.Text = @"Animation: " + (scrlAnimation.Value + 1) + " " + Globals.GameAnimations[scrlAnimation.Value].Name;
+            }
             chkWalkableBefore.Checked = Globals.GameResources[_editorIndex].WalkableBefore;
             chkWalkableAfter.Checked = Globals.GameResources[_editorIndex].WalkableAfter;
-            cmbInitialSprite.SelectedIndex = cmbInitialSprite.FindString(Globals.GameResources[_editorIndex].InitialGraphic.Sprite);
-            cmbEndSprite.SelectedIndex = cmbEndSprite.FindString(Globals.GameResources[_editorIndex].EndGraphic.Sprite);
+            cmbInitialSprite.SelectedIndex = cmbInitialSprite.FindString(Globals.GameResources[_editorIndex].InitialGraphic);
+            cmbEndSprite.SelectedIndex = cmbEndSprite.FindString(Globals.GameResources[_editorIndex].EndGraphic);
             scrlDropIndex.Value = 1;
             UpdateDropValues();
             Render();
@@ -168,10 +175,10 @@ namespace Intersect_Editor.Classes
         {
             if (cmbInitialSprite.SelectedIndex > 0)
             {
-                Globals.GameResources[_editorIndex].InitialGraphic.Sprite = cmbInitialSprite.Text;
-                if (File.Exists("Resources/Tilesets/" + cmbInitialSprite.Text))
+                Globals.GameResources[_editorIndex].InitialGraphic = cmbInitialSprite.Text;
+                if (File.Exists("Resources/Resources/" + cmbInitialSprite.Text))
                 {
-                    _initialTileset = (Bitmap)Bitmap.FromFile("Resources/Tilesets/" + cmbInitialSprite.Text);
+                    _initialTileset = (Bitmap)Bitmap.FromFile("Resources/Resources/" + cmbInitialSprite.Text);
                     picInitialResource.Width = _initialTileset.Width;
                     picInitialResource.Height = _initialTileset.Height;
                     _initialBitmap = new Bitmap(picInitialResource.Width, picInitialResource.Height);
@@ -184,7 +191,7 @@ namespace Intersect_Editor.Classes
             }
             else
             {
-                Globals.GameResources[_editorIndex].InitialGraphic.Sprite = "";
+                Globals.GameResources[_editorIndex].InitialGraphic = "None";
                 _initialTileset = null;
             }
             Render();
@@ -194,10 +201,10 @@ namespace Intersect_Editor.Classes
         {
             if (cmbEndSprite.SelectedIndex > 0)
             {
-                Globals.GameResources[_editorIndex].EndGraphic.Sprite = cmbEndSprite.Text;
-                if (File.Exists("Resources/Tilesets/" + cmbEndSprite.Text))
+                Globals.GameResources[_editorIndex].EndGraphic = cmbEndSprite.Text;
+                if (File.Exists("Resources/Resources/" + cmbEndSprite.Text))
                 {
-                    _endTileset = (Bitmap)Bitmap.FromFile("Resources/Tilesets/" + cmbEndSprite.Text);
+                    _endTileset = (Bitmap)Bitmap.FromFile("Resources/Resources/" + cmbEndSprite.Text);
                     picEndResource.Width = _endTileset.Width;
                     picEndResource.Height = _endTileset.Height;
                     _endBitmap = new Bitmap(picInitialResource.Width, picInitialResource.Height);
@@ -210,7 +217,7 @@ namespace Intersect_Editor.Classes
             }
             else
             {
-                Globals.GameResources[_editorIndex].EndGraphic.Sprite = "";
+                Globals.GameResources[_editorIndex].EndGraphic = "None";
                 _endTileset = null;
             }
             Render();
@@ -264,9 +271,6 @@ namespace Intersect_Editor.Classes
             if (cmbInitialSprite.SelectedIndex > 0 && _initialTileset != null)
             {
                 gfx.DrawImage(_initialTileset, new Rectangle(0, 0, _initialTileset.Width, _initialTileset.Height), new Rectangle(0, 0, _initialTileset.Width, _initialTileset.Height), GraphicsUnit.Pixel);
-
-                tileSelection = new Rectangle(Globals.GameResources[_editorIndex].InitialGraphic.X * Globals.TileWidth, Globals.GameResources[_editorIndex].InitialGraphic.Y * Globals.TileHeight, (Globals.GameResources[_editorIndex].InitialGraphic.Width + 1) * Globals.TileWidth, (Globals.GameResources[_editorIndex].InitialGraphic.Height + 1) * Globals.TileHeight);
-                gfx.DrawRectangle(whitePen, tileSelection);
             }
             gfx.Dispose();
             gfx = picInitialResource.CreateGraphics();
@@ -279,108 +283,11 @@ namespace Intersect_Editor.Classes
             if (cmbEndSprite.SelectedIndex > 0 && _endTileset != null)
             {
                 gfx.DrawImage(_endTileset, new Rectangle(0, 0, _endTileset.Width, _endTileset.Height), new Rectangle(0, 0, _endTileset.Width, _endTileset.Height), GraphicsUnit.Pixel);
-
-                tileSelection = new Rectangle(Globals.GameResources[_editorIndex].EndGraphic.X * Globals.TileWidth, Globals.GameResources[_editorIndex].EndGraphic.Y * Globals.TileHeight, (Globals.GameResources[_editorIndex].EndGraphic.Width + 1) * Globals.TileWidth, (Globals.GameResources[_editorIndex].EndGraphic.Height + 1) * Globals.TileHeight);
-                gfx.DrawRectangle(whitePen, tileSelection);
             }
             gfx.Dispose();
             gfx = picEndResource.CreateGraphics();
             gfx.DrawImageUnscaled(_endBitmap, new System.Drawing.Point(0, 0));
             gfx.Dispose();
-        }
-
-        private void picInitialResource_MouseDown(object sender, MouseEventArgs e)
-        {
-            if (e.X > picInitialResource.Width || e.Y > picInitialResource.Height) { return; }
-            _tMouseDown = true;
-            Globals.GameResources[_editorIndex].InitialGraphic.X = (int)Math.Floor((double)e.X / Globals.TileWidth);
-            Globals.GameResources[_editorIndex].InitialGraphic.Y = (int)Math.Floor((double)e.Y / Globals.TileWidth);
-            Globals.GameResources[_editorIndex].InitialGraphic.Width = 0;
-            Globals.GameResources[_editorIndex].InitialGraphic.Height = 0;
-            if (Globals.GameResources[_editorIndex].InitialGraphic.X < 0) { Globals.GameResources[_editorIndex].InitialGraphic.X = 0; }
-            if (Globals.GameResources[_editorIndex].InitialGraphic.Y < 0) { Globals.GameResources[_editorIndex].InitialGraphic.Y = 0; }
-        }
-
-        private void picInitialResource_MouseMove(object sender, MouseEventArgs e)
-        {
-            if (e.X > picInitialResource.Width || e.Y > picInitialResource.Height) { return; }
-            if (_tMouseDown)
-            {
-                var tmpX = (int)Math.Floor((double)e.X / Globals.TileWidth);
-                var tmpY = (int)Math.Floor((double)e.Y / Globals.TileHeight);
-                Globals.GameResources[_editorIndex].InitialGraphic.Width = tmpX - Globals.GameResources[_editorIndex].InitialGraphic.X;
-                Globals.GameResources[_editorIndex].InitialGraphic.Height = tmpY - Globals.GameResources[_editorIndex].InitialGraphic.Y;
-            }
-        }
-
-        private void picInitialResource_MouseUp(object sender, MouseEventArgs e)
-        {
-            var selX = Globals.GameResources[_editorIndex].InitialGraphic.X;
-            var selY = Globals.GameResources[_editorIndex].InitialGraphic.Y;
-            var selW = Globals.GameResources[_editorIndex].InitialGraphic.Width;
-            var selH = Globals.GameResources[_editorIndex].InitialGraphic.Height;
-            if (selW < 0)
-            {
-                selX -= Math.Abs(selW);
-                selW = Math.Abs(selW);
-            }
-            if (selH < 0)
-            {
-                selY -= Math.Abs(selH);
-                selH = Math.Abs(selH);
-            }
-            Globals.GameResources[_editorIndex].InitialGraphic.X = selX;
-            Globals.GameResources[_editorIndex].InitialGraphic.Y = selY;
-            Globals.GameResources[_editorIndex].InitialGraphic.Width = selW;
-            Globals.GameResources[_editorIndex].InitialGraphic.Height = selH;
-            _tMouseDown = false;
-        }
-
-        private void picEndResource_MouseDown(object sender, MouseEventArgs e)
-        {
-            if (e.X > picEndResource.Width || e.Y > picEndResource.Height) { return; }
-            _tMouseDown = true;
-            Globals.GameResources[_editorIndex].EndGraphic.X = (int)Math.Floor((double)e.X / Globals.TileWidth);
-            Globals.GameResources[_editorIndex].EndGraphic.Y = (int)Math.Floor((double)e.Y / Globals.TileHeight);
-            Globals.GameResources[_editorIndex].EndGraphic.Width = 0;
-            Globals.GameResources[_editorIndex].EndGraphic.Height = 0;
-            if (Globals.GameResources[_editorIndex].EndGraphic.X < 0) { Globals.GameResources[_editorIndex].EndGraphic.X = 0; }
-            if (Globals.GameResources[_editorIndex].EndGraphic.Y < 0) { Globals.GameResources[_editorIndex].EndGraphic.Y = 0; }
-        }
-
-        private void picEndResource_MouseMove(object sender, MouseEventArgs e)
-        {
-            if (e.X > picEndResource.Width || e.Y > picEndResource.Height) { return; }
-            if (_tMouseDown)
-            {
-                var tmpX = (int)Math.Floor((double)e.X / Globals.TileWidth);
-                var tmpY = (int)Math.Floor((double)e.Y / Globals.TileHeight);
-                Globals.GameResources[_editorIndex].EndGraphic.Width = tmpX - Globals.GameResources[_editorIndex].EndGraphic.X;
-                Globals.GameResources[_editorIndex].EndGraphic.Height = tmpY - Globals.GameResources[_editorIndex].EndGraphic.Y;
-            }
-        }
-
-        private void picEndResource_MouseUp(object sender, MouseEventArgs e)
-        {
-            var selX = Globals.GameResources[_editorIndex].EndGraphic.X;
-            var selY = Globals.GameResources[_editorIndex].EndGraphic.Y;
-            var selW = Globals.GameResources[_editorIndex].EndGraphic.Width;
-            var selH = Globals.GameResources[_editorIndex].EndGraphic.Height;
-            if (selW < 0)
-            {
-                selX -= Math.Abs(selW);
-                selW = Math.Abs(selW);
-            }
-            if (selH < 0)
-            {
-                selY -= Math.Abs(selH);
-                selH = Math.Abs(selH);
-            }
-            Globals.GameResources[_editorIndex].EndGraphic.X = selX;
-            Globals.GameResources[_editorIndex].EndGraphic.Y = selY;
-            Globals.GameResources[_editorIndex].EndGraphic.Width = selW;
-            Globals.GameResources[_editorIndex].EndGraphic.Height = selH;
-            _tMouseDown = false;
         }
 
         private void UpdateInitialScrollBars()
@@ -507,6 +414,11 @@ namespace Intersect_Editor.Classes
         private void frmResource_FormClosed(object sender, FormClosedEventArgs e)
         {
             Globals.CurrentEditor = -1;
+        }
+
+        private void tmrRender_Tick(object sender, EventArgs e)
+        {
+            Render();
         }
     }
 }

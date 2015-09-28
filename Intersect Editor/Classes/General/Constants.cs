@@ -33,8 +33,6 @@ namespace Intersect_Editor.Classes
         public const int MaxClasses = 20;
         public const int MaxQuests = 255;
 
-        public const int MapWidth = 30;
-        public const int MapHeight = 26;
         public const int LayerCount = 5;
 
         //Player maxes

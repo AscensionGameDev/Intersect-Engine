@@ -46,12 +46,12 @@ namespace Intersect_Client.Classes
 
         public void InitAutotiles()
         {
-            Autotile = new AutoTileCls[Constants.MapWidth, Constants.MapHeight];
+            Autotile = new AutoTileCls[Globals.MapWidth, Globals.MapHeight];
 
 
-            for (var x = 0; x < Constants.MapWidth; x++)
+            for (var x = 0; x < Globals.MapWidth; x++)
             {
-                for (var y = 0; y < Constants.MapHeight; y++)
+                for (var y = 0; y < Globals.MapHeight; y++)
                 {
                     Autotile[x, y] = new AutoTileCls();
                     for (var i = 0; i < Constants.LayerCount; i++)
@@ -157,9 +157,9 @@ namespace Intersect_Client.Classes
 
             for (var i = 0; i < Constants.LayerCount; i++)
             {
-                for (var x = 0; x < Constants.MapWidth; x++)
+                for (var x = 0; x < Globals.MapWidth; x++)
                 {
-                    for (var y = 0; y < Constants.MapHeight; y++)
+                    for (var y = 0; y < Globals.MapHeight; y++)
                     {
                         // calculate the subtile positions and place them
                         CalculateAutotile(x, y, i);
@@ -173,7 +173,7 @@ namespace Intersect_Client.Classes
         public void CacheRenderState(int x, int y, int layerNum)
         {
             // exit out early
-            if (x < 0 || x > Constants.MapWidth || y < 0 || y > Constants.MapHeight) { return; }
+            if (x < 0 || x > Globals.MapWidth || y < 0 || y > Globals.MapHeight) { return; }
 
             // check if it needs to be rendered as an autotile
             if (_myMap.Layers[layerNum].Tiles[x, y].Autotile == Constants.AutotileNone || _myMap.Layers[layerNum].Tiles[x, y].Autotile == Constants.AutotileFake)
@@ -683,9 +683,9 @@ namespace Intersect_Client.Classes
         {
             Tile targetTile = null;
             // if ( it//s off the map ) { set it as autotile and exit out early
-            if (x2 < 0 || x2 >= Constants.MapWidth || y2 < 0 || y2 >= Constants.MapHeight)
+            if (x2 < 0 || x2 >= Globals.MapWidth || y2 < 0 || y2 >= Globals.MapHeight)
             {
-                if (((x2 < 0 && y2 < 0)) || (x2 >= Constants.MapWidth && y2 >= Constants.MapHeight) || (x2 < 0 && y2 >= Constants.MapHeight) || (x2 >= Constants.MapWidth && y2 < 0))
+                if (((x2 < 0 && y2 < 0)) || (x2 >= Globals.MapWidth && y2 >= Globals.MapHeight) || (x2 < 0 && y2 >= Globals.MapHeight) || (x2 >= Globals.MapWidth && y2 < 0))
                 {
                     return true;
                 }
@@ -697,7 +697,7 @@ namespace Intersect_Client.Classes
                         otherMap = Globals.GameMaps[_myMap.Left];
                         if (otherMap != null)
                         {
-                            targetTile = otherMap.Layers[layerNum].Tiles[Constants.MapWidth + x2, y2];
+                            targetTile = otherMap.Layers[layerNum].Tiles[Globals.MapWidth + x2, y2];
                         }
                         else
                         {
@@ -709,14 +709,14 @@ namespace Intersect_Client.Classes
                         return true;
                     }
                 }
-                else if (x2 >= Constants.MapWidth)
+                else if (x2 >= Globals.MapWidth)
                 {
                     if (_myMap.Right > -1)
                     {
                         otherMap = Globals.GameMaps[_myMap.Right];
                         if (otherMap != null)
                         {
-                            targetTile = otherMap.Layers[layerNum].Tiles[x2 - Constants.MapWidth, y2];
+                            targetTile = otherMap.Layers[layerNum].Tiles[x2 - Globals.MapWidth, y2];
                         }
                         else
                         {
@@ -735,7 +735,7 @@ namespace Intersect_Client.Classes
                         otherMap = Globals.GameMaps[_myMap.Up];
                         if (otherMap != null)
                         {
-                            targetTile = otherMap.Layers[layerNum].Tiles[x2, Constants.MapHeight + y2];
+                            targetTile = otherMap.Layers[layerNum].Tiles[x2, Globals.MapHeight + y2];
                         }
                         else
                         {
@@ -747,14 +747,14 @@ namespace Intersect_Client.Classes
                         return true;
                     }
                 }
-                else if (y2 >= Constants.MapHeight)
+                else if (y2 >= Globals.MapHeight)
                 {
                     if (_myMap.Down > -1)
                     {
                         otherMap = Globals.GameMaps[_myMap.Down];
                         if (otherMap != null)
                         {
-                            targetTile = otherMap.Layers[layerNum].Tiles[x2, y2 - Constants.MapHeight];
+                            targetTile = otherMap.Layers[layerNum].Tiles[x2, y2 - Globals.MapHeight];
                         }
                         else
                         {

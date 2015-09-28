@@ -111,24 +111,35 @@ namespace Intersect_Server.Classes
             bf.Dispose();
         }
 
-        public static void SendEntityData(Client client, int sendIndex, int entityType, Entity en)
+        public static void SendEntityData(Client client, Entity en)
         {
             var bf = new ByteBuffer();
             bf.WriteLong((int)Enums.ServerPackets.EntityData);
-            bf.WriteLong(sendIndex);
-            bf.WriteInteger(entityType);
-            if (entityType == 1)
+            int sendIndex = -1;
+            int entityType = 0;
+            if (en.GetType() == typeof(Event))
             {
+                sendIndex = client.Entity.FindEvent((Event)en);
+                bf.WriteLong(sendIndex);
+                entityType = 0;
+                bf.WriteInteger(1);
                 bf.WriteBytes(((Event)en).Data());
             }
-            else if (entityType == 3) //Resources
+            else if (en.GetType() == typeof(Resource))
             {
+                sendIndex = Globals.Entities.IndexOf(en);
+                bf.WriteLong(sendIndex);
+                entityType = 3;
+                bf.WriteInteger(3);
                 bf.WriteBytes(((Resource)en).Data());
             }
             else
             {
+                entityType = 2;
+                bf.WriteInteger(2);
                 bf.WriteBytes(en.Data());
             }
+            if (sendIndex == -1) { return; }
             client.SendPacket(bf.ToArray());
             bf.Dispose();
             SendEntityVitalsTo(client, sendIndex,entityType,en);
@@ -339,7 +350,7 @@ namespace Intersect_Server.Classes
             bf.WriteLong(mapNum);
             if (!(Globals.GameMaps[mapNum].MapGridX == -1 || Globals.GameMaps[mapNum].MapGridY == -1))
             {
-                Globals.GameMaps[mapNum].PlayerEnteredMap();
+                Globals.GameMaps[mapNum].PlayerEnteredMap(client);
                 for (var y = Globals.GameMaps[mapNum].MapGridY - 1; y < Globals.GameMaps[mapNum].MapGridY + 2; y++)
                 {
                     for (var x = Globals.GameMaps[mapNum].MapGridX - 1; x < Globals.GameMaps[mapNum].MapGridX + 2; x++)
@@ -810,6 +821,14 @@ namespace Intersect_Server.Classes
         {
             var bf = new ByteBuffer();
             bf.WriteLong((int)Enums.ServerPackets.OpenQuestEditor);
+            client.SendPacket(bf.ToArray());
+            bf.Dispose();
+        }
+
+        public static void SendOpenAdminWindow(Client client)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteLong((int)Enums.ServerPackets.OpenAdminWindow);
             client.SendPacket(bf.ToArray());
             bf.Dispose();
         }

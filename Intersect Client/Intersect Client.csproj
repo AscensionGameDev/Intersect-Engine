@@ -115,12 +115,14 @@
     <Compile Include="Classes\Game Objects\QuestStruct.cs" />
     <Compile Include="Classes\Game Objects\ResourceStruct.cs" />
     <Compile Include="Classes\Items\ItemInstance.cs" />
+    <Compile Include="Classes\Maps\MapList.cs" />
     <Compile Include="Classes\Misc\FieldChecking.cs" />
     <Compile Include="Classes\Game Objects\ItemStruct.cs" />
     <Compile Include="Classes\Game Objects\NpcStruct.cs" />
     <Compile Include="Classes\Game Objects\SpellStruct.cs" />
     <Compile Include="Classes\Misc\MathHelper.cs" />
     <Compile Include="Classes\Spells\SpellInstance.cs" />
+    <Compile Include="Classes\UI\Game\AdminWindow.cs" />
     <Compile Include="Classes\UI\Game\CharacterWindow.cs" />
     <Compile Include="Classes\UI\Game\Draggable.cs" />
     <Compile Include="Classes\UI\Game\GameGuiBase.cs" />

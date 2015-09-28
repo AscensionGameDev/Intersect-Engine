@@ -39,7 +39,7 @@ namespace Intersect_Editor.Classes
         
         //Core Data
         public TileArray[] Layers = new TileArray[Constants.LayerCount];
-        public Attribute[,] Attributes = new Attribute[Constants.MapWidth, Constants.MapHeight];
+        public Attribute[,] Attributes = new Attribute[Globals.MapWidth, Globals.MapHeight];
         public List<EventStruct> Events = new List<EventStruct>();
         public List<Light> Lights = new List<Light>();
 
@@ -72,9 +72,9 @@ namespace Intersect_Editor.Classes
             for (var i = 0; i < Constants.LayerCount; i++)
             {
                 Layers[i] = new TileArray();
-                for (var x = 0; x < Constants.MapWidth; x++)
+                for (var x = 0; x < Globals.MapWidth; x++)
                 {
-                    for (var y = 0; y < Constants.MapHeight; y++)
+                    for (var y = 0; y < Globals.MapHeight; y++)
                     {
                         Layers[i].Tiles[x, y] = new Tile();
                         if (i == 0) { Attributes[x, y] = new Attribute(); }
@@ -119,9 +119,9 @@ namespace Intersect_Editor.Classes
 
             for (var i = 0; i < Constants.LayerCount; i++)
             {
-                for (var x = 0; x < Constants.MapWidth; x++)
+                for (var x = 0; x < Globals.MapWidth; x++)
                 {
-                    for (var y = 0; y < Constants.MapHeight; y++)
+                    for (var y = 0; y < Globals.MapHeight; y++)
                     {
                         bf.WriteInteger(Layers[i].Tiles[x, y].TilesetIndex);
                         bf.WriteInteger(Layers[i].Tiles[x, y].X);
@@ -130,9 +130,9 @@ namespace Intersect_Editor.Classes
                     }
                 }
             }
-            for (var x = 0; x < Constants.MapWidth; x++)
+            for (var x = 0; x < Globals.MapWidth; x++)
             {
-                for (var y = 0; y < Constants.MapHeight; y++)
+                for (var y = 0; y < Globals.MapHeight; y++)
                 {
                     bf.WriteInteger(Attributes[x, y].value);
                     bf.WriteInteger(Attributes[x, y].data1);
@@ -196,9 +196,9 @@ namespace Intersect_Editor.Classes
 
             for (var i = 0; i < Constants.LayerCount; i++)
             {
-                for (var x = 0; x < Constants.MapWidth; x++)
+                for (var x = 0; x < Globals.MapWidth; x++)
                 {
-                    for (var y = 0; y < Constants.MapHeight; y++)
+                    for (var y = 0; y < Globals.MapHeight; y++)
                     {
                         Layers[i].Tiles[x, y].TilesetIndex = bf.ReadInteger();
                         Layers[i].Tiles[x, y].X = bf.ReadInteger();
@@ -207,9 +207,9 @@ namespace Intersect_Editor.Classes
                     }
                 }
             }
-            for (var x = 0; x < Constants.MapWidth; x++)
+            for (var x = 0; x < Globals.MapWidth; x++)
             {
-                for (var y = 0; y < Constants.MapHeight; y++)
+                for (var y = 0; y < Globals.MapHeight; y++)
                 {
                     Attributes[x, y].value = bf.ReadInteger();
                     Attributes[x, y].data1 = bf.ReadInteger();
@@ -278,7 +278,7 @@ namespace Intersect_Editor.Classes
     }
 
     public class TileArray {
-        public Tile[,] Tiles = new Tile[Constants.MapWidth ,Constants.MapHeight];
+        public Tile[,] Tiles = new Tile[Globals.MapWidth ,Globals.MapHeight];
     }
 
     public class Tile {

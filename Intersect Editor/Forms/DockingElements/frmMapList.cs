@@ -286,6 +286,11 @@ namespace Intersect_Editor.Forms
         {
             if (e.Node.Tag.GetType() == typeof(FolderMap))
             {
+                //Should ask if the user wants to save changes
+                if (Globals.MapEditorWindow.MapUndoStates.Count > 0 && MessageBox.Show(@"Do you want to save your current map?", @"Save current map?", MessageBoxButtons.YesNo) == DialogResult.Yes)
+                {
+                    PacketSender.SendMap(Globals.CurrentMap);
+                }
                 Globals.MainForm.EnterMap(((FolderMap)e.Node.Tag).MapNum);
             }
         }

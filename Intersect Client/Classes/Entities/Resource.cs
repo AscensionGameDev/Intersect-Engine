@@ -33,11 +33,6 @@ namespace Intersect_Client.Classes
 {
     public class Resource : Entity
     {
-        //Tileset Locations
-        public int X;
-        public int Y;
-        public int Width;
-        public int Height;
 
         public Resource() : base()
         {
@@ -47,10 +42,6 @@ namespace Intersect_Client.Classes
         public void Load(ByteBuffer bf)
         {
             base.Load(bf);
-            X = bf.ReadInteger();
-            Y = bf.ReadInteger();
-            Width = bf.ReadInteger();
-            Height = bf.ReadInteger();
             HideName = 1;
         }
 
@@ -60,34 +51,14 @@ namespace Intersect_Client.Classes
             Rectangle srcRectangle = new Rectangle();
             Rectangle destRectangle = new Rectangle();
             Texture srcTexture;
-            if (File.Exists("Resources/Tilesets/" + MySprite.ToLower()))
+            if (Graphics.ResourceFileNames.IndexOf(MySprite) > -1)
             {
-                var str = MySprite.ToLower();
-                var charsToRemove = new string[] { "tileset", ".png"};
-                foreach (var c in charsToRemove)
-                {
-                    str = str.Replace(c, string.Empty);
-                }
-                srcTexture = Graphics.Tilesets[Convert.ToInt32(str) - 1];
-
-                if ((Height + 1) * Globals.TileHeight > Globals.TileHeight)
-                {
-                    destRectangle.Y = (int)Math.Ceiling(Graphics.CalcMapOffsetY(i) + CurrentY * Globals.TileHeight + OffsetY - (((Height + 1) * Globals.TileHeight) - Globals.TileHeight));
-                }
-                else
-                {
-                    destRectangle.Y = (int)Math.Ceiling(Graphics.CalcMapOffsetY(i) + CurrentY * Globals.TileHeight + OffsetY);
-                }
-                if ((Width + 1) * Globals.TileWidth > Globals.TileWidth)
-                {
-                    destRectangle.X = (int)Math.Ceiling(Graphics.CalcMapOffsetX(i) + CurrentX * Globals.TileWidth + OffsetX - (((Width + 1) * 16) - 16));
-                }
-                else
-                {
-                    destRectangle.X = (int)Math.Ceiling(Graphics.CalcMapOffsetX(i) + CurrentX * Globals.TileWidth + OffsetX);
-                }
-
-                srcRectangle = new Rectangle(X * Globals.TileWidth, Y * Globals.TileHeight, (Width + 1) * Globals.TileWidth, (Height + 1) * Globals.TileHeight);
+                srcTexture = Graphics.ResourceTextures[Graphics.ResourceFileNames.IndexOf(MySprite)];
+                srcRectangle = new Rectangle(0, 0, (int)Graphics.ResourceTextures[Graphics.ResourceFileNames.IndexOf(MySprite)].Size.X, (int)Graphics.ResourceTextures[Graphics.ResourceFileNames.IndexOf(MySprite)].Size.Y);
+                destRectangle.Y = (int)Math.Ceiling(Graphics.CalcMapOffsetY(i) + CurrentY * Globals.TileHeight + OffsetY);
+                destRectangle.X = (int)Math.Ceiling(Graphics.CalcMapOffsetX(i) + CurrentX * Globals.TileWidth + OffsetX);
+                if (srcRectangle.Height > 32) { destRectangle.Y -= srcRectangle.Height - 32; }
+                if (srcRectangle.Width > 32) { destRectangle.X -= (srcRectangle.Width - 32) / 2; }
                 destRectangle.Width = srcRectangle.Width;
                 destRectangle.Height = srcRectangle.Height;
                 Graphics.RenderTexture(srcTexture, srcRectangle, destRectangle, Graphics.RenderWindow);

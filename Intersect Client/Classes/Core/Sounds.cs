@@ -323,7 +323,7 @@ namespace Intersect_Client.Classes
                     Point player = new Point();
                     player.X = playerx;
                     player.Y = playery;
-                    Rectangle mapRect = new Rectangle(Graphics.CalcMapOffsetX(_localMap,true), Graphics.CalcMapOffsetY(_localMap,true), Constants.MapWidth * Globals.TileWidth, Constants.MapHeight * Globals.TileHeight);
+                    Rectangle mapRect = new Rectangle(Graphics.CalcMapOffsetX(_localMap,true), Graphics.CalcMapOffsetY(_localMap,true), Globals.MapWidth * Globals.TileWidth, Globals.MapHeight * Globals.TileHeight);
                     distance = (float)DistancePointToRectangle(player,mapRect) / 32f;
                 }
                 else

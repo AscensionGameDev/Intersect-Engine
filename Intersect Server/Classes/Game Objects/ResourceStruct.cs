@@ -39,8 +39,8 @@ namespace Intersect_Server.Classes
         public bool WalkableAfter = false;
 
         // Graphics
-        public ResourceGraphic InitialGraphic = new ResourceGraphic();
-        public ResourceGraphic EndGraphic = new ResourceGraphic();
+        public string InitialGraphic = "None";
+        public string EndGraphic = "None";
 
         // Drops
         public List<ResourceDrop> Drops = new List<ResourceDrop>();
@@ -59,16 +59,8 @@ namespace Intersect_Server.Classes
             var myBuffer = new ByteBuffer();
             myBuffer.WriteBytes(packet);
             Name = myBuffer.ReadString();
-            InitialGraphic.Sprite = myBuffer.ReadString();
-            InitialGraphic.X = myBuffer.ReadInteger();
-            InitialGraphic.Y = myBuffer.ReadInteger();
-            InitialGraphic.Width = myBuffer.ReadInteger();
-            InitialGraphic.Height = myBuffer.ReadInteger();
-            EndGraphic.Sprite = myBuffer.ReadString();
-            EndGraphic.X = myBuffer.ReadInteger();
-            EndGraphic.Y = myBuffer.ReadInteger();
-            EndGraphic.Width = myBuffer.ReadInteger();
-            EndGraphic.Height = myBuffer.ReadInteger();
+            InitialGraphic = myBuffer.ReadString();
+            EndGraphic = myBuffer.ReadString();
             MinHP = myBuffer.ReadInteger();
             MaxHP = myBuffer.ReadInteger();
             Tool = myBuffer.ReadInteger();
@@ -91,16 +83,8 @@ namespace Intersect_Server.Classes
         {
             var myBuffer = new ByteBuffer();
             myBuffer.WriteString(Name);
-            myBuffer.WriteString(InitialGraphic.Sprite);
-            myBuffer.WriteInteger(InitialGraphic.X);
-            myBuffer.WriteInteger(InitialGraphic.Y);
-            myBuffer.WriteInteger(InitialGraphic.Width);
-            myBuffer.WriteInteger(InitialGraphic.Height);
-            myBuffer.WriteString(EndGraphic.Sprite);
-            myBuffer.WriteInteger(EndGraphic.X);
-            myBuffer.WriteInteger(EndGraphic.Y);
-            myBuffer.WriteInteger(EndGraphic.Width);
-            myBuffer.WriteInteger(EndGraphic.Height);
+            myBuffer.WriteString(InitialGraphic);
+            myBuffer.WriteString(EndGraphic);
             myBuffer.WriteInteger(MinHP);
             myBuffer.WriteInteger(MaxHP);
             myBuffer.WriteInteger(Tool);
@@ -132,16 +116,6 @@ namespace Intersect_Server.Classes
             public int ItemNum;
             public int Amount;
             public int Chance;
-        }
-
-
-        public class ResourceGraphic
-        {
-            public string Sprite = "";
-            public int X = 0;
-            public int Y = 0;
-            public int Width = 0;
-            public int Height = 0;
         }
     }
 }

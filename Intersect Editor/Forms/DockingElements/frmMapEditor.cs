@@ -26,8 +26,8 @@ namespace Intersect_Editor.Forms
         }
         private void frmMapEditor_Load(object sender, EventArgs e)
         {
-            picMap.Width = (Constants.MapWidth + 2) * Globals.TileWidth;
-            picMap.Height = (Constants.MapHeight + 2) * Globals.TileHeight;
+            picMap.Width = (Globals.MapWidth + 2) * Globals.TileWidth;
+            picMap.Height = (Globals.MapHeight + 2) * Globals.TileHeight;
         }
         private void frmMapEditor_DockStateChanged(object sender, EventArgs e)
         {
@@ -71,6 +71,9 @@ namespace Intersect_Editor.Forms
         {
             if (Globals.EditingLight != null) { return; }
             var tmpMap = Globals.GameMaps[Globals.CurrentMap];
+
+            if (e.X >= picMap.Width - Globals.TileWidth || e.Y >= picMap.Height - Globals.TileHeight) { return; }
+            if (e.X < Globals.TileWidth || e.Y < Globals.TileHeight) { return; }
 
             if (CurrentMapState == null)
             {
@@ -172,7 +175,7 @@ namespace Intersect_Editor.Forms
                                 {
                                     for (var y = 0; y <= Globals.CurSelH; y++)
                                     {
-                                        if (Globals.CurTileX + x >= 0 && Globals.CurTileX + x < Constants.MapWidth && Globals.CurTileY + y >= 0 && Globals.CurTileY + y < Constants.MapHeight)
+                                        if (Globals.CurTileX + x >= 0 && Globals.CurTileX + x < Globals.MapWidth && Globals.CurTileY + y >= 0 && Globals.CurTileY + y < Globals.MapHeight)
                                         {
                                             tmpMap.Layers[Globals.CurrentLayer].Tiles[Globals.CurTileX + x, Globals.CurTileY + y].TilesetIndex = Globals.CurrentTileset;
                                             tmpMap.Layers[Globals.CurrentLayer].Tiles[Globals.CurTileX + x, Globals.CurTileY + y].X = Globals.CurSelX + x;
@@ -253,7 +256,7 @@ namespace Intersect_Editor.Forms
                     }
                 }
             }
-            if (Globals.CurTileX == Constants.MapWidth - 1)
+            if (Globals.CurTileX == Globals.MapWidth - 1)
             {
                 if (tmpMap.Right > -1)
                 {
@@ -263,7 +266,7 @@ namespace Intersect_Editor.Forms
                     }
                 }
             }
-            if (Globals.CurTileY != Constants.MapHeight - 1) return;
+            if (Globals.CurTileY != Globals.MapHeight - 1) return;
             if (tmpMap.Down <= -1) return;
             if (Globals.GameMaps[tmpMap.Down] != null)
             {
@@ -364,7 +367,7 @@ namespace Intersect_Editor.Forms
                             }
                         }
                     }
-                    if (Globals.CurTileX == Constants.MapWidth - 1)
+                    if (Globals.CurTileX == Globals.MapWidth - 1)
                     {
                         if (tmpMap.Right > -1)
                         {
@@ -374,7 +377,7 @@ namespace Intersect_Editor.Forms
                             }
                         }
                     }
-                    if (Globals.CurTileY == Constants.MapHeight - 1)
+                    if (Globals.CurTileY == Globals.MapHeight - 1)
                     {
                         if (tmpMap.Down > -1)
                         {
@@ -429,7 +432,7 @@ namespace Intersect_Editor.Forms
                             }
                         }
                     }
-                    if (Globals.CurTileX == Constants.MapWidth - 1)
+                    if (Globals.CurTileX == Globals.MapWidth - 1)
                     {
                         if (tmpMap.Right > -1)
                         {
@@ -439,7 +442,7 @@ namespace Intersect_Editor.Forms
                             }
                         }
                     }
-                    if (Globals.CurTileY == Constants.MapHeight - 1)
+                    if (Globals.CurTileY == Globals.MapHeight - 1)
                     {
                         if (tmpMap.Down > -1)
                         {
@@ -468,7 +471,7 @@ namespace Intersect_Editor.Forms
         }
         private void picMap_DoubleClick(object sender, EventArgs e)
         {
-            if (Globals.MouseX >= Globals.TileWidth && Globals.MouseX <= (Constants.MapWidth + 2) * Globals.TileWidth - Globals.TileWidth)
+            if (Globals.MouseX >= Globals.TileWidth && Globals.MouseX <= (Globals.MapWidth + 2) * Globals.TileWidth - Globals.TileWidth)
             {
                 if (Globals.MouseY >= 0 && Globals.MouseY <= Globals.TileHeight)
                 {
@@ -476,7 +479,7 @@ namespace Intersect_Editor.Forms
                     {
                         if (MessageBox.Show(@"Do you want to create a map here?", @"Create new map.", MessageBoxButtons.YesNo) == DialogResult.Yes)
                         {
-                            if (MessageBox.Show(@"Do you want to save your current map?", @"Save current map?", MessageBoxButtons.YesNo) == DialogResult.Yes)
+                            if (MapUndoStates.Count > 0 && MessageBox.Show(@"Do you want to save your current map?", @"Save current map?", MessageBoxButtons.YesNo) == DialogResult.Yes)
                             {
                                 PacketSender.SendMap(Globals.CurrentMap);
                             }
@@ -486,20 +489,20 @@ namespace Intersect_Editor.Forms
                     else
                     {
                         //Should ask if the user wants to save changes
-                        if (MessageBox.Show(@"Do you want to save your current map?", @"Save current map?", MessageBoxButtons.YesNo) == DialogResult.Yes)
+                        if (MapUndoStates.Count > 0 && MessageBox.Show(@"Do you want to save your current map?", @"Save current map?", MessageBoxButtons.YesNo) == DialogResult.Yes)
                         {
                             PacketSender.SendMap(Globals.CurrentMap);
                         }
                         Globals.MainForm.EnterMap(Globals.GameMaps[Globals.CurrentMap].Up);
                     }
                 }
-                else if (Globals.MouseY >= (Constants.MapHeight + 2) * Globals.TileHeight - Globals.TileHeight && Globals.MouseY <= (Constants.MapHeight + 2) * Globals.TileHeight)
+                else if (Globals.MouseY >= (Globals.MapHeight + 2) * Globals.TileHeight - Globals.TileHeight && Globals.MouseY <= (Globals.MapHeight + 2) * Globals.TileHeight)
                 {
                     if (Globals.GameMaps[Globals.CurrentMap].Down == -1)
                     {
                         if (MessageBox.Show(@"Do you want to create a map here?", @"Create new map.", MessageBoxButtons.YesNo) == DialogResult.Yes)
                         {
-                            if (MessageBox.Show(@"Do you want to save your current map?", @"Save current map?", MessageBoxButtons.YesNo) == DialogResult.Yes)
+                            if (MapUndoStates.Count > 0 && MessageBox.Show(@"Do you want to save your current map?", @"Save current map?", MessageBoxButtons.YesNo) == DialogResult.Yes)
                             {
                                 PacketSender.SendMap(Globals.CurrentMap);
                             }
@@ -509,7 +512,7 @@ namespace Intersect_Editor.Forms
                     else
                     {
                         //Should ask if the user wants to save changes
-                        if (MessageBox.Show(@"Do you want to save your current map?", @"Save current map?", MessageBoxButtons.YesNo) == DialogResult.Yes)
+                        if (MapUndoStates.Count > 0 && MessageBox.Show(@"Do you want to save your current map?", @"Save current map?", MessageBoxButtons.YesNo) == DialogResult.Yes)
                         {
                             PacketSender.SendMap(Globals.CurrentMap);
                         }
@@ -517,7 +520,7 @@ namespace Intersect_Editor.Forms
                     }
                 }
             }
-            if (Globals.MouseY < Globals.TileHeight || Globals.MouseY > (Constants.MapHeight + 2) * Globals.TileHeight - Globals.TileHeight) return;
+            if (Globals.MouseY < Globals.TileHeight || Globals.MouseY > (Globals.MapHeight + 2) * Globals.TileHeight - Globals.TileHeight) return;
             if (Globals.MouseX >= 0 & Globals.MouseX <= Globals.TileWidth)
             {
                 if (Globals.GameMaps[Globals.CurrentMap].Left == -1)
@@ -525,7 +528,7 @@ namespace Intersect_Editor.Forms
                     if (
                         MessageBox.Show(@"Do you want to create a map here?", @"Create new map.",
                             MessageBoxButtons.YesNo) != DialogResult.Yes) return;
-                    if (MessageBox.Show(@"Do you want to save your current map?", @"Save current map?", MessageBoxButtons.YesNo) == DialogResult.Yes)
+                    if (MapUndoStates.Count > 0 && MessageBox.Show(@"Do you want to save your current map?", @"Save current map?", MessageBoxButtons.YesNo) == DialogResult.Yes)
                     {
                         PacketSender.SendMap(Globals.CurrentMap);
                     }
@@ -534,21 +537,21 @@ namespace Intersect_Editor.Forms
                 else
                 {
                     //Should ask if the user wants to save changes
-                    if (MessageBox.Show(@"Do you want to save your current map?", @"Save current map?", MessageBoxButtons.YesNo) == DialogResult.Yes)
+                    if (MapUndoStates.Count > 0 && MessageBox.Show(@"Do you want to save your current map?", @"Save current map?", MessageBoxButtons.YesNo) == DialogResult.Yes)
                     {
                         PacketSender.SendMap(Globals.CurrentMap);
                     }
                     Globals.MainForm.EnterMap(Globals.GameMaps[Globals.CurrentMap].Left);
                 }
             }
-            else if (Globals.MouseX >= (Constants.MapWidth + 2) * Globals.TileWidth - Globals.TileWidth && Globals.MouseX <= (Constants.MapWidth + 2) * Globals.TileWidth)
+            else if (Globals.MouseX >= (Globals.MapWidth + 2) * Globals.TileWidth - Globals.TileWidth && Globals.MouseX <= (Globals.MapWidth + 2) * Globals.TileWidth)
             {
                 if (Globals.GameMaps[Globals.CurrentMap].Right == -1)
                 {
                     if (
                         MessageBox.Show(@"Do you want to create a map here?", @"Create new map.", MessageBoxButtons.YesNo) !=
                         DialogResult.Yes) return;
-                    if (MessageBox.Show(@"Do you want to save your current map?", @"Save current map?", MessageBoxButtons.YesNo) == DialogResult.Yes)
+                    if (MapUndoStates.Count > 0 && MessageBox.Show(@"Do you want to save your current map?", @"Save current map?", MessageBoxButtons.YesNo) == DialogResult.Yes)
                     {
                         PacketSender.SendMap(Globals.CurrentMap);
                     }
@@ -557,7 +560,7 @@ namespace Intersect_Editor.Forms
                 else
                 {
                     //Should ask if the user wants to save changes
-                    if (MessageBox.Show(@"Do you want to save your current map?", @"Save current map?", MessageBoxButtons.YesNo) == DialogResult.Yes)
+                    if (MapUndoStates.Count > 0 && MessageBox.Show(@"Do you want to save your current map?", @"Save current map?", MessageBoxButtons.YesNo) == DialogResult.Yes)
                     {
                         PacketSender.SendMap(Globals.CurrentMap);
                     }
@@ -582,9 +585,9 @@ namespace Intersect_Editor.Forms
             }
             if (MessageBox.Show(@"Are you sure you want to fill this layer?", @"Fill Layer", MessageBoxButtons.YesNo) == DialogResult.Yes)
             {
-                for (var x = 0; x < Constants.MapWidth; x++)
+                for (var x = 0; x < Globals.MapWidth; x++)
                 {
-                    for (var y = 0; y < Constants.MapHeight; y++)
+                    for (var y = 0; y < Globals.MapHeight; y++)
                     {
                         Globals.CurTileX = x;
                         Globals.CurTileY = y;
@@ -669,9 +672,9 @@ namespace Intersect_Editor.Forms
             }
             if (MessageBox.Show(@"Are you sure you want to erase this layer?", @"Fill Layer", MessageBoxButtons.YesNo) == DialogResult.Yes)
             {
-                for (var x = 0; x < Constants.MapWidth; x++)
+                for (var x = 0; x < Globals.MapWidth; x++)
                 {
-                    for (var y = 0; y < Constants.MapHeight; y++)
+                    for (var y = 0; y < Globals.MapHeight; y++)
                     {
                         Globals.CurTileX = x;
                         Globals.CurTileY = y;

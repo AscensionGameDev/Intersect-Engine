@@ -45,8 +45,6 @@ namespace Intersect_Client.Classes
         public const int MaxHotbar = 10;
 
         //Map Maxes
-        public const int MapWidth = 30;
-        public const int MapHeight = 26;
         public const int LayerCount = 5;
 
         //Item Rendering
