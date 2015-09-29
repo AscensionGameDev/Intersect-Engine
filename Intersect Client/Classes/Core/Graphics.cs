@@ -936,6 +936,12 @@ namespace Intersect_Client.Classes
                 _renderState.Texture = tex;
             }
 
+            /*targetRect.X = (int)targetRect.X;
+            targetRect.Y = (int)targetRect.Y;
+            targetRect.Width = (int)targetRect.Width;
+            targetRect.Height = (int)targetRect.Height;*/
+
+
             var right = targetRect.X + targetRect.Width;
             var bottom = targetRect.Y + targetRect.Height;
 

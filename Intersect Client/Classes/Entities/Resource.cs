@@ -48,15 +48,15 @@ namespace Intersect_Client.Classes
         //Rendering Resources
        override public void Draw(int i)
         {
-            Rectangle srcRectangle = new Rectangle();
-            Rectangle destRectangle = new Rectangle();
+            RectangleF srcRectangle = new RectangleF();
+            RectangleF destRectangle = new RectangleF();
             Texture srcTexture;
             if (Graphics.ResourceFileNames.IndexOf(MySprite) > -1)
             {
                 srcTexture = Graphics.ResourceTextures[Graphics.ResourceFileNames.IndexOf(MySprite)];
-                srcRectangle = new Rectangle(0, 0, (int)Graphics.ResourceTextures[Graphics.ResourceFileNames.IndexOf(MySprite)].Size.X, (int)Graphics.ResourceTextures[Graphics.ResourceFileNames.IndexOf(MySprite)].Size.Y);
-                destRectangle.Y = (int)Math.Ceiling(Graphics.CalcMapOffsetY(i) + CurrentY * Globals.TileHeight + OffsetY);
-                destRectangle.X = (int)Math.Ceiling(Graphics.CalcMapOffsetX(i) + CurrentX * Globals.TileWidth + OffsetX);
+                srcRectangle = new RectangleF(0, 0, Graphics.ResourceTextures[Graphics.ResourceFileNames.IndexOf(MySprite)].Size.X, Graphics.ResourceTextures[Graphics.ResourceFileNames.IndexOf(MySprite)].Size.Y);
+                destRectangle.Y = Graphics.CalcMapOffsetY(i) + CurrentY * Globals.TileHeight + OffsetY;
+                destRectangle.X = Graphics.CalcMapOffsetX(i) + CurrentX * Globals.TileWidth + OffsetX;
                 if (srcRectangle.Height > 32) { destRectangle.Y -= srcRectangle.Height - 32; }
                 if (srcRectangle.Width > 32) { destRectangle.X -= (srcRectangle.Width - 32) / 2; }
                 destRectangle.Width = srcRectangle.Width;
