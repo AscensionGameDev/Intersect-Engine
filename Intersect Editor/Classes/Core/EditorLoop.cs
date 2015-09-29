@@ -101,7 +101,7 @@ namespace Intersect_Editor.Classes
                 Graphics.Render();
                 Network.Update();
                 Application.DoEvents(); // handle form events
-                Thread.Sleep(10);
+                Thread.Sleep(1);
             }
         }
     }

@@ -64,6 +64,7 @@ namespace Intersect_Client.Classes
         private static int _fpsCount;
         private static long _fpsTimer;
         private static RenderStates _renderState = new RenderStates(BlendMode.Alpha);
+        public static FloatRect CurrentView;
 
         //Game Textures
         public static List<Texture> Tilesets = new List<Texture>();
@@ -259,6 +260,7 @@ namespace Intersect_Client.Classes
             }
             if (Globals.GameState == (int)Enums.GameStates.InGame && Globals.GameLoaded && Globals.CurrentMap > -1 && Globals.GameMaps[Globals.CurrentMap] != null)
             {
+                UpdateView();
                 if (LightsChanged)
                 {
                     if (LightThread == null)
@@ -403,9 +405,9 @@ namespace Intersect_Client.Classes
                 }
                 DrawDarkness();
             }
-            
 
             Gui.DrawGui();
+            RenderTexture(Gui.GwenTexture.Texture,CurrentView.Left,CurrentView.Top,RenderWindow);
 
 
             if (FadeStage != 0)
@@ -435,6 +437,7 @@ namespace Intersect_Client.Classes
                 {
                     FillColor = new Color(0, 0, 0, (byte)FadeAmt)
                 };
+                myShape.Position = new Vector2f(CurrentView.Left,CurrentView.Top);
                 RenderWindow.Draw(myShape);
             }
 
@@ -543,6 +546,13 @@ namespace Intersect_Client.Classes
         {
             RenderTexture(tex, new Rectangle(0, 0, (int)tex.Size.X, (int)tex.Size.Y),
                 new Rectangle(0, 0, ScreenWidth, ScreenHeight), RenderWindow);
+        }
+
+        private static void UpdateView()
+        {
+            Player en = (Player) Globals.Entities[Globals.MyIndex];
+            CurrentView = new FloatRect(en.GetCenterPos(4).X - ScreenWidth/2f,en.GetCenterPos(4).Y - ScreenHeight/2f,ScreenWidth,ScreenHeight);
+            RenderWindow.SetView(new View(CurrentView));
         }
 
         //Graphic Loading
@@ -667,6 +677,7 @@ namespace Intersect_Client.Classes
         //Lighting
         private static void InitLighting()
         {
+            return;
             RenderTexture tmpTex;
             do
             {
@@ -722,9 +733,9 @@ namespace Intersect_Client.Classes
                                 {
                                     if (LightsChanged) { break; }
                                     double w = CalcLightWidth(t.Range);
-                                    var x = CalcMapOffsetX(z, true) + Globals.MapWidth * Globals.TileWidth + (t.TileX * Globals.TileWidth + t.OffsetX) - (int)w / 2 + 16;
-                                    var y = CalcMapOffsetY(z, true) + Globals.MapHeight * Globals.TileHeight + (t.TileY * Globals.TileHeight + t.OffsetY) - (int)w / 2 + 16;
-                                    AddLight(x, y, (int)w, t.Intensity, t, tmpTex);
+                                    var x = CalcMapOffsetX(z) + Globals.MapWidth * Globals.TileWidth + (t.TileX * Globals.TileWidth + t.OffsetX) - (int)w / 2 + 16;
+                                    var y = CalcMapOffsetY(z) + Globals.MapHeight * Globals.TileHeight + (t.TileY * Globals.TileHeight + t.OffsetY) - (int)w / 2 + 16;
+                                    AddLight((int)x, (int)y, (int)w, t.Intensity, t, tmpTex);
                                 }
                             }
                             tmpTex.Display();
@@ -761,6 +772,7 @@ namespace Intersect_Client.Classes
         }
         private static void DrawDarkness()
         {
+            return;
             if (Globals.GameMaps[Globals.CurrentMap].IsIndoors) { return; }
             var rs = new RectangleShape(new Vector2f(3 * Globals.TileWidth * Globals.MapWidth, 3 * Globals.TileHeight * Globals.MapHeight));
             if (CurrentDarknexxTexture == null) { return; }
@@ -854,79 +866,55 @@ namespace Intersect_Client.Classes
             myList.Reverse();
             return myList;
         }
-        public static int CalcMapOffsetX(int i, bool ignorePlayerOffset = false)
+        public static float CalcMapOffsetX(int i)
         {
             if (i < 3)
             {
-                if (ignorePlayerOffset || Globals.Entities[Globals.MyIndex] == null)
-                {
-                    return ((-Globals.MapWidth * Globals.TileWidth) + ((i) * (Globals.MapWidth * Globals.TileWidth)));
-                }
-                return ((-Globals.MapWidth * Globals.TileWidth) + ((i) * (Globals.MapWidth * Globals.TileWidth))) + (ScreenWidth / 2) - Globals.Entities[Globals.MyIndex].CurrentX * Globals.TileWidth - (int)Math.Ceiling(Globals.Entities[Globals.MyIndex].OffsetX);
+                return ((-Globals.MapWidth * Globals.TileWidth) + ((i) * (Globals.MapWidth * Globals.TileWidth)));
             }
             if (i < 6)
             {
-                if (ignorePlayerOffset || Globals.Entities[Globals.MyIndex] == null)
-                {
-                    return ((-Globals.MapWidth * Globals.TileWidth) + ((i - 3) * (Globals.MapWidth * Globals.TileWidth)));
-                }
-                return ((-Globals.MapWidth * Globals.TileWidth) + ((i - 3) * (Globals.MapWidth * Globals.TileWidth))) + (ScreenWidth / 2) - Globals.Entities[Globals.MyIndex].CurrentX * Globals.TileWidth - (int)Math.Ceiling(Globals.Entities[Globals.MyIndex].OffsetX);
+                return ((-Globals.MapWidth * Globals.TileWidth) + ((i - 3) * (Globals.MapWidth * Globals.TileWidth)));
             }
-            if (ignorePlayerOffset || Globals.Entities[Globals.MyIndex] == null)
-            {
-                return ((-Globals.MapWidth * Globals.TileWidth) + ((i - 6) * (Globals.MapWidth * Globals.TileWidth)));
-            }
-            return ((-Globals.MapWidth * Globals.TileWidth) + ((i - 6) * (Globals.MapWidth * Globals.TileWidth))) + (ScreenWidth / 2) - Globals.Entities[Globals.MyIndex].CurrentX * Globals.TileWidth - (int)Math.Ceiling(Globals.Entities[Globals.MyIndex].OffsetX);
+            return ((-Globals.MapWidth * Globals.TileWidth) + ((i - 6) * (Globals.MapWidth * Globals.TileWidth)));
         }
-        public static int CalcMapOffsetY(int i, bool ignorePlayerOffset = false)
+        public static float CalcMapOffsetY(int i)
         {
             if (i < 3)
             {
-                if (ignorePlayerOffset || Globals.Entities[Globals.MyIndex] == null)
-                {
-                    return -Globals.MapHeight * Globals.TileHeight;
-                }
-                return -Globals.MapHeight * Globals.TileHeight + (ScreenHeight / 2) - Globals.Entities[Globals.MyIndex].CurrentY * Globals.TileHeight - (int)Math.Ceiling(Globals.Entities[Globals.MyIndex].OffsetY);
+                return -Globals.MapHeight * Globals.TileHeight;
             }
             if (i < 6)
             {
-                if (ignorePlayerOffset || Globals.Entities[Globals.MyIndex] == null)
-                {
-                    return 0;
-                }
-                return 0 + (ScreenHeight / 2) - Globals.Entities[Globals.MyIndex].CurrentY * Globals.TileHeight - (int)Math.Ceiling(Globals.Entities[Globals.MyIndex].OffsetY);
+                return 0;
             }
-            if (ignorePlayerOffset || Globals.Entities[Globals.MyIndex] == null)
-            {
-                return Globals.MapHeight * Globals.TileHeight;
-            }
-            return Globals.MapHeight * Globals.TileHeight + (ScreenHeight / 2) - Globals.Entities[Globals.MyIndex].CurrentY * Globals.TileHeight - (int)Math.Ceiling(Globals.Entities[Globals.MyIndex].OffsetY);
+            return Globals.MapHeight * Globals.TileHeight;
         }
 
         //Rendering Functions
-        public static void RenderTexture(Texture tex, int x, int y, RenderTarget renderTarget)
+        public static void RenderTexture(Texture tex, float x, float y, RenderTarget renderTarget)
         {
-            var destRectangle = new Rectangle(x, y, (int)tex.Size.X, (int)tex.Size.Y);
-            var srcRectangle = new Rectangle(0, 0, (int)tex.Size.X, (int)tex.Size.Y);
+            var destRectangle = new RectangleF(x, y, (int)tex.Size.X, (int)tex.Size.Y);
+            var srcRectangle = new RectangleF(0, 0, (int)tex.Size.X, (int)tex.Size.Y);
             RenderTexture(tex, srcRectangle, destRectangle, renderTarget);
         }
-        public static void RenderTexture(Texture tex, int x, int y, RenderTarget renderTarget, BlendMode blendMode)
+        public static void RenderTexture(Texture tex, float x, float y, RenderTarget renderTarget, BlendMode blendMode)
         {
-            var destRectangle = new Rectangle(x, y, (int)tex.Size.X, (int)tex.Size.Y);
-            var srcRectangle = new Rectangle(0, 0, (int)tex.Size.X, (int)tex.Size.Y);
+            var destRectangle = new RectangleF(x, y, (int)tex.Size.X, (int)tex.Size.Y);
+            var srcRectangle = new RectangleF(0, 0, (int)tex.Size.X, (int)tex.Size.Y);
             RenderTexture(tex, srcRectangle, destRectangle, renderTarget, blendMode);
         }
-        public static void RenderTexture(Texture tex, int dx, int dy, int sx, int sy, int w, int h, RenderTarget renderTarget)
+        public static void RenderTexture(Texture tex, float dx, float dy, float sx, float sy, float w, float h, RenderTarget renderTarget)
         {
-            var destRectangle = new Rectangle(dx, dy, w, h);
-            var srcRectangle = new Rectangle(sx, sy, w, h);
+            var destRectangle = new RectangleF(dx, dy, w, h);
+            var srcRectangle = new RectangleF(sx, sy, w, h);
             RenderTexture(tex, srcRectangle, destRectangle, renderTarget);
         }
-        public static void RenderTexture(Texture tex, Rectangle srcRectangle, Rectangle targetRect, RenderTarget renderTarget)
+        public static void RenderTexture(Texture tex, RectangleF srcRectangle, RectangleF targetRect, RenderTarget renderTarget)
         {
             RenderTexture(tex, srcRectangle, targetRect, renderTarget, BlendMode.Alpha);
         }
-        public static void RenderTexture(Texture tex, Rectangle srcRectangle, Rectangle targetRect, RenderTarget renderTarget, BlendMode blendMode)
+        public static void RenderTexture(Texture tex, RectangleF srcRectangle, RectangleF targetRect, RenderTarget renderTarget, BlendMode blendMode)
         {
             var vertexCache = new Vertex[4];
             var u1 = (float)srcRectangle.X / tex.Size.X;

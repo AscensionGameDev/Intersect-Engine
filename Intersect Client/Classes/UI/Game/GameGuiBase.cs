@@ -82,7 +82,6 @@ namespace Intersect_Client.Classes
                 _chatBox.Focus();
                 FocusChat = false;
             }
-
             GameCanvas.RenderCanvas();
         }
     }

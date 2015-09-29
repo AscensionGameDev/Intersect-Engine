@@ -313,29 +313,29 @@ namespace Intersect_Client.Classes
         private float CalculateSoundDistance()
         {
             float distance = 0f;
-            int playerx = (int)Globals.Me.GetCenterPos(4).X;
-            int playery = (int)Globals.Me.GetCenterPos(4).Y;
-            int soundx = 0;
-            int soundy = 0;
+            float playerx = Globals.Me.GetCenterPos(4).X;
+            float playery = Globals.Me.GetCenterPos(4).Y;
+            float soundx = 0;
+            float soundy = 0;
             if (_localMap != 4) {
                 if (_x == -1 || _y == -1 || _distance == -1)
                 {
                     Point player = new Point();
-                    player.X = playerx;
-                    player.Y = playery;
-                    Rectangle mapRect = new Rectangle(Graphics.CalcMapOffsetX(_localMap,true), Graphics.CalcMapOffsetY(_localMap,true), Globals.MapWidth * Globals.TileWidth, Globals.MapHeight * Globals.TileHeight);
+                    player.X = (int)playerx;
+                    player.Y = (int)playery;
+                    Rectangle mapRect = new Rectangle((int)Graphics.CalcMapOffsetX(_localMap), (int)Graphics.CalcMapOffsetY(_localMap), Globals.MapWidth * Globals.TileWidth, Globals.MapHeight * Globals.TileHeight);
                     distance = (float)DistancePointToRectangle(player,mapRect) / 32f;
                 }
                 else
                 {
-                    soundx = Graphics.CalcMapOffsetX(_localMap, true) + _x * Globals.TileWidth + 16;
-                    soundy = Graphics.CalcMapOffsetY(_localMap, true) + _y * Globals.TileHeight + 16;
+                    soundx = Graphics.CalcMapOffsetX(_localMap) + _x * Globals.TileWidth + 16;
+                    soundy = Graphics.CalcMapOffsetY(_localMap) + _y * Globals.TileHeight + 16;
                     distance = (float)Math.Sqrt(Math.Pow(playerx - soundx, 2) + Math.Pow(playery - soundy, 2)) / 32f;
                 }
             }
             else {
-                soundx = Graphics.CalcMapOffsetX(4, true) + _x * Globals.TileWidth + 16;
-                soundy = Graphics.CalcMapOffsetY(4, true) + _y * Globals.TileHeight + 16;
+                soundx = Graphics.CalcMapOffsetX(4) + _x * Globals.TileWidth + 16;
+                soundy = Graphics.CalcMapOffsetY(4) + _y * Globals.TileHeight + 16;
                 distance = (float)Math.Sqrt(Math.Pow(playerx - soundx, 2) + Math.Pow(playery - soundy, 2)) / 32f;
             }
             return distance;

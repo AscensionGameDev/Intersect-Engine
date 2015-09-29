@@ -225,13 +225,6 @@ namespace Intersect_Editor.Forms
             this.hideTilePreviewToolStripMenuItem.Text = "Hide Tile Preview";
             this.hideTilePreviewToolStripMenuItem.Click += new System.EventHandler(this.hideTilePreviewToolStripMenuItem_Click);
             // 
-            // hideTilePreviewToolStripMenuItem
-            // 
-            this.hideTilePreviewToolStripMenuItem.Name = "hideTilePreviewToolStripMenuItem";
-            this.hideTilePreviewToolStripMenuItem.Size = new System.Drawing.Size(165, 22);
-            this.hideTilePreviewToolStripMenuItem.Text = "Hide Tile Preview";
-            this.hideTilePreviewToolStripMenuItem.Click += new System.EventHandler(this.hideTilePreviewToolStripMenuItem_Click);
-            // 
             // contentEditorsToolStripMenuItem
             // 
             this.contentEditorsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {

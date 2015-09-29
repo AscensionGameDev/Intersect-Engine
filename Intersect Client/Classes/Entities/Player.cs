@@ -402,8 +402,8 @@ namespace Intersect_Client.Classes
         }
         private bool TryTarget()
         {
-            var x = (int)Math.Floor((SFML.Window.Mouse.GetPosition(Graphics.RenderWindow).X - (float)Graphics.CalcMapOffsetX(4)) / Globals.TileWidth);
-            var y = (int)Math.Floor((SFML.Window.Mouse.GetPosition(Graphics.RenderWindow).Y - (float)Graphics.CalcMapOffsetY(4)) / Globals.TileHeight);
+            var x = (int)Math.Floor((SFML.Window.Mouse.GetPosition(Graphics.RenderWindow).X + Graphics.CurrentView.Left) / Globals.TileWidth);
+            var y = (int)Math.Floor((SFML.Window.Mouse.GetPosition(Graphics.RenderWindow).Y + Graphics.CurrentView.Top) / Globals.TileHeight);
             var map = Globals.Entities[Globals.MyIndex].CurrentMap;
             if (GetRealLocation(ref x, ref y, ref map))
             {

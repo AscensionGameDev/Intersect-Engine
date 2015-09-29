@@ -64,8 +64,6 @@ namespace Intersect_Client
                 lock (Globals.GameLock)
                 {
                     Network.CheckNetwork();
-                    Graphics.DrawGame();
-                    Sounds.Update();
                     if (Globals.GameState == (int)Enums.GameStates.Menu)
                     {
                         ProcessMenu();
@@ -74,6 +72,9 @@ namespace Intersect_Client
                     {
                         ProcessGame();
                     }
+                    Graphics.DrawGame();
+                    Sounds.Update();
+                    
                 }
                 Application.DoEvents();
             }

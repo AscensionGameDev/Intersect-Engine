@@ -31,12 +31,12 @@ using Gwen.Input;
 using Gwen.Skin;
 using SFML.Graphics;
 using SFML.Window;
-using Color = System.Drawing.Color;
 using Font = Gwen.Font;
 using Intersect_Client.Classes.UI.Menu;
 using Intersect_Client.Classes.UI;
 using Intersect_Client.Classes.UI.Game;
 using System.IO;
+using SFML = Gwen.Input.SFML;
 
 namespace Intersect_Client.Classes
 {
@@ -45,6 +45,7 @@ namespace Intersect_Client.Classes
 
         //GWEN GUI
         private static Gwen.Input.SFML _gwenInput;
+        public static RenderTexture GwenTexture;
         private static Canvas _gameCanvas;
         private static Canvas _menuCanvas;
         public static Gwen.Renderer.SFML _gwenRenderer;
@@ -63,8 +64,8 @@ namespace Intersect_Client.Classes
         //Gwen Low Level Functions
         public static void InitGwen()
         {
-
-            _gwenRenderer = new Gwen.Renderer.SFML(Graphics.RenderWindow);
+            GwenTexture = new RenderTexture((uint)Graphics.ScreenWidth,(uint)Graphics.ScreenHeight);
+            _gwenRenderer = new Gwen.Renderer.SFML(GwenTexture);
             //TODO: Make it easier to modify skin.
             _gwenSkin = new TexturedBase(_gwenRenderer, "DefaultSkin.png");
 
@@ -98,14 +99,14 @@ namespace Intersect_Client.Classes
             _menuCanvas = new Canvas(_gwenSkin);
             _menuCanvas.SetSize(Graphics.ScreenWidth, Graphics.ScreenHeight);
             _menuCanvas.ShouldDrawBackground = false;
-            _menuCanvas.BackgroundColor = Color.FromArgb(255, 150, 170, 170);
+            _menuCanvas.BackgroundColor = System.Drawing.Color.FromArgb(255, 150, 170, 170);
             _menuCanvas.KeyboardInputEnabled = true;
 
             // Create the game Canvas (it's root, on which all other GWEN controls are created)
             _gameCanvas = new Canvas(_gwenSkin);
             _gameCanvas.SetSize(Graphics.ScreenWidth, Graphics.ScreenHeight);
             _gameCanvas.ShouldDrawBackground = false;
-            _gameCanvas.BackgroundColor = Color.FromArgb(255, 150, 170, 170);
+            _gameCanvas.BackgroundColor = System.Drawing.Color.FromArgb(255, 150, 170, 170);
             _gameCanvas.KeyboardInputEnabled = true;
 
             // Create GWEN input processor
@@ -157,10 +158,34 @@ namespace Intersect_Client.Classes
         {
             _gwenInput.ProcessMessage(e);
         }
-        static void window_MouseMoved(object sender, MouseMoveEventArgs e) { _gwenInput.ProcessMessage(e); }
-        static void window_MouseWheelMoved(object sender, MouseWheelEventArgs e) { _gwenInput.ProcessMessage(e); }
-        static void window_MouseButtonPressed(object sender, MouseButtonEventArgs e) { _gwenInput.ProcessMessage(new SFMLMouseButtonEventArgs(e, true)); }
-        static void window_MouseButtonReleased(object sender, MouseButtonEventArgs e) { _gwenInput.ProcessMessage(new SFMLMouseButtonEventArgs(e, false)); }
+
+        static void window_MouseMoved(object sender, MouseMoveEventArgs e)
+        {
+            e.X -= (int)Graphics.CurrentView.Left;
+            e.Y -= (int)Graphics.CurrentView.Top;
+            _gwenInput.ProcessMessage(e);
+        }
+
+        static void window_MouseWheelMoved(object sender, MouseWheelEventArgs e)
+        {
+            e.X -= (int)Graphics.CurrentView.Left;
+            e.Y -= (int)Graphics.CurrentView.Top;
+            _gwenInput.ProcessMessage(e);
+        }
+
+        static void window_MouseButtonPressed(object sender, MouseButtonEventArgs e)
+        {
+            e.X -= (int)Graphics.CurrentView.Left;
+            e.Y -= (int)Graphics.CurrentView.Top;
+            _gwenInput.ProcessMessage(new SFMLMouseButtonEventArgs(e, true));
+        }
+
+        static void window_MouseButtonReleased(object sender, MouseButtonEventArgs e)
+        {
+            e.X -= (int)Graphics.CurrentView.Left;
+            e.Y -= (int)Graphics.CurrentView.Top;
+            _gwenInput.ProcessMessage(new SFMLMouseButtonEventArgs(e, false));
+        }
         static void window_KeyReleased(object sender, KeyEventArgs e) { _gwenInput.ProcessMessage(new SFMLKeyEventArgs(e, false)); }
         static void OnClosed(object sender, EventArgs e) { GameMain.IsRunning = false; }
         static void OnKeyPressed(object sender, KeyEventArgs e)
@@ -206,6 +231,7 @@ namespace Intersect_Client.Classes
         public static void DrawGui()
         {
             ErrorMsgHandler.Update();
+            GwenTexture.Clear(Color.Transparent);
             if (Globals.GameState == (int)Enums.GameStates.Menu)
             {
                 _MenuGui.Draw();
@@ -214,6 +240,7 @@ namespace Intersect_Client.Classes
             {
                 _GameGui.Draw();
             }
+            GwenTexture.Display();
         }
         public static Gwen.Texture BitmapToGwenTexture(System.Drawing.Bitmap bmp)
         {
@@ -337,7 +364,7 @@ namespace Intersect_Client.Classes
             }
             else
             {
-                System.Drawing.Rectangle rect = new System.Drawing.Rectangle(obj.LocalPosToCanvas(new System.Drawing.Point(0, 0)).X, obj.LocalPosToCanvas(new System.Drawing.Point(0, 0)).Y, obj.Width, obj.Height);
+                System.Drawing.RectangleF rect = new System.Drawing.RectangleF(obj.LocalPosToCanvas(new System.Drawing.Point(0, 0)).X, obj.LocalPosToCanvas(new System.Drawing.Point(0, 0)).Y, obj.Width, obj.Height);
                 if (rect.Contains(Gwen.Input.InputHandler.MousePosition.X, Gwen.Input.InputHandler.MousePosition.Y))
                 {
                     return true;

@@ -334,7 +334,7 @@ namespace Intersect_Client.Classes
                 BackgroundSound = Sounds.AddMapSound(Sound, -1, -1, MyMapNum, true, 10);
             }
         }
-        public void Draw(int xoffset, int yoffset, int layer = 0)
+        public void Draw(float xoffset, float yoffset, int layer = 0)
         {
             if (!MapRendered) { PreRenderMap(); }
             if (layer == 0)

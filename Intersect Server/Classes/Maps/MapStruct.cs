@@ -279,6 +279,16 @@ namespace Intersect_Server.Classes
                 MapItems.RemoveAt(i);
             }
             ItemRespawns.Clear();
+            //Clear Map Resources
+            for (int i = 0; i < ResourceSpawns.Count; i++)
+            {
+                if (ResourceSpawns[i] > -1 && ResourceSpawns[i] < Globals.Entities.Count && Globals.Entities[i] != null)
+                {
+                    Globals.Entities[ResourceSpawns[i]].Die();
+                    Entities.Remove(Globals.Entities[ResourceSpawns[i]]);
+                    Globals.Entities[ResourceSpawns[i]] = null;
+                }
+            }
             SpawnAttributeItems();
             SpawnMapNpcs();
             //Save();
