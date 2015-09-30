@@ -131,7 +131,7 @@ namespace Intersect_Client.Classes.UI.Game
                         }
                         else
                         {
-                            tmpNode = _mapList.AddNode(((FolderMap)mapList.Items[i]).MapNum + ". " + mapList.Items[i].Name);
+                            tmpNode = parent.AddNode(((FolderMap)mapList.Items[i]).MapNum + ". " + mapList.Items[i].Name);
                             tmpNode.UserData = ((FolderMap)mapList.Items[i]).MapNum;
                             tmpNode.DoubleClicked += tmpNode_DoubleClicked;
                         }

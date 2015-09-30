@@ -32,7 +32,7 @@ namespace Intersect_Client.Classes
         public static Entity AddPlayer(int index)
         {
             var i = index;
-            if (Globals.Entities.ContainsKey(i)){RemoveEntity(i, 0);}
+            if (Globals.Entities.ContainsKey(i)) {return Globals.Entities[index];}
             Globals.Entities.Add(i,new Player {CurrentMap = 0, MyIndex = i});;
             if (index == Globals.MyIndex)
             {
@@ -46,7 +46,7 @@ namespace Intersect_Client.Classes
         public static Entity AddGlobalEntity(int index)
         {
             var i = index;
-            if (Globals.Entities.ContainsKey(i)) { RemoveEntity(i, 0); }
+            if (Globals.Entities.ContainsKey(i)) { return Globals.Entities[index]; }
             Globals.Entities.Add(i,new Entity());
             return Globals.Entities[i];
         }
@@ -54,7 +54,7 @@ namespace Intersect_Client.Classes
         public static Entity AddLocalEvent(int index)
         {
             var i = index;
-            if (Globals.LocalEntities.ContainsKey(i)) { RemoveEntity(i, (int)Enums.EntityTypes.LocalEvent); }
+            if (Globals.LocalEntities.ContainsKey(i)) { return Globals.LocalEntities[index]; }
             Globals.LocalEntities[i] = new Event {CurrentMap = 0};
             return Globals.LocalEntities[i];
         }
@@ -62,7 +62,7 @@ namespace Intersect_Client.Classes
         public static Entity AddResource(int index)
         {
             var i = index;
-            if (Globals.Entities.ContainsKey(i)) { RemoveEntity(i, 0); }
+            if (Globals.Entities.ContainsKey(i)) { return Globals.Entities[index]; }
             Globals.Entities.Add(i,new Resource());
             return Globals.Entities[i];
         }

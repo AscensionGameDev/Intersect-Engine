@@ -612,7 +612,7 @@ namespace Intersect_Server.Classes
         {
             for (int i = 0; i < Entities.Count; i++)
             {
-                if (Entities[i] != null) {
+                if (Entities[i] != null && Entities[i] != client.Entity) {
                     if (Globals.Entities.IndexOf(Entities[i]) > -1)
                     {
                         if (Entities[i].GetType() == typeof (Player))

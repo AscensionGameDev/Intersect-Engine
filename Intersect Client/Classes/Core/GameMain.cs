@@ -143,14 +143,20 @@ namespace Intersect_Client
                     }
                     else
                     {
-                        en.Value.Update();
+                        if (!en.Value.Update())
+                        {
+                            Globals.Entities.Remove(en.Key);
+                        }
                     }
                 }
                 foreach (var en in Globals.LocalEntities)
                 {
                     if (en.Value == null) continue;
                     if (en.Value.CurrentMap != Globals.LocalMaps[i]) continue;
-                    en.Value.Update();
+                    if (!en.Value.Update())
+                    {
+                        Globals.LocalEntities.Remove(en.Key);
+                    }
                 }
             }
 

@@ -128,7 +128,9 @@ namespace Intersect_Client.Classes
         public static int DrawCalls = 0;
         public static int CacheLimit = 0;
 
-
+        //Cache the Y based rendering
+        public static List<Entity>[] Layer1Entities;
+        public static List<Entity>[] Layer2Entities;
 
         //Init Functions
         public static void InitGraphics()
@@ -142,6 +144,7 @@ namespace Intersect_Client.Classes
             LoadImages();
             LoadFogs();
             LoadResources();
+            InitRenderingLists();
             GameFont = new Font("Arvo-Regular.ttf");
         }
         private static void InitSfml()
@@ -150,8 +153,7 @@ namespace Intersect_Client.Classes
             MyForm = new FrmGame();
             if (GetValidVideoModes().Any())
             {
-                MyForm.Width = (int)GetValidVideoModes()[DisplayMode].Width;
-                MyForm.Height = (int)GetValidVideoModes()[DisplayMode].Height;
+                MyForm.ClientSize = new Size((int)GetValidVideoModes()[DisplayMode].Width, (int)GetValidVideoModes()[DisplayMode].Height);
                 MyForm.Text = @"Intersect Client";
                 RenderWindow = new RenderWindow(MyForm.Handle);
                 if (FullScreen)
@@ -163,7 +165,7 @@ namespace Intersect_Client.Classes
                 }
                 else
                 {
-                    RenderWindow.SetView(new View(new FloatRect(0, 0, MyForm.ClientSize.Width, MyForm.ClientSize.Height)));
+                    RenderWindow.SetView(new View(new FloatRect(0, 0, (int)GetValidVideoModes()[DisplayMode].Width, (int)GetValidVideoModes()[DisplayMode].Height)));
                 }
 
             }
@@ -191,6 +193,17 @@ namespace Intersect_Client.Classes
             RenderWindow.MouseButtonReleased += renderWindow_MouseButtonReleased;
             CurrentView = new FloatRect(0,0,ScreenWidth,ScreenHeight);
             Gui.InitGwen();
+        }
+
+        private static void InitRenderingLists()
+        {
+            Layer1Entities = new List<Entity>[Globals.MapHeight * 3];
+            Layer2Entities = new List<Entity>[Globals.MapHeight * 3];
+            for (var i = 0; i < Globals.MapHeight * 3; i++)
+            {
+                Layer1Entities[i] = new List<Entity>();
+                Layer2Entities[i] = new List<Entity>();
+            }
         }
 
         //GUI Input Events
@@ -325,36 +338,13 @@ namespace Intersect_Client.Classes
 
                 //Globals.Entities[Globals.MyIndex].Draw(4);
 
-                for (var n = 0; n <= 1; n++)
+                for (int x = 0; x < Layer1Entities.Length; x++)
                 {
-                    for (var i = 0; i < 9; i++)
+                    for (int y = 0; y < Layer1Entities[x].Count; y++)
                     {
-                        if (Globals.LocalMaps[i] <= -1) continue;
-                        for (var y = 0; y < Globals.MapHeight; y++)
-                        {
-                            foreach (var en in Globals.Entities)
-                            {
-                                if (en.Value == null) continue;
-                                if (en.Value.CurrentMap != Globals.LocalMaps[i]) continue;
-                                if (en.Value.Passable == n) continue;
-                                if (en.Value.CurrentY == y && en.Value.CurrentZ == 0)
-                                {
-                                    en.Value.Draw(i);
-                                }
-                            }
-                            foreach (var en in Globals.LocalEntities)
-                            {
-                                if (en.Value == null) continue;
-                                if (en.Value.CurrentMap != Globals.LocalMaps[i]) continue;
-                                if (en.Value.Passable == n) continue;
-                                if (en.Value.CurrentY == y)
-                                {
-                                    en.Value.Draw(i);
-                                }
-                            }
-                        }
+                        Layer1Entities[x][y].Draw();
                     }
-                }   
+                }  
 
                 //Render the upper layer
                 for (var i = 0; i < 9; i++)
@@ -365,20 +355,11 @@ namespace Intersect_Client.Classes
                     }
                 }
 
-                for (var i = 0; i < 9; i++)
+                for (int x = 0; x < Layer2Entities.Length; x++)
                 {
-                    if (Globals.LocalMaps[i] <= -1) continue;
-                    for (var y = 0; y < Globals.MapHeight; y++)
+                    for (int y = 0; y < Layer2Entities[x].Count; y++)
                     {
-                        foreach (var t in Globals.Entities)
-                        {
-                            if (t.Value == null) continue;
-                            if (t.Value.CurrentMap != Globals.LocalMaps[i]) continue;
-                            if (t.Value.CurrentY == y && t.Value.CurrentZ == 1)
-                            {
-                                t.Value.Draw(i);
-                            }
-                        }
+                        Layer1Entities[x][y].Draw();
                     }
                 }
 
@@ -390,28 +371,22 @@ namespace Intersect_Client.Classes
 
                 DrawOverlay();
 
-
-                for (var i = 0; i < 9; i++)
+                for (int x = 0; x < Layer1Entities.Length; x++)
                 {
-                    if (Globals.LocalMaps[i] <= -1) continue;
-                    for (var y = 0; y < Globals.MapHeight; y++)
+                    for (int y = 0; y < Layer1Entities[x].Count; y++)
                     {
-                        foreach (var en in Globals.Entities)
-                        {
-                            if (en.Value == null) continue;
-                            if (en.Value.CurrentMap != Globals.LocalMaps[i]) continue;
-                            if (en.Value.CurrentY != y) continue;
-                            en.Value.DrawName(i);
-                            en.Value.DrawHpBar(i);
-                        }
-                        foreach (var en in Globals.LocalEntities)
-                        {
-                            if (en.Value == null) continue;
-                            if (en.Value.CurrentMap != Globals.LocalMaps[i]) continue;
-                            if (en.Value.CurrentY != y) continue;
-                            en.Value.DrawName(i);
-                            if (en.GetType() != typeof(Event)){en.Value.DrawHpBar(i);}
-                        }
+                        //if (!Globals.Entities.ContainsValue(Layer1Entities[x][y]) && !Globals.LocalEntities.ContainsValue(Layer1Entities[x][y])) { Layer1Entities[x].RemoveAt(y);}
+                        Layer1Entities[x][y].DrawName();
+                        if (Layer1Entities[x][y].GetType() != typeof(Event)) { Layer1Entities[x][y].DrawHpBar(); }
+                    }
+                }
+                for (int x = 0; x < Layer2Entities.Length; x++)
+                {
+                    for (int y = 0; y < Layer2Entities[x].Count; y++)
+                    {
+                        //if (!Globals.Entities.ContainsValue(Layer2Entities[x][y]) && !Globals.LocalEntities.ContainsValue(Layer2Entities[x][y])) { Layer2Entities[x].RemoveAt(y); }
+                        Layer1Entities[x][y].DrawName();
+                        if (Layer1Entities[x][y].GetType() != typeof(Event)) { Layer1Entities[x][y].DrawHpBar(); }
                     }
                 }
                 DrawDarkness();
@@ -420,6 +395,12 @@ namespace Intersect_Client.Classes
             Gui.DrawGui();
             RenderTexture(Gui.GwenTexture.Texture,CurrentView.Left,CurrentView.Top,RenderWindow);
 
+            if (_vertexCount > 0)
+            {
+                RenderWindow.Draw(_vertexCache, 0, (uint)_vertexCount, PrimitiveType.Quads, _renderState);
+                RenderWindow.ResetGLStates();
+                _vertexCount = 0;
+            }
 
             if (FadeStage != 0)
             {
@@ -452,12 +433,7 @@ namespace Intersect_Client.Classes
                 RenderWindow.Draw(myShape);
             }
 
-            if (_vertexCount > 0)
-            {
-                RenderWindow.Draw(_vertexCache, 0, (uint)_vertexCount, PrimitiveType.Quads, _renderState);
-                RenderWindow.ResetGLStates();
-                _vertexCount = 0;
-            }
+
                 
 
             RenderWindow.Display();
@@ -569,9 +545,12 @@ namespace Intersect_Client.Classes
 
         private static void UpdateView()
         {
+            View newView;
             Player en = (Player) Globals.Entities[Globals.MyIndex];
-            CurrentView = new FloatRect((int)(en.GetCenterPos(4).X - ScreenWidth / 2f), (int)(en.GetCenterPos(4).Y - ScreenHeight / 2f), ScreenWidth, ScreenHeight);
-            RenderWindow.SetView(new View(CurrentView));
+            CurrentView = new FloatRect((int)Math.Ceiling(en.GetCenterPos(4).X - ScreenWidth / 2f), (int)Math.Ceiling(en.GetCenterPos(4).Y - ScreenHeight / 2f), (int)ScreenWidth, (int)ScreenHeight);
+            newView = new View(CurrentView);
+            //newView.Zoom(2.5f);
+            RenderWindow.SetView(newView);
         }
 
         //Graphic Loading

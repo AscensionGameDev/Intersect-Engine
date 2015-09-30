@@ -46,8 +46,13 @@ namespace Intersect_Client.Classes
         }
 
         //Rendering Resources
-       override public void Draw(int i)
+       override public void Draw()
         {
+            int i = GetLocalPos(CurrentMap);
+            if (i == -1)
+            {
+                return;
+            }
             RectangleF srcRectangle = new RectangleF();
             RectangleF destRectangle = new RectangleF();
             Texture srcTexture;
@@ -55,8 +60,8 @@ namespace Intersect_Client.Classes
             {
                 srcTexture = Graphics.ResourceTextures[Graphics.ResourceFileNames.IndexOf(MySprite)];
                 srcRectangle = new RectangleF(0, 0, Graphics.ResourceTextures[Graphics.ResourceFileNames.IndexOf(MySprite)].Size.X, Graphics.ResourceTextures[Graphics.ResourceFileNames.IndexOf(MySprite)].Size.Y);
-                destRectangle.Y = Graphics.CalcMapOffsetY(i) + CurrentY * Globals.TileHeight + OffsetY;
-                destRectangle.X = Graphics.CalcMapOffsetX(i) + CurrentX * Globals.TileWidth + OffsetX;
+                destRectangle.Y = (int)(Graphics.CalcMapOffsetY(i) + CurrentY * Globals.TileHeight + OffsetY);
+                destRectangle.X = (int)(Graphics.CalcMapOffsetX(i) + CurrentX * Globals.TileWidth + OffsetX);
                 if (srcRectangle.Height > 32) { destRectangle.Y -= srcRectangle.Height - 32; }
                 if (srcRectangle.Width > 32) { destRectangle.X -= (srcRectangle.Width - 32) / 2; }
                 destRectangle.Width = srcRectangle.Width;
