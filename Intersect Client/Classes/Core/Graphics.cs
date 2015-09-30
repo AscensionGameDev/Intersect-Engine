@@ -121,6 +121,14 @@ namespace Intersect_Client.Classes
         private static long IntroDelay = 3000;
 
 
+        //Rendering Variables
+        private static Vertex[] _vertexCache = new Vertex[1024];
+        private static int _vertexCount = 0;
+        private static Texture _curTexture;
+        public static int DrawCalls = 0;
+        public static int CacheLimit = 0;
+
+
 
         //Init Functions
         public static void InitGraphics()
@@ -181,6 +189,7 @@ namespace Intersect_Client.Classes
             RenderWindow.KeyReleased += renderWindow_KeyReleased;
             RenderWindow.MouseButtonPressed += renderWindow_MouseButtonPressed;
             RenderWindow.MouseButtonReleased += renderWindow_MouseButtonReleased;
+            CurrentView = new FloatRect(0,0,ScreenWidth,ScreenHeight);
             Gui.InitGwen();
         }
 
@@ -224,7 +233,8 @@ namespace Intersect_Client.Classes
             //if (!RenderWindow.HasFocus()) return;
             RenderWindow.DispatchEvents();
             RenderWindow.Clear(Color.Black);
-
+            DrawCalls = 0;
+            CacheLimit = 0;
             if (Globals.GameState == (int)Enums.GameStates.Intro)
             {
                 if (ImageFileNames.IndexOf(Globals.IntroBG[IntroIndex]) > -1)
@@ -313,6 +323,8 @@ namespace Intersect_Client.Classes
                     }
                 }
 
+                //Globals.Entities[Globals.MyIndex].Draw(4);
+
                 for (var n = 0; n <= 1; n++)
                 {
                     for (var i = 0; i < 9; i++)
@@ -320,24 +332,24 @@ namespace Intersect_Client.Classes
                         if (Globals.LocalMaps[i] <= -1) continue;
                         for (var y = 0; y < Globals.MapHeight; y++)
                         {
-                            foreach (var t in Globals.Entities)
+                            foreach (var en in Globals.Entities)
                             {
-                                if (t == null) continue;
-                                if (t.CurrentMap != Globals.LocalMaps[i]) continue;
-                                if (t.Passable == n) continue;
-                                if (t.CurrentY == y && t.CurrentZ == 0)
+                                if (en.Value == null) continue;
+                                if (en.Value.CurrentMap != Globals.LocalMaps[i]) continue;
+                                if (en.Value.Passable == n) continue;
+                                if (en.Value.CurrentY == y && en.Value.CurrentZ == 0)
                                 {
-                                    t.Draw(i);
+                                    en.Value.Draw(i);
                                 }
                             }
-                            foreach (var t in Globals.Events)
+                            foreach (var en in Globals.LocalEntities)
                             {
-                                if (t == null) continue;
-                                if (t.CurrentMap != Globals.LocalMaps[i]) continue;
-                                if (t.Passable == n) continue;
-                                if (t.CurrentY == y)
+                                if (en.Value == null) continue;
+                                if (en.Value.CurrentMap != Globals.LocalMaps[i]) continue;
+                                if (en.Value.Passable == n) continue;
+                                if (en.Value.CurrentY == y)
                                 {
-                                    t.Draw(i);
+                                    en.Value.Draw(i);
                                 }
                             }
                         }
@@ -360,11 +372,11 @@ namespace Intersect_Client.Classes
                     {
                         foreach (var t in Globals.Entities)
                         {
-                            if (t == null) continue;
-                            if (t.CurrentMap != Globals.LocalMaps[i]) continue;
-                            if (t.CurrentY == y && t.CurrentZ == 1)
+                            if (t.Value == null) continue;
+                            if (t.Value.CurrentMap != Globals.LocalMaps[i]) continue;
+                            if (t.Value.CurrentY == y && t.Value.CurrentZ == 1)
                             {
-                                t.Draw(i);
+                                t.Value.Draw(i);
                             }
                         }
                     }
@@ -384,22 +396,21 @@ namespace Intersect_Client.Classes
                     if (Globals.LocalMaps[i] <= -1) continue;
                     for (var y = 0; y < Globals.MapHeight; y++)
                     {
-                        foreach (var t in Globals.Entities)
+                        foreach (var en in Globals.Entities)
                         {
-                            if (t == null) continue;
-                            if (t.CurrentMap != Globals.LocalMaps[i]) continue;
-                            if (t.CurrentY != y) continue;
-                            t.DrawName(i, false);
-                            t.DrawHpBar(i);
+                            if (en.Value == null) continue;
+                            if (en.Value.CurrentMap != Globals.LocalMaps[i]) continue;
+                            if (en.Value.CurrentY != y) continue;
+                            en.Value.DrawName(i);
+                            en.Value.DrawHpBar(i);
                         }
-                        foreach (var t in Globals.Events)
+                        foreach (var en in Globals.LocalEntities)
                         {
-                            if (t == null) continue;
-                            if (t.CurrentMap != Globals.LocalMaps[i]) continue;
-                            if (t.CurrentY == y)
-                            {
-                                t.DrawName(i, true);
-                            }
+                            if (en.Value == null) continue;
+                            if (en.Value.CurrentMap != Globals.LocalMaps[i]) continue;
+                            if (en.Value.CurrentY != y) continue;
+                            en.Value.DrawName(i);
+                            if (en.GetType() != typeof(Event)){en.Value.DrawHpBar(i);}
                         }
                     }
                 }
@@ -441,6 +452,14 @@ namespace Intersect_Client.Classes
                 RenderWindow.Draw(myShape);
             }
 
+            if (_vertexCount > 0)
+            {
+                RenderWindow.Draw(_vertexCache, 0, (uint)_vertexCount, PrimitiveType.Quads, _renderState);
+                RenderWindow.ResetGLStates();
+                _vertexCount = 0;
+            }
+                
+
             RenderWindow.Display();
             _fpsCount++;
             if (_fpsTimer < Environment.TickCount)
@@ -448,7 +467,7 @@ namespace Intersect_Client.Classes
                 Fps = _fpsCount;
                 _fpsCount = 0;
                 _fpsTimer = Environment.TickCount + 1000;
-                RenderWindow.SetTitle("Intersect Engine - Brought to you by: http://ascensiongamedev.com - FPS: " + Fps);
+                RenderWindow.SetTitle("Intersect Engine - Brought to you by: http://ascensiongamedev.com - FPS: " + Fps + " - General Draw Calls: " + DrawCalls + " - Cache Limit: " + CacheLimit);
             }
         }
         private static void DrawMap(int index, int layer = 0)
@@ -551,7 +570,7 @@ namespace Intersect_Client.Classes
         private static void UpdateView()
         {
             Player en = (Player) Globals.Entities[Globals.MyIndex];
-            CurrentView = new FloatRect(en.GetCenterPos(4).X - ScreenWidth/2f,en.GetCenterPos(4).Y - ScreenHeight/2f,ScreenWidth,ScreenHeight);
+            CurrentView = new FloatRect((int)(en.GetCenterPos(4).X - ScreenWidth / 2f), (int)(en.GetCenterPos(4).Y - ScreenHeight / 2f), ScreenWidth, ScreenHeight);
             RenderWindow.SetView(new View(CurrentView));
         }
 
@@ -916,7 +935,6 @@ namespace Intersect_Client.Classes
         }
         public static void RenderTexture(Texture tex, RectangleF srcRectangle, RectangleF targetRect, RenderTarget renderTarget, BlendMode blendMode)
         {
-            var vertexCache = new Vertex[4];
             var u1 = (float)srcRectangle.X / tex.Size.X;
             var v1 = (float)srcRectangle.Y / tex.Size.Y;
             var u2 = (float)srcRectangle.Right / tex.Size.X;
@@ -930,27 +948,63 @@ namespace Intersect_Client.Classes
 
             _renderState.BlendMode = blendMode;
 
-            if (_renderState.Texture == null || _renderState.Texture != tex)
+            if (renderTarget == RenderWindow)
             {
-                // enable the new texture
-                _renderState.Texture = tex;
+                if (
+                !targetRect.IntersectsWith(new RectangleF(CurrentView.Left, CurrentView.Top, CurrentView.Width,
+                    CurrentView.Height)))
+                {
+                    return;
+                }
+                if (_renderState.Texture == null || _renderState.Texture != tex || _vertexCount >= 1024 - 4)
+                {
+                    // enable the new texture
+                    if (_vertexCount > 0)
+                    {
+                        if (_vertexCount > CacheLimit)
+                        {
+                            CacheLimit = _vertexCount;
+                        }
+                        renderTarget.Draw(_vertexCache, 0, (uint)_vertexCount, PrimitiveType.Quads, _renderState);
+                        DrawCalls++;
+                        renderTarget.ResetGLStates();
+                        _vertexCount = 0;
+                    }
+
+                    _renderState.Texture = tex;
+                }
+
+
+                var right = targetRect.X + targetRect.Width;
+                var bottom = targetRect.Y + targetRect.Height;
+
+
+                _vertexCache[_vertexCount++] = new Vertex(new Vector2f(targetRect.X, targetRect.Y), new Vector2f(u1, v1));
+                _vertexCache[_vertexCount++] = new Vertex(new Vector2f(right, targetRect.Y), new Vector2f(u2, v1));
+                _vertexCache[_vertexCount++] = new Vertex(new Vector2f(right, bottom), new Vector2f(u2, v2));
+                _vertexCache[_vertexCount++] = new Vertex(new Vector2f(targetRect.X, bottom), new Vector2f(u1, v2));
+            }
+            else
+            {
+                if (_renderState.Texture == null || _renderState.Texture != tex )
+                {
+                    // enable the new texture
+
+                    _renderState.Texture = tex;
+                }
+                var right = targetRect.X + targetRect.Width;
+                var bottom = targetRect.Y + targetRect.Height;
+                var vertexCache = new Vertex[4];
+                vertexCache[0] = new Vertex(new Vector2f(targetRect.X, targetRect.Y), new Vector2f(u1, v1));
+                vertexCache[1] = new Vertex(new Vector2f(right, targetRect.Y), new Vector2f(u2, v1));
+                vertexCache[2] = new Vertex(new Vector2f(right, bottom), new Vector2f(u2, v2));
+                vertexCache[3] = new Vertex(new Vector2f(targetRect.X, bottom), new Vector2f(u1, v2));
+                DrawCalls++;
+                renderTarget.Draw(vertexCache, 0, 4, PrimitiveType.Quads, _renderState);
+                renderTarget.ResetGLStates();
             }
 
-            /*targetRect.X = (int)targetRect.X;
-            targetRect.Y = (int)targetRect.Y;
-            targetRect.Width = (int)targetRect.Width;
-            targetRect.Height = (int)targetRect.Height;*/
-
-
-            var right = targetRect.X + targetRect.Width;
-            var bottom = targetRect.Y + targetRect.Height;
-
-            vertexCache[0] = new Vertex(new Vector2f(targetRect.X, targetRect.Y), new Vector2f(u1, v1));
-            vertexCache[1] = new Vertex(new Vector2f(right, targetRect.Y), new Vector2f(u2, v1));
-            vertexCache[2] = new Vertex(new Vector2f(right, bottom), new Vector2f(u2, v2));
-            vertexCache[3] = new Vertex(new Vector2f(targetRect.X, bottom), new Vector2f(u1, v2));
-            renderTarget.Draw(vertexCache, 0, 4, PrimitiveType.Quads, _renderState);
-            renderTarget.ResetGLStates();
+            
         }
     }
 }

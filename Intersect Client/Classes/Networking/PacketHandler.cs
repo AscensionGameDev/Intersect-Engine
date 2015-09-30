@@ -178,28 +178,32 @@ namespace Intersect_Client.Classes
             var i = (int)bf.ReadLong();
             var entityType = bf.ReadInteger();
             Entity en;
-           
-            if (entityType == 1)
+            switch (entityType)
             {
-                 en = EntityManager.AddEvent(i);
-                ((Event)en).Load(bf);
-            }
-            else if (entityType == 3)
-            {
-                en = EntityManager.AddResource(i);
-                ((Resource)en).Load(bf);
-            }
-            else
-            {
-                if (i == Globals.MyIndex)
-                {
-                    en = EntityManager.AddPlayer(i);
-                }
-                else
-                {
-                    en = EntityManager.AddEntity(i);
-                }
-                en.Load(bf);
+                case (int)Enums.EntityTypes.Player:
+                    if (i == Globals.MyIndex)
+                    {
+                        en = EntityManager.AddPlayer(i);
+                        en.Load(bf);
+                    }
+                    else
+                    {
+                        en = EntityManager.AddGlobalEntity(i);
+                        en.Load(bf);
+                    }
+                    break;
+                case (int)Enums.EntityTypes.GlobalEntity:
+                    en = EntityManager.AddGlobalEntity(i);
+                    en.Load(bf);
+                    break;
+                case (int)Enums.EntityTypes.Resource:
+                    en = EntityManager.AddResource(i);
+                    ((Resource)en).Load(bf);
+                    break;
+                case (int)Enums.EntityTypes.Event:
+                    en = EntityManager.AddLocalEvent(i);
+                    ((Event)en).Load(bf);
+                    break;
             }
         }
 
@@ -208,36 +212,32 @@ namespace Intersect_Client.Classes
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
             var index = (int)bf.ReadLong();
-            var isEvent = bf.ReadInteger();
-            if (isEvent != 1)
+            var type = bf.ReadInteger();
+            Entity en;
+            if (type < (int)Enums.EntityTypes.LocalEvent)
             {
-                if (index >= Globals.Entities.Count) { return; }
-                if (Globals.Entities[index] == null) { return; }
-                Globals.Entities[index].CurrentMap = bf.ReadInteger();
-                Globals.Entities[index].CurrentX = bf.ReadInteger();
-                Globals.Entities[index].CurrentY = bf.ReadInteger();
-                Globals.Entities[index].Dir = bf.ReadInteger();
-                Globals.Entities[index].Passable = bf.ReadInteger();
-                Globals.Entities[index].HideName = bf.ReadInteger();
-                if (index != Globals.MyIndex) return;
-                if (Globals.CurrentMap == Globals.Entities[index].CurrentMap) return;
+                if (!Globals.Entities.ContainsKey(index)) { return; }
+                en = Globals.Entities[index];
+            }
+            else
+            {
+                if (!Globals.LocalEntities.ContainsKey(index)) { return; }
+                en = Globals.LocalEntities[index];
+            }
+            en.CurrentMap = bf.ReadInteger();
+            en.CurrentX = bf.ReadInteger();
+            en.CurrentY = bf.ReadInteger();
+            en.Dir = bf.ReadInteger();
+            en.Passable = bf.ReadInteger();
+            en.HideName = bf.ReadInteger();
+
+            if (en == Globals.Me && Globals.CurrentMap != en.CurrentMap)
+            {
                 Globals.CurrentMap = Globals.Entities[index].CurrentMap;
                 //Initiate loading screen, we got probz
                 Graphics.FadeStage = 2;
                 Graphics.FadeAmt = 255.0f;
                 Globals.GameLoaded = false;
-                //Globals.LocalMaps[4] = -1;
-            }
-            else
-            {
-                if (index >= Globals.Events.Count) { return; }
-                if (Globals.Events[index] == null) { return; }
-                Globals.Events[index].CurrentMap = bf.ReadInteger();
-                Globals.Events[index].CurrentX = bf.ReadInteger();
-                Globals.Events[index].CurrentY = bf.ReadInteger();
-                Globals.Events[index].Dir = bf.ReadInteger();
-                Globals.Events[index].Passable = bf.ReadInteger();
-                Globals.Events[index].HideName = bf.ReadInteger();
             }
         }
 
@@ -246,9 +246,9 @@ namespace Intersect_Client.Classes
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
             var index = (int)bf.ReadLong();
-            var isEvent = bf.ReadInteger();
-            if (index == Globals.MyIndex && isEvent == 0) { return; }
-            EntityManager.RemoveEntity(index, isEvent);
+            var type = bf.ReadInteger();
+            if (index == Globals.MyIndex && type < (int)Enums.EntityTypes.LocalEvent) { return; }
+            EntityManager.RemoveEntity(index, type);
 
         }
 
@@ -351,82 +351,59 @@ namespace Intersect_Client.Classes
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
             var index = (int)bf.ReadLong();
-            var isEvent = bf.ReadInteger();
-            if (isEvent != 1)
+            var type = bf.ReadInteger();
+            Entity en;
+            if (type < (int)Enums.EntityTypes.LocalEvent)
             {
-                if (index >= Globals.Entities.Count) { return; }
-                if (Globals.Entities[index] == null) { return; }
-                if (Globals.GameMaps[Globals.Entities[index].CurrentMap] == null) { return; }
-                int map = bf.ReadInteger();
-                int x = bf.ReadInteger();
-                int y = bf.ReadInteger();
-                int dir = bf.ReadInteger();
-                if (Globals.Entities[index].CurrentMap != map || Globals.Entities[index].CurrentX != x || Globals.Entities[index].CurrentY != y)
-                {
-                    Globals.Entities[index].CurrentMap = map;
-                    Globals.Entities[index].CurrentX = x;
-                    Globals.Entities[index].CurrentY = y;
-                    Globals.Entities[index].Dir = dir;
-                    Globals.Entities[index].IsMoving = true;
-
-                    switch (Globals.Entities[index].Dir)
-                    {
-                        case 0:
-                            Globals.Entities[index].OffsetY = Globals.TileWidth;
-                            Globals.Entities[index].OffsetX = 0;
-                            break;
-                        case 1:
-                            Globals.Entities[index].OffsetY = -Globals.TileWidth;
-                            Globals.Entities[index].OffsetX = 0;
-                            break;
-                        case 2:
-                            Globals.Entities[index].OffsetY = 0;
-                            Globals.Entities[index].OffsetX = Globals.TileWidth;
-                            break;
-                        case 3:
-                            Globals.Entities[index].OffsetY = 0;
-                            Globals.Entities[index].OffsetX = -Globals.TileWidth;
-                            break;
-                    }
-                }
-
-                // Set the Z-Dimension if the player has moved up or down a dimension.
-                if (Globals.GameMaps[Globals.Entities[index].CurrentMap].Attributes[Globals.Entities[index].CurrentX, Globals.Entities[index].CurrentY].value == (int)Enums.MapAttributes.ZDimension)
-                {
-                    if (Globals.GameMaps[Globals.Entities[index].CurrentMap].Attributes[Globals.Entities[index].CurrentX, Globals.Entities[index].CurrentY].data1 > 0)
-                    {
-                        Globals.Entities[index].CurrentZ = Globals.GameMaps[Globals.Entities[index].CurrentMap].Attributes[Globals.Entities[index].CurrentX, Globals.Entities[index].CurrentY].data1 - 1;
-                    }
-                }
-                
+                if (!Globals.Entities.ContainsKey(index)){return;}
+                en = Globals.Entities[index];
             }
             else
             {
-                if (index >= Globals.Events.Count) { return; }
-                if (Globals.Events[index] == null) { return; }
-                Globals.Events[index].CurrentMap = bf.ReadInteger();
-                Globals.Events[index].CurrentX = bf.ReadInteger();
-                Globals.Events[index].CurrentY = bf.ReadInteger();
-                Globals.Events[index].Dir = bf.ReadInteger();
-                Globals.Events[index].IsMoving = true;
-                switch (Globals.Events[index].Dir)
+                if (!Globals.LocalEntities.ContainsKey(index)) { return; }
+                en = Globals.LocalEntities[index];
+            }
+            if (en == null) {return;}
+            if (Globals.GameMaps[en.CurrentMap] == null) { return; }
+            var map = bf.ReadInteger();
+            var x = bf.ReadInteger();
+            var y = bf.ReadInteger();
+            var dir = bf.ReadInteger();
+            if (en.CurrentMap != map || en.CurrentX != x || en.CurrentY != y)
+            {
+                en.CurrentMap = map;
+                en.CurrentX = x;
+                en.CurrentY = y;
+                en.Dir = dir;
+                en.IsMoving = true;
+
+                switch (en.Dir)
                 {
                     case 0:
-                        Globals.Events[index].OffsetY = Globals.TileWidth;
-                        Globals.Events[index].OffsetX = 0;
+                        en.OffsetY = Globals.TileWidth;
+                        en.OffsetX = 0;
                         break;
                     case 1:
-                        Globals.Events[index].OffsetY = -Globals.TileWidth;
-                        Globals.Events[index].OffsetX = 0;
+                        en.OffsetY = -Globals.TileWidth;
+                        en.OffsetX = 0;
                         break;
                     case 2:
-                        Globals.Events[index].OffsetY = 0;
-                        Globals.Events[index].OffsetX = Globals.TileWidth;
+                        en.OffsetY = 0;
+                        en.OffsetX = Globals.TileWidth;
                         break;
                     case 3:
-                        Globals.Events[index].OffsetY = 0;
-                        Globals.Events[index].OffsetX = -Globals.TileWidth;
+                        en.OffsetY = 0;
+                        en.OffsetX = -Globals.TileWidth;
                         break;
+                }
+            }
+
+            // Set the Z-Dimension if the player has moved up or down a dimension.
+            if (Globals.GameMaps[en.CurrentMap].Attributes[en.CurrentX, en.CurrentY].value == (int)Enums.MapAttributes.ZDimension)
+            {
+                if (Globals.GameMaps[en.CurrentMap].Attributes[en.CurrentX, en.CurrentY].data1 > 0)
+                {
+                    en.CurrentZ = Globals.GameMaps[en.CurrentMap].Attributes[en.CurrentX, en.CurrentY].data1 - 1;
                 }
             }
         }
@@ -436,26 +413,26 @@ namespace Intersect_Client.Classes
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
             var index = (int)bf.ReadLong();
-            var isEvent = bf.ReadInteger();
-            if (isEvent != 1)
+            var type = bf.ReadInteger();
+            Entity en = null;
+            if (type < (int)Enums.EntityTypes.LocalEvent)
             {
-                if (index >= Globals.Entities.Count) { return; }
-                if (Globals.Entities[index] == null) { return; }
-                for (var i = 0; i < (int) Enums.Vitals.VitalCount; i++)
-                {
-                    Globals.Entities[index].MaxVital[i] = bf.ReadInteger();
-                    Globals.Entities[index].Vital[i] = bf.ReadInteger();
-                }
+                if (!Globals.Entities.ContainsKey(index)) { return; }
+                en = Globals.Entities[index];
             }
             else
             {
-                if (index >= Globals.Events.Count) { return; }
-                if (Globals.Events[index] == null) { return; }
-                for (var i = 0; i < (int)Enums.Vitals.VitalCount; i++)
-                {
-                    Globals.Events[index].MaxVital[i] = bf.ReadInteger();
-                    Globals.Events[index].Vital[i] = bf.ReadInteger();
-                }
+                if (!Globals.LocalEntities.ContainsKey(index)) { return; }
+                en = Globals.LocalEntities[index];
+            }
+            if (en == null)
+            {
+                return;
+            }
+            for (var i = 0; i < (int)Enums.Vitals.VitalCount; i++)
+            {
+                en.MaxVital[i] = bf.ReadInteger();
+                en.Vital[i] = bf.ReadInteger();
             }
         }
 
@@ -464,24 +441,25 @@ namespace Intersect_Client.Classes
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
             var index = (int)bf.ReadLong();
-            var isEvent = bf.ReadInteger();
-            if (isEvent != 1)
+            var type = bf.ReadInteger();
+            Entity en = null;
+            if (type < (int)Enums.EntityTypes.LocalEvent)
             {
-                if (index >= Globals.Entities.Count) { return; }
-                if (Globals.Entities[index] == null) { return; }
-                for (var i = 0; i < (int)Enums.Stats.StatCount; i++)
-                {
-                    Globals.Entities[index].Stat[i] = bf.ReadInteger();
-                }
+                if (!Globals.Entities.ContainsKey(index)) { return; }
+                en = Globals.Entities[index];
             }
             else
             {
-                if (index >= Globals.Events.Count) { return; }
-                if (Globals.Events[index] == null) { return; }
-                for (var i = 0; i < (int)Enums.Stats.StatCount; i++)
-                {
-                    Globals.Events[index].Stat[i] = bf.ReadInteger();
-                }
+                if (!Globals.LocalEntities.ContainsKey(index)) { return; }
+                en = Globals.LocalEntities[index];
+            }
+            if (en == null)
+            {
+                return;
+            }
+            for (var i = 0; i < (int)Enums.Stats.StatCount; i++)
+            {
+                en.Stat[i] = bf.ReadInteger();
             }
         }
 
@@ -490,20 +468,23 @@ namespace Intersect_Client.Classes
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
             var index = (int)bf.ReadLong();
-            var isEvent = bf.ReadInteger();
-            if (isEvent != 1)
+            var type = bf.ReadInteger();
+            Entity en = null;
+            if (type < (int)Enums.EntityTypes.LocalEvent)
             {
-                if (index >= Globals.Entities.Count) { return; }
-                if (Globals.Entities[index] == null) { return; }
-                Globals.Entities[index].Dir = bf.ReadInteger();
+                if (!Globals.Entities.ContainsKey(index)) { return; }
+                en = Globals.Entities[index];
             }
             else
             {
-                if (index >= Globals.Events.Count) { return; }
-                if (Globals.Events[index] == null) { return; }
-                Globals.Events[index].Dir = bf.ReadInteger();
+                if (!Globals.LocalEntities.ContainsKey(index)) { return; }
+                en = Globals.LocalEntities[index];
             }
-
+            if (en == null)
+            {
+                return;
+            }
+            en.Dir = bf.ReadInteger();
         }
 
         private static void HandleEventDialog(byte[] packet)

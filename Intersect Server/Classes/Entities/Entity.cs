@@ -30,7 +30,6 @@ namespace Intersect_Server.Classes
         public int MyIndex;
         public string MyName = "";
         public string MySprite = "";
-        public int IsEvent = 0;
         public int Passable = 0;
         public int HideName = 0;
 
@@ -432,13 +431,13 @@ namespace Intersect_Server.Classes
                 CurrentY = tmpY;
                 CurrentMap = tmpMap;
                 Dir = moveDir;
-                if (client == null)
+                if (this.GetType() == typeof (Event))
                 {
-                    PacketSender.SendEntityMove(MyIndex, IsEvent, this);
+                    if (client != null) {PacketSender.SendEntityMoveTo(client, MyIndex, (int)Enums.EntityTypes.LocalEvent, this);}
                 }
                 else
                 {
-                    PacketSender.SendEntityMoveTo(client,MyIndex, IsEvent, this);
+                    PacketSender.SendEntityMove(MyIndex, (int)Enums.EntityTypes.GlobalEntity, this);
                 }
                 if (Stat[2] == 0) { Stat[2] = 1; }
                 MoveTimer = Environment.TickCount + (int)((1.0 / (Stat[2] / 10f)) * 1000);
@@ -470,7 +469,14 @@ namespace Intersect_Server.Classes
         public void ChangeDir(int dir)
         {
             Dir = dir;
-            PacketSender.SendEntityDir(MyIndex,IsEvent);
+            if (this.GetType() == typeof (Event))
+            {
+                PacketSender.SendEntityDirTo(  ((Event)this).Client  ,MyIndex, (int)Enums.EntityTypes.LocalEvent,Dir);
+            }
+            else
+            {
+                PacketSender.SendEntityDir(MyIndex, (int)Enums.EntityTypes.GlobalEntity,Dir,CurrentMap);
+            }
         }
 
         //Combat
@@ -550,7 +556,7 @@ namespace Intersect_Server.Classes
             else
             {
                 //Hit him, make him mad and send the vital update.
-                PacketSender.SendEntityVitals(enemyIndex,0, Globals.Entities[enemyIndex]);
+                PacketSender.SendEntityVitals(enemyIndex,(int)Enums.EntityTypes.GlobalEntity, Globals.Entities[enemyIndex]);
             }
             // Add a timer before able to make the next move.
             if (Globals.Entities[MyIndex].GetType() == typeof(Npc))

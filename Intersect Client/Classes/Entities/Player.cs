@@ -88,7 +88,7 @@ namespace Intersect_Client.Classes
             {
                 if (Inventory[index].ItemVal > 1)
                 {
-                    InputBox iBox = new InputBox("Drop Item", "How many/much " + Globals.GameItems[Inventory[index].ItemNum].Name + " do you want to drop?", true, DropItemInputBoxOkay, null, index,true);
+                    InputBox iBox = new InputBox("Drop Item", "How many/much " + Globals.GameItems[Inventory[index].ItemNum].Name + " do you want to drop?", true, DropItemInputBoxOkay, null, index, true);
                 }
                 else
                 {
@@ -128,7 +128,7 @@ namespace Intersect_Client.Classes
         {
             if (Spells[index].SpellNum > -1)
             {
-                InputBox iBox = new InputBox("Forget Spell", "Are you sure you want to forget " + Globals.GameSpells[Spells[index].SpellNum].Name + "?", true, ForgetSpellInputBoxOkay, null, index,false);
+                InputBox iBox = new InputBox("Forget Spell", "Are you sure you want to forget " + Globals.GameSpells[Spells[index].SpellNum].Name + "?", true, ForgetSpellInputBoxOkay, null, index, false);
             }
         }
         private void ForgetSpellInputBoxOkay(Object sender, EventArgs e)
@@ -155,7 +155,7 @@ namespace Intersect_Client.Classes
             {
                 if (CurrentY < Globals.MapHeight && CurrentY >= 0)
                 {
-                    if(Globals.GameMaps[CurrentMap].Attributes[CurrentX, CurrentY].value == (int)Enums.MapAttributes.ZDimension)
+                    if (Globals.GameMaps[CurrentMap].Attributes[CurrentX, CurrentY].value == (int)Enums.MapAttributes.ZDimension)
                     {
                         if (Globals.GameMaps[CurrentMap].Attributes[CurrentX, CurrentY].data1 > 0)
                         {
@@ -221,32 +221,34 @@ namespace Intersect_Client.Classes
             }
             if (GetRealLocation(ref x, ref y, ref map))
             {
-                for (var i = 0; i < Globals.Entities.Count; i++)
+                foreach (var en in Globals.Entities)
                 {
-                    if (i != Globals.MyIndex)
+                    if (en.Value == null) continue;
+                    if (en.Value != Globals.Me)
                     {
-                        if (Globals.Entities[i] != null)
+                        if (en.Value.CurrentMap == map && en.Value.CurrentX == x && en.Value.CurrentY == y)
                         {
-                            if (Globals.Entities[i].CurrentMap == map && Globals.Entities[i].CurrentX == x && Globals.Entities[i].CurrentY == y)
-                            {
-                                //ATTACKKKKK!!!
-                                PacketSender.SendAttack(i);
-                                _attackTimer = Environment.TickCount + 1000;
-                                return true;
-                            }
+                            //ATTACKKKKK!!!
+                            PacketSender.SendAttack(en.Key);
+                            _attackTimer = Environment.TickCount + 1000;
+                            return true;
                         }
                     }
                 }
-                for (var i = 0; i < Globals.Events.Count; i++)
+                foreach (var en in Globals.LocalEntities)
                 {
-                    if (Globals.Events[i] != null)
+                    if (en.Value == null) continue;
+                    if (en.Value != Globals.Me)
                     {
-                        if (Globals.Events[i].CurrentMap == map && Globals.Events[i].CurrentX == x && Globals.Events[i].CurrentY == y)
+                        if (en.Value.CurrentMap == map && en.Value.CurrentX == x && en.Value.CurrentY == y)
                         {
-                            //Talk to Event
-                            PacketSender.SendActivateEvent(i);
-                            _attackTimer = Environment.TickCount + 1000;
-                            return true;
+                            if (en.Value.GetType() == typeof (Event))
+                            {
+                                //Talk to Event
+                                PacketSender.SendActivateEvent(en.Key);
+                                _attackTimer = Environment.TickCount + 1000;
+                                return true;
+                            }
                         }
                     }
                 }
@@ -407,31 +409,25 @@ namespace Intersect_Client.Classes
             var map = Globals.Entities[Globals.MyIndex].CurrentMap;
             if (GetRealLocation(ref x, ref y, ref map))
             {
-                for (var i = 0; i < Globals.Entities.Count; i++)
+                foreach (var en in Globals.Entities)
                 {
-                    if (i != Globals.MyIndex)
+                    if (en.Value == null) continue;
+                    if (en.Value.CurrentMap == map && en.Value.CurrentX == x && en.Value.CurrentY == y)
                     {
-                        if (Globals.Entities[i] != null)
-                        {
-                            if (Globals.Entities[i].CurrentMap == map && Globals.Entities[i].CurrentX == x && Globals.Entities[i].CurrentY == y)
-                            {
-                                if (_targetBox != null) { _targetBox.Dispose(); _targetBox = null; }
-                                _targetBox = new EntityBox(Gui._GameGui.GameCanvas, Globals.Entities[i], 0, 100);
-                                return true;
-                            }
-                        }
+                        if (_targetBox != null) { _targetBox.Dispose(); _targetBox = null; }
+                        _targetBox = new EntityBox(Gui._GameGui.GameCanvas, en.Value, 0, 100);
+                        return true;
                     }
                 }
-                for (var i = 0; i < Globals.Events.Count; i++)
+                foreach (var en in Globals.LocalEntities)
                 {
-                    if (Globals.Events[i] != null)
+                    if (en.Value == null) continue;
+                    if (en.Value == null) continue;
+                    if (en.Value.CurrentMap == map && en.Value.CurrentX == x && en.Value.CurrentY == y)
                     {
-                        if (Globals.Events[i].CurrentMap == map && Globals.Events[i].CurrentX == x && Globals.Events[i].CurrentY == y &&  Globals.Events[i].DisablePreview == 0)
-                        {
-                            if (_targetBox != null) { _targetBox.Dispose(); _targetBox = null; }
-                            _targetBox = new EntityBox(Gui._GameGui.GameCanvas, Globals.Events[i], 0, 100);
-                            return true;
-                        }
+                        if (_targetBox != null) { _targetBox.Dispose(); _targetBox = null; }
+                        _targetBox = new EntityBox(Gui._GameGui.GameCanvas, en.Value, 0, 100);
+                        return true;
                     }
                 }
             }
@@ -992,20 +988,31 @@ namespace Intersect_Client.Classes
                         return true;
                     }
                 }
-                for (var i = 0; i < Globals.Entities.Count; i++)
+                foreach (var en in Globals.Entities)
                 {
-                    if (i == MyIndex) continue;
-                    if (Globals.Entities[i] == null) continue;
-                    if (Globals.Entities[i].CurrentMap == tmpMap && Globals.Entities[i].CurrentX == tmpX && Globals.Entities[i].CurrentY == tmpY && Globals.Entities[i].Passable == 0)
+                    if (en.Value == null) continue;
+                    if (en.Value == Globals.Me)
                     {
-                        return true;
+                        continue;
+                    }
+                    else
+                    {
+                        if (en.Value.CurrentMap == tmpMap && en.Value.CurrentX == tmpX && en.Value.CurrentY == tmpY && en.Value.Passable == 0)
+                        {
+                            return true;
+                        }
                     }
                 }
-                for (var i = 0; i < Globals.Events.Count; i++)
+                foreach (var en in Globals.LocalEntities)
                 {
-                    if (Globals.Events[i] != null)
+                    if (en.Value == null) continue;
+                    if (en.Value == Globals.Me)
                     {
-                        if (Globals.Events[i].CurrentMap == tmpMap && Globals.Events[i].CurrentX == tmpX && Globals.Events[i].CurrentY == tmpY && Globals.Events[i].Passable == 0)
+                        continue;
+                    }
+                    else
+                    {
+                        if (en.Value.CurrentMap == tmpMap && en.Value.CurrentX == tmpX && en.Value.CurrentY == tmpY && en.Value.Passable == 0)
                         {
                             return true;
                         }
@@ -1022,7 +1029,8 @@ namespace Intersect_Client.Classes
         }
     }
 
-    public class HotbarInstance {
+    public class HotbarInstance
+    {
         public int Type = -1;
         public int Slot = -1;
     }

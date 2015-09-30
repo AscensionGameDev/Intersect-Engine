@@ -197,6 +197,15 @@ namespace Intersect_Client.Classes
             WarpTo = 0,
         }
 
+        public enum EntityTypes
+        {
+            GlobalEntity = 0,
+            Player = 1,
+            Event = 2,
+            Resource = 3,
+            LocalEvent = 4,
+        }
+
         public static int WeaponIndex = 2;
         public static int ShieldIndex = 3;
         //This is programming so indices work like this                  ---0---   ---1---  ---2---   ---3---   ---4---

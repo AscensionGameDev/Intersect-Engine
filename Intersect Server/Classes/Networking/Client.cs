@@ -133,7 +133,7 @@ namespace Intersect_Server.Classes
                     if (EntityIndex > -1 && Globals.Entities[EntityIndex] != null)
                     {
                         Database.SavePlayer(Globals.Clients[ClientIndex]);
-                        PacketSender.SendEntityLeave(EntityIndex, 0, Globals.Entities[EntityIndex].CurrentMap);
+                        PacketSender.SendEntityLeave(EntityIndex, (int)Enums.EntityTypes.Player, Globals.Entities[EntityIndex].CurrentMap);
                         if (Globals.Entities[EntityIndex] == null) { return; }
                         PacketSender.SendGlobalMsg(Globals.Entities[EntityIndex].MyName + " has left the Intersect engine");
                         Globals.Clients[ClientIndex] = null;

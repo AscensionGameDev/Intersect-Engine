@@ -163,6 +163,15 @@ namespace Intersect_Server.Classes
             WarpTo = 0,
         }
 
+        public enum EntityTypes
+        {
+            GlobalEntity = 0,
+            Player = 1,
+            Event = 2,
+            Resource = 3,
+            LocalEvent = 4,
+        }
+
         public const int WeaponIndex = 2;
         public const int ShieldIndex = 3;
         public static List<string> EquipmentSlots = new List<string>() { "Helmet", "Armor", "Weapon", "Shield", "Boots" };

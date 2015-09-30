@@ -383,7 +383,6 @@ namespace Intersect_Server.Classes
 
             Globals.Entities[index] = new Resource(index, Attributes[x, y].data1);
             ResourceSpawns[ResourceSpawns.Count - 1] = index;
-            ((Resource)Globals.Entities[index]).IsEvent = 3;
             ((Resource)Globals.Entities[index]).CurrentX = x;
             ((Resource)Globals.Entities[index]).CurrentY = y;
             ((Resource)Globals.Entities[index]).CurrentMap = MyMapNum;
@@ -400,7 +399,7 @@ namespace Intersect_Server.Classes
             }
 
             Entities.Add((Resource)Globals.Entities[index]);
-            PacketSender.SendEntityDataToProximity(index, 3, Globals.Entities[index]);
+            PacketSender.SendEntityDataToProximity(index, (int)Enums.EntityTypes.Resource,((Resource)Globals.Entities[index]).Data(), Globals.Entities[index]);
         }
 
         //Npcs
@@ -462,7 +461,7 @@ namespace Intersect_Server.Classes
             }
 
             Entities.Add((Npc)Globals.Entities[index]);
-            PacketSender.SendEntityDataToProximity(index, 2, Globals.Entities[index]);
+            PacketSender.SendEntityDataToProximity(index, (int)Enums.EntityTypes.GlobalEntity, Globals.Entities[index].Data(), Globals.Entities[index]);
         }
 
         //Entity Processing
@@ -616,7 +615,20 @@ namespace Intersect_Server.Classes
                 if (Entities[i] != null) {
                     if (Globals.Entities.IndexOf(Entities[i]) > -1)
                     {
-                        PacketSender.SendEntityData(client, Entities[i]);
+                        if (Entities[i].GetType() == typeof (Player))
+                        {
+                            PacketSender.SendEntityDataTo(client,Entities[i].MyIndex,(int)Enums.EntityTypes.Player,((Player)Entities[i]).Data(),Entities[i]);
+                        }
+                        else if (Entities[i].GetType() == typeof (Resource))
+                        {
+                            PacketSender.SendEntityDataTo(client, Entities[i].MyIndex, (int) Enums.EntityTypes.Resource,
+                                ((Resource) Entities[i]).Data(), Entities[i]);
+                        }
+                        else
+                        {
+                            PacketSender.SendEntityDataTo(client, Entities[i].MyIndex, (int)Enums.EntityTypes.GlobalEntity,
+                                (Entities[i]).Data(), Entities[i]);
+                        }
                     }
                 }
             }

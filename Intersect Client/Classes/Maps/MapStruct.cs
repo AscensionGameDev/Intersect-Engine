@@ -271,7 +271,7 @@ namespace Intersect_Client.Classes
             MapRendered = true;
             Graphics.LightsChanged = true;
         }
-        private void DrawAutoTile(int layerNum, int destX, int destY, int quarterNum, int x, int y, int forceFrame, RenderTexture tex)
+        private void DrawAutoTile(int layerNum, float destX, float destY, int quarterNum, int x, int y, int forceFrame, RenderTarget tex)
         {
             int yOffset = 0, xOffset = 0;
 
@@ -294,7 +294,7 @@ namespace Intersect_Client.Classes
                 (int)Autotiles.Autotile[x, y].Layer[layerNum].SrcX[quarterNum] + xOffset,
                 (int)Autotiles.Autotile[x, y].Layer[layerNum].SrcY[quarterNum] + yOffset, 16, 16, tex);
         }
-        private void DrawMapLayer(RenderTexture tex, int l, int z)
+        private void DrawMapLayer(RenderTarget tex, int l, int z, float xoffset = 0, float yoffset = 0)
         {
             for (var x = 0; x < Globals.MapWidth; x++)
             {
@@ -308,13 +308,13 @@ namespace Intersect_Client.Classes
                         switch (Autotiles.Autotile[x, y].Layer[l].RenderState)
                         {
                             case Constants.RenderStateNormal:
-                                Graphics.RenderTexture(Graphics.Tilesets[Layers[l].Tiles[x, y].TilesetIndex], x * Globals.TileWidth, y * Globals.TileHeight, Layers[l].Tiles[x, y].X * Globals.TileWidth, Layers[l].Tiles[x, y].Y * Globals.TileHeight,Globals.TileWidth,Globals.TileHeight,tex);
+                                Graphics.RenderTexture(Graphics.Tilesets[Layers[l].Tiles[x, y].TilesetIndex], x * Globals.TileWidth + xoffset, y * Globals.TileHeight + yoffset, Layers[l].Tiles[x, y].X * Globals.TileWidth, Layers[l].Tiles[x, y].Y * Globals.TileHeight, Globals.TileWidth, Globals.TileHeight, tex);
                                 break;
                             case Constants.RenderStateAutotile:
-                                DrawAutoTile(l, x * Globals.TileWidth, y * Globals.TileHeight, 1, x, y, z, tex);
-                                DrawAutoTile(l, x * Globals.TileWidth + 16, y * Globals.TileHeight, 2, x, y, z, tex);
-                                DrawAutoTile(l, x * Globals.TileWidth, y * Globals.TileHeight + 16, 3, x, y, z, tex);
-                                DrawAutoTile(l, +x * Globals.TileWidth + 16, y * Globals.TileHeight + 16, 4, x, y, z, tex);
+                                DrawAutoTile(l, x * Globals.TileWidth + xoffset, y * Globals.TileHeight + yoffset, 1, x, y, z, tex);
+                                DrawAutoTile(l, x * Globals.TileWidth + 16 + xoffset, y * Globals.TileHeight + yoffset, 2, x, y, z, tex);
+                                DrawAutoTile(l, x * Globals.TileWidth + xoffset, y * Globals.TileHeight + 16 + yoffset, 3, x, y, z, tex);
+                                DrawAutoTile(l, +x * Globals.TileWidth + 16 + xoffset, y * Globals.TileHeight + 16 + yoffset, 4, x, y, z, tex);
                                 break;
                         }
                     }
@@ -357,6 +357,44 @@ namespace Intersect_Client.Classes
             else
             {
                 Graphics.RenderTexture(PeakTextures[Globals.AnimFrame].Texture, xoffset, yoffset, Graphics.RenderWindow);
+                DrawFog();
+            }
+
+        }
+
+        public void DrawNew(float xoffset, float yoffset, int layer = 0)
+        {
+            //if (!MapRendered) { PreRenderMap(); }
+            //return;
+            if (layer == 0)
+            {
+                for (var l = 0; l < 3; l++)
+                {
+                        DrawMapLayer(Graphics.RenderWindow, l, Globals.AnimFrame,xoffset,yoffset);
+                }
+
+                //Draw Map Items
+                for (int i = 0; i < MapItems.Count; i++)
+                {
+                    if (Graphics.ItemFileNames.IndexOf(Globals.GameItems[MapItems[i].ItemNum].Pic) > -1)
+                    {
+                        Graphics.RenderTexture(Graphics.ItemTextures[Graphics.ItemFileNames.IndexOf(Globals.GameItems[MapItems[i].ItemNum].Pic)], xoffset + MapItems[i].X * Globals.TileWidth, yoffset + MapItems[i].Y * Globals.TileHeight, Graphics.RenderWindow);
+                    }
+                }
+            }
+            else if (layer == 1)
+            {
+                for (var l = 3; l <= 3; l++)
+                {
+                    DrawMapLayer(Graphics.RenderWindow, l, Globals.AnimFrame, xoffset, yoffset);
+                }
+            }
+            else
+            {
+                for (var l = 4; l < Constants.LayerCount; l++)
+                {
+                    DrawMapLayer(Graphics.RenderWindow, l, Globals.AnimFrame, xoffset, yoffset);
+                }
                 DrawFog();
             }
 

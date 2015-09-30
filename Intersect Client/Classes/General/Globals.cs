@@ -78,8 +78,9 @@ namespace Intersect_Client.Classes
         public static bool GameLoaded;
 
         //Entities and stuff
-        public static List<Entity> Entities = new List<Entity>();
-        public static List<Event> Events = new List<Event>();
+        //public static List<Entity> Entities = new List<Entity>();
+        public static Dictionary<int, Entity> Entities = new Dictionary<int, Entity>();
+        public static Dictionary<int, Entity> LocalEntities = new Dictionary<int, Entity>(); 
 
         //Game Items
         public static ItemStruct[] GameItems;

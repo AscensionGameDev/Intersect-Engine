@@ -99,33 +99,33 @@ namespace Intersect_Server.Classes
                 int mapNum;
                 if (i == Globals.GameMaps[CurrentMap].SurroundingMaps.Count) { mapNum = CurrentMap; } else { mapNum = Globals.GameMaps[CurrentMap].SurroundingMaps[i]; }
                 if (mapNum <= -1) continue;
-                foreach (var t in Globals.GameMaps[mapNum].Events)
+                foreach (var ev in Globals.GameMaps[mapNum].Events)
                 {
                     int foundEvent;
-                    if (CanSpawnEvent(t, mapNum))
+                    if (CanSpawnEvent(ev, mapNum))
                     {
                         //if event isnt spawned, spawn it
-                        foundEvent = EventExists(mapNum, t.SpawnX, t.SpawnY);
+                        foundEvent = EventExists(mapNum, ev.SpawnX, ev.SpawnY);
                         if (foundEvent == -1)
                         {
-                            var pageIndex = SpawnEventPage(t);
+                            var pageIndex = SpawnEventPage(ev);
                             var tmpEvent = new EventIndex(MyEvents.Count, MyClient)
                             {
                                 IsGlobal = false,
                                 MapNum = mapNum,
                                 PageIndex = pageIndex,
-                                SpawnX = t.SpawnX,
-                                SpawnY = t.SpawnY
+                                SpawnX = ev.SpawnX,
+                                SpawnY = ev.SpawnY
                             };
                             MyEvents.Add(tmpEvent);
-                            tmpEvent.EventInstance = new Event(t, pageIndex,
+                            tmpEvent.EventInstance = new Event(ev, pageIndex,
                                 MyEvents.Count - 1, mapNum)
                             {
-                                Dir = t.MyPages[pageIndex].Graphicy
+                                Dir = ev.MyPages[pageIndex].Graphicy
                             };
                             //Send Spawn Event to Player
-                            PacketSender.SendEntityData(MyClient, MyEvents[MyEvents.Count - 1].EventInstance);
-                            PacketSender.SendEntityPositionTo(MyClient, MyEvents.Count - 1, 1, MyEvents[MyEvents.Count - 1].EventInstance);
+                            PacketSender.SendEntityDataTo(MyClient,MyEvents.Count-1,(int)Enums.EntityTypes.LocalEvent,MyEvents[MyEvents.Count - 1].EventInstance.Data(), MyEvents[MyEvents.Count - 1].EventInstance);
+                            PacketSender.SendEntityPositionTo(MyClient, MyEvents.Count - 1, (int)Enums.EntityTypes.LocalEvent, MyEvents[MyEvents.Count - 1].EventInstance);
 
                         }
                         else
@@ -136,10 +136,10 @@ namespace Intersect_Server.Classes
                     else
                     {
                         //if event is up and running, destroy itttt
-                        foundEvent = EventExists(mapNum, t.SpawnX, t.SpawnY);
+                        foundEvent = EventExists(mapNum, ev.SpawnX, ev.SpawnY);
                         if (foundEvent <= -1 || foundEvent >= MyEvents.Count) continue;
                         MyEvents[foundEvent] = null;
-                        PacketSender.SendEntityLeaveTo(MyClient, foundEvent, 1);
+                        PacketSender.SendEntityLeaveTo(MyClient, foundEvent, (int)Enums.EntityTypes.LocalEvent);
                     }
                 }
             }
@@ -163,7 +163,7 @@ namespace Intersect_Server.Classes
                 }
                 if (eventFound) continue;
                 MyEvents[i] = null;
-                PacketSender.SendEntityLeaveTo(MyClient, i, 1);
+                PacketSender.SendEntityLeaveTo(MyClient, i, (int)Enums.EntityTypes.LocalEvent);
             }
         }
 
@@ -196,10 +196,10 @@ namespace Intersect_Server.Classes
             CurrentY = newY;
             if (newMap != CurrentMap || _sentMap == false)
             {
-                PacketSender.SendEntityLeave(MyIndex,0,CurrentMap);
+                PacketSender.SendEntityLeave(MyIndex,(int)Enums.EntityTypes.Player,CurrentMap);
                 CurrentMap = newMap;
-                PacketSender.SendEntityDataToProximity(MyIndex, 0, Globals.Entities[MyIndex]);
-                PacketSender.SendEntityPositionToAll(MyIndex,0,Globals.Entities[MyIndex]);
+                PacketSender.SendEntityDataToProximity(MyIndex, (int)Enums.EntityTypes.Player, Data(), Globals.Entities[MyIndex]);
+                PacketSender.SendEntityPositionToAll(MyIndex, (int)Enums.EntityTypes.Player, Globals.Entities[MyIndex]);
                 PacketSender.SendMap(MyClient,newMap);
                 PacketSender.SendEnterMap(MyClient,newMap);
                 _sentMap = true;
@@ -207,15 +207,15 @@ namespace Intersect_Server.Classes
                 {
                     if (i != MyIndex)
                     {
-                        PacketSender.SendEntityPositionTo(MyClient, i,0, Globals.Entities[i]);
+                        PacketSender.SendEntityPositionTo(MyClient, i, (int)Enums.EntityTypes.Player, Globals.Entities[i]);
                     }
                 }
             }
             else
             {
-                PacketSender.SendEntityPositionToAll(MyIndex,0,Globals.Entities[MyIndex]);
-                PacketSender.SendEntityVitals(MyIndex, IsEvent, Globals.Entities[MyIndex]);
-                PacketSender.SendEntityStats(MyIndex, IsEvent, Globals.Entities[MyIndex]);
+                PacketSender.SendEntityPositionToAll(MyIndex, (int)Enums.EntityTypes.Player, Globals.Entities[MyIndex]);
+                PacketSender.SendEntityVitals(MyIndex, (int)Enums.EntityTypes.Player, Globals.Entities[MyIndex]);
+                PacketSender.SendEntityStats(MyIndex, (int)Enums.EntityTypes.Player, Globals.Entities[MyIndex]);
             }
             
         }
@@ -507,7 +507,7 @@ namespace Intersect_Server.Classes
             {
                 Stat[statIndex]++;
                 StatPoints--;
-                PacketSender.SendEntityStats(MyIndex, 0, this);
+                PacketSender.SendEntityStats(MyIndex, (int)Enums.EntityTypes.Player, this);
                 PacketSender.SendPointsTo(MyClient);
             }
         }

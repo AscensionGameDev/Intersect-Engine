@@ -32,12 +32,8 @@ namespace Intersect_Client.Classes
         public static Entity AddPlayer(int index)
         {
             var i = index;
-            while (Globals.Entities.Count <= index)
-            {
-                Globals.Entities.Add(null);
-            }
-            if (Globals.Entities[i] != null) { RemoveEntity(i, 0); }
-            Globals.Entities[i] = new Player {CurrentMap = 0, MyIndex = i};
+            if (Globals.Entities.ContainsKey(i)){RemoveEntity(i, 0);}
+            Globals.Entities.Add(i,new Player {CurrentMap = 0, MyIndex = i});;
             if (index == Globals.MyIndex)
             {
                 Globals.Entities[i].IsLocal = true;
@@ -47,65 +43,39 @@ namespace Intersect_Client.Classes
             return Globals.Entities[i];
         }
 
-        public static Entity AddEntity(int index)
+        public static Entity AddGlobalEntity(int index)
         {
             var i = index;
-            while (Globals.Entities.Count <= index)
-            {
-                Globals.Entities.Add(null);
-            }
-            if (Globals.Entities[i] != null) { RemoveEntity(i, 0); }
-            Globals.Entities[i] = new Entity();
+            if (Globals.Entities.ContainsKey(i)) { RemoveEntity(i, 0); }
+            Globals.Entities.Add(i,new Entity());
             return Globals.Entities[i];
         }
 
-        public static Entity AddEvent(int index)
+        public static Entity AddLocalEvent(int index)
         {
             var i = index;
-            while (Globals.Events.Count <= index)
-            {
-                Globals.Events.Add(null);
-            }
-            if (Globals.Events[i] != null) { RemoveEntity(i, 1); }
-            Globals.Events[i] = new Event {CurrentMap = 0};
-            return Globals.Events[i];
+            if (Globals.LocalEntities.ContainsKey(i)) { RemoveEntity(i, (int)Enums.EntityTypes.LocalEvent); }
+            Globals.LocalEntities[i] = new Event {CurrentMap = 0};
+            return Globals.LocalEntities[i];
         }
 
         public static Entity AddResource(int index)
         {
             var i = index;
-            while (Globals.Entities.Count <= index)
-            {
-                Globals.Entities.Add(null);
-            }
-            if (Globals.Entities[i] != null) { RemoveEntity(i, 0); }
-            Globals.Entities[i] = new Resource();
+            if (Globals.Entities.ContainsKey(i)) { RemoveEntity(i, 0); }
+            Globals.Entities.Add(i,new Resource());
             return Globals.Entities[i];
         }
 
-        public static void RemoveEntity(int index, int isEvent)
+        public static void RemoveEntity(int index, int type)
         {
-            if (isEvent == 1)
+            if (type < (int)Enums.EntityTypes.LocalEvent)
             {
-                if (Globals.Events.Count > index)
-                {
-                    Globals.Events[index] = null;
-                }
+                Globals.Entities.Remove(index);
             }
             else
             {
-                if (Globals.Entities.Count > index)
-                {
-                    if (index == Globals.MyIndex)
-                    {
-                        Globals.Entities[index] = null;
-                    }
-
-                    else
-                    {
-                        Globals.Entities[index] = null;
-                    }
-                }
+                Globals.LocalEntities.Remove(index);
             }
         }
     }

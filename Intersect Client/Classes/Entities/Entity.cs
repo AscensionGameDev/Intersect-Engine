@@ -212,7 +212,7 @@ namespace Intersect_Client
             }
             return pos;
         }
-        public void DrawName(int i, bool isEvent)
+        public void DrawName(int i)
         {
             if (HideName == 1) { return; }
             var nameText = new Text(MyName, Graphics.GameFont);
@@ -229,7 +229,7 @@ namespace Intersect_Client
                     //x += (int)Math.Ceiling((Graphics.EntityTextures[Graphics.EntityFileNames.IndexOf(MySprite.ToLower())].Size.Y / 4f) - Globals.TileWidth) / 2;
                 }
             }
-            if (!isEvent) { y -= 8; } //Need room for HP bar if not an event.
+            if (this.GetType() != typeof(Intersect_Client.Classes.Event)) { y -= 8; } //Need room for HP bar if not an event.
             nameText.CharacterSize = 10;
             nameText.Position = new Vector2f(x - nameText.GetLocalBounds().Width / 2, y);
             Graphics.RenderWindow.Draw(nameText);

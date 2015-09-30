@@ -133,28 +133,24 @@ namespace Intersect_Client
             //Update All Entities
             for (var i = 0; i < 9; i++)
             {
-                for (var z = 0; z < Globals.Entities.Count; z++)
+                foreach (var en in Globals.Entities)
                 {
-                    if (Globals.Entities[z] == null) continue;
-                    if (Globals.Entities[z].CurrentMap != Globals.LocalMaps[i]) continue;
-                    if (z == Globals.MyIndex)
+                    if (en.Value == null) continue;
+                    if (en.Value.CurrentMap != Globals.LocalMaps[i]) continue;
+                    if (en.Value == Globals.Me)
                     {
-                        ((Player)Globals.Entities[z]).Update();
+                        Globals.Me.Update();
                     }
                     else
                     {
-                        Globals.Entities[z].Update();
+                        en.Value.Update();
                     }
                 }
-                for (var z = 0; z < Globals.Events.Count; z++)
+                foreach (var en in Globals.LocalEntities)
                 {
-                    if (Globals.Events[z] != null)
-                    {
-                        if (Globals.Events[z].CurrentMap == Globals.LocalMaps[i])
-                        {
-                            Globals.Events[z].Update();
-                        }
-                    }
+                    if (en.Value == null) continue;
+                    if (en.Value.CurrentMap != Globals.LocalMaps[i]) continue;
+                    en.Value.Update();
                 }
             }
 

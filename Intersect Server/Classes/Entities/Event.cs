@@ -26,6 +26,8 @@ namespace Intersect_Server.Classes
 {
     public class Event : Entity
     {
+        public Client Client = null;
+        public bool Local = true;
         public int Trigger;
         public int MovementType;
         public int MovementFreq;
@@ -37,7 +39,6 @@ namespace Intersect_Server.Classes
             BaseEvent = myEvent;
             MyPage = pageIndex;
             CurrentMap = mapNum;
-            IsEvent = 1;
             CurrentX = myEvent.SpawnX;
             CurrentY = myEvent.SpawnY;
             MyName = myEvent.MyName;

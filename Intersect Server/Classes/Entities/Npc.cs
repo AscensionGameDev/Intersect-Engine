@@ -76,7 +76,7 @@ namespace Intersect_Server.Classes
             }
 
             Globals.GameMaps[CurrentMap].RemoveEntity(this);
-            PacketSender.SendEntityLeave(MyIndex, 0, CurrentMap);
+            PacketSender.SendEntityLeave(MyIndex, (int)Enums.EntityTypes.GlobalEntity, CurrentMap);
             Globals.Entities[MyIndex] = null;
         }
 

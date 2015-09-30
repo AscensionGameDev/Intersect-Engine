@@ -256,7 +256,7 @@ namespace Intersect_Server.Classes
             }
 
             //TODO: Add Check if valid before sending the move to everyone.
-            PacketSender.SendEntityMove(index, 0, Globals.Entities[index]);
+            PacketSender.SendEntityMove(index, (int)Enums.EntityTypes.Player, Globals.Entities[index]);
         }
 
         private static void HandleLocalMsg(Client client, byte[] packet)

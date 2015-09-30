@@ -52,9 +52,9 @@ namespace Intersect_Server.Classes
             MySprite = myBase.EndGraphic;
             Passable = Convert.ToInt32(myBase.WalkableAfter);
             RespawnTime = Environment.TickCount + myBase.SpawnDuration * 1000;
-            PacketSender.SendEntityDataToProximity(MyIndex, 3, Globals.Entities[MyIndex]);
-            PacketSender.SendEntityPositionToAll(MyIndex, 3, Globals.Entities[MyIndex]);
-            PacketSender.SendEntityVitals(MyIndex, 3, Globals.Entities[MyIndex]);
+            PacketSender.SendEntityDataToProximity(MyIndex, (int)Enums.EntityTypes.Resource,Data(), Globals.Entities[MyIndex]);
+            PacketSender.SendEntityPositionToAll(MyIndex, (int)Enums.EntityTypes.Resource, Globals.Entities[MyIndex]);
+            PacketSender.SendEntityVitals(MyIndex, (int)Enums.EntityTypes.Resource, Globals.Entities[MyIndex]);
         }
 
         public void Respawn()
@@ -65,9 +65,9 @@ namespace Intersect_Server.Classes
             Vital[(int)Enums.Vitals.Health] = Globals.Rand.Next(myBase.MinHP, myBase.MaxHP + 1);
             MaxVital[(int)Enums.Vitals.Health] = Vital[(int)Enums.Vitals.Health];
             Passable = Convert.ToInt32(myBase.WalkableBefore);
-            PacketSender.SendEntityDataToProximity(MyIndex, 3, Globals.Entities[MyIndex]);
-            PacketSender.SendEntityPositionToAll(MyIndex, 3, Globals.Entities[MyIndex]);
-            PacketSender.SendEntityVitals(MyIndex, 3, Globals.Entities[MyIndex]);
+            PacketSender.SendEntityDataToProximity(MyIndex, (int)Enums.EntityTypes.Resource, Data(), Globals.Entities[MyIndex]);
+            PacketSender.SendEntityPositionToAll(MyIndex, (int)Enums.EntityTypes.Resource, Globals.Entities[MyIndex]);
+            PacketSender.SendEntityVitals(MyIndex, (int)Enums.EntityTypes.Resource, Globals.Entities[MyIndex]);
         }
 
         public void SpawnResourceItems(int KillerIndex)
