@@ -432,10 +432,6 @@ namespace Intersect_Client.Classes
                 myShape.Position = new Vector2f(CurrentView.Left,CurrentView.Top);
                 RenderWindow.Draw(myShape);
             }
-
-
-                
-
             RenderWindow.Display();
             _fpsCount++;
             if (_fpsTimer < Environment.TickCount)

@@ -236,15 +236,14 @@ namespace Intersect_Server.Classes
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
             Globals.Entities[index].CurrentMap = bf.ReadInteger();
-            if (oldMap != Globals.Entities[index].CurrentMap)
-            {
-                Globals.GameMaps[Globals.Entities[index].CurrentMap].PlayerEnteredMap(client);
-            }
             Globals.Entities[index].CurrentX = bf.ReadInteger();
             Globals.Entities[index].CurrentY = bf.ReadInteger();
             Globals.Entities[index].TryToChangeDimension();
             Globals.Entities[index].Dir = bf.ReadInteger();
             bf.Dispose();
+
+            //TODO: Add Check if valid before sending the move to everyone.
+            PacketSender.SendEntityMove(index, (int)Enums.EntityTypes.Player, Globals.Entities[index]);
 
             // Check for a warp, if so warp the player.
             if (Globals.GameMaps[Globals.Entities[index].CurrentMap].Attributes[Globals.Entities[index].CurrentX, Globals.Entities[index].CurrentY].value == (int)Enums.MapAttributes.Warp)
@@ -255,8 +254,11 @@ namespace Intersect_Server.Classes
                     Globals.Entities[index].Dir);
             }
 
-            //TODO: Add Check if valid before sending the move to everyone.
-            PacketSender.SendEntityMove(index, (int)Enums.EntityTypes.Player, Globals.Entities[index]);
+            if (oldMap != Globals.Entities[index].CurrentMap)
+            {
+                Globals.GameMaps[Globals.Entities[index].CurrentMap].PlayerEnteredMap(client);
+            }
+            
         }
 
         private static void HandleLocalMsg(Client client, byte[] packet)
@@ -450,17 +452,40 @@ namespace Intersect_Server.Classes
                     if (tmpMap.MapGridY - 1 >= 0)
                     {
                         tmpMap.Up = Database.MapGrids[tmpMap.MapGrid].MyGrid[tmpMap.MapGridX, tmpMap.MapGridY - 1];
+                        if (tmpMap.Up > -1)
+                        {
+                            Globals.GameMaps[tmpMap.Up].Down = newMap;
+                            Globals.GameMaps[tmpMap.Up].Save();
+                        }
                     }
                     if (tmpMap.MapGridY + 1 <= Database.MapGrids[tmpMap.MapGrid].Height)
                     {
                         tmpMap.Down = Database.MapGrids[tmpMap.MapGrid].MyGrid[tmpMap.MapGridX, tmpMap.MapGridY + 1];
+                        if (tmpMap.Down > -1)
+                        {
+                            Globals.GameMaps[tmpMap.Down].Up = newMap;
+                            Globals.GameMaps[tmpMap.Down].Save();
+                        }
                     }
 
-                    if (tmpMap.MapGridX - 1 >= 0) { tmpMap.Left = Database.MapGrids[tmpMap.MapGrid].MyGrid[tmpMap.MapGridX - 1, tmpMap.MapGridY]; }
+                    if (tmpMap.MapGridX - 1 >= 0)
+                    {
+                        tmpMap.Left = Database.MapGrids[tmpMap.MapGrid].MyGrid[tmpMap.MapGridX - 1, tmpMap.MapGridY];
+                        if (tmpMap.Left > -1)
+                        {
+                            Globals.GameMaps[tmpMap.Left].Right = newMap;
+                            Globals.GameMaps[tmpMap.Left].Save();
+                        }
+                    }
 
                     if (tmpMap.MapGridX + 1 <= Database.MapGrids[tmpMap.MapGrid].Width)
                     {
                         tmpMap.Right = Database.MapGrids[tmpMap.MapGrid].MyGrid[tmpMap.MapGridX + 1, tmpMap.MapGridY];
+                        if (tmpMap.Right > -1)
+                        {
+                            Globals.GameMaps[tmpMap.Right].Left = newMap;
+                            Globals.GameMaps[tmpMap.Right].Save();
+                        }
                     }
 
                     tmpMap.Save();

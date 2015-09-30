@@ -73,6 +73,7 @@
             this.treeMapList.NodeMouseDoubleClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.treeMapList_NodeMouseDoubleClick);
             this.treeMapList.DragDrop += new System.Windows.Forms.DragEventHandler(this.treeMapList_DragDrop);
             this.treeMapList.DragEnter += new System.Windows.Forms.DragEventHandler(this.treeMapList_DragEnter);
+            this.treeMapList.MouseDown += new System.Windows.Forms.MouseEventHandler(this.treeMapList_MouseDown);
             // 
             // contextMenuStrip1
             // 
@@ -81,7 +82,7 @@
             this.newFolderToolStripMenuItem,
             this.deleteToolStripMenuItem});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(153, 92);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(118, 70);
             // 
             // newMapToolStripMenuItem
             // 
@@ -89,34 +90,34 @@
             this.mapToolStripMenuItem,
             this.folderToolStripMenuItem});
             this.newMapToolStripMenuItem.Name = "newMapToolStripMenuItem";
-            this.newMapToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.newMapToolStripMenuItem.Size = new System.Drawing.Size(117, 22);
             this.newMapToolStripMenuItem.Text = "New...";
             // 
             // mapToolStripMenuItem
             // 
             this.mapToolStripMenuItem.Name = "mapToolStripMenuItem";
-            this.mapToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.mapToolStripMenuItem.Size = new System.Drawing.Size(107, 22);
             this.mapToolStripMenuItem.Text = "Map";
             this.mapToolStripMenuItem.Click += new System.EventHandler(this.btnNewMap_Click);
             // 
             // folderToolStripMenuItem
             // 
             this.folderToolStripMenuItem.Name = "folderToolStripMenuItem";
-            this.folderToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.folderToolStripMenuItem.Size = new System.Drawing.Size(107, 22);
             this.folderToolStripMenuItem.Text = "Folder";
             this.folderToolStripMenuItem.Click += new System.EventHandler(this.btnNewFolder_Click);
             // 
             // newFolderToolStripMenuItem
             // 
             this.newFolderToolStripMenuItem.Name = "newFolderToolStripMenuItem";
-            this.newFolderToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.newFolderToolStripMenuItem.Size = new System.Drawing.Size(117, 22);
             this.newFolderToolStripMenuItem.Text = "Rename";
             this.newFolderToolStripMenuItem.Click += new System.EventHandler(this.btnRename_Click);
             // 
             // deleteToolStripMenuItem
             // 
             this.deleteToolStripMenuItem.Name = "deleteToolStripMenuItem";
-            this.deleteToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.deleteToolStripMenuItem.Size = new System.Drawing.Size(117, 22);
             this.deleteToolStripMenuItem.Text = "Delete";
             this.deleteToolStripMenuItem.Click += new System.EventHandler(this.btnDelete_Click);
             // 

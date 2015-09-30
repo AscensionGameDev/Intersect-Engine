@@ -81,7 +81,35 @@ namespace Intersect_Editor.Classes
                     }
                 }
             }
+            Autotiles = new MapAutotiles(this);
+            Autotiles.InitAutotiles();
             Load(mapData);
+        }
+
+        public MapStruct(MapStruct mapcopy)
+        {
+            for (var i = 0; i < Constants.LayerCount; i++)
+            {
+                Layers[i] = new TileArray();
+                for (var x = 0; x < Globals.MapWidth; x++)
+                {
+                    for (var y = 0; y < Globals.MapHeight; y++)
+                    {
+                        Layers[i].Tiles[x, y] = new Tile();
+                        Layers[i].Tiles[x, y].TilesetIndex = mapcopy.Layers[i].Tiles[x, y].TilesetIndex;
+                        Layers[i].Tiles[x, y].X = mapcopy.Layers[i].Tiles[x, y].X;
+                        Layers[i].Tiles[x, y].Y = mapcopy.Layers[i].Tiles[x, y].Y;
+                        Layers[i].Tiles[x, y].Autotile = mapcopy.Layers[i].Tiles[x, y].Autotile;
+                        if (i == 0) { Attributes[x, y] = new Attribute(); }
+                        Attributes[x, y].data1 = mapcopy.Attributes[x, y].data1;
+                        Attributes[x, y].data2 = mapcopy.Attributes[x, y].data2;
+                        Attributes[x, y].data3 = mapcopy.Attributes[x, y].data3;
+                        Attributes[x, y].data4 = mapcopy.Attributes[x, y].data4;
+                    }
+                }
+            }
+            Autotiles = new MapAutotiles(this);
+            Autotiles.InitAutotiles();
         }
 
         //Saving/Loading
@@ -155,7 +183,7 @@ namespace Intersect_Editor.Classes
             }
             return bf.ToArray();
         }
-        public void Load(byte[] myArr)
+        public void Load(byte[] myArr, bool import = false)
         {
             var npcCount = 0;
             NpcSpawn TempNpc = new NpcSpawn();
@@ -163,10 +191,20 @@ namespace Intersect_Editor.Classes
             var bf = new ByteBuffer();
             bf.WriteBytes(myArr);
             MyName = bf.ReadString();
-            Up = bf.ReadInteger();
-            Down = bf.ReadInteger();
-            Left = bf.ReadInteger();
-            Right = bf.ReadInteger();
+            if (!import)
+            {
+                Up = bf.ReadInteger();
+                Down = bf.ReadInteger();
+                Left = bf.ReadInteger();
+                Right = bf.ReadInteger();
+            }
+            else
+            {
+                bf.ReadInteger();
+                bf.ReadInteger();
+                bf.ReadInteger();
+                bf.ReadInteger();
+            }
             Music = bf.ReadString();
             Sound = bf.ReadString();
             IsIndoors = Convert.ToBoolean(bf.ReadInteger());
@@ -236,7 +274,6 @@ namespace Intersect_Editor.Classes
             {
                 Events.Add(new EventStruct(bf));
             }
-            Autotiles = new MapAutotiles(this);
             Autotiles.InitAutotiles();
         }
 

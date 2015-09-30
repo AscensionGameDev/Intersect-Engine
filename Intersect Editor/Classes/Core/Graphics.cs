@@ -382,7 +382,7 @@ namespace Intersect_Editor.Classes
                 tmpMap = TilePreviewStruct;
                 if (TilePreviewUpdated || TilePreviewStruct == null)
                 {
-                    TilePreviewStruct = new MapStruct(Globals.CurrentMap, Globals.GameMaps[Globals.CurrentMap].Save());
+                    TilePreviewStruct = new MapStruct(Globals.GameMaps[Globals.CurrentMap]);
                     //Lets Create the Preview
                     //Mimic Mouse Down
                     tmpMap = TilePreviewStruct;
@@ -410,7 +410,6 @@ namespace Intersect_Editor.Classes
                                             tmpMap.Layers[Globals.CurrentLayer].Tiles[Globals.CurTileX + x, Globals.CurTileY + y].X = Globals.CurSelX + x;
                                             tmpMap.Layers[Globals.CurrentLayer].Tiles[Globals.CurTileX + x, Globals.CurTileY + y].Y = Globals.CurSelY + y;
                                             tmpMap.Layers[Globals.CurrentLayer].Tiles[Globals.CurTileX + x, Globals.CurTileY + y].Autotile = 0;
-                                            tmpMap.Autotiles.InitAutotiles();
                                         }
                                     }
                                 }
@@ -421,7 +420,8 @@ namespace Intersect_Editor.Classes
                                 tmpMap.Layers[Globals.CurrentLayer].Tiles[Globals.CurTileX, Globals.CurTileY].X = Globals.CurSelX;
                                 tmpMap.Layers[Globals.CurrentLayer].Tiles[Globals.CurTileX, Globals.CurTileY].Y = Globals.CurSelY;
                                 tmpMap.Layers[Globals.CurrentLayer].Tiles[Globals.CurTileX, Globals.CurTileY].Autotile = (byte)Globals.Autotilemode;
-                                tmpMap.Autotiles.InitAutotiles();
+                                tmpMap.Autotiles.UpdateAutoTiles(Globals.CurTileX, Globals.CurTileY,
+                                    Globals.CurrentLayer);
                             }
                             break;
                     }
@@ -431,7 +431,7 @@ namespace Intersect_Editor.Classes
             {
                  tmpMap = Globals.GameMaps[Globals.CurrentMap];
             }
-            if (tmpMap == null) { return; }
+            if (tmpMap == null || tmpMap.Deleted == 1) { return; }
             for (var x = 0; x < Globals.MapWidth; x++)
             {
                 for (var y = 0; y < Globals.MapHeight; y++)
@@ -585,10 +585,10 @@ namespace Intersect_Editor.Classes
         private static void DrawMapUp()
         {
             var tmpMap = Globals.GameMaps[Globals.CurrentMap];
-            if (tmpMap == null) { return; }
+            if (tmpMap == null || tmpMap.Deleted == 1) { return; }
             if (tmpMap.Up <= -1) return;
             tmpMap = Globals.GameMaps[tmpMap.Up];
-            if (tmpMap == null) { return; }
+            if (tmpMap == null || tmpMap.Deleted == 1) { return; }
             for (var x = 0; x < Globals.MapWidth; x++)
             {
                 for (var y = Globals.MapHeight - 1; y < Globals.MapHeight; y++)
@@ -624,10 +624,10 @@ namespace Intersect_Editor.Classes
         private static void DrawMapDown()
         {
             var tmpMap = Globals.GameMaps[Globals.CurrentMap];
-            if (tmpMap == null) { return; }
+            if (tmpMap == null || tmpMap.Deleted == 1) { return; }
             if (tmpMap.Down <= -1) return;
             tmpMap = Globals.GameMaps[tmpMap.Down];
-            if (tmpMap == null) { return; }
+            if (tmpMap == null || tmpMap.Deleted == 1) { return; }
             for (var x = 0; x < Globals.MapWidth; x++)
             {
                 for (var y = 0; y < 1; y++)
@@ -663,10 +663,10 @@ namespace Intersect_Editor.Classes
         private static void DrawMapLeft()
         {
             var tmpMap = Globals.GameMaps[Globals.CurrentMap];
-            if (tmpMap == null) { return; }
+            if (tmpMap == null || tmpMap.Deleted == 1) { return; }
             if (tmpMap.Left <= -1) return;
             tmpMap = Globals.GameMaps[tmpMap.Left];
-            if (tmpMap == null) { return; }
+            if (tmpMap == null || tmpMap.Deleted == 1) { return; }
             for (var x = Globals.MapWidth - 1; x < Globals.MapWidth; x++)
             {
                 for (var y = 0; y < Globals.MapHeight; y++)
@@ -702,10 +702,10 @@ namespace Intersect_Editor.Classes
         private static void DrawMapRight()
         {
             var tmpMap = Globals.GameMaps[Globals.CurrentMap];
-            if (tmpMap == null) { return; }
+            if (tmpMap == null || tmpMap.Deleted == 1) { return; }
             if (tmpMap.Right <= -1) return;
             tmpMap = Globals.GameMaps[tmpMap.Right];
-            if (tmpMap == null) { return; }
+            if (tmpMap == null || tmpMap.Deleted == 1) { return; }
             for (var x = 0; x < 1; x++)
             {
                 for (var y = 0; y < Globals.MapHeight; y++)

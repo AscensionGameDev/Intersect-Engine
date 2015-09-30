@@ -199,7 +199,7 @@ namespace Intersect_Editor.Forms
             if (fileDialog.FileName != "")
             {
                 Globals.MapEditorWindow.PrepUndoState();
-                Globals.GameMaps[Globals.CurrentMap].Load(File.ReadAllBytes(fileDialog.FileName));
+                Globals.GameMaps[Globals.CurrentMap].Load(File.ReadAllBytes(fileDialog.FileName),true);
                 Globals.MapEditorWindow.AddUndoState();
             }
         }

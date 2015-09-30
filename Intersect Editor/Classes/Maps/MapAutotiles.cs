@@ -43,7 +43,6 @@ namespace Intersect_Editor.Classes
         {
             Autotile = new AutoTileCls[Globals.MapWidth, Globals.MapHeight];
 
-
             for (var x = 0; x < Globals.MapWidth; x++)
             {
                 for (var y = 0; y < Globals.MapHeight; y++)
@@ -163,6 +162,27 @@ namespace Intersect_Editor.Classes
                     }
                 }
             }
+        }
+
+        public void UpdateAutoTiles(int x, int y, int layer)
+        {
+                for (var x1 = x-1; x1 < x + 2; x1++)
+                {
+                    if (x1 < 0 || x1 >= Globals.MapWidth)
+                    {
+                        continue;}
+                    for (var y1 = y-1; y1 < y+2; y1++)
+                    {
+                        if (y1 < 0 || y1 >= Globals.MapHeight)
+                        {
+                            continue;
+                        }
+                        // calculate the subtile positions and place them
+                        CalculateAutotile(x1, y1, layer);
+                        // cache the rendering state of the tiles and set them
+                        CacheRenderState(x1, y1, layer);
+                    }
+                }
         }
 
         public void CacheRenderState(int x, int y, int layerNum)
@@ -690,7 +710,7 @@ namespace Intersect_Editor.Classes
                     if (_myMap.Left > -1)
                     {
                         otherMap = Globals.GameMaps[_myMap.Left];
-                        if (otherMap != null)
+                        if (otherMap != null && otherMap.Deleted == 0)
                         {
                             targetTile = otherMap.Layers[layerNum].Tiles[Globals.MapWidth + x2, y2];
                         }
@@ -709,7 +729,7 @@ namespace Intersect_Editor.Classes
                     if (_myMap.Right > -1)
                     {
                         otherMap = Globals.GameMaps[_myMap.Right];
-                        if (otherMap != null)
+                        if (otherMap != null && otherMap.Deleted == 0)
                         {
                             targetTile = otherMap.Layers[layerNum].Tiles[x2 - Globals.MapWidth, y2];
                         }
@@ -728,7 +748,7 @@ namespace Intersect_Editor.Classes
                     if (_myMap.Up > -1)
                     {
                         otherMap = Globals.GameMaps[_myMap.Up];
-                        if (otherMap != null)
+                        if (otherMap != null && otherMap.Deleted == 0)
                         {
                             targetTile = otherMap.Layers[layerNum].Tiles[x2, Globals.MapHeight + y2];
                         }
@@ -747,7 +767,7 @@ namespace Intersect_Editor.Classes
                     if (_myMap.Down > -1)
                     {
                         otherMap = Globals.GameMaps[_myMap.Down];
-                        if (otherMap != null)
+                        if (otherMap != null && otherMap.Deleted == 0)
                         {
                             targetTile = otherMap.Layers[layerNum].Tiles[x2, y2 - Globals.MapHeight];
                         }

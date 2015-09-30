@@ -320,6 +320,15 @@ namespace Intersect_Editor.Forms
             }
         }
 
+        private void treeMapList_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Right)
+            {
+                treeMapList.SelectedNode = treeMapList.GetNodeAt(e.Location);
+            }
+            
+        }
+
 
        
 

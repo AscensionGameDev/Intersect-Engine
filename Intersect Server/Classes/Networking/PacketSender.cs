@@ -319,7 +319,7 @@ namespace Intersect_Server.Classes
             bf.WriteLong(mapNum);
             if (!(Globals.GameMaps[mapNum].MapGridX == -1 || Globals.GameMaps[mapNum].MapGridY == -1))
             {
-                Globals.GameMaps[mapNum].PlayerEnteredMap(client);
+                if (!client.IsEditor){  Globals.GameMaps[mapNum].PlayerEnteredMap(client);}
                 for (var y = Globals.GameMaps[mapNum].MapGridY - 1; y < Globals.GameMaps[mapNum].MapGridY + 2; y++)
                 {
                     for (var x = Globals.GameMaps[mapNum].MapGridX - 1; x < Globals.GameMaps[mapNum].MapGridX + 2; x++)
@@ -353,7 +353,7 @@ namespace Intersect_Server.Classes
             }
         }
 
-        public static void SendEntityMove(int entityIndex, int type, Entity en)
+        public static void SendEntityMove(int entityIndex, int type, Entity en, int correction = 0)
         {
             var bf = new ByteBuffer();
             bf.WriteLong((int)Enums.ServerPackets.EntityMove);
@@ -363,11 +363,12 @@ namespace Intersect_Server.Classes
             bf.WriteInteger(en.CurrentX);
             bf.WriteInteger(en.CurrentY);
             bf.WriteInteger(en.Dir);
+            bf.WriteInteger(correction);
             SendDataToProximity(en.CurrentMap, bf.ToArray());
             bf.Dispose();
         }
 
-        public static void SendEntityMoveTo(Client client, int entityIndex, int type, Entity en)
+        public static void SendEntityMoveTo(Client client, int entityIndex, int type, Entity en, int correction = 0)
         {
             var bf = new ByteBuffer();
             bf.WriteLong((int)Enums.ServerPackets.EntityMove);
@@ -377,6 +378,7 @@ namespace Intersect_Server.Classes
             bf.WriteInteger(en.CurrentX);
             bf.WriteInteger(en.CurrentY);
             bf.WriteInteger(en.Dir);
+            bf.WriteInteger(correction);
             SendDataTo(client, bf.ToArray());
             bf.Dispose();
         }

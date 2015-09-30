@@ -369,7 +369,8 @@ namespace Intersect_Client.Classes
             var x = bf.ReadInteger();
             var y = bf.ReadInteger();
             var dir = bf.ReadInteger();
-            if (en.CurrentMap != map || en.CurrentX != x || en.CurrentY != y)
+            var correction = bf.ReadInteger();
+            if ((en.CurrentMap != map || en.CurrentX != x || en.CurrentY != y) && (en != Globals.Me || (en == Globals.Me && correction ==1)))
             {
                 en.CurrentMap = map;
                 en.CurrentX = x;
