@@ -51,7 +51,8 @@ namespace Intersect_Client.Classes
         //Screen Values
         public static int ScreenWidth;
         public static int ScreenHeight;
-        public static int DisplayMode;
+        public static int DisplayMode = 0;
+        public static int FPS = 0;
         public static bool FullScreen = false;
         public static bool MustReInit;
         public static int FadeStage = 1;
@@ -156,6 +157,27 @@ namespace Intersect_Client.Classes
                 MyForm.ClientSize = new Size((int)GetValidVideoModes()[DisplayMode].Width, (int)GetValidVideoModes()[DisplayMode].Height);
                 MyForm.Text = @"Intersect Client";
                 RenderWindow = new RenderWindow(MyForm.Handle);
+
+                if (FPS == 0)
+                {
+                    RenderWindow.SetVerticalSyncEnabled(true);
+                }
+                else if (FPS == 1)
+                {
+                    RenderWindow.SetFramerateLimit(30);
+                }
+                else if (FPS == 2)
+                {
+                    RenderWindow.SetFramerateLimit(60);
+                }
+                else if (FPS == 3)
+                {
+                    RenderWindow.SetFramerateLimit(90);
+                }
+                else if (FPS == 4)
+                {
+                    RenderWindow.SetFramerateLimit(120);
+                }
                 if (FullScreen)
                 {
                     MyForm.TopMost = true;

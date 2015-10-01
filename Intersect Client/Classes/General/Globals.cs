@@ -42,6 +42,7 @@ namespace Intersect_Client.Classes
         public static int MusicVolume = 100;
         public static string MenuBGM = "";
         public static string MenuBG = "";
+        public static string IntroBGString = "";
         public static int TileWidth = 32;
         public static int TileHeight = 32;
         public static int MapWidth = 30;

@@ -49,28 +49,7 @@ namespace Intersect_Client.Classes
 
             if (!File.Exists("Resources\\config.xml"))
             {
-                var settings = new XmlWriterSettings {Indent = true};
-                var writer = XmlWriter.Create("Resources\\config.xml", settings);
-                writer.WriteStartDocument();
-                writer.WriteComment("Config.xml generated automatically by Intersect Client.");
-                writer.WriteStartElement("Config");
-                writer.WriteElementString("Host", "localhost");
-                writer.WriteElementString("Port", "4500");
-                writer.WriteElementString("DisplayMode", "0");
-                writer.WriteElementString("FullScreen", "False");
-                writer.WriteElementString("Sound", "100");
-                writer.WriteElementString("Music", "100");
-                writer.WriteElementString("MenuBGM", "");
-                writer.WriteElementString("IntroBG", "");
-                writer.WriteElementString("TileWidth", "32");
-                writer.WriteElementString("TileHeight", "32");
-                writer.WriteComment("Do NOT touch these values will resize the maps in the engine. If you have existing maps and change these values you MUST delete them or else the engine will crash on launch.");
-                writer.WriteElementString("MapWidth", "30");
-                writer.WriteElementString("MapHeight", "26");
-                writer.WriteEndElement();
-                writer.WriteEndDocument();
-                writer.Flush();
-                writer.Close();
+                SaveOptions();
             }
             else
             {
@@ -89,7 +68,9 @@ namespace Intersect_Client.Classes
                         Graphics.DisplayMode = Int32.Parse(selectSingleNode.InnerText);
                     selectSingleNode = options.SelectSingleNode("//Config/FullScreen");
                     if (selectSingleNode != null && selectSingleNode.InnerText != "")
-                        Graphics.FullScreen = Boolean.Parse(selectSingleNode.InnerText);
+                        selectSingleNode = options.SelectSingleNode("//Config/FPS");
+                    if (selectSingleNode != null && selectSingleNode.InnerText != "")
+                        Graphics.FPS = Int32.Parse(selectSingleNode.InnerText);
                     selectSingleNode = options.SelectSingleNode("//Config/Sound");
                     if (selectSingleNode != null && selectSingleNode.InnerText != "")
                         Globals.SoundVolume = Int32.Parse(selectSingleNode.InnerText);
@@ -104,7 +85,10 @@ namespace Intersect_Client.Classes
                         Globals.MenuBG = selectSingleNode.InnerText;
                     selectSingleNode = options.SelectSingleNode("//Config/IntroBG");
                     if (selectSingleNode != null && selectSingleNode.InnerText != "")
+                    {
                         Globals.IntroBG.AddRange(selectSingleNode.InnerText.Split(','));
+                        Globals.IntroBGString = selectSingleNode.InnerText;
+                    }
                     selectSingleNode = options.SelectSingleNode("//Config/TileWidth");
                     if (selectSingleNode != null && selectSingleNode.InnerText != "")
                         Globals.TileWidth = Int32.Parse(selectSingleNode.InnerText);
@@ -136,11 +120,13 @@ namespace Intersect_Client.Classes
                 writer.WriteElementString("Host", Globals.ServerHost);
                 writer.WriteElementString("Port", Globals.ServerPort.ToString());
                 writer.WriteElementString("DisplayMode", Graphics.DisplayMode.ToString());
+                writer.WriteElementString("FPS", Graphics.FPS.ToString());
                 writer.WriteElementString("FullScreen", Graphics.FullScreen.ToString());
                 writer.WriteElementString("Sound", Globals.SoundVolume.ToString());
                 writer.WriteElementString("Music", Globals.MusicVolume.ToString());
                 writer.WriteElementString("MenuBGM", Globals.MenuBGM);
                 writer.WriteElementString("MenuBG", Globals.MenuBG);
+                writer.WriteElementString("IntroBG", Globals.IntroBGString);
                 writer.WriteElementString("TileWidth", Globals.TileWidth.ToString());
                 writer.WriteElementString("TileHeight", Globals.TileHeight.ToString());
                 writer.WriteComment("Do NOT touch these values will resize the maps in the engine. If you have existing maps and change these values you MUST delete them or else the engine will crash on launch.");
