@@ -101,6 +101,7 @@ namespace Intersect_Editor.Classes
                         Layers[i].Tiles[x, y].Y = mapcopy.Layers[i].Tiles[x, y].Y;
                         Layers[i].Tiles[x, y].Autotile = mapcopy.Layers[i].Tiles[x, y].Autotile;
                         if (i == 0) { Attributes[x, y] = new Attribute(); }
+                        Attributes[x, y].value = mapcopy.Attributes[x, y].value;
                         Attributes[x, y].data1 = mapcopy.Attributes[x, y].data1;
                         Attributes[x, y].data2 = mapcopy.Attributes[x, y].data2;
                         Attributes[x, y].data3 = mapcopy.Attributes[x, y].data3;
