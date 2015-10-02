@@ -25,6 +25,7 @@ using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.Collections.Generic;
 using System.IO;
+using System.Security.Policy;
 using Intersect_Editor.Forms;
 using Intersect_Editor.Properties;
 using SFML.Graphics;
@@ -92,10 +93,21 @@ namespace Intersect_Editor.Classes
         private static float _fogCurrentX = 0;
         private static float _fogCurrentY = 0;
 
+        //Resources
+        public static bool HideResources = false;
+
         //Advanced Editing Features
         public static bool HideTilePreview = false;
         public static bool TilePreviewUpdated = false;
         public static MapStruct TilePreviewStruct;
+
+        //Rendering Variables
+        private static RenderStates _renderState = new RenderStates(BlendMode.Alpha);
+        private static Vertex[] _vertexCache = new Vertex[1024];
+        private static int _vertexCount = 0;
+        private static Texture _curTexture;
+        public static int DrawCalls = 0;
+        public static int CacheLimit = 0;
 
         //Setup and Loading
         public static void InitSfml(frmMain myForm)
@@ -335,20 +347,31 @@ namespace Intersect_Editor.Classes
                 DrawTransparentBorders();
                 for (int i = 0; i < 2; i++)
                 {
-                    DrawBorderMap(0, i);
-                    DrawBorderMap(1, i);
-                    DrawBorderMap(2, i);
-                    DrawBorderMap(3, i);
-                    DrawMap(RenderWindow, false, i);
+                    for (int z = -1; z < 4; z++)
+                    {
+                        DrawMap(z, false, i, RenderWindow);
+                    }
                     if (i == 0)
                     {
-                        DrawMapResources(-1);
+                        for (int z = -1; z < 4; z++)
+                        {
+                            DrawMapResources(z, false, RenderWindow);
+                        }
                     }
                 }
                 DrawMapBorders();
                 if (!HideFog) { DrawFog(RenderWindow); }
                 if (!HideOverlay) { DrawMapOverlay(RenderWindow); }
                 if (!HideDarkness || Globals.CurrentLayer == Constants.LayerCount + 1) { DrawDarkness(RenderWindow); }
+            }
+            Globals.MainForm.toolStripLabelDebug.Text = @"Draw Calls: " + DrawCalls + @" Cache Limit: " + CacheLimit;
+            DrawCalls = 0;
+            CacheLimit = 0;
+            if (_vertexCount > 0)
+            {
+                RenderWindow.Draw(_vertexCache, 0, (uint)_vertexCount, PrimitiveType.Quads, _renderState);
+                RenderWindow.ResetGLStates();
+                _vertexCount = 0;
             }
             RenderWindow.Display(); // display what SFML has drawn to the screen
             TilesetWindow.Display();
@@ -373,207 +396,6 @@ namespace Intersect_Editor.Classes
                 RenderWindow.Draw(tmpSprite);
             }
         }
-        private static void DrawMap(RenderTarget target, bool screenShotting = false, int layer = 0)
-        {
-            Sprite tmpSprite;
-            MapStruct tmpMap;
-            int xOffset = Globals.TileWidth;
-            int yOffset = Globals.TileHeight;
-            int z1 = 0, z2 = 3;
-            if (layer == 1)
-            {
-                z1 = 3;
-                z2 = 5;
-            }
-            if (screenShotting)
-            {
-                xOffset = 0;
-                yOffset = 0;
-            }
-            if (!HideTilePreview && !screenShotting)
-            {
-                tmpMap = TilePreviewStruct;
-                if (TilePreviewUpdated || TilePreviewStruct == null && layer == 0)
-                {
-                    TilePreviewStruct = new MapStruct(Globals.GameMaps[Globals.CurrentMap]);
-                    //Lets Create the Preview
-                    //Mimic Mouse Down
-                    tmpMap = TilePreviewStruct;
-                    switch (Globals.CurrentLayer)
-                    {
-                        case Constants.LayerCount:
-                            Globals.MapLayersWindow.PlaceAttribute(tmpMap);
-                            break;
-                        case Constants.LayerCount + 1:
-                            break;
-                        case Constants.LayerCount + 2:
-                            break;
-                        case Constants.LayerCount + 3:
-                            break;
-                        default:
-                            if (Globals.Autotilemode == 0)
-                            {
-                                for (var x = 0; x <= Globals.CurSelW; x++)
-                                {
-                                    for (var y = 0; y <= Globals.CurSelH; y++)
-                                    {
-                                        if (Globals.CurTileX + x >= 0 && Globals.CurTileX + x < Globals.MapWidth && Globals.CurTileY + y >= 0 && Globals.CurTileY + y < Globals.MapHeight)
-                                        {
-                                            tmpMap.Layers[Globals.CurrentLayer].Tiles[Globals.CurTileX + x, Globals.CurTileY + y].TilesetIndex = Globals.CurrentTileset;
-                                            tmpMap.Layers[Globals.CurrentLayer].Tiles[Globals.CurTileX + x, Globals.CurTileY + y].X = Globals.CurSelX + x;
-                                            tmpMap.Layers[Globals.CurrentLayer].Tiles[Globals.CurTileX + x, Globals.CurTileY + y].Y = Globals.CurSelY + y;
-                                            tmpMap.Layers[Globals.CurrentLayer].Tiles[Globals.CurTileX + x, Globals.CurTileY + y].Autotile = 0;
-                                        }
-                                    }
-                                }
-                            }
-                            else
-                            {
-                                tmpMap.Layers[Globals.CurrentLayer].Tiles[Globals.CurTileX, Globals.CurTileY].TilesetIndex = Globals.CurrentTileset;
-                                tmpMap.Layers[Globals.CurrentLayer].Tiles[Globals.CurTileX, Globals.CurTileY].X = Globals.CurSelX;
-                                tmpMap.Layers[Globals.CurrentLayer].Tiles[Globals.CurTileX, Globals.CurTileY].Y = Globals.CurSelY;
-                                tmpMap.Layers[Globals.CurrentLayer].Tiles[Globals.CurTileX, Globals.CurTileY].Autotile = (byte)Globals.Autotilemode;
-                                tmpMap.Autotiles.UpdateAutoTiles(Globals.CurTileX, Globals.CurTileY,
-                                    Globals.CurrentLayer);
-                            }
-                            break;
-                    }
-                }
-            }
-            else
-            {
-                tmpMap = Globals.GameMaps[Globals.CurrentMap];
-            }
-            if (tmpMap == null || tmpMap.Deleted == 1) { return; }
-            for (var x = 0; x < Globals.MapWidth; x++)
-            {
-                for (var y = 0; y < Globals.MapHeight; y++)
-                {
-                    for (var z = z1; z < z2; z++)
-                    {
-                        if (tmpMap.Layers[z].Tiles[x, y].TilesetIndex <= -1) continue;
-                        if (_tilesetTex[tmpMap.Layers[z].Tiles[x, y].TilesetIndex] == null) continue;
-                        switch (tmpMap.Autotiles.Autotile[x, y].Layer[z].RenderState)
-                        {
-                            case Constants.RenderStateNormal:
-                                tmpSprite = new Sprite(_tilesetTex[tmpMap.Layers[z].Tiles[x, y].TilesetIndex])
-                                {
-                                    TextureRect =
-                                        new IntRect(tmpMap.Layers[z].Tiles[x, y].X * Globals.TileWidth,
-                                            tmpMap.Layers[z].Tiles[x, y].Y * Globals.TileHeight,
-                                            Globals.TileWidth, Globals.TileHeight),
-                                    Position =
-                                        new Vector2f(x * Globals.TileWidth + xOffset, y * Globals.TileHeight + yOffset)
-                                };
-                                target.Draw(tmpSprite);
-                                break;
-                            case Constants.RenderStateAutotile:
-                                DrawAutoTile(z, x * Globals.TileWidth + xOffset, y * Globals.TileHeight + yOffset, 1, x, y,
-                                    tmpMap, target);
-                                DrawAutoTile(z, x * Globals.TileWidth + 16 + xOffset, y * Globals.TileHeight + yOffset, 2, x,
-                                    y, tmpMap, target);
-                                DrawAutoTile(z, x * Globals.TileWidth + xOffset, y * Globals.TileHeight + 16 + yOffset, 3, x,
-                                    y, tmpMap, target);
-                                DrawAutoTile(z, x * Globals.TileWidth + 16 + xOffset, y * Globals.TileHeight + 16 + yOffset,
-                                    4, x, y, tmpMap, target);
-                                break;
-                        }
-                    }
-                }
-
-            }
-            RectangleShape tileSelectionRect;
-
-            // Draw Npc Spawns from Map Editor
-            if (!screenShotting && layer == 1)
-            {
-                if (Globals.CurrentLayer == Constants.LayerCount + 3)
-                {
-                    for (int i = 0; i < Globals.GameMaps[Globals.CurrentMap].Spawns.Count; i++)
-                    {
-                        if (Globals.GameMaps[Globals.CurrentMap].Spawns[i].X >= 0 && Globals.GameMaps[Globals.CurrentMap].Spawns[i].Y >= 0)
-                        {
-                            tmpSprite = new Sprite(_spawnTex);
-                            tmpSprite.TextureRect = new IntRect(0, 0, Globals.TileWidth, Globals.TileHeight);
-                            tmpSprite.Position = new Vector2f(Globals.GameMaps[Globals.CurrentMap].Spawns[i].X * Globals.TileWidth + Globals.TileWidth, Globals.GameMaps[Globals.CurrentMap].Spawns[i].Y * Globals.TileHeight + Globals.TileHeight);
-                            target.Draw(tmpSprite);
-                        }
-                    }
-                }
-
-                switch (Globals.CurrentLayer)
-                {
-                    case Constants.LayerCount:
-                        //Draw attributes
-                        for (int x = 0; x < Globals.MapWidth; x++)
-                        {
-                            for (int y = 0; y < Globals.MapHeight; y++)
-                            {
-                                if (tmpMap.Attributes[x, y].value > 0)
-                                {
-                                    tmpSprite = new Sprite(_attributesTex);
-                                    tmpSprite.TextureRect = new IntRect(0, (tmpMap.Attributes[x, y].value - 1) * Globals.TileWidth, Globals.TileWidth, Globals.TileHeight);
-                                    tmpSprite.Position = new Vector2f(x * Globals.TileWidth + Globals.TileWidth, y * Globals.TileHeight + Globals.TileHeight);
-                                    tmpSprite.Color = new Color(255, 255, 255, 150);
-                                    target.Draw(tmpSprite);
-                                }
-                            }
-
-                        }
-                        tileSelectionRect = new RectangleShape(new Vector2f(Globals.TileWidth, Globals.TileHeight))
-                        {
-                            Position = new Vector2f(Globals.CurTileX * Globals.TileWidth + Globals.TileWidth, Globals.CurTileY * Globals.TileHeight + Globals.TileHeight),
-                            FillColor = Color.White
-                        };
-                        tileSelectionRect.FillColor = Color.Transparent;
-                        tileSelectionRect.OutlineColor = Color.White;
-                        tileSelectionRect.OutlineThickness = 1;
-                        target.Draw(tileSelectionRect);
-                        break;
-                    case Constants.LayerCount + 1:
-
-                        break;
-                    case Constants.LayerCount + 2:
-                        //Draw Attributes
-                        for (var x = 0; x < Globals.MapWidth; x++)
-                        {
-                            for (var y = 0; y < Globals.MapHeight; y++)
-                            {
-                                if (Globals.GameMaps[Globals.CurrentMap].FindEventAt(x, y) == null) continue;
-                                tmpSprite = new Sprite(_eventTex)
-                                {
-                                    TextureRect = new IntRect(0, 0, Globals.TileWidth, Globals.TileHeight),
-                                    Position = new Vector2f(x * Globals.TileWidth + Globals.TileWidth, y * Globals.TileHeight + Globals.TileHeight)
-                                };
-                                target.Draw(tmpSprite);
-                            }
-
-                        }
-                        tileSelectionRect = new RectangleShape(new Vector2f(Globals.TileWidth, Globals.TileHeight))
-                        {
-                            Position = new Vector2f(Globals.CurTileX * Globals.TileWidth + Globals.TileWidth, Globals.CurTileY * Globals.TileHeight + Globals.TileHeight),
-                            FillColor = Color.White
-                        };
-                        tileSelectionRect.FillColor = Color.Transparent;
-                        tileSelectionRect.OutlineColor = Color.White;
-                        tileSelectionRect.OutlineThickness = 1;
-                        target.Draw(tileSelectionRect);
-                        break;
-                    default:
-                        tileSelectionRect = new RectangleShape(new Vector2f(Globals.TileWidth, Globals.TileHeight));
-                        if (Globals.Autotilemode == 0) { tileSelectionRect = new RectangleShape(new Vector2f(Globals.TileWidth + (Globals.CurSelW * Globals.TileWidth), Globals.TileHeight + (Globals.CurSelH * Globals.TileHeight))); }
-                        tileSelectionRect.Position = new Vector2f(Globals.CurTileX * Globals.TileWidth + Globals.TileWidth, Globals.CurTileY * Globals.TileHeight + Globals.TileHeight);
-                        tileSelectionRect.FillColor = Color.White;
-                        tileSelectionRect.FillColor = Color.Transparent;
-                        tileSelectionRect.OutlineColor = Color.White;
-                        tileSelectionRect.OutlineThickness = 1;
-                        target.Draw(tileSelectionRect);
-                        break;
-                }
-            }
-
-
-        }
         private static void DrawAutoTile(int layerNum, int destX, int destY, int quarterNum, int x, int y, MapStruct map, RenderTarget target)
         {
             int yOffset = 0, xOffset = 0;
@@ -591,158 +413,41 @@ namespace Intersect_Editor.Classes
                     yOffset = -Globals.TileHeight;
                     break;
             }
+            RenderTexture(_tilesetTex[map.Layers[layerNum].Tiles[x, y].TilesetIndex],
+                                destX, destY,
+                                (int)map.Autotiles.Autotile[x, y].Layer[layerNum].SrcX[quarterNum] + xOffset,
+                                (int)map.Autotiles.Autotile[x, y].Layer[layerNum].SrcY[quarterNum] + yOffset,
+                                16, 16, target);
 
-            // Draw the quarter
-            var tmpSprite = new Sprite(_tilesetTex[map.Layers[layerNum].Tiles[x, y].TilesetIndex])
-            {
-                TextureRect =
-                    new IntRect((int)map.Autotiles.Autotile[x, y].Layer[layerNum].SrcX[quarterNum] + xOffset,
-                        (int)map.Autotiles.Autotile[x, y].Layer[layerNum].SrcY[quarterNum] + yOffset, 16, 16),
-                Position = new Vector2f(destX, destY)
-            };
-            target.Draw(tmpSprite);
         }
-        private static void DrawBorderMap(int dir, int layer)
+        private static void DrawMap(int dir, bool screenShotting, int layer, RenderTarget renderTarget)
         {
             var tmpMap = Globals.GameMaps[Globals.CurrentMap];
             if (tmpMap == null || tmpMap.Deleted == 1) { return; }
+            RectangleShape tileSelectionRect;
+            Sprite tmpSprite;
+            int selX = Globals.CurMapSelX, selY = Globals.CurMapSelY, selW = Globals.CurMapSelW, selH = Globals.CurMapSelH;
             int x1 = 0, y1 = 0, x2 = 0, y2 = 0, z1 = 0, z2 = 3, xoffset = 0, yoffset = 0;
+            int dragxoffset = 0, dragyoffset = 0;
+            if (Globals.CurrentTool == (int)Enums.EdittingTool.Rectangle ||
+            Globals.CurrentTool == (int)Enums.EdittingTool.Selection)
+            {
+                if (selW < 0)
+                {
+                    selX -= Math.Abs(selW);
+                    selW = Math.Abs(selW);
+                }
+                if (selH < 0)
+                {
+                    selY -= Math.Abs(selH);
+                    selH = Math.Abs(selH);
+                }
+            }
             if (layer == 1)
             {
                 z1 = 3;
                 z2 = 5;
             }
-            switch (dir)
-            {
-                case 0:
-                    if (tmpMap.Up <= -1) return;
-                    tmpMap = Globals.GameMaps[tmpMap.Up];
-                    x1 = 0;
-                    x2 = Globals.MapWidth;
-                    y1 = Globals.MapHeight - 1;
-                    y2 = Globals.MapHeight;
-                    xoffset = Globals.TileWidth;
-                    yoffset = -(Globals.MapHeight - 1) * Globals.TileHeight;
-                    break;
-                case 1:
-                    if (tmpMap.Down <= -1) return;
-                    tmpMap = Globals.GameMaps[tmpMap.Down];
-                    x1 = 0;
-                    x2 = Globals.MapWidth;
-                    y1 = 0;
-                    y2 = 1;
-                    xoffset = Globals.TileWidth;
-                    yoffset = Globals.TileHeight + Globals.MapHeight * Globals.TileHeight;
-                    break;
-                case 2:
-                    if (tmpMap.Left <= -1) return;
-                    tmpMap = Globals.GameMaps[tmpMap.Left];
-                    x1 = Globals.MapWidth - 1;
-                    x2 = Globals.MapWidth;
-                    y1 = 0;
-                    y2 = Globals.MapHeight;
-                    xoffset = Globals.TileWidth - Globals.MapWidth * Globals.TileWidth;
-                    yoffset = Globals.TileHeight;
-                    break;
-                case 3:
-                    if (tmpMap.Right <= -1) return;
-                    tmpMap = Globals.GameMaps[tmpMap.Right];
-                    x1 = 0;
-                    x2 = 1;
-                    y1 = 0;
-                    y2 = Globals.MapHeight;
-                    xoffset = Globals.TileWidth + Globals.MapWidth * Globals.TileWidth;
-                    yoffset = Globals.TileHeight;
-                    break;
-            }
-            if (tmpMap == null || tmpMap.Deleted == 1) { return; }
-
-            for (var x = x1; x < x2; x++)
-            {
-                for (var y = y1; y < y2; y++)
-                {
-                    for (var z = z1; z < z2; z++)
-                    {
-                        if (tmpMap.Layers[z].Tiles[x, y].TilesetIndex <= -1) continue;
-                        if (_tilesetTex[tmpMap.Layers[z].Tiles[x, y].TilesetIndex] == null) continue;
-                        if (tmpMap.Autotiles.Autotile[x, y].Layer[z].RenderState != Constants.RenderStateNormal)
-                        {
-                            if (tmpMap.Autotiles.Autotile[x, y].Layer[z].RenderState != Constants.RenderStateAutotile)
-                                continue;
-                            DrawAutoTile(z, x * Globals.TileWidth + xoffset, y * Globals.TileHeight + yoffset, 1, x, y, tmpMap, RenderWindow);
-                            DrawAutoTile(z, x * Globals.TileWidth + 16 + xoffset, y * Globals.TileHeight + yoffset, 2, x, y, tmpMap, RenderWindow);
-                            DrawAutoTile(z, x * Globals.TileWidth + xoffset, y * Globals.TileHeight + 16 + yoffset, 3, x, y, tmpMap, RenderWindow);
-                            DrawAutoTile(z, x * Globals.TileWidth + 16 + xoffset, y * Globals.TileHeight + 16 + yoffset, 4, x, y, tmpMap, RenderWindow);
-                        }
-                        else
-                        {
-                            var tmpSprite = new Sprite(_tilesetTex[tmpMap.Layers[z].Tiles[x, y].TilesetIndex])
-                            {
-                                TextureRect = new IntRect(tmpMap.Layers[z].Tiles[x, y].X * Globals.TileWidth,
-                                    tmpMap.Layers[z].Tiles[x, y].Y * Globals.TileHeight, Globals.TileWidth, Globals.TileHeight),
-                                Position = new Vector2f(x * Globals.TileWidth + xoffset, y * Globals.TileHeight + yoffset)
-                            };
-                            RenderWindow.Draw(tmpSprite);
-                        }
-                    }
-                }
-            }
-
-
-        }
-        private static void DrawTileset()
-        {
-            //Draw Current Tileset
-            if (Globals.CurrentTileset <= -1) return;
-            var tmpSprite = new Sprite(_tilesetTex[Globals.CurrentTileset]);
-            TilesetWindow.Draw(tmpSprite);
-            var selX = Globals.CurSelX;
-            var selY = Globals.CurSelY;
-            var selW = Globals.CurSelW;
-            var selH = Globals.CurSelH;
-            if (selW < 0)
-            {
-                selX -= Math.Abs(selW);
-                selW = Math.Abs(selW);
-            }
-            if (selH < 0)
-            {
-                selY -= Math.Abs(selH);
-                selH = Math.Abs(selH);
-            }
-            var tileSelectionRect = new RectangleShape(new Vector2f(Globals.TileWidth + (selW * Globals.TileWidth), Globals.TileHeight + (selH * Globals.TileHeight)))
-            {
-                Position = new Vector2f(selX * Globals.TileWidth, selY * Globals.TileHeight),
-                FillColor = Color.White
-            };
-            tileSelectionRect.FillColor = Color.Transparent;
-            tileSelectionRect.OutlineColor = Color.White;
-            tileSelectionRect.OutlineThickness = 1;
-            TilesetWindow.Draw(tileSelectionRect);
-        }
-        private static void DrawMapBorders()
-        {
-            var mapBorderLine = new RectangleShape(new Vector2f((Globals.MapWidth + 2) * Globals.TileWidth, 1))
-            {
-                Position = new Vector2f(0, Globals.TileHeight),
-                FillColor = Color.White
-            };
-            RenderWindow.Draw(mapBorderLine);
-            mapBorderLine.Position = new Vector2f(0, (Globals.MapHeight + 2) * Globals.TileHeight - Globals.TileHeight);
-            RenderWindow.Draw(mapBorderLine);
-            mapBorderLine.Size = new Vector2f(1, (Globals.MapHeight + 2) * Globals.TileHeight);
-            mapBorderLine.Position = new Vector2f(Globals.TileWidth, 0);
-            RenderWindow.Draw(mapBorderLine);
-            mapBorderLine.Position = new Vector2f((Globals.MapWidth + 2) * Globals.TileWidth - Globals.TileWidth, 0);
-            RenderWindow.Draw(mapBorderLine);
-            mapBorderLine.Dispose();
-        }
-        private static void DrawMapResources(int dir)
-        {
-            return;
-            var tmpMap = Globals.GameMaps[Globals.CurrentMap];
-            if (tmpMap == null || tmpMap.Deleted == 1) { return; }
-            int x1 = 0, y1 = 0, x2 = 0, y2 = 0, xoffset = 0, yoffset = 0;
             switch (dir)
             {
                 case -1:
@@ -795,6 +500,424 @@ namespace Intersect_Editor.Classes
                     break;
             }
             if (tmpMap == null || tmpMap.Deleted == 1) { return; }
+            if (screenShotting)
+            {
+                xoffset -= Globals.TileWidth;
+                yoffset -= Globals.TileHeight;
+            }
+
+            if (dir == -1)
+            {
+                if (Globals.Dragging)
+                {
+                    if (Globals.MouseButton == 0)
+                    {
+                        dragxoffset = Globals.TotalTileDragX - (Globals.TileDragX - Globals.CurTileX);
+                        dragyoffset = Globals.TotalTileDragY - (Globals.TileDragY - Globals.CurTileY);
+                    }
+                    else
+                    {
+                        dragxoffset = Globals.TotalTileDragX;
+                        dragyoffset = Globals.TotalTileDragY;
+                    }
+
+                }
+                if ((!HideTilePreview || Globals.Dragging) && !screenShotting)
+                {
+                    tmpMap = TilePreviewStruct;
+                    if (TilePreviewUpdated || TilePreviewStruct == null)
+                    {
+                        TilePreviewStruct = new MapStruct(Globals.GameMaps[Globals.CurrentMap]);
+                        //Lets Create the Preview
+                        //Mimic Mouse Down
+                        tmpMap = TilePreviewStruct;
+                        if (Globals.CurrentTool == (int)Enums.EdittingTool.Selection && Globals.Dragging)
+                        {
+                            Globals.MapEditorWindow.ProcessSelectionMovement(tmpMap);
+                        }
+                        else
+                        {
+                            switch (Globals.CurrentLayer)
+                            {
+                                case Constants.LayerCount:
+                                    if (Globals.CurrentTool == (int)Enums.EdittingTool.Pen)
+                                    {
+                                        Globals.MapLayersWindow.PlaceAttribute(tmpMap, Globals.CurTileX,
+                                            Globals.CurTileY);
+                                    }
+                                    else if (Globals.CurrentTool == (int)Enums.EdittingTool.Rectangle)
+                                    {
+                                        for (int x = selX; x < selX + selW + 1; x++)
+                                        {
+                                            for (int y = selY; y < selY + selH + 1; y++)
+                                            {
+                                                if (Globals.MouseButton == 0)
+                                                {
+                                                    Globals.MapLayersWindow.PlaceAttribute(tmpMap, x, y);
+                                                }
+                                                else if (Globals.MouseButton == 1)
+                                                {
+                                                    Globals.MapLayersWindow.RemoveAttribute(tmpMap, x, y);
+                                                }
+                                            }
+                                        }
+                                    }
+                                    break;
+                                case Constants.LayerCount + 1:
+                                    break;
+                                case Constants.LayerCount + 2:
+                                    break;
+                                case Constants.LayerCount + 3:
+                                    break;
+                                default:
+                                    if (Globals.CurrentTool == (int)Enums.EdittingTool.Pen)
+                                    {
+                                        if (Globals.Autotilemode == 0)
+                                        {
+                                            for (var x = 0; x <= Globals.CurSelW; x++)
+                                            {
+                                                for (var y = 0; y <= Globals.CurSelH; y++)
+                                                {
+                                                    if (Globals.CurTileX + x >= 0 &&
+                                                        Globals.CurTileX + x < Globals.MapWidth &&
+                                                        Globals.CurTileY + y >= 0 &&
+                                                        Globals.CurTileY + y < Globals.MapHeight)
+                                                    {
+                                                        tmpMap.Layers[Globals.CurrentLayer].Tiles[
+                                                            Globals.CurTileX + x, Globals.CurTileY + y].TilesetIndex =
+                                                            Globals.CurrentTileset;
+                                                        tmpMap.Layers[Globals.CurrentLayer].Tiles[
+                                                            Globals.CurTileX + x, Globals.CurTileY + y].X =
+                                                            Globals.CurSelX + x;
+                                                        tmpMap.Layers[Globals.CurrentLayer].Tiles[
+                                                            Globals.CurTileX + x, Globals.CurTileY + y].Y =
+                                                            Globals.CurSelY + y;
+                                                        tmpMap.Layers[Globals.CurrentLayer].Tiles[
+                                                            Globals.CurTileX + x, Globals.CurTileY + y].Autotile = 0;
+                                                        tmpMap.Autotiles.UpdateAutoTiles(Globals.CurTileX + x,
+                                                            Globals.CurTileY + y, Globals.CurrentLayer);
+                                                    }
+                                                }
+                                            }
+                                        }
+                                        else
+                                        {
+                                            tmpMap.Layers[Globals.CurrentLayer].Tiles[Globals.CurTileX, Globals.CurTileY
+                                                ].TilesetIndex = Globals.CurrentTileset;
+                                            tmpMap.Layers[Globals.CurrentLayer].Tiles[Globals.CurTileX, Globals.CurTileY
+                                                ].X = Globals.CurSelX;
+                                            tmpMap.Layers[Globals.CurrentLayer].Tiles[Globals.CurTileX, Globals.CurTileY
+                                                ].Y = Globals.CurSelY;
+                                            tmpMap.Layers[Globals.CurrentLayer].Tiles[Globals.CurTileX, Globals.CurTileY
+                                                ].Autotile = (byte)Globals.Autotilemode;
+                                            tmpMap.Autotiles.UpdateAutoTiles(Globals.CurTileX, Globals.CurTileY,
+                                                Globals.CurrentLayer);
+                                        }
+                                    }
+                                    else if (Globals.CurrentTool == (int)Enums.EdittingTool.Rectangle)
+                                    {
+                                        for (int x0 = selX; x0 < selX + selW + 1; x0++)
+                                        {
+                                            for (int y0 = selY; y0 < selY + selH + 1; y0++)
+                                            {
+                                                if (Globals.Autotilemode == 0)
+                                                {
+                                                    for (var x = 0; x <= Globals.CurSelW; x++)
+                                                    {
+                                                        for (var y = 0; y <= Globals.CurSelH; y++)
+                                                        {
+                                                            if (x0 + x >= 0 && x0 + x < Globals.MapWidth && y0 + y >= 0 &&
+                                                                y0 + y < Globals.MapHeight && x0 + x < selX + selW + 1 &&
+                                                                y0 + y < selY + selH + 1)
+                                                            {
+                                                                if (Globals.MouseButton == 0)
+                                                                {
+                                                                    tmpMap.Layers[Globals.CurrentLayer].Tiles[
+                                                                        x0 + x, y0 + y].TilesetIndex =
+                                                                        Globals.CurrentTileset;
+                                                                    tmpMap.Layers[Globals.CurrentLayer].Tiles[
+                                                                        x0 + x, y0 + y].X = Globals.CurSelX + x;
+                                                                    tmpMap.Layers[Globals.CurrentLayer].Tiles[
+                                                                        x0 + x, y0 + y].Y = Globals.CurSelY + y;
+                                                                    tmpMap.Layers[Globals.CurrentLayer].Tiles[
+                                                                        x0 + x, y0 + y].Autotile =
+                                                                        (byte)Globals.Autotilemode;
+                                                                }
+                                                                else if (Globals.MouseButton == 1)
+                                                                {
+                                                                    tmpMap.Layers[Globals.CurrentLayer].Tiles[
+                                                                        x0 + x, y0 + y].TilesetIndex = -1;
+                                                                    tmpMap.Layers[Globals.CurrentLayer].Tiles[
+                                                                        x0 + x, y0 + y].X = 0;
+                                                                    tmpMap.Layers[Globals.CurrentLayer].Tiles[
+                                                                        x0 + x, y0 + y].Y = 0;
+                                                                    tmpMap.Layers[Globals.CurrentLayer].Tiles[
+                                                                        x0 + x, y0 + y].Autotile = 0;
+                                                                }
+                                                                tmpMap.Autotiles.UpdateAutoTiles(x0 + x, y0 + y,
+                                                                    Globals.CurrentLayer);
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    if (Globals.MouseButton == 0)
+                                                    {
+                                                        tmpMap.Layers[Globals.CurrentLayer].Tiles[x0, y0].TilesetIndex =
+                                                            Globals.CurrentTileset;
+                                                        tmpMap.Layers[Globals.CurrentLayer].Tiles[x0, y0].X =
+                                                            Globals.CurSelX;
+                                                        tmpMap.Layers[Globals.CurrentLayer].Tiles[x0, y0].Y =
+                                                            Globals.CurSelY;
+                                                        tmpMap.Layers[Globals.CurrentLayer].Tiles[x0, y0].Autotile =
+                                                            (byte)Globals.Autotilemode;
+                                                    }
+                                                    else if (Globals.MouseButton == 1)
+                                                    {
+                                                        tmpMap.Layers[Globals.CurrentLayer].Tiles[x0, y0].TilesetIndex =
+                                                            -1;
+                                                        tmpMap.Layers[Globals.CurrentLayer].Tiles[x0, y0].X = 0;
+                                                        tmpMap.Layers[Globals.CurrentLayer].Tiles[x0, y0].Y = 0;
+                                                        tmpMap.Layers[Globals.CurrentLayer].Tiles[x0, y0].Autotile = 0;
+                                                    }
+                                                    tmpMap.Autotiles.UpdateAutoTiles(x0, y0,
+                                                        Globals.CurrentLayer);
+                                                }
+                                            }
+                                        }
+                                    }
+                                    break;
+                            }
+                        }
+                        TilePreviewUpdated = false;
+                    }
+                }
+                else
+                {
+                    tmpMap = Globals.GameMaps[Globals.CurrentMap];
+                }
+            }
+
+
+            for (var x = x1; x < x2; x++)
+            {
+                for (var y = y1; y < y2; y++)
+                {
+                    for (var z = z1; z < z2; z++)
+                    {
+                        if (tmpMap.Layers[z].Tiles[x, y].TilesetIndex <= -1) continue;
+                        if (_tilesetTex[tmpMap.Layers[z].Tiles[x, y].TilesetIndex] == null) continue;
+                        if (tmpMap.Autotiles.Autotile[x, y].Layer[z].RenderState != Constants.RenderStateNormal)
+                        {
+                            if (tmpMap.Autotiles.Autotile[x, y].Layer[z].RenderState != Constants.RenderStateAutotile)
+                                continue;
+                            DrawAutoTile(z, x * Globals.TileWidth + xoffset, y * Globals.TileHeight + yoffset, 1, x, y, tmpMap, renderTarget);
+                            DrawAutoTile(z, x * Globals.TileWidth + 16 + xoffset, y * Globals.TileHeight + yoffset, 2, x, y, tmpMap, renderTarget);
+                            DrawAutoTile(z, x * Globals.TileWidth + xoffset, y * Globals.TileHeight + 16 + yoffset, 3, x, y, tmpMap, renderTarget);
+                            DrawAutoTile(z, x * Globals.TileWidth + 16 + xoffset, y * Globals.TileHeight + 16 + yoffset, 4, x, y, tmpMap, renderTarget);
+                        }
+                        else
+                        {
+                            RenderTexture(_tilesetTex[tmpMap.Layers[z].Tiles[x, y].TilesetIndex],
+                                x * Globals.TileWidth + xoffset, y * Globals.TileHeight + yoffset,
+                                tmpMap.Layers[z].Tiles[x, y].X * Globals.TileWidth, tmpMap.Layers[z].Tiles[x, y].Y * Globals.TileHeight,
+                                Globals.TileWidth, Globals.TileHeight, renderTarget);
+                        }
+                    }
+                }
+            }
+
+            // Draw Npc Spawns from Map Editor
+            if (!screenShotting && layer == 1 && dir == -1)
+            {
+
+                switch (Globals.CurrentLayer)
+                {
+                    case Constants.LayerCount:
+                        //Draw attributes
+                        for (int x = 0; x < Globals.MapWidth; x++)
+                        {
+                            for (int y = 0; y < Globals.MapHeight; y++)
+                            {
+                                if (tmpMap.Attributes[x, y].value > 0)
+                                {
+                                    tmpSprite = new Sprite(_attributesTex);
+                                    tmpSprite.TextureRect = new IntRect(0, (tmpMap.Attributes[x, y].value - 1) * Globals.TileWidth, Globals.TileWidth, Globals.TileHeight);
+                                    tmpSprite.Position = new Vector2f(x * Globals.TileWidth + Globals.TileWidth, y * Globals.TileHeight + Globals.TileHeight);
+                                    tmpSprite.Color = new Color(255, 255, 255, 150);
+                                    renderTarget.Draw(tmpSprite);
+                                }
+                            }
+
+                        }
+                        break;
+                    case Constants.LayerCount + 1:
+
+                        break;
+                    case Constants.LayerCount + 2:
+                        for (var x = 0; x < Globals.MapWidth; x++)
+                        {
+                            for (var y = 0; y < Globals.MapHeight; y++)
+                            {
+                                if (tmpMap.FindEventAt(x, y) == null) continue;
+                                tmpSprite = new Sprite(_eventTex)
+                                {
+                                    TextureRect = new IntRect(0, 0, Globals.TileWidth, Globals.TileHeight),
+                                    Position = new Vector2f(x * Globals.TileWidth + Globals.TileWidth, y * Globals.TileHeight + Globals.TileHeight)
+                                };
+                                renderTarget.Draw(tmpSprite);
+                            }
+
+                        }
+                        break;
+                    case Constants.LayerCount + 3:
+                        for (int i = 0; i < tmpMap.Spawns.Count; i++)
+                        {
+                            if (tmpMap.Spawns[i].X >= 0 && tmpMap.Spawns[i].Y >= 0)
+                            {
+                                tmpSprite = new Sprite(_spawnTex);
+                                tmpSprite.TextureRect = new IntRect(0, 0, Globals.TileWidth, Globals.TileHeight);
+                                tmpSprite.Position = new Vector2f(tmpMap.Spawns[i].X * Globals.TileWidth + Globals.TileWidth, tmpMap.Spawns[i].Y * Globals.TileHeight + Globals.TileHeight);
+                                renderTarget.Draw(tmpSprite);
+                            }
+                        }
+                        break;
+                    default:
+                        break;
+                }
+                if (Globals.CurrentTool == (int)Enums.EdittingTool.Rectangle ||
+    Globals.CurrentTool == (int)Enums.EdittingTool.Selection)
+                {
+                    tileSelectionRect = new RectangleShape(new Vector2f((selW + 1) * Globals.TileWidth, (selH + 1) * Globals.TileHeight))
+                    {
+                        Position = new Vector2f((selX + dragxoffset) * Globals.TileWidth + Globals.TileWidth, (selY + dragyoffset) * Globals.TileHeight + Globals.TileHeight),
+                        FillColor = Color.White
+                    };
+                }
+                else
+                {
+                    tileSelectionRect = new RectangleShape(new Vector2f(Globals.TileWidth, Globals.TileHeight))
+                    {
+                        Position = new Vector2f(Globals.CurTileX * Globals.TileWidth + Globals.TileWidth, Globals.CurTileY * Globals.TileHeight + Globals.TileHeight),
+                        FillColor = Color.White
+                    };
+                }
+                tileSelectionRect.FillColor = Color.Transparent;
+                tileSelectionRect.OutlineColor = Color.White;
+                tileSelectionRect.OutlineThickness = 1;
+                renderTarget.Draw(tileSelectionRect);
+            }
+        }
+        private static void DrawTileset()
+        {
+            //Draw Current Tileset
+            if (Globals.CurrentTileset <= -1) return;
+            var tmpSprite = new Sprite(_tilesetTex[Globals.CurrentTileset]);
+            TilesetWindow.Draw(tmpSprite);
+            var selX = Globals.CurSelX;
+            var selY = Globals.CurSelY;
+            var selW = Globals.CurSelW;
+            var selH = Globals.CurSelH;
+            if (selW < 0)
+            {
+                selX -= Math.Abs(selW);
+                selW = Math.Abs(selW);
+            }
+            if (selH < 0)
+            {
+                selY -= Math.Abs(selH);
+                selH = Math.Abs(selH);
+            }
+            var tileSelectionRect = new RectangleShape(new Vector2f(Globals.TileWidth + (selW * Globals.TileWidth), Globals.TileHeight + (selH * Globals.TileHeight)))
+            {
+                Position = new Vector2f(selX * Globals.TileWidth, selY * Globals.TileHeight),
+                FillColor = Color.White
+            };
+            tileSelectionRect.FillColor = Color.Transparent;
+            tileSelectionRect.OutlineColor = Color.White;
+            tileSelectionRect.OutlineThickness = 1;
+            TilesetWindow.Draw(tileSelectionRect);
+        }
+        private static void DrawMapBorders()
+        {
+            var mapBorderLine = new RectangleShape(new Vector2f((Globals.MapWidth + 2) * Globals.TileWidth, 1))
+            {
+                Position = new Vector2f(0, Globals.TileHeight),
+                FillColor = Color.White
+            };
+            RenderWindow.Draw(mapBorderLine);
+            mapBorderLine.Position = new Vector2f(0, (Globals.MapHeight + 2) * Globals.TileHeight - Globals.TileHeight);
+            RenderWindow.Draw(mapBorderLine);
+            mapBorderLine.Size = new Vector2f(1, (Globals.MapHeight + 2) * Globals.TileHeight);
+            mapBorderLine.Position = new Vector2f(Globals.TileWidth, 0);
+            RenderWindow.Draw(mapBorderLine);
+            mapBorderLine.Position = new Vector2f((Globals.MapWidth + 2) * Globals.TileWidth - Globals.TileWidth, 0);
+            RenderWindow.Draw(mapBorderLine);
+            mapBorderLine.Dispose();
+        }
+        private static void DrawMapResources(int dir, bool screenShotting, RenderTarget renderTarget)
+        {
+            if (HideResources) { return; }
+            var tmpMap = Globals.GameMaps[Globals.CurrentMap];
+            if (tmpMap == null || tmpMap.Deleted == 1) { return; }
+            int x1 = 0, y1 = 0, x2 = 0, y2 = 0, z1 = 0, z2 = 3, xoffset = 0, yoffset = 0;
+            switch (dir)
+            {
+                case -1:
+                    if (TilePreviewStruct != null)
+                    {
+                        tmpMap = TilePreviewStruct;
+                    }
+                    x1 = 0;
+                    x2 = Globals.MapWidth;
+                    y1 = 0;
+                    y2 = Globals.MapHeight;
+                    xoffset = Globals.TileWidth;
+                    yoffset = Globals.TileHeight;
+                    break;
+                case 0:
+                    if (tmpMap.Up <= -1) return;
+                    tmpMap = Globals.GameMaps[tmpMap.Up];
+                    x1 = 0;
+                    x2 = Globals.MapWidth;
+                    y1 = Globals.MapHeight - 8;
+                    y2 = Globals.MapHeight;
+                    xoffset = Globals.TileWidth;
+                    yoffset = -(Globals.MapHeight - 1) * Globals.TileHeight;
+                    break;
+                case 1:
+                    if (tmpMap.Down <= -1) return;
+                    tmpMap = Globals.GameMaps[tmpMap.Down];
+                    x1 = 0;
+                    x2 = Globals.MapWidth;
+                    y1 = 0;
+                    y2 = 8;
+                    xoffset = Globals.TileWidth;
+                    yoffset = Globals.TileHeight + Globals.MapHeight * Globals.TileHeight;
+                    break;
+                case 2:
+                    if (tmpMap.Left <= -1) return;
+                    tmpMap = Globals.GameMaps[tmpMap.Left];
+                    x1 = Globals.MapWidth - 8;
+                    x2 = Globals.MapWidth;
+                    y1 = 0;
+                    y2 = Globals.MapHeight;
+                    xoffset = Globals.TileWidth - Globals.MapWidth * Globals.TileWidth;
+                    yoffset = Globals.TileHeight;
+                    break;
+                case 3:
+                    if (tmpMap.Right <= -1) return;
+                    tmpMap = Globals.GameMaps[tmpMap.Right];
+                    x1 = 0;
+                    x2 = 8;
+                    y1 = 0;
+                    y2 = Globals.MapHeight;
+                    xoffset = Globals.TileWidth + Globals.MapWidth * Globals.TileWidth;
+                    yoffset = Globals.TileHeight;
+                    break;
+            }
+            if (tmpMap == null || tmpMap.Deleted == 1) { return; }
             Texture res;
             for (var x = x1; x < x2; x++)
             {
@@ -810,8 +933,6 @@ namespace Intersect_Editor.Classes
                                 if (Graphics.ResourceFileNames.IndexOf(Globals.GameResources[resourcenum].InitialGraphic) > -1)
                                 {
                                     res = Graphics.ResourceTextures[Graphics.ResourceFileNames.IndexOf(Globals.GameResources[resourcenum].InitialGraphic)];
-                                    var tmpSprite = new Sprite(res);
-                                    tmpSprite.TextureRect = new IntRect(0, 0, (int)res.Size.X, (int)res.Size.Y);
                                     float xpos = x * Globals.TileWidth + xoffset;
                                     float ypos = y * Globals.TileHeight + yoffset;
                                     if (res.Size.Y > Globals.TileHeight)
@@ -822,8 +943,8 @@ namespace Intersect_Editor.Classes
                                     {
                                         xpos -= (res.Size.X - 32) / 2;
                                     }
-                                    tmpSprite.Position = new Vector2f(xpos, ypos);
-                                    RenderWindow.Draw(tmpSprite);
+                                    RenderTexture(res, xpos, ypos,
+                                    0, 0, (int)res.Size.X, (int)res.Size.Y, renderTarget);
                                 }
                             }
                         }
@@ -848,6 +969,10 @@ namespace Intersect_Editor.Classes
         private static void DrawDarkness(RenderTarget target, bool screenShotting = false)
         {
             if (LightsChanged || CurrentBrightness != Globals.GameMaps[Globals.CurrentMap].Brightness) { InitLighting(); }
+            var tmpMap = Globals.GameMaps[Globals.CurrentMap];
+            if (TilePreviewStruct != null)
+            {
+                tmpMap = TilePreviewStruct;}
             var darkSprite = new Sprite(DarkCacheTexture.Texture) { Position = new Vector2f(-Globals.TileWidth * 30, -Globals.TileHeight * 30) };
             target.Draw(darkSprite, new RenderStates(BlendMode.Multiply));
             darkSprite.Dispose();
@@ -858,7 +983,7 @@ namespace Intersect_Editor.Classes
                 {
                     for (var y = 0; y < Globals.MapHeight; y++)
                     {
-                        if (Globals.GameMaps[Globals.CurrentMap].FindLightAt(x, y) == null) continue;
+                        if (tmpMap.FindLightAt(x, y) == null) continue;
                         var tmpSprite = new Sprite(_lightTex)
                         {
                             TextureRect = new IntRect(0, 0, Globals.TileWidth, Globals.TileHeight),
@@ -881,7 +1006,20 @@ namespace Intersect_Editor.Classes
         {
             RenderTexture screenShot = new RenderTexture((uint)((Globals.MapWidth) * Globals.TileWidth), (uint)((Globals.MapHeight) * Globals.TileHeight));
             screenShot.Clear(Color.Transparent);
-            DrawMap(screenShot, true);
+            for (int i = 0; i < 2; i++)
+            {
+                for (int z = -1; z < 4; z++)
+                {
+                    DrawMap(z, true, i, screenShot);
+                }
+                if (i == 0)
+                {
+                    for (int z = -1; z < 4; z++)
+                    {
+                        DrawMapResources(z, true, screenShot);
+                    }
+                }
+            }
             if (!HideFog) { DrawFog(screenShot); }
             if (!HideOverlay) { DrawMapOverlay(screenShot); }
             if (!HideDarkness || Globals.CurrentLayer == Constants.LayerCount + 1) { DrawDarkness(screenShot, true); }
@@ -926,15 +1064,21 @@ namespace Intersect_Editor.Classes
         //Lighting
         private static void InitLighting()
         {
+            var tmpMap = Globals.GameMaps[Globals.CurrentMap];
+            if (TilePreviewStruct != null)
+            {
+                tmpMap = TilePreviewStruct;
+            }
+
             //If we don't have a light texture, make a base/blank one.
             if (DarkCacheTexture == null)
             {
                 DarkCacheTexture = new RenderTexture((uint)Globals.MapWidth * (uint)Globals.TileWidth * 3, (uint)Globals.MapHeight * (uint)Globals.TileHeight * 3);
             }
-            CurrentBrightness = (byte)(((float)Globals.GameMaps[Globals.CurrentMap].Brightness / 100f) * 255f);
+            CurrentBrightness = (byte)(((float)tmpMap.Brightness / 100f) * 255f);
             DarkCacheTexture.Clear(new Color(CurrentBrightness, CurrentBrightness, CurrentBrightness, 255));
 
-            foreach (var t in Globals.GameMaps[Globals.CurrentMap].Lights)
+            foreach (var t in tmpMap.Lights)
             {
                 double w = CalcLightWidth(t.Range);
                 var x = (30 * Globals.TileWidth) + (t.TileX * Globals.TileWidth + t.OffsetX) - (int)w / 2 + Globals.TileWidth + 16;
@@ -943,7 +1087,7 @@ namespace Intersect_Editor.Classes
             }
             DarkCacheTexture.Display();
             LightsChanged = false;
-            CurrentBrightness = (byte)Globals.GameMaps[Globals.CurrentMap].Brightness;
+            CurrentBrightness = (byte)tmpMap.Brightness;
         }
         private static int CalcLightWidth(int range)
         {
@@ -1012,6 +1156,104 @@ namespace Intersect_Editor.Classes
             Globals.MapLayersWindow.picTileset.Width = (int)_tilesetTex[index].Size.X;
             Globals.MapLayersWindow.picTileset.Height = (int)_tilesetTex[index].Size.Y;
             TilesetWindow.SetView(new View(new Vector2f(Globals.MapLayersWindow.picTileset.Width / 2f, Globals.MapLayersWindow.picTileset.Height / 2f), new Vector2f(Globals.MapLayersWindow.picTileset.Width, Globals.MapLayersWindow.picTileset.Height)));
+        }
+
+        //Rendering
+        //Rendering Functions
+        public static void RenderTexture(Texture tex, float x, float y, RenderTarget renderTarget)
+        {
+            var destRectangle = new RectangleF(x, y, (int)tex.Size.X, (int)tex.Size.Y);
+            var srcRectangle = new RectangleF(0, 0, (int)tex.Size.X, (int)tex.Size.Y);
+            RenderTexture(tex, srcRectangle, destRectangle, renderTarget);
+        }
+        public static void RenderTexture(Texture tex, float x, float y, RenderTarget renderTarget, BlendMode blendMode)
+        {
+            var destRectangle = new RectangleF(x, y, (int)tex.Size.X, (int)tex.Size.Y);
+            var srcRectangle = new RectangleF(0, 0, (int)tex.Size.X, (int)tex.Size.Y);
+            RenderTexture(tex, srcRectangle, destRectangle, renderTarget, blendMode);
+        }
+        public static void RenderTexture(Texture tex, float dx, float dy, float sx, float sy, float w, float h, RenderTarget renderTarget)
+        {
+            var destRectangle = new RectangleF(dx, dy, w, h);
+            var srcRectangle = new RectangleF(sx, sy, w, h);
+            RenderTexture(tex, srcRectangle, destRectangle, renderTarget);
+        }
+        public static void RenderTexture(Texture tex, RectangleF srcRectangle, RectangleF targetRect, RenderTarget renderTarget)
+        {
+            RenderTexture(tex, srcRectangle, targetRect, renderTarget, BlendMode.Alpha);
+        }
+        public static void RenderTexture(Texture tex, RectangleF srcRectangle, RectangleF targetRect, RenderTarget renderTarget, BlendMode blendMode)
+        {
+            var u1 = (float)srcRectangle.X / tex.Size.X;
+            var v1 = (float)srcRectangle.Y / tex.Size.Y;
+            var u2 = (float)srcRectangle.Right / tex.Size.X;
+            var v2 = (float)srcRectangle.Bottom / tex.Size.Y;
+
+
+            u1 *= tex.Size.X;
+            v1 *= tex.Size.Y;
+            u2 *= tex.Size.X;
+            v2 *= tex.Size.Y;
+
+            _renderState.BlendMode = blendMode;
+
+            if (renderTarget == RenderWindow)
+            {
+                if (!targetRect.IntersectsWith(new RectangleF(Globals.MapEditorWindow.pnlMapContainer.HorizontalScroll.Value, Globals.MapEditorWindow.pnlMapContainer.VerticalScroll.Value, Globals.MapEditorWindow.pnlMapContainer.Width, Globals.MapEditorWindow.pnlMapContainer.Height)
+
+                    ))
+                {
+                    return;
+                }
+                if (_renderState.Texture == null || _renderState.Texture != tex || _vertexCount >= 1024 - 4)
+                {
+                    // enable the new texture
+                    if (_vertexCount > 0)
+                    {
+                        if (_vertexCount > CacheLimit)
+                        {
+                            CacheLimit = _vertexCount;
+                        }
+                        renderTarget.Draw(_vertexCache, 0, (uint)_vertexCount, PrimitiveType.Quads, _renderState);
+                        DrawCalls++;
+                        renderTarget.ResetGLStates();
+                        _vertexCount = 0;
+                    }
+
+                    _renderState.Texture = tex;
+                }
+
+
+                var right = targetRect.X + targetRect.Width;
+                var bottom = targetRect.Y + targetRect.Height;
+
+
+                _vertexCache[_vertexCount++] = new Vertex(new Vector2f(targetRect.X, targetRect.Y), new Vector2f(u1, v1));
+                _vertexCache[_vertexCount++] = new Vertex(new Vector2f(right, targetRect.Y), new Vector2f(u2, v1));
+                _vertexCache[_vertexCount++] = new Vertex(new Vector2f(right, bottom), new Vector2f(u2, v2));
+                _vertexCache[_vertexCount++] = new Vertex(new Vector2f(targetRect.X, bottom), new Vector2f(u1, v2));
+            }
+            else
+            {
+                if (_renderState.Texture == null || _renderState.Texture != tex)
+                {
+                    // enable the new texture
+
+                    _renderState.Texture = tex;
+                }
+                var right = targetRect.X + targetRect.Width;
+                var bottom = targetRect.Y + targetRect.Height;
+                var vertexCache = new Vertex[4];
+                vertexCache[0] = new Vertex(new Vector2f(targetRect.X, targetRect.Y), new Vector2f(u1, v1));
+                vertexCache[1] = new Vertex(new Vector2f(right, targetRect.Y), new Vector2f(u2, v1));
+                vertexCache[2] = new Vertex(new Vector2f(right, bottom), new Vector2f(u2, v2));
+                vertexCache[3] = new Vertex(new Vector2f(targetRect.X, bottom), new Vector2f(u1, v2));
+                DrawCalls++;
+                renderTarget.Draw(vertexCache, 0, 4, PrimitiveType.Quads, _renderState);
+                renderTarget.ResetGLStates();
+            }
+
+
         }
     }
 }

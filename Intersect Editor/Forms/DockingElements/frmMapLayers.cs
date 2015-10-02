@@ -161,6 +161,7 @@ namespace Intersect_Editor.Forms
                 Globals.EditingLight.OffsetX = offsetX;
                 Globals.EditingLight.Graphic = null;
                 Graphics.LightsChanged = true;
+                Graphics.TilePreviewUpdated = true;
             }
             catch (Exception)
             {
@@ -175,6 +176,7 @@ namespace Intersect_Editor.Forms
             Globals.EditingLight.Graphic = null;
             Globals.EditingLight.Range = scrlLightRange.Value;
             Graphics.LightsChanged = true;
+            Graphics.TilePreviewUpdated = true;
         }
         private void scrlLightIntensity_Scroll(object sender, ScrollEventArgs e)
         {
@@ -184,6 +186,7 @@ namespace Intersect_Editor.Forms
             Globals.EditingLight.Graphic = null;
             txtLightIntensity.Text = "" + Globals.EditingLight.Intensity;
             Graphics.LightsChanged = true;
+            Graphics.TilePreviewUpdated = true;
         }
         private void txtLightIntensity_TextChanged(object sender, EventArgs e)
         {
@@ -204,6 +207,7 @@ namespace Intersect_Editor.Forms
                 txtLightIntensity.Text = "" + Globals.EditingLight.Intensity;
                 scrlLightIntensity.Value = (int)(intensity * 10000.0);
                 Graphics.LightsChanged = true;
+                Graphics.TilePreviewUpdated = true;
             }
             catch (Exception)
             {
@@ -230,6 +234,7 @@ namespace Intersect_Editor.Forms
                 Globals.EditingLight.Range = range;
                 Globals.EditingLight.Graphic = null;
                 Graphics.LightsChanged = true;
+                Graphics.TilePreviewUpdated = true;
                 txtLightRange.Text = "" + range;
             }
             catch (Exception)
@@ -252,6 +257,7 @@ namespace Intersect_Editor.Forms
             Globals.EditingLight.Graphic = null;
             Graphics.LightsChanged = false;
             Globals.EditingLight = null;
+            Graphics.TilePreviewUpdated = true;
             pnlLight.Hide();
         }
 
@@ -325,59 +331,58 @@ namespace Intersect_Editor.Forms
             }
             return 0;
         }
-        public void PlaceAttribute(MapStruct tmpMap)
+        public void PlaceAttribute(MapStruct tmpMap, int x, int y)
         {
             if (rbBlocked.Checked == true)
             {
-                tmpMap.Attributes[Globals.CurTileX, Globals.CurTileY].value = (int)Enums.MapAttributes.Blocked;
+                tmpMap.Attributes[x, y].value = (int)Enums.MapAttributes.Blocked;
             }
             else if (rbItem.Checked == true)
             {
-                tmpMap.Attributes[Globals.CurTileX, Globals.CurTileY].value = (int)Enums.MapAttributes.Item;
-                tmpMap.Attributes[Globals.CurTileX, Globals.CurTileY].data1 = scrlMapItem.Value - 1;
-                tmpMap.Attributes[Globals.CurTileX, Globals.CurTileY].data2 = scrlMaxItemVal.Value;
+                tmpMap.Attributes[x, y].value = (int)Enums.MapAttributes.Item;
+                tmpMap.Attributes[x, y].data1 = scrlMapItem.Value - 1;
+                tmpMap.Attributes[x, y].data2 = scrlMaxItemVal.Value;
             }
             else if (rbZDimension.Checked == true)
             {
-                tmpMap.Attributes[Globals.CurTileX, Globals.CurTileY].value = (int)Enums.MapAttributes.ZDimension;
-                tmpMap.Attributes[Globals.CurTileX, Globals.CurTileY].data1 = GetEditorDimensionGateway();
-                tmpMap.Attributes[Globals.CurTileX, Globals.CurTileY].data2 = GetEditorDimensionBlock();
+                tmpMap.Attributes[x, y].value = (int)Enums.MapAttributes.ZDimension;
+                tmpMap.Attributes[x, y].data1 = GetEditorDimensionGateway();
+                tmpMap.Attributes[x, y].data2 = GetEditorDimensionBlock();
             }
             else if (rbNPCAvoid.Checked == true)
             {
-                tmpMap.Attributes[Globals.CurTileX, Globals.CurTileY].value = (int)Enums.MapAttributes.NPCAvoid;
+                tmpMap.Attributes[x, y].value = (int)Enums.MapAttributes.NPCAvoid;
             }
             else if (rbWarp.Checked == true)
             {
-                tmpMap.Attributes[Globals.CurTileX, Globals.CurTileY].value = (int)Enums.MapAttributes.Warp;
-                tmpMap.Attributes[Globals.CurTileX, Globals.CurTileY].data1 = scrlMap.Value;
-                tmpMap.Attributes[Globals.CurTileX, Globals.CurTileY].data2 = scrlX.Value;
-                tmpMap.Attributes[Globals.CurTileX, Globals.CurTileY].data3 = scrlY.Value;
+                tmpMap.Attributes[x, y].value = (int)Enums.MapAttributes.Warp;
+                tmpMap.Attributes[x, y].data1 = scrlMap.Value;
+                tmpMap.Attributes[x, y].data2 = scrlX.Value;
+                tmpMap.Attributes[x, y].data3 = scrlY.Value;
             }
             else if (rbSound.Checked == true)
             {
-                tmpMap.Attributes[Globals.CurTileX, Globals.CurTileY].value = (int)Enums.MapAttributes.Sound;
-                tmpMap.Attributes[Globals.CurTileX, Globals.CurTileY].data1 = scrlSoundDistance.Value;
-                tmpMap.Attributes[Globals.CurTileX, Globals.CurTileY].data2 = 0;
-                tmpMap.Attributes[Globals.CurTileX, Globals.CurTileY].data3 = 0;
-                tmpMap.Attributes[Globals.CurTileX, Globals.CurTileY].data4 = cmbMapAttributeSound.Text;
+                tmpMap.Attributes[x, y].value = (int)Enums.MapAttributes.Sound;
+                tmpMap.Attributes[x, y].data1 = scrlSoundDistance.Value;
+                tmpMap.Attributes[x, y].data2 = 0;
+                tmpMap.Attributes[x, y].data3 = 0;
+                tmpMap.Attributes[x, y].data4 = cmbMapAttributeSound.Text;
             }
             else if (rbResource.Checked == true)
             {
-                tmpMap.Attributes[Globals.CurTileX, Globals.CurTileY].value = (int)Enums.MapAttributes.Resource;
-                tmpMap.Attributes[Globals.CurTileX, Globals.CurTileY].data1 = scrlResource.Value;
+                tmpMap.Attributes[x, y].value = (int)Enums.MapAttributes.Resource;
+                tmpMap.Attributes[x, y].data1 = scrlResource.Value;
             }
         }
-        public bool RemoveAttribute()
+        public bool RemoveAttribute(MapStruct tmpMap, int x, int y)
         {
-            var tmpMap = Globals.GameMaps[Globals.CurrentMap];
-            if (tmpMap.Attributes[Globals.CurTileX, Globals.CurTileY].value > 0)
+            if (tmpMap.Attributes[x, y].value > 0)
             {
-                tmpMap.Attributes[Globals.CurTileX, Globals.CurTileY].value = 0;
-                tmpMap.Attributes[Globals.CurTileX, Globals.CurTileY].data1 = 0;
-                tmpMap.Attributes[Globals.CurTileX, Globals.CurTileY].data2 = 0;
-                tmpMap.Attributes[Globals.CurTileX, Globals.CurTileY].data3 = 0;
-                tmpMap.Attributes[Globals.CurTileX, Globals.CurTileY].data4 = "";
+                tmpMap.Attributes[x, y].value = 0;
+                tmpMap.Attributes[x, y].data1 = 0;
+                tmpMap.Attributes[x, y].data2 = 0;
+                tmpMap.Attributes[x, y].data3 = 0;
+                tmpMap.Attributes[x, y].data4 = "";
                 return true;
             }
             return false;
@@ -427,23 +432,28 @@ namespace Intersect_Editor.Forms
             if (tabControl.SelectedIndex == tabControl.TabPages.IndexOf(tabTiles)) {
                 Globals.CurrentLayer = 0;
                 Graphics.TilePreviewUpdated = true;
+                Globals.SelectionType = (int) Enums.SelectionTypes.AllLayers;
             }
             else if (tabControl.SelectedIndex == tabControl.TabPages.IndexOf(tabAttributes)) {
                 Globals.CurrentLayer = Constants.LayerCount;
                 Graphics.TilePreviewUpdated = true;
+                Globals.SelectionType = (int)Enums.SelectionTypes.AllLayers;
             }  
             else if (tabControl.SelectedIndex == tabControl.TabPages.IndexOf(tabEvents)) {
                 Globals.CurrentLayer = Constants.LayerCount + 2;
                 Graphics.TilePreviewUpdated = true;
+                Globals.SelectionType = (int)Enums.SelectionTypes.CurrentLayer;
             }  
             else if (tabControl.SelectedIndex == tabControl.TabPages.IndexOf(tabLights)) {
                 Globals.CurrentLayer =  Constants.LayerCount + 1;
                 Graphics.TilePreviewUpdated = true;
+                Globals.SelectionType = (int)Enums.SelectionTypes.CurrentLayer;
             }
             else if (tabControl.SelectedIndex == tabControl.TabPages.IndexOf(tabNPCs ))
             {
                 Globals.CurrentLayer = Constants.LayerCount + 3;
                 Graphics.TilePreviewUpdated = true;
+                Globals.SelectionType = (int)Enums.SelectionTypes.CurrentLayer;
                 // Update the list incase npcs have been modified since form load.
                 cmbNpc.Items.Clear();
                 cmbNpc.Items.Add("None");

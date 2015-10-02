@@ -78,6 +78,21 @@ namespace Intersect_Editor.Classes
         public static int TileHeight = 32;
         public static int MapWidth = 30;
         public static int MapHeight = 26;
+        public static int CurrentTool = (int) Enums.EdittingTool.Pen;
+        public static int CurMapSelX;
+        public static int CurMapSelY;
+        public static int CurMapSelW;
+        public static int CurMapSelH;
+
+        //Selection Moving Copying and Pasting
+        public static int SelectionType = (int) Enums.SelectionTypes.AllLayers;
+        public static bool Dragging = false;
+        public static int TileDragX = 0;
+        public static int TileDragY = 0;
+        public static int TotalTileDragX = 0;
+        public static int TotalTileDragY = 0;
+        public static MapStruct SelectionSource;
+
 
         //Game Object Editors
         public static frmResource ResourceEditor;

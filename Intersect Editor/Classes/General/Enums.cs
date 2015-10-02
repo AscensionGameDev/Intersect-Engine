@@ -170,6 +170,19 @@ namespace Intersect_Editor.Classes
             Delete = 3,
         }
 
+        public enum EdittingTool
+        {
+            Pen = 0,
+            Selection = 1,
+            Rectangle = 2,
+        }
+
+        public enum SelectionTypes
+        {
+            AllLayers = 0,
+            CurrentLayer = 1,
+        }
+
         public static int WeaponIndex = 2;
         public static int ShieldIndex = 3;
         public static List<string> EquipmentSlots = new List<string>() { "Helmet", "Armor", "Weapon", "Shield", "Boots" };

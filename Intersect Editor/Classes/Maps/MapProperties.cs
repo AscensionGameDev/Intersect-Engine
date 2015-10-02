@@ -100,6 +100,8 @@ namespace Intersect_Editor.Classes.Maps
                 {
                     Globals.MapEditorWindow.PrepUndoState();
                     _myMap.IsIndoors = value;
+                    Graphics.LightsChanged = true;
+                    Graphics.TilePreviewUpdated = true;
                     Globals.MapEditorWindow.AddUndoState();
                 }
             }
@@ -117,6 +119,8 @@ namespace Intersect_Editor.Classes.Maps
                     Globals.MapEditorWindow.PrepUndoState();
                     _myMap.Brightness = Math.Max(value, 10);
                     _myMap.Brightness = Math.Min(_myMap.Brightness, 100);
+                    Graphics.LightsChanged = true;
+                    Graphics.TilePreviewUpdated = true;
                     Globals.MapEditorWindow.AddUndoState();
                 }
             }

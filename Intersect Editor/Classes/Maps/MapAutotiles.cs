@@ -203,8 +203,8 @@ namespace Intersect_Editor.Classes
                 int quarterNum;
                 for (quarterNum = 1; quarterNum < 5; quarterNum++)
                 {
-                    Autotile[x, y].Layer[layerNum].SrcX[quarterNum] = (_myMap.Layers[layerNum].Tiles[x, y].X * Globals.TileWidth) + Autotile[x, y].Layer[layerNum].QuarterTile[quarterNum].X;
-                    Autotile[x, y].Layer[layerNum].SrcY[quarterNum] = (_myMap.Layers[layerNum].Tiles[x, y].Y * Globals.TileHeight) + Autotile[x, y].Layer[layerNum].QuarterTile[quarterNum].Y;
+                    Autotile[x, y].Layer[layerNum].SrcX[quarterNum] = (_myMap.Layers[layerNum].Tiles[x, y].X * Globals.TileWidth) + Autotile[x, y].Layer[layerNum].QuarterTileX[quarterNum];
+                    Autotile[x, y].Layer[layerNum].SrcY[quarterNum] = (_myMap.Layers[layerNum].Tiles[x, y].Y * Globals.TileHeight) + Autotile[x, y].Layer[layerNum].QuarterTileY[quarterNum];
                 }
             }
         }
@@ -827,84 +827,84 @@ namespace Intersect_Editor.Classes
             switch (autoTileLetter)
             {
                 case "a":
-                    Autotile[x, y].Layer[layerNum].QuarterTile[tileQuarter].X = AutoInner[1].X;
-                    Autotile[x, y].Layer[layerNum].QuarterTile[tileQuarter].Y = AutoInner[1].Y;
+                    Autotile[x, y].Layer[layerNum].QuarterTileX[tileQuarter] = AutoInner[1].X;
+                    Autotile[x, y].Layer[layerNum].QuarterTileY[tileQuarter] = AutoInner[1].Y;
                     break;
                 case "b":
-                    Autotile[x, y].Layer[layerNum].QuarterTile[tileQuarter].X = AutoInner[2].X;
-                    Autotile[x, y].Layer[layerNum].QuarterTile[tileQuarter].Y = AutoInner[2].Y;
+                    Autotile[x, y].Layer[layerNum].QuarterTileX[tileQuarter] = AutoInner[2].X;
+                    Autotile[x, y].Layer[layerNum].QuarterTileY[tileQuarter] = AutoInner[2].Y;
                     break;
                 case "c":
-                    Autotile[x, y].Layer[layerNum].QuarterTile[tileQuarter].X = AutoInner[3].X;
-                    Autotile[x, y].Layer[layerNum].QuarterTile[tileQuarter].Y = AutoInner[3].Y;
+                    Autotile[x, y].Layer[layerNum].QuarterTileX[tileQuarter] = AutoInner[3].X;
+                    Autotile[x, y].Layer[layerNum].QuarterTileY[tileQuarter] = AutoInner[3].Y;
                     break;
                 case "d":
-                    Autotile[x, y].Layer[layerNum].QuarterTile[tileQuarter].X = AutoInner[4].X;
-                    Autotile[x, y].Layer[layerNum].QuarterTile[tileQuarter].Y = AutoInner[4].Y;
+                    Autotile[x, y].Layer[layerNum].QuarterTileX[tileQuarter] = AutoInner[4].X;
+                    Autotile[x, y].Layer[layerNum].QuarterTileY[tileQuarter] = AutoInner[4].Y;
                     break;
                 case "e":
-                    Autotile[x, y].Layer[layerNum].QuarterTile[tileQuarter].X = AutoNw[1].X;
-                    Autotile[x, y].Layer[layerNum].QuarterTile[tileQuarter].Y = AutoNw[1].Y;
+                    Autotile[x, y].Layer[layerNum].QuarterTileX[tileQuarter] = AutoNw[1].X;
+                    Autotile[x, y].Layer[layerNum].QuarterTileY[tileQuarter] = AutoNw[1].Y;
                     break;
                 case "f":
-                    Autotile[x, y].Layer[layerNum].QuarterTile[tileQuarter].X = AutoNw[2].X;
-                    Autotile[x, y].Layer[layerNum].QuarterTile[tileQuarter].Y = AutoNw[2].Y;
+                    Autotile[x, y].Layer[layerNum].QuarterTileX[tileQuarter] = AutoNw[2].X;
+                    Autotile[x, y].Layer[layerNum].QuarterTileY[tileQuarter] = AutoNw[2].Y;
                     break;
                 case "g":
-                    Autotile[x, y].Layer[layerNum].QuarterTile[tileQuarter].X = AutoNw[3].X;
-                    Autotile[x, y].Layer[layerNum].QuarterTile[tileQuarter].Y = AutoNw[3].Y;
+                    Autotile[x, y].Layer[layerNum].QuarterTileX[tileQuarter] = AutoNw[3].X;
+                    Autotile[x, y].Layer[layerNum].QuarterTileY[tileQuarter] = AutoNw[3].Y;
                     break;
                 case "h":
-                    Autotile[x, y].Layer[layerNum].QuarterTile[tileQuarter].X = AutoNw[4].X;
-                    Autotile[x, y].Layer[layerNum].QuarterTile[tileQuarter].Y = AutoNw[4].Y;
+                    Autotile[x, y].Layer[layerNum].QuarterTileX[tileQuarter] = AutoNw[4].X;
+                    Autotile[x, y].Layer[layerNum].QuarterTileY[tileQuarter] = AutoNw[4].Y;
                     break;
                 case "i":
-                    Autotile[x, y].Layer[layerNum].QuarterTile[tileQuarter].X = AutoNe[1].X;
-                    Autotile[x, y].Layer[layerNum].QuarterTile[tileQuarter].Y = AutoNe[1].Y;
+                    Autotile[x, y].Layer[layerNum].QuarterTileX[tileQuarter] = AutoNe[1].X;
+                    Autotile[x, y].Layer[layerNum].QuarterTileY[tileQuarter] = AutoNe[1].Y;
                     break;
                 case "j":
-                    Autotile[x, y].Layer[layerNum].QuarterTile[tileQuarter].X = AutoNe[2].X;
-                    Autotile[x, y].Layer[layerNum].QuarterTile[tileQuarter].Y = AutoNe[2].Y;
+                    Autotile[x, y].Layer[layerNum].QuarterTileX[tileQuarter] = AutoNe[2].X;
+                    Autotile[x, y].Layer[layerNum].QuarterTileY[tileQuarter] = AutoNe[2].Y;
                     break;
                 case "k":
-                    Autotile[x, y].Layer[layerNum].QuarterTile[tileQuarter].X = AutoNe[3].X;
-                    Autotile[x, y].Layer[layerNum].QuarterTile[tileQuarter].Y = AutoNe[3].Y;
+                    Autotile[x, y].Layer[layerNum].QuarterTileX[tileQuarter] = AutoNe[3].X;
+                    Autotile[x, y].Layer[layerNum].QuarterTileY[tileQuarter] = AutoNe[3].Y;
                     break;
                 case "l":
-                    Autotile[x, y].Layer[layerNum].QuarterTile[tileQuarter].X = AutoNe[4].X;
-                    Autotile[x, y].Layer[layerNum].QuarterTile[tileQuarter].Y = AutoNe[4].Y;
+                    Autotile[x, y].Layer[layerNum].QuarterTileX[tileQuarter] = AutoNe[4].X;
+                    Autotile[x, y].Layer[layerNum].QuarterTileY[tileQuarter] = AutoNe[4].Y;
                     break;
                 case "m":
-                    Autotile[x, y].Layer[layerNum].QuarterTile[tileQuarter].X = AutoSw[1].X;
-                    Autotile[x, y].Layer[layerNum].QuarterTile[tileQuarter].Y = AutoSw[1].Y;
+                    Autotile[x, y].Layer[layerNum].QuarterTileX[tileQuarter] = AutoSw[1].X;
+                    Autotile[x, y].Layer[layerNum].QuarterTileY[tileQuarter] = AutoSw[1].Y;
                     break;
                 case "n":
-                    Autotile[x, y].Layer[layerNum].QuarterTile[tileQuarter].X = AutoSw[2].X;
-                    Autotile[x, y].Layer[layerNum].QuarterTile[tileQuarter].Y = AutoSw[2].Y;
+                    Autotile[x, y].Layer[layerNum].QuarterTileX[tileQuarter] = AutoSw[2].X;
+                    Autotile[x, y].Layer[layerNum].QuarterTileY[tileQuarter] = AutoSw[2].Y;
                     break;
                 case "o":
-                    Autotile[x, y].Layer[layerNum].QuarterTile[tileQuarter].X = AutoSw[3].X;
-                    Autotile[x, y].Layer[layerNum].QuarterTile[tileQuarter].Y = AutoSw[3].Y;
+                    Autotile[x, y].Layer[layerNum].QuarterTileX[tileQuarter] = AutoSw[3].X;
+                    Autotile[x, y].Layer[layerNum].QuarterTileY[tileQuarter] = AutoSw[3].Y;
                     break;
                 case "p":
-                    Autotile[x, y].Layer[layerNum].QuarterTile[tileQuarter].X = AutoSw[4].X;
-                    Autotile[x, y].Layer[layerNum].QuarterTile[tileQuarter].Y = AutoSw[4].Y;
+                    Autotile[x, y].Layer[layerNum].QuarterTileX[tileQuarter] = AutoSw[4].X;
+                    Autotile[x, y].Layer[layerNum].QuarterTileY[tileQuarter] = AutoSw[4].Y;
                     break;
                 case "q":
-                    Autotile[x, y].Layer[layerNum].QuarterTile[tileQuarter].X = AutoSe[1].X;
-                    Autotile[x, y].Layer[layerNum].QuarterTile[tileQuarter].Y = AutoSe[1].Y;
+                    Autotile[x, y].Layer[layerNum].QuarterTileX[tileQuarter] = AutoSe[1].X;
+                    Autotile[x, y].Layer[layerNum].QuarterTileY[tileQuarter] = AutoSe[1].Y;
                     break;
                 case "r":
-                    Autotile[x, y].Layer[layerNum].QuarterTile[tileQuarter].X = AutoSe[2].X;
-                    Autotile[x, y].Layer[layerNum].QuarterTile[tileQuarter].Y = AutoSe[2].Y;
+                    Autotile[x, y].Layer[layerNum].QuarterTileX[tileQuarter] = AutoSe[2].X;
+                    Autotile[x, y].Layer[layerNum].QuarterTileY[tileQuarter] = AutoSe[2].Y;
                     break;
                 case "s":
-                    Autotile[x, y].Layer[layerNum].QuarterTile[tileQuarter].X = AutoSe[3].X;
-                    Autotile[x, y].Layer[layerNum].QuarterTile[tileQuarter].Y = AutoSe[3].Y;
+                    Autotile[x, y].Layer[layerNum].QuarterTileX[tileQuarter] = AutoSe[3].X;
+                    Autotile[x, y].Layer[layerNum].QuarterTileY[tileQuarter] = AutoSe[3].Y;
                     break;
                 case "t":
-                    Autotile[x, y].Layer[layerNum].QuarterTile[tileQuarter].X = AutoSe[4].X;
-                    Autotile[x, y].Layer[layerNum].QuarterTile[tileQuarter].Y = AutoSe[4].Y;
+                    Autotile[x, y].Layer[layerNum].QuarterTileX[tileQuarter] = AutoSe[4].X;
+                    Autotile[x, y].Layer[layerNum].QuarterTileY[tileQuarter] = AutoSe[4].Y;
                     break;
             }
         }
@@ -927,16 +927,11 @@ namespace Intersect_Editor.Classes
 
     public class QuarterTileCls
     {
-        public Point[] QuarterTile = new Point[5];
+        public int[] QuarterTileX = new int[5];
+        public int[] QuarterTileY = new int[5];
         public byte RenderState;
         public long[] SrcX = new long[5];
         public long[] SrcY = new long[5];
-        public QuarterTileCls()
-        {
-            for (var i = 0; i < 5; i++) {
-                QuarterTile[i] = new Point();
-            }
-        }
     }
 
     public class AutoTileCls

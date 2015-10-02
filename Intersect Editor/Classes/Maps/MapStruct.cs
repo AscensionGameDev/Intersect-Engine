@@ -22,6 +22,7 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 
 namespace Intersect_Editor.Classes
 {
@@ -88,6 +89,10 @@ namespace Intersect_Editor.Classes
 
         public MapStruct(MapStruct mapcopy)
         {
+            ByteBuffer bf = new ByteBuffer();
+            MyName = mapcopy.MyName;
+            Brightness = mapcopy.Brightness;
+            IsIndoors = mapcopy.IsIndoors;
             for (var i = 0; i < Constants.LayerCount; i++)
             {
                 Layers[i] = new TileArray();
@@ -108,6 +113,19 @@ namespace Intersect_Editor.Classes
                         Attributes[x, y].data4 = mapcopy.Attributes[x, y].data4;
                     }
                 }
+            }
+            for (var i = 0; i < mapcopy.Spawns.Count; i++)
+            {
+                Spawns.Add(new NpcSpawn(mapcopy.Spawns[i]));
+            }
+            for (var i = 0; i < mapcopy.Lights.Count; i++)
+            {
+                Lights.Add(new Light(mapcopy.Lights[i]));
+            }
+            for (var i = 0; i < mapcopy.Events.Count; i++)
+            {
+                bf.WriteBytes(mapcopy.Events[i].EventData());
+                Events.Add(new EventStruct(bf));
             }
             Autotiles = new MapAutotiles(this);
             Autotiles.InitAutotiles();
@@ -304,6 +322,18 @@ namespace Intersect_Editor.Classes
             }
             return null;
         }
+        public NpcSpawn FindSpawnAt(int x, int y)
+        {
+            if (Spawns.Count <= 0) return null;
+            foreach (var t in Spawns)
+            {
+                if (t.X == x && t.Y == y)
+                {
+                    return t;
+                }
+            }
+            return null;
+        }
     }
 
     public class Attribute
@@ -346,6 +376,16 @@ namespace Intersect_Editor.Classes
             TileX = x;
             TileY = y;
         }
+
+        public Light(Light copy)
+        {
+            TileX = copy.TileX;
+            TileY = copy.TileY;
+            OffsetX = copy.OffsetX;
+            OffsetY = copy.OffsetY;
+            Intensity = copy.Intensity;
+            Range = copy.Range;
+        }
         public Light(ByteBuffer myBuffer)
         {
             OffsetX = myBuffer.ReadInteger();
@@ -374,6 +414,19 @@ namespace Intersect_Editor.Classes
         public int X;
         public int Y;
         public int Dir;
+
+        public NpcSpawn()
+        {
+            
+        }
+
+        public NpcSpawn(NpcSpawn copy)
+        {
+            NpcNum = copy.NpcNum;
+            X = copy.X;
+            Y = copy.Y;
+            Dir = copy.Dir;
+        }
     }
 }
 

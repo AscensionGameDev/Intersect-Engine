@@ -240,22 +240,27 @@ namespace Intersect_Editor.Forms
         private void hideDarknessToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Graphics.HideDarkness = !Graphics.HideDarkness;
-            hideDarknessToolStripMenuItem.Checked = Graphics.HideDarkness;
+            hideDarknessToolStripMenuItem.Checked = !Graphics.HideDarkness;
         }
         private void hideFogToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Graphics.HideFog = !Graphics.HideFog;
-            hideFogToolStripMenuItem.Checked = Graphics.HideFog;
+            hideFogToolStripMenuItem.Checked = !Graphics.HideFog;
         }
         private void hideOverlayToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Graphics.HideOverlay = !Graphics.HideOverlay;
-            hideOverlayToolStripMenuItem.Checked = Graphics.HideOverlay;
+            hideOverlayToolStripMenuItem.Checked = !Graphics.HideOverlay;
         }
         private void hideTilePreviewToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Graphics.HideTilePreview = !Graphics.HideTilePreview;
-            hideTilePreviewToolStripMenuItem.Checked = Graphics.HideTilePreview;
+            hideTilePreviewToolStripMenuItem.Checked = !Graphics.HideTilePreview;
+        }
+        private void hideResourcesToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Graphics.HideResources = !Graphics.HideResources;
+            hideResourcesToolStripMenuItem.Checked = !Graphics.HideResources;
         }
         //Content Editors
         private void itemEditorToolStripMenuItem_Click(object sender, EventArgs e)
@@ -312,6 +317,7 @@ namespace Intersect_Editor.Forms
                 Globals.MapEditorWindow.CurrentMapState = Globals.MapEditorWindow.MapUndoStates[Globals.MapEditorWindow.MapUndoStates.Count - 1];
                 Globals.MapEditorWindow.MapUndoStates.RemoveAt(Globals.MapEditorWindow.MapUndoStates.Count - 1);
                 Globals.MapPropertiesWindow.Update();
+                Graphics.TilePreviewUpdated = true;
             }
         }
         private void toolStripBtnRedo_Click(object sender, EventArgs e)
@@ -324,6 +330,7 @@ namespace Intersect_Editor.Forms
                 Globals.MapEditorWindow.CurrentMapState = Globals.MapEditorWindow.MapRedoStates[Globals.MapEditorWindow.MapRedoStates.Count - 1];
                 Globals.MapEditorWindow.MapRedoStates.RemoveAt(Globals.MapEditorWindow.MapRedoStates.Count - 1);
                 Globals.MapPropertiesWindow.Update();
+                Graphics.TilePreviewUpdated = true;
             }
         }
         private void toolStripBtnFill_Click(object sender, EventArgs e)
@@ -422,6 +429,37 @@ namespace Intersect_Editor.Forms
                 Globals.CurrentEditor = editorIndex;
             }
 
+        }
+
+        private void toolStripBtnPen_Click(object sender, EventArgs e)
+        {
+            Globals.CurrentTool = (int) Enums.EdittingTool.Pen;
+        }
+
+        private void toolStripBtnSelect_Click(object sender, EventArgs e)
+        {
+            Globals.CurrentTool = (int)Enums.EdittingTool.Selection;
+        }
+
+        private void toolStripBtnRect_Click(object sender, EventArgs e)
+        {
+            Globals.CurrentTool = (int)Enums.EdittingTool.Rectangle;
+            Globals.CurMapSelX = -1;
+            Globals.CurMapSelY = -1;
+        }
+
+        private void allLayersToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Globals.SelectionType = (int) Enums.SelectionTypes.AllLayers;
+            allLayersToolStripMenuItem.Checked = true;
+            currentLayerOnlyToolStripMenuItem.Checked = false;
+        }
+
+        private void currentLayerOnlyToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Globals.SelectionType = (int)Enums.SelectionTypes.CurrentLayer;
+            allLayersToolStripMenuItem.Checked = false;
+            currentLayerOnlyToolStripMenuItem.Checked = true;
         }
     }
 }

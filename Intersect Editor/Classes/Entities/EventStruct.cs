@@ -39,6 +39,21 @@ namespace Intersect_Editor.Classes
             SpawnY = y;
             MyPages.Add(new EventPage());
         }
+
+        public EventStruct(EventStruct copy)
+        {
+            ByteBuffer bf = new ByteBuffer();
+            bf.WriteBytes(copy.EventData());
+            MyName = bf.ReadString();
+            SpawnX = bf.ReadInteger();
+            SpawnY = bf.ReadInteger();
+            Deleted = bf.ReadInteger();
+            PageCount = bf.ReadInteger();
+            for (var i = 0; i < PageCount; i++)
+            {
+                MyPages.Add(new EventPage(bf));
+            }
+        }
         public EventStruct(ByteBuffer myBuffer)
         {
             MyName = myBuffer.ReadString();

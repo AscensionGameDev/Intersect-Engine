@@ -28,6 +28,9 @@ namespace Intersect_Editor.Classes
 {
     public static class EditorLoop
     {
+        private static int _fps = 0;
+        private static int _fpsCount = 0;
+        private static long _fpsTime = 0;
         public static void StartLoop()
         {
             Globals.MainForm.Visible = true;
@@ -42,15 +45,18 @@ namespace Intersect_Editor.Classes
                 {
                     if (Globals.GameMaps[Globals.CurrentMap] != null)
                     {
-                        if (myForm.Text != @"Intersect Editor - Map# " + Globals.CurrentMap + @" " + Globals.GameMaps[Globals.CurrentMap].MyName + @" Revision: " + Globals.GameMaps[Globals.CurrentMap].Revision + @" CurX: " + Globals.CurTileX + @" CurY: " + Globals.CurTileY)
+                        myForm.toolStripLabelCoords.Text = @" CurX: " + Globals.CurTileX + @" CurY: " + Globals.CurTileY;
+                        myForm.toolStripLabelRevision.Text = @"Revision: " + Globals.GameMaps[Globals.CurrentMap].Revision;
+                        if (myForm.Text != @"Intersect Editor - Map# " + Globals.CurrentMap + @" " + Globals.GameMaps[Globals.CurrentMap].MyName)
                         {
-                            myForm.Text = @"Intersect Editor - Map# " + Globals.CurrentMap + @" " + Globals.GameMaps[Globals.CurrentMap].MyName + @" Revision: " + Globals.GameMaps[Globals.CurrentMap].Revision + @" CurX: " + Globals.CurTileX + @" CurY: " + Globals.CurTileY;
+                            myForm.Text = @"Intersect Editor - Map# " + Globals.CurrentMap + @" " + Globals.GameMaps[Globals.CurrentMap].MyName;
                         }
                     }
                 }
 
                 //Process the Undo/Redo Buttons
-                if (Globals.MapEditorWindow.MapUndoStates.Count > 0)  {
+                if (Globals.MapEditorWindow.MapUndoStates.Count > 0)
+                {
                     myForm.toolStripBtnUndo.Enabled = true;
                 }
                 else
@@ -81,7 +87,51 @@ namespace Intersect_Editor.Classes
                     myForm.toolStripBtnErase.Enabled = false;
                     myForm.eraseLayerToolStripMenuItem.Enabled = false;
                 }
+
+                //Process the Tool Buttons
+                myForm.toolStripBtnPen.Enabled = false;
+                myForm.toolStripBtnSelect.Enabled = true;
+                myForm.toolStripBtnRect.Enabled = false;
+                switch (Globals.CurrentLayer)
+                {
+                    case Constants.LayerCount: //Attributes
+                        myForm.toolStripBtnPen.Enabled = true;
+                        myForm.toolStripBtnRect.Enabled = true;
+                        break;
+                    case Constants.LayerCount + 1: //Lights
+                        Globals.CurrentTool = (int)Enums.EdittingTool.Selection;
+                        break;
+                    case Constants.LayerCount + 2: //Events
+                        Globals.CurrentTool = (int)Enums.EdittingTool.Selection;
+                        break;
+                    case Constants.LayerCount + 3: //NPCS
+                        Globals.CurrentTool = (int) Enums.EdittingTool.Selection;
+                        break;
+                    default:
+                        myForm.toolStripBtnPen.Enabled = true;
+                        myForm.toolStripBtnRect.Enabled = true;
+                        break;
+                }
                 
+                switch (Globals.CurrentTool)
+                {
+                    case (int)Enums.EdittingTool.Pen:
+                        if (!myForm.toolStripBtnPen.Checked) { myForm.toolStripBtnPen.Checked = true; }
+                        if (myForm.toolStripBtnSelect.Checked) { myForm.toolStripBtnSelect.Checked = false; }
+                        if (myForm.toolStripBtnRect.Checked) { myForm.toolStripBtnRect.Checked = false; }
+                        break;
+                    case (int)Enums.EdittingTool.Selection:
+                        if (myForm.toolStripBtnPen.Checked) { myForm.toolStripBtnPen.Checked = false; }
+                        if (!myForm.toolStripBtnSelect.Checked) { myForm.toolStripBtnSelect.Checked = true; }
+                        if (myForm.toolStripBtnRect.Checked) { myForm.toolStripBtnRect.Checked = false; }
+                        break;
+                    case (int)Enums.EdittingTool.Rectangle:
+                        if (myForm.toolStripBtnPen.Checked) { myForm.toolStripBtnPen.Checked = false; }
+                        if (myForm.toolStripBtnSelect.Checked) { myForm.toolStripBtnSelect.Checked = false; }
+                        if (!myForm.toolStripBtnRect.Checked) { myForm.toolStripBtnRect.Checked = true; }
+                        break;
+                }
+
                 if (waterfallTimer < Environment.TickCount)
                 {
                     Globals.WaterfallFrame++;
@@ -102,7 +152,15 @@ namespace Intersect_Editor.Classes
                 Graphics.Render();
                 Network.Update();
                 Application.DoEvents(); // handle form events
-                Thread.Sleep(1);
+
+                _fpsCount++;
+                if (_fpsTime < Environment.TickCount)
+                {
+                    _fps = _fpsCount;
+                    myForm.toolStripLabelFPS.Text = @"FPS: " + _fps;
+                    _fpsCount = 0;
+                    _fpsTime = Environment.TickCount + 1000;
+                }
             }
         }
     }

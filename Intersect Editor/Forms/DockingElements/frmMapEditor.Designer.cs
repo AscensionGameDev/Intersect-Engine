@@ -83,6 +83,6 @@
         #endregion
 
         public System.Windows.Forms.PictureBox picMap;
-        private System.Windows.Forms.Panel pnlMapContainer;
+        public System.Windows.Forms.Panel pnlMapContainer;
     }
 }
