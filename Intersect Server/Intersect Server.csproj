@@ -37,6 +37,9 @@
   <PropertyGroup>
     <StartupObject>Intersect_Server.Classes.MainClass</StartupObject>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>IntersectLogo.ico</ApplicationIcon>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="MySql.Data">
       <HintPath>.\MySql.Data.dll</HintPath>
@@ -82,6 +85,9 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="IntersectLogo.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>

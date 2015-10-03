@@ -28,11 +28,13 @@ using Intersect_Client.Classes.Animations;
 using Intersect_Client.Classes.Items;
 using Intersect_Client.Classes.Spells;
 using System;
+using System.Collections.Generic;
 
 namespace Intersect_Client.Classes
 {
     public static class PacketHandler
     {
+        public static Dictionary<Enums.ServerPackets, int> dict = new Dictionary<Enums.ServerPackets,int>();  
         public static void HandlePacket(byte[] packet)
         {
             var bf = new ByteBuffer();
@@ -40,6 +42,14 @@ namespace Intersect_Client.Classes
             var packetHeader = (Enums.ServerPackets)bf.ReadLong();
             lock (Globals.GameLock)
             {
+                if (dict.ContainsKey(packetHeader))
+                {
+                    dict[packetHeader]++;
+                }
+                else
+                {
+                    dict.Add(packetHeader, 1);
+                }
                 switch (packetHeader)
                 {
                     case Enums.ServerPackets.RequestPing:

@@ -71,6 +71,9 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>IntersectLogo.ico</ApplicationIcon>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="Gwen, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -150,12 +153,6 @@
     <Compile Include="Classes\UI\Menu\RegisterControls.cs" />
     <Compile Include="Classes\UI\OptionsWindow.cs" />
     <Compile Include="Classes\UI\IGUIElement.cs" />
-    <Compile Include="Forms\frmGame.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\frmGame.Designer.cs">
-      <DependentUpon>frmGame.cs</DependentUpon>
-    </Compile>
     <Compile Include="Classes\General\Globals.cs" />
     <Compile Include="Classes\Core\GameMain.cs" />
     <Compile Include="Classes\Core\Graphics.cs" />
@@ -169,10 +166,6 @@
     <Compile Include="Classes\Entities\Player.cs" />
     <Compile Include="Classes\Core\Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <EmbeddedResource Include="Forms\frmGame.resx">
-      <DependentUpon>frmGame.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
@@ -458,6 +451,7 @@
     <Content Include="Gwen.Renderer.SFML.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="IntersectLogo.ico" />
     <Content Include="LICENSE.txt" />
     <Content Include="Resources\Animations\Fire 4.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

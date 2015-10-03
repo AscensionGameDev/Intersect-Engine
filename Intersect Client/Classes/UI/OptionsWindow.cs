@@ -121,7 +121,6 @@ namespace Intersect_Client.Classes.UI
 
             //Options - Fullscreen Checkbox
             _fullscreen = new LabeledCheckBox(_optionsMenu) { Text = "FS" };
-            _fullscreen.SetToolTipText("Fullscreen");
             _fullscreen.SetSize(40, 14);
             _fullscreen.SetPosition(_fpsList.X + _fpsList.Width + 4, 64);
 

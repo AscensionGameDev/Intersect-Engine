@@ -203,13 +203,6 @@ namespace Intersect_Server.Classes
                 PacketSender.SendMap(MyClient,newMap);
                 PacketSender.SendEnterMap(MyClient,newMap);
                 _sentMap = true;
-                for (var i = 0; i < Globals.Entities.Count; i++)
-                {
-                    if (i != MyIndex)
-                    {
-                        PacketSender.SendEntityPositionTo(MyClient, i, (int)Enums.EntityTypes.Player, Globals.Entities[i]);
-                    }
-                }
             }
             else
             {

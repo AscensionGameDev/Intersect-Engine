@@ -57,7 +57,6 @@ namespace Intersect_Client.Classes
         public static bool MustReInit;
         public static int FadeStage = 1;
         public static float FadeAmt = 255f;
-        public static FrmGame MyForm;
         public static List<Keyboard.Key> KeyStates = new List<Keyboard.Key>();
         public static List<Mouse.Button> MouseState = new List<Mouse.Button>();
         public static Font GameFont;
@@ -151,13 +150,19 @@ namespace Intersect_Client.Classes
         private static void InitSfml()
         {
             if (DisplayMode < 0 || DisplayMode >= GetValidVideoModes().Count) { DisplayMode = 0; }
-            MyForm = new FrmGame();
             if (GetValidVideoModes().Any())
             {
-                MyForm.Size = new Size((int)GetValidVideoModes()[DisplayMode].Width, (int)GetValidVideoModes()[DisplayMode].Height);
-                MyForm.Text = @"Intersect Client";
-                RenderWindow = new RenderWindow(MyForm.Handle);
-
+                
+                if (FullScreen)
+                {
+                    RenderWindow = new RenderWindow(GetValidVideoModes()[DisplayMode], "Intersect Engine", Styles.Fullscreen);
+                }
+                else
+                {
+                    RenderWindow = new RenderWindow(GetValidVideoModes()[DisplayMode], "Intersect Engine", Styles.Default);
+                }
+                ScreenWidth = (int)RenderWindow.Size.X;
+                ScreenHeight = (int)RenderWindow.Size.Y;
                 if (FPS == 0)
                 {
                     RenderWindow.SetVerticalSyncEnabled(true);
@@ -178,36 +183,12 @@ namespace Intersect_Client.Classes
                 {
                     RenderWindow.SetFramerateLimit(120);
                 }
-                if (FullScreen)
-                {
-                    MyForm.TopMost = true;
-                    MyForm.FormBorderStyle = FormBorderStyle.None;
-                    MyForm.WindowState = FormWindowState.Maximized;
-                    RenderWindow.SetView(new View(new FloatRect(0, 0, (int)GetValidVideoModes()[DisplayMode].Width, (int)GetValidVideoModes()[DisplayMode].Height)));
-                }
-                else
-                {
-                    RenderWindow.SetView(new View(new FloatRect(0, 0, MyForm.ClientSize.Width, MyForm.ClientSize.Height)));
-                }
-
             }
             else
             {
-                MyForm.Width = 800;
-                MyForm.Height = 640;
-                MyForm.Text = @"Intersect Client";
-                RenderWindow = new RenderWindow(MyForm.Handle);
-                RenderWindow.SetView(new View(new FloatRect(0, 0, MyForm.ClientSize.Width, MyForm.ClientSize.Height)));
-            }
-            if (FullScreen)
-            {
-                ScreenWidth = (int)GetValidVideoModes()[DisplayMode].Width;
-                ScreenHeight = (int)GetValidVideoModes()[DisplayMode].Height;
-            }
-            else
-            {
-                ScreenWidth = MyForm.ClientSize.Width;
-                ScreenHeight = MyForm.ClientSize.Height;
+                MessageBox.Show(@"Failed to load available video modes.");
+                Application.Exit();
+                    return;
             }
             RenderWindow.KeyPressed += renderWindow_KeyPressed;
             RenderWindow.KeyReleased += renderWindow_KeyReleased;
@@ -282,14 +263,11 @@ namespace Intersect_Client.Classes
             {
                 Gui.DestroyGwen();
                 RenderWindow.Close();
-                MyForm.Close();
-                MyForm.Dispose();
                 Gui.SetupHandlers = false;
                 InitSfml();
                 MustReInit = false;
             }
             //if (!RenderWindow.HasFocus()) return;
-            RenderWindow.DispatchEvents();
             RenderWindow.Clear(Color.Black);
             DrawCalls = 0;
             CacheLimit = 0;
@@ -476,6 +454,7 @@ namespace Intersect_Client.Classes
                 RenderWindow.Draw(myShape);
             }
             RenderWindow.Display();
+                        RenderWindow.DispatchEvents();
             _fpsCount++;
             if (_fpsTimer < Environment.TickCount)
             {
