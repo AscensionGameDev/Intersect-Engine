@@ -243,6 +243,7 @@ namespace Intersect_Editor.Forms
             toolStripBtnPen.Enabled = false;
             toolStripBtnSelect.Enabled = true;
             toolStripBtnRect.Enabled = false;
+            toolStripBtnEyeDrop.Enabled = false;
             switch (Globals.CurrentLayer)
             {
                 case Constants.LayerCount: //Attributes
@@ -261,6 +262,7 @@ namespace Intersect_Editor.Forms
                 default:
                     toolStripBtnPen.Enabled = true;
                     toolStripBtnRect.Enabled = true;
+                    toolStripBtnEyeDrop.Enabled = true;
                     break;
             }
 
@@ -270,6 +272,7 @@ namespace Intersect_Editor.Forms
                     if (!toolStripBtnPen.Checked) { toolStripBtnPen.Checked = true; }
                     if (toolStripBtnSelect.Checked) { toolStripBtnSelect.Checked = false; }
                     if (toolStripBtnRect.Checked) { toolStripBtnRect.Checked = false; }
+                    if (toolStripBtnEyeDrop.Checked) { toolStripBtnEyeDrop.Checked = false; }
 
                     if (toolStripBtnCut.Enabled) { toolStripBtnCut.Enabled = false; }
                     if (toolStripBtnCopy.Enabled) { toolStripBtnCopy.Enabled = false; }
@@ -280,6 +283,7 @@ namespace Intersect_Editor.Forms
                     if (toolStripBtnPen.Checked) { toolStripBtnPen.Checked = false; }
                     if (!toolStripBtnSelect.Checked) { toolStripBtnSelect.Checked = true; }
                     if (toolStripBtnRect.Checked) { toolStripBtnRect.Checked = false; }
+                    if (toolStripBtnEyeDrop.Checked) { toolStripBtnEyeDrop.Checked = false; }
 
                     if (!toolStripBtnCut.Enabled) { toolStripBtnCut.Enabled = true; }
                     if (!toolStripBtnCopy.Enabled) { toolStripBtnCopy.Enabled = true; }
@@ -290,6 +294,18 @@ namespace Intersect_Editor.Forms
                     if (toolStripBtnPen.Checked) { toolStripBtnPen.Checked = false; }
                     if (toolStripBtnSelect.Checked) { toolStripBtnSelect.Checked = false; }
                     if (!toolStripBtnRect.Checked) { toolStripBtnRect.Checked = true; }
+                    if (toolStripBtnEyeDrop.Checked) { toolStripBtnEyeDrop.Checked = false; }
+
+                    if (toolStripBtnCut.Enabled) { toolStripBtnCut.Enabled = false; }
+                    if (toolStripBtnCopy.Enabled) { toolStripBtnCopy.Enabled = false; }
+                    if (cutToolStripMenuItem.Enabled) { cutToolStripMenuItem.Enabled = false; }
+                    if (copyToolStripMenuItem.Enabled) { copyToolStripMenuItem.Enabled = false; }
+                    break;
+                case (int)Enums.EdittingTool.Droppler:
+                    if (toolStripBtnPen.Checked) { toolStripBtnPen.Checked = false; }
+                    if (toolStripBtnSelect.Checked) { toolStripBtnSelect.Checked = false; }
+                    if (toolStripBtnRect.Checked) { toolStripBtnRect.Checked = false; }
+                    if (!toolStripBtnEyeDrop.Checked) { toolStripBtnEyeDrop.Checked = true; }
 
                     if (toolStripBtnCut.Enabled) { toolStripBtnCut.Enabled = false; }
                     if (toolStripBtnCopy.Enabled) { toolStripBtnCopy.Enabled = false; }
@@ -592,6 +608,12 @@ namespace Intersect_Editor.Forms
             Globals.CurMapSelX = -1;
             Globals.CurMapSelY = -1;
         }
+        private void toolStripBtnEyeDrop_Click(object sender, EventArgs e)
+        {
+            Globals.CurrentTool = (int)Enums.EdittingTool.Droppler;
+            Globals.CurMapSelX = -1;
+            Globals.CurMapSelY = -1;
+        }
         private void toolStripBtnCopy_Click(object sender, EventArgs e)
         {
             if (Globals.CurrentTool != (int)Enums.EdittingTool.Selection) { return; }
@@ -678,6 +700,8 @@ namespace Intersect_Editor.Forms
             }
 
         }
+
+
 
 
 

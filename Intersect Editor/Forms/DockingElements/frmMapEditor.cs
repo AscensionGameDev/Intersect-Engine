@@ -6,6 +6,7 @@ using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Windows.Forms;
 using WeifenLuo.WinFormsUI.Docking;
@@ -89,7 +90,45 @@ namespace Intersect_Editor.Forms
             {
                 case MouseButtons.Left:
                     Globals.MouseButton = 0;
-                    if (Globals.CurrentTool == (int)Enums.EdittingTool.Selection)
+                    if (Globals.CurrentTool == (int) Enums.EdittingTool.Droppler)
+                    {
+                        for (int i = Globals.CurrentLayer; i >= 0; i--)
+                        {
+                            if (tmpMap.Layers[i].Tiles[Globals.CurTileX, Globals.CurTileY].TilesetIndex > -1)
+                            {
+                                Globals.MapLayersWindow.SetTileset(
+                                    tmpMap.Layers[i].Tiles[Globals.CurTileX, Globals.CurTileY].TilesetIndex);
+                                Globals.MapLayersWindow.SetAutoTile(
+                                    tmpMap.Layers[i].Tiles[Globals.CurTileX, Globals.CurTileY].Autotile);
+                                Globals.CurSelX = tmpMap.Layers[i].Tiles[Globals.CurTileX, Globals.CurTileY].X;
+                                Globals.CurSelY = tmpMap.Layers[i].Tiles[Globals.CurTileX, Globals.CurTileY].Y;
+                                Globals.CurrentTool = (int)Enums.EdittingTool.Pen;
+                                Globals.MapLayersWindow.SetLayer(i);
+                                break;
+                            }
+                        }
+                        if (Globals.CurrentTool == (int) Enums.EdittingTool.Droppler)
+                        {
+                            //Could not find a tile from the selected level downward, maybe they didnt opt for a specific layer?
+                            for (int i = 4; i >= 0; i--)
+                            {
+                                if (tmpMap.Layers[i].Tiles[Globals.CurTileX, Globals.CurTileY].TilesetIndex > -1)
+                                {
+                                    Globals.MapLayersWindow.SetTileset(
+                                        tmpMap.Layers[i].Tiles[Globals.CurTileX, Globals.CurTileY].TilesetIndex);
+                                    Globals.MapLayersWindow.SetAutoTile(
+                                        tmpMap.Layers[i].Tiles[Globals.CurTileX, Globals.CurTileY].Autotile);
+                                    Globals.CurSelX = tmpMap.Layers[i].Tiles[Globals.CurTileX, Globals.CurTileY].X;
+                                    Globals.CurSelY = tmpMap.Layers[i].Tiles[Globals.CurTileX, Globals.CurTileY].Y;
+                                    Globals.CurrentTool = (int) Enums.EdittingTool.Pen;
+                                    Globals.MapLayersWindow.SetLayer(i);
+                                    break;
+                                }
+                            }
+                        }
+                        return;
+                    }
+                    else if (Globals.CurrentTool == (int)Enums.EdittingTool.Selection)
                     {
                         if (Globals.Dragging == true)
                         {

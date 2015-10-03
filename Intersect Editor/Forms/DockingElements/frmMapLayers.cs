@@ -29,15 +29,7 @@ namespace Intersect_Editor.Forms
         //Tiles Tab
         private void cmbTilesets_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (File.Exists("Resources/Tilesets/" + Globals.Tilesets[cmbTilesets.SelectedIndex]))
-            {
-                Globals.CurrentTileset = cmbTilesets.SelectedIndex;
-                Graphics.InitTileset(Globals.CurrentTileset, Globals.MainForm);
-            }
-            else
-            {
-                cmbTilesets.SelectedIndex = Globals.CurrentTileset;
-            }
+            SetTileset(cmbTilesets.SelectedIndex);
         }
         private void picTileset_MouseDown(object sender, MouseEventArgs e)
         {
@@ -106,7 +98,13 @@ namespace Intersect_Editor.Forms
         }
         private void cmbAutotile_SelectedIndexChanged(object sender, EventArgs e)
         {
-            Globals.Autotilemode = cmbAutotile.SelectedIndex;
+            SetAutoTile(cmbAutotile.SelectedIndex);
+        }
+
+        public void SetAutoTile(int index)
+        {
+            Globals.Autotilemode = index;
+            cmbAutotile.SelectedIndex = index;
             switch (Globals.Autotilemode)
             {
                 case 1:
@@ -127,6 +125,27 @@ namespace Intersect_Editor.Forms
                     Globals.CurSelH = 1;
                     break;
 
+            }
+        }
+        public void SetTileset(int index)
+        {
+            cmbTilesets.SelectedIndex = index;
+            if (File.Exists("Resources/Tilesets/" + Globals.Tilesets[cmbTilesets.SelectedIndex]))
+            {
+                Globals.CurrentTileset = cmbTilesets.SelectedIndex;
+                Graphics.InitTileset(Globals.CurrentTileset, Globals.MainForm);
+            }
+            else
+            {
+                cmbTilesets.SelectedIndex = Globals.CurrentTileset;
+            }
+        }
+        public void SetLayer(int index)
+        {
+            Globals.CurrentLayer = index;
+            if (index < Constants.LayerCount)
+            {
+                cmbMapLayer.SelectedIndex = index;
             }
         }
 
