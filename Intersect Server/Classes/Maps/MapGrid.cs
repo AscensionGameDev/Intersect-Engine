@@ -29,6 +29,10 @@ namespace Intersect_Server.Classes
 		private readonly int _myIndex;
 		public long Width;
 		public long Height;
+	    public long XMin;
+	    public long YMin;
+	    public long XMax;
+	    public long YMax;
 		public MapGrid (int startMap, int myGridIndex)
 		{
 			MyMaps = new int[1];
@@ -46,6 +50,10 @@ namespace Intersect_Server.Classes
 			Globals.GameMaps [startMap].MapGrid = myGridIndex;
 			Globals.GameMaps [startMap].MapGridX = Globals.MapCount;
 			Globals.GameMaps [startMap].MapGridY = Globals.MapCount;
+		    XMin = Globals.MapCount;
+		    XMax = Globals.MapCount;
+		    YMin = Globals.MapCount;
+		    YMax = Globals.MapCount;
 			if (Globals.GameMaps [startMap].Up > -1) {
 				AddMap (Globals.GameMaps [startMap].Up, Globals.MapCount, Globals.MapCount - 1);
 			}
@@ -63,10 +71,17 @@ namespace Intersect_Server.Classes
 
 		private void AddMap(int mapNum, int x, int y) {
 		    if (HasMap(mapNum)) return;
+		    if (Globals.GameMaps[mapNum].Deleted == 1)
+		    {
+		        return;}
 		    MyGrid [x,y] = mapNum;
 		    Globals.GameMaps [mapNum].MapGrid = _myIndex;
 		    Globals.GameMaps [mapNum].MapGridX = x;
 		    Globals.GameMaps [mapNum].MapGridY = y;
+		    if (x < XMin){XMin = x;}
+            if (x > XMax) { XMax = x; }
+            if (y < YMin) { YMin = y; }
+            if (y > YMax) { YMax = y; }
 		    _tmpMaps = (int[])MyMaps.Clone();
 		    MyMaps = new int[_tmpMaps.Length + 1];
 		    _tmpMaps.CopyTo (MyMaps, 0);

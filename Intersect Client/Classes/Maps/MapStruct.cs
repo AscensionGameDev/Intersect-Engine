@@ -45,6 +45,12 @@ namespace Intersect_Client.Classes
         public int Right = -1;
         public int Revision;
 
+        //Camera Locking Variables
+        public int HoldUp = 0;
+        public int HoldDown = 0;
+        public int HoldLeft = 0;
+        public int HoldRight = 0;
+
         //Core Data
         public TileArray[] Layers = new TileArray[Constants.LayerCount];
         public Attribute[,] Attributes = new Attribute[Globals.MapWidth, Globals.MapHeight];

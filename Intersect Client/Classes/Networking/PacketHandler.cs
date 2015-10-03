@@ -168,7 +168,10 @@ namespace Intersect_Client.Classes
             Globals.GameMaps[mapNum] = new MapStruct((int)mapNum, mapData);
             if ((mapNum) == Globals.LocalMaps[4]) { 
                 Sounds.PlayMusic(Globals.GameMaps[mapNum].Music, 3,3, true); }
-
+            Globals.GameMaps[mapNum].HoldLeft = bf.ReadInteger();
+            Globals.GameMaps[mapNum].HoldRight = bf.ReadInteger();
+            Globals.GameMaps[mapNum].HoldUp = bf.ReadInteger();
+            Globals.GameMaps[mapNum].HoldDown = bf.ReadInteger();
         }
 
         private static void HandleEntityData(byte[] packet)
@@ -267,6 +270,13 @@ namespace Intersect_Client.Classes
             var mapCount = (int)bf.ReadLong();
             Globals.GameMaps = new MapStruct[mapCount];
             Globals.MapCount = mapCount;
+            var BorderMode = bf.ReadInteger();
+
+            if (BorderMode == 1)
+            {
+                Globals.GameBorderStyle = 1;
+                Graphics.FixResolution();
+            }
 
             //Load Each of the Main Game Object Types
             Globals.GameItems = new ItemStruct[Constants.MaxItems];

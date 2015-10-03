@@ -48,6 +48,7 @@ namespace Intersect_Client.Classes
         public static int MapWidth = 30;
         public static int MapHeight = 26;
         public static List<string> IntroBG = new List<string>();
+        public static int GameBorderStyle = 0;
 
         //Game Lock
         public static object GameLock = new object();

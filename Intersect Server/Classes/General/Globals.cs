@@ -40,6 +40,7 @@ namespace Intersect_Server.Classes
         public static string MySqlUser = "";
         public static string MySqlPass = "";
         public static string MySqldb = "";
+	    public static int GameBorderStyle = 0; //0 For Smart Borders, 1 for Non-Seamless, 2 for black borders
 
         //Map Options
         public static int MapWidth = 30;

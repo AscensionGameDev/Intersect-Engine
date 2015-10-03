@@ -84,7 +84,18 @@ namespace Intersect_Client.Classes.UI
             var myModes = Graphics.GetValidVideoModes();
             for (var i = 0; i < myModes.Count(); i++)
             {
-                _resolutionList.AddItem(myModes[i].Width + "x" + myModes[i].Height);
+                if (Globals.GameBorderStyle == 1)
+                {
+                    if (myModes[i].Width <= Globals.TileWidth*Globals.MapWidth &&
+                        myModes[i].Height <= Globals.TileHeight*Globals.MapHeight)
+                    {
+                        _resolutionList.AddItem(myModes[i].Width + "x" + myModes[i].Height);
+                    }
+                }
+                else
+                {
+                    _resolutionList.AddItem(myModes[i].Width + "x" + myModes[i].Height);
+                }
             }
             _resolutionList.SetSize(120, 14);
             _resolutionList.SetPosition(_optionsMenu.Width / 2 - 120 / 2, 28);

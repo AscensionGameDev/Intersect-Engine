@@ -90,6 +90,55 @@ namespace Intersect_Server.Classes
             {
                 bf.WriteLong(Globals.GameMaps[mapNum].MapGameData.Length);
                 bf.WriteBytes(Globals.GameMaps[mapNum].MapGameData);
+                if (Globals.GameBorderStyle == 1)
+                {
+                    bf.WriteInteger(1);
+                    bf.WriteInteger(1);
+                    bf.WriteInteger(1);
+                    bf.WriteInteger(1);
+                }
+                else if (Globals.GameBorderStyle == 0)
+                {
+                    if (Database.MapGrids[Globals.GameMaps[mapNum].MapGrid].XMin == Globals.GameMaps[mapNum].MapGridX)
+                    {
+                        bf.WriteInteger(1);
+                    }
+                    else
+                    {
+                        bf.WriteInteger(0);
+                    }
+                    if (Database.MapGrids[Globals.GameMaps[mapNum].MapGrid].XMax == Globals.GameMaps[mapNum].MapGridX)
+                    {
+                        bf.WriteInteger(1);
+                    }
+                    else
+                    {
+                        bf.WriteInteger(0);
+                    }
+                    if (Database.MapGrids[Globals.GameMaps[mapNum].MapGrid].YMin == Globals.GameMaps[mapNum].MapGridY)
+                    {
+                        bf.WriteInteger(1);
+                    }
+                    else
+                    {
+                        bf.WriteInteger(0);
+                    }
+                    if (Database.MapGrids[Globals.GameMaps[mapNum].MapGrid].YMax == Globals.GameMaps[mapNum].MapGridY)
+                    {
+                        bf.WriteInteger(1);
+                    }
+                    else
+                    {
+                        bf.WriteInteger(0);
+                    }
+                }
+                else
+                {
+                    bf.WriteInteger(0);
+                    bf.WriteInteger(0);
+                    bf.WriteInteger(0);
+                    bf.WriteInteger(0);
+                }
             }
             client.SendPacket(bf.ToArray());
             if (!client.IsEditor)
@@ -234,6 +283,7 @@ namespace Intersect_Server.Classes
             var bf = new ByteBuffer();
             bf.WriteLong((int)Enums.ServerPackets.GameData);
             bf.WriteLong(Globals.MapCount); //Map Count
+            bf.WriteInteger(Globals.GameBorderStyle);
             if (client.IsEditor)
             {
                 for (var i = 0; i < Globals.MapCount; i++)

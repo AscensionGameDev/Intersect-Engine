@@ -72,6 +72,8 @@ namespace Intersect_Server.Classes
                 writer.WriteElementString("DBUser", "");
                 writer.WriteElementString("DBPass", "");
                 writer.WriteElementString("DBName", "");
+                writer.WriteComment("MapBorder Override. 0 for seamless with scrolling that stops on world edges. 1 for non-seamless, and 2 for seamless where the camera knows no boundaries. (Black borders where the world ends)");
+                writer.WriteElementString("BorderStyle", "0");
                 writer.WriteComment("Do NOT touch these values will resize the maps in the engine. If you have existing maps and change these values you MUST delete them or else the engine will crash on launch.");
                 writer.WriteElementString("MapWidth", "30");
                 writer.WriteElementString("MapHeight", "26");
@@ -104,6 +106,9 @@ namespace Intersect_Server.Classes
                     selectSingleNode = options.SelectSingleNode("//Config/DBName");
                     if (selectSingleNode != null && selectSingleNode.InnerText != "")
                         Globals.MySqldb = selectSingleNode.InnerText;
+                    selectSingleNode = options.SelectSingleNode("//Config/BorderStyle");
+                    if (selectSingleNode != null && selectSingleNode.InnerText != "")
+                        Globals.GameBorderStyle = Int32.Parse(selectSingleNode.InnerText);
                     selectSingleNode = options.SelectSingleNode("//Config/MapWidth");
                     if (selectSingleNode != null && selectSingleNode.InnerText != "")
                         Globals.MapWidth = Int32.Parse(selectSingleNode.InnerText);

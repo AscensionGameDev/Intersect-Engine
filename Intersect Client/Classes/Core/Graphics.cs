@@ -154,7 +154,7 @@ namespace Intersect_Client.Classes
             MyForm = new FrmGame();
             if (GetValidVideoModes().Any())
             {
-                MyForm.ClientSize = new Size((int)GetValidVideoModes()[DisplayMode].Width, (int)GetValidVideoModes()[DisplayMode].Height);
+                MyForm.Size = new Size((int)GetValidVideoModes()[DisplayMode].Width, (int)GetValidVideoModes()[DisplayMode].Height);
                 MyForm.Text = @"Intersect Client";
                 RenderWindow = new RenderWindow(MyForm.Handle);
 
@@ -187,7 +187,7 @@ namespace Intersect_Client.Classes
                 }
                 else
                 {
-                    RenderWindow.SetView(new View(new FloatRect(0, 0, (int)GetValidVideoModes()[DisplayMode].Width, (int)GetValidVideoModes()[DisplayMode].Height)));
+                    RenderWindow.SetView(new View(new FloatRect(0, 0, MyForm.ClientSize.Width, MyForm.ClientSize.Height)));
                 }
 
             }
@@ -215,6 +215,29 @@ namespace Intersect_Client.Classes
             RenderWindow.MouseButtonReleased += renderWindow_MouseButtonReleased;
             CurrentView = new FloatRect(0,0,ScreenWidth,ScreenHeight);
             Gui.InitGwen();
+        }
+
+        public static void FixResolution()
+        {
+            int maxx = Globals.MapWidth * Globals.TileWidth;
+            int maxy = Globals.MapHeight * Globals.TileHeight;
+            if (ScreenWidth > maxx || ScreenHeight > maxy)
+            {
+                int z = 0;
+                if (GetValidVideoModes().Any())
+                {
+                    for (int i = 0; i < GetValidVideoModes().Count; i++)
+                    {
+                        if (GetValidVideoModes()[i].Width <= maxx && GetValidVideoModes()[i].Height <= maxy && GetValidVideoModes()[i].Width <= ScreenWidth && GetValidVideoModes()[i].Height <= ScreenHeight)
+                        {
+                            z = i;
+                        }
+                    }
+                    DisplayMode = z;
+                    Database.SaveOptions();
+                    Graphics.MustReInit = true;
+                }
+            }
         }
 
         private static void InitRenderingLists()
@@ -358,7 +381,7 @@ namespace Intersect_Client.Classes
                     }
                 }
 
-                //Globals.Entities[Globals.MyIndex].Draw(4);
+                Globals.Entities[Globals.MyIndex].Draw();
 
                 for (int x = 0; x < Layer1Entities.Length; x++)
                 {
@@ -397,7 +420,6 @@ namespace Intersect_Client.Classes
                 {
                     for (int y = 0; y < Layer1Entities[x].Count; y++)
                     {
-                        //if (!Globals.Entities.ContainsValue(Layer1Entities[x][y]) && !Globals.LocalEntities.ContainsValue(Layer1Entities[x][y])) { Layer1Entities[x].RemoveAt(y);}
                         Layer1Entities[x][y].DrawName();
                         if (Layer1Entities[x][y].GetType() != typeof(Event)) { Layer1Entities[x][y].DrawHpBar(); }
                     }
@@ -406,7 +428,6 @@ namespace Intersect_Client.Classes
                 {
                     for (int y = 0; y < Layer2Entities[x].Count; y++)
                     {
-                        //if (!Globals.Entities.ContainsValue(Layer2Entities[x][y]) && !Globals.LocalEntities.ContainsValue(Layer2Entities[x][y])) { Layer2Entities[x].RemoveAt(y); }
                         Layer1Entities[x][y].DrawName();
                         if (Layer1Entities[x][y].GetType() != typeof(Event)) { Layer1Entities[x][y].DrawHpBar(); }
                     }
@@ -565,7 +586,40 @@ namespace Intersect_Client.Classes
         {
             View newView;
             Player en = (Player) Globals.Entities[Globals.MyIndex];
+            float x = CalcMapOffsetX(0);
+            float y = CalcMapOffsetY(0);
+            float x1 = CalcMapOffsetX(8) + Globals.MapWidth * Globals.TileWidth;
+            float y1 = CalcMapOffsetY(8) + Globals.MapHeight * Globals.TileHeight;
+            if (Globals.GameMaps[Globals.CurrentMap].HoldUp == 1) { y += Globals.MapHeight * Globals.TileHeight; }
+            if (Globals.GameMaps[Globals.CurrentMap].HoldLeft == 1) { x += Globals.MapWidth * Globals.TileWidth; }
+            if (Globals.GameMaps[Globals.CurrentMap].HoldRight == 1) { x1 -= Globals.MapWidth * Globals.TileWidth; }
+            if (Globals.GameMaps[Globals.CurrentMap].HoldDown == 1) { y1 -= Globals.MapHeight * Globals.TileHeight; }
+            float w = x1 - x;
+            float h = y1 - y;
+            var RestrictView = new FloatRect(x, y, w, h);
             CurrentView = new FloatRect((int)Math.Ceiling(en.GetCenterPos(4).X - ScreenWidth / 2f), (int)Math.Ceiling(en.GetCenterPos(4).Y - ScreenHeight / 2f), (int)ScreenWidth, (int)ScreenHeight);
+            if (RestrictView.Width >= CurrentView.Width)
+            {
+                if (CurrentView.Left < RestrictView.Left)
+                {
+                    CurrentView.Left = RestrictView.Left;
+                }
+                if (CurrentView.Left + CurrentView.Width > RestrictView.Left + RestrictView.Width)
+                {
+                    CurrentView.Left -= (CurrentView.Left + CurrentView.Width) - (RestrictView.Left + RestrictView.Width);
+                }
+            }
+            if (RestrictView.Height >= CurrentView.Height)
+            {
+                if (CurrentView.Top < RestrictView.Top)
+                {
+                    CurrentView.Top = RestrictView.Top;
+                }
+                if (CurrentView.Top + CurrentView.Height > RestrictView.Top + RestrictView.Height)
+                {
+                    CurrentView.Top -= (CurrentView.Top + CurrentView.Height) - (RestrictView.Top + RestrictView.Height);
+                }
+            }
             newView = new View(CurrentView);
             //newView.Zoom(2.5f);
             RenderWindow.SetView(newView);
