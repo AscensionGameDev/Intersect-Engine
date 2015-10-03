@@ -93,6 +93,14 @@ namespace Intersect_Editor.Classes
         public static int TotalTileDragY = 0;
         public static MapStruct SelectionSource;
 
+        //Cut/Copy Variables
+        public static MapStruct CopySource;
+        public static int CopyMapSelX;
+        public static int CopyMapSelY;
+        public static int CopyMapSelW;
+        public static int CopyMapSelH;
+        public static bool HasCopy;
+        public static bool IsPaste;
 
         //Game Object Editors
         public static frmResource ResourceEditor;

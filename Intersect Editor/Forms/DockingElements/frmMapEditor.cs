@@ -71,6 +71,7 @@ namespace Intersect_Editor.Forms
         //PicMap Functions
         public void picMap_MouseDown(object sender, MouseEventArgs e)
         {
+            Globals.MapEditorWindow.DockPanel.Focus();
             if (Globals.EditingLight != null) { return; }
             var tmpMap = Globals.GameMaps[Globals.CurrentMap];
 
@@ -82,6 +83,8 @@ namespace Intersect_Editor.Forms
                 CurrentMapState = tmpMap.Save();
             }
 
+            
+
             switch (e.Button)
             {
                 case MouseButtons.Left:
@@ -91,9 +94,9 @@ namespace Intersect_Editor.Forms
                         if (Globals.Dragging == true)
                         {
                             if (Globals.CurTileX >= Globals.CurMapSelX + Globals.TotalTileDragX &&
-                                Globals.CurTileX <= Globals.CurMapSelX + Globals.TotalTileDragX + Globals.CurMapSelW + 1 &&
+                                Globals.CurTileX <= Globals.CurMapSelX + Globals.TotalTileDragX + Globals.CurMapSelW &&
                                 Globals.CurTileY >= Globals.CurMapSelY + Globals.TotalTileDragY &&
-                                Globals.CurTileY <= Globals.CurMapSelY + Globals.TotalTileDragY + Globals.CurMapSelH + 1)
+                                Globals.CurTileY <= Globals.CurMapSelY + Globals.TotalTileDragY + Globals.CurMapSelH)
                             {
                                 Globals.TileDragX = Globals.CurTileX;
                                 Globals.TileDragY = Globals.CurTileY;
@@ -102,28 +105,17 @@ namespace Intersect_Editor.Forms
                             else
                             {
                                 //Place the change, we done!
-                                ProcessSelectionMovement(Globals.GameMaps[Globals.CurrentMap],true,true);
-                                Globals.Dragging = false;
-                                Globals.TotalTileDragX = 0;
-                                Globals.TotalTileDragY = 0;
-                                Globals.SelectionSource = null;
-                                Graphics.LightsChanged = true;
-                                Graphics.TilePreviewUpdated = true;
-                                Globals.CurMapSelX = Globals.CurTileX;
-                                Globals.CurMapSelY = Globals.CurTileY;
-                                Globals.CurMapSelW = 0;
-                                Globals.CurMapSelH = 0;
-                                Globals.SelectionSource = null;
-                                MapChanged = true;
+                                ProcessSelectionMovement(Globals.GameMaps[Globals.CurrentMap], true);
+                                PlaceSelection();
                             }
 
                         }
                         else
                         {
                             if (Globals.CurTileX >= Globals.CurMapSelX &&
-                                Globals.CurTileX <= Globals.CurMapSelX + Globals.CurMapSelW + 1 &&
+                                Globals.CurTileX <= Globals.CurMapSelX + Globals.CurMapSelW &&
                                 Globals.CurTileY >= Globals.CurMapSelY &&
-                                Globals.CurTileY <= Globals.CurMapSelY + Globals.CurMapSelH + 1)
+                                Globals.CurTileY <= Globals.CurMapSelY + Globals.CurMapSelH)
                             {
                                 Globals.Dragging = true;
                                 Globals.TileDragX = Globals.CurTileX;
@@ -337,10 +329,10 @@ namespace Intersect_Editor.Forms
                         }
                     }
                     else if (Globals.CurrentTool == (int)Enums.EdittingTool.Rectangle)
-                        {
-                            Globals.CurMapSelW = Globals.CurTileX - Globals.CurMapSelX;
-                            Globals.CurMapSelH = Globals.CurTileY - Globals.CurMapSelY;
-                        }
+                    {
+                        Globals.CurMapSelW = Globals.CurTileX - Globals.CurMapSelX;
+                        Globals.CurMapSelH = Globals.CurTileY - Globals.CurMapSelY;
+                    }
                     else
                     {
                         if (Globals.CurrentLayer == Constants.LayerCount)
@@ -469,7 +461,7 @@ namespace Intersect_Editor.Forms
                                 tmpMap.Layers[Globals.CurrentLayer].Tiles[Globals.CurTileX, Globals.CurTileY].Autotile = 0;
                                 tmpMap.Autotiles.InitAutotiles();
                             }
-                        } 
+                        }
                     }
                     if (Globals.CurTileX == 0)
                     {
@@ -1017,8 +1009,9 @@ namespace Intersect_Editor.Forms
         }
 
         //Selection/Movement Function
-        public void ProcessSelectionMovement(MapStruct tmpMap, bool ignoreMouse = false, bool wipeSource = false)
+        public void ProcessSelectionMovement(MapStruct tmpMap, bool ignoreMouse = false, bool ispreview = false)
         {
+            bool wipeSource = false;
             int selX = Globals.CurMapSelX, selY = Globals.CurMapSelY, selW = Globals.CurMapSelW, selH = Globals.CurMapSelH;
             int dragxoffset = 0, dragyoffset = 0;
             if (Globals.CurrentTool == (int)Enums.EdittingTool.Rectangle ||
@@ -1050,126 +1043,23 @@ namespace Intersect_Editor.Forms
 
             }
             //WE are moving tiles, this will be fun!
-            //Start by copying out the source tiles
-            int z = 0, zf = Constants.LayerCount;
-            if (Globals.SelectionType == (int)Enums.SelectionTypes.CurrentLayer)
-            {
-                z = Globals.CurrentLayer;
-                zf = z + 1;
-                if (zf > Constants.LayerCount)
-                {
-                    zf = Constants.LayerCount;
-                }
-            }
             if (Globals.GameMaps[Globals.CurrentMap] == tmpMap && Globals.SelectionSource == tmpMap)
             {
                 Globals.SelectionSource = new MapStruct(tmpMap);
+                wipeSource = true;
             }
-            if (Globals.SelectionSource == Globals.GameMaps[Globals.CurrentMap] || wipeSource)
+            if ((wipeSource || ispreview)&& !Globals.IsPaste)
             {
-                //start by deleting the source tiles
-                for (int l = z; l < zf; l++)
+                if (ispreview )
                 {
-                    for (int x0 = selX; x0 < selX + selW + 1; x0++)
-                    {
-                        for (int y0 = selY; y0 < selY + selH + 1; y0++)
-                        {
-                            for (var x = 0; x <= Globals.CurSelW; x++)
-                            {
-                                for (var y = 0; y <= Globals.CurSelH; y++)
-                                {
-                                    if (x0 + x >= 0 && x0 + x < Globals.MapWidth && y0 + y >= 0 &&
-                                        y0 + y < Globals.MapHeight && x0 + x < selX + selW + 1 &&
-                                        y0 + y < selY + selH + 1)
-                                    {
-                                        tmpMap.Layers[l].Tiles[
-                                            x0 + x, y0 + y].TilesetIndex = -1;
-                                        tmpMap.Layers[l].Tiles[
-                                            x0 + x, y0 + y].X = 0;
-                                        tmpMap.Layers[l].Tiles[
-                                            x0 + x, y0 + y].Y = 0;
-                                        tmpMap.Layers[l].Tiles[
-                                            x0 + x, y0 + y].Autotile = 0;
-                                    }
-                                    tmpMap.Autotiles.UpdateAutoTiles(x0 + x, y0 + y,
-                                        l);
-                                }
-                            }
-                        }
-                    }
+                    WipeCurrentSelection(tmpMap);
                 }
-
-                for (int x0 = selX; x0 < selX + selW + 1; x0++)
+                else
                 {
-                    for (int y0 = selY; y0 < selY + selH + 1; y0++)
-                    {
-                        for (var x = 0; x <= Globals.CurSelW; x++)
-                        {
-                            for (var y = 0; y <= Globals.CurSelH; y++)
-                            {
-                                if (x0 + x >= 0 && x0 + x < Globals.MapWidth && y0 + y >= 0 &&
-                                    y0 + y < Globals.MapHeight && x0 + x < selX + selW + 1 &&
-                                    y0 + y < selY + selH + 1)
-                                {
-                                    //Attributes
-                                    if (Globals.SelectionType != (int)Enums.SelectionTypes.CurrentLayer || Globals.CurrentLayer == Constants.LayerCount)
-                                    {
-                                        tmpMap.Attributes[x0 + x, y0 + y].value = 0;
-                                        tmpMap.Attributes[x0 + x, y0 + y].data1 = 0;
-                                        tmpMap.Attributes[x0 + x, y0 + y].data2 = 0;
-                                        tmpMap.Attributes[x0 + x, y0 + y].data3 = 0;
-                                        tmpMap.Attributes[x0 + x, y0 + y].data4 = "";
-                                    }
-
-                                    //Spawns
-                                    if (Globals.SelectionType != (int)Enums.SelectionTypes.CurrentLayer || Globals.CurrentLayer == Constants.LayerCount + 3)
-                                    {
-                                        for (int w = 0; w < tmpMap.Spawns.Count; w++)
-                                        {
-                                            if (tmpMap.Spawns[w].X == x0 + x &&
-                                                tmpMap.Spawns[w].Y == y0 + y)
-                                            {
-                                                tmpMap.Spawns.Remove(tmpMap.Spawns[w]);
-                                            }
-                                        }
-                                    }
-
-                                    //Lights
-                                    if (Globals.SelectionType != (int)Enums.SelectionTypes.CurrentLayer || Globals.CurrentLayer == Constants.LayerCount + 1)
-                                    {
-                                        for (int w = 0; w < tmpMap.Lights.Count; w++)
-                                        {
-                                            if (tmpMap.Lights[w].TileX == x0 + x &&
-                                                tmpMap.Lights[w].TileY == y0 + y)
-                                            {
-                                                tmpMap.Lights.Remove(tmpMap.Lights[w]);
-                                                Graphics.LightsChanged = true;
-                                            }
-                                        }
-                                    }
-
-                                    //Events
-                                    if (Globals.SelectionType != (int)Enums.SelectionTypes.CurrentLayer || Globals.CurrentLayer == Constants.LayerCount + 2)
-                                    {
-                                        for (int w = 0; w < tmpMap.Events.Count; w++)
-                                        {
-                                            if (tmpMap.Events[w].SpawnX == x0 + x &&
-                                                tmpMap.Events[w].SpawnY == y0 + y)
-                                            {
-                                                tmpMap.Events.Remove(tmpMap.Events[w]);
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
+                    WipeCurrentSelection(Globals.GameMaps[Globals.CurrentMap]);
                 }
-
-
-
             }
-
+            int z = 0, zf = Constants.LayerCount;
             if (Globals.SelectionType == (int)Enums.SelectionTypes.CurrentLayer)
             {
                 z = Globals.CurrentLayer;
@@ -1282,6 +1172,226 @@ namespace Intersect_Editor.Forms
                         }
                     }
                 }
+            }
+        }
+
+        private void WipeCurrentSelection(MapStruct tmpMap)
+        {
+            int selX = Globals.CurMapSelX, selY = Globals.CurMapSelY, selW = Globals.CurMapSelW, selH = Globals.CurMapSelH;
+            int dragxoffset = 0, dragyoffset = 0;
+            if (Globals.CurrentTool == (int)Enums.EdittingTool.Rectangle ||
+            Globals.CurrentTool == (int)Enums.EdittingTool.Selection)
+            {
+                if (selW < 0)
+                {
+                    selX -= Math.Abs(selW);
+                    selW = Math.Abs(selW);
+                }
+                if (selH < 0)
+                {
+                    selY -= Math.Abs(selH);
+                    selH = Math.Abs(selH);
+                }
+            }
+            if (Globals.Dragging)
+            {
+                if (Globals.MouseButton == 0)
+                {
+                    dragxoffset = Globals.TotalTileDragX;
+                    dragyoffset = Globals.TotalTileDragY;
+                }
+            }
+            int z = 0, zf = Constants.LayerCount;
+            if (Globals.SelectionType == (int)Enums.SelectionTypes.CurrentLayer)
+            {
+                z = Globals.CurrentLayer;
+                zf = z + 1;
+                if (zf > Constants.LayerCount)
+                {
+                    zf = Constants.LayerCount;
+                }
+            }
+            //start by deleting the source tiles
+            for (int l = z; l < zf; l++)
+            {
+                for (int x0 = selX; x0 < selX + selW + 1; x0++)
+                {
+                    for (int y0 = selY; y0 < selY + selH + 1; y0++)
+                    {
+                        for (var x = 0; x <= Globals.CurSelW; x++)
+                        {
+                            for (var y = 0; y <= Globals.CurSelH; y++)
+                            {
+                                if (x0 + x >= 0 && x0 + x < Globals.MapWidth && y0 + y >= 0 &&
+                                    y0 + y < Globals.MapHeight && x0 + x < selX + selW + 1 &&
+                                    y0 + y < selY + selH + 1)
+                                {
+                                    tmpMap.Layers[l].Tiles[
+                                        x0 + x, y0 + y].TilesetIndex = -1;
+                                    tmpMap.Layers[l].Tiles[
+                                        x0 + x, y0 + y].X = 0;
+                                    tmpMap.Layers[l].Tiles[
+                                        x0 + x, y0 + y].Y = 0;
+                                    tmpMap.Layers[l].Tiles[
+                                        x0 + x, y0 + y].Autotile = 0;
+                                }
+                                tmpMap.Autotiles.UpdateAutoTiles(x0 + x, y0 + y,
+                                    l);
+                            }
+                        }
+                    }
+                }
+            }
+
+            for (int x0 = selX; x0 < selX + selW + 1; x0++)
+            {
+                for (int y0 = selY; y0 < selY + selH + 1; y0++)
+                {
+                    for (var x = 0; x <= Globals.CurSelW; x++)
+                    {
+                        for (var y = 0; y <= Globals.CurSelH; y++)
+                        {
+                            if (x0 + x >= 0 && x0 + x < Globals.MapWidth && y0 + y >= 0 &&
+                                y0 + y < Globals.MapHeight && x0 + x < selX + selW + 1 &&
+                                y0 + y < selY + selH + 1)
+                            {
+                                //Attributes
+                                if (Globals.SelectionType != (int)Enums.SelectionTypes.CurrentLayer || Globals.CurrentLayer == Constants.LayerCount)
+                                {
+                                    tmpMap.Attributes[x0 + x, y0 + y].value = 0;
+                                    tmpMap.Attributes[x0 + x, y0 + y].data1 = 0;
+                                    tmpMap.Attributes[x0 + x, y0 + y].data2 = 0;
+                                    tmpMap.Attributes[x0 + x, y0 + y].data3 = 0;
+                                    tmpMap.Attributes[x0 + x, y0 + y].data4 = "";
+                                }
+
+                                //Spawns
+                                if (Globals.SelectionType != (int)Enums.SelectionTypes.CurrentLayer || Globals.CurrentLayer == Constants.LayerCount + 3)
+                                {
+                                    for (int w = 0; w < tmpMap.Spawns.Count; w++)
+                                    {
+                                        if (tmpMap.Spawns[w].X == x0 + x &&
+                                            tmpMap.Spawns[w].Y == y0 + y)
+                                        {
+                                            tmpMap.Spawns.Remove(tmpMap.Spawns[w]);
+                                        }
+                                    }
+                                }
+
+                                //Lights
+                                if (Globals.SelectionType != (int)Enums.SelectionTypes.CurrentLayer || Globals.CurrentLayer == Constants.LayerCount + 1)
+                                {
+                                    for (int w = 0; w < tmpMap.Lights.Count; w++)
+                                    {
+                                        if (tmpMap.Lights[w].TileX == x0 + x &&
+                                            tmpMap.Lights[w].TileY == y0 + y)
+                                        {
+                                            tmpMap.Lights.Remove(tmpMap.Lights[w]);
+                                            Graphics.LightsChanged = true;
+                                        }
+                                    }
+                                }
+
+                                //Events
+                                if (Globals.SelectionType != (int)Enums.SelectionTypes.CurrentLayer || Globals.CurrentLayer == Constants.LayerCount + 2)
+                                {
+                                    for (int w = 0; w < tmpMap.Events.Count; w++)
+                                    {
+                                        if (tmpMap.Events[w].SpawnX == x0 + x &&
+                                            tmpMap.Events[w].SpawnY == y0 + y)
+                                        {
+                                            tmpMap.Events.Remove(tmpMap.Events[w]);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        public void PlaceSelection()
+        {
+            if (!Globals.Dragging) { return; }
+            Globals.Dragging = false;
+            Globals.TotalTileDragX = 0;
+            Globals.TotalTileDragY = 0;
+            Globals.SelectionSource = null;
+            Graphics.LightsChanged = true;
+            Graphics.TilePreviewUpdated = true;
+            Globals.CurMapSelX = Globals.CurTileX;
+            Globals.CurMapSelY = Globals.CurTileY;
+            Globals.CurMapSelW = 0;
+            Globals.CurMapSelH = 0;
+            Globals.SelectionSource = null;
+            Globals.IsPaste = false;
+            MapChanged = true;
+        }
+
+        //Cut Copy Paste Functions
+        public void Cut()
+        {
+            Copy();
+            WipeCurrentSelection(Globals.GameMaps[Globals.CurrentMap]);
+            Graphics.LightsChanged = true;
+            Graphics.TilePreviewUpdated = true;
+            MapUndoStates.Add(CurrentMapState);
+            MapRedoStates.Clear();
+            CurrentMapState = Globals.GameMaps[Globals.CurrentMap].Save();
+            MapChanged = false;
+        }
+        public void Copy()
+        {
+            if (Globals.CurrentTool == (int)Enums.EdittingTool.Selection)
+            {
+                Globals.CopySource = new MapStruct(Globals.GameMaps[Globals.CurrentMap]);
+                Globals.CopyMapSelH = Globals.CurMapSelH;
+                Globals.CopyMapSelW = Globals.CurMapSelW;
+                Globals.CopyMapSelX = Globals.CurMapSelX;
+                Globals.CopyMapSelY = Globals.CurMapSelY;
+                Globals.HasCopy = true;
+            }
+        }
+        public void Paste()
+        {
+            if (Globals.HasCopy && Globals.CopySource != null)
+            {
+                Globals.CurrentTool = (int) Enums.EdittingTool.Selection;
+                int selX1 = Globals.CurMapSelX, selY1 = Globals.CurMapSelY, selW1 = Globals.CurMapSelW, selH1 = Globals.CurMapSelH;
+                if (selW1 < 0)
+                {
+                    selX1 -= Math.Abs(selW1);
+                    selW1 = Math.Abs(selW1);
+                }
+                if (selH1 < 0)
+                {
+                    selY1 -= Math.Abs(selH1);
+                    selH1 = Math.Abs(selH1);
+                }
+                Globals.SelectionSource = Globals.CopySource;
+                Globals.CurMapSelH = Globals.CopyMapSelH;
+                Globals.CurMapSelW = Globals.CopyMapSelW;
+                Globals.CurMapSelX = Globals.CopyMapSelX;
+                Globals.CurMapSelY = Globals.CopyMapSelY;
+                Globals.Dragging = true;
+                int selX = Globals.CurMapSelX, selY = Globals.CurMapSelY, selW = Globals.CurMapSelW, selH = Globals.CurMapSelH;
+                if (selW < 0)
+                {
+                    selX -= Math.Abs(selW);
+                    selW = Math.Abs(selW);
+                }
+                if (selH < 0)
+                {
+                    selY -= Math.Abs(selH);
+                    selH = Math.Abs(selH);
+                }
+                //We just pasted, lets move it under the cursor:
+                Globals.TotalTileDragX = -selX + selX1;
+                Globals.TotalTileDragY = -selY + selY1;
+                Globals.IsPaste = true;
+                Graphics.LightsChanged = true;
+                Graphics.TilePreviewUpdated = true;
             }
         }
 

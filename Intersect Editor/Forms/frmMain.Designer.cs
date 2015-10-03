@@ -55,8 +55,16 @@ namespace Intersect_Editor.Forms
             this.exportMapToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.editToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.undoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.redoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.cutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.copyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.pasteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.fillToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.eraseLayerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.selectToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.allLayersToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.currentLayerOnlyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.viewToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.hideDarknessToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.hideFogToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -85,6 +93,7 @@ namespace Intersect_Editor.Forms
             this.toolStripBtnRedo = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripBtnPen = new System.Windows.Forms.ToolStripButton();
+            this.toolStripBtnSelect = new System.Windows.Forms.ToolStripButton();
             this.toolStripBtnRect = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripBtnFill = new System.Windows.Forms.ToolStripButton();
@@ -103,15 +112,6 @@ namespace Intersect_Editor.Forms
             this.toolStripLabelFPS = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripSeparator9 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripLabelDebug = new System.Windows.Forms.ToolStripStatusLabel();
-            this.toolStripBtnSelect = new System.Windows.Forms.ToolStripButton();
-            this.cutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.copyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.pasteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.undoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.redoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.selectToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.allLayersToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.currentLayerOnlyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip.SuspendLayout();
             this.toolStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
@@ -195,6 +195,46 @@ namespace Intersect_Editor.Forms
             this.editToolStripMenuItem.Size = new System.Drawing.Size(39, 20);
             this.editToolStripMenuItem.Text = "Edit";
             // 
+            // undoToolStripMenuItem
+            // 
+            this.undoToolStripMenuItem.Enabled = false;
+            this.undoToolStripMenuItem.Name = "undoToolStripMenuItem";
+            this.undoToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.undoToolStripMenuItem.Text = "Undo";
+            this.undoToolStripMenuItem.Click += new System.EventHandler(this.undoToolStripMenuItem_Click);
+            // 
+            // redoToolStripMenuItem
+            // 
+            this.redoToolStripMenuItem.Enabled = false;
+            this.redoToolStripMenuItem.Name = "redoToolStripMenuItem";
+            this.redoToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.redoToolStripMenuItem.Text = "Redo";
+            this.redoToolStripMenuItem.Click += new System.EventHandler(this.redoToolStripMenuItem_Click);
+            // 
+            // cutToolStripMenuItem
+            // 
+            this.cutToolStripMenuItem.Enabled = false;
+            this.cutToolStripMenuItem.Name = "cutToolStripMenuItem";
+            this.cutToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.cutToolStripMenuItem.Text = "Cut";
+            this.cutToolStripMenuItem.Click += new System.EventHandler(this.cutToolStripMenuItem_Click);
+            // 
+            // copyToolStripMenuItem
+            // 
+            this.copyToolStripMenuItem.Enabled = false;
+            this.copyToolStripMenuItem.Name = "copyToolStripMenuItem";
+            this.copyToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.copyToolStripMenuItem.Text = "Copy";
+            this.copyToolStripMenuItem.Click += new System.EventHandler(this.copyToolStripMenuItem_Click);
+            // 
+            // pasteToolStripMenuItem
+            // 
+            this.pasteToolStripMenuItem.Enabled = false;
+            this.pasteToolStripMenuItem.Name = "pasteToolStripMenuItem";
+            this.pasteToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.pasteToolStripMenuItem.Text = "Paste";
+            this.pasteToolStripMenuItem.Click += new System.EventHandler(this.pasteToolStripMenuItem_Click);
+            // 
             // fillToolStripMenuItem
             // 
             this.fillToolStripMenuItem.Name = "fillToolStripMenuItem";
@@ -208,6 +248,31 @@ namespace Intersect_Editor.Forms
             this.eraseLayerToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.eraseLayerToolStripMenuItem.Text = "Erase Layer";
             this.eraseLayerToolStripMenuItem.Click += new System.EventHandler(this.eraseLayerToolStripMenuItem_Click);
+            // 
+            // selectToolStripMenuItem
+            // 
+            this.selectToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.allLayersToolStripMenuItem,
+            this.currentLayerOnlyToolStripMenuItem});
+            this.selectToolStripMenuItem.Name = "selectToolStripMenuItem";
+            this.selectToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.selectToolStripMenuItem.Text = "Select....";
+            // 
+            // allLayersToolStripMenuItem
+            // 
+            this.allLayersToolStripMenuItem.Checked = true;
+            this.allLayersToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.allLayersToolStripMenuItem.Name = "allLayersToolStripMenuItem";
+            this.allLayersToolStripMenuItem.Size = new System.Drawing.Size(173, 22);
+            this.allLayersToolStripMenuItem.Text = "All Layers";
+            this.allLayersToolStripMenuItem.Click += new System.EventHandler(this.allLayersToolStripMenuItem_Click);
+            // 
+            // currentLayerOnlyToolStripMenuItem
+            // 
+            this.currentLayerOnlyToolStripMenuItem.Name = "currentLayerOnlyToolStripMenuItem";
+            this.currentLayerOnlyToolStripMenuItem.Size = new System.Drawing.Size(173, 22);
+            this.currentLayerOnlyToolStripMenuItem.Text = "Current Layer Only";
+            this.currentLayerOnlyToolStripMenuItem.Click += new System.EventHandler(this.currentLayerOnlyToolStripMenuItem_Click);
             // 
             // viewToolStripMenuItem
             // 
@@ -405,32 +470,32 @@ namespace Intersect_Editor.Forms
             // toolStripBtnCut
             // 
             this.toolStripBtnCut.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.toolStripBtnCut.Enabled = false;
             this.toolStripBtnCut.Image = ((System.Drawing.Image)(resources.GetObject("toolStripBtnCut.Image")));
             this.toolStripBtnCut.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripBtnCut.Name = "toolStripBtnCut";
             this.toolStripBtnCut.Size = new System.Drawing.Size(23, 22);
             this.toolStripBtnCut.Text = "Cut Selection";
+            this.toolStripBtnCut.Click += new System.EventHandler(this.toolStripBtnCut_Click);
             // 
             // toolStripBtnCopy
             // 
             this.toolStripBtnCopy.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.toolStripBtnCopy.Enabled = false;
             this.toolStripBtnCopy.Image = ((System.Drawing.Image)(resources.GetObject("toolStripBtnCopy.Image")));
             this.toolStripBtnCopy.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripBtnCopy.Name = "toolStripBtnCopy";
             this.toolStripBtnCopy.Size = new System.Drawing.Size(23, 22);
             this.toolStripBtnCopy.Text = "Copy Selection";
+            this.toolStripBtnCopy.Click += new System.EventHandler(this.toolStripBtnCopy_Click);
             // 
             // toolStripBtnPaste
             // 
             this.toolStripBtnPaste.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.toolStripBtnPaste.Enabled = false;
             this.toolStripBtnPaste.Image = ((System.Drawing.Image)(resources.GetObject("toolStripBtnPaste.Image")));
             this.toolStripBtnPaste.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripBtnPaste.Name = "toolStripBtnPaste";
             this.toolStripBtnPaste.Size = new System.Drawing.Size(23, 22);
             this.toolStripBtnPaste.Text = "Paste";
+            this.toolStripBtnPaste.Click += new System.EventHandler(this.toolStripBtnPaste_Click);
             // 
             // toolStripSeparator2
             // 
@@ -475,6 +540,16 @@ namespace Intersect_Editor.Forms
             this.toolStripBtnPen.Size = new System.Drawing.Size(23, 22);
             this.toolStripBtnPen.Text = "Single Tile";
             this.toolStripBtnPen.Click += new System.EventHandler(this.toolStripBtnPen_Click);
+            // 
+            // toolStripBtnSelect
+            // 
+            this.toolStripBtnSelect.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toolStripBtnSelect.Image = ((System.Drawing.Image)(resources.GetObject("toolStripBtnSelect.Image")));
+            this.toolStripBtnSelect.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripBtnSelect.Name = "toolStripBtnSelect";
+            this.toolStripBtnSelect.Size = new System.Drawing.Size(23, 22);
+            this.toolStripBtnSelect.Text = "Selection";
+            this.toolStripBtnSelect.Click += new System.EventHandler(this.toolStripBtnSelect_Click);
             // 
             // toolStripBtnRect
             // 
@@ -653,76 +728,6 @@ namespace Intersect_Editor.Forms
             // 
             this.toolStripLabelDebug.Name = "toolStripLabelDebug";
             this.toolStripLabelDebug.Size = new System.Drawing.Size(0, 18);
-            // 
-            // toolStripBtnSelect
-            // 
-            this.toolStripBtnSelect.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.toolStripBtnSelect.Image = ((System.Drawing.Image)(resources.GetObject("toolStripBtnSelect.Image")));
-            this.toolStripBtnSelect.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripBtnSelect.Name = "toolStripBtnSelect";
-            this.toolStripBtnSelect.Size = new System.Drawing.Size(23, 22);
-            this.toolStripBtnSelect.Text = "Selection";
-            this.toolStripBtnSelect.Click += new System.EventHandler(this.toolStripBtnSelect_Click);
-            // 
-            // cutToolStripMenuItem
-            // 
-            this.cutToolStripMenuItem.Enabled = false;
-            this.cutToolStripMenuItem.Name = "cutToolStripMenuItem";
-            this.cutToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
-            this.cutToolStripMenuItem.Text = "Cut";
-            // 
-            // copyToolStripMenuItem
-            // 
-            this.copyToolStripMenuItem.Enabled = false;
-            this.copyToolStripMenuItem.Name = "copyToolStripMenuItem";
-            this.copyToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
-            this.copyToolStripMenuItem.Text = "Copy";
-            // 
-            // pasteToolStripMenuItem
-            // 
-            this.pasteToolStripMenuItem.Enabled = false;
-            this.pasteToolStripMenuItem.Name = "pasteToolStripMenuItem";
-            this.pasteToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
-            this.pasteToolStripMenuItem.Text = "Paste";
-            // 
-            // undoToolStripMenuItem
-            // 
-            this.undoToolStripMenuItem.Enabled = false;
-            this.undoToolStripMenuItem.Name = "undoToolStripMenuItem";
-            this.undoToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
-            this.undoToolStripMenuItem.Text = "Undo";
-            // 
-            // redoToolStripMenuItem
-            // 
-            this.redoToolStripMenuItem.Enabled = false;
-            this.redoToolStripMenuItem.Name = "redoToolStripMenuItem";
-            this.redoToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
-            this.redoToolStripMenuItem.Text = "Redo";
-            // 
-            // selectToolStripMenuItem
-            // 
-            this.selectToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.allLayersToolStripMenuItem,
-            this.currentLayerOnlyToolStripMenuItem});
-            this.selectToolStripMenuItem.Name = "selectToolStripMenuItem";
-            this.selectToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
-            this.selectToolStripMenuItem.Text = "Select....";
-            // 
-            // allLayersToolStripMenuItem
-            // 
-            this.allLayersToolStripMenuItem.Checked = true;
-            this.allLayersToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.allLayersToolStripMenuItem.Name = "allLayersToolStripMenuItem";
-            this.allLayersToolStripMenuItem.Size = new System.Drawing.Size(173, 22);
-            this.allLayersToolStripMenuItem.Text = "All Layers";
-            this.allLayersToolStripMenuItem.Click += new System.EventHandler(this.allLayersToolStripMenuItem_Click);
-            // 
-            // currentLayerOnlyToolStripMenuItem
-            // 
-            this.currentLayerOnlyToolStripMenuItem.Name = "currentLayerOnlyToolStripMenuItem";
-            this.currentLayerOnlyToolStripMenuItem.Size = new System.Drawing.Size(173, 22);
-            this.currentLayerOnlyToolStripMenuItem.Text = "Current Layer Only";
-            this.currentLayerOnlyToolStripMenuItem.Click += new System.EventHandler(this.currentLayerOnlyToolStripMenuItem_Click);
             // 
             // frmMain
             // 

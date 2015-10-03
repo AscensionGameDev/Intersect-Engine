@@ -25,6 +25,7 @@ using System.Windows.Forms;
 using Intersect_Editor.Classes;
 using WeifenLuo.WinFormsUI.Docking;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 
 namespace Intersect_Editor.Forms
 {
@@ -87,6 +88,18 @@ namespace Intersect_Editor.Forms
             {
                 toolStripBtnRedo_Click(null, null);
             }
+            else if (e.KeyData == (Keys.Control | Keys.X))
+            {
+                toolStripBtnCut_Click(null, null);
+            }
+            else if (e.KeyData == (Keys.Control | Keys.C))
+            {
+                toolStripBtnCopy_Click(null, null);
+            }
+            else if (e.KeyData == (Keys.Control | Keys.V))
+            {
+                toolStripBtnPaste_Click(null, null);
+            }
         }
         private void InitFormObjects()
         {
@@ -101,12 +114,14 @@ namespace Intersect_Editor.Forms
             Globals.MapPropertiesWindow = new frmMapProperties();
             Globals.MapPropertiesWindow.Show(unhiddenPane, DockAlignment.Bottom, .4);
             Globals.MapPropertiesWindow.Init(Globals.CurrentMap);
+            Globals.MapEditorWindow.DockPanel.Focus();
         }
         private void InitEditor()
         {
             Graphics.InitSfml(this);
             Sounds.Init();
             Globals.InEditor = true;
+            GrabMouseDownEvents();
         }
         protected override void OnClosed(EventArgs e)
         {
@@ -132,6 +147,178 @@ namespace Intersect_Editor.Forms
                 Text = @"Intersect Editor";
                 Globals.MapEditorWindow.picMap.Visible = false;
                 Globals.MapEditorWindow.ResetUndoRedoStates();
+            }
+        }
+        private void GrabMouseDownEvents()
+        {
+            GrabMouseDownEvents(this);
+        }
+        private void GrabMouseDownEvents(Control e)
+        {
+            foreach (Control t in e.Controls)
+            {
+                if (t.GetType() == typeof (MenuStrip))
+                {
+                    foreach (ToolStripMenuItem t1 in ((MenuStrip) t).Items)
+                    {
+                        t1.MouseDown += MouseDownHandler;
+                    }
+                    t.MouseDown += MouseDownHandler;
+                }
+                else if (t.GetType() == typeof (PropertyGrid))
+                {
+                }
+                else
+                {
+                    GrabMouseDownEvents(t);
+                }
+            }
+            e.MouseDown += MouseDownHandler;
+        }
+        public void MouseDownHandler(object sender, MouseEventArgs e)
+        {
+            if (sender != Globals.MapEditorWindow && sender != Globals.MapEditorWindow.pnlMapContainer &&
+                sender != Globals.MapEditorWindow.picMap)
+            {
+                Globals.MapEditorWindow.PlaceSelection();
+            }
+        }
+
+        //Update
+        public void Update()
+        {
+            if (Globals.CurrentMap > -1)
+            {
+
+                if (Globals.GameMaps[Globals.CurrentMap] != null)
+                {
+                    toolStripLabelCoords.Text = @" CurX: " + Globals.CurTileX + @" CurY: " + Globals.CurTileY;
+                    toolStripLabelRevision.Text = @"Revision: " + Globals.GameMaps[Globals.CurrentMap].Revision;
+                    if (Text != @"Intersect Editor - Map# " + Globals.CurrentMap + @" " + Globals.GameMaps[Globals.CurrentMap].MyName)
+                    {
+                        Text = @"Intersect Editor - Map# " + Globals.CurrentMap + @" " + Globals.GameMaps[Globals.CurrentMap].MyName;
+                    }
+                }
+            }
+
+            //Process the Undo/Redo Buttons
+            if (Globals.MapEditorWindow.MapUndoStates.Count > 0)
+            {
+                toolStripBtnUndo.Enabled = true;
+                undoToolStripMenuItem.Enabled = true;
+            }
+            else
+            {
+                toolStripBtnUndo.Enabled = false;
+                undoToolStripMenuItem.Enabled = false;
+            }
+            if (Globals.MapEditorWindow.MapRedoStates.Count > 0)
+            {
+                toolStripBtnRedo.Enabled = true;
+                redoToolStripMenuItem.Enabled = true;
+            }
+            else
+            {
+                toolStripBtnRedo.Enabled = false;
+                redoToolStripMenuItem.Enabled = false;
+            }
+
+            //Process the Fill/Erase Buttons
+            if (Globals.CurrentLayer <= Constants.LayerCount)
+            {
+                toolStripBtnFill.Enabled = true;
+                fillToolStripMenuItem.Enabled = true;
+                toolStripBtnErase.Enabled = true;
+                eraseLayerToolStripMenuItem.Enabled = true;
+            }
+            else
+            {
+                toolStripBtnFill.Enabled = false;
+                fillToolStripMenuItem.Enabled = false;
+                toolStripBtnErase.Enabled = false;
+                eraseLayerToolStripMenuItem.Enabled = false;
+            }
+
+            //Process the Tool Buttons
+            toolStripBtnPen.Enabled = false;
+            toolStripBtnSelect.Enabled = true;
+            toolStripBtnRect.Enabled = false;
+            switch (Globals.CurrentLayer)
+            {
+                case Constants.LayerCount: //Attributes
+                    toolStripBtnPen.Enabled = true;
+                    toolStripBtnRect.Enabled = true;
+                    break;
+                case Constants.LayerCount + 1: //Lights
+                    Globals.CurrentTool = (int)Enums.EdittingTool.Selection;
+                    break;
+                case Constants.LayerCount + 2: //Events
+                    Globals.CurrentTool = (int)Enums.EdittingTool.Selection;
+                    break;
+                case Constants.LayerCount + 3: //NPCS
+                    Globals.CurrentTool = (int)Enums.EdittingTool.Selection;
+                    break;
+                default:
+                    toolStripBtnPen.Enabled = true;
+                    toolStripBtnRect.Enabled = true;
+                    break;
+            }
+
+            switch (Globals.CurrentTool)
+            {
+                case (int)Enums.EdittingTool.Pen:
+                    if (!toolStripBtnPen.Checked) { toolStripBtnPen.Checked = true; }
+                    if (toolStripBtnSelect.Checked) { toolStripBtnSelect.Checked = false; }
+                    if (toolStripBtnRect.Checked) { toolStripBtnRect.Checked = false; }
+
+                    if (toolStripBtnCut.Enabled) { toolStripBtnCut.Enabled = false; }
+                    if (toolStripBtnCopy.Enabled) { toolStripBtnCopy.Enabled = false; }
+                    if (cutToolStripMenuItem.Enabled) { cutToolStripMenuItem.Enabled = false; }
+                    if (copyToolStripMenuItem.Enabled) { copyToolStripMenuItem.Enabled = false; }
+                        break;
+                case (int)Enums.EdittingTool.Selection:
+                    if (toolStripBtnPen.Checked) { toolStripBtnPen.Checked = false; }
+                    if (!toolStripBtnSelect.Checked) { toolStripBtnSelect.Checked = true; }
+                    if (toolStripBtnRect.Checked) { toolStripBtnRect.Checked = false; }
+
+                    if (!toolStripBtnCut.Enabled) { toolStripBtnCut.Enabled = true; }
+                    if (!toolStripBtnCopy.Enabled) { toolStripBtnCopy.Enabled = true; }
+                    if (!cutToolStripMenuItem.Enabled) { cutToolStripMenuItem.Enabled = true; }
+                    if (!copyToolStripMenuItem.Enabled) { copyToolStripMenuItem.Enabled = true; }
+                    break;
+                case (int)Enums.EdittingTool.Rectangle:
+                    if (toolStripBtnPen.Checked) { toolStripBtnPen.Checked = false; }
+                    if (toolStripBtnSelect.Checked) { toolStripBtnSelect.Checked = false; }
+                    if (!toolStripBtnRect.Checked) { toolStripBtnRect.Checked = true; }
+
+                    if (toolStripBtnCut.Enabled) { toolStripBtnCut.Enabled = false; }
+                    if (toolStripBtnCopy.Enabled) { toolStripBtnCopy.Enabled = false; }
+                    if (cutToolStripMenuItem.Enabled) { cutToolStripMenuItem.Enabled = false; }
+                    if (copyToolStripMenuItem.Enabled) { copyToolStripMenuItem.Enabled = false; }
+                    break;
+            }
+
+            if (Globals.HasCopy)
+            {
+                toolStripBtnPaste.Enabled = true;
+                pasteToolStripMenuItem.Enabled = true;
+            }
+            else
+            {
+                toolStripBtnPaste.Enabled = false;
+                pasteToolStripMenuItem.Enabled = false;
+            }
+
+            if (Globals.Dragging)
+            {
+                if (Globals.MainForm.ActiveControl.GetType() == typeof(WeifenLuo.WinFormsUI.Docking.DockPane))
+                {
+                    Control ctrl = ((WeifenLuo.WinFormsUI.Docking.DockPane)Globals.MainForm.ActiveControl).ActiveControl;
+                    if (ctrl != Globals.MapEditorWindow)
+                    {
+                        Globals.MapEditorWindow.PlaceSelection();
+                    }
+                }
             }
         }
 
@@ -235,6 +422,38 @@ namespace Intersect_Editor.Forms
                     Globals.MapEditorWindow.picMap_MouseUp(null, new MouseEventArgs(MouseButtons.None, 0, 0, 0, 0));
                 }
             }
+        }
+        private void allLayersToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Globals.SelectionType = (int)Enums.SelectionTypes.AllLayers;
+            allLayersToolStripMenuItem.Checked = true;
+            currentLayerOnlyToolStripMenuItem.Checked = false;
+        }
+        private void currentLayerOnlyToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Globals.SelectionType = (int)Enums.SelectionTypes.CurrentLayer;
+            allLayersToolStripMenuItem.Checked = false;
+            currentLayerOnlyToolStripMenuItem.Checked = true;
+        }
+        private void undoToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            toolStripBtnUndo_Click(null, null);
+        }
+        private void redoToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            toolStripBtnRedo_Click(null, null);
+        }
+        private void cutToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            toolStripBtnCut_Click(null, null);
+        }
+        private void copyToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            toolStripBtnCopy_Click(null, null);
+        }
+        private void pasteToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            toolStripBtnPaste_Click(null, null);
         }
         //View
         private void hideDarknessToolStripMenuItem_Click(object sender, EventArgs e)
@@ -359,6 +578,35 @@ namespace Intersect_Editor.Forms
                 Graphics.ScreenShotMap().SaveToFile(fileDialog.FileName);
             }
         }
+        private void toolStripBtnPen_Click(object sender, EventArgs e)
+        {
+            Globals.CurrentTool = (int)Enums.EdittingTool.Pen;
+        }
+        private void toolStripBtnSelect_Click(object sender, EventArgs e)
+        {
+            Globals.CurrentTool = (int)Enums.EdittingTool.Selection;
+        }
+        private void toolStripBtnRect_Click(object sender, EventArgs e)
+        {
+            Globals.CurrentTool = (int)Enums.EdittingTool.Rectangle;
+            Globals.CurMapSelX = -1;
+            Globals.CurMapSelY = -1;
+        }
+        private void toolStripBtnCopy_Click(object sender, EventArgs e)
+        {
+            if (Globals.CurrentTool != (int)Enums.EdittingTool.Selection) { return; }
+            Globals.MapEditorWindow.Copy();
+        }
+        private void toolStripBtnPaste_Click(object sender, EventArgs e)
+        {
+            if (!Globals.HasCopy) { return; }
+            Globals.MapEditorWindow.Paste();
+        }
+        private void toolStripBtnCut_Click(object sender, EventArgs e)
+        {
+            if (Globals.CurrentTool != (int)Enums.EdittingTool.Selection) { return; }
+            Globals.MapEditorWindow.Cut();
+        }
 
         //Cross Threading Delegate Methods
         private void TryOpenEditorMethod(int editorIndex)
@@ -431,35 +679,8 @@ namespace Intersect_Editor.Forms
 
         }
 
-        private void toolStripBtnPen_Click(object sender, EventArgs e)
-        {
-            Globals.CurrentTool = (int) Enums.EdittingTool.Pen;
-        }
 
-        private void toolStripBtnSelect_Click(object sender, EventArgs e)
-        {
-            Globals.CurrentTool = (int)Enums.EdittingTool.Selection;
-        }
 
-        private void toolStripBtnRect_Click(object sender, EventArgs e)
-        {
-            Globals.CurrentTool = (int)Enums.EdittingTool.Rectangle;
-            Globals.CurMapSelX = -1;
-            Globals.CurMapSelY = -1;
-        }
 
-        private void allLayersToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            Globals.SelectionType = (int) Enums.SelectionTypes.AllLayers;
-            allLayersToolStripMenuItem.Checked = true;
-            currentLayerOnlyToolStripMenuItem.Checked = false;
-        }
-
-        private void currentLayerOnlyToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            Globals.SelectionType = (int)Enums.SelectionTypes.CurrentLayer;
-            allLayersToolStripMenuItem.Checked = false;
-            currentLayerOnlyToolStripMenuItem.Checked = true;
-        }
     }
 }

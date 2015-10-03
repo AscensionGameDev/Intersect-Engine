@@ -175,6 +175,7 @@ namespace Intersect_Editor.Classes
             Pen = 0,
             Selection = 1,
             Rectangle = 2,
+            Droppler = 3,
         }
 
         public enum SelectionTypes

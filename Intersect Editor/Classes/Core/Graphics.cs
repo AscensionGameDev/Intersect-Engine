@@ -26,6 +26,7 @@ using System.Drawing.Imaging;
 using System.Collections.Generic;
 using System.IO;
 using System.Security.Policy;
+using System.Windows.Forms;
 using Intersect_Editor.Forms;
 using Intersect_Editor.Properties;
 using SFML.Graphics;
@@ -33,6 +34,7 @@ using SFML.Window;
 using Color = SFML.Graphics.Color;
 using Image = SFML.Graphics.Image;
 using SFML.System;
+using View = SFML.Graphics.View;
 
 namespace Intersect_Editor.Classes
 {
@@ -533,7 +535,7 @@ namespace Intersect_Editor.Classes
                         tmpMap = TilePreviewStruct;
                         if (Globals.CurrentTool == (int)Enums.EdittingTool.Selection && Globals.Dragging)
                         {
-                            Globals.MapEditorWindow.ProcessSelectionMovement(tmpMap);
+                            Globals.MapEditorWindow.ProcessSelectionMovement(tmpMap,false, true);
                         }
                         else
                         {
@@ -805,6 +807,10 @@ namespace Intersect_Editor.Classes
                 }
                 tileSelectionRect.FillColor = Color.Transparent;
                 tileSelectionRect.OutlineColor = Color.White;
+                if (Globals.CurrentTool == (int) Enums.EdittingTool.Selection && Globals.Dragging)
+                {
+                    tileSelectionRect.OutlineColor = Color.Blue;
+                }
                 tileSelectionRect.OutlineThickness = 1;
                 renderTarget.Draw(tileSelectionRect);
             }
