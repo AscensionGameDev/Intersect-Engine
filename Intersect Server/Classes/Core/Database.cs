@@ -34,7 +34,7 @@ namespace Intersect_Server.Classes
     public static class Database
     {
         public static bool MySQLConnected;
-        public static MapGrid[] MapGrids;
+        public static List<MapGrid> MapGrids = new List<MapGrid>();
         public static string ConnectionString = "";
         public static MapList MapStructure = new MapList();
 
@@ -1317,22 +1317,18 @@ namespace Intersect_Server.Classes
             for (var i = 0; i < Globals.MapCount; i++)
             {
                 if (Globals.GameMaps[i].Deleted != 0) continue;
-                if (MapGrids == null)
+                if (!MapGrids.Any())
                 {
-                    MapGrids = new MapGrid[1];
-                    MapGrids[0] = new MapGrid(i, 0);
+                    MapGrids.Add(new MapGrid(i, 0));
                 }
                 else
                 {
-                    for (var y = 0; y < MapGrids.Length; y++)
+                    for (var y = 0; y < MapGrids.Count(); y++)
                     {
                         if (!MapGrids[y].HasMap(i))
                         {
-                            if (y != MapGrids.Length - 1) continue;
-                            var tmpGrids = (MapGrid[])MapGrids.Clone();
-                            MapGrids = new MapGrid[tmpGrids.Length + 1];
-                            tmpGrids.CopyTo(MapGrids, 0);
-                            MapGrids[MapGrids.Length - 1] = new MapGrid(i, MapGrids.Length - 1);
+                            if (y != MapGrids.Count() - 1) continue;
+                            MapGrids.Add(new MapGrid(i, MapGrids.Count()));
                         }
                         else
                         {
@@ -1352,7 +1348,7 @@ namespace Intersect_Server.Classes
                     {
                         if ((x == Globals.GameMaps[i].MapGridX) && (y == Globals.GameMaps[i].MapGridY))
                             continue;
-                        if (MapGrids[myGrid].MyGrid[x, y] > -1)
+                        if (x >= MapGrids[myGrid].XMin && x < MapGrids[myGrid].XMax && y >= MapGrids[myGrid].YMin && y < MapGrids[myGrid].YMax &&  MapGrids[myGrid].MyGrid[x, y] > -1)
                         {
                             Globals.GameMaps[i].SurroundingMaps.Add(MapGrids[myGrid].MyGrid[x, y]);
                         }

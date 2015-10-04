@@ -294,9 +294,53 @@ namespace Intersect_Editor.Classes
                 Events.Add(new EventStruct(bf));
             }
             Autotiles.InitAutotiles();
+            UpdateAdjacentAutotiles();
         }
 
         //Helper Functions
+        private void UpdateAdjacentAutotiles()
+        {
+            if (Up > -1 && Up < Globals.GameMaps.Length && Globals.GameMaps[Up] != null)
+            {
+                for (int x = 0; x < Globals.MapWidth; x++)
+                {
+                    for (int y = Globals.MapHeight - 1; y < Globals.MapHeight; y++)
+                    {
+                        Globals.GameMaps[Up].Autotiles.UpdateAutoTiles(x, y);
+                    }
+                }
+            }
+            if (Down > -1 && Up < Globals.GameMaps.Length && Globals.GameMaps[Down] != null)
+            {
+                for (int x = 0; x < Globals.MapWidth; x++)
+                {
+                    for (int y = 0; y < 1; y++)
+                    {
+                        Globals.GameMaps[Down].Autotiles.UpdateAutoTiles(x, y);
+                    }
+                }
+            }
+            if (Left > -1 && Left < Globals.GameMaps.Length && Globals.GameMaps[Left] != null)
+            {
+                for (int x = Globals.MapWidth - 1; x < Globals.MapWidth; x++)
+                {
+                    for (int y = 0; y < Globals.MapHeight; y++)
+                    {
+                        Globals.GameMaps[Left].Autotiles.UpdateAutoTiles(x, y);
+                    }
+                }
+            }
+            if (Right > -1 && Left < Globals.GameMaps.Length && Globals.GameMaps[Right] != null)
+            {
+                for (int x = 0; x < 1; x++)
+                {
+                    for (int y = 0; y < Globals.MapHeight; y++)
+                    {
+                        Globals.GameMaps[Right].Autotiles.UpdateAutoTiles(x, y);
+                    }
+                }
+            }
+        }
         public EventStruct FindEventAt(int x, int y)
         {
             if (Events.Count <= 0) return null;

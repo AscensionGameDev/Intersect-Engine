@@ -291,7 +291,6 @@ namespace Intersect_Server.Classes
             }
             SpawnAttributeItems();
             SpawnMapNpcs();
-            //Save();
         }
 
         //Items & Resources

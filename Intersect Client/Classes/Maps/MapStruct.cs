@@ -27,6 +27,7 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using SFML.Graphics;
 using Color = SFML.Graphics.Color;
 using SFML.Window;
@@ -195,8 +196,53 @@ namespace Intersect_Client.Classes
             Globals.ShouldUpdateLights = true;
             Autotiles = new MapAutotiles(this);
             Autotiles.InitAutotiles();
+            UpdateAdjacentAutotiles();
             CreateMapSounds();
             MapRendered = false;
+        }
+
+        private void UpdateAdjacentAutotiles()
+        {
+            if (Up > -1 && Up < Globals.GameMaps.Count() && Globals.GameMaps[Up] != null)
+            {
+                for (int x = 0; x < Globals.MapWidth; x++)
+                {
+                    for (int y = Globals.MapHeight - 1; y < Globals.MapHeight; y++)
+                    {
+                        Globals.GameMaps[Up].Autotiles.UpdateAutoTiles(x, y);
+                    }
+                }
+            }
+            if (Down > -1 && Up < Globals.GameMaps.Count() && Globals.GameMaps[Down] != null)
+            {
+                for (int x = 0; x < Globals.MapWidth; x++)
+                {
+                    for (int y = 0; y < 1; y++)
+                    {
+                        Globals.GameMaps[Down].Autotiles.UpdateAutoTiles(x, y);
+                    }
+                }
+            }
+            if (Left > -1 && Left < Globals.GameMaps.Count() && Globals.GameMaps[Left] != null)
+            {
+                for (int x = Globals.MapWidth - 1; x < Globals.MapWidth; x++)
+                {
+                    for (int y = 0; y < Globals.MapHeight; y++)
+                    {
+                        Globals.GameMaps[Left].Autotiles.UpdateAutoTiles(x, y);
+                    }
+                }
+            }
+            if (Right > -1 && Left < Globals.GameMaps.Count() && Globals.GameMaps[Right] != null)
+            {
+                for (int x = 0; x < 1; x++)
+                {
+                    for (int y = 0; y < Globals.MapHeight; y++)
+                    {
+                        Globals.GameMaps[Right].Autotiles.UpdateAutoTiles(x, y);
+                    }
+                }
+            }
         }
         public bool ShouldLoad(int index)
         {

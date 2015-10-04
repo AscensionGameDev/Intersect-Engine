@@ -159,7 +159,7 @@ namespace Intersect_Client.Classes
                 }
                 else
                 {
-                    RenderWindow = new RenderWindow(GetValidVideoModes()[DisplayMode], "Intersect Engine", Styles.Default);
+                    RenderWindow = new RenderWindow(GetValidVideoModes()[DisplayMode], "Intersect Engine", Styles.Titlebar);
                 }
                 ScreenWidth = (int)RenderWindow.Size.X;
                 ScreenHeight = (int)RenderWindow.Size.Y;

@@ -374,7 +374,15 @@ namespace Intersect_Server.Classes
                 {
                     for (var x = Globals.GameMaps[mapNum].MapGridX - 1; x < Globals.GameMaps[mapNum].MapGridX + 2; x++)
                     {
-                        bf.WriteLong(Database.MapGrids[Globals.GameMaps[mapNum].MapGrid].MyGrid[x, y]);
+                        if (x >= Database.MapGrids[Globals.GameMaps[mapNum].MapGrid].XMin && x < Database.MapGrids[Globals.GameMaps[mapNum].MapGrid].XMax && y >= Database.MapGrids[Globals.GameMaps[mapNum].MapGrid].YMin && y < Database.MapGrids[Globals.GameMaps[mapNum].MapGrid].YMax)
+                        {
+                            bf.WriteLong(Database.MapGrids[Globals.GameMaps[mapNum].MapGrid].MyGrid[x, y]);
+                        }
+                        else
+                        {
+                            bf.WriteLong(-1);
+                        }
+                        
                     }
                 }
                 client.SendPacket(bf.ToArray());

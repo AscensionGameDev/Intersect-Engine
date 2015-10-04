@@ -185,6 +185,31 @@ namespace Intersect_Editor.Classes
                 }
         }
 
+        public void UpdateAutoTiles(int x, int y)
+        {
+            for (var x1 = x - 1; x1 < x + 2; x1++)
+            {
+                if (x1 < 0 || x1 >= Globals.MapWidth)
+                {
+                    continue;
+                }
+                for (var y1 = y - 1; y1 < y + 2; y1++)
+                {
+                    if (y1 < 0 || y1 >= Globals.MapHeight)
+                    {
+                        continue;
+                    }
+                    for (int i = 0; i < Constants.LayerCount; i++)
+                    {
+                        // calculate the subtile positions and place them
+                        CalculateAutotile(x1, y1, i);
+                        // cache the rendering state of the tiles and set them
+                        CacheRenderState(x1, y1, i);
+                    }
+                }
+            }
+        }
+
         public void CacheRenderState(int x, int y, int layerNum)
         {
             // exit out early
