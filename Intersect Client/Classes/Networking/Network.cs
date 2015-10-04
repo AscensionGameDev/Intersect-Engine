@@ -41,6 +41,7 @@ namespace Intersect_Client.Classes
         private static byte[] _tempBuff;
         private static ByteBuffer _myBuffer = new ByteBuffer();
         private static Object _bufferLock = new Object();
+        public static int Ping = 0;
 
         public static void InitNetwork()
         {

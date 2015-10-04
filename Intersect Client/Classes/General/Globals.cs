@@ -58,7 +58,8 @@ namespace Intersect_Client.Classes
         public static bool JoiningGame = false;
 
         //Map/Chunk Array
-        public static MapStruct[] GameMaps;
+        public static Dictionary<int, MapStruct> GameMaps = new Dictionary<int, MapStruct>();
+        public static List<int> MapsToRemove = new List<int>();
         public static int[] LocalMaps = new int[9];
         public static int[] MapRevision;
         public static int MapCount;

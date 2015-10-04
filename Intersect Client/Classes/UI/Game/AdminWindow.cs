@@ -1,5 +1,4 @@
-﻿using Gwen;
-/*
+﻿/*
     The MIT License (MIT)
 
     Copyright (c) 2015 JC Snider, Joe Bridges
@@ -25,6 +24,7 @@
     OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
     SOFTWARE.
 */
+using Gwen;
 using Gwen.Control;
 using System;
 using System.Collections.Generic;
@@ -37,6 +37,18 @@ namespace Intersect_Client.Classes.UI.Game
     {
         //Controls
         private WindowControl _adminWindow;
+
+        //Player Mods
+        private Label _nameLabel;
+        private TextBox _nameTextbox;
+        private Button _kickButton;
+        private Button _banButton;
+        private Button _warpToMeButton;
+        private Button _warpMeToButton;
+
+        //Admin Powers
+        private Label _noclipLabel;
+        private CheckBox _noclipCheckBox;
 
         private TreeControl _mapList;
         private CheckBox _chkChronological;
@@ -53,8 +65,45 @@ namespace Intersect_Client.Classes.UI.Game
             _adminWindow.Margin = Margin.Zero;
             _adminWindow.Padding = Padding.Zero;
 
-            CreateMapList();
+            //Player Mods
+            _nameLabel = new Label(_adminWindow);
+            _nameLabel.SetPosition(4,4);
+            _nameLabel.Text = "Name:";
 
+            _nameTextbox = new TextBox(_adminWindow);
+            _nameTextbox.SetBounds(4,16,100,18);
+
+            _kickButton = new Button(_adminWindow);
+            _kickButton.Text = "Kick Player";
+            _kickButton.SetBounds(4,38,80,18);
+
+            _banButton = new Button(_adminWindow);
+            _banButton.Text = "Ban Player";
+            _banButton.SetBounds(88,38,80,18);
+
+            _warpMeToButton = new Button(_adminWindow);
+            _warpMeToButton.Text = "Warp to Me";
+            _warpMeToButton.SetBounds(4,60,80,18);
+
+            _warpMeToButton = new Button(_adminWindow);
+            _warpMeToButton.Text = "Warp Me To";
+            _warpMeToButton.SetBounds(88,60,80,18);
+
+            _noclipLabel = new Label(_adminWindow);
+            _noclipLabel.Text = "No Clip";
+            _noclipLabel.SetPosition(4, 84);
+
+            _noclipCheckBox = new CheckBox(_adminWindow);
+            _noclipCheckBox.SetPosition(12 + _noclipLabel.Width, 84);
+            _noclipCheckBox.IsChecked = Globals.Me.NoClip;
+            _noclipCheckBox.CheckChanged += _noclipCheckBox_CheckChanged;
+
+
+
+
+
+
+            CreateMapList();
             _mapListLabel = new Label(_adminWindow);
             _mapListLabel.Text = "Map List: ";
             _mapListLabel.SetPosition(4f, 162);
@@ -62,13 +111,18 @@ namespace Intersect_Client.Classes.UI.Game
             _chkChronological = new CheckBox(_adminWindow);
             _chkChronological.SetToolTipText("Order maps chronologically.");
             _chkChronological.SetPosition(_adminWindow.Width - 24, 162);
+            _chkChronological.CheckChanged += _chkChronological_CheckChanged;
 
             _lblChronological = new Label(_adminWindow);
             _lblChronological.Text = "123...";
             _lblChronological.SetPosition(_chkChronological.X - 30, 162);
 
             UpdateMapList();
+        }
 
+        void _noclipCheckBox_CheckChanged(Base sender, EventArgs arguments)
+        {
+            Globals.Me.NoClip = _noclipCheckBox.IsChecked;
         }
 
         //Methods
@@ -95,10 +149,7 @@ namespace Intersect_Client.Classes.UI.Game
                     tmpNode = _mapList.AddNode(Database.OrderedMaps[i].MapNum + ". " + Database.OrderedMaps[i].Name);
                     tmpNode.UserData = (Database.OrderedMaps[i]).MapNum;
                     tmpNode.DoubleClicked += tmpNode_DoubleClicked;
-                    //tmpNode.ImageIndex = 1;
-                    //tmpNode.SelectedImageIndex = 1;
                 }
-                //treeMapList.Sort();
             }
             else
             {
@@ -118,8 +169,6 @@ namespace Intersect_Client.Classes.UI.Game
                             tmpNode.UserData = ((FolderDirectory)mapList.Items[i]);
                             AddMapListToTree(((FolderDirectory)mapList.Items[i]).Children, tmpNode);
                         }
-                        //tmpNode.ImageIndex = 0;
-                        //tmpNode.SelectedImageIndex = 0;
                     }
                     else
                     {
@@ -135,11 +184,14 @@ namespace Intersect_Client.Classes.UI.Game
                             tmpNode.UserData = ((FolderMap)mapList.Items[i]).MapNum;
                             tmpNode.DoubleClicked += tmpNode_DoubleClicked;
                         }
-                        //tmpNode.ImageIndex = 1;
-                        //tmpNode.SelectedImageIndex = 1;
                     }
                 }
             }
+        }
+
+        void _chkChronological_CheckChanged(Base sender, EventArgs arguments)
+        {
+            UpdateMapList();
         }
 
         void tmpNode_DoubleClicked(Base sender, ClickedEventArgs arguments)

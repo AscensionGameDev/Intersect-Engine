@@ -235,12 +235,28 @@ namespace Intersect_Server.Classes
             var oldMap = Globals.Entities[index].CurrentMap;
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
-            Globals.Entities[index].CurrentMap = bf.ReadInteger();
-            Globals.Entities[index].CurrentX = bf.ReadInteger();
-            Globals.Entities[index].CurrentY = bf.ReadInteger();
-            Globals.Entities[index].TryToChangeDimension();
-            Globals.Entities[index].Dir = bf.ReadInteger();
+            int map = bf.ReadInteger();
+            int x = bf.ReadInteger();
+            int y = bf.ReadInteger();
+            int dir = bf.ReadInteger();
+            if (x > -1 && x < Globals.MapWidth && y > -1 && y < Globals.MapHeight && dir > -1 && dir < 4 && map > -1 && map < Globals.GameMaps.Length)
+            {
+                Globals.Entities[index].CurrentMap = map;
+                Globals.Entities[index].CurrentX = x;
+                Globals.Entities[index].CurrentY = y;
+                Globals.Entities[index].TryToChangeDimension();
+                Globals.Entities[index].Dir = dir;
+            }
+            else
+            {
+                //POSSIBLE HACKING ATTEMPT!
+                return;
+            }
+
+
+            
             bf.Dispose();
+
 
             //TODO: Add Check if valid before sending the move to everyone.
             PacketSender.SendEntityMove(index, (int)Enums.EntityTypes.Player, Globals.Entities[index]);
@@ -281,19 +297,30 @@ namespace Intersect_Server.Classes
             bf.WriteBytes(packet);
             var usr = bf.ReadString();
             var pass = bf.ReadString();
-            if (Database.CheckPassword(usr,pass)) {
-                if (Database.CheckPower(usr) == 2) {
-                    client.IsEditor = true;
-                    PacketSender.SendJoinGame(client);
-                    PacketSender.SendGameData(client);
-                    PacketSender.SendTilesets(client);
-                    PacketSender.SendMapList(client);
+            if (Database.AccountExists(usr))
+            {
+                if (Database.CheckPassword(usr, pass))
+                {
+                    if (Database.CheckPower(usr) == 2)
+                    {
+                        client.IsEditor = true;
+                        PacketSender.SendJoinGame(client);
+                        PacketSender.SendGameData(client);
+                        PacketSender.SendTilesets(client);
+                        PacketSender.SendMapList(client);
+                    }
+                    else
+                    {
+                        PacketSender.SendLoginError(client, "Access denied! Invalid power level!");
+                    }
                 }
-                else {
-                    PacketSender.SendLoginError(client, "Access denied! Invalid power level!");
+                else
+                {
+                    PacketSender.SendLoginError(client, "Username or password invalid.");
                 }
             }
-            else {
+            else
+            {
                 PacketSender.SendLoginError(client, "Username or password invalid.");
             }
         }

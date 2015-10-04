@@ -39,6 +39,8 @@ namespace Intersect_Client.Classes
         public int StatPoints = 0;
         public int Experience = 0;
 
+        public bool NoClip = false;
+
         private int _targetType = -1; //None (-1), Entity, Item, Event
         private int _targetIndex = -1;
         private EntityBox _targetBox;
@@ -437,6 +439,7 @@ namespace Intersect_Client.Classes
         }
         private bool TryPickupItem()
         {
+            if (!Globals.GameMaps.ContainsKey(CurrentMap)) { return false; }
             for (int i = 0; i < Globals.GameMaps[CurrentMap].MapItems.Count; i++)
             {
                 if (Globals.GameMaps[CurrentMap].MapItems[i].X == CurrentX && Globals.GameMaps[CurrentMap].MapItems[i].Y == CurrentY)
@@ -779,11 +782,11 @@ namespace Intersect_Client.Classes
                         tmpY = (Globals.MapHeight - 1) - (y * -1);
                         if (Globals.LocalMaps[tmpI - 4] > -1)
                         {
-                            if (Globals.GameMaps[Globals.LocalMaps[tmpI - 4]].Attributes[tmpX, tmpY].value == (int)Enums.MapAttributes.Blocked)
+                            if (Globals.GameMaps[Globals.LocalMaps[tmpI - 4]].Attributes[tmpX, tmpY].value == (int)Enums.MapAttributes.Blocked && !NoClip)
                             {
                                 return true;
                             }
-                            else if (Globals.GameMaps[Globals.LocalMaps[tmpI - 4]].Attributes[tmpX, tmpY].value == (int)Enums.MapAttributes.ZDimension)
+                            else if (Globals.GameMaps[Globals.LocalMaps[tmpI - 4]].Attributes[tmpX, tmpY].value == (int)Enums.MapAttributes.ZDimension && !NoClip)
                             {
                                 if (Globals.GameMaps[Globals.LocalMaps[tmpI - 4]].Attributes[tmpX, tmpY].data2 - 1 == z)
                                 {
@@ -802,11 +805,11 @@ namespace Intersect_Client.Classes
                         tmpY = y - (Globals.MapHeight - 1);
                         if (Globals.LocalMaps[tmpI + 2] > -1)
                         {
-                            if (Globals.GameMaps[Globals.LocalMaps[tmpI + 2]].Attributes[tmpX, tmpY].value == (int)Enums.MapAttributes.Blocked)
+                            if (Globals.GameMaps[Globals.LocalMaps[tmpI + 2]].Attributes[tmpX, tmpY].value == (int)Enums.MapAttributes.Blocked && !NoClip)
                             {
                                 return true;
                             }
-                            else if (Globals.GameMaps[Globals.LocalMaps[tmpI + 2]].Attributes[tmpX, tmpY].value == (int)Enums.MapAttributes.ZDimension)
+                            else if (Globals.GameMaps[Globals.LocalMaps[tmpI + 2]].Attributes[tmpX, tmpY].value == (int)Enums.MapAttributes.ZDimension && !NoClip)
                             {
                                 if (Globals.GameMaps[Globals.LocalMaps[tmpI + 2]].Attributes[tmpX, tmpY].data2 - 1 == z)
                                 {
@@ -824,11 +827,11 @@ namespace Intersect_Client.Classes
                     {
                         if (Globals.LocalMaps[tmpI - 1] > -1)
                         {
-                            if (Globals.GameMaps[Globals.LocalMaps[tmpI - 1]].Attributes[tmpX, tmpY].value == (int)Enums.MapAttributes.Blocked)
+                            if (Globals.GameMaps[Globals.LocalMaps[tmpI - 1]].Attributes[tmpX, tmpY].value == (int)Enums.MapAttributes.Blocked && !NoClip)
                             {
                                 return true;
                             }
-                            else if (Globals.GameMaps[Globals.LocalMaps[tmpI - 1]].Attributes[tmpX, tmpY].value == (int)Enums.MapAttributes.ZDimension)
+                            else if (Globals.GameMaps[Globals.LocalMaps[tmpI - 1]].Attributes[tmpX, tmpY].value == (int)Enums.MapAttributes.ZDimension && !NoClip)
                             {
                                 if (Globals.GameMaps[Globals.LocalMaps[tmpI - 1]].Attributes[tmpX, tmpY].data2 - 1 == z)
                                 {
@@ -852,11 +855,11 @@ namespace Intersect_Client.Classes
                         tmpY = (Globals.MapHeight - 1) - (y * -1);
                         if (Globals.LocalMaps[tmpI - 2] > -1)
                         {
-                            if (Globals.GameMaps[Globals.LocalMaps[tmpI - 2]].Attributes[tmpX, tmpY].value == (int)Enums.MapAttributes.Blocked)
+                            if (Globals.GameMaps[Globals.LocalMaps[tmpI - 2]].Attributes[tmpX, tmpY].value == (int)Enums.MapAttributes.Blocked && !NoClip)
                             {
                                 return true;
                             }
-                            else if (Globals.GameMaps[Globals.LocalMaps[tmpI - 2]].Attributes[tmpX, tmpY].value == (int)Enums.MapAttributes.ZDimension)
+                            else if (Globals.GameMaps[Globals.LocalMaps[tmpI - 2]].Attributes[tmpX, tmpY].value == (int)Enums.MapAttributes.ZDimension && !NoClip)
                             {
                                 if (Globals.GameMaps[Globals.LocalMaps[tmpI - 2]].Attributes[tmpX, tmpY].data2 - 1 == z)
                                 {
@@ -875,11 +878,11 @@ namespace Intersect_Client.Classes
                         tmpY = y - (Globals.MapHeight - 1);
                         if (Globals.LocalMaps[tmpI + 4] > -1)
                         {
-                            if (Globals.GameMaps[Globals.LocalMaps[tmpI + 4]].Attributes[tmpX, tmpY].value == (int)Enums.MapAttributes.Blocked)
+                            if (Globals.GameMaps[Globals.LocalMaps[tmpI + 4]].Attributes[tmpX, tmpY].value == (int)Enums.MapAttributes.Blocked && !NoClip)
                             {
                                 return true;
                             }
-                            else if (Globals.GameMaps[Globals.LocalMaps[tmpI + 4]].Attributes[tmpX, tmpY].value == (int)Enums.MapAttributes.ZDimension)
+                            else if (Globals.GameMaps[Globals.LocalMaps[tmpI + 4]].Attributes[tmpX, tmpY].value == (int)Enums.MapAttributes.ZDimension && !NoClip)
                             {
                                 if (Globals.GameMaps[Globals.LocalMaps[tmpI + 4]].Attributes[tmpX, tmpY].data2 - 1 == z)
                                 {
@@ -897,11 +900,11 @@ namespace Intersect_Client.Classes
                     {
                         if (Globals.LocalMaps[tmpI + 1] > -1)
                         {
-                            if (Globals.GameMaps[Globals.LocalMaps[tmpI + 1]].Attributes[tmpX, tmpY].value == (int)Enums.MapAttributes.Blocked)
+                            if (Globals.GameMaps[Globals.LocalMaps[tmpI + 1]].Attributes[tmpX, tmpY].value == (int)Enums.MapAttributes.Blocked && !NoClip)
                             {
                                 return true;
                             }
-                            else if (Globals.GameMaps[Globals.LocalMaps[tmpI + 1]].Attributes[tmpX, tmpY].value == (int)Enums.MapAttributes.ZDimension)
+                            else if (Globals.GameMaps[Globals.LocalMaps[tmpI + 1]].Attributes[tmpX, tmpY].value == (int)Enums.MapAttributes.ZDimension && !NoClip)
                             {
                                 if (Globals.GameMaps[Globals.LocalMaps[tmpI + 1]].Attributes[tmpX, tmpY].data2 - 1 == z)
                                 {
@@ -922,11 +925,11 @@ namespace Intersect_Client.Classes
                     tmpY = (Globals.MapHeight - 1) - (y * -1);
                     if (Globals.LocalMaps[tmpI - 3] > -1)
                     {
-                        if (Globals.GameMaps[Globals.LocalMaps[tmpI - 3]].Attributes[tmpX, tmpY].value == (int)Enums.MapAttributes.Blocked)
+                        if (Globals.GameMaps[Globals.LocalMaps[tmpI - 3]].Attributes[tmpX, tmpY].value == (int)Enums.MapAttributes.Blocked && !NoClip)
                         {
                             return true;
                         }
-                        else if (Globals.GameMaps[Globals.LocalMaps[tmpI - 3]].Attributes[tmpX, tmpY].value == (int)Enums.MapAttributes.ZDimension)
+                        else if (Globals.GameMaps[Globals.LocalMaps[tmpI - 3]].Attributes[tmpX, tmpY].value == (int)Enums.MapAttributes.ZDimension && !NoClip)
                         {
                             if (Globals.GameMaps[Globals.LocalMaps[tmpI - 3]].Attributes[tmpX, tmpY].data2 - 1 == z)
                             {
@@ -946,11 +949,11 @@ namespace Intersect_Client.Classes
                     tmpY = y - (Globals.MapHeight - 1);
                     if (Globals.LocalMaps[tmpI + 3] > -1)
                     {
-                        if (Globals.GameMaps[Globals.LocalMaps[tmpI + 3]].Attributes[tmpX, tmpY].value == (int)Enums.MapAttributes.Blocked)
+                        if (Globals.GameMaps[Globals.LocalMaps[tmpI + 3]].Attributes[tmpX, tmpY].value == (int)Enums.MapAttributes.Blocked && !NoClip)
                         {
                             return true;
                         }
-                        else if (Globals.GameMaps[Globals.LocalMaps[tmpI + 3]].Attributes[tmpX, tmpY].value == (int)Enums.MapAttributes.ZDimension)
+                        else if (Globals.GameMaps[Globals.LocalMaps[tmpI + 3]].Attributes[tmpX, tmpY].value == (int)Enums.MapAttributes.ZDimension && !NoClip)
                         {
                             if (Globals.GameMaps[Globals.LocalMaps[tmpI + 3]].Attributes[tmpX, tmpY].data2 - 1 == z)
                             {
@@ -970,11 +973,11 @@ namespace Intersect_Client.Classes
                     tmpY = y;
                     if (Globals.LocalMaps[tmpI] > -1)
                     {
-                        if (Globals.GameMaps[Globals.LocalMaps[tmpI]].Attributes[tmpX, tmpY].value == (int)Enums.MapAttributes.Blocked)
+                        if (Globals.GameMaps[Globals.LocalMaps[tmpI]].Attributes[tmpX, tmpY].value == (int)Enums.MapAttributes.Blocked && !NoClip)
                         {
                             return true;
                         }
-                        else if (Globals.GameMaps[Globals.LocalMaps[tmpI]].Attributes[tmpX, tmpY].value == (int)Enums.MapAttributes.ZDimension)
+                        else if (Globals.GameMaps[Globals.LocalMaps[tmpI]].Attributes[tmpX, tmpY].value == (int)Enums.MapAttributes.ZDimension && !NoClip)
                         {
                             if (Globals.GameMaps[Globals.LocalMaps[tmpI]].Attributes[tmpX, tmpY].data2 - 1 == z)
                             {
@@ -997,7 +1000,7 @@ namespace Intersect_Client.Classes
                     }
                     else
                     {
-                        if (en.Value.CurrentMap == tmpMap && en.Value.CurrentX == tmpX && en.Value.CurrentY == tmpY && en.Value.Passable == 0)
+                        if (en.Value.CurrentMap == tmpMap && en.Value.CurrentX == tmpX && en.Value.CurrentY == tmpY && en.Value.Passable == 0 && !NoClip)
                         {
                             return true;
                         }
@@ -1012,7 +1015,7 @@ namespace Intersect_Client.Classes
                     }
                     else
                     {
-                        if (en.Value.CurrentMap == tmpMap && en.Value.CurrentX == tmpX && en.Value.CurrentY == tmpY && en.Value.Passable == 0)
+                        if (en.Value.CurrentMap == tmpMap && en.Value.CurrentX == tmpX && en.Value.CurrentY == tmpY && en.Value.Passable == 0 && !NoClip)
                         {
                             return true;
                         }

@@ -171,11 +171,11 @@ namespace Intersect_Client.Classes
         {
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
-            var mapNum = bf.ReadLong();
+            var mapNum = (int)bf.ReadLong();
             var mapLength = bf.ReadLong();
             var mapData = bf.ReadBytes((int)mapLength);
-            if (Globals.GameMaps[mapNum] != null) { Globals.GameMaps[mapNum].Dispose(); }
-            Globals.GameMaps[mapNum] = new MapStruct((int)mapNum, mapData);
+            if (Globals.GameMaps.ContainsKey(mapNum)) { Globals.GameMaps[mapNum].Dispose(false); }
+            Globals.GameMaps.Add(mapNum, new MapStruct((int)mapNum, mapData));
             if ((mapNum) == Globals.LocalMaps[4]) { 
                 Sounds.PlayMusic(Globals.GameMaps[mapNum].Music, 3,3, true); }
             Globals.GameMaps[mapNum].HoldLeft = bf.ReadInteger();
@@ -278,7 +278,6 @@ namespace Intersect_Client.Classes
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
             var mapCount = (int)bf.ReadLong();
-            Globals.GameMaps = new MapStruct[mapCount];
             Globals.MapCount = mapCount;
             var BorderMode = bf.ReadInteger();
 
@@ -326,7 +325,7 @@ namespace Intersect_Client.Classes
             {
                 Globals.LocalMaps[i] = (int)bf.ReadLong();
                 if (Globals.LocalMaps[i] <= -1) continue;
-                if (Globals.GameMaps[Globals.LocalMaps[i]] == null)
+                if (!Globals.GameMaps.ContainsKey(Globals.LocalMaps[i]))
                 {
                     PacketSender.SendNeedMap(Globals.LocalMaps[i]);
                 }
@@ -335,22 +334,6 @@ namespace Intersect_Client.Classes
                     if (i == 4)
                     {
                         Sounds.PlayMusic(Globals.GameMaps[Globals.LocalMaps[i]].Music, 3,3, true);
-                    }
-                }
-            }
-            for (var i = 0; i < Globals.GameMaps.Length; i++)
-            {
-                if (Globals.GameMaps[i] == null) continue;
-                if (Globals.GameMaps[i].CacheCleared) continue;
-                for (var x = 0; x < 9; x++)
-                {
-                    if (Globals.LocalMaps[x] == i)
-                    {
-                        break;
-                    }
-                    if (x == 8)
-                    {
-                        //Globals.GameMaps[i].ClearCache();
                     }
                 }
             }
@@ -592,7 +575,7 @@ namespace Intersect_Client.Classes
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
             int mapNum = bf.ReadInteger();
-            if (Globals.GameMaps[mapNum] != null)
+            if (Globals.GameMaps.ContainsKey(mapNum) && Globals.GameMaps[mapNum] != null)
             {
                 Globals.GameMaps[mapNum].MapItems.Clear();
                 int itemCount = bf.ReadInteger();

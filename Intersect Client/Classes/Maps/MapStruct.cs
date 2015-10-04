@@ -94,6 +94,7 @@ namespace Intersect_Client.Classes
         private float _fogCurrentY;
         private float _lastFogX;
         private float _lastFogY;
+        private long _lastUpdateTime;
         
         //Init
         public MapStruct(int mapNum, byte[] mapPacket)
@@ -203,7 +204,7 @@ namespace Intersect_Client.Classes
 
         private void UpdateAdjacentAutotiles()
         {
-            if (Up > -1 && Up < Globals.GameMaps.Count() && Globals.GameMaps[Up] != null)
+            if (Up > -1 && Globals.GameMaps.ContainsKey(Up))
             {
                 for (int x = 0; x < Globals.MapWidth; x++)
                 {
@@ -213,7 +214,7 @@ namespace Intersect_Client.Classes
                     }
                 }
             }
-            if (Down > -1 && Up < Globals.GameMaps.Count() && Globals.GameMaps[Down] != null)
+            if (Down > -1 &&  Globals.GameMaps.ContainsKey(Down))
             {
                 for (int x = 0; x < Globals.MapWidth; x++)
                 {
@@ -223,7 +224,7 @@ namespace Intersect_Client.Classes
                     }
                 }
             }
-            if (Left > -1 && Left < Globals.GameMaps.Count() && Globals.GameMaps[Left] != null)
+            if (Left > -1 && Globals.GameMaps.ContainsKey(Left))
             {
                 for (int x = Globals.MapWidth - 1; x < Globals.MapWidth; x++)
                 {
@@ -233,7 +234,7 @@ namespace Intersect_Client.Classes
                     }
                 }
             }
-            if (Right > -1 && Left < Globals.GameMaps.Count() && Globals.GameMaps[Right] != null)
+            if (Right > -1 && Globals.GameMaps.ContainsKey(Right))
             {
                 for (int x = 0; x < 1; x++)
                 {
@@ -379,11 +380,22 @@ namespace Intersect_Client.Classes
         }
 
         //Rendering Functions
-        public void Update()
+        public void Update(bool isLocal)
         {
-            if (BackgroundSound == null && Sound != "None" && Sound !="")
+            if (isLocal)
             {
-                BackgroundSound = Sounds.AddMapSound(Sound, -1, -1, MyMapNum, true, 10);
+                _lastUpdateTime = Environment.TickCount + 10000;
+                if (BackgroundSound == null && Sound != "None" && Sound != "")
+                {
+                    BackgroundSound = Sounds.AddMapSound(Sound, -1, -1, MyMapNum, true, 10);
+                }
+            }
+            else
+            {
+                if (Environment.TickCount > _lastUpdateTime)
+                {
+                    Dispose();
+                }
             }
         }
         public void Draw(float xoffset, float yoffset, int layer = 0)
@@ -536,8 +548,13 @@ namespace Intersect_Client.Classes
         }
 
         //Dispose
-        public void Dispose()
+        public void Dispose(bool prep = true)
         {
+            if (prep)
+            {
+                Globals.MapsToRemove.Add(MyMapNum);
+                return;
+            }
             //Clean up all map stuff.
             for (int i = 0; i < 3; i++)
             {
@@ -545,6 +562,7 @@ namespace Intersect_Client.Classes
                 if (UpperTextures[i] != null) { UpperTextures[i].Dispose(); }
                 if (PeakTextures[i] != null) { PeakTextures[i].Dispose(); }
             }
+            Globals.GameMaps.Remove(MyMapNum);
         }
     }
 

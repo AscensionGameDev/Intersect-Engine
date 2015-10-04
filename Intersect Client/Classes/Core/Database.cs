@@ -70,7 +70,7 @@ namespace Intersect_Client.Classes
                     if (selectSingleNode != null && selectSingleNode.InnerText != "")
                         selectSingleNode = options.SelectSingleNode("//Config/FPS");
                     if (selectSingleNode != null && selectSingleNode.InnerText != "")
-                        Graphics.FPS = Int32.Parse(selectSingleNode.InnerText);
+                        Graphics.FpsLimit = Int32.Parse(selectSingleNode.InnerText);
                     selectSingleNode = options.SelectSingleNode("//Config/Sound");
                     if (selectSingleNode != null && selectSingleNode.InnerText != "")
                         Globals.SoundVolume = Int32.Parse(selectSingleNode.InnerText);
@@ -120,7 +120,7 @@ namespace Intersect_Client.Classes
                 writer.WriteElementString("Host", Globals.ServerHost);
                 writer.WriteElementString("Port", Globals.ServerPort.ToString());
                 writer.WriteElementString("DisplayMode", Graphics.DisplayMode.ToString());
-                writer.WriteElementString("FPS", Graphics.FPS.ToString());
+                writer.WriteElementString("FPS", Graphics.FpsLimit.ToString());
                 writer.WriteElementString("FullScreen", Graphics.FullScreen.ToString());
                 writer.WriteElementString("Sound", Globals.SoundVolume.ToString());
                 writer.WriteElementString("Music", Globals.MusicVolume.ToString());

@@ -120,7 +120,7 @@ namespace Intersect_Client.Classes
             base.Load(myBuffer);
             MapNum = myBuffer.ReadInteger();
             Name = myBuffer.ReadString();
-            if (Globals.GameMaps.Length > MapNum && Globals.GameMaps[MapNum] != null)
+            if (Globals.GameMaps.ContainsKey(MapNum) && Globals.GameMaps[MapNum] != null)
             {
                 Globals.GameMaps[MapNum].MyName = Name;
             }

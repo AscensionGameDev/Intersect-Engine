@@ -107,7 +107,7 @@ namespace Intersect_Client
                 for (var i = 0; i < 9; i++)
                 {
                     if (Globals.LocalMaps[i] <= -1) continue;
-                    if (Globals.GameMaps[Globals.LocalMaps[i]] != null)
+                    if (Globals.GameMaps.ContainsKey(Globals.LocalMaps[i]) && Globals.GameMaps[Globals.LocalMaps[i]] != null)
                     {
                         if (!Globals.GameMaps[Globals.LocalMaps[i]].ShouldLoad(i*2 + 0)) continue;
                         if (Globals.GameMaps[Globals.LocalMaps[i]].MapLoaded == false)
@@ -161,17 +161,32 @@ namespace Intersect_Client
             }
 
             //Update Maps
-            for (var i = 0; i < 9; i++)
+            bool handled = false;
+            foreach (var map in Globals.GameMaps)
             {
-                if (Globals.LocalMaps[i] <= -1) continue;
-                if (Globals.GameMaps[Globals.LocalMaps[i]] != null)
+                handled = false;
+                if (map.Value == null) continue;
+                for (var i = 0; i < 9; i++)
                 {
-                    if (Globals.GameMaps[Globals.LocalMaps[i]].MapLoaded != false)
+                    if (Globals.LocalMaps[i] <= -1) continue;
+                    if (map.Value.MyMapNum == Globals.LocalMaps[i])
                     {
-                        Globals.GameMaps[Globals.LocalMaps[i]].Update();
+                        map.Value.Update(true);
+                        handled = true;
                     }
                 }
+                if (!handled)
+                {
+                    map.Value.Update(false);
+                }
             }
+
+            for (int i = 0; i < Globals.MapsToRemove.Count; i++)
+            {
+                Globals.GameMaps[Globals.MapsToRemove[i]].Dispose(false);
+            }
+            Globals.MapsToRemove.Clear();
+
 
             //Update Game Animations
             if (_animTimer < Environment.TickCount)

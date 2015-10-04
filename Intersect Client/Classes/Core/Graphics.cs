@@ -52,7 +52,6 @@ namespace Intersect_Client.Classes
         public static int ScreenWidth;
         public static int ScreenHeight;
         public static int DisplayMode = 0;
-        public static int FPS = 0;
         public static bool FullScreen = false;
         public static bool MustReInit;
         public static int FadeStage = 1;
@@ -60,6 +59,7 @@ namespace Intersect_Client.Classes
         public static List<Keyboard.Key> KeyStates = new List<Keyboard.Key>();
         public static List<Mouse.Button> MouseState = new List<Mouse.Button>();
         public static Font GameFont;
+        public static int FpsLimit;
         public static int Fps;
         private static int _fpsCount;
         private static long _fpsTimer;
@@ -126,7 +126,8 @@ namespace Intersect_Client.Classes
         private static int _vertexCount = 0;
         private static Texture _curTexture;
         public static int DrawCalls = 0;
-        public static int CacheLimit = 0;
+        public static int EntitiesDrawn = 0;
+        public static int MapsDrawn = 0;
 
         //Cache the Y based rendering
         public static List<Entity>[] Layer1Entities;
@@ -163,23 +164,23 @@ namespace Intersect_Client.Classes
                 }
                 ScreenWidth = (int)RenderWindow.Size.X;
                 ScreenHeight = (int)RenderWindow.Size.Y;
-                if (FPS == 0)
+                if (FpsLimit == 0)
                 {
                     RenderWindow.SetVerticalSyncEnabled(true);
                 }
-                else if (FPS == 1)
+                else if (FpsLimit == 1)
                 {
                     RenderWindow.SetFramerateLimit(30);
                 }
-                else if (FPS == 2)
+                else if (FpsLimit == 2)
                 {
                     RenderWindow.SetFramerateLimit(60);
                 }
-                else if (FPS == 3)
+                else if (FpsLimit == 3)
                 {
                     RenderWindow.SetFramerateLimit(90);
                 }
-                else if (FPS == 4)
+                else if (FpsLimit == 4)
                 {
                     RenderWindow.SetFramerateLimit(120);
                 }
@@ -270,7 +271,8 @@ namespace Intersect_Client.Classes
             //if (!RenderWindow.HasFocus()) return;
             RenderWindow.Clear(Color.Black);
             DrawCalls = 0;
-            CacheLimit = 0;
+            MapsDrawn = 0;
+            EntitiesDrawn = 0;
             if (Globals.GameState == (int)Enums.GameStates.Intro)
             {
                 if (ImageFileNames.IndexOf(Globals.IntroBG[IntroIndex]) > -1)
@@ -304,7 +306,7 @@ namespace Intersect_Client.Classes
                     DrawFullScreenTexture(ImageTextures[ImageFileNames.IndexOf(Globals.MenuBG)]);
                 }
             }
-            if (Globals.GameState == (int)Enums.GameStates.InGame && Globals.GameLoaded && Globals.CurrentMap > -1 && Globals.GameMaps[Globals.CurrentMap] != null)
+            if (Globals.GameState == (int)Enums.GameStates.InGame && Globals.GameLoaded && Globals.CurrentMap > -1 && Globals.GameMaps.ContainsKey(Globals.CurrentMap))
             {
                 UpdateView();
                 if (LightsChanged)
@@ -366,6 +368,7 @@ namespace Intersect_Client.Classes
                     for (int y = 0; y < Layer1Entities[x].Count; y++)
                     {
                         Layer1Entities[x][y].Draw();
+                        EntitiesDrawn++;
                     }
                 }  
 
@@ -382,7 +385,8 @@ namespace Intersect_Client.Classes
                 {
                     for (int y = 0; y < Layer2Entities[x].Count; y++)
                     {
-                        Layer1Entities[x][y].Draw();
+                        Layer2Entities[x][y].Draw();
+                        EntitiesDrawn++;
                     }
                 }
 
@@ -454,14 +458,14 @@ namespace Intersect_Client.Classes
                 RenderWindow.Draw(myShape);
             }
             RenderWindow.Display();
-                        RenderWindow.DispatchEvents();
+            RenderWindow.DispatchEvents();
             _fpsCount++;
             if (_fpsTimer < Environment.TickCount)
             {
                 Fps = _fpsCount;
                 _fpsCount = 0;
                 _fpsTimer = Environment.TickCount + 1000;
-                RenderWindow.SetTitle("Intersect Engine - Brought to you by: http://ascensiongamedev.com - FPS: " + Fps + " - General Draw Calls: " + DrawCalls + " - Cache Limit: " + CacheLimit);
+                RenderWindow.SetTitle("Intersect Engine");
             }
         }
         private static void DrawMap(int index, int layer = 0)
@@ -469,11 +473,13 @@ namespace Intersect_Client.Classes
             var mapoffsetx = CalcMapOffsetX(index);
             var mapoffsety = CalcMapOffsetY(index);
 
-            if (Globals.LocalMaps[index] > Globals.GameMaps.Count() || Globals.LocalMaps[index] < 0) return;
-            if (Globals.GameMaps[Globals.LocalMaps[index]] == null) return;
+            if (Globals.LocalMaps[index] < 0) return;
+            if (!Globals.GameMaps.ContainsKey(Globals.LocalMaps[index])) return;
+            if (!CurrentView.Intersects(new FloatRect(mapoffsetx, mapoffsety, Globals.MapWidth * Globals.TileWidth, Globals.MapHeight * Globals.TileHeight))) { return; }
             if (Globals.GameMaps[Globals.LocalMaps[index]].MapLoaded)
             {
                 Globals.GameMaps[Globals.LocalMaps[index]].Draw(mapoffsetx, mapoffsety, layer);
+                if (layer == 0) { MapsDrawn++; }
             }
         }
         public static void DrawOverlay()
@@ -991,10 +997,6 @@ namespace Intersect_Client.Classes
                     // enable the new texture
                     if (_vertexCount > 0)
                     {
-                        if (_vertexCount > CacheLimit)
-                        {
-                            CacheLimit = _vertexCount;
-                        }
                         renderTarget.Draw(_vertexCache, 0, (uint)_vertexCount, PrimitiveType.Quads, _renderState);
                         DrawCalls++;
                         renderTarget.ResetGLStates();

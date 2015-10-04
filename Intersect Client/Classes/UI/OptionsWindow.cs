@@ -185,7 +185,7 @@ namespace Intersect_Client.Classes.UI
             {
                 _resolutionList.SelectByText(Graphics.GetValidVideoModes()[Graphics.DisplayMode].Width + "x" + Graphics.GetValidVideoModes()[Graphics.DisplayMode].Height);
             }
-            switch (Graphics.FPS)
+            switch (Graphics.FpsLimit)
             {
                 case -1: //Unlimited
                      _fpsList.SelectByText("No Limit");
@@ -299,8 +299,9 @@ namespace Intersect_Client.Classes.UI
                     break;
                     
             }
-            if (newFps != Graphics.FPS) {
-                Graphics.FPS = newFps;
+            if (newFps != Graphics.FpsLimit)
+            {
+                Graphics.FpsLimit = newFps;
                 Graphics.MustReInit = true;
             }
             Globals.MusicVolume = (int)_musicSlider.Value;

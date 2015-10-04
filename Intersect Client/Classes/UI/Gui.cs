@@ -202,6 +202,10 @@ namespace Intersect_Client.Classes
                     PacketSender.SendOpenAdminWindow();
                 }
             }
+            else if (e.Code == Keyboard.Key.F1)
+            {
+                _GameGui.ShowHideDebug();
+            }
             else
             {
                 _gwenInput.ProcessMessage(new SFMLKeyEventArgs(e, true));

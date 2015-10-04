@@ -38,6 +38,7 @@ namespace Intersect_Client.Classes
     public class GameGuiBase
     {
         public Canvas GameCanvas;
+        private DebugMenu _debugMenu;
         public bool FocusChat;
 
         public GameGuiBase(Canvas myCanvas)
@@ -61,6 +62,7 @@ namespace Intersect_Client.Classes
             _chatBox = new Chatbox(GameCanvas);
             GameMenu = new GameMenu(GameCanvas);
             Hotbar = new HotBarWindow(GameCanvas);
+            _debugMenu = new DebugMenu(GameCanvas);
             if (Globals.Me != null) { TryAddPlayerBox(); }
         }
 
@@ -70,12 +72,25 @@ namespace Intersect_Client.Classes
             _playerBox = new EntityBox(GameCanvas, Globals.Me,0,0);
         }
 
+        public void ShowHideDebug()
+        {
+            if (_debugMenu.IsVisible())
+            {
+                _debugMenu.Hide();
+            }
+            else
+            {
+                _debugMenu.Show();
+            }
+        }
+
         public void Draw()
         {
             _eventWindow.Update();
             _chatBox.Update();
             GameMenu.Update();
             Hotbar.Update();
+            _debugMenu.Update();
             if (_playerBox != null) { _playerBox.Update(); }
             if (FocusChat)
             {
