@@ -5,10 +5,6 @@ VisualStudioVersion = 12.0.31101.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Intersect Client", "Intersect Client.csproj", "{081F7EFF-4303-406E-86AE-226AFEF53AB7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gwen", "..\..\GwenCS\Gwen\Gwen.csproj", "{ADDA2F43-96C0-497F-8216-29C67ABC9806}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gwen.Renderer.SFML", "..\..\GwenCS\Gwen.Renderer.SFML\Gwen.Renderer.SFML.csproj", "{D97B4F91-9FC8-46E0-A511-68D006662051}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -25,22 +21,6 @@ Global
 		{081F7EFF-4303-406E-86AE-226AFEF53AB7}.Release|Any CPU.Build.0 = Release|Any CPU
 		{081F7EFF-4303-406E-86AE-226AFEF53AB7}.Release|x86.ActiveCfg = Release|x86
 		{081F7EFF-4303-406E-86AE-226AFEF53AB7}.Release|x86.Build.0 = Release|x86
-		{ADDA2F43-96C0-497F-8216-29C67ABC9806}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{ADDA2F43-96C0-497F-8216-29C67ABC9806}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{ADDA2F43-96C0-497F-8216-29C67ABC9806}.Debug|x86.ActiveCfg = Debug|x86
-		{ADDA2F43-96C0-497F-8216-29C67ABC9806}.Debug|x86.Build.0 = Debug|x86
-		{ADDA2F43-96C0-497F-8216-29C67ABC9806}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{ADDA2F43-96C0-497F-8216-29C67ABC9806}.Release|Any CPU.Build.0 = Release|Any CPU
-		{ADDA2F43-96C0-497F-8216-29C67ABC9806}.Release|x86.ActiveCfg = Release|x86
-		{ADDA2F43-96C0-497F-8216-29C67ABC9806}.Release|x86.Build.0 = Release|x86
-		{D97B4F91-9FC8-46E0-A511-68D006662051}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{D97B4F91-9FC8-46E0-A511-68D006662051}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{D97B4F91-9FC8-46E0-A511-68D006662051}.Debug|x86.ActiveCfg = Debug|x86
-		{D97B4F91-9FC8-46E0-A511-68D006662051}.Debug|x86.Build.0 = Debug|x86
-		{D97B4F91-9FC8-46E0-A511-68D006662051}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{D97B4F91-9FC8-46E0-A511-68D006662051}.Release|Any CPU.Build.0 = Release|Any CPU
-		{D97B4F91-9FC8-46E0-A511-68D006662051}.Release|x86.ActiveCfg = Release|x86
-		{D97B4F91-9FC8-46E0-A511-68D006662051}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
