@@ -717,7 +717,7 @@ namespace Intersect_Client.Classes
                 MapStruct otherMap;
                 if (x2 < 0)
                 {
-                    if (_myMap.Left > -1)
+                    if (_myMap.Left > -1 && Globals.GameMaps.ContainsKey(_myMap.Left))
                     {
                         otherMap = Globals.GameMaps[_myMap.Left];
                         if (otherMap != null)
@@ -736,7 +736,7 @@ namespace Intersect_Client.Classes
                 }
                 else if (x2 >= Globals.MapWidth)
                 {
-                    if (_myMap.Right > -1)
+                    if (_myMap.Right > -1 && Globals.GameMaps.ContainsKey(_myMap.Right))
                     {
                         otherMap = Globals.GameMaps[_myMap.Right];
                         if (otherMap != null)
@@ -755,7 +755,7 @@ namespace Intersect_Client.Classes
                 }
                 else if (y2 < 0)
                 {
-                    if (_myMap.Up > -1)
+                    if (_myMap.Up > -1 && Globals.GameMaps.ContainsKey(_myMap.Up))
                     {
                         otherMap = Globals.GameMaps[_myMap.Up];
                         if (otherMap != null)
@@ -774,7 +774,7 @@ namespace Intersect_Client.Classes
                 }
                 else if (y2 >= Globals.MapHeight)
                 {
-                    if (_myMap.Down > -1)
+                    if (_myMap.Down > -1 && Globals.GameMaps.ContainsKey(_myMap.Down))
                     {
                         otherMap = Globals.GameMaps[_myMap.Down];
                         if (otherMap != null)
