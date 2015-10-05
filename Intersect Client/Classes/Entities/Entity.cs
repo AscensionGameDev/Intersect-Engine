@@ -91,6 +91,14 @@ namespace Intersect_Client
             CurrentZ = bf.ReadInteger();
         }
 
+        public void Dispose()
+        {
+            if (RenderList != null)
+            {
+                RenderList.Remove(this);
+            }
+        }
+
         //Movement Processing
         public bool Update()
         {
@@ -127,21 +135,25 @@ namespace Intersect_Client
                 {
                     case 0:
                         OffsetY -= (float)ecTime * (40f / 10f * (float)Globals.TileHeight) / 1000f;
+                        OffsetX = 0;
                         if (OffsetY < 0) { OffsetY = 0; }
                         break;
 
                     case 1:
                         OffsetY += (float)ecTime * (40f / 10f * (float)Globals.TileHeight) / 1000f;
+                        OffsetX = 0;
                         if (OffsetY > 0) { OffsetY = 0; }
                         break;
 
                     case 2:
                         OffsetX -= (float)ecTime * (40f / 10f * (float)Globals.TileHeight) / 1000f;
+                        OffsetY = 0;
                         if (OffsetX < 0) { OffsetX = 0; }
                         break;
 
                     case 3:
                         OffsetX += (float)ecTime * (40f / 10f * (float)Globals.TileHeight) / 1000f;
+                        OffsetY = 0;
                         if (OffsetX > 0) { OffsetX = 0; }
                         break;
                 }
@@ -159,6 +171,11 @@ namespace Intersect_Client
             if (RenderList != null)
             {
                 RenderList.Remove(this);
+            }
+
+            if (!Globals.GameMaps.ContainsKey(CurrentMap))
+            {
+                return;
             }
 
             int mapLoc = -1;
@@ -199,7 +216,7 @@ namespace Intersect_Client
         public virtual void Draw()
         {
             int i = GetLocalPos(CurrentMap);
-            if (i == -1)
+            if (i == -1 || !Globals.GameMaps.ContainsKey(CurrentMap))
             {
                 return;
             }
@@ -212,13 +229,13 @@ namespace Intersect_Client
                 srcTexture = Graphics.EntityTextures[Graphics.EntityFileNames.IndexOf(MySprite.ToLower())];
                 if (srcTexture.Size.Y / 4 > Globals.TileHeight)
                 {
-                    destRectangle.X = (Graphics.CalcMapOffsetX(i) + CurrentX * Globals.TileWidth + OffsetX);
-                    destRectangle.Y = Graphics.CalcMapOffsetY(i) + CurrentY * Globals.TileHeight + OffsetY - ((srcTexture.Size.Y / 4) - Globals.TileHeight);
+                    destRectangle.X = (Globals.GameMaps[CurrentMap].GetX() + CurrentX * Globals.TileWidth + OffsetX);
+                    destRectangle.Y = Globals.GameMaps[CurrentMap].GetY() + CurrentY * Globals.TileHeight + OffsetY - ((srcTexture.Size.Y / 4) - Globals.TileHeight);
                 }
                 else
                 {
-                    destRectangle.X = Graphics.CalcMapOffsetX(i) + CurrentX * Globals.TileWidth + OffsetX;
-                    destRectangle.Y = Graphics.CalcMapOffsetY(i) + CurrentY * Globals.TileHeight + OffsetY;
+                    destRectangle.X = Globals.GameMaps[CurrentMap].GetX() + CurrentX * Globals.TileWidth + OffsetX;
+                    destRectangle.Y = Globals.GameMaps[CurrentMap].GetY() + CurrentY * Globals.TileHeight + OffsetY;
                 }
                 if (srcTexture.Size.X / 4 > Globals.TileWidth)
                 {
@@ -262,21 +279,24 @@ namespace Intersect_Client
         }
 
         //returns the point on the screen that is the center of the player sprite
-        public Vector2f GetCenterPos(int mapPos)
+        public Vector2f GetCenterPos()
         {
+            if (!Globals.GameMaps.ContainsKey(CurrentMap))
+            {
+                return new Vector2f(0,0);}
             Sprite tmpSprite;
             Vector2f pos;
             if (Graphics.EntityFileNames.IndexOf(MySprite.ToLower()) >= 0)
             {
                 tmpSprite = new Sprite(Graphics.EntityTextures[Graphics.EntityFileNames.IndexOf(MySprite.ToLower())]);
-                pos = new Vector2f(Graphics.CalcMapOffsetX(mapPos) + CurrentX * Globals.TileWidth + OffsetX + tmpSprite.Texture.Size.X / 8f,
-                    Graphics.CalcMapOffsetY(mapPos) + CurrentY * Globals.TileHeight + OffsetY - ((tmpSprite.Texture.Size.Y / 4) - Globals.TileHeight) + tmpSprite.Texture.Size.Y / 8f);
+                pos = new Vector2f(Globals.GameMaps[CurrentMap].GetX() + CurrentX * Globals.TileWidth + OffsetX + tmpSprite.Texture.Size.X / 8f,
+                    Globals.GameMaps[CurrentMap].GetY() + CurrentY * Globals.TileHeight + OffsetY - ((tmpSprite.Texture.Size.Y / 4) - Globals.TileHeight) + tmpSprite.Texture.Size.Y / 8f);
 
             }
             else
             {
-                pos = new Vector2f(Graphics.CalcMapOffsetX(mapPos) + CurrentX * Globals.TileWidth + OffsetX + 16,
-                    Graphics.CalcMapOffsetY(mapPos) + CurrentY * Globals.TileHeight + OffsetY - Globals.TileHeight + 32);
+                pos = new Vector2f(Globals.GameMaps[CurrentMap].GetX() + CurrentX * Globals.TileWidth + OffsetX + 16,
+                    Globals.GameMaps[CurrentMap].GetY() + CurrentY * Globals.TileHeight + OffsetY - Globals.TileHeight + 32);
             }
             return pos;
         }
@@ -284,13 +304,13 @@ namespace Intersect_Client
         {
             if (HideName == 1) { return; }
             int i = GetLocalPos(CurrentMap);
-            if (i == -1)
+            if (i == -1 || !Globals.GameMaps.ContainsKey(CurrentMap))
             {
                 return;
             }
             var nameText = new Text(MyName, Graphics.GameFont);
-            var y = (int)Math.Ceiling(GetCenterPos(i).Y);
-            var x = (int)Math.Ceiling(GetCenterPos(i).X);
+            var y = (int)Math.Ceiling(GetCenterPos().Y);
+            var x = (int)Math.Ceiling(GetCenterPos().X);
             if (Graphics.EntityFileNames.IndexOf(MySprite.ToLower()) >= 0)
             {
                 if (Graphics.EntityTextures[Graphics.EntityFileNames.IndexOf(MySprite.ToLower())].Size.Y / 4 > Globals.TileHeight)
@@ -314,15 +334,15 @@ namespace Intersect_Client
             if (HideName == 1 && Vital[(int)Enums.Vitals.Health] == MaxVital[(int)Enums.Vitals.Health]) { return; }
             if (Vital[(int)Enums.Vitals.Health] <= 0) { return; }
             int i = GetLocalPos(CurrentMap);
-            if (i == -1)
+            if (i == -1 || !Globals.GameMaps.ContainsKey(CurrentMap))
             {
                 return;
             }
             var width = Globals.TileWidth;
             var bgRect = new RectangleShape(new Vector2f(width, 6));
             var fgRect = new RectangleShape(new Vector2f(width - 2, 4));
-            var y = (int)Math.Ceiling(GetCenterPos(i).Y);
-            var x = (int)Math.Ceiling(GetCenterPos(i).X);
+            var y = (int)Math.Ceiling(GetCenterPos().Y);
+            var x = (int)Math.Ceiling(GetCenterPos().X);
             if (Graphics.EntityFileNames.IndexOf(MySprite.ToLower()) >= 0)
             {
                 if (Graphics.EntityTextures[Graphics.EntityFileNames.IndexOf(MySprite.ToLower())].Size.Y / 4 > Globals.TileHeight)

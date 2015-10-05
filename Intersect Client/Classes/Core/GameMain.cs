@@ -114,6 +114,11 @@ namespace Intersect_Client
                         {
                             return;
                         }
+                        else if (Globals.GameMaps[Globals.LocalMaps[i]].MapRendered == false)
+                        {
+                            Globals.GameMaps[Globals.LocalMaps[i]].PreRenderMap();
+                            return;
+                        }
                     }
                     else
                     {

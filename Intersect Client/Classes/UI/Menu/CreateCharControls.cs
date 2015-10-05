@@ -31,6 +31,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Intersect_Client.Classes;
+using SFML.Graphics;
 
 namespace Intersect_Client.Classes.UI.Menu
 {
@@ -51,7 +52,7 @@ namespace Intersect_Client.Classes.UI.Menu
         //Image
         private string _characterPortraitImg = "";
         private ImagePanel _characterPortrait;
-        private Texture _spriteTex;
+        private RenderTexture _spriteTex;
         private string _currentSprite = "";
 
         //Parent
@@ -167,7 +168,8 @@ namespace Intersect_Client.Classes.UI.Menu
             if (Globals.GameClasses[GetClass()].Sprites.Count > 0)
             {
                 string test = Globals.GameClasses[GetClass()].Sprites[GetSprite(i)].Sprite;
-                _characterPortrait.Texture = Gui.CreateTextureFromSprite(Globals.GameClasses[GetClass()].Sprites[GetSprite(i)].Sprite, _characterPortrait.Width, _characterPortrait.Height);
+                _spriteTex = Gui.CreateTextureFromSprite(Globals.GameClasses[GetClass()].Sprites[GetSprite(i)].Sprite, _characterPortrait.Width, _characterPortrait.Height);
+                _characterPortrait.Texture = Gui.SFMLToGwenTexture(_spriteTex.Texture);
                 _currentSprite = Globals.GameClasses[GetClass()].Sprites[GetSprite(i)].Sprite;
             }
         }

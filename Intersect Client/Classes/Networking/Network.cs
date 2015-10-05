@@ -54,6 +54,8 @@ namespace Intersect_Client.Classes
             _tempBuff = new byte[MySocket.ReceiveBufferSize];
             MySocket.BeginConnect(Globals.ServerHost, Globals.ServerPort, ConnectCb, null);
             Connecting = true;
+            MySocket.SendTimeout = 100000;
+            MySocket.ReceiveTimeout = 100000;
         }
 
         public static void Close()
@@ -129,7 +131,7 @@ namespace Intersect_Client.Classes
                 TryHandleData();
                 _myStream.BeginRead(_tempBuff, 0, MySocket.ReceiveBufferSize, ReceiveCb, null);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 HandleDc();
             }

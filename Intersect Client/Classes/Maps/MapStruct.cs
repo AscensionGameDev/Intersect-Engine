@@ -26,8 +26,10 @@
 */
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
+using System.Threading;
 using SFML.Graphics;
 using Color = SFML.Graphics.Color;
 using SFML.Window;
@@ -51,6 +53,10 @@ namespace Intersect_Client.Classes
         public int HoldDown = 0;
         public int HoldLeft = 0;
         public int HoldRight = 0;
+
+        //World Position
+        public int MapGridX = 0;
+        public int MapGridY = 0;
 
         //Core Data
         public TileArray[] Layers = new TileArray[Constants.LayerCount];
@@ -95,7 +101,10 @@ namespace Intersect_Client.Classes
         private float _lastFogX;
         private float _lastFogY;
         private long _lastUpdateTime;
-        
+
+        private int _preRenderStage = 0;
+        private int _preRenderLayer = 0;
+
         //Init
         public MapStruct(int mapNum, byte[] mapPacket)
         {
@@ -112,14 +121,13 @@ namespace Intersect_Client.Classes
                     }
                 }
             }
-            //cacheThread = new Thread (Load);
-            //cacheThread.Start (mapPacket);
             MyPacket = mapPacket;
             Load();
+            //Thread _renderThread = new Thread(new ThreadStart(PreRenderMap1));
+            //_renderThread.Priority = ThreadPriority.Lowest;
+            //_renderThread.Start();
             MapLoaded = true;
 
-            //CacheMap1 ();
-            //CacheMapLayers();
         }
 
         //Load
@@ -214,7 +222,7 @@ namespace Intersect_Client.Classes
                     }
                 }
             }
-            if (Down > -1 &&  Globals.GameMaps.ContainsKey(Down))
+            if (Down > -1 && Globals.GameMaps.ContainsKey(Down))
             {
                 for (int x = 0; x < Globals.MapWidth; x++)
                 {
@@ -291,17 +299,106 @@ namespace Intersect_Client.Classes
         }
 
         //Caching Functions
-        private void PreRenderMap()
+        public void PreRenderMap()
         {
+            Graphics.PreRenderedMapLayer = true;
+            if (_preRenderStage < 3)
+            {
+                int i = _preRenderStage;
+                if (LowerTextures[i] == null)
+                {
+                    while (!Graphics.GetMapTexture(ref LowerTextures[i]))
+                    {
+                        Thread.Sleep(10);
+                    }
+                }
+                if (UpperTextures[i] == null)
+                {
+                    while (!Graphics.GetMapTexture(ref UpperTextures[i]))
+                    {
+                        Thread.Sleep(10);
+                    }
+                }
+                if (PeakTextures[i] == null)
+                {
+                    while (!Graphics.GetMapTexture(ref PeakTextures[i]))
+                    {
+                        Thread.Sleep(10);
+                    }
+                }
+                LowerTextures[i].Clear(Color.Transparent);
+                UpperTextures[i].Clear(Color.Transparent);
+                PeakTextures[i].Clear(Color.Transparent);
+
+                _preRenderStage++;
+                return;
+            }
+            else if (_preRenderStage >= 3 && _preRenderStage < 6)
+            {
+                int i = _preRenderStage - 3;
+                int l = _preRenderLayer;
+                _preRenderLayer++;
+                if (l < 3)
+                {
+                    DrawMapLayer(LowerTextures[i], l, i);
+                    LowerTextures[i].Display();
+                    return;
+                }
+                else if (l == 3)
+                {
+                    DrawMapLayer(UpperTextures[i], l, i);
+                    UpperTextures[i].Display();
+                    return;
+                }
+                else
+                {
+                    DrawMapLayer(PeakTextures[i], l, i);
+                    PeakTextures[i].Display();
+                    _preRenderStage++;
+                    _preRenderLayer = 0;
+                    return;
+                }
+            }
+
+            MapRendered = true;
+            Graphics.LightsChanged = true;
+        }
+        public void PreRenderMap1()
+        {
+            long ectime = Environment.TickCount;
+            long creationTime = 0;
+            long renderingTime = 0;
+            long displayTime = 0;
             for (var i = 0; i < 3; i++)
             {
-                if (LowerTextures[i] != null) { LowerTextures[i].Dispose(); }
-                LowerTextures[i] = new RenderTexture((uint)Globals.TileWidth * (uint)Globals.MapWidth, (uint)Globals.TileHeight * (uint)Globals.MapHeight);
+                ectime = Environment.TickCount;
+                if (LowerTextures[i] == null)
+                {
+                    while (!Graphics.GetMapTexture(ref LowerTextures[i]))
+                    {
+                        Thread.Sleep(10);
+                    }
+                }
+                if (UpperTextures[i] == null)
+                {
+                    while (!Graphics.GetMapTexture(ref UpperTextures[i]))
+                    {
+                        Thread.Sleep(10);
+                    }
+                }
+                if (PeakTextures[i] == null)
+                {
+                    while (!Graphics.GetMapTexture(ref PeakTextures[i]))
+                    {
+                        Thread.Sleep(10);
+                    }
+                }
+                creationTime += Environment.TickCount - ectime;
                 LowerTextures[i].Clear(Color.Transparent);
-                if (UpperTextures[i] != null) { UpperTextures[i].Dispose(); }
-                UpperTextures[i] = new RenderTexture((uint)Globals.TileWidth * (uint)Globals.MapWidth, (uint)Globals.TileHeight * (uint)Globals.MapHeight);
-                if (PeakTextures[i] != null) { PeakTextures[i].Dispose(); }
-                PeakTextures[i] = new RenderTexture((uint)Globals.TileWidth * (uint)Globals.MapWidth, (uint)Globals.TileHeight * (uint)Globals.MapHeight);
+                UpperTextures[i].Clear(Color.Transparent);
+                PeakTextures[i].Clear(Color.Transparent);
+
+                ectime = Environment.TickCount;
                 for (var l = 0; l < Constants.LayerCount; l++)
                 {
                     if (l < 3)
@@ -317,10 +414,17 @@ namespace Intersect_Client.Classes
                         DrawMapLayer(PeakTextures[i], l, i);
                     }
                 }
+                renderingTime += Environment.TickCount - ectime;
+                ectime = Environment.TickCount;
                 LowerTextures[i].Display();
                 UpperTextures[i].Display();
                 PeakTextures[i].Display();
+                displayTime += Environment.TickCount - ectime;
+                ectime = Environment.TickCount;
             }
+            Debug.Print("Texture Creation Time:" + (creationTime));
+            Debug.Print("Tile Rendering Time:" + (renderingTime));
+            Debug.Print("Texture Display Time:" + (displayTime));
             MapRendered = true;
             Graphics.LightsChanged = true;
         }
@@ -361,7 +465,13 @@ namespace Intersect_Client.Classes
                         switch (Autotiles.Autotile[x, y].Layer[l].RenderState)
                         {
                             case Constants.RenderStateNormal:
-                                Graphics.RenderTexture(Graphics.Tilesets[Layers[l].Tiles[x, y].TilesetIndex], x * Globals.TileWidth + xoffset, y * Globals.TileHeight + yoffset, Layers[l].Tiles[x, y].X * Globals.TileWidth, Layers[l].Tiles[x, y].Y * Globals.TileHeight, Globals.TileWidth, Globals.TileHeight, tex);
+                                Sprite tmpsprite = new Sprite(Graphics.Tilesets[Layers[l].Tiles[x, y].TilesetIndex]);
+                                tmpsprite.Position = new Vector2f(x * Globals.TileWidth + xoffset,
+                                    y * Globals.TileHeight + yoffset);
+                                tmpsprite.TextureRect = new IntRect(Layers[l].Tiles[x, y].X * Globals.TileWidth,
+                                    Layers[l].Tiles[x, y].Y * Globals.TileHeight, Globals.TileWidth, Globals.TileHeight);
+                                tex.Draw(tmpsprite);
+                                //Graphics.RenderTexture(Graphics.Tilesets[Layers[l].Tiles[x, y].TilesetIndex], x * Globals.TileWidth + xoffset, y * Globals.TileHeight + yoffset, Layers[l].Tiles[x, y].X * Globals.TileWidth, Layers[l].Tiles[x, y].Y * Globals.TileHeight, Globals.TileWidth, Globals.TileHeight, tex);
                                 break;
                             case Constants.RenderStateAutotile:
                                 DrawAutoTile(l, x * Globals.TileWidth + xoffset, y * Globals.TileHeight + yoffset, 1, x, y, z, tex);
@@ -392,76 +502,49 @@ namespace Intersect_Client.Classes
             }
             else
             {
-                if (Environment.TickCount > _lastUpdateTime)
+                if (Environment.TickCount > _lastUpdateTime || Graphics.FreeMapTextures.Count < 27)
                 {
                     Dispose();
                 }
             }
         }
-        public void Draw(float xoffset, float yoffset, int layer = 0)
+        public void Draw(int layer = 0)
         {
-            if (!MapRendered) { PreRenderMap(); }
+            if (!MapRendered)
+            {
+                return;
+            }
             if (layer == 0)
             {
-                Graphics.RenderTexture(LowerTextures[Globals.AnimFrame].Texture,xoffset,yoffset,Graphics.RenderWindow);
-                
+                Graphics.RenderTexture(LowerTextures[Globals.AnimFrame].Texture, GetX(), GetY(), Graphics.RenderWindow);
+
                 //Draw Map Items
                 for (int i = 0; i < MapItems.Count; i++)
                 {
                     if (Graphics.ItemFileNames.IndexOf(Globals.GameItems[MapItems[i].ItemNum].Pic) > -1)
                     {
-                        Graphics.RenderTexture(Graphics.ItemTextures[Graphics.ItemFileNames.IndexOf(Globals.GameItems[MapItems[i].ItemNum].Pic)], xoffset + MapItems[i].X * Globals.TileWidth, yoffset + MapItems[i].Y * Globals.TileHeight, Graphics.RenderWindow);
+                        Graphics.RenderTexture(Graphics.ItemTextures[Graphics.ItemFileNames.IndexOf(Globals.GameItems[MapItems[i].ItemNum].Pic)], GetX() + MapItems[i].X * Globals.TileWidth, GetY() + MapItems[i].Y * Globals.TileHeight, Graphics.RenderWindow);
                     }
                 }
             }
             else if (layer == 1)
             {
-                Graphics.RenderTexture(UpperTextures[Globals.AnimFrame].Texture, xoffset, yoffset, Graphics.RenderWindow);
+                Graphics.RenderTexture(UpperTextures[Globals.AnimFrame].Texture, GetX(), GetY(), Graphics.RenderWindow);
             }
             else
             {
-                Graphics.RenderTexture(PeakTextures[Globals.AnimFrame].Texture, xoffset, yoffset, Graphics.RenderWindow);
+                Graphics.RenderTexture(PeakTextures[Globals.AnimFrame].Texture, GetX(), GetY(), Graphics.RenderWindow);
                 DrawFog();
             }
 
         }
-
-        public void DrawNew(float xoffset, float yoffset, int layer = 0)
+        public float GetX()
         {
-            //if (!MapRendered) { PreRenderMap(); }
-            //return;
-            if (layer == 0)
-            {
-                for (var l = 0; l < 3; l++)
-                {
-                        DrawMapLayer(Graphics.RenderWindow, l, Globals.AnimFrame,xoffset,yoffset);
-                }
-
-                //Draw Map Items
-                for (int i = 0; i < MapItems.Count; i++)
-                {
-                    if (Graphics.ItemFileNames.IndexOf(Globals.GameItems[MapItems[i].ItemNum].Pic) > -1)
-                    {
-                        Graphics.RenderTexture(Graphics.ItemTextures[Graphics.ItemFileNames.IndexOf(Globals.GameItems[MapItems[i].ItemNum].Pic)], xoffset + MapItems[i].X * Globals.TileWidth, yoffset + MapItems[i].Y * Globals.TileHeight, Graphics.RenderWindow);
-                    }
-                }
-            }
-            else if (layer == 1)
-            {
-                for (var l = 3; l <= 3; l++)
-                {
-                    DrawMapLayer(Graphics.RenderWindow, l, Globals.AnimFrame, xoffset, yoffset);
-                }
-            }
-            else
-            {
-                for (var l = 4; l < Constants.LayerCount; l++)
-                {
-                    DrawMapLayer(Graphics.RenderWindow, l, Globals.AnimFrame, xoffset, yoffset);
-                }
-                DrawFog();
-            }
-
+            return MapGridX * Globals.MapWidth * Globals.TileWidth;
+        }
+        public float GetY()
+        {
+            return MapGridY * Globals.MapHeight * Globals.TileHeight;
         }
 
         //Fogs
@@ -495,9 +578,9 @@ namespace Intersect_Client.Classes
 
                     _fogCurrentX += (ecTime / 1000f) * Globals.GameMaps[MyMapNum].FogXSpeed * -6;
                     _fogCurrentY += (ecTime / 1000f) * Globals.GameMaps[MyMapNum].FogYSpeed * 2;
-                    float deltaX = _lastFogX - Graphics.CalcMapOffsetX(0) - Graphics.FogOffsetX;
+                    float deltaX = _lastFogX - Graphics.CurrentView.Left - Graphics.FogOffsetX;
                     _fogCurrentX -= deltaX;
-                    float deltaY = _lastFogY - Graphics.CalcMapOffsetY(0) - Graphics.FogOffsetY;
+                    float deltaY = _lastFogY - Graphics.CurrentView.Top - Graphics.FogOffsetY;
                     _fogCurrentY -= deltaY;
 
                     if (_fogCurrentX < Graphics.FogTextures[fogIndex].Size.X) { _fogCurrentX += Graphics.FogTextures[fogIndex].Size.X; }
@@ -514,8 +597,8 @@ namespace Intersect_Client.Classes
                             Graphics.RenderWindow.Draw(fogSprite);
                         }
                     }
-                    _lastFogX = Graphics.CalcMapOffsetX(0);
-                    _lastFogY = Graphics.CalcMapOffsetY(0);
+                    _lastFogX = Graphics.CurrentView.Left;
+                    _lastFogY = Graphics.CurrentView.Top;
                 }
             }
         }
@@ -558,9 +641,18 @@ namespace Intersect_Client.Classes
             //Clean up all map stuff.
             for (int i = 0; i < 3; i++)
             {
-                if (LowerTextures[i] != null) { LowerTextures[i].Dispose(); }
-                if (UpperTextures[i] != null) { UpperTextures[i].Dispose(); }
-                if (PeakTextures[i] != null) { PeakTextures[i].Dispose(); }
+                if (LowerTextures[i] != null)
+                {
+                    Graphics.ReleaseMapTexture(LowerTextures[i]);
+                }
+                if (UpperTextures[i] != null)
+                {
+                    Graphics.ReleaseMapTexture(UpperTextures[i]);
+                }
+                if (PeakTextures[i] != null)
+                {
+                    Graphics.ReleaseMapTexture(PeakTextures[i]);
+                }
             }
             Globals.GameMaps.Remove(MyMapNum);
         }

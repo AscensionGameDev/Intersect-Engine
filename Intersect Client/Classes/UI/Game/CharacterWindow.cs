@@ -29,9 +29,13 @@ using Gwen.Control;
 using SFML.Window;
 using System;
 using System.Collections.Generic;
+using System.Drawing.Drawing2D;
 using System.IO;
 using System.Linq;
 using System.Text;
+using SFML.Graphics;
+using SFML.System;
+using Texture = Gwen.Texture;
 
 namespace Intersect_Client.Classes.UI.Game
 {
@@ -46,10 +50,10 @@ namespace Intersect_Client.Classes.UI.Game
 
         private string _characterPortraitImg = "";
         private ImagePanel _characterPortrait;
-        private Texture _spriteTex;
+        private RenderTexture _spriteTex;
         private string _currentSprite = "";
 
-        private System.Drawing.Bitmap _equipmentBG;
+        private RenderTexture _equipmentBG;
         private int[] _emptyStatBoost = new int[Constants.MaxStats];
 
         //Stats
@@ -169,15 +173,20 @@ namespace Intersect_Client.Classes.UI.Game
             _pointsLabel.SetText("Points: ");
 
 
-            //Create equipment background image
-            _equipmentBG = new System.Drawing.Bitmap(34, 34);
-            System.Drawing.Graphics g = System.Drawing.Graphics.FromImage(_equipmentBG);
-            g.Clear(System.Drawing.Color.Transparent);
-            g.DrawLine(System.Drawing.Pens.Black, new System.Drawing.Point(0, 0), new System.Drawing.Point(33, 0));
-            g.DrawLine(System.Drawing.Pens.Black, new System.Drawing.Point(0, 0), new System.Drawing.Point(0, 33));
-            g.DrawLine(System.Drawing.Pens.Black, new System.Drawing.Point(33, 0), new System.Drawing.Point(33, 33));
-            g.DrawLine(System.Drawing.Pens.Black, new System.Drawing.Point(0, 33), new System.Drawing.Point(33, 33));
-            g.Dispose();
+            //Create equipment background image=
+            RenderTexture rtEquipment = new RenderTexture(34, 34);
+            RectangleShape border = new RectangleShape(new Vector2f(1, 34));
+            border.FillColor = Color.Black;
+            rtEquipment.Draw(border);
+            border.Position = new Vector2f(33, 0);
+            rtEquipment.Draw(border);
+            border.Size = new Vector2f(34, 1);
+            border.Position = new Vector2f(0, 0);
+            rtEquipment.Draw(border);
+            border.Position = new Vector2f(0, 33);
+            rtEquipment.Draw(border);
+            rtEquipment.Display();
+            _equipmentBG = rtEquipment;
 
             InitEquipmentContainer();
         }
@@ -253,7 +262,9 @@ namespace Intersect_Client.Classes.UI.Game
                 {
                     if (_currentSprite != Globals.Me.MySprite)
                     {
-                        _characterPortrait.Texture = Gui.CreateTextureFromSprite(Globals.Me.MySprite,_characterPortrait.Width,_characterPortrait.Height);
+                        _spriteTex = Gui.CreateTextureFromSprite(Globals.Me.MySprite, _characterPortrait.Width,
+                            _characterPortrait.Height);
+                        _characterPortrait.Texture = Gui.SFMLToGwenTexture(_spriteTex.Texture );
                         _currentSprite = Globals.Me.MySprite;
                     }
                 }
@@ -314,11 +325,11 @@ namespace Intersect_Client.Classes.UI.Game
         private int _currentItem = -1;
         private int[] _statBoost = new int[Constants.MaxStats];
         private bool _texLoaded = false;
-        private System.Drawing.Bitmap _equipmentBG;
-        private System.Drawing.Bitmap _texImg;
+        private SFML.Graphics.RenderTexture _equipmentBG;
+        private SFML.Graphics.RenderTexture _texImg;
         private WindowControl _characterWindow;
 
-        public EquipmentItem(int index, System.Drawing.Bitmap equipmentBG, WindowControl characterWindow)
+        public EquipmentItem(int index, SFML.Graphics.RenderTexture equipmentBG, WindowControl characterWindow)
         {
             myindex = index;
             _equipmentBG = equipmentBG;
@@ -361,17 +372,28 @@ namespace Intersect_Client.Classes.UI.Game
 
         private void CreateTexImage()
         {
-            _texImg = new System.Drawing.Bitmap(34, 34);
-            System.Drawing.Graphics g = System.Drawing.Graphics.FromImage(_texImg);
-            g.DrawImage(_equipmentBG, new System.Drawing.Point(0, 0));
+            if (_texImg == null)
+            {
+                RenderTexture rtItem = new RenderTexture(34, 34);
+                _texImg = rtItem;
+            }
+            else
+            {
+                _texImg.Clear(Color.Transparent);
+            }
+
+            Sprite sprite = new Sprite(_equipmentBG.Texture);
+            _texImg.Draw(sprite);
             if (_currentItem != -1)
             {
-                if (File.Exists("Resources/Items/" + Globals.GameItems[_currentItem].Pic))
+                if (Graphics.ItemFileNames.Contains(Globals.GameItems[_currentItem].Pic))
                 {
-                    g.DrawImage(System.Drawing.Bitmap.FromFile("Resources/Items/" + Globals.GameItems[_currentItem].Pic), new System.Drawing.Point(1, 1));
+                    sprite = new Sprite(Graphics.ItemTextures[Graphics.ItemFileNames.IndexOf(Globals.GameItems[_currentItem].Pic)]);
+                    sprite.Position = new Vector2f(1, 1);
+                    _texImg.Draw(sprite);
                 }
             }
-            g.Dispose();
+            _texImg.Display();
         }
 
 
@@ -383,7 +405,7 @@ namespace Intersect_Client.Classes.UI.Game
                 _currentItem = currentItem;
                 _statBoost = statBoost;
                 CreateTexImage();
-                pnl.Texture = Gui.BitmapToGwenTexture(_texImg);
+                pnl.Texture = Gui.SFMLToGwenTexture(_texImg.Texture);
                 _texLoaded = true;
             }
         }

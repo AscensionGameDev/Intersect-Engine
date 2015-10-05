@@ -90,6 +90,8 @@ namespace Intersect_Server.Classes
             {
                 bf.WriteLong(Globals.GameMaps[mapNum].MapGameData.Length);
                 bf.WriteBytes(Globals.GameMaps[mapNum].MapGameData);
+                bf.WriteInteger(Globals.GameMaps[mapNum].MapGridX);
+                bf.WriteInteger(Globals.GameMaps[mapNum].MapGridY);
                 if (Globals.GameBorderStyle == 1)
                 {
                     bf.WriteInteger(1);

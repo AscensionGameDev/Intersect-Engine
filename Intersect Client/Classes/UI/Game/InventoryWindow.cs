@@ -245,7 +245,7 @@ namespace Intersect_Client.Classes.UI.Game
             {
                 _currentItem = Globals.Me.Inventory[_mySlot].ItemNum;
                 _isEquipped = equipped;
-                pnl.Texture = Gui.BitmapToGwenTexture(Gui.CreateImageTexBitmap(_currentItem,0,0,32,32,_isEquipped,null));
+                pnl.Texture = Gui.SFMLToGwenTexture(Gui.CreateItemTex(_currentItem,0,0,32,32,_isEquipped,null));
             }
             if (!IsDragging)
             {

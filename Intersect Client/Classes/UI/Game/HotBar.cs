@@ -32,6 +32,10 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Xml.Linq;
+using SFML.Graphics;
+using SFML.System;
+using Texture = SFML.Graphics.Texture;
 
 namespace Intersect_Client.Classes.UI.Game
 {
@@ -39,7 +43,7 @@ namespace Intersect_Client.Classes.UI.Game
     {
         //Controls
         public WindowControl _hotbarWindow;
-        private System.Drawing.Bitmap _hotbarBG;
+        private RenderTexture _hotbarBG;
 
         //Item List
         public List<HotBarItem> Items = new List<HotBarItem>();
@@ -56,14 +60,19 @@ namespace Intersect_Client.Classes.UI.Game
             _hotbarWindow.IsClosable = false;
 
             //Create equipment background image
-            _hotbarBG = new System.Drawing.Bitmap(34, 34);
-            System.Drawing.Graphics g = System.Drawing.Graphics.FromImage(_hotbarBG);
-            g.Clear(System.Drawing.Color.Transparent);
-            g.DrawLine(System.Drawing.Pens.Black, new System.Drawing.Point(0, 0), new System.Drawing.Point(33, 0));
-            g.DrawLine(System.Drawing.Pens.Black, new System.Drawing.Point(0, 0), new System.Drawing.Point(0, 33));
-            g.DrawLine(System.Drawing.Pens.Black, new System.Drawing.Point(33, 0), new System.Drawing.Point(33, 33));
-            g.DrawLine(System.Drawing.Pens.Black, new System.Drawing.Point(0, 33), new System.Drawing.Point(33, 33));
-            g.Dispose();
+            RenderTexture rtHotbar = new RenderTexture(34, 34);
+            RectangleShape border = new RectangleShape(new Vector2f(1, 34));
+            border.FillColor = Color.Black;
+            rtHotbar.Draw(border);
+            border.Position = new Vector2f(33, 0);
+            rtHotbar.Draw(border);
+            border.Size = new Vector2f(34, 1);
+            border.Position = new Vector2f(0, 0);
+            rtHotbar.Draw(border);
+            border.Position = new Vector2f(0, 33);
+            rtHotbar.Draw(border);
+            rtHotbar.Display();
+            _hotbarBG = rtHotbar;
 
             InitHotbarItems();
         }
@@ -144,11 +153,11 @@ namespace Intersect_Client.Classes.UI.Game
         private int[] _statBoost = new int[Constants.MaxStats];
         
 
-        private System.Drawing.Bitmap _hotbarBG;
-        private System.Drawing.Bitmap _texImg;
+        private RenderTexture _hotbarBG;
+        private RenderTexture _texImg;
         
 
-        public HotBarItem(int index, System.Drawing.Bitmap hotbarBG, WindowControl hotbarWindow)
+        public HotBarItem(int index, RenderTexture hotbarBG, WindowControl hotbarWindow)
         {
             myindex = index;
             _hotbarBG = hotbarBG;
@@ -235,21 +244,21 @@ namespace Intersect_Client.Classes.UI.Game
                 _currentType = Globals.Me.Hotbar[myindex].Type;
                 if (_currentItem == -1 || _currentType == -1)
                 {
-                    pnl.Texture = Gui.BitmapToGwenTexture(_hotbarBG);
+                    pnl.Texture = Gui.SFMLToGwenTexture(_hotbarBG.Texture);
                     _onCooldown = false;
                     _texLoaded = true;
                     _isEquipped = false;
                 }
                 else if (_currentType == 0 && _currentItem > -1 && Globals.Me.Inventory[_currentItem].ItemNum > -1)
                 {
-                    pnl.Texture = Gui.BitmapToGwenTexture(Gui.CreateImageTexBitmap(Globals.Me.Inventory[_currentItem].ItemNum, 1, 1, 34, 34, Globals.Me.IsEquipped(_currentItem), _hotbarBG));
+                    pnl.Texture = Gui.SFMLToGwenTexture(Gui.CreateItemTex(Globals.Me.Inventory[_currentItem].ItemNum, 1, 1, 34, 34, Globals.Me.IsEquipped(_currentItem), _hotbarBG.Texture));
                     _onCooldown = false;
                     _texLoaded = true;
                     _isEquipped = Globals.Me.IsEquipped(_currentItem);
                 }
                 else if (_currentType == 1 && _currentItem > -1 && Globals.Me.Spells[_currentItem].SpellNum > -1)
                 {
-                    pnl.Texture = Gui.BitmapToGwenTexture(Gui.CreateSpellTexBitmap(Globals.Me.Spells[_currentItem].SpellNum,1,1,34,34,(Globals.Me.Spells[_currentItem].SpellCD > 0), _hotbarBG));
+                    pnl.Texture = Gui.SFMLToGwenTexture(Gui.CreateSpellTex(Globals.Me.Spells[_currentItem].SpellNum, 1, 1, 34, 34, (Globals.Me.Spells[_currentItem].SpellCD > 0), _hotbarBG.Texture));
                     _onCooldown = false;
                     _texLoaded = true;
                     _isEquipped = false;
@@ -298,11 +307,11 @@ namespace Intersect_Client.Classes.UI.Game
                                         IsDragging = true;
                                         if (_currentType == 0)
                                         {
-                                            dragIcon = new Draggable(pnl.LocalPosToCanvas(new System.Drawing.Point(0, 0)).X + MouseX, pnl.LocalPosToCanvas(new System.Drawing.Point(0, 0)).X + MouseY, Gui.BitmapToGwenTexture(Gui.CreateImageTexBitmap(Globals.Me.Inventory[_currentItem].ItemNum, 0, 0, 32, 32, _isEquipped, null)));
+                                            dragIcon = new Draggable(pnl.LocalPosToCanvas(new System.Drawing.Point(0, 0)).X + MouseX, pnl.LocalPosToCanvas(new System.Drawing.Point(0, 0)).X + MouseY, Gui.SFMLToGwenTexture(Gui.CreateItemTex(Globals.Me.Inventory[_currentItem].ItemNum, 0, 0, 32, 32, _isEquipped, null)));
                                         }
                                         else
                                         {
-                                            dragIcon = new Draggable(pnl.LocalPosToCanvas(new System.Drawing.Point(0, 0)).X + MouseX, pnl.LocalPosToCanvas(new System.Drawing.Point(0, 0)).X + MouseY, Gui.BitmapToGwenTexture(Gui.CreateSpellTexBitmap(Globals.Me.Spells[_currentItem].SpellNum, 0, 0, 32, 32, _onCooldown, null)));
+                                            dragIcon = new Draggable(pnl.LocalPosToCanvas(new System.Drawing.Point(0, 0)).X + MouseX, pnl.LocalPosToCanvas(new System.Drawing.Point(0, 0)).X + MouseY, Gui.SFMLToGwenTexture(Gui.CreateSpellTex(Globals.Me.Spells[_currentItem].SpellNum, 0, 0, 32, 32, _onCooldown, null)));
                                         }
                                     }
                                 }

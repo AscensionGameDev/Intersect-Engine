@@ -94,7 +94,13 @@ namespace Intersect_Client.Classes.UI
                 }
                 else
                 {
-                    _resolutionList.AddItem(myModes[i].Width + "x" + myModes[i].Height);
+                    int maxx = (Globals.MapWidth - 1) * Globals.TileWidth * 2;
+                    int maxy = (Globals.MapHeight - 1) * Globals.TileHeight * 2;
+                    if (myModes[i].Width <= maxx &&
+                        myModes[i].Height <= maxy)
+                    {
+                        _resolutionList.AddItem(myModes[i].Width + "x" + myModes[i].Height);
+                    }
                 }
             }
             _resolutionList.SetSize(120, 14);

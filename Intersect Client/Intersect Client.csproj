@@ -75,14 +75,6 @@
     <ApplicationIcon>IntersectLogo.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Gwen, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>.\Gwen.dll</HintPath>
-    </Reference>
-    <Reference Include="Gwen.Renderer.SFML, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>.\Gwen.Renderer.SFML.dll</HintPath>
-    </Reference>
     <Reference Include="sfmlnet-audio-2">
       <HintPath>.\sfmlnet-audio-2.dll</HintPath>
     </Reference>
@@ -1955,6 +1947,16 @@
       <ProductName>Windows Installer 4.5</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\GwenCS\Gwen.Renderer.SFML\Gwen.Renderer.SFML.csproj">
+      <Project>{d97b4f91-9fc8-46e0-a511-68d006662051}</Project>
+      <Name>Gwen.Renderer.SFML</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\GwenCS\Gwen\Gwen.csproj">
+      <Project>{adda2f43-96c0-497f-8216-29c67abc9806}</Project>
+      <Name>Gwen</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -36,6 +36,7 @@ using Intersect_Client.Classes.UI.Menu;
 using Intersect_Client.Classes.UI;
 using Intersect_Client.Classes.UI.Game;
 using System.IO;
+using SFML.System;
 using SFML = Gwen.Input.SFML;
 
 namespace Intersect_Client.Classes
@@ -148,6 +149,9 @@ namespace Intersect_Client.Classes
         public static void DestroyGwen()
         {
             //The canvases dispose of all of their children.
+            if (_menuCanvas == null)
+            {
+                return;}
             _menuCanvas.Dispose();
             _gameCanvas.Dispose();
             _gwenRenderer.Dispose();
@@ -246,73 +250,86 @@ namespace Intersect_Client.Classes
             }
             GwenTexture.Display();
         }
-        public static Gwen.Texture BitmapToGwenTexture(System.Drawing.Bitmap bmp)
+        public static Gwen.Texture SFMLToGwenTexture(Texture sftex)
         {
-            Stream s = new MemoryStream();
-            Gwen.Texture tex;
-            bmp.Save(s, System.Drawing.Imaging.ImageFormat.Png);
-            tex = new Gwen.Texture(_gwenRenderer);
-            Gui._gwenRenderer.LoadTextureStream(tex, s);
-            s.Dispose();
+            Gwen.Texture tex = new Gwen.Texture(_gwenRenderer);
+            _gwenRenderer.LoadSFMLTexture(tex, sftex);
             return tex;
         }
-        public static Gwen.Texture CreateTextureFromSprite(string spritename, int w, int h)
+        public static RenderTexture CreateTextureFromSprite(string spritename, int w, int h)
         {
-            System.Drawing.Bitmap sprite = new System.Drawing.Bitmap("Resources/Entities/" + spritename);
-            System.Drawing.Bitmap spriteImg = new System.Drawing.Bitmap(w, h);
-            spriteImg = new System.Drawing.Bitmap(sprite.Width / 4, sprite.Height / 4);
-            System.Drawing.Graphics g = System.Drawing.Graphics.FromImage(spriteImg);
-            g.DrawImage(sprite, new System.Drawing.Rectangle(0, 0, sprite.Width / 4, sprite.Height / 4), new System.Drawing.Rectangle(0, 0, sprite.Width / 4, sprite.Height / 4), System.Drawing.GraphicsUnit.Pixel);
-            g.Dispose();
-            sprite.Dispose();
-            return BitmapToGwenTexture(spriteImg);
+            RenderTexture rt = new RenderTexture((uint)w, (uint)h);
+            if (Graphics.EntityFileNames.Contains(spritename))
+            {
+                Sprite enSprite = new Sprite(Graphics.EntityTextures[Graphics.EntityFileNames.IndexOf(spritename)]);
+                enSprite.TextureRect = new IntRect(0, 0,
+                    (int) Graphics.EntityTextures[Graphics.EntityFileNames.IndexOf(spritename)].Size.X/4,
+                    (int) Graphics.EntityTextures[Graphics.EntityFileNames.IndexOf(spritename)].Size.Y/4);
+                enSprite.Scale =
+                    new Vector2f(w/(Graphics.EntityTextures[Graphics.EntityFileNames.IndexOf(spritename)].Size.X/4f),
+                        h/(Graphics.EntityTextures[Graphics.EntityFileNames.IndexOf(spritename)].Size.Y/4f));
+                rt.Draw((enSprite));
+            }
+            rt.Display();
+            return rt;
         }
-        public static System.Drawing.Bitmap CreateImageTexBitmap(int itemnum, int xOffset = 0, int yOffset = 0, int width = 32, int height = 32, bool isEquipped = false, System.Drawing.Bitmap bg = null)
+
+        public static Texture CreateItemTex(int itemnum, int xOffset = 0, int yOffset = 0, int width = 32, int height = 32, bool isEquipped = false, Texture bg = null)
         {
-            System.Drawing.Bitmap panelImg = new System.Drawing.Bitmap(width, height);
-            System.Drawing.Graphics g = System.Drawing.Graphics.FromImage(panelImg);
+            RenderTexture rt = new RenderTexture((uint)width, (uint)height);
+            Sprite sprite;
             if (bg != null)
             {
-                g.DrawImage(bg, new System.Drawing.Point(0, 0));
+                sprite = new Sprite(bg);
+                rt.Draw(sprite);
             }
             if (itemnum > -1)
             {
-                if (File.Exists("Resources/Items/" + Globals.GameItems[itemnum].Pic))
+                if (Graphics.ItemFileNames.Contains(Globals.GameItems[itemnum].Pic))
                 {
-                    g.DrawImage(System.Drawing.Bitmap.FromFile("Resources/Items/" + Globals.GameItems[itemnum].Pic), new System.Drawing.Point(xOffset, yOffset));
+                    sprite =
+                        new Sprite(Graphics.ItemTextures[Graphics.ItemFileNames.IndexOf(Globals.GameItems[itemnum].Pic)]);
+                    sprite.Position = new Vector2f(xOffset, yOffset);
+                    rt.Draw(sprite);
                 }
             }
             if (isEquipped)
             {
-                g.FillEllipse(System.Drawing.Brushes.Red, 26 + xOffset, 0 + yOffset, 5, 5);
+                CircleShape equipDot = new CircleShape();
+                equipDot.FillColor = Color.Red;
+                equipDot.Position = new Vector2f(26 + xOffset, 0 + yOffset);
+                equipDot.Radius = 5;
+                rt.Draw(equipDot);
             }
-            g.Dispose();
-            return panelImg;
+            rt.Display();
+            return rt.Texture;
         }
-        public static System.Drawing.Bitmap CreateSpellTexBitmap(int spellnum, int xOffset = 0, int yOffset = 0, int width = 32, int height = 32, bool onCD = false, System.Drawing.Bitmap bg = null)
+        public static Texture CreateSpellTex(int spellnum, int xOffset = 0, int yOffset = 0, int width = 32, int height = 32, bool onCD = false, Texture bg = null)
         {
-            System.Drawing.Bitmap panelImg = new System.Drawing.Bitmap(width, height);
-            System.Drawing.Graphics g = System.Drawing.Graphics.FromImage(panelImg);
+            RenderTexture rt = new RenderTexture((uint)width, (uint)height);
+            Sprite sprite;
             if (bg != null)
             {
-                g.DrawImage(bg, new System.Drawing.Point(0, 0));
+                sprite = new Sprite(bg);
+                rt.Draw(sprite);
             }
             if (spellnum > -1)
             {
-                if (File.Exists("Resources/Spells/" + Globals.GameItems[spellnum].Pic))
+                if (Graphics.SpellFileNames.Contains(Globals.GameSpells[spellnum].Pic))
                 {
+                    sprite =
+                        new Sprite(Graphics.SpellTextures[Graphics.SpellFileNames.IndexOf(Globals.GameSpells[spellnum].Pic)]);
+                    sprite.Position = new Vector2f(xOffset, yOffset);
+                    
                     if (onCD)
                     {
-                        g.DrawImage(MakeGrayscale3((System.Drawing.Bitmap)System.Drawing.Bitmap.FromFile("Resources/Spells/" + Globals.GameItems[spellnum].Pic)), new System.Drawing.Point(xOffset, yOffset));
+                        sprite.Color = new Color(255,255,255,100);
                     }
-                    else
-                    {
-                        g.DrawImage(System.Drawing.Bitmap.FromFile("Resources/Spells/" + Globals.GameItems[spellnum].Pic), new System.Drawing.Point(xOffset, yOffset));
-                    }
+                    rt.Draw(sprite);
                 }
             }
-            g.Dispose();
-            return panelImg;
+            rt.Display();
+            return rt.Texture;
         }
         //Code courtousy of http://tech.pro/tutorial/660/csharp-tutorial-convert-a-color-image-to-grayscale
         public static System.Drawing.Bitmap MakeGrayscale3(System.Drawing.Bitmap original)

@@ -174,10 +174,14 @@ namespace Intersect_Client.Classes
             var mapNum = (int)bf.ReadLong();
             var mapLength = bf.ReadLong();
             var mapData = bf.ReadBytes((int)mapLength);
-            if (Globals.GameMaps.ContainsKey(mapNum)) { Globals.GameMaps[mapNum].Dispose(false); }
+            if (Globals.GameMaps.ContainsKey(mapNum))
+            {
+                return; }
             Globals.GameMaps.Add(mapNum, new MapStruct((int)mapNum, mapData));
             if ((mapNum) == Globals.LocalMaps[4]) { 
                 Sounds.PlayMusic(Globals.GameMaps[mapNum].Music, 3,3, true); }
+            Globals.GameMaps[mapNum].MapGridX = bf.ReadInteger();
+            Globals.GameMaps[mapNum].MapGridY = bf.ReadInteger();
             Globals.GameMaps[mapNum].HoldLeft = bf.ReadInteger();
             Globals.GameMaps[mapNum].HoldRight = bf.ReadInteger();
             Globals.GameMaps[mapNum].HoldUp = bf.ReadInteger();
@@ -367,7 +371,7 @@ namespace Intersect_Client.Classes
                 en = Globals.LocalEntities[index];
             }
             if (en == null) {return;}
-            if (Globals.GameMaps[en.CurrentMap] == null) { return; }
+            if (!Globals.GameMaps.ContainsKey(en.CurrentMap)) { return; }
             var map = bf.ReadInteger();
             var x = bf.ReadInteger();
             var y = bf.ReadInteger();

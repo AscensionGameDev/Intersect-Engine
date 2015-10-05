@@ -28,9 +28,10 @@ using Gwen;
 using Gwen.Control;
 using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Linq;
 using System.Text;
+using SFML.Graphics;
+using Color = System.Drawing.Color;
 
 namespace Intersect_Client.Classes.UI.Game
 {
@@ -50,11 +51,6 @@ namespace Intersect_Client.Classes.UI.Game
         public ImagePanel _expBar;
         public RichLabel _eventDesc;
 
-        //Bar Images
-        System.Drawing.Bitmap _hpBarImg = new System.Drawing.Bitmap("Resources/GUI/HPBar.png");
-        System.Drawing.Bitmap _mpBarImg = new System.Drawing.Bitmap("Resources/GUI/ManaBar.png");
-        System.Drawing.Bitmap _expBarImg = new System.Drawing.Bitmap("Resources/GUI/EXPBar.png");
-
         public float _curHPWidth;
         public float _curMPWidth;
         public float _curEXPWidth;
@@ -63,6 +59,7 @@ namespace Intersect_Client.Classes.UI.Game
 
         private Entity _myEntity;
         private string _currentSprite = "";
+        private RenderTexture _faceTexture;
 
         //Init
         public EntityBox(Canvas _gameCanvas, Entity myEntity, int x, int y)
@@ -101,6 +98,7 @@ namespace Intersect_Client.Classes.UI.Game
 
                 _hpBar = new ImagePanel(_entityBox);
                 _hpBar.SetSize(169, 18);
+                _hpBar.ImageName = "Resources/GUI/HPBar.png";
                 _hpBar.SetPosition(70, 2);
                 _hpBar.IsHidden = true;
 
@@ -115,6 +113,7 @@ namespace Intersect_Client.Classes.UI.Game
 
                 _mpBar = new ImagePanel(_entityBox);
                 _mpBar.SetSize(169, 18);
+                _mpBar.ImageName = "Resources/GUI/ManaBar.png";
                 _mpBar.SetPosition(70, 24);
                 _mpBar.IsHidden = true;
 
@@ -132,6 +131,7 @@ namespace Intersect_Client.Classes.UI.Game
 
                 _expBar = new ImagePanel(_entityBox);
                 _expBar.SetSize(169, 18);
+                _expBar.ImageName = "Resources/GUI/EXPBar.png";
                 _expBar.SetPosition(70, 46);
                 _expBar.IsHidden = true;
 
@@ -165,7 +165,9 @@ namespace Intersect_Client.Classes.UI.Game
                 {
                     if (_currentSprite != _myEntity.MySprite)
                     {
-                        _entityFace.Texture = Gui.CreateTextureFromSprite(_myEntity.MySprite, _entityFace.Width, _entityFace.Height);
+                        _faceTexture = Gui.CreateTextureFromSprite(_myEntity.MySprite, _entityFace.Width,
+                            _entityFace.Height);
+                        _entityFace.Texture = Gui.SFMLToGwenTexture(_faceTexture.Texture);
                         _currentSprite = _myEntity.MySprite;
                     }
                 }
@@ -213,7 +215,7 @@ namespace Intersect_Client.Classes.UI.Game
                     else
                     {
                         _hpBar.Width = (int)_curHPWidth;
-                        _hpBar.Texture = UpdateBarTexture(_curHPWidth, _hpBarImg);
+                        _hpBar.SetTextureRect(0, 0, (int)_curHPWidth, _hpBar.Height);
                         _hpBar.IsHidden = false;
                     }
                 }
@@ -250,7 +252,7 @@ namespace Intersect_Client.Classes.UI.Game
                     else
                     {
                         _mpBar.Width = (int)_curMPWidth;
-                        _mpBar.Texture = UpdateBarTexture(_curMPWidth, _mpBarImg);
+                        _mpBar.SetTextureRect(0, 0, (int)_curMPWidth, _mpBar.Height);
                         _mpBar.IsHidden = false;
                     }
                 }
@@ -297,7 +299,7 @@ namespace Intersect_Client.Classes.UI.Game
                     else
                     {
                         _expBar.Width = (int)_curEXPWidth;
-                        _expBar.Texture = UpdateBarTexture(_curEXPWidth, _expBarImg);
+                        _expBar.SetTextureRect(0, 0, (int)_curEXPWidth, _expBar.Height);
                         _expBar.IsHidden = false;
                     }
                 }
@@ -305,15 +307,6 @@ namespace Intersect_Client.Classes.UI.Game
 
             //Eventually draw icons for buffs and debuffs?
             lastUpdateTime = Environment.TickCount;
-        }
-
-        private Gwen.Texture UpdateBarTexture(float width, System.Drawing.Bitmap barImg)
-        {
-            System.Drawing.Bitmap bar = new System.Drawing.Bitmap((int)Math.Ceiling(width), 18);
-            System.Drawing.Graphics g = System.Drawing.Graphics.FromImage(bar);
-            g.DrawImage(barImg, new Rectangle(0, 0, (int)Math.Ceiling(width), 18), new Rectangle(0, 0, (int)Math.Ceiling(width), 18), GraphicsUnit.Pixel);
-            g.Dispose();
-            return Gui.BitmapToGwenTexture(bar);
         }
 
         public void Dispose()

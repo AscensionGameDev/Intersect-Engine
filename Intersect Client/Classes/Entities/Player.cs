@@ -922,7 +922,7 @@ namespace Intersect_Client.Classes
                 else if (y < 0)
                 {
                     tmpX = x;
-                    tmpY = (Globals.MapHeight - 1) - (y * -1);
+                    tmpY = (Globals.MapHeight ) - (y * -1);
                     if (Globals.LocalMaps[tmpI - 3] > -1)
                     {
                         if (Globals.GameMaps[Globals.LocalMaps[tmpI - 3]].Attributes[tmpX, tmpY].value == (int)Enums.MapAttributes.Blocked && !NoClip)

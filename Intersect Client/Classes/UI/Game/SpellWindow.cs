@@ -207,7 +207,7 @@ namespace Intersect_Client.Classes.UI.Game
             {
                 if (Globals.Me.Spells[myindex].SpellNum > -1)
                 {
-                    pnl.Texture = Gui.BitmapToGwenTexture(Gui.CreateSpellTexBitmap(Globals.Me.Spells[myindex].SpellNum, 0, 0, 32, 32, (Globals.Me.Spells[myindex].SpellCD > 0), null));
+                    pnl.Texture = Gui.SFMLToGwenTexture(Gui.CreateSpellTex(Globals.Me.Spells[myindex].SpellNum, 0, 0, 32, 32, (Globals.Me.Spells[myindex].SpellCD > 0), null));
                     texLoaded = true;
                     currentSpell = Globals.Me.Spells[myindex].SpellNum;
                     iconCD = (Globals.Me.Spells[myindex].SpellCD > 0);

@@ -71,11 +71,19 @@ namespace Intersect_Client.Classes
         {
             if (type < (int)Enums.EntityTypes.LocalEvent)
             {
-                Globals.Entities.Remove(index);
+                if (Globals.Entities.ContainsKey(index))
+                {
+                    Globals.Entities[index].Dispose();
+                    Globals.Entities.Remove(index);
+                }
             }
             else
             {
-                Globals.LocalEntities.Remove(index);
+                if (Globals.LocalEntities.ContainsKey(index))
+                {
+                    Globals.LocalEntities[index].Dispose();
+                    Globals.LocalEntities.Remove(index);
+                }
             }
         }
     }
