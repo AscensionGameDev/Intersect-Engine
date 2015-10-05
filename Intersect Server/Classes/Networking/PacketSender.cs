@@ -109,7 +109,7 @@ namespace Intersect_Server.Classes
                     {
                         bf.WriteInteger(0);
                     }
-                    if (Database.MapGrids[Globals.GameMaps[mapNum].MapGrid].XMax == Globals.GameMaps[mapNum].MapGridX)
+                    if (Database.MapGrids[Globals.GameMaps[mapNum].MapGrid].XMax-1 == Globals.GameMaps[mapNum].MapGridX)
                     {
                         bf.WriteInteger(1);
                     }
@@ -125,7 +125,7 @@ namespace Intersect_Server.Classes
                     {
                         bf.WriteInteger(0);
                     }
-                    if (Database.MapGrids[Globals.GameMaps[mapNum].MapGrid].YMax == Globals.GameMaps[mapNum].MapGridY)
+                    if (Database.MapGrids[Globals.GameMaps[mapNum].MapGrid].YMax-1 == Globals.GameMaps[mapNum].MapGridY)
                     {
                         bf.WriteInteger(1);
                     }

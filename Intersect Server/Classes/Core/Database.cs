@@ -1314,6 +1314,7 @@ namespace Intersect_Server.Classes
         }
         public static void GenerateMapGrids()
         {
+            MapGrids.Clear();
             for (var i = 0; i < Globals.MapCount; i++)
             {
                 if (Globals.GameMaps[i].Deleted != 0) continue;

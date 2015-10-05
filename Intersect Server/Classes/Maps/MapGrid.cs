@@ -19,6 +19,8 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 namespace Intersect_Server.Classes
@@ -41,9 +43,9 @@ namespace Intersect_Server.Classes
 		{
 			_myIndex = myGridIndex;
             Globals.GameMaps[startMap].MapGrid = myGridIndex;
-            Globals.GameMaps[startMap].MapGridX = Globals.MapCount;
-            Globals.GameMaps[startMap].MapGridY = Globals.MapCount;
-
+            Globals.GameMaps[startMap].MapGridX = 0;
+            Globals.GameMaps[startMap].MapGridY = 0;
+            MyMaps.Clear();
             CalculateBounds(Globals.GameMaps[startMap], 0, 0);
 
             Width = _botRight.X - _topLeft.X + 1;
@@ -55,17 +57,20 @@ namespace Intersect_Server.Classes
             XMax = _botRight.X - xoffset + 1;
             YMax = _botRight.Y - yoffset + 1;
             MyGrid = new int[Width,Height];
+		    List<int> tmpMaps = new List<int>();
+            tmpMaps.AddRange(MyMaps.ToArray());
             for (var x = XMin; x < XMax; x++)
             {
 				for (var y = YMin; y < YMax; y++) {
                     MyGrid[x, y] = -1;
-                    for (int i = 0; i < MyMaps.Count; i++)
+                    for (int i = 0; i < tmpMaps.Count; i++)
                     {
-                        if (Globals.GameMaps[MyMaps[i]].MapGridX - xoffset == x && Globals.GameMaps[MyMaps[i]].MapGridY - yoffset == y)
+                        if (Globals.GameMaps[tmpMaps[i]].MapGridX + Math.Abs(_topLeft.X) == x && Globals.GameMaps[tmpMaps[i]].MapGridY + Math.Abs(_topLeft.Y) == y)
                         {
-                            MyGrid[x, y] = MyMaps[i];
-                            Globals.GameMaps[MyMaps[i]].MapGridX = (int)x;
-                            Globals.GameMaps[MyMaps[i]].MapGridY = (int)y;
+                            MyGrid[x, y] = tmpMaps[i];
+                            Globals.GameMaps[tmpMaps[i]].MapGridX = (int)x;
+                            Globals.GameMaps[tmpMaps[i]].MapGridY = (int)y;
+                            tmpMaps.RemoveAt(i);
                             break;
                         }
                     }  
