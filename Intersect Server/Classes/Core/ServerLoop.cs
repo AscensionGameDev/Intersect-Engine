@@ -26,13 +26,12 @@ namespace Intersect_Server.Classes
 {
     public static class ServerLoop
     {
-        public static void RunServerLoop(Network nb)
+        public static void RunServerLoop()
         {
             long cpsTimer = Environment.TickCount + 1000;
             long cps = 0;
             while (true)
             {
-                nb.RunServer();
                 for (int i = 0; i < Globals.GameMaps.Length; i++)
                 {
                     if (Globals.GameMaps[i] != null)

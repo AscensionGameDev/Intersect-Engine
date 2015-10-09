@@ -19,6 +19,7 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+#define websockets
 using System;
 using System.IO;
 using System.Threading;
@@ -60,9 +61,12 @@ namespace Intersect_Server.Classes
             {
                 Globals.Tilesets = File.ReadAllLines("Resources/Tilesets.dat");
             }
-            var networkBase = new Network();
+            SocketServer.Init();
+#if websockets
+            WebSocketServer.Init();
+#endif
             Console.WriteLine("Server Started.");
-            logicThread = new Thread(() => ServerLoop.RunServerLoop(networkBase));
+            logicThread = new Thread(() => ServerLoop.RunServerLoop());
             logicThread.Start();
             Console.WriteLine("Type exit to shutdown the server, or help for a list of commands.");
             Console.Write("> ");

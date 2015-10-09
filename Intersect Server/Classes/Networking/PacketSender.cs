@@ -50,7 +50,7 @@ namespace Intersect_Server.Classes
             for (var i = 0; i < Globals.Clients.Count; i++)
             {
                 if (Globals.Clients[i] == null) continue;
-                if (!Globals.Clients[i].isConnected) continue;
+                if (!Globals.Clients[i].IsConnected()) continue;
                 if (Globals.Clients[i].IsEditor)
                 {
                     Globals.Clients[i].SendPacket(data);
@@ -101,7 +101,7 @@ namespace Intersect_Server.Classes
                 }
                 else if (Globals.GameBorderStyle == 0)
                 {
-                    if (Database.MapGrids[Globals.GameMaps[mapNum].MapGrid].XMin == Globals.GameMaps[mapNum].MapGridX)
+                    if (0 == Globals.GameMaps[mapNum].MapGridX)
                     {
                         bf.WriteInteger(1);
                     }
@@ -109,7 +109,7 @@ namespace Intersect_Server.Classes
                     {
                         bf.WriteInteger(0);
                     }
-                    if (Database.MapGrids[Globals.GameMaps[mapNum].MapGrid].XMax == Globals.GameMaps[mapNum].MapGridX)
+                    if (Database.MapGrids[Globals.GameMaps[mapNum].MapGrid].XMax - 1 == Globals.GameMaps[mapNum].MapGridX)
                     {
                         bf.WriteInteger(1);
                     }
@@ -117,7 +117,7 @@ namespace Intersect_Server.Classes
                     {
                         bf.WriteInteger(0);
                     }
-                    if (Database.MapGrids[Globals.GameMaps[mapNum].MapGrid].YMin == Globals.GameMaps[mapNum].MapGridY)
+                    if (0 == Globals.GameMaps[mapNum].MapGridY)
                     {
                         bf.WriteInteger(1);
                     }
@@ -125,7 +125,7 @@ namespace Intersect_Server.Classes
                     {
                         bf.WriteInteger(0);
                     }
-                    if (Database.MapGrids[Globals.GameMaps[mapNum].MapGrid].YMax == Globals.GameMaps[mapNum].MapGridY)
+                    if (Database.MapGrids[Globals.GameMaps[mapNum].MapGrid].YMax - 1 == Globals.GameMaps[mapNum].MapGridY)
                     {
                         bf.WriteInteger(1);
                     }
@@ -259,7 +259,7 @@ namespace Intersect_Server.Classes
             foreach (var t in Globals.Clients)
             {
                 if (t == null) continue;
-                if (t.isConnected && ((Player)Globals.Entities[t.EntityIndex]).InGame)
+                if (t.IsConnected() && ((Player)Globals.Entities[t.EntityIndex]).InGame)
                 {
                     t.SendPacket(packet);
                 }
@@ -404,7 +404,7 @@ namespace Intersect_Server.Classes
             {
                 if (Globals.Clients[i] == null) continue;
                 if ((!entityId || Globals.Clients[i].EntityIndex == index) && (entityId || i == index)) continue;
-                if (!Globals.Clients[i].isConnected || Globals.Clients[i].EntityIndex <= -1) continue;
+                if (!Globals.Clients[i].IsConnected() || Globals.Clients[i].EntityIndex <= -1) continue;
                 if (Globals.Entities[Globals.Clients[i].EntityIndex] == null) continue;
                 if (((Player)Globals.Entities[Globals.Clients[i].EntityIndex]).InGame)
                 {

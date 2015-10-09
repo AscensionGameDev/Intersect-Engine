@@ -261,14 +261,14 @@ namespace Intersect_Server.Classes
             //Check Online First
             for (int i = 0; i < Globals.Clients.Count; i++)
             {
-                if (Globals.Clients[i] != null && Globals.Clients[i].isConnected && Globals.Clients[i].Entity != null)
+                if (Globals.Clients[i] != null && Globals.Clients[i].IsConnected() && Globals.Clients[i].Entity != null)
                 {
                     if (Globals.Clients[i].Entity.MyAccount == username) { return Globals.Clients[i]; }
                 }
             }
 
             //Didn't find the player online, lets load him from our database.
-            Client fakeClient = new Client(-1, -1, new System.Net.Sockets.TcpClient());
+            Client fakeClient = new Client(-1, -1, new GameSocket());
             Player en = new Player(-1, fakeClient);
             fakeClient.Entity = en;
             en.MyAccount = username;

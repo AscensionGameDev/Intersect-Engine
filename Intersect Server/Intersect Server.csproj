@@ -9,7 +9,7 @@
     <OutputType>Exe</OutputType>
     <RootNamespace>Intersect_Server</RootNamespace>
     <AssemblyName>Intersect Server</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
@@ -48,14 +48,19 @@
     <PlatformTarget>x64</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
     <OutputPath>bin\x64\Release\</OutputPath>
     <PlatformTarget>x64</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Alchemy">
+      <HintPath>.\Alchemy.dll</HintPath>
+    </Reference>
     <Reference Include="MySql.Data">
       <HintPath>.\MySql.Data.dll</HintPath>
     </Reference>
@@ -77,7 +82,8 @@
     <Compile Include="Classes\Core\Main.cs" />
     <Compile Include="Classes\Items\ItemInstance.cs" />
     <Compile Include="Classes\Maps\MapList.cs" />
-    <Compile Include="Classes\Networking\Network.cs" />
+    <Compile Include="Classes\Networking\GameSocket.cs" />
+    <Compile Include="Classes\Networking\SocketServer.cs" />
     <Compile Include="Classes\Networking\Client.cs" />
     <Compile Include="Classes\Misc\ByteBuffer.cs" />
     <Compile Include="Classes\Entities\Npc.cs" />
@@ -93,6 +99,7 @@
     <Compile Include="Classes\Maps\MapGrid.cs" />
     <Compile Include="Classes\Core\ServerLoop.cs" />
     <Compile Include="Classes\Game Objects\SpellStruct.cs" />
+    <Compile Include="Classes\Networking\WebSocketServer.cs" />
     <Compile Include="Classes\Spells\SpellInstance.cs" />
     <Compile Include="Classes\Core\AssemblyInfo.cs" />
   </ItemGroup>

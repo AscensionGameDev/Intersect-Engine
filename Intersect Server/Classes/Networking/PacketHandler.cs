@@ -343,7 +343,7 @@ namespace Intersect_Server.Classes
             {
                 if (i == client.ClientIndex) continue;
                 if (Globals.Clients[i] == null) continue;
-                if (Globals.Clients[i].isConnected)
+                if (Globals.Clients[i].IsConnected())
                 {
                     PacketSender.SendTilesets(Globals.Clients[i]);
                 }
