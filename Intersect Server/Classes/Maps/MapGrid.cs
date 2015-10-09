@@ -19,6 +19,8 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 namespace Intersect_Server.Classes
@@ -55,56 +57,77 @@ namespace Intersect_Server.Classes
             XMax = _botRight.X - xoffset + 1;
             YMax = _botRight.Y - yoffset + 1;
             MyGrid = new int[Width,Height];
+		    List<int> tmpMaps = new List<int>();
+            tmpMaps.AddRange(MyMaps.ToArray());
             for (var x = XMin; x < XMax; x++)
             {
 				for (var y = YMin; y < YMax; y++) {
                     MyGrid[x, y] = -1;
-                    for (int i = 0; i < MyMaps.Count; i++)
+                    for (int i = 0; i < tmpMaps.Count; i++)
                     {
-                        if (Globals.GameMaps[MyMaps[i]].MapGridX - xoffset == x && Globals.GameMaps[MyMaps[i]].MapGridY - yoffset == y)
+                        if (Globals.GameMaps[tmpMaps[i]].MapGridX + Math.Abs(_topLeft.X) == x && Globals.GameMaps[tmpMaps[i]].MapGridY + Math.Abs(_topLeft.Y) == y)
                         {
-                            MyGrid[x, y] = MyMaps[i];
-                            Globals.GameMaps[MyMaps[i]].MapGridX = (int)x;
-                            Globals.GameMaps[MyMaps[i]].MapGridY = (int)y;
+                            MyGrid[x, y] = tmpMaps[i];
+                            Globals.GameMaps[tmpMaps[i]].MapGrid = myGridIndex;
+                            Globals.GameMaps[tmpMaps[i]].MapGridX = (int)x;
+                            Globals.GameMaps[tmpMaps[i]].MapGridY = (int)y;
+                            tmpMaps.RemoveAt(i);
                             break;
                         }
                     }  
 				}
 			}
+		    foreach (var s in tmpMaps)
+		    {
+		        MyMaps.Remove(s);
+		    }
 		}
 
         private void CalculateBounds(MapStruct map, int x, int y)
         {
-            if (HasMap(map.MyMapNum)) { return; }
+            if (HasMap(map.MyMapNum,true)) { return; }
             if (map.Deleted > 0) { return; }
             MyMaps.Add(map.MyMapNum);
-            map.MapGrid = _myIndex;
             map.MapGridX = x;
             map.MapGridY = y;
             if (x < _topLeft.X) {_topLeft.X = x;}
             if (y < _topLeft.Y) {_topLeft.Y = y;}
             if (x > _botRight.X) {_botRight.X = x;}
             if (y > _botRight.Y) { _botRight.Y = y;}
-            if (map.Up > -1 && map.Up < Globals.GameMaps.Length)
+            if (map.Up > -1 && map.Up < Globals.GameMaps.Length && Globals.GameMaps[map.Up] != null && Globals.GameMaps[map.Up].Deleted == 0 && Globals.GameMaps[map.Up].Down == map.MyMapNum)
             {
                 CalculateBounds(Globals.GameMaps[map.Up], x, y - 1);
             }
-            if (map.Down > -1 && map.Down < Globals.GameMaps.Length)
+            if (map.Down > -1 && map.Down < Globals.GameMaps.Length && Globals.GameMaps[map.Down] != null && Globals.GameMaps[map.Down].Deleted == 0 && Globals.GameMaps[map.Down].Up == map.MyMapNum)
             {
                 CalculateBounds(Globals.GameMaps[map.Down], x, y + 1);
             }
-            if (map.Left > -1 && map.Left < Globals.GameMaps.Length)
+            if (map.Left > -1 && map.Left < Globals.GameMaps.Length && Globals.GameMaps[map.Left] != null && Globals.GameMaps[map.Left].Deleted == 0 && Globals.GameMaps[map.Left].Right == map.MyMapNum)
             {
                 CalculateBounds(Globals.GameMaps[map.Left], x - 1, y);
             }
-            if (map.Right > -1 && map.Right < Globals.GameMaps.Length)
+            if (map.Right > -1 && map.Right < Globals.GameMaps.Length && Globals.GameMaps[map.Right] != null && Globals.GameMaps[map.Right].Deleted == 0 && Globals.GameMaps[map.Right].Left == map.MyMapNum)
             {
                 CalculateBounds(Globals.GameMaps[map.Right], x + 1, y);
             }
         }
 
-		public bool HasMap(int mapNum) {
-            return MyMaps.Contains(mapNum);
+		public bool HasMap(int mapNum, bool parent = false)
+		{
+		    bool has = false;
+		    has = MyMaps.Contains(mapNum);
+		    if (has) return true;
+		    if (parent)
+		    {
+		        for (int i = 0; i < Database.MapGrids.Count; i++)
+		        {
+		            if (Database.MapGrids[i].HasMap(mapNum))
+		            {
+		                return true;
+		            }
+		        }
+		    }
+		    return has;
 		}
 	}
 }
