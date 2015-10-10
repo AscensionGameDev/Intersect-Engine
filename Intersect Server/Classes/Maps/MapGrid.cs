@@ -43,9 +43,9 @@ namespace Intersect_Server.Classes
 		{
 			_myIndex = myGridIndex;
             Globals.GameMaps[startMap].MapGrid = myGridIndex;
-            Globals.GameMaps[startMap].MapGridX = Globals.MapCount;
-            Globals.GameMaps[startMap].MapGridY = Globals.MapCount;
-
+            Globals.GameMaps[startMap].MapGridX = 0;
+            Globals.GameMaps[startMap].MapGridY = 0;
+            MyMaps.Clear();
             CalculateBounds(Globals.GameMaps[startMap], 0, 0);
 
             Width = _botRight.X - _topLeft.X + 1;

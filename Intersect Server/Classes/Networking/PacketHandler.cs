@@ -476,42 +476,50 @@ namespace Intersect_Server.Classes
                 if (newMap > -1)
                 {
                     Globals.GameMaps[relativeMap].Save();
-                    if (tmpMap.MapGridY - 1 >= 0)
+                    
+                    if (tmpMap.MapGridX >= 0 && tmpMap.MapGridX < Database.MapGrids[tmpMap.MapGrid].Width)
                     {
-                        tmpMap.Up = Database.MapGrids[tmpMap.MapGrid].MyGrid[tmpMap.MapGridX, tmpMap.MapGridY - 1];
-                        if (tmpMap.Up > -1)
+                        if (tmpMap.MapGridY + 1 < Database.MapGrids[tmpMap.MapGrid].Height)
                         {
-                            Globals.GameMaps[tmpMap.Up].Down = newMap;
-                            Globals.GameMaps[tmpMap.Up].Save();
+                            tmpMap.Down = Database.MapGrids[tmpMap.MapGrid].MyGrid[tmpMap.MapGridX, tmpMap.MapGridY + 1];
+                            if (tmpMap.Down > -1)
+                            {
+                                Globals.GameMaps[tmpMap.Down].Up = newMap;
+                                Globals.GameMaps[tmpMap.Down].Save();
+                            }
                         }
-                    }
-                    if (tmpMap.MapGridY + 1 <= Database.MapGrids[tmpMap.MapGrid].Height)
-                    {
-                        tmpMap.Down = Database.MapGrids[tmpMap.MapGrid].MyGrid[tmpMap.MapGridX, tmpMap.MapGridY + 1];
-                        if (tmpMap.Down > -1)
+                        if (tmpMap.MapGridY - 1 >= 0)
                         {
-                            Globals.GameMaps[tmpMap.Down].Up = newMap;
-                            Globals.GameMaps[tmpMap.Down].Save();
-                        }
-                    }
-
-                    if (tmpMap.MapGridX - 1 >= 0)
-                    {
-                        tmpMap.Left = Database.MapGrids[tmpMap.MapGrid].MyGrid[tmpMap.MapGridX - 1, tmpMap.MapGridY];
-                        if (tmpMap.Left > -1)
-                        {
-                            Globals.GameMaps[tmpMap.Left].Right = newMap;
-                            Globals.GameMaps[tmpMap.Left].Save();
+                            tmpMap.Up = Database.MapGrids[tmpMap.MapGrid].MyGrid[tmpMap.MapGridX, tmpMap.MapGridY - 1];
+                            if (tmpMap.Up > -1)
+                            {
+                                Globals.GameMaps[tmpMap.Up].Down = newMap;
+                                Globals.GameMaps[tmpMap.Up].Save();
+                            }
                         }
                     }
 
-                    if (tmpMap.MapGridX + 1 <= Database.MapGrids[tmpMap.MapGrid].Width)
+                    if (tmpMap.MapGridY >= 0 && tmpMap.MapGridY < Database.MapGrids[tmpMap.MapGrid].Height)
                     {
-                        tmpMap.Right = Database.MapGrids[tmpMap.MapGrid].MyGrid[tmpMap.MapGridX + 1, tmpMap.MapGridY];
-                        if (tmpMap.Right > -1)
+                        if (tmpMap.MapGridX - 1 >= 0)
                         {
-                            Globals.GameMaps[tmpMap.Right].Left = newMap;
-                            Globals.GameMaps[tmpMap.Right].Save();
+                            tmpMap.Left = Database.MapGrids[tmpMap.MapGrid].MyGrid[tmpMap.MapGridX - 1, tmpMap.MapGridY];
+                            if (tmpMap.Left > -1)
+                            {
+                                Globals.GameMaps[tmpMap.Left].Right = newMap;
+                                Globals.GameMaps[tmpMap.Left].Save();
+                            }
+                        }
+
+                        if (tmpMap.MapGridX + 1 < Database.MapGrids[tmpMap.MapGrid].Width)
+                        {
+                            tmpMap.Right =
+                                Database.MapGrids[tmpMap.MapGrid].MyGrid[tmpMap.MapGridX + 1, tmpMap.MapGridY];
+                            if (tmpMap.Right > -1)
+                            {
+                                Globals.GameMaps[tmpMap.Right].Left = newMap;
+                                Globals.GameMaps[tmpMap.Right].Save();
+                            }
                         }
                     }
 
