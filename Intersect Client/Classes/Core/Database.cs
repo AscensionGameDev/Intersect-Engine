@@ -68,7 +68,11 @@ namespace Intersect_Client.Classes
                         Graphics.DisplayMode = Int32.Parse(selectSingleNode.InnerText);
                     selectSingleNode = options.SelectSingleNode("//Config/FullScreen");
                     if (selectSingleNode != null && selectSingleNode.InnerText != "")
-                        selectSingleNode = options.SelectSingleNode("//Config/FPS");
+                        Graphics.FullScreen = Boolean.Parse(selectSingleNode.InnerText);
+                    selectSingleNode = options.SelectSingleNode("//Config/RenderCache");
+                    if (selectSingleNode != null && selectSingleNode.InnerText != "")
+                        Globals.RenderCaching = Boolean.Parse(selectSingleNode.InnerText);
+                    selectSingleNode = options.SelectSingleNode("//Config/FPS");
                     if (selectSingleNode != null && selectSingleNode.InnerText != "")
                         Graphics.FpsLimit = Int32.Parse(selectSingleNode.InnerText);
                     selectSingleNode = options.SelectSingleNode("//Config/Sound");
@@ -122,6 +126,7 @@ namespace Intersect_Client.Classes
                 writer.WriteElementString("DisplayMode", Graphics.DisplayMode.ToString());
                 writer.WriteElementString("FPS", Graphics.FpsLimit.ToString());
                 writer.WriteElementString("FullScreen", Graphics.FullScreen.ToString());
+                writer.WriteElementString("RenderCache", Globals.RenderCaching.ToString());
                 writer.WriteElementString("Sound", Globals.SoundVolume.ToString());
                 writer.WriteElementString("Music", Globals.MusicVolume.ToString());
                 writer.WriteElementString("MenuBGM", Globals.MenuBGM);

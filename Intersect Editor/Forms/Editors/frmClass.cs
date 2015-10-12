@@ -191,6 +191,7 @@ namespace Intersect_Editor.Forms
 
         private void btnRemoveSpell_Click(object sender, EventArgs e)
         {
+            if (lstSpells.SelectedIndex == -1) return;
             Globals.GameClasses[_editorIndex].Spells.RemoveAt(lstSpells.SelectedIndex);
             lstSpells.Items.RemoveAt(lstSpells.SelectedIndex);
 
@@ -444,6 +445,7 @@ namespace Intersect_Editor.Forms
 
         private void btnRemove_Click(object sender, EventArgs e)
         {
+            if (lstSprites.SelectedIndex == -1) return;
             Globals.GameClasses[_editorIndex].Sprites.RemoveAt(lstSprites.SelectedIndex);
             lstSprites.Items.RemoveAt(lstSprites.SelectedIndex);
 
@@ -453,11 +455,11 @@ namespace Intersect_Editor.Forms
             {
                 if (Globals.GameClasses[_editorIndex].Sprites[i].Gender == 0)
                 {
-                    lstSprites.Items.Add(Convert.ToString(i + 1) + ") " + Globals.GameClasses[Globals.CurrentMap].Sprites[i].Sprite + " - M");
+                    lstSprites.Items.Add(Convert.ToString(i + 1) + ") " + Globals.GameClasses[_editorIndex].Sprites[i].Sprite + " - M");
                 }
                 else
                 {
-                    lstSprites.Items.Add(Convert.ToString(i + 1) + ") " + Globals.GameClasses[Globals.CurrentMap].Sprites[i].Sprite + " - F");
+                    lstSprites.Items.Add(Convert.ToString(i + 1) + ") " + Globals.GameClasses[_editorIndex].Sprites[i].Sprite + " - F");
                 }
             }
 

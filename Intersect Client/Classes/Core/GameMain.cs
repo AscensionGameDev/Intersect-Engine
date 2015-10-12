@@ -114,7 +114,7 @@ namespace Intersect_Client
                         {
                             return;
                         }
-                        else if (Globals.GameMaps[Globals.LocalMaps[i]].MapRendered == false)
+                        else if (Globals.GameMaps[Globals.LocalMaps[i]].MapRendered == false && Globals.RenderCaching == true)
                         {
                             Globals.GameMaps[Globals.LocalMaps[i]].PreRenderMap();
                             return;

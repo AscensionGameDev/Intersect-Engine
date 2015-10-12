@@ -453,9 +453,32 @@ namespace Intersect_Client.Classes
         }
         private void DrawMapLayer(RenderTarget tex, int l, int z, float xoffset = 0, float yoffset = 0)
         {
-            for (var x = 0; x < Globals.MapWidth; x++)
+            int xmin = 0;
+            int xmax = Globals.MapWidth;
+            int ymin = 0;
+            int ymax = Globals.MapHeight;
+            if (!Globals.RenderCaching)
             {
-                for (var y = 0; y < Globals.MapHeight; y++)
+                if (GetX() < Graphics.CurrentView.Left)
+                {
+                    xmin += (int)(Math.Floor((Graphics.CurrentView.Left - GetX()) / 32));
+                }
+                if (GetX() + (xmax * 32) > Graphics.CurrentView.Left + Graphics.CurrentView.Width)
+                {
+                    xmax -= (int)(Math.Floor(((GetX() + (xmax * 32)) - (Graphics.CurrentView.Left + Graphics.CurrentView.Width)) / 32));
+                }
+                if (GetY() < Graphics.CurrentView.Top)
+                {
+                    ymin += (int)(Math.Floor((Graphics.CurrentView.Top - GetY()) / 32));
+                }
+                if (GetY() + (ymax * 32) > Graphics.CurrentView.Top + Graphics.CurrentView.Height)
+                {
+                    ymax -= (int)(Math.Floor(((GetY() + (ymax * 32)) - (Graphics.CurrentView.Top + Graphics.CurrentView.Height)) / 32));
+                }
+            }
+            for (var x = xmin; x < xmax; x++)
+            {
+                for (var y = ymin; y < ymax; y++)
                 {
                     if (Globals.Tilesets == null) continue;
                     if (Layers[l].Tiles[x, y].TilesetIndex < 0) continue;
@@ -512,12 +535,43 @@ namespace Intersect_Client.Classes
         {
             if (!MapRendered)
             {
-                return;
+                if (Globals.RenderCaching) return;
+                switch (layer)
+                {
+                    case 0:
+                        for (int i = 0; i < 3; i++)
+                        {
+                            DrawMapLayer(Graphics.RenderWindow, i, Globals.AnimFrame, GetX(), GetY());
+                        }
+                        break;
+
+                    case 1:
+                        DrawMapLayer(Graphics.RenderWindow, 3, Globals.AnimFrame, GetX(), GetY());
+                        break;
+
+                    case 2:
+                        DrawMapLayer(Graphics.RenderWindow, 4, Globals.AnimFrame, GetX(), GetY());
+                        break;
+                }
+
+            }
+            else
+            {
+                if (layer == 0)
+                {
+                    Graphics.RenderTexture(LowerTextures[Globals.AnimFrame].Texture, GetX(), GetY(), Graphics.RenderWindow);
+                }
+                else if (layer == 1)
+                {
+                    Graphics.RenderTexture(UpperTextures[Globals.AnimFrame].Texture, GetX(), GetY(), Graphics.RenderWindow);
+                }
+                else
+                {
+                    Graphics.RenderTexture(PeakTextures[Globals.AnimFrame].Texture, GetX(), GetY(), Graphics.RenderWindow);
+                }
             }
             if (layer == 0)
             {
-                Graphics.RenderTexture(LowerTextures[Globals.AnimFrame].Texture, GetX(), GetY(), Graphics.RenderWindow);
-
                 //Draw Map Items
                 for (int i = 0; i < MapItems.Count; i++)
                 {
@@ -527,13 +581,8 @@ namespace Intersect_Client.Classes
                     }
                 }
             }
-            else if (layer == 1)
+            if (layer == 2)
             {
-                Graphics.RenderTexture(UpperTextures[Globals.AnimFrame].Texture, GetX(), GetY(), Graphics.RenderWindow);
-            }
-            else
-            {
-                Graphics.RenderTexture(PeakTextures[Globals.AnimFrame].Texture, GetX(), GetY(), Graphics.RenderWindow);
                 DrawFog();
             }
 

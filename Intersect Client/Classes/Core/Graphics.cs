@@ -205,7 +205,7 @@ namespace Intersect_Client.Classes
             if (LimitResolution())
             {
                 return;}
-            CreateMapTextures(9 * 18);
+            if (Globals.RenderCaching) CreateMapTextures(9 * 18);
             
         }
 
@@ -346,13 +346,16 @@ namespace Intersect_Client.Classes
             {
                 UpdateView();
 
-                for (var i = 0; i < 9; i++)
+                if (Globals.RenderCaching)
                 {
-                    if (Globals.LocalMaps[i] > -1)
+                    for (var i = 0; i < 9; i++)
                     {
-                        if (Globals.GameMaps.ContainsKey(Globals.LocalMaps[i]) && !Globals.GameMaps[Globals.LocalMaps[i]].MapRendered)
+                        if (Globals.LocalMaps[i] > -1)
                         {
-                            if (!Graphics.PreRenderedMapLayer) { Globals.GameMaps[Globals.LocalMaps[i]].PreRenderMap(); }
+                            if (Globals.GameMaps.ContainsKey(Globals.LocalMaps[i]) && !Globals.GameMaps[Globals.LocalMaps[i]].MapRendered)
+                            {
+                                if (!Graphics.PreRenderedMapLayer) { Globals.GameMaps[Globals.LocalMaps[i]].PreRenderMap(); }
+                            }
                         }
                     }
                 }
