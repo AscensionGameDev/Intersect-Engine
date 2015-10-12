@@ -45,7 +45,7 @@ namespace Intersect_Client.Classes
         public static string IntroBGString = "";
         public static int TileWidth = 32;
         public static int TileHeight = 32;
-        public static int MapWidth = 30;
+        public static int MapWidth = 32;
         public static int MapHeight = 26;
         public static List<string> IntroBG = new List<string>();
         public static int GameBorderStyle = 0;

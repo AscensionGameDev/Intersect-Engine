@@ -313,6 +313,7 @@ namespace Intersect_Editor.Forms
         private void rbWarp_CheckedChanged(object sender, EventArgs e)
         {
             hideAttributeMenus();
+            scrlMap.Maximum = Globals.GameMaps.Length;
             grpWarp.Visible = true;
         }
         private void rbSound_CheckedChanged(object sender, EventArgs e)

@@ -33,9 +33,10 @@ namespace Intersect_Server.Classes
 {
     public static class WebSocketServer
     {
+        private static Alchemy.WebSocketServer _listener;
         public static void Init()
         {
-            var aServer = new Alchemy.WebSocketServer(false,Globals.ServerPort + 1)
+            _listener = new Alchemy.WebSocketServer(false,Globals.ServerPort + 1)
             {
                 OnReceive = OnReceive,
                 OnConnected = OnConnected,
@@ -44,8 +45,13 @@ namespace Intersect_Server.Classes
             };
             string[] stuff = new string[1];
             stuff[0] = "binary";
-            aServer.SubProtocols = stuff;
-            aServer.Start();
+            _listener.SubProtocols = stuff;
+            _listener.Start();
+        }
+        public static void Stop()
+        {
+            _listener.Stop();
+            _listener = null;
         }
         static void OnConnected(UserContext aContext)
         {

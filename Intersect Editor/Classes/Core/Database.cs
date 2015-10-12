@@ -54,11 +54,11 @@ namespace Intersect_Editor.Classes
                 writer.WriteStartElement("Config");
                 writer.WriteElementString("Host", "localhost");
                 writer.WriteElementString("Port", "4500");
-                writer.WriteElementString("TileWidth", "32");
-                writer.WriteElementString("TileHeight", "32");
+                writer.WriteElementString("TileWidth", Globals.TileWidth.ToString());
+                writer.WriteElementString("TileHeight", Globals.TileHeight.ToString());
                 writer.WriteComment("Do NOT touch these values will resize the maps in the engine. If you have existing maps and change these values you MUST delete them or else the engine will crash on launch.");
-                writer.WriteElementString("MapWidth", "30");
-                writer.WriteElementString("MapHeight", "26");
+                writer.WriteElementString("MapWidth", Globals.MapWidth.ToString());
+                writer.WriteElementString("MapHeight", Globals.MapHeight.ToString());
                 writer.WriteEndElement();
                 writer.WriteEndDocument();
                 writer.Flush();

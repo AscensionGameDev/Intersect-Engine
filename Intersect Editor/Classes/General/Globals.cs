@@ -29,7 +29,7 @@ namespace Intersect_Editor.Classes
     {
         //Network Variables
         public static string ServerHost = "localhost";
-        public static int ServerPort = 6000;
+        public static int ServerPort = 4500;
         public static int ReconnectTime = 3000;
 
 
@@ -76,7 +76,7 @@ namespace Intersect_Editor.Classes
         public static bool ViewingMapProperties = false;
         public static int TileWidth = 32;
         public static int TileHeight = 32;
-        public static int MapWidth = 30;
+        public static int MapWidth = 32;
         public static int MapHeight = 26;
         public static int CurrentTool = (int) Enums.EdittingTool.Pen;
         public static int CurMapSelX;

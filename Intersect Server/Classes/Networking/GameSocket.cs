@@ -111,6 +111,7 @@ namespace Intersect_Server.Classes
             {
                 try
                 {
+                    isConnected = false;
                     Globals.GeneralLogs.Add("Client disconnected.");
                     if (EntityIndex > -1 && Globals.Entities[EntityIndex] != null)
                     {
@@ -126,7 +127,6 @@ namespace Intersect_Server.Classes
                 }
                 catch (Exception) { }
             }
-            isConnected = false;
         }
 
         public void Update(PacketHandler packetHandler)

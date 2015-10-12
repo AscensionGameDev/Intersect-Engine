@@ -75,8 +75,8 @@ namespace Intersect_Server.Classes
                 writer.WriteComment("MapBorder Override. 0 for seamless with scrolling that stops on world edges. 1 for non-seamless, and 2 for seamless where the camera knows no boundaries. (Black borders where the world ends)");
                 writer.WriteElementString("BorderStyle", "0");
                 writer.WriteComment("Do NOT touch these values will resize the maps in the engine. If you have existing maps and change these values you MUST delete them or else the engine will crash on launch.");
-                writer.WriteElementString("MapWidth", "30");
-                writer.WriteElementString("MapHeight", "26");
+                writer.WriteElementString("MapWidth", Globals.MapWidth.ToString());
+                writer.WriteElementString("MapHeight", Globals.MapHeight.ToString());
                 writer.WriteEndElement();
                 writer.WriteEndDocument();
                 writer.Flush();

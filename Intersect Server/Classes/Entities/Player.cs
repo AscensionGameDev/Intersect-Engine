@@ -82,7 +82,7 @@ namespace Intersect_Server.Classes
                 }
                 if (CurrentMap > -1)
                 {
-                    if (CurrentMap > Globals.GameMaps.Length || Globals.GameMaps[CurrentMap] == null)
+                    if (CurrentMap >= Globals.GameMaps.Length || Globals.GameMaps[CurrentMap] == null)
                     {
                         WarpToSpawn(true);
                     }

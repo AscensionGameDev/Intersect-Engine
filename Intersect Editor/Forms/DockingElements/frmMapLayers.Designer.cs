@@ -101,6 +101,8 @@
             this.rbRandom = new System.Windows.Forms.RadioButton();
             this.rbDeclared = new System.Windows.Forms.RadioButton();
             this.lstMapNpcs = new System.Windows.Forms.ListBox();
+            this.label6 = new System.Windows.Forms.Label();
+            this.label8 = new System.Windows.Forms.Label();
             this.tabControl.SuspendLayout();
             this.tabTiles.SuspendLayout();
             this.pnlTilesetContainer.SuspendLayout();
@@ -115,6 +117,7 @@
             this.grpDimBlock.SuspendLayout();
             this.tabLights.SuspendLayout();
             this.pnlLight.SuspendLayout();
+            this.tabEvents.SuspendLayout();
             this.tabNPCs.SuspendLayout();
             this.grpManage.SuspendLayout();
             this.grpSpawnLoc.SuspendLayout();
@@ -663,6 +666,7 @@
             // tabLights
             // 
             this.tabLights.Controls.Add(this.pnlLight);
+            this.tabLights.Controls.Add(this.label6);
             this.tabLights.Location = new System.Drawing.Point(4, 22);
             this.tabLights.Name = "tabLights";
             this.tabLights.Size = new System.Drawing.Size(267, 368);
@@ -803,6 +807,7 @@
             // 
             // tabEvents
             // 
+            this.tabEvents.Controls.Add(this.label8);
             this.tabEvents.Location = new System.Drawing.Point(4, 22);
             this.tabEvents.Name = "tabEvents";
             this.tabEvents.Size = new System.Drawing.Size(267, 368);
@@ -934,6 +939,23 @@
             this.lstMapNpcs.TabIndex = 10;
             this.lstMapNpcs.Click += new System.EventHandler(this.lstMapNpcs_Click);
             // 
+            // label6
+            // 
+            this.label6.Location = new System.Drawing.Point(4, 4);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(259, 38);
+            this.label6.TabIndex = 1;
+            this.label6.Text = "Lower the maps brightness and double click on a tile to create a light!";
+            // 
+            // label8
+            // 
+            this.label8.AutoSize = true;
+            this.label8.Location = new System.Drawing.Point(4, 4);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(240, 13);
+            this.label8.TabIndex = 0;
+            this.label8.Text = "Double click a tile on the map to create an event!";
+            // 
             // frmMapLayers
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -974,6 +996,8 @@
             this.tabLights.ResumeLayout(false);
             this.pnlLight.ResumeLayout(false);
             this.pnlLight.PerformLayout();
+            this.tabEvents.ResumeLayout(false);
+            this.tabEvents.PerformLayout();
             this.tabNPCs.ResumeLayout(false);
             this.grpManage.ResumeLayout(false);
             this.grpSpawnLoc.ResumeLayout(false);
@@ -1057,6 +1081,8 @@
         public System.Windows.Forms.RadioButton rbRandom;
         public System.Windows.Forms.RadioButton rbDeclared;
         public System.Windows.Forms.ListBox lstMapNpcs;
+        private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.Label label8;
 
     }
 }

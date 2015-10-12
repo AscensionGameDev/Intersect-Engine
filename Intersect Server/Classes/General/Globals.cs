@@ -32,9 +32,10 @@ namespace Intersect_Server.Classes
         public static List<string> GeneralLogs = new List<string>();
         public static long CPS = 0;
         public static Boolean CPSLock = true;
+        public static bool ServerStarted = true;
 
         //Options
-        public static int ServerPort = 4501;
+        public static int ServerPort = 4500;
         public static string MySqlHost = "";
         public static int MySqlPort = 3306;
         public static string MySqlUser = "";
@@ -43,7 +44,7 @@ namespace Intersect_Server.Classes
 	    public static int GameBorderStyle = 0; //0 For Smart Borders, 1 for Non-Seamless, 2 for black borders
 
         //Map Options
-        public static int MapWidth = 30;
+        public static int MapWidth = 32;
         public static int MapHeight = 26;
 
         //Game Maps

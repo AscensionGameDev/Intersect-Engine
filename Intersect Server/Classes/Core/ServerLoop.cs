@@ -30,7 +30,7 @@ namespace Intersect_Server.Classes
         {
             long cpsTimer = Environment.TickCount + 1000;
             long cps = 0;
-            while (true)
+            while (Globals.ServerStarted)
             {
                 for (int i = 0; i < Globals.GameMaps.Length; i++)
                 {
@@ -59,6 +59,11 @@ namespace Intersect_Server.Classes
                 }
                 if (Globals.CPSLock) { Thread.Sleep(10); }
             }
+
+            //Server is shutting down!!
+            //TODO gracefully disconnect all clients
+            SocketServer.Stop();
+            WebSocketServer.Stop();
         }
     }
 }

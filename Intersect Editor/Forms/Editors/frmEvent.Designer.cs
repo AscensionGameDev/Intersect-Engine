@@ -1161,6 +1161,7 @@ namespace Intersect_Editor.Forms
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.frmEvent_FormClosing);
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.FrmEvent_FormClosed);
             this.Load += new System.EventHandler(this.frmEvent_Load);
+            this.VisibleChanged += new System.EventHandler(this.FrmEvent_VisibleChanged);
             this.tabControl1.ResumeLayout(false);
             this.tabPage1.ResumeLayout(false);
             this.groupBox7.ResumeLayout(false);

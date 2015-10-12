@@ -390,6 +390,7 @@ namespace Intersect_Editor.Forms
             // 
             // questEditorToolStripMenuItem
             // 
+            this.questEditorToolStripMenuItem.Enabled = false;
             this.questEditorToolStripMenuItem.Name = "questEditorToolStripMenuItem";
             this.questEditorToolStripMenuItem.Size = new System.Drawing.Size(164, 22);
             this.questEditorToolStripMenuItem.Text = "Quest Editor";

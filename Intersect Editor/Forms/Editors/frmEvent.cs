@@ -636,6 +636,11 @@ namespace Intersect_Editor.Forms
             Globals.CurrentEditor = -1;
         }
 
+        private void FrmEvent_VisibleChanged(object sender, EventArgs e)
+        {
+            btnCancel_Click(null, null);
+        }
+
 
 
     }

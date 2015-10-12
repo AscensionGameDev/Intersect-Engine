@@ -361,10 +361,18 @@ namespace Intersect_Editor.Classes
                         }
                     }
                 }
-                DrawMapBorders();
+                if (_vertexCount > 0)
+                {
+                    RenderWindow.Draw(_vertexCache, 0, (uint)_vertexCount, PrimitiveType.Quads, _renderState);
+                    RenderWindow.ResetGLStates();
+                    _vertexCount = 0;
+                }
                 if (!HideFog) { DrawFog(RenderWindow); }
                 if (!HideOverlay) { DrawMapOverlay(RenderWindow); }
                 if (!HideDarkness || Globals.CurrentLayer == Constants.LayerCount + 1) { DrawDarkness(RenderWindow); }
+
+                DrawMapBorders();
+                DrawSelectionRect();
             }
             Globals.MainForm.toolStripLabelDebug.Text = @"Draw Calls: " + DrawCalls + @" Cache Limit: " + CacheLimit;
             DrawCalls = 0;
@@ -535,7 +543,7 @@ namespace Intersect_Editor.Classes
                         tmpMap = TilePreviewStruct;
                         if (Globals.CurrentTool == (int)Enums.EdittingTool.Selection && Globals.Dragging)
                         {
-                            Globals.MapEditorWindow.ProcessSelectionMovement(tmpMap,false, true);
+                            Globals.MapEditorWindow.ProcessSelectionMovement(tmpMap, false, true);
                         }
                         else
                         {
@@ -618,48 +626,46 @@ namespace Intersect_Editor.Classes
                                     }
                                     else if (Globals.CurrentTool == (int)Enums.EdittingTool.Rectangle)
                                     {
+                                        int x = 0;
+                                        int y = 0;
                                         for (int x0 = selX; x0 < selX + selW + 1; x0++)
                                         {
                                             for (int y0 = selY; y0 < selY + selH + 1; y0++)
                                             {
+                                                x = (x0 - selX) % (Globals.CurSelW + 1);
+                                                y = (y0 - selY) % (Globals.CurSelH + 1);
                                                 if (Globals.Autotilemode == 0)
                                                 {
-                                                    for (var x = 0; x <= Globals.CurSelW; x++)
+                                                    if (x0 >= 0 && x0 < Globals.MapWidth && y0 >= 0 &&
+                                                        y0 < Globals.MapHeight && x0  < selX + selW + 1 &&
+                                                        y0  < selY + selH + 1)
                                                     {
-                                                        for (var y = 0; y <= Globals.CurSelH; y++)
+                                                        if (Globals.MouseButton == 0)
                                                         {
-                                                            if (x0 + x >= 0 && x0 + x < Globals.MapWidth && y0 + y >= 0 &&
-                                                                y0 + y < Globals.MapHeight && x0 + x < selX + selW + 1 &&
-                                                                y0 + y < selY + selH + 1)
-                                                            {
-                                                                if (Globals.MouseButton == 0)
-                                                                {
-                                                                    tmpMap.Layers[Globals.CurrentLayer].Tiles[
-                                                                        x0 + x, y0 + y].TilesetIndex =
-                                                                        Globals.CurrentTileset;
-                                                                    tmpMap.Layers[Globals.CurrentLayer].Tiles[
-                                                                        x0 + x, y0 + y].X = Globals.CurSelX + x;
-                                                                    tmpMap.Layers[Globals.CurrentLayer].Tiles[
-                                                                        x0 + x, y0 + y].Y = Globals.CurSelY + y;
-                                                                    tmpMap.Layers[Globals.CurrentLayer].Tiles[
-                                                                        x0 + x, y0 + y].Autotile =
-                                                                        (byte)Globals.Autotilemode;
-                                                                }
-                                                                else if (Globals.MouseButton == 1)
-                                                                {
-                                                                    tmpMap.Layers[Globals.CurrentLayer].Tiles[
-                                                                        x0 + x, y0 + y].TilesetIndex = -1;
-                                                                    tmpMap.Layers[Globals.CurrentLayer].Tiles[
-                                                                        x0 + x, y0 + y].X = 0;
-                                                                    tmpMap.Layers[Globals.CurrentLayer].Tiles[
-                                                                        x0 + x, y0 + y].Y = 0;
-                                                                    tmpMap.Layers[Globals.CurrentLayer].Tiles[
-                                                                        x0 + x, y0 + y].Autotile = 0;
-                                                                }
-                                                                tmpMap.Autotiles.UpdateAutoTiles(x0 + x, y0 + y,
-                                                                    Globals.CurrentLayer);
-                                                            }
+                                                            tmpMap.Layers[Globals.CurrentLayer].Tiles[
+                                                                x0, y0].TilesetIndex =
+                                                                Globals.CurrentTileset;
+                                                            tmpMap.Layers[Globals.CurrentLayer].Tiles[
+                                                                x0, y0].X = Globals.CurSelX + x;
+                                                            tmpMap.Layers[Globals.CurrentLayer].Tiles[
+                                                                x0, y0].Y = Globals.CurSelY + y;
+                                                            tmpMap.Layers[Globals.CurrentLayer].Tiles[
+                                                                x0, y0].Autotile =
+                                                                (byte)Globals.Autotilemode;
                                                         }
+                                                        else if (Globals.MouseButton == 1)
+                                                        {
+                                                            tmpMap.Layers[Globals.CurrentLayer].Tiles[
+                                                                x0, y0].TilesetIndex = -1;
+                                                            tmpMap.Layers[Globals.CurrentLayer].Tiles[
+                                                                x0, y0].X = 0;
+                                                            tmpMap.Layers[Globals.CurrentLayer].Tiles[
+                                                                x0, y0].Y = 0;
+                                                            tmpMap.Layers[Globals.CurrentLayer].Tiles[
+                                                                x0, y0].Autotile = 0;
+                                                        }
+                                                        tmpMap.Autotiles.UpdateAutoTiles(x0, y0,
+                                                            Globals.CurrentLayer);
                                                     }
                                                 }
                                                 else
@@ -729,91 +735,118 @@ namespace Intersect_Editor.Classes
                     }
                 }
             }
-
-            // Draw Npc Spawns from Map Editor
-            if (!screenShotting && layer == 1 && dir == -1)
+        }
+        private static void DrawSelectionRect()
+        {
+            var tmpMap = Globals.GameMaps[Globals.CurrentMap];
+            if (tmpMap == null || tmpMap.Deleted == 1) { return; }
+            RectangleShape tileSelectionRect;
+            Sprite tmpSprite;
+            int selX = Globals.CurMapSelX, selY = Globals.CurMapSelY, selW = Globals.CurMapSelW, selH = Globals.CurMapSelH;
+            int x1 = 0, y1 = 0, x2 = 0, y2 = 0, z1 = 0, z2 = 3, xoffset = 0, yoffset = 0;
+            int dragxoffset = 0, dragyoffset = 0;
+            if (Globals.CurrentTool == (int)Enums.EdittingTool.Rectangle ||
+            Globals.CurrentTool == (int)Enums.EdittingTool.Selection)
             {
-
-                switch (Globals.CurrentLayer)
+                if (selW < 0)
                 {
-                    case Constants.LayerCount:
-                        //Draw attributes
-                        for (int x = 0; x < Globals.MapWidth; x++)
-                        {
-                            for (int y = 0; y < Globals.MapHeight; y++)
-                            {
-                                if (tmpMap.Attributes[x, y].value > 0)
-                                {
-                                    tmpSprite = new Sprite(_attributesTex);
-                                    tmpSprite.TextureRect = new IntRect(0, (tmpMap.Attributes[x, y].value - 1) * Globals.TileWidth, Globals.TileWidth, Globals.TileHeight);
-                                    tmpSprite.Position = new Vector2f(x * Globals.TileWidth + Globals.TileWidth, y * Globals.TileHeight + Globals.TileHeight);
-                                    tmpSprite.Color = new Color(255, 255, 255, 150);
-                                    renderTarget.Draw(tmpSprite);
-                                }
-                            }
-
-                        }
-                        break;
-                    case Constants.LayerCount + 1:
-
-                        break;
-                    case Constants.LayerCount + 2:
-                        for (var x = 0; x < Globals.MapWidth; x++)
-                        {
-                            for (var y = 0; y < Globals.MapHeight; y++)
-                            {
-                                if (tmpMap.FindEventAt(x, y) == null) continue;
-                                tmpSprite = new Sprite(_eventTex)
-                                {
-                                    TextureRect = new IntRect(0, 0, Globals.TileWidth, Globals.TileHeight),
-                                    Position = new Vector2f(x * Globals.TileWidth + Globals.TileWidth, y * Globals.TileHeight + Globals.TileHeight)
-                                };
-                                renderTarget.Draw(tmpSprite);
-                            }
-
-                        }
-                        break;
-                    case Constants.LayerCount + 3:
-                        for (int i = 0; i < tmpMap.Spawns.Count; i++)
-                        {
-                            if (tmpMap.Spawns[i].X >= 0 && tmpMap.Spawns[i].Y >= 0)
-                            {
-                                tmpSprite = new Sprite(_spawnTex);
-                                tmpSprite.TextureRect = new IntRect(0, 0, Globals.TileWidth, Globals.TileHeight);
-                                tmpSprite.Position = new Vector2f(tmpMap.Spawns[i].X * Globals.TileWidth + Globals.TileWidth, tmpMap.Spawns[i].Y * Globals.TileHeight + Globals.TileHeight);
-                                renderTarget.Draw(tmpSprite);
-                            }
-                        }
-                        break;
-                    default:
-                        break;
+                    selX -= Math.Abs(selW);
+                    selW = Math.Abs(selW);
                 }
-                if (Globals.CurrentTool == (int)Enums.EdittingTool.Rectangle ||
-    Globals.CurrentTool == (int)Enums.EdittingTool.Selection)
+                if (selH < 0)
                 {
-                    tileSelectionRect = new RectangleShape(new Vector2f((selW + 1) * Globals.TileWidth, (selH + 1) * Globals.TileHeight))
-                    {
-                        Position = new Vector2f((selX + dragxoffset) * Globals.TileWidth + Globals.TileWidth, (selY + dragyoffset) * Globals.TileHeight + Globals.TileHeight),
-                        FillColor = Color.White
-                    };
+                    selY -= Math.Abs(selH);
+                    selH = Math.Abs(selH);
                 }
-                else
-                {
-                    tileSelectionRect = new RectangleShape(new Vector2f(Globals.TileWidth, Globals.TileHeight))
-                    {
-                        Position = new Vector2f(Globals.CurTileX * Globals.TileWidth + Globals.TileWidth, Globals.CurTileY * Globals.TileHeight + Globals.TileHeight),
-                        FillColor = Color.White
-                    };
-                }
-                tileSelectionRect.FillColor = Color.Transparent;
-                tileSelectionRect.OutlineColor = Color.White;
-                if (Globals.CurrentTool == (int) Enums.EdittingTool.Selection && Globals.Dragging)
-                {
-                    tileSelectionRect.OutlineColor = Color.Blue;
-                }
-                tileSelectionRect.OutlineThickness = 1;
-                renderTarget.Draw(tileSelectionRect);
             }
+            x1 = 0;
+            x2 = Globals.MapWidth;
+            y1 = 0;
+            y2 = Globals.MapHeight;
+            xoffset = Globals.TileWidth;
+            yoffset = Globals.TileHeight;
+            switch (Globals.CurrentLayer)
+            {
+                case Constants.LayerCount:
+                    //Draw attributes
+                    for (int x = 0; x < Globals.MapWidth; x++)
+                    {
+                        for (int y = 0; y < Globals.MapHeight; y++)
+                        {
+                            if (tmpMap.Attributes[x, y].value > 0)
+                            {
+                                tmpSprite = new Sprite(_attributesTex);
+                                tmpSprite.TextureRect = new IntRect(0, (tmpMap.Attributes[x, y].value - 1) * Globals.TileWidth, Globals.TileWidth, Globals.TileHeight);
+                                tmpSprite.Position = new Vector2f(x * Globals.TileWidth + Globals.TileWidth, y * Globals.TileHeight + Globals.TileHeight);
+                                tmpSprite.Color = new Color(255, 255, 255, 150);
+                                RenderWindow.Draw(tmpSprite);
+                            }
+                        }
+
+                    }
+                    break;
+                case Constants.LayerCount + 1:
+
+                    break;
+                case Constants.LayerCount + 2:
+                    for (var x = 0; x < Globals.MapWidth; x++)
+                    {
+                        for (var y = 0; y < Globals.MapHeight; y++)
+                        {
+                            if (tmpMap.FindEventAt(x, y) == null) continue;
+                            tmpSprite = new Sprite(_eventTex)
+                            {
+                                TextureRect = new IntRect(0, 0, Globals.TileWidth, Globals.TileHeight),
+                                Position = new Vector2f(x * Globals.TileWidth + Globals.TileWidth, y * Globals.TileHeight + Globals.TileHeight)
+                            };
+                            RenderWindow.Draw(tmpSprite);
+                        }
+
+                    }
+                    break;
+                case Constants.LayerCount + 3:
+                    for (int i = 0; i < tmpMap.Spawns.Count; i++)
+                    {
+                        if (tmpMap.Spawns[i].X >= 0 && tmpMap.Spawns[i].Y >= 0)
+                        {
+                            tmpSprite = new Sprite(_spawnTex);
+                            tmpSprite.TextureRect = new IntRect(0, 0, Globals.TileWidth, Globals.TileHeight);
+                            tmpSprite.Position = new Vector2f(tmpMap.Spawns[i].X * Globals.TileWidth + Globals.TileWidth, tmpMap.Spawns[i].Y * Globals.TileHeight + Globals.TileHeight);
+                            RenderWindow.Draw(tmpSprite);
+                        }
+                    }
+                    break;
+                default:
+                    break;
+            }
+            if (Globals.CurrentTool == (int)Enums.EdittingTool.Rectangle ||
+Globals.CurrentTool == (int)Enums.EdittingTool.Selection)
+            {
+                tileSelectionRect = new RectangleShape(new Vector2f((selW + 1) * Globals.TileWidth, (selH + 1) * Globals.TileHeight))
+                {
+                    Position = new Vector2f((selX + dragxoffset) * Globals.TileWidth + Globals.TileWidth, (selY + dragyoffset) * Globals.TileHeight + Globals.TileHeight),
+                    FillColor = Color.White,
+                    OutlineColor = Color.White
+                };
+            }
+            else
+            {
+                tileSelectionRect = new RectangleShape(new Vector2f(Globals.TileWidth, Globals.TileHeight))
+                {
+                    Position = new Vector2f(Globals.CurTileX * Globals.TileWidth + Globals.TileWidth, Globals.CurTileY * Globals.TileHeight + Globals.TileHeight),
+                    FillColor = Color.White,
+                    OutlineColor = Color.White
+                };
+            }
+            tileSelectionRect.FillColor = Color.Transparent;
+            tileSelectionRect.OutlineColor = Color.White;
+            if (Globals.CurrentTool == (int)Enums.EdittingTool.Selection && Globals.Dragging)
+            {
+                tileSelectionRect.OutlineColor = Color.Blue;
+            }
+            tileSelectionRect.OutlineThickness = 1;
+            RenderWindow.Draw(tileSelectionRect);
+
         }
         private static void DrawTileset()
         {
@@ -978,7 +1011,8 @@ namespace Intersect_Editor.Classes
             var tmpMap = Globals.GameMaps[Globals.CurrentMap];
             if (TilePreviewStruct != null)
             {
-                tmpMap = TilePreviewStruct;}
+                tmpMap = TilePreviewStruct;
+            }
             var darkSprite = new Sprite(DarkCacheTexture.Texture) { Position = new Vector2f(-Globals.TileWidth * 30, -Globals.TileHeight * 30) };
             target.Draw(darkSprite, new RenderStates(BlendMode.Multiply));
             darkSprite.Dispose();

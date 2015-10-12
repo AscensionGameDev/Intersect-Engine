@@ -990,11 +990,18 @@ namespace Intersect_Client.Classes
         public static List<VideoMode> GetValidVideoModes()
         {
             var myList = new List<VideoMode>();
-            for (var i = 0; i < VideoMode.FullscreenModes.Length; i++)
-            {
-                myList.Add(VideoMode.FullscreenModes[i]);
-            }
-            myList.Reverse();
+            myList.Add(new VideoMode(800, 600));
+            myList.Add(new VideoMode(1024, 768));
+            myList.Add(new VideoMode(1280, 720));
+            myList.Add(new VideoMode(1280, 768));
+            myList.Add(new VideoMode(1280, 1024));
+            myList.Add(new VideoMode(1360, 768));
+            myList.Add(new VideoMode(1366, 768));
+            myList.Add(new VideoMode(1400, 1050));
+            myList.Add(new VideoMode(1440, 900));
+            myList.Add(new VideoMode(1600, 900));
+            myList.Add(new VideoMode(1680, 1050));
+            myList.Add(new VideoMode(1920, 1080));
             return myList;
         }
 

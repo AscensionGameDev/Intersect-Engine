@@ -49,17 +49,29 @@ namespace Intersect_Server.Classes
             _tcpServer.BeginAcceptTcpClient(OnClientConnect, null);
 		}
 
+        public static void Stop()
+        {
+            _tcpServer.Stop();
+        }
+
 		private static void OnClientConnect (IAsyncResult ar)
 		{
-            var client = new TcpDataClient( _tcpServer.EndAcceptTcpClient(ar));
-            client.TcpClient.NoDelay = false;
-            _tcpServer.BeginAcceptTcpClient(OnClientConnect, null);
-            client.Data = new GameSocket();
-            client.Data.Sender = client;
-            client.Data.OnSendData += Network_OnSendData;
-            client.readBuff = new byte[client.TcpClient.ReceiveBufferSize];
-            if (client.MyStream != null) { client.MyStream.BeginRead(client.readBuff, 0, client.TcpClient.ReceiveBufferSize, OnReceiveData, client); }
-            //Globals.GeneralLogs.Add("Client Connection From : " + aContext.ClientAddress.ToString());
+            try
+            {
+                var client = new TcpDataClient(_tcpServer.EndAcceptTcpClient(ar));
+                client.TcpClient.NoDelay = false;
+                _tcpServer.BeginAcceptTcpClient(OnClientConnect, null);
+                client.Data = new GameSocket();
+                client.Data.Sender = client;
+                client.Data.OnSendData += Network_OnSendData;
+                client.readBuff = new byte[client.TcpClient.ReceiveBufferSize];
+                if (client.MyStream != null) { client.MyStream.BeginRead(client.readBuff, 0, client.TcpClient.ReceiveBufferSize, OnReceiveData, client); }
+                //Globals.GeneralLogs.Add("Client Connection From : " + aContext.ClientAddress.ToString());
+            }
+            catch (Exception)
+            {
+                //client DC or server shutting down... nothing to worry about
+            }
 		}
 
         static void Network_OnSendData(SendDataEventArgs e)

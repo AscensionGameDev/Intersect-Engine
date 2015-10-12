@@ -573,14 +573,14 @@ namespace Intersect_Client.Classes
                 if (Graphics.FogFileNames.IndexOf(Globals.GameMaps[MyMapNum].Fog) > -1)
                 {
                     int fogIndex = Graphics.FogFileNames.IndexOf(Globals.GameMaps[MyMapNum].Fog);
-                    int xCount = (int)(Graphics.RenderWindow.Size.X / Graphics.FogTextures[fogIndex].Size.X) + 1;
-                    int yCount = (int)(Graphics.RenderWindow.Size.Y / Graphics.FogTextures[fogIndex].Size.Y) + 1;
+                    int xCount = (int)(Graphics.ScreenWidth / Graphics.FogTextures[fogIndex].Size.X) + 2;
+                    int yCount = (int)(Graphics.ScreenHeight / Graphics.FogTextures[fogIndex].Size.Y) + 2;
 
                     _fogCurrentX += (ecTime / 1000f) * Globals.GameMaps[MyMapNum].FogXSpeed * -6;
                     _fogCurrentY += (ecTime / 1000f) * Globals.GameMaps[MyMapNum].FogYSpeed * 2;
-                    float deltaX = _lastFogX - Graphics.CurrentView.Left - Graphics.FogOffsetX;
+                    float deltaX = 0;///= _lastFogX - Graphics.CurrentView.Left - Graphics.FogOffsetX;
                     _fogCurrentX -= deltaX;
-                    float deltaY = _lastFogY - Graphics.CurrentView.Top - Graphics.FogOffsetY;
+                    float deltaY = 0;// _lastFogY - Graphics.CurrentView.Top - Graphics.FogOffsetY;
                     _fogCurrentY -= deltaY;
 
                     if (_fogCurrentX < Graphics.FogTextures[fogIndex].Size.X) { _fogCurrentX += Graphics.FogTextures[fogIndex].Size.X; }
@@ -592,13 +592,11 @@ namespace Intersect_Client.Classes
                     {
                         for (int y = -1; y < yCount; y++)
                         {
-                            var fogSprite = new Sprite(Graphics.FogTextures[fogIndex]) { Position = new Vector2f(x * Graphics.FogTextures[fogIndex].Size.X + _fogCurrentX, y * Graphics.FogTextures[fogIndex].Size.Y + _fogCurrentY) };
+                            var fogSprite = new Sprite(Graphics.FogTextures[fogIndex]) { Position = new Vector2f((GetX() + Globals.MapWidth * Globals.TileWidth / 2) - (xCount * Graphics.FogTextures[fogIndex].Size.X / 2) + x * Graphics.FogTextures[fogIndex].Size.X + _fogCurrentX, (GetY() + Globals.MapHeight * Globals.TileHeight / 2) - (yCount * Graphics.FogTextures[fogIndex].Size.Y / 2) + y * Graphics.FogTextures[fogIndex].Size.Y + _fogCurrentY) };
                             fogSprite.Color = new Color(255, 255, 255, (byte)(Globals.GameMaps[MyMapNum].FogTransaprency * _curFogIntensity));
                             Graphics.RenderWindow.Draw(fogSprite);
                         }
                     }
-                    _lastFogX = Graphics.CurrentView.Left;
-                    _lastFogY = Graphics.CurrentView.Top;
                 }
             }
         }
