@@ -89,7 +89,9 @@
             this.lblOffsetX = new System.Windows.Forms.Label();
             this.btnLightEditorRevert = new System.Windows.Forms.Button();
             this.btnLightEditorClose = new System.Windows.Forms.Button();
+            this.label6 = new System.Windows.Forms.Label();
             this.tabEvents = new System.Windows.Forms.TabPage();
+            this.label8 = new System.Windows.Forms.Label();
             this.tabNPCs = new System.Windows.Forms.TabPage();
             this.grpManage = new System.Windows.Forms.GroupBox();
             this.btnRemoveMapNpc = new System.Windows.Forms.Button();
@@ -101,8 +103,6 @@
             this.rbRandom = new System.Windows.Forms.RadioButton();
             this.rbDeclared = new System.Windows.Forms.RadioButton();
             this.lstMapNpcs = new System.Windows.Forms.ListBox();
-            this.label6 = new System.Windows.Forms.Label();
-            this.label8 = new System.Windows.Forms.Label();
             this.tabControl.SuspendLayout();
             this.tabTiles.SuspendLayout();
             this.pnlTilesetContainer.SuspendLayout();
@@ -805,6 +805,14 @@
             this.btnLightEditorClose.UseVisualStyleBackColor = true;
             this.btnLightEditorClose.Click += new System.EventHandler(this.btnLightEditorClose_Click);
             // 
+            // label6
+            // 
+            this.label6.Location = new System.Drawing.Point(4, 4);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(259, 38);
+            this.label6.TabIndex = 1;
+            this.label6.Text = "Lower the maps brightness and double click on a tile to create a light!";
+            // 
             // tabEvents
             // 
             this.tabEvents.Controls.Add(this.label8);
@@ -814,6 +822,15 @@
             this.tabEvents.TabIndex = 3;
             this.tabEvents.Text = "Events";
             this.tabEvents.UseVisualStyleBackColor = true;
+            // 
+            // label8
+            // 
+            this.label8.AutoSize = true;
+            this.label8.Location = new System.Drawing.Point(4, 4);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(240, 13);
+            this.label8.TabIndex = 0;
+            this.label8.Text = "Double click a tile on the map to create an event!";
             // 
             // tabNPCs
             // 
@@ -938,23 +955,6 @@
             this.lstMapNpcs.Size = new System.Drawing.Size(259, 173);
             this.lstMapNpcs.TabIndex = 10;
             this.lstMapNpcs.Click += new System.EventHandler(this.lstMapNpcs_Click);
-            // 
-            // label6
-            // 
-            this.label6.Location = new System.Drawing.Point(4, 4);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(259, 38);
-            this.label6.TabIndex = 1;
-            this.label6.Text = "Lower the maps brightness and double click on a tile to create a light!";
-            // 
-            // label8
-            // 
-            this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(4, 4);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(240, 13);
-            this.label8.TabIndex = 0;
-            this.label8.Text = "Double click a tile on the map to create an event!";
             // 
             // frmMapLayers
             // 

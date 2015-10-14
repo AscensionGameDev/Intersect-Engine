@@ -274,7 +274,7 @@ namespace Intersect_Client.Classes
             return rt;
         }
 
-        public static Texture CreateItemTex(int itemnum, int xOffset = 0, int yOffset = 0, int width = 32, int height = 32, bool isEquipped = false, Texture bg = null)
+        public static RenderTexture CreateItemTex(int itemnum, int xOffset = 0, int yOffset = 0, int width = 32, int height = 32, bool isEquipped = false, Texture bg = null)
         {
             RenderTexture rt = new RenderTexture((uint)width, (uint)height);
             Sprite sprite;
@@ -298,13 +298,13 @@ namespace Intersect_Client.Classes
                 CircleShape equipDot = new CircleShape();
                 equipDot.FillColor = Color.Red;
                 equipDot.Position = new Vector2f(26 + xOffset, 0 + yOffset);
-                equipDot.Radius = 5;
+                equipDot.Radius = 2;
                 rt.Draw(equipDot);
             }
             rt.Display();
-            return rt.Texture;
+            return rt;
         }
-        public static Texture CreateSpellTex(int spellnum, int xOffset = 0, int yOffset = 0, int width = 32, int height = 32, bool onCD = false, Texture bg = null)
+        public static RenderTexture CreateSpellTex(int spellnum, int xOffset = 0, int yOffset = 0, int width = 32, int height = 32, bool onCD = false, Texture bg = null)
         {
             RenderTexture rt = new RenderTexture((uint)width, (uint)height);
             Sprite sprite;
@@ -329,7 +329,7 @@ namespace Intersect_Client.Classes
                 }
             }
             rt.Display();
-            return rt.Texture;
+            return rt;
         }
         //Code courtousy of http://tech.pro/tutorial/660/csharp-tutorial-convert-a-color-image-to-grayscale
         public static System.Drawing.Bitmap MakeGrayscale3(System.Drawing.Bitmap original)

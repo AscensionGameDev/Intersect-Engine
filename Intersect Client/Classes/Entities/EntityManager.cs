@@ -74,6 +74,7 @@ namespace Intersect_Client.Classes
                 if (Globals.Entities.ContainsKey(index))
                 {
                     Globals.Entities[index].Dispose();
+                    Globals.Entities[index] = null;
                     Globals.Entities.Remove(index);
                 }
             }
@@ -82,6 +83,7 @@ namespace Intersect_Client.Classes
                 if (Globals.LocalEntities.ContainsKey(index))
                 {
                     Globals.LocalEntities[index].Dispose();
+                    Globals.LocalEntities[index] = null;
                     Globals.LocalEntities.Remove(index);
                 }
             }

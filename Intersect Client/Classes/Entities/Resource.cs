@@ -33,6 +33,9 @@ namespace Intersect_Client.Classes
 {
     public class Resource : Entity
     {
+        private bool _hasRenderBounds;
+        RectangleF srcRectangle = new RectangleF();
+        RectangleF destRectangle = new RectangleF();
 
         public Resource() : base()
         {
@@ -45,16 +48,28 @@ namespace Intersect_Client.Classes
             HideName = 1;
         }
 
-        //Rendering Resources
-       override public void Draw()
+        override public bool Update()
         {
+            bool result = base.Update();
+            if (!_hasRenderBounds) { CalculateRenderBounds(); }
+            if (result && !Graphics.CurrentView.Intersects(new FloatRect(destRectangle.Left,destRectangle.Top,destRectangle.Width,destRectangle.Height)))
+            {
+                if (RenderList != null)
+                {
+                    RenderList.Remove(this);
+                }
+            }
+            return result;
+        }
+
+        private void CalculateRenderBounds()
+        {
+            if (!Globals.GameMaps.ContainsKey(CurrentMap)) return;
             int i = GetLocalPos(CurrentMap);
             if (i == -1)
             {
                 return;
             }
-            RectangleF srcRectangle = new RectangleF();
-            RectangleF destRectangle = new RectangleF();
             Texture srcTexture;
             if (Graphics.ResourceFileNames.IndexOf(MySprite) > -1)
             {
@@ -66,6 +81,22 @@ namespace Intersect_Client.Classes
                 if (srcRectangle.Width > 32) { destRectangle.X -= (srcRectangle.Width - 32) / 2; }
                 destRectangle.Width = srcRectangle.Width;
                 destRectangle.Height = srcRectangle.Height;
+                _hasRenderBounds = true;
+            }
+        }
+
+        //Rendering Resources
+       override public void Draw()
+        {
+            int i = GetLocalPos(CurrentMap);
+            if (i == -1)
+            {
+                return;
+            }
+            Texture srcTexture;
+            if (Graphics.ResourceFileNames.IndexOf(MySprite) > -1)
+            {
+                srcTexture = Graphics.ResourceTextures[Graphics.ResourceFileNames.IndexOf(MySprite)];
                 Graphics.RenderTexture(srcTexture, srcRectangle, destRectangle, Graphics.RenderWindow);
             }
         }

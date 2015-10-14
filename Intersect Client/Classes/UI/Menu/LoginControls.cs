@@ -25,9 +25,11 @@
     SOFTWARE.
 */
 using Gwen.Control;
+using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 
 namespace Intersect_Client.Classes.UI.Menu
@@ -42,6 +44,9 @@ namespace Intersect_Client.Classes.UI.Menu
         private Button _loginBtn;
         private Button _backBtn;
         private LabeledCheckBox _savePassChk;
+
+        private bool _useSavedPass = false;
+        private string _savedPass = "";
 
         //Parent
         private MainMenu _mainMenu;
@@ -77,6 +82,7 @@ namespace Intersect_Client.Classes.UI.Menu
             _passwordTextbox.SetSize(120, 14);
             _passwordTextbox.IsHidden = true;
             _passwordTextbox.SubmitPressed += PasswordTextbox_SubmitPressed;
+            _passwordTextbox.TextChanged += _passwordTextbox_TextChanged;
 
             //Login Save Pass Checkbox
             _savePassChk = new LabeledCheckBox(_parent) { Text = "Save Password" };
@@ -99,7 +105,10 @@ namespace Intersect_Client.Classes.UI.Menu
             _backBtn.SetSize(56, 32);
             _backBtn.IsHidden = true;
             _backBtn.Clicked += BackBtn_Clicked;
+
+            LoadCredentials();
         }
+
 
         //Methods
         public void Update()
@@ -128,6 +137,10 @@ namespace Intersect_Client.Classes.UI.Menu
         }
 
         //Input Handlers
+        void _passwordTextbox_TextChanged(Base sender, EventArgs arguments)
+        {
+            _useSavedPass = false;
+        }
         void BackBtn_Clicked(Base sender, ClickedEventArgs arguments)
         {
             _mainMenu.Reset();
@@ -146,23 +159,75 @@ namespace Intersect_Client.Classes.UI.Menu
         }
         public void TryLogin()
         {
+            var sha = new SHA256Managed();
             if (Globals.WaitingOnServer) { return; }
             if (FieldChecking.IsValidName(_usernameTextbox.Text))
             {
-                if (FieldChecking.IsValidPass(_passwordTextbox.Text))
+                if (_useSavedPass)
                 {
                     Graphics.FadeStage = 2;
-                    PacketSender.SendLogin(_usernameTextbox.Text, _passwordTextbox.Text);
+                    PacketSender.SendLogin(_usernameTextbox.Text, _savedPass);
+                    if (!_savePassChk.IsChecked) SaveCredentials();
                     Globals.WaitingOnServer = true;
                 }
                 else
                 {
-                    Gui.MsgboxErrors.Add("Password is invalid. Please user alphanumeric characters with a length between 4 and 20");
+                    if (FieldChecking.IsValidPass(_passwordTextbox.Text))
+                    {
+                        Graphics.FadeStage = 2;
+                        PacketSender.SendLogin(_usernameTextbox.Text, BitConverter.ToString(sha.ComputeHash(Encoding.UTF8.GetBytes(_passwordTextbox.Text.Trim()))).Replace("-", ""));
+                        SaveCredentials();
+                        Globals.WaitingOnServer = true;
+                    }
+                    else
+                    {
+                        Gui.MsgboxErrors.Add("Password is invalid. Please user alphanumeric characters with a length between 4 and 20");
+                    }
                 }
             }
             else
             {
                 Gui.MsgboxErrors.Add("Username is invalid. Please user alphanumeric characters with a length between 2 and 20");
+            }
+        }
+        private void LoadCredentials()
+        {
+            RegistryKey key = Registry.CurrentUser.OpenSubKey("Software", false);
+            key = key.OpenSubKey("IntersectEngine", false);
+            if (key == null) { return; }
+            key = key.OpenSubKey(Globals.ServerHost + Globals.ServerPort);
+            if (key == null) { return; }
+            string name = (string)key.GetValue("username");
+            if (name != null)
+            {
+                _usernameTextbox.Text = name;
+                if ((string)key.GetValue("pass") != "")
+                {
+                    _passwordTextbox.Text = "*********";
+                    _savedPass = (string)key.GetValue("pass");
+                    _useSavedPass = true;
+                    _savePassChk.IsChecked = true;
+                }
+            }
+        }
+        private void SaveCredentials()
+        {
+            var sha = new SHA256Managed();
+            RegistryKey key = Registry.CurrentUser.OpenSubKey("Software", true);
+
+            key.CreateSubKey("IntersectEngine");
+            key = key.OpenSubKey("IntersectEngine", true);
+            key.CreateSubKey(Globals.ServerHost + Globals.ServerPort);
+            key = key.OpenSubKey(Globals.ServerHost + Globals.ServerPort,true);
+            if (_savePassChk.IsChecked)
+            {
+                key.SetValue("username", _usernameTextbox.Text.Trim(), RegistryValueKind.String);
+                key.SetValue("pass", BitConverter.ToString(sha.ComputeHash(Encoding.UTF8.GetBytes(_passwordTextbox.Text.Trim()))).Replace("-", ""),RegistryValueKind.String);
+            }
+            else
+            {
+                key.SetValue("username", "",RegistryValueKind.String);
+                key.SetValue("pass", "",RegistryValueKind.String);
             }
         }
     }

@@ -174,9 +174,18 @@ namespace Intersect_Client.Classes
             var mapNum = (int)bf.ReadLong();
             var mapLength = bf.ReadLong();
             var mapData = bf.ReadBytes((int)mapLength);
+            var revision = bf.ReadInteger();
             if (Globals.GameMaps.ContainsKey(mapNum))
             {
-                return; }
+                if (revision == Globals.GameMaps[mapNum].Revision)
+                {
+                    return;
+                }
+                else
+                {
+                    Globals.GameMaps[mapNum].Dispose(false,false);
+                }
+            }
             Globals.GameMaps.Add(mapNum, new MapStruct((int)mapNum, mapData));
             if ((mapNum) == Globals.LocalMaps[4]) { 
                 Sounds.PlayMusic(Globals.GameMaps[mapNum].Music, 3,3, true); }
@@ -700,7 +709,7 @@ namespace Intersect_Client.Classes
 
         private static void HandleOpenAdminWindow()
         {
-            Gui.OpenAdminWindow();
+            Gui._GameGui.ShowAdminWindow();
         }
     }
 }

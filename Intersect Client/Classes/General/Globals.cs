@@ -49,7 +49,7 @@ namespace Intersect_Client.Classes
         public static int MapHeight = 26;
         public static List<string> IntroBG = new List<string>();
         public static int GameBorderStyle = 0;
-        public static bool RenderCaching = true;
+        public static bool RenderCaching = false;
 
         //Game Lock
         public static object GameLock = new object();
@@ -84,7 +84,9 @@ namespace Intersect_Client.Classes
         //Entities and stuff
         //public static List<Entity> Entities = new List<Entity>();
         public static Dictionary<int, Entity> Entities = new Dictionary<int, Entity>();
-        public static Dictionary<int, Entity> LocalEntities = new Dictionary<int, Entity>(); 
+        public static Dictionary<int, Entity> LocalEntities = new Dictionary<int, Entity>();
+        public static List<int> EntitiesToDispose = new List<int>();
+        public static List<int> LocalEntitiesToDispose = new List<int>();
 
         //Game Items
         public static ItemStruct[] GameItems;

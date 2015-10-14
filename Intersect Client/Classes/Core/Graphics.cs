@@ -142,6 +142,7 @@ namespace Intersect_Client.Classes
         public static void InitGraphics()
         {
             InitSfml();
+            if (Globals.RenderCaching) CreateMapTextures(9 * 18);
             LoadEntities();
             LoadItems();
             LoadAnimations();
@@ -190,12 +191,6 @@ namespace Intersect_Client.Classes
                     RenderWindow.SetFramerateLimit(120);
                 }
             }
-            else
-            {
-                MessageBox.Show(@"Failed to load available video modes.");
-                Application.Exit();
-                    return;
-            }
             RenderWindow.KeyPressed += renderWindow_KeyPressed;
             RenderWindow.KeyReleased += renderWindow_KeyReleased;
             RenderWindow.MouseButtonPressed += renderWindow_MouseButtonPressed;
@@ -205,8 +200,6 @@ namespace Intersect_Client.Classes
             if (LimitResolution())
             {
                 return;}
-            if (Globals.RenderCaching) CreateMapTextures(9 * 18);
-            
         }
 
         public static void FixResolution()
@@ -414,7 +407,6 @@ namespace Intersect_Client.Classes
                     }
                 }
 
-                Globals.Entities[Globals.MyIndex].Draw();
 
                 for (int x = 0; x < Layer1Entities.Length; x++)
                 {
@@ -451,6 +443,8 @@ namespace Intersect_Client.Classes
 
                 DrawOverlay();
 
+                RenderCurrentBatch();
+
                 for (int x = 0; x < Layer1Entities.Length; x++)
                 {
                     for (int y = 0; y < Layer1Entities[x].Count; y++)
@@ -463,8 +457,8 @@ namespace Intersect_Client.Classes
                 {
                     for (int y = 0; y < Layer2Entities[x].Count; y++)
                     {
-                        Layer1Entities[x][y].DrawName();
-                        if (Layer1Entities[x][y].GetType() != typeof(Event)) { Layer1Entities[x][y].DrawHpBar(); }
+                        Layer2Entities[x][y].DrawName();
+                        if (Layer2Entities[x][y].GetType() != typeof(Event)) { Layer2Entities[x][y].DrawHpBar(); }
                     }
                 }
                 DrawDarkness();
@@ -473,12 +467,7 @@ namespace Intersect_Client.Classes
             Gui.DrawGui();
             RenderTexture(Gui.GwenTexture.Texture,CurrentView.Left,CurrentView.Top,RenderWindow);
 
-            if (_vertexCount > 0)
-            {
-                RenderWindow.Draw(_vertexCache, 0, (uint)_vertexCount, PrimitiveType.Quads, _renderState);
-                RenderWindow.ResetGLStates();
-                _vertexCount = 0;
-            }
+            RenderCurrentBatch();
 
             if (FadeStage != 0)
             {
@@ -525,6 +514,7 @@ namespace Intersect_Client.Classes
         {
             if (Globals.LocalMaps[index] < 0) return;
             if (!Globals.GameMaps.ContainsKey(Globals.LocalMaps[index])) return;
+            if (!new FloatRect(Globals.GameMaps[Globals.LocalMaps[index]].GetX(), Globals.GameMaps[Globals.LocalMaps[index]].GetY(), Globals.TileWidth * Globals.MapWidth, Globals.TileHeight * Globals.MapHeight).Intersects(CurrentView)) return;
             Globals.GameMaps[Globals.LocalMaps[index]].Draw(layer);
             if (layer == 0) { MapsDrawn++; }
         }
@@ -652,7 +642,7 @@ namespace Intersect_Client.Classes
                 }
             }
             newView = new View(CurrentView);
-            //newView.Zoom(2.5f);
+            newView.Zoom(1f);
             RenderWindow.SetView(newView);
         }
 
@@ -1056,15 +1046,7 @@ namespace Intersect_Client.Classes
                 }
                 if (_renderState.Texture == null || _renderState.Texture != tex || _vertexCount >= 1024 - 4)
                 {
-                    // enable the new texture
-                    if (_vertexCount > 0)
-                    {
-                        renderTarget.Draw(_vertexCache, 0, (uint)_vertexCount, PrimitiveType.Quads, _renderState);
-                        DrawCalls++;
-                        renderTarget.ResetGLStates();
-                        _vertexCount = 0;
-                    }
-
+                    RenderCurrentBatch();
                     _renderState.Texture = tex;
                 }
 
@@ -1097,8 +1079,16 @@ namespace Intersect_Client.Classes
                 renderTarget.Draw(vertexCache, 0, 4, PrimitiveType.Quads, _renderState);
                 renderTarget.ResetGLStates();
             }
-
-            
+        }
+        private static void RenderCurrentBatch()
+        {
+            if (_vertexCount > 0)
+            {
+                RenderWindow.Draw(_vertexCache, 0, (uint)_vertexCount, PrimitiveType.Quads, _renderState);
+                DrawCalls++;
+                RenderWindow.ResetGLStates();
+                _vertexCount = 0;
+            }
         }
     }
 }

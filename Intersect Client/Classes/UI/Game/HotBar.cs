@@ -151,10 +151,11 @@ namespace Intersect_Client.Classes.UI.Game
         private int myindex;
         
         private int[] _statBoost = new int[Constants.MaxStats];
-        
 
+        //Textures
+        private Gwen.Texture gwenTex;
+        private SFML.Graphics.RenderTexture sfTex;
         private RenderTexture _hotbarBG;
-        private RenderTexture _texImg;
         
 
         public HotBarItem(int index, RenderTexture hotbarBG, WindowControl hotbarWindow)
@@ -251,14 +252,20 @@ namespace Intersect_Client.Classes.UI.Game
                 }
                 else if (_currentType == 0 && _currentItem > -1 && Globals.Me.Inventory[_currentItem].ItemNum > -1)
                 {
-                    pnl.Texture = Gui.SFMLToGwenTexture(Gui.CreateItemTex(Globals.Me.Inventory[_currentItem].ItemNum, 1, 1, 34, 34, Globals.Me.IsEquipped(_currentItem), _hotbarBG.Texture));
+                    sfTex = Gui.CreateItemTex(Globals.Me.Inventory[_currentItem].ItemNum, 1, 1, 34, 34,
+                        Globals.Me.IsEquipped(_currentItem), _hotbarBG.Texture);
+                    gwenTex = Gui.SFMLToGwenTexture(sfTex.Texture);
+                    pnl.Texture = gwenTex;
                     _onCooldown = false;
                     _texLoaded = true;
                     _isEquipped = Globals.Me.IsEquipped(_currentItem);
                 }
                 else if (_currentType == 1 && _currentItem > -1 && Globals.Me.Spells[_currentItem].SpellNum > -1)
                 {
-                    pnl.Texture = Gui.SFMLToGwenTexture(Gui.CreateSpellTex(Globals.Me.Spells[_currentItem].SpellNum, 1, 1, 34, 34, (Globals.Me.Spells[_currentItem].SpellCD > 0), _hotbarBG.Texture));
+                    sfTex = Gui.CreateSpellTex(Globals.Me.Spells[_currentItem].SpellNum, 1, 1, 34, 34,
+                        (Globals.Me.Spells[_currentItem].SpellCD > 0), _hotbarBG.Texture);
+                    gwenTex = Gui.SFMLToGwenTexture(sfTex.Texture);
+                    pnl.Texture = gwenTex;
                     _onCooldown = false;
                     _texLoaded = true;
                     _isEquipped = false;
@@ -305,14 +312,7 @@ namespace Intersect_Client.Classes.UI.Game
                                     if (Math.Sqrt(Math.Pow(xdiff, 2) + Math.Pow(ydiff, 2)) > 5)
                                     {
                                         IsDragging = true;
-                                        if (_currentType == 0)
-                                        {
-                                            dragIcon = new Draggable(pnl.LocalPosToCanvas(new System.Drawing.Point(0, 0)).X + MouseX, pnl.LocalPosToCanvas(new System.Drawing.Point(0, 0)).X + MouseY, Gui.SFMLToGwenTexture(Gui.CreateItemTex(Globals.Me.Inventory[_currentItem].ItemNum, 0, 0, 32, 32, _isEquipped, null)));
-                                        }
-                                        else
-                                        {
-                                            dragIcon = new Draggable(pnl.LocalPosToCanvas(new System.Drawing.Point(0, 0)).X + MouseX, pnl.LocalPosToCanvas(new System.Drawing.Point(0, 0)).X + MouseY, Gui.SFMLToGwenTexture(Gui.CreateSpellTex(Globals.Me.Spells[_currentItem].SpellNum, 0, 0, 32, 32, _onCooldown, null)));
-                                        }
+                                        dragIcon = new Draggable(pnl.LocalPosToCanvas(new System.Drawing.Point(0, 0)).X + MouseX, pnl.LocalPosToCanvas(new System.Drawing.Point(0, 0)).X + MouseY, gwenTex);
                                     }
                                 }
                             }

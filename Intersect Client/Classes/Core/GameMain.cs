@@ -53,7 +53,7 @@ namespace Intersect_Client
 
             //Load Sounds
             Sounds.Init();
-            Sounds.PlayMusic(Globals.MenuBGM,3,3,true);
+            Sounds.PlayMusic(Globals.MenuBGM, 3, 3, true);
 
             //Init Network
             Network.InitNetwork();
@@ -74,7 +74,7 @@ namespace Intersect_Client
                     }
                     Graphics.DrawGame();
                     Sounds.Update();
-                    
+
                 }
                 Application.DoEvents();
             }
@@ -109,7 +109,7 @@ namespace Intersect_Client
                     if (Globals.LocalMaps[i] <= -1) continue;
                     if (Globals.GameMaps.ContainsKey(Globals.LocalMaps[i]) && Globals.GameMaps[Globals.LocalMaps[i]] != null)
                     {
-                        if (!Globals.GameMaps[Globals.LocalMaps[i]].ShouldLoad(i*2 + 0)) continue;
+                        if (!Globals.GameMaps[Globals.LocalMaps[i]].ShouldLoad(i * 2 + 0)) continue;
                         if (Globals.GameMaps[Globals.LocalMaps[i]].MapLoaded == false)
                         {
                             return;
@@ -136,34 +136,29 @@ namespace Intersect_Client
 
 
             //Update All Entities
-            for (var i = 0; i < 9; i++)
+
+            foreach (var en in Globals.Entities)
             {
-                foreach (var en in Globals.Entities)
-                {
-                    if (en.Value == null) continue;
-                    if (en.Value.CurrentMap != Globals.LocalMaps[i]) continue;
-                    if (en.Value == Globals.Me)
-                    {
-                        Globals.Me.Update();
-                    }
-                    else
-                    {
-                        if (!en.Value.Update())
-                        {
-                            Globals.Entities.Remove(en.Key);
-                        }
-                    }
-                }
-                foreach (var en in Globals.LocalEntities)
-                {
-                    if (en.Value == null) continue;
-                    if (en.Value.CurrentMap != Globals.LocalMaps[i]) continue;
-                    if (!en.Value.Update())
-                    {
-                        Globals.LocalEntities.Remove(en.Key);
-                    }
-                }
+                if (en.Value == null) continue;
+                en.Value.Update();
             }
+            foreach (var en in Globals.LocalEntities)
+            {
+                if (en.Value == null) continue;
+                en.Value.Update();
+            }
+
+            for (int i = 0; i < Globals.EntitiesToDispose.Count; i++)
+            {
+                if (Globals.Entities[Globals.EntitiesToDispose[i]] == Globals.Me) continue;
+                Globals.Entities.Remove(Globals.EntitiesToDispose[i]);
+            }
+            Globals.EntitiesToDispose.Clear();
+            for (int i = 0; i < Globals.LocalEntitiesToDispose.Count; i++)
+            {
+                Globals.LocalEntities.Remove(Globals.LocalEntitiesToDispose[i]);
+            }
+            Globals.LocalEntitiesToDispose.Clear();
 
             //Update Maps
             bool handled = false;
@@ -208,7 +203,7 @@ namespace Intersect_Client
             Sounds.StopMusic(3f);
         }
 
-        
+
     }
 
 

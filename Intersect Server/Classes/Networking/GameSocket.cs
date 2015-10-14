@@ -113,12 +113,15 @@ namespace Intersect_Server.Classes
                 {
                     isConnected = false;
                     Globals.GeneralLogs.Add("Client disconnected.");
-                    if (EntityIndex > -1 && Globals.Entities[EntityIndex] != null)
+                    if (EntityIndex > -1 && Globals.Entities[EntityIndex] != null && Globals.Entities[EntityIndex].MyName != "")
                     {
                         Database.SavePlayer(myClient);
                         PacketSender.SendEntityLeave(EntityIndex, (int)Enums.EntityTypes.Player, Globals.Entities[EntityIndex].CurrentMap);
                         if (Globals.Entities[EntityIndex] == null) { return; }
-                        PacketSender.SendGlobalMsg(Globals.Entities[EntityIndex].MyName + " has left the Intersect engine");
+                        if (!myClient.IsEditor)
+                        {
+                            PacketSender.SendGlobalMsg(Globals.Entities[EntityIndex].MyName + " has left the Intersect engine");
+                        }
                         myClient.Entity = null;
                         myClient = null;
                         Globals.Entities[EntityIndex] = null;

@@ -62,18 +62,9 @@ namespace Intersect_Server.Classes
             Range = (byte)myBase.SightRange;
         }
 
-        public override void Die()
+        public override void Die(bool dropitems = false)
         {
-            base.Die();
-
-            // Drop items
-            for (int i = 0; i < Constants.MaxInvItems; i++)
-            {
-                if (Inventory[i].ItemNum >= 0)
-                {
-                    Globals.GameMaps[CurrentMap].SpawnItem(CurrentX, CurrentY, Inventory[i], Inventory[i].ItemVal);
-                }
-            }
+            base.Die(dropitems);
 
             Globals.GameMaps[CurrentMap].RemoveEntity(this);
             PacketSender.SendEntityLeave(MyIndex, (int)Enums.EntityTypes.GlobalEntity, CurrentMap);
@@ -252,8 +243,10 @@ namespace Intersect_Server.Classes
             var myGrid = Globals.GameMaps[CurrentMap].MapGrid;
             for (var x = Globals.GameMaps[CurrentMap].MapGridX - 1; x <= Globals.GameMaps[CurrentMap].MapGridX + 1; x++)
             {
+                if (x == -1 || x >= Database.MapGrids[myGrid].Width) continue;
                 for (var y = Globals.GameMaps[CurrentMap].MapGridY - 1; y <= Globals.GameMaps[CurrentMap].MapGridY + 1; y++)
                 {
+                    if (y == -1 || y >= Database.MapGrids[myGrid].Height) continue;
                     if (Database.MapGrids[myGrid].MyGrid[x, y] > -1)
                     {
                         for (var i = 0; i < Globals.Entities.Count; i++)

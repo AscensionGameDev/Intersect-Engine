@@ -77,7 +77,7 @@ namespace Intersect_Client
         private int _walkFrame;
 
         //Rendering Variables
-        private List<Entity> RenderList = null;
+        public List<Entity> RenderList = null;
 
         //Deserializing
         public void Load(ByteBuffer bf)
@@ -100,7 +100,7 @@ namespace Intersect_Client
         }
 
         //Movement Processing
-        public bool Update()
+        public virtual bool Update()
         {
             DetermineRenderOrder();
             if (_lastUpdate == 0) { _lastUpdate = Environment.TickCount; }
@@ -257,7 +257,7 @@ namespace Intersect_Client
                         break;
                 }
                 destRectangle.X = (int)Math.Ceiling( destRectangle.X);
-                destRectangle.Y = (int) Math.Ceiling(destRectangle.Y);
+                destRectangle.Y = destRectangle.Y;
                 srcRectangle = new Rectangle(_walkFrame * (int)srcTexture.Size.X / 4, d * (int)srcTexture.Size.Y / 4, (int)srcTexture.Size.X / 4, (int)srcTexture.Size.Y / 4);
                 destRectangle.Width = srcRectangle.Width;
                 destRectangle.Height = srcRectangle.Height;
@@ -313,11 +313,11 @@ namespace Intersect_Client
             var x = (int)Math.Ceiling(GetCenterPos().X);
             if (Graphics.EntityFileNames.IndexOf(MySprite.ToLower()) >= 0)
             {
-                if (Graphics.EntityTextures[Graphics.EntityFileNames.IndexOf(MySprite.ToLower())].Size.Y / 4 > Globals.TileHeight)
-                {
+                //if (Graphics.EntityTextures[Graphics.EntityFileNames.IndexOf(MySprite.ToLower())].Size.Y / 4 > Globals.TileHeight)
+                //{
                     y = y -(int) ((Graphics.EntityTextures[Graphics.EntityFileNames.IndexOf(MySprite.ToLower())].Size.Y/8));
-                    y = y - (int)((Graphics.EntityTextures[Graphics.EntityFileNames.IndexOf(MySprite.ToLower())].Size.Y / 4) - Globals.TileHeight) - 04;
-                }
+                    y -= 16;
+               // }
                 if (Graphics.EntityTextures[Graphics.EntityFileNames.IndexOf(MySprite.ToLower())].Size.X / 4 > Globals.TileWidth)
                 {
                     x = x - (int)((Graphics.EntityTextures[Graphics.EntityFileNames.IndexOf(MySprite.ToLower())].Size.X / 4) - Globals.TileWidth)/2;
@@ -345,11 +345,9 @@ namespace Intersect_Client
             var x = (int)Math.Ceiling(GetCenterPos().X);
             if (Graphics.EntityFileNames.IndexOf(MySprite.ToLower()) >= 0)
             {
-                if (Graphics.EntityTextures[Graphics.EntityFileNames.IndexOf(MySprite.ToLower())].Size.Y / 4 > Globals.TileHeight)
-                {
                     y = y - (int)((Graphics.EntityTextures[Graphics.EntityFileNames.IndexOf(MySprite.ToLower())].Size.Y / 8));
-                    y -= (int)((Graphics.EntityTextures[Graphics.EntityFileNames.IndexOf(MySprite.ToLower())].Size.Y / 4) - Globals.TileHeight) - 8;
-                }
+                    y -= 10;
+                
                 if (Graphics.EntityTextures[Graphics.EntityFileNames.IndexOf(MySprite.ToLower())].Size.X / 4 > Globals.TileWidth)
                 {
                     x = x - (int)((Graphics.EntityTextures[Graphics.EntityFileNames.IndexOf(MySprite.ToLower())].Size.X / 4) - Globals.TileWidth) / 2;

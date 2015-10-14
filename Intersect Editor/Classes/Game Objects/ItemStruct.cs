@@ -23,10 +23,10 @@ namespace Intersect_Editor.Classes
 {
     public class ItemStruct
     {
-        public string Name;
-        public string Desc;
+        public string Name = "";
+        public string Desc = "";
         public int Type;
-        public string Pic;
+        public string Pic = "";
         public int Price;
         public int Bound;
         public int Animation;
@@ -37,7 +37,7 @@ namespace Intersect_Editor.Classes
         public int StatGrowth;
         public int Damage;
         public int Speed;
-        public string Paperdoll;
+        public string Paperdoll = "";
         public int Tool;
         public int Data1;
         public int Data2;

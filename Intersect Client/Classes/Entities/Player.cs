@@ -63,18 +63,19 @@ namespace Intersect_Client.Classes
             }
         }
 
-        public void Update(bool local = false)
+        public override bool Update()
         {
-            base.Update();
+            bool returnval = base.Update();
             HandleInput();
             if (Globals.MyIndex == MyIndex && base.IsMoving == false) { ProcessDirectionalInput(); }
             if ((Graphics.MouseState.IndexOf(Mouse.Button.Left) >= 0 && Gui.MouseHitGUI() == false) || Keyboard.IsKeyPressed(Keyboard.Key.E))
             {
                 TryTarget();
-                if (TryAttack()) { return; }
-                if (TryPickupItem()) { return; }
+                if (TryAttack()) { return returnval; }
+                if (TryPickupItem()) { return returnval; }
             }
             if (_targetBox != null) { _targetBox.Update(); }
+            return returnval;
         }
 
         //Item Processing

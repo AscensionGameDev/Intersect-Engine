@@ -27,7 +27,7 @@ namespace Intersect_Server.Classes
     public static class PacketSender
     {
 
-        private static void SendDataToMap(int mapNum, byte[] data)
+        public static void SendDataToMap(int mapNum, byte[] data)
         {
             if (mapNum < 0 || mapNum >= Globals.GameMaps.Length || Globals.GameMaps[mapNum] == null) { return; }
             List<int> Players = Globals.GameMaps[mapNum].GetPlayersOnMap();
@@ -36,7 +36,7 @@ namespace Intersect_Server.Classes
                 Globals.Clients[Players[i]].SendPacket(data);
             }
         }
-        private static void SendDataToProximity(int mapNum, byte[] data)
+        public static void SendDataToProximity(int mapNum, byte[] data)
         {
             if (mapNum < 0 || mapNum >= Globals.GameMaps.Length || Globals.GameMaps[mapNum] == null) { return; }
             SendDataToMap(mapNum, data);
@@ -45,7 +45,7 @@ namespace Intersect_Server.Classes
                 SendDataToMap(Globals.GameMaps[mapNum].SurroundingMaps[i], data);
             }
         }
-        private static void SendDataToEditors(byte[] data)
+        public static void SendDataToEditors(byte[] data)
         {
             for (var i = 0; i < Globals.Clients.Count; i++)
             {
@@ -81,7 +81,9 @@ namespace Intersect_Server.Classes
             var bf = new ByteBuffer();
             bf.WriteLong((int)Enums.ServerPackets.MapData);
             bf.WriteLong(mapNum);
-            if (client.IsEditor)
+            bool isEditor = false;
+            if (client != null && client.IsEditor) isEditor = true;
+            if (isEditor)
             {
                 bf.WriteLong(Globals.GameMaps[mapNum].MapData.Length);
                 bf.WriteBytes(Globals.GameMaps[mapNum].MapData);
@@ -90,6 +92,7 @@ namespace Intersect_Server.Classes
             {
                 bf.WriteLong(Globals.GameMaps[mapNum].MapGameData.Length);
                 bf.WriteBytes(Globals.GameMaps[mapNum].MapGameData);
+                bf.WriteInteger(Globals.GameMaps[mapNum].Revision);
                 bf.WriteInteger(Globals.GameMaps[mapNum].MapGridX);
                 bf.WriteInteger(Globals.GameMaps[mapNum].MapGridY);
                 if (Globals.GameBorderStyle == 1)
@@ -142,11 +145,19 @@ namespace Intersect_Server.Classes
                     bf.WriteInteger(0);
                 }
             }
-            client.SendPacket(bf.ToArray());
-            if (!client.IsEditor)
+            if (client != null)
             {
-                //Send Extra Map Info
-                PacketSender.SendMapItems(client, mapNum);
+                client.SendPacket(bf.ToArray());
+                if (isEditor)
+                {
+                    SendDataToEditors(bf.ToArray());
+                }
+            }
+            else if (client == null)
+            {
+                SendDataToProximity(mapNum, bf.ToArray());
+                SendMapItemsToProximity(mapNum);
+                SendDataToEditors(bf.ToArray());
             }
             bf.Dispose();
         }
@@ -706,6 +717,20 @@ namespace Intersect_Server.Classes
                 bf.WriteBytes(Globals.GameMaps[mapNum].MapItems[i].Data());
             }
             client.SendPacket(bf.ToArray());
+            bf.Dispose();
+        }
+
+        public static void SendMapItemsToProximity(int mapNum)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteLong((int)Enums.ServerPackets.MapItems);
+            bf.WriteInteger(mapNum);
+            bf.WriteInteger(Globals.GameMaps[mapNum].MapItems.Count);
+            for (int i = 0; i < Globals.GameMaps[mapNum].MapItems.Count; i++)
+            {
+                bf.WriteBytes(Globals.GameMaps[mapNum].MapItems[i].Data());
+            }
+            SendDataToProximity(mapNum, bf.ToArray());
             bf.Dispose();
         }
 

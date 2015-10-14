@@ -176,6 +176,10 @@ namespace Intersect_Client.Classes.UI.Game
         private bool _isEquipped;
         private int _currentItem = -2;
 
+        //Textures
+        private Gwen.Texture gwenTex;
+        private SFML.Graphics.RenderTexture sfTex;
+
         //Drag/Drop References
         private InventoryWindow _inventoryWindow;
  
@@ -245,7 +249,9 @@ namespace Intersect_Client.Classes.UI.Game
             {
                 _currentItem = Globals.Me.Inventory[_mySlot].ItemNum;
                 _isEquipped = equipped;
-                pnl.Texture = Gui.SFMLToGwenTexture(Gui.CreateItemTex(_currentItem,0,0,32,32,_isEquipped,null));
+                sfTex = Gui.CreateItemTex(_currentItem, 0, 0, 32, 32, _isEquipped, null);
+                gwenTex = Gui.SFMLToGwenTexture(sfTex.Texture);
+                pnl.Texture = gwenTex;
             }
             if (!IsDragging)
             {

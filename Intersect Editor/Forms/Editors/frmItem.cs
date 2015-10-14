@@ -40,15 +40,16 @@ namespace Intersect_Editor.Forms
         private void frmItem_Load(object sender, EventArgs e)
         {
             int i = 0;
-
             lstItems.SelectedIndex = 0;
             cmbPic.Items.Clear();
             cmbPic.Items.Add("None");
 
-            for (int n = 0; i < Intersect_Editor.Classes.Graphics.ItemNames.Length; i++)
+            for (i= 0; i < Intersect_Editor.Classes.Graphics.ItemNames.Length; i++)
             {
-                cmbPic.Items.Add(Intersect_Editor.Classes.Graphics.ItemNames[n]);
+                cmbPic.Items.Add(Intersect_Editor.Classes.Graphics.ItemNames[i]);
             }
+
+            i = 0;
 
             while (Globals.GameClasses[i].Name != "")
             {

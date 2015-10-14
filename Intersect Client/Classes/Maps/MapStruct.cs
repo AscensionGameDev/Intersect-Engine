@@ -475,6 +475,14 @@ namespace Intersect_Client.Classes
                 {
                     ymax -= (int)(Math.Floor(((GetY() + (ymax * 32)) - (Graphics.CurrentView.Top + Graphics.CurrentView.Height)) / 32));
                 }
+                xmin -= 2;
+                if (xmin < 0) xmin = 0;
+                xmax += 2;
+                if (xmax > Globals.MapWidth) xmax = Globals.MapWidth;
+                ymin -= 2;
+                if (ymin < 0) ymin = 0;
+                ymax += 2;
+                if (ymax > Globals.MapHeight) ymax = Globals.MapHeight;
             }
             for (var x = xmin; x < xmax; x++)
             {
@@ -488,13 +496,13 @@ namespace Intersect_Client.Classes
                         switch (Autotiles.Autotile[x, y].Layer[l].RenderState)
                         {
                             case Constants.RenderStateNormal:
-                                Sprite tmpsprite = new Sprite(Graphics.Tilesets[Layers[l].Tiles[x, y].TilesetIndex]);
+                                /*Sprite tmpsprite = new Sprite(Graphics.Tilesets[Layers[l].Tiles[x, y].TilesetIndex]);
                                 tmpsprite.Position = new Vector2f(x * Globals.TileWidth + xoffset,
                                     y * Globals.TileHeight + yoffset);
                                 tmpsprite.TextureRect = new IntRect(Layers[l].Tiles[x, y].X * Globals.TileWidth,
                                     Layers[l].Tiles[x, y].Y * Globals.TileHeight, Globals.TileWidth, Globals.TileHeight);
-                                tex.Draw(tmpsprite);
-                                //Graphics.RenderTexture(Graphics.Tilesets[Layers[l].Tiles[x, y].TilesetIndex], x * Globals.TileWidth + xoffset, y * Globals.TileHeight + yoffset, Layers[l].Tiles[x, y].X * Globals.TileWidth, Layers[l].Tiles[x, y].Y * Globals.TileHeight, Globals.TileWidth, Globals.TileHeight, tex);
+                                tex.Draw(tmpsprite);*/
+                                Graphics.RenderTexture(Graphics.Tilesets[Layers[l].Tiles[x, y].TilesetIndex], x * Globals.TileWidth + xoffset, y * Globals.TileHeight + yoffset, Layers[l].Tiles[x, y].X * Globals.TileWidth, Layers[l].Tiles[x, y].Y * Globals.TileHeight, Globals.TileWidth, Globals.TileHeight, tex);
                                 break;
                             case Constants.RenderStateAutotile:
                                 DrawAutoTile(l, x * Globals.TileWidth + xoffset, y * Globals.TileHeight + yoffset, 1, x, y, z, tex);
@@ -678,29 +686,51 @@ namespace Intersect_Client.Classes
         }
 
         //Dispose
-        public void Dispose(bool prep = true)
+        public void Dispose(bool prep = true, bool killentities = true)
         {
             if (prep)
             {
                 Globals.MapsToRemove.Add(MyMapNum);
                 return;
             }
-            //Clean up all map stuff.
-            for (int i = 0; i < 3; i++)
+            if (Globals.RenderCaching)
             {
-                if (LowerTextures[i] != null)
+                //Clean up all map stuff.
+                for (int i = 0; i < 3; i++)
                 {
-                    Graphics.ReleaseMapTexture(LowerTextures[i]);
-                }
-                if (UpperTextures[i] != null)
-                {
-                    Graphics.ReleaseMapTexture(UpperTextures[i]);
-                }
-                if (PeakTextures[i] != null)
-                {
-                    Graphics.ReleaseMapTexture(PeakTextures[i]);
+                    if (LowerTextures[i] != null)
+                    {
+                        Graphics.ReleaseMapTexture(LowerTextures[i]);
+                    }
+                    if (UpperTextures[i] != null)
+                    {
+                        Graphics.ReleaseMapTexture(UpperTextures[i]);
+                    }
+                    if (PeakTextures[i] != null)
+                    {
+                        Graphics.ReleaseMapTexture(PeakTextures[i]);
+                    }
                 }
             }
+            if (killentities)
+            {
+                foreach (var en in Globals.Entities)
+                {
+                    if (en.Value.CurrentMap == MyMapNum)
+                    {
+                        Globals.EntitiesToDispose.Add(en.Key);
+                    }
+                }
+                foreach (var en in Globals.LocalEntities)
+                {
+                    if (en.Value.CurrentMap == MyMapNum)
+                    {
+                        Globals.LocalEntitiesToDispose.Add(en.Key);
+                    }
+                }
+            }
+            MapRendered = false;
+            MapLoaded = false;
             Globals.GameMaps.Remove(MyMapNum);
         }
     }

@@ -172,9 +172,9 @@ namespace Intersect_Server.Classes
         {
             Warp(Constants.SpawnMap, Constants.SpawnX, Constants.SpawnY, 1);
         }
-        public override void Die()
+        public override void Die(bool dropitems = false)
         {
-            base.Die();
+            base.Die(dropitems);
             Reset();
             Respawn();
         }

@@ -147,6 +147,10 @@ namespace Intersect_Client.Classes.UI.Game
         private bool iconCD = false;
         private int currentSpell = -1;
 
+        //Textures
+        private Gwen.Texture gwenTex;
+        private SFML.Graphics.RenderTexture sfTex;
+
         //Drag/Drop References
         private SpellWindow _spellWindow;
 
@@ -207,7 +211,10 @@ namespace Intersect_Client.Classes.UI.Game
             {
                 if (Globals.Me.Spells[myindex].SpellNum > -1)
                 {
-                    pnl.Texture = Gui.SFMLToGwenTexture(Gui.CreateSpellTex(Globals.Me.Spells[myindex].SpellNum, 0, 0, 32, 32, (Globals.Me.Spells[myindex].SpellCD > 0), null));
+                    sfTex = Gui.CreateSpellTex(Globals.Me.Spells[myindex].SpellNum, 0, 0, 32, 32,
+                        (Globals.Me.Spells[myindex].SpellCD > 0), null);
+                    gwenTex = Gui.SFMLToGwenTexture(sfTex.Texture);
+                    pnl.Texture = gwenTex;
                     texLoaded = true;
                     currentSpell = Globals.Me.Spells[myindex].SpellNum;
                     iconCD = (Globals.Me.Spells[myindex].SpellCD > 0);

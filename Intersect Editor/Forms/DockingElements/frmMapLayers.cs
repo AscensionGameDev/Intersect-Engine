@@ -268,14 +268,17 @@ namespace Intersect_Editor.Forms
         }
         private void btnLightEditorRevert_Click(object sender, EventArgs e)
         {
-            Globals.EditingLight.Intensity = Globals.BackupLight.Intensity;
-            Globals.EditingLight.Range = Globals.BackupLight.Range;
-            Globals.EditingLight.OffsetX = Globals.BackupLight.OffsetX;
-            Globals.EditingLight.OffsetY = Globals.BackupLight.OffsetY;
-            Globals.EditingLight.Graphic.Dispose();
-            Globals.EditingLight.Graphic = null;
-            Graphics.LightsChanged = false;
-            Globals.EditingLight = null;
+            if (Globals.EditingLight != null)
+            {
+                Globals.EditingLight.Intensity = Globals.BackupLight.Intensity;
+                Globals.EditingLight.Range = Globals.BackupLight.Range;
+                Globals.EditingLight.OffsetX = Globals.BackupLight.OffsetX;
+                Globals.EditingLight.OffsetY = Globals.BackupLight.OffsetY;
+                if (Globals.EditingLight.Graphic != null) Globals.EditingLight.Graphic.Dispose();
+                Globals.EditingLight.Graphic = null;
+                Graphics.LightsChanged = false;
+                Globals.EditingLight = null;
+            }
             Graphics.TilePreviewUpdated = true;
             pnlLight.Hide();
         }
@@ -580,9 +583,12 @@ namespace Intersect_Editor.Forms
         }
         private void rbRandom_Click(object sender, EventArgs e)
         {
-            Globals.GameMaps[Globals.CurrentMap].Spawns[lstMapNpcs.SelectedIndex].X = -1;
-            Globals.GameMaps[Globals.CurrentMap].Spawns[lstMapNpcs.SelectedIndex].Y = -1;
-            Globals.GameMaps[Globals.CurrentMap].Spawns[lstMapNpcs.SelectedIndex].Dir = -1;
+            if (lstMapNpcs.SelectedIndex > -1)
+            {
+                Globals.GameMaps[Globals.CurrentMap].Spawns[lstMapNpcs.SelectedIndex].X = -1;
+                Globals.GameMaps[Globals.CurrentMap].Spawns[lstMapNpcs.SelectedIndex].Y = -1;
+                Globals.GameMaps[Globals.CurrentMap].Spawns[lstMapNpcs.SelectedIndex].Dir = -1;
+            }
         }
         private void cmbDir_SelectedIndexChanged(object sender, EventArgs e)
         {

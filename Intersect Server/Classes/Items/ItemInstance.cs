@@ -83,6 +83,6 @@ namespace Intersect_Server.Classes
     {
         public int AttributeSpawnX = -1;
         public int AttributeSpawnY = -1;
-        public long RespawnTime;
+        public long RespawnTime = -1;
     }
 }

@@ -44,7 +44,7 @@ namespace Intersect_Client.Classes
             var sha = new SHA256Managed();
             bf.WriteLong((int)Enums.ClientPackets.Login);
             bf.WriteString(username.ToLower().Trim());
-            bf.WriteString(BitConverter.ToString(sha.ComputeHash(Encoding.UTF8.GetBytes(password.Trim()))).Replace("-", ""));
+            bf.WriteString(password.Trim());
             Network.SendPacket(bf.ToArray());
         }
 

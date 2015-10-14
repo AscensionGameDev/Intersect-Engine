@@ -50,6 +50,7 @@ namespace Intersect_Client.Classes
         //Public Components - For clicking/dragging
         public HotBarWindow Hotbar;
         private GameMenu GameMenu;
+        private AdminWindow _adminWindow;
 
         private EventWindow _eventWindow;
         private Chatbox _chatBox;
@@ -82,6 +83,15 @@ namespace Intersect_Client.Classes
             {
                 _debugMenu.Show();
             }
+        }
+
+        public void ShowAdminWindow()
+        {
+            if (_adminWindow == null)
+            {
+                _adminWindow = new AdminWindow(GameCanvas);
+            }
+            _adminWindow.Show();
         }
 
         public void Draw()

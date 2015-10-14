@@ -356,7 +356,9 @@ namespace Intersect_Server.Classes
             bf.WriteBytes(packet);
             var mapNum = bf.ReadLong();
             var mapLength = bf.ReadLong();
+            var revision = Globals.GameMaps[mapNum].Revision + 1;
             Globals.GameMaps[mapNum].Load(bf.ReadBytes((int)mapLength));
+            Globals.GameMaps[mapNum].Revision = revision;
             Globals.GameMaps[mapNum].Save();
             foreach (var t in Globals.Clients)
             {
@@ -366,6 +368,7 @@ namespace Intersect_Server.Classes
                     PacketSender.SendMapList(t);
                 }
             }
+            PacketSender.SendMap(null, (int)mapNum); //Sends map to everyone/everything in proximity
             bf.Dispose();
         }
 
@@ -575,6 +578,7 @@ namespace Intersect_Server.Classes
             PacketSender.SendGameData(client);
             PacketSender.SendPlayerMsg(client, "Welcome to the Intersect game server.");
             PacketSender.SendGlobalMsg(Globals.Entities[index].MyName + " has joined the Intersect engine");
+            PacketSender.SendEntityDataTo(client,index,(int)Enums.EntityTypes.Player,client.Entity.Data(),client.Entity);
             Globals.Entities[index].Warp(Globals.Entities[index].CurrentMap, Globals.Entities[index].CurrentX, Globals.Entities[index].CurrentY, Globals.Entities[index].Dir);
 
         }

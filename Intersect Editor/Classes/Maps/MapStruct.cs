@@ -193,7 +193,7 @@ namespace Intersect_Editor.Classes
             {
                 bf.WriteBytes(t.LightData());
             }
-            bf.WriteInteger(Revision + 1);
+            bf.WriteInteger(Revision);
             bf.WriteLong(0); //Never deleted.
             bf.WriteInteger(Events.Count);
             foreach (var t in Events)

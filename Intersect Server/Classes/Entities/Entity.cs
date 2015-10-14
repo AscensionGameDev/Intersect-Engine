@@ -597,9 +597,19 @@ namespace Intersect_Server.Classes
         }
 
         //Spawning/Dying
-        public virtual void Die()
+        public virtual void Die(bool dropitems = false)
         {
-
+            if (dropitems)
+            {
+                // Drop items
+                for (int i = 0; i < Constants.MaxInvItems; i++)
+                {
+                    if (Inventory[i].ItemNum >= 0)
+                    {
+                        Globals.GameMaps[CurrentMap].SpawnItem(CurrentX, CurrentY, Inventory[i], Inventory[i].ItemVal);
+                    }
+                }
+            }
         }
         public void Reset()
         {

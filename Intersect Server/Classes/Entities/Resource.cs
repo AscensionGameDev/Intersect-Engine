@@ -45,16 +45,13 @@ namespace Intersect_Server.Classes
             HideName = 1;
         }
 
-        public override void Die()
+        public override void Die(bool dropitems = false)
         {
-            ResourceStruct myBase = Globals.GameResources[ResourceNum];
-            RespawnTime = Environment.TickCount + Globals.GameResources[ResourceNum].SpawnDuration * 1000;
-            MySprite = myBase.EndGraphic;
-            Passable = Convert.ToInt32(myBase.WalkableAfter);
-            RespawnTime = Environment.TickCount + myBase.SpawnDuration * 1000;
-            PacketSender.SendEntityDataToProximity(MyIndex, (int)Enums.EntityTypes.Resource,Data(), Globals.Entities[MyIndex]);
-            PacketSender.SendEntityPositionToAll(MyIndex, (int)Enums.EntityTypes.Resource, Globals.Entities[MyIndex]);
-            PacketSender.SendEntityVitals(MyIndex, (int)Enums.EntityTypes.Resource, Globals.Entities[MyIndex]);
+            base.Die(dropitems);
+
+            Globals.GameMaps[CurrentMap].RemoveEntity(this);
+            PacketSender.SendEntityLeave(MyIndex, (int)Enums.EntityTypes.Resource, CurrentMap);
+            Globals.Entities[MyIndex] = null;
         }
 
         public void Respawn()
