@@ -134,7 +134,7 @@ namespace Intersect_Editor.Classes
         {
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
-            var mapNum = bf.ReadLong();
+            int mapNum = (int)bf.ReadLong();
             var mapLength = bf.ReadLong();
             var mapData = bf.ReadBytes((int)mapLength);
             if (mapNum > Globals.MapCount-1)
@@ -146,20 +146,37 @@ namespace Intersect_Editor.Classes
             }
             Globals.GameMaps[mapNum] = new MapStruct((int)mapNum, mapData);
             Globals.ReceivedGameData++;
-            int currentmap = Globals.CurrentMap;
-            if (!Directory.Exists("resources/mapcache")) Directory.CreateDirectory("resources/mapcache");
-            if (!File.Exists("resources/mapcache/" + mapNum + "_" + Globals.GameMaps[mapNum].Revision + ".png"))
-            {
-                Globals.CurrentMap = mapNum;
-                Graphics.ScreenShotMap(true).SaveToFile("resources/mapcache/" + mapNum + "_" + Globals.GameMaps[mapNum].Revision + ".png");
-            }
-            Globals.CurrentMap = currentmap;
             if (Globals.ReceivedGameData == 3 && !Globals.InEditor)
             {
                 Globals.LoginForm.BeginInvoke(Globals.LoginForm.EditorLoopDelegate);
             }
             else if (Globals.InEditor)
             {
+                if (Globals.FetchingMapPreviews || Globals.SavePreviewsOverTime)
+                {
+                    int currentmap = Globals.CurrentMap;
+                    if (!Directory.Exists("resources/mapcache")) Directory.CreateDirectory("resources/mapcache");
+                    if (!File.Exists("resources/mapcache/" + mapNum + "_" + Globals.GameMaps[mapNum].Revision + ".png"))
+                    {
+                        Globals.CurrentMap = (int)mapNum;
+                        Graphics.ScreenShotMap(true).SaveToFile("resources/mapcache/" + mapNum + "_" + Globals.GameMaps[mapNum].Revision + ".png");
+                    }
+                    if (Globals.FetchingMapPreviews)
+                    {
+                        if (Globals.MapsToFetch.Contains(mapNum))
+                        {
+                            Globals.MapsToFetch.Remove(mapNum);
+                            if (Globals.MapsToFetch.Count == 0) {
+                                Globals.FetchingMapPreviews = false;
+                                Globals.PreviewProgressForm.Dispose();
+                            }
+                            else {
+                                Globals.PreviewProgressForm.SetProgress("Fetching Maps: " + (Globals.FetchCount - Globals.MapsToFetch.Count) + "/" + Globals.FetchCount, (int)(((float)(Globals.FetchCount - Globals.MapsToFetch.Count)/(float)Globals.FetchCount) * 100f),false);
+                            }
+                        }
+                    }
+                    Globals.CurrentMap = currentmap;
+                }
                 if (mapNum != Globals.CurrentMap) return;
                 if (Globals.GameMaps[mapNum].Deleted == 1)
                 {

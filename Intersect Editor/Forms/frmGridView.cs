@@ -39,6 +39,7 @@ namespace Intersect_Editor.Forms
         private int gridWidth = 5;
         private int gridHeight = 5;
         private MapGridItem[,] myGrid;
+        private bool showNames = true;
         public frmGridView()
         {
             InitializeComponent();
@@ -132,6 +133,45 @@ namespace Intersect_Editor.Forms
                     }
                     e.Graphics.DrawRectangle(Pens.LightGray, new Rectangle(e.CellBounds.X - 1,e.CellBounds.Y-1,e.CellBounds.Width,e.CellBounds.Height));
                     e.PaintContent(e.CellBounds);
+                }
+            }
+        }
+
+        private void btnToggleNames_Click(object sender, EventArgs e)
+        {
+            showNames = !showNames;
+        }
+
+        private void btnFetchPreview_Click(object sender, EventArgs e)
+        {
+            //Get a list of maps without images.
+            List<int> maps = new List<int>();
+            for (int x = 0; x < gridWidth; x++)
+            {
+                for (int y = 0; y < gridHeight; y++)
+                {
+                    if (myGrid[x, y].mapnum > -1 && !File.Exists(myGrid[x, y].imagepath))
+                    {
+                        maps.Add(myGrid[x, y].mapnum);
+                    }
+                }
+            }
+            if (maps.Count > 0)
+            {
+                if (MessageBox.Show("Are you sure you want to fetch previews for each map? This could take several minutes based on the number of maps in this grid!", "Fetch Preview?", MessageBoxButtons.YesNo) == System.Windows.Forms.DialogResult.Yes)
+                {
+                    Globals.FetchingMapPreviews = true;
+                    Globals.PreviewProgressForm = new frmProgress();
+                    Globals.PreviewProgressForm.SetTitle("Fetching Map Previews");
+                    Globals.PreviewProgressForm.SetProgress("Fetching Maps: 0/" + maps.Count,0,false);
+                    Globals.FetchCount = maps.Count;
+                    Globals.MapsToFetch = maps;
+                    for (int i = 0; i < maps.Count; i++)
+                    {
+                        PacketSender.SendNeedMap(maps[i]);
+                    }
+                    Globals.PreviewProgressForm.ShowDialog();
+                    dataGridView1.Refresh();
                 }
             }
         }

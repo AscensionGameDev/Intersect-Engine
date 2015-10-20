@@ -21,6 +21,7 @@
 */
 using Intersect_Editor.Forms;
 using SFML.Graphics;
+using System.Collections.Generic;
 using System.Threading;
 
 namespace Intersect_Editor.Classes
@@ -111,6 +112,13 @@ namespace Intersect_Editor.Classes
         public static frmMapList MapListWindow;
         public static frmMapProperties MapPropertiesWindow;
         public static frmGridView MapGridWindow;
+
+        //Preview Fetching Variables
+        public static bool SavePreviewsOverTime = true;
+        public static bool FetchingMapPreviews = false;
+        public static List<int> MapsToFetch;
+        public static int FetchCount;
+        public static frmProgress PreviewProgressForm;
 
 
         public static Light BackupLight;

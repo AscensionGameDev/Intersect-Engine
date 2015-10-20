@@ -918,7 +918,7 @@ Globals.CurrentTool == (int)Enums.EdittingTool.Selection)
             switch (dir)
             {
                 case -1:
-                    if (TilePreviewStruct != null)
+                    if (TilePreviewStruct != null && !screenShotting)
                     {
                         tmpMap = TilePreviewStruct;
                     }
@@ -1078,7 +1078,9 @@ Globals.CurrentTool == (int)Enums.EdittingTool.Selection)
             if (!HideOverlay && !bland) { DrawMapOverlay(screenShot); }
             if ((!HideDarkness || Globals.CurrentLayer == Constants.LayerCount + 1) && !bland) { DrawDarkness(screenShot, true); }
             screenShot.Display();
-            return screenShot.Texture.CopyToImage();
+            Image img = screenShot.Texture.CopyToImage();
+            screenShot.Dispose();
+            return img;
         }
 
         //Fogs
