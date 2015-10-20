@@ -40,6 +40,7 @@
             this.imageList = new System.Windows.Forms.ImageList(this.components);
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this.btnChronological = new System.Windows.Forms.ToolStripButton();
+            this.btnGridView = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.btnNewMap = new System.Windows.Forms.ToolStripButton();
             this.btnNewFolder = new System.Windows.Forms.ToolStripButton();
@@ -47,7 +48,6 @@
             this.btnDelete = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.btnRefreshList = new System.Windows.Forms.ToolStripButton();
-            this.btnGridView = new System.Windows.Forms.ToolStripButton();
             this.contextMenuStrip1.SuspendLayout();
             this.toolStrip1.SuspendLayout();
             this.SuspendLayout();
@@ -160,6 +160,16 @@
             this.btnChronological.Text = "Order Chronologically";
             this.btnChronological.Click += new System.EventHandler(this.btnChronological_Click);
             // 
+            // btnGridView
+            // 
+            this.btnGridView.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.btnGridView.Image = ((System.Drawing.Image)(resources.GetObject("btnGridView.Image")));
+            this.btnGridView.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.btnGridView.Name = "btnGridView";
+            this.btnGridView.Size = new System.Drawing.Size(23, 22);
+            this.btnGridView.Text = "Show Grid View";
+            this.btnGridView.Click += new System.EventHandler(this.btnGridView_Click);
+            // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
@@ -219,16 +229,6 @@
             this.btnRefreshList.Size = new System.Drawing.Size(23, 20);
             this.btnRefreshList.Text = "Refresh";
             this.btnRefreshList.Click += new System.EventHandler(this.btnRefreshList_Click);
-            // 
-            // btnGridView
-            // 
-            this.btnGridView.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.btnGridView.Image = ((System.Drawing.Image)(resources.GetObject("btnGridView.Image")));
-            this.btnGridView.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.btnGridView.Name = "btnGridView";
-            this.btnGridView.Size = new System.Drawing.Size(23, 22);
-            this.btnGridView.Text = "Show Grid View";
-            this.btnGridView.Click += new System.EventHandler(this.btnGridView_Click);
             // 
             // frmMapList
             // 

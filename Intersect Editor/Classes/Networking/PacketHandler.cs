@@ -152,7 +152,7 @@ namespace Intersect_Editor.Classes
             }
             else if (Globals.InEditor)
             {
-                if (Globals.FetchingMapPreviews || Globals.SavePreviewsOverTime)
+                if (Globals.FetchingMapPreviews || Globals.CurrentMap == mapNum)
                 {
                     int currentmap = Globals.CurrentMap;
                     if (!Directory.Exists("resources/mapcache")) Directory.CreateDirectory("resources/mapcache");

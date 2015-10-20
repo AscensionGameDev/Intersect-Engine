@@ -40,9 +40,13 @@ namespace Intersect_Editor.Forms
         private int gridHeight = 5;
         private MapGridItem[,] myGrid;
         private bool showNames = true;
+        private bool showPreviews = false;
+        private int defaultSize;
+        private int currentSize;
         public frmGridView()
         {
             InitializeComponent();
+            cmbZoom.SelectedIndex = 0;
         }
 
         public void InitGrid(ByteBuffer bf)
@@ -51,6 +55,7 @@ namespace Intersect_Editor.Forms
             gridWidth = (int)bf.ReadLong();
             gridHeight = (int)bf.ReadLong();
             myGrid = new MapGridItem[gridWidth, gridHeight];
+            dataGridView1.AutoSize = true;
             dataGridView1.Columns.Clear();
             dataGridView1.Rows.Clear();
             for (int x = -1; x <= gridWidth; x++)
@@ -85,14 +90,10 @@ namespace Intersect_Editor.Forms
                     }
                 }
             }
-            for (int x = -1; x <= gridWidth; x++)
-            {
-                dataGridView1.Columns[x+1].Width = size;
-            }
-            for (int y = -1; y <= gridHeight; y++)
-            {
-                dataGridView1.Rows[y + 1].Height = (int)((float)size * ((float)(Globals.TileHeight * Globals.MapHeight)/(float)(Globals.TileWidth * Globals.MapWidth)));
-            }
+            defaultSize = size;
+            currentSize = 0;
+            cmbZoom_SelectedIndexChanged(null, null);
+            dataGridView1.Select();
         }
 
         private void frmGridView_FormClosing(object sender, FormClosingEventArgs e)
@@ -105,16 +106,10 @@ namespace Intersect_Editor.Forms
         {
             if (e.RowIndex > 0 && e.ColumnIndex > 0 && e.ColumnIndex - 1 < gridWidth && e.RowIndex - 1 < gridHeight)
             {
-                //e.Handled = true;
-                //e.PaintContent(e.CellBounds);
-                if ((e.PaintParts & DataGridViewPaintParts.Background) != DataGridViewPaintParts.None)
-                {
-                    //e.Graphics.DrawImage(Resources.Image1, e.CellBounds);
-                }
-                if (!e.Handled && myGrid[e.ColumnIndex - 1,e.RowIndex - 1].mapnum > -1)
+                if (!e.Handled && myGrid[e.ColumnIndex - 1, e.RowIndex - 1].mapnum > -1 && ((e.PaintParts & DataGridViewPaintParts.Background) != DataGridViewPaintParts.None))
                 {
                     e.Handled = true;
-                    if (File.Exists(myGrid[e.ColumnIndex - 1, e.RowIndex - 1].imagepath))
+                    if (File.Exists(myGrid[e.ColumnIndex - 1, e.RowIndex - 1].imagepath) && showPreviews)
                     {
                         Bitmap tmpBitmap = new Bitmap(myGrid[e.ColumnIndex - 1, e.RowIndex - 1].imagepath);
                         e.Graphics.DrawImage(tmpBitmap, e.CellBounds);
@@ -131,15 +126,16 @@ namespace Intersect_Editor.Forms
                             e.Graphics.FillRectangle(Brushes.Green, e.CellBounds);
                         }
                     }
-                    e.Graphics.DrawRectangle(Pens.LightGray, new Rectangle(e.CellBounds.X - 1,e.CellBounds.Y-1,e.CellBounds.Width,e.CellBounds.Height));
-                    e.PaintContent(e.CellBounds);
                 }
+                e.Graphics.DrawRectangle(Pens.LightGray, new Rectangle(e.CellBounds.X - 1, e.CellBounds.Y - 1, e.CellBounds.Width, e.CellBounds.Height));
+                if (showNames) e.PaintContent(e.CellBounds);
             }
         }
 
         private void btnToggleNames_Click(object sender, EventArgs e)
         {
             showNames = !showNames;
+            dataGridView1.Refresh();
         }
 
         private void btnFetchPreview_Click(object sender, EventArgs e)
@@ -171,9 +167,88 @@ namespace Intersect_Editor.Forms
                         PacketSender.SendNeedMap(maps[i]);
                     }
                     Globals.PreviewProgressForm.ShowDialog();
+                    showPreviews = true;
                     dataGridView1.Refresh();
                 }
             }
+        }
+
+        private void btnTogglePreviews_Click(object sender, EventArgs e)
+        {
+            showPreviews = !showPreviews;
+            dataGridView1.Refresh();
+        }
+
+        private void cmbZoom_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (!Globals.InEditor) return;
+            int size = 0;
+            DataGridViewCellStyle style = dataGridView1.DefaultCellStyle.Clone();
+            if (cmbZoom.SelectedIndex == 0)
+            {
+                size = defaultSize;
+                style.Font = new Font(style.Font.FontFamily, 8.25f, FontStyle.Bold);
+            }
+            else if (cmbZoom.SelectedIndex == 1)
+            {
+                size = (Globals.MapWidth * Globals.TileWidth) / 8;
+                style.Font = new Font(style.Font.FontFamily, 24f, FontStyle.Bold);
+            }
+            else if (cmbZoom.SelectedIndex == 2)
+            {
+                size = (Globals.MapWidth * Globals.TileWidth) / 4;
+                style.Font = new Font(style.Font.FontFamily, 24f, FontStyle.Bold);
+            }
+            else if (cmbZoom.SelectedIndex == 3)
+            {
+                size = (Globals.MapWidth * Globals.TileWidth) / 2;
+                style.Font = new Font(style.Font.FontFamily, 36f, FontStyle.Bold);
+            }
+            else if (cmbZoom.SelectedIndex == 4)
+            {
+                size = (Globals.MapWidth * Globals.TileWidth) * 3 / 4;
+                style.Font = new Font(style.Font.FontFamily, 48f, FontStyle.Bold);
+            }
+            else
+            {
+                size = Globals.MapWidth * Globals.TileWidth;
+                style.Font = new Font(style.Font.FontFamily, 60f, FontStyle.Bold);
+            }
+            if (size != currentSize)
+            {
+                dataGridView1.DefaultCellStyle = style;
+                currentSize = size;
+                for (int x = -1; x <= gridWidth; x++)
+                {
+                    dataGridView1.Columns[x + 1].Width = size;
+                }
+                for (int y = -1; y <= gridHeight; y++)
+                {
+                    dataGridView1.Rows[y + 1].Height = (int)((float)size * ((float)(Globals.TileHeight * Globals.MapHeight) / (float)(Globals.TileWidth * Globals.MapWidth)));
+                }
+                dataGridView1.Refresh();
+            }
+        }
+
+        private void dataGridView1_CellContentDoubleClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.RowIndex > 0 && e.ColumnIndex > 0 && e.ColumnIndex - 1 < gridWidth && e.RowIndex - 1 < gridHeight)
+            {
+                if (myGrid[e.ColumnIndex - 1, e.RowIndex - 1].mapnum > -1)
+                {
+                    Globals.MainForm.EnterMap(myGrid[e.ColumnIndex - 1, e.RowIndex - 1].mapnum);
+                }
+            }
+        }
+
+        private void panel1_Paint(object sender, PaintEventArgs e)
+        {
+            dataGridView1.Refresh();
+        }
+
+        private void dataGridView1_SelectionChanged(object sender, EventArgs e)
+        {
+            dataGridView1.ClearSelection();
         }
     }
 

@@ -114,7 +114,6 @@ namespace Intersect_Editor.Classes
         public static frmGridView MapGridWindow;
 
         //Preview Fetching Variables
-        public static bool SavePreviewsOverTime = true;
         public static bool FetchingMapPreviews = false;
         public static List<int> MapsToFetch;
         public static int FetchCount;

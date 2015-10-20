@@ -126,6 +126,7 @@ namespace Intersect_Editor.Forms
         }
         protected override void OnClosed(EventArgs e)
         {
+            Globals.MapGridWindow.Dispose();
             base.OnClosed(e);
             Application.Exit();
         }
