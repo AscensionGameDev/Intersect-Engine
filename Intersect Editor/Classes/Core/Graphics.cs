@@ -1056,7 +1056,7 @@ Globals.CurrentTool == (int)Enums.EdittingTool.Selection)
                 target.Draw(tileSelectionRect);
             }
         }
-        public static Image ScreenShotMap()
+        public static Image ScreenShotMap(bool bland = false)
         {
             RenderTexture screenShot = new RenderTexture((uint)((Globals.MapWidth) * Globals.TileWidth), (uint)((Globals.MapHeight) * Globals.TileHeight));
             screenShot.Clear(Color.Transparent);
@@ -1074,9 +1074,9 @@ Globals.CurrentTool == (int)Enums.EdittingTool.Selection)
                     }
                 }
             }
-            if (!HideFog) { DrawFog(screenShot); }
-            if (!HideOverlay) { DrawMapOverlay(screenShot); }
-            if (!HideDarkness || Globals.CurrentLayer == Constants.LayerCount + 1) { DrawDarkness(screenShot, true); }
+            if (!HideFog && !bland) { DrawFog(screenShot); }
+            if (!HideOverlay && !bland) { DrawMapOverlay(screenShot); }
+            if ((!HideDarkness || Globals.CurrentLayer == Constants.LayerCount + 1) && !bland) { DrawDarkness(screenShot, true); }
             screenShot.Display();
             return screenShot.Texture.CopyToImage();
         }

@@ -22,6 +22,7 @@
 using System;
 using Intersect_Editor.Forms;
 using System.Threading;
+using System.IO;
 
 namespace Intersect_Editor.Classes
 {
@@ -145,6 +146,14 @@ namespace Intersect_Editor.Classes
             }
             Globals.GameMaps[mapNum] = new MapStruct((int)mapNum, mapData);
             Globals.ReceivedGameData++;
+            int currentmap = Globals.CurrentMap;
+            if (!Directory.Exists("resources/mapcache")) Directory.CreateDirectory("resources/mapcache");
+            if (!File.Exists("resources/mapcache/" + mapNum + "_" + Globals.GameMaps[mapNum].Revision + ".png"))
+            {
+                Globals.CurrentMap = mapNum;
+                Graphics.ScreenShotMap(true).SaveToFile("resources/mapcache/" + mapNum + "_" + Globals.GameMaps[mapNum].Revision + ".png");
+            }
+            Globals.CurrentMap = currentmap;
             if (Globals.ReceivedGameData == 3 && !Globals.InEditor)
             {
                 Globals.LoginForm.BeginInvoke(Globals.LoginForm.EditorLoopDelegate);

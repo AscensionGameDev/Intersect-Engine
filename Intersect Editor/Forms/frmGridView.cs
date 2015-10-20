@@ -30,6 +30,7 @@ using System.Windows.Forms;
 using Intersect_Editor.Classes;
 using Point = System.Drawing.Point;
 using System.Drawing;
+using System.IO;
 
 namespace Intersect_Editor.Forms
 {
@@ -112,13 +113,22 @@ namespace Intersect_Editor.Forms
                 if (!e.Handled && myGrid[e.ColumnIndex - 1,e.RowIndex - 1].mapnum > -1)
                 {
                     e.Handled = true;
-                    if (myGrid[e.ColumnIndex - 1, e.RowIndex - 1].mapnum == Globals.CurrentMap)
+                    if (File.Exists(myGrid[e.ColumnIndex - 1, e.RowIndex - 1].imagepath))
                     {
-                        e.Graphics.FillRectangle(Brushes.OrangeRed, e.CellBounds);
+                        Bitmap tmpBitmap = new Bitmap(myGrid[e.ColumnIndex - 1, e.RowIndex - 1].imagepath);
+                        e.Graphics.DrawImage(tmpBitmap, e.CellBounds);
+                        tmpBitmap.Dispose();
                     }
                     else
                     {
-                        e.Graphics.FillRectangle(Brushes.Green, e.CellBounds);
+                        if (myGrid[e.ColumnIndex - 1, e.RowIndex - 1].mapnum == Globals.CurrentMap)
+                        {
+                            e.Graphics.FillRectangle(Brushes.OrangeRed, e.CellBounds);
+                        }
+                        else
+                        {
+                            e.Graphics.FillRectangle(Brushes.Green, e.CellBounds);
+                        }
                     }
                     e.Graphics.DrawRectangle(Pens.LightGray, new Rectangle(e.CellBounds.X - 1,e.CellBounds.Y-1,e.CellBounds.Width,e.CellBounds.Height));
                     e.PaintContent(e.CellBounds);
@@ -138,7 +148,7 @@ namespace Intersect_Editor.Forms
             this.mapnum = num;
             this.name = name;
             this.revision = revision;
-            this.imagepath = "";
+            this.imagepath = "resources/mapcache/" + mapnum + "_" + revision + ".png";
         }
     }
 }
