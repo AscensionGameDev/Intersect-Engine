@@ -110,6 +110,7 @@ namespace Intersect_Editor.Classes
         public static frmMapEditor MapEditorWindow;
         public static frmMapList MapListWindow;
         public static frmMapProperties MapPropertiesWindow;
+        public static frmGridView MapGridWindow;
 
 
         public static Light BackupLight;

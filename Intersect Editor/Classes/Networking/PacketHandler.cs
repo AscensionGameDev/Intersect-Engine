@@ -112,6 +112,9 @@ namespace Intersect_Editor.Classes
                 case Enums.ServerPackets.QuestData:
                     HandleQuestData(bf.ReadBytes(bf.Length()));
                     break;
+                case Enums.ServerPackets.MapGrid:
+                    HandleMapGrid(bf.ReadBytes(bf.Length()));
+                    break;
                 default:
                     Console.WriteLine(@"Non implemented packet received: " + packetHeader);
                     break;
@@ -212,6 +215,7 @@ namespace Intersect_Editor.Classes
             bf.WriteBytes(packet);
             Database.OrderedMaps.Clear();
             Database.MapStructure.Load(bf);
+            Database.OrderedMaps.Sort();
             if (Globals.CurrentMap == -1)
             {
                 Globals.MainForm.EnterMap(Database.MapStructure.FindFirstMap());
@@ -369,6 +373,13 @@ namespace Intersect_Editor.Classes
             var questNum = bf.ReadInteger();
             Globals.GameQuests[questNum] = new QuestStruct();
             Globals.GameQuests[questNum].Load(bf.ReadBytes(bf.Length()));
+        }
+
+        private static void HandleMapGrid(byte[] packet)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteBytes(packet);
+            Globals.MapGridWindow.InitGrid(bf);
         }
     }
 }

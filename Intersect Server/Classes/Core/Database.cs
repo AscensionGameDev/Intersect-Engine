@@ -285,7 +285,7 @@ namespace Intersect_Server.Classes
                 SavePlayer(player);
                 if (player.ClientIndex > -1)
                 {
-                    PacketSender.SendPlayerMsg(player, "You're power has been modified!");
+                    PacketSender.SendPlayerMsg(player, "Your power has been modified!");
                 }
                 Console.WriteLine(username + "'s power has been set to " + power + "!");
             }

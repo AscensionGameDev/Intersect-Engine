@@ -892,6 +892,7 @@ namespace Intersect_Client.Classes
                 w = yVals[x - 1];
                 w += (int)((range - xVals[x - 1]) / ((float)xVals[x] - xVals[x - 1])) * (yVals[x] - yVals[x - 1]);
             }
+            w++;
             return w;
         }
         private static void DrawDarkness()

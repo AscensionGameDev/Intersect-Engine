@@ -53,6 +53,7 @@ namespace Intersect_Editor.Forms
         public frmMain()
         {
             InitializeComponent();
+            Globals.MapGridWindow = new frmGridView();
             Globals.MapListWindow = new frmMapList();
             Globals.MapListWindow.Show(dockLeft, DockState.DockRight);
             Globals.MapLayersWindow = new frmMapLayers();
@@ -141,6 +142,7 @@ namespace Intersect_Editor.Forms
                 Globals.MapEditorWindow.picMap.Visible = false;
                 Globals.MapEditorWindow.ResetUndoRedoStates();
                 PacketSender.SendNeedMap(Globals.CurrentMap);
+                PacketSender.SendNeedGrid(Globals.CurrentMap);
             }
             else
             {

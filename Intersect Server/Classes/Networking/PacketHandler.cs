@@ -168,6 +168,9 @@ namespace Intersect_Server.Classes
                 case Enums.ClientPackets.AdminAction:
                     HandleAdminAction(client, packet);
                     break;
+                case Enums.ClientPackets.NeedGrid:
+                    HandleNeedGrid(client, packet);
+                    break;
                 default:
                     Globals.GeneralLogs.Add(@"Non implemented packet received: " + packetHeader);
                     break;
@@ -226,7 +229,11 @@ namespace Intersect_Server.Classes
         {
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
-            PacketSender.SendMap(client, (int)bf.ReadLong());
+            int mapNum = (int) bf.ReadLong();
+            if (mapNum >= 0 && mapNum < Globals.GameMaps.Length)
+            {
+                PacketSender.SendMap(client, mapNum);
+            }
         }
 
         private static void HandlePlayerMove(Client client, byte[] packet)
@@ -1040,6 +1047,20 @@ namespace Intersect_Server.Classes
                 case (int)Enums.AdminActions.WarpTo:
                     client.Entity.Warp(bf.ReadInteger(), client.Entity.CurrentX, client.Entity.CurrentY);
                     break;
+            }
+        }
+
+        private static void HandleNeedGrid(Client client, byte[] packet)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteBytes(packet);
+            int mapNum = (int)bf.ReadLong();
+            if (mapNum >= 0 && mapNum < Globals.GameMaps.Length)
+            {
+                if (client.IsEditor)
+                {
+                    PacketSender.SendMapGrid(client, Globals.GameMaps[mapNum].MapGrid);
+                }
             }
         }
     }

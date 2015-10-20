@@ -99,7 +99,7 @@ namespace Intersect_Editor.Classes
         }
 
     }
-    public class FolderMap : FolderItem
+    public class FolderMap : FolderItem, IComparable<FolderMap>
     {
         public int MapNum = -1;
         public FolderMap()
@@ -127,6 +127,10 @@ namespace Intersect_Editor.Classes
             return true;
         }
 
+        public int CompareTo(FolderMap obj)
+        {
+            return MapNum.CompareTo(obj.MapNum);
+        }
     }
     public class FolderDirectory : FolderItem
     {

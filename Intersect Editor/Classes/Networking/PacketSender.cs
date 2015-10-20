@@ -291,5 +291,13 @@ namespace Intersect_Editor.Classes
             }
             Network.SendPacket(bf.ToArray());
         }
+
+        public static void SendNeedGrid(int mapNum)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteLong((int)Enums.ClientPackets.NeedGrid);
+            bf.WriteLong(mapNum);
+            Network.SendPacket(bf.ToArray());
+        }
     }
 }

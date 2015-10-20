@@ -368,15 +368,15 @@ namespace Intersect_Editor.Forms
             Globals.GameItems[_editorIndex].Data4 = Convert.ToInt32(chk2Hand.Checked);
         }
 
-        void scrlEffectAmount_ValueChanged(object sender, System.EventArgs e)
-        {
-            Globals.GameItems[_editorIndex].Data3 = scrlEffectAmount.Value;
-            lblEffectPercent.Text = "Effect Amount: " + Globals.GameItems[_editorIndex].Data3 + "%";
-        }
-
         private void FrmItem_FormClosed(object sender, FormClosedEventArgs e)
         {
             Globals.CurrentEditor = -1;
+        }
+
+        private void scrlEffectAmount_ValueChanged(object sender, EventArgs e)
+        {
+            Globals.GameItems[_editorIndex].Data3 = scrlEffectAmount.Value;
+            lblEffectPercent.Text = "Effect Amount: " + Globals.GameItems[_editorIndex].Data3 + "%";
         }
 
     }

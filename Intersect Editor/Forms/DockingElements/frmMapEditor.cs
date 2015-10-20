@@ -265,6 +265,7 @@ namespace Intersect_Editor.Forms
                             {
                                 Globals.GameMaps[Globals.CurrentMap].Lights.Remove(tmpLight);
                                 Graphics.LightsChanged = true;
+                                Graphics.TilePreviewUpdated = true;
                                 MapChanged = true;
                             }
                             break;

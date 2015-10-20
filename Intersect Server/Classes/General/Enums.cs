@@ -74,6 +74,7 @@ namespace Intersect_Server.Classes
             SaveQuest,
             OpenAdminWindow,
             AdminAction,
+            NeedGrid,
         }
 
         public enum ServerPackets
@@ -122,6 +123,7 @@ namespace Intersect_Server.Classes
             OpenQuestEditor,
             QuestData,
             OpenAdminWindow,
+            MapGrid,
         }
 
         public enum Stats

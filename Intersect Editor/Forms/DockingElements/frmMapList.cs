@@ -47,7 +47,6 @@ namespace Intersect_Editor.Forms
                     tmpNode.ImageIndex = 1;
                     tmpNode.SelectedImageIndex = 1;
                 }
-                treeMapList.Sort();
             }
             else
             {
@@ -327,6 +326,11 @@ namespace Intersect_Editor.Forms
                 treeMapList.SelectedNode = treeMapList.GetNodeAt(e.Location);
             }
             
+        }
+
+        private void btnGridView_Click(object sender, EventArgs e)
+        {
+            Globals.MapGridWindow.Visible = !Globals.MapGridWindow.Visible;
         }
 
 

@@ -21,6 +21,7 @@
 */
 using System;
 using System.Collections.Generic;
+using System.Data;
 
 namespace Intersect_Server.Classes
 {
@@ -897,6 +898,28 @@ namespace Intersect_Server.Classes
         {
             var bf = new ByteBuffer();
             bf.WriteLong((int)Enums.ServerPackets.OpenAdminWindow);
+            client.SendPacket(bf.ToArray());
+            bf.Dispose();
+        }
+
+        public static void SendMapGrid(Client client, int gridIndex)
+        {
+            ByteBuffer bf = new ByteBuffer();
+            bf.WriteLong((int)Enums.ServerPackets.MapGrid);
+            bf.WriteLong(Database.MapGrids[gridIndex].Width);
+            bf.WriteLong(Database.MapGrids[gridIndex].Height);
+            for (int x = 0; x < Database.MapGrids[gridIndex].Width; x++)
+            {
+                for (int y = 0; y < Database.MapGrids[gridIndex].Height; y++)
+                {
+                    bf.WriteInteger(Database.MapGrids[gridIndex].MyGrid[x,y]);
+                    if (Database.MapGrids[gridIndex].MyGrid[x, y] != -1)
+                    {
+                        bf.WriteString(Globals.GameMaps[Database.MapGrids[gridIndex].MyGrid[x, y]].MyName);
+                        bf.WriteInteger(Globals.GameMaps[Database.MapGrids[gridIndex].MyGrid[x, y]].Revision);
+                    }
+                }
+            }
             client.SendPacket(bf.ToArray());
             bf.Dispose();
         }

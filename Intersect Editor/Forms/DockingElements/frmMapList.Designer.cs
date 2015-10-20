@@ -47,6 +47,7 @@
             this.btnDelete = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.btnRefreshList = new System.Windows.Forms.ToolStripButton();
+            this.btnGridView = new System.Windows.Forms.ToolStripButton();
             this.contextMenuStrip1.SuspendLayout();
             this.toolStrip1.SuspendLayout();
             this.SuspendLayout();
@@ -133,6 +134,7 @@
             this.toolStrip1.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
             this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.btnChronological,
+            this.btnGridView,
             this.toolStripSeparator1,
             this.btnNewMap,
             this.btnNewFolder,
@@ -214,9 +216,19 @@
             this.btnRefreshList.Image = ((System.Drawing.Image)(resources.GetObject("btnRefreshList.Image")));
             this.btnRefreshList.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.btnRefreshList.Name = "btnRefreshList";
-            this.btnRefreshList.Size = new System.Drawing.Size(23, 22);
+            this.btnRefreshList.Size = new System.Drawing.Size(23, 20);
             this.btnRefreshList.Text = "Refresh";
             this.btnRefreshList.Click += new System.EventHandler(this.btnRefreshList_Click);
+            // 
+            // btnGridView
+            // 
+            this.btnGridView.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.btnGridView.Image = ((System.Drawing.Image)(resources.GetObject("btnGridView.Image")));
+            this.btnGridView.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.btnGridView.Name = "btnGridView";
+            this.btnGridView.Size = new System.Drawing.Size(23, 22);
+            this.btnGridView.Text = "Show Grid View";
+            this.btnGridView.Click += new System.EventHandler(this.btnGridView_Click);
             // 
             // frmMapList
             // 
@@ -256,6 +268,7 @@
         private System.Windows.Forms.ToolStripMenuItem folderToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem newFolderToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem deleteToolStripMenuItem;
+        private System.Windows.Forms.ToolStripButton btnGridView;
 
     }
 }

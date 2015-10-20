@@ -515,6 +515,7 @@ namespace Intersect_Editor.Forms
             this.scrlEffectAmount.Name = "scrlEffectAmount";
             this.scrlEffectAmount.Size = new System.Drawing.Size(102, 17);
             this.scrlEffectAmount.TabIndex = 30;
+            this.scrlEffectAmount.ValueChanged += new System.EventHandler(this.scrlEffectAmount_ValueChanged);
             // 
             // cmbEquipmentBonus
             // 

@@ -358,6 +358,7 @@ namespace Intersect_Client.Classes
             bf.WriteBytes(packet);
             Database.OrderedMaps.Clear();
             Database.MapStructure.Load(bf);
+            Database.OrderedMaps.Sort();
             //If admin window is open update it
             bf.Dispose();
         }

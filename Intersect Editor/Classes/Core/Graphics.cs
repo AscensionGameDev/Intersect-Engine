@@ -765,6 +765,20 @@ namespace Intersect_Editor.Classes
             y2 = Globals.MapHeight;
             xoffset = Globals.TileWidth;
             yoffset = Globals.TileHeight;
+            if (Globals.Dragging)
+            {
+                if (Globals.MouseButton == 0)
+                {
+                    dragxoffset = Globals.TotalTileDragX - (Globals.TileDragX - Globals.CurTileX);
+                    dragyoffset = Globals.TotalTileDragY - (Globals.TileDragY - Globals.CurTileY);
+                }
+                else
+                {
+                    dragxoffset = Globals.TotalTileDragX;
+                    dragyoffset = Globals.TotalTileDragY;
+                }
+
+            }
             switch (Globals.CurrentLayer)
             {
                 case Constants.LayerCount:
@@ -1149,6 +1163,7 @@ Globals.CurrentTool == (int)Enums.EdittingTool.Selection)
                 w = yVals[x - 1];
                 w += (int)((range - xVals[x - 1]) / ((float)xVals[x] - xVals[x - 1])) * (yVals[x] - yVals[x - 1]);
             }
+            w++;
             return w;
         }
         private static void AddLight(int x1, int y1, int size, double intensity, Light light)
