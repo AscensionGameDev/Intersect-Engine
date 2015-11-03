@@ -113,6 +113,7 @@ namespace Intersect_Editor.Forms
             this.toolStripLabelFPS = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripSeparator9 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripLabelDebug = new System.Windows.Forms.ToolStripStatusLabel();
+            this.projectileEditorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip.SuspendLayout();
             this.toolStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
@@ -341,7 +342,8 @@ namespace Intersect_Editor.Forms
             this.animationEditorToolStripMenuItem,
             this.resourceEditorToolStripMenuItem,
             this.classEditorToolStripMenuItem,
-            this.questEditorToolStripMenuItem});
+            this.questEditorToolStripMenuItem,
+            this.projectileEditorToolStripMenuItem});
             this.contentEditorsToolStripMenuItem.Name = "contentEditorsToolStripMenuItem";
             this.contentEditorsToolStripMenuItem.Size = new System.Drawing.Size(101, 20);
             this.contentEditorsToolStripMenuItem.Text = "Content Editors";
@@ -407,7 +409,7 @@ namespace Intersect_Editor.Forms
             // aboutToolStripMenuItem
             // 
             this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
-            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(107, 22);
+            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.aboutToolStripMenuItem.Text = "About";
             this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
             // 
@@ -743,6 +745,13 @@ namespace Intersect_Editor.Forms
             this.toolStripLabelDebug.Name = "toolStripLabelDebug";
             this.toolStripLabelDebug.Size = new System.Drawing.Size(0, 18);
             // 
+            // projectileEditorToolStripMenuItem
+            // 
+            this.projectileEditorToolStripMenuItem.Name = "projectileEditorToolStripMenuItem";
+            this.projectileEditorToolStripMenuItem.Size = new System.Drawing.Size(164, 22);
+            this.projectileEditorToolStripMenuItem.Text = "Projectile Editor";
+            this.projectileEditorToolStripMenuItem.Click += new System.EventHandler(this.projectileEditorToolStripMenuItem_Click);
+            // 
             // frmMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -841,6 +850,7 @@ namespace Intersect_Editor.Forms
         private ToolStripMenuItem currentLayerOnlyToolStripMenuItem;
         public ToolStripButton toolStripBtnSelect;
         private ToolStripButton toolStripBtnEyeDrop;
+        private ToolStripMenuItem projectileEditorToolStripMenuItem;
     }
 }
 

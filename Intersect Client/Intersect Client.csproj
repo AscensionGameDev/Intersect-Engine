@@ -115,6 +115,7 @@
     <Compile Include="Classes\Entities\Resource.cs" />
     <Compile Include="Classes\Game Objects\AnimationStruct.cs" />
     <Compile Include="Classes\Game Objects\ClassStruct.cs" />
+    <Compile Include="Classes\Game Objects\ProjectileStruct.cs" />
     <Compile Include="Classes\Game Objects\QuestStruct.cs" />
     <Compile Include="Classes\Game Objects\ResourceStruct.cs" />
     <Compile Include="Classes\Items\ItemInstance.cs" />

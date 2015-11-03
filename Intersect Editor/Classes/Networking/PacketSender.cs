@@ -217,6 +217,22 @@ namespace Intersect_Editor.Classes
             Network.SendPacket(bf.ToArray());
         }
 
+        public static void SendProjectileEditor()
+        {
+            var bf = new ByteBuffer();
+            bf.WriteLong((int)Enums.ClientPackets.OpenProjectileEditor);
+            Network.SendPacket(bf.ToArray());
+        }
+
+        public static void SendProjectile(int ProjectileNum, byte[] ProjectileData)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteLong((int)Enums.ClientPackets.SaveProjectile);
+            bf.WriteInteger(ProjectileNum);
+            bf.WriteBytes(ProjectileData);
+            Network.SendPacket(bf.ToArray());
+        }
+
         public static void SendMapListMove(int srcType, int srcId, int destType, int destId)
         {
             ByteBuffer bf = new ByteBuffer();

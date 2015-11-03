@@ -75,6 +75,8 @@ namespace Intersect_Editor.Classes
             OpenAdminWindow,
             AdminAction,
             NeedGrid,
+            OpenProjectileEditor,
+            SaveProjectile,
         }
 
         public enum ServerPackets
@@ -124,6 +126,8 @@ namespace Intersect_Editor.Classes
             QuestData,
             OpenAdminWindow,
             MapGrid,
+            OpenProjectileEditor,
+            ProjectileData,
         }
 
         public enum Stats
@@ -161,7 +165,8 @@ namespace Intersect_Editor.Classes
             Spell = 4,
             Class = 5,
             Quest = 6,
-            Event = 7,
+            Projectile = 7,
+            Event = 8,
         }
 
         public enum MapListUpdates

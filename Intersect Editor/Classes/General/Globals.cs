@@ -55,6 +55,7 @@ namespace Intersect_Editor.Classes
         public static ResourceStruct[] GameResources;
         public static ClassStruct[] GameClasses;
         public static QuestStruct[] GameQuests;
+        public static ProjectileStruct[] GameProjectiles;
 
         //Animation Frame Variables
         public static int Autotilemode = 0;

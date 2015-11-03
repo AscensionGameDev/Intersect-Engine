@@ -171,6 +171,12 @@ namespace Intersect_Server.Classes
                 case Enums.ClientPackets.NeedGrid:
                     HandleNeedGrid(client, packet);
                     break;
+                case Enums.ClientPackets.OpenProjectileEditor:
+                    HandleProjectileEditor(client);
+                    break;
+                case Enums.ClientPackets.SaveProjectile:
+                    HandleProjectileData(client, packet);
+                    break;
                 default:
                     Globals.GeneralLogs.Add(@"Non implemented packet received: " + packetHeader);
                     break;
@@ -936,6 +942,25 @@ namespace Intersect_Server.Classes
                 PacketSender.SendQuest(client, i);
             }
             PacketSender.SendQuestEditor(client);
+        }
+
+        private static void HandleProjectileData(Client client, byte[] packet)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteBytes(packet);
+            var projectileNum = bf.ReadInteger();
+            Globals.GameProjectiles[projectileNum].Load(bf.ReadBytes(bf.Length()));
+            Globals.GameProjectiles[projectileNum].Save(projectileNum);
+            bf.Dispose();
+        }
+
+        private static void HandleProjectileEditor(Client client)
+        {
+            for (var i = 0; i < Constants.MaxProjectiles; i++)
+            {
+                PacketSender.SendProjectile(client, i);
+            }
+            PacketSender.SendProjectileEditor(client);
         }
 
         private static void HandleMapListUpdate(Client client, byte[] packet)

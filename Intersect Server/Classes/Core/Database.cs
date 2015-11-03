@@ -1505,6 +1505,29 @@ namespace Intersect_Server.Classes
             }
         }
 
+        // Projectiles
+        public static void LoadProjectiles()
+        {
+            if (!Directory.Exists("Resources/Projectiles"))
+            {
+                Directory.CreateDirectory("Resources/Projectiles");
+            }
+            Globals.GameProjectiles = new ProjectileStruct[Constants.MaxProjectiles];
+            for (var i = 0; i < Constants.MaxProjectiles; i++)
+            {
+                Globals.GameProjectiles[i] = new ProjectileStruct();
+                if (!File.Exists("Resources/Projectiles/" + i + ".prj"))
+                {
+                    Globals.GameProjectiles[i].Save(i);
+                }
+                else
+                {
+                    Globals.GameProjectiles[i].Load(File.ReadAllBytes("Resources/Projectiles/" + i + ".prj"));
+                }
+
+            }
+        }
+
         // Classes
         public static int LoadClasses()
         {

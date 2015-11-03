@@ -116,6 +116,12 @@ namespace Intersect_Editor.Classes
                 case Enums.ServerPackets.MapGrid:
                     HandleMapGrid(bf.ReadBytes(bf.Length()));
                     break;
+                case Enums.ServerPackets.OpenProjectileEditor:
+                    HandleProjectileEditor();
+                    break;
+                case Enums.ServerPackets.ProjectileData:
+                    HandleProjectileData(bf.ReadBytes(bf.Length()));
+                    break;
                 default:
                     Console.WriteLine(@"Non implemented packet received: " + packetHeader);
                     break;
@@ -406,6 +412,20 @@ namespace Intersect_Editor.Classes
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
             Globals.MapGridWindow.InitGrid(bf);
+        }
+
+        private static void HandleProjectileEditor()
+        {
+            Globals.MainForm.BeginInvoke(Globals.MainForm.EditorDelegate, (int)Enums.EditorTypes.Projectile);
+        }
+
+        private static void HandleProjectileData(byte[] packet)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteBytes(packet);
+            var projectileNum = bf.ReadInteger();
+            Globals.GameProjectiles[projectileNum] = new ProjectileStruct();
+            Globals.GameProjectiles[projectileNum].Load(bf.ReadBytes(bf.Length()));
         }
     }
 }

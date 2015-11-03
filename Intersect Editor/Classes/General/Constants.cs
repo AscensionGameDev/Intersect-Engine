@@ -32,6 +32,7 @@ namespace Intersect_Editor.Classes
         public const int MaxResources = 255;
         public const int MaxClasses = 20;
         public const int MaxQuests = 255;
+        public const int MaxProjectiles = 255;
 
         public const int LayerCount = 5;
 

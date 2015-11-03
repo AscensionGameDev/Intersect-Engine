@@ -337,6 +337,10 @@ namespace Intersect_Server.Classes
             {
                 SendQuest(client, i);
             }
+            for (int i = 0; i < Constants.MaxProjectiles; i++)
+            {
+                SendProjectile(client, i);
+            }
         }
 
         public static void SendGlobalMsg(string message)
@@ -920,6 +924,24 @@ namespace Intersect_Server.Classes
                     }
                 }
             }
+            client.SendPacket(bf.ToArray());
+            bf.Dispose();
+        }
+
+        public static void SendProjectile(Client client, int projectileNum)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteLong((int)Enums.ServerPackets.ProjectileData);
+            bf.WriteInteger(projectileNum);
+            bf.WriteBytes(Globals.GameProjectiles[projectileNum].ProjectileData());
+            client.SendPacket(bf.ToArray());
+            bf.Dispose();
+        }
+
+        public static void SendProjectileEditor(Client client)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteLong((int)Enums.ServerPackets.OpenProjectileEditor);
             client.SendPacket(bf.ToArray());
             bf.Dispose();
         }

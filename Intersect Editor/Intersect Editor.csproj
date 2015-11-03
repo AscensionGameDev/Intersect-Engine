@@ -95,6 +95,7 @@
     <Compile Include="Classes\Game Objects\AnimationStruct.cs" />
     <Compile Include="Classes\Core\Audio.cs" />
     <Compile Include="Classes\Game Objects\ClassStruct.cs" />
+    <Compile Include="Classes\Game Objects\ProjectileStruct.cs" />
     <Compile Include="Classes\Game Objects\QuestStruct.cs" />
     <Compile Include="Classes\Game Objects\ResourceStruct.cs" />
     <Compile Include="Classes\Maps\MapList.cs" />
@@ -155,6 +156,12 @@
     </Compile>
     <Compile Include="Forms\Editors\frmEvent.Designer.cs">
       <DependentUpon>frmEvent.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\Editors\frmProjectile.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\Editors\frmProjectile.Designer.cs">
+      <DependentUpon>frmProjectile.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\Editors\frmQuest.cs">
       <SubType>Form</SubType>
@@ -243,14 +250,19 @@
     <EmbeddedResource Include="Forms\Editors\frmItem.resx">
       <DependentUpon>frmItem.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Editors\frmProjectile.resx">
+      <DependentUpon>frmProjectile.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Forms\Editors\frmQuest.resx">
       <DependentUpon>frmQuest.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\frmAbout.resx">
       <DependentUpon>frmAbout.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\frmLogin.resx">
       <DependentUpon>frmLogin.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\frmMain.resx">
       <DependentUpon>frmMain.cs</DependentUpon>
@@ -1724,6 +1736,7 @@
     <Content Include="Resources\jce.png" />
     <Content Include="Resources\jcl.png" />
     <Content Include="Resources\MapSpawn.png" />
+    <Content Include="Resources\ProjectileDirections.png" />
     <Content Include="Resources\Spells\1.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

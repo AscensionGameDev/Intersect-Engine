@@ -48,6 +48,7 @@ namespace Intersect_Editor.Forms
         private frmSpell _spellEditor;
         private frmClass _classEditor;
         private frmQuest _questEditor;
+        private frmProjectile _projectileEditor;
 
         //Initialization & Setup Functions
         public frmMain()
@@ -531,6 +532,10 @@ namespace Intersect_Editor.Forms
         {
             PacketSender.SendQuestEditor();
         }
+        private void projectileEditorToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            PacketSender.SendProjectileEditor();
+        }
         //Help
         private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -698,6 +703,14 @@ namespace Intersect_Editor.Forms
                             _questEditor.Show();
                         }
                         break;
+                    case (int)Enums.EditorTypes.Projectile:
+                        if (_projectileEditor == null || _projectileEditor.Visible == false)
+                        {
+                            _projectileEditor = new frmProjectile();
+                            _projectileEditor.InitEditor();
+                            _projectileEditor.Show();
+                        }
+                        break;
                     default:
                         return;
                 }
@@ -705,11 +718,6 @@ namespace Intersect_Editor.Forms
             }
 
         }
-
-
-
-
-
 
     }
 }

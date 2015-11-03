@@ -151,6 +151,9 @@ namespace Intersect_Client.Classes
                     case Enums.ServerPackets.OpenAdminWindow:
                         HandleOpenAdminWindow();
                         break;
+                    case Enums.ServerPackets.ProjectileData:
+                        HandleProjectileData(bf.ReadBytes(bf.Length()));
+                        break;
                     default:
                         Console.WriteLine(@"Non implemented packet received: " + packetHeader);
                         break;
@@ -308,6 +311,7 @@ namespace Intersect_Client.Classes
             Globals.GameResources = new ResourceStruct[Constants.MaxResources];
             Globals.GameClasses = new ClassStruct[Constants.MaxClasses];
             Globals.GameQuests = new QuestStruct[Constants.MaxQuests];
+            Globals.GameProjectiles = new ProjectileStruct[Constants.MaxProjectiles];
 
             //Database.LoadMapRevisions();
         }
@@ -711,6 +715,15 @@ namespace Intersect_Client.Classes
         private static void HandleOpenAdminWindow()
         {
             Gui._GameGui.ShowAdminWindow();
+        }
+
+        private static void HandleProjectileData(byte[] packet)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteBytes(packet);
+            var projectileNum = bf.ReadInteger();
+            Globals.GameProjectiles[projectileNum] = new ProjectileStruct();
+            Globals.GameProjectiles[projectileNum].Load(bf.ReadBytes(bf.Length()));
         }
     }
 }

@@ -52,6 +52,7 @@ namespace Intersect_Server.Classes
             Database.LoadAnimations();
             Database.LoadResources();
             Database.LoadQuests();
+            Database.LoadProjectiles();
             if (Database.LoadClasses() == Constants.MaxClasses)
             {
                 Console.WriteLine("Failed to load classes. Creating default class.");

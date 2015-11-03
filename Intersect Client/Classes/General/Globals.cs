@@ -109,6 +109,9 @@ namespace Intersect_Client.Classes
         //Game Quests
         public static QuestStruct[] GameQuests;
 
+        //Game Projectiles
+        public static ProjectileStruct[] GameProjectiles;
+
         //GUI Varaibles
         public static ArrayList ChatboxContent = new ArrayList();
 
