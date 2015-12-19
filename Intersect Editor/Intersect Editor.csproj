@@ -100,6 +100,7 @@
     <Compile Include="Classes\Game Objects\ResourceStruct.cs" />
     <Compile Include="Classes\Maps\MapList.cs" />
     <Compile Include="Classes\Maps\MapProperties.cs" />
+    <Compile Include="Classes\Misc\AlphanumComparatorFast.cs" />
     <Compile Include="Classes\Misc\ByteBuffer.cs" />
     <Compile Include="Classes\Core\Database.cs" />
     <Compile Include="Classes\General\Enums.cs" />

@@ -62,6 +62,8 @@ namespace Intersect_Editor.Classes
         public static Texture[] FogTextures;
         public static List<string> ResourceFileNames;
         public static Texture[] ResourceTextures;
+        public static List<string> PaperdollFileNames;
+        public static Texture[] PaperdollTextures;
 
         //Face Textures
         public static List<string> FaceFileNames;
@@ -159,11 +161,13 @@ namespace Intersect_Editor.Classes
             LoadImages();
             LoadFogs();
             LoadResources();
+            LoadPaperdolls();
         }
         private static void LoadTilesets(frmMain myForm)
         {
             if (!Directory.Exists("Resources/Tilesets")) { Directory.CreateDirectory("Resources/Tilesets"); }
             var tilesets = Directory.GetFiles("Resources/Tilesets", "*.png");
+            Array.Sort(tilesets, new AlphanumComparatorFast());
             var tilesetsUpdated = false;
             if (tilesets.Length > 0)
             {
@@ -241,6 +245,7 @@ namespace Intersect_Editor.Classes
         {
             if (!Directory.Exists("Resources/Items")) { Directory.CreateDirectory("Resources/Items"); }
             var items = Directory.GetFiles("Resources/Items", "*.png");
+            Array.Sort(items, new AlphanumComparatorFast());
             ItemNames = new string[items.Length];
             ItemTextures = new Texture[items.Length];
             for (int i = 0; i < items.Length; i++)
@@ -253,6 +258,7 @@ namespace Intersect_Editor.Classes
         {
             if (!Directory.Exists("Resources/Entities")) { Directory.CreateDirectory("Resources/Entities"); }
             var chars = Directory.GetFiles("Resources/Entities", "*.png");
+            Array.Sort(chars, new AlphanumComparatorFast());
             EntityFileNames = new string[chars.Length];
             EntityTextures = new Texture[chars.Length];
             for (int i = 0; i < chars.Length; i++)
@@ -265,6 +271,7 @@ namespace Intersect_Editor.Classes
         {
             if (!Directory.Exists("Resources/Spells")) { Directory.CreateDirectory("Resources/Spells"); }
             var spells = Directory.GetFiles("Resources/Spells", "*.png");
+            Array.Sort(spells, new AlphanumComparatorFast());
             SpellFileNames = new string[spells.Length];
             SpellTextures = new Texture[spells.Length];
             for (int i = 0; i < spells.Length; i++)
@@ -277,6 +284,7 @@ namespace Intersect_Editor.Classes
         {
             if (!Directory.Exists("Resources/Animations")) { Directory.CreateDirectory("Resources/Animations"); }
             var animations = Directory.GetFiles("Resources/Animations", "*.png");
+            Array.Sort(animations, new AlphanumComparatorFast());
             AnimationFileNames = new string[animations.Length];
             AnimationTextures = new Texture[animations.Length];
             for (int i = 0; i < animations.Length; i++)
@@ -289,6 +297,7 @@ namespace Intersect_Editor.Classes
         {
             if (!Directory.Exists("Resources/Faces")) { Directory.CreateDirectory("Resources/Faces"); }
             var faces = Directory.GetFiles("Resources/Faces", "*.png");
+            Array.Sort(faces, new AlphanumComparatorFast());
             FaceFileNames = new List<string>();
             FaceTextures = new Texture[faces.Length];
             for (int i = 0; i < faces.Length; i++)
@@ -301,6 +310,7 @@ namespace Intersect_Editor.Classes
         {
             if (!Directory.Exists("Resources/Images")) { Directory.CreateDirectory("Resources/Images"); }
             var images = Directory.GetFiles("Resources/Images", "*.png");
+            Array.Sort(images, new AlphanumComparatorFast());
             ImageFileNames = new List<string>();
             ImageTextures = new Texture[images.Length];
             for (int i = 0; i < images.Length; i++)
@@ -313,6 +323,7 @@ namespace Intersect_Editor.Classes
         {
             if (!Directory.Exists("Resources/Fogs")) { Directory.CreateDirectory("Resources/Fogs"); }
             var fogs = Directory.GetFiles("Resources/Fogs", "*.png");
+            Array.Sort(fogs, new AlphanumComparatorFast());
             FogFileNames = new List<string>();
             FogTextures = new Texture[fogs.Length];
             for (int i = 0; i < fogs.Length; i++)
@@ -325,12 +336,26 @@ namespace Intersect_Editor.Classes
         {
             if (!Directory.Exists("Resources/Resources")) { Directory.CreateDirectory("Resources/Resources"); }
             var resources = Directory.GetFiles("Resources/Resources", "*.png");
+            Array.Sort(resources, new AlphanumComparatorFast());
             ResourceFileNames = new List<string>();
             ResourceTextures = new Texture[resources.Length];
             for (int i = 0; i < resources.Length; i++)
             {
                 ResourceFileNames.Add(resources[i].Replace("Resources/Resources\\", ""));
                 ResourceTextures[i] = new Texture(new Image("Resources/Resources/" + ResourceFileNames[i]));
+            }
+        }
+        private static void LoadPaperdolls()
+        {
+            if (!Directory.Exists("Resources/Paperdolls")) { Directory.CreateDirectory("Resources/Paperdolls"); }
+            var resources = Directory.GetFiles("Resources/Paperdolls", "*.png");
+            Array.Sort(resources, new AlphanumComparatorFast());
+            PaperdollFileNames = new List<string>();
+            PaperdollTextures = new Texture[resources.Length];
+            for (int i = 0; i < resources.Length; i++)
+            {
+                PaperdollFileNames.Add(resources[i].Replace("Resources/Paperdolls\\", ""));
+                PaperdollTextures[i] = new Texture(new Image("Resources/Paperdolls/" + PaperdollFileNames[i]));
             }
         }
 
