@@ -76,6 +76,11 @@ namespace Intersect_Client
         public long CastTime = 0;
         public int SpellCast = 0;
 
+        //Inventory/Spells/Equipment
+        public ItemInstance[] Inventory = new ItemInstance[Constants.MaxInvItems];
+        public SpellInstance[] Spells = new SpellInstance[Constants.MaxPlayerSkills];
+        public int[] Equipment = new int[Enums.EquipmentSlots.Count];
+
         private long _lastUpdate;
         private long _walkTimer;
         private int _walkFrame;
@@ -261,6 +266,65 @@ namespace Intersect_Client
                         break;
                 }
                 destRectangle.X = (int)Math.Ceiling( destRectangle.X);
+                destRectangle.Y = destRectangle.Y;
+                srcRectangle = new Rectangle(_walkFrame * (int)srcTexture.Size.X / 4, d * (int)srcTexture.Size.Y / 4, (int)srcTexture.Size.X / 4, (int)srcTexture.Size.Y / 4);
+                destRectangle.Width = srcRectangle.Width;
+                destRectangle.Height = srcRectangle.Height;
+                Graphics.RenderTexture(srcTexture, srcRectangle, destRectangle, Graphics.RenderWindow);
+                
+                //Draw the equipment/paperdolls
+                for (int z = Enums.EquipmentSlots.Count - 1; z >= 0; z--)
+                {
+                    if (Equipment[z] >-1 && Inventory[Equipment[z]].ItemNum > -1)
+                    {
+                        DrawEquipment(Globals.GameItems[Inventory[Equipment[z]].ItemNum].Paperdoll);
+                    }
+                }
+
+            }
+        }
+
+        public virtual void DrawEquipment(string filename)
+        {
+            int i = GetLocalPos(CurrentMap);
+            if (i == -1 || !Globals.GameMaps.ContainsKey(CurrentMap)) return;
+            RectangleF srcRectangle = new Rectangle();
+            RectangleF destRectangle = new Rectangle();
+            Texture srcTexture;
+            var d = 0;
+            if (Graphics.PaperdollFileNames.IndexOf(filename.ToLower()) >= 0)
+            {
+                srcTexture = Graphics.PaperdollTextures[Graphics.PaperdollFileNames.IndexOf(filename)];
+                if (srcTexture.Size.Y / 4 > Globals.TileHeight)
+                {
+                    destRectangle.X = (Globals.GameMaps[CurrentMap].GetX() + CurrentX * Globals.TileWidth + OffsetX);
+                    destRectangle.Y = Globals.GameMaps[CurrentMap].GetY() + CurrentY * Globals.TileHeight + OffsetY - ((srcTexture.Size.Y / 4) - Globals.TileHeight);
+                }
+                else
+                {
+                    destRectangle.X = Globals.GameMaps[CurrentMap].GetX() + CurrentX * Globals.TileWidth + OffsetX;
+                    destRectangle.Y = Globals.GameMaps[CurrentMap].GetY() + CurrentY * Globals.TileHeight + OffsetY;
+                }
+                if (srcTexture.Size.X / 4 > Globals.TileWidth)
+                {
+                    destRectangle.X -= ((srcTexture.Size.X / 4) - Globals.TileWidth) / 2;
+                }
+                switch (Dir)
+                {
+                    case 0:
+                        d = 3;
+                        break;
+                    case 1:
+                        d = 0;
+                        break;
+                    case 2:
+                        d = 1;
+                        break;
+                    case 3:
+                        d = 2;
+                        break;
+                }
+                destRectangle.X = (int)Math.Ceiling(destRectangle.X);
                 destRectangle.Y = destRectangle.Y;
                 srcRectangle = new Rectangle(_walkFrame * (int)srcTexture.Size.X / 4, d * (int)srcTexture.Size.Y / 4, (int)srcTexture.Size.X / 4, (int)srcTexture.Size.Y / 4);
                 destRectangle.Width = srcRectangle.Width;

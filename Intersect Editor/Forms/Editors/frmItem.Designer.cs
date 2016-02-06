@@ -613,6 +613,7 @@ namespace Intersect_Editor.Forms
             // 
             // cmbPaperdoll
             // 
+            this.cmbPaperdoll.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbPaperdoll.FormattingEnabled = true;
             this.cmbPaperdoll.Items.AddRange(new object[] {
             "None"});
@@ -620,7 +621,6 @@ namespace Intersect_Editor.Forms
             this.cmbPaperdoll.Name = "cmbPaperdoll";
             this.cmbPaperdoll.Size = new System.Drawing.Size(96, 21);
             this.cmbPaperdoll.TabIndex = 22;
-            this.cmbPaperdoll.Text = "None";
             this.cmbPaperdoll.SelectedIndexChanged += new System.EventHandler(this.cmbPaperdoll_SelectedIndexChanged);
             // 
             // label5

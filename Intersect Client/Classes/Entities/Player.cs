@@ -32,10 +32,7 @@ namespace Intersect_Client.Classes
     public class Player : Entity
     {
         private long _attackTimer;
-        public ItemInstance[] Inventory = new ItemInstance[Constants.MaxInvItems];
-        public SpellInstance[] Spells = new SpellInstance[Constants.MaxPlayerSkills];
         public HotbarInstance[] Hotbar = new HotbarInstance[Constants.MaxHotbar];
-        public int[] Equipment = new int[Enums.EquipmentSlots.Count];
         public int StatPoints = 0;
         public int Experience = 0;
 

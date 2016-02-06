@@ -21,7 +21,6 @@
 */
 using System;
 using System.Windows.Forms;
-using System.Drawing;
 using Intersect_Editor.Classes;
 
 namespace Intersect_Editor.Forms
@@ -62,6 +61,14 @@ namespace Intersect_Editor.Forms
             }
 
             scrlProjectile.Maximum = Constants.MaxProjectiles;
+
+            cmbPaperdoll.Items.Clear();
+            cmbPaperdoll.Items.Add("None");
+            for (i = 0; i < Graphics.PaperdollFileNames.Count; i++)
+            {
+                cmbPaperdoll.Items.Add(Graphics.PaperdollFileNames[i]);
+            }
+
             UpdateEditor();
         }
 
@@ -114,8 +121,10 @@ namespace Intersect_Editor.Forms
             chk2Hand.Checked = Convert.ToBoolean(Globals.GameItems[_editorIndex].Data4);
             cmbPaperdoll.SelectedIndex = cmbPaperdoll.FindString(Globals.GameItems[_editorIndex].Paperdoll);
             scrlProjectile.Value = Globals.GameItems[_editorIndex].Projectile;
-            if (cmbPic.SelectedIndex > 0) { picItem.BackgroundImage = Bitmap.FromFile("Resources/Items/" + cmbPic.Text); }
+            if (cmbPic.SelectedIndex > 0) { picItem.BackgroundImage = System.Drawing.Bitmap.FromFile("Resources/Items/" + cmbPic.Text); }
             else { picItem.BackgroundImage = null; }
+            if (cmbPaperdoll.SelectedIndex > 0) { picPaperdoll.BackgroundImage = System.Drawing.Bitmap.FromFile("Resources/Paperdolls/" + cmbPaperdoll.Text); }
+            else { picPaperdoll.BackgroundImage = null; }
             _changed[_editorIndex] = true;
         }
 
@@ -217,7 +226,7 @@ namespace Intersect_Editor.Forms
         private void cmbPic_SelectedIndexChanged(object sender, EventArgs e)
         {
             Globals.GameItems[_editorIndex].Pic = cmbPic.Text;
-            if (cmbPic.SelectedIndex > 0) { picItem.BackgroundImage = Bitmap.FromFile("Resources/Items/" + cmbPic.Text); }
+            if (cmbPic.SelectedIndex > 0) { picItem.BackgroundImage = System.Drawing.Bitmap.FromFile("Resources/Items/" + cmbPic.Text); }
             else { picItem.BackgroundImage = null; }
         }
 
@@ -324,6 +333,8 @@ namespace Intersect_Editor.Forms
         private void cmbPaperdoll_SelectedIndexChanged(object sender, EventArgs e)
         {
             Globals.GameItems[_editorIndex].Paperdoll = cmbPaperdoll.Text;
+            if (cmbPaperdoll.SelectedIndex > 0) { picPaperdoll.BackgroundImage = System.Drawing.Bitmap.FromFile("Resources/Paperdolls/" + cmbPaperdoll.Text); }
+            else { picPaperdoll.BackgroundImage = null; }
         }
 
         private void txtDesc_TextChanged(object sender, EventArgs e)

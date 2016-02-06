@@ -85,6 +85,8 @@ namespace Intersect_Client.Classes
         public static Texture[] FogTextures;
         public static List<string> ResourceFileNames;
         public static Texture[] ResourceTextures;
+        public static List<string> PaperdollFileNames;
+        public static Texture[] PaperdollTextures;
 
 
         //Darkness Stuff
@@ -151,6 +153,7 @@ namespace Intersect_Client.Classes
             LoadImages();
             LoadFogs();
             LoadResources();
+            LoadPaperdolls();
             InitRenderingLists();
             GameFont = new Font("Arvo-Regular.ttf");
         }
@@ -805,6 +808,18 @@ namespace Intersect_Client.Classes
                 ResourceTextures[i] = new Texture(new Image("Resources/Resources/" + ResourceFileNames[i]));
             }
         }
+        private static void LoadPaperdolls()
+        {
+            if (!Directory.Exists("Resources/Paperdolls")) { Directory.CreateDirectory("Resources/Paperdolls"); }
+            var resources = Directory.GetFiles("Resources/Paperdolls", "*.png");
+            PaperdollFileNames = new List<string>();
+            PaperdollTextures = new Texture[resources.Length];
+            for (int i = 0; i < resources.Length; i++)
+            {
+                PaperdollFileNames.Add(resources[i].Replace("Resources/Paperdolls\\", ""));
+                PaperdollTextures[i] = new Texture(new Image("Resources/Paperdolls/" + PaperdollFileNames[i]));
+            }
+        }
 
         //Lighting
         private static void InitLighting()
@@ -1032,6 +1047,7 @@ namespace Intersect_Client.Classes
         }
         public static void RenderTexture(Texture tex, RectangleF srcRectangle, RectangleF targetRect, RenderTarget renderTarget, BlendMode blendMode)
         {
+            if (tex == null) return;
             var u1 = (float)srcRectangle.X / tex.Size.X;
             var v1 = (float)srcRectangle.Y / tex.Size.Y;
             var u2 = (float)srcRectangle.Right / tex.Size.X;
