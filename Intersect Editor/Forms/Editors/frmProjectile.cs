@@ -83,6 +83,7 @@ namespace Intersect_Editor.Classes
             scrlSpawn.Value = Globals.GameProjectiles[_editorIndex].Delay;
             scrlQuantity.Value = Globals.GameProjectiles[_editorIndex].Quantity;
             scrlRange.Value = Globals.GameProjectiles[_editorIndex].Range;
+            scrlSpell.Value = Globals.GameProjectiles[_editorIndex].Spell;
             chkHoming.Checked = Globals.GameProjectiles[_editorIndex].Homing;
             chkRotation.Checked = Globals.GameProjectiles[_editorIndex].AutoRotate;
 
@@ -93,6 +94,14 @@ namespace Intersect_Editor.Classes
             else
             {
                 lblAnimation.Text = "Animation: " + scrlAnimation.Value + " " + Globals.GameAnimations[scrlAnimation.Value - 1].Name;
+            }
+            if (scrlSpell.Value == 0)
+            {
+                lblSpell.Text = "Collision Spell: 0 None";
+            }
+            else
+            {
+                lblSpell.Text = "Collision Spell: " + scrlSpell.Value + " " + Globals.GameSpells[scrlSpell.Value - 1].Name;
             }
             lblSpeed.Text = "Speed: " + scrlSpeed.Value + "ms";
             lblSpawn.Text = "Spawn Delay: " + scrlSpawn.Value + "ms";
@@ -325,6 +334,19 @@ namespace Intersect_Editor.Classes
             Hide();
             Globals.CurrentEditor = -1;
             Dispose();
+        }
+
+        private void scrlSpell_Scroll(object sender, ScrollEventArgs e)
+        {
+            if (scrlSpell.Value == 0)
+            {
+                lblSpell.Text = "Collision Spell: 0 None";
+            }
+            else
+            {
+                lblSpell.Text = "Collision Spell: " + scrlSpell.Value + " " + Globals.GameSpells[scrlSpell.Value - 1].Name;
+            }
+            Globals.GameProjectiles[_editorIndex].Spell = scrlSpell.Value;
         }
     }
 }

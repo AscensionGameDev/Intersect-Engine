@@ -480,8 +480,8 @@ namespace Intersect_Client.Classes
             }
             if (MoveDir > -1 && Globals.EventDialogs.Count == 0)
             {
-                //Try to move
-                if (MoveTimer < Environment.TickCount)
+                //Try to move if able and not casting spells.
+                if (MoveTimer < Environment.TickCount && CastTime < Environment.TickCount)
                 {
                     switch (MoveDir)
                     {

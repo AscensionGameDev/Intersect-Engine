@@ -170,7 +170,7 @@ namespace Intersect_Server.Classes
                             {
                                 if (_directions.Count > 0)
                                 {
-                                    if (!CanMove(_directions[0]))
+                                    if (CanMove(_directions[0]) == 0)
                                     {
                                         Move(_directions[0], null);
                                         _directions.RemoveAt(0);
@@ -208,7 +208,7 @@ namespace Intersect_Server.Classes
                 if (i == 0)
                 {
                     i = Globals.Rand.Next(0, 4);
-                    if (!CanMove(i))
+                    if (CanMove(i) == 0)
                     {
                         Move(i, null);
                     }

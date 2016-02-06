@@ -72,6 +72,9 @@ namespace Intersect_Server.Classes
         public List<MapItemRespawn> ItemRespawns = new List<MapItemRespawn>();
         public List<Entity> Entities = new List<Entity>();
 
+        //Projectiles
+        public List<Projectile> MapProjectiles = new List<Projectile>();
+
         //Location of Map in the current grid
         public int MapGrid;
         public int MapGridX = -1;
@@ -292,6 +295,16 @@ namespace Intersect_Server.Classes
                     }
                 }
                 ResourceSpawns.Clear();
+                //Clear Map Projectiles
+                for (int i = 0; i < MapProjectiles.Count; i++)
+                {
+                    if (MapProjectiles[i] != null)
+                    {
+                        Entities.Remove(MapProjectiles[i]);
+                        MapProjectiles[i].Die();
+                    }
+                }
+                MapProjectiles.Clear();
                 SpawnAttributeItems();
                 SpawnMapNpcs();
                 SpawnMapResources();
@@ -462,6 +475,7 @@ namespace Intersect_Server.Classes
                 SpawnMapResource(i);
             }
         }
+
         private void SpawnMapResource(int i)
         {
             int x = ResourceSpawns[i].X;
@@ -470,8 +484,8 @@ namespace Intersect_Server.Classes
             int index = Globals.FindOpenEntity();
             Globals.Entities[index] = new Resource(index, ResourceSpawns[i].ResourceNum);
             ResourceSpawns[i].Entity = Globals.Entities[index];
-           Globals.Entities[index].CurrentX = ResourceSpawns[i].X;
-           Globals.Entities[index].CurrentY = ResourceSpawns[i].Y;
+            Globals.Entities[index].CurrentX = ResourceSpawns[i].X;
+            Globals.Entities[index].CurrentY = ResourceSpawns[i].Y;
             Globals.Entities[index].CurrentMap = MyMapNum;
 
             //Give Resource Drops
@@ -489,6 +503,17 @@ namespace Intersect_Server.Classes
             PacketSender.SendEntityDataToProximity(index, (int)Enums.EntityTypes.Resource, Globals.Entities[index].Data(), Globals.Entities[index]);
         }
 
+        //Spawn a projectile
+        public void SpawnMapProjectile(int MyIndex, Type ownerType, int projectileNum, int Map, int X, int Y, int Z, int Direction, int Target = 0)
+        {
+            int n = Globals.FindOpenEntity();
+            MapProjectiles.Add(new Projectile(n, MyIndex, this.GetType(), projectileNum, Map, X, Y, Z, Direction, Target));
+            Globals.Entities[n] = MapProjectiles[MapProjectiles.Count - 1];
+
+            Entities.Add(Globals.Entities[n]);
+            PacketSender.SendEntityDataToProximity(n, (int)Enums.EntityTypes.Projectile, ((Projectile)Globals.Entities[n]).Data(), Globals.Entities[n]);
+        }
+
         //Entity Processing
         public void AddEntity(Entity en)
         {
@@ -500,6 +525,11 @@ namespace Intersect_Server.Classes
         public void RemoveEntity(Entity en)
         {
             Entities.Remove(en);
+        }
+
+        public void RemoveProjectile(Projectile en)
+        {
+            MapProjectiles.Remove(en);
         }
 
         //Update + Related Functions
@@ -529,11 +559,19 @@ namespace Intersect_Server.Classes
                             ItemRespawns.RemoveAt(i);
                         }
                     }
-                    //Process All Active Npcs On the Map
+                    //Process All Entites
                     for (int i = 0; i < Entities.Count; i++)
                     {
                         if (Entities[i] != null)
                         {
+                            //Cast timers
+                            if (Entities[i].CastTime != 0 && Entities[i].CastTime < Environment.TickCount)
+                            {
+                                Entities[i].CastSpell(Entities[i].Spells[Entities[i].SpellCastSlot].SpellNum, Entities[i].SpellCastSlot);
+                                Entities[i].CastTime = 0;
+                            }
+
+                            //Active Npcs On the Map
                             if (Entities[i].GetType() == typeof (Npc))
                             {
                                 ((Npc) Entities[i]).Update();
@@ -574,6 +612,11 @@ namespace Intersect_Server.Classes
                                 ResourceSpawns[i].RespawnTime = -1;
                             }
                         }
+                    }
+                    //Process all of the projectiles
+                    for (int i = 0; i < MapProjectiles.Count; i++)
+                    {
+                        MapProjectiles[i].TryMoveProjectile();
                     }
                 }
             }
@@ -665,6 +708,11 @@ namespace Intersect_Server.Classes
                             PacketSender.SendEntityDataTo(client, Entities[i].MyIndex, (int)Enums.EntityTypes.Resource,
                                 ((Resource)Entities[i]).Data(), Entities[i]);
                         }
+                        else if (Entities[i].GetType() == typeof(Projectile))
+                        {
+                            PacketSender.SendEntityDataTo(client, Entities[i].MyIndex, (int)Enums.EntityTypes.Projectile,
+                                ((Projectile)Entities[i]).Data(), Entities[i]);
+                        }
                         else
                         {
                             PacketSender.SendEntityDataTo(client, Entities[i].MyIndex, (int)Enums.EntityTypes.GlobalEntity,
@@ -750,7 +798,7 @@ namespace Intersect_Server.Classes
         public int Y;
 
         //Temporary Values
-        //Npc Index
+        //Resource Index
         public int EntityIndex = -1;
         public Entity Entity;
         public long RespawnTime = -1;

@@ -450,7 +450,11 @@ namespace Intersect_Client.Classes
                     for (int y = 0; y < Layer1Entities[x].Count; y++)
                     {
                         Layer1Entities[x][y].DrawName();
-                        if (Layer1Entities[x][y].GetType() != typeof(Event)) { Layer1Entities[x][y].DrawHpBar(); }
+                        if (Layer1Entities[x][y].GetType() != typeof(Event)) 
+                        { 
+                            Layer1Entities[x][y].DrawHpBar();
+                            Layer1Entities[x][y].DrawCastingBar();
+                        }
                     }
                 }
                 for (int x = 0; x < Layer2Entities.Length; x++)
@@ -458,7 +462,11 @@ namespace Intersect_Client.Classes
                     for (int y = 0; y < Layer2Entities[x].Count; y++)
                     {
                         Layer2Entities[x][y].DrawName();
-                        if (Layer2Entities[x][y].GetType() != typeof(Event)) { Layer2Entities[x][y].DrawHpBar(); }
+                        if (Layer2Entities[x][y].GetType() != typeof(Event)) 
+                        { 
+                            Layer2Entities[x][y].DrawHpBar();
+                            Layer2Entities[x][y].DrawCastingBar();
+                        }
                     }
                 }
                 DrawDarkness();

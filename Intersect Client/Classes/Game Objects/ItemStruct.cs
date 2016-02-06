@@ -42,6 +42,7 @@ namespace Intersect_Client.Classes.Items
         public int Animation;
         public int ClassReq;
         public int LevelReq;
+        public int Projectile;
         public int[] StatsReq;
         public int[] StatsGiven;
         public int StatGrowth;
@@ -74,6 +75,7 @@ namespace Intersect_Client.Classes.Items
             Animation = myBuffer.ReadInteger();
             ClassReq = myBuffer.ReadInteger();
             LevelReq = myBuffer.ReadInteger();
+            Projectile = myBuffer.ReadInteger();
 
             for (var i = 0; i < Constants.MaxStats; i++)
             {

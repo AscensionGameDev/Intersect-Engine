@@ -945,6 +945,25 @@ namespace Intersect_Server.Classes
             client.SendPacket(bf.ToArray());
             bf.Dispose();
         }
+
+        public static void SendEntityCastTime(int EntityIndex, int SpellNum)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteLong((int)Enums.ServerPackets.CastTime);
+            bf.WriteLong(EntityIndex);
+            bf.WriteInteger(SpellNum);
+            SendDataToProximity(Globals.Entities[EntityIndex].CurrentMap, bf.ToArray());
+            bf.Dispose();
+        }
+
+        public static void SendSpellCooldown(Client client, int SpellSlot)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteLong((int)Enums.ServerPackets.SendSpellCooldown);
+            bf.WriteLong(SpellSlot);
+            client.SendPacket(bf.ToArray());
+            bf.Dispose();
+        }
     }
 }
 

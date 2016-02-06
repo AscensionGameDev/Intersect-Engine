@@ -67,6 +67,14 @@ namespace Intersect_Client.Classes
             return Globals.Entities[i];
         }
 
+        public static Entity AddProjectile(int index)
+        {
+            var i = index;
+            if (Globals.Entities.ContainsKey(i)) { return Globals.Entities[index]; }
+            Globals.Entities.Add(i, new Projectile());
+            return Globals.Entities[i];
+        }
+
         public static void RemoveEntity(int index, int type)
         {
             if (type < (int)Enums.EntityTypes.LocalEvent)

@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.btnCancel = new System.Windows.Forms.Button();
             this.btnDelete = new System.Windows.Forms.Button();
@@ -65,12 +66,32 @@
             this.scrlAbilityPwrReq = new System.Windows.Forms.HScrollBar();
             this.scrlAttackReq = new System.Windows.Forms.HScrollBar();
             this.grpTargetInfo = new System.Windows.Forms.GroupBox();
+            this.scrlProjectile = new System.Windows.Forms.HScrollBar();
+            this.lblProjectile = new System.Windows.Forms.Label();
             this.scrlHitRadius = new System.Windows.Forms.HScrollBar();
             this.lblHitRadius = new System.Windows.Forms.Label();
             this.cmbTargetType = new System.Windows.Forms.ComboBox();
             this.scrlCastRange = new System.Windows.Forms.HScrollBar();
             this.lblCastRange = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
+            this.grpWarp = new System.Windows.Forms.GroupBox();
+            this.grpDash = new System.Windows.Forms.GroupBox();
+            this.lblRange = new System.Windows.Forms.Label();
+            this.scrlRange = new System.Windows.Forms.HScrollBar();
+            this.lblWarpDir = new System.Windows.Forms.Label();
+            this.lblWarpX = new System.Windows.Forms.Label();
+            this.lblWarpY = new System.Windows.Forms.Label();
+            this.scrlWarpX = new System.Windows.Forms.HScrollBar();
+            this.scrlWarpDir = new System.Windows.Forms.HScrollBar();
+            this.scrlWarpY = new System.Windows.Forms.HScrollBar();
+            this.txtWarpChunk = new System.Windows.Forms.TextBox();
+            this.label16 = new System.Windows.Forms.Label();
+            this.groupBox4 = new System.Windows.Forms.GroupBox();
+            this.txtManaCost = new System.Windows.Forms.TextBox();
+            this.txtHPCost = new System.Windows.Forms.TextBox();
+            this.label3 = new System.Windows.Forms.Label();
+            this.label5 = new System.Windows.Forms.Label();
+            this.bindingSource1 = new System.Windows.Forms.BindingSource(this.components);
             this.grpBuffDebuff = new System.Windows.Forms.GroupBox();
             this.cmbExtraEffect = new System.Windows.Forms.ComboBox();
             this.label7 = new System.Windows.Forms.Label();
@@ -92,28 +113,16 @@
             this.txtHPDiff = new System.Windows.Forms.TextBox();
             this.lblMana = new System.Windows.Forms.Label();
             this.lblHP = new System.Windows.Forms.Label();
-            this.grpWarp = new System.Windows.Forms.GroupBox();
-            this.lblWarpDir = new System.Windows.Forms.Label();
-            this.lblWarpX = new System.Windows.Forms.Label();
-            this.lblWarpY = new System.Windows.Forms.Label();
-            this.scrlWarpX = new System.Windows.Forms.HScrollBar();
-            this.scrlWarpDir = new System.Windows.Forms.HScrollBar();
-            this.scrlWarpY = new System.Windows.Forms.HScrollBar();
-            this.txtWarpChunk = new System.Windows.Forms.TextBox();
-            this.label16 = new System.Windows.Forms.Label();
-            this.groupBox4 = new System.Windows.Forms.GroupBox();
-            this.txtManaCost = new System.Windows.Forms.TextBox();
-            this.txtHPCost = new System.Windows.Forms.TextBox();
-            this.label3 = new System.Windows.Forms.Label();
-            this.label5 = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.picSpell)).BeginInit();
             this.groupBox3.SuspendLayout();
             this.grpTargetInfo.SuspendLayout();
-            this.grpBuffDebuff.SuspendLayout();
             this.grpWarp.SuspendLayout();
+            this.grpDash.SuspendLayout();
             this.groupBox4.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.bindingSource1)).BeginInit();
+            this.grpBuffDebuff.SuspendLayout();
             this.SuspendLayout();
             // 
             // groupBox1
@@ -124,7 +133,7 @@
             this.groupBox1.Controls.Add(this.lstSpells);
             this.groupBox1.Location = new System.Drawing.Point(12, 12);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(203, 431);
+            this.groupBox1.Size = new System.Drawing.Size(203, 466);
             this.groupBox1.TabIndex = 16;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Spells";
@@ -132,7 +141,7 @@
             // btnCancel
             // 
             this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.btnCancel.Location = new System.Drawing.Point(6, 398);
+            this.btnCancel.Location = new System.Drawing.Point(5, 426);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(190, 27);
             this.btnCancel.TabIndex = 4;
@@ -143,7 +152,7 @@
             // btnDelete
             // 
             this.btnDelete.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.btnDelete.Location = new System.Drawing.Point(7, 366);
+            this.btnDelete.Location = new System.Drawing.Point(6, 394);
             this.btnDelete.Name = "btnDelete";
             this.btnDelete.Size = new System.Drawing.Size(190, 27);
             this.btnDelete.TabIndex = 3;
@@ -153,7 +162,7 @@
             // 
             // btnSave
             // 
-            this.btnSave.Location = new System.Drawing.Point(6, 333);
+            this.btnSave.Location = new System.Drawing.Point(5, 361);
             this.btnSave.Name = "btnSave";
             this.btnSave.Size = new System.Drawing.Size(190, 27);
             this.btnSave.TabIndex = 2;
@@ -166,7 +175,7 @@
             this.lstSpells.FormattingEnabled = true;
             this.lstSpells.Location = new System.Drawing.Point(6, 19);
             this.lstSpells.Name = "lstSpells";
-            this.lstSpells.Size = new System.Drawing.Size(191, 303);
+            this.lstSpells.Size = new System.Drawing.Size(191, 329);
             this.lstSpells.TabIndex = 1;
             this.lstSpells.Click += new System.EventHandler(this.lstSpells_Click);
             // 
@@ -187,7 +196,7 @@
             this.groupBox2.Controls.Add(this.txtName);
             this.groupBox2.Location = new System.Drawing.Point(225, 12);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(207, 254);
+            this.groupBox2.Size = new System.Drawing.Size(207, 282);
             this.groupBox2.TabIndex = 17;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "General";
@@ -297,7 +306,8 @@
             this.cmbType.FormattingEnabled = true;
             this.cmbType.Items.AddRange(new object[] {
             "Combat Spell",
-            "Warp"});
+            "Warp",
+            "Dash"});
             this.cmbType.Location = new System.Drawing.Point(60, 45);
             this.cmbType.Name = "cmbType";
             this.cmbType.Size = new System.Drawing.Size(135, 21);
@@ -496,6 +506,8 @@
             // 
             // grpTargetInfo
             // 
+            this.grpTargetInfo.Controls.Add(this.scrlProjectile);
+            this.grpTargetInfo.Controls.Add(this.lblProjectile);
             this.grpTargetInfo.Controls.Add(this.scrlHitRadius);
             this.grpTargetInfo.Controls.Add(this.lblHitRadius);
             this.grpTargetInfo.Controls.Add(this.cmbTargetType);
@@ -504,11 +516,30 @@
             this.grpTargetInfo.Controls.Add(this.label4);
             this.grpTargetInfo.Location = new System.Drawing.Point(438, 172);
             this.grpTargetInfo.Name = "grpTargetInfo";
-            this.grpTargetInfo.Size = new System.Drawing.Size(225, 94);
+            this.grpTargetInfo.Size = new System.Drawing.Size(225, 122);
             this.grpTargetInfo.TabIndex = 19;
             this.grpTargetInfo.TabStop = false;
             this.grpTargetInfo.Text = "Targetting Info";
             this.grpTargetInfo.Visible = false;
+            // 
+            // scrlProjectile
+            // 
+            this.scrlProjectile.LargeChange = 1;
+            this.scrlProjectile.Location = new System.Drawing.Point(6, 98);
+            this.scrlProjectile.Maximum = 20;
+            this.scrlProjectile.Name = "scrlProjectile";
+            this.scrlProjectile.Size = new System.Drawing.Size(209, 18);
+            this.scrlProjectile.TabIndex = 19;
+            this.scrlProjectile.Scroll += new System.Windows.Forms.ScrollEventHandler(this.scrlProjectile_Scroll);
+            // 
+            // lblProjectile
+            // 
+            this.lblProjectile.AutoSize = true;
+            this.lblProjectile.Location = new System.Drawing.Point(6, 85);
+            this.lblProjectile.Name = "lblProjectile";
+            this.lblProjectile.Size = new System.Drawing.Size(91, 13);
+            this.lblProjectile.TabIndex = 18;
+            this.lblProjectile.Text = "Projectile: 0 None";
             // 
             // scrlHitRadius
             // 
@@ -572,218 +603,9 @@
             this.label4.TabIndex = 12;
             this.label4.Text = "Target Type:";
             // 
-            // grpBuffDebuff
-            // 
-            this.grpBuffDebuff.Controls.Add(this.cmbExtraEffect);
-            this.grpBuffDebuff.Controls.Add(this.label7);
-            this.grpBuffDebuff.Controls.Add(this.scrlBuffDuration);
-            this.grpBuffDebuff.Controls.Add(this.lblBuffDuration);
-            this.grpBuffDebuff.Controls.Add(this.txtMagicResistBuff);
-            this.grpBuffDebuff.Controls.Add(this.txtAbilityPwrBuff);
-            this.grpBuffDebuff.Controls.Add(this.txtSpeedBuff);
-            this.grpBuffDebuff.Controls.Add(this.txtDefenseBuff);
-            this.grpBuffDebuff.Controls.Add(this.txtAttackBuff);
-            this.grpBuffDebuff.Controls.Add(this.label10);
-            this.grpBuffDebuff.Controls.Add(this.label11);
-            this.grpBuffDebuff.Controls.Add(this.label12);
-            this.grpBuffDebuff.Controls.Add(this.label13);
-            this.grpBuffDebuff.Controls.Add(this.label14);
-            this.grpBuffDebuff.Controls.Add(this.chkHOTDOT);
-            this.grpBuffDebuff.Controls.Add(this.label9);
-            this.grpBuffDebuff.Controls.Add(this.txtManaDiff);
-            this.grpBuffDebuff.Controls.Add(this.txtHPDiff);
-            this.grpBuffDebuff.Controls.Add(this.lblMana);
-            this.grpBuffDebuff.Controls.Add(this.lblHP);
-            this.grpBuffDebuff.Location = new System.Drawing.Point(225, 273);
-            this.grpBuffDebuff.Name = "grpBuffDebuff";
-            this.grpBuffDebuff.Size = new System.Drawing.Size(278, 170);
-            this.grpBuffDebuff.TabIndex = 20;
-            this.grpBuffDebuff.TabStop = false;
-            this.grpBuffDebuff.Text = "Combat Spell";
-            this.grpBuffDebuff.Visible = false;
-            // 
-            // cmbExtraEffect
-            // 
-            this.cmbExtraEffect.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cmbExtraEffect.FormattingEnabled = true;
-            this.cmbExtraEffect.Items.AddRange(new object[] {
-            "None",
-            "Silence",
-            "Stun"});
-            this.cmbExtraEffect.Location = new System.Drawing.Point(12, 132);
-            this.cmbExtraEffect.Name = "cmbExtraEffect";
-            this.cmbExtraEffect.Size = new System.Drawing.Size(86, 21);
-            this.cmbExtraEffect.TabIndex = 36;
-            this.cmbExtraEffect.SelectedIndexChanged += new System.EventHandler(this.cmbExtraEffect_SelectedIndexChanged);
-            // 
-            // label7
-            // 
-            this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(9, 116);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(65, 13);
-            this.label7.TabIndex = 35;
-            this.label7.Text = "Extra Effect:";
-            // 
-            // scrlBuffDuration
-            // 
-            this.scrlBuffDuration.LargeChange = 1;
-            this.scrlBuffDuration.Location = new System.Drawing.Point(196, 129);
-            this.scrlBuffDuration.Maximum = 600;
-            this.scrlBuffDuration.Name = "scrlBuffDuration";
-            this.scrlBuffDuration.Size = new System.Drawing.Size(73, 18);
-            this.scrlBuffDuration.TabIndex = 34;
-            this.scrlBuffDuration.Scroll += new System.Windows.Forms.ScrollEventHandler(this.scrlBuffDuration_Scroll);
-            // 
-            // lblBuffDuration
-            // 
-            this.lblBuffDuration.Location = new System.Drawing.Point(193, 94);
-            this.lblBuffDuration.Name = "lblBuffDuration";
-            this.lblBuffDuration.Size = new System.Drawing.Size(79, 35);
-            this.lblBuffDuration.TabIndex = 33;
-            this.lblBuffDuration.Text = "Duration (seconds): 0.0";
-            // 
-            // txtMagicResistBuff
-            // 
-            this.txtMagicResistBuff.Location = new System.Drawing.Point(196, 67);
-            this.txtMagicResistBuff.Name = "txtMagicResistBuff";
-            this.txtMagicResistBuff.Size = new System.Drawing.Size(55, 20);
-            this.txtMagicResistBuff.TabIndex = 32;
-            this.txtMagicResistBuff.TextChanged += new System.EventHandler(this.txtMagicResistBuff_TextChanged);
-            // 
-            // txtAbilityPwrBuff
-            // 
-            this.txtAbilityPwrBuff.Location = new System.Drawing.Point(196, 32);
-            this.txtAbilityPwrBuff.Name = "txtAbilityPwrBuff";
-            this.txtAbilityPwrBuff.Size = new System.Drawing.Size(55, 20);
-            this.txtAbilityPwrBuff.TabIndex = 31;
-            this.txtAbilityPwrBuff.TextChanged += new System.EventHandler(this.txtAbilityPwrBuff_TextChanged);
-            // 
-            // txtSpeedBuff
-            // 
-            this.txtSpeedBuff.Location = new System.Drawing.Point(120, 103);
-            this.txtSpeedBuff.Name = "txtSpeedBuff";
-            this.txtSpeedBuff.Size = new System.Drawing.Size(56, 20);
-            this.txtSpeedBuff.TabIndex = 30;
-            this.txtSpeedBuff.TextChanged += new System.EventHandler(this.txtSpeedBuff_TextChanged);
-            // 
-            // txtDefenseBuff
-            // 
-            this.txtDefenseBuff.Location = new System.Drawing.Point(120, 67);
-            this.txtDefenseBuff.Name = "txtDefenseBuff";
-            this.txtDefenseBuff.Size = new System.Drawing.Size(56, 20);
-            this.txtDefenseBuff.TabIndex = 29;
-            this.txtDefenseBuff.TextChanged += new System.EventHandler(this.txtDefenseBuff_TextChanged);
-            // 
-            // txtAttackBuff
-            // 
-            this.txtAttackBuff.Location = new System.Drawing.Point(120, 32);
-            this.txtAttackBuff.Name = "txtAttackBuff";
-            this.txtAttackBuff.Size = new System.Drawing.Size(56, 20);
-            this.txtAttackBuff.TabIndex = 28;
-            this.txtAttackBuff.TextChanged += new System.EventHandler(this.txtAttackBuff_TextChanged);
-            // 
-            // label10
-            // 
-            this.label10.AutoSize = true;
-            this.label10.Location = new System.Drawing.Point(117, 88);
-            this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(41, 13);
-            this.label10.TabIndex = 27;
-            this.label10.Text = "Speed:";
-            // 
-            // label11
-            // 
-            this.label11.AutoSize = true;
-            this.label11.Location = new System.Drawing.Point(193, 51);
-            this.label11.Name = "label11";
-            this.label11.Size = new System.Drawing.Size(71, 13);
-            this.label11.TabIndex = 26;
-            this.label11.Text = "Magic Resist:";
-            // 
-            // label12
-            // 
-            this.label12.AutoSize = true;
-            this.label12.Location = new System.Drawing.Point(117, 51);
-            this.label12.Name = "label12";
-            this.label12.Size = new System.Drawing.Size(50, 13);
-            this.label12.TabIndex = 25;
-            this.label12.Text = "Defense:";
-            // 
-            // label13
-            // 
-            this.label13.AutoSize = true;
-            this.label13.Location = new System.Drawing.Point(193, 16);
-            this.label13.Name = "label13";
-            this.label13.Size = new System.Drawing.Size(58, 13);
-            this.label13.TabIndex = 24;
-            this.label13.Text = "Ability Pwr:";
-            // 
-            // label14
-            // 
-            this.label14.AutoSize = true;
-            this.label14.Location = new System.Drawing.Point(117, 16);
-            this.label14.Name = "label14";
-            this.label14.Size = new System.Drawing.Size(41, 13);
-            this.label14.TabIndex = 23;
-            this.label14.Text = "Attack:";
-            // 
-            // chkHOTDOT
-            // 
-            this.chkHOTDOT.Location = new System.Drawing.Point(12, 92);
-            this.chkHOTDOT.Name = "chkHOTDOT";
-            this.chkHOTDOT.Size = new System.Drawing.Size(86, 24);
-            this.chkHOTDOT.TabIndex = 22;
-            this.chkHOTDOT.Text = "HOT/DOT?";
-            this.chkHOTDOT.UseVisualStyleBackColor = true;
-            this.chkHOTDOT.CheckedChanged += new System.EventHandler(this.chkHOTDOT_CheckedChanged);
-            // 
-            // label9
-            // 
-            this.label9.AutoSize = true;
-            this.label9.ForeColor = System.Drawing.Color.Red;
-            this.label9.Location = new System.Drawing.Point(6, 156);
-            this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(229, 13);
-            this.label9.TabIndex = 21;
-            this.label9.Text = "Hint: Negative values will reduce stats or vitals.";
-            // 
-            // txtManaDiff
-            // 
-            this.txtManaDiff.Location = new System.Drawing.Point(12, 71);
-            this.txtManaDiff.Name = "txtManaDiff";
-            this.txtManaDiff.Size = new System.Drawing.Size(86, 20);
-            this.txtManaDiff.TabIndex = 20;
-            this.txtManaDiff.TextChanged += new System.EventHandler(this.txtManaDiff_TextChanged);
-            // 
-            // txtHPDiff
-            // 
-            this.txtHPDiff.Location = new System.Drawing.Point(12, 32);
-            this.txtHPDiff.Name = "txtHPDiff";
-            this.txtHPDiff.Size = new System.Drawing.Size(86, 20);
-            this.txtHPDiff.TabIndex = 17;
-            this.txtHPDiff.TextChanged += new System.EventHandler(this.txtHPDiff_TextChanged);
-            // 
-            // lblMana
-            // 
-            this.lblMana.AutoSize = true;
-            this.lblMana.Location = new System.Drawing.Point(9, 55);
-            this.lblMana.Name = "lblMana";
-            this.lblMana.Size = new System.Drawing.Size(89, 13);
-            this.lblMana.TabIndex = 19;
-            this.lblMana.Text = "Mana Difference:";
-            // 
-            // lblHP
-            // 
-            this.lblHP.AutoSize = true;
-            this.lblHP.Location = new System.Drawing.Point(9, 16);
-            this.lblHP.Name = "lblHP";
-            this.lblHP.Size = new System.Drawing.Size(77, 13);
-            this.lblHP.TabIndex = 18;
-            this.lblHP.Text = "HP Difference:";
-            // 
             // grpWarp
             // 
+            this.grpWarp.Controls.Add(this.grpDash);
             this.grpWarp.Controls.Add(this.lblWarpDir);
             this.grpWarp.Controls.Add(this.lblWarpX);
             this.grpWarp.Controls.Add(this.lblWarpY);
@@ -792,13 +614,46 @@
             this.grpWarp.Controls.Add(this.scrlWarpY);
             this.grpWarp.Controls.Add(this.txtWarpChunk);
             this.grpWarp.Controls.Add(this.label16);
-            this.grpWarp.Location = new System.Drawing.Point(225, 273);
+            this.grpWarp.Location = new System.Drawing.Point(225, 293);
             this.grpWarp.Name = "grpWarp";
             this.grpWarp.Size = new System.Drawing.Size(200, 170);
             this.grpWarp.TabIndex = 35;
             this.grpWarp.TabStop = false;
             this.grpWarp.Text = "Warp Caster:";
             this.grpWarp.Visible = false;
+            // 
+            // grpDash
+            // 
+            this.grpDash.Controls.Add(this.lblRange);
+            this.grpDash.Controls.Add(this.scrlRange);
+            this.grpDash.Location = new System.Drawing.Point(0, 4);
+            this.grpDash.Name = "grpDash";
+            this.grpDash.Size = new System.Drawing.Size(200, 75);
+            this.grpDash.TabIndex = 38;
+            this.grpDash.TabStop = false;
+            this.grpDash.Text = "Dash";
+            this.grpDash.Visible = false;
+            // 
+            // lblRange
+            // 
+            this.lblRange.AutoSize = true;
+            this.lblRange.Location = new System.Drawing.Point(16, 23);
+            this.lblRange.Name = "lblRange";
+            this.lblRange.Size = new System.Drawing.Size(51, 13);
+            this.lblRange.TabIndex = 40;
+            this.lblRange.Text = "Range: 0";
+            // 
+            // scrlRange
+            // 
+            this.scrlRange.LargeChange = 1;
+            this.scrlRange.Location = new System.Drawing.Point(19, 38);
+            this.scrlRange.Maximum = 29;
+            this.scrlRange.Minimum = 10;
+            this.scrlRange.Name = "scrlRange";
+            this.scrlRange.Size = new System.Drawing.Size(168, 18);
+            this.scrlRange.TabIndex = 39;
+            this.scrlRange.Value = 10;
+            this.scrlRange.Scroll += new System.Windows.Forms.ScrollEventHandler(this.scrlRange_Scroll);
             // 
             // lblWarpDir
             // 
@@ -884,7 +739,7 @@
             this.groupBox4.Controls.Add(this.lblCastDuration);
             this.groupBox4.Controls.Add(this.lblCooldownDuration);
             this.groupBox4.Controls.Add(this.scrlCastDuration);
-            this.groupBox4.Location = new System.Drawing.Point(509, 273);
+            this.groupBox4.Location = new System.Drawing.Point(509, 308);
             this.groupBox4.Name = "groupBox4";
             this.groupBox4.Size = new System.Drawing.Size(154, 170);
             this.groupBox4.TabIndex = 36;
@@ -925,14 +780,216 @@
             this.label5.TabIndex = 22;
             this.label5.Text = "HP Cost:";
             // 
+            // grpBuffDebuff
+            // 
+            this.grpBuffDebuff.Controls.Add(this.cmbExtraEffect);
+            this.grpBuffDebuff.Controls.Add(this.label7);
+            this.grpBuffDebuff.Controls.Add(this.scrlBuffDuration);
+            this.grpBuffDebuff.Controls.Add(this.lblBuffDuration);
+            this.grpBuffDebuff.Controls.Add(this.txtMagicResistBuff);
+            this.grpBuffDebuff.Controls.Add(this.txtAbilityPwrBuff);
+            this.grpBuffDebuff.Controls.Add(this.txtSpeedBuff);
+            this.grpBuffDebuff.Controls.Add(this.txtDefenseBuff);
+            this.grpBuffDebuff.Controls.Add(this.txtAttackBuff);
+            this.grpBuffDebuff.Controls.Add(this.label10);
+            this.grpBuffDebuff.Controls.Add(this.label11);
+            this.grpBuffDebuff.Controls.Add(this.label12);
+            this.grpBuffDebuff.Controls.Add(this.label13);
+            this.grpBuffDebuff.Controls.Add(this.label14);
+            this.grpBuffDebuff.Controls.Add(this.chkHOTDOT);
+            this.grpBuffDebuff.Controls.Add(this.label9);
+            this.grpBuffDebuff.Controls.Add(this.txtManaDiff);
+            this.grpBuffDebuff.Controls.Add(this.txtHPDiff);
+            this.grpBuffDebuff.Controls.Add(this.lblMana);
+            this.grpBuffDebuff.Controls.Add(this.lblHP);
+            this.grpBuffDebuff.Location = new System.Drawing.Point(221, 297);
+            this.grpBuffDebuff.Name = "grpBuffDebuff";
+            this.grpBuffDebuff.Size = new System.Drawing.Size(278, 181);
+            this.grpBuffDebuff.TabIndex = 39;
+            this.grpBuffDebuff.TabStop = false;
+            this.grpBuffDebuff.Text = "Combat Spell";
+            this.grpBuffDebuff.Visible = false;
+            // 
+            // cmbExtraEffect
+            // 
+            this.cmbExtraEffect.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbExtraEffect.FormattingEnabled = true;
+            this.cmbExtraEffect.Items.AddRange(new object[] {
+            "None",
+            "Silence",
+            "Stun",
+            "Snare",
+            "Blind"});
+            this.cmbExtraEffect.Location = new System.Drawing.Point(12, 132);
+            this.cmbExtraEffect.Name = "cmbExtraEffect";
+            this.cmbExtraEffect.Size = new System.Drawing.Size(86, 21);
+            this.cmbExtraEffect.TabIndex = 36;
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(9, 116);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(65, 13);
+            this.label7.TabIndex = 35;
+            this.label7.Text = "Extra Effect:";
+            // 
+            // scrlBuffDuration
+            // 
+            this.scrlBuffDuration.LargeChange = 1;
+            this.scrlBuffDuration.Location = new System.Drawing.Point(196, 129);
+            this.scrlBuffDuration.Maximum = 600;
+            this.scrlBuffDuration.Name = "scrlBuffDuration";
+            this.scrlBuffDuration.Size = new System.Drawing.Size(73, 18);
+            this.scrlBuffDuration.TabIndex = 34;
+            // 
+            // lblBuffDuration
+            // 
+            this.lblBuffDuration.Location = new System.Drawing.Point(193, 94);
+            this.lblBuffDuration.Name = "lblBuffDuration";
+            this.lblBuffDuration.Size = new System.Drawing.Size(79, 35);
+            this.lblBuffDuration.TabIndex = 33;
+            this.lblBuffDuration.Text = "Duration (seconds): 0.0";
+            // 
+            // txtMagicResistBuff
+            // 
+            this.txtMagicResistBuff.Location = new System.Drawing.Point(196, 67);
+            this.txtMagicResistBuff.Name = "txtMagicResistBuff";
+            this.txtMagicResistBuff.Size = new System.Drawing.Size(55, 20);
+            this.txtMagicResistBuff.TabIndex = 32;
+            // 
+            // txtAbilityPwrBuff
+            // 
+            this.txtAbilityPwrBuff.Location = new System.Drawing.Point(196, 32);
+            this.txtAbilityPwrBuff.Name = "txtAbilityPwrBuff";
+            this.txtAbilityPwrBuff.Size = new System.Drawing.Size(55, 20);
+            this.txtAbilityPwrBuff.TabIndex = 31;
+            // 
+            // txtSpeedBuff
+            // 
+            this.txtSpeedBuff.Location = new System.Drawing.Point(120, 103);
+            this.txtSpeedBuff.Name = "txtSpeedBuff";
+            this.txtSpeedBuff.Size = new System.Drawing.Size(56, 20);
+            this.txtSpeedBuff.TabIndex = 30;
+            // 
+            // txtDefenseBuff
+            // 
+            this.txtDefenseBuff.Location = new System.Drawing.Point(120, 67);
+            this.txtDefenseBuff.Name = "txtDefenseBuff";
+            this.txtDefenseBuff.Size = new System.Drawing.Size(56, 20);
+            this.txtDefenseBuff.TabIndex = 29;
+            // 
+            // txtAttackBuff
+            // 
+            this.txtAttackBuff.Location = new System.Drawing.Point(120, 32);
+            this.txtAttackBuff.Name = "txtAttackBuff";
+            this.txtAttackBuff.Size = new System.Drawing.Size(56, 20);
+            this.txtAttackBuff.TabIndex = 28;
+            // 
+            // label10
+            // 
+            this.label10.AutoSize = true;
+            this.label10.Location = new System.Drawing.Point(117, 88);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(41, 13);
+            this.label10.TabIndex = 27;
+            this.label10.Text = "Speed:";
+            // 
+            // label11
+            // 
+            this.label11.AutoSize = true;
+            this.label11.Location = new System.Drawing.Point(193, 51);
+            this.label11.Name = "label11";
+            this.label11.Size = new System.Drawing.Size(71, 13);
+            this.label11.TabIndex = 26;
+            this.label11.Text = "Magic Resist:";
+            // 
+            // label12
+            // 
+            this.label12.AutoSize = true;
+            this.label12.Location = new System.Drawing.Point(117, 51);
+            this.label12.Name = "label12";
+            this.label12.Size = new System.Drawing.Size(50, 13);
+            this.label12.TabIndex = 25;
+            this.label12.Text = "Defense:";
+            // 
+            // label13
+            // 
+            this.label13.AutoSize = true;
+            this.label13.Location = new System.Drawing.Point(193, 16);
+            this.label13.Name = "label13";
+            this.label13.Size = new System.Drawing.Size(58, 13);
+            this.label13.TabIndex = 24;
+            this.label13.Text = "Ability Pwr:";
+            // 
+            // label14
+            // 
+            this.label14.AutoSize = true;
+            this.label14.Location = new System.Drawing.Point(117, 16);
+            this.label14.Name = "label14";
+            this.label14.Size = new System.Drawing.Size(41, 13);
+            this.label14.TabIndex = 23;
+            this.label14.Text = "Attack:";
+            // 
+            // chkHOTDOT
+            // 
+            this.chkHOTDOT.Location = new System.Drawing.Point(12, 92);
+            this.chkHOTDOT.Name = "chkHOTDOT";
+            this.chkHOTDOT.Size = new System.Drawing.Size(86, 24);
+            this.chkHOTDOT.TabIndex = 22;
+            this.chkHOTDOT.Text = "HOT/DOT?";
+            this.chkHOTDOT.UseVisualStyleBackColor = true;
+            // 
+            // label9
+            // 
+            this.label9.AutoSize = true;
+            this.label9.ForeColor = System.Drawing.Color.Red;
+            this.label9.Location = new System.Drawing.Point(6, 156);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(229, 13);
+            this.label9.TabIndex = 21;
+            this.label9.Text = "Hint: Negative values will reduce stats or vitals.";
+            // 
+            // txtManaDiff
+            // 
+            this.txtManaDiff.Location = new System.Drawing.Point(12, 71);
+            this.txtManaDiff.Name = "txtManaDiff";
+            this.txtManaDiff.Size = new System.Drawing.Size(86, 20);
+            this.txtManaDiff.TabIndex = 20;
+            // 
+            // txtHPDiff
+            // 
+            this.txtHPDiff.Location = new System.Drawing.Point(12, 32);
+            this.txtHPDiff.Name = "txtHPDiff";
+            this.txtHPDiff.Size = new System.Drawing.Size(86, 20);
+            this.txtHPDiff.TabIndex = 17;
+            // 
+            // lblMana
+            // 
+            this.lblMana.AutoSize = true;
+            this.lblMana.Location = new System.Drawing.Point(9, 55);
+            this.lblMana.Name = "lblMana";
+            this.lblMana.Size = new System.Drawing.Size(89, 13);
+            this.lblMana.TabIndex = 19;
+            this.lblMana.Text = "Mana Difference:";
+            // 
+            // lblHP
+            // 
+            this.lblHP.AutoSize = true;
+            this.lblHP.Location = new System.Drawing.Point(9, 16);
+            this.lblHP.Name = "lblHP";
+            this.lblHP.Size = new System.Drawing.Size(77, 13);
+            this.lblHP.TabIndex = 18;
+            this.lblHP.Text = "HP Difference:";
+            // 
             // frmSpell
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(676, 461);
+            this.ClientSize = new System.Drawing.Size(671, 487);
             this.ControlBox = false;
-            this.Controls.Add(this.groupBox4);
             this.Controls.Add(this.grpBuffDebuff);
+            this.Controls.Add(this.groupBox4);
             this.Controls.Add(this.grpTargetInfo);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.groupBox2);
@@ -952,12 +1009,15 @@
             this.groupBox3.PerformLayout();
             this.grpTargetInfo.ResumeLayout(false);
             this.grpTargetInfo.PerformLayout();
-            this.grpBuffDebuff.ResumeLayout(false);
-            this.grpBuffDebuff.PerformLayout();
             this.grpWarp.ResumeLayout(false);
             this.grpWarp.PerformLayout();
+            this.grpDash.ResumeLayout(false);
+            this.grpDash.PerformLayout();
             this.groupBox4.ResumeLayout(false);
             this.groupBox4.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.bindingSource1)).EndInit();
+            this.grpBuffDebuff.ResumeLayout(false);
+            this.grpBuffDebuff.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -1005,7 +1065,31 @@
         private System.Windows.Forms.HScrollBar scrlCastRange;
         private System.Windows.Forms.Label lblCastRange;
         private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.GroupBox grpWarp;
+        private System.Windows.Forms.Label lblWarpDir;
+        private System.Windows.Forms.Label lblWarpX;
+        private System.Windows.Forms.Label lblWarpY;
+        private System.Windows.Forms.HScrollBar scrlWarpX;
+        private System.Windows.Forms.HScrollBar scrlWarpDir;
+        private System.Windows.Forms.HScrollBar scrlWarpY;
+        private System.Windows.Forms.TextBox txtWarpChunk;
+        private System.Windows.Forms.Label label16;
+        private System.Windows.Forms.GroupBox groupBox4;
+        private System.Windows.Forms.TextBox txtManaCost;
+        private System.Windows.Forms.TextBox txtHPCost;
+        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.TextBox txtDesc;
+        private System.Windows.Forms.BindingSource bindingSource1;
+        private System.Windows.Forms.GroupBox grpDash;
+        private System.Windows.Forms.Label lblRange;
+        private System.Windows.Forms.HScrollBar scrlRange;
+        private System.Windows.Forms.HScrollBar scrlProjectile;
+        private System.Windows.Forms.Label lblProjectile;
         private System.Windows.Forms.GroupBox grpBuffDebuff;
+        private System.Windows.Forms.ComboBox cmbExtraEffect;
+        private System.Windows.Forms.Label label7;
         private System.Windows.Forms.HScrollBar scrlBuffDuration;
         private System.Windows.Forms.Label lblBuffDuration;
         private System.Windows.Forms.TextBox txtMagicResistBuff;
@@ -1024,23 +1108,5 @@
         private System.Windows.Forms.TextBox txtHPDiff;
         private System.Windows.Forms.Label lblMana;
         private System.Windows.Forms.Label lblHP;
-        private System.Windows.Forms.GroupBox grpWarp;
-        private System.Windows.Forms.Label lblWarpDir;
-        private System.Windows.Forms.Label lblWarpX;
-        private System.Windows.Forms.Label lblWarpY;
-        private System.Windows.Forms.HScrollBar scrlWarpX;
-        private System.Windows.Forms.HScrollBar scrlWarpDir;
-        private System.Windows.Forms.HScrollBar scrlWarpY;
-        private System.Windows.Forms.TextBox txtWarpChunk;
-        private System.Windows.Forms.Label label16;
-        private System.Windows.Forms.GroupBox groupBox4;
-        private System.Windows.Forms.TextBox txtManaCost;
-        private System.Windows.Forms.TextBox txtHPCost;
-        private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.Label label5;
-        private System.Windows.Forms.Label label6;
-        private System.Windows.Forms.TextBox txtDesc;
-        private System.Windows.Forms.ComboBox cmbExtraEffect;
-        private System.Windows.Forms.Label label7;
     }
 }

@@ -33,7 +33,6 @@ namespace Intersect_Server.Classes
         public List<EventIndex> MyEvents = new List<EventIndex>();
         public bool[] Switches;
         public int[] Variables;
-        public SpellInstance[] Spells = new SpellInstance[Constants.MaxPlayerSkills];
         public HotbarInstance[] Hotbar = new HotbarInstance[Constants.MaxHotbar];
         public int[] Equipment = new int[Enums.EquipmentSlots.Count];
         public int StatPoints = 0;
@@ -460,9 +459,38 @@ namespace Intersect_Server.Classes
             Spells[spell] = new SpellInstance();
             PacketSender.SendPlayerSpellUpdate(MyClient, spell);
         }
-        public void UseSpell(int spell)
+        public void UseSpell(int spellSlot)
         {
-            PacketSender.SendPlayerMsg(MyClient, "The use of spells is not yet implemented.");
+            int spellNum = Spells[spellSlot].SpellNum;
+            if (spellNum > -1)
+            {
+                if (Globals.GameSpells[spellNum].Cost <= Vital[(int)Enums.Vitals.Mana])
+                {
+                    if (Spells[spellSlot].SpellCD < Environment.TickCount)
+                    {
+                        if (CastTime < Environment.TickCount)
+                        {
+                            Vital[(int)Enums.Vitals.Mana] = Vital[(int)Enums.Vitals.Mana] - Globals.GameSpells[spellNum].Cost;
+                            CastTime = Environment.TickCount + Globals.GameSpells[spellNum].CastDuration;
+                            SpellCastSlot = spellSlot;
+                            PacketSender.SendEntityVitals(MyIndex, (int)Enums.Vitals.Mana, Globals.Entities[MyIndex]);
+                            PacketSender.SendEntityCastTime(MyIndex, spellNum);
+                        }
+                        else
+                        {
+                            PacketSender.SendPlayerMsg(MyClient, "You are currently channeling another skill.");
+                        }
+                    }
+                    else
+                    {
+                        PacketSender.SendPlayerMsg(MyClient, "This skill is on cooldown.");
+                    }
+                }
+                else
+                {
+                    PacketSender.SendPlayerMsg(MyClient, "Not enough mana.");
+                }
+            }
         }
 
         //Equipment

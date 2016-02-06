@@ -128,6 +128,8 @@ namespace Intersect_Server.Classes
             MapGrid,
             OpenProjectileEditor,
             ProjectileData,
+            CastTime,
+            SendSpellCooldown,
         }
 
         public enum Stats
@@ -156,6 +158,21 @@ namespace Intersect_Server.Classes
             Spell = 4
         }
 
+        public enum SpellTypes
+        {
+            CombatSpell = 0,
+            Warp = 1,
+            Dash = 2,
+        }
+
+        public enum TargetTypes
+        {
+            Self = 0,
+            Single = 1,
+            AoE = 2,
+            Projectile = 3,
+        }
+
         public enum MapListUpdates
         {
             MoveItem = 0,
@@ -175,7 +192,8 @@ namespace Intersect_Server.Classes
             Player = 1,
             Event = 2,
             Resource = 3,
-            LocalEvent = 4,
+            Projectile = 4,
+            LocalEvent = 5,
         }
 
         public const int WeaponIndex = 2;

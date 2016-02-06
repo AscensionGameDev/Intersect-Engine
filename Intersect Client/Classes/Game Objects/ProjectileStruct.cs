@@ -37,6 +37,7 @@ namespace Intersect_Client.Classes
         public int Delay = 1;
         public int Quantity = 1;
         public int Range = 1;
+        public int Spell = 0;
         public bool Homing = false;
         public bool AutoRotate = false;
         public Location[,] SpawnLocations = new Location[SpawnLocationsWidth, SpawnLocationsHeight];
@@ -63,6 +64,7 @@ namespace Intersect_Client.Classes
             Delay = myBuffer.ReadInteger();
             Quantity = myBuffer.ReadInteger();
             Range = myBuffer.ReadInteger();
+            Spell = myBuffer.ReadInteger();
             Homing = Convert.ToBoolean(myBuffer.ReadInteger());
             AutoRotate = Convert.ToBoolean(myBuffer.ReadInteger());
 
@@ -89,6 +91,7 @@ namespace Intersect_Client.Classes
             myBuffer.WriteInteger(Delay);
             myBuffer.WriteInteger(Quantity);
             myBuffer.WriteInteger(Range);
+            myBuffer.WriteInteger(Spell);
             myBuffer.WriteInteger(Convert.ToInt32(Homing));
             myBuffer.WriteInteger(Convert.ToInt32(AutoRotate));
 

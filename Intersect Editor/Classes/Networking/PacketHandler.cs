@@ -277,6 +277,7 @@ namespace Intersect_Editor.Classes
             var itemnum = bf.ReadLong();
             Globals.GameItems[itemnum] = new ItemStruct();
             Globals.GameItems[itemnum].LoadByte(bf.ReadBytes(bf.Length()));
+            bf.Dispose();
         }
 
         private static void HandleItemList(byte[] packet)
@@ -288,6 +289,7 @@ namespace Intersect_Editor.Classes
                 Globals.GameItems[i] = new ItemStruct();
                 Globals.GameItems[i].Name = bf.ReadString();
             }
+            bf.Dispose();
         }
 
         private static void HandleNpcEditor()
@@ -302,6 +304,7 @@ namespace Intersect_Editor.Classes
             var npcNum = bf.ReadInteger();
             Globals.GameNpcs[npcNum] = new NpcStruct();
             Globals.GameNpcs[npcNum].Load(bf.ReadBytes(bf.Length()));
+            bf.Dispose();
         }
 
         private static void HandleNpcList(byte[] packet)
@@ -313,6 +316,7 @@ namespace Intersect_Editor.Classes
                 Globals.GameNpcs[i] = new NpcStruct();
                 Globals.GameNpcs[i].Name = bf.ReadString();
             }
+            bf.Dispose();
         }
 
         private static void HandleSpellEditor()
@@ -327,6 +331,7 @@ namespace Intersect_Editor.Classes
             var index = bf.ReadInteger();
             Globals.GameSpells[index] = new SpellStruct();
             Globals.GameSpells[index].Load(bf.ReadBytes(bf.Length()));
+            bf.Dispose();
         }
 
         private static void HandleSpellList(byte[] packet)
@@ -338,6 +343,7 @@ namespace Intersect_Editor.Classes
                 Globals.GameSpells[i] = new SpellStruct();
                 Globals.GameSpells[i].Name = bf.ReadString();
             }
+            bf.Dispose();
         }
 
         private static void HandleAnimationEditor()
@@ -352,6 +358,7 @@ namespace Intersect_Editor.Classes
             var index = bf.ReadInteger();
             Globals.GameAnimations[index] = new AnimationStruct();
             Globals.GameAnimations[index].Load(bf.ReadBytes(bf.Length()));
+            bf.Dispose();
         }
 
         private static void HandleAnimationList(byte[] packet)
@@ -363,6 +370,7 @@ namespace Intersect_Editor.Classes
                 Globals.GameAnimations[i] = new AnimationStruct();
                 Globals.GameAnimations[i].Name = bf.ReadString();
             }
+            bf.Dispose();
         }
 
         private static void HandleResourceEditor()
@@ -377,6 +385,7 @@ namespace Intersect_Editor.Classes
             var resourceNum = bf.ReadInteger();
             Globals.GameResources[resourceNum] = new ResourceStruct();
             Globals.GameResources[resourceNum].Load(bf.ReadBytes(bf.Length()));
+            bf.Dispose();
         }
 
         private static void HandleClassEditor()
@@ -391,6 +400,7 @@ namespace Intersect_Editor.Classes
             var classNum = bf.ReadInteger();
             Globals.GameClasses[classNum] = new ClassStruct();
             Globals.GameClasses[classNum].Load(bf.ReadBytes(bf.Length()));
+            bf.Dispose();
         }
 
         private static void HandleQuestEditor()
@@ -405,6 +415,7 @@ namespace Intersect_Editor.Classes
             var questNum = bf.ReadInteger();
             Globals.GameQuests[questNum] = new QuestStruct();
             Globals.GameQuests[questNum].Load(bf.ReadBytes(bf.Length()));
+            bf.Dispose();
         }
 
         private static void HandleMapGrid(byte[] packet)
@@ -412,6 +423,7 @@ namespace Intersect_Editor.Classes
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
             Globals.MapGridWindow.InitGrid(bf);
+            bf.Dispose();
         }
 
         private static void HandleProjectileEditor()
@@ -426,6 +438,7 @@ namespace Intersect_Editor.Classes
             var projectileNum = bf.ReadInteger();
             Globals.GameProjectiles[projectileNum] = new ProjectileStruct();
             Globals.GameProjectiles[projectileNum].Load(bf.ReadBytes(bf.Length()));
+            bf.Dispose();
         }
     }
 }

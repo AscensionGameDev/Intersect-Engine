@@ -128,6 +128,8 @@ namespace Intersect_Editor.Classes
             MapGrid,
             OpenProjectileEditor,
             ProjectileData,
+            CastTime,
+            SendSpellCooldown,
         }
 
         public enum Stats

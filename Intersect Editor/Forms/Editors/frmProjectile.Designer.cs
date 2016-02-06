@@ -36,6 +36,8 @@
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.picSpawns = new System.Windows.Forms.PictureBox();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.lblSpell = new System.Windows.Forms.Label();
+            this.scrlSpell = new System.Windows.Forms.HScrollBar();
             this.chkRotation = new System.Windows.Forms.CheckBox();
             this.lblAnimation = new System.Windows.Forms.Label();
             this.scrlAnimation = new System.Windows.Forms.HScrollBar();
@@ -64,7 +66,7 @@
             this.groupBox1.Controls.Add(this.lstProjectiles);
             this.groupBox1.Location = new System.Drawing.Point(12, 12);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(203, 444);
+            this.groupBox1.Size = new System.Drawing.Size(203, 467);
             this.groupBox1.TabIndex = 15;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Projectiles";
@@ -72,7 +74,7 @@
             // btnCancel
             // 
             this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.btnCancel.Location = new System.Drawing.Point(6, 408);
+            this.btnCancel.Location = new System.Drawing.Point(6, 427);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(190, 27);
             this.btnCancel.TabIndex = 4;
@@ -83,7 +85,7 @@
             // btnDelete
             // 
             this.btnDelete.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.btnDelete.Location = new System.Drawing.Point(7, 375);
+            this.btnDelete.Location = new System.Drawing.Point(6, 394);
             this.btnDelete.Name = "btnDelete";
             this.btnDelete.Size = new System.Drawing.Size(190, 27);
             this.btnDelete.TabIndex = 3;
@@ -93,7 +95,7 @@
             // 
             // btnSave
             // 
-            this.btnSave.Location = new System.Drawing.Point(6, 342);
+            this.btnSave.Location = new System.Drawing.Point(6, 361);
             this.btnSave.Name = "btnSave";
             this.btnSave.Size = new System.Drawing.Size(190, 27);
             this.btnSave.TabIndex = 2;
@@ -106,14 +108,14 @@
             this.lstProjectiles.FormattingEnabled = true;
             this.lstProjectiles.Location = new System.Drawing.Point(6, 19);
             this.lstProjectiles.Name = "lstProjectiles";
-            this.lstProjectiles.Size = new System.Drawing.Size(191, 316);
+            this.lstProjectiles.Size = new System.Drawing.Size(191, 329);
             this.lstProjectiles.TabIndex = 1;
             this.lstProjectiles.Click += new System.EventHandler(this.lstProjectiles_Click);
             // 
             // groupBox2
             // 
             this.groupBox2.Controls.Add(this.picSpawns);
-            this.groupBox2.Location = new System.Drawing.Point(221, 264);
+            this.groupBox2.Location = new System.Drawing.Point(221, 287);
             this.groupBox2.Name = "groupBox2";
             this.groupBox2.Size = new System.Drawing.Size(186, 192);
             this.groupBox2.TabIndex = 17;
@@ -131,6 +133,8 @@
             // 
             // groupBox3
             // 
+            this.groupBox3.Controls.Add(this.lblSpell);
+            this.groupBox3.Controls.Add(this.scrlSpell);
             this.groupBox3.Controls.Add(this.chkRotation);
             this.groupBox3.Controls.Add(this.lblAnimation);
             this.groupBox3.Controls.Add(this.scrlAnimation);
@@ -147,15 +151,33 @@
             this.groupBox3.Controls.Add(this.scrlSpeed);
             this.groupBox3.Location = new System.Drawing.Point(221, 12);
             this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(186, 246);
+            this.groupBox3.Size = new System.Drawing.Size(186, 269);
             this.groupBox3.TabIndex = 18;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Properties";
             // 
+            // lblSpell
+            // 
+            this.lblSpell.AutoSize = true;
+            this.lblSpell.Location = new System.Drawing.Point(15, 210);
+            this.lblSpell.Name = "lblSpell";
+            this.lblSpell.Size = new System.Drawing.Size(112, 13);
+            this.lblSpell.TabIndex = 24;
+            this.lblSpell.Text = "Collision Spell: 0 None";
+            // 
+            // scrlSpell
+            // 
+            this.scrlSpell.Location = new System.Drawing.Point(16, 223);
+            this.scrlSpell.Name = "scrlSpell";
+            this.scrlSpell.Size = new System.Drawing.Size(160, 17);
+            this.scrlSpell.TabIndex = 23;
+            this.scrlSpell.Value = 1;
+            this.scrlSpell.Scroll += new System.Windows.Forms.ScrollEventHandler(this.scrlSpell_Scroll);
+            // 
             // chkRotation
             // 
             this.chkRotation.AutoSize = true;
-            this.chkRotation.Location = new System.Drawing.Point(86, 222);
+            this.chkRotation.Location = new System.Drawing.Point(91, 243);
             this.chkRotation.Name = "chkRotation";
             this.chkRotation.Size = new System.Drawing.Size(89, 17);
             this.chkRotation.TabIndex = 22;
@@ -201,7 +223,7 @@
             // chkHoming
             // 
             this.chkHoming.AutoSize = true;
-            this.chkHoming.Location = new System.Drawing.Point(16, 222);
+            this.chkHoming.Location = new System.Drawing.Point(18, 243);
             this.chkHoming.Name = "chkHoming";
             this.chkHoming.Size = new System.Drawing.Size(68, 17);
             this.chkHoming.TabIndex = 8;
@@ -212,7 +234,7 @@
             // lblRange
             // 
             this.lblRange.AutoSize = true;
-            this.lblRange.Location = new System.Drawing.Point(12, 180);
+            this.lblRange.Location = new System.Drawing.Point(15, 180);
             this.lblRange.Name = "lblRange";
             this.lblRange.Size = new System.Drawing.Size(51, 13);
             this.lblRange.TabIndex = 7;
@@ -291,7 +313,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(417, 466);
+            this.ClientSize = new System.Drawing.Size(417, 489);
             this.ControlBox = false;
             this.Controls.Add(this.groupBox3);
             this.Controls.Add(this.groupBox2);
@@ -333,6 +355,8 @@
         private System.Windows.Forms.CheckBox chkRotation;
         private System.Windows.Forms.Label lblAnimation;
         private System.Windows.Forms.HScrollBar scrlAnimation;
+        private System.Windows.Forms.Label lblSpell;
+        private System.Windows.Forms.HScrollBar scrlSpell;
 
     }
 }

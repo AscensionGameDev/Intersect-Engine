@@ -61,6 +61,7 @@ namespace Intersect_Editor.Forms
                 }
             }
 
+            scrlProjectile.Maximum = Constants.MaxProjectiles;
             UpdateEditor();
         }
 
@@ -112,6 +113,7 @@ namespace Intersect_Editor.Forms
             scrlEffectAmount.Value = Globals.GameItems[_editorIndex].Data3;
             chk2Hand.Checked = Convert.ToBoolean(Globals.GameItems[_editorIndex].Data4);
             cmbPaperdoll.SelectedIndex = cmbPaperdoll.FindString(Globals.GameItems[_editorIndex].Paperdoll);
+            scrlProjectile.Value = Globals.GameItems[_editorIndex].Projectile;
             if (cmbPic.SelectedIndex > 0) { picItem.BackgroundImage = Bitmap.FromFile("Resources/Items/" + cmbPic.Text); }
             else { picItem.BackgroundImage = null; }
             _changed[_editorIndex] = true;
@@ -379,5 +381,17 @@ namespace Intersect_Editor.Forms
             lblEffectPercent.Text = "Effect Amount: " + Globals.GameItems[_editorIndex].Data3 + "%";
         }
 
+        private void scrlProjectile_ValueChanged(object sender, EventArgs e)
+        {
+            Globals.GameItems[_editorIndex].Projectile = scrlProjectile.Value;
+            if (scrlProjectile.Value > 0)
+            {
+                lblProjectile.Text = "Projectile: " + scrlProjectile.Value + " " + Globals.GameProjectiles[scrlProjectile.Value].Name;
+            }
+            else
+            {
+                lblProjectile.Text = "Projectile: " + scrlProjectile.Value + " None";
+            }
+        }
     }
 }

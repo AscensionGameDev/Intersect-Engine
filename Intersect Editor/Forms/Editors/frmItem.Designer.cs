@@ -66,6 +66,8 @@ namespace Intersect_Editor.Forms
             this.scrlAbilityPowerReq = new System.Windows.Forms.HScrollBar();
             this.scrlAttackReq = new System.Windows.Forms.HScrollBar();
             this.gbEquipment = new System.Windows.Forms.GroupBox();
+            this.lblProjectile = new System.Windows.Forms.Label();
+            this.scrlProjectile = new System.Windows.Forms.HScrollBar();
             this.lblEffectPercent = new System.Windows.Forms.Label();
             this.scrlEffectAmount = new System.Windows.Forms.HScrollBar();
             this.cmbEquipmentBonus = new System.Windows.Forms.ComboBox();
@@ -465,6 +467,8 @@ namespace Intersect_Editor.Forms
             // 
             // gbEquipment
             // 
+            this.gbEquipment.Controls.Add(this.lblProjectile);
+            this.gbEquipment.Controls.Add(this.scrlProjectile);
             this.gbEquipment.Controls.Add(this.lblEffectPercent);
             this.gbEquipment.Controls.Add(this.scrlEffectAmount);
             this.gbEquipment.Controls.Add(this.cmbEquipmentBonus);
@@ -498,6 +502,25 @@ namespace Intersect_Editor.Forms
             this.gbEquipment.TabStop = false;
             this.gbEquipment.Text = "Equipment";
             this.gbEquipment.Visible = false;
+            // 
+            // lblProjectile
+            // 
+            this.lblProjectile.AutoSize = true;
+            this.lblProjectile.Location = new System.Drawing.Point(195, 107);
+            this.lblProjectile.Name = "lblProjectile";
+            this.lblProjectile.Size = new System.Drawing.Size(91, 13);
+            this.lblProjectile.TabIndex = 33;
+            this.lblProjectile.Text = "Projectile: 0 None";
+            this.lblProjectile.Visible = false;
+            // 
+            // scrlProjectile
+            // 
+            this.scrlProjectile.Location = new System.Drawing.Point(326, 103);
+            this.scrlProjectile.Name = "scrlProjectile";
+            this.scrlProjectile.Size = new System.Drawing.Size(102, 17);
+            this.scrlProjectile.TabIndex = 32;
+            this.scrlProjectile.Visible = false;
+            this.scrlProjectile.ValueChanged += new System.EventHandler(this.scrlProjectile_ValueChanged);
             // 
             // lblEffectPercent
             // 
@@ -560,7 +583,7 @@ namespace Intersect_Editor.Forms
             // chk2Hand
             // 
             this.chk2Hand.AutoSize = true;
-            this.chk2Hand.Location = new System.Drawing.Point(198, 107);
+            this.chk2Hand.Location = new System.Drawing.Point(198, 136);
             this.chk2Hand.Name = "chk2Hand";
             this.chk2Hand.Size = new System.Drawing.Size(61, 17);
             this.chk2Hand.TabIndex = 25;
@@ -593,9 +616,9 @@ namespace Intersect_Editor.Forms
             this.cmbPaperdoll.FormattingEnabled = true;
             this.cmbPaperdoll.Items.AddRange(new object[] {
             "None"});
-            this.cmbPaperdoll.Location = new System.Drawing.Point(226, 181);
+            this.cmbPaperdoll.Location = new System.Drawing.Point(198, 172);
             this.cmbPaperdoll.Name = "cmbPaperdoll";
-            this.cmbPaperdoll.Size = new System.Drawing.Size(194, 21);
+            this.cmbPaperdoll.Size = new System.Drawing.Size(96, 21);
             this.cmbPaperdoll.TabIndex = 22;
             this.cmbPaperdoll.Text = "None";
             this.cmbPaperdoll.SelectedIndexChanged += new System.EventHandler(this.cmbPaperdoll_SelectedIndexChanged);
@@ -603,7 +626,7 @@ namespace Intersect_Editor.Forms
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(223, 165);
+            this.label5.Location = new System.Drawing.Point(195, 156);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(54, 13);
             this.label5.TabIndex = 21;
@@ -624,11 +647,12 @@ namespace Intersect_Editor.Forms
             this.scrlRange.Name = "scrlRange";
             this.scrlRange.Size = new System.Drawing.Size(80, 18);
             this.scrlRange.TabIndex = 19;
+            this.scrlRange.Scroll += new System.Windows.Forms.ScrollEventHandler(this.scrlRange_Scroll);
             this.scrlRange.ValueChanged += new System.EventHandler(this.scrlRange_Scroll);
             // 
             // picPaperdoll
             // 
-            this.picPaperdoll.Location = new System.Drawing.Point(292, 103);
+            this.picPaperdoll.Location = new System.Drawing.Point(305, 132);
             this.picPaperdoll.Name = "picPaperdoll";
             this.picPaperdoll.Size = new System.Drawing.Size(128, 64);
             this.picPaperdoll.TabIndex = 16;
@@ -934,6 +958,8 @@ namespace Intersect_Editor.Forms
         private Label label9;
         private ComboBox cmbToolType;
         private Label lblToolType;
+        private Label lblProjectile;
+        private HScrollBar scrlProjectile;
 
     }
 }

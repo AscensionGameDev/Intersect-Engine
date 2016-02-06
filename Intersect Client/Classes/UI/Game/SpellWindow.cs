@@ -207,17 +207,17 @@ namespace Intersect_Client.Classes.UI.Game
 
         public void Update()
         {
-            if (texLoaded == false || currentSpell != Globals.Me.Spells[myindex].SpellNum || iconCD != (Globals.Me.Spells[myindex].SpellCD > 0))
+            if (texLoaded == false || currentSpell != Globals.Me.Spells[myindex].SpellNum || iconCD != (Globals.Me.Spells[myindex].SpellCD > Environment.TickCount))
             {
                 if (Globals.Me.Spells[myindex].SpellNum > -1)
                 {
                     sfTex = Gui.CreateSpellTex(Globals.Me.Spells[myindex].SpellNum, 0, 0, 32, 32,
-                        (Globals.Me.Spells[myindex].SpellCD > 0), null);
+                        (Globals.Me.Spells[myindex].SpellCD > Environment.TickCount), null);
                     gwenTex = Gui.SFMLToGwenTexture(sfTex.Texture);
                     pnl.Texture = gwenTex;
                     texLoaded = true;
                     currentSpell = Globals.Me.Spells[myindex].SpellNum;
-                    iconCD = (Globals.Me.Spells[myindex].SpellCD > 0);
+                    iconCD = (Globals.Me.Spells[myindex].SpellCD > Environment.TickCount);
                 }
             }
             if (!IsDragging)

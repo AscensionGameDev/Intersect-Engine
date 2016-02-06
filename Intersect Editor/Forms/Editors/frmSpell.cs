@@ -44,6 +44,7 @@ namespace Intersect_Editor.Forms
 
         private void frmSpell_Load(object sender, EventArgs e)
         {
+            scrlProjectile.Maximum = Constants.MaxProjectiles;
             lstSpells.SelectedIndex = 0;
             cmbSprite.Items.Clear();
             cmbSprite.Items.Add("None");
@@ -171,6 +172,8 @@ namespace Intersect_Editor.Forms
             scrlHitRadius.Hide();
             lblCastRange.Hide();
             scrlCastRange.Hide();
+            lblProjectile.Hide();
+            scrlProjectile.Hide();
             if (cmbTargetType.SelectedIndex == cmbTargetType.Items.IndexOf("AOE"))
             {
                 lblHitRadius.Show();
@@ -184,6 +187,20 @@ namespace Intersect_Editor.Forms
                 scrlCastRange.Show();
                 scrlCastRange.Value = Globals.GameSpells[_editorIndex].CastRange;
                 lblCastRange.Text = "Cast Range: " + scrlCastRange.Value;
+            }
+            if (cmbTargetType.SelectedIndex == cmbTargetType.Items.IndexOf("Linear (projectile)"))
+            {
+                lblProjectile.Show();
+                scrlProjectile.Show();
+                scrlProjectile.Value = Globals.GameSpells[_editorIndex].Data4;
+                if (scrlProjectile.Value == 0)
+                {
+                    lblProjectile.Text = "Projectile: 0 None";
+                }
+                else
+                {
+                    lblProjectile.Text = "Projectile: " + scrlProjectile.Value + " " + Globals.GameProjectiles[scrlProjectile.Value - 1].Name;
+                }
             }
         }
 
@@ -456,6 +473,25 @@ namespace Intersect_Editor.Forms
         private void frmSpell_FormClosed(object sender, FormClosedEventArgs e)
         {
             Globals.CurrentEditor = -1;
+        }
+
+        private void scrlRange_Scroll(object sender, ScrollEventArgs e)
+        {
+            lblRange.Text = "Range: " + scrlRange.Value;
+            Globals.GameSpells[_editorIndex].Data1 = scrlRange.Value;
+        }
+
+        private void scrlProjectile_Scroll(object sender, ScrollEventArgs e)
+        {
+            if (scrlProjectile.Value == 0)
+            {
+                lblProjectile.Text = "Projectile: 0 None";
+            }
+            else
+            {
+                lblProjectile.Text = "Projectile: " + scrlProjectile.Value + " " + Globals.GameProjectiles[scrlProjectile.Value - 1].Name;
+            }
+            Globals.GameSpells[_editorIndex].Data4 = scrlProjectile.Value;
         }
 
     }

@@ -48,8 +48,15 @@ namespace Intersect_Server.Classes
         public int[] Vital = new int[(int)Enums.Vitals.VitalCount];
         public int[] Stat = new int[(int)Enums.Stats.StatCount];
 
+        //Combat Status
+        public long CastTime = 0;
+        public int SpellCastSlot = 0;
+
         //Inventory
         public ItemInstance[] Inventory = new ItemInstance[Constants.MaxInvItems];
+
+        //Spells
+        public SpellInstance[] Spells = new SpellInstance[Constants.MaxPlayerSkills];
 
         public long MoveTimer;
         
@@ -81,7 +88,7 @@ namespace Intersect_Server.Classes
         }
 
         //Movement
-        public bool CanMove(int moveDir)
+        public int CanMove(int moveDir)
         {
             var tmpX = CurrentX;
             var tmpY = CurrentY;
@@ -99,6 +106,22 @@ namespace Intersect_Server.Classes
                 case 3:
                     tmpX++;
                     break;
+                case 4:
+                    tmpY--;
+                    tmpX--;
+                    break;
+                case 5:
+                    tmpY--;
+                    tmpX++;
+                    break;
+                case 6:
+                    tmpY++;
+                    tmpX--;
+                    break;
+                case 7:
+                    tmpY++;
+                    tmpX++;
+                    break;
             }
             var tmpMap = CurrentMap;
             try
@@ -113,17 +136,17 @@ namespace Intersect_Server.Classes
                         {
                             if (Globals.GameMaps[Database.MapGrids[Globals.GameMaps[tmpMap].MapGrid].MyGrid[Globals.GameMaps[tmpMap].MapGridX - 1, Globals.GameMaps[tmpMap].MapGridY - 1]].Attributes[tmpX, tmpY].value == (int)Enums.MapAttributes.Blocked)
                             {
-                                return true;
+                                return 1;
                             }
                             if (Globals.GameMaps[Database.MapGrids[Globals.GameMaps[tmpMap].MapGrid].MyGrid[Globals.GameMaps[tmpMap].MapGridX - 1, Globals.GameMaps[tmpMap].MapGridY - 1]].Attributes[tmpX, tmpY].value == (int)Enums.MapAttributes.NPCAvoid && this.GetType() == typeof(Npc))
                             {
-                                return true;
+                                return 1;
                             }
                             tmpMap = Database.MapGrids[Globals.GameMaps[tmpMap].MapGrid].MyGrid[Globals.GameMaps[tmpMap].MapGridX - 1, Globals.GameMaps[tmpMap].MapGridY - 1];
                         }
                         else
                         {
-                            return true;
+                            return 1;
                         }
                     }
                     else if (tmpY > (Globals.MapHeight - 1))
@@ -133,17 +156,17 @@ namespace Intersect_Server.Classes
                         {
                             if (Globals.GameMaps[Database.MapGrids[Globals.GameMaps[tmpMap].MapGrid].MyGrid[Globals.GameMaps[tmpMap].MapGridX - 1, Globals.GameMaps[tmpMap].MapGridY + 1]].Attributes[tmpX, tmpY].value == (int)Enums.MapAttributes.Blocked)
                             {
-                                return true;
+                                return 1;
                             }
                             if (Globals.GameMaps[Database.MapGrids[Globals.GameMaps[tmpMap].MapGrid].MyGrid[Globals.GameMaps[tmpMap].MapGridX - 1, Globals.GameMaps[tmpMap].MapGridY + 1]].Attributes[tmpX, tmpY].value == (int)Enums.MapAttributes.NPCAvoid && this.GetType() == typeof(Npc))
                             {
-                                return true;
+                                return 1;
                             }
                             tmpMap = Database.MapGrids[Globals.GameMaps[tmpMap].MapGrid].MyGrid[Globals.GameMaps[tmpMap].MapGridX - 1, Globals.GameMaps[tmpMap].MapGridY + 1];
                         }
                         else
                         {
-                            return true;
+                            return 1;
                         }
                     }
                     else
@@ -152,17 +175,17 @@ namespace Intersect_Server.Classes
                         {
                             if (Globals.GameMaps[Database.MapGrids[Globals.GameMaps[tmpMap].MapGrid].MyGrid[Globals.GameMaps[tmpMap].MapGridX - 1, Globals.GameMaps[tmpMap].MapGridY]].Attributes[tmpX, tmpY].value == (int)Enums.MapAttributes.Blocked)
                             {
-                                return true;
+                                return 1;
                             }
                             if (Globals.GameMaps[Database.MapGrids[Globals.GameMaps[tmpMap].MapGrid].MyGrid[Globals.GameMaps[tmpMap].MapGridX - 1, Globals.GameMaps[tmpMap].MapGridY]].Attributes[tmpX, tmpY].value == (int)Enums.MapAttributes.NPCAvoid && this.GetType() == typeof(Npc))
                             {
-                                return true;
+                                return 1;
                             }
                             tmpMap = Database.MapGrids[Globals.GameMaps[tmpMap].MapGrid].MyGrid[Globals.GameMaps[tmpMap].MapGridX - 1, Globals.GameMaps[tmpMap].MapGridY];
                         }
                         else
                         {
-                            return true;
+                            return 1;
                         }
                     }
                 }
@@ -176,17 +199,17 @@ namespace Intersect_Server.Classes
                         {
                             if (Globals.GameMaps[Database.MapGrids[Globals.GameMaps[tmpMap].MapGrid].MyGrid[Globals.GameMaps[tmpMap].MapGridX + 1, Globals.GameMaps[tmpMap].MapGridY - 1]].Attributes[tmpX, tmpY].value == (int)Enums.MapAttributes.Blocked)
                             {
-                                return true;
+                                return 1;
                             }
                             if (Globals.GameMaps[Database.MapGrids[Globals.GameMaps[tmpMap].MapGrid].MyGrid[Globals.GameMaps[tmpMap].MapGridX + 1, Globals.GameMaps[tmpMap].MapGridY - 1]].Attributes[tmpX, tmpY].value == (int)Enums.MapAttributes.NPCAvoid && this.GetType() == typeof(Npc))
                             {
-                                return true;
+                                return 1;
                             }
                             tmpMap = Database.MapGrids[Globals.GameMaps[tmpMap].MapGrid].MyGrid[Globals.GameMaps[tmpMap].MapGridX + 1, Globals.GameMaps[tmpMap].MapGridY - 1];
                         }
                         else
                         {
-                            return true;
+                            return 1;
                         }
                     }
                     else if (tmpY > (Globals.MapHeight - 1))
@@ -196,17 +219,17 @@ namespace Intersect_Server.Classes
                         {
                             if (Globals.GameMaps[Database.MapGrids[Globals.GameMaps[tmpMap].MapGrid].MyGrid[Globals.GameMaps[tmpMap].MapGridX + 1, Globals.GameMaps[tmpMap].MapGridY + 1]].Attributes[tmpX, tmpY].value == (int)Enums.MapAttributes.Blocked)
                             {
-                                return true;
+                                return 1;
                             }
                             if (Globals.GameMaps[Database.MapGrids[Globals.GameMaps[tmpMap].MapGrid].MyGrid[Globals.GameMaps[tmpMap].MapGridX + 1, Globals.GameMaps[tmpMap].MapGridY + 1]].Attributes[tmpX, tmpY].value == (int)Enums.MapAttributes.NPCAvoid && this.GetType() == typeof(Npc))
                             {
-                                return true;
+                                return 1;
                             }
                             tmpMap = Database.MapGrids[Globals.GameMaps[tmpMap].MapGrid].MyGrid[Globals.GameMaps[tmpMap].MapGridX + 1, Globals.GameMaps[tmpMap].MapGridY + 1];
                         }
                         else
                         {
-                            return true;
+                            return 1;
                         }
                     }
                     else
@@ -215,17 +238,17 @@ namespace Intersect_Server.Classes
                         {
                             if (Globals.GameMaps[Database.MapGrids[Globals.GameMaps[tmpMap].MapGrid].MyGrid[Globals.GameMaps[tmpMap].MapGridX + 1, Globals.GameMaps[tmpMap].MapGridY]].Attributes[tmpX, tmpY].value == (int)Enums.MapAttributes.Blocked)
                             {
-                                return true;
+                                return 1;
                             }
                             if (Globals.GameMaps[Database.MapGrids[Globals.GameMaps[tmpMap].MapGrid].MyGrid[Globals.GameMaps[tmpMap].MapGridX + 1, Globals.GameMaps[tmpMap].MapGridY]].Attributes[tmpX, tmpY].value == (int)Enums.MapAttributes.NPCAvoid && this.GetType() == typeof(Npc))
                             {
-                                return true;
+                                return 1;
                             }
                             tmpMap = Database.MapGrids[Globals.GameMaps[tmpMap].MapGrid].MyGrid[Globals.GameMaps[tmpMap].MapGridX + 1, Globals.GameMaps[tmpMap].MapGridY];
                         }
                         else
                         {
-                            return true;
+                            return 1;
                         }
                     }
                 }
@@ -236,17 +259,17 @@ namespace Intersect_Server.Classes
                     {
                         if (Globals.GameMaps[Database.MapGrids[Globals.GameMaps[tmpMap].MapGrid].MyGrid[Globals.GameMaps[tmpMap].MapGridX, Globals.GameMaps[tmpMap].MapGridY - 1]].Attributes[tmpX, tmpY].value == (int)Enums.MapAttributes.Blocked)
                         {
-                            return true;
+                            return 1;
                         }
                         if (Globals.GameMaps[Database.MapGrids[Globals.GameMaps[tmpMap].MapGrid].MyGrid[Globals.GameMaps[tmpMap].MapGridX, Globals.GameMaps[tmpMap].MapGridY - 1]].Attributes[tmpX, tmpY].value == (int)Enums.MapAttributes.NPCAvoid && this.GetType() == typeof(Npc))
                         {
-                            return true;
+                            return 1;
                         }
                         tmpMap = Database.MapGrids[Globals.GameMaps[tmpMap].MapGrid].MyGrid[Globals.GameMaps[tmpMap].MapGridX, Globals.GameMaps[tmpMap].MapGridY - 1];
                     }
                     else
                     {
-                        return true;
+                        return 1;
                     }
                 }
                 else if (tmpY > (Globals.MapHeight - 1))
@@ -256,17 +279,17 @@ namespace Intersect_Server.Classes
                     {
                         if (Globals.GameMaps[Database.MapGrids[Globals.GameMaps[tmpMap].MapGrid].MyGrid[Globals.GameMaps[tmpMap].MapGridX, Globals.GameMaps[tmpMap].MapGridY + 1]].Attributes[tmpX, tmpY].value == (int)Enums.MapAttributes.Blocked)
                         {
-                            return true;
+                            return 1;
                         }
                         if (Globals.GameMaps[Database.MapGrids[Globals.GameMaps[tmpMap].MapGrid].MyGrid[Globals.GameMaps[tmpMap].MapGridX, Globals.GameMaps[tmpMap].MapGridY + 1]].Attributes[tmpX, tmpY].value == (int)Enums.MapAttributes.NPCAvoid && this.GetType() == typeof(Npc))
                         {
-                            return true;
+                            return 1;
                         }
                         tmpMap = Database.MapGrids[Globals.GameMaps[tmpMap].MapGrid].MyGrid[Globals.GameMaps[tmpMap].MapGridX, Globals.GameMaps[tmpMap].MapGridY + 1];
                     }
                     else
                     {
-                        return true;
+                        return 1;
                     }
                 }
                 else
@@ -275,31 +298,51 @@ namespace Intersect_Server.Classes
                     {
                         if (Globals.GameMaps[Database.MapGrids[Globals.GameMaps[tmpMap].MapGrid].MyGrid[Globals.GameMaps[tmpMap].MapGridX, Globals.GameMaps[tmpMap].MapGridY]].Attributes[tmpX, tmpY].value == (int)Enums.MapAttributes.Blocked)
                         {
-                            return true;
+                            return 1;
                         }
                         if (Globals.GameMaps[Database.MapGrids[Globals.GameMaps[tmpMap].MapGrid].MyGrid[Globals.GameMaps[tmpMap].MapGridX, Globals.GameMaps[tmpMap].MapGridY]].Attributes[tmpX, tmpY].value == (int)Enums.MapAttributes.NPCAvoid && this.GetType() == typeof(Npc))
                         {
-                            return true;
+                            return 1;
                         }
                     }
                     else
                     {
-                        return true;
+                        return 1;
                     }
                 }
                 foreach (Entity t in Globals.Entities)
                 {
                     if (t == null) continue;
-                    if (t.CurrentMap == tmpMap && t.CurrentX == tmpX && t.CurrentY == tmpY)
+                    if (t.CurrentMap == tmpMap && t.CurrentX == tmpX && t.CurrentY == tmpY && t.CurrentZ == CurrentZ && t.Passable == 0)
                     {
-                        return true;
+                        //Set a target if a projectile
+                        if (this.GetType() == typeof(Projectile))
+                        {
+                            ((Projectile)this).Target = t.MyIndex;
+                        }
+                        if (t.GetType() == typeof(Player))
+                        {
+                            return 2;
+                        }
+                        else if (t.GetType() == typeof(Npc))
+                        {
+                            return 3;
+                        }
+                        else if (t.GetType() == typeof(Resource))
+                        {
+                            return 4;
+                        }
+                        else if (t.GetType() == typeof(Event))
+                        {
+                            return 5;
+                        }
                     }
                 }
-                return false;
+                return 0;
             }
             catch
             {
-                return true;
+                return 1;
 
             }
         }
@@ -309,16 +352,32 @@ namespace Intersect_Server.Classes
             var tmpY = CurrentY;
             switch (moveDir)
             {
-                case 0:
+                case 0: //Up
                     tmpY--;
                     break;
-                case 1:
+                case 1: //Down
                     tmpY++;
                     break;
-                case 2:
+                case 2: //Left
                     tmpX--;
                     break;
-                case 3:
+                case 3: //Right
+                    tmpX++;
+                    break;
+                case 4: //UpLeft
+                    tmpY--;
+                    tmpX--;
+                    break;
+                case 5: //UpRight
+                    tmpY--;
+                    tmpX++;
+                    break;
+                case 6: //DownLeft
+                    tmpY++;
+                    tmpX--;
+                    break;
+                case 7: //DownRight
+                    tmpY++;
                     tmpX++;
                     break;
             }
@@ -480,10 +539,10 @@ namespace Intersect_Server.Classes
         }
 
         //Combat
-        public void TryAttack(int enemyIndex)
+        public void TryAttack(int enemyIndex, bool isProjectile = false, bool isSpell = false)
         {
             if (Globals.Entities[enemyIndex] == null) return;
-            if (!IsOneBlockAway(enemyIndex)) return;
+            if (!IsOneBlockAway(enemyIndex) && isProjectile == false && isSpell == false) return;
             //If Entity is resource, check for the correct tool.
             if (Globals.Entities[enemyIndex].GetType() == typeof(Resource))
             {
@@ -627,6 +686,137 @@ namespace Intersect_Server.Classes
         public virtual void Warp(int newMap, int newX, int newY, int newDir)
         {
             
+        }
+
+        public void CastSpell(int SpellNum, int SpellSlot = -1)
+        {
+            switch (Globals.GameSpells[SpellNum].Type)
+            {
+                case (int)Enums.SpellTypes.CombatSpell:
+
+                    switch (Globals.GameSpells[SpellNum].TargetType)
+                    {
+                        case (int)Enums.TargetTypes.Self:
+
+                            break;
+                        case (int)Enums.TargetTypes.Single:
+
+                            break;
+                        case (int)Enums.TargetTypes.AoE:
+
+                            break;
+                        case (int)Enums.TargetTypes.Projectile:
+                            FireProjectile(Globals.GameSpells[SpellNum].Data4 - 1);
+                            break;
+                        default:
+                            break;
+                    }
+
+                    break;
+                case (int)Enums.SpellTypes.Warp:
+                    if (GetType() == typeof(Player))
+                    {
+                        Warp(Globals.GameSpells[SpellNum].Data1, Globals.GameSpells[SpellNum].Data2, Globals.GameSpells[SpellNum].Data3, Globals.GameSpells[SpellNum].Data4);
+                    }
+                    break;
+                case (int)Enums.SpellTypes.Dash:
+
+                    break;
+                default:
+                    break;
+            }
+            if (SpellSlot >= 0 && SpellSlot < Constants.MaxPlayerSkills)
+            {
+                Spells[SpellSlot].SpellCD = Environment.TickCount + (Globals.GameSpells[SpellNum].CooldownDuration * 100);
+                if (GetType() == typeof(Player))
+                {
+                    PacketSender.SendSpellCooldown(((Player)Globals.Entities[MyIndex]).MyClient, SpellSlot);
+                }
+            }
+        }
+
+        public void FireProjectile(int ProjectileNum, int Target = 0)
+        {
+            int x2 = 0;
+            int y2 = 0;
+            int xmap = 0;
+            int ymap = 0;
+
+            if (ProjectileNum == -1) { return; }
+
+            for (int x = -2; x < 2; x++)
+            {
+                xmap = CurrentMap;
+                x2 = x + CurrentX;
+                if (x2 < 0)
+                {
+                    if (Globals.GameMaps[xmap].Left != -1)
+                    {
+                        xmap = Globals.GameMaps[xmap].Left;
+                        x2 = Globals.MapWidth + x + 1;
+                    }
+                    else
+                    {
+                        xmap = -1;
+                    }
+                }
+                else if (x2 >= Globals.MapWidth)
+                {
+                    if (Globals.GameMaps[xmap].Right != -1)
+                    {
+                        xmap = Globals.GameMaps[xmap].Right;
+                        x2 = Globals.MapWidth + x + 1;
+                    }
+                    else
+                    {
+                        xmap = -1;
+                    }
+                }
+
+                if (xmap != -1)
+                {
+                    for (int y = -2; y < 2; y++)
+                    {
+                        ymap = xmap;
+                        y2 = y + CurrentY;
+                        if (y2 < 0)
+                        {
+                            if (Globals.GameMaps[xmap].Up != -1)
+                            {
+                                ymap = Globals.GameMaps[ymap].Up;
+                                y2 = Globals.MapWidth + y + 1;
+                            }
+                            else
+                            {
+                                ymap = -1;
+                            }
+                        }
+                        else if (y2 >= Globals.MapHeight)
+                        {
+                            if (Globals.GameMaps[ymap].Down != -1)
+                            {
+                                ymap = Globals.GameMaps[ymap].Right;
+                                y2 = Globals.MapHeight + y + 1;
+                            }
+                            else
+                            {
+                                ymap = -1;
+                            }
+                        }
+
+                        if (ymap != -1)
+                        {
+                            for (int d = 0; d < ProjectileStruct.MaxProjectileDirections; d++)
+                            {
+                                if (Globals.GameProjectiles[ProjectileNum].SpawnLocations[x + 2, y + 2].Directions[d] == true)
+                                {
+                                    Globals.GameMaps[ymap].SpawnMapProjectile(MyIndex, this.GetType(), ProjectileNum, ymap, x2, y2, CurrentZ, d, Target);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
 
         //Serializing Data

@@ -72,6 +72,10 @@ namespace Intersect_Client
         public int[] Vital = new int[(int)Enums.Vitals.VitalCount];
         public int[] Stat = new int[(int)Enums.Stats.StatCount];
 
+        //Combat Status
+        public long CastTime = 0;
+        public int SpellCast = 0;
+
         private long _lastUpdate;
         private long _walkTimer;
         private int _walkFrame;
@@ -358,6 +362,37 @@ namespace Intersect_Client
             fgRect.Size = new Vector2f((float)Math.Ceiling((1f * Vital[(int)Enums.Vitals.Health] / MaxVital[(int)Enums.Vitals.Health]) * (width - 2)), 4f);
             bgRect.Position = new Vector2f((int)(x - 1 - width / 2),(int)( y - 1));
             fgRect.Position = new Vector2f((int)(x - width / 2),(int)( y));
+            Graphics.RenderWindow.Draw(bgRect);
+            Graphics.RenderWindow.Draw(fgRect);
+        }
+        public void DrawCastingBar()
+        {
+            if (CastTime < Environment.TickCount) { return; }
+            int i = GetLocalPos(CurrentMap);
+            if (i == -1 || !Globals.GameMaps.ContainsKey(CurrentMap))
+            {
+                return;
+            }
+            var width = Globals.TileWidth;
+            var bgRect = new RectangleShape(new Vector2f(width, 6));
+            var fgRect = new RectangleShape(new Vector2f(width - 2, 4));
+            var y = (int)Math.Ceiling(GetCenterPos().Y);
+            var x = (int)Math.Ceiling(GetCenterPos().X);
+            if (Graphics.EntityFileNames.IndexOf(MySprite.ToLower()) >= 0)
+            {
+                y = y - (int)((Graphics.EntityTextures[Graphics.EntityFileNames.IndexOf(MySprite.ToLower())].Size.Y / 8));
+                y -= 18;
+
+                if (Graphics.EntityTextures[Graphics.EntityFileNames.IndexOf(MySprite.ToLower())].Size.X / 4 > Globals.TileWidth)
+                {
+                    x = x - (int)((Graphics.EntityTextures[Graphics.EntityFileNames.IndexOf(MySprite.ToLower())].Size.X / 4) - Globals.TileWidth) / 2;
+                }
+            }
+            bgRect.FillColor = Color.Black;
+            fgRect.FillColor = Color.White;
+            fgRect.Size = new Vector2f((float)Math.Ceiling((1f * (Globals.GameSpells[SpellCast].CastDuration - (CastTime - Environment.TickCount)) / Globals.GameSpells[SpellCast].CastDuration) * (width - 2)), 4f);
+            bgRect.Position = new Vector2f((int)(x - 1 - width / 2), (int)(y - 1));
+            fgRect.Position = new Vector2f((int)(x - width / 2), (int)(y));
             Graphics.RenderWindow.Draw(bgRect);
             Graphics.RenderWindow.Draw(fgRect);
         }

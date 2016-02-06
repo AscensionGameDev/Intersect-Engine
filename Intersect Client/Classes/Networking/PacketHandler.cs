@@ -154,6 +154,12 @@ namespace Intersect_Client.Classes
                     case Enums.ServerPackets.ProjectileData:
                         HandleProjectileData(bf.ReadBytes(bf.Length()));
                         break;
+                    case Enums.ServerPackets.CastTime:
+                        HandleCastTime(bf.ReadBytes(bf.Length()));
+                        break;
+                    case Enums.ServerPackets.SendSpellCooldown:
+                        HandleSpellCooldown(bf.ReadBytes(bf.Length()));
+                        break;
                     default:
                         Console.WriteLine(@"Non implemented packet received: " + packetHeader);
                         break;
@@ -228,6 +234,10 @@ namespace Intersect_Client.Classes
                 case (int)Enums.EntityTypes.Resource:
                     en = EntityManager.AddResource(i);
                     ((Resource)en).Load(bf);
+                    break;
+                case (int)Enums.EntityTypes.Projectile:
+                    en = EntityManager.AddProjectile(i);
+                    ((Projectile)en).Load(bf);
                     break;
                 case (int)Enums.EntityTypes.Event:
                     en = EntityManager.AddLocalEvent(i);
@@ -694,6 +704,7 @@ namespace Intersect_Client.Classes
 
             Globals.GameClasses[classNum] = new ClassStruct();
             Globals.GameClasses[classNum].Load(bf.ReadBytes(bf.Length()));
+            bf.Dispose();
         }
 
         private static void HandleCreateCharacter()
@@ -710,6 +721,7 @@ namespace Intersect_Client.Classes
             var questNum = bf.ReadInteger();
             Globals.GameQuests[questNum] = new QuestStruct();
             Globals.GameQuests[questNum].Load(bf.ReadBytes(bf.Length()));
+            bf.Dispose();
         }
 
         private static void HandleOpenAdminWindow()
@@ -724,6 +736,27 @@ namespace Intersect_Client.Classes
             var projectileNum = bf.ReadInteger();
             Globals.GameProjectiles[projectileNum] = new ProjectileStruct();
             Globals.GameProjectiles[projectileNum].Load(bf.ReadBytes(bf.Length()));
+            bf.Dispose();
+        }
+
+        private static void HandleCastTime(byte[] packet)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteBytes(packet);
+            int EntityNum = bf.ReadInteger();
+            int SpellNum = bf.ReadInteger();
+            Globals.Entities[EntityNum].CastTime = Environment.TickCount + Globals.GameSpells[SpellNum].CastDuration;
+            Globals.Entities[EntityNum].SpellCast = SpellNum;
+            bf.Dispose();
+        }
+
+        private static void HandleSpellCooldown(byte[] packet)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteBytes(packet);
+            int SpellSlot = bf.ReadInteger();
+            Globals.Me.Spells[SpellSlot].SpellCD = Environment.TickCount + (Globals.GameSpells[Globals.Me.Spells[SpellSlot].SpellNum].CooldownDuration * 100);
+            bf.Dispose();
         }
     }
 }

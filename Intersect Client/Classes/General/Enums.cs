@@ -137,6 +137,8 @@ namespace Intersect_Client.Classes
             MapGrid,
             OpenProjectileEditor,
             ProjectileData,
+            CastTime,
+            SendSpellCooldown,
         }
 
         public enum Stats
@@ -209,7 +211,8 @@ namespace Intersect_Client.Classes
             Player = 1,
             Event = 2,
             Resource = 3,
-            LocalEvent = 4,
+            Projectile = 4,
+            LocalEvent = 5,
         }
 
         public static int WeaponIndex = 2;

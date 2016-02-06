@@ -781,7 +781,7 @@ namespace Intersect_Server.Classes
                         if (reader.GetInt32(columns.IndexOf("slot")) < Constants.MaxPlayerSkills)
                         {
                             ((Player)en).Spells[reader.GetInt32(columns.IndexOf("slot"))].SpellNum = reader.GetInt32(columns.IndexOf("spellnum"));
-                            ((Player)en).Spells[reader.GetInt32(columns.IndexOf("slot"))].SpellCD = reader.GetInt32(columns.IndexOf("spellcd"));
+                            ((Player)en).Spells[reader.GetInt32(columns.IndexOf("slot"))].SpellCD = 0;
                         }
                     }
                     reader.Close();

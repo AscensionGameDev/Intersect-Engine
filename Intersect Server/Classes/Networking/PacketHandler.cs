@@ -571,6 +571,19 @@ namespace Intersect_Server.Classes
         {
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
+
+            //Fire projectile instead if weapon has it
+            if (client.Entity.Equipment[Enums.WeaponIndex] > 0)
+            {
+                if (Globals.GameItems[client.Entity.Equipment[Enums.WeaponIndex]].Projectile > 0)
+                {
+                    client.Entity.FireProjectile(Globals.GameItems[client.Entity.Equipment[Enums.WeaponIndex]].Projectile + 1, 0);
+                    bf.Dispose();
+                    return;
+                }
+            }
+
+            //Attack normally.
             client.Entity.TryAttack((int)bf.ReadLong());
             bf.Dispose();
         }

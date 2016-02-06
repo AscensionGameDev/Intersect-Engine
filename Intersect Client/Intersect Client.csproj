@@ -112,6 +112,7 @@
   <ItemGroup>
     <Compile Include="Classes\Core\Sounds.cs" />
     <Compile Include="Classes\Entities\Event.cs" />
+    <Compile Include="Classes\Entities\Projectile.cs" />
     <Compile Include="Classes\Entities\Resource.cs" />
     <Compile Include="Classes\Game Objects\AnimationStruct.cs" />
     <Compile Include="Classes\Game Objects\ClassStruct.cs" />

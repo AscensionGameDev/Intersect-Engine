@@ -32,6 +32,7 @@ namespace Intersect_Editor.Classes
         public int Animation;
         public int ClassReq;
         public int LevelReq;
+        public int Projectile;
         public int[] StatsReq;
         public int[] StatsGiven;
         public int StatGrowth;
@@ -67,6 +68,7 @@ namespace Intersect_Editor.Classes
             Animation = myBuffer.ReadInteger();
             ClassReq = myBuffer.ReadInteger();
             LevelReq = myBuffer.ReadInteger();
+            Projectile = myBuffer.ReadInteger();
 
             for (var i =0; i < Constants.MaxStats; i++)
             {
@@ -97,6 +99,7 @@ namespace Intersect_Editor.Classes
             myBuffer.WriteInteger(Animation);
             myBuffer.WriteInteger(ClassReq);
             myBuffer.WriteInteger(LevelReq);
+            myBuffer.WriteInteger(Projectile);
 
             for (var i = 0; i < Constants.MaxStats; i++)
             {

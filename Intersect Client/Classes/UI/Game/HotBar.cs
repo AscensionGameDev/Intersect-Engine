@@ -130,7 +130,6 @@ namespace Intersect_Client.Classes.UI.Game
         //Item Info
         private int _currentType = -1; //0 for item, 1 for spell
         private int _currentItem = -1;
-        private bool _onCooldown = false;
         private bool _isEquipped = false;
         private bool _texLoaded = false;
 
@@ -239,14 +238,13 @@ namespace Intersect_Client.Classes.UI.Game
                     Globals.Me.AddToHotbar(myindex, -1, -1);
                 }
             }
-            if (Globals.Me.Hotbar[myindex].Type != _currentType || Globals.Me.Hotbar[myindex].Slot != _currentItem || _texLoaded == false || (Globals.Me.Hotbar[myindex].Type == 1 && Globals.Me.Hotbar[myindex].Slot > -1 && (Globals.Me.Spells[Globals.Me.Hotbar[myindex].Slot].SpellCD > 0 != _onCooldown)) || (Globals.Me.Hotbar[myindex].Type == 0 && Globals.Me.Hotbar[myindex].Slot > -1 && Globals.Me.IsEquipped(_currentItem) != _isEquipped))
+            if (Globals.Me.Hotbar[myindex].Type != _currentType || Globals.Me.Hotbar[myindex].Slot != _currentItem || _texLoaded == false || (Globals.Me.Hotbar[myindex].Type == 1 && Globals.Me.Hotbar[myindex].Slot > -1 && (Globals.Me.Spells[Globals.Me.Hotbar[myindex].Slot].SpellCD < Environment.TickCount)) || (Globals.Me.Hotbar[myindex].Type == 0 && Globals.Me.Hotbar[myindex].Slot > -1 && Globals.Me.IsEquipped(_currentItem) != _isEquipped))
             {
                 _currentItem = Globals.Me.Hotbar[myindex].Slot;
                 _currentType = Globals.Me.Hotbar[myindex].Type;
                 if (_currentItem == -1 || _currentType == -1)
                 {
                     pnl.Texture = Gui.SFMLToGwenTexture(_hotbarBG.Texture);
-                    _onCooldown = false;
                     _texLoaded = true;
                     _isEquipped = false;
                 }
@@ -256,17 +254,15 @@ namespace Intersect_Client.Classes.UI.Game
                         Globals.Me.IsEquipped(_currentItem), _hotbarBG.Texture);
                     gwenTex = Gui.SFMLToGwenTexture(sfTex.Texture);
                     pnl.Texture = gwenTex;
-                    _onCooldown = false;
                     _texLoaded = true;
                     _isEquipped = Globals.Me.IsEquipped(_currentItem);
                 }
                 else if (_currentType == 1 && _currentItem > -1 && Globals.Me.Spells[_currentItem].SpellNum > -1)
                 {
                     sfTex = Gui.CreateSpellTex(Globals.Me.Spells[_currentItem].SpellNum, 1, 1, 34, 34,
-                        (Globals.Me.Spells[_currentItem].SpellCD > 0), _hotbarBG.Texture);
+                        (Globals.Me.Spells[_currentItem].SpellCD > Environment.TickCount), _hotbarBG.Texture);
                     gwenTex = Gui.SFMLToGwenTexture(sfTex.Texture);
                     pnl.Texture = gwenTex;
-                    _onCooldown = false;
                     _texLoaded = true;
                     _isEquipped = false;
                 }

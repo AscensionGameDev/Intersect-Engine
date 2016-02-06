@@ -89,7 +89,7 @@ namespace Intersect_Server.Classes
             var i = Globals.Rand.Next(0, 1);
             if (i != 0) return;
             i = Globals.Rand.Next(0, 4);
-            if (CanMove(i)) return;
+            if (CanMove(i) > 0) return;
             Move(i, client);
             switch (MovementFreq)
             {
