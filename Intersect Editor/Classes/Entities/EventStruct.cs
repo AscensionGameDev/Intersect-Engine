@@ -26,57 +26,74 @@ namespace Intersect_Editor.Classes
 {
     public class EventStruct
     {
-        public string MyName = "New Event";
-        public int SpawnX;
-        public int SpawnY;
-        public int Deleted;
-        public int PageCount = 1;
-        public List<EventPage> MyPages = new List<EventPage>();
-        
-        public EventStruct(int x, int y)
+        public string MyName { get; set; } = "New Event";
+        public int MyIndex { get; set; }
+        public int SpawnX { get; set; }
+        public int SpawnY { get; set; }
+        public int Deleted { get; set; }
+        public int PageCount { get; } = 1;
+        public bool CommonEvent { get; set; }
+        public List<EventPage> MyPages { get; } = new List<EventPage>();
+
+        public EventStruct(int index, int x, int y, bool isCommon = false)
         {
+            MyIndex = index;
             SpawnX = x;
             SpawnY = y;
+            CommonEvent = isCommon;
             MyPages.Add(new EventPage());
         }
 
-        public EventStruct(EventStruct copy)
+        public EventStruct(int index, EventStruct copy)
         {
-            ByteBuffer bf = new ByteBuffer();
-            bf.WriteBytes(copy.EventData());
-            MyName = bf.ReadString();
-            SpawnX = bf.ReadInteger();
-            SpawnY = bf.ReadInteger();
-            Deleted = bf.ReadInteger();
-            PageCount = bf.ReadInteger();
-            for (var i = 0; i < PageCount; i++)
+            ByteBuffer myBuffer = new ByteBuffer();
+            MyIndex = index;
+            myBuffer.WriteBytes(copy.EventData());
+            Deleted = myBuffer.ReadInteger();
+            if (Deleted != 1)
             {
-                MyPages.Add(new EventPage(bf));
+                MyName = myBuffer.ReadString();
+                SpawnX = myBuffer.ReadInteger();
+                SpawnY = myBuffer.ReadInteger();
+                PageCount = myBuffer.ReadInteger();
+                CommonEvent = copy.CommonEvent;
+                for (var i = 0; i < PageCount; i++)
+                {
+                    MyPages.Add(new EventPage(myBuffer));
+                }
             }
         }
-        public EventStruct(ByteBuffer myBuffer)
+        public EventStruct(int index, ByteBuffer myBuffer, bool isCommon = false)
         {
-            MyName = myBuffer.ReadString();
-            SpawnX = myBuffer.ReadInteger();
-            SpawnY = myBuffer.ReadInteger();
+            MyIndex = index;
             Deleted = myBuffer.ReadInteger();
-            PageCount = myBuffer.ReadInteger();
-            for (var i = 0; i < PageCount; i++)
+            if (Deleted != 1)
             {
-                MyPages.Add(new EventPage(myBuffer));
+                MyName = myBuffer.ReadString();
+                SpawnX = myBuffer.ReadInteger();
+                SpawnY = myBuffer.ReadInteger();
+                PageCount = myBuffer.ReadInteger();
+                CommonEvent = isCommon;
+                for (var i = 0; i < PageCount; i++)
+                {
+                    MyPages.Add(new EventPage(myBuffer));
+                }
             }
         }
         public byte[] EventData()
         {
             var myBuffer = new ByteBuffer();
-            myBuffer.WriteString(MyName);
-            myBuffer.WriteInteger(SpawnX);
-            myBuffer.WriteInteger(SpawnY);
             myBuffer.WriteInteger(Deleted);
-            myBuffer.WriteInteger(PageCount);
-            for (var i = 0; i < PageCount; i++)
+            if (Deleted == 0)
             {
-                MyPages[i].WriteBytes(myBuffer);
+                myBuffer.WriteString(MyName);
+                myBuffer.WriteInteger(SpawnX);
+                myBuffer.WriteInteger(SpawnY);
+                myBuffer.WriteInteger(PageCount);
+                for (var i = 0; i < PageCount; i++)
+                {
+                    MyPages[i].WriteBytes(myBuffer);
+                }
             }
             return myBuffer.ToArray();
         }
@@ -84,113 +101,253 @@ namespace Intersect_Editor.Classes
 
     public class EventPage
     {
-        public EventConditions MyConditions;
         public string Desc = "";
         public int MovementType;
         public int MovementSpeed;
         public int MovementFreq;
+        public EventMoveRoute MoveRoute = new EventMoveRoute();
         public int Passable;
         public int Layer;
         public int Trigger;
-        public int GraphicType;
-        public string Graphic = "";
         public string FaceGraphic = "";
-        public int Graphicx;
-        public int Graphicy;
+        public EventGraphic Graphic = new EventGraphic();
         public int HideName;
         public int DisablePreview = 1;
+        public int DirectionFix;
+        public int WalkingAnimation;
         public List<CommandList> CommandLists = new List<CommandList>();
+        public List<EventCommand> Conditions = new List<EventCommand>(); 
 
         public EventPage()
         {
-            MyConditions = new EventConditions();
             MovementType = 0;
             MovementSpeed = 2;
             MovementFreq = 2;
             Passable = 0;
             Layer = 1;
             Trigger = 0;
-            GraphicType = 0;
-            Graphic = "";
-            Graphicx = -1;
-            Graphicy = -1;
             HideName = 0;
             CommandLists.Add(new CommandList());
         }
 
         public EventPage(ByteBuffer curBuffer)
         {
-            MyConditions = new EventConditions();
-            MyConditions.Load(curBuffer);
             Desc = curBuffer.ReadString();
             MovementType = curBuffer.ReadInteger();
+            if (MovementType == 2) MoveRoute.Load(curBuffer);
             MovementSpeed = curBuffer.ReadInteger();
             MovementFreq = curBuffer.ReadInteger();
             Passable = curBuffer.ReadInteger();
             Layer = curBuffer.ReadInteger();
             Trigger = curBuffer.ReadInteger();
-            GraphicType = curBuffer.ReadInteger();
-            Graphic = curBuffer.ReadString();
             FaceGraphic = curBuffer.ReadString();
-            Graphicx = curBuffer.ReadInteger();
-            Graphicy = curBuffer.ReadInteger();
+            Graphic.Load(curBuffer);
             HideName = curBuffer.ReadInteger();
             DisablePreview = curBuffer.ReadInteger();
+            DirectionFix = curBuffer.ReadInteger();
+            WalkingAnimation = curBuffer.ReadInteger();
             var x = curBuffer.ReadInteger();
             for (var i = 0; i < x; i++)
             {
                 CommandLists.Add(new CommandList(curBuffer));
             }
-
+            x = curBuffer.ReadInteger();
+            for (var i = 0; i < x; i++)
+            {
+                Conditions.Add(new EventCommand());
+                Conditions[i].Load(curBuffer);
+            }
         }
 
         public void WriteBytes(ByteBuffer myBuffer)
         {
-            MyConditions.WriteBytes(myBuffer);
             myBuffer.WriteString(Desc);
             myBuffer.WriteInteger(MovementType);
+            if (MovementType == 2) MoveRoute.Save(myBuffer);
             myBuffer.WriteInteger(MovementSpeed);
             myBuffer.WriteInteger(MovementFreq);
             myBuffer.WriteInteger(Passable);
             myBuffer.WriteInteger(Layer);
             myBuffer.WriteInteger(Trigger);
-            myBuffer.WriteInteger(GraphicType);
-            myBuffer.WriteString(Graphic);
             myBuffer.WriteString(FaceGraphic);
-            myBuffer.WriteInteger(Graphicx);
-            myBuffer.WriteInteger(Graphicy);
+            Graphic.Save(myBuffer);
             myBuffer.WriteInteger(HideName);
             myBuffer.WriteInteger(DisablePreview);
+            myBuffer.WriteInteger(DirectionFix);
+            myBuffer.WriteInteger(WalkingAnimation);
             myBuffer.WriteInteger(CommandLists.Count);
-            foreach (var t in CommandLists)
+            foreach (var commandList in CommandLists)
             {
-                t.WriteBytes(myBuffer);
+                commandList.WriteBytes(myBuffer);
+            }
+            myBuffer.WriteInteger(Conditions.Count);
+            foreach (var condition in Conditions)
+            {
+                condition.Save(myBuffer);
             }
         }
-
     }
 
-    public class EventConditions
+    public class EventMoveRoute
     {
-        public int Switch1;
-        public bool Switch1Val;
-        public int Switch2;
-        public bool Switch2Val;
+        public int Target = -1;
+        public bool RepeatRoute = false;
+        public bool IgnoreIfBlocked = false;
+        public List<MoveRouteAction> Actions = new List<MoveRouteAction>();
 
-        public void WriteBytes(ByteBuffer myBuffer)
+        public EventMoveRoute()
         {
-            myBuffer.WriteInteger(Switch1);
-            myBuffer.WriteInteger(Convert.ToInt32(Switch1Val));
-            myBuffer.WriteInteger(Switch2);
-            myBuffer.WriteInteger(Convert.ToInt32(Switch1Val));
         }
 
         public void Load(ByteBuffer myBuffer)
         {
-            Switch1 = myBuffer.ReadInteger();
-            Switch1Val = Convert.ToBoolean(myBuffer.ReadInteger());
-            Switch2 = myBuffer.ReadInteger();
-            Switch2Val = Convert.ToBoolean(myBuffer.ReadInteger());
+            Target = myBuffer.ReadInteger();
+            if (myBuffer.ReadByte() == 1)
+            {
+                IgnoreIfBlocked = true;
+            }
+            else
+            {
+                IgnoreIfBlocked = false;
+            }
+            if (myBuffer.ReadByte() == 1)
+            {
+                RepeatRoute = true;
+            }
+            else
+            {
+                RepeatRoute = false;
+            }
+            int actionCount = myBuffer.ReadInteger();
+            for (int i = 0; i < actionCount; i++)
+            {
+                Actions.Add(new MoveRouteAction());
+                Actions[Actions.Count - 1].Load(myBuffer);
+            }
+        }
+
+        public void Save(ByteBuffer myBuffer)
+        {
+            myBuffer.WriteInteger(Target);
+            if (IgnoreIfBlocked)
+            {
+                myBuffer.WriteByte(1);
+            }
+            else
+            {
+                myBuffer.WriteByte(0);
+            }
+            if (RepeatRoute)
+            {
+                myBuffer.WriteByte(1);
+            }
+            else
+            {
+                myBuffer.WriteByte(0);
+            }
+            myBuffer.WriteInteger(Actions.Count);
+            foreach (MoveRouteAction action in Actions)
+            {
+                action.Save(myBuffer);
+            }
+        }
+
+        public void CopyFrom(EventMoveRoute route)
+        {
+            Target = route.Target;
+            IgnoreIfBlocked = route.IgnoreIfBlocked;
+            RepeatRoute = route.RepeatRoute;
+            Actions.Clear();
+            foreach (MoveRouteAction action in route.Actions)
+            {
+                Actions.Add(action.Copy());
+            }
+        }
+    }
+
+    public enum MoveRouteEnum
+    {
+        MoveUp = 1,
+        MoveDown,
+        MoveLeft,
+        MoveRight,
+        MoveRandomly,
+        MoveTowardsPlayer,
+        MoveAwayFromPlayer,
+        StepForward,
+        StepBack,
+        FaceUp,
+        FaceDown,
+        FaceLeft,
+        FaceRight,
+        Turn90Clockwise,
+        Turn90CounterClockwise,
+        Turn180,
+        TurnRandomly,
+        FacePlayer,
+        FaceAwayFromPlayer,
+        SetSpeedSlowest,
+        SetSpeedSlower,
+        SetSpeedNormal,
+        SetSpeedFaster,
+        SetSpeedFastest,
+        SetFreqLowest,
+        SetFreqLower,
+        SetFreqNormal,
+        SetFreqHigher,
+        SetFreqHighest,
+        WalkingAnimOn,
+        WalkingAnimOff,
+        DirectionFixOn,
+        DirectionFixOff,
+        WalkthroughOn,
+        WalkthroughOff,
+        ShowName,
+        HideName,
+        SetLevelBelow,
+        SetLevelNormal,
+        SetLevelAbove,
+        Wait100,
+        Wait500,
+        Wait1000,
+        SetGraphic,
+    }
+
+    public class MoveRouteAction
+    {
+        public MoveRouteEnum Type;
+        public EventGraphic Graphic = null;
+
+
+        public void Save(ByteBuffer myBuffer)
+        {
+            myBuffer.WriteInteger((int)Type);
+            if (Type == MoveRouteEnum.SetGraphic)
+            {
+                Graphic.Save(myBuffer);
+            }
+        }
+
+        public void Load(ByteBuffer myBuffer)
+        {
+            Type = (MoveRouteEnum)myBuffer.ReadInteger();
+            if (Type == MoveRouteEnum.SetGraphic)
+            {
+                Graphic = new EventGraphic();
+                Graphic.Load(myBuffer);
+            }
+        }
+
+        public MoveRouteAction Copy()
+        {
+            MoveRouteAction copy = new MoveRouteAction();
+            copy.Type = Type;
+            if (Type == MoveRouteEnum.SetGraphic)
+            {
+                copy.Graphic = new EventGraphic();
+                copy.Graphic.CopyFrom(Graphic);
+            }
+            return copy;
         }
     }
 
@@ -209,68 +366,162 @@ namespace Intersect_Editor.Classes
             for (var i = 0; i < y; i++)
             {
                 Commands.Add(new EventCommand());
-                Commands[i].Type = myBuffer.ReadInteger();
-                if (Commands[i].Type != 4)
-                {
-                    for (var x = 0; x < 6; x++)
-                    {
-                        Commands[i].Strs[x] = myBuffer.ReadString();
-                        Commands[i].Ints[x] = myBuffer.ReadInteger();
-                    }
-                }
-                else
-                {
-                    Commands[i].MyConditions.Load(myBuffer);
-                    for (var x = 0; x < 6; x++)
-                    {
-                        Commands[i].Strs[x] = myBuffer.ReadString();
-                        Commands[i].Ints[x] = myBuffer.ReadInteger();
-                    }
-                }
+                Commands[i].Load(myBuffer);
+
             }
         }
 
         public void WriteBytes(ByteBuffer myBuffer)
         {
             myBuffer.WriteInteger(Commands.Count);
-            foreach (var t in Commands)
+            foreach (var command in Commands)
             {
-                myBuffer.WriteInteger(t.Type);
-                if (t.Type != 4)
-                {
-                    for (var x = 0; x < 6; x++)
-                    {
-                        myBuffer.WriteString(t.Strs[x]);
-                        myBuffer.WriteInteger(t.Ints[x]);
-                    }
-                }
-                else
-                {
-                    t.MyConditions.WriteBytes(myBuffer);
-                    for (var x = 0; x < 6; x++)
-                    {
-                        myBuffer.WriteString(t.Strs[x]);
-                        myBuffer.WriteInteger(t.Ints[x]);
-                    }
-                }
+                command.Save(myBuffer);
             }
         }
     }
 
+    public enum EventCommandType
+    {
+        Null = 0,
+
+        //Dialog
+        ShowText,
+        ShowOptions,
+        AddChatboxText,
+        //Logic Flow
+        SetSwitch,
+        SetVariable,
+        SetSelfSwitch,
+        ConditionalBranch,
+        ExitEventProcess,
+        Label,
+        GoToLabel,
+        //Player Control
+        RestoreHp,
+        RestoreMp,
+        LevelUp,
+        GiveExperience,
+        ChangeLevel,
+        ChangeSpells,
+        ChangeItems,
+        ChangeSprite,
+        ChangeFace,
+        ChangeGender,
+        SetAccess,
+        //Movement,
+        WarpPlayer,
+        SetMoveRoute,
+        WaitForRouteCompletion,
+        HoldPlayer,
+        ReleasePlayer,
+        SpawnNpc,
+        //Special Effects
+        PlayAnimation,
+        PlayBgm,
+        FadeoutBgm,
+        PlaySound,
+        StopSounds,
+        //Etc
+        Wait,
+        //Shop and Bank
+        OpenBank,
+        OpenShop
+    }
+
     public class EventCommand
     {
-        public int Type;
-        public EventConditions MyConditions;
+        public EventCommandType Type;
         public string[] Strs = new string[6];
         public int[] Ints = new int[6];
+        public EventMoveRoute Route;
         public EventCommand()
         {
-            MyConditions = new EventConditions();
             for (var i = 0; i < 6; i++)
             {
                 Strs[i] = "";
                 Ints[i] = 0;
             }
         }
+
+        public void Load(ByteBuffer myBuffer)
+        {
+            Type = (EventCommandType)myBuffer.ReadInteger();
+            for (var x = 0; x < 6; x++)
+            {
+                Strs[x] = myBuffer.ReadString();
+                Ints[x] = myBuffer.ReadInteger();
+            }
+            if (Type == EventCommandType.SetMoveRoute)
+            {
+                Route = new EventMoveRoute();
+                Route.Load(myBuffer);
+            }
+        }
+
+        public void Save(ByteBuffer myBuffer)
+        {
+            myBuffer.WriteInteger((int)Type);
+            for (var x = 0; x < 6; x++)
+            {
+                myBuffer.WriteString(Strs[x]);
+                myBuffer.WriteInteger(Ints[x]);
+            }
+            if (Type == EventCommandType.SetMoveRoute)
+            {
+                Route.Save(myBuffer);
+            }
+        }
+    }
+
+    public class EventGraphic
+    {
+        public string Filename;
+        public int Type;
+        public int X;
+        public int Y;
+        public int Width;
+        public int Height;
+
+        public EventGraphic()
+        {
+            Type = 0;
+            Filename = "";
+            X = -1;
+            Y = -1;
+            Width = -1;
+            Height = -1;
+        }
+
+        public void Load(ByteBuffer curBuffer)
+        {
+            Type = curBuffer.ReadInteger();
+            Filename = curBuffer.ReadString();
+            X = curBuffer.ReadInteger();
+            Y = curBuffer.ReadInteger();
+            Width = curBuffer.ReadInteger();
+            Height = curBuffer.ReadInteger();
+        }
+
+        public void Save(ByteBuffer curBuffer)
+        {
+            curBuffer.WriteInteger(Type);
+            curBuffer.WriteString(Filename);
+            curBuffer.WriteInteger(X);
+            curBuffer.WriteInteger(Y);
+            curBuffer.WriteInteger(Width);
+            curBuffer.WriteInteger(Height);
+        }
+
+        public void CopyFrom(EventGraphic toCopy)
+        {
+            Type = toCopy.Type;
+            Filename = toCopy.Filename;
+            X = toCopy.X;
+            Y = toCopy.Y;
+            Width = toCopy.Width;
+            Height = toCopy.Height;
+        }
+
     }
 }

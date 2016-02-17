@@ -273,7 +273,6 @@ namespace Intersect_Editor.Forms
                             EventStruct tmpEvent;
                             if ((tmpEvent = Globals.GameMaps[Globals.CurrentMap].FindEventAt(Globals.CurTileX, Globals.CurTileY)) != null)
                             {
-                                Globals.GameMaps[Globals.CurrentMap].Events.Remove(tmpEvent);
                                 tmpEvent.Deleted = 1;
                                 MapChanged = true;
                             }
@@ -847,9 +846,9 @@ namespace Intersect_Editor.Forms
                             Globals.GameMaps[Globals.CurrentMap].FindEventAt(Globals.CurTileX,
                                 Globals.CurTileY)) == null)
                     {
-                        tmpEvent = new EventStruct(Globals.CurTileX, Globals.CurTileY);
+                        tmpEvent = new EventStruct(Globals.GameMaps[Globals.CurrentMap].Events.Count,Globals.CurTileX, Globals.CurTileY);
                         Globals.GameMaps[Globals.CurrentMap].Events.Add(tmpEvent);
-                        tmpEventEditor = new FrmEvent
+                        tmpEventEditor = new FrmEvent(Globals.GameMaps[Globals.CurrentMap])
                         {
                             MyEvent = tmpEvent,
                             MyMap = Globals.GameMaps[Globals.CurrentMap],
@@ -861,7 +860,7 @@ namespace Intersect_Editor.Forms
                     }
                     else
                     {
-                        tmpEventEditor = new FrmEvent { MyEvent = tmpEvent };
+                        tmpEventEditor = new FrmEvent(Globals.GameMaps[Globals.CurrentMap]) { MyEvent = tmpEvent };
                         tmpEventEditor.InitEditor();
                         tmpEventEditor.Show();
                     }
@@ -1201,9 +1200,9 @@ namespace Intersect_Editor.Forms
                                     {
                                         if (tmpMap.FindEventAt(x0 + x, y0 + y) != null)
                                         {
-                                            tmpMap.Events.Remove(tmpMap.FindEventAt(x0 + x, y0 + y));
+                                            tmpMap.FindEventAt(x0 + x, y0 + y).Deleted = 1;
                                         }
-                                        eventCopy = new EventStruct(Globals.SelectionSource.FindEventAt(x0 + x - dragxoffset, y0 + y - dragyoffset));
+                                        eventCopy = new EventStruct(tmpMap.Events.Count,Globals.SelectionSource.FindEventAt(x0 + x - dragxoffset, y0 + y - dragyoffset));
                                         eventCopy.SpawnX = x0 + x;
                                         eventCopy.SpawnY = y0 + y;
                                         tmpMap.Events.Add(eventCopy);
@@ -1341,7 +1340,7 @@ namespace Intersect_Editor.Forms
                                         if (tmpMap.Events[w].SpawnX == x0 + x &&
                                             tmpMap.Events[w].SpawnY == y0 + y)
                                         {
-                                            tmpMap.Events.Remove(tmpMap.Events[w]);
+                                            tmpMap.Events[w].Deleted = 1;
                                         }
                                     }
                                 }

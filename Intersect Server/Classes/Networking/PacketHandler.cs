@@ -381,7 +381,7 @@ namespace Intersect_Server.Classes
                     PacketSender.SendMapList(t);
                 }
             }
-            PacketSender.SendMap(null, (int)mapNum); //Sends map to everyone/everything in proximity
+            PacketSender.SendMap(client, (int)mapNum); //Sends map to everyone/everything in proximity
             bf.Dispose();
         }
 

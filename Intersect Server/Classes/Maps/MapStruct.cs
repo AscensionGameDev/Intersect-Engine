@@ -274,7 +274,7 @@ namespace Intersect_Server.Classes
                 var eCount = bf.ReadInteger();
                 for (var i = 0; i < eCount; i++)
                 {
-                    Events.Add(new EventStruct(bf));
+                    Events.Add(new EventStruct(i,bf));
                 }
 
                 //Clear Map Items

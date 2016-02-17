@@ -19,6 +19,8 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+
+using System;
 using Intersect_Editor.Forms;
 using SFML.Graphics;
 using System.Collections.Generic;
@@ -141,5 +143,35 @@ namespace Intersect_Editor.Classes
             }
         }
 
+        public static string GetColorName(Enums.ChatColor color)
+        {
+            switch (color)
+            {
+                case Enums.ChatColor.Black:
+                    return "Black";
+                case Enums.ChatColor.White:
+                    return "White";
+                case Enums.ChatColor.Blue:
+                    return "Blue";
+                case Enums.ChatColor.Red:
+                    return "Red";
+                case Enums.ChatColor.Green:
+                    return "Green";
+                case Enums.ChatColor.Yellow:
+                    return "Yellow";
+                case Enums.ChatColor.Orange:
+                    return "Orange";
+                case Enums.ChatColor.Purple:
+                    return "Purple";
+                case Enums.ChatColor.Gray:
+                    return "Gray";
+                case Enums.ChatColor.Cyan:
+                    return "Cyan";
+                case Enums.ChatColor.Pink:
+                    return "Pink";
+                default:
+                    return "No Color";
+            }
+        }
     }
 }

@@ -35,7 +35,7 @@ namespace Intersect_Editor.Classes
         public int Left = -1;
         public int Right = -1;
         public int MyMapNum;
-        public int Deleted;
+        public long Deleted;
         public int Revision;
         
         //Core Data
@@ -125,7 +125,7 @@ namespace Intersect_Editor.Classes
             for (var i = 0; i < mapcopy.Events.Count; i++)
             {
                 bf.WriteBytes(mapcopy.Events[i].EventData());
-                Events.Add(new EventStruct(bf));
+                Events.Add(new EventStruct(Events.Count,bf));
             }
             Autotiles = new MapAutotiles(this);
             Autotiles.InitAutotiles();
@@ -281,7 +281,7 @@ namespace Intersect_Editor.Classes
                 Lights.Add(new Light(bf));
             }
             Revision = bf.ReadInteger();
-            Deleted = bf.ReadInteger();
+            Deleted = bf.ReadLong();
             if (Deleted == 1)
             {
                 Layers = null;
@@ -291,7 +291,7 @@ namespace Intersect_Editor.Classes
             var eCount = bf.ReadInteger();
             for (var i = 0; i < eCount; i++)
             {
-                Events.Add(new EventStruct(bf));
+                Events.Add(new EventStruct(i,bf));
             }
             Autotiles.InitAutotiles();
             UpdateAdjacentAutotiles();

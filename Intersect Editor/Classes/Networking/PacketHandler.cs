@@ -252,7 +252,7 @@ namespace Intersect_Editor.Classes
             {
                 Globals.MainForm.EnterMap(Database.MapStructure.FindFirstMap());
             }
-            Globals.MapListWindow.BeginInvoke(Globals.MapListWindow.MapListDelegate);
+            Globals.MapListWindow.BeginInvoke(Globals.MapListWindow.mapTreeList.MapListDelegate,-1);
             bf.Dispose();
         }
 
