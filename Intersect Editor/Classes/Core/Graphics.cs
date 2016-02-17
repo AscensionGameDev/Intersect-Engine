@@ -215,15 +215,15 @@ namespace Intersect_Editor.Classes
                 }
 
                 Globals.MapLayersWindow.cmbTilesets.Items.Clear();
-                foreach (var t in Globals.Tilesets)
+                foreach (var filename in Globals.Tilesets)
                 {
-                    if (File.Exists("Resources/Tilesets/" + t))
+                    if (File.Exists("Resources/Tilesets/" + filename))
                     {
-                        Globals.MapLayersWindow.cmbTilesets.Items.Add(t);
+                        Globals.MapLayersWindow.cmbTilesets.Items.Add(filename);
                     }
                     else
                     {
-                        Globals.MapLayersWindow.cmbTilesets.Items.Add(t + " - [MISSING]");
+                        Globals.MapLayersWindow.cmbTilesets.Items.Add(filename + " - [MISSING]");
                     }
                 }
                 Globals.MapLayersWindow.cmbTilesets.SelectedIndex = 0;

@@ -75,11 +75,11 @@
     <ApplicationIcon>IntersectLogo.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Gwen, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="Gwen, Version=1.0.0.0, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>.\Gwen.dll</HintPath>
     </Reference>
-    <Reference Include="Gwen.Renderer.SFML, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="Gwen.Renderer.SFML, Version=1.0.0.0, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>.\Gwen.Renderer.SFML.dll</HintPath>
     </Reference>

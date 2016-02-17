@@ -92,53 +92,34 @@ namespace Intersect_Server.Classes
                 }
                 _curMapLink = CurrentMap;
             }
+
             //Check to see if we can spawn events, if already spawned.. update them.
             for (var i = 0; i < Globals.GameMaps[CurrentMap].SurroundingMaps.Count + 1; i++)
             {
                 int mapNum;
                 if (i == Globals.GameMaps[CurrentMap].SurroundingMaps.Count) { mapNum = CurrentMap; } else { mapNum = Globals.GameMaps[CurrentMap].SurroundingMaps[i]; }
                 if (mapNum <= -1) continue;
-                foreach (var ev in Globals.GameMaps[mapNum].Events)
+                foreach (var mapEvent in Globals.GameMaps[mapNum].Events)
                 {
-                    int foundEvent;
-                    if (CanSpawnEvent(ev, mapNum))
+                    if (mapEvent.Deleted == 0)
                     {
-                        //if event isnt spawned, spawn it
-                        foundEvent = EventExists(mapNum, ev.SpawnX, ev.SpawnY);
+                        //Look for event
+                        var foundEvent = EventExists(mapNum, mapEvent.SpawnX, mapEvent.SpawnY);
                         if (foundEvent == -1)
                         {
-                            var pageIndex = SpawnEventPage(ev);
-                            var tmpEvent = new EventIndex(MyEvents.Count, MyClient)
+                            var tmpEvent = new EventIndex(MyEvents.Count, MyClient, mapEvent)
                             {
                                 IsGlobal = false,
                                 MapNum = mapNum,
-                                PageIndex = pageIndex,
-                                SpawnX = ev.SpawnX,
-                                SpawnY = ev.SpawnY
+                                SpawnX = mapEvent.SpawnX,
+                                SpawnY = mapEvent.SpawnY
                             };
                             MyEvents.Add(tmpEvent);
-                            tmpEvent.EventInstance = new Event(ev, pageIndex,
-                                MyEvents.Count - 1, mapNum)
-                            {
-                                Dir = ev.MyPages[pageIndex].Graphicy
-                            };
-                            //Send Spawn Event to Player
-                            PacketSender.SendEntityDataTo(MyClient,MyEvents.Count-1,(int)Enums.EntityTypes.LocalEvent,MyEvents[MyEvents.Count - 1].EventInstance.Data(), MyEvents[MyEvents.Count - 1].EventInstance);
-                            PacketSender.SendEntityPositionTo(MyClient, MyEvents.Count - 1, (int)Enums.EntityTypes.LocalEvent, MyEvents[MyEvents.Count - 1].EventInstance);
-
                         }
                         else
                         {
                             MyEvents[foundEvent].Update();
                         }
-                    }
-                    else
-                    {
-                        //if event is up and running, destroy itttt
-                        foundEvent = EventExists(mapNum, ev.SpawnX, ev.SpawnY);
-                        if (foundEvent <= -1 || foundEvent >= MyEvents.Count) continue;
-                        MyEvents[foundEvent] = null;
-                        PacketSender.SendEntityLeaveTo(MyClient, foundEvent, (int)Enums.EntityTypes.LocalEvent);
                     }
                 }
             }
@@ -564,18 +545,6 @@ namespace Intersect_Server.Classes
 
 
         //Event Processing Methods
-        public bool MeetsConditions(EventConditions ec, Event ei){
-            if (ec.Switch1 - 1 > -1)
-            {
-                if (Switches[ec.Switch1 - 1] != ec.Switch1Val)
-                {
-                    return false;
-                }
-            }
-            if (ec.Switch2 - 1 <= -1) return true;
-            if (Switches[ec.Switch2 - 1] == ec.Switch2Val) return true;
-            return false;
-        }
         private int EventExists(int map, int x, int y)
         {
             for (var i = 0; i < MyEvents.Count; i++)
@@ -592,7 +561,7 @@ namespace Intersect_Server.Classes
         {
             if (eventIndex <= -1 || eventIndex >= MyEvents.Count) return;
             if (MyEvents[eventIndex] == null) return;
-            if (MyEvents[eventIndex].EventInstance.Trigger != 0) return;
+            if (MyEvents[eventIndex].PageInstance.Trigger != 0) return;
             if (!IsEventOneBlockAway(eventIndex)) return;
             if (MyEvents[eventIndex].CallStack.Count != 0) return;
             var newStack = new EventStack { CommandIndex = 0, ListIndex = 0 };
@@ -613,7 +582,7 @@ namespace Intersect_Server.Classes
                 var tmpStack = new EventStack();
                 MyEvents[eventIndex].CallStack.Peek().WaitingForResponse = 0;
                 tmpStack.CommandIndex = 0;
-                tmpStack.ListIndex = MyEvents[eventIndex].EventInstance.BaseEvent.MyPages[MyEvents[eventIndex].PageIndex].CommandLists[MyEvents[eventIndex].CallStack.Peek().ListIndex].Commands[MyEvents[eventIndex].CallStack.Peek().CommandIndex].Ints[responseId - 1];
+                tmpStack.ListIndex = MyEvents[eventIndex].PageInstance.BaseEvent.MyPages[MyEvents[eventIndex].PageIndex].CommandLists[MyEvents[eventIndex].CallStack.Peek().ListIndex].Commands[MyEvents[eventIndex].CallStack.Peek().CommandIndex].Ints[responseId - 1];
                 MyEvents[eventIndex].CallStack.Peek().CommandIndex++;
                 MyEvents[eventIndex].CallStack.Push(tmpStack);
             }
@@ -623,21 +592,12 @@ namespace Intersect_Server.Classes
 
             return true;
         }
-        private static int SpawnEventPage(EventStruct myEvent)
-        {
-            return 0;
-        }
-        private bool CanSpawnEvent(EventStruct myEvent, int myMap)
-        {
-            if (MeetsConditions(myEvent.MyPages[0].MyConditions, new Event(myEvent, 0, 0, myMap))) return true;
-            return false;
-        }
-        public int FindEvent(Event en)
+        public int FindEvent(EventPageInstance en)
         {
             int id = -1;
             for (int i = 0; i < MyEvents.Count; i++)
             {
-                if (MyEvents[i].EventInstance == en)
+                if (MyEvents[i].PageInstance == en)
                 {
                     id = i;
                     return id;

@@ -332,7 +332,7 @@ namespace Intersect_Server.Classes
                         {
                             return 4;
                         }
-                        else if (t.GetType() == typeof(Event))
+                        else if (t.GetType() == typeof(EventPageInstance))
                         {
                             return 5;
                         }
@@ -490,7 +490,7 @@ namespace Intersect_Server.Classes
                 CurrentY = tmpY;
                 CurrentMap = tmpMap;
                 Dir = moveDir;
-                if (this.GetType() == typeof (Event))
+                if (this.GetType() == typeof (EventPageInstance))
                 {
                     if (client != null) {PacketSender.SendEntityMoveTo(client, MyIndex, (int)Enums.EntityTypes.LocalEvent, this);}
                 }
@@ -528,9 +528,9 @@ namespace Intersect_Server.Classes
         public void ChangeDir(int dir)
         {
             Dir = dir;
-            if (this.GetType() == typeof (Event))
+            if (this.GetType() == typeof (EventPageInstance))
             {
-                PacketSender.SendEntityDirTo(  ((Event)this).Client  ,MyIndex, (int)Enums.EntityTypes.LocalEvent,Dir);
+                PacketSender.SendEntityDirTo(  ((EventPageInstance)this).Client  ,MyIndex, (int)Enums.EntityTypes.LocalEvent,Dir);
             }
             else
             {

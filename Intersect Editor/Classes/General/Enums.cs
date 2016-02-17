@@ -193,6 +193,21 @@ namespace Intersect_Editor.Classes
             CurrentLayer = 1,
         }
 
+        public enum ChatColor
+        {
+            Black = 0,
+            White,
+            Blue,
+            Red,
+            Green,
+            Yellow,
+            Orange,
+            Purple,
+            Gray,
+            Cyan,
+            Pink,
+        }
+
         public static int WeaponIndex = 2;
         public static int ShieldIndex = 3;
         public static List<string> EquipmentSlots = new List<string>() { "Helmet", "Armor", "Weapon", "Shield", "Boots" };
