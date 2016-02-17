@@ -242,6 +242,7 @@
             // 
             // scrlRange
             // 
+            this.scrlRange.LargeChange = 1;
             this.scrlRange.Location = new System.Drawing.Point(15, 193);
             this.scrlRange.Minimum = 1;
             this.scrlRange.Name = "scrlRange";
@@ -279,6 +280,7 @@
             // 
             // scrlQuantity
             // 
+            this.scrlQuantity.LargeChange = 1;
             this.scrlQuantity.Location = new System.Drawing.Point(15, 160);
             this.scrlQuantity.Minimum = 1;
             this.scrlQuantity.Name = "scrlQuantity";

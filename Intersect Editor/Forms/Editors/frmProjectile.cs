@@ -114,7 +114,17 @@ namespace Intersect_Editor.Classes
 
         private void Render()
         {
-            var gfx = picSpawns.CreateGraphics();
+            Bitmap img;
+            if (picSpawns.BackgroundImage == null)
+            {
+                img = new Bitmap(picSpawns.Width, picSpawns.Height);
+                picSpawns.BackgroundImage = img;
+            }
+            else
+            {
+                img = (Bitmap)picSpawns.BackgroundImage;
+            }
+            var gfx = System.Drawing.Graphics.FromImage(img);
             gfx.FillRectangle(Brushes.White, new Rectangle(0, 0, picSpawns.Width, picSpawns.Height));
 
             for (var x = 0; x < ProjectileStruct.SpawnLocationsWidth; x++)
@@ -134,6 +144,7 @@ namespace Intersect_Editor.Classes
 
             gfx.DrawImage(_directionGrid, new Rectangle((picSpawns.Width / 2) - (((Globals.TileHeight - 2) / 3) / 2), (picSpawns.Height / 2) - (((Globals.TileHeight - 2) / 3) / 2), (Globals.TileWidth - 2) / 3, (Globals.TileHeight - 2) / 3), new Rectangle(43, 11, (Globals.TileWidth - 2) / 3, (Globals.TileHeight - 2) / 3), GraphicsUnit.Pixel);
             gfx.Dispose();
+            picSpawns.Refresh();
         }
 
         private int DirectionOffsetX(int Dir)

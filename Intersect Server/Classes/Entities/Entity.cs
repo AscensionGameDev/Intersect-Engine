@@ -584,12 +584,12 @@ namespace Intersect_Server.Classes
                             if (xMax >= Globals.MapWidth) xMax = Globals.MapWidth;
                             if (yMax >= Globals.MapHeight) yMax = Globals.MapHeight;
 
-                            if (x < CurrentX && xMax > CurrentX)
+                            if (x < Globals.Entities[MyIndex].CurrentX && xMax > Globals.Entities[MyIndex].CurrentX)
                             {
-                                if (y < CurrentY && yMax > CurrentY)
+                                if (y < Globals.Entities[MyIndex].CurrentY && yMax > Globals.Entities[MyIndex].CurrentY)
                                 {
                                     // In range, so make a target
-                                    ((Npc)Globals.GameMaps[CurrentMap].Entities[n]).MyTarget = this;
+                                    ((Npc)Globals.GameMaps[CurrentMap].Entities[n]).MyTarget = Globals.Entities[MyIndex];
                                 }
                             }
                         }
@@ -706,7 +706,7 @@ namespace Intersect_Server.Classes
 
                             break;
                         case (int)Enums.TargetTypes.Projectile:
-                            FireProjectile(Globals.GameSpells[SpellNum].Data4 - 1);
+                            Globals.GameMaps[CurrentMap].SpawnMapProjectile(MyIndex, this.GetType(), Globals.GameSpells[SpellNum].Data4 - 1, CurrentMap, CurrentX, CurrentY, CurrentZ, Dir);
                             break;
                         default:
                             break;
@@ -731,90 +731,6 @@ namespace Intersect_Server.Classes
                 if (GetType() == typeof(Player))
                 {
                     PacketSender.SendSpellCooldown(((Player)Globals.Entities[MyIndex]).MyClient, SpellSlot);
-                }
-            }
-        }
-
-        public void FireProjectile(int ProjectileNum, int Target = 0)
-        {
-            int x2 = 0;
-            int y2 = 0;
-            int xmap = 0;
-            int ymap = 0;
-
-            if (ProjectileNum == -1) { return; }
-
-            for (int x = -2; x < 2; x++)
-            {
-                xmap = CurrentMap;
-                x2 = x + CurrentX;
-                if (x2 < 0)
-                {
-                    if (Globals.GameMaps[xmap].Left != -1)
-                    {
-                        xmap = Globals.GameMaps[xmap].Left;
-                        x2 = Globals.MapWidth + x + 1;
-                    }
-                    else
-                    {
-                        xmap = -1;
-                    }
-                }
-                else if (x2 >= Globals.MapWidth)
-                {
-                    if (Globals.GameMaps[xmap].Right != -1)
-                    {
-                        xmap = Globals.GameMaps[xmap].Right;
-                        x2 = Globals.MapWidth + x + 1;
-                    }
-                    else
-                    {
-                        xmap = -1;
-                    }
-                }
-
-                if (xmap != -1)
-                {
-                    for (int y = -2; y < 2; y++)
-                    {
-                        ymap = xmap;
-                        y2 = y + CurrentY;
-                        if (y2 < 0)
-                        {
-                            if (Globals.GameMaps[xmap].Up != -1)
-                            {
-                                ymap = Globals.GameMaps[ymap].Up;
-                                y2 = Globals.MapWidth + y + 1;
-                            }
-                            else
-                            {
-                                ymap = -1;
-                            }
-                        }
-                        else if (y2 >= Globals.MapHeight)
-                        {
-                            if (Globals.GameMaps[ymap].Down != -1)
-                            {
-                                ymap = Globals.GameMaps[ymap].Right;
-                                y2 = Globals.MapHeight + y + 1;
-                            }
-                            else
-                            {
-                                ymap = -1;
-                            }
-                        }
-
-                        if (ymap != -1)
-                        {
-                            for (int d = 0; d < ProjectileStruct.MaxProjectileDirections; d++)
-                            {
-                                if (Globals.GameProjectiles[ProjectileNum].SpawnLocations[x + 2, y + 2].Directions[d] == true)
-                                {
-                                    Globals.GameMaps[ymap].SpawnMapProjectile(MyIndex, this.GetType(), ProjectileNum, ymap, x2, y2, CurrentZ, d, Target);
-                                }
-                            }
-                        }
-                    }
                 }
             }
         }

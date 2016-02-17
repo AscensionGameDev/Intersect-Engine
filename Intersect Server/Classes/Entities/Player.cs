@@ -464,26 +464,35 @@ namespace Intersect_Server.Classes
             int spellNum = Spells[spellSlot].SpellNum;
             if (spellNum > -1)
             {
-                if (Globals.GameSpells[spellNum].Cost <= Vital[(int)Enums.Vitals.Mana])
+                if (Globals.GameSpells[spellNum].VitalCost[(int)Enums.Vitals.Mana] <= Vital[(int)Enums.Vitals.Mana])
                 {
-                    if (Spells[spellSlot].SpellCD < Environment.TickCount)
+                    if (Globals.GameSpells[spellNum].VitalCost[(int)Enums.Vitals.Health] <= Vital[(int)Enums.Vitals.Health])
                     {
-                        if (CastTime < Environment.TickCount)
+                        if (Spells[spellSlot].SpellCD < Environment.TickCount)
                         {
-                            Vital[(int)Enums.Vitals.Mana] = Vital[(int)Enums.Vitals.Mana] - Globals.GameSpells[spellNum].Cost;
-                            CastTime = Environment.TickCount + Globals.GameSpells[spellNum].CastDuration;
-                            SpellCastSlot = spellSlot;
-                            PacketSender.SendEntityVitals(MyIndex, (int)Enums.Vitals.Mana, Globals.Entities[MyIndex]);
-                            PacketSender.SendEntityCastTime(MyIndex, spellNum);
+                            if (CastTime < Environment.TickCount)
+                            {
+                                Vital[(int)Enums.Vitals.Mana] = Vital[(int)Enums.Vitals.Mana] - Globals.GameSpells[spellNum].VitalCost[(int)Enums.Vitals.Mana];
+                                Vital[(int)Enums.Vitals.Health] = Vital[(int)Enums.Vitals.Health] - Globals.GameSpells[spellNum].VitalCost[(int)Enums.Vitals.Health];
+                                CastTime = Environment.TickCount + (Globals.GameSpells[spellNum].CastDuration * 100);
+                                SpellCastSlot = spellSlot;
+                                PacketSender.SendEntityVitals(MyIndex, (int)Enums.Vitals.Health, Globals.Entities[MyIndex]);
+                                PacketSender.SendEntityVitals(MyIndex, (int)Enums.Vitals.Mana, Globals.Entities[MyIndex]);
+                                PacketSender.SendEntityCastTime(MyIndex, spellNum);
+                            }
+                            else
+                            {
+                                PacketSender.SendPlayerMsg(MyClient, "You are currently channeling another skill.");
+                            }
                         }
                         else
                         {
-                            PacketSender.SendPlayerMsg(MyClient, "You are currently channeling another skill.");
+                            PacketSender.SendPlayerMsg(MyClient, "This skill is on cooldown.");
                         }
                     }
                     else
                     {
-                        PacketSender.SendPlayerMsg(MyClient, "This skill is on cooldown.");
+                        PacketSender.SendPlayerMsg(MyClient, "Not enough Health.");
                     }
                 }
                 else

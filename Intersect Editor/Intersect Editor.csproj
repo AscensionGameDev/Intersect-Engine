@@ -1737,7 +1737,9 @@
     <Content Include="Resources\jce.png" />
     <Content Include="Resources\jcl.png" />
     <Content Include="Resources\MapSpawn.png" />
-    <Content Include="Resources\ProjectileDirections.png" />
+    <Content Include="Resources\ProjectileDirections.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Resources\Spells\1.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

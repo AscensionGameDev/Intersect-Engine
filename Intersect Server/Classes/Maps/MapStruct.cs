@@ -616,7 +616,7 @@ namespace Intersect_Server.Classes
                     //Process all of the projectiles
                     for (int i = 0; i < MapProjectiles.Count; i++)
                     {
-                        MapProjectiles[i].TryMoveProjectile();
+                        MapProjectiles[i].CheckForCollision();
                     }
                 }
             }

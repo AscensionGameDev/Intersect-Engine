@@ -291,6 +291,10 @@ namespace Intersect_Client.Classes
         //Game Rendering
         public static void DrawGame()
         {
+            if (!RenderWindow.HasFocus())
+            {
+                return;
+            }
             if (MustReInit)
             {
                 Gui.DestroyGwen();

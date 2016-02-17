@@ -132,6 +132,7 @@ namespace Intersect_Client.Classes.UI.Game
         private int _currentItem = -1;
         private bool _isEquipped = false;
         private bool _texLoaded = false;
+        private bool _isFaded = false;
 
         //Mouse Event Variables
         private bool MouseOver = false;
@@ -148,14 +149,14 @@ namespace Intersect_Client.Classes.UI.Game
         private SpellDescWindow _spellDescWindow;
 
         private int myindex;
-        
+
         private int[] _statBoost = new int[Constants.MaxStats];
 
         //Textures
         private Gwen.Texture gwenTex;
         private SFML.Graphics.RenderTexture sfTex;
         private RenderTexture _hotbarBG;
-        
+
 
         public HotBarItem(int index, RenderTexture hotbarBG, WindowControl hotbarWindow)
         {
@@ -199,7 +200,7 @@ namespace Intersect_Client.Classes.UI.Game
             if (_currentType == 0)
             {
                 if (_itemDescWindow != null) { _itemDescWindow.Dispose(); _itemDescWindow = null; }
-                _itemDescWindow = new ItemDescWindow(Globals.Me.Inventory[_currentItem].ItemNum, 1, _hotbarWindow.X + pnl.X + 16 - 220/2, _hotbarWindow.Y + _hotbarWindow.Height + 2, Globals.Me.Inventory[_currentItem].StatBoost, "Hotbar Slot: " + Globals.GameItems[Globals.Me.Inventory[_currentItem].ItemNum].Name);
+                _itemDescWindow = new ItemDescWindow(Globals.Me.Inventory[_currentItem].ItemNum, 1, _hotbarWindow.X + pnl.X + 16 - 220 / 2, _hotbarWindow.Y + _hotbarWindow.Height + 2, Globals.Me.Inventory[_currentItem].StatBoost, "Hotbar Slot: " + Globals.GameItems[Globals.Me.Inventory[_currentItem].ItemNum].Name);
             }
             else if (_currentType == 1)
             {
@@ -231,14 +232,17 @@ namespace Intersect_Client.Classes.UI.Game
                     Globals.Me.AddToHotbar(myindex, -1, -1);
                 }
             }
-            else if (Globals.Me.Hotbar[myindex].Type ==1)
+            else if (Globals.Me.Hotbar[myindex].Type == 1)
             {
                 if (Globals.Me.Hotbar[myindex].Slot == -1 || Globals.Me.Spells[Globals.Me.Hotbar[myindex].Slot].SpellNum == -1)
                 {
                     Globals.Me.AddToHotbar(myindex, -1, -1);
                 }
             }
-            if (Globals.Me.Hotbar[myindex].Type != _currentType || Globals.Me.Hotbar[myindex].Slot != _currentItem || _texLoaded == false || (Globals.Me.Hotbar[myindex].Type == 1 && Globals.Me.Hotbar[myindex].Slot > -1 && (Globals.Me.Spells[Globals.Me.Hotbar[myindex].Slot].SpellCD < Environment.TickCount)) || (Globals.Me.Hotbar[myindex].Type == 0 && Globals.Me.Hotbar[myindex].Slot > -1 && Globals.Me.IsEquipped(_currentItem) != _isEquipped))
+            if (Globals.Me.Hotbar[myindex].Type != _currentType || Globals.Me.Hotbar[myindex].Slot != _currentItem || _texLoaded == false || //Basics
+                (Globals.Me.Hotbar[myindex].Type == 1 && Globals.Me.Hotbar[myindex].Slot > -1 && (Globals.Me.Spells[Globals.Me.Hotbar[myindex].Slot].SpellCD > Environment.TickCount) && _isFaded == false) || //Is Spell, on CD and not faded
+                (Globals.Me.Hotbar[myindex].Type == 1 && Globals.Me.Hotbar[myindex].Slot > -1 && (Globals.Me.Spells[Globals.Me.Hotbar[myindex].Slot].SpellCD <= Environment.TickCount) && _isFaded == true) || //Is Spell, not on CD and faded
+                (Globals.Me.Hotbar[myindex].Type == 0 && Globals.Me.Hotbar[myindex].Slot > -1 && Globals.Me.IsEquipped(_currentItem) != _isEquipped))
             {
                 _currentItem = Globals.Me.Hotbar[myindex].Slot;
                 _currentType = Globals.Me.Hotbar[myindex].Type;
@@ -259,14 +263,15 @@ namespace Intersect_Client.Classes.UI.Game
                 }
                 else if (_currentType == 1 && _currentItem > -1 && Globals.Me.Spells[_currentItem].SpellNum > -1)
                 {
+                    _isFaded = Globals.Me.Spells[_currentItem].SpellCD > Environment.TickCount;
                     sfTex = Gui.CreateSpellTex(Globals.Me.Spells[_currentItem].SpellNum, 1, 1, 34, 34,
-                        (Globals.Me.Spells[_currentItem].SpellCD > Environment.TickCount), _hotbarBG.Texture);
+                        _isFaded, _hotbarBG.Texture);
                     gwenTex = Gui.SFMLToGwenTexture(sfTex.Texture);
                     pnl.Texture = gwenTex;
                     _texLoaded = true;
                     _isEquipped = false;
                 }
-                }
+            }
             if (_currentType > -1 && _currentItem > -1)
             {
                 if (!IsDragging)

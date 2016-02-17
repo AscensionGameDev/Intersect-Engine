@@ -46,14 +46,6 @@ namespace Intersect_Client.Classes
         public Player()
             : base()
         {
-            for (int i = 0; i < Constants.MaxInvItems; i++)
-            {
-                Inventory[i] = new ItemInstance();
-            }
-            for (int i = 0; i < Constants.MaxPlayerSkills; i++)
-            {
-                Spells[i] = new SpellInstance();
-            }
             for (int i = 0; i < Constants.MaxHotbar; i++)
             {
                 Hotbar[i] = new HotbarInstance();

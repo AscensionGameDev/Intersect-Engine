@@ -86,7 +86,7 @@ namespace Intersect_Client.Classes
         }
 
         //Rendering Resources
-       override public void Draw()
+        override public void Draw()
         {
             int i = GetLocalPos(CurrentMap);
             if (i == -1)

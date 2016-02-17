@@ -88,6 +88,18 @@ namespace Intersect_Client
         //Rendering Variables
         public List<Entity> RenderList = null;
 
+        public Entity()
+        {
+            for (int i = 0; i < Constants.MaxInvItems; i++)
+            {
+                Inventory[i] = new ItemInstance();
+            }
+            for (int i = 0; i < Constants.MaxPlayerSkills; i++)
+            {
+                Spells[i] = new SpellInstance();
+            }
+        }
+
         //Deserializing
         public void Load(ByteBuffer bf)
         {
