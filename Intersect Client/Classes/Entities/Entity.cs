@@ -98,7 +98,6 @@ namespace Intersect_Client
             {
                 Spells[i] = new SpellInstance();
             }
-			
         }
 
         //Deserializing
