@@ -28,6 +28,7 @@ using Gwen;
 using Gwen.Control;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 
@@ -50,7 +51,8 @@ namespace Intersect_Client.Classes.UI.Game
             ImagePanel icon = new ImagePanel(_descWindow);
             icon.SetSize(32, 32);
             icon.SetPosition(220 - 4 - 32, 4);
-            icon.ImageName = "Resources/Spells/" + Globals.GameSpells[spellnum].Pic;
+            if (File.Exists("Resources/Spells/" + Globals.GameSpells[spellnum].Pic))
+                icon.ImageName = "Resources/Spells/" + Globals.GameSpells[spellnum].Pic;
 
             Label spellName = new Label(_descWindow);
             spellName.SetPosition(4, 4);

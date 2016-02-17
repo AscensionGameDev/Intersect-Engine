@@ -27,11 +27,13 @@ namespace Intersect_Server.Classes
 {
     public class Projectile : Entity
     {
+        private ProjectileStruct MyBase;
         private int ProjectileNum = 0;
         private int OwnerID = 0;
         private Type OwnerType = null;
         private long TransmittionTimer = 0;
-        private int DistanceTraveled = 0;
+        private int Quantity = 0;
+        private long SpawnTime = 0;
         public int Target = 0;
 
         // Individual Spawns
@@ -40,13 +42,13 @@ namespace Intersect_Server.Classes
         public Projectile(int index, int ownerID, Type ownerType, int projectileNum, int Map, int X, int Y, int Z, int Direction, int target = 0) : base(index)
         {
             ProjectileNum = projectileNum;
-            ProjectileStruct myBase = Globals.GameProjectiles[ProjectileNum];
-            MyName = myBase.Name;
+            MyBase = Globals.GameProjectiles[ProjectileNum];
+            MyName = MyBase.Name;
             OwnerID = ownerID;
             OwnerType = ownerType;
             MySprite = Globals.Entities[OwnerID].MySprite;
             //MySprite = Globals.GameAnimations[myBase.Animation].UpperAnimSprite;
-            TransmittionTimer = Environment.TickCount + myBase.Speed;
+            TransmittionTimer = Environment.TickCount + MyBase.Speed;
             Vital[(int)Enums.Vitals.Health] = 1;
             MaxVital[(int)Enums.Vitals.Health] = 1;
             CurrentMap = Map;
@@ -55,12 +57,8 @@ namespace Intersect_Server.Classes
             CurrentZ = Z;
             Dir = Direction;
             Target = target;
-            DistanceTraveled = 0;
             Passable = 1;
             HideName = 1;
-
-            //Add the spawns
-            AddProjectileSpawns();
         }
 
         private void AddProjectileSpawns()
@@ -81,6 +79,8 @@ namespace Intersect_Server.Classes
                     }
                 }
             }
+            Quantity++;
+            SpawnTime = Environment.TickCount + MyBase.Delay;
         }
 
         private int FindProjectileRotationX(int direction, int x, int y)
@@ -194,6 +194,15 @@ namespace Intersect_Server.Classes
             }
         }
 
+        public void Update()
+        {
+            if (Quantity < MyBase.Quantity && Environment.TickCount > SpawnTime)
+            {
+                AddProjectileSpawns();
+            }
+            CheckForCollision();
+        }
+
         private int GetRangeX(int direction, int range)
         {
             //Left, UpLeft, DownLeft
@@ -236,19 +245,23 @@ namespace Intersect_Server.Classes
         {
             if (Environment.TickCount > TransmittionTimer)
             {
-                if (DistanceTraveled < Globals.GameProjectiles[ProjectileNum].Range)
+                if (Spawns.Count != 0 || Quantity < MyBase.Quantity)
                 {
-                    DistanceTraveled++;
                     for (int i = 0; i < Spawns.Count; i++)
                     {
+                        Spawns[i].Distance++;
                         Entity TempEntity = new Entity(OwnerID);
-                        TempEntity.CurrentX = Spawns[i].X + GetRangeX(Spawns[i].Dir, DistanceTraveled);
-                        TempEntity.CurrentX = Spawns[i].Y + GetRangeY(Spawns[i].Dir, DistanceTraveled);
+                        TempEntity.CurrentX = Spawns[i].X + GetRangeX(Spawns[i].Dir, Spawns[i].Distance);
+                        TempEntity.CurrentX = Spawns[i].Y + GetRangeY(Spawns[i].Dir, Spawns[i].Distance);
                         int c = TempEntity.CanMove(Dir);
 
                         if (c == 0) //No collision so increase the counter for the next collision detection.
                         {
                             TransmittionTimer = Environment.TickCount + Globals.GameProjectiles[ProjectileNum].Speed;
+                            if (Spawns[i].Distance >= Globals.GameProjectiles[ProjectileNum].Range)
+                            {
+                                Spawns.Remove(Spawns[i]);
+                            }
                         }
                         else
                         {
@@ -295,6 +308,7 @@ namespace Intersect_Server.Classes
         public int X;
         public int Y;
         public int Dir;
+        public int Distance = 0;
 
         public ProjectileSpawns(int dir, int x, int y)
         {

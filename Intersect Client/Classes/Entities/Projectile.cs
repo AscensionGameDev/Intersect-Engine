@@ -21,6 +21,7 @@
 */
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Threading;
 using System.Drawing;
 using Intersect_Client.Classes;
@@ -38,6 +39,8 @@ namespace Intersect_Client.Classes
         public int ProjectileNum = 0;
         public int Target = 0;
         private long _movementTimer = 0;
+        private int Quantity = 0;
+        private long SpawnTime = 0;
 
         // Individual Spawns
         public List<ProjectileSpawns> Spawns = new List<ProjectileSpawns>();
@@ -51,6 +54,7 @@ namespace Intersect_Client.Classes
             MaxVital[(int)Enums.Vitals.Health] = 1;
             HideName = 1;
             Passable = 1;
+            IsMoving = true;
         }
 
         public void Load(ByteBuffer bf)
@@ -60,7 +64,6 @@ namespace Intersect_Client.Classes
             Dir = bf.ReadInteger();
             Target = bf.ReadInteger();
             _movementTimer = Environment.TickCount;
-            AddProjectileSpawns();
         }
 
         private void AddProjectileSpawns()
@@ -75,12 +78,14 @@ namespace Intersect_Client.Classes
                     {
                         if (myBase.SpawnLocations[x, y].Directions[d] == true)
                         {
-                            ProjectileSpawns s = new ProjectileSpawns(FindProjectileRotationDir(Dir, d), FindProjectileRotationX(Dir, x, y), FindProjectileRotationY(Dir, x, y));
+                            ProjectileSpawns s = new ProjectileSpawns(FindProjectileRotationDir(Dir, d), CurrentX +  FindProjectileRotationX(Dir, x-2, y-2), CurrentY + FindProjectileRotationY(Dir, x-2, y-2));
                             Spawns.Add(s);
                         }
                     }
                 }
             }
+            Quantity++;
+            SpawnTime = Environment.TickCount + Globals.GameProjectiles[ProjectileNum].Delay;
         }
 
         private int FindProjectileRotationX(int direction, int x, int y)
@@ -236,9 +241,11 @@ namespace Intersect_Client.Classes
         /// Gets the displacement of the projectile during projection
         /// </summary>
         /// <returns>The displacement from the co-ordinates if placed on a Globals.TileHeight grid.</returns>
-        private float getDisplacement()
+        private float getDisplacement(long spawnTime)
         {
-            return (float)(((Environment.TickCount - _movementTimer) / Globals.GameProjectiles[ProjectileNum].Speed) * (float)(Globals.TileHeight * Globals.GameProjectiles[ProjectileNum].Range));
+            long elapsedTime = Environment.TickCount - spawnTime;
+            float displacementPercent = elapsedTime/(float)Globals.GameProjectiles[ProjectileNum].Speed;
+            return displacementPercent*Globals.TileHeight*Globals.GameProjectiles[ProjectileNum].Range;
         }
 
         /// <summary>
@@ -260,12 +267,18 @@ namespace Intersect_Client.Classes
             }
             if (tmpI == -1) return false;
 
+            if (Quantity < Globals.GameProjectiles[ProjectileNum].Quantity && SpawnTime < Environment.TickCount)
+            {
+                AddProjectileSpawns();
+                Console.WriteLine(Quantity.ToString());
+            }
+
             if (IsMoving)
             {
                 for (int s = 0; s < Spawns.Count; s++)
                 {
-                    Spawns[s].OffsetX = GetRangeX(Spawns[s].Dir, getDisplacement());
-                    Spawns[s].OffsetY = GetRangeY(Spawns[s].Dir, getDisplacement());
+                    Spawns[s].OffsetX = GetRangeX(Spawns[s].Dir, getDisplacement(Spawns[s].SpawnTime));
+                    Spawns[s].OffsetY = GetRangeY(Spawns[s].Dir, getDisplacement(Spawns[s].SpawnTime));
                 }
             }
             return true;
@@ -347,6 +360,7 @@ namespace Intersect_Client.Classes
         //Clientside variables
         public float OffsetX = 0;
         public float OffsetY = 0;
+        public long SpawnTime = Environment.TickCount;
 
         public ProjectileSpawns(int dir, int x, int y)
         {
