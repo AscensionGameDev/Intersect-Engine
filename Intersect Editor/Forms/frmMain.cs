@@ -153,7 +153,6 @@ namespace Intersect_Editor.Forms
                 Globals.MapEditorWindow.ResetUndoRedoStates();
             }
             Graphics.TilePreviewUpdated = true;
-            Graphics.LightsChanged = true;
         }
         private void GrabMouseDownEvents()
         {

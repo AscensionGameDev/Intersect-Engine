@@ -205,6 +205,7 @@ namespace Intersect_Client.Classes
             {
                 // default to... default
                 Autotile[x, y].Layer[layerNum].RenderState = Constants.RenderStateNormal;
+                Autotile[x, y].Layer[layerNum].QuarterTile = null;
             }
             else
             {
@@ -213,8 +214,8 @@ namespace Intersect_Client.Classes
                 int quarterNum;
                 for (quarterNum = 1; quarterNum < 5; quarterNum++)
                 {
-                    Autotile[x, y].Layer[layerNum].SrcX[quarterNum] = (_myMap.Layers[layerNum].Tiles[x, y].X * Globals.TileWidth) + Autotile[x, y].Layer[layerNum].QuarterTile[quarterNum].X;
-                    Autotile[x, y].Layer[layerNum].SrcY[quarterNum] = (_myMap.Layers[layerNum].Tiles[x, y].Y * Globals.TileHeight) + Autotile[x, y].Layer[layerNum].QuarterTile[quarterNum].Y;
+                    Autotile[x, y].Layer[layerNum].QuarterTile[quarterNum].X = (_myMap.Layers[layerNum].Tiles[x, y].X * Globals.TileWidth) + Autotile[x, y].Layer[layerNum].QuarterTile[quarterNum].X;
+                    Autotile[x, y].Layer[layerNum].QuarterTile[quarterNum].Y = (_myMap.Layers[layerNum].Tiles[x, y].Y * Globals.TileHeight) + Autotile[x, y].Layer[layerNum].QuarterTile[quarterNum].Y;
                 }
             }
         }
@@ -939,8 +940,6 @@ namespace Intersect_Client.Classes
     {
         public Point[] QuarterTile = new Point[5];
         public byte RenderState;
-        public long[] SrcX = new long[5];
-        public long[] SrcY = new long[5];
         public QuarterTileCls()
         {
             for (var i = 0; i < 5; i++)

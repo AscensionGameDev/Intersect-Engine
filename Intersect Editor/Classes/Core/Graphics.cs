@@ -48,13 +48,13 @@ namespace Intersect_Editor.Classes
         //Game Graphics
         static bool _tilesetsLoaded;
         static Texture[] _tilesetTex;
-        public static string[] ItemNames;
+        public static List<string> ItemNames;
         public static Texture[] ItemTextures;
-        public static string[] EntityFileNames;
+        public static List<string> EntityFileNames;
         public static Texture[] EntityTextures;
-        public static string[] SpellFileNames;
+        public static List<string> SpellFileNames;
         public static Texture[] SpellTextures;
-        public static string[] AnimationFileNames;
+        public static List<string> AnimationFileNames;
         public static Texture[] AnimationTextures;
         public static List<string> ImageFileNames;
         public static Texture[] ImageTextures;
@@ -83,8 +83,36 @@ namespace Intersect_Editor.Classes
         //Light Stuff
         public static byte CurrentBrightness = 100;
         public static bool HideDarkness = false;
-        public static bool LightsChanged = true;
-        public static RenderTexture DarkCacheTexture;
+        public static RenderTexture DarknessTexture;
+        private static Shader RadialGradientShader;
+        private static string LightingFragmentShader = @"
+            uniform vec4 color;
+            uniform float expand;
+            uniform vec2 center;
+            uniform float radius;
+            uniform float windowHeight;
+            void main()
+            {
+	            vec2 centerFromSfml = vec2(center.x, windowHeight - center.y);
+	            vec2 p = (gl_FragCoord.xy - centerFromSfml) / radius;
+                float r = sqrt(dot(p, p));
+                if (r < 1.0)
+                {
+                    gl_FragColor = mix(color, gl_Color, (r - expand) / (1 - expand));
+                }
+                else
+                {
+                    gl_FragColor = gl_Color;
+                }
+            }";
+
+        private static string LightingVertexShader = @"
+            void main()
+            {
+                gl_Position = gl_ModelViewProjectionMatrix * gl_Vertex;
+                gl_TexCoord[0] = gl_TextureMatrix[0] * gl_MultiTexCoord0;
+                gl_FrontColor = gl_Color;
+            }";
 
         //Overlay Stuff
         public static Color OverlayColor = Color.Transparent;
@@ -143,6 +171,17 @@ namespace Intersect_Editor.Classes
                 s.Dispose();
                 LoadGraphics(myForm);
                 Audio.LoadAudio();
+
+                //Load Lighting Shader
+                if (Shader.IsAvailable)
+                {
+                    RadialGradientShader = Shader.FromString(LightingVertexShader, LightingFragmentShader);
+                }
+                else
+                {
+                    MessageBox.Show(@"This machine is not able to load SFML Shaders and cannot run this application.");
+                    Application.Exit();
+                }
 
             }
             catch (Exception)
@@ -246,11 +285,11 @@ namespace Intersect_Editor.Classes
             if (!Directory.Exists("Resources/Items")) { Directory.CreateDirectory("Resources/Items"); }
             var items = Directory.GetFiles("Resources/Items", "*.png");
             Array.Sort(items, new AlphanumComparatorFast());
-            ItemNames = new string[items.Length];
+            ItemNames = new List<string>();
             ItemTextures = new Texture[items.Length];
             for (int i = 0; i < items.Length; i++)
             {
-                ItemNames[i] = items[i].Replace("Resources/Items\\", "");
+                ItemNames.Add(items[i].Replace("Resources/Items\\", ""));
                 ItemTextures[i] = new Texture(new Image("Resources/Items/" + ItemNames[i]));
             }
         }
@@ -259,11 +298,11 @@ namespace Intersect_Editor.Classes
             if (!Directory.Exists("Resources/Entities")) { Directory.CreateDirectory("Resources/Entities"); }
             var chars = Directory.GetFiles("Resources/Entities", "*.png");
             Array.Sort(chars, new AlphanumComparatorFast());
-            EntityFileNames = new string[chars.Length];
+            EntityFileNames = new List<string>();
             EntityTextures = new Texture[chars.Length];
             for (int i = 0; i < chars.Length; i++)
             {
-                EntityFileNames[i] = chars[i].Replace("Resources/Entities\\", "");
+                EntityFileNames.Add(chars[i].Replace("Resources/Entities\\", ""));
                 EntityTextures[i] = new Texture(new Image("Resources/Entities/" + EntityFileNames[i]));
             }
         }
@@ -272,11 +311,11 @@ namespace Intersect_Editor.Classes
             if (!Directory.Exists("Resources/Spells")) { Directory.CreateDirectory("Resources/Spells"); }
             var spells = Directory.GetFiles("Resources/Spells", "*.png");
             Array.Sort(spells, new AlphanumComparatorFast());
-            SpellFileNames = new string[spells.Length];
+            SpellFileNames = new List<string>();
             SpellTextures = new Texture[spells.Length];
             for (int i = 0; i < spells.Length; i++)
             {
-                SpellFileNames[i] = spells[i].Replace("Resources/Spells\\", "");
+                SpellFileNames.Add(spells[i].Replace("Resources/Spells\\", ""));
                 SpellTextures[i] = new Texture(new Image("Resources/Spells/" + SpellFileNames[i]));
             }
         }
@@ -285,11 +324,11 @@ namespace Intersect_Editor.Classes
             if (!Directory.Exists("Resources/Animations")) { Directory.CreateDirectory("Resources/Animations"); }
             var animations = Directory.GetFiles("Resources/Animations", "*.png");
             Array.Sort(animations, new AlphanumComparatorFast());
-            AnimationFileNames = new string[animations.Length];
+            AnimationFileNames = new List<string>();
             AnimationTextures = new Texture[animations.Length];
             for (int i = 0; i < animations.Length; i++)
             {
-                AnimationFileNames[i] = animations[i].Replace("Resources/Animations\\", "");
+                AnimationFileNames.Add(animations[i].Replace("Resources/Animations\\", ""));
                 AnimationTextures[i] = new Texture(new Image("Resources/Animations/" + AnimationFileNames[i]));
             }
         }
@@ -366,7 +405,9 @@ namespace Intersect_Editor.Classes
             RenderWindow.Clear(Color.Black); // clear our SFML RenderWindow
             TilesetWindow.DispatchEvents();
             TilesetWindow.Clear(Color.Black);
+            ClearDarknessTexture();
             DrawTileset();
+            
 
             //Draw Current Map
             if (Globals.MapEditorWindow.picMap.Visible && Globals.CurrentMap > -1 && Globals.GameMaps[Globals.CurrentMap] != null)
@@ -394,7 +435,7 @@ namespace Intersect_Editor.Classes
                 }
                 if (!HideFog) { DrawFog(RenderWindow); }
                 if (!HideOverlay) { DrawMapOverlay(RenderWindow); }
-                if (!HideDarkness || Globals.CurrentLayer == Constants.LayerCount + 1) { DrawDarkness(RenderWindow); }
+                if (!HideDarkness || Globals.CurrentLayer == Constants.LayerCount + 1) { OverlayDarkness(RenderWindow); }
 
                 DrawMapBorders();
                 DrawSelectionRect();
@@ -402,12 +443,7 @@ namespace Intersect_Editor.Classes
             Globals.MainForm.toolStripLabelDebug.Text = @"Draw Calls: " + DrawCalls + @" Cache Limit: " + CacheLimit;
             DrawCalls = 0;
             CacheLimit = 0;
-            if (_vertexCount > 0)
-            {
-                RenderWindow.Draw(_vertexCache, 0, (uint)_vertexCount, PrimitiveType.Quads, _renderState);
-                RenderWindow.ResetGLStates();
-                _vertexCount = 0;
-            }
+            RenderCurrentBatch();
             RenderWindow.Display(); // display what SFML has drawn to the screen
             TilesetWindow.Display();
         }
@@ -760,6 +796,14 @@ namespace Intersect_Editor.Classes
                     }
                 }
             }
+
+            foreach (var light in tmpMap.Lights)
+            {
+                double w = light.Size;
+                var x = xoffset + (light.TileX * Globals.TileWidth + light.OffsetX) - (int)w / 2 + 16;
+                var y = yoffset + (light.TileY * Globals.TileHeight + light.OffsetY) - (int)w / 2 + 16;
+                Graphics.DrawLight((int)x, (int)y, (int)w, light.Intensity,light.Expand, light.Color);
+            }
         }
         private static void DrawSelectionRect()
         {
@@ -1044,43 +1088,6 @@ Globals.CurrentTool == (int)Enums.EdittingTool.Selection)
             target.Draw(overlaySprite);
             overlaySprite.Dispose();
         }
-        private static void DrawDarkness(RenderTarget target, bool screenShotting = false)
-        {
-            if (LightsChanged || CurrentBrightness != Globals.GameMaps[Globals.CurrentMap].Brightness) { InitLighting(); }
-            var tmpMap = Globals.GameMaps[Globals.CurrentMap];
-            if (TilePreviewStruct != null)
-            {
-                tmpMap = TilePreviewStruct;
-            }
-            var darkSprite = new Sprite(DarkCacheTexture.Texture) { Position = new Vector2f(-Globals.TileWidth * 30, -Globals.TileHeight * 30) };
-            target.Draw(darkSprite, new RenderStates(BlendMode.Multiply));
-            darkSprite.Dispose();
-            if (Globals.CurrentLayer != Constants.LayerCount + 1) return;
-            if (!screenShotting)
-            {
-                for (var x = 0; x < Globals.MapWidth; x++)
-                {
-                    for (var y = 0; y < Globals.MapHeight; y++)
-                    {
-                        if (tmpMap.FindLightAt(x, y) == null) continue;
-                        var tmpSprite = new Sprite(_lightTex)
-                        {
-                            TextureRect = new IntRect(0, 0, Globals.TileWidth, Globals.TileHeight),
-                            Position = new Vector2f(x * Globals.TileWidth + Globals.TileWidth, y * Globals.TileHeight + Globals.TileHeight)
-                        };
-                        target.Draw(tmpSprite);
-                    }
-
-                }
-                Shape tileSelectionRect = new RectangleShape(new Vector2f(Globals.TileWidth, Globals.TileHeight));
-                tileSelectionRect.Position = new Vector2f(Globals.CurTileX * Globals.TileWidth + Globals.TileWidth, Globals.CurTileY * Globals.TileHeight + Globals.TileHeight);
-                tileSelectionRect.FillColor = Color.White;
-                tileSelectionRect.FillColor = Color.Transparent;
-                tileSelectionRect.OutlineColor = Color.White;
-                tileSelectionRect.OutlineThickness = 1;
-                target.Draw(tileSelectionRect);
-            }
-        }
         public static Image ScreenShotMap(bool bland = false)
         {
             RenderTexture screenShot = new RenderTexture((uint)((Globals.MapWidth) * Globals.TileWidth), (uint)((Globals.MapHeight) * Globals.TileHeight));
@@ -1101,7 +1108,7 @@ Globals.CurrentTool == (int)Enums.EdittingTool.Selection)
             }
             if (!HideFog && !bland) { DrawFog(screenShot); }
             if (!HideOverlay && !bland) { DrawMapOverlay(screenShot); }
-            if ((!HideDarkness || Globals.CurrentLayer == Constants.LayerCount + 1) && !bland) { DrawDarkness(screenShot, true); }
+            if ((!HideDarkness || Globals.CurrentLayer == Constants.LayerCount + 1) && !bland) { OverlayDarkness(screenShot, true); }
             screenShot.Display();
             Image img = screenShot.Texture.CopyToImage();
             screenShot.Dispose();
@@ -1143,83 +1150,77 @@ Globals.CurrentTool == (int)Enums.EdittingTool.Selection)
         }
 
         //Lighting
-        private static void InitLighting()
+        private static void ClearDarknessTexture()
         {
+            if (DarknessTexture == null)
+            {
+                DarknessTexture = new RenderTexture((uint)(Globals.TileWidth * Globals.MapWidth * 3),(uint)(Globals.TileHeight * Globals.MapHeight * 3));
+            }
+            DarknessTexture.Clear(Color.Black);
+        }
+        private static void OverlayDarkness(RenderTarget target, bool screenShotting = false)
+        {
+            if (DarknessTexture == null) { return; }
+            var rs = new RectangleShape(new Vector2f(DarknessTexture.Size.X, DarknessTexture.Size.Y));
+
             var tmpMap = Globals.GameMaps[Globals.CurrentMap];
             if (TilePreviewStruct != null)
             {
                 tmpMap = TilePreviewStruct;
             }
+            rs.FillColor = new Color(255, 255, 255, (byte)(((float)tmpMap.Brightness/100f) * 255f));    //Draw a rectangle, the opacity indicates if it is day or night.
+            DarknessTexture.Draw(rs);
+            DarknessTexture.Display();
+            RenderCurrentBatch();
+            RenderTexture(DarknessTexture.Texture,-Globals.MapWidth * Globals.TileWidth,-Globals.MapHeight * Globals.TileHeight,target,BlendMode.Multiply);
+            RenderCurrentBatch();
 
-            //If we don't have a light texture, make a base/blank one.
-            if (DarkCacheTexture == null)
+            //Draw Light Attribute Icons
+            if (Globals.CurrentLayer != Constants.LayerCount + 1) return;
+            if (!screenShotting)
             {
-                DarkCacheTexture = new RenderTexture((uint)Globals.MapWidth * (uint)Globals.TileWidth * 3, (uint)Globals.MapHeight * (uint)Globals.TileHeight * 3);
-            }
-            CurrentBrightness = (byte)(((float)tmpMap.Brightness / 100f) * 255f);
-            DarkCacheTexture.Clear(new Color(CurrentBrightness, CurrentBrightness, CurrentBrightness, 255));
-
-            foreach (var t in tmpMap.Lights)
-            {
-                double w = CalcLightWidth(t.Range);
-                var x = (30 * Globals.TileWidth) + (t.TileX * Globals.TileWidth + t.OffsetX) - (int)w / 2 + Globals.TileWidth + 16;
-                var y = 30 * Globals.TileHeight + (t.TileY * Globals.TileHeight + t.OffsetY) - (int)w / 2 + Globals.TileHeight + 16;
-                AddLight(x, y, (int)w, t.Intensity, t);
-            }
-            DarkCacheTexture.Display();
-            LightsChanged = false;
-            CurrentBrightness = (byte)tmpMap.Brightness;
-        }
-        private static int CalcLightWidth(int range)
-        {
-            //Formula that is ~equilivant to Unity spotlight widths, this is so future Unity lighting is possible.
-            int[] xVals = { 0, 5, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120, 130, 140, 150, 160, 170, 180 };
-            int[] yVals = { 1, 8, 18, 34, 50, 72, 92, 114, 135, 162, 196, 230, 268, 320, 394, 500, 658, 976, 1234, 1600 };
-            int w;
-            var x = 0;
-            while (range >= xVals[x])
-            {
-                x++;
-            }
-            if (x > yVals.Length)
-            {
-                w = yVals[yVals.Length - 1];
-            }
-            else
-            {
-                w = yVals[x - 1];
-                w += (int)((range - xVals[x - 1]) / ((float)xVals[x] - xVals[x - 1])) * (yVals[x] - yVals[x - 1]);
-            }
-            w++;
-            return w;
-        }
-        private static void AddLight(int x1, int y1, int size, double intensity, Light light)
-        {
-            Bitmap tmpLight;
-            //If not cached, create a radial gradent for the light.
-            if (light.Graphic == null)
-            {
-                tmpLight = new Bitmap(size, size);
-                var g = System.Drawing.Graphics.FromImage(tmpLight);
-                var pth = new GraphicsPath();
-                pth.AddEllipse(0, 0, size - 1, size - 1);
-                var pgb = new PathGradientBrush(pth)
+                for (var x = 0; x < Globals.MapWidth; x++)
                 {
-                    CenterColor = System.Drawing.Color.FromArgb((int)(255 * intensity), 255, 255, 255),
-                    SurroundColors = new[] { System.Drawing.Color.Transparent },
-                    FocusScales = new PointF(0.8f, 0.8f)
-                };
-                g.FillPath(pgb, pth);
-                g.Dispose();
-                light.Graphic = tmpLight;
-            }
-            else
-            {
-                tmpLight = light.Graphic;
-            }
+                    for (var y = 0; y < Globals.MapHeight; y++)
+                    {
+                        if (tmpMap.FindLightAt(x, y) == null) continue;
+                        var tmpSprite = new Sprite(_lightTex)
+                        {
+                            TextureRect = new IntRect(0, 0, Globals.TileWidth, Globals.TileHeight),
+                            Position = new Vector2f(x * Globals.TileWidth + Globals.TileWidth, y * Globals.TileHeight + Globals.TileHeight)
+                        };
+                        target.Draw(tmpSprite);
+                    }
 
-            var tmpSprite = new Sprite(TexFromBitmap(tmpLight)) { Position = new Vector2f(x1, y1) };
-            DarkCacheTexture.Draw(tmpSprite, new RenderStates(BlendMode.Add));
+                }
+                Shape tileSelectionRect = new RectangleShape(new Vector2f(Globals.TileWidth, Globals.TileHeight));
+                tileSelectionRect.Position = new Vector2f(Globals.CurTileX * Globals.TileWidth + Globals.TileWidth, Globals.CurTileY * Globals.TileHeight + Globals.TileHeight);
+                tileSelectionRect.FillColor = Color.White;
+                tileSelectionRect.FillColor = Color.Transparent;
+                tileSelectionRect.OutlineColor = Color.White;
+                tileSelectionRect.OutlineThickness = 1;
+                target.Draw(tileSelectionRect);
+            }
+        }
+        public static void DrawLight(int x, int y, int size, byte intensity, float expand, System.Drawing.Color color, RenderTarget target = null)
+        {
+            if (target == null)
+            {
+                target = DarknessTexture;
+                x += Globals.TileWidth * Globals.MapWidth;
+                y += Globals.TileHeight * Globals.MapHeight;
+            }
+            RectangleShape rect = new RectangleShape(new Vector2f(size* 2,size* 2));
+            rect.Origin = new Vector2f(size, size);
+            rect.Position = new Vector2f(x + size / 2,
+                y + size / 2);
+            rect.FillColor = Color.Transparent;
+            RadialGradientShader.SetParameter("color", new Color(color.R, color.G, color.B, intensity));
+            RadialGradientShader.SetParameter("center", rect.Position);
+            RadialGradientShader.SetParameter("radius", size);
+            RadialGradientShader.SetParameter("expand", expand/100f);
+            RadialGradientShader.SetParameter("windowHeight", target.Size.Y); // this must be set, but only needs to be set once (or whenever the size of the window changes)
+            target.Draw(rect, new RenderStates(BlendMode.Add, Transform.Identity, null, RadialGradientShader));
         }
         private static Texture TexFromBitmap(Bitmap bmp)
         {
@@ -1336,6 +1337,16 @@ Globals.CurrentTool == (int)Enums.EdittingTool.Selection)
             }
 
 
+        }
+        private static void RenderCurrentBatch()
+        {
+            if (_vertexCount > 0)
+            {
+                RenderWindow.Draw(_vertexCache, 0, (uint)_vertexCount, PrimitiveType.Quads, _renderState);
+                DrawCalls++;
+                RenderWindow.ResetGLStates();
+                _vertexCount = 0;
+            }
         }
     }
 }

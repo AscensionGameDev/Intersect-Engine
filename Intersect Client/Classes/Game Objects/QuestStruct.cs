@@ -29,6 +29,7 @@ namespace Intersect_Client.Classes
     public class QuestStruct
     {
         //General
+        public const string Version = "0.0.0.1";
         public string Name = "";
         public string StartDesc = "";
         public string EndDesc = "";
@@ -45,10 +46,13 @@ namespace Intersect_Client.Classes
         //Tasks
         public List<QuestTask> Tasks = new List<QuestTask>();
 
-        public void Load(byte[] packet)
+        public void Load(byte[] packet, int index)
         {
             var myBuffer = new ByteBuffer();
             myBuffer.WriteBytes(packet);
+            string loadedVersion = myBuffer.ReadString();
+            if (loadedVersion != Version)
+                throw new Exception("Failed to load Animation #" + index + ". Loaded Version: " + loadedVersion + " Expected Version: " + Version);
             Name = myBuffer.ReadString();
             StartDesc = myBuffer.ReadString();
             EndDesc = myBuffer.ReadString();
@@ -79,38 +83,6 @@ namespace Intersect_Client.Classes
             }
 
             myBuffer.Dispose();
-        }
-
-        public byte[] QuestData()
-        {
-            var myBuffer = new ByteBuffer();
-            myBuffer.WriteString(Name);
-            myBuffer.WriteString(StartDesc);
-            myBuffer.WriteString(EndDesc);
-            myBuffer.WriteInteger(ClassReq);
-            myBuffer.WriteInteger(ItemReq);
-            myBuffer.WriteInteger(LevelReq);
-            myBuffer.WriteInteger(QuestReq);
-            myBuffer.WriteInteger(SwitchReq);
-            myBuffer.WriteInteger(VariableReq);
-            myBuffer.WriteInteger(VariableValue);
-
-            myBuffer.WriteInteger(Tasks.Count);
-            for (int i = 0; i < Tasks.Count; i++)
-            {
-                myBuffer.WriteInteger(Tasks[i].Objective);
-                myBuffer.WriteString(Tasks[i].Desc);
-                myBuffer.WriteInteger(Tasks[i].Data1);
-                myBuffer.WriteInteger(Tasks[i].Data2);
-                myBuffer.WriteInteger(Tasks[i].Experience);
-                for (int n = 0; n < Constants.MaxNpcDrops; n++)
-                {
-                    myBuffer.WriteInteger(Tasks[i].Rewards[n].ItemNum);
-                    myBuffer.WriteInteger(Tasks[i].Rewards[n].Amount);
-                }
-            }
-
-            return myBuffer.ToArray();
         }
 
         public class QuestTask

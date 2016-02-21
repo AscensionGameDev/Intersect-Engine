@@ -33,6 +33,7 @@ namespace Intersect_Client.Classes.Items
 {
     public class ItemStruct
     {
+        public const string Version = "0.0.0.1";
         public string Name = "";
         public string Desc = "";
         public int Type;
@@ -62,10 +63,13 @@ namespace Intersect_Client.Classes.Items
             StatsGiven = new int[Constants.MaxStats];
         }
 
-        public void Load(byte[] data)
+        public void Load(byte[] data, int index)
         {
             var myBuffer = new ByteBuffer();
             myBuffer.WriteBytes(data);
+            string loadedVersion = myBuffer.ReadString();
+            if (loadedVersion != Version)
+                throw new Exception("Failed to load Item #" + index + ". Loaded Version: " + loadedVersion + " Expected Version: " + Version);
             Name = myBuffer.ReadString();
             Desc = myBuffer.ReadString();
             Type = myBuffer.ReadInteger();

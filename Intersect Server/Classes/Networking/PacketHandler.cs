@@ -236,7 +236,7 @@ namespace Intersect_Server.Classes
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
             int mapNum = (int) bf.ReadLong();
-            if (mapNum >= 0 && mapNum < Globals.GameMaps.Length)
+            if (mapNum >= 0 && mapNum < Globals.GameMaps.Length && Globals.GameMaps[mapNum] != null)
             {
                 PacketSender.SendMap(client, mapNum);
             }
@@ -275,12 +275,12 @@ namespace Intersect_Server.Classes
             PacketSender.SendEntityMove(index, (int)Enums.EntityTypes.Player, Globals.Entities[index]);
 
             // Check for a warp, if so warp the player.
-            if (Globals.GameMaps[Globals.Entities[index].CurrentMap].Attributes[Globals.Entities[index].CurrentX, Globals.Entities[index].CurrentY].value == (int)Enums.MapAttributes.Warp)
+            Attribute attribute =
+                Globals.GameMaps[Globals.Entities[index].CurrentMap].Attributes[
+                    Globals.Entities[index].CurrentX, Globals.Entities[index].CurrentY];
+            if (attribute != null && attribute.value == (int)Enums.MapAttributes.Warp)
             {
-                Globals.Entities[index].Warp(Globals.GameMaps[Globals.Entities[index].CurrentMap].Attributes[Globals.Entities[index].CurrentX, Globals.Entities[index].CurrentY].data1,
-                    Globals.GameMaps[Globals.Entities[index].CurrentMap].Attributes[Globals.Entities[index].CurrentX, Globals.Entities[index].CurrentY].data2,
-                    Globals.GameMaps[Globals.Entities[index].CurrentMap].Attributes[Globals.Entities[index].CurrentX, Globals.Entities[index].CurrentY].data3,
-                    Globals.Entities[index].Dir);
+                Globals.Entities[index].Warp(attribute.data1,attribute.data2,attribute.data3,Globals.Entities[index].Dir);
             }
 
             if (oldMap != Globals.Entities[index].CurrentMap)
@@ -723,8 +723,8 @@ namespace Intersect_Server.Classes
         {
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
-            var itemNum = bf.ReadLong();
-            Globals.GameItems[itemNum].Load(bf.ReadBytes(bf.Length()));
+            var itemNum = bf.ReadInteger();
+            Globals.GameItems[itemNum].Load(bf.ReadBytes(bf.Length()),itemNum);
             Globals.GameItems[itemNum].Save((int)itemNum);
             bf.Dispose();
         }
@@ -743,7 +743,7 @@ namespace Intersect_Server.Classes
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
             var npcNum = bf.ReadInteger();
-            Globals.GameNpcs[npcNum].Load(bf.ReadBytes(bf.Length()));
+            Globals.GameNpcs[npcNum].Load(bf.ReadBytes(bf.Length()),npcNum);
             Globals.GameNpcs[npcNum].Save(npcNum);
             bf.Dispose();
         }
@@ -762,7 +762,7 @@ namespace Intersect_Server.Classes
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
             var index = bf.ReadInteger();
-            Globals.GameSpells[index].Load(bf.ReadBytes(bf.Length()));
+            Globals.GameSpells[index].Load(bf.ReadBytes(bf.Length()),index);
             Globals.GameSpells[index].Save(index);
             bf.Dispose();
         }
@@ -781,7 +781,7 @@ namespace Intersect_Server.Classes
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
             var index = bf.ReadInteger();
-            Globals.GameAnimations[index].Load(bf.ReadBytes(bf.Length()));
+            Globals.GameAnimations[index].Load(bf.ReadBytes(bf.Length()),index);
             Globals.GameAnimations[index].Save(index);
             bf.Dispose();
         }
@@ -905,7 +905,7 @@ namespace Intersect_Server.Classes
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
             var resourceNum = bf.ReadInteger();
-            Globals.GameResources[resourceNum].Load(bf.ReadBytes(bf.Length()));
+            Globals.GameResources[resourceNum].Load(bf.ReadBytes(bf.Length()),resourceNum);
             Globals.GameResources[resourceNum].Save(resourceNum);
             bf.Dispose();
         }
@@ -924,7 +924,7 @@ namespace Intersect_Server.Classes
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
             var classNum = bf.ReadInteger();
-            Globals.GameClasses[classNum].Load(bf.ReadBytes(bf.Length()));
+            Globals.GameClasses[classNum].Load(bf.ReadBytes(bf.Length()),classNum);
             Globals.GameClasses[classNum].Save(classNum);
             bf.Dispose();
         }
@@ -943,7 +943,7 @@ namespace Intersect_Server.Classes
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
             var questNum = bf.ReadInteger();
-            Globals.GameQuests[questNum].Load(bf.ReadBytes(bf.Length()));
+            Globals.GameQuests[questNum].Load(bf.ReadBytes(bf.Length()),questNum);
             Globals.GameQuests[questNum].Save(questNum);
             bf.Dispose();
         }
@@ -962,7 +962,7 @@ namespace Intersect_Server.Classes
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
             var projectileNum = bf.ReadInteger();
-            Globals.GameProjectiles[projectileNum].Load(bf.ReadBytes(bf.Length()));
+            Globals.GameProjectiles[projectileNum].Load(bf.ReadBytes(bf.Length()),projectileNum);
             Globals.GameProjectiles[projectileNum].Save(projectileNum);
             bf.Dispose();
         }

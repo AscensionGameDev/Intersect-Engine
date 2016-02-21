@@ -40,6 +40,7 @@ namespace Intersect_Client.Classes
     public class MapStruct
     {
         //Core
+        public const string Version = "0.0.0.1";
         public int MyMapNum;
         public string MyName = "New Map";
         public int Up = -1;
@@ -61,7 +62,7 @@ namespace Intersect_Client.Classes
         //Core Data
         public TileArray[] Layers = new TileArray[Constants.LayerCount];
         public Attribute[,] Attributes = new Attribute[Globals.MapWidth, Globals.MapHeight];
-        public List<LightObj> Lights = new List<LightObj>();
+        public List<Light> Lights = new List<Light>();
 
         //Properties
         public string Music = "";
@@ -123,9 +124,6 @@ namespace Intersect_Client.Classes
             }
             MyPacket = mapPacket;
             Load();
-            //Thread _renderThread = new Thread(new ThreadStart(PreRenderMap1));
-            //_renderThread.Priority = ThreadPriority.Lowest;
-            //_renderThread.Start();
             MapLoaded = true;
 
         }
@@ -133,81 +131,83 @@ namespace Intersect_Client.Classes
         //Load
         private void Load()
         {
-            var npcCount = 0;
-            NpcSpawn TempNpc = new NpcSpawn();
-
             var bf = new ByteBuffer();
             bf.WriteBytes(MyPacket);
-            MyName = bf.ReadString();
-            Up = bf.ReadInteger();
-            Down = bf.ReadInteger();
-            Left = bf.ReadInteger();
-            Right = bf.ReadInteger();
-            Music = bf.ReadString();
-            Sound = bf.ReadString();
-            IsIndoors = Convert.ToBoolean(bf.ReadInteger());
-            Panorama = bf.ReadString();
-            Fog = bf.ReadString();
-            FogXSpeed = bf.ReadInteger();
-            FogYSpeed = bf.ReadInteger();
-            FogTransaprency = bf.ReadInteger();
-            RHue = bf.ReadInteger();
-            GHue = bf.ReadInteger();
-            BHue = bf.ReadInteger();
-            AHue = bf.ReadInteger();
-            Brightness = bf.ReadInteger();
-
-            // Load Map Npcs
-            Spawns.Clear();
-            npcCount = bf.ReadInteger();
-            for (var i = 0; i < npcCount; i++)
+            if (bf.ReadInteger() == 1)
             {
-                TempNpc = new NpcSpawn();
-                TempNpc.NpcNum = bf.ReadInteger();
-                TempNpc.X = bf.ReadInteger();
-                TempNpc.Y = bf.ReadInteger();
-                TempNpc.Dir = bf.ReadInteger();
-                Spawns.Add(TempNpc);
+                //Deleted
+                throw new Exception("Server sent a deleted or corrupted map!");
             }
-
-            for (var i = 0; i < Constants.LayerCount; i++)
+            else
             {
+                string loadedVersion = bf.ReadString();
+                if (loadedVersion != Version)
+                    throw new Exception("Failed to load Map #" + MyMapNum + ". Loaded Version: " + loadedVersion + " Expected Version: " + Version);
+                MyName = bf.ReadString();
+                Revision = bf.ReadInteger();
+                Up = bf.ReadInteger();
+                Down = bf.ReadInteger();
+                Left = bf.ReadInteger();
+                Right = bf.ReadInteger();
+                Music = bf.ReadString();
+                Sound = bf.ReadString();
+                IsIndoors = Convert.ToBoolean(bf.ReadInteger());
+                Panorama = bf.ReadString();
+                Fog = bf.ReadString();
+                FogXSpeed = bf.ReadInteger();
+                FogYSpeed = bf.ReadInteger();
+                FogTransaprency = bf.ReadInteger();
+                RHue = bf.ReadInteger();
+                GHue = bf.ReadInteger();
+                BHue = bf.ReadInteger();
+                AHue = bf.ReadInteger();
+                Brightness = bf.ReadInteger();
+
+                for (var i = 0; i < Constants.LayerCount; i++)
+                {
+                    for (var x = 0; x < Globals.MapWidth; x++)
+                    {
+                        for (var y = 0; y < Globals.MapHeight; y++)
+                        {
+                            Layers[i].Tiles[x, y].TilesetIndex = bf.ReadInteger();
+                            Layers[i].Tiles[x, y].X = bf.ReadInteger();
+                            Layers[i].Tiles[x, y].Y = bf.ReadInteger();
+                            Layers[i].Tiles[x, y].Autotile = bf.ReadByte();
+                        }
+                    }
+                }
                 for (var x = 0; x < Globals.MapWidth; x++)
                 {
                     for (var y = 0; y < Globals.MapHeight; y++)
                     {
-                        Layers[i].Tiles[x, y].TilesetIndex = bf.ReadInteger();
-                        Layers[i].Tiles[x, y].X = bf.ReadInteger();
-                        Layers[i].Tiles[x, y].Y = bf.ReadInteger();
-                        Layers[i].Tiles[x, y].Autotile = bf.ReadByte();
+                        int attributeType = bf.ReadInteger();
+                        if (attributeType > 0)
+                        {
+                            Attributes[x, y].value = attributeType;
+                            Attributes[x, y].data1 = bf.ReadInteger();
+                            Attributes[x, y].data2 = bf.ReadInteger();
+                            Attributes[x, y].data3 = bf.ReadInteger();
+                            Attributes[x, y].data4 = bf.ReadString();
+                        }
+                        else
+                        {
+                            Attributes[x, y].value = 0;
+                        }
                     }
                 }
-            }
-            for (var x = 0; x < Globals.MapWidth; x++)
-            {
-                for (var y = 0; y < Globals.MapHeight; y++)
+                var lCount = bf.ReadInteger();
+                for (var i = 0; i < lCount; i++)
                 {
-                    Attributes[x, y].value = bf.ReadInteger();
-                    Attributes[x, y].data1 = bf.ReadInteger();
-                    Attributes[x, y].data2 = bf.ReadInteger();
-                    Attributes[x, y].data3 = bf.ReadInteger();
-                    Attributes[x, y].data4 = bf.ReadString();
+                    Lights.Add(new Light(bf));
                 }
+                MapLoaded = true;
+                Globals.ShouldUpdateLights = true;
+                Autotiles = new MapAutotiles(this);
+                Autotiles.InitAutotiles();
+                UpdateAdjacentAutotiles();
+                CreateMapSounds();
+                MapRendered = false;
             }
-            var lCount = bf.ReadInteger();
-            for (var i = 0; i < lCount; i++)
-            {
-                Lights.Add(new LightObj(bf));
-            }
-            Revision = bf.ReadInteger();
-            bf.ReadLong();
-            MapLoaded = true;
-            Globals.ShouldUpdateLights = true;
-            Autotiles = new MapAutotiles(this);
-            Autotiles.InitAutotiles();
-            UpdateAdjacentAutotiles();
-            CreateMapSounds();
-            MapRendered = false;
         }
 
         private void UpdateAdjacentAutotiles()
@@ -361,7 +361,6 @@ namespace Intersect_Client.Classes
             }
 
             MapRendered = true;
-            Graphics.LightsChanged = true;
         }
         public void PreRenderMap1()
         {
@@ -426,7 +425,6 @@ namespace Intersect_Client.Classes
             Debug.Print("Tile Rendering Time:" + (renderingTime));
             Debug.Print("Texture Display Time:" + (displayTime));
             MapRendered = true;
-            Graphics.LightsChanged = true;
         }
         private void DrawAutoTile(int layerNum, float destX, float destY, int quarterNum, int x, int y, int forceFrame, RenderTarget tex)
         {
@@ -448,8 +446,8 @@ namespace Intersect_Client.Classes
                     break;
             }
             Graphics.RenderTexture(Graphics.Tilesets[Layers[layerNum].Tiles[x, y].TilesetIndex], destX, destY,
-                (int)Autotiles.Autotile[x, y].Layer[layerNum].SrcX[quarterNum] + xOffset,
-                (int)Autotiles.Autotile[x, y].Layer[layerNum].SrcY[quarterNum] + yOffset, 16, 16, tex);
+                (int)Autotiles.Autotile[x, y].Layer[layerNum].QuarterTile[quarterNum].X + xOffset,
+                (int)Autotiles.Autotile[x, y].Layer[layerNum].QuarterTile[quarterNum].Y + yOffset, 16, 16, tex);
         }
         private void DrawMapLayer(RenderTarget tex, int l, int z, float xoffset = 0, float yoffset = 0)
         {
@@ -587,6 +585,15 @@ namespace Intersect_Client.Classes
                     {
                         Graphics.RenderTexture(Graphics.ItemTextures[Graphics.ItemFileNames.IndexOf(Globals.GameItems[MapItems[i].ItemNum].Pic)], GetX() + MapItems[i].X * Globals.TileWidth, GetY() + MapItems[i].Y * Globals.TileHeight, Graphics.RenderWindow);
                     }
+                }
+
+                //Add lights to our darkness texture
+                foreach (var light in Lights)
+                {
+                    double w = light.Size;
+                    var x = GetX() + (light.TileX * Globals.TileWidth + light.OffsetX) - (int)w / 2 + 16;
+                    var y = GetY() + (light.TileY * Globals.TileHeight + light.OffsetY) - (int)w / 2 + 16;
+                    Graphics.DrawLight((int)x, (int)y, (int)w, light.Intensity, light.Expand, light.Color);
                 }
             }
             if (layer == 2)
@@ -757,24 +764,27 @@ namespace Intersect_Client.Classes
         public byte Autotile;
     }
 
-    public class LightObj
+    public class Light
     {
         public int OffsetX;
         public int OffsetY;
         public int TileX;
         public int TileY;
-        public double Intensity;
-        public int Range;
-        public Bitmap Graphic;
+        public byte Intensity = 255;
+        public int Size = 20;
+        public float Expand = 0f;
+        public Color Color = Color.White;
 
-        public LightObj(ByteBuffer myBuffer)
+        public Light(ByteBuffer myBuffer)
         {
             OffsetX = myBuffer.ReadInteger();
             OffsetY = myBuffer.ReadInteger();
             TileX = myBuffer.ReadInteger();
             TileY = myBuffer.ReadInteger();
-            Intensity = myBuffer.ReadDouble();
-            Range = myBuffer.ReadInteger();
+            Intensity = myBuffer.ReadByte();
+            Size = myBuffer.ReadInteger();
+            Expand = (float)myBuffer.ReadDouble();
+            Color = new Color(myBuffer.ReadByte(), myBuffer.ReadByte(), myBuffer.ReadByte());
         }
     }
 

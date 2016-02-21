@@ -76,19 +76,7 @@
             this.rbBlock1 = new System.Windows.Forms.RadioButton();
             this.rbBlockNone = new System.Windows.Forms.RadioButton();
             this.tabLights = new System.Windows.Forms.TabPage();
-            this.pnlLight = new System.Windows.Forms.Panel();
-            this.scrlLightRange = new System.Windows.Forms.HScrollBar();
-            this.label3 = new System.Windows.Forms.Label();
-            this.txtLightRange = new System.Windows.Forms.TextBox();
-            this.scrlLightIntensity = new System.Windows.Forms.HScrollBar();
-            this.label4 = new System.Windows.Forms.Label();
-            this.txtLightIntensity = new System.Windows.Forms.TextBox();
-            this.txtLightOffsetY = new System.Windows.Forms.TextBox();
-            this.txtLightOffsetX = new System.Windows.Forms.TextBox();
-            this.lblOffsetY = new System.Windows.Forms.Label();
-            this.lblOffsetX = new System.Windows.Forms.Label();
-            this.btnLightEditorRevert = new System.Windows.Forms.Button();
-            this.btnLightEditorClose = new System.Windows.Forms.Button();
+            this.lightEditor = new Intersect_Editor.Forms.Controls.LightEditorCtrl();
             this.label6 = new System.Windows.Forms.Label();
             this.tabEvents = new System.Windows.Forms.TabPage();
             this.label8 = new System.Windows.Forms.Label();
@@ -116,7 +104,6 @@
             this.grpGateway.SuspendLayout();
             this.grpDimBlock.SuspendLayout();
             this.tabLights.SuspendLayout();
-            this.pnlLight.SuspendLayout();
             this.tabEvents.SuspendLayout();
             this.tabNPCs.SuspendLayout();
             this.grpManage.SuspendLayout();
@@ -665,7 +652,7 @@
             // 
             // tabLights
             // 
-            this.tabLights.Controls.Add(this.pnlLight);
+            this.tabLights.Controls.Add(this.lightEditor);
             this.tabLights.Controls.Add(this.label6);
             this.tabLights.Location = new System.Drawing.Point(4, 22);
             this.tabLights.Name = "tabLights";
@@ -674,136 +661,14 @@
             this.tabLights.Text = "Lights";
             this.tabLights.UseVisualStyleBackColor = true;
             // 
-            // pnlLight
+            // lightEditor
             // 
-            this.pnlLight.Controls.Add(this.scrlLightRange);
-            this.pnlLight.Controls.Add(this.label3);
-            this.pnlLight.Controls.Add(this.txtLightRange);
-            this.pnlLight.Controls.Add(this.scrlLightIntensity);
-            this.pnlLight.Controls.Add(this.label4);
-            this.pnlLight.Controls.Add(this.txtLightIntensity);
-            this.pnlLight.Controls.Add(this.txtLightOffsetY);
-            this.pnlLight.Controls.Add(this.txtLightOffsetX);
-            this.pnlLight.Controls.Add(this.lblOffsetY);
-            this.pnlLight.Controls.Add(this.lblOffsetX);
-            this.pnlLight.Controls.Add(this.btnLightEditorRevert);
-            this.pnlLight.Controls.Add(this.btnLightEditorClose);
-            this.pnlLight.Location = new System.Drawing.Point(4, 4);
-            this.pnlLight.Name = "pnlLight";
-            this.pnlLight.Size = new System.Drawing.Size(259, 257);
-            this.pnlLight.TabIndex = 0;
-            this.pnlLight.Visible = false;
-            // 
-            // scrlLightRange
-            // 
-            this.scrlLightRange.Location = new System.Drawing.Point(3, 177);
-            this.scrlLightRange.Maximum = 179;
-            this.scrlLightRange.Minimum = 2;
-            this.scrlLightRange.Name = "scrlLightRange";
-            this.scrlLightRange.Size = new System.Drawing.Size(225, 17);
-            this.scrlLightRange.TabIndex = 35;
-            this.scrlLightRange.Value = 2;
-            this.scrlLightRange.Scroll += new System.Windows.Forms.ScrollEventHandler(this.scrlLightRange_Scroll);
-            // 
-            // label3
-            // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(4, 138);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(42, 13);
-            this.label3.TabIndex = 34;
-            this.label3.Text = "Range:";
-            // 
-            // txtLightRange
-            // 
-            this.txtLightRange.Location = new System.Drawing.Point(3, 154);
-            this.txtLightRange.Name = "txtLightRange";
-            this.txtLightRange.Size = new System.Drawing.Size(225, 20);
-            this.txtLightRange.TabIndex = 33;
-            this.txtLightRange.TextChanged += new System.EventHandler(this.txtLightRange_TextChanged);
-            // 
-            // scrlLightIntensity
-            // 
-            this.scrlLightIntensity.LargeChange = 1000;
-            this.scrlLightIntensity.Location = new System.Drawing.Point(3, 121);
-            this.scrlLightIntensity.Maximum = 10000;
-            this.scrlLightIntensity.Minimum = 1;
-            this.scrlLightIntensity.Name = "scrlLightIntensity";
-            this.scrlLightIntensity.Size = new System.Drawing.Size(225, 17);
-            this.scrlLightIntensity.TabIndex = 32;
-            this.scrlLightIntensity.Value = 1;
-            this.scrlLightIntensity.Scroll += new System.Windows.Forms.ScrollEventHandler(this.scrlLightIntensity_Scroll);
-            // 
-            // label4
-            // 
-            this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(4, 82);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(49, 13);
-            this.label4.TabIndex = 31;
-            this.label4.Text = "Intensity:";
-            // 
-            // txtLightIntensity
-            // 
-            this.txtLightIntensity.Location = new System.Drawing.Point(3, 98);
-            this.txtLightIntensity.Name = "txtLightIntensity";
-            this.txtLightIntensity.Size = new System.Drawing.Size(225, 20);
-            this.txtLightIntensity.TabIndex = 30;
-            this.txtLightIntensity.TextChanged += new System.EventHandler(this.txtLightIntensity_TextChanged);
-            // 
-            // txtLightOffsetY
-            // 
-            this.txtLightOffsetY.Location = new System.Drawing.Point(3, 59);
-            this.txtLightOffsetY.Name = "txtLightOffsetY";
-            this.txtLightOffsetY.Size = new System.Drawing.Size(114, 20);
-            this.txtLightOffsetY.TabIndex = 29;
-            this.txtLightOffsetY.TextChanged += new System.EventHandler(this.txtLightOffsetX_TextChanged);
-            // 
-            // txtLightOffsetX
-            // 
-            this.txtLightOffsetX.Location = new System.Drawing.Point(3, 20);
-            this.txtLightOffsetX.Name = "txtLightOffsetX";
-            this.txtLightOffsetX.Size = new System.Drawing.Size(114, 20);
-            this.txtLightOffsetX.TabIndex = 28;
-            this.txtLightOffsetX.TextChanged += new System.EventHandler(this.txtLightOffsetX_TextChanged);
-            // 
-            // lblOffsetY
-            // 
-            this.lblOffsetY.AutoSize = true;
-            this.lblOffsetY.Location = new System.Drawing.Point(3, 43);
-            this.lblOffsetY.Name = "lblOffsetY";
-            this.lblOffsetY.Size = new System.Drawing.Size(48, 13);
-            this.lblOffsetY.TabIndex = 27;
-            this.lblOffsetY.Text = "Offset Y:";
-            // 
-            // lblOffsetX
-            // 
-            this.lblOffsetX.AutoSize = true;
-            this.lblOffsetX.Location = new System.Drawing.Point(4, 4);
-            this.lblOffsetX.Name = "lblOffsetX";
-            this.lblOffsetX.Size = new System.Drawing.Size(48, 13);
-            this.lblOffsetX.TabIndex = 26;
-            this.lblOffsetX.Text = "Offset X:";
-            // 
-            // btnLightEditorRevert
-            // 
-            this.btnLightEditorRevert.Location = new System.Drawing.Point(3, 227);
-            this.btnLightEditorRevert.Name = "btnLightEditorRevert";
-            this.btnLightEditorRevert.Size = new System.Drawing.Size(75, 23);
-            this.btnLightEditorRevert.TabIndex = 25;
-            this.btnLightEditorRevert.Text = "Revert";
-            this.btnLightEditorRevert.UseVisualStyleBackColor = true;
-            this.btnLightEditorRevert.Click += new System.EventHandler(this.btnLightEditorRevert_Click);
-            // 
-            // btnLightEditorClose
-            // 
-            this.btnLightEditorClose.Location = new System.Drawing.Point(153, 227);
-            this.btnLightEditorClose.Name = "btnLightEditorClose";
-            this.btnLightEditorClose.Size = new System.Drawing.Size(75, 23);
-            this.btnLightEditorClose.TabIndex = 24;
-            this.btnLightEditorClose.Text = "Close";
-            this.btnLightEditorClose.UseVisualStyleBackColor = true;
-            this.btnLightEditorClose.Click += new System.EventHandler(this.btnLightEditorClose_Click);
+            this.lightEditor.Location = new System.Drawing.Point(7, 4);
+            this.lightEditor.Name = "lightEditor";
+            this.lightEditor.Size = new System.Drawing.Size(256, 358);
+            this.lightEditor.TabIndex = 2;
+            this.lightEditor.Visible = false;
+            this.lightEditor.Load += new System.EventHandler(this.lightEditor_Load);
             // 
             // label6
             // 
@@ -994,8 +859,6 @@
             this.grpDimBlock.ResumeLayout(false);
             this.grpDimBlock.PerformLayout();
             this.tabLights.ResumeLayout(false);
-            this.pnlLight.ResumeLayout(false);
-            this.pnlLight.PerformLayout();
             this.tabEvents.ResumeLayout(false);
             this.tabEvents.PerformLayout();
             this.tabNPCs.ResumeLayout(false);
@@ -1019,19 +882,6 @@
         public System.Windows.Forms.TabPage tabAttributes;
         public System.Windows.Forms.TabPage tabLights;
         public System.Windows.Forms.TabPage tabEvents;
-        public System.Windows.Forms.Panel pnlLight;
-        public System.Windows.Forms.HScrollBar scrlLightRange;
-        private System.Windows.Forms.Label label3;
-        public System.Windows.Forms.TextBox txtLightRange;
-        public System.Windows.Forms.HScrollBar scrlLightIntensity;
-        private System.Windows.Forms.Label label4;
-        public System.Windows.Forms.TextBox txtLightIntensity;
-        public System.Windows.Forms.TextBox txtLightOffsetY;
-        public System.Windows.Forms.TextBox txtLightOffsetX;
-        private System.Windows.Forms.Label lblOffsetY;
-        private System.Windows.Forms.Label lblOffsetX;
-        private System.Windows.Forms.Button btnLightEditorRevert;
-        private System.Windows.Forms.Button btnLightEditorClose;
         private System.Windows.Forms.RadioButton rbResource;
         private System.Windows.Forms.RadioButton rbSound;
         private System.Windows.Forms.RadioButton rbWarp;
@@ -1083,6 +933,6 @@
         public System.Windows.Forms.ListBox lstMapNpcs;
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.Label label8;
-
+        public Controls.LightEditorCtrl lightEditor;
     }
 }

@@ -1274,7 +1274,9 @@ namespace Intersect_Server.Classes
                 for (var i = 0; i < mapNames.Length; i++)
                 {
                     Globals.GameMaps[i] = new MapStruct(i);
-                    Globals.GameMaps[i].Load(File.ReadAllBytes("Resources/Maps/" + i + ".map"));
+                    if (!Globals.GameMaps[i].Load(File.ReadAllBytes("Resources/Maps/" + i + ".map")))
+                        Globals.GameMaps[i] = null;
+
                 }
             }
             GenerateMapGrids();
@@ -1317,7 +1319,7 @@ namespace Intersect_Server.Classes
             MapGrids.Clear();
             for (var i = 0; i < Globals.MapCount; i++)
             {
-                if (Globals.GameMaps[i].Deleted != 0) continue;
+                if (Globals.GameMaps[i] == null) continue;
                 if (!MapGrids.Any())
                 {
                     MapGrids.Add(new MapGrid(i, 0));
@@ -1340,7 +1342,7 @@ namespace Intersect_Server.Classes
             }
             for (var i = 0; i < Globals.MapCount; i++)
             {
-                if (Globals.GameMaps[i].Deleted != 0) continue;
+                if (Globals.GameMaps[i] == null) continue;
                 Globals.GameMaps[i].SurroundingMaps.Clear();
                 var myGrid = Globals.GameMaps[i].MapGrid;
                 for (var x = Globals.GameMaps[i].MapGridX - 1; x <= Globals.GameMaps[i].MapGridX + 1; x++)
@@ -1383,7 +1385,7 @@ namespace Intersect_Server.Classes
                 }
                 else
                 {
-                    Globals.GameNpcs[i].Load(File.ReadAllBytes("Resources/Npcs/" + i + ".npc"));
+                    Globals.GameNpcs[i].Load(File.ReadAllBytes("Resources/Npcs/" + i + ".npc"), i);
                 }
 
             }
@@ -1407,8 +1409,7 @@ namespace Intersect_Server.Classes
                 }
                 else
                 {
-                    Globals.GameItems[i].Load(File.ReadAllBytes("Resources/Items/" + i + ".item"));
-                    Globals.GameItems[i].Save(i);
+                    Globals.GameItems[i].Load(File.ReadAllBytes("Resources/Items/" + i + ".item"), i);
                 }
             }
         }
@@ -1431,7 +1432,7 @@ namespace Intersect_Server.Classes
                 }
                 else
                 {
-                    Globals.GameSpells[i].Load(File.ReadAllBytes("Resources/Spells/" + i + ".spell"));
+                    Globals.GameSpells[i].Load(File.ReadAllBytes("Resources/Spells/" + i + ".spell"), i);
                 }
             }
         }
@@ -1454,7 +1455,7 @@ namespace Intersect_Server.Classes
                 }
                 else
                 {
-                    Globals.GameAnimations[i].Load(File.ReadAllBytes("Resources/Animations/" + i + ".anim"));
+                    Globals.GameAnimations[i].Load(File.ReadAllBytes("Resources/Animations/" + i + ".anim"), i);
                 }
             }
         }
@@ -1476,7 +1477,7 @@ namespace Intersect_Server.Classes
                 }
                 else
                 {
-                    Globals.GameResources[i].Load(File.ReadAllBytes("Resources/Resources/" + i + ".res"));
+                    Globals.GameResources[i].Load(File.ReadAllBytes("Resources/Resources/" + i + ".res"), i);
                 }
 
             }
@@ -1499,7 +1500,7 @@ namespace Intersect_Server.Classes
                 }
                 else
                 {
-                    Globals.GameQuests[i].Load(File.ReadAllBytes("Resources/Quests/" + i + ".qst"));
+                    Globals.GameQuests[i].Load(File.ReadAllBytes("Resources/Quests/" + i + ".qst"), i);
                 }
 
             }
@@ -1522,7 +1523,7 @@ namespace Intersect_Server.Classes
                 }
                 else
                 {
-                    Globals.GameProjectiles[i].Load(File.ReadAllBytes("Resources/Projectiles/" + i + ".prj"));
+                    Globals.GameProjectiles[i].Load(File.ReadAllBytes("Resources/Projectiles/" + i + ".prj"), i);
                 }
 
             }
@@ -1546,7 +1547,7 @@ namespace Intersect_Server.Classes
                 }
                 else
                 {
-                    Globals.GameClasses[i].Load(File.ReadAllBytes("Resources/Classes/" + i + ".cls"));
+                    Globals.GameClasses[i].Load(File.ReadAllBytes("Resources/Classes/" + i + ".cls"),i);
                 }
                 if (String.IsNullOrEmpty(Globals.GameClasses[i].Name)) { x++; }
             }
@@ -1584,7 +1585,7 @@ namespace Intersect_Server.Classes
                 MapStructure.Load(myBuffer);
                 for (int i = 0; i < Globals.GameMaps.Length; i++)
                 {
-                    if (Globals.GameMaps[i].Deleted == 0)
+                    if (Globals.GameMaps[i] != null)
                     {
                         if (MapStructure.FindMap(i) == null)
                         {

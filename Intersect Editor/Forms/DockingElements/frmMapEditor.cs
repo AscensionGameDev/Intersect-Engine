@@ -9,6 +9,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Windows.Forms;
+using Intersect_Editor.Forms.Controls;
 using WeifenLuo.WinFormsUI.Docking;
 using Graphics = Intersect_Editor.Classes.Graphics;
 
@@ -264,7 +265,6 @@ namespace Intersect_Editor.Forms
                             if ((tmpLight = Globals.GameMaps[Globals.CurrentMap].FindLightAt(Globals.CurTileX, Globals.CurTileY)) != null)
                             {
                                 Globals.GameMaps[Globals.CurrentMap].Lights.Remove(tmpLight);
-                                Graphics.LightsChanged = true;
                                 Graphics.TilePreviewUpdated = true;
                                 MapChanged = true;
                             }
@@ -796,47 +796,16 @@ namespace Intersect_Editor.Forms
                                 Globals.CurTileY)) == null)
                     {
                         tmpLight = new Light(Globals.CurTileX, Globals.CurTileY);
-                        Globals.MapLayersWindow.tabControl.SelectedTab = Globals.MapLayersWindow.tabLights;
-                        Globals.MapLayersWindow.pnlLight.Show();
+                        tmpLight.Size = 50;
                         Globals.GameMaps[Globals.CurrentMap].Lights.Add(tmpLight);
-                        Graphics.LightsChanged = true;
-                        Globals.BackupLight = new Light(tmpLight.TileX, tmpLight.TileY)
-                        {
-                            OffsetX = tmpLight.OffsetX
-                        };
-                        Globals.BackupLight.OffsetX = tmpLight.OffsetX;
-                        Globals.BackupLight.Intensity = tmpLight.Intensity;
-                        Globals.BackupLight.Range = tmpLight.Range;
-                        Globals.MapLayersWindow.txtLightIntensity.Text = "" + tmpLight.Intensity;
-                        Globals.MapLayersWindow.txtLightRange.Text = "" + tmpLight.Range;
-                        Globals.MapLayersWindow.txtLightOffsetX.Text = "" + tmpLight.OffsetX;
-                        Globals.MapLayersWindow.txtLightOffsetY.Text = "" + tmpLight.OffsetY;
-                        Globals.MapLayersWindow.scrlLightIntensity.Value =
-                            (int)(tmpLight.Intensity * 10000.0);
-                        Globals.MapLayersWindow.scrlLightRange.Value = tmpLight.Range;
-                        Globals.EditingLight = tmpLight;
-                        MapChanged = true;
                     }
-                    else
-                    {
-                        Globals.MapLayersWindow.tabControl.SelectedTab = Globals.MapLayersWindow.tabLights;
-                        Globals.MapLayersWindow.pnlLight.Show();
-                        Globals.BackupLight = new Light(tmpLight.TileX, tmpLight.TileY)
-                        {
-                            OffsetX = tmpLight.OffsetX
-                        };
-                        Globals.BackupLight.OffsetX = tmpLight.OffsetX;
-                        Globals.BackupLight.Intensity = tmpLight.Intensity;
-                        Globals.BackupLight.Range = tmpLight.Range;
-                        Globals.MapLayersWindow.txtLightIntensity.Text = "" + tmpLight.Intensity;
-                        Globals.MapLayersWindow.txtLightRange.Text = "" + tmpLight.Range;
-                        Globals.MapLayersWindow.txtLightOffsetX.Text = "" + tmpLight.OffsetX;
-                        Globals.MapLayersWindow.txtLightOffsetY.Text = "" + tmpLight.OffsetY;
-                        Globals.MapLayersWindow.scrlLightIntensity.Value =
-                            (int)(tmpLight.Intensity * 10000.0);
-                        Globals.MapLayersWindow.scrlLightRange.Value = tmpLight.Range;
-                        Globals.EditingLight = tmpLight;
-                    }
+                    Globals.MapLayersWindow.tabControl.SelectedTab = Globals.MapLayersWindow.tabLights;
+                    Globals.MapLayersWindow.lightEditor.Show();
+                    Globals.BackupLight = new Light(tmpLight);
+                    Globals.MapLayersWindow.lightEditor.LoadEditor(tmpLight);
+                    Globals.EditingLight = tmpLight;
+                    MapChanged = true;
+
                     break;
                 case Constants.LayerCount + 2:
                     EventStruct tmpEvent;
@@ -882,7 +851,6 @@ namespace Intersect_Editor.Forms
             Globals.TotalTileDragY = 0;
             Globals.MouseButton = -1;
             Globals.SelectionSource = null;
-            Graphics.LightsChanged = true;
             Graphics.TilePreviewUpdated = true;
         }
         private void picMap_MouseEnter(object sender, EventArgs e)
@@ -1327,7 +1295,6 @@ namespace Intersect_Editor.Forms
                                             tmpMap.Lights[w].TileY == y0 + y)
                                         {
                                             tmpMap.Lights.Remove(tmpMap.Lights[w]);
-                                            Graphics.LightsChanged = true;
                                         }
                                     }
                                 }
@@ -1358,7 +1325,6 @@ namespace Intersect_Editor.Forms
             Globals.TotalTileDragX = 0;
             Globals.TotalTileDragY = 0;
             Globals.SelectionSource = null;
-            Graphics.LightsChanged = true;
             Graphics.TilePreviewUpdated = true;
             Globals.CurMapSelX = Globals.CurTileX;
             Globals.CurMapSelY = Globals.CurTileY;
@@ -1374,7 +1340,6 @@ namespace Intersect_Editor.Forms
         {
             Copy();
             WipeCurrentSelection(Globals.GameMaps[Globals.CurrentMap]);
-            Graphics.LightsChanged = true;
             Graphics.TilePreviewUpdated = true;
             MapUndoStates.Add(CurrentMapState);
             MapRedoStates.Clear();
@@ -1430,7 +1395,6 @@ namespace Intersect_Editor.Forms
                 Globals.TotalTileDragX = -selX + selX1;
                 Globals.TotalTileDragY = -selY + selY1;
                 Globals.IsPaste = true;
-                Graphics.LightsChanged = true;
                 Graphics.TilePreviewUpdated = true;
             }
         }

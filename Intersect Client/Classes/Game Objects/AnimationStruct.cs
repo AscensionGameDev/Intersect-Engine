@@ -33,6 +33,7 @@ namespace Intersect_Client.Classes.Animations
 {
     public class AnimationStruct
     {
+        public const string Version = "0.0.0.1";
         public string Name = "";
         public string Sound = "";
 
@@ -43,6 +44,7 @@ namespace Intersect_Client.Classes.Animations
         public int LowerAnimFrameCount = 1;
         public int LowerAnimFrameSpeed = 100;
         public int LowerAnimLoopCount = 1;
+        public Light[] LowerLights;
 
         //Upper Animation
         public string UpperAnimSprite = "";
@@ -51,11 +53,17 @@ namespace Intersect_Client.Classes.Animations
         public int UpperAnimFrameCount = 1;
         public int UpperAnimFrameSpeed = 100;
         public int UpperAnimLoopCount = 1;
+        public Light[] UpperLights;
 
-        public void Load(byte[] packet)
+        public void Load(byte[] packet, int index)
         {
             var myBuffer = new ByteBuffer();
             myBuffer.WriteBytes(packet);
+
+            string loadedVersion = myBuffer.ReadString();
+            if (loadedVersion != Version)
+                throw new Exception("Failed to load Animation #" + index + ". Loaded Version: " + loadedVersion + " Expected Version: " + Version);
+
             Name = myBuffer.ReadString();
             Sound = myBuffer.ReadString();
 
@@ -66,6 +74,11 @@ namespace Intersect_Client.Classes.Animations
             LowerAnimFrameCount = myBuffer.ReadInteger();
             LowerAnimFrameSpeed = myBuffer.ReadInteger();
             LowerAnimLoopCount = myBuffer.ReadInteger();
+            LowerLights = new Light[LowerAnimFrameCount];
+            for (int i = 0; i < LowerAnimFrameCount; i++)
+            {
+                LowerLights[i] = new Light(myBuffer);
+            }
 
             //Upper Animation
             UpperAnimSprite = myBuffer.ReadString();
@@ -74,6 +87,11 @@ namespace Intersect_Client.Classes.Animations
             UpperAnimFrameCount = myBuffer.ReadInteger();
             UpperAnimFrameSpeed = myBuffer.ReadInteger();
             UpperAnimLoopCount = myBuffer.ReadInteger();
+            UpperLights = new Light[UpperAnimFrameCount];
+            for (int i = 0; i < UpperAnimFrameCount; i++)
+            {
+                UpperLights[i] = new Light(myBuffer);
+            }
 
             myBuffer.Dispose();
         }

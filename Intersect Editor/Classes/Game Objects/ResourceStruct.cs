@@ -29,6 +29,7 @@ namespace Intersect_Editor.Classes
     public class ResourceStruct
     {
         // General
+        public const string Version = "0.0.0.1";
         public string Name = "";
         public int MinHP = 0;
         public int MaxHP = 0;
@@ -54,10 +55,13 @@ namespace Intersect_Editor.Classes
 
         }
 
-        public void Load(byte[] packet)
+        public void Load(byte[] packet, int index)
         {
             var myBuffer = new ByteBuffer();
             myBuffer.WriteBytes(packet);
+            string loadedVersion = myBuffer.ReadString();
+            if (loadedVersion != Version)
+                throw new Exception("Failed to load Resource #" + index + ". Loaded Version: " + loadedVersion + " Expected Version: " + Version);
             Name = myBuffer.ReadString();
             InitialGraphic = myBuffer.ReadString();
             EndGraphic = myBuffer.ReadString();
@@ -82,6 +86,7 @@ namespace Intersect_Editor.Classes
         public byte[] ResourceData()
         {
             var myBuffer = new ByteBuffer();
+            myBuffer.WriteString(Version);
             myBuffer.WriteString(Name);
             myBuffer.WriteString(InitialGraphic);
             myBuffer.WriteString(EndGraphic);

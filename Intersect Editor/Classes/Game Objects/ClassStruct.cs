@@ -19,6 +19,8 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+
+using System;
 using System.Collections.Generic;
 using System.IO;
 namespace Intersect_Editor.Classes
@@ -26,6 +28,7 @@ namespace Intersect_Editor.Classes
     public class ClassStruct
     {
         //Core info
+        public const string Version = "0.0.0.1";
         public string Name = "";
 
         //Sprites
@@ -50,7 +53,7 @@ namespace Intersect_Editor.Classes
             }
         }
 
-        public void Load(byte[] packet)
+        public void Load(byte[] packet, int index)
         {
             var spriteCount = 0;
             ClassSprite TempSprite = new ClassSprite();
@@ -59,6 +62,9 @@ namespace Intersect_Editor.Classes
 
             var myBuffer = new ByteBuffer();
             myBuffer.WriteBytes(packet);
+            string loadedVersion = myBuffer.ReadString();
+            if (loadedVersion != Version)
+                throw new Exception("Failed to load Class #" + index + ". Loaded Version: " + loadedVersion + " Expected Version: " + Version);
             Name = myBuffer.ReadString();
 
             // Load Class Sprites
@@ -105,6 +111,7 @@ namespace Intersect_Editor.Classes
         public byte[] ClassData()
         {
             var myBuffer = new ByteBuffer();
+            myBuffer.WriteString(Version);
             myBuffer.WriteString(Name);
 
             //Sprites

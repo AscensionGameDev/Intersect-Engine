@@ -47,7 +47,7 @@ namespace Intersect_Editor.Forms
             lstNpcs.SelectedIndex = 0;
             cmbSprite.Items.Clear();
             cmbSprite.Items.Add("None");
-            for (int i = 0; i < Intersect_Editor.Classes.Graphics.EntityFileNames.Length; i++)
+            for (int i = 0; i < Intersect_Editor.Classes.Graphics.EntityFileNames.Count; i++)
             {
                 cmbSprite.Items.Add(Intersect_Editor.Classes.Graphics.EntityFileNames[i]);
             }
@@ -123,7 +123,7 @@ namespace Intersect_Editor.Forms
             var tempItem = new NpcStruct();
             var tempBuff = new ByteBuffer();
             tempBuff.WriteBytes(tempItem.NpcData());
-            Globals.GameNpcs[_editorIndex].Load(tempBuff.ToArray());
+            Globals.GameNpcs[_editorIndex].Load(tempBuff.ToArray(),_editorIndex);
             tempBuff.Dispose();
             UpdateEditor();
         }
@@ -132,7 +132,7 @@ namespace Intersect_Editor.Forms
         {
             for (var i = 0; i < Constants.MaxNpcs; i++)
             {
-                Globals.GameNpcs[i].Load(_npcsBackup[i].ToArray());
+                Globals.GameNpcs[i].Load(_npcsBackup[i].ToArray(),i);
             }
 
             Hide();

@@ -48,7 +48,7 @@ namespace Intersect_Editor.Forms
             lstSpells.SelectedIndex = 0;
             cmbSprite.Items.Clear();
             cmbSprite.Items.Add("None");
-            for (int i = 0; i < Intersect_Editor.Classes.Graphics.SpellFileNames.Length; i++)
+            for (int i = 0; i < Intersect_Editor.Classes.Graphics.SpellFileNames.Count; i++)
             {
                 cmbSprite.Items.Add(Intersect_Editor.Classes.Graphics.SpellFileNames[i]);
             }
@@ -429,7 +429,7 @@ namespace Intersect_Editor.Forms
         private void btnDelete_Click(object sender, EventArgs e)
         {
             var temp = new SpellStruct();
-            Globals.GameSpells[_editorIndex].Load(temp.SpellData());
+            Globals.GameSpells[_editorIndex].Load(temp.SpellData(),_editorIndex);
             UpdateEditor();
         }
 
@@ -437,7 +437,7 @@ namespace Intersect_Editor.Forms
         {
             for (var i = 0; i < Constants.MaxSpells; i++)
             {
-                Globals.GameSpells[i].Load(_spellsBackup[i].ToArray());
+                Globals.GameSpells[i].Load(_spellsBackup[i].ToArray(),i);
             }
 
             Hide();

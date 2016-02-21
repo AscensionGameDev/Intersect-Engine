@@ -557,9 +557,9 @@ namespace Intersect_Client.Classes
         {
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
-            var itemnum = bf.ReadLong();
-            Globals.GameItems[itemnum] = new ItemStruct();
-            Globals.GameItems[itemnum].Load(bf.ReadBytes(bf.Length()));
+            var itemNum = bf.ReadInteger();
+            Globals.GameItems[itemNum] = new ItemStruct();
+            Globals.GameItems[itemNum].Load(bf.ReadBytes(bf.Length()),itemNum);
         }
 
         private static void HandleNpcData(byte[] packet)
@@ -568,7 +568,7 @@ namespace Intersect_Client.Classes
             bf.WriteBytes(packet);
             var npcNum = bf.ReadInteger();
             Globals.GameNpcs[npcNum] = new NpcStruct();
-            Globals.GameNpcs[npcNum].Load(bf.ReadBytes(bf.Length()));
+            Globals.GameNpcs[npcNum].Load(bf.ReadBytes(bf.Length()),npcNum);
         }
 
         private static void HandleSpellData(byte[] packet)
@@ -577,7 +577,7 @@ namespace Intersect_Client.Classes
             bf.WriteBytes(packet);
             var index = bf.ReadInteger();
             Globals.GameSpells[index] = new SpellStruct();
-            Globals.GameSpells[index].Load(bf.ReadBytes(bf.Length()));
+            Globals.GameSpells[index].Load(bf.ReadBytes(bf.Length()),index);
         }
 
         private static void HandleAnimationData(byte[] packet)
@@ -586,7 +586,7 @@ namespace Intersect_Client.Classes
             bf.WriteBytes(packet);
             var index = bf.ReadInteger();
             Globals.GameAnimations[index] = new AnimationStruct();
-            Globals.GameAnimations[index].Load(bf.ReadBytes(bf.Length()));
+            Globals.GameAnimations[index].Load(bf.ReadBytes(bf.Length()),index);
         }
 
         private static void HandleResourceData(byte[] packet)
@@ -595,7 +595,7 @@ namespace Intersect_Client.Classes
             bf.WriteBytes(packet);
             var resourceNum = bf.ReadInteger();
             Globals.GameResources[resourceNum] = new ResourceStruct();
-            Globals.GameResources[resourceNum].Load(bf.ReadBytes(bf.Length()));
+            Globals.GameResources[resourceNum].Load(bf.ReadBytes(bf.Length()),resourceNum);
         }
 
         private static void HandleMapItems(byte[] packet)
@@ -703,7 +703,7 @@ namespace Intersect_Client.Classes
             }
 
             Globals.GameClasses[classNum] = new ClassStruct();
-            Globals.GameClasses[classNum].Load(bf.ReadBytes(bf.Length()));
+            Globals.GameClasses[classNum].Load(bf.ReadBytes(bf.Length()),classNum);
             bf.Dispose();
         }
 
@@ -720,7 +720,7 @@ namespace Intersect_Client.Classes
             bf.WriteBytes(packet);
             var questNum = bf.ReadInteger();
             Globals.GameQuests[questNum] = new QuestStruct();
-            Globals.GameQuests[questNum].Load(bf.ReadBytes(bf.Length()));
+            Globals.GameQuests[questNum].Load(bf.ReadBytes(bf.Length()),questNum);
             bf.Dispose();
         }
 
@@ -735,7 +735,7 @@ namespace Intersect_Client.Classes
             bf.WriteBytes(packet);
             var projectileNum = bf.ReadInteger();
             Globals.GameProjectiles[projectileNum] = new ProjectileStruct();
-            Globals.GameProjectiles[projectileNum].Load(bf.ReadBytes(bf.Length()));
+            Globals.GameProjectiles[projectileNum].Load(bf.ReadBytes(bf.Length()),projectileNum);
             bf.Dispose();
         }
 

@@ -42,6 +42,7 @@ using KeyEventArgs = SFML.Window.KeyEventArgs;
 using View = SFML.Graphics.View;
 using SFML.System;
 using System.Diagnostics;
+using System.Runtime.Remoting.Metadata.W3cXsd2001;
 
 namespace Intersect_Client.Classes
 {
@@ -90,17 +91,39 @@ namespace Intersect_Client.Classes
 
 
         //Darkness Stuff
-        public static bool LightsChanged = true;
         public static int DarkOffsetX = 0;
         public static int DarkOffsetY = 0;
-        private static Thread LightThread;
-        public static RenderTexture DarkCacheTexture;
-        private static RenderTexture DarkCacheTextureBackup;
-        private static bool UseDarknessBackup = true;
-        private static bool SwapDarknessTextures = false;
-        public static RenderTexture CurrentDarknexxTexture;
-        public static Texture PlayerLightTex;
         public static float SunIntensity;
+        public static RenderTexture DarknessTexture;
+        private static Shader RadialGradientShader;
+        private static string LightingFragmentShader = @"
+            uniform vec4 color;
+            uniform float expand;
+            uniform vec2 center;
+            uniform float radius;
+            uniform float windowHeight;
+            void main()
+            {
+	            vec2 centerFromSfml = vec2(center.x, windowHeight - center.y);
+	            vec2 p = (gl_FragCoord.xy - centerFromSfml) / radius;
+                float r = sqrt(dot(p, p));
+                if (r < 1.0)
+                {
+                    gl_FragColor = mix(color, gl_Color, (r - expand) / (1 - expand));
+                }
+                else
+                {
+                    gl_FragColor = gl_Color;
+                }
+            }";
+
+        private static string LightingVertexShader = @"
+            void main()
+            {
+                gl_Position = gl_ModelViewProjectionMatrix * gl_Vertex;
+                gl_TexCoord[0] = gl_TextureMatrix[0] * gl_MultiTexCoord0;
+                gl_FrontColor = gl_Color;
+            }";
 
         //Fog Stuff
         public static int FogOffsetX = 0;
@@ -113,8 +136,9 @@ namespace Intersect_Client.Classes
 
         //Player Spotlight Values
         private const float PlayerLightIntensity = .7f;
-        private const int PlayerLightSize = 150;
-        private const float PlayerLightScale = .6f;
+        private const int PlayerLightSize = 300;
+        private const float PlayerLightExpand = 0f;
+        public static Color PlayerLightColor = Color.White;
 
         private static long _fadeTimer;
 
@@ -198,6 +222,19 @@ namespace Intersect_Client.Classes
             RenderWindow.KeyReleased += renderWindow_KeyReleased;
             RenderWindow.MouseButtonPressed += renderWindow_MouseButtonPressed;
             RenderWindow.MouseButtonReleased += renderWindow_MouseButtonReleased;
+
+            //Init the lighting shader on load.
+            //Load Lighting Shader
+            if (Shader.IsAvailable)
+            {
+                RadialGradientShader = Shader.FromString(LightingVertexShader, LightingFragmentShader);
+            }
+            else
+            {
+                MessageBox.Show(@"This machine is not able to load SFML Shaders and cannot run this application.");
+                Application.Exit();
+            }
+
             CurrentView = new FloatRect(0,0,ScreenWidth,ScreenHeight);
             Gui.InitGwen();
             if (LimitResolution())
@@ -291,10 +328,6 @@ namespace Intersect_Client.Classes
         //Game Rendering
         public static void DrawGame()
         {
-            if (!RenderWindow.HasFocus())
-            {
-                return;
-            }
             if (MustReInit)
             {
                 Gui.DestroyGwen();
@@ -303,8 +336,8 @@ namespace Intersect_Client.Classes
                 InitSfml();
                 MustReInit = false;
             }
-            //if (!RenderWindow.HasFocus()) return;
             RenderWindow.Clear(Color.Black);
+            ClearDarknessTexture();
             DrawCalls = 0;
             MapsDrawn = 0;
             EntitiesDrawn = 0;
@@ -362,37 +395,6 @@ namespace Intersect_Client.Classes
 
 
                 RenderWindow.Clear(Color.Black);
-                if (LightsChanged && !LightsChanged)
-                {
-                    if (LightThread == null)
-                    {
-                        LightThread = new Thread(InitLighting);
-                        //If we don't have a light texture, make a base/blank one.
-                        if (DarkCacheTexture == null)
-                        {
-                            DarkCacheTexture = new RenderTexture((uint)Globals.MapWidth * (uint)Globals.TileWidth * 3, (uint)Globals.MapHeight * (uint)Globals.TileHeight * 3);
-                            DarkCacheTextureBackup = new RenderTexture((uint)Globals.MapWidth * (uint)Globals.TileWidth * 3, (uint)Globals.MapHeight * (uint)Globals.TileHeight * 3);
-                            CurrentDarknexxTexture = new RenderTexture((uint)Globals.MapWidth * (uint)Globals.TileWidth * 3, (uint)Globals.MapHeight * (uint)Globals.TileHeight * 3);
-                            var size = CalcLightWidth(PlayerLightSize);
-                            var tmpLight = new Bitmap(size, size);
-                            var g = System.Drawing.Graphics.FromImage(tmpLight);
-                            var pth = new GraphicsPath();
-                            pth.AddEllipse(0, 0, size - 1, size - 1);
-                            var pgb = new PathGradientBrush(pth)
-                            {
-                                CenterColor =
-                                    System.Drawing.Color.FromArgb((int)(255 * PlayerLightIntensity), (int)(255 * PlayerLightIntensity),
-                                        (int)(255 * PlayerLightIntensity), (int)(255 * PlayerLightIntensity)),
-                                SurroundColors = new[] { System.Drawing.Color.Black },
-                                FocusScales = new PointF(PlayerLightScale, PlayerLightScale)
-                            };
-                            g.FillPath(pgb, pth);
-                            g.Dispose();
-                            PlayerLightTex = TexFromBitmap(tmpLight);
-                        }
-                        LightThread.Start();
-                    }
-                }
 
                 if (Globals.CurrentMap > -1)
                 {
@@ -476,7 +478,9 @@ namespace Intersect_Client.Classes
                         }
                     }
                 }
-                DrawDarkness();
+                RenderCurrentBatch();
+                OverlayDarkness();
+                RenderCurrentBatch();
             }
 
             Gui.DrawGui();
@@ -826,179 +830,44 @@ namespace Intersect_Client.Classes
         }
 
         //Lighting
-        private static void InitLighting()
+        private static void ClearDarknessTexture()
         {
-            return;
-            RenderTexture tmpTex;
-            do
+            if (DarknessTexture == null)
             {
-                if (LightsChanged)
-                {
-                    LightsChanged = false;
-                    if (UseDarknessBackup)
-                    {
-                        tmpTex = DarkCacheTexture;
-                    }
-                    else
-                    {
-                        tmpTex = DarkCacheTextureBackup;
-                    }
-
-                    lock (tmpTex)
-                    {
-                        tmpTex.SetActive(true);
-                        //If loading maps still, dont make the texture, no point
-                        for (var i = 0; i < 9; i++)
-                        {
-                            if (Globals.LocalMaps[i] <= -1 || Globals.LocalMaps[i] >= Globals.GameMaps.Count()) continue;
-                            if (Globals.GameMaps[Globals.LocalMaps[i]] != null)
-                            {
-                                if (Globals.GameMaps[Globals.LocalMaps[i]].MapLoaded)
-                                {
-
-                                }
-                                else
-                                {
-                                    LightsChanged = true;
-                                    break;
-                                }
-                            }
-                            else
-                            {
-                                LightsChanged = true;
-                                break;
-                            }
-                        }
-                        byte val = (byte)(((float)Globals.GameMaps[Globals.LocalMaps[4]].Brightness / 100f) * 255f);
-                        tmpTex.Clear(new Color(val, val, val, 255));
-
-                        if (!LightsChanged)
-                        {
-                            //Render each light.
-                            for (var z = 0; z < 9; z++)
-                            {
-                                if (Globals.LocalMaps[z] <= -1 || Globals.LocalMaps[z] >= Globals.GameMaps.Count()) continue;
-                                if (Globals.GameMaps[Globals.LocalMaps[z]] == null) continue;
-                                if (!Globals.GameMaps[Globals.LocalMaps[z]].MapLoaded) continue;
-                                foreach (var t in Globals.GameMaps[Globals.LocalMaps[z]].Lights)
-                                {
-                                    if (LightsChanged) { break; }
-                                    double w = CalcLightWidth(t.Range);
-                                    var x = Globals.GameMaps[Globals.LocalMaps[z]].GetX() + Globals.MapWidth * Globals.TileWidth + (t.TileX * Globals.TileWidth + t.OffsetX) - (int)w / 2 + 16;
-                                    var y = Globals.GameMaps[Globals.LocalMaps[z]].GetY() + Globals.MapHeight * Globals.TileHeight + (t.TileY * Globals.TileHeight + t.OffsetY) - (int)w / 2 + 16;
-                                    AddLight((int)x, (int)y, (int)w, t.Intensity, t, tmpTex);
-                                }
-                            }
-                            tmpTex.Display();
-                            tmpTex.SetActive(false);
-                        }
-                    }
-                    SwapDarknessTextures = true;
-                    UseDarknessBackup = !UseDarknessBackup;
-                }
-                if (!LightsChanged) { System.Threading.Thread.Sleep(1); }
-            } while (GameMain.IsRunning);
+                DarknessTexture = new RenderTexture((uint)ScreenWidth, (uint)ScreenHeight);
+            }
+            DarknessTexture.Clear(Color.Black);
         }
-        private static int CalcLightWidth(int range)
+        private static void OverlayDarkness()
         {
-            //Formula that is ~equilivant to Unity spotlight widths, this is so future Unity lighting is possible.
-            int[] xVals = { 0, 5, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120, 130, 140, 150, 160, 170, 180 };
-            int[] yVals = { 1, 8, 18, 34, 50, 72, 92, 114, 135, 162, 196, 230, 268, 320, 394, 500, 658, 976, 1234, 1600 };
-            int w;
-            var x = 0;
-            while (range >= xVals[x])
-            {
-                x++;
-            }
-            if (x > yVals.Length)
-            {
-                w = yVals[yVals.Length - 1];
-            }
-            else
-            {
-                w = yVals[x - 1];
-                w += (int)((range - xVals[x - 1]) / ((float)xVals[x] - xVals[x - 1])) * (yVals[x] - yVals[x - 1]);
-            }
-            w++;
-            return w;
-        }
-        private static void DrawDarkness()
-        {
-            return;
             if (Globals.GameMaps[Globals.CurrentMap].IsIndoors) { return; }
-            var rs = new RectangleShape(new Vector2f(3 * Globals.TileWidth * Globals.MapWidth, 3 * Globals.TileHeight * Globals.MapHeight));
-            if (CurrentDarknexxTexture == null) { return; }
-            CurrentDarknexxTexture.Clear(Color.Transparent);
+            if (DarknessTexture == null) { return; }
+            var rs = new RectangleShape(new Vector2f(DarknessTexture.Size.X, DarknessTexture.Size.Y));
 
-            if (UseDarknessBackup)
-            {
-                if (SwapDarknessTextures)
-                {
-                    DarkCacheTextureBackup.SetActive(true);
-                    DarkCacheTexture.SetActive(false);
-                    SwapDarknessTextures = false;
-                    DarkOffsetX = 0;
-                    DarkOffsetY = 0;
-                }
-                RenderTexture(DarkCacheTextureBackup.Texture, 0, 0, CurrentDarknexxTexture); //Draw our cached map lights
+            //Draw Light Around Player
+            DrawLight((int)Math.Ceiling(-DarkOffsetX + Globals.Entities[Globals.MyIndex].GetCenterPos().X - PlayerLightSize / 2 ), (int)
+                                Math.Ceiling(-DarkOffsetY + Globals.Entities[Globals.MyIndex].GetCenterPos().Y - PlayerLightSize / 2 ), (int)PlayerLightSize,PlayerLightIntensity,PlayerLightExpand, PlayerLightColor);
 
-            }
-            else
-            {
-                if (SwapDarknessTextures)
-                {
-                    DarkCacheTextureBackup.SetActive(false);
-                    DarkCacheTexture.SetActive(true);
-                    SwapDarknessTextures = false;
-                    DarkOffsetX = 0;
-                    DarkOffsetY = 0;
-                }
-                RenderTexture(DarkCacheTexture.Texture, 0, 0, CurrentDarknexxTexture); //Draw our cached map lights
-
-            }
-
-
-            //Draw the light around the player (if any)
-            if (PlayerLightTex != null)
-            {
-                RenderTexture(PlayerLightTex, (int)
-                                Math.Ceiling(-DarkOffsetX + Globals.Entities[Globals.MyIndex].GetCenterPos().X - PlayerLightTex.Size.X / 2 +
-                                             Globals.MapWidth * Globals.TileWidth), (int)
-                                Math.Ceiling(-DarkOffsetY + Globals.Entities[Globals.MyIndex].GetCenterPos().Y - PlayerLightTex.Size.Y / 2 +
-                                             Globals.MapHeight * Globals.TileHeight), CurrentDarknexxTexture, BlendMode.Add);
-            }
             rs.FillColor = new Color(255, 255, 255, (byte)(SunIntensity * 255));    //Draw a rectangle, the opacity indicates if it is day or night.
-            CurrentDarknexxTexture.Draw(rs, new RenderStates(BlendMode.Add));
-            CurrentDarknexxTexture.Display();
-            RenderTexture(CurrentDarknexxTexture.Texture, (Globals.GameMaps[Globals.CurrentMap].GetX() - Globals.MapWidth * Globals.TileWidth) + DarkOffsetX, (Globals.GameMaps[Globals.CurrentMap].GetY() - Globals.MapHeight * Globals.TileHeight) + DarkOffsetY, RenderWindow, BlendMode.Multiply);
+            //CurrentDarknessTexture.Draw(rs);
+            DarknessTexture.Display();
+            RenderTexture(DarknessTexture.Texture, CurrentView.Left, CurrentView.Top, RenderWindow, BlendMode.Multiply);
         }
-        private static void AddLight(int x1, int y1, int size, double intensity, LightObj light, RenderTexture myTex)
+        public static void DrawLight(int x, int y, int size, byte intensity, float Expand, Color color)
         {
-            Bitmap tmpLight;
-            //If not cached, create a radial gradent for the light.
-            if (light.Graphic == null)
-            {
-                tmpLight = new Bitmap(size, size);
-                var g = System.Drawing.Graphics.FromImage(tmpLight);
-                var pth = new GraphicsPath();
-                pth.AddEllipse(0, 0, size - 1, size - 1);
-                var pgb = new PathGradientBrush(pth)
-                {
-                    CenterColor = System.Drawing.Color.FromArgb((int)(255 * intensity), 255, 255, 255),
-                    SurroundColors = new[] { System.Drawing.Color.Transparent },
-                    FocusScales = new PointF(0.8f, 0.8f)
-                };
-                g.FillPath(pgb, pth);
-                g.Dispose();
-                light.Graphic = tmpLight;
-            }
-            else
-            {
-                tmpLight = light.Graphic;
-            }
-
-            var tmpSprite = new Sprite(TexFromBitmap(tmpLight)) { Position = new Vector2f(x1, y1) };
-            myTex.Draw(tmpSprite, new RenderStates(BlendMode.Add));
+            CircleShape circle = new CircleShape(size);
+            circle.Origin = new Vector2f(circle.Radius, circle.Radius);
+            x -= (int)CurrentView.Left;
+            y -= (int)CurrentView.Top;
+            circle.Position = new Vector2f(x + size/2,
+                y + size/2);
+            circle.FillColor = Color.Transparent;
+            RadialGradientShader.SetParameter("color", new Color(color.R,color.G,color.B,intensity));
+            RadialGradientShader.SetParameter("center", circle.Position);
+            RadialGradientShader.SetParameter("radius", circle.Radius);
+            RadialGradientShader.SetParameter("expand", Expand/100f);
+            RadialGradientShader.SetParameter("windowHeight", DarknessTexture.Size.Y); // this must be set, but only needs to be set once (or whenever the size of the window changes)
+            DarknessTexture.Draw(circle, new RenderStates(BlendMode.Add, Transform.Identity, null, RadialGradientShader));
         }
 
         //Helper Functions

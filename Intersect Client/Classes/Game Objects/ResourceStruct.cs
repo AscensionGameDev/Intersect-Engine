@@ -29,6 +29,7 @@ namespace Intersect_Client.Classes
     public class ResourceStruct
     {
         // General
+        public const string Version = "0.0.0.1";
         public string Name = "";
         public int MinHP = 0;
         public int MaxHP = 0;
@@ -54,10 +55,13 @@ namespace Intersect_Client.Classes
 
         }
 
-        public void Load(byte[] packet)
+        public void Load(byte[] packet, int index)
         {
             var myBuffer = new ByteBuffer();
             myBuffer.WriteBytes(packet);
+            string loadedVersion = myBuffer.ReadString();
+            if (loadedVersion != Version)
+                throw new Exception("Failed to load Resource #" + index + ". Loaded Version: " + loadedVersion + " Expected Version: " + Version);
             Name = myBuffer.ReadString();
             InitialGraphic = myBuffer.ReadString();
             EndGraphic = myBuffer.ReadString();
@@ -77,30 +81,6 @@ namespace Intersect_Client.Classes
             }
 
             myBuffer.Dispose();
-        }
-
-        public byte[] ResourceData()
-        {
-            var myBuffer = new ByteBuffer();
-            myBuffer.WriteString(Name);
-            myBuffer.WriteString(InitialGraphic);
-            myBuffer.WriteString(EndGraphic);
-            myBuffer.WriteInteger(MinHP);
-            myBuffer.WriteInteger(MaxHP);
-            myBuffer.WriteInteger(Tool);
-            myBuffer.WriteInteger(SpawnDuration);
-            myBuffer.WriteInteger(Animation);
-            myBuffer.WriteInteger(Convert.ToInt32(WalkableBefore));
-            myBuffer.WriteInteger(Convert.ToInt32(WalkableAfter));
-
-            for (int i = 0; i < Constants.MaxNpcDrops; i++)
-            {
-                myBuffer.WriteInteger(Drops[i].ItemNum);
-                myBuffer.WriteInteger(Drops[i].Amount);
-                myBuffer.WriteInteger(Drops[i].Chance);
-            }
-
-            return myBuffer.ToArray();
         }
 
         public class ResourceDrop

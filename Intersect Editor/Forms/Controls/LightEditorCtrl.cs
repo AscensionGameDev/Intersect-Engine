@@ -1,0 +1,200 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Linq;
+using System.Text;
+using System.Windows.Forms;
+using Intersect_Editor.Classes;
+using Graphics = System.Drawing.Graphics;
+
+namespace Intersect_Editor.Forms.Controls
+{
+    public partial class LightEditorCtrl : UserControl
+    {
+        public bool CanClose = true;
+        private Light _editingLight;
+        private Light _backupLight;
+
+        public LightEditorCtrl()
+        {
+            InitializeComponent();
+            if (!CanClose)
+            {
+                btnOkay.Visible = false;
+            }
+        }
+
+        public void LoadEditor(Light tmpLight)
+        {
+            _editingLight = tmpLight;
+            _backupLight = new Light(tmpLight);
+            txtLightIntensity.Text = "" + tmpLight.Intensity;
+            txtLightRange.Text = "" + tmpLight.Size;
+            txtLightOffsetX.Text = "" + tmpLight.OffsetX;
+            txtLightOffsetY.Text = "" + tmpLight.OffsetY;
+            scrlLightIntensity.Value = tmpLight.Intensity;
+            txtLightExpandAmt.Text = "" + tmpLight.Expand;
+            scrlLightSize.Value = tmpLight.Size;
+            pnlLightColor.BackColor = tmpLight.Color;
+            if (!CanClose) btnOkay.Hide();
+        }
+
+        //Lights Tab
+        private void txtLightOffsetY_TextChanged(object sender, EventArgs e)
+        {
+            try
+            {
+                if (_editingLight == null)
+                {
+                    return;
+                }
+                var offsetY = Convert.ToInt32(txtLightOffsetY.Text);
+                _editingLight.OffsetY = offsetY;
+            }
+            catch (Exception)
+            {
+                //ignore
+            }
+        }
+        private void txtLightOffsetX_TextChanged(object sender, EventArgs e)
+        {
+            try
+            {
+                if (_editingLight == null)
+                {
+                    return;
+                }
+                var offsetX = Convert.ToInt32(txtLightOffsetX.Text);
+                _editingLight.OffsetX = offsetX;
+                Classes.Graphics.TilePreviewUpdated = true;
+            }
+            catch (Exception)
+            {
+                //ignore
+            }
+        }
+        private void scrlLightSize_Scroll(object sender, ScrollEventArgs e)
+        {
+            if (_editingLight == null) { return; }
+            txtLightRange.Text = "" + _editingLight.Size;
+            _editingLight.Size = scrlLightSize.Value;
+            Classes.Graphics.TilePreviewUpdated = true;
+        }
+        private void scrlLightIntensity_Scroll(object sender, ScrollEventArgs e)
+        {
+            if (_editingLight == null) { return; }
+            _editingLight.Intensity = (byte)scrlLightIntensity.Value;
+            txtLightIntensity.Text = "" + _editingLight.Intensity;
+            Classes.Graphics.TilePreviewUpdated = true;
+        }
+        private void txtLightIntensity_TextChanged(object sender, EventArgs e)
+        {
+            if (_editingLight == null) { return; }
+            try
+            {
+                var intensity = Convert.ToByte(txtLightIntensity.Text);
+                _editingLight.Intensity = intensity;
+                txtLightIntensity.Text = "" + _editingLight.Intensity;
+                scrlLightIntensity.Value = intensity;
+                Classes.Graphics.TilePreviewUpdated = true;
+            }
+            catch (Exception)
+            {
+                //ignore
+            }
+        }
+        private void txtLightRange_TextChanged(object sender, EventArgs e)
+        {
+            try
+            {
+                if (_editingLight == null)
+                {
+                    return;
+                }
+                var range = Convert.ToInt32(txtLightRange.Text);
+                if (range < 0)
+                {
+                    range = 0;
+                }
+                if (range > scrlLightSize.Maximum)
+                {
+                    range = scrlLightSize.Maximum;
+                }
+                _editingLight.Size = range;
+                Classes.Graphics.TilePreviewUpdated = true;
+                txtLightRange.Text = "" + range;
+            }
+            catch (Exception)
+            {
+                //ignore
+            }
+        }
+        private void btnLightEditorClose_Click(object sender, EventArgs e)
+        {
+            if (CanClose) this.Visible = false;
+            if (_editingLight == Globals.EditingLight) Globals.EditingLight = null;
+        }
+        private void btnLightEditorRevert_Click(object sender, EventArgs e)
+        {
+            if (_editingLight != null)
+            {
+                _editingLight.Intensity = _backupLight.Intensity;
+                _editingLight.Size = _backupLight.Size;
+                _editingLight.OffsetX = _backupLight.OffsetX;
+                _editingLight.OffsetY = _backupLight.OffsetY;
+                if (_editingLight == Globals.EditingLight) Globals.EditingLight = null;
+            }
+            Classes.Graphics.TilePreviewUpdated = true;
+            if (CanClose) this.Visible = false;
+        }
+        private void btnSelectLightColor_Click(object sender, EventArgs e)
+        {
+            colorDialog.Color = System.Drawing.Color.White;
+            colorDialog.ShowDialog();
+            pnlLightColor.BackColor = colorDialog.Color;
+            _editingLight.Color = colorDialog.Color;
+            Classes.Graphics.TilePreviewUpdated = true;
+        }
+
+        public void Cancel()
+        {
+            btnLightEditorClose_Click(null, null);
+        }
+
+        private void scrlLightExpand_Scroll(object sender, ScrollEventArgs e)
+        {
+            if (_editingLight == null) { return; }
+            _editingLight.Expand = scrlLightExpand.Value;
+            txtLightExpandAmt.Text = "" + _editingLight.Expand;
+            Classes.Graphics.TilePreviewUpdated = true;
+        }
+
+        private void txtLightExpandAmt_TextChanged(object sender, EventArgs e)
+        {
+            try
+            {
+                if (_editingLight == null)
+                {
+                    return;
+                }
+                var expand = Convert.ToInt32(txtLightExpandAmt.Text);
+                if (expand < 0)
+                {
+                    expand = 0;
+                }
+                if (expand > scrlLightExpand.Maximum)
+                {
+                    expand = scrlLightExpand.Maximum;
+                }
+                _editingLight.Expand = expand;
+                Classes.Graphics.TilePreviewUpdated = true;
+                txtLightExpandAmt.Text = "" + expand;
+            }
+            catch (Exception)
+            {
+                //ignore
+            }
+        }
+    }
+}

@@ -100,14 +100,13 @@ namespace Intersect_Editor.Classes.Maps
                 {
                     Globals.MapEditorWindow.PrepUndoState();
                     _myMap.IsIndoors = value;
-                    Graphics.LightsChanged = true;
                     Graphics.TilePreviewUpdated = true;
                     Globals.MapEditorWindow.AddUndoState();
                 }
             }
         }
         [CategoryAttribute("Lighting"),
-        Description("How bright is this map? (Range: 10 to 100)."), 
+        Description("How bright is this map? (Range: 0 to 100)."), 
         DefaultValueAttribute(100)]
         public int Brightness
         {
@@ -117,9 +116,8 @@ namespace Intersect_Editor.Classes.Maps
                 if (_myMap.Brightness != value)
                 {
                     Globals.MapEditorWindow.PrepUndoState();
-                    _myMap.Brightness = Math.Max(value, 10);
+                    _myMap.Brightness = Math.Max(value, 0);
                     _myMap.Brightness = Math.Min(_myMap.Brightness, 100);
-                    Graphics.LightsChanged = true;
                     Graphics.TilePreviewUpdated = true;
                     Globals.MapEditorWindow.AddUndoState();
                 }

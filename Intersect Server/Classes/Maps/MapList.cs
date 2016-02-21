@@ -17,6 +17,7 @@ namespace Intersect_Server.Classes
             {
                 if (Items[i].GetType() == typeof(FolderMap))
                 {
+
                     ((FolderMap)Items[i]).GetData(myBuffer);
                 }
                 else
@@ -54,7 +55,7 @@ namespace Intersect_Server.Classes
                     tmpMap = new FolderMap();
                     if (tmpMap.Load(myBuffer))
                     {
-                        if (Globals.GameMaps[tmpMap.MapNum].Deleted != 1)
+                        if (Globals.GameMaps[tmpMap.MapNum] == null)
                         {
                             Items.Add(tmpMap);
                         }

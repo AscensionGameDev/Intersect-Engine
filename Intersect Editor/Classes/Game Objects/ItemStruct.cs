@@ -19,10 +19,14 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+
+using System;
+
 namespace Intersect_Editor.Classes
 {
     public class ItemStruct
     {
+        public const string Version = "0.0.0.1";
         public string Name = "";
         public string Desc = "";
         public int Type;
@@ -52,13 +56,13 @@ namespace Intersect_Editor.Classes
             StatsReq = new int[Constants.MaxStats];
         }
 
-        public ItemStruct(ByteBuffer myBuffer)
+        public void LoadItem(byte[] data, int index)
         {
-            LoadItem(myBuffer);
-        }
-
-        public void LoadItem(ByteBuffer myBuffer)
-        {
+            ByteBuffer myBuffer = new ByteBuffer();
+            myBuffer.WriteBytes(data);
+            string loadedVersion = myBuffer.ReadString();
+            if (loadedVersion != Version)
+                throw new Exception("Failed to load Item #" + index + ". Loaded Version: " + loadedVersion + " Expected Version: " + Version);
             Name = myBuffer.ReadString();
             Desc = myBuffer.ReadString();
             Type = myBuffer.ReadInteger();
@@ -90,6 +94,7 @@ namespace Intersect_Editor.Classes
         public byte[] ItemData()
         {
             var myBuffer = new ByteBuffer();
+            myBuffer.WriteString(Version);
             myBuffer.WriteString(Name);
             myBuffer.WriteString(Desc);
             myBuffer.WriteInteger(Type);
@@ -117,13 +122,6 @@ namespace Intersect_Editor.Classes
             myBuffer.WriteInteger(Data3);
             myBuffer.WriteInteger(Data4);
             return myBuffer.ToArray();
-        }
-
-        public void LoadByte(byte[] data)
-        {
-            var bf = new ByteBuffer();
-            bf.WriteBytes(data);
-            LoadItem(bf);
         }
     }
 }

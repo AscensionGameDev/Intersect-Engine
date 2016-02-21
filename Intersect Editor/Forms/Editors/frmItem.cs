@@ -43,7 +43,7 @@ namespace Intersect_Editor.Forms
             cmbPic.Items.Clear();
             cmbPic.Items.Add("None");
 
-            for (i= 0; i < Intersect_Editor.Classes.Graphics.ItemNames.Length; i++)
+            for (i= 0; i < Intersect_Editor.Classes.Graphics.ItemNames.Count; i++)
             {
                 cmbPic.Items.Add(Intersect_Editor.Classes.Graphics.ItemNames[i]);
             }
@@ -199,9 +199,7 @@ namespace Intersect_Editor.Forms
         private void btnDelete_Click(object sender, EventArgs e)
         {
             var tempItem = new ItemStruct();
-            var tempBuff = new ByteBuffer();
-            tempBuff.WriteBytes(tempItem.ItemData());
-            Globals.GameItems[_editorIndex].LoadItem(tempBuff);
+            Globals.GameItems[_editorIndex].LoadItem(tempItem.ItemData(),_editorIndex);
             UpdateEditor();
         }
 
@@ -209,7 +207,7 @@ namespace Intersect_Editor.Forms
         {
             for (var i = 0; i < Constants.MaxItems; i++)
             {
-                Globals.GameItems[i].LoadItem(_itemsBackup[i]);
+                Globals.GameItems[i].LoadItem(_itemsBackup[i].ToArray(),i);
             }
 
             Hide();

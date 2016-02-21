@@ -23,12 +23,14 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using System.Windows.Forms;
 
 namespace Intersect_Editor.Classes
 {
     public class MapStruct
     {
         //Core 
+        public const string Version = "0.0.0.1";
         public string MyName = "New Map";
         public int Up = -1;
         public int Down = -1;
@@ -37,7 +39,7 @@ namespace Intersect_Editor.Classes
         public int MyMapNum;
         public long Deleted;
         public int Revision;
-        
+
         //Core Data
         public TileArray[] Layers = new TileArray[Constants.LayerCount];
         public Attribute[,] Attributes = new Attribute[Globals.MapWidth, Globals.MapHeight];
@@ -125,7 +127,7 @@ namespace Intersect_Editor.Classes
             for (var i = 0; i < mapcopy.Events.Count; i++)
             {
                 bf.WriteBytes(mapcopy.Events[i].EventData());
-                Events.Add(new EventStruct(Events.Count,bf));
+                Events.Add(new EventStruct(Events.Count, bf));
             }
             Autotiles = new MapAutotiles(this);
             Autotiles.InitAutotiles();
@@ -135,7 +137,10 @@ namespace Intersect_Editor.Classes
         public byte[] Save()
         {
             var bf = new ByteBuffer();
+            bf.WriteInteger(0); //Never deleted
+            bf.WriteString(Version);
             bf.WriteString(MyName);
+            bf.WriteInteger(Revision);
             bf.WriteInteger(Up);
             bf.WriteInteger(Down);
             bf.WriteInteger(Left);
@@ -153,16 +158,6 @@ namespace Intersect_Editor.Classes
             bf.WriteInteger(BHue);
             bf.WriteInteger(AHue);
             bf.WriteInteger(Brightness);
-
-            // Save Map Npcs
-            bf.WriteInteger(Spawns.Count);
-            for (var i = 0; i < Spawns.Count; i++)
-            {
-                bf.WriteInteger(Spawns[i].NpcNum);
-                bf.WriteInteger(Spawns[i].X);
-                bf.WriteInteger(Spawns[i].Y);
-                bf.WriteInteger(Spawns[i].Dir);
-            }
 
             for (var i = 0; i < Constants.LayerCount; i++)
             {
@@ -182,10 +177,13 @@ namespace Intersect_Editor.Classes
                 for (var y = 0; y < Globals.MapHeight; y++)
                 {
                     bf.WriteInteger(Attributes[x, y].value);
-                    bf.WriteInteger(Attributes[x, y].data1);
-                    bf.WriteInteger(Attributes[x, y].data2);
-                    bf.WriteInteger(Attributes[x, y].data3);
-                    bf.WriteString(Attributes[x, y].data4);
+                    if (Attributes[x, y].value > 0)
+                    {
+                        bf.WriteInteger(Attributes[x, y].data1);
+                        bf.WriteInteger(Attributes[x, y].data2);
+                        bf.WriteInteger(Attributes[x, y].data3);
+                        bf.WriteString(Attributes[x, y].data4);
+                    }
                 }
             }
             bf.WriteInteger(Lights.Count);
@@ -193,8 +191,17 @@ namespace Intersect_Editor.Classes
             {
                 bf.WriteBytes(t.LightData());
             }
-            bf.WriteInteger(Revision);
-            bf.WriteLong(0); //Never deleted.
+
+            // Save Map Npcs
+            bf.WriteInteger(Spawns.Count);
+            for (var i = 0; i < Spawns.Count; i++)
+            {
+                bf.WriteInteger(Spawns[i].NpcNum);
+                bf.WriteInteger(Spawns[i].X);
+                bf.WriteInteger(Spawns[i].Y);
+                bf.WriteInteger(Spawns[i].Dir);
+            }
+
             bf.WriteInteger(Events.Count);
             foreach (var t in Events)
             {
@@ -206,95 +213,105 @@ namespace Intersect_Editor.Classes
         {
             var npcCount = 0;
             NpcSpawn TempNpc = new NpcSpawn();
-
             var bf = new ByteBuffer();
             bf.WriteBytes(myArr);
-            MyName = bf.ReadString();
-            if (!import)
+            Deleted = bf.ReadInteger();
+            if (Deleted == 0)
             {
-                Up = bf.ReadInteger();
-                Down = bf.ReadInteger();
-                Left = bf.ReadInteger();
-                Right = bf.ReadInteger();
-            }
-            else
-            {
-                bf.ReadInteger();
-                bf.ReadInteger();
-                bf.ReadInteger();
-                bf.ReadInteger();
-            }
-            Music = bf.ReadString();
-            Sound = bf.ReadString();
-            IsIndoors = Convert.ToBoolean(bf.ReadInteger());
-            Panorama = bf.ReadString();
-            Fog = bf.ReadString();
-            FogXSpeed = bf.ReadInteger();
-            FogYSpeed = bf.ReadInteger();
-            FogTransparency = bf.ReadInteger();
-            RHue = bf.ReadInteger();
-            GHue = bf.ReadInteger();
-            BHue = bf.ReadInteger();
-            AHue = bf.ReadInteger();
-            Brightness = bf.ReadInteger();
+                string loadedVersion = bf.ReadString();
+                if (loadedVersion != Version)
+                    throw new Exception("Failed to load Map #" + MyMapNum + ". Loaded Version: " + loadedVersion + " Expected Version: " + Version);
 
-            // Load Map Npcs
-            Spawns.Clear();
-            npcCount = bf.ReadInteger();
-            for (var i = 0; i < npcCount; i++)
-            {
-                TempNpc = new NpcSpawn();
-                TempNpc.NpcNum = bf.ReadInteger();
-                TempNpc.X = bf.ReadInteger();
-                TempNpc.Y = bf.ReadInteger();
-                TempNpc.Dir = bf.ReadInteger();
-                Spawns.Add(TempNpc);
-            }
+                MyName = bf.ReadString();
+                Revision = bf.ReadInteger();
+                if (!import)
+                {
+                    Up = bf.ReadInteger();
+                    Down = bf.ReadInteger();
+                    Left = bf.ReadInteger();
+                    Right = bf.ReadInteger();
+                }
+                else
+                {
+                    bf.ReadInteger();
+                    bf.ReadInteger();
+                    bf.ReadInteger();
+                    bf.ReadInteger();
+                }
+                Music = bf.ReadString();
+                Sound = bf.ReadString();
+                IsIndoors = Convert.ToBoolean(bf.ReadInteger());
+                Panorama = bf.ReadString();
+                Fog = bf.ReadString();
+                FogXSpeed = bf.ReadInteger();
+                FogYSpeed = bf.ReadInteger();
+                FogTransparency = bf.ReadInteger();
+                RHue = bf.ReadInteger();
+                GHue = bf.ReadInteger();
+                BHue = bf.ReadInteger();
+                AHue = bf.ReadInteger();
+                Brightness = bf.ReadInteger();
 
-            for (var i = 0; i < Constants.LayerCount; i++)
-            {
+                for (var i = 0; i < Constants.LayerCount; i++)
+                {
+                    for (var x = 0; x < Globals.MapWidth; x++)
+                    {
+                        for (var y = 0; y < Globals.MapHeight; y++)
+                        {
+                            Layers[i].Tiles[x, y].TilesetIndex = bf.ReadInteger();
+                            Layers[i].Tiles[x, y].X = bf.ReadInteger();
+                            Layers[i].Tiles[x, y].Y = bf.ReadInteger();
+                            Layers[i].Tiles[x, y].Autotile = bf.ReadByte();
+                        }
+                    }
+                }
                 for (var x = 0; x < Globals.MapWidth; x++)
                 {
                     for (var y = 0; y < Globals.MapHeight; y++)
                     {
-                        Layers[i].Tiles[x, y].TilesetIndex = bf.ReadInteger();
-                        Layers[i].Tiles[x, y].X = bf.ReadInteger();
-                        Layers[i].Tiles[x, y].Y = bf.ReadInteger();
-                        Layers[i].Tiles[x, y].Autotile = bf.ReadByte();
+                        int attributeType = bf.ReadInteger();
+                        if (attributeType > 0)
+                        {
+                            Attributes[x, y].value = attributeType;
+                            Attributes[x, y].data1 = bf.ReadInteger();
+                            Attributes[x, y].data2 = bf.ReadInteger();
+                            Attributes[x, y].data3 = bf.ReadInteger();
+                            Attributes[x, y].data4 = bf.ReadString();
+                        }
+                        else
+                        {
+                            Attributes[x, y].value = 0;
+                        }
                     }
                 }
-            }
-            for (var x = 0; x < Globals.MapWidth; x++)
-            {
-                for (var y = 0; y < Globals.MapHeight; y++)
+                var lCount = bf.ReadInteger();
+                for (var i = 0; i < lCount; i++)
                 {
-                    Attributes[x, y].value = bf.ReadInteger();
-                    Attributes[x, y].data1 = bf.ReadInteger();
-                    Attributes[x, y].data2 = bf.ReadInteger();
-                    Attributes[x, y].data3 = bf.ReadInteger();
-                    Attributes[x, y].data4 = bf.ReadString();
+                    Lights.Add(new Light(bf));
                 }
+
+                // Load Map Npcs
+                Spawns.Clear();
+                npcCount = bf.ReadInteger();
+                for (var i = 0; i < npcCount; i++)
+                {
+                    TempNpc = new NpcSpawn();
+                    TempNpc.NpcNum = bf.ReadInteger();
+                    TempNpc.X = bf.ReadInteger();
+                    TempNpc.Y = bf.ReadInteger();
+                    TempNpc.Dir = bf.ReadInteger();
+                    Spawns.Add(TempNpc);
+                }
+
+                Events.Clear();
+                var eCount = bf.ReadInteger();
+                for (var i = 0; i < eCount; i++)
+                {
+                    Events.Add(new EventStruct(i, bf));
+                }
+                Autotiles.InitAutotiles();
+                UpdateAdjacentAutotiles();
             }
-            var lCount = bf.ReadInteger();
-            for (var i = 0; i < lCount; i++)
-            {
-                Lights.Add(new Light(bf));
-            }
-            Revision = bf.ReadInteger();
-            Deleted = bf.ReadLong();
-            if (Deleted == 1)
-            {
-                Layers = null;
-                return;
-            }
-            Events.Clear();
-            var eCount = bf.ReadInteger();
-            for (var i = 0; i < eCount; i++)
-            {
-                Events.Add(new EventStruct(i,bf));
-            }
-            Autotiles.InitAutotiles();
-            UpdateAdjacentAutotiles();
         }
 
         //Helper Functions
@@ -389,11 +406,13 @@ namespace Intersect_Editor.Classes
         public string data4 = "";
     }
 
-    public class TileArray {
-        public Tile[,] Tiles = new Tile[Globals.MapWidth ,Globals.MapHeight];
+    public class TileArray
+    {
+        public Tile[,] Tiles = new Tile[Globals.MapWidth, Globals.MapHeight];
     }
 
-    public class Tile {
+    public class Tile
+    {
         public int TilesetIndex = -1;
         public int X;
         public int Y;
@@ -412,9 +431,10 @@ namespace Intersect_Editor.Classes
         public int OffsetY;
         public int TileX;
         public int TileY;
-        public double Intensity = 1;
-        public int Range = 20;
-        public Bitmap Graphic;
+        public byte Intensity = 255;
+        public int Size = 0;
+        public float Expand = 0f;
+        public System.Drawing.Color Color = System.Drawing.Color.White;
         public Light(int x, int y)
         {
             TileX = x;
@@ -428,7 +448,9 @@ namespace Intersect_Editor.Classes
             OffsetX = copy.OffsetX;
             OffsetY = copy.OffsetY;
             Intensity = copy.Intensity;
-            Range = copy.Range;
+            Size = copy.Size;
+            Expand = copy.Expand;
+            Color = Color.FromArgb(copy.Color.R, copy.Color.G, copy.Color.B);
         }
         public Light(ByteBuffer myBuffer)
         {
@@ -436,8 +458,11 @@ namespace Intersect_Editor.Classes
             OffsetY = myBuffer.ReadInteger();
             TileX = myBuffer.ReadInteger();
             TileY = myBuffer.ReadInteger();
-            Intensity = myBuffer.ReadDouble();
-            Range = myBuffer.ReadInteger();
+            Intensity = myBuffer.ReadByte();
+            Size = myBuffer.ReadInteger();
+            Expand = (float)myBuffer.ReadDouble();
+            Color = Color.FromArgb(myBuffer.ReadByte(), myBuffer.ReadByte(), myBuffer.ReadByte());
+
         }
         public byte[] LightData()
         {
@@ -446,8 +471,12 @@ namespace Intersect_Editor.Classes
             myBuffer.WriteInteger(OffsetY);
             myBuffer.WriteInteger(TileX);
             myBuffer.WriteInteger(TileY);
-            myBuffer.WriteDouble(Intensity);
-            myBuffer.WriteInteger(Range);
+            myBuffer.WriteByte(Intensity);
+            myBuffer.WriteInteger(Size);
+            myBuffer.WriteDouble(Expand);
+            myBuffer.WriteByte(Color.R);
+            myBuffer.WriteByte(Color.G);
+            myBuffer.WriteByte(Color.B);
             return myBuffer.ToArray();
         }
     }
@@ -461,7 +490,7 @@ namespace Intersect_Editor.Classes
 
         public NpcSpawn()
         {
-            
+
         }
 
         public NpcSpawn(NpcSpawn copy)

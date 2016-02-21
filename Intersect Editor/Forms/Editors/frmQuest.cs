@@ -334,7 +334,7 @@ namespace Intersect_Editor.Forms
             var tempQuest = new QuestStruct();
             var tempBuff = new ByteBuffer();
             tempBuff.WriteBytes(tempQuest.QuestData());
-            Globals.GameQuests[_editorIndex].Load(tempBuff.ToArray());
+            Globals.GameQuests[_editorIndex].Load(tempBuff.ToArray(),_editorIndex);
             tempBuff.Dispose();
             UpdateEditor();
         }
@@ -343,7 +343,7 @@ namespace Intersect_Editor.Forms
         {
             for (var i = 0; i < Constants.MaxQuests; i++)
             {
-                Globals.GameQuests[i].Load(_questsBackup[i].ToArray());
+                Globals.GameQuests[i].Load(_questsBackup[i].ToArray(),i);
             }
 
             Hide();

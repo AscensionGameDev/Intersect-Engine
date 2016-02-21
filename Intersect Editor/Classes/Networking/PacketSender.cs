@@ -116,7 +116,7 @@ namespace Intersect_Editor.Classes
         {
             var bf = new ByteBuffer();
             bf.WriteLong((int)Enums.ClientPackets.SaveItem);
-            bf.WriteLong(itemNum);
+            bf.WriteInteger(itemNum);
             bf.WriteBytes(itemData);
             Network.SendPacket(bf.ToArray());
         }

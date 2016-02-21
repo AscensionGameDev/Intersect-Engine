@@ -243,7 +243,7 @@ namespace Intersect_Editor.Classes
             var tempResource = new ResourceStruct();
             var tempBuff = new ByteBuffer();
             tempBuff.WriteBytes(tempResource.ResourceData());
-            Globals.GameResources[_editorIndex].Load(tempBuff.ToArray());
+            Globals.GameResources[_editorIndex].Load(tempBuff.ToArray(),_editorIndex);
             tempBuff.Dispose();
             UpdateEditor();
         }
@@ -252,7 +252,7 @@ namespace Intersect_Editor.Classes
         {
             for (var i = 0; i < Constants.MaxResources; i++)
             {
-                Globals.GameResources[i].Load(_resourcesBackup[i].ToArray());
+                Globals.GameResources[i].Load(_resourcesBackup[i].ToArray(),i);
             }
 
             Hide();

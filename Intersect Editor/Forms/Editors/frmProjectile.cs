@@ -330,7 +330,7 @@ namespace Intersect_Editor.Classes
             var tempProjectile = new ProjectileStruct();
             var tempBuff = new ByteBuffer();
             tempBuff.WriteBytes(tempProjectile.ProjectileData());
-            Globals.GameProjectiles[_editorIndex].Load(tempBuff.ToArray());
+            Globals.GameProjectiles[_editorIndex].Load(tempBuff.ToArray(),_editorIndex);
             tempBuff.Dispose();
             UpdateEditor();
         }
@@ -339,7 +339,7 @@ namespace Intersect_Editor.Classes
         {
             for (var i = 0; i < Constants.MaxProjectiles; i++)
             {
-                Globals.GameProjectiles[i].Load(_projectilesBackup[i].ToArray());
+                Globals.GameProjectiles[i].Load(_projectilesBackup[i].ToArray(),i);
             }
 
             Hide();

@@ -29,6 +29,7 @@ namespace Intersect_Server.Classes
     public class QuestStruct
     {
         //General
+        public const string Version = "0.0.0.1";
         public string Name = "";
         public string StartDesc = "";
         public string EndDesc = "";
@@ -45,10 +46,13 @@ namespace Intersect_Server.Classes
         //Tasks
         public List<QuestTask> Tasks = new List<QuestTask>();
 
-        public void Load(byte[] packet)
+        public void Load(byte[] packet, int index)
         {
             var myBuffer = new ByteBuffer();
             myBuffer.WriteBytes(packet);
+            string loadedVersion = myBuffer.ReadString();
+            if (loadedVersion != Version)
+                throw new Exception("Failed to load Quest #" + index + ". Loaded Version: " + loadedVersion + " Expected Version: " + Version);
             Name = myBuffer.ReadString();
             StartDesc = myBuffer.ReadString();
             EndDesc = myBuffer.ReadString();
@@ -84,6 +88,7 @@ namespace Intersect_Server.Classes
         public byte[] QuestData()
         {
             var myBuffer = new ByteBuffer();
+            myBuffer.WriteString(Version);
             myBuffer.WriteString(Name);
             myBuffer.WriteString(StartDesc);
             myBuffer.WriteString(EndDesc);

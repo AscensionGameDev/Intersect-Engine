@@ -19,6 +19,8 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+
+using System;
 using System.Collections.Generic;
 using System.IO;
 namespace Intersect_Client.Classes
@@ -26,6 +28,7 @@ namespace Intersect_Client.Classes
     public class ClassStruct
     {
         //Core info
+        public const string Version = "0.0.0.1";
         public string Name = "";
 
         //Sprites
@@ -50,7 +53,7 @@ namespace Intersect_Client.Classes
             }
         }
 
-        public void Load(byte[] packet)
+        public void Load(byte[] packet, int index)
         {
             var spriteCount = 0;
             ClassSprite TempSprite = new ClassSprite();
@@ -59,6 +62,9 @@ namespace Intersect_Client.Classes
 
             var myBuffer = new ByteBuffer();
             myBuffer.WriteBytes(packet);
+            string loadedVersion = myBuffer.ReadString();
+            if (loadedVersion != Version)
+                throw new Exception("Failed to load Class #" + index + ". Loaded Version: " + loadedVersion + " Expected Version: " + Version);
             Name = myBuffer.ReadString();
 
             // Load Class Sprites
@@ -100,46 +106,6 @@ namespace Intersect_Client.Classes
             }
 
             myBuffer.Dispose();
-        }
-
-        public byte[] ClassData()
-        {
-            var myBuffer = new ByteBuffer();
-            myBuffer.WriteString(Name);
-
-            //Sprites
-            myBuffer.WriteInteger(Sprites.Count);
-            for (var i = 0; i < Sprites.Count; i++)
-            {
-                myBuffer.WriteString(Sprites[i].Sprite);
-                myBuffer.WriteByte(Sprites[i].Gender);
-            }
-
-            for (int i = 0; i < (int)Enums.Vitals.VitalCount; i++)
-            {
-                myBuffer.WriteInteger(MaxVital[i]);
-            }
-            for (int i = 0; i < (int)Enums.Stats.StatCount; i++)
-            {
-                myBuffer.WriteInteger(Stat[i]);
-            }
-            myBuffer.WriteInteger(Points);
-
-            for (int i = 0; i < Constants.MaxNpcDrops; i++)
-            {
-                myBuffer.WriteInteger(Items[i].ItemNum);
-                myBuffer.WriteInteger(Items[i].Amount);
-            }
-
-            //Spells
-            myBuffer.WriteInteger(Spells.Count);
-            for (var i = 0; i < Spells.Count; i++)
-            {
-                myBuffer.WriteInteger(Spells[i].SpellNum);
-                myBuffer.WriteInteger(Spells[i].Level);
-            }
-
-            return myBuffer.ToArray();
         }
     }
 

@@ -31,6 +31,7 @@ namespace Intersect_Client.Classes
         public const int SpawnLocationsHeight = 5;
         public const int MaxProjectileDirections = 8;
 
+        public const string Version = "0.0.0.1";
         public string Name = "";
         public int Animation = 0;
         public int Speed = 1;
@@ -54,10 +55,13 @@ namespace Intersect_Client.Classes
             }
         }
 
-        public void Load(byte[] packet)
+        public void Load(byte[] packet, int index)
         {
             var myBuffer = new ByteBuffer();
             myBuffer.WriteBytes(packet);
+            string loadedVersion = myBuffer.ReadString();
+            if (loadedVersion != Version)
+                throw new Exception("Failed to load Projectile #" + index + ". Loaded Version: " + loadedVersion + " Expected Version: " + Version);
             Name = myBuffer.ReadString();
             Animation = myBuffer.ReadInteger();
             Speed = myBuffer.ReadInteger();

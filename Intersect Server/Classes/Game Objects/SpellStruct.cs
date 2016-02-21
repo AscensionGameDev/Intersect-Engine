@@ -30,6 +30,7 @@ namespace Intersect_Server.Classes
     public class SpellStruct
     {
         //Core Info
+        public const string Version = "0.0.0.1";
         public string Name = "";
         public string Desc = "";
         public byte Type = 0;
@@ -73,10 +74,13 @@ namespace Intersect_Server.Classes
 
         }
 
-        public void Load(byte[] packet)
+        public void Load(byte[] packet, int index)
         {
             var myBuffer = new ByteBuffer();
             myBuffer.WriteBytes(packet);
+            string loadedVersion = myBuffer.ReadString();
+            if (loadedVersion != Version)
+                throw new Exception("Failed to load Spell #" + index + ". Loaded Version: " + loadedVersion + " Expected Version: " + Version);
             Name = myBuffer.ReadString();
             Desc = myBuffer.ReadString();
             Type = myBuffer.ReadByte();
@@ -125,6 +129,7 @@ namespace Intersect_Server.Classes
         public byte[] SpellData()
         {
             var myBuffer = new ByteBuffer();
+            myBuffer.WriteString(Version);
             myBuffer.WriteString(Name);
             myBuffer.WriteString(Desc);
             myBuffer.WriteByte(Type);

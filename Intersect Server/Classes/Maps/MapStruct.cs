@@ -29,6 +29,8 @@ namespace Intersect_Server.Classes
     public class MapStruct
     {
         //Core
+        public const string Version = "0.0.0.1";
+
         public string MyName = "New Map";
         public int Up = -1;
         public int Down = -1;
@@ -39,7 +41,7 @@ namespace Intersect_Server.Classes
         public int Revision;
 
         //Core Data
-        public TileArray[] _layers = new TileArray[Constants.LayerCount];
+        private byte[] tileData;
         public Attribute[,] Attributes = new Attribute[Globals.MapWidth, Globals.MapHeight];
         public List<Light> Lights = new List<Light>();
         public List<EventStruct> Events = new List<EventStruct>();
@@ -72,6 +74,12 @@ namespace Intersect_Server.Classes
         public List<MapItemRespawn> ItemRespawns = new List<MapItemRespawn>();
         public List<Entity> Entities = new List<Entity>();
 
+        //Caching Values
+        //In order to keep the memory footprint down, if a map hasn't been requested for over 20 seconds then we will drop the data to be sent.
+        private byte[] _clientMapData = null;
+        private byte[] _editorMapData = null;
+        private long _lastAccessTime = 0;
+
         //Projectiles
         public List<Projectile> MapProjectiles = new List<Projectile>();
 
@@ -82,10 +90,6 @@ namespace Intersect_Server.Classes
 
         //Does the map have a player on or nearby it?
         public bool Active;
-
-        //Data Caching
-        public byte[] MapGameData;
-        public byte[] MapData;
 
         //SyncLock
         private Object _mapLock = new Object();
@@ -98,96 +102,110 @@ namespace Intersect_Server.Classes
                 return;
             }
             MyMapNum = mapNum;
-            for (var i = 0; i < Constants.LayerCount; i++)
-            {
-                _layers[i] = new TileArray();
-                for (var x = 0; x < Globals.MapWidth; x++)
-                {
-                    for (var y = 0; y < Globals.MapHeight; y++)
-                    {
-                        _layers[i].Tiles[x, y] = new Tile();
-                        if (i == 0) { Attributes[x, y] = new Attribute(); }
-                    }
-                }
-            }
         }
 
         //Saving/Loading
         public void Save()
         {
+            byte[] MapGameData = null;
             var bf = new ByteBuffer();
-            bf.WriteString(MyName);
-            bf.WriteInteger(Up);
-            bf.WriteInteger(Down);
-            bf.WriteInteger(Left);
-            bf.WriteInteger(Right);
-            bf.WriteString(_music);
-            bf.WriteString(_sound);
-            bf.WriteInteger(Convert.ToInt32(IsIndoors));
-            bf.WriteString(Panorama);
-            bf.WriteString(Fog);
-            bf.WriteInteger(FogXSpeed);
-            bf.WriteInteger(FogYSpeed);
-            bf.WriteInteger(FogTransaprency);
-            bf.WriteInteger(RHue);
-            bf.WriteInteger(GHue);
-            bf.WriteInteger(BHue);
-            bf.WriteInteger(AHue);
-            bf.WriteInteger(Brightness);
-
-            // Save Map Npcs
-            bf.WriteInteger(Spawns.Count);
-            for (var i = 0; i < Spawns.Count; i++)
+            bf.WriteInteger(Deleted);
+            if (Deleted != 1)
             {
-                bf.WriteInteger(Spawns[i].NpcNum);
-                bf.WriteInteger(Spawns[i].X);
-                bf.WriteInteger(Spawns[i].Y);
-                bf.WriteInteger(Spawns[i].Dir);
-            }
+                bf.WriteString(Version);
+                bf.WriteString(MyName);
+                bf.WriteInteger(Revision);
+                bf.WriteInteger(Up);
+                bf.WriteInteger(Down);
+                bf.WriteInteger(Left);
+                bf.WriteInteger(Right);
+                bf.WriteString(_music);
+                bf.WriteString(_sound);
+                bf.WriteInteger(Convert.ToInt32(IsIndoors));
+                bf.WriteString(Panorama);
+                bf.WriteString(Fog);
+                bf.WriteInteger(FogXSpeed);
+                bf.WriteInteger(FogYSpeed);
+                bf.WriteInteger(FogTransaprency);
+                bf.WriteInteger(RHue);
+                bf.WriteInteger(GHue);
+                bf.WriteInteger(BHue);
+                bf.WriteInteger(AHue);
+                bf.WriteInteger(Brightness);
 
-            for (var i = 0; i < Constants.LayerCount; i++)
-            {
+                if (tileData == null)
+                {
+                    //New map. We need to generate the tile data.
+                    //We zero everything out
+                    ByteBuffer tmpBuffer = new ByteBuffer();
+                    Tile fakeTile = new Tile();
+                    for (int i = 0; i < Constants.LayerCount; i++)
+                    {
+                        for (int x = 0; x < Globals.MapWidth; x++)
+                        {
+                            for (int y = 0; y < Globals.MapHeight; y++)
+                            {
+                                tmpBuffer.WriteInteger(fakeTile.TilesetIndex);
+                                tmpBuffer.WriteInteger(fakeTile.X);
+                                tmpBuffer.WriteInteger(fakeTile.Y);
+                                tmpBuffer.WriteByte(fakeTile.Autotile);
+                            }
+                        }
+                    }
+                    tileData = tmpBuffer.ToArray();
+                    tmpBuffer.Dispose();
+                }
+                bf.WriteBytes(tileData);
+
                 for (var x = 0; x < Globals.MapWidth; x++)
                 {
                     for (var y = 0; y < Globals.MapHeight; y++)
                     {
-                        bf.WriteInteger(_layers[i].Tiles[x, y].TilesetIndex);
-                        bf.WriteInteger(_layers[i].Tiles[x, y].X);
-                        bf.WriteInteger(_layers[i].Tiles[x, y].Y);
-                        bf.WriteByte(_layers[i].Tiles[x, y].Autotile);
+                        if (Attributes[x, y] != null && Attributes[x, y].value > 0)
+                        {
+                            bf.WriteInteger(Attributes[x, y].value);
+                            bf.WriteInteger(Attributes[x, y].data1);
+                            bf.WriteInteger(Attributes[x, y].data2);
+                            bf.WriteInteger(Attributes[x, y].data3);
+                            bf.WriteString(Attributes[x, y].data4);
+                        }
+                        else
+                        {
+                            bf.WriteInteger(0);
+                        }
                     }
                 }
-            }
-            for (var x = 0; x < Globals.MapWidth; x++)
-            {
-                for (var y = 0; y < Globals.MapHeight; y++)
+                bf.WriteInteger(Lights.Count);
+                foreach (var t in Lights)
                 {
-                    bf.WriteInteger(Attributes[x, y].value);
-                    bf.WriteInteger(Attributes[x, y].data1);
-                    bf.WriteInteger(Attributes[x, y].data2);
-                    bf.WriteInteger(Attributes[x, y].data3);
-                    bf.WriteString(Attributes[x, y].data4);
+                    bf.WriteBytes(t.LightData());
+                }
+                MapGameData = bf.ToArray();
+
+                // Save Map Npcs
+                bf.WriteInteger(Spawns.Count);
+                for (var i = 0; i < Spawns.Count; i++)
+                {
+                    bf.WriteInteger(Spawns[i].NpcNum);
+                    bf.WriteInteger(Spawns[i].X);
+                    bf.WriteInteger(Spawns[i].Y);
+                    bf.WriteInteger(Spawns[i].Dir);
+                }
+
+                bf.WriteInteger(Events.Count);
+                foreach (var t in Events)
+                {
+                    bf.WriteBytes(t.EventData());
                 }
             }
-            bf.WriteInteger(Lights.Count);
-            foreach (var t in Lights)
+            if (MapGameData != null)
             {
-                bf.WriteBytes(t.LightData());
+                File.WriteAllBytes("Resources/Maps/" + MyMapNum + ".cmap", MapGameData);
             }
-            bf.WriteInteger(Revision);
-            bf.WriteLong(Deleted);
-            MapGameData = bf.ToArray();
-            bf.WriteInteger(Events.Count);
-            foreach (var t in Events)
-            {
-                bf.WriteBytes(t.EventData());
-            }
-            Stream stream = File.Create("Resources/Maps/" + MyMapNum + ".map");
-            stream.Write(bf.ToArray(), 0, bf.ToArray().Length);
-            stream.Close();
-            MapData = bf.ToArray();
+            File.WriteAllBytes("Resources/Maps/" + MyMapNum + ".map", bf.ToArray());
+            bf.Dispose();
         }
-        public void Load(byte[] packet)
+        public bool Load(byte[] packet)
         {
             lock (_mapLock)
             {
@@ -195,8 +213,14 @@ namespace Intersect_Server.Classes
                 NpcSpawn TempNpc = new NpcSpawn();
                 var bf = new ByteBuffer();
                 bf.WriteBytes(packet);
-                MapData = bf.ToArray();
+                Deleted = bf.ReadInteger();
+                if (Deleted == 1) return false;
+
+                string loadedVersion = bf.ReadString();
+                if (loadedVersion != Version)
+                    throw new Exception("Failed to load Map #" + MyMapNum + ". Loaded Version: " + loadedVersion + " Expected Version: " + Version);
                 MyName = bf.ReadString();
+                Revision = bf.ReadInteger();
                 Up = bf.ReadInteger();
                 Down = bf.ReadInteger();
                 Left = bf.ReadInteger();
@@ -215,15 +239,38 @@ namespace Intersect_Server.Classes
                 AHue = bf.ReadInteger();
                 Brightness = bf.ReadInteger();
 
-                //Clear Map Npcs
-                for (int i = 0; i < Spawns.Count; i++)
+                //Server Doesn't care about visuals.. just read the tile chunk into a byte array
+                //We read the TilesetIndex (int), X (int), Y (int) and Autotile (byte) for everyt tile of every later.
+                //Meaning we need to read (Layers * Width * Height) * ( 4 (int) + 4 (int) + 4 (int) + 1 (byte)) bytes.
+                tileData = bf.ReadBytes(Constants.LayerCount * Globals.MapWidth * Globals.MapHeight * 13);
+
+                for (var x = 0; x < Globals.MapWidth; x++)
                 {
-                    if (Spawns[i].Entity != null)
+                    for (var y = 0; y < Globals.MapHeight; y++)
                     {
-                        Entities.Remove(Spawns[i].Entity);
-                        Spawns[i].Entity.Die();
+                        int attributeType = bf.ReadInteger();
+                        if (attributeType > 0)
+                        {
+                            Attributes[x, y] = new Attribute();
+                            Attributes[x, y].value = attributeType;
+                            Attributes[x, y].data1 = bf.ReadInteger();
+                            Attributes[x, y].data2 = bf.ReadInteger();
+                            Attributes[x, y].data3 = bf.ReadInteger();
+                            Attributes[x, y].data4 = bf.ReadString();
+                        }
+                        else
+                        {
+                            Attributes[x, y] = null;
+                        }
                     }
                 }
+                var lCount = bf.ReadInteger();
+                Lights.Clear();
+                for (var i = 0; i < lCount; i++)
+                {
+                    Lights.Add(new Light(bf));
+                }
+
                 // Load Map Npcs
                 Spawns.Clear();
                 npcCount = bf.ReadInteger();
@@ -237,45 +284,24 @@ namespace Intersect_Server.Classes
                     Spawns.Add(TempNpc);
                 }
 
-                for (var i = 0; i < Constants.LayerCount; i++)
-                {
-                    for (var x = 0; x < Globals.MapWidth; x++)
-                    {
-                        for (var y = 0; y < Globals.MapHeight; y++)
-                        {
-                            _layers[i].Tiles[x, y].TilesetIndex = bf.ReadInteger();
-                            _layers[i].Tiles[x, y].X = bf.ReadInteger();
-                            _layers[i].Tiles[x, y].Y = bf.ReadInteger();
-                            _layers[i].Tiles[x, y].Autotile = bf.ReadByte();
-                        }
-                    }
-                }
-                for (var x = 0; x < Globals.MapWidth; x++)
-                {
-                    for (var y = 0; y < Globals.MapHeight; y++)
-                    {
-                        Attributes[x, y].value = bf.ReadInteger();
-                        Attributes[x, y].data1 = bf.ReadInteger();
-                        Attributes[x, y].data2 = bf.ReadInteger();
-                        Attributes[x, y].data3 = bf.ReadInteger();
-                        Attributes[x, y].data4 = bf.ReadString();
-                    }
-                }
-                var lCount = bf.ReadInteger();
-                Lights.Clear();
-                for (var i = 0; i < lCount; i++)
-                {
-                    Lights.Add(new Light(bf));
-                }
-                Revision = bf.ReadInteger();
-                Deleted = (int) bf.ReadLong();
-                MapGameData = packet.Skip(0).Take(bf.Pos()).ToArray();
                 Events.Clear();
                 var eCount = bf.ReadInteger();
                 for (var i = 0; i < eCount; i++)
                 {
-                    Events.Add(new EventStruct(i,bf));
+                    Events.Add(new EventStruct(i, bf));
                 }
+
+
+                //Clear Map Npcs
+                for (int i = 0; i < Spawns.Count; i++)
+                {
+                    if (Spawns[i].Entity != null)
+                    {
+                        Entities.Remove(Spawns[i].Entity);
+                        Spawns[i].Entity.Die();
+                    }
+                }
+
 
                 //Clear Map Items
                 for (int i = 0; i < MapItems.Count; i++)
@@ -308,7 +334,31 @@ namespace Intersect_Server.Classes
                 SpawnAttributeItems();
                 SpawnMapNpcs();
                 SpawnMapResources();
+                Save();
+                tileData = null;
+                return true;
             }
+        }
+
+        //Get Map Data
+        public byte[] GetClientMapData()
+        {
+            if (_clientMapData == null)
+            {
+                _clientMapData = File.ReadAllBytes("Resources/Maps/" + MyMapNum + ".cmap");
+            }
+            _lastAccessTime = Environment.TickCount;
+            return _clientMapData;
+        }
+
+        public byte[] GetEditorMapData()
+        {
+            if (_editorMapData == null)
+            {
+                _editorMapData = File.ReadAllBytes("Resources/Maps/" + MyMapNum + ".map");
+            }
+            _lastAccessTime = Environment.TickCount;
+            return _editorMapData;
         }
 
         //Items & Resources
@@ -319,13 +369,16 @@ namespace Intersect_Server.Classes
             {
                 for (int y = 0; y < Globals.MapHeight; y++)
                 {
-                    if (Attributes[x, y].value == (int)Enums.MapAttributes.Item)
+                    if (Attributes[x, y] != null)
                     {
-                        SpawnAttributeItem(x, y);
-                    }
-                    else if (Attributes[x, y].value == (int)Enums.MapAttributes.Resource)
-                    {
-                        SpawnAttributeResource(x, y);
+                        if (Attributes[x, y].value == (int)Enums.MapAttributes.Item)
+                        {
+                            SpawnAttributeItem(x, y);
+                        }
+                        else if (Attributes[x, y].value == (int)Enums.MapAttributes.Resource)
+                        {
+                            SpawnAttributeResource(x, y);
+                        }
                     }
                 }
             }
@@ -537,6 +590,14 @@ namespace Intersect_Server.Classes
         {
             lock (_mapLock)
             {
+                if (_clientMapData != null || _editorMapData != null)
+                {
+                    if (_lastAccessTime + 20000 < Environment.TickCount)
+                    {
+                        _clientMapData = null;
+                        _editorMapData = null;
+                    }
+                }
                 if (CheckActive() == false)
                 {
                     return;
@@ -572,9 +633,9 @@ namespace Intersect_Server.Classes
                             }
 
                             //Active Npcs On the Map
-                            if (Entities[i].GetType() == typeof (Npc))
+                            if (Entities[i].GetType() == typeof(Npc))
                             {
-                                ((Npc) Entities[i]).Update();
+                                ((Npc)Entities[i]).Update();
                             }
                         }
                     }
@@ -586,7 +647,7 @@ namespace Intersect_Server.Classes
                             if (Spawns[i].RespawnTime == -1)
                             {
                                 Spawns[i].RespawnTime = Environment.TickCount +
-                                                        Globals.GameNpcs[Spawns[i].NpcNum].SpawnDuration*1000;
+                                                        Globals.GameNpcs[Spawns[i].NpcNum].SpawnDuration * 1000;
                             }
                             else if (Spawns[i].RespawnTime < Environment.TickCount)
                             {
@@ -604,7 +665,7 @@ namespace Intersect_Server.Classes
                             {
                                 ResourceSpawns[i].RespawnTime = Environment.TickCount +
                                                                 Globals.GameResources[ResourceSpawns[i].ResourceNum]
-                                                                    .SpawnDuration*1000;
+                                                                    .SpawnDuration * 1000;
                             }
                             else if (ResourceSpawns[i].RespawnTime < Environment.TickCount)
                             {
@@ -681,7 +742,7 @@ namespace Intersect_Server.Classes
             Active = true;
             //Send Entity Info to Everyone and Everyone to the Entity
             SendMapEntitiesTo(client);
-            PacketSender.SendMapItems(client,MyMapNum);
+            PacketSender.SendMapItems(client, MyMapNum);
             Entities.Add(client.Entity);
             if (SurroundingMaps.Count <= 0) return;
             foreach (var t in SurroundingMaps)
@@ -735,12 +796,12 @@ namespace Intersect_Server.Classes
         public string data4 = "";
     }
 
-    public class TileArray
+    class TileArray
     {
         public Tile[,] Tiles = new Tile[Globals.MapWidth, Globals.MapHeight];
     }
 
-    public class Tile
+    class Tile
     {
         public int TilesetIndex = -1;
         public int X;
@@ -754,16 +815,44 @@ namespace Intersect_Server.Classes
         public int OffsetY;
         public int TileX;
         public int TileY;
-        public double Intensity;
-        public int Range;
+        public byte Intensity = 255;
+        public int Size = 0;
+        public float Expand = 0f;
+        public System.Drawing.Color Color = System.Drawing.Color.White;
+
+        public Light()
+        {
+            TileX = -1;
+            TileY = -1;
+        }
+        public Light(int x, int y)
+        {
+            TileX = x;
+            TileY = y;
+        }
+
+        public Light(Light copy)
+        {
+            TileX = copy.TileX;
+            TileY = copy.TileY;
+            OffsetX = copy.OffsetX;
+            OffsetY = copy.OffsetY;
+            Intensity = copy.Intensity;
+            Size = copy.Size;
+            Expand = copy.Expand;
+            Color = System.Drawing.Color.FromArgb(copy.Color.R, copy.Color.G, copy.Color.B);
+        }
         public Light(ByteBuffer myBuffer)
         {
             OffsetX = myBuffer.ReadInteger();
             OffsetY = myBuffer.ReadInteger();
             TileX = myBuffer.ReadInteger();
             TileY = myBuffer.ReadInteger();
-            Intensity = myBuffer.ReadDouble();
-            Range = myBuffer.ReadInteger();
+            Intensity = myBuffer.ReadByte();
+            Size = myBuffer.ReadInteger();
+            Expand = (float)myBuffer.ReadDouble();
+            Color = System.Drawing.Color.FromArgb(myBuffer.ReadByte(), myBuffer.ReadByte(), myBuffer.ReadByte());
+
         }
         public byte[] LightData()
         {
@@ -772,8 +861,12 @@ namespace Intersect_Server.Classes
             myBuffer.WriteInteger(OffsetY);
             myBuffer.WriteInteger(TileX);
             myBuffer.WriteInteger(TileY);
-            myBuffer.WriteDouble(Intensity);
-            myBuffer.WriteInteger(Range);
+            myBuffer.WriteByte(Intensity);
+            myBuffer.WriteInteger(Size);
+            myBuffer.WriteDouble(Expand);
+            myBuffer.WriteByte(Color.R);
+            myBuffer.WriteByte(Color.G);
+            myBuffer.WriteByte(Color.B);
             return myBuffer.ToArray();
         }
     }

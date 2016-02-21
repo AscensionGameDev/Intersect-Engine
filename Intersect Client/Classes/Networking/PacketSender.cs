@@ -81,7 +81,6 @@ namespace Intersect_Client.Classes
             bf.WriteLong((int)Enums.ClientPackets.EnterMap);
             bf.WriteLong(Globals.CurrentMap);
             Network.SendPacket(bf.ToArray());
-            Graphics.LightsChanged = true;
         }
 
         public static void SendAttack(int index)

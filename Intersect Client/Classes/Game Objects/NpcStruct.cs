@@ -34,6 +34,7 @@ namespace Intersect_Client.Classes
     public class NpcStruct
     {
         //Core info
+        public const string Version = "0.0.0.1";
         public string Name = "";
         public string Sprite = "";
 
@@ -60,10 +61,13 @@ namespace Intersect_Client.Classes
 
         }
 
-        public void Load(byte[] packet)
+        public void Load(byte[] packet, int index)
         {
             var myBuffer = new ByteBuffer();
             myBuffer.WriteBytes(packet);
+            string loadedVersion = myBuffer.ReadString();
+            if (loadedVersion != Version)
+                throw new Exception("Failed to load Npc #" + index + ". Loaded Version: " + loadedVersion + " Expected Version: " + Version);
             Name = myBuffer.ReadString();
             Sprite = myBuffer.ReadString();
             for (int i = 0; i < (int)Enums.Vitals.VitalCount; i++)

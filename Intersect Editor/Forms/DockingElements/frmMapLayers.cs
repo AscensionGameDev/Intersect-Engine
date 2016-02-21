@@ -149,140 +149,6 @@ namespace Intersect_Editor.Forms
             }
         }
 
-        //Lights Tab
-        private void txtLightOffsetY_TextChanged(object sender, EventArgs e)
-        {
-            try
-            {
-                if (Globals.EditingLight == null)
-                {
-                    return;
-                }
-                var offsetY = Convert.ToInt32(txtLightOffsetY.Text);
-                Globals.EditingLight.OffsetY = offsetY;
-                Globals.EditingLight.Graphic = null;
-                Graphics.LightsChanged = true;
-            }
-            catch (Exception)
-            {
-                //ignore
-            }
-        }
-        private void txtLightOffsetX_TextChanged(object sender, EventArgs e)
-        {
-            try
-            {
-                if (Globals.EditingLight == null)
-                {
-                    return;
-                }
-                var offsetX = Convert.ToInt32(txtLightOffsetX.Text);
-                Globals.EditingLight.OffsetX = offsetX;
-                Globals.EditingLight.Graphic = null;
-                Graphics.LightsChanged = true;
-                Graphics.TilePreviewUpdated = true;
-            }
-            catch (Exception)
-            {
-                //ignore
-            }
-        }
-        private void scrlLightRange_Scroll(object sender, ScrollEventArgs e)
-        {
-            if (Globals.EditingLight == null) { return; }
-            txtLightRange.Text = "" + Globals.EditingLight.Range;
-            if (Globals.EditingLight.Graphic != null) { Globals.EditingLight.Graphic.Dispose(); }
-            Globals.EditingLight.Graphic = null;
-            Globals.EditingLight.Range = scrlLightRange.Value;
-            Graphics.LightsChanged = true;
-            Graphics.TilePreviewUpdated = true;
-        }
-        private void scrlLightIntensity_Scroll(object sender, ScrollEventArgs e)
-        {
-            if (Globals.EditingLight == null) { return; }
-            Globals.EditingLight.Intensity = scrlLightIntensity.Value / 10000.0;
-            if (Globals.EditingLight.Graphic != null) { Globals.EditingLight.Graphic.Dispose(); }
-            Globals.EditingLight.Graphic = null;
-            txtLightIntensity.Text = "" + Globals.EditingLight.Intensity;
-            Graphics.LightsChanged = true;
-            Graphics.TilePreviewUpdated = true;
-        }
-        private void txtLightIntensity_TextChanged(object sender, EventArgs e)
-        {
-            if (Globals.EditingLight == null) { return; }
-            try
-            {
-                var intensity = Convert.ToDouble(txtLightIntensity.Text);
-                if (intensity < 0)
-                {
-                    intensity = 0;
-                }
-                if (intensity > 1)
-                {
-                    intensity = 1;
-                }
-                Globals.EditingLight.Intensity = intensity;
-                Globals.EditingLight.Graphic = null;
-                txtLightIntensity.Text = "" + Globals.EditingLight.Intensity;
-                scrlLightIntensity.Value = (int)(intensity * 10000.0);
-                Graphics.LightsChanged = true;
-                Graphics.TilePreviewUpdated = true;
-            }
-            catch (Exception)
-            {
-                //ignore
-            }
-        }
-        private void txtLightRange_TextChanged(object sender, EventArgs e)
-        {
-            try
-            {
-                if (Globals.EditingLight == null)
-                {
-                    return;
-                }
-                var range = Convert.ToInt32(txtLightRange.Text);
-                if (range < 2)
-                {
-                    range = 2;
-                }
-                if (range > 179)
-                {
-                    range = 179;
-                }
-                Globals.EditingLight.Range = range;
-                Globals.EditingLight.Graphic = null;
-                Graphics.LightsChanged = true;
-                Graphics.TilePreviewUpdated = true;
-                txtLightRange.Text = "" + range;
-            }
-            catch (Exception)
-            {
-                //ignore
-            }
-        }
-        private void btnLightEditorClose_Click(object sender, EventArgs e)
-        {
-            pnlLight.Hide();
-            Globals.EditingLight = null;
-        }
-        private void btnLightEditorRevert_Click(object sender, EventArgs e)
-        {
-            if (Globals.EditingLight != null)
-            {
-                Globals.EditingLight.Intensity = Globals.BackupLight.Intensity;
-                Globals.EditingLight.Range = Globals.BackupLight.Range;
-                Globals.EditingLight.OffsetX = Globals.BackupLight.OffsetX;
-                Globals.EditingLight.OffsetY = Globals.BackupLight.OffsetY;
-                if (Globals.EditingLight.Graphic != null) Globals.EditingLight.Graphic.Dispose();
-                Globals.EditingLight.Graphic = null;
-                Graphics.LightsChanged = false;
-                Globals.EditingLight = null;
-            }
-            Graphics.TilePreviewUpdated = true;
-            pnlLight.Hide();
-        }
-
         //Mapping Attribute Functions
         /// <summary>
         /// A method that hides all of the extra group boxes for tile data related to the map attributes.
@@ -509,7 +375,7 @@ namespace Intersect_Editor.Forms
             }
             if (Globals.EditingLight != null)
             {
-                btnLightEditorRevert_Click(null, null);
+                Globals.MapLayersWindow.lightEditor.Cancel();
             }
         }
 
@@ -614,6 +480,11 @@ namespace Intersect_Editor.Forms
                 }
                 lstMapNpcs.SelectedIndex = n;
             }
+        }
+
+        private void lightEditor_Load(object sender, EventArgs e)
+        {
+
         }
     }
 }

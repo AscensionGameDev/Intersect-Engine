@@ -56,7 +56,11 @@ namespace Intersect_Server.Classes
             Variables = new int[Constants.VariableCount];
             for (int i = 0; i < Constants.MaxPlayerSkills; i++)
             {
-                Spells[i] = new SpellInstance();
+                Spells.Add(new SpellInstance());
+            }
+            for (int i = 0; i < Constants.MaxInvItems; i++)
+            {
+                Inventory.Add(new ItemInstance());
             }
             for (int i = 0; i < Enums.EquipmentSlots.Count; i++)
             {
