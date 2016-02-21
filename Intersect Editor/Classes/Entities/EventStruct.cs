@@ -26,14 +26,14 @@ namespace Intersect_Editor.Classes
 {
     public class EventStruct
     {
-        public string MyName { get; set; } = "New Event";
+        public string MyName { get; set; }
         public int MyIndex { get; set; }
         public int SpawnX { get; set; }
         public int SpawnY { get; set; }
         public int Deleted { get; set; }
-        public int PageCount { get; } = 1;
+        public int PageCount { get; set; }
         public bool CommonEvent { get; set; }
-        public List<EventPage> MyPages { get; } = new List<EventPage>();
+        public List<EventPage> MyPages { get; set; }
 
         public EventStruct(int index, int x, int y, bool isCommon = false)
         {
@@ -46,6 +46,9 @@ namespace Intersect_Editor.Classes
 
         public EventStruct(int index, EventStruct copy)
         {
+            MyName = "New Event";
+            PageCount = 1;
+            MyPages = new List<EventPage>();
             ByteBuffer myBuffer = new ByteBuffer();
             MyIndex = index;
             myBuffer.WriteBytes(copy.EventData());
@@ -65,6 +68,9 @@ namespace Intersect_Editor.Classes
         }
         public EventStruct(int index, ByteBuffer myBuffer, bool isCommon = false)
         {
+            MyName = "New Event";
+            PageCount = 1;
+            MyPages = new List<EventPage>();
             MyIndex = index;
             Deleted = myBuffer.ReadInteger();
             if (Deleted != 1)
