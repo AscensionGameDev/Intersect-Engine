@@ -73,17 +73,17 @@ namespace Intersect_Editor.Forms
             //Lower Animation Graphic
             cmbLowerGraphic.Items.Clear();
             cmbLowerGraphic.Items.Add("None");
-            for (int i = 0; i < Intersect_Editor.Classes.Graphics.AnimationFileNames.Count; i++)
+            for (int i = 0; i < Intersect_Editor.Classes.EditorGraphics.AnimationFileNames.Count; i++)
             {
-                cmbLowerGraphic.Items.Add(Intersect_Editor.Classes.Graphics.AnimationFileNames[i]);
+                cmbLowerGraphic.Items.Add(Intersect_Editor.Classes.EditorGraphics.AnimationFileNames[i]);
             }
 
             //Upper Animation Graphic
             cmbUpperGraphic.Items.Clear();
             cmbUpperGraphic.Items.Add("None");
-            for (int i = 0; i < Intersect_Editor.Classes.Graphics.AnimationFileNames.Count; i++)
+            for (int i = 0; i < Intersect_Editor.Classes.EditorGraphics.AnimationFileNames.Count; i++)
             {
-                cmbUpperGraphic.Items.Add(Intersect_Editor.Classes.Graphics.AnimationFileNames[i]);
+                cmbUpperGraphic.Items.Add(Intersect_Editor.Classes.EditorGraphics.AnimationFileNames[i]);
             }
 
             lowerWindow = new RenderWindow(picLowerAnimation.Handle);
@@ -343,10 +343,10 @@ namespace Intersect_Editor.Forms
             if (!_playLower) _lowerFrame = scrlLowerFrame.Value - 1;
             lowerWindow.Clear(SFML.Graphics.Color.White);
             lowerDarkness.Clear(SFML.Graphics.Color.Black);
-            if (Classes.Graphics.AnimationFileNames.IndexOf(cmbLowerGraphic.Text) > -1)
+            if (Classes.EditorGraphics.AnimationFileNames.IndexOf(cmbLowerGraphic.Text) > -1)
             {
                 Texture animTexture =
-                    Classes.Graphics.AnimationTextures[Classes.Graphics.AnimationFileNames.IndexOf(cmbLowerGraphic.Text)
+                    Classes.EditorGraphics.AnimationTextures[Classes.EditorGraphics.AnimationFileNames.IndexOf(cmbLowerGraphic.Text)
                         ];
                 long w = animTexture.Size.X / scrlLowerHorizontalFrames.Value;
                 long h = animTexture.Size.Y / scrlLowerVerticalFrames.Value;
@@ -359,7 +359,7 @@ namespace Intersect_Editor.Forms
             }
             if (_lowerFrame < Globals.GameAnimations[_editorIndex].LowerLights.Length)
             {
-                Classes.Graphics.DrawLight(
+                Classes.EditorGraphics.DrawLight(
                     picLowerAnimation.Width/2 - Globals.GameAnimations[_editorIndex].LowerLights[_lowerFrame].Size/2 +
                     Globals.GameAnimations[_editorIndex].LowerLights[_lowerFrame].OffsetX,
                     picLowerAnimation.Height/2 - Globals.GameAnimations[_editorIndex].LowerLights[_lowerFrame].Size/2 +
@@ -386,10 +386,10 @@ namespace Intersect_Editor.Forms
             if (!_playUpper) _upperFrame = scrlUpperFrame.Value - 1;
             upperWindow.Clear(SFML.Graphics.Color.White);
             upperDarkness.Clear(SFML.Graphics.Color.Black);
-            if (Classes.Graphics.AnimationFileNames.IndexOf(cmbUpperGraphic.Text) > -1)
+            if (Classes.EditorGraphics.AnimationFileNames.IndexOf(cmbUpperGraphic.Text) > -1)
             {
                 Texture animTexture =
-                    Classes.Graphics.AnimationTextures[Classes.Graphics.AnimationFileNames.IndexOf(cmbUpperGraphic.Text)
+                    Classes.EditorGraphics.AnimationTextures[Classes.EditorGraphics.AnimationFileNames.IndexOf(cmbUpperGraphic.Text)
                         ];
                 long w = animTexture.Size.X / scrlUpperHorizontalFrames.Value;
                 long h = animTexture.Size.Y / scrlUpperVerticalFrames.Value;
@@ -402,7 +402,7 @@ namespace Intersect_Editor.Forms
             }
             if (_upperFrame < Globals.GameAnimations[_editorIndex].UpperLights.Length)
             {
-                Classes.Graphics.DrawLight(
+                Classes.EditorGraphics.DrawLight(
                     picUpperAnimation.Width / 2 - Globals.GameAnimations[_editorIndex].UpperLights[_upperFrame].Size / 2 +
                     Globals.GameAnimations[_editorIndex].UpperLights[_upperFrame].OffsetX,
                     picUpperAnimation.Height / 2 - Globals.GameAnimations[_editorIndex].UpperLights[_upperFrame].Size / 2 +

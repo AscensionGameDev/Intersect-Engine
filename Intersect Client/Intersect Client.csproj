@@ -158,7 +158,7 @@
     <Compile Include="Classes\UI\IGUIElement.cs" />
     <Compile Include="Classes\General\Globals.cs" />
     <Compile Include="Classes\Core\GameMain.cs" />
-    <Compile Include="Classes\Core\Graphics.cs" />
+    <Compile Include="Classes\Core\GameGraphics.cs" />
     <Compile Include="Classes\UI\Gui.cs" />
     <Compile Include="Classes\Maps\MapStruct.cs" />
     <Compile Include="Classes\Maps\MapAutotiles.cs" />

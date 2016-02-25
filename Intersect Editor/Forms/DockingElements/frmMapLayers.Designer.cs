@@ -240,6 +240,7 @@
             // 
             // tabAttributes
             // 
+            this.tabAttributes.Controls.Add(this.grpSound);
             this.tabAttributes.Controls.Add(this.rbResource);
             this.tabAttributes.Controls.Add(this.rbSound);
             this.tabAttributes.Controls.Add(this.rbWarp);
@@ -248,7 +249,6 @@
             this.tabAttributes.Controls.Add(this.rbItem);
             this.tabAttributes.Controls.Add(this.rbBlocked);
             this.tabAttributes.Controls.Add(this.grpResource);
-            this.tabAttributes.Controls.Add(this.grpSound);
             this.tabAttributes.Controls.Add(this.grpItem);
             this.tabAttributes.Controls.Add(this.grpWarp);
             this.tabAttributes.Controls.Add(this.grpZDimension);

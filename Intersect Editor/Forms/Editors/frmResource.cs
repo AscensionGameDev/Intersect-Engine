@@ -60,10 +60,10 @@ namespace Intersect_Editor.Classes
             cmbEndSprite.Items.Clear();
             cmbInitialSprite.Items.Add("None");
             cmbEndSprite.Items.Add("None");
-            for (int i = 0; i < Graphics.ResourceFileNames.Count; i++)
+            for (int i = 0; i < EditorGraphics.ResourceFileNames.Count; i++)
             {
-                cmbInitialSprite.Items.Add(Graphics.ResourceFileNames[i]);
-                cmbEndSprite.Items.Add(Graphics.ResourceFileNames[i]);
+                cmbInitialSprite.Items.Add(EditorGraphics.ResourceFileNames[i]);
+                cmbEndSprite.Items.Add(EditorGraphics.ResourceFileNames[i]);
             }
             scrlDropItem.Maximum = Constants.MaxItems - 1;
             UpdateEditor();

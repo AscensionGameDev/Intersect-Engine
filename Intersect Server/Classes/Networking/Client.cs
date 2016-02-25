@@ -22,6 +22,7 @@
 using System;
 using System.Collections.Generic;
 using System.Net.Sockets;
+using Intersect_Server.Classes.Networking;
 
 namespace Intersect_Server.Classes
 {
@@ -59,7 +60,10 @@ namespace Intersect_Server.Classes
 
         public void SendPacket(byte[] packet)
         {
-            mySocket.SendData(packet);
+            var buff = new ByteBuffer();
+            buff.WriteInteger(packet.Length);
+            buff.WriteBytes(packet);
+            mySocket.SendData(buff.ToArray());
         }
 
         public bool IsConnected()

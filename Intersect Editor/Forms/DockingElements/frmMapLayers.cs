@@ -133,7 +133,7 @@ namespace Intersect_Editor.Forms
             if (File.Exists("Resources/Tilesets/" + Globals.Tilesets[cmbTilesets.SelectedIndex]))
             {
                 Globals.CurrentTileset = cmbTilesets.SelectedIndex;
-                Graphics.InitTileset(Globals.CurrentTileset, Globals.MainForm);
+                EditorGraphics.InitTileset(Globals.CurrentTileset, Globals.MainForm);
             }
             else
             {
@@ -189,6 +189,13 @@ namespace Intersect_Editor.Forms
         {
             hideAttributeMenus();
             grpSound.Visible = true;
+            cmbMapAttributeSound.Items.Clear();
+            cmbMapAttributeSound.Items.Add("None");
+            foreach (string filename in Audio.SoundFileNames)
+            {
+                cmbMapAttributeSound.Items.Add(filename);
+            }
+            cmbMapAttributeSound.SelectedIndex = 0;
         }
         private void rbResource_CheckedChanged(object sender, EventArgs e)
         {
@@ -320,28 +327,28 @@ namespace Intersect_Editor.Forms
         {
             if (tabControl.SelectedIndex == tabControl.TabPages.IndexOf(tabTiles)) {
                 Globals.CurrentLayer = 0;
-                Graphics.TilePreviewUpdated = true;
+                EditorGraphics.TilePreviewUpdated = true;
                 Globals.SelectionType = (int) Enums.SelectionTypes.AllLayers;
             }
             else if (tabControl.SelectedIndex == tabControl.TabPages.IndexOf(tabAttributes)) {
                 Globals.CurrentLayer = Constants.LayerCount;
-                Graphics.TilePreviewUpdated = true;
+                EditorGraphics.TilePreviewUpdated = true;
                 Globals.SelectionType = (int)Enums.SelectionTypes.AllLayers;
             }  
             else if (tabControl.SelectedIndex == tabControl.TabPages.IndexOf(tabEvents)) {
                 Globals.CurrentLayer = Constants.LayerCount + 2;
-                Graphics.TilePreviewUpdated = true;
+                EditorGraphics.TilePreviewUpdated = true;
                 Globals.SelectionType = (int)Enums.SelectionTypes.CurrentLayer;
             }  
             else if (tabControl.SelectedIndex == tabControl.TabPages.IndexOf(tabLights)) {
                 Globals.CurrentLayer =  Constants.LayerCount + 1;
-                Graphics.TilePreviewUpdated = true;
+                EditorGraphics.TilePreviewUpdated = true;
                 Globals.SelectionType = (int)Enums.SelectionTypes.CurrentLayer;
             }
             else if (tabControl.SelectedIndex == tabControl.TabPages.IndexOf(tabNPCs ))
             {
                 Globals.CurrentLayer = Constants.LayerCount + 3;
-                Graphics.TilePreviewUpdated = true;
+                EditorGraphics.TilePreviewUpdated = true;
                 Globals.SelectionType = (int)Enums.SelectionTypes.CurrentLayer;
                 // Update the list incase npcs have been modified since form load.
                 cmbNpc.Items.Clear();
@@ -382,16 +389,16 @@ namespace Intersect_Editor.Forms
         private void cmbMapLayer_SelectedIndexChanged(object sender, EventArgs e)
         {
             Globals.CurrentLayer = cmbMapLayer.SelectedIndex;
-            Graphics.TilePreviewUpdated = true;
+            EditorGraphics.TilePreviewUpdated = true;
         }
 
         private void frmMapLayers_DockStateChanged(object sender, EventArgs e)
         {
-            if (Graphics.TilesetWindow != null && !Globals.MapLayersWindow.picTileset.IsDisposed)
+            if (EditorGraphics.TilesetWindow != null && !Globals.MapLayersWindow.picTileset.IsDisposed)
             {
-                Graphics.TilesetWindow.Close();
-                Graphics.TilesetWindow.Dispose();
-                Graphics.TilesetWindow = new RenderWindow(Globals.MapLayersWindow.picTileset.Handle);
+                EditorGraphics.TilesetWindow.Close();
+                EditorGraphics.TilesetWindow.Dispose();
+                EditorGraphics.TilesetWindow = new RenderWindow(Globals.MapLayersWindow.picTileset.Handle);
             }
         }
 

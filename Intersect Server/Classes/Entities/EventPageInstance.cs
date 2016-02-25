@@ -229,9 +229,18 @@ namespace Intersect_Server.Classes
             return true;
         }
 
-        public bool MeetsConditions(EventCommand condtionCommand)
+        public bool MeetsConditions(EventCommand conditionCommand)
         {
             //For instance use PageInstance
+            switch (conditionCommand.Ints[0])
+            {
+                case 0:
+                    if (MyPlayer.Switches[conditionCommand.Ints[1]] == Convert.ToBoolean(conditionCommand.Ints[2]))
+                    {
+                        return true;
+                    }
+                    break;
+            }
             return false;
         }
 
@@ -253,7 +262,7 @@ namespace Intersect_Server.Classes
                     CallStack.Peek().ResponseType = 1;
                     break;
                 case EventCommandType.SetSwitch:
-                    MyPlayer.Switches[command.Ints[0]-1] = Convert.ToBoolean(command.Ints[1]);
+                    MyPlayer.Switches[command.Ints[0]] = Convert.ToBoolean(command.Ints[1]);
                     CallStack.Peek().CommandIndex++;
                     break;
                 case EventCommandType.ConditionalBranch:

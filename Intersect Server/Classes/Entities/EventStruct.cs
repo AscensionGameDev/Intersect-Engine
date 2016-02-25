@@ -31,7 +31,6 @@ namespace Intersect_Server.Classes
         public int SpawnX { get; set; }
         public int SpawnY { get; set; }
         public int Deleted { get; set; }
-        public int PageCount { get; set; }
         public bool CommonEvent { get; set; }
         public List<EventPage> MyPages { get; set; }
 
@@ -41,13 +40,13 @@ namespace Intersect_Server.Classes
             SpawnX = x;
             SpawnY = y;
             CommonEvent = isCommon;
+            MyPages = new List<EventPage>();
             MyPages.Add(new EventPage());
         }
 
         public EventStruct(int index, EventStruct copy)
         {
             MyName = "New Event";
-            PageCount = 1;
             MyPages = new List<EventPage>();
             ByteBuffer myBuffer = new ByteBuffer();
             MyIndex = index;
@@ -58,9 +57,9 @@ namespace Intersect_Server.Classes
                 MyName = myBuffer.ReadString();
                 SpawnX = myBuffer.ReadInteger();
                 SpawnY = myBuffer.ReadInteger();
-                PageCount = myBuffer.ReadInteger();
+                int pageCount = myBuffer.ReadInteger();
                 CommonEvent = copy.CommonEvent;
-                for (var i = 0; i < PageCount; i++)
+                for (var i = 0; i < pageCount; i++)
                 {
                     MyPages.Add(new EventPage(myBuffer));
                 }
@@ -69,7 +68,6 @@ namespace Intersect_Server.Classes
         public EventStruct(int index, ByteBuffer myBuffer, bool isCommon = false)
         {
             MyName = "New Event";
-            PageCount = 1;
             MyPages = new List<EventPage>();
             MyIndex = index;
             Deleted = myBuffer.ReadInteger();
@@ -78,9 +76,9 @@ namespace Intersect_Server.Classes
                 MyName = myBuffer.ReadString();
                 SpawnX = myBuffer.ReadInteger();
                 SpawnY = myBuffer.ReadInteger();
-                PageCount = myBuffer.ReadInteger();
+                int pageCount = myBuffer.ReadInteger();
                 CommonEvent = isCommon;
-                for (var i = 0; i < PageCount; i++)
+                for (var i = 0; i < pageCount; i++)
                 {
                     MyPages.Add(new EventPage(myBuffer));
                 }
@@ -95,8 +93,8 @@ namespace Intersect_Server.Classes
                 myBuffer.WriteString(MyName);
                 myBuffer.WriteInteger(SpawnX);
                 myBuffer.WriteInteger(SpawnY);
-                myBuffer.WriteInteger(PageCount);
-                for (var i = 0; i < PageCount; i++)
+                myBuffer.WriteInteger(MyPages.Count);
+                for (var i = 0; i < MyPages.Count; i++)
                 {
                     MyPages[i].WriteBytes(myBuffer);
                 }

@@ -11,7 +11,7 @@ using System.Text;
 using System.Windows.Forms;
 using Intersect_Editor.Forms.Controls;
 using WeifenLuo.WinFormsUI.Docking;
-using Graphics = Intersect_Editor.Classes.Graphics;
+using EditorGraphics = Intersect_Editor.Classes.EditorGraphics;
 
 namespace Intersect_Editor.Forms
 {
@@ -35,11 +35,11 @@ namespace Intersect_Editor.Forms
         }
         private void frmMapEditor_DockStateChanged(object sender, EventArgs e)
         {
-            if (Graphics.RenderWindow != null && !Globals.MapEditorWindow.picMap.IsDisposed)
+            if (EditorGraphics.RenderWindow != null && !Globals.MapEditorWindow.picMap.IsDisposed)
             {
-                Graphics.RenderWindow.Close();
-                Graphics.RenderWindow.Dispose();
-                Graphics.RenderWindow = new RenderWindow(Globals.MapEditorWindow.picMap.Handle);
+                EditorGraphics.RenderWindow.Close();
+                EditorGraphics.RenderWindow.Dispose();
+                EditorGraphics.RenderWindow = new RenderWindow(Globals.MapEditorWindow.picMap.Handle);
             }
         }
 
@@ -265,7 +265,7 @@ namespace Intersect_Editor.Forms
                             if ((tmpLight = Globals.GameMaps[Globals.CurrentMap].FindLightAt(Globals.CurTileX, Globals.CurTileY)) != null)
                             {
                                 Globals.GameMaps[Globals.CurrentMap].Lights.Remove(tmpLight);
-                                Graphics.TilePreviewUpdated = true;
+                                EditorGraphics.TilePreviewUpdated = true;
                                 MapChanged = true;
                             }
                             break;
@@ -351,7 +351,7 @@ namespace Intersect_Editor.Forms
 
             if (oldx != Globals.CurTileX || oldy != Globals.CurTileY)
             {
-                Graphics.TilePreviewUpdated = true;
+                EditorGraphics.TilePreviewUpdated = true;
             }
 
             if (Globals.MouseButton > -1)
@@ -683,7 +683,7 @@ namespace Intersect_Editor.Forms
             Globals.TotalTileDragY -= (Globals.TileDragY - Globals.CurTileY);
             Globals.TileDragX = 0;
             Globals.TileDragY = 0;
-            Graphics.TilePreviewUpdated = true;
+            EditorGraphics.TilePreviewUpdated = true;
 
         }
         private void picMap_DoubleClick(object sender, EventArgs e)
@@ -851,7 +851,7 @@ namespace Intersect_Editor.Forms
             Globals.TotalTileDragY = 0;
             Globals.MouseButton = -1;
             Globals.SelectionSource = null;
-            Graphics.TilePreviewUpdated = true;
+            EditorGraphics.TilePreviewUpdated = true;
         }
         private void picMap_MouseEnter(object sender, EventArgs e)
         {
@@ -1325,7 +1325,7 @@ namespace Intersect_Editor.Forms
             Globals.TotalTileDragX = 0;
             Globals.TotalTileDragY = 0;
             Globals.SelectionSource = null;
-            Graphics.TilePreviewUpdated = true;
+            EditorGraphics.TilePreviewUpdated = true;
             Globals.CurMapSelX = Globals.CurTileX;
             Globals.CurMapSelY = Globals.CurTileY;
             Globals.CurMapSelW = 0;
@@ -1340,7 +1340,7 @@ namespace Intersect_Editor.Forms
         {
             Copy();
             WipeCurrentSelection(Globals.GameMaps[Globals.CurrentMap]);
-            Graphics.TilePreviewUpdated = true;
+            EditorGraphics.TilePreviewUpdated = true;
             MapUndoStates.Add(CurrentMapState);
             MapRedoStates.Clear();
             CurrentMapState = Globals.GameMaps[Globals.CurrentMap].Save();
@@ -1395,7 +1395,7 @@ namespace Intersect_Editor.Forms
                 Globals.TotalTileDragX = -selX + selX1;
                 Globals.TotalTileDragY = -selY + selY1;
                 Globals.IsPaste = true;
-                Graphics.TilePreviewUpdated = true;
+                EditorGraphics.TilePreviewUpdated = true;
             }
         }
 

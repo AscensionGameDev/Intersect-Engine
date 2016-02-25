@@ -357,7 +357,7 @@
       <DependentUpon>frmMain.cs</DependentUpon>
     </Compile>
     <Compile Include="Classes\General\Globals.cs" />
-    <Compile Include="Classes\Core\Graphics.cs" />
+    <Compile Include="Classes\Core\EditorGraphics.cs" />
     <Compile Include="Classes\Maps\MapStruct.cs" />
     <Compile Include="Classes\Maps\MapAutotiles.cs" />
     <Compile Include="Classes\Networking\PacketHandler.cs" />

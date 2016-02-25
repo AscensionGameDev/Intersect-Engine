@@ -1,4 +1,4 @@
-﻿/*
+/*
     Intersect Game Engine (Server)
     Copyright (C) 2015  JC Snider, Joe Bridges
     
@@ -19,48 +19,41 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-using WebSocketSharp.Server;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Text;
 using System.Net;
-using System.Threading;
-using WebSocketSharp;
-using WebSocket = Intersect_Server.Classes.Networking.WebSocket;
-
+using System.Net.Sockets;
 
 namespace Intersect_Server.Classes
 {
-    public static class WebSocketServer
-    {
-        private static WebSocketSharp.Server.WebSocketServer _listener;
+	public static class SocketServer
+	{
+	    static TcpListener _tcpServer;
 
-        public static void Init()
-        {
-            _listener = new WebSocketSharp.Server.WebSocketServer(Globals.ServerPort + 1);
-            _listener.AddWebSocketService<SharpServerService>("/Intersect", () => new SharpServerService() {IgnoreExtensions = true, Protocol="binary"});
-            _listener.Start();
-        }
+	    public static void  Init ()
+		{
+		    _tcpServer = new TcpListener(IPAddress.Any,Globals.ServerPort);
+            _tcpServer.Start();
+            _tcpServer.BeginAcceptTcpClient(OnClientConnect, null);
+		}
 
         public static void Stop()
         {
-            
-        }
-    }
-
-    public class SharpServerService : WebSocketBehavior
-    {
-        public SharpServerService() : base()
-        {
-            IgnoreExtensions = true;
+            _tcpServer.Stop();
         }
 
-        protected override void OnOpen()
-        {
-            new WebSocket(Context);
-        }
-    }
-
+		private static void OnClientConnect (IAsyncResult ar)
+		{
+            try
+            {
+                new NetSocket(_tcpServer.EndAcceptTcpClient(ar));
+                _tcpServer.BeginAcceptTcpClient(OnClientConnect, null);
+                //Globals.GeneralLogs.Add("Client Connection From : " + aContext.ClientAddress.ToString());
+            }
+            catch (Exception)
+            {
+                //client DC or server shutting down... nothing to worry about
+            }
+		}
+	}
 }
+

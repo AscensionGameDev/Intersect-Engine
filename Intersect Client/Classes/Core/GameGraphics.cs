@@ -135,7 +135,7 @@ namespace Intersect_Client.Classes
         private static long _overlayUpdate = Environment.TickCount;
 
         //Player Spotlight Values
-        private const float PlayerLightIntensity = .7f;
+        private const byte PlayerLightIntensity = 255;
         private const int PlayerLightSize = 300;
         private const float PlayerLightExpand = 0f;
         public static Color PlayerLightColor = Color.White;
@@ -951,7 +951,6 @@ namespace Intersect_Client.Classes
 
                 var right = targetRect.X + targetRect.Width;
                 var bottom = targetRect.Y + targetRect.Height;
-
 
                 _vertexCache[_vertexCount++] = new Vertex(new Vector2f(targetRect.X, targetRect.Y), new Vector2f(u1, v1));
                 _vertexCache[_vertexCount++] = new Vertex(new Vector2f(right, targetRect.Y), new Vector2f(u2, v1));

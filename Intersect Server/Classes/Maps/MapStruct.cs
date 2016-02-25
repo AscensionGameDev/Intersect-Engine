@@ -198,14 +198,17 @@ namespace Intersect_Server.Classes
                     bf.WriteBytes(t.EventData());
                 }
             }
+            _lastAccessTime = Environment.TickCount;
             if (MapGameData != null)
             {
-                File.WriteAllBytes("Resources/Maps/" + MyMapNum + ".cmap", MapGameData);
+                _clientMapData = MapGameData;
+                File.WriteAllBytes("Resources/Maps/" + MyMapNum + ".cmap", _clientMapData);
             }
-            File.WriteAllBytes("Resources/Maps/" + MyMapNum + ".map", bf.ToArray());
+            _editorMapData = bf.ToArray();
+            File.WriteAllBytes("Resources/Maps/" + MyMapNum + ".map", _editorMapData);
             bf.Dispose();
         }
-        public bool Load(byte[] packet)
+        public bool Load(byte[] packet, int keepRevision = -1)
         {
             lock (_mapLock)
             {
@@ -221,6 +224,7 @@ namespace Intersect_Server.Classes
                     throw new Exception("Failed to load Map #" + MyMapNum + ". Loaded Version: " + loadedVersion + " Expected Version: " + Version);
                 MyName = bf.ReadString();
                 Revision = bf.ReadInteger();
+                if (keepRevision > -1) Revision = keepRevision;
                 Up = bf.ReadInteger();
                 Down = bf.ReadInteger();
                 Left = bf.ReadInteger();

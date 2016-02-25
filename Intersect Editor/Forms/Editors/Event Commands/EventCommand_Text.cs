@@ -44,9 +44,9 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             txtShowText.Text = _myCommand.Strs[0];
             cmbFace.Items.Clear();
             cmbFace.Items.Add("None");
-            for (int i = 0; i < Classes.Graphics.FaceFileNames.Count; i++)
+            for (int i = 0; i < Classes.EditorGraphics.FaceFileNames.Count; i++)
             {
-                cmbFace.Items.Add(Classes.Graphics.FaceFileNames[i]);
+                cmbFace.Items.Add(Classes.EditorGraphics.FaceFileNames[i]);
             }
             if (cmbFace.Items.IndexOf(_myCommand.Strs[1]) > -1)
             {

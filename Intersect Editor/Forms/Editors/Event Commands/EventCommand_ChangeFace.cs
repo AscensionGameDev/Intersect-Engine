@@ -42,7 +42,7 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             _myCommand = refCommand;
             _eventEditor = editor;
             cmbFace.Items.Clear();
-            foreach (string filename in Intersect_Editor.Classes.Graphics.FaceFileNames)
+            foreach (string filename in Intersect_Editor.Classes.EditorGraphics.FaceFileNames)
             {
                 cmbFace.Items.Add(filename);
             }

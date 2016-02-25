@@ -29,6 +29,8 @@ using System.Xml;
 using System.Security.Cryptography;
 using System.Text;
 using MySql.Data.MySqlClient;
+using Intersect_Server.Classes.Networking;
+
 namespace Intersect_Server.Classes
 {
     public static class Database
@@ -268,7 +270,7 @@ namespace Intersect_Server.Classes
             }
 
             //Didn't find the player online, lets load him from our database.
-            Client fakeClient = new Client(-1, -1, new GameSocket());
+            Client fakeClient = new Client(-1, -1, null);
             Player en = new Player(-1, fakeClient);
             fakeClient.Entity = en;
             en.MyAccount = username;

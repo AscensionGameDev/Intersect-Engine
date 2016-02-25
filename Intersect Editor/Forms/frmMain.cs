@@ -120,7 +120,7 @@ namespace Intersect_Editor.Forms
         }
         private void InitEditor()
         {
-            Graphics.InitSfml(this);
+            EditorGraphics.InitSfml(this);
             Sounds.Init();
             Globals.InEditor = true;
             GrabMouseDownEvents();
@@ -152,7 +152,7 @@ namespace Intersect_Editor.Forms
                 Globals.MapEditorWindow.picMap.Visible = false;
                 Globals.MapEditorWindow.ResetUndoRedoStates();
             }
-            Graphics.TilePreviewUpdated = true;
+            EditorGraphics.TilePreviewUpdated = true;
         }
         private void GrabMouseDownEvents()
         {
@@ -479,28 +479,28 @@ namespace Intersect_Editor.Forms
         //View
         private void hideDarknessToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Graphics.HideDarkness = !Graphics.HideDarkness;
-            hideDarknessToolStripMenuItem.Checked = !Graphics.HideDarkness;
+            EditorGraphics.HideDarkness = !EditorGraphics.HideDarkness;
+            hideDarknessToolStripMenuItem.Checked = !EditorGraphics.HideDarkness;
         }
         private void hideFogToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Graphics.HideFog = !Graphics.HideFog;
-            hideFogToolStripMenuItem.Checked = !Graphics.HideFog;
+            EditorGraphics.HideFog = !EditorGraphics.HideFog;
+            hideFogToolStripMenuItem.Checked = !EditorGraphics.HideFog;
         }
         private void hideOverlayToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Graphics.HideOverlay = !Graphics.HideOverlay;
-            hideOverlayToolStripMenuItem.Checked = !Graphics.HideOverlay;
+            EditorGraphics.HideOverlay = !EditorGraphics.HideOverlay;
+            hideOverlayToolStripMenuItem.Checked = !EditorGraphics.HideOverlay;
         }
         private void hideTilePreviewToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Graphics.HideTilePreview = !Graphics.HideTilePreview;
-            hideTilePreviewToolStripMenuItem.Checked = !Graphics.HideTilePreview;
+            EditorGraphics.HideTilePreview = !EditorGraphics.HideTilePreview;
+            hideTilePreviewToolStripMenuItem.Checked = !EditorGraphics.HideTilePreview;
         }
         private void hideResourcesToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Graphics.HideResources = !Graphics.HideResources;
-            hideResourcesToolStripMenuItem.Checked = !Graphics.HideResources;
+            EditorGraphics.HideResources = !EditorGraphics.HideResources;
+            hideResourcesToolStripMenuItem.Checked = !EditorGraphics.HideResources;
         }
         //Content Editors
         private void itemEditorToolStripMenuItem_Click(object sender, EventArgs e)
@@ -561,7 +561,7 @@ namespace Intersect_Editor.Forms
                 Globals.MapEditorWindow.CurrentMapState = Globals.MapEditorWindow.MapUndoStates[Globals.MapEditorWindow.MapUndoStates.Count - 1];
                 Globals.MapEditorWindow.MapUndoStates.RemoveAt(Globals.MapEditorWindow.MapUndoStates.Count - 1);
                 Globals.MapPropertiesWindow.Update();
-                Graphics.TilePreviewUpdated = true;
+                EditorGraphics.TilePreviewUpdated = true;
             }
         }
         private void toolStripBtnRedo_Click(object sender, EventArgs e)
@@ -574,7 +574,7 @@ namespace Intersect_Editor.Forms
                 Globals.MapEditorWindow.CurrentMapState = Globals.MapEditorWindow.MapRedoStates[Globals.MapEditorWindow.MapRedoStates.Count - 1];
                 Globals.MapEditorWindow.MapRedoStates.RemoveAt(Globals.MapEditorWindow.MapRedoStates.Count - 1);
                 Globals.MapPropertiesWindow.Update();
-                Graphics.TilePreviewUpdated = true;
+                EditorGraphics.TilePreviewUpdated = true;
             }
         }
         private void toolStripBtnFill_Click(object sender, EventArgs e)
@@ -600,7 +600,7 @@ namespace Intersect_Editor.Forms
 
             if (fileDialog.FileName != "")
             {
-                Graphics.ScreenShotMap().SaveToFile(fileDialog.FileName);
+                EditorGraphics.ScreenShotMap().SaveToFile(fileDialog.FileName);
             }
         }
         private void toolStripBtnPen_Click(object sender, EventArgs e)

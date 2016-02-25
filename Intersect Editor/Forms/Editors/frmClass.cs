@@ -296,9 +296,9 @@ namespace Intersect_Editor.Forms
         {
             cmbSprite.Items.Clear();
             cmbSprite.Items.Add("None");
-            for (int i = 0; i < Intersect_Editor.Classes.Graphics.EntityFileNames.Count; i++)
+            for (int i = 0; i < Intersect_Editor.Classes.EditorGraphics.EntityFileNames.Count; i++)
             {
-                cmbSprite.Items.Add(Intersect_Editor.Classes.Graphics.EntityFileNames[i]);
+                cmbSprite.Items.Add(Intersect_Editor.Classes.EditorGraphics.EntityFileNames[i]);
             }
             scrlDropItem.Maximum = Constants.MaxItems - 1;
             scrlSpell.Maximum = Constants.MaxSpells - 1;

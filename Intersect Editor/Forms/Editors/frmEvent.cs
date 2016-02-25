@@ -95,9 +95,9 @@ namespace Intersect_Editor.Forms
             txtEventname.Text = MyEvent.MyName;
             cmbPreviewFace.Items.Clear();
             cmbPreviewFace.Items.Add("None");
-            for (int i = 0; i < Classes.Graphics.FaceFileNames.Count; i++)
+            for (int i = 0; i < Classes.EditorGraphics.FaceFileNames.Count; i++)
             {
-                cmbPreviewFace.Items.Add(Classes.Graphics.FaceFileNames[i]);
+                cmbPreviewFace.Items.Add(Classes.EditorGraphics.FaceFileNames[i]);
             }
             if (MyEvent.CommonEvent)
             {

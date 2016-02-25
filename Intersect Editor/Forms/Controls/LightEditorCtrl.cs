@@ -67,7 +67,7 @@ namespace Intersect_Editor.Forms.Controls
                 }
                 var offsetX = Convert.ToInt32(txtLightOffsetX.Text);
                 _editingLight.OffsetX = offsetX;
-                Classes.Graphics.TilePreviewUpdated = true;
+                Classes.EditorGraphics.TilePreviewUpdated = true;
             }
             catch (Exception)
             {
@@ -79,14 +79,14 @@ namespace Intersect_Editor.Forms.Controls
             if (_editingLight == null) { return; }
             txtLightRange.Text = "" + _editingLight.Size;
             _editingLight.Size = scrlLightSize.Value;
-            Classes.Graphics.TilePreviewUpdated = true;
+            Classes.EditorGraphics.TilePreviewUpdated = true;
         }
         private void scrlLightIntensity_Scroll(object sender, ScrollEventArgs e)
         {
             if (_editingLight == null) { return; }
             _editingLight.Intensity = (byte)scrlLightIntensity.Value;
             txtLightIntensity.Text = "" + _editingLight.Intensity;
-            Classes.Graphics.TilePreviewUpdated = true;
+            Classes.EditorGraphics.TilePreviewUpdated = true;
         }
         private void txtLightIntensity_TextChanged(object sender, EventArgs e)
         {
@@ -97,7 +97,7 @@ namespace Intersect_Editor.Forms.Controls
                 _editingLight.Intensity = intensity;
                 txtLightIntensity.Text = "" + _editingLight.Intensity;
                 scrlLightIntensity.Value = intensity;
-                Classes.Graphics.TilePreviewUpdated = true;
+                Classes.EditorGraphics.TilePreviewUpdated = true;
             }
             catch (Exception)
             {
@@ -122,7 +122,7 @@ namespace Intersect_Editor.Forms.Controls
                     range = scrlLightSize.Maximum;
                 }
                 _editingLight.Size = range;
-                Classes.Graphics.TilePreviewUpdated = true;
+                Classes.EditorGraphics.TilePreviewUpdated = true;
                 txtLightRange.Text = "" + range;
             }
             catch (Exception)
@@ -145,7 +145,7 @@ namespace Intersect_Editor.Forms.Controls
                 _editingLight.OffsetY = _backupLight.OffsetY;
                 if (_editingLight == Globals.EditingLight) Globals.EditingLight = null;
             }
-            Classes.Graphics.TilePreviewUpdated = true;
+            Classes.EditorGraphics.TilePreviewUpdated = true;
             if (CanClose) this.Visible = false;
         }
         private void btnSelectLightColor_Click(object sender, EventArgs e)
@@ -154,7 +154,7 @@ namespace Intersect_Editor.Forms.Controls
             colorDialog.ShowDialog();
             pnlLightColor.BackColor = colorDialog.Color;
             _editingLight.Color = colorDialog.Color;
-            Classes.Graphics.TilePreviewUpdated = true;
+            Classes.EditorGraphics.TilePreviewUpdated = true;
         }
 
         public void Cancel()
@@ -167,7 +167,7 @@ namespace Intersect_Editor.Forms.Controls
             if (_editingLight == null) { return; }
             _editingLight.Expand = scrlLightExpand.Value;
             txtLightExpandAmt.Text = "" + _editingLight.Expand;
-            Classes.Graphics.TilePreviewUpdated = true;
+            Classes.EditorGraphics.TilePreviewUpdated = true;
         }
 
         private void txtLightExpandAmt_TextChanged(object sender, EventArgs e)
@@ -188,7 +188,7 @@ namespace Intersect_Editor.Forms.Controls
                     expand = scrlLightExpand.Maximum;
                 }
                 _editingLight.Expand = expand;
-                Classes.Graphics.TilePreviewUpdated = true;
+                Classes.EditorGraphics.TilePreviewUpdated = true;
                 txtLightExpandAmt.Text = "" + expand;
             }
             catch (Exception)

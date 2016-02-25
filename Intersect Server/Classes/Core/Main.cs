@@ -69,7 +69,7 @@ namespace Intersect_Server.Classes
 #if websockets
             WebSocketServer.Init();
 #endif
-            Console.WriteLine("Server Started.");
+            Console.WriteLine("Server Started. Using Port #" + Globals.ServerPort);
             logicThread = new Thread(() => ServerLoop.RunServerLoop());
             logicThread.Start();
             Console.WriteLine("Type exit to shutdown the server, or help for a list of commands.");

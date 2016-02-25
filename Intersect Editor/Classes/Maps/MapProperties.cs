@@ -100,7 +100,7 @@ namespace Intersect_Editor.Classes.Maps
                 {
                     Globals.MapEditorWindow.PrepUndoState();
                     _myMap.IsIndoors = value;
-                    Graphics.TilePreviewUpdated = true;
+                    EditorGraphics.TilePreviewUpdated = true;
                     Globals.MapEditorWindow.AddUndoState();
                 }
             }
@@ -118,7 +118,7 @@ namespace Intersect_Editor.Classes.Maps
                     Globals.MapEditorWindow.PrepUndoState();
                     _myMap.Brightness = Math.Max(value, 0);
                     _myMap.Brightness = Math.Min(_myMap.Brightness, 100);
-                    Graphics.TilePreviewUpdated = true;
+                    EditorGraphics.TilePreviewUpdated = true;
                     Globals.MapEditorWindow.AddUndoState();
                 }
             }
@@ -204,7 +204,7 @@ namespace Intersect_Editor.Classes.Maps
             {
                 List<string> FogList = new List<string>();
                 FogList.Add("None");
-                FogList.AddRange(Graphics.FogFileNames);
+                FogList.AddRange(EditorGraphics.FogFileNames);
                 if (FogList.IndexOf(_myMap.Fog) <= -1)
                 {
                     _myMap.Fog = "None";
@@ -284,7 +284,7 @@ namespace Intersect_Editor.Classes.Maps
             {
                 List<string> ImageList = new List<string>();
                 ImageList.Add("None");
-                ImageList.AddRange(Graphics.ImageFileNames);
+                ImageList.AddRange(EditorGraphics.ImageFileNames);
                 if (ImageList.IndexOf(_myMap.Panorama) <= -1)
                 {
                     _myMap.Panorama = "None";
@@ -373,7 +373,7 @@ namespace Intersect_Editor.Classes.Maps
         {
             List<string> FogList = new List<string>();
             FogList.Add("None");
-            FogList.AddRange(Graphics.FogFileNames);
+            FogList.AddRange(EditorGraphics.FogFileNames);
             return new StandardValuesCollection(FogList.ToArray());
         }
     }
@@ -398,7 +398,7 @@ namespace Intersect_Editor.Classes.Maps
         {
             List<string> ImageList = new List<string>();
             ImageList.Add("None");
-            ImageList.AddRange(Graphics.ImageFileNames);
+            ImageList.AddRange(EditorGraphics.ImageFileNames);
             return new StandardValuesCollection(ImageList.ToArray());
         }
     }

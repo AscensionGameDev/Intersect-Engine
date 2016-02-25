@@ -285,6 +285,7 @@ namespace Intersect_Editor.Classes
                     }
                 }
                 var lCount = bf.ReadInteger();
+                Lights.Clear();
                 for (var i = 0; i < lCount; i++)
                 {
                     Lights.Add(new Light(bf));

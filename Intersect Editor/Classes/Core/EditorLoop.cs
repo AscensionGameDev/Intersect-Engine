@@ -60,7 +60,7 @@ namespace Intersect_Editor.Classes
                 {
                     Globals.ResourceEditor.Render();
                 }
-                Graphics.Render();
+                EditorGraphics.Render();
                 Network.Update();
                 Application.DoEvents(); // handle form events
 

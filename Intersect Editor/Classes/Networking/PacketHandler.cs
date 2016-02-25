@@ -165,7 +165,7 @@ namespace Intersect_Editor.Classes
                     if (!File.Exists("resources/mapcache/" + mapNum + "_" + Globals.GameMaps[mapNum].Revision + ".png"))
                     {
                         Globals.CurrentMap = (int)mapNum;
-                        Graphics.ScreenShotMap(true).SaveToFile("resources/mapcache/" + mapNum + "_" + Globals.GameMaps[mapNum].Revision + ".png");
+                        EditorGraphics.ScreenShotMap(true).SaveToFile("resources/mapcache/" + mapNum + "_" + Globals.GameMaps[mapNum].Revision + ".png");
                     }
                     if (Globals.FetchingMapPreviews)
                     {

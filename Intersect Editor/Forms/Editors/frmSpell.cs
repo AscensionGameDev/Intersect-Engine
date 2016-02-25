@@ -48,9 +48,9 @@ namespace Intersect_Editor.Forms
             lstSpells.SelectedIndex = 0;
             cmbSprite.Items.Clear();
             cmbSprite.Items.Add("None");
-            for (int i = 0; i < Intersect_Editor.Classes.Graphics.SpellFileNames.Count; i++)
+            for (int i = 0; i < Intersect_Editor.Classes.EditorGraphics.SpellFileNames.Count; i++)
             {
-                cmbSprite.Items.Add(Intersect_Editor.Classes.Graphics.SpellFileNames[i]);
+                cmbSprite.Items.Add(Intersect_Editor.Classes.EditorGraphics.SpellFileNames[i]);
             }
             UpdateEditor();
         }

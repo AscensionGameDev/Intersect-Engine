@@ -1,179 +1,55 @@
-﻿/*
-    Intersect Game Engine (Server)
-    Copyright (C) 2015  JC Snider, Joe Bridges
-    
-    Website: http://ascensiongamedev.com
-    Contact Email: admin@ascensiongamedev.com 
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation; either version 2 of the License, or
-    (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License along
-    with this program; if not, write to the Free Software Foundation, Inc.,
-    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
-*/
-using System.Net;
-using System.Net.Sockets;
-using System.Threading;
-using System;
-
-namespace Intersect_Server.Classes
+namespace Intersect_Server.Classes.Networking
 {
-
-    public class SendDataEventArgs : EventArgs
+    public abstract class GameSocket
     {
-        public byte[] data { get; set; }
-        public GameSocket socket { get; set; }
-    }
-
-    public class GameSocket
-    {
-        private TcpClient mySocket;
-        
-        private long connectTime;
-        private NetworkStream myStream;
-        private PacketHandler packetHandler = new PacketHandler();
-        private ByteBuffer _myBuffer = new ByteBuffer();
-        private Object _bufferLock = new Object();
-        private Client myClient;
-        private int EntityIndex;
-        private long PingTime;
-        private long ConnectionTimeout;
-        private long Timeout = 10;
-        public Object Sender;
-        public delegate void SendDataEventHander(SendDataEventArgs e);
-        public event SendDataEventHander OnSendData;
-        private bool isConnected = true;
-
-        public void SendData(byte[] data)
-        {
-            SendDataEventHander handler = OnSendData;
-            if (handler != null)
-            {
-                SendDataEventArgs e = new SendDataEventArgs();
-                var buff = new ByteBuffer();
-                buff.WriteInteger(data.Length);
-                buff.WriteBytes(data);
-                e.data = buff.ToArray();
-                e.socket = this;
-                handler(e);
-            }
-        }
+        protected long _connectTime;
+        protected PacketHandler _packetHandler = new PacketHandler();
+        protected ByteBuffer _myBuffer = new ByteBuffer();
+        protected Object _bufferLock = new Object();
+        protected Client _myClient;
+        protected int _entityIndex;
+        protected long _pingTime;
+        protected long _connectionTimeout;
+        protected long _timeout = 10;
+        protected bool _isConnected;
 
         public GameSocket()
         {
             CreateClient();
-            connectTime = Environment.TickCount;
+            _connectTime = Environment.TickCount;
         }
 
-        public void ReceiveData(byte[] data)
+        public abstract void SendData(byte[] data);
+        public abstract void Update();
+        public abstract void Disconnect();
+        public abstract void Dispose();
+        public abstract bool IsConnected();
+        public event DataReceivedHandler DataReceived;
+        public event ConnectedHandler Connected;
+        public event ConnectionFailedHandler ConnectionFailed;
+        public event DisconnectedHandler Disconnected;
+
+        protected void OnDataReceived(byte[] data)
         {
-            int packetLen;
-            lock (_bufferLock)
-            {
-                _myBuffer.WriteBytes(data);
-                while (_myBuffer.Length() >= 4)
-                {
-                    packetLen = _myBuffer.ReadInteger(false);
-                    if (packetLen == 0)
-                    {
-                        break;
-                    }
-                    if (_myBuffer.Length() >= packetLen + 4)
-                    {
-                        _myBuffer.ReadInteger();
-                        packetHandler.HandlePacket(myClient, _myBuffer.ReadBytes(packetLen));
-                    }
-                    else
-                    {
-                        break;
-                    }
-                }
-                if (_myBuffer.Length() == 0)
-                {
-                    _myBuffer.Clear();
-                }
-            }
+            DataReceived(data);
         }
-
-        
-
-        public void HandleDisconnect()
+        protected void OnConnected()
         {
-            if (isConnected)
-            {
-                try
-                {
-                    isConnected = false;
-                    Globals.GeneralLogs.Add("Client disconnected.");
-                    if (EntityIndex > -1 && Globals.Entities[EntityIndex] != null && Globals.Entities[EntityIndex].MyName != "")
-                    {
-                        Database.SavePlayer(myClient);
-                        PacketSender.SendEntityLeave(EntityIndex, (int)Enums.EntityTypes.Player, Globals.Entities[EntityIndex].CurrentMap);
-                        if (Globals.Entities[EntityIndex] == null) { return; }
-                        if (!myClient.IsEditor)
-                        {
-                            PacketSender.SendGlobalMsg(Globals.Entities[EntityIndex].MyName + " has left the Intersect engine");
-                        }
-                        myClient.Entity = null;
-                        myClient = null;
-                        Globals.Entities[EntityIndex] = null;
-
-                    }
-                }
-                catch (Exception) { }
-            }
+            Connected();
         }
-
-        public void Update(PacketHandler packetHandler)
+        protected void OnConnectionFailed()
         {
-            var tempBuff = new byte[4096];
-
-            do
-            {
-                try
-                {
-                    if (IsConnected())
-                    {
-                        if (ConnectionTimeout > -1 && ConnectionTimeout < Environment.TickCount)
-                        {
-                            //Disconnect
-                            HandleDisconnect();
-                            return;
-                        }
-                        else
-                        {
-                            if (PingTime < Environment.TickCount)
-                            {
-                                PacketSender.SendPing(myClient);
-                            }
-                        }
-                    }
-                    else
-                    {
-                        HandleDisconnect();
-                        return;
-                    }
-                }
-                catch
-                {
-                    HandleDisconnect();
-                    return;
-                }
-
-            } while (true);
+            ConnectionFailed();
         }
-
-        public bool IsConnected()
+        protected void OnDisconnected()
         {
-            return isConnected;
+            Disconnected();
         }
 
         private void CreateClient()
@@ -182,9 +58,9 @@ namespace Intersect_Server.Classes
             if (tempIndex > -1)
             {
                 Globals.Clients[tempIndex] = new Client(tempIndex, Globals.FindOpenEntity(), this);
-                myClient = Globals.Clients[tempIndex];
-                EntityIndex = Globals.Clients[tempIndex].EntityIndex;
-                Globals.Entities[EntityIndex] = new Player(EntityIndex, Globals.Clients[tempIndex]);
+                _myClient = Globals.Clients[tempIndex];
+                _entityIndex = Globals.Clients[tempIndex].EntityIndex;
+                Globals.Entities[_entityIndex] = new Player(_entityIndex, Globals.Clients[tempIndex]);
                 Globals.GeneralLogs.Add("Client connected using client index of " + tempIndex);
             }
             else
@@ -213,21 +89,66 @@ namespace Intersect_Server.Classes
             return Globals.Clients.Count - 1;
         }
 
+        protected void TryHandleData()
+        {
+            int packetLen;
+            lock (_bufferLock)
+            {
+                while (_myBuffer.Length() >= 4)
+                {
+                    packetLen = _myBuffer.ReadInteger(false);
+                    if (packetLen == 0)
+                    {
+                        break;
+                    }
+                    if (_myBuffer.Length() >= packetLen + 4)
+                    {
+                        _myBuffer.ReadInteger();
+                        _packetHandler.HandlePacket(_myClient, _myBuffer.ReadBytes(packetLen));
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+                if (_myBuffer.Length() == 0)
+                {
+                    _myBuffer.Clear();
+                }
+            }
+        }
 
+        protected void HandleDisconnect()
+        {
+            if (_isConnected)
+            {
+                try
+                {
+                    _isConnected = false;
+                    Globals.GeneralLogs.Add("Client disconnected.");
+                    if (_entityIndex > -1 && Globals.Entities[_entityIndex] != null && Globals.Entities[_entityIndex].MyName != "")
+                    {
+                        Database.SavePlayer(_myClient);
+                        PacketSender.SendEntityLeave(_entityIndex, (int)Enums.EntityTypes.Player, Globals.Entities[_entityIndex].CurrentMap);
+                        if (Globals.Entities[_entityIndex] == null) { return; }
+                        if (!_myClient.IsEditor)
+                        {
+                            PacketSender.SendGlobalMsg(Globals.Entities[_entityIndex].MyName + " has left the Intersect engine");
+                        }
+                        _myClient.Entity = null;
+                        _myClient = null;
+                        Globals.Entities[_entityIndex] = null;
 
-
-
-
-
-
-
-
-
-
-
-
-
+                    }
+                }
+                catch (Exception) { }
+            }
+            _isConnected = false;
+        }
     }
 
-
+    public delegate void DataReceivedHandler(byte[] data);
+    public delegate void ConnectedHandler();
+    public delegate void ConnectionFailedHandler();
+    public delegate void DisconnectedHandler();
 }

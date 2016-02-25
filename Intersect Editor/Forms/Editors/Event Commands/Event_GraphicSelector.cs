@@ -30,7 +30,7 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Windows.Forms;
 using Intersect_Editor.Classes;
-using Graphics = Intersect_Editor.Classes.Graphics;
+using EditorGraphics = Intersect_Editor.Classes.EditorGraphics;
 
 namespace Intersect_Editor.Forms.Editors.Event_Commands
 {
@@ -83,7 +83,7 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
                 cmbGraphic.Show();
                 lblGraphic.Show();
                 cmbGraphic.Items.Clear();
-                foreach (var filename in Graphics.EntityFileNames)
+                foreach (var filename in EditorGraphics.EntityFileNames)
                 {
                     cmbGraphic.Items.Add(filename);
                 }
@@ -120,7 +120,7 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             {
                 cmbGraphic.Show();
                 lblGraphic.Show();
-                foreach (var filename in Graphics.EntityFileNames)
+                foreach (var filename in EditorGraphics.EntityFileNames)
                 {
                     cmbGraphic.Items.Add(filename);
                 }

@@ -43,9 +43,9 @@ namespace Intersect_Editor.Forms
             cmbPic.Items.Clear();
             cmbPic.Items.Add("None");
 
-            for (i= 0; i < Intersect_Editor.Classes.Graphics.ItemNames.Count; i++)
+            for (i= 0; i < Intersect_Editor.Classes.EditorGraphics.ItemNames.Count; i++)
             {
-                cmbPic.Items.Add(Intersect_Editor.Classes.Graphics.ItemNames[i]);
+                cmbPic.Items.Add(Intersect_Editor.Classes.EditorGraphics.ItemNames[i]);
             }
 
             i = 0;
@@ -64,9 +64,9 @@ namespace Intersect_Editor.Forms
 
             cmbPaperdoll.Items.Clear();
             cmbPaperdoll.Items.Add("None");
-            for (i = 0; i < Graphics.PaperdollFileNames.Count; i++)
+            for (i = 0; i < EditorGraphics.PaperdollFileNames.Count; i++)
             {
-                cmbPaperdoll.Items.Add(Graphics.PaperdollFileNames[i]);
+                cmbPaperdoll.Items.Add(EditorGraphics.PaperdollFileNames[i]);
             }
 
             UpdateEditor();

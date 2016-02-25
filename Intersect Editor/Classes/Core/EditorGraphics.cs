@@ -38,7 +38,7 @@ using View = SFML.Graphics.View;
 
 namespace Intersect_Editor.Classes
 {
-    public static class Graphics
+    public static class EditorGraphics
     {
         //Main render area - map window
         public static RenderWindow RenderWindow;
@@ -802,7 +802,7 @@ namespace Intersect_Editor.Classes
                 double w = light.Size;
                 var x = xoffset + (light.TileX * Globals.TileWidth + light.OffsetX) - (int)w / 2 + 16;
                 var y = yoffset + (light.TileY * Globals.TileHeight + light.OffsetY) - (int)w / 2 + 16;
-                Graphics.DrawLight((int)x, (int)y, (int)w, light.Intensity,light.Expand, light.Color);
+                EditorGraphics.DrawLight((int)x, (int)y, (int)w, light.Intensity,light.Expand, light.Color);
             }
         }
         private static void DrawSelectionRect()
@@ -1052,9 +1052,9 @@ Globals.CurrentTool == (int)Enums.EdittingTool.Selection)
                         {
                             if (Globals.GameResources[resourcenum].Name != "" & Globals.GameResources[resourcenum].InitialGraphic != "None")
                             {
-                                if (Graphics.ResourceFileNames.IndexOf(Globals.GameResources[resourcenum].InitialGraphic) > -1)
+                                if (EditorGraphics.ResourceFileNames.IndexOf(Globals.GameResources[resourcenum].InitialGraphic) > -1)
                                 {
-                                    res = Graphics.ResourceTextures[Graphics.ResourceFileNames.IndexOf(Globals.GameResources[resourcenum].InitialGraphic)];
+                                    res = EditorGraphics.ResourceTextures[EditorGraphics.ResourceFileNames.IndexOf(Globals.GameResources[resourcenum].InitialGraphic)];
                                     float xpos = x * Globals.TileWidth + xoffset;
                                     float ypos = y * Globals.TileHeight + yoffset;
                                     if (res.Size.Y > Globals.TileHeight)

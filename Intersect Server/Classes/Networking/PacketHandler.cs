@@ -369,10 +369,7 @@ namespace Intersect_Server.Classes
             bf.WriteBytes(packet);
             var mapNum = bf.ReadLong();
             var mapLength = bf.ReadLong();
-            var revision = Globals.GameMaps[mapNum].Revision + 1;
-            Globals.GameMaps[mapNum].Load(bf.ReadBytes((int)mapLength));
-            Globals.GameMaps[mapNum].Revision = revision;
-            Globals.GameMaps[mapNum].Save();
+            Globals.GameMaps[mapNum].Load(bf.ReadBytes((int)mapLength), Globals.GameMaps[mapNum].Revision + 1);
             foreach (var t in Globals.Clients)
             {
                 if (t == null) continue;
