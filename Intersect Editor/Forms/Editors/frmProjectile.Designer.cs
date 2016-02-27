@@ -190,14 +190,15 @@
             this.lblAnimation.AutoSize = true;
             this.lblAnimation.Location = new System.Drawing.Point(15, 46);
             this.lblAnimation.Name = "lblAnimation";
-            this.lblAnimation.Size = new System.Drawing.Size(94, 13);
+            this.lblAnimation.Size = new System.Drawing.Size(85, 13);
             this.lblAnimation.TabIndex = 21;
-            this.lblAnimation.Text = "Animation: 0 None";
+            this.lblAnimation.Text = "Animation: None";
             // 
             // scrlAnimation
             // 
             this.scrlAnimation.Location = new System.Drawing.Point(15, 62);
             this.scrlAnimation.Maximum = 5000;
+            this.scrlAnimation.Minimum = -1;
             this.scrlAnimation.Name = "scrlAnimation";
             this.scrlAnimation.Size = new System.Drawing.Size(160, 17);
             this.scrlAnimation.TabIndex = 20;

@@ -87,13 +87,13 @@ namespace Intersect_Editor.Classes
             chkHoming.Checked = Globals.GameProjectiles[_editorIndex].Homing;
             chkRotation.Checked = Globals.GameProjectiles[_editorIndex].AutoRotate;
 
-            if (scrlAnimation.Value == 0)
+            if (scrlAnimation.Value == -1)
             {
-                lblAnimation.Text = "Animation: 0 None";
+                lblAnimation.Text = "Animation: None";
             }
             else
             {
-                lblAnimation.Text = "Animation: " + scrlAnimation.Value + " " + Globals.GameAnimations[scrlAnimation.Value - 1].Name;
+                lblAnimation.Text = "Animation: " + (scrlAnimation.Value + 1) + ".  " + Globals.GameAnimations[scrlAnimation.Value].Name;
             }
             if (scrlSpell.Value == 0)
             {
@@ -245,13 +245,13 @@ namespace Intersect_Editor.Classes
 
         private void scrlAnimation_Scroll(object sender, ScrollEventArgs e)
         {
-            if (scrlAnimation.Value == 0)
+            if (scrlAnimation.Value == -1)
             {
-                lblAnimation.Text = "Animation: 0 None";
+                lblAnimation.Text = "Animation: None";
             }
             else
             {
-                lblAnimation.Text = "Animation: " + scrlAnimation.Value + " " + Globals.GameAnimations[scrlAnimation.Value - 1].Name;
+                lblAnimation.Text = "Animation: " + (scrlAnimation.Value + 1) + ".  " + Globals.GameAnimations[scrlAnimation.Value].Name;
             }
             Globals.GameProjectiles[_editorIndex].Animation = scrlAnimation.Value;
         }

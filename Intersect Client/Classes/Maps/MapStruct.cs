@@ -589,8 +589,8 @@ namespace Intersect_Client.Classes.Maps
                 foreach (var light in Lights)
                 {
                     double w = light.Size;
-                    var x = GetX() + (light.TileX * Globals.Database.TileWidth + light.OffsetX) - (int)w / 2 + 16;
-                    var y = GetY() + (light.TileY * Globals.Database.TileHeight + light.OffsetY) - (int)w / 2 + 16;
+                    var x = GetX() + (light.TileX * Globals.Database.TileWidth + light.OffsetX) + Globals.Database.TileWidth/2f;
+                    var y = GetY() + (light.TileY * Globals.Database.TileHeight + light.OffsetY)  + Globals.Database.TileHeight/2f;
                     GameGraphics.DrawLight((int)x, (int)y, (int)w, light.Intensity, light.Expand, light.Color);
                 }
             }
@@ -792,6 +792,18 @@ namespace Intersect_Client.Classes.Maps
             Size = myBuffer.ReadInteger();
             Expand = (float)myBuffer.ReadDouble();
             Color = new Color(myBuffer.ReadByte(), myBuffer.ReadByte(), myBuffer.ReadByte());
+        }
+
+        public Light(int tileX, int tileY, int offsetX, int offsetY, byte intensity, int size, float expand, Color clr)
+        {
+            TileX = tileX;
+            TileY = tileY;
+            OffsetX = offsetX;
+            OffsetY = offsetY;
+            Intensity = intensity;
+            Size = size;
+            Expand = expand;
+            Color = clr;
         }
     }
 

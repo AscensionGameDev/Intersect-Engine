@@ -258,7 +258,7 @@ namespace Intersect_Server.Classes
 
                         if (c == 0) //No collision so increase the counter for the next collision detection.
                         {
-                            TransmittionTimer = Environment.TickCount + Globals.GameProjectiles[ProjectileNum].Speed;
+                            TransmittionTimer = Environment.TickCount + (long)((float)Globals.GameProjectiles[ProjectileNum].Speed/ (float)Globals.GameProjectiles[ProjectileNum].Range);
                             if (Spawns[i].Distance >= Globals.GameProjectiles[ProjectileNum].Range)
                             {
                                 Spawns.Remove(Spawns[i]);

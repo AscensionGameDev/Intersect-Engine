@@ -70,9 +70,12 @@ namespace Intersect_Client.Classes
 
             while (Globals.IsRunning)
             {
-                GameMain.Update();
-                GameGraphics.Render();
-                Application.DoEvents();
+                lock (Globals.GameLock)
+                {
+                    GameMain.Update();
+                    GameGraphics.Render();
+                    Application.DoEvents();
+                }
             }
         }
     }

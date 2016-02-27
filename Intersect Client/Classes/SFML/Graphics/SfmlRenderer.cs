@@ -89,6 +89,7 @@ namespace Intersect_Client.Classes.Bridges_and_Interfaces.SFML.Graphics
             }
             _screenWidth = (int)_renderWindow.Size.X;
             _screenHeight = (int)_renderWindow.Size.Y;
+            _renderWindow.SetVerticalSyncEnabled(false);
             if (Globals.Database.TargetFps == 0)
             {
                 _renderWindow.SetVerticalSyncEnabled(true);
@@ -109,6 +110,10 @@ namespace Intersect_Client.Classes.Bridges_and_Interfaces.SFML.Graphics
             {
                 _renderWindow.SetFramerateLimit(120);
             }
+            else
+            {
+                _renderWindow.SetFramerateLimit(0);
+            }
 
             _renderWindow.KeyPressed += ((SfmlInput)Globals.InputManager).RenderWindow_KeyPressed;
             _renderWindow.KeyReleased += ((SfmlInput)Globals.InputManager).RenderWindow_KeyReleased;
@@ -127,15 +132,18 @@ namespace Intersect_Client.Classes.Bridges_and_Interfaces.SFML.Graphics
         public override void End()
         {
             _fpsCount++;
-            if (_fpsTimer < Globals.System.GetTimeMS())
+            DrawCalls++;
+            if (_fpsTimer < Environment.TickCount)
             {
                 _fps = _fpsCount;
+                _renderWindow.SetTitle("Intersect Engine - FPS: " + _fps + " Draw Calls: " + DrawCalls);
                 _fpsCount = 0;
-                _fpsTimer = Globals.System.GetTimeMS() + 1000;
+                _fpsTimer = Environment.TickCount + 1000;
             }
             RenderCurrentBatch();
             _renderWindow.Display();
             _renderWindow.DispatchEvents();
+            DrawCalls = 0;
         }
 
         public override void Clear(Color color)
@@ -162,7 +170,7 @@ namespace Intersect_Client.Classes.Bridges_and_Interfaces.SFML.Graphics
         }
 
         public override void DrawTexture(GameTexture tex, FloatRect srcRectangle, FloatRect targetRect, Color renderColor,
-            GameRenderTexture renderTarget = null, GameBlendModes blendMode = GameBlendModes.Alpha, GameShader shader = null)
+            GameRenderTexture renderTarget = null, GameBlendModes blendMode = GameBlendModes.Alpha, GameShader shader = null, float rotationDegrees = 0.0f)
         {
             if (tex == null) return;
             Texture drawTex = (Texture)tex.GetTexture();
@@ -204,17 +212,19 @@ namespace Intersect_Client.Classes.Bridges_and_Interfaces.SFML.Graphics
                     break;
             }
 
+            Transform transform = Transform.Identity;
+            transform.Rotate(rotationDegrees, targetRect.X + targetRect.Width/2, targetRect.Y + targetRect.Height/2);
             if (_curTexture != tex || _curBlendMode != blendMode || _curShader != _curShader ||
                 _curTarget != renderTarget)
             {
                 RenderCurrentBatch();
                 if (shader != null)
                 {
-                    _renderState = new RenderStates(sfmlBlendMode, Transform.Identity, null, (Shader)shader.GetShader());
+                    _renderState = new RenderStates(sfmlBlendMode, transform, null, (Shader)shader.GetShader());
                 }
                 else
                 {
-                    _renderState = new RenderStates(sfmlBlendMode);
+                    _renderState = new RenderStates(sfmlBlendMode, transform,null,null );
                     _renderState.Texture = drawTex;
                 }
             }
@@ -333,7 +343,7 @@ namespace Intersect_Client.Classes.Bridges_and_Interfaces.SFML.Graphics
             var textObject = new Text(text, (Font)gameFont.GetFont(), (uint)fontSize);
             textObject.Position = new Vector2f(x, y);
             textObject.Color = new global::SFML.Graphics.Color(fontColor.R, fontColor.G, fontColor.B, fontColor.A);
-            RenderCurrentBatch();
+            //RenderCurrentBatch();
             if (renderTexture == null)
             {
                 _renderWindow.Draw(textObject);
@@ -349,7 +359,7 @@ namespace Intersect_Client.Classes.Bridges_and_Interfaces.SFML.Graphics
             var textObject = new Text(text, (Font)gameFont.GetFont(), (uint)fontSize);
             textObject.Position = new Vector2f(x, y);
             textObject.Color = new global::SFML.Graphics.Color(fontColor.R, fontColor.G, fontColor.B, fontColor.A);
-            RenderCurrentBatch();
+            //RenderCurrentBatch();
             RenderTarget target;
             if (renderTexture == null)
             {

@@ -29,6 +29,7 @@ using System;
 using System.Collections.Generic;
 using IntersectClientExtras.GenericClasses;
 using IntersectClientExtras.Graphics;
+using Intersect_Client.Classes.Game_Objects;
 using Intersect_Client.Classes.General;
 using Intersect_Client.Classes.Items;
 using Intersect_Client.Classes.Misc;
@@ -82,6 +83,9 @@ namespace Intersect_Client.Classes.Entities
         public SpellInstance[] Spells = new SpellInstance[Constants.MaxPlayerSkills];
         public int[] Equipment = new int[Enums.EquipmentSlots.Count];
 
+        //Entity Animations
+        public List<AnimationInstance> Animations = new List<AnimationInstance>(); 
+
         private long _lastUpdate;
         private long _walkTimer;
         private int _walkFrame;
@@ -114,7 +118,7 @@ namespace Intersect_Client.Classes.Entities
             CurrentZ = bf.ReadInteger();
         }
 
-        public void Dispose()
+        public virtual void Dispose()
         {
             if (RenderList != null)
             {
@@ -125,7 +129,7 @@ namespace Intersect_Client.Classes.Entities
         //Movement Processing
         public virtual bool Update()
         {
-            DetermineRenderOrder();
+            RenderList = DetermineRenderOrder(RenderList);
             if (_lastUpdate == 0) { _lastUpdate = Globals.System.GetTimeMS(); }
             float ecTime = (float)(Globals.System.GetTimeMS() - _lastUpdate);
             var tmpI = -1;
@@ -185,20 +189,25 @@ namespace Intersect_Client.Classes.Entities
                     IsMoving = false;
                 }
             }
+            foreach (AnimationInstance animInstance in Animations)
+            {
+                animInstance.Update();
+                animInstance.SetPosition((int)GetCenterPos().X, (int)GetCenterPos().Y, 0);
+            }
             _lastUpdate = Globals.System.GetTimeMS();
             return true;
         }
 
-        public void DetermineRenderOrder()
+        public List<Entity> DetermineRenderOrder(List<Entity> renderList )
         {
-            if (RenderList != null)
+            if (renderList != null)
             {
-                RenderList.Remove(this);
+                renderList.Remove(this);
             }
 
             if (!Globals.GameMaps.ContainsKey(CurrentMap))
             {
-                return;
+                return null;
             }
 
             int mapLoc = -1;
@@ -218,21 +227,22 @@ namespace Intersect_Client.Classes.Entities
                     if (i < 3)
                     {
                         outerList[CurrentY].Add(this);
-                        RenderList = outerList[CurrentY];
+                        renderList = outerList[CurrentY];
                     }
                     else if (i < 6)
                     {
                        outerList[Globals.Database.MapHeight + CurrentY].Add(this);
-                       RenderList = outerList[Globals.Database.MapHeight + CurrentY];
+                        renderList = outerList[Globals.Database.MapHeight + CurrentY];
                     }
                     else
                     {
                         outerList[Globals.Database.MapHeight * 2 + CurrentY].Add(this);
-                        RenderList = outerList[Globals.Database.MapHeight*2 + CurrentY];
+                        renderList = outerList[Globals.Database.MapHeight*2 + CurrentY];
                     }
                     break;
                 }
             }
+            return renderList;
         }
 
         //Rendering Functions

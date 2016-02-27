@@ -88,7 +88,7 @@ namespace Intersect_Editor.Forms
 
             lowerWindow = new RenderWindow(picLowerAnimation.Handle);
             upperWindow = new RenderWindow(picUpperAnimation.Handle);
-            lowerDarkness = new RenderTexture((uint)picLowerAnimation.Width,(uint)picLowerAnimation.Height);
+            lowerDarkness = new RenderTexture((uint)picLowerAnimation.Width, (uint)picLowerAnimation.Height);
             upperDarkness = new RenderTexture((uint)picUpperAnimation.Width, (uint)picUpperAnimation.Height);
 
             UpdateEditor();
@@ -271,7 +271,7 @@ namespace Intersect_Editor.Forms
         {
             for (var i = 0; i < Constants.MaxAnimations; i++)
             {
-                Globals.GameAnimations[i].Load(_animationsBackup[i].ToArray(),i);
+                Globals.GameAnimations[i].Load(_animationsBackup[i].ToArray(), i);
             }
 
             Hide();
@@ -308,7 +308,7 @@ namespace Intersect_Editor.Forms
                     }
                     else
                     {
-                        newArray[i] = new Light(-1,-1);
+                        newArray[i] = new Light(-1, -1);
                     }
                 }
                 Globals.GameAnimations[_editorIndex].LowerLights = newArray;
@@ -353,16 +353,18 @@ namespace Intersect_Editor.Forms
                 long x = 0;
                 if (_lowerFrame > 0) { x = (_lowerFrame % scrlLowerHorizontalFrames.Value) * w; }
                 long y = (int)Math.Floor(_lowerFrame / (double)scrlLowerHorizontalFrames.Value) * h;
-                Sprite animSprite = new Sprite(animTexture,new IntRect((int)picLowerAnimation.Width / 2 - (int)w / 2, (int)picLowerAnimation.Height / 2 - (int)h / 2, (int)w, (int)h));
+                Sprite animSprite = new Sprite(animTexture, new IntRect((int)picLowerAnimation.Width / 2 - (int)w / 2, (int)picLowerAnimation.Height / 2 - (int)h / 2, (int)w, (int)h));
+                animSprite.Position = new Vector2f((int)picLowerAnimation.Width / 2 - (int)w / 2,
+                    (int)picLowerAnimation.Height / 2 - (int)h / 2);
                 animSprite.TextureRect = new IntRect((int)x, (int)y, (int)w, (int)h);
                 lowerWindow.Draw(animSprite);
             }
             if (_lowerFrame < Globals.GameAnimations[_editorIndex].LowerLights.Length)
             {
                 Classes.EditorGraphics.DrawLight(
-                    picLowerAnimation.Width/2 - Globals.GameAnimations[_editorIndex].LowerLights[_lowerFrame].Size/2 +
+                    picLowerAnimation.Width / 2 - Globals.GameAnimations[_editorIndex].LowerLights[_lowerFrame].Size / 2 +
                     Globals.GameAnimations[_editorIndex].LowerLights[_lowerFrame].OffsetX,
-                    picLowerAnimation.Height/2 - Globals.GameAnimations[_editorIndex].LowerLights[_lowerFrame].Size/2 +
+                    picLowerAnimation.Height / 2 - Globals.GameAnimations[_editorIndex].LowerLights[_lowerFrame].Size / 2 +
                     Globals.GameAnimations[_editorIndex].LowerLights[_lowerFrame].OffsetY,
                     Globals.GameAnimations[_editorIndex].LowerLights[_lowerFrame].Size,
                     Globals.GameAnimations[_editorIndex].LowerLights[_lowerFrame].Intensity,
@@ -372,11 +374,11 @@ namespace Intersect_Editor.Forms
             RectangleShape rs = new RectangleShape(new Vector2f(lowerDarkness.Size.X, lowerDarkness.Size.Y));
             rs.FillColor =
                 new SFML.Graphics.Color(new SFML.Graphics.Color(255, 255, 255,
-                    (byte) (((float) (100-scrlDarkness.Value)/100f)*255)));
+                    (byte)(((float)(100 - scrlDarkness.Value) / 100f) * 255)));
             lowerDarkness.Draw(rs);
             lowerDarkness.Display();
             Sprite darknessSprite = new Sprite(lowerDarkness.Texture);
-            lowerWindow.Draw(darknessSprite,new RenderStates(BlendMode.Multiply));
+            lowerWindow.Draw(darknessSprite, new RenderStates(BlendMode.Multiply));
             lowerWindow.DispatchEvents();
             lowerWindow.Display();
         }
@@ -397,6 +399,8 @@ namespace Intersect_Editor.Forms
                 if (_upperFrame > 0) { x = (_upperFrame % scrlUpperHorizontalFrames.Value) * w; }
                 long y = (int)Math.Floor(_upperFrame / (double)scrlUpperHorizontalFrames.Value) * h;
                 Sprite animSprite = new Sprite(animTexture, new IntRect((int)picUpperAnimation.Width / 2 - (int)w / 2, (int)picUpperAnimation.Height / 2 - (int)h / 2, (int)w, (int)h));
+                animSprite.Position = new Vector2f((int)picUpperAnimation.Width / 2 - (int)w / 2,
+                    (int)picUpperAnimation.Height / 2 - (int)h / 2);
                 animSprite.TextureRect = new IntRect((int)x, (int)y, (int)w, (int)h);
                 upperWindow.Draw(animSprite);
             }
@@ -485,7 +489,7 @@ namespace Intersect_Editor.Forms
         {
             if (scrlLowerFrame.Value > 1)
             {
-                Globals.GameAnimations[_editorIndex].LowerLights[scrlLowerFrame.Value-1] = new Light(Globals.GameAnimations[_editorIndex].LowerLights[scrlLowerFrame.Value - 2]);
+                Globals.GameAnimations[_editorIndex].LowerLights[scrlLowerFrame.Value - 1] = new Light(Globals.GameAnimations[_editorIndex].LowerLights[scrlLowerFrame.Value - 2]);
                 LoadLowerLight();
                 DrawLowerFrame();
             }
@@ -517,6 +521,34 @@ namespace Intersect_Editor.Forms
         private void scrlDarkness_Scroll(object sender, ScrollEventArgs e)
         {
             labelDarkness.Text = "Simulate Darkness: " + scrlDarkness.Value;
+        }
+
+        private void btnSwap_Click(object sender, EventArgs e)
+        {
+            string LowerAnimSprite = Globals.GameAnimations[_editorIndex].LowerAnimSprite;
+            int LowerAnimXFrames = Globals.GameAnimations[_editorIndex].LowerAnimXFrames;
+            int LowerAnimYFrames = Globals.GameAnimations[_editorIndex].LowerAnimYFrames;
+            int LowerAnimFrameCount = Globals.GameAnimations[_editorIndex].LowerAnimFrameCount;
+            int LowerAnimFrameSpeed = Globals.GameAnimations[_editorIndex].LowerAnimFrameSpeed;
+            int LowerAnimLoopCount = Globals.GameAnimations[_editorIndex].LowerAnimLoopCount;
+            Light[] LowerLights = Globals.GameAnimations[_editorIndex].LowerLights;
+            Globals.GameAnimations[_editorIndex].LowerAnimSprite = Globals.GameAnimations[_editorIndex].UpperAnimSprite;
+            Globals.GameAnimations[_editorIndex].LowerAnimXFrames = Globals.GameAnimations[_editorIndex].UpperAnimXFrames;
+            Globals.GameAnimations[_editorIndex].LowerAnimYFrames = Globals.GameAnimations[_editorIndex].UpperAnimYFrames;
+            Globals.GameAnimations[_editorIndex].LowerAnimFrameCount = Globals.GameAnimations[_editorIndex].UpperAnimFrameCount;
+            Globals.GameAnimations[_editorIndex].LowerAnimFrameSpeed = Globals.GameAnimations[_editorIndex].UpperAnimFrameSpeed;
+            Globals.GameAnimations[_editorIndex].LowerAnimLoopCount = Globals.GameAnimations[_editorIndex].UpperAnimLoopCount;
+            Globals.GameAnimations[_editorIndex].LowerLights = Globals.GameAnimations[_editorIndex].UpperLights;
+
+            Globals.GameAnimations[_editorIndex].UpperAnimSprite = LowerAnimSprite;
+            Globals.GameAnimations[_editorIndex].UpperAnimXFrames = LowerAnimXFrames;
+            Globals.GameAnimations[_editorIndex].UpperAnimYFrames = LowerAnimYFrames;
+            Globals.GameAnimations[_editorIndex].UpperAnimFrameCount = LowerAnimFrameCount;
+            Globals.GameAnimations[_editorIndex].UpperAnimFrameSpeed = LowerAnimFrameSpeed;
+            Globals.GameAnimations[_editorIndex].UpperAnimLoopCount = LowerAnimLoopCount;
+            Globals.GameAnimations[_editorIndex].UpperLights = LowerLights;
+
+            UpdateEditor();
         }
     }
 }

@@ -68,6 +68,20 @@ namespace Intersect_Client.Classes.Core
                     Gui.GameUI.FocusChat = true;
                 }
             }
+            else if (key >= Keys.D1 && key <= Keys.D9)
+            {
+                if (!Gui.HasInputFocus())
+                {
+                    Globals.System.Log("Hotbar index of " + ((int)key - (int)Keys.D1) + " activated.");
+                }
+            }
+            else if (key == Keys.D0)
+            {
+                if (!Gui.HasInputFocus())
+                {
+                    Globals.System.Log("Hotbar index of " + 10 + " activated.");
+                }
+            }
         }
 
         public static void OnKeyReleased(Keys key)

@@ -152,6 +152,7 @@ namespace Intersect_Client.Classes.UI.Game
                     tmpNode = _mapList.AddNode(Globals.OrderedMaps[i].MapNum + ". " + Globals.OrderedMaps[i].Name);
                     tmpNode.UserData = (Globals.OrderedMaps[i]).MapNum;
                     tmpNode.DoubleClicked += tmpNode_DoubleClicked;
+                    tmpNode.Clicked += tmpNode_DoubleClicked;
                 }
             }
             else
