@@ -1,5 +1,4 @@
-﻿using System;
-/*
+﻿/*
     The MIT License (MIT)
 
     Copyright (c) 2015 JC Snider, Joe Bridges
@@ -25,9 +24,15 @@
     OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
     SOFTWARE.
 */
+using System;
 using System.Security.Cryptography;
 using System.Text;
-namespace Intersect_Client.Classes
+using Intersect_Client.Classes.Entities;
+using Intersect_Client.Classes.General;
+using Intersect_Client.Classes.Misc;
+
+
+namespace Intersect_Client.Classes.Networking
 {
     public static class PacketSender
     {
@@ -35,7 +40,7 @@ namespace Intersect_Client.Classes
         {
             var bf = new ByteBuffer();
             bf.WriteLong((int)Enums.ClientPackets.Ping);
-            Network.SendPacket(bf.ToArray());
+            GameNetwork.SendPacket(bf.ToArray());
         }
 
         public static void SendLogin(string username, string password)
@@ -45,7 +50,7 @@ namespace Intersect_Client.Classes
             bf.WriteLong((int)Enums.ClientPackets.Login);
             bf.WriteString(username.ToLower().Trim());
             bf.WriteString(password.Trim());
-            Network.SendPacket(bf.ToArray());
+            GameNetwork.SendPacket(bf.ToArray());
         }
 
         public static void SendNeedMap(int mapNum)
@@ -53,7 +58,7 @@ namespace Intersect_Client.Classes
             var bf = new ByteBuffer();
             bf.WriteLong((int)Enums.ClientPackets.NeedMap);
             bf.WriteLong(mapNum);
-            Network.SendPacket(bf.ToArray());
+            GameNetwork.SendPacket(bf.ToArray());
         }
 
         public static void SendMove()
@@ -64,7 +69,7 @@ namespace Intersect_Client.Classes
             bf.WriteInteger(Globals.Entities[Globals.MyIndex].CurrentX);
             bf.WriteInteger(Globals.Entities[Globals.MyIndex].CurrentY);
             bf.WriteInteger(Globals.Entities[Globals.MyIndex].Dir);
-            Network.SendPacket(bf.ToArray());
+            GameNetwork.SendPacket(bf.ToArray());
        }
 
         public static void SendChatMsg(string msg)
@@ -72,7 +77,7 @@ namespace Intersect_Client.Classes
             var bf = new ByteBuffer();
             bf.WriteLong((int)Enums.ClientPackets.LocalMessage);
             bf.WriteString(msg);
-            Network.SendPacket(bf.ToArray());
+            GameNetwork.SendPacket(bf.ToArray());
         }
 
         public static void SendEnterMap()
@@ -80,7 +85,7 @@ namespace Intersect_Client.Classes
             var bf = new ByteBuffer();
             bf.WriteLong((int)Enums.ClientPackets.EnterMap);
             bf.WriteLong(Globals.CurrentMap);
-            Network.SendPacket(bf.ToArray());
+            GameNetwork.SendPacket(bf.ToArray());
         }
 
         public static void SendAttack(int index)
@@ -88,7 +93,7 @@ namespace Intersect_Client.Classes
             var bf = new ByteBuffer();
             bf.WriteLong((int)Enums.ClientPackets.TryAttack);
             bf.WriteLong(index);
-            Network.SendPacket(bf.ToArray());
+            GameNetwork.SendPacket(bf.ToArray());
         }
 
         public static void SendDir(int dir)
@@ -96,14 +101,14 @@ namespace Intersect_Client.Classes
             var bf = new ByteBuffer();
             bf.WriteLong((int)Enums.ClientPackets.SendDir);
             bf.WriteLong(dir);
-            Network.SendPacket(bf.ToArray());
+            GameNetwork.SendPacket(bf.ToArray());
         }
 
         public static void SendEnterGame()
         {
             var bf = new ByteBuffer();
             bf.WriteLong((int)Enums.ClientPackets.EnterGame);
-            Network.SendPacket(bf.ToArray());
+            GameNetwork.SendPacket(bf.ToArray());
         }
 
         public static void SendActivateEvent(int eventIndex)
@@ -111,7 +116,7 @@ namespace Intersect_Client.Classes
             var bf = new ByteBuffer();
             bf.WriteLong((int)Enums.ClientPackets.ActivateEvent);
             bf.WriteLong(eventIndex);
-            Network.SendPacket(bf.ToArray());
+            GameNetwork.SendPacket(bf.ToArray());
         }
 
         public static void SendEventResponse(int response, EventDialog ed)
@@ -121,7 +126,7 @@ namespace Intersect_Client.Classes
             bf.WriteInteger(ed.EventIndex);
             bf.WriteInteger(response);
             Globals.EventDialogs.Remove(ed);
-            Network.SendPacket(bf.ToArray());
+            GameNetwork.SendPacket(bf.ToArray());
         }
 
         public static void SendCreateAccount(string username, string password, string email)
@@ -132,7 +137,7 @@ namespace Intersect_Client.Classes
             bf.WriteString(username.ToLower().Trim());
             bf.WriteString(BitConverter.ToString(sha.ComputeHash(Encoding.UTF8.GetBytes(password.Trim()))).Replace("-", ""));
             bf.WriteString(email.ToLower().Trim());
-            Network.SendPacket(bf.ToArray());
+            GameNetwork.SendPacket(bf.ToArray());
         }
 
         public static void SendCreateCharacter(string Name, int Class, int Sprite)
@@ -142,7 +147,7 @@ namespace Intersect_Client.Classes
             bf.WriteString(Name.ToLower().Trim());
             bf.WriteInteger(Class);
             bf.WriteInteger(Sprite);
-            Network.SendPacket(bf.ToArray());
+            GameNetwork.SendPacket(bf.ToArray());
         }
 
         public static void SendPickupItem(int index)
@@ -150,7 +155,7 @@ namespace Intersect_Client.Classes
             var bf = new ByteBuffer();
             bf.WriteLong((int)Enums.ClientPackets.PickupItem);
             bf.WriteInteger(index);
-            Network.SendPacket(bf.ToArray());
+            GameNetwork.SendPacket(bf.ToArray());
         }
 
         public static void SendSwapItems(int item1, int item2)
@@ -159,7 +164,7 @@ namespace Intersect_Client.Classes
             bf.WriteLong((int)Enums.ClientPackets.SwapItems);
             bf.WriteInteger(item1);
             bf.WriteInteger(item2);
-            Network.SendPacket(bf.ToArray());
+            GameNetwork.SendPacket(bf.ToArray());
         }
 
         public static void SendDropItem(int slot, int amount)
@@ -168,7 +173,7 @@ namespace Intersect_Client.Classes
             bf.WriteLong((int)Enums.ClientPackets.DropItems);
             bf.WriteInteger(slot);
             bf.WriteInteger(amount);
-            Network.SendPacket(bf.ToArray());
+            GameNetwork.SendPacket(bf.ToArray());
         }
 
         public static void SendUseItem(int slot)
@@ -176,7 +181,7 @@ namespace Intersect_Client.Classes
             var bf = new ByteBuffer();
             bf.WriteLong((int)Enums.ClientPackets.UseItem);
             bf.WriteInteger(slot);
-            Network.SendPacket(bf.ToArray());
+            GameNetwork.SendPacket(bf.ToArray());
         }
 
         public static void SendSwapSpells(int spell1, int spell2)
@@ -185,7 +190,7 @@ namespace Intersect_Client.Classes
             bf.WriteLong((int)Enums.ClientPackets.SwapSpells);
             bf.WriteInteger(spell1);
             bf.WriteInteger(spell2);
-            Network.SendPacket(bf.ToArray());
+            GameNetwork.SendPacket(bf.ToArray());
         }
 
         public static void SendForgetSpell(int slot)
@@ -193,7 +198,7 @@ namespace Intersect_Client.Classes
             var bf = new ByteBuffer();
             bf.WriteLong((int)Enums.ClientPackets.ForgetSpell);
             bf.WriteInteger(slot);
-            Network.SendPacket(bf.ToArray());
+            GameNetwork.SendPacket(bf.ToArray());
         }
 
         public static void SendUseSpell(int slot)
@@ -201,7 +206,7 @@ namespace Intersect_Client.Classes
             var bf = new ByteBuffer();
             bf.WriteLong((int)Enums.ClientPackets.UseSpell);
             bf.WriteInteger(slot);
-            Network.SendPacket(bf.ToArray());
+            GameNetwork.SendPacket(bf.ToArray());
         }
 
         public static void SendUnequipItem(int slot)
@@ -209,7 +214,7 @@ namespace Intersect_Client.Classes
             var bf = new ByteBuffer();
             bf.WriteLong((int)Enums.ClientPackets.UnequipItem);
             bf.WriteInteger(slot);
-            Network.SendPacket(bf.ToArray());
+            GameNetwork.SendPacket(bf.ToArray());
         }
 
         public static void SendUpgradeStat(int stat)
@@ -217,7 +222,7 @@ namespace Intersect_Client.Classes
             var bf = new ByteBuffer();
             bf.WriteLong((int)Enums.ClientPackets.UpgradeStat);
             bf.WriteInteger(stat);
-            Network.SendPacket(bf.ToArray());
+            GameNetwork.SendPacket(bf.ToArray());
         }
 
         public static void SendHotbarChange(int slot)
@@ -227,14 +232,14 @@ namespace Intersect_Client.Classes
             bf.WriteInteger(slot);
             bf.WriteInteger(Globals.Me.Hotbar[slot].Type);
             bf.WriteInteger(Globals.Me.Hotbar[slot].Slot);
-            Network.SendPacket(bf.ToArray());
+            GameNetwork.SendPacket(bf.ToArray());
         }
 
         public static void SendOpenAdminWindow()
         {
             var bf = new ByteBuffer();
             bf.WriteLong((int)Enums.ClientPackets.OpenAdminWindow);
-            Network.SendPacket(bf.ToArray());
+            GameNetwork.SendPacket(bf.ToArray());
         }
 
         public static void SendAdminAction(int action, int val)
@@ -243,7 +248,7 @@ namespace Intersect_Client.Classes
             bf.WriteLong((int)Enums.ClientPackets.AdminAction);
             bf.WriteInteger(action);
             bf.WriteInteger(val);
-            Network.SendPacket(bf.ToArray());
+            GameNetwork.SendPacket(bf.ToArray());
         }
 
     }

@@ -24,127 +24,89 @@
     OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
     SOFTWARE.
 */
-using System;
-using System.Collections.Generic;
-using Gwen.Control;
-using Gwen.Input;
-using Gwen.Skin;
-using SFML.Graphics;
-using SFML.Window;
-using Font = Gwen.Font;
-using Intersect_Client.Classes.UI.Menu;
-using Intersect_Client.Classes.UI;
-using Intersect_Client.Classes.UI.Game;
-using System.IO;
-using SFML.System;
-using SFML = Gwen.Input.SFML;
 
-namespace Intersect_Client.Classes
+using System.Collections.Generic;
+using IntersectClientExtras.GenericClasses;
+using IntersectClientExtras.Graphics;
+using IntersectClientExtras.Gwen;
+using IntersectClientExtras.Gwen.Control;
+using IntersectClientExtras.Gwen.Input;
+using IntersectClientExtras.Gwen.Skin;
+using Intersect_Client.Classes.Core;
+using Intersect_Client.Classes.General;
+using Intersect_Client.Classes.UI.Game;
+using Intersect_Client.Classes.UI.Menu;
+using Base = IntersectClientExtras.Gwen.Renderer.Base;
+using Font = IntersectClientExtras.Gwen.Font;
+
+namespace Intersect_Client.Classes.UI
 {
     public static class Gui
     {
 
         //GWEN GUI
-        private static Gwen.Input.SFML _gwenInput;
-        public static RenderTexture GwenTexture;
+        public static bool GwenInitialized = false;
+        public static InputBase GwenInput;
+        public static Base GwenRenderer;
+        public static GameRenderTexture GwenTexture;
         private static Canvas _gameCanvas;
         private static Canvas _menuCanvas;
-        public static Gwen.Renderer.SFML _gwenRenderer;
         private static TexturedBase _gwenSkin;
-        private static Font _gwenFont;
         public static List<string> MsgboxErrors = new List<string>();
         public static bool SetupHandlers;
-        public static GameGuiBase _GameGui;
-        public static MenuGuiBase _MenuGui;
+        public static GameGuiBase GameUI;
+        public static MenuGuiBase MenuUI;
         public static ErrorMessageHandler ErrorMsgHandler;
 
         //Input Handling
-        public static List<Gwen.Control.Base> FocusElements;
+        public static List<IntersectClientExtras.Gwen.Control.Base> FocusElements;
 
         #region "Gwen Setup and Input"
         //Gwen Low Level Functions
         public static void InitGwen()
         {
-            GwenTexture = new RenderTexture((uint)Graphics.ScreenWidth,(uint)Graphics.ScreenHeight);
-            _gwenRenderer = new Gwen.Renderer.SFML(GwenTexture);
             //TODO: Make it easier to modify skin.
-            _gwenSkin = new TexturedBase(_gwenRenderer, "DefaultSkin.png");
+            _gwenSkin = new TexturedBase(GwenRenderer, "Resources/GUI/DefaultSkin.png");
 
-
-
-            //TODO Move font system over from Orion
-            // try to load, fallback if failed
-            _gwenFont = new Font(_gwenRenderer) { Size = 10, FaceName = "Arvo-Regular.ttf" };
-            if (_gwenRenderer.LoadFont(_gwenFont))
-            {
-                _gwenRenderer.FreeFont(_gwenFont);
-            }
-            else // try another
-            {
-                _gwenFont.FaceName = "Arial";
-                if (_gwenRenderer.LoadFont(_gwenFont))
-                {
-                    _gwenRenderer.FreeFont(_gwenFont);
-                }
-                else // try default
-                {
-                    _gwenFont.FaceName = "OpenSans.ttf";
-                }
-            }
-
-            _gwenSkin.SetDefaultFont(_gwenFont.FaceName);
-            _gwenFont.Dispose(); // skin has its own
+            _gwenSkin.DefaultFont = new Font(GwenRenderer, "Resources/Fonts/Arvo-Regular.ttf", 10);
 
 
             // Create a Canvas (it's root, on which all other GWEN controls are created)
             _menuCanvas = new Canvas(_gwenSkin);
-            _menuCanvas.SetSize(Graphics.ScreenWidth, Graphics.ScreenHeight);
+            _menuCanvas.SetSize(GameGraphics.Renderer.GetScreenWidth(), GameGraphics.Renderer.GetScreenHeight());
             _menuCanvas.ShouldDrawBackground = false;
-            _menuCanvas.BackgroundColor = System.Drawing.Color.FromArgb(255, 150, 170, 170);
+            _menuCanvas.BackgroundColor = Color.FromArgb(255, 150, 170, 170);
             _menuCanvas.KeyboardInputEnabled = true;
 
             // Create the game Canvas (it's root, on which all other GWEN controls are created)
             _gameCanvas = new Canvas(_gwenSkin);
-            _gameCanvas.SetSize(Graphics.ScreenWidth, Graphics.ScreenHeight);
+            _gameCanvas.SetSize(GameGraphics.Renderer.GetScreenWidth(), GameGraphics.Renderer.GetScreenHeight());
             _gameCanvas.ShouldDrawBackground = false;
-            _gameCanvas.BackgroundColor = System.Drawing.Color.FromArgb(255, 150, 170, 170);
+            _gameCanvas.BackgroundColor = Color.FromArgb(255, 150, 170, 170);
             _gameCanvas.KeyboardInputEnabled = true;
 
             // Create GWEN input processor
-            _gwenInput = new Gwen.Input.SFML();
-            if (Globals.GameState == (int)Enums.GameStates.Intro || Globals.GameState == (int)Enums.GameStates.Menu)
+            if (Globals.GameState == Enums.GameStates.Intro || Globals.GameState == Enums.GameStates.Menu)
             {
-                _gwenInput.Initialize(_menuCanvas, Graphics.RenderWindow);
+                GwenInput.Initialize(_menuCanvas);
             }
             else
             {
-                _gwenInput.Initialize(_gameCanvas, Graphics.RenderWindow);
+                GwenInput.Initialize(_gameCanvas);
             }
 
-            // Setup event handlers
-            if (SetupHandlers == false)
-            {
-                Graphics.RenderWindow.Closed += OnClosed;
-                Graphics.RenderWindow.KeyPressed += OnKeyPressed;
-                Graphics.RenderWindow.KeyReleased += window_KeyReleased;
-                Graphics.RenderWindow.MouseButtonPressed += window_MouseButtonPressed;
-                Graphics.RenderWindow.MouseButtonReleased += window_MouseButtonReleased;
-                Graphics.RenderWindow.MouseWheelMoved += window_MouseWheelMoved;
-                Graphics.RenderWindow.MouseMoved += window_MouseMoved;
-                Graphics.RenderWindow.TextEntered += window_TextEntered;
-                SetupHandlers = true;
-            }
-
-            FocusElements = new List<Gwen.Control.Base>();
+            FocusElements = new List<IntersectClientExtras.Gwen.Control.Base>();
             ErrorMsgHandler = new ErrorMessageHandler(_menuCanvas, _gameCanvas);
-            if (Globals.GameState == (int)Enums.GameStates.Intro || Globals.GameState == (int)Enums.GameStates.Menu)
+            if (Globals.GameState == Enums.GameStates.Intro || Globals.GameState == Enums.GameStates.Menu)
             {
-                _MenuGui = new MenuGuiBase(_menuCanvas);
+                MenuUI = new MenuGuiBase(_menuCanvas);
             }
             else
             {
-                _GameGui = new GameGuiBase(_gameCanvas);
+                GameUI = new GameGuiBase(_gameCanvas);
             }
+
+            GwenInitialized = true;
         }
         public static void DestroyGwen()
         {
@@ -154,68 +116,10 @@ namespace Intersect_Client.Classes
                 return;}
             _menuCanvas.Dispose();
             _gameCanvas.Dispose();
-            _gwenRenderer.Dispose();
             _gwenSkin.Dispose();
-            _gwenFont.Dispose();
+            GwenInitialized = false;
         }
-        static void window_TextEntered(object sender, TextEventArgs e)
-        {
-            _gwenInput.ProcessMessage(e);
-        }
-
-        static void window_MouseMoved(object sender, MouseMoveEventArgs e)
-        {
-            e.X -= (int)Graphics.CurrentView.Left;
-            e.Y -= (int)Graphics.CurrentView.Top;
-            _gwenInput.ProcessMessage(e);
-        }
-
-        static void window_MouseWheelMoved(object sender, MouseWheelEventArgs e)
-        {
-            e.X -= (int)Graphics.CurrentView.Left;
-            e.Y -= (int)Graphics.CurrentView.Top;
-            _gwenInput.ProcessMessage(e);
-        }
-
-        static void window_MouseButtonPressed(object sender, MouseButtonEventArgs e)
-        {
-            e.X -= (int)Graphics.CurrentView.Left;
-            e.Y -= (int)Graphics.CurrentView.Top;
-            _gwenInput.ProcessMessage(new SFMLMouseButtonEventArgs(e, true));
-        }
-
-        static void window_MouseButtonReleased(object sender, MouseButtonEventArgs e)
-        {
-            e.X -= (int)Graphics.CurrentView.Left;
-            e.Y -= (int)Graphics.CurrentView.Top;
-            _gwenInput.ProcessMessage(new SFMLMouseButtonEventArgs(e, false));
-        }
-        static void window_KeyReleased(object sender, KeyEventArgs e) { _gwenInput.ProcessMessage(new SFMLKeyEventArgs(e, false)); }
-        static void OnClosed(object sender, EventArgs e) { GameMain.IsRunning = false; }
-        static void OnKeyPressed(object sender, KeyEventArgs e)
-        {
-            if (e.Code == Keyboard.Key.Escape)
-            {
-                GameMain.IsRunning = false;
-            }
-            else if (e.Code == Keyboard.Key.Insert)
-            {
-                //Try to open admin panel!
-                if (Globals.GameState == (int)Enums.GameStates.InGame)
-                {
-                    PacketSender.SendOpenAdminWindow();
-                }
-            }
-            else if (e.Code == Keyboard.Key.F1)
-            {
-                _GameGui.ShowHideDebug();
-            }
-            else
-            {
-                _gwenInput.ProcessMessage(new SFMLKeyEventArgs(e, true));
-
-            }
-        }
+ 
         public static bool HasInputFocus()
         {
             for (var i = 0; i < FocusElements.Count; i++)
@@ -227,144 +131,118 @@ namespace Intersect_Client.Classes
             }
             return false;
         }
-
-        public static void OpenAdminWindow()
-        {
-            AdminWindow adminWindow = new AdminWindow(_gameCanvas);
-        }
         #endregion
 
         #region "GUI Functions"
         //Actual Drawing Function
         public static void DrawGui()
         {
+            if (!Gui.GwenInitialized) Gui.InitGwen();
             ErrorMsgHandler.Update();
-            GwenTexture.Clear(Color.Transparent);
-            if (Globals.GameState == (int)Enums.GameStates.Menu)
+            if (GwenTexture != null)
             {
-                _MenuGui.Draw();
+                GwenTexture.Begin();
+                GwenTexture.Clear(Color.Transparent);
             }
-            else if (Globals.GameState == (int)Enums.GameStates.InGame)
+            if (Globals.GameState == Enums.GameStates.Menu)
             {
-                _GameGui.Draw();
+                MenuUI.Draw();
             }
-            GwenTexture.Display();
+            else if (Globals.GameState == Enums.GameStates.InGame)
+            {
+                GameUI.Draw();
+            }
+            if (GwenTexture != null)
+            {
+                GwenTexture.End();
+
+                GameGraphics.DrawGameTexture(GwenTexture, GameGraphics.CurrentView.Left, GameGraphics.CurrentView.Top);
+                    //SFML will need this part....
+            }
         }
-        public static Gwen.Texture SFMLToGwenTexture(Texture sftex)
+        public static Texture ToGwenTexture(GameTexture gameTex)
         {
-            Gwen.Texture tex = new Gwen.Texture(_gwenRenderer);
-            _gwenRenderer.LoadSFMLTexture(tex, sftex);
+            Texture tex = new Texture(GwenRenderer);
+            GwenRenderer.LoadGameTexture(tex, gameTex);
             return tex;
         }
-        public static RenderTexture CreateTextureFromSprite(string spritename, int w, int h)
+        public static GameRenderTexture CreateTextureFromSprite(string spritename, int w, int h)
         {
-            RenderTexture rt = new RenderTexture((uint)w, (uint)h);
-            if (Graphics.EntityFileNames.Contains(spritename))
+            GameRenderTexture rt = GameGraphics.Renderer.CreateRenderTexture(w, h);
+            rt.Begin();
+            if (GameGraphics.EntityFileNames.Contains(spritename))
             {
-                Sprite enSprite = new Sprite(Graphics.EntityTextures[Graphics.EntityFileNames.IndexOf(spritename)]);
-                enSprite.TextureRect = new IntRect(0, 0,
-                    (int) Graphics.EntityTextures[Graphics.EntityFileNames.IndexOf(spritename)].Size.X/4,
-                    (int) Graphics.EntityTextures[Graphics.EntityFileNames.IndexOf(spritename)].Size.Y/4);
-                enSprite.Scale =
-                    new Vector2f(w/(Graphics.EntityTextures[Graphics.EntityFileNames.IndexOf(spritename)].Size.X/4f),
-                        h/(Graphics.EntityTextures[Graphics.EntityFileNames.IndexOf(spritename)].Size.Y/4f));
-                rt.Draw((enSprite));
+                GameGraphics.DrawGameTexture(
+                    GameGraphics.EntityTextures[GameGraphics.EntityFileNames.IndexOf(spritename)], new FloatRect(0, 0,
+                        GameGraphics.EntityTextures[GameGraphics.EntityFileNames.IndexOf(spritename)].GetWidth()/4f,
+                        GameGraphics.EntityTextures[GameGraphics.EntityFileNames.IndexOf(spritename)].GetHeight()/4f),
+                    new FloatRect(
+                        w/2 - (GameGraphics.EntityTextures[GameGraphics.EntityFileNames.IndexOf(spritename)].GetWidth()/4f)/2,
+                        h/2 - (GameGraphics.EntityTextures[GameGraphics.EntityFileNames.IndexOf(spritename)].GetHeight()/4f)/2,
+                        GameGraphics.EntityTextures[GameGraphics.EntityFileNames.IndexOf(spritename)].GetWidth()/4f,
+                        GameGraphics.EntityTextures[GameGraphics.EntityFileNames.IndexOf(spritename)].GetHeight()/4f),
+                    Color.White, rt);
             }
-            rt.Display();
+            rt.End();
             return rt;
         }
 
-        public static RenderTexture CreateItemTex(int itemnum, int xOffset = 0, int yOffset = 0, int width = 32, int height = 32, bool isEquipped = false, Texture bg = null)
+        public static GameRenderTexture CreateItemTex(int itemnum, int xOffset = 0, int yOffset = 0, int width = 32, int height = 32, bool isEquipped = false, GameTexture bg = null)
         {
-            RenderTexture rt = new RenderTexture((uint)width, (uint)height);
-            Sprite sprite;
+            GameRenderTexture rt = GameGraphics.Renderer.CreateRenderTexture(width, height);
+            rt.Begin();
             if (bg != null)
             {
-                sprite = new Sprite(bg);
-                rt.Draw(sprite);
+                GameGraphics.DrawGameTexture(bg, 0, 0, rt);
             }
             if (itemnum > -1)
             {
-                if (Graphics.ItemFileNames.Contains(Globals.GameItems[itemnum].Pic))
+                if (GameGraphics.ItemFileNames.Contains(Globals.GameItems[itemnum].Pic))
                 {
-                    sprite =
-                        new Sprite(Graphics.ItemTextures[Graphics.ItemFileNames.IndexOf(Globals.GameItems[itemnum].Pic)]);
-                    sprite.Position = new Vector2f(xOffset, yOffset);
-                    rt.Draw(sprite);
+                    GameGraphics.DrawGameTexture(
+                            GameGraphics.ItemTextures[GameGraphics.ItemFileNames.IndexOf(Globals.GameItems[itemnum].Pic)], xOffset, yOffset,
+                            Color.White, rt);
                 }
             }
             if (isEquipped)
             {
-                CircleShape equipDot = new CircleShape();
-                equipDot.FillColor = Color.Red;
-                equipDot.Position = new Vector2f(26 + xOffset, 0 + yOffset);
-                equipDot.Radius = 2;
-                rt.Draw(equipDot);
+                GameGraphics.DrawGameTexture(GameGraphics.WhiteTex, new FloatRect(0, 0, 1, 1),
+                    new FloatRect(26 + xOffset, 0 + yOffset, 2, 2), Color.Red, rt);
             }
-            rt.Display();
+            rt.End();
             return rt;
         }
-        public static RenderTexture CreateSpellTex(int spellnum, int xOffset = 0, int yOffset = 0, int width = 32, int height = 32, bool onCD = false, Texture bg = null)
+        public static GameRenderTexture CreateSpellTex(int spellnum, int xOffset = 0, int yOffset = 0, int width = 32, int height = 32, bool onCD = false, GameTexture bg = null)
         {
-            RenderTexture rt = new RenderTexture((uint)width, (uint)height);
-            Sprite sprite;
+            GameRenderTexture rt = GameGraphics.Renderer.CreateRenderTexture(width, height);
+            rt.Begin();
             if (bg != null)
             {
-                sprite = new Sprite(bg);
-                rt.Draw(sprite);
+                GameGraphics.DrawGameTexture(bg, 0, 0,rt);
             }
             if (spellnum > -1)
             {
-                if (Graphics.SpellFileNames.Contains(Globals.GameSpells[spellnum].Pic))
+                if (GameGraphics.SpellFileNames.Contains(Globals.GameSpells[spellnum].Pic))
                 {
-                    sprite =
-                        new Sprite(Graphics.SpellTextures[Graphics.SpellFileNames.IndexOf(Globals.GameSpells[spellnum].Pic)]);
-                    sprite.Position = new Vector2f(xOffset, yOffset);
-                    
                     if (onCD)
                     {
-                        sprite.Color = new Color(255,255,255,100);
+                        GameGraphics.DrawGameTexture(
+                            GameGraphics.SpellTextures[
+                                GameGraphics.SpellFileNames.IndexOf(Globals.GameSpells[spellnum].Pic)], xOffset, yOffset,
+                            new Color(255, 255, 255, 100), rt);
                     }
-                    rt.Draw(sprite);
+                    else
+                    {
+                        GameGraphics.DrawGameTexture(
+                            GameGraphics.SpellTextures[
+                                GameGraphics.SpellFileNames.IndexOf(Globals.GameSpells[spellnum].Pic)], xOffset, yOffset,
+                            Color.White, rt);
+                    }
+                    
                 }
             }
-            rt.Display();
+            rt.End();
             return rt;
-        }
-        //Code courtousy of http://tech.pro/tutorial/660/csharp-tutorial-convert-a-color-image-to-grayscale
-        public static System.Drawing.Bitmap MakeGrayscale3(System.Drawing.Bitmap original)
-        {
-            //create a blank bitmap the same size as original
-            System.Drawing.Bitmap newBitmap = new System.Drawing.Bitmap(original.Width, original.Height);
-
-            //get a graphics object from the new image
-            System.Drawing.Graphics g = System.Drawing.Graphics.FromImage(newBitmap);
-
-            //create the grayscale ColorMatrix
-            System.Drawing.Imaging.ColorMatrix colorMatrix = new System.Drawing.Imaging.ColorMatrix(
-               new float[][] 
-                  {
-                     new float[] {.3f, .3f, .3f, 0, 0},
-                     new float[] {.59f, .59f, .59f, 0, 0},
-                     new float[] {.11f, .11f, .11f, 0, 0},
-                     new float[] {0, 0, 0, 1, 0},
-                     new float[] {0, 0, 0, 0, 1}
-                  });
-
-            //create some image attributes
-            System.Drawing.Imaging.ImageAttributes attributes = new System.Drawing.Imaging.ImageAttributes();
-
-            //set the color matrix attribute
-            attributes.SetColorMatrix(colorMatrix);
-
-            //draw the original image on the new image
-            //using the grayscale color matrix
-            g.DrawImage(original, new System.Drawing.Rectangle(0, 0, original.Width, original.Height),
-               0, 0, original.Width, original.Height, System.Drawing.GraphicsUnit.Pixel, attributes);
-
-            //dispose the Graphics object
-            g.Dispose();
-            return newBitmap;
         }
         public static bool MouseHitGUI()
         {
@@ -377,7 +255,7 @@ namespace Intersect_Client.Classes
             }
             return false;
         }
-        public static bool MouseHitBase(Gwen.Control.Base obj)
+        public static bool MouseHitBase(IntersectClientExtras.Gwen.Control.Base obj)
         {
             if (obj.IsHidden == true)
             {
@@ -385,8 +263,8 @@ namespace Intersect_Client.Classes
             }
             else
             {
-                System.Drawing.RectangleF rect = new System.Drawing.RectangleF(obj.LocalPosToCanvas(new System.Drawing.Point(0, 0)).X, obj.LocalPosToCanvas(new System.Drawing.Point(0, 0)).Y, obj.Width, obj.Height);
-                if (rect.Contains(Gwen.Input.InputHandler.MousePosition.X, Gwen.Input.InputHandler.MousePosition.Y))
+                FloatRect rect = new FloatRect(obj.LocalPosToCanvas(new Point(0, 0)).X, obj.LocalPosToCanvas(new Point(0, 0)).Y, obj.Width, obj.Height);
+                if (rect.Contains(InputHandler.MousePosition.X, InputHandler.MousePosition.Y))
                 {
                     return true;
                 }
@@ -400,11 +278,9 @@ namespace Intersect_Client.Classes
             var lastSpace = 0;
             var curPos = 0;
             var curLen = 1;
-            var myText = new Text(input.Substring(curPos, curLen), Graphics.GameFont);
-            myText.CharacterSize = 10;
             while (curPos + curLen < input.Length)
             {
-                if (myText.GetLocalBounds().Width < width)
+                if (GameGraphics.Renderer.MeasureText(input.Substring(curPos, curLen),GameGraphics.GameFont,10).X < width)
                 {
                     if (input[curPos + curLen] == ' ' || input[curPos + curLen] == '-')
                     {
@@ -424,8 +300,6 @@ namespace Intersect_Client.Classes
                     curLen = 1;
                 }
                 curLen++;
-                myText = new Text(input.Substring(curPos, curLen), Graphics.GameFont);
-                myText.CharacterSize = 10;
             }
             myOutput.Add(input.Substring(curPos, input.Length - curPos));
             return myOutput.ToArray();

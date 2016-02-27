@@ -24,106 +24,59 @@
     OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
     SOFTWARE.
 */
+
 using System;
 using System.Collections.Generic;
-using System.Drawing;
-using System.Drawing.Drawing2D;
-using System.Drawing.Imaging;
-using System.IO;
-using System.Linq;
-using System.Threading;
-using System.Windows.Forms;
-using SFML.Graphics;
-using SFML.Window;
-using Color = SFML.Graphics.Color;
-using Font = SFML.Graphics.Font;
-using Image = SFML.Graphics.Image;
-using KeyEventArgs = SFML.Window.KeyEventArgs;
-using View = SFML.Graphics.View;
-using SFML.System;
-using System.Diagnostics;
-using System.Runtime.Remoting.Metadata.W3cXsd2001;
+using IntersectClientExtras.GenericClasses;
+using IntersectClientExtras.Graphics;
+using Intersect_Client.Classes.Entities;
+using Intersect_Client.Classes.General;
+using Intersect_Client.Classes.UI;
+using Event = Intersect_Client.Classes.Entities.Event;
+using Object = System.Object;
 
-namespace Intersect_Client.Classes
+namespace Intersect_Client.Classes.Core
 {
-    public static class Graphics
+    public static class GameGraphics
     {
-        public static RenderWindow RenderWindow;
+        //Game Renderer
+        public static GameRenderer Renderer;
+        public static GameShader DefaultShader;
 
         //Screen Values
-        public static int ScreenWidth;
-        public static int ScreenHeight;
-        public static int DisplayMode = 0;
-        public static bool FullScreen = false;
         public static bool MustReInit;
-        public static int FadeStage = 1;
-        public static float FadeAmt = 255f;
-        public static List<Keyboard.Key> KeyStates = new List<Keyboard.Key>();
-        public static List<Mouse.Button> MouseState = new List<Mouse.Button>();
-        public static Font GameFont;
-        public static int FpsLimit;
-        public static int Fps;
-        private static int _fpsCount;
-        private static long _fpsTimer;
-        private static RenderStates _renderState = new RenderStates(BlendMode.Alpha);
+        public static GameFont GameFont;
         public static FloatRect CurrentView;
 
         //Game Textures
-        public static List<Texture> Tilesets = new List<Texture>();
-        public static List<string> ItemFileNames;
-        public static Texture[] ItemTextures;
-        public static List<string> EntityFileNames;
-        public static Texture[] EntityTextures;
-        public static List<string> SpellFileNames;
-        public static Texture[] SpellTextures;
-        public static List<string> AnimationFileNames;
-        public static Texture[] AnimationTextures;
-        public static List<string> FaceFileNames;
-        public static Texture[] FaceTextures;
-        public static List<string> ImageFileNames;
-        public static Texture[] ImageTextures;
-        public static List<string> FogFileNames;
-        public static Texture[] FogTextures;
-        public static List<string> ResourceFileNames;
-        public static Texture[] ResourceTextures;
-        public static List<string> PaperdollFileNames;
-        public static Texture[] PaperdollTextures;
+        public static GameRenderTexture WhiteTex;
+        public static List<GameTexture> Tilesets = new List<GameTexture>();
+        public static List<string> ItemFileNames = new List<string>();
+        public static GameTexture[] ItemTextures;
+        public static List<string> EntityFileNames = new List<string>();
+        public static GameTexture[] EntityTextures;
+        public static List<string> SpellFileNames = new List<string>();
+        public static GameTexture[] SpellTextures;
+        public static List<string> AnimationFileNames = new List<string>();
+        public static GameTexture[] AnimationTextures;
+        public static List<string> FaceFileNames = new List<string>();
+        public static GameTexture[] FaceTextures;
+        public static List<string> ImageFileNames = new List<string>();
+        public static GameTexture[] ImageTextures;
+        public static List<string> FogFileNames = new List<string>();
+        public static GameTexture[] FogTextures;
+        public static List<string> ResourceFileNames = new List<string>();
+        public static GameTexture[] ResourceTextures;
+        public static List<string> PaperdollFileNames = new List<string>();
+        public static GameTexture[] PaperdollTextures;
 
 
         //Darkness Stuff
         public static int DarkOffsetX = 0;
         public static int DarkOffsetY = 0;
         public static float SunIntensity;
-        public static RenderTexture DarknessTexture;
-        private static Shader RadialGradientShader;
-        private static string LightingFragmentShader = @"
-            uniform vec4 color;
-            uniform float expand;
-            uniform vec2 center;
-            uniform float radius;
-            uniform float windowHeight;
-            void main()
-            {
-	            vec2 centerFromSfml = vec2(center.x, windowHeight - center.y);
-	            vec2 p = (gl_FragCoord.xy - centerFromSfml) / radius;
-                float r = sqrt(dot(p, p));
-                if (r < 1.0)
-                {
-                    gl_FragColor = mix(color, gl_Color, (r - expand) / (1 - expand));
-                }
-                else
-                {
-                    gl_FragColor = gl_Color;
-                }
-            }";
-
-        private static string LightingVertexShader = @"
-            void main()
-            {
-                gl_Position = gl_ModelViewProjectionMatrix * gl_Vertex;
-                gl_TexCoord[0] = gl_TextureMatrix[0] * gl_MultiTexCoord0;
-                gl_FrontColor = gl_Color;
-            }";
+        public static GameRenderTexture DarknessTexture;
+        private static GameShader RadialGradientShader;
 
         //Fog Stuff
         public static int FogOffsetX = 0;
@@ -131,8 +84,8 @@ namespace Intersect_Client.Classes
 
         //Overlay Stuff
         public static Color OverlayColor = Color.Transparent;
-        public static RenderTexture OverlayTexture;
-        private static long _overlayUpdate = Environment.TickCount;
+        public static GameRenderTexture OverlayTexture;
+        private static long _overlayUpdate = 0;
 
         //Player Spotlight Values
         private const byte PlayerLightIntensity = 255;
@@ -142,15 +95,7 @@ namespace Intersect_Client.Classes
 
         private static long _fadeTimer;
 
-        //Intro Variables
-        private static int IntroIndex = 0;
-        private static long IntroTime = -1;
-        private static long IntroDelay = 3000;
-
         //Rendering Variables
-        private static Vertex[] _vertexCache = new Vertex[1024];
-        private static int _vertexCount = 0;
-        private static Texture _curTexture;
         public static int DrawCalls = 0;
         public static int EntitiesDrawn = 0;
         public static int MapsDrawn = 0;
@@ -161,249 +106,69 @@ namespace Intersect_Client.Classes
 
         public static bool PreRenderedMapLayer = false;
         public static object GFXLock = new Object();
-        public static List<RenderTexture> MapReleaseQueue = new List<RenderTexture>(); 
-        public static List<RenderTexture> FreeMapTextures = new List<RenderTexture>(); 
+        public static List<GameRenderTexture> MapReleaseQueue = new List<GameRenderTexture>(); 
+        public static List<GameRenderTexture> FreeMapTextures = new List<GameRenderTexture>(); 
 
         //Init Functions
         public static void InitGraphics()
         {
-            InitSfml();
-            if (Globals.RenderCaching) CreateMapTextures(9 * 18);
-            LoadEntities();
-            LoadItems();
-            LoadAnimations();
-            LoadSpells();
-            LoadFaces();
-            LoadImages();
-            LoadFogs();
-            LoadResources();
-            LoadPaperdolls();
+            Renderer.Init();
+            if (Globals.Database.RenderCaching) CreateMapTextures(9 * 18);
+            CreateWhiteTexture();
+            Globals.ContentManager.LoadAll();
             InitRenderingLists();
-            GameFont = new Font("Arvo-Regular.ttf");
+            GameFont = Renderer.LoadFont("Resources/Fonts/Arvo-Regular.ttf");
+            RadialGradientShader = Renderer.LoadShader("Resources/Shaders/RadialGradient");
         }
-        private static void InitSfml()
-        {
-            if (DisplayMode < 0 || DisplayMode >= GetValidVideoModes().Count) { DisplayMode = GetValidVideoModes().Count -1; }
-            if (GetValidVideoModes().Any())
-            {
-                
-                if (FullScreen)
-                {
-                    RenderWindow = new RenderWindow(GetValidVideoModes()[DisplayMode], "Intersect Engine", Styles.Fullscreen);
-                }
-                else
-                {
-                    RenderWindow = new RenderWindow(GetValidVideoModes()[DisplayMode], "Intersect Engine", Styles.Titlebar);
-                }
-                ScreenWidth = (int)RenderWindow.Size.X;
-                ScreenHeight = (int)RenderWindow.Size.Y;
-                if (FpsLimit == 0)
-                {
-                    RenderWindow.SetVerticalSyncEnabled(true);
-                }
-                else if (FpsLimit == 1)
-                {
-                    RenderWindow.SetFramerateLimit(30);
-                }
-                else if (FpsLimit == 2)
-                {
-                    RenderWindow.SetFramerateLimit(60);
-                }
-                else if (FpsLimit == 3)
-                {
-                    RenderWindow.SetFramerateLimit(90);
-                }
-                else if (FpsLimit == 4)
-                {
-                    RenderWindow.SetFramerateLimit(120);
-                }
-            }
-            RenderWindow.KeyPressed += renderWindow_KeyPressed;
-            RenderWindow.KeyReleased += renderWindow_KeyReleased;
-            RenderWindow.MouseButtonPressed += renderWindow_MouseButtonPressed;
-            RenderWindow.MouseButtonReleased += renderWindow_MouseButtonReleased;
-
-            //Init the lighting shader on load.
-            //Load Lighting Shader
-            if (Shader.IsAvailable)
-            {
-                RadialGradientShader = Shader.FromString(LightingVertexShader, LightingFragmentShader);
-            }
-            else
-            {
-                MessageBox.Show(@"This machine is not able to load SFML Shaders and cannot run this application.");
-                Application.Exit();
-            }
-
-            CurrentView = new FloatRect(0,0,ScreenWidth,ScreenHeight);
-            Gui.InitGwen();
-            if (LimitResolution())
-            {
-                return;}
-        }
-
-        public static void FixResolution()
-        {
-            int maxx = Globals.MapWidth * Globals.TileWidth;
-            int maxy = Globals.MapHeight * Globals.TileHeight;
-            if (ScreenWidth > maxx || ScreenHeight > maxy)
-            {
-                int z = 0;
-                if (GetValidVideoModes().Any())
-                {
-                    for (int i = 0; i < GetValidVideoModes().Count; i++)
-                    {
-                        if (GetValidVideoModes()[i].Width <= maxx && GetValidVideoModes()[i].Height <= maxy && GetValidVideoModes()[i].Width <= ScreenWidth && GetValidVideoModes()[i].Height <= ScreenHeight)
-                        {
-                            z = i;
-                        }
-                    }
-                    DisplayMode = z;
-                    Database.SaveOptions();
-                    Graphics.MustReInit = true;
-                }
-            }
-        }
-
-        public static bool LimitResolution()
-        {
-            int maxx = (Globals.MapWidth-1)* Globals.TileWidth * 2;
-            int maxy = (Globals.MapHeight-1) * Globals.TileHeight * 2;
-            if (ScreenWidth > maxx || ScreenHeight > maxy)
-            {
-                int z = 0;
-                if (GetValidVideoModes().Any())
-                {
-                    for (int i = 0; i < GetValidVideoModes().Count; i++)
-                    {
-                        if (GetValidVideoModes()[i].Width <= maxx && GetValidVideoModes()[i].Height <= maxy && GetValidVideoModes()[i].Width <= ScreenWidth && GetValidVideoModes()[i].Height <= ScreenHeight)
-                        {
-                            z = i;
-                        }
-                    }
-                    DisplayMode = z;
-                    Database.SaveOptions();
-                    Graphics.MustReInit = true;
-                    return true;
-                }
-            }
-            return false;
-        }
-
         private static void InitRenderingLists()
         {
-            Layer1Entities = new List<Entity>[Globals.MapHeight * 3];
-            Layer2Entities = new List<Entity>[Globals.MapHeight * 3];
-            for (var i = 0; i < Globals.MapHeight * 3; i++)
+            Layer1Entities = new List<Entity>[Globals.Database.MapHeight*3];
+            Layer2Entities = new List<Entity>[Globals.Database.MapHeight*3];
+            for (var i = 0; i < Globals.Database.MapHeight*3; i++)
             {
                 Layer1Entities[i] = new List<Entity>();
                 Layer2Entities[i] = new List<Entity>();
             }
         }
+        public static void CreateWhiteTexture()
+        {
+            WhiteTex = Renderer.CreateRenderTexture(1, 1);
+            WhiteTex.Begin();
+            WhiteTex.Clear(Color.White);
+            WhiteTex.End();
+        }
 
-        //GUI Input Events
-        static void renderWindow_MouseButtonReleased(object sender, MouseButtonEventArgs e)
+        public static void DrawIntro()
         {
-            while (MouseState.Remove(e.Button)) { }
-        }
-        static void renderWindow_MouseButtonPressed(object sender, MouseButtonEventArgs e)
-        {
-            MouseState.Add(e.Button);
-        }
-        static void renderWindow_KeyReleased(object sender, KeyEventArgs e)
-        {
-            while (KeyStates.Remove(e.Code)) { }
-        }
-        static void renderWindow_KeyPressed(object sender, KeyEventArgs e)
-        {
-            KeyStates.Add(e.Code);
-            if (e.Code != Keyboard.Key.Return) return;
-            if (Globals.GameState != (int)Enums.GameStates.InGame) return;
-            if (Gui.HasInputFocus() == false)
+            if (ImageFileNames.IndexOf(Globals.Database.IntroBG[Globals.IntroIndex]) > -1)
             {
-                Gui._GameGui.FocusChat = true;
+                DrawFullScreenTextureStretched(
+                    ImageTextures[ImageFileNames.IndexOf(Globals.Database.IntroBG[Globals.IntroIndex])]);
             }
         }
 
-        //Game Rendering
-        public static void DrawGame()
+        public static void DrawMenu()
         {
-            if (MustReInit)
+            if (ImageFileNames.IndexOf(Globals.Database.MenuBG) > -1)
             {
-                Gui.DestroyGwen();
-                RenderWindow.Close();
-                Gui.SetupHandlers = false;
-                InitSfml();
-                MustReInit = false;
+                DrawFullScreenTexture(ImageTextures[ImageFileNames.IndexOf(Globals.Database.MenuBG)]);
             }
-            RenderWindow.Clear(Color.Black);
+        }
+
+        public static void DrawInGame()
+        {
             ClearDarknessTexture();
-            DrawCalls = 0;
-            MapsDrawn = 0;
-            EntitiesDrawn = 0;
-            PreRenderedMapLayer = false;
-            if (Globals.GameState == (int)Enums.GameStates.Intro)
+
+            TryPreRendering();
+
+            if (Globals.CurrentMap > -1 && Globals.GameMaps.ContainsKey(Globals.CurrentMap))
             {
-                if (ImageFileNames.IndexOf(Globals.IntroBG[IntroIndex]) > -1)
+                if (Globals.GameMaps[Globals.CurrentMap] != null)
                 {
-                    DrawFullScreenTextureStretched(ImageTextures[ImageFileNames.IndexOf(Globals.IntroBG[IntroIndex])]);
-                }
-                if (FadeStage == 0 && IntroTime == -1)
-                {
-                    IntroTime = Environment.TickCount + IntroDelay;
-                }
-                else if (FadeStage == 0 && IntroTime > 0)
-                {
-                    if (IntroTime <= Environment.TickCount)
+                    if (ImageFileNames.IndexOf(Globals.GameMaps[Globals.CurrentMap].Panorama) > -1)
                     {
-                        FadeStage = 2;
-                        IntroTime = 0;
-                    }
-                }
-                else if (FadeStage == 2 && FadeAmt == 255 && IntroTime == 0)
-                {
-                    IntroIndex++;
-                    FadeStage = 1;
-                    IntroTime = -1;
-                    if (IntroIndex >= Globals.IntroBG.Count) { Globals.GameState = (int)Enums.GameStates.Menu; }
-                }
-            }
-            else if (Globals.GameState == (int)Enums.GameStates.Menu)
-            {
-                if (ImageFileNames.IndexOf(Globals.MenuBG) > -1)
-                {
-                    DrawFullScreenTexture(ImageTextures[ImageFileNames.IndexOf(Globals.MenuBG)]);
-                }
-            }
-            if (Globals.GameState == (int)Enums.GameStates.InGame && Globals.GameLoaded && Globals.CurrentMap > -1 && Globals.GameMaps.ContainsKey(Globals.CurrentMap))
-            {
-                UpdateView();
-
-                if (Globals.RenderCaching)
-                {
-                    for (var i = 0; i < 9; i++)
-                    {
-                        if (Globals.LocalMaps[i] > -1)
-                        {
-                            if (Globals.GameMaps.ContainsKey(Globals.LocalMaps[i]) && !Globals.GameMaps[Globals.LocalMaps[i]].MapRendered)
-                            {
-                                if (!Graphics.PreRenderedMapLayer) { Globals.GameMaps[Globals.LocalMaps[i]].PreRenderMap(); }
-                            }
-                        }
-                    }
-                }
-
-
-                RenderWindow.Clear(Color.Black);
-
-                if (Globals.CurrentMap > -1)
-                {
-                    if (Globals.GameMaps[Globals.CurrentMap] != null)
-                    {
-                        if (ImageFileNames.IndexOf(Globals.GameMaps[Globals.CurrentMap].Panorama) > -1)
-                        {
-                            DrawFullScreenTexture(ImageTextures[ImageFileNames.IndexOf(Globals.GameMaps[Globals.CurrentMap].Panorama)]);
-                        }
+                        DrawFullScreenTexture(
+                            ImageTextures[ImageFileNames.IndexOf(Globals.GameMaps[Globals.CurrentMap].Panorama)]);
                     }
                 }
 
@@ -424,7 +189,7 @@ namespace Intersect_Client.Classes
                         Layer1Entities[x][y].Draw();
                         EntitiesDrawn++;
                     }
-                }  
+                }
 
                 //Render the upper layer
                 for (var i = 0; i < 9; i++)
@@ -452,15 +217,14 @@ namespace Intersect_Client.Classes
 
                 DrawOverlay();
 
-                RenderCurrentBatch();
 
                 for (int x = 0; x < Layer1Entities.Length; x++)
                 {
                     for (int y = 0; y < Layer1Entities[x].Count; y++)
                     {
                         Layer1Entities[x][y].DrawName();
-                        if (Layer1Entities[x][y].GetType() != typeof(Event)) 
-                        { 
+                        if (Layer1Entities[x][y].GetType() != typeof (Event))
+                        {
                             Layer1Entities[x][y].DrawHpBar();
                             Layer1Entities[x][y].DrawCastingBar();
                         }
@@ -471,81 +235,90 @@ namespace Intersect_Client.Classes
                     for (int y = 0; y < Layer2Entities[x].Count; y++)
                     {
                         Layer2Entities[x][y].DrawName();
-                        if (Layer2Entities[x][y].GetType() != typeof(Event)) 
-                        { 
+                        if (Layer2Entities[x][y].GetType() != typeof (Event))
+                        {
                             Layer2Entities[x][y].DrawHpBar();
                             Layer2Entities[x][y].DrawCastingBar();
                         }
                     }
                 }
-                RenderCurrentBatch();
                 OverlayDarkness();
-                RenderCurrentBatch();
             }
+        }
 
-            Gui.DrawGui();
-            RenderTexture(Gui.GwenTexture.Texture,CurrentView.Left,CurrentView.Top,RenderWindow);
-
-            RenderCurrentBatch();
-
-            if (FadeStage != 0)
+        //Game Rendering
+        public static void Render()
+        {
+            if (Renderer.Begin())
             {
-                if (_fadeTimer < Environment.TickCount)
+                Renderer.Clear(Color.Black);
+                DrawCalls = 0;
+                MapsDrawn = 0;
+                EntitiesDrawn = 0;
+                PreRenderedMapLayer = false;
+
+                UpdateView();
+
+                if (Globals.GameState == Enums.GameStates.Intro)
                 {
-                    if (FadeStage == 1)
-                    {
-                        FadeAmt -= 2f;
-                        if (FadeAmt <= 0)
-                        {
-                            FadeStage = 0;
-                            FadeAmt = 0f;
-                        }
-                    }
-                    else
-                    {
-                        FadeAmt += 2f;
-                        if (FadeAmt >= 255)
-                        {
-                            FadeAmt = 255f;
-                        }
-                    }
-                    _fadeTimer = Environment.TickCount + 10;
+                    DrawIntro();
                 }
-                var myShape = new RectangleShape(new Vector2f(ScreenWidth, ScreenHeight))
+                else if (Globals.GameState == Enums.GameStates.Menu)
                 {
-                    FillColor = new Color(0, 0, 0, (byte)FadeAmt)
-                };
-                myShape.Position = new Vector2f(CurrentView.Left,CurrentView.Top);
-                RenderWindow.Draw(myShape);
+                    DrawMenu();
+                }
+                else if (Globals.GameState == Enums.GameStates.Loading)
+                {
+
+                }
+                if (Globals.GameState == Enums.GameStates.InGame)
+                {
+                    DrawInGame();
+                }
+
+                Gui.DrawGui();
+
+                DrawGameTexture(WhiteTex,new FloatRect(0,0,1,1),CurrentView, new Color((int)GameFade.GetFade(), 0, 0, 0),null,GameBlendModes.Alpha);
+                Renderer.End();
             }
-                RenderWindow.Display();
-            RenderWindow.DispatchEvents();
-            _fpsCount++;
-            if (_fpsTimer < Environment.TickCount)
+        }
+
+        private static void TryPreRendering()
+        {
+            if (Globals.Database.RenderCaching)
             {
-                Fps = _fpsCount;
-                _fpsCount = 0;
-                _fpsTimer = Environment.TickCount + 1000;
-                RenderWindow.SetTitle("Intersect Engine");
+                for (var i = 0; i < 9; i++)
+                {
+                    if (Globals.LocalMaps[i] > -1)
+                    {
+                        if (Globals.GameMaps.ContainsKey(Globals.LocalMaps[i]) &&
+                            !Globals.GameMaps[Globals.LocalMaps[i]].MapRendered)
+                        {
+                            if (!GameGraphics.PreRenderedMapLayer)
+                            {
+                                Globals.GameMaps[Globals.LocalMaps[i]].PreRenderMap();
+                            }
+                        }
+                    }
+                }
             }
         }
         private static void DrawMap(int index, int layer = 0)
         {
             if (Globals.LocalMaps[index] < 0) return;
             if (!Globals.GameMaps.ContainsKey(Globals.LocalMaps[index])) return;
-            if (!new FloatRect(Globals.GameMaps[Globals.LocalMaps[index]].GetX(), Globals.GameMaps[Globals.LocalMaps[index]].GetY(), Globals.TileWidth * Globals.MapWidth, Globals.TileHeight * Globals.MapHeight).Intersects(CurrentView)) return;
+            if (!new FloatRect(Globals.GameMaps[Globals.LocalMaps[index]].GetX(), Globals.GameMaps[Globals.LocalMaps[index]].GetY(), Globals.Database.TileWidth * Globals.Database.MapWidth, Globals.Database.TileHeight * Globals.Database.MapHeight).IntersectsWith(CurrentView)) return;
             Globals.GameMaps[Globals.LocalMaps[index]].Draw(layer);
             if (layer == 0) { MapsDrawn++; }
         }
         public static void DrawOverlay()
         {
-            float ecTime = Environment.TickCount - _overlayUpdate;
+            if (!Globals.GameMaps.ContainsKey(Globals.CurrentMap)) return;
+            float ecTime = Globals.System.GetTimeMS() - _overlayUpdate;
             if (OverlayTexture == null)
             {
                 //Init Overlay
-                OverlayTexture = new RenderTexture(1, 1);
-                OverlayTexture.Clear(OverlayColor);
-                OverlayTexture.Display();
+                OverlayTexture = Renderer.CreateRenderTexture(1, 1);
             }
 
             if (OverlayColor.A != Globals.GameMaps[Globals.CurrentMap].AHue || OverlayColor.R != Globals.GameMaps[Globals.CurrentMap].RHue ||
@@ -587,93 +360,114 @@ namespace Intersect_Client.Classes
                     OverlayColor.B -= (byte)(255 * ecTime / 2000f);
                     if (OverlayColor.B < Globals.GameMaps[Globals.CurrentMap].BHue) { OverlayColor.B = (byte)Globals.GameMaps[Globals.CurrentMap].BHue; }
                 }
+                OverlayTexture.Begin();
                 OverlayTexture.Clear(OverlayColor);
-                OverlayTexture.Display();
+                OverlayTexture.End();
             }
 
-            RenderTexture(OverlayTexture.Texture, new Rectangle(0, 0, 1, 1), new Rectangle(0, 0, (int)RenderWindow.Size.X, (int)RenderWindow.Size.Y), RenderWindow);
-            _overlayUpdate = Environment.TickCount;
+            DrawGameTexture(OverlayTexture, new FloatRect(0, 0, 1, 1), CurrentView, null);
+            _overlayUpdate = Globals.System.GetTimeMS();
         }
-        public static void DrawFullScreenTexture(Texture tex)
+        public static void DrawFullScreenTexture(GameTexture tex)
         {
-            int bgx = (int)(RenderWindow.Size.X / 2 - tex.Size.X / 2);
-            int bgy = (int)(RenderWindow.Size.Y / 2 - tex.Size.Y / 2);
-            int bgw = (int)tex.Size.X;
-            int bgh = (int)tex.Size.Y;
+            int bgx = (int)(Renderer.GetScreenWidth() / 2 - tex.GetWidth() / 2);
+            int bgy = (int)(Renderer.GetScreenHeight()/ 2 - tex.GetHeight() / 2);
+            int bgw = (int)tex.GetWidth();
+            int bgh = (int)tex.GetHeight();
             int diff = 0;
-            if (bgw < RenderWindow.Size.X)
+            if (bgw < Renderer.GetScreenWidth())
             {
-                diff = (int)(RenderWindow.Size.X - bgw);
+                diff = (int)(Renderer.GetScreenWidth() - bgw);
                 bgx -= diff / 2;
                 bgw += diff;
             }
-            if (bgh < RenderWindow.Size.Y)
+            if (bgh < Renderer.GetScreenHeight())
             {
-                diff = (int)(RenderWindow.Size.Y - bgh);
+                diff = (int)(Renderer.GetScreenHeight() - bgh);
                 bgy -= diff / 2;
                 bgh += diff;
             }
-            RenderTexture(tex, new Rectangle(0, 0, (int)tex.Size.X, (int)tex.Size.Y),
-                new Rectangle(bgx, bgy, bgw, bgh), RenderWindow);
+            DrawGameTexture(tex, new FloatRect(0, 0, tex.GetWidth(), tex.GetHeight()),
+                new FloatRect(bgx, bgy, bgw, bgh),Color.White);
         }
-        public static void DrawFullScreenTextureStretched(Texture tex)
+        public static void DrawFullScreenTextureStretched(GameTexture tex)
         {
-            RenderTexture(tex, new Rectangle(0, 0, (int)tex.Size.X, (int)tex.Size.Y),
-                new Rectangle(0, 0, ScreenWidth, ScreenHeight), RenderWindow);
+            DrawGameTexture(tex, new FloatRect(0, 0, (int)tex.GetWidth(), (int)tex.GetHeight()),
+                new FloatRect(0, 0, Renderer.GetScreenWidth(), Renderer.GetScreenHeight()), Color.White);
         }
 
         private static void UpdateView()
         {
-            View newView;
-            Player en = (Player) Globals.Entities[Globals.MyIndex];
-            float x = Globals.GameMaps[Globals.CurrentMap].GetX() - Globals.MapWidth * Globals.TileWidth;
-            float y = Globals.GameMaps[Globals.CurrentMap].GetY() - Globals.MapHeight * Globals.TileHeight;
-            float x1 = Globals.GameMaps[Globals.CurrentMap].GetX() + (Globals.MapWidth * Globals.TileWidth) * 2;
-            float y1 = Globals.GameMaps[Globals.CurrentMap].GetY() + (Globals.MapHeight * Globals.TileHeight) * 2;
-            if (Globals.GameMaps[Globals.CurrentMap].HoldUp == 1) { y += Globals.MapHeight * Globals.TileHeight; }
-            if (Globals.GameMaps[Globals.CurrentMap].HoldLeft == 1) { x += Globals.MapWidth * Globals.TileWidth; }
-            if (Globals.GameMaps[Globals.CurrentMap].HoldRight == 1) { x1 -= Globals.MapWidth * Globals.TileWidth; }
-            if (Globals.GameMaps[Globals.CurrentMap].HoldDown == 1) { y1 -= Globals.MapHeight * Globals.TileHeight; }
-            float w = x1 - x;
-            float h = y1 - y;
-            var RestrictView = new FloatRect(x, y, w, h);
-            CurrentView = new FloatRect((int)Math.Ceiling(en.GetCenterPos().X - ScreenWidth / 2f), (int)Math.Ceiling(en.GetCenterPos().Y - ScreenHeight / 2f), (int)ScreenWidth, (int)ScreenHeight);
-            if (RestrictView.Width >= CurrentView.Width)
+            if (Globals.GameState == Enums.GameStates.InGame && Globals.GameMaps.ContainsKey(Globals.CurrentMap))
             {
-                if (CurrentView.Left < RestrictView.Left)
+                Player en = (Player) Globals.Entities[Globals.MyIndex];
+                float x = Globals.GameMaps[Globals.CurrentMap].GetX() - Globals.Database.MapWidth*Globals.Database.TileWidth;
+                float y = Globals.GameMaps[Globals.CurrentMap].GetY() - Globals.Database.MapHeight*Globals.Database.TileHeight;
+                float x1 = Globals.GameMaps[Globals.CurrentMap].GetX() + (Globals.Database.MapWidth*Globals.Database.TileWidth)*2;
+                float y1 = Globals.GameMaps[Globals.CurrentMap].GetY() + (Globals.Database.MapHeight*Globals.Database.TileHeight)*2;
+                if (Globals.GameMaps[Globals.CurrentMap].HoldUp == 1)
                 {
-                    CurrentView.Left = RestrictView.Left;
+                    y += Globals.Database.MapHeight*Globals.Database.TileHeight;
                 }
-                if (CurrentView.Left + CurrentView.Width > RestrictView.Left + RestrictView.Width)
+                if (Globals.GameMaps[Globals.CurrentMap].HoldLeft == 1)
                 {
-                    CurrentView.Left -= (CurrentView.Left + CurrentView.Width) - (RestrictView.Left + RestrictView.Width);
+                    x += Globals.Database.MapWidth*Globals.Database.TileWidth;
+                }
+                if (Globals.GameMaps[Globals.CurrentMap].HoldRight == 1)
+                {
+                    x1 -= Globals.Database.MapWidth*Globals.Database.TileWidth;
+                }
+                if (Globals.GameMaps[Globals.CurrentMap].HoldDown == 1)
+                {
+                    y1 -= Globals.Database.MapHeight*Globals.Database.TileHeight;
+                }
+                float w = x1 - x;
+                float h = y1 - y;
+                var RestrictView = new FloatRect(x, y, w, h);
+                CurrentView = new FloatRect((int) Math.Ceiling(en.GetCenterPos().X - Renderer.GetScreenWidth()/2f),
+                    (int) Math.Ceiling(en.GetCenterPos().Y - Renderer.GetScreenHeight()/2f), Renderer.GetScreenWidth(),
+                    Renderer.GetScreenHeight());
+                if (RestrictView.Width >= CurrentView.Width)
+                {
+                    if (CurrentView.Left < RestrictView.Left)
+                    {
+                        CurrentView.X = RestrictView.Left;
+                    }
+                    if (CurrentView.Left + CurrentView.Width > RestrictView.Left + RestrictView.Width)
+                    {
+                        CurrentView.X -= (CurrentView.Left + CurrentView.Width) -
+                                         (RestrictView.Left + RestrictView.Width);
+                    }
+                }
+                if (RestrictView.Height >= CurrentView.Height)
+                {
+                    if (CurrentView.Top < RestrictView.Top)
+                    {
+                        CurrentView.Y = RestrictView.Top;
+                    }
+                    if (CurrentView.Top + CurrentView.Height > RestrictView.Top + RestrictView.Height)
+                    {
+                        CurrentView.Y -= (CurrentView.Top + CurrentView.Height) -
+                                         (RestrictView.Top + RestrictView.Height);
+                    }
                 }
             }
-            if (RestrictView.Height >= CurrentView.Height)
+            else
             {
-                if (CurrentView.Top < RestrictView.Top)
-                {
-                    CurrentView.Top = RestrictView.Top;
-                }
-                if (CurrentView.Top + CurrentView.Height > RestrictView.Top + RestrictView.Height)
-                {
-                    CurrentView.Top -= (CurrentView.Top + CurrentView.Height) - (RestrictView.Top + RestrictView.Height);
-                }
+                CurrentView = new FloatRect(0, 0, Renderer.GetScreenWidth(), Renderer.GetScreenHeight());
             }
-            newView = new View(CurrentView);
-            newView.Zoom(1f);
-            RenderWindow.SetView(newView);
+            Renderer.SetView(CurrentView);
         }
 
         private static void CreateMapTextures(int count)
         {
             for (int i = 0; i < count; i++)
             {
-                ReleaseMapTexture(new RenderTexture((uint) Globals.TileWidth*(uint) Globals.MapWidth,
-                    (uint) Globals.TileHeight*(uint) Globals.MapHeight));
+                ReleaseMapTexture(Renderer.CreateRenderTexture(Globals.Database.TileWidth*Globals.Database.MapWidth,
+                    Globals.Database.TileHeight*Globals.Database.MapHeight));
             }
         }
-        public static bool GetMapTexture(ref RenderTexture replaceme)
+        public static bool GetMapTexture(ref GameRenderTexture replaceme)
         {
             if (FreeMapTextures.Count > 0)
             {
@@ -686,7 +480,7 @@ namespace Intersect_Client.Classes
                 return false;
             }
         }
-        public static void ReleaseMapTexture(RenderTexture releaseTex)
+        public static void ReleaseMapTexture(GameRenderTexture releaseTex)
         {
             if (releaseTex.SetActive(false))
             {
@@ -694,138 +488,7 @@ namespace Intersect_Client.Classes
             }
             else
             {
-                Debug.Print("Error!");
-            }
-        }
-
-        //Graphic Loading
-        public static void LoadTilesets(string[] tilesetnames)
-        {
-            foreach (var t in tilesetnames)
-            {
-                if (t == "")
-                {
-                    Tilesets.Add(null);
-                }
-                else
-                {
-                    if (!File.Exists("Resources/Tilesets/" + t))
-                    {
-                        Tilesets.Add(null);
-                    }
-                    else
-                    {
-                        Tilesets.Add(new Texture("Resources/Tilesets/" + t));
-                    }
-                }
-            }
-        }
-        private static void LoadItems()
-        {
-            if (!Directory.Exists("Resources/Items")) { Directory.CreateDirectory("Resources/Items"); }
-            var items = Directory.GetFiles("Resources/Items", "*.png");
-            ItemFileNames = new List<string>();
-            ItemTextures = new Texture[items.Length];
-            for (int i = 0; i < items.Length; i++)
-            {
-                ItemFileNames.Add(items[i].Replace("Resources/Items\\", ""));
-                ItemTextures[i] = new Texture(new Image("Resources/Items/" + ItemFileNames[i]));
-            }
-        }
-        private static void LoadEntities()
-        {
-            if (!Directory.Exists("Resources/Entities")) { Directory.CreateDirectory("Resources/Entities"); }
-            var chars = Directory.GetFiles("Resources/Entities", "*.png");
-            EntityFileNames = new List<string>();
-            EntityTextures = new Texture[chars.Length];
-            for (int i = 0; i < chars.Length; i++)
-            {
-                EntityFileNames.Add(chars[i].Replace("Resources/Entities\\", ""));
-                EntityTextures[i] = new Texture(new Image("Resources/Entities/" + EntityFileNames[i]));
-            }
-        }
-        private static void LoadSpells()
-        {
-            if (!Directory.Exists("Resources/Spells")) { Directory.CreateDirectory("Resources/Spells"); }
-            var spells = Directory.GetFiles("Resources/Spells", "*.png");
-            SpellFileNames = new List<string>();
-            SpellTextures = new Texture[spells.Length];
-            for (int i = 0; i < spells.Length; i++)
-            {
-                SpellFileNames.Add(spells[i].Replace("Resources/Spells\\", ""));
-                SpellTextures[i] = new Texture(new Image("Resources/Spells/" + SpellFileNames[i]));
-            }
-        }
-        private static void LoadAnimations()
-        {
-            if (!Directory.Exists("Resources/Animations")) { Directory.CreateDirectory("Resources/Animations"); }
-            var animations = Directory.GetFiles("Resources/Animations", "*.png");
-            AnimationFileNames = new List<string>();
-            AnimationTextures = new Texture[animations.Length];
-            for (int i = 0; i < animations.Length; i++)
-            {
-                AnimationFileNames.Add(animations[i].Replace("Resources/Animations\\", ""));
-                AnimationTextures[i] = new Texture(new Image("Resources/Animations/" + AnimationFileNames[i]));
-            }
-        }
-        private static void LoadFaces()
-        {
-            if (!Directory.Exists("Resources/Faces")) { Directory.CreateDirectory("Resources/Faces"); }
-            var faces = Directory.GetFiles("Resources/Faces", "*.png");
-            FaceFileNames = new List<string>();
-            FaceTextures = new Texture[faces.Length];
-            for (int i = 0; i < faces.Length; i++)
-            {
-                FaceFileNames.Add(faces[i].Replace("Resources/Faces\\", ""));
-                FaceTextures[i] = new Texture(new Image("Resources/Faces/" + FaceFileNames[i]));
-            }
-        }
-        private static void LoadImages()
-        {
-            if (!Directory.Exists("Resources/Images")) { Directory.CreateDirectory("Resources/Images"); }
-            var images = Directory.GetFiles("Resources/Images", "*.png");
-            ImageFileNames = new List<string>();
-            ImageTextures = new Texture[images.Length];
-            for (int i = 0; i < images.Length; i++)
-            {
-                ImageFileNames.Add(images[i].Replace("Resources/Images\\", ""));
-                ImageTextures[i] = new Texture(new Image("Resources/Images/" + ImageFileNames[i]));
-            }
-        }
-        private static void LoadFogs()
-        {
-            if (!Directory.Exists("Resources/Fogs")) { Directory.CreateDirectory("Resources/Fogs"); }
-            var fogs = Directory.GetFiles("Resources/Fogs", "*.png");
-            FogFileNames = new List<string>();
-            FogTextures = new Texture[fogs.Length];
-            for (int i = 0; i < fogs.Length; i++)
-            {
-                FogFileNames.Add(fogs[i].Replace("Resources/Fogs\\", ""));
-                FogTextures[i] = new Texture(new Image("Resources/Fogs/" + FogFileNames[i]));
-            }
-        }
-        private static void LoadResources()
-        {
-            if (!Directory.Exists("Resources/Resources")) { Directory.CreateDirectory("Resources/Resources"); }
-            var resources = Directory.GetFiles("Resources/Resources", "*.png");
-            ResourceFileNames = new List<string>();
-            ResourceTextures = new Texture[resources.Length];
-            for (int i = 0; i < resources.Length; i++)
-            {
-                ResourceFileNames.Add(resources[i].Replace("Resources/Resources\\", ""));
-                ResourceTextures[i] = new Texture(new Image("Resources/Resources/" + ResourceFileNames[i]));
-            }
-        }
-        private static void LoadPaperdolls()
-        {
-            if (!Directory.Exists("Resources/Paperdolls")) { Directory.CreateDirectory("Resources/Paperdolls"); }
-            var resources = Directory.GetFiles("Resources/Paperdolls", "*.png");
-            PaperdollFileNames = new List<string>();
-            PaperdollTextures = new Texture[resources.Length];
-            for (int i = 0; i < resources.Length; i++)
-            {
-                PaperdollFileNames.Add(resources[i].Replace("Resources/Paperdolls\\", ""));
-                PaperdollTextures[i] = new Texture(new Image("Resources/Paperdolls/" + PaperdollFileNames[i]));
+                //Debug.Print("Error!");
             }
         }
 
@@ -834,158 +497,102 @@ namespace Intersect_Client.Classes
         {
             if (DarknessTexture == null)
             {
-                DarknessTexture = new RenderTexture((uint)ScreenWidth, (uint)ScreenHeight);
+                DarknessTexture = Renderer.CreateRenderTexture(Renderer.GetScreenWidth(), Renderer.GetScreenHeight());
             }
             DarknessTexture.Clear(Color.Black);
         }
         private static void OverlayDarkness()
         {
+            if (!Globals.GameMaps.ContainsKey(Globals.CurrentMap)) return;
             if (Globals.GameMaps[Globals.CurrentMap].IsIndoors) { return; }
             if (DarknessTexture == null) { return; }
-            var rs = new RectangleShape(new Vector2f(DarknessTexture.Size.X, DarknessTexture.Size.Y));
 
             //Draw Light Around Player
             DrawLight((int)Math.Ceiling(-DarkOffsetX + Globals.Entities[Globals.MyIndex].GetCenterPos().X - PlayerLightSize / 2 ), (int)
                                 Math.Ceiling(-DarkOffsetY + Globals.Entities[Globals.MyIndex].GetCenterPos().Y - PlayerLightSize / 2 ), (int)PlayerLightSize,PlayerLightIntensity,PlayerLightExpand, PlayerLightColor);
 
-            rs.FillColor = new Color(255, 255, 255, (byte)(SunIntensity * 255));    //Draw a rectangle, the opacity indicates if it is day or night.
-            //CurrentDarknessTexture.Draw(rs);
-            DarknessTexture.Display();
-            RenderTexture(DarknessTexture.Texture, CurrentView.Left, CurrentView.Top, RenderWindow, BlendMode.Multiply);
+            DrawGameTexture(WhiteTex, new FloatRect(0, 0, 1, 1),
+                new FloatRect(0, 0, DarknessTexture.GetWidth(), DarknessTexture.GetHeight()),
+                new Color((byte)(SunIntensity),255, 255, 255),DarknessTexture);
+            DarknessTexture.End();
+            DrawGameTexture(DarknessTexture, CurrentView.Left, CurrentView.Top, null,GameBlendModes.Multiply);
         }
-        public static void DrawLight(int x, int y, int size, byte intensity, float Expand, Color color)
+        public static void DrawLight(int x, int y, int size, byte intensity, float expand, Color color)
         {
-            CircleShape circle = new CircleShape(size);
-            circle.Origin = new Vector2f(circle.Radius, circle.Radius);
-            x -= (int)CurrentView.Left;
-            y -= (int)CurrentView.Top;
-            circle.Position = new Vector2f(x + size/2,
-                y + size/2);
-            circle.FillColor = Color.Transparent;
-            RadialGradientShader.SetParameter("color", new Color(color.R,color.G,color.B,intensity));
-            RadialGradientShader.SetParameter("center", circle.Position);
-            RadialGradientShader.SetParameter("radius", circle.Radius);
-            RadialGradientShader.SetParameter("expand", Expand/100f);
-            RadialGradientShader.SetParameter("windowHeight", DarknessTexture.Size.Y); // this must be set, but only needs to be set once (or whenever the size of the window changes)
-            DarknessTexture.Draw(circle, new RenderStates(BlendMode.Add, Transform.Identity, null, RadialGradientShader));
+            x -= (int)CurrentView.Left + size / 2;
+            y -= (int)CurrentView.Top + size / 2;
+
+            RadialGradientShader.SetColor("_Color",new Color(intensity,color.R,color.G,color.B));
+            RadialGradientShader.SetVector2("_Center",new Pointf(x + size, y + size));
+            RadialGradientShader.SetFloat("_Radius",size);
+            RadialGradientShader.SetFloat("_Expand",expand/100f);
+            RadialGradientShader.SetFloat("_WindowHeight",DarknessTexture.GetHeight());
+            
+            DrawGameTexture(WhiteTex, new FloatRect(0, 0, 1, 1), new FloatRect(x, y, size*2, size*2), Color.Transparent,
+                DarknessTexture, GameBlendModes.Add, RadialGradientShader);
         }
 
         //Helper Functions
-        private static Texture TexFromBitmap(Bitmap bmp)
-        {
-            var ms = new MemoryStream();
-            bmp.Save(ms, ImageFormat.Png);
-            return new Texture(ms);
-        }
-        public static List<VideoMode> GetValidVideoModes()
-        {
-            var myList = new List<VideoMode>();
-            myList.Add(new VideoMode(800, 600));
-            myList.Add(new VideoMode(1024, 768));
-            myList.Add(new VideoMode(1280, 720));
-            myList.Add(new VideoMode(1280, 768));
-            myList.Add(new VideoMode(1280, 1024));
-            myList.Add(new VideoMode(1360, 768));
-            myList.Add(new VideoMode(1366, 768));
-            myList.Add(new VideoMode(1400, 1050));
-            myList.Add(new VideoMode(1440, 900));
-            myList.Add(new VideoMode(1600, 900));
-            myList.Add(new VideoMode(1680, 1050));
-            myList.Add(new VideoMode(1920, 1080));
-            return myList;
-        }
+
 
         //Rendering Functions
-        public static void RenderTexture(Texture tex, float x, float y, RenderTarget renderTarget)
+
+
+        /// <summary>
+        /// Renders a specified texture onto a RenderTexture or the GameScreen (if renderTarget is passed as null) at the coordinates given using a specified blending mode.
+        /// </summary>
+        /// <param name="tex">The texture to draw</param>
+        /// <param name="x">X coordinate on the render target to draw to</param>
+        /// <param name="y">Y coordinate on the render target to draw to</param>
+        /// <param name="renderTarget">Where to draw to. If null it this will draw to the game screen.</param>
+        /// <param name="blendMode">Which blend mode to use when rendering</param>
+        public static void DrawGameTexture(GameTexture tex, float x, float y, GameRenderTexture renderTarget = null, GameBlendModes blendMode = GameBlendModes.Alpha, GameShader shader = null)
         {
-            var destRectangle = new RectangleF(x, y, (int)tex.Size.X, (int)tex.Size.Y);
-            var srcRectangle = new RectangleF(0, 0, (int)tex.Size.X, (int)tex.Size.Y);
-            RenderTexture(tex, srcRectangle, destRectangle, renderTarget);
+            var destRectangle = new FloatRect(x, y, (int)tex.GetWidth(), (int)tex.GetHeight());
+            var srcRectangle = new FloatRect(0, 0, (int)tex.GetWidth(), (int)tex.GetHeight());
+            DrawGameTexture(tex, srcRectangle, destRectangle, Color.White, renderTarget, blendMode);
         }
-        public static void RenderTexture(Texture tex, float x, float y, RenderTarget renderTarget, BlendMode blendMode)
+
+        /// <summary>
+        /// Renders a specified texture onto a RenderTexture or the GameScreen (if renderTarget is passed as null) at the coordinates given using a specified blending mode.
+        /// </summary>
+        /// <param name="tex">The texture to draw</param>
+        /// <param name="x">X coordinate on the render target to draw to</param>
+        /// <param name="y">Y coordinate on the render target to draw to</param>
+        /// <param name="renderColor">Color mask to draw with. Default is Color.White</param>
+        /// <param name="renderTarget">Where to draw to. If null it this will draw to the game screen.</param>
+        /// <param name="blendMode">Which blend mode to use when rendering</param>
+        public static void DrawGameTexture(GameTexture tex, float x, float y,   Color renderColor, GameRenderTexture renderTarget = null, GameBlendModes blendMode = GameBlendModes.Alpha, GameShader shader = null)
         {
-            var destRectangle = new RectangleF(x, y, (int)tex.Size.X, (int)tex.Size.Y);
-            var srcRectangle = new RectangleF(0, 0, (int)tex.Size.X, (int)tex.Size.Y);
-            RenderTexture(tex, srcRectangle, destRectangle, renderTarget, blendMode);
+            var destRectangle = new FloatRect(x, y, (int)tex.GetWidth(), (int)tex.GetHeight());
+            var srcRectangle = new FloatRect(0, 0, (int)tex.GetWidth(), (int)tex.GetHeight());
+            DrawGameTexture(tex, srcRectangle, destRectangle, renderColor, renderTarget, blendMode, shader);
         }
-        public static void RenderTexture(Texture tex, float dx, float dy, float sx, float sy, float w, float h, RenderTarget renderTarget)
+
+        /// <summary>
+        /// Renders a specified texture onto a RenderTexture or the GameScreen (if renderTarget is passed as null) at the coordinates given using a specified blending mode.
+        /// </summary>
+        /// <param name="tex">The texture to draw</param>
+        /// <param name="dx">X coordinate on the renderTarget to draw to.</param>
+        /// <param name="dy">Y coordinate on the renderTarget to draw to.</param>
+        /// <param name="sx">X coordinate on the source texture to grab from.</param>
+        /// <param name="sy">Y coordinate on the source texture to grab from.</param>
+        /// <param name="w">Width of the texture part we are rendering.</param>
+        /// <param name="h">Height of the texture part we are rendering.</param>
+        /// <param name="renderTarget">>Where to draw to. If null it this will draw to the game screen.</param>
+        /// <param name="blendMode">Which blend mode to use when rendering</param>
+        public static void DrawGameTexture(GameTexture tex, float dx, float dy, float sx, float sy, float w, float h, GameRenderTexture renderTarget = null, GameBlendModes blendMode = GameBlendModes.Alpha, GameShader shader = null)
         {
-            var destRectangle = new RectangleF(dx, dy, w, h);
-            var srcRectangle = new RectangleF(sx, sy, w, h);
-            RenderTexture(tex, srcRectangle, destRectangle, renderTarget);
+            var destRectangle = new FloatRect(dx, dy, w, h);
+            var srcRectangle = new FloatRect(sx, sy, w, h);
+            DrawGameTexture(tex, srcRectangle, destRectangle, Color.White, renderTarget, blendMode, shader);
         }
-        public static void RenderTexture(Texture tex, RectangleF srcRectangle, RectangleF targetRect, RenderTarget renderTarget)
-        {
-            RenderTexture(tex, srcRectangle, targetRect, renderTarget, BlendMode.Alpha);
-        }
-        public static void RenderTexture(Texture tex, RectangleF srcRectangle, RectangleF targetRect, RenderTarget renderTarget, BlendMode blendMode)
+
+
+        public static void DrawGameTexture(GameTexture tex, FloatRect srcRectangle, FloatRect targetRect,Color renderColor, GameRenderTexture renderTarget = null, GameBlendModes blendMode = GameBlendModes.Alpha, GameShader shader = null)
         {
             if (tex == null) return;
-            var u1 = (float)srcRectangle.X / tex.Size.X;
-            var v1 = (float)srcRectangle.Y / tex.Size.Y;
-            var u2 = (float)srcRectangle.Right / tex.Size.X;
-            var v2 = (float)srcRectangle.Bottom / tex.Size.Y;
-
-
-            u1 *= tex.Size.X;
-            v1 *= tex.Size.Y;
-            u2 *= tex.Size.X;
-            v2 *= tex.Size.Y;
-
-            _renderState.BlendMode = blendMode;
-
-            if (renderTarget == RenderWindow)
-            {
-                if (
-                !targetRect.IntersectsWith(new RectangleF(CurrentView.Left, CurrentView.Top, CurrentView.Width,
-                    CurrentView.Height)))
-                {
-                    return;
-                }
-                if (_renderState.Texture == null || _renderState.Texture != tex || _vertexCount >= 1024 - 4)
-                {
-                    RenderCurrentBatch();
-                    _renderState.Texture = tex;
-                }
-
-
-                var right = targetRect.X + targetRect.Width;
-                var bottom = targetRect.Y + targetRect.Height;
-
-                _vertexCache[_vertexCount++] = new Vertex(new Vector2f(targetRect.X, targetRect.Y), new Vector2f(u1, v1));
-                _vertexCache[_vertexCount++] = new Vertex(new Vector2f(right, targetRect.Y), new Vector2f(u2, v1));
-                _vertexCache[_vertexCount++] = new Vertex(new Vector2f(right, bottom), new Vector2f(u2, v2));
-                _vertexCache[_vertexCount++] = new Vertex(new Vector2f(targetRect.X, bottom), new Vector2f(u1, v2));
-            }
-            else
-            {
-                if (_renderState.Texture == null || _renderState.Texture != tex )
-                {
-                    // enable the new texture
-
-                    _renderState.Texture = tex;
-                }
-                var right = targetRect.X + targetRect.Width;
-                var bottom = targetRect.Y + targetRect.Height;
-                var vertexCache = new Vertex[4];
-                vertexCache[0] = new Vertex(new Vector2f(targetRect.X, targetRect.Y), new Vector2f(u1, v1));
-                vertexCache[1] = new Vertex(new Vector2f(right, targetRect.Y), new Vector2f(u2, v1));
-                vertexCache[2] = new Vertex(new Vector2f(right, bottom), new Vector2f(u2, v2));
-                vertexCache[3] = new Vertex(new Vector2f(targetRect.X, bottom), new Vector2f(u1, v2));
-                DrawCalls++;
-                renderTarget.Draw(vertexCache, 0, 4, PrimitiveType.Quads, _renderState);
-                renderTarget.ResetGLStates();
-            }
-        }
-        private static void RenderCurrentBatch()
-        {
-            if (_vertexCount > 0)
-            {
-                RenderWindow.Draw(_vertexCache, 0, (uint)_vertexCount, PrimitiveType.Quads, _renderState);
-                DrawCalls++;
-                RenderWindow.ResetGLStates();
-                _vertexCount = 0;
-            }
+            Renderer.DrawTexture(tex, srcRectangle, targetRect, renderColor, renderTarget, blendMode, shader);
         }
     }
 }

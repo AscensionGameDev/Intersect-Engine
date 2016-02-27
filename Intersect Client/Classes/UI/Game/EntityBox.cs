@@ -24,14 +24,13 @@
     OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
     SOFTWARE.
 */
-using Gwen;
-using Gwen.Control;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using SFML.Graphics;
-using Color = System.Drawing.Color;
+
+using IntersectClientExtras.Graphics;
+using IntersectClientExtras.Gwen;
+using IntersectClientExtras.Gwen.Control;
+using Intersect_Client.Classes.Entities;
+using Intersect_Client.Classes.General;
+using Color = IntersectClientExtras.GenericClasses.Color;
 
 namespace Intersect_Client.Classes.UI.Game
 {
@@ -59,7 +58,7 @@ namespace Intersect_Client.Classes.UI.Game
 
         private Entity _myEntity;
         private string _currentSprite = "";
-        private RenderTexture _faceTexture;
+        private GameRenderTexture _faceTexture;
 
         //Init
         public EntityBox(Canvas _gameCanvas, Entity myEntity, int x, int y)
@@ -140,13 +139,13 @@ namespace Intersect_Client.Classes.UI.Game
                 _expLbl.SetPosition(120, 49);
             }
 
-            lastUpdateTime = Environment.TickCount;
+            lastUpdateTime = Globals.System.GetTimeMS();
         }
 
         //Update
         public void Update()
         {
-            float elapsedTime = ((float)(Environment.TickCount - lastUpdateTime)) / 1000.0f;
+            float elapsedTime = ((float)(Globals.System.GetTimeMS() - lastUpdateTime)) / 1000.0f;
 
             //Update the window title
             _entityBox.Title = _myEntity.MyName + ((_myEntity.Level == 0 || _myEntity.GetType() == typeof(Event)) ? "" : " Lv: " + _myEntity.Level);
@@ -167,7 +166,7 @@ namespace Intersect_Client.Classes.UI.Game
                     {
                         _faceTexture = Gui.CreateTextureFromSprite(_myEntity.MySprite, _entityFace.Width,
                             _entityFace.Height);
-                        _entityFace.Texture = Gui.SFMLToGwenTexture(_faceTexture.Texture);
+                        _entityFace.Texture = Gui.ToGwenTexture(_faceTexture);
                         _currentSprite = _myEntity.MySprite;
                     }
                 }
@@ -306,13 +305,13 @@ namespace Intersect_Client.Classes.UI.Game
             }
 
             //Eventually draw icons for buffs and debuffs?
-            lastUpdateTime = Environment.TickCount;
+            lastUpdateTime = Globals.System.GetTimeMS();
         }
 
         public void Dispose()
         {
             _entityBox.Close();
-            Gui._GameGui.GameCanvas.RemoveChild(_entityBox, false);
+            Gui.GameUI.GameCanvas.RemoveChild(_entityBox, false);
             _entityBox.Dispose();
         }
 

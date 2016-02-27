@@ -24,19 +24,20 @@
     OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
     SOFTWARE.
 */
+
 using System;
 using System.Collections.Generic;
-using System.Drawing;
-using Intersect_Client.Classes;
-using SFML.Graphics;
-using SFML.Window;
-using Color = SFML.Graphics.Color;
-using Graphics = Intersect_Client.Classes.Graphics;
-using SFML.System;
+using IntersectClientExtras.GenericClasses;
+using IntersectClientExtras.Graphics;
+using Intersect_Client.Classes.General;
+using Intersect_Client.Classes.Items;
+using Intersect_Client.Classes.Misc;
+using Intersect_Client.Classes.Spells;
+using GameGraphics = Intersect_Client.Classes.Core.GameGraphics;
 
 // ReSharper disable All
 
-namespace Intersect_Client
+namespace Intersect_Client.Classes.Entities
 {
     public class Entity
     {
@@ -125,8 +126,8 @@ namespace Intersect_Client
         public virtual bool Update()
         {
             DetermineRenderOrder();
-            if (_lastUpdate == 0) { _lastUpdate = Environment.TickCount; }
-            float ecTime = (float)(Environment.TickCount - _lastUpdate);
+            if (_lastUpdate == 0) { _lastUpdate = Globals.System.GetTimeMS(); }
+            float ecTime = (float)(Globals.System.GetTimeMS() - _lastUpdate);
             var tmpI = -1;
             for (var i = 0; i < 9; i++)
             {
@@ -137,7 +138,7 @@ namespace Intersect_Client
                 }
             }
             if (tmpI == -1) return false;
-            if (_walkTimer < Environment.TickCount)
+            if (_walkTimer < Globals.System.GetTimeMS())
             {
                 if (IsMoving)
                 {
@@ -148,7 +149,7 @@ namespace Intersect_Client
                 {
                     _walkFrame = 0;
                 }
-                _walkTimer = Environment.TickCount + 200;
+                _walkTimer = Globals.System.GetTimeMS() + 200;
             }
             if (IsMoving)
             {
@@ -156,25 +157,25 @@ namespace Intersect_Client
                 switch (Dir)
                 {
                     case 0:
-                        OffsetY -= (float)ecTime * (40f / 10f * (float)Globals.TileHeight) / 1000f;
+                        OffsetY -= (float)ecTime * (40f / 10f * (float)Globals.Database.TileHeight) / 1000f;
                         OffsetX = 0;
                         if (OffsetY < 0) { OffsetY = 0; }
                         break;
 
                     case 1:
-                        OffsetY += (float)ecTime * (40f / 10f * (float)Globals.TileHeight) / 1000f;
+                        OffsetY += (float)ecTime * (40f / 10f * (float)Globals.Database.TileHeight) / 1000f;
                         OffsetX = 0;
                         if (OffsetY > 0) { OffsetY = 0; }
                         break;
 
                     case 2:
-                        OffsetX -= (float)ecTime * (40f / 10f * (float)Globals.TileHeight) / 1000f;
+                        OffsetX -= (float)ecTime * (40f / 10f * (float)Globals.Database.TileHeight) / 1000f;
                         OffsetY = 0;
                         if (OffsetX < 0) { OffsetX = 0; }
                         break;
 
                     case 3:
-                        OffsetX += (float)ecTime * (40f / 10f * (float)Globals.TileHeight) / 1000f;
+                        OffsetX += (float)ecTime * (40f / 10f * (float)Globals.Database.TileHeight) / 1000f;
                         OffsetY = 0;
                         if (OffsetX > 0) { OffsetX = 0; }
                         break;
@@ -184,7 +185,7 @@ namespace Intersect_Client
                     IsMoving = false;
                 }
             }
-            _lastUpdate = Environment.TickCount;
+            _lastUpdate = Globals.System.GetTimeMS();
             return true;
         }
 
@@ -208,11 +209,11 @@ namespace Intersect_Client
                     List<Entity>[] outerList;
                     if (CurrentZ == 0)
                     {
-                        outerList = Graphics.Layer1Entities;
+                        outerList = GameGraphics.Layer1Entities;
                     }
                     else
                     {
-                        outerList = Graphics.Layer2Entities;
+                        outerList = GameGraphics.Layer2Entities;
                     }
                     if (i < 3)
                     {
@@ -221,13 +222,13 @@ namespace Intersect_Client
                     }
                     else if (i < 6)
                     {
-                       outerList[Globals.MapHeight + CurrentY].Add(this);
-                       RenderList = outerList[Globals.MapHeight + CurrentY];
+                       outerList[Globals.Database.MapHeight + CurrentY].Add(this);
+                       RenderList = outerList[Globals.Database.MapHeight + CurrentY];
                     }
                     else
                     {
-                        outerList[Globals.MapHeight * 2 + CurrentY].Add(this);
-                        RenderList = outerList[Globals.MapHeight*2 + CurrentY];
+                        outerList[Globals.Database.MapHeight * 2 + CurrentY].Add(this);
+                        RenderList = outerList[Globals.Database.MapHeight*2 + CurrentY];
                     }
                     break;
                 }
@@ -242,26 +243,26 @@ namespace Intersect_Client
             {
                 return;
             }
-            RectangleF srcRectangle = new Rectangle();
-            RectangleF destRectangle = new Rectangle();
-            Texture srcTexture;
+            FloatRect srcRectangle = new FloatRect();
+            FloatRect destRectangle = new FloatRect();
+            GameTexture srcTexture;
             var d = 0;
-            if (Graphics.EntityFileNames.IndexOf(MySprite.ToLower()) >= 0)
+            if (GameGraphics.EntityFileNames.IndexOf(MySprite.ToLower()) >= 0)
             {
-                srcTexture = Graphics.EntityTextures[Graphics.EntityFileNames.IndexOf(MySprite.ToLower())];
-                if (srcTexture.Size.Y / 4 > Globals.TileHeight)
+                srcTexture = GameGraphics.EntityTextures[GameGraphics.EntityFileNames.IndexOf(MySprite.ToLower())];
+                if (srcTexture.GetHeight() / 4 > Globals.Database.TileHeight)
                 {
-                    destRectangle.X = (Globals.GameMaps[CurrentMap].GetX() + CurrentX * Globals.TileWidth + OffsetX);
-                    destRectangle.Y = Globals.GameMaps[CurrentMap].GetY() + CurrentY * Globals.TileHeight + OffsetY - ((srcTexture.Size.Y / 4) - Globals.TileHeight);
+                    destRectangle.X = (Globals.GameMaps[CurrentMap].GetX() + CurrentX * Globals.Database.TileWidth + OffsetX);
+                    destRectangle.Y = Globals.GameMaps[CurrentMap].GetY() + CurrentY * Globals.Database.TileHeight + OffsetY - ((srcTexture.GetHeight() / 4) - Globals.Database.TileHeight);
                 }
                 else
                 {
-                    destRectangle.X = Globals.GameMaps[CurrentMap].GetX() + CurrentX * Globals.TileWidth + OffsetX;
-                    destRectangle.Y = Globals.GameMaps[CurrentMap].GetY() + CurrentY * Globals.TileHeight + OffsetY;
+                    destRectangle.X = Globals.GameMaps[CurrentMap].GetX() + CurrentX * Globals.Database.TileWidth + OffsetX;
+                    destRectangle.Y = Globals.GameMaps[CurrentMap].GetY() + CurrentY * Globals.Database.TileHeight + OffsetY;
                 }
-                if (srcTexture.Size.X / 4 > Globals.TileWidth)
+                if (srcTexture.GetWidth() / 4 > Globals.Database.TileWidth)
                 {
-                    destRectangle.X -= ((srcTexture.Size.X / 4) - Globals.TileWidth) / 2;
+                    destRectangle.X -= ((srcTexture.GetWidth() / 4) - Globals.Database.TileWidth) / 2;
                 }
                 switch (Dir)
                 {
@@ -279,12 +280,12 @@ namespace Intersect_Client
                         break;
                 }
                 destRectangle.X = (int)Math.Ceiling( destRectangle.X);
-                destRectangle.Y = destRectangle.Y;
-                srcRectangle = new Rectangle(_walkFrame * (int)srcTexture.Size.X / 4, d * (int)srcTexture.Size.Y / 4, (int)srcTexture.Size.X / 4, (int)srcTexture.Size.Y / 4);
+                destRectangle.Y = (int)Math.Ceiling(destRectangle.Y);
+                srcRectangle = new FloatRect(_walkFrame * (int)srcTexture.GetWidth() / 4, d * (int)srcTexture.GetHeight() / 4, (int)srcTexture.GetWidth() / 4, (int)srcTexture.GetHeight() / 4);
                 destRectangle.Width = srcRectangle.Width;
                 destRectangle.Height = srcRectangle.Height;
-                Graphics.RenderTexture(srcTexture, srcRectangle, destRectangle, Graphics.RenderWindow);
-                
+                GameGraphics.DrawGameTexture(srcTexture, srcRectangle, destRectangle,Color.White);
+
                 //Draw the equipment/paperdolls
                 for (int z = Enums.EquipmentSlots.Count - 1; z >= 0; z--)
                 {
@@ -301,26 +302,26 @@ namespace Intersect_Client
         {
             int i = GetLocalPos(CurrentMap);
             if (i == -1 || !Globals.GameMaps.ContainsKey(CurrentMap)) return;
-            RectangleF srcRectangle = new Rectangle();
-            RectangleF destRectangle = new Rectangle();
-            Texture srcTexture;
+            FloatRect srcRectangle = new FloatRect();
+            FloatRect destRectangle = new FloatRect();
+            GameTexture srcTexture;
             var d = 0;
-            if (Graphics.PaperdollFileNames.IndexOf(filename.ToLower()) >= 0)
+            if (GameGraphics.PaperdollFileNames.IndexOf(filename.ToLower()) >= 0)
             {
-                srcTexture = Graphics.PaperdollTextures[Graphics.PaperdollFileNames.IndexOf(filename)];
-                if (srcTexture.Size.Y / 4 > Globals.TileHeight)
+                srcTexture = GameGraphics.PaperdollTextures[GameGraphics.PaperdollFileNames.IndexOf(filename)];
+                if (srcTexture.GetHeight() / 4 > Globals.Database.TileHeight)
                 {
-                    destRectangle.X = (Globals.GameMaps[CurrentMap].GetX() + CurrentX * Globals.TileWidth + OffsetX);
-                    destRectangle.Y = Globals.GameMaps[CurrentMap].GetY() + CurrentY * Globals.TileHeight + OffsetY - ((srcTexture.Size.Y / 4) - Globals.TileHeight);
+                    destRectangle.X = (Globals.GameMaps[CurrentMap].GetX() + CurrentX * Globals.Database.TileWidth + OffsetX);
+                    destRectangle.Y = Globals.GameMaps[CurrentMap].GetY() + CurrentY * Globals.Database.TileHeight + OffsetY - ((srcTexture.GetHeight() / 4) - Globals.Database.TileHeight);
                 }
                 else
                 {
-                    destRectangle.X = Globals.GameMaps[CurrentMap].GetX() + CurrentX * Globals.TileWidth + OffsetX;
-                    destRectangle.Y = Globals.GameMaps[CurrentMap].GetY() + CurrentY * Globals.TileHeight + OffsetY;
+                    destRectangle.X = Globals.GameMaps[CurrentMap].GetX() + CurrentX * Globals.Database.TileWidth + OffsetX;
+                    destRectangle.Y = Globals.GameMaps[CurrentMap].GetY() + CurrentY * Globals.Database.TileHeight + OffsetY;
                 }
-                if (srcTexture.Size.X / 4 > Globals.TileWidth)
+                if (srcTexture.GetWidth() / 4 > Globals.Database.TileWidth)
                 {
-                    destRectangle.X -= ((srcTexture.Size.X / 4) - Globals.TileWidth) / 2;
+                    destRectangle.X -= ((srcTexture.GetWidth() / 4) - Globals.Database.TileWidth) / 2;
                 }
                 switch (Dir)
                 {
@@ -339,11 +340,10 @@ namespace Intersect_Client
                 }
                 destRectangle.X = (int)Math.Ceiling(destRectangle.X);
                 destRectangle.Y = destRectangle.Y;
-                srcRectangle = new Rectangle(_walkFrame * (int)srcTexture.Size.X / 4, d * (int)srcTexture.Size.Y / 4, (int)srcTexture.Size.X / 4, (int)srcTexture.Size.Y / 4);
+                srcRectangle = new FloatRect(_walkFrame * (int)srcTexture.GetWidth() / 4, d * (int)srcTexture.GetHeight() / 4, (int)srcTexture.GetWidth() / 4, (int)srcTexture.GetHeight() / 4);
                 destRectangle.Width = srcRectangle.Width;
                 destRectangle.Height = srcRectangle.Height;
-                Graphics.RenderTexture(srcTexture, srcRectangle, destRectangle, Graphics.RenderWindow);
-
+                GameGraphics.DrawGameTexture(srcTexture, srcRectangle, destRectangle, Color.White);
             }
         }
 
@@ -360,24 +360,22 @@ namespace Intersect_Client
         }
 
         //returns the point on the screen that is the center of the player sprite
-        public Vector2f GetCenterPos()
+        public Pointf GetCenterPos()
         {
             if (!Globals.GameMaps.ContainsKey(CurrentMap))
             {
-                return new Vector2f(0,0);}
-            Sprite tmpSprite;
-            Vector2f pos;
-            if (Graphics.EntityFileNames.IndexOf(MySprite.ToLower()) >= 0)
+                return new Pointf(0,0);}
+            Pointf pos;
+            if (GameGraphics.EntityFileNames.IndexOf(MySprite.ToLower()) >= 0)
             {
-                tmpSprite = new Sprite(Graphics.EntityTextures[Graphics.EntityFileNames.IndexOf(MySprite.ToLower())]);
-                pos = new Vector2f(Globals.GameMaps[CurrentMap].GetX() + CurrentX * Globals.TileWidth + OffsetX + tmpSprite.Texture.Size.X / 8f,
-                    Globals.GameMaps[CurrentMap].GetY() + CurrentY * Globals.TileHeight + OffsetY - ((tmpSprite.Texture.Size.Y / 4) - Globals.TileHeight) + tmpSprite.Texture.Size.Y / 8f);
+                pos = new Pointf(Globals.GameMaps[CurrentMap].GetX() + CurrentX * Globals.Database.TileWidth + OffsetX + GameGraphics.EntityTextures[GameGraphics.EntityFileNames.IndexOf(MySprite.ToLower())].GetWidth() / 8f,
+                    Globals.GameMaps[CurrentMap].GetY() + CurrentY * Globals.Database.TileHeight + OffsetY - ((GameGraphics.EntityTextures[GameGraphics.EntityFileNames.IndexOf(MySprite.ToLower())].GetHeight() / 4) - Globals.Database.TileHeight) + GameGraphics.EntityTextures[GameGraphics.EntityFileNames.IndexOf(MySprite.ToLower())].GetHeight() / 8f);
 
             }
             else
             {
-                pos = new Vector2f(Globals.GameMaps[CurrentMap].GetX() + CurrentX * Globals.TileWidth + OffsetX + 16,
-                    Globals.GameMaps[CurrentMap].GetY() + CurrentY * Globals.TileHeight + OffsetY - Globals.TileHeight + 32);
+                pos = new Pointf(Globals.GameMaps[CurrentMap].GetX() + CurrentX * Globals.Database.TileWidth + OffsetX + 16,
+                    Globals.GameMaps[CurrentMap].GetY() + CurrentY * Globals.Database.TileHeight + OffsetY - Globals.Database.TileHeight + 32);
             }
             return pos;
         }
@@ -389,26 +387,25 @@ namespace Intersect_Client
             {
                 return;
             }
-            var nameText = new Text(MyName, Graphics.GameFont);
             var y = (int)Math.Ceiling(GetCenterPos().Y);
             var x = (int)Math.Ceiling(GetCenterPos().X);
-            if (Graphics.EntityFileNames.IndexOf(MySprite.ToLower()) >= 0)
+            if (GameGraphics.EntityFileNames.IndexOf(MySprite.ToLower()) >= 0)
             {
-                //if (Graphics.EntityTextures[Graphics.EntityFileNames.IndexOf(MySprite.ToLower())].Size.Y / 4 > Globals.TileHeight)
+                //if (Graphics.EntityTextures[Graphics.EntityFileNames.IndexOf(MySprite.ToLower())].GetHeight() / 4 > Globals.Database.TileHeight)
                 //{
-                    y = y -(int) ((Graphics.EntityTextures[Graphics.EntityFileNames.IndexOf(MySprite.ToLower())].Size.Y/8));
+                    y = y -(int) ((GameGraphics.EntityTextures[GameGraphics.EntityFileNames.IndexOf(MySprite.ToLower())].GetHeight()/8));
                     y -= 16;
                // }
-                if (Graphics.EntityTextures[Graphics.EntityFileNames.IndexOf(MySprite.ToLower())].Size.X / 4 > Globals.TileWidth)
+                if (GameGraphics.EntityTextures[GameGraphics.EntityFileNames.IndexOf(MySprite.ToLower())].GetWidth() / 4 > Globals.Database.TileWidth)
                 {
-                    x = x - (int)((Graphics.EntityTextures[Graphics.EntityFileNames.IndexOf(MySprite.ToLower())].Size.X / 4) - Globals.TileWidth)/2;
+                    x = x - (int)((GameGraphics.EntityTextures[GameGraphics.EntityFileNames.IndexOf(MySprite.ToLower())].GetWidth() / 4) - Globals.Database.TileWidth)/2;
                 }
             }
-            if (this.GetType() != typeof(Intersect_Client.Classes.Event)) { y -= 10; } //Need room for HP bar if not an event.
-            nameText.CharacterSize = 10;
-            nameText.Position = new Vector2f((int)(x - (int)Math.Ceiling(nameText.GetLocalBounds().Width) / 2), (int)(y));
-            //nameText.Position = new Vector2f((int)(x), (int)(y));
-            Graphics.RenderWindow.Draw(nameText);
+            if (this.GetType() != typeof(Event)) { y -= 10; } //Need room for HP bar if not an event.
+
+            float textWidth = GameGraphics.Renderer.MeasureText(MyName, GameGraphics.GameFont, 10).X;
+            GameGraphics.Renderer.DrawString(MyName, GameGraphics.GameFont,
+                (int) (x - (int) Math.Ceiling(textWidth/2)), (int) (y), 10, Color.White);
         }
         public void DrawHpBar()
         {
@@ -419,59 +416,51 @@ namespace Intersect_Client
             {
                 return;
             }
-            var width = Globals.TileWidth;
-            var bgRect = new RectangleShape(new Vector2f(width, 6));
-            var fgRect = new RectangleShape(new Vector2f(width - 2, 4));
+            var width = Globals.Database.TileWidth;
             var y = (int)Math.Ceiling(GetCenterPos().Y);
             var x = (int)Math.Ceiling(GetCenterPos().X);
-            if (Graphics.EntityFileNames.IndexOf(MySprite.ToLower()) >= 0)
+            if (GameGraphics.EntityFileNames.IndexOf(MySprite.ToLower()) >= 0)
             {
-                    y = y - (int)((Graphics.EntityTextures[Graphics.EntityFileNames.IndexOf(MySprite.ToLower())].Size.Y / 8));
+                    y = y - (int)((GameGraphics.EntityTextures[GameGraphics.EntityFileNames.IndexOf(MySprite.ToLower())].GetHeight() / 8));
                     y -= 10;
                 
-                if (Graphics.EntityTextures[Graphics.EntityFileNames.IndexOf(MySprite.ToLower())].Size.X / 4 > Globals.TileWidth)
+                if (GameGraphics.EntityTextures[GameGraphics.EntityFileNames.IndexOf(MySprite.ToLower())].GetWidth() / 4 > Globals.Database.TileWidth)
                 {
-                    x = x - (int)((Graphics.EntityTextures[Graphics.EntityFileNames.IndexOf(MySprite.ToLower())].Size.X / 4) - Globals.TileWidth) / 2;
+                    x = x - (int)((GameGraphics.EntityTextures[GameGraphics.EntityFileNames.IndexOf(MySprite.ToLower())].GetWidth() / 4) - Globals.Database.TileWidth) / 2;
                 }
             }
-            bgRect.FillColor = Color.Black;
-            fgRect.FillColor = Color.Red;
-            fgRect.Size = new Vector2f((float)Math.Ceiling((1f * Vital[(int)Enums.Vitals.Health] / MaxVital[(int)Enums.Vitals.Health]) * (width - 2)), 4f);
-            bgRect.Position = new Vector2f((int)(x - 1 - width / 2),(int)( y - 1));
-            fgRect.Position = new Vector2f((int)(x - width / 2),(int)( y));
-            Graphics.RenderWindow.Draw(bgRect);
-            Graphics.RenderWindow.Draw(fgRect);
+
+            GameGraphics.DrawGameTexture(GameGraphics.WhiteTex, new FloatRect(0, 0, 1, 1),
+                new FloatRect((int) (x - 1 - width/2), (int) (y - 1), width, 6), Color.Black);
+            GameGraphics.DrawGameTexture(GameGraphics.WhiteTex, new FloatRect(0, 0, 1, 1),
+                new FloatRect((int)(x - width / 2), (int)(y), width-2, 4), Color.Red);
         }
         public void DrawCastingBar()
         {
-            if (CastTime < Environment.TickCount) { return; }
+            if (CastTime < Globals.System.GetTimeMS()) { return; }
             int i = GetLocalPos(CurrentMap);
             if (i == -1 || !Globals.GameMaps.ContainsKey(CurrentMap))
             {
                 return;
             }
-            var width = Globals.TileWidth;
-            var bgRect = new RectangleShape(new Vector2f(width, 6));
-            var fgRect = new RectangleShape(new Vector2f(width - 2, 4));
+            var width = Globals.Database.TileWidth;
             var y = (int)Math.Ceiling(GetCenterPos().Y);
             var x = (int)Math.Ceiling(GetCenterPos().X);
-            if (Graphics.EntityFileNames.IndexOf(MySprite.ToLower()) >= 0)
+            if (GameGraphics.EntityFileNames.IndexOf(MySprite.ToLower()) >= 0)
             {
-                y = y - (int)((Graphics.EntityTextures[Graphics.EntityFileNames.IndexOf(MySprite.ToLower())].Size.Y / 8));
+                y = y - (int)((GameGraphics.EntityTextures[GameGraphics.EntityFileNames.IndexOf(MySprite.ToLower())].GetHeight() / 8));
                 y -= 18;
 
-                if (Graphics.EntityTextures[Graphics.EntityFileNames.IndexOf(MySprite.ToLower())].Size.X / 4 > Globals.TileWidth)
+                if (GameGraphics.EntityTextures[GameGraphics.EntityFileNames.IndexOf(MySprite.ToLower())].GetWidth() / 4 > Globals.Database.TileWidth)
                 {
-                    x = x - (int)((Graphics.EntityTextures[Graphics.EntityFileNames.IndexOf(MySprite.ToLower())].Size.X / 4) - Globals.TileWidth) / 2;
+                    x = x - (int)((GameGraphics.EntityTextures[GameGraphics.EntityFileNames.IndexOf(MySprite.ToLower())].GetWidth() / 4) - Globals.Database.TileWidth) / 2;
                 }
             }
-            bgRect.FillColor = Color.Black;
-            fgRect.FillColor = Color.White;
-            fgRect.Size = new Vector2f((float)Math.Ceiling((1f * (Globals.GameSpells[SpellCast].CastDuration - (CastTime - Environment.TickCount)) / Globals.GameSpells[SpellCast].CastDuration) * (width - 2)), 4f);
-            bgRect.Position = new Vector2f((int)(x - 1 - width / 2), (int)(y - 1));
-            fgRect.Position = new Vector2f((int)(x - width / 2), (int)(y));
-            Graphics.RenderWindow.Draw(bgRect);
-            Graphics.RenderWindow.Draw(fgRect);
+
+            GameGraphics.DrawGameTexture(GameGraphics.WhiteTex, new FloatRect(0, 0, 1, 1),
+                new FloatRect((int)(x - 1 - width / 2), (int)(y - 1), width, 6), Color.Black);
+            GameGraphics.DrawGameTexture(GameGraphics.WhiteTex, new FloatRect(0, 0, 1, 1),
+                new FloatRect((int)(x - width / 2), (int)(y), width - 2, 4), Color.White);
         }
     }
 }

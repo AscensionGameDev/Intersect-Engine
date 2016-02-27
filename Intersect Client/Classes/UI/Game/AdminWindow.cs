@@ -24,12 +24,15 @@
     OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
     SOFTWARE.
 */
-using Gwen;
-using Gwen.Control;
+
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using IntersectClientExtras.Gwen;
+using IntersectClientExtras.Gwen.Control;
+using IntersectClientExtras.Gwen.Control.EventArguments;
+using Intersect_Client.Classes.Core;
+using Intersect_Client.Classes.General;
+using Intersect_Client.Classes.Maps;
+using Intersect_Client.Classes.Networking;
 
 namespace Intersect_Client.Classes.UI.Game
 {
@@ -60,7 +63,7 @@ namespace Intersect_Client.Classes.UI.Game
         {
             _adminWindow = new WindowControl(_gameCanvas, "Administration");
             _adminWindow.SetSize(200, 400);
-            _adminWindow.SetPosition(Graphics.ScreenWidth / 2 - _adminWindow.Width / 2, Graphics.ScreenHeight / 2 - _adminWindow.Height / 2);
+            _adminWindow.SetPosition(GameGraphics.Renderer.GetScreenWidth() / 2 - _adminWindow.Width / 2, GameGraphics.Renderer.GetScreenHeight() / 2 - _adminWindow.Height / 2);
             _adminWindow.DisableResizing();
             _adminWindow.Margin = Margin.Zero;
             _adminWindow.Padding = Padding.Zero;
@@ -137,17 +140,17 @@ namespace Intersect_Client.Classes.UI.Game
         {
             _mapList.Dispose();
             CreateMapList();
-            AddMapListToTree(Database.MapStructure, null);
+            AddMapListToTree(Globals.MapStructure, null);
         }
         private void AddMapListToTree(MapList mapList, TreeNode parent)
         {
             TreeNode tmpNode;
             if (_chkChronological.IsChecked)
             {
-                for (int i = 0; i < Database.OrderedMaps.Count; i++)
+                for (int i = 0; i < Globals.OrderedMaps.Count; i++)
                 {
-                    tmpNode = _mapList.AddNode(Database.OrderedMaps[i].MapNum + ". " + Database.OrderedMaps[i].Name);
-                    tmpNode.UserData = (Database.OrderedMaps[i]).MapNum;
+                    tmpNode = _mapList.AddNode(Globals.OrderedMaps[i].MapNum + ". " + Globals.OrderedMaps[i].Name);
+                    tmpNode.UserData = (Globals.OrderedMaps[i]).MapNum;
                     tmpNode.DoubleClicked += tmpNode_DoubleClicked;
                 }
             }

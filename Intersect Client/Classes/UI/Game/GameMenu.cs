@@ -24,12 +24,12 @@
     OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
     SOFTWARE.
 */
-using Gwen;
-using Gwen.Control;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+
+using IntersectClientExtras.Gwen;
+using IntersectClientExtras.Gwen.Control;
+using Intersect_Client.Classes.Core;
+using Intersect_Client.Classes.General;
+using IntersectClientExtras.Gwen.Control.EventArguments;
 
 namespace Intersect_Client.Classes.UI.Game
 {
@@ -55,7 +55,7 @@ namespace Intersect_Client.Classes.UI.Game
             _gameMenu = new WindowControl(_gameCanvas, "Game Menu") { IsClosable = false };
             _gameMenu.DisableResizing();
             _gameMenu.SetSize(166, 84);
-            _gameMenu.SetPosition(Graphics.ScreenWidth - 116, Graphics.ScreenHeight - 84);
+            _gameMenu.SetPosition(GameGraphics.Renderer.GetScreenWidth() - 116, GameGraphics.Renderer.GetScreenHeight() - 84);
             _gameMenu.Margin = Margin.Zero;
             _gameMenu.Padding = Padding.Zero;
 
@@ -113,7 +113,7 @@ namespace Intersect_Client.Classes.UI.Game
         //Input Handlers
         void CloseBtn_Clicked(Base sender, ClickedEventArgs arguments)
         {
-            GameMain.IsRunning = false;
+            Globals.IsRunning = false;
         }
         void OptionBtn_Clicked(Base sender, ClickedEventArgs arguments)
         {

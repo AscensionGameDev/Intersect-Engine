@@ -24,7 +24,10 @@
     OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
     SOFTWARE.
 */
-namespace Intersect_Client.Classes
+
+using Intersect_Client.Classes.General;
+
+namespace Intersect_Client.Classes.Entities
 {
     public static class EntityManager
     {
@@ -38,7 +41,6 @@ namespace Intersect_Client.Classes
             {
                 Globals.Entities[i].IsLocal = true;
                 Globals.Me = (Player)Globals.Entities[i];
-                Gui._GameGui.TryAddPlayerBox();
             }
             return Globals.Entities[i];
         }

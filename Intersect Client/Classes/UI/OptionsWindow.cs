@@ -24,13 +24,15 @@
     OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
     SOFTWARE.
 */
-using Gwen;
-using Gwen.Control;
-using Intersect_Client.Classes.UI.Menu;
+
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
+using IntersectClientExtras.Gwen;
+using Intersect_Client.Classes.Core;
+using Intersect_Client.Classes.General;
+using Intersect_Client.Classes.UI.Menu;
+using IntersectClientExtras.Gwen.Control;
+using IntersectClientExtras.Gwen.Control.EventArguments;
 
 namespace Intersect_Client.Classes.UI
 {
@@ -50,6 +52,9 @@ namespace Intersect_Client.Classes.UI
         private Label _fpsLabel;
         private ComboBox _fpsList;
 
+        private int _previousSoundVolume;
+        private int _previousMusicVolume;
+
         private bool _gameWindow = false;
         private MainMenu _mainMenu = null;
 
@@ -64,11 +69,12 @@ namespace Intersect_Client.Classes.UI
             {
                 _optionsMenu = new WindowControl(_parent, "Options");
                 _optionsMenu.SetSize(200, 200);
-                _optionsMenu.SetPosition(Graphics.ScreenWidth / 2 - 100, Graphics.ScreenHeight / 2 - 80);
+                _optionsMenu.SetPosition(GameGraphics.Renderer.GetScreenWidth() / 2 - 100, GameGraphics.Renderer.GetScreenHeight() / 2 - 80);
                 ((WindowControl)_optionsMenu).DisableResizing();
                 _optionsMenu.Margin = Margin.Zero;
                 _optionsMenu.Padding = Padding.Zero;
                 _optionsMenu.IsHidden = true;
+                ((WindowControl) _optionsMenu).IsClosable = false;
             }
             else
             {
@@ -81,27 +87,28 @@ namespace Intersect_Client.Classes.UI
             _resolutionLabel.SetPosition(_optionsMenu.Width / 2 - 120 / 2, 12);
 
             _resolutionList = new ComboBox(_optionsMenu);
-            var myModes = Graphics.GetValidVideoModes();
+            var myModes = GameGraphics.Renderer.GetValidVideoModes();
             for (var i = 0; i < myModes.Count(); i++)
             {
-                if (Globals.GameBorderStyle == 1)
+                _resolutionList.AddItem(myModes[i]);
+                /*if (Globals.GameBorderStyle == 1)
                 {
-                    if (myModes[i].Width <= Globals.TileWidth*Globals.MapWidth &&
-                        myModes[i].Height <= Globals.TileHeight*Globals.MapHeight)
+                    if (myModes[i].Width <= Globals.Database.TileWidth*Globals.Database.MapWidth &&
+                        myModes[i].Height <= Globals.Database.TileHeight*Globals.Database.MapHeight)
                     {
                         _resolutionList.AddItem(myModes[i].Width + "x" + myModes[i].Height);
                     }
                 }
                 else
                 {
-                    int maxx = (Globals.MapWidth - 1) * Globals.TileWidth * 2;
-                    int maxy = (Globals.MapHeight - 1) * Globals.TileHeight * 2;
+                    int maxx = (Globals.Database.MapWidth - 1) * Globals.Database.TileWidth * 2;
+                    int maxy = (Globals.Database.MapHeight - 1) * Globals.Database.TileHeight * 2;
                     if (myModes[i].Width <= maxx &&
                         myModes[i].Height <= maxy)
                     {
                         _resolutionList.AddItem(myModes[i].Width + "x" + myModes[i].Height);
                     }
-                }
+                }*/
             }
             _resolutionList.SetSize(120, 14);
             _resolutionList.SetPosition(_optionsMenu.Width / 2 - 120 / 2, 28);
@@ -160,23 +167,17 @@ namespace Intersect_Client.Classes.UI
             _applyBtn = new Button(_optionsMenu);
             _applyBtn.SetText("Apply");
             _applyBtn.SetPosition(_optionsMenu.Width / 2 - 120 / 2, 136);
-            _applyBtn.SetSize(120, 32);
+            _applyBtn.SetSize(56, 32);
             _applyBtn.Clicked += ApplyBtn_Clicked;
 
-            if (!InGame)
-            {
-                _applyBtn.SetPosition(_optionsMenu.Width / 2 - 120 / 2, 136);
-                _applyBtn.SetSize(56, 32);
 
                 //Options - Back Button
                 _backBtn = new Button(_optionsMenu);
-                _backBtn.SetText("Back");
+                _backBtn.SetText("Cancel");
                 _backBtn.SetPosition(_optionsMenu.Width / 2 + 4, 136);
                 _backBtn.SetSize(56, 32);
                 _backBtn.IsHidden = true;
                 _backBtn.Clicked += BackBtn_Clicked;
-
-            }
         }
 
 
@@ -187,11 +188,13 @@ namespace Intersect_Client.Classes.UI
         }
         public void Show()
         {
-            if (Graphics.GetValidVideoModes().Count > 0)
+            _previousMusicVolume = Globals.Database.MusicVolume;
+            _previousSoundVolume = Globals.Database.SoundVolume;
+            if (GameGraphics.Renderer.GetValidVideoModes().Count > 0)
             {
-                _resolutionList.SelectByText(Graphics.GetValidVideoModes()[Graphics.DisplayMode].Width + "x" + Graphics.GetValidVideoModes()[Graphics.DisplayMode].Height);
+                _resolutionList.SelectByText(GameGraphics.Renderer.GetValidVideoModes()[Globals.Database.TargetResolution]);
             }
-            switch (Graphics.FpsLimit)
+            switch (Globals.Database.TargetFps)
             {
                 case -1: //Unlimited
                      _fpsList.SelectByText("No Limit");
@@ -215,9 +218,9 @@ namespace Intersect_Client.Classes.UI
                     _fpsList.SelectByText("V-Sync");
                     break;
             }
-            _fullscreen.IsChecked = Graphics.FullScreen;
-            _musicSlider.Value = Globals.MusicVolume;
-            _soundSlider.Value = Globals.SoundVolume;
+            _fullscreen.IsChecked = Globals.Database.FullScreen;
+            _musicSlider.Value = Globals.Database.MusicVolume;
+            _soundSlider.Value = Globals.Database.SoundVolume;
             if (_gameWindow) { _optionsMenu.IsHidden = false; }
             _resolutionLabel.IsHidden = false;
             _resolutionList.IsHidden = false;
@@ -229,7 +232,7 @@ namespace Intersect_Client.Classes.UI
             _applyBtn.IsHidden = false;
             _fpsList.IsHidden = false;
             _fpsLabel.IsHidden = false;
-            if (!_gameWindow) { _backBtn.IsHidden = false; }
+             _backBtn.IsHidden = false;
         }
 
         public bool IsVisible()
@@ -256,31 +259,47 @@ namespace Intersect_Client.Classes.UI
         //Input Handlers
         void BackBtn_Clicked(Base sender, ClickedEventArgs arguments)
         {
-            _mainMenu.Reset();
+            Globals.Database.MusicVolume = _previousMusicVolume;
+            Globals.Database.SoundVolume = _previousSoundVolume;
+            GameAudio.UpdateGlobalVolume();
+            if (Globals.GameState == Enums.GameStates.Menu)
+            {
+                _mainMenu.Reset();
+            }
+            else
+            {
+                Hide();
+            }
         }
         void _musicSlider_ValueChanged(Base sender, EventArgs arguments)
         {
             _musicLabel.Text = "Music Volume: " + (int)_musicSlider.Value + "%";
+            Globals.Database.MusicVolume = (int)_musicSlider.Value;
+            GameAudio.UpdateGlobalVolume();
         }
 
         void _soundSlider_ValueChanged(Base sender, EventArgs arguments)
         {
             _soundLabel.Text = "Sound Volume: " + (int)_soundSlider.Value + "%";
+            Globals.Database.SoundVolume = (int)_soundSlider.Value;
+            GameAudio.UpdateGlobalVolume();
         }
         void ApplyBtn_Clicked(Base sender, ClickedEventArgs arguments)
         {
-            var mi = _resolutionList.SelectedItem;
-            var myModes = Graphics.GetValidVideoModes();
+            var resolution = _resolutionList.SelectedItem;
+            var myModes = GameGraphics.Renderer.GetValidVideoModes();
             for (var i = 0; i < myModes.Count(); i++)
             {
-                if (mi.Text != myModes[i].Width + "x" + myModes[i].Height) continue;
-                Graphics.DisplayMode = i;
-                Graphics.MustReInit = true;
+                if (resolution.Text == myModes[i])
+                {
+                    Globals.Database.TargetResolution = i;
+                    GameGraphics.MustReInit = true;
+                }
             }
-            if (Graphics.FullScreen != _fullscreen.IsChecked)
+            if (Globals.Database.FullScreen != _fullscreen.IsChecked)
             {
-                Graphics.FullScreen = _fullscreen.IsChecked;
-                Graphics.MustReInit = true;
+                Globals.Database.FullScreen = _fullscreen.IsChecked;
+                GameGraphics.MustReInit = true;
             }
             var newFps = 0;
             switch (_fpsList.SelectedItem.Text)
@@ -305,14 +324,23 @@ namespace Intersect_Client.Classes.UI
                     break;
                     
             }
-            if (newFps != Graphics.FpsLimit)
+            if (newFps != Globals.Database.TargetFps)
             {
-                Graphics.FpsLimit = newFps;
-                Graphics.MustReInit = true;
+                Globals.Database.TargetFps = newFps;
+                GameGraphics.MustReInit = true;
             }
-            Globals.MusicVolume = (int)_musicSlider.Value;
-            Globals.SoundVolume = (int)_soundSlider.Value;
-            Database.SaveOptions();
+            Globals.Database.MusicVolume = (int)_musicSlider.Value;
+            Globals.Database.SoundVolume = (int)_soundSlider.Value;
+            GameAudio.UpdateGlobalVolume();
+            Globals.Database.SavePreferences();
+            if (Globals.GameState == Enums.GameStates.InGame)
+            {
+                this.Hide();
+            }
+            else
+            {
+                _mainMenu.Reset();
+            }
         }
     }
 }

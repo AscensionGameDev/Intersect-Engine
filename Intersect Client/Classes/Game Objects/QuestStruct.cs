@@ -22,9 +22,10 @@
 
 using System;
 using System.Collections.Generic;
-using System.IO;
+using Intersect_Client.Classes.General;
+using Intersect_Client.Classes.Misc;
 
-namespace Intersect_Client.Classes
+namespace Intersect_Client.Classes.Game_Objects
 {
     public class QuestStruct
     {

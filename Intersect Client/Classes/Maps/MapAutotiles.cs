@@ -24,7 +24,10 @@
     OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
     SOFTWARE.
 */
-namespace Intersect_Client.Classes
+
+using Intersect_Client.Classes.General;
+
+namespace Intersect_Client.Classes.Maps
 {
     public class MapAutotiles
     {
@@ -46,12 +49,12 @@ namespace Intersect_Client.Classes
 
         public void InitAutotiles()
         {
-            Autotile = new AutoTileCls[Globals.MapWidth, Globals.MapHeight];
+            Autotile = new AutoTileCls[Globals.Database.MapWidth, Globals.Database.MapHeight];
 
 
-            for (var x = 0; x < Globals.MapWidth; x++)
+            for (var x = 0; x < Globals.Database.MapWidth; x++)
             {
-                for (var y = 0; y < Globals.MapHeight; y++)
+                for (var y = 0; y < Globals.Database.MapHeight; y++)
                 {
                     Autotile[x, y] = new AutoTileCls();
                     for (var i = 0; i < Constants.LayerCount; i++)
@@ -72,94 +75,94 @@ namespace Intersect_Client.Classes
 
             // Inner tiles (Top right subtile region)
             // NW - a
-            AutoInner[1].X = Globals.TileWidth;
+            AutoInner[1].X = Globals.Database.TileWidth;
             AutoInner[1].Y = 0;
 
             // NE - b
-            AutoInner[2].X = (2 * Globals.TileWidth) - (Globals.TileWidth / 2);
+            AutoInner[2].X = (2 * Globals.Database.TileWidth) - (Globals.Database.TileWidth / 2);
             AutoInner[2].Y = 0;
 
             // SW - c
-            AutoInner[3].X = Globals.TileWidth;
-            AutoInner[3].Y = Globals.TileHeight / 2;
+            AutoInner[3].X = Globals.Database.TileWidth;
+            AutoInner[3].Y = Globals.Database.TileHeight / 2;
 
             // SE - d
-            AutoInner[4].X = (2 * Globals.TileWidth) - (Globals.TileWidth / 2);
-            AutoInner[4].Y = Globals.TileHeight / 2;
+            AutoInner[4].X = (2 * Globals.Database.TileWidth) - (Globals.Database.TileWidth / 2);
+            AutoInner[4].Y = Globals.Database.TileHeight / 2;
 
             // Outer Tiles - NW (bottom subtile region)
             // NW - e
             AutoNw[1].X = 0;
-            AutoNw[1].Y = Globals.TileHeight;
+            AutoNw[1].Y = Globals.Database.TileHeight;
 
             // NE - f
-            AutoNw[2].X = Globals.TileWidth / 2;
-            AutoNw[2].Y = Globals.TileHeight;
+            AutoNw[2].X = Globals.Database.TileWidth / 2;
+            AutoNw[2].Y = Globals.Database.TileHeight;
 
             // SW - g
             AutoNw[3].X = 0;
-            AutoNw[3].Y = (2 * Globals.TileHeight) - (Globals.TileHeight / 2);
+            AutoNw[3].Y = (2 * Globals.Database.TileHeight) - (Globals.Database.TileHeight / 2);
 
             // SE - h
-            AutoNw[4].X = Globals.TileWidth / 2;
-            AutoNw[4].Y = (2 * Globals.TileHeight) - (Globals.TileHeight / 2);
+            AutoNw[4].X = Globals.Database.TileWidth / 2;
+            AutoNw[4].Y = (2 * Globals.Database.TileHeight) - (Globals.Database.TileHeight / 2);
 
             // Outer Tiles - NE (bottom subtile region)
             // NW - i
-            AutoNe[1].X = Globals.TileWidth;
-            AutoNe[1].Y = Globals.TileHeight;
+            AutoNe[1].X = Globals.Database.TileWidth;
+            AutoNe[1].Y = Globals.Database.TileHeight;
 
             // NE - g
-            AutoNe[2].X = (2 * Globals.TileWidth) - (Globals.TileWidth / 2);
-            AutoNe[2].Y = Globals.TileHeight;
+            AutoNe[2].X = (2 * Globals.Database.TileWidth) - (Globals.Database.TileWidth / 2);
+            AutoNe[2].Y = Globals.Database.TileHeight;
 
             // SW - k
-            AutoNe[3].X = Globals.TileWidth;
-            AutoNe[3].Y = (2 * Globals.TileHeight) - (Globals.TileHeight / 2);
+            AutoNe[3].X = Globals.Database.TileWidth;
+            AutoNe[3].Y = (2 * Globals.Database.TileHeight) - (Globals.Database.TileHeight / 2);
 
             // SE - l
-            AutoNe[4].X = (2 * Globals.TileWidth) - (Globals.TileWidth / 2);
-            AutoNe[4].Y = (2 * Globals.TileHeight) - (Globals.TileHeight / 2);
+            AutoNe[4].X = (2 * Globals.Database.TileWidth) - (Globals.Database.TileWidth / 2);
+            AutoNe[4].Y = (2 * Globals.Database.TileHeight) - (Globals.Database.TileHeight / 2);
 
             // Outer Tiles - SW (bottom subtile region)
             // NW - m
             AutoSw[1].X = 0;
-            AutoSw[1].Y = 2 * Globals.TileHeight;
+            AutoSw[1].Y = 2 * Globals.Database.TileHeight;
 
             // NE - n
-            AutoSw[2].X = Globals.TileWidth / 2;
-            AutoSw[2].Y = 2 * Globals.TileHeight;
+            AutoSw[2].X = Globals.Database.TileWidth / 2;
+            AutoSw[2].Y = 2 * Globals.Database.TileHeight;
 
             // SW - o
             AutoSw[3].X = 0;
-            AutoSw[3].Y = (2 * Globals.TileHeight) + (Globals.TileHeight / 2);
+            AutoSw[3].Y = (2 * Globals.Database.TileHeight) + (Globals.Database.TileHeight / 2);
 
             // SE - p
-            AutoSw[4].X = Globals.TileWidth / 2;
-            AutoSw[4].Y = (2 * Globals.TileHeight) + (Globals.TileHeight / 2);
+            AutoSw[4].X = Globals.Database.TileWidth / 2;
+            AutoSw[4].Y = (2 * Globals.Database.TileHeight) + (Globals.Database.TileHeight / 2);
 
             // Outer Tiles - SE (bottom subtile region)
             // NW - q
-            AutoSe[1].X = Globals.TileWidth;
-            AutoSe[1].Y = 2 * Globals.TileHeight;
+            AutoSe[1].X = Globals.Database.TileWidth;
+            AutoSe[1].Y = 2 * Globals.Database.TileHeight;
 
             // NE - r
-            AutoSe[2].X = (2 * Globals.TileWidth) - (Globals.TileWidth / 2);
-            AutoSe[2].Y = 2 * Globals.TileHeight;
+            AutoSe[2].X = (2 * Globals.Database.TileWidth) - (Globals.Database.TileWidth / 2);
+            AutoSe[2].Y = 2 * Globals.Database.TileHeight;
 
             // SW - s
-            AutoSe[3].X = Globals.TileWidth;
-            AutoSe[3].Y = (2 * Globals.TileHeight) + (Globals.TileHeight / 2);
+            AutoSe[3].X = Globals.Database.TileWidth;
+            AutoSe[3].Y = (2 * Globals.Database.TileHeight) + (Globals.Database.TileHeight / 2);
 
             // SE - t
-            AutoSe[4].X = (2 * Globals.TileWidth) - (Globals.TileWidth / 2);
-            AutoSe[4].Y = (2 * Globals.TileHeight) + (Globals.TileHeight / 2);
+            AutoSe[4].X = (2 * Globals.Database.TileWidth) - (Globals.Database.TileWidth / 2);
+            AutoSe[4].Y = (2 * Globals.Database.TileHeight) + (Globals.Database.TileHeight / 2);
 
             for (var i = 0; i < Constants.LayerCount; i++)
             {
-                for (var x = 0; x < Globals.MapWidth; x++)
+                for (var x = 0; x < Globals.Database.MapWidth; x++)
                 {
-                    for (var y = 0; y < Globals.MapHeight; y++)
+                    for (var y = 0; y < Globals.Database.MapHeight; y++)
                     {
                         // calculate the subtile positions and place them
                         CalculateAutotile(x, y, i);
@@ -174,13 +177,13 @@ namespace Intersect_Client.Classes
         {
             for (var x1 = x - 1; x1 < x + 2; x1++)
             {
-                if (x1 < 0 || x1 >= Globals.MapWidth)
+                if (x1 < 0 || x1 >= Globals.Database.MapWidth)
                 {
                     continue;
                 }
                 for (var y1 = y - 1; y1 < y + 2; y1++)
                 {
-                    if (y1 < 0 || y1 >= Globals.MapHeight)
+                    if (y1 < 0 || y1 >= Globals.Database.MapHeight)
                     {
                         continue;
                     }
@@ -198,7 +201,7 @@ namespace Intersect_Client.Classes
         public void CacheRenderState(int x, int y, int layerNum)
         {
             // exit out early
-            if (x < 0 || x > Globals.MapWidth || y < 0 || y > Globals.MapHeight) { return; }
+            if (x < 0 || x > Globals.Database.MapWidth || y < 0 || y > Globals.Database.MapHeight) { return; }
 
             // check if it needs to be rendered as an autotile
             if (_myMap.Layers[layerNum].Tiles[x, y].Autotile == Constants.AutotileNone || _myMap.Layers[layerNum].Tiles[x, y].Autotile == Constants.AutotileFake)
@@ -214,8 +217,8 @@ namespace Intersect_Client.Classes
                 int quarterNum;
                 for (quarterNum = 1; quarterNum < 5; quarterNum++)
                 {
-                    Autotile[x, y].Layer[layerNum].QuarterTile[quarterNum].X = (_myMap.Layers[layerNum].Tiles[x, y].X * Globals.TileWidth) + Autotile[x, y].Layer[layerNum].QuarterTile[quarterNum].X;
-                    Autotile[x, y].Layer[layerNum].QuarterTile[quarterNum].Y = (_myMap.Layers[layerNum].Tiles[x, y].Y * Globals.TileHeight) + Autotile[x, y].Layer[layerNum].QuarterTile[quarterNum].Y;
+                    Autotile[x, y].Layer[layerNum].QuarterTile[quarterNum].X = (_myMap.Layers[layerNum].Tiles[x, y].X * Globals.Database.TileWidth) + Autotile[x, y].Layer[layerNum].QuarterTile[quarterNum].X;
+                    Autotile[x, y].Layer[layerNum].QuarterTile[quarterNum].Y = (_myMap.Layers[layerNum].Tiles[x, y].Y * Globals.Database.TileHeight) + Autotile[x, y].Layer[layerNum].QuarterTile[quarterNum].Y;
                 }
             }
         }
@@ -709,9 +712,9 @@ namespace Intersect_Client.Classes
         {
             Tile targetTile = null;
             // if ( it//s off the map ) { set it as autotile and exit out early
-            if (x2 < 0 || x2 >= Globals.MapWidth || y2 < 0 || y2 >= Globals.MapHeight)
+            if (x2 < 0 || x2 >= Globals.Database.MapWidth || y2 < 0 || y2 >= Globals.Database.MapHeight)
             {
-                if (((x2 < 0 && y2 < 0)) || (x2 >= Globals.MapWidth && y2 >= Globals.MapHeight) || (x2 < 0 && y2 >= Globals.MapHeight) || (x2 >= Globals.MapWidth && y2 < 0))
+                if (((x2 < 0 && y2 < 0)) || (x2 >= Globals.Database.MapWidth && y2 >= Globals.Database.MapHeight) || (x2 < 0 && y2 >= Globals.Database.MapHeight) || (x2 >= Globals.Database.MapWidth && y2 < 0))
                 {
                     return true;
                 }
@@ -723,7 +726,7 @@ namespace Intersect_Client.Classes
                         otherMap = Globals.GameMaps[_myMap.Left];
                         if (otherMap != null)
                         {
-                            targetTile = otherMap.Layers[layerNum].Tiles[Globals.MapWidth + x2, y2];
+                            targetTile = otherMap.Layers[layerNum].Tiles[Globals.Database.MapWidth + x2, y2];
                         }
                         else
                         {
@@ -735,14 +738,14 @@ namespace Intersect_Client.Classes
                         return true;
                     }
                 }
-                else if (x2 >= Globals.MapWidth)
+                else if (x2 >= Globals.Database.MapWidth)
                 {
                     if (_myMap.Right > -1 && Globals.GameMaps.ContainsKey(_myMap.Right))
                     {
                         otherMap = Globals.GameMaps[_myMap.Right];
                         if (otherMap != null)
                         {
-                            targetTile = otherMap.Layers[layerNum].Tiles[x2 - Globals.MapWidth, y2];
+                            targetTile = otherMap.Layers[layerNum].Tiles[x2 - Globals.Database.MapWidth, y2];
                         }
                         else
                         {
@@ -761,7 +764,7 @@ namespace Intersect_Client.Classes
                         otherMap = Globals.GameMaps[_myMap.Up];
                         if (otherMap != null)
                         {
-                            targetTile = otherMap.Layers[layerNum].Tiles[x2, Globals.MapHeight + y2];
+                            targetTile = otherMap.Layers[layerNum].Tiles[x2, Globals.Database.MapHeight + y2];
                         }
                         else
                         {
@@ -773,14 +776,14 @@ namespace Intersect_Client.Classes
                         return true;
                     }
                 }
-                else if (y2 >= Globals.MapHeight)
+                else if (y2 >= Globals.Database.MapHeight)
                 {
                     if (_myMap.Down > -1 && Globals.GameMaps.ContainsKey(_myMap.Down))
                     {
                         otherMap = Globals.GameMaps[_myMap.Down];
                         if (otherMap != null)
                         {
-                            targetTile = otherMap.Layers[layerNum].Tiles[x2, y2 - Globals.MapHeight];
+                            targetTile = otherMap.Layers[layerNum].Tiles[x2, y2 - Globals.Database.MapHeight];
                         }
                         else
                         {

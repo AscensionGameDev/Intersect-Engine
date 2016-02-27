@@ -24,31 +24,36 @@
     OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
     SOFTWARE.
 */
+
 using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using SFML.Audio;
-using System.Drawing;
+using IntersectClientExtras.Audio;
+using IntersectClientExtras.File_Management;
+using IntersectClientExtras.GenericClasses;
+using Intersect_Client.Classes.General;
+using Point = Intersect_Client.Classes.Maps.Point;
 
-namespace Intersect_Client.Classes
+namespace Intersect_Client.Classes.Core
 {
-    public static class Sounds
+    public static class GameAudio
     {
         private static bool _isInitialized;
 
         public static List<string> SoundFiles;
         public static List<string> MusicFiles;
+        public static GameAudioSource[] SoundSources;
+        public static GameAudioSource[] MusicSources;
 
         //Music
         private static string _queuedMusic = "";
         private static string _currentSong = "";
         private static float _fadeRate;
         private static long _fadeTimer;
-        private static Music _myMusic;
+        private static GameAudioInstance _myMusic;
         private static bool _musicLoop;
         private static bool _fadingOut = false;
+        private static bool _queuedLoop = false;
+        private static float _queuedFade = 0f;
 
         //Sounds
         private static List<MapSound> _gameSounds = new List<MapSound>();
@@ -58,26 +63,24 @@ namespace Intersect_Client.Classes
         public static void Init()
         {
             if (_isInitialized == true) { return; }
-            if (!Directory.Exists("Resources/Sounds")) { Directory.CreateDirectory("Resources/Sounds"); }
-            var sounds = Directory.GetFiles("Resources/Sounds", "*.ogg");
-            var wavsounds = Directory.GetFiles("Resources/Sounds", "*.wav");
-            SoundFiles = new List<string>();
-            for (int i = 0; i < sounds.Length; i++)
-            {
-                SoundFiles.Add(sounds[i].Replace("Resources/Sounds\\", "").ToLower());
-            }
-            for (int i = 0; i < wavsounds.Length; i++)
-            {
-                SoundFiles.Add(wavsounds[i].Replace("Resources/Sounds\\", "").ToLower());
-            }
-            if (!Directory.Exists("Resources/Music")) { Directory.CreateDirectory("Resources/Music"); }
-            var music = Directory.GetFiles("Resources/Music", "*.ogg");
-            MusicFiles = new List<string>();
-            for (int i = 0; i < music.Length; i++)
-            {
-                MusicFiles.Add(music[i].Replace("Resources/Music\\", "").ToLower());
-            }
+            Globals.ContentManager.LoadAudio();
             _isInitialized = true;
+        }
+
+        public static void UpdateGlobalVolume()
+        {
+            if (_myMusic != null)
+            {
+                _myMusic.SetVolume(_myMusic.GetVolume(),true);
+            }
+            for (int i = 0; i < _gameSounds.Count; i++)
+            {
+                _gameSounds[i].Update();
+                if (!_gameSounds[i].Loaded)
+                {
+                    _gameSounds.RemoveAt(i);
+                }
+            }
         }
 
         //Update
@@ -85,26 +88,31 @@ namespace Intersect_Client.Classes
         {
             if (_myMusic != null)
             {
-                if (_fadeTimer != 0 && _fadeTimer < Environment.TickCount)
+                if (_fadeTimer != 0 && _fadeTimer < Globals.System.GetTimeMS())
                 {
                     if (_fadingOut)
                     {
-                        _myMusic.Volume -= 1;
-                        if (_myMusic.Volume <= 1)
+                        _myMusic.SetVolume(_myMusic.GetVolume() - 1, true);
+                        if (_myMusic.GetVolume() <= 1)
                         {
                             StopMusic();
+                            if (_queuedMusic != "")
+                            {
+                                PlayMusic(_queuedMusic, 0f, _queuedFade, _queuedLoop);
+                                _queuedMusic = "";
+                            }
                         }
                         else
                         {
-                            _fadeTimer = Environment.TickCount + (long)(_fadeRate / 1000);
+                            _fadeTimer = Globals.System.GetTimeMS() + (long)(_fadeRate / 1000);
                         }
                     }
                     else
                     {
-                        _myMusic.Volume += 1;
-                        if (_myMusic.Volume < 100)
+                        _myMusic.SetVolume(_myMusic.GetVolume() + 1, true);
+                        if (_myMusic.GetVolume() < 100)
                         {
-                            _fadeTimer = Environment.TickCount + (long)(_fadeRate / 1000);
+                            _fadeTimer = Globals.System.GetTimeMS() + (long)(_fadeRate / 1000);
                         }
                         else
                         {
@@ -115,7 +123,7 @@ namespace Intersect_Client.Classes
                 }
                 else
                 {
-                    if (_myMusic.Status == SoundStatus.Stopped)
+                    if (_myMusic.GetState() == GameAudioInstance.AudioInstanceState.Stopped)
                     {
                         if (_musicLoop) { _myMusic.Play(); }
                     }
@@ -132,23 +140,26 @@ namespace Intersect_Client.Classes
         //Music
         public static void PlayMusic(string filename, float fadeout = 0f, float fadein = 0f, bool loop = false)
         {
-            if (Globals.MusicVolume == 0) { return; }
+            if (Globals.Database.MusicVolume == 0) { return; }
+            filename = GameContentManager.RemoveExtension(filename);
             if (_myMusic != null)
             {
-                if (fadeout == 0 || _myMusic.Status == SoundStatus.Stopped || _myMusic.Status == SoundStatus.Paused || _myMusic.Volume == 0)
+                if (fadeout == 0 || _myMusic.GetState() == GameAudioInstance.AudioInstanceState.Stopped || _myMusic.GetState() == GameAudioInstance.AudioInstanceState.Paused || _myMusic.GetVolume() == 0)
                 {
                     StopMusic();
-                    StartMusic(filename);
+                    StartMusic(filename,fadein);
                 }
                 else
                 {
                     //Start fadeout
-                    if (_currentSong.ToLower() != filename.ToLower())
+                    if (_currentSong.ToLower() != filename.ToLower() || _fadingOut)
                     {
-                        _fadeRate = (float)_myMusic.Volume / fadeout;
-                        _fadeTimer = Environment.TickCount + (long)(_fadeRate / 1000);
+                        _fadeRate = (float)_myMusic.GetVolume() / fadeout;
+                        _fadeTimer = Globals.System.GetTimeMS() + (long)(_fadeRate / 1000);
                         _fadingOut = true;
                         _queuedMusic = filename;
+                        _queuedFade = fadein;
+                        _queuedLoop = loop;
                     }
                 }
             }
@@ -160,15 +171,15 @@ namespace Intersect_Client.Classes
         }
         private static void StartMusic(string filename, float fadein = 0f)
         {
-            if (Globals.MusicVolume == 0) { return; }
+            if (Globals.Database.MusicVolume == 0) { return; }
             if (MusicFiles.IndexOf(filename.ToLower()) > -1)
             {
-                _myMusic = new Music("Resources/Music/" + filename);
+                _myMusic = MusicSources[MusicFiles.IndexOf(filename.ToLower())].CreateInstance();
                 _currentSong = filename;
                 _myMusic.Play();
-                _myMusic.Volume = 0;
+                _myMusic.SetVolume(0, true);
                 _fadeRate = (float)100 / fadein;
-                _fadeTimer = Environment.TickCount + (long)(_fadeRate / 1000);
+                _fadeTimer = Globals.System.GetTimeMS() + (long)(_fadeRate / 1000) + 1;
                 _fadingOut = false;
             }
         }
@@ -176,7 +187,7 @@ namespace Intersect_Client.Classes
         {
             if (_myMusic != null)
             {
-                if (fadeout == 0 || _myMusic.Status == SoundStatus.Stopped || _myMusic.Status == SoundStatus.Paused || _myMusic.Volume == 0)
+                if (fadeout == 0 || _myMusic.GetState() == GameAudioInstance.AudioInstanceState.Stopped || _myMusic.GetState() == GameAudioInstance.AudioInstanceState.Paused || _myMusic.GetVolume() == 0)
                 {
                     _currentSong = "";
                     _myMusic.Stop();
@@ -187,8 +198,8 @@ namespace Intersect_Client.Classes
                 else
                 {
                     //Start fadeout
-                    _fadeRate = (float)_myMusic.Volume / fadeout;
-                    _fadeTimer = Environment.TickCount + (long)(_fadeRate / 1000);
+                    _fadeRate = (float)_myMusic.GetVolume() / fadeout;
+                    _fadeTimer = Globals.System.GetTimeMS() + (long)(_fadeRate / 1000);
                     _fadingOut = true;
                 }
             }
@@ -225,8 +236,7 @@ namespace Intersect_Client.Classes
 
     public class MapSound
     {
-        private Sound _sound;
-        private SoundBuffer _soundBuffer;
+        private GameAudioInstance _sound;
         private string _filename;
         private int _x;
         private int _y;
@@ -239,17 +249,17 @@ namespace Intersect_Client.Classes
 
         public MapSound(string filename, int x, int y, int map, bool loop, int distance)
         {
-            _filename = filename;
+            _filename = GameContentManager.RemoveExtension(filename).ToLower();
             _x = x;
             _y = y;
             _map = map;
             _loop = loop;
             _distance = distance;
-            if (Sounds.SoundFiles.IndexOf(filename) > -1 && Globals.SoundVolume > 0)
+            if (GameAudio.SoundFiles.IndexOf(_filename) > -1 && Globals.Database.SoundVolume > 0)
             {
-                _soundBuffer = new SoundBuffer("Resources/Sounds/" + filename);
-                _sound = new Sound(_soundBuffer);
-                _sound.Loop = _loop;
+                _sound = GameAudio.SoundSources[GameAudio.SoundFiles.IndexOf(_filename)].CreateInstance();
+                Globals.System.Log("Adding map sound: " + _filename);
+                _sound.SetLoop(_loop);
                 _sound.Play();
                 Loaded = true;
             }
@@ -259,7 +269,7 @@ namespace Intersect_Client.Classes
         {
             if (Loaded)
             {
-                if (!_loop && _sound.Status == SoundStatus.Stopped)
+                if (!_loop && _sound.GetState() == GameAudioInstance.AudioInstanceState.Stopped)
                 {
                     Stop();
                 }
@@ -292,7 +302,7 @@ namespace Intersect_Client.Classes
             }
             if ((_x == -1 || _y == -1 || _distance == 0) && _map == Globals.Me.CurrentMap)
             {
-                _sound.Volume = 100;
+                _sound.SetVolume(100);
             }
             else
             {
@@ -300,11 +310,11 @@ namespace Intersect_Client.Classes
                 {
                     float volume = 100 - ((100 / _distance) * CalculateSoundDistance());
                     if (volume < 0) {volume = 0f;}
-                    _sound.Volume = volume;
+                    _sound.SetVolume((int)volume);
                 }
                 else
                 {
-                    _sound.Volume = 0;
+                    _sound.SetVolume(0);
                 }
             }
             
@@ -325,13 +335,13 @@ namespace Intersect_Client.Classes
                     Point player = new Point();
                     player.X = (int)playerx;
                     player.Y = (int)playery;
-                    Rectangle mapRect = new Rectangle((int)Globals.GameMaps[mapNum].GetX(), (int)Globals.GameMaps[mapNum].GetY(), Globals.MapWidth * Globals.TileWidth, Globals.MapHeight * Globals.TileHeight);
+                    Rectangle mapRect = new Rectangle((int)Globals.GameMaps[mapNum].GetX(), (int)Globals.GameMaps[mapNum].GetY(), Globals.Database.MapWidth * Globals.Database.TileWidth, Globals.Database.MapHeight * Globals.Database.TileHeight);
                     distance = (float)DistancePointToRectangle(player, mapRect) / 32f;
                 }
                 else
                 {
-                    soundx = Globals.GameMaps[mapNum].GetX() + _x * Globals.TileWidth + 16;
-                    soundy = Globals.GameMaps[mapNum].GetY() + _y * Globals.TileHeight + 16;
+                    soundx = Globals.GameMaps[mapNum].GetX() + _x * Globals.Database.TileWidth + 16;
+                    soundy = Globals.GameMaps[mapNum].GetY() + _y * Globals.Database.TileHeight + 16;
                     distance = (float)Math.Sqrt(Math.Pow(playerx - soundx, 2) + Math.Pow(playery - soundy, 2)) / 32f;
                 }
             }
@@ -417,7 +427,6 @@ namespace Intersect_Client.Classes
 
         public void Stop()
         {
-            _soundBuffer.Dispose();
             _sound.Dispose();
             Loaded = false;
         }

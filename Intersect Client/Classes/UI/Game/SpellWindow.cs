@@ -24,13 +24,19 @@
     OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
     SOFTWARE.
 */
-using Gwen;
-using Gwen.Control;
-using SFML.Window;
+
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using IntersectClientExtras.GenericClasses;
+using IntersectClientExtras.Graphics;
+using IntersectClientExtras.Gwen;
+using IntersectClientExtras.Gwen.Control;
+using IntersectClientExtras.Gwen.Control.EventArguments;
+using IntersectClientExtras.Gwen.Input;
+using IntersectClientExtras.Input;
+using Intersect_Client.Classes.Core;
+using Intersect_Client.Classes.General;
+using Intersect_Client.Classes.Networking;
 
 namespace Intersect_Client.Classes.UI.Game
 {
@@ -52,7 +58,7 @@ namespace Intersect_Client.Classes.UI.Game
         {
             _spellWindow = new WindowControl(_gameCanvas, "Spell");
             _spellWindow.SetSize(200, 300);
-            _spellWindow.SetPosition(Graphics.ScreenWidth - 210, Graphics.ScreenHeight - 500);
+            _spellWindow.SetPosition(GameGraphics.Renderer.GetScreenWidth() - 210, GameGraphics.Renderer.GetScreenHeight() - 500);
             _spellWindow.DisableResizing();
             _spellWindow.Margin = Margin.Zero;
             _spellWindow.Padding = Padding.Zero;
@@ -116,11 +122,11 @@ namespace Intersect_Client.Classes.UI.Game
         {
             _spellWindow.IsHidden = true;
         }
-        public System.Drawing.Rectangle RenderBounds()
+        public FloatRect RenderBounds()
         {
-            System.Drawing.Rectangle rect = new System.Drawing.Rectangle();
-            rect.X = _spellWindow.LocalPosToCanvas(new System.Drawing.Point(0, 0)).X - Constants.ItemXPadding / 2;
-            rect.Y = _spellWindow.LocalPosToCanvas(new System.Drawing.Point(0, 0)).Y - Constants.ItemYPadding / 2;
+            FloatRect rect = new FloatRect();
+            rect.X = _spellWindow.LocalPosToCanvas(new Point(0, 0)).X - Constants.ItemXPadding / 2;
+            rect.Y = _spellWindow.LocalPosToCanvas(new Point(0, 0)).Y - Constants.ItemYPadding / 2;
             rect.Width = _spellWindow.Width + Constants.ItemXPadding;
             rect.Height = _spellWindow.Height + Constants.ItemYPadding;
             return rect;
@@ -148,8 +154,8 @@ namespace Intersect_Client.Classes.UI.Game
         private int currentSpell = -1;
 
         //Textures
-        private Gwen.Texture gwenTex;
-        private SFML.Graphics.RenderTexture sfTex;
+        private Texture gwenTex;
+        private GameRenderTexture sfTex;
 
         //Drag/Drop References
         private SpellWindow _spellWindow;
@@ -170,7 +176,7 @@ namespace Intersect_Client.Classes.UI.Game
 
         void pnl_Clicked(Base sender, ClickedEventArgs arguments)
         {
-            ClickTime = Environment.TickCount + 500;
+            ClickTime = Globals.System.GetTimeMS() + 500;
         }
 
         void pnl_RightClicked(Base sender, ClickedEventArgs arguments)
@@ -190,16 +196,16 @@ namespace Intersect_Client.Classes.UI.Game
         {
             MouseOver = true;
             CanDrag = true;
-            if (Mouse.IsButtonPressed(Mouse.Button.Left)) { CanDrag = false; return; }
+            if (Globals.InputManager.MouseButtonDown(GameInput.MouseButtons.Left)) { CanDrag = false; return; }
             if (_descWindow != null) { _descWindow.Dispose(); _descWindow = null; }
             _descWindow = new SpellDescWindow(Globals.Me.Spells[myindex].SpellNum, _spellWindow.X - 220, _spellWindow.Y);
         }
 
-        public System.Drawing.Rectangle RenderBounds()
+        public FloatRect RenderBounds()
         {
-            System.Drawing.Rectangle rect = new System.Drawing.Rectangle();
-            rect.X = pnl.LocalPosToCanvas(new System.Drawing.Point(0, 0)).X;
-            rect.Y = pnl.LocalPosToCanvas(new System.Drawing.Point(0, 0)).Y;
+            FloatRect rect = new FloatRect();
+            rect.X = pnl.LocalPosToCanvas(new Point(0, 0)).X;
+            rect.Y = pnl.LocalPosToCanvas(new Point(0, 0)).Y;
             rect.Width = pnl.Width;
             rect.Height = pnl.Height;
             return rect;
@@ -207,29 +213,29 @@ namespace Intersect_Client.Classes.UI.Game
 
         public void Update()
         {
-            if (texLoaded == false || currentSpell != Globals.Me.Spells[myindex].SpellNum || iconCD != (Globals.Me.Spells[myindex].SpellCD > Environment.TickCount))
+            if (texLoaded == false || currentSpell != Globals.Me.Spells[myindex].SpellNum || iconCD != (Globals.Me.Spells[myindex].SpellCD > Globals.System.GetTimeMS()))
             {
                 if (Globals.Me.Spells[myindex].SpellNum > -1)
                 {
                     sfTex = Gui.CreateSpellTex(Globals.Me.Spells[myindex].SpellNum, 0, 0, 32, 32,
-                        (Globals.Me.Spells[myindex].SpellCD > Environment.TickCount), null);
-                    gwenTex = Gui.SFMLToGwenTexture(sfTex.Texture);
+                        (Globals.Me.Spells[myindex].SpellCD > Globals.System.GetTimeMS()), null);
+                    gwenTex = Gui.ToGwenTexture(sfTex);
                     pnl.Texture = gwenTex;
                     texLoaded = true;
                     currentSpell = Globals.Me.Spells[myindex].SpellNum;
-                    iconCD = (Globals.Me.Spells[myindex].SpellCD > Environment.TickCount);
+                    iconCD = (Globals.Me.Spells[myindex].SpellCD > Globals.System.GetTimeMS());
                 }
             }
             if (!IsDragging)
             {
                 if (MouseOver)
                 {
-                    if (!Mouse.IsButtonPressed(Mouse.Button.Left))
+                    if (!Globals.InputManager.MouseButtonDown(GameInput.MouseButtons.Left))
                     {
                         CanDrag = true;
                         MouseX = -1;
                         MouseY = -1;
-                        if (Environment.TickCount < ClickTime)
+                        if (Globals.System.GetTimeMS() < ClickTime)
                         {
                             Globals.Me.TryUseSpell(myindex);
                             ClickTime = 0;
@@ -241,18 +247,18 @@ namespace Intersect_Client.Classes.UI.Game
                         {
                             if (MouseX == -1 || MouseY == -1)
                             {
-                                MouseX = Gwen.Input.InputHandler.MousePosition.X - pnl.LocalPosToCanvas(new System.Drawing.Point(0, 0)).X;
-                                MouseY = Gwen.Input.InputHandler.MousePosition.Y - pnl.LocalPosToCanvas(new System.Drawing.Point(0, 0)).Y;
+                                MouseX = InputHandler.MousePosition.X - pnl.LocalPosToCanvas(new Point(0, 0)).X;
+                                MouseY = InputHandler.MousePosition.Y - pnl.LocalPosToCanvas(new Point(0, 0)).Y;
 
                             }
                             else
                             {
-                                int xdiff = MouseX - (Gwen.Input.InputHandler.MousePosition.X - pnl.LocalPosToCanvas(new System.Drawing.Point(0, 0)).X);
-                                int ydiff = MouseY - (Gwen.Input.InputHandler.MousePosition.Y - pnl.LocalPosToCanvas(new System.Drawing.Point(0, 0)).Y);
+                                int xdiff = MouseX - (InputHandler.MousePosition.X - pnl.LocalPosToCanvas(new Point(0, 0)).X);
+                                int ydiff = MouseY - (InputHandler.MousePosition.Y - pnl.LocalPosToCanvas(new Point(0, 0)).Y);
                                 if (Math.Sqrt(Math.Pow(xdiff, 2) + Math.Pow(ydiff, 2)) > 5)
                                 {
                                     IsDragging = true;
-                                    dragIcon = new Draggable(pnl.LocalPosToCanvas(new System.Drawing.Point(0, 0)).X + MouseX, pnl.LocalPosToCanvas(new System.Drawing.Point(0, 0)).X + MouseY, pnl.Texture);
+                                    dragIcon = new Draggable(pnl.LocalPosToCanvas(new Point(0, 0)).X + MouseX, pnl.LocalPosToCanvas(new Point(0, 0)).X + MouseY, pnl.Texture);
                                 }
                             }
                         }
@@ -265,9 +271,9 @@ namespace Intersect_Client.Classes.UI.Game
                 {
                     //Drug the item and now we stopped
                     IsDragging = false;
-                    System.Drawing.Rectangle dragRect = new System.Drawing.Rectangle(dragIcon.x - Constants.ItemXPadding / 2, dragIcon.y - Constants.ItemYPadding / 2, Constants.ItemXPadding/2 + 32, Constants.ItemYPadding/2 + 32);
+                    FloatRect dragRect = new FloatRect(dragIcon.x - Constants.ItemXPadding / 2, dragIcon.y - Constants.ItemYPadding / 2, Constants.ItemXPadding/2 + 32, Constants.ItemYPadding/2 + 32);
 
-                    int bestIntersect = 0;
+                    float bestIntersect = 0;
                     int bestIntersectIndex = -1;
                     //So we picked up an item and then dropped it. Lets see where we dropped it to.
                     //Check spell first.
@@ -277,9 +283,9 @@ namespace Intersect_Client.Classes.UI.Game
                         {
                             if (_spellWindow.Items[i].RenderBounds().IntersectsWith(dragRect))
                             {
-                                if (System.Drawing.Rectangle.Intersect(_spellWindow.Items[i].RenderBounds(), dragRect).Width * System.Drawing.Rectangle.Intersect(_spellWindow.Items[i].RenderBounds(), dragRect).Height > bestIntersect)
+                                if (FloatRect.Intersect(_spellWindow.Items[i].RenderBounds(), dragRect).Width * FloatRect.Intersect(_spellWindow.Items[i].RenderBounds(), dragRect).Height > bestIntersect)
                                 {
-                                    bestIntersect = System.Drawing.Rectangle.Intersect(_spellWindow.Items[i].RenderBounds(), dragRect).Width * System.Drawing.Rectangle.Intersect(_spellWindow.Items[i].RenderBounds(), dragRect).Height;
+                                    bestIntersect = FloatRect.Intersect(_spellWindow.Items[i].RenderBounds(), dragRect).Width * FloatRect.Intersect(_spellWindow.Items[i].RenderBounds(), dragRect).Height;
                                     bestIntersectIndex = i;
                                 }
                             }
@@ -294,15 +300,15 @@ namespace Intersect_Client.Classes.UI.Game
                             }
                         }
                     }
-                    else if (Gui._GameGui.Hotbar.RenderBounds().IntersectsWith(dragRect))
+                    else if (Gui.GameUI.Hotbar.RenderBounds().IntersectsWith(dragRect))
                     {
                         for (int i = 0; i < Constants.MaxHotbar; i++)
                         {
-                            if (Gui._GameGui.Hotbar.Items[i].RenderBounds().IntersectsWith(dragRect))
+                            if (Gui.GameUI.Hotbar.Items[i].RenderBounds().IntersectsWith(dragRect))
                             {
-                                if (System.Drawing.Rectangle.Intersect(Gui._GameGui.Hotbar.Items[i].RenderBounds(), dragRect).Width * System.Drawing.Rectangle.Intersect(Gui._GameGui.Hotbar.Items[i].RenderBounds(), dragRect).Height > bestIntersect)
+                                if (FloatRect.Intersect(Gui.GameUI.Hotbar.Items[i].RenderBounds(), dragRect).Width * FloatRect.Intersect(Gui.GameUI.Hotbar.Items[i].RenderBounds(), dragRect).Height > bestIntersect)
                                 {
-                                    bestIntersect = System.Drawing.Rectangle.Intersect(Gui._GameGui.Hotbar.Items[i].RenderBounds(), dragRect).Width * System.Drawing.Rectangle.Intersect(Gui._GameGui.Hotbar.Items[i].RenderBounds(), dragRect).Height;
+                                    bestIntersect = FloatRect.Intersect(Gui.GameUI.Hotbar.Items[i].RenderBounds(), dragRect).Width * FloatRect.Intersect(Gui.GameUI.Hotbar.Items[i].RenderBounds(), dragRect).Height;
                                     bestIntersectIndex = i;
                                 } 
                             }

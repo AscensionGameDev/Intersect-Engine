@@ -24,13 +24,16 @@
     OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
     SOFTWARE.
 */
-using Gwen.Control;
-using Microsoft.Win32;
+
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
+using IntersectClientExtras.Gwen.Control;
+using IntersectClientExtras.Gwen.Control.EventArguments;
+using Intersect_Client.Classes.Core;
+using Intersect_Client.Classes.General;
+using Intersect_Client.Classes.Misc;
+using Intersect_Client.Classes.Networking;
 
 namespace Intersect_Client.Classes.UI.Menu
 {
@@ -165,7 +168,7 @@ namespace Intersect_Client.Classes.UI.Menu
             {
                 if (_useSavedPass)
                 {
-                    Graphics.FadeStage = 2;
+                    GameFade.FadeOut();
                     PacketSender.SendLogin(_usernameTextbox.Text, _savedPass);
                     if (!_savePassChk.IsChecked) SaveCredentials();
                     Globals.WaitingOnServer = true;
@@ -174,7 +177,7 @@ namespace Intersect_Client.Classes.UI.Menu
                 {
                     if (FieldChecking.IsValidPass(_passwordTextbox.Text))
                     {
-                        Graphics.FadeStage = 2;
+                        GameFade.FadeOut();
                         PacketSender.SendLogin(_usernameTextbox.Text, BitConverter.ToString(sha.ComputeHash(Encoding.UTF8.GetBytes(_passwordTextbox.Text.Trim()))).Replace("-", ""));
                         SaveCredentials();
                         Globals.WaitingOnServer = true;
@@ -192,19 +195,15 @@ namespace Intersect_Client.Classes.UI.Menu
         }
         private void LoadCredentials()
         {
-            RegistryKey key = Registry.CurrentUser.OpenSubKey("Software", false);
-            key = key.OpenSubKey("IntersectEngine", false);
-            if (key == null) { return; }
-            key = key.OpenSubKey(Globals.ServerHost + Globals.ServerPort);
-            if (key == null) { return; }
-            string name = (string)key.GetValue("username");
-            if (name != null)
+            string name = Globals.Database.LoadPreference("Username");
+            if (!string.IsNullOrEmpty(name))
             {
                 _usernameTextbox.Text = name;
-                if ((string)key.GetValue("pass") != "")
+                string pass = Globals.Database.LoadPreference("Password");
+                if (!string.IsNullOrEmpty(pass))
                 {
                     _passwordTextbox.Text = "*********";
-                    _savedPass = (string)key.GetValue("pass");
+                    _savedPass = pass;
                     _useSavedPass = true;
                     _savePassChk.IsChecked = true;
                 }
@@ -213,21 +212,15 @@ namespace Intersect_Client.Classes.UI.Menu
         private void SaveCredentials()
         {
             var sha = new SHA256Managed();
-            RegistryKey key = Registry.CurrentUser.OpenSubKey("Software", true);
-
-            key.CreateSubKey("IntersectEngine");
-            key = key.OpenSubKey("IntersectEngine", true);
-            key.CreateSubKey(Globals.ServerHost + Globals.ServerPort);
-            key = key.OpenSubKey(Globals.ServerHost + Globals.ServerPort,true);
             if (_savePassChk.IsChecked)
             {
-                key.SetValue("username", _usernameTextbox.Text.Trim(), RegistryValueKind.String);
-                key.SetValue("pass", BitConverter.ToString(sha.ComputeHash(Encoding.UTF8.GetBytes(_passwordTextbox.Text.Trim()))).Replace("-", ""),RegistryValueKind.String);
+                Globals.Database.SavePreference("Username", _usernameTextbox.Text.Trim());
+                Globals.Database.SavePreference("Password", BitConverter.ToString(sha.ComputeHash(Encoding.UTF8.GetBytes(_passwordTextbox.Text.Trim()))).Replace("-", ""));
             }
             else
             {
-                key.SetValue("username", "",RegistryValueKind.String);
-                key.SetValue("pass", "",RegistryValueKind.String);
+                Globals.Database.SavePreference("Username", "");
+                Globals.Database.SavePreference("Password", "");
             }
         }
     }

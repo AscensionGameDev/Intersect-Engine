@@ -24,11 +24,11 @@
     OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
     SOFTWARE.
 */
-using Gwen.Control;
+
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using IntersectClientExtras.Gwen.Control;
+using Intersect_Client.Classes.Core;
 
 namespace Intersect_Client.Classes.UI
 {
@@ -88,7 +88,7 @@ namespace Intersect_Client.Classes.UI
         }
         protected virtual void ErrorBox_Resized(Base sender, EventArgs arguments)
         {
-            sender.SetPosition(Graphics.ScreenWidth / 2 - sender.Width / 2, Graphics.ScreenHeight / 2 - sender.Height / 2);
+            sender.SetPosition(GameGraphics.Renderer.GetScreenWidth() / 2 - sender.Width / 2, GameGraphics.Renderer.GetScreenHeight() / 2 - sender.Height / 2);
         }
     }
 }

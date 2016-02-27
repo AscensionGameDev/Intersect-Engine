@@ -24,12 +24,11 @@
     OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
     SOFTWARE.
 */
-using Gwen;
-using Gwen.Control;
+
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using IntersectClientExtras.Gwen;
+using IntersectClientExtras.Gwen.Control;
+using Intersect_Client.Classes.General;
 
 namespace Intersect_Client.Classes.UI.Game
 {
@@ -44,7 +43,7 @@ namespace Intersect_Client.Classes.UI.Game
             else
                 title = titleOverride;
 
-            _descWindow = new WindowControl(Gui._GameGui.GameCanvas, title, false);
+            _descWindow = new WindowControl(Gui.GameUI.GameCanvas, title, false);
             _descWindow.SetSize(220, 100);
             _descWindow.IsClosable = false;
             _descWindow.DisableResizing();
@@ -103,7 +102,7 @@ namespace Intersect_Client.Classes.UI.Game
                     }
                     itemSlot.SetPosition(4, 28);
                 }
-                Gwen.Control.RichLabel itemDesc = new Gwen.Control.RichLabel(_descWindow);
+                RichLabel itemDesc = new RichLabel(_descWindow);
                 itemDesc.SetPosition(4, y);
                 itemDesc.Width = 210;
                 //itemDesc.SetBounds(4, y, 180, 10);
@@ -120,7 +119,7 @@ namespace Intersect_Client.Classes.UI.Game
                 if (Globals.GameItems[itemnum].Type != (int)Enums.ItemTypes.Currency && Globals.GameItems[itemnum].Type != (int)Enums.ItemTypes.None)
                 {
                     //Check for requirements
-                    Gwen.Control.RichLabel itemReqs = new Gwen.Control.RichLabel(_descWindow);
+                    RichLabel itemReqs = new RichLabel(_descWindow);
                     itemReqs.Width = 110;
                     itemReqs.AddText("Prerequisites", itemName.TextColor);
                     itemReqs.AddLineBreak();
@@ -154,7 +153,7 @@ namespace Intersect_Client.Classes.UI.Game
                 string stats = "";
                 if (Globals.GameItems[itemnum].Type == (int)Enums.ItemTypes.Equipment)
                 {
-                    Gwen.Control.RichLabel itemStats = new Gwen.Control.RichLabel(_descWindow);
+                    RichLabel itemStats = new RichLabel(_descWindow);
                     if (requirements != true)
                     {
                         itemStats.SetPosition(4, y);
@@ -203,7 +202,7 @@ namespace Intersect_Client.Classes.UI.Game
         public void Dispose()
         {
             _descWindow.Close();
-            Gui._GameGui.GameCanvas.RemoveChild(_descWindow,false);
+            Gui.GameUI.GameCanvas.RemoveChild(_descWindow,false);
             _descWindow.Dispose();
         }
     }

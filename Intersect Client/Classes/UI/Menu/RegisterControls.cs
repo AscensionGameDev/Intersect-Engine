@@ -24,12 +24,14 @@
     OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
     SOFTWARE.
 */
-using Gwen.Control;
+
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Intersect_Client.Classes;
+using IntersectClientExtras.Gwen.Control;
+using IntersectClientExtras.Gwen.Control.EventArguments;
+using Intersect_Client.Classes.Core;
+using Intersect_Client.Classes.General;
+using Intersect_Client.Classes.Misc;
+using Intersect_Client.Classes.Networking;
 
 namespace Intersect_Client.Classes.UI.Menu
 {
@@ -169,7 +171,7 @@ namespace Intersect_Client.Classes.UI.Menu
                     {
                         if (FieldChecking.IsEmail(_emailTextbox.Text))
                         {
-                            Graphics.FadeStage = 2;
+                            GameFade.FadeOut();
                             PacketSender.SendCreateAccount(_usernameTextbox.Text, _passwordTextbox.Text, _emailTextbox.Text);
                             Globals.WaitingOnServer = true;
                         }

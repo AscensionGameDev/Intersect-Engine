@@ -22,8 +22,10 @@
 
 using System;
 using System.Collections.Generic;
-using System.IO;
-namespace Intersect_Client.Classes
+using Intersect_Client.Classes.General;
+using Intersect_Client.Classes.Misc;
+
+namespace Intersect_Client.Classes.Game_Objects
 {
     public class ClassStruct
     {

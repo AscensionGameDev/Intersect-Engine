@@ -24,19 +24,46 @@
     OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
     SOFTWARE.
 */
-using System;
+using System.IO;
+using IntersectClientExtras.GenericClasses;
+using IntersectClientExtras.Graphics;
+using SFML.Graphics;
+using SFML.System;
+using Color = IntersectClientExtras.GenericClasses.Color;
 
-namespace Intersect_Client.Classes
+namespace Intersect_Client.Classes.Bridges_and_Interfaces.SFML.Graphics
 {
-    static class Program
+    public class SfmlShader : GameShader
     {
-        /// <summary>
-        /// The main entry point for the application.
-        /// </summary>
-        [STAThread]
-        static void Main()
+        private Shader _shader;
+        public SfmlShader(string shaderName) : base(shaderName)
         {
-            GameMain.StartGame();
+            _shader = Shader.FromString(File.ReadAllText(shaderName + "_vert.shader"), File.ReadAllText(shaderName + "_frag.shader"));
+        }
+
+        public override void SetFloat(string key, float val)
+        {
+            _shader.SetParameter(key, val);
+        }
+
+        public override void SetInt(string key, int val)
+        {
+            _shader.SetParameter(key, val);
+        }
+
+        public override void SetColor(string key, Color val)
+        {
+            _shader.SetParameter(key, new global::SFML.Graphics.Color(val.R,val.G,val.B,val.A));
+        }
+
+        public override void SetVector2(string key, Pointf val)
+        {
+            _shader.SetParameter(key, new Vector2f(val.X,val.Y));
+        }
+
+        public override object GetShader()
+        {
+            return _shader;
         }
     }
 }

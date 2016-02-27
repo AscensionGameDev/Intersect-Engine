@@ -24,7 +24,7 @@
     OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
     SOFTWARE.
 */
-namespace Intersect_Client.Classes
+namespace Intersect_Client.Classes.General
 {
     public static class Constants
     {

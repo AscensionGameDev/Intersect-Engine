@@ -24,11 +24,11 @@
     OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
     SOFTWARE.
 */
-using Gwen.Control;
+
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using IntersectClientExtras.Gwen.Control;
+using IntersectClientExtras.Gwen.Control.EventArguments;
+using Intersect_Client.Classes.Core;
 
 namespace Intersect_Client.Classes.UI.Game
 {
@@ -48,9 +48,9 @@ namespace Intersect_Client.Classes.UI.Game
             _cancelEventHandler = cancelClicked;
             Slot = slot;
 
-            _myWindow = new WindowControl(Gui._GameGui.GameCanvas, title, modal);
+            _myWindow = new WindowControl(Gui.GameUI.GameCanvas, title, modal);
             _myWindow.SetSize(300, 120);
-            _myWindow.SetPosition(Graphics.ScreenWidth / 2 - 380 / 2, Graphics.ScreenHeight / 2 - 200 / 2);
+            _myWindow.SetPosition(GameGraphics.Renderer.GetScreenWidth() / 2 - 380 / 2, GameGraphics.Renderer.GetScreenHeight() / 2 - 200 / 2);
             _myWindow.IsClosable = false;
             _myWindow.DisableResizing();
 
@@ -98,7 +98,7 @@ namespace Intersect_Client.Classes.UI.Game
         private void Dispose()
         {
             _myWindow.Close();
-            Gui._GameGui.GameCanvas.RemoveChild(_myWindow,false);
+            Gui.GameUI.GameCanvas.RemoveChild(_myWindow,false);
             _myWindow.Dispose();
         }
 

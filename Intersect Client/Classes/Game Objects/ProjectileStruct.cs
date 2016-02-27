@@ -19,11 +19,11 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-using System;
-using System.Collections.Generic;
-using System.IO;
 
-namespace Intersect_Client.Classes
+using System;
+using Intersect_Client.Classes.Misc;
+
+namespace Intersect_Client.Classes.Game_Objects
 {
     public class ProjectileStruct
     {

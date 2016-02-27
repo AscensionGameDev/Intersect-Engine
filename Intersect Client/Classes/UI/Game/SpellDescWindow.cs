@@ -24,13 +24,11 @@
     OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
     SOFTWARE.
 */
-using Gwen;
-using Gwen.Control;
-using System;
-using System.Collections.Generic;
+
 using System.IO;
-using System.Linq;
-using System.Text;
+using IntersectClientExtras.Gwen;
+using IntersectClientExtras.Gwen.Control;
+using Intersect_Client.Classes.General;
 
 namespace Intersect_Client.Classes.UI.Game
 {
@@ -40,7 +38,7 @@ namespace Intersect_Client.Classes.UI.Game
         public SpellDescWindow(int spellnum, int x, int y)
         {
             if (spellnum == -1) { return; }
-            _descWindow = new WindowControl(Gui._GameGui.GameCanvas, Globals.GameSpells[spellnum].Name, false);
+            _descWindow = new WindowControl(Gui.GameUI.GameCanvas, Globals.GameSpells[spellnum].Name, false);
             _descWindow.SetSize(220, 100);
             _descWindow.IsClosable = false;
             _descWindow.DisableResizing();
@@ -70,7 +68,7 @@ namespace Intersect_Client.Classes.UI.Game
 
             y = 32;
             
-            Gwen.Control.RichLabel castInfo = new Gwen.Control.RichLabel(_descWindow);
+            RichLabel castInfo = new RichLabel(_descWindow);
             castInfo.SetPosition(4, y);
             castInfo.Width = 140;
 
@@ -112,7 +110,7 @@ namespace Intersect_Client.Classes.UI.Game
             y += castInfo.Height + 8;
 
 
-            Gwen.Control.RichLabel spellDesc = new Gwen.Control.RichLabel(_descWindow);
+            RichLabel spellDesc = new RichLabel(_descWindow);
             spellDesc.SetPosition(4, y);
             spellDesc.Width = 210;
             //itemDesc.SetBounds(4, y, 180, 10);
@@ -128,7 +126,7 @@ namespace Intersect_Client.Classes.UI.Game
             bool requirements = false;
 
                 //Check for requirements
-                Gwen.Control.RichLabel itemReqs = new Gwen.Control.RichLabel(_descWindow);
+                RichLabel itemReqs = new RichLabel(_descWindow);
                 itemReqs.Width = 110;
                 itemReqs.AddText("Prerequisites", spellName.TextColor);
                 itemReqs.AddLineBreak();
@@ -171,7 +169,7 @@ namespace Intersect_Client.Classes.UI.Game
             string stats = "";
             if (Globals.GameSpells[spellnum].Type == (int)Enums.SpellTypes.Combat)
             {
-                Gwen.Control.RichLabel spellStats = new Gwen.Control.RichLabel(_descWindow);
+                RichLabel spellStats = new RichLabel(_descWindow);
                 if (requirements != true)
                 {
                     spellStats.SetPosition(4, y);
@@ -254,7 +252,7 @@ namespace Intersect_Client.Classes.UI.Game
         {
             if (_descWindow == null) { return; }
             _descWindow.Close();
-            Gui._GameGui.GameCanvas.RemoveChild(_descWindow, false);
+            Gui.GameUI.GameCanvas.RemoveChild(_descWindow, false);
             _descWindow.Dispose();
         }
     }

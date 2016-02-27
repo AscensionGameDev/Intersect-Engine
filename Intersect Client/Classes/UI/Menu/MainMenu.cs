@@ -24,12 +24,12 @@
     OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
     SOFTWARE.
 */
-using Gwen;
-using Gwen.Control;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+
+using IntersectClientExtras.Gwen;
+using IntersectClientExtras.Gwen.Control;
+using IntersectClientExtras.Gwen.Control.EventArguments;
+using Intersect_Client.Classes.Core;
+using Intersect_Client.Classes.General;
 
 namespace Intersect_Client.Classes.UI.Menu
 {
@@ -48,6 +48,8 @@ namespace Intersect_Client.Classes.UI.Menu
         private RegisterControls _registerControls;
         private CreateCharControls _CreateCharControls;
 
+        private bool _shouldOpenCharacterCreation;
+
         //Character creation feild check
         private bool HasMadeCharacterCreation = false;
 
@@ -57,7 +59,7 @@ namespace Intersect_Client.Classes.UI.Menu
             //Main Menu Window
             _menuWindow = new WindowControl(_menuCanvas, "Main Menu");
             _menuWindow.SetSize(200, 200);
-            _menuWindow.SetPosition(Graphics.ScreenWidth / 2 - 100, Graphics.ScreenHeight / 2 - 80);
+            _menuWindow.SetPosition(GameGraphics.Renderer.GetScreenWidth() / 2 - 100, GameGraphics.Renderer.GetScreenHeight() / 2 - 80);
             _menuWindow.IsClosable = false;
             _menuWindow.DisableResizing();
             _menuWindow.Margin = Margin.Zero;
@@ -106,7 +108,10 @@ namespace Intersect_Client.Classes.UI.Menu
         //Methods
         public void Update()
         {
-
+            if (_shouldOpenCharacterCreation)
+            {
+                CreateCharacterCreation();
+            }
         }
         public void Reset()
         {
@@ -133,6 +138,11 @@ namespace Intersect_Client.Classes.UI.Menu
             }
         }
 
+        public void NotifyOpenCharacterCreation()
+        {
+            _shouldOpenCharacterCreation = true;
+        }
+
         public void CreateCharacterCreation()
         {
             _menuWindow.Title = "Create Character";
@@ -141,6 +151,7 @@ namespace Intersect_Client.Classes.UI.Menu
             _CreateCharControls = new CreateCharControls(_menuWindow);
             _CreateCharControls.Show();
             HasMadeCharacterCreation = true;
+            _shouldOpenCharacterCreation = false;
         }
 
         //Input Handlers
@@ -173,7 +184,7 @@ namespace Intersect_Client.Classes.UI.Menu
         }
         void ExitButton_Clicked(Base sender, ClickedEventArgs arguments)
         {
-            GameMain.IsRunning = false;
+            Globals.IsRunning = false;
         }
     }
 }

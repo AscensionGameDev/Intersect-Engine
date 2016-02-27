@@ -24,12 +24,13 @@
     OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
     SOFTWARE.
 */
-using Gwen;
-using Gwen.Control;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+
+using IntersectClientExtras.Gwen;
+using IntersectClientExtras.Gwen.Control;
+using IntersectClientExtras.Gwen.Control.EventArguments;
+using Intersect_Client.Classes.Core;
+using Intersect_Client.Classes.General;
+using Intersect_Client.Classes.Networking;
 
 namespace Intersect_Client.Classes.UI.Game
 {
@@ -49,7 +50,7 @@ namespace Intersect_Client.Classes.UI.Game
             //Event Dialog Window
             _eventDialogWindow = new WindowControl(_gameCanvas, "Event Dialog");
             _eventDialogWindow.SetSize(200, 260);
-            _eventDialogWindow.SetPosition(Graphics.ScreenWidth / 2 - 100, Graphics.ScreenHeight / 2 - 260 / 2);
+            _eventDialogWindow.SetPosition(GameGraphics.Renderer.GetScreenWidth() / 2 - 100, GameGraphics.Renderer.GetScreenHeight() / 2 - 260 / 2);
             _eventDialogWindow.IsClosable = false;
             _eventDialogWindow.DisableResizing();
             _eventDialogWindow.Margin = Margin.Zero;

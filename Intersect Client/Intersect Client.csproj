@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Intersect_Client</RootNamespace>
     <AssemblyName>Intersect Client</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
     <PublishUrl>publish\</PublishUrl>
@@ -37,6 +37,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -46,6 +47,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup>
     <StartupObject>Intersect_Client.Classes.Program</StartupObject>
@@ -75,13 +77,8 @@
     <ApplicationIcon>IntersectLogo.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Gwen, Version=1.0.0.0, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>.\Gwen.dll</HintPath>
-    </Reference>
-    <Reference Include="Gwen.Renderer.SFML, Version=1.0.0.0, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>.\Gwen.Renderer.SFML.dll</HintPath>
+    <Reference Include="IntersectClientExtras">
+      <HintPath>.\IntersectClientExtras.dll</HintPath>
     </Reference>
     <Reference Include="sfmlnet-audio-2">
       <HintPath>.\sfmlnet-audio-2.dll</HintPath>
@@ -110,7 +107,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Classes\Core\Sounds.cs" />
+    <Compile Include="Classes\Core\GameAudio.cs" />
+    <Compile Include="Classes\Core\GameFade.cs" />
+    <Compile Include="Classes\Core\GameInputHandler.cs" />
     <Compile Include="Classes\Entities\Event.cs" />
     <Compile Include="Classes\Entities\Projectile.cs" />
     <Compile Include="Classes\Entities\Resource.cs" />
@@ -126,6 +125,22 @@
     <Compile Include="Classes\Game Objects\NpcStruct.cs" />
     <Compile Include="Classes\Game Objects\SpellStruct.cs" />
     <Compile Include="Classes\Misc\MathHelper.cs" />
+    <Compile Include="Classes\Networking\GameNetwork.cs" />
+    <Compile Include="Classes\Program.cs" />
+    <Compile Include="Classes\SFML\Audio\SfmlMusicInstance.cs" />
+    <Compile Include="Classes\SFML\Audio\SfmlMusicSource.cs" />
+    <Compile Include="Classes\SFML\Audio\SfmlSoundInstance.cs" />
+    <Compile Include="Classes\SFML\Audio\SfmlSoundSource.cs" />
+    <Compile Include="Classes\SFML\Database\SfmlDatabase.cs" />
+    <Compile Include="Classes\SFML\File Management\SfmlContentManager.cs" />
+    <Compile Include="Classes\SFML\Graphics\SfmlFont.cs" />
+    <Compile Include="Classes\SFML\Graphics\SfmlRenderer.cs" />
+    <Compile Include="Classes\SFML\Graphics\SfmlRenderTexture.cs" />
+    <Compile Include="Classes\SFML\Graphics\SfmlShader.cs" />
+    <Compile Include="Classes\SFML\Graphics\SfmlTexture.cs" />
+    <Compile Include="Classes\SFML\Input\SfmlInput.cs" />
+    <Compile Include="Classes\SFML\Network\SfmlSocket.cs" />
+    <Compile Include="Classes\SFML\System\SfmlSystem.cs" />
     <Compile Include="Classes\Spells\SpellInstance.cs" />
     <Compile Include="Classes\UI\Game\AdminWindow.cs" />
     <Compile Include="Classes\UI\Game\CharacterWindow.cs" />
@@ -134,7 +149,6 @@
     <Compile Include="Classes\UI\Game\GameGuiBase.cs" />
     <Compile Include="Classes\Misc\ByteBuffer.cs" />
     <Compile Include="Classes\General\Constants.cs" />
-    <Compile Include="Classes\Core\Database.cs" />
     <Compile Include="Classes\Entities\Entity.cs" />
     <Compile Include="Classes\Entities\EntityManager.cs" />
     <Compile Include="Classes\Entities\EventDialog.cs" />
@@ -163,11 +177,9 @@
     <Compile Include="Classes\Maps\MapStruct.cs" />
     <Compile Include="Classes\Maps\MapAutotiles.cs" />
     <Compile Include="Classes\UI\Menu\MenuGuiBase.cs" />
-    <Compile Include="Classes\Networking\Network.cs" />
     <Compile Include="Classes\Networking\PacketHandler.cs" />
     <Compile Include="Classes\Networking\PacketSender.cs" />
     <Compile Include="Classes\Entities\Player.cs" />
-    <Compile Include="Classes\Core\Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -179,8 +191,8 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
-    <None Include="Arvo-Regular.ttf">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    <None Include="Resources\Fonts\Arvo-Regular.ttf">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -192,6 +204,12 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
     <None Include="Resources\Music\Banquet.ogg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Resources\Shaders\RadialGradient_frag.shader">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Resources\Shaders\RadialGradient_vert.shader">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Resources\Sounds\013-Move01.ogg">
@@ -446,12 +464,6 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="csfml-window-2.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Gwen.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Gwen.Renderer.SFML.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="IntersectLogo.ico" />
@@ -1926,7 +1938,7 @@
     <Content Include="Resources\Tilesets\Tileset9.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="DefaultSkin.png">
+    <Content Include="Resources\GUI\DefaultSkin.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="libsndfile-1.dll">

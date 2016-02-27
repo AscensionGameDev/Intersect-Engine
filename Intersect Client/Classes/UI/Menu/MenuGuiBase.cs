@@ -24,17 +24,15 @@
     OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
     SOFTWARE.
 */
-using System;
-using System.Linq;
-using System.Text.RegularExpressions;
-using Gwen;
-using Gwen.Control;
+
+using IntersectClientExtras.Gwen.Control;
 
 namespace Intersect_Client.Classes.UI.Menu
 {
     public class MenuGuiBase
     {
         private readonly Canvas _menuCanvas;
+        private bool shouldReset = false;
         public MenuGuiBase(Canvas myCanvas)
         {
             _menuCanvas = myCanvas;
@@ -50,12 +48,18 @@ namespace Intersect_Client.Classes.UI.Menu
 
         public void Draw()
         {
+            _mainMenu.Update();
+            if (shouldReset)
+            {
+                shouldReset = false;
+                _mainMenu.Reset();
+            }
             _menuCanvas.RenderCanvas();
         }
 
         public void Reset()
         {
-            _mainMenu.Reset();
+            shouldReset = true;
         }
 
         

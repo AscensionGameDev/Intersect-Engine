@@ -24,22 +24,18 @@
     OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
     SOFTWARE.
 */
-using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using Gwen;
-using Gwen.Control;
-using Intersect_Client.Classes.UI.Game;
-using Intersect_Client.Classes.UI;
 
-namespace Intersect_Client.Classes
+using IntersectClientExtras.Gwen.Control;
+using Intersect_Client.Classes.General;
+
+namespace Intersect_Client.Classes.UI.Game
 {
     public class GameGuiBase
     {
         public Canvas GameCanvas;
         private DebugMenu _debugMenu;
         public bool FocusChat;
+        private bool _shouldOpenAdminWindow = false;
 
         public GameGuiBase(Canvas myCanvas)
         {
@@ -67,9 +63,19 @@ namespace Intersect_Client.Classes
             if (Globals.Me != null) { TryAddPlayerBox(); }
         }
 
+        public void NotifyOpenAdminWindow()
+        {
+            _shouldOpenAdminWindow = true;
+        }
+        public void OpenAdminWindow()
+        {
+            new AdminWindow(GameCanvas);
+            _shouldOpenAdminWindow = false;
+        }
+
         public void TryAddPlayerBox()
         {
-            if (_playerBox != null) { return; }
+            if (_playerBox != null || Globals.Me == null) { return; }
             _playerBox = new EntityBox(GameCanvas, Globals.Me,0,0);
         }
 
@@ -96,12 +102,17 @@ namespace Intersect_Client.Classes
 
         public void Draw()
         {
+            if (Globals.Me != null) { TryAddPlayerBox(); }
             _eventWindow.Update();
             _chatBox.Update();
             GameMenu.Update();
             Hotbar.Update();
             _debugMenu.Update();
             if (_playerBox != null) { _playerBox.Update(); }
+            if (_shouldOpenAdminWindow)
+            {
+                OpenAdminWindow();
+            }
             if (FocusChat)
             {
                 _chatBox.Focus();

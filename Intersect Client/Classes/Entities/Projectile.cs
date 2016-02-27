@@ -19,20 +19,17 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Threading;
-using System.Drawing;
-using Intersect_Client.Classes;
-using SFML.Graphics;
-using SFML.Window;
-using Color = SFML.Graphics.Color;
-using Graphics = Intersect_Client.Classes.Graphics;
-using SFML.System;
-using System.IO;
+using IntersectClientExtras.GenericClasses;
+using IntersectClientExtras.Graphics;
+using Intersect_Client.Classes.Game_Objects;
+using Intersect_Client.Classes.General;
+using Intersect_Client.Classes.Misc;
+using Graphics = Intersect_Client.Classes.Core.GameGraphics;
 
-namespace Intersect_Client.Classes
+namespace Intersect_Client.Classes.Entities
 {
     public class Projectile : Entity
     {
@@ -63,7 +60,7 @@ namespace Intersect_Client.Classes
             ProjectileNum = bf.ReadInteger();
             Dir = bf.ReadInteger();
             Target = bf.ReadInteger();
-            _movementTimer = Environment.TickCount;
+            _movementTimer = Globals.System.GetTimeMS();
         }
 
         private void AddProjectileSpawns()
@@ -85,7 +82,7 @@ namespace Intersect_Client.Classes
                 }
             }
             Quantity++;
-            SpawnTime = Environment.TickCount + Globals.GameProjectiles[ProjectileNum].Delay;
+            SpawnTime = Globals.System.GetTimeMS() + Globals.GameProjectiles[ProjectileNum].Delay;
         }
 
         private int FindProjectileRotationX(int direction, int x, int y)
@@ -240,12 +237,12 @@ namespace Intersect_Client.Classes
         /// <summary>
         /// Gets the displacement of the projectile during projection
         /// </summary>
-        /// <returns>The displacement from the co-ordinates if placed on a Globals.TileHeight grid.</returns>
+        /// <returns>The displacement from the co-ordinates if placed on a Globals.Database.TileHeight grid.</returns>
         private float getDisplacement(long spawnTime)
         {
-            long elapsedTime = Environment.TickCount - spawnTime;
+            long elapsedTime = Globals.System.GetTimeMS() - spawnTime;
             float displacementPercent = elapsedTime/(float)Globals.GameProjectiles[ProjectileNum].Speed;
-            return displacementPercent*Globals.TileHeight*Globals.GameProjectiles[ProjectileNum].Range;
+            return displacementPercent*Globals.Database.TileHeight*Globals.GameProjectiles[ProjectileNum].Range;
         }
 
         /// <summary>
@@ -267,7 +264,7 @@ namespace Intersect_Client.Classes
             }
             if (tmpI == -1) return false;
 
-            if (Quantity < Globals.GameProjectiles[ProjectileNum].Quantity && SpawnTime < Environment.TickCount)
+            if (Quantity < Globals.GameProjectiles[ProjectileNum].Quantity && SpawnTime < Globals.System.GetTimeMS())
             {
                 AddProjectileSpawns();
                 Console.WriteLine(Quantity.ToString());
@@ -297,9 +294,9 @@ namespace Intersect_Client.Classes
 
             for (int s = 0; s < Spawns.Count; s++)
             {
-                Texture srcTexture;
-                RectangleF srcRectangle = new Rectangle();
-                RectangleF destRectangle = new Rectangle();
+                GameTexture srcTexture;
+                FloatRect srcRectangle = new FloatRect();
+                FloatRect destRectangle = new FloatRect();
                 
                 /////////////////////////////////////////////////////////////////////////////////////////////////////////
                 //COPIED CODE FROM ENTITY CLASS DRAW METHOD, REMOVE AND REPLACE WITH ANIMATIONS WHEN THEY ARE A THING. //
@@ -307,19 +304,19 @@ namespace Intersect_Client.Classes
                 
                 var d = 0;
                 srcTexture = Graphics.EntityTextures[Graphics.EntityFileNames.IndexOf(MySprite.ToLower())];
-                if (srcTexture.Size.Y / 4 > Globals.TileHeight)
+                if (srcTexture.GetHeight() / 4 > Globals.Database.TileHeight)
                 {
-                    destRectangle.X = (Globals.GameMaps[CurrentMap].GetX() + Spawns[s].X * Globals.TileWidth + Spawns[s].OffsetX);
-                    destRectangle.Y = Globals.GameMaps[CurrentMap].GetY() + Spawns[s].Y * Globals.TileHeight + Spawns[s].OffsetY - ((srcTexture.Size.Y / 4) - Globals.TileHeight);
+                    destRectangle.X = (Globals.GameMaps[CurrentMap].GetX() + Spawns[s].X * Globals.Database.TileWidth + Spawns[s].OffsetX);
+                    destRectangle.Y = Globals.GameMaps[CurrentMap].GetY() + Spawns[s].Y * Globals.Database.TileHeight + Spawns[s].OffsetY - ((srcTexture.GetHeight() / 4) - Globals.Database.TileHeight);
                 }
                 else
                 {
-                    destRectangle.X = Globals.GameMaps[CurrentMap].GetX() + Spawns[s].X * Globals.TileWidth + Spawns[s].OffsetX;
-                    destRectangle.Y = Globals.GameMaps[CurrentMap].GetY() + Spawns[s].Y * Globals.TileHeight + Spawns[s].OffsetY;
+                    destRectangle.X = Globals.GameMaps[CurrentMap].GetX() + Spawns[s].X * Globals.Database.TileWidth + Spawns[s].OffsetX;
+                    destRectangle.Y = Globals.GameMaps[CurrentMap].GetY() + Spawns[s].Y * Globals.Database.TileHeight + Spawns[s].OffsetY;
                 }
-                if (srcTexture.Size.X / 4 > Globals.TileWidth)
+                if (srcTexture.GetWidth() / 4 > Globals.Database.TileWidth)
                 {
-                    destRectangle.X -= ((srcTexture.Size.X / 4) - Globals.TileWidth) / 2;
+                    destRectangle.X -= ((srcTexture.GetWidth() / 4) - Globals.Database.TileWidth) / 2;
                 }
 
                 switch (Dir)
@@ -339,10 +336,10 @@ namespace Intersect_Client.Classes
                 }
                 destRectangle.X = (int)Math.Ceiling(destRectangle.X);
                 destRectangle.Y = destRectangle.Y;
-                srcRectangle = new Rectangle(0 * (int)srcTexture.Size.X / 4, d * (int)srcTexture.Size.Y / 4, (int)srcTexture.Size.X / 4, (int)srcTexture.Size.Y / 4);
+                srcRectangle = new FloatRect(0 * (int)srcTexture.GetWidth() / 4, d * (int)srcTexture.GetHeight() / 4, (int)srcTexture.GetWidth() / 4, (int)srcTexture.GetHeight() / 4);
                 destRectangle.Width = srcRectangle.Width;
                 destRectangle.Height = srcRectangle.Height;
-                Graphics.RenderTexture(srcTexture, srcRectangle, destRectangle, Graphics.RenderWindow);
+                Graphics.DrawGameTexture(srcTexture, srcRectangle, destRectangle, Color.White);
 
                 //////////////
                 // CODE END //
@@ -360,7 +357,7 @@ namespace Intersect_Client.Classes
         //Clientside variables
         public float OffsetX = 0;
         public float OffsetY = 0;
-        public long SpawnTime = Environment.TickCount;
+        public long SpawnTime = Globals.System.GetTimeMS();
 
         public ProjectileSpawns(int dir, int x, int y)
         {

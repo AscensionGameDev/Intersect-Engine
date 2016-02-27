@@ -19,23 +19,20 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-using System;
-using System.Drawing;
-using Intersect_Client.Classes;
-using SFML.Graphics;
-using SFML.Window;
-using Color = SFML.Graphics.Color;
-using Graphics = Intersect_Client.Classes.Graphics;
-using SFML.System;
-using System.IO;
 
-namespace Intersect_Client.Classes
+using IntersectClientExtras.GenericClasses;
+using Intersect_Client.Classes.Core;
+using Intersect_Client.Classes.General;
+using Intersect_Client.Classes.Misc;
+using IntersectClientExtras.Graphics;
+
+namespace Intersect_Client.Classes.Entities
 {
     public class Resource : Entity
     {
         private bool _hasRenderBounds;
-        RectangleF srcRectangle = new RectangleF();
-        RectangleF destRectangle = new RectangleF();
+        FloatRect srcRectangle = new FloatRect();
+        FloatRect destRectangle = new FloatRect();
 
         public Resource() : base()
         {
@@ -52,7 +49,7 @@ namespace Intersect_Client.Classes
         {
             bool result = base.Update();
             if (!_hasRenderBounds) { CalculateRenderBounds(); }
-            if (result && !Graphics.CurrentView.Intersects(new FloatRect(destRectangle.Left,destRectangle.Top,destRectangle.Width,destRectangle.Height)))
+            if (result && !GameGraphics.CurrentView.IntersectsWith(new FloatRect(destRectangle.Left,destRectangle.Top,destRectangle.Width,destRectangle.Height)))
             {
                 if (RenderList != null)
                 {
@@ -70,13 +67,13 @@ namespace Intersect_Client.Classes
             {
                 return;
             }
-            Texture srcTexture;
-            if (Graphics.ResourceFileNames.IndexOf(MySprite) > -1)
+            GameTexture srcTexture;
+            if (GameGraphics.ResourceFileNames.IndexOf(MySprite) > -1)
             {
-                srcTexture = Graphics.ResourceTextures[Graphics.ResourceFileNames.IndexOf(MySprite)];
-                srcRectangle = new RectangleF(0, 0, Graphics.ResourceTextures[Graphics.ResourceFileNames.IndexOf(MySprite)].Size.X, Graphics.ResourceTextures[Graphics.ResourceFileNames.IndexOf(MySprite)].Size.Y);
-                destRectangle.Y = (int)(Globals.GameMaps[CurrentMap].GetY() + CurrentY * Globals.TileHeight + OffsetY);
-                destRectangle.X = (int)(Globals.GameMaps[CurrentMap].GetX() + CurrentX * Globals.TileWidth + OffsetX);
+                srcTexture = GameGraphics.ResourceTextures[GameGraphics.ResourceFileNames.IndexOf(MySprite)];
+                srcRectangle = new FloatRect(0, 0, GameGraphics.ResourceTextures[GameGraphics.ResourceFileNames.IndexOf(MySprite)].GetWidth(), GameGraphics.ResourceTextures[GameGraphics.ResourceFileNames.IndexOf(MySprite)].GetHeight());
+                destRectangle.Y = (int)(Globals.GameMaps[CurrentMap].GetY() + CurrentY * Globals.Database.TileHeight + OffsetY);
+                destRectangle.X = (int)(Globals.GameMaps[CurrentMap].GetX() + CurrentX * Globals.Database.TileWidth + OffsetX);
                 if (srcRectangle.Height > 32) { destRectangle.Y -= srcRectangle.Height - 32; }
                 if (srcRectangle.Width > 32) { destRectangle.X -= (srcRectangle.Width - 32) / 2; }
                 destRectangle.Width = srcRectangle.Width;
@@ -93,11 +90,11 @@ namespace Intersect_Client.Classes
             {
                 return;
             }
-            Texture srcTexture;
-            if (Graphics.ResourceFileNames.IndexOf(MySprite) > -1)
+            GameTexture srcTexture;
+            if (GameGraphics.ResourceFileNames.IndexOf(MySprite) > -1)
             {
-                srcTexture = Graphics.ResourceTextures[Graphics.ResourceFileNames.IndexOf(MySprite)];
-                Graphics.RenderTexture(srcTexture, srcRectangle, destRectangle, Graphics.RenderWindow);
+                srcTexture = GameGraphics.ResourceTextures[GameGraphics.ResourceFileNames.IndexOf(MySprite)];
+                GameGraphics.DrawGameTexture(srcTexture, srcRectangle, destRectangle, Color.White);
             }
         }
     }

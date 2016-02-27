@@ -24,18 +24,18 @@
     OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
     SOFTWARE.
 */
-using Gwen;
-using Gwen.Control;
-using SFML.Window;
+
 using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Xml.Linq;
-using SFML.Graphics;
-using SFML.System;
-using Texture = SFML.Graphics.Texture;
+using IntersectClientExtras.GenericClasses;
+using IntersectClientExtras.Graphics;
+using IntersectClientExtras.Gwen;
+using IntersectClientExtras.Gwen.Control;
+using IntersectClientExtras.Gwen.Control.EventArguments;
+using IntersectClientExtras.Gwen.Input;
+using IntersectClientExtras.Input;
+using Intersect_Client.Classes.Core;
+using Intersect_Client.Classes.General;
 
 namespace Intersect_Client.Classes.UI.Game
 {
@@ -43,7 +43,7 @@ namespace Intersect_Client.Classes.UI.Game
     {
         //Controls
         public WindowControl _hotbarWindow;
-        private RenderTexture _hotbarBG;
+        private GameRenderTexture _hotbarBG;
 
         //Item List
         public List<HotBarItem> Items = new List<HotBarItem>();
@@ -53,25 +53,24 @@ namespace Intersect_Client.Classes.UI.Game
         {
             _hotbarWindow = new WindowControl(_gameCanvas, "Hotbar");
             _hotbarWindow.SetSize(36 * Constants.MaxHotbar + 8, 38 + 24);
-            _hotbarWindow.SetPosition(Graphics.ScreenWidth - 4 - _hotbarWindow.Width, 2);
+            _hotbarWindow.SetPosition(GameGraphics.Renderer.GetScreenWidth() - 4 - _hotbarWindow.Width, 2);
             _hotbarWindow.DisableResizing();
             _hotbarWindow.Margin = Margin.Zero;
             _hotbarWindow.Padding = Padding.Zero;
             _hotbarWindow.IsClosable = false;
 
             //Create equipment background image
-            RenderTexture rtHotbar = new RenderTexture(34, 34);
-            RectangleShape border = new RectangleShape(new Vector2f(1, 34));
-            border.FillColor = Color.Black;
-            rtHotbar.Draw(border);
-            border.Position = new Vector2f(33, 0);
-            rtHotbar.Draw(border);
-            border.Size = new Vector2f(34, 1);
-            border.Position = new Vector2f(0, 0);
-            rtHotbar.Draw(border);
-            border.Position = new Vector2f(0, 33);
-            rtHotbar.Draw(border);
-            rtHotbar.Display();
+            GameRenderTexture rtHotbar = GameGraphics.Renderer.CreateRenderTexture(34, 34);
+            rtHotbar.Begin();
+            GameGraphics.DrawGameTexture(GameGraphics.WhiteTex, new FloatRect(0, 0, 1, 1), new FloatRect(0, 0, 1, 34),
+                Color.Black, rtHotbar);
+            GameGraphics.DrawGameTexture(GameGraphics.WhiteTex, new FloatRect(0, 0, 1, 1), new FloatRect(33, 0, 1, 34),
+                Color.Black, rtHotbar);
+            GameGraphics.DrawGameTexture(GameGraphics.WhiteTex, new FloatRect(0, 0, 1, 1), new FloatRect(0, 0, 34, 1),
+                Color.Black, rtHotbar);
+            GameGraphics.DrawGameTexture(GameGraphics.WhiteTex, new FloatRect(0, 0, 1, 1), new FloatRect(0, 33, 34, 1),
+                Color.Black, rtHotbar);
+            rtHotbar.End();
             _hotbarBG = rtHotbar;
 
             InitHotbarItems();
@@ -110,11 +109,11 @@ namespace Intersect_Client.Classes.UI.Game
             }
         }
 
-        public System.Drawing.Rectangle RenderBounds()
+        public FloatRect RenderBounds()
         {
-            System.Drawing.Rectangle rect = new System.Drawing.Rectangle();
-            rect.X = _hotbarWindow.LocalPosToCanvas(new System.Drawing.Point(0, 0)).X - Constants.ItemXPadding / 2;
-            rect.Y = _hotbarWindow.LocalPosToCanvas(new System.Drawing.Point(0, 0)).Y - Constants.ItemYPadding / 2;
+            FloatRect rect = new FloatRect();
+            rect.X = _hotbarWindow.LocalPosToCanvas(new Point(0, 0)).X - Constants.ItemXPadding / 2;
+            rect.Y = _hotbarWindow.LocalPosToCanvas(new Point(0, 0)).Y - Constants.ItemYPadding / 2;
             rect.Width = _hotbarWindow.Width + Constants.ItemXPadding;
             rect.Height = _hotbarWindow.Height + Constants.ItemYPadding;
             return rect;
@@ -153,12 +152,12 @@ namespace Intersect_Client.Classes.UI.Game
         private int[] _statBoost = new int[Constants.MaxStats];
 
         //Textures
-        private Gwen.Texture gwenTex;
-        private SFML.Graphics.RenderTexture sfTex;
-        private RenderTexture _hotbarBG;
+        private Texture gwenTex;
+        private GameRenderTexture sfTex;
+        private GameRenderTexture _hotbarBG;
 
 
-        public HotBarItem(int index, RenderTexture hotbarBG, WindowControl hotbarWindow)
+        public HotBarItem(int index, GameRenderTexture hotbarBG, WindowControl hotbarWindow)
         {
             myindex = index;
             _hotbarBG = hotbarBG;
@@ -180,7 +179,7 @@ namespace Intersect_Client.Classes.UI.Game
 
         void pnl_Clicked(Base sender, ClickedEventArgs arguments)
         {
-            ClickTime = Environment.TickCount + 500;
+            ClickTime = Globals.System.GetTimeMS() + 500;
         }
 
         void pnl_HoverLeave(Base sender, EventArgs arguments)
@@ -196,7 +195,7 @@ namespace Intersect_Client.Classes.UI.Game
         {
             MouseOver = true;
             CanDrag = true;
-            if (Mouse.IsButtonPressed(Mouse.Button.Left)) { return; }
+            if (Globals.InputManager.MouseButtonDown(GameInput.MouseButtons.Left)) { return; }
             if (_currentType == 0)
             {
                 if (_itemDescWindow != null) { _itemDescWindow.Dispose(); _itemDescWindow = null; }
@@ -209,11 +208,11 @@ namespace Intersect_Client.Classes.UI.Game
             }
         }
 
-        public System.Drawing.Rectangle RenderBounds()
+        public FloatRect RenderBounds()
         {
-            System.Drawing.Rectangle rect = new System.Drawing.Rectangle();
-            rect.X = pnl.LocalPosToCanvas(new System.Drawing.Point(0, 0)).X;
-            rect.Y = pnl.LocalPosToCanvas(new System.Drawing.Point(0, 0)).Y;
+            FloatRect rect = new FloatRect();
+            rect.X = pnl.LocalPosToCanvas(new Point(0, 0)).X;
+            rect.Y = pnl.LocalPosToCanvas(new Point(0, 0)).Y;
             rect.Width = pnl.Width;
             rect.Height = pnl.Height;
             return rect;
@@ -240,33 +239,33 @@ namespace Intersect_Client.Classes.UI.Game
                 }
             }
             if (Globals.Me.Hotbar[myindex].Type != _currentType || Globals.Me.Hotbar[myindex].Slot != _currentItem || _texLoaded == false || //Basics
-                (Globals.Me.Hotbar[myindex].Type == 1 && Globals.Me.Hotbar[myindex].Slot > -1 && (Globals.Me.Spells[Globals.Me.Hotbar[myindex].Slot].SpellCD > Environment.TickCount) && _isFaded == false) || //Is Spell, on CD and not faded
-                (Globals.Me.Hotbar[myindex].Type == 1 && Globals.Me.Hotbar[myindex].Slot > -1 && (Globals.Me.Spells[Globals.Me.Hotbar[myindex].Slot].SpellCD <= Environment.TickCount) && _isFaded == true) || //Is Spell, not on CD and faded
+                (Globals.Me.Hotbar[myindex].Type == 1 && Globals.Me.Hotbar[myindex].Slot > -1 && (Globals.Me.Spells[Globals.Me.Hotbar[myindex].Slot].SpellCD > Globals.System.GetTimeMS()) && _isFaded == false) || //Is Spell, on CD and not faded
+                (Globals.Me.Hotbar[myindex].Type == 1 && Globals.Me.Hotbar[myindex].Slot > -1 && (Globals.Me.Spells[Globals.Me.Hotbar[myindex].Slot].SpellCD <= Globals.System.GetTimeMS()) && _isFaded == true) || //Is Spell, not on CD and faded
                 (Globals.Me.Hotbar[myindex].Type == 0 && Globals.Me.Hotbar[myindex].Slot > -1 && Globals.Me.IsEquipped(_currentItem) != _isEquipped))
             {
                 _currentItem = Globals.Me.Hotbar[myindex].Slot;
                 _currentType = Globals.Me.Hotbar[myindex].Type;
                 if (_currentItem == -1 || _currentType == -1)
                 {
-                    pnl.Texture = Gui.SFMLToGwenTexture(_hotbarBG.Texture);
+                    pnl.Texture = Gui.ToGwenTexture(_hotbarBG);
                     _texLoaded = true;
                     _isEquipped = false;
                 }
                 else if (_currentType == 0 && _currentItem > -1 && Globals.Me.Inventory[_currentItem].ItemNum > -1)
                 {
                     sfTex = Gui.CreateItemTex(Globals.Me.Inventory[_currentItem].ItemNum, 1, 1, 34, 34,
-                        Globals.Me.IsEquipped(_currentItem), _hotbarBG.Texture);
-                    gwenTex = Gui.SFMLToGwenTexture(sfTex.Texture);
+                        Globals.Me.IsEquipped(_currentItem), _hotbarBG);
+                    gwenTex = Gui.ToGwenTexture(sfTex);
                     pnl.Texture = gwenTex;
                     _texLoaded = true;
                     _isEquipped = Globals.Me.IsEquipped(_currentItem);
                 }
                 else if (_currentType == 1 && _currentItem > -1 && Globals.Me.Spells[_currentItem].SpellNum > -1)
                 {
-                    _isFaded = Globals.Me.Spells[_currentItem].SpellCD > Environment.TickCount;
+                    _isFaded = Globals.Me.Spells[_currentItem].SpellCD > Globals.System.GetTimeMS();
                     sfTex = Gui.CreateSpellTex(Globals.Me.Spells[_currentItem].SpellNum, 1, 1, 34, 34,
-                        _isFaded, _hotbarBG.Texture);
-                    gwenTex = Gui.SFMLToGwenTexture(sfTex.Texture);
+                        _isFaded, _hotbarBG);
+                    gwenTex = Gui.ToGwenTexture(sfTex);
                     pnl.Texture = gwenTex;
                     _texLoaded = true;
                     _isEquipped = false;
@@ -278,12 +277,12 @@ namespace Intersect_Client.Classes.UI.Game
                 {
                     if (MouseOver)
                     {
-                        if (!Mouse.IsButtonPressed(Mouse.Button.Left))
+                        if (!Globals.InputManager.MouseButtonDown(GameInput.MouseButtons.Left))
                         {
                             CanDrag = true;
                             MouseX = -1;
                             MouseY = -1;
-                            if (Environment.TickCount < ClickTime)
+                            if (Globals.System.GetTimeMS() < ClickTime)
                             {
                                 if (_currentType == 0)
                                 {
@@ -302,18 +301,18 @@ namespace Intersect_Client.Classes.UI.Game
                             {
                                 if (MouseX == -1 || MouseY == -1)
                                 {
-                                    MouseX = Gwen.Input.InputHandler.MousePosition.X - pnl.LocalPosToCanvas(new System.Drawing.Point(0, 0)).X;
-                                    MouseY = Gwen.Input.InputHandler.MousePosition.Y - pnl.LocalPosToCanvas(new System.Drawing.Point(0, 0)).Y;
+                                    MouseX = InputHandler.MousePosition.X - pnl.LocalPosToCanvas(new Point(0, 0)).X;
+                                    MouseY = InputHandler.MousePosition.Y - pnl.LocalPosToCanvas(new Point(0, 0)).Y;
 
                                 }
                                 else
                                 {
-                                    int xdiff = MouseX - (Gwen.Input.InputHandler.MousePosition.X - pnl.LocalPosToCanvas(new System.Drawing.Point(0, 0)).X);
-                                    int ydiff = MouseY - (Gwen.Input.InputHandler.MousePosition.Y - pnl.LocalPosToCanvas(new System.Drawing.Point(0, 0)).Y);
+                                    int xdiff = MouseX - (InputHandler.MousePosition.X - pnl.LocalPosToCanvas(new Point(0, 0)).X);
+                                    int ydiff = MouseY - (InputHandler.MousePosition.Y - pnl.LocalPosToCanvas(new Point(0, 0)).Y);
                                     if (Math.Sqrt(Math.Pow(xdiff, 2) + Math.Pow(ydiff, 2)) > 5)
                                     {
                                         IsDragging = true;
-                                        dragIcon = new Draggable(pnl.LocalPosToCanvas(new System.Drawing.Point(0, 0)).X + MouseX, pnl.LocalPosToCanvas(new System.Drawing.Point(0, 0)).X + MouseY, gwenTex);
+                                        dragIcon = new Draggable(pnl.LocalPosToCanvas(new Point(0, 0)).X + MouseX, pnl.LocalPosToCanvas(new Point(0, 0)).X + MouseY, gwenTex);
                                     }
                                 }
                             }
@@ -327,20 +326,20 @@ namespace Intersect_Client.Classes.UI.Game
                         pnl.IsHidden = false;
                         //Drug the item and now we stopped
                         IsDragging = false;
-                        System.Drawing.Rectangle dragRect = new System.Drawing.Rectangle(dragIcon.x - Constants.ItemXPadding / 2, dragIcon.y - Constants.ItemYPadding / 2, Constants.ItemXPadding / 2 + 32, Constants.ItemYPadding / 2 + 32);
+                        FloatRect dragRect = new FloatRect(dragIcon.x - Constants.ItemXPadding / 2, dragIcon.y - Constants.ItemYPadding / 2, Constants.ItemXPadding / 2 + 32, Constants.ItemYPadding / 2 + 32);
 
-                        int bestIntersect = 0;
+                        float bestIntersect = 0;
                         int bestIntersectIndex = -1;
 
-                        if (Gui._GameGui.Hotbar.RenderBounds().IntersectsWith(dragRect))
+                        if (Gui.GameUI.Hotbar.RenderBounds().IntersectsWith(dragRect))
                         {
                             for (int i = 0; i < Constants.MaxHotbar; i++)
                             {
-                                if (Gui._GameGui.Hotbar.Items[i].RenderBounds().IntersectsWith(dragRect))
+                                if (Gui.GameUI.Hotbar.Items[i].RenderBounds().IntersectsWith(dragRect))
                                 {
-                                    if (System.Drawing.Rectangle.Intersect(Gui._GameGui.Hotbar.Items[i].RenderBounds(), dragRect).Width * System.Drawing.Rectangle.Intersect(Gui._GameGui.Hotbar.Items[i].RenderBounds(), dragRect).Height > bestIntersect)
+                                    if (FloatRect.Intersect(Gui.GameUI.Hotbar.Items[i].RenderBounds(), dragRect).Width * FloatRect.Intersect(Gui.GameUI.Hotbar.Items[i].RenderBounds(), dragRect).Height > bestIntersect)
                                     {
-                                        bestIntersect = System.Drawing.Rectangle.Intersect(Gui._GameGui.Hotbar.Items[i].RenderBounds(), dragRect).Width * System.Drawing.Rectangle.Intersect(Gui._GameGui.Hotbar.Items[i].RenderBounds(), dragRect).Height;
+                                        bestIntersect = FloatRect.Intersect(Gui.GameUI.Hotbar.Items[i].RenderBounds(), dragRect).Width * FloatRect.Intersect(Gui.GameUI.Hotbar.Items[i].RenderBounds(), dragRect).Height;
                                         bestIntersectIndex = i;
                                     }
                                 }

@@ -24,14 +24,15 @@
     OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
     SOFTWARE.
 */
-using Gwen;
-using Gwen.Control;
+
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Intersect_Client.Classes;
-using SFML.Graphics;
+using IntersectClientExtras.Graphics;
+using IntersectClientExtras.Gwen.Control;
+using IntersectClientExtras.Gwen.Control.EventArguments;
+using Intersect_Client.Classes.Core;
+using Intersect_Client.Classes.General;
+using Intersect_Client.Classes.Misc;
+using Intersect_Client.Classes.Networking;
 
 namespace Intersect_Client.Classes.UI.Menu
 {
@@ -52,7 +53,7 @@ namespace Intersect_Client.Classes.UI.Menu
         //Image
         private string _characterPortraitImg = "";
         private ImagePanel _characterPortrait;
-        private RenderTexture _spriteTex;
+        private GameRenderTexture _spriteTex;
         private string _currentSprite = "";
 
         //Parent
@@ -169,7 +170,7 @@ namespace Intersect_Client.Classes.UI.Menu
             {
                 string test = Globals.GameClasses[GetClass()].Sprites[GetSprite(i)].Sprite;
                 _spriteTex = Gui.CreateTextureFromSprite(Globals.GameClasses[GetClass()].Sprites[GetSprite(i)].Sprite, _characterPortrait.Width, _characterPortrait.Height);
-                _characterPortrait.Texture = Gui.SFMLToGwenTexture(_spriteTex.Texture);
+                _characterPortrait.Texture = Gui.ToGwenTexture(_spriteTex);
                 _currentSprite = Globals.GameClasses[GetClass()].Sprites[GetSprite(i)].Sprite;
             }
         }
@@ -256,7 +257,7 @@ namespace Intersect_Client.Classes.UI.Menu
             if (Globals.WaitingOnServer) { return; }
             if (FieldChecking.IsValidName(_charnameTextbox.Text))
             {
-                Graphics.FadeStage = 2;
+                GameFade.FadeOut();
                 PacketSender.SendCreateCharacter(_charnameTextbox.Text, GetClass(), GetSprite(Gender));
                 Globals.WaitingOnServer = true;
             }

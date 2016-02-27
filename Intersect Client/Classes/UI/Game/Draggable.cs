@@ -24,12 +24,12 @@
     OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
     SOFTWARE.
 */
-using Gwen.Control;
-using SFML.Window;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+
+using IntersectClientExtras.Gwen;
+using IntersectClientExtras.Gwen.Control;
+using IntersectClientExtras.Gwen.Input;
+using IntersectClientExtras.Input;
+using Intersect_Client.Classes.General;
 
 namespace Intersect_Client.Classes.UI.Game
 {
@@ -39,9 +39,9 @@ namespace Intersect_Client.Classes.UI.Game
         public int x;
         public int y;
 
-        public Draggable(int x, int y, Gwen.Texture tex)
+        public Draggable(int x, int y, Texture tex)
         {
-            pnl = new ImagePanel(Gui._GameGui.GameCanvas);
+            pnl = new ImagePanel(Gui.GameUI.GameCanvas);
             pnl.SetPosition(x, y);
             pnl.SetSize(32, 32);
             pnl.Texture = tex;
@@ -50,10 +50,10 @@ namespace Intersect_Client.Classes.UI.Game
 
         public bool Update()
         {
-            pnl.SetPosition(Gwen.Input.InputHandler.MousePosition.X - 16, Gwen.Input.InputHandler.MousePosition.Y - 16);
-            x = Gwen.Input.InputHandler.MousePosition.X - 16;
-            y = Gwen.Input.InputHandler.MousePosition.Y - 16;
-            if (!Mouse.IsButtonPressed(Mouse.Button.Left))
+            pnl.SetPosition(InputHandler.MousePosition.X - 16, InputHandler.MousePosition.Y - 16);
+            x = InputHandler.MousePosition.X - 16;
+            y = InputHandler.MousePosition.Y - 16;
+            if (!Globals.InputManager.MouseButtonDown(GameInput.MouseButtons.Left))
             {
                 return true;
             }
@@ -62,7 +62,7 @@ namespace Intersect_Client.Classes.UI.Game
 
         public void Dispose()
         {
-            Gui._GameGui.GameCanvas.RemoveChild(pnl,false);
+            Gui.GameUI.GameCanvas.RemoveChild(pnl,false);
         }
     }
 }

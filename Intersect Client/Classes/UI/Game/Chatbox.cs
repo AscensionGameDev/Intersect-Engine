@@ -24,13 +24,14 @@
     OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
     SOFTWARE.
 */
-using Gwen;
-using Gwen.Control;
+
 using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Text;
+using IntersectClientExtras.Gwen;
+using IntersectClientExtras.Gwen.Control;
+using IntersectClientExtras.Gwen.Control.EventArguments;
+using Intersect_Client.Classes.Core;
+using Intersect_Client.Classes.General;
+using Intersect_Client.Classes.Networking;
 
 namespace Intersect_Client.Classes.UI.Game
 {
@@ -49,7 +50,7 @@ namespace Intersect_Client.Classes.UI.Game
             _chatboxWindow = new WindowControl(_gameCanvas, "Chatbox") { IsClosable = false };
             _chatboxWindow.SetSize(380, 140);
             _chatboxWindow.DisableResizing();
-            _chatboxWindow.SetPosition(0, Graphics.ScreenHeight - 140);
+            _chatboxWindow.SetPosition(0, GameGraphics.Renderer.GetScreenHeight() - 140);
             _chatboxWindow.Margin = Margin.Zero;
             _chatboxWindow.Padding = Padding.Zero;
 

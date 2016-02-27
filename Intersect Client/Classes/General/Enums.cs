@@ -24,8 +24,10 @@
     OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
     SOFTWARE.
 */
+
 using System.Collections.Generic;
-namespace Intersect_Client.Classes
+
+namespace Intersect_Client.Classes.General
 {
     public static class Enums
     {
@@ -34,7 +36,9 @@ namespace Intersect_Client.Classes
         {
             Intro = 0,
             Menu,
-            InGame
+            Loading,
+            InGame,
+            Error
         }
 
         public enum ClientPackets

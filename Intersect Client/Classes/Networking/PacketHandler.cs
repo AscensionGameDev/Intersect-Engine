@@ -24,13 +24,19 @@
     OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
     SOFTWARE.
 */
-using Intersect_Client.Classes.Animations;
-using Intersect_Client.Classes.Items;
-using Intersect_Client.Classes.Spells;
+
 using System;
 using System.Collections.Generic;
+using Intersect_Client.Classes.Core;
+using Intersect_Client.Classes.Entities;
+using Intersect_Client.Classes.Game_Objects;
+using Intersect_Client.Classes.General;
+using Intersect_Client.Classes.Items;
+using Intersect_Client.Classes.Maps;
+using Intersect_Client.Classes.Misc;
+using Intersect_Client.Classes.UI;
 
-namespace Intersect_Client.Classes
+namespace Intersect_Client.Classes.Networking
 {
     public static class PacketHandler
     {
@@ -50,6 +56,8 @@ namespace Intersect_Client.Classes
                 {
                     dict.Add(packetHeader, 1);
                 }
+                
+                //Globals.System.Log("Handling Packet: " + packetHeader);
                 switch (packetHeader)
                 {
                     case Enums.ServerPackets.RequestPing:
@@ -197,7 +205,7 @@ namespace Intersect_Client.Classes
             }
             Globals.GameMaps.Add(mapNum, new MapStruct((int)mapNum, mapData));
             if ((mapNum) == Globals.LocalMaps[4]) { 
-                Sounds.PlayMusic(Globals.GameMaps[mapNum].Music, 3,3, true); }
+                GameAudio.PlayMusic(Globals.GameMaps[mapNum].Music, 3,3, true); }
             Globals.GameMaps[mapNum].MapGridX = bf.ReadInteger();
             Globals.GameMaps[mapNum].MapGridY = bf.ReadInteger();
             Globals.GameMaps[mapNum].HoldLeft = bf.ReadInteger();
@@ -273,10 +281,6 @@ namespace Intersect_Client.Classes
             if (en == Globals.Me && Globals.CurrentMap != en.CurrentMap)
             {
                 Globals.CurrentMap = Globals.Entities[index].CurrentMap;
-                //Initiate loading screen, we got probz
-                Graphics.FadeStage = 2;
-                Graphics.FadeAmt = 255.0f;
-                Globals.GameLoaded = false;
             }
         }
 
@@ -310,7 +314,8 @@ namespace Intersect_Client.Classes
             if (BorderMode == 1)
             {
                 Globals.GameBorderStyle = 1;
-                Graphics.FixResolution();
+                //TODO Make sure window isn't too large.
+                //GameGraphics.FixResolution();
             }
 
             //Load Each of the Main Game Object Types
@@ -338,7 +343,6 @@ namespace Intersect_Client.Classes
                 {
                     Globals.Tilesets[i] = bf.ReadString();
                 }
-                Graphics.LoadTilesets(Globals.Tilesets);
             }
         }
 
@@ -360,7 +364,7 @@ namespace Intersect_Client.Classes
                 {
                     if (i == 4)
                     {
-                        Sounds.PlayMusic(Globals.GameMaps[Globals.LocalMaps[i]].Music, 3,3, true);
+                        GameAudio.PlayMusic(Globals.GameMaps[Globals.LocalMaps[i]].Music, 3,3, true);
                     }
                 }
             }
@@ -370,9 +374,9 @@ namespace Intersect_Client.Classes
         {
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
-            Database.OrderedMaps.Clear();
-            Database.MapStructure.Load(bf);
-            Database.OrderedMaps.Sort();
+            Globals.OrderedMaps.Clear();
+            Globals.MapStructure.Load(bf);
+            Globals.OrderedMaps.Sort();
             //If admin window is open update it
             bf.Dispose();
         }
@@ -412,20 +416,20 @@ namespace Intersect_Client.Classes
                 switch (en.Dir)
                 {
                     case 0:
-                        en.OffsetY = Globals.TileWidth;
+                        en.OffsetY = Globals.Database.TileWidth;
                         en.OffsetX = 0;
                         break;
                     case 1:
-                        en.OffsetY = -Globals.TileWidth;
+                        en.OffsetY = -Globals.Database.TileWidth;
                         en.OffsetX = 0;
                         break;
                     case 2:
                         en.OffsetY = 0;
-                        en.OffsetX = Globals.TileWidth;
+                        en.OffsetX = Globals.Database.TileWidth;
                         break;
                     case 3:
                         en.OffsetY = 0;
-                        en.OffsetX = -Globals.TileWidth;
+                        en.OffsetX = -Globals.Database.TileWidth;
                         break;
                 }
             }
@@ -546,11 +550,10 @@ namespace Intersect_Client.Classes
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
             var error = bf.ReadString();
-            Graphics.FadeStage = 1;
-            Graphics.FadeAmt = 250;
+            GameFade.FadeIn();
             Globals.WaitingOnServer = false;
             Gui.MsgboxErrors.Add(error);
-            Gui._MenuGui.Reset();
+            Gui.MenuUI.Reset();
         }
 
         private static void HandleItemData(byte[] packet)
@@ -710,8 +713,8 @@ namespace Intersect_Client.Classes
         private static void HandleCreateCharacter()
         {
             Globals.WaitingOnServer = false;
-            Graphics.FadeStage = 1;
-            Gui._MenuGui._mainMenu.CreateCharacterCreation();
+            GameFade.FadeIn();
+            Gui.MenuUI._mainMenu.NotifyOpenCharacterCreation();
         }
 
         private static void HandleQuestData(byte[] packet)
@@ -726,7 +729,7 @@ namespace Intersect_Client.Classes
 
         private static void HandleOpenAdminWindow()
         {
-            Gui._GameGui.ShowAdminWindow();
+            Gui.GameUI.NotifyOpenAdminWindow();
         }
 
         private static void HandleProjectileData(byte[] packet)
@@ -745,7 +748,7 @@ namespace Intersect_Client.Classes
             bf.WriteBytes(packet);
             int EntityNum = bf.ReadInteger();
             int SpellNum = bf.ReadInteger();
-            Globals.Entities[EntityNum].CastTime = Environment.TickCount + Globals.GameSpells[SpellNum].CastDuration;
+            Globals.Entities[EntityNum].CastTime = Globals.System.GetTimeMS() + Globals.GameSpells[SpellNum].CastDuration;
             Globals.Entities[EntityNum].SpellCast = SpellNum;
             bf.Dispose();
         }
@@ -755,7 +758,7 @@ namespace Intersect_Client.Classes
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
             int SpellSlot = bf.ReadInteger();
-            Globals.Me.Spells[SpellSlot].SpellCD = Environment.TickCount + (Globals.GameSpells[Globals.Me.Spells[SpellSlot].SpellNum].CooldownDuration * 100);
+            Globals.Me.Spells[SpellSlot].SpellCD = Globals.System.GetTimeMS() + (Globals.GameSpells[Globals.Me.Spells[SpellSlot].SpellNum].CooldownDuration * 100);
             bf.Dispose();
         }
     }

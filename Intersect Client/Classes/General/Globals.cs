@@ -24,35 +24,38 @@
     OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
     SOFTWARE.
 */
-using Intersect_Client.Classes.Animations;
-using Intersect_Client.Classes.Items;
-using Intersect_Client.Classes.Spells;
+
 using System.Collections;
 using System.Collections.Generic;
+using IntersectClientExtras.Database;
+using IntersectClientExtras.File_Management;
+using IntersectClientExtras.Input;
+using IntersectClientExtras.Sys;
+using Intersect_Client.Classes.Entities;
+using Intersect_Client.Classes.Game_Objects;
+using Intersect_Client.Classes.Maps;
 
-namespace Intersect_Client.Classes
+namespace Intersect_Client.Classes.General
 {
     public static class Globals
     {
+        //Engine Progression
+        public static int IntroIndex = 0;
+        public static long IntroStartTime =-1;
+        public static long IntroDelay = 2000;
+        public static bool IntroComing = true;
 
-        //Game Options
-        public static string ServerHost = "localhost";
-        public static int ServerPort = 4500;
-        public static int SoundVolume = 100;
-        public static int MusicVolume = 100;
-        public static string MenuBGM = "";
-        public static string MenuBG = "";
-        public static string IntroBGString = "";
-        public static int TileWidth = 32;
-        public static int TileHeight = 32;
-        public static int MapWidth = 32;
-        public static int MapHeight = 26;
-        public static List<string> IntroBG = new List<string>();
-        public static int GameBorderStyle = 0;
-        public static bool RenderCaching = false;
 
         //Game Lock
         public static object GameLock = new object();
+        public static bool IsRunning = false;
+        public static string GameError = "";
+
+        //Game Systems
+        public static GameContentManager ContentManager;
+        public static GameInput InputManager;
+        public static GameSystem System;
+        public static GameDatabase Database;
 
         //Scene management
         public static bool WaitingOnServer = false;
@@ -65,6 +68,8 @@ namespace Intersect_Client.Classes
         public static int[] MapRevision;
         public static int MapCount;
         public static float MapRenderTimer = 0f;
+        public static List<FolderMap> OrderedMaps = new List<FolderMap>();
+        public static MapList MapStructure = new MapList();
 
 
         //Local player information
@@ -78,7 +83,7 @@ namespace Intersect_Client.Classes
         public static string DebugInfo = "";
 
         //Crucial game variables
-        public static int GameState = 0; //0 for Intro, 1 to Menu, 2 for in game
+        public static Enums.GameStates GameState = Enums.GameStates.Intro; //0 for Intro, 1 to Menu, 2 for in game
         public static bool GameLoaded;
 
         //Entities and stuff
@@ -127,5 +132,7 @@ namespace Intersect_Client.Classes
 
         //Resource Information
         public static string[] Tilesets;
+
+        public static int GameBorderStyle;
     }
 }
