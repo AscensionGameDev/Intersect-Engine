@@ -50,13 +50,11 @@ namespace Intersect_Server.Classes
         public void Load(ByteBuffer bf)
         {
             SpellNum = bf.ReadInteger();
-            SpellCD = bf.ReadLong();
         }
         public byte[] Data()
         {
             var bf = new ByteBuffer();
             bf.WriteInteger(SpellNum);
-            bf.WriteLong(SpellCD);
             return bf.ToArray();
         }
     }

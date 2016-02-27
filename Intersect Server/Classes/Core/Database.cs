@@ -972,7 +972,7 @@ namespace Intersect_Server.Classes
                 query = "";
                 for (var i = 0; i < Constants.MaxPlayerSkills; i++)
                 {
-                    query += "UPDATE Spells SET spellnum=" + en.Spells[i].SpellNum + ", spellcd=" + en.Spells[i].SpellCD + " WHERE id=" + id + " AND slot=" + i + ";\n";
+                    query += "UPDATE Spells SET spellnum=" + en.Spells[i].SpellNum + ", spellcd=" + 0 + " WHERE id=" + id + " AND slot=" + i + ";\n";
                 }
                 cmd = new MySqlCommand(query, mysqlConn);
                 cmd.ExecuteNonQuery();
@@ -1131,7 +1131,6 @@ namespace Intersect_Server.Classes
                 for (int i = 0; i < Constants.MaxPlayerSkills; i++)
                 {
                     en.Spells[i].SpellNum = Int32.Parse(playerdata.SelectSingleNode("//PlayerData//CharacterInfo//Spells/Slot" + i + "Num").InnerText);
-                    en.Spells[i].SpellCD = Int32.Parse(playerdata.SelectSingleNode("//PlayerData//CharacterInfo//Spells/Slot" + i + "CD").InnerText);
                 }
 
                 for (int i = 0; i < Constants.MaxHotbar; i++)
@@ -1223,7 +1222,6 @@ namespace Intersect_Server.Classes
             for (int i = 0; i < Constants.MaxPlayerSkills; i++)
             {
                 writer.WriteElementString("Slot" + i + "Num", en.Spells[i].SpellNum.ToString());
-                writer.WriteElementString("Slot" + i + "CD", en.Spells[i].SpellCD.ToString());
             }
             writer.WriteEndElement();
 

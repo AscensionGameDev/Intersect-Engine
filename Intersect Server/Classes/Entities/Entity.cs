@@ -43,7 +43,7 @@ namespace Intersect_Server.Classes
         public int CurrentZ = 0;
         public int CurrentMap = -1;
         public int Dir;
-        
+
         //Vitals & Stats
         public int[] MaxVital = new int[(int)Enums.Vitals.VitalCount];
         public int[] Vital = new int[(int)Enums.Vitals.VitalCount];
@@ -60,7 +60,7 @@ namespace Intersect_Server.Classes
         public List<SpellInstance> Spells = new List<SpellInstance>();
 
         public long MoveTimer;
-        
+
         //Initialization
         public Entity(int index)
         {
@@ -88,33 +88,35 @@ namespace Intersect_Server.Classes
         {
             var tmpX = CurrentX;
             var tmpY = CurrentY;
+            var mapX = 0;
+            var mapY = 0;
             switch (moveDir)
             {
-                case 0:
+                case 0: //Up
                     tmpY--;
                     break;
-                case 1:
+                case 1: //Down
                     tmpY++;
                     break;
-                case 2:
+                case 2: //Left
                     tmpX--;
                     break;
-                case 3:
+                case 3: //Right
                     tmpX++;
                     break;
-                case 4:
+                case 4: //NW
                     tmpY--;
                     tmpX--;
                     break;
-                case 5:
+                case 5: //NE
                     tmpY--;
                     tmpX++;
                     break;
-                case 6:
+                case 6: //SW
                     tmpY++;
                     tmpX--;
                     break;
-                case 7:
+                case 7: //SE
                     tmpY++;
                     tmpX++;
                     break;
@@ -125,186 +127,52 @@ namespace Intersect_Server.Classes
                 if (tmpX < 0)
                 {
                     tmpX = (Globals.MapWidth - 1) - (tmpX * -1);
-                    if (tmpY < 0)
-                    {
-                        tmpY = (Globals.MapHeight - 1) - (tmpY * -1);
-                        if (Database.MapGrids[Globals.GameMaps[tmpMap].MapGrid].MyGrid[Globals.GameMaps[tmpMap].MapGridX - 1, Globals.GameMaps[tmpMap].MapGridY - 1] > -1)
-                        {
-                            Attribute tileAttribute =
-                                Globals.GameMaps[
-                                    Database.MapGrids[Globals.GameMaps[tmpMap].MapGrid].MyGrid[
-                                        Globals.GameMaps[tmpMap].MapGridX - 1, Globals.GameMaps[tmpMap].MapGridY - 1]]
-                                    .Attributes[tmpX, tmpY];
-                            if (tileAttribute != null)
-                            {
-                                if (tileAttribute.value == (int) Enums.MapAttributes.Blocked) return 1;
-                                if (tileAttribute.value == (int)Enums.MapAttributes.NPCAvoid && this.GetType() == typeof(Npc)) return 1;
-                            }
-                            tmpMap = Database.MapGrids[Globals.GameMaps[tmpMap].MapGrid].MyGrid[Globals.GameMaps[tmpMap].MapGridX - 1, Globals.GameMaps[tmpMap].MapGridY - 1];
-                        }
-                        else
-                        {
-                            return 1;
-                        }
-                    }
-                    else if (tmpY > (Globals.MapHeight - 1))
-                    {
-                        tmpY = tmpY - (Globals.MapHeight - 1);
-                        if (Database.MapGrids[Globals.GameMaps[tmpMap].MapGrid].MyGrid[Globals.GameMaps[tmpMap].MapGridX - 1, Globals.GameMaps[tmpMap].MapGridY + 1] > -1)
-                        {
+                    mapX--;
+                }
 
-                            Attribute tileAttribute =
-                                Globals.GameMaps[
-                                    Database.MapGrids[Globals.GameMaps[tmpMap].MapGrid].MyGrid[
-                                        Globals.GameMaps[tmpMap].MapGridX - 1, Globals.GameMaps[tmpMap].MapGridY + 1]]
-                                    .Attributes[tmpX, tmpY];
-                            if (tileAttribute != null)
-                            {
-                                if (tileAttribute.value == (int)Enums.MapAttributes.Blocked) return 1;
-                                if (tileAttribute.value == (int)Enums.MapAttributes.NPCAvoid && this.GetType() == typeof(Npc)) return 1;
-                            }
-                            tmpMap = Database.MapGrids[Globals.GameMaps[tmpMap].MapGrid].MyGrid[Globals.GameMaps[tmpMap].MapGridX - 1, Globals.GameMaps[tmpMap].MapGridY + 1];
-                        }
-                        else
-                        {
-                            return 1;
-                        }
-                    }
-                    else
-                    {
-                        if (Database.MapGrids[Globals.GameMaps[tmpMap].MapGrid].MyGrid[Globals.GameMaps[tmpMap].MapGridX - 1, Globals.GameMaps[tmpMap].MapGridY] > -1)
-                        {
-                            Attribute tileAttribute =
-                                Globals.GameMaps[
-                                    Database.MapGrids[Globals.GameMaps[tmpMap].MapGrid].MyGrid[
-                                        Globals.GameMaps[tmpMap].MapGridX - 1, Globals.GameMaps[tmpMap].MapGridY]]
-                                    .Attributes[tmpX, tmpY];
-                            if (tileAttribute != null)
-                            {
-                                if (tileAttribute.value == (int)Enums.MapAttributes.Blocked) return 1;
-                                if (tileAttribute.value == (int)Enums.MapAttributes.NPCAvoid &&
-                                    this.GetType() == typeof(Npc)) return 1;
-                            }
-                            tmpMap = Database.MapGrids[Globals.GameMaps[tmpMap].MapGrid].MyGrid[Globals.GameMaps[tmpMap].MapGridX - 1, Globals.GameMaps[tmpMap].MapGridY];
-                        }
-                        else
-                        {
-                            return 1;
-                        }
-                    }
-                }
-                else if (tmpX > (Globals.MapWidth - 1))
-                {
-                    tmpX = tmpX - (Globals.MapWidth - 1);
-                    if (tmpY < 0)
-                    {
-                        tmpY = (Globals.MapHeight - 1) - (tmpY * -1);
-                        if (Database.MapGrids[Globals.GameMaps[tmpMap].MapGrid].MyGrid[Globals.GameMaps[tmpMap].MapGridX + 1, Globals.GameMaps[tmpMap].MapGridY - 1] > -1)
-                        {
-                            Attribute tileAttribute =
-                                Globals.GameMaps[
-                                    Database.MapGrids[Globals.GameMaps[tmpMap].MapGrid].MyGrid[
-                                        Globals.GameMaps[tmpMap].MapGridX + 1, Globals.GameMaps[tmpMap].MapGridY - 1]]
-                                    .Attributes[tmpX, tmpY];
-                            if (tileAttribute != null)
-                            {
-                                if (tileAttribute.value == (int)Enums.MapAttributes.Blocked) return 1;
-                                if (tileAttribute.value == (int)Enums.MapAttributes.NPCAvoid &&
-                                    this.GetType() == typeof(Npc)) return 1;
-                            }
-                            tmpMap = Database.MapGrids[Globals.GameMaps[tmpMap].MapGrid].MyGrid[Globals.GameMaps[tmpMap].MapGridX + 1, Globals.GameMaps[tmpMap].MapGridY - 1];
-                        }
-                        else
-                        {
-                            return 1;
-                        }
-                    }
-                    else if (tmpY > (Globals.MapHeight - 1))
-                    {
-                        tmpY = tmpY - (Globals.MapHeight - 1);
-                        if (Database.MapGrids[Globals.GameMaps[tmpMap].MapGrid].MyGrid[Globals.GameMaps[tmpMap].MapGridX + 1, Globals.GameMaps[tmpMap].MapGridY + 1] > -1)
-                        {
-                            Attribute tileAttribute =
-                                Globals.GameMaps[
-                                    Database.MapGrids[Globals.GameMaps[tmpMap].MapGrid].MyGrid[
-                                        Globals.GameMaps[tmpMap].MapGridX + 1, Globals.GameMaps[tmpMap].MapGridY + 1]]
-                                    .Attributes[tmpX, tmpY];
-                            if (tileAttribute != null)
-                            {
-                                if (tileAttribute.value == (int)Enums.MapAttributes.Blocked) return 1;
-                                if (tileAttribute.value == (int)Enums.MapAttributes.NPCAvoid &&
-                                    this.GetType() == typeof(Npc)) return 1;
-                            }
-                            tmpMap = Database.MapGrids[Globals.GameMaps[tmpMap].MapGrid].MyGrid[Globals.GameMaps[tmpMap].MapGridX + 1, Globals.GameMaps[tmpMap].MapGridY + 1];
-                        }
-                        else
-                        {
-                            return 1;
-                        }
-                    }
-                    else
-                    {
-                        if (Database.MapGrids[Globals.GameMaps[tmpMap].MapGrid].MyGrid[Globals.GameMaps[tmpMap].MapGridX + 1, Globals.GameMaps[tmpMap].MapGridY] > -1)
-                        {
-                            Attribute tileAttribute =
-                                Globals.GameMaps[
-                                    Database.MapGrids[Globals.GameMaps[tmpMap].MapGrid].MyGrid[
-                                        Globals.GameMaps[tmpMap].MapGridX + 1, Globals.GameMaps[tmpMap].MapGridY]]
-                                    .Attributes[tmpX, tmpY];
-                            if (tileAttribute != null)
-                            {
-                                if (tileAttribute.value == (int)Enums.MapAttributes.Blocked) return 1;
-                                if (tileAttribute.value == (int)Enums.MapAttributes.NPCAvoid &&
-                                    this.GetType() == typeof(Npc)) return 1;
-                            }
-                            tmpMap = Database.MapGrids[Globals.GameMaps[tmpMap].MapGrid].MyGrid[Globals.GameMaps[tmpMap].MapGridX + 1, Globals.GameMaps[tmpMap].MapGridY];
-                        }
-                        else
-                        {
-                            return 1;
-                        }
-                    }
-                }
-                else if (tmpY < 0)
+                if (tmpY < 0)
                 {
                     tmpY = (Globals.MapHeight - 1) - (tmpY * -1);
-                    if (Database.MapGrids[Globals.GameMaps[tmpMap].MapGrid].MyGrid[Globals.GameMaps[tmpMap].MapGridX, Globals.GameMaps[tmpMap].MapGridY - 1] > -1)
-                    {
-                        Attribute tileAttribute =
-                                Globals.GameMaps[
-                                    Database.MapGrids[Globals.GameMaps[tmpMap].MapGrid].MyGrid[
-                                        Globals.GameMaps[tmpMap].MapGridX, Globals.GameMaps[tmpMap].MapGridY - 1]]
-                                    .Attributes[tmpX, tmpY];
-                        if (tileAttribute != null)
-                        {
-                            if (tileAttribute.value == (int)Enums.MapAttributes.Blocked) return 1;
-                            if (tileAttribute.value == (int)Enums.MapAttributes.NPCAvoid &&
-                                this.GetType() == typeof(Npc)) return 1;
-                        }
-                        tmpMap = Database.MapGrids[Globals.GameMaps[tmpMap].MapGrid].MyGrid[Globals.GameMaps[tmpMap].MapGridX, Globals.GameMaps[tmpMap].MapGridY - 1];
-                    }
-                    else
-                    {
-                        return 1;
-                    }
+                    mapY--;
                 }
-                else if (tmpY > (Globals.MapHeight - 1))
+
+                if (tmpY > (Globals.MapHeight - 1))
                 {
                     tmpY = tmpY - (Globals.MapHeight - 1);
-                    if (Database.MapGrids[Globals.GameMaps[tmpMap].MapGrid].MyGrid[Globals.GameMaps[tmpMap].MapGridX, Globals.GameMaps[tmpMap].MapGridY + 1] > -1)
+                    mapY++;
+                }
+
+                if (tmpX > (Globals.MapWidth - 1))
+                {
+                    tmpX = tmpX - (Globals.MapWidth - 1);
+                    mapX++;
+                }
+
+                if (Globals.GameMaps[tmpMap].MapGridX + mapX >= 0 &&
+                    Globals.GameMaps[tmpMap].MapGridX + mapX < Database.MapGrids[Globals.GameMaps[tmpMap].MapGrid].Width)
+                {
+                    if (Globals.GameMaps[tmpMap].MapGridY + mapY >= 0 &&
+                        Globals.GameMaps[tmpMap].MapGridY + mapY <
+                        Database.MapGrids[Globals.GameMaps[tmpMap].MapGrid].Height)
                     {
-                        Attribute tileAttribute =
+                        if (Database.MapGrids[Globals.GameMaps[tmpMap].MapGrid].MyGrid[Globals.GameMaps[tmpMap].MapGridX + mapX, Globals.GameMaps[tmpMap].MapGridY + mapY] > -1)
+                        {
+                            Attribute tileAttribute =
                                 Globals.GameMaps[
                                     Database.MapGrids[Globals.GameMaps[tmpMap].MapGrid].MyGrid[
-                                        Globals.GameMaps[tmpMap].MapGridX, Globals.GameMaps[tmpMap].MapGridY + 1]]
+                                        Globals.GameMaps[tmpMap].MapGridX + mapX, Globals.GameMaps[tmpMap].MapGridY + mapY]]
                                     .Attributes[tmpX, tmpY];
-                        if (tileAttribute != null)
-                        {
-                            if (tileAttribute.value == (int)Enums.MapAttributes.Blocked) return 1;
-                            if (tileAttribute.value == (int)Enums.MapAttributes.NPCAvoid &&
-                                this.GetType() == typeof(Npc)) return 1;
+                            if (tileAttribute != null)
+                            {
+                                if (tileAttribute.value == (int)Enums.MapAttributes.Blocked) return 1;
+                                if (tileAttribute.value == (int)Enums.MapAttributes.NPCAvoid && this.GetType() == typeof(Npc)) return 1;
+                            }
+                            tmpMap = Database.MapGrids[Globals.GameMaps[tmpMap].MapGrid].MyGrid[Globals.GameMaps[tmpMap].MapGridX +mapX, Globals.GameMaps[tmpMap].MapGridY +mapY];
                         }
-                        tmpMap = Database.MapGrids[Globals.GameMaps[tmpMap].MapGrid].MyGrid[Globals.GameMaps[tmpMap].MapGridX, Globals.GameMaps[tmpMap].MapGridY + 1];
+                        else
+                        {
+                            return 1;
+                        }
                     }
                     else
                     {
@@ -313,25 +181,11 @@ namespace Intersect_Server.Classes
                 }
                 else
                 {
-                    if (Database.MapGrids[Globals.GameMaps[tmpMap].MapGrid].MyGrid[Globals.GameMaps[tmpMap].MapGridX, Globals.GameMaps[tmpMap].MapGridY] > -1)
-                    {
-                        Attribute tileAttribute =
-                                Globals.GameMaps[
-                                    Database.MapGrids[Globals.GameMaps[tmpMap].MapGrid].MyGrid[
-                                        Globals.GameMaps[tmpMap].MapGridX, Globals.GameMaps[tmpMap].MapGridY]]
-                                    .Attributes[tmpX, tmpY];
-                        if (tileAttribute != null)
-                        {
-                            if (tileAttribute.value == (int) Enums.MapAttributes.Blocked) return 1;
-                            if (tileAttribute.value == (int) Enums.MapAttributes.NPCAvoid &&
-                                this.GetType() == typeof (Npc)) return 1;
-                        }
-                    }
-                    else
-                    {
-                        return 1;
-                    }
+                    return 1;
                 }
+
+
+
                 foreach (Entity t in Globals.Entities)
                 {
                     if (t == null) continue;
@@ -372,6 +226,8 @@ namespace Intersect_Server.Classes
         {
             var tmpX = CurrentX;
             var tmpY = CurrentY;
+            var mapX = 0;
+            var mapY = 0;
             switch (moveDir)
             {
                 case 0: //Up
@@ -409,112 +265,66 @@ namespace Intersect_Server.Classes
                 if (tmpX < 0)
                 {
                     tmpX = (Globals.MapWidth - 1) - (tmpX * -1);
-                    if (tmpY < 0)
-                    {
-                        tmpY = (Globals.MapHeight - 1) - (tmpY * -1);
-                        if (Database.MapGrids[Globals.GameMaps[tmpMap].MapGrid].MyGrid[Globals.GameMaps[tmpMap].MapGridX - 1, Globals.GameMaps[tmpMap].MapGridY - 1] > -1)
-                        {
-                            tmpMap = Database.MapGrids[Globals.GameMaps[tmpMap].MapGrid].MyGrid[Globals.GameMaps[tmpMap].MapGridX - 1, Globals.GameMaps[tmpMap].MapGridY - 1];
-                        }
-                        else
-                        {
-                            return ;
-                        }
-                    }
-                    else if (tmpY > (Globals.MapHeight - 1))
-                    {
-                        tmpY = tmpY - (Globals.MapHeight - 1);
-                        if (Database.MapGrids[Globals.GameMaps[tmpMap].MapGrid].MyGrid[Globals.GameMaps[tmpMap].MapGridX - 1, Globals.GameMaps[tmpMap].MapGridY + 1] > -1)
-                        {
-                            tmpMap = Database.MapGrids[Globals.GameMaps[tmpMap].MapGrid].MyGrid[Globals.GameMaps[tmpMap].MapGridX - 1, Globals.GameMaps[tmpMap].MapGridY + 1];
-                        }
-                        else
-                        {
-                            return ;
-                        }
-                    }
-                    else
-                    {
-                        if (Database.MapGrids[Globals.GameMaps[tmpMap].MapGrid].MyGrid[Globals.GameMaps[tmpMap].MapGridX - 1, Globals.GameMaps[tmpMap].MapGridY] > -1)
-                        {
-                            tmpMap = Database.MapGrids[Globals.GameMaps[tmpMap].MapGrid].MyGrid[Globals.GameMaps[tmpMap].MapGridX - 1, Globals.GameMaps[tmpMap].MapGridY];
-                        }
-                        else
-                        {
-                            return ;
-                        }
-                    }
+                    mapX--;
                 }
-                else if (tmpX > (Globals.MapWidth - 1))
-                {
-                    tmpX = tmpX - (Globals.MapWidth - 1);
-                    if (tmpY < 0)
-                    {
-                        tmpY = (Globals.MapHeight - 1) - (tmpY * -1);
-                        if (Database.MapGrids[Globals.GameMaps[tmpMap].MapGrid].MyGrid[Globals.GameMaps[tmpMap].MapGridX + 1, Globals.GameMaps[tmpMap].MapGridY - 1] > -1)
-                        {
-                            tmpMap = Database.MapGrids[Globals.GameMaps[tmpMap].MapGrid].MyGrid[Globals.GameMaps[tmpMap].MapGridX + 1, Globals.GameMaps[tmpMap].MapGridY - 1];
-                        }
-                        else
-                        {
-                            return ;
-                        }
-                    }
-                    else if (tmpY > (Globals.MapHeight - 1))
-                    {
-                        tmpY = tmpY - (Globals.MapHeight - 1);
-                        if (Database.MapGrids[Globals.GameMaps[tmpMap].MapGrid].MyGrid[Globals.GameMaps[tmpMap].MapGridX + 1, Globals.GameMaps[tmpMap].MapGridY + 1] > -1)
-                        {
-                            tmpMap = Database.MapGrids[Globals.GameMaps[tmpMap].MapGrid].MyGrid[Globals.GameMaps[tmpMap].MapGridX + 1, Globals.GameMaps[tmpMap].MapGridY + 1];
-                        }
-                        else
-                        {
-                            return ;
-                        }
-                    }
-                    else
-                    {
-                        if (Database.MapGrids[Globals.GameMaps[tmpMap].MapGrid].MyGrid[Globals.GameMaps[tmpMap].MapGridX + 1, Globals.GameMaps[tmpMap].MapGridY] > -1)
-                        {
-                            tmpMap = Database.MapGrids[Globals.GameMaps[tmpMap].MapGrid].MyGrid[Globals.GameMaps[tmpMap].MapGridX + 1, Globals.GameMaps[tmpMap].MapGridY];
-                        }
-                        else
-                        {
-                            return ;
-                        }
-                    }
-                }
-                else if (tmpY < 0)
+
+                if (tmpY < 0)
                 {
                     tmpY = (Globals.MapHeight - 1) - (tmpY * -1);
-                    if (Database.MapGrids[Globals.GameMaps[tmpMap].MapGrid].MyGrid[Globals.GameMaps[tmpMap].MapGridX, Globals.GameMaps[tmpMap].MapGridY - 1] > -1)
-                    {
-                        tmpMap = Database.MapGrids[Globals.GameMaps[tmpMap].MapGrid].MyGrid[Globals.GameMaps[tmpMap].MapGridX, Globals.GameMaps[tmpMap].MapGridY - 1];
-                    }
-                    else
-                    {
-                        return ;
-                    }
+                    mapY--;
                 }
-                else if (tmpY > (Globals.MapHeight - 1))
+
+                if (tmpY > (Globals.MapHeight - 1))
                 {
                     tmpY = tmpY - (Globals.MapHeight - 1);
-                    if (Database.MapGrids[Globals.GameMaps[tmpMap].MapGrid].MyGrid[Globals.GameMaps[tmpMap].MapGridX, Globals.GameMaps[tmpMap].MapGridY + 1] > -1)
+                    mapY++;
+                }
+
+                if (tmpX > (Globals.MapWidth - 1))
+                {
+                    tmpX = tmpX - (Globals.MapWidth - 1);
+                    mapX++;
+                }
+
+                if (Globals.GameMaps[tmpMap].MapGridX + mapX >= 0 &&
+                    Globals.GameMaps[tmpMap].MapGridX + mapX < Database.MapGrids[Globals.GameMaps[tmpMap].MapGrid].Width)
+                {
+                    if (Globals.GameMaps[tmpMap].MapGridY + mapY >= 0 &&
+                        Globals.GameMaps[tmpMap].MapGridY + mapY <
+                        Database.MapGrids[Globals.GameMaps[tmpMap].MapGrid].Height)
                     {
-                        tmpMap = Database.MapGrids[Globals.GameMaps[tmpMap].MapGrid].MyGrid[Globals.GameMaps[tmpMap].MapGridX, Globals.GameMaps[tmpMap].MapGridY + 1];
+
+                        if (
+                            Database.MapGrids[Globals.GameMaps[tmpMap].MapGrid].MyGrid[
+                                Globals.GameMaps[tmpMap].MapGridX + mapX, Globals.GameMaps[tmpMap].MapGridY + mapY] > -1)
+                        {
+                            tmpMap =
+                                Database.MapGrids[Globals.GameMaps[tmpMap].MapGrid].MyGrid[
+                                    Globals.GameMaps[tmpMap].MapGridX + mapX, Globals.GameMaps[tmpMap].MapGridY +mapY];
+                        }
+                        else
+                        {
+                            return;
+                        }
                     }
                     else
                     {
-                        return ;
+                        return;
                     }
                 }
+                else
+                {
+                    return;
+                }
+
+
                 CurrentX = tmpX;
                 CurrentY = tmpY;
                 CurrentMap = tmpMap;
                 Dir = moveDir;
-                if (this.GetType() == typeof (EventPageInstance))
+                if (this.GetType() == typeof(EventPageInstance))
                 {
-                    if (client != null) {PacketSender.SendEntityMoveTo(client, MyIndex, (int)Enums.EntityTypes.LocalEvent, this);}
+                    if (client != null) { PacketSender.SendEntityMoveTo(client, MyIndex, (int)Enums.EntityTypes.LocalEvent, this); }
                 }
                 else
                 {
@@ -551,13 +361,13 @@ namespace Intersect_Server.Classes
         public void ChangeDir(int dir)
         {
             Dir = dir;
-            if (this.GetType() == typeof (EventPageInstance))
+            if (this.GetType() == typeof(EventPageInstance))
             {
-                PacketSender.SendEntityDirTo(  ((EventPageInstance)this).Client  ,MyIndex, (int)Enums.EntityTypes.LocalEvent,Dir);
+                PacketSender.SendEntityDirTo(((EventPageInstance)this).Client, MyIndex, (int)Enums.EntityTypes.LocalEvent, Dir);
             }
             else
             {
-                PacketSender.SendEntityDir(MyIndex, (int)Enums.EntityTypes.GlobalEntity,Dir,CurrentMap);
+                PacketSender.SendEntityDir(MyIndex, (int)Enums.EntityTypes.GlobalEntity, Dir, CurrentMap);
             }
         }
 
@@ -638,7 +448,7 @@ namespace Intersect_Server.Classes
             else
             {
                 //Hit him, make him mad and send the vital update.
-                PacketSender.SendEntityVitals(enemyIndex,(int)Enums.EntityTypes.GlobalEntity, Globals.Entities[enemyIndex]);
+                PacketSender.SendEntityVitals(enemyIndex, (int)Enums.EntityTypes.GlobalEntity, Globals.Entities[enemyIndex]);
             }
             // Add a timer before able to make the next move.
             if (Globals.Entities[MyIndex].GetType() == typeof(Npc))
@@ -695,7 +505,7 @@ namespace Intersect_Server.Classes
         }
         public void Reset()
         {
-            for (var i = 0; i < (int) Enums.Vitals.VitalCount; i++)
+            for (var i = 0; i < (int)Enums.Vitals.VitalCount; i++)
             {
                 Vital[i] = MaxVital[i];
             }
@@ -708,7 +518,7 @@ namespace Intersect_Server.Classes
         }
         public virtual void Warp(int newMap, int newX, int newY, int newDir)
         {
-            
+
         }
 
         public void CastSpell(int SpellNum, int SpellSlot = -1)

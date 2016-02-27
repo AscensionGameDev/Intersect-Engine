@@ -44,13 +44,11 @@ namespace Intersect_Client.Classes.Spells
         public void Load(ByteBuffer bf)
         {
             SpellNum = bf.ReadInteger();
-            SpellCD = bf.ReadLong();
         }
         public byte[] Data()
         {
             var bf = new ByteBuffer();
             bf.WriteInteger(SpellNum);
-            bf.WriteLong(SpellCD);
             return bf.ToArray();
         }
     }

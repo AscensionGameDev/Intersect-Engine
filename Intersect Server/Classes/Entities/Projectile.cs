@@ -73,7 +73,7 @@ namespace Intersect_Server.Classes
                     {
                         if (myBase.SpawnLocations[x, y].Directions[d] == true)
                         {
-                            ProjectileSpawns s = new ProjectileSpawns(FindProjectileRotationDir(Dir, d), FindProjectileRotationX(Dir, x, y), FindProjectileRotationY(Dir, x, y));
+                            ProjectileSpawns s = new ProjectileSpawns(FindProjectileRotationDir(Dir, d), FindProjectileRotationX(Dir, x, y), FindProjectileRotationY(Dir, x, y),CurrentMap);
                             Spawns.Add(s);
                         }
                     }
@@ -252,7 +252,8 @@ namespace Intersect_Server.Classes
                         Spawns[i].Distance++;
                         Entity TempEntity = new Entity(OwnerID);
                         TempEntity.CurrentX = Spawns[i].X + GetRangeX(Spawns[i].Dir, Spawns[i].Distance);
-                        TempEntity.CurrentX = Spawns[i].Y + GetRangeY(Spawns[i].Dir, Spawns[i].Distance);
+                        TempEntity.CurrentY = Spawns[i].Y + GetRangeY(Spawns[i].Dir, Spawns[i].Distance);
+                        TempEntity.CurrentMap = Spawns[i].Map;
                         int c = TempEntity.CanMove(Dir);
 
                         if (c == 0) //No collision so increase the counter for the next collision detection.
@@ -307,11 +308,13 @@ namespace Intersect_Server.Classes
     {
         public int X;
         public int Y;
+        public int Map;
         public int Dir;
         public int Distance = 0;
 
-        public ProjectileSpawns(int dir, int x, int y)
+        public ProjectileSpawns(int dir, int x, int y, int map)
         {
+            Map = map;
             X = x;
             Y = y;
             Dir = dir;
