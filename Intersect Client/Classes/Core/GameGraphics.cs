@@ -513,7 +513,6 @@ namespace Intersect_Client.Classes.Core
         private static void OverlayDarkness()
         {
             if (!Globals.GameMaps.ContainsKey(Globals.CurrentMap)) return;
-            if (Globals.GameMaps[Globals.CurrentMap].IsIndoors) { return; }
             if (DarknessTexture == null) { return; }
 
             //Draw Light Around Player

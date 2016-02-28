@@ -109,55 +109,60 @@ namespace Intersect_Editor.Forms
 
         private void UpdateEditor()
         {
-            _editorIndex = lstAnimations.SelectedIndex;
+            if (lstAnimations.SelectedIndex > -1)
+            {
+                _editorIndex = lstAnimations.SelectedIndex;
 
-            txtName.Text = Globals.GameAnimations[_editorIndex].Name;
-            cmbSound.SelectedIndex = cmbSound.FindString(Globals.GameAnimations[_editorIndex].Sound);
+                txtName.Text = Globals.GameAnimations[_editorIndex].Name;
+                cmbSound.SelectedIndex = cmbSound.FindString(Globals.GameAnimations[_editorIndex].Sound);
 
-            cmbLowerGraphic.SelectedIndex = cmbLowerGraphic.FindString(Globals.GameAnimations[_editorIndex].LowerAnimSprite);
+                cmbLowerGraphic.SelectedIndex =
+                    cmbLowerGraphic.FindString(Globals.GameAnimations[_editorIndex].LowerAnimSprite);
 
-            scrlLowerHorizontalFrames.Value = Globals.GameAnimations[_editorIndex].LowerAnimXFrames;
-            lblLowerHorizontalFrames.Text = "Graphic Horizontal Frames: " + scrlLowerHorizontalFrames.Value;
+                scrlLowerHorizontalFrames.Value = Globals.GameAnimations[_editorIndex].LowerAnimXFrames;
+                lblLowerHorizontalFrames.Text = "Graphic Horizontal Frames: " + scrlLowerHorizontalFrames.Value;
 
-            scrlLowerVerticalFrames.Value = Globals.GameAnimations[_editorIndex].LowerAnimYFrames;
-            lblLowerVerticalFrames.Text = "Graphic Vertical Frames: " + scrlLowerVerticalFrames.Value;
+                scrlLowerVerticalFrames.Value = Globals.GameAnimations[_editorIndex].LowerAnimYFrames;
+                lblLowerVerticalFrames.Text = "Graphic Vertical Frames: " + scrlLowerVerticalFrames.Value;
 
-            scrlLowerFrameCount.Value = Globals.GameAnimations[_editorIndex].LowerAnimFrameCount;
-            lblLowerFrameCount.Text = "Graphic Frame Count: " + scrlLowerFrameCount.Value;
-            UpdateLowerFrames();
+                scrlLowerFrameCount.Value = Globals.GameAnimations[_editorIndex].LowerAnimFrameCount;
+                lblLowerFrameCount.Text = "Graphic Frame Count: " + scrlLowerFrameCount.Value;
+                UpdateLowerFrames();
 
-            scrlLowerFrameDuration.Value = Globals.GameAnimations[_editorIndex].LowerAnimFrameSpeed;
-            lblLowerFrameDuration.Text = "Frame Duration (ms): " + scrlLowerFrameDuration.Value;
-            tmrLowerAnimation.Interval = scrlLowerFrameDuration.Value;
+                scrlLowerFrameDuration.Value = Globals.GameAnimations[_editorIndex].LowerAnimFrameSpeed;
+                lblLowerFrameDuration.Text = "Frame Duration (ms): " + scrlLowerFrameDuration.Value;
+                tmrLowerAnimation.Interval = scrlLowerFrameDuration.Value;
 
-            scrlLowerLoopCount.Value = Globals.GameAnimations[_editorIndex].LowerAnimLoopCount;
-            lblLowerLoopCount.Text = "Loop Count: " + scrlLowerLoopCount.Value;
+                scrlLowerLoopCount.Value = Globals.GameAnimations[_editorIndex].LowerAnimLoopCount;
+                lblLowerLoopCount.Text = "Loop Count: " + scrlLowerLoopCount.Value;
 
-            cmbUpperGraphic.SelectedIndex = cmbUpperGraphic.FindString(Globals.GameAnimations[_editorIndex].UpperAnimSprite);
+                cmbUpperGraphic.SelectedIndex =
+                    cmbUpperGraphic.FindString(Globals.GameAnimations[_editorIndex].UpperAnimSprite);
 
-            scrlUpperHorizontalFrames.Value = Globals.GameAnimations[_editorIndex].UpperAnimXFrames;
-            lblUpperHorizontalFrames.Text = "Graphic Horizontal Frames: " + scrlUpperHorizontalFrames.Value;
+                scrlUpperHorizontalFrames.Value = Globals.GameAnimations[_editorIndex].UpperAnimXFrames;
+                lblUpperHorizontalFrames.Text = "Graphic Horizontal Frames: " + scrlUpperHorizontalFrames.Value;
 
-            scrlUpperVerticalFrames.Value = Globals.GameAnimations[_editorIndex].UpperAnimYFrames;
-            lblUpperVerticalFrames.Text = "Graphic Vertical Frames: " + scrlUpperVerticalFrames.Value;
+                scrlUpperVerticalFrames.Value = Globals.GameAnimations[_editorIndex].UpperAnimYFrames;
+                lblUpperVerticalFrames.Text = "Graphic Vertical Frames: " + scrlUpperVerticalFrames.Value;
 
-            scrlUpperFrameCount.Value = Globals.GameAnimations[_editorIndex].UpperAnimFrameCount;
-            lblUpperFrameCount.Text = "Graphic Frame Count: " + scrlUpperFrameCount.Value;
-            UpdateUpperFrames();
+                scrlUpperFrameCount.Value = Globals.GameAnimations[_editorIndex].UpperAnimFrameCount;
+                lblUpperFrameCount.Text = "Graphic Frame Count: " + scrlUpperFrameCount.Value;
+                UpdateUpperFrames();
 
-            scrlUpperFrameDuration.Value = Globals.GameAnimations[_editorIndex].UpperAnimFrameSpeed;
-            lblUpperFrameDuration.Text = "Frame Duration (ms): " + scrlUpperFrameDuration.Value;
-            tmrUpperAnimation.Interval = scrlUpperFrameDuration.Value;
+                scrlUpperFrameDuration.Value = Globals.GameAnimations[_editorIndex].UpperAnimFrameSpeed;
+                lblUpperFrameDuration.Text = "Frame Duration (ms): " + scrlUpperFrameDuration.Value;
+                tmrUpperAnimation.Interval = scrlUpperFrameDuration.Value;
 
-            scrlUpperLoopCount.Value = Globals.GameAnimations[_editorIndex].UpperAnimLoopCount;
-            lblUpperLoopCount.Text = "Loop Count: " + scrlUpperLoopCount.Value;
+                scrlUpperLoopCount.Value = Globals.GameAnimations[_editorIndex].UpperAnimLoopCount;
+                lblUpperLoopCount.Text = "Loop Count: " + scrlUpperLoopCount.Value;
 
-            LoadLowerLight();
-            DrawLowerFrame();
-            LoadUpperLight();
-            DrawUpperFrame();
+                LoadLowerLight();
+                DrawLowerFrame();
+                LoadUpperLight();
+                DrawUpperFrame();
 
-            _changed[_editorIndex] = true;
+                _changed[_editorIndex] = true;
+            }
         }
 
         private void txtName_TextChanged(object sender, EventArgs e)
@@ -340,6 +345,7 @@ namespace Intersect_Editor.Forms
 
         void DrawLowerFrame()
         {
+            if (lowerWindow == null) return;
             if (!_playLower) _lowerFrame = scrlLowerFrame.Value - 1;
             lowerWindow.Clear(SFML.Graphics.Color.White);
             lowerDarkness.Clear(SFML.Graphics.Color.Black);
@@ -362,9 +368,9 @@ namespace Intersect_Editor.Forms
             if (_lowerFrame < Globals.GameAnimations[_editorIndex].LowerLights.Length)
             {
                 Classes.EditorGraphics.DrawLight(
-                    picLowerAnimation.Width / 2 - Globals.GameAnimations[_editorIndex].LowerLights[_lowerFrame].Size / 2 +
+                    picLowerAnimation.Width / 2  +
                     Globals.GameAnimations[_editorIndex].LowerLights[_lowerFrame].OffsetX,
-                    picLowerAnimation.Height / 2 - Globals.GameAnimations[_editorIndex].LowerLights[_lowerFrame].Size / 2 +
+                    picLowerAnimation.Height / 2  +
                     Globals.GameAnimations[_editorIndex].LowerLights[_lowerFrame].OffsetY,
                     Globals.GameAnimations[_editorIndex].LowerLights[_lowerFrame].Size,
                     Globals.GameAnimations[_editorIndex].LowerLights[_lowerFrame].Intensity,
@@ -385,6 +391,7 @@ namespace Intersect_Editor.Forms
 
         void DrawUpperFrame()
         {
+            if (upperWindow == null) return;
             if (!_playUpper) _upperFrame = scrlUpperFrame.Value - 1;
             upperWindow.Clear(SFML.Graphics.Color.White);
             upperDarkness.Clear(SFML.Graphics.Color.Black);
@@ -407,9 +414,9 @@ namespace Intersect_Editor.Forms
             if (_upperFrame < Globals.GameAnimations[_editorIndex].UpperLights.Length)
             {
                 Classes.EditorGraphics.DrawLight(
-                    picUpperAnimation.Width / 2 - Globals.GameAnimations[_editorIndex].UpperLights[_upperFrame].Size / 2 +
+                    picUpperAnimation.Width / 2 +
                     Globals.GameAnimations[_editorIndex].UpperLights[_upperFrame].OffsetX,
-                    picUpperAnimation.Height / 2 - Globals.GameAnimations[_editorIndex].UpperLights[_upperFrame].Size / 2 +
+                    picUpperAnimation.Height / 2  +
                     Globals.GameAnimations[_editorIndex].UpperLights[_upperFrame].OffsetY,
                     Globals.GameAnimations[_editorIndex].UpperLights[_upperFrame].Size,
                     Globals.GameAnimations[_editorIndex].UpperLights[_upperFrame].Intensity,
@@ -548,6 +555,11 @@ namespace Intersect_Editor.Forms
             Globals.GameAnimations[_editorIndex].UpperAnimLoopCount = LowerAnimLoopCount;
             Globals.GameAnimations[_editorIndex].UpperLights = LowerLights;
 
+            UpdateEditor();
+        }
+
+        private void lstAnimations_SelectedIndexChanged(object sender, EventArgs e)
+        {
             UpdateEditor();
         }
     }

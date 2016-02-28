@@ -177,6 +177,7 @@ namespace Intersect_Client.Classes.Maps
                         }
                     }
                 }
+                HideActiveAnimations();
                 for (var x = 0; x < Globals.Database.MapWidth; x++)
                 {
                     for (var y = 0; y < Globals.Database.MapHeight; y++)
@@ -534,8 +535,28 @@ namespace Intersect_Client.Classes.Maps
                 {
                     Dispose();
                 }
+                HideActiveAnimations();
             }
         }
+
+        private void HideActiveAnimations()
+        {
+            for (int x = 0; x < Globals.Database.MapWidth; x++)
+            {
+                for (int y = 0; y < Globals.Database.MapHeight; y++)
+                {
+                    if (Attributes[x, y] != null && Attributes[x, y].value == (int)Enums.MapAttributes.Animation)
+                    {
+                        if (Attributes[x, y].data1 >= 0 && Attributes[x, y].data1 < Constants.MaxAnimations && Attributes[x, y].animInstance != null)
+                        {
+                            GameGraphics.LiveAnimations.Remove(Attributes[x, y].animInstance);
+                            Attributes[x, y].animInstance = null;
+                        }
+                    }
+                }
+            }
+        }
+
         public void Draw(int layer = 0)
         {
             if (!MapRendered)
@@ -594,14 +615,13 @@ namespace Intersect_Client.Classes.Maps
                     var y = GetY() + (light.TileY * Globals.Database.TileHeight + light.OffsetY) + Globals.Database.TileHeight / 2f;
                     GameGraphics.DrawLight((int)x, (int)y, (int)w, light.Intensity, light.Expand, light.Color);
                 }
-
                 for (int x = 0; x < Globals.Database.MapWidth; x++)
                 {
                     for (int y = 0; y < Globals.Database.MapHeight; y++)
                     {
                         if (Attributes[x, y] != null)
                         {
-                            if (Attributes[x, y].value == (int) Enums.MapAttributes.Animation)
+                            if (Attributes[x, y].value == (int)Enums.MapAttributes.Animation)
                             {
                                 if (Attributes[x, y].data1 >= 0 && Attributes[x, y].data1 < Constants.MaxAnimations)
                                 {
@@ -610,9 +630,8 @@ namespace Intersect_Client.Classes.Maps
                                         Attributes[x, y].animInstance =
                                             new AnimationInstance(Globals.GameAnimations[Attributes[x, y].data1], true);
                                         Attributes[x, y].animInstance.SetPosition(
-                                            GetX() + x*Globals.Database.TileWidth + Globals.Database.TileWidth/2,
-                                            GetY() + y*Globals.Database.TileHeight + Globals.Database.TileHeight/2, 0);
-                                        GameGraphics.LiveAnimations.Add(Attributes[x,y].animInstance);
+                                            GetX() + x * Globals.Database.TileWidth + Globals.Database.TileWidth / 2,
+                                            GetY() + y * Globals.Database.TileHeight + Globals.Database.TileHeight / 2, 0);
                                     }
                                     Attributes[x, y].animInstance.Update();
                                 }
@@ -770,9 +789,15 @@ namespace Intersect_Client.Classes.Maps
                     }
                 }
             }
+            HideActiveAnimations();
             MapRendered = false;
             MapLoaded = false;
             Globals.GameMaps.Remove(MyMapNum);
+        }
+
+        ~MapStruct()
+        {
+            Dispose(false);
         }
     }
 

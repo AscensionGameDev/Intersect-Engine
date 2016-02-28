@@ -264,8 +264,8 @@ namespace Intersect_Editor.Classes
                             showLower = false;
                         }
                     }
-                    lowerTimer = Environment.TickCount + myBase.LowerAnimFrameSpeed;
                 }
+                lowerTimer = Environment.TickCount + myBase.LowerAnimFrameSpeed;
             }
             if (upperTimer < Environment.TickCount && showUpper)
             {
@@ -286,8 +286,8 @@ namespace Intersect_Editor.Classes
                             showUpper = false;
                         }
                     }
-                    upperTimer = Environment.TickCount + myBase.UpperAnimFrameSpeed;
                 }
+                upperTimer = Environment.TickCount + myBase.UpperAnimFrameSpeed;
             }
         }
     }

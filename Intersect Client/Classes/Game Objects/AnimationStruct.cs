@@ -194,18 +194,22 @@ namespace Intersect_Client.Classes.Game_Objects
                         GameTexture tex =
                             GameGraphics.AnimationTextures[
                                 GameGraphics.AnimationFileNames.IndexOf(myBase.UpperAnimSprite)];
+
                         int frameWidth = tex.GetWidth() / myBase.UpperAnimXFrames;
                         int frameHeight = tex.GetHeight() / myBase.UpperAnimYFrames;
+
                         GameGraphics.DrawGameTexture(tex,
                             new FloatRect((upperFrame % myBase.UpperAnimXFrames) * frameWidth,
                                 (float)Math.Floor((double)upperFrame / myBase.UpperAnimXFrames) * frameHeight, frameWidth,
                                 frameHeight),
                             new FloatRect(_renderX - frameWidth / 2, _renderY - frameHeight / 2, frameWidth, frameHeight),
                             Color.White, null, GameBlendModes.Alpha, null, rotationDegrees);
-                        GameGraphics.DrawLight((int)_renderX + myBase.UpperLights[lowerFrame].OffsetX,
-                            (int)_renderY + myBase.UpperLights[lowerFrame].OffsetY, myBase.UpperLights[lowerFrame].Size,
-                            myBase.UpperLights[lowerFrame].Intensity, myBase.UpperLights[lowerFrame].Expand,
-                            myBase.UpperLights[lowerFrame].Color);
+
+
+                        GameGraphics.DrawLight((int)_renderX + myBase.UpperLights[upperFrame].OffsetX,
+                            (int)_renderY + myBase.UpperLights[upperFrame].OffsetY, myBase.UpperLights[upperFrame].Size,
+                            myBase.UpperLights[upperFrame].Intensity, myBase.UpperLights[upperFrame].Expand,
+                            myBase.UpperLights[upperFrame].Color);
                     }
                 }
             }
@@ -243,8 +247,8 @@ namespace Intersect_Client.Classes.Game_Objects
                             showLower = false;
                         }
                     }
-                    lowerTimer = Globals.System.GetTimeMS() + myBase.LowerAnimFrameSpeed;
                 }
+                lowerTimer = Globals.System.GetTimeMS() + myBase.LowerAnimFrameSpeed;
             }
             if (upperTimer < Globals.System.GetTimeMS() && showUpper)
             {
@@ -265,8 +269,8 @@ namespace Intersect_Client.Classes.Game_Objects
                             showUpper = false;
                         }
                     }
-                    upperTimer = Globals.System.GetTimeMS() + myBase.UpperAnimFrameSpeed;
                 }
+                upperTimer = Globals.System.GetTimeMS() + myBase.UpperAnimFrameSpeed;
             }
         }
     }

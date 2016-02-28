@@ -35,6 +35,7 @@
             this.btnSave = new System.Windows.Forms.Button();
             this.lstAnimations = new System.Windows.Forms.ListBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.btnSwap = new System.Windows.Forms.Button();
             this.scrlDarkness = new System.Windows.Forms.HScrollBar();
             this.labelDarkness = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
@@ -85,7 +86,6 @@
             this.picUpperAnimation = new System.Windows.Forms.PictureBox();
             this.tmrUpperAnimation = new System.Windows.Forms.Timer(this.components);
             this.tmrLowerAnimation = new System.Windows.Forms.Timer(this.components);
-            this.btnSwap = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -150,6 +150,7 @@
             this.lstAnimations.Name = "lstAnimations";
             this.lstAnimations.Size = new System.Drawing.Size(191, 407);
             this.lstAnimations.TabIndex = 1;
+            this.lstAnimations.SelectedIndexChanged += new System.EventHandler(this.lstAnimations_SelectedIndexChanged);
             // 
             // groupBox2
             // 
@@ -166,6 +167,16 @@
             this.groupBox2.TabIndex = 18;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "General";
+            // 
+            // btnSwap
+            // 
+            this.btnSwap.Location = new System.Drawing.Point(440, 45);
+            this.btnSwap.Name = "btnSwap";
+            this.btnSwap.Size = new System.Drawing.Size(149, 23);
+            this.btnSwap.TabIndex = 6;
+            this.btnSwap.Text = "Swap Upper/Lower";
+            this.btnSwap.UseVisualStyleBackColor = true;
+            this.btnSwap.Click += new System.EventHandler(this.btnSwap_Click);
             // 
             // scrlDarkness
             // 
@@ -688,16 +699,6 @@
             // 
             this.tmrLowerAnimation.Enabled = true;
             this.tmrLowerAnimation.Tick += new System.EventHandler(this.tmrLowerAnimation_Tick);
-            // 
-            // btnSwap
-            // 
-            this.btnSwap.Location = new System.Drawing.Point(440, 45);
-            this.btnSwap.Name = "btnSwap";
-            this.btnSwap.Size = new System.Drawing.Size(149, 23);
-            this.btnSwap.TabIndex = 6;
-            this.btnSwap.Text = "Swap Upper/Lower";
-            this.btnSwap.UseVisualStyleBackColor = true;
-            this.btnSwap.Click += new System.EventHandler(this.btnSwap_Click);
             // 
             // frmAnimation
             // 
