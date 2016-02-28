@@ -48,6 +48,7 @@ namespace Intersect_Client.Classes.Bridges_and_Interfaces.SFML.Graphics
         private RenderWindow _renderWindow;
         private int _screenWidth = 0;
         private int _screenHeight = 0;
+        private FloatRect _currentView;
 
         //Rendering Variables
         private static Vertex[] _vertexCache = new Vertex[1024];
@@ -155,13 +156,13 @@ namespace Intersect_Client.Classes.Bridges_and_Interfaces.SFML.Graphics
         {
             global::SFML.Graphics.FloatRect rect = new global::SFML.Graphics.FloatRect(view.X, view.Y, view.Width,
                 view.Height);
+            _currentView = view;
             _renderWindow.SetView(new View(rect));
         }
 
         public override FloatRect GetView()
         {
-            return new FloatRect(_renderWindow.GetView().Viewport.Left, _renderWindow.GetView().Viewport.Top,
-                _renderWindow.GetView().Viewport.Width, _renderWindow.GetView().Viewport.Height);
+            return _currentView;
         }
 
         public override GameFont LoadFont(string filename)
@@ -343,7 +344,7 @@ namespace Intersect_Client.Classes.Bridges_and_Interfaces.SFML.Graphics
             var textObject = new Text(text, (Font)gameFont.GetFont(), (uint)fontSize);
             textObject.Position = new Vector2f(x, y);
             textObject.Color = new global::SFML.Graphics.Color(fontColor.R, fontColor.G, fontColor.B, fontColor.A);
-            //RenderCurrentBatch();
+            RenderCurrentBatch();
             if (renderTexture == null)
             {
                 _renderWindow.Draw(textObject);
@@ -356,10 +357,12 @@ namespace Intersect_Client.Classes.Bridges_and_Interfaces.SFML.Graphics
 
         public override void DrawString(string text, GameFont gameFont, float x, float y, int fontSize, Color fontColor, bool worldPos, GameRenderTexture renderTexture, FloatRect clipRect)
         {
+            clipRect.X -= GetView().X;
+            clipRect.Y -= GetView().Y;
             var textObject = new Text(text, (Font)gameFont.GetFont(), (uint)fontSize);
             textObject.Position = new Vector2f(x, y);
             textObject.Color = new global::SFML.Graphics.Color(fontColor.R, fontColor.G, fontColor.B, fontColor.A);
-            //RenderCurrentBatch();
+            RenderCurrentBatch();
             RenderTarget target;
             if (renderTexture == null)
             {

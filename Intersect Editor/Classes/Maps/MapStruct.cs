@@ -113,6 +113,7 @@ namespace Intersect_Editor.Classes
                         Attributes[x, y].data2 = mapcopy.Attributes[x, y].data2;
                         Attributes[x, y].data3 = mapcopy.Attributes[x, y].data3;
                         Attributes[x, y].data4 = mapcopy.Attributes[x, y].data4;
+                        Attributes[x, y].animInstance = mapcopy.Attributes[x, y].animInstance;
                     }
                 }
             }
@@ -405,6 +406,7 @@ namespace Intersect_Editor.Classes
         public int data2;
         public int data3;
         public string data4 = "";
+        public AnimationInstance animInstance;
     }
 
     public class TileArray

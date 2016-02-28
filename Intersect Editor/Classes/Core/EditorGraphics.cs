@@ -423,9 +423,13 @@ namespace Intersect_Editor.Classes
                     {
                         for (int z = -1; z < 4; z++)
                         {
-                            DrawMapResources(z, false, RenderWindow);
+                            DrawMapAttributes(z, false, RenderWindow,false);
                         }
                     }
+                }
+                for (int z = -1; z < 4; z++)
+                {
+                    DrawMapAttributes(z, false, RenderWindow, true);
                 }
                 if (_vertexCount > 0)
                 {
@@ -800,8 +804,8 @@ namespace Intersect_Editor.Classes
             foreach (var light in tmpMap.Lights)
             {
                 double w = light.Size;
-                var x = xoffset + (light.TileX * Globals.TileWidth + light.OffsetX) - (int)w / 2 + 16;
-                var y = yoffset + (light.TileY * Globals.TileHeight + light.OffsetY) - (int)w / 2 + 16;
+                var x = xoffset + (light.TileX * Globals.TileWidth + light.OffsetX)  + 16;
+                var y = yoffset + (light.TileY * Globals.TileHeight + light.OffsetY)  + 16;
                 EditorGraphics.DrawLight((int)x, (int)y, (int)w, light.Intensity,light.Expand, light.Color);
             }
         }
@@ -978,7 +982,7 @@ Globals.CurrentTool == (int)Enums.EdittingTool.Selection)
             RenderWindow.Draw(mapBorderLine);
             mapBorderLine.Dispose();
         }
-        private static void DrawMapResources(int dir, bool screenShotting, RenderTarget renderTarget)
+        private static void DrawMapAttributes(int dir, bool screenShotting, RenderTarget renderTarget, bool upper)
         {
             if (HideResources) { return; }
             var tmpMap = Globals.GameMaps[Globals.CurrentMap];
@@ -1045,7 +1049,7 @@ Globals.CurrentTool == (int)Enums.EdittingTool.Selection)
             {
                 for (var y = y1; y < y2; y++)
                 {
-                    if (tmpMap.Attributes[x, y].value == (int)Enums.MapAttributes.Resource)
+                    if (tmpMap.Attributes[x, y].value == (int)Enums.MapAttributes.Resource && !upper)
                     {
                         int resourcenum = tmpMap.Attributes[x, y].data1;
                         if (resourcenum >= 0 && resourcenum < Constants.MaxResources)
@@ -1070,7 +1074,42 @@ Globals.CurrentTool == (int)Enums.EdittingTool.Selection)
                                 }
                             }
                         }
-                    };
+                    }
+                    else if (tmpMap.Attributes[x, y].value == (int) Enums.MapAttributes.Animation)
+                    {
+                        int animationNum = tmpMap.Attributes[x, y].data1;
+                        
+                        
+                        if (animationNum >= 0 && animationNum < Constants.MaxAnimations)
+                        {
+                            float xpos = x * Globals.TileWidth + xoffset + 16;
+                            float ypos = y * Globals.TileHeight + yoffset + 16;
+                            var tmpMapOld = tmpMap;
+                            if (tmpMap == TilePreviewStruct)
+                            {
+                                tmpMap = Globals.GameMaps[Globals.CurrentMap];
+                            }
+                           
+                            if (tmpMap.Attributes[x, y].animInstance == null)
+                            {
+                                tmpMap.Attributes[x, y].animInstance =
+                                    new AnimationInstance(Globals.GameAnimations[animationNum], true);
+                            }
+                            else
+                            {
+                                //Update if the animation isn't right!
+                                if (tmpMap.Attributes[x, y].animInstance.myBase != Globals.GameAnimations[animationNum])
+                                {
+                                    tmpMap.Attributes[x, y].animInstance =
+                                    new AnimationInstance(Globals.GameAnimations[animationNum], true);
+                                }
+                            }
+                            tmpMap.Attributes[x, y].animInstance.Update();
+                            tmpMap.Attributes[x, y].animInstance.SetPosition((int)xpos, (int)ypos,0);
+                            tmpMap.Attributes[x, y].animInstance.Draw(renderTarget,upper);
+                            tmpMap = tmpMapOld;
+                        }
+                    }
                 }
             }
 
@@ -1102,9 +1141,13 @@ Globals.CurrentTool == (int)Enums.EdittingTool.Selection)
                 {
                     for (int z = -1; z < 4; z++)
                     {
-                        DrawMapResources(z, true, screenShot);
+                        DrawMapAttributes(z, true, screenShot, false);
                     }
                 }
+            }
+            for (int z = -1; z < 4; z++)
+            {
+                DrawMapAttributes(z, true, screenShot, true);
             }
             if (!HideFog && !bland) { DrawFog(screenShot); }
             if (!HideOverlay && !bland) { DrawMapOverlay(screenShot); }
@@ -1210,6 +1253,8 @@ Globals.CurrentTool == (int)Enums.EdittingTool.Selection)
                 x += Globals.TileWidth * Globals.MapWidth;
                 y += Globals.TileHeight * Globals.MapHeight;
             }
+            y -= size/2;
+            x -= size/2;
             RectangleShape rect = new RectangleShape(new Vector2f(size* 2,size* 2));
             rect.Origin = new Vector2f(size, size);
             rect.Position = new Vector2f(x + size / 2,

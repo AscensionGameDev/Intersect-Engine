@@ -31,6 +31,7 @@ using System.Threading;
 using IntersectClientExtras.GenericClasses;
 using IntersectClientExtras.Graphics;
 using Intersect_Client.Classes.Core;
+using Intersect_Client.Classes.Game_Objects;
 using Intersect_Client.Classes.General;
 using Intersect_Client.Classes.Items;
 using Intersect_Client.Classes.Misc;
@@ -589,9 +590,35 @@ namespace Intersect_Client.Classes.Maps
                 foreach (var light in Lights)
                 {
                     double w = light.Size;
-                    var x = GetX() + (light.TileX * Globals.Database.TileWidth + light.OffsetX) + Globals.Database.TileWidth/2f;
-                    var y = GetY() + (light.TileY * Globals.Database.TileHeight + light.OffsetY)  + Globals.Database.TileHeight/2f;
+                    var x = GetX() + (light.TileX * Globals.Database.TileWidth + light.OffsetX) + Globals.Database.TileWidth / 2f;
+                    var y = GetY() + (light.TileY * Globals.Database.TileHeight + light.OffsetY) + Globals.Database.TileHeight / 2f;
                     GameGraphics.DrawLight((int)x, (int)y, (int)w, light.Intensity, light.Expand, light.Color);
+                }
+
+                for (int x = 0; x < Globals.Database.MapWidth; x++)
+                {
+                    for (int y = 0; y < Globals.Database.MapHeight; y++)
+                    {
+                        if (Attributes[x, y] != null)
+                        {
+                            if (Attributes[x, y].value == (int) Enums.MapAttributes.Animation)
+                            {
+                                if (Attributes[x, y].data1 >= 0 && Attributes[x, y].data1 < Constants.MaxAnimations)
+                                {
+                                    if (Attributes[x, y].animInstance == null)
+                                    {
+                                        Attributes[x, y].animInstance =
+                                            new AnimationInstance(Globals.GameAnimations[Attributes[x, y].data1], true);
+                                        Attributes[x, y].animInstance.SetPosition(
+                                            GetX() + x*Globals.Database.TileWidth + Globals.Database.TileWidth/2,
+                                            GetY() + y*Globals.Database.TileHeight + Globals.Database.TileHeight/2, 0);
+                                        GameGraphics.LiveAnimations.Add(Attributes[x,y].animInstance);
+                                    }
+                                    Attributes[x, y].animInstance.Update();
+                                }
+                            }
+                        }
+                    }
                 }
             }
             if (layer == 2)
@@ -659,11 +686,11 @@ namespace Intersect_Client.Classes.Maps
                             GameGraphics.DrawGameTexture(GameGraphics.FogTextures[fogIndex],
                                 new FloatRect(0, 0, fogW, fogH),
                                 new FloatRect(
-                                    (GetX() + Globals.Database.MapWidth*Globals.Database.TileWidth/2) - (xCount*fogW/2) + x*fogW +
+                                    (GetX() + Globals.Database.MapWidth * Globals.Database.TileWidth / 2) - (xCount * fogW / 2) + x * fogW +
                                     _fogCurrentX,
-                                    (GetY() + Globals.Database.MapHeight*Globals.Database.TileHeight/2) - (yCount*fogH/2) + y*fogH +
+                                    (GetY() + Globals.Database.MapHeight * Globals.Database.TileHeight / 2) - (yCount * fogH / 2) + y * fogH +
                                     _fogCurrentY, fogW, fogH),
-                                new Color((byte)(Globals.GameMaps[MyMapNum].FogTransaprency * _curFogIntensity),255, 255, 255
+                                new Color((byte)(Globals.GameMaps[MyMapNum].FogTransaprency * _curFogIntensity), 255, 255, 255
                                     ));
                         }
                     }
@@ -756,6 +783,15 @@ namespace Intersect_Client.Classes.Maps
         public int data2;
         public int data3;
         public string data4 = "";
+        public AnimationInstance animInstance;
+
+        ~Attribute()
+        {
+            if (animInstance != null)
+            {
+                GameGraphics.LiveAnimations.Remove(animInstance);
+            }
+        }
     }
 
     public class TileArray

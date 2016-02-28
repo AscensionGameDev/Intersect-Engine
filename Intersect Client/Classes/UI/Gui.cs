@@ -144,6 +144,8 @@ namespace Intersect_Client.Classes.UI
                 GwenTexture.Begin();
                 GwenTexture.Clear(Color.Transparent);
             }
+            _gameCanvas.RestrictToParent = false;
+            _gameCanvas.SetPosition((int) GameGraphics.CurrentView.X, (int) GameGraphics.CurrentView.Y);
             if (Globals.GameState == Enums.GameStates.Menu)
             {
                 MenuUI.Draw();

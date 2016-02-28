@@ -39,6 +39,10 @@
             this.cmbAutotile = new System.Windows.Forms.ComboBox();
             this.cmbTilesets = new System.Windows.Forms.ComboBox();
             this.tabAttributes = new System.Windows.Forms.TabPage();
+            this.grpAnimation = new System.Windows.Forms.GroupBox();
+            this.cmbAnimationAttribute = new System.Windows.Forms.ComboBox();
+            this.label3 = new System.Windows.Forms.Label();
+            this.rbAnimation = new System.Windows.Forms.RadioButton();
             this.rbResource = new System.Windows.Forms.RadioButton();
             this.rbSound = new System.Windows.Forms.RadioButton();
             this.rbWarp = new System.Windows.Forms.RadioButton();
@@ -47,25 +51,23 @@
             this.rbItem = new System.Windows.Forms.RadioButton();
             this.rbBlocked = new System.Windows.Forms.RadioButton();
             this.grpResource = new System.Windows.Forms.GroupBox();
+            this.cmbResourceAttribute = new System.Windows.Forms.ComboBox();
             this.lblResource = new System.Windows.Forms.Label();
-            this.scrlResource = new System.Windows.Forms.HScrollBar();
-            this.grpSound = new System.Windows.Forms.GroupBox();
-            this.cmbMapAttributeSound = new System.Windows.Forms.ComboBox();
-            this.lblSoundDistance = new System.Windows.Forms.Label();
-            this.label7 = new System.Windows.Forms.Label();
-            this.scrlSoundDistance = new System.Windows.Forms.HScrollBar();
             this.grpItem = new System.Windows.Forms.GroupBox();
+            this.cmbItemAttribute = new System.Windows.Forms.ComboBox();
             this.lblMaxItemAmount = new System.Windows.Forms.Label();
             this.lblMapItem = new System.Windows.Forms.Label();
             this.scrlMaxItemVal = new System.Windows.Forms.HScrollBar();
-            this.scrlMapItem = new System.Windows.Forms.HScrollBar();
             this.grpWarp = new System.Windows.Forms.GroupBox();
+            this.btnVisualMapSelector = new System.Windows.Forms.Button();
+            this.cmbWarpMap = new System.Windows.Forms.ComboBox();
+            this.cmbDirection = new System.Windows.Forms.ComboBox();
+            this.label23 = new System.Windows.Forms.Label();
             this.lblY = new System.Windows.Forms.Label();
             this.lblX = new System.Windows.Forms.Label();
             this.lblMap = new System.Windows.Forms.Label();
             this.scrlX = new System.Windows.Forms.HScrollBar();
             this.scrlY = new System.Windows.Forms.HScrollBar();
-            this.scrlMap = new System.Windows.Forms.HScrollBar();
             this.grpZDimension = new System.Windows.Forms.GroupBox();
             this.grpGateway = new System.Windows.Forms.GroupBox();
             this.rbGateway2 = new System.Windows.Forms.RadioButton();
@@ -75,6 +77,11 @@
             this.rbBlock2 = new System.Windows.Forms.RadioButton();
             this.rbBlock1 = new System.Windows.Forms.RadioButton();
             this.rbBlockNone = new System.Windows.Forms.RadioButton();
+            this.grpSound = new System.Windows.Forms.GroupBox();
+            this.cmbMapAttributeSound = new System.Windows.Forms.ComboBox();
+            this.lblSoundDistance = new System.Windows.Forms.Label();
+            this.label7 = new System.Windows.Forms.Label();
+            this.scrlSoundDistance = new System.Windows.Forms.HScrollBar();
             this.tabLights = new System.Windows.Forms.TabPage();
             this.lightEditor = new Intersect_Editor.Forms.Controls.LightEditorCtrl();
             this.label6 = new System.Windows.Forms.Label();
@@ -96,13 +103,14 @@
             this.pnlTilesetContainer.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.picTileset)).BeginInit();
             this.tabAttributes.SuspendLayout();
+            this.grpAnimation.SuspendLayout();
             this.grpResource.SuspendLayout();
-            this.grpSound.SuspendLayout();
             this.grpItem.SuspendLayout();
             this.grpWarp.SuspendLayout();
             this.grpZDimension.SuspendLayout();
             this.grpGateway.SuspendLayout();
             this.grpDimBlock.SuspendLayout();
+            this.grpSound.SuspendLayout();
             this.tabLights.SuspendLayout();
             this.tabEvents.SuspendLayout();
             this.tabNPCs.SuspendLayout();
@@ -240,7 +248,8 @@
             // 
             // tabAttributes
             // 
-            this.tabAttributes.Controls.Add(this.grpSound);
+            this.tabAttributes.Controls.Add(this.grpAnimation);
+            this.tabAttributes.Controls.Add(this.rbAnimation);
             this.tabAttributes.Controls.Add(this.rbResource);
             this.tabAttributes.Controls.Add(this.rbSound);
             this.tabAttributes.Controls.Add(this.rbWarp);
@@ -252,6 +261,7 @@
             this.tabAttributes.Controls.Add(this.grpItem);
             this.tabAttributes.Controls.Add(this.grpWarp);
             this.tabAttributes.Controls.Add(this.grpZDimension);
+            this.tabAttributes.Controls.Add(this.grpSound);
             this.tabAttributes.Location = new System.Drawing.Point(4, 22);
             this.tabAttributes.Name = "tabAttributes";
             this.tabAttributes.Padding = new System.Windows.Forms.Padding(3);
@@ -259,6 +269,47 @@
             this.tabAttributes.TabIndex = 1;
             this.tabAttributes.Text = "Attributes";
             this.tabAttributes.UseVisualStyleBackColor = true;
+            // 
+            // grpAnimation
+            // 
+            this.grpAnimation.Controls.Add(this.cmbAnimationAttribute);
+            this.grpAnimation.Controls.Add(this.label3);
+            this.grpAnimation.Location = new System.Drawing.Point(6, 200);
+            this.grpAnimation.Name = "grpAnimation";
+            this.grpAnimation.Size = new System.Drawing.Size(256, 69);
+            this.grpAnimation.TabIndex = 33;
+            this.grpAnimation.TabStop = false;
+            this.grpAnimation.Text = "Animaton";
+            this.grpAnimation.Visible = false;
+            // 
+            // cmbAnimationAttribute
+            // 
+            this.cmbAnimationAttribute.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbAnimationAttribute.FormattingEnabled = true;
+            this.cmbAnimationAttribute.Location = new System.Drawing.Point(17, 36);
+            this.cmbAnimationAttribute.Name = "cmbAnimationAttribute";
+            this.cmbAnimationAttribute.Size = new System.Drawing.Size(222, 21);
+            this.cmbAnimationAttribute.TabIndex = 11;
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(14, 16);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(56, 13);
+            this.label3.TabIndex = 10;
+            this.label3.Text = "Animation:";
+            // 
+            // rbAnimation
+            // 
+            this.rbAnimation.AutoSize = true;
+            this.rbAnimation.Location = new System.Drawing.Point(5, 168);
+            this.rbAnimation.Name = "rbAnimation";
+            this.rbAnimation.Size = new System.Drawing.Size(71, 17);
+            this.rbAnimation.TabIndex = 32;
+            this.rbAnimation.Text = "Animation";
+            this.rbAnimation.UseVisualStyleBackColor = true;
+            this.rbAnimation.CheckedChanged += new System.EventHandler(this.rbAnimation_CheckedChanged);
             // 
             // rbResource
             // 
@@ -341,108 +392,61 @@
             // 
             // grpResource
             // 
+            this.grpResource.Controls.Add(this.cmbResourceAttribute);
             this.grpResource.Controls.Add(this.lblResource);
-            this.grpResource.Controls.Add(this.scrlResource);
-            this.grpResource.Location = new System.Drawing.Point(5, 233);
+            this.grpResource.Location = new System.Drawing.Point(6, 200);
             this.grpResource.Name = "grpResource";
-            this.grpResource.Size = new System.Drawing.Size(256, 100);
+            this.grpResource.Size = new System.Drawing.Size(256, 69);
             this.grpResource.TabIndex = 31;
             this.grpResource.TabStop = false;
             this.grpResource.Text = "Resource";
             this.grpResource.Visible = false;
             // 
+            // cmbResourceAttribute
+            // 
+            this.cmbResourceAttribute.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbResourceAttribute.FormattingEnabled = true;
+            this.cmbResourceAttribute.Location = new System.Drawing.Point(17, 36);
+            this.cmbResourceAttribute.Name = "cmbResourceAttribute";
+            this.cmbResourceAttribute.Size = new System.Drawing.Size(222, 21);
+            this.cmbResourceAttribute.TabIndex = 11;
+            // 
             // lblResource
             // 
             this.lblResource.AutoSize = true;
-            this.lblResource.Location = new System.Drawing.Point(14, 31);
+            this.lblResource.Location = new System.Drawing.Point(14, 16);
             this.lblResource.Name = "lblResource";
-            this.lblResource.Size = new System.Drawing.Size(94, 13);
+            this.lblResource.Size = new System.Drawing.Size(56, 13);
             this.lblResource.TabIndex = 10;
-            this.lblResource.Text = "Resource: 0 None";
-            // 
-            // scrlResource
-            // 
-            this.scrlResource.LargeChange = 1;
-            this.scrlResource.Location = new System.Drawing.Point(17, 53);
-            this.scrlResource.Maximum = 255;
-            this.scrlResource.Minimum = -1;
-            this.scrlResource.Name = "scrlResource";
-            this.scrlResource.Size = new System.Drawing.Size(222, 20);
-            this.scrlResource.TabIndex = 9;
-            this.scrlResource.Value = -1;
-            this.scrlResource.Scroll += new System.Windows.Forms.ScrollEventHandler(this.scrlResource_Scroll);
-            // 
-            // grpSound
-            // 
-            this.grpSound.Controls.Add(this.cmbMapAttributeSound);
-            this.grpSound.Controls.Add(this.lblSoundDistance);
-            this.grpSound.Controls.Add(this.label7);
-            this.grpSound.Controls.Add(this.scrlSoundDistance);
-            this.grpSound.Location = new System.Drawing.Point(9, 195);
-            this.grpSound.Name = "grpSound";
-            this.grpSound.Size = new System.Drawing.Size(252, 132);
-            this.grpSound.TabIndex = 29;
-            this.grpSound.TabStop = false;
-            this.grpSound.Text = "Map Sound";
-            this.grpSound.Visible = false;
-            // 
-            // cmbMapAttributeSound
-            // 
-            this.cmbMapAttributeSound.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cmbMapAttributeSound.FormattingEnabled = true;
-            this.cmbMapAttributeSound.Location = new System.Drawing.Point(16, 41);
-            this.cmbMapAttributeSound.Name = "cmbMapAttributeSound";
-            this.cmbMapAttributeSound.Size = new System.Drawing.Size(219, 21);
-            this.cmbMapAttributeSound.TabIndex = 9;
-            // 
-            // lblSoundDistance
-            // 
-            this.lblSoundDistance.AutoSize = true;
-            this.lblSoundDistance.Location = new System.Drawing.Point(13, 72);
-            this.lblSoundDistance.Name = "lblSoundDistance";
-            this.lblSoundDistance.Size = new System.Drawing.Size(92, 13);
-            this.lblSoundDistance.TabIndex = 8;
-            this.lblSoundDistance.Text = "Distance: 1 Tile(s)";
-            // 
-            // label7
-            // 
-            this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(13, 21);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(41, 13);
-            this.label7.TabIndex = 7;
-            this.label7.Text = "Sound:";
-            // 
-            // scrlSoundDistance
-            // 
-            this.scrlSoundDistance.LargeChange = 1;
-            this.scrlSoundDistance.Location = new System.Drawing.Point(16, 94);
-            this.scrlSoundDistance.Maximum = 15;
-            this.scrlSoundDistance.Minimum = 1;
-            this.scrlSoundDistance.Name = "scrlSoundDistance";
-            this.scrlSoundDistance.Size = new System.Drawing.Size(219, 17);
-            this.scrlSoundDistance.TabIndex = 6;
-            this.scrlSoundDistance.Value = 1;
-            this.scrlSoundDistance.Scroll += new System.Windows.Forms.ScrollEventHandler(this.scrlSoundDistance_Scroll);
+            this.lblResource.Text = "Resource:";
             // 
             // grpItem
             // 
+            this.grpItem.Controls.Add(this.cmbItemAttribute);
             this.grpItem.Controls.Add(this.lblMaxItemAmount);
             this.grpItem.Controls.Add(this.lblMapItem);
             this.grpItem.Controls.Add(this.scrlMaxItemVal);
-            this.grpItem.Controls.Add(this.scrlMapItem);
-            this.grpItem.Location = new System.Drawing.Point(9, 198);
+            this.grpItem.Location = new System.Drawing.Point(6, 200);
             this.grpItem.Name = "grpItem";
-            this.grpItem.Size = new System.Drawing.Size(246, 132);
+            this.grpItem.Size = new System.Drawing.Size(246, 98);
             this.grpItem.TabIndex = 22;
             this.grpItem.TabStop = false;
             this.grpItem.Text = "Map Item";
             this.grpItem.Visible = false;
             // 
+            // cmbItemAttribute
+            // 
+            this.cmbItemAttribute.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbItemAttribute.FormattingEnabled = true;
+            this.cmbItemAttribute.Location = new System.Drawing.Point(16, 32);
+            this.cmbItemAttribute.Name = "cmbItemAttribute";
+            this.cmbItemAttribute.Size = new System.Drawing.Size(219, 21);
+            this.cmbItemAttribute.TabIndex = 9;
+            // 
             // lblMaxItemAmount
             // 
             this.lblMaxItemAmount.AutoSize = true;
-            this.lblMaxItemAmount.Location = new System.Drawing.Point(13, 72);
+            this.lblMaxItemAmount.Location = new System.Drawing.Point(13, 54);
             this.lblMaxItemAmount.Name = "lblMaxItemAmount";
             this.lblMaxItemAmount.Size = new System.Drawing.Size(63, 13);
             this.lblMaxItemAmount.TabIndex = 8;
@@ -451,16 +455,16 @@
             // lblMapItem
             // 
             this.lblMapItem.AutoSize = true;
-            this.lblMapItem.Location = new System.Drawing.Point(13, 21);
+            this.lblMapItem.Location = new System.Drawing.Point(13, 16);
             this.lblMapItem.Name = "lblMapItem";
-            this.lblMapItem.Size = new System.Drawing.Size(39, 13);
+            this.lblMapItem.Size = new System.Drawing.Size(30, 13);
             this.lblMapItem.TabIndex = 7;
-            this.lblMapItem.Text = "Item: 1";
+            this.lblMapItem.Text = "Item:";
             // 
             // scrlMaxItemVal
             // 
             this.scrlMaxItemVal.LargeChange = 1;
-            this.scrlMaxItemVal.Location = new System.Drawing.Point(16, 94);
+            this.scrlMaxItemVal.Location = new System.Drawing.Point(16, 70);
             this.scrlMaxItemVal.Maximum = 1000;
             this.scrlMaxItemVal.Minimum = 1;
             this.scrlMaxItemVal.Name = "scrlMaxItemVal";
@@ -469,26 +473,18 @@
             this.scrlMaxItemVal.Value = 1;
             this.scrlMaxItemVal.ValueChanged += new System.EventHandler(this.scrlMaxItemVal_ValueChanged);
             // 
-            // scrlMapItem
-            // 
-            this.scrlMapItem.LargeChange = 1;
-            this.scrlMapItem.Location = new System.Drawing.Point(16, 44);
-            this.scrlMapItem.Minimum = 1;
-            this.scrlMapItem.Name = "scrlMapItem";
-            this.scrlMapItem.Size = new System.Drawing.Size(219, 20);
-            this.scrlMapItem.TabIndex = 5;
-            this.scrlMapItem.Value = 1;
-            this.scrlMapItem.ValueChanged += new System.EventHandler(this.scrlMapItem_ValueChanged);
-            // 
             // grpWarp
             // 
+            this.grpWarp.Controls.Add(this.btnVisualMapSelector);
+            this.grpWarp.Controls.Add(this.cmbWarpMap);
+            this.grpWarp.Controls.Add(this.cmbDirection);
+            this.grpWarp.Controls.Add(this.label23);
             this.grpWarp.Controls.Add(this.lblY);
             this.grpWarp.Controls.Add(this.lblX);
             this.grpWarp.Controls.Add(this.lblMap);
             this.grpWarp.Controls.Add(this.scrlX);
             this.grpWarp.Controls.Add(this.scrlY);
-            this.grpWarp.Controls.Add(this.scrlMap);
-            this.grpWarp.Location = new System.Drawing.Point(6, 168);
+            this.grpWarp.Location = new System.Drawing.Point(6, 200);
             this.grpWarp.Name = "grpWarp";
             this.grpWarp.Size = new System.Drawing.Size(255, 162);
             this.grpWarp.TabIndex = 26;
@@ -496,10 +492,53 @@
             this.grpWarp.Text = "Warp";
             this.grpWarp.Visible = false;
             // 
+            // btnVisualMapSelector
+            // 
+            this.btnVisualMapSelector.Location = new System.Drawing.Point(16, 131);
+            this.btnVisualMapSelector.Name = "btnVisualMapSelector";
+            this.btnVisualMapSelector.Size = new System.Drawing.Size(222, 23);
+            this.btnVisualMapSelector.TabIndex = 24;
+            this.btnVisualMapSelector.Text = "Open Visual Interface";
+            this.btnVisualMapSelector.UseVisualStyleBackColor = true;
+            this.btnVisualMapSelector.Click += new System.EventHandler(this.btnVisualMapSelector_Click);
+            // 
+            // cmbWarpMap
+            // 
+            this.cmbWarpMap.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbWarpMap.FormattingEnabled = true;
+            this.cmbWarpMap.Location = new System.Drawing.Point(17, 30);
+            this.cmbWarpMap.Name = "cmbWarpMap";
+            this.cmbWarpMap.Size = new System.Drawing.Size(221, 21);
+            this.cmbWarpMap.TabIndex = 12;
+            // 
+            // cmbDirection
+            // 
+            this.cmbDirection.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbDirection.FormattingEnabled = true;
+            this.cmbDirection.Items.AddRange(new object[] {
+            "Retain Direction",
+            "Up",
+            "Down",
+            "Left",
+            "Right"});
+            this.cmbDirection.Location = new System.Drawing.Point(46, 102);
+            this.cmbDirection.Name = "cmbDirection";
+            this.cmbDirection.Size = new System.Drawing.Size(192, 21);
+            this.cmbDirection.TabIndex = 23;
+            // 
+            // label23
+            // 
+            this.label23.AutoSize = true;
+            this.label23.Location = new System.Drawing.Point(13, 105);
+            this.label23.Name = "label23";
+            this.label23.Size = new System.Drawing.Size(23, 13);
+            this.label23.TabIndex = 22;
+            this.label23.Text = "Dir:";
+            // 
             // lblY
             // 
             this.lblY.AutoSize = true;
-            this.lblY.Location = new System.Drawing.Point(22, 106);
+            this.lblY.Location = new System.Drawing.Point(14, 82);
             this.lblY.Name = "lblY";
             this.lblY.Size = new System.Drawing.Size(26, 13);
             this.lblY.TabIndex = 11;
@@ -508,7 +547,7 @@
             // lblX
             // 
             this.lblX.AutoSize = true;
-            this.lblX.Location = new System.Drawing.Point(22, 65);
+            this.lblX.Location = new System.Drawing.Point(14, 61);
             this.lblX.Name = "lblX";
             this.lblX.Size = new System.Drawing.Size(26, 13);
             this.lblX.TabIndex = 10;
@@ -517,44 +556,35 @@
             // lblMap
             // 
             this.lblMap.AutoSize = true;
-            this.lblMap.Location = new System.Drawing.Point(19, 21);
+            this.lblMap.Location = new System.Drawing.Point(13, 14);
             this.lblMap.Name = "lblMap";
-            this.lblMap.Size = new System.Drawing.Size(40, 13);
+            this.lblMap.Size = new System.Drawing.Size(31, 13);
             this.lblMap.TabIndex = 9;
-            this.lblMap.Text = "Map: 0";
+            this.lblMap.Text = "Map:";
             // 
             // scrlX
             // 
             this.scrlX.LargeChange = 1;
-            this.scrlX.Location = new System.Drawing.Point(19, 78);
+            this.scrlX.Location = new System.Drawing.Point(46, 54);
             this.scrlX.Name = "scrlX";
-            this.scrlX.Size = new System.Drawing.Size(219, 21);
+            this.scrlX.Size = new System.Drawing.Size(192, 21);
             this.scrlX.TabIndex = 8;
             this.scrlX.ValueChanged += new System.EventHandler(this.scrlX_ValueChanged);
             // 
             // scrlY
             // 
             this.scrlY.LargeChange = 1;
-            this.scrlY.Location = new System.Drawing.Point(19, 121);
+            this.scrlY.Location = new System.Drawing.Point(46, 78);
             this.scrlY.Name = "scrlY";
-            this.scrlY.Size = new System.Drawing.Size(219, 21);
+            this.scrlY.Size = new System.Drawing.Size(192, 21);
             this.scrlY.TabIndex = 7;
             this.scrlY.ValueChanged += new System.EventHandler(this.scrlY_ValueChanged);
-            // 
-            // scrlMap
-            // 
-            this.scrlMap.LargeChange = 1;
-            this.scrlMap.Location = new System.Drawing.Point(20, 34);
-            this.scrlMap.Name = "scrlMap";
-            this.scrlMap.Size = new System.Drawing.Size(218, 21);
-            this.scrlMap.TabIndex = 6;
-            this.scrlMap.ValueChanged += new System.EventHandler(this.scrlMap_ValueChanged);
             // 
             // grpZDimension
             // 
             this.grpZDimension.Controls.Add(this.grpGateway);
             this.grpZDimension.Controls.Add(this.grpDimBlock);
-            this.grpZDimension.Location = new System.Drawing.Point(4, 201);
+            this.grpZDimension.Location = new System.Drawing.Point(6, 200);
             this.grpZDimension.Name = "grpZDimension";
             this.grpZDimension.Size = new System.Drawing.Size(257, 132);
             this.grpZDimension.TabIndex = 27;
@@ -649,6 +679,59 @@
             this.rbBlockNone.TabStop = true;
             this.rbBlockNone.Text = "None";
             this.rbBlockNone.UseVisualStyleBackColor = true;
+            // 
+            // grpSound
+            // 
+            this.grpSound.Controls.Add(this.cmbMapAttributeSound);
+            this.grpSound.Controls.Add(this.lblSoundDistance);
+            this.grpSound.Controls.Add(this.label7);
+            this.grpSound.Controls.Add(this.scrlSoundDistance);
+            this.grpSound.Location = new System.Drawing.Point(6, 200);
+            this.grpSound.Name = "grpSound";
+            this.grpSound.Size = new System.Drawing.Size(252, 102);
+            this.grpSound.TabIndex = 29;
+            this.grpSound.TabStop = false;
+            this.grpSound.Text = "Map Sound";
+            this.grpSound.Visible = false;
+            // 
+            // cmbMapAttributeSound
+            // 
+            this.cmbMapAttributeSound.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbMapAttributeSound.FormattingEnabled = true;
+            this.cmbMapAttributeSound.Location = new System.Drawing.Point(16, 30);
+            this.cmbMapAttributeSound.Name = "cmbMapAttributeSound";
+            this.cmbMapAttributeSound.Size = new System.Drawing.Size(219, 21);
+            this.cmbMapAttributeSound.TabIndex = 9;
+            // 
+            // lblSoundDistance
+            // 
+            this.lblSoundDistance.AutoSize = true;
+            this.lblSoundDistance.Location = new System.Drawing.Point(13, 54);
+            this.lblSoundDistance.Name = "lblSoundDistance";
+            this.lblSoundDistance.Size = new System.Drawing.Size(92, 13);
+            this.lblSoundDistance.TabIndex = 8;
+            this.lblSoundDistance.Text = "Distance: 1 Tile(s)";
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(13, 16);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(41, 13);
+            this.label7.TabIndex = 7;
+            this.label7.Text = "Sound:";
+            // 
+            // scrlSoundDistance
+            // 
+            this.scrlSoundDistance.LargeChange = 1;
+            this.scrlSoundDistance.Location = new System.Drawing.Point(16, 76);
+            this.scrlSoundDistance.Maximum = 15;
+            this.scrlSoundDistance.Minimum = 1;
+            this.scrlSoundDistance.Name = "scrlSoundDistance";
+            this.scrlSoundDistance.Size = new System.Drawing.Size(219, 17);
+            this.scrlSoundDistance.TabIndex = 6;
+            this.scrlSoundDistance.Value = 1;
+            this.scrlSoundDistance.Scroll += new System.Windows.Forms.ScrollEventHandler(this.scrlSoundDistance_Scroll);
             // 
             // tabLights
             // 
@@ -845,10 +928,10 @@
             ((System.ComponentModel.ISupportInitialize)(this.picTileset)).EndInit();
             this.tabAttributes.ResumeLayout(false);
             this.tabAttributes.PerformLayout();
+            this.grpAnimation.ResumeLayout(false);
+            this.grpAnimation.PerformLayout();
             this.grpResource.ResumeLayout(false);
             this.grpResource.PerformLayout();
-            this.grpSound.ResumeLayout(false);
-            this.grpSound.PerformLayout();
             this.grpItem.ResumeLayout(false);
             this.grpItem.PerformLayout();
             this.grpWarp.ResumeLayout(false);
@@ -858,6 +941,8 @@
             this.grpGateway.PerformLayout();
             this.grpDimBlock.ResumeLayout(false);
             this.grpDimBlock.PerformLayout();
+            this.grpSound.ResumeLayout(false);
+            this.grpSound.PerformLayout();
             this.tabLights.ResumeLayout(false);
             this.tabEvents.ResumeLayout(false);
             this.tabEvents.PerformLayout();
@@ -890,8 +975,6 @@
         private System.Windows.Forms.RadioButton rbItem;
         private System.Windows.Forms.RadioButton rbBlocked;
         private System.Windows.Forms.GroupBox grpResource;
-        private System.Windows.Forms.Label lblResource;
-        private System.Windows.Forms.HScrollBar scrlResource;
         private System.Windows.Forms.GroupBox grpSound;
         public System.Windows.Forms.ComboBox cmbMapAttributeSound;
         private System.Windows.Forms.Label lblSoundDistance;
@@ -901,14 +984,12 @@
         private System.Windows.Forms.Label lblMaxItemAmount;
         private System.Windows.Forms.Label lblMapItem;
         private System.Windows.Forms.HScrollBar scrlMaxItemVal;
-        public System.Windows.Forms.HScrollBar scrlMapItem;
         private System.Windows.Forms.GroupBox grpWarp;
         private System.Windows.Forms.Label lblY;
         private System.Windows.Forms.Label lblX;
         private System.Windows.Forms.Label lblMap;
         public System.Windows.Forms.HScrollBar scrlX;
         public System.Windows.Forms.HScrollBar scrlY;
-        public System.Windows.Forms.HScrollBar scrlMap;
         private System.Windows.Forms.GroupBox grpZDimension;
         private System.Windows.Forms.GroupBox grpGateway;
         private System.Windows.Forms.RadioButton rbGateway2;
@@ -934,5 +1015,16 @@
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.Label label8;
         public Controls.LightEditorCtrl lightEditor;
+        private System.Windows.Forms.ComboBox cmbResourceAttribute;
+        private System.Windows.Forms.Label lblResource;
+        private System.Windows.Forms.ComboBox cmbItemAttribute;
+        private System.Windows.Forms.ComboBox cmbWarpMap;
+        private System.Windows.Forms.Button btnVisualMapSelector;
+        private System.Windows.Forms.ComboBox cmbDirection;
+        private System.Windows.Forms.Label label23;
+        private System.Windows.Forms.GroupBox grpAnimation;
+        private System.Windows.Forms.ComboBox cmbAnimationAttribute;
+        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.RadioButton rbAnimation;
     }
 }

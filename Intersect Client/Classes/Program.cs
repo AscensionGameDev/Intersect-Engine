@@ -59,9 +59,7 @@ namespace Intersect_Client.Classes
             GameGraphics.Renderer = new SfmlRenderer();
             Globals.ContentManager = new SfmlContentManager();
             Globals.System = new SfmlSystem();
-            Gui.GwenTexture = GameGraphics.Renderer.CreateRenderTexture(GameGraphics.Renderer.GetScreenWidth(),
-                GameGraphics.Renderer.GetScreenHeight());
-            Gui.GwenRenderer = new IntersectRenderer(Gui.GwenTexture,GameGraphics.WhiteTex,GameGraphics.Renderer);
+            Gui.GwenRenderer = new IntersectRenderer(null,GameGraphics.WhiteTex,GameGraphics.Renderer);
             Gui.GwenInput = new IntersectInput();
 
             GameNetwork.MySocket = new SfmlSocket();

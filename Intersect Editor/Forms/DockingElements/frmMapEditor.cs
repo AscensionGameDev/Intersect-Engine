@@ -1399,5 +1399,9 @@ namespace Intersect_Editor.Forms
             }
         }
 
+        private void picMap_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }

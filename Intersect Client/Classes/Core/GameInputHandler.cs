@@ -70,16 +70,18 @@ namespace Intersect_Client.Classes.Core
             }
             else if (key >= Keys.D1 && key <= Keys.D9)
             {
+                if (Globals.GameState != Enums.GameStates.InGame) return;
                 if (!Gui.HasInputFocus())
                 {
-                    Globals.System.Log("Hotbar index of " + ((int)key - (int)Keys.D1) + " activated.");
+                    Gui.GameUI.Hotbar.Items[((int) key - (int) Keys.D1)].Activate();
                 }
             }
             else if (key == Keys.D0)
             {
+                if (Globals.GameState != Enums.GameStates.InGame) return;
                 if (!Gui.HasInputFocus())
                 {
-                    Globals.System.Log("Hotbar index of " + 10 + " activated.");
+                    Gui.GameUI.Hotbar.Items[9].Activate();
                 }
             }
         }

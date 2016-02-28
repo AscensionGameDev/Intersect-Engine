@@ -105,10 +105,8 @@ namespace Intersect_Editor.Forms
         }
         private void InitFormObjects()
         {
-            Globals.MapLayersWindow.scrlMap.Maximum = Globals.GameMaps.Length;
             Globals.MapLayersWindow.scrlX.Maximum = Globals.MapWidth;
             Globals.MapLayersWindow.scrlY.Maximum = Globals.MapHeight;
-            Globals.MapLayersWindow.scrlMapItem.Maximum = Constants.MaxItems;
         }
         private void InitMapProperties()
         {

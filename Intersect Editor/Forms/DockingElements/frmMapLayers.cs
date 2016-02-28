@@ -160,11 +160,18 @@ namespace Intersect_Editor.Forms
             grpWarp.Visible = false;
             grpSound.Visible = false;
             grpResource.Visible = false;
+            grpAnimation.Visible = false;
         }
         private void rbItem_CheckedChanged(object sender, EventArgs e)
         {
             hideAttributeMenus();
             grpItem.Visible = true;
+            cmbItemAttribute.Items.Clear();
+            for (int i = 0; i < Globals.GameItems.Length; i++)
+            {
+                cmbItemAttribute.Items.Add((i + 1) + ". " + Globals.GameItems[i].Name);
+            }
+            cmbItemAttribute.SelectedIndex = 0;
         }
         private void rbBlocked_CheckedChanged(object sender, EventArgs e)
         {
@@ -182,8 +189,14 @@ namespace Intersect_Editor.Forms
         private void rbWarp_CheckedChanged(object sender, EventArgs e)
         {
             hideAttributeMenus();
-            scrlMap.Maximum = Globals.GameMaps.Length;
             grpWarp.Visible = true;
+            cmbWarpMap.Items.Clear();
+            for (int i = 0; i < Database.OrderedMaps.Count; i++)
+            {
+                cmbWarpMap.Items.Add(Database.OrderedMaps[i].MapNum + ". " + Database.OrderedMaps[i].Name);
+            }
+            cmbWarpMap.SelectedIndex = 0;
+            cmbDirection.SelectedIndex = 0;
         }
         private void rbSound_CheckedChanged(object sender, EventArgs e)
         {
@@ -201,6 +214,12 @@ namespace Intersect_Editor.Forms
         {
             hideAttributeMenus();
             grpResource.Visible = true;
+            cmbResourceAttribute.Items.Clear();
+            for (int i = 0; i < Globals.GameResources.Length; i++)
+            {
+                cmbResourceAttribute.Items.Add((i + 1) + ". " + Globals.GameResources[i].Name);
+            }
+            cmbResourceAttribute.SelectedIndex = 0;
         }
         // Used for returning an integer value depending on which radio button is selected on the forms. This is merely used to make PlaceAtrribute less messy.
         private int GetEditorDimensionGateway()
@@ -236,7 +255,7 @@ namespace Intersect_Editor.Forms
             else if (rbItem.Checked == true)
             {
                 tmpMap.Attributes[x, y].value = (int)Enums.MapAttributes.Item;
-                tmpMap.Attributes[x, y].data1 = scrlMapItem.Value - 1;
+                tmpMap.Attributes[x, y].data1 = cmbItemAttribute.SelectedIndex;
                 tmpMap.Attributes[x, y].data2 = scrlMaxItemVal.Value;
             }
             else if (rbZDimension.Checked == true)
@@ -252,9 +271,10 @@ namespace Intersect_Editor.Forms
             else if (rbWarp.Checked == true)
             {
                 tmpMap.Attributes[x, y].value = (int)Enums.MapAttributes.Warp;
-                tmpMap.Attributes[x, y].data1 = scrlMap.Value;
+                tmpMap.Attributes[x, y].data1 = Database.OrderedMaps[cmbWarpMap.SelectedIndex].MapNum;
                 tmpMap.Attributes[x, y].data2 = scrlX.Value;
                 tmpMap.Attributes[x, y].data3 = scrlY.Value;
+                tmpMap.Attributes[x, y].data4 = (cmbDirection.SelectedIndex - 1).ToString();
             }
             else if (rbSound.Checked == true)
             {
@@ -267,7 +287,12 @@ namespace Intersect_Editor.Forms
             else if (rbResource.Checked == true)
             {
                 tmpMap.Attributes[x, y].value = (int)Enums.MapAttributes.Resource;
-                tmpMap.Attributes[x, y].data1 = scrlResource.Value;
+                tmpMap.Attributes[x, y].data1 = cmbResourceAttribute.SelectedIndex;
+            }
+            else if (rbAnimation.Checked == true)
+            {
+                tmpMap.Attributes[x, y].value = (int)Enums.MapAttributes.Animation;
+                tmpMap.Attributes[x, y].data1 = cmbAnimationAttribute.SelectedIndex;
             }
         }
         public bool RemoveAttribute(MapStruct tmpMap, int x, int y)
@@ -284,19 +309,11 @@ namespace Intersect_Editor.Forms
             return false;
         }
         //Item Attribute
-        private void scrlMapItem_ValueChanged(object sender, EventArgs e)
-        {
-            lblMapItem.Text = "Item: " + scrlMapItem.Value + " " + Globals.GameItems[scrlMapItem.Value - 1].Name;
-        }
         private void scrlMaxItemVal_ValueChanged(object sender, EventArgs e)
         {
             lblMaxItemAmount.Text = "Quantity: x" + scrlMaxItemVal.Value;
         }
         //Warp Attribute
-        private void scrlMap_ValueChanged(object sender, EventArgs e)
-        {
-            lblMap.Text = "Map: " + scrlMap.Value;
-        }
         private void scrlX_ValueChanged(object sender, EventArgs e)
         {
             lblX.Text = "X: " + scrlX.Value;
@@ -310,42 +327,34 @@ namespace Intersect_Editor.Forms
         {
             lblSoundDistance.Text = "Distance: " + scrlSoundDistance.Value + " Tile(s)";
         }
-        //Resource Attribute
-        private void scrlResource_Scroll(object sender, ScrollEventArgs e)
-        {
-            if (scrlResource.Value >= 0)
-            {
-                lblResource.Text = "Resource: " + (scrlResource.Value + 1) + " " + Globals.GameResources[scrlResource.Value].Name;
-            }
-            else
-            {
-                lblResource.Text = "Resource: 0 None";
-            }
-        }
 
         private void tabControl_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (tabControl.SelectedIndex == tabControl.TabPages.IndexOf(tabTiles)) {
+            if (tabControl.SelectedIndex == tabControl.TabPages.IndexOf(tabTiles))
+            {
                 Globals.CurrentLayer = 0;
                 EditorGraphics.TilePreviewUpdated = true;
-                Globals.SelectionType = (int) Enums.SelectionTypes.AllLayers;
+                Globals.SelectionType = (int)Enums.SelectionTypes.AllLayers;
             }
-            else if (tabControl.SelectedIndex == tabControl.TabPages.IndexOf(tabAttributes)) {
+            else if (tabControl.SelectedIndex == tabControl.TabPages.IndexOf(tabAttributes))
+            {
                 Globals.CurrentLayer = Constants.LayerCount;
                 EditorGraphics.TilePreviewUpdated = true;
                 Globals.SelectionType = (int)Enums.SelectionTypes.AllLayers;
-            }  
-            else if (tabControl.SelectedIndex == tabControl.TabPages.IndexOf(tabEvents)) {
+            }
+            else if (tabControl.SelectedIndex == tabControl.TabPages.IndexOf(tabEvents))
+            {
                 Globals.CurrentLayer = Constants.LayerCount + 2;
                 EditorGraphics.TilePreviewUpdated = true;
                 Globals.SelectionType = (int)Enums.SelectionTypes.CurrentLayer;
-            }  
-            else if (tabControl.SelectedIndex == tabControl.TabPages.IndexOf(tabLights)) {
-                Globals.CurrentLayer =  Constants.LayerCount + 1;
+            }
+            else if (tabControl.SelectedIndex == tabControl.TabPages.IndexOf(tabLights))
+            {
+                Globals.CurrentLayer = Constants.LayerCount + 1;
                 EditorGraphics.TilePreviewUpdated = true;
                 Globals.SelectionType = (int)Enums.SelectionTypes.CurrentLayer;
             }
-            else if (tabControl.SelectedIndex == tabControl.TabPages.IndexOf(tabNPCs ))
+            else if (tabControl.SelectedIndex == tabControl.TabPages.IndexOf(tabNPCs))
             {
                 Globals.CurrentLayer = Constants.LayerCount + 3;
                 EditorGraphics.TilePreviewUpdated = true;
@@ -492,6 +501,40 @@ namespace Intersect_Editor.Forms
         private void lightEditor_Load(object sender, EventArgs e)
         {
 
+        }
+
+        private void btnVisualMapSelector_Click(object sender, EventArgs e)
+        {
+            frmWarpSelection frmWarpSelection = new frmWarpSelection();
+            frmWarpSelection.SelectTile(Database.OrderedMaps[cmbWarpMap.SelectedIndex].MapNum, scrlX.Value, scrlY.Value);
+            frmWarpSelection.ShowDialog();
+            if (frmWarpSelection.GetResult())
+            {
+                for (int i = 0; i < Database.OrderedMaps.Count; i++)
+                {
+                    if (Database.OrderedMaps[i].MapNum == frmWarpSelection.GetMap())
+                    {
+                        cmbWarpMap.SelectedIndex = i;
+                        break;
+                    }
+                }
+                scrlX.Value = frmWarpSelection.GetX();
+                scrlY.Value = frmWarpSelection.GetY();
+                lblX.Text = @"X: " + scrlX.Value;
+                lblY.Text = @"Y: " + scrlY.Value;
+            }
+        }
+
+        private void rbAnimation_CheckedChanged(object sender, EventArgs e)
+        {
+            hideAttributeMenus();
+            grpAnimation.Visible = true;
+            cmbAnimationAttribute.Items.Clear();
+            for (int i = 0; i < Globals.GameAnimations.Length; i++)
+            {
+                cmbAnimationAttribute.Items.Add((i + 1) + ". " + Globals.GameAnimations[i].Name);
+            }
+            cmbAnimationAttribute.SelectedIndex = 0;
         }
     }
 }

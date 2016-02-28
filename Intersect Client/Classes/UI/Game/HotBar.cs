@@ -27,6 +27,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Runtime.Remoting;
 using IntersectClientExtras.GenericClasses;
 using IntersectClientExtras.Graphics;
 using IntersectClientExtras.Gwen;
@@ -172,6 +173,21 @@ namespace Intersect_Client.Classes.UI.Game
             pnl.Clicked += pnl_Clicked;
         }
 
+        public void Activate()
+        {
+            if (_currentType > -1 && _currentItem > -1)
+            {
+                if (_currentType == 0)
+                {
+                    Globals.Me.TryUseItem(_currentItem);
+                }
+                else if (_currentType == 1)
+                {
+                    Globals.Me.TryUseSpell(_currentItem);
+                }
+            }
+        }
+
         void pnl_RightClicked(Base sender, ClickedEventArgs arguments)
         {
             Globals.Me.AddToHotbar(myindex, -1, -1);
@@ -284,14 +300,7 @@ namespace Intersect_Client.Classes.UI.Game
                             MouseY = -1;
                             if (Globals.System.GetTimeMS() < ClickTime)
                             {
-                                if (_currentType == 0)
-                                {
-                                    Globals.Me.TryUseItem(_currentItem);
-                                }
-                                else if (_currentType == 1)
-                                {
-                                    Globals.Me.TryUseSpell(_currentItem);
-                                }
+                                Activate();
                                 ClickTime = 0;
                             }
                         }

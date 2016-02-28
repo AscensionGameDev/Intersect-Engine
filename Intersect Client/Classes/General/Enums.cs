@@ -228,6 +228,6 @@ namespace Intersect_Client.Classes.General
         public static List<string> ItemBonusEffects = new List<string>() { "Cooldown Reduction", "Life Steal" };
 
         // Map Attribtes
-        public enum MapAttributes : byte { Walkable = 0, Blocked, Item, ZDimension, NPCAvoid, Warp, Sound, Resource };
+        public enum MapAttributes : byte { Walkable = 0, Blocked, Item, ZDimension, NPCAvoid, Warp, Sound, Resource, Animation };
     }
 }
