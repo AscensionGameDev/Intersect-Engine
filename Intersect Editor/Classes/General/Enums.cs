@@ -208,6 +208,12 @@ namespace Intersect_Editor.Classes
             Pink,
         }
 
+        public enum MapZones
+        {
+            Normal = 0,
+            Safe = 1
+        }
+
         public static int WeaponIndex = 2;
         public static int ShieldIndex = 3;
         public static List<string> EquipmentSlots = new List<string>() { "Helmet", "Armor", "Weapon", "Shield", "Boots" };
