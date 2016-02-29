@@ -63,6 +63,12 @@ namespace Intersect_Editor.Classes
         public int BHue = 0;
         public int AHue = 0;
         public int Brightness = 100;
+        public byte ZoneType = 0; //Everything goes, 1 is safe, add more later
+        public int PlayerLightSize = 300;
+        public byte PlayerLightIntensity = 100;
+        public float PlayerLightExpand = 0f;
+        public Color PlayerLightColor = Color.White;
+        public string OverlayGraphic = "None";
 
 
         //Temporary Values
@@ -159,6 +165,14 @@ namespace Intersect_Editor.Classes
             bf.WriteInteger(BHue);
             bf.WriteInteger(AHue);
             bf.WriteInteger(Brightness);
+            bf.WriteByte(ZoneType);
+            bf.WriteString(OverlayGraphic);
+            bf.WriteInteger(PlayerLightSize);
+            bf.WriteDouble(PlayerLightExpand);
+            bf.WriteByte(PlayerLightIntensity);
+            bf.WriteByte(PlayerLightColor.R);
+            bf.WriteByte(PlayerLightColor.G);
+            bf.WriteByte(PlayerLightColor.B);
 
             for (var i = 0; i < Constants.LayerCount; i++)
             {
@@ -252,6 +266,12 @@ namespace Intersect_Editor.Classes
                 BHue = bf.ReadInteger();
                 AHue = bf.ReadInteger();
                 Brightness = bf.ReadInteger();
+                ZoneType = bf.ReadByte();
+                OverlayGraphic = bf.ReadString();
+                PlayerLightSize = bf.ReadInteger();
+                PlayerLightExpand = (float)bf.ReadDouble();
+                PlayerLightIntensity = bf.ReadByte();
+                PlayerLightColor = Color.FromArgb(bf.ReadByte(), bf.ReadByte(), bf.ReadByte());
 
                 for (var i = 0; i < Constants.LayerCount; i++)
                 {

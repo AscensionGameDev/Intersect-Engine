@@ -21,8 +21,10 @@
 */
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 
 namespace Intersect_Server.Classes
 {
@@ -66,6 +68,12 @@ namespace Intersect_Server.Classes
         public int BHue = 0;
         public int AHue = 0;
         public int Brightness = 100;
+        public byte ZoneType = 0; //Everything goes, 1 is safe, add more later
+        public int PlayerLightSize = 300;
+        public byte PlayerLightIntensity = 100;
+        public float PlayerLightExpand = 0f;
+        public Color PlayerLightColor = Color.White;
+        public string OverlayGraphic = "None";
 
 
         //Temporary Values
@@ -105,10 +113,11 @@ namespace Intersect_Server.Classes
         }
 
         //Saving/Loading
-        public void Save()
+        public void Save(bool newMap)
         {
             byte[] MapGameData = null;
             var bf = new ByteBuffer();
+            var tileBuffer = new ByteBuffer();
             bf.WriteInteger(Deleted);
             if (Deleted != 1)
             {
@@ -132,29 +141,45 @@ namespace Intersect_Server.Classes
                 bf.WriteInteger(BHue);
                 bf.WriteInteger(AHue);
                 bf.WriteInteger(Brightness);
+                bf.WriteByte(ZoneType);
+                bf.WriteString(OverlayGraphic);
+                bf.WriteInteger(PlayerLightSize);
+                bf.WriteDouble(PlayerLightExpand);
+                bf.WriteByte(PlayerLightIntensity);
+                bf.WriteByte(PlayerLightColor.R);
+                bf.WriteByte(PlayerLightColor.G);
+                bf.WriteByte(PlayerLightColor.B);
 
                 if (tileData == null)
                 {
-                    //New map. We need to generate the tile data.
-                    //We zero everything out
-                    ByteBuffer tmpBuffer = new ByteBuffer();
-                    Tile fakeTile = new Tile();
-                    for (int i = 0; i < Constants.LayerCount; i++)
+                    if (newMap)
                     {
-                        for (int x = 0; x < Globals.MapWidth; x++)
+                        //New map. We need to generate the tile data.
+                        //We zero everything out
+                        ByteBuffer tmpBuffer = new ByteBuffer();
+                        Tile fakeTile = new Tile();
+                        for (int i = 0; i < Constants.LayerCount; i++)
                         {
-                            for (int y = 0; y < Globals.MapHeight; y++)
+                            for (int x = 0; x < Globals.MapWidth; x++)
                             {
-                                tmpBuffer.WriteInteger(fakeTile.TilesetIndex);
-                                tmpBuffer.WriteInteger(fakeTile.X);
-                                tmpBuffer.WriteInteger(fakeTile.Y);
-                                tmpBuffer.WriteByte(fakeTile.Autotile);
+                                for (int y = 0; y < Globals.MapHeight; y++)
+                                {
+                                    tileBuffer.WriteInteger(fakeTile.TilesetIndex);
+                                    tileBuffer.WriteInteger(fakeTile.X);
+                                    tileBuffer.WriteInteger(fakeTile.Y);
+                                    tileBuffer.WriteByte(fakeTile.Autotile);
+                                }
                             }
                         }
+                        tileData = tileBuffer.ToArray();
+                        tileBuffer.Dispose();
                     }
-                    tileData = tmpBuffer.ToArray();
-                    tmpBuffer.Dispose();
+                    else
+                    {
+                        tileData = File.ReadAllBytes("Resources/Maps/" + MyMapNum + ".tiles");
+                    }
                 }
+                File.WriteAllBytes("Resources/Maps/" + MyMapNum + ".tiles", tileData);
                 bf.WriteBytes(tileData);
 
                 for (var x = 0; x < Globals.MapWidth; x++)
@@ -242,6 +267,12 @@ namespace Intersect_Server.Classes
                 BHue = bf.ReadInteger();
                 AHue = bf.ReadInteger();
                 Brightness = bf.ReadInteger();
+                ZoneType = bf.ReadByte();
+                OverlayGraphic = bf.ReadString();
+                PlayerLightSize = bf.ReadInteger();
+                PlayerLightExpand = (float)bf.ReadDouble();
+                PlayerLightIntensity = bf.ReadByte();
+                PlayerLightColor = Color.FromArgb(bf.ReadByte(), bf.ReadByte(), bf.ReadByte());
 
                 //Server Doesn't care about visuals.. just read the tile chunk into a byte array
                 //We read the TilesetIndex (int), X (int), Y (int) and Autotile (byte) for everyt tile of every later.
@@ -338,7 +369,7 @@ namespace Intersect_Server.Classes
                 SpawnAttributeItems();
                 SpawnMapNpcs();
                 SpawnMapResources();
-                Save();
+                Save(false);
                 tileData = null;
                 return true;
             }

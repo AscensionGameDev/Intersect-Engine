@@ -55,7 +55,7 @@ namespace Intersect_Server.Classes
             ClientIndex = myIndex;
             EntityIndex = entIndex;
             if (EntityIndex > -1) { Entity = (Player)Globals.Entities[EntityIndex]; }
-            if (mySocket.IsConnected()) { PacketSender.SendPing(this); }
+            if (mySocket != null && mySocket.IsConnected()) { PacketSender.SendPing(this); }
         }
 
         public void SendPacket(byte[] packet)

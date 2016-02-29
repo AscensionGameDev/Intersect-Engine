@@ -82,6 +82,12 @@ namespace Intersect_Client.Classes.Maps
         public int BHue = 0;
         public int AHue = 0;
         public int Brightness = 0;
+        public byte ZoneType = 0; //Everything goes, 1 is safe, add more later
+        public int PlayerLightSize = 300;
+        public byte PlayerLightIntensity = 100;
+        public float PlayerLightExpand = 0f;
+        public Color PlayerLightColor = Color.White;
+        public string OverlayGraphic = "None";
 
         //Temporary Values
         public bool MapLoaded;
@@ -163,6 +169,12 @@ namespace Intersect_Client.Classes.Maps
                 BHue = bf.ReadInteger();
                 AHue = bf.ReadInteger();
                 Brightness = bf.ReadInteger();
+                ZoneType = bf.ReadByte();
+                OverlayGraphic = bf.ReadString();
+                PlayerLightSize = bf.ReadInteger();
+                PlayerLightExpand = (float)bf.ReadDouble();
+                PlayerLightIntensity = bf.ReadByte();
+                PlayerLightColor = new Color((int)bf.ReadByte(),(int)bf.ReadByte(),(int)bf.ReadByte());
 
                 for (var i = 0; i < Constants.LayerCount; i++)
                 {
@@ -793,11 +805,6 @@ namespace Intersect_Client.Classes.Maps
             MapRendered = false;
             MapLoaded = false;
             Globals.GameMaps.Remove(MyMapNum);
-        }
-
-        ~MapStruct()
-        {
-            Dispose(false);
         }
     }
 

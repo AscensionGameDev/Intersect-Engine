@@ -91,7 +91,7 @@ namespace Intersect_Client.Classes.Core
 
         //Player Spotlight Values
         private const byte PlayerLightIntensity = 255;
-        private const int PlayerLightSize = 300;
+        private const int PlayerLightSize = 0;
         private const float PlayerLightExpand = 0f;
         public static Color PlayerLightColor = Color.White;
         private static List<Light> lightQueue = new List<Light>(); 

@@ -1267,7 +1267,7 @@ namespace Intersect_Server.Classes
                 Globals.MapCount = 1;
                 Globals.GameMaps = new MapStruct[1];
                 Globals.GameMaps[0] = new MapStruct(0);
-                Globals.GameMaps[0].Save();
+                Globals.GameMaps[0].Save(true);
             }
             else
             {
@@ -1302,7 +1302,7 @@ namespace Intersect_Server.Classes
             if (!CheckMapExistance(Globals.GameMaps[mapNum].Right)) { Globals.GameMaps[mapNum].Right = -1; updated = true; }
             if (updated)
             {
-                Globals.GameMaps[mapNum].Save();
+                Globals.GameMaps[mapNum].Save(false);
                 PacketSender.SendMapToEditors(mapNum);
             }
         }
@@ -1366,7 +1366,7 @@ namespace Intersect_Server.Classes
             Globals.GameMaps = new MapStruct[Globals.MapCount];
             tmpMaps.CopyTo(Globals.GameMaps, 0);
             Globals.GameMaps[Globals.MapCount - 1] = new MapStruct(Globals.MapCount - 1);
-            Globals.GameMaps[Globals.MapCount - 1].Save();
+            Globals.GameMaps[Globals.MapCount - 1].Save(true);
             return Globals.MapCount - 1;
         }
         public static void LoadNpcs()

@@ -394,7 +394,7 @@ namespace Intersect_Server.Classes
                 var folder = bf.ReadInteger();
                 newMap = Database.AddMap();
                 tmpMap = Globals.GameMaps[newMap];
-                tmpMap.Save();
+                tmpMap.Save(true);
                 Database.GenerateMapGrids();
                 PacketSender.SendMap(client, newMap);
                 PacketSender.SendEnterMap(client, newMap);
@@ -433,6 +433,7 @@ namespace Intersect_Server.Classes
             else
             {
                 var relativeMap = (int)bf.ReadLong();
+                Globals.GameMaps[relativeMap].Load(File.ReadAllBytes("Resources/Maps/" + relativeMap + ".map"), -1);
                 switch (location)
                 {
                     case 0:
@@ -488,7 +489,7 @@ namespace Intersect_Server.Classes
 
                 if (newMap > -1)
                 {
-                    Globals.GameMaps[relativeMap].Save();
+                    Globals.GameMaps[relativeMap].Save(false);
                     
                     if (tmpMap.MapGridX >= 0 && tmpMap.MapGridX < Database.MapGrids[tmpMap.MapGrid].Width)
                     {
@@ -498,7 +499,7 @@ namespace Intersect_Server.Classes
                             if (tmpMap.Down > -1)
                             {
                                 Globals.GameMaps[tmpMap.Down].Up = newMap;
-                                Globals.GameMaps[tmpMap.Down].Save();
+                                Globals.GameMaps[tmpMap.Down].Save(true);
                             }
                         }
                         if (tmpMap.MapGridY - 1 >= 0)
@@ -507,7 +508,7 @@ namespace Intersect_Server.Classes
                             if (tmpMap.Up > -1)
                             {
                                 Globals.GameMaps[tmpMap.Up].Down = newMap;
-                                Globals.GameMaps[tmpMap.Up].Save();
+                                Globals.GameMaps[tmpMap.Up].Save(true);
                             }
                         }
                     }
@@ -520,7 +521,7 @@ namespace Intersect_Server.Classes
                             if (tmpMap.Left > -1)
                             {
                                 Globals.GameMaps[tmpMap.Left].Right = newMap;
-                                Globals.GameMaps[tmpMap.Left].Save();
+                                Globals.GameMaps[tmpMap.Left].Save(true);
                             }
                         }
 
@@ -531,12 +532,12 @@ namespace Intersect_Server.Classes
                             if (tmpMap.Right > -1)
                             {
                                 Globals.GameMaps[tmpMap.Right].Left = newMap;
-                                Globals.GameMaps[tmpMap.Right].Save();
+                                Globals.GameMaps[tmpMap.Right].Save(true);
                             }
                         }
                     }
 
-                    tmpMap.Save();
+                    tmpMap.Save(true);
                     Database.GenerateMapGrids();
                     PacketSender.SendMap(client, newMap);
                     PacketSender.SendEnterMap(client, newMap);
@@ -1032,7 +1033,7 @@ namespace Intersect_Server.Classes
                     {
                         mapNum = bf.ReadInteger();
                         Globals.GameMaps[mapNum].MyName = bf.ReadString();
-                        Globals.GameMaps[mapNum].Save();
+                        Globals.GameMaps[mapNum].Save(false);
                         PacketSender.SendMapListToEditors();
 
                     }
@@ -1052,7 +1053,7 @@ namespace Intersect_Server.Classes
                         Database.CheckAllMapConnections();
                         Database.MapStructure.DeleteMap(mapNum);
                         Database.GenerateMapGrids();
-                        Globals.GameMaps[mapNum].Save();
+                        Globals.GameMaps[mapNum].Save(false);
                         PacketSender.SendMapToEditors(mapNum);
                         PacketSender.SendMapListToEditors();
                     }
