@@ -79,6 +79,7 @@ namespace Intersect_Editor.Forms
             this.resourceEditorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.classEditorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.questEditorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.projectileEditorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
@@ -113,7 +114,7 @@ namespace Intersect_Editor.Forms
             this.toolStripLabelFPS = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripSeparator9 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripLabelDebug = new System.Windows.Forms.ToolStripStatusLabel();
-            this.projectileEditorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.mapGridToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip.SuspendLayout();
             this.toolStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
@@ -283,7 +284,8 @@ namespace Intersect_Editor.Forms
             this.hideFogToolStripMenuItem,
             this.hideOverlayToolStripMenuItem,
             this.hideTilePreviewToolStripMenuItem,
-            this.hideResourcesToolStripMenuItem});
+            this.hideResourcesToolStripMenuItem,
+            this.mapGridToolStripMenuItem});
             this.viewToolStripMenuItem.Name = "viewToolStripMenuItem";
             this.viewToolStripMenuItem.Size = new System.Drawing.Size(44, 20);
             this.viewToolStripMenuItem.Text = "View";
@@ -293,7 +295,7 @@ namespace Intersect_Editor.Forms
             this.hideDarknessToolStripMenuItem.Checked = true;
             this.hideDarknessToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
             this.hideDarknessToolStripMenuItem.Name = "hideDarknessToolStripMenuItem";
-            this.hideDarknessToolStripMenuItem.Size = new System.Drawing.Size(137, 22);
+            this.hideDarknessToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.hideDarknessToolStripMenuItem.Text = "Darkness";
             this.hideDarknessToolStripMenuItem.Click += new System.EventHandler(this.hideDarknessToolStripMenuItem_Click);
             // 
@@ -302,7 +304,7 @@ namespace Intersect_Editor.Forms
             this.hideFogToolStripMenuItem.Checked = true;
             this.hideFogToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
             this.hideFogToolStripMenuItem.Name = "hideFogToolStripMenuItem";
-            this.hideFogToolStripMenuItem.Size = new System.Drawing.Size(137, 22);
+            this.hideFogToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.hideFogToolStripMenuItem.Text = "Fog";
             this.hideFogToolStripMenuItem.Click += new System.EventHandler(this.hideFogToolStripMenuItem_Click);
             // 
@@ -311,7 +313,7 @@ namespace Intersect_Editor.Forms
             this.hideOverlayToolStripMenuItem.Checked = true;
             this.hideOverlayToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
             this.hideOverlayToolStripMenuItem.Name = "hideOverlayToolStripMenuItem";
-            this.hideOverlayToolStripMenuItem.Size = new System.Drawing.Size(137, 22);
+            this.hideOverlayToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.hideOverlayToolStripMenuItem.Text = "Overlay";
             this.hideOverlayToolStripMenuItem.Click += new System.EventHandler(this.hideOverlayToolStripMenuItem_Click);
             // 
@@ -320,7 +322,7 @@ namespace Intersect_Editor.Forms
             this.hideTilePreviewToolStripMenuItem.Checked = true;
             this.hideTilePreviewToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
             this.hideTilePreviewToolStripMenuItem.Name = "hideTilePreviewToolStripMenuItem";
-            this.hideTilePreviewToolStripMenuItem.Size = new System.Drawing.Size(137, 22);
+            this.hideTilePreviewToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.hideTilePreviewToolStripMenuItem.Text = "Tile Preview";
             this.hideTilePreviewToolStripMenuItem.Click += new System.EventHandler(this.hideTilePreviewToolStripMenuItem_Click);
             // 
@@ -329,7 +331,7 @@ namespace Intersect_Editor.Forms
             this.hideResourcesToolStripMenuItem.Checked = true;
             this.hideResourcesToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
             this.hideResourcesToolStripMenuItem.Name = "hideResourcesToolStripMenuItem";
-            this.hideResourcesToolStripMenuItem.Size = new System.Drawing.Size(137, 22);
+            this.hideResourcesToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.hideResourcesToolStripMenuItem.Text = "Resources";
             this.hideResourcesToolStripMenuItem.Click += new System.EventHandler(this.hideResourcesToolStripMenuItem_Click);
             // 
@@ -398,6 +400,13 @@ namespace Intersect_Editor.Forms
             this.questEditorToolStripMenuItem.Text = "Quest Editor";
             this.questEditorToolStripMenuItem.Click += new System.EventHandler(this.questEditorToolStripMenuItem_Click);
             // 
+            // projectileEditorToolStripMenuItem
+            // 
+            this.projectileEditorToolStripMenuItem.Name = "projectileEditorToolStripMenuItem";
+            this.projectileEditorToolStripMenuItem.Size = new System.Drawing.Size(164, 22);
+            this.projectileEditorToolStripMenuItem.Text = "Projectile Editor";
+            this.projectileEditorToolStripMenuItem.Click += new System.EventHandler(this.projectileEditorToolStripMenuItem_Click);
+            // 
             // helpToolStripMenuItem
             // 
             this.helpToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -409,7 +418,7 @@ namespace Intersect_Editor.Forms
             // aboutToolStripMenuItem
             // 
             this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
-            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(107, 22);
             this.aboutToolStripMenuItem.Text = "About";
             this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
             // 
@@ -745,12 +754,14 @@ namespace Intersect_Editor.Forms
             this.toolStripLabelDebug.Name = "toolStripLabelDebug";
             this.toolStripLabelDebug.Size = new System.Drawing.Size(0, 18);
             // 
-            // projectileEditorToolStripMenuItem
+            // mapGridToolStripMenuItem
             // 
-            this.projectileEditorToolStripMenuItem.Name = "projectileEditorToolStripMenuItem";
-            this.projectileEditorToolStripMenuItem.Size = new System.Drawing.Size(164, 22);
-            this.projectileEditorToolStripMenuItem.Text = "Projectile Editor";
-            this.projectileEditorToolStripMenuItem.Click += new System.EventHandler(this.projectileEditorToolStripMenuItem_Click);
+            this.mapGridToolStripMenuItem.Checked = true;
+            this.mapGridToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.mapGridToolStripMenuItem.Name = "mapGridToolStripMenuItem";
+            this.mapGridToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.mapGridToolStripMenuItem.Text = "Map Grid";
+            this.mapGridToolStripMenuItem.Click += new System.EventHandler(this.mapGridToolStripMenuItem_Click);
             // 
             // frmMain
             // 
@@ -851,6 +862,7 @@ namespace Intersect_Editor.Forms
         public ToolStripButton toolStripBtnSelect;
         private ToolStripButton toolStripBtnEyeDrop;
         private ToolStripMenuItem projectileEditorToolStripMenuItem;
+        private ToolStripMenuItem mapGridToolStripMenuItem;
     }
 }
 

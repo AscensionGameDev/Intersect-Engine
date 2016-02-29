@@ -500,6 +500,11 @@ namespace Intersect_Editor.Forms
             EditorGraphics.HideResources = !EditorGraphics.HideResources;
             hideResourcesToolStripMenuItem.Checked = !EditorGraphics.HideResources;
         }
+        private void mapGridToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            EditorGraphics.HideGrid = !EditorGraphics.HideGrid;
+            mapGridToolStripMenuItem.Checked = !EditorGraphics.HideGrid;
+        }
         //Content Editors
         private void itemEditorToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -715,6 +720,5 @@ namespace Intersect_Editor.Forms
             }
 
         }
-
     }
 }

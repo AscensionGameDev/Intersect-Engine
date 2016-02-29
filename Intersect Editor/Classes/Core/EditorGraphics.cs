@@ -130,6 +130,7 @@ namespace Intersect_Editor.Classes
 
         //Advanced Editing Features
         public static bool HideTilePreview = false;
+        public static bool HideGrid = false;
         public static bool TilePreviewUpdated = false;
         public static MapStruct TilePreviewStruct;
 
@@ -440,6 +441,7 @@ namespace Intersect_Editor.Classes
                 if (!HideFog) { DrawFog(RenderWindow); }
                 if (!HideOverlay) { DrawMapOverlay(RenderWindow); }
                 if (!HideDarkness || Globals.CurrentLayer == Constants.LayerCount + 1) { OverlayDarkness(RenderWindow); }
+                if (!HideGrid) DrawMapGrid();
 
                 DrawMapBorders();
                 DrawSelectionRect();
@@ -450,6 +452,25 @@ namespace Intersect_Editor.Classes
             RenderCurrentBatch();
             RenderWindow.Display(); // display what SFML has drawn to the screen
             TilesetWindow.Display();
+        }
+        private static void DrawMapGrid()
+        {
+            RectangleShape line = new RectangleShape();
+            line.FillColor = Color.Transparent;
+            line.OutlineColor = new Color(255,255,255,180);
+            line.OutlineThickness = 1;
+            for (int x = 0; x < Globals.MapWidth; x++)
+            {
+                line.Position = new Vector2f(x * Globals.TileWidth + Globals.TileWidth, Globals.TileHeight);
+                line.Size = new Vector2f(0, Globals.MapHeight * Globals.TileHeight);
+                RenderWindow.Draw(line);
+            }
+            for (int y = 0; y < Globals.MapHeight; y++)
+            {
+                line.Position = new Vector2f(Globals.TileWidth, y * Globals.TileHeight + Globals.TileHeight);
+                line.Size = new Vector2f(Globals.MapWidth * Globals.TileWidth, 0);
+                RenderWindow.Draw(line);
+            }
         }
         private static void DrawTransparentBorders()
         {
