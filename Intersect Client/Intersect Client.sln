@@ -5,8 +5,6 @@ VisualStudioVersion = 14.0.24720.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Intersect Client", "Intersect Client.csproj", "{081F7EFF-4303-406E-86AE-226AFEF53AB7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IntersectClientExtras", "..\..\Intersect-Client-Extras\IntersectClientExtras\IntersectClientExtras.csproj", "{40973F13-3339-4548-9008-FF76A0C8CD79}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -23,14 +21,6 @@ Global
 		{081F7EFF-4303-406E-86AE-226AFEF53AB7}.Release|Any CPU.Build.0 = Release|Any CPU
 		{081F7EFF-4303-406E-86AE-226AFEF53AB7}.Release|x86.ActiveCfg = Release|x86
 		{081F7EFF-4303-406E-86AE-226AFEF53AB7}.Release|x86.Build.0 = Release|x86
-		{40973F13-3339-4548-9008-FF76A0C8CD79}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{40973F13-3339-4548-9008-FF76A0C8CD79}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{40973F13-3339-4548-9008-FF76A0C8CD79}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{40973F13-3339-4548-9008-FF76A0C8CD79}.Debug|x86.Build.0 = Debug|Any CPU
-		{40973F13-3339-4548-9008-FF76A0C8CD79}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{40973F13-3339-4548-9008-FF76A0C8CD79}.Release|Any CPU.Build.0 = Release|Any CPU
-		{40973F13-3339-4548-9008-FF76A0C8CD79}.Release|x86.ActiveCfg = Release|Any CPU
-		{40973F13-3339-4548-9008-FF76A0C8CD79}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
