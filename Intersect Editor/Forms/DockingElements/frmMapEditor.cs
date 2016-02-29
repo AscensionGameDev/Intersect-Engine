@@ -245,6 +245,16 @@ namespace Intersect_Editor.Forms
                 case MouseButtons.Right:
                     Globals.MouseButton = 1;
 
+
+                    if (Globals.CurrentTool == (int) Enums.EdittingTool.Selection)
+                    {
+                        if (Globals.Dragging)
+                        {
+                            //Place the change, we done!
+                            ProcessSelectionMovement(Globals.GameMaps[Globals.CurrentMap], true);
+                            PlaceSelection();
+                        }
+                    }
                     switch (Globals.CurrentLayer)
                     {
                         case Constants.LayerCount:
@@ -679,10 +689,12 @@ namespace Intersect_Editor.Forms
                 Globals.CurMapSelH = 0;
             }
             //Globals.Dragging = false;
+            if (Globals.Dragging) { 
             Globals.TotalTileDragX -= (Globals.TileDragX - Globals.CurTileX);
             Globals.TotalTileDragY -= (Globals.TileDragY - Globals.CurTileY);
             Globals.TileDragX = 0;
             Globals.TileDragY = 0;
+            }
             EditorGraphics.TilePreviewUpdated = true;
 
         }
@@ -815,7 +827,7 @@ namespace Intersect_Editor.Forms
                             Globals.GameMaps[Globals.CurrentMap].FindEventAt(Globals.CurTileX,
                                 Globals.CurTileY)) == null)
                     {
-                        tmpEvent = new EventStruct(Globals.GameMaps[Globals.CurrentMap].Events.Count,Globals.CurTileX, Globals.CurTileY);
+                        tmpEvent = new EventStruct(Globals.GameMaps[Globals.CurrentMap].Events.Count, Globals.CurTileX, Globals.CurTileY);
                         Globals.GameMaps[Globals.CurrentMap].Events.Add(tmpEvent);
                         tmpEventEditor = new FrmEvent(Globals.GameMaps[Globals.CurrentMap])
                         {
@@ -1085,22 +1097,16 @@ namespace Intersect_Editor.Forms
                 {
                     for (int y0 = selY + dragyoffset; y0 < selY + selH + 1 + dragyoffset; y0++)
                     {
-                        for (var x = 0; x <= Globals.CurSelW; x++)
+                        if (x0 >= 0 && x0 < Globals.MapWidth && y0 >= 0 &&
+                            y0 < Globals.MapHeight)
                         {
-                            for (var y = 0; y <= Globals.CurSelH; y++)
-                            {
-                                if (x0 + x >= 0 && x0 + x < Globals.MapWidth && y0 + y >= 0 &&
-                                    y0 + y < Globals.MapHeight)
-                                {
-                                    tmpMap.Layers[l].Tiles[x0 + x, y0 + y].TilesetIndex = Globals.SelectionSource.Layers[l].Tiles[x0 + x - dragxoffset, y0 + y - dragyoffset].TilesetIndex;
-                                    tmpMap.Layers[l].Tiles[x0 + x, y0 + y].X = Globals.SelectionSource.Layers[l].Tiles[x0 + x - dragxoffset, y0 + y - dragyoffset].X;
-                                    tmpMap.Layers[l].Tiles[x0 + x, y0 + y].Y = Globals.SelectionSource.Layers[l].Tiles[x0 + x - dragxoffset, y0 + y - dragyoffset].Y;
-                                    tmpMap.Layers[l].Tiles[x0 + x, y0 + y].Autotile = Globals.SelectionSource.Layers[l].Tiles[x0 + x - dragxoffset, y0 + y - dragyoffset].Autotile;
-                                }
-                                tmpMap.Autotiles.UpdateAutoTiles(x0 + x, y0 + y,
-                                    l);
-                            }
+                            tmpMap.Layers[l].Tiles[x0, y0].TilesetIndex = Globals.SelectionSource.Layers[l].Tiles[x0 - dragxoffset, y0 - dragyoffset].TilesetIndex;
+                            tmpMap.Layers[l].Tiles[x0, y0].X = Globals.SelectionSource.Layers[l].Tiles[x0 - dragxoffset, y0 - dragyoffset].X;
+                            tmpMap.Layers[l].Tiles[x0, y0].Y = Globals.SelectionSource.Layers[l].Tiles[x0 - dragxoffset, y0 - dragyoffset].Y;
+                            tmpMap.Layers[l].Tiles[x0, y0].Autotile = Globals.SelectionSource.Layers[l].Tiles[x0 - dragxoffset, y0 - dragyoffset].Autotile;
                         }
+                        tmpMap.Autotiles.UpdateAutoTiles(x0, y0,
+                            l);
                     }
                 }
             }
@@ -1109,73 +1115,67 @@ namespace Intersect_Editor.Forms
             {
                 for (int y0 = selY + dragyoffset; y0 < selY + selH + 1 + dragyoffset; y0++)
                 {
-                    for (var x = 0; x <= Globals.CurSelW; x++)
+                    if (x0 >= 0 && x0 < Globals.MapWidth && y0 >= 0 &&
+                        y0 < Globals.MapHeight)
                     {
-                        for (var y = 0; y <= Globals.CurSelH; y++)
+                        //Attributes
+                        if (Globals.SelectionType != (int)Enums.SelectionTypes.CurrentLayer || Globals.CurrentLayer == Constants.LayerCount)
                         {
-                            if (x0 + x >= 0 && x0 + x < Globals.MapWidth && y0 + y >= 0 &&
-                                y0 + y < Globals.MapHeight)
+                            tmpMap.Attributes[x0, y0].value = Globals.SelectionSource.Attributes[x0 - dragxoffset, y0 - dragyoffset].value;
+                            tmpMap.Attributes[x0, y0].data1 = Globals.SelectionSource.Attributes[x0 - dragxoffset, y0 - dragyoffset].data1;
+                            tmpMap.Attributes[x0, y0].data2 = Globals.SelectionSource.Attributes[x0 - dragxoffset, y0 - dragyoffset].data2;
+                            tmpMap.Attributes[x0, y0].data3 = Globals.SelectionSource.Attributes[x0 - dragxoffset, y0 - dragyoffset].data3;
+                            tmpMap.Attributes[x0, y0].data4 = Globals.SelectionSource.Attributes[x0 - dragxoffset, y0 - dragyoffset].data4;
+                        }
+
+                        //Spawns
+                        NpcSpawn spawnCopy;
+                        if (Globals.SelectionType != (int)Enums.SelectionTypes.CurrentLayer || Globals.CurrentLayer == Constants.LayerCount + 3)
+                        {
+                            if (Globals.SelectionSource.FindSpawnAt(x0 - dragxoffset, y0 - dragyoffset) != null)
                             {
-                                //Attributes
-                                if (Globals.SelectionType != (int)Enums.SelectionTypes.CurrentLayer || Globals.CurrentLayer == Constants.LayerCount)
+                                if (tmpMap.FindSpawnAt(x0, y0) != null)
                                 {
-                                    tmpMap.Attributes[x0 + x, y0 + y].value = Globals.SelectionSource.Attributes[x0 + x - dragxoffset, y0 + y - dragyoffset].value;
-                                    tmpMap.Attributes[x0 + x, y0 + y].data1 = Globals.SelectionSource.Attributes[x0 + x - dragxoffset, y0 + y - dragyoffset].data1;
-                                    tmpMap.Attributes[x0 + x, y0 + y].data2 = Globals.SelectionSource.Attributes[x0 + x - dragxoffset, y0 + y - dragyoffset].data2;
-                                    tmpMap.Attributes[x0 + x, y0 + y].data3 = Globals.SelectionSource.Attributes[x0 + x - dragxoffset, y0 + y - dragyoffset].data3;
-                                    tmpMap.Attributes[x0 + x, y0 + y].data4 = Globals.SelectionSource.Attributes[x0 + x - dragxoffset, y0 + y - dragyoffset].data4;
+                                    tmpMap.Spawns.Remove(tmpMap.FindSpawnAt(x0, y0));
                                 }
+                                spawnCopy = new NpcSpawn(Globals.SelectionSource.FindSpawnAt(x0 - dragxoffset, y0 - dragyoffset));
+                                spawnCopy.X = x0;
+                                spawnCopy.Y = y0;
+                                tmpMap.Spawns.Add(spawnCopy);
+                            }
+                        }
 
-                                //Spawns
-                                NpcSpawn spawnCopy;
-                                if (Globals.SelectionType != (int)Enums.SelectionTypes.CurrentLayer || Globals.CurrentLayer == Constants.LayerCount + 3)
+                        //Lights
+                        Light lightCopy;
+                        if (Globals.SelectionType != (int)Enums.SelectionTypes.CurrentLayer || Globals.CurrentLayer == Constants.LayerCount + 1)
+                        {
+                            if (Globals.SelectionSource.FindLightAt(x0 - dragxoffset, y0 - dragyoffset) != null)
+                            {
+                                if (tmpMap.FindLightAt(x0, y0) != null)
                                 {
-                                    if (Globals.SelectionSource.FindSpawnAt(x0 + x - dragxoffset, y0 + y - dragyoffset) != null)
-                                    {
-                                        if (tmpMap.FindSpawnAt(x0 + x, y0 + y) != null)
-                                        {
-                                            tmpMap.Spawns.Remove(tmpMap.FindSpawnAt(x0 + x, y0 + y));
-                                        }
-                                        spawnCopy = new NpcSpawn(Globals.SelectionSource.FindSpawnAt(x0 + x - dragxoffset, y0 + y - dragyoffset));
-                                        spawnCopy.X = x0 + x;
-                                        spawnCopy.Y = y0 + y;
-                                        tmpMap.Spawns.Add(spawnCopy);
-                                    }
+                                    tmpMap.Lights.Remove(tmpMap.FindLightAt(x0, y0));
                                 }
+                                lightCopy = new Light(Globals.SelectionSource.FindLightAt(x0 - dragxoffset, y0 - dragyoffset));
+                                lightCopy.TileX = x0;
+                                lightCopy.TileY = y0;
+                                tmpMap.Lights.Add(lightCopy);
+                            }
+                        }
 
-                                //Lights
-                                Light lightCopy;
-                                if (Globals.SelectionType != (int)Enums.SelectionTypes.CurrentLayer || Globals.CurrentLayer == Constants.LayerCount + 1)
+                        //Events
+                        EventStruct eventCopy;
+                        if (Globals.SelectionType != (int)Enums.SelectionTypes.CurrentLayer || Globals.CurrentLayer == Constants.LayerCount + 2)
+                        {
+                            if (Globals.SelectionSource.FindEventAt(x0 - dragxoffset, y0 - dragyoffset) != null)
+                            {
+                                if (tmpMap.FindEventAt(x0, y0) != null)
                                 {
-                                    if (Globals.SelectionSource.FindLightAt(x0 + x - dragxoffset, y0 + y - dragyoffset) != null)
-                                    {
-                                        if (tmpMap.FindLightAt(x0 + x, y0 + y) != null)
-                                        {
-                                            tmpMap.Lights.Remove(tmpMap.FindLightAt(x0 + x, y0 + y));
-                                        }
-                                        lightCopy = new Light(Globals.SelectionSource.FindLightAt(x0 + x - dragxoffset, y0 + y - dragyoffset));
-                                        lightCopy.TileX = x0 + x;
-                                        lightCopy.TileY = y0 + y;
-                                        tmpMap.Lights.Add(lightCopy);
-                                    }
+                                    tmpMap.FindEventAt(x0, y0).Deleted = 1;
                                 }
-
-                                //Events
-                                EventStruct eventCopy;
-                                if (Globals.SelectionType != (int)Enums.SelectionTypes.CurrentLayer || Globals.CurrentLayer == Constants.LayerCount + 2)
-                                {
-                                    if (Globals.SelectionSource.FindEventAt(x0 + x - dragxoffset, y0 + y - dragyoffset) != null)
-                                    {
-                                        if (tmpMap.FindEventAt(x0 + x, y0 + y) != null)
-                                        {
-                                            tmpMap.FindEventAt(x0 + x, y0 + y).Deleted = 1;
-                                        }
-                                        eventCopy = new EventStruct(tmpMap.Events.Count,Globals.SelectionSource.FindEventAt(x0 + x - dragxoffset, y0 + y - dragyoffset));
-                                        eventCopy.SpawnX = x0 + x;
-                                        eventCopy.SpawnY = y0 + y;
-                                        tmpMap.Events.Add(eventCopy);
-                                    }
-                                }
+                                eventCopy = new EventStruct(tmpMap.Events.Count, Globals.SelectionSource.FindEventAt(x0 - dragxoffset, y0 - dragyoffset));
+                                eventCopy.SpawnX = x0;
+                                eventCopy.SpawnY = y0;
+                                tmpMap.Events.Add(eventCopy);
                             }
                         }
                     }
@@ -1226,27 +1226,21 @@ namespace Intersect_Editor.Forms
                 {
                     for (int y0 = selY; y0 < selY + selH + 1; y0++)
                     {
-                        for (var x = 0; x <= Globals.CurSelW; x++)
+                        if (x0 >= 0 && x0 < Globals.MapWidth && y0 >= 0 &&
+                            y0 < Globals.MapHeight && x0 < selX + selW + 1 &&
+                            y0 < selY + selH + 1)
                         {
-                            for (var y = 0; y <= Globals.CurSelH; y++)
-                            {
-                                if (x0 + x >= 0 && x0 + x < Globals.MapWidth && y0 + y >= 0 &&
-                                    y0 + y < Globals.MapHeight && x0 + x < selX + selW + 1 &&
-                                    y0 + y < selY + selH + 1)
-                                {
-                                    tmpMap.Layers[l].Tiles[
-                                        x0 + x, y0 + y].TilesetIndex = -1;
-                                    tmpMap.Layers[l].Tiles[
-                                        x0 + x, y0 + y].X = 0;
-                                    tmpMap.Layers[l].Tiles[
-                                        x0 + x, y0 + y].Y = 0;
-                                    tmpMap.Layers[l].Tiles[
-                                        x0 + x, y0 + y].Autotile = 0;
-                                }
-                                tmpMap.Autotiles.UpdateAutoTiles(x0 + x, y0 + y,
-                                    l);
-                            }
+                            tmpMap.Layers[l].Tiles[
+                                x0, y0].TilesetIndex = -1;
+                            tmpMap.Layers[l].Tiles[
+                                x0, y0].X = 0;
+                            tmpMap.Layers[l].Tiles[
+                                x0, y0].Y = 0;
+                            tmpMap.Layers[l].Tiles[
+                                x0, y0].Autotile = 0;
                         }
+                        tmpMap.Autotiles.UpdateAutoTiles(x0, y0,
+                            l);
                     }
                 }
             }
@@ -1255,61 +1249,55 @@ namespace Intersect_Editor.Forms
             {
                 for (int y0 = selY; y0 < selY + selH + 1; y0++)
                 {
-                    for (var x = 0; x <= Globals.CurSelW; x++)
+                    if (x0 >= 0 && x0 < Globals.MapWidth && y0 >= 0 &&
+                        y0 < Globals.MapHeight && x0 < selX + selW + 1 &&
+                        y0 < selY + selH + 1)
                     {
-                        for (var y = 0; y <= Globals.CurSelH; y++)
+                        //Attributes
+                        if (Globals.SelectionType != (int)Enums.SelectionTypes.CurrentLayer || Globals.CurrentLayer == Constants.LayerCount)
                         {
-                            if (x0 + x >= 0 && x0 + x < Globals.MapWidth && y0 + y >= 0 &&
-                                y0 + y < Globals.MapHeight && x0 + x < selX + selW + 1 &&
-                                y0 + y < selY + selH + 1)
+                            tmpMap.Attributes[x0, y0].value = 0;
+                            tmpMap.Attributes[x0, y0].data1 = 0;
+                            tmpMap.Attributes[x0, y0].data2 = 0;
+                            tmpMap.Attributes[x0, y0].data3 = 0;
+                            tmpMap.Attributes[x0, y0].data4 = "";
+                        }
+
+                        //Spawns
+                        if (Globals.SelectionType != (int)Enums.SelectionTypes.CurrentLayer || Globals.CurrentLayer == Constants.LayerCount + 3)
+                        {
+                            for (int w = 0; w < tmpMap.Spawns.Count; w++)
                             {
-                                //Attributes
-                                if (Globals.SelectionType != (int)Enums.SelectionTypes.CurrentLayer || Globals.CurrentLayer == Constants.LayerCount)
+                                if (tmpMap.Spawns[w].X == x0 &&
+                                    tmpMap.Spawns[w].Y == y0)
                                 {
-                                    tmpMap.Attributes[x0 + x, y0 + y].value = 0;
-                                    tmpMap.Attributes[x0 + x, y0 + y].data1 = 0;
-                                    tmpMap.Attributes[x0 + x, y0 + y].data2 = 0;
-                                    tmpMap.Attributes[x0 + x, y0 + y].data3 = 0;
-                                    tmpMap.Attributes[x0 + x, y0 + y].data4 = "";
+                                    tmpMap.Spawns.Remove(tmpMap.Spawns[w]);
                                 }
+                            }
+                        }
 
-                                //Spawns
-                                if (Globals.SelectionType != (int)Enums.SelectionTypes.CurrentLayer || Globals.CurrentLayer == Constants.LayerCount + 3)
+                        //Lights
+                        if (Globals.SelectionType != (int)Enums.SelectionTypes.CurrentLayer || Globals.CurrentLayer == Constants.LayerCount + 1)
+                        {
+                            for (int w = 0; w < tmpMap.Lights.Count; w++)
+                            {
+                                if (tmpMap.Lights[w].TileX == x0 &&
+                                    tmpMap.Lights[w].TileY == y0)
                                 {
-                                    for (int w = 0; w < tmpMap.Spawns.Count; w++)
-                                    {
-                                        if (tmpMap.Spawns[w].X == x0 + x &&
-                                            tmpMap.Spawns[w].Y == y0 + y)
-                                        {
-                                            tmpMap.Spawns.Remove(tmpMap.Spawns[w]);
-                                        }
-                                    }
+                                    tmpMap.Lights.Remove(tmpMap.Lights[w]);
                                 }
+                            }
+                        }
 
-                                //Lights
-                                if (Globals.SelectionType != (int)Enums.SelectionTypes.CurrentLayer || Globals.CurrentLayer == Constants.LayerCount + 1)
+                        //Events
+                        if (Globals.SelectionType != (int)Enums.SelectionTypes.CurrentLayer || Globals.CurrentLayer == Constants.LayerCount + 2)
+                        {
+                            for (int w = 0; w < tmpMap.Events.Count; w++)
+                            {
+                                if (tmpMap.Events[w].SpawnX == x0 &&
+                                    tmpMap.Events[w].SpawnY == y0)
                                 {
-                                    for (int w = 0; w < tmpMap.Lights.Count; w++)
-                                    {
-                                        if (tmpMap.Lights[w].TileX == x0 + x &&
-                                            tmpMap.Lights[w].TileY == y0 + y)
-                                        {
-                                            tmpMap.Lights.Remove(tmpMap.Lights[w]);
-                                        }
-                                    }
-                                }
-
-                                //Events
-                                if (Globals.SelectionType != (int)Enums.SelectionTypes.CurrentLayer || Globals.CurrentLayer == Constants.LayerCount + 2)
-                                {
-                                    for (int w = 0; w < tmpMap.Events.Count; w++)
-                                    {
-                                        if (tmpMap.Events[w].SpawnX == x0 + x &&
-                                            tmpMap.Events[w].SpawnY == y0 + y)
-                                        {
-                                            tmpMap.Events[w].Deleted = 1;
-                                        }
-                                    }
+                                    tmpMap.Events[w].Deleted = 1;
                                 }
                             }
                         }

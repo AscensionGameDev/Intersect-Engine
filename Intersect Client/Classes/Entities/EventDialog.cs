@@ -28,6 +28,7 @@ namespace Intersect_Client.Classes.Entities
 {
     public class EventDialog
     {
+        public string Face = "";
         public string Prompt = "";
         public string Opt1 = "";
         public string Opt2 = "";

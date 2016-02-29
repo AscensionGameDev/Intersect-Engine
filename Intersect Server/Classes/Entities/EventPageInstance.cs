@@ -252,12 +252,13 @@ namespace Intersect_Server.Classes
             switch (command.Type)
             {
                 case EventCommandType.ShowText:
-                    PacketSender.SendEventDialog(MyClient, command.Strs[0], MyIndex);
+                    PacketSender.SendEventDialog(MyClient, command.Strs[0],command.Strs[1], MyIndex);
                     CallStack.Peek().WaitingForResponse = 1;
                     CallStack.Peek().CommandIndex++;
                     break;
                 case EventCommandType.ShowOptions:
-                    PacketSender.SendEventDialog(MyClient, command.Strs[0], command.Strs[1], command.Strs[2], command.Strs[3], command.Strs[4], MyIndex);
+                    PacketSender.SendEventDialog(MyClient, command.Strs[0], command.Strs[1], command.Strs[2],
+                        command.Strs[3], command.Strs[4], command.Strs[5], MyIndex);
                     CallStack.Peek().WaitingForResponse = 1;
                     CallStack.Peek().ResponseType = 1;
                     break;

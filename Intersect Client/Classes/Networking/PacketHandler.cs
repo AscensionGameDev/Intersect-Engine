@@ -529,6 +529,7 @@ namespace Intersect_Client.Classes.Networking
             var ed = new EventDialog();
             bf.WriteBytes(packet);
             ed.Prompt = bf.ReadString();
+            ed.Face = bf.ReadString();
             ed.Type = bf.ReadInteger();
             if (ed.Type == 0)
             {

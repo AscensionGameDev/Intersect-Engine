@@ -551,21 +551,23 @@ namespace Intersect_Server.Classes
             bf.Dispose();
         }
 
-        public static void SendEventDialog(Client client, string prompt, int eventIndex)
+        public static void SendEventDialog(Client client, string prompt,string face, int eventIndex)
         {
             var bf = new ByteBuffer();
             bf.WriteLong((int)Enums.ServerPackets.EventDialog);
             bf.WriteString(prompt);
+            bf.WriteString(face);
             bf.WriteInteger(0);
             bf.WriteInteger(eventIndex);
             client.SendPacket(bf.ToArray());
             bf.Dispose();
         }
-        public static void SendEventDialog(Client client, string prompt, string opt1, string opt2, string opt3, string opt4, int eventIndex)
+        public static void SendEventDialog(Client client, string prompt, string opt1, string opt2, string opt3, string opt4,string face, int eventIndex)
         {
             var bf = new ByteBuffer();
             bf.WriteLong((int)Enums.ServerPackets.EventDialog);
             bf.WriteString(prompt);
+            bf.WriteString(face);
             bf.WriteInteger(1);
             bf.WriteString(opt1);
             bf.WriteString(opt2);

@@ -25,6 +25,8 @@
     SOFTWARE.
 */
 
+using System.Windows.Forms.VisualStyles;
+using IntersectClientExtras.GenericClasses;
 using IntersectClientExtras.Gwen;
 using IntersectClientExtras.Gwen.Control;
 using IntersectClientExtras.Gwen.Control.EventArguments;
@@ -38,6 +40,7 @@ namespace Intersect_Client.Classes.UI.Game
     {
         //Window Controls
         private WindowControl _eventDialogWindow;
+        private ImagePanel _eventFace;
         private ListBox _eventDialog;
         private Button _eventResponse1;
         private Button _eventResponse2;
@@ -49,26 +52,24 @@ namespace Intersect_Client.Classes.UI.Game
         {
             //Event Dialog Window
             _eventDialogWindow = new WindowControl(_gameCanvas, "Event Dialog");
-            _eventDialogWindow.SetSize(200, 260);
-            _eventDialogWindow.SetPosition(GameGraphics.Renderer.GetScreenWidth() / 2 - 100, GameGraphics.Renderer.GetScreenHeight() / 2 - 260 / 2);
+            _eventDialogWindow.SetSize(500, 156);
+            _eventDialogWindow.SetPosition(GameGraphics.Renderer.GetScreenWidth() / 2 - 500/2, GameGraphics.Renderer.GetScreenHeight() / 2 - 156 / 2);
             _eventDialogWindow.IsClosable = false;
             _eventDialogWindow.DisableResizing();
             _eventDialogWindow.Margin = Margin.Zero;
             _eventDialogWindow.Padding = Padding.Zero;
             _eventDialogWindow.IsHidden = true;
 
-            _eventDialog = new ListBox(_eventDialogWindow);
-            var myText = Gui.WrapText("This is a really long string of text that I really, really want to get working with my text box, please wish me luck and hopefully in 10 minutes I will have something decent.", 180);
-            foreach (var t in myText)
-            {
-                var rw = _eventDialog.AddRow(t);
-                rw.MouseInputEnabled = false;
-            }
-            _eventDialog.IsDisabled = true;
-            _eventDialog.SetPosition(6, 6);
-            _eventDialog.SetSize(188, 80);
-            _eventDialog.ShouldDrawBackground = false;
+            _eventFace = new ImagePanel(_eventDialogWindow);
+            _eventFace.SetPosition(6, 6);
+            _eventFace.SetSize(80, 80);
+            _eventFace.IsHidden = true;
 
+            _eventDialog = new ListBox(_eventDialogWindow);
+            _eventDialog.IsDisabled = true;
+            _eventDialog.SetPosition(92, 6);
+            _eventDialog.SetSize(402, 80);
+            _eventDialog.ShouldDrawBackground = false;
 
             _eventResponse1 = new Button(_eventDialogWindow);
             _eventResponse1.SetSize(120, 32);
@@ -78,19 +79,19 @@ namespace Intersect_Client.Classes.UI.Game
 
             _eventResponse2 = new Button(_eventDialogWindow);
             _eventResponse2.SetSize(120, 32);
-            _eventResponse2.SetPosition(_eventDialogWindow.Width / 2 - 120 / 2, 130);
+            _eventResponse2.SetPosition(_eventDialogWindow.Width / 2 - 120 / 2, 94);
             _eventResponse2.SetText("Response 2");
             _eventResponse2.Clicked += EventResponse2_Clicked;
 
             _eventResponse3 = new Button(_eventDialogWindow);
             _eventResponse3.SetSize(120, 32);
-            _eventResponse3.SetPosition(_eventDialogWindow.Width / 2 - 120 / 2, 164);
+            _eventResponse3.SetPosition(_eventDialogWindow.Width / 2 - 120 / 2, 94);
             _eventResponse3.SetText("Response 3");
             _eventResponse3.Clicked += EventResponse3_Clicked;
 
             _eventResponse4 = new Button(_eventDialogWindow);
             _eventResponse4.SetSize(120, 32);
-            _eventResponse4.SetPosition(_eventDialogWindow.Width / 2 - 120 / 2, 198);
+            _eventResponse4.SetPosition(_eventDialogWindow.Width / 2 - 120 / 2, 94);
             _eventResponse4.SetText("Response 4");
             _eventResponse4.Clicked += EventResponse4_Clicked;
         }
@@ -103,18 +104,56 @@ namespace Intersect_Client.Classes.UI.Game
                 if (_eventDialogWindow.IsHidden)
                 {
                     _eventDialogWindow.Show();
+                    _eventDialogWindow.MakeModal();
                     _eventDialog.Clear();
-                    var myText = Gui.WrapText(Globals.EventDialogs[0].Prompt, 180);
+                    if (GameGraphics.FaceFileNames.IndexOf(Globals.EventDialogs[0].Face) > -1)
+                    {
+                        _eventFace.Show();
+                        _eventFace.Texture =
+                            Gui.ToGwenTexture(
+                                GameGraphics.FaceTextures[
+                                    GameGraphics.FaceFileNames.IndexOf(Globals.EventDialogs[0].Face)]);
+                        _eventDialog.Width = 402;
+                        _eventDialog.X = 96;
+                    }
+                    else
+                    {
+                        _eventFace.Hide();
+                        _eventDialog.Width = 488;
+                        _eventDialog.X = 6;
+
+                    }
+                    var myText = Gui.WrapText(Globals.EventDialogs[0].Prompt, _eventDialog.Width - 12);
                     foreach (var t in myText)
                     {
                         var rw = _eventDialog.AddRow(t);
                         rw.MouseInputEnabled = false;
                     }
-                    if (Globals.EventDialogs[0].Opt1.Length > 0 || Globals.EventDialogs[0].Opt2.Length > 0 || Globals.EventDialogs[0].Opt3.Length > 0 || Globals.EventDialogs[0].Opt4.Length > 0)
+
+                    int responseCount = 0;
+                    int buttonsAdded = 0;
+                    if (Globals.EventDialogs[0].Opt1.Length > 0) responseCount++;
+                    if (Globals.EventDialogs[0].Opt2.Length > 0) responseCount++;
+                    if (Globals.EventDialogs[0].Opt3.Length > 0) responseCount++;
+                    if (Globals.EventDialogs[0].Opt4.Length > 0) responseCount++;
+                    FloatRect rect = new FloatRect(0, 0, responseCount*(_eventResponse1.Width + 12), 32);
+                    rect.X = _eventDialogWindow.Width/2 - rect.Width/2;
+
+                    if (responseCount == 0)
+                    {
+                        _eventResponse1.Show();
+                        _eventResponse1.SetText("Continue");
+                        _eventResponse1.X = _eventDialogWindow.Width/2 - _eventResponse1.Width/2;
+                        _eventResponse2.Hide();
+                        _eventResponse3.Hide();
+                        _eventResponse4.Hide();
+                    }
+                    else
                     {
                         if (Globals.EventDialogs[0].Opt1 != "")
                         {
                             _eventResponse1.Show();
+                            _eventResponse1.X = (int)rect.X + 6 + (buttonsAdded++ * (_eventResponse1.Width + 6));
                             _eventResponse1.SetText(Globals.EventDialogs[0].Opt1);
                         }
                         else
@@ -124,6 +163,7 @@ namespace Intersect_Client.Classes.UI.Game
                         if (Globals.EventDialogs[0].Opt2 != "")
                         {
                             _eventResponse2.Show();
+                            _eventResponse2.X = (int)rect.X + 6 + (buttonsAdded++ * (_eventResponse1.Width + 6));
                             _eventResponse2.SetText(Globals.EventDialogs[0].Opt2);
                         }
                         else
@@ -133,6 +173,7 @@ namespace Intersect_Client.Classes.UI.Game
                         if (Globals.EventDialogs[0].Opt3 != "")
                         {
                             _eventResponse3.Show();
+                            _eventResponse3.X = (int)rect.X + 6 + (buttonsAdded++ * (_eventResponse1.Width + 6));
                             _eventResponse3.SetText(Globals.EventDialogs[0].Opt3);
                         }
                         else
@@ -142,6 +183,7 @@ namespace Intersect_Client.Classes.UI.Game
                         if (Globals.EventDialogs[0].Opt4 != "")
                         {
                             _eventResponse4.Show();
+                            _eventResponse4.X = (int)rect.X + 6 + (buttonsAdded++ * (_eventResponse1.Width + 6));
                             _eventResponse4.SetText(Globals.EventDialogs[0].Opt4);
                         }
                         else
@@ -149,16 +191,6 @@ namespace Intersect_Client.Classes.UI.Game
                             _eventResponse4.Hide();
                         }
                     }
-                    else
-                    {
-                        _eventResponse1.Show();
-                        _eventResponse1.SetText("Continue");
-                        _eventResponse2.Hide();
-                        _eventResponse3.Hide();
-                        _eventResponse4.Hide();
-                    }
-
-
                 }
             }
         }
@@ -169,7 +201,8 @@ namespace Intersect_Client.Classes.UI.Game
             var ed = Globals.EventDialogs[0];
             if (ed.ResponseSent != 0) return;
             PacketSender.SendEventResponse(4, ed);
-            _eventDialogWindow.Hide();
+            _eventDialogWindow.RemoveModal();
+            _eventDialogWindow.ToggleHidden();
             ed.ResponseSent = 1;
         }
         void EventResponse3_Clicked(Base sender, ClickedEventArgs arguments)
@@ -177,7 +210,8 @@ namespace Intersect_Client.Classes.UI.Game
             var ed = Globals.EventDialogs[0];
             if (ed.ResponseSent != 0) return;
             PacketSender.SendEventResponse(3, ed);
-            _eventDialogWindow.Hide();
+            _eventDialogWindow.RemoveModal();
+            _eventDialogWindow.ToggleHidden();
             ed.ResponseSent = 1;
         }
         void EventResponse2_Clicked(Base sender, ClickedEventArgs arguments)
@@ -185,7 +219,8 @@ namespace Intersect_Client.Classes.UI.Game
             var ed = Globals.EventDialogs[0];
             if (ed.ResponseSent != 0) return;
             PacketSender.SendEventResponse(2, ed);
-            _eventDialogWindow.Hide();
+            _eventDialogWindow.RemoveModal();
+            _eventDialogWindow.ToggleHidden();
             ed.ResponseSent = 1;
         }
         void EventResponse1_Clicked(Base sender, ClickedEventArgs arguments)
@@ -193,7 +228,8 @@ namespace Intersect_Client.Classes.UI.Game
             var ed = Globals.EventDialogs[0];
             if (ed.ResponseSent != 0) return;
             PacketSender.SendEventResponse(1, ed);
-            _eventDialogWindow.Hide();
+            _eventDialogWindow.RemoveModal();
+            _eventDialogWindow.ToggleHidden();
             ed.ResponseSent = 1;
         }
     }

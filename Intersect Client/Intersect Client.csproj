@@ -77,10 +77,6 @@
     <ApplicationIcon>IntersectLogo.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="IntersectClientExtras, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>.\IntersectClientExtras.dll</HintPath>
-    </Reference>
     <Reference Include="sfmlnet-audio-2">
       <HintPath>.\sfmlnet-audio-2.dll</HintPath>
     </Reference>
@@ -2000,6 +1996,12 @@
       <ProductName>Windows Installer 4.5</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Intersect-Client-Extras\IntersectClientExtras\IntersectClientExtras.csproj">
+      <Project>{40973f13-3339-4548-9008-ff76a0c8cd79}</Project>
+      <Name>IntersectClientExtras</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
