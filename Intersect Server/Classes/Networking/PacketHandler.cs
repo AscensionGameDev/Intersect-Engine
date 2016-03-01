@@ -493,7 +493,7 @@ namespace Intersect_Server.Classes
 
                 if (newMap > -1)
                 {
-                    Globals.GameMaps[relativeMap].Save(false);
+                    Globals.GameMaps[relativeMap].Save();
                     
                     if (tmpMap.MapGridX >= 0 && tmpMap.MapGridX < Database.MapGrids[tmpMap.MapGrid].Width)
                     {
@@ -503,7 +503,7 @@ namespace Intersect_Server.Classes
                             if (tmpMap.Down > -1)
                             {
                                 Globals.GameMaps[tmpMap.Down].Up = newMap;
-                                Globals.GameMaps[tmpMap.Down].Save(true);
+                                Globals.GameMaps[tmpMap.Down].Save();
                             }
                         }
                         if (tmpMap.MapGridY - 1 >= 0)
@@ -512,7 +512,7 @@ namespace Intersect_Server.Classes
                             if (tmpMap.Up > -1)
                             {
                                 Globals.GameMaps[tmpMap.Up].Down = newMap;
-                                Globals.GameMaps[tmpMap.Up].Save(true);
+                                Globals.GameMaps[tmpMap.Up].Save();
                             }
                         }
                     }
@@ -525,7 +525,7 @@ namespace Intersect_Server.Classes
                             if (tmpMap.Left > -1)
                             {
                                 Globals.GameMaps[tmpMap.Left].Right = newMap;
-                                Globals.GameMaps[tmpMap.Left].Save(true);
+                                Globals.GameMaps[tmpMap.Left].Save();
                             }
                         }
 
@@ -536,7 +536,7 @@ namespace Intersect_Server.Classes
                             if (tmpMap.Right > -1)
                             {
                                 Globals.GameMaps[tmpMap.Right].Left = newMap;
-                                Globals.GameMaps[tmpMap.Right].Save(true);
+                                Globals.GameMaps[tmpMap.Right].Save();
                             }
                         }
                     }
@@ -1037,7 +1037,7 @@ namespace Intersect_Server.Classes
                     {
                         mapNum = bf.ReadInteger();
                         Globals.GameMaps[mapNum].MyName = bf.ReadString();
-                        Globals.GameMaps[mapNum].Save(false);
+                        Globals.GameMaps[mapNum].Save();
                         PacketSender.SendMapListToEditors();
 
                     }

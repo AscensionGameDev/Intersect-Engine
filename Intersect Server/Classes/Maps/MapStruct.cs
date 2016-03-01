@@ -110,7 +110,7 @@ namespace Intersect_Server.Classes
         }
 
         //Saving/Loading
-        public void Save(bool newMap)
+        public void Save(bool newMap = false)
         {
             byte[] MapGameData = null;
             var bf = new ByteBuffer();
@@ -149,7 +149,7 @@ namespace Intersect_Server.Classes
 
                 if (tileData == null)
                 {
-                    if (newMap)
+                    if (newMap || !File.Exists("Resources/Maps/" + MyMapNum + ".tiles"))
                     {
                         //New map. We need to generate the tile data.
                         //We zero everything out
@@ -367,7 +367,7 @@ namespace Intersect_Server.Classes
                 SpawnGlobalEvents();
                 SpawnMapNpcs();
                 SpawnMapResources();
-                Save(false);
+                Save();
                 tileData = null;
                 return true;
             }

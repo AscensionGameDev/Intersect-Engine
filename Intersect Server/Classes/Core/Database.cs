@@ -1302,7 +1302,7 @@ namespace Intersect_Server.Classes
             if (!CheckMapExistance(Globals.GameMaps[mapNum].Right)) { Globals.GameMaps[mapNum].Right = -1; updated = true; }
             if (updated)
             {
-                Globals.GameMaps[mapNum].Save(false);
+                Globals.GameMaps[mapNum].Save();
                 PacketSender.SendMapToEditors(mapNum);
             }
         }
