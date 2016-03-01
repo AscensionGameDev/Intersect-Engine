@@ -25,7 +25,6 @@
     SOFTWARE.
 */
 
-using System.Windows.Forms.VisualStyles;
 using IntersectClientExtras.GenericClasses;
 using IntersectClientExtras.Gwen;
 using IntersectClientExtras.Gwen.Control;

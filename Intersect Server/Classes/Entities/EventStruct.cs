@@ -32,14 +32,19 @@ namespace Intersect_Server.Classes
         public int SpawnY { get; set; }
         public int Deleted { get; set; }
         public bool CommonEvent { get; set; }
+        public byte IsGlobal { get; set; }
         public List<EventPage> MyPages { get; set; }
 
-        public EventStruct(int index, int x, int y, bool isCommon = false)
+        //Temporary Variables
+        public EventIndex GlobalInstance;
+
+        public EventStruct(int index, int x, int y, bool isCommon = false, byte isGlobal = 0)
         {
             MyIndex = index;
             SpawnX = x;
             SpawnY = y;
             CommonEvent = isCommon;
+            IsGlobal = isGlobal;
             MyPages = new List<EventPage>();
             MyPages.Add(new EventPage());
         }
@@ -57,6 +62,7 @@ namespace Intersect_Server.Classes
                 MyName = myBuffer.ReadString();
                 SpawnX = myBuffer.ReadInteger();
                 SpawnY = myBuffer.ReadInteger();
+                IsGlobal = myBuffer.ReadByte();
                 int pageCount = myBuffer.ReadInteger();
                 CommonEvent = copy.CommonEvent;
                 for (var i = 0; i < pageCount; i++)
@@ -76,6 +82,7 @@ namespace Intersect_Server.Classes
                 MyName = myBuffer.ReadString();
                 SpawnX = myBuffer.ReadInteger();
                 SpawnY = myBuffer.ReadInteger();
+                IsGlobal = myBuffer.ReadByte();
                 int pageCount = myBuffer.ReadInteger();
                 CommonEvent = isCommon;
                 for (var i = 0; i < pageCount; i++)
@@ -93,6 +100,7 @@ namespace Intersect_Server.Classes
                 myBuffer.WriteString(MyName);
                 myBuffer.WriteInteger(SpawnX);
                 myBuffer.WriteInteger(SpawnY);
+                myBuffer.WriteByte(IsGlobal);
                 myBuffer.WriteInteger(MyPages.Count);
                 for (var i = 0; i < MyPages.Count; i++)
                 {
@@ -119,6 +127,7 @@ namespace Intersect_Server.Classes
         public int DisablePreview = 1;
         public int DirectionFix;
         public int WalkingAnimation;
+        public int Animation = -1;
         public List<CommandList> CommandLists = new List<CommandList>();
         public List<EventCommand> Conditions = new List<EventCommand>();
 
@@ -150,6 +159,7 @@ namespace Intersect_Server.Classes
             DisablePreview = curBuffer.ReadInteger();
             DirectionFix = curBuffer.ReadInteger();
             WalkingAnimation = curBuffer.ReadInteger();
+            Animation = curBuffer.ReadInteger();
             var x = curBuffer.ReadInteger();
             for (var i = 0; i < x; i++)
             {
@@ -179,6 +189,7 @@ namespace Intersect_Server.Classes
             myBuffer.WriteInteger(DisablePreview);
             myBuffer.WriteInteger(DirectionFix);
             myBuffer.WriteInteger(WalkingAnimation);
+            myBuffer.WriteInteger(Animation);
             myBuffer.WriteInteger(CommandLists.Count);
             foreach (var commandList in CommandLists)
             {

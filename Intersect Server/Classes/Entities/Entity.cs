@@ -59,6 +59,9 @@ namespace Intersect_Server.Classes
         //Spells
         public List<SpellInstance> Spells = new List<SpellInstance>();
 
+        //Active Animations -- for events mainly
+        public List<int> Animations = new List<int>(); 
+
         public long MoveTimer;
 
         //Initialization
@@ -324,7 +327,14 @@ namespace Intersect_Server.Classes
                 Dir = moveDir;
                 if (this.GetType() == typeof(EventPageInstance))
                 {
-                    if (client != null) { PacketSender.SendEntityMoveTo(client, MyIndex, (int)Enums.EntityTypes.LocalEvent, this); }
+                    if (client != null)
+                    {
+                        PacketSender.SendEntityMoveTo(client, MyIndex, (int) Enums.EntityTypes.Event, this);
+                    }
+                    else
+                    {
+                        PacketSender.SendEntityMove(MyIndex, (int)Enums.EntityTypes.Event, this);
+                    }
                 }
                 else
                 {
@@ -363,7 +373,7 @@ namespace Intersect_Server.Classes
             Dir = dir;
             if (this.GetType() == typeof(EventPageInstance))
             {
-                PacketSender.SendEntityDirTo(((EventPageInstance)this).Client, MyIndex, (int)Enums.EntityTypes.LocalEvent, Dir);
+                PacketSender.SendEntityDirTo(((EventPageInstance)this).Client, MyIndex, (int)Enums.EntityTypes.Event, Dir, CurrentMap);
             }
             else
             {
@@ -572,13 +582,18 @@ namespace Intersect_Server.Classes
         public byte[] Data()
         {
             var bf = new ByteBuffer();
+            bf.WriteInteger(CurrentMap);
             bf.WriteString(MyName);
             bf.WriteString(MySprite);
             bf.WriteString(Face);
             bf.WriteInteger(CurrentX);
             bf.WriteInteger(CurrentY);
-            bf.WriteInteger(CurrentMap);
             bf.WriteInteger(CurrentZ);
+            bf.WriteInteger(Animations.Count);
+            for (int i = 0; i < Animations.Count; i++)
+            {
+                bf.WriteInteger(Animations[i]);
+            }
             return bf.ToArray();
         }
     }

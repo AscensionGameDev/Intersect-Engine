@@ -31,6 +31,7 @@ using System.Threading;
 using IntersectClientExtras.GenericClasses;
 using IntersectClientExtras.Graphics;
 using Intersect_Client.Classes.Core;
+using Intersect_Client.Classes.Entities;
 using Intersect_Client.Classes.Game_Objects;
 using Intersect_Client.Classes.General;
 using Intersect_Client.Classes.Items;
@@ -84,7 +85,7 @@ namespace Intersect_Client.Classes.Maps
         public int Brightness = 0;
         public byte ZoneType = 0; //Everything goes, 1 is safe, add more later
         public int PlayerLightSize = 300;
-        public byte PlayerLightIntensity = 100;
+        public byte PlayerLightIntensity = 255;
         public float PlayerLightExpand = 0f;
         public Color PlayerLightColor = Color.White;
         public string OverlayGraphic = "None";
@@ -112,6 +113,9 @@ namespace Intersect_Client.Classes.Maps
 
         private int _preRenderStage = 0;
         private int _preRenderLayer = 0;
+
+        public List<int> LocalEntitiesToDispose = new List<int>();
+        public Dictionary<int, Entity> LocalEntities = new Dictionary<int, Entity>();
 
         //Init
         public MapStruct(int mapNum, byte[] mapPacket)
@@ -540,6 +544,16 @@ namespace Intersect_Client.Classes.Maps
                 {
                     BackgroundSound = GameAudio.AddMapSound(Sound, -1, -1, MyMapNum, true, 10);
                 }
+                foreach (var en in LocalEntities)
+                {
+                    if (en.Value == null) continue;
+                    en.Value.Update();
+                }
+                for (int i = 0; i < LocalEntitiesToDispose.Count; i++)
+                {
+                    LocalEntities.Remove(LocalEntitiesToDispose[i]);
+                }
+                LocalEntitiesToDispose.Clear();
             }
             else
             {
@@ -696,7 +710,7 @@ namespace Intersect_Client.Classes.Maps
                     int xCount = (int)(GameGraphics.Renderer.GetScreenWidth() / GameGraphics.FogTextures[fogIndex].GetWidth()) + 2;
                     int yCount = (int)(GameGraphics.Renderer.GetScreenHeight() / GameGraphics.FogTextures[fogIndex].GetHeight()) + 2;
 
-                    _fogCurrentX += (ecTime / 1000f) * Globals.GameMaps[MyMapNum].FogXSpeed * -6;
+                    _fogCurrentX -= (ecTime / 1000f) * Globals.GameMaps[MyMapNum].FogXSpeed * -6;
                     _fogCurrentY += (ecTime / 1000f) * Globals.GameMaps[MyMapNum].FogYSpeed * 2;
                     float deltaX = 0;///= _lastFogX - Graphics.CurrentView.Left - Graphics.FogOffsetX;
                     _fogCurrentX -= deltaX;
@@ -791,13 +805,6 @@ namespace Intersect_Client.Classes.Maps
                     if (en.Value.CurrentMap == MyMapNum)
                     {
                         Globals.EntitiesToDispose.Add(en.Key);
-                    }
-                }
-                foreach (var en in Globals.LocalEntities)
-                {
-                    if (en.Value.CurrentMap == MyMapNum)
-                    {
-                        Globals.LocalEntitiesToDispose.Add(en.Key);
                     }
                 }
             }

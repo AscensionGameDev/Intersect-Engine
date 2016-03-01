@@ -71,6 +71,7 @@ namespace Intersect_Editor.Forms
             this.hideOverlayToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.hideTilePreviewToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.hideResourcesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.mapGridToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.contentEditorsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.itemEditorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.npcEditorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -114,7 +115,6 @@ namespace Intersect_Editor.Forms
             this.toolStripLabelFPS = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripSeparator9 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripLabelDebug = new System.Windows.Forms.ToolStripStatusLabel();
-            this.mapGridToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip.SuspendLayout();
             this.toolStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
@@ -334,6 +334,13 @@ namespace Intersect_Editor.Forms
             this.hideResourcesToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.hideResourcesToolStripMenuItem.Text = "Resources";
             this.hideResourcesToolStripMenuItem.Click += new System.EventHandler(this.hideResourcesToolStripMenuItem_Click);
+            // 
+            // mapGridToolStripMenuItem
+            // 
+            this.mapGridToolStripMenuItem.Name = "mapGridToolStripMenuItem";
+            this.mapGridToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.mapGridToolStripMenuItem.Text = "Map Grid";
+            this.mapGridToolStripMenuItem.Click += new System.EventHandler(this.mapGridToolStripMenuItem_Click);
             // 
             // contentEditorsToolStripMenuItem
             // 
@@ -753,15 +760,6 @@ namespace Intersect_Editor.Forms
             // 
             this.toolStripLabelDebug.Name = "toolStripLabelDebug";
             this.toolStripLabelDebug.Size = new System.Drawing.Size(0, 18);
-            // 
-            // mapGridToolStripMenuItem
-            // 
-            this.mapGridToolStripMenuItem.Checked = true;
-            this.mapGridToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.mapGridToolStripMenuItem.Name = "mapGridToolStripMenuItem";
-            this.mapGridToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
-            this.mapGridToolStripMenuItem.Text = "Map Grid";
-            this.mapGridToolStripMenuItem.Click += new System.EventHandler(this.mapGridToolStripMenuItem_Click);
             // 
             // frmMain
             // 

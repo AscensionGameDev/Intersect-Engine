@@ -65,7 +65,7 @@ namespace Intersect_Editor.Classes
         public int Brightness = 100;
         public byte ZoneType = 0; //Everything goes, 1 is safe, add more later
         public int PlayerLightSize = 300;
-        public byte PlayerLightIntensity = 100;
+        public byte PlayerLightIntensity = 255;
         public float PlayerLightExpand = 0f;
         public Color PlayerLightColor = Color.White;
         public string OverlayGraphic = "None";

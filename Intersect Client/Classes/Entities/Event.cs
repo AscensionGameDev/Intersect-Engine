@@ -50,6 +50,7 @@ namespace Intersect_Client.Classes.Entities
             HideName = bf.ReadInteger();
             DisablePreview = bf.ReadInteger();
             Desc = bf.ReadString();
+            GraphicType = bf.ReadInteger();
         }
     }
 

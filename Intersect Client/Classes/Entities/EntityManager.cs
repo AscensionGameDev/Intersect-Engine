@@ -53,12 +53,22 @@ namespace Intersect_Client.Classes.Entities
             return Globals.Entities[i];
         }
 
-        public static Entity AddLocalEvent(int index)
+        public static Entity AddLocalEvent(int index, int mapNum)
         {
             var i = index;
-            if (Globals.LocalEntities.ContainsKey(i)) { return Globals.LocalEntities[index]; }
-            Globals.LocalEntities[i] = new Event {CurrentMap = 0};
-            return Globals.LocalEntities[i];
+            if (Globals.GameMaps.ContainsKey(mapNum))
+            {
+                if (Globals.GameMaps[mapNum].LocalEntities.ContainsKey(i))
+                {
+                    return Globals.GameMaps[mapNum].LocalEntities[index];
+                }
+                else
+                {
+                    Globals.GameMaps[mapNum].LocalEntities.Add(index,new Event {CurrentMap = 0});
+                    return Globals.GameMaps[mapNum].LocalEntities[index];
+                }
+            }
+            return null;
         }
 
         public static Entity AddResource(int index)
@@ -77,9 +87,9 @@ namespace Intersect_Client.Classes.Entities
             return Globals.Entities[i];
         }
 
-        public static void RemoveEntity(int index, int type)
+        public static void RemoveEntity(int index, int type, int mapNum)
         {
-            if (type < (int)Enums.EntityTypes.LocalEvent)
+            if (type != (int)Enums.EntityTypes.Event)
             {
                 if (Globals.Entities.ContainsKey(index))
                 {
@@ -90,11 +100,14 @@ namespace Intersect_Client.Classes.Entities
             }
             else
             {
-                if (Globals.LocalEntities.ContainsKey(index))
+                if (Globals.GameMaps.ContainsKey(mapNum))
                 {
-                    Globals.LocalEntities[index].Dispose();
-                    Globals.LocalEntities[index] = null;
-                    Globals.LocalEntities.Remove(index);
+                    if (Globals.GameMaps[mapNum].LocalEntities.ContainsKey(index))
+                    {
+                        Globals.GameMaps[mapNum].LocalEntities[index].Dispose();
+                        Globals.GameMaps[mapNum].LocalEntities[index] = null;
+                        Globals.GameMaps[mapNum].LocalEntities.Remove(index);
+                    }
                 }
             }
         }

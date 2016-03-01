@@ -201,11 +201,6 @@ namespace Intersect_Client.Classes.Core
                 if (en.Value == null) continue;
                 en.Value.Update();
             }
-            foreach (var en in Globals.LocalEntities)
-            {
-                if (en.Value == null) continue;
-                en.Value.Update();
-            }
 
             for (int i = 0; i < Globals.EntitiesToDispose.Count; i++)
             {
@@ -213,11 +208,6 @@ namespace Intersect_Client.Classes.Core
                 Globals.Entities.Remove(Globals.EntitiesToDispose[i]);
             }
             Globals.EntitiesToDispose.Clear();
-            for (int i = 0; i < Globals.LocalEntitiesToDispose.Count; i++)
-            {
-                Globals.LocalEntities.Remove(Globals.LocalEntitiesToDispose[i]);
-            }
-            Globals.LocalEntitiesToDispose.Clear();
 
             //Update Maps
             bool handled = false;

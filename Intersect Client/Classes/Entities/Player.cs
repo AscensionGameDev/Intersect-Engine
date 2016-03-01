@@ -236,19 +236,22 @@ namespace Intersect_Client.Classes.Entities
                         }
                     }
                 }
-                foreach (var en in Globals.LocalEntities)
+                foreach (var eventMap in Globals.GameMaps)
                 {
-                    if (en.Value == null) continue;
-                    if (en.Value != Globals.Me)
+                    foreach (var en in eventMap.Value.LocalEntities)
                     {
-                        if (en.Value.CurrentMap == map && en.Value.CurrentX == x && en.Value.CurrentY == y)
+                        if (en.Value == null) continue;
+                        if (en.Value != Globals.Me)
                         {
-                            if (en.Value.GetType() == typeof (Event))
+                            if (en.Value.CurrentMap == map && en.Value.CurrentX == x && en.Value.CurrentY == y)
                             {
-                                //Talk to Event
-                                PacketSender.SendActivateEvent(en.Key);
-                                _attackTimer = Globals.System.GetTimeMS() + 1000;
-                                return true;
+                                if (en.Value.GetType() == typeof(Event))
+                                {
+                                    //Talk to Event
+                                    PacketSender.SendActivateEvent(en.Value.CurrentMap, en.Key);
+                                    _attackTimer = Globals.System.GetTimeMS() + 1000;
+                                    return true;
+                                }
                             }
                         }
                     }
@@ -420,15 +423,17 @@ namespace Intersect_Client.Classes.Entities
                         return true;
                     }
                 }
-                foreach (var en in Globals.LocalEntities)
+                foreach (var eventMap in Globals.GameMaps)
                 {
-                    if (en.Value == null) continue;
-                    if (en.Value == null) continue;
-                    if (en.Value.CurrentMap == map && en.Value.CurrentX == x && en.Value.CurrentY == y)
+                    foreach (var en in eventMap.Value.LocalEntities)
                     {
-                        if (_targetBox != null) { _targetBox.Dispose(); _targetBox = null; }
-                        _targetBox = new EntityBox(Gui.GameUI.GameCanvas, en.Value, 0, 100);
-                        return true;
+                        if (en.Value == null) continue;
+                        if (en.Value.CurrentMap == map && en.Value.CurrentX == x && en.Value.CurrentY == y)
+                        {
+                            if (_targetBox != null) { _targetBox.Dispose(); _targetBox = null; }
+                            _targetBox = new EntityBox(Gui.GameUI.GameCanvas, en.Value, 0, 100);
+                            return true;
+                        }
                     }
                 }
             }
@@ -921,7 +926,7 @@ namespace Intersect_Client.Classes.Entities
                 else if (y < 0)
                 {
                     tmpX = x;
-                    tmpY = (Globals.Database.MapHeight ) - (y * -1);
+                    tmpY = (Globals.Database.MapHeight) - (y * -1);
                     if (Globals.LocalMaps[tmpI - 3] > -1)
                     {
                         if (Globals.GameMaps[Globals.LocalMaps[tmpI - 3]].Attributes[tmpX, tmpY].value == (int)Enums.MapAttributes.Blocked && !NoClip)
@@ -1005,15 +1010,11 @@ namespace Intersect_Client.Classes.Entities
                         }
                     }
                 }
-                foreach (var en in Globals.LocalEntities)
+                if (Globals.GameMaps.ContainsKey(tmpMap))
                 {
-                    if (en.Value == null) continue;
-                    if (en.Value == Globals.Me)
+                    foreach (var en in Globals.GameMaps[tmpMap].LocalEntities)
                     {
-                        continue;
-                    }
-                    else
-                    {
+                        if (en.Value == null) continue;
                         if (en.Value.CurrentMap == tmpMap && en.Value.CurrentX == tmpX && en.Value.CurrentY == tmpY && en.Value.Passable == 0 && !NoClip)
                         {
                             return true;

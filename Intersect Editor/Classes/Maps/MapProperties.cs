@@ -183,7 +183,7 @@ namespace Intersect_Editor.Classes.Maps
         }
         [CategoryAttribute("Lighting"),
         Description("How strong the light is at its brightest point. (0 to 255)"),
-        DefaultValueAttribute(0)]
+        DefaultValueAttribute(255)]
         public byte PlayerLightIntensity
         {
             get { return _myMap.PlayerLightIntensity; }

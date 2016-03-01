@@ -47,15 +47,16 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             {
                 cmbColor.Items.Add(Globals.GetColorName(color));
             }
-            cmbColor.SelectedIndex = _myCommand.Ints[0];
-            cmbChannel.SelectedIndex = _myCommand.Ints[1];
+            cmbColor.SelectedIndex = cmbColor.Items.IndexOf(_myCommand.Strs[1]);
+            if (cmbColor.SelectedIndex == -1) cmbColor.SelectedIndex = 0;
+            cmbChannel.SelectedIndex = _myCommand.Ints[0];
         }
 
         private void btnSave_Click(object sender, EventArgs e)
         {
             _myCommand.Strs[0] = txtAddText.Text;
-            _myCommand.Ints[0] = cmbColor.SelectedIndex;
-            _myCommand.Ints[1] = cmbChannel.SelectedIndex;
+            _myCommand.Strs[1] = cmbColor.Text;
+            _myCommand.Ints[0] = cmbChannel.SelectedIndex;
             _eventEditor.FinishCommandEdit();
         }
 

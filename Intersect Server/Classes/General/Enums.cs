@@ -190,10 +190,9 @@ namespace Intersect_Server.Classes
         {
             GlobalEntity = 0,
             Player = 1,
-            Event = 2,
-            Resource = 3,
-            Projectile = 4,
-            LocalEvent = 5,
+            Resource = 2,
+            Projectile = 3,
+            Event = 4,
         }
 
         public const int WeaponIndex = 2;

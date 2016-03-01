@@ -130,7 +130,7 @@ namespace Intersect_Editor.Classes
 
         //Advanced Editing Features
         public static bool HideTilePreview = false;
-        public static bool HideGrid = false;
+        public static bool HideGrid = true;
         public static bool TilePreviewUpdated = false;
         public static MapStruct TilePreviewStruct;
 

@@ -111,11 +111,12 @@ namespace Intersect_Client.Classes.Networking
             GameNetwork.SendPacket(bf.ToArray());
         }
 
-        public static void SendActivateEvent(int eventIndex)
+        public static void SendActivateEvent(int mapNum, int eventIndex)
         {
             var bf = new ByteBuffer();
             bf.WriteLong((int)Enums.ClientPackets.ActivateEvent);
-            bf.WriteLong(eventIndex);
+            bf.WriteInteger(mapNum);
+            bf.WriteInteger(eventIndex);
             GameNetwork.SendPacket(bf.ToArray());
         }
 
@@ -123,6 +124,7 @@ namespace Intersect_Client.Classes.Networking
         {
             var bf = new ByteBuffer();
             bf.WriteLong((int)Enums.ClientPackets.EventResponse);
+            bf.WriteInteger(ed.EventMap);
             bf.WriteInteger(ed.EventIndex);
             bf.WriteInteger(response);
             Globals.EventDialogs.Remove(ed);

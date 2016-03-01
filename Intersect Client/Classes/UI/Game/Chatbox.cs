@@ -81,10 +81,11 @@ namespace Intersect_Client.Classes.UI.Game
             {
                 foreach (var t1 in Globals.ChatboxContent)
                 {
-                    var myText = Gui.WrapText((string)t1, 360);
+                    var myText = Gui.WrapText(t1.Key, 360);
                     foreach (var t in myText)
                     {
                         var rw = _chatboxMessages.AddRow(t);
+                        rw.SetTextColor(t1.Value);
                         rw.MouseInputEnabled = false;
                     }
                 }

@@ -47,6 +47,7 @@ namespace Intersect_Server.Classes
 
         //Temporary Values
         private int _curMapLink = -1;
+	    private object EventLock = new object();
 
         //Init
 		public Player (int index, Client newClient) : base(index)
@@ -98,56 +99,66 @@ namespace Intersect_Server.Classes
             }
 
             //Check to see if we can spawn events, if already spawned.. update them.
-            for (var i = 0; i < Globals.GameMaps[CurrentMap].SurroundingMaps.Count + 1; i++)
+            lock (EventLock)
             {
-                int mapNum;
-                if (i == Globals.GameMaps[CurrentMap].SurroundingMaps.Count) { mapNum = CurrentMap; } else { mapNum = Globals.GameMaps[CurrentMap].SurroundingMaps[i]; }
-                if (mapNum <= -1) continue;
-                foreach (var mapEvent in Globals.GameMaps[mapNum].Events)
+                for (var i = 0; i < Globals.GameMaps[CurrentMap].SurroundingMaps.Count + 1; i++)
                 {
-                    if (mapEvent.Deleted == 0)
+                    int mapNum;
+                    if (i == Globals.GameMaps[CurrentMap].SurroundingMaps.Count)
                     {
-                        //Look for event
-                        var foundEvent = EventExists(mapNum, mapEvent.SpawnX, mapEvent.SpawnY);
-                        if (foundEvent == -1)
+                        mapNum = CurrentMap;
+                    }
+                    else
+                    {
+                        mapNum = Globals.GameMaps[CurrentMap].SurroundingMaps[i];
+                    }
+                    if (mapNum <= -1) continue;
+                    foreach (var mapEvent in Globals.GameMaps[mapNum].Events)
+                    {
+                        if (mapEvent.Deleted == 0)
                         {
-                            var tmpEvent = new EventIndex(MyEvents.Count, MyClient, mapEvent)
+                            //Look for event
+                            var foundEvent = EventExists(mapNum, mapEvent.SpawnX, mapEvent.SpawnY);
+                            if (foundEvent == -1)
                             {
-                                IsGlobal = false,
-                                MapNum = mapNum,
-                                SpawnX = mapEvent.SpawnX,
-                                SpawnY = mapEvent.SpawnY
-                            };
-                            MyEvents.Add(tmpEvent);
-                        }
-                        else
-                        {
-                            MyEvents[foundEvent].Update();
+                                var tmpEvent = new EventIndex(MyEvents.Count, MyClient, mapEvent, mapNum)
+                                {
+                                    IsGlobal = mapEvent.IsGlobal == 1,
+                                    MapNum = mapNum,
+                                    SpawnX = mapEvent.SpawnX,
+                                    SpawnY = mapEvent.SpawnY
+                                };
+                                MyEvents.Add(tmpEvent);
+                            }
+                            else
+                            {
+                                MyEvents[foundEvent].Update();
+                            }
                         }
                     }
                 }
-            }
-            for (var i = 0; i < MyEvents.Count; i++)
-            {
-                if (MyEvents[i] == null) continue;
-                var eventFound = false;
-                if (MyEvents[i].MapNum != CurrentMap)
+                for (var i = 0; i < MyEvents.Count; i++)
                 {
-                    foreach (var t in Globals.GameMaps[CurrentMap].SurroundingMaps)
+                    if (MyEvents[i] == null) continue;
+                    var eventFound = false;
+                    if (MyEvents[i].MapNum != CurrentMap)
                     {
-                        if (t == MyEvents[i].MapNum)
+                        foreach (var t in Globals.GameMaps[CurrentMap].SurroundingMaps)
                         {
-                            eventFound = true;
+                            if (t == MyEvents[i].MapNum)
+                            {
+                                eventFound = true;
+                            }
                         }
                     }
+                    else
+                    {
+                        eventFound = true;
+                    }
+                    if (eventFound) continue;
+                    PacketSender.SendEntityLeaveTo(MyClient, i, (int) Enums.EntityTypes.Event, MyEvents[i].MapNum);
+                    MyEvents[i] = null;
                 }
-                else
-                {
-                    eventFound = true;
-                }
-                if (eventFound) continue;
-                MyEvents[i] = null;
-                PacketSender.SendEntityLeaveTo(MyClient, i, (int)Enums.EntityTypes.LocalEvent);
             }
         }
 
@@ -570,34 +581,55 @@ namespace Intersect_Server.Classes
             }
             return -1;
         }
-        public void TryActivateEvent(int eventIndex)
+        public void TryActivateEvent(int mapNum, int eventIndex)
         {
-            if (eventIndex <= -1 || eventIndex >= MyEvents.Count) return;
-            if (MyEvents[eventIndex] == null) return;
-            if (MyEvents[eventIndex].PageInstance.Trigger != 0) return;
-            if (!IsEventOneBlockAway(eventIndex)) return;
-            if (MyEvents[eventIndex].CallStack.Count != 0) return;
-            var newStack = new EventStack { CommandIndex = 0, ListIndex = 0 };
-            MyEvents[eventIndex].CallStack.Push(newStack);
-        }
-        public void RespondToEvent(int eventIndex, int responseId)
-        {
-            if (eventIndex <= -1 || eventIndex >= MyEvents.Count) return;
-            if (MyEvents[eventIndex] == null) return;
-            if (MyEvents[eventIndex].CallStack.Count <= 0) return;
-            if (MyEvents[eventIndex].CallStack.Peek().WaitingForResponse != 1) return;
-            if (MyEvents[eventIndex].CallStack.Peek().ResponseType == 0)
+            for (int i = 0; i < MyEvents.Count; i++)
             {
-                MyEvents[eventIndex].CallStack.Peek().WaitingForResponse = 0;
+                if (MyEvents[i] != null)
+                {
+                    if (MyEvents[i].MapNum == mapNum && MyEvents[i].BaseEvent.MyIndex == eventIndex)
+                    {
+                        if (MyEvents[i].PageInstance == null) return;
+                        if (MyEvents[i].PageInstance.Trigger != 0) return;
+                        if (!IsEventOneBlockAway(i)) return;
+                        if (MyEvents[i].CallStack.Count != 0) return;
+                        var newStack = new EventStack { CommandIndex = 0, ListIndex = 0 };
+                        MyEvents[i].CallStack.Push(newStack);
+                    }
+                }
             }
-            else
+            
+        }
+        public void RespondToEvent(int mapNum, int eventIndex, int responseId)
+        {
+            lock (EventLock)
             {
-                var tmpStack = new EventStack();
-                MyEvents[eventIndex].CallStack.Peek().WaitingForResponse = 0;
-                tmpStack.CommandIndex = 0;
-                tmpStack.ListIndex = MyEvents[eventIndex].PageInstance.BaseEvent.MyPages[MyEvents[eventIndex].PageIndex].CommandLists[MyEvents[eventIndex].CallStack.Peek().ListIndex].Commands[MyEvents[eventIndex].CallStack.Peek().CommandIndex].Ints[responseId - 1];
-                MyEvents[eventIndex].CallStack.Peek().CommandIndex++;
-                MyEvents[eventIndex].CallStack.Push(tmpStack);
+                for (int i = 0; i < MyEvents.Count; i++)
+                {
+                    if (MyEvents[i] != null && MyEvents[i].MapNum == mapNum &&
+                        MyEvents[i].BaseEvent.MyIndex == eventIndex)
+                    {
+                        if (MyEvents[i].CallStack.Count <= 0) return;
+                        if (MyEvents[i].CallStack.Peek().WaitingForResponse != 1) return;
+                        if (MyEvents[i].CallStack.Peek().ResponseType == 0)
+                        {
+                            MyEvents[i].CallStack.Peek().WaitingForResponse = 0;
+                        }
+                        else
+                        {
+                            var tmpStack = new EventStack();
+                            tmpStack.CommandIndex = 0;
+                            tmpStack.ListIndex =
+                                MyEvents[i].PageInstance.BaseEvent.MyPages[MyEvents[i].PageIndex].CommandLists[
+                                    MyEvents[i].CallStack.Peek().ListIndex].Commands[
+                                        MyEvents[i].CallStack.Peek().CommandIndex].Ints[responseId - 1];
+                            MyEvents[i].CallStack.Peek().CommandIndex++;
+                            MyEvents[i].CallStack.Peek().WaitingForResponse = 0;
+                            MyEvents[i].CallStack.Push(tmpStack);
+                        }
+                        return;
+                    }
+                }
             }
         }
         static bool IsEventOneBlockAway(int eventIndex)
@@ -618,6 +650,16 @@ namespace Intersect_Server.Classes
             }
                 return id;
         }
+	    public void SendEvents()
+	    {
+	        for (int i = 0; i < MyEvents.Count; i++)
+	        {
+	            if (MyEvents[i] != null && MyEvents[i].PageInstance != null)
+	            {
+	                MyEvents[i].PageInstance.SendToClient();
+	            }
+	        }
+	    }
         
 
 

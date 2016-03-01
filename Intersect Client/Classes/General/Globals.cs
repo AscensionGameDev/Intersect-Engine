@@ -29,6 +29,7 @@ using System.Collections;
 using System.Collections.Generic;
 using IntersectClientExtras.Database;
 using IntersectClientExtras.File_Management;
+using IntersectClientExtras.GenericClasses;
 using IntersectClientExtras.Input;
 using IntersectClientExtras.Sys;
 using Intersect_Client.Classes.Entities;
@@ -89,9 +90,7 @@ namespace Intersect_Client.Classes.General
         //Entities and stuff
         //public static List<Entity> Entities = new List<Entity>();
         public static Dictionary<int, Entity> Entities = new Dictionary<int, Entity>();
-        public static Dictionary<int, Entity> LocalEntities = new Dictionary<int, Entity>();
         public static List<int> EntitiesToDispose = new List<int>();
-        public static List<int> LocalEntitiesToDispose = new List<int>();
 
         //Game Items
         public static ItemStruct[] GameItems;
@@ -118,7 +117,7 @@ namespace Intersect_Client.Classes.General
         public static ProjectileStruct[] GameProjectiles;
 
         //GUI Varaibles
-        public static ArrayList ChatboxContent = new ArrayList();
+        public static List<KeyValuePair<string,Color>> ChatboxContent = new List<KeyValuePair<string, Color>>();
 
         public static int AnimFrame = 0;
 

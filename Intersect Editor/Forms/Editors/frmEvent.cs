@@ -99,10 +99,17 @@ namespace Intersect_Editor.Forms
             {
                 cmbPreviewFace.Items.Add(Classes.EditorGraphics.FaceFileNames[i]);
             }
+            cmbAnimation.Items.Clear();
+            cmbAnimation.Items.Add("None");
+            for (int i = 0; i < Constants.MaxAnimations; i++)
+            {
+                cmbAnimation.Items.Add((i + 1) + ". " + Globals.GameAnimations[i].Name);
+            }
             if (MyEvent.CommonEvent)
             {
                 grpEntityOptions.Hide();
             }
+            chkIsGlobal.Checked = Convert.ToBoolean(MyEvent.IsGlobal);
             LoadPage(0);
         }
         /// <summary>
@@ -135,6 +142,7 @@ namespace Intersect_Editor.Forms
                 cmbPreviewFace.SelectedIndex = 0;
                 UpdateFacePreview();
             }
+            cmbAnimation.SelectedIndex = CurrentPage.Animation + 1;
             chkHideName.Checked = Convert.ToBoolean(CurrentPage.HideName);
             chkDisablePreview.Checked = Convert.ToBoolean(CurrentPage.DisablePreview);
             chkDirectionFix.Checked = Convert.ToBoolean(CurrentPage.DirectionFix);
@@ -413,7 +421,7 @@ namespace Intersect_Editor.Forms
                     return "Show Options: " + Truncate(command.Strs[0], 30);
                 case EventCommandType.AddChatboxText:
                     output = "Show Chatbox Text [Channel: ";
-                    switch (command.Ints[1])
+                    switch (command.Ints[0])
                     {
                         case 0:
                             output += "Player";
@@ -425,7 +433,7 @@ namespace Intersect_Editor.Forms
                             output += "Global";
                             break;
                     }
-                    output += ", Color: " + Globals.GetColorName((Enums.ChatColor) command.Ints[0]) + "] - ";
+                    output += ", Color: " + command.Strs[1] + "] - ";
                     output += Truncate(command.Strs[0], 20);
                     return output;
                 case EventCommandType.SetSwitch:
@@ -1420,6 +1428,16 @@ namespace Intersect_Editor.Forms
                 MyEvent.MyPages[CurrentPageIndex] = new EventPage(_pageCopy);
                 LoadPage(CurrentPageIndex);
             }
+        }
+
+        private void cmbAnimation_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            CurrentPage.Animation = cmbAnimation.SelectedIndex - 1;
+        }
+
+        private void chkIsGlobal_CheckedChanged(object sender, EventArgs e)
+        {
+            MyEvent.IsGlobal = Convert.ToByte(chkIsGlobal.Checked);
         }
     }
 

@@ -239,6 +239,10 @@ namespace Intersect_Server.Classes
             if (mapNum >= 0 && mapNum < Globals.GameMaps.Length && Globals.GameMaps[mapNum] != null)
             {
                 PacketSender.SendMap(client, mapNum);
+                if (!client.IsEditor && mapNum == client.Entity.CurrentMap)
+                {
+                    PacketSender.SendEnterMap(client,mapNum);
+                }
             }
         }
 
@@ -611,7 +615,7 @@ namespace Intersect_Server.Classes
         {
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
-            ((Player)(client.Entity)).TryActivateEvent(bf.ReadInteger());
+            ((Player)(client.Entity)).TryActivateEvent(bf.ReadInteger(),bf.ReadInteger());
             bf.Dispose();
         }
 
@@ -619,7 +623,7 @@ namespace Intersect_Server.Classes
         {
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
-            ((Player)(client.Entity)).RespondToEvent(bf.ReadInteger(), bf.ReadInteger());
+            ((Player)(client.Entity)).RespondToEvent(bf.ReadInteger(),bf.ReadInteger(), bf.ReadInteger());
             bf.Dispose();
         }
 

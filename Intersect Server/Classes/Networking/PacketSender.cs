@@ -22,6 +22,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Drawing;
 using System.IO;
 
 namespace Intersect_Server.Classes
@@ -257,16 +258,18 @@ namespace Intersect_Server.Classes
             bf.WriteLong((int)Enums.ServerPackets.EntityLeave);
             bf.WriteLong(entityIndex);
             bf.WriteInteger(type);
+            bf.WriteInteger(mapNum);
             SendDataToProximity(mapNum, bf.ToArray());
             bf.Dispose();
         }
 
-        public static void SendEntityLeaveTo(Client client, int entityIndex, int type)
+        public static void SendEntityLeaveTo(Client client, int entityIndex, int type, int map)
         {
             var bf = new ByteBuffer();
             bf.WriteLong((int)Enums.ServerPackets.EntityLeave);
             bf.WriteLong(entityIndex);
             bf.WriteInteger(type);
+            bf.WriteInteger(map);
             client.SendPacket(bf.ToArray());
             bf.Dispose();
         }
@@ -290,9 +293,18 @@ namespace Intersect_Server.Classes
 
         public static void SendPlayerMsg(Client client, string message)
         {
+            SendPlayerMsg(client, message, Color.Black);
+        }
+
+        public static void SendPlayerMsg(Client client, string message, Color clr)
+        {
             var bf = new ByteBuffer();
             bf.WriteLong((int)Enums.ServerPackets.ChatMessage);
             bf.WriteString(message);
+            bf.WriteByte(clr.A);
+            bf.WriteByte(clr.R);
+            bf.WriteByte(clr.G);
+            bf.WriteByte(clr.B);
             client.SendPacket(bf.ToArray());
             bf.Dispose();
         }
@@ -357,18 +369,36 @@ namespace Intersect_Server.Classes
 
         public static void SendGlobalMsg(string message)
         {
+            SendGlobalMsg(message, Color.Black);
+        }
+
+        public static void SendGlobalMsg(string message, Color clr)
+        {
             var bf = new ByteBuffer();
             bf.WriteLong((int)Enums.ServerPackets.ChatMessage);
             bf.WriteString(message);
+            bf.WriteByte(clr.A);
+            bf.WriteByte(clr.R);
+            bf.WriteByte(clr.G);
+            bf.WriteByte(clr.B);
             SendDataToAll(bf.ToArray());
             bf.Dispose();
         }
 
         public static void SendProximityMsg(string message, int centerMap)
         {
+            SendProximityMsg(message, centerMap, Color.Black);
+        }
+
+        public static void SendProximityMsg(string message, int centerMap, Color clr)
+        {
             var bf = new ByteBuffer();
             bf.WriteLong((int)Enums.ServerPackets.ChatMessage);
             bf.WriteString(message);
+            bf.WriteByte(clr.A);
+            bf.WriteByte(clr.R);
+            bf.WriteByte(clr.G);
+            bf.WriteByte(clr.B);
             SendDataToProximity(centerMap, bf.ToArray());
             bf.Dispose();
         }
@@ -416,7 +446,7 @@ namespace Intersect_Server.Classes
                     }
                 }
                 client.SendPacket(bf.ToArray());
-
+                
                 //Send Map Info
                 for (int i = 0; i < Globals.GameMaps[mapNum].SurroundingMaps.Count; i++)
                 {
@@ -477,6 +507,7 @@ namespace Intersect_Server.Classes
             bf.WriteLong((int)Enums.ServerPackets.EntityVitals);
             bf.WriteLong(entityIndex);
             bf.WriteInteger(type);
+            bf.WriteInteger(en.CurrentMap);
             for (var i = 0; i < (int)Enums.Vitals.VitalCount; i++)
             {
                 bf.WriteInteger(en.MaxVital[i]);
@@ -492,6 +523,7 @@ namespace Intersect_Server.Classes
             bf.WriteLong((int)Enums.ServerPackets.EntityStats);
             bf.WriteLong(entityIndex);
             bf.WriteInteger(type);
+            bf.WriteInteger(en.CurrentMap);
             for (var i = 0; i < (int)Enums.Stats.StatCount; i++)
             {
                 bf.WriteInteger(en.Stat[i]);
@@ -506,6 +538,7 @@ namespace Intersect_Server.Classes
             bf.WriteLong((int)Enums.ServerPackets.EntityVitals);
             bf.WriteLong(entityIndex);
             bf.WriteInteger(type);
+            bf.WriteInteger(en.CurrentMap);
             for (var i = 0; i < (int)Enums.Vitals.VitalCount; i++)
             {
                 bf.WriteInteger(en.MaxVital[i]);
@@ -521,6 +554,7 @@ namespace Intersect_Server.Classes
             bf.WriteLong((int)Enums.ServerPackets.EntityStats);
             bf.WriteLong(entityIndex);
             bf.WriteInteger(type);
+            bf.WriteInteger(en.CurrentMap);
             for (var i = 0; i < (int)Enums.Stats.StatCount; i++)
             {
                 bf.WriteInteger(en.Stat[i]);
@@ -535,34 +569,37 @@ namespace Intersect_Server.Classes
             bf.WriteLong((int)Enums.ServerPackets.EntityDir);
             bf.WriteLong(entityIndex);
             bf.WriteInteger(type);
+            bf.WriteInteger(map);
             bf.WriteInteger(dir);
             SendDataToProximity(map, bf.ToArray());
             bf.Dispose();
         }
 
-        public static void SendEntityDirTo(Client client, int entityIndex, int type, int dir)
+        public static void SendEntityDirTo(Client client, int entityIndex, int type, int dir, int map)
         {
             var bf = new ByteBuffer();
             bf.WriteLong((int)Enums.ServerPackets.EntityDir);
             bf.WriteLong(entityIndex);
             bf.WriteInteger(type);
+            bf.WriteInteger(map);
             bf.WriteInteger(dir);
             SendDataTo(client, bf.ToArray());
             bf.Dispose();
         }
 
-        public static void SendEventDialog(Client client, string prompt,string face, int eventIndex)
+        public static void SendEventDialog(Client client, string prompt,string face, int mapNum, int eventIndex)
         {
             var bf = new ByteBuffer();
             bf.WriteLong((int)Enums.ServerPackets.EventDialog);
             bf.WriteString(prompt);
             bf.WriteString(face);
             bf.WriteInteger(0);
+            bf.WriteInteger(mapNum);
             bf.WriteInteger(eventIndex);
             client.SendPacket(bf.ToArray());
             bf.Dispose();
         }
-        public static void SendEventDialog(Client client, string prompt, string opt1, string opt2, string opt3, string opt4,string face, int eventIndex)
+        public static void SendEventDialog(Client client, string prompt, string opt1, string opt2, string opt3, string opt4,string face,int mapNum, int eventIndex)
         {
             var bf = new ByteBuffer();
             bf.WriteLong((int)Enums.ServerPackets.EventDialog);
@@ -573,6 +610,7 @@ namespace Intersect_Server.Classes
             bf.WriteString(opt2);
             bf.WriteString(opt3);
             bf.WriteString(opt4);
+            bf.WriteInteger(mapNum);
             bf.WriteInteger(eventIndex);
             client.SendPacket(bf.ToArray());
             bf.Dispose();

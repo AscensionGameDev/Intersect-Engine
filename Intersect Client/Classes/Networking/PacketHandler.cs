@@ -26,7 +26,10 @@
 */
 
 using System;
+using System.CodeDom;
 using System.Collections.Generic;
+using IntersectClientExtras.GenericClasses;
+using IntersectClientExtras.Sys;
 using Intersect_Client.Classes.Core;
 using Intersect_Client.Classes.Entities;
 using Intersect_Client.Classes.Game_Objects;
@@ -212,6 +215,7 @@ namespace Intersect_Client.Classes.Networking
             Globals.GameMaps[mapNum].HoldRight = bf.ReadInteger();
             Globals.GameMaps[mapNum].HoldUp = bf.ReadInteger();
             Globals.GameMaps[mapNum].HoldDown = bf.ReadInteger();
+            Globals.System.Log("Loaded map " + mapNum);
         }
 
         private static void HandleEntityData(byte[] packet)
@@ -220,6 +224,7 @@ namespace Intersect_Client.Classes.Networking
             bf.WriteBytes(packet);
             var i = (int)bf.ReadLong();
             var entityType = bf.ReadInteger();
+            var mapNum = bf.ReadInteger(false);
             Entity en;
             switch (entityType)
             {
@@ -248,8 +253,11 @@ namespace Intersect_Client.Classes.Networking
                     ((Projectile)en).Load(bf);
                     break;
                 case (int)Enums.EntityTypes.Event:
-                    en = EntityManager.AddLocalEvent(i);
-                    ((Event)en).Load(bf);
+                    en = EntityManager.AddLocalEvent(i,mapNum);
+                    if (en != null)
+                    {
+                        ((Event) en).Load(bf);
+                    }
                     break;
             }
         }
@@ -260,18 +268,20 @@ namespace Intersect_Client.Classes.Networking
             bf.WriteBytes(packet);
             var index = (int)bf.ReadLong();
             var type = bf.ReadInteger();
+            var mapNum = bf.ReadInteger();
             Entity en;
-            if (type < (int)Enums.EntityTypes.LocalEvent)
+            if (type != (int)Enums.EntityTypes.Event)
             {
                 if (!Globals.Entities.ContainsKey(index)) { return; }
                 en = Globals.Entities[index];
             }
             else
             {
-                if (!Globals.LocalEntities.ContainsKey(index)) { return; }
-                en = Globals.LocalEntities[index];
+                if (!Globals.GameMaps.ContainsKey(mapNum)) return;
+                if (!Globals.GameMaps[mapNum].LocalEntities.ContainsKey(index)) { return; }
+                en = Globals.GameMaps[mapNum].LocalEntities[index];
             }
-            en.CurrentMap = bf.ReadInteger();
+            en.CurrentMap = mapNum;
             en.CurrentX = bf.ReadInteger();
             en.CurrentY = bf.ReadInteger();
             en.Dir = bf.ReadInteger();
@@ -290,8 +300,9 @@ namespace Intersect_Client.Classes.Networking
             bf.WriteBytes(packet);
             var index = (int)bf.ReadLong();
             var type = bf.ReadInteger();
-            if (index == Globals.MyIndex && type < (int)Enums.EntityTypes.LocalEvent) { return; }
-            EntityManager.RemoveEntity(index, type);
+            var map = bf.ReadInteger();
+            if (index == Globals.MyIndex && type < (int)Enums.EntityTypes.Event) { return; }
+            EntityManager.RemoveEntity(index, type, map);
 
         }
 
@@ -299,7 +310,7 @@ namespace Intersect_Client.Classes.Networking
         {
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
-            Globals.ChatboxContent.Add(bf.ReadString());
+            Globals.ChatboxContent.Add(new KeyValuePair<string, Color>(bf.ReadString(),new Color((int)bf.ReadByte(),(int)bf.ReadByte(),(int)bf.ReadByte(),(int)bf.ReadByte())));
 
         }
 
@@ -368,6 +379,7 @@ namespace Intersect_Client.Classes.Networking
                     }
                 }
             }
+            Globals.System.Log("Got enter map packet");
         }
 
         private static void HandleMapList(byte[] packet)
@@ -387,20 +399,22 @@ namespace Intersect_Client.Classes.Networking
             bf.WriteBytes(packet);
             var index = (int)bf.ReadLong();
             var type = bf.ReadInteger();
+            var mapNum = bf.ReadInteger();
             Entity en;
-            if (type < (int)Enums.EntityTypes.LocalEvent)
+            if (type < (int)Enums.EntityTypes.Event)
             {
                 if (!Globals.Entities.ContainsKey(index)){return;}
                 en = Globals.Entities[index];
             }
             else
             {
-                if (!Globals.LocalEntities.ContainsKey(index)) { return; }
-                en = Globals.LocalEntities[index];
+                if (!Globals.GameMaps.ContainsKey(mapNum)) return;
+                if (!Globals.GameMaps[mapNum].LocalEntities.ContainsKey(index)) { return; }
+                en = Globals.GameMaps[mapNum].LocalEntities[index];
             }
             if (en == null) {return;}
             if (!Globals.GameMaps.ContainsKey(en.CurrentMap)) { return; }
-            var map = bf.ReadInteger();
+            var map = mapNum;
             var x = bf.ReadInteger();
             var y = bf.ReadInteger();
             var dir = bf.ReadInteger();
@@ -450,16 +464,18 @@ namespace Intersect_Client.Classes.Networking
             bf.WriteBytes(packet);
             var index = (int)bf.ReadLong();
             var type = bf.ReadInteger();
+            var mapNum = bf.ReadInteger();
             Entity en = null;
-            if (type < (int)Enums.EntityTypes.LocalEvent)
+            if (type < (int)Enums.EntityTypes.Event)
             {
                 if (!Globals.Entities.ContainsKey(index)) { return; }
                 en = Globals.Entities[index];
             }
             else
             {
-                if (!Globals.LocalEntities.ContainsKey(index)) { return; }
-                en = Globals.LocalEntities[index];
+                if(!Globals.GameMaps.ContainsKey(mapNum)) return;
+                if (!Globals.GameMaps[mapNum].LocalEntities.ContainsKey(index)) { return; }
+                en = Globals.GameMaps[mapNum].LocalEntities[index];
             }
             if (en == null)
             {
@@ -478,16 +494,18 @@ namespace Intersect_Client.Classes.Networking
             bf.WriteBytes(packet);
             var index = (int)bf.ReadLong();
             var type = bf.ReadInteger();
+            var mapNum = bf.ReadInteger();
             Entity en = null;
-            if (type < (int)Enums.EntityTypes.LocalEvent)
+            if (type < (int)Enums.EntityTypes.Event)
             {
                 if (!Globals.Entities.ContainsKey(index)) { return; }
                 en = Globals.Entities[index];
             }
             else
             {
-                if (!Globals.LocalEntities.ContainsKey(index)) { return; }
-                en = Globals.LocalEntities[index];
+                if (!Globals.GameMaps.ContainsKey(mapNum)) return;
+                if (!Globals.GameMaps[mapNum].LocalEntities.ContainsKey(index)) { return; }
+                en = Globals.GameMaps[mapNum].LocalEntities[index];
             }
             if (en == null)
             {
@@ -505,16 +523,18 @@ namespace Intersect_Client.Classes.Networking
             bf.WriteBytes(packet);
             var index = (int)bf.ReadLong();
             var type = bf.ReadInteger();
+            var mapNum = bf.ReadInteger();
             Entity en = null;
-            if (type < (int)Enums.EntityTypes.LocalEvent)
+            if (type < (int)Enums.EntityTypes.Event)
             {
                 if (!Globals.Entities.ContainsKey(index)) { return; }
                 en = Globals.Entities[index];
             }
             else
             {
-                if (!Globals.LocalEntities.ContainsKey(index)) { return; }
-                en = Globals.LocalEntities[index];
+                if (!Globals.GameMaps.ContainsKey(mapNum)) return;
+                if (!Globals.GameMaps[mapNum].LocalEntities.ContainsKey(index)) { return; }
+                en = Globals.GameMaps[mapNum].LocalEntities[index];
             }
             if (en == null)
             {
@@ -542,6 +562,7 @@ namespace Intersect_Client.Classes.Networking
                 ed.Opt3 = bf.ReadString();
                 ed.Opt4 = bf.ReadString();
             }
+            ed.EventMap = bf.ReadInteger();
             ed.EventIndex = bf.ReadInteger();
             Globals.EventDialogs.Add(ed);
         }
@@ -668,9 +689,12 @@ namespace Intersect_Client.Classes.Networking
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
             int entityIndex = bf.ReadInteger();
-            for (int i = 0; i < Enums.EquipmentSlots.Count; i++ )
+            if (Globals.Entities.ContainsKey(entityIndex))
             {
-                ((Player)Globals.Entities[entityIndex]).Equipment[i] = bf.ReadInteger();
+                for (int i = 0; i < Enums.EquipmentSlots.Count; i++)
+                {
+                    ((Player) Globals.Entities[entityIndex]).Equipment[i] = bf.ReadInteger();
+                }
             }
             bf.Dispose();
         }

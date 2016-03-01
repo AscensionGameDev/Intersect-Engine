@@ -109,13 +109,19 @@ namespace Intersect_Client.Classes.Entities
         //Deserializing
         public void Load(ByteBuffer bf)
         {
+            CurrentMap = bf.ReadInteger();
             MyName = bf.ReadString();
             MySprite = bf.ReadString();
             Face = bf.ReadString();
             CurrentX = bf.ReadInteger();
             CurrentY = bf.ReadInteger();
-            CurrentMap = bf.ReadInteger();
             CurrentZ = bf.ReadInteger();
+            Animations.Clear();
+            int animCount = bf.ReadInteger();
+            for (int i = 0; i < animCount; i++)
+            {
+                Animations.Add(new AnimationInstance(Globals.GameAnimations[bf.ReadInteger()], true));
+            }
         }
 
         public virtual void Dispose()
@@ -123,6 +129,13 @@ namespace Intersect_Client.Classes.Entities
             if (RenderList != null)
             {
                 RenderList.Remove(this);
+            }
+            if (Animations.Count > 0)
+            {
+                for (int i = 0; i < Animations.Count; i++)
+                {
+                    Animations[i].Dispose();
+                }
             }
         }
 
