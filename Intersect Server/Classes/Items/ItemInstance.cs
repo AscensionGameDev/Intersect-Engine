@@ -32,9 +32,23 @@ namespace Intersect_Server.Classes
         public int ItemVal = 0;
         public int[] StatBoost = new int[(int)Enums.Stats.StatCount];
 
-        public ItemInstance()
+        public ItemInstance(int itemNum, int itemVal)
         {
-
+            ItemNum = itemNum;
+            ItemVal = itemVal;
+            if (itemNum > 0 && itemNum < Constants.MaxItems)
+            {
+                if (Globals.GameItems[itemNum].Type == (int) Enums.ItemTypes.Equipment)
+                {
+                    itemVal = 1;
+                    for (int i = 0; i < (int) Enums.Stats.StatCount; i++)
+                    {
+                      StatBoost[i] =
+                            Globals.Rand.Next(-1*Globals.GameItems[itemNum].StatGrowth,
+                                Globals.GameItems[itemNum].StatGrowth + 1);
+                    }
+                }
+            }
         }
 
         public byte[] Data()
@@ -51,9 +65,7 @@ namespace Intersect_Server.Classes
 
         public ItemInstance Clone()
         {
-            ItemInstance newItem = new ItemInstance();
-            newItem.ItemNum = ItemNum;
-            newItem.ItemVal = ItemVal;
+            ItemInstance newItem = new ItemInstance(ItemNum,ItemVal);
             for (int i = 0; i < (int)Enums.Stats.StatCount; i++){
                 newItem.StatBoost[i] = StatBoost[i];
             }
@@ -68,6 +80,11 @@ namespace Intersect_Server.Classes
         public int AttributeSpawnX = -1;
         public int AttributeSpawnY = -1;
         public long DespawnTime;
+
+        public MapItemInstance(int itemNum, int itemVal) : base(itemNum, itemVal)
+        {
+            
+        }
 
         public byte[] Data()
         {

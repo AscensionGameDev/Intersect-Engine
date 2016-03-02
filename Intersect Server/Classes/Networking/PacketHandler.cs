@@ -708,9 +708,7 @@ namespace Intersect_Server.Classes
 
                 for (int i = 0; i < Constants.MaxNpcDrops; i++)
                 {
-                    ItemInstance TempItem = new ItemInstance();
-                    TempItem.ItemNum = Globals.GameClasses[Class].Items[i].ItemNum;
-                    TempItem.ItemVal = Globals.GameClasses[Class].Items[i].Amount;
+                    ItemInstance TempItem = new ItemInstance(Globals.GameClasses[Class].Items[i].ItemNum, Globals.GameClasses[Class].Items[i].Amount);
                     ((Player)Globals.Entities[index]).TryGiveItem(TempItem, false);
                 }
 

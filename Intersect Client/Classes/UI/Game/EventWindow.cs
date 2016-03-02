@@ -135,7 +135,7 @@ namespace Intersect_Client.Classes.UI.Game
                     if (Globals.EventDialogs[0].Opt2.Length > 0) responseCount++;
                     if (Globals.EventDialogs[0].Opt3.Length > 0) responseCount++;
                     if (Globals.EventDialogs[0].Opt4.Length > 0) responseCount++;
-                    FloatRect rect = new FloatRect(0, 0, responseCount*(_eventResponse1.Width + 12), 32);
+                    FloatRect rect = new FloatRect(0, 0, responseCount*(_eventResponse1.Width + 3), 32);
                     rect.X = _eventDialogWindow.Width/2 - rect.Width/2;
 
                     if (responseCount == 0)
@@ -152,7 +152,7 @@ namespace Intersect_Client.Classes.UI.Game
                         if (Globals.EventDialogs[0].Opt1 != "")
                         {
                             _eventResponse1.Show();
-                            _eventResponse1.X = (int)rect.X + 6 + (buttonsAdded++ * (_eventResponse1.Width + 6));
+                            _eventResponse1.X = (int)rect.X + (buttonsAdded++ * (_eventResponse1.Width + 3));
                             _eventResponse1.SetText(Globals.EventDialogs[0].Opt1);
                         }
                         else
@@ -162,7 +162,7 @@ namespace Intersect_Client.Classes.UI.Game
                         if (Globals.EventDialogs[0].Opt2 != "")
                         {
                             _eventResponse2.Show();
-                            _eventResponse2.X = (int)rect.X + 6 + (buttonsAdded++ * (_eventResponse1.Width + 6));
+                            _eventResponse2.X = (int)rect.X + (buttonsAdded++ * (_eventResponse1.Width + 3));
                             _eventResponse2.SetText(Globals.EventDialogs[0].Opt2);
                         }
                         else
@@ -172,7 +172,7 @@ namespace Intersect_Client.Classes.UI.Game
                         if (Globals.EventDialogs[0].Opt3 != "")
                         {
                             _eventResponse3.Show();
-                            _eventResponse3.X = (int)rect.X + 6 + (buttonsAdded++ * (_eventResponse1.Width + 6));
+                            _eventResponse3.X = (int)rect.X + (buttonsAdded++ * (_eventResponse1.Width + 3));
                             _eventResponse3.SetText(Globals.EventDialogs[0].Opt3);
                         }
                         else
@@ -182,7 +182,7 @@ namespace Intersect_Client.Classes.UI.Game
                         if (Globals.EventDialogs[0].Opt4 != "")
                         {
                             _eventResponse4.Show();
-                            _eventResponse4.X = (int)rect.X + 6 + (buttonsAdded++ * (_eventResponse1.Width + 6));
+                            _eventResponse4.X = (int)rect.X + (buttonsAdded++ * (_eventResponse1.Width + 3));
                             _eventResponse4.SetText(Globals.EventDialogs[0].Opt4);
                         }
                         else

@@ -25,6 +25,7 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
+using Intersect_Server.Classes.Entities;
 
 namespace Intersect_Server.Classes
 {
@@ -77,7 +78,7 @@ namespace Intersect_Server.Classes
         public List<MapItemInstance> MapItems = new List<MapItemInstance>();
         public List<MapItemRespawn> ItemRespawns = new List<MapItemRespawn>();
         public List<Entity> Entities = new List<Entity>();
-        public List<EventIndex> GlobalEvents = new List<EventIndex>(); 
+        public List<EventInstance> GlobalEvents = new List<EventInstance>(); 
 
         //Caching Values
         //In order to keep the memory footprint down, if a map hasn't been requested for over 20 seconds then we will drop the data to be sent.
@@ -418,10 +419,9 @@ namespace Intersect_Server.Classes
         }
         public void SpawnItem(int x, int y, ItemInstance item, int amount)
         {
-            MapItems.Add(new MapItemInstance());
+            MapItems.Add(new MapItemInstance(item.ItemNum,item.ItemVal));
             MapItems[MapItems.Count - 1].X = x;
             MapItems[MapItems.Count - 1].Y = y;
-            MapItems[MapItems.Count - 1].ItemNum = item.ItemNum;
             MapItems[MapItems.Count - 1].DespawnTime = Environment.TickCount + Constants.ItemDespawnTime;
             if (Globals.GameItems[MapItems[MapItems.Count - 1].ItemNum].Type == (int)Enums.ItemTypes.Equipment)
             {
@@ -439,10 +439,9 @@ namespace Intersect_Server.Classes
         }
         private void SpawnAttributeItem(int x, int y)
         {
-            MapItems.Add(new MapItemInstance());
+            MapItems.Add(new MapItemInstance(Attributes[x, y].data1, Attributes[x, y].data2));
             MapItems[MapItems.Count - 1].X = x;
             MapItems[MapItems.Count - 1].Y = y;
-            MapItems[MapItems.Count - 1].ItemNum = Attributes[x, y].data1;
             MapItems[MapItems.Count - 1].DespawnTime = -1;
             MapItems[MapItems.Count - 1].AttributeSpawnX = x;
             MapItems[MapItems.Count - 1].AttributeSpawnY = y;
@@ -454,10 +453,6 @@ namespace Intersect_Server.Classes
                 {
                     MapItems[MapItems.Count - 1].StatBoost[i] = r.Next(-1 * Globals.GameItems[MapItems[MapItems.Count - 1].ItemNum].StatGrowth, Globals.GameItems[MapItems[MapItems.Count - 1].ItemNum].StatGrowth + 1);
                 }
-            }
-            else
-            {
-                MapItems[MapItems.Count - 1].ItemVal = Attributes[x, y].data2;
             }
             PacketSender.SendMapItemUpdate(MyMapNum, MapItems.Count - 1);
         }
@@ -590,7 +585,7 @@ namespace Intersect_Server.Classes
             {
                 if (Events[i].IsGlobal == 1)
                 {
-                    Events[i].GlobalInstance = new EventIndex(Events[i], i, MyMapNum);
+                    Events[i].GlobalInstance = new EventInstance(Events[i], i, MyMapNum);
                     GlobalEvents.Add(Events[i].GlobalInstance);
                 }
             }

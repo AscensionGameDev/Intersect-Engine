@@ -41,7 +41,9 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             InitializeComponent();
             _myCommand = refCommand;
             _eventEditor = editor;
+            if (_myCommand.Ints[0] <= 0 || _myCommand.Ints[0] > Constants.MaxLevel) _myCommand.Ints[0] = 1;
             scrlLevel.Value = _myCommand.Ints[0];
+            scrlLevel.Maximum = Constants.MaxLevel;
             lblLevel.Text = @"Set Level: " + scrlLevel.Value;
         }
 

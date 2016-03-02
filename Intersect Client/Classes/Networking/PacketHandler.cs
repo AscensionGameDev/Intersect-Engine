@@ -171,6 +171,9 @@ namespace Intersect_Client.Classes.Networking
                     case Enums.ServerPackets.SendSpellCooldown:
                         HandleSpellCooldown(bf.ReadBytes(bf.Length()));
                         break;
+                    case Enums.ServerPackets.Experience:
+                        HandleExperience(bf.ReadBytes(bf.Length()));
+                        break;
                     default:
                         Console.WriteLine(@"Non implemented packet received: " + packetHeader);
                         break;
@@ -784,6 +787,14 @@ namespace Intersect_Client.Classes.Networking
             bf.WriteBytes(packet);
             int SpellSlot = bf.ReadInteger();
             Globals.Me.Spells[SpellSlot].SpellCD = Globals.System.GetTimeMS() + (Globals.GameSpells[Globals.Me.Spells[SpellSlot].SpellNum].CooldownDuration * 100);
+            bf.Dispose();
+        }
+
+        private static void HandleExperience(byte[] packet)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteBytes(packet);
+            Globals.Me.Experience = bf.ReadInteger();
             bf.Dispose();
         }
     }

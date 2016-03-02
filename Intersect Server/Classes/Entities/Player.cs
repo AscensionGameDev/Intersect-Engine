@@ -21,6 +21,8 @@
 */
 using System;
 using System.Collections.Generic;
+using System.Drawing;
+using Intersect_Server.Classes.Entities;
 
 namespace Intersect_Server.Classes
 {
@@ -30,7 +32,7 @@ namespace Intersect_Server.Classes
 		public bool InGame;
         public Client MyClient;
         private bool _sentMap;
-        public List<EventIndex> MyEvents = new List<EventIndex>();
+        public List<EventInstance> MyEvents = new List<EventInstance>();
         public bool[] Switches;
         public int[] Variables;
         public HotbarInstance[] Hotbar = new HotbarInstance[Constants.MaxHotbar];
@@ -61,7 +63,7 @@ namespace Intersect_Server.Classes
             }
             for (int i = 0; i < Constants.MaxInvItems; i++)
             {
-                Inventory.Add(new ItemInstance());
+                Inventory.Add(new ItemInstance(-1,0));
             }
             for (int i = 0; i < Enums.EquipmentSlots.Count; i++)
             {
@@ -121,7 +123,7 @@ namespace Intersect_Server.Classes
                             var foundEvent = EventExists(mapNum, mapEvent.SpawnX, mapEvent.SpawnY);
                             if (foundEvent == -1)
                             {
-                                var tmpEvent = new EventIndex(MyEvents.Count, MyClient, mapEvent, mapNum)
+                                var tmpEvent = new EventInstance(MyEvents.Count, MyClient, mapEvent, mapNum)
                                 {
                                     IsGlobal = mapEvent.IsGlobal == 1,
                                     MapNum = mapNum,
@@ -173,6 +175,65 @@ namespace Intersect_Server.Classes
             Reset();
             Respawn();
         }
+
+        //Vitals
+	    public void RestoreVital(Enums.Vitals vital)
+	    {
+	        Vital[(int)vital] = MaxVital[(int)vital];
+	        PacketSender.SendEntityVitals(MyIndex, (int) Enums.EntityTypes.Player, this);
+	    }
+
+        //Leveling
+	    public void SetLevel(int level, bool resetExperience = false)
+	    {
+	        if (level > 0 && level <= Constants.MaxLevel)
+	        {
+	            Level = level;
+                if (resetExperience) Experience = 0;
+                PacketSender.SendEntityDataToProximity(MyIndex, (int)Enums.EntityTypes.Player, Data(), this);
+            }
+	    }
+	    public void LevelUp(bool resetExperience = true, int levels = 1)
+	    {
+            SetLevel(Level + levels,resetExperience);
+	        PacketSender.SendPlayerMsg(MyClient, "You have leveled up! You are now level " + Level + "!", Color.Blue);
+            //ToDo, add stat points based on class I guess?
+	        StatPoints += 5 * levels;
+	        if (StatPoints > 0)
+	        {
+	            PacketSender.SendPlayerMsg(MyClient, "You have " + StatPoints + " stat points available to be spent!", Color.Blue);
+	        }
+            PacketSender.SendEntityDataToProximity(MyIndex, (int)Enums.EntityTypes.Player, Data(), this);
+        }
+	    public void GiveExperience(int amount)
+	    {
+	        Experience += amount;
+	        if (!CheckLevelUp())
+	        {
+	            PacketSender.SendExperience(MyClient);
+	        }
+	    }
+	    private bool CheckLevelUp()
+	    {
+	        int levelCount = 0;
+	        while (Experience > GetExperienceToNextLevel())
+	        {
+	            Experience -= GetExperienceToNextLevel();
+	            levelCount++;
+	        }
+	        if (levelCount > 0)
+	        {
+	            LevelUp(false, levelCount);
+	            return true;
+	        }
+	        return false;
+	    }
+	    private int GetExperienceToNextLevel()
+	    {
+            //TODO: Program this
+	        return 1000;
+	    }
+
 
         //Warping
         public override void Warp(int newMap, int newX, int newY)
@@ -293,7 +354,7 @@ namespace Intersect_Server.Classes
                     Globals.GameMaps[CurrentMap].SpawnItem(CurrentX, CurrentY, Inventory[slot], amount);
                     if (amount == Inventory[slot].ItemVal)
                     {
-                        Inventory[slot] = new ItemInstance();
+                        Inventory[slot] = new ItemInstance(-1,0);
                         EquipmentProcessItemLoss(slot);
                     }
                     else
@@ -304,7 +365,7 @@ namespace Intersect_Server.Classes
                 else
                 {
                     Globals.GameMaps[CurrentMap].SpawnItem(CurrentX, CurrentY, Inventory[slot], 1);
-                    Inventory[slot] = new ItemInstance();
+                    Inventory[slot] = new ItemInstance(-1,0);
                     EquipmentProcessItemLoss(slot);
                 }
                 PacketSender.SendInventoryItemUpdate(MyClient, slot);
@@ -393,7 +454,7 @@ namespace Intersect_Server.Classes
                     {
                         if (amount == Inventory[slot].ItemVal)
                         {
-                            Inventory[slot] = new ItemInstance();
+                            Inventory[slot] = new ItemInstance(-1,0);
                             EquipmentProcessItemLoss(slot);
                             returnVal = true;
                         }
@@ -406,7 +467,7 @@ namespace Intersect_Server.Classes
                 }
                 else
                 {
-                    Inventory[slot] = new ItemInstance();
+                    Inventory[slot] = new ItemInstance(-1,0);
                     EquipmentProcessItemLoss(slot);
                     returnVal = true;
                 }
@@ -414,6 +475,18 @@ namespace Intersect_Server.Classes
             }
             return returnVal;
         }
+
+	    public int FindItem(int itemNum, int itemVal = 1)
+	    {
+	        for (int i = 0; i < Constants.MaxInvItems; i++)
+	        {
+	            if (Inventory[i].ItemNum == itemNum && Inventory[i].ItemVal >= itemVal)
+	            {
+	                return i;
+	            }
+	        }
+	        return -1;
+	    }
 
         //Skills
         public bool TryTeachSpell(SpellInstance spell, bool SendUpdate = true)
@@ -441,6 +514,14 @@ namespace Intersect_Server.Classes
             }
             return false;
         }
+	    public int FindSpell(int spellNum)
+	    {
+            for (int i = 0; i < Constants.MaxPlayerSkills; i++)
+            {
+                if (Spells[i].SpellNum == spellNum) { return i; }
+            }
+            return -1;
+        }
         public void SwapSpells(int spell1, int spell2)
         {
             SpellInstance tmpInstance = Spells[spell2].Clone();
@@ -450,10 +531,10 @@ namespace Intersect_Server.Classes
             PacketSender.SendPlayerSpellUpdate(MyClient, spell2);
             HotbarProcessSpellSwap(spell1, spell2);
         }
-        public void ForgetSpell(int spell)
+        public void ForgetSpell(int spellSlot)
         {
-            Spells[spell] = new SpellInstance();
-            PacketSender.SendPlayerSpellUpdate(MyClient, spell);
+            Spells[spellSlot] = new SpellInstance();
+            PacketSender.SendPlayerSpellUpdate(MyClient, spellSlot);
         }
         public void UseSpell(int spellSlot)
         {
@@ -593,7 +674,7 @@ namespace Intersect_Server.Classes
                         if (MyEvents[i].PageInstance.Trigger != 0) return;
                         if (!IsEventOneBlockAway(i)) return;
                         if (MyEvents[i].CallStack.Count != 0) return;
-                        var newStack = new EventStack { CommandIndex = 0, ListIndex = 0 };
+                        var newStack = new CommandInstance { CommandIndex = 0, ListIndex = 0 };
                         MyEvents[i].CallStack.Push(newStack);
                     }
                 }
@@ -617,7 +698,7 @@ namespace Intersect_Server.Classes
                         }
                         else
                         {
-                            var tmpStack = new EventStack();
+                            var tmpStack = new CommandInstance();
                             tmpStack.CommandIndex = 0;
                             tmpStack.ListIndex =
                                 MyEvents[i].PageInstance.BaseEvent.MyPages[MyEvents[i].PageIndex].CommandLists[
