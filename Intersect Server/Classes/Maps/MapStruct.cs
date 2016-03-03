@@ -723,7 +723,7 @@ namespace Intersect_Server.Classes
                     {
                         for (int x = 0; x < GlobalEvents[i].GlobalPageInstance.Length; x++)
                         {
-                            GlobalEvents[i].GlobalPageInstance[x].Update(null);
+                            GlobalEvents[i].GlobalPageInstance[x].Update();
                         }
                     }
                 }

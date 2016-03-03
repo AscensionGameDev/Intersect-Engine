@@ -210,6 +210,7 @@ namespace Intersect_Server.Classes
         public bool RepeatRoute = false;
         public bool IgnoreIfBlocked = false;
         public List<MoveRouteAction> Actions = new List<MoveRouteAction>();
+        public int ActionIndex = 0;
 
         public EventMoveRoute()
         {

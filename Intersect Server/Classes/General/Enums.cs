@@ -196,6 +196,14 @@ namespace Intersect_Server.Classes
             Event = 4,
         }
 
+        public enum Directions
+        {
+            Up = 0,
+            Down,
+            Left,
+            Right
+        }
+
         public const int WeaponIndex = 2;
         public const int ShieldIndex = 3;
         public static List<string> EquipmentSlots = new List<string>() { "Helmet", "Armor", "Weapon", "Shield", "Boots" };

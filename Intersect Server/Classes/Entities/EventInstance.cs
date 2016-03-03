@@ -85,7 +85,7 @@ namespace Intersect_Server.Classes.Entities
                 }
                 else
                 {
-                    if (!IsGlobal) PageInstance.Update(MyClient); //Process movement and stuff that is client specific
+                    if (!IsGlobal) PageInstance.Update(); //Process movement and stuff that is client specific
                     if (CallStack.Count > 0)
                     {
                         while (CallStack.Peek().WaitingForResponse == 0)
@@ -211,7 +211,6 @@ namespace Intersect_Server.Classes.Entities
             }
             return false;
         }
-
 
         private void ProcessCommand(EventCommand command)
         {
@@ -458,6 +457,9 @@ namespace Intersect_Server.Classes.Entities
                         PageInstance.BaseEvent.MyPages[PageIndex].CommandLists[CallStack.Peek().ListIndex].Commands[CallStack.Peek().CommandIndex].Ints[2],
                         PageInstance.BaseEvent.MyPages[PageIndex].CommandLists[CallStack.Peek().ListIndex].Commands[CallStack.Peek().CommandIndex].Ints[3]);
                     CallStack.Peek().CommandIndex++;
+                    break;
+                case EventCommandType.SetMoveRoute:
+
                     break;
 
             }

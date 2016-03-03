@@ -22,6 +22,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading;
+using Intersect_Server.Classes.Misc;
 
 namespace Intersect_Server.Classes
 {
@@ -29,13 +30,9 @@ namespace Intersect_Server.Classes
     {
         //Targetting
         public Entity MyTarget = null;
-        readonly TargetLocation _tileTarget = null;
 
         //Pathfinding
-        Thread _findPath;
-        TargetLocation _pathFindingLocation;
-        List<int> _directions = new List<int>();
-        bool _pathfinding;
+        private Pathfinder pathFinder;
 
         //Temporary Values
         private int _curMapLink = -1;
@@ -60,6 +57,7 @@ namespace Intersect_Server.Classes
             myBase.MaxVital.CopyTo(MaxVital, 0);
             Behaviour = myBase.Behavior;
             Range = (byte)myBase.SightRange;
+            pathFinder = new Pathfinder(this);
         }
 
         public override void Die(bool dropitems = false)
@@ -100,6 +98,7 @@ namespace Intersect_Server.Classes
                         if (xMax >= Globals.MapWidth) xMax = Globals.MapWidth;
                         if (yMax >= Globals.MapHeight) yMax = Globals.MapHeight;
 
+                        //TODO base this off of the entity array of surrounding maps, not the whole global list.
                         for (int n = 0; n < Globals.GameMaps[CurrentMap].Entities.Count; n++)
                         {
                             if (Globals.GameMaps[CurrentMap].Entities[n].GetType() == typeof(Player))
@@ -115,14 +114,6 @@ namespace Intersect_Server.Classes
                                 }
                             }
                         }
-                    }
-                }
-
-                if (targetMap == -1)
-                {
-                    if (_tileTarget != null)
-                    {
-
                     }
                 }
 
@@ -154,49 +145,33 @@ namespace Intersect_Server.Classes
 
                 if (targetMap > -1)
                 {
-                    if (_pathFindingLocation != null)
+                    if (pathFinder.GetTarget() != null)
                     {
-                        if (targetMap != _pathFindingLocation.TargetMap || targetX != _pathFindingLocation.TargetX || targetY != _pathFindingLocation.TargetY)
+                        if (targetMap != pathFinder.GetTarget().TargetMap || targetX != pathFinder.GetTarget().TargetX || targetY != pathFinder.GetTarget().TargetY)
                         {
-                            _pathFindingLocation = null;
+                           pathFinder.SetTarget(null);
                         }
                     }
 
-                    if (_pathFindingLocation != null)
+                    if (pathFinder.GetTarget() != null)
                     {
-                        if (!_pathfinding)
+                        var dir = pathFinder.GetMove();
+                        if (dir > -1)
                         {
-                            if (_directions != null)
+                            if (CanMove(dir) == 0)
                             {
-                                if (_directions.Count > 0)
-                                {
-                                    if (CanMove(_directions[0]) == 0)
-                                    {
-                                        Move(_directions[0], null);
-                                        _directions.RemoveAt(0);
-                                        if (_directions.Count == 0)
-                                        {
-                                            _pathFindingLocation = null;
-                                        }
-                                    }
-                                    else
-                                    {
-                                        _pathFindingLocation = null;
-                                    }
-                                }
-                                else
-                                {
-                                    _pathFindingLocation = null;
-                                }
+                                Move(dir, null);
+                                pathFinder.RemoveMove();
+                            }
+                            else
+                            {
+                                pathFinder.SetTarget(null);
                             }
                         }
                     }
-                    else
+                else
                     {
-                        _pathFindingLocation = new TargetLocation(targetMap, targetX, targetY);
-                        _findPath = new Thread(PathFind);
-                        _findPath.Start();
-                        _pathfinding = true;
+                        pathFinder.SetTarget(new PathfinderTarget(targetMap, targetX, targetY));
                         TryAttack(MyTarget.MyIndex);
                     }
                 }
@@ -229,220 +204,7 @@ namespace Intersect_Server.Classes
                 _curMapLink = CurrentMap;
             }
         }
-
-        private void PathFind()
-        {
-            var targetX = -1;
-            var targetY = -1;
-            var startX = -1;
-            var startY = -1;
-            _directions = new List<int>();
-            var openList = new List<Point>();
-            var closedList = new List<Point>();
-            var adjSquares = new List<Point>();
-            var myGrid = Globals.GameMaps[CurrentMap].MapGrid;
-            for (var x = Globals.GameMaps[CurrentMap].MapGridX - 1; x <= Globals.GameMaps[CurrentMap].MapGridX + 1; x++)
-            {
-                if (x == -1 || x >= Database.MapGrids[myGrid].Width) continue;
-                for (var y = Globals.GameMaps[CurrentMap].MapGridY - 1; y <= Globals.GameMaps[CurrentMap].MapGridY + 1; y++)
-                {
-                    if (y == -1 || y >= Database.MapGrids[myGrid].Height) continue;
-                    if (Database.MapGrids[myGrid].MyGrid[x, y] > -1)
-                    {
-                        for (var i = 0; i < Globals.Entities.Count; i++)
-                        {
-                            if (Globals.Entities[i] != null)
-                            {
-                                if (i != MyIndex && Globals.Entities[i] != MyTarget)
-                                {
-                                    if (Globals.Entities[i].CurrentMap == Database.MapGrids[myGrid].MyGrid[x, y])
-                                    {
-                                        closedList.Add(new Point((x - Globals.GameMaps[CurrentMap].MapGridX + 1) * Globals.MapWidth + Globals.Entities[i].CurrentX, (y - Globals.GameMaps[CurrentMap].MapGridY + 1) * Globals.MapHeight + Globals.Entities[i].CurrentY, -1, 0));
-                                    }
-                                }
-                            }
-                        }
-                        for (var x1 = 0; x1 < Globals.MapWidth; x1++)
-                        {
-                            for (var y1 = 0; y1 < Globals.MapHeight; y1++)
-                            {
-                                if (Globals.GameMaps[Database.MapGrids[myGrid].MyGrid[x, y]].Attributes[x1, y1].value == (int)Enums.MapAttributes.Blocked || Globals.GameMaps[Database.MapGrids[myGrid].MyGrid[x, y]].Attributes[x1, y1].value == (int)Enums.MapAttributes.NPCAvoid)
-                                {
-                                    closedList.Add(new Point((x - Globals.GameMaps[CurrentMap].MapGridX + 1) * Globals.MapWidth + x1, (y - Globals.GameMaps[CurrentMap].MapGridY + 1) * Globals.MapHeight + y1, -1, 0));
-                                }
-                                if (Database.MapGrids[myGrid].MyGrid[x, y] == _pathFindingLocation.TargetMap && x1 == _pathFindingLocation.TargetX && y1 == _pathFindingLocation.TargetY)
-                                {
-                                    targetX = (x - Globals.GameMaps[CurrentMap].MapGridX + 1) * Globals.MapWidth + x1;
-                                    targetY = (y - Globals.GameMaps[CurrentMap].MapGridY + 1) * Globals.MapHeight + y1;
-                                }
-                                if (Database.MapGrids[myGrid].MyGrid[x, y] == CurrentMap && x1 == CurrentX && y1 == CurrentY)
-                                {
-                                    startX = (x - Globals.GameMaps[CurrentMap].MapGridX + 1) * Globals.MapWidth + x1;
-                                    startY = (y - Globals.GameMaps[CurrentMap].MapGridY + 1) * Globals.MapHeight + y1;
-                                }
-                            }
-                        }
-                    }
-                    else
-                    {
-                        for (var x1 = 0; x1 < Globals.MapWidth; x1++)
-                        {
-                            for (var y1 = 0; y1 < Globals.MapHeight; y1++)
-                            {
-                                closedList.Add(new Point((x - Globals.GameMaps[CurrentMap].MapGridX + 1) * Globals.MapWidth + x1, (y - Globals.GameMaps[CurrentMap].MapGridY + 1) * Globals.MapHeight + y1, -1, 0));
-                            }
-                        }
-                    }
-                }
-            }
-
-            if (startX > -1 && targetX > -1)
-            {
-                openList.Add(new Point(startX, startY, 0, 0));
-                do
-                {
-                    var currentTile = FindLowestF(openList);
-                    closedList.Add(currentTile);
-                    openList.Remove(currentTile);
-
-                    foreach (Point t in closedList)
-                    {
-                        if (t.X != targetX || t.Y != targetY) continue;
-                        //path found
-                        currentTile = t;
-                        while (currentTile.G > 0)
-                        {
-                            foreach (var t1 in closedList)
-                            {
-                                if (t1.G != currentTile.G - 1) continue;
-                                if (currentTile.X > t1.X)
-                                {
-                                    _directions.Insert(0, 3);
-                                }
-                                else if (currentTile.X < t1.X)
-                                {
-                                    _directions.Insert(0, 2);
-                                }
-                                else if (currentTile.Y > t1.Y)
-                                {
-                                    _directions.Insert(0, 1);
-                                }
-                                else if (currentTile.Y < t1.Y)
-                                {
-                                    _directions.Insert(0, 0);
-                                }
-                                currentTile = t1;
-                                break;
-                            }
-                        }
-                        _pathfinding = false;
-                        return;
-                    }
-
-                    adjSquares.Clear();
-                    if (currentTile.X > 0)
-                    {
-                        adjSquares.Add(new Point(currentTile.X - 1, currentTile.Y, 0, 0));
-                    }
-                    if (currentTile.Y > 0)
-                    {
-                        adjSquares.Add(new Point(currentTile.X, currentTile.Y - 1, 0, 0));
-                    }
-                    if (currentTile.X < 89)
-                    {
-                        adjSquares.Add(new Point(currentTile.X + 1, currentTile.Y, 0, 0));
-                    }
-                    if (currentTile.Y < 89)
-                    {
-                        adjSquares.Add(new Point(currentTile.X, currentTile.Y + 1, 0, 0));
-                    }
-
-                    foreach (var t in adjSquares)
-                    {
-                        for (var x = 0; x < closedList.Count; x++)
-                        {
-                            if (closedList[x].X == t.X && closedList[x].Y == t.Y)
-                            {
-                                //Continue - already in the closed list
-                                break;
-                            }
-                            if (x != closedList.Count - 1) continue;
-                            if (openList.Count > 0)
-                            {
-                                //If not in the closed list then add or update the open list
-                                for (var y = 0; y < openList.Count; y++)
-                                {
-                                    if (openList[y].X == t.X && openList[y].Y == t.Y)
-                                    {
-                                        //Update if the points are better
-                                        var newPoint = new Point(t.X, t.Y, currentTile.G + 1, Math.Abs(targetX - t.X) + Math.Abs(targetY - t.Y));
-                                        if (newPoint.F < openList[y].F)
-                                        {
-                                            openList.RemoveAt(y);
-                                            openList.Add(newPoint);
-                                        }
-                                        break;
-                                    }
-                                    if (y == openList.Count - 1)
-                                    {
-                                        //add to the open list
-                                        openList.Add(new Point(t.X, t.Y, currentTile.G + 1, Math.Abs(targetX - t.X) + Math.Abs(targetY - t.Y)));
-                                    }
-                                }
-                            }
-                            else
-                            {
-                                //add to the open list
-                                openList.Add(new Point(t.X, t.Y, currentTile.G + 1, Math.Abs(targetX - t.X) + Math.Abs(targetY - t.Y)));
-                            }
-                        }
-                    }
-                } while (openList.Count > 0);
-            }
-            _pathfinding = false;
-        }
-
-        private static Point FindLowestF(IList<Point> openList)
-        {
-            var solution = openList[0];
-            foreach (var t in openList)
-            {
-                if (t.F < solution.F)
-                {
-                    solution = t;
-                }
-            }
-            return solution;
-        }
     }
 
-    class TargetLocation
-    {
-        public int TargetX;
-        public int TargetY;
-        public int TargetMap;
-        public TargetLocation(int map, int x, int y)
-        {
-            TargetMap = map;
-            TargetX = x;
-            TargetY = y;
-        }
-    }
 
-    public class Point
-    {
-        public int X;
-        public int Y;
-        public int F;
-        public int H;
-        public int G;
-        public Point(int x, int y, int g, int h)
-        {
-            X = x;
-            Y = y;
-            G = g;
-            H = h;
-            F = g + h;
-        }
-    }
 }
