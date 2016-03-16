@@ -118,11 +118,23 @@ namespace Intersect_Client.Classes.Entities
             CurrentX = bf.ReadInteger();
             CurrentY = bf.ReadInteger();
             CurrentZ = bf.ReadInteger();
-            Animations.Clear();
+            ClearAnimations();
             int animCount = bf.ReadInteger();
             for (int i = 0; i < animCount; i++)
             {
                 Animations.Add(new AnimationInstance(Globals.GameAnimations[bf.ReadInteger()], true));
+            }
+        }
+
+        public void ClearAnimations()
+        {
+            if (Animations.Count > 0)
+            {
+                for (int i = 0; i < Animations.Count; i++)
+                {
+                    Animations[i].Dispose();
+                }
+                Animations.Clear();
             }
         }
 
@@ -132,13 +144,7 @@ namespace Intersect_Client.Classes.Entities
             {
                 RenderList.Remove(this);
             }
-            if (Animations.Count > 0)
-            {
-                for (int i = 0; i < Animations.Count; i++)
-                {
-                    Animations[i].Dispose();
-                }
-            }
+            ClearAnimations();
             _disposed = true;
         }
 
@@ -491,6 +497,11 @@ namespace Intersect_Client.Classes.Entities
                 new FloatRect((int)(x - 1 - width / 2), (int)(y - 1), width, 6), Color.Black);
             GameGraphics.DrawGameTexture(GameGraphics.WhiteTex, new FloatRect(0, 0, 1, 1),
                 new FloatRect((int)(x - width / 2), (int)(y), width - 2, 4), Color.White);
+        }
+
+        ~Entity()
+        {
+            Dispose();
         }
     }
 }

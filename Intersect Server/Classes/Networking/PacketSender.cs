@@ -1016,6 +1016,15 @@ namespace Intersect_Server.Classes
             client.SendPacket(bf.ToArray());
             bf.Dispose();
         }
+
+        public static void SendExperience(Client client)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteLong((int)Enums.ServerPackets.Experience);
+            bf.WriteInteger(client.Entity.Experience);
+            client.SendPacket(bf.ToArray());
+            bf.Dispose();
+        }
     }
 }
 

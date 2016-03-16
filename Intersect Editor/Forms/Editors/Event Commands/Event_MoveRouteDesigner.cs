@@ -39,6 +39,7 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
         private readonly EventStruct _editingEvent;
         private EventCommand _editingCommand;
         private MapStruct _currentMap;
+        private List<int> _targetIndicies = new List<int>(); 
         public Event_MoveRouteDesigner(FrmEvent eventEditor, MapStruct currentMap, EventStruct currentEvent, EventMoveRoute editingRoute, EventCommand editingCommand = null)
         {
             InitializeComponent();
@@ -60,6 +61,7 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
 
             cmbTarget.Items.Clear();
             cmbTarget.Items.Add("Player");
+            _targetIndicies.Add(-1);
             cmbTarget.SelectedIndex = 0;
 
             if (!_editingEvent.CommonEvent)
@@ -69,16 +71,17 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
                     if (i == _editingEvent.MyIndex)
                     {
                         cmbTarget.Items.Add((i + 1) + ". [THIS EVENT] " + currentMap.Events[i].MyName);
+                        _targetIndicies.Add(i);
                         if (_editingCommand == null)
                         {
-                            cmbTarget.SelectedIndex = i + 1;
+                            cmbTarget.SelectedIndex = cmbTarget.Items.Count-1;
                             cmbTarget.Enabled = false;
                         }
                         else
                         {
                             if (_editingRoute.Target == i)
                             {
-                                cmbTarget.SelectedIndex = i + 1;
+                                cmbTarget.SelectedIndex = cmbTarget.Items.Count - 1;
                             }
                         }
                     }
@@ -87,9 +90,10 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
                         if (currentMap.Events[i].Deleted == 0)
                         {
                             cmbTarget.Items.Add((i + 1) + ". " + currentMap.Events[i].MyName);
+                            _targetIndicies.Add(i);
                             if (_editingRoute.Target == i)
                             {
-                                cmbTarget.SelectedIndex = i + 1;
+                                cmbTarget.SelectedIndex = cmbTarget.Items.Count - 1;
                             }
                         }
                     }

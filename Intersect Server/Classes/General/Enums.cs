@@ -130,6 +130,7 @@ namespace Intersect_Server.Classes
             ProjectileData,
             CastTime,
             SendSpellCooldown,
+            Experience,
         }
 
         public enum Stats
@@ -193,6 +194,14 @@ namespace Intersect_Server.Classes
             Resource = 2,
             Projectile = 3,
             Event = 4,
+        }
+
+        public enum Directions
+        {
+            Up = 0,
+            Down,
+            Left,
+            Right
         }
 
         public const int WeaponIndex = 2;

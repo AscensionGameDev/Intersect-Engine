@@ -60,7 +60,7 @@ namespace Intersect_Server.Classes
         public List<SpellInstance> Spells = new List<SpellInstance>();
 
         //Active Animations -- for events mainly
-        public List<int> Animations = new List<int>(); 
+        public List<int> Animations = new List<int>();
 
         public long MoveTimer;
 
@@ -172,7 +172,7 @@ namespace Intersect_Server.Classes
                                 if (tileAttribute.value == (int)Enums.MapAttributes.Blocked) return 1;
                                 if (tileAttribute.value == (int)Enums.MapAttributes.NPCAvoid && this.GetType() == typeof(Npc)) return 1;
                             }
-                            tmpMap = Database.MapGrids[Globals.GameMaps[tmpMap].MapGrid].MyGrid[Globals.GameMaps[tmpMap].MapGridX +mapX, Globals.GameMaps[tmpMap].MapGridY +mapY];
+                            tmpMap = Database.MapGrids[Globals.GameMaps[tmpMap].MapGrid].MyGrid[Globals.GameMaps[tmpMap].MapGridX + mapX, Globals.GameMaps[tmpMap].MapGridY + mapY];
                         }
                         else
                         {
@@ -189,26 +189,26 @@ namespace Intersect_Server.Classes
                     return 1;
                 }
 
-                foreach (Entity t in Globals.Entities)
+                foreach (Entity en in Globals.Entities)
                 {
-                    if (t == null) continue;
-                    if (t.CurrentMap == tmpMap && t.CurrentX == tmpX && t.CurrentY == tmpY && t.CurrentZ == CurrentZ && t.Passable == 0)
+                    if (en == null) continue;
+                    if (en.CurrentMap == tmpMap && en.CurrentX == tmpX && en.CurrentY == tmpY && en.CurrentZ == CurrentZ && en.Passable == 0)
                     {
                         //Set a target if a projectile
-                        CollisionIndex = t.MyIndex;
-                        if (t.GetType() == typeof(Player))
+                        CollisionIndex = en.MyIndex;
+                        if (en.GetType() == typeof(Player))
                         {
                             return 2;
                         }
-                        else if (t.GetType() == typeof(Npc))
+                        else if (en.GetType() == typeof(Npc))
                         {
                             return 3;
                         }
-                        else if (t.GetType() == typeof(Resource))
+                        else if (en.GetType() == typeof(Resource))
                         {
                             return 4;
                         }
-                        else if (t.GetType() == typeof(EventPageInstance))
+                        else if (en.GetType() == typeof(EventPageInstance))
                         {
                             return 6;
                         }
@@ -300,7 +300,7 @@ namespace Intersect_Server.Classes
                         {
                             tmpMap =
                                 Database.MapGrids[Globals.GameMaps[tmpMap].MapGrid].MyGrid[
-                                    Globals.GameMaps[tmpMap].MapGridX + mapX, Globals.GameMaps[tmpMap].MapGridY +mapY];
+                                    Globals.GameMaps[tmpMap].MapGridX + mapX, Globals.GameMaps[tmpMap].MapGridY + mapY];
                         }
                         else
                         {
@@ -326,7 +326,7 @@ namespace Intersect_Server.Classes
                 {
                     if (client != null)
                     {
-                        PacketSender.SendEntityMoveTo(client, MyIndex, (int) Enums.EntityTypes.Event, this);
+                        PacketSender.SendEntityMoveTo(client, MyIndex, (int)Enums.EntityTypes.Event, this);
                     }
                     else
                     {
@@ -345,7 +345,18 @@ namespace Intersect_Server.Classes
                 //ignore
             }
         }
-
+        public void ChangeDir(int dir)
+        {
+            Dir = dir;
+            if (this.GetType() == typeof(EventPageInstance))
+            {
+                PacketSender.SendEntityDirTo(((EventPageInstance)this).Client, MyIndex, (int)Enums.EntityTypes.Event, Dir, CurrentMap);
+            }
+            else
+            {
+                PacketSender.SendEntityDir(MyIndex, (int)Enums.EntityTypes.GlobalEntity, Dir, CurrentMap);
+            }
+        }
         // Change the dimension if the player is on a gateway
         public void TryToChangeDimension()
         {
@@ -365,18 +376,46 @@ namespace Intersect_Server.Classes
             }
         }
 
-        public void ChangeDir(int dir)
+        //Misc
+        public int GetDirectionTo(Entity target)
         {
-            Dir = dir;
-            if (this.GetType() == typeof(EventPageInstance))
+            int xDiff = 0, yDiff = 0;
+            int myGrid = Globals.GameMaps[CurrentMap].MapGrid;
+            //Loop through surrouding maps to generate a array of open and blocked points.
+            for (var x = Globals.GameMaps[CurrentMap].MapGridX - 1;
+                x <= Globals.GameMaps[CurrentMap].MapGridX + 1;
+                x++)
             {
-                PacketSender.SendEntityDirTo(((EventPageInstance)this).Client, MyIndex, (int)Enums.EntityTypes.Event, Dir, CurrentMap);
+                if (x == -1 || x >= Database.MapGrids[myGrid].Width) continue;
+                for (var y = Globals.GameMaps[CurrentMap].MapGridY - 1;
+                    y <= Globals.GameMaps[CurrentMap].MapGridY + 1;
+                    y++)
+                {
+                    if (y == -1 || y >= Database.MapGrids[myGrid].Height) continue;
+                    if (Database.MapGrids[myGrid].MyGrid[x, y] > -1 &&
+                        Database.MapGrids[myGrid].MyGrid[x, y] == target.CurrentMap)
+                    {
+                        xDiff = (Globals.GameMaps[CurrentMap].MapGridX - x) * Globals.MapWidth + target.CurrentX -
+                                CurrentX;
+                        yDiff = (Globals.GameMaps[CurrentMap].MapGridY - y) * Globals.MapHeight + target.CurrentY -
+                                CurrentY;
+                        if (Math.Abs(xDiff) > Math.Abs(yDiff))
+                        {
+                            if (xDiff < 0) return (int)Enums.Directions.Left;
+                            if (xDiff > 0) return (int)Enums.Directions.Right;
+                        }
+                        else
+                        {
+                            if (yDiff < 0) return (int)Enums.Directions.Up;
+                            if (yDiff > 0) return (int)Enums.Directions.Down;
+                        }
+                    }
+                }
             }
-            else
-            {
-                PacketSender.SendEntityDir(MyIndex, (int)Enums.EntityTypes.GlobalEntity, Dir, CurrentMap);
-            }
+
+            return -1;
         }
+
 
         //Combat
         public void TryAttack(int enemyIndex, bool isProjectile = false, bool isSpell = false)
@@ -474,6 +513,52 @@ namespace Intersect_Server.Classes
             if (Globals.Entities[MyIndex].GetType() == typeof(Npc))
             {
                 ((Npc)Globals.Entities[MyIndex]).MoveTimer = Environment.TickCount + (int)((1.0 / (Stat[2] / 10f)) * 1000);
+            }
+        }
+        public void CastSpell(int SpellNum, int SpellSlot = -1)
+        {
+            switch (Globals.GameSpells[SpellNum].Type)
+            {
+                case (int)Enums.SpellTypes.CombatSpell:
+
+                    switch (Globals.GameSpells[SpellNum].TargetType)
+                    {
+                        case (int)Enums.TargetTypes.Self:
+
+                            break;
+                        case (int)Enums.TargetTypes.Single:
+
+                            break;
+                        case (int)Enums.TargetTypes.AoE:
+
+                            break;
+                        case (int)Enums.TargetTypes.Projectile:
+                            Globals.GameMaps[CurrentMap].SpawnMapProjectile(MyIndex, this.GetType(), Globals.GameSpells[SpellNum].Data4 - 1, CurrentMap, CurrentX, CurrentY, CurrentZ, Dir);
+                            break;
+                        default:
+                            break;
+                    }
+
+                    break;
+                case (int)Enums.SpellTypes.Warp:
+                    if (GetType() == typeof(Player))
+                    {
+                        Warp(Globals.GameSpells[SpellNum].Data1, Globals.GameSpells[SpellNum].Data2, Globals.GameSpells[SpellNum].Data3, Globals.GameSpells[SpellNum].Data4);
+                    }
+                    break;
+                case (int)Enums.SpellTypes.Dash:
+
+                    break;
+                default:
+                    break;
+            }
+            if (SpellSlot >= 0 && SpellSlot < Constants.MaxPlayerSkills)
+            {
+                Spells[SpellSlot].SpellCD = Environment.TickCount + (Globals.GameSpells[SpellNum].CooldownDuration * 100);
+                if (GetType() == typeof(Player))
+                {
+                    PacketSender.SendSpellCooldown(((Player)Globals.Entities[MyIndex]).MyClient, SpellSlot);
+                }
             }
         }
 

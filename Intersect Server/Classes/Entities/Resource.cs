@@ -70,7 +70,7 @@ namespace Intersect_Server.Classes
         public void SpawnResourceItems(int KillerIndex)
         {
             // Drop items
-            for (int i = 0; i < Constants.MaxInvItems; i++)
+            for (int i = 0; i < Inventory.Count; i++)
             {
                 if (Inventory[i].ItemNum >= 0)
                 {

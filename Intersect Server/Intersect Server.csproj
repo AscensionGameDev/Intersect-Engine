@@ -71,6 +71,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Classes\Entities\EventInstance.cs" />
     <Compile Include="Classes\Entities\Projectile.cs" />
     <Compile Include="Classes\Entities\Resource.cs" />
     <Compile Include="Classes\Game Objects\AnimationStruct.cs" />
@@ -85,6 +86,7 @@
     <Compile Include="Classes\Core\Main.cs" />
     <Compile Include="Classes\Items\ItemInstance.cs" />
     <Compile Include="Classes\Maps\MapList.cs" />
+    <Compile Include="Classes\Misc\Pathfinder.cs" />
     <Compile Include="Classes\Networking\GameSocket.cs" />
     <Compile Include="Classes\Networking\NetSocket.cs" />
     <Compile Include="Classes\Networking\NetSocketServer.cs" />

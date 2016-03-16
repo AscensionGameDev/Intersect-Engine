@@ -21,6 +21,7 @@
 */
 using System;
 using System.Collections.Generic;
+using Intersect_Server.Classes.Entities;
 
 namespace Intersect_Server.Classes
 {
@@ -36,7 +37,7 @@ namespace Intersect_Server.Classes
         public List<EventPage> MyPages { get; set; }
 
         //Temporary Variables
-        public EventIndex GlobalInstance;
+        public EventInstance GlobalInstance;
 
         public EventStruct(int index, int x, int y, bool isCommon = false, byte isGlobal = 0)
         {
@@ -209,6 +210,7 @@ namespace Intersect_Server.Classes
         public bool RepeatRoute = false;
         public bool IgnoreIfBlocked = false;
         public List<MoveRouteAction> Actions = new List<MoveRouteAction>();
+        public int ActionIndex = 0;
 
         public EventMoveRoute()
         {
