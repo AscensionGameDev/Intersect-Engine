@@ -27,28 +27,26 @@ namespace Intersect_Server.Classes
 {
     public class Projectile : Entity
     {
+        public int OwnerID = 0;
+        public Type OwnerType = null;
         private ProjectileStruct MyBase;
         private int ProjectileNum = 0;
-        private int OwnerID = 0;
-        private Type OwnerType = null;
-        private long TransmittionTimer = 0;
         private int Quantity = 0;
         private long SpawnTime = 0;
         public int Target = 0;
+        private bool IsSpell = false;
 
         // Individual Spawns
         public List<ProjectileSpawns> Spawns = new List<ProjectileSpawns>();
 
-        public Projectile(int index, int ownerID, Type ownerType, int projectileNum, int Map, int X, int Y, int Z, int Direction, int target = 0) : base(index)
+        public Projectile(int index, int ownerID, Type ownerType, int projectileNum, int Map, int X, int Y, int Z, int Direction, bool isSpell = false, int target = 0) : base(index)
         {
             ProjectileNum = projectileNum;
             MyBase = Globals.GameProjectiles[ProjectileNum];
             MyName = MyBase.Name;
             OwnerID = ownerID;
             OwnerType = ownerType;
-            MySprite = Globals.Entities[OwnerID].MySprite;
-            //MySprite = Globals.GameAnimations[myBase.Animation].UpperAnimSprite;
-            TransmittionTimer = Environment.TickCount + MyBase.Speed;
+            Stat = Globals.Entities[OwnerID].Stat;
             Vital[(int)Enums.Vitals.Health] = 1;
             MaxVital[(int)Enums.Vitals.Health] = 1;
             CurrentMap = Map;
@@ -57,6 +55,7 @@ namespace Intersect_Server.Classes
             CurrentZ = Z;
             Dir = Direction;
             Target = target;
+            IsSpell = isSpell;
             Passable = 1;
             HideName = 1;
         }
@@ -73,7 +72,7 @@ namespace Intersect_Server.Classes
                     {
                         if (myBase.SpawnLocations[x, y].Directions[d] == true)
                         {
-                            ProjectileSpawns s = new ProjectileSpawns(FindProjectileRotationDir(Dir, d), FindProjectileRotationX(Dir, x, y), FindProjectileRotationY(Dir, x, y),CurrentMap);
+                            ProjectileSpawns s = new ProjectileSpawns(FindProjectileRotationDir(Dir, d), CurrentX + FindProjectileRotationX(Dir, x - 2, y - 2), CurrentY + FindProjectileRotationY(Dir, x - 2, y - 2), CurrentZ, CurrentMap);
                             Spawns.Add(s);
                         }
                     }
@@ -243,22 +242,96 @@ namespace Intersect_Server.Classes
 
         public void CheckForCollision()
         {
-            if (Environment.TickCount > TransmittionTimer)
+            if (Spawns.Count != 0 || Quantity < MyBase.Quantity)
             {
-                if (Spawns.Count != 0 || Quantity < MyBase.Quantity)
+                for (int i = 0; i < Spawns.Count; i++)
                 {
-                    for (int i = 0; i < Spawns.Count; i++)
+                    if (Environment.TickCount > Spawns[i].TransmittionTimer)
                     {
                         Spawns[i].Distance++;
+
+                        int newx = Spawns[i].X + GetRangeX(Spawns[i].Dir, 1);
+                        int newy = Spawns[i].Y + GetRangeY(Spawns[i].Dir, 1);
+                        int newmap = Spawns[i].Map;
+
+                        if (newx < 0)
+                        {
+                            if (Globals.GameMaps[Spawns[i].Map].Left > -1 && Globals.GameMaps[Globals.GameMaps[Spawns[i].Map].Left] != null)
+                            {
+                                newmap = Globals.GameMaps[Spawns[i].Map].Left;
+                                newx = Globals.MapWidth - 1;
+                            }
+                            else
+                            {
+                                Spawns.Remove(Spawns[i]);
+                                return;
+                            }
+                        }
+                        if (newx > Globals.MapWidth - 1)
+                        {
+                            if (Globals.GameMaps[Spawns[i].Map].Right > -1 && Globals.GameMaps[Globals.GameMaps[Spawns[i].Map].Right] != null)
+                            {
+                                newmap = Globals.GameMaps[Spawns[i].Map].Right;
+                                newx = 0;
+                            }
+                            else
+                            {
+                                Spawns.Remove(Spawns[i]);
+                                return;
+                            }
+                        }
+                        if (newy < 0)
+                        {
+                            if (Globals.GameMaps[Spawns[i].Map].Up > -1 && Globals.GameMaps[Globals.GameMaps[Spawns[i].Map].Up] != null)
+                            {
+                                newmap = Globals.GameMaps[Spawns[i].Map].Up;
+                                newy = Globals.MapHeight - 1;
+                            }
+                            else
+                            {
+                                Spawns.Remove(Spawns[i]);
+                                return;
+                            }
+                        }
+                        if (newy > Globals.MapHeight - 1)
+                        {
+                            if (Globals.GameMaps[Spawns[i].Map].Down > -1 && Globals.GameMaps[Globals.GameMaps[Spawns[i].Map].Down] != null)
+                            {
+                                newmap = Globals.GameMaps[Spawns[i].Map].Down;
+                                newy = 0;
+                            }
+                            else
+                            {
+                                Spawns.Remove(Spawns[i]);
+                                return;
+                            }
+                        }
+
+                        Spawns[i].X = newx;
+                        Spawns[i].Y = newy;
+                        Spawns[i].Map = newmap;
+
+                        //Check for Z-Dimension
+                        Attribute attribute = Globals.GameMaps[Spawns[i].Map].Attributes[Spawns[i].X, Spawns[i].Y];
+                        if (attribute != null && attribute.value == (int)Enums.MapAttributes.ZDimension)
+                        {
+                            if (attribute.data1 > 0)
+                            {
+                                Spawns[i].Z = attribute.data1 - 1;
+                            }
+                        }
+
                         Entity TempEntity = new Entity(OwnerID);
-                        TempEntity.CurrentX = Spawns[i].X + GetRangeX(Spawns[i].Dir, Spawns[i].Distance);
-                        TempEntity.CurrentY = Spawns[i].Y + GetRangeY(Spawns[i].Dir, Spawns[i].Distance);
+                        TempEntity.CurrentX = Spawns[i].X;
+                        TempEntity.CurrentY = Spawns[i].Y;
+                        TempEntity.CurrentZ = Spawns[i].Z;
                         TempEntity.CurrentMap = Spawns[i].Map;
                         int c = TempEntity.CanMove(Dir);
+                        Target = (int)TempEntity.CollisionIndex;
 
                         if (c == 0) //No collision so increase the counter for the next collision detection.
                         {
-                            TransmittionTimer = Environment.TickCount + (long)((float)Globals.GameProjectiles[ProjectileNum].Speed/ (float)Globals.GameProjectiles[ProjectileNum].Range);
+                            Spawns[i].TransmittionTimer = Environment.TickCount + (long)((float)Globals.GameProjectiles[ProjectileNum].Speed / (float)Globals.GameProjectiles[ProjectileNum].Range);
                             if (Spawns[i].Distance >= Globals.GameProjectiles[ProjectileNum].Range)
                             {
                                 Spawns.Remove(Spawns[i]);
@@ -270,26 +343,26 @@ namespace Intersect_Server.Classes
                             {
                                 if (OwnerID != Target)
                                 {
-                                    TryAttack(Target, true);
+                                    TryAttack(Target, true, IsSpell);
                                 }
                             }
                             else //Any other target
                             {
                                 if (OwnerType == typeof(Player))
                                 {
-                                    TryAttack(Target, true);
+                                    TryAttack(Target, true, IsSpell);
                                 }
                             }
                             Spawns.Remove(Spawns[i]); //Remove from the list being processed
                         }
                     }
                 }
-                else
-                {
-                    Globals.GameMaps[CurrentMap].RemoveProjectile(this);
-                    PacketSender.SendEntityLeave(MyIndex, (int)Enums.EntityTypes.Projectile, CurrentMap);
-                    Globals.Entities[MyIndex] = null;
-                }
+            }
+            else
+            {
+                Globals.GameMaps[CurrentMap].RemoveProjectile(this);
+                PacketSender.SendEntityLeave(MyIndex, (int)Enums.EntityTypes.Projectile, CurrentMap);
+                Globals.Entities[MyIndex] = null;
             }
         }
 
@@ -308,15 +381,18 @@ namespace Intersect_Server.Classes
     {
         public int X;
         public int Y;
+        public int Z;
         public int Map;
         public int Dir;
         public int Distance = 0;
+        public long TransmittionTimer = Environment.TickCount;
 
-        public ProjectileSpawns(int dir, int x, int y, int map)
+        public ProjectileSpawns(int dir, int x, int y, int z, int map)
         {
             Map = map;
             X = x;
             Y = y;
+            Z = z;
             Dir = dir;
         }
     }

@@ -90,6 +90,8 @@ namespace Intersect_Client.Classes.Entities
         private long _walkTimer;
         private int _walkFrame;
 
+        private bool _disposed;
+
         //Rendering Variables
         public List<Entity> RenderList = null;
 
@@ -137,11 +139,16 @@ namespace Intersect_Client.Classes.Entities
                     Animations[i].Dispose();
                 }
             }
+            _disposed = true;
         }
 
         //Movement Processing
         public virtual bool Update()
         {
+            if (_disposed)
+            {
+                return false;
+            }
             RenderList = DetermineRenderOrder(RenderList);
             if (_lastUpdate == 0) { _lastUpdate = Globals.System.GetTimeMS(); }
             float ecTime = (float)(Globals.System.GetTimeMS() - _lastUpdate);

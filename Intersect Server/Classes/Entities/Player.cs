@@ -472,6 +472,12 @@ namespace Intersect_Server.Classes
                                 Vital[(int)Enums.Vitals.Health] = Vital[(int)Enums.Vitals.Health] - Globals.GameSpells[spellNum].VitalCost[(int)Enums.Vitals.Health];
                                 CastTime = Environment.TickCount + (Globals.GameSpells[spellNum].CastDuration * 100);
                                 SpellCastSlot = spellSlot;
+
+                                if (Globals.GameSpells[spellNum].CastAnimation > -1)
+                                {
+                                    Animations.Add(Globals.GameSpells[spellNum].CastAnimation);
+                                }
+
                                 PacketSender.SendEntityVitals(MyIndex, (int)Enums.Vitals.Health, Globals.Entities[MyIndex]);
                                 PacketSender.SendEntityVitals(MyIndex, (int)Enums.Vitals.Mana, Globals.Entities[MyIndex]);
                                 PacketSender.SendEntityCastTime(MyIndex, spellNum);

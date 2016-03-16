@@ -35,7 +35,6 @@ namespace Intersect_Client.Classes.Entities
     {
         public int ProjectileNum = 0;
         public int Target = 0;
-        private long _movementTimer = 0;
         private int Quantity = 0;
         private long SpawnTime = 0;
 
@@ -60,7 +59,6 @@ namespace Intersect_Client.Classes.Entities
             ProjectileNum = bf.ReadInteger();
             Dir = bf.ReadInteger();
             Target = bf.ReadInteger();
-            _movementTimer = Globals.System.GetTimeMS();
         }
 
         public override void Dispose()
@@ -88,7 +86,7 @@ namespace Intersect_Client.Classes.Entities
                     {
                         if (myBase.SpawnLocations[x, y].Directions[d] == true)
                         {
-                            ProjectileSpawns s = new ProjectileSpawns(FindProjectileRotationDir(Dir, d), CurrentX + FindProjectileRotationX(Dir, x - 2, y - 2), CurrentY + FindProjectileRotationY(Dir, x - 2, y - 2), animBase, myBase.AutoRotate);
+                            ProjectileSpawns s = new ProjectileSpawns(FindProjectileRotationDir(Dir, d), CurrentX + FindProjectileRotationX(Dir, x - 2, y - 2), CurrentY + FindProjectileRotationY(Dir, x - 2, y - 2), CurrentZ, CurrentMap, animBase, myBase.AutoRotate);
                             Spawns.Add(s);
                         }
                     }
@@ -290,17 +288,121 @@ namespace Intersect_Client.Classes.Entities
                     Spawns[s].OffsetX = GetRangeX(Spawns[s].Dir, getDisplacement(Spawns[s].SpawnTime));
                     Spawns[s].OffsetY = GetRangeY(Spawns[s].Dir, getDisplacement(Spawns[s].SpawnTime));
                     Spawns[s].Anim.SetPosition(
-                        Globals.GameMaps[CurrentMap].GetX() + Spawns[s].X*Globals.Database.TileWidth + Spawns[s].OffsetX +
+                        Globals.GameMaps[Spawns[s].SpawnMap].GetX() + Spawns[s].SpawnX * Globals.Database.TileWidth + Spawns[s].OffsetX +
                         Globals.Database.TileWidth/2,
-                        Globals.GameMaps[CurrentMap].GetY() + Spawns[s].Y*Globals.Database.TileHeight +
+                        Globals.GameMaps[Spawns[s].SpawnMap].GetY() + Spawns[s].SpawnY * Globals.Database.TileHeight +
                         Spawns[s].OffsetY +
                         Globals.Database.TileHeight/2, Spawns[s].AutoRotate ? Spawns[s].Dir : 0);
                     Spawns[s].Anim.Update();
                 }
             }
+            CheckForCollision();
+
             return true;
         }
 
+        public void CheckForCollision()
+        {
+            if (Spawns.Count != 0 || Quantity < Globals.GameProjectiles[ProjectileNum].Quantity)
+            {
+                for (int i = 0; i < Spawns.Count; i++)
+                {
+                    if (Globals.System.GetTimeMS() > Spawns[i].TransmittionTimer)
+                    {                
+                        int newx = Spawns[i].X + (int)GetRangeX(Spawns[i].Dir, 1);
+                        int newy = Spawns[i].Y + (int)GetRangeY(Spawns[i].Dir, 1);
+                        int newmap = Spawns[i].Map;
+
+                        Spawns[i].Distance++;
+
+                        if (newx < 0)
+                        {
+                            if (Globals.GameMaps[Spawns[i].Map].Left > -1 && Globals.GameMaps.ContainsKey(Globals.GameMaps[Spawns[i].Map].Left))
+                            {
+                                newmap = Globals.GameMaps[Spawns[i].Map].Left;
+                                newx = Globals.Database.MapWidth - 1;
+                            }
+                            else
+                            {
+                                Spawns.Remove(Spawns[i]);
+                                continue;
+                            }
+                        }
+                        if (newx > Globals.Database.MapWidth - 1)
+                        {
+                            if (Globals.GameMaps[Spawns[i].Map].Right > -1 && Globals.GameMaps.ContainsKey(Globals.GameMaps[Spawns[i].Map].Right))
+                            {
+                                newmap = Globals.GameMaps[Spawns[i].Map].Right;
+                                newx = 0;
+                            }
+                            else
+                            {
+                                Spawns.Remove(Spawns[i]);
+                                continue;
+                            }
+                        }
+                        if (newy < 0)
+                        {
+                            if (Globals.GameMaps[Spawns[i].Map].Up > -1 && Globals.GameMaps.ContainsKey(Globals.GameMaps[Spawns[i].Map].Up))
+                            {
+                                newmap = Globals.GameMaps[Spawns[i].Map].Up;
+                                newy = Globals.Database.MapHeight - 1;
+                            }
+                            else
+                            {
+                                Spawns.Remove(Spawns[i]);
+                                continue;
+                            }
+                        }
+                        if (newy > Globals.Database.MapHeight - 1)
+                        {
+                            if (Globals.GameMaps[Spawns[i].Map].Down > -1 && Globals.GameMaps.ContainsKey(Globals.GameMaps[Spawns[i].Map].Down))
+                            {
+                                newmap = Globals.GameMaps[Spawns[i].Map].Down;
+                                newy = 0;
+                            }
+                            else
+                            {
+                                Spawns.Remove(Spawns[i]);
+                                continue;
+                            }
+                        }
+
+                        Spawns[i].X = newx;
+                        Spawns[i].Y = newy;
+                        Spawns[i].Map = newmap;
+
+                        //Check for Z-Dimension
+                        if (Globals.GameMaps[Spawns[i].Map].Attributes[Spawns[i].X, Spawns[i].Y].value == (int)Enums.MapAttributes.ZDimension)
+                        {
+                            if (Globals.GameMaps[Spawns[i].Map].Attributes[Spawns[i].X, Spawns[i].Y].data1 > 0)
+                            {
+                                Spawns[i].Z = Globals.GameMaps[Spawns[i].Map].Attributes[Spawns[i].X, Spawns[i].Y].data1 - 1;
+                            }
+                        }
+
+                        if (!((Player)Globals.Entities[Globals.MyIndex]).IsTileBlocked(Spawns[i].X, Spawns[i].Y, CurrentZ, CurrentMap))
+                        {
+                            Spawns[i].TransmittionTimer = Globals.System.GetTimeMS() + (long)((float)Globals.GameProjectiles[ProjectileNum].Speed / (float)Globals.GameProjectiles[ProjectileNum].Range);
+                            if (Spawns[i].Distance >= Globals.GameProjectiles[ProjectileNum].Range)
+                            {
+                                Spawns[i].Dispose();
+                                Spawns.Remove(Spawns[i]);
+                            }
+                        }
+                        else
+                        {
+                            Spawns[i].Dispose();
+                            Spawns.Remove(Spawns[i]);
+                        }
+                    }
+                }
+            }
+            else
+            {
+                EntityManager.RemoveEntity(MyIndex, (int)Enums.EntityTypes.Projectile, CurrentMap);
+            }
+        }
         /// <summary>
         /// Rendering all of the individual projectiles from a singular spawn to a map.
         /// </summary>
@@ -318,23 +420,39 @@ namespace Intersect_Client.Classes.Entities
     {
         public int X;
         public int Y;
+        public int Z;
+        public int Map;
         public int Dir;
+        public int Distance = 0;
         public AnimationInstance Anim;
         public bool AutoRotate = false;
-
 
         //Clientside variables
         public float OffsetX = 0;
         public float OffsetY = 0;
+        public int SpawnX = 0;
+        public int SpawnY = 0;
+        public int SpawnMap = 0;
         public long SpawnTime = Globals.System.GetTimeMS();
+        public long TransmittionTimer = Globals.System.GetTimeMS();
 
-        public ProjectileSpawns(int dir, int x, int y, AnimationStruct animBase, bool autoRotate)
+        public ProjectileSpawns(int dir, int x, int y, int z, int map, AnimationStruct animBase, bool autoRotate)
         {
             X = x;
             Y = y;
+            SpawnX = X;
+            SpawnY = Y;
+            Z = z;
+            Map = map;
+            SpawnMap = Map;
             Dir = dir;
             Anim = new AnimationInstance(animBase, true);
             AutoRotate = autoRotate;
+        }
+
+        public void Dispose()
+        {
+            Anim.Dispose();
         }
     }
 }

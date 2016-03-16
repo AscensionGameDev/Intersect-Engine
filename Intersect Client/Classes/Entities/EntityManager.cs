@@ -94,8 +94,7 @@ namespace Intersect_Client.Classes.Entities
                 if (Globals.Entities.ContainsKey(index))
                 {
                     Globals.Entities[index].Dispose();
-                    Globals.Entities[index] = null;
-                    Globals.Entities.Remove(index);
+                    Globals.EntitiesToDispose.Add(index);
                 }
             }
             else

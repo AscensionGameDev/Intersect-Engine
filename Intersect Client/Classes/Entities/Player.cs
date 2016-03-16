@@ -759,7 +759,7 @@ namespace Intersect_Client.Classes.Entities
             GameGraphics.FogOffsetX = GameGraphics.DarkOffsetX;
             GameGraphics.FogOffsetY = GameGraphics.DarkOffsetY;
         }
-        bool IsTileBlocked(int x, int y, int z, int map)
+        public bool IsTileBlocked(int x, int y, int z, int map)
         {
             var tmpI = -1;
             for (var i = 0; i < 9; i++)

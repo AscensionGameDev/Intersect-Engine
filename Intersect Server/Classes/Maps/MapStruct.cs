@@ -602,10 +602,10 @@ namespace Intersect_Server.Classes
 
 
         //Spawn a projectile
-        public void SpawnMapProjectile(int MyIndex, Type ownerType, int projectileNum, int Map, int X, int Y, int Z, int Direction, int Target = 0)
+        public void SpawnMapProjectile(int MyIndex, Type ownerType, int projectileNum, int Map, int X, int Y, int Z, int Direction, bool IsSpell = false, int Target = 0)
         {
             int n = Globals.FindOpenEntity();
-            MapProjectiles.Add(new Projectile(n, MyIndex, this.GetType(), projectileNum, Map, X, Y, Z, Direction, Target));
+            MapProjectiles.Add(new Projectile(n, MyIndex, Globals.Entities[MyIndex].GetType(), projectileNum, Map, X, Y, Z, Direction, IsSpell, Target));
             Globals.Entities[n] = MapProjectiles[MapProjectiles.Count - 1];
 
             Entities.Add(Globals.Entities[n]);

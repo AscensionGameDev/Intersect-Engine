@@ -71,6 +71,19 @@ namespace Intersect_Server.Classes
             Globals.Entities[MyIndex] = null;
         }
 
+        //Targeting
+        public void AssignTarget(int Target)
+        {
+            if (Globals.Entities[Target].GetType() == typeof(Projectile))
+            {
+                MyTarget = Globals.Entities[((Projectile)Globals.Entities[Target]).OwnerID];
+            }
+            else
+            {
+                MyTarget = Globals.Entities[Target];
+            }
+        }
+
         public void Update()
         {
             if (MoveTimer < Environment.TickCount)

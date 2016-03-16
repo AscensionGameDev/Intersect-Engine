@@ -64,6 +64,8 @@ namespace Intersect_Server.Classes
 
         public long MoveTimer;
 
+        public long CollisionIndex;
+
         //Initialization
         public Entity(int index)
         {
@@ -187,18 +189,13 @@ namespace Intersect_Server.Classes
                     return 1;
                 }
 
-
-
                 foreach (Entity t in Globals.Entities)
                 {
                     if (t == null) continue;
                     if (t.CurrentMap == tmpMap && t.CurrentX == tmpX && t.CurrentY == tmpY && t.CurrentZ == CurrentZ && t.Passable == 0)
                     {
                         //Set a target if a projectile
-                        if (this.GetType() == typeof(Projectile))
-                        {
-                            ((Projectile)this).Target = t.MyIndex;
-                        }
+                        CollisionIndex = t.MyIndex;
                         if (t.GetType() == typeof(Player))
                         {
                             return 2;
@@ -213,7 +210,7 @@ namespace Intersect_Server.Classes
                         }
                         else if (t.GetType() == typeof(EventPageInstance))
                         {
-                            return 5;
+                            return 6;
                         }
                     }
                 }
@@ -384,10 +381,13 @@ namespace Intersect_Server.Classes
         //Combat
         public void TryAttack(int enemyIndex, bool isProjectile = false, bool isSpell = false)
         {
+            double dmg = 0;
+
             if (Globals.Entities[enemyIndex] == null) return;
             if (!IsOneBlockAway(enemyIndex) && isProjectile == false && isSpell == false) return;
-            //If Entity is resource, check for the correct tool.
-            if (Globals.Entities[enemyIndex].GetType() == typeof(Resource))
+
+            //If Entity is resource, check for the correct tool and make sure its not a spell cast.
+            if (Globals.Entities[enemyIndex].GetType() == typeof(Resource) && isSpell == false)
             {
                 // Check that a resource is actually required.
                 if (Globals.GameResources[((Resource)Globals.Entities[enemyIndex]).ResourceNum].Tool > 0)
@@ -407,7 +407,7 @@ namespace Intersect_Server.Classes
             //No Matter what, if we attack the entitiy, make them chase us
             if (Globals.Entities[enemyIndex].GetType() == typeof(Npc))
             {
-                ((Npc)Globals.Entities[enemyIndex]).MyTarget = this;
+                ((Npc)Globals.Entities[enemyIndex]).AssignTarget(MyIndex);
 
                 //Check if there are any guards nearby
                 for (int n = 0; n < Globals.GameMaps[CurrentMap].Entities.Count; n++)
@@ -432,14 +432,23 @@ namespace Intersect_Server.Classes
                                 if (y < Globals.Entities[MyIndex].CurrentY && yMax > Globals.Entities[MyIndex].CurrentY)
                                 {
                                     // In range, so make a target
-                                    ((Npc)Globals.GameMaps[CurrentMap].Entities[n]).MyTarget = Globals.Entities[MyIndex];
+                                    ((Npc)Globals.GameMaps[CurrentMap].Entities[n]).AssignTarget(MyIndex);
                                 }
                             }
                         }
                     }
                 }
             }
-            double dmg = (Stat[(int)Enums.Stats.Attack] * ((double)100 / (100 + (double)(Globals.Entities[enemyIndex].Stat[(int)Enums.Stats.Defense] * 2)))) + Globals.Rand.Next(0, 3);
+
+            //Check if magic or physical damage
+            if (isSpell == false)
+            {
+                dmg = DamageCalculator(Stat[(int)Enums.Stats.Attack], Globals.Entities[enemyIndex].Stat[(int)Enums.Stats.Defense]);
+            }
+            else
+            {
+                dmg = DamageCalculator(Stat[(int)Enums.Stats.AbilityPower], Globals.Entities[enemyIndex].Stat[(int)Enums.Stats.MagicResist]);
+            }
 
             if (dmg <= 0) dmg = 1; // Always do damage.
 
@@ -453,6 +462,7 @@ namespace Intersect_Server.Classes
                 {
                     ((Resource)Globals.Entities[enemyIndex]).SpawnResourceItems(MyIndex);
                 }
+                Globals.GameMaps[CurrentMap].Entities.Remove(Globals.Entities[enemyIndex]);
                 Globals.Entities[enemyIndex].Die();
             }
             else
@@ -465,6 +475,11 @@ namespace Intersect_Server.Classes
             {
                 ((Npc)Globals.Entities[MyIndex]).MoveTimer = Environment.TickCount + (int)((1.0 / (Stat[2] / 10f)) * 1000);
             }
+        }
+
+        private double DamageCalculator(int OffensiveStat, int DefensiveStat)
+        {
+            return (OffensiveStat * ((double)100 / (100 + (double)(DefensiveStat * 2)))) + Globals.Rand.Next(0, 3);
         }
 
         //Check if the target is either up, down, left or right of the target on the correct Z dimension.
@@ -540,25 +555,30 @@ namespace Intersect_Server.Classes
                     switch (Globals.GameSpells[SpellNum].TargetType)
                     {
                         case (int)Enums.TargetTypes.Self:
-
+                            if (Globals.GameSpells[SpellNum].HitAnimation > -1)
+                            {
+                                Animations.Add(Globals.GameSpells[SpellNum].HitAnimation);
+                            }
+                            TryAttack(MyIndex, false, true);
                             break;
                         case (int)Enums.TargetTypes.Single:
-
+                            
                             break;
                         case (int)Enums.TargetTypes.AoE:
-
+                            HandleAoESpell(SpellNum);
                             break;
                         case (int)Enums.TargetTypes.Projectile:
-                            Globals.GameMaps[CurrentMap].SpawnMapProjectile(MyIndex, this.GetType(), Globals.GameSpells[SpellNum].Data4 - 1, CurrentMap, CurrentX, CurrentY, CurrentZ, Dir);
+                            Globals.GameMaps[CurrentMap].SpawnMapProjectile(MyIndex, this.GetType(), Globals.GameSpells[SpellNum].Data4 - 1, CurrentMap, CurrentX, CurrentY, CurrentZ, Dir, true);
                             break;
                         default:
                             break;
                     }
 
+
                     break;
                 case (int)Enums.SpellTypes.Warp:
                     if (GetType() == typeof(Player))
-                    {
+                    { 
                         Warp(Globals.GameSpells[SpellNum].Data1, Globals.GameSpells[SpellNum].Data2, Globals.GameSpells[SpellNum].Data3, Globals.GameSpells[SpellNum].Data4);
                     }
                     break;
@@ -574,6 +594,57 @@ namespace Intersect_Server.Classes
                 if (GetType() == typeof(Player))
                 {
                     PacketSender.SendSpellCooldown(((Player)Globals.Entities[MyIndex]).MyClient, SpellSlot);
+                }
+            }
+        }
+
+        private void HandleAoESpell(int SpellNum)
+        {
+            for (int x = CurrentX - Globals.GameSpells[SpellNum].CastRange; x < CurrentX + Globals.GameSpells[SpellNum].CastRange; x++)
+            {
+                for (int y = CurrentY - Globals.GameSpells[SpellNum].CastRange; y < CurrentY + Globals.GameSpells[SpellNum].CastRange; x++)
+                {
+                    int tempMap = CurrentMap;
+                    int x2 = x;
+                    int y2 = y;
+
+                    if (y < 0 && Globals.GameMaps[tempMap].Up > -1)
+                    {
+                        tempMap = Globals.GameMaps[tempMap].Up;
+                        y2 = Globals.MapHeight + y;
+                    }
+                    else if (y > Globals.MapHeight - 1 && Globals.GameMaps[tempMap].Down > -1)
+                    {
+                        tempMap = Globals.GameMaps[tempMap].Down;
+                        y2 = Globals.MapHeight - y;
+                    }
+
+                    if (x < 0 && Globals.GameMaps[tempMap].Left > -1)
+                    {
+                        tempMap = Globals.GameMaps[tempMap].Left;
+                        x2 = Globals.MapWidth + x;
+                    }
+                    else if (x > Globals.MapWidth - 1 && Globals.GameMaps[tempMap].Right > -1)
+                    {
+                        tempMap = Globals.GameMaps[tempMap].Right;
+                        x2 = Globals.MapWidth - x;
+                    }
+
+                    foreach (Entity t in Globals.Entities)
+                    {
+                        if (t == null) continue;
+                        if (t.CurrentMap == tempMap && t.CurrentX == x2 && t.CurrentY == y2 && t.CurrentZ == CurrentZ)
+                        {
+                            if (t.GetType() == typeof(Player) || t.GetType() == typeof(Npc))
+                            {
+                                TryAttack(t.MyIndex, false, true);
+                                if (Globals.GameSpells[SpellNum].HitAnimation > -1)
+                                {
+                                    t.Animations.Add(Globals.GameSpells[SpellNum].HitAnimation);
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }
