@@ -171,7 +171,7 @@ namespace Intersect_Server.Classes
                         var dir = pathFinder.GetMove();
                         if (dir > -1)
                         {
-                            if (CanMove(dir) == 0)
+                            if (CanMove(dir) == -1)
                             {
                                 Move(dir, null);
                                 pathFinder.RemoveMove();
@@ -196,7 +196,7 @@ namespace Intersect_Server.Classes
                 if (i == 0)
                 {
                     i = Globals.Rand.Next(0, 4);
-                    if (CanMove(i) == 0)
+                    if (CanMove(i) == -1)
                     {
                         Move(i, null);
                     }

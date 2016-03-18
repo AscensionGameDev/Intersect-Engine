@@ -471,6 +471,16 @@ namespace Intersect_Server.Classes
             }
         }
 
+        internal static void SendRemoveProjectileSpawn(int map, int baseEntityIndex, int spawnIndex)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteLong((int)Enums.ServerPackets.ProjectileSpawnDead);
+            bf.WriteLong(baseEntityIndex);
+            bf.WriteLong(spawnIndex);
+            SendDataToProximity(map, bf.ToArray());
+            bf.Dispose();
+        }
+
         public static void SendEntityMove(int entityIndex, int type, Entity en, int correction = 0)
         {
             var bf = new ByteBuffer();

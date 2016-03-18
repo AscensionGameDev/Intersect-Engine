@@ -84,6 +84,10 @@ namespace Intersect_Editor.Classes
             scrlQuantity.Value = Globals.GameProjectiles[_editorIndex].Quantity;
             scrlRange.Value = Globals.GameProjectiles[_editorIndex].Range;
             scrlSpell.Value = Globals.GameProjectiles[_editorIndex].Spell;
+            chkIgnoreMapBlocks.Checked = Globals.GameProjectiles[_editorIndex].IgnoreMapBlocks;
+            chkIgnoreActiveResources.Checked = Globals.GameProjectiles[_editorIndex].IgnoreActiveResources;
+            chkIgnoreInactiveResources.Checked = Globals.GameProjectiles[_editorIndex].IgnoreExhaustedResources;
+            chkIgnoreZDimensionBlocks.Checked = Globals.GameProjectiles[_editorIndex].IgnoreZDimension;
             chkHoming.Checked = Globals.GameProjectiles[_editorIndex].Homing;
             chkRotation.Checked = Globals.GameProjectiles[_editorIndex].AutoRotate;
 
@@ -358,6 +362,26 @@ namespace Intersect_Editor.Classes
                 lblSpell.Text = "Collision Spell: " + scrlSpell.Value + " " + Globals.GameSpells[scrlSpell.Value - 1].Name;
             }
             Globals.GameProjectiles[_editorIndex].Spell = scrlSpell.Value;
+        }
+
+        private void chkIgnoreMapBlocks_CheckedChanged(object sender, EventArgs e)
+        {
+            Globals.GameProjectiles[_editorIndex].IgnoreMapBlocks = chkIgnoreMapBlocks.Checked;
+        }
+
+        private void chkIgnoreActiveResources_CheckedChanged(object sender, EventArgs e)
+        {
+            Globals.GameProjectiles[_editorIndex].IgnoreActiveResources = chkIgnoreActiveResources.Checked;
+        }
+
+        private void chkIgnoreInactiveResources_CheckedChanged(object sender, EventArgs e)
+        {
+            Globals.GameProjectiles[_editorIndex].IgnoreExhaustedResources = chkIgnoreInactiveResources.Checked;
+        }
+
+        private void chkIgnoreZDimensionBlocks_CheckedChanged(object sender, EventArgs e)
+        {
+            Globals.GameProjectiles[_editorIndex].IgnoreZDimension = chkIgnoreZDimensionBlocks.Checked;
         }
     }
 }

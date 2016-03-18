@@ -89,6 +89,16 @@ namespace Intersect_Server.Classes
         }
 
         //Movement
+        /// <summary>
+        /// Determines if this entity can move in the direction given.
+        /// Returns -5 if the tile is completely out of bounds.
+        /// Returns -3 if a tile is blocked because of a Z dimension tile
+        /// Returns -2 if a tile is blocked by a map attribute.
+        /// Returns -1 for clear.
+        /// Returns the type of entity that is blocking the way (if one exists)
+        /// </summary>
+        /// <param name="moveDir"></param>
+        /// <returns></returns>
         public int CanMove(int moveDir)
         {
             var tmpX = CurrentX;
@@ -169,24 +179,26 @@ namespace Intersect_Server.Classes
                                     .Attributes[tmpX, tmpY];
                             if (tileAttribute != null)
                             {
-                                if (tileAttribute.value == (int)Enums.MapAttributes.Blocked) return 1;
-                                if (tileAttribute.value == (int)Enums.MapAttributes.NPCAvoid && this.GetType() == typeof(Npc)) return 1;
+                                if (tileAttribute.value == (int)Enums.MapAttributes.Blocked) return -2;
+                                if (tileAttribute.value == (int)Enums.MapAttributes.NPCAvoid && this.GetType() == typeof(Npc)) return -2;
+                                if (tileAttribute.value == (int) Enums.MapAttributes.ZDimension &&
+                                    tileAttribute.data2 - 1 == CurrentZ) return -3;
                             }
                             tmpMap = Database.MapGrids[Globals.GameMaps[tmpMap].MapGrid].MyGrid[Globals.GameMaps[tmpMap].MapGridX + mapX, Globals.GameMaps[tmpMap].MapGridY + mapY];
                         }
                         else
                         {
-                            return 1;
+                            return -5;
                         }
                     }
                     else
                     {
-                        return 1;
+                        return -5;
                     }
                 }
                 else
                 {
-                    return 1;
+                    return -5;
                 }
 
                 foreach (Entity en in Globals.Entities)
@@ -198,27 +210,27 @@ namespace Intersect_Server.Classes
                         CollisionIndex = en.MyIndex;
                         if (en.GetType() == typeof(Player))
                         {
-                            return 2;
+                            return (int)Enums.EntityTypes.Player;
                         }
                         else if (en.GetType() == typeof(Npc))
                         {
-                            return 3;
+                            return (int)Enums.EntityTypes.Player;
                         }
                         else if (en.GetType() == typeof(Resource))
                         {
-                            return 4;
+                            return (int)Enums.EntityTypes.Resource;
                         }
                         else if (en.GetType() == typeof(EventPageInstance))
                         {
-                            return 6;
+                            return (int)Enums.EntityTypes.Event;
                         }
                     }
                 }
-                return 0;
+                return -1;
             }
             catch
             {
-                return 1;
+                return -2;
 
             }
         }
@@ -449,6 +461,7 @@ namespace Intersect_Server.Classes
                 ((Npc)Globals.Entities[enemyIndex]).AssignTarget(MyIndex);
 
                 //Check if there are any guards nearby
+                //TODO Loop through CurrentMap - SurroundingMaps Entity List instead of global entity list.
                 for (int n = 0; n < Globals.GameMaps[CurrentMap].Entities.Count; n++)
                 {
                     if (Globals.GameMaps[CurrentMap].Entities[n].GetType() == typeof(Npc))
@@ -524,20 +537,25 @@ namespace Intersect_Server.Classes
                     switch (Globals.GameSpells[SpellNum].TargetType)
                     {
                         case (int)Enums.TargetTypes.Self:
-
+                            if (Globals.GameSpells[SpellNum].HitAnimation > -1)
+                            {
+                                Animations.Add(Globals.GameSpells[SpellNum].HitAnimation);
+                            }
+                            TryAttack(MyIndex, false, true);
                             break;
                         case (int)Enums.TargetTypes.Single:
 
                             break;
                         case (int)Enums.TargetTypes.AoE:
-
+                            HandleAoESpell(SpellNum);
                             break;
                         case (int)Enums.TargetTypes.Projectile:
-                            Globals.GameMaps[CurrentMap].SpawnMapProjectile(MyIndex, this.GetType(), Globals.GameSpells[SpellNum].Data4 - 1, CurrentMap, CurrentX, CurrentY, CurrentZ, Dir);
+                            Globals.GameMaps[CurrentMap].SpawnMapProjectile(MyIndex, this.GetType(), Globals.GameSpells[SpellNum].Data4 - 1, CurrentMap, CurrentX, CurrentY, CurrentZ, Dir, true);
                             break;
                         default:
                             break;
                     }
+
 
                     break;
                 case (int)Enums.SpellTypes.Warp:
@@ -629,58 +647,6 @@ namespace Intersect_Server.Classes
         public virtual void Warp(int newMap, int newX, int newY, int newDir)
         {
 
-        }
-
-        public void CastSpell(int SpellNum, int SpellSlot = -1)
-        {
-            switch (Globals.GameSpells[SpellNum].Type)
-            {
-                case (int)Enums.SpellTypes.CombatSpell:
-
-                    switch (Globals.GameSpells[SpellNum].TargetType)
-                    {
-                        case (int)Enums.TargetTypes.Self:
-                            if (Globals.GameSpells[SpellNum].HitAnimation > -1)
-                            {
-                                Animations.Add(Globals.GameSpells[SpellNum].HitAnimation);
-                            }
-                            TryAttack(MyIndex, false, true);
-                            break;
-                        case (int)Enums.TargetTypes.Single:
-                            
-                            break;
-                        case (int)Enums.TargetTypes.AoE:
-                            HandleAoESpell(SpellNum);
-                            break;
-                        case (int)Enums.TargetTypes.Projectile:
-                            Globals.GameMaps[CurrentMap].SpawnMapProjectile(MyIndex, this.GetType(), Globals.GameSpells[SpellNum].Data4 - 1, CurrentMap, CurrentX, CurrentY, CurrentZ, Dir, true);
-                            break;
-                        default:
-                            break;
-                    }
-
-
-                    break;
-                case (int)Enums.SpellTypes.Warp:
-                    if (GetType() == typeof(Player))
-                    { 
-                        Warp(Globals.GameSpells[SpellNum].Data1, Globals.GameSpells[SpellNum].Data2, Globals.GameSpells[SpellNum].Data3, Globals.GameSpells[SpellNum].Data4);
-                    }
-                    break;
-                case (int)Enums.SpellTypes.Dash:
-
-                    break;
-                default:
-                    break;
-            }
-            if (SpellSlot >= 0 && SpellSlot < Constants.MaxPlayerSkills)
-            {
-                Spells[SpellSlot].SpellCD = Environment.TickCount + (Globals.GameSpells[SpellNum].CooldownDuration * 100);
-                if (GetType() == typeof(Player))
-                {
-                    PacketSender.SendSpellCooldown(((Player)Globals.Entities[MyIndex]).MyClient, SpellSlot);
-                }
-            }
         }
 
         private void HandleAoESpell(int SpellNum)

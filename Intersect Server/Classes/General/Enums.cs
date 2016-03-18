@@ -131,6 +131,7 @@ namespace Intersect_Server.Classes
             CastTime,
             SendSpellCooldown,
             Experience,
+            ProjectileSpawnDead,
         }
 
         public enum Stats

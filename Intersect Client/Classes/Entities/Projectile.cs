@@ -37,9 +37,12 @@ namespace Intersect_Client.Classes.Entities
         public int Target = 0;
         private int Quantity = 0;
         private long SpawnTime = 0;
+        private int _spawnCount = 0;
+        private int _totalSpawns = 0;
+        private int _spawnedAmount = 0;
 
         // Individual Spawns
-        public List<ProjectileSpawns> Spawns = new List<ProjectileSpawns>();
+        public ProjectileSpawns[] Spawns;
 
         /// <summary>
         /// The constructor for the inherated projectile class
@@ -59,13 +62,30 @@ namespace Intersect_Client.Classes.Entities
             ProjectileNum = bf.ReadInteger();
             Dir = bf.ReadInteger();
             Target = bf.ReadInteger();
+            for (int x = 0; x < ProjectileStruct.SpawnLocationsWidth; x++)
+            {
+                for (int y = 0; y < ProjectileStruct.SpawnLocationsWidth; y++)
+                {
+                    for (int d = 0; d < ProjectileStruct.MaxProjectileDirections; d++)
+                    {
+                        if (Globals.GameProjectiles[ProjectileNum].SpawnLocations[x, y].Directions[d] == true)
+                        {
+                            _totalSpawns++;
+                        }
+                    }
+                }
+            }
+            Spawns = new ProjectileSpawns[_totalSpawns];
         }
 
         public override void Dispose()
         {
             foreach (ProjectileSpawns s in Spawns)
             {
-                s.Anim.Dispose();
+                if (s != null)
+                {
+                    s.Anim.Dispose();
+                }
             }
         }
 
@@ -86,8 +106,10 @@ namespace Intersect_Client.Classes.Entities
                     {
                         if (myBase.SpawnLocations[x, y].Directions[d] == true)
                         {
-                            ProjectileSpawns s = new ProjectileSpawns(FindProjectileRotationDir(Dir, d), CurrentX + FindProjectileRotationX(Dir, x - 2, y - 2), CurrentY + FindProjectileRotationY(Dir, x - 2, y - 2), CurrentZ, CurrentMap, animBase, myBase.AutoRotate);
-                            Spawns.Add(s);
+                            ProjectileSpawns s = new ProjectileSpawns(FindProjectileRotationDir(Dir, d), CurrentX + FindProjectileRotationX(Dir, x - 2, y - 2), CurrentY + FindProjectileRotationY(Dir, x - 2, y - 2), CurrentZ, CurrentMap, animBase, myBase.AutoRotate,myBase);
+                            Spawns[_spawnedAmount] = s;
+                            _spawnedAmount++;
+                            _spawnCount++;
                         }
                     }
                 }
@@ -278,22 +300,25 @@ namespace Intersect_Client.Classes.Entities
             if (Quantity < Globals.GameProjectiles[ProjectileNum].Quantity && SpawnTime < Globals.System.GetTimeMS())
             {
                 AddProjectileSpawns();
-                Console.WriteLine(Quantity.ToString());
             }
 
             if (IsMoving)
             {
-                for (int s = 0; s < Spawns.Count; s++)
+                for (int s = 0; s < _spawnedAmount; s++)
                 {
-                    Spawns[s].OffsetX = GetRangeX(Spawns[s].Dir, getDisplacement(Spawns[s].SpawnTime));
-                    Spawns[s].OffsetY = GetRangeY(Spawns[s].Dir, getDisplacement(Spawns[s].SpawnTime));
-                    Spawns[s].Anim.SetPosition(
-                        Globals.GameMaps[Spawns[s].SpawnMap].GetX() + Spawns[s].SpawnX * Globals.Database.TileWidth + Spawns[s].OffsetX +
-                        Globals.Database.TileWidth/2,
-                        Globals.GameMaps[Spawns[s].SpawnMap].GetY() + Spawns[s].SpawnY * Globals.Database.TileHeight +
-                        Spawns[s].OffsetY +
-                        Globals.Database.TileHeight/2, Spawns[s].AutoRotate ? Spawns[s].Dir : 0);
-                    Spawns[s].Anim.Update();
+                    if (Spawns[s] != null)
+                    {
+                        Spawns[s].OffsetX = GetRangeX(Spawns[s].Dir, getDisplacement(Spawns[s].SpawnTime));
+                        Spawns[s].OffsetY = GetRangeY(Spawns[s].Dir, getDisplacement(Spawns[s].SpawnTime));
+                        Spawns[s].Anim.SetPosition(
+                            Globals.GameMaps[Spawns[s].SpawnMap].GetX() + Spawns[s].SpawnX*Globals.Database.TileWidth +
+                            Spawns[s].OffsetX +
+                            Globals.Database.TileWidth/2,
+                            Globals.GameMaps[Spawns[s].SpawnMap].GetY() + Spawns[s].SpawnY*Globals.Database.TileHeight +
+                            Spawns[s].OffsetY +
+                            Globals.Database.TileHeight/2, Spawns[s].AutoRotate ? Spawns[s].Dir : 0);
+                        Spawns[s].Anim.Update();
+                    }
                 }
             }
             CheckForCollision();
@@ -303,15 +328,16 @@ namespace Intersect_Client.Classes.Entities
 
         public void CheckForCollision()
         {
-            if (Spawns.Count != 0 || Quantity < Globals.GameProjectiles[ProjectileNum].Quantity)
+            if (_spawnCount != 0 || Quantity < Globals.GameProjectiles[ProjectileNum].Quantity)
             {
-                for (int i = 0; i < Spawns.Count; i++)
+                for (int i = 0; i < _spawnedAmount; i++)
                 {
-                    if (Globals.System.GetTimeMS() > Spawns[i].TransmittionTimer)
+                    if (Spawns[i] != null && Globals.System.GetTimeMS() > Spawns[i].TransmittionTimer)
                     {                
                         int newx = Spawns[i].X + (int)GetRangeX(Spawns[i].Dir, 1);
                         int newy = Spawns[i].Y + (int)GetRangeY(Spawns[i].Dir, 1);
                         int newmap = Spawns[i].Map;
+                        bool killSpawn = false;
 
                         Spawns[i].Distance++;
 
@@ -324,8 +350,7 @@ namespace Intersect_Client.Classes.Entities
                             }
                             else
                             {
-                                Spawns.Remove(Spawns[i]);
-                                continue;
+                                killSpawn = true;
                             }
                         }
                         if (newx > Globals.Database.MapWidth - 1)
@@ -337,8 +362,7 @@ namespace Intersect_Client.Classes.Entities
                             }
                             else
                             {
-                                Spawns.Remove(Spawns[i]);
-                                continue;
+                                killSpawn = true;
                             }
                         }
                         if (newy < 0)
@@ -350,8 +374,7 @@ namespace Intersect_Client.Classes.Entities
                             }
                             else
                             {
-                                Spawns.Remove(Spawns[i]);
-                                continue;
+                                killSpawn = true;
                             }
                         }
                         if (newy > Globals.Database.MapHeight - 1)
@@ -363,9 +386,16 @@ namespace Intersect_Client.Classes.Entities
                             }
                             else
                             {
-                                Spawns.Remove(Spawns[i]);
-                                continue;
+                                killSpawn = true;
                             }
+                        }
+
+                        if (killSpawn)
+                        {
+                            Spawns[i].Dispose();
+                            Spawns[i] = null;
+                            _spawnCount--;
+                            continue;
                         }
 
                         Spawns[i].X = newx;
@@ -381,19 +411,58 @@ namespace Intersect_Client.Classes.Entities
                             }
                         }
 
-                        if (!((Player)Globals.Entities[Globals.MyIndex]).IsTileBlocked(Spawns[i].X, Spawns[i].Y, CurrentZ, CurrentMap))
+                        int tileBlocked = ((Player) Globals.Entities[Globals.MyIndex]).IsTileBlocked(Spawns[i].X,
+                            Spawns[i].Y, CurrentZ, Spawns[i].Map);
+                        
+                        if (tileBlocked != -1)
                         {
-                            Spawns[i].TransmittionTimer = Globals.System.GetTimeMS() + (long)((float)Globals.GameProjectiles[ProjectileNum].Speed / (float)Globals.GameProjectiles[ProjectileNum].Range);
-                            if (Spawns[i].Distance >= Globals.GameProjectiles[ProjectileNum].Range)
+                            if (tileBlocked >= 0 && Globals.Entities.ContainsKey(tileBlocked))
                             {
-                                Spawns[i].Dispose();
-                                Spawns.Remove(Spawns[i]);
+                                if (Globals.Entities[tileBlocked].GetType() == typeof (Resource))
+                                {
+                                    if ((((Resource) Globals.Entities[tileBlocked]).IsDead && !Spawns[i].ProjectileBase.IgnoreExhaustedResources) ||
+                                        (!((Resource) Globals.Entities[tileBlocked]).IsDead && !Spawns[i].ProjectileBase.IgnoreActiveResources))
+                                    {
+                                        killSpawn = true;
+                                    }
+                                }
+                                else
+                                {
+                                    killSpawn = true;
+                                }
+                            }
+                            else
+                            {
+                                if (tileBlocked == -2)
+                                {
+                                    if (!Spawns[i].ProjectileBase.IgnoreMapBlocks)
+                                    {
+                                        killSpawn = true;
+                                    }
+                                }
+                                else if (tileBlocked == -3)
+                                {
+                                    if (!Spawns[i].ProjectileBase.IgnoreZDimension)
+                                    {
+                                        killSpawn = true;
+                                    }
+                                }
+                                else if (tileBlocked == -5)
+                                {
+                                    killSpawn = true;
+                                }
                             }
                         }
-                        else
+                        Spawns[i].TransmittionTimer = Globals.System.GetTimeMS() + (long)((float)Globals.GameProjectiles[ProjectileNum].Speed / (float)Globals.GameProjectiles[ProjectileNum].Range);
+                        if (Spawns[i].Distance >= Globals.GameProjectiles[ProjectileNum].Range)
+                        {
+                            killSpawn = true;
+                        }
+                        if (killSpawn)
                         {
                             Spawns[i].Dispose();
-                            Spawns.Remove(Spawns[i]);
+                            Spawns[i] = null;
+                            _spawnCount--;
                         }
                     }
                 }
@@ -414,6 +483,15 @@ namespace Intersect_Client.Classes.Entities
                 return;
             }
         }
+
+        public void SpawnDead(int spawnIndex)
+        {
+            if (spawnIndex <= _spawnedAmount && Spawns[spawnIndex] != null)
+            {
+               Spawns[spawnIndex].Dispose();
+               Spawns[spawnIndex] = null;
+            }
+        }
     }
 
     public class ProjectileSpawns
@@ -425,6 +503,7 @@ namespace Intersect_Client.Classes.Entities
         public int Dir;
         public int Distance = 0;
         public AnimationInstance Anim;
+        public ProjectileStruct ProjectileBase;
         public bool AutoRotate = false;
 
         //Clientside variables
@@ -436,7 +515,7 @@ namespace Intersect_Client.Classes.Entities
         public long SpawnTime = Globals.System.GetTimeMS();
         public long TransmittionTimer = Globals.System.GetTimeMS();
 
-        public ProjectileSpawns(int dir, int x, int y, int z, int map, AnimationStruct animBase, bool autoRotate)
+        public ProjectileSpawns(int dir, int x, int y, int z, int map, AnimationStruct animBase, bool autoRotate, ProjectileStruct projectileBase)
         {
             X = x;
             Y = y;
@@ -448,6 +527,7 @@ namespace Intersect_Client.Classes.Entities
             Dir = dir;
             Anim = new AnimationInstance(animBase, true);
             AutoRotate = autoRotate;
+            ProjectileBase = projectileBase;
         }
 
         public void Dispose()

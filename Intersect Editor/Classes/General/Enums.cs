@@ -130,6 +130,8 @@ namespace Intersect_Editor.Classes
             ProjectileData,
             CastTime,
             SendSpellCooldown,
+            Experience,
+            ProjectileSpawnDead,
         }
 
         public enum Stats

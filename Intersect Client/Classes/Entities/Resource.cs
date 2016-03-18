@@ -20,6 +20,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
+using System;
 using IntersectClientExtras.GenericClasses;
 using Intersect_Client.Classes.Core;
 using Intersect_Client.Classes.General;
@@ -33,6 +34,7 @@ namespace Intersect_Client.Classes.Entities
         private bool _hasRenderBounds;
         FloatRect srcRectangle = new FloatRect();
         FloatRect destRectangle = new FloatRect();
+        public bool IsDead;
 
         public Resource() : base()
         {
@@ -41,8 +43,10 @@ namespace Intersect_Client.Classes.Entities
 
         public void Load(ByteBuffer bf)
         {
+            IsDead = Convert.ToBoolean(bf.ReadInteger());
             base.Load(bf);
             HideName = 1;
+            CalculateRenderBounds();
         }
 
         override public bool Update()

@@ -491,26 +491,23 @@ namespace Intersect_Server.Classes
             int x = ResourceSpawns[i].X;
             int y = ResourceSpawns[i].Y;
             int Z = 0;
-            int index = Globals.FindOpenEntity();
-            Globals.Entities[index] = new Resource(index, ResourceSpawns[i].ResourceNum);
-            ResourceSpawns[i].Entity = Globals.Entities[index];
-            Globals.Entities[index].CurrentX = ResourceSpawns[i].X;
-            Globals.Entities[index].CurrentY = ResourceSpawns[i].Y;
-            Globals.Entities[index].CurrentMap = MyMapNum;
-
-            //Give Resource Drops
-            for (int n = 0; n < Constants.MaxNpcDrops; n++)
+            int index = -1;
+            if (ResourceSpawns[i].Entity == null)
             {
-                if (Globals.Rand.Next(1, 101) <= Globals.GameResources[Attributes[x, y].data1].Drops[n].Chance)
-                {
-                    Globals.Entities[index].Inventory[Z].ItemNum = Globals.GameResources[Attributes[x, y].data1].Drops[n].ItemNum;
-                    Globals.Entities[index].Inventory[Z].ItemVal = Globals.GameResources[Attributes[x, y].data1].Drops[n].Amount;
-                    Z = Z + 1;
-                }
+                index = Globals.FindOpenEntity();
+                Globals.Entities[index] = new Resource(index, ResourceSpawns[i].ResourceNum);
+                ResourceSpawns[i].Entity = (Resource) Globals.Entities[index];
+                Globals.Entities[index].CurrentX = ResourceSpawns[i].X;
+                Globals.Entities[index].CurrentY = ResourceSpawns[i].Y;
+                Globals.Entities[index].CurrentMap = MyMapNum;
+                Entities.Add((Resource)Globals.Entities[index]);
+            }
+            else
+            {
+                index = ResourceSpawns[i].Entity.MyIndex;
             }
 
-            Entities.Add((Resource)Globals.Entities[index]);
-            PacketSender.SendEntityDataToProximity(index, (int)Enums.EntityTypes.Resource, Globals.Entities[index].Data(), Globals.Entities[index]);
+            ((Resource) Globals.Entities[index]).Spawn();
         }
 
         //Npcs
@@ -698,7 +695,7 @@ namespace Intersect_Server.Classes
                     //Process Resource Respawns
                     for (int i = 0; i < ResourceSpawns.Count; i++)
                     {
-                        if (!Globals.Entities.Contains(ResourceSpawns[i].Entity))
+                        if (ResourceSpawns[i].Entity != null && ResourceSpawns[i].Entity.IsDead)
                         {
                             if (ResourceSpawns[i].RespawnTime == -1)
                             {
@@ -941,7 +938,7 @@ namespace Intersect_Server.Classes
         //Temporary Values
         //Resource Index
         public int EntityIndex = -1;
-        public Entity Entity;
+        public Resource Entity;
         public long RespawnTime = -1;
     }
 
