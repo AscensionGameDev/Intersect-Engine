@@ -74,7 +74,7 @@ namespace Intersect_Server.Classes
         {
             if (Globals.Entities[Target].GetType() == typeof(Projectile))
             {
-                MyTarget = Globals.Entities[((Projectile)Globals.Entities[Target]).OwnerID];
+                MyTarget = ((Projectile)Globals.Entities[Target]).Owner;
             }
             else
             {

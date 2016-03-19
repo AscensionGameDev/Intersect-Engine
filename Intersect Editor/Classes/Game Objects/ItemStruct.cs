@@ -36,7 +36,7 @@ namespace Intersect_Editor.Classes
         public int Animation;
         public int ClassReq;
         public int LevelReq;
-        public int Projectile;
+        public int Projectile = -1;
         public int[] StatsReq;
         public int[] StatsGiven;
         public int StatGrowth;

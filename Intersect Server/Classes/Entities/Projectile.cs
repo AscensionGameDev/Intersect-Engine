@@ -28,8 +28,7 @@ namespace Intersect_Server.Classes
 {
     public class Projectile : Entity
     {
-        public int OwnerID = 0;
-        public Type OwnerType = null;
+        public Entity Owner;
         private ProjectileStruct MyBase;
         private int ProjectileNum = 0;
         private int Quantity = 0;
@@ -43,14 +42,13 @@ namespace Intersect_Server.Classes
         // Individual Spawns
         public ProjectileSpawns[] Spawns;
 
-        public Projectile(int index, int ownerID, Type ownerType, int projectileNum, int Map, int X, int Y, int Z, int Direction, bool isSpell = false, int target = 0) : base(index)
+        public Projectile(int index, Entity owner, int projectileNum, int Map, int X, int Y, int Z, int Direction, bool isSpell = false, int target = 0) : base(index)
         {
             ProjectileNum = projectileNum;
             MyBase = Globals.GameProjectiles[ProjectileNum];
             MyName = MyBase.Name;
-            OwnerID = ownerID;
-            OwnerType = ownerType;
-            Stat = Globals.Entities[OwnerID].Stat;
+            Owner = owner;
+            Stat = owner.Stat;
             Vital[(int)Enums.Vitals.Health] = 1;
             MaxVital[(int)Enums.Vitals.Health] = 1;
             CurrentMap = Map;
@@ -331,7 +329,7 @@ namespace Intersect_Server.Classes
                             continue;
                         }
 
-                        Entity TempEntity = new Entity(OwnerID);
+                        Entity TempEntity = new Entity(0);
                         TempEntity.CurrentX = Spawns[i].X;
                         TempEntity.CurrentY = Spawns[i].Y;
                         TempEntity.CurrentZ = Spawns[i].Z;
@@ -391,9 +389,9 @@ namespace Intersect_Server.Classes
                         {
                             if (c == (int)Enums.EntityTypes.Player) //Player
                             {
-                                if (OwnerID != Target)
+                                if (Owner.MyIndex != Target)
                                 {
-                                    TryAttack(Target, true, IsSpell);
+                                    Owner.TryAttack(Target, true, IsSpell);
                                     killSpawn = true; //Remove from the list being processed
                                 }
                             }
@@ -401,20 +399,20 @@ namespace Intersect_Server.Classes
                             {
                                 if ((((Resource)Globals.Entities[Target]).IsDead && !Spawns[i].ProjectileBase.IgnoreExhaustedResources) || (!((Resource)Globals.Entities[Target]).IsDead && !Spawns[i].ProjectileBase.IgnoreActiveResources))
                                 {
-                                    if (OwnerType == typeof(Player))
+                                    if (Owner.GetType() == typeof(Player))
                                     {
 
-                                        TryAttack(Target, true, IsSpell);
+                                        Owner.TryAttack(Target, true, IsSpell);
                                         killSpawn = true; //Remove from the list being processed
                                     }
                                 }
                             }
                             else //Any other target
                             {
-                                if (OwnerType == typeof(Player))
+                                if (Owner.GetType() == typeof(Player))
                                 {
                                     
-                                    TryAttack(Target, true, IsSpell);
+                                    Owner.TryAttack(Target, true, IsSpell);
                                     killSpawn = true; //Remove from the list being processed
                                 }
                             }

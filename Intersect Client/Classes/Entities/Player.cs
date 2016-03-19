@@ -138,10 +138,10 @@ namespace Intersect_Client.Classes.Entities
         }
         public void TryUseSpell(int index)
         {
-            if (Spells[index].SpellNum >= 0 && Spells[index].SpellCD < Globals.System.GetTimeMS())
-            {
+            //if (Spells[index].SpellNum >= 0 && Spells[index].SpellCD < Globals.System.GetTimeMS())
+           // {
                 PacketSender.SendUseSpell(index);
-            }
+           // }
         }
 
         //Hotbar Processing
@@ -225,20 +225,6 @@ namespace Intersect_Client.Classes.Entities
             }
             if (GetRealLocation(ref x, ref y, ref map))
             {
-                foreach (var en in Globals.Entities)
-                {
-                    if (en.Value == null) continue;
-                    if (en.Value != Globals.Me)
-                    {
-                        if (en.Value.CurrentMap == map && en.Value.CurrentX == x && en.Value.CurrentY == y)
-                        {
-                            //ATTACKKKKK!!!
-                            PacketSender.SendAttack(en.Key);
-                            _attackTimer = Globals.System.GetTimeMS() + 1000;
-                            return true;
-                        }
-                    }
-                }
                 foreach (var eventMap in Globals.GameMaps)
                 {
                     foreach (var en in eventMap.Value.LocalEntities)
@@ -259,6 +245,33 @@ namespace Intersect_Client.Classes.Entities
                         }
                     }
                 }
+                if (Globals.Me.Equipment[Enums.WeaponIndex] > -1 &&
+                    Globals.Me.Inventory[Globals.Me.Equipment[Enums.WeaponIndex]].ItemNum > -1)
+                {
+                    if (
+                        Globals.GameItems[Globals.Me.Inventory[Globals.Me.Equipment[Enums.WeaponIndex]].ItemNum]
+                            .Projectile >= 0)
+                    {
+                        PacketSender.SendAttack(-1);
+                        _attackTimer = Globals.System.GetTimeMS() + 1000;
+                        return true;
+                    }
+                }
+                foreach (var en in Globals.Entities)
+                {
+                    if (en.Value == null) continue;
+                    if (en.Value != Globals.Me)
+                    {
+                        if (en.Value.CurrentMap == map && en.Value.CurrentX == x && en.Value.CurrentY == y)
+                        {
+                            //ATTACKKKKK!!!
+                            PacketSender.SendAttack(en.Key);
+                            _attackTimer = Globals.System.GetTimeMS() + 1000;
+                            return true;
+                        }
+                    }
+                }
+                
             }
             return false;
         }

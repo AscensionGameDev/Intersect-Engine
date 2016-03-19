@@ -573,20 +573,21 @@ namespace Intersect_Server.Classes
         {
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
+            long target = bf.ReadLong();
 
             //Fire projectile instead if weapon has it
-            if (client.Entity.Equipment[Enums.WeaponIndex] > 0)
+            if (client.Entity.Equipment[Enums.WeaponIndex] >= 0 && client.Entity.Inventory[client.Entity.Equipment[Enums.WeaponIndex]].ItemNum >= 0)
             {
-                if (Globals.GameItems[client.Entity.Equipment[Enums.WeaponIndex]].Projectile > 0)
+                if (Globals.GameItems[client.Entity.Inventory[client.Entity.Equipment[Enums.WeaponIndex]].ItemNum].Projectile >= 0)
                 {
-                    Globals.GameMaps[client.Entity.CurrentMap].SpawnMapProjectile(client.EntityIndex, client.Entity.GetType(), Globals.GameItems[client.Entity.Equipment[Enums.WeaponIndex]].Projectile - 1, client.Entity.CurrentMap, client.Entity.CurrentX, client.Entity.CurrentY, client.Entity.CurrentZ, client.Entity.Dir, false);
+                    Globals.GameMaps[client.Entity.CurrentMap].SpawnMapProjectile(client.Entity, Globals.GameItems[client.Entity.Inventory[client.Entity.Equipment[Enums.WeaponIndex]].ItemNum].Projectile, client.Entity.CurrentMap, client.Entity.CurrentX, client.Entity.CurrentY, client.Entity.CurrentZ, client.Entity.Dir, false);
                     bf.Dispose();
                     return;
                 }
             }
 
             //Attack normally.
-            client.Entity.TryAttack((int)bf.ReadLong());
+            if (target > -1) client.Entity.TryAttack((int)target);
             bf.Dispose();
         }
 

@@ -83,8 +83,6 @@ namespace Intersect_Client.Classes.Bridges_and_Interfaces.SFML.Network
             }
         }
 
-
-
         private void ReceiveCallback(IAsyncResult result)
         {
             try

@@ -438,8 +438,9 @@ namespace Intersect_Server.Classes
             if (!IsOneBlockAway(enemyIndex) && isProjectile == false && isSpell == false) return;
 
             //If Entity is resource, check for the correct tool and make sure its not a spell cast.
-            if (Globals.Entities[enemyIndex].GetType() == typeof(Resource) && isSpell == false)
+            if (Globals.Entities[enemyIndex].GetType() == typeof(Resource))
             {
+                if (isSpell) return;
                 // Check that a resource is actually required.
                 if (Globals.GameResources[((Resource)Globals.Entities[enemyIndex]).ResourceNum].Tool > 0)
                 {
@@ -514,7 +515,6 @@ namespace Intersect_Server.Classes
                 {
                     ((Resource)Globals.Entities[enemyIndex]).SpawnResourceItems(MyIndex);
                 }
-                Globals.GameMaps[CurrentMap].Entities.Remove(Globals.Entities[enemyIndex]);
                 Globals.Entities[enemyIndex].Die();
             }
             else
@@ -550,7 +550,7 @@ namespace Intersect_Server.Classes
                             HandleAoESpell(SpellNum);
                             break;
                         case (int)Enums.TargetTypes.Projectile:
-                            Globals.GameMaps[CurrentMap].SpawnMapProjectile(MyIndex, this.GetType(), Globals.GameSpells[SpellNum].Data4 - 1, CurrentMap, CurrentX, CurrentY, CurrentZ, Dir, true);
+                            Globals.GameMaps[CurrentMap].SpawnMapProjectile(this, Globals.GameSpells[SpellNum].Data4 - 1, CurrentMap, CurrentX, CurrentY, CurrentZ, Dir, true);
                             break;
                         default:
                             break;

@@ -82,5 +82,10 @@ namespace Intersect_Client.Classes.Bridges_and_Interfaces.SFML.Graphics
         {
             _renderTexture.Clear(new global::SFML.Graphics.Color(color.R, color.G, color.B, color.A));
         }
+
+        ~SfmlRenderTexture()
+        {
+            _renderTexture.Dispose();
+        }
     }
 }
