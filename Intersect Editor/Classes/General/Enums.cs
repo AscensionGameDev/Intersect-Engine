@@ -77,6 +77,8 @@ namespace Intersect_Editor.Classes
             NeedGrid,
             OpenProjectileEditor,
             SaveProjectile,
+            UnlinkMap,
+            LinkMap,
         }
 
         public enum ServerPackets
@@ -132,6 +134,7 @@ namespace Intersect_Editor.Classes
             SendSpellCooldown,
             Experience,
             ProjectileSpawnDead,
+            SendAlert,
         }
 
         public enum Stats

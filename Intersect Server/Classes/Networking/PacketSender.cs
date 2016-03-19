@@ -1035,6 +1035,16 @@ namespace Intersect_Server.Classes
             client.SendPacket(bf.ToArray());
             bf.Dispose();
         }
+
+        public static void SendAlert(Client client, string title, string message)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteLong((int)Enums.ServerPackets.SendAlert);
+            bf.WriteString(title);
+            bf.WriteString(message);
+            client.SendPacket(bf.ToArray());
+            bf.Dispose();
+        }
     }
 }
 

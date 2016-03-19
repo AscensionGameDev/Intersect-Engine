@@ -28,10 +28,11 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            this.components = new System.ComponentModel.Container();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmGridView));
             this.gridContainer = new System.Windows.Forms.Panel();
-            this.dataGridView1 = new System.Windows.Forms.DataGridView();
+            this.mapGridView = new System.Windows.Forms.DataGridView();
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this.btnToggleNames = new System.Windows.Forms.ToolStripButton();
             this.btnTogglePreviews = new System.Windows.Forms.ToolStripButton();
@@ -39,50 +40,56 @@
             this.cmbZoom = new System.Windows.Forms.ToolStripComboBox();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.btnFetchPreview = new System.Windows.Forms.ToolStripButton();
+            this.mapMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.unlinkMapToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.linkMapToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.gridContainer.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.mapGridView)).BeginInit();
             this.toolStrip1.SuspendLayout();
+            this.mapMenuStrip.SuspendLayout();
             this.SuspendLayout();
             // 
             // gridContainer
             // 
             this.gridContainer.AutoScroll = true;
-            this.gridContainer.Controls.Add(this.dataGridView1);
+            this.gridContainer.Controls.Add(this.mapGridView);
             this.gridContainer.Dock = System.Windows.Forms.DockStyle.Fill;
             this.gridContainer.Location = new System.Drawing.Point(0, 0);
             this.gridContainer.Name = "gridContainer";
             this.gridContainer.Size = new System.Drawing.Size(784, 601);
             this.gridContainer.TabIndex = 2;
             // 
-            // dataGridView1
+            // mapGridView
             // 
-            this.dataGridView1.AllowUserToAddRows = false;
-            this.dataGridView1.AllowUserToDeleteRows = false;
-            this.dataGridView1.AllowUserToResizeColumns = false;
-            this.dataGridView1.AllowUserToResizeRows = false;
-            this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
-            this.dataGridView1.ColumnHeadersVisible = false;
-            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle1.ForeColor = System.Drawing.Color.White;
-            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.dataGridView1.DefaultCellStyle = dataGridViewCellStyle1;
-            this.dataGridView1.EditMode = System.Windows.Forms.DataGridViewEditMode.EditProgrammatically;
-            this.dataGridView1.Location = new System.Drawing.Point(0, 28);
-            this.dataGridView1.MultiSelect = false;
-            this.dataGridView1.Name = "dataGridView1";
-            this.dataGridView1.ReadOnly = true;
-            this.dataGridView1.RowHeadersVisible = false;
-            this.dataGridView1.RowTemplate.ReadOnly = true;
-            this.dataGridView1.ScrollBars = System.Windows.Forms.ScrollBars.None;
-            this.dataGridView1.Size = new System.Drawing.Size(44, 44);
-            this.dataGridView1.TabIndex = 1;
-            this.dataGridView1.CellContentDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView1_CellContentDoubleClick);
-            this.dataGridView1.CellPainting += new System.Windows.Forms.DataGridViewCellPaintingEventHandler(this.dataGridView1_CellPainting);
-            this.dataGridView1.SelectionChanged += new System.EventHandler(this.dataGridView1_SelectionChanged);
+            this.mapGridView.AllowUserToAddRows = false;
+            this.mapGridView.AllowUserToDeleteRows = false;
+            this.mapGridView.AllowUserToResizeColumns = false;
+            this.mapGridView.AllowUserToResizeRows = false;
+            this.mapGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
+            this.mapGridView.ColumnHeadersVisible = false;
+            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle3.ForeColor = System.Drawing.Color.White;
+            dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.mapGridView.DefaultCellStyle = dataGridViewCellStyle3;
+            this.mapGridView.EditMode = System.Windows.Forms.DataGridViewEditMode.EditProgrammatically;
+            this.mapGridView.Location = new System.Drawing.Point(0, 28);
+            this.mapGridView.MultiSelect = false;
+            this.mapGridView.Name = "mapGridView";
+            this.mapGridView.ReadOnly = true;
+            this.mapGridView.RowHeadersVisible = false;
+            this.mapGridView.RowTemplate.ReadOnly = true;
+            this.mapGridView.ScrollBars = System.Windows.Forms.ScrollBars.None;
+            this.mapGridView.Size = new System.Drawing.Size(44, 44);
+            this.mapGridView.TabIndex = 1;
+            this.mapGridView.CellContentDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.mapGridView_CellContentDoubleClick);
+            this.mapGridView.CellEnter += new System.Windows.Forms.DataGridViewCellEventHandler(this.mapGridView_CellEnter);
+            this.mapGridView.CellPainting += new System.Windows.Forms.DataGridViewCellPaintingEventHandler(this.mapGridView_CellPainting);
+            this.mapGridView.SelectionChanged += new System.EventHandler(this.mapGridView_SelectionChanged);
+            this.mapGridView.MouseClick += new System.Windows.Forms.MouseEventHandler(this.mapGridView_MouseClick);
             // 
             // toolStrip1
             // 
@@ -154,6 +161,28 @@
             this.btnFetchPreview.Text = "Fetch Preview";
             this.btnFetchPreview.Click += new System.EventHandler(this.btnFetchPreview_Click);
             // 
+            // mapMenuStrip
+            // 
+            this.mapMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.unlinkMapToolStripMenuItem,
+            this.linkMapToolStripMenuItem});
+            this.mapMenuStrip.Name = "mapMenuStrip";
+            this.mapMenuStrip.Size = new System.Drawing.Size(153, 70);
+            // 
+            // unlinkMapToolStripMenuItem
+            // 
+            this.unlinkMapToolStripMenuItem.Name = "unlinkMapToolStripMenuItem";
+            this.unlinkMapToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.unlinkMapToolStripMenuItem.Text = "Unlink Map";
+            this.unlinkMapToolStripMenuItem.Click += new System.EventHandler(this.unlinkMapToolStripMenuItem_Click);
+            // 
+            // linkMapToolStripMenuItem
+            // 
+            this.linkMapToolStripMenuItem.Name = "linkMapToolStripMenuItem";
+            this.linkMapToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.linkMapToolStripMenuItem.Text = "Link Map";
+            this.linkMapToolStripMenuItem.Click += new System.EventHandler(this.linkMapToolStripMenuItem_Click);
+            // 
             // frmGridView
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -168,9 +197,10 @@
             this.Text = "Grid Viewer";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.frmGridView_FormClosing);
             this.gridContainer.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.mapGridView)).EndInit();
             this.toolStrip1.ResumeLayout(false);
             this.toolStrip1.PerformLayout();
+            this.mapMenuStrip.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -179,7 +209,7 @@
         #endregion
 
         private System.Windows.Forms.Panel gridContainer;
-        private System.Windows.Forms.DataGridView dataGridView1;
+        private System.Windows.Forms.DataGridView mapGridView;
         private System.Windows.Forms.ToolStrip toolStrip1;
         private System.Windows.Forms.ToolStripButton btnToggleNames;
         private System.Windows.Forms.ToolStripButton btnFetchPreview;
@@ -187,5 +217,8 @@
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
         private System.Windows.Forms.ToolStripComboBox cmbZoom;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
+        private System.Windows.Forms.ContextMenuStrip mapMenuStrip;
+        private System.Windows.Forms.ToolStripMenuItem unlinkMapToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem linkMapToolStripMenuItem;
     }
 }

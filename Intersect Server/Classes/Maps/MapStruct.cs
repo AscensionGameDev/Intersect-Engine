@@ -829,6 +829,17 @@ namespace Intersect_Server.Classes
             ((Player) client.Entity).SendEvents();
         }
 
+        public void ClearConnections(int side = -1)
+        {
+            if (Deleted == 0)
+            {
+                if (side == -1 || side == (int)Enums.Directions.Up) Up = -1;
+                if (side == -1 || side == (int)Enums.Directions.Down) Down = -1;
+                if (side == -1 || side == (int)Enums.Directions.Left) Left = -1;
+                if (side == -1 || side == (int)Enums.Directions.Right) Right = -1;
+                Save();
+            }
+        }
     }
 
     #region "Extra Classes - Just for maps"
