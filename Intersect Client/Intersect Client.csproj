@@ -112,6 +112,7 @@
     <Compile Include="Classes\Core\GameFade.cs" />
     <Compile Include="Classes\Core\GameInputHandler.cs" />
     <Compile Include="Classes\Entities\Event.cs" />
+    <Compile Include="Classes\Entities\EventHold.cs" />
     <Compile Include="Classes\Entities\Projectile.cs" />
     <Compile Include="Classes\Entities\Resource.cs" />
     <Compile Include="Classes\Game Objects\AnimationStruct.cs" />

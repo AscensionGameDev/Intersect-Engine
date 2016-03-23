@@ -63,7 +63,8 @@ namespace Intersect_Server.Classes
             CurrentY = myEvent.SpawnY;
             CurrentMap = mapNum;
             MyEventIndex = eventIndex;
-            MoveRoute = MyPage.MoveRoute;
+            MoveRoute = new EventMoveRoute();
+            MoveRoute.CopyFrom(MyPage.MoveRoute);
             _pathFinder = new Pathfinder(this);
             SetMovementSpeed(MyPage.MovementSpeed);
             MyGraphicType = MyPage.Graphic.Type;
@@ -194,9 +195,9 @@ namespace Intersect_Server.Classes
         {
             if (MoveTimer >= Environment.TickCount || GlobalClone != null) return;
             bool moved = false;
-            if (MovementType ==2 && MoveRoute != null)
+            if (MovementType == 2 && MoveRoute != null)
             {
-                moved = ProcessMoveRoute();
+                ProcessMoveRoute();
             }
             else
             {
@@ -208,45 +209,42 @@ namespace Intersect_Server.Classes
                     {
                         Move(dir, Client);
                         moved = true;
+                        switch (MovementFreq)
+                        {
+                            case 0:
+                                MoveTimer = Environment.TickCount + 4000;
+                                break;
+                            case 1:
+                                MoveTimer = Environment.TickCount + 2000;
+                                break;
+                            case 2:
+                                MoveTimer = Environment.TickCount + 1000;
+                                break;
+                            case 3:
+                                MoveTimer = Environment.TickCount + 500;
+                                break;
+                            case 4:
+                                MoveTimer = Environment.TickCount + 250;
+                                break;
+                        }
                     }
-                }
-            }
-
-            if (moved)
-            {
-                switch (MovementFreq)
-                {
-                    case 0:
-                        MoveTimer = Environment.TickCount + 4000;
-                        break;
-                    case 1:
-                        MoveTimer = Environment.TickCount + 2000;
-                        break;
-                    case 2:
-                        MoveTimer = Environment.TickCount + 1000;
-                        break;
-                    case 3:
-                        MoveTimer = Environment.TickCount + 500;
-                        break;
-                    case 4:
-                        MoveTimer = Environment.TickCount + 250;
-                        break;
                 }
             }
         }
 
-        private bool ProcessMoveRoute()
+        private void ProcessMoveRoute()
         {
             var moved = false;
+            var shouldSendUpdate = false;
             int lookDir = 0, moveDir = 0;
             if (MoveRoute.ActionIndex < MoveRoute.Actions.Count)
             {
                 switch (MoveRoute.Actions[MoveRoute.ActionIndex].Type)
                 {
                     case MoveRouteEnum.MoveUp:
-                        if (CanMove((int) Enums.Directions.Up) == -1)
+                        if (CanMove((int)Enums.Directions.Up) == -1)
                         {
-                            Move((int)Enums.Directions.Up,Client);
+                            Move((int)Enums.Directions.Up, Client);
                             moved = true;
                         }
                         break;
@@ -311,17 +309,17 @@ namespace Intersect_Server.Classes
                             {
                                 switch (moveDir)
                                 {
-                                    case (int) Enums.Directions.Up:
-                                        moveDir = (int) Enums.Directions.Down;
+                                    case (int)Enums.Directions.Up:
+                                        moveDir = (int)Enums.Directions.Down;
                                         break;
-                                    case (int) Enums.Directions.Down:
-                                        moveDir = (int) Enums.Directions.Up;
+                                    case (int)Enums.Directions.Down:
+                                        moveDir = (int)Enums.Directions.Up;
                                         break;
-                                    case (int) Enums.Directions.Left:
-                                        moveDir = (int) Enums.Directions.Right;
+                                    case (int)Enums.Directions.Left:
+                                        moveDir = (int)Enums.Directions.Right;
                                         break;
-                                    case (int) Enums.Directions.Right:
-                                        moveDir = (int) Enums.Directions.Left;
+                                    case (int)Enums.Directions.Right:
+                                        moveDir = (int)Enums.Directions.Left;
                                         break;
                                 }
                                 if (CanMove(moveDir) == -1)
@@ -363,7 +361,7 @@ namespace Intersect_Server.Classes
                         switch (Dir)
                         {
                             case (int)Enums.Directions.Up:
-                                moveDir = (int) Enums.Directions.Down;
+                                moveDir = (int)Enums.Directions.Down;
                                 break;
                             case (int)Enums.Directions.Down:
                                 moveDir = (int)Enums.Directions.Up;
@@ -455,7 +453,7 @@ namespace Intersect_Server.Classes
                         moved = true;
                         break;
                     case MoveRouteEnum.TurnRandomly:
-                        ChangeDir(Globals.Rand.Next(0,4));
+                        ChangeDir(Globals.Rand.Next(0, 4));
                         moved = true;
                         break;
                     case MoveRouteEnum.FacePlayer:
@@ -497,74 +495,138 @@ namespace Intersect_Server.Classes
                         break;
                     case MoveRouteEnum.SetSpeedSlowest:
                         SetMovementSpeed(0);
+                        shouldSendUpdate = true;
+                        moved = true;
                         break;
                     case MoveRouteEnum.SetSpeedSlower:
                         SetMovementSpeed(1);
+                        shouldSendUpdate = true;
+                        moved = true;
                         break;
                     case MoveRouteEnum.SetSpeedNormal:
                         SetMovementSpeed(2);
+                        shouldSendUpdate = true;
+                        moved = true;
                         break;
                     case MoveRouteEnum.SetSpeedFaster:
                         SetMovementSpeed(3);
+                        shouldSendUpdate = true;
+                        moved = true;
                         break;
                     case MoveRouteEnum.SetSpeedFastest:
                         SetMovementSpeed(4);
+                        shouldSendUpdate = true;
+                        moved = true;
                         break;
                     case MoveRouteEnum.SetFreqLowest:
                         MovementFreq = 0;
+                        moved = true;
                         break;
                     case MoveRouteEnum.SetFreqLower:
                         MovementFreq = 1;
+                        moved = true;
                         break;
                     case MoveRouteEnum.SetFreqNormal:
                         MovementFreq = 2;
+                        moved = true;
                         break;
                     case MoveRouteEnum.SetFreqHigher:
                         MovementFreq = 3;
+                        moved = true;
                         break;
                     case MoveRouteEnum.SetFreqHighest:
                         MovementFreq = 4;
+                        moved = true;
                         break;
                     case MoveRouteEnum.WalkingAnimOn:
                         WalkingAnim = 1;
+                        shouldSendUpdate = true;
+                        moved = true;
                         break;
                     case MoveRouteEnum.WalkingAnimOff:
                         WalkingAnim = 0;
+                        shouldSendUpdate = true;
+                        moved = true;
                         break;
                     case MoveRouteEnum.DirectionFixOn:
                         DirectionFix = 1;
+                        moved = true;
                         break;
                     case MoveRouteEnum.DirectionFixOff:
                         DirectionFix = 0;
+                        moved = true;
                         break;
                     case MoveRouteEnum.WalkthroughOn:
                         Passable = 1;
+                        shouldSendUpdate = true;
+                        moved = true;
                         break;
                     case MoveRouteEnum.WalkthroughOff:
                         Passable = 0;
+                        shouldSendUpdate = true;
+                        moved = true;
                         break;
                     case MoveRouteEnum.ShowName:
                         HideName = 0;
+                        shouldSendUpdate = true;
+                        moved = true;
                         break;
                     case MoveRouteEnum.HideName:
                         HideName = 1;
+                        shouldSendUpdate = true;
+                        moved = true;
                         break;
                     case MoveRouteEnum.SetLevelBelow:
                         RenderLevel = 0;
+                        shouldSendUpdate = true;
+                        moved = true;
                         break;
                     case MoveRouteEnum.SetLevelNormal:
                         RenderLevel = 1;
+                        shouldSendUpdate = true;
+                        moved = true;
                         break;
                     case MoveRouteEnum.SetLevelAbove:
                         RenderLevel = 2;
+                        shouldSendUpdate = true;
+                        moved = true;
                         break;
                     case MoveRouteEnum.Wait100:
+                        MoveTimer = Environment.TickCount + 100;
+                        moved = true;
                         break;
                     case MoveRouteEnum.Wait500:
+                        MoveTimer = Environment.TickCount + 500;
+                        moved = true;
                         break;
                     case MoveRouteEnum.Wait1000:
+                        MoveTimer = Environment.TickCount + 1000;
+                        moved = true;
                         break;
                     case MoveRouteEnum.SetGraphic:
+                        MyGraphicType = MoveRoute.Actions[MoveRoute.ActionIndex].Graphic.Type;
+                        MySprite = MoveRoute.Actions[MoveRoute.ActionIndex].Graphic.Filename;
+                        
+                        if (MyGraphicType == 1)
+                        {
+                            switch (MoveRoute.Actions[MoveRoute.ActionIndex].Graphic.Y)
+                            {
+                                case 0:
+                                    Dir = 1;
+                                    break;
+                                case 1:
+                                    Dir = 2;
+                                    break;
+                                case 2:
+                                    Dir = 3;
+                                    break;
+                                case 3:
+                                    Dir = 0;
+                                    break;
+                            }
+                        }
+                        shouldSendUpdate = true;
+                        moved = true;
                         break;
                     default:
                         throw new ArgumentOutOfRangeException();
@@ -572,13 +634,39 @@ namespace Intersect_Server.Classes
                 if (moved || MoveRoute.IgnoreIfBlocked)
                 {
                     MoveRoute.ActionIndex++;
-                    if (MoveRoute.ActionIndex >= MoveRoute.Actions.Count && MoveRoute.RepeatRoute)
+                    if (MoveRoute.ActionIndex >= MoveRoute.Actions.Count)
                     {
-                        MoveRoute.ActionIndex = 0;
+                        if (MoveRoute.RepeatRoute) MoveRoute.ActionIndex = 0;
+                        MoveRoute.Complete = true;
+                    }
+                }
+                if (shouldSendUpdate)
+                {
+                    //Send Update
+                    SendToClient();
+                }
+                if (MoveTimer < Environment.TickCount)
+                {
+                    switch (MovementFreq)
+                    {
+                        case 0:
+                            MoveTimer = Environment.TickCount + 4000;
+                            break;
+                        case 1:
+                            MoveTimer = Environment.TickCount + 2000;
+                            break;
+                        case 2:
+                            MoveTimer = Environment.TickCount + 1000;
+                            break;
+                        case 3:
+                            MoveTimer = Environment.TickCount + 500;
+                            break;
+                        case 4:
+                            MoveTimer = Environment.TickCount + 250;
+                            break;
                     }
                 }
             }
-            return moved;
         }
 
         public bool ShouldDespawn()

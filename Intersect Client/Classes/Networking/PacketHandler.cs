@@ -177,6 +177,27 @@ namespace Intersect_Client.Classes.Networking
                     case Enums.ServerPackets.ProjectileSpawnDead:
                         HandleProjectileSpawnDead(bf.ReadBytes(bf.Length()));
                         break;
+                    case Enums.ServerPackets.SendPlayAnimation:
+                        HandlePlayAnimation(bf.ReadBytes(bf.Length()));
+                        break;
+                    case Enums.ServerPackets.HoldPlayer:
+                        HandleHoldPlayer(bf.ReadBytes(bf.Length()));
+                        break;
+                    case Enums.ServerPackets.ReleasePlayer:
+                        HandleReleasePlayer(bf.ReadBytes(bf.Length()));
+                        break;
+                    case Enums.ServerPackets.PlayMusic:
+                        HandlePlayMusic(bf.ReadBytes(bf.Length()));
+                        break;
+                    case Enums.ServerPackets.FadeMusic:
+                        HandleFadeMusic(bf.ReadBytes(bf.Length()));
+                        break;
+                    case Enums.ServerPackets.PlaySound:
+                        HandlePlaySound(bf.ReadBytes(bf.Length()));
+                        break;
+                    case Enums.ServerPackets.StopSounds:
+                        HandleStopSounds(bf.ReadBytes(bf.Length()));
+                        break;
                     default:
                         Console.WriteLine(@"Non implemented packet received: " + packetHeader);
                         break;
@@ -812,5 +833,124 @@ namespace Intersect_Client.Classes.Networking
             }
             bf.Dispose();
         }
+
+        private static void HandlePlayAnimation(byte[] packet)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteBytes(packet);
+            int animNum = bf.ReadInteger();
+            int targetType = bf.ReadInteger();
+            if (targetType == -1)
+            {
+                int mapNum = bf.ReadInteger();
+                if (Globals.GameMaps.ContainsKey(mapNum))
+                {
+                    Globals.GameMaps[mapNum].AddTileAnimation(animNum, bf.ReadInteger(), bf.ReadInteger(),
+                        bf.ReadInteger());
+                }
+            }
+            else if (targetType == 1)
+            {
+                //Entity
+                int entityIndex = bf.ReadInteger();
+                bf.ReadInteger();
+                bf.ReadInteger();
+                int dir = bf.ReadInteger();
+                if (entityIndex >= 0 && entityIndex < Globals.Entities.Count)
+                {
+                    if (Globals.Entities[entityIndex] != null)
+                    {
+                        AnimationInstance animInstance = new AnimationInstance(Globals.GameAnimations[animNum], false, dir == -1 ? true: false);
+                        if (dir > -1) animInstance.SetDir(dir);
+                        Globals.Entities[entityIndex].Animations.Add(animInstance);
+                    }
+                }
+            }
+            else if (targetType == 2)
+            {
+                int mapIndex = bf.ReadInteger();
+                int entityIndex = bf.ReadInteger();
+                bf.ReadInteger();
+                int dir = bf.ReadInteger();
+                if (Globals.GameMaps.ContainsKey(mapIndex))
+                {
+                    if (entityIndex >= 0 && entityIndex < Globals.GameMaps[mapIndex].LocalEntities.Count)
+                    {
+                        if (Globals.GameMaps[mapIndex].LocalEntities[entityIndex] != null)
+                        {
+                            AnimationInstance animInstance = new AnimationInstance(Globals.GameAnimations[animNum], false, dir == -1 ? true : false);
+                            if (dir > -1) animInstance.SetDir(dir);
+                            Globals.GameMaps[mapIndex].LocalEntities[entityIndex].Animations.Add(animInstance);
+                        }
+                    }
+                }
+                
+            }
+            bf.Dispose();
+        }
+
+        private static void HandleHoldPlayer(byte[] packet)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteBytes(packet);
+            int mapNum = bf.ReadInteger();
+            int eventIndex = bf.ReadInteger();
+            for (int i = 0; i < Globals.EventHolds.Count; i++)
+            {
+                if (Globals.EventHolds[i].MapNum == mapNum && Globals.EventHolds[i].EventIndex == eventIndex)
+                {
+                    return; //Event already holding
+                }
+            }
+            Globals.EventHolds.Add(new EventHold(mapNum,eventIndex));
+            bf.Dispose();
+        }
+
+        private static void HandleReleasePlayer(byte[] packet)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteBytes(packet);
+            int mapNum = bf.ReadInteger();
+            int eventIndex = bf.ReadInteger();
+            for (int i = 0; i < Globals.EventHolds.Count; i++)
+            {
+                if (Globals.EventHolds[i].MapNum == mapNum && Globals.EventHolds[i].EventIndex == eventIndex)
+                {
+                    Globals.EventHolds.RemoveAt(i);
+                    break;
+                }
+            }
+            bf.Dispose();
+        }
+
+        private static void HandlePlayMusic(byte[] packet)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteBytes(packet);
+            string bgm = bf.ReadString();
+            GameAudio.PlayMusic(bgm, 1f, 1f, true);
+            bf.Dispose();
+        }
+
+        private static void HandleFadeMusic(byte[] packet)
+        {
+            GameAudio.StopMusic(3f);
+        }
+
+        private static void HandlePlaySound(byte[] packet)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteBytes(packet);
+            string sound = bf.ReadString();
+            GameAudio.AddMapSound(sound, -1, -1, Globals.CurrentMap, true, -1);
+            bf.Dispose();
+        }
+
+        private static void HandleStopSounds(byte[] packet)
+        {
+            GameAudio.StopAllSounds();
+        }
+
+
     }
 }

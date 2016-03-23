@@ -60,9 +60,6 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             chkRepeatRoute.Checked = _tmpMoveRoute.RepeatRoute;
 
             cmbTarget.Items.Clear();
-            cmbTarget.Items.Add("Player");
-            _targetIndicies.Add(-1);
-            cmbTarget.SelectedIndex = 0;
 
             if (!_editingEvent.CommonEvent)
             {
@@ -79,7 +76,7 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
                         }
                         else
                         {
-                            if (_editingRoute.Target == i)
+                            if (_editingRoute.Target == i || _editingRoute.Target == -1)
                             {
                                 cmbTarget.SelectedIndex = cmbTarget.Items.Count - 1;
                             }
@@ -306,6 +303,10 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
                     graphicSelector.BringToFront();
                     graphicSelector.Size = this.ClientSize;
                 }
+                else if (_tmpMoveRoute.Actions[lstActions.SelectedIndex].Type == MoveRouteEnum.SetAnimation)
+                {
+                    //Open the animation selector
+                }
             }
         }
 
@@ -321,31 +322,13 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
 
         private void btnOkay_Click(object sender, EventArgs e)
         {
-            int slot = 0;
             _editingRoute.CopyFrom(_tmpMoveRoute);
+            _editingRoute.Target = -1;
             if (_editingCommand != null)
             {
                 if (!_editingEvent.CommonEvent)
                 {
-                    for (int i = 0; i < _currentMap.Events.Count; i++)
-                    {
-                        if (cmbTarget.SelectedIndex == 0)
-                        {
-                            _editingRoute.Target = -1;
-                        }
-                        else
-                        {
-                            if (_currentMap.Events[i].Deleted == 0)
-                            {
-                                slot++;
-                                if (cmbTarget.SelectedIndex == slot)
-                                {
-                                    _editingRoute.Target = i;
-                                    break;
-                                }
-                            }
-                        }
-                    }
+                    _editingRoute.Target = _targetIndicies[cmbTarget.SelectedIndex];
                 }
                 _eventEditor.FinishCommandEdit(true);
             }

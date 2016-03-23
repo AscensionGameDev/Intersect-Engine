@@ -21,6 +21,7 @@
 */
 using System;
 using System.Threading;
+using Intersect_Server.Classes.Maps;
 
 namespace Intersect_Server.Classes
 {
@@ -34,7 +35,7 @@ namespace Intersect_Server.Classes
             {
                 for (int i = 0; i < Globals.GameMaps.Length; i++)
                 {
-                    if (Globals.GameMaps[i] != null)
+                    if (MapHelper.IsMapValid(i))
                     {
                         if (Globals.GameMaps[i].Active)
                         {

@@ -28,9 +28,11 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.lblStatus = new System.Windows.Forms.Label();
             this.progressBar = new System.Windows.Forms.ProgressBar();
             this.btnCancel = new System.Windows.Forms.Button();
+            this.tmrUpdater = new System.Windows.Forms.Timer(this.components);
             this.SuspendLayout();
             // 
             // lblStatus
@@ -59,6 +61,11 @@
             this.btnCancel.UseVisualStyleBackColor = true;
             this.btnCancel.Visible = false;
             // 
+            // tmrUpdater
+            // 
+            this.tmrUpdater.Enabled = true;
+            this.tmrUpdater.Tick += new System.EventHandler(this.tmrUpdater_Tick);
+            // 
             // frmProgress
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -82,5 +89,6 @@
         private System.Windows.Forms.Label lblStatus;
         private System.Windows.Forms.ProgressBar progressBar;
         private System.Windows.Forms.Button btnCancel;
+        private System.Windows.Forms.Timer tmrUpdater;
     }
 }

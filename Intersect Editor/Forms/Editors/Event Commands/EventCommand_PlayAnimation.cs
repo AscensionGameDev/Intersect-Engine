@@ -67,7 +67,20 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
                 case 1: //On/Around Entity Spawn
                     spawnX = _myCommand.Ints[3];
                     spawnY = _myCommand.Ints[4];
-                    chkDirRelative.Checked = Convert.ToBoolean(_myCommand.Ints[5]);
+                    switch (_myCommand.Ints[5])
+                    {
+                        //0 does not adhere to direction, 1 is Spawning Relative to Direction, 2 is Rotating Relative to Direction, and 3 is both.
+                        case 1:
+                            chkRelativeLocation.Checked = true;
+                            break;
+                        case 2:
+                            chkRotateDirection.Checked = true;
+                            break;
+                        case 3:
+                            chkRelativeLocation.Checked = true;
+                            chkRotateDirection.Checked = true;
+                            break;
+                    }
                     UpdateSpawnPreview();
                     break;
             }
@@ -193,7 +206,23 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
                     }
                     _myCommand.Ints[3] = spawnX;
                     _myCommand.Ints[4] = spawnY;
-                    _myCommand.Ints[5] = Convert.ToInt32(chkDirRelative.Checked);
+                    if (chkRelativeLocation.Checked && chkRotateDirection.Checked)
+                    {
+                        _myCommand.Ints[5] = 3; //0 does not adhere to direction, 1 is Spawning Relative to Direction, 2 is Rotating Relative to Direction, and 3 is both.
+                    }
+                    else if (chkRelativeLocation.Checked)
+                    {
+                        _myCommand.Ints[5] = 1; //0 does not adhere to direction, 1 is Spawning Relative to Direction, 2 is Rotating Relative to Direction, and 3 is both.
+                    }
+                    else if (chkRotateDirection.Checked)
+                    {
+                        _myCommand.Ints[5] = 2; //0 does not adhere to direction, 1 is Spawning Relative to Direction, 2 is Rotating Relative to Direction, and 3 is both.
+                    }
+                    else
+                    {
+                        _myCommand.Ints[5] = 0; //0 does not adhere to direction, 1 is Spawning Relative to Direction, 2 is Rotating Relative to Direction, and 3 is both.
+                    }
+                    
                     break;
             }
             _eventEditor.FinishCommandEdit();

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Intersect_Server.Classes.Maps;
 
 namespace Intersect_Server.Classes
 {
@@ -71,10 +72,7 @@ namespace Intersect_Server.Classes
 
         public void AddMap(int mapNum)
         {
-            if (mapNum >= Globals.GameMaps.Length || Globals.GameMaps[mapNum].Deleted == 1)
-            {
-                return;
-            }
+            if (!MapHelper.IsMapValid(mapNum)) return;
             var tmp = new FolderMap();
             tmp.Name = Globals.GameMaps[mapNum].MyName;
             tmp.MapNum = mapNum;
@@ -325,10 +323,7 @@ namespace Intersect_Server.Classes
             base.Load(myBuffer);
             MapNum = myBuffer.ReadInteger();
             myBuffer.ReadString();
-            if (MapNum >= Globals.GameMaps.Length)
-            {
-                return false;
-            }
+            if (!MapHelper.IsMapValid(MapNum)) return false;
             return true;
         }
 

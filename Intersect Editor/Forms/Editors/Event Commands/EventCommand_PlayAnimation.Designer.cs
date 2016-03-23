@@ -46,11 +46,12 @@
             this.btnCancel = new System.Windows.Forms.Button();
             this.btnSave = new System.Windows.Forms.Button();
             this.grpEntitySpawn = new System.Windows.Forms.GroupBox();
-            this.chkDirRelative = new System.Windows.Forms.CheckBox();
+            this.chkRelativeLocation = new System.Windows.Forms.CheckBox();
             this.pnlSpawnLoc = new System.Windows.Forms.Panel();
             this.label2 = new System.Windows.Forms.Label();
             this.cmbEntities = new System.Windows.Forms.ComboBox();
             this.label4 = new System.Windows.Forms.Label();
+            this.chkRotateDirection = new System.Windows.Forms.CheckBox();
             this.groupBox1.SuspendLayout();
             this.grpTileSpawn.SuspendLayout();
             this.grpEntitySpawn.SuspendLayout();
@@ -60,15 +61,15 @@
             // 
             this.groupBox1.Controls.Add(this.cmbAnimation);
             this.groupBox1.Controls.Add(this.label3);
-            this.groupBox1.Controls.Add(this.grpTileSpawn);
             this.groupBox1.Controls.Add(this.cmbConditionType);
             this.groupBox1.Controls.Add(this.label1);
             this.groupBox1.Controls.Add(this.btnCancel);
             this.groupBox1.Controls.Add(this.btnSave);
             this.groupBox1.Controls.Add(this.grpEntitySpawn);
+            this.groupBox1.Controls.Add(this.grpTileSpawn);
             this.groupBox1.Location = new System.Drawing.Point(3, 3);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(256, 388);
+            this.groupBox1.Size = new System.Drawing.Size(256, 407);
             this.groupBox1.TabIndex = 17;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Play Animation";
@@ -227,7 +228,7 @@
             // 
             // btnCancel
             // 
-            this.btnCancel.Location = new System.Drawing.Point(90, 359);
+            this.btnCancel.Location = new System.Drawing.Point(90, 378);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(75, 23);
             this.btnCancel.TabIndex = 20;
@@ -237,7 +238,7 @@
             // 
             // btnSave
             // 
-            this.btnSave.Location = new System.Drawing.Point(9, 359);
+            this.btnSave.Location = new System.Drawing.Point(9, 378);
             this.btnSave.Name = "btnSave";
             this.btnSave.Size = new System.Drawing.Size(75, 23);
             this.btnSave.TabIndex = 19;
@@ -247,27 +248,28 @@
             // 
             // grpEntitySpawn
             // 
-            this.grpEntitySpawn.Controls.Add(this.chkDirRelative);
+            this.grpEntitySpawn.Controls.Add(this.chkRotateDirection);
+            this.grpEntitySpawn.Controls.Add(this.chkRelativeLocation);
             this.grpEntitySpawn.Controls.Add(this.pnlSpawnLoc);
             this.grpEntitySpawn.Controls.Add(this.label2);
             this.grpEntitySpawn.Controls.Add(this.cmbEntities);
             this.grpEntitySpawn.Controls.Add(this.label4);
             this.grpEntitySpawn.Location = new System.Drawing.Point(9, 81);
             this.grpEntitySpawn.Name = "grpEntitySpawn";
-            this.grpEntitySpawn.Size = new System.Drawing.Size(236, 264);
+            this.grpEntitySpawn.Size = new System.Drawing.Size(236, 281);
             this.grpEntitySpawn.TabIndex = 24;
             this.grpEntitySpawn.TabStop = false;
             this.grpEntitySpawn.Text = "On/Around Entity";
             // 
-            // chkDirRelative
+            // chkRelativeLocation
             // 
-            this.chkDirRelative.AutoSize = true;
-            this.chkDirRelative.Location = new System.Drawing.Point(38, 236);
-            this.chkDirRelative.Name = "chkDirRelative";
-            this.chkDirRelative.Size = new System.Drawing.Size(151, 17);
-            this.chkDirRelative.TabIndex = 30;
-            this.chkDirRelative.Text = "Relative to Entity Direction";
-            this.chkDirRelative.UseVisualStyleBackColor = true;
+            this.chkRelativeLocation.AutoSize = true;
+            this.chkRelativeLocation.Location = new System.Drawing.Point(38, 236);
+            this.chkRelativeLocation.Name = "chkRelativeLocation";
+            this.chkRelativeLocation.Size = new System.Drawing.Size(158, 17);
+            this.chkRelativeLocation.TabIndex = 30;
+            this.chkRelativeLocation.Text = "Spawn Relative to Direction";
+            this.chkRelativeLocation.UseVisualStyleBackColor = true;
             // 
             // pnlSpawnLoc
             // 
@@ -310,6 +312,16 @@
             this.label4.TabIndex = 22;
             this.label4.Text = "Entity:";
             // 
+            // chkRotateDirection
+            // 
+            this.chkRotateDirection.AutoSize = true;
+            this.chkRotateDirection.Location = new System.Drawing.Point(38, 258);
+            this.chkRotateDirection.Name = "chkRotateDirection";
+            this.chkRotateDirection.Size = new System.Drawing.Size(157, 17);
+            this.chkRotateDirection.TabIndex = 31;
+            this.chkRotateDirection.Text = "Rotate Relative to Direction";
+            this.chkRotateDirection.UseVisualStyleBackColor = true;
+            // 
             // EventCommand_PlayAnimation
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -317,7 +329,7 @@
             this.AutoSize = true;
             this.Controls.Add(this.groupBox1);
             this.Name = "EventCommand_PlayAnimation";
-            this.Size = new System.Drawing.Size(267, 394);
+            this.Size = new System.Drawing.Size(267, 413);
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             this.grpTileSpawn.ResumeLayout(false);
@@ -346,12 +358,13 @@
         private System.Windows.Forms.Label label21;
         private System.Windows.Forms.Label lblX;
         private System.Windows.Forms.GroupBox grpEntitySpawn;
-        private System.Windows.Forms.CheckBox chkDirRelative;
+        private System.Windows.Forms.CheckBox chkRelativeLocation;
         private System.Windows.Forms.Panel pnlSpawnLoc;
         private System.Windows.Forms.ComboBox cmbEntities;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.ComboBox cmbAnimation;
         private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.CheckBox chkRotateDirection;
     }
 }

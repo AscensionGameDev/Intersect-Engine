@@ -28,6 +28,7 @@ using System.Security.Cryptography.X509Certificates;
 using System.Xml;
 using System.Security.Cryptography;
 using System.Text;
+using Intersect_Server.Classes.Maps;
 using MySql.Data.MySqlClient;
 using Intersect_Server.Classes.Networking;
 
@@ -36,6 +37,7 @@ namespace Intersect_Server.Classes
     public static class Database
     {
         public static bool MySQLConnected;
+        public static object MapGridLock = new Object();
         public static List<MapGrid> MapGrids = new List<MapGrid>();
         public static string ConnectionString = "";
         public static MapList MapStructure = new MapList();
@@ -1287,7 +1289,7 @@ namespace Intersect_Server.Classes
         {
             for (int i = 0; i < Globals.GameMaps.Length; i++)
             {
-                if (Globals.GameMaps[i] != null)
+                if (MapHelper.IsMapValid(i))
                 {
                     CheckMapConnections(i);
                 }
@@ -1296,64 +1298,61 @@ namespace Intersect_Server.Classes
         public static void CheckMapConnections(int mapNum)
         {
             bool updated = false;
-            if (!CheckMapExistance(Globals.GameMaps[mapNum].Up)) { Globals.GameMaps[mapNum].Up = -1; updated = true; }
-            if (!CheckMapExistance(Globals.GameMaps[mapNum].Down)) { Globals.GameMaps[mapNum].Down = -1; updated = true; }
-            if (!CheckMapExistance(Globals.GameMaps[mapNum].Left)) { Globals.GameMaps[mapNum].Left = -1; updated = true; }
-            if (!CheckMapExistance(Globals.GameMaps[mapNum].Right)) { Globals.GameMaps[mapNum].Right = -1; updated = true; }
+            if (!MapHelper.IsMapValid(Globals.GameMaps[mapNum].Up)) { Globals.GameMaps[mapNum].Up = -1; updated = true; }
+            if (!MapHelper.IsMapValid(Globals.GameMaps[mapNum].Down)) { Globals.GameMaps[mapNum].Down = -1; updated = true; }
+            if (!MapHelper.IsMapValid(Globals.GameMaps[mapNum].Left)) { Globals.GameMaps[mapNum].Left = -1; updated = true; }
+            if (!MapHelper.IsMapValid(Globals.GameMaps[mapNum].Right)) { Globals.GameMaps[mapNum].Right = -1; updated = true; }
             if (updated)
             {
                 Globals.GameMaps[mapNum].Save();
                 PacketSender.SendMapToEditors(mapNum);
             }
         }
-        private static bool CheckMapExistance(int mapNum)
-        {
-            if (mapNum == -1) { return true; }
-            if (mapNum >= Globals.GameMaps.Length) { return false; }
-            if (Globals.GameMaps[mapNum] == null) { return false; }
-            if (Globals.GameMaps[mapNum].Deleted == 1) { return false; }
-            return true;
-        }
         public static void GenerateMapGrids()
         {
-            MapGrids.Clear();
-            for (var i = 0; i < Globals.MapCount; i++)
+            lock (MapGridLock)
             {
-                if (Globals.GameMaps[i] == null) continue;
-                if (!MapGrids.Any())
+                MapGrids.Clear();
+                for (var i = 0; i < Globals.MapCount; i++)
                 {
-                    MapGrids.Add(new MapGrid(i, 0));
-                }
-                else
-                {
-                    for (var y = 0; y < MapGrids.Count(); y++)
+                    if (Globals.GameMaps[i] == null) continue;
+                    if (!MapGrids.Any())
                     {
-                        if (!MapGrids[y].HasMap(i))
+                        MapGrids.Add(new MapGrid(i, 0));
+                    }
+                    else
+                    {
+                        for (var y = 0; y < MapGrids.Count(); y++)
                         {
-                            if (y != MapGrids.Count() - 1) continue;
-                            MapGrids.Add(new MapGrid(i, MapGrids.Count()));
-                        }
-                        else
-                        {
-                            break;
+                            if (!MapGrids[y].HasMap(i))
+                            {
+                                if (y != MapGrids.Count() - 1) continue;
+                                MapGrids.Add(new MapGrid(i, MapGrids.Count()));
+                                break;
+                            }
+                            else
+                            {
+                                break;
+                            }
                         }
                     }
                 }
-            }
-            for (var i = 0; i < Globals.MapCount; i++)
-            {
-                if (Globals.GameMaps[i] == null) continue;
-                Globals.GameMaps[i].SurroundingMaps.Clear();
-                var myGrid = Globals.GameMaps[i].MapGrid;
-                for (var x = Globals.GameMaps[i].MapGridX - 1; x <= Globals.GameMaps[i].MapGridX + 1; x++)
+                for (var i = 0; i < Globals.MapCount; i++)
                 {
-                    for (var y = Globals.GameMaps[i].MapGridY - 1; y <= Globals.GameMaps[i].MapGridY + 1; y++)
+                    if (Globals.GameMaps[i] == null) continue;
+                    Globals.GameMaps[i].SurroundingMaps.Clear();
+                    var myGrid = Globals.GameMaps[i].MapGrid;
+                    for (var x = Globals.GameMaps[i].MapGridX - 1; x <= Globals.GameMaps[i].MapGridX + 1; x++)
                     {
-                        if ((x == Globals.GameMaps[i].MapGridX) && (y == Globals.GameMaps[i].MapGridY))
-                            continue;
-                        if (x >= MapGrids[myGrid].XMin && x < MapGrids[myGrid].XMax && y >= MapGrids[myGrid].YMin && y < MapGrids[myGrid].YMax &&  MapGrids[myGrid].MyGrid[x, y] > -1)
+                        for (var y = Globals.GameMaps[i].MapGridY - 1; y <= Globals.GameMaps[i].MapGridY + 1; y++)
                         {
-                            Globals.GameMaps[i].SurroundingMaps.Add(MapGrids[myGrid].MyGrid[x, y]);
+                            if ((x == Globals.GameMaps[i].MapGridX) && (y == Globals.GameMaps[i].MapGridY))
+                                continue;
+                            if (x >= MapGrids[myGrid].XMin && x < MapGrids[myGrid].XMax && y >= MapGrids[myGrid].YMin &&
+                                y < MapGrids[myGrid].YMax && MapGrids[myGrid].MyGrid[x, y] > -1)
+                            {
+                                Globals.GameMaps[i].SurroundingMaps.Add(MapGrids[myGrid].MyGrid[x, y]);
+                            }
                         }
                     }
                 }
@@ -1585,7 +1584,7 @@ namespace Intersect_Server.Classes
                 MapStructure.Load(myBuffer);
                 for (int i = 0; i < Globals.GameMaps.Length; i++)
                 {
-                    if (Globals.GameMaps[i] != null)
+                    if (MapHelper.IsMapValid(i))
                     {
                         if (MapStructure.FindMap(i) == null)
                         {
@@ -1600,7 +1599,7 @@ namespace Intersect_Server.Classes
             {
                 for (int i = 0; i < Globals.GameMaps.Length; i++)
                 {
-                    if (Globals.GameMaps[i].Deleted == 0)
+                    if (MapHelper.IsMapValid(i))
                     {
                         MapStructure.AddMap(i);
                     }

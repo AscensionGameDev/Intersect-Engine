@@ -135,6 +135,13 @@ namespace Intersect_Server.Classes
             Experience,
             ProjectileSpawnDead,
             SendAlert,
+            HoldPlayer,
+            ReleasePlayer,
+            SendPlayAnimation,
+            PlayMusic,
+            FadeMusic,
+            PlaySound,
+            StopSounds,
         }
 
         public enum Stats

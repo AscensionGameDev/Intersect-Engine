@@ -29,7 +29,7 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmGridView));
             this.gridContainer = new System.Windows.Forms.Panel();
             this.mapGridView = new System.Windows.Forms.DataGridView();
@@ -43,6 +43,7 @@
             this.mapMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.unlinkMapToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.linkMapToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.btnScreenshotWorld = new System.Windows.Forms.ToolStripButton();
             this.gridContainer.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.mapGridView)).BeginInit();
             this.toolStrip1.SuspendLayout();
@@ -67,14 +68,14 @@
             this.mapGridView.AllowUserToResizeRows = false;
             this.mapGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
             this.mapGridView.ColumnHeadersVisible = false;
-            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle3.ForeColor = System.Drawing.Color.White;
-            dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.mapGridView.DefaultCellStyle = dataGridViewCellStyle3;
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle1.ForeColor = System.Drawing.Color.White;
+            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.mapGridView.DefaultCellStyle = dataGridViewCellStyle1;
             this.mapGridView.EditMode = System.Windows.Forms.DataGridViewEditMode.EditProgrammatically;
             this.mapGridView.Location = new System.Drawing.Point(0, 28);
             this.mapGridView.MultiSelect = false;
@@ -99,7 +100,8 @@
             this.toolStripSeparator2,
             this.cmbZoom,
             this.toolStripSeparator1,
-            this.btnFetchPreview});
+            this.btnFetchPreview,
+            this.btnScreenshotWorld});
             this.toolStrip1.Location = new System.Drawing.Point(0, 0);
             this.toolStrip1.Name = "toolStrip1";
             this.toolStrip1.Size = new System.Drawing.Size(784, 25);
@@ -167,21 +169,30 @@
             this.unlinkMapToolStripMenuItem,
             this.linkMapToolStripMenuItem});
             this.mapMenuStrip.Name = "mapMenuStrip";
-            this.mapMenuStrip.Size = new System.Drawing.Size(153, 70);
+            this.mapMenuStrip.Size = new System.Drawing.Size(136, 48);
             // 
             // unlinkMapToolStripMenuItem
             // 
             this.unlinkMapToolStripMenuItem.Name = "unlinkMapToolStripMenuItem";
-            this.unlinkMapToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.unlinkMapToolStripMenuItem.Size = new System.Drawing.Size(135, 22);
             this.unlinkMapToolStripMenuItem.Text = "Unlink Map";
             this.unlinkMapToolStripMenuItem.Click += new System.EventHandler(this.unlinkMapToolStripMenuItem_Click);
             // 
             // linkMapToolStripMenuItem
             // 
             this.linkMapToolStripMenuItem.Name = "linkMapToolStripMenuItem";
-            this.linkMapToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.linkMapToolStripMenuItem.Size = new System.Drawing.Size(135, 22);
             this.linkMapToolStripMenuItem.Text = "Link Map";
-            this.linkMapToolStripMenuItem.Click += new System.EventHandler(this.linkMapToolStripMenuItem_Click);
+            // 
+            // btnScreenshotWorld
+            // 
+            this.btnScreenshotWorld.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.btnScreenshotWorld.Image = ((System.Drawing.Image)(resources.GetObject("btnScreenshotWorld.Image")));
+            this.btnScreenshotWorld.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.btnScreenshotWorld.Name = "btnScreenshotWorld";
+            this.btnScreenshotWorld.Size = new System.Drawing.Size(23, 22);
+            this.btnScreenshotWorld.Text = "toolStripButton1";
+            this.btnScreenshotWorld.Click += new System.EventHandler(this.btnScreenshotWorld_Click);
             // 
             // frmGridView
             // 
@@ -196,6 +207,7 @@
             this.Name = "frmGridView";
             this.Text = "Grid Viewer";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.frmGridView_FormClosing);
+            this.SizeChanged += new System.EventHandler(this.frmGridView_ResizeEnd);
             this.gridContainer.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.mapGridView)).EndInit();
             this.toolStrip1.ResumeLayout(false);
@@ -220,5 +232,6 @@
         private System.Windows.Forms.ContextMenuStrip mapMenuStrip;
         private System.Windows.Forms.ToolStripMenuItem unlinkMapToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem linkMapToolStripMenuItem;
+        private System.Windows.Forms.ToolStripButton btnScreenshotWorld;
     }
 }

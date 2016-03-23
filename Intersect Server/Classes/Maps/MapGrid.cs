@@ -23,6 +23,8 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using Intersect_Server.Classes.Maps;
+
 namespace Intersect_Server.Classes
 {
 	public class MapGrid
@@ -94,19 +96,19 @@ namespace Intersect_Server.Classes
             if (y < _topLeft.Y) {_topLeft.Y = y;}
             if (x > _botRight.X) {_botRight.X = x;}
             if (y > _botRight.Y) { _botRight.Y = y;}
-            if (map.Up > -1 && map.Up < Globals.GameMaps.Length && Globals.GameMaps[map.Up] != null && Globals.GameMaps[map.Up].Deleted == 0 && Globals.GameMaps[map.Up].Down == map.MyMapNum)
+            if (MapHelper.IsMapValid(map.Up) && Globals.GameMaps[map.Up].Down == map.MyMapNum)
             {
                 CalculateBounds(Globals.GameMaps[map.Up], x, y - 1);
             }
-            if (map.Down > -1 && map.Down < Globals.GameMaps.Length && Globals.GameMaps[map.Down] != null && Globals.GameMaps[map.Down].Deleted == 0 && Globals.GameMaps[map.Down].Up == map.MyMapNum)
+            if (MapHelper.IsMapValid(map.Down) && Globals.GameMaps[map.Down].Up == map.MyMapNum)
             {
                 CalculateBounds(Globals.GameMaps[map.Down], x, y + 1);
             }
-            if (map.Left > -1 && map.Left < Globals.GameMaps.Length && Globals.GameMaps[map.Left] != null && Globals.GameMaps[map.Left].Deleted == 0 && Globals.GameMaps[map.Left].Right == map.MyMapNum)
+            if (MapHelper.IsMapValid(map.Left) && Globals.GameMaps[map.Left].Right == map.MyMapNum)
             {
                 CalculateBounds(Globals.GameMaps[map.Left], x - 1, y);
             }
-            if (map.Right > -1 && map.Right < Globals.GameMaps.Length && Globals.GameMaps[map.Right] != null && Globals.GameMaps[map.Right].Deleted == 0 && Globals.GameMaps[map.Right].Left == map.MyMapNum)
+            if (MapHelper.IsMapValid(map.Right) && Globals.GameMaps[map.Right].Left == map.MyMapNum)
             {
                 CalculateBounds(Globals.GameMaps[map.Right], x + 1, y);
             }

@@ -117,7 +117,8 @@ namespace Intersect_Client.Classes.Game_Objects
         private bool infiniteLoop = false;
         private bool showLower = true;
         private bool showUpper = true;
-        public AnimationInstance(AnimationStruct animBase, bool loopForever)
+        public bool AutoRotate = false;
+        public AnimationInstance(AnimationStruct animBase, bool loopForever, bool autoRotate = false)
         {
             myBase = animBase;
             lowerLoop = animBase.LowerAnimLoopCount;
@@ -125,6 +126,7 @@ namespace Intersect_Client.Classes.Game_Objects
             lowerTimer = Globals.System.GetTimeMS() + animBase.LowerAnimFrameSpeed;
             upperTimer = Globals.System.GetTimeMS() + animBase.UpperAnimFrameSpeed;
             infiniteLoop = loopForever;
+            AutoRotate = autoRotate;
             GameGraphics.LiveAnimations.Add(this);
         }
 
@@ -224,7 +226,7 @@ namespace Intersect_Client.Classes.Game_Objects
         {
             _renderX = x;
             _renderY = y;
-            _renderDir = dir;
+            if (dir > -1) _renderDir = dir;
         }
 
         public void Update()
@@ -272,6 +274,11 @@ namespace Intersect_Client.Classes.Game_Objects
                 }
                 upperTimer = Globals.System.GetTimeMS() + myBase.UpperAnimFrameSpeed;
             }
+        }
+
+        public void SetDir(int dir)
+        {
+            _renderDir = dir;
         }
     }
 }

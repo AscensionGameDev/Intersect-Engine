@@ -522,17 +522,21 @@ namespace Intersect_Server.Classes
         {
             int X = 0;
             int Y = 0;
-            int Z = 0;
-            if (
-                Spawns[i].NpcNum < 0 || Globals.GameNpcs[Spawns[i].NpcNum].Sprite == "None" ||
+            int dir = 0;
+            if (Spawns[i].NpcNum < 0 || Globals.GameNpcs[Spawns[i].NpcNum].Sprite == "None" ||
                 Globals.GameNpcs[Spawns[i].NpcNum].Name == "") return;
-            int index = Globals.FindOpenEntity();
-            Globals.Entities[index] = new Npc(index, Globals.GameNpcs[Spawns[i].NpcNum]);
-            Spawns[i].Entity = Globals.Entities[index];
+
+            if (Spawns[i].Dir >= 0)
+            {
+                dir = Spawns[i].Dir;
+            }
+            else
+            {
+                dir = Globals.Rand.Next(0, 4);
+            }
             if (Spawns[i].X >= 0 && Spawns[i].Y >= 0)
             {
-                ((Npc)Globals.Entities[index]).CurrentX = Spawns[i].X;
-                ((Npc)Globals.Entities[index]).CurrentY = Spawns[i].Y;
+                Spawns[i].Entity = SpawnNpc(Spawns[i].X, Spawns[i].Y,dir, Spawns[i].NpcNum);
             }
             else
             {
@@ -547,32 +551,33 @@ namespace Intersect_Server.Classes
                     X = 0;
                     Y = 0;
                 }
-                ((Npc)Globals.Entities[index]).CurrentX = X;
-                ((Npc)Globals.Entities[index]).CurrentY = Y;
+                Spawns[i].Entity = SpawnNpc(X, Y,dir, Spawns[i].NpcNum);
             }
-            if (Spawns[i].Dir >= 0)
-            {
-                ((Npc)Globals.Entities[index]).Dir = Spawns[i].Dir;
-            }
-            else
-            {
-                ((Npc)Globals.Entities[index]).Dir = Globals.Rand.Next(0, 4);
-            }
-            ((Npc)Globals.Entities[index]).CurrentMap = MyMapNum;
+        }
+
+        public Entity SpawnNpc(int tileX, int tileY, int dir, int npcNum)
+        {
+            int index = Globals.FindOpenEntity();
+            int Z = 0;
+            Globals.Entities[index] = new Npc(index,Globals.GameNpcs[npcNum]);
+            Globals.Entities[index].CurrentMap = MyMapNum;
+            Globals.Entities[index].CurrentX = tileX;
+            Globals.Entities[index].CurrentY = tileY;
 
             //Give NPC Drops
             for (int n = 0; n < Constants.MaxNpcDrops; n++)
             {
-                if (Globals.Rand.Next(1, 101) <= Globals.GameNpcs[Spawns[i].NpcNum].Drops[n].Chance)
+                if (Globals.Rand.Next(1, 101) <= Globals.GameNpcs[npcNum].Drops[n].Chance)
                 {
-                    Globals.Entities[index].Inventory[Z].ItemNum = Globals.GameNpcs[Spawns[i].NpcNum].Drops[n].ItemNum;
-                    Globals.Entities[index].Inventory[Z].ItemVal = Globals.GameNpcs[Spawns[i].NpcNum].Drops[n].Amount;
+                    Globals.Entities[index].Inventory[Z].ItemNum = Globals.GameNpcs[npcNum].Drops[n].ItemNum;
+                    Globals.Entities[index].Inventory[Z].ItemVal = Globals.GameNpcs[npcNum].Drops[n].Amount;
                     Z = Z + 1;
                 }
             }
 
             Entities.Add((Npc)Globals.Entities[index]);
             PacketSender.SendEntityDataToProximity(index, (int)Enums.EntityTypes.GlobalEntity, Globals.Entities[index].Data(), Globals.Entities[index]);
+            return (Npc) Globals.Entities[index];
         }
 
         //Events
@@ -846,6 +851,12 @@ namespace Intersect_Server.Classes
                 Save();
             }
         }
+
+
+
+
+
+
     }
 
     #region "Extra Classes - Just for maps"

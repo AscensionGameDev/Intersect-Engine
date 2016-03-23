@@ -165,7 +165,7 @@ namespace Intersect_Editor.Forms
             }
             else
             {
-                MyEvent = new EventStruct(MyEvent.MyIndex,_eventBackup);
+                MyEvent = new EventStruct(MyEvent.MyIndex, _eventBackup);
             }
             Hide();
             Dispose();
@@ -461,7 +461,7 @@ namespace Intersect_Editor.Forms
                     output += ")";
                     return output;
                 case EventCommandType.SetSelfSwitch:
-                    return "Set Self Switch " + (char)('A' + command.Ints[0]) +  " to " + Convert.ToBoolean(command.Ints[1]);
+                    return "Set Self Switch " + (char)('A' + command.Ints[0]) + " to " + Convert.ToBoolean(command.Ints[1]);
                 case EventCommandType.ConditionalBranch:
                     return "Conditional Branch: [" + GetConditionalDesc(command) + "]";
                 case EventCommandType.ExitEventProcess:
@@ -502,7 +502,7 @@ namespace Intersect_Editor.Forms
                     {
                         output += "Take: ";
                     }
-                    output += "Item #" + (command.Ints[1] + 1) + " " + Globals.GameItems[command.Ints[1]].Name + " x" + command.Ints[2] +"]";
+                    output += "Item #" + (command.Ints[1] + 1) + " " + Globals.GameItems[command.Ints[1]].Name + " x" + command.Ints[2] + "]";
                     return output;
                 case EventCommandType.ChangeSprite:
                     return "Set Player Sprite to " + command.Strs[0];
@@ -555,51 +555,37 @@ namespace Intersect_Editor.Forms
                     return output + "NOT FOUND]";
                 case EventCommandType.SetMoveRoute:
                     output += "Set Move Route for ";
-                    if (command.Route.Target == -1)
+                    if (MyMap.Events.Count > command.Route.Target && command.Route.Target > -1)
                     {
-                        return output + "Player...";
-                    }
-                    else
-                    {
-                        if (MyMap.Events.Count > command.Route.Target)
+                        if (MyMap.Events[command.Route.Target].Deleted == 0)
                         {
-                            if (MyMap.Events[command.Route.Target].Deleted == 0)
-                            {
-                                return output + "Event #" + (command.Route.Target + 1) + " " + MyMap.Events[command.Route.Target].MyName;
-                            }
-                            else
-                            {
-                                return output + "Deleted Event!";
-                            }
+                            return output + "Event #" + (command.Route.Target + 1) + " " + MyMap.Events[command.Route.Target].MyName;
                         }
                         else
                         {
-                            return output + "Invalid Event";
+                            return output + "Deleted Event!";
                         }
+                    }
+                    else
+                    {
+                        return output + "Invalid Event";
                     }
                 case EventCommandType.WaitForRouteCompletion:
                     output += "Wait for Move Route Completion of ";
-                    if (command.Ints[0] == -1)
+                    if (MyMap.Events.Count > command.Ints[0] && command.Ints[0] > -1)
                     {
-                        return output += "Player";
-                    }
-                    else
-                    {
-                        if (MyMap.Events.Count > command.Ints[0])
+                        if (MyMap.Events[command.Ints[0]].Deleted == 0)
                         {
-                            if (MyMap.Events[command.Ints[0]].Deleted == 0)
-                            {
-                                return output + "Event #" + (command.Ints[0] + 1) + " " + MyMap.Events[command.Ints[0]].MyName;
-                            }
-                            else
-                            {
-                                return output + "Deleted Event!";
-                            }
+                            return output + "Event #" + (command.Ints[0] + 1) + " " + MyMap.Events[command.Ints[0]].MyName;
                         }
                         else
                         {
-                            return output + "Invalid Event";
+                            return output + "Deleted Event!";
                         }
+                    }
+                    else
+                    {
+                        return output + "Invalid Event";
                     }
                 case EventCommandType.HoldPlayer:
                     return "Hold Player";
@@ -685,7 +671,7 @@ namespace Intersect_Editor.Forms
                         case 1: //On/Around Entity
                             if (command.Ints[2] == -1)
                             {
-                                return output += "On Player" + " [X Offset: " + command.Ints[3] + " Y Offset: " + command.Ints[4] + " Retain Direction: " + Convert.ToBoolean(command.Ints[5]).ToString() + "]";
+                                output += "On Player" + " [X Offset: " + command.Ints[3] + " Y Offset: " + command.Ints[4];
                             }
                             else
                             {
@@ -693,18 +679,33 @@ namespace Intersect_Editor.Forms
                                 {
                                     if (MyMap.Events[command.Ints[2]].Deleted == 0)
                                     {
-                                        return output + "On Event #" + (command.Ints[2] + 1) + " " + MyMap.Events[command.Ints[2]].MyName + " [X Offset: " + command.Ints[3] + " Y Offset: " + command.Ints[4] + " Retain Direction: " + Convert.ToBoolean(command.Ints[5]).ToString() + "]";
+                                        output += "On Event #" + (command.Ints[2] + 1) + " " + MyMap.Events[command.Ints[2]].MyName + " [X Offset: " + command.Ints[3] + " Y Offset: " + command.Ints[4];
                                     }
                                     else
                                     {
-                                        return output + "On Deleted Event!" + " [X Offset: " + command.Ints[3] + " Y Offset: " + command.Ints[4] + " Retain Direction: " + Convert.ToBoolean(command.Ints[5]).ToString() + "]";
+                                        output += "On Deleted Event!" + " [X Offset: " + command.Ints[3] + " Y Offset: " + command.Ints[4];
                                     }
                                 }
                                 else
                                 {
-                                    return output + "On Invalid Event" + " [X Offset: " + command.Ints[3] + " Y Offset: " + command.Ints[4] + " Retain Direction: " + Convert.ToBoolean(command.Ints[5]).ToString() + "]";
+                                    output += "On Invalid Event" + " [X Offset: " + command.Ints[3] + " Y Offset: " + command.Ints[4];
                                 }
                             }
+                            switch (command.Ints[5])
+                            {
+                                //0 does not adhere to direction, 1 is Spawning Relative to Direction, 2 is Rotating Relative to Direction, and 3 is both.
+                                case 1:
+                                    output += " (Spawn Relative To Direction)";
+                                    break;
+                                case 2:
+                                    output += " (Rotate Relative To Direction)";
+                                    break;
+                                case 3:
+                                    output += " (Spawn and Rotate Relative To Direction)";
+                                    break;
+                            }
+                            output += "]";
+                            return output;
                     }
                     return output;
                 case EventCommandType.PlayBgm:
@@ -724,7 +725,6 @@ namespace Intersect_Editor.Forms
                 default:
                     return "Unknown Command";
             }
-            return "Unknown Command";
         }
 
         private string GetConditionalDesc(EventCommand command)
@@ -843,7 +843,7 @@ namespace Intersect_Editor.Forms
                     cmdWindow = new EventCommand_Switch(command, this);
                     break;
                 case EventCommandType.SetVariable:
-                    cmdWindow = new EventCommand_Variable(command,this);
+                    cmdWindow = new EventCommand_Variable(command, this);
                     break;
                 case EventCommandType.SetSelfSwitch:
                     cmdWindow = new EventCommand_SelfSwitch(command, this);
@@ -858,7 +858,7 @@ namespace Intersect_Editor.Forms
                     cmdWindow = new EventCommand_Label(command, this);
                     break;
                 case EventCommandType.GoToLabel:
-                    cmdWindow = new EventCommand_GotoLabel(command,this);
+                    cmdWindow = new EventCommand_GotoLabel(command, this);
                     break;
                 case EventCommandType.RestoreHp:
                     //No editor
@@ -876,19 +876,19 @@ namespace Intersect_Editor.Forms
                     cmdWindow = new EventCommand_ChangeLevel(command, this);
                     break;
                 case EventCommandType.ChangeSpells:
-                    cmdWindow = new EventCommand_ChangeSpells(command,CurrentPage,this);
+                    cmdWindow = new EventCommand_ChangeSpells(command, CurrentPage, this);
                     break;
                 case EventCommandType.ChangeItems:
-                    cmdWindow = new EventCommand_ChangeItems(command,CurrentPage,this);
+                    cmdWindow = new EventCommand_ChangeItems(command, CurrentPage, this);
                     break;
                 case EventCommandType.ChangeSprite:
-                    cmdWindow = new EventCommand_ChangeSprite(command,this);
+                    cmdWindow = new EventCommand_ChangeSprite(command, this);
                     break;
                 case EventCommandType.ChangeFace:
                     cmdWindow = new EventCommand_ChangeFace(command, this);
                     break;
                 case EventCommandType.ChangeGender:
-                    cmdWindow = new EventCommand_ChangeGender(command,this);
+                    cmdWindow = new EventCommand_ChangeGender(command, this);
                     break;
                 case EventCommandType.SetAccess:
                     cmdWindow = new EventCommand_SetAccess(command, this);
@@ -917,7 +917,7 @@ namespace Intersect_Editor.Forms
                     cmdWindow = new EventCommand_PlayAnimation(this, _currentMap, MyEvent, command);
                     break;
                 case EventCommandType.PlayBgm:
-                    cmdWindow = new EventCommand_PlayBgm(command,this);
+                    cmdWindow = new EventCommand_PlayBgm(command, this);
                     break;
                 case EventCommandType.FadeoutBgm:
                     break;
@@ -927,7 +927,7 @@ namespace Intersect_Editor.Forms
                 case EventCommandType.StopSounds:
                     break;
                 case EventCommandType.Wait:
-                    cmdWindow = new EventCommand_Wait(command,this);
+                    cmdWindow = new EventCommand_Wait(command, this);
                     break;
                 case EventCommandType.OpenBank:
                     break;
@@ -938,7 +938,7 @@ namespace Intersect_Editor.Forms
             }
             if (cmdWindow != null)
             {
-                if (cmdWindow.GetType() == typeof (Event_MoveRouteDesigner))
+                if (cmdWindow.GetType() == typeof(Event_MoveRouteDesigner))
                 {
                     this.Controls.Add(cmdWindow);
                     cmdWindow.Width = this.ClientSize.Width;
@@ -971,7 +971,7 @@ namespace Intersect_Editor.Forms
             {
                 grpCreateCommands.Hide();
                 grpCreateCommands.Controls.RemoveAt(0);
-                    //Remove the only control which should be the last editing window
+                //Remove the only control which should be the last editing window
             }
             ListPageCommands();
             ListPageConditions();
@@ -1005,7 +1005,7 @@ namespace Intersect_Editor.Forms
                 grpCreateCommands.Hide();
                 grpCreateCommands.Controls.RemoveAt(0);
 
-                
+
             }
             ListPageCommands();
             EnableButtons();
@@ -1050,7 +1050,7 @@ namespace Intersect_Editor.Forms
         }
         #endregion
 
-        
+
         /// <summary>
         /// Takes a string and a length value. If the string is longer than the length it will cut the string and add a ..., otherwise it will return the original string.
         /// </summary>
@@ -1093,7 +1093,7 @@ namespace Intersect_Editor.Forms
         }
         private void btnSetRoute_Click(object sender, EventArgs e)
         {
-            Event_MoveRouteDesigner moveRouteDesigner = new Event_MoveRouteDesigner(this, _currentMap,MyEvent, CurrentPage.MoveRoute);
+            Event_MoveRouteDesigner moveRouteDesigner = new Event_MoveRouteDesigner(this, _currentMap, MyEvent, CurrentPage.MoveRoute);
             this.Controls.Add(moveRouteDesigner);
             moveRouteDesigner.BringToFront();
             moveRouteDesigner.Size = this.ClientSize;
@@ -1185,7 +1185,7 @@ namespace Intersect_Editor.Forms
             if (i <= -1 || i >= lstEventCommands.Items.Count) return;
             if (!_commandProperties[i].Editable) return;
             lstEventCommands.SelectedIndex = i;
-            commandMenu.Show((ListBox) sender, e.Location);
+            commandMenu.Show((ListBox)sender, e.Location);
             if (_commandProperties[i].Type != null)
             {
                 btnEdit.Enabled = true;
@@ -1280,7 +1280,7 @@ namespace Intersect_Editor.Forms
             UpdateEventPreview();
         }
 
-        
+
         private void lstCommands_SelectedIndexChanged(object sender, EventArgs e)
         {
         }
@@ -1321,7 +1321,7 @@ namespace Intersect_Editor.Forms
         {
             MyEvent.MyPages.Add(new EventPage());
             UpdateTabControl();
-            LoadPage(MyEvent.MyPages.Count-1);
+            LoadPage(MyEvent.MyPages.Count - 1);
         }
 
         private void UpdateTabControl()
@@ -1329,7 +1329,7 @@ namespace Intersect_Editor.Forms
             tabControl.TabPages.Clear();
             for (int i = 0; i < MyEvent.MyPages.Count(); i++)
             {
-                tabControl.TabPages.Add((i+1).ToString());
+                tabControl.TabPages.Add((i + 1).ToString());
             }
         }
 

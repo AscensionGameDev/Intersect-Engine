@@ -24,6 +24,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Drawing;
 using System.IO;
+using Intersect_Server.Classes.Maps;
 
 namespace Intersect_Server.Classes
 {
@@ -32,7 +33,7 @@ namespace Intersect_Server.Classes
 
         public static void SendDataToMap(int mapNum, byte[] data)
         {
-            if (mapNum < 0 || mapNum >= Globals.GameMaps.Length || Globals.GameMaps[mapNum] == null) { return; }
+            if (!MapHelper.IsMapValid(mapNum)) { return; }
             List<int> Players = Globals.GameMaps[mapNum].GetPlayersOnMap();
             for (int i = 0; i < Players.Count; i++)
             {
@@ -41,7 +42,7 @@ namespace Intersect_Server.Classes
         }
         public static void SendDataToProximity(int mapNum, byte[] data)
         {
-            if (mapNum < 0 || mapNum >= Globals.GameMaps.Length || Globals.GameMaps[mapNum] == null) { return; }
+            if (!MapHelper.IsMapValid(mapNum)) { return; }
             SendDataToMap(mapNum, data);
             for (int i = 0; i < Globals.GameMaps[mapNum].SurroundingMaps.Count; i++)
             {
@@ -1045,6 +1046,75 @@ namespace Intersect_Server.Classes
             client.SendPacket(bf.ToArray());
             bf.Dispose();
         }
+
+        public static void SendAnimationToProximity(int animNum, int targetType, int map, int x, int y, int direction)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteLong((int)Enums.ServerPackets.SendPlayAnimation);
+            bf.WriteInteger(animNum);
+            bf.WriteInteger(targetType);
+            bf.WriteInteger(map);
+            bf.WriteInteger(x);
+            bf.WriteInteger(y);
+            bf.WriteInteger(direction);
+            SendDataToProximity(map, bf.ToArray());
+            bf.Dispose();
+        }
+
+        public static void SendHoldPlayer(Client client, int eventMap, int eventIndex)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteLong((int)Enums.ServerPackets.HoldPlayer);
+            bf.WriteInteger(eventMap);
+            bf.WriteInteger(eventIndex);
+            client.SendPacket(bf.ToArray());
+            bf.Dispose();
+        }
+
+        public static void SendReleasePlayer(Client client, int eventMap, int eventIndex)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteLong((int)Enums.ServerPackets.ReleasePlayer);
+            bf.WriteInteger(eventMap);
+            bf.WriteInteger(eventIndex);
+            client.SendPacket(bf.ToArray());
+            bf.Dispose();
+        }
+
+        public static void SendPlayMusic(Client client, string bgm)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteLong((int)Enums.ServerPackets.PlayMusic);
+            bf.WriteString(bgm);
+            client.SendPacket(bf.ToArray());
+            bf.Dispose();
+        }
+
+        public static void SendFadeMusic(Client client)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteLong((int)Enums.ServerPackets.FadeMusic);
+            client.SendPacket(bf.ToArray());
+            bf.Dispose();
+        }
+
+        public static void SendPlaySound(Client client, string sound)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteLong((int)Enums.ServerPackets.PlaySound);
+            bf.WriteString(sound);
+            client.SendPacket(bf.ToArray());
+            bf.Dispose();
+        }
+
+        public static void SendStopSounds(Client client)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteLong((int)Enums.ServerPackets.StopSounds);
+            client.SendPacket(bf.ToArray());
+            bf.Dispose();
+        }
+
     }
 }
 

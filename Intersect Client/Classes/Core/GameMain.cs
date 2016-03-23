@@ -244,6 +244,15 @@ namespace Intersect_Client.Classes.Core
                 if (Globals.AnimFrame == 3) { Globals.AnimFrame = 0; }
                 _animTimer = Globals.System.GetTimeMS() + 500;
             }
+
+            //Remove Event Holds If Invalid
+            for (int i = 0; i < Globals.EventHolds.Count; i++)
+            {
+                if (!Globals.GameMaps.ContainsKey(Globals.EventHolds[i].MapNum))
+                {
+                    Globals.EventHolds.RemoveAt(i);
+                }
+            }
         }
 
         public static void JoinGame()

@@ -23,6 +23,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using Intersect_Server.Classes.Entities;
+using Intersect_Server.Classes.Maps;
 
 namespace Intersect_Server.Classes
 {
@@ -88,7 +89,7 @@ namespace Intersect_Server.Classes
                 }
                 if (CurrentMap > -1)
                 {
-                    if (CurrentMap >= Globals.GameMaps.Length || Globals.GameMaps[CurrentMap] == null)
+                    if (!MapHelper.IsMapValid(CurrentMap))
                     {
                         WarpToSpawn(true);
                     }
@@ -242,7 +243,7 @@ namespace Intersect_Server.Classes
         }
         public override void Warp(int newMap, int newX, int newY, int newDir)
         {
-            if (newMap < 0 || newMap >= Globals.GameMaps.Length || Globals.GameMaps[newMap] == null || Globals.GameMaps[newMap].Deleted == 1)
+            if (!MapHelper.IsMapValid(newMap))
             {
                 Globals.GeneralLogs.Add("Failed to warp player to new map -- warping to /spawn/.");
                 WarpToSpawn(true);
@@ -271,7 +272,7 @@ namespace Intersect_Server.Classes
         public void WarpToSpawn(bool sendWarp = false)
         {
             int map = 0, x = 0, y = 0;
-            if (Constants.SpawnMap >= 0 && Constants.SpawnMap < Globals.GameMaps.Length && Globals.GameMaps[Constants.SpawnMap] != null && Globals.GameMaps[Constants.SpawnMap].Deleted == 0)
+            if (MapHelper.IsMapValid(Constants.SpawnMap))
             {
                map = Constants.SpawnMap;
             }
@@ -279,7 +280,7 @@ namespace Intersect_Server.Classes
             {
                 for (int i = 0; i < Globals.GameMaps.Length; i++)
                 {
-                    if (Globals.GameMaps[i] != null && Globals.GameMaps[i].Deleted == 0)
+                    if (MapHelper.IsMapValid(i))
                     {
                         map = i;
                         break;

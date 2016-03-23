@@ -209,6 +209,7 @@ namespace Intersect_Server.Classes
         public int Target = -1;
         public bool RepeatRoute = false;
         public bool IgnoreIfBlocked = false;
+        public bool Complete = false;
         public List<MoveRouteAction> Actions = new List<MoveRouteAction>();
         public int ActionIndex = 0;
 
@@ -272,6 +273,8 @@ namespace Intersect_Server.Classes
         public void CopyFrom(EventMoveRoute route)
         {
             Target = route.Target;
+            Complete = false;
+            ActionIndex = 0;
             IgnoreIfBlocked = route.IgnoreIfBlocked;
             RepeatRoute = route.RepeatRoute;
             Actions.Clear();
@@ -328,6 +331,7 @@ namespace Intersect_Server.Classes
         Wait500,
         Wait1000,
         SetGraphic,
+        SetAnimation,
     }
 
     public class MoveRouteAction

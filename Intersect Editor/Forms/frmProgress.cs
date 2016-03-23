@@ -32,6 +32,10 @@ namespace Intersect_Editor.Forms
 {
     public partial class frmProgress : Form
     {
+        private string statusText;
+        private int progressVal;
+        private Boolean showCancelBtn;
+        private Boolean shouldClose;
         public frmProgress()
         {
             InitializeComponent();
@@ -43,10 +47,26 @@ namespace Intersect_Editor.Forms
         }
         public void SetProgress(string label, int progress, bool showCancel)
         {
-            lblStatus.Text = label;
-            progressBar.Value = progress;
-            btnCancel.Visible = showCancel;
+            statusText = label;
+            progressVal = progress;
+            showCancelBtn = showCancel;
             Application.DoEvents();
+        }
+
+        public void NotifyClose()
+        {
+            shouldClose = true;
+        }
+
+        private void tmrUpdater_Tick(object sender, EventArgs e)
+        {
+            lblStatus.Text = statusText;
+            progressBar.Value = progressVal;
+            btnCancel.Visible = showCancelBtn;
+            if (shouldClose)
+            {
+                Close();
+            }
         }
     }
 }

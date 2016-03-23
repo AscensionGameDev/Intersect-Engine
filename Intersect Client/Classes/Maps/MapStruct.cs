@@ -116,6 +116,7 @@ namespace Intersect_Client.Classes.Maps
 
         public List<int> LocalEntitiesToDispose = new List<int>();
         public Dictionary<int, Entity> LocalEntities = new Dictionary<int, Entity>();
+        public List<MapAnimationInstance> LocalAnimations = new List<MapAnimationInstance>(); 
 
         //Init
         public MapStruct(int mapNum, byte[] mapPacket)
@@ -220,7 +221,6 @@ namespace Intersect_Client.Classes.Maps
                     Lights.Add(new Light(bf));
                 }
                 MapLoaded = true;
-                Globals.ShouldUpdateLights = true;
                 Autotiles = new MapAutotiles(this);
                 Autotiles.InitAutotiles();
                 UpdateAdjacentAutotiles();
@@ -384,70 +384,6 @@ namespace Intersect_Client.Classes.Maps
 
             MapRendered = true;
         }
-        public void PreRenderMap1()
-        {
-            long ectime = Globals.System.GetTimeMS();
-            long creationTime = 0;
-            long renderingTime = 0;
-            long displayTime = 0;
-            for (var i = 0; i < 3; i++)
-            {
-                ectime = Globals.System.GetTimeMS();
-                if (LowerTextures[i] == null)
-                {
-                    while (!GameGraphics.GetMapTexture(ref LowerTextures[i]))
-                    {
-                        Thread.Sleep(10);
-                    }
-                }
-                if (UpperTextures[i] == null)
-                {
-                    while (!GameGraphics.GetMapTexture(ref UpperTextures[i]))
-                    {
-                        Thread.Sleep(10);
-                    }
-                }
-                if (PeakTextures[i] == null)
-                {
-                    while (!GameGraphics.GetMapTexture(ref PeakTextures[i]))
-                    {
-                        Thread.Sleep(10);
-                    }
-                }
-                creationTime += Globals.System.GetTimeMS() - ectime;
-                LowerTextures[i].Begin();
-                UpperTextures[i].Begin();
-                PeakTextures[i].Begin();
-                LowerTextures[i].Clear(Color.Transparent);
-                UpperTextures[i].Clear(Color.Transparent);
-                PeakTextures[i].Clear(Color.Transparent);
-
-                ectime = Globals.System.GetTimeMS();
-                for (var l = 0; l < Constants.LayerCount; l++)
-                {
-                    if (l < 3)
-                    {
-                        DrawMapLayer(LowerTextures[i], l, i);
-                    }
-                    else if (l == 3)
-                    {
-                        DrawMapLayer(UpperTextures[i], l, i);
-                    }
-                    else
-                    {
-                        DrawMapLayer(PeakTextures[i], l, i);
-                    }
-                }
-                renderingTime += Globals.System.GetTimeMS() - ectime;
-                ectime = Globals.System.GetTimeMS();
-                LowerTextures[i].End();
-                UpperTextures[i].End();
-                PeakTextures[i].End();
-                displayTime += Globals.System.GetTimeMS() - ectime;
-                ectime = Globals.System.GetTimeMS();
-            }
-            MapRendered = true;
-        }
         private void DrawAutoTile(int layerNum, float destX, float destY, int quarterNum, int x, int y, int forceFrame, GameRenderTexture tex)
         {
             int yOffset = 0, xOffset = 0;
@@ -544,6 +480,10 @@ namespace Intersect_Client.Classes.Maps
                 {
                     BackgroundSound = GameAudio.AddMapSound(Sound, -1, -1, MyMapNum, true, 10);
                 }
+                foreach (var anim in LocalAnimations)
+                {
+                    anim.Update();
+                }
                 foreach (var en in LocalEntities)
                 {
                     if (en.Value == null) continue;
@@ -571,6 +511,11 @@ namespace Intersect_Client.Classes.Maps
             {
                 en.ClearAnimations();
             }
+            foreach (MapAnimationInstance anim in LocalAnimations)
+            {
+                anim.Dispose();
+            }
+            LocalAnimations.Clear();
             for (int x = 0; x < Globals.Database.MapWidth; x++)
             {
                 for (int y = 0; y < Globals.Database.MapHeight; y++)
@@ -775,6 +720,15 @@ namespace Intersect_Client.Classes.Maps
             AttributeSounds.Clear();
         }
 
+        //Tile Animations
+        public void AddTileAnimation(int animNum, int tileX, int tileY, int dir = -1)
+        {
+            var anim = new MapAnimationInstance(Globals.GameAnimations[animNum], tileX, tileY, dir);
+            LocalAnimations.Add(anim);
+            anim.SetPosition(GetX() + tileX*Globals.Database.TileWidth + Globals.Database.TileWidth/2,
+                GetY() + tileY*Globals.Database.TileHeight + Globals.Database.TileHeight/2, dir);
+        }
+
         //Dispose
         public void Dispose(bool prep = true, bool killentities = true)
         {
@@ -835,6 +789,21 @@ namespace Intersect_Client.Classes.Maps
                 GameGraphics.LiveAnimations.Remove(animInstance);
             }
         }
+    }
+
+    public class MapAnimationInstance : AnimationInstance
+    {
+        private int _tileX = 0;
+        private int _tileY = 0;
+        private int _dir = -1;
+        public MapAnimationInstance(AnimationStruct animBase, int tileX, int tileY, int dir) : base(animBase,false)
+        {
+            _tileX = tileX;
+            _tileY = tileY;
+            _dir = dir;
+        }
+
+        
     }
 
     public class TileArray

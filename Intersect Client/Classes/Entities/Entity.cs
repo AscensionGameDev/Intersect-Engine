@@ -218,7 +218,15 @@ namespace Intersect_Client.Classes.Entities
             foreach (AnimationInstance animInstance in Animations)
             {
                 animInstance.Update();
-                animInstance.SetPosition((int)GetCenterPos().X, (int)GetCenterPos().Y, 0);
+                if (animInstance.AutoRotate)
+                {
+                    animInstance.SetPosition((int)GetCenterPos().X, (int)GetCenterPos().Y, Dir);
+                }
+                else
+                {
+                    animInstance.SetPosition((int)GetCenterPos().X, (int)GetCenterPos().Y, -1);
+                }
+                
             }
             _lastUpdate = Globals.System.GetTimeMS();
             return true;

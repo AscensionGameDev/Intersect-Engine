@@ -31,6 +31,9 @@ using Intersect_Editor.Classes;
 using Point = System.Drawing.Point;
 using System.Drawing;
 using System.IO;
+using System.Threading;
+using Hjg.Pngcs;
+using Microsoft.Win32.SafeHandles;
 
 namespace Intersect_Editor.Forms
 {
@@ -56,7 +59,7 @@ namespace Intersect_Editor.Forms
         {
             int size = 0;
             List<int> gridMaps = new List<int>();
-                gridWidth = (int)bf.ReadLong();
+            gridWidth = (int)bf.ReadLong();
             gridHeight = (int)bf.ReadLong();
             myGrid = new MapGridItem[gridWidth, gridHeight];
             mapGridView.AutoSize = true;
@@ -85,11 +88,11 @@ namespace Intersect_Editor.Forms
                         }
                         else
                         {
-                            myGrid[x, y] = new MapGridItem(num,bf.ReadString(),bf.ReadInteger());
-                            gridMaps.Add(myGrid[x,y].mapnum);
+                            myGrid[x, y] = new MapGridItem(num, bf.ReadString(), bf.ReadInteger());
+                            gridMaps.Add(myGrid[x, y].mapnum);
                             mapGridView.Rows[y + 1].Cells[x + 1].Style.BackColor = Color.Green;
                             mapGridView.Rows[y + 1].Cells[x + 1].ValueType = typeof(string);
-                            mapGridView.Rows[y + 1].Cells[x + 1].Value = myGrid[x,y].mapnum + ". " + myGrid[x,y].name;
+                            mapGridView.Rows[y + 1].Cells[x + 1].Value = myGrid[x, y].mapnum + ". " + myGrid[x, y].name;
                             if (mapGridView.Rows[y + 1].Cells[x + 1].Size.Width > size) size = mapGridView.Rows[y + 1].Cells[x + 1].Size.Width;
                         }
                     }
@@ -176,7 +179,7 @@ namespace Intersect_Editor.Forms
                     Globals.FetchingMapPreviews = true;
                     Globals.PreviewProgressForm = new frmProgress();
                     Globals.PreviewProgressForm.SetTitle("Fetching Map Previews");
-                    Globals.PreviewProgressForm.SetProgress("Fetching Maps: 0/" + maps.Count,0,false);
+                    Globals.PreviewProgressForm.SetProgress("Fetching Maps: 0/" + maps.Count, 0, false);
                     Globals.FetchCount = maps.Count;
                     Globals.MapsToFetch = maps;
                     for (int i = 0; i < maps.Count; i++)
@@ -201,9 +204,13 @@ namespace Intersect_Editor.Forms
             if (!Globals.InEditor) return;
             int size = 0;
             DataGridViewCellStyle style = mapGridView.DefaultCellStyle.Clone();
+            mapGridView.AutoSize = true;
             if (cmbZoom.SelectedIndex == 0)
             {
-                size = defaultSize;
+                mapGridView.AutoSize = false;
+                mapGridView.Width = this.Width;
+                mapGridView.Height = this.Height - toolStrip1.Height;
+                size = Math.Min((int)(Math.Floor(mapGridView.Height / (mapGridView.RowCount * ((float)(Globals.TileHeight * Globals.MapHeight) / (float)(Globals.TileWidth * Globals.MapWidth))))), mapGridView.Width / mapGridView.ColumnCount);
                 style.Font = new Font(style.Font.FontFamily, 8.25f, FontStyle.Bold);
             }
             else if (cmbZoom.SelectedIndex == 1)
@@ -292,9 +299,9 @@ namespace Intersect_Editor.Forms
                         {
                             int adjacentMap = -1;
                             //Check Left
-                            if (currentCellX > 1  && currentCellY != 0 && currentCellY -1 < gridHeight)
+                            if (currentCellX > 1 && currentCellY != 0 && currentCellY - 1 < gridHeight)
                             {
-                                if (myGrid[currentCellX - 2, currentCellY -1].mapnum > -1)
+                                if (myGrid[currentCellX - 2, currentCellY - 1].mapnum > -1)
                                     adjacentMap = myGrid[currentCellX - 2, currentCellY - 1].mapnum;
                             }
                             //Check Right
@@ -310,7 +317,7 @@ namespace Intersect_Editor.Forms
                                     adjacentMap = myGrid[currentCellX - 1, currentCellY - 2].mapnum;
                             }
                             //Check Down
-                            if (currentCellX != 0 && currentCellY < gridHeight && currentCellX -1 < gridWidth)
+                            if (currentCellX != 0 && currentCellY < gridHeight && currentCellX - 1 < gridWidth)
                             {
                                 if (myGrid[currentCellX - 1, currentCellY].mapnum > -1)
                                     adjacentMap = myGrid[currentCellX - 1, currentCellY].mapnum;
@@ -337,7 +344,7 @@ namespace Intersect_Editor.Forms
         private void LinkMapItem_Click(object sender, EventArgs e)
         {
             //Make sure the selected tile is adjacent to a map
-            int linkMap = (int) ((ToolStripItem) sender).Tag;
+            int linkMap = (int)((ToolStripItem)sender).Tag;
             int adjacentMap = -1;
             //Check Left
             if (currentCellX > 1 && currentCellY != 0 && currentCellY - 1 < gridHeight)
@@ -374,14 +381,141 @@ namespace Intersect_Editor.Forms
         {
             if (contextMap > -1)
             {
-                if (MessageBox.Show("Are you sure you want to unlink map " + contextMap + "?","Unlink Map",MessageBoxButtons.YesNo) == DialogResult.Yes)
+                if (MessageBox.Show("Are you sure you want to unlink map " + contextMap + "?", "Unlink Map", MessageBoxButtons.YesNo) == DialogResult.Yes)
                     PacketSender.SendUnlinkMap(contextMap);
             }
         }
 
-        private void linkMapToolStripMenuItem_Click(object sender, EventArgs e)
+        void ScreenshotWorld(string filename)
         {
+            int rowSize = (Globals.TileHeight * Globals.MapHeight);
+            int colSize = (Globals.MapWidth * Globals.TileWidth);
+            int cols = colSize * (mapGridView.ColumnCount - 2);
+            int rows = rowSize * (mapGridView.RowCount - 2);
+            Bitmap tmpBitmap = new Bitmap(colSize, rowSize);
+            string loadedBitmap = "";
+            Graphics g = Graphics.FromImage(tmpBitmap);
+            var png = new PngWriter(new FileStream(filename, FileMode.OpenOrCreate), new ImageInfo(cols, rows, 16, true));
 
+            //Generate one row at a time.
+            for (int y = 0; y < rows; y++)
+            {
+                int gridRow = (int)Math.Floor(y / (double)rowSize);
+                byte[] row = new byte[png.ImgInfo.Cols * 4];
+                for (int x = 1; x < mapGridView.ColumnCount - 1; x++)
+                {
+                    int gridCol = x;
+
+                    MapGridItem item = myGrid[gridCol - 1, gridRow];
+                    if (item.mapnum >= 0)
+                    {
+                        if (item.imagepath != "" && File.Exists(item.imagepath))
+                        {
+                            if (item.pngReader == null)
+                                item.pngReader = FileHelper.CreatePngReader(item.imagepath);
+                            ImageLine line = item.pngReader.ReadRow(y - (gridRow * rowSize));
+
+                            //Get the pixel color we need
+                            for (int x1 = (x - 1) * colSize; x1 < (x - 1) * colSize + colSize; x1++)
+                            {
+                                Color clr = Color.FromArgb(ImageLineHelper.GetPixelToARGB8(line, x1 - (x - 1) * colSize));
+                                row[x1 * 4] = clr.R;
+                                row[x1 * 4 + 1] = clr.G;
+                                row[x1 * 4 + 2] = clr.B;
+                                row[x1 * 4 + 3] = clr.A;
+                            }
+                        }
+                        else
+                        {
+                            for (int x1 = (x - 1) * colSize; x1 < (x - 1) * colSize + colSize; x1++)
+                            {
+                                row[x1 * 4] = 0;
+                                row[x1 * 4 + 1] = 255;
+                                row[x1 * 4 + 2] = 0;
+                                row[x1 * 4 + 3] = 255;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        for (int x1 = (x - 1) * colSize; x1 < (x - 1) * colSize + colSize; x1++)
+                        {
+                            row[x1 * 4] = Color.Gray.R;
+                            row[x1 * 4 + 1] = Color.Gray.G;
+                            row[x1 * 4 + 2] = Color.Gray.B;
+                            row[x1 * 4 + 3] = Color.Gray.A;
+                        }
+                    }
+                }
+                png.WriteRowByte(row, y);
+                Globals.PreviewProgressForm.SetProgress("Saving Row: " + y + "/" + rows, (int)((y / (float)rows) * 100), false);
+                Application.DoEvents();
+            }
+            png.End();
+            Globals.PreviewProgressForm.NotifyClose();
+        }
+
+        private void frmGridView_ResizeEnd(object sender, EventArgs e)
+        {
+            if (cmbZoom.SelectedIndex == 0) cmbZoom_SelectedIndexChanged(null, null);
+        }
+
+        private void btnScreenshotWorld_Click(object sender, EventArgs e)
+        {
+            //Get a list of maps without images.
+            List<int> maps = new List<int>();
+            for (int x = 0; x < gridWidth; x++)
+            {
+                for (int y = 0; y < gridHeight; y++)
+                {
+                    if (myGrid[x, y].mapnum > -1 && !File.Exists(myGrid[x, y].imagepath))
+                    {
+                        maps.Add(myGrid[x, y].mapnum);
+                    }
+                }
+            }
+            if (maps.Count > 0)
+            {
+                if (
+                    MessageBox.Show(
+                        "Are you sure you want to fetch previews for each map? This is required before a screenshot can be taken!",
+                        "Fetch Preview?", MessageBoxButtons.YesNo) == System.Windows.Forms.DialogResult.Yes)
+                {
+                    Globals.FetchingMapPreviews = true;
+                    Globals.PreviewProgressForm = new frmProgress();
+                    Globals.PreviewProgressForm.SetTitle("Fetching Map Previews");
+                    Globals.PreviewProgressForm.SetProgress("Fetching Maps: 0/" + maps.Count, 0, false);
+                    Globals.FetchCount = maps.Count;
+                    Globals.MapsToFetch = maps;
+                    for (int i = 0; i < maps.Count; i++)
+                    {
+                        PacketSender.SendNeedMap(maps[i]);
+                    }
+                    Globals.PreviewProgressForm.ShowDialog();
+                }
+                else
+                {
+                    return;
+                }
+            }
+            SaveFileDialog fileDialog = new SaveFileDialog();
+            fileDialog.Filter = "Png Image|*.png|JPeg Image|*.jpg|Bitmap Image|*.bmp|Gif Image|*.gif";
+            fileDialog.Title = "Save a screenshot of the world";
+            fileDialog.ShowDialog();
+            if (fileDialog.FileName != "")
+            {
+                if (
+                    MessageBox.Show(
+                        "Are you sure you want to save a screenshot of your world to a file? This could take several minutes!",
+                        "Save Screenshot?", MessageBoxButtons.YesNo) == System.Windows.Forms.DialogResult.Yes)
+                {
+                    Globals.PreviewProgressForm = new frmProgress();
+                    Globals.PreviewProgressForm.SetTitle("Saving Screenshot");
+                    Thread screenShotThread = new Thread(() => ScreenshotWorld(fileDialog.FileName));
+                    screenShotThread.Start();
+                    Globals.PreviewProgressForm.ShowDialog();
+                }
+            }
         }
     }
 
@@ -391,6 +525,7 @@ namespace Intersect_Editor.Forms
         public int revision { get; set; }
         public int mapnum { get; set; }
         public string imagepath { get; set; }
+        public PngReader pngReader { get; set; }
         public MapGridItem(int num, string name = "", int revision = 0)
         {
             this.mapnum = num;

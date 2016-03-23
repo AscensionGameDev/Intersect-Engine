@@ -28,56 +28,57 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.ListViewGroup listViewGroup31 = new System.Windows.Forms.ListViewGroup("Move", System.Windows.Forms.HorizontalAlignment.Left);
-            System.Windows.Forms.ListViewGroup listViewGroup32 = new System.Windows.Forms.ListViewGroup("Turn", System.Windows.Forms.HorizontalAlignment.Left);
-            System.Windows.Forms.ListViewGroup listViewGroup33 = new System.Windows.Forms.ListViewGroup("Set Speed", System.Windows.Forms.HorizontalAlignment.Left);
-            System.Windows.Forms.ListViewGroup listViewGroup34 = new System.Windows.Forms.ListViewGroup("Set Movement Frequency", System.Windows.Forms.HorizontalAlignment.Left);
-            System.Windows.Forms.ListViewGroup listViewGroup35 = new System.Windows.Forms.ListViewGroup("Set Attribute", System.Windows.Forms.HorizontalAlignment.Left);
-            System.Windows.Forms.ListViewGroup listViewGroup36 = new System.Windows.Forms.ListViewGroup("Etc", System.Windows.Forms.HorizontalAlignment.Left);
-            System.Windows.Forms.ListViewItem listViewItem221 = new System.Windows.Forms.ListViewItem("Move Up");
-            System.Windows.Forms.ListViewItem listViewItem222 = new System.Windows.Forms.ListViewItem("Move Down");
-            System.Windows.Forms.ListViewItem listViewItem223 = new System.Windows.Forms.ListViewItem("Move Left");
-            System.Windows.Forms.ListViewItem listViewItem224 = new System.Windows.Forms.ListViewItem("Move Right");
-            System.Windows.Forms.ListViewItem listViewItem225 = new System.Windows.Forms.ListViewItem("Move Randomly");
-            System.Windows.Forms.ListViewItem listViewItem226 = new System.Windows.Forms.ListViewItem("Move Toward Player");
-            System.Windows.Forms.ListViewItem listViewItem227 = new System.Windows.Forms.ListViewItem("Move Away From Player");
-            System.Windows.Forms.ListViewItem listViewItem228 = new System.Windows.Forms.ListViewItem("Step Forward");
-            System.Windows.Forms.ListViewItem listViewItem229 = new System.Windows.Forms.ListViewItem("Step Back");
-            System.Windows.Forms.ListViewItem listViewItem230 = new System.Windows.Forms.ListViewItem("Face Up");
-            System.Windows.Forms.ListViewItem listViewItem231 = new System.Windows.Forms.ListViewItem("Face Down");
-            System.Windows.Forms.ListViewItem listViewItem232 = new System.Windows.Forms.ListViewItem("Face Left");
-            System.Windows.Forms.ListViewItem listViewItem233 = new System.Windows.Forms.ListViewItem("Face Right");
-            System.Windows.Forms.ListViewItem listViewItem234 = new System.Windows.Forms.ListViewItem("Turn 90* Clockwise");
-            System.Windows.Forms.ListViewItem listViewItem235 = new System.Windows.Forms.ListViewItem("Turn 90* Counter Clockwise");
-            System.Windows.Forms.ListViewItem listViewItem236 = new System.Windows.Forms.ListViewItem("Turn 180*");
-            System.Windows.Forms.ListViewItem listViewItem237 = new System.Windows.Forms.ListViewItem("Turn Randomly");
-            System.Windows.Forms.ListViewItem listViewItem238 = new System.Windows.Forms.ListViewItem("Turn Toward Player");
-            System.Windows.Forms.ListViewItem listViewItem239 = new System.Windows.Forms.ListViewItem("Turn Away From Player");
-            System.Windows.Forms.ListViewItem listViewItem240 = new System.Windows.Forms.ListViewItem("Slowest");
-            System.Windows.Forms.ListViewItem listViewItem241 = new System.Windows.Forms.ListViewItem("Slower");
-            System.Windows.Forms.ListViewItem listViewItem242 = new System.Windows.Forms.ListViewItem("Normal");
-            System.Windows.Forms.ListViewItem listViewItem243 = new System.Windows.Forms.ListViewItem("Faster");
-            System.Windows.Forms.ListViewItem listViewItem244 = new System.Windows.Forms.ListViewItem("Fastest");
-            System.Windows.Forms.ListViewItem listViewItem245 = new System.Windows.Forms.ListViewItem("Lowest");
-            System.Windows.Forms.ListViewItem listViewItem246 = new System.Windows.Forms.ListViewItem("Lower");
-            System.Windows.Forms.ListViewItem listViewItem247 = new System.Windows.Forms.ListViewItem("Normal");
-            System.Windows.Forms.ListViewItem listViewItem248 = new System.Windows.Forms.ListViewItem("Higher");
-            System.Windows.Forms.ListViewItem listViewItem249 = new System.Windows.Forms.ListViewItem("Highest");
-            System.Windows.Forms.ListViewItem listViewItem250 = new System.Windows.Forms.ListViewItem("Walking Animation: On");
-            System.Windows.Forms.ListViewItem listViewItem251 = new System.Windows.Forms.ListViewItem("Walking Animation: Off");
-            System.Windows.Forms.ListViewItem listViewItem252 = new System.Windows.Forms.ListViewItem("Direction Fix: On");
-            System.Windows.Forms.ListViewItem listViewItem253 = new System.Windows.Forms.ListViewItem("Direction Fix: Off");
-            System.Windows.Forms.ListViewItem listViewItem254 = new System.Windows.Forms.ListViewItem("Walkthrough: On");
-            System.Windows.Forms.ListViewItem listViewItem255 = new System.Windows.Forms.ListViewItem("Walkthrough: Off");
-            System.Windows.Forms.ListViewItem listViewItem256 = new System.Windows.Forms.ListViewItem("Show Name");
-            System.Windows.Forms.ListViewItem listViewItem257 = new System.Windows.Forms.ListViewItem("Hide Name");
-            System.Windows.Forms.ListViewItem listViewItem258 = new System.Windows.Forms.ListViewItem("Set Layer: Below Player");
-            System.Windows.Forms.ListViewItem listViewItem259 = new System.Windows.Forms.ListViewItem("Set Layer: With Player");
-            System.Windows.Forms.ListViewItem listViewItem260 = new System.Windows.Forms.ListViewItem("Set Layer: Above Player");
-            System.Windows.Forms.ListViewItem listViewItem261 = new System.Windows.Forms.ListViewItem("Wait 100ms");
-            System.Windows.Forms.ListViewItem listViewItem262 = new System.Windows.Forms.ListViewItem("Wait 500ms");
-            System.Windows.Forms.ListViewItem listViewItem263 = new System.Windows.Forms.ListViewItem("Wait 1000ms");
-            System.Windows.Forms.ListViewItem listViewItem264 = new System.Windows.Forms.ListViewItem("Set Graphic...");
+            System.Windows.Forms.ListViewGroup listViewGroup1 = new System.Windows.Forms.ListViewGroup("Move", System.Windows.Forms.HorizontalAlignment.Left);
+            System.Windows.Forms.ListViewGroup listViewGroup2 = new System.Windows.Forms.ListViewGroup("Turn", System.Windows.Forms.HorizontalAlignment.Left);
+            System.Windows.Forms.ListViewGroup listViewGroup3 = new System.Windows.Forms.ListViewGroup("Set Speed", System.Windows.Forms.HorizontalAlignment.Left);
+            System.Windows.Forms.ListViewGroup listViewGroup4 = new System.Windows.Forms.ListViewGroup("Set Movement Frequency", System.Windows.Forms.HorizontalAlignment.Left);
+            System.Windows.Forms.ListViewGroup listViewGroup5 = new System.Windows.Forms.ListViewGroup("Set Attribute", System.Windows.Forms.HorizontalAlignment.Left);
+            System.Windows.Forms.ListViewGroup listViewGroup6 = new System.Windows.Forms.ListViewGroup("Etc", System.Windows.Forms.HorizontalAlignment.Left);
+            System.Windows.Forms.ListViewItem listViewItem1 = new System.Windows.Forms.ListViewItem("Move Up");
+            System.Windows.Forms.ListViewItem listViewItem2 = new System.Windows.Forms.ListViewItem("Move Down");
+            System.Windows.Forms.ListViewItem listViewItem3 = new System.Windows.Forms.ListViewItem("Move Left");
+            System.Windows.Forms.ListViewItem listViewItem4 = new System.Windows.Forms.ListViewItem("Move Right");
+            System.Windows.Forms.ListViewItem listViewItem5 = new System.Windows.Forms.ListViewItem("Move Randomly");
+            System.Windows.Forms.ListViewItem listViewItem6 = new System.Windows.Forms.ListViewItem("Move Toward Player");
+            System.Windows.Forms.ListViewItem listViewItem7 = new System.Windows.Forms.ListViewItem("Move Away From Player");
+            System.Windows.Forms.ListViewItem listViewItem8 = new System.Windows.Forms.ListViewItem("Step Forward");
+            System.Windows.Forms.ListViewItem listViewItem9 = new System.Windows.Forms.ListViewItem("Step Back");
+            System.Windows.Forms.ListViewItem listViewItem10 = new System.Windows.Forms.ListViewItem("Face Up");
+            System.Windows.Forms.ListViewItem listViewItem11 = new System.Windows.Forms.ListViewItem("Face Down");
+            System.Windows.Forms.ListViewItem listViewItem12 = new System.Windows.Forms.ListViewItem("Face Left");
+            System.Windows.Forms.ListViewItem listViewItem13 = new System.Windows.Forms.ListViewItem("Face Right");
+            System.Windows.Forms.ListViewItem listViewItem14 = new System.Windows.Forms.ListViewItem("Turn 90* Clockwise");
+            System.Windows.Forms.ListViewItem listViewItem15 = new System.Windows.Forms.ListViewItem("Turn 90* Counter Clockwise");
+            System.Windows.Forms.ListViewItem listViewItem16 = new System.Windows.Forms.ListViewItem("Turn 180*");
+            System.Windows.Forms.ListViewItem listViewItem17 = new System.Windows.Forms.ListViewItem("Turn Randomly");
+            System.Windows.Forms.ListViewItem listViewItem18 = new System.Windows.Forms.ListViewItem("Turn Toward Player");
+            System.Windows.Forms.ListViewItem listViewItem19 = new System.Windows.Forms.ListViewItem("Turn Away From Player");
+            System.Windows.Forms.ListViewItem listViewItem20 = new System.Windows.Forms.ListViewItem("Slowest");
+            System.Windows.Forms.ListViewItem listViewItem21 = new System.Windows.Forms.ListViewItem("Slower");
+            System.Windows.Forms.ListViewItem listViewItem22 = new System.Windows.Forms.ListViewItem("Normal");
+            System.Windows.Forms.ListViewItem listViewItem23 = new System.Windows.Forms.ListViewItem("Faster");
+            System.Windows.Forms.ListViewItem listViewItem24 = new System.Windows.Forms.ListViewItem("Fastest");
+            System.Windows.Forms.ListViewItem listViewItem25 = new System.Windows.Forms.ListViewItem("Lowest");
+            System.Windows.Forms.ListViewItem listViewItem26 = new System.Windows.Forms.ListViewItem("Lower");
+            System.Windows.Forms.ListViewItem listViewItem27 = new System.Windows.Forms.ListViewItem("Normal");
+            System.Windows.Forms.ListViewItem listViewItem28 = new System.Windows.Forms.ListViewItem("Higher");
+            System.Windows.Forms.ListViewItem listViewItem29 = new System.Windows.Forms.ListViewItem("Highest");
+            System.Windows.Forms.ListViewItem listViewItem30 = new System.Windows.Forms.ListViewItem("Walking Animation: On");
+            System.Windows.Forms.ListViewItem listViewItem31 = new System.Windows.Forms.ListViewItem("Walking Animation: Off");
+            System.Windows.Forms.ListViewItem listViewItem32 = new System.Windows.Forms.ListViewItem("Direction Fix: On");
+            System.Windows.Forms.ListViewItem listViewItem33 = new System.Windows.Forms.ListViewItem("Direction Fix: Off");
+            System.Windows.Forms.ListViewItem listViewItem34 = new System.Windows.Forms.ListViewItem("Walkthrough: On");
+            System.Windows.Forms.ListViewItem listViewItem35 = new System.Windows.Forms.ListViewItem("Walkthrough: Off");
+            System.Windows.Forms.ListViewItem listViewItem36 = new System.Windows.Forms.ListViewItem("Show Name");
+            System.Windows.Forms.ListViewItem listViewItem37 = new System.Windows.Forms.ListViewItem("Hide Name");
+            System.Windows.Forms.ListViewItem listViewItem38 = new System.Windows.Forms.ListViewItem("Set Layer: Below Player");
+            System.Windows.Forms.ListViewItem listViewItem39 = new System.Windows.Forms.ListViewItem("Set Layer: With Player");
+            System.Windows.Forms.ListViewItem listViewItem40 = new System.Windows.Forms.ListViewItem("Set Layer: Above Player");
+            System.Windows.Forms.ListViewItem listViewItem41 = new System.Windows.Forms.ListViewItem("Wait 100ms");
+            System.Windows.Forms.ListViewItem listViewItem42 = new System.Windows.Forms.ListViewItem("Wait 500ms");
+            System.Windows.Forms.ListViewItem listViewItem43 = new System.Windows.Forms.ListViewItem("Wait 1000ms");
+            System.Windows.Forms.ListViewItem listViewItem44 = new System.Windows.Forms.ListViewItem("Set Graphic...");
+            System.Windows.Forms.ListViewItem listViewItem45 = new System.Windows.Forms.ListViewItem("Set Animation...");
             this.grpMoveRoute = new System.Windows.Forms.GroupBox();
             this.btnOkay = new System.Windows.Forms.Button();
             this.btnCancel = new System.Windows.Forms.Button();
@@ -150,115 +151,117 @@
             this.lstCommands.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            listViewGroup31.Header = "Move";
-            listViewGroup31.Name = "Move";
-            listViewGroup32.Header = "Turn";
-            listViewGroup32.Name = "Turn";
-            listViewGroup33.Header = "Set Speed";
-            listViewGroup33.Name = "Set Speed";
-            listViewGroup34.Header = "Set Movement Frequency";
-            listViewGroup34.Name = "Set Movement Frequency";
-            listViewGroup35.Header = "Set Attribute";
-            listViewGroup35.Name = "Set Attribute";
-            listViewGroup36.Header = "Etc";
-            listViewGroup36.Name = "Etc";
+            listViewGroup1.Header = "Move";
+            listViewGroup1.Name = "Move";
+            listViewGroup2.Header = "Turn";
+            listViewGroup2.Name = "Turn";
+            listViewGroup3.Header = "Set Speed";
+            listViewGroup3.Name = "Set Speed";
+            listViewGroup4.Header = "Set Movement Frequency";
+            listViewGroup4.Name = "Set Movement Frequency";
+            listViewGroup5.Header = "Set Attribute";
+            listViewGroup5.Name = "Set Attribute";
+            listViewGroup6.Header = "Etc";
+            listViewGroup6.Name = "Etc";
             this.lstCommands.Groups.AddRange(new System.Windows.Forms.ListViewGroup[] {
-            listViewGroup31,
-            listViewGroup32,
-            listViewGroup33,
-            listViewGroup34,
-            listViewGroup35,
-            listViewGroup36});
+            listViewGroup1,
+            listViewGroup2,
+            listViewGroup3,
+            listViewGroup4,
+            listViewGroup5,
+            listViewGroup6});
             this.lstCommands.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.None;
-            listViewItem221.Group = listViewGroup31;
-            listViewItem222.Group = listViewGroup31;
-            listViewItem223.Group = listViewGroup31;
-            listViewItem224.Group = listViewGroup31;
-            listViewItem225.Group = listViewGroup31;
-            listViewItem226.Group = listViewGroup31;
-            listViewItem227.Group = listViewGroup31;
-            listViewItem228.Group = listViewGroup31;
-            listViewItem229.Group = listViewGroup31;
-            listViewItem230.Group = listViewGroup32;
-            listViewItem231.Group = listViewGroup32;
-            listViewItem232.Group = listViewGroup32;
-            listViewItem233.Group = listViewGroup32;
-            listViewItem234.Group = listViewGroup32;
-            listViewItem235.Group = listViewGroup32;
-            listViewItem236.Group = listViewGroup32;
-            listViewItem237.Group = listViewGroup32;
-            listViewItem238.Group = listViewGroup32;
-            listViewItem239.Group = listViewGroup32;
-            listViewItem240.Group = listViewGroup33;
-            listViewItem241.Group = listViewGroup33;
-            listViewItem242.Group = listViewGroup33;
-            listViewItem243.Group = listViewGroup33;
-            listViewItem244.Group = listViewGroup33;
-            listViewItem245.Group = listViewGroup34;
-            listViewItem246.Group = listViewGroup34;
-            listViewItem247.Group = listViewGroup34;
-            listViewItem248.Group = listViewGroup34;
-            listViewItem249.Group = listViewGroup34;
-            listViewItem250.Group = listViewGroup35;
-            listViewItem251.Group = listViewGroup35;
-            listViewItem252.Group = listViewGroup35;
-            listViewItem253.Group = listViewGroup35;
-            listViewItem254.Group = listViewGroup35;
-            listViewItem255.Group = listViewGroup35;
-            listViewItem256.Group = listViewGroup35;
-            listViewItem257.Group = listViewGroup35;
-            listViewItem258.Group = listViewGroup35;
-            listViewItem259.Group = listViewGroup35;
-            listViewItem260.Group = listViewGroup35;
-            listViewItem261.Group = listViewGroup36;
-            listViewItem262.Group = listViewGroup36;
-            listViewItem263.Group = listViewGroup36;
-            listViewItem264.Group = listViewGroup36;
+            listViewItem1.Group = listViewGroup1;
+            listViewItem2.Group = listViewGroup1;
+            listViewItem3.Group = listViewGroup1;
+            listViewItem4.Group = listViewGroup1;
+            listViewItem5.Group = listViewGroup1;
+            listViewItem6.Group = listViewGroup1;
+            listViewItem7.Group = listViewGroup1;
+            listViewItem8.Group = listViewGroup1;
+            listViewItem9.Group = listViewGroup1;
+            listViewItem10.Group = listViewGroup2;
+            listViewItem11.Group = listViewGroup2;
+            listViewItem12.Group = listViewGroup2;
+            listViewItem13.Group = listViewGroup2;
+            listViewItem14.Group = listViewGroup2;
+            listViewItem15.Group = listViewGroup2;
+            listViewItem16.Group = listViewGroup2;
+            listViewItem17.Group = listViewGroup2;
+            listViewItem18.Group = listViewGroup2;
+            listViewItem19.Group = listViewGroup2;
+            listViewItem20.Group = listViewGroup3;
+            listViewItem21.Group = listViewGroup3;
+            listViewItem22.Group = listViewGroup3;
+            listViewItem23.Group = listViewGroup3;
+            listViewItem24.Group = listViewGroup3;
+            listViewItem25.Group = listViewGroup4;
+            listViewItem26.Group = listViewGroup4;
+            listViewItem27.Group = listViewGroup4;
+            listViewItem28.Group = listViewGroup4;
+            listViewItem29.Group = listViewGroup4;
+            listViewItem30.Group = listViewGroup5;
+            listViewItem31.Group = listViewGroup5;
+            listViewItem32.Group = listViewGroup5;
+            listViewItem33.Group = listViewGroup5;
+            listViewItem34.Group = listViewGroup5;
+            listViewItem35.Group = listViewGroup5;
+            listViewItem36.Group = listViewGroup5;
+            listViewItem37.Group = listViewGroup5;
+            listViewItem38.Group = listViewGroup5;
+            listViewItem39.Group = listViewGroup5;
+            listViewItem40.Group = listViewGroup5;
+            listViewItem41.Group = listViewGroup6;
+            listViewItem42.Group = listViewGroup6;
+            listViewItem43.Group = listViewGroup6;
+            listViewItem44.Group = listViewGroup6;
+            listViewItem45.Group = listViewGroup6;
             this.lstCommands.Items.AddRange(new System.Windows.Forms.ListViewItem[] {
-            listViewItem221,
-            listViewItem222,
-            listViewItem223,
-            listViewItem224,
-            listViewItem225,
-            listViewItem226,
-            listViewItem227,
-            listViewItem228,
-            listViewItem229,
-            listViewItem230,
-            listViewItem231,
-            listViewItem232,
-            listViewItem233,
-            listViewItem234,
-            listViewItem235,
-            listViewItem236,
-            listViewItem237,
-            listViewItem238,
-            listViewItem239,
-            listViewItem240,
-            listViewItem241,
-            listViewItem242,
-            listViewItem243,
-            listViewItem244,
-            listViewItem245,
-            listViewItem246,
-            listViewItem247,
-            listViewItem248,
-            listViewItem249,
-            listViewItem250,
-            listViewItem251,
-            listViewItem252,
-            listViewItem253,
-            listViewItem254,
-            listViewItem255,
-            listViewItem256,
-            listViewItem257,
-            listViewItem258,
-            listViewItem259,
-            listViewItem260,
-            listViewItem261,
-            listViewItem262,
-            listViewItem263,
-            listViewItem264});
+            listViewItem1,
+            listViewItem2,
+            listViewItem3,
+            listViewItem4,
+            listViewItem5,
+            listViewItem6,
+            listViewItem7,
+            listViewItem8,
+            listViewItem9,
+            listViewItem10,
+            listViewItem11,
+            listViewItem12,
+            listViewItem13,
+            listViewItem14,
+            listViewItem15,
+            listViewItem16,
+            listViewItem17,
+            listViewItem18,
+            listViewItem19,
+            listViewItem20,
+            listViewItem21,
+            listViewItem22,
+            listViewItem23,
+            listViewItem24,
+            listViewItem25,
+            listViewItem26,
+            listViewItem27,
+            listViewItem28,
+            listViewItem29,
+            listViewItem30,
+            listViewItem31,
+            listViewItem32,
+            listViewItem33,
+            listViewItem34,
+            listViewItem35,
+            listViewItem36,
+            listViewItem37,
+            listViewItem38,
+            listViewItem39,
+            listViewItem40,
+            listViewItem41,
+            listViewItem42,
+            listViewItem43,
+            listViewItem44,
+            listViewItem45});
             this.lstCommands.Location = new System.Drawing.Point(7, 20);
             this.lstCommands.MultiSelect = false;
             this.lstCommands.Name = "lstCommands";

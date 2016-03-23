@@ -403,12 +403,12 @@ namespace Intersect_Client.Classes.Core
                 bgh += diff;
             }
             DrawGameTexture(tex, new FloatRect(0, 0, tex.GetWidth(), tex.GetHeight()),
-                new FloatRect(bgx, bgy, bgw, bgh),Color.White);
+                new FloatRect(bgx + Renderer.GetView().X, bgy + Renderer.GetView().Y, bgw, bgh),Color.White);
         }
         public static void DrawFullScreenTextureStretched(GameTexture tex)
         {
             DrawGameTexture(tex, new FloatRect(0, 0, (int)tex.GetWidth(), (int)tex.GetHeight()),
-                new FloatRect(0, 0, Renderer.GetScreenWidth(), Renderer.GetScreenHeight()), Color.White);
+                new FloatRect(Renderer.GetView().X, Renderer.GetView().Y, Renderer.GetScreenWidth(), Renderer.GetScreenHeight()), Color.White);
         }
 
         private static void UpdateView()

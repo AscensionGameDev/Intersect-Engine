@@ -841,7 +841,7 @@ namespace Intersect_Editor.Forms
                     }
                     else
                     {
-                        tmpEventEditor = new FrmEvent(Globals.GameMaps[Globals.CurrentMap]) { MyEvent = tmpEvent };
+                        tmpEventEditor = new FrmEvent(Globals.GameMaps[Globals.CurrentMap]) { MyEvent = tmpEvent, MyMap = Globals.GameMaps[Globals.CurrentMap] };
                         tmpEventEditor.InitEditor();
                         tmpEventEditor.Show();
                     }

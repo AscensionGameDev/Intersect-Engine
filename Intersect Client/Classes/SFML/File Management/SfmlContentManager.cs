@@ -183,10 +183,12 @@ namespace Intersect_Client.Classes.Bridges_and_Interfaces.SFML.File_Management
             for (int i = 0; i < sounds.Length; i++)
             {
                 GameAudio.SoundFiles.Add(RemoveExtension(sounds[i].Replace("Resources/Sounds\\", "").ToLower()));
+                GameAudio.SoundSources[i] = new SfmlSoundSource(sounds[i]);
             }
             for (int i = 0; i < wavsounds.Length; i++)
             {
                 GameAudio.SoundFiles.Add(RemoveExtension(wavsounds[i].Replace("Resources/Sounds\\", "").ToLower()));
+                GameAudio.SoundSources[i + sounds.Length] = new SfmlSoundSource(wavsounds[i]);
             }
         }
 

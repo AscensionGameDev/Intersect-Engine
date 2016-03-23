@@ -67,12 +67,25 @@ namespace Intersect_Client.Classes.Entities
         {
             bool returnval = base.Update();
             HandleInput();
-            if (Globals.MyIndex == MyIndex && base.IsMoving == false) { ProcessDirectionalInput(); }
-            if ((Globals.InputManager.MouseButtonDown(GameInput.MouseButtons.Left) && Gui.MouseHitGUI() == false) || Globals.InputManager.KeyDown(Keys.E))
+            if (Globals.EventHolds.Count == 0)
             {
-                TryTarget();
-                if (TryAttack()) { return returnval; }
-                if (TryPickupItem()) { return returnval; }
+                if (Globals.MyIndex == MyIndex && base.IsMoving == false)
+                {
+                    ProcessDirectionalInput();
+                }
+                if ((Globals.InputManager.MouseButtonDown(GameInput.MouseButtons.Left) && Gui.MouseHitGUI() == false) ||
+                    Globals.InputManager.KeyDown(Keys.E))
+                {
+                    TryTarget();
+                    if (TryAttack())
+                    {
+                        return returnval;
+                    }
+                    if (TryPickupItem())
+                    {
+                        return returnval;
+                    }
+                }
             }
             if (_targetBox != null) { _targetBox.Update(); }
             return returnval;

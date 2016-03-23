@@ -324,6 +324,7 @@ namespace Intersect_Editor.Classes
         Wait500,
         Wait1000,
         SetGraphic,
+        SetAnimation,
     }
 
     public class MoveRouteAction

@@ -124,10 +124,8 @@ namespace Intersect_Client.Classes.General
         public static bool LoggedIn = false;
 
         //Control Objects
-
         public static List<EventDialog> EventDialogs = new List<EventDialog>();
-        public static float DirLightIntensity = .5f;
-        public static bool ShouldUpdateLights = false;
+        public static List<EventHold> EventHolds = new List<EventHold>(); 
 
         //Resource Information
         public static string[] Tilesets;

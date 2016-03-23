@@ -22,6 +22,7 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using Intersect_Server.Classes.Maps;
 
 namespace Intersect_Server.Classes.Entities
 {
@@ -37,6 +38,8 @@ namespace Intersect_Server.Classes.Entities
         public int SpawnY;
         public int PageIndex;
         public bool[] SelfSwitch { get; set; }
+        public bool HoldingPlayer = false;
+        public long WaitTimer = 0;
         public EventPageInstance PageInstance;
         public EventPageInstance[] GlobalPageInstance;
 
@@ -74,6 +77,11 @@ namespace Intersect_Server.Classes.Entities
                 if (PageInstance.ShouldDespawn())
                 {
                     PageInstance = null;
+                    if (HoldingPlayer)
+                    {
+                        PacketSender.SendReleasePlayer(MyClient, MapNum, MyIndex);
+                        HoldingPlayer = false;
+                    }
                     if (IsGlobal)
                     {
                         PacketSender.SendEntityLeaveTo(MyClient, BaseEvent.MyIndex, (int)Enums.EntityTypes.Event, MapNum);
@@ -90,21 +98,46 @@ namespace Intersect_Server.Classes.Entities
                     {
                         while (CallStack.Peek().WaitingForResponse == 0)
                         {
-                            if (CallStack.Peek().CommandIndex >=
-                                PageInstance.BaseEvent.MyPages[PageIndex].CommandLists[CallStack.Peek().ListIndex]
-                                    .Commands.Count)
+                            if (CallStack.Peek().WaitingForRoute > -1)
                             {
-                                CallStack.Pop();
+                                //Check if the exist exists && if the move route is completed.
+                                for (var i = 0; i < MyPlayer.MyEvents.Count; i++)
+                                {
+                                    if (MyPlayer.MyEvents[i] == null) continue;
+                                    if (MyPlayer.MyEvents[i].MapNum == CallStack.Peek().WaitingForRouteMap &&
+                                        MyPlayer.MyEvents[i].MyIndex == CallStack.Peek().WaitingForRoute)
+                                    {
+                                        if (MyPlayer.MyEvents[i].PageInstance == null) break;
+                                        if (!MyPlayer.MyEvents[i].PageInstance.MoveRoute.Complete) break;
+                                        CallStack.Peek().WaitingForRoute = -1;
+                                        CallStack.Peek().WaitingForRouteMap = -1;
+                                        break;
+                                    }
+                                }
+                                if (CallStack.Peek().WaitingForRoute > -1) break;
                             }
                             else
                             {
-                                ProcessCommand(
+                                if (CallStack.Peek().CommandIndex >=
                                     PageInstance.BaseEvent.MyPages[PageIndex].CommandLists[CallStack.Peek().ListIndex]
-                                        .Commands[CallStack.Peek().CommandIndex]);
-                            }
-                            if (CallStack.Count == 0)
-                            {
-                                break;
+                                        .Commands.Count)
+                                {
+                                    CallStack.Pop();
+                                }
+                                else
+                                {
+                                    if (WaitTimer < Environment.TickCount)
+                                    {
+                                        ProcessCommand(
+                                            PageInstance.BaseEvent.MyPages[PageIndex].CommandLists[
+                                                CallStack.Peek().ListIndex]
+                                                .Commands[CallStack.Peek().CommandIndex]);
+                                    }
+                                }
+                                if (CallStack.Count == 0)
+                                {
+                                    break;
+                                }
                             }
                         }
                     }
@@ -215,6 +248,9 @@ namespace Intersect_Server.Classes.Entities
         private void ProcessCommand(EventCommand command)
         {
             bool success = false;
+            TileHelper tile;
+            int npcNum, animNum, spawnCondition, mapNum = -1, tileX = 0, tileY = 0, direction = (int)Enums.Directions.Up;
+            Entity targetEntity = null;
             CallStack.Peek().WaitingForResponse = 0;
             CallStack.Peek().ResponseType = 0;
             switch (command.Type)
@@ -343,7 +379,7 @@ namespace Intersect_Server.Classes.Entities
                     CallStack.Peek().CommandIndex++;
                     break;
                 case EventCommandType.ChangeLevel:
-                    MyPlayer.SetLevel(command.Ints[0],true);
+                    MyPlayer.SetLevel(command.Ints[0], true);
                     CallStack.Peek().CommandIndex++;
                     break;
                 case EventCommandType.ChangeSpells:
@@ -396,9 +432,9 @@ namespace Intersect_Server.Classes.Entities
                     else
                     {
                         int itemIndex = MyPlayer.FindItem(command.Ints[1], command.Ints[2]);
-                        if ( itemIndex > -1)
+                        if (itemIndex > -1)
                         {
-                            success = MyPlayer.TakeItem(itemIndex,command.Ints[2]);
+                            success = MyPlayer.TakeItem(itemIndex, command.Ints[2]);
                         }
                     }
                     if (success)
@@ -428,7 +464,7 @@ namespace Intersect_Server.Classes.Entities
                     break;
                 case EventCommandType.ChangeSprite:
                     MyPlayer.MySprite = command.Strs[0];
-                    PacketSender.SendEntityDataToProximity(MyPlayer.MyIndex, (int) Enums.EntityTypes.Player,
+                    PacketSender.SendEntityDataToProximity(MyPlayer.MyIndex, (int)Enums.EntityTypes.Player,
                         MyPlayer.Data(), MyPlayer);
                     CallStack.Peek().CommandIndex++;
                     break;
@@ -459,16 +495,270 @@ namespace Intersect_Server.Classes.Entities
                     CallStack.Peek().CommandIndex++;
                     break;
                 case EventCommandType.SetMoveRoute:
+                    for (var i = 0; i < MyPlayer.MyEvents.Count; i++)
+                    {
+                        if (MyPlayer.MyEvents[i] == null) continue;
+                        if (MyPlayer.MyEvents[i].BaseEvent.MyIndex ==
+                            PageInstance.BaseEvent.MyPages[PageIndex].CommandLists[CallStack.Peek().ListIndex].Commands[
+                                CallStack.Peek().CommandIndex].Route.Target)
+                        {
+                            if (MyPlayer.MyEvents[i].PageInstance != null)
+                            {
+                                MyPlayer.MyEvents[i].PageInstance.MoveRoute.CopyFrom(
+                                    PageInstance.BaseEvent.MyPages[PageIndex].CommandLists[CallStack.Peek().ListIndex]
+                                        .Commands[
+                                            CallStack.Peek().CommandIndex].Route);
+                                MyPlayer.MyEvents[i].PageInstance.MovementType = 2;
+                            }
+                        }
+                    }
+                    CallStack.Peek().CommandIndex++;
+                    break;
+                case EventCommandType.WaitForRouteCompletion:
+                    for (var i = 0; i < MyPlayer.MyEvents.Count; i++)
+                    {
+                        if (MyPlayer.MyEvents[i] == null) continue;
+                        if (MyPlayer.MyEvents[i].BaseEvent.MyIndex ==
+                            PageInstance.BaseEvent.MyPages[PageIndex].CommandLists[CallStack.Peek().ListIndex].Commands[
+                                CallStack.Peek().CommandIndex].Ints[0])
+                        {
+                            CallStack.Peek().WaitingForRoute = MyPlayer.MyEvents[i].BaseEvent.MyIndex;
+                            CallStack.Peek().WaitingForRouteMap = MyPlayer.MyEvents[i].MapNum;
+                            break;
+                        }
+                    }
+                    CallStack.Peek().CommandIndex++;
+                    break;
+                case EventCommandType.SpawnNpc:
+                    npcNum = PageInstance.BaseEvent.MyPages[PageIndex].CommandLists[CallStack.Peek().ListIndex].Commands[CallStack.Peek().CommandIndex].Ints[0];
+                    spawnCondition = PageInstance.BaseEvent.MyPages[PageIndex].CommandLists[CallStack.Peek().ListIndex].Commands[CallStack.Peek().CommandIndex].Ints[1];
+                    mapNum = -1;
+                    tileX = 0;
+                    tileY = 0;
+                    direction = (int)Enums.Directions.Up;
+                    targetEntity = null;
+                    switch (spawnCondition)
+                    {
+                        case 0: //Tile Spawn
+                            mapNum = PageInstance.BaseEvent.MyPages[PageIndex].CommandLists[CallStack.Peek().ListIndex].Commands[CallStack.Peek().CommandIndex].Ints[2];
+                            tileX = PageInstance.BaseEvent.MyPages[PageIndex].CommandLists[CallStack.Peek().ListIndex].Commands[CallStack.Peek().CommandIndex].Ints[3];
+                            tileY = PageInstance.BaseEvent.MyPages[PageIndex].CommandLists[CallStack.Peek().ListIndex].Commands[CallStack.Peek().CommandIndex].Ints[4];
+                            direction = PageInstance.BaseEvent.MyPages[PageIndex].CommandLists[CallStack.Peek().ListIndex].Commands[CallStack.Peek().CommandIndex].Ints[5];
+                            break;
+                        case 1: //Entity Spawn
+                            if (PageInstance.BaseEvent.MyPages[PageIndex].CommandLists[CallStack.Peek().ListIndex]
+                                .Commands[
+                                    CallStack.Peek().CommandIndex].Ints[2] == -1)
+                            {
+                                targetEntity = MyPlayer;
+                            }
+                            else
+                            {
+                                for (var i = 0; i < MyPlayer.MyEvents.Count; i++)
+                                {
+                                    if (MyPlayer.MyEvents[i] == null) continue;
+                                    if (MyPlayer.MyEvents[i].BaseEvent.MyIndex ==
+                                        PageInstance.BaseEvent.MyPages[PageIndex].CommandLists[
+                                            CallStack.Peek().ListIndex].Commands[
+                                                CallStack.Peek().CommandIndex].Ints[2])
+                                    {
+                                        targetEntity = MyPlayer.MyEvents[i].PageInstance;
+                                        break;
+                                    }
+                                }
+                            }
+                            if (targetEntity != null)
+                            {
+                                int xDiff = PageInstance.BaseEvent.MyPages[PageIndex].CommandLists[CallStack.Peek().ListIndex].Commands[CallStack.Peek().CommandIndex].Ints[3];
+                                int yDiff = PageInstance.BaseEvent.MyPages[PageIndex].CommandLists[CallStack.Peek().ListIndex].Commands[CallStack.Peek().CommandIndex].Ints[4];
+                                if (
+                                    PageInstance.BaseEvent.MyPages[PageIndex].CommandLists[CallStack.Peek().ListIndex]
+                                        .Commands[CallStack.Peek().CommandIndex].Ints[5] == 1)
+                                {
+                                    int tmp = 0;
+                                    switch (targetEntity.Dir)
+                                    {
+                                        case (int)Enums.Directions.Down:
+                                            yDiff *= -1;
+                                            xDiff *= -1;
+                                            break;
+                                        case (int)Enums.Directions.Left:
+                                            tmp = yDiff;
+                                            yDiff = xDiff;
+                                            xDiff = tmp;
+                                            break;
+                                        case (int)Enums.Directions.Right:
+                                            tmp = yDiff;
+                                            yDiff = xDiff;
+                                            xDiff = -tmp;
+                                            break;
+                                    }
+                                    direction = targetEntity.Dir;
+                                }
+                                mapNum = targetEntity.CurrentMap;
+                                tileX = targetEntity.CurrentX + xDiff;
+                                tileY = targetEntity.CurrentY + yDiff;
+                            }
+                            break;
+                    }
+                    tile = new TileHelper(mapNum, tileX, tileY);
+                    if (tile.TryFix())
+                    {
+                        Globals.GameMaps[mapNum].SpawnNpc(tileX, tileY, direction, npcNum);
+                    }
+                    CallStack.Peek().CommandIndex++;
+                    break;
+                case EventCommandType.PlayAnimation:
+                    //Playing an animations requires a target type/target or just a tile.
+                    //We need an animation number and whether or not it should rotate (and the direction I guess)
+                    animNum = PageInstance.BaseEvent.MyPages[PageIndex].CommandLists[CallStack.Peek().ListIndex].Commands[CallStack.Peek().CommandIndex].Ints[0];
+                    spawnCondition = PageInstance.BaseEvent.MyPages[PageIndex].CommandLists[CallStack.Peek().ListIndex].Commands[CallStack.Peek().CommandIndex].Ints[1];
+                    mapNum = -1;
+                    tileX = 0;
+                    tileY = 0;
+                    direction = (int)Enums.Directions.Up;
+                    targetEntity = null;
+                    switch (spawnCondition)
+                    {
+                        case 0: //Tile Spawn
+                            mapNum = PageInstance.BaseEvent.MyPages[PageIndex].CommandLists[CallStack.Peek().ListIndex].Commands[CallStack.Peek().CommandIndex].Ints[2];
+                            tileX = PageInstance.BaseEvent.MyPages[PageIndex].CommandLists[CallStack.Peek().ListIndex].Commands[CallStack.Peek().CommandIndex].Ints[3];
+                            tileY = PageInstance.BaseEvent.MyPages[PageIndex].CommandLists[CallStack.Peek().ListIndex].Commands[CallStack.Peek().CommandIndex].Ints[4];
+                            direction = PageInstance.BaseEvent.MyPages[PageIndex].CommandLists[CallStack.Peek().ListIndex].Commands[CallStack.Peek().CommandIndex].Ints[5];
+                            break;
+                        case 1: //Entity Spawn
+                            if (PageInstance.BaseEvent.MyPages[PageIndex].CommandLists[CallStack.Peek().ListIndex]
+                                .Commands[
+                                    CallStack.Peek().CommandIndex].Ints[2] == -1)
+                            {
+                                targetEntity = MyPlayer;
+                            }
+                            else
+                            {
+                                for (var i = 0; i < MyPlayer.MyEvents.Count; i++)
+                                {
+                                    if (MyPlayer.MyEvents[i] == null) continue;
+                                    if (MyPlayer.MyEvents[i].BaseEvent.MyIndex ==
+                                        PageInstance.BaseEvent.MyPages[PageIndex].CommandLists[
+                                            CallStack.Peek().ListIndex].Commands[
+                                                CallStack.Peek().CommandIndex].Ints[2])
+                                    {
+                                        targetEntity = MyPlayer.MyEvents[i].PageInstance;
+                                        break;
+                                    }
+                                }
+                            }
+                            if (targetEntity != null)
+                            {
+                                int xDiff = PageInstance.BaseEvent.MyPages[PageIndex].CommandLists[CallStack.Peek().ListIndex].Commands[CallStack.Peek().CommandIndex].Ints[3];
+                                int yDiff = PageInstance.BaseEvent.MyPages[PageIndex].CommandLists[CallStack.Peek().ListIndex].Commands[CallStack.Peek().CommandIndex].Ints[4];
+                                if (PageInstance.BaseEvent.MyPages[PageIndex].CommandLists[CallStack.Peek().ListIndex]
+                                        .Commands[CallStack.Peek().CommandIndex].Ints[5] == 2 || PageInstance.BaseEvent.MyPages[PageIndex].CommandLists[CallStack.Peek().ListIndex]
+                                        .Commands[CallStack.Peek().CommandIndex].Ints[5] == 3)
+                                    direction = targetEntity.Dir;
+                                if (xDiff == 0 && yDiff == 0)
+                                {
+                                    if (PageInstance.BaseEvent.MyPages[PageIndex].CommandLists[CallStack.Peek().ListIndex]
+                                        .Commands[CallStack.Peek().CommandIndex].Ints[5] == 2 || PageInstance.BaseEvent.MyPages[PageIndex].CommandLists[CallStack.Peek().ListIndex]
+                                        .Commands[CallStack.Peek().CommandIndex].Ints[5] == 3)
+                                        direction = -1;
+                                    //Send Animation on Npc
+                                    if (targetEntity.GetType() == typeof(Player))
+                                    {
+                                        PacketSender.SendAnimationToProximity(animNum, 1, targetEntity.MyIndex, 0, 0, direction); //Target Type 1 will be global entity
+                                    }
+                                    else
+                                    {
+                                        PacketSender.SendAnimationToProximity(animNum, 2, targetEntity.CurrentMap, targetEntity.MyIndex, 0, direction);
+                                    }
+                                    CallStack.Peek().CommandIndex++;
+                                    return;
+                                }
+                                else
+                                {
+                                    //Determine the tile data
+                                    if (PageInstance.BaseEvent.MyPages[PageIndex].CommandLists[CallStack.Peek().ListIndex]
+                                        .Commands[CallStack.Peek().CommandIndex].Ints[5] == 1 || PageInstance.BaseEvent.MyPages[PageIndex].CommandLists[CallStack.Peek().ListIndex]
+                                        .Commands[CallStack.Peek().CommandIndex].Ints[5] == 3)
+                                    {
+                                        int tmp = 0;
+                                        switch (targetEntity.Dir)
+                                        {
+                                            case (int)Enums.Directions.Down:
+                                                yDiff *= -1;
+                                                xDiff *= -1;
+                                                break;
+                                            case (int)Enums.Directions.Left:
+                                                tmp = yDiff;
+                                                yDiff = xDiff;
+                                                xDiff = tmp;
+                                                break;
+                                            case (int)Enums.Directions.Right:
+                                                tmp = yDiff;
+                                                yDiff = xDiff;
+                                                xDiff = -tmp;
+                                                break;
+                                        }
+                                    }
+                                    mapNum = targetEntity.CurrentMap;
+                                    tileX = targetEntity.CurrentX + xDiff;
+                                    tileY = targetEntity.CurrentY + yDiff;
+                                }
+                            }
+                            break;
+                    }
+                    tile = new TileHelper(mapNum, tileX, tileY);
+                    if (tile.TryFix())
+                    {
+                        PacketSender.SendAnimationToProximity(animNum, -1, tile.GetMap(), tile.GetX(), tile.GetY(), direction);
+                    }
+                    CallStack.Peek().CommandIndex++;
+                    break;
+                case EventCommandType.HoldPlayer:
+                    HoldingPlayer = true;
+                    PacketSender.SendHoldPlayer(MyClient,MapNum,MyIndex);
+                    CallStack.Peek().CommandIndex++;
+                    break;
+                case EventCommandType.ReleasePlayer:
+                    HoldingPlayer = false;
+                    PacketSender.SendReleasePlayer(MyClient, MapNum, MyIndex);
+                    CallStack.Peek().CommandIndex++;
+                    break;
+                case EventCommandType.PlayBgm:
+                    PacketSender.SendPlayMusic(MyClient, PageInstance.BaseEvent.MyPages[PageIndex].CommandLists[CallStack.Peek().ListIndex].Commands[CallStack.Peek().CommandIndex].Strs[0]);
+                    CallStack.Peek().CommandIndex++;
+                    break;
+                case EventCommandType.FadeoutBgm:
+                    PacketSender.SendFadeMusic(MyClient);
+                    CallStack.Peek().CommandIndex++;
+                    break;
+                case EventCommandType.PlaySound:
+                    PacketSender.SendPlaySound(MyClient, PageInstance.BaseEvent.MyPages[PageIndex].CommandLists[CallStack.Peek().ListIndex].Commands[CallStack.Peek().CommandIndex].Strs[0]);
+                    CallStack.Peek().CommandIndex++;
+                    break;
+                case EventCommandType.StopSounds:
+                    PacketSender.SendStopSounds(MyClient);
+                    CallStack.Peek().CommandIndex++;
+                    break;
+                case EventCommandType.Wait:
+                    WaitTimer = Environment.TickCount +
+                                PageInstance.BaseEvent.MyPages[PageIndex].CommandLists[CallStack.Peek().ListIndex]
+                                    .Commands[CallStack.Peek().CommandIndex].Ints[0];
+                    CallStack.Peek().CommandIndex++;
+                    break;
+                case EventCommandType.OpenBank:
 
                     break;
+                case EventCommandType.OpenShop:
 
+                    break;
             }
         }
 
         private Stack<CommandInstance> LoadLabelCallstack(string label)
         {
             Stack<CommandInstance> newStack = new Stack<CommandInstance>();
-            newStack.Push(new CommandInstance {CommandIndex = 0, ListIndex = 0}); //Start from the top
+            newStack.Push(new CommandInstance { CommandIndex = 0, ListIndex = 0 }); //Start from the top
             if (FindLabelResursive(newStack, label))
             {
                 return newStack;
@@ -523,7 +813,7 @@ namespace Intersect_Server.Classes.Entities
                                 return true;
                             }
                             break;
-                        
+
                     }
                     stack.Peek().CommandIndex++;
                 }
@@ -539,6 +829,8 @@ namespace Intersect_Server.Classes.Entities
         public int ListIndex;
         public int CommandIndex;
         public int WaitingForResponse;
+        public int WaitingForRoute = -1;
+        public int WaitingForRouteMap;
         public int ResponseType;
     }
 }

@@ -140,16 +140,16 @@ namespace Intersect_Server.Classes.Misc
                             {
                                 if (i != _sourceEntity.MyIndex && (Globals.GameMaps[Database.MapGrids[myGrid].MyGrid[x, y]].Entities[i].CurrentMap != _target.TargetMap || Globals.GameMaps[Database.MapGrids[myGrid].MyGrid[x, y]].Entities[i].CurrentY != _target.TargetY || Globals.GameMaps[Database.MapGrids[myGrid].MyGrid[x, y]].Entities[i].CurrentX != _target.TargetX))
                                 {
-                                    if (Globals.Entities[i] != null)
+                                    if (Globals.GameMaps[Database.MapGrids[myGrid].MyGrid[x, y]].Entities[i] != null)
                                     {
-                                        if (Globals.Entities[i].CurrentMap == Database.MapGrids[myGrid].MyGrid[x, y])
+                                        if (Globals.GameMaps[Database.MapGrids[myGrid].MyGrid[x, y]].Entities[i].CurrentMap == Database.MapGrids[myGrid].MyGrid[x, y])
                                         {
                                             closedList.Add(
                                                 new PathfinderPoint(
                                                     (x - Globals.GameMaps[_sourceEntity.CurrentMap].MapGridX + 1)*
-                                                    Globals.MapWidth + Globals.Entities[i].CurrentX,
+                                                    Globals.MapWidth + Globals.GameMaps[Database.MapGrids[myGrid].MyGrid[x, y]].Entities[i].CurrentX,
                                                     (y - Globals.GameMaps[_sourceEntity.CurrentMap].MapGridY + 1)*
-                                                    Globals.MapHeight + Globals.Entities[i].CurrentY, -1, 0));
+                                                    Globals.MapHeight + Globals.GameMaps[Database.MapGrids[myGrid].MyGrid[x, y]].Entities[i].CurrentY, -1, 0));
                                         }
                                     }
                                 }
