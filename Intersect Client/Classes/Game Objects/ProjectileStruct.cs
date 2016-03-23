@@ -39,8 +39,13 @@ namespace Intersect_Client.Classes.Game_Objects
         public int Quantity = 1;
         public int Range = 1;
         public int Spell = 0;
+        public bool IgnoreMapBlocks = false;
+        public bool IgnoreZDimension = false;
+        public bool IgnoreActiveResources = false;
+        public bool IgnoreExhaustedResources = false;
         public bool Homing = false;
         public bool AutoRotate = false;
+
         public Location[,] SpawnLocations = new Location[SpawnLocationsWidth, SpawnLocationsHeight];
 
         //Init
@@ -69,6 +74,10 @@ namespace Intersect_Client.Classes.Game_Objects
             Quantity = myBuffer.ReadInteger();
             Range = myBuffer.ReadInteger();
             Spell = myBuffer.ReadInteger();
+            IgnoreMapBlocks = Convert.ToBoolean(myBuffer.ReadInteger());
+            IgnoreActiveResources = Convert.ToBoolean(myBuffer.ReadInteger());
+            IgnoreExhaustedResources = Convert.ToBoolean(myBuffer.ReadInteger());
+            IgnoreZDimension = Convert.ToBoolean(myBuffer.ReadInteger());
             Homing = Convert.ToBoolean(myBuffer.ReadInteger());
             AutoRotate = Convert.ToBoolean(myBuffer.ReadInteger());
 
@@ -84,33 +93,6 @@ namespace Intersect_Client.Classes.Game_Objects
             }
 
             myBuffer.Dispose();
-        }
-
-        public byte[] ProjectileData()
-        {
-            var myBuffer = new ByteBuffer();
-            myBuffer.WriteString(Name);
-            myBuffer.WriteInteger(Animation);
-            myBuffer.WriteInteger(Speed);
-            myBuffer.WriteInteger(Delay);
-            myBuffer.WriteInteger(Quantity);
-            myBuffer.WriteInteger(Range);
-            myBuffer.WriteInteger(Spell);
-            myBuffer.WriteInteger(Convert.ToInt32(Homing));
-            myBuffer.WriteInteger(Convert.ToInt32(AutoRotate));
-
-            for (var x = 0; x < SpawnLocationsWidth; x++)
-            {
-                for (var y = 0; y < SpawnLocationsHeight; y++)
-                {
-                    for (var i = 0; i < MaxProjectileDirections; i++)
-                    {
-                        myBuffer.WriteInteger(Convert.ToInt32(SpawnLocations[x, y].Directions[i]));
-                    }
-                }
-            }
-
-            return myBuffer.ToArray();
         }
 
     }

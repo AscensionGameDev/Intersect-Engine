@@ -174,6 +174,9 @@ namespace Intersect_Client.Classes.Networking
                     case Enums.ServerPackets.Experience:
                         HandleExperience(bf.ReadBytes(bf.Length()));
                         break;
+                    case Enums.ServerPackets.ProjectileSpawnDead:
+                        HandleProjectileSpawnDead(bf.ReadBytes(bf.Length()));
+                        break;
                     default:
                         Console.WriteLine(@"Non implemented packet received: " + packetHeader);
                         break;
@@ -795,6 +798,18 @@ namespace Intersect_Client.Classes.Networking
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
             Globals.Me.Experience = bf.ReadInteger();
+            bf.Dispose();
+        }
+
+        private static void HandleProjectileSpawnDead(byte[] packet)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteBytes(packet);
+            int entityIndex = (int)bf.ReadLong();
+            if (Globals.Entities.ContainsKey(entityIndex))
+            {
+                ((Projectile) Globals.Entities[entityIndex]).SpawnDead((int)bf.ReadLong());
+            }
             bf.Dispose();
         }
     }

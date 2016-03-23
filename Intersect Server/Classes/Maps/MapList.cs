@@ -55,7 +55,7 @@ namespace Intersect_Server.Classes
                     tmpMap = new FolderMap();
                     if (tmpMap.Load(myBuffer))
                     {
-                        if (Globals.GameMaps[tmpMap.MapNum] == null)
+                        if (Globals.GameMaps[tmpMap.MapNum] != null)
                         {
                             Items.Add(tmpMap);
                         }

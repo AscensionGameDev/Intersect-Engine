@@ -315,5 +315,25 @@ namespace Intersect_Editor.Classes
             bf.WriteLong(mapNum);
             Network.SendPacket(bf.ToArray());
         }
+
+        public static void SendUnlinkMap(int mapNum)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteLong((int)Enums.ClientPackets.UnlinkMap);
+            bf.WriteLong(mapNum);
+            bf.WriteLong(Globals.CurrentMap);
+            Network.SendPacket(bf.ToArray());
+        }
+
+        public static void SendLinkMap(int adjacentMap, int linkMap, int gridX, int gridY)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteLong((int)Enums.ClientPackets.LinkMap);
+            bf.WriteLong(adjacentMap);
+            bf.WriteLong(linkMap);
+            bf.WriteLong(gridX);
+            bf.WriteLong(gridY);
+            Network.SendPacket(bf.ToArray());
+        }
     }
 }

@@ -332,7 +332,7 @@ namespace Intersect_Editor.Forms
         {
             if (tabControl.SelectedIndex == tabControl.TabPages.IndexOf(tabTiles))
             {
-                Globals.CurrentLayer = 0;
+                Globals.CurrentLayer = cmbMapLayer.SelectedIndex;
                 EditorGraphics.TilePreviewUpdated = true;
                 Globals.SelectionType = (int)Enums.SelectionTypes.AllLayers;
             }

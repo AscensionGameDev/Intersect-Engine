@@ -491,26 +491,23 @@ namespace Intersect_Server.Classes
             int x = ResourceSpawns[i].X;
             int y = ResourceSpawns[i].Y;
             int Z = 0;
-            int index = Globals.FindOpenEntity();
-            Globals.Entities[index] = new Resource(index, ResourceSpawns[i].ResourceNum);
-            ResourceSpawns[i].Entity = Globals.Entities[index];
-            Globals.Entities[index].CurrentX = ResourceSpawns[i].X;
-            Globals.Entities[index].CurrentY = ResourceSpawns[i].Y;
-            Globals.Entities[index].CurrentMap = MyMapNum;
-
-            //Give Resource Drops
-            for (int n = 0; n < Constants.MaxNpcDrops; n++)
+            int index = -1;
+            if (ResourceSpawns[i].Entity == null)
             {
-                if (Globals.Rand.Next(1, 101) <= Globals.GameResources[Attributes[x, y].data1].Drops[n].Chance)
-                {
-                    Globals.Entities[index].Inventory[Z].ItemNum = Globals.GameResources[Attributes[x, y].data1].Drops[n].ItemNum;
-                    Globals.Entities[index].Inventory[Z].ItemVal = Globals.GameResources[Attributes[x, y].data1].Drops[n].Amount;
-                    Z = Z + 1;
-                }
+                index = Globals.FindOpenEntity();
+                Globals.Entities[index] = new Resource(index, ResourceSpawns[i].ResourceNum);
+                ResourceSpawns[i].Entity = (Resource) Globals.Entities[index];
+                Globals.Entities[index].CurrentX = ResourceSpawns[i].X;
+                Globals.Entities[index].CurrentY = ResourceSpawns[i].Y;
+                Globals.Entities[index].CurrentMap = MyMapNum;
+                Entities.Add((Resource)Globals.Entities[index]);
+            }
+            else
+            {
+                index = ResourceSpawns[i].Entity.MyIndex;
             }
 
-            Entities.Add((Resource)Globals.Entities[index]);
-            PacketSender.SendEntityDataToProximity(index, (int)Enums.EntityTypes.Resource, Globals.Entities[index].Data(), Globals.Entities[index]);
+            ((Resource) Globals.Entities[index]).Spawn();
         }
 
         //Npcs
@@ -597,10 +594,10 @@ namespace Intersect_Server.Classes
 
 
         //Spawn a projectile
-        public void SpawnMapProjectile(int MyIndex, Type ownerType, int projectileNum, int Map, int X, int Y, int Z, int Direction, int IsSpell = -1, int Target = 0)
+        public void SpawnMapProjectile(Entity owner, int projectileNum, int Map, int X, int Y, int Z, int Direction, int IsSpell = -1, int Target = 0)
         {
             int n = Globals.FindOpenEntity();
-            MapProjectiles.Add(new Projectile(n, MyIndex, Globals.Entities[MyIndex].GetType(), projectileNum, Map, X, Y, Z, Direction, IsSpell, Target));
+            MapProjectiles.Add(new Projectile(n, owner, projectileNum, Map, X, Y, Z, Direction, IsSpell, Target));
             Globals.Entities[n] = MapProjectiles[MapProjectiles.Count - 1];
 
             Entities.Add(Globals.Entities[n]);
@@ -704,7 +701,7 @@ namespace Intersect_Server.Classes
                     //Process Resource Respawns
                     for (int i = 0; i < ResourceSpawns.Count; i++)
                     {
-                        if (!Globals.Entities.Contains(ResourceSpawns[i].Entity))
+                        if (ResourceSpawns[i].Entity != null && ResourceSpawns[i].Entity.IsDead)
                         {
                             if (ResourceSpawns[i].RespawnTime == -1)
                             {
@@ -838,6 +835,17 @@ namespace Intersect_Server.Classes
             ((Player) client.Entity).SendEvents();
         }
 
+        public void ClearConnections(int side = -1)
+        {
+            if (Deleted == 0)
+            {
+                if (side == -1 || side == (int)Enums.Directions.Up) Up = -1;
+                if (side == -1 || side == (int)Enums.Directions.Down) Down = -1;
+                if (side == -1 || side == (int)Enums.Directions.Left) Left = -1;
+                if (side == -1 || side == (int)Enums.Directions.Right) Right = -1;
+                Save();
+            }
+        }
     }
 
     #region "Extra Classes - Just for maps"
@@ -947,7 +955,7 @@ namespace Intersect_Server.Classes
         //Temporary Values
         //Resource Index
         public int EntityIndex = -1;
-        public Entity Entity;
+        public Resource Entity;
         public long RespawnTime = -1;
     }
 

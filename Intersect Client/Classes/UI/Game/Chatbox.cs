@@ -87,6 +87,11 @@ namespace Intersect_Client.Classes.UI.Game
                         var rw = _chatboxMessages.AddRow(t);
                         rw.SetTextColor(t1.Value);
                         rw.MouseInputEnabled = false;
+
+                        while (_chatboxMessages.RowCount > 20)
+                        {
+                            _chatboxMessages.RemoveRow(0);
+                        }
                     }
                 }
 

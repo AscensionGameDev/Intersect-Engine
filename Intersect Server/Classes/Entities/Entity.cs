@@ -96,6 +96,16 @@ namespace Intersect_Server.Classes
         }
 
         //Movement
+        /// <summary>
+        /// Determines if this entity can move in the direction given.
+        /// Returns -5 if the tile is completely out of bounds.
+        /// Returns -3 if a tile is blocked because of a Z dimension tile
+        /// Returns -2 if a tile is blocked by a map attribute.
+        /// Returns -1 for clear.
+        /// Returns the type of entity that is blocking the way (if one exists)
+        /// </summary>
+        /// <param name="moveDir"></param>
+        /// <returns></returns>
         public int CanMove(int moveDir)
         {
             var tmpX = CurrentX;
@@ -176,24 +186,26 @@ namespace Intersect_Server.Classes
                                     .Attributes[tmpX, tmpY];
                             if (tileAttribute != null)
                             {
-                                if (tileAttribute.value == (int)Enums.MapAttributes.Blocked) return 1;
-                                if (tileAttribute.value == (int)Enums.MapAttributes.NPCAvoid && this.GetType() == typeof(Npc)) return 1;
+                                if (tileAttribute.value == (int)Enums.MapAttributes.Blocked) return -2;
+                                if (tileAttribute.value == (int)Enums.MapAttributes.NPCAvoid && this.GetType() == typeof(Npc)) return -2;
+                                if (tileAttribute.value == (int) Enums.MapAttributes.ZDimension &&
+                                    tileAttribute.data2 - 1 == CurrentZ) return -3;
                             }
                             tmpMap = Database.MapGrids[Globals.GameMaps[tmpMap].MapGrid].MyGrid[Globals.GameMaps[tmpMap].MapGridX + mapX, Globals.GameMaps[tmpMap].MapGridY + mapY];
                         }
                         else
                         {
-                            return 1;
+                            return -5;
                         }
                     }
                     else
                     {
-                        return 1;
+                        return -5;
                     }
                 }
                 else
                 {
-                    return 1;
+                    return -5;
                 }
 
                 foreach (Entity en in Globals.Entities)
@@ -205,27 +217,27 @@ namespace Intersect_Server.Classes
                         CollisionIndex = en.MyIndex;
                         if (en.GetType() == typeof(Player))
                         {
-                            return 2;
+                            return (int)Enums.EntityTypes.Player;
                         }
                         else if (en.GetType() == typeof(Npc))
                         {
-                            return 3;
+                            return (int)Enums.EntityTypes.Player;
                         }
                         else if (en.GetType() == typeof(Resource))
                         {
-                            return 4;
+                            return (int)Enums.EntityTypes.Resource;
                         }
                         else if (en.GetType() == typeof(EventPageInstance))
                         {
-                            return 6;
+                            return (int)Enums.EntityTypes.Event;
                         }
                     }
                 }
-                return 0;
+                return -1;
             }
             catch
             {
-                return 1;
+                return -2;
 
             }
         }
@@ -456,6 +468,7 @@ namespace Intersect_Server.Classes
                 ((Npc)Globals.Entities[enemyIndex]).AssignTarget(MyIndex);
 
                 //Check if there are any guards nearby
+                //TODO Loop through CurrentMap - SurroundingMaps Entity List instead of global entity list.
                 for (int n = 0; n < Globals.GameMaps[CurrentMap].Entities.Count; n++)
                 {
                     if (Globals.GameMaps[CurrentMap].Entities[n].GetType() == typeof(Npc))
@@ -523,7 +536,6 @@ namespace Intersect_Server.Classes
                 {
                     ((Resource)Globals.Entities[enemyIndex]).SpawnResourceItems(MyIndex);
                 }
-                Globals.GameMaps[CurrentMap].Entities.Remove(Globals.Entities[enemyIndex]);
                 Globals.Entities[enemyIndex].Die();
             }
             else

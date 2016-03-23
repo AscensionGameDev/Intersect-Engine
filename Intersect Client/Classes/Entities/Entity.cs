@@ -453,6 +453,7 @@ namespace Intersect_Client.Classes.Entities
                 return;
             }
             var width = Globals.Database.TileWidth;
+            var fillWidth = ((float) Vital[(int) Enums.Vitals.Health]/MaxVital[(int) Enums.Vitals.Health])*width;
             var y = (int)Math.Ceiling(GetCenterPos().Y);
             var x = (int)Math.Ceiling(GetCenterPos().X);
             if (GameGraphics.EntityFileNames.IndexOf(MySprite.ToLower()) >= 0)
@@ -469,7 +470,7 @@ namespace Intersect_Client.Classes.Entities
             GameGraphics.DrawGameTexture(GameGraphics.WhiteTex, new FloatRect(0, 0, 1, 1),
                 new FloatRect((int) (x - 1 - width/2), (int) (y - 1), width, 6), Color.Black);
             GameGraphics.DrawGameTexture(GameGraphics.WhiteTex, new FloatRect(0, 0, 1, 1),
-                new FloatRect((int)(x - width / 2), (int)(y), width-2, 4), Color.Red);
+                new FloatRect((int)(x - width / 2), (int)(y), fillWidth-2, 4), Color.Red);
         }
         public void DrawCastingBar()
         {

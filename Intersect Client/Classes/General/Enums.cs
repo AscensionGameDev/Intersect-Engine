@@ -90,6 +90,8 @@ namespace Intersect_Client.Classes.General
             NeedGrid,
             OpenProjectileEditor,
             SaveProjectile,
+            UnlinkMap,
+            LinkMap,
         }
 
         public enum ServerPackets
@@ -144,6 +146,8 @@ namespace Intersect_Client.Classes.General
             CastTime,
             SendSpellCooldown,
             Experience,
+            ProjectileSpawnDead,
+            SendAlert,
         }
 
         public enum Stats

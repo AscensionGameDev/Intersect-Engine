@@ -43,6 +43,9 @@ namespace Intersect_Editor.Forms
         private bool showPreviews = false;
         private int defaultSize;
         private int currentSize;
+        private int currentCellX;
+        private int currentCellY;
+        private int contextMap = -1;
         public frmGridView()
         {
             InitializeComponent();
@@ -52,24 +55,25 @@ namespace Intersect_Editor.Forms
         public void InitGrid(ByteBuffer bf)
         {
             int size = 0;
-            gridWidth = (int)bf.ReadLong();
+            List<int> gridMaps = new List<int>();
+                gridWidth = (int)bf.ReadLong();
             gridHeight = (int)bf.ReadLong();
             myGrid = new MapGridItem[gridWidth, gridHeight];
-            dataGridView1.AutoSize = true;
-            dataGridView1.Columns.Clear();
-            dataGridView1.Rows.Clear();
+            mapGridView.AutoSize = true;
+            mapGridView.Columns.Clear();
+            mapGridView.Rows.Clear();
             for (int x = -1; x <= gridWidth; x++)
             {
-                dataGridView1.Columns.Add(@"", @"");
+                mapGridView.Columns.Add(@"", @"");
             }
-            dataGridView1.Rows.Add(gridHeight + 2);
+            mapGridView.Rows.Add(gridHeight + 2);
             for (int x = -1; x <= gridWidth; x++)
             {
                 for (int y = -1; y <= gridHeight; y++)
                 {
                     if (y == -1 || y == gridHeight || x == -1 || x == gridWidth)
                     {
-                        dataGridView1.Rows[y + 1].Cells[x + 1].Style.BackColor = Color.Black;
+                        mapGridView.Rows[y + 1].Cells[x + 1].Style.BackColor = Color.Black;
                     }
                     else
                     {
@@ -77,23 +81,36 @@ namespace Intersect_Editor.Forms
                         if (num == -1)
                         {
                             myGrid[x, y] = new MapGridItem(num);
-                            dataGridView1.Rows[y + 1].Cells[x + 1].Style.BackColor = Color.Gray;
+                            mapGridView.Rows[y + 1].Cells[x + 1].Style.BackColor = Color.Gray;
                         }
                         else
                         {
                             myGrid[x, y] = new MapGridItem(num,bf.ReadString(),bf.ReadInteger());
-                            dataGridView1.Rows[y + 1].Cells[x + 1].Style.BackColor = Color.Green;
-                            dataGridView1.Rows[y + 1].Cells[x + 1].ValueType = typeof(string);
-                            dataGridView1.Rows[y + 1].Cells[x + 1].Value = myGrid[x,y].mapnum + ". " + myGrid[x,y].name;
-                            if (dataGridView1.Rows[y + 1].Cells[x + 1].Size.Width > size) size = dataGridView1.Rows[y + 1].Cells[x + 1].Size.Width;
+                            gridMaps.Add(myGrid[x,y].mapnum);
+                            mapGridView.Rows[y + 1].Cells[x + 1].Style.BackColor = Color.Green;
+                            mapGridView.Rows[y + 1].Cells[x + 1].ValueType = typeof(string);
+                            mapGridView.Rows[y + 1].Cells[x + 1].Value = myGrid[x,y].mapnum + ". " + myGrid[x,y].name;
+                            if (mapGridView.Rows[y + 1].Cells[x + 1].Size.Width > size) size = mapGridView.Rows[y + 1].Cells[x + 1].Size.Width;
                         }
                     }
+                }
+            }
+            linkMapToolStripMenuItem.DropDownItems.Clear();
+            //Get a list of maps -- if they are not in this grid.
+            for (int i = 0; i < Database.OrderedMaps.Count; i++)
+            {
+                if (!gridMaps.Contains(Database.OrderedMaps[i].MapNum))
+                {
+                    var item = new ToolStripButton(Database.OrderedMaps[i].MapNum + ". " + Database.OrderedMaps[i].Name);
+                    item.Tag = Database.OrderedMaps[i].MapNum;
+                    item.Click += LinkMapItem_Click;
+                    linkMapToolStripMenuItem.DropDownItems.Add(item);
                 }
             }
             defaultSize = size;
             currentSize = 0;
             cmbZoom_SelectedIndexChanged(null, null);
-            dataGridView1.Select();
+            mapGridView.Select();
         }
 
         private void frmGridView_FormClosing(object sender, FormClosingEventArgs e)
@@ -102,7 +119,7 @@ namespace Intersect_Editor.Forms
             Hide();
         }
 
-        private void dataGridView1_CellPainting(object sender, DataGridViewCellPaintingEventArgs e)
+        private void mapGridView_CellPainting(object sender, DataGridViewCellPaintingEventArgs e)
         {
             if (e.RowIndex > 0 && e.ColumnIndex > 0 && e.ColumnIndex - 1 < gridWidth && e.RowIndex - 1 < gridHeight)
             {
@@ -135,7 +152,7 @@ namespace Intersect_Editor.Forms
         private void btnToggleNames_Click(object sender, EventArgs e)
         {
             showNames = !showNames;
-            dataGridView1.Refresh();
+            mapGridView.Refresh();
         }
 
         private void btnFetchPreview_Click(object sender, EventArgs e)
@@ -168,7 +185,7 @@ namespace Intersect_Editor.Forms
                     }
                     Globals.PreviewProgressForm.ShowDialog();
                     showPreviews = true;
-                    dataGridView1.Refresh();
+                    mapGridView.Refresh();
                 }
             }
         }
@@ -176,14 +193,14 @@ namespace Intersect_Editor.Forms
         private void btnTogglePreviews_Click(object sender, EventArgs e)
         {
             showPreviews = !showPreviews;
-            dataGridView1.Refresh();
+            mapGridView.Refresh();
         }
 
         private void cmbZoom_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (!Globals.InEditor) return;
             int size = 0;
-            DataGridViewCellStyle style = dataGridView1.DefaultCellStyle.Clone();
+            DataGridViewCellStyle style = mapGridView.DefaultCellStyle.Clone();
             if (cmbZoom.SelectedIndex == 0)
             {
                 size = defaultSize;
@@ -216,21 +233,21 @@ namespace Intersect_Editor.Forms
             }
             if (size != currentSize)
             {
-                dataGridView1.DefaultCellStyle = style;
+                mapGridView.DefaultCellStyle = style;
                 currentSize = size;
                 for (int x = -1; x <= gridWidth; x++)
                 {
-                    dataGridView1.Columns[x + 1].Width = size;
+                    mapGridView.Columns[x + 1].Width = size;
                 }
                 for (int y = -1; y <= gridHeight; y++)
                 {
-                    dataGridView1.Rows[y + 1].Height = (int)((float)size * ((float)(Globals.TileHeight * Globals.MapHeight) / (float)(Globals.TileWidth * Globals.MapWidth)));
+                    mapGridView.Rows[y + 1].Height = (int)((float)size * ((float)(Globals.TileHeight * Globals.MapHeight) / (float)(Globals.TileWidth * Globals.MapWidth)));
                 }
-                dataGridView1.Refresh();
+                mapGridView.Refresh();
             }
         }
 
-        private void dataGridView1_CellContentDoubleClick(object sender, DataGridViewCellEventArgs e)
+        private void mapGridView_CellContentDoubleClick(object sender, DataGridViewCellEventArgs e)
         {
             if (e.RowIndex > 0 && e.ColumnIndex > 0 && e.ColumnIndex - 1 < gridWidth && e.RowIndex - 1 < gridHeight)
             {
@@ -241,14 +258,130 @@ namespace Intersect_Editor.Forms
             }
         }
 
-        private void panel1_Paint(object sender, PaintEventArgs e)
+        private void mapGridView_SelectionChanged(object sender, EventArgs e)
         {
-            dataGridView1.Refresh();
+            mapGridView.ClearSelection();
         }
 
-        private void dataGridView1_SelectionChanged(object sender, EventArgs e)
+        private void mapGridView_CellEnter(object sender, DataGridViewCellEventArgs e)
         {
-            dataGridView1.ClearSelection();
+            currentCellX = e.ColumnIndex;
+            currentCellY = e.RowIndex;
+        }
+
+        private void mapGridView_MouseClick(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Right)
+            {
+                if (mapGridView.HitTest(e.X, e.Y).Type == DataGridViewHitTestType.Cell)
+                {
+                    currentCellX = mapGridView.HitTest(e.X, e.Y).ColumnIndex;
+                    currentCellY = mapGridView.HitTest(e.X, e.Y).RowIndex;
+                }
+                else
+                {
+                    contextMap = -1;
+                }
+                if (currentCellX >= 0 && currentCellY >= 0)
+                {
+                    if (currentCellX >= 0 && currentCellY >= 0 && currentCellX - 1 <= gridWidth &&
+                        currentCellY - 1 <= gridHeight)
+                    {
+                        if (currentCellX == 0 || currentCellY == 0 || currentCellX - 1 == gridWidth ||
+                            currentCellY - 1 == gridHeight || myGrid[currentCellX - 1, currentCellY - 1].mapnum <= -1)
+                        {
+                            int adjacentMap = -1;
+                            //Check Left
+                            if (currentCellX > 1  && currentCellY != 0 && currentCellY -1 < gridHeight)
+                            {
+                                if (myGrid[currentCellX - 2, currentCellY -1].mapnum > -1)
+                                    adjacentMap = myGrid[currentCellX - 2, currentCellY - 1].mapnum;
+                            }
+                            //Check Right
+                            if (currentCellX < gridWidth && currentCellY != 0 && currentCellY - 1 < gridHeight)
+                            {
+                                if (myGrid[currentCellX, currentCellY - 1].mapnum > -1)
+                                    adjacentMap = myGrid[currentCellX, currentCellY - 1].mapnum;
+                            }
+                            //Check Up
+                            if (currentCellX != 0 && currentCellY > 1 && currentCellX - 1 < gridWidth)
+                            {
+                                if (myGrid[currentCellX - 1, currentCellY - 2].mapnum > -1)
+                                    adjacentMap = myGrid[currentCellX - 1, currentCellY - 2].mapnum;
+                            }
+                            //Check Down
+                            if (currentCellX != 0 && currentCellY < gridHeight && currentCellX -1 < gridWidth)
+                            {
+                                if (myGrid[currentCellX - 1, currentCellY].mapnum > -1)
+                                    adjacentMap = myGrid[currentCellX - 1, currentCellY].mapnum;
+                            }
+                            if (adjacentMap > -1)
+                            {
+                                mapMenuStrip.Show(mapGridView, new Point(e.X, e.Y));
+                                unlinkMapToolStripMenuItem.Visible = false;
+                                linkMapToolStripMenuItem.Visible = true;
+                            }
+                        }
+                        else
+                        {
+                            contextMap = myGrid[currentCellX - 1, currentCellY - 1].mapnum;
+                            mapMenuStrip.Show(mapGridView, new Point(e.X, e.Y));
+                            unlinkMapToolStripMenuItem.Visible = true;
+                            linkMapToolStripMenuItem.Visible = false;
+                        }
+                    }
+                }
+            }
+        }
+
+        private void LinkMapItem_Click(object sender, EventArgs e)
+        {
+            //Make sure the selected tile is adjacent to a map
+            int linkMap = (int) ((ToolStripItem) sender).Tag;
+            int adjacentMap = -1;
+            //Check Left
+            if (currentCellX > 1 && currentCellY != 0 && currentCellY - 1 < gridHeight)
+            {
+                if (myGrid[currentCellX - 2, currentCellY - 1].mapnum > -1)
+                    adjacentMap = myGrid[currentCellX - 2, currentCellY - 1].mapnum;
+            }
+            //Check Right
+            if (currentCellX < gridWidth && currentCellY != 0 && currentCellY - 1 < gridHeight)
+            {
+                if (myGrid[currentCellX, currentCellY - 1].mapnum > -1)
+                    adjacentMap = myGrid[currentCellX, currentCellY - 1].mapnum;
+            }
+            //Check Up
+            if (currentCellX != 0 && currentCellY > 1 && currentCellX - 1 < gridWidth)
+            {
+                if (myGrid[currentCellX - 1, currentCellY - 2].mapnum > -1)
+                    adjacentMap = myGrid[currentCellX - 1, currentCellY - 2].mapnum;
+            }
+            //Check Down
+            if (currentCellX != 0 && currentCellY < gridHeight && currentCellX - 1 < gridWidth)
+            {
+                if (myGrid[currentCellX - 1, currentCellY].mapnum > -1)
+                    adjacentMap = myGrid[currentCellX - 1, currentCellY].mapnum;
+            }
+            if (adjacentMap != -1)
+            {
+                PacketSender.SendLinkMap(adjacentMap, linkMap, currentCellX - 1, currentCellY - 1);
+            }
+        }
+
+
+        private void unlinkMapToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (contextMap > -1)
+            {
+                if (MessageBox.Show("Are you sure you want to unlink map " + contextMap + "?","Unlink Map",MessageBoxButtons.YesNo) == DialogResult.Yes)
+                    PacketSender.SendUnlinkMap(contextMap);
+            }
+        }
+
+        private void linkMapToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
         }
     }
 

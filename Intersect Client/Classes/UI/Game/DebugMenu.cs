@@ -48,6 +48,7 @@ namespace Intersect_Client.Classes.UI.Game
         private Label _mapsLoadedLabel;
         private Label _mapsDrawnLabel;
         private Label _entitiesDrawnLabel;
+        private Label _lightsDrawnLabel;
 
         //Init
         public DebugMenu(Canvas _gameCanvas)
@@ -104,6 +105,9 @@ namespace Intersect_Client.Classes.UI.Game
             _entitiesDrawnLabel.SetPosition(4, 124);
             _entitiesDrawnLabel.Text = "Entities Drawn: ";
 
+            _lightsDrawnLabel = new Label(_debugWindow);
+            _lightsDrawnLabel.SetPosition(4,136);
+            _lightsDrawnLabel.Text = "Lights Drawn: ";
 
         }
         public void Update()
@@ -122,6 +126,7 @@ namespace Intersect_Client.Classes.UI.Game
             _mapsLoadedLabel.Text = "Known Maps: " + Globals.GameMaps.Count;
             _mapsDrawnLabel.Text = "Maps Drawn: " + GameGraphics.MapsDrawn;
             _entitiesDrawnLabel.Text = "Entities Drawn: " + GameGraphics.EntitiesDrawn;
+            _lightsDrawnLabel.Text = "Lights Drawn: " + GameGraphics.LightsDrawn;
         }
         public void Show()
         {

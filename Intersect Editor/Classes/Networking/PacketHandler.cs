@@ -23,6 +23,7 @@ using System;
 using Intersect_Editor.Forms;
 using System.Threading;
 using System.IO;
+using System.Windows.Forms;
 
 namespace Intersect_Editor.Classes
 {
@@ -121,6 +122,9 @@ namespace Intersect_Editor.Classes
                     break;
                 case Enums.ServerPackets.ProjectileData:
                     HandleProjectileData(bf.ReadBytes(bf.Length()));
+                    break;
+                case Enums.ServerPackets.SendAlert:
+                    HandleAlert(bf.ReadBytes(bf.Length()));
                     break;
                 default:
                     Console.WriteLine(@"Non implemented packet received: " + packetHeader);
@@ -438,6 +442,16 @@ namespace Intersect_Editor.Classes
             var projectileNum = bf.ReadInteger();
             Globals.GameProjectiles[projectileNum] = new ProjectileStruct();
             Globals.GameProjectiles[projectileNum].Load(bf.ReadBytes(bf.Length()),projectileNum);
+            bf.Dispose();
+        }
+
+        private static void HandleAlert(byte[] packet)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteBytes(packet);
+            var title = bf.ReadString();
+            var text = bf.ReadString();
+            MessageBox.Show(text, title);
             bf.Dispose();
         }
     }

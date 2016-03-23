@@ -102,6 +102,7 @@ namespace Intersect_Client.Classes.Core
         //Rendering Variables
         public static int DrawCalls = 0;
         public static int EntitiesDrawn = 0;
+        public static int LightsDrawn = 0;
         public static int MapsDrawn = 0;
 
         //Cache the Y based rendering
@@ -276,6 +277,7 @@ namespace Intersect_Client.Classes.Core
                 DrawCalls = 0;
                 MapsDrawn = 0;
                 EntitiesDrawn = 0;
+                LightsDrawn = 0;
                 PreRenderedMapLayer = false;
 
                 UpdateView();
@@ -532,7 +534,7 @@ namespace Intersect_Client.Classes.Core
         public static void DrawLight(int x, int y, int size, byte intensity, float expand, Color color)
         {
             lightQueue.Add(new Light(0, 0, x, y, intensity, size, expand, color));
-
+            LightsDrawn++;
         }
 
         private static void DrawLights()

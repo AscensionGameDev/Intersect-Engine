@@ -88,6 +88,7 @@ namespace Intersect_Editor.Forms
             cmbToolType.Items.AddRange(Enums.ToolTypes.ToArray());
             cmbEquipmentBonus.Items.Add("None");
             cmbEquipmentBonus.Items.AddRange(Enums.ItemBonusEffects.ToArray());
+            scrlProjectile.Maximum = Constants.MaxProjectiles;
         }
 
         private void UpdateEditor()
@@ -116,6 +117,7 @@ namespace Intersect_Editor.Forms
             scrlRange.Value = Globals.GameItems[_editorIndex].StatGrowth;
             cmbEquipmentSlot.SelectedIndex = Globals.GameItems[_editorIndex].Data1;
             cmbToolType.SelectedIndex = Globals.GameItems[_editorIndex].Tool;
+            scrlProjectile.Value = Globals.GameItems[_editorIndex].Projectile;
             cmbEquipmentBonus.SelectedIndex = Globals.GameItems[_editorIndex].Data2;
             scrlEffectAmount.Value = Globals.GameItems[_editorIndex].Data3;
             chk2Hand.Checked = Convert.ToBoolean(Globals.GameItems[_editorIndex].Data4);
@@ -362,6 +364,8 @@ namespace Intersect_Editor.Forms
                 scrlDamage.Visible = false;
                 lblProjectile.Visible = false;
                 scrlProjectile.Visible = false;
+
+                Globals.GameItems[_editorIndex].Projectile = -1;
                 Globals.GameItems[_editorIndex].Tool = -1;
                 Globals.GameItems[_editorIndex].Damage = 0;
                 Globals.GameItems[_editorIndex].Data4 = 0;
@@ -397,13 +401,13 @@ namespace Intersect_Editor.Forms
         private void scrlProjectile_ValueChanged(object sender, EventArgs e)
         {
             Globals.GameItems[_editorIndex].Projectile = scrlProjectile.Value;
-            if (scrlProjectile.Value > 0)
+            if (scrlProjectile.Value > -1)
             {
-                lblProjectile.Text = "Projectile: " + scrlProjectile.Value + " " + Globals.GameProjectiles[scrlProjectile.Value - 1].Name;
+                lblProjectile.Text = "Projectile: " + (scrlProjectile.Value + 1) + " " + Globals.GameProjectiles[scrlProjectile.Value].Name;
             }
             else
             {
-                lblProjectile.Text = "Projectile: " + scrlProjectile.Value + " None";
+                lblProjectile.Text = "Projectile: None";
             }
         }
     }

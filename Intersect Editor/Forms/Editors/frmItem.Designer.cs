@@ -516,6 +516,7 @@ namespace Intersect_Editor.Forms
             // scrlProjectile
             // 
             this.scrlProjectile.Location = new System.Drawing.Point(326, 103);
+            this.scrlProjectile.Minimum = -1;
             this.scrlProjectile.Name = "scrlProjectile";
             this.scrlProjectile.Size = new System.Drawing.Size(102, 17);
             this.scrlProjectile.TabIndex = 32;

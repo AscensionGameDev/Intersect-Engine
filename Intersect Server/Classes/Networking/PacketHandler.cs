@@ -177,6 +177,12 @@ namespace Intersect_Server.Classes
                 case Enums.ClientPackets.SaveProjectile:
                     HandleProjectileData(client, packet);
                     break;
+                case Enums.ClientPackets.UnlinkMap:
+                    HandleUnlinkMap(client, packet);
+                    break;
+                case Enums.ClientPackets.LinkMap:
+                    HandleLinkMap(client, packet);
+                    break;
                 default:
                     Globals.GeneralLogs.Add(@"Non implemented packet received: " + packetHeader);
                     break;
@@ -573,20 +579,21 @@ namespace Intersect_Server.Classes
         {
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
+            long target = bf.ReadLong();
 
             //Fire projectile instead if weapon has it
-            if (client.Entity.Equipment[Enums.WeaponIndex] > -1)
+            if (client.Entity.Equipment[Enums.WeaponIndex] >= 0 && client.Entity.Inventory[client.Entity.Equipment[Enums.WeaponIndex]].ItemNum >= 0)
             {
-                if (Globals.GameItems[client.Entity.Equipment[Enums.WeaponIndex]].Projectile > -1)
+                if (Globals.GameItems[client.Entity.Inventory[client.Entity.Equipment[Enums.WeaponIndex]].ItemNum].Projectile >= 0)
                 {
-                    Globals.GameMaps[client.Entity.CurrentMap].SpawnMapProjectile(client.EntityIndex, client.Entity.GetType(), Globals.GameItems[client.Entity.Equipment[Enums.WeaponIndex]].Projectile - 1, client.Entity.CurrentMap, client.Entity.CurrentX, client.Entity.CurrentY, client.Entity.CurrentZ, client.Entity.Dir, -1, (int)bf.ReadLong());
+                    Globals.GameMaps[client.Entity.CurrentMap].SpawnMapProjectile(client.Entity, Globals.GameItems[client.Entity.Inventory[client.Entity.Equipment[Enums.WeaponIndex]].ItemNum].Projectile, client.Entity.CurrentMap, client.Entity.CurrentX, client.Entity.CurrentY, client.Entity.CurrentZ, client.Entity.Dir);
                     bf.Dispose();
                     return;
                 }
             }
 
             //Attack normally.
-            client.Entity.TryAttack((int)bf.ReadLong());
+            if (target > -1) client.Entity.TryAttack((int)target);
             bf.Dispose();
         }
 
@@ -1099,6 +1106,163 @@ namespace Intersect_Server.Classes
                 if (client.IsEditor)
                 {
                     PacketSender.SendMapGrid(client, Globals.GameMaps[mapNum].MapGrid);
+                }
+            }
+        }
+
+        private static void HandleUnlinkMap(Client client, byte[] packet)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteBytes(packet);
+            int mapNum = (int)bf.ReadLong();
+            int curMap = (int) bf.ReadLong();
+            int mapGrid = 0;
+            if (mapNum >= 0 && mapNum < Globals.GameMaps.Length)
+            {
+                if (client.IsEditor)
+                {
+                    if (Globals.GameMaps[mapNum] != null && Globals.GameMaps[mapNum].Deleted == 0)
+                    {
+                        Globals.GameMaps[mapNum].ClearConnections();
+
+                        int gridX = Globals.GameMaps[mapNum].MapGridX;
+                        int gridY = Globals.GameMaps[mapNum].MapGridY;
+
+                        //Up
+                        if (gridY - 1 >= 0 && Database.MapGrids[Globals.GameMaps[mapNum].MapGrid].MyGrid[gridX, gridY - 1] > -1)
+                        {
+                            if (Globals.GameMaps[Database.MapGrids[Globals.GameMaps[mapNum].MapGrid].MyGrid[gridX, gridY - 1]] != null)
+                                Globals.GameMaps[Database.MapGrids[Globals.GameMaps[mapNum].MapGrid].MyGrid[gridX, gridY - 1]].ClearConnections((int)Enums.Directions.Down);
+                        }
+
+                        //Down
+                        if (gridY + 1 < Database.MapGrids[Globals.GameMaps[mapNum].MapGrid].Height && Database.MapGrids[Globals.GameMaps[mapNum].MapGrid].MyGrid[gridX, gridY + 1] > -1)
+                        {
+                            if (Globals.GameMaps[Database.MapGrids[Globals.GameMaps[mapNum].MapGrid].MyGrid[gridX, gridY + 1]] !=null)
+                                Globals.GameMaps[Database.MapGrids[Globals.GameMaps[mapNum].MapGrid].MyGrid[gridX, gridY + 1]].ClearConnections((int)Enums.Directions.Up);
+                        }
+
+                        //Left
+                        if (gridX - 1 >= 0 && Database.MapGrids[Globals.GameMaps[mapNum].MapGrid].MyGrid[gridX - 1, gridY] > -1)
+                        {
+                            if (Globals.GameMaps[Database.MapGrids[Globals.GameMaps[mapNum].MapGrid].MyGrid[gridX - 1, gridY]] != null)
+                                Globals.GameMaps[Database.MapGrids[Globals.GameMaps[mapNum].MapGrid].MyGrid[gridX - 1, gridY]].ClearConnections((int)Enums.Directions.Right);
+                        }
+
+                        //Right
+                        if (gridX + 1 < Database.MapGrids[Globals.GameMaps[mapNum].MapGrid].Width && Database.MapGrids[Globals.GameMaps[mapNum].MapGrid].MyGrid[gridX + 1, gridY] > -1)
+                        {
+                            if (Globals.GameMaps[Database.MapGrids[Globals.GameMaps[mapNum].MapGrid].MyGrid[gridX + 1, gridY]] != null)
+                                Globals.GameMaps[Database.MapGrids[Globals.GameMaps[mapNum].MapGrid].MyGrid[gridX + 1, gridY]].ClearConnections((int)Enums.Directions.Left);
+                        }
+
+                        Database.GenerateMapGrids();
+                        if (curMap >= 0 && curMap < Globals.GameMaps.Length)
+                        {
+                            if (Globals.GameMaps[curMap] != null && Globals.GameMaps[curMap].Deleted == 0)
+                            {
+                                mapGrid = Globals.GameMaps[curMap].MapGrid;
+                            }
+                        }
+                    }
+                    PacketSender.SendMapGrid(client, mapGrid);
+                }
+            }
+        }
+
+        private static void HandleLinkMap(Client client, byte[] packet)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteBytes(packet);
+            long adjacentMap = bf.ReadLong();
+            long linkMap = bf.ReadLong();
+            long gridX = bf.ReadLong();
+            long gridY = bf.ReadLong();
+            bool canLink = true;
+            if (adjacentMap > 0 && linkMap > 0 && adjacentMap < Globals.GameMaps.Length &&
+                linkMap < Globals.GameMaps.Length)
+            {
+                if (Globals.GameMaps[linkMap] != null && Globals.GameMaps[adjacentMap] != null &&
+                    Globals.GameMaps[linkMap].Deleted == 0 && Globals.GameMaps[adjacentMap].Deleted == 0)
+                {
+                    //Clear to test if we can link.
+                    int linkGrid = Globals.GameMaps[linkMap].MapGrid;
+                    int adjacentGrid = Globals.GameMaps[adjacentMap].MapGrid;
+                    if (linkGrid != adjacentGrid)
+                    {
+                        long xOffset = Globals.GameMaps[linkMap].MapGridX - gridX;
+                        long yOffset = Globals.GameMaps[linkMap].MapGridY - gridY;
+                        for (int x = 0; x < Database.MapGrids[adjacentGrid].Width; x++)
+                        {
+                            for (int y = 0; y < Database.MapGrids[adjacentGrid].Height; y++)
+                            {
+                                if (x + xOffset >= 0 && x + xOffset < Database.MapGrids[linkGrid].Width && y + yOffset >= 0 && y + yOffset < Database.MapGrids[linkGrid].Height)
+                                {
+                                    if (Database.MapGrids[adjacentGrid].MyGrid[x, y] != -1 &&
+                                        Database.MapGrids[linkGrid].MyGrid[x + xOffset, y + yOffset] != -1)
+                                    {
+                                        //Incompatible Link!
+                                        PacketSender.SendAlert(client,"Map Link Failure","Failed to link map " + linkMap + " to map " + adjacentMap + ". If this merge were to happen, maps " + 
+                                            Database.MapGrids[adjacentGrid].MyGrid[x, y] + " and " + Database.MapGrids[linkGrid].MyGrid[x + xOffset, y + yOffset] + " would occupy the same space in the world.");
+                                        return;
+                                    }
+                                }
+                            }
+                        }
+                        if (canLink)
+                        {
+                            for (int x = -1; x < Database.MapGrids[adjacentGrid].Width + 1; x++)
+                            {
+                                for (int y = -1; y < Database.MapGrids[adjacentGrid].Height + 1; y++)
+                                {
+                                    if (x + xOffset >= 0 && x + xOffset < Database.MapGrids[linkGrid].Width && y + yOffset >= 0 && y + yOffset < Database.MapGrids[linkGrid].Height)
+                                    {
+                                        if (Database.MapGrids[linkGrid].MyGrid[x + xOffset, y + yOffset] != -1)
+                                        {
+                                            bool inXBounds = x > -1 &&
+                                                             x < Database.MapGrids[adjacentGrid].Width;
+                                            bool inYBounds = y > -1 &&
+                                                            y < Database.MapGrids[adjacentGrid].Height;
+                                            if (inXBounds && inYBounds)
+                                                Database.MapGrids[adjacentGrid].MyGrid[x, y] = Database.MapGrids[linkGrid].MyGrid[x + xOffset, y + yOffset];
+
+                                            if (inXBounds && y > 0 && Database.MapGrids[adjacentGrid].MyGrid[x, y -1] > -1)
+                                            {
+                                                Globals.GameMaps[Database.MapGrids[linkGrid].MyGrid[x + xOffset, y + yOffset]].Up = Database.MapGrids[adjacentGrid].MyGrid[x, y-1];
+                                                Globals.GameMaps[Database.MapGrids[adjacentGrid].MyGrid[x, y - 1]].Down = Database.MapGrids[linkGrid].MyGrid[x + xOffset, y + yOffset];
+                                                Globals.GameMaps[Database.MapGrids[adjacentGrid].MyGrid[x, y - 1]].Save();
+                                            }
+
+                                            if (inXBounds && y + 1 < Database.MapGrids[adjacentGrid].Height && Database.MapGrids[adjacentGrid].MyGrid[x, y + 1] > -1)
+                                            {
+                                                Globals.GameMaps[Database.MapGrids[linkGrid].MyGrid[x + xOffset, y + yOffset]].Down = Database.MapGrids[adjacentGrid].MyGrid[x, y + 1];
+                                                Globals.GameMaps[Database.MapGrids[adjacentGrid].MyGrid[x, y + 1]].Up = Database.MapGrids[linkGrid].MyGrid[x + xOffset, y + yOffset];
+                                                Globals.GameMaps[Database.MapGrids[adjacentGrid].MyGrid[x, y + 1]].Save();
+                                            }
+
+                                            if (inYBounds && x- 1 > 0 && Database.MapGrids[adjacentGrid].MyGrid[x -1, y] > -1)
+                                            {
+                                                Globals.GameMaps[Database.MapGrids[linkGrid].MyGrid[x + xOffset, y + yOffset]].Left = Database.MapGrids[adjacentGrid].MyGrid[x-1, y];
+                                                Globals.GameMaps[Database.MapGrids[adjacentGrid].MyGrid[x - 1, y]].Right = Database.MapGrids[linkGrid].MyGrid[x + xOffset, y + yOffset];
+                                                Globals.GameMaps[Database.MapGrids[adjacentGrid].MyGrid[x - 1, y]].Save();
+                                            }
+
+                                            if (inYBounds && x + 1 < Database.MapGrids[adjacentGrid].Width && Database.MapGrids[adjacentGrid].MyGrid[x + 1, y] > -1)
+                                            {
+                                                Globals.GameMaps[Database.MapGrids[linkGrid].MyGrid[x + xOffset, y + yOffset]].Right = Database.MapGrids[adjacentGrid].MyGrid[x + 1, y];
+                                                Globals.GameMaps[Database.MapGrids[adjacentGrid].MyGrid[x + 1, y]].Left = Database.MapGrids[linkGrid].MyGrid[x + xOffset, y + yOffset];
+                                                Globals.GameMaps[Database.MapGrids[adjacentGrid].MyGrid[x + 1, y]].Save();
+                                            }
+
+                                            Globals.GameMaps[Database.MapGrids[linkGrid].MyGrid[x + xOffset, y + yOffset]].Save();
+                                        }
+                                    }
+                                }
+                            }
+                            Database.GenerateMapGrids();
+                            PacketSender.SendMapGrid(client, Globals.GameMaps[adjacentMap].MapGrid);
+                        }
+                    }
                 }
             }
         }

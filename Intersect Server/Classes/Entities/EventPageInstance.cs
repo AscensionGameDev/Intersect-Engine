@@ -204,7 +204,7 @@ namespace Intersect_Server.Classes
                 {
                     if (Globals.Rand.Next(0, 2) != 0) return;
                     var dir = Globals.Rand.Next(0, 4);
-                    if (CanMove(dir) > 0)
+                    if (CanMove(dir) == -1)
                     {
                         Move(dir, Client);
                         moved = true;
@@ -244,28 +244,28 @@ namespace Intersect_Server.Classes
                 switch (MoveRoute.Actions[MoveRoute.ActionIndex].Type)
                 {
                     case MoveRouteEnum.MoveUp:
-                        if (CanMove((int) Enums.Directions.Up) == 0)
+                        if (CanMove((int) Enums.Directions.Up) == -1)
                         {
                             Move((int)Enums.Directions.Up,Client);
                             moved = true;
                         }
                         break;
                     case MoveRouteEnum.MoveDown:
-                        if (CanMove((int)Enums.Directions.Down) == 0)
+                        if (CanMove((int)Enums.Directions.Down) == -1)
                         {
                             Move((int)Enums.Directions.Down, Client);
                             moved = true;
                         }
                         break;
                     case MoveRouteEnum.MoveLeft:
-                        if (CanMove((int)Enums.Directions.Left) == 0)
+                        if (CanMove((int)Enums.Directions.Left) == -1)
                         {
                             Move((int)Enums.Directions.Left, Client);
                             moved = true;
                         }
                         break;
                     case MoveRouteEnum.MoveRight:
-                        if (CanMove((int)Enums.Directions.Right) == 0)
+                        if (CanMove((int)Enums.Directions.Right) == -1)
                         {
                             Move((int)Enums.Directions.Right, Client);
                             moved = true;
@@ -273,7 +273,7 @@ namespace Intersect_Server.Classes
                         break;
                     case MoveRouteEnum.MoveRandomly:
                         var dir = Globals.Rand.Next(0, 4);
-                        if (CanMove(dir) == 0)
+                        if (CanMove(dir) == -1)
                         {
                             Move(dir, Client);
                             moved = true;
@@ -292,7 +292,7 @@ namespace Intersect_Server.Classes
                             {
                                 if (_pathFinder.GetMove() > -1)
                                 {
-                                    if (CanMove(_pathFinder.GetMove()) == 0)
+                                    if (CanMove(_pathFinder.GetMove()) == -1)
                                     {
                                         Move(_pathFinder.GetMove(), Client);
                                         _pathFinder.RemoveMove();
@@ -324,7 +324,7 @@ namespace Intersect_Server.Classes
                                         moveDir = (int) Enums.Directions.Left;
                                         break;
                                 }
-                                if (CanMove(moveDir) == 0)
+                                if (CanMove(moveDir) == -1)
                                 {
                                     Move(moveDir, Client);
                                     moved = true;
@@ -333,7 +333,7 @@ namespace Intersect_Server.Classes
                                 {
                                     //Move Randomly
                                     moveDir = Globals.Rand.Next(0, 4);
-                                    if (CanMove(moveDir) == 0)
+                                    if (CanMove(moveDir) == -1)
                                     {
                                         Move(moveDir, Client);
                                         moved = true;
@@ -344,7 +344,7 @@ namespace Intersect_Server.Classes
                             {
                                 //Move Randomly
                                 moveDir = Globals.Rand.Next(0, 4);
-                                if (CanMove(moveDir) == 0)
+                                if (CanMove(moveDir) == -1)
                                 {
                                     Move(moveDir, Client);
                                     moved = true;
@@ -353,7 +353,7 @@ namespace Intersect_Server.Classes
                         }
                         break;
                     case MoveRouteEnum.StepForward:
-                        if (CanMove(Dir) > 0)
+                        if (CanMove(Dir) > -1)
                         {
                             Move(Dir, Client);
                             moved = true;
@@ -375,7 +375,7 @@ namespace Intersect_Server.Classes
                                 moveDir = (int)Enums.Directions.Left;
                                 break;
                         }
-                        if (CanMove(moveDir) > 0)
+                        if (CanMove(moveDir) > -1)
                         {
                             Move(moveDir, Client);
                             moved = true;

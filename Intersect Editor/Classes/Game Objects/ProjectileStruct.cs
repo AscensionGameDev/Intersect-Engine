@@ -39,6 +39,10 @@ namespace Intersect_Editor.Classes
         public int Quantity = 1;
         public int Range = 1;
         public int Spell = 0;
+        public bool IgnoreMapBlocks = false;
+        public bool IgnoreZDimension = false;
+        public bool IgnoreActiveResources = false;
+        public bool IgnoreExhaustedResources = false;
         public bool Homing = false;
         public bool AutoRotate = false;
         public Location[,] SpawnLocations = new Location[SpawnLocationsWidth, SpawnLocationsHeight];
@@ -69,6 +73,10 @@ namespace Intersect_Editor.Classes
             Quantity = myBuffer.ReadInteger();
             Range = myBuffer.ReadInteger();
             Spell = myBuffer.ReadInteger();
+            IgnoreMapBlocks = Convert.ToBoolean(myBuffer.ReadInteger());
+            IgnoreActiveResources = Convert.ToBoolean(myBuffer.ReadInteger());
+            IgnoreExhaustedResources = Convert.ToBoolean(myBuffer.ReadInteger());
+            IgnoreZDimension = Convert.ToBoolean(myBuffer.ReadInteger());
             Homing = Convert.ToBoolean(myBuffer.ReadInteger());
             AutoRotate = Convert.ToBoolean(myBuffer.ReadInteger());
 
@@ -97,6 +105,10 @@ namespace Intersect_Editor.Classes
             myBuffer.WriteInteger(Quantity);
             myBuffer.WriteInteger(Range);
             myBuffer.WriteInteger(Spell);
+            myBuffer.WriteInteger(Convert.ToInt32(IgnoreMapBlocks));
+            myBuffer.WriteInteger(Convert.ToInt32(IgnoreActiveResources));
+            myBuffer.WriteInteger(Convert.ToInt32(IgnoreExhaustedResources));
+            myBuffer.WriteInteger(Convert.ToInt32(IgnoreZDimension));
             myBuffer.WriteInteger(Convert.ToInt32(Homing));
             myBuffer.WriteInteger(Convert.ToInt32(AutoRotate));
 
