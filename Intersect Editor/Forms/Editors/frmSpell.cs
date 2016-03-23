@@ -89,7 +89,7 @@ namespace Intersect_Editor.Forms
             }
             else
             {
-                lblCastAnimation.Text = "Cast Animation: " + scrlCastAnimation.Value;
+                lblCastAnimation.Text = "Cast Animation: " + (scrlCastAnimation.Value + 1) + ".  " + Globals.GameAnimations[scrlCastAnimation.Value].Name;
             }
             
 
@@ -100,7 +100,7 @@ namespace Intersect_Editor.Forms
             }
             else
             {
-                lblHitAnimation.Text = "Hit Animation: " + scrlHitAnimation.Value;
+                lblHitAnimation.Text = "Hit Animation: " + (scrlHitAnimation.Value + 1) + ".  " + Globals.GameAnimations[scrlHitAnimation.Value].Name;
             }
             
             scrlAttackReq.Value = Globals.GameSpells[_editorIndex].StatReq[(int)Enums.Stats.Attack];
@@ -251,7 +251,7 @@ namespace Intersect_Editor.Forms
             }
             else
             {
-                lblCastAnimation.Text = "Cast Animation: " + scrlCastAnimation.Value;
+                lblCastAnimation.Text = "Cast Animation: " + (scrlCastAnimation.Value + 1) + ".  " + Globals.GameAnimations[scrlCastAnimation.Value].Name;
             }
         }
 
@@ -264,7 +264,7 @@ namespace Intersect_Editor.Forms
             }
             else
             {
-                lblHitAnimation.Text = "Hit Animation: " + scrlHitAnimation.Value;
+                lblHitAnimation.Text = "Hit Animation: " + (scrlHitAnimation.Value + 1) + ".  " + Globals.GameAnimations[scrlHitAnimation.Value].Name;
             }
         }
 

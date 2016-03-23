@@ -52,7 +52,12 @@ namespace Intersect_Server.Classes
         {
             MyName = myBase.Name;
             MySprite = myBase.Sprite;
-            myBase.Stat.CopyTo(Stat, 0);
+
+            for (int I = 0; I < (int)Enums.Stats.StatCount; I++)
+            {
+                Stat[I] = new EntityStat(myBase.Stat[I]);
+            }
+
             myBase.MaxVital.CopyTo(Vital, 0);
             myBase.MaxVital.CopyTo(MaxVital, 0);
             Behaviour = myBase.Behavior;

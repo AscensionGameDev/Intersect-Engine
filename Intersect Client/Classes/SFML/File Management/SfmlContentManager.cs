@@ -167,6 +167,11 @@ namespace Intersect_Client.Classes.Bridges_and_Interfaces.SFML.File_Management
                 GameGraphics.PaperdollTextures[i] = new SfmlTexture("Resources/Paperdolls/" + GameGraphics.PaperdollFileNames[i]);
             }
         }
+        public override void LoadTarget()
+        {
+            if (!Directory.Exists("Resources/Misc")) { Directory.CreateDirectory("Resources/Misc"); }
+            GameGraphics.TargetTexture = new SfmlTexture("Resources/Misc/target.png");
+        }
 
         public override void LoadSounds()
         {

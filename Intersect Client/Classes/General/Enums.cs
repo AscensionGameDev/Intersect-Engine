@@ -219,6 +219,12 @@ namespace Intersect_Client.Classes.General
             Event = 4,
         }
 
+        public enum TargetTypes
+        {
+            Hover = 0,
+            Selected = 1,
+        }
+
         public static int WeaponIndex = 2;
         public static int ShieldIndex = 3;
         //This is programming so indices work like this                  ---0---   ---1---  ---2---   ---3---   ---4---

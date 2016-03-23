@@ -230,6 +230,7 @@
             this.chkHoming.TabIndex = 8;
             this.chkHoming.Text = "Homing?";
             this.chkHoming.UseVisualStyleBackColor = true;
+            this.chkHoming.Visible = false;
             this.chkHoming.CheckedChanged += new System.EventHandler(this.chkHoming_CheckedChanged);
             // 
             // lblRange

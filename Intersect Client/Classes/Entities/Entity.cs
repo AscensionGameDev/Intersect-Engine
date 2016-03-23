@@ -499,6 +499,27 @@ namespace Intersect_Client.Classes.Entities
                 new FloatRect((int)(x - width / 2), (int)(y), width - 2, 4), Color.White);
         }
 
+        //
+        public void DrawTarget(int Priority)
+        {
+            if (this.GetType() == typeof(Projectile)) return;
+            int i = GetLocalPos(CurrentMap);
+            if (i == -1 || !Globals.GameMaps.ContainsKey(CurrentMap)) return;
+            FloatRect srcRectangle = new FloatRect();
+            FloatRect destRectangle = new FloatRect();
+            GameTexture srcTexture = GameGraphics.TargetTexture;
+
+            destRectangle.X = Globals.GameMaps[CurrentMap].GetX() + CurrentX * Globals.Database.TileWidth + OffsetX;
+            destRectangle.Y = Globals.GameMaps[CurrentMap].GetY() + CurrentY * Globals.Database.TileHeight + OffsetY;
+            destRectangle.X = (int)Math.Ceiling(destRectangle.X - (int)srcTexture.GetWidth() / 8);
+
+            srcRectangle = new FloatRect(Priority * (int)srcTexture.GetWidth() / 2, 0, (int)srcTexture.GetWidth() / 2, (int)srcTexture.GetHeight());
+            destRectangle.Width = srcRectangle.Width;
+            destRectangle.Height = srcRectangle.Height;
+
+            GameGraphics.DrawGameTexture(srcTexture, srcRectangle, destRectangle, Color.White);
+        }
+
         ~Entity()
         {
             Dispose();

@@ -47,7 +47,7 @@ namespace Intersect_Server.Classes
         //Vitals & Stats
         public int[] MaxVital = new int[(int)Enums.Vitals.VitalCount];
         public int[] Vital = new int[(int)Enums.Vitals.VitalCount];
-        public int[] Stat = new int[(int)Enums.Stats.StatCount];
+        public EntityStat[] Stat = new EntityStat[(int)Enums.Stats.StatCount];
 
         //Combat Status
         public long CastTime = 0;
@@ -66,9 +66,16 @@ namespace Intersect_Server.Classes
 
         public long CollisionIndex;
 
+        public int Target = -1;
+
         //Initialization
         public Entity(int index)
         {
+            for (int I = 0; I < (int)Enums.Stats.StatCount; I++ )
+            {
+                Stat[I] = new EntityStat(0);
+            }
+
             MyIndex = index;
             //HP
             MaxVital[(int)Enums.Vitals.Health] = 100;
@@ -77,15 +84,15 @@ namespace Intersect_Server.Classes
             MaxVital[(int)Enums.Vitals.Health] = 100;
             Vital[(int)Enums.Vitals.Health] = 100;
             //ATK
-            Stat[(int)Enums.Stats.Attack] = 23;
+            Stat[(int)Enums.Stats.Attack].Stat = 23;
             //Ability
-            Stat[(int)Enums.Stats.AbilityPower] = 16;
+            Stat[(int)Enums.Stats.AbilityPower].Stat = 16;
             //Def
-            Stat[(int)Enums.Stats.Defense] = 23;
+            Stat[(int)Enums.Stats.Defense].Stat = 23;
             //MR
-            Stat[(int)Enums.Stats.MagicResist] = 16;
+            Stat[(int)Enums.Stats.MagicResist].Stat = 16;
             //SPD
-            Stat[(int)Enums.Stats.Speed] = 20;
+            Stat[(int)Enums.Stats.Speed].Stat = 20;
         }
 
         //Movement
@@ -337,8 +344,7 @@ namespace Intersect_Server.Classes
                 {
                     PacketSender.SendEntityMove(MyIndex, (int)Enums.EntityTypes.GlobalEntity, this);
                 }
-                if (Stat[2] == 0) { Stat[2] = 1; }
-                MoveTimer = Environment.TickCount + (int)((1.0 / (Stat[2] / 10f)) * 1000);
+                MoveTimer = Environment.TickCount + (int)((1.0 / (Stat[2].Value() / 10f)) * 1000);
             }
             catch (Exception)
             {
@@ -418,16 +424,17 @@ namespace Intersect_Server.Classes
 
 
         //Combat
-        public void TryAttack(int enemyIndex, bool isProjectile = false, bool isSpell = false)
+        public void TryAttack(int enemyIndex, bool isProjectile = false, int isSpell = -1)
         {
             double dmg = 0;
 
             if (Globals.Entities[enemyIndex] == null) return;
-            if (!IsOneBlockAway(enemyIndex) && isProjectile == false && isSpell == false) return;
+            if (!IsOneBlockAway(enemyIndex) && isProjectile == false && isSpell == -1) return;
 
             //If Entity is resource, check for the correct tool and make sure its not a spell cast.
-            if (Globals.Entities[enemyIndex].GetType() == typeof(Resource) && isSpell == false)
+            if (Globals.Entities[enemyIndex].GetType() == typeof(Resource))
             {
+                if (isSpell == -1) return;
                 // Check that a resource is actually required.
                 if (Globals.GameResources[((Resource)Globals.Entities[enemyIndex]).ResourceNum].Tool > 0)
                 {
@@ -480,16 +487,31 @@ namespace Intersect_Server.Classes
             }
 
             //Check if magic or physical damage
-            if (isSpell == false)
+            if (isSpell == -1)
             {
-                dmg = DamageCalculator(Stat[(int)Enums.Stats.Attack], Globals.Entities[enemyIndex].Stat[(int)Enums.Stats.Defense]);
+                dmg = DamageCalculator(Stat[(int)Enums.Stats.Attack].Value(), Globals.Entities[enemyIndex].Stat[(int)Enums.Stats.Defense].Value());
+                if (dmg <= 0) dmg = 1; // Always do damage.
             }
             else
             {
-                dmg = DamageCalculator(Stat[(int)Enums.Stats.AbilityPower], Globals.Entities[enemyIndex].Stat[(int)Enums.Stats.MagicResist]);
+                // Handle different dmg formula for healing and damaging spells.
+                if (Globals.GameSpells[isSpell].VitalDiff[(int)Enums.Vitals.Health] > 0)
+                {
+                    dmg = -Globals.GameSpells[isSpell].VitalDiff[(int)Enums.Vitals.Health];
+                }
+                else
+                {
+                    dmg = DamageCalculator(Stat[(int)Enums.Stats.AbilityPower].Value(), Globals.Entities[enemyIndex].Stat[(int)Enums.Stats.MagicResist].Value()) - Globals.GameSpells[isSpell].VitalDiff[(int)Enums.Vitals.Health];
+                    if (dmg <= 0) dmg = 1; // Always do damage.
+                }
+                
+                //Handle other stat debuffs/vitals.
+                Globals.Entities[enemyIndex].Vital[(int)Enums.Vitals.Mana] += Globals.GameSpells[isSpell].VitalDiff[(int)Enums.Vitals.Mana];
+                for (int i = 0; i < (int)Enums.Stats.StatCount; i++)
+                {
+                    Globals.Entities[enemyIndex].Stat[i].Buff.Add(new EntityBuff(Globals.GameSpells[isSpell].StatDiff[i], (Globals.GameSpells[isSpell].Data2 * 100)));
+                }
             }
-
-            if (dmg <= 0) dmg = 1; // Always do damage.
 
             Globals.Entities[enemyIndex].Vital[(int)Enums.Vitals.Health] -= (int)dmg;
 
@@ -512,53 +534,7 @@ namespace Intersect_Server.Classes
             // Add a timer before able to make the next move.
             if (Globals.Entities[MyIndex].GetType() == typeof(Npc))
             {
-                ((Npc)Globals.Entities[MyIndex]).MoveTimer = Environment.TickCount + (int)((1.0 / (Stat[2] / 10f)) * 1000);
-            }
-        }
-        public void CastSpell(int SpellNum, int SpellSlot = -1)
-        {
-            switch (Globals.GameSpells[SpellNum].Type)
-            {
-                case (int)Enums.SpellTypes.CombatSpell:
-
-                    switch (Globals.GameSpells[SpellNum].TargetType)
-                    {
-                        case (int)Enums.TargetTypes.Self:
-
-                            break;
-                        case (int)Enums.TargetTypes.Single:
-
-                            break;
-                        case (int)Enums.TargetTypes.AoE:
-
-                            break;
-                        case (int)Enums.TargetTypes.Projectile:
-                            Globals.GameMaps[CurrentMap].SpawnMapProjectile(MyIndex, this.GetType(), Globals.GameSpells[SpellNum].Data4 - 1, CurrentMap, CurrentX, CurrentY, CurrentZ, Dir);
-                            break;
-                        default:
-                            break;
-                    }
-
-                    break;
-                case (int)Enums.SpellTypes.Warp:
-                    if (GetType() == typeof(Player))
-                    {
-                        Warp(Globals.GameSpells[SpellNum].Data1, Globals.GameSpells[SpellNum].Data2, Globals.GameSpells[SpellNum].Data3, Globals.GameSpells[SpellNum].Data4);
-                    }
-                    break;
-                case (int)Enums.SpellTypes.Dash:
-
-                    break;
-                default:
-                    break;
-            }
-            if (SpellSlot >= 0 && SpellSlot < Constants.MaxPlayerSkills)
-            {
-                Spells[SpellSlot].SpellCD = Environment.TickCount + (Globals.GameSpells[SpellNum].CooldownDuration * 100);
-                if (GetType() == typeof(Player))
-                {
-                    PacketSender.SendSpellCooldown(((Player)Globals.Entities[MyIndex]).MyClient, SpellSlot);
-                }
+                ((Npc)Globals.Entities[MyIndex]).MoveTimer = Environment.TickCount + (int)((1.0 / (Stat[2].Value() / 10f)) * 1000);
             }
         }
 
@@ -644,21 +620,20 @@ namespace Intersect_Server.Classes
                             {
                                 Animations.Add(Globals.GameSpells[SpellNum].HitAnimation);
                             }
-                            TryAttack(MyIndex, false, true);
+                            TryAttack(MyIndex, false, SpellNum);
                             break;
                         case (int)Enums.TargetTypes.Single:
-                            
+                            HandleAoESpell(SpellNum, Target);
                             break;
                         case (int)Enums.TargetTypes.AoE:
                             HandleAoESpell(SpellNum);
                             break;
                         case (int)Enums.TargetTypes.Projectile:
-                            Globals.GameMaps[CurrentMap].SpawnMapProjectile(MyIndex, this.GetType(), Globals.GameSpells[SpellNum].Data4 - 1, CurrentMap, CurrentX, CurrentY, CurrentZ, Dir, true);
+                            Globals.GameMaps[CurrentMap].SpawnMapProjectile(MyIndex, this.GetType(), Globals.GameSpells[SpellNum].Data4 - 1, CurrentMap, CurrentX, CurrentY, CurrentZ, Dir, SpellNum, Target);
                             break;
                         default:
                             break;
                     }
-
 
                     break;
                 case (int)Enums.SpellTypes.Warp:
@@ -683,11 +658,11 @@ namespace Intersect_Server.Classes
             }
         }
 
-        private void HandleAoESpell(int SpellNum)
+        private void HandleAoESpell(int SpellNum, int target = -1)
         {
             for (int x = CurrentX - Globals.GameSpells[SpellNum].CastRange; x < CurrentX + Globals.GameSpells[SpellNum].CastRange; x++)
             {
-                for (int y = CurrentY - Globals.GameSpells[SpellNum].CastRange; y < CurrentY + Globals.GameSpells[SpellNum].CastRange; x++)
+                for (int y = CurrentY - Globals.GameSpells[SpellNum].CastRange; y < CurrentY + Globals.GameSpells[SpellNum].CastRange; y++)
                 {
                     int tempMap = CurrentMap;
                     int x2 = x;
@@ -715,17 +690,21 @@ namespace Intersect_Server.Classes
                         x2 = Globals.MapWidth - x;
                     }
 
-                    foreach (Entity t in Globals.Entities)
+                    for (int i = 0; i < Globals.GameMaps[tempMap].Entities.Count; i++ )
                     {
+                        Entity t = Globals.GameMaps[tempMap].Entities[i];
                         if (t == null) continue;
-                        if (t.CurrentMap == tempMap && t.CurrentX == x2 && t.CurrentY == y2 && t.CurrentZ == CurrentZ)
+                        if (t.GetType() == typeof(Player) || t.GetType() == typeof(Npc))
                         {
-                            if (t.GetType() == typeof(Player) || t.GetType() == typeof(Npc))
+                            if (t.CurrentMap == tempMap && t.CurrentX == x2 && t.CurrentY == y2)
                             {
-                                TryAttack(t.MyIndex, false, true);
-                                if (Globals.GameSpells[SpellNum].HitAnimation > -1)
+                                if ((target == -1 || target == t.MyIndex) && t.MyIndex != MyIndex)
                                 {
-                                    t.Animations.Add(Globals.GameSpells[SpellNum].HitAnimation);
+                                    TryAttack(t.MyIndex, false, SpellNum);
+                                    if (Globals.GameSpells[SpellNum].HitAnimation > -1)
+                                    {
+                                        t.Animations.Add(Globals.GameSpells[SpellNum].HitAnimation);
+                                    }
                                 }
                             }
                         }
@@ -751,6 +730,53 @@ namespace Intersect_Server.Classes
                 bf.WriteInteger(Animations[i]);
             }
             return bf.ToArray();
+        }
+    }
+
+    public class EntityStat
+    {
+        public int Stat = 0;
+        public List<EntityBuff> Buff = new List<EntityBuff>();
+        
+        public EntityStat(int stat)
+        {
+            Stat = stat;
+        }
+
+        public int Value()
+        {
+            int s = Stat;
+
+            for (int i = 0; i < Buff.Count; i++)
+            {
+                s += Buff[i].Buff;
+            }
+
+            if (s <= 0) s = 1; //No 0 or negative stats, will give errors elsewhere in the code (especially divide by 0 errors).
+            return s;
+        }
+
+        public void Update()
+        {
+            for (int i = 0; i < Buff.Count; i++)
+            {
+                if (Buff[i].Duration <= Environment.TickCount)
+                {
+                    Buff.RemoveAt(i);
+                }
+            }
+        }
+    }
+
+    public class EntityBuff
+    {
+        public int Buff = 0;
+        public long Duration = 0;
+
+        public EntityBuff(int buff, int duration)
+        {
+            Buff = buff;
+            Duration = Environment.TickCount + duration;
         }
     }
 

@@ -173,19 +173,19 @@ namespace Intersect_Server.Classes
             switch (speed)
             {
                 case 0:
-                    Stat[2] = 5;
+                    Stat[2].Stat = 5;
                     break;
                 case 1:
-                    Stat[2] = 10;
+                    Stat[2].Stat = 10;
                     break;
                 case 2:
-                    Stat[2] = 20;
+                    Stat[2].Stat = 20;
                     break;
                 case 3:
-                    Stat[2] = 30;
+                    Stat[2].Stat = 30;
                     break;
                 case 4:
-                    Stat[2] = 40;
+                    Stat[2].Stat = 40;
                     break;
 
             }

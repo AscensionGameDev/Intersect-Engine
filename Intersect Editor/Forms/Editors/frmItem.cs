@@ -350,6 +350,8 @@ namespace Intersect_Editor.Forms
                 lblToolType.Visible = true;
                 lblDamage.Visible = true;
                 scrlDamage.Visible = true;
+                lblProjectile.Visible = true;
+                scrlProjectile.Visible = true;
             }
             else
             {
@@ -358,6 +360,8 @@ namespace Intersect_Editor.Forms
                 lblToolType.Visible = false;
                 lblDamage.Visible = false;
                 scrlDamage.Visible = false;
+                lblProjectile.Visible = false;
+                scrlProjectile.Visible = false;
                 Globals.GameItems[_editorIndex].Tool = -1;
                 Globals.GameItems[_editorIndex].Damage = 0;
                 Globals.GameItems[_editorIndex].Data4 = 0;
@@ -395,7 +399,7 @@ namespace Intersect_Editor.Forms
             Globals.GameItems[_editorIndex].Projectile = scrlProjectile.Value;
             if (scrlProjectile.Value > 0)
             {
-                lblProjectile.Text = "Projectile: " + scrlProjectile.Value + " " + Globals.GameProjectiles[scrlProjectile.Value].Name;
+                lblProjectile.Text = "Projectile: " + scrlProjectile.Value + " " + Globals.GameProjectiles[scrlProjectile.Value - 1].Name;
             }
             else
             {

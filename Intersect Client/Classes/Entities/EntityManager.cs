@@ -50,6 +50,7 @@ namespace Intersect_Client.Classes.Entities
             var i = index;
             if (Globals.Entities.ContainsKey(i)) { return Globals.Entities[index]; }
             Globals.Entities.Add(i,new Entity());
+            Globals.Entities[i].MyIndex = i;
             return Globals.Entities[i];
         }
 

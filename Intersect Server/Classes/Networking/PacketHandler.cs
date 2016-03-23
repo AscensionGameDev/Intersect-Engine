@@ -575,11 +575,11 @@ namespace Intersect_Server.Classes
             bf.WriteBytes(packet);
 
             //Fire projectile instead if weapon has it
-            if (client.Entity.Equipment[Enums.WeaponIndex] > 0)
+            if (client.Entity.Equipment[Enums.WeaponIndex] > -1)
             {
-                if (Globals.GameItems[client.Entity.Equipment[Enums.WeaponIndex]].Projectile > 0)
+                if (Globals.GameItems[client.Entity.Equipment[Enums.WeaponIndex]].Projectile > -1)
                 {
-                    Globals.GameMaps[client.Entity.CurrentMap].SpawnMapProjectile(client.EntityIndex, client.Entity.GetType(), Globals.GameItems[client.Entity.Equipment[Enums.WeaponIndex]].Projectile - 1, client.Entity.CurrentMap, client.Entity.CurrentX, client.Entity.CurrentY, client.Entity.CurrentZ, client.Entity.Dir, false);
+                    Globals.GameMaps[client.Entity.CurrentMap].SpawnMapProjectile(client.EntityIndex, client.Entity.GetType(), Globals.GameItems[client.Entity.Equipment[Enums.WeaponIndex]].Projectile - 1, client.Entity.CurrentMap, client.Entity.CurrentX, client.Entity.CurrentY, client.Entity.CurrentZ, client.Entity.Dir, -1, (int)bf.ReadLong());
                     bf.Dispose();
                     return;
                 }
@@ -690,7 +690,7 @@ namespace Intersect_Server.Classes
 
                 for (int i = 0; i < (int)Enums.Stats.StatCount; i++)
                 {
-                    Globals.Entities[index].Stat[i] = Globals.GameClasses[Class].Stat[i];
+                    Globals.Entities[index].Stat[i].Stat = Globals.GameClasses[Class].Stat[i];
                 }
                 ((Player)Globals.Entities[index]).StatPoints = Globals.GameClasses[Class].Points;
 
@@ -867,7 +867,8 @@ namespace Intersect_Server.Classes
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
             var slot = bf.ReadInteger();
-            client.Entity.UseSpell(slot);
+            var target = bf.ReadInteger();
+            client.Entity.UseSpell(slot, target);
             bf.Dispose();
         }
 

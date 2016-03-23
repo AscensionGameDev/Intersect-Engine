@@ -526,7 +526,7 @@ namespace Intersect_Server.Classes
             bf.WriteInteger(en.CurrentMap);
             for (var i = 0; i < (int)Enums.Stats.StatCount; i++)
             {
-                bf.WriteInteger(en.Stat[i]);
+                bf.WriteInteger(en.Stat[i].Value());
             }
             SendDataToProximity(en.CurrentMap, bf.ToArray());
             bf.Dispose();
@@ -557,7 +557,7 @@ namespace Intersect_Server.Classes
             bf.WriteInteger(en.CurrentMap);
             for (var i = 0; i < (int)Enums.Stats.StatCount; i++)
             {
-                bf.WriteInteger(en.Stat[i]);
+                bf.WriteInteger(en.Stat[i].Value());
             }
             SendDataTo(client, bf.ToArray());
             bf.Dispose();

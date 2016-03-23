@@ -824,6 +824,7 @@
             this.cmbExtraEffect.Name = "cmbExtraEffect";
             this.cmbExtraEffect.Size = new System.Drawing.Size(86, 21);
             this.cmbExtraEffect.TabIndex = 36;
+            this.cmbExtraEffect.SelectedIndexChanged += new System.EventHandler(this.cmbExtraEffect_SelectedIndexChanged);
             // 
             // label7
             // 
@@ -842,6 +843,7 @@
             this.scrlBuffDuration.Name = "scrlBuffDuration";
             this.scrlBuffDuration.Size = new System.Drawing.Size(73, 18);
             this.scrlBuffDuration.TabIndex = 34;
+            this.scrlBuffDuration.Scroll += new System.Windows.Forms.ScrollEventHandler(this.scrlBuffDuration_Scroll);
             // 
             // lblBuffDuration
             // 
@@ -857,6 +859,7 @@
             this.txtMagicResistBuff.Name = "txtMagicResistBuff";
             this.txtMagicResistBuff.Size = new System.Drawing.Size(55, 20);
             this.txtMagicResistBuff.TabIndex = 32;
+            this.txtMagicResistBuff.TextChanged += new System.EventHandler(this.txtMagicResistBuff_TextChanged);
             // 
             // txtAbilityPwrBuff
             // 
@@ -864,6 +867,7 @@
             this.txtAbilityPwrBuff.Name = "txtAbilityPwrBuff";
             this.txtAbilityPwrBuff.Size = new System.Drawing.Size(55, 20);
             this.txtAbilityPwrBuff.TabIndex = 31;
+            this.txtAbilityPwrBuff.TextChanged += new System.EventHandler(this.txtAbilityPwrBuff_TextChanged);
             // 
             // txtSpeedBuff
             // 
@@ -871,6 +875,7 @@
             this.txtSpeedBuff.Name = "txtSpeedBuff";
             this.txtSpeedBuff.Size = new System.Drawing.Size(56, 20);
             this.txtSpeedBuff.TabIndex = 30;
+            this.txtSpeedBuff.TextChanged += new System.EventHandler(this.txtSpeedBuff_TextChanged);
             // 
             // txtDefenseBuff
             // 
@@ -878,6 +883,7 @@
             this.txtDefenseBuff.Name = "txtDefenseBuff";
             this.txtDefenseBuff.Size = new System.Drawing.Size(56, 20);
             this.txtDefenseBuff.TabIndex = 29;
+            this.txtDefenseBuff.TextChanged += new System.EventHandler(this.txtDefenseBuff_TextChanged);
             // 
             // txtAttackBuff
             // 
@@ -885,6 +891,7 @@
             this.txtAttackBuff.Name = "txtAttackBuff";
             this.txtAttackBuff.Size = new System.Drawing.Size(56, 20);
             this.txtAttackBuff.TabIndex = 28;
+            this.txtAttackBuff.TextChanged += new System.EventHandler(this.txtAttackBuff_TextChanged);
             // 
             // label10
             // 
@@ -939,6 +946,7 @@
             this.chkHOTDOT.TabIndex = 22;
             this.chkHOTDOT.Text = "HOT/DOT?";
             this.chkHOTDOT.UseVisualStyleBackColor = true;
+            this.chkHOTDOT.CheckedChanged += new System.EventHandler(this.chkHOTDOT_CheckedChanged);
             // 
             // label9
             // 
@@ -956,6 +964,7 @@
             this.txtManaDiff.Name = "txtManaDiff";
             this.txtManaDiff.Size = new System.Drawing.Size(86, 20);
             this.txtManaDiff.TabIndex = 20;
+            this.txtManaDiff.TextChanged += new System.EventHandler(this.txtManaDiff_TextChanged);
             // 
             // txtHPDiff
             // 
@@ -963,6 +972,7 @@
             this.txtHPDiff.Name = "txtHPDiff";
             this.txtHPDiff.Size = new System.Drawing.Size(86, 20);
             this.txtHPDiff.TabIndex = 17;
+            this.txtHPDiff.TextChanged += new System.EventHandler(this.txtHPDiff_TextChanged);
             // 
             // lblMana
             // 

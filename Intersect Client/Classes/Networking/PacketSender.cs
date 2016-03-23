@@ -203,11 +203,12 @@ namespace Intersect_Client.Classes.Networking
             GameNetwork.SendPacket(bf.ToArray());
         }
 
-        public static void SendUseSpell(int slot)
+        public static void SendUseSpell(int slot, int target)
         {
             var bf = new ByteBuffer();
             bf.WriteLong((int)Enums.ClientPackets.UseSpell);
             bf.WriteInteger(slot);
+            bf.WriteInteger(target);
             GameNetwork.SendPacket(bf.ToArray());
         }
 

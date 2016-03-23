@@ -536,9 +536,10 @@ namespace Intersect_Server.Classes
             Spells[spellSlot] = new SpellInstance();
             PacketSender.SendPlayerSpellUpdate(MyClient, spellSlot);
         }
-        public void UseSpell(int spellSlot)
+        public void UseSpell(int spellSlot, int target)
         {
             int spellNum = Spells[spellSlot].SpellNum;
+            Target = target;
             if (spellNum > -1)
             {
                 if (Globals.GameSpells[spellNum].VitalCost[(int)Enums.Vitals.Mana] <= Vital[(int)Enums.Vitals.Mana])
@@ -616,9 +617,9 @@ namespace Intersect_Server.Classes
         //Stats
         public void UpgradeStat(int statIndex)
         {
-            if (Stat[statIndex] < Constants.MaxStatValue)
+            if (Stat[statIndex].Stat < Constants.MaxStatValue)
             {
-                Stat[statIndex]++;
+                Stat[statIndex].Stat++;
                 StatPoints--;
                 PacketSender.SendEntityStats(MyIndex, (int)Enums.EntityTypes.Player, this);
                 PacketSender.SendPointsTo(MyClient);

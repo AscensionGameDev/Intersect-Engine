@@ -721,7 +721,7 @@ namespace Intersect_Server.Classes
                         }
                         for (i = 0; i < (int)Enums.Stats.StatCount; i++)
                         {
-                            en.Stat[i] = reader.GetInt32(columns.IndexOf("stat" + i));
+                            en.Stat[i].Stat = reader.GetInt32(columns.IndexOf("stat" + i));
                         }
                         en.StatPoints = reader.GetInt32(columns.IndexOf("statpoints"));
                         for (i = 0; i < Enums.EquipmentSlots.Count; i++)
@@ -1098,7 +1098,7 @@ namespace Intersect_Server.Classes
                 }
                 for (var i = 0; i < (int)Enums.Stats.StatCount; i++)
                 {
-                    en.Stat[i] = Int32.Parse(playerdata.SelectSingleNode("//PlayerData//CharacterInfo/Stat" + i).InnerText);
+                    en.Stat[i].Stat = Int32.Parse(playerdata.SelectSingleNode("//PlayerData//CharacterInfo/Stat" + i).InnerText);
                 }
                 en.StatPoints = Int32.Parse(playerdata.SelectSingleNode("//PlayerData//CharacterInfo/StatPoints").InnerText);
                 for (var i = 0; i < Enums.EquipmentSlots.Count; i++)
@@ -1181,7 +1181,7 @@ namespace Intersect_Server.Classes
             }
             for (var i = 0; i < (int)Enums.Stats.StatCount; i++)
             {
-                writer.WriteElementString("Stat" + i, en.Stat[i].ToString());
+                writer.WriteElementString("Stat" + i, en.Stat[i].Stat.ToString());
             }
             writer.WriteElementString("StatPoints", en.StatPoints.ToString());
             for (var i = 0; i < Enums.EquipmentSlots.Count; i++)

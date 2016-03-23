@@ -33,13 +33,13 @@ namespace Intersect_Server.Classes
         private int ProjectileNum = 0;
         private int Quantity = 0;
         private long SpawnTime = 0;
-        public int Target = 0;
-        private bool IsSpell = false;
+        public int Target = -1;
+        private int IsSpell = -1;
 
         // Individual Spawns
         public List<ProjectileSpawns> Spawns = new List<ProjectileSpawns>();
 
-        public Projectile(int index, int ownerID, Type ownerType, int projectileNum, int Map, int X, int Y, int Z, int Direction, bool isSpell = false, int target = 0) : base(index)
+        public Projectile(int index, int ownerID, Type ownerType, int projectileNum, int Map, int X, int Y, int Z, int Direction, int isSpell = -1, int target = -1) : base(index)
         {
             ProjectileNum = projectileNum;
             MyBase = Globals.GameProjectiles[ProjectileNum];
@@ -54,8 +54,13 @@ namespace Intersect_Server.Classes
             CurrentY = Y;
             CurrentZ = Z;
             Dir = Direction;
-            Target = target;
             IsSpell = isSpell;
+
+            if (MyBase.Homing == true)
+            {
+                Target = target;
+            }
+
             Passable = 1;
             HideName = 1;
         }

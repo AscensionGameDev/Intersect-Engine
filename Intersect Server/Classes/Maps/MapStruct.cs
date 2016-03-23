@@ -597,7 +597,7 @@ namespace Intersect_Server.Classes
 
 
         //Spawn a projectile
-        public void SpawnMapProjectile(int MyIndex, Type ownerType, int projectileNum, int Map, int X, int Y, int Z, int Direction, bool IsSpell = false, int Target = 0)
+        public void SpawnMapProjectile(int MyIndex, Type ownerType, int projectileNum, int Map, int X, int Y, int Z, int Direction, int IsSpell = -1, int Target = 0)
         {
             int n = Globals.FindOpenEntity();
             MapProjectiles.Add(new Projectile(n, MyIndex, Globals.Entities[MyIndex].GetType(), projectileNum, Map, X, Y, Z, Direction, IsSpell, Target));
@@ -664,17 +664,23 @@ namespace Intersect_Server.Classes
                     {
                         if (Entities[i] != null)
                         {
-                            //Cast timers
-                            if (Entities[i].CastTime != 0 && Entities[i].CastTime < Environment.TickCount)
+                            //Buffs/Debuffs
+                            for (int n = 0; n < (int)Enums.Stats.StatCount; n++)
                             {
-                                Entities[i].CastSpell(Entities[i].Spells[Entities[i].SpellCastSlot].SpellNum, Entities[i].SpellCastSlot);
-                                Entities[i].CastTime = 0;
+                                Entities[i].Stat[n].Update();
                             }
 
                             //Active Npcs On the Map
                             if (Entities[i].GetType() == typeof(Npc))
                             {
                                 ((Npc)Entities[i]).Update();
+                            }
+
+                            //Cast timers
+                            if (Entities[i].CastTime != 0 && Entities[i].CastTime < Environment.TickCount)
+                            {
+                                Entities[i].CastTime = 0;
+                                Entities[i].CastSpell(Entities[i].Spells[Entities[i].SpellCastSlot].SpellNum, Entities[i].SpellCastSlot);
                             }
                         }
                     }

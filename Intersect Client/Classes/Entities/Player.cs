@@ -35,6 +35,8 @@ using Intersect_Client.Classes.Networking;
 using Intersect_Client.Classes.Spells;
 using Intersect_Client.Classes.UI;
 using Intersect_Client.Classes.UI.Game;
+using System.Collections.Generic;
+using Intersect_Client.Classes.Maps;
 
 namespace Intersect_Client.Classes.Entities
 {
@@ -138,7 +140,7 @@ namespace Intersect_Client.Classes.Entities
         }
         public void TryUseSpell(int index)
         {
-            PacketSender.SendUseSpell(index);
+            PacketSender.SendUseSpell(index, _targetIndex);
         }
 
         //Hotbar Processing
@@ -202,6 +204,19 @@ namespace Intersect_Client.Classes.Entities
         private bool TryAttack()
         {
             if (_attackTimer > Globals.System.GetTimeMS()) { return false; }
+
+            //If has a weapon with a projectile equiped, attack anyway
+            if (Equipment[Enums.WeaponIndex] > -1)
+            {
+                if (Globals.GameItems[Equipment[Enums.WeaponIndex]].Projectile > -1)
+                {
+                    //Fire the projectile
+                    PacketSender.SendAttack(_targetIndex);
+                    _attackTimer = Globals.System.GetTimeMS() + 1000;
+                    return true;
+                }
+            }
+
             var x = Globals.Entities[Globals.MyIndex].CurrentX;
             var y = Globals.Entities[Globals.MyIndex].CurrentY;
             var map = Globals.Entities[Globals.MyIndex].CurrentMap;
@@ -408,37 +423,65 @@ namespace Intersect_Client.Classes.Entities
         }
         private bool TryTarget()
         {
-            var x = (int)Math.Floor((Globals.InputManager.GetMousePosition().X + GameGraphics.CurrentView.Left) / Globals.Database.TileWidth);
-            var y = (int)Math.Floor((Globals.InputManager.GetMousePosition().Y + GameGraphics.CurrentView.Top) / Globals.Database.TileHeight);
-            var map = Globals.Entities[Globals.MyIndex].CurrentMap;
-            if (GetRealLocation(ref x, ref y, ref map))
+            var x = (int)Math.Floor(Globals.InputManager.GetMousePosition().X + GameGraphics.CurrentView.Left);
+            var y = (int)Math.Floor(Globals.InputManager.GetMousePosition().Y + GameGraphics.CurrentView.Top);
+            
+            foreach (KeyValuePair<int, MapStruct> map in Globals.GameMaps)
             {
-                foreach (var en in Globals.Entities)
+                if (x >= map.Value.GetX() && x <= map.Value.GetX() + (Globals.Database.MapWidth * Globals.Database.TileWidth))
                 {
-                    if (en.Value == null) continue;
-                    if (en.Value.CurrentMap == map && en.Value.CurrentX == x && en.Value.CurrentY == y)
+                    if (y >= map.Value.GetY() && y <= map.Value.GetY() + (Globals.Database.MapHeight * Globals.Database.TileHeight))
                     {
-                        if (_targetBox != null) { _targetBox.Dispose(); _targetBox = null; }
-                        _targetBox = new EntityBox(Gui.GameUI.GameCanvas, en.Value, 0, 100);
-                        return true;
-                    }
-                }
-                foreach (var eventMap in Globals.GameMaps)
-                {
-                    foreach (var en in eventMap.Value.LocalEntities)
-                    {
-                        if (en.Value == null) continue;
-                        if (en.Value.CurrentMap == map && en.Value.CurrentX == x && en.Value.CurrentY == y)
+                        //Remove the offsets to just be dealing with pixels within the map selected
+                        x -= (int)map.Value.GetX();
+                        y -= (int)map.Value.GetY();
+
+                        //transform pixel format to tile format
+                        x /= Globals.Database.TileWidth;
+                        y /= Globals.Database.TileHeight;
+
+                        if (GetRealLocation(ref x, ref y, ref map.Value.MyMapNum))
                         {
-                            if (_targetBox != null) { _targetBox.Dispose(); _targetBox = null; }
-                            _targetBox = new EntityBox(Gui.GameUI.GameCanvas, en.Value, 0, 100);
-                            return true;
+                            foreach (var en in Globals.Entities)
+                            {
+                                if (en.Value == null) continue;
+                                if (en.Value.CurrentMap == map.Value.MyMapNum && en.Value.CurrentX == x && en.Value.CurrentY == y)
+                                {
+                                    if (en.GetType() != typeof(Projectile))
+                                    {
+                                        if (_targetBox != null) { _targetBox.Dispose(); _targetBox = null; }
+                                        _targetBox = new EntityBox(Gui.GameUI.GameCanvas, en.Value, 0, 100);
+                                        _targetIndex = en.Value.MyIndex;
+                                        return true;
+                                    }
+                                }
+                            }
+                            foreach (var eventMap in Globals.GameMaps)
+                            {
+                                foreach (var en in eventMap.Value.LocalEntities)
+                                {
+                                    if (en.Value == null) continue;
+                                    if (en.Value.CurrentMap == map.Value.MyMapNum && en.Value.CurrentX == x && en.Value.CurrentY == y)
+                                    {
+                                        if (en.GetType() != typeof(Projectile))
+                                        {
+                                            if (_targetBox != null) { _targetBox.Dispose(); _targetBox = null; }
+                                            _targetBox = new EntityBox(Gui.GameUI.GameCanvas, en.Value, 0, 100);
+                                            _targetIndex = en.Value.MyIndex;
+                                            return true;
+
+                                        }
+                                    }
+                                }
+                            }
                         }
+                        if (_targetBox != null) { _targetBox.Dispose(); _targetBox = null; }
+                        if (_itemTargetBox != null) { _itemTargetBox.Dispose(); _itemTargetBox = null; }
+                        return false;
+                        break;
                     }
                 }
             }
-            if (_targetBox != null) { _targetBox.Dispose(); _targetBox = null; }
-            if (_itemTargetBox != null) { _itemTargetBox.Dispose(); _itemTargetBox = null; }
             return false;
         }
         private bool TryPickupItem()
@@ -1029,6 +1072,64 @@ namespace Intersect_Client.Classes.Entities
 
             }
 
+        }
+
+        public void DrawTargets()
+        {
+            var x = (int)Math.Floor(Globals.InputManager.GetMousePosition().X + GameGraphics.CurrentView.Left);
+            var y = (int)Math.Floor(Globals.InputManager.GetMousePosition().Y + GameGraphics.CurrentView.Top);
+
+            if (_targetIndex > -1 && Globals.Entities.ContainsKey(_targetIndex))
+            {
+                Globals.Entities[_targetIndex].DrawTarget((int)Enums.TargetTypes.Selected);
+            }
+
+            foreach (KeyValuePair<int, MapStruct> map in Globals.GameMaps)
+            {
+                if (x >= map.Value.GetX() && x <= map.Value.GetX() + (Globals.Database.MapWidth * Globals.Database.TileWidth))
+                {
+                    if (y >= map.Value.GetY() && y <= map.Value.GetY() + (Globals.Database.MapHeight * Globals.Database.TileHeight))
+                    {
+                        //Remove the offsets to just be dealing with pixels within the map selected
+                        x -= (int)map.Value.GetX();
+                        y -= (int)map.Value.GetY();
+
+                        //transform pixel format to tile format
+                        x /= Globals.Database.TileWidth;
+                        y /= Globals.Database.TileHeight;
+
+                        if (GetRealLocation(ref x, ref y, ref map.Value.MyMapNum))
+                        {
+                            foreach (var en in Globals.Entities)
+                            {
+                                if (en.Value == null) continue;
+                                if (en.Value.CurrentMap == map.Value.MyMapNum && en.Value.CurrentX == x && en.Value.CurrentY == y)
+                                {
+                                    if (en.GetType() != typeof(Projectile))
+                                    {
+                                        en.Value.DrawTarget((int)Enums.TargetTypes.Hover);
+                                    }
+                                }
+                            }
+                            foreach (var eventMap in Globals.GameMaps)
+                            {
+                                foreach (var en in eventMap.Value.LocalEntities)
+                                {
+                                    if (en.Value == null) continue;
+                                    if (en.Value.CurrentMap == map.Value.MyMapNum && en.Value.CurrentX == x && en.Value.CurrentY == y)
+                                    {
+                                        if (en.GetType() != typeof(Projectile))
+                                        {
+                                            en.Value.DrawTarget((int)Enums.TargetTypes.Hover);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        break;
+                    }
+                }
+            }
         }
     }
 

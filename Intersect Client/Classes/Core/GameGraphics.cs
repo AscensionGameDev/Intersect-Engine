@@ -71,6 +71,7 @@ namespace Intersect_Client.Classes.Core
         public static GameTexture[] ResourceTextures;
         public static List<string> PaperdollFileNames = new List<string>();
         public static GameTexture[] PaperdollTextures;
+        public static GameTexture TargetTexture;
 
 
         //Darkness Stuff
@@ -231,6 +232,9 @@ namespace Intersect_Client.Classes.Core
                 {
                     animInstance.Draw(true);
                 }
+
+                //Draw the players targets
+                ((Player)Globals.Entities[Globals.MyIndex]).DrawTargets();
 
                 DrawOverlay();
 
