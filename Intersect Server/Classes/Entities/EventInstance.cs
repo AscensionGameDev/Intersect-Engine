@@ -665,11 +665,11 @@ namespace Intersect_Server.Classes.Entities
                                     //Send Animation on Npc
                                     if (targetEntity.GetType() == typeof(Player))
                                     {
-                                        PacketSender.SendAnimationToProximity(animNum, 1, targetEntity.MyIndex, 0, 0, direction); //Target Type 1 will be global entity
+                                        PacketSender.SendAnimationToProximity(animNum, 1, targetEntity.MyIndex, MyClient.Entity.CurrentMap, 0, 0, direction); //Target Type 1 will be global entity
                                     }
                                     else
                                     {
-                                        PacketSender.SendAnimationToProximity(animNum, 2, targetEntity.CurrentMap, targetEntity.MyIndex, 0, direction);
+                                        PacketSender.SendAnimationToProximity(animNum, 2, targetEntity.MyIndex, targetEntity.CurrentMap, targetEntity.MyIndex, 0, direction);
                                     }
                                     CallStack.Peek().CommandIndex++;
                                     return;
@@ -710,7 +710,7 @@ namespace Intersect_Server.Classes.Entities
                     tile = new TileHelper(mapNum, tileX, tileY);
                     if (tile.TryFix())
                     {
-                        PacketSender.SendAnimationToProximity(animNum, -1, tile.GetMap(), tile.GetX(), tile.GetY(), direction);
+                        PacketSender.SendAnimationToProximity(animNum, -1, -1, tile.GetMap(), tile.GetX(), tile.GetY(), direction);
                     }
                     CallStack.Peek().CommandIndex++;
                     break;

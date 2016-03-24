@@ -840,6 +840,7 @@ namespace Intersect_Client.Classes.Networking
             bf.WriteBytes(packet);
             int animNum = bf.ReadInteger();
             int targetType = bf.ReadInteger();
+            int entityIndex = bf.ReadInteger();
             if (targetType == -1)
             {
                 int mapNum = bf.ReadInteger();
@@ -851,12 +852,11 @@ namespace Intersect_Client.Classes.Networking
             }
             else if (targetType == 1)
             {
-                //Entity
-                int entityIndex = bf.ReadInteger();
+                bf.ReadInteger();
                 bf.ReadInteger();
                 bf.ReadInteger();
                 int dir = bf.ReadInteger();
-                if (entityIndex >= 0 && entityIndex < Globals.Entities.Count)
+                if (Globals.Entities.ContainsKey(entityIndex))
                 {
                     if (Globals.Entities[entityIndex] != null)
                     {
@@ -869,7 +869,7 @@ namespace Intersect_Client.Classes.Networking
             else if (targetType == 2)
             {
                 int mapIndex = bf.ReadInteger();
-                int entityIndex = bf.ReadInteger();
+                bf.ReadInteger();
                 bf.ReadInteger();
                 int dir = bf.ReadInteger();
                 if (Globals.GameMaps.ContainsKey(mapIndex))

@@ -87,8 +87,9 @@ namespace Intersect_Server.Classes
             }
         }
 
-        public void Update()
+        public override void Update()
         {
+            base.Update();
             if (MoveTimer < Environment.TickCount)
             {
                 var targetMap = -1;

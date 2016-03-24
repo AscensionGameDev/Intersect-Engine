@@ -1047,12 +1047,13 @@ namespace Intersect_Server.Classes
             bf.Dispose();
         }
 
-        public static void SendAnimationToProximity(int animNum, int targetType, int map, int x, int y, int direction)
+        public static void SendAnimationToProximity(int animNum, int targetType, int entityIndex, int map, int x, int y, int direction)
         {
             var bf = new ByteBuffer();
             bf.WriteLong((int)Enums.ServerPackets.SendPlayAnimation);
             bf.WriteInteger(animNum);
             bf.WriteInteger(targetType);
+            bf.WriteInteger(entityIndex);
             bf.WriteInteger(map);
             bf.WriteInteger(x);
             bf.WriteInteger(y);

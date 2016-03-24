@@ -677,13 +677,6 @@ namespace Intersect_Server.Classes
                             {
                                 ((Npc)Entities[i]).Update();
                             }
-
-                            //Cast timers
-                            if (Entities[i].CastTime != 0 && Entities[i].CastTime < Environment.TickCount)
-                            {
-                                Entities[i].CastTime = 0;
-                                Entities[i].CastSpell(Entities[i].Spells[Entities[i].SpellCastSlot].SpellNum, Entities[i].SpellCastSlot);
-                            }
                         }
                     }
                     //Process NPC Respawns

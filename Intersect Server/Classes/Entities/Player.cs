@@ -77,9 +77,10 @@ namespace Intersect_Server.Classes
 		}
 
         //Update
-        public void Update()
+        public override void Update()
         {
             if (!InGame || CurrentMap == -1) { return; }
+            base.Update();
             //If we switched maps, lets update the maps
             if (_curMapLink != CurrentMap)
             {
@@ -558,7 +559,7 @@ namespace Intersect_Server.Classes
 
                                 if (Globals.GameSpells[spellNum].CastAnimation > -1)
                                 {
-                                    Animations.Add(Globals.GameSpells[spellNum].CastAnimation);
+                                    PacketSender.SendAnimationToProximity(Globals.GameSpells[spellNum].CastAnimation, 1, MyIndex, CurrentMap, 0, 0, Dir); //Target Type 1 will be global entity
                                 }
 
                                 PacketSender.SendEntityVitals(MyIndex, (int)Enums.Vitals.Health, Globals.Entities[MyIndex]);

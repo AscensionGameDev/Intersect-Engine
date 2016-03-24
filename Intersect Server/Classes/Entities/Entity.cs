@@ -95,6 +95,16 @@ namespace Intersect_Server.Classes
             Stat[(int)Enums.Stats.Speed].Stat = 20;
         }
 
+        public virtual void Update()
+        {
+            //Cast timers
+            if (CastTime != 0 && CastTime < Environment.TickCount)
+            {
+                CastTime = 0;
+                CastSpell(Spells[SpellCastSlot].SpellNum, SpellCastSlot);
+            }
+        }
+
         //Movement
         /// <summary>
         /// Determines if this entity can move in the direction given.
@@ -528,6 +538,12 @@ namespace Intersect_Server.Classes
 
             Globals.Entities[enemyIndex].Vital[(int)Enums.Vitals.Health] -= (int)dmg;
 
+            //Check if after healing, greater than maximum hp.
+            if (Globals.Entities[enemyIndex].Vital[(int)Enums.Vitals.Health] >= Globals.Entities[enemyIndex].MaxVital[(int)Enums.Vitals.Health]) 
+            {
+                Globals.Entities[enemyIndex].Vital[(int)Enums.Vitals.Health] = Globals.Entities[enemyIndex].MaxVital[(int)Enums.Vitals.Health];
+            }
+
             //Dead entity check
             if (Globals.Entities[enemyIndex].Vital[(int)Enums.Vitals.Health] <= 0)
             {
@@ -630,7 +646,7 @@ namespace Intersect_Server.Classes
                         case (int)Enums.TargetTypes.Self:
                             if (Globals.GameSpells[SpellNum].HitAnimation > -1)
                             {
-                                Animations.Add(Globals.GameSpells[SpellNum].HitAnimation);
+                                PacketSender.SendAnimationToProximity(Globals.GameSpells[SpellNum].HitAnimation, 1, MyIndex, CurrentMap, 0, 0, Dir); //Target Type 1 will be global entity
                             }
                             TryAttack(MyIndex, false, SpellNum);
                             break;
@@ -641,7 +657,7 @@ namespace Intersect_Server.Classes
                             HandleAoESpell(SpellNum);
                             break;
                         case (int)Enums.TargetTypes.Projectile:
-                            Globals.GameMaps[CurrentMap].SpawnMapProjectile(MyIndex, this.GetType(), Globals.GameSpells[SpellNum].Data4 - 1, CurrentMap, CurrentX, CurrentY, CurrentZ, Dir, SpellNum, Target);
+                            Globals.GameMaps[CurrentMap].SpawnMapProjectile(this, Globals.GameSpells[SpellNum].Data4 - 1, CurrentMap, CurrentX, CurrentY, CurrentZ, Dir, SpellNum, Target);
                             break;
                         default:
                             break;
@@ -715,7 +731,14 @@ namespace Intersect_Server.Classes
                                     TryAttack(t.MyIndex, false, SpellNum);
                                     if (Globals.GameSpells[SpellNum].HitAnimation > -1)
                                     {
-                                        t.Animations.Add(Globals.GameSpells[SpellNum].HitAnimation);
+                                        if (target > -1 && t.Vital[(int)Enums.Vitals.Health] > 0)
+                                        {
+                                            PacketSender.SendAnimationToProximity(Globals.GameSpells[SpellNum].HitAnimation, 1, target, tempMap, 0, 0, t.Dir); //Target Type 1 will be global entity
+                                        }
+                                        else
+                                        {
+                                            PacketSender.SendAnimationToProximity(Globals.GameSpells[SpellNum].HitAnimation, -1, -1, tempMap, x, y, Dir); //Target Type -1 will be tile based animation
+                                        }
                                     }
                                 }
                             }
