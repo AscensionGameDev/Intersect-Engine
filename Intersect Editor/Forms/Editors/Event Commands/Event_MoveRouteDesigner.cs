@@ -39,7 +39,8 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
         private readonly EventStruct _editingEvent;
         private EventCommand _editingCommand;
         private MapStruct _currentMap;
-        private List<int> _targetIndicies = new List<int>(); 
+        private List<int> _targetIndicies = new List<int>();
+        private MoveRouteAction _lastAddedAction;
         public Event_MoveRouteDesigner(FrmEvent eventEditor, MapStruct currentMap, EventStruct currentEvent, EventMoveRoute editingRoute, EventCommand editingCommand = null)
         {
             InitializeComponent();
@@ -239,6 +240,9 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
                     case MoveRouteEnum.SetGraphic:
                         lstActions.Items.Add("Set Graphic....");
                         break;
+                    case MoveRouteEnum.SetAnimation:
+                        lstActions.Items.Add("Set Animation....");
+                        break;
                     default:
                         throw new ArgumentOutOfRangeException();
                 }
@@ -255,10 +259,18 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             {
                 action.Graphic = new EventGraphic();
                 //Open the graphic editor....
-                Event_GraphicSelector graphicSelector = new Event_GraphicSelector(action.Graphic, _eventEditor);
+                Event_GraphicSelector graphicSelector = new Event_GraphicSelector(action.Graphic, _eventEditor, this, true);
                 _eventEditor.Controls.Add(graphicSelector);
                 graphicSelector.BringToFront();
                 graphicSelector.Size = this.ClientSize;
+            }
+            else if (action.Type == MoveRouteEnum.SetAnimation)
+            {
+                //Open the animation selector
+                Event_MoveRouteAnimationSelector animationSelector = new Event_MoveRouteAnimationSelector(this,action,true);
+                Controls.Add(animationSelector);
+                animationSelector.BringToFront();
+                animationSelector.Size = this.ClientSize;
             }
             if (lstActions.SelectedIndex == -1)
             {
@@ -268,6 +280,7 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             {
                 _tmpMoveRoute.Actions.Insert(lstActions.SelectedIndex, action);
             }
+            _lastAddedAction = action;
             ListMoveRoute();
         }
 
@@ -298,7 +311,7 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
                 if (_tmpMoveRoute.Actions[lstActions.SelectedIndex].Type == MoveRouteEnum.SetGraphic)
                 {
                     //Open the graphic editor....
-                    Event_GraphicSelector graphicSelector = new Event_GraphicSelector(_tmpMoveRoute.Actions[lstActions.SelectedIndex].Graphic, _eventEditor);
+                    Event_GraphicSelector graphicSelector = new Event_GraphicSelector(_tmpMoveRoute.Actions[lstActions.SelectedIndex].Graphic, _eventEditor,this,false);
                     _eventEditor.Controls.Add(graphicSelector);
                     graphicSelector.BringToFront();
                     graphicSelector.Size = this.ClientSize;
@@ -306,7 +319,20 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
                 else if (_tmpMoveRoute.Actions[lstActions.SelectedIndex].Type == MoveRouteEnum.SetAnimation)
                 {
                     //Open the animation selector
+                    Event_MoveRouteAnimationSelector animationSelector = new Event_MoveRouteAnimationSelector(this, _tmpMoveRoute.Actions[lstActions.SelectedIndex], true);
+                    Controls.Add(animationSelector);
+                    animationSelector.BringToFront();
+                    animationSelector.Size = this.ClientSize;
                 }
+            }
+        }
+
+        public void RemoveLastAction()
+        {
+            if (_tmpMoveRoute.Actions.Count > 0)
+            {
+                _tmpMoveRoute.Actions.Remove(_lastAddedAction);
+                ListMoveRoute();
             }
         }
 

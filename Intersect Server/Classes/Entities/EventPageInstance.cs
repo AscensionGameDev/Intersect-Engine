@@ -35,7 +35,8 @@ namespace Intersect_Server.Classes
         public int MovementType;
         public int MovementFreq;
         public int MovementSpeed;
-        public int MyGraphicType;
+        public EventGraphic MyGraphic = new EventGraphic();
+        public int DisablePreview;
         public EventStruct BaseEvent;
         public EventPage MyPage;
         public Entities.EventInstance MyEventIndex;
@@ -56,6 +57,7 @@ namespace Intersect_Server.Classes
             MovementType = MyPage.MovementType;
             MovementFreq = MyPage.MovementFreq;
             MovementSpeed = MyPage.MovementSpeed;
+            DisablePreview = MyPage.DisablePreview;
             Trigger = MyPage.Trigger;
             Passable = MyPage.Passable;
             HideName = MyPage.HideName;
@@ -67,14 +69,19 @@ namespace Intersect_Server.Classes
             MoveRoute.CopyFrom(MyPage.MoveRoute);
             _pathFinder = new Pathfinder(this);
             SetMovementSpeed(MyPage.MovementSpeed);
-            MyGraphicType = MyPage.Graphic.Type;
+            MyGraphic.Type = MyPage.Graphic.Type;
+            MyGraphic.Filename = MyPage.Graphic.Filename;
+            MyGraphic.X = MyPage.Graphic.X;
+            MyGraphic.Y = MyPage.Graphic.Y;
+            MyGraphic.Width = MyPage.Graphic.Width;
+            MyGraphic.Height = MyPage.Graphic.Height;
             MySprite = MyPage.Graphic.Filename;
             DirectionFix = MyPage.DirectionFix;
             WalkingAnim = MyPage.WalkingAnimation;
             RenderLevel = MyPage.Layer;
-            if (MyGraphicType == 1)
+            if (MyGraphic.Type == 1)
             {
-                switch (MyPage.Graphic.Y)
+                switch (MyGraphic.Y)
                 {
                     case 0:
                         Dir = 1;
@@ -110,6 +117,7 @@ namespace Intersect_Server.Classes
             MovementType = globalClone.MovementType;
             MovementFreq = globalClone.MovementFreq;
             MovementSpeed = globalClone.MovementSpeed;
+            DisablePreview = globalClone.DisablePreview;
             Trigger = MyPage.Trigger;
             Passable = globalClone.Passable;
             HideName = globalClone.HideName;
@@ -118,12 +126,17 @@ namespace Intersect_Server.Classes
             MoveRoute = globalClone.MoveRoute;
             _pathFinder = new Pathfinder(this);
             SetMovementSpeed(MyPage.MovementSpeed);
-            MyGraphicType = MyPage.Graphic.Type;
+            MyGraphic.Type = globalClone.MyGraphic.Type;
+            MyGraphic.Filename = globalClone.MyGraphic.Filename;
+            MyGraphic.X = globalClone.MyGraphic.X;
+            MyGraphic.Y = globalClone.MyGraphic.Y;
+            MyGraphic.Width = globalClone.MyGraphic.Width;
+            MyGraphic.Height = globalClone.MyGraphic.Height;
             MySprite = MyPage.Graphic.Filename;
             DirectionFix = MyPage.DirectionFix;
             WalkingAnim = MyPage.WalkingAnimation;
             RenderLevel = MyPage.Layer;
-            if (MyGraphicType == 1)
+            if (globalClone.MyGraphic.Type == 1)
             {
                 switch (MyPage.Graphic.Y)
                 {
@@ -161,11 +174,18 @@ namespace Intersect_Server.Classes
         {
             var bf = new ByteBuffer();
             bf.WriteBytes(base.Data());
-            bf.WriteInteger(MyPage.HideName);
-            bf.WriteInteger(MyPage.DisablePreview);
+            bf.WriteInteger(HideName);
+            bf.WriteInteger(DirectionFix);
+            bf.WriteInteger(WalkingAnim);
+            bf.WriteInteger(DisablePreview);
             bf.WriteString(MyPage.Desc);
-            bf.WriteInteger(MyPage.Graphic.Type);
-
+            bf.WriteInteger(MyGraphic.Type);
+            bf.WriteString(MyGraphic.Filename);
+            bf.WriteInteger(MyGraphic.X);
+            bf.WriteInteger(MyGraphic.Y);
+            bf.WriteInteger(MyGraphic.Width);
+            bf.WriteInteger(MyGraphic.Height);
+            bf.WriteInteger(RenderLevel);
             return bf.ToArray();
         }
 
@@ -604,10 +624,13 @@ namespace Intersect_Server.Classes
                         moved = true;
                         break;
                     case MoveRouteEnum.SetGraphic:
-                        MyGraphicType = MoveRoute.Actions[MoveRoute.ActionIndex].Graphic.Type;
-                        MySprite = MoveRoute.Actions[MoveRoute.ActionIndex].Graphic.Filename;
-                        
-                        if (MyGraphicType == 1)
+                        MyGraphic.Type = MoveRoute.Actions[MoveRoute.ActionIndex].Graphic.Type;
+                        MyGraphic.Filename = MoveRoute.Actions[MoveRoute.ActionIndex].Graphic.Filename;
+                        MyGraphic.X = MoveRoute.Actions[MoveRoute.ActionIndex].Graphic.X;
+                        MyGraphic.Y = MoveRoute.Actions[MoveRoute.ActionIndex].Graphic.Y;
+                        MyGraphic.Width = MoveRoute.Actions[MoveRoute.ActionIndex].Graphic.Width;
+                        MyGraphic.Height = MoveRoute.Actions[MoveRoute.ActionIndex].Graphic.Height;
+                        if (MyGraphic.Type == 1)
                         {
                             switch (MoveRoute.Actions[MoveRoute.ActionIndex].Graphic.Y)
                             {
@@ -624,6 +647,16 @@ namespace Intersect_Server.Classes
                                     Dir = 0;
                                     break;
                             }
+                        }
+                        shouldSendUpdate = true;
+                        moved = true;
+                        break;
+                    case MoveRouteEnum.SetAnimation:
+                        Animations.Clear();
+                        if (MoveRoute.Actions[MoveRoute.ActionIndex].AnimationIndex > 0 &&
+                            MoveRoute.Actions[MoveRoute.ActionIndex].AnimationIndex < Globals.GameAnimations.Length)
+                        {
+                            Animations.Add(MoveRoute.Actions[MoveRoute.ActionIndex].AnimationIndex);
                         }
                         shouldSendUpdate = true;
                         moved = true;
@@ -665,6 +698,19 @@ namespace Intersect_Server.Classes
                             MoveTimer = Environment.TickCount + 250;
                             break;
                     }
+                }
+            }
+        }
+
+        public void TurnTowardsPlayer()
+        {
+            int lookDir = -1;
+            if (Client != null && GlobalClone == null) //Local Event
+            {
+                lookDir = GetDirectionTo(Client.Entity);
+                if (lookDir > -1)
+                {
+                    ChangeDir(lookDir);
                 }
             }
         }

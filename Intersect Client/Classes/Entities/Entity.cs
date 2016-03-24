@@ -84,11 +84,11 @@ namespace Intersect_Client.Classes.Entities
         public int[] Equipment = new int[Enums.EquipmentSlots.Count];
 
         //Entity Animations
-        public List<AnimationInstance> Animations = new List<AnimationInstance>(); 
+        public List<AnimationInstance> Animations = new List<AnimationInstance>();
 
         private long _lastUpdate;
         private long _walkTimer;
-        private int _walkFrame;
+        public int WalkFrame;
 
         private bool _disposed;
 
@@ -172,12 +172,12 @@ namespace Intersect_Client.Classes.Entities
             {
                 if (IsMoving)
                 {
-                    _walkFrame++;
-                    if (_walkFrame > 3) { _walkFrame = 0; }
+                    WalkFrame++;
+                    if (WalkFrame > 3) { WalkFrame = 0; }
                 }
                 else
                 {
-                    _walkFrame = 0;
+                    WalkFrame = 0;
                 }
                 _walkTimer = Globals.System.GetTimeMS() + 200;
             }
@@ -226,13 +226,13 @@ namespace Intersect_Client.Classes.Entities
                 {
                     animInstance.SetPosition((int)GetCenterPos().X, (int)GetCenterPos().Y, -1);
                 }
-                
+
             }
             _lastUpdate = Globals.System.GetTimeMS();
             return true;
         }
 
-        public List<Entity> DetermineRenderOrder(List<Entity> renderList )
+        public virtual List<Entity> DetermineRenderOrder(List<Entity> renderList)
         {
             if (renderList != null)
             {
@@ -265,13 +265,13 @@ namespace Intersect_Client.Classes.Entities
                     }
                     else if (i < 6)
                     {
-                       outerList[Globals.Database.MapHeight + CurrentY].Add(this);
+                        outerList[Globals.Database.MapHeight + CurrentY].Add(this);
                         renderList = outerList[Globals.Database.MapHeight + CurrentY];
                     }
                     else
                     {
                         outerList[Globals.Database.MapHeight * 2 + CurrentY].Add(this);
-                        renderList = outerList[Globals.Database.MapHeight*2 + CurrentY];
+                        renderList = outerList[Globals.Database.MapHeight * 2 + CurrentY];
                     }
                     break;
                 }
@@ -323,17 +323,17 @@ namespace Intersect_Client.Classes.Entities
                         d = 2;
                         break;
                 }
-                destRectangle.X = (int)Math.Ceiling( destRectangle.X);
+                destRectangle.X = (int)Math.Ceiling(destRectangle.X);
                 destRectangle.Y = (int)Math.Ceiling(destRectangle.Y);
-                srcRectangle = new FloatRect(_walkFrame * (int)srcTexture.GetWidth() / 4, d * (int)srcTexture.GetHeight() / 4, (int)srcTexture.GetWidth() / 4, (int)srcTexture.GetHeight() / 4);
+                srcRectangle = new FloatRect(WalkFrame * (int)srcTexture.GetWidth() / 4, d * (int)srcTexture.GetHeight() / 4, (int)srcTexture.GetWidth() / 4, (int)srcTexture.GetHeight() / 4);
                 destRectangle.Width = srcRectangle.Width;
                 destRectangle.Height = srcRectangle.Height;
-                GameGraphics.DrawGameTexture(srcTexture, srcRectangle, destRectangle,Color.White);
+                GameGraphics.DrawGameTexture(srcTexture, srcRectangle, destRectangle, Color.White);
 
                 //Draw the equipment/paperdolls
                 for (int z = Enums.EquipmentSlots.Count - 1; z >= 0; z--)
                 {
-                    if (Equipment[z] >-1 && Inventory[Equipment[z]].ItemNum > -1)
+                    if (Equipment[z] > -1 && Inventory[Equipment[z]].ItemNum > -1)
                     {
                         DrawEquipment(Globals.GameItems[Inventory[Equipment[z]].ItemNum].Paperdoll);
                     }
@@ -384,7 +384,7 @@ namespace Intersect_Client.Classes.Entities
                 }
                 destRectangle.X = (int)Math.Ceiling(destRectangle.X);
                 destRectangle.Y = destRectangle.Y;
-                srcRectangle = new FloatRect(_walkFrame * (int)srcTexture.GetWidth() / 4, d * (int)srcTexture.GetHeight() / 4, (int)srcTexture.GetWidth() / 4, (int)srcTexture.GetHeight() / 4);
+                srcRectangle = new FloatRect(WalkFrame * (int)srcTexture.GetWidth() / 4, d * (int)srcTexture.GetHeight() / 4, (int)srcTexture.GetWidth() / 4, (int)srcTexture.GetHeight() / 4);
                 destRectangle.Width = srcRectangle.Width;
                 destRectangle.Height = srcRectangle.Height;
                 GameGraphics.DrawGameTexture(srcTexture, srcRectangle, destRectangle, Color.White);
@@ -404,26 +404,22 @@ namespace Intersect_Client.Classes.Entities
         }
 
         //returns the point on the screen that is the center of the player sprite
-        public Pointf GetCenterPos()
+        public virtual Pointf GetCenterPos()
         {
             if (!Globals.GameMaps.ContainsKey(CurrentMap))
             {
-                return new Pointf(0,0);}
-            Pointf pos;
+                return new Pointf(0, 0);
+            }
+            Pointf pos = new Pointf(Globals.GameMaps[CurrentMap].GetX() + CurrentX * Globals.Database.TileWidth + OffsetX + Globals.Database.TileWidth / 2,
+                    Globals.GameMaps[CurrentMap].GetY() + CurrentY * Globals.Database.TileHeight + OffsetY + Globals.Database.TileHeight / 2);
             if (GameGraphics.EntityFileNames.IndexOf(MySprite.ToLower()) >= 0)
             {
-                pos = new Pointf(Globals.GameMaps[CurrentMap].GetX() + CurrentX * Globals.Database.TileWidth + OffsetX + GameGraphics.EntityTextures[GameGraphics.EntityFileNames.IndexOf(MySprite.ToLower())].GetWidth() / 8f,
-                    Globals.GameMaps[CurrentMap].GetY() + CurrentY * Globals.Database.TileHeight + OffsetY - ((GameGraphics.EntityTextures[GameGraphics.EntityFileNames.IndexOf(MySprite.ToLower())].GetHeight() / 4) - Globals.Database.TileHeight) + GameGraphics.EntityTextures[GameGraphics.EntityFileNames.IndexOf(MySprite.ToLower())].GetHeight() / 8f);
-
-            }
-            else
-            {
-                pos = new Pointf(Globals.GameMaps[CurrentMap].GetX() + CurrentX * Globals.Database.TileWidth + OffsetX + 16,
-                    Globals.GameMaps[CurrentMap].GetY() + CurrentY * Globals.Database.TileHeight + OffsetY - Globals.Database.TileHeight + 32);
+                pos.Y += Globals.Database.TileHeight / 2;
+                pos.Y -= GameGraphics.EntityTextures[GameGraphics.EntityFileNames.IndexOf(MySprite.ToLower())].GetHeight() / 4 / 2;
             }
             return pos;
         }
-        public void DrawName()
+        public virtual void DrawName()
         {
             if (HideName == 1) { return; }
             int i = GetLocalPos(CurrentMap);
@@ -435,21 +431,18 @@ namespace Intersect_Client.Classes.Entities
             var x = (int)Math.Ceiling(GetCenterPos().X);
             if (GameGraphics.EntityFileNames.IndexOf(MySprite.ToLower()) >= 0)
             {
-                //if (Graphics.EntityTextures[Graphics.EntityFileNames.IndexOf(MySprite.ToLower())].GetHeight() / 4 > Globals.Database.TileHeight)
-                //{
-                    y = y -(int) ((GameGraphics.EntityTextures[GameGraphics.EntityFileNames.IndexOf(MySprite.ToLower())].GetHeight()/8));
-                    y -= 16;
-               // }
+                y = y - (int)((GameGraphics.EntityTextures[GameGraphics.EntityFileNames.IndexOf(MySprite.ToLower())].GetHeight() / 8));
+                y -= 6;
                 if (GameGraphics.EntityTextures[GameGraphics.EntityFileNames.IndexOf(MySprite.ToLower())].GetWidth() / 4 > Globals.Database.TileWidth)
                 {
-                    x = x - (int)((GameGraphics.EntityTextures[GameGraphics.EntityFileNames.IndexOf(MySprite.ToLower())].GetWidth() / 4) - Globals.Database.TileWidth)/2;
+                    x = x - (int)((GameGraphics.EntityTextures[GameGraphics.EntityFileNames.IndexOf(MySprite.ToLower())].GetWidth() / 4) - Globals.Database.TileWidth) / 2;
                 }
             }
             if (this.GetType() != typeof(Event)) { y -= 10; } //Need room for HP bar if not an event.
 
             float textWidth = GameGraphics.Renderer.MeasureText(MyName, GameGraphics.GameFont, 10).X;
             GameGraphics.Renderer.DrawString(MyName, GameGraphics.GameFont,
-                (int) (x - (int) Math.Ceiling(textWidth/2)), (int) (y), 10, Color.White);
+                (int)(x - (int)Math.Ceiling(textWidth / 2)), (int)(y), 10, Color.White);
         }
         public void DrawHpBar()
         {
@@ -461,14 +454,13 @@ namespace Intersect_Client.Classes.Entities
                 return;
             }
             var width = Globals.Database.TileWidth;
-            var fillWidth = ((float) Vital[(int) Enums.Vitals.Health]/MaxVital[(int) Enums.Vitals.Health])*width;
+            var fillWidth = ((float)Vital[(int)Enums.Vitals.Health] / MaxVital[(int)Enums.Vitals.Health]) * width;
             var y = (int)Math.Ceiling(GetCenterPos().Y);
             var x = (int)Math.Ceiling(GetCenterPos().X);
             if (GameGraphics.EntityFileNames.IndexOf(MySprite.ToLower()) >= 0)
             {
-                    y = y - (int)((GameGraphics.EntityTextures[GameGraphics.EntityFileNames.IndexOf(MySprite.ToLower())].GetHeight() / 8));
-                    y -= 10;
-                
+                y = y - (int)((GameGraphics.EntityTextures[GameGraphics.EntityFileNames.IndexOf(MySprite.ToLower())].GetHeight() / 8));
+
                 if (GameGraphics.EntityTextures[GameGraphics.EntityFileNames.IndexOf(MySprite.ToLower())].GetWidth() / 4 > Globals.Database.TileWidth)
                 {
                     x = x - (int)((GameGraphics.EntityTextures[GameGraphics.EntityFileNames.IndexOf(MySprite.ToLower())].GetWidth() / 4) - Globals.Database.TileWidth) / 2;
@@ -476,9 +468,9 @@ namespace Intersect_Client.Classes.Entities
             }
 
             GameGraphics.DrawGameTexture(GameGraphics.WhiteTex, new FloatRect(0, 0, 1, 1),
-                new FloatRect((int) (x - 1 - width/2), (int) (y - 1), width, 6), Color.Black);
+                new FloatRect((int)(x - 1 - width / 2), (int)(y - 1), width, 6), Color.Black);
             GameGraphics.DrawGameTexture(GameGraphics.WhiteTex, new FloatRect(0, 0, 1, 1),
-                new FloatRect((int)(x - width / 2), (int)(y), fillWidth-2, 4), Color.Red);
+                new FloatRect((int)(x - width / 2), (int)(y), fillWidth - 2, 4), Color.Red);
         }
         public void DrawCastingBar()
         {

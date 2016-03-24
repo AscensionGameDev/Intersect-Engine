@@ -25,6 +25,12 @@
     SOFTWARE.
 */
 
+using System;
+using System.Collections.Generic;
+using IntersectClientExtras.GenericClasses;
+using IntersectClientExtras.Graphics;
+using Intersect_Client.Classes.Core;
+using Intersect_Client.Classes.General;
 using Intersect_Client.Classes.Misc;
 
 namespace Intersect_Client.Classes.Entities
@@ -36,11 +42,18 @@ namespace Intersect_Client.Classes.Entities
         public int GraphicType;
         public string Graphic = "";
         public string FaceGraphic = "";
-        public int Graphicx;
-        public int Graphicy;
+        public int GraphicX;
+        public int GraphicY;
+        public string GraphicFile = "";
+        public int GraphicWidth;
+        public int GraphicHeight;
         public int DisablePreview;
+        public int DirectionFix;
+        public int WalkingAnim = 1;
+        public int RenderLevel = 1;
 
-        public Event() : base() {
+        public Event() : base()
+        {
 
         }
 
@@ -48,9 +61,230 @@ namespace Intersect_Client.Classes.Entities
         {
             base.Load(bf);
             HideName = bf.ReadInteger();
+            DirectionFix = bf.ReadInteger();
+            WalkingAnim = bf.ReadInteger();
             DisablePreview = bf.ReadInteger();
             Desc = bf.ReadString();
             GraphicType = bf.ReadInteger();
+            GraphicFile = bf.ReadString();
+            GraphicX = bf.ReadInteger();
+            GraphicY = bf.ReadInteger();
+            GraphicWidth = bf.ReadInteger();
+            GraphicHeight = bf.ReadInteger();
+            RenderLevel = bf.ReadInteger();
+        }
+
+        public override bool Update()
+        {
+            bool success = base.Update();
+            if (WalkingAnim == 0) WalkFrame = 0;
+            return success;
+        }
+
+        public override void Draw()
+        {
+            int i = GetLocalPos(CurrentMap);
+            if (i == -1 || !Globals.GameMaps.ContainsKey(CurrentMap))
+            {
+                return;
+            }
+            FloatRect srcRectangle = new FloatRect();
+            FloatRect destRectangle = new FloatRect();
+            GameTexture srcTexture = null;
+            int height = 0;
+            int width = 0;
+            var d = 0;
+            switch (GraphicType)
+            {
+                case 1: //Sprite
+                    if (GameGraphics.EntityFileNames.IndexOf(MySprite.ToLower()) >= 0)
+                    {
+                        srcTexture =
+                            GameGraphics.EntityTextures[GameGraphics.EntityFileNames.IndexOf(GraphicFile)];
+                        height = srcTexture.GetHeight() / 4;
+                        width = srcTexture.GetWidth() / 4;
+                        d = GraphicY;
+                        if (DirectionFix != 1)
+                        {
+                            switch (Dir)
+                            {
+                                case 0:
+                                    d = 3;
+                                    break;
+                                case 1:
+                                    d = 0;
+                                    break;
+                                case 2:
+                                    d = 1;
+                                    break;
+                                case 3:
+                                    d = 2;
+                                    break;
+                            }
+                        }
+                        int frame = GraphicX;
+                        if (WalkingAnim == 1) frame = WalkFrame;
+                        srcRectangle = new FloatRect(frame * (int)srcTexture.GetWidth() / 4, d * (int)srcTexture.GetHeight() / 4, (int)srcTexture.GetWidth() / 4, (int)srcTexture.GetHeight() / 4);
+                    }
+                    break;
+                case 2: //Tile
+                    for (int z = 0; z < Globals.Tilesets.Length; z++)
+                    {
+                        if (Globals.Tilesets[z] == GraphicFile)
+                        {
+                            srcTexture = GameGraphics.Tilesets[z];
+                            width = (GraphicWidth+ 1)*Globals.Database.TileWidth;
+                            height = (GraphicHeight + 1)*Globals.Database.TileHeight;
+                            srcRectangle = new FloatRect(GraphicX * Globals.Database.TileWidth, GraphicY * Globals.Database.TileHeight, (GraphicWidth + 1) * Globals.Database.TileWidth, (GraphicHeight + 1) * Globals.Database.TileHeight);
+                        }
+                    }
+                    break;
+            }
+            if (srcTexture != null)
+            {
+                destRectangle.X = Globals.GameMaps[CurrentMap].GetX() + CurrentX * Globals.Database.TileWidth + OffsetX;
+                if (height > Globals.Database.TileHeight)
+                {
+                    destRectangle.Y = Globals.GameMaps[CurrentMap].GetY() + CurrentY * Globals.Database.TileHeight + OffsetY - ((height) - Globals.Database.TileHeight);
+                }
+                else
+                {
+                    destRectangle.Y = Globals.GameMaps[CurrentMap].GetY() + CurrentY * Globals.Database.TileHeight + OffsetY;
+                }
+                if (width > Globals.Database.TileWidth)
+                {
+                    destRectangle.X -= ((width) - Globals.Database.TileWidth) / 2;
+                }
+                destRectangle.X = (int)Math.Ceiling(destRectangle.X);
+                destRectangle.Y = (int)Math.Ceiling(destRectangle.Y);
+                destRectangle.Width = srcRectangle.Width;
+                destRectangle.Height = srcRectangle.Height;
+                GameGraphics.DrawGameTexture(srcTexture, srcRectangle, destRectangle, Color.White);
+            }
+        }
+
+        public override List<Entity> DetermineRenderOrder(List<Entity> renderList)
+        {
+            if (RenderLevel == 1) return base.DetermineRenderOrder(renderList);
+            if (renderList != null)
+            {
+                renderList.Remove(this);
+            }
+
+            if (!Globals.GameMaps.ContainsKey(CurrentMap))
+            {
+                return null;
+            }
+
+            int mapLoc = -1;
+            for (int i = 0; i < 9; i++)
+            {
+                if (Globals.LocalMaps[i] == CurrentMap)
+                {
+                    List<Entity>[] outerList;
+                    if (CurrentZ == 0)
+                    {
+                        outerList = GameGraphics.Layer1Entities;
+                    }
+                    else
+                    {
+                        outerList = GameGraphics.Layer2Entities;
+                    }
+                    if (RenderLevel == 0) i -= 3;
+                    if (RenderLevel == 2) i += 3;
+                    if (i < 3 && i > -1)
+                    {
+                        outerList[CurrentY].Add(this);
+                        renderList = outerList[CurrentY];
+                    }
+                    else if (i < 6)
+                    {
+                        outerList[Globals.Database.MapHeight + CurrentY].Add(this);
+                        renderList = outerList[Globals.Database.MapHeight + CurrentY];
+                    }
+                    else if (i <= 8)
+                    {
+                        outerList[Globals.Database.MapHeight * 2 + CurrentY].Add(this);
+                        renderList = outerList[Globals.Database.MapHeight * 2 + CurrentY];
+                    }
+                    break;
+                }
+            }
+            return renderList;
+        }
+
+        public override void DrawName()
+        {
+            if (HideName == 1) { return; }
+            int i = GetLocalPos(CurrentMap);
+            if (i == -1 || !Globals.GameMaps.ContainsKey(CurrentMap))
+            {
+                return;
+            }
+            var y = (int)Math.Ceiling(GetCenterPos().Y);
+            var x = (int)Math.Ceiling(GetCenterPos().X);
+            int width = 0;
+            int height = 0;
+            GameTexture srcTexture = null;
+            switch (GraphicType)
+            {
+                case 1: //Sprite
+                    if (GameGraphics.EntityFileNames.IndexOf(MySprite.ToLower()) >= 0)
+                    {
+                        srcTexture =
+                            GameGraphics.EntityTextures[GameGraphics.EntityFileNames.IndexOf(GraphicFile)];
+                        y -= srcTexture.GetHeight()/4/2;
+                    }
+                    break;
+                case 2: //Tile
+                    for (int z = 0; z < Globals.Tilesets.Length; z++)
+                    {
+                        if (Globals.Tilesets[z] == GraphicFile)
+                        {
+                            y -= ((GraphicHeight + 1) * Globals.Database.TileHeight) / 2;
+                        }
+                    }
+                    break;
+            }
+
+            float textWidth = GameGraphics.Renderer.MeasureText(MyName, GameGraphics.GameFont, 10).X;
+            GameGraphics.Renderer.DrawString(MyName, GameGraphics.GameFont,
+                (int)(x - (int)Math.Ceiling(textWidth / 2)), (int)(y), 10, Color.White);
+        }
+
+        public override Pointf GetCenterPos()
+        {
+            if (!Globals.GameMaps.ContainsKey(CurrentMap))
+            {
+                return new Pointf(0, 0);
+            }
+            Pointf pos = new Pointf(Globals.GameMaps[CurrentMap].GetX() + CurrentX * Globals.Database.TileWidth + OffsetX + Globals.Database.TileWidth / 2,
+                    Globals.GameMaps[CurrentMap].GetY() + CurrentY * Globals.Database.TileHeight + OffsetY + Globals.Database.TileHeight / 2);
+            int width = 0, height = 0;
+            GameTexture srcTexture = null;
+            switch (GraphicType)
+            {
+                case 1: //Sprite
+                    if (GameGraphics.EntityFileNames.IndexOf(MySprite.ToLower()) >= 0)
+                    {
+                        srcTexture =
+                            GameGraphics.EntityTextures[GameGraphics.EntityFileNames.IndexOf(GraphicFile)];
+                        pos.Y += Globals.Database.TileHeight/2;
+                        pos.Y -= srcTexture.GetHeight()/4/2;
+                    }
+                    break;
+                case 2: //Tile
+                    for (int z = 0; z < Globals.Tilesets.Length; z++)
+                    {
+                        if (Globals.Tilesets[z] == GraphicFile)
+                        {
+                            pos.Y += Globals.Database.TileHeight / 2;
+                            pos.Y -= ((GraphicHeight + 1) * Globals.Database.TileHeight) / 2;
+                        }
+                    }
+                    break;
+            }
+            return pos;
         }
     }
 

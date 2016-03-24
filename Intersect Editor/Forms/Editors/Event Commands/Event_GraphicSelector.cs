@@ -40,6 +40,8 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
         private EventGraphic _editingGraphic;
         private FrmEvent _eventEditor;
         private EventGraphic _tmpGraphic = new EventGraphic();
+        private Event_MoveRouteDesigner _routeDesigner = null;
+        private bool _newRouteAction = false;
 
         private int _spriteWidth = 0;
         private int _spriteHeight = 0;
@@ -47,7 +49,7 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
         private bool _mouseDown;
         private bool _loading = false;
 
-        public Event_GraphicSelector(EventGraphic editingGraphic, FrmEvent eventEditor)
+        public Event_GraphicSelector(EventGraphic editingGraphic, FrmEvent eventEditor, Event_MoveRouteDesigner moveRouteDesigner = null, bool newMoveRouteAction = false)
         {
             InitializeComponent();
             _editingGraphic = editingGraphic;
@@ -61,6 +63,8 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
                 cmbGraphic.SelectedIndex = cmbGraphic.Items.IndexOf(_editingGraphic.Filename);
             }
             UpdatePreview();
+            _routeDesigner = moveRouteDesigner;
+            _newRouteAction = newMoveRouteAction;
             _loading = false;
         }
 
@@ -76,6 +80,7 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             {
                 cmbGraphic.Hide();
                 lblGraphic.Hide();
+                UpdatePreview();
             }
             else if (cmbGraphicType.SelectedIndex == 1) //Sprite
             {
@@ -282,6 +287,7 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
 
         private void btnCancel_Click(object sender, EventArgs e)
         {
+            if (_routeDesigner != null && _newRouteAction) _routeDesigner.RemoveLastAction();
             _eventEditor.CloseGraphicSelector(this);
         }
     }

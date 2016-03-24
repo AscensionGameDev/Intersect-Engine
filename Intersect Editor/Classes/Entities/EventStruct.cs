@@ -124,7 +124,7 @@ namespace Intersect_Editor.Classes
         public int HideName;
         public int DisablePreview = 1;
         public int DirectionFix;
-        public int WalkingAnimation;
+        public int WalkingAnimation = 1;
         public int Animation = -1;
         public List<CommandList> CommandLists = new List<CommandList>();
         public List<EventCommand> Conditions = new List<EventCommand>(); 
@@ -331,6 +331,7 @@ namespace Intersect_Editor.Classes
     {
         public MoveRouteEnum Type;
         public EventGraphic Graphic = null;
+        public int AnimationIndex = -1;
 
 
         public void Save(ByteBuffer myBuffer)
@@ -339,6 +340,10 @@ namespace Intersect_Editor.Classes
             if (Type == MoveRouteEnum.SetGraphic)
             {
                 Graphic.Save(myBuffer);
+            }
+            else if (Type == MoveRouteEnum.SetAnimation)
+            {
+                myBuffer.WriteInteger(AnimationIndex);
             }
         }
 
@@ -350,6 +355,10 @@ namespace Intersect_Editor.Classes
                 Graphic = new EventGraphic();
                 Graphic.Load(myBuffer);
             }
+            else if (Type == MoveRouteEnum.SetAnimation)
+            {
+                AnimationIndex = myBuffer.ReadInteger();
+            }
         }
 
         public MoveRouteAction Copy()
@@ -360,6 +369,10 @@ namespace Intersect_Editor.Classes
             {
                 copy.Graphic = new EventGraphic();
                 copy.Graphic.CopyFrom(Graphic);
+            }
+            else if (Type == MoveRouteEnum.SetAnimation)
+            {
+                copy.AnimationIndex = AnimationIndex;
             }
             return copy;
         }

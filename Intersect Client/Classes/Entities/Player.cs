@@ -221,18 +221,6 @@ namespace Intersect_Client.Classes.Entities
         {
             if (_attackTimer > Globals.System.GetTimeMS()) { return false; }
 
-            //If has a weapon with a projectile equiped, attack anyway
-            if (Equipment[Enums.WeaponIndex] > -1)
-            {
-                if (Globals.GameItems[Equipment[Enums.WeaponIndex]].Projectile > -1)
-                {
-                    //Fire the projectile
-                    PacketSender.SendAttack(_targetIndex);
-                    _attackTimer = Globals.System.GetTimeMS() + 1000;
-                    return true;
-                }
-            }
-
             var x = Globals.Entities[Globals.MyIndex].CurrentX;
             var y = Globals.Entities[Globals.MyIndex].CurrentY;
             var map = Globals.Entities[Globals.MyIndex].CurrentMap;
@@ -299,7 +287,18 @@ namespace Intersect_Client.Classes.Entities
                         }
                     }
                 }
-                
+
+            }
+            //If has a weapon with a projectile equiped, attack anyway
+            if (Equipment[Enums.WeaponIndex] > -1)
+            {
+                if (Globals.GameItems[Equipment[Enums.WeaponIndex]].Projectile > -1)
+                {
+                    //Fire the projectile
+                    PacketSender.SendAttack(_targetIndex);
+                    _attackTimer = Globals.System.GetTimeMS() + 1000;
+                    return true;
+                }
             }
             return false;
         }
@@ -454,7 +453,7 @@ namespace Intersect_Client.Classes.Entities
         {
             var x = (int)Math.Floor(Globals.InputManager.GetMousePosition().X + GameGraphics.CurrentView.Left);
             var y = (int)Math.Floor(Globals.InputManager.GetMousePosition().Y + GameGraphics.CurrentView.Top);
-            
+
             foreach (KeyValuePair<int, MapStruct> map in Globals.GameMaps)
             {
                 if (x >= map.Value.GetX() && x <= map.Value.GetX() + (Globals.Database.MapWidth * Globals.Database.TileWidth))
@@ -490,16 +489,12 @@ namespace Intersect_Client.Classes.Entities
                                 foreach (var en in eventMap.Value.LocalEntities)
                                 {
                                     if (en.Value == null) continue;
-                                    if (en.Value.CurrentMap == map.Value.MyMapNum && en.Value.CurrentX == x && en.Value.CurrentY == y)
+                                    if (en.Value.CurrentMap == map.Value.MyMapNum && en.Value.CurrentX == x && en.Value.CurrentY == y && ((Event)en.Value).DisablePreview == 0)
                                     {
-                                        if (en.GetType() != typeof(Projectile))
-                                        {
-                                            if (_targetBox != null) { _targetBox.Dispose(); _targetBox = null; }
-                                            _targetBox = new EntityBox(Gui.GameUI.GameCanvas, en.Value, 0, 100);
-                                            _targetIndex = en.Value.MyIndex;
-                                            return true;
-
-                                        }
+                                        if (_targetBox != null) { _targetBox.Dispose(); _targetBox = null; }
+                                        _targetBox = new EntityBox(Gui.GameUI.GameCanvas, en.Value, 0, 100);
+                                        _targetIndex = en.Value.MyIndex;
+                                        return true;
                                     }
                                 }
                             }
@@ -1008,12 +1003,9 @@ namespace Intersect_Client.Classes.Entities
                                 foreach (var en in eventMap.Value.LocalEntities)
                                 {
                                     if (en.Value == null) continue;
-                                    if (en.Value.CurrentMap == map.Value.MyMapNum && en.Value.CurrentX == x && en.Value.CurrentY == y)
+                                    if (en.Value.CurrentMap == map.Value.MyMapNum && en.Value.CurrentX == x && en.Value.CurrentY == y && ((Event)en.Value).DisablePreview == 0)
                                     {
-                                        if (en.GetType() != typeof(Projectile))
-                                        {
                                             en.Value.DrawTarget((int)Enums.TargetTypes.Hover);
-                                        }
                                     }
                                 }
                             }

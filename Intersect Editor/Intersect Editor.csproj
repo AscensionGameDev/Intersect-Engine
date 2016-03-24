@@ -299,6 +299,12 @@
     <Compile Include="Forms\Editors\Event Commands\Event_GraphicSelector.Designer.cs">
       <DependentUpon>Event_GraphicSelector.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\Editors\Event Commands\Event_MoveRouteAnimationSelector.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Forms\Editors\Event Commands\Event_MoveRouteAnimationSelector.Designer.cs">
+      <DependentUpon>Event_MoveRouteAnimationSelector.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\Editors\Event Commands\Event_MoveRouteDesigner.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -500,6 +506,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\Editors\Event Commands\Event_GraphicSelector.resx">
       <DependentUpon>Event_GraphicSelector.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Editors\Event Commands\Event_MoveRouteAnimationSelector.resx">
+      <DependentUpon>Event_MoveRouteAnimationSelector.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\Editors\Event Commands\Event_MoveRouteDesigner.resx">
       <DependentUpon>Event_MoveRouteDesigner.cs</DependentUpon>

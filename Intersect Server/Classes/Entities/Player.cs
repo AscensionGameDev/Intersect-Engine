@@ -685,6 +685,7 @@ namespace Intersect_Server.Classes
                         if (MyEvents[i].CallStack.Count != 0) return;
                         var newStack = new CommandInstance { CommandIndex = 0, ListIndex = 0 };
                         MyEvents[i].CallStack.Push(newStack);
+                        if (!MyEvents[i].IsGlobal) MyEvents[i].PageInstance.TurnTowardsPlayer();
                     }
                 }
             }
