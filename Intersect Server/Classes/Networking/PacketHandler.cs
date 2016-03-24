@@ -184,6 +184,12 @@ namespace Intersect_Server.Classes
                 case Enums.ClientPackets.LinkMap:
                     HandleLinkMap(client, packet);
                     break;
+                case Enums.ClientPackets.OpenCommonEventEditor:
+                    HandleOpenCommonEventEditor(client);
+                    break;
+                case Enums.ClientPackets.SaveCommonEvent:
+                    HandleCommonEvent(client, packet);
+                    break;
                 default:
                     Globals.GeneralLogs.Add(@"Non implemented packet received: " + packetHeader);
                     break;
@@ -1258,6 +1264,25 @@ namespace Intersect_Server.Classes
                     }
                 }
             }
+        }
+
+        private static void HandleOpenCommonEventEditor(Client client)
+        {
+            for (var i = 0; i < Constants.MaxCommonEvents; i++)
+            {
+                PacketSender.SendCommonEvent(client, i);
+            }
+            PacketSender.SendOpenCommonEventEditor(client);
+        }
+
+        private static void HandleCommonEvent(Client client, byte[] packet)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteBytes(packet);
+            var index = bf.ReadInteger();
+            Globals.CommonEvents[index] = new EventStruct(index, bf, true);
+            File.WriteAllBytes("Resources/Common Events/" + index + ".evt", Globals.CommonEvents[index].EventData());
+            bf.Dispose();
         }
     }
 }

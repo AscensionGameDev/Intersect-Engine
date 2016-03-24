@@ -41,6 +41,8 @@ namespace Intersect_Server.Classes
 
         public EventStruct(int index, int x, int y, bool isCommon = false, byte isGlobal = 0)
         {
+            MyName = "";
+            if (isCommon) MyName = "Common Event " + index;
             MyIndex = index;
             SpawnX = x;
             SpawnY = y;
@@ -431,6 +433,7 @@ namespace Intersect_Server.Classes
         ExitEventProcess,
         Label,
         GoToLabel,
+        StartCommonEvent,
         //Player Control
         RestoreHp,
         RestoreMp,

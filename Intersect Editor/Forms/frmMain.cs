@@ -26,6 +26,7 @@ using Intersect_Editor.Classes;
 using WeifenLuo.WinFormsUI.Docking;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
+using Intersect_Editor.Forms.Editors;
 
 namespace Intersect_Editor.Forms
 {
@@ -49,6 +50,7 @@ namespace Intersect_Editor.Forms
         private frmClass _classEditor;
         private frmQuest _questEditor;
         private frmProjectile _projectileEditor;
+        private frmCommonEvent _commonEventEditor;
 
         //Initialization & Setup Functions
         public frmMain()
@@ -538,6 +540,10 @@ namespace Intersect_Editor.Forms
         {
             PacketSender.SendProjectileEditor();
         }
+        private void commonEventEditorToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            PacketSender.SendOpenCommonEventEditor();
+        }
         //Help
         private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -711,6 +717,13 @@ namespace Intersect_Editor.Forms
                             _projectileEditor = new frmProjectile();
                             _projectileEditor.InitEditor();
                             _projectileEditor.Show();
+                        }
+                        break;
+                    case (int)Enums.EditorTypes.CommonEvent:
+                        if (_commonEventEditor == null || _commonEventEditor.Visible == false)
+                        {
+                            _commonEventEditor = new frmCommonEvent();
+                            _commonEventEditor.Show();
                         }
                         break;
                     default:

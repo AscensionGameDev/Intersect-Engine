@@ -24,47 +24,40 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
 using System.Data;
+using System.IO;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using Intersect_Editor.Classes;
 
 namespace Intersect_Editor.Forms.Editors.Event_Commands
 {
-    public partial class Event_MoveRouteAnimationSelector : UserControl
+    public partial class EventCommand_StartCommonEvent : UserControl
     {
-        private Event_MoveRouteDesigner _routeDesigner;
-        private MoveRouteAction _myAction;
-        private bool _newAction = false;
-        public Event_MoveRouteAnimationSelector(Event_MoveRouteDesigner moveRouteDesigner,MoveRouteAction action, bool newAction = false)
+        private EventCommand _myCommand;
+        private readonly FrmEvent _eventEditor;
+        public EventCommand_StartCommonEvent(EventCommand refCommand, FrmEvent editor)
         {
             InitializeComponent();
-            cmbAnimation.Items.Clear();
-            cmbAnimation.Items.Add("None");
-            for (int i = 0; i < Globals.GameAnimations.Length; i++)
+            _myCommand = refCommand;
+            _eventEditor = editor;
+            cmbEvent.Items.Clear();
+            for (int i = 0; i < Constants.MaxCommonEvents; i++)
             {
-                cmbAnimation.Items.Add((i + 1) + ". " + Globals.GameAnimations[i].Name);
+                cmbEvent.Items.Add((i + 1) + ". " + Globals.CommonEvents[i].MyName);
             }
-            if (newAction)
-            {
-                cmbAnimation.SelectedIndex = action.AnimationIndex + 1;
-            }
-            _newAction = newAction;
-            _routeDesigner = moveRouteDesigner;
-            _myAction = action;
+            cmbEvent.SelectedIndex = refCommand.Ints[0];
         }
 
-        private void btnOkay_Click(object sender, EventArgs e)
+        private void btnSave_Click(object sender, EventArgs e)
         {
-            _myAction.AnimationIndex = cmbAnimation.SelectedIndex - 1;
-            _routeDesigner.Controls.Remove(this);
+            _myCommand.Ints[0] = cmbEvent.SelectedIndex;
+            _eventEditor.FinishCommandEdit();
         }
 
         private void btnCancel_Click(object sender, EventArgs e)
         {
-            _routeDesigner.RemoveLastAction();
-            _routeDesigner.Controls.Remove(this);
+            _eventEditor.CancelCommandEdit();
         }
     }
 }

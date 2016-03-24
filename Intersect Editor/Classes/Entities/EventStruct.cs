@@ -424,6 +424,7 @@ namespace Intersect_Editor.Classes
         ExitEventProcess,
         Label,
         GoToLabel,
+        StartCommonEvent,
         //Player Control
         RestoreHp,
         RestoreMp,

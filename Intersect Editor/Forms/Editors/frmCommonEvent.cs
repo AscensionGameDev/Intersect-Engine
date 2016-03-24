@@ -22,49 +22,48 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Drawing;
 using System.Data;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Intersect_Editor.Classes;
 
-namespace Intersect_Editor.Forms.Editors.Event_Commands
+namespace Intersect_Editor.Forms.Editors
 {
-    public partial class Event_MoveRouteAnimationSelector : UserControl
+    public partial class frmCommonEvent : Form
     {
-        private Event_MoveRouteDesigner _routeDesigner;
-        private MoveRouteAction _myAction;
-        private bool _newAction = false;
-        public Event_MoveRouteAnimationSelector(Event_MoveRouteDesigner moveRouteDesigner,MoveRouteAction action, bool newAction = false)
+        public frmCommonEvent()
         {
             InitializeComponent();
-            cmbAnimation.Items.Clear();
-            cmbAnimation.Items.Add("None");
-            for (int i = 0; i < Globals.GameAnimations.Length; i++)
-            {
-                cmbAnimation.Items.Add((i + 1) + ". " + Globals.GameAnimations[i].Name);
-            }
-            if (newAction)
-            {
-                cmbAnimation.SelectedIndex = action.AnimationIndex + 1;
-            }
-            _newAction = newAction;
-            _routeDesigner = moveRouteDesigner;
-            _myAction = action;
+            ListCommonEvents();
         }
 
-        private void btnOkay_Click(object sender, EventArgs e)
+        private void ListCommonEvents()
         {
-            _myAction.AnimationIndex = cmbAnimation.SelectedIndex - 1;
-            _routeDesigner.Controls.Remove(this);
+            lstCommonEvents.Items.Clear();
+            for (int i = 0; i < Constants.MaxCommonEvents; i++)
+            {
+                lstCommonEvents.Items.Add((i + 1) + ". " + Globals.CommonEvents[i].MyName);
+            }
         }
 
-        private void btnCancel_Click(object sender, EventArgs e)
+        private void lstCommonEvents_DoubleClick(object sender, EventArgs e)
         {
-            _routeDesigner.RemoveLastAction();
-            _routeDesigner.Controls.Remove(this);
+            if (lstCommonEvents.SelectedIndex > -1)
+            {
+                FrmEvent editor = new FrmEvent(null);
+                editor.MyEvent = Globals.CommonEvents[lstCommonEvents.SelectedIndex];
+                editor.InitEditor();
+                editor.ShowDialog();
+                ListCommonEvents();
+            }
+        }
+
+        private void frmCommonEvent_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            Globals.CurrentEditor = -1;
         }
     }
 }

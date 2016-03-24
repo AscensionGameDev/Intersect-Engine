@@ -676,7 +676,7 @@ namespace Intersect_Editor.Forms
             Globals.MouseButton = -1;
             if (MapChanged)
             {
-                MapUndoStates.Add(CurrentMapState);
+                if (CurrentMapState != null) MapUndoStates.Add(CurrentMapState);
                 MapRedoStates.Clear();
                 CurrentMapState = tmpMap.Save();
                 MapChanged = false;
@@ -950,7 +950,7 @@ namespace Intersect_Editor.Forms
 
                 if (!CurrentMapState.SequenceEqual(tmpMap.Save()))
                 {
-                    MapUndoStates.Add(CurrentMapState);
+                    if (CurrentMapState != null) MapUndoStates.Add(CurrentMapState);
                     MapRedoStates.Clear();
                     CurrentMapState = tmpMap.Save();
                 }
@@ -1021,7 +1021,7 @@ namespace Intersect_Editor.Forms
 
                 if (!CurrentMapState.SequenceEqual(tmpMap.Save()))
                 {
-                    MapUndoStates.Add(CurrentMapState);
+                    if (CurrentMapState != null) MapUndoStates.Add(CurrentMapState);
                     MapRedoStates.Clear();
                     CurrentMapState = tmpMap.Save();
                 }
@@ -1329,7 +1329,7 @@ namespace Intersect_Editor.Forms
             Copy();
             WipeCurrentSelection(Globals.GameMaps[Globals.CurrentMap]);
             EditorGraphics.TilePreviewUpdated = true;
-            MapUndoStates.Add(CurrentMapState);
+            if (CurrentMapState != null) MapUndoStates.Add(CurrentMapState);
             MapRedoStates.Clear();
             CurrentMapState = Globals.GameMaps[Globals.CurrentMap].Save();
             MapChanged = false;

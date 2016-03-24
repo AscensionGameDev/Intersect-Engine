@@ -92,6 +92,8 @@ namespace Intersect_Client.Classes.General
             SaveProjectile,
             UnlinkMap,
             LinkMap,
+            OpenCommonEventEditor,
+            SaveCommonEvent,
         }
 
         public enum ServerPackets
@@ -155,6 +157,8 @@ namespace Intersect_Client.Classes.General
             FadeMusic,
             PlaySound,
             StopSounds,
+            OpenCommonEventEditor,
+            CommonEventData,
         }
 
         public enum Stats

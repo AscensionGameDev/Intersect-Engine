@@ -366,6 +366,13 @@ namespace Intersect_Server.Classes
             {
                 SendProjectile(client, i);
             }
+            if (client.IsEditor)
+            {
+                for (int i = 0; i < Constants.MaxCommonEvents; i++)
+                {
+                    SendCommonEvent(client, i);
+                }
+            }
         }
 
         public static void SendGlobalMsg(string message)
@@ -1112,6 +1119,24 @@ namespace Intersect_Server.Classes
         {
             var bf = new ByteBuffer();
             bf.WriteLong((int)Enums.ServerPackets.StopSounds);
+            client.SendPacket(bf.ToArray());
+            bf.Dispose();
+        }
+
+        public static void SendOpenCommonEventEditor(Client client)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteLong((int)Enums.ServerPackets.OpenCommonEventEditor);
+            client.SendPacket(bf.ToArray());
+            bf.Dispose();
+        }
+
+        public static void SendCommonEvent(Client client, int index)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteLong((int)Enums.ServerPackets.CommonEventData);
+            bf.WriteInteger(index);
+            bf.WriteBytes(Globals.CommonEvents[index].EventData());
             client.SendPacket(bf.ToArray());
             bf.Dispose();
         }

@@ -19,6 +19,8 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+using System;
+
 namespace Intersect_Editor.Classes
 {
     public static class PacketSender
@@ -333,6 +335,22 @@ namespace Intersect_Editor.Classes
             bf.WriteLong(linkMap);
             bf.WriteLong(gridX);
             bf.WriteLong(gridY);
+            Network.SendPacket(bf.ToArray());
+        }
+
+        public static void SendOpenCommonEventEditor()
+        {
+            var bf = new ByteBuffer();
+            bf.WriteLong((int)Enums.ClientPackets.OpenCommonEventEditor);
+            Network.SendPacket(bf.ToArray());
+        }
+
+        public static void SendCommonEvent(int index, byte[] data)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteLong((int)Enums.ClientPackets.SaveCommonEvent);
+            bf.WriteInteger(index);
+            bf.WriteBytes(data);
             Network.SendPacket(bf.ToArray());
         }
     }

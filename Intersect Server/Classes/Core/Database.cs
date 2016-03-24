@@ -1607,6 +1607,31 @@ namespace Intersect_Server.Classes
                 File.WriteAllBytes("Resources/Maps/MapStructure.dat", MapStructure.Data());
             }
         }
+
+        //Common Events
+        public static void LoadCommonEvents()
+        {
+            if (!Directory.Exists("Resources/Common Events"))
+            {
+                Directory.CreateDirectory("Resources/Common Events");
+            }
+            Globals.CommonEvents = new EventStruct[Constants.MaxCommonEvents];
+            for (var i = 0; i < Constants.MaxCommonEvents; i++)
+            {
+                Globals.CommonEvents[i] = new EventStruct(i,-1,-1,true);
+                if (!File.Exists("Resources/Common Events/" + i + ".evt"))
+                {
+                    File.WriteAllBytes("Resources/Common Events/" + i + ".evt",Globals.CommonEvents[i].EventData());
+                }
+                else
+                {
+                    ByteBuffer bf = new ByteBuffer();
+                    bf.WriteBytes(File.ReadAllBytes("Resources/Common Events/" + i + ".evt"));
+                    Globals.CommonEvents[i] = new EventStruct(i, bf, true);
+                }
+
+            }
+        }
     }
 }
 

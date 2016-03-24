@@ -75,6 +75,9 @@ namespace Intersect_Server.Classes
         //Game Projectiles
         public static ProjectileStruct[] GameProjectiles;
 
+        //Common Evnets
+	    public static EventStruct[] CommonEvents;
+
 		public static List<Client> Clients = new List<Client>();
 		public static List<Thread> ClientThread = new List<Thread>();
 		public static List<Entity> Entities = new List<Entity>();

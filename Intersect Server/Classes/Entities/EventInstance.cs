@@ -119,7 +119,7 @@ namespace Intersect_Server.Classes.Entities
                             else
                             {
                                 if (CallStack.Peek().CommandIndex >=
-                                    PageInstance.BaseEvent.MyPages[PageIndex].CommandLists[CallStack.Peek().ListIndex]
+                                    CallStack.Peek().Page.CommandLists[CallStack.Peek().ListIndex]
                                         .Commands.Count)
                                 {
                                     CallStack.Pop();
@@ -129,7 +129,7 @@ namespace Intersect_Server.Classes.Entities
                                     if (WaitTimer < Environment.TickCount)
                                     {
                                         ProcessCommand(
-                                            PageInstance.BaseEvent.MyPages[PageIndex].CommandLists[
+                                            CallStack.Peek().Page.CommandLists[
                                                 CallStack.Peek().ListIndex]
                                                 .Commands[CallStack.Peek().CommandIndex]);
                                     }
@@ -145,7 +145,7 @@ namespace Intersect_Server.Classes.Entities
                     {
                         if (PageInstance.Trigger == 2)
                         {
-                            var newStack = new CommandInstance { CommandIndex = 0, ListIndex = 0 };
+                            var newStack = new CommandInstance(CallStack.Peek().Page) { CommandIndex = 0, ListIndex = 0 };
                             CallStack.Push(newStack);
                         }
                     }
@@ -324,11 +324,11 @@ namespace Intersect_Server.Classes.Entities
                 case EventCommandType.ConditionalBranch:
                     if (MeetsConditions(command))
                     {
-                        var tmpStack = new CommandInstance
+                        var tmpStack = new CommandInstance(CallStack.Peek().Page)
                         {
                             CommandIndex = 0,
                             ListIndex =
-                                PageInstance.BaseEvent.MyPages[PageIndex].CommandLists[CallStack.Peek().ListIndex]
+                                CallStack.Peek().Page.CommandLists[CallStack.Peek().ListIndex]
                                     .Commands[CallStack.Peek().CommandIndex].Ints[4]
                         };
                         CallStack.Peek().CommandIndex++;
@@ -336,11 +336,11 @@ namespace Intersect_Server.Classes.Entities
                     }
                     else
                     {
-                        var tmpStack = new CommandInstance
+                        var tmpStack = new CommandInstance(CallStack.Peek().Page)
                         {
                             CommandIndex = 0,
                             ListIndex =
-                                PageInstance.BaseEvent.MyPages[PageIndex].CommandLists[CallStack.Peek().ListIndex]
+                                CallStack.Peek().Page.CommandLists[CallStack.Peek().ListIndex]
                                     .Commands[CallStack.Peek().CommandIndex].Ints[5]
                         };
                         CallStack.Peek().CommandIndex++;
@@ -355,12 +355,29 @@ namespace Intersect_Server.Classes.Entities
                     break;
                 case EventCommandType.GoToLabel:
                     //Recursively search through commands for the label, and create a brand new call stack based on where that label is located.
-                    Stack<CommandInstance> newCallStack = LoadLabelCallstack(command.Strs[0]);
+                    Stack<CommandInstance> newCallStack = LoadLabelCallstack(command.Strs[0], CallStack.Peek().Page);
                     if (newCallStack != null)
                     {
                         CallStack = newCallStack;
                     }
                     CallStack.Peek().CommandIndex++;
+                    break;
+                case EventCommandType.StartCommonEvent:
+                    CallStack.Peek().CommandIndex++;
+                    for (int i = 0; i < Globals.CommonEvents[command.Ints[0]].MyPages.Count; i++)
+                    {
+                        if (CanSpawnPage(i, Globals.CommonEvents[command.Ints[0]]))
+                        {
+                            var commonEventStack = new CommandInstance(Globals.CommonEvents[command.Ints[0]].MyPages[i])
+                            {
+                                CommandIndex = 0,
+                                ListIndex = 0,
+                            };
+
+                            CallStack.Push(commonEventStack);
+                        }
+                    }
+
                     break;
                 case EventCommandType.RestoreHp:
                     MyPlayer.RestoreVital(Enums.Vitals.Health);
@@ -399,11 +416,11 @@ namespace Intersect_Server.Classes.Entities
                     }
                     if (success)
                     {
-                        var tmpStack = new CommandInstance
+                        var tmpStack = new CommandInstance(CallStack.Peek().Page)
                         {
                             CommandIndex = 0,
                             ListIndex =
-                                PageInstance.BaseEvent.MyPages[PageIndex].CommandLists[CallStack.Peek().ListIndex]
+                                CallStack.Peek().Page.CommandLists[CallStack.Peek().ListIndex]
                                     .Commands[CallStack.Peek().CommandIndex].Ints[4]
                         };
                         CallStack.Peek().CommandIndex++;
@@ -411,11 +428,11 @@ namespace Intersect_Server.Classes.Entities
                     }
                     else
                     {
-                        var tmpStack = new CommandInstance
+                        var tmpStack = new CommandInstance(CallStack.Peek().Page)
                         {
                             CommandIndex = 0,
                             ListIndex =
-                                PageInstance.BaseEvent.MyPages[PageIndex].CommandLists[CallStack.Peek().ListIndex]
+                                CallStack.Peek().Page.CommandLists[CallStack.Peek().ListIndex]
                                     .Commands[CallStack.Peek().CommandIndex].Ints[5]
                         };
                         CallStack.Peek().CommandIndex++;
@@ -439,11 +456,11 @@ namespace Intersect_Server.Classes.Entities
                     }
                     if (success)
                     {
-                        var tmpStack = new CommandInstance
+                        var tmpStack = new CommandInstance(CallStack.Peek().Page)
                         {
                             CommandIndex = 0,
                             ListIndex =
-                                PageInstance.BaseEvent.MyPages[PageIndex].CommandLists[CallStack.Peek().ListIndex]
+                                CallStack.Peek().Page.CommandLists[CallStack.Peek().ListIndex]
                                     .Commands[CallStack.Peek().CommandIndex].Ints[4]
                         };
                         CallStack.Peek().CommandIndex++;
@@ -451,11 +468,11 @@ namespace Intersect_Server.Classes.Entities
                     }
                     else
                     {
-                        var tmpStack = new CommandInstance
+                        var tmpStack = new CommandInstance(CallStack.Peek().Page)
                         {
                             CommandIndex = 0,
                             ListIndex =
-                                PageInstance.BaseEvent.MyPages[PageIndex].CommandLists[CallStack.Peek().ListIndex]
+                                CallStack.Peek().Page.CommandLists[CallStack.Peek().ListIndex]
                                     .Commands[CallStack.Peek().CommandIndex].Ints[5]
                         };
                         CallStack.Peek().CommandIndex++;
@@ -488,10 +505,10 @@ namespace Intersect_Server.Classes.Entities
                     CallStack.Peek().CommandIndex++;
                     break;
                 case EventCommandType.WarpPlayer:
-                    MyPlayer.Warp(PageInstance.BaseEvent.MyPages[PageIndex].CommandLists[CallStack.Peek().ListIndex].Commands[CallStack.Peek().CommandIndex].Ints[0],
-                        PageInstance.BaseEvent.MyPages[PageIndex].CommandLists[CallStack.Peek().ListIndex].Commands[CallStack.Peek().CommandIndex].Ints[1],
-                        PageInstance.BaseEvent.MyPages[PageIndex].CommandLists[CallStack.Peek().ListIndex].Commands[CallStack.Peek().CommandIndex].Ints[2],
-                        PageInstance.BaseEvent.MyPages[PageIndex].CommandLists[CallStack.Peek().ListIndex].Commands[CallStack.Peek().CommandIndex].Ints[3]);
+                    MyPlayer.Warp(CallStack.Peek().Page.CommandLists[CallStack.Peek().ListIndex].Commands[CallStack.Peek().CommandIndex].Ints[0],
+                        CallStack.Peek().Page.CommandLists[CallStack.Peek().ListIndex].Commands[CallStack.Peek().CommandIndex].Ints[1],
+                        CallStack.Peek().Page.CommandLists[CallStack.Peek().ListIndex].Commands[CallStack.Peek().CommandIndex].Ints[2],
+                        CallStack.Peek().Page.CommandLists[CallStack.Peek().ListIndex].Commands[CallStack.Peek().CommandIndex].Ints[3]);
                     CallStack.Peek().CommandIndex++;
                     break;
                 case EventCommandType.SetMoveRoute:
@@ -499,13 +516,13 @@ namespace Intersect_Server.Classes.Entities
                     {
                         if (MyPlayer.MyEvents[i] == null) continue;
                         if (MyPlayer.MyEvents[i].BaseEvent.MyIndex ==
-                            PageInstance.BaseEvent.MyPages[PageIndex].CommandLists[CallStack.Peek().ListIndex].Commands[
+                            CallStack.Peek().Page.CommandLists[CallStack.Peek().ListIndex].Commands[
                                 CallStack.Peek().CommandIndex].Route.Target)
                         {
                             if (MyPlayer.MyEvents[i].PageInstance != null)
                             {
                                 MyPlayer.MyEvents[i].PageInstance.MoveRoute.CopyFrom(
-                                    PageInstance.BaseEvent.MyPages[PageIndex].CommandLists[CallStack.Peek().ListIndex]
+                                    CallStack.Peek().Page.CommandLists[CallStack.Peek().ListIndex]
                                         .Commands[
                                             CallStack.Peek().CommandIndex].Route);
                                 MyPlayer.MyEvents[i].PageInstance.MovementType = 2;
@@ -519,7 +536,7 @@ namespace Intersect_Server.Classes.Entities
                     {
                         if (MyPlayer.MyEvents[i] == null) continue;
                         if (MyPlayer.MyEvents[i].BaseEvent.MyIndex ==
-                            PageInstance.BaseEvent.MyPages[PageIndex].CommandLists[CallStack.Peek().ListIndex].Commands[
+                            CallStack.Peek().Page.CommandLists[CallStack.Peek().ListIndex].Commands[
                                 CallStack.Peek().CommandIndex].Ints[0])
                         {
                             CallStack.Peek().WaitingForRoute = MyPlayer.MyEvents[i].BaseEvent.MyIndex;
@@ -530,8 +547,8 @@ namespace Intersect_Server.Classes.Entities
                     CallStack.Peek().CommandIndex++;
                     break;
                 case EventCommandType.SpawnNpc:
-                    npcNum = PageInstance.BaseEvent.MyPages[PageIndex].CommandLists[CallStack.Peek().ListIndex].Commands[CallStack.Peek().CommandIndex].Ints[0];
-                    spawnCondition = PageInstance.BaseEvent.MyPages[PageIndex].CommandLists[CallStack.Peek().ListIndex].Commands[CallStack.Peek().CommandIndex].Ints[1];
+                    npcNum = CallStack.Peek().Page.CommandLists[CallStack.Peek().ListIndex].Commands[CallStack.Peek().CommandIndex].Ints[0];
+                    spawnCondition = CallStack.Peek().Page.CommandLists[CallStack.Peek().ListIndex].Commands[CallStack.Peek().CommandIndex].Ints[1];
                     mapNum = -1;
                     tileX = 0;
                     tileY = 0;
@@ -540,13 +557,13 @@ namespace Intersect_Server.Classes.Entities
                     switch (spawnCondition)
                     {
                         case 0: //Tile Spawn
-                            mapNum = PageInstance.BaseEvent.MyPages[PageIndex].CommandLists[CallStack.Peek().ListIndex].Commands[CallStack.Peek().CommandIndex].Ints[2];
-                            tileX = PageInstance.BaseEvent.MyPages[PageIndex].CommandLists[CallStack.Peek().ListIndex].Commands[CallStack.Peek().CommandIndex].Ints[3];
-                            tileY = PageInstance.BaseEvent.MyPages[PageIndex].CommandLists[CallStack.Peek().ListIndex].Commands[CallStack.Peek().CommandIndex].Ints[4];
-                            direction = PageInstance.BaseEvent.MyPages[PageIndex].CommandLists[CallStack.Peek().ListIndex].Commands[CallStack.Peek().CommandIndex].Ints[5];
+                            mapNum = CallStack.Peek().Page.CommandLists[CallStack.Peek().ListIndex].Commands[CallStack.Peek().CommandIndex].Ints[2];
+                            tileX = CallStack.Peek().Page.CommandLists[CallStack.Peek().ListIndex].Commands[CallStack.Peek().CommandIndex].Ints[3];
+                            tileY = CallStack.Peek().Page.CommandLists[CallStack.Peek().ListIndex].Commands[CallStack.Peek().CommandIndex].Ints[4];
+                            direction = CallStack.Peek().Page.CommandLists[CallStack.Peek().ListIndex].Commands[CallStack.Peek().CommandIndex].Ints[5];
                             break;
                         case 1: //Entity Spawn
-                            if (PageInstance.BaseEvent.MyPages[PageIndex].CommandLists[CallStack.Peek().ListIndex]
+                            if (CallStack.Peek().Page.CommandLists[CallStack.Peek().ListIndex]
                                 .Commands[
                                     CallStack.Peek().CommandIndex].Ints[2] == -1)
                             {
@@ -558,7 +575,7 @@ namespace Intersect_Server.Classes.Entities
                                 {
                                     if (MyPlayer.MyEvents[i] == null) continue;
                                     if (MyPlayer.MyEvents[i].BaseEvent.MyIndex ==
-                                        PageInstance.BaseEvent.MyPages[PageIndex].CommandLists[
+                                        CallStack.Peek().Page.CommandLists[
                                             CallStack.Peek().ListIndex].Commands[
                                                 CallStack.Peek().CommandIndex].Ints[2])
                                     {
@@ -569,10 +586,10 @@ namespace Intersect_Server.Classes.Entities
                             }
                             if (targetEntity != null)
                             {
-                                int xDiff = PageInstance.BaseEvent.MyPages[PageIndex].CommandLists[CallStack.Peek().ListIndex].Commands[CallStack.Peek().CommandIndex].Ints[3];
-                                int yDiff = PageInstance.BaseEvent.MyPages[PageIndex].CommandLists[CallStack.Peek().ListIndex].Commands[CallStack.Peek().CommandIndex].Ints[4];
+                                int xDiff = CallStack.Peek().Page.CommandLists[CallStack.Peek().ListIndex].Commands[CallStack.Peek().CommandIndex].Ints[3];
+                                int yDiff = CallStack.Peek().Page.CommandLists[CallStack.Peek().ListIndex].Commands[CallStack.Peek().CommandIndex].Ints[4];
                                 if (
-                                    PageInstance.BaseEvent.MyPages[PageIndex].CommandLists[CallStack.Peek().ListIndex]
+                                    CallStack.Peek().Page.CommandLists[CallStack.Peek().ListIndex]
                                         .Commands[CallStack.Peek().CommandIndex].Ints[5] == 1)
                                 {
                                     int tmp = 0;
@@ -611,8 +628,8 @@ namespace Intersect_Server.Classes.Entities
                 case EventCommandType.PlayAnimation:
                     //Playing an animations requires a target type/target or just a tile.
                     //We need an animation number and whether or not it should rotate (and the direction I guess)
-                    animNum = PageInstance.BaseEvent.MyPages[PageIndex].CommandLists[CallStack.Peek().ListIndex].Commands[CallStack.Peek().CommandIndex].Ints[0];
-                    spawnCondition = PageInstance.BaseEvent.MyPages[PageIndex].CommandLists[CallStack.Peek().ListIndex].Commands[CallStack.Peek().CommandIndex].Ints[1];
+                    animNum = CallStack.Peek().Page.CommandLists[CallStack.Peek().ListIndex].Commands[CallStack.Peek().CommandIndex].Ints[0];
+                    spawnCondition = CallStack.Peek().Page.CommandLists[CallStack.Peek().ListIndex].Commands[CallStack.Peek().CommandIndex].Ints[1];
                     mapNum = -1;
                     tileX = 0;
                     tileY = 0;
@@ -621,13 +638,13 @@ namespace Intersect_Server.Classes.Entities
                     switch (spawnCondition)
                     {
                         case 0: //Tile Spawn
-                            mapNum = PageInstance.BaseEvent.MyPages[PageIndex].CommandLists[CallStack.Peek().ListIndex].Commands[CallStack.Peek().CommandIndex].Ints[2];
-                            tileX = PageInstance.BaseEvent.MyPages[PageIndex].CommandLists[CallStack.Peek().ListIndex].Commands[CallStack.Peek().CommandIndex].Ints[3];
-                            tileY = PageInstance.BaseEvent.MyPages[PageIndex].CommandLists[CallStack.Peek().ListIndex].Commands[CallStack.Peek().CommandIndex].Ints[4];
-                            direction = PageInstance.BaseEvent.MyPages[PageIndex].CommandLists[CallStack.Peek().ListIndex].Commands[CallStack.Peek().CommandIndex].Ints[5];
+                            mapNum = CallStack.Peek().Page.CommandLists[CallStack.Peek().ListIndex].Commands[CallStack.Peek().CommandIndex].Ints[2];
+                            tileX = CallStack.Peek().Page.CommandLists[CallStack.Peek().ListIndex].Commands[CallStack.Peek().CommandIndex].Ints[3];
+                            tileY = CallStack.Peek().Page.CommandLists[CallStack.Peek().ListIndex].Commands[CallStack.Peek().CommandIndex].Ints[4];
+                            direction = CallStack.Peek().Page.CommandLists[CallStack.Peek().ListIndex].Commands[CallStack.Peek().CommandIndex].Ints[5];
                             break;
                         case 1: //Entity Spawn
-                            if (PageInstance.BaseEvent.MyPages[PageIndex].CommandLists[CallStack.Peek().ListIndex]
+                            if (CallStack.Peek().Page.CommandLists[CallStack.Peek().ListIndex]
                                 .Commands[
                                     CallStack.Peek().CommandIndex].Ints[2] == -1)
                             {
@@ -639,7 +656,7 @@ namespace Intersect_Server.Classes.Entities
                                 {
                                     if (MyPlayer.MyEvents[i] == null) continue;
                                     if (MyPlayer.MyEvents[i].BaseEvent.MyIndex ==
-                                        PageInstance.BaseEvent.MyPages[PageIndex].CommandLists[
+                                        CallStack.Peek().Page.CommandLists[
                                             CallStack.Peek().ListIndex].Commands[
                                                 CallStack.Peek().CommandIndex].Ints[2])
                                     {
@@ -650,16 +667,16 @@ namespace Intersect_Server.Classes.Entities
                             }
                             if (targetEntity != null)
                             {
-                                int xDiff = PageInstance.BaseEvent.MyPages[PageIndex].CommandLists[CallStack.Peek().ListIndex].Commands[CallStack.Peek().CommandIndex].Ints[3];
-                                int yDiff = PageInstance.BaseEvent.MyPages[PageIndex].CommandLists[CallStack.Peek().ListIndex].Commands[CallStack.Peek().CommandIndex].Ints[4];
-                                if (PageInstance.BaseEvent.MyPages[PageIndex].CommandLists[CallStack.Peek().ListIndex]
-                                        .Commands[CallStack.Peek().CommandIndex].Ints[5] == 2 || PageInstance.BaseEvent.MyPages[PageIndex].CommandLists[CallStack.Peek().ListIndex]
+                                int xDiff = CallStack.Peek().Page.CommandLists[CallStack.Peek().ListIndex].Commands[CallStack.Peek().CommandIndex].Ints[3];
+                                int yDiff = CallStack.Peek().Page.CommandLists[CallStack.Peek().ListIndex].Commands[CallStack.Peek().CommandIndex].Ints[4];
+                                if (CallStack.Peek().Page.CommandLists[CallStack.Peek().ListIndex]
+                                        .Commands[CallStack.Peek().CommandIndex].Ints[5] == 2 || CallStack.Peek().Page.CommandLists[CallStack.Peek().ListIndex]
                                         .Commands[CallStack.Peek().CommandIndex].Ints[5] == 3)
                                     direction = targetEntity.Dir;
                                 if (xDiff == 0 && yDiff == 0)
                                 {
-                                    if (PageInstance.BaseEvent.MyPages[PageIndex].CommandLists[CallStack.Peek().ListIndex]
-                                        .Commands[CallStack.Peek().CommandIndex].Ints[5] == 2 || PageInstance.BaseEvent.MyPages[PageIndex].CommandLists[CallStack.Peek().ListIndex]
+                                    if (CallStack.Peek().Page.CommandLists[CallStack.Peek().ListIndex]
+                                        .Commands[CallStack.Peek().CommandIndex].Ints[5] == 2 || CallStack.Peek().Page.CommandLists[CallStack.Peek().ListIndex]
                                         .Commands[CallStack.Peek().CommandIndex].Ints[5] == 3)
                                         direction = -1;
                                     //Send Animation on Npc
@@ -677,8 +694,8 @@ namespace Intersect_Server.Classes.Entities
                                 else
                                 {
                                     //Determine the tile data
-                                    if (PageInstance.BaseEvent.MyPages[PageIndex].CommandLists[CallStack.Peek().ListIndex]
-                                        .Commands[CallStack.Peek().CommandIndex].Ints[5] == 1 || PageInstance.BaseEvent.MyPages[PageIndex].CommandLists[CallStack.Peek().ListIndex]
+                                    if (CallStack.Peek().Page.CommandLists[CallStack.Peek().ListIndex]
+                                        .Commands[CallStack.Peek().CommandIndex].Ints[5] == 1 || CallStack.Peek().Page.CommandLists[CallStack.Peek().ListIndex]
                                         .Commands[CallStack.Peek().CommandIndex].Ints[5] == 3)
                                     {
                                         int tmp = 0;
@@ -725,7 +742,7 @@ namespace Intersect_Server.Classes.Entities
                     CallStack.Peek().CommandIndex++;
                     break;
                 case EventCommandType.PlayBgm:
-                    PacketSender.SendPlayMusic(MyClient, PageInstance.BaseEvent.MyPages[PageIndex].CommandLists[CallStack.Peek().ListIndex].Commands[CallStack.Peek().CommandIndex].Strs[0]);
+                    PacketSender.SendPlayMusic(MyClient, CallStack.Peek().Page.CommandLists[CallStack.Peek().ListIndex].Commands[CallStack.Peek().CommandIndex].Strs[0]);
                     CallStack.Peek().CommandIndex++;
                     break;
                 case EventCommandType.FadeoutBgm:
@@ -733,7 +750,7 @@ namespace Intersect_Server.Classes.Entities
                     CallStack.Peek().CommandIndex++;
                     break;
                 case EventCommandType.PlaySound:
-                    PacketSender.SendPlaySound(MyClient, PageInstance.BaseEvent.MyPages[PageIndex].CommandLists[CallStack.Peek().ListIndex].Commands[CallStack.Peek().CommandIndex].Strs[0]);
+                    PacketSender.SendPlaySound(MyClient, CallStack.Peek().Page.CommandLists[CallStack.Peek().ListIndex].Commands[CallStack.Peek().CommandIndex].Strs[0]);
                     CallStack.Peek().CommandIndex++;
                     break;
                 case EventCommandType.StopSounds:
@@ -742,7 +759,7 @@ namespace Intersect_Server.Classes.Entities
                     break;
                 case EventCommandType.Wait:
                     WaitTimer = Environment.TickCount +
-                                PageInstance.BaseEvent.MyPages[PageIndex].CommandLists[CallStack.Peek().ListIndex]
+                                CallStack.Peek().Page.CommandLists[CallStack.Peek().ListIndex]
                                     .Commands[CallStack.Peek().CommandIndex].Ints[0];
                     CallStack.Peek().CommandIndex++;
                     break;
@@ -755,10 +772,10 @@ namespace Intersect_Server.Classes.Entities
             }
         }
 
-        private Stack<CommandInstance> LoadLabelCallstack(string label)
+        private Stack<CommandInstance> LoadLabelCallstack(string label, EventPage currentPage)
         {
             Stack<CommandInstance> newStack = new Stack<CommandInstance>();
-            newStack.Push(new CommandInstance { CommandIndex = 0, ListIndex = 0 }); //Start from the top
+            newStack.Push(new CommandInstance(currentPage) { CommandIndex = 0, ListIndex = 0 }); //Start from the top
             if (FindLabelResursive(newStack, label))
             {
                 return newStack;
@@ -768,21 +785,21 @@ namespace Intersect_Server.Classes.Entities
 
         private bool FindLabelResursive(Stack<CommandInstance> stack, string label)
         {
-            if (stack.Peek().ListIndex < PageInstance.BaseEvent.MyPages[PageIndex].CommandLists.Count)
+            if (stack.Peek().ListIndex < CallStack.Peek().Page.CommandLists.Count)
             {
-                while (stack.Peek().CommandIndex < PageInstance.BaseEvent.MyPages[PageIndex].CommandLists[stack.Peek().ListIndex].Commands.Count)
+                while (stack.Peek().CommandIndex < CallStack.Peek().Page.CommandLists[stack.Peek().ListIndex].Commands.Count)
                 {
                     EventCommand command =
-                        PageInstance.BaseEvent.MyPages[PageIndex].CommandLists[stack.Peek().ListIndex].Commands[stack.Peek().CommandIndex];
+                        CallStack.Peek().Page.CommandLists[stack.Peek().ListIndex].Commands[stack.Peek().CommandIndex];
                     switch (command.Type)
                     {
                         case EventCommandType.ShowOptions:
                             for (int i = 0; i < 4; i++)
                             {
-                                var tmpStack = new CommandInstance();
+                                var tmpStack = new CommandInstance(CallStack.Peek().Page);
                                 tmpStack.CommandIndex = 0;
                                 tmpStack.ListIndex =
-                                    PageInstance.BaseEvent.MyPages[PageIndex].CommandLists[stack.Peek().ListIndex].Commands[stack.Peek().CommandIndex].Ints[i];
+                                    CallStack.Peek().Page.CommandLists[stack.Peek().ListIndex].Commands[stack.Peek().CommandIndex].Ints[i];
                                 stack.Peek().CommandIndex++;
                                 stack.Push(tmpStack);
                                 if (FindLabelResursive(stack, label)) return true;
@@ -794,10 +811,10 @@ namespace Intersect_Server.Classes.Entities
                         case EventCommandType.ChangeItems:
                             for (int i = 4; i <= 5; i++)
                             {
-                                var tmpStack = new CommandInstance();
+                                var tmpStack = new CommandInstance(CallStack.Peek().Page);
                                 tmpStack.CommandIndex = 0;
                                 tmpStack.ListIndex =
-                                    PageInstance.BaseEvent.MyPages[PageIndex].CommandLists[stack.Peek().ListIndex].Commands[stack.Peek().CommandIndex].Ints[i];
+                                    CallStack.Peek().Page.CommandLists[stack.Peek().ListIndex].Commands[stack.Peek().CommandIndex].Ints[i];
                                 stack.Peek().CommandIndex++;
                                 stack.Push(tmpStack);
                                 if (FindLabelResursive(stack, label)) return true;
@@ -807,7 +824,7 @@ namespace Intersect_Server.Classes.Entities
                         case EventCommandType.Label:
                             //See if we found the label!
                             if (
-                                PageInstance.BaseEvent.MyPages[PageIndex].CommandLists[stack.Peek().ListIndex].Commands[
+                                CallStack.Peek().Page.CommandLists[stack.Peek().ListIndex].Commands[
                                     stack.Peek().CommandIndex].Strs[0] == label)
                             {
                                 return true;
@@ -826,11 +843,17 @@ namespace Intersect_Server.Classes.Entities
 
     public class CommandInstance
     {
+        public EventPage Page;
         public int ListIndex;
         public int CommandIndex;
         public int WaitingForResponse;
         public int WaitingForRoute = -1;
         public int WaitingForRouteMap;
         public int ResponseType;
+
+        public CommandInstance(EventPage page)
+        {
+            Page = page;
+        }
     }
 }

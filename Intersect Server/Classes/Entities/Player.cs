@@ -683,7 +683,7 @@ namespace Intersect_Server.Classes
                         if (MyEvents[i].PageInstance.Trigger != 0) return;
                         if (!IsEventOneBlockAway(i)) return;
                         if (MyEvents[i].CallStack.Count != 0) return;
-                        var newStack = new CommandInstance { CommandIndex = 0, ListIndex = 0 };
+                        var newStack = new CommandInstance(MyEvents[i].PageInstance.MyPage) { CommandIndex = 0, ListIndex = 0 };
                         MyEvents[i].CallStack.Push(newStack);
                         if (!MyEvents[i].IsGlobal) MyEvents[i].PageInstance.TurnTowardsPlayer();
                     }
@@ -708,7 +708,7 @@ namespace Intersect_Server.Classes
                         }
                         else
                         {
-                            var tmpStack = new CommandInstance();
+                            var tmpStack = new CommandInstance(MyEvents[i].PageInstance.BaseEvent.MyPages[MyEvents[i].PageIndex]);
                             tmpStack.CommandIndex = 0;
                             tmpStack.ListIndex =
                                 MyEvents[i].PageInstance.BaseEvent.MyPages[MyEvents[i].PageIndex].CommandLists[

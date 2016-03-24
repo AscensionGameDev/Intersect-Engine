@@ -39,6 +39,7 @@ namespace Intersect_Editor.Classes
             Globals.GameClasses = new ClassStruct[Constants.MaxClasses];
             Globals.GameQuests = new QuestStruct[Constants.MaxQuests];
             Globals.GameProjectiles = new ProjectileStruct[Constants.MaxProjectiles];
+            Globals.CommonEvents = new EventStruct[Constants.MaxCommonEvents];
             LoadOptions();
         }
 

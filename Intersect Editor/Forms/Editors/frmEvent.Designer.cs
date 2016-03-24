@@ -50,31 +50,32 @@ namespace Intersect_Editor.Forms
             System.Windows.Forms.ListViewItem listViewItem8 = new System.Windows.Forms.ListViewItem("Exit Event Process");
             System.Windows.Forms.ListViewItem listViewItem9 = new System.Windows.Forms.ListViewItem("Label");
             System.Windows.Forms.ListViewItem listViewItem10 = new System.Windows.Forms.ListViewItem("Go To Label");
-            System.Windows.Forms.ListViewItem listViewItem11 = new System.Windows.Forms.ListViewItem("Restore HP");
-            System.Windows.Forms.ListViewItem listViewItem12 = new System.Windows.Forms.ListViewItem("Restore MP");
-            System.Windows.Forms.ListViewItem listViewItem13 = new System.Windows.Forms.ListViewItem("Level Up");
-            System.Windows.Forms.ListViewItem listViewItem14 = new System.Windows.Forms.ListViewItem("Give Experience");
-            System.Windows.Forms.ListViewItem listViewItem15 = new System.Windows.Forms.ListViewItem("Change Level");
-            System.Windows.Forms.ListViewItem listViewItem16 = new System.Windows.Forms.ListViewItem("Change Spells");
-            System.Windows.Forms.ListViewItem listViewItem17 = new System.Windows.Forms.ListViewItem("Change Items");
-            System.Windows.Forms.ListViewItem listViewItem18 = new System.Windows.Forms.ListViewItem("Change Sprite");
-            System.Windows.Forms.ListViewItem listViewItem19 = new System.Windows.Forms.ListViewItem("Change Face");
-            System.Windows.Forms.ListViewItem listViewItem20 = new System.Windows.Forms.ListViewItem("Change Gender");
-            System.Windows.Forms.ListViewItem listViewItem21 = new System.Windows.Forms.ListViewItem("Set Access");
-            System.Windows.Forms.ListViewItem listViewItem22 = new System.Windows.Forms.ListViewItem("Warp Player");
-            System.Windows.Forms.ListViewItem listViewItem23 = new System.Windows.Forms.ListViewItem("Set Move Route");
-            System.Windows.Forms.ListViewItem listViewItem24 = new System.Windows.Forms.ListViewItem("Wait for Route Completion");
-            System.Windows.Forms.ListViewItem listViewItem25 = new System.Windows.Forms.ListViewItem("Hold Player");
-            System.Windows.Forms.ListViewItem listViewItem26 = new System.Windows.Forms.ListViewItem("Release Player");
-            System.Windows.Forms.ListViewItem listViewItem27 = new System.Windows.Forms.ListViewItem("Spawn NPC");
-            System.Windows.Forms.ListViewItem listViewItem28 = new System.Windows.Forms.ListViewItem("Play Animation");
-            System.Windows.Forms.ListViewItem listViewItem29 = new System.Windows.Forms.ListViewItem("Play BGM");
-            System.Windows.Forms.ListViewItem listViewItem30 = new System.Windows.Forms.ListViewItem("Fadeout BGM");
-            System.Windows.Forms.ListViewItem listViewItem31 = new System.Windows.Forms.ListViewItem("Play Sound");
-            System.Windows.Forms.ListViewItem listViewItem32 = new System.Windows.Forms.ListViewItem("Stop Sounds");
-            System.Windows.Forms.ListViewItem listViewItem33 = new System.Windows.Forms.ListViewItem("Wait...");
-            System.Windows.Forms.ListViewItem listViewItem34 = new System.Windows.Forms.ListViewItem("Open Bank");
-            System.Windows.Forms.ListViewItem listViewItem35 = new System.Windows.Forms.ListViewItem("Open Shop");
+            System.Windows.Forms.ListViewItem listViewItem11 = new System.Windows.Forms.ListViewItem("Start Common Event");
+            System.Windows.Forms.ListViewItem listViewItem12 = new System.Windows.Forms.ListViewItem("Restore HP");
+            System.Windows.Forms.ListViewItem listViewItem13 = new System.Windows.Forms.ListViewItem("Restore MP");
+            System.Windows.Forms.ListViewItem listViewItem14 = new System.Windows.Forms.ListViewItem("Level Up");
+            System.Windows.Forms.ListViewItem listViewItem15 = new System.Windows.Forms.ListViewItem("Give Experience");
+            System.Windows.Forms.ListViewItem listViewItem16 = new System.Windows.Forms.ListViewItem("Change Level");
+            System.Windows.Forms.ListViewItem listViewItem17 = new System.Windows.Forms.ListViewItem("Change Spells");
+            System.Windows.Forms.ListViewItem listViewItem18 = new System.Windows.Forms.ListViewItem("Change Items");
+            System.Windows.Forms.ListViewItem listViewItem19 = new System.Windows.Forms.ListViewItem("Change Sprite");
+            System.Windows.Forms.ListViewItem listViewItem20 = new System.Windows.Forms.ListViewItem("Change Face");
+            System.Windows.Forms.ListViewItem listViewItem21 = new System.Windows.Forms.ListViewItem("Change Gender");
+            System.Windows.Forms.ListViewItem listViewItem22 = new System.Windows.Forms.ListViewItem("Set Access");
+            System.Windows.Forms.ListViewItem listViewItem23 = new System.Windows.Forms.ListViewItem("Warp Player");
+            System.Windows.Forms.ListViewItem listViewItem24 = new System.Windows.Forms.ListViewItem("Set Move Route");
+            System.Windows.Forms.ListViewItem listViewItem25 = new System.Windows.Forms.ListViewItem("Wait for Route Completion");
+            System.Windows.Forms.ListViewItem listViewItem26 = new System.Windows.Forms.ListViewItem("Hold Player");
+            System.Windows.Forms.ListViewItem listViewItem27 = new System.Windows.Forms.ListViewItem("Release Player");
+            System.Windows.Forms.ListViewItem listViewItem28 = new System.Windows.Forms.ListViewItem("Spawn NPC");
+            System.Windows.Forms.ListViewItem listViewItem29 = new System.Windows.Forms.ListViewItem("Play Animation");
+            System.Windows.Forms.ListViewItem listViewItem30 = new System.Windows.Forms.ListViewItem("Play BGM");
+            System.Windows.Forms.ListViewItem listViewItem31 = new System.Windows.Forms.ListViewItem("Fadeout BGM");
+            System.Windows.Forms.ListViewItem listViewItem32 = new System.Windows.Forms.ListViewItem("Play Sound");
+            System.Windows.Forms.ListViewItem listViewItem33 = new System.Windows.Forms.ListViewItem("Stop Sounds");
+            System.Windows.Forms.ListViewItem listViewItem34 = new System.Windows.Forms.ListViewItem("Wait...");
+            System.Windows.Forms.ListViewItem listViewItem35 = new System.Windows.Forms.ListViewItem("Open Bank");
+            System.Windows.Forms.ListViewItem listViewItem36 = new System.Windows.Forms.ListViewItem("Open Shop");
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmEvent));
             this.label1 = new System.Windows.Forms.Label();
             this.txtEventname = new System.Windows.Forms.TextBox();
@@ -608,7 +609,7 @@ namespace Intersect_Editor.Forms
             listViewItem8.Group = listViewGroup2;
             listViewItem9.Group = listViewGroup2;
             listViewItem10.Group = listViewGroup2;
-            listViewItem11.Group = listViewGroup3;
+            listViewItem11.Group = listViewGroup2;
             listViewItem12.Group = listViewGroup3;
             listViewItem13.Group = listViewGroup3;
             listViewItem14.Group = listViewGroup3;
@@ -619,21 +620,22 @@ namespace Intersect_Editor.Forms
             listViewItem19.Group = listViewGroup3;
             listViewItem20.Group = listViewGroup3;
             listViewItem21.Group = listViewGroup3;
-            listViewItem22.Group = listViewGroup4;
-            listViewItem22.Tag = "5";
+            listViewItem22.Group = listViewGroup3;
             listViewItem23.Group = listViewGroup4;
+            listViewItem23.Tag = "5";
             listViewItem24.Group = listViewGroup4;
             listViewItem25.Group = listViewGroup4;
             listViewItem26.Group = listViewGroup4;
             listViewItem27.Group = listViewGroup4;
-            listViewItem28.Group = listViewGroup6;
+            listViewItem28.Group = listViewGroup4;
             listViewItem29.Group = listViewGroup6;
             listViewItem30.Group = listViewGroup6;
             listViewItem31.Group = listViewGroup6;
             listViewItem32.Group = listViewGroup6;
-            listViewItem33.Group = listViewGroup7;
-            listViewItem34.Group = listViewGroup8;
+            listViewItem33.Group = listViewGroup6;
+            listViewItem34.Group = listViewGroup7;
             listViewItem35.Group = listViewGroup8;
+            listViewItem36.Group = listViewGroup8;
             this.lstCommands.Items.AddRange(new System.Windows.Forms.ListViewItem[] {
             listViewItem1,
             listViewItem2,
@@ -669,7 +671,8 @@ namespace Intersect_Editor.Forms
             listViewItem32,
             listViewItem33,
             listViewItem34,
-            listViewItem35});
+            listViewItem35,
+            listViewItem36});
             this.lstCommands.Location = new System.Drawing.Point(7, 19);
             this.lstCommands.MultiSelect = false;
             this.lstCommands.Name = "lstCommands";

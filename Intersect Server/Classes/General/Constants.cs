@@ -33,6 +33,7 @@ namespace Intersect_Server.Classes
         public const int MaxClasses = 20;
         public const int MaxQuests = 255;
         public const int MaxProjectiles = 255;
+        public const int MaxCommonEvents = 255;
 
         //Player Maxes
         public const int MaxStatValue = 200;

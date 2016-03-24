@@ -149,6 +149,12 @@
     <Compile Include="Forms\DockingElements\frmMapProperties.Designer.cs">
       <DependentUpon>frmMapProperties.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\Editors\Event Commands\EventCommand_EventCommand_StartCommonEvent.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Forms\Editors\Event Commands\EventCommand_EventCommand_StartCommonEvent.Designer.cs">
+      <DependentUpon>EventCommand_EventCommand_StartCommonEvent.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\Editors\Event Commands\EventCommand_Wait.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -323,6 +329,12 @@
     <Compile Include="Forms\Editors\frmClass.Designer.cs">
       <DependentUpon>frmClass.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\Editors\frmCommonEvent.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\Editors\frmCommonEvent.Designer.cs">
+      <DependentUpon>frmCommonEvent.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\Editors\frmItem.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -432,6 +444,9 @@
     <EmbeddedResource Include="Forms\DockingElements\frmMapProperties.resx">
       <DependentUpon>frmMapProperties.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Editors\Event Commands\EventCommand_EventCommand_StartCommonEvent.resx">
+      <DependentUpon>EventCommand_EventCommand_StartCommonEvent.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Forms\Editors\Event Commands\EventCommand_Wait.resx">
       <DependentUpon>EventCommand_Wait.cs</DependentUpon>
     </EmbeddedResource>
@@ -518,6 +533,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\Editors\frmClass.resx">
       <DependentUpon>frmClass.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Editors\frmCommonEvent.resx">
+      <DependentUpon>frmCommonEvent.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\Editors\frmEvent.resx">
       <DependentUpon>frmEvent.cs</DependentUpon>

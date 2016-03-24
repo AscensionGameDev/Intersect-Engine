@@ -126,6 +126,12 @@ namespace Intersect_Editor.Classes
                 case Enums.ServerPackets.SendAlert:
                     HandleAlert(bf.ReadBytes(bf.Length()));
                     break;
+                case Enums.ServerPackets.OpenCommonEventEditor:
+                    HandleOpenCommonEventEditor();
+                    break;
+                case Enums.ServerPackets.CommonEventData:
+                    HandleCommonEventData(bf.ReadBytes(bf.Length()));
+                    break;
                 default:
                     Console.WriteLine(@"Non implemented packet received: " + packetHeader);
                     break;
@@ -452,6 +458,20 @@ namespace Intersect_Editor.Classes
             var title = bf.ReadString();
             var text = bf.ReadString();
             MessageBox.Show(text, title);
+            bf.Dispose();
+        }
+
+        private static void HandleOpenCommonEventEditor()
+        {
+            Globals.MainForm.BeginInvoke(Globals.MainForm.EditorDelegate, (int)Enums.EditorTypes.CommonEvent);
+        }
+
+        private static void HandleCommonEventData(byte[] packet)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteBytes(packet);
+            var index = bf.ReadInteger();
+            Globals.CommonEvents[index] = new EventStruct(index,bf,true);
             bf.Dispose();
         }
     }

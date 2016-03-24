@@ -79,6 +79,8 @@ namespace Intersect_Editor.Classes
             SaveProjectile,
             UnlinkMap,
             LinkMap,
+            OpenCommonEventEditor,
+            SaveCommonEvent,
         }
 
         public enum ServerPackets
@@ -142,6 +144,8 @@ namespace Intersect_Editor.Classes
             FadeMusic,
             PlaySound,
             StopSounds,
+            OpenCommonEventEditor,
+            CommonEventData,
         }
 
         public enum Stats
@@ -181,6 +185,7 @@ namespace Intersect_Editor.Classes
             Quest = 6,
             Projectile = 7,
             Event = 8,
+            CommonEvent = 9,
         }
 
         public enum MapListUpdates

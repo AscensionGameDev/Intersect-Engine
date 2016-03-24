@@ -110,6 +110,7 @@ namespace Intersect_Editor.Forms
                 grpEntityOptions.Hide();
             }
             chkIsGlobal.Checked = Convert.ToBoolean(MyEvent.IsGlobal);
+            if (MyEvent.CommonEvent) chkIsGlobal.Hide();
             LoadPage(0);
         }
         /// <summary>
@@ -175,6 +176,10 @@ namespace Intersect_Editor.Forms
             if (grpCreateCommands.Visible)
             {
                 CancelCommandEdit();
+            }
+            if (MyEvent.CommonEvent)
+            {
+                PacketSender.SendCommonEvent(MyEvent.MyIndex,MyEvent.EventData());
             }
             Hide();
             Dispose();
@@ -470,6 +475,9 @@ namespace Intersect_Editor.Forms
                     return "Label: " + command.Strs[0];
                 case EventCommandType.GoToLabel:
                     return "Go to Label: " + command.Strs[0];
+                case EventCommandType.StartCommonEvent:
+                    return "Start Common Event: " + (command.Ints[0] + 1) + ". " +
+                           Globals.CommonEvents[command.Ints[0]].MyName;
                 case EventCommandType.RestoreHp:
                     return "Restore Player HP";
                 case EventCommandType.RestoreMp:
@@ -859,6 +867,9 @@ namespace Intersect_Editor.Forms
                     break;
                 case EventCommandType.GoToLabel:
                     cmdWindow = new EventCommand_GotoLabel(command, this);
+                    break;
+                case EventCommandType.StartCommonEvent:
+                    cmdWindow = new EventCommand_StartCommonEvent(command, this);
                     break;
                 case EventCommandType.RestoreHp:
                     //No editor
