@@ -222,7 +222,77 @@ namespace Intersect_Server.Classes.Entities
                             break;
                     }
                     break;
-                case 6: //Self Switch
+                case 2: //Player Switch
+                    if (Globals.ServerSwitchValues[conditionCommand.Ints[1]] == Convert.ToBoolean(conditionCommand.Ints[2]))
+                    {
+                        return true;
+                    }
+                    break;
+                case 3: //Player Variable
+                    switch (conditionCommand.Ints[2])//Comparator
+                    {
+                        case 0: //Equal to
+                            if (Globals.ServerVariableValues[conditionCommand.Ints[1]] == conditionCommand.Ints[3]) return true;
+                            break;
+                        case 1: //Greater than or equal to
+                            if (Globals.ServerVariableValues[conditionCommand.Ints[1]] >= conditionCommand.Ints[3]) return true;
+                            break;
+                        case 2: //Less than or equal to
+                            if (Globals.ServerVariableValues[conditionCommand.Ints[1]] <= conditionCommand.Ints[3]) return true;
+                            break;
+                        case 3: //Greater than
+                            if (Globals.ServerVariableValues[conditionCommand.Ints[1]] > conditionCommand.Ints[3]) return true;
+                            break;
+                        case 4: //Less than
+                            if (Globals.ServerVariableValues[conditionCommand.Ints[1]] < conditionCommand.Ints[3]) return true;
+                            break;
+                        case 5: //Does not equal
+                            if (Globals.ServerVariableValues[conditionCommand.Ints[1]] != conditionCommand.Ints[3]) return true;
+                            break;
+                    }
+                    break;
+                case 4: //Has Item
+                    if (MyPlayer.FindItem(conditionCommand.Ints[1], conditionCommand.Ints[2]) > -1)
+                    {
+                        return true;
+                    }
+                    break;
+                case 5: //Class Is
+                    if (MyPlayer.Class == conditionCommand.Ints[1])
+                    {
+                        return true;
+                    }
+                    break;
+                case 6: //Knows spell
+                    if (MyPlayer.KnowsSpell(conditionCommand.Ints[1]))
+                    {
+                        return true;
+                    }
+                    break;
+                case 7: //Level is
+                    switch (conditionCommand.Ints[1])
+                    {
+                        case 0:
+                            if (MyPlayer.Level == conditionCommand.Ints[2]) return true;
+                            break;
+                        case 1:
+                            if (MyPlayer.Level >= conditionCommand.Ints[2]) return true;
+                            break;
+                        case 2:
+                            if (MyPlayer.Level <= conditionCommand.Ints[2]) return true;
+                            break;
+                        case 3:
+                            if (MyPlayer.Level > conditionCommand.Ints[2]) return true;
+                            break;
+                        case 4:
+                            if (MyPlayer.Level < conditionCommand.Ints[2]) return true;
+                            break;
+                        case 5:
+                            if (MyPlayer.Level != conditionCommand.Ints[2]) return true;
+                            break;
+                    }
+                    break;
+                case 8: //Self Switch
                     if (IsGlobal)
                     {
                         for (int i = 0; i < Globals.GameMaps[MapNum].GlobalEvents.Count; i++)
@@ -282,25 +352,56 @@ namespace Intersect_Server.Classes.Entities
                     CallStack.Peek().CommandIndex++;
                     break;
                 case EventCommandType.SetSwitch:
-                    MyPlayer.Switches[command.Ints[0]] = Convert.ToBoolean(command.Ints[1]);
+                    if (command.Ints[0] == (int) Enums.SwitchVariableTypes.PlayerSwitch)
+                    {
+                        MyPlayer.Switches[command.Ints[1]] = Convert.ToBoolean(command.Ints[2]);
+                    }
+                    else if(command.Ints[0] == (int)Enums.SwitchVariableTypes.ServerSwitch)
+                    {
+                        Globals.ServerSwitchValues[command.Ints[1]] = Convert.ToBoolean(command.Ints[2]);
+                        Database.SaveSwitchesOrVariables(Globals.ServerSwitches, Globals.ServerSwitchValues, null, "Switch", "ServerSwitches", Constants.MaxServerSwitches);
+                    }
                     CallStack.Peek().CommandIndex++;
                     break;
                 case EventCommandType.SetVariable:
-                    switch (command.Ints[1])
+                    if (command.Ints[0] == (int) Enums.SwitchVariableTypes.PlayerVariable)
                     {
-                        case 0: //Set
-                            MyPlayer.Variables[command.Ints[0]] = command.Ints[2];
-                            break;
-                        case 1: //Add
-                            MyPlayer.Variables[command.Ints[0]] += command.Ints[2];
-                            break;
-                        case 2: //Subtract
-                            MyPlayer.Variables[command.Ints[0]] -= command.Ints[2];
-                            break;
-                        case 3: //Random
-                            MyPlayer.Variables[command.Ints[0]] = Globals.Rand.Next(command.Ints[2], command.Ints[3] + 1);
-                            break;
+                        switch (command.Ints[2])
+                        {
+                            case 0: //Set
+                                MyPlayer.Variables[command.Ints[1]] = command.Ints[3];
+                                break;
+                            case 1: //Add
+                                MyPlayer.Variables[command.Ints[1]] += command.Ints[3];
+                                break;
+                            case 2: //Subtract
+                                MyPlayer.Variables[command.Ints[1]] -= command.Ints[3];
+                                break;
+                            case 3: //Random
+                                MyPlayer.Variables[command.Ints[1]] = Globals.Rand.Next(command.Ints[3], command.Ints[4] + 1);
+                                break;
+                        }
                     }
+                    else if (command.Ints[0] == (int) Enums.SwitchVariableTypes.ServerVariable)
+                    {
+                        switch (command.Ints[2])
+                        {
+                            case 0: //Set
+                               Globals.ServerVariableValues[command.Ints[1]] = command.Ints[3];
+                                break;
+                            case 1: //Add
+                                Globals.ServerVariableValues[command.Ints[1]] += command.Ints[3];
+                                break;
+                            case 2: //Subtract
+                                Globals.ServerVariableValues[command.Ints[1]] -= command.Ints[3];
+                                break;
+                            case 3: //Random
+                                Globals.ServerVariableValues[command.Ints[1]] = Globals.Rand.Next(command.Ints[3], command.Ints[4] + 1);
+                                break;
+                        }
+                        Database.SaveSwitchesOrVariables(Globals.ServerVariables, null, Globals.ServerVariableValues, "Variable", "ServerVariables", Constants.MaxServerVariables);
+                    }
+                    
                     CallStack.Peek().CommandIndex++;
                     break;
                 case EventCommandType.SetSelfSwitch:

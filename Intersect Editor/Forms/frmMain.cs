@@ -51,6 +51,7 @@ namespace Intersect_Editor.Forms
         private frmQuest _questEditor;
         private frmProjectile _projectileEditor;
         private frmCommonEvent _commonEventEditor;
+        private frmSwitchVariable _switchVariableEditor;
 
         //Initialization & Setup Functions
         public frmMain()
@@ -544,6 +545,14 @@ namespace Intersect_Editor.Forms
         {
             PacketSender.SendOpenCommonEventEditor();
         }
+        private void switchVariableEditorToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            PacketSender.SendOpenVariableSwitchEditor();
+        }
+        private void shopEditorToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            PacketSender.SendOpenShopEditor();
+        }
         //Help
         private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -726,6 +735,17 @@ namespace Intersect_Editor.Forms
                             _commonEventEditor.Show();
                         }
                         break;
+                    case (int)Enums.EditorTypes.SwitchVariable:
+                        if (_switchVariableEditor == null || _switchVariableEditor.Visible == false)
+                        {
+                            _switchVariableEditor = new frmSwitchVariable();
+                            _switchVariableEditor.InitEditor();
+                            _switchVariableEditor.Show();
+                        }
+                        break;
+                    case (int)Enums.EditorTypes.Shop:
+                        
+                        break;
                     default:
                         return;
                 }
@@ -733,5 +753,7 @@ namespace Intersect_Editor.Forms
             }
 
         }
+
+
     }
 }

@@ -372,6 +372,7 @@ namespace Intersect_Server.Classes
                 {
                     SendCommonEvent(client, i);
                 }
+                SendSwitchesAndVariablesTo(client);
             }
         }
 
@@ -1137,6 +1138,73 @@ namespace Intersect_Server.Classes
             bf.WriteLong((int)Enums.ServerPackets.CommonEventData);
             bf.WriteInteger(index);
             bf.WriteBytes(Globals.CommonEvents[index].EventData());
+            client.SendPacket(bf.ToArray());
+            bf.Dispose();
+        }
+
+        public static void SendOpenSwitchVariableEditor(Client client)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteLong((int)Enums.ServerPackets.OpenSwitchVariableEditor);
+            client.SendPacket(bf.ToArray());
+            bf.Dispose();
+        }
+
+        public static void SendSwitchesAndVariablesTo(Client client)
+        {
+            //Send Player Switches
+            for (int i = 0; i < Constants.MaxPlayerSwitches; i++)
+            {
+                SendSwitchVariable(client, (int) Enums.SwitchVariableTypes.PlayerSwitch, i);
+            }
+            //Send Player Variables
+            for (int i = 0; i < Constants.MaxPlayerVariables; i++)
+            {
+                SendSwitchVariable(client, (int)Enums.SwitchVariableTypes.PlayerVariable, i);
+            }
+            //Send Server Switches
+            for (int i = 0; i < Constants.MaxServerSwitches; i++)
+            {
+                SendSwitchVariable(client, (int)Enums.SwitchVariableTypes.ServerSwitch, i);
+            }
+            //Send Server Variables
+            for (int i = 0; i < Constants.MaxServerVariables; i++)
+            {
+                SendSwitchVariable(client, (int)Enums.SwitchVariableTypes.ServerVariable, i);
+            }
+        }
+
+        public static void SendSwitchVariable(Client client, int type, int index)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteLong((int)Enums.ServerPackets.SwitchVariableData);
+            bf.WriteInteger(type);
+            bf.WriteInteger(index);
+            switch (type)
+            {
+                case (int)Enums.SwitchVariableTypes.PlayerSwitch:
+                    bf.WriteString(Globals.PlayerSwitches[index]);
+                    break;
+                case (int)Enums.SwitchVariableTypes.PlayerVariable:
+                    bf.WriteString(Globals.PlayerVariables[index]);
+                    break;
+                case (int)Enums.SwitchVariableTypes.ServerSwitch:
+                    bf.WriteString(Globals.ServerSwitches[index]);
+                    bf.WriteByte(Convert.ToByte(Globals.ServerSwitchValues[index]));
+                    break;
+                case (int)Enums.SwitchVariableTypes.ServerVariable:
+                    bf.WriteString(Globals.ServerVariables[index]);
+                    bf.WriteInteger(Globals.ServerVariableValues[index]);
+                    break;
+            }
+            client.SendPacket(bf.ToArray());
+            bf.Dispose();
+        }
+
+        public static void SendOpenShopEditor(Client client)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteLong((int)Enums.ServerPackets.OpenShopEditor);
             client.SendPacket(bf.ToArray());
             bf.Dispose();
         }

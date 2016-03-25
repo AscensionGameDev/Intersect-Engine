@@ -55,23 +55,32 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
                     cmbVariableMod.SelectedIndex = _myCommand.Ints[2];
                     txtVariableVal.Text = _myCommand.Ints[3].ToString();
                     break;
-                case 2: //Has Item
+                case 2: //Global Switch
+                    cmbSwitch.SelectedIndex = _myCommand.Ints[1];
+                    cmbSwitchVal.SelectedIndex = _myCommand.Ints[2];
+                    break;
+                case 3: //Global Variable
+                    cmbVariable.SelectedIndex = _myCommand.Ints[1];
+                    cmbVariableMod.SelectedIndex = _myCommand.Ints[2];
+                    txtVariableVal.Text = _myCommand.Ints[3].ToString();
+                    break;
+                case 4: //Has Item
                     cmbItem.SelectedIndex = _myCommand.Ints[1];
                     scrlItemQuantity.Value = _myCommand.Ints[2];
                     lblItemQuantity.Text = @"Has at least: " + scrlItemQuantity.Value;
                     break;
-                case 3: //Class Is
+                case 5: //Class Is
                     cmbClass.SelectedIndex = _myCommand.Ints[1];
                     break;
-                case 4: //Knows spell
+                case 6: //Knows spell
                     cmbSpell.SelectedIndex = _myCommand.Ints[1];
                     break;
-                case 5: //Level is...
+                case 7: //Level is...
                     cmbLevelComparator.SelectedIndex = _myCommand.Ints[1];
                     scrlLevel.Value = _myCommand.Ints[2];
                     lblLevel.Text = @"Level: " + scrlLevel.Value;
                     break;
-                case 6: //Self Switch
+                case 8: //Self Switch
                     cmbSelfSwitch.SelectedIndex = _myCommand.Ints[1];
                     cmbSelfSwitchVal.SelectedIndex = _myCommand.Ints[2];
                     break;
@@ -90,27 +99,52 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             switch (cmbConditionType.SelectedIndex)
             {
                 case 0: //Player Switch
+                    grpSwitch.Text = "Player Switch";
                     grpSwitch.Show();
                     cmbSwitch.Items.Clear();
-                    for (int i = 0; i < Constants.SwitchCount; i++)
+                    for (int i = 0; i < Constants.MaxPlayerSwitches; i++)
                     {
-                        cmbSwitch.Items.Add("Switch #" + (i + 1));
+                        cmbSwitch.Items.Add((i + 1) + ". " + Globals.PlayerSwitches[i]);
                     }
                     cmbSwitch.SelectedIndex = 0;
                     cmbSwitchVal.SelectedIndex = 0;
                     break;
                 case 1: //Player Variables
+                    grpPlayerVariable.Text = "Player Variable";
                     grpPlayerVariable.Show();
                     cmbVariable.Items.Clear();
-                    for (int i = 0; i < Constants.VariableCount; i++)
+                    for (int i = 0; i < Constants.MaxPlayerVariables; i++)
                     {
-                        cmbVariable.Items.Add("Variable #" + (i + 1));
+                        cmbVariable.Items.Add((i + 1) + ". " + Globals.PlayerVariables[i]);
                     }
                     cmbVariable.SelectedIndex = 0;
                     cmbVariableMod.SelectedIndex = 0;
                     txtVariableVal.Text = @"0";
                     break;
-                case 2: //Has Item
+                case 2: //Global Switch
+                    grpPlayerVariable.Text = "Global Switch";
+                    grpSwitch.Show();
+                    cmbSwitch.Items.Clear();
+                    for (int i = 0; i < Constants.MaxServerSwitches; i++)
+                    {
+                        cmbSwitch.Items.Add((i + 1) + ". " + Globals.ServerSwitches[i]);
+                    }
+                    cmbSwitch.SelectedIndex = 0;
+                    cmbSwitchVal.SelectedIndex = 0;
+                    break;
+                case 3: //Global Variables
+                    grpPlayerVariable.Text = "Global Variable";
+                    grpPlayerVariable.Show();
+                    cmbVariable.Items.Clear();
+                    for (int i = 0; i < Constants.MaxServerVariables; i++)
+                    {
+                        cmbVariable.Items.Add((i + 1) + ". " + Globals.ServerVariables[i]);
+                    }
+                    cmbVariable.SelectedIndex = 0;
+                    cmbVariableMod.SelectedIndex = 0;
+                    txtVariableVal.Text = @"0";
+                    break;
+                case 4: //Has Item
                     grpHasItem.Show();
                     cmbItem.Items.Clear();
                     for (int i = 0; i < Globals.GameItems.Count(); i++)
@@ -120,7 +154,7 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
                     cmbItem.SelectedIndex = 0;
                     scrlItemQuantity.Value = 1;
                     break;
-                case 3: //Class is
+                case 5: //Class is
                     grpClass.Show();
                     cmbClass.Items.Clear();
                     for (int i = 0; i < Globals.GameClasses.Count(); i++)
@@ -129,7 +163,7 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
                     }
                     cmbClass.SelectedIndex = 0;
                     break;
-                case 4: //Knows spell
+                case 6: //Knows spell
                     grpSpell.Show();
                     cmbSpell.Items.Clear();
                     for (int i = 0; i < Globals.GameSpells.Count(); i++)
@@ -138,13 +172,13 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
                     }
                     cmbSpell.SelectedIndex = 0;
                     break;
-                case 5: //Level is...
+                case 7: //Level is...
                     grpLevel.Show();
                     cmbLevelComparator.SelectedIndex = 0;
                     scrlLevel.Value = 0;
                     lblLevel.Text = @"Level: " + scrlLevel.Value;
                     break;
-                case 6: //Self Switch
+                case 8: //Self Switch
                     grpSelfSwitch.Show();
                     cmbSelfSwitch.SelectedIndex = 0;
                     cmbSelfSwitchVal.SelectedIndex = 0;
@@ -187,21 +221,37 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
                         _myCommand.Ints[3] = 0;
                     }
                     break;
-                case 2: //Has Item
+                case 2: //Global Switch
+                    _myCommand.Ints[1] = cmbSwitch.SelectedIndex;
+                    _myCommand.Ints[2] = cmbSwitchVal.SelectedIndex;
+                    break;
+                case 3: //Global Variable
+                    _myCommand.Ints[1] = cmbVariable.SelectedIndex;
+                    _myCommand.Ints[2] = cmbVariableMod.SelectedIndex;
+                    if (int.TryParse(txtVariableVal.Text, out n))
+                    {
+                        _myCommand.Ints[3] = n;
+                    }
+                    else
+                    {
+                        _myCommand.Ints[3] = 0;
+                    }
+                    break;
+                case 4: //Has Item
                     _myCommand.Ints[1] = cmbItem.SelectedIndex;
                     _myCommand.Ints[2] = scrlItemQuantity.Value;
                     break;
-                case 3: //Class Is
+                case 5: //Class Is
                     _myCommand.Ints[1] = cmbClass.SelectedIndex;
                     break;
-                case 4: //Knows spell
+                case 6: //Knows spell
                     _myCommand.Ints[1] = cmbSpell.SelectedIndex;
                     break;
-                case 5: //Level is
+                case 7: //Level is
                     _myCommand.Ints[1] = cmbLevelComparator.SelectedIndex;
                     _myCommand.Ints[2] = scrlLevel.Value;
                     break;
-                case 6: //Self Switch
+                case 8: //Self Switch
                     _myCommand.Ints[1] = cmbSelfSwitch.SelectedIndex;
                     _myCommand.Ints[2] = cmbSelfSwitchVal.SelectedIndex;
                     break;

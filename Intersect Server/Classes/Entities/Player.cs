@@ -56,8 +56,8 @@ namespace Intersect_Server.Classes
 		public Player (int index, Client newClient) : base(index)
 		{
             MyClient = newClient;
-            Switches = new bool[Constants.SwitchCount];
-            Variables = new int[Constants.VariableCount];
+            Switches = new bool[Constants.MaxPlayerSwitches];
+            Variables = new int[Constants.MaxPlayerVariables];
             for (int i = 0; i < Constants.MaxPlayerSkills; i++)
             {
                 Spells.Add(new SpellInstance());

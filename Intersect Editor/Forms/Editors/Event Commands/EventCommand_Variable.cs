@@ -35,35 +35,72 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
     {
         private EventCommand _myCommand;
         private readonly FrmEvent _eventEditor;
+        private bool _loading = false;
         public EventCommand_Variable(EventCommand refCommand, FrmEvent editor)
         {
             InitializeComponent();
             _myCommand = refCommand;
             _eventEditor = editor;
-            cmbVariable.Items.Clear();
-            for (int i = 0; i < Constants.VariableCount; i++)
+            _loading = true;
+            if (_myCommand.Ints[0] == (int) Enums.SwitchVariableTypes.ServerVariable)
             {
-                cmbVariable.Items.Add("Variable #" + (i + 1));
+                rdoGlobalVariable.Checked = true;
             }
-            cmbVariable.SelectedIndex = _myCommand.Ints[0];
-            switch (_myCommand.Ints[1])
+            else
+            {
+                rdoPlayerVariable.Checked = true;
+            }
+            _loading = false;
+            InitEditor();
+        }
+
+        private void InitEditor()
+        {
+            cmbVariable.Items.Clear();
+            int varCount = 0;
+            if (rdoPlayerVariable.Checked)
+            {
+                for (int i = 0; i < Constants.MaxPlayerVariables; i++)
+                {
+                    cmbVariable.Items.Add((i + 1) + ". " + Globals.PlayerVariables[i]);
+                }
+                varCount = Constants.MaxPlayerVariables;
+            }
+            else
+            {
+                for (int i = 0; i < Constants.MaxServerVariables; i++)
+                {
+                    cmbVariable.Items.Add((i + 1) + ". " + Globals.ServerVariables[i]);
+                }
+                varCount = Constants.MaxServerVariables;
+            }
+            if (_myCommand.Ints[1] >= 0 && _myCommand.Ints[1] < varCount)
+            {
+                cmbVariable.SelectedIndex = _myCommand.Ints[1];
+            }
+            else
+            {
+                cmbVariable.SelectedIndex = 0;
+                _myCommand.Ints[1] = 0;
+            }
+            switch (_myCommand.Ints[2])
             {
                 case 0:
                     optSet.Checked = true;
-                    txtSet.Text = _myCommand.Ints[2].ToString();
+                    txtSet.Text = _myCommand.Ints[3].ToString();
                     break;
                 case 1:
                     optAdd.Checked = true;
-                    txtAdd.Text = _myCommand.Ints[2].ToString();
+                    txtAdd.Text = _myCommand.Ints[3].ToString();
                     break;
                 case 2:
                     optSubtract.Checked = true;
-                    txtSubtract.Text = _myCommand.Ints[2].ToString();
+                    txtSubtract.Text = _myCommand.Ints[3].ToString();
                     break;
                 case 3:
                     optRandom.Checked = true;
-                    txtRandomLow.Text = _myCommand.Ints[2].ToString();
-                    txtRandomHigh.Text = _myCommand.Ints[3].ToString();
+                    txtRandomLow.Text = _myCommand.Ints[3].ToString();
+                    txtRandomHigh.Text = _myCommand.Ints[4].ToString();
                     break;
             }
             UpdateFormElements();
@@ -81,55 +118,13 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
         private void btnSave_Click(object sender, EventArgs e)
         {
             int n;
-            _myCommand.Ints[0] = cmbVariable.SelectedIndex;
+            if (rdoPlayerVariable.Checked) _myCommand.Ints[0] = (int) Enums.SwitchVariableTypes.PlayerVariable;
+            if (rdoGlobalVariable.Checked) _myCommand.Ints[0] = (int) Enums.SwitchVariableTypes.ServerVariable;
+            _myCommand.Ints[1] = cmbVariable.SelectedIndex;
             if (optSet.Checked)
             {
-                _myCommand.Ints[1] = 0;
+                _myCommand.Ints[2] = 0;
                 if (int.TryParse(txtSet.Text, out n))
-                {
-                    _myCommand.Ints[2] = n;
-                }
-                else
-                {
-                    _myCommand.Ints[2] = 0;
-                }
-            }
-            else if (optAdd.Checked)
-            {
-                _myCommand.Ints[1] = 1;
-                if (int.TryParse(txtAdd.Text, out n))
-                {
-                    _myCommand.Ints[2] = n;
-                }
-                else
-                {
-                    _myCommand.Ints[2] = 0;
-                }
-            }
-            else if (optSubtract.Checked)
-            {
-                _myCommand.Ints[1] = 2;
-                if (int.TryParse(txtSubtract.Text, out n))
-                {
-                    _myCommand.Ints[2] = n;
-                }
-                else
-                {
-                    _myCommand.Ints[2] = 0;
-                }
-            }
-            else if (optRandom.Checked)
-            {
-                _myCommand.Ints[1] = 3;
-                if (int.TryParse(txtRandomLow.Text, out n))
-                {
-                    _myCommand.Ints[2] = n;
-                }
-                else
-                {
-                    _myCommand.Ints[2] = 0;
-                }
-                if (int.TryParse(txtRandomHigh.Text, out n))
                 {
                     _myCommand.Ints[3] = n;
                 }
@@ -137,11 +132,55 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
                 {
                     _myCommand.Ints[3] = 0;
                 }
-                if (_myCommand.Ints[3] < _myCommand.Ints[2])
+            }
+            else if (optAdd.Checked)
+            {
+                _myCommand.Ints[2] = 1;
+                if (int.TryParse(txtAdd.Text, out n))
                 {
-                    n = _myCommand.Ints[2];
-                    _myCommand.Ints[2] = _myCommand.Ints[3];
                     _myCommand.Ints[3] = n;
+                }
+                else
+                {
+                    _myCommand.Ints[3] = 0;
+                }
+            }
+            else if (optSubtract.Checked)
+            {
+                _myCommand.Ints[2] = 2;
+                if (int.TryParse(txtSubtract.Text, out n))
+                {
+                    _myCommand.Ints[3] = n;
+                }
+                else
+                {
+                    _myCommand.Ints[3] = 0;
+                }
+            }
+            else if (optRandom.Checked)
+            {
+                _myCommand.Ints[2] = 3;
+                if (int.TryParse(txtRandomLow.Text, out n))
+                {
+                    _myCommand.Ints[3] = n;
+                }
+                else
+                {
+                    _myCommand.Ints[3] = 0;
+                }
+                if (int.TryParse(txtRandomHigh.Text, out n))
+                {
+                    _myCommand.Ints[4] = n;
+                }
+                else
+                {
+                    _myCommand.Ints[4] = 0;
+                }
+                if (_myCommand.Ints[4] < _myCommand.Ints[3])
+                {
+                    n = _myCommand.Ints[3];
+                    _myCommand.Ints[3] = _myCommand.Ints[4];
+                    _myCommand.Ints[4] = n;
                 }
             }
             _eventEditor.FinishCommandEdit();
@@ -170,6 +209,22 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
         private void optRandom_CheckedChanged(object sender, EventArgs e)
         {
             UpdateFormElements();
+        }
+
+        private void rdoPlayerVariable_CheckedChanged(object sender, EventArgs e)
+        {
+            InitEditor();
+            if (!_loading) cmbVariable.SelectedIndex = 0;
+            if (!_loading) optSet.Checked = true;
+            if (!_loading) txtSet.Text = "0";
+        }
+
+        private void rdoGlobalVariable_CheckedChanged(object sender, EventArgs e)
+        {
+            InitEditor();
+            if (!_loading) cmbVariable.SelectedIndex = 0;
+            if (!_loading) optSet.Checked = true;
+            if (!_loading) txtSet.Text = "0";
         }
     }
 }

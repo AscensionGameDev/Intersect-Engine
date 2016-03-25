@@ -42,8 +42,8 @@ namespace Intersect_Editor.Forms
             scrlItem.Maximum = Constants.MaxItems;
             scrlLevel.Maximum = Constants.MaxLevel;
             scrlQuest.Maximum = Constants.MaxQuests;
-            scrlSwitch.Maximum = Constants.SwitchCount;
-            scrlVariable.Maximum = Constants.VariableCount;
+            scrlSwitch.Maximum = Constants.MaxPlayerSwitches;
+            scrlVariable.Maximum = Constants.MaxPlayerVariables;
             scrlItemReward.Maximum = Constants.MaxItems;
 
             lstQuests.SelectedIndex = 0;

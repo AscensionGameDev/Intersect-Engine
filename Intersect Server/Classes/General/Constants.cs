@@ -34,6 +34,10 @@ namespace Intersect_Server.Classes
         public const int MaxQuests = 255;
         public const int MaxProjectiles = 255;
         public const int MaxCommonEvents = 255;
+        public const int MaxServerVariables = 100;
+        public const int MaxServerSwitches = 100;
+        public const int MaxPlayerVariables = 100;
+        public const int MaxPlayerSwitches = 100;
 
         //Player Maxes
         public const int MaxStatValue = 200;
@@ -54,9 +58,6 @@ namespace Intersect_Server.Classes
         public const int SpawnMap = 0;
         public const int SpawnX = 17;
         public const int SpawnY = 12;
-
-        public const int VariableCount = 100;
-        public const int SwitchCount = 100;
     }
 }
 

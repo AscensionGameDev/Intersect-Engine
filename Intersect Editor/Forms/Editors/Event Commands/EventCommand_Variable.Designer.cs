@@ -29,8 +29,8 @@
         private void InitializeComponent()
         {
             this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.btnCancel = new System.Windows.Forms.Button();
-            this.btnSave = new System.Windows.Forms.Button();
+            this.rdoGlobalVariable = new System.Windows.Forms.RadioButton();
+            this.rdoPlayerVariable = new System.Windows.Forms.RadioButton();
             this.lblRandomLabel37 = new System.Windows.Forms.Label();
             this.lblRandomLabel13 = new System.Windows.Forms.Label();
             this.txtRandomHigh = new System.Windows.Forms.TextBox();
@@ -44,57 +44,55 @@
             this.optSet = new System.Windows.Forms.RadioButton();
             this.cmbVariable = new System.Windows.Forms.ComboBox();
             this.lblRandomLabel = new System.Windows.Forms.Label();
+            this.btnCancel = new System.Windows.Forms.Button();
+            this.btnSave = new System.Windows.Forms.Button();
+            this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.groupBox1.SuspendLayout();
+            this.groupBox2.SuspendLayout();
             this.SuspendLayout();
             // 
             // groupBox1
             // 
-            this.groupBox1.Controls.Add(this.lblRandomLabel37);
-            this.groupBox1.Controls.Add(this.lblRandomLabel13);
-            this.groupBox1.Controls.Add(this.txtRandomHigh);
-            this.groupBox1.Controls.Add(this.txtRandomLow);
-            this.groupBox1.Controls.Add(this.optRandom);
-            this.groupBox1.Controls.Add(this.txtSubtract);
-            this.groupBox1.Controls.Add(this.optSubtract);
-            this.groupBox1.Controls.Add(this.txtAdd);
-            this.groupBox1.Controls.Add(this.optAdd);
-            this.groupBox1.Controls.Add(this.txtSet);
-            this.groupBox1.Controls.Add(this.optSet);
-            this.groupBox1.Controls.Add(this.cmbVariable);
-            this.groupBox1.Controls.Add(this.lblRandomLabel);
+            this.groupBox1.Controls.Add(this.rdoGlobalVariable);
+            this.groupBox1.Controls.Add(this.rdoPlayerVariable);
             this.groupBox1.Controls.Add(this.btnCancel);
             this.groupBox1.Controls.Add(this.btnSave);
+            this.groupBox1.Controls.Add(this.groupBox2);
             this.groupBox1.Location = new System.Drawing.Point(3, 3);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(189, 231);
+            this.groupBox1.Size = new System.Drawing.Size(189, 253);
             this.groupBox1.TabIndex = 17;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Set Variable";
             // 
-            // btnCancel
+            // rdoGlobalVariable
             // 
-            this.btnCancel.Location = new System.Drawing.Point(87, 202);
-            this.btnCancel.Name = "btnCancel";
-            this.btnCancel.Size = new System.Drawing.Size(75, 23);
-            this.btnCancel.TabIndex = 20;
-            this.btnCancel.Text = "Cancel";
-            this.btnCancel.UseVisualStyleBackColor = true;
-            this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
+            this.rdoGlobalVariable.AutoSize = true;
+            this.rdoGlobalVariable.Location = new System.Drawing.Point(98, 19);
+            this.rdoGlobalVariable.Name = "rdoGlobalVariable";
+            this.rdoGlobalVariable.Size = new System.Drawing.Size(96, 17);
+            this.rdoGlobalVariable.TabIndex = 35;
+            this.rdoGlobalVariable.Text = "Global Variable";
+            this.rdoGlobalVariable.UseVisualStyleBackColor = true;
+            this.rdoGlobalVariable.CheckedChanged += new System.EventHandler(this.rdoGlobalVariable_CheckedChanged);
             // 
-            // btnSave
+            // rdoPlayerVariable
             // 
-            this.btnSave.Location = new System.Drawing.Point(6, 202);
-            this.btnSave.Name = "btnSave";
-            this.btnSave.Size = new System.Drawing.Size(75, 23);
-            this.btnSave.TabIndex = 19;
-            this.btnSave.Text = "Ok";
-            this.btnSave.UseVisualStyleBackColor = true;
-            this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
+            this.rdoPlayerVariable.AutoSize = true;
+            this.rdoPlayerVariable.Checked = true;
+            this.rdoPlayerVariable.Location = new System.Drawing.Point(3, 19);
+            this.rdoPlayerVariable.Name = "rdoPlayerVariable";
+            this.rdoPlayerVariable.Size = new System.Drawing.Size(95, 17);
+            this.rdoPlayerVariable.TabIndex = 34;
+            this.rdoPlayerVariable.TabStop = true;
+            this.rdoPlayerVariable.Text = "Player Variable";
+            this.rdoPlayerVariable.UseVisualStyleBackColor = true;
+            this.rdoPlayerVariable.CheckedChanged += new System.EventHandler(this.rdoPlayerVariable_CheckedChanged);
             // 
             // lblRandomLabel37
             // 
             this.lblRandomLabel37.AutoSize = true;
-            this.lblRandomLabel37.Location = new System.Drawing.Point(83, 158);
+            this.lblRandomLabel37.Location = new System.Drawing.Point(78, 155);
             this.lblRandomLabel37.Name = "lblRandomLabel37";
             this.lblRandomLabel37.Size = new System.Drawing.Size(29, 13);
             this.lblRandomLabel37.TabIndex = 32;
@@ -103,7 +101,7 @@
             // lblRandomLabel13
             // 
             this.lblRandomLabel13.AutoSize = true;
-            this.lblRandomLabel13.Location = new System.Drawing.Point(85, 129);
+            this.lblRandomLabel13.Location = new System.Drawing.Point(80, 126);
             this.lblRandomLabel13.Name = "lblRandomLabel13";
             this.lblRandomLabel13.Size = new System.Drawing.Size(27, 13);
             this.lblRandomLabel13.TabIndex = 33;
@@ -112,7 +110,7 @@
             // txtRandomHigh
             // 
             this.txtRandomHigh.Enabled = false;
-            this.txtRandomHigh.Location = new System.Drawing.Point(114, 151);
+            this.txtRandomHigh.Location = new System.Drawing.Point(109, 148);
             this.txtRandomHigh.Name = "txtRandomHigh";
             this.txtRandomHigh.Size = new System.Drawing.Size(63, 20);
             this.txtRandomHigh.TabIndex = 27;
@@ -121,7 +119,7 @@
             // txtRandomLow
             // 
             this.txtRandomLow.Enabled = false;
-            this.txtRandomLow.Location = new System.Drawing.Point(114, 124);
+            this.txtRandomLow.Location = new System.Drawing.Point(109, 121);
             this.txtRandomLow.Name = "txtRandomLow";
             this.txtRandomLow.Size = new System.Drawing.Size(63, 20);
             this.txtRandomLow.TabIndex = 28;
@@ -130,7 +128,7 @@
             // optRandom
             // 
             this.optRandom.AutoSize = true;
-            this.optRandom.Location = new System.Drawing.Point(14, 129);
+            this.optRandom.Location = new System.Drawing.Point(9, 126);
             this.optRandom.Name = "optRandom";
             this.optRandom.Size = new System.Drawing.Size(65, 17);
             this.optRandom.TabIndex = 23;
@@ -141,7 +139,7 @@
             // txtSubtract
             // 
             this.txtSubtract.Enabled = false;
-            this.txtSubtract.Location = new System.Drawing.Point(114, 98);
+            this.txtSubtract.Location = new System.Drawing.Point(109, 95);
             this.txtSubtract.Name = "txtSubtract";
             this.txtSubtract.Size = new System.Drawing.Size(63, 20);
             this.txtSubtract.TabIndex = 29;
@@ -150,7 +148,7 @@
             // optSubtract
             // 
             this.optSubtract.AutoSize = true;
-            this.optSubtract.Location = new System.Drawing.Point(14, 101);
+            this.optSubtract.Location = new System.Drawing.Point(9, 98);
             this.optSubtract.Name = "optSubtract";
             this.optSubtract.Size = new System.Drawing.Size(65, 17);
             this.optSubtract.TabIndex = 24;
@@ -161,7 +159,7 @@
             // txtAdd
             // 
             this.txtAdd.Enabled = false;
-            this.txtAdd.Location = new System.Drawing.Point(114, 72);
+            this.txtAdd.Location = new System.Drawing.Point(109, 69);
             this.txtAdd.Name = "txtAdd";
             this.txtAdd.Size = new System.Drawing.Size(63, 20);
             this.txtAdd.TabIndex = 30;
@@ -170,7 +168,7 @@
             // optAdd
             // 
             this.optAdd.AutoSize = true;
-            this.optAdd.Location = new System.Drawing.Point(14, 73);
+            this.optAdd.Location = new System.Drawing.Point(9, 70);
             this.optAdd.Name = "optAdd";
             this.optAdd.Size = new System.Drawing.Size(44, 17);
             this.optAdd.TabIndex = 25;
@@ -180,7 +178,7 @@
             // 
             // txtSet
             // 
-            this.txtSet.Location = new System.Drawing.Point(114, 46);
+            this.txtSet.Location = new System.Drawing.Point(109, 43);
             this.txtSet.Name = "txtSet";
             this.txtSet.Size = new System.Drawing.Size(63, 20);
             this.txtSet.TabIndex = 31;
@@ -189,12 +187,10 @@
             // optSet
             // 
             this.optSet.AutoSize = true;
-            this.optSet.Checked = true;
-            this.optSet.Location = new System.Drawing.Point(14, 47);
+            this.optSet.Location = new System.Drawing.Point(9, 44);
             this.optSet.Name = "optSet";
             this.optSet.Size = new System.Drawing.Size(41, 17);
             this.optSet.TabIndex = 26;
-            this.optSet.TabStop = true;
             this.optSet.Text = "Set";
             this.optSet.UseVisualStyleBackColor = true;
             this.optSet.CheckedChanged += new System.EventHandler(this.optSet_CheckedChanged);
@@ -203,7 +199,7 @@
             // 
             this.cmbVariable.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbVariable.FormattingEnabled = true;
-            this.cmbVariable.Location = new System.Drawing.Point(68, 19);
+            this.cmbVariable.Location = new System.Drawing.Point(63, 16);
             this.cmbVariable.Name = "cmbVariable";
             this.cmbVariable.Size = new System.Drawing.Size(109, 21);
             this.cmbVariable.TabIndex = 22;
@@ -211,11 +207,53 @@
             // lblRandomLabel
             // 
             this.lblRandomLabel.AutoSize = true;
-            this.lblRandomLabel.Location = new System.Drawing.Point(14, 22);
+            this.lblRandomLabel.Location = new System.Drawing.Point(9, 19);
             this.lblRandomLabel.Name = "lblRandomLabel";
             this.lblRandomLabel.Size = new System.Drawing.Size(48, 13);
             this.lblRandomLabel.TabIndex = 21;
             this.lblRandomLabel.Text = "Variable:";
+            // 
+            // btnCancel
+            // 
+            this.btnCancel.Location = new System.Drawing.Point(95, 224);
+            this.btnCancel.Name = "btnCancel";
+            this.btnCancel.Size = new System.Drawing.Size(75, 23);
+            this.btnCancel.TabIndex = 20;
+            this.btnCancel.Text = "Cancel";
+            this.btnCancel.UseVisualStyleBackColor = true;
+            this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
+            // 
+            // btnSave
+            // 
+            this.btnSave.Location = new System.Drawing.Point(14, 224);
+            this.btnSave.Name = "btnSave";
+            this.btnSave.Size = new System.Drawing.Size(75, 23);
+            this.btnSave.TabIndex = 19;
+            this.btnSave.Text = "Ok";
+            this.btnSave.UseVisualStyleBackColor = true;
+            this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
+            // 
+            // groupBox2
+            // 
+            this.groupBox2.Controls.Add(this.cmbVariable);
+            this.groupBox2.Controls.Add(this.lblRandomLabel);
+            this.groupBox2.Controls.Add(this.lblRandomLabel37);
+            this.groupBox2.Controls.Add(this.optSet);
+            this.groupBox2.Controls.Add(this.lblRandomLabel13);
+            this.groupBox2.Controls.Add(this.txtSet);
+            this.groupBox2.Controls.Add(this.txtRandomHigh);
+            this.groupBox2.Controls.Add(this.optAdd);
+            this.groupBox2.Controls.Add(this.txtRandomLow);
+            this.groupBox2.Controls.Add(this.txtAdd);
+            this.groupBox2.Controls.Add(this.optRandom);
+            this.groupBox2.Controls.Add(this.optSubtract);
+            this.groupBox2.Controls.Add(this.txtSubtract);
+            this.groupBox2.Location = new System.Drawing.Point(3, 43);
+            this.groupBox2.Name = "groupBox2";
+            this.groupBox2.Size = new System.Drawing.Size(180, 175);
+            this.groupBox2.TabIndex = 36;
+            this.groupBox2.TabStop = false;
+            this.groupBox2.Text = "Variable:";
             // 
             // EventCommand_Variable
             // 
@@ -224,9 +262,11 @@
             this.AutoSize = true;
             this.Controls.Add(this.groupBox1);
             this.Name = "EventCommand_Variable";
-            this.Size = new System.Drawing.Size(195, 237);
+            this.Size = new System.Drawing.Size(195, 260);
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
+            this.groupBox2.ResumeLayout(false);
+            this.groupBox2.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -249,5 +289,8 @@
         internal System.Windows.Forms.RadioButton optSet;
         internal System.Windows.Forms.ComboBox cmbVariable;
         internal System.Windows.Forms.Label lblRandomLabel;
+        private System.Windows.Forms.RadioButton rdoGlobalVariable;
+        private System.Windows.Forms.RadioButton rdoPlayerVariable;
+        private System.Windows.Forms.GroupBox groupBox2;
     }
 }

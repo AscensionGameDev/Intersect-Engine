@@ -179,7 +179,7 @@ namespace Intersect_Editor.Forms
             }
             if (MyEvent.CommonEvent)
             {
-                PacketSender.SendCommonEvent(MyEvent.MyIndex,MyEvent.EventData());
+                PacketSender.SendCommonEvent(MyEvent.MyIndex, MyEvent.EventData());
             }
             Hide();
             Dispose();
@@ -442,25 +442,46 @@ namespace Intersect_Editor.Forms
                     output += Truncate(command.Strs[0], 20);
                     return output;
                 case EventCommandType.SetSwitch:
-                    //TODO: Show switch name
-                    return "Set Switch #" + (command.Ints[0] + 1) + " to " + Convert.ToBoolean(command.Ints[1]);
+                    if (command.Ints[0] == (int)Enums.SwitchVariableTypes.PlayerSwitch)
+                    {
+                        return "Set Player Switch " + (command.Ints[1] + 1) + ". " + Globals.PlayerSwitches[command.Ints[1]] + " to " + Convert.ToBoolean(command.Ints[2]);
+                    }
+                    else if (command.Ints[0] == (int)Enums.SwitchVariableTypes.ServerSwitch)
+                    {
+                        return "Set Global Switch " + (command.Ints[1] + 1) + ". " + Globals.ServerSwitches[command.Ints[1]] + " to " + Convert.ToBoolean(command.Ints[2]);
+                    }
+                    else
+                    {
+                        return "Invalid Command";
+                    }
                 case EventCommandType.SetVariable:
-                    output = "Set Variable #" + (command.Ints[0] + 1) + "  (";
-                    switch (command.Ints[1])
+                    if (command.Ints[0] == (int)Enums.SwitchVariableTypes.PlayerVariable)
+                    {
+                        output =  "Set Player Variable " + (command.Ints[1] + 1) + ". " + Globals.PlayerVariables[command.Ints[1]] + " (";
+                    }
+                    else if (command.Ints[0] == (int)Enums.SwitchVariableTypes.ServerVariable)
+                    {
+                        output =  "Set Global Variable " + (command.Ints[1] + 1) + ". " + Globals.ServerVariables[command.Ints[1]] + " (";
+                    }
+                    else
+                    {
+                        return "Invalid Command";
+                    }
+                    switch (command.Ints[2])
                     {
                         case 0:
-                            output += "Set to " + command.Ints[2];
+                            output += "Set to " + command.Ints[3];
                             break;
                         case 1:
-                            output += "Add " + command.Ints[2];
+                            output += "Add " + command.Ints[3];
                             break;
 
                         case 2:
-                            output += "Subtract " + command.Ints[2];
+                            output += "Subtract " + command.Ints[3];
                             break;
 
                         case 3:
-                            output += "Random Number" + command.Ints[2] + " to " + command.Ints[3] + "]";
+                            output += "Random Number " + command.Ints[3] + " to " + command.Ints[4] + "]";
                             break;
                     }
                     output += ")";
@@ -742,9 +763,9 @@ namespace Intersect_Editor.Forms
             switch (command.Ints[0])
             {
                 case 0: //Player Switch
-                    return "Switch #" + (command.Ints[1] + 1) + " is " + Convert.ToBoolean(command.Ints[2]);
+                    return "Player Switch " + (command.Ints[1] + 1) + ". "  + Globals.PlayerSwitches[command.Ints[1]] +  " is " + Convert.ToBoolean(command.Ints[2]);
                 case 1: //Player Variables
-                    output = "Variable #" + (command.Ints[1] + 1);
+                    output = "Player Variable " + (command.Ints[1] + 1) + ". " + Globals.PlayerVariables[command.Ints[1]];
                     switch (command.Ints[2])
                     {
                         case 0:
@@ -768,14 +789,41 @@ namespace Intersect_Editor.Forms
                     }
                     output += command.Ints[3];
                     return output;
-                case 2: //Has Item
+                case 2: //Global Switch
+                    return "Global Switch " + (command.Ints[1] + 1) + ". " + Globals.ServerSwitches[command.Ints[1]] + " is " + Convert.ToBoolean(command.Ints[2]);
+                case 3: //Global Variables
+                    output = "Global Variable " + (command.Ints[1] + 1) + ". " + Globals.ServerVariables[command.Ints[1]];
+                    switch (command.Ints[2])
+                    {
+                        case 0:
+                            output += " is equal to ";
+                            break;
+                        case 1:
+                            output += " is greater than or equal to ";
+                            break;
+                        case 2:
+                            output += " is less than or equal to ";
+                            break;
+                        case 3:
+                            output += " is greater than ";
+                            break;
+                        case 4:
+                            output += " is less than ";
+                            break;
+                        case 5:
+                            output += " does not equal ";
+                            break;
+                    }
+                    output += command.Ints[3];
+                    return output;
+                case 4: //Has Item
                     return "Player has at least " + command.Ints[2] + " of Item #" + (command.Ints[1] + 1) + " " +
                               Globals.GameItems[command.Ints[1]].Name;
-                case 3: //Class Is
+                case 5: //Class Is
                     return "Player's class is #" + (command.Ints[1] + 1) + " " + Globals.GameClasses[command.Ints[1]].Name;
-                case 4: //Knows spell
+                case 6: //Knows spell
                     return "Player knows  Spell #" + (command.Ints[1] + 1) + " " + Globals.GameSpells[command.Ints[1]].Name;
-                case 5: //Level is
+                case 7: //Level is
                     output = "Player's level";
                     switch (command.Ints[1])
                     {
@@ -800,7 +848,7 @@ namespace Intersect_Editor.Forms
                     }
                     output += command.Ints[2];
                     return output;
-                case 6: //Self Switch
+                case 8: //Self Switch
                     return "Self Switch " + (char)('A' + command.Ints[1]) + " is " + Convert.ToBoolean(command.Ints[2]);
             }
             return "";

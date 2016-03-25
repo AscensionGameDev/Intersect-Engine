@@ -35,41 +35,80 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
     {
         private EventCommand _myCommand;
         private readonly FrmEvent _eventEditor;
+        private bool _loading = false;
         public EventCommand_Switch(EventCommand refCommand, FrmEvent editor)
         {
             InitializeComponent();
             _myCommand = refCommand;
             _eventEditor = editor;
-            //TODO Everything
-            if (cmbSetSwitch.Items.Count == 0)
+            _loading = true;
+            if (_myCommand.Ints[0] == (int) Enums.SwitchVariableTypes.ServerSwitch)
             {
-                for (var i = 0; i < Constants.SwitchCount; i++)
-                {
-                    cmbSetSwitch.Items.Add("Switch " + (i + 1));
-                }
+                rdoGlobalSwitch.Checked = true;
             }
-            if (_myCommand.Ints[0] > 0)
+            _loading = false;
+            InitEditor();
+
+        }
+
+        private void InitEditor()
+        {
+            cmbSetSwitch.Items.Clear();
+            int switchCount = 0;
+            if (rdoPlayerSwitch.Checked)
             {
-                cmbSetSwitch.SelectedIndex = _myCommand.Ints[0];
+                for (var i = 0; i < Constants.MaxPlayerSwitches; i++)
+                {
+                    cmbSetSwitch.Items.Add((i + 1) + ". " + Globals.PlayerSwitches[i]);
+                }
+                switchCount = Constants.MaxPlayerSwitches;
+            }
+            else
+            {
+                for (var i = 0; i < Constants.MaxServerSwitches; i++)
+                {
+                    cmbSetSwitch.Items.Add((i + 1) + ". " + Globals.ServerSwitches[i]);
+                }
+                switchCount = Constants.MaxServerSwitches;
+            }
+            if (_myCommand.Ints[1] >= 0 && _myCommand.Ints[1] < switchCount)
+            {
+                cmbSetSwitch.SelectedIndex = _myCommand.Ints[1];
             }
             else
             {
                 cmbSetSwitch.SelectedIndex = 0;
-                _myCommand.Ints[0] = 1;
+                _myCommand.Ints[1] = 0;
             }
-            cmbSetSwitchVal.SelectedIndex = _myCommand.Ints[1];
+            cmbSetSwitchVal.SelectedIndex = _myCommand.Ints[2];
         }
 
         private void btnSave_Click(object sender, EventArgs e)
         {
-            _myCommand.Ints[0] = cmbSetSwitch.SelectedIndex;
-            _myCommand.Ints[1] = cmbSetSwitchVal.SelectedIndex;
+            if (rdoPlayerSwitch.Checked) _myCommand.Ints[0] = (int) Enums.SwitchVariableTypes.PlayerSwitch;
+            if (rdoGlobalSwitch.Checked) _myCommand.Ints[0] = (int)Enums.SwitchVariableTypes.ServerSwitch;
+            _myCommand.Ints[1] = cmbSetSwitch.SelectedIndex;
+            _myCommand.Ints[2] = cmbSetSwitchVal.SelectedIndex;
             _eventEditor.FinishCommandEdit();
         }
 
         private void btnCancel_Click(object sender, EventArgs e)
         {
             _eventEditor.CancelCommandEdit();
+        }
+
+        private void rdoPlayerSwitch_CheckedChanged(object sender, EventArgs e)
+        {
+            InitEditor();
+            if (!_loading) cmbSetSwitch.SelectedIndex = 0;
+            if (!_loading) cmbSetSwitchVal.SelectedIndex = 0;
+        }
+
+        private void rdoGlobalSwitch_CheckedChanged(object sender, EventArgs e)
+        {
+            InitEditor();
+            if (!_loading) cmbSetSwitch.SelectedIndex = 0;
+            if (!_loading) cmbSetSwitchVal.SelectedIndex = 0;
         }
     }
 }

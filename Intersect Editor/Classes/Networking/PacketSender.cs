@@ -353,5 +353,19 @@ namespace Intersect_Editor.Classes
             bf.WriteBytes(data);
             Network.SendPacket(bf.ToArray());
         }
+
+        public static void SendOpenVariableSwitchEditor()
+        {
+            var bf = new ByteBuffer();
+            bf.WriteLong((int)Enums.ClientPackets.OpenSwitchVariableEditor);
+            Network.SendPacket(bf.ToArray());
+        }
+
+        public static void SendOpenShopEditor()
+        {
+            var bf = new ByteBuffer();
+            bf.WriteLong((int)Enums.ClientPackets.OpenShopEditor);
+            Network.SendPacket(bf.ToArray());
+        }
     }
 }

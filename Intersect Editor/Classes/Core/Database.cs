@@ -40,6 +40,13 @@ namespace Intersect_Editor.Classes
             Globals.GameQuests = new QuestStruct[Constants.MaxQuests];
             Globals.GameProjectiles = new ProjectileStruct[Constants.MaxProjectiles];
             Globals.CommonEvents = new EventStruct[Constants.MaxCommonEvents];
+
+            Globals.ServerSwitches = new string[Constants.MaxServerSwitches];
+            Globals.ServerSwitchValues = new bool[Constants.MaxServerSwitches];
+            Globals.ServerVariables = new string[Constants.MaxServerVariables];
+            Globals.ServerVariableValues = new int[Constants.MaxServerVariables];
+            Globals.PlayerSwitches = new string[Constants.MaxPlayerSwitches];
+            Globals.PlayerVariables = new string[Constants.MaxPlayerVariables];
             LoadOptions();
         }
 

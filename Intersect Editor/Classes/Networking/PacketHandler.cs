@@ -132,6 +132,15 @@ namespace Intersect_Editor.Classes
                 case Enums.ServerPackets.CommonEventData:
                     HandleCommonEventData(bf.ReadBytes(bf.Length()));
                     break;
+                case Enums.ServerPackets.OpenSwitchVariableEditor:
+                    HandleOpenSwitchVariableEditor();
+                    break;
+                case Enums.ServerPackets.SwitchVariableData:
+                    HandleSwitchVariableData(bf.ReadBytes(bf.Length()));
+                    break;
+                case Enums.ServerPackets.OpenShopEditor:
+                    HandleOpenShopEditor();
+                    break;
                 default:
                     Console.WriteLine(@"Non implemented packet received: " + packetHeader);
                     break;
@@ -473,6 +482,41 @@ namespace Intersect_Editor.Classes
             var index = bf.ReadInteger();
             Globals.CommonEvents[index] = new EventStruct(index,bf,true);
             bf.Dispose();
+        }
+
+        private static void HandleOpenSwitchVariableEditor()
+        {
+            Globals.MainForm.BeginInvoke(Globals.MainForm.EditorDelegate, (int)Enums.EditorTypes.SwitchVariable);
+        }
+
+        private static void HandleSwitchVariableData(byte[] packet)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteBytes(packet);
+            var type = bf.ReadInteger();
+            var index = bf.ReadInteger();
+            switch (type)
+            {
+                case (int)Enums.SwitchVariableTypes.PlayerSwitch:
+                    Globals.PlayerSwitches[index] = bf.ReadString();
+                    break;
+                case (int)Enums.SwitchVariableTypes.PlayerVariable:
+                    Globals.PlayerVariables[index] = bf.ReadString();
+                    break;
+                case (int)Enums.SwitchVariableTypes.ServerSwitch:
+                    Globals.ServerSwitches[index] = bf.ReadString();
+                    Globals.ServerSwitchValues[index] = Convert.ToBoolean(bf.ReadByte());
+                    break;
+                case (int)Enums.SwitchVariableTypes.ServerVariable:
+                    Globals.ServerVariables[index] = bf.ReadString();
+                    Globals.ServerVariableValues[index] = bf.ReadInteger();
+                    break;
+            }
+            bf.Dispose();
+        }
+
+        private static void HandleOpenShopEditor() { 
+            Globals.MainForm.BeginInvoke(Globals.MainForm.EditorDelegate, (int)Enums.EditorTypes.Shop);
         }
     }
 }

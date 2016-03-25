@@ -35,7 +35,6 @@ namespace Intersect_Editor.Classes
         public static int ServerPort = 4500;
         public static int ReconnectTime = 3000;
 
-
         //Editor Loop Variables
         public static Thread EditorThread;
         public static int CurrentEditor = -1;
@@ -59,6 +58,16 @@ namespace Intersect_Editor.Classes
         public static QuestStruct[] GameQuests;
         public static ProjectileStruct[] GameProjectiles;
         public static EventStruct[] CommonEvents;
+
+        //Server Switches and Variables
+        public static string[] ServerSwitches;
+        public static bool[] ServerSwitchValues;
+        public static string[] ServerVariables;
+        public static int[] ServerVariableValues;
+
+        //Player Switches and Variables
+        public static string[] PlayerSwitches;
+        public static string[] PlayerVariables;
 
         //Animation Frame Variables
         public static int Autotilemode = 0;

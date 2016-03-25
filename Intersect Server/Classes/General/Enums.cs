@@ -81,6 +81,10 @@ namespace Intersect_Server.Classes
             LinkMap,
             OpenCommonEventEditor,
             SaveCommonEvent,
+            OpenSwitchVariableEditor,
+            SaveSwitchVariable,
+            OpenShopEditor,
+            SaveShop
         }
 
         public enum ServerPackets
@@ -146,6 +150,10 @@ namespace Intersect_Server.Classes
             StopSounds,
             OpenCommonEventEditor,
             CommonEventData,
+            OpenSwitchVariableEditor,
+            SwitchVariableData,
+            OpenShopEditor,
+            ShopData,
         }
 
         public enum Stats
@@ -217,6 +225,14 @@ namespace Intersect_Server.Classes
             Down,
             Left,
             Right
+        }
+
+        public enum SwitchVariableTypes
+        {
+            PlayerSwitch = 0,
+            PlayerVariable,
+            ServerSwitch,
+            ServerVariable,
         }
 
         public const int WeaponIndex = 2;

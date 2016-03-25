@@ -24,6 +24,7 @@ using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Collections.Generic;
+using System.Runtime.Remoting.Messaging;
 using System.Security.Cryptography.X509Certificates;
 using System.Xml;
 using System.Security.Cryptography;
@@ -741,7 +742,7 @@ namespace Intersect_Server.Classes
                     reader = cmd.ExecuteReader();
                     while (reader.Read())
                     {
-                        if (i >= Constants.SwitchCount) continue;
+                        if (i >= Constants.MaxPlayerSwitches) continue;
                         ((Player)en).Switches[i] = Convert.ToBoolean(reader.GetInt32(0));
                         i++;
                     }
@@ -752,7 +753,7 @@ namespace Intersect_Server.Classes
                     reader = cmd.ExecuteReader();
                     while (reader.Read())
                     {
-                        if (i >= Constants.VariableCount) continue;
+                        if (i >= Constants.MaxPlayerVariables) continue;
                         ((Player)en).Variables[i] = reader.GetInt32(0);
                         i++;
                     }
@@ -862,10 +863,10 @@ namespace Intersect_Server.Classes
                     result = reader.GetInt32(0);
                 }
                 reader.Close();
-                if (result < Constants.SwitchCount)
+                if (result < Constants.MaxPlayerSwitches)
                 {
                     query = "";
-                    for (var i = result; i < Constants.SwitchCount; i++)
+                    for (var i = result; i < Constants.MaxPlayerSwitches; i++)
                     {
                         query += "INSERT INTO Switches (id,switchnum,switchval) VALUES (" + id + "," + i + ",0);\n";
                     }
@@ -873,7 +874,7 @@ namespace Intersect_Server.Classes
                     cmd.ExecuteNonQuery();
                 }
                 query = "";
-                for (var i = 0; i < Constants.SwitchCount; i++)
+                for (var i = 0; i < Constants.MaxPlayerSwitches; i++)
                 {
                     query += "UPDATE Switches SET switchval=" + Convert.ToInt32(((Player)(en)).Switches[i]) + " WHERE id=" + id + " AND switchnum=" + i + ";\n";
                 }
@@ -890,10 +891,10 @@ namespace Intersect_Server.Classes
                     result = reader.GetInt32(0);
                 }
                 reader.Close();
-                if (result < Constants.VariableCount)
+                if (result < Constants.MaxPlayerVariables)
                 {
                     query = "";
-                    for (var i = result; i < Constants.VariableCount; i++)
+                    for (var i = result; i < Constants.MaxPlayerVariables; i++)
                     {
                         query += "INSERT INTO Variables (id,variablenum,variableval) VALUES (" + id + "," + i + ",0);\n";
                     }
@@ -901,7 +902,7 @@ namespace Intersect_Server.Classes
                     cmd.ExecuteNonQuery();
                 }
                 query = "";
-                for (var i = 0; i < Constants.VariableCount; i++)
+                for (var i = 0; i < Constants.MaxPlayerVariables; i++)
                 {
                     query += "UPDATE Variables SET variableval=" + Convert.ToInt32(((Player)(en)).Variables[i]) + " WHERE id=" + id + " AND variablenum=" + i + ";\n";
                 }
@@ -1110,12 +1111,12 @@ namespace Intersect_Server.Classes
                 client.Power = Int32.Parse(playerdata.SelectSingleNode("//PlayerData//CharacterInfo/Power").InnerText);
                 en.Face = playerdata.SelectSingleNode("//PlayerData//CharacterInfo/Face").InnerText;
 
-                for (int i = 0; i < Constants.SwitchCount; i++)
+                for (int i = 0; i < Constants.MaxPlayerSwitches; i++)
                 {
                     ((Player)(en)).Switches[i] = Convert.ToBoolean(Int32.Parse(playerdata.SelectSingleNode("//PlayerData//CharacterInfo//Switches/Switch" + i).InnerText));
                 }
 
-                for (int i = 0; i < Constants.VariableCount; i++)
+                for (int i = 0; i < Constants.MaxPlayerSwitches; i++)
                 {
                     ((Player)(en)).Variables[i] = Int32.Parse(playerdata.SelectSingleNode("//PlayerData//CharacterInfo//Variables/Variable" + i).InnerText);
                 }
@@ -1194,14 +1195,14 @@ namespace Intersect_Server.Classes
             writer.WriteElementString("Face", en.Face);
 
             writer.WriteStartElement("Switches");
-            for (int i = 0; i < Constants.SwitchCount; i++)
+            for (int i = 0; i < Constants.MaxPlayerSwitches; i++)
             {
                 writer.WriteElementString("Switch" + i, Convert.ToInt32(((Player)(en)).Switches[i]).ToString());
             }
             writer.WriteEndElement();
 
             writer.WriteStartElement("Variables");
-            for (int i = 0; i < Constants.VariableCount; i++)
+            for (int i = 0; i < Constants.MaxPlayerVariables; i++)
             {
                 writer.WriteElementString("Variable" + i, ((Player)(en)).Variables[i].ToString());
             }
@@ -1631,6 +1632,73 @@ namespace Intersect_Server.Classes
                 }
 
             }
+        }
+
+        //Switches and Variables
+        public static void LoadSwitchesAndVariables()
+        {
+            //Gonna do xml
+            Globals.ServerSwitches = new string[Constants.MaxServerSwitches];
+            Globals.ServerVariables = new string[Constants.MaxServerVariables];
+            Globals.ServerSwitchValues = new bool[Constants.MaxServerSwitches];
+            Globals.ServerVariableValues = new int[Constants.MaxServerVariables];
+            Globals.PlayerSwitches = new string[Constants.MaxPlayerSwitches];
+            Globals.PlayerVariables = new string[Constants.MaxPlayerVariables];
+            LoadSwitchesOrVariabes(Globals.ServerSwitches, Globals.ServerSwitchValues, null, "GlobalSwitch", "ServerSwitches", Constants.MaxServerSwitches);
+            LoadSwitchesOrVariabes(Globals.PlayerSwitches, null, null, "Switch", "PlayerSwitches", Constants.MaxPlayerSwitches);
+            LoadSwitchesOrVariabes(Globals.ServerVariables, null, Globals.ServerVariableValues, "GlobalVariable", "ServerVariables", Constants.MaxServerVariables);
+            LoadSwitchesOrVariabes(Globals.PlayerVariables, null, null, "Variable", "PlayerVariables", Constants.MaxPlayerVariables);
+        }
+        private static void LoadSwitchesOrVariabes(string[] names, bool[] boolValues, int[] intValues, string prefix, string header, int count)
+        {
+            for (int i = 0; i < count; i++)
+            {
+                names[i] = prefix;
+            }
+            if (File.Exists("Resources/" + header + ".xml"))
+            {
+                try
+                {
+                    var xml = new XmlDocument();
+                    xml.Load("resources\\" + header + ".xml");
+                    for (int i = 0; i < Constants.MaxServerSwitches; i++)
+                    {
+                        
+                        names[i] = xml.SelectSingleNode("//" + header + "/" + prefix + (i + 1) + "Name").InnerText;
+                        if (boolValues != null)
+                        {
+                            boolValues[i] = Convert.ToBoolean( xml.SelectSingleNode("//" + header + "/" + prefix + (i + 1) + "Value").InnerText);
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+
+                }
+            }
+            else
+            {
+                SaveSwitchesOrVariables(names, boolValues,intValues, prefix, header, count);
+            }
+        }
+        public static void SaveSwitchesOrVariables(string[] names, bool[] boolValues, int[] intValues, string prefix, string header, int count)
+        {
+            var xml = new XmlWriterSettings { Indent = true };
+            xml.ConformanceLevel = ConformanceLevel.Auto;
+            var writer = XmlWriter.Create("resources\\" + header + ".xml", xml);
+
+            writer.WriteStartDocument();
+            writer.WriteStartElement(header);
+            for (int i = 0; i < count; i++)
+            {
+                writer.WriteElementString(prefix + (i + 1) + "Name", names[i]);
+                if (boolValues != null) writer.WriteElementString(prefix + (i + 1) + "Value", boolValues[i].ToString());
+                if (intValues != null) writer.WriteElementString(prefix + (i + 1) + "Value", intValues[i].ToString());
+            }
+            writer.WriteEndElement();
+            writer.WriteEndDocument();
+            writer.Flush();
+            writer.Close();
         }
     }
 }

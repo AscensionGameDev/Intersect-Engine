@@ -49,8 +49,6 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             _currentMap = currentMap;
 
             cmbEntities.Items.Clear();
-            cmbEntities.Items.Add("Player");
-            cmbEntities.SelectedIndex = 0;
 
             if (!_editingEvent.CommonEvent)
             {
@@ -62,7 +60,7 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
 
                         if (refCommand.Ints[0] == i)
                         {
-                            cmbEntities.SelectedIndex = i + 1;
+                            cmbEntities.SelectedIndex = i;
                         }
                     }
                     else
@@ -72,7 +70,7 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
                             cmbEntities.Items.Add((i + 1) + ". " + currentMap.Events[i].MyName);
                             if (refCommand.Ints[0] == i)
                             {
-                                cmbEntities.SelectedIndex = i + 1;
+                                cmbEntities.SelectedIndex = i;
                             }
                         }
                     }
@@ -85,25 +83,16 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
 
         private void btnSave_Click(object sender, EventArgs e)
         {
-            int slot = 0;
             if (!_editingEvent.CommonEvent)
             {
                 for (int i = 0; i < _currentMap.Events.Count; i++)
                 {
-                    if (cmbEntities.SelectedIndex == 0)
+                    if (_currentMap.Events[i].Deleted == 0)
                     {
-                        _editingCommand.Ints[0] = -1;
-                    }
-                    else
-                    {
-                        if (_currentMap.Events[i].Deleted == 0)
+                        if (cmbEntities.SelectedIndex == i)
                         {
-                            slot++;
-                            if (cmbEntities.SelectedIndex == slot)
-                            {
-                                _editingCommand.Ints[0] = i;
-                                break;
-                            }
+                            _editingCommand.Ints[0] = i;
+                            break;
                         }
                     }
                 }

@@ -363,6 +363,12 @@
     <Compile Include="Forms\Editors\frmQuest.Designer.cs">
       <DependentUpon>frmQuest.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\Editors\frmSwitchVariable.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\Editors\frmSwitchVariable.Designer.cs">
+      <DependentUpon>frmSwitchVariable.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\frmAbout.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -548,6 +554,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\Editors\frmQuest.resx">
       <DependentUpon>frmQuest.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Editors\frmSwitchVariable.resx">
+      <DependentUpon>frmSwitchVariable.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\frmAbout.resx">
       <DependentUpon>frmAbout.cs</DependentUpon>

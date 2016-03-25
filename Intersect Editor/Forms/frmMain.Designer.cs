@@ -32,21 +32,21 @@ namespace Intersect_Editor.Forms
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmMain));
-            WeifenLuo.WinFormsUI.Docking.DockPanelSkin dockPanelSkin2 = new WeifenLuo.WinFormsUI.Docking.DockPanelSkin();
-            WeifenLuo.WinFormsUI.Docking.AutoHideStripSkin autoHideStripSkin2 = new WeifenLuo.WinFormsUI.Docking.AutoHideStripSkin();
-            WeifenLuo.WinFormsUI.Docking.DockPanelGradient dockPanelGradient4 = new WeifenLuo.WinFormsUI.Docking.DockPanelGradient();
-            WeifenLuo.WinFormsUI.Docking.TabGradient tabGradient8 = new WeifenLuo.WinFormsUI.Docking.TabGradient();
-            WeifenLuo.WinFormsUI.Docking.DockPaneStripSkin dockPaneStripSkin2 = new WeifenLuo.WinFormsUI.Docking.DockPaneStripSkin();
-            WeifenLuo.WinFormsUI.Docking.DockPaneStripGradient dockPaneStripGradient2 = new WeifenLuo.WinFormsUI.Docking.DockPaneStripGradient();
-            WeifenLuo.WinFormsUI.Docking.TabGradient tabGradient9 = new WeifenLuo.WinFormsUI.Docking.TabGradient();
-            WeifenLuo.WinFormsUI.Docking.DockPanelGradient dockPanelGradient5 = new WeifenLuo.WinFormsUI.Docking.DockPanelGradient();
-            WeifenLuo.WinFormsUI.Docking.TabGradient tabGradient10 = new WeifenLuo.WinFormsUI.Docking.TabGradient();
-            WeifenLuo.WinFormsUI.Docking.DockPaneStripToolWindowGradient dockPaneStripToolWindowGradient2 = new WeifenLuo.WinFormsUI.Docking.DockPaneStripToolWindowGradient();
-            WeifenLuo.WinFormsUI.Docking.TabGradient tabGradient11 = new WeifenLuo.WinFormsUI.Docking.TabGradient();
-            WeifenLuo.WinFormsUI.Docking.TabGradient tabGradient12 = new WeifenLuo.WinFormsUI.Docking.TabGradient();
-            WeifenLuo.WinFormsUI.Docking.DockPanelGradient dockPanelGradient6 = new WeifenLuo.WinFormsUI.Docking.DockPanelGradient();
-            WeifenLuo.WinFormsUI.Docking.TabGradient tabGradient13 = new WeifenLuo.WinFormsUI.Docking.TabGradient();
-            WeifenLuo.WinFormsUI.Docking.TabGradient tabGradient14 = new WeifenLuo.WinFormsUI.Docking.TabGradient();
+            WeifenLuo.WinFormsUI.Docking.DockPanelSkin dockPanelSkin1 = new WeifenLuo.WinFormsUI.Docking.DockPanelSkin();
+            WeifenLuo.WinFormsUI.Docking.AutoHideStripSkin autoHideStripSkin1 = new WeifenLuo.WinFormsUI.Docking.AutoHideStripSkin();
+            WeifenLuo.WinFormsUI.Docking.DockPanelGradient dockPanelGradient1 = new WeifenLuo.WinFormsUI.Docking.DockPanelGradient();
+            WeifenLuo.WinFormsUI.Docking.TabGradient tabGradient1 = new WeifenLuo.WinFormsUI.Docking.TabGradient();
+            WeifenLuo.WinFormsUI.Docking.DockPaneStripSkin dockPaneStripSkin1 = new WeifenLuo.WinFormsUI.Docking.DockPaneStripSkin();
+            WeifenLuo.WinFormsUI.Docking.DockPaneStripGradient dockPaneStripGradient1 = new WeifenLuo.WinFormsUI.Docking.DockPaneStripGradient();
+            WeifenLuo.WinFormsUI.Docking.TabGradient tabGradient2 = new WeifenLuo.WinFormsUI.Docking.TabGradient();
+            WeifenLuo.WinFormsUI.Docking.DockPanelGradient dockPanelGradient2 = new WeifenLuo.WinFormsUI.Docking.DockPanelGradient();
+            WeifenLuo.WinFormsUI.Docking.TabGradient tabGradient3 = new WeifenLuo.WinFormsUI.Docking.TabGradient();
+            WeifenLuo.WinFormsUI.Docking.DockPaneStripToolWindowGradient dockPaneStripToolWindowGradient1 = new WeifenLuo.WinFormsUI.Docking.DockPaneStripToolWindowGradient();
+            WeifenLuo.WinFormsUI.Docking.TabGradient tabGradient4 = new WeifenLuo.WinFormsUI.Docking.TabGradient();
+            WeifenLuo.WinFormsUI.Docking.TabGradient tabGradient5 = new WeifenLuo.WinFormsUI.Docking.TabGradient();
+            WeifenLuo.WinFormsUI.Docking.DockPanelGradient dockPanelGradient3 = new WeifenLuo.WinFormsUI.Docking.DockPanelGradient();
+            WeifenLuo.WinFormsUI.Docking.TabGradient tabGradient6 = new WeifenLuo.WinFormsUI.Docking.TabGradient();
+            WeifenLuo.WinFormsUI.Docking.TabGradient tabGradient7 = new WeifenLuo.WinFormsUI.Docking.TabGradient();
             this.menuStrip = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveMapToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -81,6 +81,7 @@ namespace Intersect_Editor.Forms
             this.classEditorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.questEditorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.projectileEditorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.commonEventEditorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
@@ -115,7 +116,8 @@ namespace Intersect_Editor.Forms
             this.toolStripLabelFPS = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripSeparator9 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripLabelDebug = new System.Windows.Forms.ToolStripStatusLabel();
-            this.commonEventEditorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.switchVariableEditorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.shopEditorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip.SuspendLayout();
             this.toolStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
@@ -354,7 +356,9 @@ namespace Intersect_Editor.Forms
             this.classEditorToolStripMenuItem,
             this.questEditorToolStripMenuItem,
             this.projectileEditorToolStripMenuItem,
-            this.commonEventEditorToolStripMenuItem});
+            this.commonEventEditorToolStripMenuItem,
+            this.switchVariableEditorToolStripMenuItem,
+            this.shopEditorToolStripMenuItem});
             this.contentEditorsToolStripMenuItem.Name = "contentEditorsToolStripMenuItem";
             this.contentEditorsToolStripMenuItem.Size = new System.Drawing.Size(101, 20);
             this.contentEditorsToolStripMenuItem.Text = "Content Editors";
@@ -362,42 +366,42 @@ namespace Intersect_Editor.Forms
             // itemEditorToolStripMenuItem
             // 
             this.itemEditorToolStripMenuItem.Name = "itemEditorToolStripMenuItem";
-            this.itemEditorToolStripMenuItem.Size = new System.Drawing.Size(191, 22);
+            this.itemEditorToolStripMenuItem.Size = new System.Drawing.Size(210, 22);
             this.itemEditorToolStripMenuItem.Text = "Item Editor";
             this.itemEditorToolStripMenuItem.Click += new System.EventHandler(this.itemEditorToolStripMenuItem_Click);
             // 
             // npcEditorToolStripMenuItem
             // 
             this.npcEditorToolStripMenuItem.Name = "npcEditorToolStripMenuItem";
-            this.npcEditorToolStripMenuItem.Size = new System.Drawing.Size(191, 22);
+            this.npcEditorToolStripMenuItem.Size = new System.Drawing.Size(210, 22);
             this.npcEditorToolStripMenuItem.Text = "Npc Editor";
             this.npcEditorToolStripMenuItem.Click += new System.EventHandler(this.npcEditorToolStripMenuItem_Click);
             // 
             // spellEditorToolStripMenuItem
             // 
             this.spellEditorToolStripMenuItem.Name = "spellEditorToolStripMenuItem";
-            this.spellEditorToolStripMenuItem.Size = new System.Drawing.Size(191, 22);
+            this.spellEditorToolStripMenuItem.Size = new System.Drawing.Size(210, 22);
             this.spellEditorToolStripMenuItem.Text = "Spell Editor";
             this.spellEditorToolStripMenuItem.Click += new System.EventHandler(this.spellEditorToolStripMenuItem_Click);
             // 
             // animationEditorToolStripMenuItem
             // 
             this.animationEditorToolStripMenuItem.Name = "animationEditorToolStripMenuItem";
-            this.animationEditorToolStripMenuItem.Size = new System.Drawing.Size(191, 22);
+            this.animationEditorToolStripMenuItem.Size = new System.Drawing.Size(210, 22);
             this.animationEditorToolStripMenuItem.Text = "Animation Editor";
             this.animationEditorToolStripMenuItem.Click += new System.EventHandler(this.animationEditorToolStripMenuItem_Click);
             // 
             // resourceEditorToolStripMenuItem
             // 
             this.resourceEditorToolStripMenuItem.Name = "resourceEditorToolStripMenuItem";
-            this.resourceEditorToolStripMenuItem.Size = new System.Drawing.Size(191, 22);
+            this.resourceEditorToolStripMenuItem.Size = new System.Drawing.Size(210, 22);
             this.resourceEditorToolStripMenuItem.Text = "Resource Editor";
             this.resourceEditorToolStripMenuItem.Click += new System.EventHandler(this.resourceEditorToolStripMenuItem_Click);
             // 
             // classEditorToolStripMenuItem
             // 
             this.classEditorToolStripMenuItem.Name = "classEditorToolStripMenuItem";
-            this.classEditorToolStripMenuItem.Size = new System.Drawing.Size(191, 22);
+            this.classEditorToolStripMenuItem.Size = new System.Drawing.Size(210, 22);
             this.classEditorToolStripMenuItem.Text = "Class Editor";
             this.classEditorToolStripMenuItem.Click += new System.EventHandler(this.classEditorToolStripMenuItem_Click);
             // 
@@ -405,16 +409,23 @@ namespace Intersect_Editor.Forms
             // 
             this.questEditorToolStripMenuItem.Enabled = false;
             this.questEditorToolStripMenuItem.Name = "questEditorToolStripMenuItem";
-            this.questEditorToolStripMenuItem.Size = new System.Drawing.Size(191, 22);
+            this.questEditorToolStripMenuItem.Size = new System.Drawing.Size(210, 22);
             this.questEditorToolStripMenuItem.Text = "Quest Editor";
             this.questEditorToolStripMenuItem.Click += new System.EventHandler(this.questEditorToolStripMenuItem_Click);
             // 
             // projectileEditorToolStripMenuItem
             // 
             this.projectileEditorToolStripMenuItem.Name = "projectileEditorToolStripMenuItem";
-            this.projectileEditorToolStripMenuItem.Size = new System.Drawing.Size(191, 22);
+            this.projectileEditorToolStripMenuItem.Size = new System.Drawing.Size(210, 22);
             this.projectileEditorToolStripMenuItem.Text = "Projectile Editor";
             this.projectileEditorToolStripMenuItem.Click += new System.EventHandler(this.projectileEditorToolStripMenuItem_Click);
+            // 
+            // commonEventEditorToolStripMenuItem
+            // 
+            this.commonEventEditorToolStripMenuItem.Name = "commonEventEditorToolStripMenuItem";
+            this.commonEventEditorToolStripMenuItem.Size = new System.Drawing.Size(210, 22);
+            this.commonEventEditorToolStripMenuItem.Text = "Common Event Editor";
+            this.commonEventEditorToolStripMenuItem.Click += new System.EventHandler(this.commonEventEditorToolStripMenuItem_Click);
             // 
             // helpToolStripMenuItem
             // 
@@ -659,52 +670,52 @@ namespace Intersect_Editor.Forms
             this.dockLeft.Location = new System.Drawing.Point(0, 49);
             this.dockLeft.Name = "dockLeft";
             this.dockLeft.Size = new System.Drawing.Size(1186, 610);
-            dockPanelGradient4.EndColor = System.Drawing.SystemColors.ControlLight;
-            dockPanelGradient4.StartColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(122)))), ((int)(((byte)(204)))));
-            autoHideStripSkin2.DockStripGradient = dockPanelGradient4;
-            tabGradient8.EndColor = System.Drawing.SystemColors.Control;
-            tabGradient8.StartColor = System.Drawing.SystemColors.Control;
-            tabGradient8.TextColor = System.Drawing.SystemColors.ControlDarkDark;
-            autoHideStripSkin2.TabGradient = tabGradient8;
-            autoHideStripSkin2.TextFont = new System.Drawing.Font("Segoe UI", 9F);
-            dockPanelSkin2.AutoHideStripSkin = autoHideStripSkin2;
-            tabGradient9.EndColor = System.Drawing.Color.FromArgb(((int)(((byte)(204)))), ((int)(((byte)(206)))), ((int)(((byte)(219)))));
-            tabGradient9.StartColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(122)))), ((int)(((byte)(204)))));
-            tabGradient9.TextColor = System.Drawing.Color.White;
-            dockPaneStripGradient2.ActiveTabGradient = tabGradient9;
-            dockPanelGradient5.EndColor = System.Drawing.SystemColors.Control;
-            dockPanelGradient5.StartColor = System.Drawing.SystemColors.Control;
-            dockPaneStripGradient2.DockStripGradient = dockPanelGradient5;
-            tabGradient10.EndColor = System.Drawing.Color.FromArgb(((int)(((byte)(28)))), ((int)(((byte)(151)))), ((int)(((byte)(234)))));
-            tabGradient10.StartColor = System.Drawing.SystemColors.Control;
-            tabGradient10.TextColor = System.Drawing.Color.Black;
-            dockPaneStripGradient2.InactiveTabGradient = tabGradient10;
-            dockPaneStripSkin2.DocumentGradient = dockPaneStripGradient2;
-            dockPaneStripSkin2.TextFont = new System.Drawing.Font("Segoe UI", 9F);
-            tabGradient11.EndColor = System.Drawing.Color.FromArgb(((int)(((byte)(80)))), ((int)(((byte)(170)))), ((int)(((byte)(220)))));
-            tabGradient11.LinearGradientMode = System.Drawing.Drawing2D.LinearGradientMode.Vertical;
-            tabGradient11.StartColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(122)))), ((int)(((byte)(204)))));
-            tabGradient11.TextColor = System.Drawing.Color.White;
-            dockPaneStripToolWindowGradient2.ActiveCaptionGradient = tabGradient11;
-            tabGradient12.EndColor = System.Drawing.SystemColors.ControlLightLight;
-            tabGradient12.StartColor = System.Drawing.SystemColors.ControlLightLight;
-            tabGradient12.TextColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(122)))), ((int)(((byte)(204)))));
-            dockPaneStripToolWindowGradient2.ActiveTabGradient = tabGradient12;
-            dockPanelGradient6.EndColor = System.Drawing.SystemColors.Control;
-            dockPanelGradient6.StartColor = System.Drawing.SystemColors.Control;
-            dockPaneStripToolWindowGradient2.DockStripGradient = dockPanelGradient6;
-            tabGradient13.EndColor = System.Drawing.SystemColors.ControlDark;
-            tabGradient13.LinearGradientMode = System.Drawing.Drawing2D.LinearGradientMode.Vertical;
-            tabGradient13.StartColor = System.Drawing.SystemColors.Control;
-            tabGradient13.TextColor = System.Drawing.SystemColors.GrayText;
-            dockPaneStripToolWindowGradient2.InactiveCaptionGradient = tabGradient13;
-            tabGradient14.EndColor = System.Drawing.SystemColors.Control;
-            tabGradient14.StartColor = System.Drawing.SystemColors.Control;
-            tabGradient14.TextColor = System.Drawing.SystemColors.GrayText;
-            dockPaneStripToolWindowGradient2.InactiveTabGradient = tabGradient14;
-            dockPaneStripSkin2.ToolWindowGradient = dockPaneStripToolWindowGradient2;
-            dockPanelSkin2.DockPaneStripSkin = dockPaneStripSkin2;
-            this.dockLeft.Skin = dockPanelSkin2;
+            dockPanelGradient1.EndColor = System.Drawing.SystemColors.ControlLight;
+            dockPanelGradient1.StartColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(122)))), ((int)(((byte)(204)))));
+            autoHideStripSkin1.DockStripGradient = dockPanelGradient1;
+            tabGradient1.EndColor = System.Drawing.SystemColors.Control;
+            tabGradient1.StartColor = System.Drawing.SystemColors.Control;
+            tabGradient1.TextColor = System.Drawing.SystemColors.ControlDarkDark;
+            autoHideStripSkin1.TabGradient = tabGradient1;
+            autoHideStripSkin1.TextFont = new System.Drawing.Font("Segoe UI", 9F);
+            dockPanelSkin1.AutoHideStripSkin = autoHideStripSkin1;
+            tabGradient2.EndColor = System.Drawing.Color.FromArgb(((int)(((byte)(204)))), ((int)(((byte)(206)))), ((int)(((byte)(219)))));
+            tabGradient2.StartColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(122)))), ((int)(((byte)(204)))));
+            tabGradient2.TextColor = System.Drawing.Color.White;
+            dockPaneStripGradient1.ActiveTabGradient = tabGradient2;
+            dockPanelGradient2.EndColor = System.Drawing.SystemColors.Control;
+            dockPanelGradient2.StartColor = System.Drawing.SystemColors.Control;
+            dockPaneStripGradient1.DockStripGradient = dockPanelGradient2;
+            tabGradient3.EndColor = System.Drawing.Color.FromArgb(((int)(((byte)(28)))), ((int)(((byte)(151)))), ((int)(((byte)(234)))));
+            tabGradient3.StartColor = System.Drawing.SystemColors.Control;
+            tabGradient3.TextColor = System.Drawing.Color.Black;
+            dockPaneStripGradient1.InactiveTabGradient = tabGradient3;
+            dockPaneStripSkin1.DocumentGradient = dockPaneStripGradient1;
+            dockPaneStripSkin1.TextFont = new System.Drawing.Font("Segoe UI", 9F);
+            tabGradient4.EndColor = System.Drawing.Color.FromArgb(((int)(((byte)(80)))), ((int)(((byte)(170)))), ((int)(((byte)(220)))));
+            tabGradient4.LinearGradientMode = System.Drawing.Drawing2D.LinearGradientMode.Vertical;
+            tabGradient4.StartColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(122)))), ((int)(((byte)(204)))));
+            tabGradient4.TextColor = System.Drawing.Color.White;
+            dockPaneStripToolWindowGradient1.ActiveCaptionGradient = tabGradient4;
+            tabGradient5.EndColor = System.Drawing.SystemColors.ControlLightLight;
+            tabGradient5.StartColor = System.Drawing.SystemColors.ControlLightLight;
+            tabGradient5.TextColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(122)))), ((int)(((byte)(204)))));
+            dockPaneStripToolWindowGradient1.ActiveTabGradient = tabGradient5;
+            dockPanelGradient3.EndColor = System.Drawing.SystemColors.Control;
+            dockPanelGradient3.StartColor = System.Drawing.SystemColors.Control;
+            dockPaneStripToolWindowGradient1.DockStripGradient = dockPanelGradient3;
+            tabGradient6.EndColor = System.Drawing.SystemColors.ControlDark;
+            tabGradient6.LinearGradientMode = System.Drawing.Drawing2D.LinearGradientMode.Vertical;
+            tabGradient6.StartColor = System.Drawing.SystemColors.Control;
+            tabGradient6.TextColor = System.Drawing.SystemColors.GrayText;
+            dockPaneStripToolWindowGradient1.InactiveCaptionGradient = tabGradient6;
+            tabGradient7.EndColor = System.Drawing.SystemColors.Control;
+            tabGradient7.StartColor = System.Drawing.SystemColors.Control;
+            tabGradient7.TextColor = System.Drawing.SystemColors.GrayText;
+            dockPaneStripToolWindowGradient1.InactiveTabGradient = tabGradient7;
+            dockPaneStripSkin1.ToolWindowGradient = dockPaneStripToolWindowGradient1;
+            dockPanelSkin1.DockPaneStripSkin = dockPaneStripSkin1;
+            this.dockLeft.Skin = dockPanelSkin1;
             this.dockLeft.SupportDeeplyNestedContent = true;
             this.dockLeft.TabIndex = 7;
             this.dockLeft.Theme = this.vS2012LightTheme1;
@@ -763,12 +774,19 @@ namespace Intersect_Editor.Forms
             this.toolStripLabelDebug.Name = "toolStripLabelDebug";
             this.toolStripLabelDebug.Size = new System.Drawing.Size(0, 18);
             // 
-            // commonEventEditorToolStripMenuItem
+            // switchVariableEditorToolStripMenuItem
             // 
-            this.commonEventEditorToolStripMenuItem.Name = "commonEventEditorToolStripMenuItem";
-            this.commonEventEditorToolStripMenuItem.Size = new System.Drawing.Size(191, 22);
-            this.commonEventEditorToolStripMenuItem.Text = "Common Event Editor";
-            this.commonEventEditorToolStripMenuItem.Click += new System.EventHandler(this.commonEventEditorToolStripMenuItem_Click);
+            this.switchVariableEditorToolStripMenuItem.Name = "switchVariableEditorToolStripMenuItem";
+            this.switchVariableEditorToolStripMenuItem.Size = new System.Drawing.Size(210, 22);
+            this.switchVariableEditorToolStripMenuItem.Text = "Switch and Variable Editor";
+            this.switchVariableEditorToolStripMenuItem.Click += new System.EventHandler(this.switchVariableEditorToolStripMenuItem_Click);
+            // 
+            // shopEditorToolStripMenuItem
+            // 
+            this.shopEditorToolStripMenuItem.Name = "shopEditorToolStripMenuItem";
+            this.shopEditorToolStripMenuItem.Size = new System.Drawing.Size(210, 22);
+            this.shopEditorToolStripMenuItem.Text = "Shop Editor";
+            this.shopEditorToolStripMenuItem.Click += new System.EventHandler(this.shopEditorToolStripMenuItem_Click);
             // 
             // frmMain
             // 
@@ -871,6 +889,8 @@ namespace Intersect_Editor.Forms
         private ToolStripMenuItem projectileEditorToolStripMenuItem;
         private ToolStripMenuItem mapGridToolStripMenuItem;
         private ToolStripMenuItem commonEventEditorToolStripMenuItem;
+        private ToolStripMenuItem switchVariableEditorToolStripMenuItem;
+        private ToolStripMenuItem shopEditorToolStripMenuItem;
     }
 }
 

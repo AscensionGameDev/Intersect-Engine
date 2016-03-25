@@ -34,6 +34,10 @@ namespace Intersect_Editor.Classes
         public const int MaxQuests = 255;
         public const int MaxProjectiles = 255;
         public const int MaxCommonEvents = 255;
+        public const int MaxServerVariables = 100;
+        public const int MaxServerSwitches = 100;
+        public const int MaxPlayerVariables = 100;
+        public const int MaxPlayerSwitches = 100;
 
         public const int LayerCount = 5;
 
@@ -59,8 +63,5 @@ namespace Intersect_Editor.Classes
         public const byte RenderStateNone = 0;
         public const byte RenderStateNormal = 1;
         public const byte RenderStateAutotile = 2;
-
-        public const int VariableCount = 100;
-        public const int SwitchCount = 100;
     }
 }

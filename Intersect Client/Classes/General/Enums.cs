@@ -94,6 +94,10 @@ namespace Intersect_Client.Classes.General
             LinkMap,
             OpenCommonEventEditor,
             SaveCommonEvent,
+            OpenSwitchVariableEditor,
+            SaveSwitchVariable,
+            OpenShopEditor,
+            SaveShop
         }
 
         public enum ServerPackets
@@ -159,6 +163,10 @@ namespace Intersect_Client.Classes.General
             StopSounds,
             OpenCommonEventEditor,
             CommonEventData,
+            OpenSwitchVariableEditor,
+            SwitchVariableData,
+            OpenShopEditor,
+            ShopData,
         }
 
         public enum Stats

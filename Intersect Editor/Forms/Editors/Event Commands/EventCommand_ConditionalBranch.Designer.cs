@@ -29,6 +29,22 @@
         private void InitializeComponent()
         {
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.btnSave = new System.Windows.Forms.Button();
+            this.grpPlayerVariable = new System.Windows.Forms.GroupBox();
+            this.txtVariableVal = new System.Windows.Forms.TextBox();
+            this.label6 = new System.Windows.Forms.Label();
+            this.cmbVariableMod = new System.Windows.Forms.ComboBox();
+            this.label4 = new System.Windows.Forms.Label();
+            this.cmbVariable = new System.Windows.Forms.ComboBox();
+            this.label5 = new System.Windows.Forms.Label();
+            this.grpSwitch = new System.Windows.Forms.GroupBox();
+            this.cmbSwitchVal = new System.Windows.Forms.ComboBox();
+            this.label3 = new System.Windows.Forms.Label();
+            this.cmbSwitch = new System.Windows.Forms.ComboBox();
+            this.label2 = new System.Windows.Forms.Label();
+            this.cmbConditionType = new System.Windows.Forms.ComboBox();
+            this.label1 = new System.Windows.Forms.Label();
+            this.btnCancel = new System.Windows.Forms.Button();
             this.grpSelfSwitch = new System.Windows.Forms.GroupBox();
             this.cmbSelfSwitchVal = new System.Windows.Forms.ComboBox();
             this.label11 = new System.Windows.Forms.Label();
@@ -50,30 +66,14 @@
             this.cmbItem = new System.Windows.Forms.ComboBox();
             this.label8 = new System.Windows.Forms.Label();
             this.lblItemQuantity = new System.Windows.Forms.Label();
-            this.grpPlayerVariable = new System.Windows.Forms.GroupBox();
-            this.txtVariableVal = new System.Windows.Forms.TextBox();
-            this.label6 = new System.Windows.Forms.Label();
-            this.cmbVariableMod = new System.Windows.Forms.ComboBox();
-            this.label4 = new System.Windows.Forms.Label();
-            this.cmbVariable = new System.Windows.Forms.ComboBox();
-            this.label5 = new System.Windows.Forms.Label();
-            this.grpSwitch = new System.Windows.Forms.GroupBox();
-            this.cmbSwitchVal = new System.Windows.Forms.ComboBox();
-            this.label3 = new System.Windows.Forms.Label();
-            this.cmbSwitch = new System.Windows.Forms.ComboBox();
-            this.label2 = new System.Windows.Forms.Label();
-            this.cmbConditionType = new System.Windows.Forms.ComboBox();
-            this.label1 = new System.Windows.Forms.Label();
-            this.btnCancel = new System.Windows.Forms.Button();
-            this.btnSave = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
+            this.grpPlayerVariable.SuspendLayout();
+            this.grpSwitch.SuspendLayout();
             this.grpSelfSwitch.SuspendLayout();
             this.grpLevel.SuspendLayout();
             this.grpClass.SuspendLayout();
             this.grpSpell.SuspendLayout();
             this.grpHasItem.SuspendLayout();
-            this.grpPlayerVariable.SuspendLayout();
-            this.grpSwitch.SuspendLayout();
             this.SuspendLayout();
             // 
             // groupBox1
@@ -95,6 +95,181 @@
             this.groupBox1.TabIndex = 17;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Conditional";
+            // 
+            // btnSave
+            // 
+            this.btnSave.Location = new System.Drawing.Point(9, 168);
+            this.btnSave.Name = "btnSave";
+            this.btnSave.Size = new System.Drawing.Size(75, 23);
+            this.btnSave.TabIndex = 19;
+            this.btnSave.Text = "Ok";
+            this.btnSave.UseVisualStyleBackColor = true;
+            this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
+            // 
+            // grpPlayerVariable
+            // 
+            this.grpPlayerVariable.Controls.Add(this.txtVariableVal);
+            this.grpPlayerVariable.Controls.Add(this.label6);
+            this.grpPlayerVariable.Controls.Add(this.cmbVariableMod);
+            this.grpPlayerVariable.Controls.Add(this.label4);
+            this.grpPlayerVariable.Controls.Add(this.cmbVariable);
+            this.grpPlayerVariable.Controls.Add(this.label5);
+            this.grpPlayerVariable.Location = new System.Drawing.Point(9, 40);
+            this.grpPlayerVariable.Name = "grpPlayerVariable";
+            this.grpPlayerVariable.Size = new System.Drawing.Size(236, 122);
+            this.grpPlayerVariable.TabIndex = 24;
+            this.grpPlayerVariable.TabStop = false;
+            this.grpPlayerVariable.Text = "Player Variable";
+            // 
+            // txtVariableVal
+            // 
+            this.txtVariableVal.Location = new System.Drawing.Point(79, 89);
+            this.txtVariableVal.Name = "txtVariableVal";
+            this.txtVariableVal.Size = new System.Drawing.Size(141, 20);
+            this.txtVariableVal.TabIndex = 5;
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(7, 92);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(37, 13);
+            this.label6.TabIndex = 4;
+            this.label6.Text = "Value:";
+            // 
+            // cmbVariableMod
+            // 
+            this.cmbVariableMod.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbVariableMod.FormattingEnabled = true;
+            this.cmbVariableMod.Items.AddRange(new object[] {
+            "Equal To",
+            "Greater Than or Equal To",
+            "Less Than or Equal To",
+            "Greater Than",
+            "Less Than",
+            "Does Not Equal"});
+            this.cmbVariableMod.Location = new System.Drawing.Point(79, 52);
+            this.cmbVariableMod.Name = "cmbVariableMod";
+            this.cmbVariableMod.Size = new System.Drawing.Size(141, 21);
+            this.cmbVariableMod.TabIndex = 3;
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(7, 55);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(61, 13);
+            this.label4.TabIndex = 2;
+            this.label4.Text = "Comparator";
+            // 
+            // cmbVariable
+            // 
+            this.cmbVariable.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbVariable.FormattingEnabled = true;
+            this.cmbVariable.Location = new System.Drawing.Point(79, 17);
+            this.cmbVariable.Name = "cmbVariable";
+            this.cmbVariable.Size = new System.Drawing.Size(141, 21);
+            this.cmbVariable.TabIndex = 1;
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(7, 20);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(45, 13);
+            this.label5.TabIndex = 0;
+            this.label5.Text = "Variable";
+            // 
+            // grpSwitch
+            // 
+            this.grpSwitch.Controls.Add(this.cmbSwitchVal);
+            this.grpSwitch.Controls.Add(this.label3);
+            this.grpSwitch.Controls.Add(this.cmbSwitch);
+            this.grpSwitch.Controls.Add(this.label2);
+            this.grpSwitch.Location = new System.Drawing.Point(9, 40);
+            this.grpSwitch.Name = "grpSwitch";
+            this.grpSwitch.Size = new System.Drawing.Size(236, 89);
+            this.grpSwitch.TabIndex = 23;
+            this.grpSwitch.TabStop = false;
+            this.grpSwitch.Text = "Player Switch";
+            // 
+            // cmbSwitchVal
+            // 
+            this.cmbSwitchVal.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbSwitchVal.FormattingEnabled = true;
+            this.cmbSwitchVal.Items.AddRange(new object[] {
+            "False",
+            "True"});
+            this.cmbSwitchVal.Location = new System.Drawing.Point(79, 52);
+            this.cmbSwitchVal.Name = "cmbSwitchVal";
+            this.cmbSwitchVal.Size = new System.Drawing.Size(141, 21);
+            this.cmbSwitchVal.TabIndex = 3;
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(10, 55);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(21, 13);
+            this.label3.TabIndex = 2;
+            this.label3.Text = "Is: ";
+            // 
+            // cmbSwitch
+            // 
+            this.cmbSwitch.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbSwitch.FormattingEnabled = true;
+            this.cmbSwitch.Location = new System.Drawing.Point(79, 17);
+            this.cmbSwitch.Name = "cmbSwitch";
+            this.cmbSwitch.Size = new System.Drawing.Size(141, 21);
+            this.cmbSwitch.TabIndex = 1;
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(7, 20);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(45, 13);
+            this.label2.TabIndex = 0;
+            this.label2.Text = "Switch: ";
+            // 
+            // cmbConditionType
+            // 
+            this.cmbConditionType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbConditionType.FormattingEnabled = true;
+            this.cmbConditionType.Items.AddRange(new object[] {
+            "Player Switch is...",
+            "Player Variable is...",
+            "Global Switch is...",
+            "Global Variable is...",
+            "Has item...",
+            "Class is...",
+            "Knows spell...",
+            "Level is....",
+            "Self Switch is...."});
+            this.cmbConditionType.Location = new System.Drawing.Point(88, 13);
+            this.cmbConditionType.Name = "cmbConditionType";
+            this.cmbConditionType.Size = new System.Drawing.Size(157, 21);
+            this.cmbConditionType.TabIndex = 22;
+            this.cmbConditionType.SelectedIndexChanged += new System.EventHandler(this.cmbConditionType_SelectedIndexChanged);
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(6, 16);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(81, 13);
+            this.label1.TabIndex = 21;
+            this.label1.Text = "Condition Type:";
+            // 
+            // btnCancel
+            // 
+            this.btnCancel.Location = new System.Drawing.Point(90, 168);
+            this.btnCancel.Name = "btnCancel";
+            this.btnCancel.Size = new System.Drawing.Size(75, 23);
+            this.btnCancel.TabIndex = 20;
+            this.btnCancel.Text = "Cancel";
+            this.btnCancel.UseVisualStyleBackColor = true;
+            this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
             // 
             // grpSelfSwitch
             // 
@@ -339,179 +514,6 @@
             this.lblItemQuantity.TabIndex = 0;
             this.lblItemQuantity.Text = "Has at least: 1";
             // 
-            // grpPlayerVariable
-            // 
-            this.grpPlayerVariable.Controls.Add(this.txtVariableVal);
-            this.grpPlayerVariable.Controls.Add(this.label6);
-            this.grpPlayerVariable.Controls.Add(this.cmbVariableMod);
-            this.grpPlayerVariable.Controls.Add(this.label4);
-            this.grpPlayerVariable.Controls.Add(this.cmbVariable);
-            this.grpPlayerVariable.Controls.Add(this.label5);
-            this.grpPlayerVariable.Location = new System.Drawing.Point(9, 40);
-            this.grpPlayerVariable.Name = "grpPlayerVariable";
-            this.grpPlayerVariable.Size = new System.Drawing.Size(236, 122);
-            this.grpPlayerVariable.TabIndex = 24;
-            this.grpPlayerVariable.TabStop = false;
-            this.grpPlayerVariable.Text = "Player Variable";
-            // 
-            // txtVariableVal
-            // 
-            this.txtVariableVal.Location = new System.Drawing.Point(79, 89);
-            this.txtVariableVal.Name = "txtVariableVal";
-            this.txtVariableVal.Size = new System.Drawing.Size(141, 20);
-            this.txtVariableVal.TabIndex = 5;
-            // 
-            // label6
-            // 
-            this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(7, 92);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(37, 13);
-            this.label6.TabIndex = 4;
-            this.label6.Text = "Value:";
-            // 
-            // cmbVariableMod
-            // 
-            this.cmbVariableMod.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cmbVariableMod.FormattingEnabled = true;
-            this.cmbVariableMod.Items.AddRange(new object[] {
-            "Equal To",
-            "Greater Than or Equal To",
-            "Less Than or Equal To",
-            "Greater Than",
-            "Less Than",
-            "Does Not Equal"});
-            this.cmbVariableMod.Location = new System.Drawing.Point(79, 52);
-            this.cmbVariableMod.Name = "cmbVariableMod";
-            this.cmbVariableMod.Size = new System.Drawing.Size(141, 21);
-            this.cmbVariableMod.TabIndex = 3;
-            // 
-            // label4
-            // 
-            this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(7, 55);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(61, 13);
-            this.label4.TabIndex = 2;
-            this.label4.Text = "Comparator";
-            // 
-            // cmbVariable
-            // 
-            this.cmbVariable.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cmbVariable.FormattingEnabled = true;
-            this.cmbVariable.Location = new System.Drawing.Point(79, 17);
-            this.cmbVariable.Name = "cmbVariable";
-            this.cmbVariable.Size = new System.Drawing.Size(141, 21);
-            this.cmbVariable.TabIndex = 1;
-            // 
-            // label5
-            // 
-            this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(7, 20);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(45, 13);
-            this.label5.TabIndex = 0;
-            this.label5.Text = "Variable";
-            // 
-            // grpSwitch
-            // 
-            this.grpSwitch.Controls.Add(this.cmbSwitchVal);
-            this.grpSwitch.Controls.Add(this.label3);
-            this.grpSwitch.Controls.Add(this.cmbSwitch);
-            this.grpSwitch.Controls.Add(this.label2);
-            this.grpSwitch.Location = new System.Drawing.Point(9, 40);
-            this.grpSwitch.Name = "grpSwitch";
-            this.grpSwitch.Size = new System.Drawing.Size(236, 89);
-            this.grpSwitch.TabIndex = 23;
-            this.grpSwitch.TabStop = false;
-            this.grpSwitch.Text = "Player Switch";
-            // 
-            // cmbSwitchVal
-            // 
-            this.cmbSwitchVal.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cmbSwitchVal.FormattingEnabled = true;
-            this.cmbSwitchVal.Items.AddRange(new object[] {
-            "False",
-            "True"});
-            this.cmbSwitchVal.Location = new System.Drawing.Point(79, 52);
-            this.cmbSwitchVal.Name = "cmbSwitchVal";
-            this.cmbSwitchVal.Size = new System.Drawing.Size(141, 21);
-            this.cmbSwitchVal.TabIndex = 3;
-            // 
-            // label3
-            // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(10, 55);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(21, 13);
-            this.label3.TabIndex = 2;
-            this.label3.Text = "Is: ";
-            // 
-            // cmbSwitch
-            // 
-            this.cmbSwitch.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cmbSwitch.FormattingEnabled = true;
-            this.cmbSwitch.Location = new System.Drawing.Point(79, 17);
-            this.cmbSwitch.Name = "cmbSwitch";
-            this.cmbSwitch.Size = new System.Drawing.Size(141, 21);
-            this.cmbSwitch.TabIndex = 1;
-            // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(7, 20);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(45, 13);
-            this.label2.TabIndex = 0;
-            this.label2.Text = "Switch: ";
-            // 
-            // cmbConditionType
-            // 
-            this.cmbConditionType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cmbConditionType.FormattingEnabled = true;
-            this.cmbConditionType.Items.AddRange(new object[] {
-            "Player Switch is...",
-            "Player Variable is...",
-            "Has item...",
-            "Class is...",
-            "Knows spell...",
-            "Level is....",
-            "Self Switch is...."});
-            this.cmbConditionType.Location = new System.Drawing.Point(88, 13);
-            this.cmbConditionType.Name = "cmbConditionType";
-            this.cmbConditionType.Size = new System.Drawing.Size(157, 21);
-            this.cmbConditionType.TabIndex = 22;
-            this.cmbConditionType.SelectedIndexChanged += new System.EventHandler(this.cmbConditionType_SelectedIndexChanged);
-            // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(6, 16);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(81, 13);
-            this.label1.TabIndex = 21;
-            this.label1.Text = "Condition Type:";
-            // 
-            // btnCancel
-            // 
-            this.btnCancel.Location = new System.Drawing.Point(90, 168);
-            this.btnCancel.Name = "btnCancel";
-            this.btnCancel.Size = new System.Drawing.Size(75, 23);
-            this.btnCancel.TabIndex = 20;
-            this.btnCancel.Text = "Cancel";
-            this.btnCancel.UseVisualStyleBackColor = true;
-            this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
-            // 
-            // btnSave
-            // 
-            this.btnSave.Location = new System.Drawing.Point(9, 168);
-            this.btnSave.Name = "btnSave";
-            this.btnSave.Size = new System.Drawing.Size(75, 23);
-            this.btnSave.TabIndex = 19;
-            this.btnSave.Text = "Ok";
-            this.btnSave.UseVisualStyleBackColor = true;
-            this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
-            // 
             // EventCommand_ConditionalBranch
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -522,6 +524,10 @@
             this.Size = new System.Drawing.Size(267, 208);
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
+            this.grpPlayerVariable.ResumeLayout(false);
+            this.grpPlayerVariable.PerformLayout();
+            this.grpSwitch.ResumeLayout(false);
+            this.grpSwitch.PerformLayout();
             this.grpSelfSwitch.ResumeLayout(false);
             this.grpSelfSwitch.PerformLayout();
             this.grpLevel.ResumeLayout(false);
@@ -532,10 +538,6 @@
             this.grpSpell.PerformLayout();
             this.grpHasItem.ResumeLayout(false);
             this.grpHasItem.PerformLayout();
-            this.grpPlayerVariable.ResumeLayout(false);
-            this.grpPlayerVariable.PerformLayout();
-            this.grpSwitch.ResumeLayout(false);
-            this.grpSwitch.PerformLayout();
             this.ResumeLayout(false);
 
         }

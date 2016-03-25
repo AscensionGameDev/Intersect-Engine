@@ -81,6 +81,10 @@ namespace Intersect_Editor.Classes
             LinkMap,
             OpenCommonEventEditor,
             SaveCommonEvent,
+            OpenSwitchVariableEditor,
+            SaveSwitchVariable,
+            OpenShopEditor,
+            SaveShop
         }
 
         public enum ServerPackets
@@ -146,6 +150,10 @@ namespace Intersect_Editor.Classes
             StopSounds,
             OpenCommonEventEditor,
             CommonEventData,
+            OpenSwitchVariableEditor,
+            SwitchVariableData,
+            OpenShopEditor,
+            ShopData,
         }
 
         public enum Stats
@@ -186,6 +194,8 @@ namespace Intersect_Editor.Classes
             Projectile = 7,
             Event = 8,
             CommonEvent = 9,
+            SwitchVariable = 10,
+            Shop = 11,
         }
 
         public enum MapListUpdates
@@ -223,6 +233,14 @@ namespace Intersect_Editor.Classes
             Gray,
             Cyan,
             Pink,
+        }
+
+        public enum SwitchVariableTypes
+        {
+            PlayerSwitch = 0,
+            PlayerVariable,
+            ServerSwitch,
+            ServerVariable,
         }
 
         public enum MapZones

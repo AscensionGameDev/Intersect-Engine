@@ -190,6 +190,15 @@ namespace Intersect_Server.Classes
                 case Enums.ClientPackets.SaveCommonEvent:
                     HandleCommonEvent(client, packet);
                     break;
+                case Enums.ClientPackets.OpenSwitchVariableEditor:
+                    HandleOpenSwitchVariableEditor(client);
+                    break;
+                case Enums.ClientPackets.SaveSwitchVariable:
+                    HandleSaveSwitchVariables(client, packet);
+                    break;
+                case Enums.ClientPackets.OpenShopEditor:
+                    HandleOpenShopEditor(client);
+                    break;
                 default:
                     Globals.GeneralLogs.Add(@"Non implemented packet received: " + packetHeader);
                     break;
@@ -1283,6 +1292,58 @@ namespace Intersect_Server.Classes
             Globals.CommonEvents[index] = new EventStruct(index, bf, true);
             File.WriteAllBytes("Resources/Common Events/" + index + ".evt", Globals.CommonEvents[index].EventData());
             bf.Dispose();
+        }
+
+        private static void HandleOpenSwitchVariableEditor(Client client)
+        {
+            for (var i = 0; i < Constants.MaxCommonEvents; i++)
+            {
+                PacketSender.SendCommonEvent(client, i);
+            }
+            PacketSender.SendOpenSwitchVariableEditor(client);
+        }
+
+        private static void HandleSaveSwitchVariables(Client client, byte[] packet)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteBytes(packet);
+            var changeCount = bf.ReadInteger();
+            for (int i = 0; i < changeCount; i++)
+            {
+                var type = bf.ReadInteger();
+                var index = bf.ReadInteger();
+                switch (type)
+                {
+                    case (int)Enums.SwitchVariableTypes.PlayerSwitch:
+                        Globals.PlayerSwitches[index] = bf.ReadString();
+                        break;
+                    case (int)Enums.SwitchVariableTypes.PlayerVariable:
+                        Globals.PlayerVariables[index] = bf.ReadString();
+                        break;
+                    case (int)Enums.SwitchVariableTypes.ServerSwitch:
+                        Globals.ServerSwitches[index] = bf.ReadString();
+                        Globals.ServerSwitchValues[index] = Convert.ToBoolean(bf.ReadInteger());
+                        break;
+                    case (int)Enums.SwitchVariableTypes.ServerVariable:
+                        Globals.ServerVariables[index] = bf.ReadString();
+                        Globals.ServerVariableValues[index] = bf.ReadInteger();
+                        break;
+                }
+            }
+            Database.SaveSwitchesOrVariables(Globals.ServerSwitches, Globals.ServerSwitchValues, null, "Switch", "ServerSwitches", Constants.MaxServerSwitches);
+            Database.SaveSwitchesOrVariables(Globals.PlayerSwitches, null, null, "Switch", "PlayerSwitches", Constants.MaxPlayerSwitches);
+            Database.SaveSwitchesOrVariables(Globals.ServerVariables, null, Globals.ServerVariableValues, "Variable", "ServerVariables", Constants.MaxServerVariables);
+            Database.SaveSwitchesOrVariables(Globals.PlayerVariables, null, null, "Variable", "PlayerVariables", Constants.MaxPlayerVariables);
+            bf.Dispose();
+        }
+
+        private static void HandleOpenShopEditor(Client client)
+        {
+            for (var i = 0; i < Constants.MaxCommonEvents; i++)
+            {
+                //PacketSender.SendCommonEvent(client, i);
+            }
+            PacketSender.SendOpenShopEditor(client);
         }
     }
 }
