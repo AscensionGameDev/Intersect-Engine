@@ -366,6 +366,10 @@ namespace Intersect_Server.Classes
             {
                 SendProjectile(client, i);
             }
+            for (int i = 0; i < Constants.MaxShops; i++)
+            {
+                SendShop(client, i);
+            }
             if (client.IsEditor)
             {
                 for (int i = 0; i < Constants.MaxCommonEvents; i++)
@@ -1203,8 +1207,22 @@ namespace Intersect_Server.Classes
 
         public static void SendOpenShopEditor(Client client)
         {
+            for (int i = 0; i < Constants.MaxShops; i++)
+            {
+                SendShop(client, i);
+            }
             var bf = new ByteBuffer();
             bf.WriteLong((int)Enums.ServerPackets.OpenShopEditor);
+            client.SendPacket(bf.ToArray());
+            bf.Dispose();
+        }
+
+        public static void SendShop(Client client, int index)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteLong((int)Enums.ServerPackets.ShopData);
+            bf.WriteInteger(index);
+            bf.WriteBytes(Globals.GameShops[index].ShopData());
             client.SendPacket(bf.ToArray());
             bf.Dispose();
         }

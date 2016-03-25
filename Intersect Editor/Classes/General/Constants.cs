@@ -25,6 +25,7 @@ namespace Intersect_Editor.Classes
     {
         public const int MaxStats = 5;
         public const int MaxItems = 255;
+        public const int MaxShops = 255;
         public const int MaxNpcs = 255;
         public const int MaxNpcDrops = 10;
         public const int MaxSpells = 255;

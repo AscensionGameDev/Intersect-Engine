@@ -24,6 +24,7 @@ using Intersect_Editor.Forms;
 using System.Threading;
 using System.IO;
 using System.Windows.Forms;
+using Intersect_Editor.Classes.Game_Objects;
 
 namespace Intersect_Editor.Classes
 {
@@ -140,6 +141,9 @@ namespace Intersect_Editor.Classes
                     break;
                 case Enums.ServerPackets.OpenShopEditor:
                     HandleOpenShopEditor();
+                    break;
+                case Enums.ServerPackets.ShopData:
+                    HandleShopData(bf.ReadBytes(bf.Length()));
                     break;
                 default:
                     Console.WriteLine(@"Non implemented packet received: " + packetHeader);
@@ -517,6 +521,16 @@ namespace Intersect_Editor.Classes
 
         private static void HandleOpenShopEditor() { 
             Globals.MainForm.BeginInvoke(Globals.MainForm.EditorDelegate, (int)Enums.EditorTypes.Shop);
+        }
+
+        private static void HandleShopData(byte[] packet)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteBytes(packet);
+            var index = bf.ReadInteger();
+            Globals.GameShops[index] = new ShopStruct();
+            Globals.GameShops[index].Load(bf.ReadBytes(bf.Length()), index);
+            bf.Dispose();
         }
     }
 }

@@ -23,6 +23,8 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Xml;
+using Intersect_Editor.Classes.Game_Objects;
+
 namespace Intersect_Editor.Classes
 {
     public static class Database
@@ -40,6 +42,7 @@ namespace Intersect_Editor.Classes
             Globals.GameQuests = new QuestStruct[Constants.MaxQuests];
             Globals.GameProjectiles = new ProjectileStruct[Constants.MaxProjectiles];
             Globals.CommonEvents = new EventStruct[Constants.MaxCommonEvents];
+            Globals.GameShops = new ShopStruct[Constants.MaxShops];
 
             Globals.ServerSwitches = new string[Constants.MaxServerSwitches];
             Globals.ServerSwitchValues = new bool[Constants.MaxServerSwitches];

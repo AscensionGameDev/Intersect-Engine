@@ -25,6 +25,7 @@ using Intersect_Editor.Forms;
 using SFML.Graphics;
 using System.Collections.Generic;
 using System.Threading;
+using Intersect_Editor.Classes.Game_Objects;
 
 namespace Intersect_Editor.Classes
 {
@@ -58,6 +59,7 @@ namespace Intersect_Editor.Classes
         public static QuestStruct[] GameQuests;
         public static ProjectileStruct[] GameProjectiles;
         public static EventStruct[] CommonEvents;
+        public static ShopStruct[] GameShops;
 
         //Server Switches and Variables
         public static string[] ServerSwitches;

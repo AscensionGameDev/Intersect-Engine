@@ -199,6 +199,9 @@ namespace Intersect_Server.Classes
                 case Enums.ClientPackets.OpenShopEditor:
                     HandleOpenShopEditor(client);
                     break;
+                case Enums.ClientPackets.SaveShop:
+                    HandleSaveShop(client, packet);
+                    break;
                 default:
                     Globals.GeneralLogs.Add(@"Non implemented packet received: " + packetHeader);
                     break;
@@ -1330,20 +1333,27 @@ namespace Intersect_Server.Classes
                         break;
                 }
             }
-            Database.SaveSwitchesOrVariables(Globals.ServerSwitches, Globals.ServerSwitchValues, null, "Switch", "ServerSwitches", Constants.MaxServerSwitches);
-            Database.SaveSwitchesOrVariables(Globals.PlayerSwitches, null, null, "Switch", "PlayerSwitches", Constants.MaxPlayerSwitches);
-            Database.SaveSwitchesOrVariables(Globals.ServerVariables, null, Globals.ServerVariableValues, "Variable", "ServerVariables", Constants.MaxServerVariables);
-            Database.SaveSwitchesOrVariables(Globals.PlayerVariables, null, null, "Variable", "PlayerVariables", Constants.MaxPlayerVariables);
+            Database.SaveSwitchesAndVariables();
             bf.Dispose();
         }
 
         private static void HandleOpenShopEditor(Client client)
         {
-            for (var i = 0; i < Constants.MaxCommonEvents; i++)
+            for (var i = 0; i < Constants.MaxShops; i++)
             {
-                //PacketSender.SendCommonEvent(client, i);
+                PacketSender.SendShop(client, i);
             }
             PacketSender.SendOpenShopEditor(client);
+        }
+
+        private static void HandleSaveShop(Client client, byte[] packet)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteBytes(packet);
+            var index = bf.ReadInteger();
+            Globals.GameShops[index].Load(bf.ReadBytes(bf.Length()), index);
+            Globals.GameShops[index].Save(index);
+            bf.Dispose();
         }
     }
 }

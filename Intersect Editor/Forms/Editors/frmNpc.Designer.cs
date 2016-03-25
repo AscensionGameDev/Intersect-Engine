@@ -49,7 +49,6 @@
             this.scrlSpawnDuration = new System.Windows.Forms.HScrollBar();
             this.lblSpawnDuration = new System.Windows.Forms.Label();
             this.lblPic = new System.Windows.Forms.Label();
-            this.picNpc = new System.Windows.Forms.PictureBox();
             this.label2 = new System.Windows.Forms.Label();
             this.cmbBehavior = new System.Windows.Forms.ComboBox();
             this.label1 = new System.Windows.Forms.Label();
@@ -71,11 +70,12 @@
             this.lblDropItem = new System.Windows.Forms.Label();
             this.scrlDropIndex = new System.Windows.Forms.HScrollBar();
             this.lblDropIndex = new System.Windows.Forms.Label();
+            this.picNpc = new System.Windows.Forms.PictureBox();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.picNpc)).BeginInit();
             this.groupBox3.SuspendLayout();
             this.groupBox4.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.picNpc)).BeginInit();
             this.SuspendLayout();
             // 
             // lblSpd
@@ -294,15 +294,6 @@
             this.lblPic.Size = new System.Drawing.Size(37, 13);
             this.lblPic.TabIndex = 6;
             this.lblPic.Text = "Sprite:";
-            // 
-            // picNpc
-            // 
-            this.picNpc.BackColor = System.Drawing.Color.Black;
-            this.picNpc.Location = new System.Drawing.Point(6, 66);
-            this.picNpc.Name = "picNpc";
-            this.picNpc.Size = new System.Drawing.Size(64, 64);
-            this.picNpc.TabIndex = 4;
-            this.picNpc.TabStop = false;
             // 
             // label2
             // 
@@ -524,6 +515,15 @@
             this.lblDropIndex.TabIndex = 9;
             this.lblDropIndex.Text = "Drop Index: 1";
             // 
+            // picNpc
+            // 
+            this.picNpc.BackColor = System.Drawing.Color.Black;
+            this.picNpc.Location = new System.Drawing.Point(6, 66);
+            this.picNpc.Name = "picNpc";
+            this.picNpc.Size = new System.Drawing.Size(64, 64);
+            this.picNpc.TabIndex = 4;
+            this.picNpc.TabStop = false;
+            // 
             // frmNpc
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -544,11 +544,11 @@
             this.groupBox1.ResumeLayout(false);
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.picNpc)).EndInit();
             this.groupBox3.ResumeLayout(false);
             this.groupBox3.PerformLayout();
             this.groupBox4.ResumeLayout(false);
             this.groupBox4.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.picNpc)).EndInit();
             this.ResumeLayout(false);
 
         }

@@ -52,6 +52,7 @@ namespace Intersect_Editor.Forms
         private frmProjectile _projectileEditor;
         private frmCommonEvent _commonEventEditor;
         private frmSwitchVariable _switchVariableEditor;
+        private frmShop _shopEditor;
 
         //Initialization & Setup Functions
         public frmMain()
@@ -744,7 +745,12 @@ namespace Intersect_Editor.Forms
                         }
                         break;
                     case (int)Enums.EditorTypes.Shop:
-                        
+                        if (_shopEditor == null || _shopEditor.Visible == false)
+                        {
+                            _shopEditor = new frmShop();
+                            _shopEditor.InitEditor();
+                            _shopEditor.Show();
+                        }
                         break;
                     default:
                         return;

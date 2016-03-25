@@ -48,6 +48,7 @@ namespace Intersect_Server.Classes
             Database.LoadOptions();
             Database.LoadNpcs();
             Database.LoadItems();
+            Database.LoadShops();
             Database.LoadSpells();
             Database.LoadAnimations();
             Database.LoadResources();

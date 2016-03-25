@@ -22,6 +22,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading;
+using Intersect_Server.Classes.Game_Objects;
 
 namespace Intersect_Server.Classes
 {
@@ -53,6 +54,9 @@ namespace Intersect_Server.Classes
 
         //Game Items
         public static ItemStruct[] GameItems;
+
+        //Game Shops
+        public static ShopStruct[] GameShops;
 
         //Game Spells
         public static SpellStruct[] GameSpells;

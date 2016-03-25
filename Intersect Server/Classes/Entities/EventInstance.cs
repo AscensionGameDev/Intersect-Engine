@@ -359,7 +359,7 @@ namespace Intersect_Server.Classes.Entities
                     else if(command.Ints[0] == (int)Enums.SwitchVariableTypes.ServerSwitch)
                     {
                         Globals.ServerSwitchValues[command.Ints[1]] = Convert.ToBoolean(command.Ints[2]);
-                        Database.SaveSwitchesOrVariables(Globals.ServerSwitches, Globals.ServerSwitchValues, null, "Switch", "ServerSwitches", Constants.MaxServerSwitches);
+                        Database.SaveSwitchesAndVariables();
                     }
                     CallStack.Peek().CommandIndex++;
                     break;
@@ -399,7 +399,7 @@ namespace Intersect_Server.Classes.Entities
                                 Globals.ServerVariableValues[command.Ints[1]] = Globals.Rand.Next(command.Ints[3], command.Ints[4] + 1);
                                 break;
                         }
-                        Database.SaveSwitchesOrVariables(Globals.ServerVariables, null, Globals.ServerVariableValues, "Variable", "ServerVariables", Constants.MaxServerVariables);
+                        Database.SaveSwitchesAndVariables();
                     }
                     
                     CallStack.Peek().CommandIndex++;

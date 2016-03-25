@@ -29,6 +29,7 @@ using System.Security.Cryptography.X509Certificates;
 using System.Xml;
 using System.Security.Cryptography;
 using System.Text;
+using Intersect_Server.Classes.Game_Objects;
 using Intersect_Server.Classes.Maps;
 using MySql.Data.MySqlClient;
 using Intersect_Server.Classes.Networking;
@@ -1414,6 +1415,29 @@ namespace Intersect_Server.Classes
             }
         }
 
+        //Shops
+        public static void LoadShops()
+        {
+            if (!Directory.Exists("Resources/Shops"))
+            {
+                Directory.CreateDirectory("Resources/Shops");
+            }
+
+            Globals.GameShops = new ShopStruct[Constants.MaxShops];
+            for (var i = 0; i < Constants.MaxShops; i++)
+            {
+                Globals.GameShops[i] = new ShopStruct();
+                if (!File.Exists("Resources/Shops/" + i + ".shop"))
+                {
+                    Globals.GameShops[i].Save(i);
+                }
+                else
+                {
+                    Globals.GameShops[i].Load(File.ReadAllBytes("Resources/Shops/" + i + ".shop"), i);
+                }
+            }
+        }
+
         //Spells
         public static void LoadSpells()
         {
@@ -1648,6 +1672,14 @@ namespace Intersect_Server.Classes
             LoadSwitchesOrVariabes(Globals.PlayerSwitches, null, null, "Switch", "PlayerSwitches", Constants.MaxPlayerSwitches);
             LoadSwitchesOrVariabes(Globals.ServerVariables, null, Globals.ServerVariableValues, "GlobalVariable", "ServerVariables", Constants.MaxServerVariables);
             LoadSwitchesOrVariabes(Globals.PlayerVariables, null, null, "Variable", "PlayerVariables", Constants.MaxPlayerVariables);
+        }
+
+        public static void SaveSwitchesAndVariables()
+        {
+            SaveSwitchesOrVariables(Globals.ServerSwitches, Globals.ServerSwitchValues, null, "GlobalSwitch", "ServerSwitches", Constants.MaxServerSwitches);
+            SaveSwitchesOrVariables(Globals.PlayerSwitches, null, null, "Switch", "PlayerSwitches", Constants.MaxPlayerSwitches);
+            SaveSwitchesOrVariables(Globals.ServerVariables, null, Globals.ServerVariableValues, "GlobalVariable", "ServerVariables", Constants.MaxServerVariables);
+            SaveSwitchesOrVariables(Globals.PlayerVariables, null, null, "Variable", "PlayerVariables", Constants.MaxPlayerVariables);
         }
         private static void LoadSwitchesOrVariabes(string[] names, bool[] boolValues, int[] intValues, string prefix, string header, int count)
         {

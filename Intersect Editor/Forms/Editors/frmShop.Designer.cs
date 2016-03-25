@@ -1,0 +1,389 @@
+﻿namespace Intersect_Editor.Forms.Editors
+{
+    partial class frmShop
+    {
+        /// <summary>
+        /// Required designer variable.
+        /// </summary>
+        private System.ComponentModel.IContainer components = null;
+
+        /// <summary>
+        /// Clean up any resources being used.
+        /// </summary>
+        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing && (components != null))
+            {
+                components.Dispose();
+            }
+            base.Dispose(disposing);
+        }
+
+        #region Windows Form Designer generated code
+
+        /// <summary>
+        /// Required method for Designer support - do not modify
+        /// the contents of this method with the code editor.
+        /// </summary>
+        private void InitializeComponent()
+        {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmShop));
+            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.btnCancel = new System.Windows.Forms.Button();
+            this.btnDelete = new System.Windows.Forms.Button();
+            this.btnSave = new System.Windows.Forms.Button();
+            this.lstShops = new System.Windows.Forms.ListBox();
+            this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.label1 = new System.Windows.Forms.Label();
+            this.txtName = new System.Windows.Forms.TextBox();
+            this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.scrlChargeRate = new System.Windows.Forms.HScrollBar();
+            this.lblChargeRate = new System.Windows.Forms.Label();
+            this.btnDelSoldItem = new System.Windows.Forms.Button();
+            this.btnAddSoldItem = new System.Windows.Forms.Button();
+            this.cmbAddSoldItem = new System.Windows.Forms.ComboBox();
+            this.label2 = new System.Windows.Forms.Label();
+            this.lstSoldItems = new System.Windows.Forms.ListBox();
+            this.groupBox4 = new System.Windows.Forms.GroupBox();
+            this.scrlBuyRate = new System.Windows.Forms.HScrollBar();
+            this.lblBuyRate = new System.Windows.Forms.Label();
+            this.btnDelBoughtItem = new System.Windows.Forms.Button();
+            this.btnAddBoughtItem = new System.Windows.Forms.Button();
+            this.cmbAddBoughtItem = new System.Windows.Forms.ComboBox();
+            this.label3 = new System.Windows.Forms.Label();
+            this.lstBoughtItems = new System.Windows.Forms.ListBox();
+            this.rdoBuyBlacklist = new System.Windows.Forms.RadioButton();
+            this.rdoBuyWhitelist = new System.Windows.Forms.RadioButton();
+            this.groupBox1.SuspendLayout();
+            this.groupBox2.SuspendLayout();
+            this.groupBox3.SuspendLayout();
+            this.groupBox4.SuspendLayout();
+            this.SuspendLayout();
+            // 
+            // groupBox1
+            // 
+            this.groupBox1.Controls.Add(this.btnCancel);
+            this.groupBox1.Controls.Add(this.btnDelete);
+            this.groupBox1.Controls.Add(this.btnSave);
+            this.groupBox1.Controls.Add(this.lstShops);
+            this.groupBox1.Location = new System.Drawing.Point(12, 5);
+            this.groupBox1.Name = "groupBox1";
+            this.groupBox1.Size = new System.Drawing.Size(203, 431);
+            this.groupBox1.TabIndex = 15;
+            this.groupBox1.TabStop = false;
+            this.groupBox1.Text = "Shops";
+            // 
+            // btnCancel
+            // 
+            this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            this.btnCancel.Location = new System.Drawing.Point(6, 398);
+            this.btnCancel.Name = "btnCancel";
+            this.btnCancel.Size = new System.Drawing.Size(190, 27);
+            this.btnCancel.TabIndex = 4;
+            this.btnCancel.Text = "Cancel";
+            this.btnCancel.UseVisualStyleBackColor = true;
+            this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
+            // 
+            // btnDelete
+            // 
+            this.btnDelete.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            this.btnDelete.Location = new System.Drawing.Point(7, 366);
+            this.btnDelete.Name = "btnDelete";
+            this.btnDelete.Size = new System.Drawing.Size(190, 27);
+            this.btnDelete.TabIndex = 3;
+            this.btnDelete.Text = "Delete";
+            this.btnDelete.UseVisualStyleBackColor = true;
+            this.btnDelete.Click += new System.EventHandler(this.btnDelete_Click);
+            // 
+            // btnSave
+            // 
+            this.btnSave.Location = new System.Drawing.Point(6, 333);
+            this.btnSave.Name = "btnSave";
+            this.btnSave.Size = new System.Drawing.Size(190, 27);
+            this.btnSave.TabIndex = 2;
+            this.btnSave.Text = "Save";
+            this.btnSave.UseVisualStyleBackColor = true;
+            this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
+            // 
+            // lstShops
+            // 
+            this.lstShops.FormattingEnabled = true;
+            this.lstShops.Location = new System.Drawing.Point(6, 19);
+            this.lstShops.Name = "lstShops";
+            this.lstShops.Size = new System.Drawing.Size(191, 303);
+            this.lstShops.TabIndex = 1;
+            this.lstShops.Click += new System.EventHandler(this.lstShops_Click);
+            // 
+            // groupBox2
+            // 
+            this.groupBox2.Controls.Add(this.label1);
+            this.groupBox2.Controls.Add(this.txtName);
+            this.groupBox2.Location = new System.Drawing.Point(221, 5);
+            this.groupBox2.Name = "groupBox2";
+            this.groupBox2.Size = new System.Drawing.Size(523, 47);
+            this.groupBox2.TabIndex = 16;
+            this.groupBox2.TabStop = false;
+            this.groupBox2.Text = "General";
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(6, 20);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(38, 13);
+            this.label1.TabIndex = 1;
+            this.label1.Text = "Name:";
+            // 
+            // txtName
+            // 
+            this.txtName.Location = new System.Drawing.Point(60, 19);
+            this.txtName.Name = "txtName";
+            this.txtName.Size = new System.Drawing.Size(135, 20);
+            this.txtName.TabIndex = 0;
+            this.txtName.TextChanged += new System.EventHandler(this.txtName_TextChanged);
+            // 
+            // groupBox3
+            // 
+            this.groupBox3.Controls.Add(this.scrlChargeRate);
+            this.groupBox3.Controls.Add(this.lblChargeRate);
+            this.groupBox3.Controls.Add(this.btnDelSoldItem);
+            this.groupBox3.Controls.Add(this.btnAddSoldItem);
+            this.groupBox3.Controls.Add(this.cmbAddSoldItem);
+            this.groupBox3.Controls.Add(this.label2);
+            this.groupBox3.Controls.Add(this.lstSoldItems);
+            this.groupBox3.Location = new System.Drawing.Point(222, 58);
+            this.groupBox3.Name = "groupBox3";
+            this.groupBox3.Size = new System.Drawing.Size(258, 378);
+            this.groupBox3.TabIndex = 17;
+            this.groupBox3.TabStop = false;
+            this.groupBox3.Text = "Items Sold";
+            // 
+            // scrlChargeRate
+            // 
+            this.scrlChargeRate.Location = new System.Drawing.Point(111, 311);
+            this.scrlChargeRate.Maximum = 1000;
+            this.scrlChargeRate.Name = "scrlChargeRate";
+            this.scrlChargeRate.Size = new System.Drawing.Size(141, 17);
+            this.scrlChargeRate.TabIndex = 6;
+            this.scrlChargeRate.Value = 100;
+            this.scrlChargeRate.Scroll += new System.Windows.Forms.ScrollEventHandler(this.scrlChargeRate_Scroll);
+            // 
+            // lblChargeRate
+            // 
+            this.lblChargeRate.AutoSize = true;
+            this.lblChargeRate.Location = new System.Drawing.Point(3, 313);
+            this.lblChargeRate.Name = "lblChargeRate";
+            this.lblChargeRate.Size = new System.Drawing.Size(84, 13);
+            this.lblChargeRate.TabIndex = 5;
+            this.lblChargeRate.Text = "Charge Rate: 1x";
+            // 
+            // btnDelSoldItem
+            // 
+            this.btnDelSoldItem.Location = new System.Drawing.Point(135, 349);
+            this.btnDelSoldItem.Name = "btnDelSoldItem";
+            this.btnDelSoldItem.Size = new System.Drawing.Size(117, 23);
+            this.btnDelSoldItem.TabIndex = 4;
+            this.btnDelSoldItem.Text = "Remove Selected";
+            this.btnDelSoldItem.UseVisualStyleBackColor = true;
+            this.btnDelSoldItem.Click += new System.EventHandler(this.btnDelSoldItem_Click);
+            // 
+            // btnAddSoldItem
+            // 
+            this.btnAddSoldItem.Location = new System.Drawing.Point(6, 349);
+            this.btnAddSoldItem.Name = "btnAddSoldItem";
+            this.btnAddSoldItem.Size = new System.Drawing.Size(117, 23);
+            this.btnAddSoldItem.TabIndex = 3;
+            this.btnAddSoldItem.Text = "Add Selected";
+            this.btnAddSoldItem.UseVisualStyleBackColor = true;
+            this.btnAddSoldItem.Click += new System.EventHandler(this.btnAddSoldItem_Click);
+            // 
+            // cmbAddSoldItem
+            // 
+            this.cmbAddSoldItem.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbAddSoldItem.FormattingEnabled = true;
+            this.cmbAddSoldItem.Location = new System.Drawing.Point(6, 280);
+            this.cmbAddSoldItem.Name = "cmbAddSoldItem";
+            this.cmbAddSoldItem.Size = new System.Drawing.Size(246, 21);
+            this.cmbAddSoldItem.TabIndex = 2;
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(7, 264);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(52, 13);
+            this.label2.TabIndex = 1;
+            this.label2.Text = "Add Item:";
+            // 
+            // lstSoldItems
+            // 
+            this.lstSoldItems.FormattingEnabled = true;
+            this.lstSoldItems.Location = new System.Drawing.Point(7, 20);
+            this.lstSoldItems.Name = "lstSoldItems";
+            this.lstSoldItems.Size = new System.Drawing.Size(245, 238);
+            this.lstSoldItems.TabIndex = 0;
+            // 
+            // groupBox4
+            // 
+            this.groupBox4.Controls.Add(this.scrlBuyRate);
+            this.groupBox4.Controls.Add(this.lblBuyRate);
+            this.groupBox4.Controls.Add(this.btnDelBoughtItem);
+            this.groupBox4.Controls.Add(this.btnAddBoughtItem);
+            this.groupBox4.Controls.Add(this.cmbAddBoughtItem);
+            this.groupBox4.Controls.Add(this.label3);
+            this.groupBox4.Controls.Add(this.lstBoughtItems);
+            this.groupBox4.Controls.Add(this.rdoBuyBlacklist);
+            this.groupBox4.Controls.Add(this.rdoBuyWhitelist);
+            this.groupBox4.Location = new System.Drawing.Point(486, 58);
+            this.groupBox4.Name = "groupBox4";
+            this.groupBox4.Size = new System.Drawing.Size(258, 378);
+            this.groupBox4.TabIndex = 18;
+            this.groupBox4.TabStop = false;
+            this.groupBox4.Text = "Items Bought";
+            // 
+            // scrlBuyRate
+            // 
+            this.scrlBuyRate.Location = new System.Drawing.Point(92, 311);
+            this.scrlBuyRate.Maximum = 1000;
+            this.scrlBuyRate.Name = "scrlBuyRate";
+            this.scrlBuyRate.Size = new System.Drawing.Size(160, 17);
+            this.scrlBuyRate.TabIndex = 7;
+            this.scrlBuyRate.Value = 100;
+            this.scrlBuyRate.Scroll += new System.Windows.Forms.ScrollEventHandler(this.scrlBuyRate_Scroll);
+            // 
+            // lblBuyRate
+            // 
+            this.lblBuyRate.AutoSize = true;
+            this.lblBuyRate.Location = new System.Drawing.Point(6, 313);
+            this.lblBuyRate.Name = "lblBuyRate";
+            this.lblBuyRate.Size = new System.Drawing.Size(68, 13);
+            this.lblBuyRate.TabIndex = 6;
+            this.lblBuyRate.Text = "Buy Rate: 1x";
+            // 
+            // btnDelBoughtItem
+            // 
+            this.btnDelBoughtItem.Location = new System.Drawing.Point(137, 349);
+            this.btnDelBoughtItem.Name = "btnDelBoughtItem";
+            this.btnDelBoughtItem.Size = new System.Drawing.Size(117, 23);
+            this.btnDelBoughtItem.TabIndex = 6;
+            this.btnDelBoughtItem.Text = "Remove Selected";
+            this.btnDelBoughtItem.UseVisualStyleBackColor = true;
+            this.btnDelBoughtItem.Click += new System.EventHandler(this.btnDelBoughtItem_Click);
+            // 
+            // btnAddBoughtItem
+            // 
+            this.btnAddBoughtItem.Location = new System.Drawing.Point(8, 349);
+            this.btnAddBoughtItem.Name = "btnAddBoughtItem";
+            this.btnAddBoughtItem.Size = new System.Drawing.Size(117, 23);
+            this.btnAddBoughtItem.TabIndex = 5;
+            this.btnAddBoughtItem.Text = "Add Selected";
+            this.btnAddBoughtItem.UseVisualStyleBackColor = true;
+            this.btnAddBoughtItem.Click += new System.EventHandler(this.btnAddBoughtItem_Click);
+            // 
+            // cmbAddBoughtItem
+            // 
+            this.cmbAddBoughtItem.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbAddBoughtItem.FormattingEnabled = true;
+            this.cmbAddBoughtItem.Location = new System.Drawing.Point(8, 280);
+            this.cmbAddBoughtItem.Name = "cmbAddBoughtItem";
+            this.cmbAddBoughtItem.Size = new System.Drawing.Size(246, 21);
+            this.cmbAddBoughtItem.TabIndex = 3;
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(6, 266);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(52, 13);
+            this.label3.TabIndex = 2;
+            this.label3.Text = "Add Item:";
+            // 
+            // lstBoughtItems
+            // 
+            this.lstBoughtItems.FormattingEnabled = true;
+            this.lstBoughtItems.Location = new System.Drawing.Point(8, 20);
+            this.lstBoughtItems.Name = "lstBoughtItems";
+            this.lstBoughtItems.Size = new System.Drawing.Size(245, 238);
+            this.lstBoughtItems.TabIndex = 2;
+            // 
+            // rdoBuyBlacklist
+            // 
+            this.rdoBuyBlacklist.AutoSize = true;
+            this.rdoBuyBlacklist.Location = new System.Drawing.Point(189, 262);
+            this.rdoBuyBlacklist.Name = "rdoBuyBlacklist";
+            this.rdoBuyBlacklist.Size = new System.Drawing.Size(64, 17);
+            this.rdoBuyBlacklist.TabIndex = 1;
+            this.rdoBuyBlacklist.Text = "Blacklist";
+            this.rdoBuyBlacklist.UseVisualStyleBackColor = true;
+            this.rdoBuyBlacklist.CheckedChanged += new System.EventHandler(this.rdoBuyBlacklist_CheckedChanged);
+            // 
+            // rdoBuyWhitelist
+            // 
+            this.rdoBuyWhitelist.AutoSize = true;
+            this.rdoBuyWhitelist.Checked = true;
+            this.rdoBuyWhitelist.Location = new System.Drawing.Point(118, 262);
+            this.rdoBuyWhitelist.Name = "rdoBuyWhitelist";
+            this.rdoBuyWhitelist.Size = new System.Drawing.Size(65, 17);
+            this.rdoBuyWhitelist.TabIndex = 0;
+            this.rdoBuyWhitelist.TabStop = true;
+            this.rdoBuyWhitelist.Text = "Whitelist";
+            this.rdoBuyWhitelist.UseVisualStyleBackColor = true;
+            this.rdoBuyWhitelist.CheckedChanged += new System.EventHandler(this.rdoBuyWhitelist_CheckedChanged);
+            // 
+            // frmShop
+            // 
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.ClientSize = new System.Drawing.Size(751, 448);
+            this.ControlBox = false;
+            this.Controls.Add(this.groupBox4);
+            this.Controls.Add(this.groupBox3);
+            this.Controls.Add(this.groupBox1);
+            this.Controls.Add(this.groupBox2);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.Name = "frmShop";
+            this.Text = "Shop Editor";
+            this.Load += new System.EventHandler(this.frmShop_Load);
+            this.groupBox1.ResumeLayout(false);
+            this.groupBox2.ResumeLayout(false);
+            this.groupBox2.PerformLayout();
+            this.groupBox3.ResumeLayout(false);
+            this.groupBox3.PerformLayout();
+            this.groupBox4.ResumeLayout(false);
+            this.groupBox4.PerformLayout();
+            this.ResumeLayout(false);
+
+        }
+
+        #endregion
+
+        private System.Windows.Forms.GroupBox groupBox1;
+        private System.Windows.Forms.Button btnCancel;
+        private System.Windows.Forms.Button btnDelete;
+        private System.Windows.Forms.Button btnSave;
+        private System.Windows.Forms.ListBox lstShops;
+        private System.Windows.Forms.GroupBox groupBox2;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.TextBox txtName;
+        private System.Windows.Forms.GroupBox groupBox3;
+        private System.Windows.Forms.ListBox lstSoldItems;
+        private System.Windows.Forms.GroupBox groupBox4;
+        private System.Windows.Forms.ListBox lstBoughtItems;
+        private System.Windows.Forms.RadioButton rdoBuyBlacklist;
+        private System.Windows.Forms.RadioButton rdoBuyWhitelist;
+        private System.Windows.Forms.Button btnDelSoldItem;
+        private System.Windows.Forms.Button btnAddSoldItem;
+        private System.Windows.Forms.ComboBox cmbAddSoldItem;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.Button btnDelBoughtItem;
+        private System.Windows.Forms.Button btnAddBoughtItem;
+        private System.Windows.Forms.ComboBox cmbAddBoughtItem;
+        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.Label lblBuyRate;
+        private System.Windows.Forms.HScrollBar scrlBuyRate;
+        private System.Windows.Forms.Label lblChargeRate;
+        private System.Windows.Forms.HScrollBar scrlChargeRate;
+    }
+}

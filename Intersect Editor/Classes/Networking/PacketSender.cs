@@ -367,5 +367,14 @@ namespace Intersect_Editor.Classes
             bf.WriteLong((int)Enums.ClientPackets.OpenShopEditor);
             Network.SendPacket(bf.ToArray());
         }
+
+        public static void SendShop(int index, byte[] data)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteLong((int)Enums.ClientPackets.SaveShop);
+            bf.WriteInteger(index);
+            bf.WriteBytes(data);
+            Network.SendPacket(bf.ToArray());
+        }
     }
 }
