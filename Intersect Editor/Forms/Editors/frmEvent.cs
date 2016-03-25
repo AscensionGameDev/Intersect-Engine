@@ -750,7 +750,7 @@ namespace Intersect_Editor.Forms
                 case EventCommandType.OpenBank:
                     return "Open Bank";
                 case EventCommandType.OpenShop:
-                    return "Open Shop --- To be revisitied when shops are implemented!";
+                    return "Open Shop [" + (command.Ints[0] + 1) + ". " + Globals.GameShops[command.Ints[0]].Name + "]";
                 default:
                     return "Unknown Command";
             }
@@ -991,6 +991,7 @@ namespace Intersect_Editor.Forms
                 case EventCommandType.OpenBank:
                     break;
                 case EventCommandType.OpenShop:
+                    cmdWindow = new EventCommand_OpenShop(command, this);
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();

@@ -156,6 +156,12 @@
     <Compile Include="Forms\Editors\Event Commands\EventCommand_EventCommand_StartCommonEvent.Designer.cs">
       <DependentUpon>EventCommand_EventCommand_StartCommonEvent.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\Editors\Event Commands\EventCommand_OpenShop.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Forms\Editors\Event Commands\EventCommand_OpenShop.Designer.cs">
+      <DependentUpon>EventCommand_OpenShop.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\Editors\Event Commands\EventCommand_Wait.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -459,6 +465,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\Editors\Event Commands\EventCommand_EventCommand_StartCommonEvent.resx">
       <DependentUpon>EventCommand_EventCommand_StartCommonEvent.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Editors\Event Commands\EventCommand_OpenShop.resx">
+      <DependentUpon>EventCommand_OpenShop.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\Editors\Event Commands\EventCommand_Wait.resx">
       <DependentUpon>EventCommand_Wait.cs</DependentUpon>
