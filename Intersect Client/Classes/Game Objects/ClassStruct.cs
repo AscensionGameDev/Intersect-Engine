@@ -33,6 +33,12 @@ namespace Intersect_Client.Classes.Game_Objects
         public const string Version = "0.0.0.1";
         public string Name = "";
 
+        //Spawn Info
+        public int SpawnMap = 0;
+        public int SpawnX = 0;
+        public int SpawnY = 0;
+        public int SpawnDir = 0;
+
         //Sprites
         public List<ClassSprite> Sprites = new List<ClassSprite>();
 
@@ -68,6 +74,11 @@ namespace Intersect_Client.Classes.Game_Objects
             if (loadedVersion != Version)
                 throw new Exception("Failed to load Class #" + index + ". Loaded Version: " + loadedVersion + " Expected Version: " + Version);
             Name = myBuffer.ReadString();
+
+            SpawnMap = myBuffer.ReadInteger();
+            SpawnX = myBuffer.ReadInteger();
+            SpawnY = myBuffer.ReadInteger();
+            SpawnDir = myBuffer.ReadInteger();
 
             // Load Class Sprites
             Sprites.Clear();

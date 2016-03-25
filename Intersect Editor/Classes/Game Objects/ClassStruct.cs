@@ -31,6 +31,12 @@ namespace Intersect_Editor.Classes
         public const string Version = "0.0.0.1";
         public string Name = "";
 
+        //Spawn Info
+        public int SpawnMap = 0;
+        public int SpawnX = 0;
+        public int SpawnY = 0;
+        public int SpawnDir = 0;
+
         //Sprites
         public List<ClassSprite> Sprites = new List<ClassSprite>();
 
@@ -66,6 +72,11 @@ namespace Intersect_Editor.Classes
             if (loadedVersion != Version)
                 throw new Exception("Failed to load Class #" + index + ". Loaded Version: " + loadedVersion + " Expected Version: " + Version);
             Name = myBuffer.ReadString();
+
+            SpawnMap = myBuffer.ReadInteger();
+            SpawnX = myBuffer.ReadInteger();
+            SpawnY = myBuffer.ReadInteger();
+            SpawnDir = myBuffer.ReadInteger();
 
             // Load Class Sprites
             Sprites.Clear();
@@ -113,6 +124,11 @@ namespace Intersect_Editor.Classes
             var myBuffer = new ByteBuffer();
             myBuffer.WriteString(Version);
             myBuffer.WriteString(Name);
+
+            myBuffer.WriteInteger(SpawnMap);
+            myBuffer.WriteInteger(SpawnX);
+            myBuffer.WriteInteger(SpawnY);
+            myBuffer.WriteInteger(SpawnDir);
 
             //Sprites
             myBuffer.WriteInteger(Sprites.Count);

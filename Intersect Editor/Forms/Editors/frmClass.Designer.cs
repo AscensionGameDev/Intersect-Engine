@@ -65,7 +65,6 @@
             this.lstSprites = new System.Windows.Forms.ListBox();
             this.cmbSprite = new System.Windows.Forms.ComboBox();
             this.lblPic = new System.Windows.Forms.Label();
-            this.picSprite = new System.Windows.Forms.PictureBox();
             this.label1 = new System.Windows.Forms.Label();
             this.txtName = new System.Windows.Forms.TextBox();
             this.groupBox6 = new System.Windows.Forms.GroupBox();
@@ -76,12 +75,24 @@
             this.btnRemoveSpell = new System.Windows.Forms.Button();
             this.btnAddSpell = new System.Windows.Forms.Button();
             this.lstSpells = new System.Windows.Forms.ListBox();
+            this.picSprite = new System.Windows.Forms.PictureBox();
+            this.grpWarp = new System.Windows.Forms.GroupBox();
+            this.btnVisualMapSelector = new System.Windows.Forms.Button();
+            this.cmbWarpMap = new System.Windows.Forms.ComboBox();
+            this.cmbDirection = new System.Windows.Forms.ComboBox();
+            this.label23 = new System.Windows.Forms.Label();
+            this.lblY = new System.Windows.Forms.Label();
+            this.lblX = new System.Windows.Forms.Label();
+            this.lblMap = new System.Windows.Forms.Label();
+            this.scrlX = new System.Windows.Forms.HScrollBar();
+            this.scrlY = new System.Windows.Forms.HScrollBar();
             this.groupBox1.SuspendLayout();
             this.groupBox4.SuspendLayout();
             this.groupBox3.SuspendLayout();
             this.groupBox2.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.picSprite)).BeginInit();
             this.groupBox6.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.picSprite)).BeginInit();
+            this.grpWarp.SuspendLayout();
             this.SuspendLayout();
             // 
             // groupBox1
@@ -147,9 +158,9 @@
             this.groupBox4.Controls.Add(this.lblDropItem);
             this.groupBox4.Controls.Add(this.scrlDropIndex);
             this.groupBox4.Controls.Add(this.lblDropIndex);
-            this.groupBox4.Location = new System.Drawing.Point(465, 283);
+            this.groupBox4.Location = new System.Drawing.Point(640, 238);
             this.groupBox4.Name = "groupBox4";
-            this.groupBox4.Size = new System.Drawing.Size(156, 132);
+            this.groupBox4.Size = new System.Drawing.Size(156, 177);
             this.groupBox4.TabIndex = 18;
             this.groupBox4.TabStop = false;
             this.groupBox4.Text = "Starting Items";
@@ -229,7 +240,7 @@
             this.groupBox3.Controls.Add(this.scrlMR);
             this.groupBox3.Controls.Add(this.scrlMag);
             this.groupBox3.Controls.Add(this.scrlStr);
-            this.groupBox3.Location = new System.Drawing.Point(221, 239);
+            this.groupBox3.Location = new System.Drawing.Point(396, 238);
             this.groupBox3.Name = "groupBox3";
             this.groupBox3.Size = new System.Drawing.Size(238, 176);
             this.groupBox3.TabIndex = 17;
@@ -477,15 +488,6 @@
             this.lblPic.TabIndex = 15;
             this.lblPic.Text = "Sprites:";
             // 
-            // picSprite
-            // 
-            this.picSprite.BackColor = System.Drawing.Color.Black;
-            this.picSprite.Location = new System.Drawing.Point(11, 66);
-            this.picSprite.Name = "picSprite";
-            this.picSprite.Size = new System.Drawing.Size(64, 64);
-            this.picSprite.TabIndex = 14;
-            this.picSprite.TabStop = false;
-            // 
             // label1
             // 
             this.label1.AutoSize = true;
@@ -514,7 +516,7 @@
             this.groupBox6.Controls.Add(this.lstSpells);
             this.groupBox6.Location = new System.Drawing.Point(465, 12);
             this.groupBox6.Name = "groupBox6";
-            this.groupBox6.Size = new System.Drawing.Size(156, 269);
+            this.groupBox6.Size = new System.Drawing.Size(331, 220);
             this.groupBox6.TabIndex = 21;
             this.groupBox6.TabStop = false;
             this.groupBox6.Text = "Spells";
@@ -522,7 +524,7 @@
             // lblLevel
             // 
             this.lblLevel.AutoSize = true;
-            this.lblLevel.Location = new System.Drawing.Point(6, 196);
+            this.lblLevel.Location = new System.Drawing.Point(153, 54);
             this.lblLevel.Name = "lblLevel";
             this.lblLevel.Size = new System.Drawing.Size(45, 13);
             this.lblLevel.TabIndex = 25;
@@ -531,17 +533,17 @@
             // scrlLevel
             // 
             this.scrlLevel.LargeChange = 1;
-            this.scrlLevel.Location = new System.Drawing.Point(9, 209);
+            this.scrlLevel.Location = new System.Drawing.Point(156, 67);
             this.scrlLevel.Maximum = 255;
             this.scrlLevel.Name = "scrlLevel";
-            this.scrlLevel.Size = new System.Drawing.Size(138, 17);
+            this.scrlLevel.Size = new System.Drawing.Size(166, 17);
             this.scrlLevel.TabIndex = 24;
             this.scrlLevel.Scroll += new System.Windows.Forms.ScrollEventHandler(this.scrlLevel_Scroll);
             // 
             // lblSpellNum
             // 
             this.lblSpellNum.AutoSize = true;
-            this.lblSpellNum.Location = new System.Drawing.Point(6, 161);
+            this.lblSpellNum.Location = new System.Drawing.Point(153, 19);
             this.lblSpellNum.Name = "lblSpellNum";
             this.lblSpellNum.Size = new System.Drawing.Size(42, 13);
             this.lblSpellNum.TabIndex = 23;
@@ -550,16 +552,16 @@
             // scrlSpell
             // 
             this.scrlSpell.LargeChange = 1;
-            this.scrlSpell.Location = new System.Drawing.Point(9, 174);
+            this.scrlSpell.Location = new System.Drawing.Point(156, 32);
             this.scrlSpell.Maximum = 255;
             this.scrlSpell.Name = "scrlSpell";
-            this.scrlSpell.Size = new System.Drawing.Size(138, 17);
+            this.scrlSpell.Size = new System.Drawing.Size(166, 17);
             this.scrlSpell.TabIndex = 22;
             this.scrlSpell.Scroll += new System.Windows.Forms.ScrollEventHandler(this.scrlSpell_Scroll);
             // 
             // btnRemoveSpell
             // 
-            this.btnRemoveSpell.Location = new System.Drawing.Point(81, 236);
+            this.btnRemoveSpell.Location = new System.Drawing.Point(256, 94);
             this.btnRemoveSpell.Name = "btnRemoveSpell";
             this.btnRemoveSpell.Size = new System.Drawing.Size(66, 23);
             this.btnRemoveSpell.TabIndex = 21;
@@ -569,7 +571,7 @@
             // 
             // btnAddSpell
             // 
-            this.btnAddSpell.Location = new System.Drawing.Point(6, 236);
+            this.btnAddSpell.Location = new System.Drawing.Point(153, 94);
             this.btnAddSpell.Name = "btnAddSpell";
             this.btnAddSpell.Size = new System.Drawing.Size(66, 23);
             this.btnAddSpell.TabIndex = 20;
@@ -582,16 +584,133 @@
             this.lstSpells.FormattingEnabled = true;
             this.lstSpells.Location = new System.Drawing.Point(9, 19);
             this.lstSpells.Name = "lstSpells";
-            this.lstSpells.Size = new System.Drawing.Size(138, 134);
+            this.lstSpells.Size = new System.Drawing.Size(138, 173);
             this.lstSpells.TabIndex = 17;
             this.lstSpells.Click += new System.EventHandler(this.lstSpells_Click);
+            // 
+            // picSprite
+            // 
+            this.picSprite.BackColor = System.Drawing.Color.Black;
+            this.picSprite.Location = new System.Drawing.Point(11, 66);
+            this.picSprite.Name = "picSprite";
+            this.picSprite.Size = new System.Drawing.Size(64, 64);
+            this.picSprite.TabIndex = 14;
+            this.picSprite.TabStop = false;
+            // 
+            // grpWarp
+            // 
+            this.grpWarp.Controls.Add(this.btnVisualMapSelector);
+            this.grpWarp.Controls.Add(this.cmbWarpMap);
+            this.grpWarp.Controls.Add(this.cmbDirection);
+            this.grpWarp.Controls.Add(this.label23);
+            this.grpWarp.Controls.Add(this.lblY);
+            this.grpWarp.Controls.Add(this.lblX);
+            this.grpWarp.Controls.Add(this.lblMap);
+            this.grpWarp.Controls.Add(this.scrlX);
+            this.grpWarp.Controls.Add(this.scrlY);
+            this.grpWarp.Location = new System.Drawing.Point(221, 238);
+            this.grpWarp.Name = "grpWarp";
+            this.grpWarp.Size = new System.Drawing.Size(169, 176);
+            this.grpWarp.TabIndex = 27;
+            this.grpWarp.TabStop = false;
+            this.grpWarp.Text = "Spawn Point";
+            // 
+            // btnVisualMapSelector
+            // 
+            this.btnVisualMapSelector.Location = new System.Drawing.Point(16, 131);
+            this.btnVisualMapSelector.Name = "btnVisualMapSelector";
+            this.btnVisualMapSelector.Size = new System.Drawing.Size(142, 23);
+            this.btnVisualMapSelector.TabIndex = 24;
+            this.btnVisualMapSelector.Text = "Open Visual Interface";
+            this.btnVisualMapSelector.UseVisualStyleBackColor = true;
+            this.btnVisualMapSelector.Click += new System.EventHandler(this.btnVisualMapSelector_Click);
+            // 
+            // cmbWarpMap
+            // 
+            this.cmbWarpMap.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbWarpMap.FormattingEnabled = true;
+            this.cmbWarpMap.Location = new System.Drawing.Point(17, 30);
+            this.cmbWarpMap.Name = "cmbWarpMap";
+            this.cmbWarpMap.Size = new System.Drawing.Size(141, 21);
+            this.cmbWarpMap.TabIndex = 12;
+            this.cmbWarpMap.SelectedIndexChanged += new System.EventHandler(this.cmbWarpMap_SelectedIndexChanged);
+            // 
+            // cmbDirection
+            // 
+            this.cmbDirection.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbDirection.FormattingEnabled = true;
+            this.cmbDirection.Items.AddRange(new object[] {
+            "Up",
+            "Down",
+            "Left",
+            "Right"});
+            this.cmbDirection.Location = new System.Drawing.Point(46, 102);
+            this.cmbDirection.Name = "cmbDirection";
+            this.cmbDirection.Size = new System.Drawing.Size(112, 21);
+            this.cmbDirection.TabIndex = 23;
+            this.cmbDirection.SelectedIndexChanged += new System.EventHandler(this.cmbDirection_SelectedIndexChanged);
+            // 
+            // label23
+            // 
+            this.label23.AutoSize = true;
+            this.label23.Location = new System.Drawing.Point(13, 105);
+            this.label23.Name = "label23";
+            this.label23.Size = new System.Drawing.Size(23, 13);
+            this.label23.TabIndex = 22;
+            this.label23.Text = "Dir:";
+            // 
+            // lblY
+            // 
+            this.lblY.AutoSize = true;
+            this.lblY.Location = new System.Drawing.Point(14, 82);
+            this.lblY.Name = "lblY";
+            this.lblY.Size = new System.Drawing.Size(26, 13);
+            this.lblY.TabIndex = 11;
+            this.lblY.Text = "Y: 0";
+            // 
+            // lblX
+            // 
+            this.lblX.AutoSize = true;
+            this.lblX.Location = new System.Drawing.Point(14, 61);
+            this.lblX.Name = "lblX";
+            this.lblX.Size = new System.Drawing.Size(26, 13);
+            this.lblX.TabIndex = 10;
+            this.lblX.Text = "X: 0";
+            // 
+            // lblMap
+            // 
+            this.lblMap.AutoSize = true;
+            this.lblMap.Location = new System.Drawing.Point(13, 14);
+            this.lblMap.Name = "lblMap";
+            this.lblMap.Size = new System.Drawing.Size(31, 13);
+            this.lblMap.TabIndex = 9;
+            this.lblMap.Text = "Map:";
+            // 
+            // scrlX
+            // 
+            this.scrlX.LargeChange = 1;
+            this.scrlX.Location = new System.Drawing.Point(46, 54);
+            this.scrlX.Name = "scrlX";
+            this.scrlX.Size = new System.Drawing.Size(112, 21);
+            this.scrlX.TabIndex = 8;
+            this.scrlX.Scroll += new System.Windows.Forms.ScrollEventHandler(this.scrlX_Scroll);
+            // 
+            // scrlY
+            // 
+            this.scrlY.LargeChange = 1;
+            this.scrlY.Location = new System.Drawing.Point(46, 78);
+            this.scrlY.Name = "scrlY";
+            this.scrlY.Size = new System.Drawing.Size(112, 21);
+            this.scrlY.TabIndex = 7;
+            this.scrlY.Scroll += new System.Windows.Forms.ScrollEventHandler(this.scrlY_Scroll);
             // 
             // frmClass
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(633, 426);
+            this.ClientSize = new System.Drawing.Size(800, 426);
             this.ControlBox = false;
+            this.Controls.Add(this.grpWarp);
             this.Controls.Add(this.groupBox6);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.groupBox4);
@@ -608,9 +727,11 @@
             this.groupBox3.PerformLayout();
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.picSprite)).EndInit();
             this.groupBox6.ResumeLayout(false);
             this.groupBox6.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.picSprite)).EndInit();
+            this.grpWarp.ResumeLayout(false);
+            this.grpWarp.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -665,5 +786,15 @@
         private System.Windows.Forms.ListBox lstSpells;
         private System.Windows.Forms.Label lblPoints;
         private System.Windows.Forms.HScrollBar scrlPoints;
+        private System.Windows.Forms.GroupBox grpWarp;
+        private System.Windows.Forms.Button btnVisualMapSelector;
+        private System.Windows.Forms.ComboBox cmbWarpMap;
+        private System.Windows.Forms.ComboBox cmbDirection;
+        private System.Windows.Forms.Label label23;
+        private System.Windows.Forms.Label lblY;
+        private System.Windows.Forms.Label lblX;
+        private System.Windows.Forms.Label lblMap;
+        public System.Windows.Forms.HScrollBar scrlX;
+        public System.Windows.Forms.HScrollBar scrlY;
     }
 }

@@ -169,7 +169,7 @@ namespace Intersect_Server.Classes
         //Spawning/Dying
         private void Respawn()
         {
-            Warp(Constants.SpawnMap, Constants.SpawnX, Constants.SpawnY, 1);
+            Warp(Globals.GameClasses[Class].SpawnMap, Globals.GameClasses[Class].SpawnX, Globals.GameClasses[Class].SpawnY, Globals.GameClasses[Class].SpawnDir);
         }
         public override void Die(bool dropitems = false)
         {
@@ -273,9 +273,9 @@ namespace Intersect_Server.Classes
         public void WarpToSpawn(bool sendWarp = false)
         {
             int map = 0, x = 0, y = 0;
-            if (MapHelper.IsMapValid(Constants.SpawnMap))
+            if (MapHelper.IsMapValid(Globals.GameClasses[Class].SpawnMap))
             {
-               map = Constants.SpawnMap;
+               map = Globals.GameClasses[Class].SpawnMap;
             }
             else
             {
@@ -288,8 +288,8 @@ namespace Intersect_Server.Classes
                     }
                 }
             }
-            x = Constants.SpawnX;
-            y = Constants.SpawnY;
+            x = Globals.GameClasses[Class].SpawnX;
+            y = Globals.GameClasses[Class].SpawnY;
             if (sendWarp) { Warp(map, x, y); }
         }
 

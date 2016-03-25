@@ -55,10 +55,6 @@ namespace Intersect_Server.Classes
         public const int MaxPlayerSkills = 35;
 
         public const int LayerCount = 5;
-
-        public const int SpawnMap = 0;
-        public const int SpawnX = 17;
-        public const int SpawnY = 12;
     }
 }
 

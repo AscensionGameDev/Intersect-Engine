@@ -286,6 +286,25 @@ namespace Intersect_Editor.Forms
                 }
             }
 
+            for (int i = 0; i < Database.OrderedMaps.Count; i++)
+            {
+                if (Database.OrderedMaps[i].MapNum == Globals.GameClasses[_editorIndex].SpawnMap)
+                {
+                    cmbWarpMap.SelectedIndex = i;
+                    break;
+                }
+            }
+            if (cmbWarpMap.SelectedIndex == -1)
+            {
+                cmbWarpMap.SelectedIndex = 0;
+                Globals.GameClasses[_editorIndex].SpawnMap = Database.OrderedMaps[0].MapNum;
+            }
+            scrlX.Value = Globals.GameClasses[_editorIndex].SpawnX;
+            scrlY.Value = Globals.GameClasses[_editorIndex].SpawnY;
+            lblX.Text = @"X: " + scrlX.Value;
+            lblY.Text = @"Y: " + scrlY.Value;
+            cmbDirection.SelectedIndex = Globals.GameClasses[_editorIndex].SpawnDir;
+
             scrlDropIndex.Value = 1;
             UpdateDropValues();
             DrawSprite();
@@ -317,6 +336,13 @@ namespace Intersect_Editor.Forms
                 lstClasses.Items.Add((i + 1) + ") " + Globals.GameClasses[i].Name);
                 _changed[i] = false;
             }
+            cmbWarpMap.Items.Clear();
+            for (int i = 0; i < Database.OrderedMaps.Count; i++)
+            {
+                cmbWarpMap.Items.Add(Database.OrderedMaps[i].MapNum + ". " + Database.OrderedMaps[i].Name);
+            }
+            cmbWarpMap.SelectedIndex = 0;
+            cmbDirection.SelectedIndex = 0;
             lstClasses.SelectedIndex = 0;
         }
 
@@ -519,6 +545,53 @@ namespace Intersect_Editor.Forms
             Hide();
             Globals.CurrentEditor = -1;
             Dispose();
+        }
+
+        private void btnVisualMapSelector_Click(object sender, EventArgs e)
+        {
+            frmWarpSelection frmWarpSelection = new frmWarpSelection();
+            frmWarpSelection.SelectTile(Database.OrderedMaps[cmbWarpMap.SelectedIndex].MapNum, scrlX.Value, scrlY.Value);
+            frmWarpSelection.ShowDialog();
+            if (frmWarpSelection.GetResult())
+            {
+                for (int i = 0; i < Database.OrderedMaps.Count; i++)
+                {
+                    if (Database.OrderedMaps[i].MapNum == frmWarpSelection.GetMap())
+                    {
+                        cmbWarpMap.SelectedIndex = i;
+                        break;
+                    }
+                }
+                scrlX.Value = frmWarpSelection.GetX();
+                scrlY.Value = frmWarpSelection.GetY();
+                lblX.Text = @"X: " + scrlX.Value;
+                lblY.Text = @"Y: " + scrlY.Value;
+                Globals.GameClasses[_editorIndex].SpawnMap = Database.OrderedMaps[cmbWarpMap.SelectedIndex].MapNum;
+                Globals.GameClasses[_editorIndex].SpawnX = scrlX.Value;
+                Globals.GameClasses[_editorIndex].SpawnY = scrlY.Value;
+            }
+        }
+
+        private void cmbWarpMap_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            Globals.GameClasses[_editorIndex].SpawnMap = Database.OrderedMaps[cmbWarpMap.SelectedIndex].MapNum;
+        }
+
+        private void scrlX_Scroll(object sender, ScrollEventArgs e)
+        {
+            lblX.Text = @"X: " + scrlX.Value;
+            Globals.GameClasses[_editorIndex].SpawnX = scrlX.Value;
+        }
+
+        private void scrlY_Scroll(object sender, ScrollEventArgs e)
+        {
+            lblY.Text = @"Y: " + scrlY.Value;
+            Globals.GameClasses[_editorIndex].SpawnY = scrlY.Value;
+        }
+
+        private void cmbDirection_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            Globals.GameClasses[_editorIndex].SpawnDir = cmbDirection.SelectedIndex;
         }
     }
 }
