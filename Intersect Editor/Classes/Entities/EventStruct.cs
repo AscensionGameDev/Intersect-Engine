@@ -119,6 +119,7 @@ namespace Intersect_Editor.Classes
         public int Passable;
         public int Layer;
         public int Trigger;
+        public int TriggerVal;
         public string FaceGraphic = "";
         public EventGraphic Graphic = new EventGraphic();
         public int HideName;
@@ -151,6 +152,7 @@ namespace Intersect_Editor.Classes
             Passable = curBuffer.ReadInteger();
             Layer = curBuffer.ReadInteger();
             Trigger = curBuffer.ReadInteger();
+            Trigger = curBuffer.ReadInteger();
             FaceGraphic = curBuffer.ReadString();
             Graphic.Load(curBuffer);
             HideName = curBuffer.ReadInteger();
@@ -181,6 +183,7 @@ namespace Intersect_Editor.Classes
             myBuffer.WriteInteger(Passable);
             myBuffer.WriteInteger(Layer);
             myBuffer.WriteInteger(Trigger);
+            myBuffer.WriteInteger(TriggerVal);
             myBuffer.WriteString(FaceGraphic);
             Graphic.Save(myBuffer);
             myBuffer.WriteInteger(HideName);
