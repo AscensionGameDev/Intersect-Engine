@@ -111,6 +111,9 @@ namespace Intersect_Editor.Forms
             }
             chkIsGlobal.Checked = Convert.ToBoolean(MyEvent.IsGlobal);
             if (MyEvent.CommonEvent) chkIsGlobal.Hide();
+            tabControl.TabPages.Clear();
+            for (int i = 0; i < MyEvent.MyPages.Count; i++)
+                tabControl.TabPages.Add((i + 1).ToString());
             LoadPage(0);
         }
         /// <summary>
