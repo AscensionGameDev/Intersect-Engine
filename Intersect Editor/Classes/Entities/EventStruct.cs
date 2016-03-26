@@ -152,7 +152,7 @@ namespace Intersect_Editor.Classes
             Passable = curBuffer.ReadInteger();
             Layer = curBuffer.ReadInteger();
             Trigger = curBuffer.ReadInteger();
-            Trigger = curBuffer.ReadInteger();
+            TriggerVal = curBuffer.ReadInteger();
             FaceGraphic = curBuffer.ReadString();
             Graphic.Load(curBuffer);
             HideName = curBuffer.ReadInteger();

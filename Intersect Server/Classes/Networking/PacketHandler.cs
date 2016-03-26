@@ -21,6 +21,7 @@
 */
 using System;
 using System.IO;
+using Intersect_Server.Classes.Entities;
 using Intersect_Server.Classes.Maps;
 
 namespace Intersect_Server.Classes
@@ -302,7 +303,7 @@ namespace Intersect_Server.Classes
             int x = bf.ReadInteger();
             int y = bf.ReadInteger();
             int dir = bf.ReadInteger();
-            if (TileHelper.IsTileValid(map,x,y))
+            if (TileHelper.IsTileValid(map, x, y))
             {
                 Globals.Entities[index].CurrentMap = map;
                 Globals.Entities[index].CurrentX = x;
@@ -336,6 +337,33 @@ namespace Intersect_Server.Classes
             if (oldMap != Globals.Entities[index].CurrentMap)
             {
                 Globals.GameMaps[Globals.Entities[index].CurrentMap].PlayerEnteredMap(client);
+            }
+
+            for (int i = 0; i < client.Entity.MyEvents.Count; i++)
+            {
+                if (client.Entity.MyEvents[i] != null)
+                {
+                    if (client.Entity.MyEvents[i].MapNum == client.Entity.CurrentMap)
+                    {
+                        if (client.Entity.MyEvents[i].PageInstance != null)
+                        {
+                            if (client.Entity.MyEvents[i].PageInstance.CurrentMap == client.Entity.CurrentMap &&
+                                client.Entity.MyEvents[i].PageInstance.CurrentX == client.Entity.CurrentX &&
+                                client.Entity.MyEvents[i].PageInstance.CurrentY == client.Entity.CurrentY &&
+                                client.Entity.MyEvents[i].PageInstance.CurrentZ == client.Entity.CurrentZ)
+                            {
+                                if (client.Entity.MyEvents[i].PageInstance.Trigger != 1) return;
+                                if (client.Entity.MyEvents[i].CallStack.Count != 0) return;
+                                var newStack = new CommandInstance(client.Entity.MyEvents[i].PageInstance.MyPage)
+                                {
+                                    CommandIndex = 0,
+                                    ListIndex = 0
+                                };
+                                client.Entity.MyEvents[i].CallStack.Push(newStack);
+                            }
+                        }
+                    }
+                }
             }
 
         }

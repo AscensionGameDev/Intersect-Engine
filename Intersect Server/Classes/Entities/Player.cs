@@ -741,6 +741,7 @@ namespace Intersect_Server.Classes
                     {
                         Bank[i] = new ItemInstance(0, 0);
                         Bank[i] = Inventory[slot].Clone();
+                        Bank[i].ItemVal = amount;
                         //Remove Items from inventory send updates
                         if (amount >= Inventory[slot].ItemVal)
                         {

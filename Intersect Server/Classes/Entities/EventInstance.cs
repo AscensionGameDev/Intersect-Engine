@@ -109,7 +109,7 @@ namespace Intersect_Server.Classes.Entities
                                 {
                                     if (MyPlayer.MyEvents[i] == null) continue;
                                     if (MyPlayer.MyEvents[i].MapNum == CallStack.Peek().WaitingForRouteMap &&
-                                        MyPlayer.MyEvents[i].MyIndex == CallStack.Peek().WaitingForRoute)
+                                        MyPlayer.MyEvents[i].BaseEvent.MyIndex == CallStack.Peek().WaitingForRoute)
                                     {
                                         if (MyPlayer.MyEvents[i].PageInstance == null) break;
                                         if (!MyPlayer.MyEvents[i].PageInstance.MoveRoute.Complete) break;
@@ -149,7 +149,7 @@ namespace Intersect_Server.Classes.Entities
                     {
                         if (PageInstance.Trigger == 2)
                         {
-                            var newStack = new CommandInstance(CallStack.Peek().Page) { CommandIndex = 0, ListIndex = 0 };
+                            var newStack = new CommandInstance(PageInstance.MyPage) { CommandIndex = 0, ListIndex = 0 };
                             CallStack.Push(newStack);
                         }
                     }
