@@ -56,6 +56,7 @@ namespace Intersect_Client.Classes.General
         //Player Constraints
         public const int MaxInvItems = 35;
         public const int MaxPlayerSkills = 35;
+        public const int MaxBankSlots = 100;
 
         // Autotiles
         public const byte AutoInner = 1;

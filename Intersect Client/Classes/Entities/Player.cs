@@ -67,7 +67,7 @@ namespace Intersect_Client.Classes.Entities
         {
             bool returnval = base.Update();
             HandleInput();
-            if (Globals.EventHolds.Count == 0)
+            if (Globals.EventHolds.Count == 0 && Globals.GameShop == null && Globals.InBank == false)
             {
                 if (Globals.MyIndex == MyIndex && base.IsMoving == false)
                 {
@@ -132,6 +132,89 @@ namespace Intersect_Client.Classes.Entities
             }
             return false;
         }
+        public void TrySellItem(int index)
+        {
+            if (Inventory[index].ItemNum > -1)
+            {
+                int foundItem = -1;
+                for (int i = 0; i < Globals.GameShop.BuyingItems.Count; i++)
+                {
+                    if (Globals.GameShop.BuyingItems[i].ItemNum == Inventory[index].ItemNum)
+                    {
+                        foundItem = i;
+                        break;
+                    }
+                }
+                if ((foundItem > -1 && Globals.GameShop.BuyingWhitelist) || (foundItem == -1 && !Globals.GameShop.BuyingWhitelist))
+                {
+                    if (Inventory[index].ItemVal > 1)
+                    {
+                        InputBox iBox = new InputBox("Sell Item", "How many " + Globals.GameItems[Inventory[index].ItemNum].Name + "(s) would you like to sell?", true,SellItemInputBoxOkay, null, index, true);
+                    }
+                    else
+                    {
+                        PacketSender.SendSellItem(index, 1);
+                    }
+                }
+                else
+                {
+                    InputBox iBox = new InputBox("Sell Item", "This shop does not accept that item!", true, null, null, -1, false);
+                }
+            }
+        }
+        private void SellItemInputBoxOkay(Object sender, EventArgs e)
+        {
+            int value = (int)((InputBox)sender).Value;
+            if (value > 0)
+            {
+                PacketSender.SendSellItem(((InputBox)sender).Slot, value);
+            }
+        }
+        public void TryDepositItem(int index)
+        {
+            if (Inventory[index].ItemNum > -1)
+            {
+                if (Inventory[index].ItemVal > 1)
+                {
+                    InputBox iBox = new InputBox("Deposit Item", "How many " + Globals.GameItems[Inventory[index].ItemNum].Name + "(s) would you like to deposit?", true, DepositItemInputBoxOkay, null, index, true);
+                }
+                else
+                {
+                    PacketSender.SendDepositItem(index, 1);
+                }
+            }
+        }
+        private void DepositItemInputBoxOkay(Object sender, EventArgs e)
+        {
+            int value = (int)((InputBox)sender).Value;
+            if (value > 0)
+            {
+                PacketSender.SendDepositItem(((InputBox)sender).Slot, value);
+            }
+        }
+        public void TryWithdrawItem(int index)
+        {
+            if (Globals.Bank[index] != null && Globals.Bank[index].ItemNum > -1)
+            {
+                if (Globals.Bank[index].ItemVal > 1)
+                {
+                    InputBox iBox = new InputBox("Withdraw Item", "How many " + Globals.GameItems[Globals.Bank[index].ItemNum].Name + "(s) would you like to withdraw?", true, WithdrawItemInputBoxOkay, null, index, true);
+                }
+                else
+                {
+                    PacketSender.SendWithdrawItem(index, 1);
+                }
+            }
+        }
+        private void WithdrawItemInputBoxOkay(Object sender, EventArgs e)
+        {
+            int value = (int)((InputBox)sender).Value;
+            if (value > 0)
+            {
+                PacketSender.SendWithdrawItem(((InputBox)sender).Slot, value);
+            }
+        }
+
 
         //Spell Processing
         public void SwapSpells(int spell1, int spell2)

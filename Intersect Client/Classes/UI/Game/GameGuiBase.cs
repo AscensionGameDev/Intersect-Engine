@@ -27,6 +27,7 @@
 
 using IntersectClientExtras.Gwen.Control;
 using Intersect_Client.Classes.General;
+using Intersect_Client.Classes.Networking;
 
 namespace Intersect_Client.Classes.UI.Game
 {
@@ -34,14 +35,14 @@ namespace Intersect_Client.Classes.UI.Game
     {
         public Canvas GameCanvas;
         private DebugMenu _debugMenu;
+        private ShopWindow _shopWindow;
+        private BankWindow _bankWindow;
         public bool FocusChat;
         private bool _shouldOpenAdminWindow = false;
-
-        public GameGuiBase(Canvas myCanvas)
-        {
-            GameCanvas = myCanvas;
-            InitGameGui();
-        }
+        private bool _shouldOpenShop = false;
+        private bool _shouldCloseShop = false;
+        private bool _shouldOpenBank = false;
+        private bool _shouldCloseBank = false;
 
         //Public Components - For clicking/dragging
         public HotBarWindow Hotbar;
@@ -51,7 +52,12 @@ namespace Intersect_Client.Classes.UI.Game
         private EventWindow _eventWindow;
         private Chatbox _chatBox;
         private EntityBox _playerBox;
-        
+
+        public GameGuiBase(Canvas myCanvas)
+        {
+            GameCanvas = myCanvas;
+            InitGameGui();
+        }
 
         public void InitGameGui()
         {
@@ -63,6 +69,7 @@ namespace Intersect_Client.Classes.UI.Game
             if (Globals.Me != null) { TryAddPlayerBox(); }
         }
 
+        //Admin Window
         public void NotifyOpenAdminWindow()
         {
             _shouldOpenAdminWindow = true;
@@ -71,6 +78,39 @@ namespace Intersect_Client.Classes.UI.Game
         {
             new AdminWindow(GameCanvas);
             _shouldOpenAdminWindow = false;
+        }
+
+        //Shop
+        public void NotifyOpenShop()
+        {
+            _shouldOpenShop = true;
+        }
+        public void NotifyCloseShop()
+        {
+            _shouldCloseShop = true;
+        }
+        public void OpenShop()
+        {
+            if (_shopWindow != null) _shopWindow.Close();
+            _shopWindow = new ShopWindow(GameCanvas);
+            _shouldOpenShop = false;
+        }
+
+        //Bank
+        public void NotifyOpenBank()
+        {
+            _shouldOpenBank = true;
+        }
+        public void NotifyCloseBank()
+        {
+            _shouldCloseBank = true;
+        }
+        public void OpenBank()
+        {
+            if (_bankWindow != null) _bankWindow.Close();
+            _bankWindow = new BankWindow(GameCanvas);
+            _shouldOpenBank = false;
+            Globals.InBank = true;
         }
 
         public void TryAddPlayerBox()
@@ -109,10 +149,43 @@ namespace Intersect_Client.Classes.UI.Game
             Hotbar.Update();
             _debugMenu.Update();
             if (_playerBox != null) { _playerBox.Update(); }
+
+            //Admin window update
             if (_shouldOpenAdminWindow)
             {
                 OpenAdminWindow();
             }
+
+            //Shop Update
+            if (_shouldOpenShop) OpenShop();
+            if (_shopWindow != null && (!_shopWindow.IsVisible() || _shouldCloseShop))
+            {
+                PacketSender.SendCloseShop();
+                Globals.GameShop = null;
+                _shopWindow.Close();
+                _shopWindow = null;
+            }
+            _shouldCloseShop = false;
+
+            //Bank Update
+            if (_shouldOpenBank) OpenBank();
+            if (_bankWindow != null)
+            {
+                if (!_bankWindow.IsVisible() || _shouldCloseBank)
+                {
+                    PacketSender.SendCloseBank();
+                    _bankWindow.Close();
+                    _bankWindow = null;
+                    Globals.InBank = false;
+                }
+                else
+                {
+                    _bankWindow.Update();
+                }
+            }
+
+            _shouldCloseBank = false;
+
             if (FocusChat)
             {
                 _chatBox.Focus();

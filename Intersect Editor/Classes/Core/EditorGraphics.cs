@@ -837,7 +837,6 @@ namespace Intersect_Editor.Classes
             RectangleShape tileSelectionRect;
             Sprite tmpSprite;
             int selX = Globals.CurMapSelX, selY = Globals.CurMapSelY, selW = Globals.CurMapSelW, selH = Globals.CurMapSelH;
-            int x1 = 0, y1 = 0, x2 = 0, y2 = 0, z1 = 0, z2 = 3, xoffset = 0, yoffset = 0;
             int dragxoffset = 0, dragyoffset = 0;
             if (Globals.CurrentTool == (int)Enums.EdittingTool.Rectangle ||
             Globals.CurrentTool == (int)Enums.EdittingTool.Selection)
@@ -853,12 +852,6 @@ namespace Intersect_Editor.Classes
                     selH = Math.Abs(selH);
                 }
             }
-            x1 = 0;
-            x2 = Globals.MapWidth;
-            y1 = 0;
-            y2 = Globals.MapHeight;
-            xoffset = Globals.TileWidth;
-            yoffset = Globals.TileHeight;
             if (Globals.Dragging)
             {
                 if (Globals.MouseButton == 0)
@@ -1008,7 +1001,7 @@ Globals.CurrentTool == (int)Enums.EdittingTool.Selection)
             if (HideResources) { return; }
             var tmpMap = Globals.GameMaps[Globals.CurrentMap];
             if (tmpMap == null || tmpMap.Deleted == 1) { return; }
-            int x1 = 0, y1 = 0, x2 = 0, y2 = 0, z1 = 0, z2 = 3, xoffset = 0, yoffset = 0;
+            int x1 = 0, y1 = 0, x2 = 0, y2 = 0, xoffset = 0, yoffset = 0;
             switch (dir)
             {
                 case -1:

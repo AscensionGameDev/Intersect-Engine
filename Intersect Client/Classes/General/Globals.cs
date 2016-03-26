@@ -34,6 +34,7 @@ using IntersectClientExtras.Input;
 using IntersectClientExtras.Sys;
 using Intersect_Client.Classes.Entities;
 using Intersect_Client.Classes.Game_Objects;
+using Intersect_Client.Classes.Items;
 using Intersect_Client.Classes.Maps;
 
 namespace Intersect_Client.Classes.General
@@ -91,6 +92,14 @@ namespace Intersect_Client.Classes.General
         //public static List<Entity> Entities = new List<Entity>();
         public static Dictionary<int, Entity> Entities = new Dictionary<int, Entity>();
         public static List<int> EntitiesToDispose = new List<int>();
+
+        //Bank
+        public static ItemInstance[] Bank = new ItemInstance[Constants.MaxBankSlots];
+        public static bool InBank = false;
+
+        //Game Shop
+        //Only need 1 shop, and that is the one we see at a given moment in time.
+        public static ShopStruct GameShop;
 
         //Game Items
         public static ItemStruct[] GameItems;

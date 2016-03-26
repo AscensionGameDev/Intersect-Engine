@@ -254,5 +254,64 @@ namespace Intersect_Client.Classes.Networking
             GameNetwork.SendPacket(bf.ToArray());
         }
 
+        public static void SendSellItem(int slot, int amount)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteLong((int)Enums.ClientPackets.SellItem);
+            bf.WriteInteger(slot);
+            bf.WriteInteger(amount);
+            GameNetwork.SendPacket(bf.ToArray());
+        }
+
+        public static void SendBuyItem(int slot, int amount)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteLong((int)Enums.ClientPackets.BuyItem);
+            bf.WriteInteger(slot);
+            bf.WriteInteger(amount);
+            GameNetwork.SendPacket(bf.ToArray());
+        }
+
+        public static void SendCloseShop()
+        {
+            var bf = new ByteBuffer();
+            bf.WriteLong((int)Enums.ClientPackets.CloseShop);
+            GameNetwork.SendPacket(bf.ToArray());
+        }
+
+        public static void SendDepositItem(int slot, int amount)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteLong((int)Enums.ClientPackets.DepositItem);
+            bf.WriteInteger(slot);
+            bf.WriteInteger(amount);
+            GameNetwork.SendPacket(bf.ToArray());
+        }
+
+        public static void SendWithdrawItem(int slot, int amount)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteLong((int)Enums.ClientPackets.WithdrawItem);
+            bf.WriteInteger(slot);
+            bf.WriteInteger(amount);
+            GameNetwork.SendPacket(bf.ToArray());
+        }
+
+        public static void SendCloseBank()
+        {
+            var bf = new ByteBuffer();
+            bf.WriteLong((int)Enums.ClientPackets.CloseBank);
+            GameNetwork.SendPacket(bf.ToArray());
+        }
+
+        public static void SendMoveBankItems(int slot1, int slot2)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteLong((int)Enums.ClientPackets.MoveBankItem);
+            bf.WriteInteger(slot1);
+            bf.WriteInteger(slot2);
+            GameNetwork.SendPacket(bf.ToArray());
+        }
+
     }
 }

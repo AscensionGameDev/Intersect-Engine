@@ -62,13 +62,21 @@ namespace Intersect_Editor.Forms.Editors
             lstShops.SelectedIndex = 0;
             cmbAddBoughtItem.Items.Clear();
             cmbAddSoldItem.Items.Clear();
+            cmbBuyFor.Items.Clear();
+            cmbSellFor.Items.Clear();
+            cmbDefaultCurrency.Items.Clear();
             for (int i = 0; i < Constants.MaxItems; i++)
             {
                 cmbAddBoughtItem.Items.Add((i + 1) + ". " + Globals.GameItems[i].Name);
                 cmbAddSoldItem.Items.Add((i + 1) + ". " + Globals.GameItems[i].Name);
+                cmbBuyFor.Items.Add((i + 1) + ". " + Globals.GameItems[i].Name);
+                cmbSellFor.Items.Add((i + 1) + ". " + Globals.GameItems[i].Name);
+                cmbDefaultCurrency.Items.Add((i + 1) + ". " + Globals.GameItems[i].Name);
             }
             cmbAddBoughtItem.SelectedIndex = 0;
             cmbAddSoldItem.SelectedIndex = 0;
+            cmbBuyFor.SelectedIndex = 0;
+            cmbSellFor.SelectedIndex = 0;
             UpdateEditor();
         }
 
@@ -77,6 +85,7 @@ namespace Intersect_Editor.Forms.Editors
             _editorIndex = lstShops.SelectedIndex;
 
             txtName.Text = Globals.GameShops[_editorIndex].Name;
+            cmbDefaultCurrency.SelectedIndex = Globals.GameShops[_editorIndex].DefaultCurrency;
             if (Globals.GameShops[_editorIndex].BuyingWhitelist)
             {
                 rdoBuyWhitelist.Checked = true;
@@ -85,8 +94,25 @@ namespace Intersect_Editor.Forms.Editors
             {
                 rdoBuyBlacklist.Checked = true;
             }
+            UpdateWhitelist();
             UpdateLists();
             _changed[_editorIndex] = true;
+        }
+
+        private void UpdateWhitelist()
+        {
+            if (rdoBuyWhitelist.Checked)
+            {
+                cmbBuyFor.Enabled = true;
+                txtBuyAmount.Enabled = true;
+                grpItemsBought.Text = "Items Bought (Whitelist - Buy Listed Items)";
+            }
+            else
+            {
+                cmbBuyFor.Enabled = false;
+                txtBuyAmount.Enabled = false;
+                grpItemsBought.Text = "Items Bought (Blacklist - Buy All But Listed Items)";
+            }
         }
 
         private void btnSave_Click(object sender, EventArgs e)
@@ -134,11 +160,15 @@ namespace Intersect_Editor.Forms.Editors
         private void rdoBuyWhitelist_CheckedChanged(object sender, EventArgs e)
         {
             Globals.GameShops[_editorIndex].BuyingWhitelist = rdoBuyWhitelist.Checked;
+            UpdateLists();
+            UpdateWhitelist();
         }
 
         private void rdoBuyBlacklist_CheckedChanged(object sender, EventArgs e)
         {
-            Globals.GameShops[_editorIndex].BuyingWhitelist = !rdoBuyWhitelist.Checked;
+            Globals.GameShops[_editorIndex].BuyingWhitelist = rdoBuyWhitelist.Checked;
+            UpdateLists();
+            UpdateWhitelist();
         }
 
         private void txtName_TextChanged(object sender, EventArgs e)
@@ -147,38 +177,49 @@ namespace Intersect_Editor.Forms.Editors
             lstShops.Items[_editorIndex] = (_editorIndex + 1) + ". " + txtName.Text;
         }
 
-        private void scrlChargeRate_Scroll(object sender, ScrollEventArgs e)
-        {
-            lblChargeRate.Text = "Charge Rate: " + (scrlChargeRate.Value/100.0) + "x";
-        }
-
-        private void scrlBuyRate_Scroll(object sender, ScrollEventArgs e)
-        {
-            lblBuyRate.Text = "Buy Rate: " + (scrlBuyRate.Value / 100.0) + "x";
-        }
-
         private void UpdateLists()
         {
             lstSoldItems.Items.Clear();
             for (int i = 0; i < Globals.GameShops[_editorIndex].SellingItems.Count; i++)
             {
-                lstSoldItems.Items.Add("Item #" + (Globals.GameShops[_editorIndex].SellingItems[i].ItemNum + 1) + " " +
-                                       Globals.GameItems[Globals.GameShops[_editorIndex].SellingItems[i].ItemNum].Name + "  at " +
-                                       Globals.GameShops[_editorIndex].SellingItems[i].ItemRate + "x Item Value");
+                lstSoldItems.Items.Add("Sell Item #" + (Globals.GameShops[_editorIndex].SellingItems[i].ItemNum + 1) + " " +
+                                       Globals.GameItems[Globals.GameShops[_editorIndex].SellingItems[i].ItemNum].Name + " For (" +
+                                       Globals.GameShops[_editorIndex].SellingItems[i].CostItemVal + ") Item #" +
+                                       (Globals.GameShops[_editorIndex].SellingItems[i].CostItemNum + 1) + ". " +
+                                       Globals.GameItems[Globals.GameShops[_editorIndex].SellingItems[i].CostItemNum].Name);
             }
             lstBoughtItems.Items.Clear();
-            for (int i = 0; i < Globals.GameShops[_editorIndex].BuyingItems.Count; i++)
+            if (Globals.GameShops[_editorIndex].BuyingWhitelist)
             {
-                lstBoughtItems.Items.Add("Item #" + (Globals.GameShops[_editorIndex].BuyingItems[i].ItemNum + 1) + " " +
-                                       Globals.GameItems[Globals.GameShops[_editorIndex].BuyingItems[i].ItemNum].Name + "  at " +
-                                       Globals.GameShops[_editorIndex].BuyingItems[i].ItemRate + "x Item Value");
+                for (int i = 0; i < Globals.GameShops[_editorIndex].BuyingItems.Count; i++)
+                {
+                    lstBoughtItems.Items.Add("Buy Item #" + (Globals.GameShops[_editorIndex].BuyingItems[i].ItemNum + 1) +
+                                             " " +
+                                             Globals.GameItems[Globals.GameShops[_editorIndex].BuyingItems[i].ItemNum]
+                                                 .Name + " For (" +
+                                       Globals.GameShops[_editorIndex].BuyingItems[i].CostItemVal + ") Item #" +
+                                       (Globals.GameShops[_editorIndex].BuyingItems[i].CostItemNum + 1) + ". " +
+                                       Globals.GameItems[Globals.GameShops[_editorIndex].BuyingItems[i].CostItemNum].Name);
+                }
             }
+            else
+            {
+                for (int i = 0; i < Globals.GameShops[_editorIndex].BuyingItems.Count; i++)
+                {
+                    lstBoughtItems.Items.Add("Don't Buy Item #" +
+                                             (Globals.GameShops[_editorIndex].BuyingItems[i].ItemNum + 1) + " " +
+                                             Globals.GameItems[Globals.GameShops[_editorIndex].BuyingItems[i].ItemNum].Name);
+                }
+            }
+
         }
 
         private void btnAddSoldItem_Click(object sender, EventArgs e)
         {
             bool addedItem = false;
-            ShopItem newItem = new ShopItem(cmbAddSoldItem.SelectedIndex, (scrlChargeRate.Value / 100.0));
+            int cost = 0;
+            int.TryParse(txtSellCost.Text, out cost);
+            ShopItem newItem = new ShopItem(cmbAddSoldItem.SelectedIndex, cmbSellFor.SelectedIndex,cost);
             for (int i = 0; i < Globals.GameShops[_editorIndex].SellingItems.Count; i++)
             {
                 if (Globals.GameShops[_editorIndex].SellingItems[i].ItemNum == newItem.ItemNum)
@@ -204,7 +245,9 @@ namespace Intersect_Editor.Forms.Editors
         private void btnAddBoughtItem_Click(object sender, EventArgs e)
         {
             bool addedItem = false;
-            ShopItem newItem = new ShopItem(cmbAddBoughtItem.SelectedIndex, (scrlBuyRate.Value / 100.0));
+            int cost = 0;
+            int.TryParse(txtBuyAmount.Text, out cost);
+            ShopItem newItem = new ShopItem(cmbAddBoughtItem.SelectedIndex, cmbBuyFor.SelectedIndex,cost);
             for (int i = 0; i < Globals.GameShops[_editorIndex].BuyingItems.Count; i++)
             {
                 if (Globals.GameShops[_editorIndex].BuyingItems[i].ItemNum == newItem.ItemNum)
@@ -225,6 +268,11 @@ namespace Intersect_Editor.Forms.Editors
                 Globals.GameShops[_editorIndex].BuyingItems.RemoveAt(lstBoughtItems.SelectedIndex);
             }
             UpdateLists();
+        }
+
+        private void cmbDefaultCurrency_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            Globals.GameShops[_editorIndex].DefaultCurrency = cmbDefaultCurrency.SelectedIndex;
         }
     }
 }

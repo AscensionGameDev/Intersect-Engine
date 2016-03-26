@@ -202,6 +202,27 @@ namespace Intersect_Server.Classes
                 case Enums.ClientPackets.SaveShop:
                     HandleSaveShop(client, packet);
                     break;
+                case Enums.ClientPackets.BuyItem:
+                    HandleBuyItem(client, packet);
+                    break;
+                case Enums.ClientPackets.SellItem:
+                    HandleSellItem(client, packet);
+                    break;
+                case Enums.ClientPackets.CloseShop:
+                    HandleCloseShop(client, packet);
+                    break;
+                case Enums.ClientPackets.CloseBank:
+                    HandleCloseBank(client, packet);
+                    break;
+                case Enums.ClientPackets.DepositItem:
+                    HandleDepositItem(client, packet);
+                    break;
+                case Enums.ClientPackets.WithdrawItem:
+                    HandleWithdrawItem(client, packet);
+                    break;
+                case Enums.ClientPackets.MoveBankItem:
+                    HandleMoveBankItem(client, packet);
+                    break;
                 default:
                     Globals.GeneralLogs.Add(@"Non implemented packet received: " + packetHeader);
                     break;
@@ -1353,6 +1374,66 @@ namespace Intersect_Server.Classes
             var index = bf.ReadInteger();
             Globals.GameShops[index].Load(bf.ReadBytes(bf.Length()), index);
             Globals.GameShops[index].Save(index);
+            bf.Dispose();
+        }
+
+        private static void HandleBuyItem(Client client, byte[] packet)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteBytes(packet);
+            var slot = bf.ReadInteger();
+            var amount = bf.ReadInteger();
+            client.Entity.BuyItem(slot, amount);
+            bf.Dispose();
+        }
+
+        private static void HandleSellItem(Client client, byte[] packet)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteBytes(packet);
+            var slot = bf.ReadInteger();
+            var amount = bf.ReadInteger();
+            client.Entity.SellItem(slot, amount);
+            bf.Dispose();
+        }
+
+        private static void HandleCloseShop(Client client, byte[] packet)
+        {
+            client.Entity.CloseShop();
+        }
+
+        private static void HandleCloseBank(Client client, byte[] packet)
+        {
+            client.Entity.CloseBank();
+        }
+
+        private static void HandleDepositItem(Client client, byte[] packet)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteBytes(packet);
+            var slot = bf.ReadInteger();
+            var amount = bf.ReadInteger();
+            client.Entity.DepositItem(slot, amount);
+            bf.Dispose();
+        }
+
+        private static void HandleWithdrawItem(Client client, byte[] packet)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteBytes(packet);
+            var slot = bf.ReadInteger();
+            var amount = bf.ReadInteger();
+            client.Entity.WithdrawItem(slot, amount);
+            bf.Dispose();
+        }
+
+        private static void HandleMoveBankItem(Client client, byte[] packet)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteBytes(packet);
+            var item1 = bf.ReadInteger();
+            var item2 = bf.ReadInteger();
+            client.Entity.SwapBankItems(item1, item2);
             bf.Dispose();
         }
     }

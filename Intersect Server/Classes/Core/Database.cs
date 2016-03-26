@@ -199,18 +199,18 @@ namespace Intersect_Server.Classes
         {
             if (MySQLConnected)
             {
-                return CheckPasswordSQL(username,password);
+                return CheckPasswordSQL(username, password);
             }
             else
             {
-                return CheckPasswordXML(username,password);
+                return CheckPasswordXML(username, password);
             }
         }
         public static void CreateAccount(Player en, string username, string password, string email)
         {
             if (MySQLConnected)
             {
-                CreateAccountSQL(en,username, password,email);
+                CreateAccountSQL(en, username, password, email);
             }
             else
             {
@@ -351,7 +351,7 @@ namespace Intersect_Server.Classes
                 CheckInventoryTable(mysqlConn);
                 CheckSpellsTable(mysqlConn);
                 CheckHotbarTable(mysqlConn);
-
+                CheckBankTable(mysqlConn);
             }
         }
         private static void CheckUsersTable(MySqlConnection mysqlConn)
@@ -509,6 +509,31 @@ namespace Intersect_Server.Classes
             CheckTableField(mysqlConn, columns, "slot", myTable, MySqlFields.m_int);
             CheckTableField(mysqlConn, columns, "itemtype", myTable, MySqlFields.m_int);
             CheckTableField(mysqlConn, columns, "itemslot", myTable, MySqlFields.m_int);
+        }
+        private static void CheckBankTable(MySqlConnection mysqlConn)
+        {
+            const string myTable = "Banks";
+            var query = "CREATE TABLE IF NOT EXISTS `" + myTable + "` (`id` int(11) NOT NULL)";
+            var cmd = new MySqlCommand(query, mysqlConn);
+            cmd.ExecuteNonQuery();
+            query = "SHOW COLUMNS FROM " + myTable + ";";
+            cmd = new MySqlCommand(query, mysqlConn);
+            var reader = cmd.ExecuteReader();
+            var columns = new List<string>();
+            while (reader.Read())
+            {
+                columns.Add(reader.GetValue(0).ToString());
+            }
+            reader.Close();
+
+            //Work on each field
+            CheckTableField(mysqlConn, columns, "slot", myTable, MySqlFields.m_int);
+            CheckTableField(mysqlConn, columns, "itemnum", myTable, MySqlFields.m_int);
+            CheckTableField(mysqlConn, columns, "itemval", myTable, MySqlFields.m_int);
+            for (int i = 0; i < (int)Enums.Stats.StatCount; i++)
+            {
+                CheckTableField(mysqlConn, columns, "statbuff" + i, myTable, MySqlFields.m_int);
+            }
         }
         private static void CheckTableField(MySqlConnection mysqlConn, List<string> columns, string fieldName, string tableName, MySqlFields fieldType, int fieldLength = -1)
         {
@@ -1008,6 +1033,63 @@ namespace Intersect_Server.Classes
                 }
                 cmd = new MySqlCommand(query, mysqlConn);
                 cmd.ExecuteNonQuery();
+
+                //Save Bank Slots
+                query = "SELECT COUNT(*) from bank WHERE id=" + id;
+                cmd = new MySqlCommand(query, mysqlConn);
+                reader = cmd.ExecuteReader();
+                result = 0;
+                while (reader.Read())
+                {
+                    result = reader.GetInt32(0);
+                }
+                reader.Close();
+                if (result < Constants.MaxBankSlots)
+                {
+                    query = "";
+                    for (var i = result; i < Constants.MaxInvItems; i++)
+                    {
+                        query += "INSERT INTO Banks (id,slot,itemnum,itemval";
+                        for (int x = 0; x < (int)Enums.Stats.StatCount; x++)
+                        {
+                            query += ", statbuff" + x;
+                        }
+                        query += ") VALUES (" + id + "," + i + ",-1,0";
+                        for (int x = 0; x < (int)Enums.Stats.StatCount; x++)
+                        {
+                            query += ", 0";
+                        }
+                        query += ");\n";
+                    }
+                    cmd = new MySqlCommand(query, mysqlConn);
+                    cmd.ExecuteNonQuery();
+                }
+                query = "";
+                for (var i = 0; i < Constants.MaxBankSlots; i++)
+                {
+                    if (en.Bank[i] != null)
+                    {
+                        query += "UPDATE Banks SET itemnum=" + en.Bank[i].ItemNum + ", itemval=" +
+                                 en.Bank[i].ItemVal;
+                        for (int x = 0; x < (int)Enums.Stats.StatCount; x++)
+                        {
+                            query += ", statbuff" + x + "=" + en.Bank[i].StatBoost[x];
+                        }
+                        query += " WHERE id=" + id + " AND slot=" + i + ";\n";
+                    }
+                    else
+                    {
+                        query += "UPDATE Banks SET itemnum=" + -1 + ", itemval=" +
+                                 0;
+                        for (int x = 0; x < (int)Enums.Stats.StatCount; x++)
+                        {
+                            query += ", statbuff" + x + "=" + 0;
+                        }
+                        query += " WHERE id=" + id + " AND slot=" + i + ";\n";
+                    }
+                }
+                cmd = new MySqlCommand(query, mysqlConn);
+                cmd.ExecuteNonQuery();
             }
         }
 
@@ -1143,6 +1225,36 @@ namespace Intersect_Server.Classes
                     en.Hotbar[i].Slot = Int32.Parse(playerdata.SelectSingleNode("//PlayerData//CharacterInfo//Hotbar/Slot" + i + "Slot").InnerText);
                 }
 
+                for (int i = 0; i < Constants.MaxBankSlots; i++)
+                {
+                    if (playerdata.SelectSingleNode("//PlayerData//CharacterInfo//Bank/Slot" + i + "Num") != null)
+                    {
+                        int itemNum =
+                            Int32.Parse(
+                                playerdata.SelectSingleNode("//PlayerData//CharacterInfo//Bank/Slot" + i + "Num")
+                                    .InnerText);
+                        int itemVal =
+                            Int32.Parse(
+                                playerdata.SelectSingleNode("//PlayerData//CharacterInfo//Bank/Slot" + i + "Val")
+                                    .InnerText);
+                        if (itemNum < 0 || itemVal == 0)
+                        {
+                            en.Bank[i] = null;
+                        }
+                        else
+                        {
+                            en.Bank[i] = new ItemInstance(itemNum, itemVal);
+                            for (int x = 0; x < (int)Enums.Stats.StatCount; x++)
+                            {
+                                en.Bank[i].StatBoost[x] =
+                                    Int32.Parse(
+                                        playerdata.SelectSingleNode("//PlayerData//CharacterInfo//Bank/Slot" + i +
+                                                                    "Buff" + x).InnerText);
+                            }
+                        }
+                    }
+                }
+
                 return true;
             }
             catch (Exception ex)
@@ -1235,6 +1347,30 @@ namespace Intersect_Server.Classes
             {
                 writer.WriteElementString("Slot" + i + "Type", en.Hotbar[i].Type.ToString());
                 writer.WriteElementString("Slot" + i + "Slot", en.Hotbar[i].Slot.ToString());
+            }
+            writer.WriteEndElement();
+
+            writer.WriteStartElement("Bank");
+            for (int i = 0; i < Constants.MaxBankSlots; i++)
+            {
+                if (en.Bank[i] != null)
+                {
+                    writer.WriteElementString("Slot" + i + "Num", en.Bank[i].ItemNum.ToString());
+                    writer.WriteElementString("Slot" + i + "Val", en.Bank[i].ItemVal.ToString());
+                    for (int x = 0; x < (int)Enums.Stats.StatCount; x++)
+                    {
+                        writer.WriteElementString("Slot" + i + "Buff" + x, en.Bank[i].StatBoost[x].ToString());
+                    }
+                }
+                else
+                {
+                    writer.WriteElementString("Slot" + i + "Num", "-1");
+                    writer.WriteElementString("Slot" + i + "Val", "0");
+                    for (int x = 0; x < (int)Enums.Stats.StatCount; x++)
+                    {
+                        writer.WriteElementString("Slot" + i + "Buff" + x, "0");
+                    }
+                }
             }
             writer.WriteEndElement();
 
@@ -1571,7 +1707,7 @@ namespace Intersect_Server.Classes
                 }
                 else
                 {
-                    Globals.GameClasses[i].Load(File.ReadAllBytes("Resources/Classes/" + i + ".cls"),i);
+                    Globals.GameClasses[i].Load(File.ReadAllBytes("Resources/Classes/" + i + ".cls"), i);
                 }
                 if (String.IsNullOrEmpty(Globals.GameClasses[i].Name)) { x++; }
             }
@@ -1643,10 +1779,10 @@ namespace Intersect_Server.Classes
             Globals.CommonEvents = new EventStruct[Constants.MaxCommonEvents];
             for (var i = 0; i < Constants.MaxCommonEvents; i++)
             {
-                Globals.CommonEvents[i] = new EventStruct(i,-1,-1,true);
+                Globals.CommonEvents[i] = new EventStruct(i, -1, -1, true);
                 if (!File.Exists("Resources/Common Events/" + i + ".evt"))
                 {
-                    File.WriteAllBytes("Resources/Common Events/" + i + ".evt",Globals.CommonEvents[i].EventData());
+                    File.WriteAllBytes("Resources/Common Events/" + i + ".evt", Globals.CommonEvents[i].EventData());
                 }
                 else
                 {
@@ -1695,11 +1831,11 @@ namespace Intersect_Server.Classes
                     xml.Load("resources\\" + header + ".xml");
                     for (int i = 0; i < Constants.MaxServerSwitches; i++)
                     {
-                        
+
                         names[i] = xml.SelectSingleNode("//" + header + "/" + prefix + (i + 1) + "Name").InnerText;
                         if (boolValues != null)
                         {
-                            boolValues[i] = Convert.ToBoolean( xml.SelectSingleNode("//" + header + "/" + prefix + (i + 1) + "Value").InnerText);
+                            boolValues[i] = Convert.ToBoolean(xml.SelectSingleNode("//" + header + "/" + prefix + (i + 1) + "Value").InnerText);
                         }
                     }
                 }
@@ -1710,7 +1846,7 @@ namespace Intersect_Server.Classes
             }
             else
             {
-                SaveSwitchesOrVariables(names, boolValues,intValues, prefix, header, count);
+                SaveSwitchesOrVariables(names, boolValues, intValues, prefix, header, count);
             }
         }
         public static void SaveSwitchesOrVariables(string[] names, bool[] boolValues, int[] intValues, string prefix, string header, int count)

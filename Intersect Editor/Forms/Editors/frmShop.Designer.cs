@@ -38,15 +38,13 @@
             this.label1 = new System.Windows.Forms.Label();
             this.txtName = new System.Windows.Forms.TextBox();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
-            this.scrlChargeRate = new System.Windows.Forms.HScrollBar();
             this.lblChargeRate = new System.Windows.Forms.Label();
             this.btnDelSoldItem = new System.Windows.Forms.Button();
             this.btnAddSoldItem = new System.Windows.Forms.Button();
             this.cmbAddSoldItem = new System.Windows.Forms.ComboBox();
             this.label2 = new System.Windows.Forms.Label();
             this.lstSoldItems = new System.Windows.Forms.ListBox();
-            this.groupBox4 = new System.Windows.Forms.GroupBox();
-            this.scrlBuyRate = new System.Windows.Forms.HScrollBar();
+            this.grpItemsBought = new System.Windows.Forms.GroupBox();
             this.lblBuyRate = new System.Windows.Forms.Label();
             this.btnDelBoughtItem = new System.Windows.Forms.Button();
             this.btnAddBoughtItem = new System.Windows.Forms.Button();
@@ -55,10 +53,18 @@
             this.lstBoughtItems = new System.Windows.Forms.ListBox();
             this.rdoBuyBlacklist = new System.Windows.Forms.RadioButton();
             this.rdoBuyWhitelist = new System.Windows.Forms.RadioButton();
+            this.label4 = new System.Windows.Forms.Label();
+            this.cmbDefaultCurrency = new System.Windows.Forms.ComboBox();
+            this.txtSellCost = new System.Windows.Forms.TextBox();
+            this.txtBuyAmount = new System.Windows.Forms.TextBox();
+            this.cmbSellFor = new System.Windows.Forms.ComboBox();
+            this.label5 = new System.Windows.Forms.Label();
+            this.cmbBuyFor = new System.Windows.Forms.ComboBox();
+            this.label6 = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
-            this.groupBox4.SuspendLayout();
+            this.grpItemsBought.SuspendLayout();
             this.SuspendLayout();
             // 
             // groupBox1
@@ -69,7 +75,7 @@
             this.groupBox1.Controls.Add(this.lstShops);
             this.groupBox1.Location = new System.Drawing.Point(12, 5);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(203, 431);
+            this.groupBox1.Size = new System.Drawing.Size(203, 467);
             this.groupBox1.TabIndex = 15;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Shops";
@@ -77,7 +83,7 @@
             // btnCancel
             // 
             this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.btnCancel.Location = new System.Drawing.Point(6, 398);
+            this.btnCancel.Location = new System.Drawing.Point(5, 436);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(190, 27);
             this.btnCancel.TabIndex = 4;
@@ -88,7 +94,7 @@
             // btnDelete
             // 
             this.btnDelete.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.btnDelete.Location = new System.Drawing.Point(7, 366);
+            this.btnDelete.Location = new System.Drawing.Point(6, 404);
             this.btnDelete.Name = "btnDelete";
             this.btnDelete.Size = new System.Drawing.Size(190, 27);
             this.btnDelete.TabIndex = 3;
@@ -98,7 +104,7 @@
             // 
             // btnSave
             // 
-            this.btnSave.Location = new System.Drawing.Point(6, 333);
+            this.btnSave.Location = new System.Drawing.Point(5, 371);
             this.btnSave.Name = "btnSave";
             this.btnSave.Size = new System.Drawing.Size(190, 27);
             this.btnSave.TabIndex = 2;
@@ -111,12 +117,14 @@
             this.lstShops.FormattingEnabled = true;
             this.lstShops.Location = new System.Drawing.Point(6, 19);
             this.lstShops.Name = "lstShops";
-            this.lstShops.Size = new System.Drawing.Size(191, 303);
+            this.lstShops.Size = new System.Drawing.Size(191, 342);
             this.lstShops.TabIndex = 1;
             this.lstShops.Click += new System.EventHandler(this.lstShops_Click);
             // 
             // groupBox2
             // 
+            this.groupBox2.Controls.Add(this.cmbDefaultCurrency);
+            this.groupBox2.Controls.Add(this.label4);
             this.groupBox2.Controls.Add(this.label1);
             this.groupBox2.Controls.Add(this.txtName);
             this.groupBox2.Location = new System.Drawing.Point(221, 5);
@@ -145,7 +153,9 @@
             // 
             // groupBox3
             // 
-            this.groupBox3.Controls.Add(this.scrlChargeRate);
+            this.groupBox3.Controls.Add(this.cmbSellFor);
+            this.groupBox3.Controls.Add(this.label5);
+            this.groupBox3.Controls.Add(this.txtSellCost);
             this.groupBox3.Controls.Add(this.lblChargeRate);
             this.groupBox3.Controls.Add(this.btnDelSoldItem);
             this.groupBox3.Controls.Add(this.btnAddSoldItem);
@@ -154,33 +164,23 @@
             this.groupBox3.Controls.Add(this.lstSoldItems);
             this.groupBox3.Location = new System.Drawing.Point(222, 58);
             this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(258, 378);
+            this.groupBox3.Size = new System.Drawing.Size(258, 414);
             this.groupBox3.TabIndex = 17;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Items Sold";
             // 
-            // scrlChargeRate
-            // 
-            this.scrlChargeRate.Location = new System.Drawing.Point(111, 311);
-            this.scrlChargeRate.Maximum = 1000;
-            this.scrlChargeRate.Name = "scrlChargeRate";
-            this.scrlChargeRate.Size = new System.Drawing.Size(141, 17);
-            this.scrlChargeRate.TabIndex = 6;
-            this.scrlChargeRate.Value = 100;
-            this.scrlChargeRate.Scroll += new System.Windows.Forms.ScrollEventHandler(this.scrlChargeRate_Scroll);
-            // 
             // lblChargeRate
             // 
             this.lblChargeRate.AutoSize = true;
-            this.lblChargeRate.Location = new System.Drawing.Point(3, 313);
+            this.lblChargeRate.Location = new System.Drawing.Point(7, 353);
             this.lblChargeRate.Name = "lblChargeRate";
-            this.lblChargeRate.Size = new System.Drawing.Size(84, 13);
+            this.lblChargeRate.Size = new System.Drawing.Size(51, 13);
             this.lblChargeRate.TabIndex = 5;
-            this.lblChargeRate.Text = "Charge Rate: 1x";
+            this.lblChargeRate.Text = "Sell Cost:";
             // 
             // btnDelSoldItem
             // 
-            this.btnDelSoldItem.Location = new System.Drawing.Point(135, 349);
+            this.btnDelSoldItem.Location = new System.Drawing.Point(135, 383);
             this.btnDelSoldItem.Name = "btnDelSoldItem";
             this.btnDelSoldItem.Size = new System.Drawing.Size(117, 23);
             this.btnDelSoldItem.TabIndex = 4;
@@ -190,7 +190,7 @@
             // 
             // btnAddSoldItem
             // 
-            this.btnAddSoldItem.Location = new System.Drawing.Point(6, 349);
+            this.btnAddSoldItem.Location = new System.Drawing.Point(6, 383);
             this.btnAddSoldItem.Name = "btnAddSoldItem";
             this.btnAddSoldItem.Size = new System.Drawing.Size(117, 23);
             this.btnAddSoldItem.TabIndex = 3;
@@ -212,9 +212,9 @@
             this.label2.AutoSize = true;
             this.label2.Location = new System.Drawing.Point(7, 264);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(52, 13);
+            this.label2.Size = new System.Drawing.Size(108, 13);
             this.label2.TabIndex = 1;
-            this.label2.Text = "Add Item:";
+            this.label2.Text = "Add Item To Be Sold:";
             // 
             // lstSoldItems
             // 
@@ -224,46 +224,38 @@
             this.lstSoldItems.Size = new System.Drawing.Size(245, 238);
             this.lstSoldItems.TabIndex = 0;
             // 
-            // groupBox4
+            // grpItemsBought
             // 
-            this.groupBox4.Controls.Add(this.scrlBuyRate);
-            this.groupBox4.Controls.Add(this.lblBuyRate);
-            this.groupBox4.Controls.Add(this.btnDelBoughtItem);
-            this.groupBox4.Controls.Add(this.btnAddBoughtItem);
-            this.groupBox4.Controls.Add(this.cmbAddBoughtItem);
-            this.groupBox4.Controls.Add(this.label3);
-            this.groupBox4.Controls.Add(this.lstBoughtItems);
-            this.groupBox4.Controls.Add(this.rdoBuyBlacklist);
-            this.groupBox4.Controls.Add(this.rdoBuyWhitelist);
-            this.groupBox4.Location = new System.Drawing.Point(486, 58);
-            this.groupBox4.Name = "groupBox4";
-            this.groupBox4.Size = new System.Drawing.Size(258, 378);
-            this.groupBox4.TabIndex = 18;
-            this.groupBox4.TabStop = false;
-            this.groupBox4.Text = "Items Bought";
-            // 
-            // scrlBuyRate
-            // 
-            this.scrlBuyRate.Location = new System.Drawing.Point(92, 311);
-            this.scrlBuyRate.Maximum = 1000;
-            this.scrlBuyRate.Name = "scrlBuyRate";
-            this.scrlBuyRate.Size = new System.Drawing.Size(160, 17);
-            this.scrlBuyRate.TabIndex = 7;
-            this.scrlBuyRate.Value = 100;
-            this.scrlBuyRate.Scroll += new System.Windows.Forms.ScrollEventHandler(this.scrlBuyRate_Scroll);
+            this.grpItemsBought.Controls.Add(this.cmbBuyFor);
+            this.grpItemsBought.Controls.Add(this.label6);
+            this.grpItemsBought.Controls.Add(this.txtBuyAmount);
+            this.grpItemsBought.Controls.Add(this.lblBuyRate);
+            this.grpItemsBought.Controls.Add(this.btnDelBoughtItem);
+            this.grpItemsBought.Controls.Add(this.btnAddBoughtItem);
+            this.grpItemsBought.Controls.Add(this.cmbAddBoughtItem);
+            this.grpItemsBought.Controls.Add(this.label3);
+            this.grpItemsBought.Controls.Add(this.lstBoughtItems);
+            this.grpItemsBought.Controls.Add(this.rdoBuyBlacklist);
+            this.grpItemsBought.Controls.Add(this.rdoBuyWhitelist);
+            this.grpItemsBought.Location = new System.Drawing.Point(486, 58);
+            this.grpItemsBought.Name = "grpItemsBought";
+            this.grpItemsBought.Size = new System.Drawing.Size(258, 414);
+            this.grpItemsBought.TabIndex = 18;
+            this.grpItemsBought.TabStop = false;
+            this.grpItemsBought.Text = "Items Bought (Whitelist - Buy Listed Items)";
             // 
             // lblBuyRate
             // 
             this.lblBuyRate.AutoSize = true;
-            this.lblBuyRate.Location = new System.Drawing.Point(6, 313);
+            this.lblBuyRate.Location = new System.Drawing.Point(6, 353);
             this.lblBuyRate.Name = "lblBuyRate";
-            this.lblBuyRate.Size = new System.Drawing.Size(68, 13);
+            this.lblBuyRate.Size = new System.Drawing.Size(66, 13);
             this.lblBuyRate.TabIndex = 6;
-            this.lblBuyRate.Text = "Buy Rate: 1x";
+            this.lblBuyRate.Text = "Sell Amount:";
             // 
             // btnDelBoughtItem
             // 
-            this.btnDelBoughtItem.Location = new System.Drawing.Point(137, 349);
+            this.btnDelBoughtItem.Location = new System.Drawing.Point(138, 383);
             this.btnDelBoughtItem.Name = "btnDelBoughtItem";
             this.btnDelBoughtItem.Size = new System.Drawing.Size(117, 23);
             this.btnDelBoughtItem.TabIndex = 6;
@@ -273,7 +265,7 @@
             // 
             // btnAddBoughtItem
             // 
-            this.btnAddBoughtItem.Location = new System.Drawing.Point(8, 349);
+            this.btnAddBoughtItem.Location = new System.Drawing.Point(9, 383);
             this.btnAddBoughtItem.Name = "btnAddBoughtItem";
             this.btnAddBoughtItem.Size = new System.Drawing.Size(117, 23);
             this.btnAddBoughtItem.TabIndex = 5;
@@ -331,13 +323,82 @@
             this.rdoBuyWhitelist.UseVisualStyleBackColor = true;
             this.rdoBuyWhitelist.CheckedChanged += new System.EventHandler(this.rdoBuyWhitelist_CheckedChanged);
             // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(247, 20);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(92, 13);
+            this.label4.TabIndex = 2;
+            this.label4.Text = "Default Currency: ";
+            // 
+            // cmbDefaultCurrency
+            // 
+            this.cmbDefaultCurrency.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbDefaultCurrency.FormattingEnabled = true;
+            this.cmbDefaultCurrency.Location = new System.Drawing.Point(338, 17);
+            this.cmbDefaultCurrency.Name = "cmbDefaultCurrency";
+            this.cmbDefaultCurrency.Size = new System.Drawing.Size(179, 21);
+            this.cmbDefaultCurrency.TabIndex = 8;
+            this.cmbDefaultCurrency.SelectedIndexChanged += new System.EventHandler(this.cmbDefaultCurrency_SelectedIndexChanged);
+            // 
+            // txtSellCost
+            // 
+            this.txtSellCost.Location = new System.Drawing.Point(79, 350);
+            this.txtSellCost.Name = "txtSellCost";
+            this.txtSellCost.Size = new System.Drawing.Size(173, 20);
+            this.txtSellCost.TabIndex = 9;
+            // 
+            // txtBuyAmount
+            // 
+            this.txtBuyAmount.Location = new System.Drawing.Point(78, 350);
+            this.txtBuyAmount.Name = "txtBuyAmount";
+            this.txtBuyAmount.Size = new System.Drawing.Size(173, 20);
+            this.txtBuyAmount.TabIndex = 10;
+            // 
+            // cmbSellFor
+            // 
+            this.cmbSellFor.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbSellFor.FormattingEnabled = true;
+            this.cmbSellFor.Location = new System.Drawing.Point(6, 322);
+            this.cmbSellFor.Name = "cmbSellFor";
+            this.cmbSellFor.Size = new System.Drawing.Size(246, 21);
+            this.cmbSellFor.TabIndex = 11;
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(7, 306);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(45, 13);
+            this.label5.TabIndex = 10;
+            this.label5.Text = "Sell For:";
+            // 
+            // cmbBuyFor
+            // 
+            this.cmbBuyFor.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbBuyFor.FormattingEnabled = true;
+            this.cmbBuyFor.Location = new System.Drawing.Point(8, 322);
+            this.cmbBuyFor.Name = "cmbBuyFor";
+            this.cmbBuyFor.Size = new System.Drawing.Size(246, 21);
+            this.cmbBuyFor.TabIndex = 12;
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(6, 306);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(46, 13);
+            this.label6.TabIndex = 11;
+            this.label6.Text = "Buy For:";
+            // 
             // frmShop
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(751, 448);
+            this.ClientSize = new System.Drawing.Size(751, 477);
             this.ControlBox = false;
-            this.Controls.Add(this.groupBox4);
+            this.Controls.Add(this.grpItemsBought);
             this.Controls.Add(this.groupBox3);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.groupBox2);
@@ -351,8 +412,8 @@
             this.groupBox2.PerformLayout();
             this.groupBox3.ResumeLayout(false);
             this.groupBox3.PerformLayout();
-            this.groupBox4.ResumeLayout(false);
-            this.groupBox4.PerformLayout();
+            this.grpItemsBought.ResumeLayout(false);
+            this.grpItemsBought.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -369,7 +430,7 @@
         private System.Windows.Forms.TextBox txtName;
         private System.Windows.Forms.GroupBox groupBox3;
         private System.Windows.Forms.ListBox lstSoldItems;
-        private System.Windows.Forms.GroupBox groupBox4;
+        private System.Windows.Forms.GroupBox grpItemsBought;
         private System.Windows.Forms.ListBox lstBoughtItems;
         private System.Windows.Forms.RadioButton rdoBuyBlacklist;
         private System.Windows.Forms.RadioButton rdoBuyWhitelist;
@@ -382,8 +443,14 @@
         private System.Windows.Forms.ComboBox cmbAddBoughtItem;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label lblBuyRate;
-        private System.Windows.Forms.HScrollBar scrlBuyRate;
         private System.Windows.Forms.Label lblChargeRate;
-        private System.Windows.Forms.HScrollBar scrlChargeRate;
+        private System.Windows.Forms.ComboBox cmbDefaultCurrency;
+        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.ComboBox cmbSellFor;
+        private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.TextBox txtSellCost;
+        private System.Windows.Forms.ComboBox cmbBuyFor;
+        private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.TextBox txtBuyAmount;
     }
 }

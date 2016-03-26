@@ -84,7 +84,14 @@ namespace Intersect_Server.Classes
             OpenSwitchVariableEditor,
             SaveSwitchVariable,
             OpenShopEditor,
-            SaveShop
+            SaveShop,
+            SellItem,
+            BuyItem,
+            CloseShop,
+            DepositItem,
+            WithdrawItem,
+            MoveBankItem,
+            CloseBank,
         }
 
         public enum ServerPackets
@@ -154,6 +161,11 @@ namespace Intersect_Server.Classes
             SwitchVariableData,
             OpenShopEditor,
             ShopData,
+            OpenShop,
+            CloseShop,
+            OpenBank,
+            CloseBank,
+            BankUpdate,
         }
 
         public enum Stats

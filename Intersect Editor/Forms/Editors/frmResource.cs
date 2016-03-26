@@ -262,7 +262,6 @@ namespace Intersect_Editor.Classes
 
         public void Render()
         {
-            Rectangle tileSelection;
             Pen whitePen = new Pen(System.Drawing.Color.Red, 1);
 
             // Initial Sprite

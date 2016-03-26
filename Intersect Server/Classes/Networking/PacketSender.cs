@@ -366,12 +366,12 @@ namespace Intersect_Server.Classes
             {
                 SendProjectile(client, i);
             }
-            for (int i = 0; i < Constants.MaxShops; i++)
-            {
-                SendShop(client, i);
-            }
             if (client.IsEditor)
             {
+                for (int i = 0; i < Constants.MaxShops; i++)
+                {
+                    SendShop(client, i);
+                }
                 for (int i = 0; i < Constants.MaxCommonEvents; i++)
                 {
                     SendCommonEvent(client, i);
@@ -1227,6 +1227,61 @@ namespace Intersect_Server.Classes
             bf.Dispose();
         }
 
+        public static void SendOpenShop(Client client, int shopNum)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteLong((int)Enums.ServerPackets.OpenShop);
+            bf.WriteBytes(Globals.GameShops[shopNum].ShopData());
+            client.SendPacket(bf.ToArray());
+            bf.Dispose();
+        }
+
+        public static void SendCloseShop(Client client)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteLong((int)Enums.ServerPackets.CloseShop);
+            client.SendPacket(bf.ToArray());
+            bf.Dispose();
+        }
+
+        public static void SendOpenBank(Client client)
+        {
+            for (int i = 0; i < Constants.MaxBankSlots; i++)
+            {
+                SendBankUpdate(client, i);
+            }
+            var bf = new ByteBuffer();
+            bf.WriteLong((int)Enums.ServerPackets.OpenBank);
+            client.SendPacket(bf.ToArray());
+            bf.Dispose();
+        }
+
+        public static void SendCloseBank(Client client)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteLong((int)Enums.ServerPackets.CloseBank);
+            client.SendPacket(bf.ToArray());
+            bf.Dispose();
+        }
+
+        public static void SendBankUpdate(Client client, int slot)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteLong((int)Enums.ServerPackets.BankUpdate);
+            bf.WriteInteger(slot);
+            if (client.Entity.Bank[slot] == null || client.Entity.Bank[slot].ItemNum < 0 ||
+                client.Entity.Bank[slot].ItemVal <= 0)
+            {
+                bf.WriteInteger(0);
+            }
+            else
+            {
+                bf.WriteInteger(1);
+                bf.WriteBytes(client.Entity.Bank[slot].Data());
+            }
+            client.SendPacket(bf.ToArray());
+            bf.Dispose();
+        }
     }
 }
 

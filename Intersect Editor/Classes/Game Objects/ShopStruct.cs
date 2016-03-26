@@ -32,7 +32,8 @@ namespace Intersect_Editor.Classes.Game_Objects
     {
         //Core info
         public const string Version = "0.0.0.1";
-        public string Name = "";
+        public string Name = "New Shop";
+        public int DefaultCurrency = 0;
 
         //Selling List
         public List<ShopItem> SellingItems = new List<ShopItem>();
@@ -54,6 +55,9 @@ namespace Intersect_Editor.Classes.Game_Objects
             if (loadedVersion != Version)
                 throw new Exception("Failed to load shop #" + index + ". Loaded Version: " + loadedVersion + " Expected Version: " + Version);
             Name = myBuffer.ReadString();
+            DefaultCurrency = myBuffer.ReadInteger();
+            SellingItems.Clear();
+            BuyingItems.Clear();
             var sellingCount = myBuffer.ReadInteger();
             for (int i = 0; i < sellingCount; i++)
             {
@@ -73,6 +77,7 @@ namespace Intersect_Editor.Classes.Game_Objects
             var myBuffer = new ByteBuffer();
             myBuffer.WriteString(Version);
             myBuffer.WriteString(Name);
+            myBuffer.WriteInteger(DefaultCurrency);
             myBuffer.WriteInteger(SellingItems.Count);
             for (int i = 0; i < SellingItems.Count; i++)
             {
@@ -92,22 +97,26 @@ namespace Intersect_Editor.Classes.Game_Objects
     public class ShopItem
     {
         public int ItemNum;
-        public double ItemRate;
+        public int CostItemNum;
+        public int CostItemVal;
         public ShopItem(ByteBuffer myBuffer)
         {
             ItemNum = myBuffer.ReadInteger();
-            ItemRate = myBuffer.ReadDouble();
+            CostItemNum = myBuffer.ReadInteger();
+            CostItemVal = myBuffer.ReadInteger();
         }
-        public ShopItem(int itemNum, double rate)
+        public ShopItem(int itemNum, int costItemNum, int costVal)
         {
             ItemNum = itemNum;
-            ItemRate = rate;
+            CostItemNum = costItemNum;
+            CostItemVal = costVal;
         }
         public byte[] Data()
         {
             ByteBuffer myBuffer = new ByteBuffer();
             myBuffer.WriteInteger(ItemNum);
-            myBuffer.WriteDouble(ItemRate);
+            myBuffer.WriteInteger(CostItemNum);
+            myBuffer.WriteInteger(CostItemVal);
             return myBuffer.ToArray();
         }
     }

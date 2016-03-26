@@ -35,7 +35,7 @@ namespace Intersect_Client.Classes.UI.Game
     public class ItemDescWindow
     {
         WindowControl _descWindow;
-        public ItemDescWindow(int itemnum, int amount, int x, int y, int[] StatBuffs, string titleOverride = "")
+        public ItemDescWindow(int itemnum, int amount, int x, int y, int[] StatBuffs, string titleOverride = "", string valueLabel = "")
         {
             string title = "";
             if (titleOverride == "")
@@ -53,27 +53,38 @@ namespace Intersect_Client.Classes.UI.Game
 
             y = 12;
 
+
+
             if (itemnum > -1)
             {
-
+                var innery = 4;
                 ImagePanel icon = new ImagePanel(_descWindow);
                 icon.SetSize(32, 32);
                 icon.SetPosition(220 - 4 - 32, 4);
                 icon.ImageName = "Resources/Items/" + Globals.GameItems[itemnum].Pic;
 
                 Label itemName = new Label(_descWindow);
-                itemName.SetPosition(4, 4);
+                itemName.SetPosition(4, innery);
                 itemName.Text = Globals.GameItems[itemnum].Name;
 
+                innery += 12;
                 if (amount > 1)
                 {
                     itemName.Text += " x" + amount;
                 }
 
+                if ( valueLabel != "")
+                {
+                    Label itemValue = new Label(_descWindow);
+                    itemValue.SetPosition(4, innery);
+                    itemValue.SetText(valueLabel);
+                    innery += 12;
+                }
+
                 if (Globals.GameItems[itemnum].Type != (int)Enums.ItemTypes.None)
                 {
                     Label itemType = new Label(_descWindow);
-                    itemType.SetPosition(4, 16);
+                    itemType.SetPosition(4, innery);
                     switch (Globals.GameItems[itemnum].Type)
                     {
                         case (int)Enums.ItemTypes.Currency:
@@ -89,9 +100,10 @@ namespace Intersect_Client.Classes.UI.Game
                             itemType.Text = "Type: Spell";
                             break;
                     }
+                    innery += 12;
                 }
 
-                y = 40;
+                y += innery + 4;
                 if (Globals.GameItems[itemnum].Type == (int)Enums.ItemTypes.Equipment)
                 {
                     Label itemSlot = new Label(_descWindow);
@@ -100,7 +112,8 @@ namespace Intersect_Client.Classes.UI.Game
                     {
                         itemSlot.Text += " - 2H";
                     }
-                    itemSlot.SetPosition(4, 28);
+                    itemSlot.SetPosition(4, y);
+                    y += 12;
                 }
                 RichLabel itemDesc = new RichLabel(_descWindow);
                 itemDesc.SetPosition(4, y);
@@ -173,11 +186,15 @@ namespace Intersect_Client.Classes.UI.Game
                         itemStats.AddText(stats, itemName.TextColor);
                         itemStats.AddLineBreak();
                     }
-                    for (int i = 0; i < Constants.MaxStats; i++)
+                    if (StatBuffs != null)
                     {
-                        stats = Enums.GetStatName(i) + ": " + (Globals.GameItems[itemnum].StatsGiven[i] + StatBuffs[i]) + "";
-                        itemStats.AddText(stats, itemName.TextColor);
-                        itemStats.AddLineBreak();
+                        for (int i = 0; i < Constants.MaxStats; i++)
+                        {
+                            stats = Enums.GetStatName(i) + ": " +
+                                    (Globals.GameItems[itemnum].StatsGiven[i] + StatBuffs[i]) + "";
+                            itemStats.AddText(stats, itemName.TextColor);
+                            itemStats.AddLineBreak();
+                        }
                     }
 
                     itemStats.SizeToChildren(false, true);

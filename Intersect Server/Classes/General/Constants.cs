@@ -19,6 +19,9 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+
+using System.CodeDom;
+
 namespace Intersect_Server.Classes
 {
     public static class Constants
@@ -46,6 +49,9 @@ namespace Intersect_Server.Classes
         public const int MaxLevel = 100;
         public const int MaxHotbar = 10;
 
+        //Shop Processing
+        public const int CurrencyItem = 0; //Index of item to be used in shops.
+
         //Item Processing
         public const int ItemDespawnTime = 15000; //15 seconds
         public const int ItemRespawnTime = 15000; //15 seconds
@@ -53,6 +59,7 @@ namespace Intersect_Server.Classes
         //Player Constraints
         public const int MaxInvItems = 35;
         public const int MaxPlayerSkills = 35;
+        public const int MaxBankSlots = 100;
 
         public const int LayerCount = 5;
     }

@@ -96,6 +96,10 @@ namespace Intersect_Server.Classes.Entities
                     if (!IsGlobal) PageInstance.Update(); //Process movement and stuff that is client specific
                     if (CallStack.Count > 0)
                     {
+                        if (CallStack.Peek().WaitingForResponse == 2 && MyPlayer.InShop == -1)
+                            CallStack.Peek().WaitingForResponse = 0;
+                        if (CallStack.Peek().WaitingForResponse == 3 && MyPlayer.InBank == false)
+                            CallStack.Peek().WaitingForResponse = 0;
                         while (CallStack.Peek().WaitingForResponse == 0)
                         {
                             if (CallStack.Peek().WaitingForRoute > -1)
@@ -865,10 +869,15 @@ namespace Intersect_Server.Classes.Entities
                     CallStack.Peek().CommandIndex++;
                     break;
                 case EventCommandType.OpenBank:
-
+                    MyPlayer.OpenBank();
+                    CallStack.Peek().WaitingForResponse = 3;
+                    CallStack.Peek().CommandIndex++;
                     break;
                 case EventCommandType.OpenShop:
-
+                    MyPlayer.OpenShop(CallStack.Peek().Page.CommandLists[CallStack.Peek().ListIndex]
+                        .Commands[CallStack.Peek().CommandIndex].Ints[0]);
+                    CallStack.Peek().WaitingForResponse = 2;
+                    CallStack.Peek().CommandIndex++;
                     break;
             }
         }
@@ -951,6 +960,11 @@ namespace Intersect_Server.Classes.Entities
         public int WaitingForRoute = -1;
         public int WaitingForRouteMap;
         public int ResponseType;
+
+        public enum EventResponseType
+        {
+            Dialog = 1,
+        }
 
         public CommandInstance(EventPage page)
         {

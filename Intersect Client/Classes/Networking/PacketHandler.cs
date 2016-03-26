@@ -198,6 +198,21 @@ namespace Intersect_Client.Classes.Networking
                     case Enums.ServerPackets.StopSounds:
                         HandleStopSounds(bf.ReadBytes(bf.Length()));
                         break;
+                    case Enums.ServerPackets.OpenShop:
+                        HandleOpenShop(bf.ReadBytes(bf.Length()));
+                        break;
+                    case Enums.ServerPackets.CloseShop:
+                        HandleCloseShop(bf.ReadBytes(bf.Length()));
+                        break;
+                    case Enums.ServerPackets.OpenBank:
+                        HandleOpenBank(bf.ReadBytes(bf.Length()));
+                        break;
+                    case Enums.ServerPackets.CloseBank:
+                        HandleCloseBank(bf.ReadBytes(bf.Length()));
+                        break;
+                    case Enums.ServerPackets.BankUpdate:
+                        HandleBankUpdate(bf.ReadBytes(bf.Length()));
+                        break;
                     default:
                         Console.WriteLine(@"Non implemented packet received: " + packetHeader);
                         break;
@@ -949,6 +964,47 @@ namespace Intersect_Client.Classes.Networking
         private static void HandleStopSounds(byte[] packet)
         {
             GameAudio.StopAllSounds();
+        }
+
+        private static void HandleOpenShop(byte[] packet)
+        {
+            Globals.GameShop = new ShopStruct();
+            Globals.GameShop.Load(packet,0);
+            Gui.GameUI.NotifyOpenShop();
+        }
+
+        private static void HandleCloseShop(byte[] packet)
+        {
+            Globals.GameShop = null;
+            Gui.GameUI.NotifyCloseShop();
+        }
+
+        private static void HandleOpenBank(byte[] packet)
+        {
+            Gui.GameUI.NotifyOpenBank();
+        }
+
+        private static void HandleCloseBank(byte[] packet)
+        {
+            Gui.GameUI.NotifyCloseBank();
+        }
+
+        private static void HandleBankUpdate(byte[] packet)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteBytes(packet);
+            int slot = bf.ReadInteger();
+            int active = bf.ReadInteger();
+            if (active == 0)
+            {
+                Globals.Bank[slot] = null;
+            }
+            else
+            {
+                Globals.Bank[slot] = new ItemInstance();
+                Globals.Bank[slot].Load(bf);
+            }
+            bf.Dispose();
         }
 
 

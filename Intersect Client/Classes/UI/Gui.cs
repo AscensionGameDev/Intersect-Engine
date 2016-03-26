@@ -280,6 +280,7 @@ namespace Intersect_Client.Classes.UI
             var lastSpace = 0;
             var curPos = 0;
             var curLen = 1;
+            input = input.Replace("\r\n", "\n");
             while (curPos + curLen < input.Length)
             {
                 if (GameGraphics.Renderer.MeasureText(input.Substring(curPos, curLen),GameGraphics.GameFont,10).X < width)
@@ -291,7 +292,7 @@ namespace Intersect_Client.Classes.UI
                     else if (input[curPos + curLen] == '\n')
                     {
                         myOutput.Add(input.Substring(curPos, curLen));
-                        curPos = curPos + curLen;
+                        curPos = curPos + curLen + 1;
                         curLen = 1;
                     }
                 }

@@ -24,9 +24,12 @@
     OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
     SOFTWARE.
 */
-
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Security.Permissions;
+using System.Text;
+using System.Threading.Tasks;
 using IntersectClientExtras.GenericClasses;
 using IntersectClientExtras.Graphics;
 using IntersectClientExtras.Gwen;
@@ -40,57 +43,69 @@ using Intersect_Client.Classes.Networking;
 
 namespace Intersect_Client.Classes.UI.Game
 {
-    public class InventoryWindow : IGUIElement
+    public class BankWindow
     {
         //Controls
-        private WindowControl _inventoryWindow;
+        private WindowControl _bankWindow;
         private ScrollControl _itemContainer;
 
         //Location
         public int X;
         public int Y;
 
-        //Item List
-        public List<InventoryItem> Items = new List<InventoryItem>();
+        public List<BankItem> Items = new List<BankItem>();
         private List<Label> _values = new List<Label>();
 
         //Init
-        public InventoryWindow(Canvas _gameCanvas)
+        public BankWindow(Canvas _gameCanvas)
         {
-            _inventoryWindow = new WindowControl(_gameCanvas, "Inventory");
-            _inventoryWindow.SetSize(200, 300);
-            _inventoryWindow.SetPosition(GameGraphics.Renderer.GetScreenWidth() - 210, GameGraphics.Renderer.GetScreenHeight() - 500);
-            _inventoryWindow.DisableResizing();
-            _inventoryWindow.Margin = Margin.Zero;
-            _inventoryWindow.Padding = Padding.Zero;
-            _inventoryWindow.IsHidden = true;
+            _bankWindow = new WindowControl(_gameCanvas, "Bank");
+            _bankWindow.SetSize(400, 400);
+            _bankWindow.SetPosition(GameGraphics.Renderer.GetScreenWidth() / 2 - 200, GameGraphics.Renderer.GetScreenHeight() / 2 - 200);
+            _bankWindow.DisableResizing();
+            _bankWindow.Margin = Margin.Zero;
+            _bankWindow.Padding = Padding.Zero;
+            X = _bankWindow.X;
+            Y = _bankWindow.Y;
 
-            _itemContainer = new ScrollControl(_inventoryWindow);
+            _itemContainer = new ScrollControl(_bankWindow);
             _itemContainer.SetPosition(0, 0);
-            _itemContainer.SetSize(_inventoryWindow.Width, _inventoryWindow.Height - 24);
+            _itemContainer.SetSize(_bankWindow.Width, _bankWindow.Height - 24);
             _itemContainer.EnableScroll(false, true);
             InitItemContainer();
         }
 
-        //Methods
+        public void Close()
+        {
+            _bankWindow.Close();
+        }
+        public bool IsVisible()
+        {
+            return !_bankWindow.IsHidden;
+        }
+        public void Hide()
+        {
+            _bankWindow.IsHidden = true;
+        }
+
         public void Update()
         {
-            if (_inventoryWindow.IsHidden == true) { return; }
-            X = _inventoryWindow.X;
-            Y = _inventoryWindow.Y;
+            if (_bankWindow.IsHidden == true) { return; }
+            X = _bankWindow.X;
+            Y = _bankWindow.Y;
             for (int i = 0; i < Constants.MaxInvItems; i++)
             {
-                if (Globals.Me.Inventory[i].ItemNum > -1)
+                if (Globals.Bank[i] != null &&  Globals.Bank[i].ItemNum > -1)
                 {
                     Items[i].pnl.IsHidden = false;
 
-                    if (Globals.GameItems[Globals.Me.Inventory[i].ItemNum].Type == (int)Enums.ItemTypes.Consumable || //Allow Stacking on Currency, Consumable, Spell, and item types of none.
-                        Globals.GameItems[Globals.Me.Inventory[i].ItemNum].Type == (int)Enums.ItemTypes.Currency ||
-                        Globals.GameItems[Globals.Me.Inventory[i].ItemNum].Type == (int)Enums.ItemTypes.None ||
-                        Globals.GameItems[Globals.Me.Inventory[i].ItemNum].Type == (int)Enums.ItemTypes.Spell)
+                    if (Globals.GameItems[Globals.Bank[i].ItemNum].Type == (int)Enums.ItemTypes.Consumable || //Allow Stacking on Currency, Consumable, Spell, and item types of none.
+                        Globals.GameItems[Globals.Bank[i].ItemNum].Type == (int)Enums.ItemTypes.Currency ||
+                        Globals.GameItems[Globals.Bank[i].ItemNum].Type == (int)Enums.ItemTypes.None ||
+                        Globals.GameItems[Globals.Bank[i].ItemNum].Type == (int)Enums.ItemTypes.Spell)
                     {
                         _values[i].IsHidden = false;
-                        _values[i].Text = Globals.Me.Inventory[i].ItemVal.ToString();
+                        _values[i].Text = Globals.Bank[i].ItemVal.ToString();
                     }
                     else
                     {
@@ -111,17 +126,16 @@ namespace Intersect_Client.Classes.UI.Game
                 }
             }
         }
+
         private void InitItemContainer()
         {
-
-            for (int i = 0; i < Constants.MaxInvItems; i++)
+            for (int i = 0; i < Constants.MaxBankSlots; i++)
             {
-                Items.Add(new InventoryItem(this, i));
+                Items.Add(new BankItem(this, i));
                 Items[i].pnl = new ImagePanel(_itemContainer);
                 Items[i].pnl.SetSize(32, 32);
                 Items[i].pnl.SetPosition((i % (_itemContainer.Width / (32 + Constants.ItemXPadding))) * (32 + Constants.ItemXPadding) + Constants.ItemXPadding, (i / (_itemContainer.Width / (32 + Constants.ItemXPadding))) * (32 + Constants.ItemYPadding) + Constants.ItemYPadding);
-                Items[i].pnl.Clicked += InventoryWindow_Clicked;
-                Items[i].pnl.IsHidden = true;
+                Items[i].pnl.IsHidden = false;
                 Items[i].Setup();
 
                 _values.Add(new Label(_itemContainer));
@@ -133,34 +147,18 @@ namespace Intersect_Client.Classes.UI.Game
             }
         }
 
-        void InventoryWindow_Clicked(Base sender, ClickedEventArgs arguments)
-        {
-
-        }
-        public void Show()
-        {
-            _inventoryWindow.IsHidden = false;
-        }
-        public bool IsVisible()
-        {
-            return !_inventoryWindow.IsHidden;
-        }
-        public void Hide()
-        {
-            _inventoryWindow.IsHidden = true;
-        }
         public FloatRect RenderBounds()
         {
             FloatRect rect = new FloatRect();
-            rect.X = _inventoryWindow.LocalPosToCanvas(new Point(0, 0)).X - Constants.ItemXPadding / 2;
-            rect.Y = _inventoryWindow.LocalPosToCanvas(new Point(0, 0)).Y - Constants.ItemYPadding / 2;
-            rect.Width = _inventoryWindow.Width + Constants.ItemXPadding;
-            rect.Height = _inventoryWindow.Height + Constants.ItemYPadding;
+            rect.X = _bankWindow.LocalPosToCanvas(new Point(0, 0)).X - Constants.ItemXPadding / 2;
+            rect.Y = _bankWindow.LocalPosToCanvas(new Point(0, 0)).Y - Constants.ItemYPadding / 2;
+            rect.Width = _bankWindow.Width + Constants.ItemXPadding;
+            rect.Height = _bankWindow.Height + Constants.ItemYPadding;
             return rect;
         }
     }
 
-    public class InventoryItem
+    public class BankItem
     {
         public ImagePanel pnl;
         private ItemDescWindow _descWindow;
@@ -186,12 +184,12 @@ namespace Intersect_Client.Classes.UI.Game
         private GameRenderTexture sfTex;
 
         //Drag/Drop References
-        private InventoryWindow _inventoryWindow;
- 
+        private BankWindow _bankWindow;
 
-        public InventoryItem(InventoryWindow inventoryWindow, int index)
+
+        public BankItem(BankWindow bankWindow, int index)
         {
-            _inventoryWindow = inventoryWindow;
+            _bankWindow = bankWindow;
             _mySlot = index;
         }
 
@@ -206,13 +204,9 @@ namespace Intersect_Client.Classes.UI.Game
 
         private void Pnl_DoubleClicked(Base sender, ClickedEventArgs arguments)
         {
-            if (Globals.GameShop != null)
+            if (Globals.InBank)
             {
-                Globals.Me.TrySellItem(_mySlot);
-            }
-            else if (Globals.InBank)
-            {
-                Globals.Me.TryDepositItem(_mySlot);
+                Globals.Me.TryWithdrawItem(_mySlot);
             }
         }
 
@@ -238,46 +232,11 @@ namespace Intersect_Client.Classes.UI.Game
         {
             MouseOver = true;
             CanDrag = true;
-            if (Globals.InputManager.MouseButtonDown(GameInput.MouseButtons.Left)){ CanDrag = false; return; }
+            if (Globals.InputManager.MouseButtonDown(GameInput.MouseButtons.Left)) { CanDrag = false; return; }
             if (_descWindow != null) { _descWindow.Dispose(); _descWindow = null; }
-            if (Globals.GameShop == null)
+            if (Globals.Bank[_mySlot] != null)
             {
-                _descWindow = new ItemDescWindow(Globals.Me.Inventory[_mySlot].ItemNum, Globals.Me.Inventory[_mySlot].ItemVal, _inventoryWindow.X - 220, _inventoryWindow.Y, Globals.Me.Inventory[_mySlot].StatBoost);
-            }
-            else
-            {
-                int foundItem = -1;
-                for (int i = 0; i < Globals.GameShop.BuyingItems.Count; i++)
-                {
-                    if (Globals.GameShop.BuyingItems[i].ItemNum == Globals.Me.Inventory[_mySlot].ItemNum)
-                    {
-                        foundItem = i;
-                        break;
-                    }
-                }
-                if ((foundItem > -1 && Globals.GameShop.BuyingWhitelist) || (foundItem == -1 && !Globals.GameShop.BuyingWhitelist))
-                {
-                    if (foundItem > -1)
-                    {
-                        _descWindow = new ItemDescWindow(Globals.Me.Inventory[_mySlot].ItemNum,
-                            Globals.Me.Inventory[_mySlot].ItemVal, _inventoryWindow.X - 220, _inventoryWindow.Y,
-                            Globals.Me.Inventory[_mySlot].StatBoost, "",
-                            "Sells for " + Globals.GameShop.BuyingItems[foundItem].CostItemVal + " " +
-                            Globals.GameItems[Globals.GameShop.BuyingItems[foundItem].CostItemNum].Name + "(s)");
-                    }
-                    else
-                    {
-                        _descWindow = new ItemDescWindow(Globals.Me.Inventory[_mySlot].ItemNum,
-                            Globals.Me.Inventory[_mySlot].ItemVal, _inventoryWindow.X - 220, _inventoryWindow.Y,
-                            Globals.Me.Inventory[_mySlot].StatBoost, "",
-                            "Sells for " + Globals.GameItems[Globals.GameShop.BuyingItems[foundItem].ItemNum].Price +
-                            " " + Globals.GameItems[Globals.GameShop.DefaultCurrency].Name + "(s)");
-                    }
-                }
-                else
-                {
-                    _descWindow = new ItemDescWindow(Globals.Me.Inventory[_mySlot].ItemNum, Globals.Me.Inventory[_mySlot].ItemVal, _inventoryWindow.X - 220, _inventoryWindow.Y, Globals.Me.Inventory[_mySlot].StatBoost, "", "Shop Will Not Buy This Item");
-                }
+                _descWindow = new ItemDescWindow(Globals.Bank[_mySlot].ItemNum, Globals.Bank[_mySlot].ItemVal, _bankWindow.X - 220, _bankWindow.Y, Globals.Bank[_mySlot].StatBoost);
             }
         }
 
@@ -301,9 +260,9 @@ namespace Intersect_Client.Classes.UI.Game
                     equipped = true;
                 }
             }
-            if (Globals.Me.Inventory[_mySlot].ItemNum != _currentItem || equipped != _isEquipped)
+            if (Globals.Bank[_mySlot].ItemNum != _currentItem || equipped != _isEquipped)
             {
-                _currentItem = Globals.Me.Inventory[_mySlot].ItemNum;
+                _currentItem = Globals.Bank[_mySlot].ItemNum;
                 _isEquipped = equipped;
                 sfTex = Gui.CreateItemTex(_currentItem, 0, 0, 32, 32, _isEquipped, null);
                 gwenTex = Gui.ToGwenTexture(sfTex);
@@ -320,7 +279,7 @@ namespace Intersect_Client.Classes.UI.Game
                         MouseY = -1;
                         if (Globals.System.GetTimeMS() < ClickTime)
                         {
-                            Globals.Me.TryUseItem(_mySlot);
+                            //Globals.Me.TryUseItem(_mySlot);
                             ClickTime = 0;
                         }
                     }
@@ -354,21 +313,21 @@ namespace Intersect_Client.Classes.UI.Game
                 {
                     //Drug the item and now we stopped
                     IsDragging = false;
-                    FloatRect dragRect = new FloatRect(dragIcon.x - Constants.ItemXPadding / 2, dragIcon.y - Constants.ItemYPadding / 2, Constants.ItemXPadding/2 + 32, Constants.ItemYPadding / 2 + 32);
+                    FloatRect dragRect = new FloatRect(dragIcon.x - Constants.ItemXPadding / 2, dragIcon.y - Constants.ItemYPadding / 2, Constants.ItemXPadding / 2 + 32, Constants.ItemYPadding / 2 + 32);
 
-                    float  bestIntersect = 0;
+                    float bestIntersect = 0;
                     int bestIntersectIndex = -1;
                     //So we picked up an item and then dropped it. Lets see where we dropped it to.
                     //Check inventory first.
-                    if (_inventoryWindow.RenderBounds().IntersectsWith(dragRect))
+                    if (_bankWindow.RenderBounds().IntersectsWith(dragRect))
                     {
                         for (int i = 0; i < Constants.MaxInvItems; i++)
                         {
-                            if (_inventoryWindow.Items[i].RenderBounds().IntersectsWith(dragRect))
+                            if (_bankWindow.Items[i].RenderBounds().IntersectsWith(dragRect))
                             {
-                                if (FloatRect.Intersect(_inventoryWindow.Items[i].RenderBounds(), dragRect).Width * FloatRect.Intersect(_inventoryWindow.Items[i].RenderBounds(), dragRect).Height > bestIntersect)
+                                if (FloatRect.Intersect(_bankWindow.Items[i].RenderBounds(), dragRect).Width * FloatRect.Intersect(_bankWindow.Items[i].RenderBounds(), dragRect).Height > bestIntersect)
                                 {
-                                    bestIntersect = FloatRect.Intersect(_inventoryWindow.Items[i].RenderBounds(), dragRect).Width * FloatRect.Intersect(_inventoryWindow.Items[i].RenderBounds(), dragRect).Height;
+                                    bestIntersect = FloatRect.Intersect(_bankWindow.Items[i].RenderBounds(), dragRect).Width * FloatRect.Intersect(_bankWindow.Items[i].RenderBounds(), dragRect).Height;
                                     bestIntersectIndex = i;
                                 }
                             }
@@ -378,30 +337,11 @@ namespace Intersect_Client.Classes.UI.Game
                             if (_mySlot != bestIntersectIndex)
                             {
                                 //Try to swap....
-                                PacketSender.SendSwapItems(bestIntersectIndex, _mySlot);
-                                Globals.Me.SwapItems(bestIntersectIndex, _mySlot);
+                                PacketSender.SendMoveBankItems(bestIntersectIndex, _mySlot);
+                                //Globals.Me.SwapItems(bestIntersectIndex, _mySlot);
                             }
                         }
                     }
-                    else if (Gui.GameUI.Hotbar.RenderBounds().IntersectsWith(dragRect))
-                    {
-                        for (int i = 0; i < Constants.MaxHotbar; i++)
-                        {
-                            if (Gui.GameUI.Hotbar.Items[i].RenderBounds().IntersectsWith(dragRect))
-                            {
-                                if (FloatRect.Intersect(Gui.GameUI.Hotbar.Items[i].RenderBounds(), dragRect).Width * FloatRect.Intersect(Gui.GameUI.Hotbar.Items[i].RenderBounds(), dragRect).Height > bestIntersect)
-                                {
-                                    bestIntersect = FloatRect.Intersect(Gui.GameUI.Hotbar.Items[i].RenderBounds(), dragRect).Width * FloatRect.Intersect(Gui.GameUI.Hotbar.Items[i].RenderBounds(), dragRect).Height;
-                                    bestIntersectIndex = i;
-                                }
-                            }
-                        }
-                        if (bestIntersectIndex > -1)
-                        {
-                            Globals.Me.AddToHotbar(bestIntersectIndex, 0, _mySlot);
-                        }
-                    }
-
                     dragIcon.Dispose();
                 }
             }
