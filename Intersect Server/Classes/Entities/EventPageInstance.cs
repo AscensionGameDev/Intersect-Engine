@@ -46,13 +46,14 @@ namespace Intersect_Server.Classes
         private int WalkingAnim = 0;
         private int DirectionFix = 0;
         private int RenderLevel = 1;
+        private int PageNum = 0;
         public EventPageInstance(EventStruct myEvent, EventPage myPage, int myIndex, int mapNum, Entities.EventInstance eventIndex, Client client) : base(myIndex)
         {
             BaseEvent = myEvent;
             MyPage = myPage;
             CurrentMap = mapNum;
-            CurrentX = myEvent.SpawnX;
-            CurrentY = myEvent.SpawnY;
+            CurrentX = eventIndex.CurrentX;
+            CurrentY = eventIndex.CurrentY;
             MyName = myEvent.MyName;
             MovementType = MyPage.MovementType;
             MovementFreq = MyPage.MovementFreq;
@@ -61,9 +62,6 @@ namespace Intersect_Server.Classes
             Trigger = MyPage.Trigger;
             Passable = MyPage.Passable;
             HideName = MyPage.HideName;
-            CurrentX = myEvent.SpawnX;
-            CurrentY = myEvent.SpawnY;
-            CurrentMap = mapNum;
             MyEventIndex = eventIndex;
             MoveRoute = new EventMoveRoute();
             MoveRoute.CopyFrom(MyPage.MoveRoute);
@@ -102,6 +100,7 @@ namespace Intersect_Server.Classes
                 Animations.Add(myPage.Animation);
             }
             Face = MyPage.FaceGraphic;
+            PageNum = BaseEvent.MyPages.IndexOf(MyPage);
             Client = client;
             SendToClient();
         }
@@ -159,6 +158,7 @@ namespace Intersect_Server.Classes
                 Animations.Add(myPage.Animation);
             }
             Face = MyPage.FaceGraphic;
+            PageNum = BaseEvent.MyPages.IndexOf(MyPage);
             Client = client;
             SendToClient();
         }
@@ -717,11 +717,19 @@ namespace Intersect_Server.Classes
 
         public bool ShouldDespawn()
         {
+            //Should despawn if conditions are not met OR an earlier page can page
             for (int i = 0; i < MyPage.Conditions.Count; i++)
             {
                 if (!MyEventIndex.MeetsConditions(MyPage.Conditions[i]))
                 {
                     return true;
+                }
+            }
+            for (int i = 0; i < BaseEvent.MyPages.Count; i++)
+            {
+                if (MyEventIndex.CanSpawnPage(i, BaseEvent))
+                {
+                    if (i < PageNum) return true;
                 }
             }
             return false;

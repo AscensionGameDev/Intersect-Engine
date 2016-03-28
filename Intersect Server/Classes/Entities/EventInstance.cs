@@ -42,6 +42,8 @@ namespace Intersect_Server.Classes.Entities
         public long WaitTimer = 0;
         public EventPageInstance PageInstance;
         public EventPageInstance[] GlobalPageInstance;
+        public int CurrentX;
+        public int CurrentY;
 
         public Stack<CommandInstance> CallStack = new Stack<CommandInstance>();
 
@@ -53,6 +55,8 @@ namespace Intersect_Server.Classes.Entities
             MyPlayer = (Player)Globals.Entities[MyClient.EntityIndex];
             SelfSwitch = new bool[4];
             BaseEvent = baseEvent;
+            CurrentX = baseEvent.SpawnX;
+            CurrentY = baseEvent.SpawnY;
         }
 
         public EventInstance(EventStruct baseEvent, int index, int mapNum) //Global constructor
@@ -76,6 +80,8 @@ namespace Intersect_Server.Classes.Entities
                 //Check for despawn
                 if (PageInstance.ShouldDespawn())
                 {
+                    CurrentX = PageInstance.CurrentX;
+                    CurrentY = PageInstance.CurrentY;
                     PageInstance = null;
                     if (HoldingPlayer)
                     {
@@ -180,7 +186,7 @@ namespace Intersect_Server.Classes.Entities
 
         }
 
-        private bool CanSpawnPage(int pageIndex, EventStruct eventStruct)
+        public bool CanSpawnPage(int pageIndex, EventStruct eventStruct)
         {
             for (int i = 0; i < eventStruct.MyPages[pageIndex].Conditions.Count; i++)
             {

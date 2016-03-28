@@ -989,7 +989,7 @@ namespace Intersect_Client.Classes.Entities
                     tmpY = y;
                 }
 
-                if (Globals.LocalMaps[tmpI] > -1)
+                if (Globals.LocalMaps[tmpI] > -1 && Globals.GameMaps.ContainsKey(Globals.LocalMaps[tmpI]))
                 {
                     if (Globals.GameMaps[Globals.LocalMaps[tmpI]].Attributes[tmpX, tmpY].value == (int)Enums.MapAttributes.Blocked && !NoClip)
                     {

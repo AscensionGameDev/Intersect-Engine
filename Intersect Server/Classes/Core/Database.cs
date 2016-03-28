@@ -1196,12 +1196,14 @@ namespace Intersect_Server.Classes
 
                 for (int i = 0; i < Constants.MaxPlayerSwitches; i++)
                 {
-                    ((Player)(en)).Switches[i] = Convert.ToBoolean(Int32.Parse(playerdata.SelectSingleNode("//PlayerData//CharacterInfo//Switches/Switch" + i).InnerText));
+                    if (playerdata.SelectSingleNode("//PlayerData//CharacterInfo//Switches/Switch" + i) != null)
+                        ((Player)(en)).Switches[i] = Convert.ToBoolean(Int32.Parse(playerdata.SelectSingleNode("//PlayerData//CharacterInfo//Switches/Switch" + i).InnerText));
                 }
 
                 for (int i = 0; i < Constants.MaxPlayerSwitches; i++)
                 {
-                    ((Player)(en)).Variables[i] = Int32.Parse(playerdata.SelectSingleNode("//PlayerData//CharacterInfo//Variables/Variable" + i).InnerText);
+                    if (playerdata.SelectSingleNode("//PlayerData//CharacterInfo//Variables/Variable" + i) != null)
+                        ((Player)(en)).Variables[i] = Int32.Parse(playerdata.SelectSingleNode("//PlayerData//CharacterInfo//Variables/Variable" + i).InnerText);
                 }
 
                 for (int i = 0; i < Constants.MaxInvItems; i++)

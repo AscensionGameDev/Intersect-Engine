@@ -97,7 +97,7 @@ namespace Intersect_Client.Classes.Entities
             switch (GraphicType)
             {
                 case 1: //Sprite
-                    if (GameGraphics.EntityFileNames.IndexOf(MySprite.ToLower()) >= 0)
+                    if (GameGraphics.EntityFileNames.IndexOf(GraphicFile) >= 0)
                     {
                         srcTexture =
                             GameGraphics.EntityTextures[GameGraphics.EntityFileNames.IndexOf(GraphicFile)];
