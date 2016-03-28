@@ -155,6 +155,7 @@ namespace Intersect_Server.Classes
             if (client != null)
             {
                 client.SendPacket(bf.ToArray());
+                Globals.GameMaps[mapNum].SendMapEntitiesTo(client);
                 if (isEditor)
                 {
                     SendDataToEditors(bf.ToArray());

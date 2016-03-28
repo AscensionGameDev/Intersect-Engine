@@ -25,10 +25,12 @@
     SOFTWARE.
 */
 
+using System.Collections.Generic;
 using IntersectClientExtras.Gwen;
 using IntersectClientExtras.Gwen.Control;
 using Intersect_Client.Classes.Core;
 using Intersect_Client.Classes.General;
+using Intersect_Client.Classes.Maps;
 using Intersect_Client.Classes.Networking;
 
 namespace Intersect_Client.Classes.UI.Game
@@ -121,6 +123,11 @@ namespace Intersect_Client.Classes.UI.Game
                 _xLabel.Text = "X: " + Globals.Me.CurrentX;
                 _yLabel.Text = "Y: " + Globals.Me.CurrentY;
                 _zLabel.Text = "Z: " + Globals.Me.CurrentZ;
+            }
+            int entityCount = Globals.Entities.Count;
+            foreach (KeyValuePair<int,MapStruct> map in Globals.GameMaps)
+            {
+                if (map.Value != null) entityCount += map.Value.LocalEntities.Count;
             }
             _entitiesLabel.Text = "Known Entities: " + Globals.Entities.Count;
             _mapsLoadedLabel.Text = "Known Maps: " + Globals.GameMaps.Count;

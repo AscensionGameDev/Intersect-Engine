@@ -89,10 +89,11 @@ namespace Intersect_Editor.Forms
                         g.Dispose();
                         pnlMap.BackgroundImage = newBitmap;
                         sourceBitmap.Dispose();
+                        tmrMapCheck.Enabled = false;
                     }
                     else
                     {
-                        tmrMapCheck.Enabled = false;
+                        tmrMapCheck.Enabled = true;
                     }
                 }
                 else
@@ -130,6 +131,13 @@ namespace Intersect_Editor.Forms
                     {
                         UpdatePreview();
                         tmrMapCheck.Enabled = false;
+                    }
+                    else
+                    {
+                        int oldMap = Globals.CurrentMap;
+                        Globals.CurrentMap = _currentMap;
+                        EditorGraphics.ScreenShotMap(true).SaveToFile("resources/mapcache/" + _currentMap + "_" + Globals.GameMaps[_currentMap].Revision + ".png");
+                        Globals.CurrentMap = oldMap;
                     }
                 }
             }

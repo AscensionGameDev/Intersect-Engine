@@ -765,6 +765,10 @@ namespace Intersect_Client.Classes.Maps
                         Globals.EntitiesToDispose.Add(en.Key);
                     }
                 }
+                foreach (var en in LocalEntities)
+                {
+                    en.Value.Dispose();
+                }
             }
             HideActiveAnimations();
             MapRendered = false;
