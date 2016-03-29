@@ -235,6 +235,15 @@ namespace Intersect_Client.Classes.Core
                 //Draw the players targets
                 ((Player)Globals.Entities[Globals.MyIndex]).DrawTargets();
 
+                if (Globals.GameMaps[Globals.CurrentMap] != null)
+                {
+                    if (ImageFileNames.IndexOf(Globals.GameMaps[Globals.CurrentMap].OverlayGraphic) > -1)
+                    {
+                        DrawFullScreenTexture(
+                            ImageTextures[ImageFileNames.IndexOf(Globals.GameMaps[Globals.CurrentMap].OverlayGraphic)]);
+                    }
+                }
+
                 DrawOverlay();
 
 

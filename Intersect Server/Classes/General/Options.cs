@@ -266,6 +266,11 @@ namespace Intersect_Server.Classes.General
                     GameBorderStyle = GetXmlInt(options, "//Config/Map/BorderStyle");
                     MapWidth = GetXmlInt(options, "//Config/Map/MapWidth");
                     MapHeight = GetXmlInt(options, "//Config/Map/MapHeight");
+                    if (MapWidth < 10 || MapWidth > 64 || MapHeight < 10 || MapHeight > 64)
+                    {
+                        Console.WriteLine("MapWidth and/or MapHeight are out of bounds. Must be between 10 and 64. The client loads 9 maps at a time, having large map sizes really hurts performance.");
+                        ConfigFailed = true;
+                    }
                     TileWidth = GetXmlInt(options, "//Config/Map/TileWidth");
                     TileHeight = GetXmlInt(options, "//Config/Map/TileHeight");
 
