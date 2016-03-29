@@ -23,6 +23,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using Intersect_Editor.Classes.General;
 
 namespace Intersect_Editor.Classes
 {
@@ -74,7 +75,7 @@ namespace Intersect_Editor.Classes
                 Q.Data1 = myBuffer.ReadInteger();
                 Q.Data2 = myBuffer.ReadInteger();
                 Q.Experience = myBuffer.ReadInteger();
-                for (int n = 0; n < Constants.MaxNpcDrops; n++)
+                for (int n = 0; n < Options.MaxNpcDrops; n++)
                 {
                     Q.Rewards[n].ItemNum = myBuffer.ReadInteger();
                     Q.Rewards[n].Amount = myBuffer.ReadInteger();
@@ -109,7 +110,7 @@ namespace Intersect_Editor.Classes
                 myBuffer.WriteInteger(Tasks[i].Data1);
                 myBuffer.WriteInteger(Tasks[i].Data2);
                 myBuffer.WriteInteger(Tasks[i].Experience);
-                for (int n = 0; n < Constants.MaxNpcDrops; n++)
+                for (int n = 0; n < Options.MaxNpcDrops; n++)
                 {
                     myBuffer.WriteInteger(Tasks[i].Rewards[n].ItemNum);
                     myBuffer.WriteInteger(Tasks[i].Rewards[n].Amount);
@@ -130,7 +131,7 @@ namespace Intersect_Editor.Classes
 
             public QuestTask()
             {
-                for (int i = 0; i < Constants.MaxNpcDrops; i++)
+                for (int i = 0; i < Options.MaxNpcDrops; i++)
                 {
                     Rewards.Add(new QuestReward());
                 }

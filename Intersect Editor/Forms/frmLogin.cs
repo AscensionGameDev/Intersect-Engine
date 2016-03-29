@@ -40,9 +40,16 @@ namespace Intersect_Editor.Forms
 
         private void frmLogin_Load(object sender, EventArgs e)
         {
-            Database.InitDatabase();
-            lblVersion.Text = "Editor v." + Application.ProductVersion;
-            EditorLoopDelegate = new BeginEditorLoop(EditorLoop.StartLoop);
+            if (Database.LoadOptions())
+            {
+                lblVersion.Text = "Editor v." + Application.ProductVersion;
+                EditorLoopDelegate = new BeginEditorLoop(EditorLoop.StartLoop);
+            }
+            else
+            {
+                MessageBox.Show("Failed to load config.xml. Does it exist?  Path(Resources/config.xml)");
+                Application.Exit();
+            }
         }
 
         private void tmrSocket_Tick(object sender, EventArgs e)

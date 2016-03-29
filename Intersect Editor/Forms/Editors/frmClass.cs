@@ -28,6 +28,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using Intersect_Editor.Classes.General;
 
 namespace Intersect_Editor.Forms
 {
@@ -319,17 +320,17 @@ namespace Intersect_Editor.Forms
             {
                 cmbSprite.Items.Add(Intersect_Editor.Classes.EditorGraphics.EntityFileNames[i]);
             }
-            scrlDropItem.Maximum = Constants.MaxItems - 1;
-            scrlSpell.Maximum = Constants.MaxSpells - 1;
-            scrlLevel.Maximum = Constants.MaxLevel;
+            scrlDropItem.Maximum = Options.MaxItems - 1;
+            scrlSpell.Maximum = Options.MaxSpells - 1;
+            scrlLevel.Maximum = Options.MaxLevel;
             UpdateEditor();
         }
 
         public void InitEditor()
         {
-            _classesBackup = new ByteBuffer[Constants.MaxClasses];
-            _changed = new bool[Constants.MaxClasses];
-            for (var i = 0; i < Constants.MaxClasses; i++)
+            _classesBackup = new ByteBuffer[Options.MaxClasses];
+            _changed = new bool[Options.MaxClasses];
+            for (var i = 0; i < Options.MaxClasses; i++)
             {
                 _classesBackup[i] = new ByteBuffer();
                 _classesBackup[i].WriteBytes(Globals.GameClasses[i].ClassData());
@@ -512,7 +513,7 @@ namespace Intersect_Editor.Forms
 
         private void btnCancel_Click(object sender, EventArgs e)
         {
-            for (var i = 0; i < Constants.MaxClasses; i++)
+            for (var i = 0; i < Options.MaxClasses; i++)
             {
                 Globals.GameClasses[i].Load(_classesBackup[i].ToArray(),i);
             }
@@ -534,7 +535,7 @@ namespace Intersect_Editor.Forms
 
         private void btnSave_Click(object sender, EventArgs e)
         {
-            for (var i = 0; i < Constants.MaxClasses; i++)
+            for (var i = 0; i < Options.MaxClasses; i++)
             {
                 if (_changed[i])
                 {

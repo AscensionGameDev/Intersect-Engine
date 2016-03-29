@@ -147,7 +147,7 @@ namespace Intersect_Client.Classes.UI.Game
                     itemReqs.AddText("Level: " + Globals.GameSpells[spellnum].LevelReq, spellName.TextColor);
                     itemReqs.AddLineBreak();
                 }
-                for (int i = 0; i < Constants.MaxStats; i++)
+                for (int i = 0; i < Options.MaxStats; i++)
                 {
                     if (Globals.GameSpells[spellnum].StatReq[i] > 0)
                     {
@@ -213,7 +213,7 @@ namespace Intersect_Client.Classes.UI.Game
                 }
 
                 if (Globals.GameSpells[spellnum].Data2 > 0) {
-                    for (int i = 0; i < Constants.MaxStats; i++ )
+                    for (int i = 0; i < Options.MaxStats; i++ )
                     {
                         if (Globals.GameSpells[spellnum].StatDiff[i] != 0)
                         {

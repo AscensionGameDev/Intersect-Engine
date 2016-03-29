@@ -28,6 +28,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using Intersect_Editor.Classes;
+using Intersect_Editor.Classes.General;
 
 namespace Intersect_Editor.Forms.Editors.Event_Commands
 {
@@ -274,8 +275,8 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
         {
             if (e.X >= 0 && e.Y >= 0 && e.X < pnlSpawnLoc.Width && e.Y < pnlSpawnLoc.Height)
             {
-                spawnX = (int)Math.Floor((double)(e.X) / Globals.TileWidth) - 2;
-                spawnY = (int)Math.Floor((double)(e.Y) / Globals.TileHeight) - 2;
+                spawnX = (int)Math.Floor((double)(e.X) / Options.TileWidth) - 2;
+                spawnY = (int)Math.Floor((double)(e.Y) / Options.TileHeight) - 2;
                 UpdateSpawnPreview();
             }
         }

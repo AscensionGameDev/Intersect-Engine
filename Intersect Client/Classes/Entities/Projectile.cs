@@ -93,7 +93,7 @@ namespace Intersect_Client.Classes.Entities
         {
             ProjectileStruct myBase = Globals.GameProjectiles[ProjectileNum];
             AnimationStruct animBase = null;
-            if (myBase.Animation > -1 && myBase.Animation < Constants.MaxAnimations)
+            if (myBase.Animation > -1 && myBase.Animation < Options.MaxAnimations)
             {
                 animBase = Globals.GameAnimations[myBase.Animation];
             }
@@ -270,12 +270,12 @@ namespace Intersect_Client.Classes.Entities
         /// <summary>
         /// Gets the displacement of the projectile during projection
         /// </summary>
-        /// <returns>The displacement from the co-ordinates if placed on a Globals.Database.TileHeight grid.</returns>
+        /// <returns>The displacement from the co-ordinates if placed on a Options.TileHeight grid.</returns>
         private float getDisplacement(long spawnTime)
         {
             long elapsedTime = Globals.System.GetTimeMS() - spawnTime;
             float displacementPercent = elapsedTime / (float)Globals.GameProjectiles[ProjectileNum].Speed;
-            return displacementPercent * Globals.Database.TileHeight * Globals.GameProjectiles[ProjectileNum].Range;
+            return displacementPercent * Options.TileHeight * Globals.GameProjectiles[ProjectileNum].Range;
         }
 
         /// <summary>
@@ -311,12 +311,12 @@ namespace Intersect_Client.Classes.Entities
                         Spawns[s].OffsetX = GetRangeX(Spawns[s].Dir, getDisplacement(Spawns[s].SpawnTime));
                         Spawns[s].OffsetY = GetRangeY(Spawns[s].Dir, getDisplacement(Spawns[s].SpawnTime));
                         Spawns[s].Anim.SetPosition(
-                            Globals.GameMaps[Spawns[s].SpawnMap].GetX() + Spawns[s].SpawnX*Globals.Database.TileWidth +
+                            Globals.GameMaps[Spawns[s].SpawnMap].GetX() + Spawns[s].SpawnX*Options.TileWidth +
                             Spawns[s].OffsetX +
-                            Globals.Database.TileWidth/2,
-                            Globals.GameMaps[Spawns[s].SpawnMap].GetY() + Spawns[s].SpawnY*Globals.Database.TileHeight +
+                            Options.TileWidth/2,
+                            Globals.GameMaps[Spawns[s].SpawnMap].GetY() + Spawns[s].SpawnY*Options.TileHeight +
                             Spawns[s].OffsetY +
-                            Globals.Database.TileHeight/2, Spawns[s].AutoRotate ? Spawns[s].Dir : 0);
+                            Options.TileHeight/2, Spawns[s].AutoRotate ? Spawns[s].Dir : 0);
                         Spawns[s].Anim.Update();
                     }
                 }
@@ -346,14 +346,14 @@ namespace Intersect_Client.Classes.Entities
                             if (Globals.GameMaps[Spawns[i].Map].Left > -1 && Globals.GameMaps.ContainsKey(Globals.GameMaps[Spawns[i].Map].Left))
                             {
                                 newmap = Globals.GameMaps[Spawns[i].Map].Left;
-                                newx = Globals.Database.MapWidth - 1;
+                                newx = Options.MapWidth - 1;
                             }
                             else
                             {
                                 killSpawn = true;
                             }
                         }
-                        if (newx > Globals.Database.MapWidth - 1)
+                        if (newx > Options.MapWidth - 1)
                         {
                             if (Globals.GameMaps[Spawns[i].Map].Right > -1 && Globals.GameMaps.ContainsKey(Globals.GameMaps[Spawns[i].Map].Right))
                             {
@@ -370,14 +370,14 @@ namespace Intersect_Client.Classes.Entities
                             if (Globals.GameMaps[Spawns[i].Map].Up > -1 && Globals.GameMaps.ContainsKey(Globals.GameMaps[Spawns[i].Map].Up))
                             {
                                 newmap = Globals.GameMaps[Spawns[i].Map].Up;
-                                newy = Globals.Database.MapHeight - 1;
+                                newy = Options.MapHeight - 1;
                             }
                             else
                             {
                                 killSpawn = true;
                             }
                         }
-                        if (newy > Globals.Database.MapHeight - 1)
+                        if (newy > Options.MapHeight - 1)
                         {
                             if (Globals.GameMaps[Spawns[i].Map].Down > -1 && Globals.GameMaps.ContainsKey(Globals.GameMaps[Spawns[i].Map].Down))
                             {

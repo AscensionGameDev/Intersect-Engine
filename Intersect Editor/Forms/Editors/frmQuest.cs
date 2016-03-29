@@ -23,6 +23,7 @@ using System;
 using System.Windows.Forms;
 using System.Drawing;
 using Intersect_Editor.Classes;
+using Intersect_Editor.Classes.General;
 
 namespace Intersect_Editor.Forms
 {
@@ -39,12 +40,12 @@ namespace Intersect_Editor.Forms
 
         private void frmQuest_Load(object sender, EventArgs e)
         {
-            scrlItem.Maximum = Constants.MaxItems;
-            scrlLevel.Maximum = Constants.MaxLevel;
-            scrlQuest.Maximum = Constants.MaxQuests;
-            scrlSwitch.Maximum = Constants.MaxPlayerSwitches;
-            scrlVariable.Maximum = Constants.MaxPlayerVariables;
-            scrlItemReward.Maximum = Constants.MaxItems;
+            scrlItem.Maximum = Options.MaxItems;
+            scrlLevel.Maximum = Options.MaxLevel;
+            scrlQuest.Maximum = Options.MaxQuests;
+            scrlSwitch.Maximum = Options.MaxPlayerSwitches;
+            scrlVariable.Maximum = Options.MaxPlayerVariables;
+            scrlItemReward.Maximum = Options.MaxItems;
 
             lstQuests.SelectedIndex = 0;
             scrlTask.Value = 1;
@@ -53,9 +54,9 @@ namespace Intersect_Editor.Forms
         public void InitEditor()
         {
             int n = 0;
-            _questsBackup = new ByteBuffer[Constants.MaxQuests];
-            _changed = new bool[Constants.MaxQuests];
-            for (var i = 0; i < Constants.MaxQuests; i++)
+            _questsBackup = new ByteBuffer[Options.MaxQuests];
+            _changed = new bool[Options.MaxQuests];
+            for (var i = 0; i < Options.MaxQuests; i++)
             {
                 _questsBackup[i] = new ByteBuffer();
                 _questsBackup[i].WriteBytes(Globals.GameQuests[i].QuestData());
@@ -70,7 +71,7 @@ namespace Intersect_Editor.Forms
             {
                 cmbClass.Items.Add(Globals.GameClasses[n].Name);
                 n = n + 1;
-                if (n >= Constants.MaxClasses)
+                if (n >= Options.MaxClasses)
                 {
                     break;
                 }
@@ -130,14 +131,14 @@ namespace Intersect_Editor.Forms
             {
                 case 0:
                     rbItem.Checked = true;
-                    scrlObjective1.Maximum = Constants.MaxItems;
+                    scrlObjective1.Maximum = Options.MaxItems;
                     if (scrlObjective1.Value == 0) { lblObjective1.Text = @"Item: 0 None"; }
                     else { lblObjective1.Text = @"Item: " + scrlObjective1.Value + " " + Globals.GameItems[scrlObjective1.Value - 1].Name; }
                     lblObjective2.Text = @"Quantity: x" + scrlObjective2.Value;
                     break;
                 case 1:
                     rbNpc.Checked = true;
-                    scrlObjective1.Maximum = Constants.MaxNpcs;
+                    scrlObjective1.Maximum = Options.MaxNpcs;
                     if (scrlObjective1.Value == 0) { lblObjective1.Text = @"Npc: 0 None"; }
                     else { lblObjective1.Text = @"Npc: " + scrlObjective1.Value + " " + Globals.GameNpcs[scrlObjective1.Value - 1].Name; }
                     lblObjective2.Text = @"Quantity: x" + scrlObjective2.Value;
@@ -252,14 +253,14 @@ namespace Intersect_Editor.Forms
             {
                 case 0:
                     rbItem.Checked = true;
-                    scrlObjective1.Maximum = Constants.MaxItems;
+                    scrlObjective1.Maximum = Options.MaxItems;
                     if (scrlObjective1.Value == 0) { lblObjective1.Text = @"Item: 0 None"; }
                     else { lblObjective1.Text = @"Item: " + scrlObjective1.Value + " " + Globals.GameItems[scrlObjective1.Value - 1].Name; }
                     lblObjective2.Text = @"Quantity: x" + scrlObjective2.Value;
                     break;
                 case 1:
                     rbNpc.Checked = true;
-                    scrlObjective1.Maximum = Constants.MaxNpcs;
+                    scrlObjective1.Maximum = Options.MaxNpcs;
                     if (scrlObjective1.Value == 0) { lblObjective1.Text = @"Npc: 0 None"; }
                     else { lblObjective1.Text = @"Npc: " + scrlObjective1.Value + " " + Globals.GameNpcs[scrlObjective1.Value - 1].Name; }
                     lblObjective2.Text = @"Quantity: x" + scrlObjective2.Value;
@@ -274,14 +275,14 @@ namespace Intersect_Editor.Forms
             {
                 case 0:
                     rbItem.Checked = true;
-                    scrlObjective1.Maximum = Constants.MaxItems;
+                    scrlObjective1.Maximum = Options.MaxItems;
                     if (scrlObjective1.Value == 0) { lblObjective1.Text = @"Item: 0 None"; }
                     else { lblObjective1.Text = @"Item: " + scrlObjective1.Value + " " + Globals.GameItems[scrlObjective1.Value - 1].Name; }
                     lblObjective2.Text = @"Quantity: x" + scrlObjective2.Value;
                     break;
                 case 1:
                     rbNpc.Checked = true;
-                    scrlObjective1.Maximum = Constants.MaxNpcs;
+                    scrlObjective1.Maximum = Options.MaxNpcs;
                     if (scrlObjective1.Value == 0) { lblObjective1.Text = @"Npc: 0 None"; }
                     else { lblObjective1.Text = @"Npc: " + scrlObjective1.Value + " " + Globals.GameNpcs[scrlObjective1.Value - 1].Name; }
                     lblObjective2.Text = @"Quantity: x" + scrlObjective2.Value;
@@ -316,7 +317,7 @@ namespace Intersect_Editor.Forms
 
         private void btnSave_Click(object sender, EventArgs e)
         {
-            for (var i = 0; i < Constants.MaxQuests; i++)
+            for (var i = 0; i < Options.MaxQuests; i++)
             {
                 if (_changed[i])
                 {
@@ -341,7 +342,7 @@ namespace Intersect_Editor.Forms
 
         private void btnCancel_Click(object sender, EventArgs e)
         {
-            for (var i = 0; i < Constants.MaxQuests; i++)
+            for (var i = 0; i < Options.MaxQuests; i++)
             {
                 Globals.GameQuests[i].Load(_questsBackup[i].ToArray(),i);
             }

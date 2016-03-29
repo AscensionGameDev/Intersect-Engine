@@ -27,6 +27,7 @@ using Intersect_Editor.Classes;
 using Intersect_Editor.Forms.Editors.Event_Commands;
 using System.Drawing;
 using System.IO;
+using Intersect_Editor.Classes.General;
 
 namespace Intersect_Editor.Forms
 {
@@ -101,7 +102,7 @@ namespace Intersect_Editor.Forms
             }
             cmbAnimation.Items.Clear();
             cmbAnimation.Items.Add("None");
-            for (int i = 0; i < Constants.MaxAnimations; i++)
+            for (int i = 0; i < Options.MaxAnimations; i++)
             {
                 cmbAnimation.Items.Add((i + 1) + ". " + Globals.GameAnimations[i].Name);
             }
@@ -1323,7 +1324,7 @@ namespace Intersect_Editor.Forms
                 }
                 else if (CurrentPage.Graphic.Type == 2)
                 {
-                    graphics.DrawImage(sourceBitmap, new Rectangle(pnlPreview.Width / 2 - (Globals.TileWidth + (CurrentPage.Graphic.Width * Globals.TileWidth)) / 2, pnlPreview.Height / 2 - (Globals.TileHeight + (CurrentPage.Graphic.Height * Globals.TileHeight)) / 2, Globals.TileWidth + (CurrentPage.Graphic.Width * Globals.TileWidth), Globals.TileHeight + (CurrentPage.Graphic.Height * Globals.TileHeight)), new Rectangle(CurrentPage.Graphic.X * Globals.TileWidth, CurrentPage.Graphic.Y * Globals.TileHeight, Globals.TileWidth + (CurrentPage.Graphic.Width * Globals.TileWidth), Globals.TileHeight + (CurrentPage.Graphic.Height * Globals.TileHeight)), GraphicsUnit.Pixel);
+                    graphics.DrawImage(sourceBitmap, new Rectangle(pnlPreview.Width / 2 - (Options.TileWidth + (CurrentPage.Graphic.Width * Options.TileWidth)) / 2, pnlPreview.Height / 2 - (Options.TileHeight + (CurrentPage.Graphic.Height * Options.TileHeight)) / 2, Options.TileWidth + (CurrentPage.Graphic.Width * Options.TileWidth), Options.TileHeight + (CurrentPage.Graphic.Height * Options.TileHeight)), new Rectangle(CurrentPage.Graphic.X * Options.TileWidth, CurrentPage.Graphic.Y * Options.TileHeight, Options.TileWidth + (CurrentPage.Graphic.Width * Options.TileWidth), Options.TileHeight + (CurrentPage.Graphic.Height * Options.TileHeight)), GraphicsUnit.Pixel);
                 }
                 sourceBitmap.Dispose();
             }

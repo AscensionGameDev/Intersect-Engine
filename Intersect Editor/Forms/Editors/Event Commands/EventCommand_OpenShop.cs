@@ -29,6 +29,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using Intersect_Editor.Classes;
+using Intersect_Editor.Classes.General;
 
 namespace Intersect_Editor.Forms.Editors.Event_Commands
 {
@@ -42,11 +43,11 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             _myCommand = refCommand;
             _eventEditor = editor;
             cmbShop.Items.Clear();
-            for (int i = 0; i < Constants.MaxShops; i++)
+            for (int i = 0; i < Options.MaxShops; i++)
             {
                 cmbShop.Items.Add((i + 1) + ". " + Globals.GameShops[i].Name);
             }
-            if (_myCommand.Ints[0] > -1 && _myCommand.Ints[0] < Constants.MaxShops)
+            if (_myCommand.Ints[0] > -1 && _myCommand.Ints[0] < Options.MaxShops)
             {
                 cmbShop.SelectedIndex = _myCommand.Ints[0];
             }

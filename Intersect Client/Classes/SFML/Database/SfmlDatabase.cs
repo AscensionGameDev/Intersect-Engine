@@ -66,7 +66,8 @@ namespace Intersect_Client.Classes.Bridges_and_Interfaces.SFML.Database
         {
             if (!File.Exists("Resources/config.xml"))
             {
-                return false;
+                File.WriteAllText("Resources/config.xml",base.GetDefaultConfig());
+                return LoadConfig();
             }
             else
             {

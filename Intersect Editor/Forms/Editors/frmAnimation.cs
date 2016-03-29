@@ -29,6 +29,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
+using Intersect_Editor.Classes.General;
 using SFML.Graphics;
 using SFML.System;
 
@@ -96,9 +97,9 @@ namespace Intersect_Editor.Forms
 
         public void InitEditor()
         {
-            _animationsBackup = new ByteBuffer[Constants.MaxAnimations];
-            _changed = new bool[Constants.MaxAnimations];
-            for (var i = 0; i < Constants.MaxAnimations; i++)
+            _animationsBackup = new ByteBuffer[Options.MaxAnimations];
+            _changed = new bool[Options.MaxAnimations];
+            for (var i = 0; i < Options.MaxAnimations; i++)
             {
                 _animationsBackup[i] = new ByteBuffer();
                 _animationsBackup[i].WriteBytes(Globals.GameAnimations[i].AnimData());
@@ -252,7 +253,7 @@ namespace Intersect_Editor.Forms
 
         private void btnSave_Click(object sender, EventArgs e)
         {
-            for (var i = 0; i < Constants.MaxAnimations; i++)
+            for (var i = 0; i < Options.MaxAnimations; i++)
             {
                 if (_changed[i])
                 {
@@ -274,7 +275,7 @@ namespace Intersect_Editor.Forms
 
         private void btnCancel_Click(object sender, EventArgs e)
         {
-            for (var i = 0; i < Constants.MaxAnimations; i++)
+            for (var i = 0; i < Options.MaxAnimations; i++)
             {
                 Globals.GameAnimations[i].Load(_animationsBackup[i].ToArray(), i);
             }

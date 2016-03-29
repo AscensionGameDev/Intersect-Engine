@@ -23,6 +23,7 @@ using Intersect_Server.Classes;
 using System;
 using System.Collections.Generic;
 using System.Threading;
+using Intersect_Server.Classes.General;
 
 namespace Intersect_Server.Classes
 {
@@ -282,14 +283,14 @@ namespace Intersect_Server.Classes
                             if (Globals.GameMaps[Spawns[i].Map].Left > -1 && Globals.GameMaps[Globals.GameMaps[Spawns[i].Map].Left] != null)
                             {
                                 newmap = Globals.GameMaps[Spawns[i].Map].Left;
-                                newx = Globals.MapWidth - 1;
+                                newx = Options.MapWidth - 1;
                             }
                             else
                             {
                                 killSpawn = true;
                             }
                         }
-                        if (newx > Globals.MapWidth - 1)
+                        if (newx > Options.MapWidth - 1)
                         {
                             if (Globals.GameMaps[Spawns[i].Map].Right > -1 && Globals.GameMaps[Globals.GameMaps[Spawns[i].Map].Right] != null)
                             {
@@ -306,14 +307,14 @@ namespace Intersect_Server.Classes
                             if (Globals.GameMaps[Spawns[i].Map].Up > -1 && Globals.GameMaps[Globals.GameMaps[Spawns[i].Map].Up] != null)
                             {
                                 newmap = Globals.GameMaps[Spawns[i].Map].Up;
-                                newy = Globals.MapHeight - 1;
+                                newy = Options.MapHeight - 1;
                             }
                             else
                             {
                                 killSpawn = true;
                             }
                         }
-                        if (newy > Globals.MapHeight - 1)
+                        if (newy > Options.MapHeight - 1)
                         {
                             if (Globals.GameMaps[Spawns[i].Map].Down > -1 && Globals.GameMaps[Globals.GameMaps[Spawns[i].Map].Down] != null)
                             {

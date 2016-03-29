@@ -94,7 +94,7 @@ namespace Intersect_Client.Classes.General
         public static List<int> EntitiesToDispose = new List<int>();
 
         //Bank
-        public static ItemInstance[] Bank = new ItemInstance[Constants.MaxBankSlots];
+        public static ItemInstance[] Bank = new ItemInstance[Options.MaxBankSlots];
         public static bool InBank = false;
 
         //Game Shop

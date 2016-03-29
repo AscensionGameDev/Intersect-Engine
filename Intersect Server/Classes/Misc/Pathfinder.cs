@@ -19,6 +19,7 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+using Intersect_Server.Classes.General;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -147,17 +148,17 @@ namespace Intersect_Server.Classes.Misc
                                             closedList.Add(
                                                 new PathfinderPoint(
                                                     (x - Globals.GameMaps[_sourceEntity.CurrentMap].MapGridX + 1)*
-                                                    Globals.MapWidth + Globals.GameMaps[Database.MapGrids[myGrid].MyGrid[x, y]].Entities[i].CurrentX,
+                                                    Options.MapWidth + Globals.GameMaps[Database.MapGrids[myGrid].MyGrid[x, y]].Entities[i].CurrentX,
                                                     (y - Globals.GameMaps[_sourceEntity.CurrentMap].MapGridY + 1)*
-                                                    Globals.MapHeight + Globals.GameMaps[Database.MapGrids[myGrid].MyGrid[x, y]].Entities[i].CurrentY, -1, 0));
+                                                    Options.MapHeight + Globals.GameMaps[Database.MapGrids[myGrid].MyGrid[x, y]].Entities[i].CurrentY, -1, 0));
                                         }
                                     }
                                 }
                             }
                         }
-                        for (var x1 = 0; x1 < Globals.MapWidth; x1++)
+                        for (var x1 = 0; x1 < Options.MapWidth; x1++)
                         {
-                            for (var y1 = 0; y1 < Globals.MapHeight; y1++)
+                            for (var y1 = 0; y1 < Options.MapHeight; y1++)
                             {
                                 if (Globals.GameMaps[Database.MapGrids[myGrid].MyGrid[x, y]].Attributes[x1, y1] != null)
                                 {
@@ -170,36 +171,36 @@ namespace Intersect_Server.Classes.Misc
                                         closedList.Add(
                                             new PathfinderPoint(
                                                 (x - Globals.GameMaps[_sourceEntity.CurrentMap].MapGridX + 1) *
-                                                Globals.MapWidth + x1,
+                                                Options.MapWidth + x1,
                                                 (y - Globals.GameMaps[_sourceEntity.CurrentMap].MapGridY + 1) *
-                                                Globals.MapHeight + y1, -1, 0));
+                                                Options.MapHeight + y1, -1, 0));
                                     }
                                 }
                                 if (Database.MapGrids[myGrid].MyGrid[x, y] == _target.TargetMap && x1 == _target.TargetX && y1 == _target.TargetY)
                                 {
                                     targetX = (x - Globals.GameMaps[_sourceEntity.CurrentMap].MapGridX + 1) *
-                                              Globals.MapWidth + x1;
+                                              Options.MapWidth + x1;
                                     targetY = (y - Globals.GameMaps[_sourceEntity.CurrentMap].MapGridY + 1) *
-                                              Globals.MapHeight + y1;
+                                              Options.MapHeight + y1;
                                 }
                                 if (Database.MapGrids[myGrid].MyGrid[x, y] == _sourceEntity.CurrentMap &&
                                     x1 == _sourceEntity.CurrentX && y1 == _sourceEntity.CurrentY)
                                 {
                                     startX = (x - Globals.GameMaps[_sourceEntity.CurrentMap].MapGridX + 1) *
-                                             Globals.MapWidth + x1;
+                                             Options.MapWidth + x1;
                                     startY = (y - Globals.GameMaps[_sourceEntity.CurrentMap].MapGridY + 1) *
-                                             Globals.MapHeight + y1;
+                                             Options.MapHeight + y1;
                                 }
                             }
                         }
                     }
                     else
                     {
-                        for (var x1 = 0; x1 < Globals.MapWidth; x1++)
+                        for (var x1 = 0; x1 < Options.MapWidth; x1++)
                         {
-                            for (var y1 = 0; y1 < Globals.MapHeight; y1++)
+                            for (var y1 = 0; y1 < Options.MapHeight; y1++)
                             {
-                                closedList.Add(new PathfinderPoint((x - Globals.GameMaps[_sourceEntity.CurrentMap].MapGridX + 1) * Globals.MapWidth + x1, (y - Globals.GameMaps[_sourceEntity.CurrentMap].MapGridY + 1) * Globals.MapHeight + y1, -1, 0));
+                                closedList.Add(new PathfinderPoint((x - Globals.GameMaps[_sourceEntity.CurrentMap].MapGridX + 1) * Options.MapWidth + x1, (y - Globals.GameMaps[_sourceEntity.CurrentMap].MapGridY + 1) * Options.MapHeight + y1, -1, 0));
                             }
                         }
                     }

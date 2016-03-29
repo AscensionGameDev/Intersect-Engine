@@ -24,6 +24,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Drawing;
 using System.IO;
+using Intersect_Server.Classes.General;
 using Intersect_Server.Classes.Maps;
 
 namespace Intersect_Server.Classes
@@ -71,6 +72,15 @@ namespace Intersect_Server.Classes
             client.ConnectionTimeout = Environment.TickCount + (client.TimeoutLength * 1000);
         }
 
+        public static void SendServerConfig(Client client)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteLong((int)Enums.ServerPackets.ServerConfig);
+            bf.WriteBytes(Options.GetServerConfig());
+            client.SendPacket(bf.ToArray());
+            bf.Dispose();
+        }
+
         public static void SendJoinGame(Client client)
         {
             var bf = new ByteBuffer();
@@ -102,14 +112,14 @@ namespace Intersect_Server.Classes
                 bf.WriteInteger(Globals.GameMaps[mapNum].Revision);
                 bf.WriteInteger(Globals.GameMaps[mapNum].MapGridX);
                 bf.WriteInteger(Globals.GameMaps[mapNum].MapGridY);
-                if (Globals.GameBorderStyle == 1)
+                if (Options.GameBorderStyle == 1)
                 {
                     bf.WriteInteger(1);
                     bf.WriteInteger(1);
                     bf.WriteInteger(1);
                     bf.WriteInteger(1);
                 }
-                else if (Globals.GameBorderStyle == 0)
+                else if (Options.GameBorderStyle == 0)
                 {
                     if (0 == Globals.GameMaps[mapNum].MapGridX)
                     {
@@ -319,7 +329,7 @@ namespace Intersect_Server.Classes
             var bf = new ByteBuffer();
             bf.WriteLong((int)Enums.ServerPackets.GameData);
             bf.WriteLong(Globals.MapCount); //Map Count
-            bf.WriteInteger(Globals.GameBorderStyle);
+            bf.WriteInteger(Options.GameBorderStyle);
             if (client.IsEditor)
             {
                 for (var i = 0; i < Globals.MapCount; i++)
@@ -338,45 +348,45 @@ namespace Intersect_Server.Classes
             bf.Dispose();
 
             //Send massive amounts of game data
-            for (int i = 0; i < Constants.MaxItems; i++)
+            for (int i = 0; i < Options.MaxItems; i++)
             {
                 SendItem(client, i);
             }
-            for (int i = 0; i < Constants.MaxAnimations; i++)
+            for (int i = 0; i < Options.MaxAnimations; i++)
             {
                 SendAnimation(client, i);
             }
-            for (int i = 0; i < Constants.MaxNpcs; i++)
+            for (int i = 0; i < Options.MaxNpcs; i++)
             {
                 SendNpc(client, i);
             }
-            for (int i = 0; i < Constants.MaxSpells; i++)
+            for (int i = 0; i < Options.MaxSpells; i++)
             {
                 SendSpell(client, i);
             }
-            for (int i = 0; i < Constants.MaxResources; i++)
+            for (int i = 0; i < Options.MaxResources; i++)
             {
                 SendResource(client, i);
             }
-            for (int i = 0; i < Constants.MaxClasses; i++)
+            for (int i = 0; i < Options.MaxClasses; i++)
             {
                 SendClass(client, i);
             }
-            for (int i = 0; i < Constants.MaxQuests; i++)
+            for (int i = 0; i < Options.MaxQuests; i++)
             {
                 SendQuest(client, i);
             }
-            for (int i = 0; i < Constants.MaxProjectiles; i++)
+            for (int i = 0; i < Options.MaxProjectiles; i++)
             {
                 SendProjectile(client, i);
             }
             if (client.IsEditor)
             {
-                for (int i = 0; i < Constants.MaxShops; i++)
+                for (int i = 0; i < Options.MaxShops; i++)
                 {
                     SendShop(client, i);
                 }
-                for (int i = 0; i < Constants.MaxCommonEvents; i++)
+                for (int i = 0; i < Options.MaxCommonEvents; i++)
                 {
                     SendCommonEvent(client, i);
                 }
@@ -674,7 +684,7 @@ namespace Intersect_Server.Classes
         {
             ByteBuffer bf = new ByteBuffer();
             bf.WriteLong((int)Enums.ServerPackets.ItemList);
-            for (int i = 0; i < Constants.MaxItems; i++)
+            for (int i = 0; i < Options.MaxItems; i++)
             {
                 bf.WriteString(Globals.GameItems[i].Name);
             }
@@ -704,7 +714,7 @@ namespace Intersect_Server.Classes
         {
             ByteBuffer bf = new ByteBuffer();
             bf.WriteLong((int)Enums.ServerPackets.NpcList);
-            for (int i = 0; i < Constants.MaxNpcs; i++)
+            for (int i = 0; i < Options.MaxNpcs; i++)
             {
                 bf.WriteString(Globals.GameNpcs[i].Name);
             }
@@ -734,7 +744,7 @@ namespace Intersect_Server.Classes
         {
             ByteBuffer bf = new ByteBuffer();
             bf.WriteLong((int)Enums.ServerPackets.SpellList);
-            for (int i = 0; i < Constants.MaxSpells; i++)
+            for (int i = 0; i < Options.MaxSpells; i++)
             {
                 bf.WriteString(Globals.GameSpells[i].Name);
             }
@@ -764,7 +774,7 @@ namespace Intersect_Server.Classes
         {
             ByteBuffer bf = new ByteBuffer();
             bf.WriteLong((int)Enums.ServerPackets.AnimationList);
-            for (int i = 0; i < Constants.MaxAnimations; i++)
+            for (int i = 0; i < Options.MaxAnimations; i++)
             {
                 bf.WriteString(Globals.GameAnimations[i].Name);
             }
@@ -839,7 +849,7 @@ namespace Intersect_Server.Classes
 
         public static void SendInventory(Client client)
         {
-            for (int i = 0; i < Constants.MaxInvItems; i++)
+            for (int i = 0; i < Options.MaxInvItems; i++)
             {
                 SendInventoryItemUpdate(client, i);
             }
@@ -855,7 +865,7 @@ namespace Intersect_Server.Classes
         }
         public static void SendPlayerSpells(Client client)
         {
-            for (int i = 0; i < Constants.MaxPlayerSkills; i++)
+            for (int i = 0; i < Options.MaxPlayerSkills; i++)
             {
                 SendPlayerSpellUpdate(client, i);
             }
@@ -874,7 +884,7 @@ namespace Intersect_Server.Classes
             var bf = new ByteBuffer();
             bf.WriteLong((int)Enums.ServerPackets.PlayerEquipment);
             bf.WriteInteger(en.MyClient.EntityIndex);
-            for (int i = 0; i < Enums.EquipmentSlots.Count; i++)
+            for (int i = 0; i < Options.EquipmentSlots.Count; i++)
             {
                 bf.WriteInteger(en.Equipment[i]);
             }
@@ -886,7 +896,7 @@ namespace Intersect_Server.Classes
             var bf = new ByteBuffer();
             bf.WriteLong((int)Enums.ServerPackets.PlayerEquipment);
             bf.WriteInteger(en.MyClient.EntityIndex);
-            for (int i = 0; i < Enums.EquipmentSlots.Count; i++)
+            for (int i = 0; i < Options.EquipmentSlots.Count; i++)
             {
                 bf.WriteInteger(en.Equipment[i]);
             }
@@ -906,7 +916,7 @@ namespace Intersect_Server.Classes
         {
             var bf = new ByteBuffer();
             bf.WriteLong((int)Enums.ServerPackets.HotbarSlots);
-            for (int i = 0; i < Constants.MaxHotbar; i++)
+            for (int i = 0; i < Options.MaxHotbar; i++)
             {
                 bf.WriteInteger(client.Entity.Hotbar[i].Type);
                 bf.WriteInteger(client.Entity.Hotbar[i].Slot);
@@ -1161,22 +1171,22 @@ namespace Intersect_Server.Classes
         public static void SendSwitchesAndVariablesTo(Client client)
         {
             //Send Player Switches
-            for (int i = 0; i < Constants.MaxPlayerSwitches; i++)
+            for (int i = 0; i < Options.MaxPlayerSwitches; i++)
             {
                 SendSwitchVariable(client, (int) Enums.SwitchVariableTypes.PlayerSwitch, i);
             }
             //Send Player Variables
-            for (int i = 0; i < Constants.MaxPlayerVariables; i++)
+            for (int i = 0; i < Options.MaxPlayerVariables; i++)
             {
                 SendSwitchVariable(client, (int)Enums.SwitchVariableTypes.PlayerVariable, i);
             }
             //Send Server Switches
-            for (int i = 0; i < Constants.MaxServerSwitches; i++)
+            for (int i = 0; i < Options.MaxServerSwitches; i++)
             {
                 SendSwitchVariable(client, (int)Enums.SwitchVariableTypes.ServerSwitch, i);
             }
             //Send Server Variables
-            for (int i = 0; i < Constants.MaxServerVariables; i++)
+            for (int i = 0; i < Options.MaxServerVariables; i++)
             {
                 SendSwitchVariable(client, (int)Enums.SwitchVariableTypes.ServerVariable, i);
             }
@@ -1211,7 +1221,7 @@ namespace Intersect_Server.Classes
 
         public static void SendOpenShopEditor(Client client)
         {
-            for (int i = 0; i < Constants.MaxShops; i++)
+            for (int i = 0; i < Options.MaxShops; i++)
             {
                 SendShop(client, i);
             }
@@ -1250,7 +1260,7 @@ namespace Intersect_Server.Classes
 
         public static void SendOpenBank(Client client)
         {
-            for (int i = 0; i < Constants.MaxBankSlots; i++)
+            for (int i = 0; i < Options.MaxBankSlots; i++)
             {
                 SendBankUpdate(client, i);
             }

@@ -26,6 +26,7 @@ using System.IO;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 using Intersect_Server.Classes.Entities;
+using Intersect_Server.Classes.General;
 
 namespace Intersect_Server.Classes
 {
@@ -45,7 +46,7 @@ namespace Intersect_Server.Classes
 
         //Core Data
         private byte[] tileData;
-        public Attribute[,] Attributes = new Attribute[Globals.MapWidth, Globals.MapHeight];
+        public Attribute[,] Attributes = new Attribute[Options.MapWidth, Options.MapHeight];
         public List<Light> Lights = new List<Light>();
         public List<EventStruct> Events = new List<EventStruct>();
         public List<NpcSpawn> Spawns = new List<NpcSpawn>();
@@ -156,11 +157,11 @@ namespace Intersect_Server.Classes
                         //We zero everything out
                         ByteBuffer tmpBuffer = new ByteBuffer();
                         Tile fakeTile = new Tile();
-                        for (int i = 0; i < Constants.LayerCount; i++)
+                        for (int i = 0; i < Options.LayerCount; i++)
                         {
-                            for (int x = 0; x < Globals.MapWidth; x++)
+                            for (int x = 0; x < Options.MapWidth; x++)
                             {
-                                for (int y = 0; y < Globals.MapHeight; y++)
+                                for (int y = 0; y < Options.MapHeight; y++)
                                 {
                                     tileBuffer.WriteInteger(fakeTile.TilesetIndex);
                                     tileBuffer.WriteInteger(fakeTile.X);
@@ -180,9 +181,9 @@ namespace Intersect_Server.Classes
                 File.WriteAllBytes("Resources/Maps/" + MyMapNum + ".tiles", tileData);
                 bf.WriteBytes(tileData);
 
-                for (var x = 0; x < Globals.MapWidth; x++)
+                for (var x = 0; x < Options.MapWidth; x++)
                 {
-                    for (var y = 0; y < Globals.MapHeight; y++)
+                    for (var y = 0; y < Options.MapHeight; y++)
                     {
                         if (Attributes[x, y] != null && Attributes[x, y].value > 0)
                         {
@@ -275,11 +276,11 @@ namespace Intersect_Server.Classes
                 //Server Doesn't care about visuals.. just read the tile chunk into a byte array
                 //We read the TilesetIndex (int), X (int), Y (int) and Autotile (byte) for everyt tile of every later.
                 //Meaning we need to read (Layers * Width * Height) * ( 4 (int) + 4 (int) + 4 (int) + 1 (byte)) bytes.
-                tileData = bf.ReadBytes(Constants.LayerCount * Globals.MapWidth * Globals.MapHeight * 13);
+                tileData = bf.ReadBytes(Options.LayerCount * Options.MapWidth * Options.MapHeight * 13);
 
-                for (var x = 0; x < Globals.MapWidth; x++)
+                for (var x = 0; x < Options.MapWidth; x++)
                 {
-                    for (var y = 0; y < Globals.MapHeight; y++)
+                    for (var y = 0; y < Options.MapHeight; y++)
                     {
                         int attributeType = bf.ReadInteger();
                         if (attributeType > 0)
@@ -399,9 +400,9 @@ namespace Intersect_Server.Classes
         private void SpawnAttributeItems()
         {
             ResourceSpawns.Clear();
-            for (int x = 0; x < Globals.MapWidth; x++)
+            for (int x = 0; x < Options.MapWidth; x++)
             {
-                for (int y = 0; y < Globals.MapHeight; y++)
+                for (int y = 0; y < Options.MapHeight; y++)
                 {
                     if (Attributes[x, y] != null)
                     {
@@ -422,7 +423,7 @@ namespace Intersect_Server.Classes
             MapItems.Add(new MapItemInstance(item.ItemNum,item.ItemVal));
             MapItems[MapItems.Count - 1].X = x;
             MapItems[MapItems.Count - 1].Y = y;
-            MapItems[MapItems.Count - 1].DespawnTime = Environment.TickCount + Constants.ItemDespawnTime;
+            MapItems[MapItems.Count - 1].DespawnTime = Environment.TickCount + Options.ItemDespawnTime;
             if (Globals.GameItems[MapItems[MapItems.Count - 1].ItemNum].Type == (int)Enums.ItemTypes.Equipment)
             {
                 MapItems[MapItems.Count - 1].ItemVal = 1;
@@ -465,7 +466,7 @@ namespace Intersect_Server.Classes
                 ItemRespawns.Add(new MapItemRespawn());
                 ItemRespawns[ItemRespawns.Count - 1].AttributeSpawnX = MapItems[index].AttributeSpawnX;
                 ItemRespawns[ItemRespawns.Count - 1].AttributeSpawnY = MapItems[index].AttributeSpawnY;
-                ItemRespawns[ItemRespawns.Count - 1].RespawnTime = Environment.TickCount + Constants.ItemRespawnTime;
+                ItemRespawns[ItemRespawns.Count - 1].RespawnTime = Environment.TickCount + Options.ItemRespawnTime;
             }
             MapItems.RemoveAt(index);
         }
@@ -542,8 +543,8 @@ namespace Intersect_Server.Classes
             {
                 for (int n = 0; n < 100; n++)
                 {
-                    X = Globals.Rand.Next(1, Globals.MapWidth);
-                    Y = Globals.Rand.Next(1, Globals.MapHeight);
+                    X = Globals.Rand.Next(1, Options.MapWidth);
+                    Y = Globals.Rand.Next(1, Options.MapHeight);
                     if (Attributes[X, Y].value == (int)Enums.MapAttributes.Walkable)
                     {
                         break;
@@ -565,7 +566,7 @@ namespace Intersect_Server.Classes
             Globals.Entities[index].CurrentY = tileY;
 
             //Give NPC Drops
-            for (int n = 0; n < Constants.MaxNpcDrops; n++)
+            for (int n = 0; n < Options.MaxNpcDrops; n++)
             {
                 if (Globals.Rand.Next(1, 101) <= Globals.GameNpcs[npcNum].Drops[n].Chance)
                 {
@@ -864,7 +865,7 @@ namespace Intersect_Server.Classes
 
     class TileArray
     {
-        public Tile[,] Tiles = new Tile[Globals.MapWidth, Globals.MapHeight];
+        public Tile[,] Tiles = new Tile[Options.MapWidth, Options.MapHeight];
     }
 
     class Tile

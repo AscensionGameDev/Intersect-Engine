@@ -8,6 +8,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using Intersect_Editor.Classes.General;
 using WeifenLuo.WinFormsUI.Docking;
 
 namespace Intersect_Editor.Forms
@@ -35,8 +36,8 @@ namespace Intersect_Editor.Forms
         {
             if (e.X > picTileset.Width || e.Y > picTileset.Height) { return; }
             _tMouseDown = true;
-            Globals.CurSelX = (int)Math.Floor((double)e.X / Globals.TileWidth);
-            Globals.CurSelY = (int)Math.Floor((double)e.Y / Globals.TileHeight);
+            Globals.CurSelX = (int)Math.Floor((double)e.X / Options.TileWidth);
+            Globals.CurSelY = (int)Math.Floor((double)e.Y / Options.TileHeight);
             Globals.CurSelW = 0;
             Globals.CurSelH = 0;
             if (Globals.CurSelX < 0) { Globals.CurSelX = 0; }
@@ -68,8 +69,8 @@ namespace Intersect_Editor.Forms
             if (e.X > picTileset.Width || e.Y > picTileset.Height) { return; }
             if (_tMouseDown && Globals.Autotilemode == 0)
             {
-                var tmpX = (int)Math.Floor((double)e.X / Globals.TileWidth);
-                var tmpY = (int)Math.Floor((double)e.Y / Globals.TileHeight);
+                var tmpX = (int)Math.Floor((double)e.X / Options.TileWidth);
+                var tmpY = (int)Math.Floor((double)e.Y / Options.TileHeight);
                 Globals.CurSelW = tmpX - Globals.CurSelX;
                 Globals.CurSelH = tmpY - Globals.CurSelY;
             }
@@ -143,7 +144,7 @@ namespace Intersect_Editor.Forms
         public void SetLayer(int index)
         {
             Globals.CurrentLayer = index;
-            if (index < Constants.LayerCount)
+            if (index < Options.LayerCount)
             {
                 cmbMapLayer.SelectedIndex = index;
             }
@@ -338,31 +339,31 @@ namespace Intersect_Editor.Forms
             }
             else if (tabControl.SelectedIndex == tabControl.TabPages.IndexOf(tabAttributes))
             {
-                Globals.CurrentLayer = Constants.LayerCount;
+                Globals.CurrentLayer = Options.LayerCount;
                 EditorGraphics.TilePreviewUpdated = true;
                 Globals.SelectionType = (int)Enums.SelectionTypes.AllLayers;
             }
             else if (tabControl.SelectedIndex == tabControl.TabPages.IndexOf(tabEvents))
             {
-                Globals.CurrentLayer = Constants.LayerCount + 2;
+                Globals.CurrentLayer = Options.LayerCount + 2;
                 EditorGraphics.TilePreviewUpdated = true;
                 Globals.SelectionType = (int)Enums.SelectionTypes.CurrentLayer;
             }
             else if (tabControl.SelectedIndex == tabControl.TabPages.IndexOf(tabLights))
             {
-                Globals.CurrentLayer = Constants.LayerCount + 1;
+                Globals.CurrentLayer = Options.LayerCount + 1;
                 EditorGraphics.TilePreviewUpdated = true;
                 Globals.SelectionType = (int)Enums.SelectionTypes.CurrentLayer;
             }
             else if (tabControl.SelectedIndex == tabControl.TabPages.IndexOf(tabNPCs))
             {
-                Globals.CurrentLayer = Constants.LayerCount + 3;
+                Globals.CurrentLayer = Options.LayerCount + 3;
                 EditorGraphics.TilePreviewUpdated = true;
                 Globals.SelectionType = (int)Enums.SelectionTypes.CurrentLayer;
                 // Update the list incase npcs have been modified since form load.
                 cmbNpc.Items.Clear();
                 cmbNpc.Items.Add("None");
-                for (int i = 0; i < Constants.MaxNpcs; i++)
+                for (int i = 0; i < Options.MaxNpcs; i++)
                 {
                     cmbNpc.Items.Add(i + ") " + Globals.GameNpcs[i].Name);
                 }

@@ -335,13 +335,13 @@ namespace Intersect_Client.Classes.Core
                     Point player = new Point();
                     player.X = (int)playerx;
                     player.Y = (int)playery;
-                    Rectangle mapRect = new Rectangle((int)Globals.GameMaps[mapNum].GetX(), (int)Globals.GameMaps[mapNum].GetY(), Globals.Database.MapWidth * Globals.Database.TileWidth, Globals.Database.MapHeight * Globals.Database.TileHeight);
+                    Rectangle mapRect = new Rectangle((int)Globals.GameMaps[mapNum].GetX(), (int)Globals.GameMaps[mapNum].GetY(), Options.MapWidth * Options.TileWidth, Options.MapHeight * Options.TileHeight);
                     distance = (float)DistancePointToRectangle(player, mapRect) / 32f;
                 }
                 else
                 {
-                    soundx = Globals.GameMaps[mapNum].GetX() + _x * Globals.Database.TileWidth + 16;
-                    soundy = Globals.GameMaps[mapNum].GetY() + _y * Globals.Database.TileHeight + 16;
+                    soundx = Globals.GameMaps[mapNum].GetX() + _x * Options.TileWidth + 16;
+                    soundy = Globals.GameMaps[mapNum].GetY() + _y * Options.TileHeight + 16;
                     distance = (float)Math.Sqrt(Math.Pow(playerx - soundx, 2) + Math.Pow(playery - soundy, 2)) / 32f;
                 }
             }

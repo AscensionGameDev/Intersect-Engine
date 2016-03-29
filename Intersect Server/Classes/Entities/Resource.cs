@@ -22,6 +22,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading;
+using Intersect_Server.Classes.General;
 
 namespace Intersect_Server.Classes
 {
@@ -68,7 +69,7 @@ namespace Intersect_Server.Classes
 
             //Give Resource Drops
             int Z = 0;
-            for (int n = 0; n < Constants.MaxNpcDrops; n++)
+            for (int n = 0; n < Options.MaxNpcDrops; n++)
             {
                 if (Globals.Rand.Next(1, 101) <= _baseResource.Drops[n].Chance)
                 {

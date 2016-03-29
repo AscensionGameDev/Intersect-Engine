@@ -1,4 +1,5 @@
 ﻿using System;
+using Intersect_Server.Classes.General;
 
 namespace Intersect_Server.Classes.Maps
 {
@@ -44,7 +45,7 @@ namespace Intersect_Server.Classes.Maps
                     if (GridY > 0 && Database.MapGrids[Grid].MyGrid[GridX, GridY-1] > -1)
                     {
                         _mapNum = Database.MapGrids[Grid].MyGrid[GridX, GridY - 1];
-                        _tileY += Globals.MapHeight;
+                        _tileY += Options.MapHeight;
                         return true;
                     }
                     return false;
@@ -52,7 +53,7 @@ namespace Intersect_Server.Classes.Maps
                     if (GridY + 1 < Database.MapGrids[Grid].Height && Database.MapGrids[Grid].MyGrid[GridX, GridY + 1] > -1)
                     {
                         _mapNum = Database.MapGrids[Grid].MyGrid[GridX, GridY + 1];
-                        _tileY -= Globals.MapHeight;
+                        _tileY -= Options.MapHeight;
                         return true;
                     }
                     return false;
@@ -60,7 +61,7 @@ namespace Intersect_Server.Classes.Maps
                     if (GridX > 0 && Database.MapGrids[Grid].MyGrid[GridX - 1, GridY] > -1)
                     {
                         _mapNum = Database.MapGrids[Grid].MyGrid[GridX - 1, GridY];
-                        _tileX += Globals.MapWidth;
+                        _tileX += Options.MapWidth;
                         return true;
                     }
                     return false;
@@ -68,7 +69,7 @@ namespace Intersect_Server.Classes.Maps
                     if (GridX + 1 < Database.MapGrids[Grid].Width && Database.MapGrids[Grid].MyGrid[GridX + 1, GridY] > -1)
                     {
                         _mapNum = Database.MapGrids[Grid].MyGrid[GridX + 1, GridY];
-                        _tileX -= Globals.MapWidth;
+                        _tileX -= Options.MapWidth;
                         return true;
                     }
                     return false;
@@ -89,11 +90,11 @@ namespace Intersect_Server.Classes.Maps
             {
                 if (!TransitionMaps((int)Enums.Directions.Up)) return false;
             }
-            while (_tileX >= Globals.MapWidth)
+            while (_tileX >= Options.MapWidth)
             {
                 if (!TransitionMaps((int)Enums.Directions.Right)) return false;
             }
-            while (_tileY >= Globals.MapHeight)
+            while (_tileY >= Options.MapHeight)
             {
                 if (!TransitionMaps((int)Enums.Directions.Down)) return false;
             }
@@ -118,8 +119,8 @@ namespace Intersect_Server.Classes.Maps
         public static Boolean IsTileValid(int mapNum, int tileX, int tileY)
         {
             if (!MapHelper.IsMapValid(mapNum)) return false;
-            if (tileX < 0 || tileX > Globals.MapWidth) return false;
-            if (tileY < 0 || tileY > Globals.MapHeight) return false;
+            if (tileX < 0 || tileX > Options.MapWidth) return false;
+            if (tileY < 0 || tileY > Options.MapHeight) return false;
             return true;
         }
     }

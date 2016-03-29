@@ -29,6 +29,7 @@ using Image = SFML.Graphics.Image;
 using SFML.System;
 using Intersect_Editor.Classes;
 using System.IO;
+using Intersect_Editor.Classes.General;
 
 namespace Intersect_Editor.Classes
 {
@@ -52,7 +53,7 @@ namespace Intersect_Editor.Classes
         {
             _directionGrid = new Bitmap(Intersect_Editor.Properties.Resources.ProjectileDirection);
             lstProjectiles.SelectedIndex = 0;
-            scrlAnimation.Maximum = Constants.MaxAnimations - 1;
+            scrlAnimation.Maximum = Options.MaxAnimations - 1;
             UpdateEditor();
         }
 
@@ -63,9 +64,9 @@ namespace Intersect_Editor.Classes
 
         public void InitEditor()
         {
-            _projectilesBackup = new ByteBuffer[Constants.MaxProjectiles];
-            _changed = new bool[Constants.MaxProjectiles];
-            for (var i = 0; i < Constants.MaxProjectiles; i++)
+            _projectilesBackup = new ByteBuffer[Options.MaxProjectiles];
+            _changed = new bool[Options.MaxProjectiles];
+            for (var i = 0; i < Options.MaxProjectiles; i++)
             {
                 _projectilesBackup[i] = new ByteBuffer();
                 _projectilesBackup[i].WriteBytes(Globals.GameProjectiles[i].ProjectileData());
@@ -135,18 +136,18 @@ namespace Intersect_Editor.Classes
             {
                 for (var y = 0; y < ProjectileStruct.SpawnLocationsHeight; y++)
                 {
-                    gfx.DrawImage(_directionGrid, new Rectangle(x * Globals.TileWidth, y * Globals.TileHeight, Globals.TileWidth, Globals.TileHeight), new Rectangle(0, 0, Globals.TileWidth, Globals.TileHeight), GraphicsUnit.Pixel);
+                    gfx.DrawImage(_directionGrid, new Rectangle(x * Options.TileWidth, y * Options.TileHeight, Options.TileWidth, Options.TileHeight), new Rectangle(0, 0, Options.TileWidth, Options.TileHeight), GraphicsUnit.Pixel);
                     for (var i = 0; i < ProjectileStruct.MaxProjectileDirections; i++)
                     {
                         if (Globals.GameProjectiles[_editorIndex].SpawnLocations[x, y].Directions[i] == true)
                         {
-                            gfx.DrawImage(_directionGrid, new Rectangle((x * Globals.TileWidth) + DirectionOffsetX(i), (y * Globals.TileHeight) + DirectionOffsetY(i), (Globals.TileWidth - 2) / 3, (Globals.TileHeight - 2) / 3), new Rectangle(Globals.TileWidth + DirectionOffsetX(i), DirectionOffsetY(i), (Globals.TileWidth - 2) / 3, (Globals.TileHeight - 2) / 3), GraphicsUnit.Pixel);
+                            gfx.DrawImage(_directionGrid, new Rectangle((x * Options.TileWidth) + DirectionOffsetX(i), (y * Options.TileHeight) + DirectionOffsetY(i), (Options.TileWidth - 2) / 3, (Options.TileHeight - 2) / 3), new Rectangle(Options.TileWidth + DirectionOffsetX(i), DirectionOffsetY(i), (Options.TileWidth - 2) / 3, (Options.TileHeight - 2) / 3), GraphicsUnit.Pixel);
                         }
                     }
                 }
             }
 
-            gfx.DrawImage(_directionGrid, new Rectangle((picSpawns.Width / 2) - (((Globals.TileHeight - 2) / 3) / 2), (picSpawns.Height / 2) - (((Globals.TileHeight - 2) / 3) / 2), (Globals.TileWidth - 2) / 3, (Globals.TileHeight - 2) / 3), new Rectangle(43, 11, (Globals.TileWidth - 2) / 3, (Globals.TileHeight - 2) / 3), GraphicsUnit.Pixel);
+            gfx.DrawImage(_directionGrid, new Rectangle((picSpawns.Width / 2) - (((Options.TileHeight - 2) / 3) / 2), (picSpawns.Height / 2) - (((Options.TileHeight - 2) / 3) / 2), (Options.TileWidth - 2) / 3, (Options.TileHeight - 2) / 3), new Rectangle(43, 11, (Options.TileWidth - 2) / 3, (Options.TileHeight - 2) / 3), GraphicsUnit.Pixel);
             gfx.Dispose();
             picSpawns.Refresh();
         }
@@ -296,15 +297,15 @@ namespace Intersect_Editor.Classes
 
         private void picSpawns_MouseDown(object sender, MouseEventArgs e)
         {
-            double x = e.X / Globals.TileWidth;
-            double y = e.Y / Globals.TileHeight;
+            double x = e.X / Options.TileWidth;
+            double y = e.Y / Options.TileHeight;
             double i, j;
 
             x = Math.Floor(x);
             y = Math.Floor(y);
 
-            i = (e.X - (x * Globals.TileWidth)) / (Globals.TileWidth / 3);
-            j = (e.Y - (y * Globals.TileHeight)) / (Globals.TileWidth / 3);
+            i = (e.X - (x * Options.TileWidth)) / (Options.TileWidth / 3);
+            j = (e.Y - (y * Options.TileHeight)) / (Options.TileWidth / 3);
 
             i = Math.Floor(i);
             j = Math.Floor(j);
@@ -316,7 +317,7 @@ namespace Intersect_Editor.Classes
 
         private void btnSave_Click(object sender, EventArgs e)
         {
-            for (var i = 0; i < Constants.MaxProjectiles; i++)
+            for (var i = 0; i < Options.MaxProjectiles; i++)
             {
                 if (_changed[i])
                 {
@@ -341,7 +342,7 @@ namespace Intersect_Editor.Classes
 
         private void btnCancel_Click(object sender, EventArgs e)
         {
-            for (var i = 0; i < Constants.MaxProjectiles; i++)
+            for (var i = 0; i < Options.MaxProjectiles; i++)
             {
                 Globals.GameProjectiles[i].Load(_projectilesBackup[i].ToArray(),i);
             }

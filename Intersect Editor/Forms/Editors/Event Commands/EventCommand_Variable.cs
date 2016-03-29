@@ -28,6 +28,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using Intersect_Editor.Classes;
+using Intersect_Editor.Classes.General;
 
 namespace Intersect_Editor.Forms.Editors.Event_Commands
 {
@@ -60,19 +61,19 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             int varCount = 0;
             if (rdoPlayerVariable.Checked)
             {
-                for (int i = 0; i < Constants.MaxPlayerVariables; i++)
+                for (int i = 0; i < Options.MaxPlayerVariables; i++)
                 {
                     cmbVariable.Items.Add((i + 1) + ". " + Globals.PlayerVariables[i]);
                 }
-                varCount = Constants.MaxPlayerVariables;
+                varCount = Options.MaxPlayerVariables;
             }
             else
             {
-                for (int i = 0; i < Constants.MaxServerVariables; i++)
+                for (int i = 0; i < Options.MaxServerVariables; i++)
                 {
                     cmbVariable.Items.Add((i + 1) + ". " + Globals.ServerVariables[i]);
                 }
-                varCount = Constants.MaxServerVariables;
+                varCount = Options.MaxServerVariables;
             }
             if (_myCommand.Ints[1] >= 0 && _myCommand.Ints[1] < varCount)
             {

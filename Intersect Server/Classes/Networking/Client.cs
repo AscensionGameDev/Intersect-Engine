@@ -30,6 +30,10 @@ namespace Intersect_Server.Classes
     {
 
         //Game Incorperation Variables
+        public string MyAccount = "";
+        public string MyEmail = "";
+        public string MyPassword = "";
+        public string MySalt = "";
         public int ClientIndex;
         public int EntityIndex;
         public Player Entity;
@@ -42,9 +46,6 @@ namespace Intersect_Server.Classes
         //Client Properties
         public bool IsEditor;
         public int Power = 0;
-
-        //Database ID
-        public int Id = -1;
 
         //Network Variables
         private GameSocket mySocket;

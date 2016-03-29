@@ -20,8 +20,10 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 using System;
+using System.Drawing;
 using System.IO;
 using Intersect_Server.Classes.Entities;
+using Intersect_Server.Classes.General;
 using Intersect_Server.Classes.Maps;
 
 namespace Intersect_Server.Classes
@@ -248,18 +250,18 @@ namespace Intersect_Server.Classes
             {
                 if (Database.CheckPassword(username, password))
                 {
-                    Globals.Entities[index] = new Player(index, client) { MyAccount = username };
+                    client.MyAccount = username;
+                    Globals.Entities[index] = new Player(index, client);
                     client.Entity = (Player)Globals.Entities[index];
-                    Globals.GeneralLogs.Add((((Player)Globals.Entities[index]).MyAccount) + " logged in.");
-                    client.Id = Database.GetUserId(username);
-
+                    Globals.GeneralLogs.Add(client.MyAccount + " logged in.");
+                    PacketSender.SendServerConfig(client);
                     if (Database.LoadPlayer(client))
                     {
                         PacketSender.SendJoinGame(client);
                     }
                     else
                     {
-                        for (int i = 0; i < Constants.MaxClasses; i++)
+                        for (int i = 0; i < Options.MaxClasses; i++)
                         {
                             PacketSender.SendClass(client, i);
                         }
@@ -395,6 +397,7 @@ namespace Intersect_Server.Classes
                     if (Database.CheckPower(usr) == 2)
                     {
                         client.IsEditor = true;
+                        PacketSender.SendServerConfig(client);
                         PacketSender.SendJoinGame(client);
                         PacketSender.SendGameData(client);
                         PacketSender.SendTilesets(client);
@@ -650,13 +653,23 @@ namespace Intersect_Server.Classes
             long target = bf.ReadLong();
 
             //Fire projectile instead if weapon has it
-            if (client.Entity.Equipment[Enums.WeaponIndex] >= 0 && client.Entity.Inventory[client.Entity.Equipment[Enums.WeaponIndex]].ItemNum >= 0)
+            if (Options.WeaponIndex > -1)
             {
-                if (Globals.GameItems[client.Entity.Inventory[client.Entity.Equipment[Enums.WeaponIndex]].ItemNum].Projectile >= 0)
+                if (client.Entity.Equipment[Options.WeaponIndex] >= 0 &&
+                    client.Entity.Inventory[client.Entity.Equipment[Options.WeaponIndex]].ItemNum >= 0)
                 {
-                    Globals.GameMaps[client.Entity.CurrentMap].SpawnMapProjectile(client.Entity, Globals.GameItems[client.Entity.Inventory[client.Entity.Equipment[Enums.WeaponIndex]].ItemNum].Projectile, client.Entity.CurrentMap, client.Entity.CurrentX, client.Entity.CurrentY, client.Entity.CurrentZ, client.Entity.Dir);
-                    bf.Dispose();
-                    return;
+                    if (
+                        Globals.GameItems[client.Entity.Inventory[client.Entity.Equipment[Options.WeaponIndex]].ItemNum]
+                            .Projectile >= 0)
+                    {
+                        Globals.GameMaps[client.Entity.CurrentMap].SpawnMapProjectile(client.Entity,
+                            Globals.GameItems[
+                                client.Entity.Inventory[client.Entity.Equipment[Options.WeaponIndex]].ItemNum].Projectile,
+                            client.Entity.CurrentMap, client.Entity.CurrentX, client.Entity.CurrentY,
+                            client.Entity.CurrentZ, client.Entity.Dir);
+                        bf.Dispose();
+                        return;
+                    }
                 }
             }
 
@@ -681,6 +694,18 @@ namespace Intersect_Server.Classes
             PacketSender.SendGameData(client);
             PacketSender.SendPlayerMsg(client, "Welcome to the Intersect game server.");
             PacketSender.SendGlobalMsg(Globals.Entities[index].MyName + " has joined the Intersect engine");
+            if (client.Power == 1)
+            {
+                PacketSender.SendPlayerMsg(client,
+                    "You are a moderator! Press Insert at any time to access the administration menu or F2 for debug information.",
+                    Color.OrangeRed);
+            }
+            else if (client.Power == 2)
+            {
+                PacketSender.SendPlayerMsg(client,
+                    "You are an administrator! Press Insert at any time to access the administration menu or F2 for debug information.",
+                    Color.OrangeRed);
+            }
             PacketSender.SendEntityDataTo(client, index, (int)Enums.EntityTypes.Player, client.Entity.Data(), client.Entity);
             Globals.Entities[index].Warp(Globals.Entities[index].CurrentMap, Globals.Entities[index].CurrentX, Globals.Entities[index].CurrentY, Globals.Entities[index].Dir);
 
@@ -722,10 +747,10 @@ namespace Intersect_Server.Classes
                 }
                 else
                 {
-                    Database.CreateAccount(((Player)Globals.Entities[index]), username, password, email);
-                    client.Id = Database.GetUserId(username);
+                    Database.CreateAccount(client, username, password, email);
                     Globals.GeneralLogs.Add(Globals.Entities[index].MyName + " logged in.");
-                    for (int i = 0; i < Constants.MaxClasses; i++)
+                    PacketSender.SendServerConfig(client);
+                    for (int i = 0; i < Options.MaxClasses; i++)
                     {
                         PacketSender.SendClass(client, i);
                     }
@@ -781,14 +806,14 @@ namespace Intersect_Server.Classes
                     }
                 }
 
-                for (int i = 0; i < Constants.MaxNpcDrops; i++)
+                for (int i = 0; i < Options.MaxNpcDrops; i++)
                 {
                     ItemInstance TempItem = new ItemInstance(Globals.GameClasses[Class].Items[i].ItemNum, Globals.GameClasses[Class].Items[i].Amount);
                     ((Player)Globals.Entities[index]).TryGiveItem(TempItem, false);
                 }
 
                 Database.SavePlayer(client);
-                Globals.GeneralLogs.Add((((Player)Globals.Entities[index]).MyAccount) + " has created a character.");
+                Globals.GeneralLogs.Add(client.MyAccount + " has created a character.");
                 PacketSender.SendJoinGame(client);
             }
             bf.Dispose();
@@ -806,7 +831,7 @@ namespace Intersect_Server.Classes
 
         private static void HandleItemEditor(Client client)
         {
-            for (var i = 0; i < Constants.MaxItems; i++)
+            for (var i = 0; i < Options.MaxItems; i++)
             {
                 PacketSender.SendItem(client, i);
             }
@@ -825,7 +850,7 @@ namespace Intersect_Server.Classes
 
         private static void HandleNpcEditor(Client client)
         {
-            for (var i = 0; i < Constants.MaxNpcs; i++)
+            for (var i = 0; i < Options.MaxNpcs; i++)
             {
                 PacketSender.SendNpc(client, i);
             }
@@ -844,7 +869,7 @@ namespace Intersect_Server.Classes
 
         private static void HandleSpellEditor(Client client)
         {
-            for (var i = 0; i < Constants.MaxSpells; i++)
+            for (var i = 0; i < Options.MaxSpells; i++)
             {
                 PacketSender.SendSpell(client, i);
             }
@@ -863,7 +888,7 @@ namespace Intersect_Server.Classes
 
         private static void HandleAnimationEditor(Client client)
         {
-            for (var i = 0; i < Constants.MaxAnimations; i++)
+            for (var i = 0; i < Options.MaxAnimations; i++)
             {
                 PacketSender.SendAnimation(client, i);
             }
@@ -988,7 +1013,7 @@ namespace Intersect_Server.Classes
 
         private static void HandleResourceEditor(Client client)
         {
-            for (var i = 0; i < Constants.MaxResources; i++)
+            for (var i = 0; i < Options.MaxResources; i++)
             {
                 PacketSender.SendResource(client, i);
             }
@@ -1007,7 +1032,7 @@ namespace Intersect_Server.Classes
 
         private static void HandleClassEditor(Client client)
         {
-            for (var i = 0; i < Constants.MaxClasses; i++)
+            for (var i = 0; i < Options.MaxClasses; i++)
             {
                 PacketSender.SendClass(client, i);
             }
@@ -1026,7 +1051,7 @@ namespace Intersect_Server.Classes
 
         private static void HandleQuestEditor(Client client)
         {
-            for (var i = 0; i < Constants.MaxQuests; i++)
+            for (var i = 0; i < Options.MaxQuests; i++)
             {
                 PacketSender.SendQuest(client, i);
             }
@@ -1045,7 +1070,7 @@ namespace Intersect_Server.Classes
 
         private static void HandleProjectileEditor(Client client)
         {
-            for (var i = 0; i < Constants.MaxProjectiles; i++)
+            for (var i = 0; i < Options.MaxProjectiles; i++)
             {
                 PacketSender.SendProjectile(client, i);
             }
@@ -1329,7 +1354,7 @@ namespace Intersect_Server.Classes
 
         private static void HandleOpenCommonEventEditor(Client client)
         {
-            for (var i = 0; i < Constants.MaxCommonEvents; i++)
+            for (var i = 0; i < Options.MaxCommonEvents; i++)
             {
                 PacketSender.SendCommonEvent(client, i);
             }
@@ -1348,7 +1373,7 @@ namespace Intersect_Server.Classes
 
         private static void HandleOpenSwitchVariableEditor(Client client)
         {
-            for (var i = 0; i < Constants.MaxCommonEvents; i++)
+            for (var i = 0; i < Options.MaxCommonEvents; i++)
             {
                 PacketSender.SendCommonEvent(client, i);
             }
@@ -1388,7 +1413,7 @@ namespace Intersect_Server.Classes
 
         private static void HandleOpenShopEditor(Client client)
         {
-            for (var i = 0; i < Constants.MaxShops; i++)
+            for (var i = 0; i < Options.MaxShops; i++)
             {
                 PacketSender.SendShop(client, i);
             }

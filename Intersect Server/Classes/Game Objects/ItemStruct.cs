@@ -22,6 +22,7 @@
 
 using System;
 using System.IO;
+using Intersect_Server.Classes.General;
 
 namespace Intersect_Server.Classes
 {
@@ -53,8 +54,8 @@ namespace Intersect_Server.Classes
         public ItemStruct()
         {
             Speed = 10; // Set to 10 by default.
-            StatsReq = new int[Constants.MaxStats];
-            StatsGiven = new int[Constants.MaxStats];
+            StatsReq = new int[Options.MaxStats];
+            StatsGiven = new int[Options.MaxStats];
         }
 
         public void Load(byte[] data, int index)
@@ -75,7 +76,7 @@ namespace Intersect_Server.Classes
             LevelReq = myBuffer.ReadInteger();
             Projectile = myBuffer.ReadInteger();
 
-            for (var i = 0; i < Constants.MaxStats; i++)
+            for (var i = 0; i < Options.MaxStats; i++)
             {
                 StatsReq[i] = myBuffer.ReadInteger();
                 StatsGiven[i] = myBuffer.ReadInteger();
@@ -107,7 +108,7 @@ namespace Intersect_Server.Classes
             myBuffer.WriteInteger(LevelReq);
             myBuffer.WriteInteger(Projectile);
 
-            for (var i = 0; i < Constants.MaxStats; i++)
+            for (var i = 0; i < Options.MaxStats; i++)
             {
                 myBuffer.WriteInteger(StatsReq[i]);
                 myBuffer.WriteInteger(StatsGiven[i]);

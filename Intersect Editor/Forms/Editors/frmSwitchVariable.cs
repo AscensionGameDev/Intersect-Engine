@@ -29,34 +29,35 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Intersect_Editor.Classes;
+using Intersect_Editor.Classes.General;
 
 namespace Intersect_Editor.Forms.Editors
 {
     public partial class frmSwitchVariable : Form
     {
-        private string[] _playerSwitchBackup = new string[Constants.MaxPlayerSwitches];
-        private string[] _playerVariableBackup = new string[Constants.MaxPlayerVariables];
-        private string[] _serverSwitchBackup = new string[Constants.MaxServerSwitches];
-        private string[] _serverVariableBackup = new string[Constants.MaxServerVariables];
-        private int[] _serverVariableValBackup = new int[Constants.MaxServerVariables];
-        private bool[] _serverSwitchValBackup = new bool[Constants.MaxServerSwitches];
+        private string[] _playerSwitchBackup = new string[Options.MaxPlayerSwitches];
+        private string[] _playerVariableBackup = new string[Options.MaxPlayerVariables];
+        private string[] _serverSwitchBackup = new string[Options.MaxServerSwitches];
+        private string[] _serverVariableBackup = new string[Options.MaxServerVariables];
+        private int[] _serverVariableValBackup = new int[Options.MaxServerVariables];
+        private bool[] _serverSwitchValBackup = new bool[Options.MaxServerSwitches];
         public frmSwitchVariable()
         {
             InitializeComponent();
-            for (int i = 0; i < Constants.MaxPlayerSwitches; i++)
+            for (int i = 0; i < Options.MaxPlayerSwitches; i++)
             {
                 _playerSwitchBackup[i] = Globals.PlayerSwitches[i];
             }
-            for (int i = 0; i < Constants.MaxPlayerVariables; i++)
+            for (int i = 0; i < Options.MaxPlayerVariables; i++)
             {
                 _playerVariableBackup[i] = Globals.PlayerVariables[i];
             }
-            for (int i = 0; i < Constants.MaxServerSwitches; i++)
+            for (int i = 0; i < Options.MaxServerSwitches; i++)
             {
                 _serverSwitchBackup[i] = Globals.ServerSwitches[i];
                 _serverSwitchValBackup[i] = Globals.ServerSwitchValues[i];
             }
-            for (int i = 0; i < Constants.MaxServerVariables; i++)
+            for (int i = 0; i < Options.MaxServerVariables; i++)
             {
                 _serverVariableBackup[i] = Globals.ServerVariables[i];
                 _serverVariableValBackup[i] = Globals.ServerVariableValues[i];
@@ -69,28 +70,28 @@ namespace Intersect_Editor.Forms.Editors
             grpEditor.Hide();
             if (rdoPlayerSwitch.Checked)
             {
-                for (int i = 0; i < Constants.MaxPlayerSwitches; i++)
+                for (int i = 0; i < Options.MaxPlayerSwitches; i++)
                 {
                     lstObjects.Items.Add((i + 1) + ". " + Globals.PlayerSwitches[i]);
                 }
             }
             else if (rdoPlayerVariables.Checked)
             {
-                for (int i = 0; i < Constants.MaxPlayerVariables; i++)
+                for (int i = 0; i < Options.MaxPlayerVariables; i++)
                 {
                     lstObjects.Items.Add((i + 1) + ". " + Globals.PlayerVariables[i]);
                 }
             }
             else if (rdoGlobalSwitches.Checked)
             {
-                for (int i = 0; i < Constants.MaxServerSwitches; i++)
+                for (int i = 0; i < Options.MaxServerSwitches; i++)
                 {
                     lstObjects.Items.Add((i + 1) + ". " + Globals.ServerSwitches[i] + "  =  " + Globals.ServerSwitchValues[i].ToString());
                 }
             }
             else if (rdoGlobalVariables.Checked)
             {
-                for (int i = 0; i < Constants.MaxServerVariables; i++)
+                for (int i = 0; i < Options.MaxServerVariables; i++)
                 {
                     lstObjects.Items.Add((i + 1) + ". " + Globals.ServerVariables[i] + "  =  " + Globals.ServerVariableValues[i].ToString());
                 }
@@ -103,7 +104,7 @@ namespace Intersect_Editor.Forms.Editors
             ByteBuffer packetBuffer = new ByteBuffer();
             ByteBuffer dataBuffer = new ByteBuffer();
             int changeCount = 0;
-            for (int i = 0; i < Constants.MaxPlayerSwitches; i++)
+            for (int i = 0; i < Options.MaxPlayerSwitches; i++)
             {
                 if (Globals.PlayerSwitches[i] != _playerSwitchBackup[i])
                 {
@@ -113,7 +114,7 @@ namespace Intersect_Editor.Forms.Editors
                     changeCount++;
                 }
             }
-            for (int i = 0; i < Constants.MaxPlayerVariables; i++)
+            for (int i = 0; i < Options.MaxPlayerVariables; i++)
             {
                 if (Globals.PlayerVariables[i] != _playerVariableBackup[i])
                 {
@@ -123,7 +124,7 @@ namespace Intersect_Editor.Forms.Editors
                     changeCount++;
                 }
             }
-            for (int i = 0; i < Constants.MaxServerSwitches; i++)
+            for (int i = 0; i < Options.MaxServerSwitches; i++)
             {
                 if (Globals.ServerSwitches[i] != _serverSwitchBackup[i] ||
                     Globals.ServerSwitchValues[i] != _serverSwitchValBackup[i])
@@ -135,7 +136,7 @@ namespace Intersect_Editor.Forms.Editors
                     changeCount++;
                 }
             }
-            for (int i = 0; i < Constants.MaxServerVariables; i++)
+            for (int i = 0; i < Options.MaxServerVariables; i++)
             {
                 if (Globals.ServerVariables[i] != _serverVariableBackup[i] ||
                     Globals.ServerVariableValues[i] != _serverVariableValBackup[i])
@@ -159,20 +160,20 @@ namespace Intersect_Editor.Forms.Editors
 
         private void btnCancel_Click(object sender, EventArgs e)
         {
-            for (int i = 0; i < Constants.MaxPlayerSwitches; i++)
+            for (int i = 0; i < Options.MaxPlayerSwitches; i++)
             {
                 Globals.PlayerSwitches[i] = _playerSwitchBackup[i];
             }
-            for (int i = 0; i < Constants.MaxPlayerVariables; i++)
+            for (int i = 0; i < Options.MaxPlayerVariables; i++)
             {
                 Globals.PlayerVariables[i] = _playerVariableBackup[i];
             }
-            for (int i = 0; i < Constants.MaxServerSwitches; i++)
+            for (int i = 0; i < Options.MaxServerSwitches; i++)
             {
                 Globals.ServerSwitches[i] = _serverSwitchBackup[i];
                 Globals.ServerSwitchValues[i] = _serverSwitchValBackup[i];
             }
-            for (int i = 0; i < Constants.MaxServerVariables; i++)
+            for (int i = 0; i < Options.MaxServerVariables; i++)
             {
                 Globals.ServerVariables[i] = _serverVariableBackup[i];
                 Globals.ServerVariableValues[i] = _serverVariableValBackup[i];

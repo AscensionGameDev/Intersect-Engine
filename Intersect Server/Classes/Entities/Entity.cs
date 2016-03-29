@@ -21,6 +21,7 @@
 */
 using System;
 using System.Collections.Generic;
+using Intersect_Server.Classes.General;
 
 namespace Intersect_Server.Classes
 {
@@ -158,25 +159,25 @@ namespace Intersect_Server.Classes
             {
                 if (tmpX < 0)
                 {
-                    tmpX = (Globals.MapWidth - 1) - (tmpX * -1);
+                    tmpX = (Options.MapWidth - 1) - (tmpX * -1);
                     mapX--;
                 }
 
                 if (tmpY < 0)
                 {
-                    tmpY = (Globals.MapHeight - 1) - (tmpY * -1);
+                    tmpY = (Options.MapHeight - 1) - (tmpY * -1);
                     mapY--;
                 }
 
-                if (tmpY > (Globals.MapHeight - 1))
+                if (tmpY > (Options.MapHeight - 1))
                 {
-                    tmpY = tmpY - (Globals.MapHeight - 1);
+                    tmpY = tmpY - (Options.MapHeight - 1);
                     mapY++;
                 }
 
-                if (tmpX > (Globals.MapWidth - 1))
+                if (tmpX > (Options.MapWidth - 1))
                 {
-                    tmpX = tmpX - (Globals.MapWidth - 1);
+                    tmpX = tmpX - (Options.MapWidth - 1);
                     mapX++;
                 }
 
@@ -293,25 +294,25 @@ namespace Intersect_Server.Classes
             {
                 if (tmpX < 0)
                 {
-                    tmpX = (Globals.MapWidth - 1) - (tmpX * -1);
+                    tmpX = (Options.MapWidth - 1) - (tmpX * -1);
                     mapX--;
                 }
 
                 if (tmpY < 0)
                 {
-                    tmpY = (Globals.MapHeight - 1) - (tmpY * -1);
+                    tmpY = (Options.MapHeight - 1) - (tmpY * -1);
                     mapY--;
                 }
 
-                if (tmpY > (Globals.MapHeight - 1))
+                if (tmpY > (Options.MapHeight - 1))
                 {
-                    tmpY = tmpY - (Globals.MapHeight - 1);
+                    tmpY = tmpY - (Options.MapHeight - 1);
                     mapY++;
                 }
 
-                if (tmpX > (Globals.MapWidth - 1))
+                if (tmpX > (Options.MapWidth - 1))
                 {
-                    tmpX = tmpX - (Globals.MapWidth - 1);
+                    tmpX = tmpX - (Options.MapWidth - 1);
                     mapX++;
                 }
 
@@ -388,9 +389,9 @@ namespace Intersect_Server.Classes
         // Change the dimension if the player is on a gateway
         public void TryToChangeDimension()
         {
-            if (CurrentX < Globals.MapWidth && CurrentX >= 0)
+            if (CurrentX < Options.MapWidth && CurrentX >= 0)
             {
-                if (CurrentY < Globals.MapHeight && CurrentY >= 0)
+                if (CurrentY < Options.MapHeight && CurrentY >= 0)
                 {
                     Attribute attribute = Globals.GameMaps[CurrentMap].Attributes[CurrentX, CurrentY];
                     if (attribute != null && attribute.value == (int)Enums.MapAttributes.ZDimension)
@@ -423,9 +424,9 @@ namespace Intersect_Server.Classes
                     if (Database.MapGrids[myGrid].MyGrid[x, y] > -1 &&
                         Database.MapGrids[myGrid].MyGrid[x, y] == target.CurrentMap)
                     {
-                        xDiff = (Globals.GameMaps[CurrentMap].MapGridX - x) * Globals.MapWidth + target.CurrentX -
+                        xDiff = (Globals.GameMaps[CurrentMap].MapGridX - x) * Options.MapWidth + target.CurrentX -
                                 CurrentX;
-                        yDiff = (Globals.GameMaps[CurrentMap].MapGridY - y) * Globals.MapHeight + target.CurrentY -
+                        yDiff = (Globals.GameMaps[CurrentMap].MapGridY - y) * Options.MapHeight + target.CurrentY -
                                 CurrentY;
                         if (Math.Abs(xDiff) > Math.Abs(yDiff))
                         {
@@ -458,16 +459,16 @@ namespace Intersect_Server.Classes
             {
                 if (isSpell == -1) return;
                 // Check that a resource is actually required.
-                if (Globals.GameResources[((Resource)Globals.Entities[enemyIndex]).ResourceNum].Tool > 0)
+                if (Globals.GameResources[((Resource)Globals.Entities[enemyIndex]).ResourceNum].Tool > -1 && Globals.GameResources[((Resource)Globals.Entities[enemyIndex]).ResourceNum].Tool < Options.ToolTypes.Count)
                 {
                     if (((Player)Globals.Entities[MyIndex]).Equipment[2] < 0)
                     {
-                        PacketSender.SendPlayerMsg(((Player)Globals.Entities[MyIndex]).MyClient, "You require a " + Enums.ToolTypes[Globals.GameResources[((Resource)Globals.Entities[enemyIndex]).ResourceNum].Tool] + " to interact with this resource.");
+                        PacketSender.SendPlayerMsg(((Player)Globals.Entities[MyIndex]).MyClient, "You require a " + Options.ToolTypes[Globals.GameResources[((Resource)Globals.Entities[enemyIndex]).ResourceNum].Tool] + " to interact with this resource.");
                         return;
                     }
                     if (Globals.GameResources[((Resource)Globals.Entities[enemyIndex]).ResourceNum].Tool != Globals.GameItems[Inventory[((Player)Globals.Entities[MyIndex]).Equipment[2]].ItemNum].Tool)
                     {
-                        PacketSender.SendPlayerMsg(((Player)Globals.Entities[MyIndex]).MyClient, "You require a " + Enums.ToolTypes[Globals.GameResources[((Resource)Globals.Entities[enemyIndex]).ResourceNum].Tool] + " to interact with this resource.");
+                        PacketSender.SendPlayerMsg(((Player)Globals.Entities[MyIndex]).MyClient, "You require a " + Options.ToolTypes[Globals.GameResources[((Resource)Globals.Entities[enemyIndex]).ResourceNum].Tool] + " to interact with this resource.");
                         return;
                     }
                 }
@@ -493,8 +494,8 @@ namespace Intersect_Server.Classes
                             //Check that not going out of the map boundaries
                             if (x < 0) x = 0;
                             if (y < 0) y = 0;
-                            if (xMax >= Globals.MapWidth) xMax = Globals.MapWidth;
-                            if (yMax >= Globals.MapHeight) yMax = Globals.MapHeight;
+                            if (xMax >= Options.MapWidth) xMax = Options.MapWidth;
+                            if (yMax >= Options.MapHeight) yMax = Options.MapHeight;
 
                             if (x < Globals.Entities[MyIndex].CurrentX && xMax > Globals.Entities[MyIndex].CurrentX)
                             {
@@ -608,7 +609,7 @@ namespace Intersect_Server.Classes
             if (dropitems)
             {
                 // Drop items
-                for (int i = 0; i < Constants.MaxInvItems; i++)
+                for (int i = 0; i < Options.MaxInvItems; i++)
                 {
                     if (Inventory[i].ItemNum >= 0)
                     {
@@ -676,7 +677,7 @@ namespace Intersect_Server.Classes
                 default:
                     break;
             }
-            if (SpellSlot >= 0 && SpellSlot < Constants.MaxPlayerSkills)
+            if (SpellSlot >= 0 && SpellSlot < Options.MaxPlayerSkills)
             {
                 Spells[SpellSlot].SpellCD = Environment.TickCount + (Globals.GameSpells[SpellNum].CooldownDuration * 100);
                 if (GetType() == typeof(Player))
@@ -699,23 +700,23 @@ namespace Intersect_Server.Classes
                     if (y < 0 && Globals.GameMaps[tempMap].Up > -1)
                     {
                         tempMap = Globals.GameMaps[tempMap].Up;
-                        y2 = Globals.MapHeight + y;
+                        y2 = Options.MapHeight + y;
                     }
-                    else if (y > Globals.MapHeight - 1 && Globals.GameMaps[tempMap].Down > -1)
+                    else if (y > Options.MapHeight - 1 && Globals.GameMaps[tempMap].Down > -1)
                     {
                         tempMap = Globals.GameMaps[tempMap].Down;
-                        y2 = Globals.MapHeight - y;
+                        y2 = Options.MapHeight - y;
                     }
 
                     if (x < 0 && Globals.GameMaps[tempMap].Left > -1)
                     {
                         tempMap = Globals.GameMaps[tempMap].Left;
-                        x2 = Globals.MapWidth + x;
+                        x2 = Options.MapWidth + x;
                     }
-                    else if (x > Globals.MapWidth - 1 && Globals.GameMaps[tempMap].Right > -1)
+                    else if (x > Options.MapWidth - 1 && Globals.GameMaps[tempMap].Right > -1)
                     {
                         tempMap = Globals.GameMaps[tempMap].Right;
-                        x2 = Globals.MapWidth - x;
+                        x2 = Options.MapWidth - x;
                     }
 
                     for (int i = 0; i < Globals.GameMaps[tempMap].Entities.Count; i++ )

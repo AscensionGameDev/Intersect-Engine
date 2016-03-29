@@ -92,7 +92,7 @@ namespace Intersect_Client.Classes.UI.Menu
             {
                 _classCombobox.AddItem(Globals.GameClasses[i].Name);
                 i = i + 1;
-                if (i >= Constants.MaxClasses)
+                if (i >= Options.MaxClasses)
                 {
                     break;
                 }
@@ -205,7 +205,7 @@ namespace Intersect_Client.Classes.UI.Menu
 
         private int GetClass()
         {
-            for (int i = 0; i < Constants.MaxClasses; i++)
+            for (int i = 0; i < Options.MaxClasses; i++)
             {
                 if (Globals.GameClasses[i].Name == _classCombobox.SelectedItem.Text)
                 {

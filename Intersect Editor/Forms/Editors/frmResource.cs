@@ -29,6 +29,7 @@ using Image = SFML.Graphics.Image;
 using SFML.System;
 using Intersect_Editor.Classes;
 using System.IO;
+using Intersect_Editor.Classes.General;
 
 namespace Intersect_Editor.Classes
 {
@@ -65,16 +66,16 @@ namespace Intersect_Editor.Classes
                 cmbInitialSprite.Items.Add(EditorGraphics.ResourceFileNames[i]);
                 cmbEndSprite.Items.Add(EditorGraphics.ResourceFileNames[i]);
             }
-            scrlDropItem.Maximum = Constants.MaxItems - 1;
+            scrlDropItem.Maximum = Options.MaxItems - 1;
             UpdateEditor();
 
         }
 
         public void InitEditor()
         {
-            _resourcesBackup = new ByteBuffer[Constants.MaxResources];
-            _changed = new bool[Constants.MaxResources];
-            for (var i = 0; i < Constants.MaxResources; i++)
+            _resourcesBackup = new ByteBuffer[Options.MaxResources];
+            _changed = new bool[Options.MaxResources];
+            for (var i = 0; i < Options.MaxResources; i++)
             {
                 _resourcesBackup[i] = new ByteBuffer();
                 _resourcesBackup[i].WriteBytes(Globals.GameResources[i].ResourceData());
@@ -82,7 +83,7 @@ namespace Intersect_Editor.Classes
                 _changed[i] = false;
             }
             cmbToolType.Items.Add("None");
-            cmbToolType.Items.AddRange(Enums.ToolTypes.ToArray());
+            cmbToolType.Items.AddRange(Options.ToolTypes.ToArray());
             UpdateInitialScrollBars();
             UpdateFinalScrollBars();
         }
@@ -225,7 +226,7 @@ namespace Intersect_Editor.Classes
 
         private void btnSave_Click(object sender, EventArgs e)
         {
-            for (var i = 0; i < Constants.MaxResources; i++)
+            for (var i = 0; i < Options.MaxResources; i++)
             {
                 if (_changed[i])
                 {
@@ -250,7 +251,7 @@ namespace Intersect_Editor.Classes
 
         private void btnCancel_Click(object sender, EventArgs e)
         {
-            for (var i = 0; i < Constants.MaxResources; i++)
+            for (var i = 0; i < Options.MaxResources; i++)
             {
                 Globals.GameResources[i].Load(_resourcesBackup[i].ToArray(),i);
             }

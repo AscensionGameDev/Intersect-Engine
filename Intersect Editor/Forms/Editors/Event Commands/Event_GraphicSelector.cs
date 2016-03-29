@@ -30,6 +30,7 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Windows.Forms;
 using Intersect_Editor.Classes;
+using Intersect_Editor.Classes.General;
 using EditorGraphics = Intersect_Editor.Classes.EditorGraphics;
 
 namespace Intersect_Editor.Forms.Editors.Event_Commands
@@ -193,8 +194,8 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
                         selH = Math.Abs(selH);
                     }
                     graphics.DrawRectangle(new Pen(Color.White,2f), 
-                        new Rectangle(selX * Globals.TileWidth, selY * Globals.TileHeight,
-                           Globals.TileWidth + (selW * Globals.TileWidth), Globals.TileHeight + (selH * Globals.TileHeight)));
+                        new Rectangle(selX * Options.TileWidth, selY * Options.TileHeight,
+                           Options.TileWidth + (selW * Options.TileWidth), Options.TileHeight + (selH * Options.TileHeight)));
                 }
                 sourceBitmap.Dispose();
                 graphics.Dispose();
@@ -229,8 +230,8 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             else
             {
                 _mouseDown = true;
-                _tmpGraphic.X = (int)Math.Floor((double)e.X / Globals.TileWidth);
-                _tmpGraphic.Y = (int)Math.Floor((double)e.Y / Globals.TileHeight);
+                _tmpGraphic.X = (int)Math.Floor((double)e.X / Options.TileWidth);
+                _tmpGraphic.Y = (int)Math.Floor((double)e.Y / Options.TileHeight);
             }
             _tmpGraphic.Width = 0;
             _tmpGraphic.Height = 0;
@@ -271,8 +272,8 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             if (cmbGraphicType.SelectedIndex != 2) return;
             if (_mouseDown)
             {
-                var tmpX = (int)Math.Floor((double)e.X / Globals.TileWidth);
-                var tmpY = (int)Math.Floor((double)e.Y / Globals.TileHeight);
+                var tmpX = (int)Math.Floor((double)e.X / Options.TileWidth);
+                var tmpY = (int)Math.Floor((double)e.Y / Options.TileHeight);
                 _tmpGraphic.Width = tmpX - _tmpGraphic.X;
                 _tmpGraphic.Height = tmpY - _tmpGraphic.Y;
             }

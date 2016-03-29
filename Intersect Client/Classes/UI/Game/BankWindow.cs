@@ -93,7 +93,7 @@ namespace Intersect_Client.Classes.UI.Game
             if (_bankWindow.IsHidden == true) { return; }
             X = _bankWindow.X;
             Y = _bankWindow.Y;
-            for (int i = 0; i < Constants.MaxInvItems; i++)
+            for (int i = 0; i < Options.MaxInvItems; i++)
             {
                 if (Globals.Bank[i] != null &&  Globals.Bank[i].ItemNum > -1)
                 {
@@ -129,7 +129,7 @@ namespace Intersect_Client.Classes.UI.Game
 
         private void InitItemContainer()
         {
-            for (int i = 0; i < Constants.MaxBankSlots; i++)
+            for (int i = 0; i < Options.MaxBankSlots; i++)
             {
                 Items.Add(new BankItem(this, i));
                 Items[i].pnl = new ImagePanel(_itemContainer);
@@ -253,7 +253,7 @@ namespace Intersect_Client.Classes.UI.Game
         public void Update()
         {
             bool equipped = false;
-            for (int i = 0; i < Enums.EquipmentSlots.Count; i++)
+            for (int i = 0; i < Options.EquipmentSlots.Count; i++)
             {
                 if (Globals.Me.Equipment[i] == _mySlot)
                 {
@@ -321,7 +321,7 @@ namespace Intersect_Client.Classes.UI.Game
                     //Check inventory first.
                     if (_bankWindow.RenderBounds().IntersectsWith(dragRect))
                     {
-                        for (int i = 0; i < Constants.MaxInvItems; i++)
+                        for (int i = 0; i < Options.MaxInvItems; i++)
                         {
                             if (_bankWindow.Items[i].RenderBounds().IntersectsWith(dragRect))
                             {

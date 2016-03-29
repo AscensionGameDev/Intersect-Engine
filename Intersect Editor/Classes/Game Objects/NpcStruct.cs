@@ -23,6 +23,8 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using Intersect_Editor.Classes.General;
+
 namespace Intersect_Editor.Classes
 {
     public class NpcStruct
@@ -48,7 +50,7 @@ namespace Intersect_Editor.Classes
 
         public NpcStruct()
         {
-            for (int i = 0; i < Constants.MaxNpcDrops; i++)
+            for (int i = 0; i < Options.MaxNpcDrops; i++)
             {
                 Drops.Add(new NPCDrop());
             }
@@ -76,7 +78,7 @@ namespace Intersect_Editor.Classes
             SpawnDuration = myBuffer.ReadInteger();
             Behavior = myBuffer.ReadByte();
             SightRange = myBuffer.ReadInteger();
-            for (int i = 0; i < Constants.MaxNpcDrops; i++)
+            for (int i = 0; i < Options.MaxNpcDrops; i++)
             {
                 Drops[i].ItemNum = myBuffer.ReadInteger();
                 Drops[i].Amount = myBuffer.ReadInteger();
@@ -104,7 +106,7 @@ namespace Intersect_Editor.Classes
             myBuffer.WriteInteger(SpawnDuration);
             myBuffer.WriteByte(Behavior);
             myBuffer.WriteInteger(SightRange);
-            for (int i = 0; i < Constants.MaxNpcDrops; i++)
+            for (int i = 0; i < Options.MaxNpcDrops; i++)
             {
                 myBuffer.WriteInteger(Drops[i].ItemNum);
                 myBuffer.WriteInteger(Drops[i].Amount);

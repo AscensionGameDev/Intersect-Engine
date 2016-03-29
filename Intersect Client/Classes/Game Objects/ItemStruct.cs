@@ -59,8 +59,8 @@ namespace Intersect_Client.Classes.Game_Objects
         public ItemStruct()
         {
             Speed = 10; // Set to 10 by default.
-            StatsReq = new int[Constants.MaxStats];
-            StatsGiven = new int[Constants.MaxStats];
+            StatsReq = new int[Options.MaxStats];
+            StatsGiven = new int[Options.MaxStats];
         }
 
         public void Load(byte[] data, int index)
@@ -81,7 +81,7 @@ namespace Intersect_Client.Classes.Game_Objects
             LevelReq = myBuffer.ReadInteger();
             Projectile = myBuffer.ReadInteger();
 
-            for (var i = 0; i < Constants.MaxStats; i++)
+            for (var i = 0; i < Options.MaxStats; i++)
             {
                 StatsReq[i] = myBuffer.ReadInteger();
                 StatsGiven[i] = myBuffer.ReadInteger();

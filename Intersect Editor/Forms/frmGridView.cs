@@ -33,6 +33,7 @@ using System.Drawing;
 using System.IO;
 using System.Threading;
 using Hjg.Pngcs;
+using Intersect_Editor.Classes.General;
 using Microsoft.Win32.SafeHandles;
 
 namespace Intersect_Editor.Forms
@@ -210,32 +211,32 @@ namespace Intersect_Editor.Forms
                 mapGridView.AutoSize = false;
                 mapGridView.Width = this.Width;
                 mapGridView.Height = this.Height - toolStrip1.Height;
-                size = Math.Min((int)(Math.Floor(mapGridView.Height / (mapGridView.RowCount * ((float)(Globals.TileHeight * Globals.MapHeight) / (float)(Globals.TileWidth * Globals.MapWidth))))), mapGridView.Width / mapGridView.ColumnCount);
+                size = Math.Min((int)(Math.Floor(mapGridView.Height / (mapGridView.RowCount * ((float)(Options.TileHeight * Options.MapHeight) / (float)(Options.TileWidth * Options.MapWidth))))), mapGridView.Width / mapGridView.ColumnCount);
                 style.Font = new Font(style.Font.FontFamily, 8.25f, FontStyle.Bold);
             }
             else if (cmbZoom.SelectedIndex == 1)
             {
-                size = (Globals.MapWidth * Globals.TileWidth) / 8;
+                size = (Options.MapWidth * Options.TileWidth) / 8;
                 style.Font = new Font(style.Font.FontFamily, 24f, FontStyle.Bold);
             }
             else if (cmbZoom.SelectedIndex == 2)
             {
-                size = (Globals.MapWidth * Globals.TileWidth) / 4;
+                size = (Options.MapWidth * Options.TileWidth) / 4;
                 style.Font = new Font(style.Font.FontFamily, 24f, FontStyle.Bold);
             }
             else if (cmbZoom.SelectedIndex == 3)
             {
-                size = (Globals.MapWidth * Globals.TileWidth) / 2;
+                size = (Options.MapWidth * Options.TileWidth) / 2;
                 style.Font = new Font(style.Font.FontFamily, 36f, FontStyle.Bold);
             }
             else if (cmbZoom.SelectedIndex == 4)
             {
-                size = (Globals.MapWidth * Globals.TileWidth) * 3 / 4;
+                size = (Options.MapWidth * Options.TileWidth) * 3 / 4;
                 style.Font = new Font(style.Font.FontFamily, 48f, FontStyle.Bold);
             }
             else
             {
-                size = Globals.MapWidth * Globals.TileWidth;
+                size = Options.MapWidth * Options.TileWidth;
                 style.Font = new Font(style.Font.FontFamily, 60f, FontStyle.Bold);
             }
             if (size != currentSize)
@@ -248,7 +249,7 @@ namespace Intersect_Editor.Forms
                 }
                 for (int y = -1; y <= gridHeight; y++)
                 {
-                    mapGridView.Rows[y + 1].Height = (int)((float)size * ((float)(Globals.TileHeight * Globals.MapHeight) / (float)(Globals.TileWidth * Globals.MapWidth)));
+                    mapGridView.Rows[y + 1].Height = (int)((float)size * ((float)(Options.TileHeight * Options.MapHeight) / (float)(Options.TileWidth * Options.MapWidth)));
                 }
                 mapGridView.Refresh();
             }
@@ -388,8 +389,8 @@ namespace Intersect_Editor.Forms
 
         void ScreenshotWorld(string filename)
         {
-            int rowSize = (Globals.TileHeight * Globals.MapHeight);
-            int colSize = (Globals.MapWidth * Globals.TileWidth);
+            int rowSize = (Options.TileHeight * Options.MapHeight);
+            int colSize = (Options.MapWidth * Options.TileWidth);
             int cols = colSize * (mapGridView.ColumnCount - 2);
             int rows = rowSize * (mapGridView.RowCount - 2);
             Bitmap tmpBitmap = new Bitmap(colSize, rowSize);

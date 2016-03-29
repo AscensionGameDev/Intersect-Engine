@@ -133,27 +133,27 @@ namespace Intersect_Client.Classes.Entities
                         if (Globals.Tilesets[z] == GraphicFile)
                         {
                             srcTexture = GameGraphics.Tilesets[z];
-                            width = (GraphicWidth+ 1)*Globals.Database.TileWidth;
-                            height = (GraphicHeight + 1)*Globals.Database.TileHeight;
-                            srcRectangle = new FloatRect(GraphicX * Globals.Database.TileWidth, GraphicY * Globals.Database.TileHeight, (GraphicWidth + 1) * Globals.Database.TileWidth, (GraphicHeight + 1) * Globals.Database.TileHeight);
+                            width = (GraphicWidth+ 1)*Options.TileWidth;
+                            height = (GraphicHeight + 1)*Options.TileHeight;
+                            srcRectangle = new FloatRect(GraphicX * Options.TileWidth, GraphicY * Options.TileHeight, (GraphicWidth + 1) * Options.TileWidth, (GraphicHeight + 1) * Options.TileHeight);
                         }
                     }
                     break;
             }
             if (srcTexture != null)
             {
-                destRectangle.X = Globals.GameMaps[CurrentMap].GetX() + CurrentX * Globals.Database.TileWidth + OffsetX;
-                if (height > Globals.Database.TileHeight)
+                destRectangle.X = Globals.GameMaps[CurrentMap].GetX() + CurrentX * Options.TileWidth + OffsetX;
+                if (height > Options.TileHeight)
                 {
-                    destRectangle.Y = Globals.GameMaps[CurrentMap].GetY() + CurrentY * Globals.Database.TileHeight + OffsetY - ((height) - Globals.Database.TileHeight);
+                    destRectangle.Y = Globals.GameMaps[CurrentMap].GetY() + CurrentY * Options.TileHeight + OffsetY - ((height) - Options.TileHeight);
                 }
                 else
                 {
-                    destRectangle.Y = Globals.GameMaps[CurrentMap].GetY() + CurrentY * Globals.Database.TileHeight + OffsetY;
+                    destRectangle.Y = Globals.GameMaps[CurrentMap].GetY() + CurrentY * Options.TileHeight + OffsetY;
                 }
-                if (width > Globals.Database.TileWidth)
+                if (width > Options.TileWidth)
                 {
-                    destRectangle.X -= ((width) - Globals.Database.TileWidth) / 2;
+                    destRectangle.X -= ((width) - Options.TileWidth) / 2;
                 }
                 destRectangle.X = (int)Math.Ceiling(destRectangle.X);
                 destRectangle.Y = (int)Math.Ceiling(destRectangle.Y);
@@ -199,13 +199,13 @@ namespace Intersect_Client.Classes.Entities
                     }
                     else if (i < 6)
                     {
-                        outerList[Globals.Database.MapHeight + CurrentY].Add(this);
-                        renderList = outerList[Globals.Database.MapHeight + CurrentY];
+                        outerList[Options.MapHeight + CurrentY].Add(this);
+                        renderList = outerList[Options.MapHeight + CurrentY];
                     }
                     else if (i <= 8)
                     {
-                        outerList[Globals.Database.MapHeight * 2 + CurrentY].Add(this);
-                        renderList = outerList[Globals.Database.MapHeight * 2 + CurrentY];
+                        outerList[Options.MapHeight * 2 + CurrentY].Add(this);
+                        renderList = outerList[Options.MapHeight * 2 + CurrentY];
                     }
                     break;
                 }
@@ -241,7 +241,7 @@ namespace Intersect_Client.Classes.Entities
                     {
                         if (Globals.Tilesets[z] == GraphicFile)
                         {
-                            y -= ((GraphicHeight + 1) * Globals.Database.TileHeight) / 2;
+                            y -= ((GraphicHeight + 1) * Options.TileHeight) / 2;
                         }
                     }
                     break;
@@ -258,8 +258,8 @@ namespace Intersect_Client.Classes.Entities
             {
                 return new Pointf(0, 0);
             }
-            Pointf pos = new Pointf(Globals.GameMaps[CurrentMap].GetX() + CurrentX * Globals.Database.TileWidth + OffsetX + Globals.Database.TileWidth / 2,
-                    Globals.GameMaps[CurrentMap].GetY() + CurrentY * Globals.Database.TileHeight + OffsetY + Globals.Database.TileHeight / 2);
+            Pointf pos = new Pointf(Globals.GameMaps[CurrentMap].GetX() + CurrentX * Options.TileWidth + OffsetX + Options.TileWidth / 2,
+                    Globals.GameMaps[CurrentMap].GetY() + CurrentY * Options.TileHeight + OffsetY + Options.TileHeight / 2);
             int width = 0, height = 0;
             GameTexture srcTexture = null;
             switch (GraphicType)
@@ -269,7 +269,7 @@ namespace Intersect_Client.Classes.Entities
                     {
                         srcTexture =
                             GameGraphics.EntityTextures[GameGraphics.EntityFileNames.IndexOf(GraphicFile)];
-                        pos.Y += Globals.Database.TileHeight/2;
+                        pos.Y += Options.TileHeight/2;
                         pos.Y -= srcTexture.GetHeight()/4/2;
                     }
                     break;
@@ -278,8 +278,8 @@ namespace Intersect_Client.Classes.Entities
                     {
                         if (Globals.Tilesets[z] == GraphicFile)
                         {
-                            pos.Y += Globals.Database.TileHeight / 2;
-                            pos.Y -= ((GraphicHeight + 1) * Globals.Database.TileHeight) / 2;
+                            pos.Y += Options.TileHeight / 2;
+                            pos.Y -= ((GraphicHeight + 1) * Options.TileHeight) / 2;
                         }
                     }
                     break;

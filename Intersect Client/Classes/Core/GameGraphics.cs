@@ -91,9 +91,9 @@ namespace Intersect_Client.Classes.Core
         private static long _overlayUpdate = 0;
 
         //Player Spotlight Values
-        private const byte PlayerLightIntensity = 255;
-        private const int PlayerLightSize = 0;
-        private const float PlayerLightExpand = 0f;
+        private static byte PlayerLightIntensity = 255;
+        private static int PlayerLightSize = 0;
+        private static float PlayerLightExpand = 0f;
         public static Color PlayerLightColor = Color.White;
         private static List<Light> lightQueue = new List<Light>(); 
 
@@ -116,29 +116,27 @@ namespace Intersect_Client.Classes.Core
         
         //Animations
         public static List<AnimationInstance> LiveAnimations = new List<AnimationInstance>();  
-
         
 
         //Init Functions
         public static void InitGraphics()
         {
             Renderer.Init();
-            if (Globals.Database.RenderCaching) CreateMapTextures(9 * 18);
             CreateWhiteTexture();
             Globals.ContentManager.LoadAll();
-            InitRenderingLists();
             GameFont = Renderer.LoadFont("Resources/Fonts/Arvo-Regular.ttf");
             RadialGradientShader = Renderer.LoadShader("Resources/Shaders/RadialGradient");
         }
-        private static void InitRenderingLists()
+        public static void InitInGame()
         {
-            Layer1Entities = new List<Entity>[Globals.Database.MapHeight*3];
-            Layer2Entities = new List<Entity>[Globals.Database.MapHeight*3];
-            for (var i = 0; i < Globals.Database.MapHeight*3; i++)
+            Layer1Entities = new List<Entity>[Options.MapHeight*3];
+            Layer2Entities = new List<Entity>[Options.MapHeight*3];
+            for (var i = 0; i < Options.MapHeight*3; i++)
             {
                 Layer1Entities[i] = new List<Entity>();
                 Layer2Entities[i] = new List<Entity>();
             }
+            if (Globals.Database.RenderCaching) CreateMapTextures(9 * 18);
         }
         public static void CreateWhiteTexture()
         {
@@ -210,7 +208,7 @@ namespace Intersect_Client.Classes.Core
                 {
                     if (Globals.LocalMaps[i] > -1)
                     {
-                        DrawMap(i, 1); //Upper only
+                       DrawMap(i, 1); //Upper only
                     }
                 }
 
@@ -330,7 +328,7 @@ namespace Intersect_Client.Classes.Core
         {
             if (Globals.LocalMaps[index] < 0) return;
             if (!Globals.GameMaps.ContainsKey(Globals.LocalMaps[index])) return;
-            if (!new FloatRect(Globals.GameMaps[Globals.LocalMaps[index]].GetX(), Globals.GameMaps[Globals.LocalMaps[index]].GetY(), Globals.Database.TileWidth * Globals.Database.MapWidth, Globals.Database.TileHeight * Globals.Database.MapHeight).IntersectsWith(CurrentView)) return;
+            if (!new FloatRect(Globals.GameMaps[Globals.LocalMaps[index]].GetX(), Globals.GameMaps[Globals.LocalMaps[index]].GetY(), Options.TileWidth * Options.MapWidth, Options.TileHeight * Options.MapHeight).IntersectsWith(CurrentView)) return;
             Globals.GameMaps[Globals.LocalMaps[index]].Draw(layer);
             if (layer == 0) { MapsDrawn++; }
         }
@@ -416,25 +414,25 @@ namespace Intersect_Client.Classes.Core
             if (Globals.GameState == Enums.GameStates.InGame && Globals.GameMaps.ContainsKey(Globals.CurrentMap))
             {
                 Player en = (Player) Globals.Entities[Globals.MyIndex];
-                float x = Globals.GameMaps[Globals.CurrentMap].GetX() - Globals.Database.MapWidth*Globals.Database.TileWidth;
-                float y = Globals.GameMaps[Globals.CurrentMap].GetY() - Globals.Database.MapHeight*Globals.Database.TileHeight;
-                float x1 = Globals.GameMaps[Globals.CurrentMap].GetX() + (Globals.Database.MapWidth*Globals.Database.TileWidth)*2;
-                float y1 = Globals.GameMaps[Globals.CurrentMap].GetY() + (Globals.Database.MapHeight*Globals.Database.TileHeight)*2;
+                float x = Globals.GameMaps[Globals.CurrentMap].GetX() - Options.MapWidth*Options.TileWidth;
+                float y = Globals.GameMaps[Globals.CurrentMap].GetY() - Options.MapHeight*Options.TileHeight;
+                float x1 = Globals.GameMaps[Globals.CurrentMap].GetX() + (Options.MapWidth*Options.TileWidth)*2;
+                float y1 = Globals.GameMaps[Globals.CurrentMap].GetY() + (Options.MapHeight*Options.TileHeight)*2;
                 if (Globals.GameMaps[Globals.CurrentMap].HoldUp == 1)
                 {
-                    y += Globals.Database.MapHeight*Globals.Database.TileHeight;
+                    y += Options.MapHeight*Options.TileHeight;
                 }
                 if (Globals.GameMaps[Globals.CurrentMap].HoldLeft == 1)
                 {
-                    x += Globals.Database.MapWidth*Globals.Database.TileWidth;
+                    x += Options.MapWidth*Options.TileWidth;
                 }
                 if (Globals.GameMaps[Globals.CurrentMap].HoldRight == 1)
                 {
-                    x1 -= Globals.Database.MapWidth*Globals.Database.TileWidth;
+                    x1 -= Options.MapWidth*Options.TileWidth;
                 }
                 if (Globals.GameMaps[Globals.CurrentMap].HoldDown == 1)
                 {
-                    y1 -= Globals.Database.MapHeight*Globals.Database.TileHeight;
+                    y1 -= Options.MapHeight*Options.TileHeight;
                 }
                 float w = x1 - x;
                 float h = y1 - y;
@@ -478,8 +476,8 @@ namespace Intersect_Client.Classes.Core
         {
             for (int i = 0; i < count; i++)
             {
-                ReleaseMapTexture(Renderer.CreateRenderTexture(Globals.Database.TileWidth*Globals.Database.MapWidth,
-                    Globals.Database.TileHeight*Globals.Database.MapHeight));
+                ReleaseMapTexture(Renderer.CreateRenderTexture(Options.TileWidth*Options.MapWidth,
+                    Options.TileHeight*Options.MapHeight));
             }
         }
         public static bool GetMapTexture(ref GameRenderTexture replaceme)
@@ -522,8 +520,16 @@ namespace Intersect_Client.Classes.Core
             if (DarknessTexture == null) { return; }
 
             //Draw Light Around Player
-            DrawLight((int)Math.Ceiling(-DarkOffsetX + Globals.Entities[Globals.MyIndex].GetCenterPos().X  ), (int)
-                                Math.Ceiling(-DarkOffsetY + Globals.Entities[Globals.MyIndex].GetCenterPos().Y  ), (int)PlayerLightSize,PlayerLightIntensity,PlayerLightExpand, PlayerLightColor);
+            if (Globals.GameMaps.ContainsKey(Globals.CurrentMap))
+            {
+                PlayerLightSize = Globals.GameMaps[Globals.CurrentMap].PlayerLightSize;
+                PlayerLightIntensity = Globals.GameMaps[Globals.CurrentMap].PlayerLightIntensity;
+                PlayerLightColor = Globals.GameMaps[Globals.CurrentMap].PlayerLightColor;
+                PlayerLightExpand = Globals.GameMaps[Globals.CurrentMap].PlayerLightExpand ;
+                DrawLight((int)Math.Ceiling(Globals.Entities[Globals.MyIndex].GetCenterPos().X), (int)
+                    Math.Ceiling(Globals.Entities[Globals.MyIndex].GetCenterPos().Y), (int)PlayerLightSize, PlayerLightIntensity, PlayerLightExpand, PlayerLightColor);
+            }
+
             DrawLights();
             DrawGameTexture(WhiteTex, new FloatRect(0, 0, 1, 1),
                 new FloatRect(0, 0, DarknessTexture.GetWidth(), DarknessTexture.GetHeight()),

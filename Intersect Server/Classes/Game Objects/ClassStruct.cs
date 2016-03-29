@@ -23,6 +23,8 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using Intersect_Server.Classes.General;
+
 namespace Intersect_Server.Classes
 {
     public class ClassStruct
@@ -53,7 +55,7 @@ namespace Intersect_Server.Classes
 
         public ClassStruct()
         {
-            for (int i = 0; i < Constants.MaxNpcDrops; i++)
+            for (int i = 0; i < Options.MaxNpcDrops; i++)
             {
                 Items.Add(new ClassItem());
             }
@@ -99,7 +101,7 @@ namespace Intersect_Server.Classes
             }
             Points = myBuffer.ReadInteger();
 
-            for (int i = 0; i < Constants.MaxNpcDrops; i++)
+            for (int i = 0; i < Options.MaxNpcDrops; i++)
             {
                 Items[i].ItemNum = myBuffer.ReadInteger();
                 Items[i].Amount = myBuffer.ReadInteger();
@@ -148,7 +150,7 @@ namespace Intersect_Server.Classes
             }
             myBuffer.WriteInteger(Points);
 
-            for (int i = 0; i < Constants.MaxNpcDrops; i++)
+            for (int i = 0; i < Options.MaxNpcDrops; i++)
             {
                 myBuffer.WriteInteger(Items[i].ItemNum);
                 myBuffer.WriteInteger(Items[i].Amount);

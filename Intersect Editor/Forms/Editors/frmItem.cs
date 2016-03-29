@@ -22,6 +22,7 @@
 using System;
 using System.Windows.Forms;
 using Intersect_Editor.Classes;
+using Intersect_Editor.Classes.General;
 
 namespace Intersect_Editor.Forms
 {
@@ -54,13 +55,13 @@ namespace Intersect_Editor.Forms
             {
                 cmbClass.Items.Add(Globals.GameClasses[i].Name);
                 i = i + 1;
-                if (i >= Constants.MaxClasses)
+                if (i >= Options.MaxClasses)
                 {
                     break;
                 }
             }
 
-            scrlProjectile.Maximum = Constants.MaxProjectiles;
+            scrlProjectile.Maximum = Options.MaxProjectiles;
 
             cmbPaperdoll.Items.Clear();
             cmbPaperdoll.Items.Add("None");
@@ -74,21 +75,21 @@ namespace Intersect_Editor.Forms
 
         public void InitEditor()
         {
-            _itemsBackup = new ByteBuffer[Constants.MaxItems];
-            _changed = new bool[Constants.MaxItems];
-            for (var i = 0; i < Constants.MaxItems; i++)
+            _itemsBackup = new ByteBuffer[Options.MaxItems];
+            _changed = new bool[Options.MaxItems];
+            for (var i = 0; i < Options.MaxItems; i++)
             {
                 _itemsBackup[i] = new ByteBuffer();
                 _itemsBackup[i].WriteBytes(Globals.GameItems[i].ItemData());
                 lstItems.Items.Add((i + 1) + ") " + Globals.GameItems[i].Name);
                 _changed[i] = false;
             }
-            cmbEquipmentSlot.Items.AddRange(Enums.EquipmentSlots.ToArray());
+            cmbEquipmentSlot.Items.AddRange(Options.EquipmentSlots.ToArray());
             cmbToolType.Items.Add("None");
-            cmbToolType.Items.AddRange(Enums.ToolTypes.ToArray());
+            cmbToolType.Items.AddRange(Options.ToolTypes.ToArray());
             cmbEquipmentBonus.Items.Add("None");
             cmbEquipmentBonus.Items.AddRange(Enums.ItemBonusEffects.ToArray());
-            scrlProjectile.Maximum = Constants.MaxProjectiles;
+            scrlProjectile.Maximum = Options.MaxProjectiles;
         }
 
         private void UpdateEditor()
@@ -132,7 +133,7 @@ namespace Intersect_Editor.Forms
 
         private void btnSave_Click(object sender, EventArgs e)
         {
-            for (var i = 0; i < Constants.MaxItems; i++)
+            for (var i = 0; i < Options.MaxItems; i++)
             {
                 if (_changed[i])
                 {
@@ -207,7 +208,7 @@ namespace Intersect_Editor.Forms
 
         private void btnCancel_Click(object sender, EventArgs e)
         {
-            for (var i = 0; i < Constants.MaxItems; i++)
+            for (var i = 0; i < Options.MaxItems; i++)
             {
                 Globals.GameItems[i].LoadItem(_itemsBackup[i].ToArray(),i);
             }
@@ -345,7 +346,7 @@ namespace Intersect_Editor.Forms
         private void cmbEquipmentSlot_SelectedIndexChanged(object sender, EventArgs e)
         {
             Globals.GameItems[_editorIndex].Data1 = cmbEquipmentSlot.SelectedIndex;
-            if (cmbEquipmentSlot.SelectedIndex == Enums.WeaponIndex)
+            if (cmbEquipmentSlot.SelectedIndex == Options.WeaponIndex)
             {
                 chk2Hand.Visible = true;
                 cmbToolType.Visible = true;

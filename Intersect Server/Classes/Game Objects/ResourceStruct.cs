@@ -23,6 +23,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using Intersect_Server.Classes.General;
 
 namespace Intersect_Server.Classes
 {
@@ -48,7 +49,7 @@ namespace Intersect_Server.Classes
 
         public ResourceStruct()
         {
-            for (int i = 0; i < Constants.MaxNpcDrops; i++)
+            for (int i = 0; i < Options.MaxNpcDrops; i++)
             {
                 Drops.Add(new ResourceDrop());
             }
@@ -73,7 +74,7 @@ namespace Intersect_Server.Classes
             WalkableBefore = Convert.ToBoolean(myBuffer.ReadInteger());
             WalkableAfter = Convert.ToBoolean(myBuffer.ReadInteger());
 
-            for (int i = 0; i < Constants.MaxNpcDrops; i++)
+            for (int i = 0; i < Options.MaxNpcDrops; i++)
             {
                 Drops[i].ItemNum = myBuffer.ReadInteger();
                 Drops[i].Amount = myBuffer.ReadInteger();
@@ -98,7 +99,7 @@ namespace Intersect_Server.Classes
             myBuffer.WriteInteger(Convert.ToInt32(WalkableBefore));
             myBuffer.WriteInteger(Convert.ToInt32(WalkableAfter));
 
-            for (int i = 0; i < Constants.MaxNpcDrops; i++)
+            for (int i = 0; i < Options.MaxNpcDrops; i++)
             {
                 myBuffer.WriteInteger(Drops[i].ItemNum);
                 myBuffer.WriteInteger(Drops[i].Amount);

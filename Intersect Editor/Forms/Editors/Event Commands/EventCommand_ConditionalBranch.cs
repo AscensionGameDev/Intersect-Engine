@@ -28,6 +28,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using Intersect_Editor.Classes;
+using Intersect_Editor.Classes.General;
 
 namespace Intersect_Editor.Forms.Editors.Event_Commands
 {
@@ -102,7 +103,7 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
                     grpSwitch.Text = "Player Switch";
                     grpSwitch.Show();
                     cmbSwitch.Items.Clear();
-                    for (int i = 0; i < Constants.MaxPlayerSwitches; i++)
+                    for (int i = 0; i < Options.MaxPlayerSwitches; i++)
                     {
                         cmbSwitch.Items.Add((i + 1) + ". " + Globals.PlayerSwitches[i]);
                     }
@@ -113,7 +114,7 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
                     grpPlayerVariable.Text = "Player Variable";
                     grpPlayerVariable.Show();
                     cmbVariable.Items.Clear();
-                    for (int i = 0; i < Constants.MaxPlayerVariables; i++)
+                    for (int i = 0; i < Options.MaxPlayerVariables; i++)
                     {
                         cmbVariable.Items.Add((i + 1) + ". " + Globals.PlayerVariables[i]);
                     }
@@ -125,7 +126,7 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
                     grpPlayerVariable.Text = "Global Switch";
                     grpSwitch.Show();
                     cmbSwitch.Items.Clear();
-                    for (int i = 0; i < Constants.MaxServerSwitches; i++)
+                    for (int i = 0; i < Options.MaxServerSwitches; i++)
                     {
                         cmbSwitch.Items.Add((i + 1) + ". " + Globals.ServerSwitches[i]);
                     }
@@ -136,7 +137,7 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
                     grpPlayerVariable.Text = "Global Variable";
                     grpPlayerVariable.Show();
                     cmbVariable.Items.Clear();
-                    for (int i = 0; i < Constants.MaxServerVariables; i++)
+                    for (int i = 0; i < Options.MaxServerVariables; i++)
                     {
                         cmbVariable.Items.Add((i + 1) + ". " + Globals.ServerVariables[i]);
                     }

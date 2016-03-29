@@ -79,9 +79,9 @@ namespace Intersect_Client.Classes.Entities
         public int SpellCast = 0;
 
         //Inventory/Spells/Equipment
-        public ItemInstance[] Inventory = new ItemInstance[Constants.MaxInvItems];
-        public SpellInstance[] Spells = new SpellInstance[Constants.MaxPlayerSkills];
-        public int[] Equipment = new int[Enums.EquipmentSlots.Count];
+        public ItemInstance[] Inventory = new ItemInstance[Options.MaxInvItems];
+        public SpellInstance[] Spells = new SpellInstance[Options.MaxPlayerSkills];
+        public int[] Equipment = new int[Options.EquipmentSlots.Count];
 
         //Entity Animations
         public List<AnimationInstance> Animations = new List<AnimationInstance>();
@@ -97,11 +97,11 @@ namespace Intersect_Client.Classes.Entities
 
         public Entity()
         {
-            for (int i = 0; i < Constants.MaxInvItems; i++)
+            for (int i = 0; i < Options.MaxInvItems; i++)
             {
                 Inventory[i] = new ItemInstance();
             }
-            for (int i = 0; i < Constants.MaxPlayerSkills; i++)
+            for (int i = 0; i < Options.MaxPlayerSkills; i++)
             {
                 Spells[i] = new SpellInstance();
             }
@@ -187,25 +187,25 @@ namespace Intersect_Client.Classes.Entities
                 switch (Dir)
                 {
                     case 0:
-                        OffsetY -= (float)ecTime * (40f / 10f * (float)Globals.Database.TileHeight) / 1000f;
+                        OffsetY -= (float)ecTime * (40f / 10f * (float)Options.TileHeight) / 1000f;
                         OffsetX = 0;
                         if (OffsetY < 0) { OffsetY = 0; }
                         break;
 
                     case 1:
-                        OffsetY += (float)ecTime * (40f / 10f * (float)Globals.Database.TileHeight) / 1000f;
+                        OffsetY += (float)ecTime * (40f / 10f * (float)Options.TileHeight) / 1000f;
                         OffsetX = 0;
                         if (OffsetY > 0) { OffsetY = 0; }
                         break;
 
                     case 2:
-                        OffsetX -= (float)ecTime * (40f / 10f * (float)Globals.Database.TileHeight) / 1000f;
+                        OffsetX -= (float)ecTime * (40f / 10f * (float)Options.TileHeight) / 1000f;
                         OffsetY = 0;
                         if (OffsetX < 0) { OffsetX = 0; }
                         break;
 
                     case 3:
-                        OffsetX += (float)ecTime * (40f / 10f * (float)Globals.Database.TileHeight) / 1000f;
+                        OffsetX += (float)ecTime * (40f / 10f * (float)Options.TileHeight) / 1000f;
                         OffsetY = 0;
                         if (OffsetX > 0) { OffsetX = 0; }
                         break;
@@ -265,13 +265,13 @@ namespace Intersect_Client.Classes.Entities
                     }
                     else if (i < 6)
                     {
-                        outerList[Globals.Database.MapHeight + CurrentY].Add(this);
-                        renderList = outerList[Globals.Database.MapHeight + CurrentY];
+                        outerList[Options.MapHeight + CurrentY].Add(this);
+                        renderList = outerList[Options.MapHeight + CurrentY];
                     }
                     else
                     {
-                        outerList[Globals.Database.MapHeight * 2 + CurrentY].Add(this);
-                        renderList = outerList[Globals.Database.MapHeight * 2 + CurrentY];
+                        outerList[Options.MapHeight * 2 + CurrentY].Add(this);
+                        renderList = outerList[Options.MapHeight * 2 + CurrentY];
                     }
                     break;
                 }
@@ -294,19 +294,19 @@ namespace Intersect_Client.Classes.Entities
             if (GameGraphics.EntityFileNames.IndexOf(MySprite.ToLower()) >= 0)
             {
                 srcTexture = GameGraphics.EntityTextures[GameGraphics.EntityFileNames.IndexOf(MySprite.ToLower())];
-                if (srcTexture.GetHeight() / 4 > Globals.Database.TileHeight)
+                if (srcTexture.GetHeight() / 4 > Options.TileHeight)
                 {
-                    destRectangle.X = (Globals.GameMaps[CurrentMap].GetX() + CurrentX * Globals.Database.TileWidth + OffsetX);
-                    destRectangle.Y = Globals.GameMaps[CurrentMap].GetY() + CurrentY * Globals.Database.TileHeight + OffsetY - ((srcTexture.GetHeight() / 4) - Globals.Database.TileHeight);
+                    destRectangle.X = (Globals.GameMaps[CurrentMap].GetX() + CurrentX * Options.TileWidth + OffsetX);
+                    destRectangle.Y = Globals.GameMaps[CurrentMap].GetY() + CurrentY * Options.TileHeight + OffsetY - ((srcTexture.GetHeight() / 4) - Options.TileHeight);
                 }
                 else
                 {
-                    destRectangle.X = Globals.GameMaps[CurrentMap].GetX() + CurrentX * Globals.Database.TileWidth + OffsetX;
-                    destRectangle.Y = Globals.GameMaps[CurrentMap].GetY() + CurrentY * Globals.Database.TileHeight + OffsetY;
+                    destRectangle.X = Globals.GameMaps[CurrentMap].GetX() + CurrentX * Options.TileWidth + OffsetX;
+                    destRectangle.Y = Globals.GameMaps[CurrentMap].GetY() + CurrentY * Options.TileHeight + OffsetY;
                 }
-                if (srcTexture.GetWidth() / 4 > Globals.Database.TileWidth)
+                if (srcTexture.GetWidth() / 4 > Options.TileWidth)
                 {
-                    destRectangle.X -= ((srcTexture.GetWidth() / 4) - Globals.Database.TileWidth) / 2;
+                    destRectangle.X -= ((srcTexture.GetWidth() / 4) - Options.TileWidth) / 2;
                 }
                 switch (Dir)
                 {
@@ -331,11 +331,14 @@ namespace Intersect_Client.Classes.Entities
                 GameGraphics.DrawGameTexture(srcTexture, srcRectangle, destRectangle, Color.White);
 
                 //Draw the equipment/paperdolls
-                for (int z = Enums.EquipmentSlots.Count - 1; z >= 0; z--)
+                for (int z = 0; z < Options.PaperdollOrder.Count; z++)
                 {
-                    if (Equipment[z] > -1 && Inventory[Equipment[z]].ItemNum > -1)
+                    if (Options.EquipmentSlots.IndexOf(Options.PaperdollOrder[z]) > -1)
                     {
-                        DrawEquipment(Globals.GameItems[Inventory[Equipment[z]].ItemNum].Paperdoll);
+                        if (Equipment[Options.EquipmentSlots.IndexOf(Options.PaperdollOrder[z])] > -1 && Inventory[Equipment[Options.EquipmentSlots.IndexOf(Options.PaperdollOrder[z])]].ItemNum > -1)
+                        {
+                            DrawEquipment(Globals.GameItems[Inventory[Equipment[Options.EquipmentSlots.IndexOf(Options.PaperdollOrder[z])]].ItemNum].Paperdoll);
+                        }
                     }
                 }
 
@@ -353,19 +356,19 @@ namespace Intersect_Client.Classes.Entities
             if (GameGraphics.PaperdollFileNames.IndexOf(filename.ToLower()) >= 0)
             {
                 srcTexture = GameGraphics.PaperdollTextures[GameGraphics.PaperdollFileNames.IndexOf(filename)];
-                if (srcTexture.GetHeight() / 4 > Globals.Database.TileHeight)
+                if (srcTexture.GetHeight() / 4 > Options.TileHeight)
                 {
-                    destRectangle.X = (Globals.GameMaps[CurrentMap].GetX() + CurrentX * Globals.Database.TileWidth + OffsetX);
-                    destRectangle.Y = Globals.GameMaps[CurrentMap].GetY() + CurrentY * Globals.Database.TileHeight + OffsetY - ((srcTexture.GetHeight() / 4) - Globals.Database.TileHeight);
+                    destRectangle.X = (Globals.GameMaps[CurrentMap].GetX() + CurrentX * Options.TileWidth + OffsetX);
+                    destRectangle.Y = Globals.GameMaps[CurrentMap].GetY() + CurrentY * Options.TileHeight + OffsetY - ((srcTexture.GetHeight() / 4) - Options.TileHeight);
                 }
                 else
                 {
-                    destRectangle.X = Globals.GameMaps[CurrentMap].GetX() + CurrentX * Globals.Database.TileWidth + OffsetX;
-                    destRectangle.Y = Globals.GameMaps[CurrentMap].GetY() + CurrentY * Globals.Database.TileHeight + OffsetY;
+                    destRectangle.X = Globals.GameMaps[CurrentMap].GetX() + CurrentX * Options.TileWidth + OffsetX;
+                    destRectangle.Y = Globals.GameMaps[CurrentMap].GetY() + CurrentY * Options.TileHeight + OffsetY;
                 }
-                if (srcTexture.GetWidth() / 4 > Globals.Database.TileWidth)
+                if (srcTexture.GetWidth() / 4 > Options.TileWidth)
                 {
-                    destRectangle.X -= ((srcTexture.GetWidth() / 4) - Globals.Database.TileWidth) / 2;
+                    destRectangle.X -= ((srcTexture.GetWidth() / 4) - Options.TileWidth) / 2;
                 }
                 switch (Dir)
                 {
@@ -410,11 +413,11 @@ namespace Intersect_Client.Classes.Entities
             {
                 return new Pointf(0, 0);
             }
-            Pointf pos = new Pointf(Globals.GameMaps[CurrentMap].GetX() + CurrentX * Globals.Database.TileWidth + OffsetX + Globals.Database.TileWidth / 2,
-                    Globals.GameMaps[CurrentMap].GetY() + CurrentY * Globals.Database.TileHeight + OffsetY + Globals.Database.TileHeight / 2);
+            Pointf pos = new Pointf(Globals.GameMaps[CurrentMap].GetX() + CurrentX * Options.TileWidth + OffsetX + Options.TileWidth / 2,
+                    Globals.GameMaps[CurrentMap].GetY() + CurrentY * Options.TileHeight + OffsetY + Options.TileHeight / 2);
             if (GameGraphics.EntityFileNames.IndexOf(MySprite.ToLower()) >= 0)
             {
-                pos.Y += Globals.Database.TileHeight / 2;
+                pos.Y += Options.TileHeight / 2;
                 pos.Y -= GameGraphics.EntityTextures[GameGraphics.EntityFileNames.IndexOf(MySprite.ToLower())].GetHeight() / 4 / 2;
             }
             return pos;
@@ -433,9 +436,9 @@ namespace Intersect_Client.Classes.Entities
             {
                 y = y - (int)((GameGraphics.EntityTextures[GameGraphics.EntityFileNames.IndexOf(MySprite.ToLower())].GetHeight() / 8));
                 y -= 6;
-                if (GameGraphics.EntityTextures[GameGraphics.EntityFileNames.IndexOf(MySprite.ToLower())].GetWidth() / 4 > Globals.Database.TileWidth)
+                if (GameGraphics.EntityTextures[GameGraphics.EntityFileNames.IndexOf(MySprite.ToLower())].GetWidth() / 4 > Options.TileWidth)
                 {
-                    x = x - (int)((GameGraphics.EntityTextures[GameGraphics.EntityFileNames.IndexOf(MySprite.ToLower())].GetWidth() / 4) - Globals.Database.TileWidth) / 2;
+                    x = x - (int)((GameGraphics.EntityTextures[GameGraphics.EntityFileNames.IndexOf(MySprite.ToLower())].GetWidth() / 4) - Options.TileWidth) / 2;
                 }
             }
             if (this.GetType() != typeof(Event)) { y -= 10; } //Need room for HP bar if not an event.
@@ -453,7 +456,7 @@ namespace Intersect_Client.Classes.Entities
             {
                 return;
             }
-            var width = Globals.Database.TileWidth;
+            var width = Options.TileWidth;
             var fillWidth = ((float)Vital[(int)Enums.Vitals.Health] / MaxVital[(int)Enums.Vitals.Health]) * width;
             var y = (int)Math.Ceiling(GetCenterPos().Y);
             var x = (int)Math.Ceiling(GetCenterPos().X);
@@ -461,9 +464,9 @@ namespace Intersect_Client.Classes.Entities
             {
                 y = y - (int)((GameGraphics.EntityTextures[GameGraphics.EntityFileNames.IndexOf(MySprite.ToLower())].GetHeight() / 8));
 
-                if (GameGraphics.EntityTextures[GameGraphics.EntityFileNames.IndexOf(MySprite.ToLower())].GetWidth() / 4 > Globals.Database.TileWidth)
+                if (GameGraphics.EntityTextures[GameGraphics.EntityFileNames.IndexOf(MySprite.ToLower())].GetWidth() / 4 > Options.TileWidth)
                 {
-                    x = x - (int)((GameGraphics.EntityTextures[GameGraphics.EntityFileNames.IndexOf(MySprite.ToLower())].GetWidth() / 4) - Globals.Database.TileWidth) / 2;
+                    x = x - (int)((GameGraphics.EntityTextures[GameGraphics.EntityFileNames.IndexOf(MySprite.ToLower())].GetWidth() / 4) - Options.TileWidth) / 2;
                 }
             }
 
@@ -480,7 +483,7 @@ namespace Intersect_Client.Classes.Entities
             {
                 return;
             }
-            var width = Globals.Database.TileWidth;
+            var width = Options.TileWidth;
             var y = (int)Math.Ceiling(GetCenterPos().Y);
             var x = (int)Math.Ceiling(GetCenterPos().X);
             if (GameGraphics.EntityFileNames.IndexOf(MySprite.ToLower()) >= 0)
@@ -488,9 +491,9 @@ namespace Intersect_Client.Classes.Entities
                 y = y - (int)((GameGraphics.EntityTextures[GameGraphics.EntityFileNames.IndexOf(MySprite.ToLower())].GetHeight() / 8));
                 y -= 18;
 
-                if (GameGraphics.EntityTextures[GameGraphics.EntityFileNames.IndexOf(MySprite.ToLower())].GetWidth() / 4 > Globals.Database.TileWidth)
+                if (GameGraphics.EntityTextures[GameGraphics.EntityFileNames.IndexOf(MySprite.ToLower())].GetWidth() / 4 > Options.TileWidth)
                 {
-                    x = x - (int)((GameGraphics.EntityTextures[GameGraphics.EntityFileNames.IndexOf(MySprite.ToLower())].GetWidth() / 4) - Globals.Database.TileWidth) / 2;
+                    x = x - (int)((GameGraphics.EntityTextures[GameGraphics.EntityFileNames.IndexOf(MySprite.ToLower())].GetWidth() / 4) - Options.TileWidth) / 2;
                 }
             }
 
@@ -510,8 +513,8 @@ namespace Intersect_Client.Classes.Entities
             FloatRect destRectangle = new FloatRect();
             GameTexture srcTexture = GameGraphics.TargetTexture;
 
-            destRectangle.X = Globals.GameMaps[CurrentMap].GetX() + CurrentX * Globals.Database.TileWidth + OffsetX;
-            destRectangle.Y = Globals.GameMaps[CurrentMap].GetY() + CurrentY * Globals.Database.TileHeight + OffsetY;
+            destRectangle.X = Globals.GameMaps[CurrentMap].GetX() + CurrentX * Options.TileWidth + OffsetX;
+            destRectangle.Y = Globals.GameMaps[CurrentMap].GetY() + CurrentY * Options.TileHeight + OffsetY;
             destRectangle.X = (int)Math.Ceiling(destRectangle.X - (int)srcTexture.GetWidth() / 8);
 
             srcRectangle = new FloatRect(Priority * (int)srcTexture.GetWidth() / 2, 0, (int)srcTexture.GetWidth() / 2, (int)srcTexture.GetHeight());

@@ -29,6 +29,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Intersect_Editor.Classes;
+using Intersect_Editor.Classes.General;
 
 namespace Intersect_Editor.Forms.Editors
 {
@@ -43,7 +44,7 @@ namespace Intersect_Editor.Forms.Editors
         private void ListCommonEvents()
         {
             lstCommonEvents.Items.Clear();
-            for (int i = 0; i < Constants.MaxCommonEvents; i++)
+            for (int i = 0; i < Options.MaxCommonEvents; i++)
             {
                 lstCommonEvents.Items.Add((i + 1) + ". " + Globals.CommonEvents[i].MyName);
             }

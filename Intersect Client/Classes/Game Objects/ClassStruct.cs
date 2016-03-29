@@ -55,7 +55,7 @@ namespace Intersect_Client.Classes.Game_Objects
 
         public ClassStruct()
         {
-            for (int i = 0; i < Constants.MaxNpcDrops; i++)
+            for (int i = 0; i < Options.MaxNpcDrops; i++)
             {
                 Items.Add(new ClassItem());
             }
@@ -101,7 +101,7 @@ namespace Intersect_Client.Classes.Game_Objects
             }
             Points = myBuffer.ReadInteger();
 
-            for (int i = 0; i < Constants.MaxNpcDrops; i++)
+            for (int i = 0; i < Options.MaxNpcDrops; i++)
             {
                 Items[i].ItemNum = myBuffer.ReadInteger();
                 Items[i].Amount = myBuffer.ReadInteger();

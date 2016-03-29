@@ -107,8 +107,8 @@ namespace Intersect_Client.Classes.UI.Game
                 if (Globals.GameItems[itemnum].Type == (int)Enums.ItemTypes.Equipment)
                 {
                     Label itemSlot = new Label(_descWindow);
-                    itemSlot.Text = "Slot: " + Enums.EquipmentSlots[Globals.GameItems[itemnum].Data1];
-                    if (Globals.GameItems[itemnum].Data1 == Enums.WeaponIndex && Convert.ToBoolean(Globals.GameItems[itemnum].Data4) == true)
+                    itemSlot.Text = "Slot: " + Options.EquipmentSlots[Globals.GameItems[itemnum].Data1];
+                    if (Globals.GameItems[itemnum].Data1 == Options.WeaponIndex && Convert.ToBoolean(Globals.GameItems[itemnum].Data4) == true)
                     {
                         itemSlot.Text += " - 2H";
                     }
@@ -143,7 +143,7 @@ namespace Intersect_Client.Classes.UI.Game
                         itemReqs.AddText("Level: " + Globals.GameItems[itemnum].LevelReq, itemName.TextColor);
                         itemReqs.AddLineBreak();
                     }
-                    for (int i = 0; i < Constants.MaxStats; i++)
+                    for (int i = 0; i < Options.MaxStats; i++)
                     {
                         if (Globals.GameItems[itemnum].StatsReq[i] > 0)
                         {
@@ -180,7 +180,7 @@ namespace Intersect_Client.Classes.UI.Game
                     stats = "Stats Bonuses:";
                     itemStats.AddText(stats, itemName.TextColor);
                     itemStats.AddLineBreak();
-                    if (Globals.GameItems[itemnum].Type == (int)Enums.ItemTypes.Equipment && Globals.GameItems[itemnum].Data1 == Enums.WeaponIndex)
+                    if (Globals.GameItems[itemnum].Type == (int)Enums.ItemTypes.Equipment && Globals.GameItems[itemnum].Data1 == Options.WeaponIndex)
                     {
                         stats = "Base Damage" + ": " + (Globals.GameItems[itemnum].Damage) + "";
                         itemStats.AddText(stats, itemName.TextColor);
@@ -188,7 +188,7 @@ namespace Intersect_Client.Classes.UI.Game
                     }
                     if (StatBuffs != null)
                     {
-                        for (int i = 0; i < Constants.MaxStats; i++)
+                        for (int i = 0; i < Options.MaxStats; i++)
                         {
                             stats = Enums.GetStatName(i) + ": " +
                                     (Globals.GameItems[itemnum].StatsGiven[i] + StatBuffs[i]) + "";

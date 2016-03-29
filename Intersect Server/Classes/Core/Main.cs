@@ -24,6 +24,7 @@ using System;
 using System.IO;
 using System.Threading;
 using System.Windows.Forms;
+using Intersect_Server.Classes.General;
 
 namespace Intersect_Server.Classes
 {
@@ -45,7 +46,12 @@ namespace Intersect_Server.Classes
             Console.WriteLine("For help, support, and updates visit: http://ascensiongamedev.com");
             Console.WriteLine("Loading, please wait.");
             Database.CheckDirectories();
-            Database.LoadOptions();
+            if (!Options.LoadOptions())
+            {
+                Console.WriteLine("Failed to load server options! Press any key to shut down.");
+                Console.ReadKey();
+                return;
+            }
             Database.LoadNpcs();
             Database.LoadItems();
             Database.LoadShops();
@@ -56,7 +62,7 @@ namespace Intersect_Server.Classes
             Database.LoadProjectiles();
             Database.LoadCommonEvents();
             Database.LoadSwitchesAndVariables();
-            if (Database.LoadClasses() == Constants.MaxClasses)
+            if (Database.LoadClasses() == Options.MaxClasses)
             {
                 Console.WriteLine("Failed to load classes. Creating default class.");
                 Database.CreateDefaultClass();
@@ -72,7 +78,7 @@ namespace Intersect_Server.Classes
 #if websockets
             WebSocketServer.Init();
 #endif
-            Console.WriteLine("Server Started. Using Port #" + Globals.ServerPort);
+            Console.WriteLine("Server Started. Using Port #" + Options.ServerPort);
             logicThread = new Thread(() => ServerLoop.RunServerLoop());
             logicThread.Start();
             Console.WriteLine("Type exit to shutdown the server, or help for a list of commands.");

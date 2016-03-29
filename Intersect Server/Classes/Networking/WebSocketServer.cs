@@ -27,6 +27,7 @@ using System.Linq.Expressions;
 using System.Text;
 using System.Net;
 using System.Threading;
+using Intersect_Server.Classes.General;
 using WebSocketSharp;
 using WebSocket = Intersect_Server.Classes.Networking.WebSocket;
 
@@ -39,7 +40,7 @@ namespace Intersect_Server.Classes
 
         public static void Init()
         {
-            _listener = new WebSocketSharp.Server.WebSocketServer(Globals.ServerPort + 1);
+            _listener = new WebSocketSharp.Server.WebSocketServer(Options.ServerPort + 1);
             _listener.AddWebSocketService<SharpServerService>("/Intersect", () => new SharpServerService() {IgnoreExtensions = true, Protocol="binary"});
             _listener.Start();
         }

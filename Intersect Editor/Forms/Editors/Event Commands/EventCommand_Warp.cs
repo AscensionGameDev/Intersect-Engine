@@ -28,6 +28,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using Intersect_Editor.Classes;
+using Intersect_Editor.Classes.General;
 
 namespace Intersect_Editor.Forms.Editors.Event_Commands
 {
@@ -54,8 +55,8 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             {
                 cmbMap.SelectedIndex = 0;
             }
-            scrlX.Maximum = Globals.MapWidth -1;
-            scrlY.Maximum = Globals.MapHeight - 1;
+            scrlX.Maximum = Options.MapWidth -1;
+            scrlY.Maximum = Options.MapHeight - 1;
             scrlX.Value = _myCommand.Ints[1];
             scrlY.Value = _myCommand.Ints[2];
             lblX.Text = @"X: " + scrlX.Value;

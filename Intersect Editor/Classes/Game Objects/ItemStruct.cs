@@ -21,6 +21,7 @@
 */
 
 using System;
+using Intersect_Editor.Classes.General;
 
 namespace Intersect_Editor.Classes
 {
@@ -52,8 +53,8 @@ namespace Intersect_Editor.Classes
         public ItemStruct()
         {
             Speed = 10; // Set to 10 by default.
-            StatsGiven = new int[Constants.MaxStats];
-            StatsReq = new int[Constants.MaxStats];
+            StatsGiven = new int[Options.MaxStats];
+            StatsReq = new int[Options.MaxStats];
         }
 
         public void LoadItem(byte[] data, int index)
@@ -74,7 +75,7 @@ namespace Intersect_Editor.Classes
             LevelReq = myBuffer.ReadInteger();
             Projectile = myBuffer.ReadInteger();
 
-            for (var i =0; i < Constants.MaxStats; i++)
+            for (var i =0; i < Options.MaxStats; i++)
             {
                 StatsReq[i] = myBuffer.ReadInteger();
                 StatsGiven[i] = myBuffer.ReadInteger();
@@ -106,7 +107,7 @@ namespace Intersect_Editor.Classes
             myBuffer.WriteInteger(LevelReq);
             myBuffer.WriteInteger(Projectile);
 
-            for (var i = 0; i < Constants.MaxStats; i++)
+            for (var i = 0; i < Options.MaxStats; i++)
             {
                 myBuffer.WriteInteger(StatsReq[i]);
                 myBuffer.WriteInteger(StatsGiven[i]);

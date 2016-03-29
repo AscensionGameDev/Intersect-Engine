@@ -22,6 +22,7 @@
 using System;
 using System.Net;
 using System.Net.Sockets;
+using Intersect_Server.Classes.General;
 
 namespace Intersect_Server.Classes
 {
@@ -31,7 +32,7 @@ namespace Intersect_Server.Classes
 
 	    public static void  Init ()
 		{
-		    _tcpServer = new TcpListener(IPAddress.Any,Globals.ServerPort);
+		    _tcpServer = new TcpListener(IPAddress.Any, Options.ServerPort);
             _tcpServer.Start();
             _tcpServer.BeginAcceptTcpClient(OnClientConnect, null);
 		}

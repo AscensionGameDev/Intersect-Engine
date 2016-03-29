@@ -32,6 +32,26 @@ namespace Intersect_Client.Classes.Maps
     public class MapAutotiles
     {
 
+        // Autotiles
+        public const byte AutoTileInner = 1;
+        public const byte AutoTileOuter = 2;
+        public const byte AutoTileHorizontal = 3;
+        public const byte AutoTileVertical = 4;
+        public const byte AutoTileFill = 5;
+
+        // Autotile types
+        public const byte AutotileNone = 0;
+        public const byte AutotileNormal = 1;
+        public const byte AutotileFake = 2;
+        public const byte AutotileAnim = 3;
+        public const byte AutotileCliff = 4;
+        public const byte AutotileWaterfall = 5;
+
+        // Rendering
+        public const byte RenderStateNone = 0;
+        public const byte RenderStateNormal = 1;
+        public const byte RenderStateAutotile = 2;
+
         // autotiling
         public Point[] AutoInner = new Point[6];
         public Point[] AutoNw = new Point[6];
@@ -49,15 +69,15 @@ namespace Intersect_Client.Classes.Maps
 
         public void InitAutotiles()
         {
-            Autotile = new AutoTileCls[Globals.Database.MapWidth, Globals.Database.MapHeight];
+            Autotile = new AutoTileCls[Options.MapWidth, Options.MapHeight];
 
 
-            for (var x = 0; x < Globals.Database.MapWidth; x++)
+            for (var x = 0; x < Options.MapWidth; x++)
             {
-                for (var y = 0; y < Globals.Database.MapHeight; y++)
+                for (var y = 0; y < Options.MapHeight; y++)
                 {
                     Autotile[x, y] = new AutoTileCls();
-                    for (var i = 0; i < Constants.LayerCount; i++)
+                    for (var i = 0; i < Options.LayerCount; i++)
                     {
                         Autotile[x, y].Layer[i] = new QuarterTileCls();
                     }
@@ -75,94 +95,94 @@ namespace Intersect_Client.Classes.Maps
 
             // Inner tiles (Top right subtile region)
             // NW - a
-            AutoInner[1].X = Globals.Database.TileWidth;
+            AutoInner[1].X = Options.TileWidth;
             AutoInner[1].Y = 0;
 
             // NE - b
-            AutoInner[2].X = (2 * Globals.Database.TileWidth) - (Globals.Database.TileWidth / 2);
+            AutoInner[2].X = (2 * Options.TileWidth) - (Options.TileWidth / 2);
             AutoInner[2].Y = 0;
 
             // SW - c
-            AutoInner[3].X = Globals.Database.TileWidth;
-            AutoInner[3].Y = Globals.Database.TileHeight / 2;
+            AutoInner[3].X = Options.TileWidth;
+            AutoInner[3].Y = Options.TileHeight / 2;
 
             // SE - d
-            AutoInner[4].X = (2 * Globals.Database.TileWidth) - (Globals.Database.TileWidth / 2);
-            AutoInner[4].Y = Globals.Database.TileHeight / 2;
+            AutoInner[4].X = (2 * Options.TileWidth) - (Options.TileWidth / 2);
+            AutoInner[4].Y = Options.TileHeight / 2;
 
             // Outer Tiles - NW (bottom subtile region)
             // NW - e
             AutoNw[1].X = 0;
-            AutoNw[1].Y = Globals.Database.TileHeight;
+            AutoNw[1].Y = Options.TileHeight;
 
             // NE - f
-            AutoNw[2].X = Globals.Database.TileWidth / 2;
-            AutoNw[2].Y = Globals.Database.TileHeight;
+            AutoNw[2].X = Options.TileWidth / 2;
+            AutoNw[2].Y = Options.TileHeight;
 
             // SW - g
             AutoNw[3].X = 0;
-            AutoNw[3].Y = (2 * Globals.Database.TileHeight) - (Globals.Database.TileHeight / 2);
+            AutoNw[3].Y = (2 * Options.TileHeight) - (Options.TileHeight / 2);
 
             // SE - h
-            AutoNw[4].X = Globals.Database.TileWidth / 2;
-            AutoNw[4].Y = (2 * Globals.Database.TileHeight) - (Globals.Database.TileHeight / 2);
+            AutoNw[4].X = Options.TileWidth / 2;
+            AutoNw[4].Y = (2 * Options.TileHeight) - (Options.TileHeight / 2);
 
             // Outer Tiles - NE (bottom subtile region)
             // NW - i
-            AutoNe[1].X = Globals.Database.TileWidth;
-            AutoNe[1].Y = Globals.Database.TileHeight;
+            AutoNe[1].X = Options.TileWidth;
+            AutoNe[1].Y = Options.TileHeight;
 
             // NE - g
-            AutoNe[2].X = (2 * Globals.Database.TileWidth) - (Globals.Database.TileWidth / 2);
-            AutoNe[2].Y = Globals.Database.TileHeight;
+            AutoNe[2].X = (2 * Options.TileWidth) - (Options.TileWidth / 2);
+            AutoNe[2].Y = Options.TileHeight;
 
             // SW - k
-            AutoNe[3].X = Globals.Database.TileWidth;
-            AutoNe[3].Y = (2 * Globals.Database.TileHeight) - (Globals.Database.TileHeight / 2);
+            AutoNe[3].X = Options.TileWidth;
+            AutoNe[3].Y = (2 * Options.TileHeight) - (Options.TileHeight / 2);
 
             // SE - l
-            AutoNe[4].X = (2 * Globals.Database.TileWidth) - (Globals.Database.TileWidth / 2);
-            AutoNe[4].Y = (2 * Globals.Database.TileHeight) - (Globals.Database.TileHeight / 2);
+            AutoNe[4].X = (2 * Options.TileWidth) - (Options.TileWidth / 2);
+            AutoNe[4].Y = (2 * Options.TileHeight) - (Options.TileHeight / 2);
 
             // Outer Tiles - SW (bottom subtile region)
             // NW - m
             AutoSw[1].X = 0;
-            AutoSw[1].Y = 2 * Globals.Database.TileHeight;
+            AutoSw[1].Y = 2 * Options.TileHeight;
 
             // NE - n
-            AutoSw[2].X = Globals.Database.TileWidth / 2;
-            AutoSw[2].Y = 2 * Globals.Database.TileHeight;
+            AutoSw[2].X = Options.TileWidth / 2;
+            AutoSw[2].Y = 2 * Options.TileHeight;
 
             // SW - o
             AutoSw[3].X = 0;
-            AutoSw[3].Y = (2 * Globals.Database.TileHeight) + (Globals.Database.TileHeight / 2);
+            AutoSw[3].Y = (2 * Options.TileHeight) + (Options.TileHeight / 2);
 
             // SE - p
-            AutoSw[4].X = Globals.Database.TileWidth / 2;
-            AutoSw[4].Y = (2 * Globals.Database.TileHeight) + (Globals.Database.TileHeight / 2);
+            AutoSw[4].X = Options.TileWidth / 2;
+            AutoSw[4].Y = (2 * Options.TileHeight) + (Options.TileHeight / 2);
 
             // Outer Tiles - SE (bottom subtile region)
             // NW - q
-            AutoSe[1].X = Globals.Database.TileWidth;
-            AutoSe[1].Y = 2 * Globals.Database.TileHeight;
+            AutoSe[1].X = Options.TileWidth;
+            AutoSe[1].Y = 2 * Options.TileHeight;
 
             // NE - r
-            AutoSe[2].X = (2 * Globals.Database.TileWidth) - (Globals.Database.TileWidth / 2);
-            AutoSe[2].Y = 2 * Globals.Database.TileHeight;
+            AutoSe[2].X = (2 * Options.TileWidth) - (Options.TileWidth / 2);
+            AutoSe[2].Y = 2 * Options.TileHeight;
 
             // SW - s
-            AutoSe[3].X = Globals.Database.TileWidth;
-            AutoSe[3].Y = (2 * Globals.Database.TileHeight) + (Globals.Database.TileHeight / 2);
+            AutoSe[3].X = Options.TileWidth;
+            AutoSe[3].Y = (2 * Options.TileHeight) + (Options.TileHeight / 2);
 
             // SE - t
-            AutoSe[4].X = (2 * Globals.Database.TileWidth) - (Globals.Database.TileWidth / 2);
-            AutoSe[4].Y = (2 * Globals.Database.TileHeight) + (Globals.Database.TileHeight / 2);
+            AutoSe[4].X = (2 * Options.TileWidth) - (Options.TileWidth / 2);
+            AutoSe[4].Y = (2 * Options.TileHeight) + (Options.TileHeight / 2);
 
-            for (var i = 0; i < Constants.LayerCount; i++)
+            for (var i = 0; i < Options.LayerCount; i++)
             {
-                for (var x = 0; x < Globals.Database.MapWidth; x++)
+                for (var x = 0; x < Options.MapWidth; x++)
                 {
-                    for (var y = 0; y < Globals.Database.MapHeight; y++)
+                    for (var y = 0; y < Options.MapHeight; y++)
                     {
                         // calculate the subtile positions and place them
                         CalculateAutotile(x, y, i);
@@ -177,17 +197,17 @@ namespace Intersect_Client.Classes.Maps
         {
             for (var x1 = x - 1; x1 < x + 2; x1++)
             {
-                if (x1 < 0 || x1 >= Globals.Database.MapWidth)
+                if (x1 < 0 || x1 >= Options.MapWidth)
                 {
                     continue;
                 }
                 for (var y1 = y - 1; y1 < y + 2; y1++)
                 {
-                    if (y1 < 0 || y1 >= Globals.Database.MapHeight)
+                    if (y1 < 0 || y1 >= Options.MapHeight)
                     {
                         continue;
                     }
-                    for (int i = 0; i < Constants.LayerCount; i++)
+                    for (int i = 0; i < Options.LayerCount; i++)
                     {
                         // calculate the subtile positions and place them
                         CalculateAutotile(x1, y1, i);
@@ -201,24 +221,24 @@ namespace Intersect_Client.Classes.Maps
         public void CacheRenderState(int x, int y, int layerNum)
         {
             // exit out early
-            if (x < 0 || x > Globals.Database.MapWidth || y < 0 || y > Globals.Database.MapHeight) { return; }
+            if (x < 0 || x > Options.MapWidth || y < 0 || y > Options.MapHeight) { return; }
 
             // check if it needs to be rendered as an autotile
-            if (_myMap.Layers[layerNum].Tiles[x, y].Autotile == Constants.AutotileNone || _myMap.Layers[layerNum].Tiles[x, y].Autotile == Constants.AutotileFake)
+            if (_myMap.Layers[layerNum].Tiles[x, y].Autotile == AutotileNone || _myMap.Layers[layerNum].Tiles[x, y].Autotile == AutotileFake)
             {
                 // default to... default
-                Autotile[x, y].Layer[layerNum].RenderState = Constants.RenderStateNormal;
+                Autotile[x, y].Layer[layerNum].RenderState = RenderStateNormal;
                 Autotile[x, y].Layer[layerNum].QuarterTile = null;
             }
             else
             {
-                Autotile[x, y].Layer[layerNum].RenderState = Constants.RenderStateAutotile;
+                Autotile[x, y].Layer[layerNum].RenderState = RenderStateAutotile;
                 // cache tileset positioning
                 int quarterNum;
                 for (quarterNum = 1; quarterNum < 5; quarterNum++)
                 {
-                    Autotile[x, y].Layer[layerNum].QuarterTile[quarterNum].X = (_myMap.Layers[layerNum].Tiles[x, y].X * Globals.Database.TileWidth) + Autotile[x, y].Layer[layerNum].QuarterTile[quarterNum].X;
-                    Autotile[x, y].Layer[layerNum].QuarterTile[quarterNum].Y = (_myMap.Layers[layerNum].Tiles[x, y].Y * Globals.Database.TileHeight) + Autotile[x, y].Layer[layerNum].QuarterTile[quarterNum].Y;
+                    Autotile[x, y].Layer[layerNum].QuarterTile[quarterNum].X = (_myMap.Layers[layerNum].Tiles[x, y].X * Options.TileWidth) + Autotile[x, y].Layer[layerNum].QuarterTile[quarterNum].X;
+                    Autotile[x, y].Layer[layerNum].QuarterTile[quarterNum].Y = (_myMap.Layers[layerNum].Tiles[x, y].Y * Options.TileHeight) + Autotile[x, y].Layer[layerNum].QuarterTile[quarterNum].Y;
                 }
             }
         }
@@ -242,8 +262,8 @@ namespace Intersect_Client.Classes.Maps
             {
 
                 // Normal or animated - same difference
-                case Constants.AutotileNormal:
-                case Constants.AutotileAnim:
+                case AutotileNormal:
+                case AutotileAnim:
                     // North West Quarter
                     CalculateNW_Normal(layerNum, x, y);
 
@@ -258,7 +278,7 @@ namespace Intersect_Client.Classes.Maps
                     break;
 
                 // Cliff
-                case Constants.AutotileCliff:
+                case AutotileCliff:
                     // North West Quarter
                     CalculateNW_Cliff(layerNum, x, y);
 
@@ -273,7 +293,7 @@ namespace Intersect_Client.Classes.Maps
                     break;
 
                 // Waterfalls
-                case Constants.AutotileWaterfall:
+                case AutotileWaterfall:
                     // North West Quarter
                     CalculateNW_Waterfall(layerNum, x, y);
 
@@ -305,32 +325,32 @@ namespace Intersect_Client.Classes.Maps
             if (CheckTileMatch(layerNum, x, y, x - 1, y)) { tmpTile[3] = true; }
 
             // Calculate Situation - Inner
-            if (!tmpTile[2] && !tmpTile[3]) { situation = Constants.AutoInner; }
+            if (!tmpTile[2] && !tmpTile[3]) { situation = AutoTileInner; }
             // Horizontal
-            if (!tmpTile[2] && tmpTile[3]) { situation = Constants.AutoHorizontal; }
+            if (!tmpTile[2] && tmpTile[3]) { situation = AutoTileHorizontal; }
             // Vertical
-            if (tmpTile[2] && !tmpTile[3]) { situation = Constants.AutoVertical; }
+            if (tmpTile[2] && !tmpTile[3]) { situation = AutoTileVertical; }
             // Outer
-            if (!tmpTile[1] && tmpTile[2] && tmpTile[3]) { situation = Constants.AutoOuter; }
+            if (!tmpTile[1] && tmpTile[2] && tmpTile[3]) { situation = AutoTileOuter; }
             // Fill
-            if (tmpTile[1] && tmpTile[2] && tmpTile[3]) { situation = Constants.AutoFill; }
+            if (tmpTile[1] && tmpTile[2] && tmpTile[3]) { situation = AutoTileFill; }
 
             // Actually place the subtile
             switch (situation)
             {
-                case Constants.AutoInner:
+                case AutoTileInner:
                     PlaceAutotile(layerNum, x, y, 1, "e");
                     break;
-                case Constants.AutoOuter:
+                case AutoTileOuter:
                     PlaceAutotile(layerNum, x, y, 1, "a");
                     break;
-                case Constants.AutoHorizontal:
+                case AutoTileHorizontal:
                     PlaceAutotile(layerNum, x, y, 1, "i");
                     break;
-                case Constants.AutoVertical:
+                case AutoTileVertical:
                     PlaceAutotile(layerNum, x, y, 1, "m");
                     break;
-                case Constants.AutoFill:
+                case AutoTileFill:
                     PlaceAutotile(layerNum, x, y, 1, "q");
                     break;
             }
@@ -351,32 +371,32 @@ namespace Intersect_Client.Classes.Maps
             if (CheckTileMatch(layerNum, x, y, x + 1, y)) { tmpTile[3] = true; }
 
             // Calculate Situation - Inner
-            if (!tmpTile[1] && !tmpTile[3]) { situation = Constants.AutoInner; }
+            if (!tmpTile[1] && !tmpTile[3]) { situation = AutoTileInner; }
             // Horizontal
-            if (!tmpTile[1] && tmpTile[3]) { situation = Constants.AutoHorizontal; }
+            if (!tmpTile[1] && tmpTile[3]) { situation = AutoTileHorizontal; }
             // Vertical
-            if (tmpTile[1] && !tmpTile[3]) { situation = Constants.AutoVertical; }
+            if (tmpTile[1] && !tmpTile[3]) { situation = AutoTileVertical; }
             // Outer
-            if (tmpTile[1] && !tmpTile[2] && tmpTile[3]) { situation = Constants.AutoOuter; }
+            if (tmpTile[1] && !tmpTile[2] && tmpTile[3]) { situation = AutoTileOuter; }
             // Fill
-            if (tmpTile[1] && tmpTile[2] && tmpTile[3]) { situation = Constants.AutoFill; }
+            if (tmpTile[1] && tmpTile[2] && tmpTile[3]) { situation = AutoTileFill; }
 
             // Actually place the subtile
             switch (situation)
             {
-                case Constants.AutoInner:
+                case AutoTileInner:
                     PlaceAutotile(layerNum, x, y, 2, "j");
                     break;
-                case Constants.AutoOuter:
+                case AutoTileOuter:
                     PlaceAutotile(layerNum, x, y, 2, "b");
                     break;
-                case Constants.AutoHorizontal:
+                case AutoTileHorizontal:
                     PlaceAutotile(layerNum, x, y, 2, "f");
                     break;
-                case Constants.AutoVertical:
+                case AutoTileVertical:
                     PlaceAutotile(layerNum, x, y, 2, "r");
                     break;
-                case Constants.AutoFill:
+                case AutoTileFill:
                     PlaceAutotile(layerNum, x, y, 2, "n");
                     break;
             }
@@ -397,32 +417,32 @@ namespace Intersect_Client.Classes.Maps
             if (CheckTileMatch(layerNum, x, y, x, y + 1)) { tmpTile[3] = true; }
 
             // Calculate Situation - Inner
-            if (!tmpTile[1] && !tmpTile[3]) { situation = Constants.AutoInner; }
+            if (!tmpTile[1] && !tmpTile[3]) { situation = AutoTileInner; }
             // Horizontal
-            if (tmpTile[1] && !tmpTile[3]) { situation = Constants.AutoHorizontal; }
+            if (tmpTile[1] && !tmpTile[3]) { situation = AutoTileHorizontal; }
             // Vertical
-            if (!tmpTile[1] && tmpTile[3]) { situation = Constants.AutoVertical; }
+            if (!tmpTile[1] && tmpTile[3]) { situation = AutoTileVertical; }
             // Outer
-            if (tmpTile[1] && !tmpTile[2] && tmpTile[3]) { situation = Constants.AutoOuter; }
+            if (tmpTile[1] && !tmpTile[2] && tmpTile[3]) { situation = AutoTileOuter; }
             // Fill
-            if (tmpTile[1] && tmpTile[2] && tmpTile[3]) { situation = Constants.AutoFill; }
+            if (tmpTile[1] && tmpTile[2] && tmpTile[3]) { situation = AutoTileFill; }
 
             // Actually place the subtile
             switch (situation)
             {
-                case Constants.AutoInner:
+                case AutoTileInner:
                     PlaceAutotile(layerNum, x, y, 3, "o");
                     break;
-                case Constants.AutoOuter:
+                case AutoTileOuter:
                     PlaceAutotile(layerNum, x, y, 3, "c");
                     break;
-                case Constants.AutoHorizontal:
+                case AutoTileHorizontal:
                     PlaceAutotile(layerNum, x, y, 3, "s");
                     break;
-                case Constants.AutoVertical:
+                case AutoTileVertical:
                     PlaceAutotile(layerNum, x, y, 3, "g");
                     break;
-                case Constants.AutoFill:
+                case AutoTileFill:
                     PlaceAutotile(layerNum, x, y, 3, "k");
                     break;
             }
@@ -443,32 +463,32 @@ namespace Intersect_Client.Classes.Maps
             if (CheckTileMatch(layerNum, x, y, x + 1, y)) { tmpTile[3] = true; }
 
             // Calculate Situation - Inner
-            if (!tmpTile[1] && !tmpTile[3]) { situation = Constants.AutoInner; }
+            if (!tmpTile[1] && !tmpTile[3]) { situation = AutoTileInner; }
             // Horizontal
-            if (!tmpTile[1] && tmpTile[3]) { situation = Constants.AutoHorizontal; }
+            if (!tmpTile[1] && tmpTile[3]) { situation = AutoTileHorizontal; }
             // Vertical
-            if (tmpTile[1] && !tmpTile[3]) { situation = Constants.AutoVertical; }
+            if (tmpTile[1] && !tmpTile[3]) { situation = AutoTileVertical; }
             // Outer
-            if (tmpTile[1] && !tmpTile[2] && tmpTile[3]) { situation = Constants.AutoOuter; }
+            if (tmpTile[1] && !tmpTile[2] && tmpTile[3]) { situation = AutoTileOuter; }
             // Fill
-            if (tmpTile[1] && tmpTile[2] && tmpTile[3]) { situation = Constants.AutoFill; }
+            if (tmpTile[1] && tmpTile[2] && tmpTile[3]) { situation = AutoTileFill; }
 
             // Actually place the subtile
             switch (situation)
             {
-                case Constants.AutoInner:
+                case AutoTileInner:
                     PlaceAutotile(layerNum, x, y, 4, "t");
                     break;
-                case Constants.AutoOuter:
+                case AutoTileOuter:
                     PlaceAutotile(layerNum, x, y, 4, "d");
                     break;
-                case Constants.AutoHorizontal:
+                case AutoTileHorizontal:
                     PlaceAutotile(layerNum, x, y, 4, "p");
                     break;
-                case Constants.AutoVertical:
+                case AutoTileVertical:
                     PlaceAutotile(layerNum, x, y, 4, "l");
                     break;
-                case Constants.AutoFill:
+                case AutoTileFill:
                     PlaceAutotile(layerNum, x, y, 4, "h");
                     break;
             }
@@ -559,27 +579,27 @@ namespace Intersect_Client.Classes.Maps
             if (CheckTileMatch(layerNum, x, y, x - 1, y)) { tmpTile[3] = true; }
 
             // Calculate Situation - Horizontal
-            if (!tmpTile[2] && tmpTile[3]) { situation = Constants.AutoHorizontal; }
+            if (!tmpTile[2] && tmpTile[3]) { situation = AutoTileHorizontal; }
             // Vertical
-            if (tmpTile[2] && !tmpTile[3]) { situation = Constants.AutoVertical; }
+            if (tmpTile[2] && !tmpTile[3]) { situation = AutoTileVertical; }
             // Fill
-            if (tmpTile[1] && tmpTile[2] && tmpTile[3]) { situation = Constants.AutoFill; }
+            if (tmpTile[1] && tmpTile[2] && tmpTile[3]) { situation = AutoTileFill; }
             // Inner
-            if (!tmpTile[2] && !tmpTile[3]) { situation = Constants.AutoInner; }
+            if (!tmpTile[2] && !tmpTile[3]) { situation = AutoTileInner; }
 
             // Actually place the subtile
             switch (situation)
             {
-                case Constants.AutoInner:
+                case AutoTileInner:
                     PlaceAutotile(layerNum, x, y, 1, "e");
                     break;
-                case Constants.AutoHorizontal:
+                case AutoTileHorizontal:
                     PlaceAutotile(layerNum, x, y, 1, "i");
                     break;
-                case Constants.AutoVertical:
+                case AutoTileVertical:
                     PlaceAutotile(layerNum, x, y, 1, "m");
                     break;
-                case Constants.AutoFill:
+                case AutoTileFill:
                     PlaceAutotile(layerNum, x, y, 1, "q");
                     break;
             }
@@ -600,27 +620,27 @@ namespace Intersect_Client.Classes.Maps
             if (CheckTileMatch(layerNum, x, y, x + 1, y)) { tmpTile[3] = true; }
 
             // Calculate Situation - Horizontal
-            if (!tmpTile[1] && tmpTile[3]) { situation = Constants.AutoHorizontal; }
+            if (!tmpTile[1] && tmpTile[3]) { situation = AutoTileHorizontal; }
             // Vertical
-            if (tmpTile[1] && !tmpTile[3]) { situation = Constants.AutoVertical; }
+            if (tmpTile[1] && !tmpTile[3]) { situation = AutoTileVertical; }
             // Fill
-            if (tmpTile[1] && tmpTile[2] && tmpTile[3]) { situation = Constants.AutoFill; }
+            if (tmpTile[1] && tmpTile[2] && tmpTile[3]) { situation = AutoTileFill; }
             // Inner
-            if (!tmpTile[1] && !tmpTile[3]) { situation = Constants.AutoInner; }
+            if (!tmpTile[1] && !tmpTile[3]) { situation = AutoTileInner; }
 
             // Actually place the subtile
             switch (situation)
             {
-                case Constants.AutoInner:
+                case AutoTileInner:
                     PlaceAutotile(layerNum, x, y, 2, "j");
                     break;
-                case Constants.AutoHorizontal:
+                case AutoTileHorizontal:
                     PlaceAutotile(layerNum, x, y, 2, "f");
                     break;
-                case Constants.AutoVertical:
+                case AutoTileVertical:
                     PlaceAutotile(layerNum, x, y, 2, "r");
                     break;
-                case Constants.AutoFill:
+                case AutoTileFill:
                     PlaceAutotile(layerNum, x, y, 2, "n");
                     break;
             }
@@ -641,27 +661,27 @@ namespace Intersect_Client.Classes.Maps
             if (CheckTileMatch(layerNum, x, y, x, y + 1)) { tmpTile[3] = true; }
 
             // Calculate Situation - Horizontal
-            if (tmpTile[1] && !tmpTile[3]) { situation = Constants.AutoHorizontal; }
+            if (tmpTile[1] && !tmpTile[3]) { situation = AutoTileHorizontal; }
             // Vertical
-            if (!tmpTile[1] && tmpTile[3]) { situation = Constants.AutoVertical; }
+            if (!tmpTile[1] && tmpTile[3]) { situation = AutoTileVertical; }
             // Fill
-            if (tmpTile[1] && tmpTile[2] && tmpTile[3]) { situation = Constants.AutoFill; }
+            if (tmpTile[1] && tmpTile[2] && tmpTile[3]) { situation = AutoTileFill; }
             // Inner
-            if (!tmpTile[1] && !tmpTile[3]) { situation = Constants.AutoInner; }
+            if (!tmpTile[1] && !tmpTile[3]) { situation = AutoTileInner; }
 
             // Actually place the subtile
             switch (situation)
             {
-                case Constants.AutoInner:
+                case AutoTileInner:
                     PlaceAutotile(layerNum, x, y, 3, "o");
                     break;
-                case Constants.AutoHorizontal:
+                case AutoTileHorizontal:
                     PlaceAutotile(layerNum, x, y, 3, "s");
                     break;
-                case Constants.AutoVertical:
+                case AutoTileVertical:
                     PlaceAutotile(layerNum, x, y, 3, "g");
                     break;
-                case Constants.AutoFill:
+                case AutoTileFill:
                     PlaceAutotile(layerNum, x, y, 3, "k");
                     break;
             }
@@ -682,27 +702,27 @@ namespace Intersect_Client.Classes.Maps
             if (CheckTileMatch(layerNum, x, y, x + 1, y)) { tmpTile[3] = true; }
 
             // Calculate Situation -  Horizontal
-            if (!tmpTile[1] && tmpTile[3]) { situation = Constants.AutoHorizontal; }
+            if (!tmpTile[1] && tmpTile[3]) { situation = AutoTileHorizontal; }
             // Vertical
-            if (tmpTile[1] && !tmpTile[3]) { situation = Constants.AutoVertical; }
+            if (tmpTile[1] && !tmpTile[3]) { situation = AutoTileVertical; }
             // Fill
-            if (tmpTile[1] && tmpTile[2] && tmpTile[3]) { situation = Constants.AutoFill; }
+            if (tmpTile[1] && tmpTile[2] && tmpTile[3]) { situation = AutoTileFill; }
             // Inner
-            if (!tmpTile[1] && !tmpTile[3]) { situation = Constants.AutoInner; }
+            if (!tmpTile[1] && !tmpTile[3]) { situation = AutoTileInner; }
 
             // Actually place the subtile
             switch (situation)
             {
-                case Constants.AutoInner:
+                case AutoTileInner:
                     PlaceAutotile(layerNum, x, y, 4, "t");
                     break;
-                case Constants.AutoHorizontal:
+                case AutoTileHorizontal:
                     PlaceAutotile(layerNum, x, y, 4, "p");
                     break;
-                case Constants.AutoVertical:
+                case AutoTileVertical:
                     PlaceAutotile(layerNum, x, y, 4, "l");
                     break;
-                case Constants.AutoFill:
+                case AutoTileFill:
                     PlaceAutotile(layerNum, x, y, 4, "h");
                     break;
             }
@@ -712,9 +732,9 @@ namespace Intersect_Client.Classes.Maps
         {
             Tile targetTile = null;
             // if ( it//s off the map ) { set it as autotile and exit out early
-            if (x2 < 0 || x2 >= Globals.Database.MapWidth || y2 < 0 || y2 >= Globals.Database.MapHeight)
+            if (x2 < 0 || x2 >= Options.MapWidth || y2 < 0 || y2 >= Options.MapHeight)
             {
-                if (((x2 < 0 && y2 < 0)) || (x2 >= Globals.Database.MapWidth && y2 >= Globals.Database.MapHeight) || (x2 < 0 && y2 >= Globals.Database.MapHeight) || (x2 >= Globals.Database.MapWidth && y2 < 0))
+                if (((x2 < 0 && y2 < 0)) || (x2 >= Options.MapWidth && y2 >= Options.MapHeight) || (x2 < 0 && y2 >= Options.MapHeight) || (x2 >= Options.MapWidth && y2 < 0))
                 {
                     return true;
                 }
@@ -726,7 +746,7 @@ namespace Intersect_Client.Classes.Maps
                         otherMap = Globals.GameMaps[_myMap.Left];
                         if (otherMap != null)
                         {
-                            targetTile = otherMap.Layers[layerNum].Tiles[Globals.Database.MapWidth + x2, y2];
+                            targetTile = otherMap.Layers[layerNum].Tiles[Options.MapWidth + x2, y2];
                         }
                         else
                         {
@@ -738,14 +758,14 @@ namespace Intersect_Client.Classes.Maps
                         return true;
                     }
                 }
-                else if (x2 >= Globals.Database.MapWidth)
+                else if (x2 >= Options.MapWidth)
                 {
                     if (_myMap.Right > -1 && Globals.GameMaps.ContainsKey(_myMap.Right))
                     {
                         otherMap = Globals.GameMaps[_myMap.Right];
                         if (otherMap != null)
                         {
-                            targetTile = otherMap.Layers[layerNum].Tiles[x2 - Globals.Database.MapWidth, y2];
+                            targetTile = otherMap.Layers[layerNum].Tiles[x2 - Options.MapWidth, y2];
                         }
                         else
                         {
@@ -764,7 +784,7 @@ namespace Intersect_Client.Classes.Maps
                         otherMap = Globals.GameMaps[_myMap.Up];
                         if (otherMap != null)
                         {
-                            targetTile = otherMap.Layers[layerNum].Tiles[x2, Globals.Database.MapHeight + y2];
+                            targetTile = otherMap.Layers[layerNum].Tiles[x2, Options.MapHeight + y2];
                         }
                         else
                         {
@@ -776,14 +796,14 @@ namespace Intersect_Client.Classes.Maps
                         return true;
                     }
                 }
-                else if (y2 >= Globals.Database.MapHeight)
+                else if (y2 >= Options.MapHeight)
                 {
                     if (_myMap.Down > -1 && Globals.GameMaps.ContainsKey(_myMap.Down))
                     {
                         otherMap = Globals.GameMaps[_myMap.Down];
                         if (otherMap != null)
                         {
-                            targetTile = otherMap.Layers[layerNum].Tiles[x2, y2 - Globals.Database.MapHeight];
+                            targetTile = otherMap.Layers[layerNum].Tiles[x2, y2 - Options.MapHeight];
                         }
                         else
                         {
@@ -803,7 +823,7 @@ namespace Intersect_Client.Classes.Maps
             var sourceTile = _myMap.Layers[layerNum].Tiles[x1, y1];
             if (targetTile == null) { return true; }
             // fakes ALWAYS return true
-            if (targetTile.Autotile == Constants.AutotileFake)
+            if (targetTile.Autotile == AutotileFake)
             {
                 return true;
             }
@@ -954,6 +974,6 @@ namespace Intersect_Client.Classes.Maps
 
     public class AutoTileCls
     {
-        public QuarterTileCls[] Layer = new QuarterTileCls[Constants.LayerCount + 1];
+        public QuarterTileCls[] Layer = new QuarterTileCls[Options.LayerCount + 1];
     }
 }

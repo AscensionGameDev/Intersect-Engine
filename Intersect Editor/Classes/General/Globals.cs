@@ -90,10 +90,6 @@ namespace Intersect_Editor.Classes
         public static int MouseButton = -1;
         public static int CurrentLayer = 0;
         public static bool ViewingMapProperties = false;
-        public static int TileWidth = 32;
-        public static int TileHeight = 32;
-        public static int MapWidth = 32;
-        public static int MapHeight = 26;
         public static int CurrentTool = (int) Enums.EdittingTool.Pen;
         public static int CurMapSelX;
         public static int CurMapSelY;

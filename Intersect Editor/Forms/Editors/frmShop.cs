@@ -30,6 +30,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using Intersect_Editor.Classes;
 using Intersect_Editor.Classes.Game_Objects;
+using Intersect_Editor.Classes.General;
 
 namespace Intersect_Editor.Forms.Editors
 {
@@ -46,9 +47,9 @@ namespace Intersect_Editor.Forms.Editors
 
         public void InitEditor()
         {
-            _backups = new ByteBuffer[Constants.MaxShops];
-            _changed = new bool[Constants.MaxShops];
-            for (var i = 0; i < Constants.MaxShops; i++)
+            _backups = new ByteBuffer[Options.MaxShops];
+            _changed = new bool[Options.MaxShops];
+            for (var i = 0; i < Options.MaxShops; i++)
             {
                 _backups[i] = new ByteBuffer();
                 _backups[i].WriteBytes(Globals.GameShops[i].ShopData());
@@ -65,7 +66,7 @@ namespace Intersect_Editor.Forms.Editors
             cmbBuyFor.Items.Clear();
             cmbSellFor.Items.Clear();
             cmbDefaultCurrency.Items.Clear();
-            for (int i = 0; i < Constants.MaxItems; i++)
+            for (int i = 0; i < Options.MaxItems; i++)
             {
                 cmbAddBoughtItem.Items.Add((i + 1) + ". " + Globals.GameItems[i].Name);
                 cmbAddSoldItem.Items.Add((i + 1) + ". " + Globals.GameItems[i].Name);
@@ -117,7 +118,7 @@ namespace Intersect_Editor.Forms.Editors
 
         private void btnSave_Click(object sender, EventArgs e)
         {
-            for (var i = 0; i < Constants.MaxShops; i++)
+            for (var i = 0; i < Options.MaxShops; i++)
             {
                 if (_changed[i])
                 {
@@ -142,7 +143,7 @@ namespace Intersect_Editor.Forms.Editors
 
         private void btnCancel_Click(object sender, EventArgs e)
         {
-            for (var i = 0; i < Constants.MaxShops; i++)
+            for (var i = 0; i < Options.MaxShops; i++)
             {
                 Globals.GameShops[i].Load(_backups[i].ToArray(), i);
             }

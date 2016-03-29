@@ -24,6 +24,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Xml;
 using Intersect_Editor.Classes.Game_Objects;
+using Intersect_Editor.Classes.General;
 
 namespace Intersect_Editor.Classes
 {
@@ -33,24 +34,23 @@ namespace Intersect_Editor.Classes
         public static List<FolderMap> OrderedMaps = new List<FolderMap>();
         public static void InitDatabase()
         {
-            Globals.GameItems = new ItemStruct[Constants.MaxItems];
-            Globals.GameNpcs = new NpcStruct[Constants.MaxNpcs];
-            Globals.GameSpells = new SpellStruct[Constants.MaxSpells];
-            Globals.GameAnimations = new AnimationStruct[Constants.MaxAnimations];
-            Globals.GameResources = new ResourceStruct[Constants.MaxResources];
-            Globals.GameClasses = new ClassStruct[Constants.MaxClasses];
-            Globals.GameQuests = new QuestStruct[Constants.MaxQuests];
-            Globals.GameProjectiles = new ProjectileStruct[Constants.MaxProjectiles];
-            Globals.CommonEvents = new EventStruct[Constants.MaxCommonEvents];
-            Globals.GameShops = new ShopStruct[Constants.MaxShops];
+            Globals.GameItems = new ItemStruct[Options.MaxItems];
+            Globals.GameNpcs = new NpcStruct[Options.MaxNpcs];
+            Globals.GameSpells = new SpellStruct[Options.MaxSpells];
+            Globals.GameAnimations = new AnimationStruct[Options.MaxAnimations];
+            Globals.GameResources = new ResourceStruct[Options.MaxResources];
+            Globals.GameClasses = new ClassStruct[Options.MaxClasses];
+            Globals.GameQuests = new QuestStruct[Options.MaxQuests];
+            Globals.GameProjectiles = new ProjectileStruct[Options.MaxProjectiles];
+            Globals.CommonEvents = new EventStruct[Options.MaxCommonEvents];
+            Globals.GameShops = new ShopStruct[Options.MaxShops];
 
-            Globals.ServerSwitches = new string[Constants.MaxServerSwitches];
-            Globals.ServerSwitchValues = new bool[Constants.MaxServerSwitches];
-            Globals.ServerVariables = new string[Constants.MaxServerVariables];
-            Globals.ServerVariableValues = new int[Constants.MaxServerVariables];
-            Globals.PlayerSwitches = new string[Constants.MaxPlayerSwitches];
-            Globals.PlayerVariables = new string[Constants.MaxPlayerVariables];
-            LoadOptions();
+            Globals.ServerSwitches = new string[Options.MaxServerSwitches];
+            Globals.ServerSwitchValues = new bool[Options.MaxServerSwitches];
+            Globals.ServerVariables = new string[Options.MaxServerVariables];
+            Globals.ServerVariableValues = new int[Options.MaxServerVariables];
+            Globals.PlayerSwitches = new string[Options.MaxPlayerSwitches];
+            Globals.PlayerVariables = new string[Options.MaxPlayerVariables];
         }
 
         //Options File
@@ -66,11 +66,6 @@ namespace Intersect_Editor.Classes
                 writer.WriteStartElement("Config");
                 writer.WriteElementString("Host", "localhost");
                 writer.WriteElementString("Port", "4500");
-                writer.WriteElementString("TileWidth", Globals.TileWidth.ToString());
-                writer.WriteElementString("TileHeight", Globals.TileHeight.ToString());
-                writer.WriteComment("Do NOT touch these values will resize the maps in the engine. If you have existing maps and change these values you MUST delete them or else the engine will crash on launch.");
-                writer.WriteElementString("MapWidth", Globals.MapWidth.ToString());
-                writer.WriteElementString("MapHeight", Globals.MapHeight.ToString());
                 writer.WriteEndElement();
                 writer.WriteEndDocument();
                 writer.Flush();
@@ -88,18 +83,6 @@ namespace Intersect_Editor.Classes
                     selectSingleNode = options.SelectSingleNode("//Config/Host");
                     if (selectSingleNode != null && selectSingleNode.InnerText != "")
                         Globals.ServerHost = selectSingleNode.InnerText;
-                    selectSingleNode = options.SelectSingleNode("//Config/TileWidth");
-                    if (selectSingleNode != null && selectSingleNode.InnerText != "")
-                        Globals.TileWidth = Int32.Parse(selectSingleNode.InnerText);
-                    selectSingleNode = options.SelectSingleNode("//Config/TileHeight");
-                    if (selectSingleNode != null && selectSingleNode.InnerText != "")
-                        Globals.TileHeight = Int32.Parse(selectSingleNode.InnerText);
-                    selectSingleNode = options.SelectSingleNode("//Config/MapWidth");
-                    if (selectSingleNode != null && selectSingleNode.InnerText != "")
-                        Globals.MapWidth = Int32.Parse(selectSingleNode.InnerText);
-                    selectSingleNode = options.SelectSingleNode("//Config/MapHeight");
-                    if (selectSingleNode != null && selectSingleNode.InnerText != "")
-                        Globals.MapHeight = Int32.Parse(selectSingleNode.InnerText);
                 }
                 catch (Exception)
                 {

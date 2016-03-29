@@ -28,6 +28,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using Intersect_Editor.Classes.General;
 
 namespace Intersect_Editor.Forms
 {
@@ -44,7 +45,7 @@ namespace Intersect_Editor.Forms
 
         private void frmSpell_Load(object sender, EventArgs e)
         {
-            scrlProjectile.Maximum = Constants.MaxProjectiles;
+            scrlProjectile.Maximum = Options.MaxProjectiles;
             lstSpells.SelectedIndex = 0;
             cmbSprite.Items.Clear();
             cmbSprite.Items.Add("None");
@@ -57,9 +58,9 @@ namespace Intersect_Editor.Forms
 
         public void InitEditor()
         {
-            _spellsBackup = new ByteBuffer[Constants.MaxSpells];
-            _changed = new bool[Constants.MaxSpells];
-            for (var i = 0; i < Constants.MaxSpells; i++)
+            _spellsBackup = new ByteBuffer[Options.MaxSpells];
+            _changed = new bool[Options.MaxSpells];
+            for (var i = 0; i < Options.MaxSpells; i++)
             {
                 _spellsBackup[i] = new ByteBuffer();
                 _spellsBackup[i].WriteBytes(Globals.GameSpells[i].SpellData());
@@ -435,7 +436,7 @@ namespace Intersect_Editor.Forms
 
         private void btnCancel_Click(object sender, EventArgs e)
         {
-            for (var i = 0; i < Constants.MaxSpells; i++)
+            for (var i = 0; i < Options.MaxSpells; i++)
             {
                 Globals.GameSpells[i].Load(_spellsBackup[i].ToArray(),i);
             }
@@ -447,7 +448,7 @@ namespace Intersect_Editor.Forms
 
         private void btnSave_Click(object sender, EventArgs e)
         {
-            for (var i = 0; i < Constants.MaxItems; i++)
+            for (var i = 0; i < Options.MaxItems; i++)
             {
                 if (_changed[i])
                 {

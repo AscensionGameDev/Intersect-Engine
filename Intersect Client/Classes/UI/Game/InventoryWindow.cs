@@ -78,7 +78,7 @@ namespace Intersect_Client.Classes.UI.Game
             if (_inventoryWindow.IsHidden == true) { return; }
             X = _inventoryWindow.X;
             Y = _inventoryWindow.Y;
-            for (int i = 0; i < Constants.MaxInvItems; i++)
+            for (int i = 0; i < Options.MaxInvItems; i++)
             {
                 if (Globals.Me.Inventory[i].ItemNum > -1)
                 {
@@ -114,7 +114,7 @@ namespace Intersect_Client.Classes.UI.Game
         private void InitItemContainer()
         {
 
-            for (int i = 0; i < Constants.MaxInvItems; i++)
+            for (int i = 0; i < Options.MaxInvItems; i++)
             {
                 Items.Add(new InventoryItem(this, i));
                 Items[i].pnl = new ImagePanel(_itemContainer);
@@ -294,7 +294,7 @@ namespace Intersect_Client.Classes.UI.Game
         public void Update()
         {
             bool equipped = false;
-            for (int i = 0; i < Enums.EquipmentSlots.Count; i++)
+            for (int i = 0; i < Options.EquipmentSlots.Count; i++)
             {
                 if (Globals.Me.Equipment[i] == _mySlot)
                 {
@@ -362,7 +362,7 @@ namespace Intersect_Client.Classes.UI.Game
                     //Check inventory first.
                     if (_inventoryWindow.RenderBounds().IntersectsWith(dragRect))
                     {
-                        for (int i = 0; i < Constants.MaxInvItems; i++)
+                        for (int i = 0; i < Options.MaxInvItems; i++)
                         {
                             if (_inventoryWindow.Items[i].RenderBounds().IntersectsWith(dragRect))
                             {
@@ -385,7 +385,7 @@ namespace Intersect_Client.Classes.UI.Game
                     }
                     else if (Gui.GameUI.Hotbar.RenderBounds().IntersectsWith(dragRect))
                     {
-                        for (int i = 0; i < Constants.MaxHotbar; i++)
+                        for (int i = 0; i < Options.MaxHotbar; i++)
                         {
                             if (Gui.GameUI.Hotbar.Items[i].RenderBounds().IntersectsWith(dragRect))
                             {

@@ -29,6 +29,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using Intersect_Editor.Classes;
+using Intersect_Editor.Classes.General;
 
 namespace Intersect_Editor.Forms.Editors.Event_Commands
 {
@@ -41,9 +42,9 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             InitializeComponent();
             _myCommand = refCommand;
             _eventEditor = editor;
-            if (_myCommand.Ints[0] <= 0 || _myCommand.Ints[0] > Constants.MaxLevel) _myCommand.Ints[0] = 1;
+            if (_myCommand.Ints[0] <= 0 || _myCommand.Ints[0] > Options.MaxLevel) _myCommand.Ints[0] = 1;
             scrlLevel.Value = _myCommand.Ints[0];
-            scrlLevel.Maximum = Constants.MaxLevel;
+            scrlLevel.Maximum = Options.MaxLevel;
             lblLevel.Text = @"Set Level: " + scrlLevel.Value;
         }
 

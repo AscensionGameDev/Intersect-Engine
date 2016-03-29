@@ -29,6 +29,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using Intersect_Editor.Classes;
+using Intersect_Editor.Classes.General;
 
 namespace Intersect_Editor.Forms.Editors.Event_Commands
 {
@@ -42,7 +43,7 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             _myCommand = refCommand;
             _eventEditor = editor;
             cmbEvent.Items.Clear();
-            for (int i = 0; i < Constants.MaxCommonEvents; i++)
+            for (int i = 0; i < Options.MaxCommonEvents; i++)
             {
                 cmbEvent.Items.Add((i + 1) + ". " + Globals.CommonEvents[i].MyName);
             }

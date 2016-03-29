@@ -22,6 +22,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading;
+using Intersect_Server.Classes.General;
 using Intersect_Server.Classes.Misc;
 
 namespace Intersect_Server.Classes
@@ -114,8 +115,8 @@ namespace Intersect_Server.Classes
                         //Check that not going out of the map boundaries
                         if (x < 0) x = 0;
                         if (y < 0) y = 0;
-                        if (xMax >= Globals.MapWidth) xMax = Globals.MapWidth;
-                        if (yMax >= Globals.MapHeight) yMax = Globals.MapHeight;
+                        if (xMax >= Options.MapWidth) xMax = Options.MapWidth;
+                        if (yMax >= Options.MapHeight) yMax = Options.MapHeight;
 
                         //TODO base this off of the entity array of surrounding maps, not the whole global list.
                         for (int n = 0; n < Globals.GameMaps[CurrentMap].Entities.Count; n++)

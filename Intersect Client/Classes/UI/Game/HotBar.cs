@@ -53,7 +53,7 @@ namespace Intersect_Client.Classes.UI.Game
         public HotBarWindow(Canvas _gameCanvas)
         {
             _hotbarWindow = new WindowControl(_gameCanvas, "Hotbar");
-            _hotbarWindow.SetSize(36 * Constants.MaxHotbar + 8, 38 + 24);
+            _hotbarWindow.SetSize(36 * Options.MaxHotbar + 8, 38 + 24);
             _hotbarWindow.SetPosition(GameGraphics.Renderer.GetScreenWidth() - 4 - _hotbarWindow.Width, 2);
             _hotbarWindow.DisableResizing();
             _hotbarWindow.Margin = Margin.Zero;
@@ -80,7 +80,7 @@ namespace Intersect_Client.Classes.UI.Game
         private void InitHotbarItems()
         {
             int x = 4;
-            for (int i = 0; i < Constants.MaxHotbar; i++)
+            for (int i = 0; i < Options.MaxHotbar; i++)
             {
                 Items.Add(new HotBarItem(i, _hotbarBG, _hotbarWindow));
                 Items[i].pnl = new ImagePanel(_hotbarWindow);
@@ -104,7 +104,7 @@ namespace Intersect_Client.Classes.UI.Game
         public void Update()
         {
             if (Globals.Me == null) { return; }
-            for (int i = 0; i < Constants.MaxHotbar; i++)
+            for (int i = 0; i < Options.MaxHotbar; i++)
             {
                 Items[i].Update();
             }
@@ -150,7 +150,7 @@ namespace Intersect_Client.Classes.UI.Game
 
         private int myindex;
 
-        private int[] _statBoost = new int[Constants.MaxStats];
+        private int[] _statBoost = new int[Options.MaxStats];
 
         //Textures
         private Texture gwenTex;
@@ -342,7 +342,7 @@ namespace Intersect_Client.Classes.UI.Game
 
                         if (Gui.GameUI.Hotbar.RenderBounds().IntersectsWith(dragRect))
                         {
-                            for (int i = 0; i < Constants.MaxHotbar; i++)
+                            for (int i = 0; i < Options.MaxHotbar; i++)
                             {
                                 if (Gui.GameUI.Hotbar.Items[i].RenderBounds().IntersectsWith(dragRect))
                                 {

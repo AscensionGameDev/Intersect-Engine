@@ -121,6 +121,7 @@
     <Compile Include="Classes\Game Objects\QuestStruct.cs" />
     <Compile Include="Classes\Game Objects\ResourceStruct.cs" />
     <Compile Include="Classes\Game Objects\ShopStruct.cs" />
+    <Compile Include="Classes\General\Options.cs" />
     <Compile Include="Classes\Items\ItemInstance.cs" />
     <Compile Include="Classes\Maps\MapList.cs" />
     <Compile Include="Classes\Misc\FieldChecking.cs" />

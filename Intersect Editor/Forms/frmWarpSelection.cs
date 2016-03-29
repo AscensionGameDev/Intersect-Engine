@@ -29,6 +29,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using Intersect_Editor.Classes;
+using Intersect_Editor.Classes.General;
 using Intersect_Editor.Forms.Controls;
 
 namespace Intersect_Editor.Forms
@@ -44,8 +45,8 @@ namespace Intersect_Editor.Forms
         {
             InitializeComponent();
             mapTreeList1.UpdateMapList(_currentMap);
-            pnlMap.Width = Globals.TileWidth*Globals.MapWidth;
-            pnlMap.Height = Globals.TileHeight*Globals.MapHeight;
+            pnlMap.Width = Options.TileWidth*Options.MapWidth;
+            pnlMap.Height = Options.TileHeight*Options.MapHeight;
             pnlMap.BackColor = Color.Black;
             mapTreeList1.SetDoubleClick(new TreeNodeMouseClickEventHandler(NodeDoubleClick));
         }
@@ -84,8 +85,8 @@ namespace Intersect_Editor.Forms
                         g.DrawImage(sourceBitmap, new Rectangle(0, 0, pnlMap.Width, pnlMap.Height),
                             new Rectangle(0, 0, pnlMap.Width, pnlMap.Height), GraphicsUnit.Pixel);
                         g.DrawRectangle(new Pen(Color.White, 2f),
-                            new Rectangle(_currentX*Globals.TileWidth, _currentY*Globals.TileHeight, Globals.TileWidth,
-                                Globals.TileHeight));
+                            new Rectangle(_currentX*Options.TileWidth, _currentY*Options.TileHeight, Options.TileWidth,
+                                Options.TileHeight));
                         g.Dispose();
                         pnlMap.BackgroundImage = newBitmap;
                         sourceBitmap.Dispose();
@@ -151,8 +152,8 @@ namespace Intersect_Editor.Forms
         {
             if (e.X >= pnlMap.Width || e.Y >= pnlMap.Height) { return; }
             if (e.X < 0 || e.Y < 0) { return; }
-            _currentX = (int)Math.Floor((double)(e.X) / Globals.TileWidth);
-            _currentY = (int)Math.Floor((double)(e.Y) / Globals.TileHeight);
+            _currentX = (int)Math.Floor((double)(e.X) / Options.TileWidth);
+            _currentY = (int)Math.Floor((double)(e.Y) / Options.TileHeight);
             UpdatePreview();
         }
 

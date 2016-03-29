@@ -55,7 +55,7 @@ namespace Intersect_Client.Classes.Game_Objects
 
         public NpcStruct()
         {
-            for (int i = 0; i < Constants.MaxNpcDrops; i++)
+            for (int i = 0; i < Options.MaxNpcDrops; i++)
             {
                 Drops.Add(new NPCDrop());
             }
@@ -83,7 +83,7 @@ namespace Intersect_Client.Classes.Game_Objects
             SpawnDuration = myBuffer.ReadInteger();
             Behavior = myBuffer.ReadByte();
             SightRange = myBuffer.ReadInteger();
-            for (int i = 0; i < Constants.MaxNpcDrops; i++)
+            for (int i = 0; i < Options.MaxNpcDrops; i++)
             {
                 Drops[i].ItemNum = myBuffer.ReadInteger();
                 Drops[i].Amount = myBuffer.ReadInteger();

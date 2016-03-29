@@ -58,9 +58,6 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="MySql.Data">
-      <HintPath>.\MySql.Data.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
@@ -85,6 +82,7 @@
     <Compile Include="Classes\Entities\EventPageInstance.cs" />
     <Compile Include="Classes\Entities\EventStruct.cs" />
     <Compile Include="Classes\Core\Main.cs" />
+    <Compile Include="Classes\General\Options.cs" />
     <Compile Include="Classes\Items\ItemInstance.cs" />
     <Compile Include="Classes\Maps\MapHelper.cs" />
     <Compile Include="Classes\Maps\MapList.cs" />
@@ -100,7 +98,6 @@
     <Compile Include="Classes\Networking\PacketHandler.cs" />
     <Compile Include="Classes\Maps\MapStruct.cs" />
     <Compile Include="Classes\General\Globals.cs" />
-    <Compile Include="Classes\General\Constants.cs" />
     <Compile Include="Classes\Networking\PacketSender.cs" />
     <Compile Include="Classes\Entities\Player.cs" />
     <Compile Include="Classes\Entities\Entity.cs" />

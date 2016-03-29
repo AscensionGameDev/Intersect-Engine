@@ -49,7 +49,7 @@ namespace Intersect_Client.Classes.Game_Objects
 
         public ResourceStruct()
         {
-            for (int i = 0; i < Constants.MaxNpcDrops; i++)
+            for (int i = 0; i < Options.MaxNpcDrops; i++)
             {
                 Drops.Add(new ResourceDrop());
             }
@@ -74,7 +74,7 @@ namespace Intersect_Client.Classes.Game_Objects
             WalkableBefore = Convert.ToBoolean(myBuffer.ReadInteger());
             WalkableAfter = Convert.ToBoolean(myBuffer.ReadInteger());
 
-            for (int i = 0; i < Constants.MaxNpcDrops; i++)
+            for (int i = 0; i < Options.MaxNpcDrops; i++)
             {
                 Drops[i].ItemNum = myBuffer.ReadInteger();
                 Drops[i].Amount = myBuffer.ReadInteger();

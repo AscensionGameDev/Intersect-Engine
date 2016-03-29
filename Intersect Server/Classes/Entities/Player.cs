@@ -24,6 +24,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using Intersect_Server.Classes.Entities;
 using Intersect_Server.Classes.Game_Objects;
+using Intersect_Server.Classes.General;
 using Intersect_Server.Classes.Maps;
 
 namespace Intersect_Server.Classes
@@ -37,18 +38,14 @@ namespace Intersect_Server.Classes
         public List<EventInstance> MyEvents = new List<EventInstance>();
         public bool[] Switches;
         public int[] Variables;
-        public HotbarInstance[] Hotbar = new HotbarInstance[Constants.MaxHotbar];
-        public int[] Equipment = new int[Enums.EquipmentSlots.Count];
+        public HotbarInstance[] Hotbar = new HotbarInstance[Options.MaxHotbar];
+        public int[] Equipment = new int[Options.EquipmentSlots.Count];
         public int StatPoints = 0;
-        public string MyAccount = "";
-        public string MyEmail = "";
-        public string MyPassword = "";
-        public string MySalt = "";
         public int Class = 0;
         public int Gender = 0;
         public int Level = 0;
         public int Experience = 0;
-        public ItemInstance[] Bank = new ItemInstance[Constants.MaxBankSlots];
+        public ItemInstance[] Bank = new ItemInstance[Options.MaxBankSlots];
 
         //Temporary Values
         private int _curMapLink = -1;
@@ -60,21 +57,21 @@ namespace Intersect_Server.Classes
         public Player(int index, Client newClient) : base(index)
         {
             MyClient = newClient;
-            Switches = new bool[Constants.MaxPlayerSwitches];
-            Variables = new int[Constants.MaxPlayerVariables];
-            for (int i = 0; i < Constants.MaxPlayerSkills; i++)
+            Switches = new bool[Options.MaxPlayerSwitches];
+            Variables = new int[Options.MaxPlayerVariables];
+            for (int i = 0; i < Options.MaxPlayerSkills; i++)
             {
                 Spells.Add(new SpellInstance());
             }
-            for (int i = 0; i < Constants.MaxInvItems; i++)
+            for (int i = 0; i < Options.MaxInvItems; i++)
             {
                 Inventory.Add(new ItemInstance(-1, 0));
             }
-            for (int i = 0; i < Enums.EquipmentSlots.Count; i++)
+            for (int i = 0; i < Options.EquipmentSlots.Count; i++)
             {
                 Equipment[i] = -1;
             }
-            for (int i = 0; i < Constants.MaxHotbar; i++)
+            for (int i = 0; i < Options.MaxHotbar; i++)
             {
                 Hotbar[i] = new HotbarInstance();
             }
@@ -192,7 +189,7 @@ namespace Intersect_Server.Classes
         //Leveling
         public void SetLevel(int level, bool resetExperience = false)
         {
-            if (level > 0 && level <= Constants.MaxLevel)
+            if (level > 0 && level <= Options.MaxLevel)
             {
                 Level = level;
                 if (resetExperience) Experience = 0;
@@ -305,7 +302,7 @@ namespace Intersect_Server.Classes
                 Globals.GameItems[item.ItemNum].Type == (int)Enums.ItemTypes.None ||
                 Globals.GameItems[item.ItemNum].Type == (int)Enums.ItemTypes.Spell)
             {
-                for (int i = 0; i < Constants.MaxInvItems; i++)
+                for (int i = 0; i < Options.MaxInvItems; i++)
                 {
                     if (Inventory[i].ItemNum == item.ItemNum)
                     {
@@ -315,7 +312,7 @@ namespace Intersect_Server.Classes
             }
 
             //Either a non stacking item, or we couldn't find the item already existing in the players inventory
-            for (int i = 0; i < Constants.MaxInvItems; i++)
+            for (int i = 0; i < Options.MaxInvItems; i++)
             {
                 if (Inventory[i].ItemNum == -1)
                 {
@@ -332,7 +329,7 @@ namespace Intersect_Server.Classes
                 Globals.GameItems[item.ItemNum].Type == (int)Enums.ItemTypes.None ||
                 Globals.GameItems[item.ItemNum].Type == (int)Enums.ItemTypes.Spell)
             {
-                for (int i = 0; i < Constants.MaxInvItems; i++)
+                for (int i = 0; i < Options.MaxInvItems; i++)
                 {
                     if (Inventory[i].ItemNum == item.ItemNum)
                     {
@@ -347,7 +344,7 @@ namespace Intersect_Server.Classes
             }
 
             //Either a non stacking item, or we couldn't find the item already existing in the players inventory
-            for (int i = 0; i < Constants.MaxInvItems; i++)
+            for (int i = 0; i < Options.MaxInvItems; i++)
             {
                 if (Inventory[i].ItemNum == -1)
                 {
@@ -419,7 +416,7 @@ namespace Intersect_Server.Classes
                         PacketSender.SendPlayerMsg(MyClient, "You cannot use this item!");
                         break;
                     case (int)Enums.ItemTypes.Equipment:
-                        for (int i = 0; i < Enums.EquipmentSlots.Count; i++)
+                        for (int i = 0; i < Options.EquipmentSlots.Count; i++)
                         {
                             if (Equipment[i] == slot)
                             {
@@ -429,28 +426,34 @@ namespace Intersect_Server.Classes
                         }
                         if (!equipped)
                         {
-                            switch (Globals.GameItems[Inventory[slot].ItemNum].Data1)
+                            if (Globals.GameItems[Inventory[slot].ItemNum].Data1 == Options.WeaponIndex)
                             {
-                                case Enums.WeaponIndex:
+                                if (Options.WeaponIndex > -1)
+                                {
                                     if (Convert.ToBoolean(Globals.GameItems[Inventory[slot].ItemNum].Data4))
                                     {
-                                        Equipment[Enums.ShieldIndex] = -1;
+                                        Equipment[Options.ShieldIndex] = -1;
                                     }
-                                    Equipment[Enums.WeaponIndex] = slot;
-                                    break;
-                                case Enums.ShieldIndex:
-                                    if (Equipment[Enums.WeaponIndex] > -1)
+                                    Equipment[Options.WeaponIndex] = slot;
+                                }
+                            }
+                            else if (Globals.GameItems[Inventory[slot].ItemNum].Data1 == Options.ShieldIndex)
+                            {
+                                if (Options.ShieldIndex > -1)
+                                {
+                                    if (Equipment[Options.WeaponIndex] > -1)
                                     {
-                                        if (Convert.ToBoolean(Globals.GameItems[Inventory[Equipment[Enums.WeaponIndex]].ItemNum].Data4))
+                                        if (Convert.ToBoolean(Globals.GameItems[Inventory[Equipment[Options.WeaponIndex]].ItemNum].Data4))
                                         {
-                                            Equipment[Enums.WeaponIndex] = -1;
+                                            Equipment[Options.WeaponIndex] = -1;
                                         }
                                     }
-                                    Equipment[Enums.ShieldIndex] = slot;
-                                    break;
-                                default:
-                                    Equipment[Globals.GameItems[Inventory[slot].ItemNum].Data1] = slot;
-                                    break;
+                                    Equipment[Options.ShieldIndex] = slot;
+                                }
+                            }
+                            else
+                            {
+                                Equipment[Globals.GameItems[Inventory[slot].ItemNum].Data1] = slot;
                             }
                         }
                         PacketSender.SendPlayerEquipmentToProximity(this);
@@ -512,7 +515,7 @@ namespace Intersect_Server.Classes
         }
         public int FindItem(int itemNum, int itemVal = 1)
         {
-            for (int i = 0; i < Constants.MaxInvItems; i++)
+            for (int i = 0; i < Options.MaxInvItems; i++)
             {
                 if (Inventory[i].ItemNum == itemNum && Inventory[i].ItemVal >= itemVal)
                 {
@@ -712,7 +715,7 @@ namespace Intersect_Server.Classes
                     Globals.GameItems[Inventory[slot].ItemNum].Type == (int)Enums.ItemTypes.None ||
                      Globals.GameItems[Inventory[slot].ItemNum].Type == (int)Enums.ItemTypes.Spell)
                 {
-                    for (int i = 0; i < Constants.MaxBankSlots; i++)
+                    for (int i = 0; i < Options.MaxBankSlots; i++)
                     {
                         if (Bank[i] != null && Bank[i].ItemNum == Inventory[slot].ItemNum)
                         {
@@ -735,7 +738,7 @@ namespace Intersect_Server.Classes
                 }
 
                 //Either a non stacking item, or we couldn't find the item already existing in the players inventory
-                for (int i = 0; i < Constants.MaxBankSlots; i++)
+                for (int i = 0; i < Options.MaxBankSlots; i++)
                 {
                     if (Bank[i] == null || Bank[i].ItemNum == -1)
                     {
@@ -791,7 +794,7 @@ namespace Intersect_Server.Classes
                     Globals.GameItems[Bank[slot].ItemNum].Type == (int)Enums.ItemTypes.None ||
                      Globals.GameItems[Bank[slot].ItemNum].Type == (int)Enums.ItemTypes.Spell)
                 {
-                    for (int i = 0; i < Constants.MaxInvItems; i++)
+                    for (int i = 0; i < Options.MaxInvItems; i++)
                     {
                         if (Inventory[i] != null && Inventory[i].ItemNum == Bank[slot].ItemNum)
                         {
@@ -813,7 +816,7 @@ namespace Intersect_Server.Classes
                 }
 
                 //Either a non stacking item, or we couldn't find the item already existing in the players inventory
-                for (int i = 0; i < Constants.MaxInvItems; i++)
+                for (int i = 0; i < Options.MaxInvItems; i++)
                 {
                     if (Inventory[i] == null || Inventory[i].ItemNum == -1)
                     {
@@ -868,7 +871,7 @@ namespace Intersect_Server.Classes
         public bool TryTeachSpell(SpellInstance spell, bool SendUpdate = true)
         {
             if (KnowsSpell(spell.SpellNum)) { return false; }
-            for (int i = 0; i < Constants.MaxPlayerSkills; i++)
+            for (int i = 0; i < Options.MaxPlayerSkills; i++)
             {
                 if (Spells[i].SpellNum == -1)
                 {
@@ -884,7 +887,7 @@ namespace Intersect_Server.Classes
         }
         public bool KnowsSpell(int spellnum)
         {
-            for (int i = 0; i < Constants.MaxPlayerSkills; i++)
+            for (int i = 0; i < Options.MaxPlayerSkills; i++)
             {
                 if (Spells[i].SpellNum == spellnum) { return true; }
             }
@@ -892,7 +895,7 @@ namespace Intersect_Server.Classes
         }
         public int FindSpell(int spellNum)
         {
-            for (int i = 0; i < Constants.MaxPlayerSkills; i++)
+            for (int i = 0; i < Options.MaxPlayerSkills; i++)
             {
                 if (Spells[i].SpellNum == spellNum) { return i; }
             }
@@ -970,7 +973,7 @@ namespace Intersect_Server.Classes
         }
         public void EquipmentProcessItemSwap(int item1, int item2)
         {
-            for (int i = 0; i < Enums.EquipmentSlots.Count; i++)
+            for (int i = 0; i < Options.EquipmentSlots.Count; i++)
             {
                 if (Equipment[i] == item1)
                     Equipment[i] = item2;
@@ -981,7 +984,7 @@ namespace Intersect_Server.Classes
         }
         public void EquipmentProcessItemLoss(int slot)
         {
-            for (int i = 0; i < Enums.EquipmentSlots.Count; i++)
+            for (int i = 0; i < Options.EquipmentSlots.Count; i++)
             {
                 if (Equipment[i] == slot)
                     Equipment[i] = -1;
@@ -992,7 +995,7 @@ namespace Intersect_Server.Classes
         //Stats
         public void UpgradeStat(int statIndex)
         {
-            if (Stat[statIndex].Stat < Constants.MaxStatValue)
+            if (Stat[statIndex].Stat < Options.MaxStatValue)
             {
                 Stat[statIndex].Stat++;
                 StatPoints--;
@@ -1009,7 +1012,7 @@ namespace Intersect_Server.Classes
         }
         public void HotbarProcessItemSwap(int item1, int item2)
         {
-            for (int i = 0; i < Constants.MaxHotbar; i++)
+            for (int i = 0; i < Options.MaxHotbar; i++)
             {
                 if (Hotbar[i].Type == 0 && Hotbar[i].Slot == item1)
                     Hotbar[i].Slot = item2;
@@ -1020,7 +1023,7 @@ namespace Intersect_Server.Classes
         }
         public void HotbarProcessSpellSwap(int spell1, int spell2)
         {
-            for (int i = 0; i < Constants.MaxHotbar; i++)
+            for (int i = 0; i < Options.MaxHotbar; i++)
             {
                 if (Hotbar[i].Type == 1 && Hotbar[i].Slot == spell1)
                     Hotbar[i].Slot = spell2;

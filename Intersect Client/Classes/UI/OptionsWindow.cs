@@ -93,16 +93,16 @@ namespace Intersect_Client.Classes.UI
                 _resolutionList.AddItem(myModes[i]);
                 /*if (Globals.GameBorderStyle == 1)
                 {
-                    if (myModes[i].Width <= Globals.Database.TileWidth*Globals.Database.MapWidth &&
-                        myModes[i].Height <= Globals.Database.TileHeight*Globals.Database.MapHeight)
+                    if (myModes[i].Width <= Options.TileWidth*Options.MapWidth &&
+                        myModes[i].Height <= Options.TileHeight*Options.MapHeight)
                     {
                         _resolutionList.AddItem(myModes[i].Width + "x" + myModes[i].Height);
                     }
                 }
                 else
                 {
-                    int maxx = (Globals.Database.MapWidth - 1) * Globals.Database.TileWidth * 2;
-                    int maxy = (Globals.Database.MapHeight - 1) * Globals.Database.TileHeight * 2;
+                    int maxx = (Options.MapWidth - 1) * Options.TileWidth * 2;
+                    int maxy = (Options.MapHeight - 1) * Options.TileHeight * 2;
                     if (myModes[i].Width <= maxx &&
                         myModes[i].Height <= maxy)
                     {

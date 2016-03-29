@@ -77,7 +77,7 @@ namespace Intersect_Client.Classes.UI.Game
             if (_spellWindow.IsHidden == true) { return; }
             X = _spellWindow.X;
             Y = _spellWindow.Y;
-            for (int i = 0; i < Constants.MaxPlayerSkills; i++)
+            for (int i = 0; i < Options.MaxPlayerSkills; i++)
             {
                 if (Globals.Me.Spells[i].SpellNum > -1)
                 {
@@ -94,7 +94,7 @@ namespace Intersect_Client.Classes.UI.Game
         private void InitItemContainer()
         {
 
-            for (int i = 0; i < Constants.MaxPlayerSkills; i++)
+            for (int i = 0; i < Options.MaxPlayerSkills; i++)
             {
                 Items.Add(new SpellItem(this, i));
                 Items[i].pnl = new ImagePanel(_itemContainer);
@@ -279,7 +279,7 @@ namespace Intersect_Client.Classes.UI.Game
                     //Check spell first.
                     if (_spellWindow.RenderBounds().IntersectsWith(dragRect))
                     {
-                        for (int i = 0; i < Constants.MaxInvItems; i++)
+                        for (int i = 0; i < Options.MaxInvItems; i++)
                         {
                             if (_spellWindow.Items[i].RenderBounds().IntersectsWith(dragRect))
                             {
@@ -302,7 +302,7 @@ namespace Intersect_Client.Classes.UI.Game
                     }
                     else if (Gui.GameUI.Hotbar.RenderBounds().IntersectsWith(dragRect))
                     {
-                        for (int i = 0; i < Constants.MaxHotbar; i++)
+                        for (int i = 0; i < Options.MaxHotbar; i++)
                         {
                             if (Gui.GameUI.Hotbar.Items[i].RenderBounds().IntersectsWith(dragRect))
                             {

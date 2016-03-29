@@ -23,6 +23,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Intersect_Server.Classes.General;
 
 namespace Intersect_Server.Classes
 {
@@ -36,7 +37,7 @@ namespace Intersect_Server.Classes
         {
             ItemNum = itemNum;
             ItemVal = itemVal;
-            if (itemNum > 0 && itemNum < Constants.MaxItems)
+            if (itemNum > 0 && itemNum < Options.MaxItems)
             {
                 if (Globals.GameItems[itemNum].Type == (int) Enums.ItemTypes.Equipment)
                 {

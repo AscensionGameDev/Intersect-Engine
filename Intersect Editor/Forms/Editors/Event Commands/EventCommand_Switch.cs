@@ -28,6 +28,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using Intersect_Editor.Classes;
+using Intersect_Editor.Classes.General;
 
 namespace Intersect_Editor.Forms.Editors.Event_Commands
 {
@@ -57,19 +58,19 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             int switchCount = 0;
             if (rdoPlayerSwitch.Checked)
             {
-                for (var i = 0; i < Constants.MaxPlayerSwitches; i++)
+                for (var i = 0; i < Options.MaxPlayerSwitches; i++)
                 {
                     cmbSetSwitch.Items.Add((i + 1) + ". " + Globals.PlayerSwitches[i]);
                 }
-                switchCount = Constants.MaxPlayerSwitches;
+                switchCount = Options.MaxPlayerSwitches;
             }
             else
             {
-                for (var i = 0; i < Constants.MaxServerSwitches; i++)
+                for (var i = 0; i < Options.MaxServerSwitches; i++)
                 {
                     cmbSetSwitch.Items.Add((i + 1) + ". " + Globals.ServerSwitches[i]);
                 }
-                switchCount = Constants.MaxServerSwitches;
+                switchCount = Options.MaxServerSwitches;
             }
             if (_myCommand.Ints[1] >= 0 && _myCommand.Ints[1] < switchCount)
             {

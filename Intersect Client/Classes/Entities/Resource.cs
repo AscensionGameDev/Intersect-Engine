@@ -76,8 +76,8 @@ namespace Intersect_Client.Classes.Entities
             {
                 srcTexture = GameGraphics.ResourceTextures[GameGraphics.ResourceFileNames.IndexOf(MySprite)];
                 srcRectangle = new FloatRect(0, 0, GameGraphics.ResourceTextures[GameGraphics.ResourceFileNames.IndexOf(MySprite)].GetWidth(), GameGraphics.ResourceTextures[GameGraphics.ResourceFileNames.IndexOf(MySprite)].GetHeight());
-                destRectangle.Y = (int)(Globals.GameMaps[CurrentMap].GetY() + CurrentY * Globals.Database.TileHeight + OffsetY);
-                destRectangle.X = (int)(Globals.GameMaps[CurrentMap].GetX() + CurrentX * Globals.Database.TileWidth + OffsetX);
+                destRectangle.Y = (int)(Globals.GameMaps[CurrentMap].GetY() + CurrentY * Options.TileHeight + OffsetY);
+                destRectangle.X = (int)(Globals.GameMaps[CurrentMap].GetX() + CurrentX * Options.TileWidth + OffsetX);
                 if (srcRectangle.Height > 32) { destRectangle.Y -= srcRectangle.Height - 32; }
                 if (srcRectangle.Width > 32) { destRectangle.X -= (srcRectangle.Width - 32) / 2; }
                 destRectangle.Width = srcRectangle.Width;

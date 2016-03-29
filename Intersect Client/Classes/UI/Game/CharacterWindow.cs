@@ -54,7 +54,7 @@ namespace Intersect_Client.Classes.UI.Game
         private string _currentSprite = "";
 
         private GameRenderTexture _equipmentBG;
-        private int[] _emptyStatBoost = new int[Constants.MaxStats];
+        private int[] _emptyStatBoost = new int[Options.MaxStats];
 
         //Stats
         Label _attackLabel;
@@ -220,7 +220,7 @@ namespace Intersect_Client.Classes.UI.Game
         private void InitEquipmentContainer()
         {
             int x = 0;
-            int w = 38 * Enums.EquipmentSlots.Count;
+            int w = 38 * Options.EquipmentSlots.Count;
             if (w > _characterWindow.Width - 10)
             {
                 _equipmentContainer.EnableScroll(true, false);
@@ -231,7 +231,7 @@ namespace Intersect_Client.Classes.UI.Game
                 x = (_characterWindow.Width - 10) / 2 - (w - 4) / 2;
                 _equipmentContainer.EnableScroll(false, false);
             }
-            for (int i = 0; i < Enums.EquipmentSlots.Count; i++)
+            for (int i = 0; i < Options.EquipmentSlots.Count; i++)
             {
                 Items.Add(new EquipmentItem(i, _equipmentBG, _characterWindow));
                 Items[i].pnl = new ImagePanel(_equipmentContainer);
@@ -275,13 +275,13 @@ namespace Intersect_Client.Classes.UI.Game
             _abilityPwrLabel.SetText("Ability Pwr: " + Globals.Me.Stat[(int)Enums.Stats.AbilityPower]);
             _magicRstLabel.SetText("Magic Resist: " + Globals.Me.Stat[(int)Enums.Stats.MagicResist]);
             _pointsLabel.SetText("Points: " + Globals.Me.StatPoints);
-            _addAbilityPwrBtn.IsHidden = (Globals.Me.StatPoints == 0 || Globals.Me.Stat[(int)Enums.Stats.AbilityPower] == Constants.MaxStatValue);
-            _addAttackBtn.IsHidden = (Globals.Me.StatPoints == 0 || Globals.Me.Stat[(int)Enums.Stats.Attack] == Constants.MaxStatValue);
-            _addDefenseBtn.IsHidden = (Globals.Me.StatPoints == 0 || Globals.Me.Stat[(int)Enums.Stats.Defense] == Constants.MaxStatValue);
-            _addMagicResistBtn.IsHidden = (Globals.Me.StatPoints == 0 || Globals.Me.Stat[(int)Enums.Stats.MagicResist] == Constants.MaxStatValue);
-            _addSpeedBtn.IsHidden = (Globals.Me.StatPoints == 0 || Globals.Me.Stat[(int)Enums.Stats.Speed] == Constants.MaxStatValue);
+            _addAbilityPwrBtn.IsHidden = (Globals.Me.StatPoints == 0 || Globals.Me.Stat[(int)Enums.Stats.AbilityPower] == Options.MaxStatValue);
+            _addAttackBtn.IsHidden = (Globals.Me.StatPoints == 0 || Globals.Me.Stat[(int)Enums.Stats.Attack] == Options.MaxStatValue);
+            _addDefenseBtn.IsHidden = (Globals.Me.StatPoints == 0 || Globals.Me.Stat[(int)Enums.Stats.Defense] == Options.MaxStatValue);
+            _addMagicResistBtn.IsHidden = (Globals.Me.StatPoints == 0 || Globals.Me.Stat[(int)Enums.Stats.MagicResist] == Options.MaxStatValue);
+            _addSpeedBtn.IsHidden = (Globals.Me.StatPoints == 0 || Globals.Me.Stat[(int)Enums.Stats.Speed] == Options.MaxStatValue);
 
-            for (int i = 0; i < Enums.EquipmentSlots.Count; i++)
+            for (int i = 0; i < Options.EquipmentSlots.Count; i++)
             {
                 if (Globals.Me.Equipment[i] > -1)
                 {
@@ -322,7 +322,7 @@ namespace Intersect_Client.Classes.UI.Game
         private ItemDescWindow _descWindow;
         private int myindex;
         private int _currentItem = -1;
-        private int[] _statBoost = new int[Constants.MaxStats];
+        private int[] _statBoost = new int[Options.MaxStats];
         private bool _texLoaded = false;
         private GameRenderTexture _equipmentBG;
         private GameRenderTexture _texImg;
@@ -356,7 +356,7 @@ namespace Intersect_Client.Classes.UI.Game
         {
             if (Globals.InputManager.MouseButtonDown(GameInput.MouseButtons.Left)) { return; }
             if (_descWindow != null) { _descWindow.Dispose(); _descWindow = null; }
-            _descWindow = new ItemDescWindow(_currentItem, 1, _characterWindow.X - 220, _characterWindow.Y, _statBoost, "Equipment Slot: " + Enums.EquipmentSlots[myindex]);
+            _descWindow = new ItemDescWindow(_currentItem, 1, _characterWindow.X - 220, _characterWindow.Y, _statBoost, "Equipment Slot: " + Options.EquipmentSlots[myindex]);
         }
 
         public FloatRect RenderBounds()

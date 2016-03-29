@@ -97,6 +97,7 @@ namespace Intersect_Editor.Classes
         public enum ServerPackets
         {
             RequestPing = 0,
+            ServerConfig,
             JoinGame,
             MapData,
             EntityData,
@@ -261,10 +262,6 @@ namespace Intersect_Editor.Classes
             Safe = 1
         }
 
-        public static int WeaponIndex = 2;
-        public static int ShieldIndex = 3;
-        public static List<string> EquipmentSlots = new List<string>() { "Helmet", "Armor", "Weapon", "Shield", "Boots" };
-        public static List<string> ToolTypes = new List<string>() { "Axe", "Picaxe", "Shovel", "Fishing Rod" };
         public static List<string> ItemBonusEffects = new List<string>() {  "Cooldown Reduction", "Life Steal" };
 
         // Map Attribtes

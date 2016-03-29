@@ -27,6 +27,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Security.Policy;
 using System.Windows.Forms;
+using Intersect_Editor.Classes.General;
 using Intersect_Editor.Forms;
 using Intersect_Editor.Properties;
 using SFML.Graphics;
@@ -117,7 +118,7 @@ namespace Intersect_Editor.Classes
         //Overlay Stuff
         public static Color OverlayColor = Color.Transparent;
         public static bool HideOverlay = false;
-        public static RenderTexture OverlayTexture = new RenderTexture((uint)Globals.MapWidth * (uint)Globals.TileWidth * 3, (uint)Globals.MapHeight * (uint)Globals.TileHeight * 3);
+        public static RenderTexture OverlayTexture = new RenderTexture((uint)Options.MapWidth * (uint)Options.TileWidth * 3, (uint)Options.MapHeight * (uint)Options.TileHeight * 3);
 
         //Fog Stuff
         public static bool HideFog = false;
@@ -440,7 +441,7 @@ namespace Intersect_Editor.Classes
                 }
                 if (!HideFog) { DrawFog(RenderWindow); }
                 if (!HideOverlay) { DrawMapOverlay(RenderWindow); }
-                if (!HideDarkness || Globals.CurrentLayer == Constants.LayerCount + 1) { OverlayDarkness(RenderWindow); }
+                if (!HideDarkness || Globals.CurrentLayer == Options.LayerCount + 1) { OverlayDarkness(RenderWindow); }
                 if (!HideGrid) DrawMapGrid();
 
                 DrawMapBorders();
@@ -459,16 +460,16 @@ namespace Intersect_Editor.Classes
             line.FillColor = Color.Transparent;
             line.OutlineColor = new Color(255,255,255,180);
             line.OutlineThickness = 1;
-            for (int x = 0; x < Globals.MapWidth; x++)
+            for (int x = 0; x < Options.MapWidth; x++)
             {
-                line.Position = new Vector2f(x * Globals.TileWidth + Globals.TileWidth, Globals.TileHeight);
-                line.Size = new Vector2f(0, Globals.MapHeight * Globals.TileHeight);
+                line.Position = new Vector2f(x * Options.TileWidth + Options.TileWidth, Options.TileHeight);
+                line.Size = new Vector2f(0, Options.MapHeight * Options.TileHeight);
                 RenderWindow.Draw(line);
             }
-            for (int y = 0; y < Globals.MapHeight; y++)
+            for (int y = 0; y < Options.MapHeight; y++)
             {
-                line.Position = new Vector2f(Globals.TileWidth, y * Globals.TileHeight + Globals.TileHeight);
-                line.Size = new Vector2f(Globals.MapWidth * Globals.TileWidth, 0);
+                line.Position = new Vector2f(Options.TileWidth, y * Options.TileHeight + Options.TileHeight);
+                line.Size = new Vector2f(Options.MapWidth * Options.TileWidth, 0);
                 RenderWindow.Draw(line);
             }
         }
@@ -476,19 +477,19 @@ namespace Intersect_Editor.Classes
         {
             var tmpSprite = new Sprite(_trans);
             RenderWindow.Draw(tmpSprite);
-            for (int x = 0; x < Globals.MapWidth + 2; x++)
+            for (int x = 0; x < Options.MapWidth + 2; x++)
             {
-                tmpSprite.Position = new Vector2f(Globals.TileWidth * x, 0);
+                tmpSprite.Position = new Vector2f(Options.TileWidth * x, 0);
                 RenderWindow.Draw(tmpSprite);
-                tmpSprite.Position = new Vector2f(Globals.TileWidth * x, Globals.TileHeight * (Globals.MapHeight + 1));
+                tmpSprite.Position = new Vector2f(Options.TileWidth * x, Options.TileHeight * (Options.MapHeight + 1));
                 RenderWindow.Draw(tmpSprite);
             }
 
-            for (int y = 1; y < Globals.MapHeight + 1; y++)
+            for (int y = 1; y < Options.MapHeight + 1; y++)
             {
-                tmpSprite.Position = new Vector2f(0, Globals.TileHeight * y);
+                tmpSprite.Position = new Vector2f(0, Options.TileHeight * y);
                 RenderWindow.Draw(tmpSprite);
-                tmpSprite.Position = new Vector2f(Globals.TileWidth * (Globals.MapWidth + 1), Globals.TileHeight * y);
+                tmpSprite.Position = new Vector2f(Options.TileWidth * (Options.MapWidth + 1), Options.TileHeight * y);
                 RenderWindow.Draw(tmpSprite);
             }
         }
@@ -499,14 +500,14 @@ namespace Intersect_Editor.Classes
             // calculate the offset
             switch (map.Layers[layerNum].Tiles[x, y].Autotile)
             {
-                case Constants.AutotileWaterfall:
-                    yOffset = (Globals.WaterfallFrame - 1) * Globals.TileHeight;
+                case MapAutotiles.AutotileWaterfall:
+                    yOffset = (Globals.WaterfallFrame - 1) * Options.TileHeight;
                     break;
-                case Constants.AutotileAnim:
+                case MapAutotiles.AutotileAnim:
                     xOffset = Globals.AutotileFrame * 64;
                     break;
-                case Constants.AutotileCliff:
-                    yOffset = -Globals.TileHeight;
+                case MapAutotiles.AutotileCliff:
+                    yOffset = -Options.TileHeight;
                     break;
             }
             RenderTexture(_tilesetTex[map.Layers[layerNum].Tiles[x, y].TilesetIndex],
@@ -548,41 +549,41 @@ namespace Intersect_Editor.Classes
             {
                 case -1:
                     x1 = 0;
-                    x2 = Globals.MapWidth;
+                    x2 = Options.MapWidth;
                     y1 = 0;
-                    y2 = Globals.MapHeight;
-                    xoffset = Globals.TileWidth;
-                    yoffset = Globals.TileHeight;
+                    y2 = Options.MapHeight;
+                    xoffset = Options.TileWidth;
+                    yoffset = Options.TileHeight;
                     break;
                 case 0:
                     if (tmpMap.Up <= -1) return;
                     tmpMap = Globals.GameMaps[tmpMap.Up];
                     x1 = 0;
-                    x2 = Globals.MapWidth;
-                    y1 = Globals.MapHeight - 1;
-                    y2 = Globals.MapHeight;
-                    xoffset = Globals.TileWidth;
-                    yoffset = -(Globals.MapHeight - 1) * Globals.TileHeight;
+                    x2 = Options.MapWidth;
+                    y1 = Options.MapHeight - 1;
+                    y2 = Options.MapHeight;
+                    xoffset = Options.TileWidth;
+                    yoffset = -(Options.MapHeight - 1) * Options.TileHeight;
                     break;
                 case 1:
                     if (tmpMap.Down <= -1) return;
                     tmpMap = Globals.GameMaps[tmpMap.Down];
                     x1 = 0;
-                    x2 = Globals.MapWidth;
+                    x2 = Options.MapWidth;
                     y1 = 0;
                     y2 = 1;
-                    xoffset = Globals.TileWidth;
-                    yoffset = Globals.TileHeight + Globals.MapHeight * Globals.TileHeight;
+                    xoffset = Options.TileWidth;
+                    yoffset = Options.TileHeight + Options.MapHeight * Options.TileHeight;
                     break;
                 case 2:
                     if (tmpMap.Left <= -1) return;
                     tmpMap = Globals.GameMaps[tmpMap.Left];
-                    x1 = Globals.MapWidth - 1;
-                    x2 = Globals.MapWidth;
+                    x1 = Options.MapWidth - 1;
+                    x2 = Options.MapWidth;
                     y1 = 0;
-                    y2 = Globals.MapHeight;
-                    xoffset = Globals.TileWidth - Globals.MapWidth * Globals.TileWidth;
-                    yoffset = Globals.TileHeight;
+                    y2 = Options.MapHeight;
+                    xoffset = Options.TileWidth - Options.MapWidth * Options.TileWidth;
+                    yoffset = Options.TileHeight;
                     break;
                 case 3:
                     if (tmpMap.Right <= -1) return;
@@ -590,16 +591,16 @@ namespace Intersect_Editor.Classes
                     x1 = 0;
                     x2 = 1;
                     y1 = 0;
-                    y2 = Globals.MapHeight;
-                    xoffset = Globals.TileWidth + Globals.MapWidth * Globals.TileWidth;
-                    yoffset = Globals.TileHeight;
+                    y2 = Options.MapHeight;
+                    xoffset = Options.TileWidth + Options.MapWidth * Options.TileWidth;
+                    yoffset = Options.TileHeight;
                     break;
             }
             if (tmpMap == null || tmpMap.Deleted == 1) { return; }
             if (screenShotting)
             {
-                xoffset -= Globals.TileWidth;
-                yoffset -= Globals.TileHeight;
+                xoffset -= Options.TileWidth;
+                yoffset -= Options.TileHeight;
             }
 
             if (dir == -1)
@@ -635,7 +636,7 @@ namespace Intersect_Editor.Classes
                         {
                             switch (Globals.CurrentLayer)
                             {
-                                case Constants.LayerCount:
+                                case Options.LayerCount:
                                     if (Globals.CurrentTool == (int)Enums.EdittingTool.Pen)
                                     {
                                         Globals.MapLayersWindow.PlaceAttribute(tmpMap, Globals.CurTileX,
@@ -659,11 +660,11 @@ namespace Intersect_Editor.Classes
                                         }
                                     }
                                     break;
-                                case Constants.LayerCount + 1:
+                                case Options.LayerCount + 1:
                                     break;
-                                case Constants.LayerCount + 2:
+                                case Options.LayerCount + 2:
                                     break;
-                                case Constants.LayerCount + 3:
+                                case Options.LayerCount + 3:
                                     break;
                                 default:
                                     if (Globals.CurrentTool == (int)Enums.EdittingTool.Pen)
@@ -675,9 +676,9 @@ namespace Intersect_Editor.Classes
                                                 for (var y = 0; y <= Globals.CurSelH; y++)
                                                 {
                                                     if (Globals.CurTileX + x >= 0 &&
-                                                        Globals.CurTileX + x < Globals.MapWidth &&
+                                                        Globals.CurTileX + x < Options.MapWidth &&
                                                         Globals.CurTileY + y >= 0 &&
-                                                        Globals.CurTileY + y < Globals.MapHeight)
+                                                        Globals.CurTileY + y < Options.MapHeight)
                                                     {
                                                         tmpMap.Layers[Globals.CurrentLayer].Tiles[
                                                             Globals.CurTileX + x, Globals.CurTileY + y].TilesetIndex =
@@ -722,8 +723,8 @@ namespace Intersect_Editor.Classes
                                                 y = (y0 - selY) % (Globals.CurSelH + 1);
                                                 if (Globals.Autotilemode == 0)
                                                 {
-                                                    if (x0 >= 0 && x0 < Globals.MapWidth && y0 >= 0 &&
-                                                        y0 < Globals.MapHeight && x0  < selX + selW + 1 &&
+                                                    if (x0 >= 0 && x0 < Options.MapWidth && y0 >= 0 &&
+                                                        y0 < Options.MapHeight && x0  < selX + selW + 1 &&
                                                         y0  < selY + selH + 1)
                                                     {
                                                         if (Globals.MouseButton == 0)
@@ -802,21 +803,21 @@ namespace Intersect_Editor.Classes
                     {
                         if (tmpMap.Layers[z].Tiles[x, y].TilesetIndex <= -1) continue;
                         if (_tilesetTex[tmpMap.Layers[z].Tiles[x, y].TilesetIndex] == null) continue;
-                        if (tmpMap.Autotiles.Autotile[x, y].Layer[z].RenderState != Constants.RenderStateNormal)
+                        if (tmpMap.Autotiles.Autotile[x, y].Layer[z].RenderState != MapAutotiles.RenderStateNormal)
                         {
-                            if (tmpMap.Autotiles.Autotile[x, y].Layer[z].RenderState != Constants.RenderStateAutotile)
+                            if (tmpMap.Autotiles.Autotile[x, y].Layer[z].RenderState != MapAutotiles.RenderStateAutotile)
                                 continue;
-                            DrawAutoTile(z, x * Globals.TileWidth + xoffset, y * Globals.TileHeight + yoffset, 1, x, y, tmpMap, renderTarget);
-                            DrawAutoTile(z, x * Globals.TileWidth + 16 + xoffset, y * Globals.TileHeight + yoffset, 2, x, y, tmpMap, renderTarget);
-                            DrawAutoTile(z, x * Globals.TileWidth + xoffset, y * Globals.TileHeight + 16 + yoffset, 3, x, y, tmpMap, renderTarget);
-                            DrawAutoTile(z, x * Globals.TileWidth + 16 + xoffset, y * Globals.TileHeight + 16 + yoffset, 4, x, y, tmpMap, renderTarget);
+                            DrawAutoTile(z, x * Options.TileWidth + xoffset, y * Options.TileHeight + yoffset, 1, x, y, tmpMap, renderTarget);
+                            DrawAutoTile(z, x * Options.TileWidth + 16 + xoffset, y * Options.TileHeight + yoffset, 2, x, y, tmpMap, renderTarget);
+                            DrawAutoTile(z, x * Options.TileWidth + xoffset, y * Options.TileHeight + 16 + yoffset, 3, x, y, tmpMap, renderTarget);
+                            DrawAutoTile(z, x * Options.TileWidth + 16 + xoffset, y * Options.TileHeight + 16 + yoffset, 4, x, y, tmpMap, renderTarget);
                         }
                         else
                         {
                             RenderTexture(_tilesetTex[tmpMap.Layers[z].Tiles[x, y].TilesetIndex],
-                                x * Globals.TileWidth + xoffset, y * Globals.TileHeight + yoffset,
-                                tmpMap.Layers[z].Tiles[x, y].X * Globals.TileWidth, tmpMap.Layers[z].Tiles[x, y].Y * Globals.TileHeight,
-                                Globals.TileWidth, Globals.TileHeight, renderTarget);
+                                x * Options.TileWidth + xoffset, y * Options.TileHeight + yoffset,
+                                tmpMap.Layers[z].Tiles[x, y].X * Options.TileWidth, tmpMap.Layers[z].Tiles[x, y].Y * Options.TileHeight,
+                                Options.TileWidth, Options.TileHeight, renderTarget);
                         }
                     }
                 }
@@ -825,8 +826,8 @@ namespace Intersect_Editor.Classes
             foreach (var light in tmpMap.Lights)
             {
                 double w = light.Size;
-                var x = xoffset + (light.TileX * Globals.TileWidth + light.OffsetX)  + 16;
-                var y = yoffset + (light.TileY * Globals.TileHeight + light.OffsetY)  + 16;
+                var x = xoffset + (light.TileX * Options.TileWidth + light.OffsetX)  + 16;
+                var y = yoffset + (light.TileY * Options.TileHeight + light.OffsetY)  + 16;
                 EditorGraphics.DrawLight((int)x, (int)y, (int)w, light.Intensity,light.Expand, light.Color);
             }
         }
@@ -868,17 +869,17 @@ namespace Intersect_Editor.Classes
             }
             switch (Globals.CurrentLayer)
             {
-                case Constants.LayerCount:
+                case Options.LayerCount:
                     //Draw attributes
-                    for (int x = 0; x < Globals.MapWidth; x++)
+                    for (int x = 0; x < Options.MapWidth; x++)
                     {
-                        for (int y = 0; y < Globals.MapHeight; y++)
+                        for (int y = 0; y < Options.MapHeight; y++)
                         {
                             if (tmpMap.Attributes[x, y].value > 0)
                             {
                                 tmpSprite = new Sprite(_attributesTex);
-                                tmpSprite.TextureRect = new IntRect(0, (tmpMap.Attributes[x, y].value - 1) * Globals.TileWidth, Globals.TileWidth, Globals.TileHeight);
-                                tmpSprite.Position = new Vector2f(x * Globals.TileWidth + Globals.TileWidth, y * Globals.TileHeight + Globals.TileHeight);
+                                tmpSprite.TextureRect = new IntRect(0, (tmpMap.Attributes[x, y].value - 1) * Options.TileWidth, Options.TileWidth, Options.TileHeight);
+                                tmpSprite.Position = new Vector2f(x * Options.TileWidth + Options.TileWidth, y * Options.TileHeight + Options.TileHeight);
                                 tmpSprite.Color = new Color(255, 255, 255, 150);
                                 RenderWindow.Draw(tmpSprite);
                             }
@@ -886,33 +887,33 @@ namespace Intersect_Editor.Classes
 
                     }
                     break;
-                case Constants.LayerCount + 1:
+                case Options.LayerCount + 1:
 
                     break;
-                case Constants.LayerCount + 2:
-                    for (var x = 0; x < Globals.MapWidth; x++)
+                case Options.LayerCount + 2:
+                    for (var x = 0; x < Options.MapWidth; x++)
                     {
-                        for (var y = 0; y < Globals.MapHeight; y++)
+                        for (var y = 0; y < Options.MapHeight; y++)
                         {
                             if (tmpMap.FindEventAt(x, y) == null) continue;
                             tmpSprite = new Sprite(_eventTex)
                             {
-                                TextureRect = new IntRect(0, 0, Globals.TileWidth, Globals.TileHeight),
-                                Position = new Vector2f(x * Globals.TileWidth + Globals.TileWidth, y * Globals.TileHeight + Globals.TileHeight)
+                                TextureRect = new IntRect(0, 0, Options.TileWidth, Options.TileHeight),
+                                Position = new Vector2f(x * Options.TileWidth + Options.TileWidth, y * Options.TileHeight + Options.TileHeight)
                             };
                             RenderWindow.Draw(tmpSprite);
                         }
 
                     }
                     break;
-                case Constants.LayerCount + 3:
+                case Options.LayerCount + 3:
                     for (int i = 0; i < tmpMap.Spawns.Count; i++)
                     {
                         if (tmpMap.Spawns[i].X >= 0 && tmpMap.Spawns[i].Y >= 0)
                         {
                             tmpSprite = new Sprite(_spawnTex);
-                            tmpSprite.TextureRect = new IntRect(0, 0, Globals.TileWidth, Globals.TileHeight);
-                            tmpSprite.Position = new Vector2f(tmpMap.Spawns[i].X * Globals.TileWidth + Globals.TileWidth, tmpMap.Spawns[i].Y * Globals.TileHeight + Globals.TileHeight);
+                            tmpSprite.TextureRect = new IntRect(0, 0, Options.TileWidth, Options.TileHeight);
+                            tmpSprite.Position = new Vector2f(tmpMap.Spawns[i].X * Options.TileWidth + Options.TileWidth, tmpMap.Spawns[i].Y * Options.TileHeight + Options.TileHeight);
                             RenderWindow.Draw(tmpSprite);
                         }
                     }
@@ -923,18 +924,18 @@ namespace Intersect_Editor.Classes
             if (Globals.CurrentTool == (int)Enums.EdittingTool.Rectangle ||
 Globals.CurrentTool == (int)Enums.EdittingTool.Selection)
             {
-                tileSelectionRect = new RectangleShape(new Vector2f((selW + 1) * Globals.TileWidth, (selH + 1) * Globals.TileHeight))
+                tileSelectionRect = new RectangleShape(new Vector2f((selW + 1) * Options.TileWidth, (selH + 1) * Options.TileHeight))
                 {
-                    Position = new Vector2f((selX + dragxoffset) * Globals.TileWidth + Globals.TileWidth, (selY + dragyoffset) * Globals.TileHeight + Globals.TileHeight),
+                    Position = new Vector2f((selX + dragxoffset) * Options.TileWidth + Options.TileWidth, (selY + dragyoffset) * Options.TileHeight + Options.TileHeight),
                     FillColor = Color.White,
                     OutlineColor = Color.White
                 };
             }
             else
             {
-                tileSelectionRect = new RectangleShape(new Vector2f(Globals.TileWidth, Globals.TileHeight))
+                tileSelectionRect = new RectangleShape(new Vector2f(Options.TileWidth, Options.TileHeight))
                 {
-                    Position = new Vector2f(Globals.CurTileX * Globals.TileWidth + Globals.TileWidth, Globals.CurTileY * Globals.TileHeight + Globals.TileHeight),
+                    Position = new Vector2f(Globals.CurTileX * Options.TileWidth + Options.TileWidth, Globals.CurTileY * Options.TileHeight + Options.TileHeight),
                     FillColor = Color.White,
                     OutlineColor = Color.White
                 };
@@ -969,9 +970,9 @@ Globals.CurrentTool == (int)Enums.EdittingTool.Selection)
                 selY -= Math.Abs(selH);
                 selH = Math.Abs(selH);
             }
-            var tileSelectionRect = new RectangleShape(new Vector2f(Globals.TileWidth + (selW * Globals.TileWidth), Globals.TileHeight + (selH * Globals.TileHeight)))
+            var tileSelectionRect = new RectangleShape(new Vector2f(Options.TileWidth + (selW * Options.TileWidth), Options.TileHeight + (selH * Options.TileHeight)))
             {
-                Position = new Vector2f(selX * Globals.TileWidth, selY * Globals.TileHeight),
+                Position = new Vector2f(selX * Options.TileWidth, selY * Options.TileHeight),
                 FillColor = Color.White
             };
             tileSelectionRect.FillColor = Color.Transparent;
@@ -981,18 +982,18 @@ Globals.CurrentTool == (int)Enums.EdittingTool.Selection)
         }
         private static void DrawMapBorders()
         {
-            var mapBorderLine = new RectangleShape(new Vector2f((Globals.MapWidth + 2) * Globals.TileWidth, 1))
+            var mapBorderLine = new RectangleShape(new Vector2f((Options.MapWidth + 2) * Options.TileWidth, 1))
             {
-                Position = new Vector2f(0, Globals.TileHeight),
+                Position = new Vector2f(0, Options.TileHeight),
                 FillColor = Color.White
             };
             RenderWindow.Draw(mapBorderLine);
-            mapBorderLine.Position = new Vector2f(0, (Globals.MapHeight + 2) * Globals.TileHeight - Globals.TileHeight);
+            mapBorderLine.Position = new Vector2f(0, (Options.MapHeight + 2) * Options.TileHeight - Options.TileHeight);
             RenderWindow.Draw(mapBorderLine);
-            mapBorderLine.Size = new Vector2f(1, (Globals.MapHeight + 2) * Globals.TileHeight);
-            mapBorderLine.Position = new Vector2f(Globals.TileWidth, 0);
+            mapBorderLine.Size = new Vector2f(1, (Options.MapHeight + 2) * Options.TileHeight);
+            mapBorderLine.Position = new Vector2f(Options.TileWidth, 0);
             RenderWindow.Draw(mapBorderLine);
-            mapBorderLine.Position = new Vector2f((Globals.MapWidth + 2) * Globals.TileWidth - Globals.TileWidth, 0);
+            mapBorderLine.Position = new Vector2f((Options.MapWidth + 2) * Options.TileWidth - Options.TileWidth, 0);
             RenderWindow.Draw(mapBorderLine);
             mapBorderLine.Dispose();
         }
@@ -1010,41 +1011,41 @@ Globals.CurrentTool == (int)Enums.EdittingTool.Selection)
                         tmpMap = TilePreviewStruct;
                     }
                     x1 = 0;
-                    x2 = Globals.MapWidth;
+                    x2 = Options.MapWidth;
                     y1 = 0;
-                    y2 = Globals.MapHeight;
-                    xoffset = Globals.TileWidth;
-                    yoffset = Globals.TileHeight;
+                    y2 = Options.MapHeight;
+                    xoffset = Options.TileWidth;
+                    yoffset = Options.TileHeight;
                     break;
                 case 0:
                     if (tmpMap.Up <= -1) return;
                     tmpMap = Globals.GameMaps[tmpMap.Up];
                     x1 = 0;
-                    x2 = Globals.MapWidth;
-                    y1 = Globals.MapHeight - 8;
-                    y2 = Globals.MapHeight;
-                    xoffset = Globals.TileWidth;
-                    yoffset = -(Globals.MapHeight - 1) * Globals.TileHeight;
+                    x2 = Options.MapWidth;
+                    y1 = Options.MapHeight - 8;
+                    y2 = Options.MapHeight;
+                    xoffset = Options.TileWidth;
+                    yoffset = -(Options.MapHeight - 1) * Options.TileHeight;
                     break;
                 case 1:
                     if (tmpMap.Down <= -1) return;
                     tmpMap = Globals.GameMaps[tmpMap.Down];
                     x1 = 0;
-                    x2 = Globals.MapWidth;
+                    x2 = Options.MapWidth;
                     y1 = 0;
                     y2 = 8;
-                    xoffset = Globals.TileWidth;
-                    yoffset = Globals.TileHeight + Globals.MapHeight * Globals.TileHeight;
+                    xoffset = Options.TileWidth;
+                    yoffset = Options.TileHeight + Options.MapHeight * Options.TileHeight;
                     break;
                 case 2:
                     if (tmpMap.Left <= -1) return;
                     tmpMap = Globals.GameMaps[tmpMap.Left];
-                    x1 = Globals.MapWidth - 8;
-                    x2 = Globals.MapWidth;
+                    x1 = Options.MapWidth - 8;
+                    x2 = Options.MapWidth;
                     y1 = 0;
-                    y2 = Globals.MapHeight;
-                    xoffset = Globals.TileWidth - Globals.MapWidth * Globals.TileWidth;
-                    yoffset = Globals.TileHeight;
+                    y2 = Options.MapHeight;
+                    xoffset = Options.TileWidth - Options.MapWidth * Options.TileWidth;
+                    yoffset = Options.TileHeight;
                     break;
                 case 3:
                     if (tmpMap.Right <= -1) return;
@@ -1052,9 +1053,9 @@ Globals.CurrentTool == (int)Enums.EdittingTool.Selection)
                     x1 = 0;
                     x2 = 8;
                     y1 = 0;
-                    y2 = Globals.MapHeight;
-                    xoffset = Globals.TileWidth + Globals.MapWidth * Globals.TileWidth;
-                    yoffset = Globals.TileHeight;
+                    y2 = Options.MapHeight;
+                    xoffset = Options.TileWidth + Options.MapWidth * Options.TileWidth;
+                    yoffset = Options.TileHeight;
                     break;
             }
             if (tmpMap == null || tmpMap.Deleted == 1) { return; }
@@ -1066,20 +1067,20 @@ Globals.CurrentTool == (int)Enums.EdittingTool.Selection)
                     if (tmpMap.Attributes[x, y].value == (int)Enums.MapAttributes.Resource && !upper)
                     {
                         int resourcenum = tmpMap.Attributes[x, y].data1;
-                        if (resourcenum >= 0 && resourcenum < Constants.MaxResources)
+                        if (resourcenum >= 0 && resourcenum < Options.MaxResources)
                         {
                             if (Globals.GameResources[resourcenum].Name != "" & Globals.GameResources[resourcenum].InitialGraphic != "None")
                             {
                                 if (EditorGraphics.ResourceFileNames.IndexOf(Globals.GameResources[resourcenum].InitialGraphic) > -1)
                                 {
                                     res = EditorGraphics.ResourceTextures[EditorGraphics.ResourceFileNames.IndexOf(Globals.GameResources[resourcenum].InitialGraphic)];
-                                    float xpos = x * Globals.TileWidth + xoffset;
-                                    float ypos = y * Globals.TileHeight + yoffset;
-                                    if (res.Size.Y > Globals.TileHeight)
+                                    float xpos = x * Options.TileWidth + xoffset;
+                                    float ypos = y * Options.TileHeight + yoffset;
+                                    if (res.Size.Y > Options.TileHeight)
                                     {
-                                        ypos -= ((int)res.Size.Y - Globals.TileHeight);
+                                        ypos -= ((int)res.Size.Y - Options.TileHeight);
                                     }
-                                    if (res.Size.X > Globals.TileWidth)
+                                    if (res.Size.X > Options.TileWidth)
                                     {
                                         xpos -= (res.Size.X - 32) / 2;
                                     }
@@ -1094,10 +1095,10 @@ Globals.CurrentTool == (int)Enums.EdittingTool.Selection)
                         int animationNum = tmpMap.Attributes[x, y].data1;
                         
                         
-                        if (animationNum >= 0 && animationNum < Constants.MaxAnimations)
+                        if (animationNum >= 0 && animationNum < Options.MaxAnimations)
                         {
-                            float xpos = x * Globals.TileWidth + xoffset + 16;
-                            float ypos = y * Globals.TileHeight + yoffset + 16;
+                            float xpos = x * Options.TileWidth + xoffset + 16;
+                            float ypos = y * Options.TileHeight + yoffset + 16;
                             var tmpMapOld = tmpMap;
                             if (tmpMap == TilePreviewStruct)
                             {
@@ -1137,13 +1138,13 @@ Globals.CurrentTool == (int)Enums.EdittingTool.Selection)
                 OverlayTexture.Clear(OverlayColor);
                 OverlayTexture.Display();
             }
-            var overlaySprite = new Sprite(OverlayTexture.Texture) { Position = new Vector2f(-Globals.TileWidth * 30, -Globals.TileHeight * 30) };
+            var overlaySprite = new Sprite(OverlayTexture.Texture) { Position = new Vector2f(-Options.TileWidth * 30, -Options.TileHeight * 30) };
             target.Draw(overlaySprite);
             overlaySprite.Dispose();
         }
         public static Image ScreenShotMap(bool bland = false)
         {
-            RenderTexture screenShot = new RenderTexture((uint)((Globals.MapWidth) * Globals.TileWidth), (uint)((Globals.MapHeight) * Globals.TileHeight));
+            RenderTexture screenShot = new RenderTexture((uint)((Options.MapWidth) * Options.TileWidth), (uint)((Options.MapHeight) * Options.TileHeight));
             screenShot.Clear(Color.Transparent);
             for (int i = 0; i < 2; i++)
             {
@@ -1165,7 +1166,7 @@ Globals.CurrentTool == (int)Enums.EdittingTool.Selection)
             }
             if (!HideFog && !bland) { DrawFog(screenShot); }
             if (!HideOverlay && !bland) { DrawMapOverlay(screenShot); }
-            if ((!HideDarkness || Globals.CurrentLayer == Constants.LayerCount + 1) && !bland) { OverlayDarkness(screenShot, true); }
+            if ((!HideDarkness || Globals.CurrentLayer == Options.LayerCount + 1) && !bland) { OverlayDarkness(screenShot, true); }
             screenShot.Display();
             Image img = screenShot.Texture.CopyToImage();
             screenShot.Dispose();
@@ -1211,7 +1212,7 @@ Globals.CurrentTool == (int)Enums.EdittingTool.Selection)
         {
             if (DarknessTexture == null)
             {
-                DarknessTexture = new RenderTexture((uint)(Globals.TileWidth * Globals.MapWidth * 3),(uint)(Globals.TileHeight * Globals.MapHeight * 3));
+                DarknessTexture = new RenderTexture((uint)(Options.TileWidth * Options.MapWidth * 3),(uint)(Options.TileHeight * Options.MapHeight * 3));
             }
             DarknessTexture.Clear(Color.Black);
         }
@@ -1229,29 +1230,29 @@ Globals.CurrentTool == (int)Enums.EdittingTool.Selection)
             DarknessTexture.Draw(rs);
             DarknessTexture.Display();
             RenderCurrentBatch();
-            RenderTexture(DarknessTexture.Texture,-Globals.MapWidth * Globals.TileWidth,-Globals.MapHeight * Globals.TileHeight,target,BlendMode.Multiply);
+            RenderTexture(DarknessTexture.Texture,-Options.MapWidth * Options.TileWidth,-Options.MapHeight * Options.TileHeight,target,BlendMode.Multiply);
             RenderCurrentBatch();
 
             //Draw Light Attribute Icons
-            if (Globals.CurrentLayer != Constants.LayerCount + 1) return;
+            if (Globals.CurrentLayer != Options.LayerCount + 1) return;
             if (!screenShotting)
             {
-                for (var x = 0; x < Globals.MapWidth; x++)
+                for (var x = 0; x < Options.MapWidth; x++)
                 {
-                    for (var y = 0; y < Globals.MapHeight; y++)
+                    for (var y = 0; y < Options.MapHeight; y++)
                     {
                         if (tmpMap.FindLightAt(x, y) == null) continue;
                         var tmpSprite = new Sprite(_lightTex)
                         {
-                            TextureRect = new IntRect(0, 0, Globals.TileWidth, Globals.TileHeight),
-                            Position = new Vector2f(x * Globals.TileWidth + Globals.TileWidth, y * Globals.TileHeight + Globals.TileHeight)
+                            TextureRect = new IntRect(0, 0, Options.TileWidth, Options.TileHeight),
+                            Position = new Vector2f(x * Options.TileWidth + Options.TileWidth, y * Options.TileHeight + Options.TileHeight)
                         };
                         target.Draw(tmpSprite);
                     }
 
                 }
-                Shape tileSelectionRect = new RectangleShape(new Vector2f(Globals.TileWidth, Globals.TileHeight));
-                tileSelectionRect.Position = new Vector2f(Globals.CurTileX * Globals.TileWidth + Globals.TileWidth, Globals.CurTileY * Globals.TileHeight + Globals.TileHeight);
+                Shape tileSelectionRect = new RectangleShape(new Vector2f(Options.TileWidth, Options.TileHeight));
+                tileSelectionRect.Position = new Vector2f(Globals.CurTileX * Options.TileWidth + Options.TileWidth, Globals.CurTileY * Options.TileHeight + Options.TileHeight);
                 tileSelectionRect.FillColor = Color.White;
                 tileSelectionRect.FillColor = Color.Transparent;
                 tileSelectionRect.OutlineColor = Color.White;
@@ -1264,8 +1265,8 @@ Globals.CurrentTool == (int)Enums.EdittingTool.Selection)
             if (target == null)
             {
                 target = DarknessTexture;
-                x += Globals.TileWidth * Globals.MapWidth;
-                y += Globals.TileHeight * Globals.MapHeight;
+                x += Options.TileWidth * Options.MapWidth;
+                y += Options.TileHeight * Options.MapHeight;
             }
             y -= size/2;
             x -= size/2;

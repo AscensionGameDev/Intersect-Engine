@@ -25,6 +25,7 @@ using System.Threading;
 using System.IO;
 using System.Windows.Forms;
 using Intersect_Editor.Classes.Game_Objects;
+using Intersect_Editor.Classes.General;
 
 namespace Intersect_Editor.Classes
 {
@@ -39,6 +40,9 @@ namespace Intersect_Editor.Classes
             {
                 case Enums.ServerPackets.RequestPing:
                     PacketSender.SendPing();
+                    break;
+                case Enums.ServerPackets.ServerConfig:
+                    HandleServerConfig(bf.ReadBytes(bf.Length()));
                     break;
                 case Enums.ServerPackets.JoinGame:
                     HandleJoinGame(bf.ReadBytes(bf.Length()));
@@ -149,6 +153,14 @@ namespace Intersect_Editor.Classes
                     Console.WriteLine(@"Non implemented packet received: " + packetHeader);
                     break;
             }
+        }
+
+        public static void HandleServerConfig(byte[] packet)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteBytes(packet);
+            Options.LoadServerConfig(bf);
+            Database.InitDatabase();
         }
 
         private static void HandleJoinGame(byte[] packet)
@@ -307,7 +319,7 @@ namespace Intersect_Editor.Classes
         {
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
-            for (int i = 0; i < Constants.MaxItems; i++)
+            for (int i = 0; i < Options.MaxItems; i++)
             {
                 Globals.GameItems[i] = new ItemStruct();
                 Globals.GameItems[i].Name = bf.ReadString();
@@ -334,7 +346,7 @@ namespace Intersect_Editor.Classes
         {
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
-            for (int i = 0; i < Constants.MaxNpcs; i++)
+            for (int i = 0; i < Options.MaxNpcs; i++)
             {
                 Globals.GameNpcs[i] = new NpcStruct();
                 Globals.GameNpcs[i].Name = bf.ReadString();
@@ -361,7 +373,7 @@ namespace Intersect_Editor.Classes
         {
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
-            for (int i = 0; i < Constants.MaxSpells; i++)
+            for (int i = 0; i < Options.MaxSpells; i++)
             {
                 Globals.GameSpells[i] = new SpellStruct();
                 Globals.GameSpells[i].Name = bf.ReadString();
@@ -388,7 +400,7 @@ namespace Intersect_Editor.Classes
         {
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
-            for (int i = 0; i < Constants.MaxAnimations; i++)
+            for (int i = 0; i < Options.MaxAnimations; i++)
             {
                 Globals.GameAnimations[i] = new AnimationStruct();
                 Globals.GameAnimations[i].Name = bf.ReadString();

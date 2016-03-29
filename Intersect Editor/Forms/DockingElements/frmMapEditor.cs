@@ -9,6 +9,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Windows.Forms;
+using Intersect_Editor.Classes.General;
 using Intersect_Editor.Forms.Controls;
 using WeifenLuo.WinFormsUI.Docking;
 using EditorGraphics = Intersect_Editor.Classes.EditorGraphics;
@@ -30,8 +31,8 @@ namespace Intersect_Editor.Forms
         }
         private void frmMapEditor_Load(object sender, EventArgs e)
         {
-            picMap.Width = (Globals.MapWidth + 2) * Globals.TileWidth;
-            picMap.Height = (Globals.MapHeight + 2) * Globals.TileHeight;
+            picMap.Width = (Options.MapWidth + 2) * Options.TileWidth;
+            picMap.Height = (Options.MapHeight + 2) * Options.TileHeight;
         }
         private void frmMapEditor_DockStateChanged(object sender, EventArgs e)
         {
@@ -77,8 +78,8 @@ namespace Intersect_Editor.Forms
             if (Globals.EditingLight != null) { return; }
             var tmpMap = Globals.GameMaps[Globals.CurrentMap];
 
-            if (e.X >= picMap.Width - Globals.TileWidth || e.Y >= picMap.Height - Globals.TileHeight) { return; }
-            if (e.X < Globals.TileWidth || e.Y < Globals.TileHeight) { return; }
+            if (e.X >= picMap.Width - Options.TileWidth || e.Y >= picMap.Height - Options.TileHeight) { return; }
+            if (e.X < Options.TileWidth || e.Y < Options.TileHeight) { return; }
 
             if (CurrentMapState == null)
             {
@@ -186,16 +187,16 @@ namespace Intersect_Editor.Forms
                     {
                         switch (Globals.CurrentLayer)
                         {
-                            case Constants.LayerCount:
+                            case Options.LayerCount:
                                 Globals.MapLayersWindow.PlaceAttribute(Globals.GameMaps[Globals.CurrentMap],
                                     Globals.CurTileX, Globals.CurTileY);
                                 MapChanged = true;
                                 break;
-                            case Constants.LayerCount + 1:
+                            case Options.LayerCount + 1:
                                 break;
-                            case Constants.LayerCount + 2:
+                            case Options.LayerCount + 2:
                                 break;
-                            case Constants.LayerCount + 3:
+                            case Options.LayerCount + 3:
                                 break;
                             default:
                                 if (Globals.Autotilemode == 0)
@@ -204,9 +205,9 @@ namespace Intersect_Editor.Forms
                                     {
                                         for (var y = 0; y <= Globals.CurSelH; y++)
                                         {
-                                            if (Globals.CurTileX + x >= 0 && Globals.CurTileX + x < Globals.MapWidth &&
+                                            if (Globals.CurTileX + x >= 0 && Globals.CurTileX + x < Options.MapWidth &&
                                                 Globals.CurTileY + y >= 0 &&
-                                                Globals.CurTileY + y < Globals.MapHeight)
+                                                Globals.CurTileY + y < Options.MapHeight)
                                             {
                                                 tmpMap.Layers[Globals.CurrentLayer].Tiles[
                                                     Globals.CurTileX + x, Globals.CurTileY + y].TilesetIndex =
@@ -257,7 +258,7 @@ namespace Intersect_Editor.Forms
                     }
                     switch (Globals.CurrentLayer)
                     {
-                        case Constants.LayerCount:
+                        case Options.LayerCount:
                             if (Globals.CurrentTool == (int)Enums.EdittingTool.Pen)
                             {
                                 if (Globals.MapLayersWindow.RemoveAttribute(Globals.GameMaps[Globals.CurrentMap], Globals.CurTileX, Globals.CurTileY)) { MapChanged = true; }
@@ -270,7 +271,7 @@ namespace Intersect_Editor.Forms
                                 Globals.CurMapSelH = 0;
                             }
                             break;
-                        case Constants.LayerCount + 1:
+                        case Options.LayerCount + 1:
                             Light tmpLight;
                             if ((tmpLight = Globals.GameMaps[Globals.CurrentMap].FindLightAt(Globals.CurTileX, Globals.CurTileY)) != null)
                             {
@@ -279,7 +280,7 @@ namespace Intersect_Editor.Forms
                                 MapChanged = true;
                             }
                             break;
-                        case Constants.LayerCount + 2:
+                        case Options.LayerCount + 2:
                             EventStruct tmpEvent;
                             if ((tmpEvent = Globals.GameMaps[Globals.CurrentMap].FindEventAt(Globals.CurTileX, Globals.CurTileY)) != null)
                             {
@@ -287,7 +288,7 @@ namespace Intersect_Editor.Forms
                                 MapChanged = true;
                             }
                             break;
-                        case Constants.LayerCount + 3:
+                        case Options.LayerCount + 3:
                             break;
                         default:
                             if (Globals.CurrentTool == (int)Enums.EdittingTool.Pen)
@@ -328,7 +329,7 @@ namespace Intersect_Editor.Forms
                     }
                 }
             }
-            if (Globals.CurTileX == Globals.MapWidth - 1)
+            if (Globals.CurTileX == Options.MapWidth - 1)
             {
                 if (tmpMap.Right > -1)
                 {
@@ -338,7 +339,7 @@ namespace Intersect_Editor.Forms
                     }
                 }
             }
-            if (Globals.CurTileY != Globals.MapHeight - 1) return;
+            if (Globals.CurTileY != Options.MapHeight - 1) return;
             if (tmpMap.Down <= -1) return;
             if (Globals.GameMaps[tmpMap.Down] != null)
             {
@@ -350,12 +351,12 @@ namespace Intersect_Editor.Forms
             if (Globals.EditingLight != null) { return; }
             Globals.MouseX = e.X;
             Globals.MouseY = e.Y;
-            if (e.X >= picMap.Width - Globals.TileWidth || e.Y >= picMap.Height - Globals.TileHeight) { return; }
-            if (e.X < Globals.TileWidth || e.Y < Globals.TileHeight) { return; }
+            if (e.X >= picMap.Width - Options.TileWidth || e.Y >= picMap.Height - Options.TileHeight) { return; }
+            if (e.X < Options.TileWidth || e.Y < Options.TileHeight) { return; }
             int oldx = Globals.CurTileX;
             int oldy = Globals.CurTileY;
-            Globals.CurTileX = (int)Math.Floor((double)(e.X - Globals.TileWidth) / Globals.TileWidth);
-            Globals.CurTileY = (int)Math.Floor((double)(e.Y - Globals.TileHeight) / Globals.TileHeight);
+            Globals.CurTileX = (int)Math.Floor((double)(e.X - Options.TileWidth) / Options.TileWidth);
+            Globals.CurTileY = (int)Math.Floor((double)(e.Y - Options.TileHeight) / Options.TileHeight);
             if (Globals.CurTileX < 0) { Globals.CurTileX = 0; }
             if (Globals.CurTileY < 0) { Globals.CurTileY = 0; }
 
@@ -384,19 +385,19 @@ namespace Intersect_Editor.Forms
                     }
                     else
                     {
-                        if (Globals.CurrentLayer == Constants.LayerCount)
+                        if (Globals.CurrentLayer == Options.LayerCount)
                         {
                             Globals.MapLayersWindow.PlaceAttribute(tmpMap, Globals.CurTileX, Globals.CurTileY);
                         }
-                        else if (Globals.CurrentLayer == Constants.LayerCount + 1)
+                        else if (Globals.CurrentLayer == Options.LayerCount + 1)
                         {
 
                         }
-                        else if (Globals.CurrentLayer == Constants.LayerCount + 2)
+                        else if (Globals.CurrentLayer == Options.LayerCount + 2)
                         {
 
                         }
-                        else if (Globals.CurrentLayer == Constants.LayerCount + 3)
+                        else if (Globals.CurrentLayer == Options.LayerCount + 3)
                         {
                             if (Globals.MapLayersWindow.rbDeclared.Checked == true &&
                                 Globals.MapLayersWindow.lstMapNpcs.Items.Count > 0)
@@ -417,9 +418,9 @@ namespace Intersect_Editor.Forms
                                 {
                                     for (var y = 0; y <= Globals.CurSelH; y++)
                                     {
-                                        if (Globals.CurTileX + x >= 0 && Globals.CurTileX + x < Globals.MapWidth &&
+                                        if (Globals.CurTileX + x >= 0 && Globals.CurTileX + x < Options.MapWidth &&
                                                 Globals.CurTileY + y >= 0 &&
-                                                Globals.CurTileY + y < Globals.MapHeight)
+                                                Globals.CurTileY + y < Options.MapHeight)
                                         {
                                             tmpMap.Layers[Globals.CurrentLayer].Tiles[
                                                 Globals.CurTileX + x, Globals.CurTileY + y].TilesetIndex =
@@ -471,7 +472,7 @@ namespace Intersect_Editor.Forms
                                 }
                             }
                         }
-                        if (Globals.CurTileX == Globals.MapWidth - 1)
+                        if (Globals.CurTileX == Options.MapWidth - 1)
                         {
                             if (tmpMap.Right > -1)
                             {
@@ -481,7 +482,7 @@ namespace Intersect_Editor.Forms
                                 }
                             }
                         }
-                        if (Globals.CurTileY == Globals.MapHeight - 1)
+                        if (Globals.CurTileY == Options.MapHeight - 1)
                         {
                             if (tmpMap.Down > -1)
                             {
@@ -502,11 +503,11 @@ namespace Intersect_Editor.Forms
                     }
                     else if (Globals.CurrentTool == (int)Enums.EdittingTool.Pen)
                     {
-                        if (Globals.CurrentLayer == Constants.LayerCount)
+                        if (Globals.CurrentLayer == Options.LayerCount)
                         {
                             Globals.MapLayersWindow.RemoveAttribute(tmpMap, Globals.CurTileX, Globals.CurTileY);
                         }
-                        else if (Globals.CurrentLayer < Constants.LayerCount)
+                        else if (Globals.CurrentLayer < Options.LayerCount)
                         {
                             if (Globals.CurrentTool == (int)Enums.EdittingTool.Pen)
                             {
@@ -537,7 +538,7 @@ namespace Intersect_Editor.Forms
                             }
                         }
                     }
-                    if (Globals.CurTileX == Globals.MapWidth - 1)
+                    if (Globals.CurTileX == Options.MapWidth - 1)
                     {
                         if (tmpMap.Right > -1)
                         {
@@ -547,7 +548,7 @@ namespace Intersect_Editor.Forms
                             }
                         }
                     }
-                    if (Globals.CurTileY == Globals.MapHeight - 1)
+                    if (Globals.CurTileY == Options.MapHeight - 1)
                     {
                         if (tmpMap.Down > -1)
                         {
@@ -593,7 +594,7 @@ namespace Intersect_Editor.Forms
 
                 switch (Globals.CurrentLayer)
                 {
-                    case Constants.LayerCount:
+                    case Options.LayerCount:
                         for (int x = selX; x < selX + selW + 1; x++)
                         {
                             for (int y = selY; y < selY + selH + 1; y++)
@@ -610,11 +611,11 @@ namespace Intersect_Editor.Forms
                         }
                         MapChanged = true;
                         break;
-                    case Constants.LayerCount + 1:
+                    case Options.LayerCount + 1:
                         break;
-                    case Constants.LayerCount + 2:
+                    case Options.LayerCount + 2:
                         break;
-                    case Constants.LayerCount + 3:
+                    case Options.LayerCount + 3:
                         break;
                     default:
                         int x1 = 0;
@@ -627,7 +628,7 @@ namespace Intersect_Editor.Forms
                                 {
                                     x1 = (x0 - selX) % (Globals.CurSelW + 1);
                                     y1 = (y0 - selY) % (Globals.CurSelH + 1);
-                                    if (x0 >= 0 && x0 < Globals.MapWidth && y0 >= 0 && y0 < Globals.MapHeight && x0 < selX + selW + 1 && y0 < selY + selH + 1)
+                                    if (x0 >= 0 && x0 < Options.MapWidth && y0 >= 0 && y0 < Options.MapHeight && x0 < selX + selW + 1 && y0 < selY + selH + 1)
                                     {
                                         if (Globals.MouseButton == 0)
                                         {
@@ -700,9 +701,9 @@ namespace Intersect_Editor.Forms
         }
         private void picMap_DoubleClick(object sender, EventArgs e)
         {
-            if (Globals.MouseX >= Globals.TileWidth && Globals.MouseX <= (Globals.MapWidth + 2) * Globals.TileWidth - Globals.TileWidth)
+            if (Globals.MouseX >= Options.TileWidth && Globals.MouseX <= (Options.MapWidth + 2) * Options.TileWidth - Options.TileWidth)
             {
-                if (Globals.MouseY >= 0 && Globals.MouseY <= Globals.TileHeight)
+                if (Globals.MouseY >= 0 && Globals.MouseY <= Options.TileHeight)
                 {
                     if (Globals.GameMaps[Globals.CurrentMap].Up == -1)
                     {
@@ -725,7 +726,7 @@ namespace Intersect_Editor.Forms
                         Globals.MainForm.EnterMap(Globals.GameMaps[Globals.CurrentMap].Up);
                     }
                 }
-                else if (Globals.MouseY >= (Globals.MapHeight + 2) * Globals.TileHeight - Globals.TileHeight && Globals.MouseY <= (Globals.MapHeight + 2) * Globals.TileHeight)
+                else if (Globals.MouseY >= (Options.MapHeight + 2) * Options.TileHeight - Options.TileHeight && Globals.MouseY <= (Options.MapHeight + 2) * Options.TileHeight)
                 {
                     if (Globals.GameMaps[Globals.CurrentMap].Down == -1)
                     {
@@ -749,8 +750,8 @@ namespace Intersect_Editor.Forms
                     }
                 }
             }
-            if (Globals.MouseY < Globals.TileHeight || Globals.MouseY > (Globals.MapHeight + 2) * Globals.TileHeight - Globals.TileHeight) return;
-            if (Globals.MouseX >= 0 & Globals.MouseX <= Globals.TileWidth)
+            if (Globals.MouseY < Options.TileHeight || Globals.MouseY > (Options.MapHeight + 2) * Options.TileHeight - Options.TileHeight) return;
+            if (Globals.MouseX >= 0 & Globals.MouseX <= Options.TileWidth)
             {
                 if (Globals.GameMaps[Globals.CurrentMap].Left == -1)
                 {
@@ -773,7 +774,7 @@ namespace Intersect_Editor.Forms
                     Globals.MainForm.EnterMap(Globals.GameMaps[Globals.CurrentMap].Left);
                 }
             }
-            else if (Globals.MouseX >= (Globals.MapWidth + 2) * Globals.TileWidth - Globals.TileWidth && Globals.MouseX <= (Globals.MapWidth + 2) * Globals.TileWidth)
+            else if (Globals.MouseX >= (Options.MapWidth + 2) * Options.TileWidth - Options.TileWidth && Globals.MouseX <= (Options.MapWidth + 2) * Options.TileWidth)
             {
                 if (Globals.GameMaps[Globals.CurrentMap].Right == -1)
                 {
@@ -800,7 +801,7 @@ namespace Intersect_Editor.Forms
             //See if we should edit an event, light, npc, etc
             switch (Globals.CurrentLayer)
             {
-                case Constants.LayerCount + 1:
+                case Options.LayerCount + 1:
                     Light tmpLight;
                     if (
                         (tmpLight =
@@ -819,7 +820,7 @@ namespace Intersect_Editor.Forms
                     MapChanged = true;
 
                     break;
-                case Constants.LayerCount + 2:
+                case Options.LayerCount + 2:
                     EventStruct tmpEvent;
                     FrmEvent tmpEventEditor;
                     if (
@@ -846,7 +847,7 @@ namespace Intersect_Editor.Forms
                         tmpEventEditor.Show();
                     }
                     break;
-                case Constants.LayerCount + 3:
+                case Options.LayerCount + 3:
                     if (Globals.MapLayersWindow.lstMapNpcs.SelectedIndex > -1 &&
                         Globals.MapLayersWindow.rbDeclared.Checked == true)
                     {
@@ -884,18 +885,18 @@ namespace Intersect_Editor.Forms
             {
                 int x1 = 0;
                 int y1 = 0;
-                for (var x = 0; x < Globals.MapWidth; x++)
+                for (var x = 0; x < Options.MapWidth; x++)
                 {
-                    for (var y = 0; y < Globals.MapHeight; y++)
+                    for (var y = 0; y < Options.MapHeight; y++)
                     {
                         Globals.CurTileX = x;
                         Globals.CurTileY = y;
 
-                        if (Globals.CurrentLayer == Constants.LayerCount)
+                        if (Globals.CurrentLayer == Options.LayerCount)
                         {
                             Globals.MapLayersWindow.PlaceAttribute(Globals.GameMaps[Globals.CurrentMap], Globals.CurTileX, Globals.CurTileY);
                         }
-                        else if (Globals.CurrentLayer < Constants.LayerCount)
+                        else if (Globals.CurrentLayer < Options.LayerCount)
                         {
                             if (Globals.Autotilemode == 0)
                             {
@@ -967,18 +968,18 @@ namespace Intersect_Editor.Forms
             }
             if (MessageBox.Show(@"Are you sure you want to erase this layer?", @"Fill Layer", MessageBoxButtons.YesNo) == DialogResult.Yes)
             {
-                for (var x = 0; x < Globals.MapWidth; x++)
+                for (var x = 0; x < Options.MapWidth; x++)
                 {
-                    for (var y = 0; y < Globals.MapHeight; y++)
+                    for (var y = 0; y < Options.MapHeight; y++)
                     {
                         Globals.CurTileX = x;
                         Globals.CurTileY = y;
 
-                        if (Globals.CurrentLayer == Constants.LayerCount)
+                        if (Globals.CurrentLayer == Options.LayerCount)
                         {
                             Globals.MapLayersWindow.RemoveAttribute(Globals.GameMaps[Globals.CurrentMap], Globals.CurTileX, Globals.CurTileY);
                         }
-                        else if (Globals.CurrentLayer < Constants.LayerCount)
+                        else if (Globals.CurrentLayer < Options.LayerCount)
                         {
                             tmpMap.Layers[Globals.CurrentLayer].Tiles[Globals.CurTileX, Globals.CurTileY].TilesetIndex = -1;
                             tmpMap.Layers[Globals.CurrentLayer].Tiles[Globals.CurTileX, Globals.CurTileY].X = -1;
@@ -1079,14 +1080,14 @@ namespace Intersect_Editor.Forms
                     WipeCurrentSelection(Globals.GameMaps[Globals.CurrentMap]);
                 }
             }
-            int z = 0, zf = Constants.LayerCount;
+            int z = 0, zf = Options.LayerCount;
             if (Globals.SelectionType == (int)Enums.SelectionTypes.CurrentLayer)
             {
                 z = Globals.CurrentLayer;
                 zf = z + 1;
-                if (zf > Constants.LayerCount)
+                if (zf > Options.LayerCount)
                 {
-                    zf = Constants.LayerCount;
+                    zf = Options.LayerCount;
                 }
             }
 
@@ -1097,8 +1098,8 @@ namespace Intersect_Editor.Forms
                 {
                     for (int y0 = selY + dragyoffset; y0 < selY + selH + 1 + dragyoffset; y0++)
                     {
-                        if (x0 >= 0 && x0 < Globals.MapWidth && y0 >= 0 &&
-                            y0 < Globals.MapHeight)
+                        if (x0 >= 0 && x0 < Options.MapWidth && y0 >= 0 &&
+                            y0 < Options.MapHeight)
                         {
                             tmpMap.Layers[l].Tiles[x0, y0].TilesetIndex = Globals.SelectionSource.Layers[l].Tiles[x0 - dragxoffset, y0 - dragyoffset].TilesetIndex;
                             tmpMap.Layers[l].Tiles[x0, y0].X = Globals.SelectionSource.Layers[l].Tiles[x0 - dragxoffset, y0 - dragyoffset].X;
@@ -1115,11 +1116,11 @@ namespace Intersect_Editor.Forms
             {
                 for (int y0 = selY + dragyoffset; y0 < selY + selH + 1 + dragyoffset; y0++)
                 {
-                    if (x0 >= 0 && x0 < Globals.MapWidth && y0 >= 0 &&
-                        y0 < Globals.MapHeight)
+                    if (x0 >= 0 && x0 < Options.MapWidth && y0 >= 0 &&
+                        y0 < Options.MapHeight)
                     {
                         //Attributes
-                        if (Globals.SelectionType != (int)Enums.SelectionTypes.CurrentLayer || Globals.CurrentLayer == Constants.LayerCount)
+                        if (Globals.SelectionType != (int)Enums.SelectionTypes.CurrentLayer || Globals.CurrentLayer == Options.LayerCount)
                         {
                             tmpMap.Attributes[x0, y0].value = Globals.SelectionSource.Attributes[x0 - dragxoffset, y0 - dragyoffset].value;
                             tmpMap.Attributes[x0, y0].data1 = Globals.SelectionSource.Attributes[x0 - dragxoffset, y0 - dragyoffset].data1;
@@ -1130,7 +1131,7 @@ namespace Intersect_Editor.Forms
 
                         //Spawns
                         NpcSpawn spawnCopy;
-                        if (Globals.SelectionType != (int)Enums.SelectionTypes.CurrentLayer || Globals.CurrentLayer == Constants.LayerCount + 3)
+                        if (Globals.SelectionType != (int)Enums.SelectionTypes.CurrentLayer || Globals.CurrentLayer == Options.LayerCount + 3)
                         {
                             if (Globals.SelectionSource.FindSpawnAt(x0 - dragxoffset, y0 - dragyoffset) != null)
                             {
@@ -1147,7 +1148,7 @@ namespace Intersect_Editor.Forms
 
                         //Lights
                         Light lightCopy;
-                        if (Globals.SelectionType != (int)Enums.SelectionTypes.CurrentLayer || Globals.CurrentLayer == Constants.LayerCount + 1)
+                        if (Globals.SelectionType != (int)Enums.SelectionTypes.CurrentLayer || Globals.CurrentLayer == Options.LayerCount + 1)
                         {
                             if (Globals.SelectionSource.FindLightAt(x0 - dragxoffset, y0 - dragyoffset) != null)
                             {
@@ -1164,7 +1165,7 @@ namespace Intersect_Editor.Forms
 
                         //Events
                         EventStruct eventCopy;
-                        if (Globals.SelectionType != (int)Enums.SelectionTypes.CurrentLayer || Globals.CurrentLayer == Constants.LayerCount + 2)
+                        if (Globals.SelectionType != (int)Enums.SelectionTypes.CurrentLayer || Globals.CurrentLayer == Options.LayerCount + 2)
                         {
                             if (Globals.SelectionSource.FindEventAt(x0 - dragxoffset, y0 - dragyoffset) != null)
                             {
@@ -1209,14 +1210,14 @@ namespace Intersect_Editor.Forms
                     dragyoffset = Globals.TotalTileDragY;
                 }
             }
-            int z = 0, zf = Constants.LayerCount;
+            int z = 0, zf = Options.LayerCount;
             if (Globals.SelectionType == (int)Enums.SelectionTypes.CurrentLayer)
             {
                 z = Globals.CurrentLayer;
                 zf = z + 1;
-                if (zf > Constants.LayerCount)
+                if (zf > Options.LayerCount)
                 {
-                    zf = Constants.LayerCount;
+                    zf = Options.LayerCount;
                 }
             }
             //start by deleting the source tiles
@@ -1226,8 +1227,8 @@ namespace Intersect_Editor.Forms
                 {
                     for (int y0 = selY; y0 < selY + selH + 1; y0++)
                     {
-                        if (x0 >= 0 && x0 < Globals.MapWidth && y0 >= 0 &&
-                            y0 < Globals.MapHeight && x0 < selX + selW + 1 &&
+                        if (x0 >= 0 && x0 < Options.MapWidth && y0 >= 0 &&
+                            y0 < Options.MapHeight && x0 < selX + selW + 1 &&
                             y0 < selY + selH + 1)
                         {
                             tmpMap.Layers[l].Tiles[
@@ -1249,12 +1250,12 @@ namespace Intersect_Editor.Forms
             {
                 for (int y0 = selY; y0 < selY + selH + 1; y0++)
                 {
-                    if (x0 >= 0 && x0 < Globals.MapWidth && y0 >= 0 &&
-                        y0 < Globals.MapHeight && x0 < selX + selW + 1 &&
+                    if (x0 >= 0 && x0 < Options.MapWidth && y0 >= 0 &&
+                        y0 < Options.MapHeight && x0 < selX + selW + 1 &&
                         y0 < selY + selH + 1)
                     {
                         //Attributes
-                        if (Globals.SelectionType != (int)Enums.SelectionTypes.CurrentLayer || Globals.CurrentLayer == Constants.LayerCount)
+                        if (Globals.SelectionType != (int)Enums.SelectionTypes.CurrentLayer || Globals.CurrentLayer == Options.LayerCount)
                         {
                             tmpMap.Attributes[x0, y0].value = 0;
                             tmpMap.Attributes[x0, y0].data1 = 0;
@@ -1264,7 +1265,7 @@ namespace Intersect_Editor.Forms
                         }
 
                         //Spawns
-                        if (Globals.SelectionType != (int)Enums.SelectionTypes.CurrentLayer || Globals.CurrentLayer == Constants.LayerCount + 3)
+                        if (Globals.SelectionType != (int)Enums.SelectionTypes.CurrentLayer || Globals.CurrentLayer == Options.LayerCount + 3)
                         {
                             for (int w = 0; w < tmpMap.Spawns.Count; w++)
                             {
@@ -1277,7 +1278,7 @@ namespace Intersect_Editor.Forms
                         }
 
                         //Lights
-                        if (Globals.SelectionType != (int)Enums.SelectionTypes.CurrentLayer || Globals.CurrentLayer == Constants.LayerCount + 1)
+                        if (Globals.SelectionType != (int)Enums.SelectionTypes.CurrentLayer || Globals.CurrentLayer == Options.LayerCount + 1)
                         {
                             for (int w = 0; w < tmpMap.Lights.Count; w++)
                             {
@@ -1290,7 +1291,7 @@ namespace Intersect_Editor.Forms
                         }
 
                         //Events
-                        if (Globals.SelectionType != (int)Enums.SelectionTypes.CurrentLayer || Globals.CurrentLayer == Constants.LayerCount + 2)
+                        if (Globals.SelectionType != (int)Enums.SelectionTypes.CurrentLayer || Globals.CurrentLayer == Options.LayerCount + 2)
                         {
                             for (int w = 0; w < tmpMap.Events.Count; w++)
                             {

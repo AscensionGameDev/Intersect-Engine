@@ -66,6 +66,9 @@ namespace Intersect_Client.Classes.Networking
                     case Enums.ServerPackets.RequestPing:
                         PacketSender.SendPing();
                         break;
+                    case Enums.ServerPackets.ServerConfig:
+                        HandleServerConfig(bf.ReadBytes(bf.Length()));
+                        break;
                     case Enums.ServerPackets.JoinGame:
                         HandleJoinGame(bf.ReadBytes(bf.Length()));
                         break;
@@ -220,6 +223,23 @@ namespace Intersect_Client.Classes.Networking
             }
         }
 
+        private static void HandleServerConfig(byte[] packet)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteBytes(packet);
+            Options.LoadServerConfig(bf);
+            //Load Each of the Main Game Object Types
+            Globals.GameItems = new ItemStruct[Options.MaxItems];
+            Globals.GameNpcs = new NpcStruct[Options.MaxNpcs];
+            Globals.GameAnimations = new AnimationStruct[Options.MaxAnimations];
+            Globals.GameSpells = new SpellStruct[Options.MaxSpells];
+            Globals.GameResources = new ResourceStruct[Options.MaxResources];
+            Globals.GameClasses = new ClassStruct[Options.MaxClasses];
+            Globals.GameQuests = new QuestStruct[Options.MaxQuests];
+            Globals.GameProjectiles = new ProjectileStruct[Options.MaxProjectiles];
+            GameGraphics.InitInGame();
+        }
+
         private static void HandleJoinGame(byte[] packet)
         {
             var bf = new ByteBuffer();
@@ -370,17 +390,6 @@ namespace Intersect_Client.Classes.Networking
                 //TODO Make sure window isn't too large.
                 //GameGraphics.FixResolution();
             }
-
-            //Load Each of the Main Game Object Types
-            Globals.GameItems = new ItemStruct[Constants.MaxItems];
-            Globals.GameNpcs = new NpcStruct[Constants.MaxNpcs];
-            Globals.GameAnimations = new AnimationStruct[Constants.MaxAnimations];
-            Globals.GameSpells = new SpellStruct[Constants.MaxSpells];
-            Globals.GameResources = new ResourceStruct[Constants.MaxResources];
-            Globals.GameClasses = new ClassStruct[Constants.MaxClasses];
-            Globals.GameQuests = new QuestStruct[Constants.MaxQuests];
-            Globals.GameProjectiles = new ProjectileStruct[Constants.MaxProjectiles];
-
             //Database.LoadMapRevisions();
         }
 
@@ -472,20 +481,20 @@ namespace Intersect_Client.Classes.Networking
                 switch (en.Dir)
                 {
                     case 0:
-                        en.OffsetY = Globals.Database.TileWidth;
+                        en.OffsetY = Options.TileWidth;
                         en.OffsetX = 0;
                         break;
                     case 1:
-                        en.OffsetY = -Globals.Database.TileWidth;
+                        en.OffsetY = -Options.TileWidth;
                         en.OffsetX = 0;
                         break;
                     case 2:
                         en.OffsetY = 0;
-                        en.OffsetX = Globals.Database.TileWidth;
+                        en.OffsetX = Options.TileWidth;
                         break;
                     case 3:
                         en.OffsetY = 0;
-                        en.OffsetX = -Globals.Database.TileWidth;
+                        en.OffsetX = -Options.TileWidth;
                         break;
                 }
             }
@@ -733,7 +742,7 @@ namespace Intersect_Client.Classes.Networking
             int entityIndex = bf.ReadInteger();
             if (Globals.Entities.ContainsKey(entityIndex))
             {
-                for (int i = 0; i < Enums.EquipmentSlots.Count; i++)
+                for (int i = 0; i < Options.EquipmentSlots.Count; i++)
                 {
                     ((Player) Globals.Entities[entityIndex]).Equipment[i] = bf.ReadInteger();
                 }
@@ -753,7 +762,7 @@ namespace Intersect_Client.Classes.Networking
         {
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
-            for (int i = 0; i < Constants.MaxHotbar; i++)
+            for (int i = 0; i < Options.MaxHotbar; i++)
             {
                 Globals.Me.Hotbar[i].Type = bf.ReadInteger();
                 Globals.Me.Hotbar[i].Slot = bf.ReadInteger();
@@ -769,7 +778,7 @@ namespace Intersect_Client.Classes.Networking
 
             if (classNum == 0) //Initilise the classes if the first one.
             {
-                Globals.GameClasses = new ClassStruct[Constants.MaxClasses];
+                Globals.GameClasses = new ClassStruct[Options.MaxClasses];
             }
 
             Globals.GameClasses[classNum] = new ClassStruct();

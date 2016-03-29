@@ -24,6 +24,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Windows.Forms;
+using Intersect_Editor.Classes.General;
 
 namespace Intersect_Editor.Classes
 {
@@ -41,8 +42,8 @@ namespace Intersect_Editor.Classes
         public int Revision;
 
         //Core Data
-        public TileArray[] Layers = new TileArray[Constants.LayerCount];
-        public Attribute[,] Attributes = new Attribute[Globals.MapWidth, Globals.MapHeight];
+        public TileArray[] Layers = new TileArray[Options.LayerCount];
+        public Attribute[,] Attributes = new Attribute[Options.MapWidth, Options.MapHeight];
         public List<EventStruct> Events = new List<EventStruct>();
         public List<Light> Lights = new List<Light>();
 
@@ -78,12 +79,12 @@ namespace Intersect_Editor.Classes
         public MapStruct(int mapNum, byte[] mapData)
         {
             MyMapNum = mapNum;
-            for (var i = 0; i < Constants.LayerCount; i++)
+            for (var i = 0; i < Options.LayerCount; i++)
             {
                 Layers[i] = new TileArray();
-                for (var x = 0; x < Globals.MapWidth; x++)
+                for (var x = 0; x < Options.MapWidth; x++)
                 {
-                    for (var y = 0; y < Globals.MapHeight; y++)
+                    for (var y = 0; y < Options.MapHeight; y++)
                     {
                         Layers[i].Tiles[x, y] = new Tile();
                         if (i == 0) { Attributes[x, y] = new Attribute(); }
@@ -101,12 +102,12 @@ namespace Intersect_Editor.Classes
             MyName = mapcopy.MyName;
             Brightness = mapcopy.Brightness;
             IsIndoors = mapcopy.IsIndoors;
-            for (var i = 0; i < Constants.LayerCount; i++)
+            for (var i = 0; i < Options.LayerCount; i++)
             {
                 Layers[i] = new TileArray();
-                for (var x = 0; x < Globals.MapWidth; x++)
+                for (var x = 0; x < Options.MapWidth; x++)
                 {
-                    for (var y = 0; y < Globals.MapHeight; y++)
+                    for (var y = 0; y < Options.MapHeight; y++)
                     {
                         Layers[i].Tiles[x, y] = new Tile();
                         Layers[i].Tiles[x, y].TilesetIndex = mapcopy.Layers[i].Tiles[x, y].TilesetIndex;
@@ -174,11 +175,11 @@ namespace Intersect_Editor.Classes
             bf.WriteByte(PlayerLightColor.G);
             bf.WriteByte(PlayerLightColor.B);
 
-            for (var i = 0; i < Constants.LayerCount; i++)
+            for (var i = 0; i < Options.LayerCount; i++)
             {
-                for (var x = 0; x < Globals.MapWidth; x++)
+                for (var x = 0; x < Options.MapWidth; x++)
                 {
-                    for (var y = 0; y < Globals.MapHeight; y++)
+                    for (var y = 0; y < Options.MapHeight; y++)
                     {
                         bf.WriteInteger(Layers[i].Tiles[x, y].TilesetIndex);
                         bf.WriteInteger(Layers[i].Tiles[x, y].X);
@@ -187,9 +188,9 @@ namespace Intersect_Editor.Classes
                     }
                 }
             }
-            for (var x = 0; x < Globals.MapWidth; x++)
+            for (var x = 0; x < Options.MapWidth; x++)
             {
-                for (var y = 0; y < Globals.MapHeight; y++)
+                for (var y = 0; y < Options.MapHeight; y++)
                 {
                     bf.WriteInteger(Attributes[x, y].value);
                     if (Attributes[x, y].value > 0)
@@ -273,11 +274,11 @@ namespace Intersect_Editor.Classes
                 PlayerLightIntensity = bf.ReadByte();
                 PlayerLightColor = Color.FromArgb(bf.ReadByte(), bf.ReadByte(), bf.ReadByte());
 
-                for (var i = 0; i < Constants.LayerCount; i++)
+                for (var i = 0; i < Options.LayerCount; i++)
                 {
-                    for (var x = 0; x < Globals.MapWidth; x++)
+                    for (var x = 0; x < Options.MapWidth; x++)
                     {
-                        for (var y = 0; y < Globals.MapHeight; y++)
+                        for (var y = 0; y < Options.MapHeight; y++)
                         {
                             Layers[i].Tiles[x, y].TilesetIndex = bf.ReadInteger();
                             Layers[i].Tiles[x, y].X = bf.ReadInteger();
@@ -286,9 +287,9 @@ namespace Intersect_Editor.Classes
                         }
                     }
                 }
-                for (var x = 0; x < Globals.MapWidth; x++)
+                for (var x = 0; x < Options.MapWidth; x++)
                 {
-                    for (var y = 0; y < Globals.MapHeight; y++)
+                    for (var y = 0; y < Options.MapHeight; y++)
                     {
                         int attributeType = bf.ReadInteger();
                         if (attributeType > 0)
@@ -341,9 +342,9 @@ namespace Intersect_Editor.Classes
         {
             if (Up > -1 && Up < Globals.GameMaps.Length && Globals.GameMaps[Up] != null)
             {
-                for (int x = 0; x < Globals.MapWidth; x++)
+                for (int x = 0; x < Options.MapWidth; x++)
                 {
-                    for (int y = Globals.MapHeight - 1; y < Globals.MapHeight; y++)
+                    for (int y = Options.MapHeight - 1; y < Options.MapHeight; y++)
                     {
                         Globals.GameMaps[Up].Autotiles.UpdateAutoTiles(x, y);
                     }
@@ -351,7 +352,7 @@ namespace Intersect_Editor.Classes
             }
             if (Down > -1 && Up < Globals.GameMaps.Length && Globals.GameMaps[Down] != null)
             {
-                for (int x = 0; x < Globals.MapWidth; x++)
+                for (int x = 0; x < Options.MapWidth; x++)
                 {
                     for (int y = 0; y < 1; y++)
                     {
@@ -361,9 +362,9 @@ namespace Intersect_Editor.Classes
             }
             if (Left > -1 && Left < Globals.GameMaps.Length && Globals.GameMaps[Left] != null)
             {
-                for (int x = Globals.MapWidth - 1; x < Globals.MapWidth; x++)
+                for (int x = Options.MapWidth - 1; x < Options.MapWidth; x++)
                 {
-                    for (int y = 0; y < Globals.MapHeight; y++)
+                    for (int y = 0; y < Options.MapHeight; y++)
                     {
                         Globals.GameMaps[Left].Autotiles.UpdateAutoTiles(x, y);
                     }
@@ -373,7 +374,7 @@ namespace Intersect_Editor.Classes
             {
                 for (int x = 0; x < 1; x++)
                 {
-                    for (int y = 0; y < Globals.MapHeight; y++)
+                    for (int y = 0; y < Options.MapHeight; y++)
                     {
                         Globals.GameMaps[Right].Autotiles.UpdateAutoTiles(x, y);
                     }
@@ -431,7 +432,7 @@ namespace Intersect_Editor.Classes
 
     public class TileArray
     {
-        public Tile[,] Tiles = new Tile[Globals.MapWidth, Globals.MapHeight];
+        public Tile[,] Tiles = new Tile[Options.MapWidth, Options.MapHeight];
     }
 
     public class Tile
