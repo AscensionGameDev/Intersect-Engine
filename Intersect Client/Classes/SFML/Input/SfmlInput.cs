@@ -141,11 +141,14 @@ namespace Intersect_Client.Classes.Bridges_and_Interfaces.SFML.Input
                 string keyName = Enum.GetName(typeof(Keyboard.Key), e.Code);
                 if (keyName.ToLower() == "backspace") keyName = "Back";
                 if (keyName.ToLower().IndexOf("num") == 0) keyName = "D" + keyName.Substring(3);
-                Keys key = (Keys)Enum.Parse(typeof(Keys), keyName, true);
-                Gui.GwenInput.ProcessMessage(new GwenInputMessage(IntersectInput.InputEvent.KeyUp,
-                GetMousePosition(), (int)MouseButtons.None, key));
-                GameInputHandler.OnKeyReleased(key);
-                _keyDictionary[key] = false;
+                Keys key;
+                if (Enum.TryParse(keyName, true, out key))
+                {
+                    Gui.GwenInput.ProcessMessage(new GwenInputMessage(IntersectInput.InputEvent.KeyUp,
+                        GetMousePosition(), (int) MouseButtons.None, key));
+                    GameInputHandler.OnKeyReleased(key);
+                    _keyDictionary[key] = false;
+                }
             }
             catch (Exception)
             {
@@ -161,11 +164,13 @@ namespace Intersect_Client.Classes.Bridges_and_Interfaces.SFML.Input
                 string keyName = Enum.GetName(typeof(Keyboard.Key), e.Code);
                 if (keyName.ToLower() == "backspace") keyName = "Back";
                 if (keyName.ToLower().IndexOf("num") == 0) keyName = "D" + keyName.Substring(3);
-                Keys key = (Keys)Enum.Parse(typeof(Keys), keyName, true);
-                Gui.GwenInput.ProcessMessage(new GwenInputMessage(IntersectInput.InputEvent.KeyDown,
-                GetMousePosition(), (int)MouseButtons.None, key));
-                GameInputHandler.OnKeyPressed(key);
-                _keyDictionary[key] = true;
+                Keys key;
+                if (Enum.TryParse(keyName, true,out key))
+                {
+                    Gui.GwenInput.ProcessMessage(new GwenInputMessage(IntersectInput.InputEvent.KeyDown,GetMousePosition(), (int)MouseButtons.None, key));
+                    GameInputHandler.OnKeyPressed(key);
+                    _keyDictionary[key] = true;
+                }
             }
             catch (Exception)
             {

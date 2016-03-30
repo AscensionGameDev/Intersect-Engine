@@ -24,6 +24,8 @@
     OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
     SOFTWARE.
 */
+
+using System.IO;
 using IntersectClientExtras.Graphics;
 using SFML.Graphics;
 
@@ -34,7 +36,8 @@ namespace Intersect_Client.Classes.Bridges_and_Interfaces.SFML.Graphics
         private Font _font;
         public SfmlFont(string fontName) : base(fontName)
         {
-            _font = new Font(fontName);
+            if (File.Exists(fontName))
+                _font = new Font(fontName);
         }
 
         public override object GetFont()

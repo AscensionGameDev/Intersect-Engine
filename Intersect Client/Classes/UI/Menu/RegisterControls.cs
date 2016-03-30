@@ -163,36 +163,47 @@ namespace Intersect_Client.Classes.UI.Menu
         void TryRegister()
         {
             if (Globals.WaitingOnServer) { return; }
-            if (FieldChecking.IsValidName(_usernameTextbox.Text))
+            if (GameNetwork.Connected)
             {
-                if (_passwordTextbox.Text == _passwordTextbox2.Text)
+                if (FieldChecking.IsValidName(_usernameTextbox.Text))
                 {
-                    if (FieldChecking.IsValidPass(_passwordTextbox.Text))
+                    if (_passwordTextbox.Text == _passwordTextbox2.Text)
                     {
-                        if (FieldChecking.IsEmail(_emailTextbox.Text))
+                        if (FieldChecking.IsValidPass(_passwordTextbox.Text))
                         {
-                            GameFade.FadeOut();
-                            PacketSender.SendCreateAccount(_usernameTextbox.Text, _passwordTextbox.Text, _emailTextbox.Text);
-                            Globals.WaitingOnServer = true;
+                            if (FieldChecking.IsEmail(_emailTextbox.Text))
+                            {
+                                GameFade.FadeOut();
+                                PacketSender.SendCreateAccount(_usernameTextbox.Text, _passwordTextbox.Text,
+                                    _emailTextbox.Text);
+                                Globals.WaitingOnServer = true;
+                            }
+                            else
+                            {
+                                Gui.MsgboxErrors.Add("Email is invalid!");
+                            }
                         }
                         else
                         {
-                            Gui.MsgboxErrors.Add("Email is invalid!");
+                            Gui.MsgboxErrors.Add(
+                                "Password is invalid. Please user alphanumeric characters with a length between 4 and 20");
                         }
                     }
                     else
                     {
-                        Gui.MsgboxErrors.Add("Password is invalid. Please user alphanumeric characters with a length between 4 and 20");
+                        Gui.MsgboxErrors.Add("Passwords didn't match!");
                     }
                 }
                 else
                 {
-                    Gui.MsgboxErrors.Add("Passwords didn't match!");
+                    Gui.MsgboxErrors.Add(
+                        "Username is invalid. Please user alphanumeric characters with a length between 2 and 20");
                 }
             }
             else
             {
-                Gui.MsgboxErrors.Add("Username is invalid. Please user alphanumeric characters with a length between 2 and 20");
+                Gui.MsgboxErrors.Add(
+                        "Not connected to the game server. Is it online?");
             }
         }
 

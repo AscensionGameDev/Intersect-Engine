@@ -93,6 +93,7 @@ namespace Intersect_Client.Classes.Networking
         private static void MySocket_OnConnected()
         {
             //Not sure how to handle this yet!
+            Connected = true;
         }
 
         public static void Close()

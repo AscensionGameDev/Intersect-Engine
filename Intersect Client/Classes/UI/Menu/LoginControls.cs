@@ -164,33 +164,46 @@ namespace Intersect_Client.Classes.UI.Menu
         {
             var sha = new SHA256Managed();
             if (Globals.WaitingOnServer) { return; }
-            if (FieldChecking.IsValidName(_usernameTextbox.Text))
+            if (GameNetwork.Connected)
             {
-                if (_useSavedPass)
+                if (FieldChecking.IsValidName(_usernameTextbox.Text))
                 {
-                    GameFade.FadeOut();
-                    PacketSender.SendLogin(_usernameTextbox.Text, _savedPass);
-                    if (!_savePassChk.IsChecked) SaveCredentials();
-                    Globals.WaitingOnServer = true;
-                }
-                else
-                {
-                    if (FieldChecking.IsValidPass(_passwordTextbox.Text))
+                    if (_useSavedPass)
                     {
                         GameFade.FadeOut();
-                        PacketSender.SendLogin(_usernameTextbox.Text, BitConverter.ToString(sha.ComputeHash(Encoding.UTF8.GetBytes(_passwordTextbox.Text.Trim()))).Replace("-", ""));
-                        SaveCredentials();
+                        PacketSender.SendLogin(_usernameTextbox.Text, _savedPass);
+                        if (!_savePassChk.IsChecked) SaveCredentials();
                         Globals.WaitingOnServer = true;
                     }
                     else
                     {
-                        Gui.MsgboxErrors.Add("Password is invalid. Please user alphanumeric characters with a length between 4 and 20");
+                        if (FieldChecking.IsValidPass(_passwordTextbox.Text))
+                        {
+                            GameFade.FadeOut();
+                            PacketSender.SendLogin(_usernameTextbox.Text,
+                                BitConverter.ToString(
+                                    sha.ComputeHash(Encoding.UTF8.GetBytes(_passwordTextbox.Text.Trim())))
+                                    .Replace("-", ""));
+                            SaveCredentials();
+                            Globals.WaitingOnServer = true;
+                        }
+                        else
+                        {
+                            Gui.MsgboxErrors.Add(
+                                "Password is invalid. Please user alphanumeric characters with a length between 4 and 20");
+                        }
                     }
+                }
+                else
+                {
+                    Gui.MsgboxErrors.Add(
+                        "Username is invalid. Please user alphanumeric characters with a length between 2 and 20");
                 }
             }
             else
             {
-                Gui.MsgboxErrors.Add("Username is invalid. Please user alphanumeric characters with a length between 2 and 20");
+                Gui.MsgboxErrors.Add(
+                        "Not connected to the game server. Is it online?");
             }
         }
         private void LoadCredentials()

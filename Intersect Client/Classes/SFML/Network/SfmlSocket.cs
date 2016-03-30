@@ -54,7 +54,13 @@ namespace Intersect_Client.Classes.Bridges_and_Interfaces.SFML.Network
             Connecting = true;
         }
 
-        private void ConnectCallback(IAsyncResult result)
+        /// <summary>
+        /// This is called when the socket succeeded or failed in connecting to the server.
+        /// This will error on the .EndConnect line if the server is offline or unreachable.
+        /// Since this error is caught with the Try-Catch you can ignore it.
+        /// </summary>
+        /// <param name="result"></param>
+        private void ConnectCallback(IAsyncResult result) 
         {
             try
             {
@@ -140,6 +146,11 @@ namespace Intersect_Client.Classes.Bridges_and_Interfaces.SFML.Network
         {
             MySocket = null;
             _myStream = null;
+        }
+
+        public override bool IsConnected()
+        {
+            return Connected;
         }
     }
 }
