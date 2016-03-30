@@ -163,6 +163,7 @@ namespace Intersect_Client.Classes.UI.Game
     public class InventoryItem
     {
         public ImagePanel pnl;
+        public ImagePanel equipPanel;
         private ItemDescWindow _descWindow;
 
         //Mouse Event Variables
@@ -198,6 +199,11 @@ namespace Intersect_Client.Classes.UI.Game
             pnl.RightClicked += pnl_RightClicked;
             pnl.DoubleClicked += Pnl_DoubleClicked;
             pnl.Clicked += pnl_Clicked;
+            equipPanel = new ImagePanel(pnl);
+            equipPanel.SetSize(2, 2);
+            equipPanel.RenderColor = Color.Red;
+            equipPanel.SetPosition(26, 2);
+            equipPanel.Texture = Gui.ToGwenTexture(GameGraphics.WhiteTex);
         }
 
         private void Pnl_DoubleClicked(Base sender, ClickedEventArgs arguments)
@@ -301,6 +307,7 @@ namespace Intersect_Client.Classes.UI.Game
             {
                 _currentItem = Globals.Me.Inventory[_mySlot].ItemNum;
                 _isEquipped = equipped;
+                equipPanel.IsHidden = !_isEquipped;
                 if (Globals.Me.Inventory[_mySlot].ItemNum > -1)
                 {
                     if (GameGraphics.ItemFileNames.Contains(Globals.GameItems[Globals.Me.Inventory[_mySlot].ItemNum].Pic))

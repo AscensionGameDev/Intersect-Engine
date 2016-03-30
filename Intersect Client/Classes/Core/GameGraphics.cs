@@ -28,6 +28,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Windows.Forms;
 using IntersectClientExtras.GenericClasses;
 using IntersectClientExtras.Graphics;
 using Intersect_Client.Classes.Entities;
@@ -78,15 +79,9 @@ namespace Intersect_Client.Classes.Core
 
 
         //Darkness Stuff
-        public static int DarkOffsetX = 0;
-        public static int DarkOffsetY = 0;
-        public static float SunIntensity;
-        public static GameRenderTexture DarknessTexture;
-        private static GameShader RadialGradientShader;
-
-        //Fog Stuff
-        public static int FogOffsetX = 0;
-        public static int FogOffsetY = 0;
+        public static float _brightnessLevel;
+        private static GameRenderTexture _darknessTexture;
+        private static GameShader _radialGradientShader;
 
         //Overlay Stuff
         public static Color OverlayColor = Color.Transparent;
@@ -94,11 +89,12 @@ namespace Intersect_Client.Classes.Core
         private static long _overlayUpdate = 0;
 
         //Player Spotlight Values
-        private static byte PlayerLightIntensity = 255;
-        private static int PlayerLightSize = 0;
-        private static float PlayerLightExpand = 0f;
-        public static Color PlayerLightColor = Color.White;
-        private static List<Light> lightQueue = new List<Light>(); 
+        private static long _lightUpdate = 0;
+        private static byte _playerLightIntensity = 255;
+        private static int _playerLightSize = 0;
+        private static float _playerLightExpand = 0f;
+        public static Color _playerLightColor = Color.White;
+        private static List<Light> _lightQueue = new List<Light>(); 
 
         private static long _fadeTimer;
 
@@ -128,7 +124,7 @@ namespace Intersect_Client.Classes.Core
             CreateWhiteTexture();
             Globals.ContentManager.LoadAll();
             GameFont = Renderer.LoadFont("Resources/Fonts/Arvo-Regular.ttf");
-            RadialGradientShader = Renderer.LoadShader("Resources/Shaders/RadialGradient");
+            _radialGradientShader = Renderer.LoadShader("Resources/Shaders/RadialGradient");
         }
         public static void InitInGame()
         {
@@ -172,17 +168,8 @@ namespace Intersect_Client.Classes.Core
 
             TryPreRendering();
 
-            if (Globals.CurrentMap > -1 && Globals.GameMaps.ContainsKey(Globals.CurrentMap))
+            if (Globals.CurrentMap > -1 && Globals.GameMaps.ContainsKey(Globals.CurrentMap) && Globals.NeedsMaps == false)
             {
-                if (Globals.GameMaps[Globals.CurrentMap] != null)
-                {
-                    if (ImageFileNames.IndexOf(Globals.GameMaps[Globals.CurrentMap].Panorama) > -1)
-                    {
-                        DrawFullScreenTexture(
-                            ImageTextures[ImageFileNames.IndexOf(Globals.GameMaps[Globals.CurrentMap].Panorama)]);
-                    }
-                }
-
                 //Render players, names, maps, etc.
                 for (var i = 0; i < 9; i++)
                 {
@@ -237,15 +224,6 @@ namespace Intersect_Client.Classes.Core
 
                 //Draw the players targets
                 ((Player)Globals.Entities[Globals.MyIndex]).DrawTargets();
-
-                if (Globals.GameMaps[Globals.CurrentMap] != null)
-                {
-                    if (ImageFileNames.IndexOf(Globals.GameMaps[Globals.CurrentMap].OverlayGraphic) > -1)
-                    {
-                        DrawFullScreenTexture(
-                            ImageTextures[ImageFileNames.IndexOf(Globals.GameMaps[Globals.CurrentMap].OverlayGraphic)]);
-                    }
-                }
 
                 DrawOverlay();
 
@@ -456,7 +434,7 @@ namespace Intersect_Client.Classes.Core
             DrawGameTexture(WhiteTex, new FloatRect(0, 0, 1, 1), CurrentView, OverlayColor,null);
             _overlayUpdate = Globals.System.GetTimeMS();
         }
-        public static void DrawFullScreenTexture(GameTexture tex)
+        public static void DrawFullScreenTexture(GameTexture tex, float alpha = 1f)
         {
             int bgx = (int)(Renderer.GetScreenWidth() / 2 - tex.GetWidth() / 2);
             int bgy = (int)(Renderer.GetScreenHeight()/ 2 - tex.GetHeight() / 2);
@@ -476,7 +454,7 @@ namespace Intersect_Client.Classes.Core
                 bgh += diff;
             }
             DrawGameTexture(tex, new FloatRect(0, 0, tex.GetWidth(), tex.GetHeight()),
-                new FloatRect(bgx + Renderer.GetView().X, bgy + Renderer.GetView().Y, bgw, bgh),Color.White);
+                new FloatRect(bgx + Renderer.GetView().X, bgy + Renderer.GetView().Y, bgw, bgh),new Color((int)(alpha * 255f),255,255,255));
         }
         public static void DrawFullScreenTextureStretched(GameTexture tex)
         {
@@ -583,57 +561,236 @@ namespace Intersect_Client.Classes.Core
         //Lighting
         private static void ClearDarknessTexture()
         {
-            if (DarknessTexture == null)
+            if (_darknessTexture == null)
             {
-                DarknessTexture = Renderer.CreateRenderTexture(Renderer.GetScreenWidth(), Renderer.GetScreenHeight());
+                _darknessTexture = Renderer.CreateRenderTexture(Renderer.GetScreenWidth(), Renderer.GetScreenHeight());
             }
-            DarknessTexture.Clear(Color.Black);
+            _darknessTexture.Clear(Color.Black);
          }
         private static void OverlayDarkness()
         {
             if (!Globals.GameMaps.ContainsKey(Globals.CurrentMap)) return;
-            if (DarknessTexture == null) { return; }
+            if (_darknessTexture == null) { return; }
 
-            //Draw Light Around Player
-            if (Globals.GameMaps.ContainsKey(Globals.CurrentMap))
-            {
-                PlayerLightSize = Globals.GameMaps[Globals.CurrentMap].PlayerLightSize;
-                PlayerLightIntensity = Globals.GameMaps[Globals.CurrentMap].PlayerLightIntensity;
-                PlayerLightColor = Globals.GameMaps[Globals.CurrentMap].PlayerLightColor;
-                PlayerLightExpand = Globals.GameMaps[Globals.CurrentMap].PlayerLightExpand ;
-                DrawLight((int)Math.Ceiling(Globals.Entities[Globals.MyIndex].GetCenterPos().X), (int)
-                    Math.Ceiling(Globals.Entities[Globals.MyIndex].GetCenterPos().Y), (int)PlayerLightSize, PlayerLightIntensity, PlayerLightExpand, PlayerLightColor);
-            }
+            UpdatePlayerLight();
+            DrawLight((int)Math.Ceiling(Globals.Entities[Globals.MyIndex].GetCenterPos().X), (int)Math.Ceiling(Globals.Entities[Globals.MyIndex].GetCenterPos().Y), (int)_playerLightSize, _playerLightIntensity, _playerLightExpand, _playerLightColor);
 
             DrawLights();
             DrawGameTexture(WhiteTex, new FloatRect(0, 0, 1, 1),
-                new FloatRect(0, 0, DarknessTexture.GetWidth(), DarknessTexture.GetHeight()),
-                new Color((byte)(SunIntensity),255, 255, 255),DarknessTexture);
-            DarknessTexture.End();
-            DrawGameTexture(DarknessTexture, CurrentView.Left, CurrentView.Top, null,GameBlendModes.Multiply);
+                new FloatRect(0, 0, _darknessTexture.GetWidth(), _darknessTexture.GetHeight()),
+                new Color((byte)(_brightnessLevel),255, 255, 255),_darknessTexture);
+            _darknessTexture.End();
+            DrawGameTexture(_darknessTexture, CurrentView.Left, CurrentView.Top, null,GameBlendModes.Multiply);
         }
         public static void DrawLight(int x, int y, int size, byte intensity, float expand, Color color)
         {
-            lightQueue.Add(new Light(0, 0, x, y, intensity, size, expand, color));
+            _lightQueue.Add(new Light(0, 0, x, y, intensity, size, expand, color));
             LightsDrawn++;
         }
 
         private static void DrawLights()
         {
-            foreach (Light l in lightQueue)
+            foreach (Light l in _lightQueue)
             {
                 int x = l.OffsetX - ((int)CurrentView.Left + l.Size);
                 int y = l.OffsetY - ((int)CurrentView.Top + l.Size);
-                RadialGradientShader.SetColor("_Color", new Color(l.Intensity, l.Color.R, l.Color.G, l.Color.B));
-                RadialGradientShader.SetVector2("_Center", new Pointf(x + l.Size, y + l.Size));
-                RadialGradientShader.SetFloat("_Radius", l.Size);
-                RadialGradientShader.SetFloat("_Expand", l.Expand / 100f);
-                RadialGradientShader.SetFloat("_WindowHeight", DarknessTexture.GetHeight());
+                _radialGradientShader.SetColor("_Color", new Color(l.Intensity, l.Color.R, l.Color.G, l.Color.B));
+                _radialGradientShader.SetVector2("_Center", new Pointf(x + l.Size, y + l.Size));
+                _radialGradientShader.SetFloat("_Radius", l.Size);
+                _radialGradientShader.SetFloat("_Expand", l.Expand / 100f);
+                _radialGradientShader.SetFloat("_WindowHeight", _darknessTexture.GetHeight());
 
                 DrawGameTexture(WhiteTex, new FloatRect(0, 0, 1, 1), new FloatRect(x, y, l.Size * 2, l.Size * 2), Color.Transparent,
-                    DarknessTexture, GameBlendModes.Add, RadialGradientShader);
+                    _darknessTexture, GameBlendModes.Add, _radialGradientShader);
             }
-            lightQueue.Clear();
+            _lightQueue.Clear();
+        }
+
+        private static void UpdatePlayerLight()
+        {
+            //Draw Light Around Player
+            if (Globals.GameMaps.ContainsKey(Globals.CurrentMap))
+            {
+                float ecTime = Globals.System.GetTimeMS() - _lightUpdate;
+
+                byte brightnessTarget = (byte)(((float)Globals.GameMaps[Globals.CurrentMap].Brightness / 100f) * 255);
+                if (_brightnessLevel < brightnessTarget)
+                {
+                    if ((int)_brightnessLevel + (int)(255 * ecTime / 2000f) > brightnessTarget)
+                    {
+                        _brightnessLevel = brightnessTarget;
+                    }
+                    else
+                    {
+                        _brightnessLevel += (byte)(255 * ecTime / 2000f);
+                    }
+                }
+
+                if (_brightnessLevel > brightnessTarget)
+                {
+                    if ((int)_brightnessLevel - (int)(255 * ecTime / 2000f) < brightnessTarget)
+                    {
+                        _brightnessLevel = brightnessTarget;
+                    }
+                    else
+                    {
+                        _brightnessLevel -= (byte)(255 * ecTime / 2000f);
+                    }
+                }
+
+                if (_playerLightColor.R != Globals.GameMaps[Globals.CurrentMap].PlayerLightColor.R ||
+                    _playerLightColor.G != Globals.GameMaps[Globals.CurrentMap].PlayerLightColor.G ||
+                    _playerLightColor.B != Globals.GameMaps[Globals.CurrentMap].PlayerLightColor.B)
+                {
+                    if (_playerLightColor.R < Globals.GameMaps[Globals.CurrentMap].PlayerLightColor.R)
+                    {
+                        if ((int)_playerLightColor.R + (int)(255 * ecTime / 2000f) > Globals.GameMaps[Globals.CurrentMap].PlayerLightColor.R)
+                        {
+                            _playerLightColor.R = (byte)Globals.GameMaps[Globals.CurrentMap].PlayerLightColor.R;
+                        }
+                        else
+                        {
+                            _playerLightColor.R += (byte)(255 * ecTime / 2000f);
+                        }
+                    }
+
+                    if (_playerLightColor.R > Globals.GameMaps[Globals.CurrentMap].PlayerLightColor.R)
+                    {
+                        if ((int)_playerLightColor.R - (int)(255 * ecTime / 2000f) < Globals.GameMaps[Globals.CurrentMap].PlayerLightColor.R)
+                        {
+                            _playerLightColor.R = (byte)Globals.GameMaps[Globals.CurrentMap].PlayerLightColor.R;
+                        }
+                        else
+                        {
+                            _playerLightColor.R -= (byte)(255 * ecTime / 2000f);
+                        }
+                    }
+
+                    if (_playerLightColor.G < Globals.GameMaps[Globals.CurrentMap].PlayerLightColor.G)
+                    {
+                        if ((int)_playerLightColor.G + (int)(255 * ecTime / 2000f) > Globals.GameMaps[Globals.CurrentMap].PlayerLightColor.G)
+                        {
+                            _playerLightColor.G = (byte)Globals.GameMaps[Globals.CurrentMap].PlayerLightColor.G;
+                        }
+                        else
+                        {
+                            _playerLightColor.G += (byte)(255 * ecTime / 2000f);
+                        }
+                    }
+
+                    if (_playerLightColor.G > Globals.GameMaps[Globals.CurrentMap].PlayerLightColor.G)
+                    {
+                        if ((int)_playerLightColor.G - (int)(255 * ecTime / 2000f) < Globals.GameMaps[Globals.CurrentMap].PlayerLightColor.G)
+                        {
+                            _playerLightColor.G = (byte)Globals.GameMaps[Globals.CurrentMap].PlayerLightColor.G;
+                        }
+                        else
+                        {
+                            _playerLightColor.G -= (byte)(255 * ecTime / 2000f);
+                        }
+                    }
+
+                    if (_playerLightColor.B < Globals.GameMaps[Globals.CurrentMap].PlayerLightColor.B)
+                    {
+                        if ((int)_playerLightColor.B + (int)(255 * ecTime / 2000f) > Globals.GameMaps[Globals.CurrentMap].PlayerLightColor.B)
+                        {
+                            _playerLightColor.B = (byte)Globals.GameMaps[Globals.CurrentMap].PlayerLightColor.B;
+                        }
+                        else
+                        {
+                            _playerLightColor.B += (byte)(255 * ecTime / 2000f);
+                        }
+                    }
+
+                    if (_playerLightColor.B > Globals.GameMaps[Globals.CurrentMap].PlayerLightColor.B)
+                    {
+                        if ((int)_playerLightColor.B - (int)(255 * ecTime / 2000f) < Globals.GameMaps[Globals.CurrentMap].PlayerLightColor.B)
+                        {
+                            _playerLightColor.B = (byte)Globals.GameMaps[Globals.CurrentMap].PlayerLightColor.B;
+                        }
+                        else
+                        {
+                            _playerLightColor.B -= (byte)(255 * ecTime / 2000f);
+                        }
+                    }
+                }
+
+                if (_playerLightSize != Globals.GameMaps[Globals.CurrentMap].PlayerLightSize)
+                {
+                    if (_playerLightSize < Globals.GameMaps[Globals.CurrentMap].PlayerLightSize)
+                    {
+                        if (_playerLightSize + (int) (500*ecTime/2000f) > Globals.GameMaps[Globals.CurrentMap].PlayerLightSize)
+                        {
+                            _playerLightSize =  Globals.GameMaps[Globals.CurrentMap].PlayerLightSize;
+                        }
+                        else
+                        {
+                            _playerLightSize +=  (int)(500*ecTime/2000f);
+                        }
+                    }
+
+                    if (_playerLightSize > Globals.GameMaps[Globals.CurrentMap].PlayerLightSize)
+                    {
+                        if (_playerLightSize - (int)(500 * ecTime / 2000f) < Globals.GameMaps[Globals.CurrentMap].PlayerLightSize)
+                        {
+                            _playerLightSize = Globals.GameMaps[Globals.CurrentMap].PlayerLightSize;
+                        }
+                        else
+                        {
+                            _playerLightSize -= (int)(500 * ecTime / 2000f);
+                        }
+                    }
+                }
+
+                if (_playerLightIntensity < Globals.GameMaps[Globals.CurrentMap].PlayerLightIntensity)
+                {
+                    if ((int)_playerLightIntensity + (int)(255 * ecTime / 2000f) > Globals.GameMaps[Globals.CurrentMap].PlayerLightIntensity)
+                    {
+                        _playerLightIntensity = (byte)Globals.GameMaps[Globals.CurrentMap].PlayerLightIntensity;
+                    }
+                    else
+                    {
+                        _playerLightIntensity += (byte)(255 * ecTime / 2000f);
+                    }
+                }
+
+                if (_playerLightIntensity > Globals.GameMaps[Globals.CurrentMap].AHue)
+                {
+                    if ((int)_playerLightIntensity - (int)(255 * ecTime / 2000f) < Globals.GameMaps[Globals.CurrentMap].PlayerLightIntensity)
+                    {
+                        _playerLightIntensity = (byte)Globals.GameMaps[Globals.CurrentMap].PlayerLightIntensity;
+                    }
+                    else
+                    {
+                        _playerLightIntensity -= (byte)(255 * ecTime / 2000f);
+                    }
+                }
+
+                if (_playerLightExpand < Globals.GameMaps[Globals.CurrentMap].PlayerLightExpand)
+                {
+                    if ((int)_playerLightExpand + (float)(100f * ecTime / 2000f) > Globals.GameMaps[Globals.CurrentMap].PlayerLightExpand)
+                    {
+                        _playerLightExpand = Globals.GameMaps[Globals.CurrentMap].PlayerLightExpand;
+                    }
+                    else
+                    {
+                        _playerLightExpand += (100f * ecTime / 2000f);
+                    }
+                }
+
+                if (_playerLightExpand > Globals.GameMaps[Globals.CurrentMap].PlayerLightExpand)
+                {
+                    if ((int)_playerLightExpand - (float)(100f * ecTime / 2000f) < Globals.GameMaps[Globals.CurrentMap].PlayerLightExpand)
+                    {
+                        _playerLightExpand = Globals.GameMaps[Globals.CurrentMap].PlayerLightExpand;
+                    }
+                    else
+                    {
+                        _playerLightExpand -= (100f * ecTime / 2000f);
+                    }
+                }
+                _lightUpdate = Globals.System.GetTimeMS();
+            }
         }
 
         //Helper Functions

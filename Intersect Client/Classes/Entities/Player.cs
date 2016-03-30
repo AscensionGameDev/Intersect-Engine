@@ -37,6 +37,7 @@ using Intersect_Client.Classes.UI;
 using Intersect_Client.Classes.UI.Game;
 using System.Collections.Generic;
 using Intersect_Client.Classes.Maps;
+using Intersect_Client.Classes.Misc;
 
 namespace Intersect_Client.Classes.Entities
 {
@@ -46,6 +47,7 @@ namespace Intersect_Client.Classes.Entities
         public HotbarInstance[] Hotbar = new HotbarInstance[Options.MaxHotbar];
         public int StatPoints = 0;
         public int Experience = 0;
+        public int ExperienceToNextLevel = 0;
 
         public bool NoClip = false;
 
@@ -89,6 +91,13 @@ namespace Intersect_Client.Classes.Entities
             }
             if (_targetBox != null) { _targetBox.Update(); }
             return returnval;
+        }
+
+        //Loading
+        public override void Load(ByteBuffer bf)
+        {
+            base.Load(bf);
+            Level = bf.ReadInteger();
         }
 
         //Item Processing
@@ -608,14 +617,7 @@ namespace Intersect_Client.Classes.Entities
         //Forumlas
         public int GetNextLevelExperience()
         {
-            if (Level == Options.MaxLevel)
-            {
-                return 0;
-            }
-            else
-            {
-                return (int)Math.Pow(2, Level + 1) * 20;
-            }
+            return ExperienceToNextLevel;
         }
 
         //Movement Processing
@@ -841,7 +843,6 @@ namespace Intersect_Client.Classes.Entities
                     Globals.LocalMaps[6] = -1;
                     Globals.CurrentMap = Globals.LocalMaps[4];
                     CurrentMap = Globals.LocalMaps[4];
-                    GameGraphics.DarkOffsetX = Options.TileWidth * Options.MapWidth;
                     PacketSender.SendEnterMap();
                 }
             }
@@ -861,7 +862,6 @@ namespace Intersect_Client.Classes.Entities
                     Globals.LocalMaps[8] = -1;
                     Globals.CurrentMap = Globals.LocalMaps[4];
                     CurrentMap = Globals.LocalMaps[4];
-                    GameGraphics.DarkOffsetX = -Options.TileWidth * Options.MapWidth;
                     PacketSender.SendEnterMap();
                 }
 
@@ -882,7 +882,6 @@ namespace Intersect_Client.Classes.Entities
                     Globals.LocalMaps[8] = -1;
                     Globals.CurrentMap = Globals.LocalMaps[4];
                     CurrentMap = Globals.LocalMaps[4];
-                    GameGraphics.DarkOffsetY = -Options.TileHeight * Options.MapHeight;
                     PacketSender.SendEnterMap();
                 }
             }
@@ -902,12 +901,9 @@ namespace Intersect_Client.Classes.Entities
                     Globals.LocalMaps[2] = -1;
                     Globals.CurrentMap = Globals.LocalMaps[4];
                     CurrentMap = Globals.LocalMaps[4];
-                    GameGraphics.DarkOffsetY = Options.TileHeight * Options.MapHeight;
                     PacketSender.SendEnterMap();
                 }
             }
-            GameGraphics.FogOffsetX = GameGraphics.DarkOffsetX;
-            GameGraphics.FogOffsetY = GameGraphics.DarkOffsetY;
         }
 
         /// <summary>

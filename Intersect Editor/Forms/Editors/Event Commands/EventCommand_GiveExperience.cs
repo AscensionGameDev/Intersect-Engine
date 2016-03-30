@@ -42,7 +42,7 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             _myCommand = refCommand;
             _eventEditor = editor;
             scrlExperience.Value = _myCommand.Ints[0];
-            lblExperience.Text = @"Give " + scrlExperience.Value + @"Experience";
+            lblExperience.Text = @"Give " + scrlExperience.Value + @" Experience";
         }
 
         private void btnSave_Click(object sender, EventArgs e)
@@ -58,7 +58,7 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
 
         private void scrlExperience_Scroll(object sender, ScrollEventArgs e)
         {
-            lblExperience.Text = @"Give " + scrlExperience.Value + @"Experience";
+            lblExperience.Text = @"Give " + scrlExperience.Value + @" Experience";
         }
     }
 }

@@ -67,6 +67,8 @@ namespace Intersect_Server.Classes.Entities
             MyIndex = index;
             SelfSwitch = new bool[4];
             GlobalPageInstance = new EventPageInstance[BaseEvent.MyPages.Count];
+            CurrentX = baseEvent.SpawnX;
+            CurrentY = baseEvent.SpawnY;
             for (int i = 0; i < BaseEvent.MyPages.Count; i++)
             {
                 GlobalPageInstance[i] = new EventPageInstance(BaseEvent, BaseEvent.MyPages[i], index, MapNum, this, null);

@@ -220,6 +220,14 @@ namespace Intersect_Client.Classes.UI.Game
                                 GameGraphics.SpellTextures[
                                     GameGraphics.SpellFileNames.IndexOf(
                                         Globals.GameSpells[Globals.Me.Spells[myindex].SpellNum].Pic)]);
+                        if ((Globals.Me.Spells[myindex].SpellCD > Globals.System.GetTimeMS()))
+                        {
+                            pnl.RenderColor = new Color(100,255,255,255);
+                        }
+                        else
+                        {
+                            pnl.RenderColor = new Color(255, 255, 255, 255);
+                        }
                     }
                     else
                     {

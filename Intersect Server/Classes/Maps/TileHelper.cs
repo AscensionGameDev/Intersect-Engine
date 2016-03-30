@@ -9,6 +9,12 @@ namespace Intersect_Server.Classes.Maps
         private int _tileX;
         private int _tileY;
 
+        /// <summary>
+        /// Creates a new tile helper instance in a position given.
+        /// </summary>
+        /// <param name="mapNum"></param>
+        /// <param name="tileX"></param>
+        /// <param name="tileY"></param>
         public TileHelper(int mapNum, int tileX, int tileY)
         {
             _mapNum = mapNum;
@@ -16,10 +22,16 @@ namespace Intersect_Server.Classes.Maps
             _tileY = tileY;
         }
 
+        /// <summary>
+        /// Moves our tile and then attempts to adjust the map location of we walked out of bounds. Will return true if the position is valid. False if not.
+        /// </summary>
+        /// <param name="xOffset"></param>
+        /// <param name="yOffset"></param>
+        /// <returns></returns>
         public bool Translate(int xOffset, int yOffset)
         {
-            _tileX = xOffset;
-            _tileY = yOffset;
+            _tileX += xOffset;
+            _tileY += yOffset;
             return TryFix();
         }
 

@@ -22,6 +22,7 @@
 using System;
 using System.Collections.Generic;
 using Intersect_Server.Classes.General;
+using Intersect_Server.Classes.Maps;
 
 namespace Intersect_Server.Classes
 {
@@ -119,238 +120,129 @@ namespace Intersect_Server.Classes
         /// <returns></returns>
         public int CanMove(int moveDir)
         {
-            var tmpX = CurrentX;
-            var tmpY = CurrentY;
-            var mapX = 0;
-            var mapY = 0;
+            var xOffset = 0;
+            var yOffset = 0;
+            var tile = new TileHelper(CurrentMap,CurrentX,CurrentY);
             switch (moveDir)
             {
                 case 0: //Up
-                    tmpY--;
+                    yOffset--;
                     break;
                 case 1: //Down
-                    tmpY++;
+                    yOffset++;
                     break;
                 case 2: //Left
-                    tmpX--;
+                    xOffset--;
                     break;
                 case 3: //Right
-                    tmpX++;
+                    xOffset++;
                     break;
                 case 4: //NW
-                    tmpY--;
-                    tmpX--;
+                    yOffset--;
+                    xOffset--;
                     break;
                 case 5: //NE
-                    tmpY--;
-                    tmpX++;
+                    yOffset--;
+                    xOffset++;
                     break;
                 case 6: //SW
-                    tmpY++;
-                    tmpX--;
+                    yOffset++;
+                    xOffset--;
                     break;
                 case 7: //SE
-                    tmpY++;
-                    tmpX++;
+                    yOffset++;
+                    xOffset++;
                     break;
             }
-            var tmpMap = CurrentMap;
-            try
+
+            if (tile.Translate(xOffset, yOffset))
             {
-                if (tmpX < 0)
+                Attribute tileAttribute = Globals.GameMaps[tile.GetMap()].Attributes[tile.GetX(), tile.GetY()];
+                if (tileAttribute != null)
                 {
-                    tmpX = (Options.MapWidth - 1) - (tmpX * -1);
-                    mapX--;
+                    if (tileAttribute.value == (int)Enums.MapAttributes.Blocked) return -2;
+                    if (tileAttribute.value == (int)Enums.MapAttributes.NPCAvoid && this.GetType() == typeof(Npc)) return -2;
+                    if (tileAttribute.value == (int)Enums.MapAttributes.ZDimension &&
+                        tileAttribute.data2 - 1 == CurrentZ) return -3;
                 }
-
-                if (tmpY < 0)
-                {
-                    tmpY = (Options.MapHeight - 1) - (tmpY * -1);
-                    mapY--;
-                }
-
-                if (tmpY > (Options.MapHeight - 1))
-                {
-                    tmpY = tmpY - (Options.MapHeight - 1);
-                    mapY++;
-                }
-
-                if (tmpX > (Options.MapWidth - 1))
-                {
-                    tmpX = tmpX - (Options.MapWidth - 1);
-                    mapX++;
-                }
-
-                if (Globals.GameMaps[tmpMap].MapGridX + mapX >= 0 &&
-                    Globals.GameMaps[tmpMap].MapGridX + mapX < Database.MapGrids[Globals.GameMaps[tmpMap].MapGrid].Width)
-                {
-                    if (Globals.GameMaps[tmpMap].MapGridY + mapY >= 0 &&
-                        Globals.GameMaps[tmpMap].MapGridY + mapY <
-                        Database.MapGrids[Globals.GameMaps[tmpMap].MapGrid].Height)
-                    {
-                        if (Database.MapGrids[Globals.GameMaps[tmpMap].MapGrid].MyGrid[Globals.GameMaps[tmpMap].MapGridX + mapX, Globals.GameMaps[tmpMap].MapGridY + mapY] > -1)
-                        {
-                            Attribute tileAttribute =
-                                Globals.GameMaps[
-                                    Database.MapGrids[Globals.GameMaps[tmpMap].MapGrid].MyGrid[
-                                        Globals.GameMaps[tmpMap].MapGridX + mapX, Globals.GameMaps[tmpMap].MapGridY + mapY]]
-                                    .Attributes[tmpX, tmpY];
-                            if (tileAttribute != null)
-                            {
-                                if (tileAttribute.value == (int)Enums.MapAttributes.Blocked) return -2;
-                                if (tileAttribute.value == (int)Enums.MapAttributes.NPCAvoid && this.GetType() == typeof(Npc)) return -2;
-                                if (tileAttribute.value == (int) Enums.MapAttributes.ZDimension &&
-                                    tileAttribute.data2 - 1 == CurrentZ) return -3;
-                            }
-                            tmpMap = Database.MapGrids[Globals.GameMaps[tmpMap].MapGrid].MyGrid[Globals.GameMaps[tmpMap].MapGridX + mapX, Globals.GameMaps[tmpMap].MapGridY + mapY];
-                        }
-                        else
-                        {
-                            return -5;
-                        }
-                    }
-                    else
-                    {
-                        return -5;
-                    }
-                }
-                else
-                {
-                    return -5;
-                }
-
-                foreach (Entity en in Globals.Entities)
-                {
-                    if (en == null) continue;
-                    if (en.CurrentMap == tmpMap && en.CurrentX == tmpX && en.CurrentY == tmpY && en.CurrentZ == CurrentZ && en.Passable == 0)
-                    {
-                        //Set a target if a projectile
-                        CollisionIndex = en.MyIndex;
-                        if (en.GetType() == typeof(Player))
-                        {
-                            return (int)Enums.EntityTypes.Player;
-                        }
-                        else if (en.GetType() == typeof(Npc))
-                        {
-                            return (int)Enums.EntityTypes.Player;
-                        }
-                        else if (en.GetType() == typeof(Resource))
-                        {
-                            return (int)Enums.EntityTypes.Resource;
-                        }
-                        else if (en.GetType() == typeof(EventPageInstance))
-                        {
-                            return (int)Enums.EntityTypes.Event;
-                        }
-                    }
-                }
-                return -1;
             }
-            catch
+            else
             {
-                return -2;
-
+                return -5; //Out of Bounds
             }
+
+            for (int i = 0; i < Globals.GameMaps[tile.GetMap()].Entities.Count; i++)
+            {
+                Entity en = Globals.GameMaps[tile.GetMap()].Entities[i];
+                if (en.CurrentX == tile.GetX() && en.CurrentY == tile.GetY() && en.CurrentZ == CurrentZ && en.Passable == 0)
+                {
+                    //Set a target if a projectile
+                    CollisionIndex = en.MyIndex;
+                    if (en.GetType() == typeof(Player))
+                    {
+                        return (int)Enums.EntityTypes.Player;
+                    }
+                    else if (en.GetType() == typeof(Npc))
+                    {
+                        return (int)Enums.EntityTypes.Player;
+                    }
+                    else if (en.GetType() == typeof(Resource))
+                    {
+                        return (int)Enums.EntityTypes.Resource;
+                    }
+                    else if (en.GetType() == typeof(EventPageInstance))
+                    {
+                        return (int)Enums.EntityTypes.Event;
+                    }
+                }
+            }
+
+            return -1;
         }
+
+
         public void Move(int moveDir, Client client)
         {
-            var tmpX = CurrentX;
-            var tmpY = CurrentY;
-            var mapX = 0;
-            var mapY = 0;
+            var xOffset = 0;
+            var yOffset = 0;
+            var tile = new TileHelper(CurrentMap, CurrentX, CurrentY);
             switch (moveDir)
             {
                 case 0: //Up
-                    tmpY--;
+                    yOffset--;
                     break;
                 case 1: //Down
-                    tmpY++;
+                    yOffset++;
                     break;
                 case 2: //Left
-                    tmpX--;
+                    xOffset--;
                     break;
                 case 3: //Right
-                    tmpX++;
+                    xOffset++;
                     break;
-                case 4: //UpLeft
-                    tmpY--;
-                    tmpX--;
+                case 4: //NW
+                    yOffset--;
+                    xOffset--;
                     break;
-                case 5: //UpRight
-                    tmpY--;
-                    tmpX++;
+                case 5: //NE
+                    yOffset--;
+                    xOffset++;
                     break;
-                case 6: //DownLeft
-                    tmpY++;
-                    tmpX--;
+                case 6: //SW
+                    yOffset++;
+                    xOffset--;
                     break;
-                case 7: //DownRight
-                    tmpY++;
-                    tmpX++;
+                case 7: //SE
+                    yOffset++;
+                    xOffset++;
                     break;
             }
-            var tmpMap = CurrentMap;
-            try
+
+            if (tile.Translate(xOffset, yOffset))
             {
-                if (tmpX < 0)
-                {
-                    tmpX = (Options.MapWidth - 1) - (tmpX * -1);
-                    mapX--;
-                }
-
-                if (tmpY < 0)
-                {
-                    tmpY = (Options.MapHeight - 1) - (tmpY * -1);
-                    mapY--;
-                }
-
-                if (tmpY > (Options.MapHeight - 1))
-                {
-                    tmpY = tmpY - (Options.MapHeight - 1);
-                    mapY++;
-                }
-
-                if (tmpX > (Options.MapWidth - 1))
-                {
-                    tmpX = tmpX - (Options.MapWidth - 1);
-                    mapX++;
-                }
-
-                if (Globals.GameMaps[tmpMap].MapGridX + mapX >= 0 &&
-                    Globals.GameMaps[tmpMap].MapGridX + mapX < Database.MapGrids[Globals.GameMaps[tmpMap].MapGrid].Width)
-                {
-                    if (Globals.GameMaps[tmpMap].MapGridY + mapY >= 0 &&
-                        Globals.GameMaps[tmpMap].MapGridY + mapY <
-                        Database.MapGrids[Globals.GameMaps[tmpMap].MapGrid].Height)
-                    {
-
-                        if (
-                            Database.MapGrids[Globals.GameMaps[tmpMap].MapGrid].MyGrid[
-                                Globals.GameMaps[tmpMap].MapGridX + mapX, Globals.GameMaps[tmpMap].MapGridY + mapY] > -1)
-                        {
-                            tmpMap =
-                                Database.MapGrids[Globals.GameMaps[tmpMap].MapGrid].MyGrid[
-                                    Globals.GameMaps[tmpMap].MapGridX + mapX, Globals.GameMaps[tmpMap].MapGridY + mapY];
-                        }
-                        else
-                        {
-                            return;
-                        }
-                    }
-                    else
-                    {
-                        return;
-                    }
-                }
-                else
-                {
-                    return;
-                }
-
-
-                CurrentX = tmpX;
-                CurrentY = tmpY;
-                CurrentMap = tmpMap;
+                CurrentX = tile.GetX();
+                CurrentY = tile.GetY();
+                CurrentMap = tile.GetMap();
                 Dir = moveDir;
                 if (this.GetType() == typeof(EventPageInstance))
                 {
@@ -369,11 +261,8 @@ namespace Intersect_Server.Classes
                 }
                 MoveTimer = Environment.TickCount + (int)((1.0 / (Stat[2].Value() / 10f)) * 1000);
             }
-            catch (Exception)
-            {
-                //ignore
-            }
         }
+
         public void ChangeDir(int dir)
         {
             Dir = dir;
@@ -750,7 +639,7 @@ namespace Intersect_Server.Classes
         }
 
         //Serializing Data
-        public byte[] Data()
+        public virtual byte[] Data()
         {
             var bf = new ByteBuffer();
             bf.WriteInteger(CurrentMap);

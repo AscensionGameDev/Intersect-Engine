@@ -277,7 +277,6 @@ namespace Intersect_Client.Classes.Networking
             Globals.GameMaps[mapNum].HoldRight = bf.ReadInteger();
             Globals.GameMaps[mapNum].HoldUp = bf.ReadInteger();
             Globals.GameMaps[mapNum].HoldDown = bf.ReadInteger();
-            Globals.System.Log("Loaded map " + mapNum);
         }
 
         private static void HandleEntityData(byte[] packet)
@@ -420,6 +419,7 @@ namespace Intersect_Client.Classes.Networking
                 if (Globals.LocalMaps[i] <= -1) continue;
                 if (!Globals.GameMaps.ContainsKey(Globals.LocalMaps[i]))
                 {
+                    Globals.NeedsMaps = true;
                     PacketSender.SendNeedMap(Globals.LocalMaps[i]);
                 }
                 else
@@ -430,7 +430,6 @@ namespace Intersect_Client.Classes.Networking
                     }
                 }
             }
-            Globals.System.Log("Got enter map packet");
         }
 
         private static void HandleMapList(byte[] packet)
@@ -824,7 +823,7 @@ namespace Intersect_Client.Classes.Networking
             bf.WriteBytes(packet);
             int EntityNum = bf.ReadInteger();
             int SpellNum = bf.ReadInteger();
-            Globals.Entities[EntityNum].CastTime = Globals.System.GetTimeMS() + Globals.GameSpells[SpellNum].CastDuration;
+            Globals.Entities[EntityNum].CastTime = Globals.System.GetTimeMS() + Globals.GameSpells[SpellNum].CastDuration * 100;
             Globals.Entities[EntityNum].SpellCast = SpellNum;
             bf.Dispose();
         }
@@ -843,6 +842,7 @@ namespace Intersect_Client.Classes.Networking
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
             Globals.Me.Experience = bf.ReadInteger();
+            Globals.Me.ExperienceToNextLevel = bf.ReadInteger();
             bf.Dispose();
         }
 

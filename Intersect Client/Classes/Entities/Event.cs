@@ -234,6 +234,7 @@ namespace Intersect_Client.Classes.Entities
                         srcTexture =
                             GameGraphics.EntityTextures[GameGraphics.EntityFileNames.IndexOf(GraphicFile)];
                         y -= srcTexture.GetHeight()/4/2;
+                        y -= 12;
                     }
                     break;
                 case 2: //Tile
@@ -242,6 +243,7 @@ namespace Intersect_Client.Classes.Entities
                         if (Globals.Tilesets[z] == GraphicFile)
                         {
                             y -= ((GraphicHeight + 1) * Options.TileHeight) / 2;
+                            y -= 12;
                         }
                     }
                     break;

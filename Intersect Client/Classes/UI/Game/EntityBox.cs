@@ -122,7 +122,7 @@ namespace Intersect_Client.Classes.UI.Game
                 _mpLbl.SetPosition(120, 25);
             }
 
-            if (_myEntity.GetType() == typeof(Player))
+            if (_myEntity == Globals.Me)
             {
                 _expBackground = new ImagePanel(_entityBox);
                 _expBackground.Texture = Gui.ToGwenTexture(GameGraphics.GuiTextures[GameGraphics.GuiFilenames.IndexOf("EmptyBar.png")]);
@@ -155,30 +155,28 @@ namespace Intersect_Client.Classes.UI.Game
             _entityBox.Title = _myEntity.MyName + ((_myEntity.Level == 0 || _myEntity.GetType() == typeof(Event)) ? "" : " Lv: " + _myEntity.Level);
 
             //Update the event/entity face.
-            if (_myEntity.Face != "")
+            if (_myEntity.Face != "" && _myEntity.Face != _currentSprite && GameGraphics.FaceFileNames.IndexOf(_myEntity.Face) > -1)
             {
                 _entityFace.Texture = Gui.ToGwenTexture(GameGraphics.FaceTextures[GameGraphics.FaceFileNames.IndexOf(_myEntity.Face)]);
+                _currentSprite = _myEntity.Face;
+                _entityFace.IsHidden = false;
             }
-            else
+            else if (_myEntity.MySprite != "" && _myEntity.MySprite != _currentSprite && GameGraphics.EntityFileNames.IndexOf(_myEntity.MySprite) > -1)
             {
-                if (_myEntity.MySprite != "")
-                {
-                    if (_currentSprite != _myEntity.MySprite)
-                    {
-                        Gui.DrawSpriteToTexture(_faceTexture, _myEntity.MySprite, _entityFace.Width,
-                            _entityFace.Height);
-                        _entityFace.Texture = Gui.ToGwenTexture(_faceTexture);
-                        _currentSprite = _myEntity.MySprite;
-                    }
-                }
-                else
-                {
-                    _entityFace.IsHidden = true;
-                }
+                Gui.DrawSpriteToTexture(_faceTexture, _myEntity.MySprite, _entityFace.Width,
+                    _entityFace.Height);
+                _entityFace.Texture = Gui.ToGwenTexture(_faceTexture);
+                _currentSprite = _myEntity.MySprite;
+                _entityFace.IsHidden = false;
+            }
+            else if (_myEntity.MySprite != _currentSprite && _myEntity.Face != _currentSprite)
+            {
+                _entityFace.IsHidden = true;
             }
 
             //If not an event, update the hp/mana bars.
-            if (_myEntity.GetType() != typeof(Event))
+            if (
+            _myEntity.GetType() != typeof(Event))
             {
                 float targetHPWidth = 0f;
                 if (_myEntity.MaxVital[(int)Enums.Vitals.Health] > 0)
@@ -266,16 +264,17 @@ namespace Intersect_Client.Classes.UI.Game
             }
 
             //If player draw exp bar
-            if (_myEntity.GetType() == typeof(Player))
+            if (_myEntity == Globals.Me)
             {
                 float targetExpWidth = 1;
-                if (((Player)_myEntity).GetNextLevelExperience() != 0)
+                if (((Player)_myEntity).GetNextLevelExperience() > 0)
                 {
-                    targetExpWidth = ((Player)_myEntity).Experience / ((Player)_myEntity).GetNextLevelExperience();
+                    targetExpWidth = (float)((Player)_myEntity).Experience / (float)((Player)_myEntity).GetNextLevelExperience();
                     _expLbl.Text = "Exp: " + ((Player)_myEntity).Experience + " / " + ((Player)_myEntity).GetNextLevelExperience();
                 }
                 else
                 {
+                    targetExpWidth = 1f;
                     _expLbl.Text = "Max Level";
                 }
                 _expLbl.X = _expBackground.X + _expBackground.Width / 2 - _expLbl.Width / 2;
@@ -284,12 +283,12 @@ namespace Intersect_Client.Classes.UI.Game
                 {
                     if ((int)targetExpWidth > _curEXPWidth)
                     {
-                        _curEXPWidth += (.1f * elapsedTime);
+                        _curEXPWidth += (100f * elapsedTime);
                         if (_curEXPWidth > (int)targetExpWidth) { _curEXPWidth = targetExpWidth; }
                     }
                     else
                     {
-                        _curEXPWidth -= (.1f * elapsedTime);
+                        _curEXPWidth -= (100f * elapsedTime);
                         if (_curEXPWidth < targetExpWidth) { _curEXPWidth = targetExpWidth; }
                     }
                     if (_curEXPWidth == 0)

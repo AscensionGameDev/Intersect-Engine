@@ -62,6 +62,7 @@ namespace Intersect_Client.Classes.General
         //Scene management
         public static bool WaitingOnServer = false;
         public static bool JoiningGame = false;
+        public static bool NeedsMaps = true;
 
         //Map/Chunk Array
         public static Dictionary<int, MapStruct> GameMaps = new Dictionary<int, MapStruct>();

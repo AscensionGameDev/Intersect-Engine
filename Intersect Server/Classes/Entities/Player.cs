@@ -167,6 +167,15 @@ namespace Intersect_Server.Classes
             }
         }
 
+        //Sending Data
+        public override byte[] Data()
+        {
+            ByteBuffer bf = new ByteBuffer();
+            bf.WriteBytes(base.Data());
+            bf.WriteInteger(Level);
+            return bf.ToArray();
+        }
+
         //Spawning/Dying
         private void Respawn()
         {
@@ -189,24 +198,30 @@ namespace Intersect_Server.Classes
         //Leveling
         public void SetLevel(int level, bool resetExperience = false)
         {
-            if (level > 0 && level <= Options.MaxLevel)
+            if (level > 0)
             {
-                Level = level;
+                Level = Math.Min(Options.MaxLevel,level);
                 if (resetExperience) Experience = 0;
                 PacketSender.SendEntityDataToProximity(MyIndex, (int)Enums.EntityTypes.Player, Data(), this);
+                PacketSender.SendExperience(MyClient);
             }
         }
         public void LevelUp(bool resetExperience = true, int levels = 1)
         {
-            SetLevel(Level + levels, resetExperience);
-            PacketSender.SendPlayerMsg(MyClient, "You have leveled up! You are now level " + Level + "!", Color.Blue);
-            //ToDo, add stat points based on class I guess?
-            StatPoints += 5 * levels;
-            if (StatPoints > 0)
+            if (Level < Options.MaxLevel)
             {
-                PacketSender.SendPlayerMsg(MyClient, "You have " + StatPoints + " stat points available to be spent!", Color.Blue);
+                SetLevel(Level + levels, resetExperience);
+                PacketSender.SendPlayerMsg(MyClient, "You have leveled up! You are now level " + Level + "!", Color.Blue);
+                //ToDo, add stat points based on class I guess?
+                StatPoints += 5*levels;
+                if (StatPoints > 0)
+                {
+                    PacketSender.SendPlayerMsg(MyClient,
+                        "You have " + StatPoints + " stat points available to be spent!", Color.Blue);
+                }
+                PacketSender.SendExperience(MyClient);
+                PacketSender.SendEntityDataToProximity(MyIndex, (int) Enums.EntityTypes.Player, Data(), this);
             }
-            PacketSender.SendEntityDataToProximity(MyIndex, (int)Enums.EntityTypes.Player, Data(), this);
         }
         public void GiveExperience(int amount)
         {
@@ -219,7 +234,7 @@ namespace Intersect_Server.Classes
         private bool CheckLevelUp()
         {
             int levelCount = 0;
-            while (Experience > GetExperienceToNextLevel())
+            while (Experience > GetExperienceToNextLevel() && GetExperienceToNextLevel() > 0)
             {
                 Experience -= GetExperienceToNextLevel();
                 levelCount++;
@@ -231,9 +246,10 @@ namespace Intersect_Server.Classes
             }
             return false;
         }
-        private int GetExperienceToNextLevel()
+        public int GetExperienceToNextLevel()
         {
             //TODO: Program this
+            if (Level >= Options.MaxLevel) return -1;
             return 1000;
         }
 

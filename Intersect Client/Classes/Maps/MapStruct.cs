@@ -109,6 +109,10 @@ namespace Intersect_Client.Classes.Maps
         private float _fogCurrentY;
         private float _lastFogX;
         private float _lastFogY;
+        private long _panoramaUpdateTime = Globals.System.GetTimeMS();
+        private float _panoramaIntensity;
+        private long _overlayUpdateTime = Globals.System.GetTimeMS();
+        private float _overlayIntensity;
         private long _lastUpdateTime;
 
         private int _preRenderStage = 0;
@@ -534,6 +538,10 @@ namespace Intersect_Client.Classes.Maps
 
         public void Draw(int layer = 0)
         {
+            if (layer == 0)
+            {
+                DrawPanorama();
+            }
             if (!MapRendered)
             {
                 if (Globals.Database.RenderCaching) return;
@@ -618,6 +626,7 @@ namespace Intersect_Client.Classes.Maps
             if (layer == 2)
             {
                 DrawFog();
+                DrawOverlayGraphic();
             }
 
         }
@@ -687,6 +696,59 @@ namespace Intersect_Client.Classes.Maps
                         }
                     }
                 }
+            }
+        }
+
+        private void DrawPanorama()
+        {
+            float ecTime = Globals.System.GetTimeMS() - _panoramaUpdateTime;
+            _panoramaUpdateTime = Globals.System.GetTimeMS();
+            if (MyMapNum == Globals.LocalMaps[4])
+            {
+                if (_panoramaIntensity != 1)
+                {
+                    _panoramaIntensity += (ecTime / 2000f);
+                    if (_panoramaIntensity > 1) { _panoramaIntensity = 1; }
+                }
+            }
+            else
+            {
+                if (_panoramaIntensity != 0)
+                {
+                    _panoramaIntensity -= (ecTime / 2000f);
+                    if (_panoramaIntensity < 0) { _panoramaIntensity = 0; }
+                }
+            }
+            if (GameGraphics.ImageFileNames.IndexOf(Panorama) > -1)
+            {
+                GameGraphics.DrawFullScreenTexture(
+                    GameGraphics.ImageTextures[GameGraphics.ImageFileNames.IndexOf(Panorama)],_panoramaIntensity);
+            }
+        }
+        private void DrawOverlayGraphic()
+        {
+            float ecTime = Globals.System.GetTimeMS() - _overlayUpdateTime;
+            _overlayUpdateTime = Globals.System.GetTimeMS();
+            if (MyMapNum == Globals.LocalMaps[4])
+            {
+                if (_overlayIntensity != 1)
+                {
+                    _overlayIntensity += (ecTime / 2000f);
+                    if (_overlayIntensity > 1) { _overlayIntensity = 1; }
+                }
+            }
+            else
+            {
+                if (_overlayIntensity != 0)
+                {
+                    _overlayIntensity -= (ecTime / 2000f);
+                    if (_overlayIntensity < 0) { _overlayIntensity = 0; }
+                }
+            }
+            if (GameGraphics.ImageFileNames.IndexOf(OverlayGraphic) > -1)
+            {
+                GameGraphics.DrawFullScreenTexture(
+                    GameGraphics.ImageTextures[GameGraphics.ImageFileNames.IndexOf(OverlayGraphic)], _overlayIntensity);
             }
         }
 

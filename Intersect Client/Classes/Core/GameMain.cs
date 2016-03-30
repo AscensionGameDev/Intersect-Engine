@@ -25,6 +25,7 @@
     SOFTWARE.
 */
 
+using System.Diagnostics.Eventing.Reader;
 using Intersect_Client.Classes.General;
 using Intersect_Client.Classes.Networking;
 using Intersect_Client.Classes.UI;
@@ -184,18 +185,7 @@ namespace Intersect_Client.Classes.Core
 
         private static void ProcessGame()
         {
-            //Reset Single-Frame Variables
-            GameGraphics.FogOffsetX = 0;
-            GameGraphics.FogOffsetY = 0;
-
-            if (Globals.GameMaps.ContainsKey(Globals.CurrentMap))
-            {
-                GameGraphics.SunIntensity = (float) (Globals.GameMaps[Globals.CurrentMap].Brightness/100f)*255f;
-            }
-
-
             //Update All Entities
-
             foreach (var en in Globals.Entities)
             {
                 if (en.Value == null) continue;
@@ -228,6 +218,27 @@ namespace Intersect_Client.Classes.Core
                 {
                     map.Value.Update(false);
                 }
+            }
+
+            //If we are waiting on maps, lets see if we have them
+            if (Globals.NeedsMaps)
+            {
+                bool canShowWorld = true;
+                for (var i = 0; i < 9; i++)
+                {
+                    if (Globals.LocalMaps[i] <= -1) continue;
+                    bool found = false;
+                    foreach (var map in Globals.GameMaps)
+                    {
+                        if (map.Value == null) continue;
+                        if (map.Value.MyMapNum == Globals.LocalMaps[i]) found = true;
+                    }
+                    if (!found)
+                    {
+                        canShowWorld = false;
+                    }
+                }
+                if (canShowWorld) Globals.NeedsMaps = false;
             }
 
             for (int i = 0; i < Globals.MapsToRemove.Count; i++)

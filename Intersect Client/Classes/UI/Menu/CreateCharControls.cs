@@ -190,6 +190,7 @@ namespace Intersect_Client.Classes.UI.Menu
             _maleChk.IsHidden = false;
             _femaleChk.IsHidden = false;
             _createButton.IsHidden = false;
+            _characterPortrait.Show();
         }
 
         public void Hide()
@@ -204,6 +205,7 @@ namespace Intersect_Client.Classes.UI.Menu
             _maleChk.IsHidden = true;
             _femaleChk.IsHidden = true;
             _createButton.IsHidden = true;
+            _characterPortrait.Hide();
         }
 
         private int GetClass()

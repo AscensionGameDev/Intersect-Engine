@@ -251,25 +251,25 @@ namespace Intersect_Client.Classes.UI.Game
             if (_characterWindow.IsHidden) { return; }
             _characterName.Text = Globals.Me.MyName;
             _characterLevel.Text = "Level: " + Globals.Me.Level;
-            if (Globals.Me.Face != "")
+
+            //Load Portrait
+            if (Globals.Me.Face != "" && Globals.Me.Face != _currentSprite && GameGraphics.FaceFileNames.IndexOf(Globals.Me.Face) > -1)
             {
-                if (_characterPortrait.ImageName != "Resources/Faces/" + Globals.Me.Face)
-                {
-                    _characterPortrait.ImageName = "Resources/Faces/" + Globals.Me.Face;
-                }
+                _characterPortrait.Texture = Gui.ToGwenTexture(GameGraphics.FaceTextures[GameGraphics.FaceFileNames.IndexOf(Globals.Me.Face)]);
+                _currentSprite = Globals.Me.Face;
+                _characterPortrait.IsHidden = false;
             }
-            else
+            else if (Globals.Me.MySprite != "" && Globals.Me.MySprite != _currentSprite && GameGraphics.EntityFileNames.IndexOf(Globals.Me.MySprite) > -1)
             {
-                if (Globals.Me.MySprite != "")
-                {
-                    if (_currentSprite != Globals.Me.MySprite)
-                    {
-                        Gui.DrawSpriteToTexture(_spriteTex, Globals.Me.MySprite, _characterPortrait.Width,
-                            _characterPortrait.Height);
-                        _characterPortrait.Texture = Gui.ToGwenTexture(_spriteTex);
-                        _currentSprite = Globals.Me.MySprite;
-                    }
-                }
+                Gui.DrawSpriteToTexture(_spriteTex, Globals.Me.MySprite, _characterPortrait.Width,
+                    _characterPortrait.Height);
+                _characterPortrait.Texture = Gui.ToGwenTexture(_spriteTex);
+                _currentSprite = Globals.Me.MySprite;
+                _characterPortrait.IsHidden = false;
+            }
+            else if (Globals.Me.MySprite != _currentSprite && Globals.Me.Face != _currentSprite)
+            {
+                _characterPortrait.IsHidden = true;
             }
 
             _attackLabel.SetText("Attack: " + Globals.Me.Stat[(int)Enums.Stats.Attack]);
@@ -322,13 +322,13 @@ namespace Intersect_Client.Classes.UI.Game
     public class EquipmentItem
     {
         public ImagePanel pnl;
+        public ImagePanel contentPanel;
         private ItemDescWindow _descWindow;
         private int myindex;
         private int _currentItem = -1;
         private int[] _statBoost = new int[Options.MaxStats];
         private bool _texLoaded = false;
         private GameRenderTexture _equipmentBG;
-        private GameRenderTexture _texImg;
         private WindowControl _characterWindow;
 
         public EquipmentItem(int index, GameRenderTexture equipmentBG, WindowControl characterWindow)
@@ -343,6 +343,14 @@ namespace Intersect_Client.Classes.UI.Game
             pnl.HoverEnter += pnl_HoverEnter;
             pnl.HoverLeave += pnl_HoverLeave;
             pnl.RightClicked += pnl_RightClicked;
+
+            contentPanel = new ImagePanel(pnl);
+            contentPanel.SetSize(32, 32);
+            contentPanel.SetPosition(2, 2);
+            contentPanel.MouseInputEnabled = false;
+
+            pnl.Texture = Gui.ToGwenTexture(_equipmentBG);
+
         }
 
         void pnl_RightClicked(Base sender, ClickedEventArgs arguments)
@@ -372,32 +380,6 @@ namespace Intersect_Client.Classes.UI.Game
             return rect;
         }
 
-        private void CreateTexImage()
-        {
-            if (_texImg == null)
-            {
-                GameRenderTexture rtItem = GameGraphics.Renderer.CreateRenderTexture(34, 34);
-                _texImg = rtItem;
-                _texImg.Begin();
-            }
-            else
-            {
-                _texImg.Begin();
-                _texImg.Clear(Color.Transparent);
-            }
-
-
-            GameGraphics.DrawGameTexture(_equipmentBG, 0, 0, _texImg);
-            if (_currentItem != -1)
-            {
-                if (GameGraphics.ItemFileNames.Contains(Globals.GameItems[_currentItem].Pic))
-                {
-                    GameGraphics.DrawGameTexture(GameGraphics.ItemTextures[GameGraphics.ItemFileNames.IndexOf(Globals.GameItems[_currentItem].Pic)], 1, 1, _texImg);
-                }
-            }
-            _texImg.End();
-        }
-
 
 
         public void Update(int currentItem, int[] statBoost)
@@ -406,8 +388,18 @@ namespace Intersect_Client.Classes.UI.Game
             {
                 _currentItem = currentItem;
                 _statBoost = statBoost;
-                CreateTexImage();
-                pnl.Texture = Gui.ToGwenTexture(_texImg);
+                if (_currentItem > 0 && GameGraphics.ItemFileNames.IndexOf(Globals.GameItems[_currentItem].Pic) > -1)
+                {
+                    contentPanel.Show();
+                    contentPanel.Texture =
+                        Gui.ToGwenTexture(
+                            GameGraphics.ItemTextures[
+                                GameGraphics.ItemFileNames.IndexOf(Globals.GameItems[_currentItem].Pic)]);
+                }
+                else
+                {
+                    contentPanel.Hide();
+                }
                 _texLoaded = true;
             }
         }

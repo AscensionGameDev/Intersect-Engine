@@ -171,6 +171,7 @@ namespace Intersect_Client.Classes.UI
         public static void DrawSpriteToTexture(GameRenderTexture rt, string spritename, int w, int h)
         {
             rt.Begin();
+            rt.Clear(Color.Transparent);
             if (GameGraphics.EntityFileNames.Contains(spritename))
             {
                 GameGraphics.DrawGameTexture(
@@ -190,6 +191,7 @@ namespace Intersect_Client.Classes.UI
         public static void DrawItemToTexture(GameRenderTexture rt, int itemnum, int xOffset = 0, int yOffset = 0, int width = 32, int height = 32, bool isEquipped = false, GameTexture bg = null)
         {
             rt.Begin();
+            rt.Clear(Color.Transparent);
             if (bg != null)
             {
                 GameGraphics.DrawGameTexture(bg, 0, 0, rt);
@@ -206,13 +208,14 @@ namespace Intersect_Client.Classes.UI
             if (isEquipped)
             {
                 GameGraphics.DrawGameTexture(GameGraphics.WhiteTex, new FloatRect(0, 0, 1, 1),
-                    new FloatRect(26 + xOffset, 0 + yOffset, 2, 2), Color.Red, rt);
+                    new FloatRect(26 + xOffset, 0 + yOffset + 2, 2, 2), Color.Red, rt);
             }
             rt.End();
         }
         public static void DrawSpellIconToTexture(GameRenderTexture rt, int spellnum, int xOffset = 0, int yOffset = 0, int width = 32, int height = 32, bool onCD = false, GameTexture bg = null)
         {
             rt.Begin();
+            rt.Clear(Color.Transparent);
             if (bg != null)
             {
                 GameGraphics.DrawGameTexture(bg, 0, 0,rt);
@@ -226,7 +229,7 @@ namespace Intersect_Client.Classes.UI
                         GameGraphics.DrawGameTexture(
                             GameGraphics.SpellTextures[
                                 GameGraphics.SpellFileNames.IndexOf(Globals.GameSpells[spellnum].Pic)], xOffset, yOffset,
-                            new Color(255, 255, 255, 100), rt);
+                            new Color(100, 255, 255, 255), rt);
                     }
                     else
                     {

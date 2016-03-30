@@ -109,7 +109,7 @@ namespace Intersect_Client.Classes.Entities
         }
 
         //Deserializing
-        public void Load(ByteBuffer bf)
+        public virtual void Load(ByteBuffer bf)
         {
             CurrentMap = bf.ReadInteger();
             MyName = bf.ReadString();
@@ -435,7 +435,7 @@ namespace Intersect_Client.Classes.Entities
             if (GameGraphics.EntityFileNames.IndexOf(MySprite.ToLower()) >= 0)
             {
                 y = y - (int)((GameGraphics.EntityTextures[GameGraphics.EntityFileNames.IndexOf(MySprite.ToLower())].GetHeight() / 8));
-                y -= 6;
+                y -= 12;
                 if (GameGraphics.EntityTextures[GameGraphics.EntityFileNames.IndexOf(MySprite.ToLower())].GetWidth() / 4 > Options.TileWidth)
                 {
                     x = x - (int)((GameGraphics.EntityTextures[GameGraphics.EntityFileNames.IndexOf(MySprite.ToLower())].GetWidth() / 4) - Options.TileWidth) / 2;
@@ -463,7 +463,7 @@ namespace Intersect_Client.Classes.Entities
             if (GameGraphics.EntityFileNames.IndexOf(MySprite.ToLower()) >= 0)
             {
                 y = y - (int)((GameGraphics.EntityTextures[GameGraphics.EntityFileNames.IndexOf(MySprite.ToLower())].GetHeight() / 8));
-
+                y -= 8;
                 if (GameGraphics.EntityTextures[GameGraphics.EntityFileNames.IndexOf(MySprite.ToLower())].GetWidth() / 4 > Options.TileWidth)
                 {
                     x = x - (int)((GameGraphics.EntityTextures[GameGraphics.EntityFileNames.IndexOf(MySprite.ToLower())].GetWidth() / 4) - Options.TileWidth) / 2;
@@ -484,12 +484,13 @@ namespace Intersect_Client.Classes.Entities
                 return;
             }
             var width = Options.TileWidth;
+            var fillWidth = ((Globals.GameSpells[SpellCast].CastDuration * 100 - (CastTime - Globals.System.GetTimeMS())) / (float)(Globals.GameSpells[SpellCast].CastDuration * 100) * width);
             var y = (int)Math.Ceiling(GetCenterPos().Y);
             var x = (int)Math.Ceiling(GetCenterPos().X);
             if (GameGraphics.EntityFileNames.IndexOf(MySprite.ToLower()) >= 0)
             {
-                y = y - (int)((GameGraphics.EntityTextures[GameGraphics.EntityFileNames.IndexOf(MySprite.ToLower())].GetHeight() / 8));
-                y -= 18;
+                y = y + (int)((GameGraphics.EntityTextures[GameGraphics.EntityFileNames.IndexOf(MySprite.ToLower())].GetHeight() / 8));
+                y += 3;
 
                 if (GameGraphics.EntityTextures[GameGraphics.EntityFileNames.IndexOf(MySprite.ToLower())].GetWidth() / 4 > Options.TileWidth)
                 {
@@ -500,7 +501,7 @@ namespace Intersect_Client.Classes.Entities
             GameGraphics.DrawGameTexture(GameGraphics.WhiteTex, new FloatRect(0, 0, 1, 1),
                 new FloatRect((int)(x - 1 - width / 2), (int)(y - 1), width, 6), Color.Black);
             GameGraphics.DrawGameTexture(GameGraphics.WhiteTex, new FloatRect(0, 0, 1, 1),
-                new FloatRect((int)(x - width / 2), (int)(y), width - 2, 4), Color.White);
+                new FloatRect((int)(x - width / 2), (int)(y), fillWidth - 2, 4), new Color(255,0,255,255));
         }
 
         //

@@ -212,11 +212,12 @@ namespace Intersect_Server.Classes
 
             if (en == client.Entity)
             {
-                PacketSender.SendInventory(client);
-                PacketSender.SendPlayerSpells(client);
-                PacketSender.SendPlayerEquipmentToProximity(client.Entity);
-                PacketSender.SendPointsTo(client);
-                PacketSender.SendHotbarSlots(client);
+                SendExperience(client);
+                SendInventory(client);
+                SendPlayerSpells(client);
+                SendPlayerEquipmentToProximity(client.Entity);
+                SendPointsTo(client);
+                SendHotbarSlots(client);
             }
         }
 
@@ -1059,6 +1060,7 @@ namespace Intersect_Server.Classes
             var bf = new ByteBuffer();
             bf.WriteLong((int)Enums.ServerPackets.Experience);
             bf.WriteInteger(client.Entity.Experience);
+            bf.WriteInteger(client.Entity.GetExperienceToNextLevel());
             client.SendPacket(bf.ToArray());
             bf.Dispose();
         }
