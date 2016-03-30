@@ -26,6 +26,7 @@
 */
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using IntersectClientExtras.GenericClasses;
 using Intersect_Client.Classes.Bridges_and_Interfaces.SFML.Input;
 using Intersect_Client.Classes.Core;
@@ -61,6 +62,11 @@ namespace Intersect_Client.Classes.Bridges_and_Interfaces.SFML.Graphics
         private static GameRenderTexture _curTarget = null;
         private static GameBlendModes _curBlendMode = GameBlendModes.Alpha;
         private static GameShader _curShader = null;
+
+        //Loaded Textures
+        private static List<SfmlTexture> LoadedTextures = new List<SfmlTexture>();
+        private int LoadedTextureCount = 0;
+        private int LoadedRenderTextureCount = 0;
 
         private static bool _initialized = false;
 
@@ -134,10 +140,15 @@ namespace Intersect_Client.Classes.Bridges_and_Interfaces.SFML.Graphics
         {
             _fpsCount++;
             DrawCalls++;
+            LoadedTextureCount = 0;
+            for (int i = 0; i < LoadedTextures.Count; i++)
+            {
+                if (LoadedTextures[i].Update()) LoadedTextureCount++;
+            }
             if (_fpsTimer < Environment.TickCount)
             {
                 _fps = _fpsCount;
-                _renderWindow.SetTitle("Intersect Engine - FPS: " + _fps + " Draw Calls: " + DrawCalls);
+                _renderWindow.SetTitle("Intersect Engine - FPS: " + _fps + " Draw Calls: " + DrawCalls + " Texture Count: " + GetTextureCount() + " (" + LoadedTextureCount + " loaded)  " + " Render Texture Count: " + LoadedRenderTextureCount + ")  Mem Usage: " + (Process.GetCurrentProcess().WorkingSet64/1024/1024) + "mb");
                 _fpsCount = 0;
                 _fpsTimer = Environment.TickCount + 1000;
             }
@@ -302,12 +313,27 @@ namespace Intersect_Client.Classes.Bridges_and_Interfaces.SFML.Graphics
 
         public override GameRenderTexture CreateRenderTexture(int width, int height)
         {
+            LoadedRenderTextureCount++;
             return new SfmlRenderTexture(width, height);
+        }
+
+        public void RenderTextureDisposed()
+        {
+            LoadedRenderTextureCount--;
         }
 
         public override GameTexture LoadTexture(string filename)
         {
-            return new SfmlTexture(filename);
+            for (int i = 0; i < LoadedTextures.Count; i++)
+            {
+                if (LoadedTextures[i].GetPath() == filename)
+                {
+                    return LoadedTextures[i];
+                }
+            }
+            var tex = new SfmlTexture(filename);
+            LoadedTextures.Add(tex);
+            return tex;
         }
 
         public override Pointf MeasureText(string text, GameFont gameFont, int fontSize)
@@ -384,6 +410,11 @@ namespace Intersect_Client.Classes.Bridges_and_Interfaces.SFML.Graphics
             target.Draw(textObject);
             Gl.glDisable(Gl.GL_SCISSOR_TEST);
 
+        }
+
+        private int GetTextureCount()
+        {
+            return LoadedTextures.Count;
         }
 
         public override void Close()

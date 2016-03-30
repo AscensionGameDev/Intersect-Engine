@@ -153,10 +153,6 @@ namespace Intersect_Client.Classes.UI.Game
         private bool iconCD = false;
         private int currentSpell = -1;
 
-        //Textures
-        private Texture gwenTex;
-        private GameRenderTexture sfTex;
-
         //Drag/Drop References
         private SpellWindow _spellWindow;
 
@@ -217,13 +213,33 @@ namespace Intersect_Client.Classes.UI.Game
             {
                 if (Globals.Me.Spells[myindex].SpellNum > -1)
                 {
-                    sfTex = Gui.CreateSpellTex(Globals.Me.Spells[myindex].SpellNum, 0, 0, 32, 32,
-                        (Globals.Me.Spells[myindex].SpellCD > Globals.System.GetTimeMS()), null);
-                    gwenTex = Gui.ToGwenTexture(sfTex);
-                    pnl.Texture = gwenTex;
+                    if (GameGraphics.SpellFileNames.Contains(Globals.GameSpells[Globals.Me.Spells[myindex].SpellNum].Pic))
+                    {
+                        pnl.Texture =
+                            Gui.ToGwenTexture(
+                                GameGraphics.SpellTextures[
+                                    GameGraphics.SpellFileNames.IndexOf(
+                                        Globals.GameSpells[Globals.Me.Spells[myindex].SpellNum].Pic)]);
+                    }
+                    else
+                    {
+                        if (pnl.Texture != null)
+                        {
+                            pnl.Texture.Dispose();
+                            pnl.Texture = null;
+                        }
+                    }
                     texLoaded = true;
                     currentSpell = Globals.Me.Spells[myindex].SpellNum;
                     iconCD = (Globals.Me.Spells[myindex].SpellCD > Globals.System.GetTimeMS());
+                }
+                else
+                {
+                    if (pnl.Texture != null)
+                    {
+                        pnl.Texture.Dispose();
+                        pnl.Texture = null;
+                    }
                 }
             }
             if (!IsDragging)

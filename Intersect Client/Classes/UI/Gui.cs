@@ -168,9 +168,8 @@ namespace Intersect_Client.Classes.UI
             GwenRenderer.LoadGameTexture(tex, gameTex);
             return tex;
         }
-        public static GameRenderTexture CreateTextureFromSprite(string spritename, int w, int h)
+        public static void DrawSpriteToTexture(GameRenderTexture rt, string spritename, int w, int h)
         {
-            GameRenderTexture rt = GameGraphics.Renderer.CreateRenderTexture(w, h);
             rt.Begin();
             if (GameGraphics.EntityFileNames.Contains(spritename))
             {
@@ -186,12 +185,10 @@ namespace Intersect_Client.Classes.UI
                     Color.White, rt);
             }
             rt.End();
-            return rt;
         }
 
-        public static GameRenderTexture CreateItemTex(int itemnum, int xOffset = 0, int yOffset = 0, int width = 32, int height = 32, bool isEquipped = false, GameTexture bg = null)
+        public static void DrawItemToTexture(GameRenderTexture rt, int itemnum, int xOffset = 0, int yOffset = 0, int width = 32, int height = 32, bool isEquipped = false, GameTexture bg = null)
         {
-            GameRenderTexture rt = GameGraphics.Renderer.CreateRenderTexture(width, height);
             rt.Begin();
             if (bg != null)
             {
@@ -212,11 +209,9 @@ namespace Intersect_Client.Classes.UI
                     new FloatRect(26 + xOffset, 0 + yOffset, 2, 2), Color.Red, rt);
             }
             rt.End();
-            return rt;
         }
-        public static GameRenderTexture CreateSpellTex(int spellnum, int xOffset = 0, int yOffset = 0, int width = 32, int height = 32, bool onCD = false, GameTexture bg = null)
+        public static void DrawSpellIconToTexture(GameRenderTexture rt, int spellnum, int xOffset = 0, int yOffset = 0, int width = 32, int height = 32, bool onCD = false, GameTexture bg = null)
         {
-            GameRenderTexture rt = GameGraphics.Renderer.CreateRenderTexture(width, height);
             rt.Begin();
             if (bg != null)
             {
@@ -244,7 +239,6 @@ namespace Intersect_Client.Classes.UI
                 }
             }
             rt.End();
-            return rt;
         }
         public static bool MouseHitGUI()
         {

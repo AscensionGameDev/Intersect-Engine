@@ -28,6 +28,7 @@
 using IntersectClientExtras.Graphics;
 using IntersectClientExtras.Gwen;
 using IntersectClientExtras.Gwen.Control;
+using Intersect_Client.Classes.Core;
 using Intersect_Client.Classes.Entities;
 using Intersect_Client.Classes.General;
 using Color = IntersectClientExtras.GenericClasses.Color;
@@ -91,13 +92,13 @@ namespace Intersect_Client.Classes.UI.Game
             if (myEntity.GetType() != typeof(Event))
             {
                 _hpBackground = new ImagePanel(_entityBox);
-                _hpBackground.ImageName = "Resources/GUI/EmptyBar.png";
+                _hpBackground.Texture = Gui.ToGwenTexture(GameGraphics.GuiTextures[GameGraphics.GuiFilenames.IndexOf("EmptyBar.png")]);
                 _hpBackground.SetSize(169, 18);
                 _hpBackground.SetPosition(70, 2);
 
                 _hpBar = new ImagePanel(_entityBox);
                 _hpBar.SetSize(169, 18);
-                _hpBar.ImageName = "Resources/GUI/HPBar.png";
+                _hpBar.Texture = Gui.ToGwenTexture(GameGraphics.GuiTextures[GameGraphics.GuiFilenames.IndexOf("HPBar.png")]);
                 _hpBar.SetPosition(70, 2);
                 _hpBar.IsHidden = true;
 
@@ -106,13 +107,13 @@ namespace Intersect_Client.Classes.UI.Game
                 _hpLbl.SetPosition(120, 5);
 
                 _mpBackground = new ImagePanel(_entityBox);
-                _mpBackground.ImageName = "Resources/GUI/EmptyBar.png";
+                _mpBackground.Texture = Gui.ToGwenTexture(GameGraphics.GuiTextures[GameGraphics.GuiFilenames.IndexOf("EmptyBar.png")]);
                 _mpBackground.SetSize(169, 18);
                 _mpBackground.SetPosition(70, 24);
 
                 _mpBar = new ImagePanel(_entityBox);
                 _mpBar.SetSize(169, 18);
-                _mpBar.ImageName = "Resources/GUI/ManaBar.png";
+                _mpBar.Texture = Gui.ToGwenTexture(GameGraphics.GuiTextures[GameGraphics.GuiFilenames.IndexOf("ManaBar.png")]);
                 _mpBar.SetPosition(70, 24);
                 _mpBar.IsHidden = true;
 
@@ -124,13 +125,13 @@ namespace Intersect_Client.Classes.UI.Game
             if (_myEntity.GetType() == typeof(Player))
             {
                 _expBackground = new ImagePanel(_entityBox);
-                _expBackground.ImageName = "Resources/GUI/EmptyBar.png";
+                _expBackground.Texture = Gui.ToGwenTexture(GameGraphics.GuiTextures[GameGraphics.GuiFilenames.IndexOf("EmptyBar.png")]);
                 _expBackground.SetSize(169, 18);
                 _expBackground.SetPosition(70, 46);
 
                 _expBar = new ImagePanel(_entityBox);
                 _expBar.SetSize(169, 18);
-                _expBar.ImageName = "Resources/GUI/EXPBar.png";
+                _expBar.Texture = Gui.ToGwenTexture(GameGraphics.GuiTextures[GameGraphics.GuiFilenames.IndexOf("EXPBar.png")]);
                 _expBar.SetPosition(70, 46);
                 _expBar.IsHidden = true;
 
@@ -138,6 +139,9 @@ namespace Intersect_Client.Classes.UI.Game
                 _expLbl.SetText("Exp: ");
                 _expLbl.SetPosition(120, 49);
             }
+
+            _faceTexture = GameGraphics.Renderer.CreateRenderTexture(_entityFace.Width,
+                            _entityFace.Height);
 
             lastUpdateTime = Globals.System.GetTimeMS();
         }
@@ -153,10 +157,7 @@ namespace Intersect_Client.Classes.UI.Game
             //Update the event/entity face.
             if (_myEntity.Face != "")
             {
-                if (_entityFace.ImageName != "Resources/Faces/" + _myEntity.Face)
-                {
-                    _entityFace.ImageName = "Resources/Faces/" + _myEntity.Face;
-                }
+                _entityFace.Texture = Gui.ToGwenTexture(GameGraphics.FaceTextures[GameGraphics.FaceFileNames.IndexOf(_myEntity.Face)]);
             }
             else
             {
@@ -164,7 +165,7 @@ namespace Intersect_Client.Classes.UI.Game
                 {
                     if (_currentSprite != _myEntity.MySprite)
                     {
-                        _faceTexture = Gui.CreateTextureFromSprite(_myEntity.MySprite, _entityFace.Width,
+                        Gui.DrawSpriteToTexture(_faceTexture, _myEntity.MySprite, _entityFace.Width,
                             _entityFace.Height);
                         _entityFace.Texture = Gui.ToGwenTexture(_faceTexture);
                         _currentSprite = _myEntity.MySprite;

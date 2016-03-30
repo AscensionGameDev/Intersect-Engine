@@ -54,7 +54,7 @@ namespace Intersect_Client.Classes.Bridges_and_Interfaces.SFML.File_Management
                     }
                     else
                     {
-                        GameGraphics.Tilesets.Add(new SfmlTexture("Resources/Tilesets/" + t));
+                        GameGraphics.Tilesets.Add(GameGraphics.Renderer.LoadTexture("Resources/Tilesets/" + t));
                     }
                 }
             }
@@ -68,7 +68,7 @@ namespace Intersect_Client.Classes.Bridges_and_Interfaces.SFML.File_Management
             for (int i = 0; i < items.Length; i++)
             {
                 GameGraphics.ItemFileNames.Add(items[i].Replace("Resources/Items\\", ""));
-                GameGraphics.ItemTextures[i] = new SfmlTexture("Resources/Items/" + GameGraphics.ItemFileNames[i]);
+                GameGraphics.ItemTextures[i] = GameGraphics.Renderer.LoadTexture("Resources/Items/" + GameGraphics.ItemFileNames[i]);
             }
         }
         public override void LoadEntities()
@@ -80,7 +80,7 @@ namespace Intersect_Client.Classes.Bridges_and_Interfaces.SFML.File_Management
             for (int i = 0; i < chars.Length; i++)
             {
                 GameGraphics.EntityFileNames.Add(chars[i].Replace("Resources/Entities\\", ""));
-                GameGraphics.EntityTextures[i] = new SfmlTexture("Resources/Entities/" + GameGraphics.EntityFileNames[i]);
+                GameGraphics.EntityTextures[i] = GameGraphics.Renderer.LoadTexture("Resources/Entities/" + GameGraphics.EntityFileNames[i]);
             }
         }
         public override void LoadSpells()
@@ -92,7 +92,7 @@ namespace Intersect_Client.Classes.Bridges_and_Interfaces.SFML.File_Management
             for (int i = 0; i < spells.Length; i++)
             {
                 GameGraphics.SpellFileNames.Add(spells[i].Replace("Resources/Spells\\", ""));
-                GameGraphics.SpellTextures[i] = new SfmlTexture("Resources/Spells/" + GameGraphics.SpellFileNames[i]);
+                GameGraphics.SpellTextures[i] = GameGraphics.Renderer.LoadTexture("Resources/Spells/" + GameGraphics.SpellFileNames[i]);
             }
         }
         public override void LoadAnimations()
@@ -104,7 +104,7 @@ namespace Intersect_Client.Classes.Bridges_and_Interfaces.SFML.File_Management
             for (int i = 0; i < animations.Length; i++)
             {
                 GameGraphics.AnimationFileNames.Add(animations[i].Replace("Resources/Animations\\", ""));
-                GameGraphics.AnimationTextures[i] = new SfmlTexture("Resources/Animations/" + GameGraphics.AnimationFileNames[i]);
+                GameGraphics.AnimationTextures[i] = GameGraphics.Renderer.LoadTexture("Resources/Animations/" + GameGraphics.AnimationFileNames[i]);
             }
         }
         public override void LoadFaces()
@@ -116,7 +116,7 @@ namespace Intersect_Client.Classes.Bridges_and_Interfaces.SFML.File_Management
             for (int i = 0; i < faces.Length; i++)
             {
                 GameGraphics.FaceFileNames.Add(faces[i].Replace("Resources/Faces\\", ""));
-                GameGraphics.FaceTextures[i] = new SfmlTexture("Resources/Faces/" + GameGraphics.FaceFileNames[i]);
+                GameGraphics.FaceTextures[i] = GameGraphics.Renderer.LoadTexture("Resources/Faces/" + GameGraphics.FaceFileNames[i]);
             }
         }
         public override void LoadImages()
@@ -128,7 +128,7 @@ namespace Intersect_Client.Classes.Bridges_and_Interfaces.SFML.File_Management
             for (int i = 0; i < images.Length; i++)
             {
                 GameGraphics.ImageFileNames.Add(images[i].Replace("Resources/Images\\", ""));
-                GameGraphics.ImageTextures[i] = new SfmlTexture("Resources/Images/" + GameGraphics.ImageFileNames[i]);
+                GameGraphics.ImageTextures[i] = GameGraphics.Renderer.LoadTexture("Resources/Images/" + GameGraphics.ImageFileNames[i]);
             }
         }
         public override void LoadFogs()
@@ -140,7 +140,7 @@ namespace Intersect_Client.Classes.Bridges_and_Interfaces.SFML.File_Management
             for (int i = 0; i < fogs.Length; i++)
             {
                 GameGraphics.FogFileNames.Add(fogs[i].Replace("Resources/Fogs\\", ""));
-                GameGraphics.FogTextures[i] = new SfmlTexture("Resources/Fogs/" + GameGraphics.FogFileNames[i]);
+                GameGraphics.FogTextures[i] = GameGraphics.Renderer.LoadTexture("Resources/Fogs/" + GameGraphics.FogFileNames[i]);
             }
         }
         public override void LoadResources()
@@ -152,7 +152,7 @@ namespace Intersect_Client.Classes.Bridges_and_Interfaces.SFML.File_Management
             for (int i = 0; i < resources.Length; i++)
             {
                 GameGraphics.ResourceFileNames.Add(resources[i].Replace("Resources/Resources\\", ""));
-                GameGraphics.ResourceTextures[i] = new SfmlTexture("Resources/Resources/" + GameGraphics.ResourceFileNames[i]);
+                GameGraphics.ResourceTextures[i] = GameGraphics.Renderer.LoadTexture("Resources/Resources/" + GameGraphics.ResourceFileNames[i]);
             }
         }
         public override void LoadPaperdolls()
@@ -164,13 +164,25 @@ namespace Intersect_Client.Classes.Bridges_and_Interfaces.SFML.File_Management
             for (int i = 0; i < resources.Length; i++)
             {
                 GameGraphics.PaperdollFileNames.Add(resources[i].Replace("Resources/Paperdolls\\", ""));
-                GameGraphics.PaperdollTextures[i] = new SfmlTexture("Resources/Paperdolls/" + GameGraphics.PaperdollFileNames[i]);
+                GameGraphics.PaperdollTextures[i] = GameGraphics.Renderer.LoadTexture("Resources/Paperdolls/" + GameGraphics.PaperdollFileNames[i]);
+            }
+        }
+        public override void LoadGui()
+        {
+            if (!Directory.Exists("Resources/GUI")) { Directory.CreateDirectory("Resources/GUI"); }
+            var resources = Directory.GetFiles("Resources/GUI", "*.png");
+            GameGraphics.GuiFilenames = new List<string>();
+            GameGraphics.GuiTextures = new SfmlTexture[resources.Length];
+            for (int i = 0; i < resources.Length; i++)
+            {
+                GameGraphics.GuiFilenames.Add(resources[i].Replace("Resources/GUI\\", ""));
+                GameGraphics.GuiTextures[i] = GameGraphics.Renderer.LoadTexture("Resources/GUI/" + GameGraphics.GuiFilenames[i]);
             }
         }
         public override void LoadTarget()
         {
             if (!Directory.Exists("Resources/Misc")) { Directory.CreateDirectory("Resources/Misc"); }
-            GameGraphics.TargetTexture = new SfmlTexture("Resources/Misc/target.png");
+            GameGraphics.TargetTexture = GameGraphics.Renderer.LoadTexture("Resources/Misc/target.png");
         }
 
         public override void LoadSounds()

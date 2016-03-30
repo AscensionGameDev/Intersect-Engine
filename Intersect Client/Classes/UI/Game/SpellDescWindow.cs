@@ -28,6 +28,7 @@
 using System.IO;
 using IntersectClientExtras.Gwen;
 using IntersectClientExtras.Gwen.Control;
+using Intersect_Client.Classes.Core;
 using Intersect_Client.Classes.General;
 
 namespace Intersect_Client.Classes.UI.Game
@@ -49,8 +50,13 @@ namespace Intersect_Client.Classes.UI.Game
             ImagePanel icon = new ImagePanel(_descWindow);
             icon.SetSize(32, 32);
             icon.SetPosition(220 - 4 - 32, 4);
-            if (File.Exists("Resources/Spells/" + Globals.GameSpells[spellnum].Pic))
-                icon.ImageName = "Resources/Spells/" + Globals.GameSpells[spellnum].Pic;
+            if (GameGraphics.SpellFileNames.IndexOf(Globals.GameSpells[spellnum].Pic) > -1)
+            {
+                icon.Texture =
+                    Gui.ToGwenTexture(
+                        GameGraphics.SpellTextures[
+                            GameGraphics.SpellFileNames.IndexOf(Globals.GameSpells[spellnum].Pic)]);
+            }
 
             Label spellName = new Label(_descWindow);
             spellName.SetPosition(4, 4);

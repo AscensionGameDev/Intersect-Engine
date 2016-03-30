@@ -187,6 +187,9 @@ namespace Intersect_Client.Classes.UI.Game
             rtEquipment.End();
             _equipmentBG = rtEquipment;
 
+            _spriteTex = GameGraphics.Renderer.CreateRenderTexture(_characterPortrait.Width,
+                            _characterPortrait.Height);
+
             InitEquipmentContainer();
         }
 
@@ -261,7 +264,7 @@ namespace Intersect_Client.Classes.UI.Game
                 {
                     if (_currentSprite != Globals.Me.MySprite)
                     {
-                        _spriteTex = Gui.CreateTextureFromSprite(Globals.Me.MySprite, _characterPortrait.Width,
+                        Gui.DrawSpriteToTexture(_spriteTex, Globals.Me.MySprite, _characterPortrait.Width,
                             _characterPortrait.Height);
                         _characterPortrait.Texture = Gui.ToGwenTexture(_spriteTex);
                         _currentSprite = Globals.Me.MySprite;

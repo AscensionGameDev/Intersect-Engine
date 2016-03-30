@@ -118,7 +118,7 @@ namespace Intersect_Editor.Classes
         //Overlay Stuff
         public static Color OverlayColor = Color.Transparent;
         public static bool HideOverlay = false;
-        public static RenderTexture OverlayTexture = new RenderTexture((uint)Options.MapWidth * (uint)Options.TileWidth * 3, (uint)Options.MapHeight * (uint)Options.TileHeight * 3);
+        public static RenderTexture OverlayTexture;
 
         //Fog Stuff
         public static bool HideFog = false;
@@ -152,6 +152,7 @@ namespace Intersect_Editor.Classes
 
                 RenderWindow = new RenderWindow(Globals.MapEditorWindow.picMap.Handle); // creates our SFML RenderWindow on our surface control
                 TilesetWindow = new RenderWindow(Globals.MapLayersWindow.picTileset.Handle);
+                OverlayTexture = new RenderTexture((uint)Options.MapWidth * (uint)Options.TileWidth * 3, (uint)Options.MapHeight * (uint)Options.TileHeight * 3);
                 Resources.trans.Save(s, ImageFormat.Png);
                 _trans = new Texture(s);
                 s.Dispose();

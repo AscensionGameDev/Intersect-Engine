@@ -148,6 +148,9 @@ namespace Intersect_Client.Classes.UI.Menu
             _createButton.IsHidden = true;
             _createButton.Clicked += CreateButton_Clicked;
 
+            //Create Render Texture
+            _spriteTex = GameGraphics.Renderer.CreateRenderTexture(_characterPortrait.Width, _characterPortrait.Height);
+
             Update();
         }
 
@@ -169,7 +172,7 @@ namespace Intersect_Client.Classes.UI.Menu
             if (Globals.GameClasses[GetClass()].Sprites.Count > 0)
             {
                 string test = Globals.GameClasses[GetClass()].Sprites[GetSprite(i)].Sprite;
-                _spriteTex = Gui.CreateTextureFromSprite(Globals.GameClasses[GetClass()].Sprites[GetSprite(i)].Sprite, _characterPortrait.Width, _characterPortrait.Height);
+                Gui.DrawSpriteToTexture(_spriteTex, Globals.GameClasses[GetClass()].Sprites[GetSprite(i)].Sprite, _characterPortrait.Width, _characterPortrait.Height);
                 _characterPortrait.Texture = Gui.ToGwenTexture(_spriteTex);
                 _currentSprite = Globals.GameClasses[GetClass()].Sprites[GetSprite(i)].Sprite;
             }

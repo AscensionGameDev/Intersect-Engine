@@ -25,6 +25,7 @@
     SOFTWARE.
 */
 using IntersectClientExtras.Graphics;
+using Intersect_Client.Classes.Core;
 using SFML.Graphics;
 using Color = IntersectClientExtras.GenericClasses.Color;
 
@@ -85,6 +86,7 @@ namespace Intersect_Client.Classes.Bridges_and_Interfaces.SFML.Graphics
 
         ~SfmlRenderTexture()
         {
+            ((SfmlRenderer) GameGraphics.Renderer).RenderTextureDisposed();
             _renderTexture.Dispose();
         }
     }

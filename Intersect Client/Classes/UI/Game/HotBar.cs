@@ -163,6 +163,8 @@ namespace Intersect_Client.Classes.UI.Game
             myindex = index;
             _hotbarBG = hotbarBG;
             _hotbarWindow = hotbarWindow;
+
+            sfTex = GameGraphics.Renderer.CreateRenderTexture(34, 34);
         }
 
         public void Setup()
@@ -269,7 +271,7 @@ namespace Intersect_Client.Classes.UI.Game
                 }
                 else if (_currentType == 0 && _currentItem > -1 && Globals.Me.Inventory[_currentItem].ItemNum > -1)
                 {
-                    sfTex = Gui.CreateItemTex(Globals.Me.Inventory[_currentItem].ItemNum, 1, 1, 34, 34,
+                    Gui.DrawItemToTexture(sfTex,Globals.Me.Inventory[_currentItem].ItemNum, 1, 1, 34, 34,
                         Globals.Me.IsEquipped(_currentItem), _hotbarBG);
                     gwenTex = Gui.ToGwenTexture(sfTex);
                     pnl.Texture = gwenTex;
@@ -279,7 +281,7 @@ namespace Intersect_Client.Classes.UI.Game
                 else if (_currentType == 1 && _currentItem > -1 && Globals.Me.Spells[_currentItem].SpellNum > -1)
                 {
                     _isFaded = Globals.Me.Spells[_currentItem].SpellCD > Globals.System.GetTimeMS();
-                    sfTex = Gui.CreateSpellTex(Globals.Me.Spells[_currentItem].SpellNum, 1, 1, 34, 34,
+                    Gui.DrawSpellIconToTexture(sfTex,Globals.Me.Spells[_currentItem].SpellNum, 1, 1, 34, 34,
                         _isFaded, _hotbarBG);
                     gwenTex = Gui.ToGwenTexture(sfTex);
                     pnl.Texture = gwenTex;

@@ -181,7 +181,6 @@ namespace Intersect_Client.Classes.UI.Game
 
         //Textures
         private Texture gwenTex;
-        private GameRenderTexture sfTex;
 
         //Drag/Drop References
         private BankWindow _bankWindow;
@@ -264,9 +263,33 @@ namespace Intersect_Client.Classes.UI.Game
             {
                 _currentItem = Globals.Bank[_mySlot].ItemNum;
                 _isEquipped = equipped;
-                sfTex = Gui.CreateItemTex(_currentItem, 0, 0, 32, 32, _isEquipped, null);
-                gwenTex = Gui.ToGwenTexture(sfTex);
-                pnl.Texture = gwenTex;
+                if (Globals.Bank[_mySlot].ItemNum > -1)
+                {
+                    if (GameGraphics.ItemFileNames.Contains(Globals.GameItems[Globals.Bank[_mySlot].ItemNum].Pic))
+                    {
+                        pnl.Texture =
+                            Gui.ToGwenTexture(
+                                GameGraphics.ItemTextures[
+                                    GameGraphics.ItemFileNames.IndexOf(
+                                        Globals.GameItems[Globals.Bank[_mySlot].ItemNum].Pic)]);
+                    }
+                    else
+                    {
+                        if (pnl.Texture != null)
+                        {
+                            pnl.Texture.Dispose();
+                            pnl.Texture = null;
+                        }
+                    }
+                }
+                else
+                {
+                    if (pnl.Texture != null)
+                    {
+                        pnl.Texture.Dispose();
+                        pnl.Texture = null;
+                    }
+                }
             }
             if (!IsDragging)
             {

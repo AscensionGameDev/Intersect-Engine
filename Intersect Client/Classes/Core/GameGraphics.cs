@@ -27,6 +27,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using IntersectClientExtras.GenericClasses;
 using IntersectClientExtras.Graphics;
 using Intersect_Client.Classes.Entities;
@@ -71,6 +72,8 @@ namespace Intersect_Client.Classes.Core
         public static GameTexture[] ResourceTextures;
         public static List<string> PaperdollFileNames = new List<string>();
         public static GameTexture[] PaperdollTextures;
+        public static List<string> GuiFilenames = new List<string>();
+        public static GameTexture[] GuiTextures;
         public static GameTexture TargetTexture;
 
 
@@ -343,47 +346,110 @@ namespace Intersect_Client.Classes.Core
         }
         public static void DrawOverlay()
         {
-            if (!Globals.GameMaps.ContainsKey(Globals.CurrentMap)) return;
-            float ecTime = Globals.System.GetTimeMS() - _overlayUpdate;
-
-            if (OverlayColor.A != Globals.GameMaps[Globals.CurrentMap].AHue || OverlayColor.R != Globals.GameMaps[Globals.CurrentMap].RHue ||
-                OverlayColor.G != Globals.GameMaps[Globals.CurrentMap].GHue || OverlayColor.B != Globals.GameMaps[Globals.CurrentMap].BHue)
+            if (Globals.GameMaps.ContainsKey(Globals.CurrentMap))
             {
-                if (OverlayColor.A < Globals.GameMaps[Globals.CurrentMap].AHue) { 
-                    OverlayColor.A += (byte)(255 * ecTime/ 2000f);
-                    if (OverlayColor.A > Globals.GameMaps[Globals.CurrentMap].AHue) { OverlayColor.A = (byte)Globals.GameMaps[Globals.CurrentMap].AHue; }
-                }
-                if (OverlayColor.A > Globals.GameMaps[Globals.CurrentMap].AHue) { 
-                    OverlayColor.A -= (byte)(255 * ecTime / 2000f);
-                    if (OverlayColor.A < Globals.GameMaps[Globals.CurrentMap].AHue) { OverlayColor.A = (byte)Globals.GameMaps[Globals.CurrentMap].AHue; }
-                }
-                if (OverlayColor.R < Globals.GameMaps[Globals.CurrentMap].RHue) { 
-                    OverlayColor.R += (byte)(255 * ecTime / 2000f);
-                    if (OverlayColor.R > Globals.GameMaps[Globals.CurrentMap].RHue) { OverlayColor.R = (byte)Globals.GameMaps[Globals.CurrentMap].RHue; }
-                }
-                if (OverlayColor.R > Globals.GameMaps[Globals.CurrentMap].RHue) { 
-                    OverlayColor.R -= (byte)(255 * ecTime / 2000f);
-                    if (OverlayColor.R < Globals.GameMaps[Globals.CurrentMap].RHue) { OverlayColor.R = (byte)Globals.GameMaps[Globals.CurrentMap].RHue; }
-                }
-                if (OverlayColor.G < Globals.GameMaps[Globals.CurrentMap].GHue)
+                float ecTime = Globals.System.GetTimeMS() - _overlayUpdate;
+
+                if (OverlayColor.A != Globals.GameMaps[Globals.CurrentMap].AHue ||
+                    OverlayColor.R != Globals.GameMaps[Globals.CurrentMap].RHue ||
+                    OverlayColor.G != Globals.GameMaps[Globals.CurrentMap].GHue ||
+                    OverlayColor.B != Globals.GameMaps[Globals.CurrentMap].BHue)
                 {
-                    OverlayColor.G += (byte)(255 * ecTime / 2000f);
-                    if (OverlayColor.G > Globals.GameMaps[Globals.CurrentMap].GHue) { OverlayColor.G = (byte)Globals.GameMaps[Globals.CurrentMap].GHue; }
-                }
-                if (OverlayColor.G > Globals.GameMaps[Globals.CurrentMap].GHue)
-                {
-                    OverlayColor.G -= (byte)(255 * ecTime / 2000f);
-                    if (OverlayColor.G < Globals.GameMaps[Globals.CurrentMap].GHue) { OverlayColor.G = (byte)Globals.GameMaps[Globals.CurrentMap].GHue; }
-                }
-                if (OverlayColor.B < Globals.GameMaps[Globals.CurrentMap].BHue)
-                {
-                    OverlayColor.B += (byte)(255 * ecTime / 2000f);
-                    if (OverlayColor.B > Globals.GameMaps[Globals.CurrentMap].BHue) { OverlayColor.B = (byte)Globals.GameMaps[Globals.CurrentMap].BHue; }
-                }
-                if (OverlayColor.B > Globals.GameMaps[Globals.CurrentMap].BHue)
-                {
-                    OverlayColor.B -= (byte)(255 * ecTime / 2000f);
-                    if (OverlayColor.B < Globals.GameMaps[Globals.CurrentMap].BHue) { OverlayColor.B = (byte)Globals.GameMaps[Globals.CurrentMap].BHue; }
+                    if (OverlayColor.A < Globals.GameMaps[Globals.CurrentMap].AHue)
+                    {
+                        if ((int)OverlayColor.A + (int)(255 * ecTime / 2000f) > Globals.GameMaps[Globals.CurrentMap].AHue)
+                        {
+                            OverlayColor.A = (byte)Globals.GameMaps[Globals.CurrentMap].AHue;
+                        }
+                        else
+                        {
+                            OverlayColor.A += (byte)(255 * ecTime / 2000f);
+                        }
+                    }
+
+                    if (OverlayColor.A > Globals.GameMaps[Globals.CurrentMap].AHue)
+                    {
+                        if ((int) OverlayColor.A - (int) (255*ecTime/2000f) < Globals.GameMaps[Globals.CurrentMap].AHue)
+                        {
+                            OverlayColor.A = (byte) Globals.GameMaps[Globals.CurrentMap].AHue;
+                        }
+                        else
+                        {
+                            OverlayColor.A -= (byte)(255 * ecTime / 2000f);
+                        }
+                    }
+
+                    if (OverlayColor.R < Globals.GameMaps[Globals.CurrentMap].RHue)
+                    {
+                        if ((int)OverlayColor.R + (int)(255 * ecTime / 2000f) > Globals.GameMaps[Globals.CurrentMap].RHue)
+                        {
+                            OverlayColor.R = (byte)Globals.GameMaps[Globals.CurrentMap].RHue;
+                        }
+                        else
+                        {
+                            OverlayColor.R += (byte)(255 * ecTime / 2000f);
+                        }
+                    }
+
+                    if (OverlayColor.R > Globals.GameMaps[Globals.CurrentMap].RHue)
+                    {
+                        if ((int)OverlayColor.R - (int)(255 * ecTime / 2000f) < Globals.GameMaps[Globals.CurrentMap].RHue)
+                        {
+                            OverlayColor.R = (byte)Globals.GameMaps[Globals.CurrentMap].RHue;
+                        }
+                        else
+                        {
+                            OverlayColor.R -= (byte)(255 * ecTime / 2000f);
+                        }
+                    }
+
+                    if (OverlayColor.G < Globals.GameMaps[Globals.CurrentMap].GHue)
+                    {
+                        if ((int)OverlayColor.G + (int)(255 * ecTime / 2000f) > Globals.GameMaps[Globals.CurrentMap].GHue)
+                        {
+                            OverlayColor.G = (byte)Globals.GameMaps[Globals.CurrentMap].GHue;
+                        }
+                        else
+                        {
+                            OverlayColor.G += (byte)(255 * ecTime / 2000f);
+                        }
+                    }
+
+                    if (OverlayColor.G > Globals.GameMaps[Globals.CurrentMap].GHue)
+                    {
+                        if ((int)OverlayColor.G - (int)(255 * ecTime / 2000f) < Globals.GameMaps[Globals.CurrentMap].GHue)
+                        {
+                            OverlayColor.G = (byte)Globals.GameMaps[Globals.CurrentMap].GHue;
+                        }
+                        else
+                        {
+                            OverlayColor.G -= (byte)(255 * ecTime / 2000f);
+                        }
+                    }
+
+                    if (OverlayColor.B < Globals.GameMaps[Globals.CurrentMap].BHue)
+                    {
+                        if ((int)OverlayColor.B + (int)(255 * ecTime / 2000f) > Globals.GameMaps[Globals.CurrentMap].BHue)
+                        {
+                            OverlayColor.B = (byte)Globals.GameMaps[Globals.CurrentMap].BHue;
+                        }
+                        else
+                        {
+                            OverlayColor.B += (byte)(255 * ecTime / 2000f);
+                        }
+                    }
+
+                    if (OverlayColor.B > Globals.GameMaps[Globals.CurrentMap].BHue)
+                    {
+                        if ((int)OverlayColor.B - (int)(255 * ecTime / 2000f) < Globals.GameMaps[Globals.CurrentMap].BHue)
+                        {
+                            OverlayColor.B = (byte)Globals.GameMaps[Globals.CurrentMap].BHue;
+                        }
+                        else
+                        {
+                            OverlayColor.B -= (byte)(255 * ecTime / 2000f);
+                        }
+                    }
                 }
             }
 

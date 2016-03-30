@@ -656,14 +656,14 @@ namespace Intersect_Client.Classes.Maps
                 if (GameGraphics.FogFileNames.IndexOf(Globals.GameMaps[MyMapNum].Fog) > -1)
                 {
                     int fogIndex = GameGraphics.FogFileNames.IndexOf(Globals.GameMaps[MyMapNum].Fog);
-                    int xCount = (int)(GameGraphics.Renderer.GetScreenWidth() / GameGraphics.FogTextures[fogIndex].GetWidth()) + 2;
-                    int yCount = (int)(GameGraphics.Renderer.GetScreenHeight() / GameGraphics.FogTextures[fogIndex].GetHeight()) + 2;
+                    int xCount = (int)(Options.MapWidth * Options.TileWidth * 3/ GameGraphics.FogTextures[fogIndex].GetWidth());
+                    int yCount = (int)(Options.MapHeight * Options.TileHeight * 3 / GameGraphics.FogTextures[fogIndex].GetHeight());
 
                     _fogCurrentX -= (ecTime / 1000f) * Globals.GameMaps[MyMapNum].FogXSpeed * -6;
                     _fogCurrentY += (ecTime / 1000f) * Globals.GameMaps[MyMapNum].FogYSpeed * 2;
-                    float deltaX = 0;///= _lastFogX - Graphics.CurrentView.Left - Graphics.FogOffsetX;
+                    float deltaX = 0;
                     _fogCurrentX -= deltaX;
-                    float deltaY = 0;// _lastFogY - Graphics.CurrentView.Top - Graphics.FogOffsetY;
+                    float deltaY = 0;
                     _fogCurrentY -= deltaY;
 
                     if (_fogCurrentX < GameGraphics.FogTextures[fogIndex].GetWidth()) { _fogCurrentX += GameGraphics.FogTextures[fogIndex].GetWidth(); }
@@ -680,10 +680,8 @@ namespace Intersect_Client.Classes.Maps
                             GameGraphics.DrawGameTexture(GameGraphics.FogTextures[fogIndex],
                                 new FloatRect(0, 0, fogW, fogH),
                                 new FloatRect(
-                                    (GetX() + Options.MapWidth * Options.TileWidth / 2) - (xCount * fogW / 2) + x * fogW +
-                                    _fogCurrentX,
-                                    (GetY() + Options.MapHeight * Options.TileHeight / 2) - (yCount * fogH / 2) + y * fogH +
-                                    _fogCurrentY, fogW, fogH),
+                                    GetX() - (Options.MapWidth * Options.TileWidth * 1.5f) + x * fogW +  _fogCurrentX,
+                                    GetY() - (Options.MapHeight * Options.TileHeight * 1.5f) + y * fogH + _fogCurrentY, fogW, fogH),
                                 new Color((byte)(Globals.GameMaps[MyMapNum].FogTransaprency * _curFogIntensity), 255, 255, 255
                                     ));
                         }
@@ -712,7 +710,6 @@ namespace Intersect_Client.Classes.Maps
         }
         private void ClearAttributeSounds()
         {
-            Globals.System.Log("Clearing Attribute Sounds");
             for (int i = 0; i < AttributeSounds.Count; i++)
             {
                 GameAudio.StopSound(AttributeSounds[i]);
