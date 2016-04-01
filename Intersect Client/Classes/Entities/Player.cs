@@ -353,7 +353,7 @@ namespace Intersect_Client.Classes.Entities
                         }
                     }
                 }
-                if (Globals.Me.Equipment[Options.WeaponIndex] > -1 &&
+                if (Options.WeaponIndex > -1 &&  Globals.Me.Equipment[Options.WeaponIndex] > -1 &&
                     Globals.Me.Inventory[Globals.Me.Equipment[Options.WeaponIndex]].ItemNum > -1)
                 {
                     if (
@@ -382,7 +382,8 @@ namespace Intersect_Client.Classes.Entities
 
             }
             //If has a weapon with a projectile equiped, attack anyway
-            if (Equipment[Options.WeaponIndex] > -1)
+            if (Options.WeaponIndex > -1 && Globals.Me.Equipment[Options.WeaponIndex] > -1 &&
+                   Globals.Me.Inventory[Globals.Me.Equipment[Options.WeaponIndex]].ItemNum > -1)
             {
                 if (Globals.GameItems[Equipment[Options.WeaponIndex]].Projectile > -1)
                 {

@@ -352,6 +352,7 @@ namespace Intersect_Client.Classes.Networking
             if (en == Globals.Me && Globals.CurrentMap != en.CurrentMap)
             {
                 Globals.CurrentMap = Globals.Entities[index].CurrentMap;
+                Globals.NeedsMaps = true;
             }
         }
 
@@ -419,7 +420,6 @@ namespace Intersect_Client.Classes.Networking
                 if (Globals.LocalMaps[i] <= -1) continue;
                 if (!Globals.GameMaps.ContainsKey(Globals.LocalMaps[i]))
                 {
-                    Globals.NeedsMaps = true;
                     PacketSender.SendNeedMap(Globals.LocalMaps[i]);
                 }
                 else

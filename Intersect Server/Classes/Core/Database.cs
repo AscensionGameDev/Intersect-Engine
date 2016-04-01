@@ -326,7 +326,7 @@ namespace Intersect_Server.Classes
         public static void SavePlayer(Client client)
         {
             if (client == null) { return; }
-
+            if (client.MyAccount == "") return;
             var en = (Player)client.Entity;
 
             var playerdata = new XmlWriterSettings { Indent = true };

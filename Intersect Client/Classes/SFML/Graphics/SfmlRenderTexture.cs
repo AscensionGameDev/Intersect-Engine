@@ -38,11 +38,38 @@ namespace Intersect_Client.Classes.Bridges_and_Interfaces.SFML.Graphics
         private int _height;
         public SfmlRenderTexture(int width, int height) : base(width, height)
         {
-            _renderTexture = new RenderTexture((uint) width, (uint) height);
+            bool convertToPot = false;
+            if (convertToPot)
+            {
+                int targetWidth = width;
+                int targetHeight = height;
+                if (!IsPowerOfTwo(targetWidth))
+                {
+                    int val = 1;
+                    while (val < targetWidth)
+                        val *= 2;
+                    targetWidth = val;
+                }
+                if (!IsPowerOfTwo(targetHeight))
+                {
+                    int val = 1;
+                    while (val < targetHeight)
+                        val *= 2;
+                    targetHeight = val;
+                }
+                _renderTexture = new RenderTexture((uint) targetWidth, (uint) targetHeight);
+            }
+            else
+            {
+                _renderTexture = new RenderTexture((uint)width, (uint)height);
+            }
             _width = width;
             _height = height;
         }
-
+        bool IsPowerOfTwo(int x)
+        {
+            return (x & (x - 1)) == 0;
+        }
         public override int GetWidth()
         {
             return _width;

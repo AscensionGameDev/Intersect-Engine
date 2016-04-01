@@ -227,13 +227,20 @@ namespace Intersect_Client.Classes.Core
                 for (var i = 0; i < 9; i++)
                 {
                     if (Globals.LocalMaps[i] <= -1) continue;
-                    bool found = false;
-                    foreach (var map in Globals.GameMaps)
+                    if (Globals.GameMaps.ContainsKey(Globals.LocalMaps[i]) && Globals.GameMaps[Globals.LocalMaps[i]] != null)
                     {
-                        if (map.Value == null) continue;
-                        if (map.Value.MyMapNum == Globals.LocalMaps[i]) found = true;
+                        if (!Globals.GameMaps[Globals.LocalMaps[i]].ShouldLoad(i * 2 + 0)) continue;
+                        if (Globals.GameMaps[Globals.LocalMaps[i]].MapLoaded == false)
+                        {
+                            canShowWorld = false;
+                        }
+                        else if (Globals.GameMaps[Globals.LocalMaps[i]].MapRendered == false && Globals.Database.RenderCaching == true)
+                        {
+                            Globals.GameMaps[Globals.LocalMaps[i]].PreRenderMap();
+                            canShowWorld = false;
+                        }
                     }
-                    if (!found)
+                    else
                     {
                         canShowWorld = false;
                     }

@@ -26,6 +26,9 @@
 */
 
 using System;
+using System.Drawing;
+using System.Drawing.Imaging;
+using System.IO;
 using IntersectClientExtras.Graphics;
 using IntersectClientExtras.Sys;
 using Intersect_Client.Classes.General;
@@ -39,10 +42,10 @@ namespace Intersect_Client.Classes.Bridges_and_Interfaces.SFML.Graphics
         private Texture _texture;
         private string _path;
         private long lastAccess = 0;
-        public SfmlTexture(Texture tex)
-        {
-            _texture = tex;
-        }
+        private bool hasLoaded = false;
+        private int _width = 0;
+        private int _height = 0;
+
         public SfmlTexture(string path)
         {
             _path = path;
@@ -50,16 +53,81 @@ namespace Intersect_Client.Classes.Bridges_and_Interfaces.SFML.Graphics
 
         private void LoadTexture()
         {
-            _texture = new Texture(_path);
+            bool convertToPot = false;
+            if (convertToPot)
+            {
+                Bitmap image = new Bitmap(_path);
+                int targetWidth = image.Width;
+                int targetHeight = image.Height;
+                if (!IsPowerOfTwo(targetWidth))
+                {
+                    int val = 1;
+                    while (val < targetWidth)
+                        val *= 2;
+                    targetWidth = val;
+                }
+                if (!IsPowerOfTwo(targetHeight))
+                {
+                    int val = 1;
+                    while (val < targetHeight)
+                        val *= 2;
+                    targetHeight = val;
+                }
+                _width = image.Width;
+                _height = image.Height;
+                if (targetWidth == image.Width && targetHeight == image.Height)
+                {
+                    _texture = new Texture(ImageToByte(image));
+                }
+                else
+                {
+                    Bitmap newImage = new Bitmap(targetWidth, targetHeight);
+                    global::System.Drawing.Graphics g = global::System.Drawing.Graphics.FromImage(newImage);
+                    g.DrawImage(image,new Rectangle(0,0,image.Width,image.Height),new Rectangle(0,0,image.Width,image.Height),GraphicsUnit.Pixel);
+                    g.Dispose();
+                    _texture = new Texture(ImageToByte(newImage));
+                    newImage.Dispose();
+                }
+                image.Dispose();
+            }
+            else
+            {
+                _texture = new Texture(_path);
+                _width = (int)_texture.Size.X;
+                _height = (int)_texture.Size.Y;
+            }
+            hasLoaded = true;
+        }
+        public Byte[] ImageToByte(Bitmap imageSource)
+        {
+            Stream stream = new MemoryStream();
+            imageSource.Save(stream,ImageFormat.Png);
+            Byte[] buffer = null;
+            stream.Position = 0;
+            if (stream != null && stream.Length > 0)
+            {
+                using (BinaryReader br = new BinaryReader(stream))
+                {
+                    buffer = br.ReadBytes((Int32)stream.Length);
+                }
+            }
+
+            return buffer;
+        }
+        bool IsPowerOfTwo(int x)
+        {
+            return (x & (x - 1)) == 0;
         }
         public override int GetWidth()
         {
-            return (int)GetSfmlTexture().Size.X;
+            if (!hasLoaded) LoadTexture();
+            return _width;
         }
 
         public override int GetHeight()
         {
-            return (int)GetSfmlTexture().Size.Y;
+            if (!hasLoaded) LoadTexture();
+            return _height;
         }
 
         public override object GetTexture()

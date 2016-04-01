@@ -24,6 +24,7 @@
     OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
     SOFTWARE.
 */
+
 using System.IO;
 using IntersectClientExtras.GenericClasses;
 using IntersectClientExtras.Graphics;
@@ -38,7 +39,15 @@ namespace Intersect_Client.Classes.Bridges_and_Interfaces.SFML.Graphics
         private Shader _shader;
         public SfmlShader(string shaderName) : base(shaderName)
         {
-            _shader = Shader.FromString(File.ReadAllText(shaderName + "_vert.shader"), File.ReadAllText(shaderName + "_frag.shader"));
+            if (Shader.IsAvailable)
+            {
+                _shader = Shader.FromString(File.ReadAllText(shaderName + "_vert.shader"),
+                    File.ReadAllText(shaderName + "_frag.shader"));
+            }
+            else
+            {
+                global::System.Windows.Forms.MessageBox.Show("Shaders are not supported on this machine. Intersect must quit.");
+            }
         }
 
         public override void SetFloat(string key, float val)
