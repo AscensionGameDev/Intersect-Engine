@@ -126,9 +126,6 @@
     <Compile Include="Classes\Spells\SpellInstance.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <None Include="app.config" />
-  </ItemGroup>
   <ItemGroup />
   <ItemGroup>
     <Content Include="IntersectLogo.ico" />
