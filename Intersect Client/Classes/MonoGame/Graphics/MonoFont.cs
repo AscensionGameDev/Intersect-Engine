@@ -24,55 +24,37 @@
     OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
     SOFTWARE.
 */
-
-using System.IO;
-using IntersectClientExtras.GenericClasses;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net.Mime;
+using System.Text;
+using System.Threading.Tasks;
 using IntersectClientExtras.Graphics;
-using SFML.Graphics;
-using SFML.System;
-using Color = IntersectClientExtras.GenericClasses.Color;
+using Microsoft.Xna.Framework.Content;
+using Microsoft.Xna.Framework.Graphics;
 
-namespace Intersect_Client.Classes.Bridges_and_Interfaces.SFML.Graphics
+namespace Intersect_Client_MonoGame.Classes.SFML.Graphics
 {
-    public class SfmlShader : GameShader
+    public class MonoFont : GameFont
     {
-        private Shader _shader;
-        public SfmlShader(string shaderName) : base(shaderName)
+        private SpriteFont font;
+        public MonoFont(string fontName, ContentManager contentManager) : base(fontName)
         {
-            if (Shader.IsAvailable)
+            try
             {
-                _shader = Shader.FromString(File.ReadAllText(shaderName + "_vert.shader"),
-                    File.ReadAllText(shaderName + "_frag.shader"));
+                fontName = fontName.Replace(".ttf", "");
+                font = contentManager.Load<SpriteFont>(fontName);
             }
-            else
+            catch (Exception ex)
             {
-                global::System.Windows.Forms.MessageBox.Show("Shaders are not supported on this machine. Intersect must quit.");
+                
             }
         }
 
-        public override void SetFloat(string key, float val)
+        public override object GetFont()
         {
-            _shader.SetParameter(key, val);
-        }
-
-        public override void SetInt(string key, int val)
-        {
-            _shader.SetParameter(key, val);
-        }
-
-        public override void SetColor(string key, Color val)
-        {
-            _shader.SetParameter(key, new global::SFML.Graphics.Color(val.R,val.G,val.B,val.A));
-        }
-
-        public override void SetVector2(string key, Pointf val)
-        {
-            _shader.SetParameter(key, new Vector2f(val.X,val.Y));
-        }
-
-        public override object GetShader()
-        {
-            return _shader;
+            return font;
         }
     }
 }

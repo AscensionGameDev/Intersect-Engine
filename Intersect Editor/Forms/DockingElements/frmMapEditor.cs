@@ -1,5 +1,4 @@
 ﻿using Intersect_Editor.Classes;
-using SFML.Graphics;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -11,6 +10,7 @@ using System.Text;
 using System.Windows.Forms;
 using Intersect_Editor.Classes.General;
 using Intersect_Editor.Forms.Controls;
+using Microsoft.Xna.Framework.Graphics;
 using WeifenLuo.WinFormsUI.Docking;
 using EditorGraphics = Intersect_Editor.Classes.EditorGraphics;
 
@@ -18,6 +18,9 @@ namespace Intersect_Editor.Forms
 {
     public partial class frmMapEditor : DockContent
     {
+        //MonoGame Swap Chain
+        private SwapChainRenderTarget _chain;
+
         //Map States
         public List<byte[]> MapUndoStates = new List<byte[]>();
         public List<byte[]> MapRedoStates = new List<byte[]>();
@@ -33,15 +36,34 @@ namespace Intersect_Editor.Forms
         {
             picMap.Width = (Options.MapWidth + 2) * Options.TileWidth;
             picMap.Height = (Options.MapHeight + 2) * Options.TileHeight;
+            CreateSwapChain();
         }
+
+        public void InitMapEditor()
+        {
+            CreateSwapChain();
+        }
+
+        private void CreateSwapChain()
+        {
+            if (!Globals.ClosingEditor)
+            {
+                if (_chain != null)
+                {
+                    _chain.Dispose();
+                }
+                if (EditorGraphics.GetGraphicsDevice() != null)
+                {
+                    _chain = new SwapChainRenderTarget(EditorGraphics.GetGraphicsDevice(), this.picMap.Handle,
+                        this.picMap.Width, this.picMap.Height);
+                    EditorGraphics.SetMapEditorChain(_chain);
+                }
+            }
+        }
+
         private void frmMapEditor_DockStateChanged(object sender, EventArgs e)
         {
-            if (EditorGraphics.RenderWindow != null && !Globals.MapEditorWindow.picMap.IsDisposed)
-            {
-                EditorGraphics.RenderWindow.Close();
-                EditorGraphics.RenderWindow.Dispose();
-                EditorGraphics.RenderWindow = new RenderWindow(Globals.MapEditorWindow.picMap.Handle);
-            }
+            CreateSwapChain();
         }
 
         //Undo/Redo Functions
@@ -1386,11 +1408,6 @@ namespace Intersect_Editor.Forms
                 Globals.IsPaste = true;
                 EditorGraphics.TilePreviewUpdated = true;
             }
-        }
-
-        private void picMap_Click(object sender, EventArgs e)
-        {
-
         }
     }
 }

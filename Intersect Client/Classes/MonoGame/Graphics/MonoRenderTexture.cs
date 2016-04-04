@@ -24,52 +24,36 @@
     OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
     SOFTWARE.
 */
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using IntersectClientExtras.Graphics;
-using Intersect_Client.Classes.Core;
-using SFML.Graphics;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Color = IntersectClientExtras.GenericClasses.Color;
 
-namespace Intersect_Client.Classes.Bridges_and_Interfaces.SFML.Graphics
+namespace Intersect_Client_MonoGame.Classes.SFML.Graphics
 {
-    public class SfmlRenderTexture : GameRenderTexture
+    public class MonoRenderTexture : GameRenderTexture
     {
-        private RenderTexture _renderTexture;
-        private int _width;
-        private int _height;
-        public SfmlRenderTexture(int width, int height) : base(width, height)
+        private int _width = 0;
+        private int _height = 0;
+        private RenderTarget2D _renderTexture;
+        private GraphicsDevice _graphicsDevice;
+        public MonoRenderTexture(GraphicsDevice graphicsDevice,int width, int height) : base(width, height)
         {
-            bool convertToPot = false;
-            if (convertToPot)
-            {
-                int targetWidth = width;
-                int targetHeight = height;
-                if (!IsPowerOfTwo(targetWidth))
-                {
-                    int val = 1;
-                    while (val < targetWidth)
-                        val *= 2;
-                    targetWidth = val;
-                }
-                if (!IsPowerOfTwo(targetHeight))
-                {
-                    int val = 1;
-                    while (val < targetHeight)
-                        val *= 2;
-                    targetHeight = val;
-                }
-                _renderTexture = new RenderTexture((uint) targetWidth, (uint) targetHeight);
-            }
-            else
-            {
-                _renderTexture = new RenderTexture((uint)width, (uint)height);
-            }
+            _renderTexture = new RenderTarget2D(graphicsDevice, width, height,false,
+         SurfaceFormat.Color,
+         DepthFormat.Depth16,
+         0,
+         RenderTargetUsage.PreserveContents);
+            _graphicsDevice = graphicsDevice;
             _width = width;
             _height = height;
         }
-        bool IsPowerOfTwo(int x)
-        {
-            return (x & (x - 1)) == 0;
-        }
+
         public override int GetWidth()
         {
             return _width;
@@ -82,18 +66,14 @@ namespace Intersect_Client.Classes.Bridges_and_Interfaces.SFML.Graphics
 
         public override object GetTexture()
         {
-            return _renderTexture.Texture;
-        }
-
-        public RenderTexture GetRenderTexture()
-        {
             return _renderTexture;
         }
 
         public override Color GetPixel(int x1, int y1)
         {
-            global::SFML.Graphics.Color clr = _renderTexture.Texture.CopyToImage().GetPixel((uint) x1, (uint) y1);
-            return new Color(clr.A,clr.R,clr.G,clr.B);
+            Microsoft.Xna.Framework.Color[] pixel = new Microsoft.Xna.Framework.Color[1];
+            _renderTexture.GetData(0,new Rectangle(x1,y1,1,1),pixel,0,1);
+            return new Color(pixel[0].A, pixel[0].R, pixel[0].G, pixel[0].B);
         }
 
         public override bool Begin()
@@ -103,18 +83,14 @@ namespace Intersect_Client.Classes.Bridges_and_Interfaces.SFML.Graphics
 
         public override void End()
         {
-            _renderTexture.Display();
+            
         }
 
         public override void Clear(Color color)
         {
-            _renderTexture.Clear(new global::SFML.Graphics.Color(color.R, color.G, color.B, color.A));
-        }
-
-        ~SfmlRenderTexture()
-        {
-            ((SfmlRenderer) GameGraphics.Renderer).RenderTextureDisposed();
-            _renderTexture.Dispose();
+            _graphicsDevice.SetRenderTarget(_renderTexture);
+            _graphicsDevice.Clear(MonoRenderer.ConvertColor(color));
+            _graphicsDevice.SetRenderTarget(null);
         }
     }
 }

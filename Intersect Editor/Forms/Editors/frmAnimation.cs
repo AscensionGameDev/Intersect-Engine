@@ -30,8 +30,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
 using Intersect_Editor.Classes.General;
-using SFML.Graphics;
-using SFML.System;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace Intersect_Editor.Forms
 {
@@ -42,11 +41,11 @@ namespace Intersect_Editor.Forms
         private bool[] _changed;
         private int _editorIndex;
 
-        //SFML Rendering Variables
-        private RenderWindow lowerWindow;
-        private RenderWindow upperWindow;
-        private RenderTexture lowerDarkness;
-        private RenderTexture upperDarkness;
+        //Mono Rendering Variables
+        private SwapChainRenderTarget lowerWindow;
+        private SwapChainRenderTarget upperWindow;
+        private RenderTarget2D lowerDarkness;
+        private RenderTarget2D upperDarkness;
 
         private int _lowerFrame;
         private int _upperFrame;
@@ -87,10 +86,10 @@ namespace Intersect_Editor.Forms
                 cmbUpperGraphic.Items.Add(Intersect_Editor.Classes.EditorGraphics.AnimationFileNames[i]);
             }
 
-            lowerWindow = new RenderWindow(picLowerAnimation.Handle);
-            upperWindow = new RenderWindow(picUpperAnimation.Handle);
-            lowerDarkness = new RenderTexture((uint)picLowerAnimation.Width, (uint)picLowerAnimation.Height);
-            upperDarkness = new RenderTexture((uint)picUpperAnimation.Width, (uint)picUpperAnimation.Height);
+            lowerWindow = new SwapChainRenderTarget(EditorGraphics.GetGraphicsDevice(),picLowerAnimation.Handle, picLowerAnimation.Width, picLowerAnimation.Height);
+            upperWindow = new SwapChainRenderTarget(EditorGraphics.GetGraphicsDevice(),picUpperAnimation.Handle, picUpperAnimation.Width, picUpperAnimation.Height);
+            lowerDarkness = EditorGraphics.CreateRenderTexture(picLowerAnimation.Width,picLowerAnimation.Height);
+            upperDarkness = EditorGraphics.CreateRenderTexture(picUpperAnimation.Width, picUpperAnimation.Height);
 
             UpdateEditor();
         }
@@ -348,92 +347,94 @@ namespace Intersect_Editor.Forms
         {
             if (lowerWindow == null) return;
             if (!_playLower) _lowerFrame = scrlLowerFrame.Value - 1;
-            lowerWindow.Clear(SFML.Graphics.Color.White);
-            lowerDarkness.Clear(SFML.Graphics.Color.Black);
-            if (Classes.EditorGraphics.AnimationFileNames.IndexOf(cmbLowerGraphic.Text) > -1)
-            {
-                Texture animTexture =
-                    Classes.EditorGraphics.AnimationTextures[Classes.EditorGraphics.AnimationFileNames.IndexOf(cmbLowerGraphic.Text)
-                        ];
-                long w = animTexture.Size.X / scrlLowerHorizontalFrames.Value;
-                long h = animTexture.Size.Y / scrlLowerVerticalFrames.Value;
-                long x = 0;
-                if (_lowerFrame > 0) { x = (_lowerFrame % scrlLowerHorizontalFrames.Value) * w; }
-                long y = (int)Math.Floor(_lowerFrame / (double)scrlLowerHorizontalFrames.Value) * h;
-                Sprite animSprite = new Sprite(animTexture, new IntRect((int)picLowerAnimation.Width / 2 - (int)w / 2, (int)picLowerAnimation.Height / 2 - (int)h / 2, (int)w, (int)h));
-                animSprite.Position = new Vector2f((int)picLowerAnimation.Width / 2 - (int)w / 2,
-                    (int)picLowerAnimation.Height / 2 - (int)h / 2);
-                animSprite.TextureRect = new IntRect((int)x, (int)y, (int)w, (int)h);
-                lowerWindow.Draw(animSprite);
-            }
+            GraphicsDevice graphicsDevice = EditorGraphics.GetGraphicsDevice();
+
+            graphicsDevice.SetRenderTarget(lowerDarkness);
+            graphicsDevice.Clear(Microsoft.Xna.Framework.Color.Black);
             if (_lowerFrame < Globals.GameAnimations[_editorIndex].LowerLights.Length)
             {
                 Classes.EditorGraphics.DrawLight(
-                    picLowerAnimation.Width / 2  +
+                    picLowerAnimation.Width / 2 +
                     Globals.GameAnimations[_editorIndex].LowerLights[_lowerFrame].OffsetX,
-                    picLowerAnimation.Height / 2  +
+                    picLowerAnimation.Height / 2 +
                     Globals.GameAnimations[_editorIndex].LowerLights[_lowerFrame].OffsetY,
-                    Globals.GameAnimations[_editorIndex].LowerLights[_lowerFrame].Size,
-                    Globals.GameAnimations[_editorIndex].LowerLights[_lowerFrame].Intensity,
-                    Globals.GameAnimations[_editorIndex].LowerLights[_lowerFrame].Expand,
-                    Globals.GameAnimations[_editorIndex].LowerLights[_lowerFrame].Color, lowerDarkness);
+                    Globals.GameAnimations[_editorIndex].LowerLights[_lowerFrame], lowerDarkness);
             }
-            RectangleShape rs = new RectangleShape(new Vector2f(lowerDarkness.Size.X, lowerDarkness.Size.Y));
-            rs.FillColor =
-                new SFML.Graphics.Color(new SFML.Graphics.Color(255, 255, 255,
-                    (byte)(((float)(100 - scrlDarkness.Value) / 100f) * 255)));
-            lowerDarkness.Draw(rs);
-            lowerDarkness.Display();
-            Sprite darknessSprite = new Sprite(lowerDarkness.Texture);
-            lowerWindow.Draw(darknessSprite, new RenderStates(BlendMode.Multiply));
-            lowerWindow.DispatchEvents();
-            lowerWindow.Display();
+            EditorGraphics.DrawTexture(EditorGraphics.GetWhiteTex(), new RectangleF(0, 0, 1, 1),
+                new RectangleF(0, 0, lowerDarkness.Width, lowerDarkness.Height),
+                Color.FromArgb((byte) (((float) (100 - scrlDarkness.Value)/100f)*255), 255, 255, 255), lowerDarkness,
+                BlendState.Additive);
+
+
+            graphicsDevice.SetRenderTarget(lowerWindow);
+            graphicsDevice.Clear(Microsoft.Xna.Framework.Color.White);
+            if (Classes.EditorGraphics.AnimationFileNames.IndexOf(cmbLowerGraphic.Text) > -1)
+            {
+                Texture2D animTexture =
+                    Classes.EditorGraphics.AnimationTextures[
+                        Classes.EditorGraphics.AnimationFileNames.IndexOf(cmbLowerGraphic.Text)
+                        ];
+                long w = animTexture.Width/scrlLowerHorizontalFrames.Value;
+                long h = animTexture.Height/scrlLowerVerticalFrames.Value;
+                long x = 0;
+                if (_lowerFrame > 0)
+                {
+                    x = (_lowerFrame%scrlLowerHorizontalFrames.Value)*w;
+                }
+                long y = (int) Math.Floor(_lowerFrame/(double) scrlLowerHorizontalFrames.Value)*h;
+                EditorGraphics.DrawTexture(animTexture, new RectangleF(x, y, w, h),
+                    new RectangleF(picLowerAnimation.Width/2 - (int) w/2,
+                        (int) picLowerAnimation.Height/2 - (int) h/2, w, h), lowerWindow);
+            }
+            EditorGraphics.DrawTexture(lowerDarkness, 0, 0, lowerWindow, EditorGraphics.MultiplyState);
+            lowerWindow.Present();
         }
 
         void DrawUpperFrame()
         {
             if (upperWindow == null) return;
             if (!_playUpper) _upperFrame = scrlUpperFrame.Value - 1;
-            upperWindow.Clear(SFML.Graphics.Color.White);
-            upperDarkness.Clear(SFML.Graphics.Color.Black);
-            if (Classes.EditorGraphics.AnimationFileNames.IndexOf(cmbUpperGraphic.Text) > -1)
-            {
-                Texture animTexture =
-                    Classes.EditorGraphics.AnimationTextures[Classes.EditorGraphics.AnimationFileNames.IndexOf(cmbUpperGraphic.Text)
-                        ];
-                long w = animTexture.Size.X / scrlUpperHorizontalFrames.Value;
-                long h = animTexture.Size.Y / scrlUpperVerticalFrames.Value;
-                long x = 0;
-                if (_upperFrame > 0) { x = (_upperFrame % scrlUpperHorizontalFrames.Value) * w; }
-                long y = (int)Math.Floor(_upperFrame / (double)scrlUpperHorizontalFrames.Value) * h;
-                Sprite animSprite = new Sprite(animTexture, new IntRect((int)picUpperAnimation.Width / 2 - (int)w / 2, (int)picUpperAnimation.Height / 2 - (int)h / 2, (int)w, (int)h));
-                animSprite.Position = new Vector2f((int)picUpperAnimation.Width / 2 - (int)w / 2,
-                    (int)picUpperAnimation.Height / 2 - (int)h / 2);
-                animSprite.TextureRect = new IntRect((int)x, (int)y, (int)w, (int)h);
-                upperWindow.Draw(animSprite);
-            }
+            GraphicsDevice graphicsDevice = EditorGraphics.GetGraphicsDevice();
+
+            graphicsDevice.SetRenderTarget(upperDarkness);
+            graphicsDevice.Clear(Microsoft.Xna.Framework.Color.Black);
             if (_upperFrame < Globals.GameAnimations[_editorIndex].UpperLights.Length)
             {
                 Classes.EditorGraphics.DrawLight(
                     picUpperAnimation.Width / 2 +
                     Globals.GameAnimations[_editorIndex].UpperLights[_upperFrame].OffsetX,
-                    picUpperAnimation.Height / 2  +
+                    picUpperAnimation.Height / 2 +
                     Globals.GameAnimations[_editorIndex].UpperLights[_upperFrame].OffsetY,
-                    Globals.GameAnimations[_editorIndex].UpperLights[_upperFrame].Size,
-                    Globals.GameAnimations[_editorIndex].UpperLights[_upperFrame].Intensity,
-                    Globals.GameAnimations[_editorIndex].UpperLights[_upperFrame].Expand,
-                    Globals.GameAnimations[_editorIndex].UpperLights[_upperFrame].Color, upperDarkness);
+                    Globals.GameAnimations[_editorIndex].UpperLights[_upperFrame], upperDarkness);
             }
-            RectangleShape rs = new RectangleShape(new Vector2f(upperDarkness.Size.X, upperDarkness.Size.Y));
-            rs.FillColor =
-                new SFML.Graphics.Color(new SFML.Graphics.Color(255, 255, 255,
-                    (byte)(((float)(100 - scrlDarkness.Value) / 100f) * 255)));
-            upperDarkness.Draw(rs);
-            upperDarkness.Display();
-            Sprite darknessSprite = new Sprite(upperDarkness.Texture);
-            upperWindow.Draw(darknessSprite, new RenderStates(BlendMode.Multiply));
-            upperWindow.DispatchEvents();
-            upperWindow.Display();
+            EditorGraphics.DrawTexture(EditorGraphics.GetWhiteTex(), new RectangleF(0, 0, 1, 1),
+                new RectangleF(0, 0, upperDarkness.Width, upperDarkness.Height),
+                Color.FromArgb((byte)(((float)(100 - scrlDarkness.Value) / 100f) * 255), 255, 255, 255), upperDarkness,
+                BlendState.Additive);
+
+
+            graphicsDevice.SetRenderTarget(upperWindow);
+            graphicsDevice.Clear(Microsoft.Xna.Framework.Color.White);
+            if (Classes.EditorGraphics.AnimationFileNames.IndexOf(cmbUpperGraphic.Text) > -1)
+            {
+                Texture2D animTexture =
+                    Classes.EditorGraphics.AnimationTextures[
+                        Classes.EditorGraphics.AnimationFileNames.IndexOf(cmbUpperGraphic.Text)
+                        ];
+                long w = animTexture.Width / scrlUpperHorizontalFrames.Value;
+                long h = animTexture.Height / scrlUpperVerticalFrames.Value;
+                long x = 0;
+                if (_upperFrame > 0)
+                {
+                    x = (_upperFrame % scrlUpperHorizontalFrames.Value) * w;
+                }
+                long y = (int)Math.Floor(_upperFrame / (double)scrlUpperHorizontalFrames.Value) * h;
+                EditorGraphics.DrawTexture(animTexture, new RectangleF(x, y, w, h),
+                    new RectangleF(picUpperAnimation.Width / 2 - (int)w / 2,
+                        (int)picUpperAnimation.Height / 2 - (int)h / 2, w, h), upperWindow);
+            }
+            EditorGraphics.DrawTexture(upperDarkness, 0, 0, upperWindow, EditorGraphics.MultiplyState);
+            upperWindow.Present();
         }
 
         private void tmrUpperAnimation_Tick(object sender, EventArgs e)

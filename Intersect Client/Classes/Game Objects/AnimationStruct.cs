@@ -179,7 +179,7 @@ namespace Intersect_Client.Classes.Game_Objects
                                 frameHeight),
                             new FloatRect(_renderX - frameWidth / 2, _renderY - frameHeight / 2, frameWidth, frameHeight),
                             Color.White, null, GameBlendModes.Alpha, null, rotationDegrees);
-                        GameGraphics.DrawLight((int)_renderX + myBase.LowerLights[lowerFrame].OffsetX,
+                        GameGraphics.AddLight((int)_renderX + myBase.LowerLights[lowerFrame].OffsetX,
                             (int)_renderY + myBase.LowerLights[lowerFrame].OffsetY, myBase.LowerLights[lowerFrame].Size,
                             myBase.LowerLights[lowerFrame].Intensity, myBase.LowerLights[lowerFrame].Expand,
                             myBase.LowerLights[lowerFrame].Color);
@@ -208,7 +208,7 @@ namespace Intersect_Client.Classes.Game_Objects
                             Color.White, null, GameBlendModes.Alpha, null, rotationDegrees);
 
 
-                        GameGraphics.DrawLight((int)_renderX + myBase.UpperLights[upperFrame].OffsetX,
+                        GameGraphics.AddLight((int)_renderX + myBase.UpperLights[upperFrame].OffsetX,
                             (int)_renderY + myBase.UpperLights[upperFrame].OffsetY, myBase.UpperLights[upperFrame].Size,
                             myBase.UpperLights[upperFrame].Intensity, myBase.UpperLights[upperFrame].Expand,
                             myBase.UpperLights[upperFrame].Color);

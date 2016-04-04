@@ -31,7 +31,7 @@ using Intersect_Client.Classes.General;
 
 namespace Intersect_Client.Classes.Bridges_and_Interfaces.SFML.Network
 {
-    public class SfmlSocket : GameSocket
+    public class MonoSocket : GameSocket
     {
         public static bool Connected;
         public static bool WasConnected;
@@ -39,7 +39,7 @@ namespace Intersect_Client.Classes.Bridges_and_Interfaces.SFML.Network
         private static byte[] _tempBuff;
         public static TcpClient MySocket;
         private static NetworkStream _myStream;
-        public SfmlSocket() : base()
+        public MonoSocket() : base()
         {
             MySocket = new TcpClient { NoDelay = true };
             _tempBuff = new byte[MySocket.ReceiveBufferSize];

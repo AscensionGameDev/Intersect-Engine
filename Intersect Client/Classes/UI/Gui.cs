@@ -68,7 +68,7 @@ namespace Intersect_Client.Classes.UI
             //TODO: Make it easier to modify skin.
             _gwenSkin = new TexturedBase(GwenRenderer, "Resources/GUI/DefaultSkin.png");
 
-            _gwenSkin.DefaultFont = new Font(GwenRenderer, "Resources/Fonts/Arvo-Regular.ttf", 10);
+            _gwenSkin.DefaultFont = new Font(GwenRenderer, "Resources/Fonts/Calibri", 10);
 
 
             // Create a Canvas (it's root, on which all other GWEN controls are created)

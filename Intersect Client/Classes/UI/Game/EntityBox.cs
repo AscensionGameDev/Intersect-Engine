@@ -92,13 +92,15 @@ namespace Intersect_Client.Classes.UI.Game
             if (myEntity.GetType() != typeof(Event))
             {
                 _hpBackground = new ImagePanel(_entityBox);
-                _hpBackground.Texture = Gui.ToGwenTexture(GameGraphics.GuiTextures[GameGraphics.GuiFilenames.IndexOf("EmptyBar.png")]);
+                if (GameGraphics.GuiFilenames.IndexOf("EmptyBar.png") > -1)
+                    _hpBackground.Texture = Gui.ToGwenTexture(GameGraphics.GuiTextures[GameGraphics.GuiFilenames.IndexOf("EmptyBar.png")]);
                 _hpBackground.SetSize(169, 18);
                 _hpBackground.SetPosition(70, 2);
 
                 _hpBar = new ImagePanel(_entityBox);
                 _hpBar.SetSize(169, 18);
-                _hpBar.Texture = Gui.ToGwenTexture(GameGraphics.GuiTextures[GameGraphics.GuiFilenames.IndexOf("HPBar.png")]);
+                if (GameGraphics.GuiFilenames.IndexOf("HPBar.png") > -1)
+                    _hpBar.Texture = Gui.ToGwenTexture(GameGraphics.GuiTextures[GameGraphics.GuiFilenames.IndexOf("HPBar.png")]);
                 _hpBar.SetPosition(70, 2);
                 _hpBar.IsHidden = true;
 
@@ -107,13 +109,15 @@ namespace Intersect_Client.Classes.UI.Game
                 _hpLbl.SetPosition(120, 5);
 
                 _mpBackground = new ImagePanel(_entityBox);
-                _mpBackground.Texture = Gui.ToGwenTexture(GameGraphics.GuiTextures[GameGraphics.GuiFilenames.IndexOf("EmptyBar.png")]);
+                if (GameGraphics.GuiFilenames.IndexOf("EmptyBar.png") > -1)
+                    _mpBackground.Texture = Gui.ToGwenTexture(GameGraphics.GuiTextures[GameGraphics.GuiFilenames.IndexOf("EmptyBar.png")]);
                 _mpBackground.SetSize(169, 18);
                 _mpBackground.SetPosition(70, 24);
 
                 _mpBar = new ImagePanel(_entityBox);
                 _mpBar.SetSize(169, 18);
-                _mpBar.Texture = Gui.ToGwenTexture(GameGraphics.GuiTextures[GameGraphics.GuiFilenames.IndexOf("ManaBar.png")]);
+                if (GameGraphics.GuiFilenames.IndexOf("ManaBar.png") > -1)
+                    _mpBar.Texture = Gui.ToGwenTexture(GameGraphics.GuiTextures[GameGraphics.GuiFilenames.IndexOf("ManaBar.png")]);
                 _mpBar.SetPosition(70, 24);
                 _mpBar.IsHidden = true;
 
@@ -125,13 +129,15 @@ namespace Intersect_Client.Classes.UI.Game
             if (_myEntity == Globals.Me)
             {
                 _expBackground = new ImagePanel(_entityBox);
-                _expBackground.Texture = Gui.ToGwenTexture(GameGraphics.GuiTextures[GameGraphics.GuiFilenames.IndexOf("EmptyBar.png")]);
+                if (GameGraphics.GuiFilenames.IndexOf("EmptyBar.png") > -1)
+                    _expBackground.Texture = Gui.ToGwenTexture(GameGraphics.GuiTextures[GameGraphics.GuiFilenames.IndexOf("EmptyBar.png")]);
                 _expBackground.SetSize(169, 18);
                 _expBackground.SetPosition(70, 46);
 
                 _expBar = new ImagePanel(_entityBox);
                 _expBar.SetSize(169, 18);
-                _expBar.Texture = Gui.ToGwenTexture(GameGraphics.GuiTextures[GameGraphics.GuiFilenames.IndexOf("EXPBar.png")]);
+                if (GameGraphics.GuiFilenames.IndexOf("EXPBar.png") > -1)
+                    _expBar.Texture = Gui.ToGwenTexture(GameGraphics.GuiTextures[GameGraphics.GuiFilenames.IndexOf("EXPBar.png")]);
                 _expBar.SetPosition(70, 46);
                 _expBar.IsHidden = true;
 

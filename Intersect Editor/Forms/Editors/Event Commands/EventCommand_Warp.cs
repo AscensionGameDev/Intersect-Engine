@@ -41,7 +41,6 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             InitializeComponent();
             _myCommand = refCommand;
             _eventEditor = editor;
-            //TODO Everything
             cmbMap.Items.Clear();
             for (int i = 0; i < Database.OrderedMaps.Count; i++)
             {

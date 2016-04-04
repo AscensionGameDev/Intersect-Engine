@@ -22,11 +22,6 @@
 using System;
 using System.Windows.Forms;
 using System.Drawing;
-using SFML.Graphics;
-using SFML.Window;
-using Color = SFML.Graphics.Color;
-using Image = SFML.Graphics.Image;
-using SFML.System;
 using Intersect_Editor.Classes;
 using System.IO;
 using Intersect_Editor.Classes.General;
@@ -51,7 +46,7 @@ namespace Intersect_Editor.Classes
 
         private void frmProjectile_Load(object sender, EventArgs e)
         {
-            _directionGrid = new Bitmap(Intersect_Editor.Properties.Resources.ProjectileDirection);
+            _directionGrid = new Bitmap("Resources/ProjectileDirections.png");
             lstProjectiles.SelectedIndex = 0;
             scrlAnimation.Maximum = Options.MaxAnimations - 1;
             UpdateEditor();

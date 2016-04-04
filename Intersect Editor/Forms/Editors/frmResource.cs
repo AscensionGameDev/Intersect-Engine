@@ -22,11 +22,6 @@
 using System;
 using System.Windows.Forms;
 using System.Drawing;
-using SFML.Graphics;
-using SFML.Window;
-using Color = SFML.Graphics.Color;
-using Image = SFML.Graphics.Image;
-using SFML.System;
 using Intersect_Editor.Classes;
 using System.IO;
 using Intersect_Editor.Classes.General;

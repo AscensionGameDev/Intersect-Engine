@@ -31,6 +31,7 @@ using System.Windows.Forms;
 using Intersect_Editor.Classes;
 using Intersect_Editor.Classes.General;
 using Intersect_Editor.Forms.Controls;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace Intersect_Editor.Forms
 {
@@ -137,7 +138,11 @@ namespace Intersect_Editor.Forms
                     {
                         int oldMap = Globals.CurrentMap;
                         Globals.CurrentMap = _currentMap;
-                        EditorGraphics.ScreenShotMap(true).SaveToFile("resources/mapcache/" + _currentMap + "_" + Globals.GameMaps[_currentMap].Revision + ".png");
+                        using (var fs = new FileStream("resources/mapcache/" + _currentMap + "_" + Globals.GameMaps[_currentMap].Revision + ".png", FileMode.OpenOrCreate))
+                        {
+                            RenderTarget2D screenshotTexture = EditorGraphics.ScreenShotMap(true);
+                            screenshotTexture.SaveAsPng(fs, screenshotTexture.Width, screenshotTexture.Height);
+                        }
                         Globals.CurrentMap = oldMap;
                     }
                 }

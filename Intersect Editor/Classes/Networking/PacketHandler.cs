@@ -26,6 +26,7 @@ using System.IO;
 using System.Windows.Forms;
 using Intersect_Editor.Classes.Game_Objects;
 using Intersect_Editor.Classes.General;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace Intersect_Editor.Classes
 {
@@ -200,7 +201,11 @@ namespace Intersect_Editor.Classes
                     if (!File.Exists("resources/mapcache/" + mapNum + "_" + Globals.GameMaps[mapNum].Revision + ".png"))
                     {
                         Globals.CurrentMap = (int)mapNum;
-                        EditorGraphics.ScreenShotMap(true).SaveToFile("resources/mapcache/" + mapNum + "_" + Globals.GameMaps[mapNum].Revision + ".png");
+                        using (var fs = new FileStream("resources/mapcache/" + mapNum + "_" + Globals.GameMaps[mapNum].Revision + ".png", FileMode.OpenOrCreate))
+                        {
+                            RenderTarget2D screenshotTexture = EditorGraphics.ScreenShotMap(true);
+                            screenshotTexture.SaveAsPng(fs, screenshotTexture.Width, screenshotTexture.Height);
+                        }
                     }
                     if (Globals.FetchingMapPreviews)
                     {

@@ -28,6 +28,7 @@ using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using Intersect_Editor.Classes.General;
 using Intersect_Editor.Forms.Editors;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace Intersect_Editor.Forms
 {
@@ -84,6 +85,10 @@ namespace Intersect_Editor.Forms
             //Init Map Properties
             InitMapProperties();
             Show();
+
+            //Init Forms with RenderTargets
+            Globals.MapEditorWindow.InitMapEditor();
+            Globals.MapLayersWindow.InitMapLayers();
         }
         private void FrmMain_KeyDown(object sender, KeyEventArgs e)
         {
@@ -123,8 +128,8 @@ namespace Intersect_Editor.Forms
         }
         private void InitEditor()
         {
-            EditorGraphics.InitSfml(this);
-            Sounds.Init();
+            EditorGraphics.InitMonogame(this);
+            //Sounds.Init();
             Globals.InEditor = true;
             GrabMouseDownEvents();
         }
@@ -620,7 +625,11 @@ namespace Intersect_Editor.Forms
 
             if (fileDialog.FileName != "")
             {
-                EditorGraphics.ScreenShotMap().SaveToFile(fileDialog.FileName);
+                using (var fs = new FileStream(fileDialog.FileName, FileMode.OpenOrCreate))
+                {
+                    RenderTarget2D screenshotTexture = EditorGraphics.ScreenShotMap();
+                    screenshotTexture.SaveAsPng(fs,screenshotTexture.Width,screenshotTexture.Height);
+                }
             }
         }
         private void toolStripBtnPen_Click(object sender, EventArgs e)
@@ -761,6 +770,9 @@ namespace Intersect_Editor.Forms
 
         }
 
-
+        private void frmMain_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            Globals.ClosingEditor = true;
+        }
     }
 }

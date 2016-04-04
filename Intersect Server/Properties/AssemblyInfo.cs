@@ -10,7 +10,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Ascension Game Development")]
 [assembly: AssemblyProduct("Intersect Game Engine")]
-[assembly: AssemblyCopyright("Copyright ©  2015 JC Snider, Joe Bridges")]
+[assembly: AssemblyCopyright("Copyright ©  2016 JC Snider, Joe Bridges")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -29,5 +29,5 @@ using System.Runtime.InteropServices;
 //      Build Number
 //      Revision
 //
-[assembly: AssemblyVersion("0.0.0.6")]
-[assembly: AssemblyFileVersion("0.0.0.6")]
+[assembly: AssemblyVersion("0.0.0.7")]
+[assembly: AssemblyFileVersion("0.0.0.7")]

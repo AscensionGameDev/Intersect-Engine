@@ -596,7 +596,7 @@ namespace Intersect_Client.Classes.Maps
                     double w = light.Size;
                     var x = GetX() + (light.TileX * Options.TileWidth + light.OffsetX) + Options.TileWidth / 2f;
                     var y = GetY() + (light.TileY * Options.TileHeight + light.OffsetY) + Options.TileHeight / 2f;
-                    GameGraphics.DrawLight((int)x, (int)y, (int)w, light.Intensity, light.Expand, light.Color);
+                    GameGraphics.AddLight((int)x, (int)y, (int)w, light.Intensity, light.Expand, light.Color);
                 }
                 for (int x = 0; x < Options.MapWidth; x++)
                 {

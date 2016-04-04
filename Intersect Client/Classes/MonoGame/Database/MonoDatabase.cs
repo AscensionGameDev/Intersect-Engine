@@ -33,8 +33,12 @@ using Microsoft.Win32;
 
 namespace Intersect_Client.Classes.Bridges_and_Interfaces.SFML.Database
 {
-    public class SfmlDatabase : GameDatabase
+    public class MonoDatabase : GameDatabase
     {
+        public MonoDatabase()
+        {
+            if (!Directory.Exists("Resources")) Directory.CreateDirectory("Resources");
+        }
         public override void SavePreference(string key, string value)
         {
             var sha = new SHA256Managed();

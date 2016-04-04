@@ -24,25 +24,27 @@
     OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
     SOFTWARE.
 */
+using System;
+using System.Diagnostics;
+using IntersectClientExtras.Sys;
 
-using System.IO;
-using IntersectClientExtras.Graphics;
-using SFML.Graphics;
-
-namespace Intersect_Client.Classes.Bridges_and_Interfaces.SFML.Graphics
+namespace Intersect_Client.Classes.Bridges_and_Interfaces.SFML.System
 {
-    public class SfmlFont : GameFont
+    public class MonoSystem : GameSystem
     {
-        private Font _font;
-        public SfmlFont(string fontName) : base(fontName)
+        public override long GetTimeMS()
         {
-            if (File.Exists(fontName))
-                _font = new Font(fontName);
+            return Environment.TickCount;
         }
 
-        public override object GetFont()
+        public override void Log(string msg)
         {
-            return _font;
+            Debug.WriteLine(msg);
+        }
+
+        public override void LogError(string error)
+        {
+            Debug.WriteLine(error);
         }
     }
 }

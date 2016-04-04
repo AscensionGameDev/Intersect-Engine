@@ -140,7 +140,6 @@ namespace Intersect_Client.Classes.Core
         //Music
         public static void PlayMusic(string filename, float fadeout = 0f, float fadein = 0f, bool loop = false)
         {
-            if (Globals.Database.MusicVolume == 0) { return; }
             filename = GameContentManager.RemoveExtension(filename);
             if (_myMusic != null)
             {

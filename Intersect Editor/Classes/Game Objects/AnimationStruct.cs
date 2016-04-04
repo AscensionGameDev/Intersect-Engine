@@ -24,8 +24,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Text;
-using SFML.Graphics;
-using Color = SFML.Graphics.Color;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace Intersect_Editor.Classes
 {
@@ -154,7 +153,7 @@ namespace Intersect_Editor.Classes
             infiniteLoop = loopForever;
         }
 
-        public void Draw(RenderTarget target, bool upper = false)
+        public void Draw(RenderTarget2D target, bool upper = false)
         {
             float rotationDegrees = 0f;
             switch (_renderDir)
@@ -192,21 +191,20 @@ namespace Intersect_Editor.Classes
                 {
                     if (myBase.LowerAnimXFrames > 0 && myBase.LowerAnimYFrames > 0)
                     {
-                        Texture tex =
+                        Texture2D tex =
                             EditorGraphics.AnimationTextures[
                                 EditorGraphics.AnimationFileNames.IndexOf(myBase.LowerAnimSprite)];
-                        int frameWidth = (int)tex.Size.X / myBase.LowerAnimXFrames;
-                        int frameHeight = (int)tex.Size.Y / myBase.LowerAnimYFrames;
-                        EditorGraphics.RenderTexture(tex,
+                        int frameWidth = (int)tex.Width / myBase.LowerAnimXFrames;
+                        int frameHeight = (int)tex.Height / myBase.LowerAnimYFrames;
+                        EditorGraphics.DrawTexture(tex,
                             new RectangleF((lowerFrame % myBase.LowerAnimXFrames) * frameWidth,
                                 (float)Math.Floor((double)lowerFrame / myBase.LowerAnimXFrames) * frameHeight, frameWidth,
                                 frameHeight),
                             new RectangleF(_renderX - frameWidth / 2, _renderY - frameHeight / 2, frameWidth, frameHeight),
-                             target, BlendMode.Alpha);
-                        EditorGraphics.DrawLight((int)_renderX + myBase.LowerLights[lowerFrame].OffsetX,
-                            (int)_renderY + myBase.LowerLights[lowerFrame].OffsetY, myBase.LowerLights[lowerFrame].Size,
-                            myBase.LowerLights[lowerFrame].Intensity, myBase.LowerLights[lowerFrame].Expand,
-                            myBase.LowerLights[lowerFrame].Color);
+                             Color.White,target, BlendState.AlphaBlend);
+                        EditorGraphics.AddLight((int) _renderX + myBase.LowerLights[lowerFrame].OffsetX,
+                            (int) _renderY + myBase.LowerLights[lowerFrame].OffsetY, myBase.LowerLights[lowerFrame]);
+
                     }
                 }
             }
@@ -217,21 +215,19 @@ namespace Intersect_Editor.Classes
                 {
                     if (myBase.UpperAnimXFrames > 0 && myBase.UpperAnimYFrames > 0)
                     {
-                        Texture tex =
+                        Texture2D tex =
                             EditorGraphics.AnimationTextures[
                                 EditorGraphics.AnimationFileNames.IndexOf(myBase.UpperAnimSprite)];
-                        int frameWidth = (int)tex.Size.X / myBase.UpperAnimXFrames;
-                        int frameHeight = (int)tex.Size.Y / myBase.UpperAnimYFrames;
-                        EditorGraphics.RenderTexture(tex,
+                        int frameWidth = (int)tex.Width / myBase.UpperAnimXFrames;
+                        int frameHeight = (int)tex.Height / myBase.UpperAnimYFrames;
+                        EditorGraphics.DrawTexture(tex,
                             new RectangleF((upperFrame%myBase.UpperAnimXFrames)*frameWidth,
                                 (float) Math.Floor((double) upperFrame/myBase.UpperAnimXFrames)*frameHeight, frameWidth,
                                 frameHeight),
                             new RectangleF(_renderX - frameWidth/2, _renderY - frameHeight/2, frameWidth, frameHeight),
-                            target, BlendMode.Alpha);
-                        EditorGraphics.DrawLight((int)_renderX + myBase.UpperLights[lowerFrame].OffsetX,
-                            (int)_renderY + myBase.UpperLights[lowerFrame].OffsetY, myBase.UpperLights[lowerFrame].Size,
-                            myBase.UpperLights[lowerFrame].Intensity, myBase.UpperLights[lowerFrame].Expand,
-                            myBase.UpperLights[lowerFrame].Color);
+                            Color.White,target, BlendState.AlphaBlend);
+                        EditorGraphics.AddLight((int)_renderX + myBase.LowerLights[upperFrame].OffsetX,
+                            (int)_renderY + myBase.LowerLights[upperFrame].OffsetY, myBase.LowerLights[upperFrame]);
                     }
                 }
             }

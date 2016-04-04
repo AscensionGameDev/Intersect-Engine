@@ -1,5 +1,4 @@
 ﻿using Intersect_Editor.Classes;
-using SFML.Graphics;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -9,12 +8,15 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using Intersect_Editor.Classes.General;
+using Microsoft.Xna.Framework.Graphics;
 using WeifenLuo.WinFormsUI.Docking;
 
 namespace Intersect_Editor.Forms
 {
     public partial class frmMapLayers : DockContent
     {
+        //MonoGame Swap Chain
+        private SwapChainRenderTarget _chain;
         private bool _tMouseDown;
         public frmMapLayers()
         {
@@ -131,14 +133,27 @@ namespace Intersect_Editor.Forms
         public void SetTileset(int index)
         {
             cmbTilesets.SelectedIndex = index;
-            if (File.Exists("Resources/Tilesets/" + Globals.Tilesets[cmbTilesets.SelectedIndex]))
+            if (index > -1)
             {
-                Globals.CurrentTileset = cmbTilesets.SelectedIndex;
-                EditorGraphics.InitTileset(Globals.CurrentTileset, Globals.MainForm);
-            }
-            else
-            {
-                cmbTilesets.SelectedIndex = Globals.CurrentTileset;
+                if (File.Exists("Resources/Tilesets/" + Globals.Tilesets[cmbTilesets.SelectedIndex]))
+                {
+                    picTileset.Show();
+                    Globals.CurrentTileset = cmbTilesets.SelectedIndex;
+                    if (!EditorGraphics.TilesetsLoaded) { return; }
+                    Globals.CurSelX = 0;
+                    Globals.CurSelY = 0;
+                    if (EditorGraphics.TilesetTextures[index] != null)
+                    {
+                        picTileset.Width = EditorGraphics.TilesetTextures[index].Width;
+                        picTileset.Height = EditorGraphics.TilesetTextures[index].Height;
+                    }
+                    CreateSwapChain();
+                }
+                else
+                {
+                    cmbTilesets.SelectedIndex = Globals.CurrentTileset;
+                    picTileset.Hide();
+                }
             }
         }
         public void SetLayer(int index)
@@ -404,12 +419,7 @@ namespace Intersect_Editor.Forms
 
         private void frmMapLayers_DockStateChanged(object sender, EventArgs e)
         {
-            if (EditorGraphics.TilesetWindow != null && !Globals.MapLayersWindow.picTileset.IsDisposed)
-            {
-                EditorGraphics.TilesetWindow.Close();
-                EditorGraphics.TilesetWindow.Dispose();
-                EditorGraphics.TilesetWindow = new RenderWindow(Globals.MapLayersWindow.picTileset.Handle);
-            }
+            CreateSwapChain();
         }
 
         //Map NPC List
@@ -536,6 +546,33 @@ namespace Intersect_Editor.Forms
                 cmbAnimationAttribute.Items.Add((i + 1) + ". " + Globals.GameAnimations[i].Name);
             }
             cmbAnimationAttribute.SelectedIndex = 0;
+        }
+
+        private void frmMapLayers_Load(object sender, EventArgs e)
+        {
+            CreateSwapChain();
+        }
+
+        public void InitMapLayers()
+        {
+            CreateSwapChain();
+        }
+
+        private void CreateSwapChain()
+        {
+            if (!Globals.ClosingEditor)
+            {
+                if (_chain != null)
+                {
+                    _chain.Dispose();
+                }
+                if (EditorGraphics.GetGraphicsDevice() != null)
+                {
+                    _chain = new SwapChainRenderTarget(EditorGraphics.GetGraphicsDevice(), this.picTileset.Handle,
+                        this.picTileset.Width, this.picTileset.Height);
+                    EditorGraphics.SetTilesetChain(_chain);
+                }
+            }
         }
     }
 }

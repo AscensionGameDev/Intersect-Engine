@@ -49,13 +49,13 @@
             // 
             // picMap
             // 
+            this.picMap.BackColor = System.Drawing.SystemColors.ControlLight;
             this.picMap.Location = new System.Drawing.Point(0, 0);
             this.picMap.Name = "picMap";
             this.picMap.Size = new System.Drawing.Size(32, 32);
             this.picMap.TabIndex = 2;
             this.picMap.TabStop = false;
             this.picMap.Visible = false;
-            this.picMap.Click += new System.EventHandler(this.picMap_Click);
             this.picMap.DoubleClick += new System.EventHandler(this.picMap_DoubleClick);
             this.picMap.MouseDown += new System.Windows.Forms.MouseEventHandler(this.picMap_MouseDown);
             this.picMap.MouseEnter += new System.EventHandler(this.picMap_MouseEnter);

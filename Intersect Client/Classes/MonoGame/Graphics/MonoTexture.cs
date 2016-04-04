@@ -24,28 +24,48 @@
     OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
     SOFTWARE.
 */
-using IntersectClientExtras.Audio;
-using SFML.Audio;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using IntersectClientExtras.GenericClasses;
+using IntersectClientExtras.Graphics;
+using Microsoft.Xna.Framework.Graphics;
 
-namespace Intersect_Client.Classes.Bridges_and_Interfaces.SFML.Audio
+namespace Intersect_Client_MonoGame.Classes.SFML.Graphics
 {
-    public class SfmlSoundSource : GameAudioSource
+    public class MonoTexture : GameTexture
     {
-        private SoundBuffer _buffer;
-        private string _path;
-        public SfmlSoundSource(string path) : base()
+        private Texture2D _tex;
+        public MonoTexture(GraphicsDevice graphicsDevice, string filename)
         {
-            _buffer = new SoundBuffer(path);
-            _path = path;
+            using (var fileStream = new FileStream(filename, FileMode.Open))
+            {
+                _tex = Texture2D.FromStream(graphicsDevice, fileStream);
+            }
         }
-        public override GameAudioInstance CreateInstance()
+        public override int GetHeight()
         {
-            return new SfmlSoundInstance(this);
+            return _tex.Height;
         }
 
-        public SoundBuffer GetBuffer()
+        public override Color GetPixel(int x1, int y1)
         {
-            return _buffer;
+            Microsoft.Xna.Framework.Color[] pixel = new Microsoft.Xna.Framework.Color[1];
+            _tex.GetData(0, new Microsoft.Xna.Framework.Rectangle(x1, y1, 1, 1), pixel, 0, 1);
+            return new Color(pixel[0].A, pixel[0].R, pixel[0].G, pixel[0].B);
+        }
+
+        public override object GetTexture()
+        {
+            return _tex;
+        }
+
+        public override int GetWidth()
+        {
+            return _tex.Width;
         }
     }
 }

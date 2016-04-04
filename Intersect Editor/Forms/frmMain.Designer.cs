@@ -82,6 +82,8 @@ namespace Intersect_Editor.Forms
             this.questEditorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.projectileEditorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.commonEventEditorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.switchVariableEditorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.shopEditorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
@@ -116,8 +118,6 @@ namespace Intersect_Editor.Forms
             this.toolStripLabelFPS = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripSeparator9 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripLabelDebug = new System.Windows.Forms.ToolStripStatusLabel();
-            this.switchVariableEditorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.shopEditorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip.SuspendLayout();
             this.toolStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
@@ -426,6 +426,20 @@ namespace Intersect_Editor.Forms
             this.commonEventEditorToolStripMenuItem.Size = new System.Drawing.Size(210, 22);
             this.commonEventEditorToolStripMenuItem.Text = "Common Event Editor";
             this.commonEventEditorToolStripMenuItem.Click += new System.EventHandler(this.commonEventEditorToolStripMenuItem_Click);
+            // 
+            // switchVariableEditorToolStripMenuItem
+            // 
+            this.switchVariableEditorToolStripMenuItem.Name = "switchVariableEditorToolStripMenuItem";
+            this.switchVariableEditorToolStripMenuItem.Size = new System.Drawing.Size(210, 22);
+            this.switchVariableEditorToolStripMenuItem.Text = "Switch and Variable Editor";
+            this.switchVariableEditorToolStripMenuItem.Click += new System.EventHandler(this.switchVariableEditorToolStripMenuItem_Click);
+            // 
+            // shopEditorToolStripMenuItem
+            // 
+            this.shopEditorToolStripMenuItem.Name = "shopEditorToolStripMenuItem";
+            this.shopEditorToolStripMenuItem.Size = new System.Drawing.Size(210, 22);
+            this.shopEditorToolStripMenuItem.Text = "Shop Editor";
+            this.shopEditorToolStripMenuItem.Click += new System.EventHandler(this.shopEditorToolStripMenuItem_Click);
             // 
             // helpToolStripMenuItem
             // 
@@ -774,20 +788,6 @@ namespace Intersect_Editor.Forms
             this.toolStripLabelDebug.Name = "toolStripLabelDebug";
             this.toolStripLabelDebug.Size = new System.Drawing.Size(0, 18);
             // 
-            // switchVariableEditorToolStripMenuItem
-            // 
-            this.switchVariableEditorToolStripMenuItem.Name = "switchVariableEditorToolStripMenuItem";
-            this.switchVariableEditorToolStripMenuItem.Size = new System.Drawing.Size(210, 22);
-            this.switchVariableEditorToolStripMenuItem.Text = "Switch and Variable Editor";
-            this.switchVariableEditorToolStripMenuItem.Click += new System.EventHandler(this.switchVariableEditorToolStripMenuItem_Click);
-            // 
-            // shopEditorToolStripMenuItem
-            // 
-            this.shopEditorToolStripMenuItem.Name = "shopEditorToolStripMenuItem";
-            this.shopEditorToolStripMenuItem.Size = new System.Drawing.Size(210, 22);
-            this.shopEditorToolStripMenuItem.Text = "Shop Editor";
-            this.shopEditorToolStripMenuItem.Click += new System.EventHandler(this.shopEditorToolStripMenuItem_Click);
-            // 
             // frmMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -804,6 +804,7 @@ namespace Intersect_Editor.Forms
             this.Name = "frmMain";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Intersect Editor";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.frmMain_FormClosing);
             this.Load += new System.EventHandler(this.frmMain_Load);
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.FrmMain_KeyDown);
             this.menuStrip.ResumeLayout(false);

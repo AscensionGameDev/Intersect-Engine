@@ -83,7 +83,6 @@
             this.label7 = new System.Windows.Forms.Label();
             this.scrlSoundDistance = new System.Windows.Forms.HScrollBar();
             this.tabLights = new System.Windows.Forms.TabPage();
-            this.lightEditor = new Intersect_Editor.Forms.Controls.LightEditorCtrl();
             this.label6 = new System.Windows.Forms.Label();
             this.tabEvents = new System.Windows.Forms.TabPage();
             this.label8 = new System.Windows.Forms.Label();
@@ -98,6 +97,7 @@
             this.rbRandom = new System.Windows.Forms.RadioButton();
             this.rbDeclared = new System.Windows.Forms.RadioButton();
             this.lstMapNpcs = new System.Windows.Forms.ListBox();
+            this.lightEditor = new Intersect_Editor.Forms.Controls.LightEditorCtrl();
             this.tabControl.SuspendLayout();
             this.tabTiles.SuspendLayout();
             this.pnlTilesetContainer.SuspendLayout();
@@ -744,15 +744,6 @@
             this.tabLights.Text = "Lights";
             this.tabLights.UseVisualStyleBackColor = true;
             // 
-            // lightEditor
-            // 
-            this.lightEditor.Location = new System.Drawing.Point(7, 4);
-            this.lightEditor.Name = "lightEditor";
-            this.lightEditor.Size = new System.Drawing.Size(256, 358);
-            this.lightEditor.TabIndex = 2;
-            this.lightEditor.Visible = false;
-            this.lightEditor.Load += new System.EventHandler(this.lightEditor_Load);
-            // 
             // label6
             // 
             this.label6.Location = new System.Drawing.Point(4, 4);
@@ -904,6 +895,15 @@
             this.lstMapNpcs.TabIndex = 10;
             this.lstMapNpcs.Click += new System.EventHandler(this.lstMapNpcs_Click);
             // 
+            // lightEditor
+            // 
+            this.lightEditor.Location = new System.Drawing.Point(7, 4);
+            this.lightEditor.Name = "lightEditor";
+            this.lightEditor.Size = new System.Drawing.Size(256, 358);
+            this.lightEditor.TabIndex = 2;
+            this.lightEditor.Visible = false;
+            this.lightEditor.Load += new System.EventHandler(this.lightEditor_Load);
+            // 
             // frmMapLayers
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -914,6 +914,7 @@
             this.CloseButtonVisible = false;
             this.ControlBox = false;
             this.Controls.Add(this.tabControl);
+            this.DoubleBuffered = true;
             this.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.HideOnClose = true;
@@ -921,6 +922,7 @@
             this.Name = "frmMapLayers";
             this.Text = "Map Layers";
             this.DockStateChanged += new System.EventHandler(this.frmMapLayers_DockStateChanged);
+            this.Load += new System.EventHandler(this.frmMapLayers_Load);
             this.tabControl.ResumeLayout(false);
             this.tabTiles.ResumeLayout(false);
             this.tabTiles.PerformLayout();

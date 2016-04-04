@@ -24,28 +24,31 @@
     OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
     SOFTWARE.
 */
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using IntersectClientExtras.Audio;
-using SFML.Audio;
+using Microsoft.Xna.Framework.Media;
 
-namespace Intersect_Client.Classes.Bridges_and_Interfaces.SFML.Audio
+namespace Intersect_MonoGameDx.Classes.SFML.Audio
 {
-    public class SfmlMusicSource : GameAudioSource
+    public class MonoMusicSource : GameAudioSource
     {
-        private Music _music;
-        private string _filePath;
-        public SfmlMusicSource(string path) : base()
+        private Song _song;
+        public MonoMusicSource(string path)
         {
-            _filePath = path;
-            _music = new Music(path);
+            _song = Song.FromUri("NoIdea", new Uri(path, UriKind.Relative));
         }
         public override GameAudioInstance CreateInstance()
         {
-            return new SfmlMusicInstance(this);
+            return new MonoMusicInstance(this);
         }
 
-        public Music GetMusic()
+        public Song GetSource()
         {
-            return _music;
+            return _song;
         }
     }
 }

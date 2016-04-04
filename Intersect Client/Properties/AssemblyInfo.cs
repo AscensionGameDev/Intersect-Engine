@@ -1,15 +1,16 @@
 ﻿using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("Intersect Client")]
-[assembly: AssemblyDescription("2D ORPG Client - Part of the Intersect Game Creation Suite")]
-[assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Ascension Game Development")]
 [assembly: AssemblyProduct("Intersect Game Engine")]
-[assembly: AssemblyCopyright("Copyright ©  2015 JC Snider, Joe Bridges")]
+[assembly: AssemblyConfiguration("")]
+[assembly: AssemblyDescription("2D ORPG Client - Part of the Intersect Game Creation Suite")]
+[assembly: AssemblyCompany("Ascension Game Development")]
+[assembly: AssemblyCopyright("Copyright ©  2016 JC Snider, Joe Bridges")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -19,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("7f817a2d-0107-4217-aece-8d927866ae70")]
+[assembly: Guid("c0e25ce4-70e8-42ad-b42f-99d8778ccfff")]
 
 // Version information for an assembly consists of the following four values:
 //

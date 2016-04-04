@@ -24,42 +24,46 @@
     OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
     SOFTWARE.
 */
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using IntersectClientExtras.Audio;
 using Intersect_Client.Classes.General;
-using SFML.Audio;
+using Microsoft.Xna.Framework.Media;
 
-namespace Intersect_Client.Classes.Bridges_and_Interfaces.SFML.Audio
+namespace Intersect_MonoGameDx.Classes.SFML.Audio
 {
-    public class SfmlMusicInstance : GameAudioInstance
+    public class MonoMusicInstance : GameAudioInstance
     {
+        private Song _song;
         private bool _disposed;
-        private Music _music;
         private int _volume;
-        public SfmlMusicInstance(GameAudioSource music) : base(music)
+        public MonoMusicInstance(GameAudioSource music) : base(music)
         {
-            _music = ((SfmlMusicSource) music).GetMusic();
-            _disposed = false;
+            _song = ((MonoMusicSource) music).GetSource();
         }
 
         public override void Play()
         {
-            _music.Play();
+            MediaPlayer.Play(_song);
         }
 
         public override void Pause()
         {
-            _music.Pause();
+            MediaPlayer.Pause();
         }
 
         public override void Stop()
         {
-            _music.Stop();
+            MediaPlayer.Stop();
         }
 
         public override void SetVolume(int volume, bool isMusic = false)
         {
             _volume = volume;
-            _music.Volume = _volume * (float)(Globals.Database.MusicVolume / 100f);
+            MediaPlayer.Volume = (_volume * (float)(Globals.Database.MusicVolume / 100f) / 100f);
         }
 
         public override int GetVolume()
@@ -69,22 +73,22 @@ namespace Intersect_Client.Classes.Bridges_and_Interfaces.SFML.Audio
 
         public override void SetLoop(bool val)
         {
-            _music.Loop = val;
+            MediaPlayer.IsRepeating = val;
         }
 
         public override AudioInstanceState GetState()
         {
             if (_disposed) return AudioInstanceState.Disposed;
-            if (_music.Status == SoundStatus.Playing) return AudioInstanceState.Playing;
-            if (_music.Status == SoundStatus.Stopped) return AudioInstanceState.Stopped;
-            if (_music.Status == SoundStatus.Paused) return AudioInstanceState.Paused;
+            if (MediaPlayer.State == MediaState.Playing) return AudioInstanceState.Playing;
+            if (MediaPlayer.State == MediaState.Stopped) return AudioInstanceState.Stopped;
+            if (MediaPlayer.State == MediaState.Paused) return AudioInstanceState.Paused;
             return AudioInstanceState.Disposed;
         }
 
         public override void Dispose()
         {
-            _music.Stop();
             _disposed = true;
+            MediaPlayer.Stop();
         }
     }
 }

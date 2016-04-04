@@ -25,26 +25,50 @@
     SOFTWARE.
 */
 using System;
-using System.Diagnostics;
-using IntersectClientExtras.Sys;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using IntersectClientExtras.GenericClasses;
+using IntersectClientExtras.Graphics;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Content;
+using Microsoft.Xna.Framework.Graphics;
+using Color = IntersectClientExtras.GenericClasses.Color;
 
-namespace Intersect_Client.Classes.Bridges_and_Interfaces.SFML.System
+namespace Intersect_Client_MonoGame.Classes.SFML.Graphics
 {
-    public class SfmlSystem : GameSystem
+    public class MonoShader : GameShader
     {
-        public override long GetTimeMS()
+        private Effect shader;
+        public MonoShader(string shaderName, ContentManager content) : base(shaderName)
         {
-            return Environment.TickCount;
+            shader = content.Load<Effect>(shaderName);
         }
 
-        public override void Log(string msg)
+        public override void SetFloat(string key, float val)
         {
-            Debug.WriteLine(msg);
+            //shader.Parameters[key].SetValue(val);
         }
 
-        public override void LogError(string error)
+        public override void SetInt(string key, int val)
         {
-            Debug.WriteLine(error);
+            //throw new NotImplementedException();
+        }
+
+        public override void SetColor(string key, Color val)
+        {
+            shader.Parameters[key].SetValue(new Vector4(val.A/255f,val.R/255f , val.G/255f , val.B/255f));
+        }
+
+        public override void SetVector2(string key, Pointf val)
+        {
+            //throw new NotImplementedException();
+        }
+
+        public override object GetShader()
+        {
+            return shader;
         }
     }
 }

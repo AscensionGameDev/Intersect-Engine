@@ -56,7 +56,7 @@ namespace Intersect_Editor.Classes
         //Options File
         public static bool LoadOptions()
         {
-
+            if (!Directory.Exists("Resources")) Directory.CreateDirectory("Resources");
             if (!File.Exists("resources\\config.xml"))
             {
                 var settings = new XmlWriterSettings { Indent = true };

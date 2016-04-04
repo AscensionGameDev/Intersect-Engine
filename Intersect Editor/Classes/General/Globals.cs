@@ -22,7 +22,6 @@
 
 using System;
 using Intersect_Editor.Forms;
-using SFML.Graphics;
 using System.Collections.Generic;
 using System.Threading;
 using Intersect_Editor.Classes.Game_Objects;
@@ -47,6 +46,7 @@ namespace Intersect_Editor.Classes
         public static long MapCount;
         public static int ReceivedGameData;
         public static bool InEditor;
+        public static bool ClosingEditor;
         public static string[] Tilesets;
         public static MapRef[] MapRefs;
 
