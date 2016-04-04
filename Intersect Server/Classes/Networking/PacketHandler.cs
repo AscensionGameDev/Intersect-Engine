@@ -1312,7 +1312,7 @@ namespace Intersect_Server.Classes
                                         if (inXBounds && inYBounds)
                                             Database.MapGrids[adjacentGrid].MyGrid[x, y] = Database.MapGrids[linkGrid].MyGrid[x + xOffset, y + yOffset];
 
-                                        if (inXBounds && y > 0 && Database.MapGrids[adjacentGrid].MyGrid[x, y - 1] > -1)
+                                        if (inXBounds && y >= 0 && Database.MapGrids[adjacentGrid].MyGrid[x, y - 1] > -1)
                                         {
                                             Globals.GameMaps[Database.MapGrids[linkGrid].MyGrid[x + xOffset, y + yOffset]].Up = Database.MapGrids[adjacentGrid].MyGrid[x, y - 1];
                                             Globals.GameMaps[Database.MapGrids[adjacentGrid].MyGrid[x, y - 1]].Down = Database.MapGrids[linkGrid].MyGrid[x + xOffset, y + yOffset];
@@ -1326,7 +1326,7 @@ namespace Intersect_Server.Classes
                                             Globals.GameMaps[Database.MapGrids[adjacentGrid].MyGrid[x, y + 1]].Save();
                                         }
 
-                                        if (inYBounds && x - 1 > 0 && Database.MapGrids[adjacentGrid].MyGrid[x - 1, y] > -1)
+                                        if (inYBounds && x - 1 >= 0 && Database.MapGrids[adjacentGrid].MyGrid[x - 1, y] > -1)
                                         {
                                             Globals.GameMaps[Database.MapGrids[linkGrid].MyGrid[x + xOffset, y + yOffset]].Left = Database.MapGrids[adjacentGrid].MyGrid[x - 1, y];
                                             Globals.GameMaps[Database.MapGrids[adjacentGrid].MyGrid[x - 1, y]].Right = Database.MapGrids[linkGrid].MyGrid[x + xOffset, y + yOffset];
