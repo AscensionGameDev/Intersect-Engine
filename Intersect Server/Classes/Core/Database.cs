@@ -839,14 +839,14 @@ namespace Intersect_Server.Classes
             for (var i = 0; i < Options.MaxCommonEvents; i++)
             {
                 Globals.CommonEvents[i] = new EventStruct(i, -1, -1, true);
-                if (!File.Exists("resources/common events" + i + ".evt"))
+                if (!File.Exists("resources/common events/" + i + ".evt"))
                 {
-                    File.WriteAllBytes("resources/common events" + i + ".evt", Globals.CommonEvents[i].EventData());
+                    File.WriteAllBytes("resources/common events/" + i + ".evt", Globals.CommonEvents[i].EventData());
                 }
                 else
                 {
                     ByteBuffer bf = new ByteBuffer();
-                    bf.WriteBytes(File.ReadAllBytes("resources/common events" + i + ".evt"));
+                    bf.WriteBytes(File.ReadAllBytes("resources/common events/" + i + ".evt"));
                     Globals.CommonEvents[i] = new EventStruct(i, bf, true);
                 }
 
@@ -882,12 +882,12 @@ namespace Intersect_Server.Classes
             {
                 names[i] = prefix;
             }
-            if (File.Exists("resources/" + header + ".xml"))
+            if (File.Exists("resources/" + header.ToLower() + ".xml"))
             {
                 try
                 {
                     var xml = new XmlDocument();
-                    xml.Load("resources/" + header + ".xml");
+                    xml.Load("resources/" + header.ToLower() + ".xml");
                     for (int i = 0; i < Options.MaxServerSwitches; i++)
                     {
 
@@ -912,7 +912,7 @@ namespace Intersect_Server.Classes
         {
             var xml = new XmlWriterSettings { Indent = true };
             xml.ConformanceLevel = ConformanceLevel.Auto;
-            var writer = XmlWriter.Create("resources/" + header + ".xml", xml);
+            var writer = XmlWriter.Create("resources/" + header.ToLower() + ".xml", xml);
 
             writer.WriteStartDocument();
             writer.WriteStartElement(header);

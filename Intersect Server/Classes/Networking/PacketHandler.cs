@@ -430,7 +430,7 @@ namespace Intersect_Server.Classes
             {
                 Globals.Tilesets[i] = bf.ReadString();
             }
-            File.WriteAllLines("resources/Tilesets.dat", Globals.Tilesets);
+            File.WriteAllLines("resources/tilesets.dat", Globals.Tilesets);
 
             //Send the updated tilesets to all clients.
             for (var i = 0; i < Globals.Clients.Count; i++)

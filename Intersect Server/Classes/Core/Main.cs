@@ -70,9 +70,9 @@ namespace Intersect_Server.Classes
             Database.LoadMaps();
             Database.LoadPlayerDatabase();
             Console.WriteLine("Server has " + Database.GetRegisteredPlayers() + " registered players.");
-            if (File.Exists("resources/Tilesets.dat"))
+            if (File.Exists("resources/tilesets.dat"))
             {
-                Globals.Tilesets = File.ReadAllLines("resources/Tilesets.dat");
+                Globals.Tilesets = File.ReadAllLines("resources/tilesets.dat");
             }
             SocketServer.Init();
             Console.WriteLine("Server Started. Using Port #" + Options.ServerPort);
