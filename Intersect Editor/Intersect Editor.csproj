@@ -35,8 +35,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>
-    </ApplicationIcon>
+    <ApplicationIcon>IntersectLogo.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Classes\Core\Audio.cs" />
@@ -405,6 +404,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="IntersectLogo.ico" />
     <Content Include="Resources\Animations\1.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

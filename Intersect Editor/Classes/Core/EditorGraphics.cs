@@ -282,8 +282,6 @@ namespace Intersect_Editor.Classes
                         Globals.MapLayersWindow.cmbTilesets.Items.Add(filename + " - [MISSING]");
                     }
                 }
-                Globals.MapLayersWindow.cmbTilesets.SelectedIndex = 0;
-                Globals.CurrentTileset = 0;
 
                 TilesetTextures = new Texture2D[Globals.Tilesets.Length];
                 for (var i = 0; i < Globals.Tilesets.Length; i++)
@@ -298,6 +296,8 @@ namespace Intersect_Editor.Classes
                     }
                 }
                 TilesetsLoaded = true;
+                Globals.MapLayersWindow.cmbTilesets.SelectedIndex = 0;
+                Globals.CurrentTileset = 0;
             }
         }
         private static void LoadItems()
@@ -1190,14 +1190,14 @@ namespace Intersect_Editor.Classes
         {
             if (DarknessTexture == null)
             {
-                DarknessTexture = CreateRenderTexture((Options.TileWidth * Options.MapWidth * 3), (Options.TileHeight * Options.MapHeight * 3));
+                DarknessTexture = CreateRenderTexture(Options.TileWidth * (Options.MapWidth + 2), Options.TileHeight * (Options.MapHeight + 2));
             }
             _graphicsDevice.SetRenderTarget(DarknessTexture);
             _graphicsDevice.Clear(Microsoft.Xna.Framework.Color.Black);
             _graphicsDevice.SetRenderTarget(null);
 
             var tmpMap = Globals.GameMaps[Globals.CurrentMap];
-            DrawTexture(_whiteTex, new RectangleF(0, 0, 1, 1),new RectangleF(0,0,Options.MapWidth * Options.TileWidth * 3, Options.MapHeight * Options.TileHeight * 3),
+            DrawTexture(_whiteTex, new RectangleF(0, 0, 1, 1),new RectangleF(0,0, Options.TileWidth * (Options.MapWidth + 2), Options.TileHeight * (Options.MapHeight + 2)),
                 Color.FromArgb((byte)(((float)tmpMap.Brightness / 100f) * 255f), 255, 255, 255), DarknessTexture, BlendState.Additive);
 
             DrawLights();
@@ -1213,9 +1213,9 @@ namespace Intersect_Editor.Classes
             }
 
 
-            DrawTexture(DarknessTexture, new RectangleF(0, 0, Options.MapWidth * Options.TileWidth * 3, Options.MapHeight * Options.TileHeight * 3),
-                new RectangleF(-Options.MapWidth * Options.TileWidth, -Options.MapHeight * Options.TileHeight,
-                    Options.MapWidth * Options.TileWidth * 3, Options.MapHeight * Options.TileHeight * 3),
+            DrawTexture(DarknessTexture, new RectangleF(0, 0, Options.TileWidth * (Options.MapWidth + 2), Options.TileHeight * (Options.MapHeight + 2)),
+                new RectangleF(0,0,
+                   Options.TileWidth * (Options.MapWidth + 2), Options.TileHeight * (Options.MapHeight + 2)),
                 Color.FromArgb((byte)(((float)tmpMap.Brightness / 100f) * 255f), 255, 255, 255), target,MultiplyState);
 
 
@@ -1264,8 +1264,6 @@ namespace Intersect_Editor.Classes
             if (target == null)
             {
                 target = DarknessTexture;
-                x += Options.TileWidth * Options.MapWidth;
-                y += Options.TileHeight * Options.MapHeight;
             }
             _lightQueue.Add(new KeyValuePair<Microsoft.Xna.Framework.Point, Light>(new Microsoft.Xna.Framework.Point(x,y),light));
         }
