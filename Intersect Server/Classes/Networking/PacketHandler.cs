@@ -430,7 +430,7 @@ namespace Intersect_Server.Classes
             {
                 Globals.Tilesets[i] = bf.ReadString();
             }
-            File.WriteAllLines("Resources/Tilesets.dat", Globals.Tilesets);
+            File.WriteAllLines("resources/Tilesets.dat", Globals.Tilesets);
 
             //Send the updated tilesets to all clients.
             for (var i = 0; i < Globals.Clients.Count; i++)
@@ -514,7 +514,7 @@ namespace Intersect_Server.Classes
             else
             {
                 var relativeMap = (int)bf.ReadLong();
-                Globals.GameMaps[relativeMap].Load(File.ReadAllBytes("Resources/Maps/" + relativeMap + ".map"), -1);
+                Globals.GameMaps[relativeMap].Load(File.ReadAllBytes("resources/maps/" + relativeMap + ".map"), -1);
                 switch (location)
                 {
                     case 0:
@@ -1162,7 +1162,7 @@ namespace Intersect_Server.Classes
                     }
                     break;
             }
-            File.WriteAllBytes("Resources/Maps/MapStructure.dat", Database.MapStructure.Data());
+            File.WriteAllBytes("resources/maps/mapstructure.dat", Database.MapStructure.Data());
             bf.Dispose();
         }
 
@@ -1367,7 +1367,7 @@ namespace Intersect_Server.Classes
             bf.WriteBytes(packet);
             var index = bf.ReadInteger();
             Globals.CommonEvents[index] = new EventStruct(index, bf, true);
-            File.WriteAllBytes("Resources/Common Events/" + index + ".evt", Globals.CommonEvents[index].EventData());
+            File.WriteAllBytes("resources/common events/" + index + ".evt", Globals.CommonEvents[index].EventData());
             bf.Dispose();
         }
 

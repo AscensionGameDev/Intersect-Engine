@@ -23,8 +23,6 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
-using System.Linq;
-using System.Security.Cryptography.X509Certificates;
 using Intersect_Server.Classes.Entities;
 using Intersect_Server.Classes.General;
 
@@ -151,7 +149,7 @@ namespace Intersect_Server.Classes
 
                 if (tileData == null)
                 {
-                    if (newMap || !File.Exists("Resources/Maps/" + MyMapNum + ".tiles"))
+                    if (newMap || !File.Exists("resources/maps/" + MyMapNum + ".tiles"))
                     {
                         //New map. We need to generate the tile data.
                         //We zero everything out
@@ -175,10 +173,10 @@ namespace Intersect_Server.Classes
                     }
                     else
                     {
-                        tileData = File.ReadAllBytes("Resources/Maps/" + MyMapNum + ".tiles");
+                        tileData = File.ReadAllBytes("resources/maps/" + MyMapNum + ".tiles");
                     }
                 }
-                File.WriteAllBytes("Resources/Maps/" + MyMapNum + ".tiles", tileData);
+                File.WriteAllBytes("resources/maps/" + MyMapNum + ".tiles", tileData);
                 bf.WriteBytes(tileData);
 
                 for (var x = 0; x < Options.MapWidth; x++)
@@ -226,10 +224,10 @@ namespace Intersect_Server.Classes
             if (MapGameData != null)
             {
                 _clientMapData = MapGameData;
-                File.WriteAllBytes("Resources/Maps/" + MyMapNum + ".cmap", _clientMapData);
+                File.WriteAllBytes("resources/maps/" + MyMapNum + ".cmap", _clientMapData);
             }
             _editorMapData = bf.ToArray();
-            File.WriteAllBytes("Resources/Maps/" + MyMapNum + ".map", _editorMapData);
+            File.WriteAllBytes("resources/maps/" + MyMapNum + ".map", _editorMapData);
             bf.Dispose();
         }
         public bool Load(byte[] packet, int keepRevision = -1)
@@ -380,7 +378,7 @@ namespace Intersect_Server.Classes
         {
             if (_clientMapData == null)
             {
-                _clientMapData = File.ReadAllBytes("Resources/Maps/" + MyMapNum + ".cmap");
+                _clientMapData = File.ReadAllBytes("resources/maps/" + MyMapNum + ".cmap");
             }
             _lastAccessTime = Environment.TickCount;
             return _clientMapData;
@@ -390,7 +388,7 @@ namespace Intersect_Server.Classes
         {
             if (_editorMapData == null)
             {
-                _editorMapData = File.ReadAllBytes("Resources/Maps/" + MyMapNum + ".map");
+                _editorMapData = File.ReadAllBytes("resources/maps/" + MyMapNum + ".map");
             }
             _lastAccessTime = Environment.TickCount;
             return _editorMapData;

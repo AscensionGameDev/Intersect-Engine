@@ -112,7 +112,7 @@ namespace Intersect_Server.Classes
         public void Save(int resourceNum)
         {
             byte[] data = ResourceData();
-            Stream stream = new FileStream("Resources/Resources/" + resourceNum + ".res", FileMode.OpenOrCreate);
+            Stream stream = new FileStream("resources/resources/" + resourceNum + ".res", FileMode.OpenOrCreate);
             stream.Write(data, 0, data.Length);
             stream.Close();
         }

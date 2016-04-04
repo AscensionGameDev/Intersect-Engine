@@ -22,8 +22,8 @@
 #define websockets
 using System;
 using System.IO;
+using System.Reflection;
 using System.Threading;
-using System.Windows.Forms;
 using Intersect_Server.Classes.General;
 
 namespace Intersect_Server.Classes
@@ -42,7 +42,7 @@ namespace Intersect_Server.Classes
             Console.WriteLine(@" |_____|_| |_|\__\___|_|  |___/\___|\___|\__|");
             Console.WriteLine(@"                          free 2d orpg engine");
             Console.WriteLine("Copyright (C) 2015  JC Snider, Joe Bridges");
-            Console.WriteLine("Version " + Application.ProductVersion);
+            Console.WriteLine("Version " + Assembly.GetExecutingAssembly().GetName().Version);
             Console.WriteLine("For help, support, and updates visit: http://ascensiongamedev.com");
             Console.WriteLine("Loading, please wait.");
             Database.CheckDirectories();
@@ -70,15 +70,16 @@ namespace Intersect_Server.Classes
             Database.LoadMaps();
             Database.LoadPlayerDatabase();
             Console.WriteLine("Server has " + Database.GetRegisteredPlayers() + " registered players.");
-            if (File.Exists("Resources/Tilesets.dat"))
+            if (File.Exists("resources/Tilesets.dat"))
             {
-                Globals.Tilesets = File.ReadAllLines("Resources/Tilesets.dat");
+                Globals.Tilesets = File.ReadAllLines("resources/Tilesets.dat");
             }
             SocketServer.Init();
+            Console.WriteLine("Server Started. Using Port #" + Options.ServerPort);
 #if websockets
             WebSocketServer.Init();
+            Console.WriteLine("Websocket Listener started for Unity WebGL Clients. Using Port #" + (Options.ServerPort + 1));
 #endif
-            Console.WriteLine("Server Started. Using Port #" + Options.ServerPort);
             logicThread = new Thread(() => ServerLoop.RunServerLoop());
             logicThread.Start();
             Console.WriteLine("Type exit to shutdown the server, or help for a list of commands.");

@@ -20,10 +20,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
 
 namespace Intersect_Server.Classes
 {
@@ -142,7 +139,7 @@ namespace Intersect_Server.Classes
 
         public void Save(int index)
         {
-            File.WriteAllBytes("Resources/Animations/" + index + ".anim", AnimData());
+            File.WriteAllBytes("resources/animations/" + index + ".anim", AnimData());
         }
 
     }

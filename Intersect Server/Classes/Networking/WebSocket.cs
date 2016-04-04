@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using WebSocketSharp.Net.WebSockets;
+﻿using WebSocketSharp.Net.WebSockets;
 
 namespace Intersect_Server.Classes.Networking
 {

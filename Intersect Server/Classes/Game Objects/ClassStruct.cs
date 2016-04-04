@@ -170,7 +170,7 @@ namespace Intersect_Server.Classes
         public void Save(int classNum)
         {
             byte[] data = ClassData();
-            Stream stream = new FileStream("Resources/Classes/" + classNum + ".cls", FileMode.OpenOrCreate);
+            Stream stream = new FileStream("resources/classes/" + classNum + ".cls", FileMode.OpenOrCreate);
             stream.Write(data, 0, data.Length);
             stream.Close();
         }

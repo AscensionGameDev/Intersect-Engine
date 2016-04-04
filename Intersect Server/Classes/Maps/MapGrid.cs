@@ -22,7 +22,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Drawing;
 using Intersect_Server.Classes.Maps;
 
 namespace Intersect_Server.Classes

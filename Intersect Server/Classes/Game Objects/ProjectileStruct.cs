@@ -20,7 +20,6 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 using System;
-using System.Collections.Generic;
 using System.IO;
 
 namespace Intersect_Server.Classes
@@ -129,7 +128,7 @@ namespace Intersect_Server.Classes
         public void Save(int projectileNum)
         {
             byte[] data = ProjectileData();
-            Stream stream = new FileStream("Resources/Projectiles/" + projectileNum + ".prj", FileMode.OpenOrCreate);
+            Stream stream = new FileStream("resources/projectiles/" + projectileNum + ".prj", FileMode.OpenOrCreate);
             stream.Write(data, 0, data.Length);
             stream.Close();
         }

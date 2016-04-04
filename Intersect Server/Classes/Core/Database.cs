@@ -21,18 +21,13 @@
 */
 using System;
 using System.IO;
-using System.Linq;
-using System.Linq.Expressions;
 using System.Collections.Generic;
-using System.Runtime.Remoting.Messaging;
-using System.Security.Cryptography.X509Certificates;
 using System.Xml;
 using System.Security.Cryptography;
 using System.Text;
 using Intersect_Server.Classes.Game_Objects;
 using Intersect_Server.Classes.General;
 using Intersect_Server.Classes.Maps;
-using Intersect_Server.Classes.Networking;
 
 namespace Intersect_Server.Classes
 {
@@ -108,17 +103,17 @@ namespace Intersect_Server.Classes
         //Players_XML
         public static void LoadAccounts()
         {
-            string[] accounts = Directory.GetDirectories("resources\\accounts");
+            string[] accounts = Directory.GetDirectories("resources/accounts");
             for (int i = 0; i < accounts.Length; i++)
             {
-                if (File.Exists(accounts[i] + "\\" + accounts[i].Replace("resources\\accounts", "") + ".xml"))
+                if (File.Exists(accounts[i] + "/" + accounts[i].Replace("resources/accounts", "") + ".xml"))
                 {
                     var playerdata = new XmlDocument();
-                    playerdata.Load(accounts[i] + "\\" + accounts[i].Replace("resources\\accounts", "") + ".xml");
-                    Accounts.Add(playerdata.SelectSingleNode("//PlayerData/Username").InnerText);
-                    Emails.Add(playerdata.SelectSingleNode("//PlayerData/Email").InnerText);
+                    playerdata.Load(accounts[i] + "" + accounts[i].Replace("resources/accounts", "") + ".xml");
+                    Accounts.Add(playerdata.SelectSingleNode("//PlayerData/Username").InnerText.ToLower());
+                    Emails.Add(playerdata.SelectSingleNode("//PlayerData/Email").InnerText.ToLower());
                     if (playerdata.SelectSingleNode("//PlayerData//CharacterInfo/Name") != null)
-                        Characters.Add(playerdata.SelectSingleNode("//PlayerData//CharacterInfo/Name").InnerText);
+                        Characters.Add(playerdata.SelectSingleNode("//PlayerData//CharacterInfo/Name").InnerText.ToLower());
                 }
                 else
                 {
@@ -128,17 +123,17 @@ namespace Intersect_Server.Classes
         }
         public static bool AccountExists(string accountname)
         {
-            if (Accounts.IndexOf(accountname) > -1) { return true; }
+            if (Accounts.IndexOf(accountname.ToLower()) > -1) { return true; }
             return false;
         }
         public static bool EmailInUse(string email)
         {
-            if (Emails.IndexOf(email) > -1) { return true; }
+            if (Emails.IndexOf(email.ToLower()) > -1) { return true; }
             return false;
         }
         public static bool CharacterNameInUse(string name)
         {
-            if (Characters.IndexOf(name) > -1) { return true; }
+            if (Characters.IndexOf(name.ToLower()) > -1) { return true; }
             return false;
         }
         public static int GetRegisteredPlayers()
@@ -148,7 +143,7 @@ namespace Intersect_Server.Classes
         public static void CreateAccount(Client client, string username, string password, string email)
         {
             var sha = new SHA256Managed();
-            Directory.CreateDirectory("resources\\accounts\\" + username);
+            Directory.CreateDirectory("resources/accounts/" + username);
             client.MyAccount = username;
 
             //Generate a Salt
@@ -171,7 +166,7 @@ namespace Intersect_Server.Classes
         {
             var playerdata = new XmlDocument();
             var sha = new SHA256Managed();
-            playerdata.Load("resources\\accounts\\" + username + "\\" + username + ".xml");
+            playerdata.Load("resources/accounts/" + username.ToLower() + "/" + username.ToLower() + ".xml");
             string salt = playerdata.SelectSingleNode("//PlayerData/Salt").InnerText;
             string pass = playerdata.SelectSingleNode("//PlayerData/Pass").InnerText;
             string temppass = BitConverter.ToString(sha.ComputeHash(Encoding.UTF8.GetBytes(password + salt))).Replace("-", "");
@@ -184,7 +179,7 @@ namespace Intersect_Server.Classes
             try
             {
                 var playerdata = new XmlDocument();
-                playerdata.Load("resources\\accounts\\" + client.MyAccount + "\\" + client.MyAccount + ".xml");
+                playerdata.Load("resources/accounts/" + client.MyAccount.ToLower() + "/" + client.MyAccount.ToLower() + ".xml");
                 client.MyEmail = playerdata.SelectSingleNode("//PlayerData/Email").InnerText;
                 client.MySalt = playerdata.SelectSingleNode("//PlayerData/Salt").InnerText;
                 client.MyPassword = playerdata.SelectSingleNode("//PlayerData/Pass").InnerText;
@@ -331,7 +326,7 @@ namespace Intersect_Server.Classes
 
             var playerdata = new XmlWriterSettings { Indent = true };
             playerdata.ConformanceLevel = ConformanceLevel.Auto;
-            var writer = XmlWriter.Create("resources\\accounts\\" + client.MyAccount + "\\" + client.MyAccount + ".xml", playerdata);
+            var writer = XmlWriter.Create("resources/accounts/" + client.MyAccount.ToLower() + "/" + client.MyAccount.ToLower() + ".xml", playerdata);
             writer.WriteStartDocument();
             writer.WriteStartElement("PlayerData");
             writer.WriteElementString("Username", client.MyAccount);
@@ -450,7 +445,7 @@ namespace Intersect_Server.Classes
         {
             var playerdata = new XmlDocument();
             var sha = new SHA256Managed();
-            playerdata.Load("resources\\accounts\\" + username + "\\" + username + ".xml");
+            playerdata.Load("resources/accounts/" + username.ToLower() + "/" + username.ToLower() + ".xml");
             int power = Int32.Parse(playerdata.SelectSingleNode("//PlayerData/Power").InnerText);
             return power;
         }
@@ -458,11 +453,11 @@ namespace Intersect_Server.Classes
         //Maps
         public static void LoadMaps()
         {
-            if (!Directory.Exists("Resources/Maps"))
+            if (!Directory.Exists("resources/maps"))
             {
-                Directory.CreateDirectory("Resources/Maps");
+                Directory.CreateDirectory("resources/maps");
             }
-            var mapNames = Directory.GetFiles("Resources/Maps", "*.map");
+            var mapNames = Directory.GetFiles("resources/maps", "*.map");
             Globals.MapCount = mapNames.Length;
             Globals.GameMaps = new MapStruct[mapNames.Length];
             if (Globals.MapCount == 0)
@@ -478,7 +473,7 @@ namespace Intersect_Server.Classes
                 for (var i = 0; i < mapNames.Length; i++)
                 {
                     Globals.GameMaps[i] = new MapStruct(i);
-                    if (!Globals.GameMaps[i].Load(File.ReadAllBytes("Resources/Maps/" + i + ".map")))
+                    if (!Globals.GameMaps[i].Load(File.ReadAllBytes("resources/maps/" + i + ".map")))
                         Globals.GameMaps[i] = null;
 
                 }
@@ -518,18 +513,18 @@ namespace Intersect_Server.Classes
                 for (var i = 0; i < Globals.MapCount; i++)
                 {
                     if (Globals.GameMaps[i] == null) continue;
-                    if (!MapGrids.Any())
+                    if (MapGrids.Count == 0)
                     {
                         MapGrids.Add(new MapGrid(i, 0));
                     }
                     else
                     {
-                        for (var y = 0; y < MapGrids.Count(); y++)
+                        for (var y = 0; y < MapGrids.Count; y++)
                         {
                             if (!MapGrids[y].HasMap(i))
                             {
-                                if (y != MapGrids.Count() - 1) continue;
-                                MapGrids.Add(new MapGrid(i, MapGrids.Count()));
+                                if (y != MapGrids.Count - 1) continue;
+                                MapGrids.Add(new MapGrid(i, MapGrids.Count));
                                 break;
                             }
                             else
@@ -572,21 +567,21 @@ namespace Intersect_Server.Classes
         }
         public static void LoadNpcs()
         {
-            if (!Directory.Exists("Resources/Npcs"))
+            if (!Directory.Exists("resources/npcs"))
             {
-                Directory.CreateDirectory("Resources/Npcs");
+                Directory.CreateDirectory("resources/npcs");
             }
             Globals.GameNpcs = new NpcStruct[Options.MaxNpcs];
             for (var i = 0; i < Options.MaxNpcs; i++)
             {
                 Globals.GameNpcs[i] = new NpcStruct();
-                if (!File.Exists("Resources/Npcs/" + i + ".npc"))
+                if (!File.Exists("resources/npcs/" + i + ".npc"))
                 {
                     Globals.GameNpcs[i].Save(i);
                 }
                 else
                 {
-                    Globals.GameNpcs[i].Load(File.ReadAllBytes("Resources/Npcs/" + i + ".npc"), i);
+                    Globals.GameNpcs[i].Load(File.ReadAllBytes("resources/npcs/" + i + ".npc"), i);
                 }
 
             }
@@ -595,22 +590,22 @@ namespace Intersect_Server.Classes
         //Items
         public static void LoadItems()
         {
-            if (!Directory.Exists("Resources/Items"))
+            if (!Directory.Exists("resources/items"))
             {
-                Directory.CreateDirectory("Resources/Items");
+                Directory.CreateDirectory("resources/items");
             }
 
             Globals.GameItems = new ItemStruct[Options.MaxItems];
             for (var i = 0; i < Options.MaxItems; i++)
             {
                 Globals.GameItems[i] = new ItemStruct();
-                if (!File.Exists("Resources/Items/" + i + ".item"))
+                if (!File.Exists("resources/items/" + i + ".item"))
                 {
                     Globals.GameItems[i].Save(i);
                 }
                 else
                 {
-                    Globals.GameItems[i].Load(File.ReadAllBytes("Resources/Items/" + i + ".item"), i);
+                    Globals.GameItems[i].Load(File.ReadAllBytes("resources/items/" + i + ".item"), i);
                 }
             }
         }
@@ -618,22 +613,22 @@ namespace Intersect_Server.Classes
         //Shops
         public static void LoadShops()
         {
-            if (!Directory.Exists("Resources/Shops"))
+            if (!Directory.Exists("resources/shops"))
             {
-                Directory.CreateDirectory("Resources/Shops");
+                Directory.CreateDirectory("resources/shops");
             }
 
             Globals.GameShops = new ShopStruct[Options.MaxShops];
             for (var i = 0; i < Options.MaxShops; i++)
             {
                 Globals.GameShops[i] = new ShopStruct();
-                if (!File.Exists("Resources/Shops/" + i + ".shop"))
+                if (!File.Exists("resources/shops/" + i + ".shop"))
                 {
                     Globals.GameShops[i].Save(i);
                 }
                 else
                 {
-                    Globals.GameShops[i].Load(File.ReadAllBytes("Resources/Shops/" + i + ".shop"), i);
+                    Globals.GameShops[i].Load(File.ReadAllBytes("resources/shops/" + i + ".shop"), i);
                 }
             }
         }
@@ -641,22 +636,22 @@ namespace Intersect_Server.Classes
         //Spells
         public static void LoadSpells()
         {
-            if (!Directory.Exists("Resources/Spells"))
+            if (!Directory.Exists("resources/spells"))
             {
-                Directory.CreateDirectory("Resources/Spells");
+                Directory.CreateDirectory("resources/spells");
             }
 
             Globals.GameSpells = new SpellStruct[Options.MaxSpells];
             for (var i = 0; i < Options.MaxSpells; i++)
             {
                 Globals.GameSpells[i] = new SpellStruct();
-                if (!File.Exists("Resources/Spells/" + i + ".spell"))
+                if (!File.Exists("resources/spells/" + i + ".spell"))
                 {
                     Globals.GameSpells[i].Save(i);
                 }
                 else
                 {
-                    Globals.GameSpells[i].Load(File.ReadAllBytes("Resources/Spells/" + i + ".spell"), i);
+                    Globals.GameSpells[i].Load(File.ReadAllBytes("resources/spells/" + i + ".spell"), i);
                 }
             }
         }
@@ -664,22 +659,22 @@ namespace Intersect_Server.Classes
         //Animations
         public static void LoadAnimations()
         {
-            if (!Directory.Exists("Resources/Animations"))
+            if (!Directory.Exists("resources/animations"))
             {
-                Directory.CreateDirectory("Resources/Animations");
+                Directory.CreateDirectory("resources/animations");
             }
 
             Globals.GameAnimations = new AnimationStruct[Options.MaxAnimations];
             for (var i = 0; i < Options.MaxAnimations; i++)
             {
                 Globals.GameAnimations[i] = new AnimationStruct();
-                if (!File.Exists("Resources/Animations/" + i + ".anim"))
+                if (!File.Exists("resources/animations/" + i + ".anim"))
                 {
                     Globals.GameAnimations[i].Save(i);
                 }
                 else
                 {
-                    Globals.GameAnimations[i].Load(File.ReadAllBytes("Resources/Animations/" + i + ".anim"), i);
+                    Globals.GameAnimations[i].Load(File.ReadAllBytes("resources/animations/" + i + ".anim"), i);
                 }
             }
         }
@@ -687,21 +682,21 @@ namespace Intersect_Server.Classes
         // Resources
         public static void LoadResources()
         {
-            if (!Directory.Exists("Resources/Resources"))
+            if (!Directory.Exists("resources/resources"))
             {
-                Directory.CreateDirectory("Resources/Resources");
+                Directory.CreateDirectory("resources/resources");
             }
             Globals.GameResources = new ResourceStruct[Options.MaxResources];
             for (var i = 0; i < Options.MaxResources; i++)
             {
                 Globals.GameResources[i] = new ResourceStruct();
-                if (!File.Exists("Resources/Resources/" + i + ".res"))
+                if (!File.Exists("resources/resources/" + i + ".res"))
                 {
                     Globals.GameResources[i].Save(i);
                 }
                 else
                 {
-                    Globals.GameResources[i].Load(File.ReadAllBytes("Resources/Resources/" + i + ".res"), i);
+                    Globals.GameResources[i].Load(File.ReadAllBytes("resources/resources/" + i + ".res"), i);
                 }
 
             }
@@ -710,21 +705,21 @@ namespace Intersect_Server.Classes
         // Quests
         public static void LoadQuests()
         {
-            if (!Directory.Exists("Resources/Quests"))
+            if (!Directory.Exists("resources/quests"))
             {
-                Directory.CreateDirectory("Resources/Quests");
+                Directory.CreateDirectory("resources/quests");
             }
             Globals.GameQuests = new QuestStruct[Options.MaxQuests];
             for (var i = 0; i < Options.MaxQuests; i++)
             {
                 Globals.GameQuests[i] = new QuestStruct();
-                if (!File.Exists("Resources/Quests/" + i + ".qst"))
+                if (!File.Exists("resources/quests/" + i + ".qst"))
                 {
                     Globals.GameQuests[i].Save(i);
                 }
                 else
                 {
-                    Globals.GameQuests[i].Load(File.ReadAllBytes("Resources/Quests/" + i + ".qst"), i);
+                    Globals.GameQuests[i].Load(File.ReadAllBytes("resources/quests/" + i + ".qst"), i);
                 }
 
             }
@@ -733,21 +728,21 @@ namespace Intersect_Server.Classes
         // Projectiles
         public static void LoadProjectiles()
         {
-            if (!Directory.Exists("Resources/Projectiles"))
+            if (!Directory.Exists("resources/projectiles"))
             {
-                Directory.CreateDirectory("Resources/Projectiles");
+                Directory.CreateDirectory("resources/projectiles");
             }
             Globals.GameProjectiles = new ProjectileStruct[Options.MaxProjectiles];
             for (var i = 0; i < Options.MaxProjectiles; i++)
             {
                 Globals.GameProjectiles[i] = new ProjectileStruct();
-                if (!File.Exists("Resources/Projectiles/" + i + ".prj"))
+                if (!File.Exists("resources/projectiles/" + i + ".prj"))
                 {
                     Globals.GameProjectiles[i].Save(i);
                 }
                 else
                 {
-                    Globals.GameProjectiles[i].Load(File.ReadAllBytes("Resources/Projectiles/" + i + ".prj"), i);
+                    Globals.GameProjectiles[i].Load(File.ReadAllBytes("resources/projectiles/" + i + ".prj"), i);
                 }
 
             }
@@ -757,21 +752,21 @@ namespace Intersect_Server.Classes
         public static int LoadClasses()
         {
             int x = 0;
-            if (!Directory.Exists("Resources/Classes"))
+            if (!Directory.Exists("resources/classes"))
             {
-                Directory.CreateDirectory("Resources/Classes");
+                Directory.CreateDirectory("resources/classes");
             }
             Globals.GameClasses = new ClassStruct[Options.MaxClasses];
             for (var i = 0; i < Options.MaxClasses; i++)
             {
                 Globals.GameClasses[i] = new ClassStruct();
-                if (!File.Exists("Resources/Classes/" + i + ".cls"))
+                if (!File.Exists("resources/classes/" + i + ".cls"))
                 {
                     Globals.GameClasses[i].Save(i);
                 }
                 else
                 {
-                    Globals.GameClasses[i].Load(File.ReadAllBytes("Resources/Classes/" + i + ".cls"), i);
+                    Globals.GameClasses[i].Load(File.ReadAllBytes("resources/classes/" + i + ".cls"), i);
                 }
                 if (String.IsNullOrEmpty(Globals.GameClasses[i].Name)) { x++; }
             }
@@ -802,10 +797,10 @@ namespace Intersect_Server.Classes
         //Map Folders
         private static void LoadMapFolders()
         {
-            if (File.Exists("Resources/Maps/MapStructure.dat"))
+            if (File.Exists("resources/maps/mapstructure.dat"))
             {
                 ByteBuffer myBuffer = new ByteBuffer();
-                myBuffer.WriteBytes(File.ReadAllBytes("Resources/Maps/MapStructure.dat"));
+                myBuffer.WriteBytes(File.ReadAllBytes("resources/maps/mapstructure.dat"));
                 MapStructure.Load(myBuffer);
                 for (int i = 0; i < Globals.GameMaps.Length; i++)
                 {
@@ -817,7 +812,7 @@ namespace Intersect_Server.Classes
                         }
                     }
                 }
-                File.WriteAllBytes("Resources/Maps/MapStructure.dat", MapStructure.Data());
+                File.WriteAllBytes("resources/maps/mapstructure.dat", MapStructure.Data());
                 PacketSender.SendMapListToEditors();
             }
             else
@@ -829,29 +824,29 @@ namespace Intersect_Server.Classes
                         MapStructure.AddMap(i);
                     }
                 }
-                File.WriteAllBytes("Resources/Maps/MapStructure.dat", MapStructure.Data());
+                File.WriteAllBytes("resources/maps/mapstructure.dat", MapStructure.Data());
             }
         }
 
         //Common Events
         public static void LoadCommonEvents()
         {
-            if (!Directory.Exists("Resources/Common Events"))
+            if (!Directory.Exists("resources/common events"))
             {
-                Directory.CreateDirectory("Resources/Common Events");
+                Directory.CreateDirectory("resources/common events");
             }
             Globals.CommonEvents = new EventStruct[Options.MaxCommonEvents];
             for (var i = 0; i < Options.MaxCommonEvents; i++)
             {
                 Globals.CommonEvents[i] = new EventStruct(i, -1, -1, true);
-                if (!File.Exists("Resources/Common Events/" + i + ".evt"))
+                if (!File.Exists("resources/common events" + i + ".evt"))
                 {
-                    File.WriteAllBytes("Resources/Common Events/" + i + ".evt", Globals.CommonEvents[i].EventData());
+                    File.WriteAllBytes("resources/common events" + i + ".evt", Globals.CommonEvents[i].EventData());
                 }
                 else
                 {
                     ByteBuffer bf = new ByteBuffer();
-                    bf.WriteBytes(File.ReadAllBytes("Resources/Common Events/" + i + ".evt"));
+                    bf.WriteBytes(File.ReadAllBytes("resources/common events" + i + ".evt"));
                     Globals.CommonEvents[i] = new EventStruct(i, bf, true);
                 }
 
@@ -887,12 +882,12 @@ namespace Intersect_Server.Classes
             {
                 names[i] = prefix;
             }
-            if (File.Exists("Resources/" + header + ".xml"))
+            if (File.Exists("resources/" + header + ".xml"))
             {
                 try
                 {
                     var xml = new XmlDocument();
-                    xml.Load("resources\\" + header + ".xml");
+                    xml.Load("resources/" + header + ".xml");
                     for (int i = 0; i < Options.MaxServerSwitches; i++)
                     {
 
@@ -917,7 +912,7 @@ namespace Intersect_Server.Classes
         {
             var xml = new XmlWriterSettings { Indent = true };
             xml.ConformanceLevel = ConformanceLevel.Auto;
-            var writer = XmlWriter.Create("resources\\" + header + ".xml", xml);
+            var writer = XmlWriter.Create("resources/" + header + ".xml", xml);
 
             writer.WriteStartDocument();
             writer.WriteStartElement(header);

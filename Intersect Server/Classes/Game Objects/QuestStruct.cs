@@ -122,7 +122,7 @@ namespace Intersect_Server.Classes
         public void Save(int questNum)
         {
             byte[] data = QuestData();
-            Stream stream = new FileStream("Resources/Quests/" + questNum + ".qst", FileMode.OpenOrCreate);
+            Stream stream = new FileStream("resources/quests/" + questNum + ".qst", FileMode.OpenOrCreate);
             stream.Write(data, 0, data.Length);
             stream.Close();
         }

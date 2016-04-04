@@ -128,7 +128,7 @@ namespace Intersect_Server.Classes
 
         public void Save(int itemNum)
         {
-            File.WriteAllBytes("Resources/Items/" + itemNum + ".item",ItemData());
+            File.WriteAllBytes("resources/items/" + itemNum + ".item",ItemData());
         }
     }
 }

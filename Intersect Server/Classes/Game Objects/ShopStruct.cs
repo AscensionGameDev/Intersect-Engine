@@ -22,9 +22,6 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Intersect_Server.Classes.Game_Objects
 {
@@ -96,7 +93,7 @@ namespace Intersect_Server.Classes.Game_Objects
         public void Save(int index)
         {
             byte[] data = ShopData();
-            Stream stream = new FileStream("Resources/Shops/" + index + ".shop", FileMode.OpenOrCreate);
+            Stream stream = new FileStream("resources/shops/" + index + ".shop", FileMode.OpenOrCreate);
             stream.Write(data, 0, data.Length);
             stream.Close();
         }

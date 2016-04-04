@@ -20,15 +20,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 using WebSocketSharp.Server;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Text;
-using System.Net;
-using System.Threading;
 using Intersect_Server.Classes.General;
-using WebSocketSharp;
 using WebSocket = Intersect_Server.Classes.Networking.WebSocket;
 
 
@@ -41,7 +33,7 @@ namespace Intersect_Server.Classes
         public static void Init()
         {
             _listener = new WebSocketSharp.Server.WebSocketServer(Options.ServerPort + 1);
-            _listener.AddWebSocketService<SharpServerService>("/Intersect", () => new SharpServerService() {IgnoreExtensions = true, Protocol="binary"});
+            _listener.AddWebSocketService<SharpServerService>("/Intersect");
             _listener.Start();
         }
 
@@ -56,6 +48,7 @@ namespace Intersect_Server.Classes
         public SharpServerService() : base()
         {
             IgnoreExtensions = true;
+            Protocol = "binary";
         }
 
         protected override void OnOpen()

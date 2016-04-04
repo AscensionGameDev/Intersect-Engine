@@ -119,7 +119,7 @@ namespace Intersect_Server.Classes
         public void Save(int npcNum)
         {
             byte[] data = NpcData();
-            Stream stream = new FileStream("Resources/Npcs/" + npcNum + ".npc",FileMode.OpenOrCreate);
+            Stream stream = new FileStream("resources/npcs/" + npcNum + ".npc",FileMode.OpenOrCreate);
             stream.Write(data, 0, data.Length);
             stream.Close();
         }

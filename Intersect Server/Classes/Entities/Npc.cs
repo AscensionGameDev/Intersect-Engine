@@ -20,8 +20,6 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 using System;
-using System.Collections.Generic;
-using System.Threading;
 using Intersect_Server.Classes.General;
 using Intersect_Server.Classes.Misc;
 

@@ -20,9 +20,6 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.IO;
 
 namespace Intersect_Server.Classes
@@ -177,7 +174,7 @@ namespace Intersect_Server.Classes
 
         public void Save(int spellNum)
         {
-            File.WriteAllBytes("Resources/Spells/" + spellNum + ".spell", SpellData());
+            File.WriteAllBytes("resources/spells/" + spellNum + ".spell", SpellData());
         }
 
     }
