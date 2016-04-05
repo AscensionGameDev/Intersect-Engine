@@ -48,7 +48,6 @@ namespace Intersect_Client.Classes.UI
         public static bool GwenInitialized = false;
         public static InputBase GwenInput;
         public static Base GwenRenderer;
-        public static GameRenderTexture GwenTexture;
         private static Canvas _gameCanvas;
         private static Canvas _menuCanvas;
         private static TexturedBase _gwenSkin;
@@ -140,11 +139,6 @@ namespace Intersect_Client.Classes.UI
         {
             if (!Gui.GwenInitialized) Gui.InitGwen();
             ErrorMsgHandler.Update();
-            if (GwenTexture != null)
-            {
-                GwenTexture.Begin();
-                GwenTexture.Clear(Color.Transparent);
-            }
             _gameCanvas.RestrictToParent = false;
             _gameCanvas.SetPosition((int)GameGraphics.CurrentView.X, (int)GameGraphics.CurrentView.Y);
             if (Globals.GameState == Enums.GameStates.Menu)
@@ -155,87 +149,8 @@ namespace Intersect_Client.Classes.UI
             {
                 GameUI.Draw();
             }
-            if (GwenTexture != null)
-            {
-                GwenTexture.End();
-
-                GameGraphics.DrawGameTexture(GwenTexture, GameGraphics.CurrentView.Left, GameGraphics.CurrentView.Top);
-                //SFML will need this part....
-            }
         }
 
-        public static void DrawSpriteToTexture(GameRenderTexture rt, string spritename, int w, int h)
-        {
-            rt.Begin();
-            rt.Clear(Color.Transparent);
-            GameTexture entityTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Entity, spritename);
-            if (entityTex != null)
-            {
-                GameGraphics.DrawGameTexture(
-                    entityTex, new FloatRect(0, 0,
-                        entityTex.GetWidth() / 4f,
-                        entityTex.GetHeight() / 4f),
-                    new FloatRect(
-                        w / 2 - (entityTex.GetWidth() / 4f) / 2,
-                        h / 2 - (entityTex.GetHeight() / 4f) / 2,
-                        entityTex.GetWidth() / 4f,
-                        entityTex.GetHeight() / 4f),
-                    Color.White, rt);
-            }
-            rt.End();
-        }
-
-        public static void DrawItemToTexture(GameRenderTexture rt, int itemnum, int xOffset = 0, int yOffset = 0, int width = 32, int height = 32, bool isEquipped = false, GameTexture bg = null)
-        {
-            rt.Begin();
-            rt.Clear(Color.Transparent);
-            if (bg != null)
-            {
-                GameGraphics.DrawGameTexture(bg, 0, 0, rt);
-            }
-            if (itemnum > -1)
-            {
-                GameTexture itemTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Item,
-                    Globals.GameItems[itemnum].Pic);
-                GameGraphics.DrawGameTexture(
-                        itemTex, xOffset, yOffset,
-                        Color.White, rt);
-            }
-            if (isEquipped)
-            {
-                GameGraphics.DrawGameTexture(GameGraphics.Renderer.GetWhiteTexture(), new FloatRect(0, 0, 1, 1),
-                    new FloatRect(26 + xOffset, 0 + yOffset + 2, 2, 2), Color.Red, rt);
-            }
-            rt.End();
-        }
-        public static void DrawSpellIconToTexture(GameRenderTexture rt, int spellnum, int xOffset = 0, int yOffset = 0, int width = 32, int height = 32, bool onCD = false, GameTexture bg = null)
-        {
-            rt.Begin();
-            rt.Clear(Color.Transparent);
-            if (bg != null)
-            {
-                GameGraphics.DrawGameTexture(bg, 0, 0, rt);
-            }
-            if (spellnum > -1)
-            {
-                GameTexture spellTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Spell,
-                    Globals.GameSpells[spellnum].Pic);
-
-                if (onCD)
-                {
-                    GameGraphics.DrawGameTexture(
-                        spellTex, xOffset, yOffset,
-                        new Color(100, 255, 255, 255), rt);
-                }
-                else
-                {
-                    GameGraphics.DrawGameTexture(
-                        spellTex, xOffset, yOffset,
-                        Color.White, rt);
-                }
-            }
-            rt.End();
-        }
         public static bool MouseHitGUI()
         {
             for (int i = 0; i < _gameCanvas.Children.Count; i++)

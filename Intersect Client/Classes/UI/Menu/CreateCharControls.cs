@@ -28,6 +28,7 @@
 using System;
 using IntersectClientExtras.File_Management;
 using IntersectClientExtras.Graphics;
+using IntersectClientExtras.Gwen;
 using IntersectClientExtras.Gwen.Control;
 using IntersectClientExtras.Gwen.Control.EventArguments;
 using Intersect_Client.Classes.Core;
@@ -54,7 +55,7 @@ namespace Intersect_Client.Classes.UI.Menu
         //Image
         private string _characterPortraitImg = "";
         private ImagePanel _characterPortrait;
-        private GameRenderTexture _spriteTex;
+        private ImagePanel _characterContainer;
         private string _currentSprite = "";
 
         //Parent
@@ -114,8 +115,13 @@ namespace Intersect_Client.Classes.UI.Menu
             UpdateSpriteCombobox(0);
             _spriteCombobox.IsHidden = true;
 
+            //Character Container
+            _characterContainer = new ImagePanel(_parent);
+            _characterContainer.SetSize(48, 48);
+            _characterContainer.SetPosition(_parent.Width / 2 + (_charnameTextbox.Width / 2), 12);
+
             //Character sprite
-            _characterPortrait = new ImagePanel(_parent);
+            _characterPortrait = new ImagePanel(_characterContainer);
             _characterPortrait.SetSize(48, 48);
             _characterPortrait.SetPosition(_parent.Width / 2 + (_charnameTextbox.Width / 2), 12);
 
@@ -149,9 +155,6 @@ namespace Intersect_Client.Classes.UI.Menu
             _createButton.IsHidden = true;
             _createButton.Clicked += CreateButton_Clicked;
 
-            //Create Render Texture
-            _spriteTex = GameGraphics.Renderer.CreateRenderTexture(_characterPortrait.Width, _characterPortrait.Height);
-
             Update();
         }
 
@@ -169,8 +172,9 @@ namespace Intersect_Client.Classes.UI.Menu
             if (Globals.GameClasses[GetClass()].Sprites.Count > 0)
             {
                 string test = Globals.GameClasses[GetClass()].Sprites[GetSprite(i)].Sprite;
-                Gui.DrawSpriteToTexture(_spriteTex, Globals.GameClasses[GetClass()].Sprites[GetSprite(i)].Sprite, _characterPortrait.Width, _characterPortrait.Height);
-                _characterPortrait.Texture = _spriteTex;
+                _characterPortrait.Texture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Entity,
+                    Globals.GameClasses[GetClass()].Sprites[GetSprite(i)].Sprite);
+                Align.Center(_characterPortrait);
                 _currentSprite = Globals.GameClasses[GetClass()].Sprites[GetSprite(i)].Sprite;
             }
         }

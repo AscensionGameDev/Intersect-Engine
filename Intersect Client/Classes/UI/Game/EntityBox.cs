@@ -40,6 +40,7 @@ namespace Intersect_Client.Classes.UI.Game
     {
         //Controls
         public WindowControl _entityBox;
+        public ImagePanel _entityFaceContainer;
         public ImagePanel _entityFace;
         public Label _hpLbl;
         public Label _mpLbl;
@@ -60,7 +61,6 @@ namespace Intersect_Client.Classes.UI.Game
 
         private Entity _myEntity;
         private string _currentSprite = "";
-        private GameRenderTexture _faceTexture;
 
         //Init
         public EntityBox(Canvas _gameCanvas, Entity myEntity, int x, int y)
@@ -76,7 +76,12 @@ namespace Intersect_Client.Classes.UI.Game
             _entityBox.Padding = Padding.Zero;
             _entityBox.IsClosable = false;
 
-            _entityFace = new ImagePanel(_entityBox);
+
+            _entityFaceContainer = new ImagePanel(_entityBox);
+            _entityFaceContainer.SetSize(64, 64);
+            _entityFaceContainer.SetPosition(3, 2);
+
+            _entityFace = new ImagePanel(_entityFaceContainer);
             _entityFace.SetSize(64, 64);
             _entityFace.SetPosition(3, 2);
 
@@ -141,9 +146,6 @@ namespace Intersect_Client.Classes.UI.Game
                 _expLbl.SetPosition(120, 49);
             }
 
-            _faceTexture = GameGraphics.Renderer.CreateRenderTexture(_entityFace.Width,
-                            _entityFace.Height);
-
             lastUpdateTime = Globals.System.GetTimeMS();
         }
 
@@ -161,14 +163,18 @@ namespace Intersect_Client.Classes.UI.Game
             if (faceTex != null)
             {
                 _entityFace.Texture = faceTex;
+                _entityFace.SetTextureRect(0, 0, faceTex.GetWidth(), faceTex.GetHeight());
+                _entityFace.SizeToContents();
+                Align.Center(_entityFace);
                 _currentSprite = _myEntity.Face;
                 _entityFace.IsHidden = false;
             }
             else if (entityTex != null)
             {
-                Gui.DrawSpriteToTexture(_faceTexture, _myEntity.MySprite, _entityFace.Width,
-                    _entityFace.Height);
-                _entityFace.Texture = _faceTexture;
+                _entityFace.Texture = entityTex;
+                _entityFace.SetTextureRect(0, 0, entityTex.GetWidth()/4, entityTex.GetHeight()/4);
+                _entityFace.SizeToContents();
+                Align.Center(_entityFace);
                 _currentSprite = _myEntity.MySprite;
                 _entityFace.IsHidden = false;
             }

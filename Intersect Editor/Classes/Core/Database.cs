@@ -60,29 +60,31 @@ namespace Intersect_Editor.Classes
             if (!File.Exists("resources/config.xml"))
             {
                 var settings = new XmlWriterSettings { Indent = true };
-                var writer = XmlWriter.Create("resources/config.xml", settings);
-                writer.WriteStartDocument();
-                writer.WriteComment("Config.xml generated automatically by Intersect Editor.");
-                writer.WriteStartElement("Config");
-                writer.WriteElementString("Host", "localhost");
-                writer.WriteElementString("Port", "4500");
-                writer.WriteEndElement();
-                writer.WriteEndDocument();
-                writer.Flush();
-                writer.Close();
+                using (var writer = XmlWriter.Create("resources/config.xml", settings))
+                {
+                    writer.WriteStartDocument();
+                    writer.WriteComment("Config.xml generated automatically by Intersect Game Engine.");
+                    writer.WriteStartElement("Config");
+                    writer.WriteElementString("Host", "localhost");
+                    writer.WriteElementString("Port", "4500");
+                    writer.WriteElementString("RenderCache", "true"); //Not used by the editor, but created here just in case we ever want to share a resource folder with a client.
+                    writer.WriteElementString("MenuBGM", ""); //Not used by the editor, but created here just in case we ever want to share a resource folder with a client.
+                    writer.WriteElementString("MenuBG", ""); //Not used by the editor, but created here just in case we ever want to share a resource folder with a client.
+                    writer.WriteElementString("IntroBG", ""); //Not used by the editor, but created here just in case we ever want to share a resource folder with a client.
+                    writer.WriteEndElement();
+                    writer.WriteEndDocument();
+                    writer.Flush();
+                    writer.Close();
+                }
             }
             else
             {
-                var options = new XmlDocument();
+                XmlDocument xmlDoc = new XmlDocument();
                 try
                 {
-                    options.Load("resources/config.xml");
-                    var selectSingleNode = options.SelectSingleNode("//Config/Port");
-                    if (selectSingleNode != null && selectSingleNode.InnerText != "")
-                        Globals.ServerPort = Int32.Parse(selectSingleNode.InnerText);
-                    selectSingleNode = options.SelectSingleNode("//Config/Host");
-                    if (selectSingleNode != null && selectSingleNode.InnerText != "")
-                        Globals.ServerHost = selectSingleNode.InnerText;
+                    xmlDoc.LoadXml(File.ReadAllText("resources/config.xml"));
+                    Globals.ServerHost = xmlDoc.SelectSingleNode("//Config/Host").InnerText;
+                    Globals.ServerPort = int.Parse(xmlDoc.SelectSingleNode("//Config/Port").InnerText);
                 }
                 catch (Exception)
                 {

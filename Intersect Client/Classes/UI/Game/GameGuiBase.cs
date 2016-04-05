@@ -142,6 +142,7 @@ namespace Intersect_Client.Classes.UI.Game
 
         public void Draw()
         {
+
             if (Globals.Me != null) { TryAddPlayerBox(); }
             _eventWindow.Update();
             _chatBox.Update();
@@ -149,12 +150,14 @@ namespace Intersect_Client.Classes.UI.Game
             Hotbar.Update();
             _debugMenu.Update();
             if (_playerBox != null) { _playerBox.Update(); }
-
+            GameCanvas.RenderCanvas();
+            return;
             //Admin window update
             if (_shouldOpenAdminWindow)
             {
                 OpenAdminWindow();
             }
+
 
             //Shop Update
             if (_shouldOpenShop) OpenShop();

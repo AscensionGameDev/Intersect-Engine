@@ -50,6 +50,7 @@ namespace Intersect_Client.Classes.UI.Game
         private Label _characterLevel;
 
         private string _characterPortraitImg = "";
+        private ImagePanel _characterContainer;
         private ImagePanel _characterPortrait;
         private GameRenderTexture _spriteTex;
         private string _currentSprite = "";
@@ -103,7 +104,11 @@ namespace Intersect_Client.Classes.UI.Game
             _characterLevel.SetSize(200, 12);
             _characterLevel.SetText("Level: " + 1);
 
-            _characterPortrait = new ImagePanel(_characterWindow);
+            _characterContainer = new ImagePanel(_characterWindow);
+            _characterContainer.SetSize(100, 100);
+            _characterContainer.SetPosition(200 / 2 - 100 / 2, 36);
+
+            _characterPortrait = new ImagePanel(_characterContainer);
             _characterPortrait.SetSize(100, 100);
             _characterPortrait.SetPosition(200 / 2 - 100 / 2, 36);
 
@@ -259,15 +264,17 @@ namespace Intersect_Client.Classes.UI.Game
             if (Globals.Me.Face != "" && Globals.Me.Face != _currentSprite && faceTex != null)
             {
                 _characterPortrait.Texture = faceTex;
-                _currentSprite = Globals.Me.Face;
+                _characterPortrait.SetTextureRect(0, 0, faceTex.GetWidth(), faceTex.GetHeight());
+                _characterPortrait.SizeToContents();
+                Align.Center(_characterPortrait);
                 _characterPortrait.IsHidden = false;
             }
             else if (Globals.Me.MySprite != "" && Globals.Me.MySprite != _currentSprite && entityTex != null)
             {
-                Gui.DrawSpriteToTexture(_spriteTex, Globals.Me.MySprite, _characterPortrait.Width,
-                    _characterPortrait.Height);
-                _characterPortrait.Texture = _spriteTex;
-                _currentSprite = Globals.Me.MySprite;
+                _characterPortrait.Texture = entityTex;
+                _characterPortrait.SetTextureRect(0, 0, entityTex.GetWidth()/4, entityTex.GetHeight()/4);
+                _characterPortrait.SizeToContents();
+                Align.Center(_characterPortrait);
                 _characterPortrait.IsHidden = false;
             }
             else if (Globals.Me.MySprite != _currentSprite && Globals.Me.Face != _currentSprite)

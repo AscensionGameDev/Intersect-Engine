@@ -215,6 +215,7 @@ namespace Intersect_Client_MonoGame.Classes.SFML.Graphics
 
         public override void DrawString(string text, GameFont gameFont, float x, float y, int fontSize, Color fontColor, bool worldPos = true, GameRenderTexture renderTexture = null)
         {
+            if (gameFont == null) return;
             SpriteFont font = (SpriteFont)gameFont.GetFont();
             if (font == null) return;
             StartSpritebatch(_currentView, GameBlendModes.None, null, renderTexture, false, null);
@@ -228,6 +229,7 @@ namespace Intersect_Client_MonoGame.Classes.SFML.Graphics
 
         public override void DrawString(string text, GameFont gameFont, float x, float y, int fontSize, Color fontColor, bool worldPos, GameRenderTexture renderTexture, FloatRect clipRect)
         {
+            if (gameFont == null) return;
             clipRect.X -= GetView().X;
             clipRect.Y -= GetView().Y;
             SpriteFont font = (SpriteFont)gameFont.GetFont();
@@ -327,7 +329,7 @@ namespace Intersect_Client_MonoGame.Classes.SFML.Graphics
 
         public override void Init()
         {
-
+            CreateWhiteTexture();
         }
 
         public void Init(GraphicsDevice graphicsDevice)
@@ -353,6 +355,7 @@ namespace Intersect_Client_MonoGame.Classes.SFML.Graphics
 
         public override Pointf MeasureText(string text, GameFont gameFont, int fontSize)
         {
+            if (gameFont == null) return Pointf.Empty;
             SpriteFont font = (SpriteFont) gameFont.GetFont();
             if (font == null) return Pointf.Empty;
             Vector2 size = font.MeasureString(text);

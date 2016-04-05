@@ -9,8 +9,6 @@ namespace Intersect_Editor.Classes
     public static class Sounds
     {
         private static bool _isInitialized;
-        public static List<string> SoundFiles;
-        public static List<string> MusicFiles;
         //private static Music _myMusic;
 
         ////Init

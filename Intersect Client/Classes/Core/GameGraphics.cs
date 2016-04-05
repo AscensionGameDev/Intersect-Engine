@@ -56,7 +56,6 @@ namespace Intersect_Client.Classes.Core
         //Darkness Stuff
         public static float _brightnessLevel;
         private static GameRenderTexture _darknessTexture;
-        private static GameShader _radialGradientShader;
 
         //Overlay Stuff
         public static Color OverlayColor = Color.Transparent;
@@ -98,6 +97,7 @@ namespace Intersect_Client.Classes.Core
             Renderer.Init();
             contentManager = Globals.ContentManager;
             contentManager.LoadAll();
+            GameFont = contentManager.GetFont("calibri.xnb");
         }
         public static void InitInGame()
         {
@@ -555,7 +555,11 @@ namespace Intersect_Client.Classes.Core
         }
         public static void DrawDarkness()
         {
-            DrawGameTexture(_darknessTexture, CurrentView.Left, CurrentView.Top, null, GameBlendModes.Multiply);
+            GameShader radialShader = Globals.ContentManager.GetShader("radialgradient.xnb");
+            if (radialShader != null)
+            {
+                DrawGameTexture(_darknessTexture, CurrentView.Left, CurrentView.Top, null, GameBlendModes.Multiply);
+            }
         }
         public static void AddLight(int x, int y, int size, byte intensity, float expand, Color color)
         {
@@ -565,15 +569,21 @@ namespace Intersect_Client.Classes.Core
 
         private static void DrawLights()
         {
-            foreach (Light l in _lightQueue)
+            GameShader radialShader = Globals.ContentManager.GetShader("radialgradient.xnb");
+            if (radialShader != null)
             {
-                int x = l.OffsetX - ((int)CurrentView.Left + l.Size);
-                int y = l.OffsetY - ((int)CurrentView.Top + l.Size);
-                _radialGradientShader.SetColor("_Color", new Color(l.Color.R, l.Color.G, l.Color.B, l.Intensity));
-                _radialGradientShader.SetFloat("_Expand", l.Expand / 100f);
+                foreach (Light l in _lightQueue)
+                {
+                    int x = l.OffsetX - ((int) CurrentView.Left + l.Size);
+                    int y = l.OffsetY - ((int) CurrentView.Top + l.Size);
 
-                DrawGameTexture(Renderer.GetWhiteTexture(), new FloatRect(0, 0, 1, 1), new FloatRect(x, y, l.Size * 2, l.Size * 2), Color.Transparent,
-                    _darknessTexture, GameBlendModes.Add, _radialGradientShader);
+                    radialShader.SetColor("_Color", new Color(l.Color.R, l.Color.G, l.Color.B, l.Intensity));
+                    radialShader.SetFloat("_Expand", l.Expand/100f);
+
+                    DrawGameTexture(Renderer.GetWhiteTexture(), new FloatRect(0, 0, 1, 1),
+                        new FloatRect(x, y, l.Size*2, l.Size*2), Color.Transparent,
+                        _darknessTexture, GameBlendModes.Add, radialShader);
+                }
             }
             _lightQueue.Clear();
         }
