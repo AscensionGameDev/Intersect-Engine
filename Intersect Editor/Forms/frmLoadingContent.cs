@@ -21,14 +21,26 @@
 */
 using System;
 using System.Collections.Generic;
-using System.IO;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
 
-namespace Intersect_Editor.Classes
+namespace Intersect_Editor.Forms
 {
-    public static class Audio
+    public partial class frmLoadingContent : Form
     {
-        //TODO
+        public frmLoadingContent()
+        {
+            InitializeComponent();
+        }
+
+        public void SetProgress(int percent)
+        {
+            lblProgress.Text = "Downloading: " + percent + "% Complete";
+        }
     }
 }

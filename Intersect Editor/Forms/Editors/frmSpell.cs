@@ -28,6 +28,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using Intersect_Editor.Classes.Core;
 using Intersect_Editor.Classes.General;
 
 namespace Intersect_Editor.Forms
@@ -49,9 +50,10 @@ namespace Intersect_Editor.Forms
             lstSpells.SelectedIndex = 0;
             cmbSprite.Items.Clear();
             cmbSprite.Items.Add("None");
-            for (int i = 0; i < Intersect_Editor.Classes.EditorGraphics.SpellFileNames.Count; i++)
+            string[] spellNames = GameContentManager.GetTextureNames(GameContentManager.TextureType.Spell);
+            for (int i = 0; i < spellNames.Length; i++)
             {
-                cmbSprite.Items.Add(Intersect_Editor.Classes.EditorGraphics.SpellFileNames[i]);
+                cmbSprite.Items.Add(spellNames[i]);
             }
             UpdateEditor();
         }
@@ -118,7 +120,7 @@ namespace Intersect_Editor.Forms
             lblLevelReq.Text = "Level: " + scrlLevelReq.Value;
 
             cmbSprite.SelectedIndex = cmbSprite.FindString(Globals.GameSpells[_editorIndex].Pic);
-            if (cmbSprite.SelectedIndex > 0) { picSpell.BackgroundImage = Bitmap.FromFile("Resources/Spells/" + cmbSprite.Text); }
+            if (cmbSprite.SelectedIndex > 0) { picSpell.BackgroundImage = Bitmap.FromFile("resources/spells/" + cmbSprite.Text); }
             else { picSpell.BackgroundImage = null; }
 
             txtHPCost.Text = Globals.GameSpells[_editorIndex].VitalCost[(int)Enums.Vitals.Health].ToString();
@@ -227,7 +229,7 @@ namespace Intersect_Editor.Forms
         private void cmbSprite_SelectedIndexChanged(object sender, EventArgs e)
         {
             Globals.GameSpells[_editorIndex].Pic = cmbSprite.Text;
-            if (cmbSprite.SelectedIndex > 0) { picSpell.BackgroundImage = Bitmap.FromFile("Resources/Spells/" + cmbSprite.Text); }
+            if (cmbSprite.SelectedIndex > 0) { picSpell.BackgroundImage = Bitmap.FromFile("resources/spells/" + cmbSprite.Text); }
             else { picSpell.BackgroundImage = null; }
         }
 

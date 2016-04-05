@@ -24,6 +24,7 @@ using System.Windows.Forms;
 using System.Drawing;
 using Intersect_Editor.Classes;
 using System.IO;
+using Intersect_Editor.Classes.Core;
 using Intersect_Editor.Classes.General;
 
 namespace Intersect_Editor.Classes
@@ -56,14 +57,14 @@ namespace Intersect_Editor.Classes
             cmbEndSprite.Items.Clear();
             cmbInitialSprite.Items.Add("None");
             cmbEndSprite.Items.Add("None");
-            for (int i = 0; i < EditorGraphics.ResourceFileNames.Count; i++)
+            string[] resources = GameContentManager.GetTextureNames(GameContentManager.TextureType.Resource);
+            for (int i = 0; i < resources.Length; i++)
             {
-                cmbInitialSprite.Items.Add(EditorGraphics.ResourceFileNames[i]);
-                cmbEndSprite.Items.Add(EditorGraphics.ResourceFileNames[i]);
+                cmbInitialSprite.Items.Add(resources[i]);
+                cmbEndSprite.Items.Add(resources[i]);
             }
             scrlDropItem.Maximum = Options.MaxItems - 1;
             UpdateEditor();
-
         }
 
         public void InitEditor()
@@ -172,9 +173,9 @@ namespace Intersect_Editor.Classes
             if (cmbInitialSprite.SelectedIndex > 0)
             {
                 Globals.GameResources[_editorIndex].InitialGraphic = cmbInitialSprite.Text;
-                if (File.Exists("Resources/Resources/" + cmbInitialSprite.Text))
+                if (File.Exists("resources/resources/" + cmbInitialSprite.Text))
                 {
-                    _initialTileset = (Bitmap)Bitmap.FromFile("Resources/Resources/" + cmbInitialSprite.Text);
+                    _initialTileset = (Bitmap)Bitmap.FromFile("resources/resources/" + cmbInitialSprite.Text);
                     picInitialResource.Width = _initialTileset.Width;
                     picInitialResource.Height = _initialTileset.Height;
                     _initialBitmap = new Bitmap(picInitialResource.Width, picInitialResource.Height);
@@ -198,9 +199,9 @@ namespace Intersect_Editor.Classes
             if (cmbEndSprite.SelectedIndex > 0)
             {
                 Globals.GameResources[_editorIndex].EndGraphic = cmbEndSprite.Text;
-                if (File.Exists("Resources/Resources/" + cmbEndSprite.Text))
+                if (File.Exists("resources/resources/" + cmbEndSprite.Text))
                 {
-                    _endTileset = (Bitmap)Bitmap.FromFile("Resources/Resources/" + cmbEndSprite.Text);
+                    _endTileset = (Bitmap)Bitmap.FromFile("resources/resources/" + cmbEndSprite.Text);
                     picEndResource.Width = _endTileset.Width;
                     picEndResource.Height = _endTileset.Height;
                     _endBitmap = new Bitmap(picInitialResource.Width, picInitialResource.Height);

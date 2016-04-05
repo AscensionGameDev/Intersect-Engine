@@ -29,6 +29,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using Intersect_Editor.Classes;
+using Intersect_Editor.Classes.Core;
 
 namespace Intersect_Editor.Forms.Editors.Event_Commands
 {
@@ -50,10 +51,7 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             txtShowOptionsOpt4.Text = _myCommand.Strs[4];
             cmbFace.Items.Clear();
             cmbFace.Items.Add("None");
-            for (int i = 0; i < Classes.EditorGraphics.FaceFileNames.Count; i++)
-            {
-                cmbFace.Items.Add(Classes.EditorGraphics.FaceFileNames[i]);
-            }
+            cmbFace.Items.AddRange(GameContentManager.GetTextureNames(GameContentManager.TextureType.Face));
             if (cmbFace.Items.IndexOf(_myCommand.Strs[5]) > -1)
             {
                 cmbFace.SelectedIndex = cmbFace.Items.IndexOf(_myCommand.Strs[5]);
@@ -67,9 +65,9 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
 
         private void UpdateFacePreview()
         {
-            if (File.Exists("Resources/Faces/" + cmbFace.Text))
+            if (File.Exists("resources/faces/" + cmbFace.Text))
             {
-                pnlFace.BackgroundImage = new Bitmap("Resources/Faces/" + cmbFace.Text);
+                pnlFace.BackgroundImage = new Bitmap("resources/faces/" + cmbFace.Text);
             }
             else
             {

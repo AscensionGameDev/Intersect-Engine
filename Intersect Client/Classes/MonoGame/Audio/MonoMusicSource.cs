@@ -39,7 +39,7 @@ namespace Intersect_MonoGameDx.Classes.SFML.Audio
         private Song _song;
         public MonoMusicSource(string path)
         {
-            _song = Song.FromUri("NoIdea", new Uri(path, UriKind.Relative));
+            _song = Song.FromUri("Unnamed", new Uri(path, UriKind.Relative));
         }
         public override GameAudioInstance CreateInstance()
         {

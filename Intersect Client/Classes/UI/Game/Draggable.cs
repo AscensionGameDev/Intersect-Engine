@@ -25,6 +25,7 @@
     SOFTWARE.
 */
 
+using IntersectClientExtras.Graphics;
 using IntersectClientExtras.Gwen;
 using IntersectClientExtras.Gwen.Control;
 using IntersectClientExtras.Gwen.Input;
@@ -39,7 +40,7 @@ namespace Intersect_Client.Classes.UI.Game
         public int x;
         public int y;
 
-        public Draggable(int x, int y, Texture tex)
+        public Draggable(int x, int y, GameTexture tex)
         {
             pnl = new ImagePanel(Gui.GameUI.GameCanvas);
             pnl.SetPosition(x, y);

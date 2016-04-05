@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Windows.Forms;
 using System.Globalization;
 using System.Collections.Generic;
+using Intersect_Editor.Classes.Core;
 
 namespace Intersect_Editor.Classes.Maps
 {
@@ -63,7 +64,7 @@ namespace Intersect_Editor.Classes.Maps
             {
                 List<string> MusicList = new List<string>();
                 MusicList.Add("None");
-                MusicList.AddRange(Audio.MusicFileNames);
+                MusicList.AddRange(GameContentManager.GetMusicNames());
                 if (MusicList.IndexOf(_myMap.Music) <= -1)
                 {
                     _myMap.Music = "None";
@@ -92,7 +93,7 @@ namespace Intersect_Editor.Classes.Maps
             {
                 List<string> SoundList = new List<string>();
                 SoundList.Add("None");
-                SoundList.AddRange(Audio.SoundFileNames);
+                SoundList.AddRange(GameContentManager.GetSoundNames());
                 if (SoundList.IndexOf(_myMap.Sound) <= -1)
                 {
                     _myMap.Sound = "None";
@@ -297,7 +298,7 @@ namespace Intersect_Editor.Classes.Maps
             {
                 List<string> FogList = new List<string>();
                 FogList.Add("None");
-                FogList.AddRange(EditorGraphics.FogFileNames);
+                FogList.AddRange(GameContentManager.GetTextureNames(GameContentManager.TextureType.Fog));
                 if (FogList.IndexOf(_myMap.Fog) <= -1)
                 {
                     _myMap.Fog = "None";
@@ -377,7 +378,7 @@ namespace Intersect_Editor.Classes.Maps
             {
                 List<string> ImageList = new List<string>();
                 ImageList.Add("None");
-                ImageList.AddRange(EditorGraphics.ImageFileNames);
+                ImageList.AddRange(GameContentManager.GetTextureNames(GameContentManager.TextureType.Image));
                 if (ImageList.IndexOf(_myMap.Panorama) <= -1)
                 {
                     _myMap.Panorama = "None";
@@ -406,7 +407,7 @@ namespace Intersect_Editor.Classes.Maps
             {
                 List<string> ImageList = new List<string>();
                 ImageList.Add("None");
-                ImageList.AddRange(EditorGraphics.ImageFileNames);
+                ImageList.AddRange(GameContentManager.GetTextureNames(GameContentManager.TextureType.Image));
                 if (ImageList.IndexOf(_myMap.OverlayGraphic) <= -1)
                 {
                     _myMap.Panorama = "None";
@@ -445,7 +446,7 @@ namespace Intersect_Editor.Classes.Maps
         {
             List<string> MusicList = new List<string>();
             MusicList.Add("None");
-            MusicList.AddRange(Audio.MusicFileNames);
+            MusicList.AddRange(GameContentManager.GetMusicNames());
             return new StandardValuesCollection(MusicList.ToArray());
         }
     }
@@ -470,7 +471,7 @@ namespace Intersect_Editor.Classes.Maps
         {
             List<string> SoundList = new List<string>();
             SoundList.Add("None");
-            SoundList.AddRange(Audio.SoundFileNames);
+            SoundList.AddRange(GameContentManager.GetSoundNames());
             return new StandardValuesCollection(SoundList.ToArray());
         }
     }
@@ -495,7 +496,7 @@ namespace Intersect_Editor.Classes.Maps
         {
             List<string> FogList = new List<string>();
             FogList.Add("None");
-            FogList.AddRange(EditorGraphics.FogFileNames);
+            FogList.AddRange(GameContentManager.GetTextureNames(GameContentManager.TextureType.Fog));
             return new StandardValuesCollection(FogList.ToArray());
         }
     }
@@ -520,7 +521,7 @@ namespace Intersect_Editor.Classes.Maps
         {
             List<string> ImageList = new List<string>();
             ImageList.Add("None");
-            ImageList.AddRange(EditorGraphics.ImageFileNames);
+            ImageList.AddRange(GameContentManager.GetTextureNames(GameContentManager.TextureType.Image));
             return new StandardValuesCollection(ImageList.ToArray());
         }
     }

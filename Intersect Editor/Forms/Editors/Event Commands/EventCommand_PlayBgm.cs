@@ -29,6 +29,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using Intersect_Editor.Classes;
+using Intersect_Editor.Classes.Core;
 
 namespace Intersect_Editor.Forms.Editors.Event_Commands
 {
@@ -42,10 +43,7 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             _myCommand = refCommand;
             _eventEditor = editor;
             cmbBgm.Items.Clear();
-            foreach (string filename in Intersect_Editor.Classes.Audio.MusicFileNames)
-            {
-                cmbBgm.Items.Add(filename);
-            }
+            cmbBgm.Items.AddRange(GameContentManager.GetMusicNames());
             if (cmbBgm.Items.IndexOf(_myCommand.Strs[0]) > -1)
             {
                 cmbBgm.SelectedIndex = cmbBgm.Items.IndexOf(_myCommand.Strs[0]);

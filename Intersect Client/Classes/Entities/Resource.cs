@@ -21,6 +21,7 @@
 */
 
 using System;
+using IntersectClientExtras.File_Management;
 using IntersectClientExtras.GenericClasses;
 using Intersect_Client.Classes.Core;
 using Intersect_Client.Classes.General;
@@ -71,11 +72,10 @@ namespace Intersect_Client.Classes.Entities
             {
                 return;
             }
-            GameTexture srcTexture;
-            if (GameGraphics.ResourceFileNames.IndexOf(MySprite) > -1)
+            GameTexture srcTexture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Resource, MySprite);
+            if (srcTexture != null)
             {
-                srcTexture = GameGraphics.ResourceTextures[GameGraphics.ResourceFileNames.IndexOf(MySprite)];
-                srcRectangle = new FloatRect(0, 0, GameGraphics.ResourceTextures[GameGraphics.ResourceFileNames.IndexOf(MySprite)].GetWidth(), GameGraphics.ResourceTextures[GameGraphics.ResourceFileNames.IndexOf(MySprite)].GetHeight());
+                srcRectangle = new FloatRect(0, 0, srcTexture.GetWidth(), srcTexture.GetHeight());
                 destRectangle.Y = (int)(Globals.GameMaps[CurrentMap].GetY() + CurrentY * Options.TileHeight + OffsetY);
                 destRectangle.X = (int)(Globals.GameMaps[CurrentMap].GetX() + CurrentX * Options.TileWidth + OffsetX);
                 if (srcRectangle.Height > 32) { destRectangle.Y -= srcRectangle.Height - 32; }
@@ -94,10 +94,9 @@ namespace Intersect_Client.Classes.Entities
             {
                 return;
             }
-            GameTexture srcTexture;
-            if (GameGraphics.ResourceFileNames.IndexOf(MySprite) > -1)
+            GameTexture srcTexture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Resource, MySprite);
+            if (srcTexture != null)
             {
-                srcTexture = GameGraphics.ResourceTextures[GameGraphics.ResourceFileNames.IndexOf(MySprite)];
                 GameGraphics.DrawGameTexture(srcTexture, srcRectangle, destRectangle, Color.White);
             }
         }

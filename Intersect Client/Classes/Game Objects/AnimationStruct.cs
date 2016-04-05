@@ -27,6 +27,7 @@
 
 using System;
 using System.Runtime.InteropServices;
+using IntersectClientExtras.File_Management;
 using IntersectClientExtras.GenericClasses;
 using IntersectClientExtras.Graphics;
 using Intersect_Client.Classes.Core;
@@ -164,13 +165,12 @@ namespace Intersect_Client.Classes.Game_Objects
             if (!upper)
             {
                 //Draw Lower
-                if (showLower && GameGraphics.AnimationFileNames.IndexOf(myBase.LowerAnimSprite) > -1)
+                GameTexture tex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Animation,
+                            myBase.UpperAnimSprite);
+                if (showLower && tex != null)
                 {
                     if (myBase.LowerAnimXFrames > 0 && myBase.LowerAnimYFrames > 0)
                     {
-                        GameTexture tex =
-                            GameGraphics.AnimationTextures[
-                                GameGraphics.AnimationFileNames.IndexOf(myBase.LowerAnimSprite)];
                         int frameWidth = tex.GetWidth() / myBase.LowerAnimXFrames;
                         int frameHeight = tex.GetHeight() / myBase.LowerAnimYFrames;
                         GameGraphics.DrawGameTexture(tex,
@@ -189,13 +189,13 @@ namespace Intersect_Client.Classes.Game_Objects
             else
             {
                 //Draw Upper
-                if (showUpper && GameGraphics.AnimationFileNames.IndexOf(myBase.UpperAnimSprite) > -1)
+                GameTexture tex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Animation,
+                            myBase.UpperAnimSprite);
+                if (showUpper && tex != null)
                 {
                     if (myBase.UpperAnimXFrames > 0 && myBase.UpperAnimYFrames > 0)
                     {
-                        GameTexture tex =
-                            GameGraphics.AnimationTextures[
-                                GameGraphics.AnimationFileNames.IndexOf(myBase.UpperAnimSprite)];
+                        
 
                         int frameWidth = tex.GetWidth() / myBase.UpperAnimXFrames;
                         int frameHeight = tex.GetHeight() / myBase.UpperAnimYFrames;

@@ -28,14 +28,14 @@ namespace Intersect_Client_MonoGame
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "";
             IsMouseVisible = true;
+            Globals.ContentManager = new MonoContentManager();
             Globals.Database = new MonoDatabase();
             Globals.Database.LoadConfig();
             Globals.Database.LoadPreferences();
             Globals.InputManager = new MonoInput(this);
             GameGraphics.Renderer = new MonoRenderer(graphics, Content, this);
-            Globals.ContentManager = new MonoContentManager();
             Globals.System = new MonoSystem();
-            Gui.GwenRenderer = new IntersectRenderer(null, GameGraphics.WhiteTex, GameGraphics.Renderer);
+            Gui.GwenRenderer = new IntersectRenderer(null, GameGraphics.Renderer);
             Gui.GwenInput = new IntersectInput();
         }
 

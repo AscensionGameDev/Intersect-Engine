@@ -46,7 +46,7 @@ namespace Intersect_Editor.Classes
 
         private void frmProjectile_Load(object sender, EventArgs e)
         {
-            _directionGrid = new Bitmap("Resources/ProjectileDirections.png");
+            _directionGrid = new Bitmap("resources/misc/directions.png");
             lstProjectiles.SelectedIndex = 0;
             scrlAnimation.Maximum = Options.MaxAnimations - 1;
             UpdateEditor();

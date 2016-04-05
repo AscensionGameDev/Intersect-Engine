@@ -27,6 +27,7 @@ using Intersect_Editor.Classes;
 using Intersect_Editor.Forms.Editors.Event_Commands;
 using System.Drawing;
 using System.IO;
+using Intersect_Editor.Classes.Core;
 using Intersect_Editor.Classes.General;
 
 namespace Intersect_Editor.Forms
@@ -96,10 +97,7 @@ namespace Intersect_Editor.Forms
             txtEventname.Text = MyEvent.MyName;
             cmbPreviewFace.Items.Clear();
             cmbPreviewFace.Items.Add("None");
-            for (int i = 0; i < Classes.EditorGraphics.FaceFileNames.Count; i++)
-            {
-                cmbPreviewFace.Items.Add(Classes.EditorGraphics.FaceFileNames[i]);
-            }
+            cmbPreviewFace.Items.AddRange(GameContentManager.GetTextureNames(GameContentManager.TextureType.Face));
             cmbAnimation.Items.Clear();
             cmbAnimation.Items.Add("None");
             for (int i = 0; i < Options.MaxAnimations; i++)
@@ -1218,9 +1216,9 @@ namespace Intersect_Editor.Forms
                 pnlFacePreview.BackgroundImage = null;
                 return;
             }
-            if (File.Exists("Resources/Faces/" + cmbPreviewFace.Text))
+            if (File.Exists("resources/faces/" + cmbPreviewFace.Text))
             {
-                pnlFacePreview.BackgroundImage = new Bitmap("Resources/Faces/" + cmbPreviewFace.Text);
+                pnlFacePreview.BackgroundImage = new Bitmap("resources/faces/" + cmbPreviewFace.Text);
             }
         }
         private void cmbPreviewFace_SelectedIndexChanged(object sender, EventArgs e)
@@ -1250,16 +1248,8 @@ namespace Intersect_Editor.Forms
             if (!_commandProperties[i].Editable) return;
             lstEventCommands.SelectedIndex = i;
             commandMenu.Show((ListBox)sender, e.Location);
-            if (_commandProperties[i].Type != null)
-            {
-                btnEdit.Enabled = true;
-                btnDelete.Enabled = true;
-            }
-            else
-            {
-                btnEdit.Enabled = false;
-                btnDelete.Enabled = false;
-            }
+            btnEdit.Enabled = true;
+            btnDelete.Enabled = true;
         }
         private void lstEventCommands_DoubleClick(object sender, EventArgs e)
         {
@@ -1304,16 +1294,16 @@ namespace Intersect_Editor.Forms
 
             if (CurrentPage.Graphic.Type == 1) //Sprite
             {
-                if (File.Exists("Resources/Entities/" + CurrentPage.Graphic.Filename))
+                if (File.Exists("resources/entities/" + CurrentPage.Graphic.Filename))
                 {
-                    sourceBitmap = new Bitmap("Resources/Entities/" + CurrentPage.Graphic.Filename);
+                    sourceBitmap = new Bitmap("resources/entities/" + CurrentPage.Graphic.Filename);
                 }
             }
             else if (CurrentPage.Graphic.Type == 2) //Tileset
             {
-                if (File.Exists("Resources/Tilesets/" + CurrentPage.Graphic.Filename))
+                if (File.Exists("resources/tilesets/" + CurrentPage.Graphic.Filename))
                 {
-                    sourceBitmap = new Bitmap("Resources/Tilesets/" + CurrentPage.Graphic.Filename);
+                    sourceBitmap = new Bitmap("resources/tilesets/" + CurrentPage.Graphic.Filename);
                 }
             }
             if (sourceBitmap != null)

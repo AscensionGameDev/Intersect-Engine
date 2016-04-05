@@ -26,6 +26,7 @@
 */
 
 using System.IO;
+using IntersectClientExtras.File_Management;
 using IntersectClientExtras.Gwen;
 using IntersectClientExtras.Gwen.Control;
 using Intersect_Client.Classes.Core;
@@ -50,13 +51,7 @@ namespace Intersect_Client.Classes.UI.Game
             ImagePanel icon = new ImagePanel(_descWindow);
             icon.SetSize(32, 32);
             icon.SetPosition(220 - 4 - 32, 4);
-            if (GameGraphics.SpellFileNames.IndexOf(Globals.GameSpells[spellnum].Pic) > -1)
-            {
-                icon.Texture =
-                    Gui.ToGwenTexture(
-                        GameGraphics.SpellTextures[
-                            GameGraphics.SpellFileNames.IndexOf(Globals.GameSpells[spellnum].Pic)]);
-            }
+            icon.Texture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Spell, Globals.GameSpells[spellnum].Pic);
 
             Label spellName = new Label(_descWindow);
             spellName.SetPosition(4, 4);
@@ -68,48 +63,52 @@ namespace Intersect_Client.Classes.UI.Game
             {
                 spellType.Text = "Combat Spell";
             }
-            else if (Globals.GameSpells[spellnum].Type == (int)Enums.SpellTypes.Warp) {
+            else if (Globals.GameSpells[spellnum].Type == (int)Enums.SpellTypes.Warp)
+            {
                 spellType.Text = "Warp - Self Cast";
             }
 
             y = 32;
-            
+
             RichLabel castInfo = new RichLabel(_descWindow);
             castInfo.SetPosition(4, y);
             castInfo.Width = 140;
 
             if (Globals.GameSpells[spellnum].Type == (int)Enums.SpellTypes.Combat)
             {
-                switch (Globals.GameSpells[spellnum].TargetType) {
+                switch (Globals.GameSpells[spellnum].TargetType)
+                {
                     case (int)Enums.SpellTargetTypes.Self:
-                        castInfo.AddText("Target: Self",spellName.TextColor);
+                        castInfo.AddText("Target: Self", spellName.TextColor);
                         break;
                     case (int)Enums.SpellTargetTypes.SingleTarget:
-                        castInfo.AddText("Target: Targetted",spellName.TextColor);
+                        castInfo.AddText("Target: Targetted", spellName.TextColor);
                         castInfo.AddLineBreak();
-                        castInfo.AddText("Range: " + Globals.GameSpells[spellnum].CastRange + " Tiles",spellName.TextColor);
+                        castInfo.AddText("Range: " + Globals.GameSpells[spellnum].CastRange + " Tiles", spellName.TextColor);
                         break;
                     case (int)Enums.SpellTargetTypes.AOE:
-                        castInfo.AddText("Target: AOE",spellName.TextColor);
+                        castInfo.AddText("Target: AOE", spellName.TextColor);
                         castInfo.AddLineBreak();
-                        castInfo.AddText("Range: " + Globals.GameSpells[spellnum].CastRange + " Tiles",spellName.TextColor);
+                        castInfo.AddText("Range: " + Globals.GameSpells[spellnum].CastRange + " Tiles", spellName.TextColor);
                         castInfo.AddLineBreak();
-                        castInfo.AddText("Radius: " + Globals.GameSpells[spellnum].HitRadius + " Tiles",spellName.TextColor);
+                        castInfo.AddText("Radius: " + Globals.GameSpells[spellnum].HitRadius + " Tiles", spellName.TextColor);
                         break;
                     case (int)Enums.SpellTargetTypes.Linear:
-                        castInfo.AddText("Target: Projectile",spellName.TextColor);
+                        castInfo.AddText("Target: Projectile", spellName.TextColor);
                         castInfo.AddLineBreak();
-                        castInfo.AddText("Range: " + Globals.GameSpells[spellnum].CastRange + " Tiles",spellName.TextColor);
+                        castInfo.AddText("Range: " + Globals.GameSpells[spellnum].CastRange + " Tiles", spellName.TextColor);
                         break;
                 }
                 castInfo.AddLineBreak();
             }
-            if (Globals.GameSpells[spellnum].CastDuration > 0) {
-                castInfo.AddText("Cast Time: " + ((float)Globals.GameSpells[spellnum].CastDuration / 10f) + " Seconds",spellName.TextColor);
+            if (Globals.GameSpells[spellnum].CastDuration > 0)
+            {
+                castInfo.AddText("Cast Time: " + ((float)Globals.GameSpells[spellnum].CastDuration / 10f) + " Seconds", spellName.TextColor);
                 castInfo.AddLineBreak();
             }
-            if (Globals.GameSpells[spellnum].CooldownDuration > 0) {
-                castInfo.AddText("Cooldown: " + ((float)Globals.GameSpells[spellnum].CooldownDuration / 10f) + " Seconds",spellName.TextColor);
+            if (Globals.GameSpells[spellnum].CooldownDuration > 0)
+            {
+                castInfo.AddText("Cooldown: " + ((float)Globals.GameSpells[spellnum].CooldownDuration / 10f) + " Seconds", spellName.TextColor);
                 castInfo.AddLineBreak();
             }
             castInfo.SizeToChildren(false, true);
@@ -131,46 +130,48 @@ namespace Intersect_Client.Classes.UI.Game
 
             bool requirements = false;
 
-                //Check for requirements
-                RichLabel itemReqs = new RichLabel(_descWindow);
-                itemReqs.Width = 110;
-                itemReqs.AddText("Prerequisites", spellName.TextColor);
+            //Check for requirements
+            RichLabel itemReqs = new RichLabel(_descWindow);
+            itemReqs.Width = 110;
+            itemReqs.AddText("Prerequisites", spellName.TextColor);
+            itemReqs.AddLineBreak();
+            itemReqs.SetPosition(4, y);
+            if (Globals.GameSpells[spellnum].VitalCost[(int)Enums.Vitals.Health] > 0)
+            {
+                requirements = true;
+                itemReqs.AddText("HP Cost: " + Globals.GameSpells[spellnum].VitalCost[(int)Enums.Vitals.Health], spellName.TextColor);
                 itemReqs.AddLineBreak();
-                itemReqs.SetPosition(4, y);
-                if (Globals.GameSpells[spellnum].VitalCost[(int)Enums.Vitals.Health] > 0) {
-                    requirements = true;
-                    itemReqs.AddText("HP Cost: " + Globals.GameSpells[spellnum].VitalCost[(int)Enums.Vitals.Health], spellName.TextColor);
-                    itemReqs.AddLineBreak();
-                }
-                if (Globals.GameSpells[spellnum].VitalCost[(int)Enums.Vitals.Mana] > 0) {
-                    requirements = true;
-                    itemReqs.AddText("MP Cost: " + Globals.GameSpells[spellnum].VitalCost[(int)Enums.Vitals.Mana], spellName.TextColor);
-                    itemReqs.AddLineBreak();
-                }
-                if (Globals.GameSpells[spellnum].LevelReq > 0)
+            }
+            if (Globals.GameSpells[spellnum].VitalCost[(int)Enums.Vitals.Mana] > 0)
+            {
+                requirements = true;
+                itemReqs.AddText("MP Cost: " + Globals.GameSpells[spellnum].VitalCost[(int)Enums.Vitals.Mana], spellName.TextColor);
+                itemReqs.AddLineBreak();
+            }
+            if (Globals.GameSpells[spellnum].LevelReq > 0)
+            {
+                requirements = true;
+                itemReqs.AddText("Level: " + Globals.GameSpells[spellnum].LevelReq, spellName.TextColor);
+                itemReqs.AddLineBreak();
+            }
+            for (int i = 0; i < Options.MaxStats; i++)
+            {
+                if (Globals.GameSpells[spellnum].StatReq[i] > 0)
                 {
                     requirements = true;
-                    itemReqs.AddText("Level: " + Globals.GameSpells[spellnum].LevelReq, spellName.TextColor);
+                    itemReqs.AddText(Enums.GetStatName(i) + ": " + Globals.GameSpells[spellnum].StatReq[i], spellName.TextColor);
                     itemReqs.AddLineBreak();
                 }
-                for (int i = 0; i < Options.MaxStats; i++)
-                {
-                    if (Globals.GameSpells[spellnum].StatReq[i] > 0)
-                    {
-                        requirements = true;
-                        itemReqs.AddText(Enums.GetStatName(i) + ": " + Globals.GameSpells[spellnum].StatReq[i], spellName.TextColor);
-                        itemReqs.AddLineBreak();
-                    }
-                }
-                if (requirements == true)
-                {
-                    itemReqs.SizeToChildren(false, true);
-                    y1 += itemReqs.Height + 8;
-                }
-                else
-                {
-                    itemReqs.IsHidden = true;
-                }
+            }
+            if (requirements == true)
+            {
+                itemReqs.SizeToChildren(false, true);
+                y1 += itemReqs.Height + 8;
+            }
+            else
+            {
+                itemReqs.IsHidden = true;
+            }
 
             string stats = "";
             if (Globals.GameSpells[spellnum].Type == (int)Enums.SpellTypes.Combat)
@@ -192,8 +193,9 @@ namespace Intersect_Client.Classes.UI.Game
 
                 if (Globals.GameSpells[spellnum].VitalDiff[(int)Enums.Vitals.Health] != 0)
                 {
-                    if (Globals.GameSpells[spellnum].Data1 == 1 && Globals.GameSpells[spellnum].Data2 > 0){
-                        stats = "HP:" +  ((float)Globals.GameSpells[spellnum].VitalDiff[(int)Enums.Vitals.Health] / (float)Globals.GameSpells[spellnum].Data2) + " / sec";
+                    if (Globals.GameSpells[spellnum].Data1 == 1 && Globals.GameSpells[spellnum].Data2 > 0)
+                    {
+                        stats = "HP:" + ((float)Globals.GameSpells[spellnum].VitalDiff[(int)Enums.Vitals.Health] / (float)Globals.GameSpells[spellnum].Data2) + " / sec";
 
                     }
                     else
@@ -218,8 +220,9 @@ namespace Intersect_Client.Classes.UI.Game
                     spellStats.AddLineBreak();
                 }
 
-                if (Globals.GameSpells[spellnum].Data2 > 0) {
-                    for (int i = 0; i < Options.MaxStats; i++ )
+                if (Globals.GameSpells[spellnum].Data2 > 0)
+                {
+                    for (int i = 0; i < Options.MaxStats; i++)
                     {
                         if (Globals.GameSpells[spellnum].StatDiff[i] != 0)
                         {
@@ -238,7 +241,7 @@ namespace Intersect_Client.Classes.UI.Game
                             spellStats.AddLineBreak();
                             break;
                     }
-                    spellStats.AddText("Effect Duration: " + ((float)Globals.GameSpells[spellnum].Data2/10f) + " seconds", spellName.TextColor);
+                    spellStats.AddText("Effect Duration: " + ((float)Globals.GameSpells[spellnum].Data2 / 10f) + " seconds", spellName.TextColor);
                     spellStats.AddLineBreak();
                 }
 

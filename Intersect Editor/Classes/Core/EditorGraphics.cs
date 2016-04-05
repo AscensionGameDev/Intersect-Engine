@@ -20,21 +20,15 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 using System;
-using System.CodeDom;
 using System.Drawing;
-using System.Drawing.Drawing2D;
-using System.Drawing.Imaging;
 using System.Collections.Generic;
-using System.IO;
-using System.Security.Policy;
 using System.Windows.Forms;
-using System.Xml;
+using Intersect_Editor.Classes.Core;
 using Intersect_Editor.Classes.General;
-using Intersect_Editor.Forms;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Color = System.Drawing.Color;
+using static Intersect_Editor.Classes.Core.GameContentManager;
 
 namespace Intersect_Editor.Classes
 {
@@ -46,48 +40,12 @@ namespace Intersect_Editor.Classes
         private static PresentationParameters _presentationParams = new PresentationParameters();
         private static SwapChainRenderTarget _mapEditorChain;
         private static SwapChainRenderTarget _tilesetChain;
-
-        //Game Graphics
-        public static bool TilesetsLoaded;
-        public static Texture2D[] TilesetTextures;
-        public static List<string> ItemNames;
-        public static Texture2D[] ItemTextures;
-        public static List<string> EntityFileNames;
-        public static Texture2D[] EntityTextures;
-        public static List<string> SpellFileNames;
-        public static Texture2D[] SpellTextures;
-        public static List<string> AnimationFileNames;
-        public static Texture2D[] AnimationTextures;
-        public static List<string> ImageFileNames;
-        public static Texture2D[] ImageTextures;
-        public static List<string> FogFileNames;
-        public static Texture2D[] FogTextures;
-        public static List<string> ResourceFileNames;
-        public static Texture2D[] ResourceTextures;
-        public static List<string> PaperdollFileNames;
-        public static Texture2D[] PaperdollTextures;
-
-        //Face Textures
-        public static List<string> FaceFileNames;
-        public static Texture2D[] FaceTextures;
-
-        //Basic Editor Textures
-        private static Texture2D _trans;
-        //Texture for attributes
-        private static Texture2D _attributesTex;
-        //Texture for events
-        private static Texture2D _eventTex;
-        //Single tile texture for light placement
-        private static Texture2D _lightTex;
-        //Texture for NPC Spawns
-        private static Texture2D _spawnTex;
         private static RenderTarget2D _whiteTex;
 
         //Light Stuff
         public static byte CurrentBrightness = 100;
         public static bool HideDarkness = false;
         public static RenderTarget2D DarknessTexture;
-        private static Effect RadialGradientShader;
         public static BlendState MultiplyState;
         private static List<KeyValuePair<Microsoft.Xna.Framework.Point, Light>> _lightQueue = new List<KeyValuePair<Microsoft.Xna.Framework.Point,Light>>();
 
@@ -118,7 +76,7 @@ namespace Intersect_Editor.Classes
         private static RenderTarget2D _currentTarget = null;
 
         //Setup and Loading
-        public static void InitMonogame(frmMain myForm)
+        public static void InitMonogame()
         {
             try
             {
@@ -132,28 +90,13 @@ namespace Intersect_Editor.Classes
                 _graphicsDevice = new GraphicsDevice(GraphicsAdapter.DefaultAdapter, GraphicsProfile.Reach,
                     _presentationParams);
 
-                //We create a dummy game service so we can load up a content manager.
-                var container = new GameServiceContainer();
-                container.AddService(typeof(IGraphicsDeviceService), new DummyGraphicsDeviceManager(_graphicsDevice));
-                ContentManager cm = new ContentManager(container,"");
-
                 //Define our spritebatch :D
                 _spriteBatch = new SpriteBatch(_graphicsDevice);
 
-                //Load Various Editor Resources
-                _trans = LoadTexture("Resources/transV.png");
-                _attributesTex = LoadTexture("Resources/attributes.png");
-                _lightTex = LoadTexture("Resources/jcl.png");
-                _spawnTex = LoadTexture("Resources/MapSpawn.png");
-                _eventTex = LoadTexture("Resources/jce.png");
                 SetupWhiteTex();
 
                 //Load the rest of the graphics and audio
-                LoadGraphics(myForm);
-                Audio.LoadAudio();
-
-                //Load Shader
-                RadialGradientShader = cm.Load<Effect>("Resources/Shaders/RadialGradient");
+                GameContentManager.LoadEditorContent();
 
                 //Create our multiplicative blending state.
                 MultiplyState = new BlendState();
@@ -180,19 +123,6 @@ namespace Intersect_Editor.Classes
         {
             _tilesetChain = _chain;
         }
-        private static void LoadGraphics(frmMain myForm)
-        {
-            LoadTilesets(myForm);
-            LoadItems();
-            LoadEntities();
-            LoadSpells();
-            LoadAnimations();
-            LoadFaces();
-            LoadImages();
-            LoadFogs();
-            LoadResources();
-            LoadPaperdolls();
-        }
 
         //Resource Allocation
         private static void SetupWhiteTex()
@@ -206,216 +136,9 @@ namespace Intersect_Editor.Classes
         {
             return _whiteTex;
         }
-        private static Texture2D LoadTexture(string filename)
-        {
-            using (var fileStream = new FileStream(filename, FileMode.Open))
-            {
-                return Texture2D.FromStream(_graphicsDevice, fileStream);
-            }
-        }
         public static RenderTarget2D CreateRenderTexture(int width, int height)
         {
             return new RenderTarget2D(_graphicsDevice, width,height, false, SurfaceFormat.Color, DepthFormat.Depth16, 0, RenderTargetUsage.PreserveContents);
-        }
-
-        //Loading Game Resources
-        private static void LoadTilesets(frmMain myForm)
-        {
-            if (!Directory.Exists("Resources/Tilesets")) { Directory.CreateDirectory("Resources/Tilesets"); }
-            var tilesets = Directory.GetFiles("Resources/Tilesets", "*.png");
-            Array.Sort(tilesets, new AlphanumComparatorFast());
-            var tilesetsUpdated = false;
-            if (tilesets.Length > 0)
-            {
-                for (var i = 0; i < tilesets.Length; i++)
-                {
-                    tilesets[i] = tilesets[i].Replace("Resources/Tilesets\\", "");
-                    if (Globals.Tilesets != null)
-                    {
-                        if (Globals.Tilesets.Length > 0)
-                        {
-                            for (var x = 0; x < Globals.Tilesets.Length; x++)
-                            {
-                                if (Globals.Tilesets[x] == tilesets[i])
-                                {
-                                    break;
-                                }
-                                if (x != Globals.Tilesets.Length - 1) continue;
-                                var newTilesets = new string[Globals.Tilesets.Length + 1];
-                                Globals.Tilesets.CopyTo(newTilesets, 0);
-                                newTilesets[Globals.Tilesets.Length] = tilesets[i];
-                                Globals.Tilesets = newTilesets;
-                                tilesetsUpdated = true;
-                            }
-                        }
-                        else
-                        {
-                            var newTilesets = new string[1];
-                            newTilesets[0] = tilesets[i];
-                            Globals.Tilesets = newTilesets;
-                            tilesetsUpdated = true;
-                        }
-                    }
-                    else
-                    {
-                        var newTilesets = new string[1];
-                        newTilesets[0] = tilesets[i];
-                        Globals.Tilesets = newTilesets;
-                        tilesetsUpdated = true;
-                    }
-                }
-
-                if (tilesetsUpdated)
-                {
-                    PacketSender.SendTilesets();
-                }
-
-                Globals.MapLayersWindow.cmbTilesets.Items.Clear();
-                foreach (var filename in Globals.Tilesets)
-                {
-                    if (File.Exists("Resources/Tilesets/" + filename))
-                    {
-                        Globals.MapLayersWindow.cmbTilesets.Items.Add(filename);
-                    }
-                    else
-                    {
-                        Globals.MapLayersWindow.cmbTilesets.Items.Add(filename + " - [MISSING]");
-                    }
-                }
-
-                TilesetTextures = new Texture2D[Globals.Tilesets.Length];
-                for (var i = 0; i < Globals.Tilesets.Length; i++)
-                {
-                    if (File.Exists("Resources/Tilesets/" + Globals.Tilesets[i]))
-                    {
-                        TilesetTextures[i] = LoadTexture("Resources/Tilesets/" + Globals.Tilesets[i]);
-                    }
-                    else
-                    {
-
-                    }
-                }
-                TilesetsLoaded = true;
-                Globals.MapLayersWindow.cmbTilesets.SelectedIndex = 0;
-                Globals.CurrentTileset = 0;
-            }
-        }
-        private static void LoadItems()
-        {
-            if (!Directory.Exists("Resources/Items")) { Directory.CreateDirectory("Resources/Items"); }
-            var items = Directory.GetFiles("Resources/Items", "*.png");
-            Array.Sort(items, new AlphanumComparatorFast());
-            ItemNames = new List<string>();
-            ItemTextures = new Texture2D[items.Length];
-            for (int i = 0; i < items.Length; i++)
-            {
-                ItemNames.Add(items[i].Replace("Resources/Items\\", ""));
-                ItemTextures[i] = LoadTexture("Resources/Items/" + ItemNames[i]);
-            }
-        }
-        private static void LoadEntities()
-        {
-            if (!Directory.Exists("Resources/Entities")) { Directory.CreateDirectory("Resources/Entities"); }
-            var chars = Directory.GetFiles("Resources/Entities", "*.png");
-            Array.Sort(chars, new AlphanumComparatorFast());
-            EntityFileNames = new List<string>();
-            EntityTextures = new Texture2D[chars.Length];
-            for (int i = 0; i < chars.Length; i++)
-            {
-                EntityFileNames.Add(chars[i].Replace("Resources/Entities\\", ""));
-                EntityTextures[i] = LoadTexture("Resources/Entities/" + EntityFileNames[i]);
-            }
-        }
-        private static void LoadSpells()
-        {
-            if (!Directory.Exists("Resources/Spells")) { Directory.CreateDirectory("Resources/Spells"); }
-            var spells = Directory.GetFiles("Resources/Spells", "*.png");
-            Array.Sort(spells, new AlphanumComparatorFast());
-            SpellFileNames = new List<string>();
-            SpellTextures = new Texture2D[spells.Length];
-            for (int i = 0; i < spells.Length; i++)
-            {
-                SpellFileNames.Add(spells[i].Replace("Resources/Spells\\", ""));
-                SpellTextures[i] = LoadTexture("Resources/Spells/" + SpellFileNames[i]);
-            }
-        }
-        private static void LoadAnimations()
-        {
-            if (!Directory.Exists("Resources/Animations")) { Directory.CreateDirectory("Resources/Animations"); }
-            var animations = Directory.GetFiles("Resources/Animations", "*.png");
-            Array.Sort(animations, new AlphanumComparatorFast());
-            AnimationFileNames = new List<string>();
-            AnimationTextures = new Texture2D[animations.Length];
-            for (int i = 0; i < animations.Length; i++)
-            {
-                AnimationFileNames.Add(animations[i].Replace("Resources/Animations\\", ""));
-                AnimationTextures[i] = LoadTexture("Resources/Animations/" + AnimationFileNames[i]);
-            }
-        }
-        private static void LoadFaces()
-        {
-            if (!Directory.Exists("Resources/Faces")) { Directory.CreateDirectory("Resources/Faces"); }
-            var faces = Directory.GetFiles("Resources/Faces", "*.png");
-            Array.Sort(faces, new AlphanumComparatorFast());
-            FaceFileNames = new List<string>();
-            FaceTextures = new Texture2D[faces.Length];
-            for (int i = 0; i < faces.Length; i++)
-            {
-                FaceFileNames.Add(faces[i].Replace("Resources/Faces\\", ""));
-                FaceTextures[i] = LoadTexture("Resources/Faces/" + FaceFileNames[i]);
-            }
-        }
-        private static void LoadImages()
-        {
-            if (!Directory.Exists("Resources/Images")) { Directory.CreateDirectory("Resources/Images"); }
-            var images = Directory.GetFiles("Resources/Images", "*.png");
-            Array.Sort(images, new AlphanumComparatorFast());
-            ImageFileNames = new List<string>();
-            ImageTextures = new Texture2D[images.Length];
-            for (int i = 0; i < images.Length; i++)
-            {
-                ImageFileNames.Add(images[i].Replace("Resources/Images\\", ""));
-                ImageTextures[i] = LoadTexture("Resources/Images/" + ImageFileNames[i]);
-            }
-        }
-        private static void LoadFogs()
-        {
-            if (!Directory.Exists("Resources/Fogs")) { Directory.CreateDirectory("Resources/Fogs"); }
-            var fogs = Directory.GetFiles("Resources/Fogs", "*.png");
-            Array.Sort(fogs, new AlphanumComparatorFast());
-            FogFileNames = new List<string>();
-            FogTextures = new Texture2D[fogs.Length];
-            for (int i = 0; i < fogs.Length; i++)
-            {
-                FogFileNames.Add(fogs[i].Replace("Resources/Fogs\\", ""));
-                FogTextures[i] = LoadTexture("Resources/Fogs/" + FogFileNames[i]);
-            }
-        }
-        private static void LoadResources()
-        {
-            if (!Directory.Exists("Resources/Resources")) { Directory.CreateDirectory("Resources/Resources"); }
-            var resources = Directory.GetFiles("Resources/Resources", "*.png");
-            Array.Sort(resources, new AlphanumComparatorFast());
-            ResourceFileNames = new List<string>();
-            ResourceTextures = new Texture2D[resources.Length];
-            for (int i = 0; i < resources.Length; i++)
-            {
-                ResourceFileNames.Add(resources[i].Replace("Resources/Resources\\", ""));
-                ResourceTextures[i] = LoadTexture("Resources/Resources/" + ResourceFileNames[i]);
-            }
-        }
-        private static void LoadPaperdolls()
-        {
-            if (!Directory.Exists("Resources/Paperdolls")) { Directory.CreateDirectory("Resources/Paperdolls"); }
-            var resources = Directory.GetFiles("Resources/Paperdolls", "*.png");
-            Array.Sort(resources, new AlphanumComparatorFast());
-            PaperdollFileNames = new List<string>();
-            PaperdollTextures = new Texture2D[resources.Length];
-            for (int i = 0; i < resources.Length; i++)
-            {
-                PaperdollFileNames.Add(resources[i].Replace("Resources/Paperdolls\\", ""));
-                PaperdollTextures[i] = LoadTexture("Resources/Paperdolls/" + PaperdollFileNames[i]);
-            }
         }
 
         //Rendering
@@ -488,13 +211,13 @@ namespace Intersect_Editor.Classes
         {
             for (int x = 0; x < Options.MapWidth + 2; x++)
             {
-                DrawTexture(_trans, Options.TileWidth * x, 0, 0, 0, Options.TileWidth, Options.TileHeight, null);
-                DrawTexture(_trans, Options.TileWidth * x, Options.TileHeight * (Options.MapHeight + 1), 0, 0, Options.TileWidth, Options.TileHeight, null);
+                DrawTexture(GetTexture(TextureType.Misc, "transtile.png"), Options.TileWidth * x, 0, 0, 0, Options.TileWidth, Options.TileHeight, null);
+                DrawTexture(GetTexture(TextureType.Misc, "transtile.png"), Options.TileWidth * x, Options.TileHeight * (Options.MapHeight + 1), 0, 0, Options.TileWidth, Options.TileHeight, null);
             }
             for (int y = 1; y < Options.MapHeight + 1; y++)
             {
-                DrawTexture(_trans, 0, Options.TileHeight * y, 0, 0, Options.TileWidth, Options.TileHeight, null);
-                DrawTexture(_trans, Options.TileWidth * (Options.MapWidth + 1), Options.TileHeight * y, 0, 0, Options.TileWidth, Options.TileHeight, null);
+                DrawTexture(GetTexture(TextureType.Misc, "transtile.png"), 0, Options.TileHeight * y, 0, 0, Options.TileWidth, Options.TileHeight, null);
+                DrawTexture(GetTexture(TextureType.Misc, "transtile.png"), Options.TileWidth * (Options.MapWidth + 1), Options.TileHeight * y, 0, 0, Options.TileWidth, Options.TileHeight, null);
             }
         }
         private static void DrawAutoTile(int layerNum, int destX, int destY, int quarterNum, int x, int y, MapStruct map, RenderTarget2D target)
@@ -514,7 +237,7 @@ namespace Intersect_Editor.Classes
                     yOffset = -Options.TileHeight;
                     break;
             }
-            DrawTexture(TilesetTextures[map.Layers[layerNum].Tiles[x, y].TilesetIndex],
+            DrawTexture(GetTexture(TextureType.Tileset,Globals.Tilesets[map.Layers[layerNum].Tiles[x, y].TilesetIndex]),
                                 destX, destY,
                                 (int)map.Autotiles.Autotile[x, y].Layer[layerNum].SrcX[quarterNum] + xOffset,
                                 (int)map.Autotiles.Autotile[x, y].Layer[layerNum].SrcY[quarterNum] + yOffset,
@@ -804,7 +527,9 @@ namespace Intersect_Editor.Classes
                     for (var z = z1; z < z2; z++)
                     {
                         if (tmpMap.Layers[z].Tiles[x, y].TilesetIndex <= -1) continue;
-                        if (TilesetTextures[tmpMap.Layers[z].Tiles[x, y].TilesetIndex] == null) continue;
+                        Texture2D tilesetTex = GetTexture(TextureType.Tileset,
+                            Globals.Tilesets[tmpMap.Layers[z].Tiles[x, y].TilesetIndex]);
+                        if (tilesetTex == null) continue;
                         if (tmpMap.Autotiles.Autotile[x, y].Layer[z].RenderState != MapAutotiles.RenderStateNormal)
                         {
                             if (tmpMap.Autotiles.Autotile[x, y].Layer[z].RenderState != MapAutotiles.RenderStateAutotile)
@@ -816,7 +541,7 @@ namespace Intersect_Editor.Classes
                         }
                         else
                         {
-                            DrawTexture(TilesetTextures[tmpMap.Layers[z].Tiles[x, y].TilesetIndex],
+                            DrawTexture(tilesetTex,
                                 x * Options.TileWidth + xoffset, y * Options.TileHeight + yoffset,
                                 tmpMap.Layers[z].Tiles[x, y].X * Options.TileWidth, tmpMap.Layers[z].Tiles[x, y].Y * Options.TileHeight,
                                 Options.TileWidth, Options.TileHeight, RenderTarget2D);
@@ -877,7 +602,7 @@ namespace Intersect_Editor.Classes
                         {
                             if (tmpMap.Attributes[x, y].value > 0)
                             {
-                                DrawTexture(_attributesTex,x * Options.TileWidth + Options.TileWidth,
+                                DrawTexture(GetTexture(TextureType.Misc,"attributes.png"),x * Options.TileWidth + Options.TileWidth,
                                 y * Options.TileHeight + Options.TileHeight, 0, (tmpMap.Attributes[x, y].value - 1) * Options.TileHeight, Options.TileWidth,
                                 Options.TileHeight, null);
                             }
@@ -894,7 +619,7 @@ namespace Intersect_Editor.Classes
                         for (var y = 0; y < Options.MapHeight; y++)
                         {
                             if (tmpMap.FindEventAt(x, y) == null) continue;
-                            DrawTexture(_eventTex, x * Options.TileWidth + Options.TileWidth,
+                            DrawTexture(GetTexture(TextureType.Misc, "eventicon.png"), x * Options.TileWidth + Options.TileWidth,
                                 y * Options.TileHeight + Options.TileHeight, 0, 0, Options.TileWidth,
                                 Options.TileHeight, null);
                         }
@@ -906,7 +631,7 @@ namespace Intersect_Editor.Classes
                     {
                         if (tmpMap.Spawns[i].X >= 0 && tmpMap.Spawns[i].Y >= 0)
                         {
-                            DrawTexture(_spawnTex, tmpMap.Spawns[i].X*Options.TileWidth + Options.TileWidth,
+                            DrawTexture(GetTexture(TextureType.Misc, "spawnicon.png"), tmpMap.Spawns[i].X*Options.TileWidth + Options.TileWidth,
                                 tmpMap.Spawns[i].Y*Options.TileHeight + Options.TileHeight, 0, 0, Options.TileWidth,
                                 Options.TileHeight, null);
                         }
@@ -952,26 +677,30 @@ namespace Intersect_Editor.Classes
             if (_tilesetChain == null) return;
             _graphicsDevice.SetRenderTarget(_tilesetChain);
             _graphicsDevice.Clear(Microsoft.Xna.Framework.Color.Black);
-            if (Globals.CurrentTileset > -1 && TilesetTextures[Globals.CurrentTileset] != null)
+            if (Globals.CurrentTileset > -1)
             {
-                DrawTexture(TilesetTextures[Globals.CurrentTileset], 0, 0, _tilesetChain);
-                var selX = Globals.CurSelX;
-                var selY = Globals.CurSelY;
-                var selW = Globals.CurSelW;
-                var selH = Globals.CurSelH;
-                if (selW < 0)
+                Texture2D tilesetTex = GetTexture(TextureType.Tileset, Globals.Tilesets[Globals.CurrentTileset]);
+                if (tilesetTex != null)
                 {
-                    selX -= Math.Abs(selW);
-                    selW = Math.Abs(selW);
+                    DrawTexture(tilesetTex, 0, 0, _tilesetChain);
+                    var selX = Globals.CurSelX;
+                    var selY = Globals.CurSelY;
+                    var selW = Globals.CurSelW;
+                    var selH = Globals.CurSelH;
+                    if (selW < 0)
+                    {
+                        selX -= Math.Abs(selW);
+                        selW = Math.Abs(selW);
+                    }
+                    if (selH < 0)
+                    {
+                        selY -= Math.Abs(selH);
+                        selH = Math.Abs(selH);
+                    }
+                    DrawBoxOutline(selX*Options.TileWidth, selY*Options.TileHeight,
+                        Options.TileWidth + (selW*Options.TileWidth), Options.TileHeight + (selH*Options.TileHeight),
+                        Color.White, _tilesetChain);
                 }
-                if (selH < 0)
-                {
-                    selY -= Math.Abs(selH);
-                    selH = Math.Abs(selH);
-                }
-                DrawBoxOutline(selX*Options.TileWidth, selY*Options.TileHeight,
-                    Options.TileWidth + (selW*Options.TileWidth), Options.TileHeight + (selH*Options.TileHeight),
-                    Color.White, _tilesetChain);
             }
             _tilesetChain.Present();
         }
@@ -1044,7 +773,6 @@ namespace Intersect_Editor.Classes
                     break;
             }
             if (tmpMap == null || tmpMap.Deleted == 1) { return; }
-            Texture2D res;
             for (var x = x1; x < x2; x++)
             {
                 for (var y = y1; y < y2; y++)
@@ -1056,9 +784,10 @@ namespace Intersect_Editor.Classes
                         {
                             if (Globals.GameResources[resourcenum].Name != "" & Globals.GameResources[resourcenum].InitialGraphic != "None")
                             {
-                                if (EditorGraphics.ResourceFileNames.IndexOf(Globals.GameResources[resourcenum].InitialGraphic) > -1)
+                                Texture2D res = GetTexture(TextureType.Resource,
+                                    Globals.GameResources[resourcenum].InitialGraphic);
+                                if (res != null)
                                 {
-                                    res = EditorGraphics.ResourceTextures[EditorGraphics.ResourceFileNames.IndexOf(Globals.GameResources[resourcenum].InitialGraphic)];
                                     float xpos = x * Options.TileWidth + xoffset;
                                     float ypos = y * Options.TileHeight + yoffset;
                                     if (res.Width > Options.TileHeight)
@@ -1155,29 +884,29 @@ namespace Intersect_Editor.Classes
             _fogUpdateTime = Environment.TickCount;
             if (Globals.GameMaps[Globals.CurrentMap].Fog.Length > 0)
             {
-                if (FogFileNames.IndexOf(Globals.GameMaps[Globals.CurrentMap].Fog) > -1)
+                Texture2D fogTex = GetTexture(TextureType.Fog, Globals.GameMaps[Globals.CurrentMap].Fog);
+                if (fogTex != null)
                 {
-                    int fogIndex = FogFileNames.IndexOf(Globals.GameMaps[Globals.CurrentMap].Fog);
-                    int xCount = (int)(Globals.MapEditorWindow.picMap.Width / FogTextures[fogIndex].Width) + 1;
-                    int yCount = (int)(Globals.MapEditorWindow.picMap.Height / FogTextures[fogIndex].Height) + 1;
+                    int xCount = (int)(Globals.MapEditorWindow.picMap.Width / fogTex.Width) + 1;
+                    int yCount = (int)(Globals.MapEditorWindow.picMap.Height / fogTex.Height) + 1;
 
                     _fogCurrentX += (ecTime / 1000f) * Globals.GameMaps[Globals.CurrentMap].FogXSpeed * 2;
                     _fogCurrentY += (ecTime / 1000f) * Globals.GameMaps[Globals.CurrentMap].FogYSpeed * 2;
 
-                    if (_fogCurrentX < FogTextures[fogIndex].Width) { _fogCurrentX += FogTextures[fogIndex].Width; }
-                    if (_fogCurrentX > FogTextures[fogIndex].Width) { _fogCurrentX -= FogTextures[fogIndex].Width; }
-                    if (_fogCurrentY < FogTextures[fogIndex].Height) { _fogCurrentY += FogTextures[fogIndex].Height; }
-                    if (_fogCurrentY > FogTextures[fogIndex].Height) { _fogCurrentY -= FogTextures[fogIndex].Height; }
+                    if (_fogCurrentX < fogTex.Width) { _fogCurrentX += fogTex.Width; }
+                    if (_fogCurrentX > fogTex.Width) { _fogCurrentX -= fogTex.Width; }
+                    if (_fogCurrentY < fogTex.Height) { _fogCurrentY += fogTex.Height; }
+                    if (_fogCurrentY > fogTex.Height) { _fogCurrentY -= fogTex.Height; }
 
                     for (int x = -1; x < xCount; x++)
                     {
                         for (int y = -1; y < yCount; y++)
                         {
-                            DrawTexture(FogTextures[fogIndex],
-                                new RectangleF(0, 0, FogTextures[fogIndex].Width, FogTextures[fogIndex].Height),
-                                new RectangleF(x*FogTextures[fogIndex].Width + _fogCurrentX,
-                                    y*FogTextures[fogIndex].Height + _fogCurrentY, FogTextures[fogIndex].Width,
-                                    FogTextures[fogIndex].Height),
+                            DrawTexture(fogTex,
+                                new RectangleF(0, 0, fogTex.Width, fogTex.Height),
+                                new RectangleF(x* fogTex.Width + _fogCurrentX,
+                                    y* fogTex.Height + _fogCurrentY, fogTex.Width,
+                                    fogTex.Height),
                                 Color.FromArgb(Globals.GameMaps[Globals.CurrentMap].FogTransparency, 255, 255, 255),target);
                         }
                     }
@@ -1228,7 +957,7 @@ namespace Intersect_Editor.Classes
                     for (var y = 0; y < Options.MapHeight; y++)
                     {
                         if (tmpMap.FindLightAt(x, y) == null) continue;
-                        DrawTexture(_lightTex, x*Options.TileWidth + Options.TileWidth,
+                        DrawTexture(GetTexture(TextureType.Misc, "lighticon.png"), x*Options.TileWidth + Options.TileWidth,
                             y*Options.TileHeight + Options.TileHeight, 0, 0, Options.TileWidth, Options.TileHeight,
                             target);
                     }
@@ -1251,13 +980,14 @@ namespace Intersect_Editor.Classes
         }
         public static void DrawLight(int x, int y, Light light, RenderTarget2D target)
         {
-            RadialGradientShader.Parameters["_Color"].SetValue(new Vector4(light.Color.R / 255f,
+            Effect shader = GetShader("radialgradient.xnb");
+            shader.Parameters["_Color"].SetValue(new Vector4(light.Color.R / 255f,
                     light.Color.G / 255f, light.Color.B / 255f, light.Intensity / 255f));
-            RadialGradientShader.Parameters["_Expand"].SetValue(light.Expand / 100f);
+            shader.Parameters["_Expand"].SetValue(light.Expand / 100f);
             y -= light.Size;
             x -= light.Size;
             DrawTexture(_whiteTex, new RectangleF(0, 0, 1, 1), new RectangleF(x, y, light.Size * 2, light.Size * 2), Color.Transparent,
-                target, BlendState.Additive, RadialGradientShader);
+                target, BlendState.Additive, shader);
         }
         public static void AddLight(int x, int y, Light light, RenderTarget2D target = null)
         {
@@ -1350,22 +1080,6 @@ namespace Intersect_Editor.Classes
         {
             _spriteBatch.End();
             _spriteBatchBegan = false;
-        }
-    }
-
-    internal class DummyGraphicsDeviceManager : IGraphicsDeviceService
-    {
-        public GraphicsDevice GraphicsDevice { get; private set; }
-
-        // Not used:
-        public event EventHandler<EventArgs> DeviceCreated;
-        public event EventHandler<EventArgs> DeviceDisposing;
-        public event EventHandler<EventArgs> DeviceReset;
-        public event EventHandler<EventArgs> DeviceResetting;
-
-        public DummyGraphicsDeviceManager(GraphicsDevice graphicsDevice)
-        {
-            GraphicsDevice = graphicsDevice;
         }
     }
 }

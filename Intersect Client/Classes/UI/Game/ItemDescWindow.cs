@@ -26,6 +26,8 @@
 */
 
 using System;
+using IntersectClientExtras.File_Management;
+using IntersectClientExtras.Graphics;
 using IntersectClientExtras.Gwen;
 using IntersectClientExtras.Gwen.Control;
 using Intersect_Client.Classes.Core;
@@ -62,12 +64,11 @@ namespace Intersect_Client.Classes.UI.Game
                 ImagePanel icon = new ImagePanel(_descWindow);
                 icon.SetSize(32, 32);
                 icon.SetPosition(220 - 4 - 32, 4);
-                if (GameGraphics.ItemFileNames.IndexOf(Globals.GameItems[itemnum].Pic) > -1)
+                GameTexture itemTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Item,
+                    Globals.GameItems[itemnum].Pic);
+                if (itemTex != null)
                 {
-                    icon.Texture =
-                        Gui.ToGwenTexture(
-                            GameGraphics.ItemTextures[
-                                GameGraphics.ItemFileNames.IndexOf(Globals.GameItems[itemnum].Pic)]);
+                    icon.Texture = itemTex;
                 }
 
                 Label itemName = new Label(_descWindow);

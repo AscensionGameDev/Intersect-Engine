@@ -30,6 +30,7 @@ using System.Linq;
 using System.Net.Mime;
 using System.Text;
 using System.Threading.Tasks;
+using IntersectClientExtras.File_Management;
 using IntersectClientExtras.Graphics;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
@@ -43,7 +44,7 @@ namespace Intersect_Client_MonoGame.Classes.SFML.Graphics
         {
             try
             {
-                fontName = fontName.Replace(".ttf", "");
+                fontName = GameContentManager.RemoveExtension(fontName);
                 font = contentManager.Load<SpriteFont>(fontName);
             }
             catch (Exception ex)

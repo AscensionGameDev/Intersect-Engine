@@ -22,6 +22,7 @@
 using System;
 using System.Windows.Forms;
 using Intersect_Editor.Classes;
+using Intersect_Editor.Classes.Core;
 using Intersect_Editor.Classes.General;
 
 namespace Intersect_Editor.Forms
@@ -44,9 +45,10 @@ namespace Intersect_Editor.Forms
             cmbPic.Items.Clear();
             cmbPic.Items.Add("None");
 
-            for (i= 0; i < Intersect_Editor.Classes.EditorGraphics.ItemNames.Count; i++)
+            string[] itemnames = GameContentManager.GetTextureNames(GameContentManager.TextureType.Item);
+            for (i= 0; i < itemnames.Length; i++)
             {
-                cmbPic.Items.Add(Intersect_Editor.Classes.EditorGraphics.ItemNames[i]);
+                cmbPic.Items.Add(itemnames[i]);
             }
 
             i = 0;
@@ -65,9 +67,10 @@ namespace Intersect_Editor.Forms
 
             cmbPaperdoll.Items.Clear();
             cmbPaperdoll.Items.Add("None");
-            for (i = 0; i < EditorGraphics.PaperdollFileNames.Count; i++)
+            string[] paperdollnames = GameContentManager.GetTextureNames(GameContentManager.TextureType.Paperdoll);
+            for (i = 0; i < paperdollnames.Length; i++)
             {
-                cmbPaperdoll.Items.Add(EditorGraphics.PaperdollFileNames[i]);
+                cmbPaperdoll.Items.Add(paperdollnames[i]);
             }
 
             UpdateEditor();
@@ -124,9 +127,9 @@ namespace Intersect_Editor.Forms
             chk2Hand.Checked = Convert.ToBoolean(Globals.GameItems[_editorIndex].Data4);
             cmbPaperdoll.SelectedIndex = cmbPaperdoll.FindString(Globals.GameItems[_editorIndex].Paperdoll);
             scrlProjectile.Value = Globals.GameItems[_editorIndex].Projectile;
-            if (cmbPic.SelectedIndex > 0) { picItem.BackgroundImage = System.Drawing.Bitmap.FromFile("Resources/Items/" + cmbPic.Text); }
+            if (cmbPic.SelectedIndex > 0) { picItem.BackgroundImage = System.Drawing.Bitmap.FromFile("resources/items/" + cmbPic.Text); }
             else { picItem.BackgroundImage = null; }
-            if (cmbPaperdoll.SelectedIndex > 0) { picPaperdoll.BackgroundImage = System.Drawing.Bitmap.FromFile("Resources/Paperdolls/" + cmbPaperdoll.Text); }
+            if (cmbPaperdoll.SelectedIndex > 0) { picPaperdoll.BackgroundImage = System.Drawing.Bitmap.FromFile("resources/paperdolls/" + cmbPaperdoll.Text); }
             else { picPaperdoll.BackgroundImage = null; }
             _changed[_editorIndex] = true;
         }
@@ -227,7 +230,7 @@ namespace Intersect_Editor.Forms
         private void cmbPic_SelectedIndexChanged(object sender, EventArgs e)
         {
             Globals.GameItems[_editorIndex].Pic = cmbPic.Text;
-            if (cmbPic.SelectedIndex > 0) { picItem.BackgroundImage = System.Drawing.Bitmap.FromFile("Resources/Items/" + cmbPic.Text); }
+            if (cmbPic.SelectedIndex > 0) { picItem.BackgroundImage = System.Drawing.Bitmap.FromFile("resources/items/" + cmbPic.Text); }
             else { picItem.BackgroundImage = null; }
         }
 
@@ -334,7 +337,7 @@ namespace Intersect_Editor.Forms
         private void cmbPaperdoll_SelectedIndexChanged(object sender, EventArgs e)
         {
             Globals.GameItems[_editorIndex].Paperdoll = cmbPaperdoll.Text;
-            if (cmbPaperdoll.SelectedIndex > 0) { picPaperdoll.BackgroundImage = System.Drawing.Bitmap.FromFile("Resources/Paperdolls/" + cmbPaperdoll.Text); }
+            if (cmbPaperdoll.SelectedIndex > 0) { picPaperdoll.BackgroundImage = System.Drawing.Bitmap.FromFile("resources/paperdolls/" + cmbPaperdoll.Text); }
             else { picPaperdoll.BackgroundImage = null; }
         }
 

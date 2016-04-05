@@ -29,6 +29,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using Intersect_Editor.Classes;
+using Intersect_Editor.Classes.Core;
 
 namespace Intersect_Editor.Forms.Editors.Event_Commands
 {
@@ -42,10 +43,7 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             _myCommand = refCommand;
             _eventEditor = editor;
             cmbSprite.Items.Clear();
-            foreach (string filename in Intersect_Editor.Classes.EditorGraphics.EntityFileNames)
-            {
-                cmbSprite.Items.Add(filename);
-            }
+            cmbSprite.Items.AddRange(GameContentManager.GetTextureNames(GameContentManager.TextureType.Entity));
             if (cmbSprite.Items.IndexOf(_myCommand.Strs[0]) > -1)
             {
                 cmbSprite.SelectedIndex = cmbSprite.Items.IndexOf(_myCommand.Strs[0]);
@@ -62,9 +60,9 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             Bitmap destBitmap = new Bitmap(pnlPreview.Width, pnlPreview.Height);
             System.Drawing.Graphics g = System.Drawing.Graphics.FromImage(destBitmap);
             g.Clear(Color.Black);
-            if (File.Exists("Resources/Entities/" + cmbSprite.Text))
+            if (File.Exists("resources/entities/" + cmbSprite.Text))
             {
-                Bitmap sourceBitmap = new Bitmap("Resources/Entities/" + cmbSprite.Text);
+                Bitmap sourceBitmap = new Bitmap("resources/entities/" + cmbSprite.Text);
                 g.DrawImage(sourceBitmap,new Rectangle(pnlPreview.Width/2 - sourceBitmap.Width/8,pnlPreview.Height/2 - sourceBitmap.Height/8,sourceBitmap.Width/4,sourceBitmap.Height/4), new Rectangle(0,0,sourceBitmap.Width/4,sourceBitmap.Height/4),GraphicsUnit.Pixel);
             }
             g.Dispose();

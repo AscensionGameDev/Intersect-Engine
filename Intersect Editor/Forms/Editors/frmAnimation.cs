@@ -29,6 +29,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
+using Intersect_Editor.Classes.Core;
 using Intersect_Editor.Classes.General;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -65,26 +66,17 @@ namespace Intersect_Editor.Forms
             //Animation Sound
             cmbSound.Items.Clear();
             cmbSound.Items.Add("None");
-            for (int i = 0; i < Intersect_Editor.Classes.Audio.SoundFileNames.Length; i++)
-            {
-                cmbSound.Items.Add(Intersect_Editor.Classes.Audio.SoundFileNames[i]);
-            }
+            cmbSound.Items.AddRange(GameContentManager.GetSoundNames());
 
             //Lower Animation Graphic
             cmbLowerGraphic.Items.Clear();
             cmbLowerGraphic.Items.Add("None");
-            for (int i = 0; i < Intersect_Editor.Classes.EditorGraphics.AnimationFileNames.Count; i++)
-            {
-                cmbLowerGraphic.Items.Add(Intersect_Editor.Classes.EditorGraphics.AnimationFileNames[i]);
-            }
+            cmbLowerGraphic.Items.AddRange(GameContentManager.GetTextureNames(GameContentManager.TextureType.Animation));
 
             //Upper Animation Graphic
             cmbUpperGraphic.Items.Clear();
             cmbUpperGraphic.Items.Add("None");
-            for (int i = 0; i < Intersect_Editor.Classes.EditorGraphics.AnimationFileNames.Count; i++)
-            {
-                cmbUpperGraphic.Items.Add(Intersect_Editor.Classes.EditorGraphics.AnimationFileNames[i]);
-            }
+            cmbUpperGraphic.Items.AddRange(GameContentManager.GetTextureNames(GameContentManager.TextureType.Animation));
 
             lowerWindow = new SwapChainRenderTarget(EditorGraphics.GetGraphicsDevice(),picLowerAnimation.Handle, picLowerAnimation.Width, picLowerAnimation.Height);
             upperWindow = new SwapChainRenderTarget(EditorGraphics.GetGraphicsDevice(),picUpperAnimation.Handle, picUpperAnimation.Width, picUpperAnimation.Height);
@@ -368,12 +360,10 @@ namespace Intersect_Editor.Forms
 
             graphicsDevice.SetRenderTarget(lowerWindow);
             graphicsDevice.Clear(Microsoft.Xna.Framework.Color.White);
-            if (Classes.EditorGraphics.AnimationFileNames.IndexOf(cmbLowerGraphic.Text) > -1)
+            Texture2D animTexture = GameContentManager.GetTexture(GameContentManager.TextureType.Animation,
+                cmbLowerGraphic.Text);
+            if (animTexture != null)
             {
-                Texture2D animTexture =
-                    Classes.EditorGraphics.AnimationTextures[
-                        Classes.EditorGraphics.AnimationFileNames.IndexOf(cmbLowerGraphic.Text)
-                        ];
                 long w = animTexture.Width/scrlLowerHorizontalFrames.Value;
                 long h = animTexture.Height/scrlLowerVerticalFrames.Value;
                 long x = 0;
@@ -415,12 +405,10 @@ namespace Intersect_Editor.Forms
 
             graphicsDevice.SetRenderTarget(upperWindow);
             graphicsDevice.Clear(Microsoft.Xna.Framework.Color.White);
-            if (Classes.EditorGraphics.AnimationFileNames.IndexOf(cmbUpperGraphic.Text) > -1)
+            Texture2D animTexture = GameContentManager.GetTexture(GameContentManager.TextureType.Animation,
+                cmbUpperGraphic.Text);
+            if (animTexture != null)
             {
-                Texture2D animTexture =
-                    Classes.EditorGraphics.AnimationTextures[
-                        Classes.EditorGraphics.AnimationFileNames.IndexOf(cmbUpperGraphic.Text)
-                        ];
                 long w = animTexture.Width / scrlUpperHorizontalFrames.Value;
                 long h = animTexture.Height / scrlUpperVerticalFrames.Value;
                 long x = 0;

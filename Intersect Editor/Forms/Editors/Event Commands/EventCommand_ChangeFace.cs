@@ -29,6 +29,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using Intersect_Editor.Classes;
+using Intersect_Editor.Classes.Core;
 
 namespace Intersect_Editor.Forms.Editors.Event_Commands
 {
@@ -42,10 +43,7 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             _myCommand = refCommand;
             _eventEditor = editor;
             cmbFace.Items.Clear();
-            foreach (string filename in Intersect_Editor.Classes.EditorGraphics.FaceFileNames)
-            {
-                cmbFace.Items.Add(filename);
-            }
+            cmbFace.Items.AddRange(GameContentManager.GetTextureNames(GameContentManager.TextureType.Face));
             if (cmbFace.Items.IndexOf(_myCommand.Strs[0]) > -1)
             {
                 cmbFace.SelectedIndex = cmbFace.Items.IndexOf(_myCommand.Strs[0]);
@@ -62,9 +60,9 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             Bitmap destBitmap = new Bitmap(pnlPreview.Width, pnlPreview.Height);
             System.Drawing.Graphics g = System.Drawing.Graphics.FromImage(destBitmap);
             g.Clear(Color.Black);
-            if (File.Exists("Resources/Faces/" + cmbFace.Text))
+            if (File.Exists("resources/faces/" + cmbFace.Text))
             {
-                Bitmap sourceBitmap = new Bitmap("Resources/Faces/" + cmbFace.Text);
+                Bitmap sourceBitmap = new Bitmap("resources/faces/" + cmbFace.Text);
                 g.DrawImage(sourceBitmap,new Rectangle(pnlPreview.Width/2 - sourceBitmap.Width/2,pnlPreview.Height/2 - sourceBitmap.Height/2,sourceBitmap.Width,sourceBitmap.Height), new Rectangle(0,0,sourceBitmap.Width,sourceBitmap.Height),GraphicsUnit.Pixel);
             }
             g.Dispose();

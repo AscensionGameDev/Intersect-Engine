@@ -24,6 +24,7 @@ using System.Windows.Forms;
 using Intersect_Editor.Classes;
 using System.Text;
 using System.Security.Cryptography;
+using Intersect_Editor.Classes.Core;
 
 namespace Intersect_Editor.Forms
 {
@@ -40,6 +41,7 @@ namespace Intersect_Editor.Forms
 
         private void frmLogin_Load(object sender, EventArgs e)
         {
+            GameContentManager.CheckForResources();
             if (Database.LoadOptions())
             {
                 lblVersion.Text = "Editor v." + Application.ProductVersion;

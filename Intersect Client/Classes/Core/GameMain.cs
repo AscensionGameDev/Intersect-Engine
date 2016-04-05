@@ -26,6 +26,8 @@
 */
 
 using System.Diagnostics.Eventing.Reader;
+using IntersectClientExtras.File_Management;
+using IntersectClientExtras.Graphics;
 using Intersect_Client.Classes.General;
 using Intersect_Client.Classes.Networking;
 using Intersect_Client.Classes.UI;
@@ -37,6 +39,8 @@ namespace Intersect_Client.Classes.Core
     public static class GameMain
     {
         private static long _animTimer;
+        private static bool _tilesetsLoaded;
+
         public static void Start()
         {
             //Load Graphics
@@ -93,7 +97,9 @@ namespace Intersect_Client.Classes.Core
         {
             if (Globals.Database.IntroBG.Count > 0)
             {
-                if (GameGraphics.ImageFileNames.IndexOf(Globals.Database.IntroBG[Globals.IntroIndex]) > -1)
+                GameTexture imageTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Image,
+                    Globals.Database.IntroBG[Globals.IntroIndex]);
+                if (imageTex != null)
                 {
                     if (Globals.IntroStartTime == -1)
                     {
@@ -149,9 +155,10 @@ namespace Intersect_Client.Classes.Core
 
         private static void ProcessLoading()
         {
-            if (Globals.Tilesets != null && Globals.Tilesets.Length > GameGraphics.Tilesets.Count)
+            if (Globals.Tilesets != null && !_tilesetsLoaded)
             {
                 Globals.ContentManager.LoadTilesets(Globals.Tilesets);
+                _tilesetsLoaded = true;
             }
             if (Globals.LocalMaps[4] == -1) { return; }
             if (Globals.GameMaps == null) return;

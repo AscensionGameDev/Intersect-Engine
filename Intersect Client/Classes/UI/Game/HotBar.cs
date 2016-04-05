@@ -28,6 +28,7 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.Remoting;
+using IntersectClientExtras.File_Management;
 using IntersectClientExtras.GenericClasses;
 using IntersectClientExtras.Graphics;
 using IntersectClientExtras.Gwen;
@@ -65,13 +66,13 @@ namespace Intersect_Client.Classes.UI.Game
             //Create equipment background image //TODO Replace this with a general BG Image because RenderTextures are very inefficient.
             GameRenderTexture rtHotbar = GameGraphics.Renderer.CreateRenderTexture(34, 34);
             rtHotbar.Begin();
-            GameGraphics.DrawGameTexture(GameGraphics.WhiteTex, new FloatRect(0, 0, 1, 1), new FloatRect(0, 0, 1, 34),
+            GameGraphics.DrawGameTexture(GameGraphics.Renderer.GetWhiteTexture(), new FloatRect(0, 0, 1, 1), new FloatRect(0, 0, 1, 34),
                 Color.Black, rtHotbar);
-            GameGraphics.DrawGameTexture(GameGraphics.WhiteTex, new FloatRect(0, 0, 1, 1), new FloatRect(33, 0, 1, 34),
+            GameGraphics.DrawGameTexture(GameGraphics.Renderer.GetWhiteTexture(), new FloatRect(0, 0, 1, 1), new FloatRect(33, 0, 1, 34),
                 Color.Black, rtHotbar);
-            GameGraphics.DrawGameTexture(GameGraphics.WhiteTex, new FloatRect(0, 0, 1, 1), new FloatRect(0, 0, 34, 1),
+            GameGraphics.DrawGameTexture(GameGraphics.Renderer.GetWhiteTexture(), new FloatRect(0, 0, 1, 1), new FloatRect(0, 0, 34, 1),
                 Color.Black, rtHotbar);
-            GameGraphics.DrawGameTexture(GameGraphics.WhiteTex, new FloatRect(0, 0, 1, 1), new FloatRect(0, 33, 34, 1),
+            GameGraphics.DrawGameTexture(GameGraphics.Renderer.GetWhiteTexture(), new FloatRect(0, 0, 1, 1), new FloatRect(0, 33, 34, 1),
                 Color.Black, rtHotbar);
             rtHotbar.End();
             _hotbarBG = rtHotbar;
@@ -159,7 +160,6 @@ namespace Intersect_Client.Classes.UI.Game
         private int[] _statBoost = new int[Options.MaxStats];
 
         //Textures
-        private Texture gwenTex;
         private GameRenderTexture _hotbarBG;
 
 
@@ -188,10 +188,10 @@ namespace Intersect_Client.Classes.UI.Game
             equipPanel.SetSize(2, 2);
             equipPanel.RenderColor = Color.Red;
             equipPanel.SetPosition(26, 2);
-            equipPanel.Texture = Gui.ToGwenTexture(GameGraphics.WhiteTex);
+            equipPanel.Texture = GameGraphics.Renderer.GetWhiteTexture();
             equipPanel.MouseInputEnabled = false;
 
-            pnl.Texture = Gui.ToGwenTexture(_hotbarBG);
+            pnl.Texture = _hotbarBG;
         }
 
         public void Activate()
@@ -282,26 +282,20 @@ namespace Intersect_Client.Classes.UI.Game
             {
                 _currentItem = Globals.Me.Hotbar[myindex].Slot;
                 _currentType = Globals.Me.Hotbar[myindex].Type;
-                if (_currentType == 0 && _currentItem > -1 && Globals.Me.Inventory[_currentItem].ItemNum > -1 && GameGraphics.ItemFileNames.IndexOf(Globals.GameItems[Globals.Me.Inventory[_currentItem].ItemNum].Pic) > -1)
+                if (_currentType == 0 && _currentItem > -1 && Globals.Me.Inventory[_currentItem].ItemNum > -1)
                 {
                     contentPanel.Show();
-                    contentPanel.Texture =
-                        Gui.ToGwenTexture(
-                            GameGraphics.ItemTextures[
-                                GameGraphics.ItemFileNames.IndexOf(
-                                    Globals.GameItems[Globals.Me.Inventory[_currentItem].ItemNum].Pic)]);
+                    contentPanel.Texture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Spell,
+                                    Globals.GameItems[Globals.Me.Inventory[_currentItem].ItemNum].Pic);
                     equipPanel.IsHidden = !Globals.Me.IsEquipped(_currentItem);
                     _texLoaded = true;
                     _isEquipped = Globals.Me.IsEquipped(_currentItem);
                 }
-                else if (_currentType == 1 && _currentItem > -1 && Globals.Me.Spells[_currentItem].SpellNum > -1 && GameGraphics.SpellFileNames.IndexOf(Globals.GameSpells[Globals.Me.Spells[_currentItem].SpellNum].Pic) > -1)
+                else if (_currentType == 1 && _currentItem > -1 && Globals.Me.Spells[_currentItem].SpellNum > -1)
                 {
                     contentPanel.Show();
-                    contentPanel.Texture =
-                        Gui.ToGwenTexture(
-                            GameGraphics.SpellTextures[
-                                GameGraphics.SpellFileNames.IndexOf(
-                                    Globals.GameSpells[Globals.Me.Spells[_currentItem].SpellNum].Pic)]);
+                    contentPanel.Texture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Spell,
+                                Globals.GameSpells[Globals.Me.Spells[_currentItem].SpellNum].Pic);
                     equipPanel.IsHidden = true;
                     _isFaded = Globals.Me.Spells[_currentItem].SpellCD > Globals.System.GetTimeMS();
                     if (_isFaded)
@@ -356,7 +350,7 @@ namespace Intersect_Client.Classes.UI.Game
                                     if (Math.Sqrt(Math.Pow(xdiff, 2) + Math.Pow(ydiff, 2)) > 5)
                                     {
                                         IsDragging = true;
-                                        dragIcon = new Draggable(pnl.LocalPosToCanvas(new Point(0, 0)).X + MouseX, pnl.LocalPosToCanvas(new Point(0, 0)).X + MouseY, gwenTex);
+                                        dragIcon = new Draggable(pnl.LocalPosToCanvas(new Point(0, 0)).X + MouseX, pnl.LocalPosToCanvas(new Point(0, 0)).X + MouseY, null); //SOMETHING SHOULD BE RENDERED HERE, RIGHT?
                                     }
                                 }
                             }

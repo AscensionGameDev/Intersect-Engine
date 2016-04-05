@@ -29,6 +29,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using Intersect_Editor.Classes;
+using Intersect_Editor.Classes.Core;
 
 namespace Intersect_Editor.Forms.Editors.Event_Commands
 {
@@ -42,10 +43,7 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             _myCommand = refCommand;
             _eventEditor = editor;
             cmbSound.Items.Clear();
-            foreach (string filename in Intersect_Editor.Classes.Audio.SoundFileNames )
-            {
-                cmbSound.Items.Add(filename);
-            }
+            cmbSound.Items.AddRange(GameContentManager.GetSoundNames());
             if (cmbSound.Items.IndexOf(_myCommand.Strs[0]) > -1)
             {
                 cmbSound.SelectedIndex = cmbSound.Items.IndexOf(_myCommand.Strs[0]);

@@ -30,6 +30,7 @@ using System.Linq;
 using System.Security.Permissions;
 using System.Text;
 using System.Threading.Tasks;
+using IntersectClientExtras.File_Management;
 using IntersectClientExtras.GenericClasses;
 using IntersectClientExtras.Graphics;
 using IntersectClientExtras.Gwen;
@@ -179,9 +180,6 @@ namespace Intersect_Client.Classes.UI.Game
         private bool _isEquipped;
         private int _currentItem = -2;
 
-        //Textures
-        private Texture gwenTex;
-
         //Drag/Drop References
         private BankWindow _bankWindow;
 
@@ -265,19 +263,16 @@ namespace Intersect_Client.Classes.UI.Game
                 _isEquipped = equipped;
                 if (Globals.Bank[_mySlot].ItemNum > -1)
                 {
-                    if (GameGraphics.ItemFileNames.Contains(Globals.GameItems[Globals.Bank[_mySlot].ItemNum].Pic))
+                    GameTexture itemTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Item,
+                        Globals.GameItems[Globals.Bank[_mySlot].ItemNum].Pic);
+                    if (itemTex != null)
                     {
-                        pnl.Texture =
-                            Gui.ToGwenTexture(
-                                GameGraphics.ItemTextures[
-                                    GameGraphics.ItemFileNames.IndexOf(
-                                        Globals.GameItems[Globals.Bank[_mySlot].ItemNum].Pic)]);
+                        pnl.Texture =  itemTex;
                     }
                     else
                     {
                         if (pnl.Texture != null)
                         {
-                            pnl.Texture.Dispose();
                             pnl.Texture = null;
                         }
                     }
@@ -286,7 +281,6 @@ namespace Intersect_Client.Classes.UI.Game
                 {
                     if (pnl.Texture != null)
                     {
-                        pnl.Texture.Dispose();
                         pnl.Texture = null;
                     }
                 }

@@ -39,11 +39,6 @@ namespace Intersect_Client.Classes.Core
     {
         private static bool _isInitialized;
 
-        public static List<string> SoundFiles;
-        public static List<string> MusicFiles;
-        public static GameAudioSource[] SoundSources;
-        public static GameAudioSource[] MusicSources;
-
         //Music
         private static string _queuedMusic = "";
         private static string _currentSong = "";
@@ -171,9 +166,10 @@ namespace Intersect_Client.Classes.Core
         private static void StartMusic(string filename, float fadein = 0f)
         {
             if (Globals.Database.MusicVolume == 0) { return; }
-            if (MusicFiles.IndexOf(filename.ToLower()) > -1)
+            GameAudioSource music = Globals.ContentManager.GetMusic(filename);
+            if (music != null)
             {
-                _myMusic = MusicSources[MusicFiles.IndexOf(filename.ToLower())].CreateInstance();
+                _myMusic = music.CreateInstance();
                 _currentSong = filename;
                 _myMusic.Play();
                 _myMusic.SetVolume(0, true);
@@ -254,9 +250,10 @@ namespace Intersect_Client.Classes.Core
             _map = map;
             _loop = loop;
             _distance = distance;
-            if (GameAudio.SoundFiles.IndexOf(_filename) > -1 && Globals.Database.SoundVolume > 0)
+            GameAudioSource sound = Globals.ContentManager.GetSound(_filename);
+            if (sound != null && Globals.Database.SoundVolume > 0)
             {
-                _sound = GameAudio.SoundSources[GameAudio.SoundFiles.IndexOf(_filename)].CreateInstance();
+                _sound = sound.CreateInstance();
                 Globals.System.Log("Adding map sound: " + _filename);
                 _sound.SetLoop(_loop);
                 _sound.Play();

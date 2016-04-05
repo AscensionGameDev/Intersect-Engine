@@ -57,6 +57,7 @@ namespace Intersect_Client_MonoGame.Classes.SFML.Graphics
         private GameWindow _gameWindow;
         private int _screenWidth;
         private int _screenHeight;
+        private GameRenderTexture _whiteTex;
 
         private SpriteBatch _spriteBatch;
         private bool _spriteBatchBegan;
@@ -115,6 +116,14 @@ namespace Intersect_Client_MonoGame.Classes.SFML.Graphics
             _gameWindow = monoGame.Window;
 
             _initialized = true;
+        }
+
+        public void CreateWhiteTexture()
+        {
+            _whiteTex = CreateRenderTexture(1, 1);
+            _whiteTex.Begin();
+            _whiteTex.Clear(Color.White);
+            _whiteTex.End();
         }
 
         public override bool Begin()
@@ -192,6 +201,11 @@ namespace Intersect_Client_MonoGame.Classes.SFML.Graphics
         public override void Close()
         {
 
+        }
+
+        public override GameTexture GetWhiteTexture()
+        {
+            return _whiteTex;
         }
 
         public override GameRenderTexture CreateRenderTexture(int width, int height)

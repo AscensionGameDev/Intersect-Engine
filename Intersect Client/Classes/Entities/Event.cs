@@ -27,6 +27,7 @@
 
 using System;
 using System.Collections.Generic;
+using IntersectClientExtras.File_Management;
 using IntersectClientExtras.GenericClasses;
 using IntersectClientExtras.Graphics;
 using Intersect_Client.Classes.Core;
@@ -97,10 +98,11 @@ namespace Intersect_Client.Classes.Entities
             switch (GraphicType)
             {
                 case 1: //Sprite
-                    if (GameGraphics.EntityFileNames.IndexOf(GraphicFile) >= 0)
+                    GameTexture entityTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Entity,
+                        GraphicFile);
+                    if (entityTex != null)
                     {
-                        srcTexture =
-                            GameGraphics.EntityTextures[GameGraphics.EntityFileNames.IndexOf(GraphicFile)];
+                        srcTexture = entityTex;
                         height = srcTexture.GetHeight() / 4;
                         width = srcTexture.GetWidth() / 4;
                         d = GraphicY;
@@ -128,15 +130,14 @@ namespace Intersect_Client.Classes.Entities
                     }
                     break;
                 case 2: //Tile
-                    for (int z = 0; z < Globals.Tilesets.Length; z++)
+                    GameTexture tileset = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Tileset,
+                        GraphicFile);
+                    if (tileset != null)
                     {
-                        if (Globals.Tilesets[z] == GraphicFile)
-                        {
-                            srcTexture = GameGraphics.Tilesets[z];
-                            width = (GraphicWidth+ 1)*Options.TileWidth;
-                            height = (GraphicHeight + 1)*Options.TileHeight;
-                            srcRectangle = new FloatRect(GraphicX * Options.TileWidth, GraphicY * Options.TileHeight, (GraphicWidth + 1) * Options.TileWidth, (GraphicHeight + 1) * Options.TileHeight);
-                        }
+                        srcTexture = tileset;
+                        width = (GraphicWidth + 1) * Options.TileWidth;
+                        height = (GraphicHeight + 1) * Options.TileHeight;
+                        srcRectangle = new FloatRect(GraphicX * Options.TileWidth, GraphicY * Options.TileHeight, (GraphicWidth + 1) * Options.TileWidth, (GraphicHeight + 1) * Options.TileHeight);
                     }
                     break;
             }
@@ -229,11 +230,11 @@ namespace Intersect_Client.Classes.Entities
             switch (GraphicType)
             {
                 case 1: //Sprite
-                    if (GameGraphics.EntityFileNames.IndexOf(MySprite.ToLower()) >= 0)
+                    GameTexture entityTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Entity,
+                       GraphicFile);
+                    if (entityTex != null)
                     {
-                        srcTexture =
-                            GameGraphics.EntityTextures[GameGraphics.EntityFileNames.IndexOf(GraphicFile)];
-                        y -= srcTexture.GetHeight()/4/2;
+                        y -= entityTex.GetHeight()/4/2;
                         y -= 12;
                     }
                     break;
@@ -263,16 +264,15 @@ namespace Intersect_Client.Classes.Entities
             Pointf pos = new Pointf(Globals.GameMaps[CurrentMap].GetX() + CurrentX * Options.TileWidth + OffsetX + Options.TileWidth / 2,
                     Globals.GameMaps[CurrentMap].GetY() + CurrentY * Options.TileHeight + OffsetY + Options.TileHeight / 2);
             int width = 0, height = 0;
-            GameTexture srcTexture = null;
             switch (GraphicType)
             {
                 case 1: //Sprite
-                    if (GameGraphics.EntityFileNames.IndexOf(MySprite.ToLower()) >= 0)
+                    GameTexture entityTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Entity,
+                        MySprite);
+                    if (entityTex != null)
                     {
-                        srcTexture =
-                            GameGraphics.EntityTextures[GameGraphics.EntityFileNames.IndexOf(GraphicFile)];
                         pos.Y += Options.TileHeight/2;
-                        pos.Y -= srcTexture.GetHeight()/4/2;
+                        pos.Y -= entityTex.GetHeight()/4/2;
                     }
                     break;
                 case 2: //Tile

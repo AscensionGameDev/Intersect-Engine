@@ -26,6 +26,7 @@
 */
 
 using System;
+using IntersectClientExtras.File_Management;
 using IntersectClientExtras.Graphics;
 using IntersectClientExtras.Gwen.Control;
 using IntersectClientExtras.Gwen.Control.EventArguments;
@@ -164,16 +165,12 @@ namespace Intersect_Client.Classes.UI.Menu
             {
                 i = 1;
             }
-
-            if (System.IO.File.Exists("Resources/Faces/" + GetSprite(i)))
-            {
-                _characterPortrait.ImageName = "Resources/Faces/" + GetSprite(i);
-            }
+            
             if (Globals.GameClasses[GetClass()].Sprites.Count > 0)
             {
                 string test = Globals.GameClasses[GetClass()].Sprites[GetSprite(i)].Sprite;
                 Gui.DrawSpriteToTexture(_spriteTex, Globals.GameClasses[GetClass()].Sprites[GetSprite(i)].Sprite, _characterPortrait.Width, _characterPortrait.Height);
-                _characterPortrait.Texture = Gui.ToGwenTexture(_spriteTex);
+                _characterPortrait.Texture = _spriteTex;
                 _currentSprite = Globals.GameClasses[GetClass()].Sprites[GetSprite(i)].Sprite;
             }
         }

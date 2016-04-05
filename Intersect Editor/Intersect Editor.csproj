@@ -39,6 +39,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Classes\Core\Audio.cs" />
+    <Compile Include="Classes\Core\GameContentManager.cs" />
     <Compile Include="Classes\Core\Database.cs" />
     <Compile Include="Classes\Core\EditorGraphics.cs" />
     <Compile Include="Classes\Core\EditorLoop.cs" />
@@ -361,6 +362,12 @@
     <Compile Include="Forms\frmGridView.Designer.cs">
       <DependentUpon>frmGridView.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\frmLoadingContent.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\frmLoadingContent.Designer.cs">
+      <DependentUpon>frmLoadingContent.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\frmLogin.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -397,6 +404,7 @@
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.IO.Compression.FileSystem" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="WeifenLuo.WinFormsUI.Docking">
@@ -554,6 +562,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\frmGridView.resx">
       <DependentUpon>frmGridView.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\frmLoadingContent.resx">
+      <DependentUpon>frmLoadingContent.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\frmLogin.resx">
       <DependentUpon>frmLogin.cs</DependentUpon>

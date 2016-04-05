@@ -24,6 +24,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using Intersect_Editor.Classes.Core;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace Intersect_Editor.Classes
@@ -187,13 +188,12 @@ namespace Intersect_Editor.Classes
             if (!upper)
             {
                 //Draw Lower
-                if (showLower && EditorGraphics.AnimationFileNames.IndexOf(myBase.LowerAnimSprite) > -1)
+                Texture2D tex = GameContentManager.GetTexture(GameContentManager.TextureType.Animation,
+                    myBase.LowerAnimSprite);
+                if (showLower && tex != null)
                 {
                     if (myBase.LowerAnimXFrames > 0 && myBase.LowerAnimYFrames > 0)
                     {
-                        Texture2D tex =
-                            EditorGraphics.AnimationTextures[
-                                EditorGraphics.AnimationFileNames.IndexOf(myBase.LowerAnimSprite)];
                         int frameWidth = (int)tex.Width / myBase.LowerAnimXFrames;
                         int frameHeight = (int)tex.Height / myBase.LowerAnimYFrames;
                         EditorGraphics.DrawTexture(tex,
@@ -211,13 +211,12 @@ namespace Intersect_Editor.Classes
             else
             {
                 //Draw Upper
-                if (showUpper && EditorGraphics.AnimationFileNames.IndexOf(myBase.UpperAnimSprite) > -1)
+                Texture2D tex = GameContentManager.GetTexture(GameContentManager.TextureType.Animation,
+                    myBase.UpperAnimSprite);
+                if (showUpper && tex != null)
                 {
                     if (myBase.UpperAnimXFrames > 0 && myBase.UpperAnimYFrames > 0)
                     {
-                        Texture2D tex =
-                            EditorGraphics.AnimationTextures[
-                                EditorGraphics.AnimationFileNames.IndexOf(myBase.UpperAnimSprite)];
                         int frameWidth = (int)tex.Width / myBase.UpperAnimXFrames;
                         int frameHeight = (int)tex.Height / myBase.UpperAnimYFrames;
                         EditorGraphics.DrawTexture(tex,

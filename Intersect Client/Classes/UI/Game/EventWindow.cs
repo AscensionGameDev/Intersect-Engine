@@ -25,7 +25,9 @@
     SOFTWARE.
 */
 
+using IntersectClientExtras.File_Management;
 using IntersectClientExtras.GenericClasses;
+using IntersectClientExtras.Graphics;
 using IntersectClientExtras.Gwen;
 using IntersectClientExtras.Gwen.Control;
 using IntersectClientExtras.Gwen.Control.EventArguments;
@@ -105,13 +107,12 @@ namespace Intersect_Client.Classes.UI.Game
                     _eventDialogWindow.Show();
                     _eventDialogWindow.MakeModal();
                     _eventDialog.Clear();
-                    if (GameGraphics.FaceFileNames.IndexOf(Globals.EventDialogs[0].Face) > -1)
+                    GameTexture faceTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Face,
+                        Globals.EventDialogs[0].Face);
+                    if (faceTex != null)
                     {
                         _eventFace.Show();
-                        _eventFace.Texture =
-                            Gui.ToGwenTexture(
-                                GameGraphics.FaceTextures[
-                                    GameGraphics.FaceFileNames.IndexOf(Globals.EventDialogs[0].Face)]);
+                        _eventFace.Texture = faceTex;
                         _eventDialog.Width = 402;
                         _eventDialog.X = 96;
                     }

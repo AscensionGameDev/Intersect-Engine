@@ -27,6 +27,7 @@
 
 using System;
 using System.Collections.Generic;
+using IntersectClientExtras.File_Management;
 using IntersectClientExtras.GenericClasses;
 using IntersectClientExtras.Graphics;
 using IntersectClientExtras.Gwen;
@@ -203,7 +204,7 @@ namespace Intersect_Client.Classes.UI.Game
             equipPanel.SetSize(2, 2);
             equipPanel.RenderColor = Color.Red;
             equipPanel.SetPosition(26, 2);
-            equipPanel.Texture = Gui.ToGwenTexture(GameGraphics.WhiteTex);
+            equipPanel.Texture = GameGraphics.Renderer.GetWhiteTexture();
         }
 
         private void Pnl_DoubleClicked(Base sender, ClickedEventArgs arguments)
@@ -310,19 +311,16 @@ namespace Intersect_Client.Classes.UI.Game
                 equipPanel.IsHidden = !_isEquipped;
                 if (Globals.Me.Inventory[_mySlot].ItemNum > -1)
                 {
-                    if (GameGraphics.ItemFileNames.Contains(Globals.GameItems[Globals.Me.Inventory[_mySlot].ItemNum].Pic))
+                    GameTexture itemTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Item,
+                        Globals.GameItems[Globals.Me.Inventory[_mySlot].ItemNum].Pic);
+                    if (itemTex != null)
                     {
-                        pnl.Texture =
-                            Gui.ToGwenTexture(
-                                GameGraphics.ItemTextures[
-                                    GameGraphics.ItemFileNames.IndexOf(
-                                        Globals.GameItems[Globals.Me.Inventory[_mySlot].ItemNum].Pic)]);
+                        pnl.Texture = itemTex;
                     }
                     else
                     {
                         if (pnl.Texture != null)
                         {
-                            pnl.Texture.Dispose();
                             pnl.Texture = null;
                         }
                     }
@@ -331,7 +329,6 @@ namespace Intersect_Client.Classes.UI.Game
                 {
                     if (pnl.Texture != null)
                     {
-                        pnl.Texture.Dispose();
                         pnl.Texture = null;
                     }
                 }

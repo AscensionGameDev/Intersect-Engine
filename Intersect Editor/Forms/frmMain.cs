@@ -128,8 +128,8 @@ namespace Intersect_Editor.Forms
         }
         private void InitEditor()
         {
-            EditorGraphics.InitMonogame(this);
-            //Sounds.Init();
+            EditorGraphics.InitMonogame();
+            Globals.MapLayersWindow.InitTilesets();
             Globals.InEditor = true;
             GrabMouseDownEvents();
         }
@@ -436,20 +436,6 @@ namespace Intersect_Editor.Forms
             if (Globals.CurrentLayer <= Options.LayerCount)
             {
                 Globals.MapEditorWindow.EraseLayer();
-            }
-            return;
-            if (
-                MessageBox.Show(@"Are you sure you want to erase this layer?", @"Erase Layer", MessageBoxButtons.YesNo) !=
-                DialogResult.Yes) return;
-            for (var x = 0; x < Options.MapWidth; x++)
-            {
-                for (var y = 0; y < Options.MapHeight; y++)
-                {
-                    Globals.CurTileX = x;
-                    Globals.CurTileY = y;
-                    Globals.MapEditorWindow.picMap_MouseDown(null, new MouseEventArgs(MouseButtons.Right, 1, x * Options.TileWidth + Options.TileWidth, y * Options.TileHeight + Options.TileHeight, 0));
-                    Globals.MapEditorWindow.picMap_MouseUp(null, new MouseEventArgs(MouseButtons.None, 0, 0, 0, 0));
-                }
             }
         }
         private void allLayersToolStripMenuItem_Click(object sender, EventArgs e)

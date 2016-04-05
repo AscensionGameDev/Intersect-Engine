@@ -28,6 +28,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using Intersect_Editor.Classes.Core;
 using Intersect_Editor.Classes.General;
 
 namespace Intersect_Editor.Forms
@@ -316,10 +317,7 @@ namespace Intersect_Editor.Forms
         {
             cmbSprite.Items.Clear();
             cmbSprite.Items.Add("None");
-            for (int i = 0; i < Intersect_Editor.Classes.EditorGraphics.EntityFileNames.Count; i++)
-            {
-                cmbSprite.Items.Add(Intersect_Editor.Classes.EditorGraphics.EntityFileNames[i]);
-            }
+            cmbSprite.Items.AddRange(GameContentManager.GetTextureNames(GameContentManager.TextureType.Entity));
             scrlDropItem.Maximum = Options.MaxItems - 1;
             scrlSpell.Maximum = Options.MaxSpells - 1;
             scrlLevel.Maximum = Options.MaxLevel;
@@ -503,7 +501,7 @@ namespace Intersect_Editor.Forms
             gfx.FillRectangle(Brushes.Black, new Rectangle(0, 0, picSprite.Width, picSprite.Height));
             if (cmbSprite.SelectedIndex > 0)
             {
-                var img = Bitmap.FromFile("Resources/Entities/" + cmbSprite.Text);
+                var img = Bitmap.FromFile("resources/entities/" + cmbSprite.Text);
                 gfx.DrawImage(img, new Rectangle(0, 0, img.Width / 4, img.Height / 4), new Rectangle(0, 0, img.Width / 4, img.Height / 4), GraphicsUnit.Pixel);
                 img.Dispose();
             }

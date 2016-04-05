@@ -35,13 +35,9 @@ namespace Intersect_Client.Classes.Bridges_and_Interfaces.SFML.Database
 {
     public class MonoDatabase : GameDatabase
     {
-        public MonoDatabase()
-        {
-            if (!Directory.Exists("Resources")) Directory.CreateDirectory("Resources");
-        }
+
         public override void SavePreference(string key, string value)
         {
-            var sha = new SHA256Managed();
             RegistryKey regkey = Registry.CurrentUser.OpenSubKey("Software", true);
 
             regkey.CreateSubKey("IntersectEngine");
@@ -68,14 +64,14 @@ namespace Intersect_Client.Classes.Bridges_and_Interfaces.SFML.Database
 
         public override bool LoadConfig()
         {
-            if (!File.Exists("Resources/config.xml"))
+            if (!File.Exists("resources/config.xml"))
             {
-                File.WriteAllText("Resources/config.xml",base.GetDefaultConfig());
+                File.WriteAllText("resources/config.xml",base.GetDefaultConfig());
                 return LoadConfig();
             }
             else
             {
-                string xmldata = File.ReadAllText("Resources/config.xml");
+                string xmldata = File.ReadAllText("resources/config.xml");
                 return base.LoadConfigFromXml(xmldata);
             }
         }

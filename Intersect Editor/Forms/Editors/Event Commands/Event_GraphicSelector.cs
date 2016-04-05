@@ -30,6 +30,7 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Windows.Forms;
 using Intersect_Editor.Classes;
+using Intersect_Editor.Classes.Core;
 using Intersect_Editor.Classes.General;
 using EditorGraphics = Intersect_Editor.Classes.EditorGraphics;
 
@@ -89,10 +90,7 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
                 cmbGraphic.Show();
                 lblGraphic.Show();
                 cmbGraphic.Items.Clear();
-                foreach (var filename in EditorGraphics.EntityFileNames)
-                {
-                    cmbGraphic.Items.Add(filename);
-                }
+                cmbGraphic.Items.AddRange(GameContentManager.GetTextureNames(GameContentManager.TextureType.Entity));
                 if (cmbGraphic.Items.Count > 0) cmbGraphic.SelectedIndex = 0;
             }
             else if (cmbGraphicType.SelectedIndex == 2) //Tileset
@@ -105,7 +103,7 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
                 cmbGraphic.Items.Clear();
                 foreach (var filename in Globals.Tilesets)
                 {
-                    if (File.Exists("Resources/Tilesets/" + filename))
+                    if (File.Exists("resources/tilesets/" + filename))
                     {
                         cmbGraphic.Items.Add(filename);
                     }
@@ -126,10 +124,7 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             {
                 cmbGraphic.Show();
                 lblGraphic.Show();
-                foreach (var filename in EditorGraphics.EntityFileNames)
-                {
-                    cmbGraphic.Items.Add(filename);
-                }
+                cmbGraphic.Items.AddRange(GameContentManager.GetTextureNames(GameContentManager.TextureType.Entity));
                 if (cmbGraphic.Items.Count > 0) cmbGraphic.SelectedIndex = 0;
             }
             else if (cmbGraphicType.SelectedIndex == 2) //Tileset
@@ -138,7 +133,7 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
                 cmbGraphic.Show();
                 foreach (var filename in Globals.Tilesets)
                 {
-                    if (File.Exists("Resources/Tilesets/" + filename))
+                    if (File.Exists("resources/tilesets/" + filename))
                     {
                         cmbGraphic.Items.Add(filename);
                     }
@@ -154,13 +149,13 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             Bitmap destBitmap = null;
             if (cmbGraphicType.SelectedIndex == 1) //Sprite
             {
-                sourceBitmap = new Bitmap("Resources/Entities/" + cmbGraphic.Text);
+                sourceBitmap = new Bitmap("resources/entities/" + cmbGraphic.Text);
                 _spriteWidth = sourceBitmap.Width/4;
                 _spriteHeight = sourceBitmap.Height/4;
             }
             else if (cmbGraphicType.SelectedIndex == 2) //Tileset
             {
-                sourceBitmap = new Bitmap("Resources/Tilesets/" + cmbGraphic.Text);
+                sourceBitmap = new Bitmap("resources/tilesets/" + cmbGraphic.Text);
             }
             if (sourceBitmap != null)
             {

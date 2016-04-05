@@ -26,51 +26,27 @@
 */
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using IntersectClientExtras.File_Management;
-using IntersectClientExtras.GenericClasses;
-using IntersectClientExtras.Graphics;
-using Intersect_Client.Classes.General;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Content;
-using Microsoft.Xna.Framework.Graphics;
-using Color = IntersectClientExtras.GenericClasses.Color;
+using System.Windows.Forms;
 
-namespace Intersect_Client_MonoGame.Classes.SFML.Graphics
+namespace Intersect_Client.Classes
 {
-    public class MonoShader : GameShader
+    public partial class frmLoadingContent : Form
     {
-        private Effect shader;
-        public MonoShader(string shaderName, ContentManager content) : base(shaderName)
+        public frmLoadingContent()
         {
-            shader = content.Load<Effect>(GameContentManager.RemoveExtension(shaderName));
+            InitializeComponent();
         }
 
-        public override void SetFloat(string key, float val)
+        public void SetProgress(int percent)
         {
-            //shader.Parameters[key].SetValue(val);
+            lblProgress.Text = "Downloading: " + percent + "% Complete";
         }
 
-        public override void SetInt(string key, int val)
-        {
-            //throw new NotImplementedException();
-        }
-
-        public override void SetColor(string key, Color val)
-        {
-            shader.Parameters[key].SetValue(new Vector4(val.A/255f,val.R/255f , val.G/255f , val.B/255f));
-        }
-
-        public override void SetVector2(string key, Pointf val)
-        {
-            //throw new NotImplementedException();
-        }
-
-        public override object GetShader()
-        {
-            return shader;
-        }
     }
 }

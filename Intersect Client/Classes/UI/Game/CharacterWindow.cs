@@ -27,6 +27,7 @@
 
 using System;
 using System.Collections.Generic;
+using IntersectClientExtras.File_Management;
 using IntersectClientExtras.GenericClasses;
 using IntersectClientExtras.Graphics;
 using IntersectClientExtras.Gwen;
@@ -176,13 +177,13 @@ namespace Intersect_Client.Classes.UI.Game
             //Create equipment background image=
             GameRenderTexture rtEquipment = GameGraphics.Renderer.CreateRenderTexture(34, 34);
             rtEquipment.Begin();
-            GameGraphics.DrawGameTexture(GameGraphics.WhiteTex, new FloatRect(0, 0, 1, 1), new FloatRect(0, 0, 1, 34),
+            GameGraphics.DrawGameTexture(GameGraphics.Renderer.GetWhiteTexture(), new FloatRect(0, 0, 1, 1), new FloatRect(0, 0, 1, 34),
                 Color.Black, rtEquipment);
-            GameGraphics.DrawGameTexture(GameGraphics.WhiteTex, new FloatRect(0, 0, 1, 1), new FloatRect(33, 0, 1, 34),
+            GameGraphics.DrawGameTexture(GameGraphics.Renderer.GetWhiteTexture(), new FloatRect(0, 0, 1, 1), new FloatRect(33, 0, 1, 34),
                 Color.Black, rtEquipment);
-            GameGraphics.DrawGameTexture(GameGraphics.WhiteTex, new FloatRect(0, 0, 1, 1), new FloatRect(0, 0, 34, 1),
+            GameGraphics.DrawGameTexture(GameGraphics.Renderer.GetWhiteTexture(), new FloatRect(0, 0, 1, 1), new FloatRect(0, 0, 34, 1),
                 Color.Black, rtEquipment);
-            GameGraphics.DrawGameTexture(GameGraphics.WhiteTex, new FloatRect(0, 0, 1, 1), new FloatRect(0, 33, 34, 1),
+            GameGraphics.DrawGameTexture(GameGraphics.Renderer.GetWhiteTexture(), new FloatRect(0, 0, 1, 1), new FloatRect(0, 33, 34, 1),
                 Color.Black, rtEquipment);
             rtEquipment.End();
             _equipmentBG = rtEquipment;
@@ -253,17 +254,19 @@ namespace Intersect_Client.Classes.UI.Game
             _characterLevel.Text = "Level: " + Globals.Me.Level;
 
             //Load Portrait
-            if (Globals.Me.Face != "" && Globals.Me.Face != _currentSprite && GameGraphics.FaceFileNames.IndexOf(Globals.Me.Face) > -1)
+            GameTexture faceTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Face, Globals.Me.Face);
+            GameTexture entityTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Entity, Globals.Me.MySprite);
+            if (Globals.Me.Face != "" && Globals.Me.Face != _currentSprite && faceTex != null)
             {
-                _characterPortrait.Texture = Gui.ToGwenTexture(GameGraphics.FaceTextures[GameGraphics.FaceFileNames.IndexOf(Globals.Me.Face)]);
+                _characterPortrait.Texture = faceTex;
                 _currentSprite = Globals.Me.Face;
                 _characterPortrait.IsHidden = false;
             }
-            else if (Globals.Me.MySprite != "" && Globals.Me.MySprite != _currentSprite && GameGraphics.EntityFileNames.IndexOf(Globals.Me.MySprite) > -1)
+            else if (Globals.Me.MySprite != "" && Globals.Me.MySprite != _currentSprite && entityTex != null)
             {
                 Gui.DrawSpriteToTexture(_spriteTex, Globals.Me.MySprite, _characterPortrait.Width,
                     _characterPortrait.Height);
-                _characterPortrait.Texture = Gui.ToGwenTexture(_spriteTex);
+                _characterPortrait.Texture = _spriteTex;
                 _currentSprite = Globals.Me.MySprite;
                 _characterPortrait.IsHidden = false;
             }
@@ -349,7 +352,7 @@ namespace Intersect_Client.Classes.UI.Game
             contentPanel.SetPosition(2, 2);
             contentPanel.MouseInputEnabled = false;
 
-            pnl.Texture = Gui.ToGwenTexture(_equipmentBG);
+            pnl.Texture =  _equipmentBG;
 
         }
 
@@ -388,13 +391,18 @@ namespace Intersect_Client.Classes.UI.Game
             {
                 _currentItem = currentItem;
                 _statBoost = statBoost;
-                if (_currentItem > 0 && GameGraphics.ItemFileNames.IndexOf(Globals.GameItems[_currentItem].Pic) > -1)
+                if (_currentItem > 0)
                 {
-                    contentPanel.Show();
-                    contentPanel.Texture =
-                        Gui.ToGwenTexture(
-                            GameGraphics.ItemTextures[
-                                GameGraphics.ItemFileNames.IndexOf(Globals.GameItems[_currentItem].Pic)]);
+                    GameTexture itemTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Item, Globals.GameItems[_currentItem].Pic);
+                    if (itemTex != null)
+                    {
+                        contentPanel.Show();
+                        contentPanel.Texture = itemTex;
+                    }
+                    else
+                    {
+                        contentPanel.Hide();
+                    }
                 }
                 else
                 {

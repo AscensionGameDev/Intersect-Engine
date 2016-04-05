@@ -56,11 +56,11 @@ namespace Intersect_Editor.Classes
         //Options File
         public static bool LoadOptions()
         {
-            if (!Directory.Exists("Resources")) Directory.CreateDirectory("Resources");
-            if (!File.Exists("resources\\config.xml"))
+            if (!Directory.Exists("resources")) Directory.CreateDirectory("resources");
+            if (!File.Exists("resources/config.xml"))
             {
                 var settings = new XmlWriterSettings { Indent = true };
-                var writer = XmlWriter.Create("resources\\config.xml", settings);
+                var writer = XmlWriter.Create("resources/config.xml", settings);
                 writer.WriteStartDocument();
                 writer.WriteComment("Config.xml generated automatically by Intersect Editor.");
                 writer.WriteStartElement("Config");
@@ -76,7 +76,7 @@ namespace Intersect_Editor.Classes
                 var options = new XmlDocument();
                 try
                 {
-                    options.Load("resources\\config.xml");
+                    options.Load("resources/config.xml");
                     var selectSingleNode = options.SelectSingleNode("//Config/Port");
                     if (selectSingleNode != null && selectSingleNode.InnerText != "")
                         Globals.ServerPort = Int32.Parse(selectSingleNode.InnerText);

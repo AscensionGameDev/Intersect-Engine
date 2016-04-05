@@ -27,6 +27,7 @@
 
 using System;
 using System.Collections.Generic;
+using IntersectClientExtras.File_Management;
 using IntersectClientExtras.GenericClasses;
 using IntersectClientExtras.Graphics;
 using IntersectClientExtras.Gwen;
@@ -213,13 +214,11 @@ namespace Intersect_Client.Classes.UI.Game
             {
                 if (Globals.Me.Spells[myindex].SpellNum > -1)
                 {
-                    if (GameGraphics.SpellFileNames.Contains(Globals.GameSpells[Globals.Me.Spells[myindex].SpellNum].Pic))
+                    GameTexture spellTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Spell,
+                        Globals.GameSpells[Globals.Me.Spells[myindex].SpellNum].Pic);
+                    if (spellTex != null)
                     {
-                        pnl.Texture =
-                            Gui.ToGwenTexture(
-                                GameGraphics.SpellTextures[
-                                    GameGraphics.SpellFileNames.IndexOf(
-                                        Globals.GameSpells[Globals.Me.Spells[myindex].SpellNum].Pic)]);
+                        pnl.Texture = spellTex;
                         if ((Globals.Me.Spells[myindex].SpellCD > Globals.System.GetTimeMS()))
                         {
                             pnl.RenderColor = new Color(100,255,255,255);
@@ -233,7 +232,6 @@ namespace Intersect_Client.Classes.UI.Game
                     {
                         if (pnl.Texture != null)
                         {
-                            pnl.Texture.Dispose();
                             pnl.Texture = null;
                         }
                     }
@@ -245,7 +243,6 @@ namespace Intersect_Client.Classes.UI.Game
                 {
                     if (pnl.Texture != null)
                     {
-                        pnl.Texture.Dispose();
                         pnl.Texture = null;
                     }
                 }

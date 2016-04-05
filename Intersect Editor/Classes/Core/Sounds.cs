@@ -23,7 +23,7 @@ namespace Intersect_Editor.Classes
         //    SoundFiles = new List<string>();
         //    for (int i = 0; i < sounds.Length; i++)
         //    {
-        //        SoundFiles.Add(sounds[i].Replace("Resources/Sounds\\", "").ToLower());
+        //        SoundFiles.Add(sounds[i].Replace("Resources/Sounds", "").ToLower());
         //    }
         //    for (int i = 0; i < wavsounds.Length; i++)
         //    {

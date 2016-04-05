@@ -7,6 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using Intersect_Editor.Classes.Core;
 using Intersect_Editor.Classes.General;
 using Microsoft.Xna.Framework.Graphics;
 using WeifenLuo.WinFormsUI.Docking;
@@ -130,22 +131,41 @@ namespace Intersect_Editor.Forms
 
             }
         }
+
+        public void InitTilesets()
+        {
+            Globals.MapLayersWindow.cmbTilesets.Items.Clear();
+            foreach (var filename in Globals.Tilesets)
+            {
+                if (File.Exists("resources/tilesets/" + filename))
+                {
+                    Globals.MapLayersWindow.cmbTilesets.Items.Add(filename);
+                }
+                else
+                {
+                    Globals.MapLayersWindow.cmbTilesets.Items.Add(filename + " - [MISSING]");
+                }
+            }
+            Globals.MapLayersWindow.cmbTilesets.SelectedIndex = 0;
+            Globals.CurrentTileset = 0;
+        }
         public void SetTileset(int index)
         {
             cmbTilesets.SelectedIndex = index;
             if (index > -1)
             {
-                if (File.Exists("Resources/Tilesets/" + Globals.Tilesets[cmbTilesets.SelectedIndex]))
+                if (File.Exists("resources/tilesets/" + Globals.Tilesets[cmbTilesets.SelectedIndex]))
                 {
                     picTileset.Show();
                     Globals.CurrentTileset = cmbTilesets.SelectedIndex;
-                    if (!EditorGraphics.TilesetsLoaded) { return; }
                     Globals.CurSelX = 0;
                     Globals.CurSelY = 0;
-                    if (EditorGraphics.TilesetTextures[index] != null)
+                    Texture2D tilesetTex = GameContentManager.GetTexture(GameContentManager.TextureType.Tileset,
+                        Globals.Tilesets[index]);
+                    if (tilesetTex != null)
                     {
-                        picTileset.Width = EditorGraphics.TilesetTextures[index].Width;
-                        picTileset.Height = EditorGraphics.TilesetTextures[index].Height;
+                        picTileset.Width = tilesetTex.Width;
+                        picTileset.Height = tilesetTex.Height;
                     }
                     CreateSwapChain();
                 }
@@ -220,10 +240,7 @@ namespace Intersect_Editor.Forms
             grpSound.Visible = true;
             cmbMapAttributeSound.Items.Clear();
             cmbMapAttributeSound.Items.Add("None");
-            foreach (string filename in Audio.SoundFileNames)
-            {
-                cmbMapAttributeSound.Items.Add(filename);
-            }
+            cmbMapAttributeSound.Items.AddRange(GameContentManager.GetSoundNames());
             cmbMapAttributeSound.SelectedIndex = 0;
         }
         private void rbResource_CheckedChanged(object sender, EventArgs e)
