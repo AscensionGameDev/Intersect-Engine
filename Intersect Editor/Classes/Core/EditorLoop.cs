@@ -22,6 +22,7 @@
 using System;
 using System.Threading;
 using System.Windows.Forms;
+using Intersect_Editor.Classes.Core;
 using Intersect_Editor.Forms;
 
 namespace Intersect_Editor.Classes
@@ -61,6 +62,7 @@ namespace Intersect_Editor.Classes
                     Globals.ResourceEditor.Render();
                 }
                 EditorGraphics.Render();
+                GameContentManager.Update();
                 Network.Update();
                 Application.DoEvents(); // handle form events
 

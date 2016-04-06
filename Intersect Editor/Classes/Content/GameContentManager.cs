@@ -35,6 +35,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Media;
 using System.Windows.Forms;
 using System.Collections.Specialized;
+using Intersect_Editor.Classes.Content;
 
 namespace Intersect_Editor.Classes.Core
 {
@@ -50,18 +51,19 @@ namespace Intersect_Editor.Classes.Core
         private static string errorString = "";
 
         //Game Content
-        static Dictionary<string, Texture2D> tilesetDict = new Dictionary<string, Texture2D>();
-        static Dictionary<string, Texture2D> itemDict = new Dictionary<string, Texture2D>();
-        static Dictionary<string, Texture2D> entityDict = new Dictionary<string, Texture2D>();
-        static Dictionary<string, Texture2D> spellDict = new Dictionary<string, Texture2D>();
-        static Dictionary<string, Texture2D> animationDict = new Dictionary<string, Texture2D>();
-        static Dictionary<string, Texture2D> faceDict = new Dictionary<string, Texture2D>();
-        static Dictionary<string, Texture2D> imageDict = new Dictionary<string, Texture2D>();
-        static Dictionary<string, Texture2D> fogDict = new Dictionary<string, Texture2D>();
-        static Dictionary<string, Texture2D> resourceDict = new Dictionary<string, Texture2D>();
-        static Dictionary<string, Texture2D> paperdollDict = new Dictionary<string, Texture2D>();
-        static Dictionary<string, Texture2D> guiDict = new Dictionary<string, Texture2D>();
-        static Dictionary<string, Texture2D> miscDict = new Dictionary<string, Texture2D>();
+        public static List<GameTexture> AllTextures = new List<GameTexture>(); 
+        static Dictionary<string, GameTexture> tilesetDict = new Dictionary<string, GameTexture>();
+        static Dictionary<string, GameTexture> itemDict = new Dictionary<string, GameTexture>();
+        static Dictionary<string, GameTexture> entityDict = new Dictionary<string, GameTexture>();
+        static Dictionary<string, GameTexture> spellDict = new Dictionary<string, GameTexture>();
+        static Dictionary<string, GameTexture> animationDict = new Dictionary<string, GameTexture>();
+        static Dictionary<string, GameTexture> faceDict = new Dictionary<string, GameTexture>();
+        static Dictionary<string, GameTexture> imageDict = new Dictionary<string, GameTexture>();
+        static Dictionary<string, GameTexture> fogDict = new Dictionary<string, GameTexture>();
+        static Dictionary<string, GameTexture> resourceDict = new Dictionary<string, GameTexture>();
+        static Dictionary<string, GameTexture> paperdollDict = new Dictionary<string, GameTexture>();
+        static Dictionary<string, GameTexture> guiDict = new Dictionary<string, GameTexture>();
+        static Dictionary<string, GameTexture> miscDict = new Dictionary<string, GameTexture>();
         static Dictionary<string, Effect> shaderDict = new Dictionary<string, Effect>();
         static Dictionary<string, Song> musicDict = new Dictionary<string, Song>();
         static Dictionary<string, SoundEffect> soundDict = new Dictionary<string, SoundEffect>();
@@ -210,16 +212,13 @@ namespace Intersect_Editor.Classes.Core
             LoadMusic();
         }
 
-        private static Texture2D LoadTexture(string filename)
+        public static void Update()
         {
-            using (var fileStream = new FileStream(filename, FileMode.Open))
-            {
-                return Texture2D.FromStream(EditorGraphics.GetGraphicsDevice(), fileStream);
-            }
+            for (int i = 0; i < AllTextures.Count; i++) AllTextures[i].Update();
         }
 
         //Loading Game Resources
-        public static void LoadTextureGroup(string directory, Dictionary<string, Texture2D> dict)
+        public static void LoadTextureGroup(string directory, Dictionary<string, GameTexture> dict)
         {
             dict.Clear();
             if (!Directory.Exists("resources/" + directory)) { Directory.CreateDirectory("resources/" + directory); }
@@ -227,7 +226,7 @@ namespace Intersect_Editor.Classes.Core
             for (int i = 0; i < items.Length; i++)
             {
                 string filename = items[i].Replace("resources/" + directory + "\\", "").ToLower();
-                dict.Add(filename, LoadTexture("resources/" + directory + "/" + filename));
+                dict.Add(filename, new GameTexture("resources/" + directory + "/" + filename));
             }
         }
         private static void LoadTilesets()
@@ -284,7 +283,7 @@ namespace Intersect_Editor.Classes.Core
                 {
                     if (File.Exists("resources/tilesets/" + Globals.Tilesets[i]))
                     {
-                        tilesetDict.Add(Globals.Tilesets[i].ToLower(), LoadTexture("resources/tilesets/" + Globals.Tilesets[i]));
+                        tilesetDict.Add(Globals.Tilesets[i].ToLower(), new GameTexture("resources/tilesets/" + Globals.Tilesets[i]));
                     }
                 }
             }
@@ -382,40 +381,40 @@ namespace Intersect_Editor.Classes.Core
             switch (type)
             {
                 case TextureType.Tileset:
-                    if (tilesetDict.ContainsKey(name.ToLower())) return tilesetDict[name.ToLower()];
+                    if (tilesetDict.ContainsKey(name.ToLower())) return tilesetDict[name.ToLower()].GetTexture();
                     break;
                 case TextureType.Item:
-                    if (itemDict.ContainsKey(name.ToLower())) return itemDict[name.ToLower()];
+                    if (itemDict.ContainsKey(name.ToLower())) return itemDict[name.ToLower()].GetTexture();
                     break;
                 case TextureType.Entity:
-                    if (entityDict.ContainsKey(name.ToLower())) return entityDict[name.ToLower()];
+                    if (entityDict.ContainsKey(name.ToLower())) return entityDict[name.ToLower()].GetTexture();
                     break;
                 case TextureType.Spell:
-                    if (spellDict.ContainsKey(name.ToLower())) return spellDict[name.ToLower()];
+                    if (spellDict.ContainsKey(name.ToLower())) return spellDict[name.ToLower()].GetTexture();
                     break;
                 case TextureType.Animation:
-                    if (animationDict.ContainsKey(name.ToLower())) return animationDict[name.ToLower()];
+                    if (animationDict.ContainsKey(name.ToLower())) return animationDict[name.ToLower()].GetTexture();
                     break;
                 case TextureType.Face:
-                    if (faceDict.ContainsKey(name.ToLower())) return faceDict[name.ToLower()];
+                    if (faceDict.ContainsKey(name.ToLower())) return faceDict[name.ToLower()].GetTexture();
                     break;
                 case TextureType.Image:
-                    if (imageDict.ContainsKey(name.ToLower())) return imageDict[name.ToLower()];
+                    if (imageDict.ContainsKey(name.ToLower())) return imageDict[name.ToLower()].GetTexture();
                     break;
                 case TextureType.Fog:
-                    if (fogDict.ContainsKey(name.ToLower())) return fogDict[name.ToLower()];
+                    if (fogDict.ContainsKey(name.ToLower())) return fogDict[name.ToLower()].GetTexture();
                     break;
                 case TextureType.Resource:
-                    if (resourceDict.ContainsKey(name.ToLower())) return resourceDict[name.ToLower()];
+                    if (resourceDict.ContainsKey(name.ToLower())) return resourceDict[name.ToLower()].GetTexture();
                     break;
                 case TextureType.Paperdoll:
-                    if (paperdollDict.ContainsKey(name.ToLower())) return paperdollDict[name.ToLower()];
+                    if (paperdollDict.ContainsKey(name.ToLower())) return paperdollDict[name.ToLower()].GetTexture();
                     break;
                 case TextureType.Gui:
-                    if (guiDict.ContainsKey(name.ToLower())) return guiDict[name.ToLower()];
+                    if (guiDict.ContainsKey(name.ToLower())) return guiDict[name.ToLower()].GetTexture();
                     break;
                 case TextureType.Misc:
-                    if (miscDict.ContainsKey(name.ToLower())) return miscDict[name.ToLower()];
+                    if (miscDict.ContainsKey(name.ToLower())) return miscDict[name.ToLower()].GetTexture();
                     break;
             }
             return null;

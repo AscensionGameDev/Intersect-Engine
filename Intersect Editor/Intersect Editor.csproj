@@ -38,13 +38,14 @@
     <ApplicationIcon>IntersectLogo.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Classes\Core\Audio.cs" />
-    <Compile Include="Classes\Core\GameContentManager.cs" />
+    <Compile Include="Classes\Content\Audio.cs" />
+    <Compile Include="Classes\Content\GameTexture.cs" />
+    <Compile Include="Classes\Content\GameContentManager.cs" />
     <Compile Include="Classes\Core\Database.cs" />
     <Compile Include="Classes\Core\EditorGraphics.cs" />
     <Compile Include="Classes\Core\EditorLoop.cs" />
     <Compile Include="Classes\Core\Program.cs" />
-    <Compile Include="Classes\Core\Sounds.cs" />
+    <Compile Include="Classes\Content\Sounds.cs" />
     <Compile Include="Classes\Entities\EventStruct.cs" />
     <Compile Include="Classes\Game Objects\AnimationStruct.cs" />
     <Compile Include="Classes\Game Objects\ClassStruct.cs" />
