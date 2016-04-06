@@ -39,33 +39,101 @@ namespace Intersect_Client_MonoGame.Classes.SFML.Graphics
     public class MonoTexture : GameTexture
     {
         private Texture2D _tex;
+        private string _path = "";
+        private bool _loadError = false;
+        private int _width = -1;
+        private int _height = -1;
+        private long _lastAccessTime = 0;
+        private GraphicsDevice _graphicsDevice;
+
         public MonoTexture(GraphicsDevice graphicsDevice, string filename)
         {
-            using (var fileStream = new FileStream(filename, FileMode.Open))
+            _graphicsDevice = graphicsDevice;
+            _path = filename;
+        }
+
+        public void LoadTexture()
+        {
+            _loadError = true;
+            if (File.Exists(_path))
             {
-                _tex = Texture2D.FromStream(graphicsDevice, fileStream);
+                using (var fileStream = new FileStream(_path, FileMode.Open))
+                {
+                    _tex = Texture2D.FromStream(_graphicsDevice, fileStream);
+                    if (_tex != null)
+                    {
+                        _width = _tex.Width;
+                        _height = _tex.Height;
+                        _loadError = false;
+                    }
+                }
             }
         }
-        public override int GetHeight()
-        {
-            return _tex.Height;
-        }
 
-        public override Color GetPixel(int x1, int y1)
+        public void ResetAccessTime()
         {
-            Microsoft.Xna.Framework.Color[] pixel = new Microsoft.Xna.Framework.Color[1];
-            _tex.GetData(0, new Microsoft.Xna.Framework.Rectangle(x1, y1, 1, 1), pixel, 0, 1);
-            return new Color(pixel[0].A, pixel[0].R, pixel[0].G, pixel[0].B);
-        }
-
-        public override object GetTexture()
-        {
-            return _tex;
+            _lastAccessTime = Environment.TickCount + 15000;
         }
 
         public override int GetWidth()
         {
-            return _tex.Width;
+            ResetAccessTime();
+            if (_width == -1)
+            {
+                if (_tex == null) LoadTexture();
+                if (_loadError)
+                {
+                    _width = 0;
+                }
+            }
+            return _width;
+        }
+
+        public override int GetHeight()
+        {
+            ResetAccessTime();
+            if (_height == -1)
+            {
+                if (_tex == null) LoadTexture();
+                if (_loadError)
+                {
+                    _height = 0;
+                }
+            }
+            return _height;
+        }
+
+        public override object GetTexture()
+        {
+            ResetAccessTime();
+            if (_tex == null) LoadTexture();
+            return _tex;
+        }
+
+        public override Color GetPixel(int x1, int y1)
+        {
+            if (_tex == null) LoadTexture();
+            if (_loadError)
+            {
+                return Color.White;
+            }
+            else
+            {
+                Microsoft.Xna.Framework.Color[] pixel = new Microsoft.Xna.Framework.Color[1];
+                _tex.GetData(0, new Microsoft.Xna.Framework.Rectangle(x1, y1, 1, 1), pixel, 0, 1);
+                return new Color(pixel[0].A, pixel[0].R, pixel[0].G, pixel[0].B);
+            }
+        }
+
+        public void Update()
+        {
+            if (_tex != null)
+            {
+                if (_lastAccessTime < Environment.TickCount)
+                {
+                    _tex.Dispose();
+                }
+            }
         }
     }
 }

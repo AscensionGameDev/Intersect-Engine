@@ -66,6 +66,7 @@ namespace Intersect_Client_MonoGame.Classes.SFML.Graphics
         private GameRenderTexture _currentTarget = null;
         private FloatRect _currentSpriteView;
         RasterizerState _rasterizerState = new RasterizerState() { ScissorTestEnable = true };
+        private List<MonoTexture> AllTextures = new List<MonoTexture>(); 
 
 
         public MonoRenderer(GraphicsDeviceManager graphics, ContentManager contentManager, Game monoGame)
@@ -287,6 +288,10 @@ namespace Intersect_Client_MonoGame.Classes.SFML.Graphics
                 _fpsTimer = Environment.TickCount + 1000;
                 _gameWindow.Title = "Intersect MonoGame Dx -- FPS: " + _fps;
             }
+            for (int i = 0; i < AllTextures.Count; i++)
+            {
+                AllTextures[i].Update();
+            }
         }
 
         public override int GetFps()
@@ -350,7 +355,9 @@ namespace Intersect_Client_MonoGame.Classes.SFML.Graphics
 
         public override GameTexture LoadTexture(string filename)
         {
-            return new MonoTexture(_graphicsDevice,filename);
+            MonoTexture tex = new MonoTexture(_graphicsDevice, filename);
+            AllTextures.Add(tex);
+            return tex;
         }
 
         public override Pointf MeasureText(string text, GameFont gameFont, int fontSize)
