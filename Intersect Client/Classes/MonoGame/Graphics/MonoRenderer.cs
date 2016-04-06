@@ -46,6 +46,8 @@ namespace Intersect_Client_MonoGame.Classes.SFML.Graphics
 {
     public class MonoRenderer : GameRenderer
     {
+        private Game _game;
+        private GraphicsDeviceManager _graphics;
         private GraphicsDevice _graphicsDevice;
         private FloatRect _currentView;
         private ContentManager _contentManager;
@@ -66,48 +68,17 @@ namespace Intersect_Client_MonoGame.Classes.SFML.Graphics
         private GameRenderTexture _currentTarget = null;
         private FloatRect _currentSpriteView;
         RasterizerState _rasterizerState = new RasterizerState() { ScissorTestEnable = true };
-        private List<MonoTexture> AllTextures = new List<MonoTexture>(); 
+        private List<MonoTexture> AllTextures = new List<MonoTexture>();
+
+        private int centerScreenX = 0;
+        private int centerScreenY = 0;
 
 
         public MonoRenderer(GraphicsDeviceManager graphics, ContentManager contentManager, Game monoGame)
         {
+            _game = monoGame;
+            _graphics = graphics;
             _contentManager = contentManager;
-            if (_initialized) return;
-            if (Globals.Database.TargetResolution < 0 || Globals.Database.TargetResolution > GetValidVideoModes().Count)
-            {
-                Globals.Database.TargetResolution = 0;
-                Globals.Database.SavePreference("Resolution", Globals.Database.TargetResolution.ToString());
-            }
-            int resX = Convert.ToInt32(GetValidVideoModes()[Globals.Database.TargetResolution].Split("x".ToCharArray())[0]);
-            int resY = Convert.ToInt32(GetValidVideoModes()[Globals.Database.TargetResolution].Split("x".ToCharArray())[1]);
-            _screenWidth = resX;
-            _screenHeight = resY;
-            graphics.PreferredBackBufferWidth = resX;
-            graphics.PreferredBackBufferHeight = resY;
-            graphics.IsFullScreen = Globals.Database.FullScreen;
-            graphics.SynchronizeWithVerticalRetrace = (Globals.Database.TargetFps == 0);
-            graphics.ApplyChanges();
-
-            if (Globals.Database.TargetFps == 1)
-            {
-                monoGame.TargetElapsedTime = new TimeSpan(333333);
-            }
-            else if (Globals.Database.TargetFps == 2)
-            {
-                monoGame.TargetElapsedTime = new TimeSpan(333333/2);
-            }
-            else if (Globals.Database.TargetFps == 3)
-            {
-                monoGame.TargetElapsedTime = new TimeSpan(333333/3);
-            }
-            else if (Globals.Database.TargetFps == 4)
-            {
-                monoGame.TargetElapsedTime = new TimeSpan(333333/4);
-            }
-            else
-            {
-                monoGame.IsFixedTimeStep = false;
-            }
 
             _multiplyState = new BlendState();
             _multiplyState.ColorBlendFunction = BlendFunction.Add;
@@ -115,8 +86,42 @@ namespace Intersect_Client_MonoGame.Classes.SFML.Graphics
             _multiplyState.ColorDestinationBlend = Blend.Zero;
 
             _gameWindow = monoGame.Window;
+            centerScreenX = _gameWindow.ClientBounds.Center.X;
+            centerScreenY = _gameWindow.ClientBounds.Center.Y;
+        }
 
-            _initialized = true;
+        public void UpdateGraphicsState(int width, int height)
+        {
+            _screenWidth = width;
+            _screenHeight = height;
+            _graphics.PreferredBackBufferWidth = width;
+            _graphics.PreferredBackBufferHeight = height;
+            _graphics.IsFullScreen = Globals.Database.FullScreen;
+            _graphics.SynchronizeWithVerticalRetrace = (Globals.Database.TargetFps == 0);
+            _graphics.ApplyChanges();
+
+            if (Globals.Database.TargetFps == 1)
+            {
+                _game.TargetElapsedTime = new TimeSpan(333333);
+            }
+            else if (Globals.Database.TargetFps == 2)
+            {
+                _game.TargetElapsedTime = new TimeSpan(333333 / 2);
+            }
+            else if (Globals.Database.TargetFps == 3)
+            {
+                _game.TargetElapsedTime = new TimeSpan(333333 / 3);
+            }
+            else if (Globals.Database.TargetFps == 4)
+            {
+                _game.TargetElapsedTime = new TimeSpan(333333 / 4);
+            }
+            else
+            {
+                _game.IsFixedTimeStep = false;
+            }
+
+            _gameWindow.Position = new Microsoft.Xna.Framework.Point(centerScreenX - _screenWidth / 2, centerScreenY - _screenHeight / 2);
         }
 
         public void CreateWhiteTexture()
@@ -129,6 +134,10 @@ namespace Intersect_Client_MonoGame.Classes.SFML.Graphics
 
         public override bool Begin()
         {
+            if (_gameWindow.ClientBounds.Width != _screenWidth || _gameWindow.ClientBounds.Height != _screenHeight)
+            {
+                UpdateGraphicsState(_gameWindow.ClientBounds.Width, _gameWindow.ClientBounds.Height);
+            }
             StartSpritebatch(_currentView,GameBlendModes.Alpha,null,null,true,null);
             return true;
         }
@@ -334,7 +343,15 @@ namespace Intersect_Client_MonoGame.Classes.SFML.Graphics
 
         public override void Init()
         {
-            CreateWhiteTexture();
+            if (Globals.Database.TargetResolution < 0 || Globals.Database.TargetResolution > GetValidVideoModes().Count)
+            {
+                Globals.Database.TargetResolution = 0;
+                Globals.Database.SavePreference("Resolution", Globals.Database.TargetResolution.ToString());
+            }
+            int resX = Convert.ToInt32(GetValidVideoModes()[Globals.Database.TargetResolution].Split("x".ToCharArray())[0]);
+            int resY = Convert.ToInt32(GetValidVideoModes()[Globals.Database.TargetResolution].Split("x".ToCharArray())[1]);
+            UpdateGraphicsState(resX, resY);
+            if (_whiteTex == null) CreateWhiteTexture();
         }
 
         public void Init(GraphicsDevice graphicsDevice)

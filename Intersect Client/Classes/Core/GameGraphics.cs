@@ -48,8 +48,11 @@ namespace Intersect_Client.Classes.Core
         public static GameShader DefaultShader;
         private static GameContentManager contentManager;
 
+        //Resolution
+        private static int _oldWidth = 0;
+        private static int _oldHeight = 0;
+
         //Screen Values
-        public static bool MustReInit;
         public static GameFont GameFont;
         public static FloatRect CurrentView;
 
@@ -232,6 +235,13 @@ namespace Intersect_Client.Classes.Core
         {
             if (Renderer.Begin())
             {
+                if (Renderer.GetScreenWidth() != _oldWidth || Renderer.GetScreenHeight() != _oldHeight)
+                {
+                    Gui.DestroyGwen();
+                    Gui.InitGwen();
+                    _oldWidth = Renderer.GetScreenWidth();
+                    _oldHeight = Renderer.GetScreenHeight();
+                }
                 Renderer.Clear(Color.Black);
                 DrawCalls = 0;
                 MapsDrawn = 0;

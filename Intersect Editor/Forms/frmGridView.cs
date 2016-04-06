@@ -100,6 +100,7 @@ namespace Intersect_Editor.Forms
                 }
             }
             linkMapToolStripMenuItem.DropDownItems.Clear();
+            List<ToolStripButton> linkBtns = new List<ToolStripButton>();
             //Get a list of maps -- if they are not in this grid.
             for (int i = 0; i < Database.OrderedMaps.Count; i++)
             {
@@ -108,9 +109,10 @@ namespace Intersect_Editor.Forms
                     var item = new ToolStripButton(Database.OrderedMaps[i].MapNum + ". " + Database.OrderedMaps[i].Name);
                     item.Tag = Database.OrderedMaps[i].MapNum;
                     item.Click += LinkMapItem_Click;
-                    linkMapToolStripMenuItem.DropDownItems.Add(item);
+                    linkBtns.Add(item);
                 }
             }
+            linkMapToolStripMenuItem.DropDownItems.AddRange(linkBtns.ToArray());
             defaultSize = size;
             currentSize = 0;
             cmbZoom_SelectedIndexChanged(null, null);

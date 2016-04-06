@@ -286,20 +286,21 @@ namespace Intersect_Client.Classes.UI
         }
         void ApplyBtn_Clicked(Base sender, ClickedEventArgs arguments)
         {
+            bool shouldReset = false;
             var resolution = _resolutionList.SelectedItem;
             var myModes = GameGraphics.Renderer.GetValidVideoModes();
             for (var i = 0; i < myModes.Count(); i++)
             {
                 if (resolution.Text == myModes[i])
                 {
+                    if (Globals.Database.TargetResolution != i) shouldReset = true;
                     Globals.Database.TargetResolution = i;
-                    GameGraphics.MustReInit = true;
                 }
             }
             if (Globals.Database.FullScreen != _fullscreen.IsChecked)
             {
                 Globals.Database.FullScreen = _fullscreen.IsChecked;
-                GameGraphics.MustReInit = true;
+                shouldReset = true;
             }
             var newFps = 0;
             switch (_fpsList.SelectedItem.Text)
@@ -326,13 +327,14 @@ namespace Intersect_Client.Classes.UI
             }
             if (newFps != Globals.Database.TargetFps)
             {
+                shouldReset = true;
                 Globals.Database.TargetFps = newFps;
-                GameGraphics.MustReInit = true;
             }
             Globals.Database.MusicVolume = (int)_musicSlider.Value;
             Globals.Database.SoundVolume = (int)_soundSlider.Value;
             GameAudio.UpdateGlobalVolume();
             Globals.Database.SavePreferences();
+            if (shouldReset) GameGraphics.Renderer.Init();
             if (Globals.GameState == Enums.GameStates.InGame)
             {
                 this.Hide();
