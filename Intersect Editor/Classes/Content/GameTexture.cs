@@ -89,6 +89,7 @@ namespace Intersect_Editor.Classes.Content
                 if (_lastAccessTime < Environment.TickCount)
                 {
                     _tex.Dispose();
+                    _tex = null;
                 }
             }
         }

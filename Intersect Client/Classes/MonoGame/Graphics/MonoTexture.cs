@@ -132,6 +132,7 @@ namespace Intersect_Client_MonoGame.Classes.SFML.Graphics
                 if (_lastAccessTime < Environment.TickCount)
                 {
                     _tex.Dispose();
+                    _tex = null;
                 }
             }
         }
