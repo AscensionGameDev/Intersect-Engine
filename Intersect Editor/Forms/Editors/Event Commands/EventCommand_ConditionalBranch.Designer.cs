@@ -66,6 +66,9 @@
             this.cmbItem = new System.Windows.Forms.ComboBox();
             this.label8 = new System.Windows.Forms.Label();
             this.lblItemQuantity = new System.Windows.Forms.Label();
+            this.grpPowerIs = new System.Windows.Forms.GroupBox();
+            this.cmbPower = new System.Windows.Forms.ComboBox();
+            this.label15 = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             this.grpPlayerVariable.SuspendLayout();
             this.grpSwitch.SuspendLayout();
@@ -74,10 +77,12 @@
             this.grpClass.SuspendLayout();
             this.grpSpell.SuspendLayout();
             this.grpHasItem.SuspendLayout();
+            this.grpPowerIs.SuspendLayout();
             this.SuspendLayout();
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.grpPowerIs);
             this.groupBox1.Controls.Add(this.btnSave);
             this.groupBox1.Controls.Add(this.grpPlayerVariable);
             this.groupBox1.Controls.Add(this.grpSwitch);
@@ -245,7 +250,8 @@
             "Class is...",
             "Knows spell...",
             "Level is....",
-            "Self Switch is...."});
+            "Self Switch is....",
+            "Power level is...."});
             this.cmbConditionType.Location = new System.Drawing.Point(88, 13);
             this.cmbConditionType.Name = "cmbConditionType";
             this.cmbConditionType.Size = new System.Drawing.Size(157, 21);
@@ -514,6 +520,38 @@
             this.lblItemQuantity.TabIndex = 0;
             this.lblItemQuantity.Text = "Has at least: 1";
             // 
+            // grpPowerIs
+            // 
+            this.grpPowerIs.Controls.Add(this.cmbPower);
+            this.grpPowerIs.Controls.Add(this.label15);
+            this.grpPowerIs.Location = new System.Drawing.Point(9, 41);
+            this.grpPowerIs.Name = "grpPowerIs";
+            this.grpPowerIs.Size = new System.Drawing.Size(236, 51);
+            this.grpPowerIs.TabIndex = 25;
+            this.grpPowerIs.TabStop = false;
+            this.grpPowerIs.Text = "Power Is...";
+            // 
+            // cmbPower
+            // 
+            this.cmbPower.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbPower.FormattingEnabled = true;
+            this.cmbPower.Items.AddRange(new object[] {
+            "Mod or Admin",
+            "Only Admin"});
+            this.cmbPower.Location = new System.Drawing.Point(79, 17);
+            this.cmbPower.Name = "cmbPower";
+            this.cmbPower.Size = new System.Drawing.Size(141, 21);
+            this.cmbPower.TabIndex = 1;
+            // 
+            // label15
+            // 
+            this.label15.AutoSize = true;
+            this.label15.Location = new System.Drawing.Point(7, 20);
+            this.label15.Name = "label15";
+            this.label15.Size = new System.Drawing.Size(40, 13);
+            this.label15.TabIndex = 0;
+            this.label15.Text = "Power:";
+            // 
             // EventCommand_ConditionalBranch
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -538,6 +576,8 @@
             this.grpSpell.PerformLayout();
             this.grpHasItem.ResumeLayout(false);
             this.grpHasItem.PerformLayout();
+            this.grpPowerIs.ResumeLayout(false);
+            this.grpPowerIs.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -582,5 +622,8 @@
         private System.Windows.Forms.Label label11;
         private System.Windows.Forms.ComboBox cmbSelfSwitch;
         private System.Windows.Forms.Label label12;
+        private System.Windows.Forms.GroupBox grpPowerIs;
+        private System.Windows.Forms.ComboBox cmbPower;
+        private System.Windows.Forms.Label label15;
     }
 }

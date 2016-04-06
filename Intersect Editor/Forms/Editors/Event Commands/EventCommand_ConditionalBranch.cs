@@ -85,6 +85,9 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
                     cmbSelfSwitch.SelectedIndex = _myCommand.Ints[1];
                     cmbSelfSwitchVal.SelectedIndex = _myCommand.Ints[2];
                     break;
+                case 9: //Power Is
+                    cmbPower.SelectedIndex = _myCommand.Ints[1];
+                    break;
             }
         }
 
@@ -97,6 +100,7 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             grpClass.Hide();
             grpLevel.Hide();
             grpSelfSwitch.Hide();
+            grpPowerIs.Hide();
             switch (cmbConditionType.SelectedIndex)
             {
                 case 0: //Player Switch
@@ -184,6 +188,10 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
                     cmbSelfSwitch.SelectedIndex = 0;
                     cmbSelfSwitchVal.SelectedIndex = 0;
                     break;
+                case 9: //Power is
+                    grpPowerIs.Show();
+                    cmbPower.SelectedIndex = 0;
+                    break;
             }
         }
 
@@ -255,6 +263,9 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
                 case 8: //Self Switch
                     _myCommand.Ints[1] = cmbSelfSwitch.SelectedIndex;
                     _myCommand.Ints[2] = cmbSelfSwitchVal.SelectedIndex;
+                    break;
+                case 9: //Power is
+                    _myCommand.Ints[1] = cmbPower.SelectedIndex;
                     break;
             }
             _eventEditor.FinishCommandEdit();

@@ -323,6 +323,9 @@ namespace Intersect_Server.Classes.Entities
                             return true;
                     }
                     return false;
+                case 9: //Power Is
+                    if (MyClient.Power > conditionCommand.Ints[1]) return true;
+                    return false;
             }
             return false;
         }

@@ -852,6 +852,18 @@ namespace Intersect_Editor.Forms
                     return output;
                 case 8: //Self Switch
                     return "Self Switch " + (char)('A' + command.Ints[1]) + " is " + Convert.ToBoolean(command.Ints[2]);
+                case 9: //Power is
+                    output = "Player's Power is";
+                    switch (command.Ints[1])
+                    {
+                        case 0:
+                            output += " Mod or Admin";
+                            break;
+                        case 1:
+                            output += " Admin";
+                            break;
+                    }
+                    return output;
             }
             return "";
         }
