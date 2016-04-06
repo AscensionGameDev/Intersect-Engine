@@ -51,6 +51,7 @@ namespace Intersect_Editor.Forms.Controls
                 }
                 var offsetY = Convert.ToInt32(txtLightOffsetY.Text);
                 _editingLight.OffsetY = offsetY;
+                Classes.EditorGraphics.TilePreviewUpdated = true;
             }
             catch (Exception)
             {

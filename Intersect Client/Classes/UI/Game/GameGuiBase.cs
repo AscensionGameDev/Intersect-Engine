@@ -150,8 +150,7 @@ namespace Intersect_Client.Classes.UI.Game
             Hotbar.Update();
             _debugMenu.Update();
             if (_playerBox != null) { _playerBox.Update(); }
-            GameCanvas.RenderCanvas();
-            return;
+
             //Admin window update
             if (_shouldOpenAdminWindow)
             {

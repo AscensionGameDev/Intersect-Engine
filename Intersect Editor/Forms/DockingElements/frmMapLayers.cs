@@ -367,31 +367,26 @@ namespace Intersect_Editor.Forms
             {
                 Globals.CurrentLayer = cmbMapLayer.SelectedIndex;
                 EditorGraphics.TilePreviewUpdated = true;
-                Globals.SelectionType = (int)Enums.SelectionTypes.AllLayers;
             }
             else if (tabControl.SelectedIndex == tabControl.TabPages.IndexOf(tabAttributes))
             {
                 Globals.CurrentLayer = Options.LayerCount;
                 EditorGraphics.TilePreviewUpdated = true;
-                Globals.SelectionType = (int)Enums.SelectionTypes.AllLayers;
             }
             else if (tabControl.SelectedIndex == tabControl.TabPages.IndexOf(tabEvents))
             {
                 Globals.CurrentLayer = Options.LayerCount + 2;
                 EditorGraphics.TilePreviewUpdated = true;
-                Globals.SelectionType = (int)Enums.SelectionTypes.CurrentLayer;
             }
             else if (tabControl.SelectedIndex == tabControl.TabPages.IndexOf(tabLights))
             {
                 Globals.CurrentLayer = Options.LayerCount + 1;
                 EditorGraphics.TilePreviewUpdated = true;
-                Globals.SelectionType = (int)Enums.SelectionTypes.CurrentLayer;
             }
             else if (tabControl.SelectedIndex == tabControl.TabPages.IndexOf(tabNPCs))
             {
                 Globals.CurrentLayer = Options.LayerCount + 3;
                 EditorGraphics.TilePreviewUpdated = true;
-                Globals.SelectionType = (int)Enums.SelectionTypes.CurrentLayer;
                 // Update the list incase npcs have been modified since form load.
                 cmbNpc.Items.Clear();
                 cmbNpc.Items.Add("None");

@@ -1015,7 +1015,7 @@ namespace Intersect_Client.Classes.Entities
                     }
                     else
                     {
-                        if (en.Value.CurrentMap == tmpMap && en.Value.CurrentX == tmpX && en.Value.CurrentY == tmpY && !NoClip)
+                        if (en.Value.CurrentMap == tmpMap && en.Value.CurrentX == tmpX && en.Value.CurrentY == tmpY && en.Value.CurrentZ == CurrentZ && !NoClip)
                         {
                             if (en.Value.GetType() != typeof(Projectile)) return en.Key;
                         }
@@ -1026,7 +1026,7 @@ namespace Intersect_Client.Classes.Entities
                     foreach (var en in Globals.GameMaps[tmpMap].LocalEntities)
                     {
                         if (en.Value == null) continue;
-                        if (en.Value.CurrentMap == tmpMap && en.Value.CurrentX == tmpX && en.Value.CurrentY == tmpY && en.Value.Passable == 0 && !NoClip)
+                        if (en.Value.CurrentMap == tmpMap && en.Value.CurrentX == tmpX && en.Value.CurrentY == tmpY && en.Value.CurrentZ == CurrentZ && en.Value.Passable == 0 && !NoClip)
                         {
                             return -4;
                         }

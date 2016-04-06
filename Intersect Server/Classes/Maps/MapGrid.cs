@@ -23,6 +23,7 @@
 using System;
 using System.Collections.Generic;
 using Intersect_Server.Classes.Maps;
+using Intersect_Server.Classes.Misc;
 
 namespace Intersect_Server.Classes
 {
@@ -32,8 +33,8 @@ namespace Intersect_Server.Classes
 		public List<int> MyMaps = new List<int>();
 		private int[] _tmpMaps;
 		private readonly int _myIndex;
-        private System.Drawing.Point _topLeft = new System.Drawing.Point(0, 0);
-        private System.Drawing.Point _botRight = new System.Drawing.Point(0, 0);
+        private Point _topLeft = new Point(0, 0);
+        private Point _botRight = new Point(0, 0);
         public long Width;
         public long Height;
         public long XMin;

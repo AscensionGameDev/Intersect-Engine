@@ -592,65 +592,70 @@ namespace Intersect_Editor.Classes
                 }
 
             }
-            switch (Globals.CurrentLayer)
+            if ((!HideTilePreview || Globals.Dragging))
             {
-                case Options.LayerCount:
-                    //Draw attributes
-                    for (int x = 0; x < Options.MapWidth; x++)
-                    {
-                        for (int y = 0; y < Options.MapHeight; y++)
+                tmpMap = TilePreviewStruct;
+                switch (Globals.CurrentLayer)
+                {
+                    case Options.LayerCount:
+                        //Draw attributes
+                        for (int x = 0; x < Options.MapWidth; x++)
                         {
-                            if (tmpMap.Attributes[x, y].value > 0)
+                            for (int y = 0; y < Options.MapHeight; y++)
                             {
-                                DrawTexture(GetTexture(TextureType.Misc,"attributes.png"),x * Options.TileWidth + Options.TileWidth,
-                                y * Options.TileHeight + Options.TileHeight, 0, (tmpMap.Attributes[x, y].value - 1) * Options.TileHeight, Options.TileWidth,
-                                Options.TileHeight, null);
+                                if (tmpMap.Attributes[x, y].value > 0)
+                                {
+                                    DrawTexture(GetTexture(TextureType.Misc, "attributes.png"), new RectangleF(0,(tmpMap.Attributes[x, y].value - 1) * Options.TileHeight, Options.TileWidth,Options.TileHeight),new RectangleF(x * Options.TileWidth + Options.TileWidth,
+                                        y * Options.TileHeight + Options.TileHeight,Options.TileWidth,Options.TileHeight),Color.FromArgb(150,255,255,255), null);
+                                }
+                            }
+
+                        }
+                        break;
+                    case Options.LayerCount + 1:
+
+                        break;
+                    case Options.LayerCount + 2:
+                        for (var x = 0; x < Options.MapWidth; x++)
+                        {
+                            for (var y = 0; y < Options.MapHeight; y++)
+                            {
+                                if (tmpMap.FindEventAt(x, y) == null) continue;
+                                DrawTexture(GetTexture(TextureType.Misc, "eventicon.png"),
+                                    x*Options.TileWidth + Options.TileWidth,
+                                    y*Options.TileHeight + Options.TileHeight, 0, 0, Options.TileWidth,
+                                    Options.TileHeight, null);
+                            }
+
+                        }
+                        break;
+                    case Options.LayerCount + 3:
+                        for (int i = 0; i < tmpMap.Spawns.Count; i++)
+                        {
+                            if (tmpMap.Spawns[i].X >= 0 && tmpMap.Spawns[i].Y >= 0)
+                            {
+                                DrawTexture(GetTexture(TextureType.Misc, "spawnicon.png"),
+                                    tmpMap.Spawns[i].X*Options.TileWidth + Options.TileWidth,
+                                    tmpMap.Spawns[i].Y*Options.TileHeight + Options.TileHeight, 0, 0, Options.TileWidth,
+                                    Options.TileHeight, null);
                             }
                         }
-
-                    }
-                    break;
-                case Options.LayerCount + 1:
-
-                    break;
-                case Options.LayerCount + 2:
-                    for (var x = 0; x < Options.MapWidth; x++)
-                    {
-                        for (var y = 0; y < Options.MapHeight; y++)
-                        {
-                            if (tmpMap.FindEventAt(x, y) == null) continue;
-                            DrawTexture(GetTexture(TextureType.Misc, "eventicon.png"), x * Options.TileWidth + Options.TileWidth,
-                                y * Options.TileHeight + Options.TileHeight, 0, 0, Options.TileWidth,
-                                Options.TileHeight, null);
-                        }
-
-                    }
-                    break;
-                case Options.LayerCount + 3:
-                    for (int i = 0; i < tmpMap.Spawns.Count; i++)
-                    {
-                        if (tmpMap.Spawns[i].X >= 0 && tmpMap.Spawns[i].Y >= 0)
-                        {
-                            DrawTexture(GetTexture(TextureType.Misc, "spawnicon.png"), tmpMap.Spawns[i].X*Options.TileWidth + Options.TileWidth,
-                                tmpMap.Spawns[i].Y*Options.TileHeight + Options.TileHeight, 0, 0, Options.TileWidth,
-                                Options.TileHeight, null);
-                        }
-                    }
-                    break;
-                default:
-                    break;
+                        break;
+                    default:
+                        break;
+                }
             }
             if (Globals.CurrentTool == (int)Enums.EdittingTool.Selection && Globals.Dragging)
             {
                 DrawBoxOutline(Globals.CurTileX * Options.TileWidth + Options.TileWidth, Globals.CurTileY * Options.TileHeight + Options.TileHeight,
                         Options.TileWidth, Options.TileHeight,
-                    Color.Blue, null);
+                    Color.White, null);
             }
-            else if (Globals.CurrentTool == (int)Enums.EdittingTool.Rectangle || Globals.CurrentTool == (int)Enums.EdittingTool.Selection)
+            if (Globals.CurrentTool == (int)Enums.EdittingTool.Rectangle || Globals.CurrentTool == (int)Enums.EdittingTool.Selection)
             {
                 DrawBoxOutline((selX + dragxoffset) * Options.TileWidth + Options.TileWidth,
                         (selY + dragyoffset) * Options.TileHeight + Options.TileHeight, (selW + 1) * Options.TileWidth, (selH + 1) * Options.TileHeight,
-                    Color.White, null);
+                    Color.Blue, null);
             }
             else
             {

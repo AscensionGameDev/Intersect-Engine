@@ -35,6 +35,7 @@ namespace Intersect_Client.Classes.Entities
         public static Entity AddPlayer(int index)
         {
             var i = index;
+            Globals.EntitiesToDispose.Remove(index);
             if (Globals.Entities.ContainsKey(i)) {return Globals.Entities[index];}
             Globals.Entities.Add(i,new Player {CurrentMap = 0, MyIndex = i});;
             if (index == Globals.MyIndex)
@@ -48,6 +49,7 @@ namespace Intersect_Client.Classes.Entities
         public static Entity AddGlobalEntity(int index)
         {
             var i = index;
+            Globals.EntitiesToDispose.Remove(index);
             if (Globals.Entities.ContainsKey(i)) { return Globals.Entities[index]; }
             Globals.Entities.Add(i,new Entity());
             Globals.Entities[i].MyIndex = i;
@@ -59,6 +61,8 @@ namespace Intersect_Client.Classes.Entities
             var i = index;
             if (Globals.GameMaps.ContainsKey(mapNum))
             {
+                //Make sure we are not about to dispose of this entity
+                Globals.GameMaps[mapNum].LocalEntitiesToDispose.Remove(i);
                 if (Globals.GameMaps[mapNum].LocalEntities.ContainsKey(i))
                 {
                     return Globals.GameMaps[mapNum].LocalEntities[index];
@@ -75,6 +79,7 @@ namespace Intersect_Client.Classes.Entities
         public static Entity AddResource(int index)
         {
             var i = index;
+            Globals.EntitiesToDispose.Remove(index);
             if (Globals.Entities.ContainsKey(i)) { return Globals.Entities[index]; }
             Globals.Entities.Add(i,new Resource());
             return Globals.Entities[i];
@@ -83,6 +88,7 @@ namespace Intersect_Client.Classes.Entities
         public static Entity AddProjectile(int index)
         {
             var i = index;
+            Globals.EntitiesToDispose.Remove(index);
             if (Globals.Entities.ContainsKey(i)) { return Globals.Entities[index]; }
             Globals.Entities.Add(i, new Projectile());
             return Globals.Entities[i];

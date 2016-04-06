@@ -77,7 +77,6 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Data" />
-    <Reference Include="System.Drawing" />
     <Reference Include="System.XML" />
     <Reference Include="websocket-sharp">
       <HintPath>.\websocket-sharp.dll</HintPath>
@@ -103,7 +102,9 @@
     <Compile Include="Classes\Maps\MapHelper.cs" />
     <Compile Include="Classes\Maps\MapList.cs" />
     <Compile Include="Classes\Maps\TileHelper.cs" />
+    <Compile Include="Classes\Misc\Color.cs" />
     <Compile Include="Classes\Misc\Pathfinder.cs" />
+    <Compile Include="Classes\Misc\Point.cs" />
     <Compile Include="Classes\Networking\GameSocket.cs" />
     <Compile Include="Classes\Networking\NetSocket.cs" />
     <Compile Include="Classes\Networking\NetSocketServer.cs" />

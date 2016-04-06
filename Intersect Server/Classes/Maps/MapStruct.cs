@@ -21,10 +21,10 @@
 */
 using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.IO;
 using Intersect_Server.Classes.Entities;
 using Intersect_Server.Classes.General;
+using Intersect_Server.Classes.Misc;
 
 namespace Intersect_Server.Classes
 {
@@ -543,7 +543,7 @@ namespace Intersect_Server.Classes
                 {
                     X = Globals.Rand.Next(1, Options.MapWidth);
                     Y = Globals.Rand.Next(1, Options.MapHeight);
-                    if (Attributes[X, Y].value == (int)Enums.MapAttributes.Walkable)
+                    if (Attributes[X,Y] == null || Attributes[X, Y].value == (int)Enums.MapAttributes.Walkable)
                     {
                         break;
                     }
@@ -883,7 +883,7 @@ namespace Intersect_Server.Classes
         public byte Intensity = 255;
         public int Size = 0;
         public float Expand = 0f;
-        public System.Drawing.Color Color = System.Drawing.Color.White;
+        public Color Color = Color.White;
 
         public Light()
         {
@@ -905,7 +905,7 @@ namespace Intersect_Server.Classes
             Intensity = copy.Intensity;
             Size = copy.Size;
             Expand = copy.Expand;
-            Color = System.Drawing.Color.FromArgb(copy.Color.R, copy.Color.G, copy.Color.B);
+            Color = Color.FromArgb(copy.Color.R, copy.Color.G, copy.Color.B);
         }
         public Light(ByteBuffer myBuffer)
         {
@@ -916,7 +916,7 @@ namespace Intersect_Server.Classes
             Intensity = myBuffer.ReadByte();
             Size = myBuffer.ReadInteger();
             Expand = (float)myBuffer.ReadDouble();
-            Color = System.Drawing.Color.FromArgb(myBuffer.ReadByte(), myBuffer.ReadByte(), myBuffer.ReadByte());
+            Color = Color.FromArgb(myBuffer.ReadByte(), myBuffer.ReadByte(), myBuffer.ReadByte());
 
         }
         public byte[] LightData()

@@ -66,17 +66,6 @@ namespace Intersect_Editor.Classes.Core
         static Dictionary<string, Song> musicDict = new Dictionary<string, Song>();
         static Dictionary<string, SoundEffect> soundDict = new Dictionary<string, SoundEffect>();
 
-        //Basic Editor Textures
-        private static Texture2D transparentTileTex;
-        //Texture for attributes
-        private static Texture2D attributesTex;
-        //Texture for events
-        private static Texture2D eventIconTex;
-        //Single tile texture for light placement
-        private static Texture2D lightIconTex;
-        //Texture for NPC Spawns
-        private static Texture2D spawnIconTex;
-
         public enum TextureType
         {
             Tileset = 0,
