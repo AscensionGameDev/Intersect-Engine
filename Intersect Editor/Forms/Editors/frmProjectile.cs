@@ -74,10 +74,9 @@ namespace Intersect_Editor.Classes
         {
             _editorIndex = lstProjectiles.SelectedIndex;
             txtName.Text = Globals.GameProjectiles[_editorIndex].Name;
-            scrlAnimation.Value = Globals.GameProjectiles[_editorIndex].Animation;
             scrlSpeed.Value = Globals.GameProjectiles[_editorIndex].Speed;
             scrlSpawn.Value = Globals.GameProjectiles[_editorIndex].Delay;
-            scrlQuantity.Value = Globals.GameProjectiles[_editorIndex].Quantity;
+            scrlAmount.Value = Globals.GameProjectiles[_editorIndex].Quantity;
             scrlRange.Value = Globals.GameProjectiles[_editorIndex].Range;
             scrlSpell.Value = Globals.GameProjectiles[_editorIndex].Spell;
             chkIgnoreMapBlocks.Checked = Globals.GameProjectiles[_editorIndex].IgnoreMapBlocks;
@@ -85,7 +84,7 @@ namespace Intersect_Editor.Classes
             chkIgnoreInactiveResources.Checked = Globals.GameProjectiles[_editorIndex].IgnoreExhaustedResources;
             chkIgnoreZDimensionBlocks.Checked = Globals.GameProjectiles[_editorIndex].IgnoreZDimension;
             chkHoming.Checked = Globals.GameProjectiles[_editorIndex].Homing;
-            chkRotation.Checked = Globals.GameProjectiles[_editorIndex].AutoRotate;
+            chkGrapple.Checked = Globals.GameProjectiles[_editorIndex].GrappleHook;
 
             if (scrlAnimation.Value == -1)
             {
@@ -105,11 +104,79 @@ namespace Intersect_Editor.Classes
             }
             lblSpeed.Text = "Speed: " + scrlSpeed.Value + "ms";
             lblSpawn.Text = "Spawn Delay: " + scrlSpawn.Value + "ms";
-            lblQuantity.Text = "Quantity: " + scrlQuantity.Value;
+            lblAmount.Text = "Quantity: " + scrlAmount.Value;
             lblRange.Text = "Range: " + scrlRange.Value;
+
+            updateAnimationData(0);
+            lstAnimations.SelectedIndex = 0;
             
             Render();
             _changed[_editorIndex] = true;
+        }
+
+        private void updateAnimationData(int index)
+        {
+            scrlAnimation.Value = Globals.GameProjectiles[_editorIndex].Animations[index].Animation;
+            scrlSpawnRange.Value = Globals.GameProjectiles[_editorIndex].Animations[index].SpawnRange;
+            chkRotation.Checked = Globals.GameProjectiles[_editorIndex].Animations[index].AutoRotate;
+            updateAnimations(true);
+        }
+
+        private void updateAnimations(bool SaveIndex = true)
+        {
+            int n = 1;
+            int selectedIndex = 0;
+
+            // if there are no animations, add one by default.
+            if (Globals.GameProjectiles[_editorIndex].Animations.Count == 0)
+            {
+                Globals.GameProjectiles[_editorIndex].Animations.Add(new ProjectileAnimation(-1, Globals.GameProjectiles[_editorIndex].Quantity, false));
+            }
+
+            //Update the spawn range maximum
+            if (scrlAmount.Value < scrlSpawnRange.Value) { scrlSpawnRange.Value = scrlAmount.Value; }
+            scrlSpawnRange.Maximum = scrlAmount.Value;
+
+            //Save the index
+            if (SaveIndex == true) { selectedIndex = lstAnimations.SelectedIndex; }
+
+            // Add the animations to the list
+            lstAnimations.Items.Clear();
+            for (int i = 0; i < Globals.GameProjectiles[_editorIndex].Animations.Count; i++)
+            {
+                if (Globals.GameProjectiles[_editorIndex].Animations[i].Animation != -1)
+                {
+                    lstAnimations.Items.Add("[Spawn Range: " + n + " - " + Globals.GameProjectiles[_editorIndex].Animations[i].SpawnRange +
+                        "] Animation: " + (Globals.GameProjectiles[_editorIndex].Animations[i].Animation + 1) + ". " +
+                        Globals.GameAnimations[Globals.GameProjectiles[_editorIndex].Animations[i].Animation].Name);
+                }
+                else
+                {
+                    lstAnimations.Items.Add("[Spawn Range: " + n + " - " + Globals.GameProjectiles[_editorIndex].Animations[i].SpawnRange + "] Animation: None");
+                }
+                n = Globals.GameProjectiles[_editorIndex].Animations[i].SpawnRange + 1;
+            }
+            lstAnimations.SelectedIndex = selectedIndex;
+            if (lstAnimations.SelectedIndex < 0) { lstAnimations.SelectedIndex = 0; }
+
+            if (scrlAnimation.Value == -1)
+            {
+                lblAnimation.Text = "Animation: None";
+            }
+            else
+            {
+                lblAnimation.Text = "Animation: " + (scrlAnimation.Value + 1) + ". " + Globals.GameAnimations[scrlAnimation.Value].Name;
+            }
+
+            if (lstAnimations.SelectedIndex > 0)
+            {
+                lblSpawnRange.Text = "Spawn Range: " + (Globals.GameProjectiles[_editorIndex].Animations[lstAnimations.SelectedIndex - 1].SpawnRange + 1) +
+                    " - " + Globals.GameProjectiles[_editorIndex].Animations[lstAnimations.SelectedIndex].SpawnRange;
+            }
+            else
+            {
+                lblSpawnRange.Text = "Spawn Range: 1 - " + Globals.GameProjectiles[_editorIndex].Animations[lstAnimations.SelectedIndex].SpawnRange;
+            }
         }
 
         private void Render()
@@ -245,15 +312,8 @@ namespace Intersect_Editor.Classes
 
         private void scrlAnimation_Scroll(object sender, ScrollEventArgs e)
         {
-            if (scrlAnimation.Value == -1)
-            {
-                lblAnimation.Text = "Animation: None";
-            }
-            else
-            {
-                lblAnimation.Text = "Animation: " + (scrlAnimation.Value + 1) + ".  " + Globals.GameAnimations[scrlAnimation.Value].Name;
-            }
-            Globals.GameProjectiles[_editorIndex].Animation = scrlAnimation.Value;
+            Globals.GameProjectiles[_editorIndex].Animations[lstAnimations.SelectedIndex].Animation = scrlAnimation.Value;
+            updateAnimations();
         }
 
         private void scrlSpeed_Scroll(object sender, ScrollEventArgs e)
@@ -266,12 +326,6 @@ namespace Intersect_Editor.Classes
         {
             lblSpawn.Text = "Spawn Delay: " + scrlSpawn.Value + "ms";
             Globals.GameProjectiles[_editorIndex].Delay = scrlSpawn.Value;
-        }
-
-        private void scrlQuantity_Scroll(object sender, ScrollEventArgs e)
-        {
-            lblQuantity.Text = "Quantity: " + scrlQuantity.Value;
-            Globals.GameProjectiles[_editorIndex].Quantity = scrlQuantity.Value;
         }
 
         private void scrlRange_Scroll(object sender, ScrollEventArgs e)
@@ -287,7 +341,7 @@ namespace Intersect_Editor.Classes
 
         private void chkRotation_CheckedChanged(object sender, EventArgs e)
         {
-            Globals.GameProjectiles[_editorIndex].AutoRotate = chkRotation.Checked;
+            Globals.GameProjectiles[_editorIndex].Animations[lstAnimations.SelectedIndex].AutoRotate = chkRotation.Checked;
         }
 
         private void picSpawns_MouseDown(object sender, MouseEventArgs e)
@@ -378,6 +432,52 @@ namespace Intersect_Editor.Classes
         private void chkIgnoreZDimensionBlocks_CheckedChanged(object sender, EventArgs e)
         {
             Globals.GameProjectiles[_editorIndex].IgnoreZDimension = chkIgnoreZDimensionBlocks.Checked;
+        }
+
+        private void chkGrapple_CheckedChanged(object sender, EventArgs e)
+        {
+            Globals.GameProjectiles[_editorIndex].GrappleHook = chkGrapple.Checked;
+        }
+
+        private void btnAdd_Click(object sender, EventArgs e)
+        {
+            //Clone the previous animation to save time, set the end point to always be the quantity of spawns.
+            Globals.GameProjectiles[_editorIndex].Animations.Add(
+                new ProjectileAnimation(Globals.GameProjectiles[_editorIndex].Animations[Globals.GameProjectiles[_editorIndex].Animations.Count - 1].Animation,
+                Globals.GameProjectiles[_editorIndex].Quantity,
+                Globals.GameProjectiles[_editorIndex].Animations[Globals.GameProjectiles[_editorIndex].Animations.Count - 1].AutoRotate));
+            updateAnimations();
+        }
+
+        private void btnRemove_Click(object sender, EventArgs e)
+        {
+            if (Globals.GameProjectiles[_editorIndex].Animations.Count > 1)
+            {
+                Globals.GameProjectiles[_editorIndex].Animations.RemoveAt(Globals.GameProjectiles[_editorIndex].Animations.Count - 1);
+                lstAnimations.SelectedIndex = 0;
+                updateAnimations(false);
+            }
+        }
+
+        private void scrlSpawnRange_Scroll(object sender, ScrollEventArgs e)
+        {
+            Globals.GameProjectiles[_editorIndex].Animations[lstAnimations.SelectedIndex].SpawnRange = scrlSpawnRange.Value;
+            updateAnimations();
+        }
+
+        private void lstAnimations_Click(object sender, EventArgs e)
+        {
+            if (lstAnimations.SelectedIndex > -1)
+            {
+                updateAnimationData(lstAnimations.SelectedIndex);
+            }
+        }
+
+        private void scrlAmount_Scroll(object sender, ScrollEventArgs e)
+        {
+            lblAmount.Text = "Quantity: " + scrlAmount.Value;
+            Globals.GameProjectiles[_editorIndex].Quantity = scrlAmount.Value;
+            updateAnimations();
         }
     }
 }

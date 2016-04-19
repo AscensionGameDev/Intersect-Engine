@@ -86,6 +86,20 @@ namespace Intersect_Server.Classes
             }
         }
 
+        //Check for status effects that would hinder the npc from attacking
+        private void CanAttack(int index)
+        {
+            //Check if the attacker is stunned or blinded.
+            for (var n = 0; n < Status.Count; n++)
+            {
+                if (Status[n].Type == (int)Enums.StatusTypes.Stun || Status[n].Type == (int)Enums.StatusTypes.Blind)
+                {
+                    return;
+                }
+            }
+            TryAttack(index);
+        }
+
         public override void Update()
         {
             base.Update();
@@ -178,6 +192,14 @@ namespace Intersect_Server.Classes
                         {
                             if (CanMove(dir) == -1)
                             {
+                                //check if NPC is snared or stunned
+                                for (var n = 0; n < Status.Count; n++)
+                                {
+                                    if (Status[n].Type == (int)Enums.StatusTypes.Stun || Status[n].Type == (int)Enums.StatusTypes.Snare)
+                                    {
+                                        return;
+                                    }
+                                }
                                 Move(dir, null);
                                 pathFinder.RemoveMove();
                             }
@@ -190,7 +212,7 @@ namespace Intersect_Server.Classes
                 else
                     {
                         pathFinder.SetTarget(new PathfinderTarget(targetMap, targetX, targetY));
-                        TryAttack(MyTarget.MyIndex);
+                        CanAttack(MyTarget.MyIndex);
                     }
                 }
 
@@ -203,6 +225,14 @@ namespace Intersect_Server.Classes
                     i = Globals.Rand.Next(0, 4);
                     if (CanMove(i) == -1)
                     {
+                        //check if NPC is snared or stunned
+                        for (var n = 0; n < Status.Count; n++)
+                        {
+                            if (Status[n].Type == (int)Enums.StatusTypes.Stun || Status[n].Type == (int)Enums.StatusTypes.Snare)
+                            {
+                                return;
+                            }
+                        }
                         Move(i, null);
                     }
                 }

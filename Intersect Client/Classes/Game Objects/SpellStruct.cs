@@ -72,6 +72,7 @@ namespace Intersect_Client.Classes.Game_Objects
         public int Data2 = 0;
         public int Data3 = 0;
         public int Data4 = 0;
+        public string Data5 = "";
 
         public SpellStruct()
         {
@@ -126,6 +127,7 @@ namespace Intersect_Client.Classes.Game_Objects
             Data2 = myBuffer.ReadInteger();
             Data3 = myBuffer.ReadInteger();
             Data4 = myBuffer.ReadInteger();
+            Data5 = myBuffer.ReadString();
 
             myBuffer.Dispose();
         }

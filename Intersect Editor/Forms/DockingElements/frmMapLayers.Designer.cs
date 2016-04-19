@@ -39,9 +39,6 @@
             this.cmbAutotile = new System.Windows.Forms.ComboBox();
             this.cmbTilesets = new System.Windows.Forms.ComboBox();
             this.tabAttributes = new System.Windows.Forms.TabPage();
-            this.grpAnimation = new System.Windows.Forms.GroupBox();
-            this.cmbAnimationAttribute = new System.Windows.Forms.ComboBox();
-            this.label3 = new System.Windows.Forms.Label();
             this.rbAnimation = new System.Windows.Forms.RadioButton();
             this.rbResource = new System.Windows.Forms.RadioButton();
             this.rbSound = new System.Windows.Forms.RadioButton();
@@ -50,6 +47,9 @@
             this.rbZDimension = new System.Windows.Forms.RadioButton();
             this.rbItem = new System.Windows.Forms.RadioButton();
             this.rbBlocked = new System.Windows.Forms.RadioButton();
+            this.grpAnimation = new System.Windows.Forms.GroupBox();
+            this.cmbAnimationAttribute = new System.Windows.Forms.ComboBox();
+            this.label3 = new System.Windows.Forms.Label();
             this.grpResource = new System.Windows.Forms.GroupBox();
             this.cmbResourceAttribute = new System.Windows.Forms.ComboBox();
             this.lblResource = new System.Windows.Forms.Label();
@@ -83,6 +83,7 @@
             this.label7 = new System.Windows.Forms.Label();
             this.scrlSoundDistance = new System.Windows.Forms.HScrollBar();
             this.tabLights = new System.Windows.Forms.TabPage();
+            this.lightEditor = new Intersect_Editor.Forms.Controls.LightEditorCtrl();
             this.label6 = new System.Windows.Forms.Label();
             this.tabEvents = new System.Windows.Forms.TabPage();
             this.label8 = new System.Windows.Forms.Label();
@@ -97,7 +98,11 @@
             this.rbRandom = new System.Windows.Forms.RadioButton();
             this.rbDeclared = new System.Windows.Forms.RadioButton();
             this.lstMapNpcs = new System.Windows.Forms.ListBox();
-            this.lightEditor = new Intersect_Editor.Forms.Controls.LightEditorCtrl();
+            this.rbSlide = new System.Windows.Forms.RadioButton();
+            this.rbGrappleStone = new System.Windows.Forms.RadioButton();
+            this.grpSlide = new System.Windows.Forms.GroupBox();
+            this.cmbSlideDir = new System.Windows.Forms.ComboBox();
+            this.label4 = new System.Windows.Forms.Label();
             this.tabControl.SuspendLayout();
             this.tabTiles.SuspendLayout();
             this.pnlTilesetContainer.SuspendLayout();
@@ -116,6 +121,7 @@
             this.tabNPCs.SuspendLayout();
             this.grpManage.SuspendLayout();
             this.grpSpawnLoc.SuspendLayout();
+            this.grpSlide.SuspendLayout();
             this.SuspendLayout();
             // 
             // tabControl
@@ -248,7 +254,9 @@
             // 
             // tabAttributes
             // 
-            this.tabAttributes.Controls.Add(this.grpAnimation);
+            this.tabAttributes.Controls.Add(this.grpSlide);
+            this.tabAttributes.Controls.Add(this.rbSlide);
+            this.tabAttributes.Controls.Add(this.rbGrappleStone);
             this.tabAttributes.Controls.Add(this.rbAnimation);
             this.tabAttributes.Controls.Add(this.rbResource);
             this.tabAttributes.Controls.Add(this.rbSound);
@@ -257,6 +265,7 @@
             this.tabAttributes.Controls.Add(this.rbZDimension);
             this.tabAttributes.Controls.Add(this.rbItem);
             this.tabAttributes.Controls.Add(this.rbBlocked);
+            this.tabAttributes.Controls.Add(this.grpAnimation);
             this.tabAttributes.Controls.Add(this.grpResource);
             this.tabAttributes.Controls.Add(this.grpItem);
             this.tabAttributes.Controls.Add(this.grpWarp);
@@ -269,36 +278,6 @@
             this.tabAttributes.TabIndex = 1;
             this.tabAttributes.Text = "Attributes";
             this.tabAttributes.UseVisualStyleBackColor = true;
-            // 
-            // grpAnimation
-            // 
-            this.grpAnimation.Controls.Add(this.cmbAnimationAttribute);
-            this.grpAnimation.Controls.Add(this.label3);
-            this.grpAnimation.Location = new System.Drawing.Point(6, 200);
-            this.grpAnimation.Name = "grpAnimation";
-            this.grpAnimation.Size = new System.Drawing.Size(256, 69);
-            this.grpAnimation.TabIndex = 33;
-            this.grpAnimation.TabStop = false;
-            this.grpAnimation.Text = "Animaton";
-            this.grpAnimation.Visible = false;
-            // 
-            // cmbAnimationAttribute
-            // 
-            this.cmbAnimationAttribute.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cmbAnimationAttribute.FormattingEnabled = true;
-            this.cmbAnimationAttribute.Location = new System.Drawing.Point(17, 36);
-            this.cmbAnimationAttribute.Name = "cmbAnimationAttribute";
-            this.cmbAnimationAttribute.Size = new System.Drawing.Size(222, 21);
-            this.cmbAnimationAttribute.TabIndex = 11;
-            // 
-            // label3
-            // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(14, 16);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(56, 13);
-            this.label3.TabIndex = 10;
-            this.label3.Text = "Animation:";
             // 
             // rbAnimation
             // 
@@ -389,6 +368,36 @@
             this.rbBlocked.Text = "Blocked";
             this.rbBlocked.UseVisualStyleBackColor = true;
             this.rbBlocked.CheckedChanged += new System.EventHandler(this.rbBlocked_CheckedChanged);
+            // 
+            // grpAnimation
+            // 
+            this.grpAnimation.Controls.Add(this.cmbAnimationAttribute);
+            this.grpAnimation.Controls.Add(this.label3);
+            this.grpAnimation.Location = new System.Drawing.Point(6, 200);
+            this.grpAnimation.Name = "grpAnimation";
+            this.grpAnimation.Size = new System.Drawing.Size(256, 69);
+            this.grpAnimation.TabIndex = 33;
+            this.grpAnimation.TabStop = false;
+            this.grpAnimation.Text = "Animaton";
+            this.grpAnimation.Visible = false;
+            // 
+            // cmbAnimationAttribute
+            // 
+            this.cmbAnimationAttribute.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbAnimationAttribute.FormattingEnabled = true;
+            this.cmbAnimationAttribute.Location = new System.Drawing.Point(17, 36);
+            this.cmbAnimationAttribute.Name = "cmbAnimationAttribute";
+            this.cmbAnimationAttribute.Size = new System.Drawing.Size(222, 21);
+            this.cmbAnimationAttribute.TabIndex = 11;
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(14, 16);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(56, 13);
+            this.label3.TabIndex = 10;
+            this.label3.Text = "Animation:";
             // 
             // grpResource
             // 
@@ -744,6 +753,15 @@
             this.tabLights.Text = "Lights";
             this.tabLights.UseVisualStyleBackColor = true;
             // 
+            // lightEditor
+            // 
+            this.lightEditor.Location = new System.Drawing.Point(7, 4);
+            this.lightEditor.Name = "lightEditor";
+            this.lightEditor.Size = new System.Drawing.Size(256, 358);
+            this.lightEditor.TabIndex = 2;
+            this.lightEditor.Visible = false;
+            this.lightEditor.Load += new System.EventHandler(this.lightEditor_Load);
+            // 
             // label6
             // 
             this.label6.Location = new System.Drawing.Point(4, 4);
@@ -895,14 +913,63 @@
             this.lstMapNpcs.TabIndex = 10;
             this.lstMapNpcs.Click += new System.EventHandler(this.lstMapNpcs_Click);
             // 
-            // lightEditor
+            // rbSlide
             // 
-            this.lightEditor.Location = new System.Drawing.Point(7, 4);
-            this.lightEditor.Name = "lightEditor";
-            this.lightEditor.Size = new System.Drawing.Size(256, 358);
-            this.lightEditor.TabIndex = 2;
-            this.lightEditor.Visible = false;
-            this.lightEditor.Load += new System.EventHandler(this.lightEditor_Load);
+            this.rbSlide.AutoSize = true;
+            this.rbSlide.Location = new System.Drawing.Point(115, 28);
+            this.rbSlide.Name = "rbSlide";
+            this.rbSlide.Size = new System.Drawing.Size(48, 17);
+            this.rbSlide.TabIndex = 35;
+            this.rbSlide.Text = "Slide";
+            this.rbSlide.UseVisualStyleBackColor = true;
+            this.rbSlide.CheckedChanged += new System.EventHandler(this.rbSlide_CheckedChanged);
+            // 
+            // rbGrappleStone
+            // 
+            this.rbGrappleStone.AutoSize = true;
+            this.rbGrappleStone.Location = new System.Drawing.Point(115, 6);
+            this.rbGrappleStone.Name = "rbGrappleStone";
+            this.rbGrappleStone.Size = new System.Drawing.Size(93, 17);
+            this.rbGrappleStone.TabIndex = 34;
+            this.rbGrappleStone.Text = "Grapple Stone";
+            this.rbGrappleStone.UseVisualStyleBackColor = true;
+            this.rbGrappleStone.CheckedChanged += new System.EventHandler(this.rbGrappleStone_CheckedChanged);
+            // 
+            // grpSlide
+            // 
+            this.grpSlide.Controls.Add(this.cmbSlideDir);
+            this.grpSlide.Controls.Add(this.label4);
+            this.grpSlide.Location = new System.Drawing.Point(5, 198);
+            this.grpSlide.Name = "grpSlide";
+            this.grpSlide.Size = new System.Drawing.Size(259, 75);
+            this.grpSlide.TabIndex = 36;
+            this.grpSlide.TabStop = false;
+            this.grpSlide.Text = "Slide";
+            this.grpSlide.Visible = false;
+            // 
+            // cmbSlideDir
+            // 
+            this.cmbSlideDir.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbSlideDir.FormattingEnabled = true;
+            this.cmbSlideDir.Items.AddRange(new object[] {
+            "Retain Direction",
+            "Up",
+            "Down",
+            "Left",
+            "Right"});
+            this.cmbSlideDir.Location = new System.Drawing.Point(50, 27);
+            this.cmbSlideDir.Name = "cmbSlideDir";
+            this.cmbSlideDir.Size = new System.Drawing.Size(192, 21);
+            this.cmbSlideDir.TabIndex = 25;
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(17, 30);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(23, 13);
+            this.label4.TabIndex = 24;
+            this.label4.Text = "Dir:";
             // 
             // frmMapLayers
             // 
@@ -952,6 +1019,8 @@
             this.grpManage.ResumeLayout(false);
             this.grpSpawnLoc.ResumeLayout(false);
             this.grpSpawnLoc.PerformLayout();
+            this.grpSlide.ResumeLayout(false);
+            this.grpSlide.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -1028,5 +1097,10 @@
         private System.Windows.Forms.ComboBox cmbAnimationAttribute;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.RadioButton rbAnimation;
+        private System.Windows.Forms.RadioButton rbSlide;
+        private System.Windows.Forms.RadioButton rbGrappleStone;
+        private System.Windows.Forms.GroupBox grpSlide;
+        private System.Windows.Forms.ComboBox cmbSlideDir;
+        private System.Windows.Forms.Label label4;
     }
 }

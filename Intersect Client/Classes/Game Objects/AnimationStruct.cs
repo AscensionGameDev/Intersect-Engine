@@ -166,7 +166,7 @@ namespace Intersect_Client.Classes.Game_Objects
             {
                 //Draw Lower
                 GameTexture tex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Animation,
-                            myBase.UpperAnimSprite);
+                            myBase.LowerAnimSprite);
                 if (showLower && tex != null)
                 {
                     if (myBase.LowerAnimXFrames > 0 && myBase.LowerAnimYFrames > 0)

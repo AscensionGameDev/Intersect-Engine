@@ -549,6 +549,12 @@ namespace Intersect_Server.Classes
                 bf.WriteInteger(en.MaxVital[i]);
                 bf.WriteInteger(en.Vital[i]);
             }
+            bf.WriteInteger(en.Status.Count);
+            for (var i = 0; i < en.Status.Count; i++)
+            {
+                bf.WriteInteger(en.Status[i].Type);
+                bf.WriteString(en.Status[i].Data);
+            }
             SendDataToProximity(en.CurrentMap, bf.ToArray());
             bf.Dispose();
         }
@@ -579,6 +585,12 @@ namespace Intersect_Server.Classes
             {
                 bf.WriteInteger(en.MaxVital[i]);
                 bf.WriteInteger(en.Vital[i]);
+            }
+            bf.WriteInteger(en.Status.Count);
+            for (var i = 0; i < en.Status.Count; i++)
+            {
+                bf.WriteInteger(en.Status[i].Type);
+                bf.WriteString(en.Status[i].Data);
             }
             SendDataTo(client, bf.ToArray());
             bf.Dispose();

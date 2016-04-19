@@ -626,6 +626,16 @@ namespace Intersect_Client.Classes.Entities
         {
             var didMove = false;
             var tmpI = -1;
+
+            //check if player is stunned or snared, if so don't let them move.
+            for (var n = 0; n < Status.Count; n++)
+            {
+                if (Status[n].Type == (int)Enums.StatusTypes.Stun || Status[n].Type == (int)Enums.StatusTypes.Snare)
+                {
+                    return;
+                }
+            }
+
             for (var i = 0; i < 9; i++)
             {
                 if (Globals.LocalMaps[i] == CurrentMap)

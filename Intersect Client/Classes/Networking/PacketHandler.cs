@@ -536,6 +536,14 @@ namespace Intersect_Client.Classes.Networking
                 en.MaxVital[i] = bf.ReadInteger();
                 en.Vital[i] = bf.ReadInteger();
             }
+
+            //Update status effects
+            var count = bf.ReadInteger();
+            en.Status.Clear();
+            for (int i = 0; i < count; i++)
+            {
+                en.Status.Add(new StatusInstance(bf.ReadInteger(), bf.ReadString()));
+            }
         }
 
         private static void HandleStats(byte[] packet)

@@ -64,6 +64,12 @@ namespace Intersect_Server.Classes
         //Active Animations -- for events mainly
         public List<int> Animations = new List<int>();
 
+        //DoT/HoT Spells
+        public List<DoTInstance> DoT = new List<DoTInstance>();
+
+        //Status effects
+        public List<StatusInstance> Status = new List<StatusInstance>();
+
         public long MoveTimer;
 
         public long CollisionIndex;
@@ -105,6 +111,19 @@ namespace Intersect_Server.Classes
                 CastTime = 0;
                 CastSpell(Spells[SpellCastSlot].SpellNum, SpellCastSlot);
             }
+            //DoT/HoT timers
+            for (int i = 0; i < DoT.Count; i++)
+            {
+                DoT[i].Tick();
+            }
+            //Status timers
+            int count = Status.Count;
+            for (int i = 0; i < Status.Count; i++)
+            {
+                Status[i].TryRemoveStatus();
+            }
+            //If there is a removal of a status, update it client sided.
+            if (count > Status.Count) { PacketSender.SendEntityVitals(MyIndex, (int)Enums.EntityTypes.GlobalEntity, this); }
         }
 
         //Movement
@@ -424,6 +443,25 @@ namespace Intersect_Server.Classes
                 {
                     Globals.Entities[enemyIndex].Stat[i].Buff.Add(new EntityBuff(Globals.GameSpells[isSpell].StatDiff[i], (Globals.GameSpells[isSpell].Data2 * 100)));
                 }
+
+                //Handle other status effects
+                if (Globals.GameSpells[isSpell].Data3 > 0)
+                {
+                    Globals.Entities[enemyIndex].Status.Add(new StatusInstance(enemyIndex, Globals.GameSpells[isSpell].Data3, (Globals.GameSpells[isSpell].Data2 * 100), Globals.GameSpells[isSpell].Data5));
+                }
+
+                //Handle DoT/HoT spells]
+                if (Globals.GameSpells[isSpell].Data1 > 0)
+                {
+                    for (int i = 0; i < Globals.Entities[enemyIndex].DoT.Count; i++)
+                    {
+                        if (Globals.Entities[enemyIndex].DoT[i].SpellNum == isSpell || Globals.Entities[enemyIndex].DoT[i].OwnerID == MyIndex)
+                        {
+                            return;
+                        }
+                    }
+                    Globals.Entities[enemyIndex].DoT.Add(new DoTInstance(MyIndex, isSpell, enemyIndex));
+                }
             }
 
             Globals.Entities[enemyIndex].Vital[(int)Enums.Vitals.Health] -= (int)dmg;
@@ -448,6 +486,7 @@ namespace Intersect_Server.Classes
             {
                 //Hit him, make him mad and send the vital update.
                 PacketSender.SendEntityVitals(enemyIndex, (int)Enums.EntityTypes.GlobalEntity, Globals.Entities[enemyIndex]);
+                PacketSender.SendEntityStats(enemyIndex, (int)Enums.EntityTypes.GlobalEntity, Globals.Entities[enemyIndex]);
             }
             // Add a timer before able to make the next move.
             if (Globals.Entities[MyIndex].GetType() == typeof(Npc))
@@ -552,7 +591,6 @@ namespace Intersect_Server.Classes
                         default:
                             break;
                     }
-
                     break;
                 case (int)Enums.SpellTypes.Warp:
                     if (GetType() == typeof(Player))
@@ -560,7 +598,16 @@ namespace Intersect_Server.Classes
                         Warp(Globals.GameSpells[SpellNum].Data1, Globals.GameSpells[SpellNum].Data2, Globals.GameSpells[SpellNum].Data3, Globals.GameSpells[SpellNum].Data4);
                     }
                     break;
+                case (int)Enums.SpellTypes.WarpTo:
+                    if (GetType() == typeof(Player))
+                    {
+                        HandleAoESpell(SpellNum, Target);
+                    }
+                    break;
                 case (int)Enums.SpellTypes.Dash:
+
+                    break;
+                case (int)Enums.SpellTypes.Event:
 
                     break;
                 default:
@@ -618,7 +665,15 @@ namespace Intersect_Server.Classes
                             {
                                 if ((target == -1 || target == t.MyIndex) && t.MyIndex != MyIndex)
                                 {
-                                    TryAttack(t.MyIndex, false, SpellNum);
+                                    //Warp or attack.
+                                    if (Globals.GameSpells[SpellNum].Type == (int)Enums.SpellTypes.CombatSpell)
+                                    {
+                                        TryAttack(t.MyIndex, false, SpellNum);
+                                    }
+                                    else
+                                    {
+                                        Warp(Globals.Entities[Target].CurrentMap, Globals.Entities[Target].CurrentX, Globals.Entities[Target].CurrentY, Dir);
+                                    }
                                     if (Globals.GameSpells[SpellNum].HitAnimation > -1)
                                     {
                                         if (target > -1 && t.Vital[(int)Enums.Vitals.Health] > 0)
@@ -705,5 +760,66 @@ namespace Intersect_Server.Classes
         }
     }
 
+    public class DoTInstance
+    {
+        public int SpellNum = -1;
+        public int OwnerID = -1;
+        public int TargetID = -1;
+        public int Count = 0;
+        private long Interval = 0;
+
+        public DoTInstance(int ownerID, int spellNum, int targetID)
+        {
+            SpellNum = spellNum;
+            OwnerID = ownerID;
+            TargetID = targetID;
+            Interval = Environment.TickCount + (Globals.GameSpells[SpellNum].Data4 * 100);
+            Count = (Globals.GameSpells[SpellNum].Data4 % Globals.GameSpells[SpellNum].Data2) - 1; //Subtract 1 since the first tick always occurs when the spell is cast.
+        }
+
+        public void Tick()
+        {
+            if (Interval >= Environment.TickCount)
+            {
+                if (Globals.GameSpells[SpellNum].HitAnimation > -1)
+                {
+                    PacketSender.SendAnimationToProximity(Globals.GameSpells[SpellNum].HitAnimation, 1, TargetID, Globals.Entities[TargetID].CurrentMap, 0, 0, Globals.Entities[TargetID].Dir); //Target Type 1 will be global entity
+                }
+                Globals.Entities[OwnerID].TryAttack(TargetID, false, SpellNum);
+                Interval = Environment.TickCount + (Globals.GameSpells[SpellNum].Data4 * 100);
+                Count--;
+
+                if (Count <= 0)
+                {
+                    Globals.Entities[TargetID].DoT.Remove(this);
+                }
+            }
+        }
+    }
+
+    public class StatusInstance
+    {
+        public int Type = -1;
+        public string Data = "";
+        public long Duration = 0;
+        private int EntityID = -1;
+
+        public StatusInstance(int entityID, int type, int duration, string data)
+        {
+            EntityID = entityID;
+            Type = type;
+            Duration = Environment.TickCount + duration;
+            Data = data;
+            PacketSender.SendEntityVitals(EntityID, (int)Enums.EntityTypes.GlobalEntity, Globals.Entities[EntityID]);
+        }
+
+        public void TryRemoveStatus()
+        {
+            if (Duration <= Environment.TickCount)
+            {
+                Globals.Entities[EntityID].Status.Remove(this);
+            }
+        }
+    }
 }
 

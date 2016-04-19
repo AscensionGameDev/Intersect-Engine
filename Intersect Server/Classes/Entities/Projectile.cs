@@ -77,6 +77,7 @@ namespace Intersect_Server.Classes
                     }
                 }
             }
+            _totalSpawns *= MyBase.Quantity;
             Spawns = new ProjectileSpawns[_totalSpawns];
         }
 

@@ -67,6 +67,7 @@ namespace Intersect_Editor.Classes
         public int Data2 = 0;
         public int Data3 = 0;
         public int Data4 = 0;
+        public string Data5 = "";
 
         public SpellStruct()
         {
@@ -121,6 +122,7 @@ namespace Intersect_Editor.Classes
             Data2 = myBuffer.ReadInteger();
             Data3 = myBuffer.ReadInteger();
             Data4 = myBuffer.ReadInteger();
+            Data5 = myBuffer.ReadString();
 
             myBuffer.Dispose();
         }
@@ -171,6 +173,7 @@ namespace Intersect_Editor.Classes
             myBuffer.WriteInteger(Data2);
             myBuffer.WriteInteger(Data3);
             myBuffer.WriteInteger(Data4);
+            myBuffer.WriteString(Data5);
             return myBuffer.ToArray();
         }
     }

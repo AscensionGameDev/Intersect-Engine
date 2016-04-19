@@ -190,14 +190,17 @@ namespace Intersect_Server.Classes
             Equipment = 1,
             Consumable = 2,
             Currency = 3,
-            Spell = 4
+            Spell = 4,
+            Event = 5,
         }
 
         public enum SpellTypes
         {
             CombatSpell = 0,
             Warp = 1,
-            Dash = 2,
+            WarpTo = 2,
+            Dash = 3,
+            Event = 4,
         }
 
         public enum TargetTypes
@@ -246,9 +249,20 @@ namespace Intersect_Server.Classes
             ServerVariable,
         }
 
+        public enum StatusTypes
+        {
+            None = 0,
+            Silence = 1,
+            Stun = 2,
+            Snare = 3,
+            Blind = 4,
+            Stealth = 5,
+            Transform = 6,
+        }
+
         public static List<string> ItemBonusEffects = new List<string>() { "Cooldown Reduction", "Life Steal" };
 
         // Map Attribtes
-        public enum MapAttributes : byte { Walkable = 0, Blocked, Item, ZDimension, NPCAvoid, Warp, Sound, Resource, Animation };
+        public enum MapAttributes : byte { Walkable = 0, Blocked, Item, ZDimension, NPCAvoid, Warp, Sound, Resource, Animation, GrappleStone, Slide };
     }
 }

@@ -102,6 +102,9 @@ namespace Intersect_Editor.Forms
             this.gbSpell = new System.Windows.Forms.GroupBox();
             this.scrlSpell = new System.Windows.Forms.HScrollBar();
             this.lblSpell = new System.Windows.Forms.Label();
+            this.grpEvent = new System.Windows.Forms.GroupBox();
+            this.scrlEvent = new System.Windows.Forms.HScrollBar();
+            this.lblEvent = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.picItem)).BeginInit();
@@ -110,6 +113,7 @@ namespace Intersect_Editor.Forms
             ((System.ComponentModel.ISupportInitialize)(this.picPaperdoll)).BeginInit();
             this.gbConsumable.SuspendLayout();
             this.gbSpell.SuspendLayout();
+            this.grpEvent.SuspendLayout();
             this.SuspendLayout();
             // 
             // groupBox1
@@ -289,7 +293,8 @@ namespace Intersect_Editor.Forms
             "Equipment",
             "Consumable",
             "Currency",
-            "Spell"});
+            "Spell",
+            "Event"});
             this.cmbType.Location = new System.Drawing.Point(60, 45);
             this.cmbType.Name = "cmbType";
             this.cmbType.Size = new System.Drawing.Size(135, 21);
@@ -854,18 +859,48 @@ namespace Intersect_Editor.Forms
             this.lblSpell.TabIndex = 11;
             this.lblSpell.Text = "Spell: 0 None";
             // 
+            // grpEvent
+            // 
+            this.grpEvent.Controls.Add(this.scrlEvent);
+            this.grpEvent.Controls.Add(this.lblEvent);
+            this.grpEvent.Location = new System.Drawing.Point(225, 232);
+            this.grpEvent.Name = "grpEvent";
+            this.grpEvent.Size = new System.Drawing.Size(217, 67);
+            this.grpEvent.TabIndex = 42;
+            this.grpEvent.TabStop = false;
+            this.grpEvent.Text = "Event";
+            this.grpEvent.Visible = false;
+            // 
+            // scrlEvent
+            // 
+            this.scrlEvent.LargeChange = 1;
+            this.scrlEvent.Location = new System.Drawing.Point(8, 36);
+            this.scrlEvent.Name = "scrlEvent";
+            this.scrlEvent.Size = new System.Drawing.Size(187, 18);
+            this.scrlEvent.TabIndex = 17;
+            // 
+            // lblEvent
+            // 
+            this.lblEvent.AutoSize = true;
+            this.lblEvent.Location = new System.Drawing.Point(8, 23);
+            this.lblEvent.Name = "lblEvent";
+            this.lblEvent.Size = new System.Drawing.Size(47, 13);
+            this.lblEvent.TabIndex = 16;
+            this.lblEvent.Text = "Event: 0";
+            // 
             // FrmItem
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(677, 450);
             this.ControlBox = false;
+            this.Controls.Add(this.grpEvent);
             this.Controls.Add(this.groupBox3);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.groupBox1);
-            this.Controls.Add(this.gbEquipment);
             this.Controls.Add(this.gbSpell);
             this.Controls.Add(this.gbConsumable);
+            this.Controls.Add(this.gbEquipment);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Name = "FrmItem";
             this.Text = "Item Editor";
@@ -884,6 +919,8 @@ namespace Intersect_Editor.Forms
             this.gbConsumable.PerformLayout();
             this.gbSpell.ResumeLayout(false);
             this.gbSpell.PerformLayout();
+            this.grpEvent.ResumeLayout(false);
+            this.grpEvent.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -961,6 +998,9 @@ namespace Intersect_Editor.Forms
         private Label lblToolType;
         private Label lblProjectile;
         private HScrollBar scrlProjectile;
+        private GroupBox grpEvent;
+        private HScrollBar scrlEvent;
+        private Label lblEvent;
 
     }
 }

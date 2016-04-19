@@ -21,6 +21,7 @@
 */
 
 using System;
+using System.Collections.Generic;
 using Intersect_Client.Classes.Misc;
 
 namespace Intersect_Client.Classes.Game_Objects
@@ -33,7 +34,6 @@ namespace Intersect_Client.Classes.Game_Objects
 
         public const string Version = "0.0.0.1";
         public string Name = "";
-        public int Animation = 0;
         public int Speed = 1;
         public int Delay = 1;
         public int Quantity = 1;
@@ -44,8 +44,9 @@ namespace Intersect_Client.Classes.Game_Objects
         public bool IgnoreActiveResources = false;
         public bool IgnoreExhaustedResources = false;
         public bool Homing = false;
-        public bool AutoRotate = false;
+        public bool GrappleHook = false;
 
+        public List<ProjectileAnimation> Animations = new List<ProjectileAnimation>();
         public Location[,] SpawnLocations = new Location[SpawnLocationsWidth, SpawnLocationsHeight];
 
         //Init
@@ -68,7 +69,6 @@ namespace Intersect_Client.Classes.Game_Objects
             if (loadedVersion != Version)
                 throw new Exception("Failed to load Projectile #" + index + ". Loaded Version: " + loadedVersion + " Expected Version: " + Version);
             Name = myBuffer.ReadString();
-            Animation = myBuffer.ReadInteger();
             Speed = myBuffer.ReadInteger();
             Delay = myBuffer.ReadInteger();
             Quantity = myBuffer.ReadInteger();
@@ -79,7 +79,7 @@ namespace Intersect_Client.Classes.Game_Objects
             IgnoreExhaustedResources = Convert.ToBoolean(myBuffer.ReadInteger());
             IgnoreZDimension = Convert.ToBoolean(myBuffer.ReadInteger());
             Homing = Convert.ToBoolean(myBuffer.ReadInteger());
-            AutoRotate = Convert.ToBoolean(myBuffer.ReadInteger());
+            GrappleHook = Convert.ToBoolean(myBuffer.ReadInteger());
 
             for (var x = 0; x < SpawnLocationsWidth; x++)
             {
@@ -92,6 +92,14 @@ namespace Intersect_Client.Classes.Game_Objects
                 }
             }
 
+            // Load Animations
+            Animations.Clear();
+            var animCount = myBuffer.ReadInteger();
+            for (var i = 0; i < animCount; i++)
+            {
+                Animations.Add(new ProjectileAnimation(myBuffer.ReadInteger(), myBuffer.ReadInteger(), Convert.ToBoolean(myBuffer.ReadInteger())));
+            }
+
             myBuffer.Dispose();
         }
 
@@ -100,5 +108,19 @@ namespace Intersect_Client.Classes.Game_Objects
     public class Location
     {
         public bool[] Directions = new bool[ProjectileStruct.MaxProjectileDirections];
+    }
+
+    public class ProjectileAnimation
+    {
+        public int Animation = -1;
+        public int SpawnRange = 1;
+        public bool AutoRotate = false;
+
+        public ProjectileAnimation(int animation, int spawnRange, bool autoRotate)
+        {
+            Animation = animation;
+            SpawnRange = spawnRange;
+            AutoRotate = autoRotate;
+        }
     }
 }

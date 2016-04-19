@@ -47,6 +47,7 @@ namespace Intersect_Editor.Forms
         private void frmSpell_Load(object sender, EventArgs e)
         {
             scrlProjectile.Maximum = Options.MaxProjectiles;
+            scrlEvent.Maximum = Options.MaxCommonEvents;
             lstSpells.SelectedIndex = 0;
             cmbSprite.Items.Clear();
             cmbSprite.Items.Add("None");
@@ -54,6 +55,13 @@ namespace Intersect_Editor.Forms
             for (int i = 0; i < spellNames.Length; i++)
             {
                 cmbSprite.Items.Add(spellNames[i]);
+            }
+            cmbTransform.Items.Clear();
+            cmbTransform.Items.Add("None");
+            string[] spriteNames = GameContentManager.GetTextureNames(GameContentManager.TextureType.Entity);
+            for (int i = 0; i < spriteNames.Length; i++)
+            {
+                cmbTransform.Items.Add(spriteNames[i]);
             }
             UpdateEditor();
         }
@@ -136,6 +144,10 @@ namespace Intersect_Editor.Forms
             grpTargetInfo.Hide();
             grpBuffDebuff.Hide();
             grpWarp.Hide();
+            grpDash.Hide();
+            grpEvent.Hide();
+            cmbTargetType.Enabled = true;
+
             if (cmbType.SelectedIndex == cmbType.Items.IndexOf("Combat Spell"))
             {
                 grpTargetInfo.Show();
@@ -153,10 +165,13 @@ namespace Intersect_Editor.Forms
 
                 chkHOTDOT.Checked = Convert.ToBoolean(Globals.GameSpells[_editorIndex].Data1);
                 scrlBuffDuration.Value = Globals.GameSpells[_editorIndex].Data2;
-                lblBuffDuration.Text = "Duration (seconds): " + ((double)scrlBuffDuration.Value / 10);
+                lblBuffDuration.Text = "Duration: " + ((double)scrlBuffDuration.Value / 10) + "s";
+                scrlTick.Value = Globals.GameSpells[_editorIndex].Data2;
+                lblTick.Text = "Tick: " + ((double)scrlTick.Value / 10) + "s";
                 cmbExtraEffect.SelectedIndex = Globals.GameSpells[_editorIndex].Data3;
+                
             }
-            else
+            else if (cmbType.SelectedIndex == cmbType.Items.IndexOf("Warp to Map"))
             {
                 grpWarp.Show();
                 txtWarpChunk.Text = Globals.GameSpells[_editorIndex].Data1.ToString();
@@ -166,6 +181,29 @@ namespace Intersect_Editor.Forms
                 lblWarpY.Text = "Y: " + scrlWarpY.Value;
                 scrlWarpDir.Value = Globals.GameSpells[_editorIndex].Data4;
                 lblWarpDir.Text = "Dir: " + Globals.IntToDir(Globals.GameSpells[_editorIndex].Data4);
+            }
+            else if (cmbType.SelectedIndex == cmbType.Items.IndexOf("Warp to Target"))
+            {
+                grpTargetInfo.Show();
+                cmbTargetType.SelectedText = "Single Target (includes self)";
+                cmbTargetType.Enabled = false;
+                UpdateTargetTypePanel();
+            }
+            else if (cmbType.SelectedIndex == cmbType.Items.IndexOf("Dash"))
+            {
+                grpDash.Show();
+                scrlRange.Value = Globals.GameSpells[_editorIndex].CastRange;
+                lblRange.Text = "Range: " + scrlRange.Value;
+                chkIgnoreMapBlocks.Checked = Convert.ToBoolean(Globals.GameSpells[_editorIndex].Data1);
+                chkIgnoreActiveResources.Checked = Convert.ToBoolean(Globals.GameSpells[_editorIndex].Data2);
+                chkIgnoreInactiveResources.Checked = Convert.ToBoolean(Globals.GameSpells[_editorIndex].Data3);
+                chkIgnoreZDimensionBlocks.Checked = Convert.ToBoolean(Globals.GameSpells[_editorIndex].Data4);
+            }
+            else if (cmbType.SelectedIndex == cmbType.Items.IndexOf("Event"))
+            {
+                grpEvent.Show();
+                scrlEvent.Value = Globals.GameSpells[_editorIndex].Data1;
+                lblEvent.Text = "Event: " + scrlEvent.Value + " " + Globals.CommonEvents[scrlEvent.Value].MyName;
             }
         }
 
@@ -177,14 +215,14 @@ namespace Intersect_Editor.Forms
             scrlCastRange.Hide();
             lblProjectile.Hide();
             scrlProjectile.Hide();
-            if (cmbTargetType.SelectedIndex == cmbTargetType.Items.IndexOf("AOE"))
+            if (cmbTargetType.SelectedIndex == cmbTargetType.Items.IndexOf("Single Target (includes self)") && cmbType.SelectedIndex == cmbType.Items.IndexOf("Combat Spell"))
             {
                 lblHitRadius.Show();
                 scrlHitRadius.Show();
                 scrlHitRadius.Value = Globals.GameSpells[_editorIndex].HitRadius;
                 lblHitRadius.Text = "Hit Radius: " + scrlHitRadius.Value;
             }
-            if (cmbTargetType.SelectedIndex != cmbTargetType.Items.IndexOf("Self"))
+            if (cmbTargetType.SelectedIndex < cmbTargetType.Items.IndexOf("Self"))
             {
                 lblCastRange.Show();
                 scrlCastRange.Show();
@@ -382,7 +420,7 @@ namespace Intersect_Editor.Forms
         private void scrlBuffDuration_Scroll(object sender, ScrollEventArgs e)
         {
             Globals.GameSpells[_editorIndex].Data2 = scrlBuffDuration.Value;
-            lblBuffDuration.Text = "Duration (seconds): " + ((double)scrlBuffDuration.Value / 10);
+            lblBuffDuration.Text = "Duration: " + ((double)scrlBuffDuration.Value / 10) + "s";
         }
 
         private void txtWarpChunk_TextChanged(object sender, EventArgs e)
@@ -471,6 +509,23 @@ namespace Intersect_Editor.Forms
         private void cmbExtraEffect_SelectedIndexChanged(object sender, EventArgs e)
         {
             Globals.GameSpells[_editorIndex].Data3 = cmbExtraEffect.SelectedIndex;
+
+            lblHint.Visible = true;
+            lblSprite.Visible = false;
+            cmbTransform.Visible = false;
+            picSprite.Visible = false;
+
+            if (cmbExtraEffect.SelectedIndex == cmbExtraEffect.Items.IndexOf("Transform"))
+            {
+                lblHint.Visible = false;
+                lblSprite.Visible = true;
+                cmbTransform.Visible = true;
+                picSprite.Visible = true;
+
+                cmbTransform.SelectedIndex = cmbTransform.FindString(Globals.GameSpells[_editorIndex].Data5);
+                if (cmbTransform.SelectedIndex > 0) { picSpell.BackgroundImage = Bitmap.FromFile("resources/spells/" + cmbTransform.Text); }
+                else { picSpell.BackgroundImage = null; }
+            }
         }
 
         private void frmSpell_FormClosed(object sender, FormClosedEventArgs e)
@@ -481,7 +536,7 @@ namespace Intersect_Editor.Forms
         private void scrlRange_Scroll(object sender, ScrollEventArgs e)
         {
             lblRange.Text = "Range: " + scrlRange.Value;
-            Globals.GameSpells[_editorIndex].Data1 = scrlRange.Value;
+            Globals.GameSpells[_editorIndex].CastRange = scrlRange.Value;
         }
 
         private void scrlProjectile_Scroll(object sender, ScrollEventArgs e)
@@ -495,6 +550,45 @@ namespace Intersect_Editor.Forms
                 lblProjectile.Text = "Projectile: " + scrlProjectile.Value + " " + Globals.GameProjectiles[scrlProjectile.Value - 1].Name;
             }
             Globals.GameSpells[_editorIndex].Data4 = scrlProjectile.Value;
+        }
+
+        private void scrlTick_Scroll(object sender, ScrollEventArgs e)
+        {
+            Globals.GameSpells[_editorIndex].Data4 = scrlTick.Value;
+            lblTick.Text = "Tick: " + ((double)scrlTick.Value / 10) + "s";
+        }
+
+        private void chkIgnoreMapBlocks_CheckedChanged(object sender, EventArgs e)
+        {
+            Globals.GameSpells[_editorIndex].Data1 = Convert.ToInt32(chkIgnoreMapBlocks.Checked);
+        }
+
+        private void chkIgnoreActiveResources_CheckedChanged(object sender, EventArgs e)
+        {
+            Globals.GameSpells[_editorIndex].Data2 = Convert.ToInt32(chkIgnoreActiveResources.Checked);
+        }
+
+        private void chkIgnoreInactiveResources_CheckedChanged(object sender, EventArgs e)
+        {
+            Globals.GameSpells[_editorIndex].Data3 = Convert.ToInt32(chkIgnoreInactiveResources.Checked);
+        }
+
+        private void chkIgnoreZDimensionBlocks_CheckedChanged(object sender, EventArgs e)
+        {
+            Globals.GameSpells[_editorIndex].Data4 = Convert.ToInt32(chkIgnoreZDimensionBlocks.Checked);
+        }
+
+        private void cmbTransform_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            Globals.GameSpells[_editorIndex].Data5 = cmbTransform.Text;
+            if (cmbTransform.SelectedIndex > 0) { picSprite.BackgroundImage = Bitmap.FromFile("resources/spells/" + cmbTransform.Text); }
+            else { picSprite.BackgroundImage = null; }
+        }
+
+        private void scrlEvent_Scroll(object sender, ScrollEventArgs e)
+        {
+            Globals.GameSpells[_editorIndex].Data1 = scrlEvent.Value;
+            lblEvent.Text = "Event: " + scrlEvent.Value + " " + Globals.CommonEvents[scrlEvent.Value].MyName;
         }
 
     }

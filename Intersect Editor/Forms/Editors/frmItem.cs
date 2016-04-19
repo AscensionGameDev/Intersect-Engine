@@ -171,6 +171,7 @@ namespace Intersect_Editor.Forms
             gbConsumable.Visible = false;
             gbSpell.Visible = false;
             gbEquipment.Visible = false;
+            grpEvent.Visible = false;
 
             if (Globals.GameItems[_editorIndex].Type != cmbType.SelectedIndex)
             {
@@ -191,7 +192,13 @@ namespace Intersect_Editor.Forms
             else if (cmbType.SelectedIndex == cmbType.Items.IndexOf("Spell"))
             {
                 scrlSpell.Value = Globals.GameItems[_editorIndex].Data1;
+                lblEvent.Text = "Event: " + scrlEvent.Value + " " + Globals.CommonEvents[scrlEvent.Value].MyName;
                 gbSpell.Visible = true;
+            }
+            else if (cmbType.SelectedIndex == cmbType.Items.IndexOf("Event"))
+            {
+                scrlEvent.Value = Globals.GameItems[_editorIndex].Data1;
+                grpEvent.Visible = true;
             }
             else if (cmbType.SelectedIndex == cmbType.Items.IndexOf("Equipment"))
             {
@@ -413,6 +420,12 @@ namespace Intersect_Editor.Forms
             {
                 lblProjectile.Text = "Projectile: None";
             }
+        }
+
+        private void scrlEvent_Scroll(object sender, ScrollEventArgs e)
+        {
+            Globals.GameItems[_editorIndex].Data1 = scrlEvent.Value;
+            lblEvent.Text = "Event: " + scrlEvent.Value + " " + Globals.CommonEvents[scrlEvent.Value].MyName;
         }
     }
 }

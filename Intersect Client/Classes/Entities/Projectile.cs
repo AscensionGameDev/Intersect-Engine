@@ -75,6 +75,7 @@ namespace Intersect_Client.Classes.Entities
                     }
                 }
             }
+            _totalSpawns *= Globals.GameProjectiles[ProjectileNum].Quantity;
             Spawns = new ProjectileSpawns[_totalSpawns];
         }
 
@@ -89,13 +90,33 @@ namespace Intersect_Client.Classes.Entities
             }
         }
 
+        //Find out which animation data to load depending on what spawn wave we are on during projection.
+        private int FindSpawnAnimationData()
+        {
+            int start = 0;
+            int end = 1;
+            for (int i = 0; i < Globals.GameProjectiles[ProjectileNum].Animations.Count; i++)
+            {
+                end = start + Globals.GameProjectiles[ProjectileNum].Animations[i].SpawnRange;
+                if (Quantity >= start && Quantity < end)
+                {
+                    return i;
+                }
+                start = end;
+            }
+            //If reaches maximum and the developer(s) have fucked up the animation ranges on each spawn of projectiles somewhere, just assign it to the last animation state.
+            return Globals.GameProjectiles[ProjectileNum].Animations.Count - 1;
+        }
+
         private void AddProjectileSpawns()
         {
             ProjectileStruct myBase = Globals.GameProjectiles[ProjectileNum];
             AnimationStruct animBase = null;
-            if (myBase.Animation > -1 && myBase.Animation < Options.MaxAnimations)
+            int Spawn = FindSpawnAnimationData();
+
+            if (myBase.Animations[Spawn].Animation > -1 && myBase.Animations[Spawn].Animation < Options.MaxAnimations)
             {
-                animBase = Globals.GameAnimations[myBase.Animation];
+                animBase = Globals.GameAnimations[myBase.Animations[Spawn].Animation];
             }
 
             for (int x = 0; x < ProjectileStruct.SpawnLocationsWidth; x++)
@@ -106,7 +127,7 @@ namespace Intersect_Client.Classes.Entities
                     {
                         if (myBase.SpawnLocations[x, y].Directions[d] == true)
                         {
-                            ProjectileSpawns s = new ProjectileSpawns(FindProjectileRotationDir(Dir, d), CurrentX + FindProjectileRotationX(Dir, x - 2, y - 2), CurrentY + FindProjectileRotationY(Dir, x - 2, y - 2), CurrentZ, CurrentMap, animBase, myBase.AutoRotate,myBase);
+                            ProjectileSpawns s = new ProjectileSpawns(FindProjectileRotationDir(Dir, d), CurrentX + FindProjectileRotationX(Dir, x - 2, y - 2), CurrentY + FindProjectileRotationY(Dir, x - 2, y - 2), CurrentZ, CurrentMap, animBase, myBase.Animations[Spawn].AutoRotate, myBase);
                             Spawns[_spawnedAmount] = s;
                             _spawnedAmount++;
                             _spawnCount++;
@@ -525,7 +546,7 @@ namespace Intersect_Client.Classes.Entities
             Map = map;
             SpawnMap = Map;
             Dir = dir;
-            Anim = new AnimationInstance(animBase, true);
+            Anim = new AnimationInstance(animBase, true, autoRotate);
             AutoRotate = autoRotate;
             ProjectileBase = projectileBase;
         }

@@ -87,6 +87,9 @@ namespace Intersect_Client.Classes.Entities
         //Entity Animations
         public List<AnimationInstance> Animations = new List<AnimationInstance>();
 
+        //Status effects
+        public List<StatusInstance> Status = new List<StatusInstance>();
+
         private long _lastUpdate;
         private long _walkTimer;
         public int WalkFrame;
@@ -292,7 +295,32 @@ namespace Intersect_Client.Classes.Entities
             FloatRect destRectangle = new FloatRect();
             GameTexture srcTexture;
             var d = 0;
-            GameTexture entityTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Entity, MySprite);
+
+            string sprite = MySprite;
+            int alpha = 255;
+
+            //If the entity has transformed, apply that sprite instead.
+            for (var n = 0; n < Status.Count; n++)
+            {
+                if (Status[n].Type == (int)Enums.StatusTypes.Transform)
+                {
+                    sprite = Status[n].Data;
+                }
+                //If unit is stealthed, don't render unless the entity is the player.
+                if (Status[n].Type == (int)Enums.StatusTypes.Stealth)
+                {
+                    if (Globals.MyIndex != MyIndex)
+                    {
+                        return;
+                    }
+                    else
+                    {
+                        alpha = 125;
+                    }
+                }
+            }
+
+            GameTexture entityTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Entity, sprite);
             if (entityTex != null)
             {
                 if (entityTex.GetHeight() / 4 > Options.TileHeight)
@@ -329,16 +357,20 @@ namespace Intersect_Client.Classes.Entities
                 srcRectangle = new FloatRect(WalkFrame * (int)entityTex.GetWidth() / 4, d * (int)entityTex.GetHeight() / 4, (int)entityTex.GetWidth() / 4, (int)entityTex.GetHeight() / 4);
                 destRectangle.Width = srcRectangle.Width;
                 destRectangle.Height = srcRectangle.Height;
-                GameGraphics.DrawGameTexture(entityTex, srcRectangle, destRectangle, Color.White);
+                GameGraphics.DrawGameTexture(entityTex, srcRectangle, destRectangle, new Color(alpha, 255, 255, 255));
 
-                //Draw the equipment/paperdolls
-                for (int z = 0; z < Options.PaperdollOrder.Count; z++)
+                //Don't render the paperdolls if they have transformed.
+                if (sprite == MySprite)
                 {
-                    if (Options.EquipmentSlots.IndexOf(Options.PaperdollOrder[z]) > -1)
+                    //Draw the equipment/paperdolls
+                    for (int z = 0; z < Options.PaperdollOrder.Count; z++)
                     {
-                        if (Equipment[Options.EquipmentSlots.IndexOf(Options.PaperdollOrder[z])] > -1 && Inventory[Equipment[Options.EquipmentSlots.IndexOf(Options.PaperdollOrder[z])]].ItemNum > -1)
+                        if (Options.EquipmentSlots.IndexOf(Options.PaperdollOrder[z]) > -1)
                         {
-                            DrawEquipment(Globals.GameItems[Inventory[Equipment[Options.EquipmentSlots.IndexOf(Options.PaperdollOrder[z])]].ItemNum].Paperdoll);
+                            if (Equipment[Options.EquipmentSlots.IndexOf(Options.PaperdollOrder[z])] > -1 && Inventory[Equipment[Options.EquipmentSlots.IndexOf(Options.PaperdollOrder[z])]].ItemNum > -1)
+                            {
+                                DrawEquipment(Globals.GameItems[Inventory[Equipment[Options.EquipmentSlots.IndexOf(Options.PaperdollOrder[z])]].ItemNum].Paperdoll, alpha);
+                            }
                         }
                     }
                 }
@@ -346,7 +378,7 @@ namespace Intersect_Client.Classes.Entities
             }
         }
 
-        public virtual void DrawEquipment(string filename)
+        public virtual void DrawEquipment(string filename, int alpha)
         {
             int i = GetLocalPos(CurrentMap);
             if (i == -1 || !Globals.GameMaps.ContainsKey(CurrentMap)) return;
@@ -391,7 +423,7 @@ namespace Intersect_Client.Classes.Entities
                 srcRectangle = new FloatRect(WalkFrame * (int)paperdollTex.GetWidth() / 4, d * (int)paperdollTex.GetHeight() / 4, (int)paperdollTex.GetWidth() / 4, (int)paperdollTex.GetHeight() / 4);
                 destRectangle.Width = srcRectangle.Width;
                 destRectangle.Height = srcRectangle.Height;
-                GameGraphics.DrawGameTexture(paperdollTex, srcRectangle, destRectangle, Color.White);
+                GameGraphics.DrawGameTexture(paperdollTex, srcRectangle, destRectangle, new Color(alpha, 255, 255, 255));
             }
         }
 
@@ -427,6 +459,20 @@ namespace Intersect_Client.Classes.Entities
         public virtual void DrawName()
         {
             if (HideName == 1) { return; }
+
+            //Check for stealth amoungst status effects.
+            for (var n = 0; n < Status.Count; n++)
+            {
+                //If unit is stealthed, don't render unless the entity is the player.
+                if (Status[n].Type == (int)Enums.StatusTypes.Stealth)
+                {
+                    if (Globals.MyIndex != MyIndex)
+                    {
+                        return;
+                    }
+                }
+            }
+
             int i = GetLocalPos(CurrentMap);
             if (i == -1 || !Globals.GameMaps.ContainsKey(CurrentMap))
             {
@@ -454,6 +500,20 @@ namespace Intersect_Client.Classes.Entities
         {
             if (HideName == 1 && Vital[(int)Enums.Vitals.Health] == MaxVital[(int)Enums.Vitals.Health]) { return; }
             if (Vital[(int)Enums.Vitals.Health] <= 0) { return; }
+
+            //Check for stealth amoungst status effects.
+            for (var n = 0; n < Status.Count; n++)
+            {
+                //If unit is stealthed, don't render unless the entity is the player.
+                if (Status[n].Type == (int)Enums.StatusTypes.Stealth)
+                {
+                    if (Globals.MyIndex != MyIndex)
+                    {
+                        return;
+                    }
+                }
+            }
+
             int i = GetLocalPos(CurrentMap);
             if (i == -1 || !Globals.GameMaps.ContainsKey(CurrentMap))
             {
@@ -536,6 +596,18 @@ namespace Intersect_Client.Classes.Entities
         ~Entity()
         {
             Dispose();
+        }
+    }
+
+    public class StatusInstance
+    {
+        public int Type = -1;
+        public string Data = "";
+
+        public StatusInstance(int type, string data)
+        {
+            Type = type;
+            Data = data;
         }
     }
 }

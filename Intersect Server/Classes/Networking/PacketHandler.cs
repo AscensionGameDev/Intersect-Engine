@@ -305,6 +305,17 @@ namespace Intersect_Server.Classes
             int x = bf.ReadInteger();
             int y = bf.ReadInteger();
             int dir = bf.ReadInteger();
+
+            //check if player is stunned or snared, if so don't let them move.
+            for (var n = 0; n < client.Entity.Status.Count; n++)
+            {
+                if (client.Entity.Status[n].Type == (int)Enums.StatusTypes.Stun || client.Entity.Status[n].Type == (int)Enums.StatusTypes.Snare)
+                {
+                    bf.Dispose();
+                    return;
+                }
+            }
+
             if (TileHelper.IsTileValid(map, x, y))
             {
                 Globals.Entities[index].CurrentMap = map;
@@ -651,6 +662,23 @@ namespace Intersect_Server.Classes
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
             long target = bf.ReadLong();
+
+            //check if player is blinded or stunned
+            for (var n = 0; n < client.Entity.Status.Count; n++)
+            {
+                if (client.Entity.Status[n].Type == (int)Enums.StatusTypes.Stun)
+                {
+                    PacketSender.SendPlayerMsg(client, "You are stunned and can't attack");
+                    bf.Dispose();
+                    return;
+                }
+                if (client.Entity.Status[n].Type == (int)Enums.StatusTypes.Blind)
+                {
+                    PacketSender.SendPlayerMsg(client, "You are blinded and can't attack");
+                    bf.Dispose();
+                    return;
+                }
+            }
 
             //Fire projectile instead if weapon has it
             if (Options.WeaponIndex > -1)

@@ -20,6 +20,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 using System;
+using System.Collections.Generic;
 using System.IO;
 
 namespace Intersect_Server.Classes
@@ -32,7 +33,6 @@ namespace Intersect_Server.Classes
 
         public const string Version = "0.0.0.1";
         public string Name = "";
-        public int Animation = 0;
         public int Speed = 1;
         public int Delay = 1;
         public int Quantity = 1;
@@ -43,8 +43,9 @@ namespace Intersect_Server.Classes
         public bool IgnoreActiveResources = false;
         public bool IgnoreExhaustedResources = false;
         public bool Homing = false;
-        public bool AutoRotate = false;
+        public bool GrappleHook = false;
         public Location[,] SpawnLocations = new Location[SpawnLocationsWidth, SpawnLocationsHeight];
+        public List<ProjectileAnimation> Animations = new List<ProjectileAnimation>();
 
         //Init
         public ProjectileStruct()
@@ -66,7 +67,6 @@ namespace Intersect_Server.Classes
             if (loadedVersion != Version)
                 throw new Exception("Failed to load Projectile #" + index + ". Loaded Version: " + loadedVersion + " Expected Version: " + Version);
             Name = myBuffer.ReadString();
-            Animation = myBuffer.ReadInteger();
             Speed = myBuffer.ReadInteger();
             Delay = myBuffer.ReadInteger();
             Quantity = myBuffer.ReadInteger();
@@ -77,7 +77,7 @@ namespace Intersect_Server.Classes
             IgnoreExhaustedResources = Convert.ToBoolean(myBuffer.ReadInteger());
             IgnoreZDimension = Convert.ToBoolean(myBuffer.ReadInteger());
             Homing = Convert.ToBoolean(myBuffer.ReadInteger());
-            AutoRotate = Convert.ToBoolean(myBuffer.ReadInteger());
+            GrappleHook = Convert.ToBoolean(myBuffer.ReadInteger());
 
             for (var x = 0; x < SpawnLocationsWidth; x++)
             {
@@ -90,6 +90,20 @@ namespace Intersect_Server.Classes
                 }
             }
 
+            // Load Animations
+            Animations.Clear();
+            var animCount = myBuffer.ReadInteger();
+            for (var i = 0; i < animCount; i++)
+            {
+                Animations.Add(new ProjectileAnimation(myBuffer.ReadInteger(), myBuffer.ReadInteger(), Convert.ToBoolean(myBuffer.ReadInteger())));
+            }
+
+            //If no animations present.
+            if (animCount <= 0)
+            {
+                Animations.Add(new ProjectileAnimation(-1, Quantity, false));
+            }
+
             myBuffer.Dispose();
         }
 
@@ -98,7 +112,6 @@ namespace Intersect_Server.Classes
             var myBuffer = new ByteBuffer();
             myBuffer.WriteString(Version);
             myBuffer.WriteString(Name);
-            myBuffer.WriteInteger(Animation);
             myBuffer.WriteInteger(Speed);
             myBuffer.WriteInteger(Delay);
             myBuffer.WriteInteger(Quantity);
@@ -109,7 +122,7 @@ namespace Intersect_Server.Classes
             myBuffer.WriteInteger(Convert.ToInt32(IgnoreExhaustedResources));
             myBuffer.WriteInteger(Convert.ToInt32(IgnoreZDimension));
             myBuffer.WriteInteger(Convert.ToInt32(Homing));
-            myBuffer.WriteInteger(Convert.ToInt32(AutoRotate));
+            myBuffer.WriteInteger(Convert.ToInt32(GrappleHook));
 
             for (var x = 0; x < SpawnLocationsWidth; x++)
             {
@@ -120,6 +133,15 @@ namespace Intersect_Server.Classes
                         myBuffer.WriteInteger(Convert.ToInt32(SpawnLocations[x, y].Directions[i]));
                     }
                 }
+            }
+
+            // Save animations
+            myBuffer.WriteInteger(Animations.Count);
+            for (var i = 0; i < Animations.Count; i++)
+            {
+                myBuffer.WriteInteger(Animations[i].Animation);
+                myBuffer.WriteInteger(Animations[i].SpawnRange);
+                myBuffer.WriteInteger(Convert.ToInt32(Animations[i].AutoRotate));
             }
 
             return myBuffer.ToArray();
@@ -138,5 +160,19 @@ namespace Intersect_Server.Classes
     public class Location
     {
         public bool[] Directions = new bool[ProjectileStruct.MaxProjectileDirections];
+    }
+
+    public class ProjectileAnimation
+    {
+        public int Animation = -1;
+        public int SpawnRange = 1;
+        public bool AutoRotate = false;
+
+        public ProjectileAnimation(int animation, int spawnRange, bool autoRotate)
+        {
+            Animation = animation;
+            SpawnRange = spawnRange;
+            AutoRotate = autoRotate;
+        }
     }
 }

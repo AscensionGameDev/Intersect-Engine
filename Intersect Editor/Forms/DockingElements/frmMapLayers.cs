@@ -197,6 +197,7 @@ namespace Intersect_Editor.Forms
             grpSound.Visible = false;
             grpResource.Visible = false;
             grpAnimation.Visible = false;
+            grpSlide.Visible = false;
         }
         private void rbItem_CheckedChanged(object sender, EventArgs e)
         {
@@ -326,6 +327,15 @@ namespace Intersect_Editor.Forms
             {
                 tmpMap.Attributes[x, y].value = (int)Enums.MapAttributes.Animation;
                 tmpMap.Attributes[x, y].data1 = cmbAnimationAttribute.SelectedIndex;
+            }
+            else if (rbGrappleStone.Checked == true)
+            {
+                tmpMap.Attributes[x, y].value = (int)Enums.MapAttributes.GrappleStone;
+            }
+            else if (rbSlide.Checked == true)
+            {
+                tmpMap.Attributes[x, y].value = (int)Enums.MapAttributes.Slide;
+                tmpMap.Attributes[x, y].data1 = cmbSlideDir.SelectedIndex;
             }
         }
         public bool RemoveAttribute(MapStruct tmpMap, int x, int y)
@@ -585,6 +595,17 @@ namespace Intersect_Editor.Forms
                     EditorGraphics.SetTilesetChain(_chain);
                 }
             }
+        }
+
+        private void rbGrappleStone_CheckedChanged(object sender, EventArgs e)
+        {
+            hideAttributeMenus();
+        }
+
+        private void rbSlide_CheckedChanged(object sender, EventArgs e)
+        {
+            hideAttributeMenus();
+            grpSlide.Visible = true;
         }
     }
 }

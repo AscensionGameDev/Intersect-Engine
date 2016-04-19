@@ -483,6 +483,9 @@ namespace Intersect_Server.Classes
                             }
                         }
                         break;
+                    case (int)Enums.ItemTypes.Event:
+
+                        break;
                     default:
                         PacketSender.SendPlayerMsg(MyClient, "Use of this item type is not yet implemented.");
                         break;
@@ -937,6 +940,31 @@ namespace Intersect_Server.Classes
             Target = target;
             if (spellNum > -1)
             {
+                //Check if caster does not have the correct combat stats, if not exit now.
+                for (var n = 0; n < (int)Enums.Stats.StatCount; n++)
+                {
+                    if (Stat[n].Value() < Globals.GameSpells[spellNum].StatReq[n])
+                    {
+                        PacketSender.SendPlayerMsg(MyClient, "You do not possess the correct combat stats to use this ability.");
+                        return;
+                    }
+                }
+
+                //Check if the caster is silenced or stunned
+                for (var n = 0; n < Status.Count; n++)
+                {
+                    if (Status[n].Type == (int)Enums.StatusTypes.Silence)
+                    {
+                        PacketSender.SendPlayerMsg(MyClient, "You cannot cast this ability whilst silenced.");
+                        return;
+                    }
+                    if (Status[n].Type == (int)Enums.StatusTypes.Stun)
+                    {
+                        PacketSender.SendPlayerMsg(MyClient, "You cannot cast this ability whilst stunned.");
+                        return;
+                    }
+                }
+
                 if (Globals.GameSpells[spellNum].VitalCost[(int)Enums.Vitals.Mana] <= Vital[(int)Enums.Vitals.Mana])
                 {
                     if (Globals.GameSpells[spellNum].VitalCost[(int)Enums.Vitals.Health] <= Vital[(int)Enums.Vitals.Health])
