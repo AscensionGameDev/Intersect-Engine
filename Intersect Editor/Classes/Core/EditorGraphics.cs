@@ -22,6 +22,7 @@
 using System;
 using System.Drawing;
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows.Forms;
 using Intersect_Editor.Classes.Core;
 using Intersect_Editor.Classes.General;
@@ -931,6 +932,7 @@ namespace Intersect_Editor.Classes
             _graphicsDevice.SetRenderTarget(null);
 
             var tmpMap = Globals.GameMaps[Globals.CurrentMap];
+            if (tmpMap == null) return;
             DrawTexture(_whiteTex, new RectangleF(0, 0, 1, 1),new RectangleF(0,0, Options.TileWidth * (Options.MapWidth + 2), Options.TileHeight * (Options.MapHeight + 2)),
                 Color.FromArgb((byte)(((float)tmpMap.Brightness / 100f) * 255f), 255, 255, 255), DarknessTexture, BlendState.Additive);
 
