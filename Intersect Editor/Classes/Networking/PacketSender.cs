@@ -68,7 +68,7 @@ namespace Intersect_Editor.Classes
         public static void SendMap(int mapnum)
         {
             var bf = new ByteBuffer();
-            var mapData = Globals.GameMaps[mapnum].Save();
+            var mapData = Globals.GameMaps[mapnum].GetMapData(false);
             bf.WriteLong((int)ClientPackets.SaveMap);
             bf.WriteLong(mapnum);
             bf.WriteLong(mapData.Length);

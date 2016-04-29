@@ -2,7 +2,6 @@
 
 namespace Intersect_Library.GameObjects
 {
-    [Serializable]
     public class Light
     {
         public int OffsetX;

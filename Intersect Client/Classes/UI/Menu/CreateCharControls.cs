@@ -34,6 +34,7 @@ using Intersect_Client.Classes.Core;
 using Intersect_Client.Classes.General;
 using Intersect_Client.Classes.Misc;
 using Intersect_Client.Classes.Networking;
+using Intersect_Library;
 
 namespace Intersect_Client.Classes.UI.Menu
 {

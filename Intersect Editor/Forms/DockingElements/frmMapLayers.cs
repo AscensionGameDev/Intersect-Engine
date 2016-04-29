@@ -8,7 +8,6 @@ using Intersect_Library.GameObjects.Maps;
 using Intersect_Library.GameObjects.Maps.MapList;
 using Microsoft.Xna.Framework.Graphics;
 using WeifenLuo.WinFormsUI.Docking;
-using Options = Intersect_Editor.Classes.General.Options;
 
 namespace Intersect_Editor.Forms
 {
@@ -280,6 +279,7 @@ namespace Intersect_Editor.Forms
         }
         public void PlaceAttribute(MapStruct tmpMap, int x, int y)
         {
+            tmpMap.Attributes[x, y] = new Intersect_Library.GameObjects.Maps.Attribute();
             if (rbBlocked.Checked == true)
             {
                 tmpMap.Attributes[x, y].value = (int)MapAttributes.Blocked;
@@ -338,13 +338,9 @@ namespace Intersect_Editor.Forms
         }
         public bool RemoveAttribute(MapStruct tmpMap, int x, int y)
         {
-            if (tmpMap.Attributes[x, y].value > 0)
+            if (tmpMap.Attributes[x, y] != null && tmpMap.Attributes[x, y].value > 0)
             {
-                tmpMap.Attributes[x, y].value = 0;
-                tmpMap.Attributes[x, y].data1 = 0;
-                tmpMap.Attributes[x, y].data2 = 0;
-                tmpMap.Attributes[x, y].data3 = 0;
-                tmpMap.Attributes[x, y].data4 = "";
+                tmpMap.Attributes[x, y] = null;
                 return true;
             }
             return false;

@@ -28,7 +28,7 @@ using Intersect_Library;
 using Intersect_Library.GameObjects;
 using Microsoft.Xna.Framework.Graphics;
 using Color = System.Drawing.Color;
-using Options = Intersect_Editor.Classes.General.Options;
+
 
 namespace Intersect_Editor.Forms
 {

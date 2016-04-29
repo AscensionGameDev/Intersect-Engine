@@ -28,7 +28,7 @@ using Intersect_Server.Classes.General;
 using Intersect_Server.Classes.Items;
 using Intersect_Server.Classes.Networking;
 using Intersect_Server.Classes.Spells;
-using Options = Intersect_Server.Classes.General.Options;
+
 
 namespace Intersect_Server.Classes.Entities
 {

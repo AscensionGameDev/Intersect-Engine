@@ -26,6 +26,7 @@ using Intersect_Editor.Classes;
 using WeifenLuo.WinFormsUI.Docking;
 using Intersect_Editor.Classes.General;
 using Intersect_Editor.Forms.Editors;
+using Intersect_Library;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace Intersect_Editor.Forms
@@ -252,26 +253,28 @@ namespace Intersect_Editor.Forms
             toolStripBtnSelect.Enabled = true;
             toolStripBtnRect.Enabled = false;
             toolStripBtnEyeDrop.Enabled = false;
-            switch (Globals.CurrentLayer)
+            if (Globals.CurrentLayer == Options.LayerCount) //Attributes
             {
-                case Options.LayerCount: //Attributes
-                    toolStripBtnPen.Enabled = true;
-                    toolStripBtnRect.Enabled = true;
-                    break;
-                case Options.LayerCount + 1: //Lights
-                    Globals.CurrentTool = (int)EdittingTool.Selection;
-                    break;
-                case Options.LayerCount + 2: //Events
-                    Globals.CurrentTool = (int)EdittingTool.Selection;
-                    break;
-                case Options.LayerCount + 3: //NPCS
-                    Globals.CurrentTool = (int)EdittingTool.Selection;
-                    break;
-                default:
-                    toolStripBtnPen.Enabled = true;
-                    toolStripBtnRect.Enabled = true;
-                    toolStripBtnEyeDrop.Enabled = true;
-                    break;
+                toolStripBtnPen.Enabled = true;
+                toolStripBtnRect.Enabled = true;
+            }
+            else if(Globals.CurrentLayer == Options.LayerCount + 1) //Lights
+            {
+                Globals.CurrentTool = (int)EdittingTool.Selection;
+            }
+            else if (Globals.CurrentLayer == Options.LayerCount + 2) //Events
+            {
+                Globals.CurrentTool = (int)EdittingTool.Selection;
+            }
+            else if (Globals.CurrentLayer == Options.LayerCount + 3) //NPCS
+            {
+                Globals.CurrentTool = (int)EdittingTool.Selection;
+            }
+            else
+            {
+                toolStripBtnPen.Enabled = true;
+                toolStripBtnRect.Enabled = true;
+                toolStripBtnEyeDrop.Enabled = true;
             }
 
             switch (Globals.CurrentTool)
@@ -397,7 +400,7 @@ namespace Intersect_Editor.Forms
 
             if (fileDialog.FileName != "")
             {
-                File.WriteAllBytes(fileDialog.FileName, Globals.GameMaps[Globals.CurrentMap].Save());
+                File.WriteAllBytes(fileDialog.FileName, Globals.GameMaps[Globals.CurrentMap].GetMapData(false));
             }
         }
         private void importMapToolStripMenuItem_Click(object sender, EventArgs e)

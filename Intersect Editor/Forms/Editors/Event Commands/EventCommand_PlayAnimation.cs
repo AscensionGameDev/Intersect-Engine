@@ -24,9 +24,11 @@ using System.Drawing;
 using System.Windows.Forms;
 using Intersect_Editor.Classes;
 using Intersect_Editor.Classes.General;
+using Intersect_Library;
 using Intersect_Library.GameObjects.Events;
 using Intersect_Library.GameObjects.Maps;
 using Intersect_Library.GameObjects.Maps.MapList;
+using Color = System.Drawing.Color;
 
 namespace Intersect_Editor.Forms.Editors.Event_Commands
 {

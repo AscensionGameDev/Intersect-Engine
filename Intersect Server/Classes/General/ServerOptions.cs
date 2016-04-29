@@ -1,66 +1,19 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Xml;
 using Intersect_Library;
 
 namespace Intersect_Server.Classes.General
 {
-    public static class Options
+    public static class ServerOptions
     {
         //Config XML String
         public static string ConfigXml = "";
         private static bool ConfigFailed = false;
 
-        //Game Settings
-        public static string GameName = "Intersect";
-        public static string MOTD = "Welcome to Intersect!";
-        public static int ServerPort = 4500;
-        
-        //Game Object Maxes
-        public static int MaxItems = 255;
-        public static int MaxShops = 255;
-        public static int MaxNpcs = 255;
-        public static int MaxNpcDrops = 10;
-        public static int MaxSpells = 255;
-        public static int MaxAnimations = 255;
-        public static int MaxResources = 255;
-        public static int MaxClasses = 20;
-        public static int MaxQuests = 255;
-        public static int MaxProjectiles = 255;
-        public static int MaxCommonEvents = 255;
-        public static int MaxServerVariables = 100;
-        public static int MaxServerSwitches = 100;
-
-        //Player Maxes
-        public static int MaxPlayerVariables = 100;
-        public static int MaxPlayerSwitches = 100;
-        public static int MaxStatValue = 200;
-        public static int MaxStats = 5;
-        public static int MaxLevel = 100;
-        public static int MaxHotbar = 10;
-        public static int MaxInvItems = 35;
-        public static int MaxPlayerSkills = 35;
-        public static int MaxBankSlots = 100;
-
-        //Equipment
-        public static int WeaponIndex = -1;
-        public static int ShieldIndex = -1;
-        public static List<string> EquipmentSlots = new List<string>();
-        public static List<string> PaperdollOrder = new List<string>();
-        public static List<string> ToolTypes = new List<string>();
-
         //Misc
         public static int ItemDespawnTime = 15000; //15 seconds
         public static int ItemRespawnTime = 15000; //15 seconds
-
-        //Maps
-        public static int GameBorderStyle = 0; //0 For Smart Borders, 1 for Non-Seamless, 2 for black borders
-        public static int MapWidth = 32;
-        public static int MapHeight = 26;
-        public static int TileWidth = 32;
-        public static int TileHeight = 32;
-        public static int LayerCount = 5; 
 
         //Options File
         public static bool LoadOptions()
@@ -162,56 +115,56 @@ namespace Intersect_Server.Classes.General
                     options.LoadXml(ConfigXml);
 
                     //General Options
-                    GameName = GetXmlStr(options, "//Config/GameName",false);
-                    MOTD = GetXmlStr(options, "//Config/MOTD", false);
-                    ServerPort = GetXmlInt(options, "//Config/ServerPort");
+                    Options.GameName = GetXmlStr(options, "//Config/GameName",false);
+                    Options.MOTD = GetXmlStr(options, "//Config/MOTD", false);
+                    Options.ServerPort = GetXmlInt(options, "//Config/ServerPort");
 
                     //Game Objects
-                    MaxItems = GetXmlInt(options, "//Config/GameObjects/MaxItems");
-                    MaxShops = GetXmlInt(options, "//Config/GameObjects/MaxShops");
-                    MaxNpcs = GetXmlInt(options, "//Config/GameObjects/MaxNpcs");
-                    MaxNpcDrops = GetXmlInt(options, "//Config/GameObjects/MaxNpcDrops");
-                    MaxSpells = GetXmlInt(options, "//Config/GameObjects/MaxSpells");
-                    MaxAnimations = GetXmlInt(options, "//Config/GameObjects/MaxAnimations");
-                    MaxResources = GetXmlInt(options, "//Config/GameObjects/MaxResources");
-                    MaxClasses = GetXmlInt(options, "//Config/GameObjects/MaxClasses");
-                    MaxQuests = GetXmlInt(options, "//Config/GameObjects/MaxQuests");
-                    MaxProjectiles = GetXmlInt(options, "//Config/GameObjects/MaxProjectiles");
-                    MaxCommonEvents = GetXmlInt(options, "//Config/GameObjects/MaxCommonEvents");
-                    MaxServerVariables = GetXmlInt(options, "//Config/GameObjects/MaxServerVariables");
-                    MaxServerSwitches = GetXmlInt(options, "//Config/GameObjects/MaxServerSwitches");
+                    Options.MaxItems = GetXmlInt(options, "//Config/GameObjects/MaxItems");
+                    Options.MaxShops = GetXmlInt(options, "//Config/GameObjects/MaxShops");
+                    Options.MaxNpcs = GetXmlInt(options, "//Config/GameObjects/MaxNpcs");
+                    Options.MaxNpcDrops = GetXmlInt(options, "//Config/GameObjects/MaxNpcDrops");
+                    Options.MaxSpells = GetXmlInt(options, "//Config/GameObjects/MaxSpells");
+                    Options.MaxAnimations = GetXmlInt(options, "//Config/GameObjects/MaxAnimations");
+                    Options.MaxResources = GetXmlInt(options, "//Config/GameObjects/MaxResources");
+                    Options.MaxClasses = GetXmlInt(options, "//Config/GameObjects/MaxClasses");
+                    Options.MaxQuests = GetXmlInt(options, "//Config/GameObjects/MaxQuests");
+                    Options.MaxProjectiles = GetXmlInt(options, "//Config/GameObjects/MaxProjectiles");
+                    Options.MaxCommonEvents = GetXmlInt(options, "//Config/GameObjects/MaxCommonEvents");
+                    Options.MaxServerVariables = GetXmlInt(options, "//Config/GameObjects/MaxServerVariables");
+                    Options.MaxServerSwitches = GetXmlInt(options, "//Config/GameObjects/MaxServerSwitches");
 
                     //Player Options
-                    MaxStatValue = GetXmlInt(options, "//Config/Player/MaxStat");
-                    MaxLevel = GetXmlInt(options, "//Config/Player/MaxLevel");
-                    MaxPlayerVariables = GetXmlInt(options, "//Config/Player/MaxPlayerVariables");
-                    MaxPlayerSwitches = GetXmlInt(options, "//Config/Player/MaxPlayerSwitches");
-                    MaxInvItems = GetXmlInt(options, "//Config/Player/MaxInventory");
-                    MaxPlayerSkills = GetXmlInt(options, "//Config/Player/MaxSpells");
-                    MaxBankSlots = GetXmlInt(options, "//Config/Player/MaxBank");
+                    Options.MaxStatValue = GetXmlInt(options, "//Config/Player/MaxStat");
+                    Options.MaxLevel = GetXmlInt(options, "//Config/Player/MaxLevel");
+                    Options.MaxPlayerVariables = GetXmlInt(options, "//Config/Player/MaxPlayerVariables");
+                    Options.MaxPlayerSwitches = GetXmlInt(options, "//Config/Player/MaxPlayerSwitches");
+                    Options.MaxInvItems = GetXmlInt(options, "//Config/Player/MaxInventory");
+                    Options.MaxPlayerSkills = GetXmlInt(options, "//Config/Player/MaxSpells");
+                    Options.MaxBankSlots = GetXmlInt(options, "//Config/Player/MaxBank");
 
                     //Equipment
                     int slot = 0;
                     while (!string.IsNullOrEmpty(GetXmlStr(options, "//Config/Equipment/Slot" + slot, false)))
                     {
-                        if (EquipmentSlots.IndexOf(GetXmlStr(options, "//Config/Equipment/Slot" + slot, false)) > -1)
+                        if (Options.EquipmentSlots.IndexOf(GetXmlStr(options, "//Config/Equipment/Slot" + slot, false)) > -1)
                         {
                             Console.WriteLine("Tried to add the same piece of equipment twice, this is not permitted.  (Path: " + "//Config/Equipment/Slot" + slot + ")");
                             return false;
                         }
                         else
                         {
-                            EquipmentSlots.Add(GetXmlStr(options, "//Config/Equipment/Slot" + slot, false));
+                            Options.EquipmentSlots.Add(GetXmlStr(options, "//Config/Equipment/Slot" + slot, false));
                         }
                         slot++;
                     }
-                    WeaponIndex = GetXmlInt(options, "//Config/Equipment/WeaponSlot");
-                    if (WeaponIndex < -1 || WeaponIndex > EquipmentSlots.Count - 1)
+                    Options.WeaponIndex = GetXmlInt(options, "//Config/Equipment/WeaponSlot");
+                    if (Options.WeaponIndex < -1 || Options.WeaponIndex > Options.EquipmentSlots.Count - 1)
                     {
                         Console.WriteLine("Weapon Slot is out of bounds! Make sure the slot exists and you are counting starting from zero! Use -1 if you do not wish to have equipable weapons in-game!  (Path: " + "//Config/Equipment/WeaponSlot)");
                     }
-                    ShieldIndex = GetXmlInt(options, "//Config/Equipment/ShieldSlot");
-                    if (ShieldIndex < -1 || ShieldIndex > EquipmentSlots.Count - 1)
+                    Options.ShieldIndex = GetXmlInt(options, "//Config/Equipment/ShieldSlot");
+                    if (Options.ShieldIndex < -1 || Options.ShieldIndex > Options.EquipmentSlots.Count - 1)
                     {
                         Console.WriteLine("Shield Slot is out of bounds! Make sure the slot exists and you are counting starting from zero! Use -1 if you do not wish to have equipable shields in-game!  (Path: " + "//Config/Equipment/ShieldSlot)");
                     }
@@ -220,16 +173,16 @@ namespace Intersect_Server.Classes.General
                     slot = 0;
                     while (!string.IsNullOrEmpty(GetXmlStr(options, "//Config/Paperdoll/Slot" + slot, false)))
                     {
-                        if (EquipmentSlots.IndexOf(GetXmlStr(options, "//Config/Paperdoll/Slot" + slot, false)) > -1)
+                        if (Options.EquipmentSlots.IndexOf(GetXmlStr(options, "//Config/Paperdoll/Slot" + slot, false)) > -1)
                         {
-                            if (PaperdollOrder.IndexOf(GetXmlStr(options, "//Config/Paperdoll/Slot" + slot, false)) > -1)
+                            if (Options.PaperdollOrder.IndexOf(GetXmlStr(options, "//Config/Paperdoll/Slot" + slot, false)) > -1)
                             {
                                 Console.WriteLine("Tried to add the same piece of equipment to the paperdoll render order twice, this is not permitted.  (Path: " + "//Config/Paperdoll/Slot" + slot + ")");
                                 return false;
                             }
                             else
                             {
-                                PaperdollOrder.Add(GetXmlStr(options, "//Config/Paperdoll/Slot" + slot, false));
+                                Options.PaperdollOrder.Add(GetXmlStr(options, "//Config/Paperdoll/Slot" + slot, false));
                             }
                         }
                         else
@@ -244,14 +197,14 @@ namespace Intersect_Server.Classes.General
                     slot = 0;
                     while (!string.IsNullOrEmpty(GetXmlStr(options, "//Config/ToolTypes/Slot" + slot, false)))
                     {
-                        if (ToolTypes.IndexOf(GetXmlStr(options, "//Config/ToolTypes/Slot" + slot, false)) > -1)
+                        if (Options.ToolTypes.IndexOf(GetXmlStr(options, "//Config/ToolTypes/Slot" + slot, false)) > -1)
                         {
                             Console.WriteLine("Tried to add the same type of tool twice, this is not permitted.  (Path: " + "//Config/ToolTypes/Slot" + slot + ")");
                             return false;
                         }
                         else
                         {
-                            ToolTypes.Add(GetXmlStr(options, "//Config/ToolTypes/Slot" + slot, false));
+                            Options.ToolTypes.Add(GetXmlStr(options, "//Config/ToolTypes/Slot" + slot, false));
                         }
                         slot++;
                     }
@@ -261,16 +214,16 @@ namespace Intersect_Server.Classes.General
                     ItemRespawnTime = GetXmlInt(options, "//Config/Misc/ItemSpawnTime");
 
                     //Map
-                    GameBorderStyle = GetXmlInt(options, "//Config/Map/BorderStyle");
-                    MapWidth = GetXmlInt(options, "//Config/Map/MapWidth");
-                    MapHeight = GetXmlInt(options, "//Config/Map/MapHeight");
-                    if (MapWidth < 10 || MapWidth > 64 || MapHeight < 10 || MapHeight > 64)
+                    Options.GameBorderStyle = GetXmlInt(options, "//Config/Map/BorderStyle");
+                    Options.MapWidth = GetXmlInt(options, "//Config/Map/MapWidth");
+                    Options.MapHeight = GetXmlInt(options, "//Config/Map/MapHeight");
+                    if (Options.MapWidth < 10 || Options.MapWidth > 64 || Options.MapHeight < 10 || Options.MapHeight > 64)
                     {
                         Console.WriteLine("MapWidth and/or MapHeight are out of bounds. Must be between 10 and 64. The client loads 9 maps at a time, having large map sizes really hurts performance.");
                         ConfigFailed = true;
                     }
-                    TileWidth = GetXmlInt(options, "//Config/Map/TileWidth");
-                    TileHeight = GetXmlInt(options, "//Config/Map/TileHeight");
+                    Options.TileWidth = GetXmlInt(options, "//Config/Map/TileWidth");
+                    Options.TileHeight = GetXmlInt(options, "//Config/Map/TileHeight");
 
                     if (ConfigFailed)
                     {
@@ -289,64 +242,64 @@ namespace Intersect_Server.Classes.General
         public static byte[] GetServerConfig()
         {
             ByteBuffer bf = new ByteBuffer();
-            bf.WriteString(GameName);
+            bf.WriteString(Options.GameName);
 
             //Game Objects
-            bf.WriteInteger(MaxItems);
-            bf.WriteInteger(MaxShops);
-            bf.WriteInteger(MaxNpcs);
-            bf.WriteInteger(MaxNpcDrops);
-            bf.WriteInteger(MaxSpells);
-            bf.WriteInteger(MaxAnimations);
-            bf.WriteInteger(MaxResources);
-            bf.WriteInteger(MaxClasses);
-            bf.WriteInteger(MaxQuests);
-            bf.WriteInteger(MaxProjectiles);
-            bf.WriteInteger(MaxCommonEvents);
-            bf.WriteInteger(MaxServerVariables);
-            bf.WriteInteger(MaxServerSwitches);
+            bf.WriteInteger(Options.MaxItems);
+            bf.WriteInteger(Options.MaxShops);
+            bf.WriteInteger(Options.MaxNpcs);
+            bf.WriteInteger(Options.MaxNpcDrops);
+            bf.WriteInteger(Options.MaxSpells);
+            bf.WriteInteger(Options.MaxAnimations);
+            bf.WriteInteger(Options.MaxResources);
+            bf.WriteInteger(Options.MaxClasses);
+            bf.WriteInteger(Options.MaxQuests);
+            bf.WriteInteger(Options.MaxProjectiles);
+            bf.WriteInteger(Options.MaxCommonEvents);
+            bf.WriteInteger(Options.MaxServerVariables);
+            bf.WriteInteger(Options.MaxServerSwitches);
 
             //Player Objects
-            bf.WriteInteger(MaxStatValue);
-            bf.WriteInteger(MaxLevel);
-            bf.WriteInteger(MaxPlayerVariables);
-            bf.WriteInteger(MaxPlayerSwitches);
-            bf.WriteInteger(MaxHotbar);
-            bf.WriteInteger(MaxInvItems);
-            bf.WriteInteger(MaxPlayerSkills);
-            bf.WriteInteger(MaxBankSlots);
+            bf.WriteInteger(Options.MaxStatValue);
+            bf.WriteInteger(Options.MaxLevel);
+            bf.WriteInteger(Options.MaxPlayerVariables);
+            bf.WriteInteger(Options.MaxPlayerSwitches);
+            bf.WriteInteger(Options.MaxHotbar);
+            bf.WriteInteger(Options.MaxInvItems);
+            bf.WriteInteger(Options.MaxPlayerSkills);
+            bf.WriteInteger(Options.MaxBankSlots);
 
             //Equipment
-            bf.WriteInteger(EquipmentSlots.Count);
-            for (int i = 0; i < EquipmentSlots.Count; i++)
+            bf.WriteInteger(Options.EquipmentSlots.Count);
+            for (int i = 0; i < Options.EquipmentSlots.Count; i++)
             {
-                bf.WriteString(EquipmentSlots[i]);
+                bf.WriteString(Options.EquipmentSlots[i]);
             }
-            bf.WriteInteger(WeaponIndex);
-            bf.WriteInteger(ShieldIndex);
+            bf.WriteInteger(Options.WeaponIndex);
+            bf.WriteInteger(Options.ShieldIndex);
 
             //Paperdoll
-            bf.WriteInteger(PaperdollOrder.Count);
-            for (int i = 0; i < PaperdollOrder.Count; i++)
+            bf.WriteInteger(Options.PaperdollOrder.Count);
+            for (int i = 0; i < Options.PaperdollOrder.Count; i++)
             {
-                bf.WriteString(PaperdollOrder[i]);
+                bf.WriteString(Options.PaperdollOrder[i]);
             }
 
             //Tool Types
-            bf.WriteInteger(ToolTypes.Count);
-            for (int i = 0; i < ToolTypes.Count; i++)
+            bf.WriteInteger(Options.ToolTypes.Count);
+            for (int i = 0; i < Options.ToolTypes.Count; i++)
             {
-                bf.WriteString(ToolTypes[i]);
+                bf.WriteString(Options.ToolTypes[i]);
             }
 
             //Misc
 
             //Map
-            bf.WriteInteger(GameBorderStyle);
-            bf.WriteInteger(MapWidth);
-            bf.WriteInteger(MapHeight);
-            bf.WriteInteger(TileWidth);
-            bf.WriteInteger(TileHeight);
+            bf.WriteInteger(Options.GameBorderStyle);
+            bf.WriteInteger(Options.MapWidth);
+            bf.WriteInteger(Options.MapHeight);
+            bf.WriteInteger(Options.TileWidth);
+            bf.WriteInteger(Options.TileHeight);
 
             return bf.ToArray();
         }

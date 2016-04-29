@@ -30,7 +30,7 @@ using IntersectClientExtras.Gwen;
 using IntersectClientExtras.Gwen.Control;
 using Intersect_Client.Classes.General;
 using Intersect_Library;
-using Options = Intersect_Client.Classes.General.Options;
+
 
 namespace Intersect_Client.Classes.UI.Game
 {

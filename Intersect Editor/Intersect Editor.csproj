@@ -49,7 +49,6 @@
     <Compile Include="Classes\Entities\AnimationInstance.cs" />
     <Compile Include="Classes\General\Enums.cs" />
     <Compile Include="Classes\General\Globals.cs" />
-    <Compile Include="Classes\General\Options.cs" />
     <Compile Include="Classes\Maps\MapInstance.cs" />
     <Compile Include="Classes\Maps\MapProperties.cs" />
     <Compile Include="Classes\Misc\AlphanumComparatorFast.cs" />

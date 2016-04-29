@@ -62,7 +62,6 @@
       <DependentUpon>frmLoadingContent.cs</DependentUpon>
     </Compile>
     <Compile Include="Classes\General\Globals.cs" />
-    <Compile Include="Classes\General\Options.cs" />
     <Compile Include="Classes\Items\ItemInstance.cs" />
     <Compile Include="Classes\Misc\FieldChecking.cs" />
     <Compile Include="Classes\Misc\MathHelper.cs" />

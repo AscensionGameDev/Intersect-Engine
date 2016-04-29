@@ -36,7 +36,7 @@ using Intersect_Client.Classes.Spells;
 using Intersect_Library;
 using Color = IntersectClientExtras.GenericClasses.Color;
 using GameGraphics = Intersect_Client.Classes.Core.GameGraphics;
-using Options = Intersect_Client.Classes.General.Options;
+
 
 // ReSharper disable All
 

@@ -39,7 +39,7 @@ using System.Collections.Generic;
 using Intersect_Client.Classes.Maps;
 using Intersect_Library;
 using Intersect_Library.GameObjects.Maps;
-using Options = Intersect_Client.Classes.General.Options;
+
 
 namespace Intersect_Client.Classes.Entities
 {
@@ -268,11 +268,15 @@ namespace Intersect_Client.Classes.Entities
             {
                 if (CurrentY < Options.MapHeight && CurrentY >= 0)
                 {
-                    if (Globals.GameMaps[CurrentMap].Attributes[CurrentX, CurrentY].value == (int)MapAttributes.ZDimension)
+                    if (Globals.GameMaps[CurrentMap].Attributes[CurrentX, CurrentY] != null)
                     {
-                        if (Globals.GameMaps[CurrentMap].Attributes[CurrentX, CurrentY].data1 > 0)
+                        if (Globals.GameMaps[CurrentMap].Attributes[CurrentX, CurrentY].value ==
+                            (int) MapAttributes.ZDimension)
                         {
-                            CurrentZ = Globals.GameMaps[CurrentMap].Attributes[CurrentX, CurrentY].data1 - 1;
+                            if (Globals.GameMaps[CurrentMap].Attributes[CurrentX, CurrentY].data1 > 0)
+                            {
+                                CurrentZ = Globals.GameMaps[CurrentMap].Attributes[CurrentX, CurrentY].data1 - 1;
+                            }
                         }
                     }
                 }
@@ -1001,15 +1005,20 @@ namespace Intersect_Client.Classes.Entities
 
                 if (Globals.LocalMaps[tmpI] > -1 && Globals.GameMaps.ContainsKey(Globals.LocalMaps[tmpI]))
                 {
-                    if (Globals.GameMaps[Globals.LocalMaps[tmpI]].Attributes[tmpX, tmpY].value == (int)MapAttributes.Blocked && !NoClip)
+                    if (Globals.GameMaps[Globals.LocalMaps[tmpI]].Attributes[tmpX, tmpY] != null)
                     {
-                        return -2;
-                    }
-                    else if (Globals.GameMaps[Globals.LocalMaps[tmpI]].Attributes[tmpX, tmpY].value == (int)MapAttributes.ZDimension && !NoClip)
-                    {
-                        if (Globals.GameMaps[Globals.LocalMaps[tmpI]].Attributes[tmpX, tmpY].data2 - 1 == z)
+                        if (Globals.GameMaps[Globals.LocalMaps[tmpI]].Attributes[tmpX, tmpY].value ==
+                            (int) MapAttributes.Blocked && !NoClip)
                         {
-                            return -3;
+                            return -2;
+                        }
+                        else if (Globals.GameMaps[Globals.LocalMaps[tmpI]].Attributes[tmpX, tmpY].value ==
+                                 (int) MapAttributes.ZDimension && !NoClip)
+                        {
+                            if (Globals.GameMaps[Globals.LocalMaps[tmpI]].Attributes[tmpX, tmpY].data2 - 1 == z)
+                            {
+                                return -3;
+                            }
                         }
                     }
                     tmpMap = Globals.LocalMaps[tmpI];

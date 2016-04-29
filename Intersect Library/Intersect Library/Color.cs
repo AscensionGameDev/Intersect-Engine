@@ -5,7 +5,6 @@ using System;
 
 namespace Intersect_Library
 {
-    [Serializable]
     public class Color
     {
         public byte A { get; set; }

@@ -30,7 +30,6 @@ using Intersect_Server.Classes.Maps;
 using Intersect_Server.Classes.Networking;
 using Intersect_Server.Classes.Spells;
 using Attribute = Intersect_Library.GameObjects.Maps.Attribute;
-using Options = Intersect_Server.Classes.General.Options;
 
 namespace Intersect_Server.Classes.Entities
 {

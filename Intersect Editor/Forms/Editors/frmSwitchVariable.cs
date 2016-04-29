@@ -23,7 +23,7 @@ using System;
 using System.Windows.Forms;
 using Intersect_Editor.Classes;
 using Intersect_Library;
-using Options = Intersect_Editor.Classes.General.Options;
+
 
 namespace Intersect_Editor.Forms.Editors
 {

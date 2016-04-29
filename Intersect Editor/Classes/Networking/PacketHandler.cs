@@ -32,7 +32,7 @@ using Intersect_Library.GameObjects.Events;
 using Intersect_Library.GameObjects.Maps;
 using Intersect_Library.GameObjects.Maps.MapList;
 using Microsoft.Xna.Framework.Graphics;
-using Options = Intersect_Editor.Classes.General.Options;
+
 
 namespace Intersect_Editor.Classes
 {
@@ -166,7 +166,7 @@ namespace Intersect_Editor.Classes
         {
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
-            Options.LoadServerConfig(bf);
+            Options.LoadFromServer(bf);
             Database.InitDatabase();
         }
 

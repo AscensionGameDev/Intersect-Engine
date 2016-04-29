@@ -37,7 +37,7 @@ using Intersect_Library;
 using Intersect_Library.GameObjects;
 using Intersect_Library.GameObjects.Maps.MapList;
 using Color = IntersectClientExtras.GenericClasses.Color;
-using Options = Intersect_Client.Classes.General.Options;
+
 
 namespace Intersect_Client.Classes.Networking
 {
@@ -227,7 +227,7 @@ namespace Intersect_Client.Classes.Networking
         {
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
-            Options.LoadServerConfig(bf);
+            Options.LoadFromServer(bf);
             //Load Each of the Main Game Object Types
             Globals.GameItems = new ItemStruct[Options.MaxItems];
             Globals.GameNpcs = new NpcStruct[Options.MaxNpcs];
@@ -499,7 +499,8 @@ namespace Intersect_Client.Classes.Networking
             }
 
             // Set the Z-Dimension if the player has moved up or down a dimension.
-            if (Globals.GameMaps[en.CurrentMap].Attributes[en.CurrentX, en.CurrentY].value == (int)MapAttributes.ZDimension)
+            if (Globals.GameMaps[en.CurrentMap].Attributes[en.CurrentX, en.CurrentY] != null &&
+                Globals.GameMaps[en.CurrentMap].Attributes[en.CurrentX, en.CurrentY].value == (int)MapAttributes.ZDimension)
             {
                 if (Globals.GameMaps[en.CurrentMap].Attributes[en.CurrentX, en.CurrentY].data1 > 0)
                 {

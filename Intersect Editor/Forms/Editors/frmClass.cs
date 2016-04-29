@@ -27,7 +27,7 @@ using Intersect_Editor.Classes.Core;
 using Intersect_Library;
 using Intersect_Library.GameObjects;
 using Intersect_Library.GameObjects.Maps.MapList;
-using Options = Intersect_Editor.Classes.General.Options;
+
 
 namespace Intersect_Editor.Forms
 {

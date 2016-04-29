@@ -33,9 +33,11 @@ using IntersectClientExtras.Graphics;
 using Intersect_Client.Classes.Entities;
 using Intersect_Client.Classes.General;
 using Intersect_Client.Classes.UI;
+using Intersect_Library;
 using Event = Intersect_Client.Classes.Entities.Event;
 using Object = System.Object;
 using Intersect_Library.GameObjects;
+using Color = IntersectClientExtras.GenericClasses.Color;
 
 namespace Intersect_Client.Classes.Core
 {

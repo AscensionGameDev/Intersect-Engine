@@ -29,7 +29,7 @@ using Intersect_Library.GameObjects.Maps.MapList;
 using Intersect_Server.Classes.Core;
 using Intersect_Server.Classes.Entities;
 using Intersect_Server.Classes.General;
-using Options = Intersect_Server.Classes.General.Options;
+
 
 namespace Intersect_Server.Classes.Networking
 {
@@ -80,7 +80,7 @@ namespace Intersect_Server.Classes.Networking
         {
             var bf = new ByteBuffer();
             bf.WriteLong((int)ServerPackets.ServerConfig);
-            bf.WriteBytes(Options.GetServerConfig());
+            bf.WriteBytes(ServerOptions.GetServerConfig());
             client.SendPacket(bf.ToArray());
             bf.Dispose();
         }

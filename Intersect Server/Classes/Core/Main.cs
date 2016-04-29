@@ -24,6 +24,7 @@ using System;
 using System.IO;
 using System.Reflection;
 using System.Threading;
+using Intersect_Library;
 using Intersect_Server.Classes.Core;
 using Intersect_Server.Classes.General;
 using Intersect_Server.Classes.Networking;
@@ -48,7 +49,7 @@ namespace Intersect_Server.Classes
             Console.WriteLine("For help, support, and updates visit: http://ascensiongamedev.com");
             Console.WriteLine("Loading, please wait.");
             Database.CheckDirectories();
-            if (!Options.LoadOptions())
+            if (!ServerOptions.LoadOptions())
             {
                 Console.WriteLine("Failed to load server options! Press any key to shut down.");
                 Console.ReadKey();

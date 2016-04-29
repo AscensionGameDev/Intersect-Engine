@@ -39,7 +39,7 @@ using IntersectClientExtras.Gwen.Control.EventArguments;
 using IntersectClientExtras.Input;
 using Intersect_Library;
 using Color = IntersectClientExtras.GenericClasses.Color;
-using Options = Intersect_Client.Classes.General.Options;
+
 using Point = IntersectClientExtras.GenericClasses.Point;
 
 namespace Intersect_Client.Classes.UI.Game

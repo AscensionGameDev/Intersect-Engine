@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Intersect_Library;
+﻿using Intersect_Library;
 using Intersect_Server.Classes.Items;
 
 namespace Intersect_Server.Classes.Maps

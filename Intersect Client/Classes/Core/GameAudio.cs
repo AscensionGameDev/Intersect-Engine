@@ -31,6 +31,8 @@ using IntersectClientExtras.Audio;
 using IntersectClientExtras.File_Management;
 using IntersectClientExtras.GenericClasses;
 using Intersect_Client.Classes.General;
+using Intersect_Library;
+using Point = IntersectClientExtras.GenericClasses.Point;
 
 namespace Intersect_Client.Classes.Core
 {

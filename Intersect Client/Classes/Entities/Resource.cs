@@ -28,7 +28,7 @@ using Intersect_Client.Classes.General;
 using IntersectClientExtras.Graphics;
 using Intersect_Library;
 using Color = IntersectClientExtras.GenericClasses.Color;
-using Options = Intersect_Client.Classes.General.Options;
+
 
 namespace Intersect_Client.Classes.Entities
 {

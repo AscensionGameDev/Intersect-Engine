@@ -23,7 +23,7 @@
 using System;
 using System.Net;
 using System.Net.Sockets;
-using Intersect_Server.Classes.General;
+using Intersect_Library;
 
 namespace Intersect_Server.Classes.Networking
 {

@@ -88,7 +88,7 @@
     <Compile Include="Classes\Entities\Resource.cs" />
     <Compile Include="Classes\Entities\EventPageInstance.cs" />
     <Compile Include="Classes\Core\Main.cs" />
-    <Compile Include="Classes\General\Options.cs" />
+    <Compile Include="Classes\General\ServerOptions.cs" />
     <Compile Include="Classes\Items\ItemInstance.cs" />
     <Compile Include="Classes\Maps\MapInstance.cs" />
     <Compile Include="Classes\Maps\MapItemInstance.cs" />

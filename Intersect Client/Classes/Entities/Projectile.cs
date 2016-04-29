@@ -24,7 +24,7 @@ using Intersect_Client.Classes.General;
 using Intersect_Library;
 using Intersect_Library.GameObjects;
 using Graphics = Intersect_Client.Classes.Core.GameGraphics;
-using Options = Intersect_Client.Classes.General.Options;
+
 
 namespace Intersect_Client.Classes.Entities
 {

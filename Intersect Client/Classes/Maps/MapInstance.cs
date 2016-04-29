@@ -24,7 +24,6 @@ namespace Intersect_Client.Classes.Maps
         //Client Only Values
 
         //Map State Variables
-        public const string Version = "0.0.0.1";
         public bool MapLoaded { get; private set; }
         public bool MapRendered { get; private set; }
 
@@ -61,7 +60,7 @@ namespace Intersect_Client.Classes.Maps
         public List<MapSound> AttributeSounds { get; set; } = new List<MapSound>();
 
         //Map Attributes
-        private Dictionary<Intersect_Library.GameObjects.Maps.Attribute, AnimationInstance>  _attributeAnimInstances = new Dictionary<Intersect_Library.GameObjects.Maps.Attribute, AnimationInstance>();
+        private Dictionary<Intersect_Library.GameObjects.Maps.Attribute, AnimationInstance> _attributeAnimInstances = new Dictionary<Intersect_Library.GameObjects.Maps.Attribute, AnimationInstance>();
 
         //Fog Variables
         private long _fogUpdateTime = Globals.System.GetTimeMS();
@@ -83,7 +82,7 @@ namespace Intersect_Client.Classes.Maps
         private long _lastUpdateTime;
 
         //Initialization
-        public MapInstance(int mapNum) : base(mapNum)
+        public MapInstance(int mapNum) : base(mapNum, true)
         {
         }
 
@@ -109,91 +108,14 @@ namespace Intersect_Client.Classes.Maps
         //Load
         public void Load(byte[] packet)
         {
-            var bf = new ByteBuffer();
-            bf.WriteBytes(packet);
-            if (bf.ReadInteger() == 1)
-            {
-                //Deleted
-                throw new Exception("Server sent a deleted or corrupted map!");
-            }
-            else
-            {
-                string loadedVersion = bf.ReadString();
-                if (loadedVersion != Version)
-                    throw new Exception("Failed to load Map #" + MyMapNum + ". Loaded Version: " + loadedVersion + " Expected Version: " + Version);
-                MyName = bf.ReadString();
-                Revision = bf.ReadInteger();
-                Up = bf.ReadInteger();
-                Down = bf.ReadInteger();
-                Left = bf.ReadInteger();
-                Right = bf.ReadInteger();
-                Music = bf.ReadString();
-                Sound = bf.ReadString();
-                IsIndoors = Convert.ToBoolean(bf.ReadInteger());
-                Panorama = bf.ReadString();
-                Fog = bf.ReadString();
-                FogXSpeed = bf.ReadInteger();
-                FogYSpeed = bf.ReadInteger();
-                FogTransparency = bf.ReadInteger();
-                RHue = bf.ReadInteger();
-                GHue = bf.ReadInteger();
-                BHue = bf.ReadInteger();
-                AHue = bf.ReadInteger();
-                Brightness = bf.ReadInteger();
-                ZoneType = bf.ReadByte();
-                OverlayGraphic = bf.ReadString();
-                PlayerLightSize = bf.ReadInteger();
-                PlayerLightExpand = (float)bf.ReadDouble();
-                PlayerLightIntensity = bf.ReadByte();
-                PlayerLightColor = new Color((int)bf.ReadByte(), (int)bf.ReadByte(), (int)bf.ReadByte());
-
-                for (var i = 0; i < Options.LayerCount; i++)
-                {
-                    for (var x = 0; x < Options.MapWidth; x++)
-                    {
-                        for (var y = 0; y < Options.MapHeight; y++)
-                        {
-                            Layers[i].Tiles[x, y].TilesetIndex = bf.ReadInteger();
-                            Layers[i].Tiles[x, y].X = bf.ReadInteger();
-                            Layers[i].Tiles[x, y].Y = bf.ReadInteger();
-                            Layers[i].Tiles[x, y].Autotile = bf.ReadByte();
-                        }
-                    }
-                }
-                HideActiveAnimations();
-                for (var x = 0; x < Options.MapWidth; x++)
-                {
-                    for (var y = 0; y < Options.MapHeight; y++)
-                    {
-                        int attributeType = bf.ReadInteger();
-                        if (attributeType > 0)
-                        {
-                            Attributes[x, y].value = attributeType;
-                            Attributes[x, y].data1 = bf.ReadInteger();
-                            Attributes[x, y].data2 = bf.ReadInteger();
-                            Attributes[x, y].data3 = bf.ReadInteger();
-                            Attributes[x, y].data4 = bf.ReadString();
-                        }
-                        else
-                        {
-                            Attributes[x, y].value = 0;
-                        }
-                    }
-                }
-                var lCount = bf.ReadInteger();
-                Lights.Clear();
-                for (var i = 0; i < lCount; i++)
-                {
-                    Lights.Add(new Light(bf));
-                }
-                MapLoaded = true;
-                Autotiles = new MapAutotiles(this);
-                Dictionary<int, MapStruct> gameMaps = Globals.GameMaps.ToDictionary(k => k.Key, v => (MapStruct)v.Value);
-                Autotiles.InitAutotiles(gameMaps);
-                UpdateAdjacentAutotiles();
-                CreateMapSounds();
-                MapRendered = false;
-            }
+            base.Load(packet);
+            MapLoaded = true;
+            Autotiles = new MapAutotiles(this);
+            Dictionary<int, MapStruct> gameMaps = Globals.GameMaps.ToDictionary(k => k.Key, v => (MapStruct)v.Value);
+            Autotiles.InitAutotiles(gameMaps);
+            UpdateAdjacentAutotiles();
+            CreateMapSounds();
+            MapRendered = false;
         }
 
         //Updating
@@ -308,7 +230,7 @@ namespace Intersect_Client.Classes.Maps
                                     animInstance.SetPosition(
                                             GetX() + x * Options.TileWidth + Options.TileWidth / 2,
                                             GetY() + y * Options.TileHeight + Options.TileHeight / 2, 0);
-                                    _attributeAnimInstances.Add(Attributes[x,y],animInstance);
+                                    _attributeAnimInstances.Add(Attributes[x, y], animInstance);
                                 }
                                 _attributeAnimInstances[Attributes[x, y]].Update();
                             }
@@ -334,11 +256,15 @@ namespace Intersect_Client.Classes.Maps
             {
                 for (int y = 0; y < Options.MapHeight; y++)
                 {
-                    if (Attributes[x, y].value == (int)MapAttributes.Sound)
+                    if (Attributes[x, y] != null)
                     {
-                        if (Attributes[x, y].data4 != "None" && Attributes[x, y].data4 != "")
+                        if (Attributes[x, y].value == (int) MapAttributes.Sound)
                         {
-                            AttributeSounds.Add(GameAudio.AddMapSound(Attributes[x, y].data4, x, y, MyMapNum, true, Attributes[x, y].data1));
+                            if (Attributes[x, y].data4 != "None" && Attributes[x, y].data4 != "")
+                            {
+                                AttributeSounds.Add(GameAudio.AddMapSound(Attributes[x, y].data4, x, y, MyMapNum, true,
+                                    Attributes[x, y].data1));
+                            }
                         }
                     }
                 }

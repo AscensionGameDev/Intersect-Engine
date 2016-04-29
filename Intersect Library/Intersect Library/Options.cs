@@ -4,10 +4,6 @@ namespace Intersect_Library
 {
     public static class Options
     {
-        //Config XML String
-        public static string ConfigXml = "";
-        private static bool ConfigFailed = false;
-
         //Game Settings
         public static string GameName = "Intersect";
         public static string MOTD = "Welcome to Intersect!";
@@ -57,5 +53,68 @@ namespace Intersect_Library
         public static int TileWidth = 32;
         public static int TileHeight = 32;
         public static int LayerCount = 5;
+
+        public static void LoadFromServer(ByteBuffer bf)
+        {
+            //General
+            GameName = bf.ReadString();
+
+            //Game Objects
+            MaxItems = bf.ReadInteger();
+            MaxShops = bf.ReadInteger();
+            MaxNpcs = bf.ReadInteger();
+            MaxNpcDrops = bf.ReadInteger();
+            MaxSpells = bf.ReadInteger();
+            MaxAnimations = bf.ReadInteger();
+            MaxResources = bf.ReadInteger();
+            MaxClasses = bf.ReadInteger();
+            MaxQuests = bf.ReadInteger();
+            MaxProjectiles = bf.ReadInteger();
+            MaxCommonEvents = bf.ReadInteger();
+            MaxServerVariables = bf.ReadInteger();
+            MaxServerSwitches = bf.ReadInteger();
+
+            //Player Objects
+            MaxStatValue = bf.ReadInteger();
+            MaxLevel = bf.ReadInteger();
+            MaxPlayerVariables = bf.ReadInteger();
+            MaxPlayerSwitches = bf.ReadInteger();
+            MaxHotbar = bf.ReadInteger();
+            MaxInvItems = bf.ReadInteger();
+            MaxPlayerSkills = bf.ReadInteger();
+            MaxBankSlots = bf.ReadInteger();
+
+            //Equipment
+            int count = bf.ReadInteger();
+            for (int i = 0; i < count; i++)
+            {
+                EquipmentSlots.Add(bf.ReadString());
+            }
+            WeaponIndex = bf.ReadInteger();
+            ShieldIndex = bf.ReadInteger();
+
+            //Paperdoll
+            count = bf.ReadInteger();
+            for (int i = 0; i < count; i++)
+            {
+                PaperdollOrder.Add(bf.ReadString());
+            }
+
+            //Tool Types
+            count = bf.ReadInteger();
+            for (int i = 0; i < count; i++)
+            {
+                ToolTypes.Add(bf.ReadString());
+            }
+
+            //Misc
+
+            //Map
+            bf.ReadInteger();
+            MapWidth = bf.ReadInteger();
+            MapHeight = bf.ReadInteger();
+            TileWidth = bf.ReadInteger();
+            TileHeight = bf.ReadInteger();
+        }
     }
 }

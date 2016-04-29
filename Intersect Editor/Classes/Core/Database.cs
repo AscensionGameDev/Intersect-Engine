@@ -23,6 +23,7 @@ using System;
 using System.IO;
 using System.Xml;
 using Intersect_Editor.Classes.General;
+using Intersect_Library;
 using Intersect_Library.GameObjects;
 using Intersect_Library.GameObjects.Events;
 

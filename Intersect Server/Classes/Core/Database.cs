@@ -38,7 +38,6 @@ using Intersect_Server.Classes.Items;
 using Intersect_Server.Classes.Maps;
 using Intersect_Server.Classes.Networking;
 using MapInstance = Intersect_Server.Classes.Maps.MapInstance;
-using Options = Intersect_Server.Classes.General.Options;
 
 namespace Intersect_Server.Classes.Core
 {
