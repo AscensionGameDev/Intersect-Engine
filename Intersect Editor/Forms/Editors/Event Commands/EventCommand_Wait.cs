@@ -20,15 +20,9 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
-using System.Data;
-using System.IO;
-using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 using Intersect_Editor.Classes;
+using Intersect_Library.GameObjects.Events;
 
 namespace Intersect_Editor.Forms.Editors.Event_Commands
 {

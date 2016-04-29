@@ -26,26 +26,24 @@
 */
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Security.Permissions;
-using System.Text;
-using System.Threading.Tasks;
 using IntersectClientExtras.File_Management;
 using IntersectClientExtras.GenericClasses;
 using IntersectClientExtras.Graphics;
 using IntersectClientExtras.Gwen;
 using IntersectClientExtras.Gwen.Control;
 using IntersectClientExtras.Gwen.Control.EventArguments;
-using IntersectClientExtras.Gwen.Input;
-using IntersectClientExtras.Input;
 using Intersect_Client.Classes.Core;
 using Intersect_Client.Classes.General;
 using Intersect_Client.Classes.Networking;
+using Intersect_Library;
+using Point = IntersectClientExtras.GenericClasses.Point;
 
 namespace Intersect_Client.Classes.UI.Game
 {
     public class ShopWindow
     {
+        private static int ItemXPadding = 4;
+        private static int ItemYPadding = 4;
         //Controls
         private WindowControl _shopWindow;
         private ScrollControl _itemContainer;
@@ -95,7 +93,7 @@ namespace Intersect_Client.Classes.UI.Game
                 Items.Add(new ShopWindowItem(this, i));
                 Items[i].pnl = new ImagePanel(_itemContainer);
                 Items[i].pnl.SetSize(32, 32);
-                Items[i].pnl.SetPosition((i % (_itemContainer.Width / (32 + Constants.ItemXPadding))) * (32 + Constants.ItemXPadding) + Constants.ItemXPadding, (i / (_itemContainer.Width / (32 + Constants.ItemXPadding))) * (32 + Constants.ItemYPadding) + Constants.ItemYPadding);
+                Items[i].pnl.SetPosition((i % (_itemContainer.Width / (32 + ItemXPadding))) * (32 + ItemXPadding) + ItemXPadding, (i / (_itemContainer.Width / (32 + ItemXPadding))) * (32 + ItemYPadding) + ItemYPadding);
                 Items[i].pnl.IsHidden = false;
                 Items[i].Setup();
             }
@@ -146,10 +144,10 @@ namespace Intersect_Client.Classes.UI.Game
         private void Pnl_DoubleClicked(Base sender, ClickedEventArgs arguments)
         {
             //Confirm the purchase
-            if (Globals.GameItems[Globals.GameShop.SellingItems[_mySlot].ItemNum].Type == (int) Enums.ItemTypes.Consumable ||
-                Globals.GameItems[Globals.GameShop.SellingItems[_mySlot].ItemNum].Type == (int) Enums.ItemTypes.Currency ||
-                Globals.GameItems[Globals.GameShop.SellingItems[_mySlot].ItemNum].Type == (int) Enums.ItemTypes.None ||
-                Globals.GameItems[Globals.GameShop.SellingItems[_mySlot].ItemNum].Type == (int) Enums.ItemTypes.Spell)
+            if (Globals.GameItems[Globals.GameShop.SellingItems[_mySlot].ItemNum].Type == (int) ItemTypes.Consumable ||
+                Globals.GameItems[Globals.GameShop.SellingItems[_mySlot].ItemNum].Type == (int) ItemTypes.Currency ||
+                Globals.GameItems[Globals.GameShop.SellingItems[_mySlot].ItemNum].Type == (int) ItemTypes.None ||
+                Globals.GameItems[Globals.GameShop.SellingItems[_mySlot].ItemNum].Type == (int) ItemTypes.Spell)
             {
                 InputBox iBox = new InputBox("Buy Item", "How many " + Globals.GameItems[Globals.GameShop.SellingItems[_mySlot].ItemNum].Name + "(s) would you like to buy?", true, BuyItemInputBoxOkay, null, -1, true);
             }

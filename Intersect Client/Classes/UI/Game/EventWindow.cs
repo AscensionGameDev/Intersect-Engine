@@ -37,7 +37,7 @@ using Intersect_Client.Classes.Networking;
 
 namespace Intersect_Client.Classes.UI.Game
 {
-    public class EventWindow : IGUIElement
+    public class EventWindow
     {
         //Window Controls
         private WindowControl _eventDialogWindow;

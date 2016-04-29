@@ -19,40 +19,63 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+
 using System;
-using System.IO;
 using System.Collections.Generic;
-using System.Xml;
+using System.IO;
+using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
-using Intersect_Server.Classes.Game_Objects;
+using System.Xml;
+using Intersect_Library;
+using Intersect_Library.GameObjects;
+using Intersect_Library.GameObjects.Events;
+using Intersect_Library.GameObjects.Maps;
+using Intersect_Library.GameObjects.Maps.MapList;
+using Intersect_Server.Classes.Entities;
 using Intersect_Server.Classes.General;
+using Intersect_Server.Classes.Items;
 using Intersect_Server.Classes.Maps;
+using Intersect_Server.Classes.Networking;
+using MapInstance = Intersect_Server.Classes.Maps.MapInstance;
+using Options = Intersect_Server.Classes.General.Options;
 
-namespace Intersect_Server.Classes
+namespace Intersect_Server.Classes.Core
 {
     public static class Database
     {
+        //private static SqliteConnection _dbConnection;
+        private const string _dbFilename = "intersect.db";
         public static object MapGridLock = new Object();
         public static List<MapGrid> MapGrids = new List<MapGrid>();
         public static string ConnectionString = "";
-        public static MapList MapStructure = new MapList();
 
         public static List<string> Emails = new List<string>();
         public static List<string> Accounts = new List<string>();
         public static List<string> Characters = new List<string>();
 
-        private enum MySqlFields
-        {
-            m_string = 0,
-            m_int
-        }
+        public static int MapCount = 0;
 
         //Check Directories
         public static void CheckDirectories()
         {
             if (!Directory.Exists("resources")) { Directory.CreateDirectory("resources"); }
             if (!Directory.Exists("resources/accounts")) { Directory.CreateDirectory("resources/accounts"); }
+        }
+
+        private static void CreateDatabase()
+        {
+            //SqliteConnection.CreateFile(_dbFilename);
+            //Create Table Structure? This could be messy.....
+
+        }
+
+        public static void InitDatabase()
+        {
+            if (!File.Exists(_dbFilename)) CreateDatabase();
+            //_dbConnection = new SqliteConnection("Data Source=" + _dbFilename + ";Version=3");
+            //_dbConnection.Open();
+
         }
 
         //Players General
@@ -199,7 +222,7 @@ namespace Intersect_Server.Classes
                     en.Level = Int32.Parse(playerdata.SelectSingleNode("//PlayerData//CharacterInfo/Level").InnerText);
                     en.Experience =
                         Int32.Parse(playerdata.SelectSingleNode("//PlayerData//CharacterInfo/Experience").InnerText);
-                    for (var i = 0; i < (int) Enums.Vitals.VitalCount; i++)
+                    for (var i = 0; i < (int)Vitals.VitalCount; i++)
                     {
                         en.Vital[i] =
                             Int32.Parse(playerdata.SelectSingleNode("//PlayerData//CharacterInfo/Vital" + i).InnerText);
@@ -207,7 +230,7 @@ namespace Intersect_Server.Classes
                             Int32.Parse(
                                 playerdata.SelectSingleNode("//PlayerData//CharacterInfo/MaxVital" + i).InnerText);
                     }
-                    for (var i = 0; i < (int) Enums.Stats.StatCount; i++)
+                    for (var i = 0; i < (int)Stats.StatCount; i++)
                     {
                         en.Stat[i].Stat =
                             Int32.Parse(playerdata.SelectSingleNode("//PlayerData//CharacterInfo/Stat" + i).InnerText);
@@ -225,7 +248,7 @@ namespace Intersect_Server.Classes
                     for (int i = 0; i < Options.MaxPlayerSwitches; i++)
                     {
                         if (playerdata.SelectSingleNode("//PlayerData//CharacterInfo//Switches/Switch" + i) != null)
-                            ((Player) (en)).Switches[i] =
+                            ((Player)(en)).Switches[i] =
                                 Convert.ToBoolean(
                                     Int32.Parse(
                                         playerdata.SelectSingleNode("//PlayerData//CharacterInfo//Switches/Switch" + i)
@@ -235,7 +258,7 @@ namespace Intersect_Server.Classes
                     for (int i = 0; i < Options.MaxPlayerSwitches; i++)
                     {
                         if (playerdata.SelectSingleNode("//PlayerData//CharacterInfo//Variables/Variable" + i) != null)
-                            ((Player) (en)).Variables[i] =
+                            ((Player)(en)).Variables[i] =
                                 Int32.Parse(
                                     playerdata.SelectSingleNode("//PlayerData//CharacterInfo//Variables/Variable" + i)
                                         .InnerText);
@@ -251,7 +274,7 @@ namespace Intersect_Server.Classes
                             Int32.Parse(
                                 playerdata.SelectSingleNode("//PlayerData//CharacterInfo//Inventory/Slot" + i + "Val")
                                     .InnerText);
-                        for (int x = 0; x < (int) Enums.Stats.StatCount; x++)
+                        for (int x = 0; x < (int)Stats.StatCount; x++)
                         {
                             en.Inventory[i].StatBoost[x] =
                                 Int32.Parse(
@@ -299,12 +322,10 @@ namespace Intersect_Server.Classes
                             else
                             {
                                 en.Bank[i] = new ItemInstance(itemNum, itemVal);
-                                for (int x = 0; x < (int) Enums.Stats.StatCount; x++)
+                                for (int x = 0; x < (int)Stats.StatCount; x++)
                                 {
                                     en.Bank[i].StatBoost[x] =
-                                        Int32.Parse(
-                                            playerdata.SelectSingleNode("//PlayerData//CharacterInfo//Bank/Slot" + i +
-                                                                        "Buff" + x).InnerText);
+                                        Int32.Parse(playerdata.SelectSingleNode("//PlayerData//CharacterInfo//Bank/Slot" + i + "Buff" + x).InnerText);
                                 }
                             }
                         }
@@ -349,12 +370,12 @@ namespace Intersect_Server.Classes
                 writer.WriteElementString("Gender", en.Gender.ToString());
                 writer.WriteElementString("Level", en.Level.ToString());
                 writer.WriteElementString("Experience", en.Experience.ToString());
-                for (var i = 0; i < (int) Enums.Vitals.VitalCount; i++)
+                for (var i = 0; i < (int)Vitals.VitalCount; i++)
                 {
                     writer.WriteElementString("Vital" + i, en.Vital[i].ToString());
                     writer.WriteElementString("MaxVital" + i, en.MaxVital[i].ToString());
                 }
-                for (var i = 0; i < (int) Enums.Stats.StatCount; i++)
+                for (var i = 0; i < (int)Stats.StatCount; i++)
                 {
                     writer.WriteElementString("Stat" + i, en.Stat[i].Stat.ToString());
                 }
@@ -368,14 +389,14 @@ namespace Intersect_Server.Classes
                 writer.WriteStartElement("Switches");
                 for (int i = 0; i < Options.MaxPlayerSwitches; i++)
                 {
-                    writer.WriteElementString("Switch" + i, Convert.ToInt32(((Player) (en)).Switches[i]).ToString());
+                    writer.WriteElementString("Switch" + i, Convert.ToInt32(((Player)(en)).Switches[i]).ToString());
                 }
                 writer.WriteEndElement();
 
                 writer.WriteStartElement("Variables");
                 for (int i = 0; i < Options.MaxPlayerVariables; i++)
                 {
-                    writer.WriteElementString("Variable" + i, ((Player) (en)).Variables[i].ToString());
+                    writer.WriteElementString("Variable" + i, ((Player)(en)).Variables[i].ToString());
                 }
                 writer.WriteEndElement();
 
@@ -384,7 +405,7 @@ namespace Intersect_Server.Classes
                 {
                     writer.WriteElementString("Slot" + i + "Num", en.Inventory[i].ItemNum.ToString());
                     writer.WriteElementString("Slot" + i + "Val", en.Inventory[i].ItemVal.ToString());
-                    for (int x = 0; x < (int) Enums.Stats.StatCount; x++)
+                    for (int x = 0; x < (int)Stats.StatCount; x++)
                     {
                         writer.WriteElementString("Slot" + i + "Buff" + x, en.Inventory[i].StatBoost[x].ToString());
                     }
@@ -415,7 +436,7 @@ namespace Intersect_Server.Classes
                     {
                         writer.WriteElementString("Slot" + i + "Num", en.Bank[i].ItemNum.ToString());
                         writer.WriteElementString("Slot" + i + "Val", en.Bank[i].ItemVal.ToString());
-                        for (int x = 0; x < (int) Enums.Stats.StatCount; x++)
+                        for (int x = 0; x < (int)Stats.StatCount; x++)
                         {
                             writer.WriteElementString("Slot" + i + "Buff" + x, en.Bank[i].StatBoost[x].ToString());
                         }
@@ -424,7 +445,7 @@ namespace Intersect_Server.Classes
                     {
                         writer.WriteElementString("Slot" + i + "Num", "-1");
                         writer.WriteElementString("Slot" + i + "Val", "0");
-                        for (int x = 0; x < (int) Enums.Stats.StatCount; x++)
+                        for (int x = 0; x < (int)Stats.StatCount; x++)
                         {
                             writer.WriteElementString("Slot" + i + "Buff" + x, "0");
                         }
@@ -458,23 +479,22 @@ namespace Intersect_Server.Classes
                 Directory.CreateDirectory("resources/maps");
             }
             var mapNames = Directory.GetFiles("resources/maps", "*.map");
-            Globals.MapCount = mapNames.Length;
-            Globals.GameMaps = new MapStruct[mapNames.Length];
-            if (Globals.MapCount == 0)
+            Globals.GameMaps.Clear();
+            MapCount = mapNames.Length;
+            if (mapNames.Length == 0)
             {
                 Console.WriteLine("No maps found! - Creating empty first map!");
-                Globals.MapCount = 1;
-                Globals.GameMaps = new MapStruct[1];
-                Globals.GameMaps[0] = new MapStruct(0);
+                Globals.GameMaps.Add(0, new MapInstance(0));
                 Globals.GameMaps[0].Save(true);
+                MapCount++;
             }
             else
             {
                 for (var i = 0; i < mapNames.Length; i++)
                 {
-                    Globals.GameMaps[i] = new MapStruct(i);
+                    Globals.GameMaps.Add(i, new MapInstance(i));
                     if (!Globals.GameMaps[i].Load(File.ReadAllBytes("resources/maps/" + i + ".map")))
-                        Globals.GameMaps[i] = null;
+                        Globals.GameMaps.Remove(i);
 
                 }
             }
@@ -484,25 +504,22 @@ namespace Intersect_Server.Classes
         }
         public static void CheckAllMapConnections()
         {
-            for (int i = 0; i < Globals.GameMaps.Length; i++)
+            foreach (var map in Globals.GameMaps)
             {
-                if (MapHelper.IsMapValid(i))
-                {
-                    CheckMapConnections(i);
-                }
+                CheckMapConnections(map.Value);
             }
         }
-        public static void CheckMapConnections(int mapNum)
+        public static void CheckMapConnections(MapInstance map)
         {
             bool updated = false;
-            if (!MapHelper.IsMapValid(Globals.GameMaps[mapNum].Up)) { Globals.GameMaps[mapNum].Up = -1; updated = true; }
-            if (!MapHelper.IsMapValid(Globals.GameMaps[mapNum].Down)) { Globals.GameMaps[mapNum].Down = -1; updated = true; }
-            if (!MapHelper.IsMapValid(Globals.GameMaps[mapNum].Left)) { Globals.GameMaps[mapNum].Left = -1; updated = true; }
-            if (!MapHelper.IsMapValid(Globals.GameMaps[mapNum].Right)) { Globals.GameMaps[mapNum].Right = -1; updated = true; }
+            if (!Globals.GameMaps.ContainsKey(map.Up)) { map.Up = -1; updated = true; }
+            if (!Globals.GameMaps.ContainsKey(map.Down)) { map.Down = -1; updated = true; }
+            if (!Globals.GameMaps.ContainsKey(map.Left)) { map.Left = -1; updated = true; }
+            if (!Globals.GameMaps.ContainsKey(map.Right)) { map.Right = -1; updated = true; }
             if (updated)
             {
-                Globals.GameMaps[mapNum].Save();
-                PacketSender.SendMapToEditors(mapNum);
+                map.Save();
+                PacketSender.SendMapToEditors(map.MyMapNum);
             }
         }
         public static void GenerateMapGrids()
@@ -510,21 +527,20 @@ namespace Intersect_Server.Classes
             lock (MapGridLock)
             {
                 MapGrids.Clear();
-                for (var i = 0; i < Globals.MapCount; i++)
+                foreach (var map in Globals.GameMaps)
                 {
-                    if (Globals.GameMaps[i] == null) continue;
                     if (MapGrids.Count == 0)
                     {
-                        MapGrids.Add(new MapGrid(i, 0));
+                        MapGrids.Add(new MapGrid(map.Value.MyMapNum, 0));
                     }
                     else
                     {
                         for (var y = 0; y < MapGrids.Count; y++)
                         {
-                            if (!MapGrids[y].HasMap(i))
+                            if (!MapGrids[y].HasMap(map.Value.MyMapNum))
                             {
                                 if (y != MapGrids.Count - 1) continue;
-                                MapGrids.Add(new MapGrid(i, MapGrids.Count));
+                                MapGrids.Add(new MapGrid(map.Value.MyMapNum, MapGrids.Count));
                                 break;
                             }
                             else
@@ -534,21 +550,20 @@ namespace Intersect_Server.Classes
                         }
                     }
                 }
-                for (var i = 0; i < Globals.MapCount; i++)
+                foreach (var map in Globals.GameMaps)
                 {
-                    if (Globals.GameMaps[i] == null) continue;
-                    Globals.GameMaps[i].SurroundingMaps.Clear();
-                    var myGrid = Globals.GameMaps[i].MapGrid;
-                    for (var x = Globals.GameMaps[i].MapGridX - 1; x <= Globals.GameMaps[i].MapGridX + 1; x++)
+                    map.Value.SurroundingMaps.Clear();
+                    var myGrid = map.Value.MapGrid;
+                    for (var x = map.Value.MapGridX - 1; x <= map.Value.MapGridX + 1; x++)
                     {
-                        for (var y = Globals.GameMaps[i].MapGridY - 1; y <= Globals.GameMaps[i].MapGridY + 1; y++)
+                        for (var y = map.Value.MapGridY - 1; y <= map.Value.MapGridY + 1; y++)
                         {
-                            if ((x == Globals.GameMaps[i].MapGridX) && (y == Globals.GameMaps[i].MapGridY))
+                            if ((x == map.Value.MapGridX) && (y == map.Value.MapGridY))
                                 continue;
                             if (x >= MapGrids[myGrid].XMin && x < MapGrids[myGrid].XMax && y >= MapGrids[myGrid].YMin &&
                                 y < MapGrids[myGrid].YMax && MapGrids[myGrid].MyGrid[x, y] > -1)
                             {
-                                Globals.GameMaps[i].SurroundingMaps.Add(MapGrids[myGrid].MyGrid[x, y]);
+                                map.Value.SurroundingMaps.Add(MapGrids[myGrid].MyGrid[x, y]);
                             }
                         }
                     }
@@ -557,13 +572,12 @@ namespace Intersect_Server.Classes
         }
         public static int AddMap()
         {
-            var tmpMaps = (MapStruct[])Globals.GameMaps.Clone();
-            Globals.MapCount++;
-            Globals.GameMaps = new MapStruct[Globals.MapCount];
-            tmpMaps.CopyTo(Globals.GameMaps, 0);
-            Globals.GameMaps[Globals.MapCount - 1] = new MapStruct(Globals.MapCount - 1);
-            Globals.GameMaps[Globals.MapCount - 1].Save(true);
-            return Globals.MapCount - 1;
+            //We will use the database to tell us the index.
+            //For now we will use the mapcount variable in this class
+            MapCount++;
+            Globals.GameMaps.Add(MapCount - 1, new MapInstance(MapCount - 1));
+            Globals.GameMaps[MapCount - 1].Save(true);
+            return MapCount - 1;
         }
         public static void LoadNpcs()
         {
@@ -674,6 +688,7 @@ namespace Intersect_Server.Classes
                 }
                 else
                 {
+                    Globals.GameAnimations[i] = new AnimationStruct();
                     Globals.GameAnimations[i].Load(File.ReadAllBytes("resources/animations/" + i + ".anim"), i);
                 }
             }
@@ -783,11 +798,11 @@ namespace Intersect_Server.Classes
             defaultFemale.Gender = 1;
             Globals.GameClasses[0].Sprites.Add(defaultMale);
             Globals.GameClasses[0].Sprites.Add(defaultFemale);
-            for (int i = 0; i < (int)Enums.Vitals.VitalCount; i++)
+            for (int i = 0; i < (int)Vitals.VitalCount; i++)
             {
                 Globals.GameClasses[0].MaxVital[i] = 20;
             }
-            for (int i = 0; i < (int)Enums.Stats.StatCount; i++)
+            for (int i = 0; i < (int)Stats.StatCount; i++)
             {
                 Globals.GameClasses[0].Stat[i] = 20;
             }
@@ -797,35 +812,23 @@ namespace Intersect_Server.Classes
         //Map Folders
         private static void LoadMapFolders()
         {
+            Dictionary<int, MapStruct> gameMaps = Globals.GameMaps.ToDictionary(k => k.Key, v => (MapStruct)v.Value);
             if (File.Exists("resources/maps/mapstructure.dat"))
             {
                 ByteBuffer myBuffer = new ByteBuffer();
                 myBuffer.WriteBytes(File.ReadAllBytes("resources/maps/mapstructure.dat"));
-                MapStructure.Load(myBuffer);
-                for (int i = 0; i < Globals.GameMaps.Length; i++)
-                {
-                    if (MapHelper.IsMapValid(i))
-                    {
-                        if (MapStructure.FindMap(i) == null)
-                        {
-                            MapStructure.AddMap(i);
-                        }
-                    }
-                }
-                File.WriteAllBytes("resources/maps/mapstructure.dat", MapStructure.Data());
-                PacketSender.SendMapListToEditors();
+                MapList.GetList().Load(myBuffer, gameMaps);
             }
-            else
+            foreach (var map in Globals.GameMaps)
             {
-                for (int i = 0; i < Globals.GameMaps.Length; i++)
+                if (MapList.GetList().FindMap(map.Value.MyMapNum) == null)
                 {
-                    if (MapHelper.IsMapValid(i))
-                    {
-                        MapStructure.AddMap(i);
-                    }
+                    gameMaps = Globals.GameMaps.ToDictionary(k => k.Key, v => (MapStruct)v.Value);
+                    MapList.GetList().AddMap(map.Value.MyMapNum, gameMaps);
                 }
-                File.WriteAllBytes("resources/maps/mapstructure.dat", MapStructure.Data());
             }
+            File.WriteAllBytes("resources/maps/mapstructure.dat", MapList.GetList().Data(gameMaps));
+            PacketSender.SendMapListToEditors();
         }
 
         //Common Events

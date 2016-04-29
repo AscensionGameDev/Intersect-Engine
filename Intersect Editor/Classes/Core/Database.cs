@@ -20,18 +20,16 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Xml;
-using Intersect_Editor.Classes.Game_Objects;
 using Intersect_Editor.Classes.General;
+using Intersect_Library.GameObjects;
+using Intersect_Library.GameObjects.Events;
 
 namespace Intersect_Editor.Classes
 {
     public static class Database
     {
-        public static MapList MapStructure = new MapList();
-        public static List<FolderMap> OrderedMaps = new List<FolderMap>();
         public static void InitDatabase()
         {
             Globals.GameItems = new ItemStruct[Options.MaxItems];

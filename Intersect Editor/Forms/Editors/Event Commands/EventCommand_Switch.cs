@@ -20,15 +20,11 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
-using System.Data;
-using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 using Intersect_Editor.Classes;
-using Intersect_Editor.Classes.General;
+using Intersect_Library;
+using Intersect_Library.GameObjects.Events;
+using Options = Intersect_Editor.Classes.General.Options;
 
 namespace Intersect_Editor.Forms.Editors.Event_Commands
 {
@@ -43,7 +39,7 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             _myCommand = refCommand;
             _eventEditor = editor;
             _loading = true;
-            if (_myCommand.Ints[0] == (int) Enums.SwitchVariableTypes.ServerSwitch)
+            if (_myCommand.Ints[0] == (int) SwitchVariableTypes.ServerSwitch)
             {
                 rdoGlobalSwitch.Checked = true;
             }
@@ -86,8 +82,8 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
 
         private void btnSave_Click(object sender, EventArgs e)
         {
-            if (rdoPlayerSwitch.Checked) _myCommand.Ints[0] = (int) Enums.SwitchVariableTypes.PlayerSwitch;
-            if (rdoGlobalSwitch.Checked) _myCommand.Ints[0] = (int)Enums.SwitchVariableTypes.ServerSwitch;
+            if (rdoPlayerSwitch.Checked) _myCommand.Ints[0] = (int) SwitchVariableTypes.PlayerSwitch;
+            if (rdoGlobalSwitch.Checked) _myCommand.Ints[0] = (int)SwitchVariableTypes.ServerSwitch;
             _myCommand.Ints[1] = cmbSetSwitch.SelectedIndex;
             _myCommand.Ints[2] = cmbSetSwitchVal.SelectedIndex;
             _eventEditor.FinishCommandEdit();

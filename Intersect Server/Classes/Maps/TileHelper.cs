@@ -1,5 +1,8 @@
 ﻿using System;
+using Intersect_Library;
+using Intersect_Server.Classes.Core;
 using Intersect_Server.Classes.General;
+using Options = Intersect_Server.Classes.General.Options;
 
 namespace Intersect_Server.Classes.Maps
 {
@@ -47,13 +50,13 @@ namespace Intersect_Server.Classes.Maps
 
         private bool TransitionMaps(int direction)
         {
-            if (!MapHelper.IsMapValid(_mapNum)) return false;
+            if (!Globals.GameMaps.ContainsKey(_mapNum)) return false;
             int Grid = Globals.GameMaps[_mapNum].MapGrid;
             int GridX = Globals.GameMaps[_mapNum].MapGridX;
             int GridY = Globals.GameMaps[_mapNum].MapGridY;
             switch (direction)
             {
-                case (int)Enums.Directions.Up:
+                case (int)Directions.Up:
                     if (GridY > 0 && Database.MapGrids[Grid].MyGrid[GridX, GridY-1] > -1)
                     {
                         _mapNum = Database.MapGrids[Grid].MyGrid[GridX, GridY - 1];
@@ -61,7 +64,7 @@ namespace Intersect_Server.Classes.Maps
                         return true;
                     }
                     return false;
-                case (int)Enums.Directions.Down:
+                case (int)Directions.Down:
                     if (GridY + 1 < Database.MapGrids[Grid].Height && Database.MapGrids[Grid].MyGrid[GridX, GridY + 1] > -1)
                     {
                         _mapNum = Database.MapGrids[Grid].MyGrid[GridX, GridY + 1];
@@ -69,7 +72,7 @@ namespace Intersect_Server.Classes.Maps
                         return true;
                     }
                     return false;
-                case (int)Enums.Directions.Left:
+                case (int)Directions.Left:
                     if (GridX > 0 && Database.MapGrids[Grid].MyGrid[GridX - 1, GridY] > -1)
                     {
                         _mapNum = Database.MapGrids[Grid].MyGrid[GridX - 1, GridY];
@@ -77,7 +80,7 @@ namespace Intersect_Server.Classes.Maps
                         return true;
                     }
                     return false;
-                case (int)Enums.Directions.Right:
+                case (int)Directions.Right:
                     if (GridX + 1 < Database.MapGrids[Grid].Width && Database.MapGrids[Grid].MyGrid[GridX + 1, GridY] > -1)
                     {
                         _mapNum = Database.MapGrids[Grid].MyGrid[GridX + 1, GridY];
@@ -92,23 +95,23 @@ namespace Intersect_Server.Classes.Maps
 
         private bool Fix()
         {
-            if (!MapHelper.IsMapValid(_mapNum)) return false;
-            MapStruct curMap = Globals.GameMaps[_mapNum];
+            if (!Globals.GameMaps.ContainsKey(_mapNum)) return false;
+            MapInstance curMap = Globals.GameMaps[_mapNum];
             while (_tileX < 0)
             {
-                if (!TransitionMaps((int) Enums.Directions.Left)) return false;
+                if (!TransitionMaps((int) Directions.Left)) return false;
             }
             while (_tileY < 0)
             {
-                if (!TransitionMaps((int)Enums.Directions.Up)) return false;
+                if (!TransitionMaps((int)Directions.Up)) return false;
             }
             while (_tileX >= Options.MapWidth)
             {
-                if (!TransitionMaps((int)Enums.Directions.Right)) return false;
+                if (!TransitionMaps((int)Directions.Right)) return false;
             }
             while (_tileY >= Options.MapHeight)
             {
-                if (!TransitionMaps((int)Enums.Directions.Down)) return false;
+                if (!TransitionMaps((int)Directions.Down)) return false;
             }
             return true;
         }
@@ -130,7 +133,7 @@ namespace Intersect_Server.Classes.Maps
 
         public static Boolean IsTileValid(int mapNum, int tileX, int tileY)
         {
-            if (!MapHelper.IsMapValid(mapNum)) return false;
+            if (!Globals.GameMaps.ContainsKey(mapNum)) return false;
             if (tileX < 0 || tileX > Options.MapWidth) return false;
             if (tileY < 0 || tileY > Options.MapHeight) return false;
             return true;

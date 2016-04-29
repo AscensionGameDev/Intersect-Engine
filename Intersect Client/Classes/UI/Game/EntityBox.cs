@@ -29,9 +29,9 @@ using IntersectClientExtras.File_Management;
 using IntersectClientExtras.Graphics;
 using IntersectClientExtras.Gwen;
 using IntersectClientExtras.Gwen.Control;
-using Intersect_Client.Classes.Core;
 using Intersect_Client.Classes.Entities;
 using Intersect_Client.Classes.General;
+using Intersect_Library;
 using Color = IntersectClientExtras.GenericClasses.Color;
 
 namespace Intersect_Client.Classes.UI.Game
@@ -188,11 +188,11 @@ namespace Intersect_Client.Classes.UI.Game
             _myEntity.GetType() != typeof(Event))
             {
                 float targetHPWidth = 0f;
-                if (_myEntity.MaxVital[(int)Enums.Vitals.Health] > 0)
+                if (_myEntity.MaxVital[(int)Vitals.Health] > 0)
                 {
-                    targetHPWidth = (float)((float)_myEntity.Vital[(int)Enums.Vitals.Health] / (float)_myEntity.MaxVital[(int)Enums.Vitals.Health]);
+                    targetHPWidth = (float)((float)_myEntity.Vital[(int)Vitals.Health] / (float)_myEntity.MaxVital[(int)Vitals.Health]);
                     //Fix the Labels
-                    _hpLbl.Text = "HP: " + _myEntity.Vital[(int)Enums.Vitals.Health] + " / " + _myEntity.MaxVital[(int)Enums.Vitals.Health];
+                    _hpLbl.Text = "HP: " + _myEntity.Vital[(int)Vitals.Health] + " / " + _myEntity.MaxVital[(int)Vitals.Health];
                     _hpLbl.X = _hpBackground.X + _hpBackground.Width / 2 - _hpLbl.Width / 2;
                     //Multiply by the width of the bars.
                     targetHPWidth *= 169;
@@ -227,10 +227,10 @@ namespace Intersect_Client.Classes.UI.Game
                     }
                 }
                 float targetMPWidth = 0f;
-                if (_myEntity.MaxVital[(int)Enums.Vitals.Mana] > 0)
+                if (_myEntity.MaxVital[(int)Vitals.Mana] > 0)
                 {
-                    targetMPWidth = _myEntity.Vital[(int)Enums.Vitals.Mana] / _myEntity.MaxVital[(int)Enums.Vitals.Mana];
-                    _mpLbl.Text = "MP: " + _myEntity.Vital[(int)Enums.Vitals.Mana] + " / " + _myEntity.MaxVital[(int)Enums.Vitals.Mana];
+                    targetMPWidth = _myEntity.Vital[(int)Vitals.Mana] / _myEntity.MaxVital[(int)Vitals.Mana];
+                    _mpLbl.Text = "MP: " + _myEntity.Vital[(int)Vitals.Mana] + " / " + _myEntity.MaxVital[(int)Vitals.Mana];
                     _mpLbl.X = _mpBackground.X + _mpBackground.Width / 2 - _mpLbl.Width / 2;
                     targetMPWidth *= 169;
                 }

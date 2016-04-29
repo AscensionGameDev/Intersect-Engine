@@ -19,14 +19,26 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using Intersect_Library;
+using Intersect_Library.GameObjects;
+using Intersect_Library.GameObjects.Events;
+using Intersect_Library.GameObjects.Maps;
+using Intersect_Library.GameObjects.Maps.MapList;
+using Intersect_Server.Classes.Core;
 using Intersect_Server.Classes.Entities;
 using Intersect_Server.Classes.General;
+using Intersect_Server.Classes.Items;
 using Intersect_Server.Classes.Maps;
-using Intersect_Server.Classes.Misc;
+using Intersect_Server.Classes.Spells;
+using Options = Intersect_Server.Classes.General.Options;
+using Attribute = Intersect_Library.GameObjects.Maps.Attribute;
 
-namespace Intersect_Server.Classes
+namespace Intersect_Server.Classes.Networking
 {
     public class PacketHandler
     {
@@ -34,196 +46,196 @@ namespace Intersect_Server.Classes
         {
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
-            var packetHeader = (Enums.ClientPackets)bf.ReadLong();
+            var packetHeader = (ClientPackets)bf.ReadLong();
             packet = bf.ReadBytes(bf.Length());
             bf.Dispose();
 
             switch (packetHeader)
             {
-                case Enums.ClientPackets.Ping:
+                case ClientPackets.Ping:
                     HandlePing(client);
                     break;
-                case Enums.ClientPackets.Login:
+                case ClientPackets.Login:
                     HandleLogin(client, packet);
                     break;
-                case Enums.ClientPackets.NeedMap:
+                case ClientPackets.NeedMap:
                     HandleNeedMap(client, packet);
                     break;
-                case Enums.ClientPackets.SendMove:
+                case ClientPackets.SendMove:
                     HandlePlayerMove(client, packet);
                     break;
-                case Enums.ClientPackets.LocalMessage:
+                case ClientPackets.LocalMessage:
                     HandleLocalMsg(client, packet);
                     break;
-                case Enums.ClientPackets.EditorLogin:
+                case ClientPackets.EditorLogin:
                     HandleEditorLogin(client, packet);
                     break;
-                case Enums.ClientPackets.SaveTilesetArray:
+                case ClientPackets.SaveTilesetArray:
                     HandleTilesets(client, packet);
                     break;
-                case Enums.ClientPackets.SaveMap:
+                case ClientPackets.SaveMap:
                     HandleMap(client, packet);
                     break;
-                case Enums.ClientPackets.CreateMap:
+                case ClientPackets.CreateMap:
                     HandleCreateMap(client, packet);
                     break;
-                case Enums.ClientPackets.EnterMap:
+                case ClientPackets.EnterMap:
                     HandleEnterMap(client, packet);
                     break;
-                case Enums.ClientPackets.TryAttack:
+                case ClientPackets.TryAttack:
                     HandleTryAttack(client, packet);
                     break;
-                case Enums.ClientPackets.SendDir:
+                case ClientPackets.SendDir:
                     HandleDir(client, packet);
                     break;
-                case Enums.ClientPackets.EnterGame:
+                case ClientPackets.EnterGame:
                     HandleEnterGame(client, packet);
                     break;
-                case Enums.ClientPackets.ActivateEvent:
+                case ClientPackets.ActivateEvent:
                     HandleActivateEvent(client, packet);
                     break;
-                case Enums.ClientPackets.EventResponse:
+                case ClientPackets.EventResponse:
                     HandleEventResponse(client, packet);
                     break;
-                case Enums.ClientPackets.CreateAccount:
+                case ClientPackets.CreateAccount:
                     HandleCreateAccount(client, packet);
                     break;
-                case Enums.ClientPackets.OpenItemEditor:
+                case ClientPackets.OpenItemEditor:
                     HandleItemEditor(client);
                     break;
-                case Enums.ClientPackets.SaveItem:
+                case ClientPackets.SaveItem:
                     HandleItemData(client, packet);
                     break;
-                case Enums.ClientPackets.OpenNpcEditor:
+                case ClientPackets.OpenNpcEditor:
                     HandleNpcEditor(client);
                     break;
-                case Enums.ClientPackets.SaveNpc:
+                case ClientPackets.SaveNpc:
                     HandleNpcData(client, packet);
                     break;
-                case Enums.ClientPackets.OpenSpellEditor:
+                case ClientPackets.OpenSpellEditor:
                     HandleSpellEditor(client);
                     break;
-                case Enums.ClientPackets.SaveSpell:
+                case ClientPackets.SaveSpell:
                     HandleSpellData(client, packet);
                     break;
-                case Enums.ClientPackets.OpenAnimationEditor:
+                case ClientPackets.OpenAnimationEditor:
                     HandleAnimationEditor(client);
                     break;
-                case Enums.ClientPackets.SaveAnimation:
+                case ClientPackets.SaveAnimation:
                     HandleAnimationData(client, packet);
                     break;
-                case Enums.ClientPackets.PickupItem:
+                case ClientPackets.PickupItem:
                     HandlePickupItem(client, packet);
                     break;
-                case Enums.ClientPackets.SwapItems:
+                case ClientPackets.SwapItems:
                     HandleSwapItems(client, packet);
                     break;
-                case Enums.ClientPackets.DropItems:
+                case ClientPackets.DropItems:
                     HandleDropItems(client, packet);
                     break;
-                case Enums.ClientPackets.UseItem:
+                case ClientPackets.UseItem:
                     HandleUseItem(client, packet);
                     break;
-                case Enums.ClientPackets.SwapSpells:
+                case ClientPackets.SwapSpells:
                     HandleSwapSpells(client, packet);
                     break;
-                case Enums.ClientPackets.ForgetSpell:
+                case ClientPackets.ForgetSpell:
                     HandleForgetSpell(client, packet);
                     break;
-                case Enums.ClientPackets.UseSpell:
+                case ClientPackets.UseSpell:
                     HandleUseSpell(client, packet);
                     break;
-                case Enums.ClientPackets.UnequipItem:
+                case ClientPackets.UnequipItem:
                     HandleUnequipItem(client, packet);
                     break;
-                case Enums.ClientPackets.UpgradeStat:
+                case ClientPackets.UpgradeStat:
                     HandleUpgradeStat(client, packet);
                     break;
-                case Enums.ClientPackets.HotbarChange:
+                case ClientPackets.HotbarChange:
                     HandleHotbarChange(client, packet);
                     break;
-                case Enums.ClientPackets.OpenResourceEditor:
+                case ClientPackets.OpenResourceEditor:
                     HandleResourceEditor(client);
                     break;
-                case Enums.ClientPackets.SaveResource:
+                case ClientPackets.SaveResource:
                     HandleResourceData(client, packet);
                     break;
-                case Enums.ClientPackets.OpenClassEditor:
+                case ClientPackets.OpenClassEditor:
                     HandleClassEditor(client);
                     break;
-                case Enums.ClientPackets.SaveClass:
+                case ClientPackets.SaveClass:
                     HandleClassData(client, packet);
                     break;
-                case Enums.ClientPackets.MapListUpdate:
+                case ClientPackets.MapListUpdate:
                     HandleMapListUpdate(client, packet);
                     break;
-                case Enums.ClientPackets.CreateCharacter:
+                case ClientPackets.CreateCharacter:
                     HandleCreateCharacter(client, packet);
                     break;
-                case Enums.ClientPackets.OpenQuestEditor:
+                case ClientPackets.OpenQuestEditor:
                     HandleQuestEditor(client);
                     break;
-                case Enums.ClientPackets.SaveQuest:
+                case ClientPackets.SaveQuest:
                     HandleQuestData(client, packet);
                     break;
-                case Enums.ClientPackets.OpenAdminWindow:
+                case ClientPackets.OpenAdminWindow:
                     HandleOpenAdminWindow(client);
                     break;
-                case Enums.ClientPackets.AdminAction:
+                case ClientPackets.AdminAction:
                     HandleAdminAction(client, packet);
                     break;
-                case Enums.ClientPackets.NeedGrid:
+                case ClientPackets.NeedGrid:
                     HandleNeedGrid(client, packet);
                     break;
-                case Enums.ClientPackets.OpenProjectileEditor:
+                case ClientPackets.OpenProjectileEditor:
                     HandleProjectileEditor(client);
                     break;
-                case Enums.ClientPackets.SaveProjectile:
+                case ClientPackets.SaveProjectile:
                     HandleProjectileData(client, packet);
                     break;
-                case Enums.ClientPackets.UnlinkMap:
+                case ClientPackets.UnlinkMap:
                     HandleUnlinkMap(client, packet);
                     break;
-                case Enums.ClientPackets.LinkMap:
+                case ClientPackets.LinkMap:
                     HandleLinkMap(client, packet);
                     break;
-                case Enums.ClientPackets.OpenCommonEventEditor:
+                case ClientPackets.OpenCommonEventEditor:
                     HandleOpenCommonEventEditor(client);
                     break;
-                case Enums.ClientPackets.SaveCommonEvent:
+                case ClientPackets.SaveCommonEvent:
                     HandleCommonEvent(client, packet);
                     break;
-                case Enums.ClientPackets.OpenSwitchVariableEditor:
+                case ClientPackets.OpenSwitchVariableEditor:
                     HandleOpenSwitchVariableEditor(client);
                     break;
-                case Enums.ClientPackets.SaveSwitchVariable:
+                case ClientPackets.SaveSwitchVariable:
                     HandleSaveSwitchVariables(client, packet);
                     break;
-                case Enums.ClientPackets.OpenShopEditor:
+                case ClientPackets.OpenShopEditor:
                     HandleOpenShopEditor(client);
                     break;
-                case Enums.ClientPackets.SaveShop:
+                case ClientPackets.SaveShop:
                     HandleSaveShop(client, packet);
                     break;
-                case Enums.ClientPackets.BuyItem:
+                case ClientPackets.BuyItem:
                     HandleBuyItem(client, packet);
                     break;
-                case Enums.ClientPackets.SellItem:
+                case ClientPackets.SellItem:
                     HandleSellItem(client, packet);
                     break;
-                case Enums.ClientPackets.CloseShop:
+                case ClientPackets.CloseShop:
                     HandleCloseShop(client, packet);
                     break;
-                case Enums.ClientPackets.CloseBank:
+                case ClientPackets.CloseBank:
                     HandleCloseBank(client, packet);
                     break;
-                case Enums.ClientPackets.DepositItem:
+                case ClientPackets.DepositItem:
                     HandleDepositItem(client, packet);
                     break;
-                case Enums.ClientPackets.WithdrawItem:
+                case ClientPackets.WithdrawItem:
                     HandleWithdrawItem(client, packet);
                     break;
-                case Enums.ClientPackets.MoveBankItem:
+                case ClientPackets.MoveBankItem:
                     HandleMoveBankItem(client, packet);
                     break;
                 default:
@@ -285,7 +297,7 @@ namespace Intersect_Server.Classes
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
             int mapNum = (int)bf.ReadLong();
-            if (MapHelper.IsMapValid(mapNum))
+            if (Globals.GameMaps.ContainsKey(mapNum))
             {
                 PacketSender.SendMap(client, mapNum);
                 if (!client.IsEditor && mapNum == client.Entity.CurrentMap)
@@ -309,7 +321,7 @@ namespace Intersect_Server.Classes
             //check if player is stunned or snared, if so don't let them move.
             for (var n = 0; n < client.Entity.Status.Count; n++)
             {
-                if (client.Entity.Status[n].Type == (int)Enums.StatusTypes.Stun || client.Entity.Status[n].Type == (int)Enums.StatusTypes.Snare)
+                if (client.Entity.Status[n].Type == (int)StatusTypes.Stun || client.Entity.Status[n].Type == (int)StatusTypes.Snare)
                 {
                     bf.Dispose();
                     return;
@@ -336,13 +348,13 @@ namespace Intersect_Server.Classes
 
 
             //TODO: Add Check if valid before sending the move to everyone.
-            PacketSender.SendEntityMove(index, (int)Enums.EntityTypes.Player, Globals.Entities[index]);
+            PacketSender.SendEntityMove(index, (int)EntityTypes.Player, Globals.Entities[index]);
 
             // Check for a warp, if so warp the player.
             Attribute attribute =
                 Globals.GameMaps[Globals.Entities[index].CurrentMap].Attributes[
                     Globals.Entities[index].CurrentX, Globals.Entities[index].CurrentY];
-            if (attribute != null && attribute.value == (int)Enums.MapAttributes.Warp)
+            if (attribute != null && attribute.value == (int)MapAttributes.Warp)
             {
                 Globals.Entities[index].Warp(attribute.data1, attribute.data2, attribute.data3, Globals.Entities[index].Dir);
             }
@@ -459,7 +471,7 @@ namespace Intersect_Server.Classes
         {
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
-            var mapNum = bf.ReadLong();
+            var mapNum = (int)bf.ReadLong();
             var mapLength = bf.ReadLong();
             Globals.GameMaps[mapNum].Load(bf.ReadBytes((int)mapLength), Globals.GameMaps[mapNum].Revision + 1);
             foreach (var t in Globals.Clients)
@@ -478,9 +490,10 @@ namespace Intersect_Server.Classes
         {
             var bf = new ByteBuffer();
             var newMap = -1;
-            var tmpMap = new MapStruct(-1);
+            var tmpMap = new MapInstance(-1);
             bf.WriteBytes(packet);
             var location = (int)bf.ReadInteger();
+            Dictionary<int, MapStruct> gameMaps;
             if (location == -1)
             {
                 var destType = bf.ReadInteger();
@@ -492,9 +505,10 @@ namespace Intersect_Server.Classes
                 PacketSender.SendEnterMap(client, newMap);
                 FolderDirectory parent = null;
                 destType = -1;
+                gameMaps = Globals.GameMaps.ToDictionary(k => k.Key, v => (MapStruct)v.Value);
                 if (destType == -1)
                 {
-                    Database.MapStructure.AddMap(newMap);
+                    MapList.GetList().AddMap(newMap, gameMaps);
                 }
                 /*else if (destType == 0)
                 {
@@ -633,14 +647,15 @@ namespace Intersect_Server.Classes
                     Database.GenerateMapGrids();
                     PacketSender.SendMap(client, newMap);
                     PacketSender.SendEnterMap(client, newMap);
-                    var folderDir = Database.MapStructure.FindMapParent(relativeMap, null);
+                    var folderDir = MapList.GetList().FindMapParent(relativeMap, null);
+                    gameMaps = Globals.GameMaps.ToDictionary(k => k.Key, v => (MapStruct)v.Value);
                     if (folderDir != null)
                     {
-                        folderDir.Children.AddMap(newMap);
+                        folderDir.Children.AddMap(newMap, gameMaps);
                     }
                     else
                     {
-                        Database.MapStructure.AddMap(newMap);
+                        MapList.GetList().AddMap(newMap, gameMaps);
                     }
                 }
             }
@@ -666,13 +681,13 @@ namespace Intersect_Server.Classes
             //check if player is blinded or stunned
             for (var n = 0; n < client.Entity.Status.Count; n++)
             {
-                if (client.Entity.Status[n].Type == (int)Enums.StatusTypes.Stun)
+                if (client.Entity.Status[n].Type == (int)StatusTypes.Stun)
                 {
                     PacketSender.SendPlayerMsg(client, "You are stunned and can't attack");
                     bf.Dispose();
                     return;
                 }
-                if (client.Entity.Status[n].Type == (int)Enums.StatusTypes.Blind)
+                if (client.Entity.Status[n].Type == (int)StatusTypes.Blind)
                 {
                     PacketSender.SendPlayerMsg(client, "You are blinded and can't attack");
                     bf.Dispose();
@@ -734,7 +749,7 @@ namespace Intersect_Server.Classes
                     "You are an administrator! Press Insert at any time to access the administration menu or F2 for debug information.",
                     Color.OrangeRed);
             }
-            PacketSender.SendEntityDataTo(client, index, (int)Enums.EntityTypes.Player, client.Entity.Data(), client.Entity);
+            PacketSender.SendEntityDataTo(client, index, (int)EntityTypes.Player, client.Entity.Data(), client.Entity);
             Globals.Entities[index].Warp(Globals.Entities[index].CurrentMap, Globals.Entities[index].CurrentX, Globals.Entities[index].CurrentY, Globals.Entities[index].Dir);
 
         }
@@ -811,12 +826,12 @@ namespace Intersect_Server.Classes
                     ((Player)Globals.Entities[index]).Gender = Globals.GameClasses[Class].Sprites[Sprite].Gender;
                 }
                 ((Player)Globals.Entities[index]).WarpToSpawn();
-                Globals.Entities[index].Vital[(int)Enums.Vitals.Health] = Globals.GameClasses[Class].MaxVital[(int)Enums.Vitals.Health];
-                Globals.Entities[index].Vital[(int)Enums.Vitals.Mana] = Globals.GameClasses[Class].MaxVital[(int)Enums.Vitals.Mana];
-                Globals.Entities[index].MaxVital[(int)Enums.Vitals.Health] = Globals.GameClasses[Class].MaxVital[(int)Enums.Vitals.Health];
-                Globals.Entities[index].MaxVital[(int)Enums.Vitals.Mana] = Globals.GameClasses[Class].MaxVital[(int)Enums.Vitals.Mana];
+                Globals.Entities[index].Vital[(int)Vitals.Health] = Globals.GameClasses[Class].MaxVital[(int)Vitals.Health];
+                Globals.Entities[index].Vital[(int)Vitals.Mana] = Globals.GameClasses[Class].MaxVital[(int)Vitals.Mana];
+                Globals.Entities[index].MaxVital[(int)Vitals.Health] = Globals.GameClasses[Class].MaxVital[(int)Vitals.Health];
+                Globals.Entities[index].MaxVital[(int)Vitals.Mana] = Globals.GameClasses[Class].MaxVital[(int)Vitals.Mana];
 
-                for (int i = 0; i < (int)Enums.Stats.StatCount; i++)
+                for (int i = 0; i < (int)Stats.StatCount; i++)
                 {
                     Globals.Entities[index].Stat[i].Stat = Globals.GameClasses[Class].Stat[i];
                 }
@@ -909,7 +924,8 @@ namespace Intersect_Server.Classes
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
             var index = bf.ReadInteger();
-            Globals.GameAnimations[index].Load(bf.ReadBytes(bf.Length()), index);
+            Globals.GameAnimations[index] = new AnimationStruct();
+            Globals.GameAnimations[index].Load(bf.ReadBytes(bf.Length()),index);
             Globals.GameAnimations[index].Save(index);
             bf.Dispose();
         }
@@ -1115,22 +1131,22 @@ namespace Intersect_Server.Classes
             var type = bf.ReadInteger();
             switch (type)
             {
-                case (int)Enums.MapListUpdates.MoveItem:
-                    Database.MapStructure.HandleMove(bf.ReadInteger(), bf.ReadInteger(), bf.ReadInteger(), bf.ReadInteger());
+                case (int)MapListUpdates.MoveItem:
+                    MapList.GetList().HandleMove(bf.ReadInteger(), bf.ReadInteger(), bf.ReadInteger(), bf.ReadInteger());
                     break;
-                case (int)Enums.MapListUpdates.AddFolder:
+                case (int)MapListUpdates.AddFolder:
                     destType = bf.ReadInteger();
                     parent = null;
                     if (destType == -1)
                     {
-                        Database.MapStructure.AddFolder("New Folder");
+                        MapList.GetList().AddFolder("New Folder");
                     }
                     else if (destType == 0)
                     {
-                        parent = Database.MapStructure.FindDir(bf.ReadInteger());
+                        parent = MapList.GetList().FindDir(bf.ReadInteger());
                         if (parent == null)
                         {
-                            Database.MapStructure.AddFolder("New Folder");
+                            MapList.GetList().AddFolder("New Folder");
                         }
                         else
                         {
@@ -1140,10 +1156,10 @@ namespace Intersect_Server.Classes
                     else if (destType == 1)
                     {
                         mapNum = bf.ReadInteger();
-                        parent = Database.MapStructure.FindMapParent(mapNum, null);
+                        parent = MapList.GetList().FindMapParent(mapNum, null);
                         if (parent == null)
                         {
-                            Database.MapStructure.AddFolder("New Folder");
+                            MapList.GetList().AddFolder("New Folder");
                         }
                         else
                         {
@@ -1151,12 +1167,12 @@ namespace Intersect_Server.Classes
                         }
                     }
                     break;
-                case (int)Enums.MapListUpdates.Rename:
+                case (int)MapListUpdates.Rename:
                     destType = bf.ReadInteger();
                     parent = null;
                     if (destType == 0)
                     {
-                        parent = Database.MapStructure.FindDir(bf.ReadInteger());
+                        parent = MapList.GetList().FindDir(bf.ReadInteger());
                         parent.Name = bf.ReadString();
                         PacketSender.SendMapListToEditors();
                     }
@@ -1169,12 +1185,12 @@ namespace Intersect_Server.Classes
 
                     }
                     break;
-                case (int)Enums.MapListUpdates.Delete:
+                case (int)MapListUpdates.Delete:
                     destType = bf.ReadInteger();
                     parent = null;
                     if (destType == 0)
                     {
-                        Database.MapStructure.DeleteFolder(bf.ReadInteger());
+                        MapList.GetList().DeleteFolder(bf.ReadInteger());
                         PacketSender.SendMapListToEditors();
                     }
                     else if (destType == 1)
@@ -1182,7 +1198,7 @@ namespace Intersect_Server.Classes
                         mapNum = bf.ReadInteger();
                         Globals.GameMaps[mapNum].Deleted = 1;
                         Database.CheckAllMapConnections();
-                        Database.MapStructure.DeleteMap(mapNum);
+                        MapList.GetList().DeleteMap(mapNum);
                         Database.GenerateMapGrids();
                         Globals.GameMaps[mapNum].Save(false);
                         PacketSender.SendMapToEditors(mapNum);
@@ -1190,7 +1206,8 @@ namespace Intersect_Server.Classes
                     }
                     break;
             }
-            File.WriteAllBytes("resources/maps/mapstructure.dat", Database.MapStructure.Data());
+            Dictionary<int, MapStruct> gameMaps = Globals.GameMaps.ToDictionary(k => k.Key, v => (MapStruct)v.Value);
+            File.WriteAllBytes("resources/maps/mapstructure.dat", MapList.GetList().Data(gameMaps));
             bf.Dispose();
         }
 
@@ -1211,7 +1228,7 @@ namespace Intersect_Server.Classes
             var type = bf.ReadInteger();
             switch (type)
             {
-                case (int)Enums.AdminActions.WarpTo:
+                case (int)AdminActions.WarpTo:
                     client.Entity.Warp(bf.ReadInteger(), client.Entity.CurrentX, client.Entity.CurrentY);
                     break;
             }
@@ -1222,7 +1239,7 @@ namespace Intersect_Server.Classes
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
             int mapNum = (int)bf.ReadLong();
-            if (MapHelper.IsMapValid(mapNum))
+            if (Globals.GameMaps.ContainsKey(mapNum))
             {
                 if (client.IsEditor)
                 {
@@ -1238,7 +1255,7 @@ namespace Intersect_Server.Classes
             int mapNum = (int)bf.ReadLong();
             int curMap = (int)bf.ReadLong();
             int mapGrid = 0;
-            if (MapHelper.IsMapValid(mapNum))
+            if (Globals.GameMaps.ContainsKey(mapNum))
             {
                 if (client.IsEditor)
                 {
@@ -1253,32 +1270,32 @@ namespace Intersect_Server.Classes
                         if (gridY - 1 >= 0 && Database.MapGrids[Globals.GameMaps[mapNum].MapGrid].MyGrid[gridX, gridY - 1] > -1)
                         {
                             if (Globals.GameMaps[Database.MapGrids[Globals.GameMaps[mapNum].MapGrid].MyGrid[gridX, gridY - 1]] != null)
-                                Globals.GameMaps[Database.MapGrids[Globals.GameMaps[mapNum].MapGrid].MyGrid[gridX, gridY - 1]].ClearConnections((int)Enums.Directions.Down);
+                                Globals.GameMaps[Database.MapGrids[Globals.GameMaps[mapNum].MapGrid].MyGrid[gridX, gridY - 1]].ClearConnections((int)Directions.Down);
                         }
 
                         //Down
                         if (gridY + 1 < Database.MapGrids[Globals.GameMaps[mapNum].MapGrid].Height && Database.MapGrids[Globals.GameMaps[mapNum].MapGrid].MyGrid[gridX, gridY + 1] > -1)
                         {
                             if (Globals.GameMaps[Database.MapGrids[Globals.GameMaps[mapNum].MapGrid].MyGrid[gridX, gridY + 1]] != null)
-                                Globals.GameMaps[Database.MapGrids[Globals.GameMaps[mapNum].MapGrid].MyGrid[gridX, gridY + 1]].ClearConnections((int)Enums.Directions.Up);
+                                Globals.GameMaps[Database.MapGrids[Globals.GameMaps[mapNum].MapGrid].MyGrid[gridX, gridY + 1]].ClearConnections((int)Directions.Up);
                         }
 
                         //Left
                         if (gridX - 1 >= 0 && Database.MapGrids[Globals.GameMaps[mapNum].MapGrid].MyGrid[gridX - 1, gridY] > -1)
                         {
                             if (Globals.GameMaps[Database.MapGrids[Globals.GameMaps[mapNum].MapGrid].MyGrid[gridX - 1, gridY]] != null)
-                                Globals.GameMaps[Database.MapGrids[Globals.GameMaps[mapNum].MapGrid].MyGrid[gridX - 1, gridY]].ClearConnections((int)Enums.Directions.Right);
+                                Globals.GameMaps[Database.MapGrids[Globals.GameMaps[mapNum].MapGrid].MyGrid[gridX - 1, gridY]].ClearConnections((int)Directions.Right);
                         }
 
                         //Right
                         if (gridX + 1 < Database.MapGrids[Globals.GameMaps[mapNum].MapGrid].Width && Database.MapGrids[Globals.GameMaps[mapNum].MapGrid].MyGrid[gridX + 1, gridY] > -1)
                         {
                             if (Globals.GameMaps[Database.MapGrids[Globals.GameMaps[mapNum].MapGrid].MyGrid[gridX + 1, gridY]] != null)
-                                Globals.GameMaps[Database.MapGrids[Globals.GameMaps[mapNum].MapGrid].MyGrid[gridX + 1, gridY]].ClearConnections((int)Enums.Directions.Left);
+                                Globals.GameMaps[Database.MapGrids[Globals.GameMaps[mapNum].MapGrid].MyGrid[gridX + 1, gridY]].ClearConnections((int)Directions.Left);
                         }
 
                         Database.GenerateMapGrids();
-                        if (MapHelper.IsMapValid(curMap))
+                        if (Globals.GameMaps.ContainsKey(curMap))
                         {
                             mapGrid = Globals.GameMaps[curMap].MapGrid;
                         }
@@ -1292,12 +1309,12 @@ namespace Intersect_Server.Classes
         {
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
-            long adjacentMap = bf.ReadLong();
-            long linkMap = bf.ReadLong();
+            int adjacentMap = (int)bf.ReadLong();
+            int linkMap = (int)bf.ReadLong();
             long gridX = bf.ReadLong();
             long gridY = bf.ReadLong();
             bool canLink = true;
-            if (MapHelper.IsMapValid((int)linkMap) && MapHelper.IsMapValid((int)adjacentMap))
+            if (Globals.GameMaps.ContainsKey((int)linkMap) && Globals.GameMaps.ContainsKey((int)adjacentMap))
             {
                 //Clear to test if we can link.
                 int linkGrid = Globals.GameMaps[linkMap].MapGrid;
@@ -1419,17 +1436,17 @@ namespace Intersect_Server.Classes
                 var index = bf.ReadInteger();
                 switch (type)
                 {
-                    case (int)Enums.SwitchVariableTypes.PlayerSwitch:
+                    case (int)SwitchVariableTypes.PlayerSwitch:
                         Globals.PlayerSwitches[index] = bf.ReadString();
                         break;
-                    case (int)Enums.SwitchVariableTypes.PlayerVariable:
+                    case (int)SwitchVariableTypes.PlayerVariable:
                         Globals.PlayerVariables[index] = bf.ReadString();
                         break;
-                    case (int)Enums.SwitchVariableTypes.ServerSwitch:
+                    case (int)SwitchVariableTypes.ServerSwitch:
                         Globals.ServerSwitches[index] = bf.ReadString();
                         Globals.ServerSwitchValues[index] = Convert.ToBoolean(bf.ReadInteger());
                         break;
-                    case (int)Enums.SwitchVariableTypes.ServerVariable:
+                    case (int)SwitchVariableTypes.ServerVariable:
                         Globals.ServerVariables[index] = bf.ReadString();
                         Globals.ServerVariableValues[index] = bf.ReadInteger();
                         break;

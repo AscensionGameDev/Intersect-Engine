@@ -19,15 +19,18 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+
 using System;
 using System.Collections.Generic;
-using Intersect_Server.Classes.Entities;
-using Intersect_Server.Classes.Game_Objects;
+using Intersect_Library;
+using Intersect_Library.GameObjects;
 using Intersect_Server.Classes.General;
-using Intersect_Server.Classes.Maps;
-using Intersect_Server.Classes.Misc;
+using Intersect_Server.Classes.Items;
+using Intersect_Server.Classes.Networking;
+using Intersect_Server.Classes.Spells;
+using Options = Intersect_Server.Classes.General.Options;
 
-namespace Intersect_Server.Classes
+namespace Intersect_Server.Classes.Entities
 {
 
     public class Player : Entity
@@ -91,7 +94,7 @@ namespace Intersect_Server.Classes
                 }
                 if (CurrentMap > -1)
                 {
-                    if (!MapHelper.IsMapValid(CurrentMap))
+                    if (!Globals.GameMaps.ContainsKey(CurrentMap))
                     {
                         WarpToSpawn(true);
                     }
@@ -161,7 +164,7 @@ namespace Intersect_Server.Classes
                         eventFound = true;
                     }
                     if (eventFound) continue;
-                    PacketSender.SendEntityLeaveTo(MyClient, i, (int)Enums.EntityTypes.Event, MyEvents[i].MapNum);
+                    PacketSender.SendEntityLeaveTo(MyClient, i, (int)EntityTypes.Event, MyEvents[i].MapNum);
                     MyEvents[i] = null;
                 }
             }
@@ -189,10 +192,10 @@ namespace Intersect_Server.Classes
         }
 
         //Vitals
-        public void RestoreVital(Enums.Vitals vital)
+        public void RestoreVital(Vitals vital)
         {
             Vital[(int)vital] = MaxVital[(int)vital];
-            PacketSender.SendEntityVitals(MyIndex, (int)Enums.EntityTypes.Player, this);
+            PacketSender.SendEntityVitals(MyIndex, (int)EntityTypes.Player, this);
         }
 
         //Leveling
@@ -202,7 +205,7 @@ namespace Intersect_Server.Classes
             {
                 Level = Math.Min(Options.MaxLevel,level);
                 if (resetExperience) Experience = 0;
-                PacketSender.SendEntityDataToProximity(MyIndex, (int)Enums.EntityTypes.Player, Data(), this);
+                PacketSender.SendEntityDataToProximity(MyIndex, (int)EntityTypes.Player, Data(), this);
                 PacketSender.SendExperience(MyClient);
             }
         }
@@ -220,7 +223,7 @@ namespace Intersect_Server.Classes
                         "You have " + StatPoints + " stat points available to be spent!", Color.Blue);
                 }
                 PacketSender.SendExperience(MyClient);
-                PacketSender.SendEntityDataToProximity(MyIndex, (int) Enums.EntityTypes.Player, Data(), this);
+                PacketSender.SendEntityDataToProximity(MyIndex, (int) EntityTypes.Player, Data(), this);
             }
         }
         public void GiveExperience(int amount)
@@ -261,7 +264,7 @@ namespace Intersect_Server.Classes
         }
         public override void Warp(int newMap, int newX, int newY, int newDir)
         {
-            if (!MapHelper.IsMapValid(newMap))
+            if (!Globals.GameMaps.ContainsKey(newMap))
             {
                 Globals.GeneralLogs.Add("Failed to warp player to new map -- warping to /spawn/.");
                 WarpToSpawn(true);
@@ -271,39 +274,32 @@ namespace Intersect_Server.Classes
             CurrentY = newY;
             if (newMap != CurrentMap || _sentMap == false)
             {
-                PacketSender.SendEntityLeave(MyIndex, (int)Enums.EntityTypes.Player, CurrentMap);
+                PacketSender.SendEntityLeave(MyIndex, (int)EntityTypes.Player, CurrentMap);
                 CurrentMap = newMap;
-                PacketSender.SendEntityDataToProximity(MyIndex, (int)Enums.EntityTypes.Player, Data(), Globals.Entities[MyIndex]);
-                PacketSender.SendEntityPositionToAll(MyIndex, (int)Enums.EntityTypes.Player, Globals.Entities[MyIndex]);
+                PacketSender.SendEntityDataToProximity(MyIndex, (int)EntityTypes.Player, Data(), Globals.Entities[MyIndex]);
+                PacketSender.SendEntityPositionToAll(MyIndex, (int)EntityTypes.Player, Globals.Entities[MyIndex]);
                 PacketSender.SendMap(MyClient, newMap);
                 PacketSender.SendEnterMap(MyClient, newMap);
                 _sentMap = true;
             }
             else
             {
-                PacketSender.SendEntityPositionToAll(MyIndex, (int)Enums.EntityTypes.Player, Globals.Entities[MyIndex]);
-                PacketSender.SendEntityVitals(MyIndex, (int)Enums.EntityTypes.Player, Globals.Entities[MyIndex]);
-                PacketSender.SendEntityStats(MyIndex, (int)Enums.EntityTypes.Player, Globals.Entities[MyIndex]);
+                PacketSender.SendEntityPositionToAll(MyIndex, (int)EntityTypes.Player, Globals.Entities[MyIndex]);
+                PacketSender.SendEntityVitals(MyIndex, (int)EntityTypes.Player, Globals.Entities[MyIndex]);
+                PacketSender.SendEntityStats(MyIndex, (int)EntityTypes.Player, Globals.Entities[MyIndex]);
             }
 
         }
         public void WarpToSpawn(bool sendWarp = false)
         {
             int map = 0, x = 0, y = 0;
-            if (MapHelper.IsMapValid(Globals.GameClasses[Class].SpawnMap))
+            if (Globals.GameMaps.ContainsKey(Globals.GameClasses[Class].SpawnMap))
             {
                 map = Globals.GameClasses[Class].SpawnMap;
             }
             else
             {
-                for (int i = 0; i < Globals.GameMaps.Length; i++)
-                {
-                    if (MapHelper.IsMapValid(i))
-                    {
-                        map = i;
-                        break;
-                    }
-                }
+                map = Globals.GameMaps.GetEnumerator().Current.Value.MyMapNum;
             }
             x = Globals.GameClasses[Class].SpawnX;
             y = Globals.GameClasses[Class].SpawnY;
@@ -313,10 +309,10 @@ namespace Intersect_Server.Classes
         //Inventory
         public bool CanGiveItem(ItemInstance item)
         {
-            if (Globals.GameItems[item.ItemNum].Type == (int)Enums.ItemTypes.Consumable || //Allow Stacking on Currency, Consumable, Spell, and item types of none.
-                Globals.GameItems[item.ItemNum].Type == (int)Enums.ItemTypes.Currency ||
-                Globals.GameItems[item.ItemNum].Type == (int)Enums.ItemTypes.None ||
-                Globals.GameItems[item.ItemNum].Type == (int)Enums.ItemTypes.Spell)
+            if (Globals.GameItems[item.ItemNum].Type == (int)ItemTypes.Consumable || //Allow Stacking on Currency, Consumable, Spell, and item types of none.
+                Globals.GameItems[item.ItemNum].Type == (int)ItemTypes.Currency ||
+                Globals.GameItems[item.ItemNum].Type == (int)ItemTypes.None ||
+                Globals.GameItems[item.ItemNum].Type == (int)ItemTypes.Spell)
             {
                 for (int i = 0; i < Options.MaxInvItems; i++)
                 {
@@ -340,10 +336,10 @@ namespace Intersect_Server.Classes
         }
         public bool TryGiveItem(ItemInstance item, bool SendUpdate = true)
         {
-            if (Globals.GameItems[item.ItemNum].Type == (int)Enums.ItemTypes.Consumable || //Allow Stacking on Currency, Consumable, Spell, and item types of none.
-                Globals.GameItems[item.ItemNum].Type == (int)Enums.ItemTypes.Currency ||
-                Globals.GameItems[item.ItemNum].Type == (int)Enums.ItemTypes.None ||
-                Globals.GameItems[item.ItemNum].Type == (int)Enums.ItemTypes.Spell)
+            if (Globals.GameItems[item.ItemNum].Type == (int)ItemTypes.Consumable || //Allow Stacking on Currency, Consumable, Spell, and item types of none.
+                Globals.GameItems[item.ItemNum].Type == (int)ItemTypes.Currency ||
+                Globals.GameItems[item.ItemNum].Type == (int)ItemTypes.None ||
+                Globals.GameItems[item.ItemNum].Type == (int)ItemTypes.Spell)
             {
                 for (int i = 0; i < Options.MaxInvItems; i++)
                 {
@@ -389,10 +385,10 @@ namespace Intersect_Server.Classes
         {
             if (Inventory[slot].ItemNum > -1)
             {
-                if (Globals.GameItems[Inventory[slot].ItemNum].Type == (int)Enums.ItemTypes.Consumable || //Allow Stacking on Currency, Consumable, Spell, and item types of none.
-                            Globals.GameItems[Inventory[slot].ItemNum].Type == (int)Enums.ItemTypes.Currency ||
-                            Globals.GameItems[Inventory[slot].ItemNum].Type == (int)Enums.ItemTypes.None ||
-                            Globals.GameItems[Inventory[slot].ItemNum].Type == (int)Enums.ItemTypes.Spell)
+                if (Globals.GameItems[Inventory[slot].ItemNum].Type == (int)ItemTypes.Consumable || //Allow Stacking on Currency, Consumable, Spell, and item types of none.
+                            Globals.GameItems[Inventory[slot].ItemNum].Type == (int)ItemTypes.Currency ||
+                            Globals.GameItems[Inventory[slot].ItemNum].Type == (int)ItemTypes.None ||
+                            Globals.GameItems[Inventory[slot].ItemNum].Type == (int)ItemTypes.Spell)
                 {
                     if (amount >= Inventory[slot].ItemVal)
                     {
@@ -427,11 +423,11 @@ namespace Intersect_Server.Classes
                 //TO DO - CHECK REQUIREMENTS
                 switch (Globals.GameItems[Inventory[slot].ItemNum].Type)
                 {
-                    case (int)Enums.ItemTypes.None:
-                    case (int)Enums.ItemTypes.Currency:
+                    case (int)ItemTypes.None:
+                    case (int)ItemTypes.Currency:
                         PacketSender.SendPlayerMsg(MyClient, "You cannot use this item!");
                         break;
-                    case (int)Enums.ItemTypes.Equipment:
+                    case (int)ItemTypes.Equipment:
                         for (int i = 0; i < Options.EquipmentSlots.Count; i++)
                         {
                             if (Equipment[i] == slot)
@@ -474,7 +470,7 @@ namespace Intersect_Server.Classes
                         }
                         PacketSender.SendPlayerEquipmentToProximity(this);
                         break;
-                    case (int)Enums.ItemTypes.Spell:
+                    case (int)ItemTypes.Spell:
                         if (Globals.GameItems[Inventory[slot].ItemNum].Data1 > -1)
                         {
                             if (TryTeachSpell(new SpellInstance(Globals.GameItems[Inventory[slot].ItemNum].Data1)))
@@ -483,7 +479,7 @@ namespace Intersect_Server.Classes
                             }
                         }
                         break;
-                    case (int)Enums.ItemTypes.Event:
+                    case (int)ItemTypes.Event:
 
                         break;
                     default:
@@ -498,10 +494,10 @@ namespace Intersect_Server.Classes
             bool returnVal = false;
             if (Inventory[slot].ItemNum > -1)
             {
-                if (Globals.GameItems[Inventory[slot].ItemNum].Type == (int)Enums.ItemTypes.Consumable || //Allow Stacking on Currency, Consumable, Spell, and item types of none.
-                            Globals.GameItems[Inventory[slot].ItemNum].Type == (int)Enums.ItemTypes.Currency ||
-                            Globals.GameItems[Inventory[slot].ItemNum].Type == (int)Enums.ItemTypes.None ||
-                            Globals.GameItems[Inventory[slot].ItemNum].Type == (int)Enums.ItemTypes.Spell)
+                if (Globals.GameItems[Inventory[slot].ItemNum].Type == (int)ItemTypes.Consumable || //Allow Stacking on Currency, Consumable, Spell, and item types of none.
+                            Globals.GameItems[Inventory[slot].ItemNum].Type == (int)ItemTypes.Currency ||
+                            Globals.GameItems[Inventory[slot].ItemNum].Type == (int)ItemTypes.None ||
+                            Globals.GameItems[Inventory[slot].ItemNum].Type == (int)ItemTypes.Spell)
                 {
                     if (amount > Inventory[slot].ItemVal)
                     {
@@ -601,10 +597,10 @@ namespace Intersect_Server.Classes
                     }
                 }
 
-                if (Globals.GameItems[sellItemNum].Type == (int)Enums.ItemTypes.Consumable || //Allow Stacking on Currency, Consumable, Spell, and item types of none.
-                            Globals.GameItems[sellItemNum].Type == (int)Enums.ItemTypes.Currency ||
-                            Globals.GameItems[sellItemNum].Type == (int)Enums.ItemTypes.None ||
-                            Globals.GameItems[sellItemNum].Type == (int)Enums.ItemTypes.Spell)
+                if (Globals.GameItems[sellItemNum].Type == (int)ItemTypes.Consumable || //Allow Stacking on Currency, Consumable, Spell, and item types of none.
+                            Globals.GameItems[sellItemNum].Type == (int)ItemTypes.Currency ||
+                            Globals.GameItems[sellItemNum].Type == (int)ItemTypes.None ||
+                            Globals.GameItems[sellItemNum].Type == (int)ItemTypes.Spell)
                 {
                     if (amount >= Inventory[slot].ItemVal)
                     {
@@ -646,11 +642,11 @@ namespace Intersect_Server.Classes
             if (slot >= 0 && slot < shop.SellingItems.Count)
             {
                 buyItemNum = shop.SellingItems[slot].ItemNum;
-                if (Globals.GameItems[buyItemNum].Type == (int)Enums.ItemTypes.Consumable ||
+                if (Globals.GameItems[buyItemNum].Type == (int)ItemTypes.Consumable ||
                     //Allow Stacking on Currency, Consumable, Spell, and item types of none.
-                    Globals.GameItems[buyItemNum].Type == (int)Enums.ItemTypes.Currency ||
-                    Globals.GameItems[buyItemNum].Type == (int)Enums.ItemTypes.None ||
-                    Globals.GameItems[buyItemNum].Type == (int)Enums.ItemTypes.Spell)
+                    Globals.GameItems[buyItemNum].Type == (int)ItemTypes.Currency ||
+                    Globals.GameItems[buyItemNum].Type == (int)ItemTypes.None ||
+                    Globals.GameItems[buyItemNum].Type == (int)ItemTypes.Spell)
                 {
                     buyItemAmt = Math.Min(1, amount);
                 }
@@ -713,11 +709,11 @@ namespace Intersect_Server.Classes
             if (!InBank) return;
             if (Inventory[slot].ItemNum > -1)
             {
-                if (Globals.GameItems[Inventory[slot].ItemNum].Type == (int)Enums.ItemTypes.Consumable ||
+                if (Globals.GameItems[Inventory[slot].ItemNum].Type == (int)ItemTypes.Consumable ||
                     //Allow Stacking on Currency, Consumable, Spell, and item types of none.
-                    Globals.GameItems[Inventory[slot].ItemNum].Type == (int)Enums.ItemTypes.Currency ||
-                    Globals.GameItems[Inventory[slot].ItemNum].Type == (int)Enums.ItemTypes.None ||
-                    Globals.GameItems[Inventory[slot].ItemNum].Type == (int)Enums.ItemTypes.Spell)
+                    Globals.GameItems[Inventory[slot].ItemNum].Type == (int)ItemTypes.Currency ||
+                    Globals.GameItems[Inventory[slot].ItemNum].Type == (int)ItemTypes.None ||
+                    Globals.GameItems[Inventory[slot].ItemNum].Type == (int)ItemTypes.Spell)
                 {
                     if (amount >= Inventory[slot].ItemVal)
                     {
@@ -729,10 +725,10 @@ namespace Intersect_Server.Classes
                     amount = 1;
                 }
                 //Find a spot in the bank for it!
-                if (Globals.GameItems[Inventory[slot].ItemNum].Type == (int)Enums.ItemTypes.Consumable || //Allow Stacking on Currency, Consumable, Spell, and item types of none.
-                    Globals.GameItems[Inventory[slot].ItemNum].Type == (int)Enums.ItemTypes.Currency ||
-                    Globals.GameItems[Inventory[slot].ItemNum].Type == (int)Enums.ItemTypes.None ||
-                     Globals.GameItems[Inventory[slot].ItemNum].Type == (int)Enums.ItemTypes.Spell)
+                if (Globals.GameItems[Inventory[slot].ItemNum].Type == (int)ItemTypes.Consumable || //Allow Stacking on Currency, Consumable, Spell, and item types of none.
+                    Globals.GameItems[Inventory[slot].ItemNum].Type == (int)ItemTypes.Currency ||
+                    Globals.GameItems[Inventory[slot].ItemNum].Type == (int)ItemTypes.None ||
+                     Globals.GameItems[Inventory[slot].ItemNum].Type == (int)ItemTypes.Spell)
                 {
                     for (int i = 0; i < Options.MaxBankSlots; i++)
                     {
@@ -792,11 +788,11 @@ namespace Intersect_Server.Classes
             if (!InBank) return;
             if (Bank[slot] != null && Bank[slot].ItemNum > -1)
             {
-                if (Globals.GameItems[Bank[slot].ItemNum].Type == (int)Enums.ItemTypes.Consumable ||
+                if (Globals.GameItems[Bank[slot].ItemNum].Type == (int)ItemTypes.Consumable ||
                     //Allow Stacking on Currency, Consumable, Spell, and item types of none.
-                    Globals.GameItems[Bank[slot].ItemNum].Type == (int)Enums.ItemTypes.Currency ||
-                    Globals.GameItems[Bank[slot].ItemNum].Type == (int)Enums.ItemTypes.None ||
-                    Globals.GameItems[Bank[slot].ItemNum].Type == (int)Enums.ItemTypes.Spell)
+                    Globals.GameItems[Bank[slot].ItemNum].Type == (int)ItemTypes.Currency ||
+                    Globals.GameItems[Bank[slot].ItemNum].Type == (int)ItemTypes.None ||
+                    Globals.GameItems[Bank[slot].ItemNum].Type == (int)ItemTypes.Spell)
                 {
                     if (amount >= Bank[slot].ItemVal)
                     {
@@ -808,10 +804,10 @@ namespace Intersect_Server.Classes
                     amount = 1;
                 }
                 //Find a spot in the inventory for it!
-                if (Globals.GameItems[Bank[slot].ItemNum].Type == (int)Enums.ItemTypes.Consumable || //Allow Stacking on Currency, Consumable, Spell, and item types of none.
-                    Globals.GameItems[Bank[slot].ItemNum].Type == (int)Enums.ItemTypes.Currency ||
-                    Globals.GameItems[Bank[slot].ItemNum].Type == (int)Enums.ItemTypes.None ||
-                     Globals.GameItems[Bank[slot].ItemNum].Type == (int)Enums.ItemTypes.Spell)
+                if (Globals.GameItems[Bank[slot].ItemNum].Type == (int)ItemTypes.Consumable || //Allow Stacking on Currency, Consumable, Spell, and item types of none.
+                    Globals.GameItems[Bank[slot].ItemNum].Type == (int)ItemTypes.Currency ||
+                    Globals.GameItems[Bank[slot].ItemNum].Type == (int)ItemTypes.None ||
+                     Globals.GameItems[Bank[slot].ItemNum].Type == (int)ItemTypes.Spell)
                 {
                     for (int i = 0; i < Options.MaxInvItems; i++)
                     {
@@ -941,7 +937,7 @@ namespace Intersect_Server.Classes
             if (spellNum > -1)
             {
                 //Check if caster does not have the correct combat stats, if not exit now.
-                for (var n = 0; n < (int)Enums.Stats.StatCount; n++)
+                for (var n = 0; n < (int)Stats.StatCount; n++)
                 {
                     if (Stat[n].Value() < Globals.GameSpells[spellNum].StatReq[n])
                     {
@@ -953,28 +949,28 @@ namespace Intersect_Server.Classes
                 //Check if the caster is silenced or stunned
                 for (var n = 0; n < Status.Count; n++)
                 {
-                    if (Status[n].Type == (int)Enums.StatusTypes.Silence)
+                    if (Status[n].Type == (int)StatusTypes.Silence)
                     {
                         PacketSender.SendPlayerMsg(MyClient, "You cannot cast this ability whilst silenced.");
                         return;
                     }
-                    if (Status[n].Type == (int)Enums.StatusTypes.Stun)
+                    if (Status[n].Type == (int)StatusTypes.Stun)
                     {
                         PacketSender.SendPlayerMsg(MyClient, "You cannot cast this ability whilst stunned.");
                         return;
                     }
                 }
 
-                if (Globals.GameSpells[spellNum].VitalCost[(int)Enums.Vitals.Mana] <= Vital[(int)Enums.Vitals.Mana])
+                if (Globals.GameSpells[spellNum].VitalCost[(int)Vitals.Mana] <= Vital[(int)Vitals.Mana])
                 {
-                    if (Globals.GameSpells[spellNum].VitalCost[(int)Enums.Vitals.Health] <= Vital[(int)Enums.Vitals.Health])
+                    if (Globals.GameSpells[spellNum].VitalCost[(int)Vitals.Health] <= Vital[(int)Vitals.Health])
                     {
                         if (Spells[spellSlot].SpellCD < Environment.TickCount)
                         {
                             if (CastTime < Environment.TickCount)
                             {
-                                Vital[(int)Enums.Vitals.Mana] = Vital[(int)Enums.Vitals.Mana] - Globals.GameSpells[spellNum].VitalCost[(int)Enums.Vitals.Mana];
-                                Vital[(int)Enums.Vitals.Health] = Vital[(int)Enums.Vitals.Health] - Globals.GameSpells[spellNum].VitalCost[(int)Enums.Vitals.Health];
+                                Vital[(int)Vitals.Mana] = Vital[(int)Vitals.Mana] - Globals.GameSpells[spellNum].VitalCost[(int)Vitals.Mana];
+                                Vital[(int)Vitals.Health] = Vital[(int)Vitals.Health] - Globals.GameSpells[spellNum].VitalCost[(int)Vitals.Health];
                                 CastTime = Environment.TickCount + (Globals.GameSpells[spellNum].CastDuration * 100);
                                 SpellCastSlot = spellSlot;
 
@@ -983,8 +979,8 @@ namespace Intersect_Server.Classes
                                     PacketSender.SendAnimationToProximity(Globals.GameSpells[spellNum].CastAnimation, 1, MyIndex, CurrentMap, 0, 0, Dir); //Target Type 1 will be global entity
                                 }
 
-                                PacketSender.SendEntityVitals(MyIndex, (int)Enums.Vitals.Health, Globals.Entities[MyIndex]);
-                                PacketSender.SendEntityVitals(MyIndex, (int)Enums.Vitals.Mana, Globals.Entities[MyIndex]);
+                                PacketSender.SendEntityVitals(MyIndex, (int)Vitals.Health, Globals.Entities[MyIndex]);
+                                PacketSender.SendEntityVitals(MyIndex, (int)Vitals.Mana, Globals.Entities[MyIndex]);
                                 PacketSender.SendEntityCastTime(MyIndex, spellNum);
                             }
                             else
@@ -1043,7 +1039,7 @@ namespace Intersect_Server.Classes
             {
                 Stat[statIndex].Stat++;
                 StatPoints--;
-                PacketSender.SendEntityStats(MyIndex, (int)Enums.EntityTypes.Player, this);
+                PacketSender.SendEntityStats(MyIndex, (int)EntityTypes.Player, this);
                 PacketSender.SendPointsTo(MyClient);
             }
         }

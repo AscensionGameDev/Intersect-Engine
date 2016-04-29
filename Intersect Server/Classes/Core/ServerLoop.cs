@@ -19,11 +19,13 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+
 using System;
 using System.Threading;
-using Intersect_Server.Classes.Maps;
+using Intersect_Server.Classes.General;
+using Intersect_Server.Classes.Networking;
 
-namespace Intersect_Server.Classes
+namespace Intersect_Server.Classes.Core
 {
     public static class ServerLoop
     {
@@ -33,15 +35,9 @@ namespace Intersect_Server.Classes
             long cps = 0;
             while (Globals.ServerStarted)
             {
-                for (int i = 0; i < Globals.GameMaps.Length; i++)
+                foreach (var map in Globals.GameMaps)
                 {
-                    if (MapHelper.IsMapValid(i))
-                    {
-                        if (Globals.GameMaps[i].Active)
-                        {
-                            Globals.GameMaps[i].Update();
-                        }
-                    }
+                    if (map.Value.Active) map.Value.Update();
                 }
 
                 for (int i = 0; i < Globals.Clients.Count; i++)

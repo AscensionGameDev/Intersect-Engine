@@ -27,7 +27,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Runtime.Remoting;
 using IntersectClientExtras.File_Management;
 using IntersectClientExtras.GenericClasses;
 using IntersectClientExtras.Graphics;
@@ -43,6 +42,8 @@ namespace Intersect_Client.Classes.UI.Game
 {
     public class HotBarWindow
     {
+        private static int ItemXPadding = 4;
+        private static int ItemYPadding = 4;
         //Controls
         public WindowControl _hotbarWindow;
         private GameRenderTexture _hotbarBG;
@@ -116,16 +117,18 @@ namespace Intersect_Client.Classes.UI.Game
         public FloatRect RenderBounds()
         {
             FloatRect rect = new FloatRect();
-            rect.X = _hotbarWindow.LocalPosToCanvas(new Point(0, 0)).X - Constants.ItemXPadding / 2;
-            rect.Y = _hotbarWindow.LocalPosToCanvas(new Point(0, 0)).Y - Constants.ItemYPadding / 2;
-            rect.Width = _hotbarWindow.Width + Constants.ItemXPadding;
-            rect.Height = _hotbarWindow.Height + Constants.ItemYPadding;
+            rect.X = _hotbarWindow.LocalPosToCanvas(new Point(0, 0)).X - ItemXPadding / 2;
+            rect.Y = _hotbarWindow.LocalPosToCanvas(new Point(0, 0)).Y - ItemYPadding / 2;
+            rect.Width = _hotbarWindow.Width + ItemXPadding;
+            rect.Height = _hotbarWindow.Height + ItemYPadding;
             return rect;
         }
     }
 
     public class HotBarItem
     {
+        private static int ItemXPadding = 4;
+        private static int ItemYPadding = 4;
         public ImagePanel pnl;
         public Label keyLabel;
         private WindowControl _hotbarWindow;
@@ -364,7 +367,7 @@ namespace Intersect_Client.Classes.UI.Game
                         pnl.IsHidden = false;
                         //Drug the item and now we stopped
                         IsDragging = false;
-                        FloatRect dragRect = new FloatRect(dragIcon.x - Constants.ItemXPadding / 2, dragIcon.y - Constants.ItemYPadding / 2, Constants.ItemXPadding / 2 + 32, Constants.ItemYPadding / 2 + 32);
+                        FloatRect dragRect = new FloatRect(dragIcon.x - ItemXPadding / 2, dragIcon.y - ItemYPadding / 2, ItemXPadding / 2 + 32, ItemYPadding / 2 + 32);
 
                         float bestIntersect = 0;
                         int bestIntersectIndex = -1;

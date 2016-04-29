@@ -21,15 +21,12 @@
 */
 using Intersect_Editor.Classes;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 using Intersect_Editor.Classes.Core;
-using Intersect_Editor.Classes.General;
+using Intersect_Library;
+using Intersect_Library.GameObjects;
+using Options = Intersect_Editor.Classes.General.Options;
 
 namespace Intersect_Editor.Forms
 {
@@ -76,13 +73,13 @@ namespace Intersect_Editor.Forms
             cmbSprite.SelectedIndex = cmbSprite.FindString(Globals.GameNpcs[_editorIndex].Sprite);
             scrlSightRange.Value = Globals.GameNpcs[_editorIndex].SightRange;
             scrlSpawnDuration.Value = Globals.GameNpcs[_editorIndex].SpawnDuration;
-            scrlStr.Value = Globals.GameNpcs[_editorIndex].Stat[(int)Enums.Stats.Attack];
-            scrlMag.Value = Globals.GameNpcs[_editorIndex].Stat[(int)Enums.Stats.AbilityPower];
-            scrlDef.Value = Globals.GameNpcs[_editorIndex].Stat[(int)Enums.Stats.Defense];
-            scrlMR.Value = Globals.GameNpcs[_editorIndex].Stat[(int)Enums.Stats.MagicResist];
-            scrlSpd.Value = Globals.GameNpcs[_editorIndex].Stat[(int)Enums.Stats.Speed];
-            txtHP.Text = Globals.GameNpcs[_editorIndex].MaxVital[(int)Enums.Vitals.Health].ToString();
-            txtMana.Text = Globals.GameNpcs[_editorIndex].MaxVital[(int)Enums.Vitals.Mana].ToString();
+            scrlStr.Value = Globals.GameNpcs[_editorIndex].Stat[(int)Stats.Attack];
+            scrlMag.Value = Globals.GameNpcs[_editorIndex].Stat[(int)Stats.AbilityPower];
+            scrlDef.Value = Globals.GameNpcs[_editorIndex].Stat[(int)Stats.Defense];
+            scrlMR.Value = Globals.GameNpcs[_editorIndex].Stat[(int)Stats.MagicResist];
+            scrlSpd.Value = Globals.GameNpcs[_editorIndex].Stat[(int)Stats.Speed];
+            txtHP.Text = Globals.GameNpcs[_editorIndex].MaxVital[(int)Vitals.Health].ToString();
+            txtMana.Text = Globals.GameNpcs[_editorIndex].MaxVital[(int)Vitals.Mana].ToString();
             txtExp.Text = Globals.GameNpcs[_editorIndex].Experience.ToString();
             lblSpawnDuration.Text = @"Spawn Duration: " + scrlSpawnDuration.Value;
             lblSightRange.Text = @"Sight Range: " + scrlSightRange.Value;
@@ -178,45 +175,45 @@ namespace Intersect_Editor.Forms
         private void scrlStr_Scroll(object sender, EventArgs e)
         {
             lblStr.Text = @"Strength: " + scrlStr.Value;
-            Globals.GameNpcs[_editorIndex].Stat[(int)Enums.Stats.Attack] = scrlStr.Value;
+            Globals.GameNpcs[_editorIndex].Stat[(int)Stats.Attack] = scrlStr.Value;
         }
 
         private void scrlMag_Scroll(object sender, EventArgs e)
         {
             lblMag.Text = @"Magic: " + scrlMag.Value;
-            Globals.GameNpcs[_editorIndex].Stat[(int)Enums.Stats.AbilityPower] = scrlMag.Value;
+            Globals.GameNpcs[_editorIndex].Stat[(int)Stats.AbilityPower] = scrlMag.Value;
         }
 
         private void scrlDef_Scroll(object sender, EventArgs e)
         {
             lblDef.Text = @"Armor: " + scrlDef.Value;
-            Globals.GameNpcs[_editorIndex].Stat[(int)Enums.Stats.Defense] = scrlDef.Value;
+            Globals.GameNpcs[_editorIndex].Stat[(int)Stats.Defense] = scrlDef.Value;
         }
 
         private void scrlMR_Scroll(object sender, EventArgs e)
         {
             lblMR.Text = @"Magic Resist: " + scrlMR.Value;
-            Globals.GameNpcs[_editorIndex].Stat[(int)Enums.Stats.MagicResist] = scrlMR.Value;
+            Globals.GameNpcs[_editorIndex].Stat[(int)Stats.MagicResist] = scrlMR.Value;
         }
 
         private void scrlSpd_Scroll(object sender, EventArgs e)
         {
             lblSpd.Text = @"Move Speed: " + scrlSpd.Value;
-            Globals.GameNpcs[_editorIndex].Stat[(int)Enums.Stats.Speed] = scrlSpd.Value;
+            Globals.GameNpcs[_editorIndex].Stat[(int)Stats.Speed] = scrlSpd.Value;
         }
 
         private void txtHP_TextChanged(object sender, EventArgs e)
         {
             int x = 0;
             int.TryParse(txtHP.Text, out x);
-            Globals.GameNpcs[_editorIndex].MaxVital[(int)Enums.Vitals.Health] = x;
+            Globals.GameNpcs[_editorIndex].MaxVital[(int)Vitals.Health] = x;
         }
 
         private void txtMana_TextChanged(object sender, EventArgs e)
         {
             int x = 0;
             int.TryParse(txtMana.Text, out x);
-            Globals.GameNpcs[_editorIndex].MaxVital[(int)Enums.Vitals.Mana] = x;
+            Globals.GameNpcs[_editorIndex].MaxVital[(int)Vitals.Mana] = x;
         }
 
         private void txtExp_TextChanged(object sender, EventArgs e)

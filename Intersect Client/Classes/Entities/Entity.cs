@@ -30,12 +30,13 @@ using System.Collections.Generic;
 using IntersectClientExtras.File_Management;
 using IntersectClientExtras.GenericClasses;
 using IntersectClientExtras.Graphics;
-using Intersect_Client.Classes.Game_Objects;
 using Intersect_Client.Classes.General;
 using Intersect_Client.Classes.Items;
-using Intersect_Client.Classes.Misc;
 using Intersect_Client.Classes.Spells;
+using Intersect_Library;
+using Color = IntersectClientExtras.GenericClasses.Color;
 using GameGraphics = Intersect_Client.Classes.Core.GameGraphics;
+using Options = Intersect_Client.Classes.General.Options;
 
 // ReSharper disable All
 
@@ -71,9 +72,9 @@ namespace Intersect_Client.Classes.Entities
         public float SpriteHeight;
 
         //Vitals & Stats
-        public int[] MaxVital = new int[(int)Enums.Vitals.VitalCount];
-        public int[] Vital = new int[(int)Enums.Vitals.VitalCount];
-        public int[] Stat = new int[(int)Enums.Stats.StatCount];
+        public int[] MaxVital = new int[(int)Vitals.VitalCount];
+        public int[] Vital = new int[(int)Vitals.VitalCount];
+        public int[] Stat = new int[(int)Stats.StatCount];
 
         //Combat Status
         public long CastTime = 0;
@@ -302,12 +303,12 @@ namespace Intersect_Client.Classes.Entities
             //If the entity has transformed, apply that sprite instead.
             for (var n = 0; n < Status.Count; n++)
             {
-                if (Status[n].Type == (int)Enums.StatusTypes.Transform)
+                if (Status[n].Type == (int)StatusTypes.Transform)
                 {
                     sprite = Status[n].Data;
                 }
                 //If unit is stealthed, don't render unless the entity is the player.
-                if (Status[n].Type == (int)Enums.StatusTypes.Stealth)
+                if (Status[n].Type == (int)StatusTypes.Stealth)
                 {
                     if (Globals.MyIndex != MyIndex)
                     {
@@ -464,7 +465,7 @@ namespace Intersect_Client.Classes.Entities
             for (var n = 0; n < Status.Count; n++)
             {
                 //If unit is stealthed, don't render unless the entity is the player.
-                if (Status[n].Type == (int)Enums.StatusTypes.Stealth)
+                if (Status[n].Type == (int)StatusTypes.Stealth)
                 {
                     if (Globals.MyIndex != MyIndex)
                     {
@@ -498,14 +499,14 @@ namespace Intersect_Client.Classes.Entities
         }
         public void DrawHpBar()
         {
-            if (HideName == 1 && Vital[(int)Enums.Vitals.Health] == MaxVital[(int)Enums.Vitals.Health]) { return; }
-            if (Vital[(int)Enums.Vitals.Health] <= 0) { return; }
+            if (HideName == 1 && Vital[(int)Vitals.Health] == MaxVital[(int)Vitals.Health]) { return; }
+            if (Vital[(int)Vitals.Health] <= 0) { return; }
 
             //Check for stealth amoungst status effects.
             for (var n = 0; n < Status.Count; n++)
             {
                 //If unit is stealthed, don't render unless the entity is the player.
-                if (Status[n].Type == (int)Enums.StatusTypes.Stealth)
+                if (Status[n].Type == (int)StatusTypes.Stealth)
                 {
                     if (Globals.MyIndex != MyIndex)
                     {
@@ -520,7 +521,7 @@ namespace Intersect_Client.Classes.Entities
                 return;
             }
             var width = Options.TileWidth;
-            var fillWidth = ((float)Vital[(int)Enums.Vitals.Health] / MaxVital[(int)Enums.Vitals.Health]) * width;
+            var fillWidth = ((float)Vital[(int)Vitals.Health] / MaxVital[(int)Vitals.Health]) * width;
             var y = (int)Math.Ceiling(GetCenterPos().Y);
             var x = (int)Math.Ceiling(GetCenterPos().X);
             GameTexture entityTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Entity, MySprite);

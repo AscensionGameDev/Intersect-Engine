@@ -20,14 +20,11 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-using System;
-using System.Collections.Generic;
-using IntersectClientExtras.GenericClasses;
-using IntersectClientExtras.Graphics;
-using Intersect_Client.Classes.Game_Objects;
 using Intersect_Client.Classes.General;
-using Intersect_Client.Classes.Misc;
+using Intersect_Library;
+using Intersect_Library.GameObjects;
 using Graphics = Intersect_Client.Classes.Core.GameGraphics;
+using Options = Intersect_Client.Classes.General.Options;
 
 namespace Intersect_Client.Classes.Entities
 {
@@ -49,8 +46,8 @@ namespace Intersect_Client.Classes.Entities
         /// </summary>
         public Projectile() : base()
         {
-            Vital[(int)Enums.Vitals.Health] = 1;
-            MaxVital[(int)Enums.Vitals.Health] = 1;
+            Vital[(int)Vitals.Health] = 1;
+            MaxVital[(int)Vitals.Health] = 1;
             HideName = 1;
             Passable = 1;
             IsMoving = true;
@@ -424,7 +421,7 @@ namespace Intersect_Client.Classes.Entities
                         Spawns[i].Map = newmap;
 
                         //Check for Z-Dimension
-                        if (Globals.GameMaps[Spawns[i].Map].Attributes[Spawns[i].X, Spawns[i].Y].value == (int)Enums.MapAttributes.ZDimension)
+                        if (Globals.GameMaps[Spawns[i].Map].Attributes[Spawns[i].X, Spawns[i].Y].value == (int)MapAttributes.ZDimension)
                         {
                             if (Globals.GameMaps[Spawns[i].Map].Attributes[Spawns[i].X, Spawns[i].Y].data1 > 0)
                             {
@@ -490,7 +487,7 @@ namespace Intersect_Client.Classes.Entities
             }
             else
             {
-                EntityManager.RemoveEntity(MyIndex, (int)Enums.EntityTypes.Projectile, CurrentMap);
+                EntityManager.RemoveEntity(MyIndex, (int)EntityTypes.Projectile, CurrentMap);
             }
         }
         /// <summary>

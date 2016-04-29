@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Linq;
-using System.Text;
-using WeifenLuo.WinFormsUI.Docking;
+﻿using WeifenLuo.WinFormsUI.Docking;
 using Intersect_Editor.Classes;
 using Intersect_Editor.Classes.Maps;
 using System.Windows.Forms;

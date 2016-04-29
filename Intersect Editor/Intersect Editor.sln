@@ -5,16 +5,30 @@ VisualStudioVersion = 14.0.24720.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Intersect Editor", "Intersect Editor.csproj", "{15588DE7-60B1-4C81-8442-8D093928D067}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Intersect Library", "..\Intersect Library\Intersect Library\Intersect Library.csproj", "{BC304B43-1F2C-4454-9EDC-48F47357CA94}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
 		Debug|x86 = Debug|x86
+		Release|Any CPU = Release|Any CPU
 		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{15588DE7-60B1-4C81-8442-8D093928D067}.Debug|Any CPU.ActiveCfg = Debug|x86
 		{15588DE7-60B1-4C81-8442-8D093928D067}.Debug|x86.ActiveCfg = Debug|x86
 		{15588DE7-60B1-4C81-8442-8D093928D067}.Debug|x86.Build.0 = Debug|x86
+		{15588DE7-60B1-4C81-8442-8D093928D067}.Release|Any CPU.ActiveCfg = Release|x86
 		{15588DE7-60B1-4C81-8442-8D093928D067}.Release|x86.ActiveCfg = Release|x86
 		{15588DE7-60B1-4C81-8442-8D093928D067}.Release|x86.Build.0 = Release|x86
+		{BC304B43-1F2C-4454-9EDC-48F47357CA94}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BC304B43-1F2C-4454-9EDC-48F47357CA94}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BC304B43-1F2C-4454-9EDC-48F47357CA94}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{BC304B43-1F2C-4454-9EDC-48F47357CA94}.Debug|x86.Build.0 = Debug|Any CPU
+		{BC304B43-1F2C-4454-9EDC-48F47357CA94}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BC304B43-1F2C-4454-9EDC-48F47357CA94}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BC304B43-1F2C-4454-9EDC-48F47357CA94}.Release|x86.ActiveCfg = Release|Any CPU
+		{BC304B43-1F2C-4454-9EDC-48F47357CA94}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -20,15 +20,11 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
-using System.Data;
-using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 using Intersect_Editor.Classes;
 using Intersect_Editor.Classes.General;
+using Intersect_Library.GameObjects.Events;
+using Intersect_Library.GameObjects.Maps.MapList;
 
 namespace Intersect_Editor.Forms.Editors.Event_Commands
 {
@@ -42,10 +38,10 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             _myCommand = refCommand;
             _eventEditor = editor;
             cmbMap.Items.Clear();
-            for (int i = 0; i < Database.OrderedMaps.Count; i++)
+            for (int i = 0; i < MapList.GetOrderedMaps().Count; i++)
             {
-                cmbMap.Items.Add(Database.OrderedMaps[i].MapNum + ". " + Database.OrderedMaps[i].Name);
-                if (Database.OrderedMaps[i].MapNum == _myCommand.Ints[0])
+                cmbMap.Items.Add(MapList.GetOrderedMaps()[i].MapNum + ". " + MapList.GetOrderedMaps()[i].Name);
+                if (MapList.GetOrderedMaps()[i].MapNum == _myCommand.Ints[0])
                 {
                     cmbMap.SelectedIndex = i;
                 }
@@ -65,7 +61,7 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
 
         private void btnSave_Click(object sender, EventArgs e)
         {
-            _myCommand.Ints[0] = Database.OrderedMaps[cmbMap.SelectedIndex].MapNum;
+            _myCommand.Ints[0] = MapList.GetOrderedMaps()[cmbMap.SelectedIndex].MapNum;
             _myCommand.Ints[1] = scrlX.Value;
             _myCommand.Ints[2] = scrlY.Value;
             _myCommand.Ints[3] = cmbDirection.SelectedIndex;
@@ -90,13 +86,13 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
         private void btnVisual_Click(object sender, EventArgs e)
         {
             frmWarpSelection frmWarpSelection = new frmWarpSelection();
-            frmWarpSelection.SelectTile(Database.OrderedMaps[cmbMap.SelectedIndex].MapNum,scrlX.Value,scrlY.Value);
+            frmWarpSelection.SelectTile(MapList.GetOrderedMaps()[cmbMap.SelectedIndex].MapNum,scrlX.Value,scrlY.Value);
             frmWarpSelection.ShowDialog();
             if (frmWarpSelection.GetResult())
             {
-                for (int i = 0; i < Database.OrderedMaps.Count; i++)
+                for (int i = 0; i < MapList.GetOrderedMaps().Count; i++)
                 {
-                    if (Database.OrderedMaps[i].MapNum == frmWarpSelection.GetMap())
+                    if (MapList.GetOrderedMaps()[i].MapNum == frmWarpSelection.GetMap())
                     {
                         cmbMap.SelectedIndex = i;
                         break;

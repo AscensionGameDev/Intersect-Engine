@@ -1,4 +1,8 @@
 ﻿using System;
+using Intersect_Library;
+using Intersect_Server.Classes.Core;
+using Intersect_Server.Classes.Entities;
+using Intersect_Server.Classes.General;
 
 namespace Intersect_Server.Classes.Networking
 {
@@ -125,7 +129,7 @@ namespace Intersect_Server.Classes.Networking
                     Database.SavePlayer(_myClient);
                     if (_entityIndex > -1 && Globals.Entities[_entityIndex] != null && Globals.Entities[_entityIndex].MyName != "")
                     {
-                        PacketSender.SendEntityLeave(_entityIndex, (int)Enums.EntityTypes.Player, Globals.Entities[_entityIndex].CurrentMap);
+                        PacketSender.SendEntityLeave(_entityIndex, (int)EntityTypes.Player, Globals.Entities[_entityIndex].CurrentMap);
                         if (Globals.Entities[_entityIndex] == null) { return; }
                         if (!_myClient.IsEditor)
                         {

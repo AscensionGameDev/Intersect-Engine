@@ -19,10 +19,15 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-using System;
-using Intersect_Server.Classes.Misc;
 
-namespace Intersect_Server.Classes
+using System;
+using Intersect_Library;
+using Intersect_Library.GameObjects.Events;
+using Intersect_Server.Classes.General;
+using Intersect_Server.Classes.Misc;
+using Intersect_Server.Classes.Networking;
+
+namespace Intersect_Server.Classes.Entities
 {
     public class EventPageInstance : Entity
     {
@@ -163,7 +168,7 @@ namespace Intersect_Server.Classes
         {
             if (Client != null)
             {
-                PacketSender.SendEntityDataTo(Client, MyIndex, (int)Enums.EntityTypes.Event, Data(), this);
+                PacketSender.SendEntityDataTo(Client, MyIndex, (int)EntityTypes.Event, Data(), this);
             }
         }
         public byte[] Data()
@@ -258,30 +263,30 @@ namespace Intersect_Server.Classes
                 switch (MoveRoute.Actions[MoveRoute.ActionIndex].Type)
                 {
                     case MoveRouteEnum.MoveUp:
-                        if (CanMove((int)Enums.Directions.Up) == -1)
+                        if (CanMove((int)Directions.Up) == -1)
                         {
-                            Move((int)Enums.Directions.Up, Client);
+                            Move((int)Directions.Up, Client);
                             moved = true;
                         }
                         break;
                     case MoveRouteEnum.MoveDown:
-                        if (CanMove((int)Enums.Directions.Down) == -1)
+                        if (CanMove((int)Directions.Down) == -1)
                         {
-                            Move((int)Enums.Directions.Down, Client);
+                            Move((int)Directions.Down, Client);
                             moved = true;
                         }
                         break;
                     case MoveRouteEnum.MoveLeft:
-                        if (CanMove((int)Enums.Directions.Left) == -1)
+                        if (CanMove((int)Directions.Left) == -1)
                         {
-                            Move((int)Enums.Directions.Left, Client);
+                            Move((int)Directions.Left, Client);
                             moved = true;
                         }
                         break;
                     case MoveRouteEnum.MoveRight:
-                        if (CanMove((int)Enums.Directions.Right) == -1)
+                        if (CanMove((int)Directions.Right) == -1)
                         {
-                            Move((int)Enums.Directions.Right, Client);
+                            Move((int)Directions.Right, Client);
                             moved = true;
                         }
                         break;
@@ -325,17 +330,17 @@ namespace Intersect_Server.Classes
                             {
                                 switch (moveDir)
                                 {
-                                    case (int)Enums.Directions.Up:
-                                        moveDir = (int)Enums.Directions.Down;
+                                    case (int)Directions.Up:
+                                        moveDir = (int)Directions.Down;
                                         break;
-                                    case (int)Enums.Directions.Down:
-                                        moveDir = (int)Enums.Directions.Up;
+                                    case (int)Directions.Down:
+                                        moveDir = (int)Directions.Up;
                                         break;
-                                    case (int)Enums.Directions.Left:
-                                        moveDir = (int)Enums.Directions.Right;
+                                    case (int)Directions.Left:
+                                        moveDir = (int)Directions.Right;
                                         break;
-                                    case (int)Enums.Directions.Right:
-                                        moveDir = (int)Enums.Directions.Left;
+                                    case (int)Directions.Right:
+                                        moveDir = (int)Directions.Left;
                                         break;
                                 }
                                 if (CanMove(moveDir) == -1)
@@ -376,17 +381,17 @@ namespace Intersect_Server.Classes
                     case MoveRouteEnum.StepBack:
                         switch (Dir)
                         {
-                            case (int)Enums.Directions.Up:
-                                moveDir = (int)Enums.Directions.Down;
+                            case (int)Directions.Up:
+                                moveDir = (int)Directions.Down;
                                 break;
-                            case (int)Enums.Directions.Down:
-                                moveDir = (int)Enums.Directions.Up;
+                            case (int)Directions.Down:
+                                moveDir = (int)Directions.Up;
                                 break;
-                            case (int)Enums.Directions.Left:
-                                moveDir = (int)Enums.Directions.Right;
+                            case (int)Directions.Left:
+                                moveDir = (int)Directions.Right;
                                 break;
-                            case (int)Enums.Directions.Right:
-                                moveDir = (int)Enums.Directions.Left;
+                            case (int)Directions.Right:
+                                moveDir = (int)Directions.Left;
                                 break;
                         }
                         if (CanMove(moveDir) > -1)
@@ -396,35 +401,35 @@ namespace Intersect_Server.Classes
                         }
                         break;
                     case MoveRouteEnum.FaceUp:
-                        ChangeDir((int)Enums.Directions.Up);
+                        ChangeDir((int)Directions.Up);
                         moved = true;
                         break;
                     case MoveRouteEnum.FaceDown:
-                        ChangeDir((int)Enums.Directions.Down);
+                        ChangeDir((int)Directions.Down);
                         moved = true;
                         break;
                     case MoveRouteEnum.FaceLeft:
-                        ChangeDir((int)Enums.Directions.Left);
+                        ChangeDir((int)Directions.Left);
                         moved = true;
                         break;
                     case MoveRouteEnum.FaceRight:
-                        ChangeDir((int)Enums.Directions.Right);
+                        ChangeDir((int)Directions.Right);
                         moved = true;
                         break;
                     case MoveRouteEnum.Turn90Clockwise:
                         switch (Dir)
                         {
-                            case (int)Enums.Directions.Up:
-                                lookDir = (int)Enums.Directions.Right;
+                            case (int)Directions.Up:
+                                lookDir = (int)Directions.Right;
                                 break;
-                            case (int)Enums.Directions.Down:
-                                lookDir = (int)Enums.Directions.Left;
+                            case (int)Directions.Down:
+                                lookDir = (int)Directions.Left;
                                 break;
-                            case (int)Enums.Directions.Left:
-                                lookDir = (int)Enums.Directions.Down;
+                            case (int)Directions.Left:
+                                lookDir = (int)Directions.Down;
                                 break;
-                            case (int)Enums.Directions.Right:
-                                lookDir = (int)Enums.Directions.Up;
+                            case (int)Directions.Right:
+                                lookDir = (int)Directions.Up;
                                 break;
                         }
                         ChangeDir(lookDir);
@@ -433,17 +438,17 @@ namespace Intersect_Server.Classes
                     case MoveRouteEnum.Turn90CounterClockwise:
                         switch (Dir)
                         {
-                            case (int)Enums.Directions.Up:
-                                lookDir = (int)Enums.Directions.Left;
+                            case (int)Directions.Up:
+                                lookDir = (int)Directions.Left;
                                 break;
-                            case (int)Enums.Directions.Down:
-                                lookDir = (int)Enums.Directions.Right;
+                            case (int)Directions.Down:
+                                lookDir = (int)Directions.Right;
                                 break;
-                            case (int)Enums.Directions.Left:
-                                lookDir = (int)Enums.Directions.Up;
+                            case (int)Directions.Left:
+                                lookDir = (int)Directions.Up;
                                 break;
-                            case (int)Enums.Directions.Right:
-                                lookDir = (int)Enums.Directions.Down;
+                            case (int)Directions.Right:
+                                lookDir = (int)Directions.Down;
                                 break;
                         }
                         ChangeDir(lookDir);
@@ -452,17 +457,17 @@ namespace Intersect_Server.Classes
                     case MoveRouteEnum.Turn180:
                         switch (Dir)
                         {
-                            case (int)Enums.Directions.Up:
-                                lookDir = (int)Enums.Directions.Down;
+                            case (int)Directions.Up:
+                                lookDir = (int)Directions.Down;
                                 break;
-                            case (int)Enums.Directions.Down:
-                                lookDir = (int)Enums.Directions.Up;
+                            case (int)Directions.Down:
+                                lookDir = (int)Directions.Up;
                                 break;
-                            case (int)Enums.Directions.Left:
-                                lookDir = (int)Enums.Directions.Right;
+                            case (int)Directions.Left:
+                                lookDir = (int)Directions.Right;
                                 break;
-                            case (int)Enums.Directions.Right:
-                                lookDir = (int)Enums.Directions.Left;
+                            case (int)Directions.Right:
+                                lookDir = (int)Directions.Left;
                                 break;
                         }
                         ChangeDir(lookDir);
@@ -491,17 +496,17 @@ namespace Intersect_Server.Classes
                             {
                                 switch (lookDir)
                                 {
-                                    case (int)Enums.Directions.Up:
-                                        lookDir = (int)Enums.Directions.Down;
+                                    case (int)Directions.Up:
+                                        lookDir = (int)Directions.Down;
                                         break;
-                                    case (int)Enums.Directions.Down:
-                                        lookDir = (int)Enums.Directions.Up;
+                                    case (int)Directions.Down:
+                                        lookDir = (int)Directions.Up;
                                         break;
-                                    case (int)Enums.Directions.Left:
-                                        lookDir = (int)Enums.Directions.Right;
+                                    case (int)Directions.Left:
+                                        lookDir = (int)Directions.Right;
                                         break;
-                                    case (int)Enums.Directions.Right:
-                                        lookDir = (int)Enums.Directions.Left;
+                                    case (int)Directions.Right:
+                                        lookDir = (int)Directions.Left;
                                         break;
                                 }
                                 ChangeDir(lookDir);

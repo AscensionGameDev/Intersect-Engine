@@ -20,16 +20,10 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using Intersect_Editor.Classes;
-using Intersect_Editor.Classes.General;
+using Intersect_Library;
+using Options = Intersect_Editor.Classes.General.Options;
 
 namespace Intersect_Editor.Forms.Editors
 {
@@ -108,7 +102,7 @@ namespace Intersect_Editor.Forms.Editors
             {
                 if (Globals.PlayerSwitches[i] != _playerSwitchBackup[i])
                 {
-                    dataBuffer.WriteInteger((int) Enums.SwitchVariableTypes.PlayerSwitch);
+                    dataBuffer.WriteInteger((int) SwitchVariableTypes.PlayerSwitch);
                     dataBuffer.WriteInteger(i);
                     dataBuffer.WriteString(Globals.PlayerSwitches[i]);
                     changeCount++;
@@ -118,7 +112,7 @@ namespace Intersect_Editor.Forms.Editors
             {
                 if (Globals.PlayerVariables[i] != _playerVariableBackup[i])
                 {
-                    dataBuffer.WriteInteger((int)Enums.SwitchVariableTypes.PlayerVariable);
+                    dataBuffer.WriteInteger((int)SwitchVariableTypes.PlayerVariable);
                     dataBuffer.WriteInteger(i);
                     dataBuffer.WriteString(Globals.PlayerVariables[i]);
                     changeCount++;
@@ -129,7 +123,7 @@ namespace Intersect_Editor.Forms.Editors
                 if (Globals.ServerSwitches[i] != _serverSwitchBackup[i] ||
                     Globals.ServerSwitchValues[i] != _serverSwitchValBackup[i])
                 {
-                    dataBuffer.WriteInteger((int)Enums.SwitchVariableTypes.ServerSwitch);
+                    dataBuffer.WriteInteger((int)SwitchVariableTypes.ServerSwitch);
                     dataBuffer.WriteInteger(i);
                     dataBuffer.WriteString(Globals.ServerSwitches[i]);
                     dataBuffer.WriteInteger(Convert.ToInt32(Globals.ServerSwitchValues[i]));
@@ -141,14 +135,14 @@ namespace Intersect_Editor.Forms.Editors
                 if (Globals.ServerVariables[i] != _serverVariableBackup[i] ||
                     Globals.ServerVariableValues[i] != _serverVariableValBackup[i])
                 {
-                    dataBuffer.WriteInteger((int)Enums.SwitchVariableTypes.ServerVariable);
+                    dataBuffer.WriteInteger((int)SwitchVariableTypes.ServerVariable);
                     dataBuffer.WriteInteger(i);
                     dataBuffer.WriteString(Globals.ServerVariables[i]);
                     dataBuffer.WriteInteger(Globals.ServerVariableValues[i]);
                     changeCount++;
                 }
             }
-            packetBuffer.WriteLong((int)Enums.ClientPackets.SaveSwitchVariable);
+            packetBuffer.WriteLong((int)ClientPackets.SaveSwitchVariable);
             packetBuffer.WriteInteger(changeCount);
             packetBuffer.WriteBytes(dataBuffer.ToArray());
             dataBuffer.Dispose();

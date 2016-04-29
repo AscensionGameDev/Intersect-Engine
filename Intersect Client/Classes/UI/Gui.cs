@@ -28,8 +28,6 @@
 using System.Collections.Generic;
 using IntersectClientExtras.File_Management;
 using IntersectClientExtras.GenericClasses;
-using IntersectClientExtras.Graphics;
-using IntersectClientExtras.Gwen;
 using IntersectClientExtras.Gwen.Control;
 using IntersectClientExtras.Gwen.Input;
 using IntersectClientExtras.Gwen.Skin;
@@ -85,7 +83,7 @@ namespace Intersect_Client.Classes.UI
             _gameCanvas.KeyboardInputEnabled = true;
 
             // Create GWEN input processor
-            if (Globals.GameState == Enums.GameStates.Intro || Globals.GameState == Enums.GameStates.Menu)
+            if (Globals.GameState == GameStates.Intro || Globals.GameState == GameStates.Menu)
             {
                 GwenInput.Initialize(_menuCanvas);
             }
@@ -96,7 +94,7 @@ namespace Intersect_Client.Classes.UI
 
             FocusElements = new List<IntersectClientExtras.Gwen.Control.Base>();
             ErrorMsgHandler = new ErrorMessageHandler(_menuCanvas, _gameCanvas);
-            if (Globals.GameState == Enums.GameStates.Intro || Globals.GameState == Enums.GameStates.Menu)
+            if (Globals.GameState == GameStates.Intro || Globals.GameState == GameStates.Menu)
             {
                 MenuUI = new MenuGuiBase(_menuCanvas);
             }
@@ -141,11 +139,11 @@ namespace Intersect_Client.Classes.UI
             ErrorMsgHandler.Update();
             _gameCanvas.RestrictToParent = false;
             _gameCanvas.SetPosition((int)GameGraphics.CurrentView.X, (int)GameGraphics.CurrentView.Y);
-            if (Globals.GameState == Enums.GameStates.Menu)
+            if (Globals.GameState == GameStates.Menu)
             {
                 MenuUI.Draw();
             }
-            else if (Globals.GameState == Enums.GameStates.InGame)
+            else if (Globals.GameState == GameStates.InGame)
             {
                 GameUI.Draw();
             }

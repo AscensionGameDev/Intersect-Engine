@@ -20,13 +20,19 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 using System;
+using System.Collections.Generic;
 using Intersect_Editor.Forms;
-using System.Threading;
 using System.IO;
 using System.Windows.Forms;
-using Intersect_Editor.Classes.Game_Objects;
 using Intersect_Editor.Classes.General;
+using Intersect_Editor.Classes.Maps;
+using Intersect_Library;
+using Intersect_Library.GameObjects;
+using Intersect_Library.GameObjects.Events;
+using Intersect_Library.GameObjects.Maps;
+using Intersect_Library.GameObjects.Maps.MapList;
 using Microsoft.Xna.Framework.Graphics;
+using Options = Intersect_Editor.Classes.General.Options;
 
 namespace Intersect_Editor.Classes
 {
@@ -36,118 +42,118 @@ namespace Intersect_Editor.Classes
         {
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
-            var packetHeader = (Enums.ServerPackets)bf.ReadLong();
+            var packetHeader = (ServerPackets)bf.ReadLong();
             switch (packetHeader)
             {
-                case Enums.ServerPackets.RequestPing:
+                case ServerPackets.RequestPing:
                     PacketSender.SendPing();
                     break;
-                case Enums.ServerPackets.ServerConfig:
+                case ServerPackets.ServerConfig:
                     HandleServerConfig(bf.ReadBytes(bf.Length()));
                     break;
-                case Enums.ServerPackets.JoinGame:
+                case ServerPackets.JoinGame:
                     HandleJoinGame(bf.ReadBytes(bf.Length()));
                     break;
-                case Enums.ServerPackets.MapData:
+                case ServerPackets.MapData:
                     HandleMapData(bf.ReadBytes(bf.Length()));
                     break;
-                case Enums.ServerPackets.GameData:
+                case ServerPackets.GameData:
                     HandleGameData(bf.ReadBytes(bf.Length()));
                     break;
-                case Enums.ServerPackets.TilesetArray:
+                case ServerPackets.TilesetArray:
                     HandleTilesets(bf.ReadBytes(bf.Length()));
                     break;
-                case Enums.ServerPackets.EnterMap:
+                case ServerPackets.EnterMap:
                     HandleEnterMap(bf.ReadBytes(bf.Length()));
                     break;
-                case Enums.ServerPackets.MapList:
+                case ServerPackets.MapList:
                     HandleMapList(bf.ReadBytes(bf.Length()));
                     break;
-                case Enums.ServerPackets.LoginError:
+                case ServerPackets.LoginError:
                     HandleLoginError(bf.ReadBytes(bf.Length()));
                     break;
-                case Enums.ServerPackets.OpenItemEditor:
+                case ServerPackets.OpenItemEditor:
                     HandleItemEditor();
                     break;
-                case Enums.ServerPackets.ItemData:
+                case ServerPackets.ItemData:
                     HandleItemData(bf.ReadBytes(bf.Length()));
                     break;
-                case Enums.ServerPackets.ItemList:
+                case ServerPackets.ItemList:
                     HandleItemList(bf.ReadBytes(bf.Length()));
                     break;
-                case Enums.ServerPackets.OpenNpcEditor:
+                case ServerPackets.OpenNpcEditor:
                     HandleNpcEditor();
                     break;
-                case Enums.ServerPackets.NpcData:
+                case ServerPackets.NpcData:
                     HandleNpcData(bf.ReadBytes(bf.Length()));
                     break;
-                case Enums.ServerPackets.NpcList:
+                case ServerPackets.NpcList:
                     HandleNpcList(bf.ReadBytes(bf.Length()));
                     break;
-                case Enums.ServerPackets.OpenSpellEditor:
+                case ServerPackets.OpenSpellEditor:
                     HandleSpellEditor();
                     break;
-                case Enums.ServerPackets.SpellData:
+                case ServerPackets.SpellData:
                     HandleSpellData(bf.ReadBytes(bf.Length()));
                     break;
-                case Enums.ServerPackets.SpellList:
+                case ServerPackets.SpellList:
                     HandleSpellList(bf.ReadBytes(bf.Length()));
                     break;
-                case Enums.ServerPackets.OpenAnimationEditor:
+                case ServerPackets.OpenAnimationEditor:
                     HandleAnimationEditor();
                     break;
-                case Enums.ServerPackets.AnimationData:
+                case ServerPackets.AnimationData:
                     HandleAnimationData(bf.ReadBytes(bf.Length()));
                     break;
-                case Enums.ServerPackets.AnimationList:
+                case ServerPackets.AnimationList:
                     HandleAnimationList(bf.ReadBytes(bf.Length()));
                     break;
-                case Enums.ServerPackets.OpenResourceEditor:
+                case ServerPackets.OpenResourceEditor:
                     HandleResourceEditor();
                     break;
-                case Enums.ServerPackets.ResourceData:
+                case ServerPackets.ResourceData:
                     HandleResourceData(bf.ReadBytes(bf.Length()));
                     break;
-                case Enums.ServerPackets.OpenClassEditor:
+                case ServerPackets.OpenClassEditor:
                     HandleClassEditor();
                     break;
-                case Enums.ServerPackets.ClassData:
+                case ServerPackets.ClassData:
                     HandleClassData(bf.ReadBytes(bf.Length()));
                     break;
-                case Enums.ServerPackets.OpenQuestEditor:
+                case ServerPackets.OpenQuestEditor:
                     HandleQuestEditor();
                     break;
-                case Enums.ServerPackets.QuestData:
+                case ServerPackets.QuestData:
                     HandleQuestData(bf.ReadBytes(bf.Length()));
                     break;
-                case Enums.ServerPackets.MapGrid:
+                case ServerPackets.MapGrid:
                     HandleMapGrid(bf.ReadBytes(bf.Length()));
                     break;
-                case Enums.ServerPackets.OpenProjectileEditor:
+                case ServerPackets.OpenProjectileEditor:
                     HandleProjectileEditor();
                     break;
-                case Enums.ServerPackets.ProjectileData:
+                case ServerPackets.ProjectileData:
                     HandleProjectileData(bf.ReadBytes(bf.Length()));
                     break;
-                case Enums.ServerPackets.SendAlert:
+                case ServerPackets.SendAlert:
                     HandleAlert(bf.ReadBytes(bf.Length()));
                     break;
-                case Enums.ServerPackets.OpenCommonEventEditor:
+                case ServerPackets.OpenCommonEventEditor:
                     HandleOpenCommonEventEditor();
                     break;
-                case Enums.ServerPackets.CommonEventData:
+                case ServerPackets.CommonEventData:
                     HandleCommonEventData(bf.ReadBytes(bf.Length()));
                     break;
-                case Enums.ServerPackets.OpenSwitchVariableEditor:
+                case ServerPackets.OpenSwitchVariableEditor:
                     HandleOpenSwitchVariableEditor();
                     break;
-                case Enums.ServerPackets.SwitchVariableData:
+                case ServerPackets.SwitchVariableData:
                     HandleSwitchVariableData(bf.ReadBytes(bf.Length()));
                     break;
-                case Enums.ServerPackets.OpenShopEditor:
+                case ServerPackets.OpenShopEditor:
                     HandleOpenShopEditor();
                     break;
-                case Enums.ServerPackets.ShopData:
+                case ServerPackets.ShopData:
                     HandleShopData(bf.ReadBytes(bf.Length()));
                     break;
                 default:
@@ -179,14 +185,14 @@ namespace Intersect_Editor.Classes
             int mapNum = (int)bf.ReadLong();
             var mapLength = bf.ReadLong();
             var mapData = bf.ReadBytes((int)mapLength);
-            if (mapNum > Globals.MapCount-1)
+            if (Globals.GameMaps.ContainsKey(mapNum))
             {
-                Globals.MapCount = mapNum + 1;
-                var tmpMap = (MapStruct[])Globals.GameMaps.Clone();
-                Globals.GameMaps = new MapStruct[Globals.MapCount];
-                tmpMap.CopyTo(Globals.GameMaps, 0);
+                Globals.GameMaps[mapNum].Dispose();
+                Globals.GameMaps.Remove(mapNum);
             }
-            Globals.GameMaps[mapNum] = new MapStruct((int)mapNum, mapData);
+            var map = new MapInstance((int) mapNum);
+            Globals.GameMaps.Add(mapNum,map);
+            map.Load(mapData);
             Globals.ReceivedGameData++;
             if (Globals.ReceivedGameData == 3 && !Globals.InEditor)
             {
@@ -227,7 +233,7 @@ namespace Intersect_Editor.Classes
                 if (Globals.GameMaps[mapNum].Deleted == 1)
                 {
                     Globals.CurrentMap = -1;
-                    Globals.MainForm.EnterMap(Database.MapStructure.FindFirstMap());
+                    Globals.MainForm.EnterMap(MapList.GetList().FindFirstMap());
                 }
                 else
                 {
@@ -246,8 +252,6 @@ namespace Intersect_Editor.Classes
         {
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
-            Globals.MapCount = bf.ReadLong();
-            Globals.GameMaps = new MapStruct[Globals.MapCount];
             PacketSender.SendNeedMap(0);
             Globals.ReceivedGameData++;
             if (Globals.ReceivedGameData != 3 || Globals.InEditor) return;
@@ -285,12 +289,10 @@ namespace Intersect_Editor.Classes
         {
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
-            Database.OrderedMaps.Clear();
-            Database.MapStructure.Load(bf);
-            Database.OrderedMaps.Sort();
+            MapList.GetList().Load(bf, new Dictionary<int,Intersect_Library.GameObjects.Maps.MapStruct>(), false);
             if (Globals.CurrentMap == -1)
             {
-                Globals.MainForm.EnterMap(Database.MapStructure.FindFirstMap());
+                Globals.MainForm.EnterMap(MapList.GetList().FindFirstMap());
             }
             Globals.MapListWindow.BeginInvoke(Globals.MapListWindow.mapTreeList.MapListDelegate,-1);
             bf.Dispose();
@@ -307,7 +309,7 @@ namespace Intersect_Editor.Classes
 
         private static void HandleItemEditor()
         {
-            Globals.MainForm.BeginInvoke(Globals.MainForm.EditorDelegate, (int)Enums.EditorTypes.Item);
+            Globals.MainForm.BeginInvoke(Globals.MainForm.EditorDelegate, (int)EditorTypes.Item);
         }
 
         private static void HandleItemData(byte[] packet)
@@ -316,7 +318,7 @@ namespace Intersect_Editor.Classes
             bf.WriteBytes(packet);
             var itemNum = bf.ReadInteger();
             Globals.GameItems[itemNum] = new ItemStruct();
-            Globals.GameItems[itemNum].LoadItem(bf.ReadBytes(bf.Length()),itemNum);
+            Globals.GameItems[itemNum].Load(bf.ReadBytes(bf.Length()),itemNum);
             bf.Dispose();
         }
 
@@ -334,7 +336,7 @@ namespace Intersect_Editor.Classes
 
         private static void HandleNpcEditor()
         {
-            Globals.MainForm.BeginInvoke(Globals.MainForm.EditorDelegate, (int)Enums.EditorTypes.Npc);
+            Globals.MainForm.BeginInvoke(Globals.MainForm.EditorDelegate, (int)EditorTypes.Npc);
         }
 
         private static void HandleNpcData(byte[] packet)
@@ -361,7 +363,7 @@ namespace Intersect_Editor.Classes
 
         private static void HandleSpellEditor()
         {
-            Globals.MainForm.BeginInvoke(Globals.MainForm.EditorDelegate, (int)Enums.EditorTypes.Spell);
+            Globals.MainForm.BeginInvoke(Globals.MainForm.EditorDelegate, (int)EditorTypes.Spell);
         }
 
         private static void HandleSpellData(byte[] packet)
@@ -388,7 +390,7 @@ namespace Intersect_Editor.Classes
 
         private static void HandleAnimationEditor()
         {
-            Globals.MainForm.BeginInvoke(Globals.MainForm.EditorDelegate, (int)Enums.EditorTypes.Animation);
+            Globals.MainForm.BeginInvoke(Globals.MainForm.EditorDelegate, (int)EditorTypes.Animation);
         }
 
         private static void HandleAnimationData(byte[] packet)
@@ -415,7 +417,7 @@ namespace Intersect_Editor.Classes
 
         private static void HandleResourceEditor()
         {
-            Globals.MainForm.BeginInvoke(Globals.MainForm.EditorDelegate, (int)Enums.EditorTypes.Resource);
+            Globals.MainForm.BeginInvoke(Globals.MainForm.EditorDelegate, (int)EditorTypes.Resource);
         }
 
         private static void HandleResourceData(byte[] packet)
@@ -430,7 +432,7 @@ namespace Intersect_Editor.Classes
 
         private static void HandleClassEditor()
         {
-            Globals.MainForm.BeginInvoke(Globals.MainForm.EditorDelegate, (int)Enums.EditorTypes.Class);
+            Globals.MainForm.BeginInvoke(Globals.MainForm.EditorDelegate, (int)EditorTypes.Class);
         }
 
         private static void HandleClassData(byte[] packet)
@@ -445,7 +447,7 @@ namespace Intersect_Editor.Classes
 
         private static void HandleQuestEditor()
         {
-            Globals.MainForm.BeginInvoke(Globals.MainForm.EditorDelegate, (int)Enums.EditorTypes.Quest);
+            Globals.MainForm.BeginInvoke(Globals.MainForm.EditorDelegate, (int)EditorTypes.Quest);
         }
 
         private static void HandleQuestData(byte[] packet)
@@ -468,7 +470,7 @@ namespace Intersect_Editor.Classes
 
         private static void HandleProjectileEditor()
         {
-            Globals.MainForm.BeginInvoke(Globals.MainForm.EditorDelegate, (int)Enums.EditorTypes.Projectile);
+            Globals.MainForm.BeginInvoke(Globals.MainForm.EditorDelegate, (int)EditorTypes.Projectile);
         }
 
         private static void HandleProjectileData(byte[] packet)
@@ -493,7 +495,7 @@ namespace Intersect_Editor.Classes
 
         private static void HandleOpenCommonEventEditor()
         {
-            Globals.MainForm.BeginInvoke(Globals.MainForm.EditorDelegate, (int)Enums.EditorTypes.CommonEvent);
+            Globals.MainForm.BeginInvoke(Globals.MainForm.EditorDelegate, (int)EditorTypes.CommonEvent);
         }
 
         private static void HandleCommonEventData(byte[] packet)
@@ -507,7 +509,7 @@ namespace Intersect_Editor.Classes
 
         private static void HandleOpenSwitchVariableEditor()
         {
-            Globals.MainForm.BeginInvoke(Globals.MainForm.EditorDelegate, (int)Enums.EditorTypes.SwitchVariable);
+            Globals.MainForm.BeginInvoke(Globals.MainForm.EditorDelegate, (int)EditorTypes.SwitchVariable);
         }
 
         private static void HandleSwitchVariableData(byte[] packet)
@@ -518,17 +520,17 @@ namespace Intersect_Editor.Classes
             var index = bf.ReadInteger();
             switch (type)
             {
-                case (int)Enums.SwitchVariableTypes.PlayerSwitch:
+                case (int)SwitchVariableTypes.PlayerSwitch:
                     Globals.PlayerSwitches[index] = bf.ReadString();
                     break;
-                case (int)Enums.SwitchVariableTypes.PlayerVariable:
+                case (int)SwitchVariableTypes.PlayerVariable:
                     Globals.PlayerVariables[index] = bf.ReadString();
                     break;
-                case (int)Enums.SwitchVariableTypes.ServerSwitch:
+                case (int)SwitchVariableTypes.ServerSwitch:
                     Globals.ServerSwitches[index] = bf.ReadString();
                     Globals.ServerSwitchValues[index] = Convert.ToBoolean(bf.ReadByte());
                     break;
-                case (int)Enums.SwitchVariableTypes.ServerVariable:
+                case (int)SwitchVariableTypes.ServerVariable:
                     Globals.ServerVariables[index] = bf.ReadString();
                     Globals.ServerVariableValues[index] = bf.ReadInteger();
                     break;
@@ -537,7 +539,7 @@ namespace Intersect_Editor.Classes
         }
 
         private static void HandleOpenShopEditor() { 
-            Globals.MainForm.BeginInvoke(Globals.MainForm.EditorDelegate, (int)Enums.EditorTypes.Shop);
+            Globals.MainForm.BeginInvoke(Globals.MainForm.EditorDelegate, (int)EditorTypes.Shop);
         }
 
         private static void HandleShopData(byte[] packet)

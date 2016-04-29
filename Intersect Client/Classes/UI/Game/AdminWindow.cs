@@ -31,8 +31,9 @@ using IntersectClientExtras.Gwen.Control;
 using IntersectClientExtras.Gwen.Control.EventArguments;
 using Intersect_Client.Classes.Core;
 using Intersect_Client.Classes.General;
-using Intersect_Client.Classes.Maps;
 using Intersect_Client.Classes.Networking;
+using Intersect_Library;
+using Intersect_Library.GameObjects.Maps.MapList;
 
 namespace Intersect_Client.Classes.UI.Game
 {
@@ -101,11 +102,6 @@ namespace Intersect_Client.Classes.UI.Game
             _noclipCheckBox.IsChecked = Globals.Me.NoClip;
             _noclipCheckBox.CheckChanged += _noclipCheckBox_CheckChanged;
 
-
-
-
-
-
             CreateMapList();
             _mapListLabel = new Label(_adminWindow);
             _mapListLabel.Text = "Map List: ";
@@ -140,17 +136,17 @@ namespace Intersect_Client.Classes.UI.Game
         {
             _mapList.Dispose();
             CreateMapList();
-            AddMapListToTree(Globals.MapStructure, null);
+            AddMapListToTree(MapList.GetList(), null);
         }
         private void AddMapListToTree(MapList mapList, TreeNode parent)
         {
             TreeNode tmpNode;
             if (_chkChronological.IsChecked)
             {
-                for (int i = 0; i < Globals.OrderedMaps.Count; i++)
+                for (int i = 0; i < MapList.GetOrderedMaps().Count; i++)
                 {
-                    tmpNode = _mapList.AddNode(Globals.OrderedMaps[i].MapNum + ". " + Globals.OrderedMaps[i].Name);
-                    tmpNode.UserData = (Globals.OrderedMaps[i]).MapNum;
+                    tmpNode = _mapList.AddNode(MapList.GetOrderedMaps()[i].MapNum + ". " + MapList.GetOrderedMaps()[i].Name);
+                    tmpNode.UserData = (MapList.GetOrderedMaps()[i]).MapNum;
                     tmpNode.DoubleClicked += tmpNode_DoubleClicked;
                     tmpNode.Clicked += tmpNode_DoubleClicked;
                 }
@@ -200,7 +196,7 @@ namespace Intersect_Client.Classes.UI.Game
 
         void tmpNode_DoubleClicked(Base sender, ClickedEventArgs arguments)
         {
-            PacketSender.SendAdminAction((int)Enums.AdminActions.WarpTo, (int)((TreeNode)sender).UserData);
+            PacketSender.SendAdminAction((int)AdminActions.WarpTo, (int)((TreeNode)sender).UserData);
         }
         public void Update()
         {

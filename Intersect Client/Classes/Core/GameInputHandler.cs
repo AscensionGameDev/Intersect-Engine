@@ -38,10 +38,10 @@ namespace Intersect_Client.Classes.Core
         {
             if (key == Keys.Escape)
             {
-                if (Globals.GameState == Enums.GameStates.Intro)
+                if (Globals.GameState == GameStates.Intro)
                 {
                     GameFade.FadeIn();
-                    Globals.GameState = Enums.GameStates.Menu;
+                    Globals.GameState = GameStates.Menu;
                 }
                 else
                 {
@@ -51,7 +51,7 @@ namespace Intersect_Client.Classes.Core
             else if (key == Keys.Insert)
             {
                 //Try to open admin panel!
-                if (Globals.GameState == Enums.GameStates.InGame)
+                if (Globals.GameState == GameStates.InGame)
                 {
                     PacketSender.SendOpenAdminWindow();
                 }
@@ -62,7 +62,7 @@ namespace Intersect_Client.Classes.Core
             }
             else if (key == Keys.Enter || key == Keys.Return)
             {
-                if (Globals.GameState != Enums.GameStates.InGame) return;
+                if (Globals.GameState != GameStates.InGame) return;
                 if (!Gui.HasInputFocus())
                 {
                     Gui.GameUI.FocusChat = true;
@@ -70,7 +70,7 @@ namespace Intersect_Client.Classes.Core
             }
             else if (key >= Keys.D1 && key <= Keys.D9)
             {
-                if (Globals.GameState != Enums.GameStates.InGame) return;
+                if (Globals.GameState != GameStates.InGame) return;
                 if (!Gui.HasInputFocus())
                 {
                     Gui.GameUI.Hotbar.Items[((int) key - (int) Keys.D1)].Activate();
@@ -78,7 +78,7 @@ namespace Intersect_Client.Classes.Core
             }
             else if (key == Keys.D0)
             {
-                if (Globals.GameState != Enums.GameStates.InGame) return;
+                if (Globals.GameState != GameStates.InGame) return;
                 if (!Gui.HasInputFocus())
                 {
                     Gui.GameUI.Hotbar.Items[9].Activate();

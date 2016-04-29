@@ -20,9 +20,11 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-using Intersect_Server.Classes.Networking;
+using Intersect_Library;
+using Intersect_Server.Classes.Entities;
+using Intersect_Server.Classes.General;
 
-namespace Intersect_Server.Classes
+namespace Intersect_Server.Classes.Networking
 {
     public class Client
     {

@@ -20,14 +20,9 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
-using System.Data;
-using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 using Intersect_Editor.Classes;
+using Intersect_Library.GameObjects.Maps.MapList;
 
 namespace Intersect_Editor.Forms.Controls
 {
@@ -214,20 +209,20 @@ namespace Intersect_Editor.Forms.Controls
         public void UpdateMapList(int selectMap = -1)
         {
             list.Nodes.Clear();
-            AddMapListToTree(Database.MapStructure, null, selectMap);
+            AddMapListToTree(MapList.GetList(), null, selectMap);
         }
         private void AddMapListToTree(MapList mapList, TreeNode parent, int selectMap = -1)
         {
             TreeNode tmpNode;
             if (Chronological)
             {
-                for (int i = 0; i < Database.OrderedMaps.Count; i++)
+                for (int i = 0; i < MapList.GetOrderedMaps().Count; i++)
                 {
-                    tmpNode = list.Nodes.Add(Database.OrderedMaps[i].MapNum + ". " + Database.OrderedMaps[i].Name);
-                    tmpNode.Tag = (Database.OrderedMaps[i]);
+                    tmpNode = list.Nodes.Add(MapList.GetOrderedMaps()[i].MapNum + ". " + MapList.GetOrderedMaps()[i].Name);
+                    tmpNode.Tag = (MapList.GetOrderedMaps()[i]);
                     tmpNode.ImageIndex = 1;
                     tmpNode.SelectedImageIndex = 1;
-                    if (Database.OrderedMaps[i].MapNum == selectMap)
+                    if (MapList.GetOrderedMaps()[i].MapNum == selectMap)
                     {
                         list.SelectedNode = tmpNode;
                         list.Focus();

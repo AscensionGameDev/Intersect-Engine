@@ -20,11 +20,15 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-using System;
 using Intersect_Editor.Forms;
 using System.Collections.Generic;
 using System.Threading;
-using Intersect_Editor.Classes.Game_Objects;
+using Intersect_Editor.Classes.General;
+using Intersect_Editor.Classes.Maps;
+using Intersect_Library;
+using Intersect_Library.GameObjects;
+using Intersect_Library.GameObjects.Events;
+using Intersect_Library.GameObjects.Maps;
 
 namespace Intersect_Editor.Classes
 {
@@ -40,15 +44,13 @@ namespace Intersect_Editor.Classes
         public static int CurrentEditor = -1;
 
         public static int MyIndex;
-        public static MapStruct[] GameMaps = new MapStruct[1];
+        public static Dictionary<int, MapInstance> GameMaps = new Dictionary<int, MapInstance>();
         public static frmMain MainForm;
         public static FrmLogin LoginForm;
-        public static long MapCount;
         public static int ReceivedGameData;
         public static bool InEditor;
         public static bool ClosingEditor;
         public static string[] Tilesets;
-        public static MapRef[] MapRefs;
 
         public static ItemStruct[] GameItems;
         public static NpcStruct[] GameNpcs;
@@ -90,23 +92,23 @@ namespace Intersect_Editor.Classes
         public static int MouseButton = -1;
         public static int CurrentLayer = 0;
         public static bool ViewingMapProperties = false;
-        public static int CurrentTool = (int) Enums.EdittingTool.Pen;
+        public static int CurrentTool = (int) EdittingTool.Pen;
         public static int CurMapSelX;
         public static int CurMapSelY;
         public static int CurMapSelW;
         public static int CurMapSelH;
 
         //Selection Moving Copying and Pasting
-        public static int SelectionType = (int) Enums.SelectionTypes.AllLayers;
+        public static int SelectionType = (int) SelectionTypes.AllLayers;
         public static bool Dragging = false;
         public static int TileDragX = 0;
         public static int TileDragY = 0;
         public static int TotalTileDragX = 0;
         public static int TotalTileDragY = 0;
-        public static MapStruct SelectionSource;
+        public static MapInstance SelectionSource;
 
         //Cut/Copy Variables
-        public static MapStruct CopySource;
+        public static MapInstance CopySource;
         public static int CopyMapSelX;
         public static int CopyMapSelY;
         public static int CopyMapSelW;
@@ -151,31 +153,31 @@ namespace Intersect_Editor.Classes
             }
         }
 
-        public static string GetColorName(Enums.ChatColor color)
+        public static string GetColorName(Color.ChatColor color)
         {
             switch (color)
             {
-                case Enums.ChatColor.Black:
+                case Color.ChatColor.Black:
                     return "Black";
-                case Enums.ChatColor.White:
+                case Color.ChatColor.White:
                     return "White";
-                case Enums.ChatColor.Blue:
+                case Color.ChatColor.Blue:
                     return "Blue";
-                case Enums.ChatColor.Red:
+                case Color.ChatColor.Red:
                     return "Red";
-                case Enums.ChatColor.Green:
+                case Color.ChatColor.Green:
                     return "Green";
-                case Enums.ChatColor.Yellow:
+                case Color.ChatColor.Yellow:
                     return "Yellow";
-                case Enums.ChatColor.Orange:
+                case Color.ChatColor.Orange:
                     return "Orange";
-                case Enums.ChatColor.Purple:
+                case Color.ChatColor.Purple:
                     return "Purple";
-                case Enums.ChatColor.Gray:
+                case Color.ChatColor.Gray:
                     return "Gray";
-                case Enums.ChatColor.Cyan:
+                case Color.ChatColor.Cyan:
                     return "Cyan";
-                case Enums.ChatColor.Pink:
+                case Color.ChatColor.Pink:
                     return "Pink";
                 default:
                     return "No Color";

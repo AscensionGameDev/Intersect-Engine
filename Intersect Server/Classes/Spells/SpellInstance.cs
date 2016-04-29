@@ -20,7 +20,9 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-namespace Intersect_Server.Classes
+using Intersect_Library;
+
+namespace Intersect_Server.Classes.Spells
 {
     public class SpellInstance
     {

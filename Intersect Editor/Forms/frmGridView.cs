@@ -21,11 +21,6 @@
 */
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Linq;
-using System.Runtime.Remoting.Messaging;
-using System.Text;
 using System.Windows.Forms;
 using Intersect_Editor.Classes;
 using Point = System.Drawing.Point;
@@ -33,8 +28,10 @@ using System.Drawing;
 using System.IO;
 using System.Threading;
 using Hjg.Pngcs;
-using Intersect_Editor.Classes.General;
-using Microsoft.Win32.SafeHandles;
+using Intersect_Library;
+using Intersect_Library.GameObjects.Maps.MapList;
+using Color = System.Drawing.Color;
+using Options = Intersect_Editor.Classes.General.Options;
 
 namespace Intersect_Editor.Forms
 {
@@ -102,12 +99,12 @@ namespace Intersect_Editor.Forms
             linkMapToolStripMenuItem.DropDownItems.Clear();
             List<ToolStripButton> linkBtns = new List<ToolStripButton>();
             //Get a list of maps -- if they are not in this grid.
-            for (int i = 0; i < Database.OrderedMaps.Count; i++)
+            for (int i = 0; i < MapList.GetOrderedMaps().Count; i++)
             {
-                if (!gridMaps.Contains(Database.OrderedMaps[i].MapNum))
+                if (!gridMaps.Contains(MapList.GetOrderedMaps()[i].MapNum))
                 {
-                    var item = new ToolStripButton(Database.OrderedMaps[i].MapNum + ". " + Database.OrderedMaps[i].Name);
-                    item.Tag = Database.OrderedMaps[i].MapNum;
+                    var item = new ToolStripButton(MapList.GetOrderedMaps()[i].MapNum + ". " + MapList.GetOrderedMaps()[i].Name);
+                    item.Tag = MapList.GetOrderedMaps()[i].MapNum;
                     item.Click += LinkMapItem_Click;
                     linkBtns.Add(item);
                 }

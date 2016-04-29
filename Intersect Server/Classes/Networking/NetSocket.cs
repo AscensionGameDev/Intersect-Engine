@@ -20,11 +20,11 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-using System.Net.Sockets;
 using System;
-using Intersect_Server.Classes.Networking;
+using System.Net.Sockets;
+using Intersect_Server.Classes.General;
 
-namespace Intersect_Server.Classes
+namespace Intersect_Server.Classes.Networking
 {
 
     public class NetSocket : GameSocket

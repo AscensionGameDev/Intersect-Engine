@@ -43,38 +43,27 @@
     <Compile Include="Classes\Core\GameGraphics.cs" />
     <Compile Include="Classes\Core\GameInputHandler.cs" />
     <Compile Include="Classes\Core\GameMain.cs" />
+    <Compile Include="Classes\Entities\AnimationInstance.cs" />
     <Compile Include="Classes\Entities\Entity.cs" />
     <Compile Include="Classes\Entities\EntityManager.cs" />
-    <Compile Include="Classes\Entities\Event.cs" />
-    <Compile Include="Classes\Entities\EventDialog.cs" />
-    <Compile Include="Classes\Entities\EventHold.cs" />
+    <Compile Include="Classes\Entities\Events\Event.cs" />
+    <Compile Include="Classes\Entities\Events\EventDialog.cs" />
+    <Compile Include="Classes\Entities\Events\EventHold.cs" />
     <Compile Include="Classes\Entities\Player.cs" />
     <Compile Include="Classes\Entities\Projectile.cs" />
     <Compile Include="Classes\Entities\Resource.cs" />
+    <Compile Include="Classes\General\Enums.cs" />
+    <Compile Include="Classes\Maps\MapAnimationInstance.cs" />
+    <Compile Include="Classes\Maps\MapInstance.cs" />
     <Compile Include="Forms\frmLoadingContent.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Forms\frmLoadingContent.Designer.cs">
       <DependentUpon>frmLoadingContent.cs</DependentUpon>
     </Compile>
-    <Compile Include="Classes\Game Objects\AnimationStruct.cs" />
-    <Compile Include="Classes\Game Objects\ClassStruct.cs" />
-    <Compile Include="Classes\Game Objects\ItemStruct.cs" />
-    <Compile Include="Classes\Game Objects\NpcStruct.cs" />
-    <Compile Include="Classes\Game Objects\ProjectileStruct.cs" />
-    <Compile Include="Classes\Game Objects\QuestStruct.cs" />
-    <Compile Include="Classes\Game Objects\ResourceStruct.cs" />
-    <Compile Include="Classes\Game Objects\ShopStruct.cs" />
-    <Compile Include="Classes\Game Objects\SpellStruct.cs" />
-    <Compile Include="Classes\General\Constants.cs" />
-    <Compile Include="Classes\General\Enums.cs" />
     <Compile Include="Classes\General\Globals.cs" />
     <Compile Include="Classes\General\Options.cs" />
     <Compile Include="Classes\Items\ItemInstance.cs" />
-    <Compile Include="Classes\Maps\MapAutotiles.cs" />
-    <Compile Include="Classes\Maps\MapList.cs" />
-    <Compile Include="Classes\Maps\MapStruct.cs" />
-    <Compile Include="Classes\Misc\ByteBuffer.cs" />
     <Compile Include="Classes\Misc\FieldChecking.cs" />
     <Compile Include="Classes\Misc\MathHelper.cs" />
     <Compile Include="Classes\Networking\GameNetwork.cs" />
@@ -114,7 +103,6 @@
     <Compile Include="Classes\UI\Game\SpellDescWindow.cs" />
     <Compile Include="Classes\UI\Game\SpellWindow.cs" />
     <Compile Include="Classes\UI\Gui.cs" />
-    <Compile Include="Classes\UI\IGUIElement.cs" />
     <Compile Include="Classes\UI\Menu\CreateCharControls.cs" />
     <Compile Include="Classes\UI\Menu\LoginControls.cs" />
     <Compile Include="Classes\UI\Menu\MainMenu.cs" />
@@ -147,6 +135,12 @@
     <EmbeddedResource Include="Forms\frmLoadingContent.resx">
       <DependentUpon>frmLoadingContent.cs</DependentUpon>
     </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Intersect Library\Intersect Library\Intersect Library.csproj">
+      <Project>{bc304b43-1f2c-4454-9edc-48f47357ca94}</Project>
+      <Name>Intersect Library</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath)\MonoGame\v3.0\MonoGame.Content.Builder.targets" />

@@ -36,7 +36,7 @@ using IntersectClientExtras.Gwen.Control.EventArguments;
 
 namespace Intersect_Client.Classes.UI
 {
-    public class OptionsWindow : IGUIElement
+    public class OptionsWindow
     {
         //Controls
         private Base _optionsMenu;
@@ -262,7 +262,7 @@ namespace Intersect_Client.Classes.UI
             Globals.Database.MusicVolume = _previousMusicVolume;
             Globals.Database.SoundVolume = _previousSoundVolume;
             GameAudio.UpdateGlobalVolume();
-            if (Globals.GameState == Enums.GameStates.Menu)
+            if (Globals.GameState == GameStates.Menu)
             {
                 _mainMenu.Reset();
             }
@@ -335,7 +335,7 @@ namespace Intersect_Client.Classes.UI
             GameAudio.UpdateGlobalVolume();
             Globals.Database.SavePreferences();
             if (shouldReset) GameGraphics.Renderer.Init();
-            if (Globals.GameState == Enums.GameStates.InGame)
+            if (Globals.GameState == GameStates.InGame)
             {
                 this.Hide();
             }

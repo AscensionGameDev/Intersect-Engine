@@ -25,17 +25,18 @@
     SOFTWARE.
 */
 
-using System.Collections;
 using System.Collections.Generic;
 using IntersectClientExtras.Database;
 using IntersectClientExtras.File_Management;
-using IntersectClientExtras.GenericClasses;
 using IntersectClientExtras.Input;
 using IntersectClientExtras.Sys;
 using Intersect_Client.Classes.Entities;
-using Intersect_Client.Classes.Game_Objects;
 using Intersect_Client.Classes.Items;
 using Intersect_Client.Classes.Maps;
+using Intersect_Library;
+using Intersect_Library.GameObjects;
+using Intersect_Library.GameObjects.Maps.MapList;
+using Color = IntersectClientExtras.GenericClasses.Color;
 
 namespace Intersect_Client.Classes.General
 {
@@ -65,14 +66,12 @@ namespace Intersect_Client.Classes.General
         public static bool NeedsMaps = true;
 
         //Map/Chunk Array
-        public static Dictionary<int, MapStruct> GameMaps = new Dictionary<int, MapStruct>();
+        public static Dictionary<int, MapInstance> GameMaps = new Dictionary<int, MapInstance>();
         public static List<int> MapsToRemove = new List<int>();
         public static int[] LocalMaps = new int[9];
         public static int[] MapRevision;
         public static int MapCount;
         public static float MapRenderTimer = 0f;
-        public static List<FolderMap> OrderedMaps = new List<FolderMap>();
-        public static MapList MapStructure = new MapList();
 
 
         //Local player information
@@ -86,7 +85,7 @@ namespace Intersect_Client.Classes.General
         public static string DebugInfo = "";
 
         //Crucial game variables
-        public static Enums.GameStates GameState = Enums.GameStates.Intro; //0 for Intro, 1 to Menu, 2 for in game
+        public static GameStates GameState = GameStates.Intro; //0 for Intro, 1 to Menu, 2 for in game
         public static bool GameLoaded;
 
         //Entities and stuff
@@ -141,5 +140,24 @@ namespace Intersect_Client.Classes.General
         public static string[] Tilesets;
 
         public static int GameBorderStyle;
+
+        public static string GetStatName(int statnum)
+        {
+            switch (statnum)
+            {
+                case (int)Stats.Attack:
+                    return "Attack";
+                case (int)Stats.AbilityPower:
+                    return "Ability Power";
+                case (int)Stats.Defense:
+                    return "Defense";
+                case (int)Stats.MagicResist:
+                    return "Magic Resist";
+                case (int)Stats.Speed:
+                    return "Speed";
+                default:
+                    return "Invalid Stat";
+            }
+        }
     }
 }

@@ -27,17 +27,15 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using IntersectClientExtras.File_Management;
 using IntersectClientExtras.GenericClasses;
 using IntersectClientExtras.Graphics;
 using Intersect_Client.Classes.Entities;
-using Intersect_Client.Classes.Game_Objects;
 using Intersect_Client.Classes.General;
-using Intersect_Client.Classes.Maps;
 using Intersect_Client.Classes.UI;
 using Event = Intersect_Client.Classes.Entities.Event;
 using Object = System.Object;
+using Intersect_Library.GameObjects;
 
 namespace Intersect_Client.Classes.Core
 {
@@ -251,19 +249,19 @@ namespace Intersect_Client.Classes.Core
 
                 UpdateView();
 
-                if (Globals.GameState == Enums.GameStates.Intro)
+                if (Globals.GameState == GameStates.Intro)
                 {
                     DrawIntro();
                 }
-                else if (Globals.GameState == Enums.GameStates.Menu)
+                else if (Globals.GameState == GameStates.Menu)
                 {
                     DrawMenu();
                 }
-                else if (Globals.GameState == Enums.GameStates.Loading)
+                else if (Globals.GameState == GameStates.Loading)
                 {
 
                 }
-                if (Globals.GameState == Enums.GameStates.InGame)
+                if (Globals.GameState == GameStates.InGame)
                 {
                     DrawInGame();
                 }
@@ -445,7 +443,7 @@ namespace Intersect_Client.Classes.Core
 
         private static void UpdateView()
         {
-            if (Globals.GameState == Enums.GameStates.InGame && Globals.GameMaps.ContainsKey(Globals.CurrentMap))
+            if (Globals.GameState == GameStates.InGame && Globals.GameMaps.ContainsKey(Globals.CurrentMap))
             {
                 Player en = (Player)Globals.Entities[Globals.MyIndex];
                 float x = Globals.GameMaps[Globals.CurrentMap].GetX() - Options.MapWidth * Options.TileWidth;
@@ -554,7 +552,7 @@ namespace Intersect_Client.Classes.Core
             if (_darknessTexture == null) { return; }
 
             UpdatePlayerLight();
-            AddLight((int)Math.Ceiling(Globals.Entities[Globals.MyIndex].GetCenterPos().X), (int)Math.Ceiling(Globals.Entities[Globals.MyIndex].GetCenterPos().Y), (int)_playerLightSize, _playerLightIntensity, _playerLightExpand, _playerLightColor);
+            AddLight((int)Math.Ceiling(Globals.Entities[Globals.MyIndex].GetCenterPos().X), (int)Math.Ceiling(Globals.Entities[Globals.MyIndex].GetCenterPos().Y), (int)_playerLightSize, _playerLightIntensity, _playerLightExpand, Intersect_Library.Color.FromArgb(_playerLightColor.A, _playerLightColor.R, _playerLightColor.G, _playerLightColor.B));
 
             DrawLights();
             DrawGameTexture(Renderer.GetWhiteTexture(), new FloatRect(0, 0, 1, 1),
@@ -571,7 +569,7 @@ namespace Intersect_Client.Classes.Core
                 DrawGameTexture(_darknessTexture, CurrentView.Left, CurrentView.Top, null, GameBlendModes.Multiply);
             }
         }
-        public static void AddLight(int x, int y, int size, byte intensity, float expand, Color color)
+        public static void AddLight(int x, int y, int size, byte intensity, float expand, Intersect_Library.Color color)
         {
             _lightQueue.Add(new Light(0, 0, x, y, intensity, size, expand, color));
             LightsDrawn++;

@@ -24,8 +24,6 @@ using System.IO;
 using System.Windows.Forms;
 using Intersect_Editor.Classes;
 using WeifenLuo.WinFormsUI.Docking;
-using System.Collections.Generic;
-using System.Runtime.CompilerServices;
 using Intersect_Editor.Classes.General;
 using Intersect_Editor.Forms.Editors;
 using Microsoft.Xna.Framework.Graphics;
@@ -143,12 +141,9 @@ namespace Intersect_Editor.Forms
         {
             Globals.CurrentMap = mapNum;
             if (Globals.MapPropertiesWindow != null) { Globals.MapPropertiesWindow.Init(Globals.CurrentMap); }
-            if (mapNum > -1)
+            if (Globals.GameMaps.ContainsKey(mapNum))
             {
-                if (Globals.GameMaps[mapNum] != null)
-                {
-                    Text = @"Intersect Editor - Map# " + mapNum + @" " + Globals.GameMaps[mapNum].MyName + @" Revision: " + Globals.GameMaps[mapNum].Revision;
-                }
+                Text = @"Intersect Editor - Map# " + mapNum + @" " + Globals.GameMaps[mapNum].MyName + @" Revision: " + Globals.GameMaps[mapNum].Revision;
                 Globals.MapEditorWindow.picMap.Visible = false;
                 Globals.MapEditorWindow.ResetUndoRedoStates();
                 PacketSender.SendNeedMap(Globals.CurrentMap);
@@ -264,13 +259,13 @@ namespace Intersect_Editor.Forms
                     toolStripBtnRect.Enabled = true;
                     break;
                 case Options.LayerCount + 1: //Lights
-                    Globals.CurrentTool = (int)Enums.EdittingTool.Selection;
+                    Globals.CurrentTool = (int)EdittingTool.Selection;
                     break;
                 case Options.LayerCount + 2: //Events
-                    Globals.CurrentTool = (int)Enums.EdittingTool.Selection;
+                    Globals.CurrentTool = (int)EdittingTool.Selection;
                     break;
                 case Options.LayerCount + 3: //NPCS
-                    Globals.CurrentTool = (int)Enums.EdittingTool.Selection;
+                    Globals.CurrentTool = (int)EdittingTool.Selection;
                     break;
                 default:
                     toolStripBtnPen.Enabled = true;
@@ -281,7 +276,7 @@ namespace Intersect_Editor.Forms
 
             switch (Globals.CurrentTool)
             {
-                case (int)Enums.EdittingTool.Pen:
+                case (int)EdittingTool.Pen:
                     if (!toolStripBtnPen.Checked) { toolStripBtnPen.Checked = true; }
                     if (toolStripBtnSelect.Checked) { toolStripBtnSelect.Checked = false; }
                     if (toolStripBtnRect.Checked) { toolStripBtnRect.Checked = false; }
@@ -292,7 +287,7 @@ namespace Intersect_Editor.Forms
                     if (cutToolStripMenuItem.Enabled) { cutToolStripMenuItem.Enabled = false; }
                     if (copyToolStripMenuItem.Enabled) { copyToolStripMenuItem.Enabled = false; }
                         break;
-                case (int)Enums.EdittingTool.Selection:
+                case (int)EdittingTool.Selection:
                     if (toolStripBtnPen.Checked) { toolStripBtnPen.Checked = false; }
                     if (!toolStripBtnSelect.Checked) { toolStripBtnSelect.Checked = true; }
                     if (toolStripBtnRect.Checked) { toolStripBtnRect.Checked = false; }
@@ -303,7 +298,7 @@ namespace Intersect_Editor.Forms
                     if (!cutToolStripMenuItem.Enabled) { cutToolStripMenuItem.Enabled = true; }
                     if (!copyToolStripMenuItem.Enabled) { copyToolStripMenuItem.Enabled = true; }
                     break;
-                case (int)Enums.EdittingTool.Rectangle:
+                case (int)EdittingTool.Rectangle:
                     if (toolStripBtnPen.Checked) { toolStripBtnPen.Checked = false; }
                     if (toolStripBtnSelect.Checked) { toolStripBtnSelect.Checked = false; }
                     if (!toolStripBtnRect.Checked) { toolStripBtnRect.Checked = true; }
@@ -314,7 +309,7 @@ namespace Intersect_Editor.Forms
                     if (cutToolStripMenuItem.Enabled) { cutToolStripMenuItem.Enabled = false; }
                     if (copyToolStripMenuItem.Enabled) { copyToolStripMenuItem.Enabled = false; }
                     break;
-                case (int)Enums.EdittingTool.Droppler:
+                case (int)EdittingTool.Droppler:
                     if (toolStripBtnPen.Checked) { toolStripBtnPen.Checked = false; }
                     if (toolStripBtnSelect.Checked) { toolStripBtnSelect.Checked = false; }
                     if (toolStripBtnRect.Checked) { toolStripBtnRect.Checked = false; }
@@ -440,13 +435,13 @@ namespace Intersect_Editor.Forms
         }
         private void allLayersToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Globals.SelectionType = (int)Enums.SelectionTypes.AllLayers;
+            Globals.SelectionType = (int)SelectionTypes.AllLayers;
             allLayersToolStripMenuItem.Checked = true;
             currentLayerOnlyToolStripMenuItem.Checked = false;
         }
         private void currentLayerOnlyToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Globals.SelectionType = (int)Enums.SelectionTypes.CurrentLayer;
+            Globals.SelectionType = (int)SelectionTypes.CurrentLayer;
             allLayersToolStripMenuItem.Checked = false;
             currentLayerOnlyToolStripMenuItem.Checked = true;
         }
@@ -620,27 +615,27 @@ namespace Intersect_Editor.Forms
         }
         private void toolStripBtnPen_Click(object sender, EventArgs e)
         {
-            Globals.CurrentTool = (int)Enums.EdittingTool.Pen;
+            Globals.CurrentTool = (int)EdittingTool.Pen;
         }
         private void toolStripBtnSelect_Click(object sender, EventArgs e)
         {
-            Globals.CurrentTool = (int)Enums.EdittingTool.Selection;
+            Globals.CurrentTool = (int)EdittingTool.Selection;
         }
         private void toolStripBtnRect_Click(object sender, EventArgs e)
         {
-            Globals.CurrentTool = (int)Enums.EdittingTool.Rectangle;
+            Globals.CurrentTool = (int)EdittingTool.Rectangle;
             Globals.CurMapSelX = -1;
             Globals.CurMapSelY = -1;
         }
         private void toolStripBtnEyeDrop_Click(object sender, EventArgs e)
         {
-            Globals.CurrentTool = (int)Enums.EdittingTool.Droppler;
+            Globals.CurrentTool = (int)EdittingTool.Droppler;
             Globals.CurMapSelX = -1;
             Globals.CurMapSelY = -1;
         }
         private void toolStripBtnCopy_Click(object sender, EventArgs e)
         {
-            if (Globals.CurrentTool != (int)Enums.EdittingTool.Selection) { return; }
+            if (Globals.CurrentTool != (int)EdittingTool.Selection) { return; }
             Globals.MapEditorWindow.Copy();
         }
         private void toolStripBtnPaste_Click(object sender, EventArgs e)
@@ -650,7 +645,7 @@ namespace Intersect_Editor.Forms
         }
         private void toolStripBtnCut_Click(object sender, EventArgs e)
         {
-            if (Globals.CurrentTool != (int)Enums.EdittingTool.Selection) { return; }
+            if (Globals.CurrentTool != (int)EdittingTool.Selection) { return; }
             Globals.MapEditorWindow.Cut();
         }
 
@@ -661,7 +656,7 @@ namespace Intersect_Editor.Forms
             {
                 switch (editorIndex)
                 {
-                    case (int)Enums.EditorTypes.Animation:
+                    case (int)EditorTypes.Animation:
                         if (_animationEditor == null || _animationEditor.Visible == false)
                         {
                             _animationEditor = new frmAnimation();
@@ -669,7 +664,7 @@ namespace Intersect_Editor.Forms
                             _animationEditor.Show();
                         }
                         break;
-                    case (int)Enums.EditorTypes.Item:
+                    case (int)EditorTypes.Item:
                         if (_itemEditor == null || _itemEditor.Visible == false)
                         {
                             _itemEditor = new FrmItem();
@@ -677,7 +672,7 @@ namespace Intersect_Editor.Forms
                             _itemEditor.Show();
                         }
                         break;
-                    case (int)Enums.EditorTypes.Npc:
+                    case (int)EditorTypes.Npc:
                         if (_npcEditor == null || _npcEditor.Visible == false)
                         {
                             _npcEditor = new frmNpc();
@@ -685,7 +680,7 @@ namespace Intersect_Editor.Forms
                             _npcEditor.Show();
                         }
                         break;
-                    case (int)Enums.EditorTypes.Resource:
+                    case (int)EditorTypes.Resource:
                         if (_resourceEditor == null || _resourceEditor.Visible == false)
                         {
                             _resourceEditor = new frmResource();
@@ -693,7 +688,7 @@ namespace Intersect_Editor.Forms
                             _resourceEditor.Show();
                         }
                         break;
-                    case (int)Enums.EditorTypes.Spell:
+                    case (int)EditorTypes.Spell:
                         if (_spellEditor == null || _spellEditor.Visible == false)
                         {
                             _spellEditor = new frmSpell();
@@ -701,7 +696,7 @@ namespace Intersect_Editor.Forms
                             _spellEditor.Show();
                         }
                         break;
-                    case (int)Enums.EditorTypes.Class:
+                    case (int)EditorTypes.Class:
                         if (_classEditor == null || _classEditor.Visible == false)
                         {
                             _classEditor = new frmClass();
@@ -709,7 +704,7 @@ namespace Intersect_Editor.Forms
                             _classEditor.Show();
                         }
                         break;
-                    case (int)Enums.EditorTypes.Quest:
+                    case (int)EditorTypes.Quest:
                         if (_questEditor == null || _questEditor.Visible == false)
                         {
                             _questEditor = new frmQuest();
@@ -717,7 +712,7 @@ namespace Intersect_Editor.Forms
                             _questEditor.Show();
                         }
                         break;
-                    case (int)Enums.EditorTypes.Projectile:
+                    case (int)EditorTypes.Projectile:
                         if (_projectileEditor == null || _projectileEditor.Visible == false)
                         {
                             _projectileEditor = new frmProjectile();
@@ -725,14 +720,14 @@ namespace Intersect_Editor.Forms
                             _projectileEditor.Show();
                         }
                         break;
-                    case (int)Enums.EditorTypes.CommonEvent:
+                    case (int)EditorTypes.CommonEvent:
                         if (_commonEventEditor == null || _commonEventEditor.Visible == false)
                         {
                             _commonEventEditor = new frmCommonEvent();
                             _commonEventEditor.Show();
                         }
                         break;
-                    case (int)Enums.EditorTypes.SwitchVariable:
+                    case (int)EditorTypes.SwitchVariable:
                         if (_switchVariableEditor == null || _switchVariableEditor.Visible == false)
                         {
                             _switchVariableEditor = new frmSwitchVariable();
@@ -740,7 +735,7 @@ namespace Intersect_Editor.Forms
                             _switchVariableEditor.Show();
                         }
                         break;
-                    case (int)Enums.EditorTypes.Shop:
+                    case (int)EditorTypes.Shop:
                         if (_shopEditor == null || _shopEditor.Visible == false)
                         {
                             _shopEditor = new frmShop();

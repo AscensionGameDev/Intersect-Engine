@@ -25,7 +25,6 @@
     SOFTWARE.
 */
 
-using System.Diagnostics.Eventing.Reader;
 using IntersectClientExtras.File_Management;
 using IntersectClientExtras.Graphics;
 using Intersect_Client.Classes.General;
@@ -72,19 +71,19 @@ namespace Intersect_Client.Classes.Core
             {
                 GameNetwork.Update();
                 GameFade.Update();
-                if (Globals.GameState == Enums.GameStates.Intro)
+                if (Globals.GameState == GameStates.Intro)
                 {
                     ProcessIntro();
                 }
-                else if (Globals.GameState == Enums.GameStates.Menu)
+                else if (Globals.GameState == GameStates.Menu)
                 {
                     ProcessMenu();
                 }
-                else if (Globals.GameState == Enums.GameStates.Loading)
+                else if (Globals.GameState == GameStates.Loading)
                 {
                     ProcessLoading();
                 }
-                if (Globals.GameState == Enums.GameStates.InGame)
+                if (Globals.GameState == GameStates.InGame)
                 {
                     ProcessGame();
                 }
@@ -134,12 +133,12 @@ namespace Intersect_Client.Classes.Core
                 }
                 if (Globals.IntroIndex >= Globals.Database.IntroBG.Count)
                 {
-                    Globals.GameState = Enums.GameStates.Menu;
+                    Globals.GameState = GameStates.Menu;
                 }
             }
             else
             {
-                Globals.GameState = Enums.GameStates.Menu;
+                Globals.GameState = GameStates.Menu;
             }
         }
 
@@ -148,7 +147,7 @@ namespace Intersect_Client.Classes.Core
             if (!Globals.JoiningGame) return;
             //if (GameGraphics.FadeAmt != 255f) return;
             //Check if maps are loaded and ready
-            Globals.GameState = Enums.GameStates.Loading;
+            Globals.GameState = GameStates.Loading;
             Gui.DestroyGwen();
             PacketSender.SendEnterGame();
         }
@@ -167,7 +166,7 @@ namespace Intersect_Client.Classes.Core
                 if (Globals.LocalMaps[i] <= -1) continue;
                 if (Globals.GameMaps.ContainsKey(Globals.LocalMaps[i]) && Globals.GameMaps[Globals.LocalMaps[i]] != null)
                 {
-                    if (!Globals.GameMaps[Globals.LocalMaps[i]].ShouldLoad(i * 2 + 0)) continue;
+                    //if (!Globals.GameMaps[Globals.LocalMaps[i]].ShouldLoad(i * 2 + 0)) continue;
                     if (Globals.GameMaps[Globals.LocalMaps[i]].MapLoaded == false)
                     {
                         return;
@@ -186,7 +185,7 @@ namespace Intersect_Client.Classes.Core
             
 
             GameAudio.PlayMusic(Globals.GameMaps[Globals.LocalMaps[4]].Music, 3, 3, true);
-            Globals.GameState = Enums.GameStates.InGame;
+            Globals.GameState = GameStates.InGame;
             GameFade.FadeIn();
         }
 
@@ -236,7 +235,7 @@ namespace Intersect_Client.Classes.Core
                     if (Globals.LocalMaps[i] <= -1) continue;
                     if (Globals.GameMaps.ContainsKey(Globals.LocalMaps[i]) && Globals.GameMaps[Globals.LocalMaps[i]] != null)
                     {
-                        if (!Globals.GameMaps[Globals.LocalMaps[i]].ShouldLoad(i * 2 + 0)) continue;
+                        //if (!Globals.GameMaps[Globals.LocalMaps[i]].ShouldLoad(i * 2 + 0)) continue;
                         if (Globals.GameMaps[Globals.LocalMaps[i]].MapLoaded == false)
                         {
                             canShowWorld = false;

@@ -26,6 +26,7 @@
 */
 
 using Intersect_Client.Classes.General;
+using Intersect_Library;
 
 namespace Intersect_Client.Classes.Entities
 {
@@ -96,7 +97,7 @@ namespace Intersect_Client.Classes.Entities
 
         public static void RemoveEntity(int index, int type, int mapNum)
         {
-            if (type != (int)Enums.EntityTypes.Event)
+            if (type != (int)EntityTypes.Event)
             {
                 if (Globals.Entities.ContainsKey(index))
                 {

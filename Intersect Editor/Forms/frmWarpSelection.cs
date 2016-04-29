@@ -21,16 +21,12 @@
 */
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
 using System.IO;
-using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 using Intersect_Editor.Classes;
 using Intersect_Editor.Classes.General;
-using Intersect_Editor.Forms.Controls;
+using Intersect_Library.GameObjects.Maps.MapList;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace Intersect_Editor.Forms

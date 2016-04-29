@@ -25,7 +25,7 @@
     SOFTWARE.
 */
 
-using Intersect_Client.Classes.Misc;
+using Intersect_Library;
 
 namespace Intersect_Client.Classes.Spells
 {

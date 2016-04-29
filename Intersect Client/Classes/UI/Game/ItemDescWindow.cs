@@ -30,8 +30,9 @@ using IntersectClientExtras.File_Management;
 using IntersectClientExtras.Graphics;
 using IntersectClientExtras.Gwen;
 using IntersectClientExtras.Gwen.Control;
-using Intersect_Client.Classes.Core;
 using Intersect_Client.Classes.General;
+using Intersect_Library;
+using Options = Intersect_Client.Classes.General.Options;
 
 namespace Intersect_Client.Classes.UI.Game
 {
@@ -89,22 +90,22 @@ namespace Intersect_Client.Classes.UI.Game
                     innery += 12;
                 }
 
-                if (Globals.GameItems[itemnum].Type != (int)Enums.ItemTypes.None)
+                if (Globals.GameItems[itemnum].Type != (int)ItemTypes.None)
                 {
                     Label itemType = new Label(_descWindow);
                     itemType.SetPosition(4, innery);
                     switch (Globals.GameItems[itemnum].Type)
                     {
-                        case (int)Enums.ItemTypes.Currency:
+                        case (int)ItemTypes.Currency:
                             itemType.Text = "Type: Currency";
                             break;
-                        case (int)Enums.ItemTypes.Equipment:
+                        case (int)ItemTypes.Equipment:
                             itemType.Text = "Type: Equipment";
                             break;
-                        case (int)Enums.ItemTypes.Consumable:
+                        case (int)ItemTypes.Consumable:
                             itemType.Text = "Type: Consume";
                             break;
-                        case (int)Enums.ItemTypes.Spell:
+                        case (int)ItemTypes.Spell:
                             itemType.Text = "Type: Spell";
                             break;
                     }
@@ -112,7 +113,7 @@ namespace Intersect_Client.Classes.UI.Game
                 }
 
                 y += innery + 4;
-                if (Globals.GameItems[itemnum].Type == (int)Enums.ItemTypes.Equipment)
+                if (Globals.GameItems[itemnum].Type == (int)ItemTypes.Equipment)
                 {
                     Label itemSlot = new Label(_descWindow);
                     itemSlot.Text = "Slot: " + Options.EquipmentSlots[Globals.GameItems[itemnum].Data1];
@@ -137,7 +138,7 @@ namespace Intersect_Client.Classes.UI.Game
                 int y1 = y;
 
                 bool requirements = false;
-                if (Globals.GameItems[itemnum].Type != (int)Enums.ItemTypes.Currency && Globals.GameItems[itemnum].Type != (int)Enums.ItemTypes.None)
+                if (Globals.GameItems[itemnum].Type != (int)ItemTypes.Currency && Globals.GameItems[itemnum].Type != (int)ItemTypes.None)
                 {
                     //Check for requirements
                     RichLabel itemReqs = new RichLabel(_descWindow);
@@ -156,7 +157,7 @@ namespace Intersect_Client.Classes.UI.Game
                         if (Globals.GameItems[itemnum].StatsReq[i] > 0)
                         {
                             requirements = true;
-                            itemReqs.AddText(Enums.GetStatName(i) + ": " + Globals.GameItems[itemnum].StatsReq[i], itemName.TextColor);
+                            itemReqs.AddText(Globals.GetStatName(i) + ": " + Globals.GameItems[itemnum].StatsReq[i], itemName.TextColor);
                             itemReqs.AddLineBreak();
                         }
                     }
@@ -172,7 +173,7 @@ namespace Intersect_Client.Classes.UI.Game
                 }
 
                 string stats = "";
-                if (Globals.GameItems[itemnum].Type == (int)Enums.ItemTypes.Equipment)
+                if (Globals.GameItems[itemnum].Type == (int)ItemTypes.Equipment)
                 {
                     RichLabel itemStats = new RichLabel(_descWindow);
                     if (requirements != true)
@@ -188,7 +189,7 @@ namespace Intersect_Client.Classes.UI.Game
                     stats = "Stats Bonuses:";
                     itemStats.AddText(stats, itemName.TextColor);
                     itemStats.AddLineBreak();
-                    if (Globals.GameItems[itemnum].Type == (int)Enums.ItemTypes.Equipment && Globals.GameItems[itemnum].Data1 == Options.WeaponIndex)
+                    if (Globals.GameItems[itemnum].Type == (int)ItemTypes.Equipment && Globals.GameItems[itemnum].Data1 == Options.WeaponIndex)
                     {
                         stats = "Base Damage" + ": " + (Globals.GameItems[itemnum].Damage) + "";
                         itemStats.AddText(stats, itemName.TextColor);
@@ -198,7 +199,7 @@ namespace Intersect_Client.Classes.UI.Game
                     {
                         for (int i = 0; i < Options.MaxStats; i++)
                         {
-                            stats = Enums.GetStatName(i) + ": " +
+                            stats = Globals.GetStatName(i) + ": " +
                                     (Globals.GameItems[itemnum].StatsGiven[i] + StatBuffs[i]) + "";
                             itemStats.AddText(stats, itemName.TextColor);
                             itemStats.AddLineBreak();
@@ -212,11 +213,11 @@ namespace Intersect_Client.Classes.UI.Game
 
                 if (y1 > y) { y = y1; }
 
-                if (Globals.GameItems[itemnum].Type == (int)Enums.ItemTypes.Equipment && Globals.GameItems[itemnum].Data2 > 0 && Globals.GameItems[itemnum].Data3 > 0)
+                if (Globals.GameItems[itemnum].Type == (int)ItemTypes.Equipment && Globals.GameItems[itemnum].Data2 > 0 && Globals.GameItems[itemnum].Data3 > 0)
                 {
                     Label bonusLabel = new Label(_descWindow);
                     bonusLabel.SetPosition(4, y);
-                    bonusLabel.Text = "Bonus Effect: " + Globals.GameItems[itemnum].Data3 + "% " + Enums.ItemBonusEffects[Globals.GameItems[itemnum].Data2 - 1];
+                    bonusLabel.Text = "Bonus Effect: " + Globals.GameItems[itemnum].Data3 + "% " + (Globals.GameItems[itemnum].Data2 - 1 == 0 ? "Cooldown Reduction" : "Lifesteal");
                     y += 24;
                 }
             }

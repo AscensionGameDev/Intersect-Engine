@@ -25,8 +25,10 @@ using IntersectClientExtras.File_Management;
 using IntersectClientExtras.GenericClasses;
 using Intersect_Client.Classes.Core;
 using Intersect_Client.Classes.General;
-using Intersect_Client.Classes.Misc;
 using IntersectClientExtras.Graphics;
+using Intersect_Library;
+using Color = IntersectClientExtras.GenericClasses.Color;
+using Options = Intersect_Client.Classes.General.Options;
 
 namespace Intersect_Client.Classes.Entities
 {

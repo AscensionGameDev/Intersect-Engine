@@ -20,15 +20,17 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
+using Intersect_Library;
 using Intersect_Server.Classes.General;
+using Options = Intersect_Server.Classes.General.Options;
 
-namespace Intersect_Server.Classes
+namespace Intersect_Server.Classes.Items
 {
     public class ItemInstance
     {
         public int ItemNum = -1;
         public int ItemVal = 0;
-        public int[] StatBoost = new int[(int)Enums.Stats.StatCount];
+        public int[] StatBoost = new int[(int)Stats.StatCount];
 
         public ItemInstance(int itemNum, int itemVal)
         {
@@ -36,10 +38,10 @@ namespace Intersect_Server.Classes
             ItemVal = itemVal;
             if (itemNum > 0 && itemNum < Options.MaxItems)
             {
-                if (Globals.GameItems[itemNum].Type == (int) Enums.ItemTypes.Equipment)
+                if (Globals.GameItems[itemNum].Type == (int) ItemTypes.Equipment)
                 {
                     itemVal = 1;
-                    for (int i = 0; i < (int) Enums.Stats.StatCount; i++)
+                    for (int i = 0; i < (int) Stats.StatCount; i++)
                     {
                       StatBoost[i] =
                             Globals.Rand.Next(-1*Globals.GameItems[itemNum].StatGrowth,
@@ -54,7 +56,7 @@ namespace Intersect_Server.Classes
             var bf = new ByteBuffer();
             bf.WriteInteger(ItemNum);
             bf.WriteInteger(ItemVal);
-            for (int i = 0; i < (int)Enums.Stats.StatCount; i++)
+            for (int i = 0; i < (int)Stats.StatCount; i++)
             {
                 bf.WriteInteger(StatBoost[i]);
             }
@@ -64,40 +66,10 @@ namespace Intersect_Server.Classes
         public ItemInstance Clone()
         {
             ItemInstance newItem = new ItemInstance(ItemNum,ItemVal);
-            for (int i = 0; i < (int)Enums.Stats.StatCount; i++){
+            for (int i = 0; i < (int)Stats.StatCount; i++){
                 newItem.StatBoost[i] = StatBoost[i];
             }
             return newItem;
         }
-    }
-
-    public class MapItemInstance : ItemInstance
-    {
-        public int X = 0;
-        public int Y = 0;
-        public int AttributeSpawnX = -1;
-        public int AttributeSpawnY = -1;
-        public long DespawnTime;
-
-        public MapItemInstance(int itemNum, int itemVal) : base(itemNum, itemVal)
-        {
-            
-        }
-
-        public byte[] Data()
-        {
-            var bf = new ByteBuffer();
-            bf.WriteInteger(X);
-            bf.WriteInteger(Y);
-            bf.WriteBytes(base.Data());
-            return bf.ToArray();
-        }
-    }
-
-    public class MapItemRespawn
-    {
-        public int AttributeSpawnX = -1;
-        public int AttributeSpawnY = -1;
-        public long RespawnTime = -1;
     }
 }

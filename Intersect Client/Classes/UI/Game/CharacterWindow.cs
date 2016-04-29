@@ -37,6 +37,10 @@ using Intersect_Client.Classes.Networking;
 using IntersectClientExtras.Gwen.Control;
 using IntersectClientExtras.Gwen.Control.EventArguments;
 using IntersectClientExtras.Input;
+using Intersect_Library;
+using Color = IntersectClientExtras.GenericClasses.Color;
+using Options = Intersect_Client.Classes.General.Options;
+using Point = IntersectClientExtras.GenericClasses.Point;
 
 namespace Intersect_Client.Classes.UI.Game
 {
@@ -203,27 +207,27 @@ namespace Intersect_Client.Classes.UI.Game
         //Update Button Event Handlers
         void _addMagicResistBtn_Clicked(Base sender, ClickedEventArgs arguments)
         {
-            PacketSender.SendUpgradeStat((int)Enums.Stats.MagicResist);
+            PacketSender.SendUpgradeStat((int)Stats.MagicResist);
         }
 
         void _addAbilityPwrBtn_Clicked(Base sender, ClickedEventArgs arguments)
         {
-            PacketSender.SendUpgradeStat((int)Enums.Stats.AbilityPower);
+            PacketSender.SendUpgradeStat((int)Stats.AbilityPower);
         }
 
         void _addSpeedBtn_Clicked(Base sender, ClickedEventArgs arguments)
         {
-            PacketSender.SendUpgradeStat((int)Enums.Stats.Speed);
+            PacketSender.SendUpgradeStat((int)Stats.Speed);
         }
 
         void _addDefenseBtn_Clicked(Base sender, ClickedEventArgs arguments)
         {
-            PacketSender.SendUpgradeStat((int)Enums.Stats.Defense);
+            PacketSender.SendUpgradeStat((int)Stats.Defense);
         }
 
         void _addAttackBtn_Clicked(Base sender, ClickedEventArgs arguments)
         {
-            PacketSender.SendUpgradeStat((int)Enums.Stats.Attack);
+            PacketSender.SendUpgradeStat((int)Stats.Attack);
         }
 
         private void InitEquipmentContainer()
@@ -282,17 +286,17 @@ namespace Intersect_Client.Classes.UI.Game
                 _characterPortrait.IsHidden = true;
             }
 
-            _attackLabel.SetText("Attack: " + Globals.Me.Stat[(int)Enums.Stats.Attack]);
-            _defenseLabel.SetText("Defense: " + Globals.Me.Stat[(int)Enums.Stats.Defense]);
-            _speedLabel.SetText("Speed: " + Globals.Me.Stat[(int)Enums.Stats.Speed]);
-            _abilityPwrLabel.SetText("Ability Pwr: " + Globals.Me.Stat[(int)Enums.Stats.AbilityPower]);
-            _magicRstLabel.SetText("Magic Resist: " + Globals.Me.Stat[(int)Enums.Stats.MagicResist]);
+            _attackLabel.SetText("Attack: " + Globals.Me.Stat[(int)Stats.Attack]);
+            _defenseLabel.SetText("Defense: " + Globals.Me.Stat[(int)Stats.Defense]);
+            _speedLabel.SetText("Speed: " + Globals.Me.Stat[(int)Stats.Speed]);
+            _abilityPwrLabel.SetText("Ability Pwr: " + Globals.Me.Stat[(int)Stats.AbilityPower]);
+            _magicRstLabel.SetText("Magic Resist: " + Globals.Me.Stat[(int)Stats.MagicResist]);
             _pointsLabel.SetText("Points: " + Globals.Me.StatPoints);
-            _addAbilityPwrBtn.IsHidden = (Globals.Me.StatPoints == 0 || Globals.Me.Stat[(int)Enums.Stats.AbilityPower] == Options.MaxStatValue);
-            _addAttackBtn.IsHidden = (Globals.Me.StatPoints == 0 || Globals.Me.Stat[(int)Enums.Stats.Attack] == Options.MaxStatValue);
-            _addDefenseBtn.IsHidden = (Globals.Me.StatPoints == 0 || Globals.Me.Stat[(int)Enums.Stats.Defense] == Options.MaxStatValue);
-            _addMagicResistBtn.IsHidden = (Globals.Me.StatPoints == 0 || Globals.Me.Stat[(int)Enums.Stats.MagicResist] == Options.MaxStatValue);
-            _addSpeedBtn.IsHidden = (Globals.Me.StatPoints == 0 || Globals.Me.Stat[(int)Enums.Stats.Speed] == Options.MaxStatValue);
+            _addAbilityPwrBtn.IsHidden = (Globals.Me.StatPoints == 0 || Globals.Me.Stat[(int)Stats.AbilityPower] == Options.MaxStatValue);
+            _addAttackBtn.IsHidden = (Globals.Me.StatPoints == 0 || Globals.Me.Stat[(int)Stats.Attack] == Options.MaxStatValue);
+            _addDefenseBtn.IsHidden = (Globals.Me.StatPoints == 0 || Globals.Me.Stat[(int)Stats.Defense] == Options.MaxStatValue);
+            _addMagicResistBtn.IsHidden = (Globals.Me.StatPoints == 0 || Globals.Me.Stat[(int)Stats.MagicResist] == Options.MaxStatValue);
+            _addSpeedBtn.IsHidden = (Globals.Me.StatPoints == 0 || Globals.Me.Stat[(int)Stats.Speed] == Options.MaxStatValue);
 
             for (int i = 0; i < Options.EquipmentSlots.Count; i++)
             {

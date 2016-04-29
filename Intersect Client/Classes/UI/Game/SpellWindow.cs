@@ -41,8 +41,12 @@ using Intersect_Client.Classes.Networking;
 
 namespace Intersect_Client.Classes.UI.Game
 {
-    public class SpellWindow : IGUIElement
+    public class SpellWindow
     {
+        //Item/Spell Rendering
+        private static int ItemXPadding = 4;
+        private static int ItemYPadding = 4;
+
         //Controls
         private WindowControl _spellWindow;
         private ScrollControl _itemContainer;
@@ -100,7 +104,7 @@ namespace Intersect_Client.Classes.UI.Game
                 Items.Add(new SpellItem(this, i));
                 Items[i].pnl = new ImagePanel(_itemContainer);
                 Items[i].pnl.SetSize(32, 32);
-                Items[i].pnl.SetPosition((i % (_itemContainer.Width / (32 + Constants.ItemXPadding))) * (32 + Constants.ItemXPadding) + Constants.ItemXPadding, (i / (_itemContainer.Width / (32 + Constants.ItemXPadding))) * (32 + Constants.ItemYPadding) + Constants.ItemYPadding);
+                Items[i].pnl.SetPosition((i % (_itemContainer.Width / (32 + ItemXPadding))) * (32 + ItemXPadding) + ItemXPadding, (i / (_itemContainer.Width / (32 + ItemXPadding))) * (32 + ItemYPadding) + ItemYPadding);
                 Items[i].pnl.Clicked += SpellWindow_Clicked;
                 Items[i].pnl.IsHidden = true;
                 Items[i].Setup();
@@ -126,16 +130,18 @@ namespace Intersect_Client.Classes.UI.Game
         public FloatRect RenderBounds()
         {
             FloatRect rect = new FloatRect();
-            rect.X = _spellWindow.LocalPosToCanvas(new Point(0, 0)).X - Constants.ItemXPadding / 2;
-            rect.Y = _spellWindow.LocalPosToCanvas(new Point(0, 0)).Y - Constants.ItemYPadding / 2;
-            rect.Width = _spellWindow.Width + Constants.ItemXPadding;
-            rect.Height = _spellWindow.Height + Constants.ItemYPadding;
+            rect.X = _spellWindow.LocalPosToCanvas(new Point(0, 0)).X - ItemXPadding / 2;
+            rect.Y = _spellWindow.LocalPosToCanvas(new Point(0, 0)).Y - ItemYPadding / 2;
+            rect.Width = _spellWindow.Width + ItemXPadding;
+            rect.Height = _spellWindow.Height + ItemYPadding;
             return rect;
         }
     }
 
     public class SpellItem
     {
+        private static int ItemXPadding = 4;
+        private static int ItemYPadding = 4;
         public ImagePanel pnl;
         private SpellDescWindow _descWindow;
 
@@ -292,7 +298,7 @@ namespace Intersect_Client.Classes.UI.Game
                 {
                     //Drug the item and now we stopped
                     IsDragging = false;
-                    FloatRect dragRect = new FloatRect(dragIcon.x - Constants.ItemXPadding / 2, dragIcon.y - Constants.ItemYPadding / 2, Constants.ItemXPadding/2 + 32, Constants.ItemYPadding/2 + 32);
+                    FloatRect dragRect = new FloatRect(dragIcon.x - ItemXPadding / 2, dragIcon.y - ItemYPadding / 2, ItemXPadding/2 + 32, ItemYPadding/2 + 32);
 
                     float bestIntersect = 0;
                     int bestIntersectIndex = -1;

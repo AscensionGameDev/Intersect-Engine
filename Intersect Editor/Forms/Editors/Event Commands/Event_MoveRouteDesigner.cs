@@ -21,13 +21,10 @@
 */
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
-using System.Data;
-using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 using Intersect_Editor.Classes;
+using Intersect_Library.GameObjects.Events;
+using Intersect_Library.GameObjects.Maps;
 
 namespace Intersect_Editor.Forms.Editors.Event_Commands
 {

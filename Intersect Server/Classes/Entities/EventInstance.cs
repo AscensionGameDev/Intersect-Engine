@@ -21,8 +21,14 @@
 */
 using System;
 using System.Collections.Generic;
+using Intersect_Library;
+using Intersect_Library.GameObjects.Events;
+using Intersect_Server.Classes.Core;
+using Intersect_Server.Classes.General;
+using Intersect_Server.Classes.Items;
 using Intersect_Server.Classes.Maps;
-using Intersect_Server.Classes.Misc;
+using Intersect_Server.Classes.Networking;
+using Intersect_Server.Classes.Spells;
 
 namespace Intersect_Server.Classes.Entities
 {
@@ -92,11 +98,11 @@ namespace Intersect_Server.Classes.Entities
                     }
                     if (IsGlobal)
                     {
-                        PacketSender.SendEntityLeaveTo(MyClient, BaseEvent.MyIndex, (int)Enums.EntityTypes.Event, MapNum);
+                        PacketSender.SendEntityLeaveTo(MyClient, BaseEvent.MyIndex, (int)EntityTypes.Event, MapNum);
                     }
                     else
                     {
-                        PacketSender.SendEntityLeaveTo(MyClient, BaseEvent.MyIndex, (int)Enums.EntityTypes.Event, MapNum);
+                        PacketSender.SendEntityLeaveTo(MyClient, BaseEvent.MyIndex, (int)EntityTypes.Event, MapNum);
                     }
                 }
                 else
@@ -172,7 +178,7 @@ namespace Intersect_Server.Classes.Entities
                     {
                         if (IsGlobal)
                         {
-                            PageInstance = new EventPageInstance(BaseEvent, BaseEvent.MyPages[i], BaseEvent.MyIndex, MapNum, this, MyClient, BaseEvent.GlobalInstance.GlobalPageInstance[i]);
+                            PageInstance = new EventPageInstance(BaseEvent, BaseEvent.MyPages[i], BaseEvent.MyIndex, MapNum, this, MyClient, Globals.GameMaps[MapNum].GetGlobalEventInstance(BaseEvent).GlobalPageInstance[i]);
                             PageIndex = i;
                         }
                         else
@@ -334,7 +340,7 @@ namespace Intersect_Server.Classes.Entities
         {
             bool success = false;
             TileHelper tile;
-            int npcNum, animNum, spawnCondition, mapNum = -1, tileX = 0, tileY = 0, direction = (int)Enums.Directions.Up;
+            int npcNum, animNum, spawnCondition, mapNum = -1, tileX = 0, tileY = 0, direction = (int)Directions.Up;
             Entity targetEntity = null;
             CallStack.Peek().WaitingForResponse = 0;
             CallStack.Peek().ResponseType = 0;
@@ -367,11 +373,11 @@ namespace Intersect_Server.Classes.Entities
                     CallStack.Peek().CommandIndex++;
                     break;
                 case EventCommandType.SetSwitch:
-                    if (command.Ints[0] == (int) Enums.SwitchVariableTypes.PlayerSwitch)
+                    if (command.Ints[0] == (int) SwitchVariableTypes.PlayerSwitch)
                     {
                         MyPlayer.Switches[command.Ints[1]] = Convert.ToBoolean(command.Ints[2]);
                     }
-                    else if(command.Ints[0] == (int)Enums.SwitchVariableTypes.ServerSwitch)
+                    else if(command.Ints[0] == (int)SwitchVariableTypes.ServerSwitch)
                     {
                         Globals.ServerSwitchValues[command.Ints[1]] = Convert.ToBoolean(command.Ints[2]);
                         Database.SaveSwitchesAndVariables();
@@ -379,7 +385,7 @@ namespace Intersect_Server.Classes.Entities
                     CallStack.Peek().CommandIndex++;
                     break;
                 case EventCommandType.SetVariable:
-                    if (command.Ints[0] == (int) Enums.SwitchVariableTypes.PlayerVariable)
+                    if (command.Ints[0] == (int) SwitchVariableTypes.PlayerVariable)
                     {
                         switch (command.Ints[2])
                         {
@@ -397,7 +403,7 @@ namespace Intersect_Server.Classes.Entities
                                 break;
                         }
                     }
-                    else if (command.Ints[0] == (int) Enums.SwitchVariableTypes.ServerVariable)
+                    else if (command.Ints[0] == (int) SwitchVariableTypes.ServerVariable)
                     {
                         switch (command.Ints[2])
                         {
@@ -496,11 +502,11 @@ namespace Intersect_Server.Classes.Entities
 
                     break;
                 case EventCommandType.RestoreHp:
-                    MyPlayer.RestoreVital(Enums.Vitals.Health);
+                    MyPlayer.RestoreVital(Vitals.Health);
                     CallStack.Peek().CommandIndex++;
                     break;
                 case EventCommandType.RestoreMp:
-                    MyPlayer.RestoreVital(Enums.Vitals.Mana);
+                    MyPlayer.RestoreVital(Vitals.Mana);
                     CallStack.Peek().CommandIndex++;
                     break;
                 case EventCommandType.LevelUp:
@@ -597,25 +603,25 @@ namespace Intersect_Server.Classes.Entities
                     break;
                 case EventCommandType.ChangeSprite:
                     MyPlayer.MySprite = command.Strs[0];
-                    PacketSender.SendEntityDataToProximity(MyPlayer.MyIndex, (int)Enums.EntityTypes.Player,
+                    PacketSender.SendEntityDataToProximity(MyPlayer.MyIndex, (int)EntityTypes.Player,
                         MyPlayer.Data(), MyPlayer);
                     CallStack.Peek().CommandIndex++;
                     break;
                 case EventCommandType.ChangeFace:
                     MyPlayer.Face = command.Strs[0];
-                    PacketSender.SendEntityDataToProximity(MyPlayer.MyIndex, (int)Enums.EntityTypes.Player,
+                    PacketSender.SendEntityDataToProximity(MyPlayer.MyIndex, (int)EntityTypes.Player,
                         MyPlayer.Data(), MyPlayer);
                     CallStack.Peek().CommandIndex++;
                     break;
                 case EventCommandType.ChangeGender:
                     MyPlayer.Gender = command.Ints[0];
-                    PacketSender.SendEntityDataToProximity(MyPlayer.MyIndex, (int)Enums.EntityTypes.Player,
+                    PacketSender.SendEntityDataToProximity(MyPlayer.MyIndex, (int)EntityTypes.Player,
                         MyPlayer.Data(), MyPlayer);
                     CallStack.Peek().CommandIndex++;
                     break;
                 case EventCommandType.SetAccess:
                     MyPlayer.MyClient.Power = command.Ints[0];
-                    PacketSender.SendEntityDataToProximity(MyPlayer.MyIndex, (int)Enums.EntityTypes.Player,
+                    PacketSender.SendEntityDataToProximity(MyPlayer.MyIndex, (int)EntityTypes.Player,
                         MyPlayer.Data(), MyPlayer);
                     PacketSender.SendPlayerMsg(MyPlayer.MyClient, "Your access has been updated!", Color.Red);
                     CallStack.Peek().CommandIndex++;
@@ -668,7 +674,7 @@ namespace Intersect_Server.Classes.Entities
                     mapNum = -1;
                     tileX = 0;
                     tileY = 0;
-                    direction = (int)Enums.Directions.Up;
+                    direction = (int)Directions.Up;
                     targetEntity = null;
                     switch (spawnCondition)
                     {
@@ -711,16 +717,16 @@ namespace Intersect_Server.Classes.Entities
                                     int tmp = 0;
                                     switch (targetEntity.Dir)
                                     {
-                                        case (int)Enums.Directions.Down:
+                                        case (int)Directions.Down:
                                             yDiff *= -1;
                                             xDiff *= -1;
                                             break;
-                                        case (int)Enums.Directions.Left:
+                                        case (int)Directions.Left:
                                             tmp = yDiff;
                                             yDiff = xDiff;
                                             xDiff = tmp;
                                             break;
-                                        case (int)Enums.Directions.Right:
+                                        case (int)Directions.Right:
                                             tmp = yDiff;
                                             yDiff = xDiff;
                                             xDiff = -tmp;
@@ -749,7 +755,7 @@ namespace Intersect_Server.Classes.Entities
                     mapNum = -1;
                     tileX = 0;
                     tileY = 0;
-                    direction = (int)Enums.Directions.Up;
+                    direction = (int)Directions.Up;
                     targetEntity = null;
                     switch (spawnCondition)
                     {
@@ -817,16 +823,16 @@ namespace Intersect_Server.Classes.Entities
                                         int tmp = 0;
                                         switch (targetEntity.Dir)
                                         {
-                                            case (int)Enums.Directions.Down:
+                                            case (int)Directions.Down:
                                                 yDiff *= -1;
                                                 xDiff *= -1;
                                                 break;
-                                            case (int)Enums.Directions.Left:
+                                            case (int)Directions.Left:
                                                 tmp = yDiff;
                                                 yDiff = xDiff;
                                                 xDiff = tmp;
                                                 break;
-                                            case (int)Enums.Directions.Right:
+                                            case (int)Directions.Right:
                                                 tmp = yDiff;
                                                 yDiff = xDiff;
                                                 xDiff = -tmp;

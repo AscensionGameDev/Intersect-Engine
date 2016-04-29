@@ -11,8 +11,6 @@ using Intersect_Client.Classes.UI;
 using Intersect_Client_MonoGame.Classes.SFML.Graphics;
 using Intersect_Client_MonoGame.Classes.SFML.Input;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
 
 namespace Intersect_Client_MonoGame
 {

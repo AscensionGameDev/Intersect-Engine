@@ -19,11 +19,16 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+
 using System;
+using Intersect_Library;
+using Intersect_Library.GameObjects;
 using Intersect_Server.Classes.General;
 using Intersect_Server.Classes.Misc;
+using Intersect_Server.Classes.Networking;
+using Options = Intersect_Server.Classes.General.Options;
 
-namespace Intersect_Server.Classes
+namespace Intersect_Server.Classes.Entities
 {
     public class Npc : Entity
     {
@@ -52,7 +57,7 @@ namespace Intersect_Server.Classes
             MyName = myBase.Name;
             MySprite = myBase.Sprite;
 
-            for (int I = 0; I < (int)Enums.Stats.StatCount; I++)
+            for (int I = 0; I < (int)Stats.StatCount; I++)
             {
                 Stat[I] = new EntityStat(myBase.Stat[I]);
             }
@@ -69,7 +74,7 @@ namespace Intersect_Server.Classes
             base.Die(dropitems);
 
             Globals.GameMaps[CurrentMap].RemoveEntity(this);
-            PacketSender.SendEntityLeave(MyIndex, (int)Enums.EntityTypes.GlobalEntity, CurrentMap);
+            PacketSender.SendEntityLeave(MyIndex, (int)EntityTypes.GlobalEntity, CurrentMap);
             Globals.Entities[MyIndex] = null;
         }
 
@@ -92,7 +97,7 @@ namespace Intersect_Server.Classes
             //Check if the attacker is stunned or blinded.
             for (var n = 0; n < Status.Count; n++)
             {
-                if (Status[n].Type == (int)Enums.StatusTypes.Stun || Status[n].Type == (int)Enums.StatusTypes.Blind)
+                if (Status[n].Type == (int)StatusTypes.Stun || Status[n].Type == (int)StatusTypes.Blind)
                 {
                     return;
                 }
@@ -195,7 +200,7 @@ namespace Intersect_Server.Classes
                                 //check if NPC is snared or stunned
                                 for (var n = 0; n < Status.Count; n++)
                                 {
-                                    if (Status[n].Type == (int)Enums.StatusTypes.Stun || Status[n].Type == (int)Enums.StatusTypes.Snare)
+                                    if (Status[n].Type == (int)StatusTypes.Stun || Status[n].Type == (int)StatusTypes.Snare)
                                     {
                                         return;
                                     }
@@ -228,7 +233,7 @@ namespace Intersect_Server.Classes
                         //check if NPC is snared or stunned
                         for (var n = 0; n < Status.Count; n++)
                         {
-                            if (Status[n].Type == (int)Enums.StatusTypes.Stun || Status[n].Type == (int)Enums.StatusTypes.Snare)
+                            if (Status[n].Type == (int)StatusTypes.Stun || Status[n].Type == (int)StatusTypes.Snare)
                             {
                                 return;
                             }

@@ -19,12 +19,12 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-using WebSocketSharp.Server;
+
 using Intersect_Server.Classes.General;
-using WebSocket = Intersect_Server.Classes.Networking.WebSocket;
+using WebSocketSharp.Server;
 
 
-namespace Intersect_Server.Classes
+namespace Intersect_Server.Classes.Networking
 {
     public static class WebSocketServer
     {

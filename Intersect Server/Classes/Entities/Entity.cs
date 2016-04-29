@@ -19,12 +19,20 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+
 using System;
 using System.Collections.Generic;
+using Intersect_Library;
+using Intersect_Server.Classes.Core;
 using Intersect_Server.Classes.General;
+using Intersect_Server.Classes.Items;
 using Intersect_Server.Classes.Maps;
+using Intersect_Server.Classes.Networking;
+using Intersect_Server.Classes.Spells;
+using Attribute = Intersect_Library.GameObjects.Maps.Attribute;
+using Options = Intersect_Server.Classes.General.Options;
 
-namespace Intersect_Server.Classes
+namespace Intersect_Server.Classes.Entities
 {
 
     public class Entity
@@ -47,9 +55,9 @@ namespace Intersect_Server.Classes
         public int Dir;
 
         //Vitals & Stats
-        public int[] MaxVital = new int[(int)Enums.Vitals.VitalCount];
-        public int[] Vital = new int[(int)Enums.Vitals.VitalCount];
-        public EntityStat[] Stat = new EntityStat[(int)Enums.Stats.StatCount];
+        public int[] MaxVital = new int[(int)Vitals.VitalCount];
+        public int[] Vital = new int[(int)Vitals.VitalCount];
+        public EntityStat[] Stat = new EntityStat[(int)Stats.StatCount];
 
         //Combat Status
         public long CastTime = 0;
@@ -79,28 +87,28 @@ namespace Intersect_Server.Classes
         //Initialization
         public Entity(int index)
         {
-            for (int I = 0; I < (int)Enums.Stats.StatCount; I++ )
+            for (int I = 0; I < (int)Stats.StatCount; I++ )
             {
                 Stat[I] = new EntityStat(0);
             }
 
             MyIndex = index;
             //HP
-            MaxVital[(int)Enums.Vitals.Health] = 100;
-            Vital[(int)Enums.Vitals.Health] = 100;
+            MaxVital[(int)Vitals.Health] = 100;
+            Vital[(int)Vitals.Health] = 100;
             //MP
-            MaxVital[(int)Enums.Vitals.Health] = 100;
-            Vital[(int)Enums.Vitals.Health] = 100;
+            MaxVital[(int)Vitals.Health] = 100;
+            Vital[(int)Vitals.Health] = 100;
             //ATK
-            Stat[(int)Enums.Stats.Attack].Stat = 23;
+            Stat[(int)Stats.Attack].Stat = 23;
             //Ability
-            Stat[(int)Enums.Stats.AbilityPower].Stat = 16;
+            Stat[(int)Stats.AbilityPower].Stat = 16;
             //Def
-            Stat[(int)Enums.Stats.Defense].Stat = 23;
+            Stat[(int)Stats.Defense].Stat = 23;
             //MR
-            Stat[(int)Enums.Stats.MagicResist].Stat = 16;
+            Stat[(int)Stats.MagicResist].Stat = 16;
             //SPD
-            Stat[(int)Enums.Stats.Speed].Stat = 20;
+            Stat[(int)Stats.Speed].Stat = 20;
         }
 
         public virtual void Update()
@@ -123,7 +131,7 @@ namespace Intersect_Server.Classes
                 Status[i].TryRemoveStatus();
             }
             //If there is a removal of a status, update it client sided.
-            if (count > Status.Count) { PacketSender.SendEntityVitals(MyIndex, (int)Enums.EntityTypes.GlobalEntity, this); }
+            if (count > Status.Count) { PacketSender.SendEntityVitals(MyIndex, (int)EntityTypes.GlobalEntity, this); }
         }
 
         //Movement
@@ -179,9 +187,9 @@ namespace Intersect_Server.Classes
                 Attribute tileAttribute = Globals.GameMaps[tile.GetMap()].Attributes[tile.GetX(), tile.GetY()];
                 if (tileAttribute != null)
                 {
-                    if (tileAttribute.value == (int)Enums.MapAttributes.Blocked) return -2;
-                    if (tileAttribute.value == (int)Enums.MapAttributes.NPCAvoid && this.GetType() == typeof(Npc)) return -2;
-                    if (tileAttribute.value == (int)Enums.MapAttributes.ZDimension &&
+                    if (tileAttribute.value == (int)MapAttributes.Blocked) return -2;
+                    if (tileAttribute.value == (int)MapAttributes.NPCAvoid && this.GetType() == typeof(Npc)) return -2;
+                    if (tileAttribute.value == (int)MapAttributes.ZDimension &&
                         tileAttribute.data2 - 1 == CurrentZ) return -3;
                 }
             }
@@ -199,19 +207,19 @@ namespace Intersect_Server.Classes
                     CollisionIndex = en.MyIndex;
                     if (en.GetType() == typeof(Player))
                     {
-                        return (int)Enums.EntityTypes.Player;
+                        return (int)EntityTypes.Player;
                     }
                     else if (en.GetType() == typeof(Npc))
                     {
-                        return (int)Enums.EntityTypes.Player;
+                        return (int)EntityTypes.Player;
                     }
                     else if (en.GetType() == typeof(Resource))
                     {
-                        return (int)Enums.EntityTypes.Resource;
+                        return (int)EntityTypes.Resource;
                     }
                     else if (en.GetType() == typeof(EventPageInstance))
                     {
-                        return (int)Enums.EntityTypes.Event;
+                        return (int)EntityTypes.Event;
                     }
                 }
             }
@@ -267,16 +275,16 @@ namespace Intersect_Server.Classes
                 {
                     if (client != null)
                     {
-                        PacketSender.SendEntityMoveTo(client, MyIndex, (int)Enums.EntityTypes.Event, this);
+                        PacketSender.SendEntityMoveTo(client, MyIndex, (int)EntityTypes.Event, this);
                     }
                     else
                     {
-                        PacketSender.SendEntityMove(MyIndex, (int)Enums.EntityTypes.Event, this);
+                        PacketSender.SendEntityMove(MyIndex, (int)EntityTypes.Event, this);
                     }
                 }
                 else
                 {
-                    PacketSender.SendEntityMove(MyIndex, (int)Enums.EntityTypes.GlobalEntity, this);
+                    PacketSender.SendEntityMove(MyIndex, (int)EntityTypes.GlobalEntity, this);
                 }
                 MoveTimer = Environment.TickCount + (int)((1.0 / (Stat[2].Value() / 10f)) * 1000);
             }
@@ -287,11 +295,11 @@ namespace Intersect_Server.Classes
             Dir = dir;
             if (this.GetType() == typeof(EventPageInstance))
             {
-                PacketSender.SendEntityDirTo(((EventPageInstance)this).Client, MyIndex, (int)Enums.EntityTypes.Event, Dir, CurrentMap);
+                PacketSender.SendEntityDirTo(((EventPageInstance)this).Client, MyIndex, (int)EntityTypes.Event, Dir, CurrentMap);
             }
             else
             {
-                PacketSender.SendEntityDir(MyIndex, (int)Enums.EntityTypes.GlobalEntity, Dir, CurrentMap);
+                PacketSender.SendEntityDir(MyIndex, (int)EntityTypes.GlobalEntity, Dir, CurrentMap);
             }
         }
         // Change the dimension if the player is on a gateway
@@ -302,7 +310,7 @@ namespace Intersect_Server.Classes
                 if (CurrentY < Options.MapHeight && CurrentY >= 0)
                 {
                     Attribute attribute = Globals.GameMaps[CurrentMap].Attributes[CurrentX, CurrentY];
-                    if (attribute != null && attribute.value == (int)Enums.MapAttributes.ZDimension)
+                    if (attribute != null && attribute.value == (int)MapAttributes.ZDimension)
                     {
                         if (attribute.data1 > 0)
                         {
@@ -338,13 +346,13 @@ namespace Intersect_Server.Classes
                                 CurrentY;
                         if (Math.Abs(xDiff) > Math.Abs(yDiff))
                         {
-                            if (xDiff < 0) return (int)Enums.Directions.Left;
-                            if (xDiff > 0) return (int)Enums.Directions.Right;
+                            if (xDiff < 0) return (int)Directions.Left;
+                            if (xDiff > 0) return (int)Directions.Right;
                         }
                         else
                         {
-                            if (yDiff < 0) return (int)Enums.Directions.Up;
-                            if (yDiff > 0) return (int)Enums.Directions.Down;
+                            if (yDiff < 0) return (int)Directions.Up;
+                            if (yDiff > 0) return (int)Directions.Down;
                         }
                     }
                 }
@@ -421,25 +429,25 @@ namespace Intersect_Server.Classes
             //Check if magic or physical damage
             if (isSpell == -1)
             {
-                dmg = DamageCalculator(Stat[(int)Enums.Stats.Attack].Value(), Globals.Entities[enemyIndex].Stat[(int)Enums.Stats.Defense].Value());
+                dmg = DamageCalculator(Stat[(int)Stats.Attack].Value(), Globals.Entities[enemyIndex].Stat[(int)Stats.Defense].Value());
                 if (dmg <= 0) dmg = 1; // Always do damage.
             }
             else
             {
                 // Handle different dmg formula for healing and damaging spells.
-                if (Globals.GameSpells[isSpell].VitalDiff[(int)Enums.Vitals.Health] > 0)
+                if (Globals.GameSpells[isSpell].VitalDiff[(int)Vitals.Health] > 0)
                 {
-                    dmg = -Globals.GameSpells[isSpell].VitalDiff[(int)Enums.Vitals.Health];
+                    dmg = -Globals.GameSpells[isSpell].VitalDiff[(int)Vitals.Health];
                 }
                 else
                 {
-                    dmg = DamageCalculator(Stat[(int)Enums.Stats.AbilityPower].Value(), Globals.Entities[enemyIndex].Stat[(int)Enums.Stats.MagicResist].Value()) - Globals.GameSpells[isSpell].VitalDiff[(int)Enums.Vitals.Health];
+                    dmg = DamageCalculator(Stat[(int)Stats.AbilityPower].Value(), Globals.Entities[enemyIndex].Stat[(int)Stats.MagicResist].Value()) - Globals.GameSpells[isSpell].VitalDiff[(int)Vitals.Health];
                     if (dmg <= 0) dmg = 1; // Always do damage.
                 }
                 
                 //Handle other stat debuffs/vitals.
-                Globals.Entities[enemyIndex].Vital[(int)Enums.Vitals.Mana] += Globals.GameSpells[isSpell].VitalDiff[(int)Enums.Vitals.Mana];
-                for (int i = 0; i < (int)Enums.Stats.StatCount; i++)
+                Globals.Entities[enemyIndex].Vital[(int)Vitals.Mana] += Globals.GameSpells[isSpell].VitalDiff[(int)Vitals.Mana];
+                for (int i = 0; i < (int)Stats.StatCount; i++)
                 {
                     Globals.Entities[enemyIndex].Stat[i].Buff.Add(new EntityBuff(Globals.GameSpells[isSpell].StatDiff[i], (Globals.GameSpells[isSpell].Data2 * 100)));
                 }
@@ -464,16 +472,16 @@ namespace Intersect_Server.Classes
                 }
             }
 
-            Globals.Entities[enemyIndex].Vital[(int)Enums.Vitals.Health] -= (int)dmg;
+            Globals.Entities[enemyIndex].Vital[(int)Vitals.Health] -= (int)dmg;
 
             //Check if after healing, greater than maximum hp.
-            if (Globals.Entities[enemyIndex].Vital[(int)Enums.Vitals.Health] >= Globals.Entities[enemyIndex].MaxVital[(int)Enums.Vitals.Health]) 
+            if (Globals.Entities[enemyIndex].Vital[(int)Vitals.Health] >= Globals.Entities[enemyIndex].MaxVital[(int)Vitals.Health]) 
             {
-                Globals.Entities[enemyIndex].Vital[(int)Enums.Vitals.Health] = Globals.Entities[enemyIndex].MaxVital[(int)Enums.Vitals.Health];
+                Globals.Entities[enemyIndex].Vital[(int)Vitals.Health] = Globals.Entities[enemyIndex].MaxVital[(int)Vitals.Health];
             }
 
             //Dead entity check
-            if (Globals.Entities[enemyIndex].Vital[(int)Enums.Vitals.Health] <= 0)
+            if (Globals.Entities[enemyIndex].Vital[(int)Vitals.Health] <= 0)
             {
                 //Check if a resource, if so spawn item drops differently.
                 if (Globals.Entities[enemyIndex].GetType() == typeof(Resource))
@@ -485,8 +493,8 @@ namespace Intersect_Server.Classes
             else
             {
                 //Hit him, make him mad and send the vital update.
-                PacketSender.SendEntityVitals(enemyIndex, (int)Enums.EntityTypes.GlobalEntity, Globals.Entities[enemyIndex]);
-                PacketSender.SendEntityStats(enemyIndex, (int)Enums.EntityTypes.GlobalEntity, Globals.Entities[enemyIndex]);
+                PacketSender.SendEntityVitals(enemyIndex, (int)EntityTypes.GlobalEntity, Globals.Entities[enemyIndex]);
+                PacketSender.SendEntityStats(enemyIndex, (int)EntityTypes.GlobalEntity, Globals.Entities[enemyIndex]);
             }
             // Add a timer before able to make the next move.
             if (Globals.Entities[MyIndex].GetType() == typeof(Npc))
@@ -548,7 +556,7 @@ namespace Intersect_Server.Classes
         }
         public void Reset()
         {
-            for (var i = 0; i < (int)Enums.Vitals.VitalCount; i++)
+            for (var i = 0; i < (int)Vitals.VitalCount; i++)
             {
                 Vital[i] = MaxVital[i];
             }
@@ -568,46 +576,46 @@ namespace Intersect_Server.Classes
         {
             switch (Globals.GameSpells[SpellNum].Type)
             {
-                case (int)Enums.SpellTypes.CombatSpell:
+                case (int)SpellTypes.CombatSpell:
 
                     switch (Globals.GameSpells[SpellNum].TargetType)
                     {
-                        case (int)Enums.TargetTypes.Self:
+                        case (int)SpellTargetTypes.Self:
                             if (Globals.GameSpells[SpellNum].HitAnimation > -1)
                             {
                                 PacketSender.SendAnimationToProximity(Globals.GameSpells[SpellNum].HitAnimation, 1, MyIndex, CurrentMap, 0, 0, Dir); //Target Type 1 will be global entity
                             }
                             TryAttack(MyIndex, false, SpellNum);
                             break;
-                        case (int)Enums.TargetTypes.Single:
+                        case (int)SpellTargetTypes.Single:
                             HandleAoESpell(SpellNum, Target);
                             break;
-                        case (int)Enums.TargetTypes.AoE:
+                        case (int)SpellTargetTypes.AoE:
                             HandleAoESpell(SpellNum);
                             break;
-                        case (int)Enums.TargetTypes.Projectile:
+                        case (int)SpellTargetTypes.Projectile:
                             Globals.GameMaps[CurrentMap].SpawnMapProjectile(this, Globals.GameSpells[SpellNum].Data4 - 1, CurrentMap, CurrentX, CurrentY, CurrentZ, Dir, SpellNum, Target);
                             break;
                         default:
                             break;
                     }
                     break;
-                case (int)Enums.SpellTypes.Warp:
+                case (int)SpellTypes.Warp:
                     if (GetType() == typeof(Player))
                     { 
                         Warp(Globals.GameSpells[SpellNum].Data1, Globals.GameSpells[SpellNum].Data2, Globals.GameSpells[SpellNum].Data3, Globals.GameSpells[SpellNum].Data4);
                     }
                     break;
-                case (int)Enums.SpellTypes.WarpTo:
+                case (int)SpellTypes.WarpTo:
                     if (GetType() == typeof(Player))
                     {
                         HandleAoESpell(SpellNum, Target);
                     }
                     break;
-                case (int)Enums.SpellTypes.Dash:
+                case (int)SpellTypes.Dash:
 
                     break;
-                case (int)Enums.SpellTypes.Event:
+                case (int)SpellTypes.Event:
 
                     break;
                 default:
@@ -666,7 +674,7 @@ namespace Intersect_Server.Classes
                                 if ((target == -1 || target == t.MyIndex) && t.MyIndex != MyIndex)
                                 {
                                     //Warp or attack.
-                                    if (Globals.GameSpells[SpellNum].Type == (int)Enums.SpellTypes.CombatSpell)
+                                    if (Globals.GameSpells[SpellNum].Type == (int)SpellTypes.CombatSpell)
                                     {
                                         TryAttack(t.MyIndex, false, SpellNum);
                                     }
@@ -676,7 +684,7 @@ namespace Intersect_Server.Classes
                                     }
                                     if (Globals.GameSpells[SpellNum].HitAnimation > -1)
                                     {
-                                        if (target > -1 && t.Vital[(int)Enums.Vitals.Health] > 0)
+                                        if (target > -1 && t.Vital[(int)Vitals.Health] > 0)
                                         {
                                             PacketSender.SendAnimationToProximity(Globals.GameSpells[SpellNum].HitAnimation, 1, target, tempMap, 0, 0, t.Dir); //Target Type 1 will be global entity
                                         }
@@ -810,7 +818,7 @@ namespace Intersect_Server.Classes
             Type = type;
             Duration = Environment.TickCount + duration;
             Data = data;
-            PacketSender.SendEntityVitals(EntityID, (int)Enums.EntityTypes.GlobalEntity, Globals.Entities[EntityID]);
+            PacketSender.SendEntityVitals(EntityID, (int)EntityTypes.GlobalEntity, Globals.Entities[EntityID]);
         }
 
         public void TryRemoveStatus()

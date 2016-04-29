@@ -26,9 +26,7 @@
 */
 
 using System.IO;
-using System.Security.Cryptography;
 using IntersectClientExtras.Database;
-using Intersect_Client.Classes.General;
 using Microsoft.Win32;
 
 namespace Intersect_Client.Classes.Bridges_and_Interfaces.SFML.Database

@@ -35,7 +35,7 @@ using Intersect_Client.Classes.Networking;
 
 namespace Intersect_Client.Classes.UI.Menu
 {
-    public class RegisterControls : IGUIElement
+    public class RegisterControls
     {
         //Controls
         private Label _usernameLabel;

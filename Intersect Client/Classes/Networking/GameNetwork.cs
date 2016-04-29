@@ -28,7 +28,7 @@
 using System;
 using IntersectClientExtras.Network;
 using Intersect_Client.Classes.General;
-using Intersect_Client.Classes.Misc;
+using Intersect_Library;
 
 namespace Intersect_Client.Classes.Networking
 {

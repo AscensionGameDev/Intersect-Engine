@@ -28,7 +28,12 @@ using Intersect_Editor.Forms.Editors.Event_Commands;
 using System.Drawing;
 using System.IO;
 using Intersect_Editor.Classes.Core;
-using Intersect_Editor.Classes.General;
+using Intersect_Library;
+using Intersect_Library.GameObjects.Events;
+using Intersect_Library.GameObjects.Maps;
+using Intersect_Library.GameObjects.Maps.MapList;
+using Color = System.Drawing.Color;
+using Options = Intersect_Editor.Classes.General.Options;
 
 namespace Intersect_Editor.Forms
 {
@@ -444,11 +449,11 @@ namespace Intersect_Editor.Forms
                     output += Truncate(command.Strs[0], 20);
                     return output;
                 case EventCommandType.SetSwitch:
-                    if (command.Ints[0] == (int)Enums.SwitchVariableTypes.PlayerSwitch)
+                    if (command.Ints[0] == (int)SwitchVariableTypes.PlayerSwitch)
                     {
                         return "Set Player Switch " + (command.Ints[1] + 1) + ". " + Globals.PlayerSwitches[command.Ints[1]] + " to " + Convert.ToBoolean(command.Ints[2]);
                     }
-                    else if (command.Ints[0] == (int)Enums.SwitchVariableTypes.ServerSwitch)
+                    else if (command.Ints[0] == (int)SwitchVariableTypes.ServerSwitch)
                     {
                         return "Set Global Switch " + (command.Ints[1] + 1) + ". " + Globals.ServerSwitches[command.Ints[1]] + " to " + Convert.ToBoolean(command.Ints[2]);
                     }
@@ -457,11 +462,11 @@ namespace Intersect_Editor.Forms
                         return "Invalid Command";
                     }
                 case EventCommandType.SetVariable:
-                    if (command.Ints[0] == (int)Enums.SwitchVariableTypes.PlayerVariable)
+                    if (command.Ints[0] == (int)SwitchVariableTypes.PlayerVariable)
                     {
                         output =  "Set Player Variable " + (command.Ints[1] + 1) + ". " + Globals.PlayerVariables[command.Ints[1]] + " (";
                     }
-                    else if (command.Ints[0] == (int)Enums.SwitchVariableTypes.ServerVariable)
+                    else if (command.Ints[0] == (int)SwitchVariableTypes.ServerVariable)
                     {
                         output =  "Set Global Variable " + (command.Ints[1] + 1) + ". " + Globals.ServerVariables[command.Ints[1]] + " (";
                     }
@@ -561,11 +566,11 @@ namespace Intersect_Editor.Forms
                     return "Set Player Access: Unknown Access";
                 case EventCommandType.WarpPlayer:
                     output = "Warp Player [Map: ";
-                    for (int i = 0; i < Database.OrderedMaps.Count; i++)
+                    for (int i = 0; i < MapList.GetOrderedMaps().Count; i++)
                     {
-                        if (Database.OrderedMaps[i].MapNum == command.Ints[0])
+                        if (MapList.GetOrderedMaps()[i].MapNum == command.Ints[0])
                         {
-                            output += "#" + command.Ints[0] + " " + Database.OrderedMaps[i].Name + " X: " +
+                            output += "#" + command.Ints[0] + " " + MapList.GetOrderedMaps()[i].Name + " X: " +
                                       command.Ints[1] + " Y: " + command.Ints[2] + " Dir: ";
                             switch (command.Ints[3])
                             {
@@ -627,11 +632,11 @@ namespace Intersect_Editor.Forms
                     switch (command.Ints[1])
                     {
                         case 0: //On Map/Tile Selection
-                            for (int i = 0; i < Database.OrderedMaps.Count; i++)
+                            for (int i = 0; i < MapList.GetOrderedMaps().Count; i++)
                             {
-                                if (Database.OrderedMaps[i].MapNum == command.Ints[2])
+                                if (MapList.GetOrderedMaps()[i].MapNum == command.Ints[2])
                                 {
-                                    output += "[On Map #" + command.Ints[2] + " " + Database.OrderedMaps[i].Name + " X: " +
+                                    output += "[On Map #" + command.Ints[2] + " " + MapList.GetOrderedMaps()[i].Name + " X: " +
                                               command.Ints[3] + " Y: " + command.Ints[4] + " Dir: ";
                                     switch (command.Ints[5])
                                     {
@@ -678,11 +683,11 @@ namespace Intersect_Editor.Forms
                     switch (command.Ints[1])
                     {
                         case 0: //On Map/Tile Selection
-                            for (int i = 0; i < Database.OrderedMaps.Count; i++)
+                            for (int i = 0; i < MapList.GetOrderedMaps().Count; i++)
                             {
-                                if (Database.OrderedMaps[i].MapNum == command.Ints[2])
+                                if (MapList.GetOrderedMaps()[i].MapNum == command.Ints[2])
                                 {
-                                    output += "[On Map #" + command.Ints[2] + " " + Database.OrderedMaps[i].Name + " X: " +
+                                    output += "[On Map #" + command.Ints[2] + " " + MapList.GetOrderedMaps()[i].Name + " X: " +
                                               command.Ints[3] + " Y: " + command.Ints[4] + " Dir: ";
                                     switch (command.Ints[5])
                                     {

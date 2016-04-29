@@ -24,11 +24,7 @@
     OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
     SOFTWARE.
 */
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 using IntersectClientExtras.Audio;
 using Intersect_Client.Classes.General;
 using Microsoft.Xna.Framework.Audio;

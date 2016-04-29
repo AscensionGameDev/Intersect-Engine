@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-
-namespace Intersect_Editor.Classes
+﻿namespace Intersect_Editor.Classes
 {
     public static class Sounds
     {

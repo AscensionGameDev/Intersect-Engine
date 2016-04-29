@@ -38,11 +38,18 @@ using IntersectClientExtras.Input;
 using Intersect_Client.Classes.Core;
 using Intersect_Client.Classes.General;
 using Intersect_Client.Classes.Networking;
+using Intersect_Library;
+using Color = IntersectClientExtras.GenericClasses.Color;
+using Options = Intersect_Client.Classes.General.Options;
+using Point = IntersectClientExtras.GenericClasses.Point;
+
 
 namespace Intersect_Client.Classes.UI.Game
 {
-    public class InventoryWindow : IGUIElement
+    public class InventoryWindow
     {
+        private static int ItemXPadding = 4;
+        private static int ItemYPadding = 4;
         //Controls
         private WindowControl _inventoryWindow;
         private ScrollControl _itemContainer;
@@ -85,10 +92,10 @@ namespace Intersect_Client.Classes.UI.Game
                 {
                     Items[i].pnl.IsHidden = false;
 
-                    if (Globals.GameItems[Globals.Me.Inventory[i].ItemNum].Type == (int)Enums.ItemTypes.Consumable || //Allow Stacking on Currency, Consumable, Spell, and item types of none.
-                        Globals.GameItems[Globals.Me.Inventory[i].ItemNum].Type == (int)Enums.ItemTypes.Currency ||
-                        Globals.GameItems[Globals.Me.Inventory[i].ItemNum].Type == (int)Enums.ItemTypes.None ||
-                        Globals.GameItems[Globals.Me.Inventory[i].ItemNum].Type == (int)Enums.ItemTypes.Spell)
+                    if (Globals.GameItems[Globals.Me.Inventory[i].ItemNum].Type == (int)ItemTypes.Consumable || //Allow Stacking on Currency, Consumable, Spell, and item types of none.
+                        Globals.GameItems[Globals.Me.Inventory[i].ItemNum].Type == (int)ItemTypes.Currency ||
+                        Globals.GameItems[Globals.Me.Inventory[i].ItemNum].Type == (int)ItemTypes.None ||
+                        Globals.GameItems[Globals.Me.Inventory[i].ItemNum].Type == (int)ItemTypes.Spell)
                     {
                         _values[i].IsHidden = false;
                         _values[i].Text = Globals.Me.Inventory[i].ItemVal.ToString();
@@ -120,14 +127,14 @@ namespace Intersect_Client.Classes.UI.Game
                 Items.Add(new InventoryItem(this, i));
                 Items[i].pnl = new ImagePanel(_itemContainer);
                 Items[i].pnl.SetSize(32, 32);
-                Items[i].pnl.SetPosition((i % (_itemContainer.Width / (32 + Constants.ItemXPadding))) * (32 + Constants.ItemXPadding) + Constants.ItemXPadding, (i / (_itemContainer.Width / (32 + Constants.ItemXPadding))) * (32 + Constants.ItemYPadding) + Constants.ItemYPadding);
+                Items[i].pnl.SetPosition((i % (_itemContainer.Width / (32 + ItemXPadding))) * (32 + ItemXPadding) + ItemXPadding, (i / (_itemContainer.Width / (32 + ItemXPadding))) * (32 + ItemYPadding) + ItemYPadding);
                 Items[i].pnl.Clicked += InventoryWindow_Clicked;
                 Items[i].pnl.IsHidden = true;
                 Items[i].Setup();
 
                 _values.Add(new Label(_itemContainer));
                 _values[i].Text = "";
-                _values[i].SetPosition((i % (_itemContainer.Width / (32 + Constants.ItemXPadding))) * (32 + Constants.ItemXPadding) + Constants.ItemXPadding, (i / (_itemContainer.Width / (32 + Constants.ItemXPadding))) * (32 + Constants.ItemYPadding) + Constants.ItemYPadding + 24);
+                _values[i].SetPosition((i % (_itemContainer.Width / (32 + ItemXPadding))) * (32 + ItemXPadding) + ItemXPadding, (i / (_itemContainer.Width / (32 + ItemXPadding))) * (32 + ItemYPadding) + ItemYPadding + 24);
                 _values[i].TextColor = Color.Black;
                 _values[i].MakeColorDark();
                 _values[i].IsHidden = true;
@@ -153,16 +160,18 @@ namespace Intersect_Client.Classes.UI.Game
         public FloatRect RenderBounds()
         {
             FloatRect rect = new FloatRect();
-            rect.X = _inventoryWindow.LocalPosToCanvas(new Point(0, 0)).X - Constants.ItemXPadding / 2;
-            rect.Y = _inventoryWindow.LocalPosToCanvas(new Point(0, 0)).Y - Constants.ItemYPadding / 2;
-            rect.Width = _inventoryWindow.Width + Constants.ItemXPadding;
-            rect.Height = _inventoryWindow.Height + Constants.ItemYPadding;
+            rect.X = _inventoryWindow.LocalPosToCanvas(new Point(0, 0)).X - ItemXPadding / 2;
+            rect.Y = _inventoryWindow.LocalPosToCanvas(new Point(0, 0)).Y - ItemYPadding / 2;
+            rect.Width = _inventoryWindow.Width + ItemXPadding;
+            rect.Height = _inventoryWindow.Height + ItemYPadding;
             return rect;
         }
     }
 
     public class InventoryItem
     {
+        private static int ItemXPadding = 4;
+        private static int ItemYPadding = 4;
         public ImagePanel pnl;
         public ImagePanel equipPanel;
         private ItemDescWindow _descWindow;
@@ -378,7 +387,7 @@ namespace Intersect_Client.Classes.UI.Game
                 {
                     //Drug the item and now we stopped
                     IsDragging = false;
-                    FloatRect dragRect = new FloatRect(dragIcon.x - Constants.ItemXPadding / 2, dragIcon.y - Constants.ItemYPadding / 2, Constants.ItemXPadding/2 + 32, Constants.ItemYPadding / 2 + 32);
+                    FloatRect dragRect = new FloatRect(dragIcon.x - ItemXPadding / 2, dragIcon.y - ItemYPadding / 2, ItemXPadding/2 + 32, ItemYPadding / 2 + 32);
 
                     float  bestIntersect = 0;
                     int bestIntersectIndex = -1;

@@ -22,10 +22,11 @@
 
 using System;
 using System.Collections.Generic;
-using Intersect_Server.Classes.Maps;
-using Intersect_Server.Classes.Misc;
+using Intersect_Library;
+using Intersect_Server.Classes.Core;
+using Intersect_Server.Classes.General;
 
-namespace Intersect_Server.Classes
+namespace Intersect_Server.Classes.Maps
 {
 	public class MapGrid
 	{
@@ -85,7 +86,7 @@ namespace Intersect_Server.Classes
 		    }
 		}
 
-        private void CalculateBounds(MapStruct map, int x, int y)
+        private void CalculateBounds(MapInstance map, int x, int y)
         {
             if (HasMap(map.MyMapNum,true)) { return; }
             if (map.Deleted > 0) { return; }
@@ -96,19 +97,19 @@ namespace Intersect_Server.Classes
             if (y < _topLeft.Y) {_topLeft.Y = y;}
             if (x > _botRight.X) {_botRight.X = x;}
             if (y > _botRight.Y) { _botRight.Y = y;}
-            if (MapHelper.IsMapValid(map.Up) && Globals.GameMaps[map.Up].Down == map.MyMapNum)
+            if (Globals.GameMaps.ContainsKey(map.Up) && Globals.GameMaps[map.Up].Down == map.MyMapNum)
             {
                 CalculateBounds(Globals.GameMaps[map.Up], x, y - 1);
             }
-            if (MapHelper.IsMapValid(map.Down) && Globals.GameMaps[map.Down].Up == map.MyMapNum)
+            if (Globals.GameMaps.ContainsKey(map.Down) && Globals.GameMaps[map.Down].Up == map.MyMapNum)
             {
                 CalculateBounds(Globals.GameMaps[map.Down], x, y + 1);
             }
-            if (MapHelper.IsMapValid(map.Left) && Globals.GameMaps[map.Left].Right == map.MyMapNum)
+            if (Globals.GameMaps.ContainsKey(map.Left) && Globals.GameMaps[map.Left].Right == map.MyMapNum)
             {
                 CalculateBounds(Globals.GameMaps[map.Left], x - 1, y);
             }
-            if (MapHelper.IsMapValid(map.Right) && Globals.GameMaps[map.Right].Left == map.MyMapNum)
+            if (Globals.GameMaps.ContainsKey(map.Right) && Globals.GameMaps[map.Right].Left == map.MyMapNum)
             {
                 CalculateBounds(Globals.GameMaps[map.Right], x + 1, y);
             }

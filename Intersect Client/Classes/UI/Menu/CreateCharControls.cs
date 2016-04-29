@@ -27,7 +27,6 @@
 
 using System;
 using IntersectClientExtras.File_Management;
-using IntersectClientExtras.Graphics;
 using IntersectClientExtras.Gwen;
 using IntersectClientExtras.Gwen.Control;
 using IntersectClientExtras.Gwen.Control.EventArguments;
@@ -38,7 +37,7 @@ using Intersect_Client.Classes.Networking;
 
 namespace Intersect_Client.Classes.UI.Menu
 {
-    public class CreateCharControls : IGUIElement
+    public class CreateCharControls
     {
         //Controls
         private Label _charnameLabel;

@@ -1,12 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 using Intersect_Editor.Classes;
-using Graphics = System.Drawing.Graphics;
+using Intersect_Library;
+using Intersect_Library.GameObjects;
 
 namespace Intersect_Editor.Forms.Controls
 {
@@ -36,7 +32,7 @@ namespace Intersect_Editor.Forms.Controls
             scrlLightIntensity.Value = tmpLight.Intensity;
             txtLightExpandAmt.Text = "" + tmpLight.Expand;
             scrlLightSize.Value = tmpLight.Size;
-            pnlLightColor.BackColor = tmpLight.Color;
+            pnlLightColor.BackColor = System.Drawing.Color.FromArgb(tmpLight.Color.A, tmpLight.Color.R, tmpLight.Color.G, tmpLight.Color.B);
             if (!CanClose) btnOkay.Hide();
         }
 
@@ -154,7 +150,7 @@ namespace Intersect_Editor.Forms.Controls
             colorDialog.Color = System.Drawing.Color.White;
             colorDialog.ShowDialog();
             pnlLightColor.BackColor = colorDialog.Color;
-            _editingLight.Color = colorDialog.Color;
+            _editingLight.Color = Color.FromArgb(colorDialog.Color.A, colorDialog.Color.R, colorDialog.Color.G, colorDialog.Color.B);
             Classes.EditorGraphics.TilePreviewUpdated = true;
         }
 

@@ -23,7 +23,9 @@ using System;
 using System.Windows.Forms;
 using Intersect_Editor.Classes;
 using Intersect_Editor.Classes.Core;
-using Intersect_Editor.Classes.General;
+using Intersect_Library;
+using Intersect_Library.GameObjects;
+using Options = Intersect_Editor.Classes.General.Options;
 
 namespace Intersect_Editor.Forms
 {
@@ -91,7 +93,8 @@ namespace Intersect_Editor.Forms
             cmbToolType.Items.Add("None");
             cmbToolType.Items.AddRange(Options.ToolTypes.ToArray());
             cmbEquipmentBonus.Items.Add("None");
-            cmbEquipmentBonus.Items.AddRange(Enums.ItemBonusEffects.ToArray());
+            cmbEquipmentBonus.Items.Add("Cooldown Reduction");
+            cmbEquipmentBonus.Items.Add("Life Steal");
             scrlProjectile.Maximum = Options.MaxProjectiles;
         }
 
@@ -212,7 +215,7 @@ namespace Intersect_Editor.Forms
         private void btnDelete_Click(object sender, EventArgs e)
         {
             var tempItem = new ItemStruct();
-            Globals.GameItems[_editorIndex].LoadItem(tempItem.ItemData(),_editorIndex);
+            Globals.GameItems[_editorIndex].Load(tempItem.ItemData(),_editorIndex);
             UpdateEditor();
         }
 
@@ -220,7 +223,7 @@ namespace Intersect_Editor.Forms
         {
             for (var i = 0; i < Options.MaxItems; i++)
             {
-                Globals.GameItems[i].LoadItem(_itemsBackup[i].ToArray(),i);
+                Globals.GameItems[i].Load(_itemsBackup[i].ToArray(),i);
             }
 
             Hide();

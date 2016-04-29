@@ -37,7 +37,9 @@ using Intersect_Client.Classes.UI;
 using Intersect_Client.Classes.UI.Game;
 using System.Collections.Generic;
 using Intersect_Client.Classes.Maps;
-using Intersect_Client.Classes.Misc;
+using Intersect_Library;
+using Intersect_Library.GameObjects.Maps;
+using Options = Intersect_Client.Classes.General.Options;
 
 namespace Intersect_Client.Classes.Entities
 {
@@ -266,7 +268,7 @@ namespace Intersect_Client.Classes.Entities
             {
                 if (CurrentY < Options.MapHeight && CurrentY >= 0)
                 {
-                    if (Globals.GameMaps[CurrentMap].Attributes[CurrentX, CurrentY].value == (int)Enums.MapAttributes.ZDimension)
+                    if (Globals.GameMaps[CurrentMap].Attributes[CurrentX, CurrentY].value == (int)MapAttributes.ZDimension)
                     {
                         if (Globals.GameMaps[CurrentMap].Attributes[CurrentX, CurrentY].data1 > 0)
                         {
@@ -547,7 +549,7 @@ namespace Intersect_Client.Classes.Entities
             var x = (int)Math.Floor(Globals.InputManager.GetMousePosition().X + GameGraphics.CurrentView.Left);
             var y = (int)Math.Floor(Globals.InputManager.GetMousePosition().Y + GameGraphics.CurrentView.Top);
 
-            foreach (KeyValuePair<int, MapStruct> map in Globals.GameMaps)
+            foreach (KeyValuePair<int, MapInstance> map in Globals.GameMaps)
             {
                 if (x >= map.Value.GetX() && x <= map.Value.GetX() + (Options.MapWidth * Options.TileWidth))
                 {
@@ -560,13 +562,14 @@ namespace Intersect_Client.Classes.Entities
                         //transform pixel format to tile format
                         x /= Options.TileWidth;
                         y /= Options.TileHeight;
+                        int mapNum = map.Value.MyMapNum;
 
-                        if (GetRealLocation(ref x, ref y, ref map.Value.MyMapNum))
+                        if (GetRealLocation(ref x, ref y, ref mapNum))
                         {
                             foreach (var en in Globals.Entities)
                             {
                                 if (en.Value == null) continue;
-                                if (en.Value.CurrentMap == map.Value.MyMapNum && en.Value.CurrentX == x && en.Value.CurrentY == y)
+                                if (en.Value.CurrentMap == mapNum && en.Value.CurrentX == x && en.Value.CurrentY == y)
                                 {
                                     if (en.GetType() != typeof(Projectile))
                                     {
@@ -582,7 +585,7 @@ namespace Intersect_Client.Classes.Entities
                                 foreach (var en in eventMap.Value.LocalEntities)
                                 {
                                     if (en.Value == null) continue;
-                                    if (en.Value.CurrentMap == map.Value.MyMapNum && en.Value.CurrentX == x && en.Value.CurrentY == y && ((Event)en.Value).DisablePreview == 0)
+                                    if (en.Value.CurrentMap == mapNum && en.Value.CurrentX == x && en.Value.CurrentY == y && ((Event)en.Value).DisablePreview == 0)
                                     {
                                         if (_targetBox != null) { _targetBox.Dispose(); _targetBox = null; }
                                         _targetBox = new EntityBox(Gui.GameUI.GameCanvas, en.Value, 0, 100);
@@ -630,7 +633,7 @@ namespace Intersect_Client.Classes.Entities
             //check if player is stunned or snared, if so don't let them move.
             for (var n = 0; n < Status.Count; n++)
             {
-                if (Status[n].Type == (int)Enums.StatusTypes.Stun || Status[n].Type == (int)Enums.StatusTypes.Snare)
+                if (Status[n].Type == (int)StatusTypes.Stun || Status[n].Type == (int)StatusTypes.Snare)
                 {
                     return;
                 }
@@ -699,7 +702,7 @@ namespace Intersect_Client.Classes.Entities
 
                     if (IsMoving)
                     {
-                        MoveTimer = Globals.System.GetTimeMS() + (Stat[(int)Enums.Stats.Speed] / 10f);
+                        MoveTimer = Globals.System.GetTimeMS() + (Stat[(int)Stats.Speed] / 10f);
                         didMove = true;
                         if (CurrentX < 0 || CurrentY < 0 || CurrentX > (Options.MapWidth - 1) || CurrentY > (Options.MapHeight - 1))
                         {
@@ -998,11 +1001,11 @@ namespace Intersect_Client.Classes.Entities
 
                 if (Globals.LocalMaps[tmpI] > -1 && Globals.GameMaps.ContainsKey(Globals.LocalMaps[tmpI]))
                 {
-                    if (Globals.GameMaps[Globals.LocalMaps[tmpI]].Attributes[tmpX, tmpY].value == (int)Enums.MapAttributes.Blocked && !NoClip)
+                    if (Globals.GameMaps[Globals.LocalMaps[tmpI]].Attributes[tmpX, tmpY].value == (int)MapAttributes.Blocked && !NoClip)
                     {
                         return -2;
                     }
-                    else if (Globals.GameMaps[Globals.LocalMaps[tmpI]].Attributes[tmpX, tmpY].value == (int)Enums.MapAttributes.ZDimension && !NoClip)
+                    else if (Globals.GameMaps[Globals.LocalMaps[tmpI]].Attributes[tmpX, tmpY].value == (int)MapAttributes.ZDimension && !NoClip)
                     {
                         if (Globals.GameMaps[Globals.LocalMaps[tmpI]].Attributes[tmpX, tmpY].data2 - 1 == z)
                         {
@@ -1058,10 +1061,10 @@ namespace Intersect_Client.Classes.Entities
 
             if (_targetIndex > -1 && Globals.Entities.ContainsKey(_targetIndex))
             {
-                Globals.Entities[_targetIndex].DrawTarget((int)Enums.TargetTypes.Selected);
+                Globals.Entities[_targetIndex].DrawTarget((int)TargetTypes.Selected);
             }
 
-            foreach (KeyValuePair<int, MapStruct> map in Globals.GameMaps)
+            foreach (KeyValuePair<int, MapInstance> map in Globals.GameMaps)
             {
                 if (x >= map.Value.GetX() && x <= map.Value.GetX() + (Options.MapWidth * Options.TileWidth))
                 {
@@ -1074,17 +1077,18 @@ namespace Intersect_Client.Classes.Entities
                         //transform pixel format to tile format
                         x /= Options.TileWidth;
                         y /= Options.TileHeight;
+                        int mapNum = map.Value.MyMapNum;
 
-                        if (GetRealLocation(ref x, ref y, ref map.Value.MyMapNum))
+                        if (GetRealLocation(ref x, ref y, ref mapNum))
                         {
                             foreach (var en in Globals.Entities)
                             {
                                 if (en.Value == null) continue;
-                                if (en.Value.CurrentMap == map.Value.MyMapNum && en.Value.CurrentX == x && en.Value.CurrentY == y)
+                                if (en.Value.CurrentMap == mapNum && en.Value.CurrentX == x && en.Value.CurrentY == y)
                                 {
                                     if (en.GetType() != typeof(Projectile))
                                     {
-                                        en.Value.DrawTarget((int)Enums.TargetTypes.Hover);
+                                        en.Value.DrawTarget((int)TargetTypes.Hover);
                                     }
                                 }
                             }
@@ -1093,9 +1097,9 @@ namespace Intersect_Client.Classes.Entities
                                 foreach (var en in eventMap.Value.LocalEntities)
                                 {
                                     if (en.Value == null) continue;
-                                    if (en.Value.CurrentMap == map.Value.MyMapNum && en.Value.CurrentX == x && en.Value.CurrentY == y && ((Event)en.Value).DisablePreview == 0)
+                                    if (en.Value.CurrentMap == mapNum && en.Value.CurrentX == x && en.Value.CurrentY == y && ((Event)en.Value).DisablePreview == 0)
                                     {
-                                            en.Value.DrawTarget((int)Enums.TargetTypes.Hover);
+                                            en.Value.DrawTarget((int)TargetTypes.Hover);
                                     }
                                 }
                             }

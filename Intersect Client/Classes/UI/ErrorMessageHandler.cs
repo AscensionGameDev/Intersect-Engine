@@ -32,7 +32,7 @@ using Intersect_Client.Classes.Core;
 
 namespace Intersect_Client.Classes.UI
 {
-    public class ErrorMessageHandler : IGUIElement
+    public class ErrorMessageHandler
     {
         //Controls
         private List<GUIError> _errors = new List<GUIError>();

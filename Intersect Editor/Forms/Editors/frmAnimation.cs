@@ -21,17 +21,14 @@
 */
 using Intersect_Editor.Classes;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
 using System.Windows.Forms;
 using Intersect_Editor.Classes.Core;
-using Intersect_Editor.Classes.General;
+using Intersect_Library;
+using Intersect_Library.GameObjects;
 using Microsoft.Xna.Framework.Graphics;
+using Color = System.Drawing.Color;
+using Options = Intersect_Editor.Classes.General.Options;
 
 namespace Intersect_Editor.Forms
 {

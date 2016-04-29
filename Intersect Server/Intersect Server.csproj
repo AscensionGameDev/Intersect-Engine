@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
@@ -9,7 +9,7 @@
     <OutputType>Exe</OutputType>
     <RootNamespace>Intersect_Server</RootNamespace>
     <AssemblyName>Intersect Server</AssemblyName>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
     <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
@@ -86,34 +86,22 @@
     <Compile Include="Classes\Entities\EventInstance.cs" />
     <Compile Include="Classes\Entities\Projectile.cs" />
     <Compile Include="Classes\Entities\Resource.cs" />
-    <Compile Include="Classes\Game Objects\AnimationStruct.cs" />
-    <Compile Include="Classes\Game Objects\ClassStruct.cs" />
-    <Compile Include="Classes\Game Objects\ProjectileStruct.cs" />
-    <Compile Include="Classes\Game Objects\QuestStruct.cs" />
-    <Compile Include="Classes\Game Objects\ResourceStruct.cs" />
-    <Compile Include="Classes\Game Objects\ShopStruct.cs" />
-    <Compile Include="Classes\General\Enums.cs" />
-    <Compile Include="Classes\Game Objects\ItemStruct.cs" />
     <Compile Include="Classes\Entities\EventPageInstance.cs" />
-    <Compile Include="Classes\Entities\EventStruct.cs" />
     <Compile Include="Classes\Core\Main.cs" />
     <Compile Include="Classes\General\Options.cs" />
     <Compile Include="Classes\Items\ItemInstance.cs" />
-    <Compile Include="Classes\Maps\MapHelper.cs" />
-    <Compile Include="Classes\Maps\MapList.cs" />
+    <Compile Include="Classes\Maps\MapInstance.cs" />
+    <Compile Include="Classes\Maps\MapItemInstance.cs" />
+    <Compile Include="Classes\Maps\MapNpcSpawnInstance.cs" />
+    <Compile Include="Classes\Maps\MapResourceSpawnInstance.cs" />
     <Compile Include="Classes\Maps\TileHelper.cs" />
-    <Compile Include="Classes\Misc\Color.cs" />
     <Compile Include="Classes\Misc\Pathfinder.cs" />
-    <Compile Include="Classes\Misc\Point.cs" />
     <Compile Include="Classes\Networking\GameSocket.cs" />
     <Compile Include="Classes\Networking\NetSocket.cs" />
     <Compile Include="Classes\Networking\NetSocketServer.cs" />
     <Compile Include="Classes\Networking\Client.cs" />
-    <Compile Include="Classes\Misc\ByteBuffer.cs" />
     <Compile Include="Classes\Entities\Npc.cs" />
-    <Compile Include="Classes\Game Objects\NpcStruct.cs" />
     <Compile Include="Classes\Networking\PacketHandler.cs" />
-    <Compile Include="Classes\Maps\MapStruct.cs" />
     <Compile Include="Classes\General\Globals.cs" />
     <Compile Include="Classes\Networking\PacketSender.cs" />
     <Compile Include="Classes\Entities\Player.cs" />
@@ -121,15 +109,26 @@
     <Compile Include="Classes\Core\Database.cs" />
     <Compile Include="Classes\Maps\MapGrid.cs" />
     <Compile Include="Classes\Core\ServerLoop.cs" />
-    <Compile Include="Classes\Game Objects\SpellStruct.cs" />
     <Compile Include="Classes\Networking\WebSocket.cs" />
     <Compile Include="Classes\Networking\WebSocketServer.cs" />
     <Compile Include="Classes\Spells\SpellInstance.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <None Include="app.config" />
+  </ItemGroup>
   <ItemGroup>
     <Content Include="IntersectLogo.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Intersect Library\Intersect Library\Intersect Library.csproj">
+      <Project>{bc304b43-1f2c-4454-9edc-48f47357ca94}</Project>
+      <Name>Intersect Library</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Classes\GameObjects\Events\" />
+    <Folder Include="Classes\GameObjects\Maps\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>

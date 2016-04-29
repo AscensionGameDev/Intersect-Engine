@@ -25,8 +25,7 @@
     SOFTWARE.
 */
 
-using Intersect_Client.Classes.General;
-using Intersect_Client.Classes.Misc;
+using Intersect_Library;
 
 namespace Intersect_Client.Classes.Items
 {
@@ -34,7 +33,7 @@ namespace Intersect_Client.Classes.Items
     {
         public int ItemNum = -1;
         public int ItemVal = 0;
-        public int[] StatBoost = new int[(int)Enums.Stats.StatCount];
+        public int[] StatBoost = new int[(int)Stats.StatCount];
 
         public ItemInstance()
         {
@@ -45,7 +44,7 @@ namespace Intersect_Client.Classes.Items
         {
             ItemNum = bf.ReadInteger();
             ItemVal = bf.ReadInteger();
-            for (int i = 0; i < (int)Enums.Stats.StatCount; i++)
+            for (int i = 0; i < (int)Stats.StatCount; i++)
             {
                 StatBoost[i] = bf.ReadInteger();
             }
@@ -55,7 +54,7 @@ namespace Intersect_Client.Classes.Items
             ItemInstance newItem = new ItemInstance();
             newItem.ItemNum = ItemNum;
             newItem.ItemVal = ItemVal;
-            for (int i = 0; i < (int)Enums.Stats.StatCount; i++)
+            for (int i = 0; i < (int)Stats.StatCount; i++)
             {
                 newItem.StatBoost[i] = StatBoost[i];
             }

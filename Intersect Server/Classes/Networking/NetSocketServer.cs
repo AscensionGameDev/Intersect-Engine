@@ -19,12 +19,13 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+
 using System;
 using System.Net;
 using System.Net.Sockets;
 using Intersect_Server.Classes.General;
 
-namespace Intersect_Server.Classes
+namespace Intersect_Server.Classes.Networking
 {
 	public static class SocketServer
 	{

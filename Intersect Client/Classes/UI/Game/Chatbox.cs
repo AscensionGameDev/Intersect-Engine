@@ -35,7 +35,7 @@ using Intersect_Client.Classes.Networking;
 
 namespace Intersect_Client.Classes.UI.Game
 {
-    public class Chatbox : IGUIElement
+    public class Chatbox
     {
         //Window Controls
         private WindowControl _chatboxWindow;

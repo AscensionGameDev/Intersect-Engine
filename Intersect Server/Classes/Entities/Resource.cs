@@ -19,10 +19,15 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-using System;
-using Intersect_Server.Classes.General;
 
-namespace Intersect_Server.Classes
+using System;
+using Intersect_Library;
+using Intersect_Library.GameObjects;
+using Intersect_Server.Classes.General;
+using Intersect_Server.Classes.Networking;
+using Options = Intersect_Server.Classes.General.Options;
+
+namespace Intersect_Server.Classes.Entities
 {
     public class Resource : Entity
     {
@@ -41,8 +46,8 @@ namespace Intersect_Server.Classes
             _baseResource = Globals.GameResources[ResourceNum];
             MyName = _baseResource.Name;
             MySprite = _baseResource.InitialGraphic;
-            Vital[(int)Enums.Vitals.Health] = Globals.Rand.Next(_baseResource.MinHP, _baseResource.MaxHP + 1);
-            MaxVital[(int)Enums.Vitals.Health] = Vital[(int)Enums.Vitals.Health];
+            Vital[(int)Vitals.Health] = Globals.Rand.Next(_baseResource.MinHP, _baseResource.MaxHP + 1);
+            MaxVital[(int)Vitals.Health] = Vital[(int)Vitals.Health];
             Passable = Convert.ToInt32(_baseResource.WalkableBefore);
             HideName = 1;
         }
@@ -53,16 +58,16 @@ namespace Intersect_Server.Classes
             MySprite = _baseResource.EndGraphic;
             Passable = Convert.ToInt32(_baseResource.WalkableBefore);
             IsDead = true;
-            PacketSender.SendEntityDataToProximity(MyIndex, (int)Enums.EntityTypes.Resource, Data(), Globals.Entities[MyIndex]);
-            PacketSender.SendEntityPositionToAll(MyIndex, (int)Enums.EntityTypes.Resource, Globals.Entities[MyIndex]);
+            PacketSender.SendEntityDataToProximity(MyIndex, (int)EntityTypes.Resource, Data(), Globals.Entities[MyIndex]);
+            PacketSender.SendEntityPositionToAll(MyIndex, (int)EntityTypes.Resource, Globals.Entities[MyIndex]);
         }
 
         public void Spawn()
         {
             if (_baseResource.Name == "" || _baseResource.MaxHP == 0) { return; }
             MySprite = _baseResource.InitialGraphic;
-            Vital[(int)Enums.Vitals.Health] = Globals.Rand.Next(_baseResource.MinHP, _baseResource.MaxHP + 1);
-            MaxVital[(int)Enums.Vitals.Health] = Vital[(int)Enums.Vitals.Health];
+            Vital[(int)Vitals.Health] = Globals.Rand.Next(_baseResource.MinHP, _baseResource.MaxHP + 1);
+            MaxVital[(int)Vitals.Health] = Vital[(int)Vitals.Health];
             Passable = Convert.ToInt32(_baseResource.WalkableBefore);
 
             //Give Resource Drops
@@ -79,9 +84,9 @@ namespace Intersect_Server.Classes
            
 
             IsDead = false;
-            PacketSender.SendEntityDataToProximity(MyIndex, (int)Enums.EntityTypes.Resource, Data(), Globals.Entities[MyIndex]);
-            PacketSender.SendEntityPositionToAll(MyIndex, (int)Enums.EntityTypes.Resource, Globals.Entities[MyIndex]);
-            PacketSender.SendEntityVitals(MyIndex, (int)Enums.EntityTypes.Resource, Globals.Entities[MyIndex]);
+            PacketSender.SendEntityDataToProximity(MyIndex, (int)EntityTypes.Resource, Data(), Globals.Entities[MyIndex]);
+            PacketSender.SendEntityPositionToAll(MyIndex, (int)EntityTypes.Resource, Globals.Entities[MyIndex]);
+            PacketSender.SendEntityVitals(MyIndex, (int)EntityTypes.Resource, Globals.Entities[MyIndex]);
         }
 
         public void SpawnResourceItems(int KillerIndex)

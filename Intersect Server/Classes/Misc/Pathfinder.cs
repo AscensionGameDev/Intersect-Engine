@@ -19,10 +19,15 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-using Intersect_Server.Classes.General;
+
 using System;
 using System.Collections.Generic;
 using System.Threading;
+using Intersect_Library;
+using Intersect_Server.Classes.Core;
+using Intersect_Server.Classes.Entities;
+using Intersect_Server.Classes.General;
+using Options = Intersect_Server.Classes.General.Options;
 
 namespace Intersect_Server.Classes.Misc
 {
@@ -161,9 +166,9 @@ namespace Intersect_Server.Classes.Misc
                                 {
                                     if (
                                         Globals.GameMaps[Database.MapGrids[myGrid].MyGrid[x, y]].Attributes[x1, y1]
-                                            .value == (int)Enums.MapAttributes.Blocked ||
+                                            .value == (int)MapAttributes.Blocked ||
                                         Globals.GameMaps[Database.MapGrids[myGrid].MyGrid[x, y]].Attributes[x1, y1]
-                                            .value == (int)Enums.MapAttributes.NPCAvoid)
+                                            .value == (int)MapAttributes.NPCAvoid)
                                     {
                                         closedList.Add(
                                             new PathfinderPoint(

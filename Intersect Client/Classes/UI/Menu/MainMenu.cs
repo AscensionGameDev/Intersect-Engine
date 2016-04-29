@@ -33,7 +33,7 @@ using Intersect_Client.Classes.General;
 
 namespace Intersect_Client.Classes.UI.Menu
 {
-    public class MainMenu : IGUIElement
+    public class MainMenu
     {
         //Controls
         private WindowControl _menuWindow;

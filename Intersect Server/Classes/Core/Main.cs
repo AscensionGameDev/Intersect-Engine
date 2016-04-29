@@ -24,7 +24,9 @@ using System;
 using System.IO;
 using System.Reflection;
 using System.Threading;
+using Intersect_Server.Classes.Core;
 using Intersect_Server.Classes.General;
+using Intersect_Server.Classes.Networking;
 
 namespace Intersect_Server.Classes
 {
@@ -52,6 +54,7 @@ namespace Intersect_Server.Classes
                 Console.ReadKey();
                 return;
             }
+            Database.InitDatabase();
             Database.LoadNpcs();
             Database.LoadItems();
             Database.LoadShops();

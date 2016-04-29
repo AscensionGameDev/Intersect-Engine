@@ -19,7 +19,9 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-using System;
+
+using Intersect_Library;
+using Intersect_Library.GameObjects.Maps.MapList;
 
 namespace Intersect_Editor.Classes
 {
@@ -29,7 +31,7 @@ namespace Intersect_Editor.Classes
         public static void SendPing()
         {
             var bf = new ByteBuffer();
-            bf.WriteLong((int)Enums.ClientPackets.Ping);
+            bf.WriteLong((int)ClientPackets.Ping);
             Network.SendPacket(bf.ToArray());
 
         }
@@ -37,7 +39,7 @@ namespace Intersect_Editor.Classes
         public static void SendLogin(string username, string password)
         {
             var bf = new ByteBuffer();
-            bf.WriteLong((int)Enums.ClientPackets.EditorLogin);
+            bf.WriteLong((int)ClientPackets.EditorLogin);
             bf.WriteString(username);
             bf.WriteString(password);
             Network.SendPacket(bf.ToArray());
@@ -46,7 +48,7 @@ namespace Intersect_Editor.Classes
         public static void SendNeedMap(int mapNum)
         {
             var bf = new ByteBuffer();
-            bf.WriteLong((int)Enums.ClientPackets.NeedMap);
+            bf.WriteLong((int)ClientPackets.NeedMap);
             bf.WriteLong(mapNum);
             Network.SendPacket(bf.ToArray());
         }
@@ -54,7 +56,7 @@ namespace Intersect_Editor.Classes
         public static void SendTilesets()
         {
             var bf = new ByteBuffer();
-            bf.WriteLong((int)Enums.ClientPackets.SaveTilesetArray);
+            bf.WriteLong((int)ClientPackets.SaveTilesetArray);
             bf.WriteLong(Globals.Tilesets.Length);
             foreach (var t in Globals.Tilesets)
             {
@@ -67,7 +69,7 @@ namespace Intersect_Editor.Classes
         {
             var bf = new ByteBuffer();
             var mapData = Globals.GameMaps[mapnum].Save();
-            bf.WriteLong((int)Enums.ClientPackets.SaveMap);
+            bf.WriteLong((int)ClientPackets.SaveMap);
             bf.WriteLong(mapnum);
             bf.WriteLong(mapData.Length);
             bf.WriteBytes(mapData);
@@ -77,7 +79,7 @@ namespace Intersect_Editor.Classes
         public static void SendCreateMap(int location, int currentMap, FolderItem parent)
         {
             var bf = new ByteBuffer();
-            bf.WriteLong((int)Enums.ClientPackets.CreateMap);
+            bf.WriteLong((int)ClientPackets.CreateMap);
             bf.WriteInteger(location);
             if (location > -1)
             {
@@ -110,14 +112,14 @@ namespace Intersect_Editor.Classes
         public static void SendItemEditor()
         {
             var bf = new ByteBuffer();
-            bf.WriteLong((int)Enums.ClientPackets.OpenItemEditor);
+            bf.WriteLong((int)ClientPackets.OpenItemEditor);
             Network.SendPacket(bf.ToArray());
         }
 
         public static void SendItem(int itemNum, byte[] itemData)
         {
             var bf = new ByteBuffer();
-            bf.WriteLong((int)Enums.ClientPackets.SaveItem);
+            bf.WriteLong((int)ClientPackets.SaveItem);
             bf.WriteInteger(itemNum);
             bf.WriteBytes(itemData);
             Network.SendPacket(bf.ToArray());
@@ -126,14 +128,14 @@ namespace Intersect_Editor.Classes
         public static void SendNpcEditor()
         {
             var bf = new ByteBuffer();
-            bf.WriteLong((int)Enums.ClientPackets.OpenNpcEditor);
+            bf.WriteLong((int)ClientPackets.OpenNpcEditor);
             Network.SendPacket(bf.ToArray());
         }
 
         public static void SendNpc(int npcNum, byte[] npcData)
         {
             var bf = new ByteBuffer();
-            bf.WriteLong((int)Enums.ClientPackets.SaveNpc);
+            bf.WriteLong((int)ClientPackets.SaveNpc);
             bf.WriteInteger(npcNum);
             bf.WriteBytes(npcData);
             Network.SendPacket(bf.ToArray());
@@ -142,14 +144,14 @@ namespace Intersect_Editor.Classes
         public static void SendSpellEditor()
         {
             var bf = new ByteBuffer();
-            bf.WriteLong((int)Enums.ClientPackets.OpenSpellEditor);
+            bf.WriteLong((int)ClientPackets.OpenSpellEditor);
             Network.SendPacket(bf.ToArray());
         }
 
         public static void SendSpell(int index, byte[] data)
         {
             var bf = new ByteBuffer();
-            bf.WriteLong((int)Enums.ClientPackets.SaveSpell);
+            bf.WriteLong((int)ClientPackets.SaveSpell);
             bf.WriteInteger(index);
             bf.WriteBytes(data);
             Network.SendPacket(bf.ToArray());
@@ -158,14 +160,14 @@ namespace Intersect_Editor.Classes
         public static void SendAnimationEditor()
         {
             var bf = new ByteBuffer();
-            bf.WriteLong((int)Enums.ClientPackets.OpenAnimationEditor);
+            bf.WriteLong((int)ClientPackets.OpenAnimationEditor);
             Network.SendPacket(bf.ToArray());
         }
 
         public static void SendAnimation(int index, byte[] data)
         {
             var bf = new ByteBuffer();
-            bf.WriteLong((int)Enums.ClientPackets.SaveAnimation);
+            bf.WriteLong((int)ClientPackets.SaveAnimation);
             bf.WriteInteger(index);
             bf.WriteBytes(data);
             Network.SendPacket(bf.ToArray());
@@ -174,14 +176,14 @@ namespace Intersect_Editor.Classes
         public static void SendResourceEditor()
         {
             var bf = new ByteBuffer();
-            bf.WriteLong((int)Enums.ClientPackets.OpenResourceEditor);
+            bf.WriteLong((int)ClientPackets.OpenResourceEditor);
             Network.SendPacket(bf.ToArray());
         }
 
         public static void SendResource(int ResourceNum, byte[] ResourceData)
         {
             var bf = new ByteBuffer();
-            bf.WriteLong((int)Enums.ClientPackets.SaveResource);
+            bf.WriteLong((int)ClientPackets.SaveResource);
             bf.WriteInteger(ResourceNum);
             bf.WriteBytes(ResourceData);
             Network.SendPacket(bf.ToArray());
@@ -190,14 +192,14 @@ namespace Intersect_Editor.Classes
         public static void SendClassEditor()
         {
             var bf = new ByteBuffer();
-            bf.WriteLong((int)Enums.ClientPackets.OpenClassEditor);
+            bf.WriteLong((int)ClientPackets.OpenClassEditor);
             Network.SendPacket(bf.ToArray());
         }
 
         public static void SendClass(int ClassNum, byte[] ClassData)
         {
             var bf = new ByteBuffer();
-            bf.WriteLong((int)Enums.ClientPackets.SaveClass);
+            bf.WriteLong((int)ClientPackets.SaveClass);
             bf.WriteInteger(ClassNum);
             bf.WriteBytes(ClassData);
             Network.SendPacket(bf.ToArray());
@@ -206,14 +208,14 @@ namespace Intersect_Editor.Classes
         public static void SendQuestEditor()
         {
             var bf = new ByteBuffer();
-            bf.WriteLong((int)Enums.ClientPackets.OpenQuestEditor);
+            bf.WriteLong((int)ClientPackets.OpenQuestEditor);
             Network.SendPacket(bf.ToArray());
         }
 
         public static void SendQuest(int QuestNum, byte[] QuestData)
         {
             var bf = new ByteBuffer();
-            bf.WriteLong((int)Enums.ClientPackets.SaveQuest);
+            bf.WriteLong((int)ClientPackets.SaveQuest);
             bf.WriteInteger(QuestNum);
             bf.WriteBytes(QuestData);
             Network.SendPacket(bf.ToArray());
@@ -222,14 +224,14 @@ namespace Intersect_Editor.Classes
         public static void SendProjectileEditor()
         {
             var bf = new ByteBuffer();
-            bf.WriteLong((int)Enums.ClientPackets.OpenProjectileEditor);
+            bf.WriteLong((int)ClientPackets.OpenProjectileEditor);
             Network.SendPacket(bf.ToArray());
         }
 
         public static void SendProjectile(int ProjectileNum, byte[] ProjectileData)
         {
             var bf = new ByteBuffer();
-            bf.WriteLong((int)Enums.ClientPackets.SaveProjectile);
+            bf.WriteLong((int)ClientPackets.SaveProjectile);
             bf.WriteInteger(ProjectileNum);
             bf.WriteBytes(ProjectileData);
             Network.SendPacket(bf.ToArray());
@@ -238,8 +240,8 @@ namespace Intersect_Editor.Classes
         public static void SendMapListMove(int srcType, int srcId, int destType, int destId)
         {
             ByteBuffer bf = new ByteBuffer();
-            bf.WriteLong((int)Enums.ClientPackets.MapListUpdate);
-            bf.WriteInteger((int)Enums.MapListUpdates.MoveItem);
+            bf.WriteLong((int)ClientPackets.MapListUpdate);
+            bf.WriteInteger((int)MapListUpdates.MoveItem);
             bf.WriteInteger(srcType);
             bf.WriteInteger(srcId);
             bf.WriteInteger(destType);
@@ -250,8 +252,8 @@ namespace Intersect_Editor.Classes
         public static void SendAddFolder(FolderItem parent)
         {
             ByteBuffer bf = new ByteBuffer();
-            bf.WriteLong((int)Enums.ClientPackets.MapListUpdate);
-            bf.WriteInteger((int)Enums.MapListUpdates.AddFolder);
+            bf.WriteLong((int)ClientPackets.MapListUpdate);
+            bf.WriteInteger((int)MapListUpdates.AddFolder);
             if (parent == null)
             {
                 bf.WriteInteger(-1);
@@ -276,8 +278,8 @@ namespace Intersect_Editor.Classes
         public static void SendRename(FolderItem parent, string name)
         {
             ByteBuffer bf = new ByteBuffer();
-            bf.WriteLong((int)Enums.ClientPackets.MapListUpdate);
-            bf.WriteInteger((int)Enums.MapListUpdates.Rename);
+            bf.WriteLong((int)ClientPackets.MapListUpdate);
+            bf.WriteInteger((int)MapListUpdates.Rename);
             if (parent.GetType() == typeof(FolderMap))
             {
                 bf.WriteInteger(1);
@@ -295,8 +297,8 @@ namespace Intersect_Editor.Classes
         public static void SendDelete(FolderItem target)
         {
             ByteBuffer bf = new ByteBuffer();
-            bf.WriteLong((int)Enums.ClientPackets.MapListUpdate);
-            bf.WriteInteger((int)Enums.MapListUpdates.Delete);
+            bf.WriteLong((int)ClientPackets.MapListUpdate);
+            bf.WriteInteger((int)MapListUpdates.Delete);
             if (target.GetType() == typeof(FolderMap))
             {
                 bf.WriteInteger(1);
@@ -313,7 +315,7 @@ namespace Intersect_Editor.Classes
         public static void SendNeedGrid(int mapNum)
         {
             var bf = new ByteBuffer();
-            bf.WriteLong((int)Enums.ClientPackets.NeedGrid);
+            bf.WriteLong((int)ClientPackets.NeedGrid);
             bf.WriteLong(mapNum);
             Network.SendPacket(bf.ToArray());
         }
@@ -321,7 +323,7 @@ namespace Intersect_Editor.Classes
         public static void SendUnlinkMap(int mapNum)
         {
             var bf = new ByteBuffer();
-            bf.WriteLong((int)Enums.ClientPackets.UnlinkMap);
+            bf.WriteLong((int)ClientPackets.UnlinkMap);
             bf.WriteLong(mapNum);
             bf.WriteLong(Globals.CurrentMap);
             Network.SendPacket(bf.ToArray());
@@ -330,7 +332,7 @@ namespace Intersect_Editor.Classes
         public static void SendLinkMap(int adjacentMap, int linkMap, int gridX, int gridY)
         {
             var bf = new ByteBuffer();
-            bf.WriteLong((int)Enums.ClientPackets.LinkMap);
+            bf.WriteLong((int)ClientPackets.LinkMap);
             bf.WriteLong(adjacentMap);
             bf.WriteLong(linkMap);
             bf.WriteLong(gridX);
@@ -341,14 +343,14 @@ namespace Intersect_Editor.Classes
         public static void SendOpenCommonEventEditor()
         {
             var bf = new ByteBuffer();
-            bf.WriteLong((int)Enums.ClientPackets.OpenCommonEventEditor);
+            bf.WriteLong((int)ClientPackets.OpenCommonEventEditor);
             Network.SendPacket(bf.ToArray());
         }
 
         public static void SendCommonEvent(int index, byte[] data)
         {
             var bf = new ByteBuffer();
-            bf.WriteLong((int)Enums.ClientPackets.SaveCommonEvent);
+            bf.WriteLong((int)ClientPackets.SaveCommonEvent);
             bf.WriteInteger(index);
             bf.WriteBytes(data);
             Network.SendPacket(bf.ToArray());
@@ -357,21 +359,21 @@ namespace Intersect_Editor.Classes
         public static void SendOpenVariableSwitchEditor()
         {
             var bf = new ByteBuffer();
-            bf.WriteLong((int)Enums.ClientPackets.OpenSwitchVariableEditor);
+            bf.WriteLong((int)ClientPackets.OpenSwitchVariableEditor);
             Network.SendPacket(bf.ToArray());
         }
 
         public static void SendOpenShopEditor()
         {
             var bf = new ByteBuffer();
-            bf.WriteLong((int)Enums.ClientPackets.OpenShopEditor);
+            bf.WriteLong((int)ClientPackets.OpenShopEditor);
             Network.SendPacket(bf.ToArray());
         }
 
         public static void SendShop(int index, byte[] data)
         {
             var bf = new ByteBuffer();
-            bf.WriteLong((int)Enums.ClientPackets.SaveShop);
+            bf.WriteLong((int)ClientPackets.SaveShop);
             bf.WriteInteger(index);
             bf.WriteBytes(data);
             Network.SendPacket(bf.ToArray());

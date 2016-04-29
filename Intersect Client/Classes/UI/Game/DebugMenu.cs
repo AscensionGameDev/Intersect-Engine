@@ -125,7 +125,7 @@ namespace Intersect_Client.Classes.UI.Game
                 _zLabel.Text = "Z: " + Globals.Me.CurrentZ;
             }
             int entityCount = Globals.Entities.Count;
-            foreach (KeyValuePair<int,MapStruct> map in Globals.GameMaps)
+            foreach (KeyValuePair<int,MapInstance> map in Globals.GameMaps)
             {
                 if (map.Value != null) entityCount += map.Value.LocalEntities.Count;
             }

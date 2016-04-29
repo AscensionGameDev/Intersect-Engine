@@ -26,29 +26,29 @@
 */
 
 using System;
-using System.CodeDom;
 using System.Collections.Generic;
-using IntersectClientExtras.GenericClasses;
-using IntersectClientExtras.Sys;
 using Intersect_Client.Classes.Core;
 using Intersect_Client.Classes.Entities;
-using Intersect_Client.Classes.Game_Objects;
 using Intersect_Client.Classes.General;
 using Intersect_Client.Classes.Items;
 using Intersect_Client.Classes.Maps;
-using Intersect_Client.Classes.Misc;
 using Intersect_Client.Classes.UI;
+using Intersect_Library;
+using Intersect_Library.GameObjects;
+using Intersect_Library.GameObjects.Maps.MapList;
+using Color = IntersectClientExtras.GenericClasses.Color;
+using Options = Intersect_Client.Classes.General.Options;
 
 namespace Intersect_Client.Classes.Networking
 {
     public static class PacketHandler
     {
-        public static Dictionary<Enums.ServerPackets, int> dict = new Dictionary<Enums.ServerPackets,int>();  
+        public static Dictionary<ServerPackets, int> dict = new Dictionary<ServerPackets,int>();  
         public static void HandlePacket(byte[] packet)
         {
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
-            var packetHeader = (Enums.ServerPackets)bf.ReadLong();
+            var packetHeader = (ServerPackets)bf.ReadLong();
             lock (Globals.GameLock)
             {
                 if (dict.ContainsKey(packetHeader))
@@ -63,157 +63,157 @@ namespace Intersect_Client.Classes.Networking
                 //Globals.System.Log("Handling Packet: " + packetHeader);
                 switch (packetHeader)
                 {
-                    case Enums.ServerPackets.RequestPing:
+                    case ServerPackets.RequestPing:
                         PacketSender.SendPing();
                         break;
-                    case Enums.ServerPackets.ServerConfig:
+                    case ServerPackets.ServerConfig:
                         HandleServerConfig(bf.ReadBytes(bf.Length()));
                         break;
-                    case Enums.ServerPackets.JoinGame:
+                    case ServerPackets.JoinGame:
                         HandleJoinGame(bf.ReadBytes(bf.Length()));
                         break;
-                    case Enums.ServerPackets.MapData:
+                    case ServerPackets.MapData:
                         HandleMapData(bf.ReadBytes(bf.Length()));
                         break;
-                    case Enums.ServerPackets.EntityData:
+                    case ServerPackets.EntityData:
                         HandleEntityData(bf.ReadBytes(bf.Length()));
                         break;
-                    case Enums.ServerPackets.EntityPosition:
+                    case ServerPackets.EntityPosition:
                         HandlePositionInfo(bf.ReadBytes(bf.Length()));
                         break;
-                    case Enums.ServerPackets.EntityLeave:
+                    case ServerPackets.EntityLeave:
                         HandleLeave(bf.ReadBytes(bf.Length()));
                         break;
-                    case Enums.ServerPackets.ChatMessage:
+                    case ServerPackets.ChatMessage:
                         HandleMsg(bf.ReadBytes(bf.Length()));
                         break;
-                    case Enums.ServerPackets.GameData:
+                    case ServerPackets.GameData:
                         HandleGameData(bf.ReadBytes(bf.Length()));
                         break;
-                    case Enums.ServerPackets.TilesetArray:
+                    case ServerPackets.TilesetArray:
                         HandleTilesets(bf.ReadBytes(bf.Length()));
                         break;
-                    case Enums.ServerPackets.EnterMap:
+                    case ServerPackets.EnterMap:
                         HandleEnterMap(bf.ReadBytes(bf.Length()));
                         break;
-                    case Enums.ServerPackets.MapList:
+                    case ServerPackets.MapList:
                         HandleMapList(bf.ReadBytes(bf.Length()));
                         break;
-                    case Enums.ServerPackets.EntityMove:
+                    case ServerPackets.EntityMove:
                         HandleEntityMove(bf.ReadBytes(bf.Length()));
                         break;
-                    case Enums.ServerPackets.EntityVitals:
+                    case ServerPackets.EntityVitals:
                         HandleVitals(bf.ReadBytes(bf.Length()));
                         break;
-                    case Enums.ServerPackets.EntityStats:
+                    case ServerPackets.EntityStats:
                         HandleStats(bf.ReadBytes(bf.Length()));
                         break;
-                    case Enums.ServerPackets.EntityDir:
+                    case ServerPackets.EntityDir:
                         HandleEntityDir(bf.ReadBytes(bf.Length()));
                         break;
-                    case Enums.ServerPackets.EventDialog:
+                    case ServerPackets.EventDialog:
                         HandleEventDialog(bf.ReadBytes(bf.Length()));
                         break;
-                    case Enums.ServerPackets.LoginError:
+                    case ServerPackets.LoginError:
                         HandleLoginError(bf.ReadBytes(bf.Length()));
                         break;
-                    case Enums.ServerPackets.ItemData:
+                    case ServerPackets.ItemData:
                         HandleItemData(bf.ReadBytes(bf.Length()));
                         break;
-                    case Enums.ServerPackets.NpcData:
+                    case ServerPackets.NpcData:
                         HandleNpcData(bf.ReadBytes(bf.Length()));
                         break;
-                    case Enums.ServerPackets.SpellData:
+                    case ServerPackets.SpellData:
                         HandleSpellData(bf.ReadBytes(bf.Length()));
                         break;
-                    case Enums.ServerPackets.AnimationData:
+                    case ServerPackets.AnimationData:
                         HandleAnimationData(bf.ReadBytes(bf.Length()));
                         break;
-                    case Enums.ServerPackets.ResourceData:
+                    case ServerPackets.ResourceData:
                         HandleResourceData(bf.ReadBytes(bf.Length()));
                         break;
-                    case Enums.ServerPackets.MapItems:
+                    case ServerPackets.MapItems:
                         HandleMapItems(bf.ReadBytes(bf.Length()));
                         break;
-                    case Enums.ServerPackets.MapItemUpdate:
+                    case ServerPackets.MapItemUpdate:
                         HandleMapItemUpdate(bf.ReadBytes(bf.Length()));
                         break;
-                    case Enums.ServerPackets.InventoryUpdate:
+                    case ServerPackets.InventoryUpdate:
                         HandleInventoryUpdate(bf.ReadBytes(bf.Length()));
                         break;
-                    case Enums.ServerPackets.SpellUpdate:
+                    case ServerPackets.SpellUpdate:
                         HandleSpellUpdate(bf.ReadBytes(bf.Length()));
                         break;
-                    case Enums.ServerPackets.PlayerEquipment:
+                    case ServerPackets.PlayerEquipment:
                         HandlePlayerEquipment(bf.ReadBytes(bf.Length()));
                         break;
-                    case Enums.ServerPackets.StatPoints:
+                    case ServerPackets.StatPoints:
                         HandleStatPoints(bf.ReadBytes(bf.Length()));
                         break;
-                    case Enums.ServerPackets.HotbarSlots:
+                    case ServerPackets.HotbarSlots:
                         HandleHotbarSlots(bf.ReadBytes(bf.Length()));
                         break;
-                    case Enums.ServerPackets.ClassData:
+                    case ServerPackets.ClassData:
                         HandleClassData(bf.ReadBytes(bf.Length()));
                         break;
-                    case Enums.ServerPackets.CreateCharacter:
+                    case ServerPackets.CreateCharacter:
                         HandleCreateCharacter();
                         break;
-                    case Enums.ServerPackets.QuestData:
+                    case ServerPackets.QuestData:
                         HandleQuestData(bf.ReadBytes(bf.Length()));
                         break;
-                    case Enums.ServerPackets.OpenAdminWindow:
+                    case ServerPackets.OpenAdminWindow:
                         HandleOpenAdminWindow();
                         break;
-                    case Enums.ServerPackets.ProjectileData:
+                    case ServerPackets.ProjectileData:
                         HandleProjectileData(bf.ReadBytes(bf.Length()));
                         break;
-                    case Enums.ServerPackets.CastTime:
+                    case ServerPackets.CastTime:
                         HandleCastTime(bf.ReadBytes(bf.Length()));
                         break;
-                    case Enums.ServerPackets.SendSpellCooldown:
+                    case ServerPackets.SendSpellCooldown:
                         HandleSpellCooldown(bf.ReadBytes(bf.Length()));
                         break;
-                    case Enums.ServerPackets.Experience:
+                    case ServerPackets.Experience:
                         HandleExperience(bf.ReadBytes(bf.Length()));
                         break;
-                    case Enums.ServerPackets.ProjectileSpawnDead:
+                    case ServerPackets.ProjectileSpawnDead:
                         HandleProjectileSpawnDead(bf.ReadBytes(bf.Length()));
                         break;
-                    case Enums.ServerPackets.SendPlayAnimation:
+                    case ServerPackets.SendPlayAnimation:
                         HandlePlayAnimation(bf.ReadBytes(bf.Length()));
                         break;
-                    case Enums.ServerPackets.HoldPlayer:
+                    case ServerPackets.HoldPlayer:
                         HandleHoldPlayer(bf.ReadBytes(bf.Length()));
                         break;
-                    case Enums.ServerPackets.ReleasePlayer:
+                    case ServerPackets.ReleasePlayer:
                         HandleReleasePlayer(bf.ReadBytes(bf.Length()));
                         break;
-                    case Enums.ServerPackets.PlayMusic:
+                    case ServerPackets.PlayMusic:
                         HandlePlayMusic(bf.ReadBytes(bf.Length()));
                         break;
-                    case Enums.ServerPackets.FadeMusic:
+                    case ServerPackets.FadeMusic:
                         HandleFadeMusic(bf.ReadBytes(bf.Length()));
                         break;
-                    case Enums.ServerPackets.PlaySound:
+                    case ServerPackets.PlaySound:
                         HandlePlaySound(bf.ReadBytes(bf.Length()));
                         break;
-                    case Enums.ServerPackets.StopSounds:
+                    case ServerPackets.StopSounds:
                         HandleStopSounds(bf.ReadBytes(bf.Length()));
                         break;
-                    case Enums.ServerPackets.OpenShop:
+                    case ServerPackets.OpenShop:
                         HandleOpenShop(bf.ReadBytes(bf.Length()));
                         break;
-                    case Enums.ServerPackets.CloseShop:
+                    case ServerPackets.CloseShop:
                         HandleCloseShop(bf.ReadBytes(bf.Length()));
                         break;
-                    case Enums.ServerPackets.OpenBank:
+                    case ServerPackets.OpenBank:
                         HandleOpenBank(bf.ReadBytes(bf.Length()));
                         break;
-                    case Enums.ServerPackets.CloseBank:
+                    case ServerPackets.CloseBank:
                         HandleCloseBank(bf.ReadBytes(bf.Length()));
                         break;
-                    case Enums.ServerPackets.BankUpdate:
+                    case ServerPackets.BankUpdate:
                         HandleBankUpdate(bf.ReadBytes(bf.Length()));
                         break;
                     default:
@@ -268,7 +268,9 @@ namespace Intersect_Client.Classes.Networking
                     Globals.GameMaps[mapNum].Dispose(false,false);
                 }
             }
-            Globals.GameMaps.Add(mapNum, new MapStruct((int)mapNum, mapData));
+            var newMap = new MapInstance((int) mapNum);
+            Globals.GameMaps.Add(mapNum, newMap);
+            ((MapInstance)newMap).Load(mapData);
             if ((mapNum) == Globals.LocalMaps[4]) { 
                 GameAudio.PlayMusic(Globals.GameMaps[mapNum].Music, 3,3, true); }
             Globals.GameMaps[mapNum].MapGridX = bf.ReadInteger();
@@ -289,7 +291,7 @@ namespace Intersect_Client.Classes.Networking
             Entity en;
             switch (entityType)
             {
-                case (int)Enums.EntityTypes.Player:
+                case (int)EntityTypes.Player:
                     if (i == Globals.MyIndex)
                     {
                         en = EntityManager.AddPlayer(i);
@@ -301,19 +303,19 @@ namespace Intersect_Client.Classes.Networking
                         en.Load(bf);
                     }
                     break;
-                case (int)Enums.EntityTypes.GlobalEntity:
+                case (int)EntityTypes.GlobalEntity:
                     en = EntityManager.AddGlobalEntity(i);
                     en.Load(bf);
                     break;
-                case (int)Enums.EntityTypes.Resource:
+                case (int)EntityTypes.Resource:
                     en = EntityManager.AddResource(i);
                     ((Resource)en).Load(bf);
                     break;
-                case (int)Enums.EntityTypes.Projectile:
+                case (int)EntityTypes.Projectile:
                     en = EntityManager.AddProjectile(i);
                     ((Projectile)en).Load(bf);
                     break;
-                case (int)Enums.EntityTypes.Event:
+                case (int)EntityTypes.Event:
                     en = EntityManager.AddLocalEvent(i,mapNum);
                     if (en != null)
                     {
@@ -331,7 +333,7 @@ namespace Intersect_Client.Classes.Networking
             var type = bf.ReadInteger();
             var mapNum = bf.ReadInteger();
             Entity en;
-            if (type != (int)Enums.EntityTypes.Event)
+            if (type != (int)EntityTypes.Event)
             {
                 if (!Globals.Entities.ContainsKey(index)) { return; }
                 en = Globals.Entities[index];
@@ -363,7 +365,7 @@ namespace Intersect_Client.Classes.Networking
             var index = (int)bf.ReadLong();
             var type = bf.ReadInteger();
             var map = bf.ReadInteger();
-            if (index == Globals.MyIndex && type < (int)Enums.EntityTypes.Event) { return; }
+            if (index == Globals.MyIndex && type < (int)EntityTypes.Event) { return; }
             EntityManager.RemoveEntity(index, type, map);
 
         }
@@ -436,9 +438,7 @@ namespace Intersect_Client.Classes.Networking
         {
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
-            Globals.OrderedMaps.Clear();
-            Globals.MapStructure.Load(bf);
-            Globals.OrderedMaps.Sort();
+            MapList.GetList().Load(bf,new Dictionary<int, Intersect_Library.GameObjects.Maps.MapStruct>(),false);
             //If admin window is open update it
             bf.Dispose();
         }
@@ -451,7 +451,7 @@ namespace Intersect_Client.Classes.Networking
             var type = bf.ReadInteger();
             var mapNum = bf.ReadInteger();
             Entity en;
-            if (type < (int)Enums.EntityTypes.Event)
+            if (type < (int)EntityTypes.Event)
             {
                 if (!Globals.Entities.ContainsKey(index)){return;}
                 en = Globals.Entities[index];
@@ -499,7 +499,7 @@ namespace Intersect_Client.Classes.Networking
             }
 
             // Set the Z-Dimension if the player has moved up or down a dimension.
-            if (Globals.GameMaps[en.CurrentMap].Attributes[en.CurrentX, en.CurrentY].value == (int)Enums.MapAttributes.ZDimension)
+            if (Globals.GameMaps[en.CurrentMap].Attributes[en.CurrentX, en.CurrentY].value == (int)MapAttributes.ZDimension)
             {
                 if (Globals.GameMaps[en.CurrentMap].Attributes[en.CurrentX, en.CurrentY].data1 > 0)
                 {
@@ -516,7 +516,7 @@ namespace Intersect_Client.Classes.Networking
             var type = bf.ReadInteger();
             var mapNum = bf.ReadInteger();
             Entity en = null;
-            if (type < (int)Enums.EntityTypes.Event)
+            if (type < (int)EntityTypes.Event)
             {
                 if (!Globals.Entities.ContainsKey(index)) { return; }
                 en = Globals.Entities[index];
@@ -531,7 +531,7 @@ namespace Intersect_Client.Classes.Networking
             {
                 return;
             }
-            for (var i = 0; i < (int)Enums.Vitals.VitalCount; i++)
+            for (var i = 0; i < (int)Vitals.VitalCount; i++)
             {
                 en.MaxVital[i] = bf.ReadInteger();
                 en.Vital[i] = bf.ReadInteger();
@@ -554,7 +554,7 @@ namespace Intersect_Client.Classes.Networking
             var type = bf.ReadInteger();
             var mapNum = bf.ReadInteger();
             Entity en = null;
-            if (type < (int)Enums.EntityTypes.Event)
+            if (type < (int)EntityTypes.Event)
             {
                 if (!Globals.Entities.ContainsKey(index)) { return; }
                 en = Globals.Entities[index];
@@ -569,7 +569,7 @@ namespace Intersect_Client.Classes.Networking
             {
                 return;
             }
-            for (var i = 0; i < (int)Enums.Stats.StatCount; i++)
+            for (var i = 0; i < (int)Stats.StatCount; i++)
             {
                 en.Stat[i] = bf.ReadInteger();
             }
@@ -583,7 +583,7 @@ namespace Intersect_Client.Classes.Networking
             var type = bf.ReadInteger();
             var mapNum = bf.ReadInteger();
             Entity en = null;
-            if (type < (int)Enums.EntityTypes.Event)
+            if (type < (int)EntityTypes.Event)
             {
                 if (!Globals.Entities.ContainsKey(index)) { return; }
                 en = Globals.Entities[index];

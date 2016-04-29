@@ -22,9 +22,13 @@
 using System;
 using System.Collections.Generic;
 using System.Threading;
-using Intersect_Server.Classes.Game_Objects;
+using Intersect_Library.GameObjects;
+using Intersect_Library.GameObjects.Events;
+using Intersect_Server.Classes.Entities;
+using Intersect_Server.Classes.Maps;
+using Intersect_Server.Classes.Networking;
 
-namespace Intersect_Server.Classes
+namespace Intersect_Server.Classes.General
 {
 	public static class Globals
 	{
@@ -36,8 +40,7 @@ namespace Intersect_Server.Classes
         public static bool ServerStarted = true;
 
         //Game Maps
-		public static MapStruct[] GameMaps;
-		public static int MapCount;
+		public static Dictionary<int,MapInstance> GameMaps = new Dictionary<int, MapInstance>();
 
         //Game Items
         public static ItemStruct[] GameItems;

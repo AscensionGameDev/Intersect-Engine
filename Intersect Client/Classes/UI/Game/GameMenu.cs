@@ -33,7 +33,7 @@ using IntersectClientExtras.Gwen.Control.EventArguments;
 
 namespace Intersect_Client.Classes.UI.Game
 {
-    class GameMenu : IGUIElement
+    class GameMenu
     {
         //Control Variables
         private WindowControl _gameMenu;

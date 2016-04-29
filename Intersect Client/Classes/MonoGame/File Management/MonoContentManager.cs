@@ -29,16 +29,13 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.IO;
-using System.Linq.Expressions;
 using System.Net;
 using System.Reflection;
 using System.Text;
 using System.Windows.Forms;
-using IntersectClientExtras.Audio;
 using IntersectClientExtras.File_Management;
 using IntersectClientExtras.Graphics;
 using Intersect_Client.Classes.Core;
-using Intersect_Client_MonoGame.Classes.SFML.Graphics;
 using Intersect_MonoGameDx.Classes.SFML.Audio;
 
 namespace Intersect_Client.Classes.Bridges_and_Interfaces.SFML.File_Management

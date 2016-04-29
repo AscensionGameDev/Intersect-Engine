@@ -21,15 +21,12 @@
 */
 using Intersect_Editor.Classes;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 using Intersect_Editor.Classes.Core;
-using Intersect_Editor.Classes.General;
+using Intersect_Library;
+using Intersect_Library.GameObjects;
+using Options = Intersect_Editor.Classes.General.Options;
 
 namespace Intersect_Editor.Forms
 {
@@ -114,15 +111,15 @@ namespace Intersect_Editor.Forms
                 lblHitAnimation.Text = "Hit Animation: " + (scrlHitAnimation.Value + 1) + ".  " + Globals.GameAnimations[scrlHitAnimation.Value].Name;
             }
             
-            scrlAttackReq.Value = Globals.GameSpells[_editorIndex].StatReq[(int)Enums.Stats.Attack];
+            scrlAttackReq.Value = Globals.GameSpells[_editorIndex].StatReq[(int)Stats.Attack];
             lblAttackReq.Text = "Attack: " + scrlAttackReq.Value;
-            scrlDefenseReq.Value = Globals.GameSpells[_editorIndex].StatReq[(int)Enums.Stats.Defense];
+            scrlDefenseReq.Value = Globals.GameSpells[_editorIndex].StatReq[(int)Stats.Defense];
             lblDefenseReq.Text = "Defense: " + scrlDefenseReq.Value;
-            scrlAbilityPwrReq.Value = Globals.GameSpells[_editorIndex].StatReq[(int)Enums.Stats.AbilityPower];
+            scrlAbilityPwrReq.Value = Globals.GameSpells[_editorIndex].StatReq[(int)Stats.AbilityPower];
             lblAbilityPwrReq.Text = "Ability Pwr: " + scrlAbilityPwrReq.Value;
-            scrlMagicResistReq.Value = Globals.GameSpells[_editorIndex].StatReq[(int)Enums.Stats.MagicResist];
+            scrlMagicResistReq.Value = Globals.GameSpells[_editorIndex].StatReq[(int)Stats.MagicResist];
             lblMagicResistReq.Text = "Magic Resist: " + scrlMagicResistReq.Value;
-            scrlSpeedReq.Value = Globals.GameSpells[_editorIndex].StatReq[(int)Enums.Stats.Speed];
+            scrlSpeedReq.Value = Globals.GameSpells[_editorIndex].StatReq[(int)Stats.Speed];
             lblSpeedReq.Text = "Speed: " + scrlSpeedReq.Value;
             scrlLevelReq.Value = Globals.GameSpells[_editorIndex].LevelReq;
             lblLevelReq.Text = "Level: " + scrlLevelReq.Value;
@@ -131,8 +128,8 @@ namespace Intersect_Editor.Forms
             if (cmbSprite.SelectedIndex > 0) { picSpell.BackgroundImage = Bitmap.FromFile("resources/spells/" + cmbSprite.Text); }
             else { picSpell.BackgroundImage = null; }
 
-            txtHPCost.Text = Globals.GameSpells[_editorIndex].VitalCost[(int)Enums.Vitals.Health].ToString();
-            txtManaCost.Text = Globals.GameSpells[_editorIndex].VitalCost[(int)Enums.Vitals.Mana].ToString();
+            txtHPCost.Text = Globals.GameSpells[_editorIndex].VitalCost[(int)Vitals.Health].ToString();
+            txtManaCost.Text = Globals.GameSpells[_editorIndex].VitalCost[(int)Vitals.Mana].ToString();
 
             UpdateSpellTypePanels();
 
@@ -155,13 +152,13 @@ namespace Intersect_Editor.Forms
                 cmbTargetType.SelectedIndex = Globals.GameSpells[_editorIndex].TargetType;
                 UpdateTargetTypePanel();
 
-                txtHPDiff.Text = Globals.GameSpells[_editorIndex].VitalDiff[(int)Enums.Vitals.Health].ToString();
-                txtManaDiff.Text = Globals.GameSpells[_editorIndex].VitalDiff[(int)Enums.Vitals.Mana].ToString();
-                txtAttackBuff.Text = Globals.GameSpells[_editorIndex].StatDiff[(int)Enums.Stats.Attack].ToString();
-                txtDefenseBuff.Text = Globals.GameSpells[_editorIndex].StatDiff[(int)Enums.Stats.Defense].ToString();
-                txtSpeedBuff.Text = Globals.GameSpells[_editorIndex].StatDiff[(int)Enums.Stats.Speed].ToString();
-                txtAbilityPwrBuff.Text = Globals.GameSpells[_editorIndex].StatDiff[(int)Enums.Stats.AbilityPower].ToString();
-                txtMagicResistBuff.Text = Globals.GameSpells[_editorIndex].StatDiff[(int)Enums.Stats.MagicResist].ToString();
+                txtHPDiff.Text = Globals.GameSpells[_editorIndex].VitalDiff[(int)Vitals.Health].ToString();
+                txtManaDiff.Text = Globals.GameSpells[_editorIndex].VitalDiff[(int)Vitals.Mana].ToString();
+                txtAttackBuff.Text = Globals.GameSpells[_editorIndex].StatDiff[(int)Stats.Attack].ToString();
+                txtDefenseBuff.Text = Globals.GameSpells[_editorIndex].StatDiff[(int)Stats.Defense].ToString();
+                txtSpeedBuff.Text = Globals.GameSpells[_editorIndex].StatDiff[(int)Stats.Speed].ToString();
+                txtAbilityPwrBuff.Text = Globals.GameSpells[_editorIndex].StatDiff[(int)Stats.AbilityPower].ToString();
+                txtMagicResistBuff.Text = Globals.GameSpells[_editorIndex].StatDiff[(int)Stats.MagicResist].ToString();
 
                 chkHOTDOT.Checked = Convert.ToBoolean(Globals.GameSpells[_editorIndex].Data1);
                 scrlBuffDuration.Value = Globals.GameSpells[_editorIndex].Data2;
@@ -311,31 +308,31 @@ namespace Intersect_Editor.Forms
 
         private void scrlAttackReq_Scroll(object sender, ScrollEventArgs e)
         {
-            Globals.GameSpells[_editorIndex].StatReq[(int)Enums.Stats.Attack] = scrlAttackReq.Value;
+            Globals.GameSpells[_editorIndex].StatReq[(int)Stats.Attack] = scrlAttackReq.Value;
             lblAttackReq.Text = "Attack: " + scrlAttackReq.Value;
         }
 
         private void scrlDefenseReq_Scroll(object sender, ScrollEventArgs e)
         {
-            Globals.GameSpells[_editorIndex].StatReq[(int)Enums.Stats.Defense] = scrlDefenseReq.Value;
+            Globals.GameSpells[_editorIndex].StatReq[(int)Stats.Defense] = scrlDefenseReq.Value;
             lblDefenseReq.Text = "Defense: " + scrlDefenseReq.Value;
         }
 
         private void scrlSpeedReq_Scroll(object sender, ScrollEventArgs e)
         {
-            Globals.GameSpells[_editorIndex].StatReq[(int)Enums.Stats.Speed] = scrlSpeedReq.Value;
+            Globals.GameSpells[_editorIndex].StatReq[(int)Stats.Speed] = scrlSpeedReq.Value;
             lblSpeedReq.Text = "Speed: " + scrlSpeedReq.Value;
         }
 
         private void scrlAbilityPwrReq_Scroll(object sender, ScrollEventArgs e)
         {
-            Globals.GameSpells[_editorIndex].StatReq[(int)Enums.Stats.AbilityPower] = scrlAbilityPwrReq.Value;
+            Globals.GameSpells[_editorIndex].StatReq[(int)Stats.AbilityPower] = scrlAbilityPwrReq.Value;
             lblAbilityPwrReq.Text = "Ability Pwr: " + scrlAbilityPwrReq.Value;
         }
 
         private void scrlMagicResistReq_Scroll(object sender, ScrollEventArgs e)
         {
-            Globals.GameSpells[_editorIndex].StatReq[(int)Enums.Stats.MagicResist] = scrlMagicResistReq.Value;
+            Globals.GameSpells[_editorIndex].StatReq[(int)Stats.MagicResist] = scrlMagicResistReq.Value;
             lblMagicResistReq.Text = "Magic Resist: " + scrlMagicResistReq.Value;
         }
 
@@ -367,49 +364,49 @@ namespace Intersect_Editor.Forms
         {
             int x = 0;
             int.TryParse(txtHPDiff.Text, out x);
-            Globals.GameSpells[_editorIndex].VitalDiff[(int)Enums.Vitals.Health] = x;
+            Globals.GameSpells[_editorIndex].VitalDiff[(int)Vitals.Health] = x;
         }
 
         private void txtManaDiff_TextChanged(object sender, EventArgs e)
         {
             int x = 0;
             int.TryParse(txtManaDiff.Text, out x);
-            Globals.GameSpells[_editorIndex].VitalDiff[(int)Enums.Vitals.Mana] = x;
+            Globals.GameSpells[_editorIndex].VitalDiff[(int)Vitals.Mana] = x;
         }
 
         private void txtAttackBuff_TextChanged(object sender, EventArgs e)
         {
             int x = 0;
             int.TryParse(txtAttackBuff.Text, out x);
-            Globals.GameSpells[_editorIndex].StatDiff[(int)Enums.Stats.Attack] = x;
+            Globals.GameSpells[_editorIndex].StatDiff[(int)Stats.Attack] = x;
         }
 
         private void txtDefenseBuff_TextChanged(object sender, EventArgs e)
         {
             int x = 0;
             int.TryParse(txtDefenseBuff.Text, out x);
-            Globals.GameSpells[_editorIndex].StatDiff[(int)Enums.Stats.Defense] = x;
+            Globals.GameSpells[_editorIndex].StatDiff[(int)Stats.Defense] = x;
         }
 
         private void txtSpeedBuff_TextChanged(object sender, EventArgs e)
         {
             int x = 0;
             int.TryParse(txtSpeedBuff.Text, out x);
-            Globals.GameSpells[_editorIndex].StatDiff[(int)Enums.Stats.Speed] = x;
+            Globals.GameSpells[_editorIndex].StatDiff[(int)Stats.Speed] = x;
         }
 
         private void txtAbilityPwrBuff_TextChanged(object sender, EventArgs e)
         {
             int x = 0;
             int.TryParse(txtAbilityPwrBuff.Text, out x);
-            Globals.GameSpells[_editorIndex].StatDiff[(int)Enums.Stats.AbilityPower] = x;
+            Globals.GameSpells[_editorIndex].StatDiff[(int)Stats.AbilityPower] = x;
         }
 
         private void txtMagicResistBuff_TextChanged(object sender, EventArgs e)
         {
             int x = 0;
             int.TryParse(txtMagicResistBuff.Text, out x);
-            Globals.GameSpells[_editorIndex].StatDiff[(int)Enums.Stats.MagicResist] = x;
+            Globals.GameSpells[_editorIndex].StatDiff[(int)Stats.MagicResist] = x;
         }
 
         private void chkHOTDOT_CheckedChanged(object sender, EventArgs e)
@@ -452,14 +449,14 @@ namespace Intersect_Editor.Forms
         {
             int x = 0;
             int.TryParse(txtHPCost.Text, out x);
-            Globals.GameSpells[_editorIndex].VitalCost[(int)Enums.Vitals.Health] = x;
+            Globals.GameSpells[_editorIndex].VitalCost[(int)Vitals.Health] = x;
         }
 
         private void txtManaCost_TextChanged(object sender, EventArgs e)
         {
             int x = 0;
             int.TryParse(txtManaCost.Text, out x);
-            Globals.GameSpells[_editorIndex].VitalCost[(int)Enums.Vitals.Mana] = x;
+            Globals.GameSpells[_editorIndex].VitalCost[(int)Vitals.Mana] = x;
         }
 
         void lstSpells_Click(object sender, System.EventArgs e)

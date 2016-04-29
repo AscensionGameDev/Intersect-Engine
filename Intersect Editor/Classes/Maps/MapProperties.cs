@@ -1,10 +1,10 @@
 ﻿using System;
-using System.Drawing;
 using System.ComponentModel;
-using System.Windows.Forms;
-using System.Globalization;
 using System.Collections.Generic;
 using Intersect_Editor.Classes.Core;
+using Intersect_Library;
+using Intersect_Library.GameObjects.Maps;
+using Color = System.Drawing.Color;
 
 namespace Intersect_Editor.Classes.Maps
 {
@@ -43,12 +43,12 @@ namespace Intersect_Editor.Classes.Maps
         {
             get
             {
-                return ((Enums.MapZones)_myMap.ZoneType).ToString();
+                return ((MapZones)_myMap.ZoneType).ToString();
             }
             set
             {
                 Globals.MapEditorWindow.PrepUndoState();
-                _myMap.ZoneType = (byte)(int)Enum.Parse(typeof(Enums.MapZones), value);
+                _myMap.ZoneType = (byte)(int)Enum.Parse(typeof(MapZones), value);
                 Globals.MapEditorWindow.AddUndoState();
             }
         }
@@ -205,13 +205,13 @@ namespace Intersect_Editor.Classes.Maps
         DefaultValueAttribute(0)]
         public Color PlayerLightColor
         {
-            get { return _myMap.PlayerLightColor; }
+            get { return Color.FromArgb(_myMap.PlayerLightColor.A, _myMap.PlayerLightColor.R, _myMap.PlayerLightColor.G, _myMap.PlayerLightColor.B); }
             set
             {
-                if (_myMap.PlayerLightColor != value)
+                if (_myMap.PlayerLightColor.A != value.A || _myMap.PlayerLightColor.R != value.R || _myMap.PlayerLightColor.G != value.G || _myMap.PlayerLightColor.B != value.B)
                 {
                     Globals.MapEditorWindow.PrepUndoState();
-                    _myMap.PlayerLightColor = value;
+                    _myMap.PlayerLightColor = Intersect_Library.Color.FromArgb(value.A, value.R, value.G, value.B);
                     EditorGraphics.TilePreviewUpdated = true;
                     Globals.MapEditorWindow.AddUndoState();
                 }
@@ -544,7 +544,7 @@ namespace Intersect_Editor.Classes.Maps
         public override System.ComponentModel.TypeConverter.StandardValuesCollection
                GetStandardValues(ITypeDescriptorContext context)
         {
-            return new StandardValuesCollection(Enum.GetNames(typeof(Enums.MapZones)));
+            return new StandardValuesCollection(Enum.GetNames(typeof(MapZones)));
         }
     }
 

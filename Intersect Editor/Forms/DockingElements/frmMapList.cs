@@ -1,13 +1,7 @@
 ﻿using Intersect_Editor.Classes;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
 using System.Windows.Forms;
-using Intersect_Editor.Forms.Controls;
+using Intersect_Library.GameObjects.Maps.MapList;
 using WeifenLuo.WinFormsUI.Docking;
 
 namespace Intersect_Editor.Forms

@@ -26,7 +26,6 @@
 */
 
 using IntersectClientExtras.Graphics;
-using IntersectClientExtras.Gwen;
 using IntersectClientExtras.Gwen.Control;
 using IntersectClientExtras.Gwen.Input;
 using IntersectClientExtras.Input;

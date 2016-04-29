@@ -21,9 +21,14 @@
 */
 
 using System;
+using Intersect_Library;
+using Intersect_Library.GameObjects;
 using Intersect_Server.Classes.General;
+using Intersect_Server.Classes.Networking;
+using Attribute = Intersect_Library.GameObjects.Maps.Attribute;
+using Options = Intersect_Server.Classes.General.Options;
 
-namespace Intersect_Server.Classes
+namespace Intersect_Server.Classes.Entities
 {
     public class Projectile : Entity
     {
@@ -48,8 +53,8 @@ namespace Intersect_Server.Classes
             MyName = MyBase.Name;
             Owner = owner;
             Stat = owner.Stat;
-            Vital[(int)Enums.Vitals.Health] = 1;
-            MaxVital[(int)Enums.Vitals.Health] = 1;
+            Vital[(int)Vitals.Health] = 1;
+            MaxVital[(int)Vitals.Health] = 1;
             CurrentMap = Map;
             CurrentX = X;
             CurrentY = Y;
@@ -349,7 +354,7 @@ namespace Intersect_Server.Classes
                         if (!Spawns[i].ProjectileBase.IgnoreZDimension)
                         {
                             Attribute attribute = Globals.GameMaps[Spawns[i].Map].Attributes[Spawns[i].X, Spawns[i].Y];
-                            if (attribute != null && attribute.value == (int) Enums.MapAttributes.ZDimension)
+                            if (attribute != null && attribute.value == (int) MapAttributes.ZDimension)
                             {
                                 if (attribute.data1 > 0)
                                 {
@@ -392,7 +397,7 @@ namespace Intersect_Server.Classes
                         }
                         else
                         {
-                            if (c == (int)Enums.EntityTypes.Player) //Player
+                            if (c == (int)EntityTypes.Player) //Player
                             {
                                 if (Owner.MyIndex != Target)
                                 {
@@ -400,7 +405,7 @@ namespace Intersect_Server.Classes
                                     killSpawn = true; //Remove from the list being processed
                                 }
                             }
-                            else if (c == (int)Enums.EntityTypes.Resource)
+                            else if (c == (int)EntityTypes.Resource)
                             {
                                 if ((((Resource)Globals.Entities[Target]).IsDead && !Spawns[i].ProjectileBase.IgnoreExhaustedResources) || (!((Resource)Globals.Entities[Target]).IsDead && !Spawns[i].ProjectileBase.IgnoreActiveResources))
                                 {
@@ -434,7 +439,7 @@ namespace Intersect_Server.Classes
             else
             {
                 Globals.GameMaps[CurrentMap].RemoveProjectile(this);
-                PacketSender.SendEntityLeave(MyIndex, (int)Enums.EntityTypes.Projectile, CurrentMap);
+                PacketSender.SendEntityLeave(MyIndex, (int)EntityTypes.Projectile, CurrentMap);
                 Globals.Entities[MyIndex] = null;
             }
         }

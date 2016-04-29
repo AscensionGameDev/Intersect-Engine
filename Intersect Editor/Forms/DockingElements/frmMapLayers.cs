@@ -1,16 +1,14 @@
 ﻿using Intersect_Editor.Classes;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.IO;
-using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 using Intersect_Editor.Classes.Core;
-using Intersect_Editor.Classes.General;
+using Intersect_Library;
+using Intersect_Library.GameObjects.Maps;
+using Intersect_Library.GameObjects.Maps.MapList;
 using Microsoft.Xna.Framework.Graphics;
 using WeifenLuo.WinFormsUI.Docking;
+using Options = Intersect_Editor.Classes.General.Options;
 
 namespace Intersect_Editor.Forms
 {
@@ -228,9 +226,9 @@ namespace Intersect_Editor.Forms
             hideAttributeMenus();
             grpWarp.Visible = true;
             cmbWarpMap.Items.Clear();
-            for (int i = 0; i < Database.OrderedMaps.Count; i++)
+            for (int i = 0; i < MapList.GetOrderedMaps().Count; i++)
             {
-                cmbWarpMap.Items.Add(Database.OrderedMaps[i].MapNum + ". " + Database.OrderedMaps[i].Name);
+                cmbWarpMap.Items.Add(MapList.GetOrderedMaps()[i].MapNum + ". " + MapList.GetOrderedMaps()[i].Name);
             }
             cmbWarpMap.SelectedIndex = 0;
             cmbDirection.SelectedIndex = 0;
@@ -284,35 +282,35 @@ namespace Intersect_Editor.Forms
         {
             if (rbBlocked.Checked == true)
             {
-                tmpMap.Attributes[x, y].value = (int)Enums.MapAttributes.Blocked;
+                tmpMap.Attributes[x, y].value = (int)MapAttributes.Blocked;
             }
             else if (rbItem.Checked == true)
             {
-                tmpMap.Attributes[x, y].value = (int)Enums.MapAttributes.Item;
+                tmpMap.Attributes[x, y].value = (int)MapAttributes.Item;
                 tmpMap.Attributes[x, y].data1 = cmbItemAttribute.SelectedIndex;
                 tmpMap.Attributes[x, y].data2 = scrlMaxItemVal.Value;
             }
             else if (rbZDimension.Checked == true)
             {
-                tmpMap.Attributes[x, y].value = (int)Enums.MapAttributes.ZDimension;
+                tmpMap.Attributes[x, y].value = (int)MapAttributes.ZDimension;
                 tmpMap.Attributes[x, y].data1 = GetEditorDimensionGateway();
                 tmpMap.Attributes[x, y].data2 = GetEditorDimensionBlock();
             }
             else if (rbNPCAvoid.Checked == true)
             {
-                tmpMap.Attributes[x, y].value = (int)Enums.MapAttributes.NPCAvoid;
+                tmpMap.Attributes[x, y].value = (int)MapAttributes.NPCAvoid;
             }
             else if (rbWarp.Checked == true)
             {
-                tmpMap.Attributes[x, y].value = (int)Enums.MapAttributes.Warp;
-                tmpMap.Attributes[x, y].data1 = Database.OrderedMaps[cmbWarpMap.SelectedIndex].MapNum;
+                tmpMap.Attributes[x, y].value = (int)MapAttributes.Warp;
+                tmpMap.Attributes[x, y].data1 = MapList.GetOrderedMaps()[cmbWarpMap.SelectedIndex].MapNum;
                 tmpMap.Attributes[x, y].data2 = scrlX.Value;
                 tmpMap.Attributes[x, y].data3 = scrlY.Value;
                 tmpMap.Attributes[x, y].data4 = (cmbDirection.SelectedIndex - 1).ToString();
             }
             else if (rbSound.Checked == true)
             {
-                tmpMap.Attributes[x, y].value = (int)Enums.MapAttributes.Sound;
+                tmpMap.Attributes[x, y].value = (int)MapAttributes.Sound;
                 tmpMap.Attributes[x, y].data1 = scrlSoundDistance.Value;
                 tmpMap.Attributes[x, y].data2 = 0;
                 tmpMap.Attributes[x, y].data3 = 0;
@@ -320,21 +318,21 @@ namespace Intersect_Editor.Forms
             }
             else if (rbResource.Checked == true)
             {
-                tmpMap.Attributes[x, y].value = (int)Enums.MapAttributes.Resource;
+                tmpMap.Attributes[x, y].value = (int)MapAttributes.Resource;
                 tmpMap.Attributes[x, y].data1 = cmbResourceAttribute.SelectedIndex;
             }
             else if (rbAnimation.Checked == true)
             {
-                tmpMap.Attributes[x, y].value = (int)Enums.MapAttributes.Animation;
+                tmpMap.Attributes[x, y].value = (int)MapAttributes.Animation;
                 tmpMap.Attributes[x, y].data1 = cmbAnimationAttribute.SelectedIndex;
             }
             else if (rbGrappleStone.Checked == true)
             {
-                tmpMap.Attributes[x, y].value = (int)Enums.MapAttributes.GrappleStone;
+                tmpMap.Attributes[x, y].value = (int)MapAttributes.GrappleStone;
             }
             else if (rbSlide.Checked == true)
             {
-                tmpMap.Attributes[x, y].value = (int)Enums.MapAttributes.Slide;
+                tmpMap.Attributes[x, y].value = (int)MapAttributes.Slide;
                 tmpMap.Attributes[x, y].data1 = cmbSlideDir.SelectedIndex;
             }
         }
@@ -539,13 +537,13 @@ namespace Intersect_Editor.Forms
         private void btnVisualMapSelector_Click(object sender, EventArgs e)
         {
             frmWarpSelection frmWarpSelection = new frmWarpSelection();
-            frmWarpSelection.SelectTile(Database.OrderedMaps[cmbWarpMap.SelectedIndex].MapNum, scrlX.Value, scrlY.Value);
+            frmWarpSelection.SelectTile(MapList.GetOrderedMaps()[cmbWarpMap.SelectedIndex].MapNum, scrlX.Value, scrlY.Value);
             frmWarpSelection.ShowDialog();
             if (frmWarpSelection.GetResult())
             {
-                for (int i = 0; i < Database.OrderedMaps.Count; i++)
+                for (int i = 0; i < MapList.GetOrderedMaps().Count; i++)
                 {
-                    if (Database.OrderedMaps[i].MapNum == frmWarpSelection.GetMap())
+                    if (MapList.GetOrderedMaps()[i].MapNum == frmWarpSelection.GetMap())
                     {
                         cmbWarpMap.SelectedIndex = i;
                         break;
