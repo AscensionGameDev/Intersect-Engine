@@ -23,6 +23,7 @@ using System;
 using System.Windows.Forms;
 using Intersect_Editor.Classes;
 using Intersect_Library;
+using Intersect_Library.GameObjects;
 using Intersect_Library.GameObjects.Events;
 
 
@@ -57,19 +58,13 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             int varCount = 0;
             if (rdoPlayerVariable.Checked)
             {
-                for (int i = 0; i < Options.MaxPlayerVariables; i++)
-                {
-                    cmbVariable.Items.Add((i + 1) + ". " + Globals.PlayerVariables[i]);
-                }
-                varCount = Options.MaxPlayerVariables;
+                cmbVariable.Items.AddRange(Database.GetGameObjectList(GameObject.PlayerVariable));
+                varCount = PlayerVariableBase.ObjectCount();
             }
             else
             {
-                for (int i = 0; i < Options.MaxServerVariables; i++)
-                {
-                    cmbVariable.Items.Add((i + 1) + ". " + Globals.ServerVariables[i]);
-                }
-                varCount = Options.MaxServerVariables;
+                cmbVariable.Items.AddRange(Database.GetGameObjectList(GameObject.ServerVariable));
+                varCount = ServerVariableBase.ObjectCount();
             }
             if (_myCommand.Ints[1] >= 0 && _myCommand.Ints[1] < varCount)
             {
@@ -115,9 +110,18 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
         private void btnSave_Click(object sender, EventArgs e)
         {
             int n;
-            if (rdoPlayerVariable.Checked) _myCommand.Ints[0] = (int) SwitchVariableTypes.PlayerVariable;
-            if (rdoGlobalVariable.Checked) _myCommand.Ints[0] = (int) SwitchVariableTypes.ServerVariable;
-            _myCommand.Ints[1] = cmbVariable.SelectedIndex;
+            if (rdoPlayerVariable.Checked)
+            {
+                _myCommand.Ints[0] = (int) SwitchVariableTypes.PlayerVariable;
+                _myCommand.Ints[0] = Database.GameObjectIdFromList(GameObject.PlayerVariable,
+                        cmbVariable.SelectedIndex);
+            }
+            if (rdoGlobalVariable.Checked)
+            {
+                _myCommand.Ints[0] = (int) SwitchVariableTypes.ServerVariable;
+                _myCommand.Ints[0] = Database.GameObjectIdFromList(GameObject.ServerVariable,
+                        cmbVariable.SelectedIndex);
+            }
             if (optSet.Checked)
             {
                 _myCommand.Ints[2] = 0;

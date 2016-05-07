@@ -24,7 +24,9 @@ using System;
 using Intersect_Library;
 using Intersect_Library.GameObjects;
 using Intersect_Server.Classes.General;
+using Intersect_Server.Classes.Maps;
 using Intersect_Server.Classes.Misc;
+using Intersect_Server.Classes.Misc.Pathfinding;
 using Intersect_Server.Classes.Networking;
 
 
@@ -34,6 +36,7 @@ namespace Intersect_Server.Classes.Entities
     {
         //Targetting
         public Entity MyTarget = null;
+        public NpcBase MyBase = null;
 
         //Pathfinding
         private Pathfinder pathFinder;
@@ -51,11 +54,12 @@ namespace Intersect_Server.Classes.Entities
         public byte Behaviour = 0;
         public byte Range = 0;
 
-        public Npc(int index, NpcStruct myBase)
+        public Npc(int index, NpcBase myBase)
             : base(index)
         {
             MyName = myBase.Name;
             MySprite = myBase.Sprite;
+            MyBase = myBase;
 
             for (int I = 0; I < (int)Stats.StatCount; I++)
             {
@@ -73,7 +77,7 @@ namespace Intersect_Server.Classes.Entities
         {
             base.Die(dropitems);
 
-            Globals.GameMaps[CurrentMap].RemoveEntity(this);
+            MapInstance.GetMap(CurrentMap).RemoveEntity(this);
             PacketSender.SendEntityLeave(MyIndex, (int)EntityTypes.GlobalEntity, CurrentMap);
             Globals.Entities[MyIndex] = null;
         }
@@ -136,16 +140,16 @@ namespace Intersect_Server.Classes.Entities
                         if (yMax >= Options.MapHeight) yMax = Options.MapHeight;
 
                         //TODO base this off of the entity array of surrounding maps, not the whole global list.
-                        for (int n = 0; n < Globals.GameMaps[CurrentMap].Entities.Count; n++)
+                        for (int n = 0; n < MapInstance.GetMap(CurrentMap).Entities.Count; n++)
                         {
-                            if (Globals.GameMaps[CurrentMap].Entities[n].GetType() == typeof(Player))
+                            if (MapInstance.GetMap(CurrentMap).Entities[n].GetType() == typeof(Player))
                             {
-                                if (x < Globals.GameMaps[CurrentMap].Entities[n].CurrentX && xMax > Globals.GameMaps[CurrentMap].Entities[n].CurrentX)
+                                if (x < MapInstance.GetMap(CurrentMap).Entities[n].CurrentX && xMax > MapInstance.GetMap(CurrentMap).Entities[n].CurrentX)
                                 {
-                                    if (y < Globals.GameMaps[CurrentMap].Entities[n].CurrentY && yMax > Globals.GameMaps[CurrentMap].Entities[n].CurrentY)
+                                    if (y < MapInstance.GetMap(CurrentMap).Entities[n].CurrentY && yMax > MapInstance.GetMap(CurrentMap).Entities[n].CurrentY)
                                     {
                                         // In range, so make a target
-                                        MyTarget = Globals.GameMaps[CurrentMap].Entities[n];
+                                        MyTarget = MapInstance.GetMap(CurrentMap).Entities[n];
                                         break;
                                     }
                                 }
@@ -159,15 +163,15 @@ namespace Intersect_Server.Classes.Entities
                     //Check if target map is on one of the surrounding maps, if not then we are not even going to look.
                     if (targetMap != CurrentMap)
                     {
-                        if (Globals.GameMaps[CurrentMap].SurroundingMaps.Count > 0)
+                        if (MapInstance.GetMap(CurrentMap).SurroundingMaps.Count > 0)
                         {
-                            for (var x = 0; x < Globals.GameMaps[CurrentMap].SurroundingMaps.Count; x++)
+                            for (var x = 0; x < MapInstance.GetMap(CurrentMap).SurroundingMaps.Count; x++)
                             {
-                                if (Globals.GameMaps[CurrentMap].SurroundingMaps[x] == targetMap)
+                                if (MapInstance.GetMap(CurrentMap).SurroundingMaps[x] == targetMap)
                                 {
                                     break;
                                 }
-                                if (x == Globals.GameMaps[CurrentMap].SurroundingMaps.Count - 1)
+                                if (x == MapInstance.GetMap(CurrentMap).SurroundingMaps.Count - 1)
                                 {
                                     targetMap = -1;
                                 }
@@ -248,11 +252,11 @@ namespace Intersect_Server.Classes.Entities
             {
                 if (_curMapLink != -1)
                 {
-                    Globals.GameMaps[_curMapLink].RemoveEntity(this);
+                    MapInstance.GetMap(_curMapLink).RemoveEntity(this);
                 }
                 if (CurrentMap > -1)
                 {
-                    Globals.GameMaps[CurrentMap].AddEntity(this);
+                    MapInstance.GetMap(CurrentMap).AddEntity(this);
                 }
                 _curMapLink = CurrentMap;
             }

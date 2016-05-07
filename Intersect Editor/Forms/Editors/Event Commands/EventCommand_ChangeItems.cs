@@ -20,9 +20,9 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 using System;
-using System.Linq;
 using System.Windows.Forms;
 using Intersect_Editor.Classes;
+using Intersect_Library;
 using Intersect_Library.GameObjects.Events;
 
 namespace Intersect_Editor.Forms.Editors.Event_Commands
@@ -39,15 +39,9 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             _eventEditor = editor;
             _currentPage = refPage;
             cmbItem.Items.Clear();
-            if (cmbItem.Items.Count == 0)
-            {
-                for (var i = 0; i < Globals.GameItems.Count(); i++)
-                {
-                    cmbItem.Items.Add((i + 1) + ". " + Globals.GameItems[i].Name);
-                }
-            }
+            cmbItem.Items.AddRange(Database.GetGameObjectList(GameObject.Item));
             cmbAction.SelectedIndex = _myCommand.Ints[0];
-            cmbItem.SelectedIndex = _myCommand.Ints[1];
+            cmbItem.SelectedIndex = Database.GameObjectListIndex(GameObject.Item,_myCommand.Ints[1]);
             if (_myCommand.Ints[2] < 1)
             {
                 scrlAmount.Value = 1;
@@ -62,7 +56,7 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
         private void btnSave_Click(object sender, EventArgs e)
         {
             _myCommand.Ints[0] = cmbAction.SelectedIndex;
-            _myCommand.Ints[1] = cmbItem.SelectedIndex;
+            _myCommand.Ints[1] = Database.GameObjectIdFromList(GameObject.Item,cmbItem.SelectedIndex);
             _myCommand.Ints[2] = scrlAmount.Value;
             if (_myCommand.Ints[4] == 0)
             // command.Ints[4, and 5] are reserved for when the action succeeds or fails

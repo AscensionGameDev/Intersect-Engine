@@ -22,14 +22,17 @@
 
 using System;
 using System.Collections.Generic;
-using System.IO;
+using System.Linq;
 
 namespace Intersect_Library.GameObjects
 {
-    public class ShopStruct
+    public class ShopBase : DatabaseObject
     {
         //Core info
-        public const string Version = "0.0.0.1";
+        public new const string DatabaseTable = "shops";
+        public new const GameObject Type = GameObject.Shop;
+        protected static Dictionary<int, DatabaseObject> Objects = new Dictionary<int, DatabaseObject>();
+        
         public string Name = "New Shop";
         public int DefaultCurrency = 0;
 
@@ -41,17 +44,14 @@ namespace Intersect_Library.GameObjects
         public List<ShopItem> BuyingItems = new List<ShopItem>();
 
 
-        public ShopStruct()
+        public ShopBase(int id) : base(id)
         {
         }
 
-        public void Load(byte[] packet, int index)
+        public override void Load(byte[] packet)
         {
             var myBuffer = new ByteBuffer();
             myBuffer.WriteBytes(packet);
-            string loadedVersion = myBuffer.ReadString();
-            if (loadedVersion != Version)
-                throw new Exception("Failed to load shop #" + index + ". Loaded Version: " + loadedVersion + " Expected Version: " + Version);
             Name = myBuffer.ReadString();
             DefaultCurrency = myBuffer.ReadInteger();
             SellingItems.Clear();
@@ -73,7 +73,6 @@ namespace Intersect_Library.GameObjects
         public byte[] ShopData()
         {
             var myBuffer = new ByteBuffer();
-            myBuffer.WriteString(Version);
             myBuffer.WriteString(Name);
             myBuffer.WriteInteger(DefaultCurrency);
             myBuffer.WriteInteger(SellingItems.Count);
@@ -91,12 +90,68 @@ namespace Intersect_Library.GameObjects
             return myBuffer.ToArray();
         }
 
-        public void Save(int index)
+        public static ShopBase GetShop(int index)
         {
-            byte[] data = ShopData();
-            Stream stream = new FileStream("resources/shops/" + index + ".shop", FileMode.OpenOrCreate);
-            stream.Write(data, 0, data.Length);
-            stream.Close();
+            if (Objects.ContainsKey(index))
+            {
+                return (ShopBase)Objects[index];
+            }
+            return null;
+        }
+
+        public static string GetName(int index)
+        {
+            if (Objects.ContainsKey(index))
+            {
+                return ((ShopBase)Objects[index]).Name;
+            }
+            return "Deleted";
+        }
+
+        public override byte[] GetData()
+        {
+            return ShopData();
+        }
+
+        public override string GetTable()
+        {
+            return DatabaseTable;
+        }
+
+        public override GameObject GetGameObjectType()
+        {
+            return Type;
+        }
+
+        public static DatabaseObject Get(int index)
+        {
+            if (Objects.ContainsKey(index))
+            {
+                return Objects[index];
+            }
+            return null;
+        }
+        public override void Delete()
+        {
+            Objects.Remove(GetId());
+        }
+        public static void ClearObjects()
+        {
+            Objects.Clear();
+        }
+        public static void AddObject(int index, DatabaseObject obj)
+        {
+            Objects.Remove(index);
+            Objects.Add(index, obj);
+        }
+        public static int ObjectCount()
+        {
+            return Objects.Count;
+        }
+        public static Dictionary<int, ShopBase> GetObjects()
+        {
+            Dictionary<int, ShopBase> objects = Objects.ToDictionary(k => k.Key, v => (ShopBase)v.Value);
+            return objects;
         }
     }
 

@@ -31,15 +31,15 @@ namespace Intersect_Library.GameObjects.Maps
         public PointStruct[] AutoSw = new PointStruct[6];
         public PointStruct[] AutoSe = new PointStruct[6];
 
-        private readonly MapStruct _myMap;
+        private readonly MapBase _myMap;
         public AutoTileCls[,] Autotile;
 
-        public MapAutotiles(MapStruct map)
+        public MapAutotiles(MapBase map)
         {
             _myMap = map;
         }
 
-        public void InitAutotiles(Dictionary<int, MapStruct> gameMaps)
+        public void InitAutotiles(Dictionary<int, MapBase> gameMaps)
         {
             Autotile = new AutoTileCls[Options.MapWidth, Options.MapHeight];
 
@@ -52,6 +52,7 @@ namespace Intersect_Library.GameObjects.Maps
                     for (var i = 0; i < Options.LayerCount; i++)
                     {
                         Autotile[x, y].Layer[i] = new QuarterTileCls();
+                        Autotile[x, y].Layer[i].QuarterTile = new PointStruct[5];
                     }
                 }
             }
@@ -156,7 +157,7 @@ namespace Intersect_Library.GameObjects.Maps
             }
         }
 
-        public void UpdateAutoTiles(int x, int y, Dictionary<int, MapStruct> gameMaps)
+        public void UpdateAutoTiles(int x, int y, Dictionary<int, MapBase> gameMaps)
         {
             for (var x1 = x - 1; x1 < x + 2; x1++)
             {
@@ -181,7 +182,7 @@ namespace Intersect_Library.GameObjects.Maps
             }
         }
 
-        public void UpdateAutoTiles(int x, int y, int layer,  Dictionary<int, MapStruct> gameMaps)
+        public void UpdateAutoTiles(int x, int y, int layer,  Dictionary<int, MapBase> gameMaps)
         {
             for (var x1 = x - 1; x1 < x + 2; x1++)
             {
@@ -213,7 +214,7 @@ namespace Intersect_Library.GameObjects.Maps
             {
                 // default to... default
                 Autotile[x, y].Layer[layerNum].RenderState = RenderStateNormal;
-                Autotile[x, y].Layer[layerNum].QuarterTile = null;
+                //Autotile[x, y].Layer[layerNum].QuarterTile = null;
             }
             else
             {
@@ -228,7 +229,7 @@ namespace Intersect_Library.GameObjects.Maps
             }
         }
 
-        public void CalculateAutotile(int x, int y, int layerNum, Dictionary<int, MapStruct> gameMaps)
+        public void CalculateAutotile(int x, int y, int layerNum, Dictionary<int, MapBase> gameMaps)
         {
             // Right, so we//ve split the tile block in to an easy to remember
             // collection of letters. We now need to do the calculations to find
@@ -295,7 +296,7 @@ namespace Intersect_Library.GameObjects.Maps
         }
 
         // Normal autotiling
-        public void CalculateNW_Normal(int layerNum, int x, int y, Dictionary<int, MapStruct> gameMaps)
+        public void CalculateNW_Normal(int layerNum, int x, int y, Dictionary<int, MapBase> gameMaps)
         {
             var tmpTile = new bool[4];
             byte situation = 1;
@@ -341,7 +342,7 @@ namespace Intersect_Library.GameObjects.Maps
             }
         }
 
-        public void CalculateNE_Normal(int layerNum, int x, int y, Dictionary<int, MapStruct> gameMaps)
+        public void CalculateNE_Normal(int layerNum, int x, int y, Dictionary<int, MapBase> gameMaps)
         {
             var tmpTile = new bool[4];
             byte situation = 1;
@@ -387,7 +388,7 @@ namespace Intersect_Library.GameObjects.Maps
             }
         }
 
-        public void CalculateSW_Normal(int layerNum, int x, int y, Dictionary<int, MapStruct> gameMaps)
+        public void CalculateSW_Normal(int layerNum, int x, int y, Dictionary<int, MapBase> gameMaps)
         {
             var tmpTile = new bool[4];
             byte situation = 1;
@@ -433,7 +434,7 @@ namespace Intersect_Library.GameObjects.Maps
             }
         }
 
-        public void CalculateSE_Normal(int layerNum, int x, int y, Dictionary<int, MapStruct> gameMaps)
+        public void CalculateSE_Normal(int layerNum, int x, int y, Dictionary<int, MapBase> gameMaps)
         {
             var tmpTile = new bool[4];
             byte situation = 1;
@@ -480,7 +481,7 @@ namespace Intersect_Library.GameObjects.Maps
         }
 
         // Waterfall autotiling
-        public void CalculateNW_Waterfall(int layerNum, int x, int y, Dictionary<int, MapStruct> gameMaps)
+        public void CalculateNW_Waterfall(int layerNum, int x, int y, Dictionary<int, MapBase> gameMaps)
         {
             var tmpTile = CheckTileMatch(layerNum, x, y, x - 1, y, gameMaps);
 
@@ -497,7 +498,7 @@ namespace Intersect_Library.GameObjects.Maps
             }
         }
 
-        public void CalculateNE_Waterfall(int layerNum, int x, int y, Dictionary<int, MapStruct> gameMaps)
+        public void CalculateNE_Waterfall(int layerNum, int x, int y, Dictionary<int, MapBase> gameMaps)
         {
             var tmpTile = CheckTileMatch(layerNum, x, y, x + 1, y, gameMaps);
 
@@ -514,7 +515,7 @@ namespace Intersect_Library.GameObjects.Maps
             }
         }
 
-        public void CalculateSW_Waterfall(int layerNum, int x, int y, Dictionary<int, MapStruct> gameMaps)
+        public void CalculateSW_Waterfall(int layerNum, int x, int y, Dictionary<int, MapBase> gameMaps)
         {
             var tmpTile = CheckTileMatch(layerNum, x, y, x - 1, y, gameMaps);
 
@@ -531,7 +532,7 @@ namespace Intersect_Library.GameObjects.Maps
             }
         }
 
-        public void CalculateSE_Waterfall(int layerNum, int x, int y, Dictionary<int, MapStruct> gameMaps)
+        public void CalculateSE_Waterfall(int layerNum, int x, int y, Dictionary<int, MapBase> gameMaps)
         {
             var tmpTile = CheckTileMatch(layerNum, x, y, x + 1, y, gameMaps);
 
@@ -549,7 +550,7 @@ namespace Intersect_Library.GameObjects.Maps
         }
 
         // Clif (f autotiling
-        public void CalculateNW_Cliff(int layerNum, int x, int y, Dictionary<int, MapStruct> gameMaps)
+        public void CalculateNW_Cliff(int layerNum, int x, int y, Dictionary<int, MapBase> gameMaps)
         {
             var tmpTile = new bool[4];
             byte situation = 1;
@@ -590,7 +591,7 @@ namespace Intersect_Library.GameObjects.Maps
             }
         }
 
-        public void CalculateNE_Cliff(int layerNum, int x, int y, Dictionary<int, MapStruct> gameMaps)
+        public void CalculateNE_Cliff(int layerNum, int x, int y, Dictionary<int, MapBase> gameMaps)
         {
             var tmpTile = new bool[4];
             byte situation = 1;
@@ -631,7 +632,7 @@ namespace Intersect_Library.GameObjects.Maps
             }
         }
 
-        public void CalculateSW_Cliff(int layerNum, int x, int y, Dictionary<int, MapStruct> gameMaps)
+        public void CalculateSW_Cliff(int layerNum, int x, int y, Dictionary<int, MapBase> gameMaps)
         {
             var tmpTile = new bool[4];
             byte situation = 1;
@@ -672,7 +673,7 @@ namespace Intersect_Library.GameObjects.Maps
             }
         }
 
-        public void CalculateSE_Cliff(int layerNum, int x, int y, Dictionary<int, MapStruct> gameMaps)
+        public void CalculateSE_Cliff(int layerNum, int x, int y, Dictionary<int, MapBase> gameMaps)
         {
             var tmpTile = new bool[4];
             byte situation = 1;
@@ -713,7 +714,7 @@ namespace Intersect_Library.GameObjects.Maps
             }
         }
 
-        public bool CheckTileMatch(int layerNum, int x1, int y1, int x2, int y2, Dictionary<int, MapStruct> gameMaps)
+        public bool CheckTileMatch(int layerNum, int x1, int y1, int x2, int y2, Dictionary<int, MapBase> gameMaps)
         {
             Tile targetTile;
             targetTile.TilesetIndex = -1;
@@ -727,7 +728,7 @@ namespace Intersect_Library.GameObjects.Maps
                 {
                     return true;
                 }
-                MapStruct otherMap;
+                MapBase otherMap;
                 if (x2 < 0)
                 {
                     if (_myMap.Left > -1 && gameMaps.ContainsKey(_myMap.Left))
@@ -846,7 +847,6 @@ namespace Intersect_Library.GameObjects.Maps
 
         public void PlaceAutotile(int layerNum, int x, int y, byte tileQuarter, string autoTileLetter)
         {
-            //With Autotile(x, y).Layer(layerNum).QuarterTile(tileQuarter)
             switch (autoTileLetter)
             {
                 case "a":

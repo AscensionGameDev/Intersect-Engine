@@ -26,7 +26,8 @@ using System.Threading;
 using Intersect_Library;
 using Intersect_Server.Classes.Core;
 using Intersect_Server.Classes.Entities;
-using Intersect_Server.Classes.General;
+using Intersect_Server.Classes.Maps;
+using Intersect_Server.Classes.Misc.Pathfinding;
 
 
 namespace Intersect_Server.Classes.Misc
@@ -125,34 +126,34 @@ namespace Intersect_Server.Classes.Misc
             var openList = new List<PathfinderPoint>();
             var closedList = new List<PathfinderPoint>();
             var adjSquares = new List<PathfinderPoint>();
-            var myGrid = Globals.GameMaps[_sourceEntity.CurrentMap].MapGrid;
+            var myGrid = MapInstance.GetMap(_sourceEntity.CurrentMap).MapGrid;
             _pathFinding = true;
 
             //Loop through surrouding maps to generate a array of open and blocked points.
-            for (var x = Globals.GameMaps[_sourceEntity.CurrentMap].MapGridX - 1; x <= Globals.GameMaps[_sourceEntity.CurrentMap].MapGridX + 1; x++)
+            for (var x = MapInstance.GetMap(_sourceEntity.CurrentMap).MapGridX - 1; x <= MapInstance.GetMap(_sourceEntity.CurrentMap).MapGridX + 1; x++)
             {
                 if (x == -1 || x >= Database.MapGrids[myGrid].Width) continue;
-                for (var y = Globals.GameMaps[_sourceEntity.CurrentMap].MapGridY - 1; y <= Globals.GameMaps[_sourceEntity.CurrentMap].MapGridY + 1; y++)
+                for (var y = MapInstance.GetMap(_sourceEntity.CurrentMap).MapGridY - 1; y <= MapInstance.GetMap(_sourceEntity.CurrentMap).MapGridY + 1; y++)
                 {
                     if (y == -1 || y >= Database.MapGrids[myGrid].Height) continue;
                     if (Database.MapGrids[myGrid].MyGrid[x, y] > -1)
                     {
-                        for (var i = 0; i < Globals.GameMaps[Database.MapGrids[myGrid].MyGrid[x, y]].Entities.Count; i++)
+                        for (var i = 0; i < MapInstance.GetMap(Database.MapGrids[myGrid].MyGrid[x, y]).Entities.Count; i++)
                         {
-                            if (Globals.GameMaps[Database.MapGrids[myGrid].MyGrid[x, y]].Entities[i] != null)
+                            if (MapInstance.GetMap(Database.MapGrids[myGrid].MyGrid[x, y]).Entities[i] != null)
                             {
-                                if (i != _sourceEntity.MyIndex && (Globals.GameMaps[Database.MapGrids[myGrid].MyGrid[x, y]].Entities[i].CurrentMap != _target.TargetMap || Globals.GameMaps[Database.MapGrids[myGrid].MyGrid[x, y]].Entities[i].CurrentY != _target.TargetY || Globals.GameMaps[Database.MapGrids[myGrid].MyGrid[x, y]].Entities[i].CurrentX != _target.TargetX))
+                                if (i != _sourceEntity.MyIndex && (MapInstance.GetMap(Database.MapGrids[myGrid].MyGrid[x, y]).Entities[i].CurrentMap != _target.TargetMap || MapInstance.GetMap(Database.MapGrids[myGrid].MyGrid[x, y]).Entities[i].CurrentY != _target.TargetY || MapInstance.GetMap(Database.MapGrids[myGrid].MyGrid[x, y]).Entities[i].CurrentX != _target.TargetX))
                                 {
-                                    if (Globals.GameMaps[Database.MapGrids[myGrid].MyGrid[x, y]].Entities[i] != null)
+                                    if (MapInstance.GetMap(Database.MapGrids[myGrid].MyGrid[x, y]).Entities[i] != null)
                                     {
-                                        if (Globals.GameMaps[Database.MapGrids[myGrid].MyGrid[x, y]].Entities[i].CurrentMap == Database.MapGrids[myGrid].MyGrid[x, y])
+                                        if (MapInstance.GetMap(Database.MapGrids[myGrid].MyGrid[x, y]).Entities[i].CurrentMap == Database.MapGrids[myGrid].MyGrid[x, y])
                                         {
                                             closedList.Add(
                                                 new PathfinderPoint(
-                                                    (x - Globals.GameMaps[_sourceEntity.CurrentMap].MapGridX + 1)*
-                                                    Options.MapWidth + Globals.GameMaps[Database.MapGrids[myGrid].MyGrid[x, y]].Entities[i].CurrentX,
-                                                    (y - Globals.GameMaps[_sourceEntity.CurrentMap].MapGridY + 1)*
-                                                    Options.MapHeight + Globals.GameMaps[Database.MapGrids[myGrid].MyGrid[x, y]].Entities[i].CurrentY, -1, 0));
+                                                    (x - MapInstance.GetMap(_sourceEntity.CurrentMap).MapGridX + 1)*
+                                                    Options.MapWidth + MapInstance.GetMap(Database.MapGrids[myGrid].MyGrid[x, y]).Entities[i].CurrentX,
+                                                    (y - MapInstance.GetMap(_sourceEntity.CurrentMap).MapGridY + 1)*
+                                                    Options.MapHeight + MapInstance.GetMap(Database.MapGrids[myGrid].MyGrid[x, y]).Entities[i].CurrentY, -1, 0));
                                         }
                                     }
                                 }
@@ -162,35 +163,35 @@ namespace Intersect_Server.Classes.Misc
                         {
                             for (var y1 = 0; y1 < Options.MapHeight; y1++)
                             {
-                                if (Globals.GameMaps[Database.MapGrids[myGrid].MyGrid[x, y]].Attributes[x1, y1] != null)
+                                if (MapInstance.GetMap(Database.MapGrids[myGrid].MyGrid[x, y]).Attributes[x1, y1] != null)
                                 {
                                     if (
-                                        Globals.GameMaps[Database.MapGrids[myGrid].MyGrid[x, y]].Attributes[x1, y1]
+                                        MapInstance.GetMap(Database.MapGrids[myGrid].MyGrid[x, y]).Attributes[x1, y1]
                                             .value == (int)MapAttributes.Blocked ||
-                                        Globals.GameMaps[Database.MapGrids[myGrid].MyGrid[x, y]].Attributes[x1, y1]
+                                        MapInstance.GetMap(Database.MapGrids[myGrid].MyGrid[x, y]).Attributes[x1, y1]
                                             .value == (int)MapAttributes.NPCAvoid)
                                     {
                                         closedList.Add(
                                             new PathfinderPoint(
-                                                (x - Globals.GameMaps[_sourceEntity.CurrentMap].MapGridX + 1) *
+                                                (x - MapInstance.GetMap(_sourceEntity.CurrentMap).MapGridX + 1) *
                                                 Options.MapWidth + x1,
-                                                (y - Globals.GameMaps[_sourceEntity.CurrentMap].MapGridY + 1) *
+                                                (y - MapInstance.GetMap(_sourceEntity.CurrentMap).MapGridY + 1) *
                                                 Options.MapHeight + y1, -1, 0));
                                     }
                                 }
                                 if (Database.MapGrids[myGrid].MyGrid[x, y] == _target.TargetMap && x1 == _target.TargetX && y1 == _target.TargetY)
                                 {
-                                    targetX = (x - Globals.GameMaps[_sourceEntity.CurrentMap].MapGridX + 1) *
+                                    targetX = (x - MapInstance.GetMap(_sourceEntity.CurrentMap).MapGridX + 1) *
                                               Options.MapWidth + x1;
-                                    targetY = (y - Globals.GameMaps[_sourceEntity.CurrentMap].MapGridY + 1) *
+                                    targetY = (y - MapInstance.GetMap(_sourceEntity.CurrentMap).MapGridY + 1) *
                                               Options.MapHeight + y1;
                                 }
                                 if (Database.MapGrids[myGrid].MyGrid[x, y] == _sourceEntity.CurrentMap &&
                                     x1 == _sourceEntity.CurrentX && y1 == _sourceEntity.CurrentY)
                                 {
-                                    startX = (x - Globals.GameMaps[_sourceEntity.CurrentMap].MapGridX + 1) *
+                                    startX = (x - MapInstance.GetMap(_sourceEntity.CurrentMap).MapGridX + 1) *
                                              Options.MapWidth + x1;
-                                    startY = (y - Globals.GameMaps[_sourceEntity.CurrentMap].MapGridY + 1) *
+                                    startY = (y - MapInstance.GetMap(_sourceEntity.CurrentMap).MapGridY + 1) *
                                              Options.MapHeight + y1;
                                 }
                             }
@@ -202,7 +203,7 @@ namespace Intersect_Server.Classes.Misc
                         {
                             for (var y1 = 0; y1 < Options.MapHeight; y1++)
                             {
-                                closedList.Add(new PathfinderPoint((x - Globals.GameMaps[_sourceEntity.CurrentMap].MapGridX + 1) * Options.MapWidth + x1, (y - Globals.GameMaps[_sourceEntity.CurrentMap].MapGridY + 1) * Options.MapHeight + y1, -1, 0));
+                                closedList.Add(new PathfinderPoint((x - MapInstance.GetMap(_sourceEntity.CurrentMap).MapGridX + 1) * Options.MapWidth + x1, (y - MapInstance.GetMap(_sourceEntity.CurrentMap).MapGridY + 1) * Options.MapHeight + y1, -1, 0));
                             }
                         }
                     }
@@ -326,36 +327,6 @@ namespace Intersect_Server.Classes.Misc
                 }
             }
             return solution;
-        }
-    }
-
-    public class PathfinderTarget
-    {
-        public int TargetX;
-        public int TargetY;
-        public int TargetMap;
-        public PathfinderTarget(int map, int x, int y)
-        {
-            TargetMap = map;
-            TargetX = x;
-            TargetY = y;
-        }
-    }
-
-    public class PathfinderPoint
-    {
-        public int X;
-        public int Y;
-        public int F;
-        public int H;
-        public int G;
-        public PathfinderPoint(int x, int y, int g, int h)
-        {
-            X = x;
-            Y = y;
-            G = g;
-            H = h;
-            F = g + h;
         }
     }
 }

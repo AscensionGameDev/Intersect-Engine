@@ -21,7 +21,6 @@
 */
 using System;
 using System.Windows.Forms;
-using Intersect_Editor.Classes;
 using Intersect_Editor.Classes.Core;
 using Intersect_Library.GameObjects.Events;
 

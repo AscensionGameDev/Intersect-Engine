@@ -19,15 +19,20 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+
 using System.Collections.Generic;
-using System.IO;
+using System.Linq;
 
 namespace Intersect_Library.GameObjects
 {
-    public class ClassStruct
+    public class ClassBase : DatabaseObject
     {
         //Core info
-        public string Name = "";
+        public new const string DatabaseTable = "classes";
+        public new const GameObject Type = GameObject.Class;
+        protected static Dictionary<int, DatabaseObject> Objects = new Dictionary<int, DatabaseObject>();
+        
+        public string Name = "New Class";
 
         //Spawn Info
         public int SpawnMap = 0;
@@ -49,7 +54,7 @@ namespace Intersect_Library.GameObjects
         //Starting Spells
         public List<ClassSpell> Spells = new List<ClassSpell>();
 
-        public ClassStruct()
+        public ClassBase(int id) : base(id)
         {
             for (int i = 0; i < Options.MaxNpcDrops; i++)
             {
@@ -57,7 +62,7 @@ namespace Intersect_Library.GameObjects
             }
         }
 
-        public void Load(byte[] packet, int index)
+        public override void Load(byte[] packet)
         {
             var spriteCount = 0;
             ClassSprite TempSprite = new ClassSprite();
@@ -159,12 +164,68 @@ namespace Intersect_Library.GameObjects
             return myBuffer.ToArray();
         }
 
-        public void Save(int classNum)
+        public static ClassBase GetClass(int index)
         {
-            byte[] data = ClassData();
-            Stream stream = new FileStream("resources/classes/" + classNum + ".cls", FileMode.OpenOrCreate);
-            stream.Write(data, 0, data.Length);
-            stream.Close();
+            if (Objects.ContainsKey(index))
+            {
+                return (ClassBase)Objects[index];
+            }
+            return null;
+        }
+
+        public static string GetName(int index)
+        {
+            if (Objects.ContainsKey(index))
+            {
+                return ((ClassBase)Objects[index]).Name;
+            }
+            return "Deleted";
+        }
+
+        public override byte[] GetData()
+        {
+            return ClassData();
+        }
+
+        public override string GetTable()
+        {
+            return DatabaseTable;
+        }
+
+        public override GameObject GetGameObjectType()
+        {
+            return Type;
+        }
+
+        public static DatabaseObject Get(int index)
+        {
+            if (Objects.ContainsKey(index))
+            {
+                return Objects[index];
+            }
+            return null;
+        }
+        public override void Delete()
+        {
+            Objects.Remove(GetId());
+        }
+        public static void ClearObjects()
+        {
+            Objects.Clear();
+        }
+        public static void AddObject(int index, DatabaseObject obj)
+        {
+            Objects.Remove(index);
+            Objects.Add(index, obj);
+        }
+        public static int ObjectCount()
+        {
+            return Objects.Count;
+        }
+        public static Dictionary<int, ClassBase> GetObjects()
+        {
+            Dictionary<int, ClassBase> objects = Objects.ToDictionary(k => k.Key, v => (ClassBase)v.Value);
+            return objects;
         }
     }
 

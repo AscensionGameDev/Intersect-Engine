@@ -32,8 +32,10 @@ using IntersectClientExtras.GenericClasses;
 using IntersectClientExtras.Graphics;
 using Intersect_Client.Classes.General;
 using Intersect_Client.Classes.Items;
+using Intersect_Client.Classes.Maps;
 using Intersect_Client.Classes.Spells;
 using Intersect_Library;
+using Intersect_Library.GameObjects;
 using Color = IntersectClientExtras.GenericClasses.Color;
 using GameGraphics = Intersect_Client.Classes.Core.GameGraphics;
 
@@ -127,7 +129,9 @@ namespace Intersect_Client.Classes.Entities
             int animCount = bf.ReadInteger();
             for (int i = 0; i < animCount; i++)
             {
-                Animations.Add(new AnimationInstance(Globals.GameAnimations[bf.ReadInteger()], true));
+                var anim = AnimationBase.GetAnim(bf.ReadInteger());
+                if (anim != null)
+                    Animations.Add(new AnimationInstance(anim, true));
             }
         }
 
@@ -244,12 +248,10 @@ namespace Intersect_Client.Classes.Entities
                 renderList.Remove(this);
             }
 
-            if (!Globals.GameMaps.ContainsKey(CurrentMap))
+            if (MapInstance.GetMap(CurrentMap) == null)
             {
                 return null;
             }
-
-            int mapLoc = -1;
             for (int i = 0; i < 9; i++)
             {
                 if (Globals.LocalMaps[i] == CurrentMap)
@@ -288,13 +290,12 @@ namespace Intersect_Client.Classes.Entities
         public virtual void Draw()
         {
             int i = GetLocalPos(CurrentMap);
-            if (i == -1 || !Globals.GameMaps.ContainsKey(CurrentMap))
+            if (i == -1 || MapInstance.GetMap(CurrentMap) == null)
             {
                 return;
             }
             FloatRect srcRectangle = new FloatRect();
             FloatRect destRectangle = new FloatRect();
-            GameTexture srcTexture;
             var d = 0;
 
             string sprite = MySprite;
@@ -324,15 +325,16 @@ namespace Intersect_Client.Classes.Entities
             GameTexture entityTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Entity, sprite);
             if (entityTex != null)
             {
+                var map = MapInstance.GetMap(CurrentMap);
                 if (entityTex.GetHeight() / 4 > Options.TileHeight)
                 {
-                    destRectangle.X = (Globals.GameMaps[CurrentMap].GetX() + CurrentX * Options.TileWidth + OffsetX);
-                    destRectangle.Y = Globals.GameMaps[CurrentMap].GetY() + CurrentY * Options.TileHeight + OffsetY - ((entityTex.GetHeight() / 4) - Options.TileHeight);
+                    destRectangle.X = (map.GetX() + CurrentX * Options.TileWidth + OffsetX);
+                    destRectangle.Y = map.GetY() + CurrentY * Options.TileHeight + OffsetY - ((entityTex.GetHeight() / 4) - Options.TileHeight);
                 }
                 else
                 {
-                    destRectangle.X = Globals.GameMaps[CurrentMap].GetX() + CurrentX * Options.TileWidth + OffsetX;
-                    destRectangle.Y = Globals.GameMaps[CurrentMap].GetY() + CurrentY * Options.TileHeight + OffsetY;
+                    destRectangle.X = map.GetX() + CurrentX * Options.TileWidth + OffsetX;
+                    destRectangle.Y = map.GetY() + CurrentY * Options.TileHeight + OffsetY;
                 }
                 if (entityTex.GetWidth() / 4 > Options.TileWidth)
                 {
@@ -368,9 +370,9 @@ namespace Intersect_Client.Classes.Entities
                     {
                         if (Options.EquipmentSlots.IndexOf(Options.PaperdollOrder[z]) > -1)
                         {
-                            if (Equipment[Options.EquipmentSlots.IndexOf(Options.PaperdollOrder[z])] > -1 && Inventory[Equipment[Options.EquipmentSlots.IndexOf(Options.PaperdollOrder[z])]].ItemNum > -1)
+                            if (Equipment[Options.EquipmentSlots.IndexOf(Options.PaperdollOrder[z])] > -1 && ItemBase.GetItem(Inventory[Equipment[Options.EquipmentSlots.IndexOf(Options.PaperdollOrder[z])]].ItemNum) != null)
                             {
-                                DrawEquipment(Globals.GameItems[Inventory[Equipment[Options.EquipmentSlots.IndexOf(Options.PaperdollOrder[z])]].ItemNum].Paperdoll, alpha);
+                                DrawEquipment(ItemBase.GetItem(Inventory[Equipment[Options.EquipmentSlots.IndexOf(Options.PaperdollOrder[z])]].ItemNum).Paperdoll, alpha);
                             }
                         }
                     }
@@ -382,23 +384,23 @@ namespace Intersect_Client.Classes.Entities
         public virtual void DrawEquipment(string filename, int alpha)
         {
             int i = GetLocalPos(CurrentMap);
-            if (i == -1 || !Globals.GameMaps.ContainsKey(CurrentMap)) return;
+            var map = MapInstance.GetMap(CurrentMap);
+            if (i == -1 || map == null) return;
             FloatRect srcRectangle = new FloatRect();
             FloatRect destRectangle = new FloatRect();
-            GameTexture srcTexture;
             var d = 0;
             GameTexture paperdollTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Paperdoll, filename);
             if (paperdollTex != null)
             {
                 if (paperdollTex.GetHeight() / 4 > Options.TileHeight)
                 {
-                    destRectangle.X = (Globals.GameMaps[CurrentMap].GetX() + CurrentX * Options.TileWidth + OffsetX);
-                    destRectangle.Y = Globals.GameMaps[CurrentMap].GetY() + CurrentY * Options.TileHeight + OffsetY - ((paperdollTex.GetHeight() / 4) - Options.TileHeight);
+                    destRectangle.X = (map.GetX() + CurrentX * Options.TileWidth + OffsetX);
+                    destRectangle.Y = map.GetY() + CurrentY * Options.TileHeight + OffsetY - ((paperdollTex.GetHeight() / 4) - Options.TileHeight);
                 }
                 else
                 {
-                    destRectangle.X = Globals.GameMaps[CurrentMap].GetX() + CurrentX * Options.TileWidth + OffsetX;
-                    destRectangle.Y = Globals.GameMaps[CurrentMap].GetY() + CurrentY * Options.TileHeight + OffsetY;
+                    destRectangle.X = map.GetX() + CurrentX * Options.TileWidth + OffsetX;
+                    destRectangle.Y = map.GetY() + CurrentY * Options.TileHeight + OffsetY;
                 }
                 if (paperdollTex.GetWidth() / 4 > Options.TileWidth)
                 {
@@ -443,12 +445,13 @@ namespace Intersect_Client.Classes.Entities
         //returns the point on the screen that is the center of the player sprite
         public virtual Pointf GetCenterPos()
         {
-            if (!Globals.GameMaps.ContainsKey(CurrentMap))
+            var map = MapInstance.GetMap(CurrentMap);
+            if (map == null)
             {
                 return new Pointf(0, 0);
             }
-            Pointf pos = new Pointf(Globals.GameMaps[CurrentMap].GetX() + CurrentX * Options.TileWidth + OffsetX + Options.TileWidth / 2,
-                    Globals.GameMaps[CurrentMap].GetY() + CurrentY * Options.TileHeight + OffsetY + Options.TileHeight / 2);
+            Pointf pos = new Pointf(map.GetX() + CurrentX * Options.TileWidth + OffsetX + Options.TileWidth / 2,
+                    map.GetY() + CurrentY * Options.TileHeight + OffsetY + Options.TileHeight / 2);
             GameTexture entityTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Entity, MySprite);
             if (entityTex != null)
             {
@@ -475,7 +478,8 @@ namespace Intersect_Client.Classes.Entities
             }
 
             int i = GetLocalPos(CurrentMap);
-            if (i == -1 || !Globals.GameMaps.ContainsKey(CurrentMap))
+            var map = MapInstance.GetMap(CurrentMap);
+            if (i == -1 || map == null)
             {
                 return;
             }
@@ -516,7 +520,8 @@ namespace Intersect_Client.Classes.Entities
             }
 
             int i = GetLocalPos(CurrentMap);
-            if (i == -1 || !Globals.GameMaps.ContainsKey(CurrentMap))
+            var map = MapInstance.GetMap(CurrentMap);
+            if (i == -1 || map == null)
             {
                 return;
             }
@@ -544,30 +549,37 @@ namespace Intersect_Client.Classes.Entities
         {
             if (CastTime < Globals.System.GetTimeMS()) { return; }
             int i = GetLocalPos(CurrentMap);
-            if (i == -1 || !Globals.GameMaps.ContainsKey(CurrentMap))
+            if (i == -1 || MapInstance.GetMap(CurrentMap) == null)
             {
                 return;
             }
-            var width = Options.TileWidth;
-            var fillWidth = ((Globals.GameSpells[SpellCast].CastDuration * 100 - (CastTime - Globals.System.GetTimeMS())) / (float)(Globals.GameSpells[SpellCast].CastDuration * 100) * width);
-            var y = (int)Math.Ceiling(GetCenterPos().Y);
-            var x = (int)Math.Ceiling(GetCenterPos().X);
-            GameTexture entityTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Entity, MySprite);
-            if (entityTex != null)
+            var castSpell = SpellBase.GetSpell(SpellCast);
+            if (castSpell != null)
             {
-                y = y + (int)((entityTex.GetHeight() / 8));
-                y += 3;
-
-                if (entityTex.GetWidth() / 4 > Options.TileWidth)
+                var width = Options.TileWidth;
+                var fillWidth = ((castSpell.CastDuration*100 -
+                                  (CastTime - Globals.System.GetTimeMS()))/
+                                 (float) (castSpell.CastDuration*100)*width);
+                var y = (int) Math.Ceiling(GetCenterPos().Y);
+                var x = (int) Math.Ceiling(GetCenterPos().X);
+                GameTexture entityTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Entity,
+                    MySprite);
+                if (entityTex != null)
                 {
-                    x = x - (int)((entityTex.GetWidth() / 4) - Options.TileWidth) / 2;
-                }
-            }
+                    y = y + (int) ((entityTex.GetHeight()/8));
+                    y += 3;
 
-            GameGraphics.DrawGameTexture(GameGraphics.Renderer.GetWhiteTexture(), new FloatRect(0, 0, 1, 1),
-                new FloatRect((int)(x - 1 - width / 2), (int)(y - 1), width, 6), Color.Black);
-            GameGraphics.DrawGameTexture(GameGraphics.Renderer.GetWhiteTexture(), new FloatRect(0, 0, 1, 1),
-                new FloatRect((int)(x - width / 2), (int)(y), fillWidth - 2, 4), new Color(255,0,255,255));
+                    if (entityTex.GetWidth()/4 > Options.TileWidth)
+                    {
+                        x = x - (int) ((entityTex.GetWidth()/4) - Options.TileWidth)/2;
+                    }
+                }
+
+                GameGraphics.DrawGameTexture(GameGraphics.Renderer.GetWhiteTexture(), new FloatRect(0, 0, 1, 1),
+                    new FloatRect((int) (x - 1 - width/2), (int) (y - 1), width, 6), Color.Black);
+                GameGraphics.DrawGameTexture(GameGraphics.Renderer.GetWhiteTexture(), new FloatRect(0, 0, 1, 1),
+                    new FloatRect((int) (x - width/2), (int) (y), fillWidth - 2, 4), new Color(255, 0, 255, 255));
+            }
         }
 
         //
@@ -575,14 +587,15 @@ namespace Intersect_Client.Classes.Entities
         {
             if (this.GetType() == typeof(Projectile)) return;
             int i = GetLocalPos(CurrentMap);
-            if (i == -1 || !Globals.GameMaps.ContainsKey(CurrentMap)) return;
+            var map = MapInstance.GetMap(CurrentMap);
+            if (i == -1 || map == null) return;
             FloatRect srcRectangle = new FloatRect();
             FloatRect destRectangle = new FloatRect();
             GameTexture targetTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Misc, "target.png");
             if (targetTex != null)
             {
-                destRectangle.X = Globals.GameMaps[CurrentMap].GetX() + CurrentX*Options.TileWidth + OffsetX;
-                destRectangle.Y = Globals.GameMaps[CurrentMap].GetY() + CurrentY*Options.TileHeight + OffsetY;
+                destRectangle.X = map.GetX() + CurrentX*Options.TileWidth + OffsetX;
+                destRectangle.Y = map.GetY() + CurrentY*Options.TileHeight + OffsetY;
                 destRectangle.X = (int) Math.Ceiling(destRectangle.X - (int)targetTex.GetWidth()/8);
 
                 srcRectangle = new FloatRect(Priority*(int)targetTex.GetWidth()/2, 0, (int)targetTex.GetWidth()/2,

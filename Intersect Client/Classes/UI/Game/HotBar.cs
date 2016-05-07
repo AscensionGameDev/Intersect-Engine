@@ -38,6 +38,7 @@ using IntersectClientExtras.Input;
 using Intersect_Client.Classes.Core;
 using Intersect_Client.Classes.General;
 using Intersect_Library;
+using Intersect_Library.GameObjects;
 using Color = IntersectClientExtras.GenericClasses.Color;
 using Point = IntersectClientExtras.GenericClasses.Point;
 
@@ -242,7 +243,7 @@ namespace Intersect_Client.Classes.UI.Game
             if (_currentType == 0)
             {
                 if (_itemDescWindow != null) { _itemDescWindow.Dispose(); _itemDescWindow = null; }
-                _itemDescWindow = new ItemDescWindow(Globals.Me.Inventory[_currentItem].ItemNum, 1, _hotbarWindow.X + pnl.X + 16 - 220 / 2, _hotbarWindow.Y + _hotbarWindow.Height + 2, Globals.Me.Inventory[_currentItem].StatBoost, "Hotbar Slot: " + Globals.GameItems[Globals.Me.Inventory[_currentItem].ItemNum].Name);
+                _itemDescWindow = new ItemDescWindow(Globals.Me.Inventory[_currentItem].ItemNum, 1, _hotbarWindow.X + pnl.X + 16 - 220 / 2, _hotbarWindow.Y + _hotbarWindow.Height + 2, Globals.Me.Inventory[_currentItem].StatBoost, "Hotbar Slot: " + ItemBase.GetName(Globals.Me.Inventory[_currentItem].ItemNum));
             }
             else if (_currentType == 1)
             {
@@ -288,20 +289,20 @@ namespace Intersect_Client.Classes.UI.Game
             {
                 _currentItem = Globals.Me.Hotbar[myindex].Slot;
                 _currentType = Globals.Me.Hotbar[myindex].Type;
-                if (_currentType == 0 && _currentItem > -1 && Globals.Me.Inventory[_currentItem].ItemNum > -1)
+                if (_currentType == 0 && _currentItem > -1 && ItemBase.GetItem(Globals.Me.Inventory[_currentItem].ItemNum)  != null)
                 {
                     contentPanel.Show();
                     contentPanel.Texture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Spell,
-                                    Globals.GameItems[Globals.Me.Inventory[_currentItem].ItemNum].Pic);
+                                    ItemBase.GetItem(Globals.Me.Inventory[_currentItem].ItemNum).Pic);
                     equipPanel.IsHidden = !Globals.Me.IsEquipped(_currentItem);
                     _texLoaded = true;
                     _isEquipped = Globals.Me.IsEquipped(_currentItem);
                 }
-                else if (_currentType == 1 && _currentItem > -1 && Globals.Me.Spells[_currentItem].SpellNum > -1)
+                else if (_currentType == 1 && _currentItem > -1 && SpellBase.GetSpell(Globals.Me.Spells[_currentItem].SpellNum) != null)
                 {
                     contentPanel.Show();
                     contentPanel.Texture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Spell,
-                                Globals.GameSpells[Globals.Me.Spells[_currentItem].SpellNum].Pic);
+                                SpellBase.GetSpell(Globals.Me.Spells[_currentItem].SpellNum).Pic);
                     equipPanel.IsHidden = true;
                     _isFaded = Globals.Me.Spells[_currentItem].SpellCD > Globals.System.GetTimeMS();
                     if (_isFaded)

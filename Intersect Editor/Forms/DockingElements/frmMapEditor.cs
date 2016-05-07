@@ -74,7 +74,7 @@ namespace Intersect_Editor.Forms
         }
         public void PrepUndoState()
         {
-            var tmpMap = Globals.GameMaps[Globals.CurrentMap];
+            var tmpMap = Globals.CurrentMap;
             if (CurrentMapState == null)
             {
                 CurrentMapState = tmpMap.GetMapData(false);
@@ -82,7 +82,7 @@ namespace Intersect_Editor.Forms
         }
         public void AddUndoState()
         {
-            var tmpMap = Globals.GameMaps[Globals.CurrentMap];
+            var tmpMap = Globals.CurrentMap;
             if (CurrentMapState != null)
             {
                 MapUndoStates.Add(CurrentMapState);
@@ -96,9 +96,8 @@ namespace Intersect_Editor.Forms
         public void picMap_MouseDown(object sender, MouseEventArgs e)
         {
             Globals.MapEditorWindow.DockPanel.Focus();
-            Dictionary<int, MapStruct> gameMaps = Globals.GameMaps.ToDictionary(k => k.Key, v => (MapStruct)v.Value);
             if (Globals.EditingLight != null) { return; }
-            var tmpMap = Globals.GameMaps[Globals.CurrentMap];
+            var tmpMap = Globals.CurrentMap;
 
             if (e.X >= picMap.Width - Options.TileWidth || e.Y >= picMap.Height - Options.TileHeight) { return; }
             if (e.X < Options.TileWidth || e.Y < Options.TileHeight) { return; }
@@ -168,7 +167,7 @@ namespace Intersect_Editor.Forms
                             else
                             {
                                 //Place the change, we done!
-                                ProcessSelectionMovement(Globals.GameMaps[Globals.CurrentMap], true);
+                                ProcessSelectionMovement(Globals.CurrentMap, true);
                                 PlaceSelection();
                             }
 
@@ -185,7 +184,7 @@ namespace Intersect_Editor.Forms
                                 Globals.TileDragY = Globals.CurTileY;
                                 Globals.TotalTileDragX = 0;
                                 Globals.TotalTileDragY = 0;
-                                Globals.SelectionSource = Globals.GameMaps[Globals.CurrentMap];
+                                Globals.SelectionSource = Globals.CurrentMap;
                                 return;
                             }
                             else
@@ -209,7 +208,7 @@ namespace Intersect_Editor.Forms
                     {
                         if (Globals.CurrentLayer == Options.LayerCount) //Attributes
                         {
-                            Globals.MapLayersWindow.PlaceAttribute(Globals.GameMaps[Globals.CurrentMap],
+                            Globals.MapLayersWindow.PlaceAttribute(Globals.CurrentMap,
                                     Globals.CurTileX, Globals.CurTileY);
                             MapChanged = true;
                         }
@@ -239,7 +238,7 @@ namespace Intersect_Editor.Forms
                                         {
                                             tmpMap.Layers[Globals.CurrentLayer].Tiles[
                                                 Globals.CurTileX + x, Globals.CurTileY + y].TilesetIndex =
-                                                Globals.CurrentTileset;
+                                                Globals.CurrentTileset.GetId();
                                             tmpMap.Layers[Globals.CurrentLayer].Tiles[
                                                 Globals.CurTileX + x, Globals.CurTileY + y].X =
                                                 Globals.CurSelX + x;
@@ -248,7 +247,7 @@ namespace Intersect_Editor.Forms
                                                 Globals.CurSelY + y;
                                             tmpMap.Layers[Globals.CurrentLayer].Tiles[
                                                 Globals.CurTileX + x, Globals.CurTileY + y].Autotile = 0;
-                                            tmpMap.Autotiles.InitAutotiles(gameMaps);
+                                            tmpMap.Autotiles.InitAutotiles(MapBase.GetObjects());
                                         }
                                     }
                                 }
@@ -257,14 +256,14 @@ namespace Intersect_Editor.Forms
                             else
                             {
                                 tmpMap.Layers[Globals.CurrentLayer].Tiles[Globals.CurTileX, Globals.CurTileY]
-                                    .TilesetIndex = Globals.CurrentTileset;
+                                    .TilesetIndex = Globals.CurrentTileset.GetId();
                                 tmpMap.Layers[Globals.CurrentLayer].Tiles[Globals.CurTileX, Globals.CurTileY].X
                                     = Globals.CurSelX;
                                 tmpMap.Layers[Globals.CurrentLayer].Tiles[Globals.CurTileX, Globals.CurTileY].Y
                                     = Globals.CurSelY;
                                 tmpMap.Layers[Globals.CurrentLayer].Tiles[Globals.CurTileX, Globals.CurTileY]
                                     .Autotile = (byte)Globals.Autotilemode;
-                                tmpMap.Autotiles.InitAutotiles(gameMaps);
+                                tmpMap.Autotiles.InitAutotiles(MapBase.GetObjects());
                                 MapChanged = true;
                             }
                         }
@@ -274,12 +273,12 @@ namespace Intersect_Editor.Forms
                     Globals.MouseButton = 1;
 
 
-                    if (Globals.CurrentTool == (int) EdittingTool.Selection)
+                    if (Globals.CurrentTool == (int)EdittingTool.Selection)
                     {
                         if (Globals.Dragging)
                         {
                             //Place the change, we done!
-                            ProcessSelectionMovement(Globals.GameMaps[Globals.CurrentMap], true);
+                            ProcessSelectionMovement(Globals.CurrentMap, true);
                             PlaceSelection();
                         }
                     }
@@ -287,7 +286,7 @@ namespace Intersect_Editor.Forms
                     {
                         if (Globals.CurrentTool == (int)EdittingTool.Pen)
                         {
-                            if (Globals.MapLayersWindow.RemoveAttribute(Globals.GameMaps[Globals.CurrentMap], Globals.CurTileX, Globals.CurTileY)) { MapChanged = true; }
+                            if (Globals.MapLayersWindow.RemoveAttribute(Globals.CurrentMap, Globals.CurTileX, Globals.CurTileY)) { MapChanged = true; }
                         }
                         else if (Globals.CurrentTool == (int)EdittingTool.Rectangle || Globals.CurrentTool == (int)EdittingTool.Selection)
                         {
@@ -299,20 +298,20 @@ namespace Intersect_Editor.Forms
                     }
                     else if (Globals.CurrentLayer == Options.LayerCount + 1) //Lights
                     {
-                        Light tmpLight;
-                        if ((tmpLight = Globals.GameMaps[Globals.CurrentMap].FindLightAt(Globals.CurTileX, Globals.CurTileY)) != null)
+                        LightBase tmpLight;
+                        if ((tmpLight = Globals.CurrentMap.FindLightAt(Globals.CurTileX, Globals.CurTileY)) != null)
                         {
-                            Globals.GameMaps[Globals.CurrentMap].Lights.Remove(tmpLight);
+                            Globals.CurrentMap.Lights.Remove(tmpLight);
                             EditorGraphics.TilePreviewUpdated = true;
                             MapChanged = true;
                         }
                     }
                     else if (Globals.CurrentLayer == Options.LayerCount + 2) //Events
                     {
-                        EventStruct tmpEvent;
-                        if ((tmpEvent = Globals.GameMaps[Globals.CurrentMap].FindEventAt(Globals.CurTileX, Globals.CurTileY)) != null)
+                        EventBase tmpEvent;
+                        if ((tmpEvent = Globals.CurrentMap.FindEventAt(Globals.CurTileX, Globals.CurTileY)) != null)
                         {
-                            tmpEvent.Deleted = 1;
+                            Globals.CurrentMap.Events.Remove(tmpEvent.MyIndex);
                             MapChanged = true;
                         }
                     }
@@ -326,7 +325,7 @@ namespace Intersect_Editor.Forms
                         {
                             tmpMap.Layers[Globals.CurrentLayer].Tiles[Globals.CurTileX, Globals.CurTileY].TilesetIndex = -1;
                             tmpMap.Layers[Globals.CurrentLayer].Tiles[Globals.CurTileX, Globals.CurTileY].Autotile = 0;
-                            tmpMap.Autotiles.InitAutotiles(gameMaps);
+                            tmpMap.Autotiles.InitAutotiles(MapBase.GetObjects());
                             MapChanged = true;
                         }
                         else if (Globals.CurrentTool == (int)EdittingTool.Rectangle || Globals.CurrentTool == (int)EdittingTool.Selection)
@@ -341,45 +340,28 @@ namespace Intersect_Editor.Forms
             }
             if (Globals.CurTileX == 0)
             {
-                if (tmpMap.Left > -1)
-                {
-                    if (Globals.GameMaps[tmpMap.Left] != null)
-                    {
-                        Globals.GameMaps[tmpMap.Left].Autotiles.InitAutotiles(gameMaps);
-                    }
-                }
+                if (MapInstance.GetMap(tmpMap.Left) != null)
+                    MapInstance.GetMap(tmpMap.Left).Autotiles.InitAutotiles(MapBase.GetObjects());
             }
             if (Globals.CurTileY == 0)
             {
-                if (tmpMap.Up > -1)
-                {
-                    if (Globals.GameMaps[tmpMap.Up] != null)
-                    {
-                        Globals.GameMaps[tmpMap.Up].Autotiles.InitAutotiles(gameMaps);
-                    }
-                }
+                if (MapInstance.GetMap(tmpMap.Up) != null)
+                    MapInstance.GetMap(tmpMap.Up).Autotiles.InitAutotiles(MapBase.GetObjects());
             }
             if (Globals.CurTileX == Options.MapWidth - 1)
             {
-                if (tmpMap.Right > -1)
-                {
-                    if (Globals.GameMaps[tmpMap.Right] != null)
-                    {
-                        Globals.GameMaps[tmpMap.Right].Autotiles.InitAutotiles(gameMaps);
-                    }
-                }
+                if (MapInstance.GetMap(tmpMap.Right) != null)
+                    MapInstance.GetMap(tmpMap.Right).Autotiles.InitAutotiles(MapBase.GetObjects());
             }
-            if (Globals.CurTileY != Options.MapHeight - 1) return;
-            if (tmpMap.Down <= -1) return;
-            if (Globals.GameMaps[tmpMap.Down] != null)
+            if (Globals.CurTileY == Options.MapHeight - 1)
             {
-                Globals.GameMaps[tmpMap.Down].Autotiles.InitAutotiles(gameMaps);
+                if (MapInstance.GetMap(tmpMap.Down) != null)
+                    MapInstance.GetMap(tmpMap.Down).Autotiles.InitAutotiles(MapBase.GetObjects());
             }
         }
         private void picMap_MouseMove(object sender, MouseEventArgs e)
         {
             if (Globals.EditingLight != null) { return; }
-            Dictionary<int, MapStruct> gameMaps = Globals.GameMaps.ToDictionary(k => k.Key, v => (MapStruct)v.Value);
             Globals.MouseX = e.X;
             Globals.MouseY = e.Y;
             if (e.X >= picMap.Width - Options.TileWidth || e.Y >= picMap.Height - Options.TileHeight) { return; }
@@ -398,7 +380,7 @@ namespace Intersect_Editor.Forms
 
             if (Globals.MouseButton > -1)
             {
-                var tmpMap = Globals.GameMaps[Globals.CurrentMap];
+                var tmpMap = Globals.CurrentMap;
                 if (Globals.MouseButton == 0)
                 {
                     if (Globals.CurrentTool == (int)EdittingTool.Selection)
@@ -433,10 +415,10 @@ namespace Intersect_Editor.Forms
                             if (Globals.MapLayersWindow.rbDeclared.Checked == true &&
                                 Globals.MapLayersWindow.lstMapNpcs.Items.Count > 0)
                             {
-                                Globals.GameMaps[Globals.CurrentMap].Spawns[
+                                Globals.CurrentMap.Spawns[
                                     Globals.MapLayersWindow.lstMapNpcs.SelectedIndex
                                     ].X = Globals.CurTileX;
-                                Globals.GameMaps[Globals.CurrentMap].Spawns[
+                                Globals.CurrentMap.Spawns[
                                     Globals.MapLayersWindow.lstMapNpcs.SelectedIndex
                                     ].Y = Globals.CurTileY;
                             }
@@ -455,7 +437,7 @@ namespace Intersect_Editor.Forms
                                         {
                                             tmpMap.Layers[Globals.CurrentLayer].Tiles[
                                                 Globals.CurTileX + x, Globals.CurTileY + y].TilesetIndex =
-                                                Globals.CurrentTileset;
+                                                Globals.CurrentTileset.GetId();
                                             tmpMap.Layers[Globals.CurrentLayer].Tiles[
                                                 Globals.CurTileX + x, Globals.CurTileY + y].X = Globals.CurSelX + x;
                                             tmpMap.Layers[Globals.CurrentLayer].Tiles[
@@ -463,7 +445,7 @@ namespace Intersect_Editor.Forms
                                             tmpMap.Layers[Globals.CurrentLayer].Tiles[
                                                 Globals.CurTileX + x, Globals.CurTileY + y].Autotile = 0;
                                             tmpMap.Autotiles.UpdateAutoTiles(Globals.CurTileX + x, Globals.CurTileY + y,
-                                                Globals.CurrentLayer, gameMaps);
+                                                Globals.CurrentLayer, MapBase.GetObjects());
                                         }
                                     }
                                 }
@@ -471,7 +453,7 @@ namespace Intersect_Editor.Forms
                             else
                             {
                                 tmpMap.Layers[Globals.CurrentLayer].Tiles[Globals.CurTileX, Globals.CurTileY]
-                                    .TilesetIndex = Globals.CurrentTileset;
+                                    .TilesetIndex = Globals.CurrentTileset.GetId();
                                 tmpMap.Layers[Globals.CurrentLayer].Tiles[Globals.CurTileX, Globals.CurTileY].X =
                                     Globals.CurSelX;
                                 tmpMap.Layers[Globals.CurrentLayer].Tiles[Globals.CurTileX, Globals.CurTileY].Y =
@@ -480,48 +462,28 @@ namespace Intersect_Editor.Forms
                                     .Autotile =
                                     (byte)Globals.Autotilemode;
                                 tmpMap.Autotiles.UpdateAutoTiles(Globals.CurTileX, Globals.CurTileY,
-                                    Globals.CurrentLayer, gameMaps);
+                                    Globals.CurrentLayer, MapBase.GetObjects());
                             }
                         }
                         if (Globals.CurTileX == 0)
                         {
-                            if (tmpMap.Left > -1)
-                            {
-                                if (Globals.GameMaps[tmpMap.Left] != null)
-                                {
-                                    Globals.GameMaps[tmpMap.Left].Autotiles.InitAutotiles(gameMaps);
-                                }
-                            }
+                            if (MapInstance.GetMap(tmpMap.Left) != null)
+                                MapInstance.GetMap(tmpMap.Left).Autotiles.InitAutotiles(MapBase.GetObjects());
                         }
                         if (Globals.CurTileY == 0)
                         {
-                            if (tmpMap.Up > -1)
-                            {
-                                if (Globals.GameMaps[tmpMap.Up] != null)
-                                {
-                                    Globals.GameMaps[tmpMap.Up].Autotiles.InitAutotiles(gameMaps);
-                                }
-                            }
+                            if (MapInstance.GetMap(tmpMap.Up) != null)
+                                MapInstance.GetMap(tmpMap.Up).Autotiles.InitAutotiles(MapBase.GetObjects());
                         }
                         if (Globals.CurTileX == Options.MapWidth - 1)
                         {
-                            if (tmpMap.Right > -1)
-                            {
-                                if (Globals.GameMaps[tmpMap.Right] != null)
-                                {
-                                    Globals.GameMaps[tmpMap.Right].Autotiles.InitAutotiles(gameMaps);
-                                }
-                            }
+                            if (MapInstance.GetMap(tmpMap.Right) != null)
+                                MapInstance.GetMap(tmpMap.Right).Autotiles.InitAutotiles(MapBase.GetObjects());
                         }
                         if (Globals.CurTileY == Options.MapHeight - 1)
                         {
-                            if (tmpMap.Down > -1)
-                            {
-                                if (Globals.GameMaps[tmpMap.Down] != null)
-                                {
-                                    Globals.GameMaps[tmpMap.Down].Autotiles.InitAutotiles(gameMaps);
-                                }
-                            }
+                            if (MapInstance.GetMap(tmpMap.Down) != null)
+                                MapInstance.GetMap(tmpMap.Down).Autotiles.InitAutotiles(MapBase.GetObjects());
                         }
                     }
                 }
@@ -545,49 +507,29 @@ namespace Intersect_Editor.Forms
                                 tmpMap.Layers[Globals.CurrentLayer].Tiles[Globals.CurTileX, Globals.CurTileY].TilesetIndex =
                                     -1;
                                 tmpMap.Layers[Globals.CurrentLayer].Tiles[Globals.CurTileX, Globals.CurTileY].Autotile = 0;
-                                tmpMap.Autotiles.InitAutotiles(gameMaps);
+                                tmpMap.Autotiles.InitAutotiles(MapBase.GetObjects());
                             }
                         }
                     }
                     if (Globals.CurTileX == 0)
                     {
-                        if (tmpMap.Left > -1)
-                        {
-                            if (Globals.GameMaps[tmpMap.Left] != null)
-                            {
-                                Globals.GameMaps[tmpMap.Left].Autotiles.InitAutotiles(gameMaps);
-                            }
-                        }
+                        if (MapInstance.GetMap(tmpMap.Left) != null)
+                            MapInstance.GetMap(tmpMap.Left).Autotiles.InitAutotiles(MapBase.GetObjects());
                     }
                     if (Globals.CurTileY == 0)
                     {
-                        if (tmpMap.Up > -1)
-                        {
-                            if (Globals.GameMaps[tmpMap.Up] != null)
-                            {
-                                Globals.GameMaps[tmpMap.Up].Autotiles.InitAutotiles(gameMaps);
-                            }
-                        }
+                        if (MapInstance.GetMap(tmpMap.Up) != null)
+                            MapInstance.GetMap(tmpMap.Up).Autotiles.InitAutotiles(MapBase.GetObjects());
                     }
                     if (Globals.CurTileX == Options.MapWidth - 1)
                     {
-                        if (tmpMap.Right > -1)
-                        {
-                            if (Globals.GameMaps[tmpMap.Right] != null)
-                            {
-                                Globals.GameMaps[tmpMap.Right].Autotiles.InitAutotiles(gameMaps);
-                            }
-                        }
+                        if (MapInstance.GetMap(tmpMap.Right) != null)
+                            MapInstance.GetMap(tmpMap.Right).Autotiles.InitAutotiles(MapBase.GetObjects());
                     }
                     if (Globals.CurTileY == Options.MapHeight - 1)
                     {
-                        if (tmpMap.Down > -1)
-                        {
-                            if (Globals.GameMaps[tmpMap.Down] != null)
-                            {
-                                Globals.GameMaps[tmpMap.Down].Autotiles.InitAutotiles(gameMaps);
-                            }
-                        }
+                        if (MapInstance.GetMap(tmpMap.Down) != null)
+                            MapInstance.GetMap(tmpMap.Down).Autotiles.InitAutotiles(MapBase.GetObjects());
                     }
                 }
             }
@@ -603,8 +545,7 @@ namespace Intersect_Editor.Forms
         public void picMap_MouseUp(object sender, MouseEventArgs e)
         {
             if (Globals.EditingLight != null) { return; }
-            var tmpMap = Globals.GameMaps[Globals.CurrentMap];
-            Dictionary<int, MapStruct> gameMaps = Globals.GameMaps.ToDictionary(k => k.Key, v => (MapStruct)v.Value);
+            var tmpMap = Globals.CurrentMap;
             if (Globals.CurrentTool == (int)EdittingTool.Rectangle)
             {
                 int selX = Globals.CurMapSelX, selY = Globals.CurMapSelY, selW = Globals.CurMapSelW, selH = Globals.CurMapSelH;
@@ -669,7 +610,7 @@ namespace Intersect_Editor.Forms
                                 {
                                     if (Globals.MouseButton == 0)
                                     {
-                                        tmpMap.Layers[Globals.CurrentLayer].Tiles[x0, y0].TilesetIndex = Globals.CurrentTileset;
+                                        tmpMap.Layers[Globals.CurrentLayer].Tiles[x0, y0].TilesetIndex = Globals.CurrentTileset.GetId();
                                         tmpMap.Layers[Globals.CurrentLayer].Tiles[x0, y0].X = Globals.CurSelX + x1;
                                         tmpMap.Layers[Globals.CurrentLayer].Tiles[x0, y0].Y = Globals.CurSelY + y1;
                                         tmpMap.Layers[Globals.CurrentLayer].Tiles[x0, y0].Autotile = (byte)Globals.Autotilemode;
@@ -681,14 +622,14 @@ namespace Intersect_Editor.Forms
                                         tmpMap.Layers[Globals.CurrentLayer].Tiles[x0, y0].Y = 0;
                                         tmpMap.Layers[Globals.CurrentLayer].Tiles[x0, y0].Autotile = 0;
                                     }
-                                    tmpMap.Autotiles.UpdateAutoTiles(x0, y0, Globals.CurrentLayer, gameMaps);
+                                    tmpMap.Autotiles.UpdateAutoTiles(x0, y0, Globals.CurrentLayer, MapBase.GetObjects());
                                 }
                             }
                             else
                             {
                                 if (Globals.MouseButton == 0)
                                 {
-                                    tmpMap.Layers[Globals.CurrentLayer].Tiles[x0, y0].TilesetIndex = Globals.CurrentTileset;
+                                    tmpMap.Layers[Globals.CurrentLayer].Tiles[x0, y0].TilesetIndex = Globals.CurrentTileset.GetId();
                                     tmpMap.Layers[Globals.CurrentLayer].Tiles[x0, y0].X = Globals.CurSelX;
                                     tmpMap.Layers[Globals.CurrentLayer].Tiles[x0, y0].Y = Globals.CurSelY;
                                     tmpMap.Layers[Globals.CurrentLayer].Tiles[x0, y0].Autotile = (byte)Globals.Autotilemode;
@@ -701,7 +642,7 @@ namespace Intersect_Editor.Forms
                                     tmpMap.Layers[Globals.CurrentLayer].Tiles[x0, y0].Autotile = 0;
                                 }
                                 tmpMap.Autotiles.UpdateAutoTiles(x0, y0,
-                                    Globals.CurrentLayer, gameMaps);
+                                    Globals.CurrentLayer, MapBase.GetObjects());
                             }
                         }
                     }
@@ -724,111 +665,67 @@ namespace Intersect_Editor.Forms
                 Globals.CurMapSelH = 0;
             }
             //Globals.Dragging = false;
-            if (Globals.Dragging) { 
-            Globals.TotalTileDragX -= (Globals.TileDragX - Globals.CurTileX);
-            Globals.TotalTileDragY -= (Globals.TileDragY - Globals.CurTileY);
-            Globals.TileDragX = 0;
-            Globals.TileDragY = 0;
+            if (Globals.Dragging)
+            {
+                Globals.TotalTileDragX -= (Globals.TileDragX - Globals.CurTileX);
+                Globals.TotalTileDragY -= (Globals.TileDragY - Globals.CurTileY);
+                Globals.TileDragX = 0;
+                Globals.TileDragY = 0;
             }
             EditorGraphics.TilePreviewUpdated = true;
 
         }
         private void picMap_DoubleClick(object sender, EventArgs e)
         {
+            var dir = -1;
+            var newMap = -1;
+
             if (Globals.MouseX >= Options.TileWidth && Globals.MouseX <= (Options.MapWidth + 2) * Options.TileWidth - Options.TileWidth)
             {
                 if (Globals.MouseY >= 0 && Globals.MouseY <= Options.TileHeight)
                 {
-                    if (Globals.GameMaps[Globals.CurrentMap].Up == -1)
-                    {
-                        if (MessageBox.Show(@"Do you want to create a map here?", @"Create new map.", MessageBoxButtons.YesNo) == DialogResult.Yes)
-                        {
-                            if (MapUndoStates.Count > 0 && MessageBox.Show(@"Do you want to save your current map?", @"Save current map?", MessageBoxButtons.YesNo) == DialogResult.Yes)
-                            {
-                                PacketSender.SendMap(Globals.CurrentMap);
-                            }
-                            PacketSender.SendCreateMap(0, Globals.CurrentMap, null);
-                        }
-                    }
-                    else
-                    {
-                        //Should ask if the user wants to save changes
-                        if (MapUndoStates.Count > 0 && MessageBox.Show(@"Do you want to save your current map?", @"Save current map?", MessageBoxButtons.YesNo) == DialogResult.Yes)
-                        {
-                            PacketSender.SendMap(Globals.CurrentMap);
-                        }
-                        Globals.MainForm.EnterMap(Globals.GameMaps[Globals.CurrentMap].Up);
-                    }
+                    dir = (int)Directions.Up;
+                    newMap = Globals.CurrentMap.Up;
                 }
                 else if (Globals.MouseY >= (Options.MapHeight + 2) * Options.TileHeight - Options.TileHeight && Globals.MouseY <= (Options.MapHeight + 2) * Options.TileHeight)
                 {
-                    if (Globals.GameMaps[Globals.CurrentMap].Down == -1)
-                    {
-                        if (MessageBox.Show(@"Do you want to create a map here?", @"Create new map.", MessageBoxButtons.YesNo) == DialogResult.Yes)
-                        {
-                            if (MapUndoStates.Count > 0 && MessageBox.Show(@"Do you want to save your current map?", @"Save current map?", MessageBoxButtons.YesNo) == DialogResult.Yes)
-                            {
-                                PacketSender.SendMap(Globals.CurrentMap);
-                            }
-                            PacketSender.SendCreateMap(1, Globals.CurrentMap, null);
-                        }
-                    }
-                    else
-                    {
-                        //Should ask if the user wants to save changes
-                        if (MapUndoStates.Count > 0 && MessageBox.Show(@"Do you want to save your current map?", @"Save current map?", MessageBoxButtons.YesNo) == DialogResult.Yes)
-                        {
-                            PacketSender.SendMap(Globals.CurrentMap);
-                        }
-                        Globals.MainForm.EnterMap(Globals.GameMaps[Globals.CurrentMap].Down);
-                    }
+                    dir = (int)Directions.Down;
+                    newMap = Globals.CurrentMap.Down;
                 }
             }
             if (Globals.MouseY < Options.TileHeight || Globals.MouseY > (Options.MapHeight + 2) * Options.TileHeight - Options.TileHeight) return;
             if (Globals.MouseX >= 0 & Globals.MouseX <= Options.TileWidth)
             {
-                if (Globals.GameMaps[Globals.CurrentMap].Left == -1)
-                {
-                    if (
-                        MessageBox.Show(@"Do you want to create a map here?", @"Create new map.",
-                            MessageBoxButtons.YesNo) != DialogResult.Yes) return;
-                    if (MapUndoStates.Count > 0 && MessageBox.Show(@"Do you want to save your current map?", @"Save current map?", MessageBoxButtons.YesNo) == DialogResult.Yes)
-                    {
-                        PacketSender.SendMap(Globals.CurrentMap);
-                    }
-                    PacketSender.SendCreateMap(2, Globals.CurrentMap, null);
-                }
-                else
-                {
-                    //Should ask if the user wants to save changes
-                    if (MapUndoStates.Count > 0 && MessageBox.Show(@"Do you want to save your current map?", @"Save current map?", MessageBoxButtons.YesNo) == DialogResult.Yes)
-                    {
-                        PacketSender.SendMap(Globals.CurrentMap);
-                    }
-                    Globals.MainForm.EnterMap(Globals.GameMaps[Globals.CurrentMap].Left);
-                }
+                dir = (int)Directions.Left;
+                newMap = Globals.CurrentMap.Left;
             }
             else if (Globals.MouseX >= (Options.MapWidth + 2) * Options.TileWidth - Options.TileWidth && Globals.MouseX <= (Options.MapWidth + 2) * Options.TileWidth)
             {
-                if (Globals.GameMaps[Globals.CurrentMap].Right == -1)
+                dir = (int)Directions.Right;
+                newMap = Globals.CurrentMap.Right;
+            }
+
+            if (dir > -1)
+            {
+                if (newMap == -1)
                 {
                     if (
                         MessageBox.Show(@"Do you want to create a map here?", @"Create new map.", MessageBoxButtons.YesNo) !=
                         DialogResult.Yes) return;
                     if (MapUndoStates.Count > 0 && MessageBox.Show(@"Do you want to save your current map?", @"Save current map?", MessageBoxButtons.YesNo) == DialogResult.Yes)
                     {
-                        PacketSender.SendMap(Globals.CurrentMap);
+                        PacketSender.SendMap(Globals.CurrentMap.GetId());
                     }
-                    PacketSender.SendCreateMap(3, Globals.CurrentMap, null);
+                    PacketSender.SendCreateMap(dir, Globals.CurrentMap.GetId(), null);
                 }
                 else
                 {
                     //Should ask if the user wants to save changes
                     if (MapUndoStates.Count > 0 && MessageBox.Show(@"Do you want to save your current map?", @"Save current map?", MessageBoxButtons.YesNo) == DialogResult.Yes)
                     {
-                        PacketSender.SendMap(Globals.CurrentMap);
+                        PacketSender.SendMap(Globals.CurrentMap.GetId());
                     }
-                    Globals.MainForm.EnterMap(Globals.GameMaps[Globals.CurrentMap].Right);
+                    Globals.MainForm.EnterMap(newMap);
                 }
             }
 
@@ -839,38 +736,38 @@ namespace Intersect_Editor.Forms
             }
             else if (Globals.CurrentLayer == Options.LayerCount + 1) //Lights
             {
-                Light tmpLight;
+                LightBase tmpLight;
                 if (
                     (tmpLight =
-                        Globals.GameMaps[Globals.CurrentMap].FindLightAt(Globals.CurTileX,
+                        Globals.CurrentMap.FindLightAt(Globals.CurTileX,
                             Globals.CurTileY)) == null)
                 {
-                    tmpLight = new Light(Globals.CurTileX, Globals.CurTileY);
+                    tmpLight = new LightBase(Globals.CurTileX, Globals.CurTileY);
                     tmpLight.Size = 50;
-                    Globals.GameMaps[Globals.CurrentMap].Lights.Add(tmpLight);
+                    Globals.CurrentMap.Lights.Add(tmpLight);
                 }
                 Globals.MapLayersWindow.tabControl.SelectedTab = Globals.MapLayersWindow.tabLights;
                 Globals.MapLayersWindow.lightEditor.Show();
-                Globals.BackupLight = new Light(tmpLight);
+                Globals.BackupLight = new LightBase(tmpLight);
                 Globals.MapLayersWindow.lightEditor.LoadEditor(tmpLight);
                 Globals.EditingLight = tmpLight;
                 MapChanged = true;
             }
             else if (Globals.CurrentLayer == Options.LayerCount + 2) //Events
             {
-                EventStruct tmpEvent;
+                EventBase tmpEvent;
                 FrmEvent tmpEventEditor;
                 if (
                     (tmpEvent =
-                        Globals.GameMaps[Globals.CurrentMap].FindEventAt(Globals.CurTileX,
+                        Globals.CurrentMap.FindEventAt(Globals.CurTileX,
                             Globals.CurTileY)) == null)
                 {
-                    tmpEvent = new EventStruct(Globals.GameMaps[Globals.CurrentMap].Events.Count, Globals.CurTileX, Globals.CurTileY);
-                    Globals.GameMaps[Globals.CurrentMap].Events.Add(tmpEvent);
-                    tmpEventEditor = new FrmEvent(Globals.GameMaps[Globals.CurrentMap])
+                    tmpEvent = new EventBase(Globals.CurrentMap.EventIndex, Globals.CurTileX, Globals.CurTileY);
+                    Globals.CurrentMap.Events.Add(Globals.CurrentMap.EventIndex++, tmpEvent);
+                    tmpEventEditor = new FrmEvent(Globals.CurrentMap)
                     {
                         MyEvent = tmpEvent,
-                        MyMap = Globals.GameMaps[Globals.CurrentMap],
+                        MyMap = Globals.CurrentMap,
                         NewEvent = true
                     };
                     tmpEventEditor.InitEditor();
@@ -879,7 +776,7 @@ namespace Intersect_Editor.Forms
                 }
                 else
                 {
-                    tmpEventEditor = new FrmEvent(Globals.GameMaps[Globals.CurrentMap]) { MyEvent = tmpEvent, MyMap = Globals.GameMaps[Globals.CurrentMap] };
+                    tmpEventEditor = new FrmEvent(Globals.CurrentMap) { MyEvent = tmpEvent, MyMap = Globals.CurrentMap };
                     tmpEventEditor.InitEditor();
                     tmpEventEditor.Show();
                 }
@@ -889,9 +786,9 @@ namespace Intersect_Editor.Forms
                 if (Globals.MapLayersWindow.lstMapNpcs.SelectedIndex > -1 &&
                         Globals.MapLayersWindow.rbDeclared.Checked == true)
                 {
-                    Globals.GameMaps[Globals.CurrentMap].Spawns[
+                    Globals.CurrentMap.Spawns[
                         Globals.MapLayersWindow.lstMapNpcs.SelectedIndex].X = Globals.CurTileX;
-                    Globals.GameMaps[Globals.CurrentMap].Spawns[
+                    Globals.CurrentMap.Spawns[
                         Globals.MapLayersWindow.lstMapNpcs.SelectedIndex].Y = Globals.CurTileY;
                     MapChanged = true;
                 }
@@ -917,8 +814,7 @@ namespace Intersect_Editor.Forms
         {
             var oldCurSelX = Globals.CurTileX;
             var oldCurSelY = Globals.CurTileY;
-            var tmpMap = Globals.GameMaps[Globals.CurrentMap];
-            Dictionary<int, MapStruct> gameMaps = Globals.GameMaps.ToDictionary(k => k.Key, v => (MapStruct)v.Value);
+            var tmpMap = Globals.CurrentMap;
             if (CurrentMapState == null)
             {
                 CurrentMapState = tmpMap.GetMapData(false);
@@ -936,7 +832,7 @@ namespace Intersect_Editor.Forms
 
                         if (Globals.CurrentLayer == Options.LayerCount)
                         {
-                            Globals.MapLayersWindow.PlaceAttribute(Globals.GameMaps[Globals.CurrentMap], Globals.CurTileX, Globals.CurTileY);
+                            Globals.MapLayersWindow.PlaceAttribute(Globals.CurrentMap, Globals.CurTileX, Globals.CurTileY);
                         }
                         else if (Globals.CurrentLayer < Options.LayerCount)
                         {
@@ -944,14 +840,14 @@ namespace Intersect_Editor.Forms
                             {
                                 x1 = (x) % (Globals.CurSelW + 1);
                                 y1 = (y) % (Globals.CurSelH + 1);
-                                tmpMap.Layers[Globals.CurrentLayer].Tiles[Globals.CurTileX, Globals.CurTileY].TilesetIndex = Globals.CurrentTileset;
+                                tmpMap.Layers[Globals.CurrentLayer].Tiles[Globals.CurTileX, Globals.CurTileY].TilesetIndex = Globals.CurrentTileset.GetId();
                                 tmpMap.Layers[Globals.CurrentLayer].Tiles[Globals.CurTileX, Globals.CurTileY].X = Globals.CurSelX + x1;
                                 tmpMap.Layers[Globals.CurrentLayer].Tiles[Globals.CurTileX, Globals.CurTileY].Y = Globals.CurSelY + y1;
                                 tmpMap.Layers[Globals.CurrentLayer].Tiles[Globals.CurTileX, Globals.CurTileY].Autotile = 0;
                             }
                             else
                             {
-                                tmpMap.Layers[Globals.CurrentLayer].Tiles[Globals.CurTileX, Globals.CurTileY].TilesetIndex = Globals.CurrentTileset;
+                                tmpMap.Layers[Globals.CurrentLayer].Tiles[Globals.CurTileX, Globals.CurTileY].TilesetIndex = Globals.CurrentTileset.GetId();
                                 tmpMap.Layers[Globals.CurrentLayer].Tiles[Globals.CurTileX, Globals.CurTileY].X = Globals.CurSelX;
                                 tmpMap.Layers[Globals.CurrentLayer].Tiles[Globals.CurTileX, Globals.CurTileY].Y = Globals.CurSelY;
                                 tmpMap.Layers[Globals.CurrentLayer].Tiles[Globals.CurTileX, Globals.CurTileY].Autotile = (byte)Globals.Autotilemode;
@@ -959,37 +855,18 @@ namespace Intersect_Editor.Forms
                         }
                     }
                 }
-                tmpMap.Autotiles.InitAutotiles(gameMaps);
+                tmpMap.Autotiles.InitAutotiles(MapBase.GetObjects());
                 Globals.CurTileX = oldCurSelX;
                 Globals.CurTileY = oldCurSelY;
-                if (tmpMap.Left > -1)
-                {
-                    if (Globals.GameMaps[tmpMap.Left] != null)
-                    {
-                        Globals.GameMaps[tmpMap.Left].Autotiles.InitAutotiles(gameMaps);
-                    }
-                }
-                if (tmpMap.Up > -1)
-                {
-                    if (Globals.GameMaps[tmpMap.Up] != null)
-                    {
-                        Globals.GameMaps[tmpMap.Up].Autotiles.InitAutotiles(gameMaps);
-                    }
-                }
-                if (tmpMap.Right > -1)
-                {
-                    if (Globals.GameMaps[tmpMap.Right] != null)
-                    {
-                        Globals.GameMaps[tmpMap.Right].Autotiles.InitAutotiles(gameMaps);
-                    }
-                }
-                if (tmpMap.Down > -1)
-                {
-                    if (Globals.GameMaps[tmpMap.Down] != null)
-                    {
-                        Globals.GameMaps[tmpMap.Down].Autotiles.InitAutotiles(gameMaps);
-                    }
-                }
+                if (MapInstance.GetMap(tmpMap.Left) != null)
+                    MapInstance.GetMap(tmpMap.Left).Autotiles.InitAutotiles(MapBase.GetObjects());
+                if (MapInstance.GetMap(tmpMap.Up) != null)
+                    MapInstance.GetMap(tmpMap.Up).Autotiles.InitAutotiles(MapBase.GetObjects());
+                if (MapInstance.GetMap(tmpMap.Right) != null)
+                    MapInstance.GetMap(tmpMap.Right).Autotiles.InitAutotiles(MapBase.GetObjects());
+                if (MapInstance.GetMap(tmpMap.Down) != null)
+                    MapInstance.GetMap(tmpMap.Down).Autotiles.InitAutotiles(MapBase.GetObjects());
+
 
                 if (!CurrentMapState.SequenceEqual(tmpMap.GetMapData(false)))
                 {
@@ -1003,8 +880,7 @@ namespace Intersect_Editor.Forms
         {
             var oldCurSelX = Globals.CurTileX;
             var oldCurSelY = Globals.CurTileY;
-            var tmpMap = Globals.GameMaps[Globals.CurrentMap];
-            Dictionary<int, MapStruct> gameMaps = Globals.GameMaps.ToDictionary(k => k.Key, v => (MapStruct)v.Value);
+            var tmpMap = Globals.CurrentMap;
             if (CurrentMapState == null)
             {
                 CurrentMapState = tmpMap.GetMapData(false);
@@ -1020,7 +896,7 @@ namespace Intersect_Editor.Forms
 
                         if (Globals.CurrentLayer == Options.LayerCount)
                         {
-                            Globals.MapLayersWindow.RemoveAttribute(Globals.GameMaps[Globals.CurrentMap], Globals.CurTileX, Globals.CurTileY);
+                            Globals.MapLayersWindow.RemoveAttribute(Globals.CurrentMap, Globals.CurTileX, Globals.CurTileY);
                         }
                         else if (Globals.CurrentLayer < Options.LayerCount)
                         {
@@ -1031,37 +907,17 @@ namespace Intersect_Editor.Forms
                         }
                     }
                 }
-                tmpMap.Autotiles.InitAutotiles(gameMaps);
+                tmpMap.Autotiles.InitAutotiles(MapBase.GetObjects());
                 Globals.CurTileX = oldCurSelX;
                 Globals.CurTileY = oldCurSelY;
-                if (tmpMap.Left > -1)
-                {
-                    if (Globals.GameMaps[tmpMap.Left] != null)
-                    {
-                        Globals.GameMaps[tmpMap.Left].Autotiles.InitAutotiles(gameMaps);
-                    }
-                }
-                if (tmpMap.Up > -1)
-                {
-                    if (Globals.GameMaps[tmpMap.Up] != null)
-                    {
-                        Globals.GameMaps[tmpMap.Up].Autotiles.InitAutotiles(gameMaps);
-                    }
-                }
-                if (tmpMap.Right > -1)
-                {
-                    if (Globals.GameMaps[tmpMap.Right] != null)
-                    {
-                        Globals.GameMaps[tmpMap.Right].Autotiles.InitAutotiles(gameMaps);
-                    }
-                }
-                if (tmpMap.Down > -1)
-                {
-                    if (Globals.GameMaps[tmpMap.Down] != null)
-                    {
-                        Globals.GameMaps[tmpMap.Down].Autotiles.InitAutotiles(gameMaps);
-                    }
-                }
+                if (MapInstance.GetMap(tmpMap.Left) != null)
+                    MapInstance.GetMap(tmpMap.Left).Autotiles.InitAutotiles(MapBase.GetObjects());
+                if (MapInstance.GetMap(tmpMap.Up) != null)
+                    MapInstance.GetMap(tmpMap.Up).Autotiles.InitAutotiles(MapBase.GetObjects());
+                if (MapInstance.GetMap(tmpMap.Right) != null)
+                    MapInstance.GetMap(tmpMap.Right).Autotiles.InitAutotiles(MapBase.GetObjects());
+                if (MapInstance.GetMap(tmpMap.Down) != null)
+                    MapInstance.GetMap(tmpMap.Down).Autotiles.InitAutotiles(MapBase.GetObjects());
 
                 if (!CurrentMapState.SequenceEqual(tmpMap.GetMapData(false)))
                 {
@@ -1076,7 +932,6 @@ namespace Intersect_Editor.Forms
         public void ProcessSelectionMovement(MapInstance tmpMap, bool ignoreMouse = false, bool ispreview = false)
         {
             bool wipeSource = false;
-            Dictionary<int, MapStruct> gameMaps = Globals.GameMaps.ToDictionary(k => k.Key, v => (MapStruct)v.Value);
             int selX = Globals.CurMapSelX, selY = Globals.CurMapSelY, selW = Globals.CurMapSelW, selH = Globals.CurMapSelH;
             int dragxoffset = 0, dragyoffset = 0;
             if (Globals.CurrentTool == (int)EdittingTool.Rectangle ||
@@ -1108,7 +963,7 @@ namespace Intersect_Editor.Forms
 
             }
             //WE are moving tiles, this will be fun!
-            if (Globals.GameMaps[Globals.CurrentMap] == tmpMap && Globals.SelectionSource == tmpMap)
+            if (Globals.CurrentMap == tmpMap && Globals.SelectionSource == tmpMap)
             {
                 Globals.SelectionSource = new MapInstance(tmpMap);
                 wipeSource = true;
@@ -1121,7 +976,7 @@ namespace Intersect_Editor.Forms
                 }
                 else
                 {
-                    WipeCurrentSelection(Globals.GameMaps[Globals.CurrentMap]);
+                    WipeCurrentSelection(Globals.CurrentMap);
                 }
             }
             int z = 0, zf = Options.LayerCount;
@@ -1151,7 +1006,7 @@ namespace Intersect_Editor.Forms
                             tmpMap.Layers[l].Tiles[x0, y0].Autotile = Globals.SelectionSource.Layers[l].Tiles[x0 - dragxoffset, y0 - dragyoffset].Autotile;
                         }
                         tmpMap.Autotiles.UpdateAutoTiles(x0, y0,
-                            l,gameMaps);
+                            l, MapBase.GetObjects());
                     }
                 }
             }
@@ -1166,11 +1021,24 @@ namespace Intersect_Editor.Forms
                         //Attributes
                         if (Globals.SelectionType != (int)SelectionTypes.CurrentLayer || Globals.CurrentLayer == Options.LayerCount)
                         {
-                            tmpMap.Attributes[x0, y0].value = Globals.SelectionSource.Attributes[x0 - dragxoffset, y0 - dragyoffset].value;
-                            tmpMap.Attributes[x0, y0].data1 = Globals.SelectionSource.Attributes[x0 - dragxoffset, y0 - dragyoffset].data1;
-                            tmpMap.Attributes[x0, y0].data2 = Globals.SelectionSource.Attributes[x0 - dragxoffset, y0 - dragyoffset].data2;
-                            tmpMap.Attributes[x0, y0].data3 = Globals.SelectionSource.Attributes[x0 - dragxoffset, y0 - dragyoffset].data3;
-                            tmpMap.Attributes[x0, y0].data4 = Globals.SelectionSource.Attributes[x0 - dragxoffset, y0 - dragyoffset].data4;
+                            if (Globals.SelectionSource.Attributes[x0 - dragxoffset, y0 - dragyoffset] != null)
+                            {
+                                tmpMap.Attributes[x0, y0] = new Intersect_Library.GameObjects.Maps.Attribute();
+                                tmpMap.Attributes[x0, y0].value =
+                                    Globals.SelectionSource.Attributes[x0 - dragxoffset, y0 - dragyoffset].value;
+                                tmpMap.Attributes[x0, y0].data1 =
+                                    Globals.SelectionSource.Attributes[x0 - dragxoffset, y0 - dragyoffset].data1;
+                                tmpMap.Attributes[x0, y0].data2 =
+                                    Globals.SelectionSource.Attributes[x0 - dragxoffset, y0 - dragyoffset].data2;
+                                tmpMap.Attributes[x0, y0].data3 =
+                                    Globals.SelectionSource.Attributes[x0 - dragxoffset, y0 - dragyoffset].data3;
+                                tmpMap.Attributes[x0, y0].data4 =
+                                    Globals.SelectionSource.Attributes[x0 - dragxoffset, y0 - dragyoffset].data4;
+                            }
+                            else
+                            {
+                                tmpMap.Attributes[x0, y0] = null;
+                            }
                         }
 
                         //Spawns
@@ -1191,7 +1059,7 @@ namespace Intersect_Editor.Forms
                         }
 
                         //Lights
-                        Light lightCopy;
+                        LightBase lightCopy;
                         if (Globals.SelectionType != (int)SelectionTypes.CurrentLayer || Globals.CurrentLayer == Options.LayerCount + 1)
                         {
                             if (Globals.SelectionSource.FindLightAt(x0 - dragxoffset, y0 - dragyoffset) != null)
@@ -1200,7 +1068,7 @@ namespace Intersect_Editor.Forms
                                 {
                                     tmpMap.Lights.Remove(tmpMap.FindLightAt(x0, y0));
                                 }
-                                lightCopy = new Light(Globals.SelectionSource.FindLightAt(x0 - dragxoffset, y0 - dragyoffset));
+                                lightCopy = new LightBase(Globals.SelectionSource.FindLightAt(x0 - dragxoffset, y0 - dragyoffset));
                                 lightCopy.TileX = x0;
                                 lightCopy.TileY = y0;
                                 tmpMap.Lights.Add(lightCopy);
@@ -1208,19 +1076,19 @@ namespace Intersect_Editor.Forms
                         }
 
                         //Events
-                        EventStruct eventCopy;
+                        EventBase eventCopy;
                         if (Globals.SelectionType != (int)SelectionTypes.CurrentLayer || Globals.CurrentLayer == Options.LayerCount + 2)
                         {
                             if (Globals.SelectionSource.FindEventAt(x0 - dragxoffset, y0 - dragyoffset) != null)
                             {
                                 if (tmpMap.FindEventAt(x0, y0) != null)
                                 {
-                                    tmpMap.FindEventAt(x0, y0).Deleted = 1;
+                                    tmpMap.Events.Remove(tmpMap.FindEventAt(x0, y0).MyIndex);
                                 }
-                                eventCopy = new EventStruct(tmpMap.Events.Count, Globals.SelectionSource.FindEventAt(x0 - dragxoffset, y0 - dragyoffset));
+                                eventCopy = new EventBase(tmpMap.EventIndex, Globals.SelectionSource.FindEventAt(x0 - dragxoffset, y0 - dragyoffset));
                                 eventCopy.SpawnX = x0;
                                 eventCopy.SpawnY = y0;
-                                tmpMap.Events.Add(eventCopy);
+                                tmpMap.Events.Add(tmpMap.EventIndex++, eventCopy);
                             }
                         }
                     }
@@ -1228,10 +1096,9 @@ namespace Intersect_Editor.Forms
             }
         }
 
-        private void WipeCurrentSelection(MapStruct tmpMap)
+        private void WipeCurrentSelection(MapBase tmpMap)
         {
             int selX = Globals.CurMapSelX, selY = Globals.CurMapSelY, selW = Globals.CurMapSelW, selH = Globals.CurMapSelH;
-            Dictionary<int, MapStruct> gameMaps = Globals.GameMaps.ToDictionary(k => k.Key, v => (MapStruct)v.Value);
             int dragxoffset = 0, dragyoffset = 0;
             if (Globals.CurrentTool == (int)EdittingTool.Rectangle ||
             Globals.CurrentTool == (int)EdittingTool.Selection)
@@ -1286,7 +1153,7 @@ namespace Intersect_Editor.Forms
                                 x0, y0].Autotile = 0;
                         }
                         tmpMap.Autotiles.UpdateAutoTiles(x0, y0,
-                            l,gameMaps);
+                            l, MapBase.GetObjects());
                     }
                 }
             }
@@ -1302,11 +1169,14 @@ namespace Intersect_Editor.Forms
                         //Attributes
                         if (Globals.SelectionType != (int)SelectionTypes.CurrentLayer || Globals.CurrentLayer == Options.LayerCount)
                         {
-                            tmpMap.Attributes[x0, y0].value = 0;
-                            tmpMap.Attributes[x0, y0].data1 = 0;
-                            tmpMap.Attributes[x0, y0].data2 = 0;
-                            tmpMap.Attributes[x0, y0].data3 = 0;
-                            tmpMap.Attributes[x0, y0].data4 = "";
+                            if (tmpMap.Attributes[x0, y0] != null)
+                            {
+                                tmpMap.Attributes[x0, y0].value = 0;
+                                tmpMap.Attributes[x0, y0].data1 = 0;
+                                tmpMap.Attributes[x0, y0].data2 = 0;
+                                tmpMap.Attributes[x0, y0].data3 = 0;
+                                tmpMap.Attributes[x0, y0].data4 = "";
+                            }
                         }
 
                         //Spawns
@@ -1338,13 +1208,9 @@ namespace Intersect_Editor.Forms
                         //Events
                         if (Globals.SelectionType != (int)SelectionTypes.CurrentLayer || Globals.CurrentLayer == Options.LayerCount + 2)
                         {
-                            for (int w = 0; w < tmpMap.Events.Count; w++)
+                            if (((MapInstance)tmpMap).FindEventAt(x0, y0) != null)
                             {
-                                if (tmpMap.Events[w].SpawnX == x0 &&
-                                    tmpMap.Events[w].SpawnY == y0)
-                                {
-                                    tmpMap.Events[w].Deleted = 1;
-                                }
+                                tmpMap.Events.Remove(((MapInstance) tmpMap).FindEventAt(x0, y0).MyIndex);
                             }
                         }
                     }
@@ -1373,18 +1239,18 @@ namespace Intersect_Editor.Forms
         public void Cut()
         {
             Copy();
-            WipeCurrentSelection(Globals.GameMaps[Globals.CurrentMap]);
+            WipeCurrentSelection(Globals.CurrentMap);
             EditorGraphics.TilePreviewUpdated = true;
             if (CurrentMapState != null) MapUndoStates.Add(CurrentMapState);
             MapRedoStates.Clear();
-            CurrentMapState = Globals.GameMaps[Globals.CurrentMap].GetMapData(false);
+            CurrentMapState = Globals.CurrentMap.GetMapData(false);
             MapChanged = false;
         }
         public void Copy()
         {
             if (Globals.CurrentTool == (int)EdittingTool.Selection)
             {
-                Globals.CopySource = new MapInstance(Globals.GameMaps[Globals.CurrentMap]);
+                Globals.CopySource = new MapInstance(Globals.CurrentMap);
                 Globals.CopyMapSelH = Globals.CurMapSelH;
                 Globals.CopyMapSelW = Globals.CurMapSelW;
                 Globals.CopyMapSelX = Globals.CurMapSelX;

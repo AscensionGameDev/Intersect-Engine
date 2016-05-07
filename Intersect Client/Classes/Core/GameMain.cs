@@ -30,6 +30,8 @@ using IntersectClientExtras.Graphics;
 using Intersect_Client.Classes.General;
 using Intersect_Client.Classes.Networking;
 using Intersect_Client.Classes.UI;
+using Intersect_Library.GameObjects;
+using Intersect_Client.Classes.Maps;
 
 // ReSharper disable All
 
@@ -154,26 +156,26 @@ namespace Intersect_Client.Classes.Core
 
         private static void ProcessLoading()
         {
-            if (Globals.Tilesets != null && !_tilesetsLoaded)
+            if (Globals.HasGameData != null && !_tilesetsLoaded)
             {
-                Globals.ContentManager.LoadTilesets(Globals.Tilesets);
+                Globals.ContentManager.LoadTilesets(DatabaseObject.GetGameObjectList(Intersect_Library.GameObject.Tileset));
                 _tilesetsLoaded = true;
             }
             if (Globals.LocalMaps[4] == -1) { return; }
-            if (Globals.GameMaps == null) return;
             for (var i = 0; i < 9; i++)
             {
                 if (Globals.LocalMaps[i] <= -1) continue;
-                if (Globals.GameMaps.ContainsKey(Globals.LocalMaps[i]) && Globals.GameMaps[Globals.LocalMaps[i]] != null)
+                var map = MapInstance.GetMap(Globals.LocalMaps[i]);
+                if (map != null)
                 {
                     //if (!Globals.GameMaps[Globals.LocalMaps[i]].ShouldLoad(i * 2 + 0)) continue;
-                    if (Globals.GameMaps[Globals.LocalMaps[i]].MapLoaded == false)
+                    if (map.MapLoaded == false)
                     {
                         return;
                     }
-                    else if (Globals.GameMaps[Globals.LocalMaps[i]].MapRendered == false && Globals.Database.RenderCaching == true)
+                    else if (map.MapRendered == false && Globals.Database.RenderCaching == true)
                     {
-                        Globals.GameMaps[Globals.LocalMaps[i]].PreRenderMap();
+                        map.PreRenderMap();
                         return;
                     }
                 }
@@ -184,7 +186,7 @@ namespace Intersect_Client.Classes.Core
             }
             
 
-            GameAudio.PlayMusic(Globals.GameMaps[Globals.LocalMaps[4]].Music, 3, 3, true);
+            GameAudio.PlayMusic(MapInstance.GetMap(Globals.LocalMaps[4]).Music, 3, 3, true);
             Globals.GameState = GameStates.InGame;
             GameFade.FadeIn();
         }
@@ -207,22 +209,22 @@ namespace Intersect_Client.Classes.Core
 
             //Update Maps
             bool handled = false;
-            foreach (var map in Globals.GameMaps)
+            foreach (var map in MapInstance.GetObjects().Values)
             {
                 handled = false;
-                if (map.Value == null) continue;
+                if (map == null) continue;
                 for (var i = 0; i < 9; i++)
                 {
                     if (Globals.LocalMaps[i] <= -1) continue;
-                    if (map.Value.MyMapNum == Globals.LocalMaps[i])
+                    if (map.MyMapNum == Globals.LocalMaps[i])
                     {
-                        map.Value.Update(true);
+                        map.Update(true);
                         handled = true;
                     }
                 }
                 if (!handled)
                 {
-                    map.Value.Update(false);
+                    map.Update(false);
                 }
             }
 
@@ -233,16 +235,16 @@ namespace Intersect_Client.Classes.Core
                 for (var i = 0; i < 9; i++)
                 {
                     if (Globals.LocalMaps[i] <= -1) continue;
-                    if (Globals.GameMaps.ContainsKey(Globals.LocalMaps[i]) && Globals.GameMaps[Globals.LocalMaps[i]] != null)
+                    var map = MapInstance.GetMap(Globals.LocalMaps[i]);
+                    if (map  != null)
                     {
-                        //if (!Globals.GameMaps[Globals.LocalMaps[i]].ShouldLoad(i * 2 + 0)) continue;
-                        if (Globals.GameMaps[Globals.LocalMaps[i]].MapLoaded == false)
+                        if (map.MapLoaded == false)
                         {
                             canShowWorld = false;
                         }
-                        else if (Globals.GameMaps[Globals.LocalMaps[i]].MapRendered == false && Globals.Database.RenderCaching == true)
+                        else if (map.MapRendered == false && Globals.Database.RenderCaching == true)
                         {
-                            Globals.GameMaps[Globals.LocalMaps[i]].PreRenderMap();
+                            map.PreRenderMap();
                             canShowWorld = false;
                         }
                     }
@@ -253,13 +255,6 @@ namespace Intersect_Client.Classes.Core
                 }
                 if (canShowWorld) Globals.NeedsMaps = false;
             }
-
-            for (int i = 0; i < Globals.MapsToRemove.Count; i++)
-            {
-                Globals.GameMaps[Globals.MapsToRemove[i]].Dispose(false);
-            }
-            Globals.MapsToRemove.Clear();
-
 
             //Update Game Animations
             if (_animTimer < Globals.System.GetTimeMS())
@@ -272,7 +267,7 @@ namespace Intersect_Client.Classes.Core
             //Remove Event Holds If Invalid
             for (int i = 0; i < Globals.EventHolds.Count; i++)
             {
-                if (!Globals.GameMaps.ContainsKey(Globals.EventHolds[i].MapNum))
+                if (MapInstance.GetMap(Globals.EventHolds[i].MapNum) == null)
                 {
                     Globals.EventHolds.RemoveAt(i);
                 }

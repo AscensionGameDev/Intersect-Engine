@@ -126,7 +126,7 @@ namespace Intersect_Server.Classes.Networking
                 {
                     _isConnected = false;
                     Globals.GeneralLogs.Add("Client disconnected.");
-                    Database.SavePlayer(_myClient);
+                    Database.SaveCharacter(_myClient.Entity);
                     if (_entityIndex > -1 && Globals.Entities[_entityIndex] != null && Globals.Entities[_entityIndex].MyName != "")
                     {
                         PacketSender.SendEntityLeave(_entityIndex, (int)EntityTypes.Player, Globals.Entities[_entityIndex].CurrentMap);

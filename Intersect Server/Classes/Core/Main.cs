@@ -21,7 +21,6 @@
 */
 #define websockets
 using System;
-using System.IO;
 using System.Reflection;
 using System.Threading;
 using Intersect_Library;
@@ -55,29 +54,12 @@ namespace Intersect_Server.Classes
                 Console.ReadKey();
                 return;
             }
-            Database.InitDatabase();
-            Database.LoadNpcs();
-            Database.LoadItems();
-            Database.LoadShops();
-            Database.LoadSpells();
-            Database.LoadAnimations();
-            Database.LoadResources();
-            Database.LoadQuests();
-            Database.LoadProjectiles();
-            Database.LoadCommonEvents();
-            Database.LoadSwitchesAndVariables();
-            if (Database.LoadClasses() == Options.MaxClasses)
+            if (!Database.InitDatabase())
             {
-                Console.WriteLine("Failed to load classes. Creating default class.");
-                Database.CreateDefaultClass();
+                Console.ReadKey();
+                return;
             }
-            Database.LoadMaps();
-            Database.LoadPlayerDatabase();
             Console.WriteLine("Server has " + Database.GetRegisteredPlayers() + " registered players.");
-            if (File.Exists("resources/tilesets.dat"))
-            {
-                Globals.Tilesets = File.ReadAllLines("resources/tilesets.dat");
-            }
             SocketServer.Init();
             Console.WriteLine("Server Started. Using Port #" + Options.ServerPort);
 #if websockets

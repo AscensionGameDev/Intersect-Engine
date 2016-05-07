@@ -26,6 +26,7 @@
 */
 
 using Intersect_Client.Classes.General;
+using Intersect_Client.Classes.Maps;
 using Intersect_Library;
 
 namespace Intersect_Client.Classes.Entities
@@ -60,18 +61,19 @@ namespace Intersect_Client.Classes.Entities
         public static Entity AddLocalEvent(int index, int mapNum)
         {
             var i = index;
-            if (Globals.GameMaps.ContainsKey(mapNum))
+            var map = MapInstance.GetMap(mapNum);
+            if (map != null)
             {
                 //Make sure we are not about to dispose of this entity
-                Globals.GameMaps[mapNum].LocalEntitiesToDispose.Remove(i);
-                if (Globals.GameMaps[mapNum].LocalEntities.ContainsKey(i))
+                map.LocalEntitiesToDispose.Remove(i);
+                if (map.LocalEntities.ContainsKey(i))
                 {
-                    return Globals.GameMaps[mapNum].LocalEntities[index];
+                    return map.LocalEntities[index];
                 }
                 else
                 {
-                    Globals.GameMaps[mapNum].LocalEntities.Add(index,new Event {CurrentMap = 0});
-                    return Globals.GameMaps[mapNum].LocalEntities[index];
+                    map.LocalEntities.Add(index,new Event {CurrentMap = 0});
+                    return map.LocalEntities[index];
                 }
             }
             return null;
@@ -107,13 +109,14 @@ namespace Intersect_Client.Classes.Entities
             }
             else
             {
-                if (Globals.GameMaps.ContainsKey(mapNum))
+                var map = MapInstance.GetMap(mapNum);
+                if (map != null)
                 {
-                    if (Globals.GameMaps[mapNum].LocalEntities.ContainsKey(index))
+                    if (map.LocalEntities.ContainsKey(index))
                     {
-                        Globals.GameMaps[mapNum].LocalEntities[index].Dispose();
-                        Globals.GameMaps[mapNum].LocalEntities[index] = null;
-                        Globals.GameMaps[mapNum].LocalEntities.Remove(index);
+                        map.LocalEntities[index].Dispose();
+                        map.LocalEntities[index] = null;
+                        map.LocalEntities.Remove(index);
                     }
                 }
             }

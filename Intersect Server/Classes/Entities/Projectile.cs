@@ -24,6 +24,7 @@ using System;
 using Intersect_Library;
 using Intersect_Library.GameObjects;
 using Intersect_Server.Classes.General;
+using Intersect_Server.Classes.Maps;
 using Intersect_Server.Classes.Networking;
 using Attribute = Intersect_Library.GameObjects.Maps.Attribute;
 
@@ -33,8 +34,7 @@ namespace Intersect_Server.Classes.Entities
     public class Projectile : Entity
     {
         public Entity Owner;
-        private ProjectileStruct MyBase;
-        private int ProjectileNum = 0;
+        private ProjectileBase MyBase;
         private int Quantity = 0;
         private long SpawnTime = 0;
         public int Target = -1;
@@ -46,10 +46,9 @@ namespace Intersect_Server.Classes.Entities
         // Individual Spawns
         public ProjectileSpawns[] Spawns;
 
-        public Projectile(int index, Entity owner, int projectileNum, int Map, int X, int Y, int Z, int Direction, int isSpell = -1, int target = 0) : base(index)
+        public Projectile(int index, Entity owner, ProjectileBase projectile, int Map, int X, int Y, int Z, int Direction, int isSpell = -1, int target = 0) : base(index)
         {
-            ProjectileNum = projectileNum;
-            MyBase = Globals.GameProjectiles[ProjectileNum];
+            MyBase = projectile;
             MyName = MyBase.Name;
             Owner = owner;
             Stat = owner.Stat;
@@ -69,11 +68,11 @@ namespace Intersect_Server.Classes.Entities
 
             Passable = 1;
             HideName = 1;
-            for (int x = 0; x < ProjectileStruct.SpawnLocationsWidth; x++)
+            for (int x = 0; x < ProjectileBase.SpawnLocationsWidth; x++)
             {
-                for (int y = 0; y < ProjectileStruct.SpawnLocationsWidth; y++)
+                for (int y = 0; y < ProjectileBase.SpawnLocationsWidth; y++)
                 {
-                    for (int d = 0; d < ProjectileStruct.MaxProjectileDirections; d++)
+                    for (int d = 0; d < ProjectileBase.MaxProjectileDirections; d++)
                     {
                         if (MyBase.SpawnLocations[x, y].Directions[d] == true)
                         {
@@ -88,17 +87,15 @@ namespace Intersect_Server.Classes.Entities
 
         private void AddProjectileSpawns()
         {
-            ProjectileStruct myBase = Globals.GameProjectiles[ProjectileNum];
-
-            for (int x = 0; x < ProjectileStruct.SpawnLocationsWidth; x++)
+            for (int x = 0; x < ProjectileBase.SpawnLocationsWidth; x++)
             {
-                for (int y = 0; y < ProjectileStruct.SpawnLocationsWidth; y++)
+                for (int y = 0; y < ProjectileBase.SpawnLocationsWidth; y++)
                 {
-                    for (int d = 0; d < ProjectileStruct.MaxProjectileDirections; d++)
+                    for (int d = 0; d < ProjectileBase.MaxProjectileDirections; d++)
                     {
-                        if (myBase.SpawnLocations[x, y].Directions[d] == true)
+                        if (MyBase.SpawnLocations[x, y].Directions[d] == true)
                         {
-                            ProjectileSpawns s = new ProjectileSpawns(FindProjectileRotationDir(Dir, d), CurrentX + FindProjectileRotationX(Dir, x - 2, y - 2), CurrentY + FindProjectileRotationY(Dir, x - 2, y - 2), CurrentZ, CurrentMap,myBase, MyIndex);
+                            ProjectileSpawns s = new ProjectileSpawns(FindProjectileRotationDir(Dir, d), CurrentX + FindProjectileRotationX(Dir, x - 2, y - 2), CurrentY + FindProjectileRotationY(Dir, x - 2, y - 2), CurrentZ, CurrentMap, MyBase, MyIndex);
                             Spawns[_spawnedAmount] = s;
                             _spawnedAmount++;
                             _spawnCount++;
@@ -281,12 +278,13 @@ namespace Intersect_Server.Classes.Entities
                         int newx = Spawns[i].X + GetRangeX(Spawns[i].Dir, 1);
                         int newy = Spawns[i].Y + GetRangeY(Spawns[i].Dir, 1);
                         int newmap = Spawns[i].Map;
+                        var map = MapInstance.GetMap(Spawns[i].Map);
 
                         if (newx < 0)
                         {
-                            if (Globals.GameMaps[Spawns[i].Map].Left > -1 && Globals.GameMaps[Globals.GameMaps[Spawns[i].Map].Left] != null)
+                            if (MapInstance.GetMap(map.Left) != null)
                             {
-                                newmap = Globals.GameMaps[Spawns[i].Map].Left;
+                                newmap = MapInstance.GetMap(Spawns[i].Map).Left;
                                 newx = Options.MapWidth - 1;
                             }
                             else
@@ -296,9 +294,9 @@ namespace Intersect_Server.Classes.Entities
                         }
                         if (newx > Options.MapWidth - 1)
                         {
-                            if (Globals.GameMaps[Spawns[i].Map].Right > -1 && Globals.GameMaps[Globals.GameMaps[Spawns[i].Map].Right] != null)
+                            if (MapInstance.GetMap(map.Right) != null)
                             {
-                                newmap = Globals.GameMaps[Spawns[i].Map].Right;
+                                newmap = MapInstance.GetMap(Spawns[i].Map).Right;
                                 newx = 0;
                             }
                             else
@@ -308,9 +306,9 @@ namespace Intersect_Server.Classes.Entities
                         }
                         if (newy < 0)
                         {
-                            if (Globals.GameMaps[Spawns[i].Map].Up > -1 && Globals.GameMaps[Globals.GameMaps[Spawns[i].Map].Up] != null)
+                            if (MapInstance.GetMap(map.Up) != null)
                             {
-                                newmap = Globals.GameMaps[Spawns[i].Map].Up;
+                                newmap = MapInstance.GetMap(Spawns[i].Map).Up;
                                 newy = Options.MapHeight - 1;
                             }
                             else
@@ -320,9 +318,9 @@ namespace Intersect_Server.Classes.Entities
                         }
                         if (newy > Options.MapHeight - 1)
                         {
-                            if (Globals.GameMaps[Spawns[i].Map].Down > -1 && Globals.GameMaps[Globals.GameMaps[Spawns[i].Map].Down] != null)
+                            if (MapInstance.GetMap(map.Down) != null)
                             {
-                                newmap = Globals.GameMaps[Spawns[i].Map].Down;
+                                newmap = MapInstance.GetMap(Spawns[i].Map).Down;
                                 newy = 0;
                             }
                             else
@@ -353,7 +351,7 @@ namespace Intersect_Server.Classes.Entities
                         //Check for Z-Dimension
                         if (!Spawns[i].ProjectileBase.IgnoreZDimension)
                         {
-                            Attribute attribute = Globals.GameMaps[Spawns[i].Map].Attributes[Spawns[i].X, Spawns[i].Y];
+                            Attribute attribute = MapInstance.GetMap(Spawns[i].Map).Attributes[Spawns[i].X, Spawns[i].Y];
                             if (attribute != null && attribute.value == (int) MapAttributes.ZDimension)
                             {
                                 if (attribute.data1 > 0)
@@ -368,8 +366,8 @@ namespace Intersect_Server.Classes.Entities
 
                         if (c == -1) //No collision so increase the counter for the next collision detection.
                         {
-                            Spawns[i].TransmittionTimer = Environment.TickCount + (long)((float)Globals.GameProjectiles[ProjectileNum].Speed / (float)Globals.GameProjectiles[ProjectileNum].Range);
-                            if (Spawns[i].Distance >= Globals.GameProjectiles[ProjectileNum].Range)
+                            Spawns[i].TransmittionTimer = Environment.TickCount + (long)((float)MyBase.Speed / (float)MyBase.Range);
+                            if (Spawns[i].Distance >= MyBase.Range)
                             {
                                 killSpawn = true;
                             }
@@ -438,7 +436,7 @@ namespace Intersect_Server.Classes.Entities
             }
             else
             {
-                Globals.GameMaps[CurrentMap].RemoveProjectile(this);
+                MapInstance.GetMap(CurrentMap).RemoveProjectile(this);
                 PacketSender.SendEntityLeave(MyIndex, (int)EntityTypes.Projectile, CurrentMap);
                 Globals.Entities[MyIndex] = null;
             }
@@ -448,7 +446,7 @@ namespace Intersect_Server.Classes.Entities
         {
             var bf = new ByteBuffer();
             bf.WriteBytes(base.Data());
-            bf.WriteInteger(ProjectileNum);
+            bf.WriteInteger(MyBase.GetId());
             bf.WriteInteger(Dir);
             bf.WriteInteger(Target);
             return bf.ToArray();
@@ -463,11 +461,11 @@ namespace Intersect_Server.Classes.Entities
         public int Map;
         public int Dir;
         public int Distance = 0;
-        public ProjectileStruct ProjectileBase;
+        public ProjectileBase ProjectileBase;
         public long TransmittionTimer = Environment.TickCount;
         private int _baseEntityIndex;
 
-        public ProjectileSpawns(int dir, int x, int y, int z, int map, ProjectileStruct projectileBase, int parentIndex)
+        public ProjectileSpawns(int dir, int x, int y, int z, int map, ProjectileBase projectileBase, int parentIndex)
         {
             Map = map;
             X = x;

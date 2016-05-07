@@ -22,7 +22,6 @@
 using System;
 using System.Windows.Forms;
 using Intersect_Editor.Classes;
-using Intersect_Editor.Classes.General;
 using Intersect_Library;
 using Intersect_Library.GameObjects.Events;
 
@@ -38,16 +37,13 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             _myCommand = refCommand;
             _eventEditor = editor;
             cmbEvent.Items.Clear();
-            for (int i = 0; i < Options.MaxCommonEvents; i++)
-            {
-                cmbEvent.Items.Add((i + 1) + ". " + Globals.CommonEvents[i].MyName);
-            }
-            cmbEvent.SelectedIndex = refCommand.Ints[0];
+            cmbEvent.Items.AddRange(Database.GetGameObjectList(GameObject.CommonEvent));
+            cmbEvent.SelectedIndex = Database.GameObjectListIndex(GameObject.CommonEvent,refCommand.Ints[0]);
         }
 
         private void btnSave_Click(object sender, EventArgs e)
         {
-            _myCommand.Ints[0] = cmbEvent.SelectedIndex;
+            _myCommand.Ints[0] = Database.GameObjectIdFromList(GameObject.CommonEvent,cmbEvent.SelectedIndex);
             _eventEditor.FinishCommandEdit();
         }
 

@@ -20,17 +20,19 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-using System;
 using System.Collections.Generic;
-using System.IO;
+using System.Linq;
 
 namespace Intersect_Library.GameObjects
 {
-    public class QuestStruct
+    public class QuestBase : DatabaseObject
     {
         //General
-        public const string Version = "0.0.0.1";
-        public string Name = "";
+        public new const string DatabaseTable = "quests";
+        public new const GameObject Type = GameObject.Quest;
+        protected static Dictionary<int, DatabaseObject> Objects = new Dictionary<int, DatabaseObject>();
+        
+        public string Name = "New Quest";
         public string StartDesc = "";
         public string EndDesc = "";
 
@@ -46,13 +48,15 @@ namespace Intersect_Library.GameObjects
         //Tasks
         public List<QuestTask> Tasks = new List<QuestTask>();
 
-        public void Load(byte[] packet, int index)
+        public QuestBase(int id) : base(id)
+        {
+            
+        }
+
+        public override void Load(byte[] packet)
         {
             var myBuffer = new ByteBuffer();
             myBuffer.WriteBytes(packet);
-            string loadedVersion = myBuffer.ReadString();
-            if (loadedVersion != Version)
-                throw new Exception("Failed to load Quest #" + index + ". Loaded Version: " + loadedVersion + " Expected Version: " + Version);
             Name = myBuffer.ReadString();
             StartDesc = myBuffer.ReadString();
             EndDesc = myBuffer.ReadString();
@@ -88,7 +92,6 @@ namespace Intersect_Library.GameObjects
         public byte[] QuestData()
         {
             var myBuffer = new ByteBuffer();
-            myBuffer.WriteString(Version);
             myBuffer.WriteString(Name);
             myBuffer.WriteString(StartDesc);
             myBuffer.WriteString(EndDesc);
@@ -118,12 +121,68 @@ namespace Intersect_Library.GameObjects
             return myBuffer.ToArray();
         }
 
-        public void Save(int questNum)
+        public static QuestBase GetQuest(int index)
         {
-            byte[] data = QuestData();
-            Stream stream = new FileStream("resources/quests/" + questNum + ".qst", FileMode.OpenOrCreate);
-            stream.Write(data, 0, data.Length);
-            stream.Close();
+            if (Objects.ContainsKey(index))
+            {
+                return (QuestBase)Objects[index];
+            }
+            return null;
+        }
+
+        public static string GetName(int index)
+        {
+            if (Objects.ContainsKey(index))
+            {
+                return ((QuestBase)Objects[index]).Name;
+            }
+            return "Deleted";
+        }
+
+        public override byte[] GetData()
+        {
+            return QuestData();
+        }
+
+        public override string GetTable()
+        {
+            return DatabaseTable;
+        }
+
+        public override GameObject GetGameObjectType()
+        {
+            return Type;
+        }
+
+        public static DatabaseObject Get(int index)
+        {
+            if (Objects.ContainsKey(index))
+            {
+                return Objects[index];
+            }
+            return null;
+        }
+        public override void Delete()
+        {
+            Objects.Remove(GetId());
+        }
+        public static void ClearObjects()
+        {
+            Objects.Clear();
+        }
+        public static void AddObject(int index, DatabaseObject obj)
+        {
+            Objects.Remove(index);
+            Objects.Add(index, obj);
+        }
+        public static int ObjectCount()
+        {
+            return Objects.Count;
+        }
+        public static Dictionary<int, QuestBase> GetObjects()
+        {
+            Dictionary<int, QuestBase> objects = Objects.ToDictionary(k => k.Key, v => (QuestBase)v.Value);
+            return objects;
         }
 
         public class QuestTask

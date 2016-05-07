@@ -1,8 +1,6 @@
-﻿using System;
-
-namespace Intersect_Library.GameObjects
+﻿namespace Intersect_Library.GameObjects
 {
-    public class Light
+    public class LightBase
     {
         public int OffsetX;
         public int OffsetY;
@@ -13,18 +11,18 @@ namespace Intersect_Library.GameObjects
         public float Expand = 0f;
         public Color Color = Color.White;
 
-        public Light()
+        public LightBase()
         {
             TileX = -1;
             TileY = -1;
         }
-        public Light(int x, int y)
+        public LightBase(int x, int y)
         {
             TileX = x;
             TileY = y;
         }
 
-        public Light(Light copy)
+        public LightBase(LightBase copy)
         {
             TileX = copy.TileX;
             TileY = copy.TileY;
@@ -35,7 +33,7 @@ namespace Intersect_Library.GameObjects
             Expand = copy.Expand;
             Color = Color.FromArgb(copy.Color.R, copy.Color.G, copy.Color.B);
         }
-        public Light(ByteBuffer myBuffer)
+        public LightBase(ByteBuffer myBuffer)
         {
             OffsetX = myBuffer.ReadInteger();
             OffsetY = myBuffer.ReadInteger();
@@ -47,7 +45,7 @@ namespace Intersect_Library.GameObjects
             Color = Color.FromArgb(myBuffer.ReadByte(), myBuffer.ReadByte(), myBuffer.ReadByte());
 
         }
-        public Light(int tileX, int tileY, int offsetX, int offsetY, byte intensity, int size, float expand, Color clr)
+        public LightBase(int tileX, int tileY, int offsetX, int offsetY, byte intensity, int size, float expand, Color clr)
         {
             TileX = tileX;
             TileY = tileY;

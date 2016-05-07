@@ -21,6 +21,7 @@
 */
 using Intersect_Editor.Classes;
 using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 using Intersect_Editor.Classes.Core;
@@ -33,63 +34,137 @@ namespace Intersect_Editor.Forms
 {
     public partial class frmClass : Form
     {
-        private ByteBuffer[] _classesBackup;
-        private bool[] _changed;
-        private int _editorIndex;
+        private List<ClassBase> _changed = new List<ClassBase>();
+        private ClassBase _editorItem = null;
 
         public frmClass()
         {
             InitializeComponent();
+            PacketHandler.GameObjectUpdatedDelegate += GameObjectUpdatedDelegate;
+        }
+
+        private void GameObjectUpdatedDelegate(GameObject type)
+        {
+            if (type == GameObject.Class)
+            {
+                InitEditor();
+                if (_editorItem != null && !ClassBase.GetObjects().ContainsValue(_editorItem))
+                {
+                    _editorItem = null;
+                    UpdateEditor();
+                }
+            }
+        }
+
+        private void btnNew_Click(object sender, EventArgs e)
+        {
+            PacketSender.SendCreateObject(GameObject.Class);
+        }
+
+        private void btnUndo_Click(object sender, EventArgs e)
+        {
+            if (_changed.Contains(_editorItem) && _editorItem != null)
+            {
+                _editorItem.RestoreBackup();
+                UpdateEditor();
+            }
+        }
+
+        private void btnDelete_Click(object sender, EventArgs e)
+        {
+            if (_editorItem != null)
+            {
+                if (
+                    MessageBox.Show(
+                        "Are you sure you want to delete this game object? This action cannot be reverted!",
+                        "Delete Object", MessageBoxButtons.YesNo) == DialogResult.Yes)
+                {
+                    PacketSender.SendDeleteObject(_editorItem);
+                }
+            }
+        }
+
+        private void btnCancel_Click(object sender, EventArgs e)
+        {
+            foreach (var item in _changed)
+            {
+                item.RestoreBackup();
+                item.DeleteBackup();
+            }
+
+            Hide();
+            Globals.CurrentEditor = -1;
+            Dispose();
+        }
+
+        private void btnSave_Click(object sender, EventArgs e)
+        {
+            //Send Changed items
+            foreach (var item in _changed)
+            {
+                PacketSender.SendSaveObject(item);
+                item.DeleteBackup();
+            }
+
+            Hide();
+            Globals.CurrentEditor = -1;
+            Dispose();
+        }
+
+        private void lstClasses_Click(object sender, EventArgs e)
+        {
+            _editorItem = ClassBase.GetClass(Database.GameObjectIdFromList(GameObject.Class, lstClasses.SelectedIndex));
+            UpdateEditor();
         }
 
         private void txtHP_TextChanged(object sender, EventArgs e)
         {
             int x = 0;
             int.TryParse(txtHP.Text, out x);
-            Globals.GameClasses[_editorIndex].MaxVital[(int)Vitals.Health] = x;
+            _editorItem.MaxVital[(int)Vitals.Health] = x;
         }
 
         private void txtMana_TextChanged(object sender, EventArgs e)
         {
             int x = 0;
             int.TryParse(txtMana.Text, out x);
-            Globals.GameClasses[_editorIndex].MaxVital[(int)Vitals.Mana] = x;
+            _editorItem.MaxVital[(int)Vitals.Mana] = x;
         }
 
         private void scrlStr_Scroll(object sender, ScrollEventArgs e)
         {
             lblStr.Text = @"Strength: " + scrlStr.Value;
-            Globals.GameClasses[_editorIndex].Stat[(int)Stats.Attack] = scrlStr.Value;
+            _editorItem.Stat[(int)Stats.Attack] = scrlStr.Value;
         }
 
         private void scrlMag_Scroll(object sender, ScrollEventArgs e)
         {
             lblMag.Text = @"Magic: " + scrlMag.Value;
-            Globals.GameClasses[_editorIndex].Stat[(int)Stats.AbilityPower] = scrlMag.Value;
+            _editorItem.Stat[(int)Stats.AbilityPower] = scrlMag.Value;
         }
 
         private void scrlDef_Scroll(object sender, ScrollEventArgs e)
         {
             lblDef.Text = @"Armor: " + scrlDef.Value;
-            Globals.GameClasses[_editorIndex].Stat[(int)Stats.Defense] = scrlDef.Value;
+            _editorItem.Stat[(int)Stats.Defense] = scrlDef.Value;
         }
 
         private void scrlMR_Scroll(object sender, ScrollEventArgs e)
         {
             lblMR.Text = @"Magic Resist: " + scrlMR.Value;
-            Globals.GameClasses[_editorIndex].Stat[(int)Stats.MagicResist] = scrlMR.Value;
+            _editorItem.Stat[(int)Stats.MagicResist] = scrlMR.Value;
         }
 
         private void scrlSpd_Scroll(object sender, ScrollEventArgs e)
         {
             lblSpd.Text = @"Move Speed: " + scrlSpd.Value;
-            Globals.GameClasses[_editorIndex].Stat[(int)Stats.Speed] = scrlSpd.Value;
+            _editorItem.Stat[(int)Stats.Speed] = scrlSpd.Value;
         }
 
         private void scrlPoints_Scroll(object sender, ScrollEventArgs e)
         {
             lblPoints.Text = @"Points: " + scrlPoints.Value;
-            Globals.GameClasses[_editorIndex].Points = scrlPoints.Value;
+            _editorItem.Points = scrlPoints.Value;
         }
 
         private void scrlDropIndex_Scroll(object sender, ScrollEventArgs e)
@@ -99,79 +174,98 @@ namespace Intersect_Editor.Forms
 
         private void scrlDropItem_Scroll(object sender, ScrollEventArgs e)
         {
-            lblDropItem.Text = @"Item " + (scrlDropItem.Value + 1) + @" - " + Globals.GameItems[scrlDropItem.Value].Name;
-            Globals.GameClasses[_editorIndex].Items[scrlDropIndex.Value - 1].ItemNum = scrlDropItem.Value;
+            if (scrlDropItem.Value > -1)
+            {
+                _editorItem.Items[scrlDropIndex.Value].ItemNum = Database.GameObjectIdFromList(GameObject.Item,scrlDropItem.Value);
+                lblDropItem.Text = @"Item " + ItemBase.GetName(_editorItem.Items[scrlDropIndex.Value].ItemNum);
+            }
+            else
+            {
+                _editorItem.Items[scrlDropIndex.Value].ItemNum = -1;
+                lblDropItem.Text = @"Item None";
+            }
         }
 
         private void txtDropAmount_TextChanged(object sender, EventArgs e)
         {
             int x = 0;
             int.TryParse(txtDropAmount.Text, out x);
-            Globals.GameClasses[_editorIndex].Items[scrlDropIndex.Value - 1].Amount = x;
+            _editorItem.Items[scrlDropIndex.Value - 1].Amount = x;
         }
 
         private void UpdateDropValues()
         {
-            int index = scrlDropIndex.Value - 1;
+            int index = scrlDropIndex.Value;
             lblDropIndex.Text = "Item Index: " + (index + 1);
-            scrlDropItem.Value = Globals.GameClasses[_editorIndex].Items[index].ItemNum;
-            lblDropItem.Text = @"Item " + (scrlDropItem.Value + 1) + @" - " + Globals.GameItems[scrlDropItem.Value].Name;
-            txtDropAmount.Text = Globals.GameClasses[_editorIndex].Items[index].Amount.ToString();
+            scrlDropItem.Value = Database.GameObjectListIndex(GameObject.Item,_editorItem.Items[index].ItemNum);
+            if (scrlDropItem.Value > -1)
+            {
+                _editorItem.Items[scrlDropIndex.Value].ItemNum = Database.GameObjectIdFromList(GameObject.Item, scrlDropItem.Value);
+                lblDropItem.Text = @"Item " + ItemBase.GetName(_editorItem.Items[scrlDropIndex.Value].ItemNum);
+            }
+            else
+            {
+                _editorItem.Items[scrlDropIndex.Value].ItemNum = -1;
+                lblDropItem.Text = @"Item None";
+            }
+            txtDropAmount.Text = _editorItem.Items[index].Amount.ToString();
         }
 
         private void txtName_TextChanged(object sender, EventArgs e)
         {
-            Globals.GameClasses[_editorIndex].Name = txtName.Text;
-            lstClasses.Items[_editorIndex] = (_editorIndex + 1) + ") " + txtName.Text;
+            _editorItem.Name = txtName.Text;
+            lstClasses.Items[Database.GameObjectListIndex(GameObject.Class,_editorItem.GetId())] = txtName.Text;
         }
 
         private void lstSpells_Click(object sender, EventArgs e)
         {
             if (lstSpells.Items.Count > 0)
             {
-                scrlSpell.Value = Globals.GameClasses[_editorIndex].Spells[lstSpells.SelectedIndex].SpellNum;
-                scrlLevel.Value = Globals.GameClasses[_editorIndex].Spells[lstSpells.SelectedIndex].Level;
-                lblSpellNum.Text = @"Spell: " + (scrlSpell.Value + 1) + " " + Globals.GameSpells[scrlSpell.Value].Name;
+                scrlSpell.Value = Database.GameObjectListIndex(GameObject.Spell,_editorItem.Spells[lstSpells.SelectedIndex].SpellNum);
+                scrlLevel.Value = _editorItem.Spells[lstSpells.SelectedIndex].Level;
+                lblSpellNum.Text = @"Spell: " +
+                                   SpellBase.GetName(_editorItem.Spells[lstSpells.SelectedIndex].SpellNum);
                 lblLevel.Text = @"Level: " + scrlLevel.Value;
             }
         }
 
         private void scrlSpell_Scroll(object sender, ScrollEventArgs e)
         {
-            int n = 0;
-
-            if (lstSpells.SelectedIndex >= 0)
+            if (scrlSpell.Value > -1)
             {
-                Globals.GameClasses[_editorIndex].Spells[lstSpells.SelectedIndex].SpellNum = scrlSpell.Value;
-
-                // Refresh List
-                n = lstSpells.SelectedIndex;
-                lstSpells.Items.Clear();
-                for (int i = 0; i < Globals.GameClasses[_editorIndex].Spells.Count; i++)
+                if (lstSpells.SelectedIndex >= 0)
                 {
-                    lstSpells.Items.Add(Convert.ToString(i + 1) + ") " + Globals.GameSpells[Globals.GameClasses[Globals.CurrentMap].Spells[i].SpellNum].Name + " - lvl: " + Globals.GameClasses[Globals.CurrentMap].Spells[i].Level);
+                    _editorItem.Spells[lstSpells.SelectedIndex].SpellNum = Database.GameObjectIdFromList(GameObject.Spell, scrlSpell.Value);
+
+                   UpdateSpellList();
                 }
-                lstSprites.SelectedIndex = n;
+                lblSpellNum.Text = @"Spell: " + SpellBase.GetName(Database.GameObjectIdFromList(GameObject.Spell, scrlSpell.Value));
             }
-            lblSpellNum.Text = @"Spell: " + (scrlSpell.Value + 1) + " " + Globals.GameSpells[scrlSpell.Value].Name;
+            else
+            {
+                lblSpellNum.Text = @"Spell: None";
+            }
+        }
+
+        private void UpdateSpellList(bool keepIndex = true)
+        {
+            // Refresh List
+            int n = lstSpells.SelectedIndex;
+            lstSpells.Items.Clear();
+            for (int i = 0; i < _editorItem.Spells.Count; i++)
+            {
+                lstSpells.Items.Add(Convert.ToString(i + 1) + ") " + SpellBase.GetName(_editorItem.Spells[i].SpellNum) + " - lvl: " + _editorItem.Spells[i].Level);
+            }
+            if (keepIndex) lstSprites.SelectedIndex = n;
         }
 
         private void scrlLevel_Scroll(object sender, ScrollEventArgs e)
         {
-            int n = 0;
-
             if (lstSpells.SelectedIndex >= 0)
             {
-                Globals.GameClasses[_editorIndex].Spells[lstSpells.SelectedIndex].Level = scrlLevel.Value;
+                _editorItem.Spells[lstSpells.SelectedIndex].Level = scrlLevel.Value;
 
-                // Refresh List
-                n = lstSpells.SelectedIndex;
-                lstSpells.Items.Clear();
-                for (int i = 0; i < Globals.GameClasses[_editorIndex].Spells.Count; i++)
-                {
-                    lstSpells.Items.Add(Convert.ToString(i + 1) + ") " + Globals.GameSpells[Globals.GameClasses[Globals.CurrentMap].Spells[i].SpellNum].Name + " - lvl: " + Globals.GameClasses[Globals.CurrentMap].Spells[i].Level);
-                }
-                lstSprites.SelectedIndex = n;
+                UpdateSpellList();
             }
             lblLevel.Text = @"Level: " + scrlLevel.Value;
         }
@@ -180,135 +274,133 @@ namespace Intersect_Editor.Forms
         {
             var n = new ClassSpell();
 
-            n.SpellNum = scrlSpell.Value;
+            n.SpellNum = Database.GameObjectIdFromList(GameObject.Spell,scrlSpell.Value);
             n.Level = scrlLevel.Value;
 
-            Globals.GameClasses[_editorIndex].Spells.Add(n);
-
-            lstSpells.Items.Add(Convert.ToString(lstSpells.Items.Count + 1) + ") " + Globals.GameSpells[scrlSpell.Value].Name + " - Lvl: " + scrlLevel.Value);
-            lstSpells.SelectedIndex = lstSpells.Items.Count - 1;
+            _editorItem.Spells.Add(n);
+            UpdateSpellList(false);
         }
 
         private void btnRemoveSpell_Click(object sender, EventArgs e)
         {
             if (lstSpells.SelectedIndex == -1) return;
-            Globals.GameClasses[_editorIndex].Spells.RemoveAt(lstSpells.SelectedIndex);
+            _editorItem.Spells.RemoveAt(lstSpells.SelectedIndex);
             lstSpells.Items.RemoveAt(lstSpells.SelectedIndex);
 
-            // Refresh List
-            lstSpells.Items.Clear();
-            for (int i = 0; i < Globals.GameClasses[_editorIndex].Spells.Count; i++)
-            {
-                lstSpells.Items.Add(Convert.ToString(i + 1) + ") " + Globals.GameSpells[Globals.GameClasses[Globals.CurrentMap].Spells[i].SpellNum].Name + " - lvl: " + Globals.GameClasses[Globals.CurrentMap].Spells[i].Level);
-            }
+            UpdateSpellList(false);
 
             if (lstSpells.Items.Count > 0)
             {
                 lstSpells.SelectedIndex = 0;
             }
-        }
-
-        private void lstClasses_Click(object sender, EventArgs e)
-        {
-            UpdateEditor();
         }
 
 
         private void UpdateEditor()
         {
-            _editorIndex = lstClasses.SelectedIndex;
-            txtName.Text = Globals.GameClasses[_editorIndex].Name;
-            scrlStr.Value = Globals.GameClasses[_editorIndex].Stat[(int)Stats.Attack];
-            scrlMag.Value = Globals.GameClasses[_editorIndex].Stat[(int)Stats.AbilityPower];
-            scrlDef.Value = Globals.GameClasses[_editorIndex].Stat[(int)Stats.Defense];
-            scrlMR.Value = Globals.GameClasses[_editorIndex].Stat[(int)Stats.MagicResist];
-            scrlSpd.Value = Globals.GameClasses[_editorIndex].Stat[(int)Stats.Speed];
-            txtHP.Text = Globals.GameClasses[_editorIndex].MaxVital[(int)Vitals.Health].ToString();
-            txtMana.Text = Globals.GameClasses[_editorIndex].MaxVital[(int)Vitals.Mana].ToString();
-            scrlPoints.Value = Globals.GameClasses[_editorIndex].Points;
-
-            lblStr.Text = @"Strength: " + scrlStr.Value;
-            lblMag.Text = @"Magic: " + scrlMag.Value;
-            lblDef.Text = @"Armor: " + scrlDef.Value;
-            lblMR.Text = @"Magic Resist: " + scrlMR.Value;
-            lblSpd.Text = @"Move Speed: " + scrlSpd.Value;
-            lblPoints.Text = @"Points: " + scrlPoints.Value;
-
-            // Add the spells
-            lstSpells.Items.Clear();
-            for (int i = 0; i < Globals.GameClasses[_editorIndex].Spells.Count; i++)
+            if (_editorItem != null)
             {
-                lstSpells.Items.Add(Convert.ToString(i + 1) + ") " + Globals.GameSpells[Globals.GameClasses[_editorIndex].Spells[i].SpellNum].Name + " - lvl: " + Globals.GameClasses[_editorIndex].Spells[i].Level);
-            }
+                pnlContainer.Show();
+                txtName.Text = _editorItem.Name;
+                scrlStr.Value = _editorItem.Stat[(int) Stats.Attack];
+                scrlMag.Value = _editorItem.Stat[(int) Stats.AbilityPower];
+                scrlDef.Value = _editorItem.Stat[(int) Stats.Defense];
+                scrlMR.Value = _editorItem.Stat[(int) Stats.MagicResist];
+                scrlSpd.Value = _editorItem.Stat[(int) Stats.Speed];
+                txtHP.Text = _editorItem.MaxVital[(int) Vitals.Health].ToString();
+                txtMana.Text = _editorItem.MaxVital[(int) Vitals.Mana].ToString();
+                scrlPoints.Value = _editorItem.Points;
 
-            // Don't select if there are no Spells, to avoid crashes.
-            if (lstSpells.Items.Count > 0)
-            {
-                lstSpells.SelectedIndex = 0;
-                scrlSpell.Value = Globals.GameClasses[_editorIndex].Spells[lstSpells.SelectedIndex].SpellNum;
-                scrlLevel.Value = Globals.GameClasses[_editorIndex].Spells[lstSpells.SelectedIndex].Level;
+                lblStr.Text = @"Strength: " + scrlStr.Value;
+                lblMag.Text = @"Magic: " + scrlMag.Value;
+                lblDef.Text = @"Armor: " + scrlDef.Value;
+                lblMR.Text = @"Magic Resist: " + scrlMR.Value;
+                lblSpd.Text = @"Move Speed: " + scrlSpd.Value;
+                lblPoints.Text = @"Points: " + scrlPoints.Value;
+
+                UpdateSpellList(false);
+
+                // Don't select if there are no Spells, to avoid crashes.
+                if (lstSpells.Items.Count > 0)
+                {
+                    lstSpells.SelectedIndex = 0;
+                    scrlSpell.Value = _editorItem.Spells[lstSpells.SelectedIndex].SpellNum;
+                    scrlLevel.Value = _editorItem.Spells[lstSpells.SelectedIndex].Level;
+                }
+                else
+                {
+                    scrlSpell.Value = -1;
+                    scrlLevel.Value = 0;
+                }
+
+                scrlSpell.Value = -1;
+                lblSpellNum.Text = @"Spell: None";
+                lblLevel.Text = @"Level: " + scrlLevel.Value;
+
+                // Add the sprites
+                lstSprites.Items.Clear();
+                for (int i = 0; i < _editorItem.Sprites.Count; i++)
+                {
+                    if (_editorItem.Sprites[i].Gender == 0)
+                    {
+                        lstSprites.Items.Add(Convert.ToString(i + 1) + ") " +
+                                             _editorItem.Sprites[i].Sprite + " - M");
+                    }
+                    else
+                    {
+                        lstSprites.Items.Add(Convert.ToString(i + 1) + ") " +
+                                             _editorItem.Sprites[i].Sprite + " - F");
+                    }
+                }
+
+                // Don't select if there are no Spells, to avoid crashes.
+                if (lstSprites.Items.Count > 0)
+                {
+                    lstSprites.SelectedIndex = 0;
+                    cmbSprite.SelectedIndex =
+                        cmbSprite.FindString(_editorItem.Sprites[lstSprites.SelectedIndex].Sprite);
+                    if (_editorItem.Sprites[lstSprites.SelectedIndex].Gender == 0)
+                    {
+                        rbMale.Checked = true;
+                    }
+                    else
+                    {
+                        rbFemale.Checked = true;
+                    }
+                }
+
+                for (int i = 0; i < MapList.GetOrderedMaps().Count; i++)
+                {
+                    if (MapList.GetOrderedMaps()[i].MapNum == _editorItem.SpawnMap)
+                    {
+                        cmbWarpMap.SelectedIndex = i;
+                        break;
+                    }
+                }
+                if (cmbWarpMap.SelectedIndex == -1)
+                {
+                    cmbWarpMap.SelectedIndex = 0;
+                    _editorItem.SpawnMap = MapList.GetOrderedMaps()[0].MapNum;
+                }
+                scrlX.Value = _editorItem.SpawnX;
+                scrlY.Value = _editorItem.SpawnY;
+                lblX.Text = @"X: " + scrlX.Value;
+                lblY.Text = @"Y: " + scrlY.Value;
+                cmbDirection.SelectedIndex = _editorItem.SpawnDir;
+
+                scrlDropIndex.Value = 1;
+                UpdateDropValues();
+                DrawSprite();
+                if (_changed.IndexOf(_editorItem) == -1)
+                {
+                    _changed.Add(_editorItem);
+                    _editorItem.MakeBackup();
+                }
             }
             else
             {
-                scrlSpell.Value = 0;
-                scrlLevel.Value = 0;
+                pnlContainer.Hide();
             }
-
-            lblSpellNum.Text = @"Strength: " + (scrlSpell.Value + 1) + " " + Globals.GameSpells[scrlSpell.Value].Name;
-            lblLevel.Text = @"Level: " + scrlLevel.Value;
-
-            // Add the sprites
-            lstSprites.Items.Clear();
-            for (int i = 0; i < Globals.GameClasses[_editorIndex].Sprites.Count; i++)
-            {
-                if (Globals.GameClasses[_editorIndex].Sprites[i].Gender == 0)
-                {
-                    lstSprites.Items.Add(Convert.ToString(i + 1) + ") " + Globals.GameClasses[_editorIndex].Sprites[i].Sprite + " - M");
-                }
-                else
-                {
-                    lstSprites.Items.Add(Convert.ToString(i + 1) + ") " + Globals.GameClasses[_editorIndex].Sprites[i].Sprite + " - F");
-                }
-            }
-
-            // Don't select if there are no Spells, to avoid crashes.
-            if (lstSprites.Items.Count > 0)
-            {
-                lstSprites.SelectedIndex = 0;
-                cmbSprite.SelectedIndex = cmbSprite.FindString(Globals.GameClasses[_editorIndex].Sprites[lstSprites.SelectedIndex].Sprite);
-                if (Globals.GameClasses[_editorIndex].Sprites[lstSprites.SelectedIndex].Gender == 0)
-                {
-                    rbMale.Checked = true;
-                }
-                else
-                {
-                    rbFemale.Checked = true;
-                }
-            }
-
-            for (int i = 0; i < MapList.GetOrderedMaps().Count; i++)
-            {
-                if (MapList.GetOrderedMaps()[i].MapNum == Globals.GameClasses[_editorIndex].SpawnMap)
-                {
-                    cmbWarpMap.SelectedIndex = i;
-                    break;
-                }
-            }
-            if (cmbWarpMap.SelectedIndex == -1)
-            {
-                cmbWarpMap.SelectedIndex = 0;
-                Globals.GameClasses[_editorIndex].SpawnMap = MapList.GetOrderedMaps()[0].MapNum;
-            }
-            scrlX.Value = Globals.GameClasses[_editorIndex].SpawnX;
-            scrlY.Value = Globals.GameClasses[_editorIndex].SpawnY;
-            lblX.Text = @"X: " + scrlX.Value;
-            lblY.Text = @"Y: " + scrlY.Value;
-            cmbDirection.SelectedIndex = Globals.GameClasses[_editorIndex].SpawnDir;
-
-            scrlDropIndex.Value = 1;
-            UpdateDropValues();
-            DrawSprite();
-            _changed[_editorIndex] = true;
         }
 
         private void frmClass_Load(object sender, EventArgs e)
@@ -316,23 +408,16 @@ namespace Intersect_Editor.Forms
             cmbSprite.Items.Clear();
             cmbSprite.Items.Add("None");
             cmbSprite.Items.AddRange(GameContentManager.GetTextureNames(GameContentManager.TextureType.Entity));
-            scrlDropItem.Maximum = Options.MaxItems - 1;
-            scrlSpell.Maximum = Options.MaxSpells - 1;
+            scrlDropItem.Maximum = ItemBase.ObjectCount() - 1;
+            scrlSpell.Maximum = SpellBase.ObjectCount() - 1;
             scrlLevel.Maximum = Options.MaxLevel;
             UpdateEditor();
         }
 
         public void InitEditor()
         {
-            _classesBackup = new ByteBuffer[Options.MaxClasses];
-            _changed = new bool[Options.MaxClasses];
-            for (var i = 0; i < Options.MaxClasses; i++)
-            {
-                _classesBackup[i] = new ByteBuffer();
-                _classesBackup[i].WriteBytes(Globals.GameClasses[i].ClassData());
-                lstClasses.Items.Add((i + 1) + ") " + Globals.GameClasses[i].Name);
-                _changed[i] = false;
-            }
+            lstClasses.Items.Clear();
+            lstClasses.Items.AddRange(Database.GetGameObjectList(GameObject.Class));
             cmbWarpMap.Items.Clear();
             for (int i = 0; i < MapList.GetOrderedMaps().Count; i++)
             {
@@ -340,15 +425,14 @@ namespace Intersect_Editor.Forms
             }
             cmbWarpMap.SelectedIndex = 0;
             cmbDirection.SelectedIndex = 0;
-            lstClasses.SelectedIndex = 0;
         }
 
         private void lstSprites_Click(object sender, EventArgs e)
         {
             if (lstSprites.Items.Count > 0)
             {
-                cmbSprite.SelectedIndex = cmbSprite.FindString(Globals.GameClasses[_editorIndex].Sprites[lstSprites.SelectedIndex].Sprite);
-                if (Globals.GameClasses[_editorIndex].Sprites[lstSprites.SelectedIndex].Gender == 0)
+                cmbSprite.SelectedIndex = cmbSprite.FindString(_editorItem.Sprites[lstSprites.SelectedIndex].Sprite);
+                if (_editorItem.Sprites[lstSprites.SelectedIndex].Gender == 0)
                 {
                     rbMale.Checked = true;
                 }
@@ -365,20 +449,20 @@ namespace Intersect_Editor.Forms
 
             if (lstSprites.Items.Count > 0)
             {
-                Globals.GameClasses[_editorIndex].Sprites[lstSprites.SelectedIndex].Gender = 0;
+                _editorItem.Sprites[lstSprites.SelectedIndex].Gender = 0;
 
                 // Refresh List
                 n = lstSprites.SelectedIndex;
                 lstSprites.Items.Clear();
-                for (int i = 0; i < Globals.GameClasses[_editorIndex].Sprites.Count; i++)
+                for (int i = 0; i < _editorItem.Sprites.Count; i++)
                 {
-                    if (Globals.GameClasses[_editorIndex].Sprites[i].Gender == 0)
+                    if (_editorItem.Sprites[i].Gender == 0)
                     {
-                        lstSprites.Items.Add(Convert.ToString(i + 1) + ") " + Globals.GameClasses[_editorIndex].Sprites[i].Sprite + " - M");
+                        lstSprites.Items.Add(Convert.ToString(i + 1) + ") " + _editorItem.Sprites[i].Sprite + " - M");
                     }
                     else
                     {
-                        lstSprites.Items.Add(Convert.ToString(i + 1) + ") " + Globals.GameClasses[_editorIndex].Sprites[i].Sprite + " - F");
+                        lstSprites.Items.Add(Convert.ToString(i + 1) + ") " + _editorItem.Sprites[i].Sprite + " - F");
                     }
                 }
                 lstSprites.SelectedIndex = n;
@@ -391,20 +475,20 @@ namespace Intersect_Editor.Forms
 
             if (lstSprites.Items.Count > 0)
             {
-                Globals.GameClasses[_editorIndex].Sprites[lstSprites.SelectedIndex].Gender = 1;
+                _editorItem.Sprites[lstSprites.SelectedIndex].Gender = 1;
 
                 // Refresh List
                 n = lstSprites.SelectedIndex;
                 lstSprites.Items.Clear();
-                for (int i = 0; i < Globals.GameClasses[_editorIndex].Sprites.Count; i++)
+                for (int i = 0; i < _editorItem.Sprites.Count; i++)
                 {
-                    if (Globals.GameClasses[_editorIndex].Sprites[i].Gender == 0)
+                    if (_editorItem.Sprites[i].Gender == 0)
                     {
-                        lstSprites.Items.Add(Convert.ToString(i + 1) + ") " + Globals.GameClasses[_editorIndex].Sprites[i].Sprite + " - M");
+                        lstSprites.Items.Add(Convert.ToString(i + 1) + ") " + _editorItem.Sprites[i].Sprite + " - M");
                     }
                     else
                     {
-                        lstSprites.Items.Add(Convert.ToString(i + 1) + ") " + Globals.GameClasses[_editorIndex].Sprites[i].Sprite + " - F");
+                        lstSprites.Items.Add(Convert.ToString(i + 1) + ") " + _editorItem.Sprites[i].Sprite + " - F");
                     }
                 }
                 lstSprites.SelectedIndex = n;
@@ -417,20 +501,20 @@ namespace Intersect_Editor.Forms
 
             if (lstSprites.SelectedIndex >= 0)
             {
-                Globals.GameClasses[_editorIndex].Sprites[lstSprites.SelectedIndex].Sprite = cmbSprite.Text;
+                _editorItem.Sprites[lstSprites.SelectedIndex].Sprite = cmbSprite.Text;
 
                 // Refresh List
                 n = lstSprites.SelectedIndex;
                 lstSprites.Items.Clear();
-                for (int i = 0; i < Globals.GameClasses[_editorIndex].Sprites.Count; i++)
+                for (int i = 0; i < _editorItem.Sprites.Count; i++)
                 {
-                    if (Globals.GameClasses[_editorIndex].Sprites[i].Gender == 0)
+                    if (_editorItem.Sprites[i].Gender == 0)
                     {
-                        lstSprites.Items.Add(Convert.ToString(i + 1) + ") " + Globals.GameClasses[_editorIndex].Sprites[i].Sprite + " - M");
+                        lstSprites.Items.Add(Convert.ToString(i + 1) + ") " + _editorItem.Sprites[i].Sprite + " - M");
                     }
                     else
                     {
-                        lstSprites.Items.Add(Convert.ToString(i + 1) + ") " + Globals.GameClasses[_editorIndex].Sprites[i].Sprite + " - F");
+                        lstSprites.Items.Add(Convert.ToString(i + 1) + ") " + _editorItem.Sprites[i].Sprite + " - F");
                     }
                 }
                 lstSprites.SelectedIndex = n;
@@ -452,7 +536,7 @@ namespace Intersect_Editor.Forms
                 n.Gender = 1;
             }
 
-            Globals.GameClasses[_editorIndex].Sprites.Add(n);
+            _editorItem.Sprites.Add(n);
 
             if (n.Gender == 0)
             {
@@ -469,20 +553,20 @@ namespace Intersect_Editor.Forms
         private void btnRemove_Click(object sender, EventArgs e)
         {
             if (lstSprites.SelectedIndex == -1) return;
-            Globals.GameClasses[_editorIndex].Sprites.RemoveAt(lstSprites.SelectedIndex);
+            _editorItem.Sprites.RemoveAt(lstSprites.SelectedIndex);
             lstSprites.Items.RemoveAt(lstSprites.SelectedIndex);
 
             // Refresh List
             lstSprites.Items.Clear();
-            for (int i = 0; i < Globals.GameClasses[_editorIndex].Sprites.Count; i++)
+            for (int i = 0; i < _editorItem.Sprites.Count; i++)
             {
-                if (Globals.GameClasses[_editorIndex].Sprites[i].Gender == 0)
+                if (_editorItem.Sprites[i].Gender == 0)
                 {
-                    lstSprites.Items.Add(Convert.ToString(i + 1) + ") " + Globals.GameClasses[_editorIndex].Sprites[i].Sprite + " - M");
+                    lstSprites.Items.Add(Convert.ToString(i + 1) + ") " + _editorItem.Sprites[i].Sprite + " - M");
                 }
                 else
                 {
-                    lstSprites.Items.Add(Convert.ToString(i + 1) + ") " + Globals.GameClasses[_editorIndex].Sprites[i].Sprite + " - F");
+                    lstSprites.Items.Add(Convert.ToString(i + 1) + ") " + _editorItem.Sprites[i].Sprite + " - F");
                 }
             }
 
@@ -507,43 +591,6 @@ namespace Intersect_Editor.Forms
             picSprite.BackgroundImage = picSpriteBmp;
         }
 
-        private void btnCancel_Click(object sender, EventArgs e)
-        {
-            for (var i = 0; i < Options.MaxClasses; i++)
-            {
-                Globals.GameClasses[i].Load(_classesBackup[i].ToArray(),i);
-            }
-
-            Hide();
-            Globals.CurrentEditor = -1;
-            Dispose();
-        }
-
-        private void btnDelete_Click(object sender, EventArgs e)
-        {
-            var tempItem = new ClassStruct();
-            var tempBuff = new ByteBuffer();
-            tempBuff.WriteBytes(tempItem.ClassData());
-            Globals.GameClasses[_editorIndex].Load(tempBuff.ToArray(),_editorIndex);
-            tempBuff.Dispose();
-            UpdateEditor();
-        }
-
-        private void btnSave_Click(object sender, EventArgs e)
-        {
-            for (var i = 0; i < Options.MaxClasses; i++)
-            {
-                if (_changed[i])
-                {
-                    PacketSender.SendClass(i, Globals.GameClasses[i].ClassData());
-                }
-            }
-
-            Hide();
-            Globals.CurrentEditor = -1;
-            Dispose();
-        }
-
         private void btnVisualMapSelector_Click(object sender, EventArgs e)
         {
             frmWarpSelection frmWarpSelection = new frmWarpSelection();
@@ -563,32 +610,34 @@ namespace Intersect_Editor.Forms
                 scrlY.Value = frmWarpSelection.GetY();
                 lblX.Text = @"X: " + scrlX.Value;
                 lblY.Text = @"Y: " + scrlY.Value;
-                Globals.GameClasses[_editorIndex].SpawnMap = MapList.GetOrderedMaps()[cmbWarpMap.SelectedIndex].MapNum;
-                Globals.GameClasses[_editorIndex].SpawnX = scrlX.Value;
-                Globals.GameClasses[_editorIndex].SpawnY = scrlY.Value;
+                _editorItem.SpawnMap = MapList.GetOrderedMaps()[cmbWarpMap.SelectedIndex].MapNum;
+                _editorItem.SpawnX = scrlX.Value;
+                _editorItem.SpawnY = scrlY.Value;
             }
         }
 
         private void cmbWarpMap_SelectedIndexChanged(object sender, EventArgs e)
         {
-            Globals.GameClasses[_editorIndex].SpawnMap = MapList.GetOrderedMaps()[cmbWarpMap.SelectedIndex].MapNum;
+            if (_editorItem == null) return;
+            _editorItem.SpawnMap = MapList.GetOrderedMaps()[cmbWarpMap.SelectedIndex].MapNum;
         }
 
         private void scrlX_Scroll(object sender, ScrollEventArgs e)
         {
             lblX.Text = @"X: " + scrlX.Value;
-            Globals.GameClasses[_editorIndex].SpawnX = scrlX.Value;
+            _editorItem.SpawnX = scrlX.Value;
         }
 
         private void scrlY_Scroll(object sender, ScrollEventArgs e)
         {
             lblY.Text = @"Y: " + scrlY.Value;
-            Globals.GameClasses[_editorIndex].SpawnY = scrlY.Value;
+            _editorItem.SpawnY = scrlY.Value;
         }
 
         private void cmbDirection_SelectedIndexChanged(object sender, EventArgs e)
         {
-            Globals.GameClasses[_editorIndex].SpawnDir = cmbDirection.SelectedIndex;
+            if (_editorItem == null) return;
+            _editorItem.SpawnDir = cmbDirection.SelectedIndex;
         }
     }
 }

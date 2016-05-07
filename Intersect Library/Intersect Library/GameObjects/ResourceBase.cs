@@ -22,15 +22,18 @@
 
 using System;
 using System.Collections.Generic;
-using System.IO;
+using System.Linq;
 
 namespace Intersect_Library.GameObjects
 {
-    public class ResourceStruct
+    public class ResourceBase : DatabaseObject
     {
         // General
-        public const string Version = "0.0.0.1";
-        public string Name = "";
+        public new const string DatabaseTable = "resources";
+        public new const GameObject Type = GameObject.Resource;
+        protected static Dictionary<int, DatabaseObject> Objects = new Dictionary<int, DatabaseObject>();
+        
+        public string Name = "New Resource";
         public int MinHP = 0;
         public int MaxHP = 0;
         public int Tool = 0;
@@ -46,7 +49,7 @@ namespace Intersect_Library.GameObjects
         // Drops
         public List<ResourceDrop> Drops = new List<ResourceDrop>();
 
-        public ResourceStruct()
+        public ResourceBase(int id): base(id)
         {
             for (int i = 0; i < Options.MaxNpcDrops; i++)
             {
@@ -55,13 +58,10 @@ namespace Intersect_Library.GameObjects
 
         }
 
-        public void Load(byte[] packet, int index)
+        public override void Load(byte[] packet)
         {
             var myBuffer = new ByteBuffer();
             myBuffer.WriteBytes(packet);
-            string loadedVersion = myBuffer.ReadString();
-            if (loadedVersion != Version)
-                throw new Exception("Failed to load Resource #" + index + ". Loaded Version: " + loadedVersion + " Expected Version: " + Version);
             Name = myBuffer.ReadString();
             InitialGraphic = myBuffer.ReadString();
             EndGraphic = myBuffer.ReadString();
@@ -86,7 +86,6 @@ namespace Intersect_Library.GameObjects
         public byte[] ResourceData()
         {
             var myBuffer = new ByteBuffer();
-            myBuffer.WriteString(Version);
             myBuffer.WriteString(Name);
             myBuffer.WriteString(InitialGraphic);
             myBuffer.WriteString(EndGraphic);
@@ -108,19 +107,75 @@ namespace Intersect_Library.GameObjects
             return myBuffer.ToArray();
         }
 
-        public void Save(int resourceNum)
-        {
-            byte[] data = ResourceData();
-            Stream stream = new FileStream("resources/resources/" + resourceNum + ".res", FileMode.OpenOrCreate);
-            stream.Write(data, 0, data.Length);
-            stream.Close();
-        }
-
         public class ResourceDrop
         {
             public int ItemNum;
             public int Amount;
             public int Chance;
+        }
+
+        public static ResourceBase GetResource(int index)
+        {
+            if (Objects.ContainsKey(index))
+            {
+                return (ResourceBase)Objects[index];
+            }
+            return null;
+        }
+
+        public static string GetName(int index)
+        {
+            if (Objects.ContainsKey(index))
+            {
+                return ((ResourceBase)Objects[index]).Name;
+            }
+            return "Deleted";
+        }
+
+        public override byte[] GetData()
+        {
+            return ResourceData();
+        }
+
+        public override string GetTable()
+        {
+            return DatabaseTable;
+        }
+
+        public override GameObject GetGameObjectType()
+        {
+            return Type;
+        }
+
+        public static DatabaseObject Get(int index)
+        {
+            if (Objects.ContainsKey(index))
+            {
+                return Objects[index];
+            }
+            return null;
+        }
+        public override void Delete()
+        {
+            Objects.Remove(GetId());
+        }
+        public static void ClearObjects()
+        {
+            Objects.Clear();
+        }
+        public static void AddObject(int index, DatabaseObject obj)
+        {
+            Objects.Remove(index);
+            Objects.Add(index, obj);
+        }
+        public static int ObjectCount()
+        {
+            return Objects.Count;
+        }
+        public static Dictionary<int, ResourceBase> GetObjects()
+        {
+            Dictionary<int, ResourceBase> objects = Objects.ToDictionary(k => k.Key, v => (ResourceBase)v.Value);
+            return objects;
         }
     }
 }

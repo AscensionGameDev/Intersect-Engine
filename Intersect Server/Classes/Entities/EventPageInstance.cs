@@ -22,9 +22,11 @@
 
 using System;
 using Intersect_Library;
+using Intersect_Library.GameObjects;
 using Intersect_Library.GameObjects.Events;
 using Intersect_Server.Classes.General;
 using Intersect_Server.Classes.Misc;
+using Intersect_Server.Classes.Misc.Pathfinding;
 using Intersect_Server.Classes.Networking;
 
 namespace Intersect_Server.Classes.Entities
@@ -38,7 +40,7 @@ namespace Intersect_Server.Classes.Entities
         public int MovementSpeed;
         public EventGraphic MyGraphic = new EventGraphic();
         public int DisablePreview;
-        public EventStruct BaseEvent;
+        public EventBase BaseEvent;
         public EventPage MyPage;
         public Entities.EventInstance MyEventIndex;
         public EventPageInstance GlobalClone;
@@ -48,7 +50,7 @@ namespace Intersect_Server.Classes.Entities
         private int DirectionFix = 0;
         private int RenderLevel = 1;
         private int PageNum = 0;
-        public EventPageInstance(EventStruct myEvent, EventPage myPage, int myIndex, int mapNum, Entities.EventInstance eventIndex, Client client) : base(myIndex)
+        public EventPageInstance(EventBase myEvent, EventPage myPage, int myIndex, int mapNum, Entities.EventInstance eventIndex, Client client) : base(myIndex)
         {
             BaseEvent = myEvent;
             MyPage = myPage;
@@ -105,7 +107,7 @@ namespace Intersect_Server.Classes.Entities
             Client = client;
             SendToClient();
         }
-        public EventPageInstance(EventStruct myEvent, EventPage myPage, int myIndex, int mapNum, Entities.EventInstance eventIndex, Client client, EventPageInstance globalClone) : base(myIndex)
+        public EventPageInstance(EventBase myEvent, EventPage myPage, int myIndex, int mapNum, Entities.EventInstance eventIndex, Client client, EventPageInstance globalClone) : base(myIndex)
         {
             BaseEvent = myEvent;
             GlobalClone = globalClone;
@@ -215,7 +217,6 @@ namespace Intersect_Server.Classes.Entities
         public void Update()
         {
             if (MoveTimer >= Environment.TickCount || GlobalClone != null) return;
-            bool moved = false;
             if (MovementType == 2 && MoveRoute != null)
             {
                 ProcessMoveRoute();
@@ -229,7 +230,6 @@ namespace Intersect_Server.Classes.Entities
                     if (CanMove(dir) == -1)
                     {
                         Move(dir, Client);
-                        moved = true;
                         switch (MovementFreq)
                         {
                             case 0:
@@ -654,8 +654,8 @@ namespace Intersect_Server.Classes.Entities
                         break;
                     case MoveRouteEnum.SetAnimation:
                         Animations.Clear();
-                        if (MoveRoute.Actions[MoveRoute.ActionIndex].AnimationIndex > 0 &&
-                            MoveRoute.Actions[MoveRoute.ActionIndex].AnimationIndex < Globals.GameAnimations.Length)
+                        var anim = AnimationBase.GetAnim(MoveRoute.Actions[MoveRoute.ActionIndex].AnimationIndex);
+                        if (anim != null)
                         {
                             Animations.Add(MoveRoute.Actions[MoveRoute.ActionIndex].AnimationIndex);
                         }

@@ -32,10 +32,8 @@ using IntersectClientExtras.Input;
 using IntersectClientExtras.Sys;
 using Intersect_Client.Classes.Entities;
 using Intersect_Client.Classes.Items;
-using Intersect_Client.Classes.Maps;
 using Intersect_Library;
 using Intersect_Library.GameObjects;
-using Intersect_Library.GameObjects.Maps.MapList;
 using Color = IntersectClientExtras.GenericClasses.Color;
 
 namespace Intersect_Client.Classes.General
@@ -47,8 +45,7 @@ namespace Intersect_Client.Classes.General
         public static long IntroStartTime =-1;
         public static long IntroDelay = 2000;
         public static bool IntroComing = true;
-
-
+        
         //Game Lock
         public static object GameLock = new object();
         public static bool IsRunning = false;
@@ -64,13 +61,11 @@ namespace Intersect_Client.Classes.General
         public static bool WaitingOnServer = false;
         public static bool JoiningGame = false;
         public static bool NeedsMaps = true;
+        public static bool HasGameData = false;
 
         //Map/Chunk Array
-        public static Dictionary<int, MapInstance> GameMaps = new Dictionary<int, MapInstance>();
-        public static List<int> MapsToRemove = new List<int>();
         public static int[] LocalMaps = new int[9];
         public static int[] MapRevision;
-        public static int MapCount;
         public static float MapRenderTimer = 0f;
 
 
@@ -99,31 +94,7 @@ namespace Intersect_Client.Classes.General
 
         //Game Shop
         //Only need 1 shop, and that is the one we see at a given moment in time.
-        public static ShopStruct GameShop;
-
-        //Game Items
-        public static ItemStruct[] GameItems;
-
-        //Game Spells
-        public static SpellStruct[] GameSpells;
-
-        //Game Npcs
-        public static NpcStruct[] GameNpcs;
-
-        //Game Resources
-        public static ResourceStruct[] GameResources;
-
-        //Game Animations
-        public static AnimationStruct[] GameAnimations;
-
-        //Game Classes
-        public static ClassStruct[] GameClasses;
-
-        //Game Quests
-        public static QuestStruct[] GameQuests;
-
-        //Game Projectiles
-        public static ProjectileStruct[] GameProjectiles;
+        public static ShopBase GameShop;
 
         //GUI Varaibles
         public static List<KeyValuePair<string,Color>> ChatboxContent = new List<KeyValuePair<string, Color>>();
@@ -135,11 +106,6 @@ namespace Intersect_Client.Classes.General
         //Control Objects
         public static List<EventDialog> EventDialogs = new List<EventDialog>();
         public static List<EventHold> EventHolds = new List<EventHold>(); 
-
-        //Resource Information
-        public static string[] Tilesets;
-
-        public static int GameBorderStyle;
 
         public static string GetStatName(int statnum)
         {

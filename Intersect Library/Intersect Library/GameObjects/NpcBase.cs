@@ -20,17 +20,19 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-using System;
 using System.Collections.Generic;
-using System.IO;
+using System.Linq;
 
 namespace Intersect_Library.GameObjects
 {
-    public class NpcStruct
+    public class NpcBase : DatabaseObject
     {
         //Core info
-        public const string Version = "0.0.0.1";
-        public string Name = "";
+        public new const string DatabaseTable = "npcs";
+        public new const GameObject Type = GameObject.Npc;
+        protected static Dictionary<int, DatabaseObject> Objects = new Dictionary<int, DatabaseObject>();
+
+        public string Name = "New Npc";
         public string Sprite = "";
 
         //Vitals & Stats
@@ -47,7 +49,7 @@ namespace Intersect_Library.GameObjects
         public List<NPCDrop> Drops = new List<NPCDrop>();
 
 
-		public NpcStruct()
+		public NpcBase(int id) : base(id)
 		{
             for (int i = 0; i < Options.MaxNpcDrops; i++)
             {
@@ -56,13 +58,10 @@ namespace Intersect_Library.GameObjects
 			
 		}
 
-        public void Load(byte[] packet, int index)
+        public override void Load(byte[] packet)
         {
             var myBuffer = new ByteBuffer();
             myBuffer.WriteBytes(packet);
-            string loadedVersion = myBuffer.ReadString();
-            if (loadedVersion != Version)
-                throw new Exception("Failed to load Npc #" + index + ". Loaded Version: " + loadedVersion + " Expected Version: " + Version);
             Name = myBuffer.ReadString();
             Sprite = myBuffer.ReadString();
             for (int i = 0; i < (int)Vitals.VitalCount; i++)
@@ -90,7 +89,6 @@ namespace Intersect_Library.GameObjects
         public byte[] NpcData()
         {
             var myBuffer = new ByteBuffer();
-            myBuffer.WriteString(Version);
             myBuffer.WriteString(Name);
             myBuffer.WriteString(Sprite);
             for (int i = 0; i < (int)Vitals.VitalCount; i++)
@@ -115,12 +113,68 @@ namespace Intersect_Library.GameObjects
             return myBuffer.ToArray();
         }
 
-        public void Save(int npcNum)
+        public static NpcBase GetNpc(int index)
         {
-            byte[] data = NpcData();
-            Stream stream = new FileStream("resources/npcs/" + npcNum + ".npc",FileMode.OpenOrCreate);
-            stream.Write(data, 0, data.Length);
-            stream.Close();
+            if (Objects.ContainsKey(index))
+            {
+                return (NpcBase)Objects[index];
+            }
+            return null;
+        }
+
+        public static string GetName(int index)
+        {
+            if (Objects.ContainsKey(index))
+            {
+                return ((NpcBase)Objects[index]).Name;
+            }
+            return "Deleted";
+        }
+
+        public override byte[] GetData()
+        {
+            return NpcData();
+        }
+
+        public override string GetTable()
+        {
+            return DatabaseTable;
+        }
+
+        public override GameObject GetGameObjectType()
+        {
+            return Type;
+        }
+
+        public static DatabaseObject Get(int index)
+        {
+            if (Objects.ContainsKey(index))
+            {
+                return Objects[index];
+            }
+            return null;
+        }
+        public override void Delete()
+        {
+            Objects.Remove(GetId());
+        }
+        public static void ClearObjects()
+        {
+            Objects.Clear();
+        }
+        public static void AddObject(int index, DatabaseObject obj)
+        {
+            Objects.Remove(index);
+            Objects.Add(index, obj);
+        }
+        public static int ObjectCount()
+        {
+            return Objects.Count;
+        }
+        public static Dictionary<int, NpcBase> GetObjects()
+        {
+            Dictionary<int, NpcBase> objects = Objects.ToDictionary(k => k.Key, v => (NpcBase)v.Value);
+            return objects;
         }
 
     }

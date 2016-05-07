@@ -35,6 +35,7 @@ using Intersect_Client.Classes.General;
 using Intersect_Client.Classes.Misc;
 using Intersect_Client.Classes.Networking;
 using Intersect_Library;
+using Intersect_Library.GameObjects;
 
 namespace Intersect_Client.Classes.UI.Menu
 {
@@ -64,8 +65,6 @@ namespace Intersect_Client.Classes.UI.Menu
         //Init
         public CreateCharControls(WindowControl _parent)
         {
-            int i = 0;
-
             _Parent = _parent;
 
             //Character name Label
@@ -89,15 +88,9 @@ namespace Intersect_Client.Classes.UI.Menu
 
             //Class Combobox
             _classCombobox = new ComboBox(_parent);
-            
-            while (Globals.GameClasses[i].Name != "")
+            foreach (var cls in DatabaseObject.GetGameObjectList(GameObject.Class))
             {
-                _classCombobox.AddItem(Globals.GameClasses[i].Name);
-                i = i + 1;
-                if (i >= Options.MaxClasses)
-                {
-                    break;
-                }
+                _classCombobox.AddItem(cls);
             }
 
             _classCombobox.SetPosition(_parent.Width / 2 - 120 / 2, 54);
@@ -168,14 +161,18 @@ namespace Intersect_Client.Classes.UI.Menu
             {
                 i = 1;
             }
-            
-            if (Globals.GameClasses[GetClass()].Sprites.Count > 0)
+
+            if (GetClass() != null)
             {
-                string test = Globals.GameClasses[GetClass()].Sprites[GetSprite(i)].Sprite;
-                _characterPortrait.Texture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Entity,
-                    Globals.GameClasses[GetClass()].Sprites[GetSprite(i)].Sprite);
-                Align.Center(_characterPortrait);
-                _currentSprite = Globals.GameClasses[GetClass()].Sprites[GetSprite(i)].Sprite;
+                if (GetClass().Sprites.Count > 0)
+                {
+                    string test = GetClass().Sprites[GetSprite(i)].Sprite;
+                    _characterPortrait.Texture = Globals.ContentManager.GetTexture(
+                        GameContentManager.TextureType.Entity,
+                       GetClass().Sprites[GetSprite(i)].Sprite);
+                    Align.Center(_characterPortrait);
+                    _currentSprite = GetClass().Sprites[GetSprite(i)].Sprite;
+                }
             }
         }
 
@@ -209,30 +206,32 @@ namespace Intersect_Client.Classes.UI.Menu
             _characterPortrait.Hide();
         }
 
-        private int GetClass()
+        private ClassBase GetClass()
         {
-            for (int i = 0; i < Options.MaxClasses; i++)
+            foreach (var cls in ClassBase.GetObjects())
             {
-                if (Globals.GameClasses[i].Name == _classCombobox.SelectedItem.Text)
+                if (_classCombobox.SelectedItem.Text == cls.Value.Name)
                 {
-                    return i;
+                    return cls.Value;
                 }
             }
-            return 0;
+            return null;
         }
 
         private int GetSprite(int Gender)
         {
             int i = 0;
-
-            for (int n = 0; n < Globals.GameClasses[GetClass()].Sprites.Count; n++)
+            if (GetClass() != null)
             {
-                if (Globals.GameClasses[GetClass()].Sprites[n].Gender == Gender)
+                for (int n = 0; n < GetClass().Sprites.Count; n++)
                 {
-                    i = i + 1;
-                    if (Convert.ToString(i) == _spriteCombobox.SelectedItem.Text)
+                    if (GetClass().Sprites[n].Gender == Gender)
                     {
-                        return n;
+                        i = i + 1;
+                        if (Convert.ToString(i) == _spriteCombobox.SelectedItem.Text)
+                        {
+                            return n;
+                        }
                     }
                 }
             }
@@ -243,13 +242,15 @@ namespace Intersect_Client.Classes.UI.Menu
         {
             int i = 0;
             _spriteCombobox = new ComboBox(_Parent);
-
-            for (int n = 0; n < Globals.GameClasses[GetClass()].Sprites.Count; n++)
+            if (GetClass() != null)
             {
-                if (Globals.GameClasses[GetClass()].Sprites[n].Gender == Gender)
+                for (int n = 0; n < GetClass().Sprites.Count; n++)
                 {
-                    i = i + 1;
-                    _spriteCombobox.AddItem(Convert.ToString(i));
+                    if (GetClass().Sprites[n].Gender == Gender)
+                    {
+                        i = i + 1;
+                        _spriteCombobox.AddItem(Convert.ToString(i));
+                    }
                 }
             }
 
@@ -264,7 +265,7 @@ namespace Intersect_Client.Classes.UI.Menu
             if (FieldChecking.IsValidName(_charnameTextbox.Text))
             {
                 GameFade.FadeOut();
-                PacketSender.SendCreateCharacter(_charnameTextbox.Text, GetClass(), GetSprite(Gender));
+                PacketSender.SendCreateCharacter(_charnameTextbox.Text, GetClass().GetId(), GetSprite(Gender));
                 Globals.WaitingOnServer = true;
             }
             else

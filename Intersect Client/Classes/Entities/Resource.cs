@@ -28,7 +28,7 @@ using Intersect_Client.Classes.General;
 using IntersectClientExtras.Graphics;
 using Intersect_Library;
 using Color = IntersectClientExtras.GenericClasses.Color;
-
+using Intersect_Client.Classes.Maps;
 
 namespace Intersect_Client.Classes.Entities
 {
@@ -68,9 +68,9 @@ namespace Intersect_Client.Classes.Entities
 
         private void CalculateRenderBounds()
         {
-            if (!Globals.GameMaps.ContainsKey(CurrentMap)) return;
+            var map = MapInstance.GetMap(CurrentMap);
             int i = GetLocalPos(CurrentMap);
-            if (i == -1)
+            if (i == -1 || map == null)
             {
                 return;
             }
@@ -78,8 +78,8 @@ namespace Intersect_Client.Classes.Entities
             if (srcTexture != null)
             {
                 srcRectangle = new FloatRect(0, 0, srcTexture.GetWidth(), srcTexture.GetHeight());
-                destRectangle.Y = (int)(Globals.GameMaps[CurrentMap].GetY() + CurrentY * Options.TileHeight + OffsetY);
-                destRectangle.X = (int)(Globals.GameMaps[CurrentMap].GetX() + CurrentX * Options.TileWidth + OffsetX);
+                destRectangle.Y = (int)(map.GetY() + CurrentY * Options.TileHeight + OffsetY);
+                destRectangle.X = (int)(map.GetX() + CurrentX * Options.TileWidth + OffsetX);
                 if (srcRectangle.Height > 32) { destRectangle.Y -= srcRectangle.Height - 32; }
                 if (srcRectangle.Width > 32) { destRectangle.X -= (srcRectangle.Width - 32) / 2; }
                 destRectangle.Width = srcRectangle.Width;

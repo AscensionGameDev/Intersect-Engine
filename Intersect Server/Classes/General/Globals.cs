@@ -22,10 +22,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading;
-using Intersect_Library.GameObjects;
-using Intersect_Library.GameObjects.Events;
 using Intersect_Server.Classes.Entities;
-using Intersect_Server.Classes.Maps;
 using Intersect_Server.Classes.Networking;
 
 namespace Intersect_Server.Classes.General
@@ -39,53 +36,9 @@ namespace Intersect_Server.Classes.General
         public static Boolean CPSLock = true;
         public static bool ServerStarted = true;
 
-        //Game Maps
-		public static Dictionary<int,MapInstance> GameMaps = new Dictionary<int, MapInstance>();
-
-        //Game Items
-        public static ItemStruct[] GameItems;
-
-        //Game Shops
-        public static ShopStruct[] GameShops;
-
-        //Game Spells
-        public static SpellStruct[] GameSpells;
-
-        //Game Npcs
-        public static NpcStruct[] GameNpcs;
-
-        //Game Resources
-        public static ResourceStruct[] GameResources;
-
-        //Game Animations
-        public static AnimationStruct[] GameAnimations;
-
-        //Game Classes
-        public static ClassStruct[] GameClasses;
-
-        //Game Quests
-        public static QuestStruct[] GameQuests;
-
-        //Game Projectiles
-        public static ProjectileStruct[] GameProjectiles;
-
-        //Common Events
-	    public static EventStruct[] CommonEvents;
-
-        //Server Switches and Variables
-	    public static string[] ServerSwitches;
-	    public static bool[] ServerSwitchValues;
-	    public static string[] ServerVariables;
-	    public static int[] ServerVariableValues;
-
-        //Player Switches and Variables
-        public static string[] PlayerSwitches;
-        public static string[] PlayerVariables;
-
         public static List<Client> Clients = new List<Client>();
 		public static List<Thread> ClientThread = new List<Thread>();
 		public static List<Entity> Entities = new List<Entity>();
-		public static string[] Tilesets;
 
         //Game helping stuff
         public static Random Rand = new Random();

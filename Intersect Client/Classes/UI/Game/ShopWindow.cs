@@ -37,6 +37,7 @@ using Intersect_Client.Classes.General;
 using Intersect_Client.Classes.Networking;
 using Intersect_Library;
 using Point = IntersectClientExtras.GenericClasses.Point;
+using Intersect_Library.GameObjects;
 
 namespace Intersect_Client.Classes.UI.Game
 {
@@ -133,27 +134,34 @@ namespace Intersect_Client.Classes.UI.Game
             pnl.HoverEnter += pnl_HoverEnter;
             pnl.HoverLeave += pnl_HoverLeave;
             pnl.DoubleClicked += Pnl_DoubleClicked;
-            GameTexture itemTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Item,
-                Globals.GameItems[Globals.GameShop.SellingItems[_mySlot].ItemNum].Pic);
-            if (itemTex != null)
+            var item = ItemBase.GetItem(Globals.GameShop.SellingItems[_mySlot].ItemNum);
+            if (item != null)
             {
-                pnl.Texture = itemTex;
+                GameTexture itemTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Item,item.Pic);
+                if (itemTex != null)
+                {
+                    pnl.Texture = itemTex;
+                }
             }
         }
 
         private void Pnl_DoubleClicked(Base sender, ClickedEventArgs arguments)
         {
             //Confirm the purchase
-            if (Globals.GameItems[Globals.GameShop.SellingItems[_mySlot].ItemNum].Type == (int) ItemTypes.Consumable ||
-                Globals.GameItems[Globals.GameShop.SellingItems[_mySlot].ItemNum].Type == (int) ItemTypes.Currency ||
-                Globals.GameItems[Globals.GameShop.SellingItems[_mySlot].ItemNum].Type == (int) ItemTypes.None ||
-                Globals.GameItems[Globals.GameShop.SellingItems[_mySlot].ItemNum].Type == (int) ItemTypes.Spell)
+            var item = ItemBase.GetItem(Globals.GameShop.SellingItems[_mySlot].ItemNum);
+            if (item != null)
             {
-                InputBox iBox = new InputBox("Buy Item", "How many " + Globals.GameItems[Globals.GameShop.SellingItems[_mySlot].ItemNum].Name + "(s) would you like to buy?", true, BuyItemInputBoxOkay, null, -1, true);
-            }
-            else
-            {
-                PacketSender.SendBuyItem(_mySlot, 1);
+                if (item.ItemType == (int)ItemTypes.Consumable ||
+                    item.ItemType == (int)ItemTypes.Currency ||
+                    item.ItemType == (int)ItemTypes.None ||
+                    item.ItemType == (int)ItemTypes.Spell)
+                {
+                    InputBox iBox = new InputBox("Buy Item", "How many " + item.Name + "(s) would you like to buy?", true, BuyItemInputBoxOkay, null, -1, true);
+                }
+                else
+                {
+                    PacketSender.SendBuyItem(_mySlot, 1);
+                }
             }
         }
         private void BuyItemInputBoxOkay(Object sender, EventArgs e)
@@ -176,7 +184,9 @@ namespace Intersect_Client.Classes.UI.Game
         void pnl_HoverEnter(Base sender, EventArgs arguments)
         {
             if (_descWindow != null) { _descWindow.Dispose(); _descWindow = null; }
-            _descWindow = new ItemDescWindow(Globals.GameShop.SellingItems[_mySlot].ItemNum, 1, _shopWindow.X - 220, _shopWindow.Y, null,"", "Costs " + Globals.GameShop.SellingItems[_mySlot].CostItemVal + " " +  Globals.GameItems[Globals.GameShop.SellingItems[_mySlot].CostItemNum].Name + "(s)");
+            var item = ItemBase.GetItem(Globals.GameShop.SellingItems[_mySlot].CostItemNum);
+            if (item != null)
+                _descWindow = new ItemDescWindow(Globals.GameShop.SellingItems[_mySlot].ItemNum, 1, _shopWindow.X - 220, _shopWindow.Y, null,"", "Costs " + Globals.GameShop.SellingItems[_mySlot].CostItemVal + " " +  item.Name + "(s)");
         }
 
         public FloatRect RenderBounds()

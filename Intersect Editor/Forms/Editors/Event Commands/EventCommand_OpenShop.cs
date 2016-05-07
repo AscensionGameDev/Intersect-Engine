@@ -22,7 +22,6 @@
 using System;
 using System.Windows.Forms;
 using Intersect_Editor.Classes;
-using Intersect_Editor.Classes.General;
 using Intersect_Library;
 using Intersect_Library.GameObjects.Events;
 
@@ -38,23 +37,14 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             _myCommand = refCommand;
             _eventEditor = editor;
             cmbShop.Items.Clear();
-            for (int i = 0; i < Options.MaxShops; i++)
-            {
-                cmbShop.Items.Add((i + 1) + ". " + Globals.GameShops[i].Name);
-            }
-            if (_myCommand.Ints[0] > -1 && _myCommand.Ints[0] < Options.MaxShops)
-            {
-                cmbShop.SelectedIndex = _myCommand.Ints[0];
-            }
-            else
-            {
-                cmbShop.SelectedIndex = 0;
-            }
+            cmbShop.Items.AddRange(Database.GetGameObjectList(GameObject.Shop));
+            cmbShop.SelectedIndex = Database.GameObjectListIndex(GameObject.Shop, _myCommand.Ints[0]);
         }
 
         private void btnSave_Click(object sender, EventArgs e)
         {
-            _myCommand.Ints[0] = cmbShop.SelectedIndex;
+            if (cmbShop.SelectedIndex > -1)
+                _myCommand.Ints[0] = Database.GameObjectIdFromList(GameObject.Shop, cmbShop.SelectedIndex);
             _eventEditor.FinishCommandEdit();
         }
 

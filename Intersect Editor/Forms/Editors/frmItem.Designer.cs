@@ -32,10 +32,12 @@ namespace Intersect_Editor.Forms
         private void InitializeComponent()
         {
             this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.btnCancel = new System.Windows.Forms.Button();
+            this.btnUndo = new System.Windows.Forms.Button();
+            this.btnNew = new System.Windows.Forms.Button();
             this.btnDelete = new System.Windows.Forms.Button();
-            this.btnSave = new System.Windows.Forms.Button();
             this.lstItems = new System.Windows.Forms.ListBox();
+            this.btnCancel = new System.Windows.Forms.Button();
+            this.btnSave = new System.Windows.Forms.Button();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.label6 = new System.Windows.Forms.Label();
             this.txtDesc = new System.Windows.Forms.TextBox();
@@ -105,6 +107,7 @@ namespace Intersect_Editor.Forms
             this.grpEvent = new System.Windows.Forms.GroupBox();
             this.scrlEvent = new System.Windows.Forms.HScrollBar();
             this.lblEvent = new System.Windows.Forms.Label();
+            this.pnlContainer = new System.Windows.Forms.Panel();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.picItem)).BeginInit();
@@ -114,36 +117,48 @@ namespace Intersect_Editor.Forms
             this.gbConsumable.SuspendLayout();
             this.gbSpell.SuspendLayout();
             this.grpEvent.SuspendLayout();
+            this.pnlContainer.SuspendLayout();
             this.SuspendLayout();
             // 
             // groupBox1
             // 
-            this.groupBox1.Controls.Add(this.btnCancel);
+            this.groupBox1.Controls.Add(this.btnUndo);
+            this.groupBox1.Controls.Add(this.btnNew);
             this.groupBox1.Controls.Add(this.btnDelete);
-            this.groupBox1.Controls.Add(this.btnSave);
             this.groupBox1.Controls.Add(this.lstItems);
             this.groupBox1.Location = new System.Drawing.Point(12, 7);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(203, 431);
+            this.groupBox1.Size = new System.Drawing.Size(203, 464);
             this.groupBox1.TabIndex = 1;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Items";
             // 
-            // btnCancel
+            // btnUndo
             // 
-            this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.btnCancel.Location = new System.Drawing.Point(6, 398);
-            this.btnCancel.Name = "btnCancel";
-            this.btnCancel.Size = new System.Drawing.Size(190, 27);
-            this.btnCancel.TabIndex = 4;
-            this.btnCancel.Text = "Cancel";
-            this.btnCancel.UseVisualStyleBackColor = true;
-            this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
+            this.btnUndo.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            this.btnUndo.Location = new System.Drawing.Point(6, 431);
+            this.btnUndo.Name = "btnUndo";
+            this.btnUndo.Size = new System.Drawing.Size(190, 27);
+            this.btnUndo.TabIndex = 5;
+            this.btnUndo.Text = "Undo Changes";
+            this.btnUndo.UseVisualStyleBackColor = true;
+            this.btnUndo.Click += new System.EventHandler(this.btnUndo_Click);
+            // 
+            // btnNew
+            // 
+            this.btnNew.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            this.btnNew.Location = new System.Drawing.Point(6, 365);
+            this.btnNew.Name = "btnNew";
+            this.btnNew.Size = new System.Drawing.Size(190, 27);
+            this.btnNew.TabIndex = 4;
+            this.btnNew.Text = "New";
+            this.btnNew.UseVisualStyleBackColor = true;
+            this.btnNew.Click += new System.EventHandler(this.btnNew_Click);
             // 
             // btnDelete
             // 
             this.btnDelete.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.btnDelete.Location = new System.Drawing.Point(7, 366);
+            this.btnDelete.Location = new System.Drawing.Point(7, 398);
             this.btnDelete.Name = "btnDelete";
             this.btnDelete.Size = new System.Drawing.Size(190, 27);
             this.btnDelete.TabIndex = 3;
@@ -151,24 +166,35 @@ namespace Intersect_Editor.Forms
             this.btnDelete.UseVisualStyleBackColor = true;
             this.btnDelete.Click += new System.EventHandler(this.btnDelete_Click);
             // 
+            // lstItems
+            // 
+            this.lstItems.FormattingEnabled = true;
+            this.lstItems.Location = new System.Drawing.Point(6, 19);
+            this.lstItems.Name = "lstItems";
+            this.lstItems.Size = new System.Drawing.Size(191, 342);
+            this.lstItems.TabIndex = 1;
+            this.lstItems.Click += new System.EventHandler(this.lstItems_Click);
+            // 
+            // btnCancel
+            // 
+            this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            this.btnCancel.Location = new System.Drawing.Point(475, 444);
+            this.btnCancel.Name = "btnCancel";
+            this.btnCancel.Size = new System.Drawing.Size(190, 27);
+            this.btnCancel.TabIndex = 4;
+            this.btnCancel.Text = "Cancel";
+            this.btnCancel.UseVisualStyleBackColor = true;
+            this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
+            // 
             // btnSave
             // 
-            this.btnSave.Location = new System.Drawing.Point(6, 333);
+            this.btnSave.Location = new System.Drawing.Point(279, 444);
             this.btnSave.Name = "btnSave";
             this.btnSave.Size = new System.Drawing.Size(190, 27);
             this.btnSave.TabIndex = 2;
             this.btnSave.Text = "Save";
             this.btnSave.UseVisualStyleBackColor = true;
             this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
-            // 
-            // lstItems
-            // 
-            this.lstItems.FormattingEnabled = true;
-            this.lstItems.Location = new System.Drawing.Point(6, 19);
-            this.lstItems.Name = "lstItems";
-            this.lstItems.Size = new System.Drawing.Size(191, 303);
-            this.lstItems.TabIndex = 1;
-            this.lstItems.Click += new System.EventHandler(this.lstItems_Click);
             // 
             // groupBox2
             // 
@@ -185,7 +211,7 @@ namespace Intersect_Editor.Forms
             this.groupBox2.Controls.Add(this.cmbType);
             this.groupBox2.Controls.Add(this.label1);
             this.groupBox2.Controls.Add(this.txtName);
-            this.groupBox2.Location = new System.Drawing.Point(225, 7);
+            this.groupBox2.Location = new System.Drawing.Point(2, 1);
             this.groupBox2.Name = "groupBox2";
             this.groupBox2.Size = new System.Drawing.Size(207, 220);
             this.groupBox2.TabIndex = 2;
@@ -223,11 +249,14 @@ namespace Intersect_Editor.Forms
             // 
             // scrlAnim
             // 
+            this.scrlAnim.LargeChange = 1;
             this.scrlAnim.Location = new System.Drawing.Point(19, 190);
             this.scrlAnim.Maximum = 1000;
+            this.scrlAnim.Minimum = -1;
             this.scrlAnim.Name = "scrlAnim";
             this.scrlAnim.Size = new System.Drawing.Size(176, 18);
             this.scrlAnim.TabIndex = 10;
+            this.scrlAnim.Value = -1;
             this.scrlAnim.Scroll += new System.Windows.Forms.ScrollEventHandler(this.scrlAnim_Scroll);
             this.scrlAnim.ValueChanged += new System.EventHandler(this.scrlAnim_Scroll);
             // 
@@ -334,7 +363,7 @@ namespace Intersect_Editor.Forms
             this.groupBox3.Controls.Add(this.scrlMagicResistReq);
             this.groupBox3.Controls.Add(this.scrlAbilityPowerReq);
             this.groupBox3.Controls.Add(this.scrlAttackReq);
-            this.groupBox3.Location = new System.Drawing.Point(438, 7);
+            this.groupBox3.Location = new System.Drawing.Point(215, 1);
             this.groupBox3.Name = "groupBox3";
             this.groupBox3.Size = new System.Drawing.Size(226, 220);
             this.groupBox3.TabIndex = 11;
@@ -500,7 +529,7 @@ namespace Intersect_Editor.Forms
             this.gbEquipment.Controls.Add(this.scrlMagicResist);
             this.gbEquipment.Controls.Add(this.scrlAbilityPower);
             this.gbEquipment.Controls.Add(this.scrlAttack);
-            this.gbEquipment.Location = new System.Drawing.Point(225, 233);
+            this.gbEquipment.Location = new System.Drawing.Point(2, 227);
             this.gbEquipment.Name = "gbEquipment";
             this.gbEquipment.Size = new System.Drawing.Size(439, 205);
             this.gbEquipment.TabIndex = 12;
@@ -520,11 +549,13 @@ namespace Intersect_Editor.Forms
             // 
             // scrlProjectile
             // 
+            this.scrlProjectile.LargeChange = 1;
             this.scrlProjectile.Location = new System.Drawing.Point(326, 103);
             this.scrlProjectile.Minimum = -1;
             this.scrlProjectile.Name = "scrlProjectile";
             this.scrlProjectile.Size = new System.Drawing.Size(102, 17);
             this.scrlProjectile.TabIndex = 32;
+            this.scrlProjectile.Value = -1;
             this.scrlProjectile.Visible = false;
             this.scrlProjectile.ValueChanged += new System.EventHandler(this.scrlProjectile_ValueChanged);
             // 
@@ -779,7 +810,7 @@ namespace Intersect_Editor.Forms
             this.gbConsumable.Controls.Add(this.cmbConsume);
             this.gbConsumable.Controls.Add(this.scrlInterval);
             this.gbConsumable.Controls.Add(this.lblInterval);
-            this.gbConsumable.Location = new System.Drawing.Point(225, 233);
+            this.gbConsumable.Location = new System.Drawing.Point(2, 227);
             this.gbConsumable.Name = "gbConsumable";
             this.gbConsumable.Size = new System.Drawing.Size(217, 122);
             this.gbConsumable.TabIndex = 12;
@@ -832,7 +863,7 @@ namespace Intersect_Editor.Forms
             // 
             this.gbSpell.Controls.Add(this.scrlSpell);
             this.gbSpell.Controls.Add(this.lblSpell);
-            this.gbSpell.Location = new System.Drawing.Point(225, 233);
+            this.gbSpell.Location = new System.Drawing.Point(2, 227);
             this.gbSpell.Name = "gbSpell";
             this.gbSpell.Size = new System.Drawing.Size(217, 67);
             this.gbSpell.TabIndex = 13;
@@ -863,7 +894,7 @@ namespace Intersect_Editor.Forms
             // 
             this.grpEvent.Controls.Add(this.scrlEvent);
             this.grpEvent.Controls.Add(this.lblEvent);
-            this.grpEvent.Location = new System.Drawing.Point(225, 232);
+            this.grpEvent.Location = new System.Drawing.Point(2, 226);
             this.grpEvent.Name = "grpEvent";
             this.grpEvent.Size = new System.Drawing.Size(217, 67);
             this.grpEvent.TabIndex = 42;
@@ -878,6 +909,7 @@ namespace Intersect_Editor.Forms
             this.scrlEvent.Name = "scrlEvent";
             this.scrlEvent.Size = new System.Drawing.Size(187, 18);
             this.scrlEvent.TabIndex = 17;
+            this.scrlEvent.Scroll += new System.Windows.Forms.ScrollEventHandler(this.scrlEvent_Scroll);
             // 
             // lblEvent
             // 
@@ -888,19 +920,30 @@ namespace Intersect_Editor.Forms
             this.lblEvent.TabIndex = 16;
             this.lblEvent.Text = "Event: 0";
             // 
+            // pnlContainer
+            // 
+            this.pnlContainer.Controls.Add(this.gbSpell);
+            this.pnlContainer.Controls.Add(this.groupBox2);
+            this.pnlContainer.Controls.Add(this.grpEvent);
+            this.pnlContainer.Controls.Add(this.gbEquipment);
+            this.pnlContainer.Controls.Add(this.groupBox3);
+            this.pnlContainer.Controls.Add(this.gbConsumable);
+            this.pnlContainer.Location = new System.Drawing.Point(221, 7);
+            this.pnlContainer.Name = "pnlContainer";
+            this.pnlContainer.Size = new System.Drawing.Size(444, 431);
+            this.pnlContainer.TabIndex = 43;
+            this.pnlContainer.Visible = false;
+            // 
             // FrmItem
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(677, 450);
+            this.ClientSize = new System.Drawing.Size(677, 479);
             this.ControlBox = false;
-            this.Controls.Add(this.grpEvent);
-            this.Controls.Add(this.groupBox3);
-            this.Controls.Add(this.groupBox2);
+            this.Controls.Add(this.btnCancel);
+            this.Controls.Add(this.btnSave);
             this.Controls.Add(this.groupBox1);
-            this.Controls.Add(this.gbSpell);
-            this.Controls.Add(this.gbConsumable);
-            this.Controls.Add(this.gbEquipment);
+            this.Controls.Add(this.pnlContainer);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Name = "FrmItem";
             this.Text = "Item Editor";
@@ -921,6 +964,7 @@ namespace Intersect_Editor.Forms
             this.gbSpell.PerformLayout();
             this.grpEvent.ResumeLayout(false);
             this.grpEvent.PerformLayout();
+            this.pnlContainer.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -1001,6 +1045,8 @@ namespace Intersect_Editor.Forms
         private GroupBox grpEvent;
         private HScrollBar scrlEvent;
         private Label lblEvent;
-
+        private Button btnUndo;
+        private Button btnNew;
+        private Panel pnlContainer;
     }
 }

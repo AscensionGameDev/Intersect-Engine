@@ -21,11 +21,9 @@
 */
 using System;
 using System.Drawing;
-using System.IO;
 using System.Windows.Forms;
 using Intersect_Editor.Classes;
 using Intersect_Editor.Classes.Core;
-using Intersect_Editor.Classes.General;
 using Intersect_Library;
 using Intersect_Library.GameObjects.Events;
 using Color = System.Drawing.Color;
@@ -97,13 +95,7 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
                 lblGraphic.Show();
                 cmbGraphic.Show();
                 cmbGraphic.Items.Clear();
-                foreach (var filename in Globals.Tilesets)
-                {
-                    if (File.Exists("resources/tilesets/" + filename))
-                    {
-                        cmbGraphic.Items.Add(filename);
-                    }
-                }
+                cmbGraphic.Items.AddRange(Database.GetGameObjectList(GameObject.Tileset));
                 if (cmbGraphic.Items.Count > 0) cmbGraphic.SelectedIndex = 0;
             }
         }
@@ -127,13 +119,7 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             {
                 lblGraphic.Show();
                 cmbGraphic.Show();
-                foreach (var filename in Globals.Tilesets)
-                {
-                    if (File.Exists("resources/tilesets/" + filename))
-                    {
-                        cmbGraphic.Items.Add(filename);
-                    }
-                }
+                cmbGraphic.Items.AddRange(Database.GetGameObjectList(GameObject.Tileset));
                 if (cmbGraphic.Items.Count > 0) cmbGraphic.SelectedIndex = 0;
             }
         }

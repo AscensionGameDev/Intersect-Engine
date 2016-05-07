@@ -20,6 +20,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 using System;
+using System.Collections.Generic;
 using System.Windows.Forms;
 using System.Drawing;
 using System.IO;
@@ -35,9 +36,8 @@ namespace Intersect_Editor.Classes
         //General Editting Variables
         bool _tMouseDown;
 
-        private ByteBuffer[] _resourcesBackup;
-        private bool[] _changed;
-        private int _editorIndex;
+        private List<ResourceBase> _changed = new List<ResourceBase>();
+        private ResourceBase _editorItem = null;
 
         private Bitmap _initialTileset;
         private Bitmap _endTileset;
@@ -47,13 +47,87 @@ namespace Intersect_Editor.Classes
         public frmResource()
         {
             InitializeComponent();
+            PacketHandler.GameObjectUpdatedDelegate += GameObjectUpdatedDelegate;
+        }
+
+        private void GameObjectUpdatedDelegate(GameObject type)
+        {
+            if (type == GameObject.Resource)
+            {
+                InitEditor();
+                if (_editorItem != null && !ResourceBase.GetObjects().ContainsValue(_editorItem))
+                {
+                    _editorItem = null;
+                    UpdateEditor();
+                }
+            }
+        }
+
+        private void btnNew_Click(object sender, EventArgs e)
+        {
+            PacketSender.SendCreateObject(GameObject.Resource);
+        }
+
+        private void btnUndo_Click(object sender, EventArgs e)
+        {
+            if (_changed.Contains(_editorItem) && _editorItem != null)
+            {
+                _editorItem.RestoreBackup();
+                UpdateEditor();
+            }
+        }
+
+        private void btnDelete_Click(object sender, EventArgs e)
+        {
+            if (_editorItem != null)
+            {
+                if (
+                    MessageBox.Show(
+                        "Are you sure you want to delete this game object? This action cannot be reverted!",
+                        "Delete Object", MessageBoxButtons.YesNo) == DialogResult.Yes)
+                {
+                    PacketSender.SendDeleteObject(_editorItem);
+                }
+            }
+        }
+
+        private void btnCancel_Click(object sender, EventArgs e)
+        {
+            foreach (var item in _changed)
+            {
+                item.RestoreBackup();
+                item.DeleteBackup();
+            }
+
+            Hide();
+            Globals.CurrentEditor = -1;
+            Dispose();
+        }
+
+        private void btnSave_Click(object sender, EventArgs e)
+        {
+            //Send Changed items
+            foreach (var item in _changed)
+            {
+                PacketSender.SendSaveObject(item);
+                item.DeleteBackup();
+            }
+
+            Hide();
+            Globals.CurrentEditor = -1;
+            Dispose();
+        }
+
+        private void lstResources_Click(object sender, EventArgs e)
+        {
+            _editorItem = ResourceBase.GetResource(Database.GameObjectIdFromList(GameObject.Resource, lstResources.SelectedIndex));
+            UpdateEditor();
         }
 
         private void frmResource_Load(object sender, EventArgs e)
         {
             _initialBitmap = new Bitmap(picInitialResource.Width, picInitialResource.Height);
             _endBitmap = new Bitmap(picInitialResource.Width, picInitialResource.Height);
-            lstResources.SelectedIndex = 0;
             cmbInitialSprite.Items.Clear();
             cmbEndSprite.Items.Clear();
             cmbInitialSprite.Items.Add("None");
@@ -64,21 +138,14 @@ namespace Intersect_Editor.Classes
                 cmbInitialSprite.Items.Add(resources[i]);
                 cmbEndSprite.Items.Add(resources[i]);
             }
-            scrlDropItem.Maximum = Options.MaxItems - 1;
+            scrlDropItem.Maximum = ItemBase.ObjectCount() - 1;
             UpdateEditor();
         }
 
         public void InitEditor()
         {
-            _resourcesBackup = new ByteBuffer[Options.MaxResources];
-            _changed = new bool[Options.MaxResources];
-            for (var i = 0; i < Options.MaxResources; i++)
-            {
-                _resourcesBackup[i] = new ByteBuffer();
-                _resourcesBackup[i].WriteBytes(Globals.GameResources[i].ResourceData());
-                lstResources.Items.Add((i + 1) + ") " + Globals.GameResources[i].Name);
-                _changed[i] = false;
-            }
+            lstResources.Items.Clear();
+            lstResources.Items.AddRange(Database.GetGameObjectList(GameObject.Resource));
             cmbToolType.Items.Add("None");
             cmbToolType.Items.AddRange(Options.ToolTypes.ToArray());
             UpdateInitialScrollBars();
@@ -87,40 +154,53 @@ namespace Intersect_Editor.Classes
 
         private void UpdateEditor()
         {
-            _editorIndex = lstResources.SelectedIndex;
-            txtName.Text = Globals.GameResources[_editorIndex].Name;
-            cmbToolType.SelectedIndex = Globals.GameResources[_editorIndex].Tool;
-            scrlSpawnDuration.Value = Globals.GameResources[_editorIndex].SpawnDuration;
-            scrlAnimation.Value = Globals.GameResources[_editorIndex].Animation;
-            txtHP.Text = Globals.GameResources[_editorIndex].MinHP.ToString();
-            txtMaxHp.Text = Globals.GameResources[_editorIndex].MaxHP.ToString();
-            lblSpawnDuration.Text = @"Spawn Duration: " + scrlSpawnDuration.Value;
-            if (scrlAnimation.Value == -1)
+            if (_editorItem != null)
             {
-                lblAnimation.Text = @"Animation: None";
+                pnlContainer.Show();
+
+                txtName.Text = _editorItem.Name;
+                cmbToolType.SelectedIndex = _editorItem.Tool;
+                scrlSpawnDuration.Value = _editorItem.SpawnDuration;
+                scrlAnimation.Value = Database.GameObjectListIndex(GameObject.Animation, _editorItem.Animation);
+                txtHP.Text = _editorItem.MinHP.ToString();
+                txtMaxHp.Text = _editorItem.MaxHP.ToString();
+                lblSpawnDuration.Text = @"Spawn Duration: " + scrlSpawnDuration.Value;
+                if (scrlAnimation.Value == -1)
+                {
+                    lblAnimation.Text = @"Animation: None";
+                }
+                else
+                {
+                    lblAnimation.Text = @"Animation: " + AnimationBase.GetName(_editorItem.Animation);
+                }
+                chkWalkableBefore.Checked = _editorItem.WalkableBefore;
+                chkWalkableAfter.Checked = _editorItem.WalkableAfter;
+                cmbInitialSprite.SelectedIndex =
+                    cmbInitialSprite.FindString(_editorItem.InitialGraphic);
+                cmbEndSprite.SelectedIndex = cmbEndSprite.FindString(_editorItem.EndGraphic);
+                scrlDropIndex.Value = 1;
+                UpdateDropValues();
+                Render();
+                if (_changed.IndexOf(_editorItem) == -1)
+                {
+                    _changed.Add(_editorItem);
+                    _editorItem.MakeBackup();
+                }
             }
             else
             {
-                lblAnimation.Text = @"Animation: " + (scrlAnimation.Value + 1) + " " + Globals.GameAnimations[scrlAnimation.Value].Name;
+                pnlContainer.Hide();
             }
-            chkWalkableBefore.Checked = Globals.GameResources[_editorIndex].WalkableBefore;
-            chkWalkableAfter.Checked = Globals.GameResources[_editorIndex].WalkableAfter;
-            cmbInitialSprite.SelectedIndex = cmbInitialSprite.FindString(Globals.GameResources[_editorIndex].InitialGraphic);
-            cmbEndSprite.SelectedIndex = cmbEndSprite.FindString(Globals.GameResources[_editorIndex].EndGraphic);
-            scrlDropIndex.Value = 1;
-            UpdateDropValues();
-            Render();
-            _changed[_editorIndex] = true;
         }
 
         private void UpdateDropValues()
         {
             int index = scrlDropIndex.Value - 1;
             lblDropIndex.Text = "Drop: " + (index + 1);
-            scrlDropItem.Value = Globals.GameResources[_editorIndex].Drops[index].ItemNum;
-            lblDropItem.Text = @"Item " + (scrlDropItem.Value + 1) + @" - " + Globals.GameItems[scrlDropItem.Value].Name;
-            txtDropAmount.Text = Globals.GameResources[_editorIndex].Drops[index].Amount.ToString();
-            scrlDropChance.Value = Globals.GameResources[_editorIndex].Drops[index].Chance;
+            scrlDropItem.Value = _editorItem.Drops[index].ItemNum;
+            lblDropItem.Text = @"Item " + ItemBase.GetName(Database.GameObjectIdFromList(GameObject.Item,scrlDropItem.Value));
+            txtDropAmount.Text = _editorItem.Drops[index].Amount.ToString();
+            scrlDropChance.Value = _editorItem.Drops[index].Chance;
             lblDropChance.Text = @"Chance (" + scrlDropChance.Value + @"/100)";
         }
 
@@ -131,49 +211,50 @@ namespace Intersect_Editor.Classes
 
         private void scrlDropItem_Scroll(object sender, ScrollEventArgs e)
         {
-            lblDropItem.Text = @"Item " + (scrlDropItem.Value + 1) + @" - " + Globals.GameItems[scrlDropItem.Value].Name;
-            Globals.GameResources[_editorIndex].Drops[scrlDropIndex.Value - 1].ItemNum = scrlDropItem.Value;
+            lblDropItem.Text = @"Item " + ItemBase.GetName(Database.GameObjectIdFromList(GameObject.Item, scrlDropItem.Value));
+            _editorItem.Drops[scrlDropIndex.Value - 1].ItemNum = Database.GameObjectIdFromList(GameObject.Item,
+                scrlDropItem.Value);
         }
 
         private void txtDropAmount_TextChanged(object sender, EventArgs e)
         {
             int x = 0;
             int.TryParse(txtDropAmount.Text, out x);
-            Globals.GameResources[_editorIndex].Drops[scrlDropIndex.Value - 1].Amount = x;
+            _editorItem.Drops[scrlDropIndex.Value - 1].Amount = x;
         }
 
         private void scrlDropChance_Scroll(object sender, ScrollEventArgs e)
         {
-            Globals.GameResources[_editorIndex].Drops[scrlDropIndex.Value - 1].Chance = scrlDropChance.Value;
+            _editorItem.Drops[scrlDropIndex.Value - 1].Chance = scrlDropChance.Value;
             lblDropChance.Text = @"Chance (" + scrlDropChance.Value + @"/100)";
         }
 
         private void scrlSpawnDuration_Scroll(object sender, ScrollEventArgs e)
         {
             lblSpawnDuration.Text = @"Spawn Duration: " + scrlSpawnDuration.Value;
-            Globals.GameResources[_editorIndex].SpawnDuration = scrlSpawnDuration.Value;
+            _editorItem.SpawnDuration = scrlSpawnDuration.Value;
         }
 
         private void cmbToolType_SelectedIndexChanged(object sender, EventArgs e)
         {
-            Globals.GameResources[_editorIndex].Tool = cmbToolType.SelectedIndex;
+            _editorItem.Tool = cmbToolType.SelectedIndex;
         }
 
         private void chkWalkableBefore_CheckedChanged(object sender, EventArgs e)
         {
-            Globals.GameResources[_editorIndex].WalkableBefore = chkWalkableBefore.Checked;
+            _editorItem.WalkableBefore = chkWalkableBefore.Checked;
         }
 
         private void chkWalkableAfter_CheckedChanged(object sender, EventArgs e)
         {
-            Globals.GameResources[_editorIndex].WalkableAfter = chkWalkableAfter.Checked;
+            _editorItem.WalkableAfter = chkWalkableAfter.Checked;
         }
 
         private void cmbInitialSprite_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (cmbInitialSprite.SelectedIndex > 0)
             {
-                Globals.GameResources[_editorIndex].InitialGraphic = cmbInitialSprite.Text;
+                _editorItem.InitialGraphic = cmbInitialSprite.Text;
                 if (File.Exists("resources/resources/" + cmbInitialSprite.Text))
                 {
                     _initialTileset = (Bitmap)Bitmap.FromFile("resources/resources/" + cmbInitialSprite.Text);
@@ -189,7 +270,7 @@ namespace Intersect_Editor.Classes
             }
             else
             {
-                Globals.GameResources[_editorIndex].InitialGraphic = "None";
+                _editorItem.InitialGraphic = "None";
                 _initialTileset = null;
             }
             Render();
@@ -199,7 +280,7 @@ namespace Intersect_Editor.Classes
         {
             if (cmbEndSprite.SelectedIndex > 0)
             {
-                Globals.GameResources[_editorIndex].EndGraphic = cmbEndSprite.Text;
+                _editorItem.EndGraphic = cmbEndSprite.Text;
                 if (File.Exists("resources/resources/" + cmbEndSprite.Text))
                 {
                     _endTileset = (Bitmap)Bitmap.FromFile("resources/resources/" + cmbEndSprite.Text);
@@ -215,47 +296,10 @@ namespace Intersect_Editor.Classes
             }
             else
             {
-                Globals.GameResources[_editorIndex].EndGraphic = "None";
+                _editorItem.EndGraphic = "None";
                 _endTileset = null;
             }
             Render();
-        }
-
-        private void btnSave_Click(object sender, EventArgs e)
-        {
-            for (var i = 0; i < Options.MaxResources; i++)
-            {
-                if (_changed[i])
-                {
-                    PacketSender.SendResource(i, Globals.GameResources[i].ResourceData());
-                }
-            }
-
-            Hide();
-            Globals.CurrentEditor = -1;
-            Dispose();
-        }
-
-        private void btnDelete_Click(object sender, EventArgs e)
-        {
-            var tempResource = new ResourceStruct();
-            var tempBuff = new ByteBuffer();
-            tempBuff.WriteBytes(tempResource.ResourceData());
-            Globals.GameResources[_editorIndex].Load(tempBuff.ToArray(),_editorIndex);
-            tempBuff.Dispose();
-            UpdateEditor();
-        }
-
-        private void btnCancel_Click(object sender, EventArgs e)
-        {
-            for (var i = 0; i < Options.MaxResources; i++)
-            {
-                Globals.GameResources[i].Load(_resourcesBackup[i].ToArray(),i);
-            }
-
-            Hide();
-            Globals.CurrentEditor = -1;
-            Dispose();
         }
 
         public void Render()
@@ -369,15 +413,10 @@ namespace Intersect_Editor.Classes
             picEndResource.Top = -vScrollEndTileset.Value;
         }
 
-        private void lstResources_Click(object sender, EventArgs e)
-        {
-            UpdateEditor();
-        }
-
         private void txtName_TextChanged(object sender, EventArgs e)
         {
-            Globals.GameResources[_editorIndex].Name = txtName.Text;
-            lstResources.Items[lstResources.SelectedIndex] = (lstResources.SelectedIndex + 1) + ". " + txtName.Text;
+            _editorItem.Name = txtName.Text;
+            lstResources.Items[lstResources.SelectedIndex] = txtName.Text;
 
         }
 
@@ -385,27 +424,28 @@ namespace Intersect_Editor.Classes
         {
             int x = 0;
             int.TryParse(txtHP.Text, out x);
-            Globals.GameResources[_editorIndex].MinHP = x;
+            _editorItem.MinHP = x;
         }
 
         private void txtMaxHp_TextChanged(object sender, EventArgs e)
         {
             int x = 0;
             int.TryParse(txtMaxHp.Text, out x);
-            Globals.GameResources[_editorIndex].MaxHP = x;
+            _editorItem.MaxHP = x;
         }
 
         private void scrlAnimation_Scroll(object sender, ScrollEventArgs e)
         {
             if (scrlAnimation.Value >= 0)
             {
-                lblAnimation.Text = "Animation: " + (scrlAnimation.Value + 1) + " " + Globals.GameAnimations[scrlAnimation.Value].Name;
+                _editorItem.Animation = Database.GameObjectIdFromList(GameObject.Animation,scrlAnimation.Value);
+                lblAnimation.Text = "Animation: " + AnimationBase.GetName(_editorItem.Animation);
             }
             else
             {
-                lblAnimation.Text = "Animation: 0 None";
+                _editorItem.Animation = -1;
+                lblAnimation.Text = "Animation: None";
             }
-            Globals.GameResources[_editorIndex].Animation = scrlAnimation.Value;
         }
 
         private void frmResource_FormClosed(object sender, FormClosedEventArgs e)

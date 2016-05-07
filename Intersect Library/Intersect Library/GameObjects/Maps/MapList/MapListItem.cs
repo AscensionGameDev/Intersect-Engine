@@ -1,6 +1,6 @@
 ﻿namespace Intersect_Library.GameObjects.Maps.MapList
 {
-    public class FolderItem
+    public class MapListItem
     {
         public string Name = "";
         public int type = -1; //0 for directory, 1 for map

@@ -39,6 +39,7 @@ using Intersect_Client.Classes.Core;
 using Intersect_Client.Classes.General;
 using Intersect_Client.Classes.Networking;
 using Intersect_Library;
+using Intersect_Library.GameObjects;
 using Color = IntersectClientExtras.GenericClasses.Color;
 using Point = IntersectClientExtras.GenericClasses.Point;
 
@@ -221,10 +222,11 @@ namespace Intersect_Client.Classes.UI.Game
         {
             if (texLoaded == false || currentSpell != Globals.Me.Spells[myindex].SpellNum || iconCD != (Globals.Me.Spells[myindex].SpellCD > Globals.System.GetTimeMS()))
             {
-                if (Globals.Me.Spells[myindex].SpellNum > -1)
+                var spell = SpellBase.GetSpell(Globals.Me.Spells[myindex].SpellNum);
+                if (spell != null)
                 {
                     GameTexture spellTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Spell,
-                        Globals.GameSpells[Globals.Me.Spells[myindex].SpellNum].Pic);
+                        spell.Pic);
                     if (spellTex != null)
                     {
                         pnl.Texture = spellTex;

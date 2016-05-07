@@ -9,8 +9,8 @@ namespace Intersect_Editor.Forms.Controls
     public partial class LightEditorCtrl : UserControl
     {
         public bool CanClose = true;
-        private Light _editingLight;
-        private Light _backupLight;
+        private LightBase _editingLight;
+        private LightBase _backupLight;
 
         public LightEditorCtrl()
         {
@@ -21,10 +21,10 @@ namespace Intersect_Editor.Forms.Controls
             }
         }
 
-        public void LoadEditor(Light tmpLight)
+        public void LoadEditor(LightBase tmpLight)
         {
             _editingLight = tmpLight;
-            _backupLight = new Light(tmpLight);
+            _backupLight = new LightBase(tmpLight);
             txtLightIntensity.Text = "" + tmpLight.Intensity;
             txtLightRange.Text = "" + tmpLight.Size;
             txtLightOffsetX.Text = "" + tmpLight.OffsetX;

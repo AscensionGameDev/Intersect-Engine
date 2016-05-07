@@ -10,9 +10,9 @@ namespace Intersect_Editor.Classes.Maps
 {
     class MapProperties
     {
-        private MapStruct _myMap;
+        private MapBase _myMap;
 
-        public MapProperties(MapStruct map)
+        public MapProperties(MapBase map)
         {
             _myMap = map;
         }

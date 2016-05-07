@@ -41,6 +41,7 @@ using Intersect_Library;
 using Color = IntersectClientExtras.GenericClasses.Color;
 
 using Point = IntersectClientExtras.GenericClasses.Point;
+using Intersect_Library.GameObjects;
 
 namespace Intersect_Client.Classes.UI.Game
 {
@@ -100,27 +101,31 @@ namespace Intersect_Client.Classes.UI.Game
             {
                 if (Globals.Bank[i] != null &&  Globals.Bank[i].ItemNum > -1)
                 {
-                    Items[i].pnl.IsHidden = false;
+                    var item = ItemBase.GetItem(Globals.Bank[i].ItemNum);
+                    if (item != null)
+                    {
+                        Items[i].pnl.IsHidden = false;
 
-                    if (Globals.GameItems[Globals.Bank[i].ItemNum].Type == (int)ItemTypes.Consumable || //Allow Stacking on Currency, Consumable, Spell, and item types of none.
-                        Globals.GameItems[Globals.Bank[i].ItemNum].Type == (int)ItemTypes.Currency ||
-                        Globals.GameItems[Globals.Bank[i].ItemNum].Type == (int)ItemTypes.None ||
-                        Globals.GameItems[Globals.Bank[i].ItemNum].Type == (int)ItemTypes.Spell)
-                    {
-                        _values[i].IsHidden = false;
-                        _values[i].Text = Globals.Bank[i].ItemVal.ToString();
-                    }
-                    else
-                    {
-                        _values[i].IsHidden = true;
-                    }
+                        if (item.ItemType == (int)ItemTypes.Consumable || //Allow Stacking on Currency, Consumable, Spell, and item types of none.
+                            item.ItemType == (int)ItemTypes.Currency ||
+                            item.ItemType == (int)ItemTypes.None ||
+                            item.ItemType == (int)ItemTypes.Spell)
+                        {
+                            _values[i].IsHidden = false;
+                            _values[i].Text = Globals.Bank[i].ItemVal.ToString();
+                        }
+                        else
+                        {
+                            _values[i].IsHidden = true;
+                        }
 
-                    if (Items[i].IsDragging)
-                    {
-                        Items[i].pnl.IsHidden = true;
-                        _values[i].IsHidden = true;
+                        if (Items[i].IsDragging)
+                        {
+                            Items[i].pnl.IsHidden = true;
+                            _values[i].IsHidden = true;
+                        }
+                        Items[i].Update();
                     }
-                    Items[i].Update();
                 }
                 else
                 {
@@ -265,10 +270,10 @@ namespace Intersect_Client.Classes.UI.Game
             {
                 _currentItem = Globals.Bank[_mySlot].ItemNum;
                 _isEquipped = equipped;
-                if (Globals.Bank[_mySlot].ItemNum > -1)
+                var item = ItemBase.GetItem(Globals.Bank[_mySlot].ItemNum);
+                if (item != null)
                 {
-                    GameTexture itemTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Item,
-                        Globals.GameItems[Globals.Bank[_mySlot].ItemNum].Pic);
+                    GameTexture itemTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Item, item.Pic);
                     if (itemTex != null)
                     {
                         pnl.Texture =  itemTex;

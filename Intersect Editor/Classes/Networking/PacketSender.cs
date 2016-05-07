@@ -20,7 +20,9 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
+using Intersect_Editor.Classes.Maps;
 using Intersect_Library;
+using Intersect_Library.GameObjects;
 using Intersect_Library.GameObjects.Maps.MapList;
 
 namespace Intersect_Editor.Classes
@@ -33,7 +35,7 @@ namespace Intersect_Editor.Classes
             var bf = new ByteBuffer();
             bf.WriteLong((int)ClientPackets.Ping);
             Network.SendPacket(bf.ToArray());
-
+            bf.Dispose();
         }
 
         public static void SendLogin(string username, string password)
@@ -43,6 +45,7 @@ namespace Intersect_Editor.Classes
             bf.WriteString(username);
             bf.WriteString(password);
             Network.SendPacket(bf.ToArray());
+            bf.Dispose();
         }
 
         public static void SendNeedMap(int mapNum)
@@ -51,32 +54,22 @@ namespace Intersect_Editor.Classes
             bf.WriteLong((int)ClientPackets.NeedMap);
             bf.WriteLong(mapNum);
             Network.SendPacket(bf.ToArray());
-        }
-
-        public static void SendTilesets()
-        {
-            var bf = new ByteBuffer();
-            bf.WriteLong((int)ClientPackets.SaveTilesetArray);
-            bf.WriteLong(Globals.Tilesets.Length);
-            foreach (var t in Globals.Tilesets)
-            {
-                bf.WriteString(t);
-            }
-            Network.SendPacket(bf.ToArray());
+            bf.Dispose();
         }
 
         public static void SendMap(int mapnum)
         {
             var bf = new ByteBuffer();
-            var mapData = Globals.GameMaps[mapnum].GetMapData(false);
+            var mapData = MapInstance.GetMap(mapnum).GetMapData(false);
             bf.WriteLong((int)ClientPackets.SaveMap);
             bf.WriteLong(mapnum);
             bf.WriteLong(mapData.Length);
             bf.WriteBytes(mapData);
             Network.SendPacket(bf.ToArray());
+            bf.Dispose();
         }
 
-        public static void SendCreateMap(int location, int currentMap, FolderItem parent)
+        public static void SendCreateMap(int location, int currentMap, MapListItem parent)
         {
             var bf = new ByteBuffer();
             bf.WriteLong((int)ClientPackets.CreateMap);
@@ -94,147 +87,20 @@ namespace Intersect_Editor.Classes
                 }
                 else
                 {
-                    if (parent.GetType() == typeof(FolderMap))
+                    if (parent.GetType() == typeof(MapListMap))
                     {
                         bf.WriteInteger(1);
-                        bf.WriteInteger(((FolderMap)parent).MapNum);
+                        bf.WriteInteger(((MapListMap)parent).MapNum);
                     }
                     else
                     {
                         bf.WriteInteger(0);
-                        bf.WriteInteger(((FolderDirectory)parent).FolderId);
+                        bf.WriteInteger(((MapListFolder)parent).FolderId);
                     }
                 }
             }
             Network.SendPacket(bf.ToArray());
-        }
-
-        public static void SendItemEditor()
-        {
-            var bf = new ByteBuffer();
-            bf.WriteLong((int)ClientPackets.OpenItemEditor);
-            Network.SendPacket(bf.ToArray());
-        }
-
-        public static void SendItem(int itemNum, byte[] itemData)
-        {
-            var bf = new ByteBuffer();
-            bf.WriteLong((int)ClientPackets.SaveItem);
-            bf.WriteInteger(itemNum);
-            bf.WriteBytes(itemData);
-            Network.SendPacket(bf.ToArray());
-        }
-
-        public static void SendNpcEditor()
-        {
-            var bf = new ByteBuffer();
-            bf.WriteLong((int)ClientPackets.OpenNpcEditor);
-            Network.SendPacket(bf.ToArray());
-        }
-
-        public static void SendNpc(int npcNum, byte[] npcData)
-        {
-            var bf = new ByteBuffer();
-            bf.WriteLong((int)ClientPackets.SaveNpc);
-            bf.WriteInteger(npcNum);
-            bf.WriteBytes(npcData);
-            Network.SendPacket(bf.ToArray());
-        }
-
-        public static void SendSpellEditor()
-        {
-            var bf = new ByteBuffer();
-            bf.WriteLong((int)ClientPackets.OpenSpellEditor);
-            Network.SendPacket(bf.ToArray());
-        }
-
-        public static void SendSpell(int index, byte[] data)
-        {
-            var bf = new ByteBuffer();
-            bf.WriteLong((int)ClientPackets.SaveSpell);
-            bf.WriteInteger(index);
-            bf.WriteBytes(data);
-            Network.SendPacket(bf.ToArray());
-        }
-
-        public static void SendAnimationEditor()
-        {
-            var bf = new ByteBuffer();
-            bf.WriteLong((int)ClientPackets.OpenAnimationEditor);
-            Network.SendPacket(bf.ToArray());
-        }
-
-        public static void SendAnimation(int index, byte[] data)
-        {
-            var bf = new ByteBuffer();
-            bf.WriteLong((int)ClientPackets.SaveAnimation);
-            bf.WriteInteger(index);
-            bf.WriteBytes(data);
-            Network.SendPacket(bf.ToArray());
-        }
-
-        public static void SendResourceEditor()
-        {
-            var bf = new ByteBuffer();
-            bf.WriteLong((int)ClientPackets.OpenResourceEditor);
-            Network.SendPacket(bf.ToArray());
-        }
-
-        public static void SendResource(int ResourceNum, byte[] ResourceData)
-        {
-            var bf = new ByteBuffer();
-            bf.WriteLong((int)ClientPackets.SaveResource);
-            bf.WriteInteger(ResourceNum);
-            bf.WriteBytes(ResourceData);
-            Network.SendPacket(bf.ToArray());
-        }
-
-        public static void SendClassEditor()
-        {
-            var bf = new ByteBuffer();
-            bf.WriteLong((int)ClientPackets.OpenClassEditor);
-            Network.SendPacket(bf.ToArray());
-        }
-
-        public static void SendClass(int ClassNum, byte[] ClassData)
-        {
-            var bf = new ByteBuffer();
-            bf.WriteLong((int)ClientPackets.SaveClass);
-            bf.WriteInteger(ClassNum);
-            bf.WriteBytes(ClassData);
-            Network.SendPacket(bf.ToArray());
-        }
-
-        public static void SendQuestEditor()
-        {
-            var bf = new ByteBuffer();
-            bf.WriteLong((int)ClientPackets.OpenQuestEditor);
-            Network.SendPacket(bf.ToArray());
-        }
-
-        public static void SendQuest(int QuestNum, byte[] QuestData)
-        {
-            var bf = new ByteBuffer();
-            bf.WriteLong((int)ClientPackets.SaveQuest);
-            bf.WriteInteger(QuestNum);
-            bf.WriteBytes(QuestData);
-            Network.SendPacket(bf.ToArray());
-        }
-
-        public static void SendProjectileEditor()
-        {
-            var bf = new ByteBuffer();
-            bf.WriteLong((int)ClientPackets.OpenProjectileEditor);
-            Network.SendPacket(bf.ToArray());
-        }
-
-        public static void SendProjectile(int ProjectileNum, byte[] ProjectileData)
-        {
-            var bf = new ByteBuffer();
-            bf.WriteLong((int)ClientPackets.SaveProjectile);
-            bf.WriteInteger(ProjectileNum);
-            bf.WriteBytes(ProjectileData);
-            Network.SendPacket(bf.ToArray());
+            bf.Dispose();
         }
 
         public static void SendMapListMove(int srcType, int srcId, int destType, int destId)
@@ -247,9 +113,10 @@ namespace Intersect_Editor.Classes
             bf.WriteInteger(destType);
             bf.WriteInteger(destId);
             Network.SendPacket(bf.ToArray());
+            bf.Dispose();
         }
 
-        public static void SendAddFolder(FolderItem parent)
+        public static void SendAddFolder(MapListItem parent)
         {
             ByteBuffer bf = new ByteBuffer();
             bf.WriteLong((int)ClientPackets.MapListUpdate);
@@ -261,55 +128,58 @@ namespace Intersect_Editor.Classes
             }
             else
             {
-                if (parent.GetType() == typeof(FolderMap))
+                if (parent.GetType() == typeof(MapListMap))
                 {
                     bf.WriteInteger(1);
-                    bf.WriteInteger(((FolderMap)parent).MapNum);
+                    bf.WriteInteger(((MapListMap)parent).MapNum);
                 }
                 else
                 {
                     bf.WriteInteger(0);
-                    bf.WriteInteger(((FolderDirectory)parent).FolderId);
+                    bf.WriteInteger(((MapListFolder)parent).FolderId);
                 }
             }
             Network.SendPacket(bf.ToArray());
+            bf.Dispose();
         }
 
-        public static void SendRename(FolderItem parent, string name)
+        public static void SendRename(MapListItem parent, string name)
         {
             ByteBuffer bf = new ByteBuffer();
             bf.WriteLong((int)ClientPackets.MapListUpdate);
             bf.WriteInteger((int)MapListUpdates.Rename);
-            if (parent.GetType() == typeof(FolderMap))
+            if (parent.GetType() == typeof(MapListMap))
             {
                 bf.WriteInteger(1);
-                bf.WriteInteger(((FolderMap)parent).MapNum);
+                bf.WriteInteger(((MapListMap)parent).MapNum);
             }
             else
             {
                 bf.WriteInteger(0);
-                bf.WriteInteger(((FolderDirectory)parent).FolderId);
+                bf.WriteInteger(((MapListFolder)parent).FolderId);
             }
             bf.WriteString(name);
             Network.SendPacket(bf.ToArray());
+            bf.Dispose();
         }
 
-        public static void SendDelete(FolderItem target)
+        public static void SendDelete(MapListItem target)
         {
             ByteBuffer bf = new ByteBuffer();
             bf.WriteLong((int)ClientPackets.MapListUpdate);
             bf.WriteInteger((int)MapListUpdates.Delete);
-            if (target.GetType() == typeof(FolderMap))
+            if (target.GetType() == typeof(MapListMap))
             {
                 bf.WriteInteger(1);
-                bf.WriteInteger(((FolderMap)target).MapNum);
+                bf.WriteInteger(((MapListMap)target).MapNum);
             }
             else
             {
                 bf.WriteInteger(0);
-                bf.WriteInteger(((FolderDirectory)target).FolderId);
+                bf.WriteInteger(((MapListFolder)target).FolderId);
             }
             Network.SendPacket(bf.ToArray());
+            bf.Dispose();
         }
 
         public static void SendNeedGrid(int mapNum)
@@ -318,6 +188,7 @@ namespace Intersect_Editor.Classes
             bf.WriteLong((int)ClientPackets.NeedGrid);
             bf.WriteLong(mapNum);
             Network.SendPacket(bf.ToArray());
+            bf.Dispose();
         }
 
         public static void SendUnlinkMap(int mapNum)
@@ -325,8 +196,9 @@ namespace Intersect_Editor.Classes
             var bf = new ByteBuffer();
             bf.WriteLong((int)ClientPackets.UnlinkMap);
             bf.WriteLong(mapNum);
-            bf.WriteLong(Globals.CurrentMap);
+            bf.WriteLong(Globals.CurrentMap.GetId());
             Network.SendPacket(bf.ToArray());
+            bf.Dispose();
         }
 
         public static void SendLinkMap(int adjacentMap, int linkMap, int gridX, int gridY)
@@ -338,45 +210,47 @@ namespace Intersect_Editor.Classes
             bf.WriteLong(gridX);
             bf.WriteLong(gridY);
             Network.SendPacket(bf.ToArray());
+            bf.Dispose();
         }
 
-        public static void SendOpenCommonEventEditor()
+        public static void SendCreateObject(GameObject type, string value = "")
         {
             var bf = new ByteBuffer();
-            bf.WriteLong((int)ClientPackets.OpenCommonEventEditor);
+            bf.WriteLong((int) ClientPackets.NewGameObject);
+            bf.WriteInteger((int) type);
+            bf.WriteString(value);
             Network.SendPacket(bf.ToArray());
+            bf.Dispose();
         }
 
-        public static void SendCommonEvent(int index, byte[] data)
+        public static void SendOpenEditor(GameObject type)
         {
             var bf = new ByteBuffer();
-            bf.WriteLong((int)ClientPackets.SaveCommonEvent);
-            bf.WriteInteger(index);
-            bf.WriteBytes(data);
+            bf.WriteLong((int)ClientPackets.OpenObjectEditor);
+            bf.WriteInteger((int)type);
             Network.SendPacket(bf.ToArray());
+            bf.Dispose();
         }
 
-        public static void SendOpenVariableSwitchEditor()
+        public static void SendDeleteObject(DatabaseObject obj)
         {
             var bf = new ByteBuffer();
-            bf.WriteLong((int)ClientPackets.OpenSwitchVariableEditor);
+            bf.WriteLong((int)ClientPackets.DeleteGameObject);
+            bf.WriteInteger((int)obj.GetGameObjectType());
+            bf.WriteInteger(obj.GetId());
             Network.SendPacket(bf.ToArray());
+            bf.Dispose();
         }
 
-        public static void SendOpenShopEditor()
+        public static void SendSaveObject(DatabaseObject obj)
         {
             var bf = new ByteBuffer();
-            bf.WriteLong((int)ClientPackets.OpenShopEditor);
+            bf.WriteLong((int)ClientPackets.SaveGameObject);
+            bf.WriteInteger((int)obj.GetGameObjectType());
+            bf.WriteInteger(obj.GetId());
+            bf.WriteBytes(obj.GetData());
             Network.SendPacket(bf.ToArray());
-        }
-
-        public static void SendShop(int index, byte[] data)
-        {
-            var bf = new ByteBuffer();
-            bf.WriteLong((int)ClientPackets.SaveShop);
-            bf.WriteInteger(index);
-            bf.WriteBytes(data);
-            Network.SendPacket(bf.ToArray());
+            bf.Dispose();
         }
     }
 }

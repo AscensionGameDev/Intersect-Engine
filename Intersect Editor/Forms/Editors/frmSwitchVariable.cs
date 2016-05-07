@@ -20,161 +20,201 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Windows.Forms;
 using Intersect_Editor.Classes;
 using Intersect_Library;
+using Intersect_Library.GameObjects;
 
 
 namespace Intersect_Editor.Forms.Editors
 {
     public partial class frmSwitchVariable : Form
     {
-        private string[] _playerSwitchBackup = new string[Options.MaxPlayerSwitches];
-        private string[] _playerVariableBackup = new string[Options.MaxPlayerVariables];
-        private string[] _serverSwitchBackup = new string[Options.MaxServerSwitches];
-        private string[] _serverVariableBackup = new string[Options.MaxServerVariables];
-        private int[] _serverVariableValBackup = new int[Options.MaxServerVariables];
-        private bool[] _serverSwitchValBackup = new bool[Options.MaxServerSwitches];
+        private List<DatabaseObject> _changed = new List<DatabaseObject>();
+        private DatabaseObject _editorItem = null;
         public frmSwitchVariable()
         {
             InitializeComponent();
-            for (int i = 0; i < Options.MaxPlayerSwitches; i++)
+            PacketHandler.GameObjectUpdatedDelegate += GameObjectUpdatedDelegate;
+        }
+
+        private void GameObjectUpdatedDelegate(GameObject type)
+        {
+            if (type == GameObject.PlayerSwitch)
             {
-                _playerSwitchBackup[i] = Globals.PlayerSwitches[i];
+                InitEditor();
+                if (_editorItem != null && !PlayerSwitchBase.GetObjects().Values.Contains(_editorItem))
+                {
+                    _editorItem = null;
+                    UpdateEditor();
+                }
             }
-            for (int i = 0; i < Options.MaxPlayerVariables; i++)
+            else if (type == GameObject.PlayerVariable)
             {
-                _playerVariableBackup[i] = Globals.PlayerVariables[i];
+                InitEditor();
+                if (_editorItem != null && !PlayerVariableBase.GetObjects().Values.Contains(_editorItem))
+                {
+                    _editorItem = null;
+                    UpdateEditor();
+                }
             }
-            for (int i = 0; i < Options.MaxServerSwitches; i++)
+            else if (type == GameObject.ServerSwitch)
             {
-                _serverSwitchBackup[i] = Globals.ServerSwitches[i];
-                _serverSwitchValBackup[i] = Globals.ServerSwitchValues[i];
+                InitEditor();
+                if (_editorItem != null && !ServerSwitchBase.GetObjects().Values.Contains(_editorItem))
+                {
+                    _editorItem = null;
+                    UpdateEditor();
+                }
             }
-            for (int i = 0; i < Options.MaxServerVariables; i++)
+            else if (type == GameObject.ServerVariable)
             {
-                _serverVariableBackup[i] = Globals.ServerVariables[i];
-                _serverVariableValBackup[i] = Globals.ServerVariableValues[i];
+                InitEditor();
+                if (_editorItem != null && !ServerVariableBase.GetObjects().Values.Contains(_editorItem))
+                {
+                    _editorItem = null;
+                    UpdateEditor();
+                }
             }
+        }
+
+        private void btnNew_Click(object sender, EventArgs e)
+        {
+            if (rdoPlayerSwitch.Checked)
+            {
+                PacketSender.SendCreateObject(GameObject.PlayerSwitch);
+            }
+            else if (rdoPlayerVariables.Checked)
+            {
+                PacketSender.SendCreateObject(GameObject.PlayerVariable);
+            }
+            else if (rdoGlobalSwitches.Checked)
+            {
+                PacketSender.SendCreateObject(GameObject.ServerSwitch);
+            }
+            else if (rdoGlobalVariables.Checked)
+            {
+                PacketSender.SendCreateObject(GameObject.ServerVariable);
+            }
+        }
+
+        private void btnUndo_Click(object sender, EventArgs e)
+        {
+            if (_changed.Contains(_editorItem) && _editorItem != null)
+            {
+                _editorItem.RestoreBackup();
+                UpdateEditor();
+            }
+        }
+
+        private void btnDelete_Click(object sender, EventArgs e)
+        {
+            if (_editorItem != null)
+            {
+                if (
+                    MessageBox.Show(
+                        "Are you sure you want to delete this game object? This action cannot be reverted!",
+                        "Delete Object", MessageBoxButtons.YesNo) == DialogResult.Yes)
+                {
+                    PacketSender.SendDeleteObject(_editorItem);
+                }
+            }
+        }
+
+        private void btnCancel_Click(object sender, EventArgs e)
+        {
+            foreach (var item in _changed)
+            {
+                item.RestoreBackup();
+                item.DeleteBackup();
+            }
+
+            Hide();
+            Globals.CurrentEditor = -1;
+            Dispose();
+        }
+
+        private void btnSave_Click(object sender, EventArgs e)
+        {
+            //Send Changed items
+            foreach (var item in _changed)
+            {
+                PacketSender.SendSaveObject(item);
+                item.DeleteBackup();
+            }
+
+            Hide();
+            Globals.CurrentEditor = -1;
+            Dispose();
+        }
+
+        private void lstObjects_Click(object sender, EventArgs e)
+        {
+            if (lstObjects.SelectedIndex > -1)
+            {
+                DatabaseObject obj = null;
+                if (rdoPlayerSwitch.Checked)
+                {
+                    obj = PlayerSwitchBase.GetSwitch(Database.GameObjectIdFromList(GameObject.PlayerSwitch, lstObjects.SelectedIndex));
+                }
+                else if (rdoPlayerVariables.Checked)
+                {
+                    obj = PlayerVariableBase.GetVariable(Database.GameObjectIdFromList(GameObject.PlayerVariable, lstObjects.SelectedIndex));
+                }
+                else if (rdoGlobalSwitches.Checked)
+                {
+                    obj = ServerSwitchBase.GetSwitch(Database.GameObjectIdFromList(GameObject.ServerSwitch, lstObjects.SelectedIndex));
+                }
+                else if (rdoGlobalVariables.Checked)
+                {
+                    obj = ServerVariableBase.GetVariable(Database.GameObjectIdFromList(GameObject.ServerVariable, lstObjects.SelectedIndex));
+                }
+                if (obj != null)
+                {
+                    _editorItem = obj;
+                    if (!_changed.Contains(obj))
+                    {
+                        _changed.Add(obj);
+                        obj.MakeBackup();
+                    }
+                }
+            }
+            UpdateEditor();
         }
 
         public void InitEditor()
         {
             lstObjects.Items.Clear();
             grpEditor.Hide();
+            cmbSwitchValue.Hide();
+            txtVariableVal.Hide();
             if (rdoPlayerSwitch.Checked)
             {
-                for (int i = 0; i < Options.MaxPlayerSwitches; i++)
-                {
-                    lstObjects.Items.Add((i + 1) + ". " + Globals.PlayerSwitches[i]);
-                }
+                lstObjects.Items.AddRange(Database.GetGameObjectList(GameObject.PlayerSwitch));
             }
             else if (rdoPlayerVariables.Checked)
             {
-                for (int i = 0; i < Options.MaxPlayerVariables; i++)
-                {
-                    lstObjects.Items.Add((i + 1) + ". " + Globals.PlayerVariables[i]);
-                }
+                lstObjects.Items.AddRange(Database.GetGameObjectList(GameObject.PlayerVariable));
             }
             else if (rdoGlobalSwitches.Checked)
             {
-                for (int i = 0; i < Options.MaxServerSwitches; i++)
+                for (int i = 0; i < ServerSwitchBase.ObjectCount(); i++)
                 {
-                    lstObjects.Items.Add((i + 1) + ". " + Globals.ServerSwitches[i] + "  =  " + Globals.ServerSwitchValues[i].ToString());
+                    var swtch = ServerSwitchBase.GetSwitch(Database.GameObjectIdFromList(GameObject.ServerSwitch, i));
+                    lstObjects.Items.Add(swtch.Name + "  =  " + swtch.Value.ToString());
                 }
             }
             else if (rdoGlobalVariables.Checked)
             {
-                for (int i = 0; i < Options.MaxServerVariables; i++)
+                for (int i = 0; i < ServerVariableBase.ObjectCount(); i++)
                 {
-                    lstObjects.Items.Add((i + 1) + ". " + Globals.ServerVariables[i] + "  =  " + Globals.ServerVariableValues[i].ToString());
+                    var var = ServerVariableBase.GetVariable(Database.GameObjectIdFromList(GameObject.ServerVariable, i));
+                    lstObjects.Items.Add(var.Name + "  =  " + var.Value.ToString());
                 }
             }
-        }
-
-        private void btnSave_Click(object sender, EventArgs e)
-        {
-            //Figure out what has changed and create massive packet of changes for server.
-            ByteBuffer packetBuffer = new ByteBuffer();
-            ByteBuffer dataBuffer = new ByteBuffer();
-            int changeCount = 0;
-            for (int i = 0; i < Options.MaxPlayerSwitches; i++)
-            {
-                if (Globals.PlayerSwitches[i] != _playerSwitchBackup[i])
-                {
-                    dataBuffer.WriteInteger((int) SwitchVariableTypes.PlayerSwitch);
-                    dataBuffer.WriteInteger(i);
-                    dataBuffer.WriteString(Globals.PlayerSwitches[i]);
-                    changeCount++;
-                }
-            }
-            for (int i = 0; i < Options.MaxPlayerVariables; i++)
-            {
-                if (Globals.PlayerVariables[i] != _playerVariableBackup[i])
-                {
-                    dataBuffer.WriteInteger((int)SwitchVariableTypes.PlayerVariable);
-                    dataBuffer.WriteInteger(i);
-                    dataBuffer.WriteString(Globals.PlayerVariables[i]);
-                    changeCount++;
-                }
-            }
-            for (int i = 0; i < Options.MaxServerSwitches; i++)
-            {
-                if (Globals.ServerSwitches[i] != _serverSwitchBackup[i] ||
-                    Globals.ServerSwitchValues[i] != _serverSwitchValBackup[i])
-                {
-                    dataBuffer.WriteInteger((int)SwitchVariableTypes.ServerSwitch);
-                    dataBuffer.WriteInteger(i);
-                    dataBuffer.WriteString(Globals.ServerSwitches[i]);
-                    dataBuffer.WriteInteger(Convert.ToInt32(Globals.ServerSwitchValues[i]));
-                    changeCount++;
-                }
-            }
-            for (int i = 0; i < Options.MaxServerVariables; i++)
-            {
-                if (Globals.ServerVariables[i] != _serverVariableBackup[i] ||
-                    Globals.ServerVariableValues[i] != _serverVariableValBackup[i])
-                {
-                    dataBuffer.WriteInteger((int)SwitchVariableTypes.ServerVariable);
-                    dataBuffer.WriteInteger(i);
-                    dataBuffer.WriteString(Globals.ServerVariables[i]);
-                    dataBuffer.WriteInteger(Globals.ServerVariableValues[i]);
-                    changeCount++;
-                }
-            }
-            packetBuffer.WriteLong((int)ClientPackets.SaveSwitchVariable);
-            packetBuffer.WriteInteger(changeCount);
-            packetBuffer.WriteBytes(dataBuffer.ToArray());
-            dataBuffer.Dispose();
-            Network.SendPacket(packetBuffer.ToArray());
-            Hide();
-            Globals.CurrentEditor = -1;
-            Dispose();
-        }
-
-        private void btnCancel_Click(object sender, EventArgs e)
-        {
-            for (int i = 0; i < Options.MaxPlayerSwitches; i++)
-            {
-                Globals.PlayerSwitches[i] = _playerSwitchBackup[i];
-            }
-            for (int i = 0; i < Options.MaxPlayerVariables; i++)
-            {
-                Globals.PlayerVariables[i] = _playerVariableBackup[i];
-            }
-            for (int i = 0; i < Options.MaxServerSwitches; i++)
-            {
-                Globals.ServerSwitches[i] = _serverSwitchBackup[i];
-                Globals.ServerSwitchValues[i] = _serverSwitchValBackup[i];
-            }
-            for (int i = 0; i < Options.MaxServerVariables; i++)
-            {
-                Globals.ServerVariables[i] = _serverVariableBackup[i];
-                Globals.ServerVariableValues[i] = _serverVariableValBackup[i];
-            }
-            Hide();
-            Globals.CurrentEditor = -1;
-            Dispose();
+            UpdateEditor();
         }
 
         private void frmSwitchVariable_FormClosing(object sender, FormClosingEventArgs e)
@@ -184,58 +224,62 @@ namespace Intersect_Editor.Forms.Editors
 
         private void rdoPlayerSwitch_CheckedChanged(object sender, EventArgs e)
         {
+            _editorItem = null;
             InitEditor();
         }
 
         private void rdoPlayerVariables_CheckedChanged(object sender, EventArgs e)
         {
+            _editorItem = null;
             InitEditor();
         }
 
         private void rdoGlobalSwitches_CheckedChanged(object sender, EventArgs e)
         {
+            _editorItem = null;
             InitEditor();
         }
 
         private void rdoGlobalVariables_CheckedChanged(object sender, EventArgs e)
         {
+            _editorItem = null;
             InitEditor();
         }
 
-        private void lstObjects_SelectedIndexChanged(object sender, EventArgs e)
+        private void UpdateEditor()
         {
-            grpEditor.Hide();
-            if (lstObjects.SelectedIndex > -1)
+            if (_editorItem != null)
             {
                 grpEditor.Show();
                 lblValue.Hide();
-                cmbSwitchValue.Hide();
-                txtVariableVal.Hide();
                 if (rdoPlayerSwitch.Checked)
                 {
-                    lblObject.Text = "Player Switch #" + (lstObjects.SelectedIndex + 1);
-                    txtObjectName.Text = Globals.PlayerSwitches[lstObjects.SelectedIndex];
+                    lblObject.Text = "Player Switch";
+                    txtObjectName.Text = ((PlayerSwitchBase)_editorItem).Name;
                 }
                 else if (rdoPlayerVariables.Checked)
                 {
-                    lblObject.Text = "Player Variable #" + (lstObjects.SelectedIndex + 1);
-                    txtObjectName.Text = Globals.PlayerVariables[lstObjects.SelectedIndex];
+                    lblObject.Text = "Player Variable";
+                    txtObjectName.Text = ((PlayerVariableBase)_editorItem).Name;
                 }
                 else if (rdoGlobalSwitches.Checked)
                 {
-                    lblObject.Text = "Server Switch #" + (lstObjects.SelectedIndex + 1);
-                    txtObjectName.Text = Globals.ServerSwitches[lstObjects.SelectedIndex];
+                    lblObject.Text = "Server Switch";
+                    txtObjectName.Text = ((ServerSwitchBase)_editorItem).Name;
                     cmbSwitchValue.Show();
-                    cmbSwitchValue.SelectedIndex =
-                        cmbSwitchValue.Items.IndexOf(Globals.ServerSwitchValues[lstObjects.SelectedIndex].ToString());
+                    cmbSwitchValue.SelectedIndex = cmbSwitchValue.Items.IndexOf(((ServerSwitchBase)_editorItem).Value.ToString());
                 }
                 else if (rdoGlobalVariables.Checked)
                 {
-                    lblObject.Text = "Server Variable #" + (lstObjects.SelectedIndex + 1);
-                    txtObjectName.Text = Globals.ServerVariables[lstObjects.SelectedIndex];
+                    lblObject.Text = "Server Variable";
+                    txtObjectName.Text = ((ServerVariableBase) _editorItem).Name;
                     txtVariableVal.Show();
-                    txtVariableVal.Text = Globals.ServerVariableValues[lstObjects.SelectedIndex].ToString();
+                    txtVariableVal.Text = ((ServerVariableBase)_editorItem).Value.ToString();
                 }
+            }
+            else
+            {
+                grpEditor.Hide();
             }
         }
 
@@ -245,7 +289,8 @@ namespace Intersect_Editor.Forms.Editors
             {
                 if (rdoGlobalSwitches.Checked)
                 {
-                    Globals.ServerSwitchValues[lstObjects.SelectedIndex] = Convert.ToBoolean(cmbSwitchValue.SelectedIndex);
+                    var obj = ServerSwitchBase.GetSwitch(Database.GameObjectIdFromList(GameObject.ServerSwitch, lstObjects.SelectedIndex));
+                    obj.Value = Convert.ToBoolean(cmbSwitchValue.SelectedIndex);
                     UpdateSelection();
                 }
             }
@@ -257,23 +302,25 @@ namespace Intersect_Editor.Forms.Editors
             {
                 grpEditor.Show();
                 lblValue.Hide();
-                cmbSwitchValue.Hide();
-                txtVariableVal.Hide();
                 if (rdoPlayerSwitch.Checked)
                 {
-                    lstObjects.Items[lstObjects.SelectedIndex] = (lstObjects.SelectedIndex + 1) + ". " + Globals.PlayerSwitches[lstObjects.SelectedIndex];
+                    var obj = PlayerSwitchBase.GetSwitch(Database.GameObjectIdFromList(GameObject.PlayerSwitch, lstObjects.SelectedIndex));
+                    lstObjects.Items[lstObjects.SelectedIndex] = obj.Name;
                 }
                 else if (rdoPlayerVariables.Checked)
                 {
-                    lstObjects.Items[lstObjects.SelectedIndex] = (lstObjects.SelectedIndex + 1) + ". " + Globals.PlayerVariables[lstObjects.SelectedIndex];
+                    var obj = PlayerVariableBase.GetVariable(Database.GameObjectIdFromList(GameObject.PlayerVariable, lstObjects.SelectedIndex));
+                    lstObjects.Items[lstObjects.SelectedIndex] = obj.Name;
                 }
                 else if (rdoGlobalSwitches.Checked)
                 {
-                    lstObjects.Items[lstObjects.SelectedIndex] = (lstObjects.SelectedIndex + 1) + ". " + Globals.ServerSwitches[lstObjects.SelectedIndex] + "  =  " + Globals.ServerSwitchValues[lstObjects.SelectedIndex];
+                    var obj = ServerSwitchBase.GetSwitch(Database.GameObjectIdFromList(GameObject.ServerSwitch, lstObjects.SelectedIndex));
+                    lstObjects.Items[lstObjects.SelectedIndex] =  obj.Name + "  =  " + obj.Value.ToString();
                 }
                 else if (rdoGlobalVariables.Checked)
                 {
-                    lstObjects.Items[lstObjects.SelectedIndex] = (lstObjects.SelectedIndex + 1) + ". " + Globals.ServerVariables[lstObjects.SelectedIndex] + "  =  " + Globals.ServerVariableValues[lstObjects.SelectedIndex];
+                    var obj = ServerVariableBase.GetVariable(Database.GameObjectIdFromList(GameObject.ServerVariable, lstObjects.SelectedIndex));
+                    lstObjects.Items[lstObjects.SelectedIndex] = obj.Name + "  =  " + obj.Value.ToString();
                 }
             }
         }
@@ -287,7 +334,8 @@ namespace Intersect_Editor.Forms.Editors
                     int readInt = 0;
                     if (int.TryParse(txtVariableVal.Text, out readInt))
                     {
-                        Globals.ServerVariableValues[lstObjects.SelectedIndex] = readInt;
+                        var obj = ServerVariableBase.GetVariable(Database.GameObjectIdFromList(GameObject.ServerVariable, lstObjects.SelectedIndex));
+                        obj.Value = readInt;
                         UpdateSelection();
                     }
                 }
@@ -300,19 +348,23 @@ namespace Intersect_Editor.Forms.Editors
             {
                 if (rdoPlayerSwitch.Checked)
                 {
-                    Globals.PlayerSwitches[lstObjects.SelectedIndex] = txtObjectName.Text;
+                    var obj = PlayerSwitchBase.GetSwitch(Database.GameObjectIdFromList(GameObject.PlayerSwitch, lstObjects.SelectedIndex));
+                    obj.Name = txtObjectName.Text;
                 }
                 else if (rdoPlayerVariables.Checked)
                 {
-                    Globals.PlayerVariables[lstObjects.SelectedIndex] = txtObjectName.Text;
+                    var obj = PlayerVariableBase.GetVariable(Database.GameObjectIdFromList(GameObject.PlayerVariable, lstObjects.SelectedIndex));
+                    obj.Name = txtObjectName.Text;
                 }
                 else if (rdoGlobalSwitches.Checked)
                 {
-                    Globals.ServerSwitches[lstObjects.SelectedIndex] = txtObjectName.Text;
+                    var obj = ServerSwitchBase.GetSwitch(Database.GameObjectIdFromList(GameObject.ServerSwitch, lstObjects.SelectedIndex));
+                    obj.Name = txtObjectName.Text;
                 }
                 else if (rdoGlobalVariables.Checked)
                 {
-                    Globals.ServerVariables[lstObjects.SelectedIndex] = txtObjectName.Text;
+                    var obj = ServerVariableBase.GetVariable(Database.GameObjectIdFromList(GameObject.ServerVariable, lstObjects.SelectedIndex));
+                    obj.Name = txtObjectName.Text;
                 }
                 UpdateSelection();
             }

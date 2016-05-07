@@ -4,28 +4,31 @@ using Intersect_Library.GameObjects.Events;
 
 namespace Intersect_Library.GameObjects.Maps
 {
-    public class MapStruct
+    public class MapBase : DatabaseObject
     {
-        public const string Version = "0.0.0.1";
+        public new const string DatabaseTable = "maps";
+        public new const GameObject Type = GameObject.Map;
+        protected static Dictionary<int, MapBase> Objects = new Dictionary<int, MapBase>();
+        
         public string MyName { get; set; } = "New Map";
         public int Up { get; set; } = -1;
         public int Down { get; set; } = -1;
         public int Left { get; set; } = -1;
         public int Right { get; set; } = -1;
         public int MyMapNum { get; set; }
-        public int Deleted { get; set; }
         public int Revision { get; set; }
 
         //Core Data
         public TileArray[] Layers = new TileArray[Options.LayerCount];
         public Attribute[,] Attributes { get; set; }  = new Attribute[Options.MapWidth, Options.MapHeight];
-        public List<Light> Lights { get; set; }  = new List<Light>();
+        public List<LightBase> Lights { get; set; }  = new List<LightBase>();
 
         //Client/Editor Only
         public MapAutotiles Autotiles;
 
         //Server/Editor Only
-        public List<EventStruct> Events { get; set; } = new List<EventStruct>();
+        public int EventIndex = 0;
+        public Dictionary<int,EventBase> Events { get; set; } = new Dictionary<int,EventBase>();
         public List<NpcSpawn> Spawns { get; set; } = new List<NpcSpawn>();
         public List<ResourceSpawn> ResourceSpawns { get; set; } = new List<ResourceSpawn>();
 
@@ -53,7 +56,7 @@ namespace Intersect_Library.GameObjects.Maps
         //Temporary Values
         public bool IsClient = false;
 
-        public MapStruct(int mapNum, bool isClient)
+        public MapBase(int mapNum, bool isClient) : base(mapNum)
         {
             MyMapNum = mapNum;
             IsClient = isClient;
@@ -71,7 +74,7 @@ namespace Intersect_Library.GameObjects.Maps
             }
         }
 
-        public MapStruct(MapStruct mapcopy)
+        public MapBase(MapBase mapcopy) : base(mapcopy.MyMapNum)
         {
             ByteBuffer bf = new ByteBuffer();
             MyName = mapcopy.MyName;
@@ -107,26 +110,20 @@ namespace Intersect_Library.GameObjects.Maps
             }
             for (var i = 0; i < mapcopy.Lights.Count; i++)
             {
-                Lights.Add(new Light(mapcopy.Lights[i]));
+                Lights.Add(new LightBase(mapcopy.Lights[i]));
             }
-            for (var i = 0; i < mapcopy.Events.Count; i++)
+            foreach (var evt in mapcopy.Events)
             {
-                bf.WriteBytes(mapcopy.Events[i].EventData());
-                Events.Add(new EventStruct(Events.Count, bf));
+                bf.WriteBytes(evt.Value.EventData());
+                Events.Add(evt.Key, new EventBase(evt.Key, bf));
+                bf.Clear();
             }
         }
 
-        public virtual bool Load(byte[] packet)
+        public override void Load(byte[] packet)
         {
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
-            Deleted = bf.ReadInteger();
-            if (Deleted == 1) return false;
-
-            string loadedVersion = bf.ReadString();
-            if (loadedVersion != Version)
-                throw new Exception("Failed to load map. Loaded Version: " + loadedVersion + " Expected Version: " + Version);
-
             MyName = bf.ReadString();
             Revision = bf.ReadInteger();
             Up = bf.ReadInteger();
@@ -191,7 +188,7 @@ namespace Intersect_Library.GameObjects.Maps
             Lights.Clear();
             for (var i = 0; i < lCount; i++)
             {
-                Lights.Add(new Light(bf));
+                Lights.Add(new LightBase(bf));
             }
 
             if (!IsClient)
@@ -210,20 +207,23 @@ namespace Intersect_Library.GameObjects.Maps
                 }
 
                 Events.Clear();
-                var eCount = bf.ReadInteger();
-                for (var i = 0; i < eCount; i++)
+                EventIndex = bf.ReadInteger();
+                var ecount = bf.ReadInteger();
+                for (var i = 0; i < ecount; i++)
                 {
-                    Events.Add(new EventStruct(i, bf));
+                    var eventIndex = bf.ReadInteger();
+                    var evtDataLen = bf.ReadLong();
+                    var evtBuffer = new ByteBuffer();
+                    evtBuffer.WriteBytes(bf.ReadBytes((int)evtDataLen));
+                    Events.Add(eventIndex,new EventBase(eventIndex,evtBuffer));
+                    evtBuffer.Dispose();
                 }
             }
-            return true;
         }
 
         public virtual byte[] GetMapData(bool forClient)
         {
             var bf = new ByteBuffer();
-            bf.WriteInteger(Deleted); //Never deleted
-            bf.WriteString(Version);
             bf.WriteString(MyName);
             bf.WriteInteger(Revision);
             bf.WriteInteger(Up);
@@ -304,28 +304,79 @@ namespace Intersect_Library.GameObjects.Maps
                     bf.WriteInteger(Spawns[i].Dir);
                 }
 
+                bf.WriteInteger(EventIndex);
                 bf.WriteInteger(Events.Count);
                 foreach (var t in Events)
                 {
-                    bf.WriteBytes(t.EventData());
+                    bf.WriteInteger(t.Key);
+                    var evtData = t.Value.EventData();
+                    bf.WriteLong(evtData.Length);
+                    bf.WriteBytes(evtData);
                 }
             }
             return bf.ToArray();
         }
 
-        public bool ShouldSerializeSpawns()
+        public static MapBase GetMap(int index)
         {
-            return !IsClient;
+            if (Objects.ContainsKey(index))
+            {
+                return (MapBase)Objects[index];
+            }
+            return null;
         }
 
-        public bool ShouldSerializeResourceSpawns()
+        public static string GetName(int index)
         {
-            return !IsClient;
+            if (Objects.ContainsKey(index))
+            {
+                return ((MapBase)Objects[index]).MyName;
+            }
+            return "Deleted";
         }
 
-        public bool ShouldSerializeEvents()
+        public override byte[] GetData()
         {
-            return !IsClient;
+            return GetMapData(false);
+        }
+
+        public override string GetTable()
+        {
+            return DatabaseTable;
+        }
+
+        public override GameObject GetGameObjectType()
+        {
+            return Type;
+        }
+
+        public static DatabaseObject Get(int index)
+        {
+            if (Objects.ContainsKey(index))
+            {
+                return Objects[index];
+            }
+            return null;
+        }
+        public override void Delete()
+        {
+            Objects.Remove(GetId());
+        }
+        public static void ClearObjects()
+        {
+            Objects.Clear();
+        }
+        public static void AddObject(int index, DatabaseObject obj)
+        {
+            Objects.Add(index, (MapBase)obj);
+        }
+        public static int ObjectCount()
+        {
+            return Objects.Count;
+        }
+        public static Dictionary<int, MapBase> GetObjects()
+        {
+            return Objects;
         }
     }
 }

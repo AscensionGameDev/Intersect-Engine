@@ -155,33 +155,33 @@ namespace Intersect_Client.Classes.UI.Game
             {
                 for (int i = 0; i < mapList.Items.Count; i++)
                 {
-                    if (mapList.Items[i].GetType() == typeof(FolderDirectory))
+                    if (mapList.Items[i].GetType() == typeof(MapListFolder))
                     {
                         if (parent == null)
                         {
                             tmpNode = _mapList.AddNode(mapList.Items[i].Name);
-                            tmpNode.UserData = ((FolderDirectory)mapList.Items[i]);
-                            AddMapListToTree(((FolderDirectory)mapList.Items[i]).Children, tmpNode);
+                            tmpNode.UserData = ((MapListFolder)mapList.Items[i]);
+                            AddMapListToTree(((MapListFolder)mapList.Items[i]).Children, tmpNode);
                         }
                         else
                         {
                             tmpNode = parent.AddNode(mapList.Items[i].Name);
-                            tmpNode.UserData = ((FolderDirectory)mapList.Items[i]);
-                            AddMapListToTree(((FolderDirectory)mapList.Items[i]).Children, tmpNode);
+                            tmpNode.UserData = ((MapListFolder)mapList.Items[i]);
+                            AddMapListToTree(((MapListFolder)mapList.Items[i]).Children, tmpNode);
                         }
                     }
                     else
                     {
                         if (parent == null)
                         {
-                            tmpNode = _mapList.AddNode(((FolderMap)mapList.Items[i]).MapNum + ". " + mapList.Items[i].Name);
-                            tmpNode.UserData = ((FolderMap)mapList.Items[i]).MapNum;
+                            tmpNode = _mapList.AddNode(((MapListMap)mapList.Items[i]).MapNum + ". " + mapList.Items[i].Name);
+                            tmpNode.UserData = ((MapListMap)mapList.Items[i]).MapNum;
                             tmpNode.DoubleClicked += tmpNode_DoubleClicked;
                         }
                         else
                         {
-                            tmpNode = parent.AddNode(((FolderMap)mapList.Items[i]).MapNum + ". " + mapList.Items[i].Name);
-                            tmpNode.UserData = ((FolderMap)mapList.Items[i]).MapNum;
+                            tmpNode = parent.AddNode(((MapListMap)mapList.Items[i]).MapNum + ". " + mapList.Items[i].Name);
+                            tmpNode.UserData = ((MapListMap)mapList.Items[i]).MapNum;
                             tmpNode.DoubleClicked += tmpNode_DoubleClicked;
                         }
                     }

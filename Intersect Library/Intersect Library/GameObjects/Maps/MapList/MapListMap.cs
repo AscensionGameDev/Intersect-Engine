@@ -3,24 +3,23 @@ using System.Collections.Generic;
 
 namespace Intersect_Library.GameObjects.Maps.MapList
 {
-    public class FolderMap : FolderItem, IComparable<FolderMap>
+    public class MapListMap : MapListItem, IComparable<MapListMap>
     {
         public int MapNum = -1;
-        public FolderMap()
-            : base()
+        public MapListMap(): base()
         {
             base.Name = "New Map";
             base.type = 1;
         }
 
-        public void GetData(ByteBuffer myBuffer, Dictionary<int,MapStruct> gameMaps )
+        public void GetData(ByteBuffer myBuffer, Dictionary<int,MapBase> gameMaps )
         {
             base.GetData(myBuffer);
             myBuffer.WriteInteger(MapNum);
             myBuffer.WriteString(gameMaps[MapNum].MyName);
         }
 
-        public bool Load(ByteBuffer myBuffer, Dictionary<int, MapStruct> gameMaps, bool isServer = true)
+        public bool Load(ByteBuffer myBuffer, Dictionary<int, MapBase> gameMaps, bool isServer = true)
         {
             base.Load(myBuffer);
             MapNum = myBuffer.ReadInteger();
@@ -39,7 +38,7 @@ namespace Intersect_Library.GameObjects.Maps.MapList
             return true;
         }
 
-        public int CompareTo(FolderMap obj)
+        public int CompareTo(MapListMap obj)
         {
             return MapNum.CompareTo(obj.MapNum);
         }

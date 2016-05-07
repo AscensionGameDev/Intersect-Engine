@@ -30,9 +30,6 @@
         {
             this.components = new System.ComponentModel.Container();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.btnCancel = new System.Windows.Forms.Button();
-            this.btnDelete = new System.Windows.Forms.Button();
-            this.btnSave = new System.Windows.Forms.Button();
             this.lstSpells = new System.Windows.Forms.ListBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.label6 = new System.Windows.Forms.Label();
@@ -126,6 +123,12 @@
             this.grpEvent = new System.Windows.Forms.GroupBox();
             this.scrlEvent = new System.Windows.Forms.HScrollBar();
             this.lblEvent = new System.Windows.Forms.Label();
+            this.pnlContainer = new System.Windows.Forms.Panel();
+            this.btnUndo = new System.Windows.Forms.Button();
+            this.btnNew = new System.Windows.Forms.Button();
+            this.btnDelete = new System.Windows.Forms.Button();
+            this.btnCancel = new System.Windows.Forms.Button();
+            this.btnSave = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.picSpell)).BeginInit();
@@ -139,52 +142,21 @@
             this.grpBuffDebuff.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.picSprite)).BeginInit();
             this.grpEvent.SuspendLayout();
+            this.pnlContainer.SuspendLayout();
             this.SuspendLayout();
             // 
             // groupBox1
             // 
-            this.groupBox1.Controls.Add(this.btnCancel);
-            this.groupBox1.Controls.Add(this.btnDelete);
-            this.groupBox1.Controls.Add(this.btnSave);
+            this.groupBox1.Controls.Add(this.btnUndo);
             this.groupBox1.Controls.Add(this.lstSpells);
+            this.groupBox1.Controls.Add(this.btnNew);
+            this.groupBox1.Controls.Add(this.btnDelete);
             this.groupBox1.Location = new System.Drawing.Point(12, 12);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(203, 473);
             this.groupBox1.TabIndex = 16;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Spells";
-            // 
-            // btnCancel
-            // 
-            this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.btnCancel.Location = new System.Drawing.Point(7, 436);
-            this.btnCancel.Name = "btnCancel";
-            this.btnCancel.Size = new System.Drawing.Size(190, 27);
-            this.btnCancel.TabIndex = 4;
-            this.btnCancel.Text = "Cancel";
-            this.btnCancel.UseVisualStyleBackColor = true;
-            this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
-            // 
-            // btnDelete
-            // 
-            this.btnDelete.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.btnDelete.Location = new System.Drawing.Point(7, 400);
-            this.btnDelete.Name = "btnDelete";
-            this.btnDelete.Size = new System.Drawing.Size(190, 27);
-            this.btnDelete.TabIndex = 3;
-            this.btnDelete.Text = "Delete";
-            this.btnDelete.UseVisualStyleBackColor = true;
-            this.btnDelete.Click += new System.EventHandler(this.btnDelete_Click);
-            // 
-            // btnSave
-            // 
-            this.btnSave.Location = new System.Drawing.Point(6, 367);
-            this.btnSave.Name = "btnSave";
-            this.btnSave.Size = new System.Drawing.Size(190, 27);
-            this.btnSave.TabIndex = 2;
-            this.btnSave.Text = "Save";
-            this.btnSave.UseVisualStyleBackColor = true;
-            this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
             // 
             // lstSpells
             // 
@@ -210,7 +182,7 @@
             this.groupBox2.Controls.Add(this.cmbType);
             this.groupBox2.Controls.Add(this.label1);
             this.groupBox2.Controls.Add(this.txtName);
-            this.groupBox2.Location = new System.Drawing.Point(225, 12);
+            this.groupBox2.Location = new System.Drawing.Point(2, 0);
             this.groupBox2.Name = "groupBox2";
             this.groupBox2.Size = new System.Drawing.Size(207, 275);
             this.groupBox2.TabIndex = 17;
@@ -401,7 +373,7 @@
             this.groupBox3.Controls.Add(this.scrlMagicResistReq);
             this.groupBox3.Controls.Add(this.scrlAbilityPwrReq);
             this.groupBox3.Controls.Add(this.scrlAttackReq);
-            this.groupBox3.Location = new System.Drawing.Point(438, 12);
+            this.groupBox3.Location = new System.Drawing.Point(215, 0);
             this.groupBox3.Name = "groupBox3";
             this.groupBox3.Size = new System.Drawing.Size(226, 157);
             this.groupBox3.TabIndex = 18;
@@ -532,7 +504,7 @@
             this.grpTargetInfo.Controls.Add(this.scrlCastRange);
             this.grpTargetInfo.Controls.Add(this.lblCastRange);
             this.grpTargetInfo.Controls.Add(this.label4);
-            this.grpTargetInfo.Location = new System.Drawing.Point(438, 172);
+            this.grpTargetInfo.Location = new System.Drawing.Point(215, 160);
             this.grpTargetInfo.Name = "grpTargetInfo";
             this.grpTargetInfo.Size = new System.Drawing.Size(225, 122);
             this.grpTargetInfo.TabIndex = 19;
@@ -631,7 +603,7 @@
             this.grpWarp.Controls.Add(this.scrlWarpY);
             this.grpWarp.Controls.Add(this.txtWarpChunk);
             this.grpWarp.Controls.Add(this.label16);
-            this.grpWarp.Location = new System.Drawing.Point(225, 293);
+            this.grpWarp.Location = new System.Drawing.Point(2, 281);
             this.grpWarp.Name = "grpWarp";
             this.grpWarp.Size = new System.Drawing.Size(200, 170);
             this.grpWarp.TabIndex = 35;
@@ -718,7 +690,7 @@
             this.grpDash.Controls.Add(this.groupBox5);
             this.grpDash.Controls.Add(this.lblRange);
             this.grpDash.Controls.Add(this.scrlRange);
-            this.grpDash.Location = new System.Drawing.Point(219, 297);
+            this.grpDash.Location = new System.Drawing.Point(-4, 285);
             this.grpDash.Name = "grpDash";
             this.grpDash.Size = new System.Drawing.Size(200, 181);
             this.grpDash.TabIndex = 38;
@@ -814,7 +786,7 @@
             this.groupBox4.Controls.Add(this.lblCastDuration);
             this.groupBox4.Controls.Add(this.lblCooldownDuration);
             this.groupBox4.Controls.Add(this.scrlCastDuration);
-            this.groupBox4.Location = new System.Drawing.Point(509, 297);
+            this.groupBox4.Location = new System.Drawing.Point(286, 285);
             this.groupBox4.Name = "groupBox4";
             this.groupBox4.Size = new System.Drawing.Size(154, 188);
             this.groupBox4.TabIndex = 36;
@@ -882,7 +854,7 @@
             this.grpBuffDebuff.Controls.Add(this.lblMana);
             this.grpBuffDebuff.Controls.Add(this.lblHP);
             this.grpBuffDebuff.Controls.Add(this.lblHint);
-            this.grpBuffDebuff.Location = new System.Drawing.Point(221, 297);
+            this.grpBuffDebuff.Location = new System.Drawing.Point(-2, 285);
             this.grpBuffDebuff.Name = "grpBuffDebuff";
             this.grpBuffDebuff.Size = new System.Drawing.Size(278, 188);
             this.grpBuffDebuff.TabIndex = 39;
@@ -1128,7 +1100,7 @@
             // 
             this.grpEvent.Controls.Add(this.scrlEvent);
             this.grpEvent.Controls.Add(this.lblEvent);
-            this.grpEvent.Location = new System.Drawing.Point(220, 294);
+            this.grpEvent.Location = new System.Drawing.Point(-3, 282);
             this.grpEvent.Name = "grpEvent";
             this.grpEvent.Size = new System.Drawing.Size(200, 67);
             this.grpEvent.TabIndex = 40;
@@ -1154,21 +1126,86 @@
             this.lblEvent.TabIndex = 16;
             this.lblEvent.Text = "Event: 0";
             // 
+            // pnlContainer
+            // 
+            this.pnlContainer.Controls.Add(this.groupBox2);
+            this.pnlContainer.Controls.Add(this.grpEvent);
+            this.pnlContainer.Controls.Add(this.grpBuffDebuff);
+            this.pnlContainer.Controls.Add(this.groupBox4);
+            this.pnlContainer.Controls.Add(this.grpWarp);
+            this.pnlContainer.Controls.Add(this.grpTargetInfo);
+            this.pnlContainer.Controls.Add(this.grpDash);
+            this.pnlContainer.Controls.Add(this.groupBox3);
+            this.pnlContainer.Location = new System.Drawing.Point(221, 12);
+            this.pnlContainer.Name = "pnlContainer";
+            this.pnlContainer.Size = new System.Drawing.Size(445, 473);
+            this.pnlContainer.TabIndex = 41;
+            this.pnlContainer.Visible = false;
+            // 
+            // btnUndo
+            // 
+            this.btnUndo.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            this.btnUndo.Location = new System.Drawing.Point(6, 433);
+            this.btnUndo.Name = "btnUndo";
+            this.btnUndo.Size = new System.Drawing.Size(190, 27);
+            this.btnUndo.TabIndex = 50;
+            this.btnUndo.Text = "Undo Changes";
+            this.btnUndo.UseVisualStyleBackColor = true;
+            this.btnUndo.Click += new System.EventHandler(this.btnUndo_Click);
+            // 
+            // btnNew
+            // 
+            this.btnNew.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            this.btnNew.Location = new System.Drawing.Point(6, 367);
+            this.btnNew.Name = "btnNew";
+            this.btnNew.Size = new System.Drawing.Size(190, 27);
+            this.btnNew.TabIndex = 48;
+            this.btnNew.Text = "New";
+            this.btnNew.UseVisualStyleBackColor = true;
+            this.btnNew.Click += new System.EventHandler(this.btnNew_Click);
+            // 
+            // btnDelete
+            // 
+            this.btnDelete.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            this.btnDelete.Location = new System.Drawing.Point(7, 400);
+            this.btnDelete.Name = "btnDelete";
+            this.btnDelete.Size = new System.Drawing.Size(190, 27);
+            this.btnDelete.TabIndex = 47;
+            this.btnDelete.Text = "Delete";
+            this.btnDelete.UseVisualStyleBackColor = true;
+            this.btnDelete.Click += new System.EventHandler(this.btnDelete_Click);
+            // 
+            // btnCancel
+            // 
+            this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            this.btnCancel.Location = new System.Drawing.Point(476, 491);
+            this.btnCancel.Name = "btnCancel";
+            this.btnCancel.Size = new System.Drawing.Size(190, 27);
+            this.btnCancel.TabIndex = 49;
+            this.btnCancel.Text = "Cancel";
+            this.btnCancel.UseVisualStyleBackColor = true;
+            this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
+            // 
+            // btnSave
+            // 
+            this.btnSave.Location = new System.Drawing.Point(280, 491);
+            this.btnSave.Name = "btnSave";
+            this.btnSave.Size = new System.Drawing.Size(190, 27);
+            this.btnSave.TabIndex = 46;
+            this.btnSave.Text = "Save";
+            this.btnSave.UseVisualStyleBackColor = true;
+            this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
+            // 
             // frmSpell
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(671, 487);
+            this.ClientSize = new System.Drawing.Size(671, 524);
             this.ControlBox = false;
-            this.Controls.Add(this.grpEvent);
-            this.Controls.Add(this.groupBox4);
-            this.Controls.Add(this.grpTargetInfo);
+            this.Controls.Add(this.btnCancel);
+            this.Controls.Add(this.btnSave);
+            this.Controls.Add(this.pnlContainer);
             this.Controls.Add(this.groupBox1);
-            this.Controls.Add(this.groupBox2);
-            this.Controls.Add(this.groupBox3);
-            this.Controls.Add(this.grpDash);
-            this.Controls.Add(this.grpWarp);
-            this.Controls.Add(this.grpBuffDebuff);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.MaximizeBox = false;
             this.Name = "frmSpell";
@@ -1197,6 +1234,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.picSprite)).EndInit();
             this.grpEvent.ResumeLayout(false);
             this.grpEvent.PerformLayout();
+            this.pnlContainer.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -1204,9 +1242,6 @@
         #endregion
 
         private System.Windows.Forms.GroupBox groupBox1;
-        private System.Windows.Forms.Button btnCancel;
-        private System.Windows.Forms.Button btnDelete;
-        private System.Windows.Forms.Button btnSave;
         private System.Windows.Forms.ListBox lstSpells;
         private System.Windows.Forms.GroupBox groupBox2;
         private System.Windows.Forms.HScrollBar scrlCooldownDuration;
@@ -1300,5 +1335,11 @@
         private System.Windows.Forms.GroupBox grpEvent;
         private System.Windows.Forms.HScrollBar scrlEvent;
         private System.Windows.Forms.Label lblEvent;
+        private System.Windows.Forms.Panel pnlContainer;
+        private System.Windows.Forms.Button btnUndo;
+        private System.Windows.Forms.Button btnNew;
+        private System.Windows.Forms.Button btnSave;
+        private System.Windows.Forms.Button btnCancel;
+        private System.Windows.Forms.Button btnDelete;
     }
 }

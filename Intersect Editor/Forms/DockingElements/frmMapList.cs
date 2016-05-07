@@ -19,14 +19,14 @@ namespace Intersect_Editor.Forms
 
         private void NodeDoubleClick(object sender, TreeNodeMouseClickEventArgs e)
         {
-            if (e.Node.Tag.GetType() == typeof(FolderMap))
+            if (e.Node.Tag.GetType() == typeof(MapListMap))
             {
                 //Should ask if the user wants to save changes
                 if (Globals.MapEditorWindow.MapUndoStates.Count > 0 && MessageBox.Show(@"Do you want to save your current map?", @"Save current map?", MessageBoxButtons.YesNo) == DialogResult.Yes)
                 {
-                    PacketSender.SendMap(Globals.CurrentMap);
+                    PacketSender.SendMap(Globals.CurrentMap.GetId());
                 }
-                Globals.MainForm.EnterMap(((FolderMap)e.Node.Tag).MapNum);
+                Globals.MainForm.EnterMap(((MapListMap)e.Node.Tag).MapNum);
             }
         }
         private void frmMapList_Load(object sender, EventArgs e)
@@ -44,7 +44,7 @@ namespace Intersect_Editor.Forms
             }
             else
             {
-                PacketSender.SendAddFolder((FolderItem)mapTreeList.list.SelectedNode.Tag);
+                PacketSender.SendAddFolder((MapListItem)mapTreeList.list.SelectedNode.Tag);
             }
         }
         private void btnRename_Click(object sender, EventArgs e)
@@ -66,9 +66,9 @@ namespace Intersect_Editor.Forms
             }
             else
             {
-                if (MessageBox.Show(@"Are you sure you want to delete " + ((FolderItem)mapTreeList.list.SelectedNode.Tag).Name, @"Delete", MessageBoxButtons.YesNo) == System.Windows.Forms.DialogResult.Yes)
+                if (MessageBox.Show(@"Are you sure you want to delete " + ((MapListItem)mapTreeList.list.SelectedNode.Tag).Name, @"Delete", MessageBoxButtons.YesNo) == System.Windows.Forms.DialogResult.Yes)
                 {
-                    PacketSender.SendDelete((FolderItem)mapTreeList.list.SelectedNode.Tag);
+                    PacketSender.SendDelete((MapListItem)mapTreeList.list.SelectedNode.Tag);
                 }
             }
         }
@@ -85,15 +85,15 @@ namespace Intersect_Editor.Forms
                     MessageBoxButtons.YesNo) != DialogResult.Yes) return;
             if (MessageBox.Show(@"Do you want to save your current map?", @"Save current map?", MessageBoxButtons.YesNo) == DialogResult.Yes)
             {
-                PacketSender.SendMap(Globals.CurrentMap);
+                PacketSender.SendMap(Globals.CurrentMap.GetId());
             }
             if (mapTreeList.list.SelectedNode == null)
             {
-                PacketSender.SendCreateMap(-1,Globals.CurrentMap,null);
+                PacketSender.SendCreateMap(-1,Globals.CurrentMap.GetId(),null);
             }
             else
             {
-                PacketSender.SendCreateMap(-1, Globals.CurrentMap, (FolderItem)mapTreeList.list.SelectedNode.Tag);
+                PacketSender.SendCreateMap(-1, Globals.CurrentMap.GetId(), (MapListItem)mapTreeList.list.SelectedNode.Tag);
             }
         }
         private void btnGridView_Click(object sender, EventArgs e)

@@ -42,7 +42,7 @@ using Intersect_Library;
 using Color = IntersectClientExtras.GenericClasses.Color;
 
 using Point = IntersectClientExtras.GenericClasses.Point;
-
+using Intersect_Library.GameObjects;
 
 namespace Intersect_Client.Classes.UI.Game
 {
@@ -88,14 +88,15 @@ namespace Intersect_Client.Classes.UI.Game
             Y = _inventoryWindow.Y;
             for (int i = 0; i < Options.MaxInvItems; i++)
             {
-                if (Globals.Me.Inventory[i].ItemNum > -1)
+                var item = ItemBase.GetItem(Globals.Me.Inventory[i].ItemNum);
+                if (item != null)
                 {
                     Items[i].pnl.IsHidden = false;
 
-                    if (Globals.GameItems[Globals.Me.Inventory[i].ItemNum].Type == (int)ItemTypes.Consumable || //Allow Stacking on Currency, Consumable, Spell, and item types of none.
-                        Globals.GameItems[Globals.Me.Inventory[i].ItemNum].Type == (int)ItemTypes.Currency ||
-                        Globals.GameItems[Globals.Me.Inventory[i].ItemNum].Type == (int)ItemTypes.None ||
-                        Globals.GameItems[Globals.Me.Inventory[i].ItemNum].Type == (int)ItemTypes.Spell)
+                    if (item.ItemType == (int)ItemTypes.Consumable || //Allow Stacking on Currency, Consumable, Spell, and item types of none.
+                        item.ItemType == (int)ItemTypes.Currency ||
+                        item.ItemType == (int)ItemTypes.None ||
+                        item.ItemType == (int)ItemTypes.Spell)
                     {
                         _values[i].IsHidden = false;
                         _values[i].Text = Globals.Me.Inventory[i].ItemVal.ToString();
@@ -271,19 +272,28 @@ namespace Intersect_Client.Classes.UI.Game
                 {
                     if (foundItem > -1)
                     {
-                        _descWindow = new ItemDescWindow(Globals.Me.Inventory[_mySlot].ItemNum,
-                            Globals.Me.Inventory[_mySlot].ItemVal, _inventoryWindow.X - 220, _inventoryWindow.Y,
-                            Globals.Me.Inventory[_mySlot].StatBoost, "",
-                            "Sells for " + Globals.GameShop.BuyingItems[foundItem].CostItemVal + " " +
-                            Globals.GameItems[Globals.GameShop.BuyingItems[foundItem].CostItemNum].Name + "(s)");
+                        var hoveredItem = ItemBase.GetItem(Globals.GameShop.BuyingItems[foundItem].CostItemNum);
+                        if (hoveredItem != null)
+                        {
+                            _descWindow = new ItemDescWindow(Globals.Me.Inventory[_mySlot].ItemNum,
+                                Globals.Me.Inventory[_mySlot].ItemVal, _inventoryWindow.X - 220, _inventoryWindow.Y,
+                                Globals.Me.Inventory[_mySlot].StatBoost, "",
+                                "Sells for " + Globals.GameShop.BuyingItems[foundItem].CostItemVal + " " +
+                                hoveredItem.Name + "(s)");
+                        }
                     }
                     else
                     {
-                        _descWindow = new ItemDescWindow(Globals.Me.Inventory[_mySlot].ItemNum,
+                        var hoveredItem = ItemBase.GetItem(Globals.GameShop.BuyingItems[foundItem].ItemNum);
+                        var costItem = ItemBase.GetItem(Globals.GameShop.DefaultCurrency);
+                        if (hoveredItem != null && costItem != null)
+                        {
+                            _descWindow = new ItemDescWindow(Globals.Me.Inventory[_mySlot].ItemNum,
                             Globals.Me.Inventory[_mySlot].ItemVal, _inventoryWindow.X - 220, _inventoryWindow.Y,
                             Globals.Me.Inventory[_mySlot].StatBoost, "",
-                            "Sells for " + Globals.GameItems[Globals.GameShop.BuyingItems[foundItem].ItemNum].Price +
-                            " " + Globals.GameItems[Globals.GameShop.DefaultCurrency].Name + "(s)");
+                            "Sells for " + hoveredItem.Price +
+                            " " + costItem.Name + "(s)");
+                        }
                     }
                 }
                 else
@@ -318,10 +328,10 @@ namespace Intersect_Client.Classes.UI.Game
                 _currentItem = Globals.Me.Inventory[_mySlot].ItemNum;
                 _isEquipped = equipped;
                 equipPanel.IsHidden = !_isEquipped;
-                if (Globals.Me.Inventory[_mySlot].ItemNum > -1)
+                var item = ItemBase.GetItem(Globals.Me.Inventory[_mySlot].ItemNum);
+                if (item != null)
                 {
-                    GameTexture itemTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Item,
-                        Globals.GameItems[Globals.Me.Inventory[_mySlot].ItemNum].Pic);
+                    GameTexture itemTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Item,item.Pic);
                     if (itemTex != null)
                     {
                         pnl.Texture = itemTex;

@@ -20,17 +20,20 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-using System;
-using System.IO;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Intersect_Library.GameObjects
 {
-    public class ItemStruct
+    public class ItemBase : DatabaseObject
     {
-        public const string Version = "0.0.0.1";
-        public string Name = "";
+        public new const string DatabaseTable = "items";
+        public new const GameObject Type = GameObject.Item;
+        protected static Dictionary<int, DatabaseObject> Objects = new Dictionary<int, DatabaseObject>();
+
+        public string Name = "New Item";
         public string Desc = "";
-        public int Type;
+        public int ItemType;
         public string Pic = "";
         public int Price;
         public int Bound;
@@ -50,23 +53,20 @@ namespace Intersect_Library.GameObjects
         public int Data3;
         public int Data4;
 
-        public ItemStruct()
+        public ItemBase(int id) : base(id)
         {
             Speed = 10; // Set to 10 by default.
             StatsReq = new int[Options.MaxStats];
             StatsGiven = new int[Options.MaxStats];
         }
 
-        public void Load(byte[] data, int index)
+        public override void Load(byte[] data)
         {
             var myBuffer = new ByteBuffer();
             myBuffer.WriteBytes(data);
-            string loadedVersion = myBuffer.ReadString();
-            if (loadedVersion != Version)
-                throw new Exception("Failed to load Item #" + index + ". Loaded Version: " + loadedVersion + " Expected Version: " + Version);
             Name = myBuffer.ReadString();
             Desc = myBuffer.ReadString();
-            Type = myBuffer.ReadInteger();
+            ItemType = myBuffer.ReadInteger();
             Pic = myBuffer.ReadString();
             Price = myBuffer.ReadInteger();
             Bound = myBuffer.ReadInteger();
@@ -95,10 +95,9 @@ namespace Intersect_Library.GameObjects
         public byte[] ItemData()
         {
             var myBuffer = new ByteBuffer();
-            myBuffer.WriteString(Version);
             myBuffer.WriteString(Name);
             myBuffer.WriteString(Desc);
-            myBuffer.WriteInteger(Type);
+            myBuffer.WriteInteger(ItemType);
             myBuffer.WriteString(Pic);
             myBuffer.WriteInteger(Price);
             myBuffer.WriteInteger(Bound);
@@ -125,9 +124,68 @@ namespace Intersect_Library.GameObjects
             return myBuffer.ToArray();
         }
 
-        public void Save(int itemNum)
+        public static ItemBase GetItem(int index)
         {
-            File.WriteAllBytes("resources/items/" + itemNum + ".item",ItemData());
+            if (Objects.ContainsKey(index))
+            {
+                return (ItemBase)Objects[index];
+            }
+            return null;
+        }
+
+        public static string GetName(int index)
+        {
+            if (Objects.ContainsKey(index))
+            {
+                return ((ItemBase)Objects[index]).Name;
+            }
+            return "Deleted";
+        }
+
+        public override byte[] GetData()
+        {
+            return ItemData();
+        }
+
+        public override string GetTable()
+        {
+            return DatabaseTable;
+        }
+
+        public override GameObject GetGameObjectType()
+        {
+            return Type;
+        }
+
+        public static DatabaseObject Get(int index)
+        {
+            if (Objects.ContainsKey(index))
+            {
+                return Objects[index];
+            }
+            return null;
+        }
+        public override void Delete()
+        {
+            Objects.Remove(GetId());
+        }
+        public static void ClearObjects()
+        {
+            Objects.Clear();
+        }
+        public static void AddObject(int index, DatabaseObject obj)
+        {
+            Objects.Remove(index);
+            Objects.Add(index, obj);
+        }
+        public static int ObjectCount()
+        {
+            return Objects.Count;
+        }
+        public static Dictionary<int, ItemBase> GetObjects()
+        {
+            Dictionary<int, ItemBase> objects = Objects.ToDictionary(k => k.Key, v => (ItemBase)v.Value);
+            return objects;
         }
     }
 }

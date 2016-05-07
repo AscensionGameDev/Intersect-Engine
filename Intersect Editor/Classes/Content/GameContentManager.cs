@@ -35,6 +35,8 @@ using Microsoft.Xna.Framework.Media;
 using System.Windows.Forms;
 using System.Collections.Specialized;
 using Intersect_Editor.Classes.Content;
+using Intersect_Library;
+using Intersect_Library.GameObjects;
 
 namespace Intersect_Editor.Classes.Core
 {
@@ -50,7 +52,7 @@ namespace Intersect_Editor.Classes.Core
         private static string errorString = "";
 
         //Game Content
-        public static List<GameTexture> AllTextures = new List<GameTexture>(); 
+        public static List<GameTexture> AllTextures = new List<GameTexture>();
         static Dictionary<string, GameTexture> tilesetDict = new Dictionary<string, GameTexture>();
         static Dictionary<string, GameTexture> itemDict = new Dictionary<string, GameTexture>();
         static Dictionary<string, GameTexture> entityDict = new Dictionary<string, GameTexture>();
@@ -193,7 +195,7 @@ namespace Intersect_Editor.Classes.Core
             var container = new GameServiceContainer();
             container.AddService(typeof(IGraphicsDeviceService), new DummyGraphicsDeviceManager(EditorGraphics.GetGraphicsDevice()));
             contentManger = new ContentManager(container, "");
-            
+
             LoadTilesets();
             LoadItems();
             LoadEntities();
@@ -228,62 +230,41 @@ namespace Intersect_Editor.Classes.Core
                 dict.Add(filename, new GameTexture("resources/" + directory + "/" + filename));
             }
         }
-        private static void LoadTilesets()
+        public static void LoadTilesets()
         {
             if (!Directory.Exists("resources/tilesets")) { Directory.CreateDirectory("resources/tilesets"); }
             var tilesets = Directory.GetFiles("resources/tilesets", "*.png");
             Array.Sort(tilesets, new AlphanumComparatorFast());
-            var tilesetsUpdated = false;
             if (tilesets.Length > 0)
             {
                 for (var i = 0; i < tilesets.Length; i++)
                 {
                     tilesets[i] = tilesets[i].Replace("resources/tilesets\\", "");
-                    if (Globals.Tilesets != null)
+                    if (TilesetBase.ObjectCount() > 0)
                     {
-                        if (Globals.Tilesets.Length > 0)
+                        for (var x = 0; x < TilesetBase.ObjectCount(); x++)
                         {
-                            for (var x = 0; x < Globals.Tilesets.Length; x++)
+                            if (Database.GetGameObjectList(GameObject.Tileset)[x] == tilesets[i])
                             {
-                                if (Globals.Tilesets[x] == tilesets[i])
-                                {
-                                    break;
-                                }
-                                if (x != Globals.Tilesets.Length - 1) continue;
-                                var newTilesets = new string[Globals.Tilesets.Length + 1];
-                                Globals.Tilesets.CopyTo(newTilesets, 0);
-                                newTilesets[Globals.Tilesets.Length] = tilesets[i];
-                                Globals.Tilesets = newTilesets;
-                                tilesetsUpdated = true;
+                                break;
                             }
-                        }
-                        else
-                        {
-                            var newTilesets = new string[1];
-                            newTilesets[0] = tilesets[i];
-                            Globals.Tilesets = newTilesets;
-                            tilesetsUpdated = true;
+                            if (x != TilesetBase.ObjectCount() - 1) continue;
+                            PacketSender.SendCreateObject(GameObject.Tileset,tilesets[i]);
                         }
                     }
                     else
                     {
-                        var newTilesets = new string[1];
-                        newTilesets[0] = tilesets[i];
-                        Globals.Tilesets = newTilesets;
-                        tilesetsUpdated = true;
+                        PacketSender.SendCreateObject(GameObject.Tileset, tilesets[i]);
                     }
                 }
+            }
 
-                if (tilesetsUpdated)
+            tilesetDict.Clear();
+            for (var i = 0; i < TilesetBase.ObjectCount(); i++)
+            {
+                if (File.Exists("resources/tilesets/" + TilesetBase.GetTileset(Database.GameObjectIdFromList(GameObject.Tileset, i)).Value))
                 {
-                    PacketSender.SendTilesets();
-                }
-                for (var i = 0; i < Globals.Tilesets.Length; i++)
-                {
-                    if (File.Exists("resources/tilesets/" + Globals.Tilesets[i]))
-                    {
-                        tilesetDict.Add(Globals.Tilesets[i].ToLower(), new GameTexture("resources/tilesets/" + Globals.Tilesets[i]));
-                    }
+                    tilesetDict.Add(TilesetBase.GetTileset(Database.GameObjectIdFromList(GameObject.Tileset, i)).Value.ToLower(), new GameTexture("resources/tilesets/" + TilesetBase.GetTileset(Database.GameObjectIdFromList(GameObject.Tileset, i)).Value));
                 }
             }
         }

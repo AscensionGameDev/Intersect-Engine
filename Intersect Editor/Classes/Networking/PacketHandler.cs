@@ -21,15 +21,13 @@
 */
 using System;
 using System.Collections.Generic;
-using Intersect_Editor.Forms;
 using System.IO;
 using System.Windows.Forms;
-using Intersect_Editor.Classes.General;
+using Intersect_Editor.Classes.Core;
 using Intersect_Editor.Classes.Maps;
 using Intersect_Library;
 using Intersect_Library.GameObjects;
 using Intersect_Library.GameObjects.Events;
-using Intersect_Library.GameObjects.Maps;
 using Intersect_Library.GameObjects.Maps.MapList;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -38,6 +36,9 @@ namespace Intersect_Editor.Classes
 {
     public static class PacketHandler
     {
+        public delegate void GameObjectUpdated(GameObject type);
+        public static  GameObjectUpdated GameObjectUpdatedDelegate;
+
         public static void HandlePacket(byte[] packet)
         {
             var bf = new ByteBuffer();
@@ -60,9 +61,6 @@ namespace Intersect_Editor.Classes
                 case ServerPackets.GameData:
                     HandleGameData(bf.ReadBytes(bf.Length()));
                     break;
-                case ServerPackets.TilesetArray:
-                    HandleTilesets(bf.ReadBytes(bf.Length()));
-                    break;
                 case ServerPackets.EnterMap:
                     HandleEnterMap(bf.ReadBytes(bf.Length()));
                     break;
@@ -72,89 +70,17 @@ namespace Intersect_Editor.Classes
                 case ServerPackets.LoginError:
                     HandleLoginError(bf.ReadBytes(bf.Length()));
                     break;
-                case ServerPackets.OpenItemEditor:
-                    HandleItemEditor();
-                    break;
-                case ServerPackets.ItemData:
-                    HandleItemData(bf.ReadBytes(bf.Length()));
-                    break;
-                case ServerPackets.ItemList:
-                    HandleItemList(bf.ReadBytes(bf.Length()));
-                    break;
-                case ServerPackets.OpenNpcEditor:
-                    HandleNpcEditor();
-                    break;
-                case ServerPackets.NpcData:
-                    HandleNpcData(bf.ReadBytes(bf.Length()));
-                    break;
-                case ServerPackets.NpcList:
-                    HandleNpcList(bf.ReadBytes(bf.Length()));
-                    break;
-                case ServerPackets.OpenSpellEditor:
-                    HandleSpellEditor();
-                    break;
-                case ServerPackets.SpellData:
-                    HandleSpellData(bf.ReadBytes(bf.Length()));
-                    break;
-                case ServerPackets.SpellList:
-                    HandleSpellList(bf.ReadBytes(bf.Length()));
-                    break;
-                case ServerPackets.OpenAnimationEditor:
-                    HandleAnimationEditor();
-                    break;
-                case ServerPackets.AnimationData:
-                    HandleAnimationData(bf.ReadBytes(bf.Length()));
-                    break;
-                case ServerPackets.AnimationList:
-                    HandleAnimationList(bf.ReadBytes(bf.Length()));
-                    break;
-                case ServerPackets.OpenResourceEditor:
-                    HandleResourceEditor();
-                    break;
-                case ServerPackets.ResourceData:
-                    HandleResourceData(bf.ReadBytes(bf.Length()));
-                    break;
-                case ServerPackets.OpenClassEditor:
-                    HandleClassEditor();
-                    break;
-                case ServerPackets.ClassData:
-                    HandleClassData(bf.ReadBytes(bf.Length()));
-                    break;
-                case ServerPackets.OpenQuestEditor:
-                    HandleQuestEditor();
-                    break;
-                case ServerPackets.QuestData:
-                    HandleQuestData(bf.ReadBytes(bf.Length()));
-                    break;
                 case ServerPackets.MapGrid:
                     HandleMapGrid(bf.ReadBytes(bf.Length()));
-                    break;
-                case ServerPackets.OpenProjectileEditor:
-                    HandleProjectileEditor();
-                    break;
-                case ServerPackets.ProjectileData:
-                    HandleProjectileData(bf.ReadBytes(bf.Length()));
                     break;
                 case ServerPackets.SendAlert:
                     HandleAlert(bf.ReadBytes(bf.Length()));
                     break;
-                case ServerPackets.OpenCommonEventEditor:
-                    HandleOpenCommonEventEditor();
+                case ServerPackets.GameObject:
+                    HandleGameObject(bf.ReadBytes(bf.Length()));
                     break;
-                case ServerPackets.CommonEventData:
-                    HandleCommonEventData(bf.ReadBytes(bf.Length()));
-                    break;
-                case ServerPackets.OpenSwitchVariableEditor:
-                    HandleOpenSwitchVariableEditor();
-                    break;
-                case ServerPackets.SwitchVariableData:
-                    HandleSwitchVariableData(bf.ReadBytes(bf.Length()));
-                    break;
-                case ServerPackets.OpenShopEditor:
-                    HandleOpenShopEditor();
-                    break;
-                case ServerPackets.ShopData:
-                    HandleShopData(bf.ReadBytes(bf.Length()));
+                case ServerPackets.GameObjectEditor:
+                    HandleOpenEditor(bf.ReadBytes(bf.Length()));
                     break;
                 default:
                     Console.WriteLine(@"Non implemented packet received: " + packetHeader);
@@ -167,7 +93,6 @@ namespace Intersect_Editor.Classes
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
             Options.LoadFromServer(bf);
-            Database.InitDatabase();
         }
 
         private static void HandleJoinGame(byte[] packet)
@@ -185,29 +110,30 @@ namespace Intersect_Editor.Classes
             int mapNum = (int)bf.ReadLong();
             var mapLength = bf.ReadLong();
             var mapData = bf.ReadBytes((int)mapLength);
-            if (Globals.GameMaps.ContainsKey(mapNum))
+            var map = new MapInstance((int)mapNum);
+            if (MapInstance.GetMap(mapNum) != null)
             {
-                Globals.GameMaps[mapNum].Dispose();
-                Globals.GameMaps.Remove(mapNum);
+                if (Globals.CurrentMap == MapInstance.GetMap(mapNum))
+                    Globals.CurrentMap = map;
+                MapInstance.GetMap(mapNum).Delete();
             }
-            var map = new MapInstance((int) mapNum);
-            Globals.GameMaps.Add(mapNum,map);
+            MapInstance.AddObject(mapNum, map);
             map.Load(mapData);
-            Globals.ReceivedGameData++;
-            if (Globals.ReceivedGameData == 3 && !Globals.InEditor)
+            if (!Globals.InEditor && Globals.HasGameData)
             {
+                Globals.CurrentMap = map;
                 Globals.LoginForm.BeginInvoke(Globals.LoginForm.EditorLoopDelegate);
             }
             else if (Globals.InEditor)
             {
-                if (Globals.FetchingMapPreviews || Globals.CurrentMap == mapNum)
+                if (Globals.FetchingMapPreviews || Globals.CurrentMap == map)
                 {
-                    int currentmap = Globals.CurrentMap;
+                    int currentmap = Globals.CurrentMap.GetId();
                     if (!Directory.Exists("resources/mapcache")) Directory.CreateDirectory("resources/mapcache");
-                    if (!File.Exists("resources/mapcache/" + mapNum + "_" + Globals.GameMaps[mapNum].Revision + ".png"))
+                    if (!File.Exists("resources/mapcache/" + mapNum + "_" + MapInstance.GetMap(mapNum).Revision + ".png"))
                     {
-                        Globals.CurrentMap = (int)mapNum;
-                        using (var fs = new FileStream("resources/mapcache/" + mapNum + "_" + Globals.GameMaps[mapNum].Revision + ".png", FileMode.OpenOrCreate))
+                        Globals.CurrentMap = MapInstance.GetMap(mapNum);
+                        using (var fs = new FileStream("resources/mapcache/" + mapNum + "_" + MapInstance.GetMap(mapNum).Revision + ".png", FileMode.OpenOrCreate))
                         {
                             RenderTarget2D screenshotTexture = EditorGraphics.ScreenShotMap(true);
                             screenshotTexture.SaveAsPng(fs, screenshotTexture.Width, screenshotTexture.Height);
@@ -227,55 +153,37 @@ namespace Intersect_Editor.Classes
                             }
                         }
                     }
-                    Globals.CurrentMap = currentmap;
+                    Globals.CurrentMap = MapInstance.GetMap(currentmap);
                 }
-                if (mapNum != Globals.CurrentMap) return;
-                if (Globals.GameMaps[mapNum].Deleted == 1)
-                {
-                    Globals.CurrentMap = -1;
-                    Globals.MainForm.EnterMap(MapList.GetList().FindFirstMap());
-                }
-                else
-                {
-                    Globals.MapPropertiesWindow.Init((int)mapNum);
+                if (mapNum != Globals.LoadingMap) return;
+                Globals.CurrentMap = MapInstance.GetMap(Globals.LoadingMap);
+                //TODO HANDLE DELETED MAP BEING SENT
+                //if (Globals.GameMaps[mapNum].Deleted == 1)
+                //{
+                //    Globals.CurrentMap = null;
+                    //Globals.MainForm.EnterMap(MapList.GetList().FindFirstMap());
+                //}
+                //else
+                //{
+                    Globals.MapPropertiesWindow.Init(Globals.CurrentMap);
                     if (Globals.MapEditorWindow.picMap.Visible) return;
                     Globals.MapEditorWindow.picMap.Visible = true;
-                    if (Globals.GameMaps[mapNum].Up > -1) { PacketSender.SendNeedMap(Globals.GameMaps[mapNum].Up); }
-                    if (Globals.GameMaps[mapNum].Down > -1) { PacketSender.SendNeedMap(Globals.GameMaps[mapNum].Down); }
-                    if (Globals.GameMaps[mapNum].Left > -1) { PacketSender.SendNeedMap(Globals.GameMaps[mapNum].Left); }
-                    if (Globals.GameMaps[mapNum].Right > -1) { PacketSender.SendNeedMap(Globals.GameMaps[mapNum].Right); }
-                }
+                    if (map.Up > -1) { PacketSender.SendNeedMap(map.Up); }
+                    if (map.Down > -1) { PacketSender.SendNeedMap(map.Down); }
+                    if (map.Left > -1) { PacketSender.SendNeedMap(map.Left); }
+                    if (map.Right > -1) { PacketSender.SendNeedMap(map.Right); }
+                //}
             }
         }
 
         private static void HandleGameData(byte[] packet)
         {
-            var bf = new ByteBuffer();
-            bf.WriteBytes(packet);
-            PacketSender.SendNeedMap(0);
-            Globals.ReceivedGameData++;
-            if (Globals.ReceivedGameData != 3 || Globals.InEditor) return;
-            Globals.MainForm = new frmMain();
-            Globals.MainForm.Show();
-        }
-
-        private static void HandleTilesets(byte[] packet)
-        {
-            var bf = new ByteBuffer();
-            bf.WriteBytes(packet);
-            var tilesetCount = bf.ReadLong();
-            if (tilesetCount > 0)
+            Globals.HasGameData = true;
+            if (!Globals.InEditor && Globals.HasGameData && Globals.CurrentMap != null)
             {
-                Globals.Tilesets = new string[tilesetCount];
-                for (var i = 0; i < tilesetCount; i++)
-                {
-                    Globals.Tilesets[i] = bf.ReadString();
-                }
+                Globals.LoginForm.BeginInvoke(Globals.LoginForm.EditorLoopDelegate);
             }
-            Globals.ReceivedGameData++;
-            if (Globals.ReceivedGameData != 3 || Globals.InEditor) return;
-            Globals.MainForm = new frmMain();
-            Globals.MainForm.Show();
+            GameContentManager.LoadTilesets();
         }
 
         private static void HandleEnterMap(byte[] packet)
@@ -289,8 +197,8 @@ namespace Intersect_Editor.Classes
         {
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
-            MapList.GetList().Load(bf, new Dictionary<int,Intersect_Library.GameObjects.Maps.MapStruct>(), false);
-            if (Globals.CurrentMap == -1)
+            MapList.GetList().Load(bf, new Dictionary<int,Intersect_Library.GameObjects.Maps.MapBase>(), false, true);
+            if (Globals.CurrentMap == null)
             {
                 Globals.MainForm.EnterMap(MapList.GetList().FindFirstMap());
             }
@@ -303,160 +211,7 @@ namespace Intersect_Editor.Classes
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
             string error = bf.ReadString();
-            System.Windows.Forms.MessageBox.Show(error, "Login Error!", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Error);
-            bf.Dispose();
-        }
-
-        private static void HandleItemEditor()
-        {
-            Globals.MainForm.BeginInvoke(Globals.MainForm.EditorDelegate, (int)EditorTypes.Item);
-        }
-
-        private static void HandleItemData(byte[] packet)
-        {
-            var bf = new ByteBuffer();
-            bf.WriteBytes(packet);
-            var itemNum = bf.ReadInteger();
-            Globals.GameItems[itemNum] = new ItemStruct();
-            Globals.GameItems[itemNum].Load(bf.ReadBytes(bf.Length()),itemNum);
-            bf.Dispose();
-        }
-
-        private static void HandleItemList(byte[] packet)
-        {
-            var bf = new ByteBuffer();
-            bf.WriteBytes(packet);
-            for (int i = 0; i < Options.MaxItems; i++)
-            {
-                Globals.GameItems[i] = new ItemStruct();
-                Globals.GameItems[i].Name = bf.ReadString();
-            }
-            bf.Dispose();
-        }
-
-        private static void HandleNpcEditor()
-        {
-            Globals.MainForm.BeginInvoke(Globals.MainForm.EditorDelegate, (int)EditorTypes.Npc);
-        }
-
-        private static void HandleNpcData(byte[] packet)
-        {
-            var bf = new ByteBuffer();
-            bf.WriteBytes(packet);
-            var npcNum = bf.ReadInteger();
-            Globals.GameNpcs[npcNum] = new NpcStruct();
-            Globals.GameNpcs[npcNum].Load(bf.ReadBytes(bf.Length()), npcNum);
-            bf.Dispose();
-        }
-
-        private static void HandleNpcList(byte[] packet)
-        {
-            var bf = new ByteBuffer();
-            bf.WriteBytes(packet);
-            for (int i = 0; i < Options.MaxNpcs; i++)
-            {
-                Globals.GameNpcs[i] = new NpcStruct();
-                Globals.GameNpcs[i].Name = bf.ReadString();
-            }
-            bf.Dispose();
-        }
-
-        private static void HandleSpellEditor()
-        {
-            Globals.MainForm.BeginInvoke(Globals.MainForm.EditorDelegate, (int)EditorTypes.Spell);
-        }
-
-        private static void HandleSpellData(byte[] packet)
-        {
-            var bf = new ByteBuffer();
-            bf.WriteBytes(packet);
-            var index = bf.ReadInteger();
-            Globals.GameSpells[index] = new SpellStruct();
-            Globals.GameSpells[index].Load(bf.ReadBytes(bf.Length()),index);
-            bf.Dispose();
-        }
-
-        private static void HandleSpellList(byte[] packet)
-        {
-            var bf = new ByteBuffer();
-            bf.WriteBytes(packet);
-            for (int i = 0; i < Options.MaxSpells; i++)
-            {
-                Globals.GameSpells[i] = new SpellStruct();
-                Globals.GameSpells[i].Name = bf.ReadString();
-            }
-            bf.Dispose();
-        }
-
-        private static void HandleAnimationEditor()
-        {
-            Globals.MainForm.BeginInvoke(Globals.MainForm.EditorDelegate, (int)EditorTypes.Animation);
-        }
-
-        private static void HandleAnimationData(byte[] packet)
-        {
-            var bf = new ByteBuffer();
-            bf.WriteBytes(packet);
-            var index = bf.ReadInteger();
-            Globals.GameAnimations[index] = new AnimationStruct();
-            Globals.GameAnimations[index].Load(bf.ReadBytes(bf.Length()),index);
-            bf.Dispose();
-        }
-
-        private static void HandleAnimationList(byte[] packet)
-        {
-            var bf = new ByteBuffer();
-            bf.WriteBytes(packet);
-            for (int i = 0; i < Options.MaxAnimations; i++)
-            {
-                Globals.GameAnimations[i] = new AnimationStruct();
-                Globals.GameAnimations[i].Name = bf.ReadString();
-            }
-            bf.Dispose();
-        }
-
-        private static void HandleResourceEditor()
-        {
-            Globals.MainForm.BeginInvoke(Globals.MainForm.EditorDelegate, (int)EditorTypes.Resource);
-        }
-
-        private static void HandleResourceData(byte[] packet)
-        {
-            var bf = new ByteBuffer();
-            bf.WriteBytes(packet);
-            var resourceNum = bf.ReadInteger();
-            Globals.GameResources[resourceNum] = new ResourceStruct();
-            Globals.GameResources[resourceNum].Load(bf.ReadBytes(bf.Length()),resourceNum);
-            bf.Dispose();
-        }
-
-        private static void HandleClassEditor()
-        {
-            Globals.MainForm.BeginInvoke(Globals.MainForm.EditorDelegate, (int)EditorTypes.Class);
-        }
-
-        private static void HandleClassData(byte[] packet)
-        {
-            var bf = new ByteBuffer();
-            bf.WriteBytes(packet);
-            var classNum = bf.ReadInteger();
-            Globals.GameClasses[classNum] = new ClassStruct();
-            Globals.GameClasses[classNum].Load(bf.ReadBytes(bf.Length()),classNum);
-            bf.Dispose();
-        }
-
-        private static void HandleQuestEditor()
-        {
-            Globals.MainForm.BeginInvoke(Globals.MainForm.EditorDelegate, (int)EditorTypes.Quest);
-        }
-
-        private static void HandleQuestData(byte[] packet)
-        {
-            var bf = new ByteBuffer();
-            bf.WriteBytes(packet);
-            var questNum = bf.ReadInteger();
-            Globals.GameQuests[questNum] = new QuestStruct();
-            Globals.GameQuests[questNum].Load(bf.ReadBytes(bf.Length()),questNum);
+            MessageBox.Show(error, "Login Error!", MessageBoxButtons.OK, MessageBoxIcon.Error);
             bf.Dispose();
         }
 
@@ -465,21 +220,6 @@ namespace Intersect_Editor.Classes
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
             Globals.MapGridWindow.InitGrid(bf);
-            bf.Dispose();
-        }
-
-        private static void HandleProjectileEditor()
-        {
-            Globals.MainForm.BeginInvoke(Globals.MainForm.EditorDelegate, (int)EditorTypes.Projectile);
-        }
-
-        private static void HandleProjectileData(byte[] packet)
-        {
-            var bf = new ByteBuffer();
-            bf.WriteBytes(packet);
-            var projectileNum = bf.ReadInteger();
-            Globals.GameProjectiles[projectileNum] = new ProjectileStruct();
-            Globals.GameProjectiles[projectileNum].Load(bf.ReadBytes(bf.Length()),projectileNum);
             bf.Dispose();
         }
 
@@ -493,62 +233,220 @@ namespace Intersect_Editor.Classes
             bf.Dispose();
         }
 
-        private static void HandleOpenCommonEventEditor()
-        {
-            Globals.MainForm.BeginInvoke(Globals.MainForm.EditorDelegate, (int)EditorTypes.CommonEvent);
-        }
-
-        private static void HandleCommonEventData(byte[] packet)
+        private static void HandleGameObject(byte[] packet)
         {
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
-            var index = bf.ReadInteger();
-            Globals.CommonEvents[index] = new EventStruct(index,bf,true);
-            bf.Dispose();
-        }
-
-        private static void HandleOpenSwitchVariableEditor()
-        {
-            Globals.MainForm.BeginInvoke(Globals.MainForm.EditorDelegate, (int)EditorTypes.SwitchVariable);
-        }
-
-        private static void HandleSwitchVariableData(byte[] packet)
-        {
-            var bf = new ByteBuffer();
-            bf.WriteBytes(packet);
-            var type = bf.ReadInteger();
-            var index = bf.ReadInteger();
+            var type = (GameObject) bf.ReadInteger();
+            var id = bf.ReadInteger();
+            var deleted = Convert.ToBoolean(bf.ReadInteger());
+            var data = bf.ReadBytes(bf.Length());
             switch (type)
             {
-                case (int)SwitchVariableTypes.PlayerSwitch:
-                    Globals.PlayerSwitches[index] = bf.ReadString();
+                case GameObject.Animation:
+                    if (deleted)
+                    {
+                        var anim = AnimationBase.GetAnim(id);
+                        anim.Delete();
+                    }
+                    else
+                    {
+                        var anim = new AnimationBase(id);
+                        anim.Load(data);
+                        AnimationBase.AddObject(id, anim);
+                    }
                     break;
-                case (int)SwitchVariableTypes.PlayerVariable:
-                    Globals.PlayerVariables[index] = bf.ReadString();
+                case GameObject.Class:
+                    if (deleted)
+                    {
+                        var cls = ClassBase.GetClass(id);
+                        cls.Delete();
+                    }
+                    else
+                    {
+                        var cls = new ClassBase(id);
+                        cls.Load(data);
+                        ClassBase.AddObject(id, cls);
+                    }
                     break;
-                case (int)SwitchVariableTypes.ServerSwitch:
-                    Globals.ServerSwitches[index] = bf.ReadString();
-                    Globals.ServerSwitchValues[index] = Convert.ToBoolean(bf.ReadByte());
+                case GameObject.Item:
+                    if (deleted)
+                    {
+                        var itm = ItemBase.GetItem(id);
+                        itm.Delete();
+                    }
+                    else
+                    {
+                        var itm = new ItemBase(id);
+                        itm.Load(data);
+                        ItemBase.AddObject(id, itm);
+                    }
                     break;
-                case (int)SwitchVariableTypes.ServerVariable:
-                    Globals.ServerVariables[index] = bf.ReadString();
-                    Globals.ServerVariableValues[index] = bf.ReadInteger();
+                case GameObject.Npc:
+                    if (deleted)
+                    {
+                        var npc = NpcBase.GetNpc(id);
+                        npc.Delete();
+                    }
+                    else
+                    {
+                        var npc = new NpcBase(id);
+                        npc.Load(data);
+                        NpcBase.AddObject(id, npc);
+                    }
                     break;
+                case GameObject.Projectile:
+                    if (deleted)
+                    {
+                        var proj = ProjectileBase.GetProjectile(id);
+                        proj.Delete();
+                    }
+                    else
+                    {
+                        var proj = new ProjectileBase(id);
+                        proj.Load(data);
+                        ProjectileBase.AddObject(id, proj);
+                    }
+                    break;
+                case GameObject.Quest:
+                    if (deleted)
+                    {
+                        var qst = QuestBase.GetQuest(id);
+                        qst.Delete();
+                    }
+                    else
+                    {
+                        var qst = new QuestBase(id);
+                        qst.Load(data);
+                        QuestBase.AddObject(id, qst);
+                    }
+                    break;
+                case GameObject.Resource:
+                    if (deleted)
+                    {
+                        var res = ResourceBase.GetResource(id);
+                        res.Delete();
+                    }
+                    else
+                    {
+                        var res = new ResourceBase(id);
+                        res.Load(data);
+                        ResourceBase.AddObject(id, res);
+                    }
+                    break;
+                case GameObject.Shop:
+                    if (deleted)
+                    {
+                        var shp = ShopBase.GetShop(id);
+                        shp.Delete();
+                    }
+                    else
+                    {
+                        var shp = new ShopBase(id);
+                        shp.Load(data);
+                        ShopBase.AddObject(id, shp);
+                    }
+                    break;
+                case GameObject.Spell:
+                    if (deleted)
+                    {
+                        var spl = SpellBase.GetSpell(id);
+                        spl.Delete();
+                    }
+                    else
+                    {
+                        var spl = new SpellBase(id);
+                        spl.Load(data);
+                        SpellBase.AddObject(id, spl);
+                    }
+                    break;
+                case GameObject.Map:
+                    //Handled in a different packet
+                    break;
+                case GameObject.CommonEvent:
+                    if (deleted)
+                    {
+                        var evt = EventBase.GetEvent(id);
+                        evt.Delete();
+                    }
+                    else
+                    {
+                        var evt = new EventBase(id, -1, -1, true);
+                        evt.Load(data);
+                        EventBase.AddObject(id, evt);
+                    }
+                    break;
+                case GameObject.PlayerSwitch:
+                    if (deleted)
+                    {
+                        var pswtch = PlayerSwitchBase.GetSwitch(id);
+                        pswtch.Delete();
+                    }
+                    else
+                    {
+                        var pswtch = new PlayerSwitchBase(id);
+                        pswtch.Load(data);
+                        PlayerSwitchBase.AddObject(id, pswtch);
+                    }
+                    break;
+                case GameObject.PlayerVariable:
+                    if (deleted)
+                    {
+                        var pvar = PlayerVariableBase.GetVariable(id);
+                        pvar.Delete();
+                    }
+                    else
+                    {
+                        var pvar = new PlayerVariableBase(id);
+                        pvar.Load(data);
+                        PlayerVariableBase.AddObject(id, pvar);
+                    }
+                    break;
+                case GameObject.ServerSwitch:
+                    if (deleted)
+                    {
+                        var sswtch = ServerSwitchBase.GetSwitch(id);
+                        sswtch.Delete();
+                    }
+                    else
+                    {
+                        var sswtch = new ServerSwitchBase(id);
+                        sswtch.Load(data);
+                        ServerSwitchBase.AddObject(id, sswtch);
+                    }
+                    break;
+                case GameObject.ServerVariable:
+                    if (deleted)
+                    {
+                        var svar = ServerVariableBase.GetVariable(id);
+                        svar.Delete();
+                    }
+                    else
+                    {
+                        var svar = new ServerVariableBase(id);
+                        svar.Load(data);
+                        ServerVariableBase.AddObject(id, svar);
+                    }
+                    break;
+                case GameObject.Tileset:
+                    var obj = new TilesetBase(id);
+                    obj.Load(data);
+                    TilesetBase.AddObject(id, obj);
+                    if (Globals.HasGameData) GameContentManager.LoadTilesets();
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
             }
+            if (GameObjectUpdatedDelegate != null) GameObjectUpdatedDelegate(type);
             bf.Dispose();
         }
 
-        private static void HandleOpenShopEditor() { 
-            Globals.MainForm.BeginInvoke(Globals.MainForm.EditorDelegate, (int)EditorTypes.Shop);
-        }
-
-        private static void HandleShopData(byte[] packet)
+        private static void HandleOpenEditor(byte[] packet)
         {
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
-            var index = bf.ReadInteger();
-            Globals.GameShops[index] = new ShopStruct();
-            Globals.GameShops[index].Load(bf.ReadBytes(bf.Length()), index);
+            var type = (GameObject)bf.ReadInteger();
+            Globals.MainForm.BeginInvoke(Globals.MainForm.EditorDelegate, type);
             bf.Dispose();
         }
     }

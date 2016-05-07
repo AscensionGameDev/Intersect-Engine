@@ -20,6 +20,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 using System;
+using System.Collections.Generic;
 using System.Windows.Forms;
 using Intersect_Editor.Classes;
 using Intersect_Library;
@@ -30,23 +31,97 @@ namespace Intersect_Editor.Forms
 {
     public partial class frmQuest : Form
     {
-        private ByteBuffer[] _questsBackup;
-        private bool[] _changed;
-        private int _editorIndex;
+        private List<QuestBase> _changed = new List<QuestBase>();
+        private QuestBase _editorItem = null;
 
         public frmQuest()
         {
             InitializeComponent();
+            PacketHandler.GameObjectUpdatedDelegate += GameObjectUpdatedDelegate;
+        }
+
+        private void GameObjectUpdatedDelegate(GameObject type)
+        {
+            if (type == GameObject.Quest)
+            {
+                InitEditor();
+                if (_editorItem != null && !QuestBase.GetObjects().ContainsValue(_editorItem))
+                {
+                    _editorItem = null;
+                    UpdateEditor();
+                }
+            }
+        }
+
+        private void btnNew_Click(object sender, EventArgs e)
+        {
+            PacketSender.SendCreateObject(GameObject.Quest);
+        }
+
+        private void btnUndo_Click(object sender, EventArgs e)
+        {
+            if (_changed.Contains(_editorItem) && _editorItem != null)
+            {
+                _editorItem.RestoreBackup();
+                UpdateEditor();
+            }
+        }
+
+        private void btnDelete_Click(object sender, EventArgs e)
+        {
+            if (_editorItem != null)
+            {
+                if (
+                    MessageBox.Show(
+                        "Are you sure you want to delete this game object? This action cannot be reverted!",
+                        "Delete Object", MessageBoxButtons.YesNo) == DialogResult.Yes)
+                {
+                    PacketSender.SendDeleteObject(_editorItem);
+                }
+            }
+        }
+
+        private void btnCancel_Click(object sender, EventArgs e)
+        {
+            foreach (var item in _changed)
+            {
+                item.RestoreBackup();
+                item.DeleteBackup();
+            }
+
+            Hide();
+            Globals.CurrentEditor = -1;
+            Dispose();
+        }
+
+        private void btnSave_Click(object sender, EventArgs e)
+        {
+            //Send Changed items
+            foreach (var item in _changed)
+            {
+                PacketSender.SendSaveObject(item);
+                item.DeleteBackup();
+            }
+
+            Hide();
+            Globals.CurrentEditor = -1;
+            Dispose();
+        }
+
+        private void lstQuests_Click(object sender, EventArgs e)
+        {
+            _editorItem = QuestBase.GetQuest(Database.GameObjectIdFromList(GameObject.Quest, lstQuests.SelectedIndex));
+            UpdateEditor();
         }
 
         private void frmQuest_Load(object sender, EventArgs e)
         {
-            scrlItem.Maximum = Options.MaxItems;
+            scrlItem.Maximum = ItemBase.ObjectCount();
             scrlLevel.Maximum = Options.MaxLevel;
-            scrlQuest.Maximum = Options.MaxQuests;
-            scrlSwitch.Maximum = Options.MaxPlayerSwitches;
-            scrlVariable.Maximum = Options.MaxPlayerVariables;
-            scrlItemReward.Maximum = Options.MaxItems;
+            scrlQuest.Maximum = QuestBase.ObjectCount();
+            scrlSwitch.Maximum = PlayerSwitchBase.ObjectCount();
+            scrlVariable.Maximum = PlayerVariableBase.ObjectCount();
+            scrlItemReward.Maximum = ItemBase.ObjectCount();
 
             lstQuests.SelectedIndex = 0;
             scrlTask.Value = 1;
@@ -54,28 +129,15 @@ namespace Intersect_Editor.Forms
 
         public void InitEditor()
         {
-            int n = 0;
-            _questsBackup = new ByteBuffer[Options.MaxQuests];
-            _changed = new bool[Options.MaxQuests];
-            for (var i = 0; i < Options.MaxQuests; i++)
+            foreach (var quest in QuestBase.GetObjects())
             {
-                _questsBackup[i] = new ByteBuffer();
-                _questsBackup[i].WriteBytes(Globals.GameQuests[i].QuestData());
-                lstQuests.Items.Add((i + 1) + ") " + Globals.GameQuests[i].Name);
-                _changed[i] = false;
+                lstQuests.Items.Add(quest.Value.Name);
             }
-            lstQuests.SelectedIndex = 0;
-
             cmbClass.Items.Clear();
             cmbClass.Items.Add("None");
-            while (Globals.GameClasses[n].Name != "")
+            foreach (var cls in ClassBase.GetObjects())
             {
-                cmbClass.Items.Add(Globals.GameClasses[n].Name);
-                n = n + 1;
-                if (n >= Options.MaxClasses)
-                {
-                    break;
-                }
+                cmbClass.Items.Add(cls.Value.Name);
             }
             cmbClass.SelectedIndex = 0;
 
@@ -84,37 +146,81 @@ namespace Intersect_Editor.Forms
 
         private void UpdateEditor()
         {
-            _editorIndex = lstQuests.SelectedIndex;
-            txtName.Text = Globals.GameQuests[_editorIndex].Name;
-            txtStartDesc.Text = Globals.GameQuests[_editorIndex].StartDesc;
-            txtEndDesc.Text = Globals.GameQuests[_editorIndex].EndDesc;
+            if (_editorItem != null)
+            {
+                pnlContainer.Show();
 
-            cmbClass.SelectedIndex = Globals.GameQuests[_editorIndex].ClassReq;
-            scrlItem.Value = Globals.GameQuests[_editorIndex].ItemReq;
-            scrlLevel.Value = Globals.GameQuests[_editorIndex].LevelReq;
-            scrlQuest.Value = Globals.GameQuests[_editorIndex].QuestReq;
-            scrlSwitch.Value = Globals.GameQuests[_editorIndex].SwitchReq;
-            scrlVariable.Value = Globals.GameQuests[_editorIndex].VariableReq;
-            scrlVariableValue.Value = Globals.GameQuests[_editorIndex].VariableValue;
+                txtName.Text = _editorItem.Name;
+                txtStartDesc.Text = _editorItem.StartDesc;
+                txtEndDesc.Text = _editorItem.EndDesc;
 
-            scrlTask.Value = 1;
-            scrlMaxTasks.Value = Globals.GameQuests[_editorIndex].Tasks.Count;
-            scrlTask.Maximum = scrlMaxTasks.Value;
+                cmbClass.SelectedIndex = Database.GameObjectListIndex(GameObject.Class, _editorItem.ClassReq);
+                scrlItem.Value = Database.GameObjectListIndex(GameObject.Item, _editorItem.ItemReq);
+                scrlLevel.Value = _editorItem.LevelReq;
+                scrlQuest.Value = Database.GameObjectListIndex(GameObject.Quest, _editorItem.QuestReq);
+                scrlSwitch.Value = Database.GameObjectListIndex(GameObject.PlayerSwitch, _editorItem.SwitchReq);
+                scrlVariable.Value = Database.GameObjectListIndex(GameObject.PlayerVariable, _editorItem.VariableReq);
+                scrlVariableValue.Value = _editorItem.VariableValue;
 
-            if (scrlItem.Value > 0) { lblItem.Text = @"Item: " + (scrlItem.Value) + @" - " + Globals.GameItems[scrlItem.Value - 1].Name; }
-            else { lblItem.Text = @"Item: 0 None"; }
-            lblLevel.Text = @"Level: " + scrlLevel.Value;
-            if (scrlQuest.Value > 0) { lblQuest.Text = @"Quest: " + (scrlQuest.Value) + @" - " + Globals.GameQuests[scrlQuest.Value - 1].Name; }
-            else { lblQuest.Text = @"Quest: 0 None"; }
-            lblSwitch.Text = @"Switch: " + scrlSwitch.Value;
-            lblVariable.Text = @"Variable: " + scrlVariable.Value;
-            lblVariableValue.Text = @"Variable Value: " + scrlVariableValue.Value;
-            lblMaxTasks.Text = @"Max Tasks: " + scrlMaxTasks.Value;
-            lblTask.Text = "Task: " + scrlTask.Value;
+                scrlTask.Value = 0;
+                scrlMaxTasks.Value = _editorItem.Tasks.Count;
+                scrlTask.Maximum = scrlMaxTasks.Value;
 
-            UpdateTask();
+                if (scrlItem.Value > 0)
+                {
+                    lblItem.Text = @"Item: " +
+                                   ItemBase.GetName(Database.GameObjectIdFromList(GameObject.Item, scrlItem.Value));
+                }
+                else
+                {
+                    lblItem.Text = @"Item: 0 None";
+                }
+                lblLevel.Text = @"Level: " + scrlLevel.Value;
+                if (scrlQuest.Value >= 0)
+                {
+                    lblQuest.Text = @"Quest: " +
+                                    QuestBase.GetName(Database.GameObjectIdFromList(GameObject.Quest, scrlQuest.Value));
+                }
+                else
+                {
+                    lblQuest.Text = @"Quest: None";
+                }
+                if (scrlSwitch.Value == -1)
+                {
+                    lblSwitch.Text = @"Switch: None";
+                }
+                else
+                {
+                    lblSwitch.Text = @"Switch: " +
+                                     QuestBase.GetName(Database.GameObjectIdFromList(GameObject.PlayerSwitch,
+                                         scrlSwitch.Value));
+                }
+                if (scrlVariable.Value == -1)
+                {
+                    lblVariable.Text = @"Variable: None";
+                }
+                else
+                {
+                    lblVariable.Text = @"Variable: " +
+                                       QuestBase.GetName(Database.GameObjectIdFromList(GameObject.PlayerVariable,
+                                           scrlVariable.Value));
+                }
+                lblVariableValue.Text = @"Variable Value: " + scrlVariableValue.Value;
+                lblMaxTasks.Text = @"Max Tasks: " + scrlMaxTasks.Value;
+                lblTask.Text = "Task: " + (scrlTask.Value + 1);
 
-            _changed[_editorIndex] = true;
+                UpdateTask();
+
+                if (_changed.IndexOf(_editorItem) == -1)
+                {
+                    _changed.Add(_editorItem);
+                    _editorItem.MakeBackup();
+                }
+            }
+            else
+            {
+                pnlContainer.Hide();
+            }
         }
 
         private void UpdateTask()
@@ -124,25 +230,19 @@ namespace Intersect_Editor.Forms
             scrlObjective1.Visible = true;
             scrlObjective2.Visible = true;
 
-            txtDesc.Text = Globals.GameQuests[_editorIndex].Tasks[scrlTask.Value - 1].Desc;
-            scrlObjective1.Value = Globals.GameQuests[_editorIndex].Tasks[scrlTask.Value - 1].Data1;
-            scrlObjective2.Value = Globals.GameQuests[_editorIndex].Tasks[scrlTask.Value - 1].Data2;
+            txtDesc.Text = _editorItem.Tasks[scrlTask.Value].Desc;
+            scrlObjective1.Value = _editorItem.Tasks[scrlTask.Value].Data1;
+            scrlObjective2.Value = _editorItem.Tasks[scrlTask.Value ].Data2;
 
-            switch (Globals.GameQuests[_editorIndex].Tasks[scrlTask.Value - 1].Objective)
+            switch (_editorItem.Tasks[scrlTask.Value].Objective)
             {
                 case 0:
                     rbItem.Checked = true;
-                    scrlObjective1.Maximum = Options.MaxItems;
-                    if (scrlObjective1.Value == 0) { lblObjective1.Text = @"Item: 0 None"; }
-                    else { lblObjective1.Text = @"Item: " + scrlObjective1.Value + " " + Globals.GameItems[scrlObjective1.Value - 1].Name; }
-                    lblObjective2.Text = @"Quantity: x" + scrlObjective2.Value;
+                    UpdateObjectives();
                     break;
                 case 1:
                     rbNpc.Checked = true;
-                    scrlObjective1.Maximum = Options.MaxNpcs;
-                    if (scrlObjective1.Value == 0) { lblObjective1.Text = @"Npc: 0 None"; }
-                    else { lblObjective1.Text = @"Npc: " + scrlObjective1.Value + " " + Globals.GameNpcs[scrlObjective1.Value - 1].Name; }
-                    lblObjective2.Text = @"Quantity: x" + scrlObjective2.Value;
+                    UpdateObjectives();
                     break;
                 case 2:
                     rbEvent.Checked = true;
@@ -153,7 +253,7 @@ namespace Intersect_Editor.Forms
                     break;
             }
 
-            scrlExp.Value = Globals.GameQuests[_editorIndex].Tasks[scrlTask.Value - 1].Experience;
+            scrlExp.Value = _editorItem.Tasks[scrlTask.Value].Experience;
             lblExp.Text = @"Experience: " + scrlExp.Value;
 
             scrlIndex.Value = 1;
@@ -162,70 +262,85 @@ namespace Intersect_Editor.Forms
 
         private void UpdateRewards()
         {
-            int index = scrlIndex.Value - 1;
+            int index = scrlIndex.Value;
             lblIndex.Text = @"Rewards Index: " + (index + 1);
-            scrlItemReward.Value = Globals.GameQuests[_editorIndex].Tasks[scrlTask.Value - 1].Rewards[index].ItemNum;
-            if (scrlItemReward.Value > 0) { lblItemReward.Text = @"Item: " + (scrlItemReward.Value) + @" - " + Globals.GameItems[scrlItemReward.Value - 1].Name; }
-            else { lblItemReward.Text = @"Item: 0 None"; }
-            txtAmount.Text = Globals.GameQuests[_editorIndex].Tasks[scrlTask.Value - 1].Rewards[index].Amount.ToString();
-        }
-
-        private void lstQuests_Click(object sender, EventArgs e)
-        {
-            UpdateEditor();
+            scrlItemReward.Value = Database.GameObjectListIndex(GameObject.Item,_editorItem.Tasks[scrlTask.Value].Rewards[index].ItemNum);
+            if (scrlItemReward.Value >= 0)
+            {
+                lblItemReward.Text = @"Item: " + ItemBase.GetName(_editorItem.Tasks[scrlTask.Value].Rewards[index].ItemNum);
+            }
+            else
+            {
+                lblItemReward.Text = @"Item: None";
+            }
+            txtAmount.Text = _editorItem.Tasks[scrlTask.Value].Rewards[index].Amount.ToString();
         }
 
         private void txtName_TextChanged(object sender, EventArgs e)
         {
-            Globals.GameQuests[_editorIndex].Name = txtName.Text;
-            lstQuests.Items[_editorIndex] = (_editorIndex + 1) + ") " + txtName.Text;
+            _editorItem.Name = txtName.Text;
+            lstQuests.Items[Database.GameObjectListIndex(GameObject.Quest,_editorItem.GetId())] =  txtName.Text;
         }
 
         private void txtStartDesc_TextChanged(object sender, EventArgs e)
         {
-            Globals.GameQuests[_editorIndex].StartDesc = txtStartDesc.Text;
+            _editorItem.StartDesc = txtStartDesc.Text;
         }
 
         private void txtEndDesc_TextChanged(object sender, EventArgs e)
         {
-            Globals.GameQuests[_editorIndex].EndDesc = txtEndDesc.Text;
+            _editorItem.EndDesc = txtEndDesc.Text;
         }
 
         private void scrlItem_ValueChanged(object sender, EventArgs e)
         {
-            Globals.GameQuests[_editorIndex].ItemReq = scrlItem.Value;
-            if (scrlItem.Value > 0) { lblItem.Text = @"Item: " + (scrlItem.Value) + @" - " + Globals.GameItems[scrlItem.Value - 1].Name; }
-            else { lblItem.Text = @"Item: 0 None"; }
+            if (scrlItem.Value >= 0)
+            {
+                _editorItem.ItemReq = Database.GameObjectIdFromList(GameObject.Item,scrlItem.Value);
+                lblItem.Text = @"Item: " + ItemBase.GetName(_editorItem.ItemReq);
+            }
+            else
+            {
+                _editorItem.ItemReq = -1;
+                lblItem.Text = @"Item: None";
+            }
         }
 
         private void scrlLevel_ValueChanged(object sender, EventArgs e)
         {
-            Globals.GameQuests[_editorIndex].LevelReq = scrlLevel.Value;
+            _editorItem.LevelReq = scrlLevel.Value;
             lblLevel.Text = @"Level: " + scrlLevel.Value;
         }
 
         private void scrlQuest_ValueChanged(object sender, EventArgs e)
         {
-            Globals.GameQuests[_editorIndex].QuestReq = scrlQuest.Value;
-            if (scrlQuest.Value > 0) { lblQuest.Text = @"Quest: " + (scrlQuest.Value) + @" - " + Globals.GameQuests[scrlQuest.Value - 1].Name; }
-            else { lblQuest.Text = @"Quest: 0 None"; }
+            if (scrlQuest.Value >= 0)
+            {
+                _editorItem.QuestReq = Database.GameObjectIdFromList(GameObject.Quest,scrlQuest.Value);
+                lblQuest.Text = @"Quest: " + QuestBase.GetName(_editorItem.QuestReq);
+            }
+            else
+            {
+                _editorItem.QuestReq = -1;
+                lblQuest.Text = @"Quest: None";
+            }
         }
 
         private void scrlSwitch_ValueChanged(object sender, EventArgs e)
         {
-            Globals.GameQuests[_editorIndex].SwitchReq = scrlSwitch.Value;
+            _editorItem.SwitchReq = scrlSwitch.Value;
             lblSwitch.Text = @"Switch: " + scrlSwitch.Value;
         }
 
         private void scrlVariable_ValueChanged(object sender, EventArgs e)
         {
-            Globals.GameQuests[_editorIndex].VariableReq = scrlVariable.Value;
+            _editorItem.VariableReq = scrlVariable.Value;
             lblVariable.Text = @"Variable: " + scrlVariable.Value;
         }
 
         private void scrlVariableValue_ValueChanged(object sender, EventArgs e)
         {
-            Globals.GameQuests[_editorIndex].VariableValue = scrlVariableValue.Value;
+            _editorItem.VariableValue = scrlVariableValue.Value;
             lblVariableValue.Text = @"Variable Value: " + scrlVariableValue.Value;
         }
 
@@ -233,7 +348,7 @@ namespace Intersect_Editor.Forms
         {
             lblMaxTasks.Text = @"Max Tasks: " + scrlMaxTasks.Value;
             scrlTask.Maximum = scrlMaxTasks.Value;
-            Globals.GameQuests[_editorIndex].Tasks.Add(new QuestStruct.QuestTask());
+            _editorItem.Tasks.Add(new QuestBase.QuestTask());
         }
 
         private void scrlTask_ValueChanged(object sender, EventArgs e)
@@ -244,48 +359,49 @@ namespace Intersect_Editor.Forms
 
         private void txtDesc_TextChanged(object sender, EventArgs e)
         {
-            Globals.GameQuests[_editorIndex].Tasks[scrlTask.Value - 1].Desc = txtDesc.Text;
+            _editorItem.Tasks[scrlTask.Value].Desc = txtDesc.Text;
         }
 
         private void scrlObjective1_ValueChanged(object sender, EventArgs e)
         {
-            Globals.GameQuests[_editorIndex].Tasks[scrlTask.Value - 1].Data1 = scrlObjective1.Value;
-            switch (Globals.GameQuests[_editorIndex].Tasks[scrlTask.Value - 1].Objective)
-            {
-                case 0:
-                    rbItem.Checked = true;
-                    scrlObjective1.Maximum = Options.MaxItems;
-                    if (scrlObjective1.Value == 0) { lblObjective1.Text = @"Item: 0 None"; }
-                    else { lblObjective1.Text = @"Item: " + scrlObjective1.Value + " " + Globals.GameItems[scrlObjective1.Value - 1].Name; }
-                    lblObjective2.Text = @"Quantity: x" + scrlObjective2.Value;
-                    break;
-                case 1:
-                    rbNpc.Checked = true;
-                    scrlObjective1.Maximum = Options.MaxNpcs;
-                    if (scrlObjective1.Value == 0) { lblObjective1.Text = @"Npc: 0 None"; }
-                    else { lblObjective1.Text = @"Npc: " + scrlObjective1.Value + " " + Globals.GameNpcs[scrlObjective1.Value - 1].Name; }
-                    lblObjective2.Text = @"Quantity: x" + scrlObjective2.Value;
-                    break;
-            }
+            _editorItem.Tasks[scrlTask.Value].Data1 = scrlObjective1.Value;
+            UpdateObjectives();
         }
 
         private void scrlObjective2_Scroll(object sender, ScrollEventArgs e)
         {
-            Globals.GameQuests[_editorIndex].Tasks[scrlTask.Value - 1].Data2 = scrlObjective2.Value;
-            switch (Globals.GameQuests[_editorIndex].Tasks[scrlTask.Value - 1].Objective)
+            _editorItem.Tasks[scrlTask.Value].Data2 = scrlObjective2.Value;
+            UpdateObjectives();
+        }
+
+        private void UpdateObjectives()
+        {
+            switch (_editorItem.Tasks[scrlTask.Value].Objective)
             {
                 case 0:
                     rbItem.Checked = true;
-                    scrlObjective1.Maximum = Options.MaxItems;
-                    if (scrlObjective1.Value == 0) { lblObjective1.Text = @"Item: 0 None"; }
-                    else { lblObjective1.Text = @"Item: " + scrlObjective1.Value + " " + Globals.GameItems[scrlObjective1.Value - 1].Name; }
+                    scrlObjective1.Maximum = ItemBase.ObjectCount();
+                    if (scrlObjective1.Value == -1)
+                    {
+                        lblObjective1.Text = @"Item: None";
+                    }
+                    else
+                    {
+                        lblObjective1.Text = @"Item: " + ItemBase.GetName(Database.GameObjectIdFromList(GameObject.Item, scrlObjective1.Value));
+                    }
                     lblObjective2.Text = @"Quantity: x" + scrlObjective2.Value;
                     break;
                 case 1:
                     rbNpc.Checked = true;
-                    scrlObjective1.Maximum = Options.MaxNpcs;
-                    if (scrlObjective1.Value == 0) { lblObjective1.Text = @"Npc: 0 None"; }
-                    else { lblObjective1.Text = @"Npc: " + scrlObjective1.Value + " " + Globals.GameNpcs[scrlObjective1.Value - 1].Name; }
+                    scrlObjective1.Maximum = NpcBase.ObjectCount();
+                    if (scrlObjective1.Value == -1)
+                    {
+                        lblObjective1.Text = @"Npc: None";
+                    }
+                    else
+                    {
+                        lblObjective1.Text = @"Npc: " + NpcBase.GetName(Database.GameObjectIdFromList(GameObject.Npc, scrlObjective1.Value));
+                    }
                     lblObjective2.Text = @"Quantity: x" + scrlObjective2.Value;
                     break;
             }
@@ -293,7 +409,7 @@ namespace Intersect_Editor.Forms
 
         private void scrlExp_ValueChanged(object sender, EventArgs e)
         {
-            Globals.GameQuests[_editorIndex].Tasks[scrlTask.Value - 1].Experience = scrlExp.Value;
+            _editorItem.Tasks[scrlTask.Value].Experience = scrlExp.Value;
             lblExp.Text = "Experience: " + scrlExp.Value;
         }
 
@@ -304,76 +420,46 @@ namespace Intersect_Editor.Forms
 
         private void scrlItemReward_ValueChanged(object sender, EventArgs e)
         {
-            if (scrlItemReward.Value == 0) { lblItemReward.Text = @"Item: 0 None"; }
-            else { lblItemReward.Text = @"Item: " + scrlItemReward.Value + " " + Globals.GameItems[scrlItemReward.Value - 1].Name; }
-            Globals.GameQuests[_editorIndex].Tasks[scrlTask.Value - 1].Rewards[scrlIndex.Value - 1].ItemNum = scrlItemReward.Value;
+            if (scrlItemReward.Value == -1)
+            {
+                _editorItem.Tasks[scrlTask.Value].Rewards[scrlIndex.Value].ItemNum = -1;
+                lblItemReward.Text = @"Item: None";
+            }
+            else
+            {
+                _editorItem.Tasks[scrlTask.Value].Rewards[scrlIndex.Value].ItemNum = Database.GameObjectIdFromList(GameObject.Item,scrlItemReward.Value);
+                lblItemReward.Text = @"Item: " + ItemBase.GetName(_editorItem.Tasks[scrlTask.Value].Rewards[scrlIndex.Value].ItemNum);
+            }
         }
 
         private void txtAmount_TextChanged(object sender, EventArgs e)
         {
             int x = 0;
             int.TryParse(txtAmount.Text, out x);
-            Globals.GameQuests[_editorIndex].Tasks[scrlTask.Value - 1].Rewards[scrlIndex.Value - 1].Amount = x;
-        }
-
-        private void btnSave_Click(object sender, EventArgs e)
-        {
-            for (var i = 0; i < Options.MaxQuests; i++)
-            {
-                if (_changed[i])
-                {
-                    PacketSender.SendQuest(i, Globals.GameQuests[i].QuestData());
-                }
-            }
-
-            Hide();
-            Globals.CurrentEditor = -1;
-            Dispose();
-        }
-
-        private void btnDelete_Click(object sender, EventArgs e)
-        {
-            var tempQuest = new QuestStruct();
-            var tempBuff = new ByteBuffer();
-            tempBuff.WriteBytes(tempQuest.QuestData());
-            Globals.GameQuests[_editorIndex].Load(tempBuff.ToArray(),_editorIndex);
-            tempBuff.Dispose();
-            UpdateEditor();
-        }
-
-        private void btnCancel_Click(object sender, EventArgs e)
-        {
-            for (var i = 0; i < Options.MaxQuests; i++)
-            {
-                Globals.GameQuests[i].Load(_questsBackup[i].ToArray(),i);
-            }
-
-            Hide();
-            Globals.CurrentEditor = -1;
-            Dispose();
+            _editorItem.Tasks[scrlTask.Value].Rewards[scrlIndex.Value].Amount = x;
         }
 
         private void rbItem_Click(object sender, EventArgs e)
         {
-            Globals.GameQuests[_editorIndex].Tasks[scrlTask.Value - 1].Objective = 0;
+            _editorItem.Tasks[scrlTask.Value].Objective = 0;
             UpdateTask();
         }
 
         private void rbNpc_Click(object sender, EventArgs e)
         {
-            Globals.GameQuests[_editorIndex].Tasks[scrlTask.Value - 1].Objective = 1;
+            _editorItem.Tasks[scrlTask.Value].Objective = 1;
             UpdateTask();
         }
 
         private void rbEvent_Click(object sender, EventArgs e)
         {
-            Globals.GameQuests[_editorIndex].Tasks[scrlTask.Value - 1].Objective = 2;
+            _editorItem.Tasks[scrlTask.Value].Objective = 2;
             UpdateTask();
         }
 
         private void cmbClass_Click(object sender, EventArgs e)
         {
-            Globals.GameQuests[_editorIndex].ClassReq = cmbClass.SelectedIndex;
+            _editorItem.ClassReq = cmbClass.SelectedIndex;
         }
 
     }

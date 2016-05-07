@@ -34,7 +34,7 @@ namespace Intersect_Editor.Classes
         public static void StartLoop()
         {
             Globals.MainForm.Visible = true;
-            Globals.MainForm.EnterMap(Globals.CurrentMap);
+            Globals.MainForm.EnterMap(Globals.CurrentMap == null ? 0 : Globals.CurrentMap.GetId());
             frmMain myForm = Globals.MainForm;
             long animationTimer = Environment.TickCount;
             long waterfallTimer = Environment.TickCount;

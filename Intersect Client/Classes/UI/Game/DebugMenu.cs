@@ -25,7 +25,6 @@
     SOFTWARE.
 */
 
-using System.Collections.Generic;
 using IntersectClientExtras.Gwen;
 using IntersectClientExtras.Gwen.Control;
 using Intersect_Client.Classes.Core;
@@ -117,20 +116,20 @@ namespace Intersect_Client.Classes.UI.Game
             _fpsLabel.Text = "FPS: " + GameGraphics.Renderer.GetFps();
             _pingLabel.Text = "Ping: " + GameNetwork.Ping;
             _drawsLabel.Text = "Draws: " + GameGraphics.DrawCalls;
-            if (Globals.CurrentMap > -1 && Globals.GameMaps.ContainsKey(Globals.CurrentMap))
+            if (MapInstance.GetMap(Globals.CurrentMap) != null)
             {
-                _mapLabel.Text = "Map: " + Globals.Me.CurrentMap + "  (" + Globals.GameMaps[Globals.CurrentMap].MyName + ")";
+                _mapLabel.Text = "Map: " + Globals.Me.CurrentMap + "  (" + MapInstance.GetMap(Globals.CurrentMap).MyName + ")";
                 _xLabel.Text = "X: " + Globals.Me.CurrentX;
                 _yLabel.Text = "Y: " + Globals.Me.CurrentY;
                 _zLabel.Text = "Z: " + Globals.Me.CurrentZ;
             }
             int entityCount = Globals.Entities.Count;
-            foreach (KeyValuePair<int,MapInstance> map in Globals.GameMaps)
+            foreach (var map in MapInstance.GetObjects())
             {
                 if (map.Value != null) entityCount += map.Value.LocalEntities.Count;
             }
             _entitiesLabel.Text = "Known Entities: " + Globals.Entities.Count;
-            _mapsLoadedLabel.Text = "Known Maps: " + Globals.GameMaps.Count;
+            _mapsLoadedLabel.Text = "Known Maps: " + MapInstance.ObjectCount();
             _mapsDrawnLabel.Text = "Maps Drawn: " + GameGraphics.MapsDrawn;
             _entitiesDrawnLabel.Text = "Entities Drawn: " + GameGraphics.EntitiesDrawn;
             _lightsDrawnLabel.Text = "Lights Drawn: " + GameGraphics.LightsDrawn;

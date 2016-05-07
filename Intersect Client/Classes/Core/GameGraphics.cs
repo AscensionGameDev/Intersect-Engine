@@ -32,6 +32,7 @@ using IntersectClientExtras.GenericClasses;
 using IntersectClientExtras.Graphics;
 using Intersect_Client.Classes.Entities;
 using Intersect_Client.Classes.General;
+using Intersect_Client.Classes.Maps;
 using Intersect_Client.Classes.UI;
 using Intersect_Library;
 using Event = Intersect_Client.Classes.Entities.Event;
@@ -71,7 +72,7 @@ namespace Intersect_Client.Classes.Core
         private static int _playerLightSize = 0;
         private static float _playerLightExpand = 0f;
         public static Color _playerLightColor = Color.White;
-        private static List<Light> _lightQueue = new List<Light>();
+        private static List<LightBase> _lightQueue = new List<LightBase>();
 
         private static long _fadeTimer;
 
@@ -141,8 +142,8 @@ namespace Intersect_Client.Classes.Core
             TryPreRendering();
 
             GenerateLightMap();
-
-            if (Globals.CurrentMap > -1 && Globals.GameMaps.ContainsKey(Globals.CurrentMap) && Globals.NeedsMaps == false)
+            var currentMap = MapInstance.GetMap(Globals.CurrentMap);
+            if (currentMap != null && Globals.NeedsMaps == false)
             {
                 //Render players, names, maps, etc.
                 for (var i = 0; i < 9; i++)
@@ -283,12 +284,12 @@ namespace Intersect_Client.Classes.Core
                 {
                     if (Globals.LocalMaps[i] > -1)
                     {
-                        if (Globals.GameMaps.ContainsKey(Globals.LocalMaps[i]) &&
-                            !Globals.GameMaps[Globals.LocalMaps[i]].MapRendered)
+                        var map = MapInstance.GetMap(Globals.LocalMaps[i]);
+                        if (map != null && !map.MapRendered)
                         {
                             if (!GameGraphics.PreRenderedMapLayer)
                             {
-                                Globals.GameMaps[Globals.LocalMaps[i]].PreRenderMap();
+                                map.PreRenderMap();
                             }
                         }
                     }
@@ -297,28 +298,31 @@ namespace Intersect_Client.Classes.Core
         }
         private static void DrawMap(int index, int layer = 0)
         {
-            if (Globals.LocalMaps[index] < 0) return;
-            if (!Globals.GameMaps.ContainsKey(Globals.LocalMaps[index])) return;
-            if (!new FloatRect(Globals.GameMaps[Globals.LocalMaps[index]].GetX(), Globals.GameMaps[Globals.LocalMaps[index]].GetY(), Options.TileWidth * Options.MapWidth, Options.TileHeight * Options.MapHeight).IntersectsWith(CurrentView)) return;
-            Globals.GameMaps[Globals.LocalMaps[index]].Draw(layer);
-            if (layer == 0) { MapsDrawn++; }
+            var map = MapInstance.GetMap(Globals.LocalMaps[index]);
+            if (map != null)
+            {
+                if (!new FloatRect(map.GetX(), map.GetY(), Options.TileWidth * Options.MapWidth, Options.TileHeight * Options.MapHeight).IntersectsWith(CurrentView)) return;
+                map.Draw(layer);
+                if (layer == 0) { MapsDrawn++; }
+            }
         }
         public static void DrawOverlay()
         {
-            if (Globals.GameMaps.ContainsKey(Globals.CurrentMap))
+            var map = MapInstance.GetMap(Globals.CurrentMap);
+            if (map != null)
             {
                 float ecTime = Globals.System.GetTimeMS() - _overlayUpdate;
 
-                if (OverlayColor.A != Globals.GameMaps[Globals.CurrentMap].AHue ||
-                    OverlayColor.R != Globals.GameMaps[Globals.CurrentMap].RHue ||
-                    OverlayColor.G != Globals.GameMaps[Globals.CurrentMap].GHue ||
-                    OverlayColor.B != Globals.GameMaps[Globals.CurrentMap].BHue)
+                if (OverlayColor.A != map.AHue ||
+                    OverlayColor.R != map.RHue ||
+                    OverlayColor.G != map.GHue ||
+                    OverlayColor.B != map.BHue)
                 {
-                    if (OverlayColor.A < Globals.GameMaps[Globals.CurrentMap].AHue)
+                    if (OverlayColor.A < map.AHue)
                     {
-                        if ((int)OverlayColor.A + (int)(255 * ecTime / 2000f) > Globals.GameMaps[Globals.CurrentMap].AHue)
+                        if ((int)OverlayColor.A + (int)(255 * ecTime / 2000f) > map.AHue)
                         {
-                            OverlayColor.A = (byte)Globals.GameMaps[Globals.CurrentMap].AHue;
+                            OverlayColor.A = (byte)map.AHue;
                         }
                         else
                         {
@@ -326,11 +330,11 @@ namespace Intersect_Client.Classes.Core
                         }
                     }
 
-                    if (OverlayColor.A > Globals.GameMaps[Globals.CurrentMap].AHue)
+                    if (OverlayColor.A > map.AHue)
                     {
-                        if ((int)OverlayColor.A - (int)(255 * ecTime / 2000f) < Globals.GameMaps[Globals.CurrentMap].AHue)
+                        if ((int)OverlayColor.A - (int)(255 * ecTime / 2000f) < map.AHue)
                         {
-                            OverlayColor.A = (byte)Globals.GameMaps[Globals.CurrentMap].AHue;
+                            OverlayColor.A = (byte)map.AHue;
                         }
                         else
                         {
@@ -338,11 +342,11 @@ namespace Intersect_Client.Classes.Core
                         }
                     }
 
-                    if (OverlayColor.R < Globals.GameMaps[Globals.CurrentMap].RHue)
+                    if (OverlayColor.R < map.RHue)
                     {
-                        if ((int)OverlayColor.R + (int)(255 * ecTime / 2000f) > Globals.GameMaps[Globals.CurrentMap].RHue)
+                        if ((int)OverlayColor.R + (int)(255 * ecTime / 2000f) > map.RHue)
                         {
-                            OverlayColor.R = (byte)Globals.GameMaps[Globals.CurrentMap].RHue;
+                            OverlayColor.R = (byte)map.RHue;
                         }
                         else
                         {
@@ -350,11 +354,11 @@ namespace Intersect_Client.Classes.Core
                         }
                     }
 
-                    if (OverlayColor.R > Globals.GameMaps[Globals.CurrentMap].RHue)
+                    if (OverlayColor.R > map.RHue)
                     {
-                        if ((int)OverlayColor.R - (int)(255 * ecTime / 2000f) < Globals.GameMaps[Globals.CurrentMap].RHue)
+                        if ((int)OverlayColor.R - (int)(255 * ecTime / 2000f) < map.RHue)
                         {
-                            OverlayColor.R = (byte)Globals.GameMaps[Globals.CurrentMap].RHue;
+                            OverlayColor.R = (byte)map.RHue;
                         }
                         else
                         {
@@ -362,11 +366,11 @@ namespace Intersect_Client.Classes.Core
                         }
                     }
 
-                    if (OverlayColor.G < Globals.GameMaps[Globals.CurrentMap].GHue)
+                    if (OverlayColor.G < map.GHue)
                     {
-                        if ((int)OverlayColor.G + (int)(255 * ecTime / 2000f) > Globals.GameMaps[Globals.CurrentMap].GHue)
+                        if ((int)OverlayColor.G + (int)(255 * ecTime / 2000f) > map.GHue)
                         {
-                            OverlayColor.G = (byte)Globals.GameMaps[Globals.CurrentMap].GHue;
+                            OverlayColor.G = (byte)map.GHue;
                         }
                         else
                         {
@@ -374,11 +378,11 @@ namespace Intersect_Client.Classes.Core
                         }
                     }
 
-                    if (OverlayColor.G > Globals.GameMaps[Globals.CurrentMap].GHue)
+                    if (OverlayColor.G > map.GHue)
                     {
-                        if ((int)OverlayColor.G - (int)(255 * ecTime / 2000f) < Globals.GameMaps[Globals.CurrentMap].GHue)
+                        if ((int)OverlayColor.G - (int)(255 * ecTime / 2000f) < map.GHue)
                         {
-                            OverlayColor.G = (byte)Globals.GameMaps[Globals.CurrentMap].GHue;
+                            OverlayColor.G = (byte)map.GHue;
                         }
                         else
                         {
@@ -386,11 +390,11 @@ namespace Intersect_Client.Classes.Core
                         }
                     }
 
-                    if (OverlayColor.B < Globals.GameMaps[Globals.CurrentMap].BHue)
+                    if (OverlayColor.B < map.BHue)
                     {
-                        if ((int)OverlayColor.B + (int)(255 * ecTime / 2000f) > Globals.GameMaps[Globals.CurrentMap].BHue)
+                        if ((int)OverlayColor.B + (int)(255 * ecTime / 2000f) > map.BHue)
                         {
-                            OverlayColor.B = (byte)Globals.GameMaps[Globals.CurrentMap].BHue;
+                            OverlayColor.B = (byte)map.BHue;
                         }
                         else
                         {
@@ -398,11 +402,11 @@ namespace Intersect_Client.Classes.Core
                         }
                     }
 
-                    if (OverlayColor.B > Globals.GameMaps[Globals.CurrentMap].BHue)
+                    if (OverlayColor.B > map.BHue)
                     {
-                        if ((int)OverlayColor.B - (int)(255 * ecTime / 2000f) < Globals.GameMaps[Globals.CurrentMap].BHue)
+                        if ((int)OverlayColor.B - (int)(255 * ecTime / 2000f) < map.BHue)
                         {
-                            OverlayColor.B = (byte)Globals.GameMaps[Globals.CurrentMap].BHue;
+                            OverlayColor.B = (byte)map.BHue;
                         }
                         else
                         {
@@ -445,26 +449,27 @@ namespace Intersect_Client.Classes.Core
 
         private static void UpdateView()
         {
-            if (Globals.GameState == GameStates.InGame && Globals.GameMaps.ContainsKey(Globals.CurrentMap))
+            var map = MapInstance.GetMap(Globals.CurrentMap);
+            if (Globals.GameState == GameStates.InGame && map != null)
             {
                 Player en = (Player)Globals.Entities[Globals.MyIndex];
-                float x = Globals.GameMaps[Globals.CurrentMap].GetX() - Options.MapWidth * Options.TileWidth;
-                float y = Globals.GameMaps[Globals.CurrentMap].GetY() - Options.MapHeight * Options.TileHeight;
-                float x1 = Globals.GameMaps[Globals.CurrentMap].GetX() + (Options.MapWidth * Options.TileWidth) * 2;
-                float y1 = Globals.GameMaps[Globals.CurrentMap].GetY() + (Options.MapHeight * Options.TileHeight) * 2;
-                if (Globals.GameMaps[Globals.CurrentMap].HoldUp == 1)
+                float x = map.GetX() - Options.MapWidth * Options.TileWidth;
+                float y = map.GetY() - Options.MapHeight * Options.TileHeight;
+                float x1 = map.GetX() + (Options.MapWidth * Options.TileWidth) * 2;
+                float y1 = map.GetY() + (Options.MapHeight * Options.TileHeight) * 2;
+                if (map.HoldUp == 1)
                 {
                     y += Options.MapHeight * Options.TileHeight;
                 }
-                if (Globals.GameMaps[Globals.CurrentMap].HoldLeft == 1)
+                if (map.HoldLeft == 1)
                 {
                     x += Options.MapWidth * Options.TileWidth;
                 }
-                if (Globals.GameMaps[Globals.CurrentMap].HoldRight == 1)
+                if (map.HoldRight == 1)
                 {
                     x1 -= Options.MapWidth * Options.TileWidth;
                 }
-                if (Globals.GameMaps[Globals.CurrentMap].HoldDown == 1)
+                if (map.HoldDown == 1)
                 {
                     y1 -= Options.MapHeight * Options.TileHeight;
                 }
@@ -550,7 +555,8 @@ namespace Intersect_Client.Classes.Core
         }
         private static void GenerateLightMap()
         {
-            if (!Globals.GameMaps.ContainsKey(Globals.CurrentMap)) return;
+            var map = MapInstance.GetMap(Globals.CurrentMap);
+            if (map == null) return;
             if (_darknessTexture == null) { return; }
 
             UpdatePlayerLight();
@@ -573,7 +579,7 @@ namespace Intersect_Client.Classes.Core
         }
         public static void AddLight(int x, int y, int size, byte intensity, float expand, Intersect_Library.Color color)
         {
-            _lightQueue.Add(new Light(0, 0, x, y, intensity, size, expand, color));
+            _lightQueue.Add(new LightBase(0, 0, x, y, intensity, size, expand, color));
             LightsDrawn++;
         }
 
@@ -582,7 +588,7 @@ namespace Intersect_Client.Classes.Core
             GameShader radialShader = Globals.ContentManager.GetShader("radialgradient.xnb");
             if (radialShader != null)
             {
-                foreach (Light l in _lightQueue)
+                foreach (LightBase l in _lightQueue)
                 {
                     int x = l.OffsetX - ((int) CurrentView.Left + l.Size);
                     int y = l.OffsetY - ((int) CurrentView.Top + l.Size);
@@ -601,11 +607,12 @@ namespace Intersect_Client.Classes.Core
         private static void UpdatePlayerLight()
         {
             //Draw Light Around Player
-            if (Globals.GameMaps.ContainsKey(Globals.CurrentMap))
+            var map = MapInstance.GetMap(Globals.CurrentMap);
+            if (map != null)
             {
                 float ecTime = Globals.System.GetTimeMS() - _lightUpdate;
 
-                byte brightnessTarget = (byte)(((float)Globals.GameMaps[Globals.CurrentMap].Brightness / 100f) * 255);
+                byte brightnessTarget = (byte)(((float)map.Brightness / 100f) * 255);
                 if (_brightnessLevel < brightnessTarget)
                 {
                     if ((int)_brightnessLevel + (int)(255 * ecTime / 2000f) > brightnessTarget)
@@ -630,15 +637,15 @@ namespace Intersect_Client.Classes.Core
                     }
                 }
 
-                if (_playerLightColor.R != Globals.GameMaps[Globals.CurrentMap].PlayerLightColor.R ||
-                    _playerLightColor.G != Globals.GameMaps[Globals.CurrentMap].PlayerLightColor.G ||
-                    _playerLightColor.B != Globals.GameMaps[Globals.CurrentMap].PlayerLightColor.B)
+                if (_playerLightColor.R != map.PlayerLightColor.R ||
+                    _playerLightColor.G != map.PlayerLightColor.G ||
+                    _playerLightColor.B != map.PlayerLightColor.B)
                 {
-                    if (_playerLightColor.R < Globals.GameMaps[Globals.CurrentMap].PlayerLightColor.R)
+                    if (_playerLightColor.R < map.PlayerLightColor.R)
                     {
-                        if ((int)_playerLightColor.R + (int)(255 * ecTime / 2000f) > Globals.GameMaps[Globals.CurrentMap].PlayerLightColor.R)
+                        if ((int)_playerLightColor.R + (int)(255 * ecTime / 2000f) > map.PlayerLightColor.R)
                         {
-                            _playerLightColor.R = (byte)Globals.GameMaps[Globals.CurrentMap].PlayerLightColor.R;
+                            _playerLightColor.R = (byte)map.PlayerLightColor.R;
                         }
                         else
                         {
@@ -646,11 +653,11 @@ namespace Intersect_Client.Classes.Core
                         }
                     }
 
-                    if (_playerLightColor.R > Globals.GameMaps[Globals.CurrentMap].PlayerLightColor.R)
+                    if (_playerLightColor.R > map.PlayerLightColor.R)
                     {
-                        if ((int)_playerLightColor.R - (int)(255 * ecTime / 2000f) < Globals.GameMaps[Globals.CurrentMap].PlayerLightColor.R)
+                        if ((int)_playerLightColor.R - (int)(255 * ecTime / 2000f) < map.PlayerLightColor.R)
                         {
-                            _playerLightColor.R = (byte)Globals.GameMaps[Globals.CurrentMap].PlayerLightColor.R;
+                            _playerLightColor.R = (byte)map.PlayerLightColor.R;
                         }
                         else
                         {
@@ -658,11 +665,11 @@ namespace Intersect_Client.Classes.Core
                         }
                     }
 
-                    if (_playerLightColor.G < Globals.GameMaps[Globals.CurrentMap].PlayerLightColor.G)
+                    if (_playerLightColor.G < map.PlayerLightColor.G)
                     {
-                        if ((int)_playerLightColor.G + (int)(255 * ecTime / 2000f) > Globals.GameMaps[Globals.CurrentMap].PlayerLightColor.G)
+                        if ((int)_playerLightColor.G + (int)(255 * ecTime / 2000f) > map.PlayerLightColor.G)
                         {
-                            _playerLightColor.G = (byte)Globals.GameMaps[Globals.CurrentMap].PlayerLightColor.G;
+                            _playerLightColor.G = (byte)map.PlayerLightColor.G;
                         }
                         else
                         {
@@ -670,11 +677,11 @@ namespace Intersect_Client.Classes.Core
                         }
                     }
 
-                    if (_playerLightColor.G > Globals.GameMaps[Globals.CurrentMap].PlayerLightColor.G)
+                    if (_playerLightColor.G > map.PlayerLightColor.G)
                     {
-                        if ((int)_playerLightColor.G - (int)(255 * ecTime / 2000f) < Globals.GameMaps[Globals.CurrentMap].PlayerLightColor.G)
+                        if ((int)_playerLightColor.G - (int)(255 * ecTime / 2000f) < map.PlayerLightColor.G)
                         {
-                            _playerLightColor.G = (byte)Globals.GameMaps[Globals.CurrentMap].PlayerLightColor.G;
+                            _playerLightColor.G = (byte)map.PlayerLightColor.G;
                         }
                         else
                         {
@@ -682,11 +689,11 @@ namespace Intersect_Client.Classes.Core
                         }
                     }
 
-                    if (_playerLightColor.B < Globals.GameMaps[Globals.CurrentMap].PlayerLightColor.B)
+                    if (_playerLightColor.B < map.PlayerLightColor.B)
                     {
-                        if ((int)_playerLightColor.B + (int)(255 * ecTime / 2000f) > Globals.GameMaps[Globals.CurrentMap].PlayerLightColor.B)
+                        if ((int)_playerLightColor.B + (int)(255 * ecTime / 2000f) > map.PlayerLightColor.B)
                         {
-                            _playerLightColor.B = (byte)Globals.GameMaps[Globals.CurrentMap].PlayerLightColor.B;
+                            _playerLightColor.B = (byte)map.PlayerLightColor.B;
                         }
                         else
                         {
@@ -694,11 +701,11 @@ namespace Intersect_Client.Classes.Core
                         }
                     }
 
-                    if (_playerLightColor.B > Globals.GameMaps[Globals.CurrentMap].PlayerLightColor.B)
+                    if (_playerLightColor.B > map.PlayerLightColor.B)
                     {
-                        if ((int)_playerLightColor.B - (int)(255 * ecTime / 2000f) < Globals.GameMaps[Globals.CurrentMap].PlayerLightColor.B)
+                        if ((int)_playerLightColor.B - (int)(255 * ecTime / 2000f) < map.PlayerLightColor.B)
                         {
-                            _playerLightColor.B = (byte)Globals.GameMaps[Globals.CurrentMap].PlayerLightColor.B;
+                            _playerLightColor.B = (byte)map.PlayerLightColor.B;
                         }
                         else
                         {
@@ -707,13 +714,13 @@ namespace Intersect_Client.Classes.Core
                     }
                 }
 
-                if (_playerLightSize != Globals.GameMaps[Globals.CurrentMap].PlayerLightSize)
+                if (_playerLightSize != map.PlayerLightSize)
                 {
-                    if (_playerLightSize < Globals.GameMaps[Globals.CurrentMap].PlayerLightSize)
+                    if (_playerLightSize < map.PlayerLightSize)
                     {
-                        if (_playerLightSize + (int)(500 * ecTime / 2000f) > Globals.GameMaps[Globals.CurrentMap].PlayerLightSize)
+                        if (_playerLightSize + (int)(500 * ecTime / 2000f) > map.PlayerLightSize)
                         {
-                            _playerLightSize = Globals.GameMaps[Globals.CurrentMap].PlayerLightSize;
+                            _playerLightSize = map.PlayerLightSize;
                         }
                         else
                         {
@@ -721,11 +728,11 @@ namespace Intersect_Client.Classes.Core
                         }
                     }
 
-                    if (_playerLightSize > Globals.GameMaps[Globals.CurrentMap].PlayerLightSize)
+                    if (_playerLightSize > map.PlayerLightSize)
                     {
-                        if (_playerLightSize - (int)(500 * ecTime / 2000f) < Globals.GameMaps[Globals.CurrentMap].PlayerLightSize)
+                        if (_playerLightSize - (int)(500 * ecTime / 2000f) < map.PlayerLightSize)
                         {
-                            _playerLightSize = Globals.GameMaps[Globals.CurrentMap].PlayerLightSize;
+                            _playerLightSize = map.PlayerLightSize;
                         }
                         else
                         {
@@ -734,11 +741,11 @@ namespace Intersect_Client.Classes.Core
                     }
                 }
 
-                if (_playerLightIntensity < Globals.GameMaps[Globals.CurrentMap].PlayerLightIntensity)
+                if (_playerLightIntensity < map.PlayerLightIntensity)
                 {
-                    if ((int)_playerLightIntensity + (int)(255 * ecTime / 2000f) > Globals.GameMaps[Globals.CurrentMap].PlayerLightIntensity)
+                    if ((int)_playerLightIntensity + (int)(255 * ecTime / 2000f) > map.PlayerLightIntensity)
                     {
-                        _playerLightIntensity = (byte)Globals.GameMaps[Globals.CurrentMap].PlayerLightIntensity;
+                        _playerLightIntensity = (byte)map.PlayerLightIntensity;
                     }
                     else
                     {
@@ -746,11 +753,11 @@ namespace Intersect_Client.Classes.Core
                     }
                 }
 
-                if (_playerLightIntensity > Globals.GameMaps[Globals.CurrentMap].AHue)
+                if (_playerLightIntensity > map.AHue)
                 {
-                    if ((int)_playerLightIntensity - (int)(255 * ecTime / 2000f) < Globals.GameMaps[Globals.CurrentMap].PlayerLightIntensity)
+                    if ((int)_playerLightIntensity - (int)(255 * ecTime / 2000f) < map.PlayerLightIntensity)
                     {
-                        _playerLightIntensity = (byte)Globals.GameMaps[Globals.CurrentMap].PlayerLightIntensity;
+                        _playerLightIntensity = (byte)map.PlayerLightIntensity;
                     }
                     else
                     {
@@ -758,11 +765,11 @@ namespace Intersect_Client.Classes.Core
                     }
                 }
 
-                if (_playerLightExpand < Globals.GameMaps[Globals.CurrentMap].PlayerLightExpand)
+                if (_playerLightExpand < map.PlayerLightExpand)
                 {
-                    if ((int)_playerLightExpand + (float)(100f * ecTime / 2000f) > Globals.GameMaps[Globals.CurrentMap].PlayerLightExpand)
+                    if ((int)_playerLightExpand + (float)(100f * ecTime / 2000f) > map.PlayerLightExpand)
                     {
-                        _playerLightExpand = Globals.GameMaps[Globals.CurrentMap].PlayerLightExpand;
+                        _playerLightExpand = map.PlayerLightExpand;
                     }
                     else
                     {
@@ -770,11 +777,11 @@ namespace Intersect_Client.Classes.Core
                     }
                 }
 
-                if (_playerLightExpand > Globals.GameMaps[Globals.CurrentMap].PlayerLightExpand)
+                if (_playerLightExpand > map.PlayerLightExpand)
                 {
-                    if ((int)_playerLightExpand - (float)(100f * ecTime / 2000f) < Globals.GameMaps[Globals.CurrentMap].PlayerLightExpand)
+                    if ((int)_playerLightExpand - (float)(100f * ecTime / 2000f) < map.PlayerLightExpand)
                     {
-                        _playerLightExpand = Globals.GameMaps[Globals.CurrentMap].PlayerLightExpand;
+                        _playerLightExpand = map.PlayerLightExpand;
                     }
                     else
                     {

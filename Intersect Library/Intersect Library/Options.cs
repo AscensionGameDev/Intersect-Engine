@@ -9,24 +9,10 @@ namespace Intersect_Library
         public static string MOTD = "Welcome to Intersect!";
         public static int ServerPort = 4500;
 
-        //Game Object Maxes
-        public static int MaxItems = 255;
-        public static int MaxShops = 255;
-        public static int MaxNpcs = 255;
+        //Maxes
         public static int MaxNpcDrops = 10;
-        public static int MaxSpells = 255;
-        public static int MaxAnimations = 255;
-        public static int MaxResources = 255;
-        public static int MaxClasses = 20;
-        public static int MaxQuests = 255;
-        public static int MaxProjectiles = 255;
-        public static int MaxCommonEvents = 255;
-        public static int MaxServerVariables = 100;
-        public static int MaxServerSwitches = 100;
 
         //Player Maxes
-        public static int MaxPlayerVariables = 100;
-        public static int MaxPlayerSwitches = 100;
         public static int MaxStatValue = 200;
         public static int MaxStats = 5;
         public static int MaxLevel = 100;
@@ -60,25 +46,11 @@ namespace Intersect_Library
             GameName = bf.ReadString();
 
             //Game Objects
-            MaxItems = bf.ReadInteger();
-            MaxShops = bf.ReadInteger();
-            MaxNpcs = bf.ReadInteger();
             MaxNpcDrops = bf.ReadInteger();
-            MaxSpells = bf.ReadInteger();
-            MaxAnimations = bf.ReadInteger();
-            MaxResources = bf.ReadInteger();
-            MaxClasses = bf.ReadInteger();
-            MaxQuests = bf.ReadInteger();
-            MaxProjectiles = bf.ReadInteger();
-            MaxCommonEvents = bf.ReadInteger();
-            MaxServerVariables = bf.ReadInteger();
-            MaxServerSwitches = bf.ReadInteger();
 
             //Player Objects
             MaxStatValue = bf.ReadInteger();
             MaxLevel = bf.ReadInteger();
-            MaxPlayerVariables = bf.ReadInteger();
-            MaxPlayerSwitches = bf.ReadInteger();
             MaxHotbar = bf.ReadInteger();
             MaxInvItems = bf.ReadInteger();
             MaxPlayerSkills = bf.ReadInteger();
@@ -110,7 +82,7 @@ namespace Intersect_Library
             //Misc
 
             //Map
-            bf.ReadInteger();
+            GameBorderStyle = bf.ReadInteger();
             MapWidth = bf.ReadInteger();
             MapHeight = bf.ReadInteger();
             TileWidth = bf.ReadInteger();

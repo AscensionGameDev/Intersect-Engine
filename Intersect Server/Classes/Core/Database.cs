@@ -19,14 +19,12 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
-using System.Xml;
+using Community.CsharpSqlite.SQLiteClient;
 using Intersect_Library;
 using Intersect_Library.GameObjects;
 using Intersect_Library.GameObjects.Events;
@@ -43,45 +41,343 @@ namespace Intersect_Server.Classes.Core
 {
     public static class Database
     {
-        //private static SqliteConnection _dbConnection;
-        private const string _dbFilename = "intersect.db";
+        private static SqliteConnection _dbConnection;
+        private const int DbVersion = 1;
+        private const string DbFilename = "resources/intersect.db";
+
+        //Database Variables
+        private const string INFO_TABLE = "info";
+        private const string DB_VERSION = "dbversion";
+
+        //User Table Constants
+        private const string USERS_TABLE = "users";
+        private const string USER_ID = "id";
+        private const string USER_NAME = "user";
+        private const string USER_PASS = "pass";
+        private const string USER_SALT = "salt";
+        private const string USER_EMAIL = "email";
+        private const string USER_POWER = "power";
+
+        //Character Table Constants
+        private const string CHAR_TABLE = "characters";
+        private const string CHAR_ID = "id";
+        private const string CHAR_USER_ID = "user_id";
+        private const string CHAR_NAME = "name";
+        private const string CHAR_MAP = "map";
+        private const string CHAR_X = "x";
+        private const string CHAR_Y = "y";
+        private const string CHAR_Z = "z";
+        private const string CHAR_DIR = "dir";
+        private const string CHAR_SPRITE = "sprite";
+        private const string CHAR_FACE = "face";
+        private const string CHAR_CLASS = "class";
+        private const string CHAR_GENDER = "gender";
+        private const string CHAR_LEVEL = "level";
+        private const string CHAR_EXP = "exp";
+        private const string CHAR_VITALS = "vitals";
+        private const string CHAR_MAX_VITALS = "maxvitals";
+        private const string CHAR_STATS = "stats";
+        private const string CHAR_STAT_POINTS = "statpoints";
+        private const string CHAR_EQUIPMENT = "equipment";
+
+        //Char Inventory Table Constants
+        private const string CHAR_INV_TABLE = "char_inventory";
+        private const string CHAR_INV_CHAR_ID = "char_id";
+        private const string CHAR_INV_SLOT = "slot";
+        private const string CHAR_INV_ITEM_NUM = "itemnum";
+        private const string CHAR_INV_ITEM_VAL = "itemval";
+        private const string CHAR_INV_ITEM_STATS = "itemstats";
+
+        //Char Spells Table Constants
+        private const string CHAR_SPELL_TABLE = "char_spells";
+        private const string CHAR_SPELL_CHAR_ID = "char_id";
+        private const string CHAR_SPELL_SLOT = "slot";
+        private const string CHAR_SPELL_NUM = "spellnum";
+        private const string CHAR_SPELL_CD = "spellcd";
+
+        //Char Hotbar Table Constants
+        private const string CHAR_HOTBAR_TABLE = "char_hotbar";
+        private const string CHAR_HOTBAR_CHAR_ID = "char_id";
+        private const string CHAR_HOTBAR_SLOT = "slot";
+        private const string CHAR_HOTBAR_TYPE = "type";
+        private const string CHAR_HOTBAR_ITEMSLOT = "itemslot";
+
+        //Char Bank Table Constants
+        private const string CHAR_BANK_TABLE = "char_bank";
+        private const string CHAR_BANK_CHAR_ID = "char_id";
+        private const string CHAR_BANK_SLOT = "slot";
+        private const string CHAR_BANK_ITEM_NUM = "itemnum";
+        private const string CHAR_BANK_ITEM_VAL = "itemval";
+        private const string CHAR_BANK_ITEM_STATS = "itemstats";
+
+        //Char Switches Table Constants
+        private const string CHAR_SWITCHES_TABLE = "char_switches";
+        private const string CHAR_SWITCH_CHAR_ID = "char_id";
+        private const string CHAR_SWITCH_SLOT = "slot";
+        private const string CHAR_SWITCH_VAL = "val";
+
+        //Char Variables Table Constants
+        private const string CHAR_VARIABLES_TABLE = "char_variables";
+        private const string CHAR_VARIABLE_CHAR_ID = "char_id";
+        private const string CHAR_VARIABLE_SLOT = "slot";
+        private const string CHAR_VARIABLE_VAL = "val";
+
+        //GameObject Table Constants
+        private const string GAME_OBJECT_ID = "id";
+        private const string GAME_OBJECT_DELETED = "deleted";
+        private const string GAME_OBJECT_DATA = "data";
+
+        //Map List Table Constants
+        private const string MAP_LIST_TABLE = "map_list";
+        private const string MAP_LIST_DATA = "data";
+
         public static object MapGridLock = new Object();
         public static List<MapGrid> MapGrids = new List<MapGrid>();
-        public static string ConnectionString = "";
-
-        public static List<string> Emails = new List<string>();
-        public static List<string> Accounts = new List<string>();
-        public static List<string> Characters = new List<string>();
-
-        public static int MapCount = 0;
 
         //Check Directories
         public static void CheckDirectories()
         {
             if (!Directory.Exists("resources")) { Directory.CreateDirectory("resources"); }
-            if (!Directory.Exists("resources/accounts")) { Directory.CreateDirectory("resources/accounts"); }
         }
 
+        //Database setup, version checking
+        public static bool InitDatabase()
+        {
+            //if (File.Exists(DbFilename)) File.Delete(DbFilename);
+            if (!File.Exists(DbFilename)) CreateDatabase();
+            if (_dbConnection == null)
+            {
+                _dbConnection = new SqliteConnection("Data Source=" + DbFilename + ";Version=3");
+                _dbConnection.Open();
+            }
+            if (GetDatabaseVersion() != DbVersion)
+            {
+                Console.WriteLine("Database is out of date! Version: " + GetDatabaseVersion() + " Expected Version: " + DbVersion + ". Please run the included migration tool!");
+                return false;
+            }
+            LoadAllGameObjects();
+            return true;
+        }
+        private static long GetDatabaseVersion()
+        {
+            int version = -1;
+            var cmd = "SELECT " + DB_VERSION + " from " + INFO_TABLE + ";";
+            using (var createCommand = _dbConnection.CreateCommand())
+            {
+                createCommand.CommandText = cmd;
+                version = (int)createCommand.ExecuteScalar();
+            }
+            return version;
+        }
         private static void CreateDatabase()
         {
-            //SqliteConnection.CreateFile(_dbFilename);
-            //Create Table Structure? This could be messy.....
-
+            _dbConnection = new SqliteConnection("Data Source=" + DbFilename + ";Version=3;New=True");
+            _dbConnection.Open();
+            CreateInfoTable();
+            CreateUsersTable();
+            CreateCharactersTable();
+            CreateCharacterInventoryTable();
+            CreateCharacterSpellsTable();
+            CreateCharacterHotbarTable();
+            CreateCharacterBankTable();
+            CreateCharacterSwitchesTable();
+            CreateCharacterVariablesTable();
+            CreateGameObjectTables();
+            CreateMapListTable();
         }
-
-        public static void InitDatabase()
+        private static void CreateInfoTable()
         {
-            if (!File.Exists(_dbFilename)) CreateDatabase();
-            //_dbConnection = new SqliteConnection("Data Source=" + _dbFilename + ";Version=3");
-            //_dbConnection.Open();
-
+            var cmd = "CREATE TABLE " + INFO_TABLE + " (" + DB_VERSION + " INTEGER NOT NULL);";
+            using (var createCommand = _dbConnection.CreateCommand())
+            {
+                createCommand.CommandText = cmd;
+                createCommand.ExecuteNonQuery();
+            }
+            cmd = "INSERT into " + INFO_TABLE + " (" + DB_VERSION + ") VALUES (" + DbVersion + ");";
+            using (var createCommand = _dbConnection.CreateCommand())
+            {
+                createCommand.CommandText = cmd;
+                createCommand.ExecuteNonQuery();
+            }
+        }
+        private static void CreateUsersTable()
+        {
+            var cmd = "CREATE TABLE " + USERS_TABLE + " ("
+                + USER_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+                + USER_NAME + " TEXT,"
+                + USER_PASS + " TEXT,"
+                + USER_SALT + " TEXT,"
+                + USER_EMAIL + " TEXT,"
+                + USER_POWER + " INTEGER"
+                + ");";
+            using (var createCommand = _dbConnection.CreateCommand())
+            {
+                createCommand.CommandText = cmd;
+                createCommand.ExecuteNonQuery();
+            }
+        }
+        private static void CreateCharactersTable()
+        {
+            var cmd = "CREATE TABLE " + CHAR_TABLE + " ("
+                + CHAR_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+                + CHAR_USER_ID + " INTEGER,"
+                + CHAR_NAME + " TEXT,"
+                + CHAR_MAP + " INTEGER,"
+                + CHAR_X + " INTEGER,"
+                + CHAR_Y + " INTEGER,"
+                + CHAR_Z + " INTEGER,"
+                + CHAR_DIR + " INTEGER,"
+                + CHAR_SPRITE + " TEXT,"
+                + CHAR_FACE + " TEXT,"
+                + CHAR_CLASS + " INTEGER,"
+                + CHAR_GENDER + " INTEGER,"
+                + CHAR_LEVEL + " INTEGER,"
+                + CHAR_EXP + " INTEGER,"
+                + CHAR_VITALS + " TEXT,"
+                + CHAR_MAX_VITALS + " TEXT,"
+                + CHAR_STATS + " TEXT,"
+                + CHAR_STAT_POINTS + " INTEGER,"
+                + CHAR_EQUIPMENT + " TEXT"
+                + ");";
+            using (var createCommand = _dbConnection.CreateCommand())
+            {
+                createCommand.CommandText = cmd;
+                createCommand.ExecuteNonQuery();
+            }
+        }
+        private static void CreateCharacterInventoryTable()
+        {
+            var cmd = "CREATE TABLE " + CHAR_INV_TABLE + " ("
+                + CHAR_INV_CHAR_ID + " INTEGER,"
+                + CHAR_INV_SLOT + " INTEGER,"
+                + CHAR_INV_ITEM_NUM + " INTEGER,"
+                + CHAR_INV_ITEM_VAL + " INTEGER,"
+                + CHAR_INV_ITEM_STATS + " TEXT,"
+                + " unique(`" + CHAR_INV_CHAR_ID + "`,`" + CHAR_INV_SLOT + "`)"
+                + ");";
+            using (var createCommand = _dbConnection.CreateCommand())
+            {
+                createCommand.CommandText = cmd;
+                createCommand.ExecuteNonQuery();
+            }
+        }
+        private static void CreateCharacterSpellsTable()
+        {
+            var cmd = "CREATE TABLE " + CHAR_SPELL_TABLE + " ("
+                + CHAR_SPELL_CHAR_ID + " INTEGER,"
+                + CHAR_SPELL_SLOT + " INTEGER,"
+                + CHAR_SPELL_NUM + " INTEGER,"
+                + CHAR_SPELL_CD + " INTEGER,"
+                + " unique('" + CHAR_SPELL_CHAR_ID + "','" + CHAR_SPELL_SLOT + "')"
+                + ");";
+            using (var createCommand = _dbConnection.CreateCommand())
+            {
+                createCommand.CommandText = cmd;
+                createCommand.ExecuteNonQuery();
+            }
+        }
+        private static void CreateCharacterHotbarTable()
+        {
+            var cmd = "CREATE TABLE " + CHAR_HOTBAR_TABLE + " ("
+                + CHAR_HOTBAR_CHAR_ID + " INTEGER,"
+                + CHAR_HOTBAR_SLOT + " INTEGER,"
+                + CHAR_HOTBAR_TYPE + " INTEGER,"
+                + CHAR_HOTBAR_ITEMSLOT + " INTEGER,"
+                + " unique('" + CHAR_HOTBAR_CHAR_ID + "','" + CHAR_HOTBAR_SLOT + "')"
+                + ");";
+            using (var createCommand = _dbConnection.CreateCommand())
+            {
+                createCommand.CommandText = cmd;
+                createCommand.ExecuteNonQuery();
+            }
+        }
+        private static void CreateCharacterBankTable()
+        {
+            var cmd = "CREATE TABLE " + CHAR_BANK_TABLE + " ("
+                + CHAR_BANK_CHAR_ID + " INTEGER,"
+                + CHAR_BANK_SLOT + " INTEGER,"
+                + CHAR_BANK_ITEM_NUM + " INTEGER,"
+                + CHAR_BANK_ITEM_VAL + " INTEGER,"
+                + CHAR_BANK_ITEM_STATS + " TEXT,"
+                + " unique('" + CHAR_BANK_CHAR_ID + "','" + CHAR_BANK_SLOT + "')"
+                + ");";
+            using (var createCommand = _dbConnection.CreateCommand())
+            {
+                createCommand.CommandText = cmd;
+                createCommand.ExecuteNonQuery();
+            }
+        }
+        private static void CreateCharacterSwitchesTable()
+        {
+            var cmd = "CREATE TABLE " + CHAR_SWITCHES_TABLE + " ("
+                + CHAR_SWITCH_CHAR_ID + " INTEGER,"
+                + CHAR_SWITCH_SLOT + " INTEGER,"
+                + CHAR_SWITCH_VAL + " INTEGER,"
+                + " unique('" + CHAR_SWITCH_CHAR_ID + "','" + CHAR_SWITCH_SLOT + "')"
+                + ");";
+            using (var createCommand = _dbConnection.CreateCommand())
+            {
+                createCommand.CommandText = cmd;
+                createCommand.ExecuteNonQuery();
+            }
+        }
+        private static void CreateCharacterVariablesTable()
+        {
+            var cmd = "CREATE TABLE " + CHAR_VARIABLES_TABLE + " ("
+                + CHAR_VARIABLE_CHAR_ID + " INTEGER,"
+                + CHAR_VARIABLE_SLOT + " INTEGER,"
+                + CHAR_VARIABLE_VAL + " INTEGER,"
+                + " unique('" + CHAR_VARIABLE_CHAR_ID + "','" + CHAR_VARIABLE_SLOT + "')"
+                + ");";
+            using (var createCommand = _dbConnection.CreateCommand())
+            {
+                createCommand.CommandText = cmd;
+                createCommand.ExecuteNonQuery();
+            }
+        }
+        private static void CreateGameObjectTables()
+        {
+            foreach (var val in Enum.GetValues(typeof(GameObject)))
+            {
+                CreateGameObjectTable((GameObject)val);
+            }
+        }
+        private static void CreateGameObjectTable(GameObject gameObject)
+        {
+            var cmd = "CREATE TABLE " + GetGameObjectTable(gameObject) + " ("
+                + GAME_OBJECT_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+                + GAME_OBJECT_DELETED + " INTEGER NOT NULL DEFAULT 0,"
+                + GAME_OBJECT_DATA + " BLOB" + ");";
+            using (var createCommand = _dbConnection.CreateCommand())
+            {
+                createCommand.CommandText = cmd;
+                createCommand.ExecuteNonQuery();
+            }
+        }
+        private static void CreateMapListTable()
+        {
+            var cmd = "CREATE TABLE " + MAP_LIST_TABLE + " (" + MAP_LIST_DATA + " BLOB);";
+            using (var createCommand = _dbConnection.CreateCommand())
+            {
+                createCommand.CommandText = cmd;
+                createCommand.ExecuteNonQuery();
+            }
+            InsertMapList();
+        }
+        private static void InsertMapList()
+        {
+            var cmd = "INSERT into " + MAP_LIST_TABLE + " (" + MAP_LIST_DATA + ") VALUES (" + "NULL" + ");";
+            using (var createCommand = _dbConnection.CreateCommand())
+            {
+                createCommand.CommandText = cmd;
+                createCommand.ExecuteNonQuery();
+            }
         }
 
         //Players General
         public static void LoadPlayerDatabase()
         {
-            Console.WriteLine("Using local file system for account database.");
-            LoadAccounts();
+            Console.WriteLine("Using SQLite database for account and data storage.");
         }
         public static Client GetPlayerClient(string username)
         {
@@ -91,7 +387,10 @@ namespace Intersect_Server.Classes.Core
             {
                 if (Globals.Clients[i] != null && Globals.Clients[i].IsConnected() && Globals.Clients[i].Entity != null)
                 {
-                    if (Globals.Clients[i].MyAccount == username) { return Globals.Clients[i]; }
+                    if (Globals.Clients[i].MyAccount == username)
+                    {
+                        return Globals.Clients[i];
+                    }
                 }
             }
 
@@ -100,19 +399,20 @@ namespace Intersect_Server.Classes.Core
             Player en = new Player(-1, fakeClient);
             fakeClient.Entity = en;
             fakeClient.MyAccount = username;
-            LoadPlayer(fakeClient);
+            LoadUser(fakeClient);
+            LoadCharacter(fakeClient);
             return fakeClient;
         }
         public static void SetPlayerPower(string username, int power)
         {
             if (AccountExists(username))
             {
-                Client player = GetPlayerClient(username);
-                player.Power = power;
-                SavePlayer(player);
-                if (player.ClientIndex > -1)
+                Client client = GetPlayerClient(username);
+                client.Power = power;
+                SaveUser(client);
+                if (client.ClientIndex > -1)
                 {
-                    PacketSender.SendPlayerMsg(player, "Your power has been modified!");
+                    PacketSender.SendPlayerMsg(client, "Your power has been modified!");
                 }
                 Console.WriteLine(username + "'s power has been set to " + power + "!");
             }
@@ -122,45 +422,50 @@ namespace Intersect_Server.Classes.Core
             }
         }
 
-        //Players_XML
-        public static void LoadAccounts()
-        {
-            string[] accounts = Directory.GetDirectories("resources/accounts");
-            for (int i = 0; i < accounts.Length; i++)
-            {
-                if (File.Exists(accounts[i] + "/" + accounts[i].Replace("resources/accounts", "") + ".xml"))
-                {
-                    var playerdata = new XmlDocument();
-                    playerdata.Load(accounts[i] + "" + accounts[i].Replace("resources/accounts", "") + ".xml");
-                    Accounts.Add(playerdata.SelectSingleNode("//PlayerData/Username").InnerText.ToLower());
-                    Emails.Add(playerdata.SelectSingleNode("//PlayerData/Email").InnerText.ToLower());
-                    if (playerdata.SelectSingleNode("//PlayerData//CharacterInfo/Name") != null)
-                        Characters.Add(playerdata.SelectSingleNode("//PlayerData//CharacterInfo/Name").InnerText.ToLower());
-                }
-                else
-                {
-                    Directory.Delete(accounts[i], true);
-                }
-            }
-        }
+        //User Info
         public static bool AccountExists(string accountname)
         {
-            if (Accounts.IndexOf(accountname.ToLower()) > -1) { return true; }
-            return false;
+            long count = -1;
+            var query = "SELECT COUNT(*)" + " from " + USERS_TABLE + " WHERE LOWER(" + USER_NAME + ")=@" + USER_NAME + ";";
+            using (SqliteCommand cmd = new SqliteCommand(query, _dbConnection))
+            {
+                cmd.Parameters.Add("@" + USER_NAME, accountname.ToLower().Trim());
+                count = (long)cmd.ExecuteScalar();
+            }
+            return (count > 0);
         }
         public static bool EmailInUse(string email)
         {
-            if (Emails.IndexOf(email.ToLower()) > -1) { return true; }
-            return false;
+            long count = -1;
+            var query = "SELECT COUNT(*)" + " from " + USERS_TABLE + " WHERE LOWER(" + USER_EMAIL + ")=@" + USER_EMAIL + ";";
+            using (SqliteCommand cmd = new SqliteCommand(query, _dbConnection))
+            {
+                cmd.Parameters.Add("@" + USER_EMAIL, email.ToLower().Trim());
+                count = (long)cmd.ExecuteScalar();
+            }
+            return (count > 0);
         }
         public static bool CharacterNameInUse(string name)
         {
-            if (Characters.IndexOf(name.ToLower()) > -1) { return true; }
-            return false;
+            long count = -1;
+            var query = "SELECT COUNT(*)" + " from " + CHAR_TABLE + " WHERE LOWER(" + CHAR_NAME + ")=@" + CHAR_NAME + ";";
+            using (SqliteCommand cmd = new SqliteCommand(query, _dbConnection))
+            {
+                cmd.Parameters.Add("@" + CHAR_NAME, name.ToLower().Trim());
+                count = (long)cmd.ExecuteScalar();
+            }
+            return (count > 0);
         }
-        public static int GetRegisteredPlayers()
+        public static long GetRegisteredPlayers()
         {
-            return Accounts.Count;
+            long count = -1;
+            var cmd = "SELECT COUNT(*)" + " from " + USERS_TABLE + ";";
+            using (var createCommand = _dbConnection.CreateCommand())
+            {
+                createCommand.CommandText = cmd;
+                count = (long)createCommand.ExecuteScalar();
+            }
+            return count;
         }
         public static void CreateAccount(Client client, string username, string password, string email)
         {
@@ -179,345 +484,967 @@ namespace Intersect_Server.Classes.Core
 
             client.MyEmail = email;
 
-            if (Accounts.Count == 0) client.Power = 2;
-            Accounts.Add(username);
-            Emails.Add(email);
-            SavePlayer(client);
+            if (GetRegisteredPlayers() == 0)
+            {
+                client.Power = 2;
+            }
+            client.MyId = SaveUser(client, true);
+        }
+        private static int SaveUser(Client client, bool newUser = false)
+        {
+            if (client == null) return -1;
+            var insertQuery = "INSERT into " + USERS_TABLE + " (" + USER_NAME + "," + USER_EMAIL + "," + USER_PASS + "," + USER_SALT + "," + USER_POWER + ")" + "VALUES (@" + USER_NAME + ",@" + USER_EMAIL + ",@" + USER_PASS + ",@" + USER_SALT + ",@" + USER_POWER + ");";
+            var updateQuery = "UPDATE " + USERS_TABLE + " SET " + USER_NAME + "=@" + USER_NAME + "," + USER_EMAIL + "=@" + USER_EMAIL + "," + USER_PASS + "=@" + USER_PASS + "," + USER_SALT + "=@" + USER_SALT + "," + USER_POWER + "=@" + USER_POWER + " WHERE " + USER_ID + "=@" + USER_ID + ";";
+            using (SqliteCommand cmd = new SqliteCommand(newUser ? insertQuery : updateQuery, _dbConnection))
+            {
+                cmd.Parameters.Add("@" + USER_NAME, client.MyAccount);
+                cmd.Parameters.Add("@" + USER_EMAIL, client.MyEmail);
+                cmd.Parameters.Add("@" + USER_PASS, client.MyPassword);
+                cmd.Parameters.Add("@" + USER_SALT, client.MySalt);
+                cmd.Parameters.Add("@" + USER_POWER, client.Power);
+                if (!newUser) cmd.Parameters.Add("@" + USER_ID, client.MyId);
+                cmd.ExecuteNonQuery();
+            }
+            return (_dbConnection.LastInsertRowId);
         }
         public static bool CheckPassword(string username, string password)
         {
-            var playerdata = new XmlDocument();
             var sha = new SHA256Managed();
-            playerdata.Load("resources/accounts/" + username.ToLower() + "/" + username.ToLower() + ".xml");
-            string salt = playerdata.SelectSingleNode("//PlayerData/Salt").InnerText;
-            string pass = playerdata.SelectSingleNode("//PlayerData/Pass").InnerText;
-            string temppass = BitConverter.ToString(sha.ComputeHash(Encoding.UTF8.GetBytes(password + salt))).Replace("-", "");
-            if (temppass == pass) { return true; }
+            var query = "SELECT " + USER_SALT + "," + USER_PASS + " from " + USERS_TABLE + " WHERE LOWER(" + USER_NAME + ")=@" + USER_NAME + ";";
+            using (SqliteCommand cmd = new SqliteCommand(query, _dbConnection))
+            {
+                cmd.Parameters.Add("@" + USER_NAME, username.ToLower().Trim());
+                var dataReader = cmd.ExecuteReader();
+                if (dataReader.HasRows && dataReader.Read())
+                {
+                    string pass = dataReader[USER_PASS].ToString();
+                    string salt = dataReader[USER_SALT].ToString();
+                    string temppass = BitConverter.ToString(sha.ComputeHash(Encoding.UTF8.GetBytes(password + salt))).Replace("-", "");
+                    if (temppass == pass)
+                    {
+                        return true;
+                    }
+                }
+            }
             return false;
         }
-        public static bool LoadPlayer(Client client)
+        public static int CheckPower(string username)
+        {
+            int power = 0;
+            var query = "SELECT " + USER_POWER + " from " + USERS_TABLE + " WHERE LOWER(" + USER_NAME + ")=@" + USER_NAME + ";";
+            using (SqliteCommand cmd = new SqliteCommand(query, _dbConnection))
+            {
+                cmd.Parameters.Add("@" + USER_NAME, username.ToLower().Trim());
+                power = (int)cmd.ExecuteScalar();
+            }
+            return power;
+        }
+        public static bool LoadUser(Client client)
+        {
+            var query = "SELECT * from " + USERS_TABLE + " WHERE LOWER(" + USER_NAME + ")=@" + USER_NAME + ";";
+            using (SqliteCommand cmd = new SqliteCommand(query, _dbConnection))
+            {
+                cmd.Parameters.Add("@" + USER_NAME, client.MyAccount.ToLower().Trim());
+                var dataReader = cmd.ExecuteReader();
+                if (dataReader.HasRows && dataReader.Read())
+                {
+                    client.MyAccount = dataReader[USER_NAME].ToString();
+                    client.MyPassword = dataReader[USER_PASS].ToString();
+                    client.MySalt = dataReader[USER_SALT].ToString();
+                    client.MyEmail = dataReader[USER_EMAIL].ToString();
+                    client.MyId = Convert.ToInt32(dataReader[USER_ID]);
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        //Character Saving/Loading
+        public static int SaveCharacter(Player player, bool newCharacter = false)
+        {
+            if (player == null)
+            {
+                return -1;
+            }
+            if (player.MyClient.MyAccount == "") return -1;
+            if (!newCharacter && player.MyId == -1) return -1;
+            var insertQuery = "INSERT into " + CHAR_TABLE + " (" + CHAR_USER_ID + "," + CHAR_NAME + "," + CHAR_MAP + "," + CHAR_X + "," + CHAR_Y + "," + CHAR_Z + "," + CHAR_DIR + "," + CHAR_SPRITE + "," + CHAR_FACE + "," + CHAR_CLASS + "," + CHAR_GENDER + "," + CHAR_LEVEL + "," + CHAR_EXP + "," + CHAR_VITALS + "," + CHAR_MAX_VITALS + "," + CHAR_STATS + "," + CHAR_STAT_POINTS + "," + CHAR_EQUIPMENT + ")" + " VALUES (@" + CHAR_USER_ID + ",@" + CHAR_NAME + ",@" + CHAR_MAP + ",@" + CHAR_X + ",@" + CHAR_Y + ",@" + CHAR_Z + ",@" + CHAR_DIR + ",@" + CHAR_SPRITE + ",@" + CHAR_FACE + ",@" + CHAR_CLASS + ",@" + CHAR_GENDER + ",@" + CHAR_LEVEL + ",@" + CHAR_EXP + ",@" + CHAR_VITALS + ",@" + CHAR_MAX_VITALS + ",@" + CHAR_STATS + ",@" + CHAR_STAT_POINTS + ",@" + CHAR_EQUIPMENT + ");";
+
+            var updateQuery = "UPDATE " + CHAR_TABLE + " SET " + CHAR_USER_ID + "=@" + CHAR_USER_ID + "," + CHAR_NAME + "=@" + CHAR_NAME + "," + CHAR_MAP + "=@" + CHAR_MAP + "," + CHAR_X + "=@" + CHAR_X + "," + CHAR_Y + "=@" + CHAR_Y + "," + CHAR_Z + "=@" + CHAR_Z + "," + CHAR_DIR + "=@" + CHAR_DIR + "," + CHAR_SPRITE + "=@" + CHAR_SPRITE + "," + CHAR_FACE + "=@" + CHAR_FACE + "," + CHAR_CLASS + "=@" + CHAR_CLASS + "," + CHAR_GENDER + "=@" + CHAR_GENDER + "," + CHAR_LEVEL + "=@" + CHAR_LEVEL + "," + CHAR_EXP + "=@" + CHAR_EXP + "," + CHAR_VITALS + "=@" + CHAR_VITALS + "," + CHAR_MAX_VITALS + "=@" + CHAR_MAX_VITALS + "," + CHAR_STATS + "=@" + CHAR_STATS + "," + CHAR_STAT_POINTS + "=@" + CHAR_STAT_POINTS + "," + CHAR_EQUIPMENT + "=@" + CHAR_EQUIPMENT + " WHERE " + CHAR_ID + "=@" + CHAR_ID + ";";
+            using (SqliteCommand cmd = new SqliteCommand(newCharacter ? insertQuery : updateQuery, _dbConnection))
+            {
+                cmd.Parameters.Add("@" + CHAR_USER_ID, player.MyClient.MyId);
+                cmd.Parameters.Add("@" + CHAR_NAME, player.MyName);
+                cmd.Parameters.Add("@" + CHAR_MAP, player.CurrentMap);
+                cmd.Parameters.Add("@" + CHAR_X, player.CurrentX);
+                cmd.Parameters.Add("@" + CHAR_Y, player.CurrentY);
+                cmd.Parameters.Add("@" + CHAR_Z, player.CurrentZ);
+                cmd.Parameters.Add("@" + CHAR_DIR, player.Dir);
+                cmd.Parameters.Add("@" + CHAR_SPRITE, player.MySprite);
+                cmd.Parameters.Add("@" + CHAR_FACE, player.Face);
+                cmd.Parameters.Add("@" + CHAR_CLASS, player.Class);
+                cmd.Parameters.Add("@" + CHAR_GENDER, player.Gender);
+                cmd.Parameters.Add("@" + CHAR_LEVEL, player.Level);
+                cmd.Parameters.Add("@" + CHAR_EXP, player.Experience);
+                var vitals = "";
+                for (int i = 0; i < player.Vital.Length; i++)
+                {
+                    vitals += player.Vital[i] + ",";
+                }
+                cmd.Parameters.Add("@" + CHAR_VITALS, vitals);
+                var maxVitals = "";
+                for (int i = 0; i < player.MaxVital.Length; i++)
+                {
+                    maxVitals += player.MaxVital[i] + ",";
+                }
+                cmd.Parameters.Add("@" + CHAR_MAX_VITALS, maxVitals);
+                var stats = "";
+                for (int i = 0; i < player.Stat.Length; i++)
+                {
+                    stats += player.Stat[i].Stat + ",";
+                }
+                cmd.Parameters.Add("@" + CHAR_STATS, stats);
+                cmd.Parameters.Add("@" + CHAR_STAT_POINTS, player.StatPoints);
+                var equipment = "";
+                for (int i = 0; i < player.Equipment.Length; i++)
+                {
+                    equipment += player.Equipment[i] + ",";
+                }
+                cmd.Parameters.Add("@" + CHAR_EQUIPMENT, equipment);
+                if (!newCharacter) cmd.Parameters.Add("@" + CHAR_ID, player.MyId);
+                cmd.ExecuteNonQuery();
+            }
+            if (newCharacter) player.MyId = _dbConnection.LastInsertRowId;
+            SaveCharacterInventory(player);
+            SaveCharacterSpells(player);
+            SaveCharacterBank(player);
+            SaveCharacterHotbar(player);
+            SaveCharacterSwitches(player);
+            SaveCharacterVariables(player);
+            return (_dbConnection.LastInsertRowId);
+        }
+        private static void SaveCharacterInventory(Player player)
+        {
+            for (int i = 0; i < Options.MaxInvItems; i++)
+            {
+                var query = "INSERT OR REPLACE into " + CHAR_INV_TABLE + " (" + CHAR_INV_CHAR_ID + "," + CHAR_INV_SLOT + "," + CHAR_INV_ITEM_NUM + "," + CHAR_INV_ITEM_VAL + "," + CHAR_INV_ITEM_STATS + ")" + " VALUES " + " (@" + CHAR_INV_CHAR_ID + ",@" + CHAR_INV_SLOT + ",@" + CHAR_INV_ITEM_NUM + ",@" + CHAR_INV_ITEM_VAL + ",@" + CHAR_INV_ITEM_STATS + ")";
+                using (SqliteCommand cmd = new SqliteCommand(query, _dbConnection))
+                {
+                    cmd.Parameters.Add("@" + CHAR_INV_CHAR_ID, player.MyId);
+                    cmd.Parameters.Add("@" + CHAR_INV_SLOT, i);
+                    cmd.Parameters.Add("@" + CHAR_INV_ITEM_NUM, player.Inventory[i].ItemNum);
+                    cmd.Parameters.Add("@" + CHAR_INV_ITEM_VAL, player.Inventory[i].ItemVal);
+                    var stats = "";
+                    for (int x = 0; x < player.Inventory[i].StatBoost.Length; x++)
+                    {
+                        stats += player.Inventory[i].StatBoost[x] + ",";
+                    }
+                    cmd.Parameters.Add("@" + CHAR_INV_ITEM_STATS, stats);
+                    cmd.ExecuteNonQuery();
+                }
+            }
+        }
+        private static void SaveCharacterSpells(Player player)
+        {
+            for (int i = 0; i < Options.MaxPlayerSkills; i++)
+            {
+                var query = "INSERT OR REPLACE into " + CHAR_SPELL_TABLE + " (" + CHAR_SPELL_CHAR_ID + "," + CHAR_SPELL_SLOT + "," + CHAR_SPELL_NUM + "," + CHAR_SPELL_CD + ")" + " VALUES " + " (@" + CHAR_SPELL_CHAR_ID + ",@" + CHAR_SPELL_SLOT + ",@" + CHAR_SPELL_NUM + ",@" + CHAR_SPELL_CD + ");";
+                using (SqliteCommand cmd = new SqliteCommand(query, _dbConnection))
+                {
+                    cmd.Parameters.Add("@" + CHAR_SPELL_CHAR_ID, player.MyId);
+                    cmd.Parameters.Add("@" + CHAR_SPELL_SLOT, i);
+                    cmd.Parameters.Add("@" + CHAR_SPELL_NUM, player.Spells[i].SpellNum);
+                    cmd.Parameters.Add("@" + CHAR_SPELL_CD, (player.Spells[i].SpellCD > Environment.TickCount ? Environment.TickCount - player.Spells[i].SpellCD : 0));
+                    cmd.ExecuteNonQuery();
+                }
+            }
+        }
+        private static void SaveCharacterBank(Player player)
+        {
+            for (int i = 0; i < Options.MaxBankSlots; i++)
+            {
+                var query = "INSERT OR REPLACE into " + CHAR_BANK_TABLE + " (" + CHAR_BANK_CHAR_ID + "," + CHAR_BANK_SLOT + "," + CHAR_BANK_ITEM_NUM + "," + CHAR_BANK_ITEM_VAL + "," + CHAR_BANK_ITEM_STATS + ")" + " VALUES " + " (@" + CHAR_BANK_CHAR_ID + ",@" + CHAR_BANK_SLOT + ",@" + CHAR_BANK_ITEM_NUM + ",@" + CHAR_BANK_ITEM_VAL + ",@" + CHAR_BANK_ITEM_STATS + ");";
+                using (SqliteCommand cmd = new SqliteCommand(query, _dbConnection))
+                {
+                    cmd.Parameters.Add("@" + CHAR_BANK_CHAR_ID, player.MyId);
+                    cmd.Parameters.Add("@" + CHAR_BANK_SLOT, i);
+                    if (player.Bank[i] != null)
+                    {
+                        cmd.Parameters.Add("@" + CHAR_BANK_ITEM_NUM, player.Bank[i].ItemNum);
+                        cmd.Parameters.Add("@" + CHAR_BANK_ITEM_VAL, player.Bank[i].ItemVal);
+                        var stats = "";
+                        for (int x = 0; x < player.Bank[i].StatBoost.Length; x++)
+                        {
+                            stats += player.Bank[i].StatBoost[x] + ",";
+                        }
+                        cmd.Parameters.Add("@" + CHAR_BANK_ITEM_STATS, stats);
+                    }
+                    else
+                    {
+                        cmd.Parameters.Add("@" + CHAR_BANK_ITEM_NUM, -1);
+                        cmd.Parameters.Add("@" + CHAR_BANK_ITEM_VAL, -1);
+                        var stats = "";
+                        for (int x = 0; x < Options.MaxStats; x++)
+                        {
+                            stats += "-1,";
+                        }
+                        cmd.Parameters.Add("@" + CHAR_BANK_ITEM_STATS, stats);
+                    }
+                    cmd.ExecuteNonQuery();
+                }
+            }
+        }
+        private static void SaveCharacterHotbar(Player player)
+        {
+            for (int i = 0; i < Options.MaxHotbar; i++)
+            {
+                var query = "INSERT OR REPLACE into " + CHAR_HOTBAR_TABLE + " (" + CHAR_HOTBAR_CHAR_ID + "," + CHAR_HOTBAR_SLOT + "," + CHAR_HOTBAR_TYPE + "," + CHAR_HOTBAR_ITEMSLOT + ")" + " VALUES " + " (@" + CHAR_HOTBAR_CHAR_ID + ",@" + CHAR_HOTBAR_SLOT + ",@" + CHAR_HOTBAR_TYPE + ",@" + CHAR_HOTBAR_ITEMSLOT + ");";
+                using (SqliteCommand cmd = new SqliteCommand(query, _dbConnection))
+                {
+                    cmd.Parameters.Add("@" + CHAR_HOTBAR_CHAR_ID, player.MyId);
+                    cmd.Parameters.Add("@" + CHAR_HOTBAR_SLOT, i);
+                    cmd.Parameters.Add("@" + CHAR_HOTBAR_TYPE, player.Hotbar[i].Type);
+                    cmd.Parameters.Add("@" + CHAR_HOTBAR_ITEMSLOT, player.Hotbar[i].Slot);
+                    cmd.ExecuteNonQuery();
+                }
+            }
+        }
+        private static void SaveCharacterSwitches(Player player)
+        {
+            foreach (var playerSwitch in player.Switches)
+            {
+                var query = "INSERT OR REPLACE into " + CHAR_SWITCHES_TABLE + " (" + CHAR_SWITCH_CHAR_ID + "," + CHAR_SWITCH_SLOT + "," + CHAR_SWITCH_VAL + ")" + " VALUES " + " (@" + CHAR_SWITCH_CHAR_ID + ",@" + CHAR_SWITCH_SLOT + ",@" + CHAR_SWITCH_VAL + ");";
+                using (SqliteCommand cmd = new SqliteCommand(query, _dbConnection))
+                {
+                    cmd.Parameters.Add("@" + CHAR_SWITCH_CHAR_ID, player.MyId);
+                    cmd.Parameters.Add("@" + CHAR_SWITCH_SLOT, playerSwitch.Key);
+                    cmd.Parameters.Add("@" + CHAR_SWITCH_VAL, Convert.ToInt32(playerSwitch.Value));
+                    cmd.ExecuteNonQuery();
+                }
+            }
+        }
+        private static void SaveCharacterVariables(Player player)
+        {
+            foreach (var playerVariable in player.Variables)
+            {
+                var query = "INSERT OR REPLACE into " + CHAR_VARIABLES_TABLE + " (" + CHAR_VARIABLE_CHAR_ID + "," + CHAR_VARIABLE_SLOT + "," + CHAR_VARIABLE_VAL + ")" + " VALUES " + " (@" + CHAR_VARIABLE_CHAR_ID + ",@" + CHAR_VARIABLE_SLOT + ",@" + CHAR_VARIABLE_VAL + ");";
+                using (SqliteCommand cmd = new SqliteCommand(query, _dbConnection))
+                {
+                    cmd.Parameters.Add("@" + CHAR_VARIABLE_CHAR_ID, player.MyId);
+                    cmd.Parameters.Add("@" + CHAR_VARIABLE_SLOT, playerVariable.Key);
+                    cmd.Parameters.Add("@" + CHAR_VARIABLE_VAL, Convert.ToInt32(playerVariable.Value));
+                    cmd.ExecuteNonQuery();
+                }
+            }
+        }
+        public static bool LoadCharacter(Client client)
         {
             var en = client.Entity;
+            var commaSep = new char[1];
+            commaSep[0] = ',';
+            if (client.MyId == -1) return false;
             try
             {
-                var playerdata = new XmlDocument();
-                playerdata.Load("resources/accounts/" + client.MyAccount.ToLower() + "/" + client.MyAccount.ToLower() + ".xml");
-                client.MyEmail = playerdata.SelectSingleNode("//PlayerData/Email").InnerText;
-                client.MySalt = playerdata.SelectSingleNode("//PlayerData/Salt").InnerText;
-                client.MyPassword = playerdata.SelectSingleNode("//PlayerData/Pass").InnerText;
-                client.Power = Int32.Parse(playerdata.SelectSingleNode("//PlayerData/Power").InnerText);
-
-                if (playerdata.SelectSingleNode("//PlayerData//CharacterInfo/Name") != null && !string.IsNullOrEmpty(playerdata.SelectSingleNode("//PlayerData//CharacterInfo/Name").InnerText))
+                var query = "SELECT * from " + CHAR_TABLE + " WHERE " + CHAR_USER_ID + "=@" + CHAR_USER_ID + ";";
+                using (SqliteCommand cmd = new SqliteCommand(query, _dbConnection))
                 {
-                    en.MyName = playerdata.SelectSingleNode("//PlayerData//CharacterInfo/Name").InnerText;
-                    en.CurrentMap = Int32.Parse(playerdata.SelectSingleNode("//PlayerData//CharacterInfo/Map").InnerText);
-                    en.CurrentX = Int32.Parse(playerdata.SelectSingleNode("//PlayerData//CharacterInfo/X").InnerText);
-                    en.CurrentY = Int32.Parse(playerdata.SelectSingleNode("//PlayerData//CharacterInfo/Y").InnerText);
-                    en.CurrentZ = Int32.Parse(playerdata.SelectSingleNode("//PlayerData//CharacterInfo/Z").InnerText);
-                    en.Dir = Int32.Parse(playerdata.SelectSingleNode("//PlayerData//CharacterInfo/Dir").InnerText);
-                    en.MySprite = playerdata.SelectSingleNode("//PlayerData//CharacterInfo/Sprite").InnerText;
-                    en.Class = Int32.Parse(playerdata.SelectSingleNode("//PlayerData//CharacterInfo/Class").InnerText);
-                    en.Gender = Int32.Parse(playerdata.SelectSingleNode("//PlayerData//CharacterInfo/Gender").InnerText);
-                    en.Level = Int32.Parse(playerdata.SelectSingleNode("//PlayerData//CharacterInfo/Level").InnerText);
-                    en.Experience =
-                        Int32.Parse(playerdata.SelectSingleNode("//PlayerData//CharacterInfo/Experience").InnerText);
-                    for (var i = 0; i < (int)Vitals.VitalCount; i++)
+                    cmd.Parameters.Add("@" + CHAR_USER_ID, client.MyId);
+                    var dataReader = cmd.ExecuteReader();
+                    if (dataReader.HasRows && dataReader.Read())
                     {
-                        en.Vital[i] =
-                            Int32.Parse(playerdata.SelectSingleNode("//PlayerData//CharacterInfo/Vital" + i).InnerText);
-                        en.MaxVital[i] =
-                            Int32.Parse(
-                                playerdata.SelectSingleNode("//PlayerData//CharacterInfo/MaxVital" + i).InnerText);
-                    }
-                    for (var i = 0; i < (int)Stats.StatCount; i++)
-                    {
-                        en.Stat[i].Stat =
-                            Int32.Parse(playerdata.SelectSingleNode("//PlayerData//CharacterInfo/Stat" + i).InnerText);
-                    }
-                    en.StatPoints =
-                        Int32.Parse(playerdata.SelectSingleNode("//PlayerData//CharacterInfo/StatPoints").InnerText);
-                    for (var i = 0; i < Options.EquipmentSlots.Count; i++)
-                    {
-                        en.Equipment[i] =
-                            Int32.Parse(
-                                playerdata.SelectSingleNode("//PlayerData//CharacterInfo/Equipment" + i).InnerText);
-                    }
-                    en.Face = playerdata.SelectSingleNode("//PlayerData//CharacterInfo/Face").InnerText;
-
-                    for (int i = 0; i < Options.MaxPlayerSwitches; i++)
-                    {
-                        if (playerdata.SelectSingleNode("//PlayerData//CharacterInfo//Switches/Switch" + i) != null)
-                            ((Player)(en)).Switches[i] =
-                                Convert.ToBoolean(
-                                    Int32.Parse(
-                                        playerdata.SelectSingleNode("//PlayerData//CharacterInfo//Switches/Switch" + i)
-                                            .InnerText));
-                    }
-
-                    for (int i = 0; i < Options.MaxPlayerSwitches; i++)
-                    {
-                        if (playerdata.SelectSingleNode("//PlayerData//CharacterInfo//Variables/Variable" + i) != null)
-                            ((Player)(en)).Variables[i] =
-                                Int32.Parse(
-                                    playerdata.SelectSingleNode("//PlayerData//CharacterInfo//Variables/Variable" + i)
-                                        .InnerText);
-                    }
-
-                    for (int i = 0; i < Options.MaxInvItems; i++)
-                    {
-                        en.Inventory[i].ItemNum =
-                            Int32.Parse(
-                                playerdata.SelectSingleNode("//PlayerData//CharacterInfo//Inventory/Slot" + i + "Num")
-                                    .InnerText);
-                        en.Inventory[i].ItemVal =
-                            Int32.Parse(
-                                playerdata.SelectSingleNode("//PlayerData//CharacterInfo//Inventory/Slot" + i + "Val")
-                                    .InnerText);
-                        for (int x = 0; x < (int)Stats.StatCount; x++)
+                        en.MyId = Convert.ToInt32(dataReader[CHAR_ID]);
+                        en.MyName = dataReader[CHAR_NAME].ToString();
+                        en.CurrentMap = Convert.ToInt32(dataReader[CHAR_MAP]);
+                        en.CurrentX = Convert.ToInt32(dataReader[CHAR_X]);
+                        en.CurrentY = Convert.ToInt32(dataReader[CHAR_Y]);
+                        en.CurrentZ = Convert.ToInt32(dataReader[CHAR_Z]);
+                        en.Dir = Convert.ToInt32(dataReader[CHAR_DIR]);
+                        en.MySprite = dataReader[CHAR_SPRITE].ToString();
+                        en.Face = dataReader[CHAR_FACE].ToString();
+                        en.Class = Convert.ToInt32(dataReader[CHAR_CLASS]);
+                        en.Gender = Convert.ToInt32(dataReader[CHAR_GENDER]);
+                        en.Level = Convert.ToInt32(dataReader[CHAR_LEVEL]);
+                        en.Experience = Convert.ToInt32(dataReader[CHAR_EXP]);
+                        var vitalString = dataReader[CHAR_VITALS].ToString();
+                        var vitals = vitalString.Split(commaSep, StringSplitOptions.RemoveEmptyEntries);
+                        for (var i = 0; i < (int)Vitals.VitalCount && i < vitals.Length; i++)
                         {
-                            en.Inventory[i].StatBoost[x] =
-                                Int32.Parse(
-                                    playerdata.SelectSingleNode("//PlayerData//CharacterInfo//Inventory/Slot" + i +
-                                                                "Buff" + x).InnerText);
+                            en.Vital[i] = Int32.Parse(vitals[i]);
                         }
-                    }
-
-                    for (int i = 0; i < Options.MaxPlayerSkills; i++)
-                    {
-                        en.Spells[i].SpellNum =
-                            Int32.Parse(
-                                playerdata.SelectSingleNode("//PlayerData//CharacterInfo//Spells/Slot" + i + "Num")
-                                    .InnerText);
-                    }
-
-                    for (int i = 0; i < Options.MaxHotbar; i++)
-                    {
-                        en.Hotbar[i].Type =
-                            Int32.Parse(
-                                playerdata.SelectSingleNode("//PlayerData//CharacterInfo//Hotbar/Slot" + i + "Type")
-                                    .InnerText);
-                        en.Hotbar[i].Slot =
-                            Int32.Parse(
-                                playerdata.SelectSingleNode("//PlayerData//CharacterInfo//Hotbar/Slot" + i + "Slot")
-                                    .InnerText);
-                    }
-
-                    for (int i = 0; i < Options.MaxBankSlots; i++)
-                    {
-                        if (playerdata.SelectSingleNode("//PlayerData//CharacterInfo//Bank/Slot" + i + "Num") != null)
+                        var maxVitalString = dataReader[CHAR_MAX_VITALS].ToString();
+                        var maxVitals = maxVitalString.Split(commaSep, StringSplitOptions.RemoveEmptyEntries);
+                        for (var i = 0; i < (int)Vitals.VitalCount && i < maxVitals.Length; i++)
                         {
-                            int itemNum =
-                                Int32.Parse(
-                                    playerdata.SelectSingleNode("//PlayerData//CharacterInfo//Bank/Slot" + i + "Num")
-                                        .InnerText);
-                            int itemVal =
-                                Int32.Parse(
-                                    playerdata.SelectSingleNode("//PlayerData//CharacterInfo//Bank/Slot" + i + "Val")
-                                        .InnerText);
-                            if (itemNum < 0 || itemVal == 0)
-                            {
-                                en.Bank[i] = null;
-                            }
-                            else
-                            {
-                                en.Bank[i] = new ItemInstance(itemNum, itemVal);
-                                for (int x = 0; x < (int)Stats.StatCount; x++)
-                                {
-                                    en.Bank[i].StatBoost[x] =
-                                        Int32.Parse(playerdata.SelectSingleNode("//PlayerData//CharacterInfo//Bank/Slot" + i + "Buff" + x).InnerText);
-                                }
-                            }
+                            en.MaxVital[i] = Int32.Parse(maxVitals[i]);
                         }
+                        var statsString = dataReader[CHAR_STATS].ToString();
+                        var stats = statsString.Split(commaSep, StringSplitOptions.RemoveEmptyEntries);
+                        for (var i = 0; i < (int)Stats.StatCount && i < stats.Length; i++)
+                        {
+                            en.Stat[i].Stat = Int32.Parse(stats[i]);
+                        }
+                        en.StatPoints = Convert.ToInt32(dataReader[CHAR_STAT_POINTS]);
+                        var equipmentString = dataReader[CHAR_EQUIPMENT].ToString();
+                        var equipment = equipmentString.Split(commaSep, StringSplitOptions.RemoveEmptyEntries);
+                        for (var i = 0; i < (int)Options.EquipmentSlots.Count && i < equipment.Length; i++)
+                        {
+                            en.Equipment[i] = Int32.Parse(equipment[i]);
+                        }
+                        if (!LoadCharacterInventory(en)) return false;
+                        if (!LoadCharacterSpells(en)) return false;
+                        if (!LoadCharacterBank(en)) return false;
+                        if (!LoadCharacterHotbar(en)) return false;
+                        if (!LoadCharacterSwitches(en)) return false;
+                        if (!LoadCharacterVariables(en)) return false;
+                        return true;
                     }
-                    return true;
                 }
                 return false;
             }
             catch (Exception ex)
             {
-                return false;
+                throw ex;
             }
         }
-        public static void SavePlayer(Client client)
+        private static bool LoadCharacterInventory(Player player)
         {
-            if (client == null) { return; }
-            if (client.MyAccount == "") return;
-            var en = (Player)client.Entity;
-
-            var playerdata = new XmlWriterSettings { Indent = true };
-            playerdata.ConformanceLevel = ConformanceLevel.Auto;
-            var writer = XmlWriter.Create("resources/accounts/" + client.MyAccount.ToLower() + "/" + client.MyAccount.ToLower() + ".xml", playerdata);
-            writer.WriteStartDocument();
-            writer.WriteStartElement("PlayerData");
-            writer.WriteElementString("Username", client.MyAccount);
-            writer.WriteElementString("Email", client.MyEmail);
-            writer.WriteElementString("Pass", client.MyPassword);
-            writer.WriteElementString("Salt", client.MySalt);
-            writer.WriteElementString("Power", client.Power.ToString());
-
-            if (en != null && en.MyName != "")
+            var commaSep = new char[1];
+            commaSep[0] = ',';
+            try
             {
-                writer.WriteStartElement("CharacterInfo");
-                writer.WriteElementString("Name", en.MyName);
-                writer.WriteElementString("Map", en.CurrentMap.ToString());
-                writer.WriteElementString("X", en.CurrentX.ToString());
-                writer.WriteElementString("Y", en.CurrentY.ToString());
-                writer.WriteElementString("Z", en.CurrentZ.ToString());
-                writer.WriteElementString("Dir", en.Dir.ToString());
-                writer.WriteElementString("Sprite", en.MySprite);
-                writer.WriteElementString("Class", en.Class.ToString());
-                writer.WriteElementString("Gender", en.Gender.ToString());
-                writer.WriteElementString("Level", en.Level.ToString());
-                writer.WriteElementString("Experience", en.Experience.ToString());
-                for (var i = 0; i < (int)Vitals.VitalCount; i++)
+                var query = "SELECT * from " + CHAR_INV_TABLE + " WHERE " + CHAR_INV_CHAR_ID + "=@" + CHAR_INV_CHAR_ID + ";";
+                using (SqliteCommand cmd = new SqliteCommand(query, _dbConnection))
                 {
-                    writer.WriteElementString("Vital" + i, en.Vital[i].ToString());
-                    writer.WriteElementString("MaxVital" + i, en.MaxVital[i].ToString());
-                }
-                for (var i = 0; i < (int)Stats.StatCount; i++)
-                {
-                    writer.WriteElementString("Stat" + i, en.Stat[i].Stat.ToString());
-                }
-                writer.WriteElementString("StatPoints", en.StatPoints.ToString());
-                for (var i = 0; i < Options.EquipmentSlots.Count; i++)
-                {
-                    writer.WriteElementString("Equipment" + i, en.Equipment[i].ToString());
-                }
-                writer.WriteElementString("Face", en.Face);
-
-                writer.WriteStartElement("Switches");
-                for (int i = 0; i < Options.MaxPlayerSwitches; i++)
-                {
-                    writer.WriteElementString("Switch" + i, Convert.ToInt32(((Player)(en)).Switches[i]).ToString());
-                }
-                writer.WriteEndElement();
-
-                writer.WriteStartElement("Variables");
-                for (int i = 0; i < Options.MaxPlayerVariables; i++)
-                {
-                    writer.WriteElementString("Variable" + i, ((Player)(en)).Variables[i].ToString());
-                }
-                writer.WriteEndElement();
-
-                writer.WriteStartElement("Inventory");
-                for (int i = 0; i < Options.MaxInvItems; i++)
-                {
-                    writer.WriteElementString("Slot" + i + "Num", en.Inventory[i].ItemNum.ToString());
-                    writer.WriteElementString("Slot" + i + "Val", en.Inventory[i].ItemVal.ToString());
-                    for (int x = 0; x < (int)Stats.StatCount; x++)
+                    cmd.Parameters.Add("@" + CHAR_INV_CHAR_ID, player.MyId);
+                    var dataReader = cmd.ExecuteReader();
+                    while (dataReader.Read())
                     {
-                        writer.WriteElementString("Slot" + i + "Buff" + x, en.Inventory[i].StatBoost[x].ToString());
-                    }
-
-                }
-                writer.WriteEndElement();
-
-                writer.WriteStartElement("Spells");
-                for (int i = 0; i < Options.MaxPlayerSkills; i++)
-                {
-                    writer.WriteElementString("Slot" + i + "Num", en.Spells[i].SpellNum.ToString());
-                }
-                writer.WriteEndElement();
-
-
-                writer.WriteStartElement("Hotbar");
-                for (int i = 0; i < Options.MaxHotbar; i++)
-                {
-                    writer.WriteElementString("Slot" + i + "Type", en.Hotbar[i].Type.ToString());
-                    writer.WriteElementString("Slot" + i + "Slot", en.Hotbar[i].Slot.ToString());
-                }
-                writer.WriteEndElement();
-
-                writer.WriteStartElement("Bank");
-                for (int i = 0; i < Options.MaxBankSlots; i++)
-                {
-                    if (en.Bank[i] != null)
-                    {
-                        writer.WriteElementString("Slot" + i + "Num", en.Bank[i].ItemNum.ToString());
-                        writer.WriteElementString("Slot" + i + "Val", en.Bank[i].ItemVal.ToString());
-                        for (int x = 0; x < (int)Stats.StatCount; x++)
+                        var slot = Convert.ToInt32(dataReader[CHAR_INV_SLOT]);
+                        if (slot >= 0 && slot < Options.MaxInvItems)
                         {
-                            writer.WriteElementString("Slot" + i + "Buff" + x, en.Bank[i].StatBoost[x].ToString());
-                        }
-                    }
-                    else
-                    {
-                        writer.WriteElementString("Slot" + i + "Num", "-1");
-                        writer.WriteElementString("Slot" + i + "Val", "0");
-                        for (int x = 0; x < (int)Stats.StatCount; x++)
-                        {
-                            writer.WriteElementString("Slot" + i + "Buff" + x, "0");
+                            player.Inventory[slot].ItemNum = Convert.ToInt32(dataReader[CHAR_INV_ITEM_NUM]);
+                            player.Inventory[slot].ItemVal = Convert.ToInt32(dataReader[CHAR_INV_ITEM_VAL]);
+                            var statBoostStr = dataReader[CHAR_INV_ITEM_STATS].ToString();
+                            var stats = statBoostStr.Split(commaSep, StringSplitOptions.RemoveEmptyEntries);
+                            for (int i = 0; i < (int)Stats.StatCount && i < stats.Length; i++)
+                            {
+                                player.Inventory[slot].StatBoost[i] = Int32.Parse(stats[i]);
+                            }
                         }
                     }
                 }
-                writer.WriteEndElement();
-
-
-
-                writer.WriteEndElement();
+                return true;
             }
-            writer.WriteEndElement();
-            writer.WriteEndDocument();
-            writer.Flush();
-            writer.Close();
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
-        public static int CheckPower(string username)
+        private static bool LoadCharacterSpells(Player player)
         {
-            var playerdata = new XmlDocument();
-            var sha = new SHA256Managed();
-            playerdata.Load("resources/accounts/" + username.ToLower() + "/" + username.ToLower() + ".xml");
-            int power = Int32.Parse(playerdata.SelectSingleNode("//PlayerData/Power").InnerText);
-            return power;
-        }
-
-        //Maps
-        public static void LoadMaps()
-        {
-            if (!Directory.Exists("resources/maps"))
+            try
             {
-                Directory.CreateDirectory("resources/maps");
-            }
-            var mapNames = Directory.GetFiles("resources/maps", "*.map");
-            Globals.GameMaps.Clear();
-            MapCount = mapNames.Length;
-            if (mapNames.Length == 0)
-            {
-                Console.WriteLine("No maps found! - Creating empty first map!");
-                Globals.GameMaps.Add(0, new MapInstance(0));
-                Globals.GameMaps[0].Save(true);
-                MapCount++;
-            }
-            else
-            {
-                for (var i = 0; i < mapNames.Length; i++)
+                var query = "SELECT * from " + CHAR_SPELL_TABLE + " WHERE " + CHAR_SPELL_CHAR_ID + "=@" + CHAR_SPELL_CHAR_ID + ";";
+                using (SqliteCommand cmd = new SqliteCommand(query, _dbConnection))
                 {
-                    Globals.GameMaps.Add(i, new MapInstance(i));
-                    if (!Globals.GameMaps[i].Load(File.ReadAllBytes("resources/maps/" + i + ".map")))
-                        Globals.GameMaps.Remove(i);
+                    cmd.Parameters.Add("@" + CHAR_SPELL_CHAR_ID, player.MyId);
+                    var dataReader = cmd.ExecuteReader();
+                    while (dataReader.Read())
+                    {
+                        var slot = Convert.ToInt32(dataReader[CHAR_SPELL_SLOT]);
+                        if (slot >= 0 && slot < Options.MaxPlayerSkills)
+                        {
+                            player.Spells[slot].SpellNum = Convert.ToInt32(dataReader[CHAR_SPELL_SLOT]);
+                            player.Spells[slot].SpellCD = Environment.TickCount + Convert.ToInt32(dataReader[CHAR_SPELL_CD]);
+                        }
+                    }
+                }
+                return true;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+        private static bool LoadCharacterBank(Player player)
+        {
+            var commaSep = new char[1];
+            commaSep[0] = ',';
+            try
+            {
+                var query = "SELECT * from " + CHAR_BANK_TABLE + " WHERE " + CHAR_BANK_CHAR_ID + "=@" + CHAR_BANK_CHAR_ID + ";";
+                using (SqliteCommand cmd = new SqliteCommand(query, _dbConnection))
+                {
+                    cmd.Parameters.Add("@" + CHAR_BANK_CHAR_ID, player.MyId);
+                    var dataReader = cmd.ExecuteReader();
+                    while (dataReader.Read())
+                    {
+                        var slot = Convert.ToInt32(dataReader[CHAR_BANK_SLOT]);
+                        if (slot >= 0 && slot < Options.MaxBankSlots)
+                        {
+                            if (player.Bank[slot] == null) player.Bank[slot] = new ItemInstance();
+                            player.Bank[slot].ItemNum = Convert.ToInt32(dataReader[CHAR_BANK_ITEM_NUM]);
+                            player.Bank[slot].ItemVal = Convert.ToInt32(dataReader[CHAR_BANK_ITEM_VAL]);
+                            var statBoostStr = dataReader[CHAR_BANK_ITEM_STATS].ToString();
+                            var stats = statBoostStr.Split(commaSep, StringSplitOptions.RemoveEmptyEntries);
+                            for (int i = 0; i < (int)Stats.StatCount && i < stats.Length; i++)
+                            {
+                                player.Bank[slot].StatBoost[i] = Int32.Parse(stats[i]);
+                            }
+                        }
+                    }
+                }
+                return true;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+        private static bool LoadCharacterHotbar(Player player)
+        {
+            try
+            {
+                var query = "SELECT * from " + CHAR_HOTBAR_TABLE + " WHERE " + CHAR_HOTBAR_CHAR_ID + "=@" + CHAR_HOTBAR_CHAR_ID + ";";
+                using (SqliteCommand cmd = new SqliteCommand(query, _dbConnection))
+                {
+                    cmd.Parameters.Add("@" + CHAR_HOTBAR_CHAR_ID, player.MyId);
+                    var dataReader = cmd.ExecuteReader();
+                    while (dataReader.Read())
+                    {
+                        var slot = Convert.ToInt32(dataReader[CHAR_HOTBAR_SLOT]);
+                        if (slot >= 0 && slot < Options.MaxHotbar)
+                        {
+                            player.Hotbar[slot].Type = Convert.ToInt32(dataReader[CHAR_HOTBAR_TYPE]);
+                            player.Hotbar[slot].Slot = Convert.ToInt32(dataReader[CHAR_HOTBAR_ITEMSLOT]);
+                        }
+                    }
+                }
+                return true;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+        private static bool LoadCharacterSwitches(Player player)
+        {
+            try
+            {
+                var query = "SELECT * from " + CHAR_SWITCHES_TABLE + " WHERE " + CHAR_SWITCH_CHAR_ID + "=@" + CHAR_SWITCH_CHAR_ID + ";";
+                using (SqliteCommand cmd = new SqliteCommand(query, _dbConnection))
+                {
+                    cmd.Parameters.Add("@" + CHAR_SWITCH_CHAR_ID, player.MyId);
+                    var dataReader = cmd.ExecuteReader();
+                    while (dataReader.Read())
+                    {
+                        var id = Convert.ToInt32(dataReader[CHAR_SWITCH_SLOT]);
+                        if (player.Switches.ContainsKey(id))
+                        {
+                            player.Switches[id] = Convert.ToBoolean(Convert.ToInt32(dataReader[CHAR_SWITCH_VAL]));
+                        }
+                        else
+                        {
+                            player.Switches.Add(id, Convert.ToBoolean(Convert.ToInt32(dataReader[CHAR_SWITCH_VAL])));
+                        }
+                    }
+                }
+                return true;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+        private static bool LoadCharacterVariables(Player player)
+        {
+            try
+            {
+                var query = "SELECT * from " + CHAR_VARIABLES_TABLE + " WHERE " + CHAR_VARIABLE_CHAR_ID + "=@" + CHAR_VARIABLE_CHAR_ID + ";";
+                using (SqliteCommand cmd = new SqliteCommand(query, _dbConnection))
+                {
+                    cmd.Parameters.Add("@" + CHAR_VARIABLE_CHAR_ID, player.MyId);
+                    var dataReader = cmd.ExecuteReader();
+                    while (dataReader.Read())
+                    {
+                        var id = Convert.ToInt32(dataReader[CHAR_VARIABLE_SLOT]);
+                        if (player.Variables.ContainsKey(id))
+                        {
+                            player.Variables[id] = Convert.ToInt32(dataReader[CHAR_VARIABLE_VAL]);
+                        }
+                        else
+                        {
+                            player.Variables.Add(id, Convert.ToInt32(dataReader[CHAR_VARIABLE_VAL]));
+                        }
+                    }
+                }
+                return true;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
 
+        //Game Object Saving/Loading
+        private static void LoadAllGameObjects()
+        {
+            foreach (var val in Enum.GetValues(typeof(GameObject)))
+            {
+                LoadGameObjects((GameObject)val);
+                if ((GameObject)val == GameObject.Map)
+                {
+                    OnMapsLoaded();
+                }
+                else if ((GameObject) val == GameObject.Class)
+                {
+                    OnClassesLoaded();
                 }
             }
+        }
+        private static string GetGameObjectTable(GameObject type)
+        {
+            var tableName = "";
+            switch (type)
+            {
+                case GameObject.Animation:
+                    tableName = AnimationBase.DatabaseTable;
+                    break;
+                case GameObject.Class:
+                    tableName = ClassBase.DatabaseTable;
+                    break;
+                case GameObject.Item:
+                    tableName = ItemBase.DatabaseTable;
+                    break;
+                case GameObject.Npc:
+                    tableName = NpcBase.DatabaseTable;
+                    break;
+                case GameObject.Projectile:
+                    tableName = ProjectileBase.DatabaseTable;
+                    break;
+                case GameObject.Quest:
+                    tableName = QuestBase.DatabaseTable;
+                    break;
+                case GameObject.Resource:
+                    tableName = ResourceBase.DatabaseTable;
+                    break;
+                case GameObject.Shop:
+                    tableName = ShopBase.DatabaseTable;
+                    break;
+                case GameObject.Spell:
+                    tableName = SpellBase.DatabaseTable;
+                    break;
+                case GameObject.Map:
+                    tableName = MapBase.DatabaseTable;
+                    break;
+                case GameObject.CommonEvent:
+                    tableName = EventBase.DatabaseTable;
+                    break;
+                case GameObject.PlayerSwitch:
+                    tableName = PlayerSwitchBase.DatabaseTable;
+                    break;
+                case GameObject.PlayerVariable:
+                    tableName = PlayerVariableBase.DatabaseTable;
+                    break;
+                case GameObject.ServerSwitch:
+                    tableName = ServerSwitchBase.DatabaseTable;
+                    break;
+                case GameObject.ServerVariable:
+                    tableName = ServerVariableBase.DatabaseTable;
+                    break;
+                case GameObject.Tileset:
+                    tableName = TilesetBase.DatabaseTable;
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(type), type, null);
+            }
+            return tableName;
+        }
+        private static void ClearGameObjects(GameObject type)
+        {
+            switch (type)
+            {
+                case GameObject.Animation:
+                    AnimationBase.ClearObjects();
+                    break;
+                case GameObject.Class:
+                    ClassBase.ClearObjects();
+                    break;
+                case GameObject.Item:
+                    ItemBase.ClearObjects();
+                    break;
+                case GameObject.Npc:
+                    NpcBase.ClearObjects();
+                    break;
+                case GameObject.Projectile:
+                    ProjectileBase.ClearObjects();
+                    break;
+                case GameObject.Quest:
+                    QuestBase.ClearObjects();
+                    break;
+                case GameObject.Resource:
+                    ResourceBase.ClearObjects();
+                    break;
+                case GameObject.Shop:
+                    ShopBase.ClearObjects();
+                    break;
+                case GameObject.Spell:
+                    SpellBase.ClearObjects();
+                    break;
+                case GameObject.Map:
+                    MapBase.ClearObjects();
+                    break;
+                case GameObject.CommonEvent:
+                    EventBase.ClearObjects();
+                    break;
+                case GameObject.PlayerSwitch:
+                    PlayerSwitchBase.ClearObjects();
+                    break;
+                case GameObject.PlayerVariable:
+                    PlayerVariableBase.ClearObjects();
+                    break;
+                case GameObject.ServerSwitch:
+                    ServerSwitchBase.ClearObjects();
+                    break;
+                case GameObject.ServerVariable:
+                    ServerVariableBase.ClearObjects();
+                    break;
+                case GameObject.Tileset:
+                    TilesetBase.ClearObjects();
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(type), type, null);
+            }
+        }
+        private static void LoadGameObject(GameObject type, int index, byte[] data)
+        {
+            switch (type)
+            {
+                case GameObject.Animation:
+                    var anim = new AnimationBase(index);
+                    anim.Load(data);
+                    AnimationBase.AddObject(index, anim);
+                    break;
+                case GameObject.Class:
+                    var cls = new ClassBase(index);
+                    cls.Load(data);
+                    ClassBase.AddObject(index, cls);
+                    break;
+                case GameObject.Item:
+                    var itm = new ItemBase(index);
+                    itm.Load(data);
+                    ItemBase.AddObject(index, itm);
+                    break;
+                case GameObject.Npc:
+                    var npc = new NpcBase(index);
+                    npc.Load(data);
+                    NpcBase.AddObject(index, npc);
+                    break;
+                case GameObject.Projectile:
+                    var proj = new ProjectileBase(index);
+                    proj.Load(data);
+                    ProjectileBase.AddObject(index, proj);
+                    break;
+                case GameObject.Quest:
+                    var qst = new QuestBase(index);
+                    qst.Load(data);
+                    QuestBase.AddObject(index, qst);
+                    break;
+                case GameObject.Resource:
+                    var res = new ResourceBase(index);
+                    res.Load(data);
+                    ResourceBase.AddObject(index, res);
+                    break;
+                case GameObject.Shop:
+                    var shp = new ShopBase(index);
+                    shp.Load(data);
+                    ShopBase.AddObject(index, shp);
+                    break;
+                case GameObject.Spell:
+                    var spl = new SpellBase(index);
+                    spl.Load(data);
+                    SpellBase.AddObject(index, spl);
+                    break;
+                case GameObject.Map:
+                    var map = new MapInstance(index);
+                    map.Load(data);
+                    MapInstance.AddObject(index, map);
+                    break;
+                case GameObject.CommonEvent:
+                    var buffer = new ByteBuffer();
+                    buffer.WriteBytes(data);
+                    var evt = new EventBase(index, buffer, true);
+                    EventBase.AddObject(index, evt);
+                    buffer.Dispose();
+                    break;
+                case GameObject.PlayerSwitch:
+                    var pswitch = new PlayerSwitchBase(index);
+                    pswitch.Load(data);
+                    PlayerSwitchBase.AddObject(index, pswitch);
+                    break;
+                case GameObject.PlayerVariable:
+                    var pvar = new PlayerVariableBase(index);
+                    pvar.Load(data);
+                    PlayerVariableBase.AddObject(index, pvar);
+                    break;
+                case GameObject.ServerSwitch:
+                    var sswitch = new ServerSwitchBase(index);
+                    sswitch.Load(data);
+                    ServerSwitchBase.AddObject(index, sswitch);
+                    break;
+                case GameObject.ServerVariable:
+                    var svar = new ServerVariableBase(index);
+                    svar.Load(data);
+                    ServerVariableBase.AddObject(index, svar);
+                    break;
+                case GameObject.Tileset:
+                    var tset = new TilesetBase(index);
+                    tset.Load(data);
+                    TilesetBase.AddObject(index, tset);
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(type), type, null);
+            }
+        }
+        public static void LoadGameObjects(GameObject type)
+        {
+            var tableName = GetGameObjectTable(type);
+            ClearGameObjects(type);
+            var query = "SELECT * from " + tableName + " WHERE " + GAME_OBJECT_DELETED + "=@" + GAME_OBJECT_DELETED + ";";
+            using (SqliteCommand cmd = new SqliteCommand(query, _dbConnection))
+            {
+                cmd.Parameters.Add("@" + GAME_OBJECT_DELETED, 0.ToString());
+                var dataReader = cmd.ExecuteReader();
+                while (dataReader.Read())
+                {
+                    var index = Convert.ToInt32(dataReader[GAME_OBJECT_ID]);
+                    LoadGameObject(type, index, (byte[])dataReader[GAME_OBJECT_DATA]);
+                }
+            }
+        }
+        public static void SaveGameObject(DatabaseObject gameObject)
+        {
+            var insertQuery = "UPDATE " + gameObject.GetTable() + " set " + GAME_OBJECT_DELETED + "=@" + GAME_OBJECT_DELETED + "," + GAME_OBJECT_DATA + "=@" + GAME_OBJECT_DATA + " WHERE " + GAME_OBJECT_ID + "=@" + GAME_OBJECT_ID + ";";
+            using (SqliteCommand cmd = new SqliteCommand(insertQuery, _dbConnection))
+            {
+                cmd.Parameters.Add("@" + GAME_OBJECT_ID, gameObject.GetId());
+                cmd.Parameters.Add("@" + GAME_OBJECT_DELETED, 0.ToString());
+                cmd.Parameters.Add("@" + GAME_OBJECT_DATA, gameObject.GetData());
+                cmd.ExecuteNonQuery();
+            }
+        }
+        public static DatabaseObject AddGameObject(GameObject type)
+        {
+            var insertQuery = "INSERT into " + GetGameObjectTable(type) + " DEFAULT VALUES" + ";";
+            using (SqliteCommand cmd = new SqliteCommand(insertQuery, _dbConnection))
+            {
+                cmd.ExecuteNonQuery();
+            }
+            var index = (_dbConnection.LastInsertRowId);
+            DatabaseObject obj = null;
+            switch (type)
+            {
+                case GameObject.Animation:
+                    obj = new AnimationBase(index);
+                    AnimationBase.AddObject(index, obj);
+                    break;
+                case GameObject.Class:
+                    obj = new ClassBase(index);
+                    ClassBase.AddObject(index, obj);
+                    break;
+                case GameObject.Item:
+                    obj = new ItemBase(index);
+                    ItemBase.AddObject(index, obj);
+                    break;
+                case GameObject.Npc:
+                    obj = new NpcBase(index);
+                    NpcBase.AddObject(index, obj);
+                    break;
+                case GameObject.Projectile:
+                    obj = new ProjectileBase(index);
+                    ProjectileBase.AddObject(index, obj);
+                    break;
+                case GameObject.Quest:
+                    obj = new QuestBase(index);
+                    QuestBase.AddObject(index, obj);
+                    break;
+                case GameObject.Resource:
+                    obj = new ResourceBase(index);
+                    ResourceBase.AddObject(index, obj);
+                    break;
+                case GameObject.Shop:
+                    obj = new ShopBase(index);
+                    ShopBase.AddObject(index, obj);
+                    break;
+                case GameObject.Spell:
+                    obj = new SpellBase(index);
+                    SpellBase.AddObject(index, obj);
+                    break;
+                case GameObject.Map:
+                    obj = new MapInstance(index);
+                    MapInstance.AddObject(index, obj);
+                    break;
+                case GameObject.CommonEvent:
+                    obj = new EventBase(index, -1, -1, true);
+                    EventBase.AddObject(index, obj);
+                    break;
+                case GameObject.PlayerSwitch:
+                    obj = new PlayerSwitchBase(index);
+                    PlayerSwitchBase.AddObject(index, obj);
+                    break;
+                case GameObject.PlayerVariable:
+                    obj = new PlayerVariableBase(index);
+                    PlayerVariableBase.AddObject(index, obj);
+                    break;
+                case GameObject.ServerSwitch:
+                    obj = new ServerSwitchBase(index);
+                    ServerSwitchBase.AddObject(index, obj);
+                    break;
+                case GameObject.ServerVariable:
+                    obj = new ServerVariableBase(index);
+                    ServerVariableBase.AddObject(index, obj);
+                    break;
+                case GameObject.Tileset:
+                    obj = new TilesetBase(index);
+                    TilesetBase.AddObject(index, obj);
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(type), type, null);
+            }
+            SaveGameObject(obj);
+            return obj;
+        }
+        public static void DeleteGameObject(DatabaseObject gameObject)
+        {
+            var insertQuery = "UPDATE " + gameObject.GetTable() + " set " + GAME_OBJECT_DELETED + "=@" + GAME_OBJECT_DELETED + "," + GAME_OBJECT_DATA + "=@" + GAME_OBJECT_DATA + " WHERE " + GAME_OBJECT_ID + "=@" + GAME_OBJECT_ID + ";";
+            using (SqliteCommand cmd = new SqliteCommand(insertQuery, _dbConnection))
+            {
+                cmd.Parameters.Add("@" + GAME_OBJECT_ID, gameObject.GetId());
+                cmd.Parameters.Add("@" + GAME_OBJECT_DELETED, 1.ToString());
+                cmd.Parameters.Add("@" + GAME_OBJECT_DATA, gameObject.GetData());
+                cmd.ExecuteNonQuery();
+            }
+            gameObject.Delete();
+        }
+
+        //Post Loading Functions
+        private static void OnMapsLoaded()
+        {
+            if (MapBase.ObjectCount() == 0)
+            {
+                //Converting Project Code, Remove before Alpha 1.0
+
+                //Let's Start by loading up tilesets... easy right?
+                string[] tilesets = File.ReadAllLines("resources/tilesets.dat");
+                foreach (var t in tilesets)
+                {
+                    var tset = (TilesetBase)AddGameObject(GameObject.Tileset);
+                    tset.SetValue(t);
+                    SaveGameObject(tset);
+                }
+
+                string[] maps = Directory.GetFiles("resources/maps/", "*.map");
+                List<int> mapIndexes = new List<int>();
+                foreach (var m in maps)
+                {
+                    int mapIndex = Int32.Parse(m.Replace(".map", "").Replace("resources/maps/", ""));
+                    mapIndexes.Add(mapIndex + 1);
+                    while (MapInstance.GetMap(mapIndex + 1) == null)
+                    {
+                        AddGameObject(GameObject.Map);
+                    }
+                    MapInstance.GetMap(mapIndex + 1).Load(File.ReadAllBytes(m));
+                    SaveGameObject(MapInstance.GetMap(mapIndex + 1));
+                }
+
+                foreach (var m in MapInstance.GetObjects())
+                {
+                    if (!mapIndexes.Contains(m.Key))
+                    {
+                        DeleteGameObject(m.Value);
+                    }
+                }
+
+                string[] resources = Directory.GetFiles("resources/resources/", "*.res");
+                foreach (var m in resources)
+                {
+                    int mapIndex = Int32.Parse(m.Replace(".res", "").Replace("resources/resources/", ""));
+                    while (ResourceBase.GetResource(mapIndex + 1) == null)
+                    {
+                        AddGameObject(GameObject.Resource);
+                    }
+                    ResourceBase.GetResource(mapIndex + 1).Load(File.ReadAllBytes(m));
+                    SaveGameObject(ResourceBase.GetResource(mapIndex + 1));
+                }
+                //Console.WriteLine("No maps found! - Creating an empty map!");
+                //AddGameObject(GameObject.Map);
+            }
+
             GenerateMapGrids();
             LoadMapFolders();
             CheckAllMapConnections();
         }
+        private static void OnClassesLoaded()
+        {
+            if (ClassBase.ObjectCount() == 0)
+            {
+                Console.WriteLine("No classes found! - Creating a default class!");
+                var cls = (ClassBase)AddGameObject(GameObject.Class);
+                cls.Name = "Default";
+                ClassSprite defaultMale = new ClassSprite();
+                defaultMale.Sprite = "1.png";
+                defaultMale.Gender = 0;
+                ClassSprite defaultFemale = new ClassSprite();
+                defaultFemale.Sprite = "2.png";
+                defaultFemale.Gender = 1;
+                cls.Sprites.Add(defaultMale);
+                cls.Sprites.Add(defaultFemale);
+                for (int i = 0; i < (int)Vitals.VitalCount; i++)
+                {
+                    cls.MaxVital[i] = 20;
+                }
+                for (int i = 0; i < (int)Stats.StatCount; i++)
+                {
+                    cls.Stat[i] = 20;
+                }
+                SaveGameObject(cls);
+            }
+        }
+
+        //Extra Map Helper Functions
         public static void CheckAllMapConnections()
         {
-            foreach (var map in Globals.GameMaps)
+            foreach (var map in MapInstance.GetObjects())
             {
                 CheckMapConnections(map.Value);
             }
         }
-        public static void CheckMapConnections(MapInstance map)
+        public static void CheckMapConnections(MapBase map)
         {
             bool updated = false;
-            if (!Globals.GameMaps.ContainsKey(map.Up)) { map.Up = -1; updated = true; }
-            if (!Globals.GameMaps.ContainsKey(map.Down)) { map.Down = -1; updated = true; }
-            if (!Globals.GameMaps.ContainsKey(map.Left)) { map.Left = -1; updated = true; }
-            if (!Globals.GameMaps.ContainsKey(map.Right)) { map.Right = -1; updated = true; }
+            if (!MapInstance.GetObjects().ContainsKey(map.Up))
+            {
+                map.Up = -1;
+                updated = true;
+            }
+            if (!MapInstance.GetObjects().ContainsKey(map.Down))
+            {
+                map.Down = -1;
+                updated = true;
+            }
+            if (!MapInstance.GetObjects().ContainsKey(map.Left))
+            {
+                map.Left = -1;
+                updated = true;
+            }
+            if (!MapInstance.GetObjects().ContainsKey(map.Right))
+            {
+                map.Right = -1;
+                updated = true;
+            }
             if (updated)
             {
-                map.Save();
+                SaveGameObject(map);
                 PacketSender.SendMapToEditors(map.MyMapNum);
             }
         }
@@ -526,7 +1453,7 @@ namespace Intersect_Server.Classes.Core
             lock (MapGridLock)
             {
                 MapGrids.Clear();
-                foreach (var map in Globals.GameMaps)
+                foreach (var map in MapInstance.GetObjects())
                 {
                     if (MapGrids.Count == 0)
                     {
@@ -549,7 +1476,7 @@ namespace Intersect_Server.Classes.Core
                         }
                     }
                 }
-                foreach (var map in Globals.GameMaps)
+                foreach (var map in MapInstance.GetObjects())
                 {
                     map.Value.SurroundingMaps.Clear();
                     var myGrid = map.Value.MapGrid;
@@ -559,8 +1486,7 @@ namespace Intersect_Server.Classes.Core
                         {
                             if ((x == map.Value.MapGridX) && (y == map.Value.MapGridY))
                                 continue;
-                            if (x >= MapGrids[myGrid].XMin && x < MapGrids[myGrid].XMax && y >= MapGrids[myGrid].YMin &&
-                                y < MapGrids[myGrid].YMax && MapGrids[myGrid].MyGrid[x, y] > -1)
+                            if (x >= MapGrids[myGrid].XMin && x < MapGrids[myGrid].XMax && y >= MapGrids[myGrid].YMin && y < MapGrids[myGrid].YMax && MapGrids[myGrid].MyGrid[x, y] > -1)
                             {
                                 map.Value.SurroundingMaps.Add(MapGrids[myGrid].MyGrid[x, y]);
                             }
@@ -569,365 +1495,50 @@ namespace Intersect_Server.Classes.Core
                 }
             }
         }
-        public static int AddMap()
-        {
-            //We will use the database to tell us the index.
-            //For now we will use the mapcount variable in this class
-            MapCount++;
-            Globals.GameMaps.Add(MapCount - 1, new MapInstance(MapCount - 1));
-            Globals.GameMaps[MapCount - 1].Save(true);
-            return MapCount - 1;
-        }
-        public static void LoadNpcs()
-        {
-            if (!Directory.Exists("resources/npcs"))
-            {
-                Directory.CreateDirectory("resources/npcs");
-            }
-            Globals.GameNpcs = new NpcStruct[Options.MaxNpcs];
-            for (var i = 0; i < Options.MaxNpcs; i++)
-            {
-                Globals.GameNpcs[i] = new NpcStruct();
-                if (!File.Exists("resources/npcs/" + i + ".npc"))
-                {
-                    Globals.GameNpcs[i].Save(i);
-                }
-                else
-                {
-                    Globals.GameNpcs[i].Load(File.ReadAllBytes("resources/npcs/" + i + ".npc"), i);
-                }
-
-            }
-        }
-
-        //Items
-        public static void LoadItems()
-        {
-            if (!Directory.Exists("resources/items"))
-            {
-                Directory.CreateDirectory("resources/items");
-            }
-
-            Globals.GameItems = new ItemStruct[Options.MaxItems];
-            for (var i = 0; i < Options.MaxItems; i++)
-            {
-                Globals.GameItems[i] = new ItemStruct();
-                if (!File.Exists("resources/items/" + i + ".item"))
-                {
-                    Globals.GameItems[i].Save(i);
-                }
-                else
-                {
-                    Globals.GameItems[i].Load(File.ReadAllBytes("resources/items/" + i + ".item"), i);
-                }
-            }
-        }
-
-        //Shops
-        public static void LoadShops()
-        {
-            if (!Directory.Exists("resources/shops"))
-            {
-                Directory.CreateDirectory("resources/shops");
-            }
-
-            Globals.GameShops = new ShopStruct[Options.MaxShops];
-            for (var i = 0; i < Options.MaxShops; i++)
-            {
-                Globals.GameShops[i] = new ShopStruct();
-                if (!File.Exists("resources/shops/" + i + ".shop"))
-                {
-                    Globals.GameShops[i].Save(i);
-                }
-                else
-                {
-                    Globals.GameShops[i].Load(File.ReadAllBytes("resources/shops/" + i + ".shop"), i);
-                }
-            }
-        }
-
-        //Spells
-        public static void LoadSpells()
-        {
-            if (!Directory.Exists("resources/spells"))
-            {
-                Directory.CreateDirectory("resources/spells");
-            }
-
-            Globals.GameSpells = new SpellStruct[Options.MaxSpells];
-            for (var i = 0; i < Options.MaxSpells; i++)
-            {
-                Globals.GameSpells[i] = new SpellStruct();
-                if (!File.Exists("resources/spells/" + i + ".spell"))
-                {
-                    Globals.GameSpells[i].Save(i);
-                }
-                else
-                {
-                    Globals.GameSpells[i].Load(File.ReadAllBytes("resources/spells/" + i + ".spell"), i);
-                }
-            }
-        }
-
-        //Animations
-        public static void LoadAnimations()
-        {
-            if (!Directory.Exists("resources/animations"))
-            {
-                Directory.CreateDirectory("resources/animations");
-            }
-
-            Globals.GameAnimations = new AnimationStruct[Options.MaxAnimations];
-            for (var i = 0; i < Options.MaxAnimations; i++)
-            {
-                Globals.GameAnimations[i] = new AnimationStruct();
-                if (!File.Exists("resources/animations/" + i + ".anim"))
-                {
-                    Globals.GameAnimations[i].Save(i);
-                }
-                else
-                {
-                    Globals.GameAnimations[i] = new AnimationStruct();
-                    Globals.GameAnimations[i].Load(File.ReadAllBytes("resources/animations/" + i + ".anim"), i);
-                }
-            }
-        }
-
-        // Resources
-        public static void LoadResources()
-        {
-            if (!Directory.Exists("resources/resources"))
-            {
-                Directory.CreateDirectory("resources/resources");
-            }
-            Globals.GameResources = new ResourceStruct[Options.MaxResources];
-            for (var i = 0; i < Options.MaxResources; i++)
-            {
-                Globals.GameResources[i] = new ResourceStruct();
-                if (!File.Exists("resources/resources/" + i + ".res"))
-                {
-                    Globals.GameResources[i].Save(i);
-                }
-                else
-                {
-                    Globals.GameResources[i].Load(File.ReadAllBytes("resources/resources/" + i + ".res"), i);
-                }
-
-            }
-        }
-
-        // Quests
-        public static void LoadQuests()
-        {
-            if (!Directory.Exists("resources/quests"))
-            {
-                Directory.CreateDirectory("resources/quests");
-            }
-            Globals.GameQuests = new QuestStruct[Options.MaxQuests];
-            for (var i = 0; i < Options.MaxQuests; i++)
-            {
-                Globals.GameQuests[i] = new QuestStruct();
-                if (!File.Exists("resources/quests/" + i + ".qst"))
-                {
-                    Globals.GameQuests[i].Save(i);
-                }
-                else
-                {
-                    Globals.GameQuests[i].Load(File.ReadAllBytes("resources/quests/" + i + ".qst"), i);
-                }
-
-            }
-        }
-
-        // Projectiles
-        public static void LoadProjectiles()
-        {
-            if (!Directory.Exists("resources/projectiles"))
-            {
-                Directory.CreateDirectory("resources/projectiles");
-            }
-            Globals.GameProjectiles = new ProjectileStruct[Options.MaxProjectiles];
-            for (var i = 0; i < Options.MaxProjectiles; i++)
-            {
-                Globals.GameProjectiles[i] = new ProjectileStruct();
-                if (!File.Exists("resources/projectiles/" + i + ".prj"))
-                {
-                    Globals.GameProjectiles[i].Save(i);
-                }
-                else
-                {
-                    Globals.GameProjectiles[i].Load(File.ReadAllBytes("resources/projectiles/" + i + ".prj"), i);
-                }
-
-            }
-        }
-
-        // Classes
-        public static int LoadClasses()
-        {
-            int x = 0;
-            if (!Directory.Exists("resources/classes"))
-            {
-                Directory.CreateDirectory("resources/classes");
-            }
-            Globals.GameClasses = new ClassStruct[Options.MaxClasses];
-            for (var i = 0; i < Options.MaxClasses; i++)
-            {
-                Globals.GameClasses[i] = new ClassStruct();
-                if (!File.Exists("resources/classes/" + i + ".cls"))
-                {
-                    Globals.GameClasses[i].Save(i);
-                }
-                else
-                {
-                    Globals.GameClasses[i].Load(File.ReadAllBytes("resources/classes/" + i + ".cls"), i);
-                }
-                if (String.IsNullOrEmpty(Globals.GameClasses[i].Name)) { x++; }
-            }
-            return x;
-        }
-        public static void CreateDefaultClass()
-        {
-            Globals.GameClasses[0].Name = "Default";
-            ClassSprite defaultMale = new ClassSprite();
-            defaultMale.Sprite = "1.png";
-            defaultMale.Gender = 0;
-            ClassSprite defaultFemale = new ClassSprite();
-            defaultFemale.Sprite = "2.png";
-            defaultFemale.Gender = 1;
-            Globals.GameClasses[0].Sprites.Add(defaultMale);
-            Globals.GameClasses[0].Sprites.Add(defaultFemale);
-            for (int i = 0; i < (int)Vitals.VitalCount; i++)
-            {
-                Globals.GameClasses[0].MaxVital[i] = 20;
-            }
-            for (int i = 0; i < (int)Stats.StatCount; i++)
-            {
-                Globals.GameClasses[0].Stat[i] = 20;
-            }
-            Globals.GameClasses[0].Save(0);
-        }
 
         //Map Folders
         private static void LoadMapFolders()
         {
-            Dictionary<int, MapStruct> gameMaps = Globals.GameMaps.ToDictionary(k => k.Key, v => (MapStruct)v.Value);
-            if (File.Exists("resources/maps/mapstructure.dat"))
+            var query = "SELECT * from " + MAP_LIST_TABLE + ";";
+            using (SqliteCommand cmd = new SqliteCommand(query, _dbConnection))
             {
-                ByteBuffer myBuffer = new ByteBuffer();
-                myBuffer.WriteBytes(File.ReadAllBytes("resources/maps/mapstructure.dat"));
-                MapList.GetList().Load(myBuffer, gameMaps);
-            }
-            foreach (var map in Globals.GameMaps)
-            {
-                if (MapList.GetList().FindMap(map.Value.MyMapNum) == null)
+                var dataReader = cmd.ExecuteReader();
+                if (dataReader.HasRows)
                 {
-                    gameMaps = Globals.GameMaps.ToDictionary(k => k.Key, v => (MapStruct)v.Value);
-                    MapList.GetList().AddMap(map.Value.MyMapNum, gameMaps);
-                }
-            }
-            File.WriteAllBytes("resources/maps/mapstructure.dat", MapList.GetList().Data(gameMaps));
-            PacketSender.SendMapListToEditors();
-        }
-
-        //Common Events
-        public static void LoadCommonEvents()
-        {
-            if (!Directory.Exists("resources/common events"))
-            {
-                Directory.CreateDirectory("resources/common events");
-            }
-            Globals.CommonEvents = new EventStruct[Options.MaxCommonEvents];
-            for (var i = 0; i < Options.MaxCommonEvents; i++)
-            {
-                Globals.CommonEvents[i] = new EventStruct(i, -1, -1, true);
-                if (!File.Exists("resources/common events/" + i + ".evt"))
-                {
-                    File.WriteAllBytes("resources/common events/" + i + ".evt", Globals.CommonEvents[i].EventData());
-                }
-                else
-                {
-                    ByteBuffer bf = new ByteBuffer();
-                    bf.WriteBytes(File.ReadAllBytes("resources/common events/" + i + ".evt"));
-                    Globals.CommonEvents[i] = new EventStruct(i, bf, true);
-                }
-
-            }
-        }
-
-        //Switches and Variables
-        public static void LoadSwitchesAndVariables()
-        {
-            //Gonna do xml
-            Globals.ServerSwitches = new string[Options.MaxServerSwitches];
-            Globals.ServerVariables = new string[Options.MaxServerVariables];
-            Globals.ServerSwitchValues = new bool[Options.MaxServerSwitches];
-            Globals.ServerVariableValues = new int[Options.MaxServerVariables];
-            Globals.PlayerSwitches = new string[Options.MaxPlayerSwitches];
-            Globals.PlayerVariables = new string[Options.MaxPlayerVariables];
-            LoadSwitchesOrVariabes(Globals.ServerSwitches, Globals.ServerSwitchValues, null, "GlobalSwitch", "ServerSwitches", Options.MaxServerSwitches);
-            LoadSwitchesOrVariabes(Globals.PlayerSwitches, null, null, "Switch", "PlayerSwitches", Options.MaxPlayerSwitches);
-            LoadSwitchesOrVariabes(Globals.ServerVariables, null, Globals.ServerVariableValues, "GlobalVariable", "ServerVariables", Options.MaxServerVariables);
-            LoadSwitchesOrVariabes(Globals.PlayerVariables, null, null, "Variable", "PlayerVariables", Options.MaxPlayerVariables);
-        }
-
-        public static void SaveSwitchesAndVariables()
-        {
-            SaveSwitchesOrVariables(Globals.ServerSwitches, Globals.ServerSwitchValues, null, "GlobalSwitch", "ServerSwitches", Options.MaxServerSwitches);
-            SaveSwitchesOrVariables(Globals.PlayerSwitches, null, null, "Switch", "PlayerSwitches", Options.MaxPlayerSwitches);
-            SaveSwitchesOrVariables(Globals.ServerVariables, null, Globals.ServerVariableValues, "GlobalVariable", "ServerVariables", Options.MaxServerVariables);
-            SaveSwitchesOrVariables(Globals.PlayerVariables, null, null, "Variable", "PlayerVariables", Options.MaxPlayerVariables);
-        }
-        private static void LoadSwitchesOrVariabes(string[] names, bool[] boolValues, int[] intValues, string prefix, string header, int count)
-        {
-            for (int i = 0; i < count; i++)
-            {
-                names[i] = prefix;
-            }
-            if (File.Exists("resources/" + header.ToLower() + ".xml"))
-            {
-                try
-                {
-                    var xml = new XmlDocument();
-                    xml.Load("resources/" + header.ToLower() + ".xml");
-                    for (int i = 0; i < Options.MaxServerSwitches; i++)
+                    while (dataReader.Read())
                     {
-
-                        names[i] = xml.SelectSingleNode("//" + header + "/" + prefix + (i + 1) + "Name").InnerText;
-                        if (boolValues != null)
+                        var data = (byte[]) dataReader[MAP_LIST_DATA];
+                        if (data != null)
                         {
-                            boolValues[i] = Convert.ToBoolean(xml.SelectSingleNode("//" + header + "/" + prefix + (i + 1) + "Value").InnerText);
+                            ByteBuffer myBuffer = new ByteBuffer();
+                            myBuffer.WriteBytes(data);
+                            MapList.GetList().Load(myBuffer, MapBase.GetObjects(),true,true);
                         }
                     }
                 }
-                catch (Exception ex)
+                else
                 {
-
+                    InsertMapList();
                 }
             }
-            else
+            foreach (var map in MapBase.GetObjects())
             {
-                SaveSwitchesOrVariables(names, boolValues, intValues, prefix, header, count);
+                if (MapList.GetList().FindMap(map.Value.MyMapNum) == null)
+                {
+                    MapList.GetList().AddMap(map.Value.MyMapNum, MapBase.GetObjects());
+                }
             }
+            SaveMapFolders();
+            PacketSender.SendMapListToAll();
         }
-        public static void SaveSwitchesOrVariables(string[] names, bool[] boolValues, int[] intValues, string prefix, string header, int count)
+        public static void SaveMapFolders()
         {
-            var xml = new XmlWriterSettings { Indent = true };
-            xml.ConformanceLevel = ConformanceLevel.Auto;
-            var writer = XmlWriter.Create("resources/" + header.ToLower() + ".xml", xml);
-
-            writer.WriteStartDocument();
-            writer.WriteStartElement(header);
-            for (int i = 0; i < count; i++)
+            var query = "UPDATE " + MAP_LIST_TABLE + " set " + MAP_LIST_DATA + "=@" + MAP_LIST_DATA +  ";";
+            using (SqliteCommand cmd = new SqliteCommand(query, _dbConnection))
             {
-                writer.WriteElementString(prefix + (i + 1) + "Name", names[i]);
-                if (boolValues != null) writer.WriteElementString(prefix + (i + 1) + "Value", boolValues[i].ToString());
-                if (intValues != null) writer.WriteElementString(prefix + (i + 1) + "Value", intValues[i].ToString());
+                cmd.Parameters.Add("@" + MAP_LIST_DATA, MapList.GetList().Data(MapBase.GetObjects()));
+                cmd.ExecuteNonQuery();
             }
-            writer.WriteEndElement();
-            writer.WriteEndDocument();
-            writer.Flush();
-            writer.Close();
         }
     }
 }

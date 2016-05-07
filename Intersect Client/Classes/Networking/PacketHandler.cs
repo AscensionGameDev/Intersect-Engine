@@ -38,7 +38,6 @@ using Intersect_Library.GameObjects;
 using Intersect_Library.GameObjects.Maps.MapList;
 using Color = IntersectClientExtras.GenericClasses.Color;
 
-
 namespace Intersect_Client.Classes.Networking
 {
     public static class PacketHandler
@@ -90,9 +89,6 @@ namespace Intersect_Client.Classes.Networking
                     case ServerPackets.GameData:
                         HandleGameData(bf.ReadBytes(bf.Length()));
                         break;
-                    case ServerPackets.TilesetArray:
-                        HandleTilesets(bf.ReadBytes(bf.Length()));
-                        break;
                     case ServerPackets.EnterMap:
                         HandleEnterMap(bf.ReadBytes(bf.Length()));
                         break;
@@ -117,21 +113,6 @@ namespace Intersect_Client.Classes.Networking
                     case ServerPackets.LoginError:
                         HandleLoginError(bf.ReadBytes(bf.Length()));
                         break;
-                    case ServerPackets.ItemData:
-                        HandleItemData(bf.ReadBytes(bf.Length()));
-                        break;
-                    case ServerPackets.NpcData:
-                        HandleNpcData(bf.ReadBytes(bf.Length()));
-                        break;
-                    case ServerPackets.SpellData:
-                        HandleSpellData(bf.ReadBytes(bf.Length()));
-                        break;
-                    case ServerPackets.AnimationData:
-                        HandleAnimationData(bf.ReadBytes(bf.Length()));
-                        break;
-                    case ServerPackets.ResourceData:
-                        HandleResourceData(bf.ReadBytes(bf.Length()));
-                        break;
                     case ServerPackets.MapItems:
                         HandleMapItems(bf.ReadBytes(bf.Length()));
                         break;
@@ -153,20 +134,11 @@ namespace Intersect_Client.Classes.Networking
                     case ServerPackets.HotbarSlots:
                         HandleHotbarSlots(bf.ReadBytes(bf.Length()));
                         break;
-                    case ServerPackets.ClassData:
-                        HandleClassData(bf.ReadBytes(bf.Length()));
-                        break;
                     case ServerPackets.CreateCharacter:
                         HandleCreateCharacter();
                         break;
-                    case ServerPackets.QuestData:
-                        HandleQuestData(bf.ReadBytes(bf.Length()));
-                        break;
                     case ServerPackets.OpenAdminWindow:
                         HandleOpenAdminWindow();
-                        break;
-                    case ServerPackets.ProjectileData:
-                        HandleProjectileData(bf.ReadBytes(bf.Length()));
                         break;
                     case ServerPackets.CastTime:
                         HandleCastTime(bf.ReadBytes(bf.Length()));
@@ -216,6 +188,9 @@ namespace Intersect_Client.Classes.Networking
                     case ServerPackets.BankUpdate:
                         HandleBankUpdate(bf.ReadBytes(bf.Length()));
                         break;
+                    case ServerPackets.GameObject:
+                        HandleGameObject(bf.ReadBytes(bf.Length()));
+                        break;
                     default:
                         Console.WriteLine(@"Non implemented packet received: " + packetHeader);
                         break;
@@ -228,15 +203,6 @@ namespace Intersect_Client.Classes.Networking
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
             Options.LoadFromServer(bf);
-            //Load Each of the Main Game Object Types
-            Globals.GameItems = new ItemStruct[Options.MaxItems];
-            Globals.GameNpcs = new NpcStruct[Options.MaxNpcs];
-            Globals.GameAnimations = new AnimationStruct[Options.MaxAnimations];
-            Globals.GameSpells = new SpellStruct[Options.MaxSpells];
-            Globals.GameResources = new ResourceStruct[Options.MaxResources];
-            Globals.GameClasses = new ClassStruct[Options.MaxClasses];
-            Globals.GameQuests = new QuestStruct[Options.MaxQuests];
-            Globals.GameProjectiles = new ProjectileStruct[Options.MaxProjectiles];
             GameGraphics.InitInGame();
         }
 
@@ -257,28 +223,28 @@ namespace Intersect_Client.Classes.Networking
             var mapLength = bf.ReadLong();
             var mapData = bf.ReadBytes((int)mapLength);
             var revision = bf.ReadInteger();
-            if (Globals.GameMaps.ContainsKey(mapNum))
+            if (MapInstance.GetMap(mapNum) != null)
             {
-                if (revision == Globals.GameMaps[mapNum].Revision)
+                if (revision == MapInstance.GetMap(mapNum).Revision)
                 {
                     return;
                 }
                 else
                 {
-                    Globals.GameMaps[mapNum].Dispose(false,false);
+                    MapInstance.GetMap(mapNum).Dispose(false,false);
                 }
             }
             var newMap = new MapInstance((int) mapNum);
-            Globals.GameMaps.Add(mapNum, newMap);
-            ((MapInstance)newMap).Load(mapData);
+            MapInstance.AddObject(mapNum, newMap);
+            newMap.Load(mapData);
             if ((mapNum) == Globals.LocalMaps[4]) { 
-                GameAudio.PlayMusic(Globals.GameMaps[mapNum].Music, 3,3, true); }
-            Globals.GameMaps[mapNum].MapGridX = bf.ReadInteger();
-            Globals.GameMaps[mapNum].MapGridY = bf.ReadInteger();
-            Globals.GameMaps[mapNum].HoldLeft = bf.ReadInteger();
-            Globals.GameMaps[mapNum].HoldRight = bf.ReadInteger();
-            Globals.GameMaps[mapNum].HoldUp = bf.ReadInteger();
-            Globals.GameMaps[mapNum].HoldDown = bf.ReadInteger();
+                GameAudio.PlayMusic(newMap.Music, 3,3, true); }
+            newMap.MapGridX = bf.ReadInteger();
+            newMap.MapGridY = bf.ReadInteger();
+            newMap.HoldLeft = bf.ReadInteger();
+            newMap.HoldRight = bf.ReadInteger();
+            newMap.HoldUp = bf.ReadInteger();
+            newMap.HoldDown = bf.ReadInteger();
         }
 
         private static void HandleEntityData(byte[] packet)
@@ -340,9 +306,9 @@ namespace Intersect_Client.Classes.Networking
             }
             else
             {
-                if (!Globals.GameMaps.ContainsKey(mapNum)) return;
-                if (!Globals.GameMaps[mapNum].LocalEntities.ContainsKey(index)) { return; }
-                en = Globals.GameMaps[mapNum].LocalEntities[index];
+                if (MapInstance.GetMap(mapNum) == null) return;
+                if (!MapInstance.GetMap(mapNum).LocalEntities.ContainsKey(index)) { return; }
+                en = MapInstance.GetMap(mapNum).LocalEntities[index];
             }
             en.CurrentMap = mapNum;
             en.CurrentX = bf.ReadInteger();
@@ -380,34 +346,7 @@ namespace Intersect_Client.Classes.Networking
 
         private static void HandleGameData(byte[] packet)
         {
-            var bf = new ByteBuffer();
-            bf.WriteBytes(packet);
-            var mapCount = (int)bf.ReadLong();
-            Globals.MapCount = mapCount;
-            var BorderMode = bf.ReadInteger();
-
-            if (BorderMode == 1)
-            {
-                Globals.GameBorderStyle = 1;
-                //TODO Make sure window isn't too large.
-                //GameGraphics.FixResolution();
-            }
-            //Database.LoadMapRevisions();
-        }
-
-        private static void HandleTilesets(byte[] packet)
-        {
-            var bf = new ByteBuffer();
-            bf.WriteBytes(packet);
-            var tilesetCount = bf.ReadLong();
-            if (tilesetCount > 0)
-            {
-                Globals.Tilesets = new string[tilesetCount];
-                for (var i = 0; i < tilesetCount; i++)
-                {
-                    Globals.Tilesets[i] = bf.ReadString();
-                }
-            }
+            Globals.HasGameData = true;
         }
 
         private static void HandleEnterMap(byte[] packet)
@@ -420,7 +359,7 @@ namespace Intersect_Client.Classes.Networking
             {
                 Globals.LocalMaps[i] = (int)bf.ReadLong();
                 if (Globals.LocalMaps[i] <= -1) continue;
-                if (!Globals.GameMaps.ContainsKey(Globals.LocalMaps[i]))
+                if (MapInstance.GetMap(Globals.LocalMaps[i]) == null)
                 {
                     PacketSender.SendNeedMap(Globals.LocalMaps[i]);
                 }
@@ -428,7 +367,7 @@ namespace Intersect_Client.Classes.Networking
                 {
                     if (i == 4)
                     {
-                        GameAudio.PlayMusic(Globals.GameMaps[Globals.LocalMaps[i]].Music, 3,3, true);
+                        GameAudio.PlayMusic(MapInstance.GetMap(Globals.LocalMaps[i]).Music, 3,3, true);
                     }
                 }
             }
@@ -438,7 +377,7 @@ namespace Intersect_Client.Classes.Networking
         {
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
-            MapList.GetList().Load(bf,new Dictionary<int, Intersect_Library.GameObjects.Maps.MapStruct>(),false);
+            MapList.GetList().Load(bf,new Dictionary<int, Intersect_Library.GameObjects.Maps.MapBase>(),false);
             //If admin window is open update it
             bf.Dispose();
         }
@@ -458,12 +397,14 @@ namespace Intersect_Client.Classes.Networking
             }
             else
             {
-                if (!Globals.GameMaps.ContainsKey(mapNum)) return;
-                if (!Globals.GameMaps[mapNum].LocalEntities.ContainsKey(index)) { return; }
-                en = Globals.GameMaps[mapNum].LocalEntities[index];
+                var gameMap = MapInstance.GetMap(mapNum);
+                if (gameMap == null) return;
+                if (!gameMap.LocalEntities.ContainsKey(index)) { return; }
+                en = gameMap.LocalEntities[index];
             }
             if (en == null) {return;}
-            if (!Globals.GameMaps.ContainsKey(en.CurrentMap)) { return; }
+            var entityMap = MapInstance.GetMap(en.CurrentMap);
+            if (entityMap == null) { return; }
             var map = mapNum;
             var x = bf.ReadInteger();
             var y = bf.ReadInteger();
@@ -499,12 +440,12 @@ namespace Intersect_Client.Classes.Networking
             }
 
             // Set the Z-Dimension if the player has moved up or down a dimension.
-            if (Globals.GameMaps[en.CurrentMap].Attributes[en.CurrentX, en.CurrentY] != null &&
-                Globals.GameMaps[en.CurrentMap].Attributes[en.CurrentX, en.CurrentY].value == (int)MapAttributes.ZDimension)
+            if (entityMap.Attributes[en.CurrentX, en.CurrentY] != null &&
+                entityMap.Attributes[en.CurrentX, en.CurrentY].value == (int)MapAttributes.ZDimension)
             {
-                if (Globals.GameMaps[en.CurrentMap].Attributes[en.CurrentX, en.CurrentY].data1 > 0)
+                if (entityMap.Attributes[en.CurrentX, en.CurrentY].data1 > 0)
                 {
-                    en.CurrentZ = Globals.GameMaps[en.CurrentMap].Attributes[en.CurrentX, en.CurrentY].data1 - 1;
+                    en.CurrentZ = entityMap.Attributes[en.CurrentX, en.CurrentY].data1 - 1;
                 }
             }
         }
@@ -524,9 +465,10 @@ namespace Intersect_Client.Classes.Networking
             }
             else
             {
-                if(!Globals.GameMaps.ContainsKey(mapNum)) return;
-                if (!Globals.GameMaps[mapNum].LocalEntities.ContainsKey(index)) { return; }
-                en = Globals.GameMaps[mapNum].LocalEntities[index];
+                var entityMap = MapInstance.GetMap(mapNum);
+                if(entityMap == null) return;
+                if (!entityMap.LocalEntities.ContainsKey(index)) { return; }
+                en = entityMap.LocalEntities[index];
             }
             if (en == null)
             {
@@ -562,9 +504,10 @@ namespace Intersect_Client.Classes.Networking
             }
             else
             {
-                if (!Globals.GameMaps.ContainsKey(mapNum)) return;
-                if (!Globals.GameMaps[mapNum].LocalEntities.ContainsKey(index)) { return; }
-                en = Globals.GameMaps[mapNum].LocalEntities[index];
+                var entityMap = MapInstance.GetMap(mapNum);
+                if (entityMap == null) return;
+                if (!entityMap.LocalEntities.ContainsKey(index)) { return; }
+                en = entityMap.LocalEntities[index];
             }
             if (en == null)
             {
@@ -591,9 +534,10 @@ namespace Intersect_Client.Classes.Networking
             }
             else
             {
-                if (!Globals.GameMaps.ContainsKey(mapNum)) return;
-                if (!Globals.GameMaps[mapNum].LocalEntities.ContainsKey(index)) { return; }
-                en = Globals.GameMaps[mapNum].LocalEntities[index];
+                var entityMap = MapInstance.GetMap(mapNum);
+                if (entityMap == null) return;
+                if (!entityMap.LocalEntities.ContainsKey(index)) { return; }
+                en = entityMap.LocalEntities[index];
             }
             if (en == null)
             {
@@ -637,65 +581,22 @@ namespace Intersect_Client.Classes.Networking
             Gui.MenuUI.Reset();
         }
 
-        private static void HandleItemData(byte[] packet)
-        {
-            var bf = new ByteBuffer();
-            bf.WriteBytes(packet);
-            var itemNum = bf.ReadInteger();
-            Globals.GameItems[itemNum] = new ItemStruct();
-            Globals.GameItems[itemNum].Load(bf.ReadBytes(bf.Length()),itemNum);
-        }
-
-        private static void HandleNpcData(byte[] packet)
-        {
-            var bf = new ByteBuffer();
-            bf.WriteBytes(packet);
-            var npcNum = bf.ReadInteger();
-            Globals.GameNpcs[npcNum] = new NpcStruct();
-            Globals.GameNpcs[npcNum].Load(bf.ReadBytes(bf.Length()),npcNum);
-        }
-
-        private static void HandleSpellData(byte[] packet)
-        {
-            var bf = new ByteBuffer();
-            bf.WriteBytes(packet);
-            var index = bf.ReadInteger();
-            Globals.GameSpells[index] = new SpellStruct();
-            Globals.GameSpells[index].Load(bf.ReadBytes(bf.Length()),index);
-        }
-
-        private static void HandleAnimationData(byte[] packet)
-        {
-            var bf = new ByteBuffer();
-            bf.WriteBytes(packet);
-            var index = bf.ReadInteger();
-            Globals.GameAnimations[index] = new AnimationStruct();
-            Globals.GameAnimations[index].Load(bf.ReadBytes(bf.Length()),index);
-        }
-
-        private static void HandleResourceData(byte[] packet)
-        {
-            var bf = new ByteBuffer();
-            bf.WriteBytes(packet);
-            var resourceNum = bf.ReadInteger();
-            Globals.GameResources[resourceNum] = new ResourceStruct();
-            Globals.GameResources[resourceNum].Load(bf.ReadBytes(bf.Length()),resourceNum);
-        }
-
         private static void HandleMapItems(byte[] packet)
         {
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
             int mapNum = bf.ReadInteger();
-            if (Globals.GameMaps.ContainsKey(mapNum) && Globals.GameMaps[mapNum] != null)
+            var map = MapInstance.GetMap(mapNum);
+            if (map == null) return;
+            if (map != null)
             {
-                Globals.GameMaps[mapNum].MapItems.Clear();
+                map.MapItems.Clear();
                 int itemCount = bf.ReadInteger();
                 for (int i = 0; i < itemCount; i++)
                 {
                     var item = new MapItemInstance();
                     item.Load(bf);
-                    Globals.GameMaps[mapNum].MapItems.Add(item);
+                    map.MapItems.Add(item);
                 }
             }
             bf.Dispose();
@@ -707,19 +608,20 @@ namespace Intersect_Client.Classes.Networking
             bf.WriteBytes(packet);
             int mapNum = bf.ReadInteger();
             int index = bf.ReadInteger();
-            if (Globals.GameMaps[mapNum] != null)
+            var map = MapInstance.GetMap(mapNum);
+            if (map != null)
             {
                 if (bf.ReadInteger() == -1)
                 {
-                    Globals.GameMaps[mapNum].MapItems.RemoveAt(index);
+                    map.MapItems.RemoveAt(index);
                 }
                 else
                 {
-                    while (index >= Globals.GameMaps[mapNum].MapItems.Count)
+                    while (index >= map.MapItems.Count)
                     {
-                        Globals.GameMaps[mapNum].MapItems.Add(new MapItemInstance());
+                        map.MapItems.Add(new MapItemInstance());
                     }
-                    Globals.GameMaps[mapNum].MapItems[index].Load(bf);
+                    map.MapItems[index].Load(bf);
                 }
             }
             bf.Dispose();
@@ -778,22 +680,6 @@ namespace Intersect_Client.Classes.Networking
             bf.Dispose();
         }
 
-        private static void HandleClassData(byte[] packet)
-        {
-            var bf = new ByteBuffer();
-            bf.WriteBytes(packet);
-            var classNum = bf.ReadInteger();
-
-            if (classNum == 0) //Initilise the classes if the first one.
-            {
-                Globals.GameClasses = new ClassStruct[Options.MaxClasses];
-            }
-
-            Globals.GameClasses[classNum] = new ClassStruct();
-            Globals.GameClasses[classNum].Load(bf.ReadBytes(bf.Length()),classNum);
-            bf.Dispose();
-        }
-
         private static void HandleCreateCharacter()
         {
             Globals.WaitingOnServer = false;
@@ -801,29 +687,9 @@ namespace Intersect_Client.Classes.Networking
             Gui.MenuUI._mainMenu.NotifyOpenCharacterCreation();
         }
 
-        private static void HandleQuestData(byte[] packet)
-        {
-            var bf = new ByteBuffer();
-            bf.WriteBytes(packet);
-            var questNum = bf.ReadInteger();
-            Globals.GameQuests[questNum] = new QuestStruct();
-            Globals.GameQuests[questNum].Load(bf.ReadBytes(bf.Length()),questNum);
-            bf.Dispose();
-        }
-
         private static void HandleOpenAdminWindow()
         {
             Gui.GameUI.NotifyOpenAdminWindow();
-        }
-
-        private static void HandleProjectileData(byte[] packet)
-        {
-            var bf = new ByteBuffer();
-            bf.WriteBytes(packet);
-            var projectileNum = bf.ReadInteger();
-            Globals.GameProjectiles[projectileNum] = new ProjectileStruct();
-            Globals.GameProjectiles[projectileNum].Load(bf.ReadBytes(bf.Length()),projectileNum);
-            bf.Dispose();
         }
 
         private static void HandleCastTime(byte[] packet)
@@ -832,8 +698,12 @@ namespace Intersect_Client.Classes.Networking
             bf.WriteBytes(packet);
             int EntityNum = bf.ReadInteger();
             int SpellNum = bf.ReadInteger();
-            Globals.Entities[EntityNum].CastTime = Globals.System.GetTimeMS() + Globals.GameSpells[SpellNum].CastDuration * 100;
-            Globals.Entities[EntityNum].SpellCast = SpellNum;
+            if (SpellBase.GetSpell(SpellNum) != null)
+            {
+                Globals.Entities[EntityNum].CastTime = Globals.System.GetTimeMS() +
+                                                        SpellBase.GetSpell(SpellNum).CastDuration*100;
+                Globals.Entities[EntityNum].SpellCast = SpellNum;
+            }
             bf.Dispose();
         }
 
@@ -842,7 +712,11 @@ namespace Intersect_Client.Classes.Networking
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
             int SpellSlot = bf.ReadInteger();
-            Globals.Me.Spells[SpellSlot].SpellCD = Globals.System.GetTimeMS() + (Globals.GameSpells[Globals.Me.Spells[SpellSlot].SpellNum].CooldownDuration * 100);
+            if (SpellBase.GetSpell(Globals.Me.Spells[SpellSlot].SpellNum) != null)
+            {
+                Globals.Me.Spells[SpellSlot].SpellCD = Globals.System.GetTimeMS() +
+                                                       (SpellBase.GetSpell(Globals.Me.Spells[SpellSlot].SpellNum).CooldownDuration*100);
+            }
             bf.Dispose();
         }
 
@@ -877,10 +751,10 @@ namespace Intersect_Client.Classes.Networking
             if (targetType == -1)
             {
                 int mapNum = bf.ReadInteger();
-                if (Globals.GameMaps.ContainsKey(mapNum))
+                var map = MapInstance.GetMap(mapNum);
+                if (map != null)
                 {
-                    Globals.GameMaps[mapNum].AddTileAnimation(animNum, bf.ReadInteger(), bf.ReadInteger(),
-                        bf.ReadInteger());
+                    map.AddTileAnimation(animNum, bf.ReadInteger(), bf.ReadInteger(), bf.ReadInteger());
                 }
             }
             else if (targetType == 1)
@@ -893,9 +767,13 @@ namespace Intersect_Client.Classes.Networking
                 {
                     if (Globals.Entities[entityIndex] != null)
                     {
-                        AnimationInstance animInstance = new AnimationInstance(Globals.GameAnimations[animNum], false, dir == -1 ? true: false);
-                        if (dir > -1) animInstance.SetDir(dir);
-                        Globals.Entities[entityIndex].Animations.Add(animInstance);
+                        var animBase = AnimationBase.GetAnim(animNum);
+                        if (animBase != null)
+                        {
+                            AnimationInstance animInstance = new AnimationInstance(animBase, false, dir == -1 ? true : false);
+                            if (dir > -1) animInstance.SetDir(dir);
+                            Globals.Entities[entityIndex].Animations.Add(animInstance);
+                        }
                     }
                 }
             }
@@ -905,15 +783,20 @@ namespace Intersect_Client.Classes.Networking
                 bf.ReadInteger();
                 bf.ReadInteger();
                 int dir = bf.ReadInteger();
-                if (Globals.GameMaps.ContainsKey(mapIndex))
+                var map = MapInstance.GetMap(mapIndex);
+                if (map != null)
                 {
-                    if (entityIndex >= 0 && entityIndex < Globals.GameMaps[mapIndex].LocalEntities.Count)
+                    if (entityIndex >= 0 && entityIndex < map.LocalEntities.Count)
                     {
-                        if (Globals.GameMaps[mapIndex].LocalEntities[entityIndex] != null)
+                        if (map.LocalEntities[entityIndex] != null)
                         {
-                            AnimationInstance animInstance = new AnimationInstance(Globals.GameAnimations[animNum], false, dir == -1 ? true : false);
-                            if (dir > -1) animInstance.SetDir(dir);
-                            Globals.GameMaps[mapIndex].LocalEntities[entityIndex].Animations.Add(animInstance);
+                            var animBase = AnimationBase.GetAnim(animNum);
+                            if (animBase != null)
+                            {
+                                AnimationInstance animInstance = new AnimationInstance(animBase, false, dir == -1 ? true : false);
+                                if (dir > -1) animInstance.SetDir(dir);
+                                map.LocalEntities[entityIndex].Animations.Add(animInstance);
+                            }
                         }
                     }
                 }
@@ -986,8 +869,8 @@ namespace Intersect_Client.Classes.Networking
 
         private static void HandleOpenShop(byte[] packet)
         {
-            Globals.GameShop = new ShopStruct();
-            Globals.GameShop.Load(packet,0);
+            Globals.GameShop = new ShopBase(0);
+            Globals.GameShop.Load(packet);
             Gui.GameUI.NotifyOpenShop();
         }
 
@@ -1021,6 +904,148 @@ namespace Intersect_Client.Classes.Networking
             {
                 Globals.Bank[slot] = new ItemInstance();
                 Globals.Bank[slot].Load(bf);
+            }
+            bf.Dispose();
+        }
+
+        private static void HandleGameObject(byte[] packet)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteBytes(packet);
+            var type = (GameObject)bf.ReadInteger();
+            var id = bf.ReadInteger();
+            var deleted = Convert.ToBoolean(bf.ReadInteger());
+            var data = bf.ReadBytes(bf.Length());
+            switch (type)
+            {
+                case GameObject.Animation:
+                    if (deleted)
+                    {
+                        var anim = AnimationBase.GetAnim(id);
+                        anim.Delete();
+                    }
+                    else
+                    {
+                        var anim = new AnimationBase(id);
+                        anim.Load(data);
+                        AnimationBase.AddObject(id, anim);
+                    }
+                    break;
+                case GameObject.Class:
+                    if (deleted)
+                    {
+                        var cls = ClassBase.GetClass(id);
+                        cls.Delete();
+                    }
+                    else
+                    {
+                        var cls = new ClassBase(id);
+                        cls.Load(data);
+                        ClassBase.AddObject(id, cls);
+                    }
+                    break;
+                case GameObject.Item:
+                    if (deleted)
+                    {
+                        var itm = ItemBase.GetItem(id);
+                        itm.Delete();
+                    }
+                    else
+                    {
+                        var itm = new ItemBase(id);
+                        itm.Load(data);
+                        ItemBase.AddObject(id, itm);
+                    }
+                    break;
+                case GameObject.Npc:
+                    if (deleted)
+                    {
+                        var npc = NpcBase.GetNpc(id);
+                        npc.Delete();
+                    }
+                    else
+                    {
+                        var npc = new NpcBase(id);
+                        npc.Load(data);
+                        NpcBase.AddObject(id, npc);
+                    }
+                    break;
+                case GameObject.Projectile:
+                    if (deleted)
+                    {
+                        var proj = ProjectileBase.GetProjectile(id);
+                        proj.Delete();
+                    }
+                    else
+                    {
+                        var proj = new ProjectileBase(id);
+                        proj.Load(data);
+                        ProjectileBase.AddObject(id, proj);
+                    }
+                    break;
+                case GameObject.Quest:
+                    if (deleted)
+                    {
+                        var qst = QuestBase.GetQuest(id);
+                        qst.Delete();
+                    }
+                    else
+                    {
+                        var qst = new QuestBase(id);
+                        qst.Load(data);
+                        QuestBase.AddObject(id, qst);
+                    }
+                    break;
+                case GameObject.Resource:
+                    if (deleted)
+                    {
+                        var res = ResourceBase.GetResource(id);
+                        res.Delete();
+                    }
+                    else
+                    {
+                        var res = new ResourceBase(id);
+                        res.Load(data);
+                        ResourceBase.AddObject(id, res);
+                    }
+                    break;
+                case GameObject.Shop:
+                    if (deleted)
+                    {
+                        var shp = ShopBase.GetShop(id);
+                        shp.Delete();
+                    }
+                    else
+                    {
+                        var shp = new ShopBase(id);
+                        shp.Load(data);
+                        ShopBase.AddObject(id, shp);
+                    }
+                    break;
+                case GameObject.Spell:
+                    if (deleted)
+                    {
+                        var spl = SpellBase.GetSpell(id);
+                        spl.Delete();
+                    }
+                    else
+                    {
+                        var spl = new SpellBase(id);
+                        spl.Load(data);
+                        SpellBase.AddObject(id, spl);
+                    }
+                    break;
+                case GameObject.Map:
+                    //Handled in a different packet
+                    break;
+                case GameObject.Tileset:
+                    var obj = new TilesetBase(id);
+                    obj.Load(data);
+                    TilesetBase.AddObject(id, obj);
+                    if (Globals.HasGameData) Globals.ContentManager.LoadTilesets(DatabaseObject.GetGameObjectList(GameObject.Tileset));
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
             }
             bf.Dispose();
         }

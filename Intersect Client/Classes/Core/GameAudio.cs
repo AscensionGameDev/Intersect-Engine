@@ -31,6 +31,7 @@ using IntersectClientExtras.Audio;
 using IntersectClientExtras.File_Management;
 using IntersectClientExtras.GenericClasses;
 using Intersect_Client.Classes.General;
+using Intersect_Client.Classes.Maps;
 using Intersect_Library;
 using Point = IntersectClientExtras.GenericClasses.Point;
 
@@ -325,20 +326,21 @@ namespace Intersect_Client.Classes.Core
             float soundx = 0;
             float soundy = 0;
             int mapNum = Globals.LocalMaps[_localMap];
-            if (Globals.GameMaps.ContainsKey(mapNum))
+            var map = MapInstance.GetMap(mapNum);
+            if (map != null)
             {
                 if (_x == -1 || _y == -1 || _distance == -1)
                 {
                     Point player = new Point();
                     player.X = (int)playerx;
                     player.Y = (int)playery;
-                    Rectangle mapRect = new Rectangle((int)Globals.GameMaps[mapNum].GetX(), (int)Globals.GameMaps[mapNum].GetY(), Options.MapWidth * Options.TileWidth, Options.MapHeight * Options.TileHeight);
+                    Rectangle mapRect = new Rectangle((int)map.GetX(), (int)map.GetY(), Options.MapWidth * Options.TileWidth, Options.MapHeight * Options.TileHeight);
                     distance = (float)DistancePointToRectangle(player, mapRect) / 32f;
                 }
                 else
                 {
-                    soundx = Globals.GameMaps[mapNum].GetX() + _x * Options.TileWidth + 16;
-                    soundy = Globals.GameMaps[mapNum].GetY() + _y * Options.TileHeight + 16;
+                    soundx = map.GetX() + _x * Options.TileWidth + 16;
+                    soundy = map.GetY() + _y * Options.TileHeight + 16;
                     distance = (float)Math.Sqrt(Math.Pow(playerx - soundx, 2) + Math.Pow(playery - soundy, 2)) / 32f;
                 }
             }

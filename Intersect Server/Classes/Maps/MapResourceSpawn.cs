@@ -2,7 +2,7 @@
 
 namespace Intersect_Server.Classes.Maps
 {
-    public class MapResourceSpawnInstance
+    public class MapResourceSpawn
     {
         public int EntityIndex = -1;
         public Resource Entity;

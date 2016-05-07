@@ -1,5 +1,4 @@
 ﻿using WeifenLuo.WinFormsUI.Docking;
-using Intersect_Editor.Classes;
 using Intersect_Editor.Classes.Maps;
 using System.Windows.Forms;
 
@@ -12,16 +11,9 @@ namespace Intersect_Editor.Forms
             InitializeComponent();
         }
 
-        public void Init(int mapNum)
+        public void Init(MapInstance map)
         {
-            if (mapNum == -1 || Globals.GameMaps[mapNum] == null)
-            {
-                gridMapProperties.SelectedObject = null;
-            }
-            else
-            {
-                gridMapProperties.SelectedObject = new MapProperties(Globals.GameMaps[mapNum]);
-            }
+            gridMapProperties.SelectedObject = new MapProperties(map);
         }
 
         public void Update()

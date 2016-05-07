@@ -75,6 +75,14 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Community.CsharpSqlite, Version=3.7.7.1, Culture=neutral, PublicKeyToken=a6e4873496fdc8b5, processorArchitecture=MSIL">
+      <HintPath>packages\Community.CsharpSqlite.SQLiteClient.3.7.7.3\lib\net45\Community.CsharpSqlite.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Community.CsharpSqlite.SQLiteClient, Version=3.7.7.1, Culture=neutral, PublicKeyToken=1ce56be3f3a785b7, processorArchitecture=MSIL">
+      <HintPath>packages\Community.CsharpSqlite.SQLiteClient.3.7.7.3\lib\net45\Community.CsharpSqlite.SQLiteClient.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.XML" />
@@ -92,10 +100,13 @@
     <Compile Include="Classes\Items\ItemInstance.cs" />
     <Compile Include="Classes\Maps\MapInstance.cs" />
     <Compile Include="Classes\Maps\MapItemInstance.cs" />
-    <Compile Include="Classes\Maps\MapNpcSpawnInstance.cs" />
-    <Compile Include="Classes\Maps\MapResourceSpawnInstance.cs" />
+    <Compile Include="Classes\Maps\MapItemSpawn.cs" />
+    <Compile Include="Classes\Maps\MapNpcSpawn.cs" />
+    <Compile Include="Classes\Maps\MapResourceSpawn.cs" />
     <Compile Include="Classes\Maps\TileHelper.cs" />
-    <Compile Include="Classes\Misc\Pathfinder.cs" />
+    <Compile Include="Classes\Misc\Pathfinding\Pathfinder.cs" />
+    <Compile Include="Classes\Misc\Pathfinding\PathfinderPoint.cs" />
+    <Compile Include="Classes\Misc\Pathfinding\PathfinderTarget.cs" />
     <Compile Include="Classes\Networking\GameSocket.cs" />
     <Compile Include="Classes\Networking\NetSocket.cs" />
     <Compile Include="Classes\Networking\NetSocketServer.cs" />
@@ -116,6 +127,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="IntersectLogo.ico" />
@@ -126,9 +138,6 @@
       <Name>Intersect Library</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Classes\GameObjects\Events\" />
-    <Folder Include="Classes\GameObjects\Maps\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>

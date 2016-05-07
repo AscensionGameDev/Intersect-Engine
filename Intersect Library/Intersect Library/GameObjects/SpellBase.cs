@@ -20,18 +20,21 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-using System;
-using System.IO;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Intersect_Library.GameObjects
 {
-    public class SpellStruct
+    public class SpellBase : DatabaseObject
     {
         //Core Info
-        public const string Version = "0.0.0.1";
-        public string Name = "";
+        public new const string DatabaseTable = "spells";
+        public new const GameObject Type = GameObject.Spell;
+        protected static Dictionary<int, DatabaseObject> Objects = new Dictionary<int, DatabaseObject>();
+        
+        public string Name = "New Spell";
         public string Desc = "";
-        public byte Type = 0;
+        public byte SpellType = 0;
         public int Cost = 0;
         public string Pic = "";
 
@@ -68,21 +71,18 @@ namespace Intersect_Library.GameObjects
         public int Data4 = 0;
         public string Data5 = "";
 
-        public SpellStruct()
+        public SpellBase(int id) : base(id)
         {
 
         }
 
-        public void Load(byte[] packet, int index)
+        public override void Load(byte[] packet)
         {
             var myBuffer = new ByteBuffer();
             myBuffer.WriteBytes(packet);
-            string loadedVersion = myBuffer.ReadString();
-            if (loadedVersion != Version)
-                throw new Exception("Failed to load Spell #" + index + ". Loaded Version: " + loadedVersion + " Expected Version: " + Version);
             Name = myBuffer.ReadString();
             Desc = myBuffer.ReadString();
-            Type = myBuffer.ReadByte();
+            SpellType = myBuffer.ReadByte();
             Cost = myBuffer.ReadInteger();
             Pic = myBuffer.ReadString();
 
@@ -129,10 +129,9 @@ namespace Intersect_Library.GameObjects
         public byte[] SpellData()
         {
             var myBuffer = new ByteBuffer();
-            myBuffer.WriteString(Version);
             myBuffer.WriteString(Name);
             myBuffer.WriteString(Desc);
-            myBuffer.WriteByte(Type);
+            myBuffer.WriteByte(SpellType);
             myBuffer.WriteInteger(Cost);
             myBuffer.WriteString(Pic);
 
@@ -176,10 +175,68 @@ namespace Intersect_Library.GameObjects
             return myBuffer.ToArray();
         }
 
-        public void Save(int spellNum)
+        public static SpellBase GetSpell(int index)
         {
-            File.WriteAllBytes("resources/spells/" + spellNum + ".spell", SpellData());
+            if (Objects.ContainsKey(index))
+            {
+                return (SpellBase)Objects[index];
+            }
+            return null;
         }
 
+        public static string GetName(int index)
+        {
+            if (Objects.ContainsKey(index))
+            {
+                return ((ShopBase)Objects[index]).Name;
+            }
+            return "Deleted";
+        }
+
+        public override byte[] GetData()
+        {
+            return SpellData();
+        }
+
+        public override string GetTable()
+        {
+            return DatabaseTable;
+        }
+
+        public override GameObject GetGameObjectType()
+        {
+            return Type;
+        }
+
+        public static DatabaseObject Get(int index)
+        {
+            if (Objects.ContainsKey(index))
+            {
+                return Objects[index];
+            }
+            return null;
+        }
+        public override void Delete()
+        {
+            Objects.Remove(GetId());
+        }
+        public static void ClearObjects()
+        {
+            Objects.Clear();
+        }
+        public static void AddObject(int index, DatabaseObject obj)
+        {
+            Objects.Remove(index);
+            Objects.Add(index, obj);
+        }
+        public static int ObjectCount()
+        {
+            return Objects.Count;
+        }
+        public static Dictionary<int, SpellBase> GetObjects()
+        {
+            Dictionary<int, SpellBase> objects = Objects.ToDictionary(k => k.Key, v => (SpellBase)v.Value);
+            return objects;
+        }
     }
 }

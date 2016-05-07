@@ -4,6 +4,7 @@ using System.IO;
 using System.Windows.Forms;
 using Intersect_Editor.Classes.Core;
 using Intersect_Library;
+using Intersect_Library.GameObjects;
 using Intersect_Library.GameObjects.Maps;
 using Intersect_Library.GameObjects.Maps.MapList;
 using Microsoft.Xna.Framework.Graphics;
@@ -25,6 +26,10 @@ namespace Intersect_Editor.Forms
         {
             cmbAutotile.SelectedIndex = 0;
             cmbMapLayer.SelectedIndex = 0;
+            if (cmbTilesets.Items.Count > 0)
+            {
+                SetTileset(0);
+            }
         }
 
         //Tiles Tab
@@ -132,7 +137,7 @@ namespace Intersect_Editor.Forms
         public void InitTilesets()
         {
             Globals.MapLayersWindow.cmbTilesets.Items.Clear();
-            foreach (var filename in Globals.Tilesets)
+            foreach (var filename in Database.GetGameObjectList(GameObject.Tileset))
             {
                 if (File.Exists("resources/tilesets/" + filename))
                 {
@@ -143,22 +148,26 @@ namespace Intersect_Editor.Forms
                     Globals.MapLayersWindow.cmbTilesets.Items.Add(filename + " - [MISSING]");
                 }
             }
-            Globals.MapLayersWindow.cmbTilesets.SelectedIndex = 0;
-            Globals.CurrentTileset = 0;
+            if (TilesetBase.ObjectCount() > 0)
+            {
+                Globals.MapLayersWindow.cmbTilesets.SelectedIndex = 0;
+                Globals.CurrentTileset = TilesetBase.GetTileset(Database.GameObjectListIndex(GameObject.Tileset,0));
+            }
         }
         public void SetTileset(int index)
         {
-            cmbTilesets.SelectedIndex = index;
-            if (index > -1)
+            var tSet =
+                TilesetBase.GetTileset(Database.GameObjectIdFromList(GameObject.Tileset, cmbTilesets.SelectedIndex));
+            if (tSet != null)
             {
-                if (File.Exists("resources/tilesets/" + Globals.Tilesets[cmbTilesets.SelectedIndex]))
+                if (File.Exists("resources/tilesets/" + tSet.Value))
                 {
                     picTileset.Show();
-                    Globals.CurrentTileset = cmbTilesets.SelectedIndex;
+                    Globals.CurrentTileset = tSet;
                     Globals.CurSelX = 0;
                     Globals.CurSelY = 0;
                     Texture2D tilesetTex = GameContentManager.GetTexture(GameContentManager.TextureType.Tileset,
-                        Globals.Tilesets[index]);
+                        tSet.Value);
                     if (tilesetTex != null)
                     {
                         picTileset.Width = tilesetTex.Width;
@@ -168,7 +177,7 @@ namespace Intersect_Editor.Forms
                 }
                 else
                 {
-                    cmbTilesets.SelectedIndex = Globals.CurrentTileset;
+                    cmbTilesets.SelectedIndex = Globals.CurrentTileset.GetId();
                     picTileset.Hide();
                 }
             }
@@ -201,10 +210,7 @@ namespace Intersect_Editor.Forms
             hideAttributeMenus();
             grpItem.Visible = true;
             cmbItemAttribute.Items.Clear();
-            for (int i = 0; i < Globals.GameItems.Length; i++)
-            {
-                cmbItemAttribute.Items.Add((i + 1) + ". " + Globals.GameItems[i].Name);
-            }
+            cmbItemAttribute.Items.AddRange(Database.GetGameObjectList(GameObject.Item));
             cmbItemAttribute.SelectedIndex = 0;
         }
         private void rbBlocked_CheckedChanged(object sender, EventArgs e)
@@ -246,10 +252,7 @@ namespace Intersect_Editor.Forms
             hideAttributeMenus();
             grpResource.Visible = true;
             cmbResourceAttribute.Items.Clear();
-            for (int i = 0; i < Globals.GameResources.Length; i++)
-            {
-                cmbResourceAttribute.Items.Add((i + 1) + ". " + Globals.GameResources[i].Name);
-            }
+            cmbResourceAttribute.Items.AddRange(Database.GetGameObjectList(GameObject.Resource));
             cmbResourceAttribute.SelectedIndex = 0;
         }
         // Used for returning an integer value depending on which radio button is selected on the forms. This is merely used to make PlaceAtrribute less messy.
@@ -277,7 +280,7 @@ namespace Intersect_Editor.Forms
             }
             return 0;
         }
-        public void PlaceAttribute(MapStruct tmpMap, int x, int y)
+        public void PlaceAttribute(MapBase tmpMap, int x, int y)
         {
             tmpMap.Attributes[x, y] = new Intersect_Library.GameObjects.Maps.Attribute();
             if (rbBlocked.Checked == true)
@@ -336,7 +339,7 @@ namespace Intersect_Editor.Forms
                 tmpMap.Attributes[x, y].data1 = cmbSlideDir.SelectedIndex;
             }
         }
-        public bool RemoveAttribute(MapStruct tmpMap, int x, int y)
+        public bool RemoveAttribute(MapBase tmpMap, int x, int y)
         {
             if (tmpMap.Attributes[x, y] != null && tmpMap.Attributes[x, y].value > 0)
             {
@@ -394,16 +397,13 @@ namespace Intersect_Editor.Forms
                 // Update the list incase npcs have been modified since form load.
                 cmbNpc.Items.Clear();
                 cmbNpc.Items.Add("None");
-                for (int i = 0; i < Options.MaxNpcs; i++)
-                {
-                    cmbNpc.Items.Add(i + ") " + Globals.GameNpcs[i].Name);
-                }
+                cmbNpc.Items.AddRange(Database.GetGameObjectList(GameObject.Npc));
 
                 // Add the map NPCs
                 lstMapNpcs.Items.Clear();
-                for (int i = 0; i < Globals.GameMaps[Globals.CurrentMap].Spawns.Count; i++)
+                for (int i = 0; i < Globals.CurrentMap.Spawns.Count; i++)
                 {
-                    lstMapNpcs.Items.Add(Convert.ToString(i + 1) + ") " + Globals.GameNpcs[Globals.GameMaps[Globals.CurrentMap].Spawns[i].NpcNum].Name);
+                    lstMapNpcs.Items.Add(NpcBase.GetName(Globals.CurrentMap.Spawns[i].NpcNum));
                 }
 
                 // Don't select if there are no NPCs, to avoid crashes.
@@ -413,9 +413,9 @@ namespace Intersect_Editor.Forms
                 if (lstMapNpcs.Items.Count > 0)
                 {
                     lstMapNpcs.SelectedIndex = 0;
-                    cmbDir.SelectedIndex = Globals.GameMaps[Globals.CurrentMap].Spawns[lstMapNpcs.SelectedIndex].Dir + 1;
-                    cmbNpc.SelectedIndex = Globals.GameMaps[Globals.CurrentMap].Spawns[lstMapNpcs.SelectedIndex].NpcNum + 1;
-                    if (Globals.GameMaps[Globals.CurrentMap].Spawns[lstMapNpcs.SelectedIndex].X >= 0)
+                    cmbDir.SelectedIndex = Globals.CurrentMap.Spawns[lstMapNpcs.SelectedIndex].Dir + 1;
+                    cmbNpc.SelectedIndex = Globals.CurrentMap.Spawns[lstMapNpcs.SelectedIndex].NpcNum + 1;
+                    if (Globals.CurrentMap.Spawns[lstMapNpcs.SelectedIndex].X >= 0)
                     {
                         rbDeclared.Checked = true;
                     }
@@ -446,41 +446,43 @@ namespace Intersect_Editor.Forms
             //Don't add nothing
             if (cmbNpc.SelectedIndex > 0)
             {
-                n.NpcNum = cmbNpc.SelectedIndex - 1;
+                n.NpcNum = Database.GameObjectIdFromList(GameObject.Npc,lstMapNpcs.SelectedIndex);
                 n.X = -1;
                 n.Y = -1;
                 n.Dir = -1;
 
-                Globals.GameMaps[Globals.CurrentMap].Spawns.Add(n);
-
-                lstMapNpcs.Items.Add(Convert.ToString(lstMapNpcs.Items.Count + 1) + ") " + Globals.GameNpcs[cmbNpc.SelectedIndex - 1].Name);
+                Globals.CurrentMap.Spawns.Add(n);
+                lstMapNpcs.Items.Add(NpcBase.GetName(Database.GameObjectIdFromList(GameObject.Npc, lstMapNpcs.SelectedIndex)));
                 lstMapNpcs.SelectedIndex = lstMapNpcs.Items.Count - 1;
             }
         }
         private void btnRemoveMapNpc_Click(object sender, EventArgs e)
         {
-            Globals.GameMaps[Globals.CurrentMap].Spawns.RemoveAt(lstMapNpcs.SelectedIndex);
-            lstMapNpcs.Items.RemoveAt(lstMapNpcs.SelectedIndex);
-
-            // Refresh List
-            lstMapNpcs.Items.Clear();
-            for (int i = 0; i < Globals.GameMaps[Globals.CurrentMap].Spawns.Count; i++)
+            if (lstMapNpcs.SelectedIndex > -1)
             {
-                lstMapNpcs.Items.Add(Convert.ToString(i + 1) + ") " + Globals.GameNpcs[Globals.GameMaps[Globals.CurrentMap].Spawns[i].NpcNum].Name);
-            }
+                Globals.CurrentMap.Spawns.RemoveAt(lstMapNpcs.SelectedIndex);
+                lstMapNpcs.Items.RemoveAt(lstMapNpcs.SelectedIndex);
 
-            if (lstMapNpcs.Items.Count > 0)
-            {
-                lstMapNpcs.SelectedIndex = 0;
+                // Refresh List
+                lstMapNpcs.Items.Clear();
+                for (int i = 0; i < Globals.CurrentMap.Spawns.Count; i++)
+                {
+                    lstMapNpcs.Items.Add(NpcBase.GetName(Globals.CurrentMap.Spawns[i].NpcNum));
+                }
+
+                if (lstMapNpcs.Items.Count > 0)
+                {
+                    lstMapNpcs.SelectedIndex = 0;
+                }
             }
         }
         private void lstMapNpcs_Click(object sender, EventArgs e)
         {
             if (lstMapNpcs.Items.Count > 0)
             {
-                cmbNpc.SelectedIndex = Globals.GameMaps[Globals.CurrentMap].Spawns[lstMapNpcs.SelectedIndex].NpcNum + 1;
-                cmbDir.SelectedIndex = Globals.GameMaps[Globals.CurrentMap].Spawns[lstMapNpcs.SelectedIndex].Dir + 1;
-                if (Globals.GameMaps[Globals.CurrentMap].Spawns[lstMapNpcs.SelectedIndex].X >= 0)
+                cmbNpc.SelectedIndex = Globals.CurrentMap.Spawns[lstMapNpcs.SelectedIndex].NpcNum + 1;
+                cmbDir.SelectedIndex = Globals.CurrentMap.Spawns[lstMapNpcs.SelectedIndex].Dir + 1;
+                if (Globals.CurrentMap.Spawns[lstMapNpcs.SelectedIndex].X >= 0)
                 {
                     rbDeclared.Checked = true;
                 }
@@ -494,16 +496,16 @@ namespace Intersect_Editor.Forms
         {
             if (lstMapNpcs.SelectedIndex > -1)
             {
-                Globals.GameMaps[Globals.CurrentMap].Spawns[lstMapNpcs.SelectedIndex].X = -1;
-                Globals.GameMaps[Globals.CurrentMap].Spawns[lstMapNpcs.SelectedIndex].Y = -1;
-                Globals.GameMaps[Globals.CurrentMap].Spawns[lstMapNpcs.SelectedIndex].Dir = -1;
+                Globals.CurrentMap.Spawns[lstMapNpcs.SelectedIndex].X = -1;
+                Globals.CurrentMap.Spawns[lstMapNpcs.SelectedIndex].Y = -1;
+                Globals.CurrentMap.Spawns[lstMapNpcs.SelectedIndex].Dir = -1;
             }
         }
         private void cmbDir_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (lstMapNpcs.SelectedIndex >= 0)
             {
-                Globals.GameMaps[Globals.CurrentMap].Spawns[lstMapNpcs.SelectedIndex].Dir = cmbDir.SelectedIndex - 1;
+                Globals.CurrentMap.Spawns[lstMapNpcs.SelectedIndex].Dir = cmbDir.SelectedIndex - 1;
             }
         }
         private void cmbNpc_SelectedIndexChanged(object sender, EventArgs e)
@@ -512,14 +514,14 @@ namespace Intersect_Editor.Forms
 
             if (lstMapNpcs.SelectedIndex >= 0)
             {
-                Globals.GameMaps[Globals.CurrentMap].Spawns[lstMapNpcs.SelectedIndex].NpcNum = cmbNpc.SelectedIndex - 1;
+                Globals.CurrentMap.Spawns[lstMapNpcs.SelectedIndex].NpcNum = cmbNpc.SelectedIndex - 1;
 
                 // Refresh List
                 n = lstMapNpcs.SelectedIndex;
                 lstMapNpcs.Items.Clear();
-                for (int i = 0; i < Globals.GameMaps[Globals.CurrentMap].Spawns.Count; i++)
+                for (int i = 0; i < Globals.CurrentMap.Spawns.Count; i++)
                 {
-                    lstMapNpcs.Items.Add(Convert.ToString(i + 1) + ") " + Globals.GameNpcs[Globals.GameMaps[Globals.CurrentMap].Spawns[i].NpcNum].Name);
+                    lstMapNpcs.Items.Add(NpcBase.GetName(Globals.CurrentMap.Spawns[i].NpcNum));
                 }
                 lstMapNpcs.SelectedIndex = n;
             }
@@ -557,10 +559,7 @@ namespace Intersect_Editor.Forms
             hideAttributeMenus();
             grpAnimation.Visible = true;
             cmbAnimationAttribute.Items.Clear();
-            for (int i = 0; i < Globals.GameAnimations.Length; i++)
-            {
-                cmbAnimationAttribute.Items.Add((i + 1) + ". " + Globals.GameAnimations[i].Name);
-            }
+            cmbAnimationAttribute.Items.AddRange(Database.GetGameObjectList(GameObject.Animation));
             cmbAnimationAttribute.SelectedIndex = 0;
         }
 

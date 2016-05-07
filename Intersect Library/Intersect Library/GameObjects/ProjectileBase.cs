@@ -19,21 +19,23 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-
 using System;
 using System.Collections.Generic;
-using System.IO;
+using System.Linq;
 
 namespace Intersect_Library.GameObjects
 {
-    public class ProjectileStruct
+    public class ProjectileBase : DatabaseObject
     {
+        public new const string DatabaseTable = "projectiles";
+        public new const GameObject Type = GameObject.Projectile;
+        protected static Dictionary<int, DatabaseObject> Objects = new Dictionary<int, DatabaseObject>();
+
         public const int SpawnLocationsWidth = 5;
         public const int SpawnLocationsHeight = 5;
         public const int MaxProjectileDirections = 8;
-
-        public const string Version = "0.0.0.1";
-        public string Name = "";
+        
+        public string Name = "New Projectile";
         public int Speed = 1;
         public int Delay = 1;
         public int Quantity = 1;
@@ -49,7 +51,7 @@ namespace Intersect_Library.GameObjects
         public List<ProjectileAnimation> Animations = new List<ProjectileAnimation>();
 
         //Init
-        public ProjectileStruct()
+        public ProjectileBase(int id) : base(id)
         {
             for (var x = 0; x < SpawnLocationsWidth; x++)
             {
@@ -60,13 +62,10 @@ namespace Intersect_Library.GameObjects
             }
         }
 
-        public void Load(byte[] packet, int index)
+        public override void Load(byte[] packet)
         {
             var myBuffer = new ByteBuffer();
             myBuffer.WriteBytes(packet);
-            string loadedVersion = myBuffer.ReadString();
-            if (loadedVersion != Version)
-                throw new Exception("Failed to load Projectile #" + index + ". Loaded Version: " + loadedVersion + " Expected Version: " + Version);
             Name = myBuffer.ReadString();
             Speed = myBuffer.ReadInteger();
             Delay = myBuffer.ReadInteger();
@@ -111,7 +110,6 @@ namespace Intersect_Library.GameObjects
         public byte[] ProjectileData()
         {
             var myBuffer = new ByteBuffer();
-            myBuffer.WriteString(Version);
             myBuffer.WriteString(Name);
             myBuffer.WriteInteger(Speed);
             myBuffer.WriteInteger(Delay);
@@ -148,19 +146,74 @@ namespace Intersect_Library.GameObjects
             return myBuffer.ToArray();
         }
 
-        public void Save(int projectileNum)
+        public static ProjectileBase GetProjectile(int index)
         {
-            byte[] data = ProjectileData();
-            Stream stream = new FileStream("resources/projectiles/" + projectileNum + ".prj", FileMode.OpenOrCreate);
-            stream.Write(data, 0, data.Length);
-            stream.Close();
+            if (Objects.ContainsKey(index))
+            {
+                return (ProjectileBase)Objects[index];
+            }
+            return null;
         }
 
+        public static string GetName(int index)
+        {
+            if (Objects.ContainsKey(index))
+            {
+                return ((ProjectileBase)Objects[index]).Name;
+            }
+            return "Deleted";
+        }
+
+        public override byte[] GetData()
+        {
+            return ProjectileData();
+        }
+
+        public override string GetTable()
+        {
+            return DatabaseTable;
+        }
+
+        public override GameObject GetGameObjectType()
+        {
+            return Type;
+        }
+
+        public static DatabaseObject Get(int index)
+        {
+            if (Objects.ContainsKey(index))
+            {
+                return Objects[index];
+            }
+            return null;
+        }
+        public override void Delete()
+        {
+            Objects.Remove(GetId());
+        }
+        public static void ClearObjects()
+        {
+            Objects.Clear();
+        }
+        public static void AddObject(int index, DatabaseObject obj)
+        {
+            Objects.Remove(index);
+            Objects.Add(index, obj);
+        }
+        public static int ObjectCount()
+        {
+            return Objects.Count;
+        }
+        public static Dictionary<int, ProjectileBase> GetObjects()
+        {
+            Dictionary<int, ProjectileBase> objects = Objects.ToDictionary(k => k.Key, v => (ProjectileBase)v.Value);
+            return objects;
+        }
     }
 
     public class Location
     {
-        public bool[] Directions = new bool[ProjectileStruct.MaxProjectileDirections];
+        public bool[] Directions = new bool[ProjectileBase.MaxProjectileDirections];
     }
 
     public class ProjectileAnimation

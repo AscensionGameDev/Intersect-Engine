@@ -20,9 +20,9 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 using System;
-using System.Linq;
 using System.Windows.Forms;
 using Intersect_Editor.Classes;
+using Intersect_Library;
 using Intersect_Library.GameObjects.Events;
 
 namespace Intersect_Editor.Forms.Editors.Event_Commands
@@ -39,21 +39,15 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             _eventEditor = editor;
             _currentPage = refPage;
             cmbSpell.Items.Clear();
-            if (cmbSpell.Items.Count == 0)
-            {
-                for (var i = 0; i < Globals.GameSpells.Count(); i++)
-                {
-                    cmbSpell.Items.Add((i + 1) + ". " + Globals.GameSpells[i].Name);
-                }
-            }
+            cmbSpell.Items.AddRange(Database.GetGameObjectList(GameObject.Spell));
             cmbAction.SelectedIndex = _myCommand.Ints[0];
-            cmbSpell.SelectedIndex = _myCommand.Ints[1];
+            cmbSpell.SelectedIndex = Database.GameObjectListIndex(GameObject.Spell,_myCommand.Ints[1]);
         }
 
         private void btnSave_Click(object sender, EventArgs e)
         {
             _myCommand.Ints[0] = cmbAction.SelectedIndex;
-            _myCommand.Ints[1] = cmbSpell.SelectedIndex;
+            _myCommand.Ints[1] = Database.GameObjectIdFromList(GameObject.Spell,cmbSpell.SelectedIndex);
             if (_myCommand.Ints[4] == 0)
             // command.Ints[4, and 5] are reserved for when the action succeeds or fails
             {

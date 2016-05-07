@@ -21,9 +21,9 @@
 */
 using System;
 using System.Drawing;
+using System.Linq;
 using System.Windows.Forms;
 using Intersect_Editor.Classes;
-using Intersect_Editor.Classes.General;
 using Intersect_Library;
 using Intersect_Library.GameObjects.Events;
 using Intersect_Library.GameObjects.Maps;
@@ -36,11 +36,11 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
     {
         private EventCommand _myCommand;
         private readonly FrmEvent _eventEditor;
-        private MapStruct _currentMap;
-        private EventStruct _editingEvent;
+        private MapBase _currentMap;
+        private EventBase _editingEvent;
         private int spawnX = 0;
         private int spawnY = 0;
-        public EventCommand_SpawnNpc(FrmEvent eventEditor, MapStruct currentMap, EventStruct currentEvent, EventCommand editingCommand)
+        public EventCommand_SpawnNpc(FrmEvent eventEditor, MapBase currentMap, EventBase currentEvent, EventCommand editingCommand)
         {
             InitializeComponent();
             _myCommand = editingCommand;
@@ -48,11 +48,8 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             _editingEvent = currentEvent;
             _currentMap = currentMap;
             cmbNpc.Items.Clear();
-            for (int i = 0; i < Globals.GameNpcs.Length; i++)
-            {
-                cmbNpc.Items.Add((i + 1) + ". " + Globals.GameNpcs[i].Name);
-            }
-            cmbNpc.SelectedIndex = _myCommand.Ints[0];
+            cmbNpc.Items.AddRange(Database.GetGameObjectList(GameObject.Npc));
+            cmbNpc.SelectedIndex = Database.GameObjectListIndex(GameObject.Npc, _myCommand.Ints[0]);
             cmbConditionType.SelectedIndex = _myCommand.Ints[1];
             UpdateFormElements();
             switch (cmbConditionType.SelectedIndex)
@@ -104,61 +101,41 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
 
                     if (!_editingEvent.CommonEvent)
                     {
-                        for (int i = 0; i < _currentMap.Events.Count; i++)
+                        foreach (var evt in _currentMap.Events)
                         {
-                            if (i == _editingEvent.MyIndex)
-                            {
-                                cmbEntities.Items.Add((i + 1) + ". [THIS EVENT] " + _currentMap.Events[i].MyName);
-
-                                if (_myCommand.Ints[2] == i)
-                                {
-                                    cmbEntities.SelectedIndex = i + 1;
-                                }
-                            }
-                            else
-                            {
-                                if (_currentMap.Events[i].Deleted == 0)
-                                {
-                                    cmbEntities.Items.Add((i + 1) + ". " + _currentMap.Events[i].MyName);
-                                    if (_myCommand.Ints[2] == i)
-                                    {
-                                        cmbEntities.SelectedIndex = i + 1;
-                                    }
-                                }
-                            }
+                            cmbEntities.Items.Add(evt.Key == _editingEvent.MyIndex ? "[THIS EVENT] " : "" + evt.Value.MyName);
+                            if (_myCommand.Ints[2] == evt.Key) cmbEntities.SelectedIndex = cmbEntities.Items.Count - 1;
                         }
                     }
                     UpdateSpawnPreview();
-
-
                     break;
             }
         }
 
         private void UpdateSpawnPreview()
         {
-            Bitmap destBitmap = new Bitmap(pnlSpawnLoc.Width,pnlSpawnLoc.Height);
+            Bitmap destBitmap = new Bitmap(pnlSpawnLoc.Width, pnlSpawnLoc.Height);
             Font renderFont = new Font(new FontFamily("Arial"), 14);
             ;
             System.Drawing.Graphics g = System.Drawing.Graphics.FromImage(destBitmap);
             g.Clear(Color.White);
-            g.FillRectangle(Brushes.Red, new Rectangle((spawnX + 2)*32, (spawnY + 2)*32, 32, 32));
+            g.FillRectangle(Brushes.Red, new Rectangle((spawnX + 2) * 32, (spawnY + 2) * 32, 32, 32));
             for (int x = 0; x < 5; x++)
             {
-                g.DrawLine(Pens.Black, x*32, 0, x*32, 32*5);
-                g.DrawLine(Pens.Black,0,x*32,32*5,x*32);
+                g.DrawLine(Pens.Black, x * 32, 0, x * 32, 32 * 5);
+                g.DrawLine(Pens.Black, 0, x * 32, 32 * 5, x * 32);
             }
-            g.DrawLine(Pens.Black,0,32*5 - 1,32*5,32*5-1);
-            g.DrawLine(Pens.Black,32*5-1,0,32*5-1,32*5-1);
-            g.DrawString("E", renderFont, Brushes.Black, pnlSpawnLoc.Width/2 - g.MeasureString("E", renderFont).Width/2,
-                pnlSpawnLoc.Height/2 - g.MeasureString("S", renderFont).Height/2);
+            g.DrawLine(Pens.Black, 0, 32 * 5 - 1, 32 * 5, 32 * 5 - 1);
+            g.DrawLine(Pens.Black, 32 * 5 - 1, 0, 32 * 5 - 1, 32 * 5 - 1);
+            g.DrawString("E", renderFont, Brushes.Black, pnlSpawnLoc.Width / 2 - g.MeasureString("E", renderFont).Width / 2,
+                pnlSpawnLoc.Height / 2 - g.MeasureString("S", renderFont).Height / 2);
             g.Dispose();
             pnlSpawnLoc.BackgroundImage = destBitmap;
         }
 
         private void btnSave_Click(object sender, EventArgs e)
         {
-            _myCommand.Ints[0] = cmbNpc.SelectedIndex;
+            _myCommand.Ints[0] = Database.GameObjectIdFromList(GameObject.Npc, cmbNpc.SelectedIndex);
             _myCommand.Ints[1] = cmbConditionType.SelectedIndex;
             switch (_myCommand.Ints[1])
             {
@@ -169,28 +146,13 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
                     _myCommand.Ints[5] = cmbDirection.SelectedIndex;
                     break;
                 case 1: //On/Around Entity Spawn
-                    int slot = 0;
-                    if (!_editingEvent.CommonEvent)
+                    if (cmbEntities.SelectedIndex == 0 || cmbEntities.SelectedIndex == -1)
                     {
-                        for (int i = 0; i < _currentMap.Events.Count; i++)
-                        {
-                            if (cmbEntities.SelectedIndex == 0)
-                            {
-                                _myCommand.Ints[2] = -1;
-                            }
-                            else
-                            {
-                                if (_currentMap.Events[i].Deleted == 0)
-                                {
-                                    slot++;
-                                    if (cmbEntities.SelectedIndex == slot)
-                                    {
-                                        _myCommand.Ints[2] = i;
-                                        break;
-                                    }
-                                }
-                            }
-                        }
+                        _myCommand.Ints[2] = -1;
+                    }
+                    else
+                    {
+                        _myCommand.Ints[2] = _currentMap.Events.Keys.ToList()[cmbEntities.SelectedIndex - 1];
                     }
                     _myCommand.Ints[3] = spawnX;
                     _myCommand.Ints[4] = spawnY;

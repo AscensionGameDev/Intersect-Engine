@@ -32,26 +32,12 @@ namespace Intersect_Server.Classes.General
 
                 writer.WriteStartElement("GameObjects");
                 writer.WriteComment("You can increase these if you want, but you shouldn't unless you need to.");
-                writer.WriteElementString("MaxItems", "255");
-                writer.WriteElementString("MaxShops", "255");
-                writer.WriteElementString("MaxNpcs", "255");
                 writer.WriteElementString("MaxNpcDrops", "10");
-                writer.WriteElementString("MaxSpells", "255");
-                writer.WriteElementString("MaxAnimations", "255");
-                writer.WriteElementString("MaxResources", "255");
-                writer.WriteElementString("MaxClasses", "20");
-                writer.WriteElementString("MaxQuests", "255");
-                writer.WriteElementString("MaxProjectiles", "255");
-                writer.WriteElementString("MaxCommonEvents", "255");
-                writer.WriteElementString("MaxServerVariables", "100");
-                writer.WriteElementString("MaxServerSwitches", "100");
                 writer.WriteEndElement();
 
                 writer.WriteStartElement("Player");
                 writer.WriteElementString("MaxStat", "255");
                 writer.WriteElementString("MaxLevel", "100");
-                writer.WriteElementString("MaxPlayerVariables", "100");
-                writer.WriteElementString("MaxPlayerSwitches", "100");
                 writer.WriteElementString("MaxInventory", "35");
                 writer.WriteElementString("MaxSpells", "35");
                 writer.WriteElementString("MaxBank", "100");
@@ -120,25 +106,11 @@ namespace Intersect_Server.Classes.General
                     Options.ServerPort = GetXmlInt(options, "//Config/ServerPort");
 
                     //Game Objects
-                    Options.MaxItems = GetXmlInt(options, "//Config/GameObjects/MaxItems");
-                    Options.MaxShops = GetXmlInt(options, "//Config/GameObjects/MaxShops");
-                    Options.MaxNpcs = GetXmlInt(options, "//Config/GameObjects/MaxNpcs");
                     Options.MaxNpcDrops = GetXmlInt(options, "//Config/GameObjects/MaxNpcDrops");
-                    Options.MaxSpells = GetXmlInt(options, "//Config/GameObjects/MaxSpells");
-                    Options.MaxAnimations = GetXmlInt(options, "//Config/GameObjects/MaxAnimations");
-                    Options.MaxResources = GetXmlInt(options, "//Config/GameObjects/MaxResources");
-                    Options.MaxClasses = GetXmlInt(options, "//Config/GameObjects/MaxClasses");
-                    Options.MaxQuests = GetXmlInt(options, "//Config/GameObjects/MaxQuests");
-                    Options.MaxProjectiles = GetXmlInt(options, "//Config/GameObjects/MaxProjectiles");
-                    Options.MaxCommonEvents = GetXmlInt(options, "//Config/GameObjects/MaxCommonEvents");
-                    Options.MaxServerVariables = GetXmlInt(options, "//Config/GameObjects/MaxServerVariables");
-                    Options.MaxServerSwitches = GetXmlInt(options, "//Config/GameObjects/MaxServerSwitches");
 
                     //Player Options
                     Options.MaxStatValue = GetXmlInt(options, "//Config/Player/MaxStat");
                     Options.MaxLevel = GetXmlInt(options, "//Config/Player/MaxLevel");
-                    Options.MaxPlayerVariables = GetXmlInt(options, "//Config/Player/MaxPlayerVariables");
-                    Options.MaxPlayerSwitches = GetXmlInt(options, "//Config/Player/MaxPlayerSwitches");
                     Options.MaxInvItems = GetXmlInt(options, "//Config/Player/MaxInventory");
                     Options.MaxPlayerSkills = GetXmlInt(options, "//Config/Player/MaxSpells");
                     Options.MaxBankSlots = GetXmlInt(options, "//Config/Player/MaxBank");
@@ -245,25 +217,11 @@ namespace Intersect_Server.Classes.General
             bf.WriteString(Options.GameName);
 
             //Game Objects
-            bf.WriteInteger(Options.MaxItems);
-            bf.WriteInteger(Options.MaxShops);
-            bf.WriteInteger(Options.MaxNpcs);
             bf.WriteInteger(Options.MaxNpcDrops);
-            bf.WriteInteger(Options.MaxSpells);
-            bf.WriteInteger(Options.MaxAnimations);
-            bf.WriteInteger(Options.MaxResources);
-            bf.WriteInteger(Options.MaxClasses);
-            bf.WriteInteger(Options.MaxQuests);
-            bf.WriteInteger(Options.MaxProjectiles);
-            bf.WriteInteger(Options.MaxCommonEvents);
-            bf.WriteInteger(Options.MaxServerVariables);
-            bf.WriteInteger(Options.MaxServerSwitches);
 
             //Player Objects
             bf.WriteInteger(Options.MaxStatValue);
             bf.WriteInteger(Options.MaxLevel);
-            bf.WriteInteger(Options.MaxPlayerVariables);
-            bf.WriteInteger(Options.MaxPlayerSwitches);
             bf.WriteInteger(Options.MaxHotbar);
             bf.WriteInteger(Options.MaxInvItems);
             bf.WriteInteger(Options.MaxPlayerSkills);

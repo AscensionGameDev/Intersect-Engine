@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Intersect_Editor.Classes.Core;
 using Intersect_Library.GameObjects;
 using Microsoft.Xna.Framework.Graphics;
@@ -12,7 +8,7 @@ namespace Intersect_Editor.Classes.Entities
 {
     public class AnimationInstance
     {
-        public AnimationStruct myBase;
+        public AnimationBase myBase;
         private float _renderX = 0;
         private float _renderY = 0;
         private int _renderDir = 0;
@@ -25,7 +21,7 @@ namespace Intersect_Editor.Classes.Entities
         private bool infiniteLoop = false;
         private bool showLower = true;
         private bool showUpper = true;
-        public AnimationInstance(AnimationStruct animBase, bool loopForever)
+        public AnimationInstance(AnimationBase animBase, bool loopForever)
         {
             myBase = animBase;
             lowerLoop = animBase.LowerAnimLoopCount;
@@ -37,35 +33,6 @@ namespace Intersect_Editor.Classes.Entities
 
         public void Draw(RenderTarget2D target, bool upper = false)
         {
-            float rotationDegrees = 0f;
-            switch (_renderDir)
-            {
-                case 0: //Up
-                    rotationDegrees = 0f;
-                    break;
-                case 1: //Down
-                    rotationDegrees = 180f;
-                    break;
-                case 2: //Left
-                    rotationDegrees = 270f;
-                    break;
-                case 3: //Right
-                    rotationDegrees = 90f;
-                    break;
-                case 4: //NW
-                    rotationDegrees = 315f;
-                    break;
-                case 5: //NE
-                    rotationDegrees = 45f;
-                    break;
-                case 6: //SW
-                    rotationDegrees = 225f;
-                    break;
-                case 7: //SE
-                    rotationDegrees = 135f;
-                    break;
-            }
-
             if (!upper)
             {
                 //Draw Lower

@@ -25,11 +25,4 @@ namespace Intersect_Server.Classes.Maps
             return bf.ToArray();
         }
     }
-
-    public class MapItemRespawn
-    {
-        public int AttributeSpawnX = -1;
-        public int AttributeSpawnY = -1;
-        public long RespawnTime = -1;
-    }
 }

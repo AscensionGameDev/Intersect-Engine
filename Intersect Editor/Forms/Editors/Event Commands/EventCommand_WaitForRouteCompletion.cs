@@ -20,8 +20,8 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 using System;
+using System.Linq;
 using System.Windows.Forms;
-using Intersect_Editor.Classes;
 using Intersect_Library.GameObjects.Events;
 using Intersect_Library.GameObjects.Maps;
 
@@ -30,10 +30,10 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
     public partial class EventCommand_WaitForRouteCompletion : UserControl
     {
         private FrmEvent _eventEditor;
-        private readonly EventStruct _editingEvent;
+        private readonly EventBase _editingEvent;
         private EventCommand _editingCommand;
-        private MapStruct _currentMap;
-        public EventCommand_WaitForRouteCompletion(EventCommand refCommand, FrmEvent eventEditor, MapStruct currentMap, EventStruct currentEvent)
+        private MapBase _currentMap;
+        public EventCommand_WaitForRouteCompletion(EventCommand refCommand, FrmEvent eventEditor, MapBase currentMap, EventBase currentEvent)
         {
             InitializeComponent();
 
@@ -44,32 +44,12 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             _currentMap = currentMap;
 
             cmbEntities.Items.Clear();
-            int slot = 0;
             if (!_editingEvent.CommonEvent)
             {
-                for (int i = 0; i < currentMap.Events.Count; i++)
+                foreach (var evt in _currentMap.Events)
                 {
-                    if (i == _editingEvent.MyIndex)
-                    {
-                        cmbEntities.Items.Add((i + 1) + ". [THIS EVENT] " + currentMap.Events[i].MyName);
-                        slot++;
-                        if (refCommand.Ints[0] == i)
-                        {
-                            cmbEntities.SelectedIndex = slot;
-                        }
-                    }
-                    else
-                    {
-                        if (currentMap.Events[i].Deleted == 0)
-                        {
-                            cmbEntities.Items.Add((i + 1) + ". " + currentMap.Events[i].MyName);
-                            slot++;
-                            if (refCommand.Ints[0] == i)
-                            {
-                                cmbEntities.SelectedIndex = slot;
-                            }
-                        }
-                    }
+                    cmbEntities.Items.Add(evt.Key == _editingEvent.MyIndex ? "[THIS EVENT] " : "" + evt.Value.MyName);
+                    if (_editingCommand.Ints[0] == evt.Key) cmbEntities.SelectedIndex = cmbEntities.Items.Count - 1;
                 }
             }
 
@@ -79,21 +59,9 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
 
         private void btnSave_Click(object sender, EventArgs e)
         {
-            int slot = 0;
             if (!_editingEvent.CommonEvent)
             {
-                for (int i = 0; i < _currentMap.Events.Count; i++)
-                {
-                    if (_currentMap.Events[i].Deleted == 0)
-                    {
-                        if (cmbEntities.SelectedIndex == slot)
-                        {
-                            _editingCommand.Ints[0] = i;
-                            break;
-                        }
-                        slot++;
-                    }
-                }
+                _editingCommand.Ints[0] = _currentMap.Events.Keys.ToList()[cmbEntities.SelectedIndex];
             }
             _eventEditor.FinishCommandEdit();
         }

@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Intersect_Editor.Classes.General
+﻿namespace Intersect_Editor.Classes.General
 {
     public enum EditorTypes
     {

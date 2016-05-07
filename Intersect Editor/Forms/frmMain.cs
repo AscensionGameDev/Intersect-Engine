@@ -25,6 +25,7 @@ using System.Windows.Forms;
 using Intersect_Editor.Classes;
 using WeifenLuo.WinFormsUI.Docking;
 using Intersect_Editor.Classes.General;
+using Intersect_Editor.Classes.Maps;
 using Intersect_Editor.Forms.Editors;
 using Intersect_Library;
 using Microsoft.Xna.Framework.Graphics;
@@ -37,7 +38,7 @@ namespace Intersect_Editor.Forms
         bool _tMouseDown;
 
         //Cross Thread Delegates
-        public delegate void TryOpenEditor(int editorIndex);
+        public delegate void TryOpenEditor(GameObject type);
         public TryOpenEditor EditorDelegate;
         public delegate void HandleDisconnect();
         public HandleDisconnect DisconnectDelegate;
@@ -63,7 +64,6 @@ namespace Intersect_Editor.Forms
             Globals.MapListWindow = new frmMapList();
             Globals.MapListWindow.Show(dockLeft, DockState.DockRight);
             Globals.MapLayersWindow = new frmMapLayers();
-            Globals.MapLayersWindow.Init();
             Globals.MapLayersWindow.Show(dockLeft, DockState.DockLeft);
 
             Globals.MapEditorWindow = new frmMapEditor();
@@ -75,8 +75,8 @@ namespace Intersect_Editor.Forms
             InitFormObjects();
 
             //Init Delegates
-            EditorDelegate = new TryOpenEditor(TryOpenEditorMethod);
-            DisconnectDelegate = new HandleDisconnect(HandleServerDisconnect);
+            EditorDelegate += TryOpenEditorMethod;
+            DisconnectDelegate += HandleServerDisconnect;
 
             // Initilise the editor.
             InitEditor();
@@ -129,6 +129,7 @@ namespace Intersect_Editor.Forms
         {
             EditorGraphics.InitMonogame();
             Globals.MapLayersWindow.InitTilesets();
+            Globals.MapLayersWindow.Init();
             Globals.InEditor = true;
             GrabMouseDownEvents();
         }
@@ -140,22 +141,20 @@ namespace Intersect_Editor.Forms
         }
         public void EnterMap(int mapNum)
         {
-            Globals.CurrentMap = mapNum;
-            if (Globals.MapPropertiesWindow != null) { Globals.MapPropertiesWindow.Init(Globals.CurrentMap); }
-            if (Globals.GameMaps.ContainsKey(mapNum))
+            Globals.CurrentMap = MapInstance.GetMap(mapNum);
+            Globals.LoadingMap = mapNum;
+            if (Globals.CurrentMap == null)
             {
-                Text = @"Intersect Editor - Map# " + mapNum + @" " + Globals.GameMaps[mapNum].MyName + @" Revision: " + Globals.GameMaps[mapNum].Revision;
-                Globals.MapEditorWindow.picMap.Visible = false;
-                Globals.MapEditorWindow.ResetUndoRedoStates();
-                PacketSender.SendNeedMap(Globals.CurrentMap);
-                PacketSender.SendNeedGrid(Globals.CurrentMap);
+                Text = @"Intersect Editor";
             }
             else
             {
-                Text = @"Intersect Editor";
-                Globals.MapEditorWindow.picMap.Visible = false;
-                Globals.MapEditorWindow.ResetUndoRedoStates();
+                if (Globals.MapPropertiesWindow != null) { Globals.MapPropertiesWindow.Init(Globals.CurrentMap); }
             }
+            Globals.MapEditorWindow.picMap.Visible = false;
+            Globals.MapEditorWindow.ResetUndoRedoStates();
+            PacketSender.SendNeedMap(mapNum);
+            PacketSender.SendNeedGrid(mapNum);
             EditorGraphics.TilePreviewUpdated = true;
         }
         private void GrabMouseDownEvents()
@@ -166,15 +165,15 @@ namespace Intersect_Editor.Forms
         {
             foreach (Control t in e.Controls)
             {
-                if (t.GetType() == typeof (MenuStrip))
+                if (t.GetType() == typeof(MenuStrip))
                 {
-                    foreach (ToolStripMenuItem t1 in ((MenuStrip) t).Items)
+                    foreach (ToolStripMenuItem t1 in ((MenuStrip)t).Items)
                     {
                         t1.MouseDown += MouseDownHandler;
                     }
                     t.MouseDown += MouseDownHandler;
                 }
-                else if (t.GetType() == typeof (PropertyGrid))
+                else if (t.GetType() == typeof(PropertyGrid))
                 {
                 }
                 else
@@ -196,17 +195,13 @@ namespace Intersect_Editor.Forms
         //Update
         public void Update()
         {
-            if (Globals.CurrentMap > -1)
+            if (Globals.CurrentMap != null)
             {
-
-                if (Globals.GameMaps[Globals.CurrentMap] != null)
+                toolStripLabelCoords.Text = @" CurX: " + Globals.CurTileX + @" CurY: " + Globals.CurTileY;
+                toolStripLabelRevision.Text = @"Revision: " + Globals.CurrentMap.Revision;
+                if (Text != @"Intersect Editor - " +  Globals.CurrentMap.MyName)
                 {
-                    toolStripLabelCoords.Text = @" CurX: " + Globals.CurTileX + @" CurY: " + Globals.CurTileY;
-                    toolStripLabelRevision.Text = @"Revision: " + Globals.GameMaps[Globals.CurrentMap].Revision;
-                    if (Text != @"Intersect Editor - Map# " + Globals.CurrentMap + @" " + Globals.GameMaps[Globals.CurrentMap].MyName)
-                    {
-                        Text = @"Intersect Editor - Map# " + Globals.CurrentMap + @" " + Globals.GameMaps[Globals.CurrentMap].MyName;
-                    }
+                    Text = @"Intersect Editor - " + Globals.CurrentMap.MyName;
                 }
             }
 
@@ -258,7 +253,7 @@ namespace Intersect_Editor.Forms
                 toolStripBtnPen.Enabled = true;
                 toolStripBtnRect.Enabled = true;
             }
-            else if(Globals.CurrentLayer == Options.LayerCount + 1) //Lights
+            else if (Globals.CurrentLayer == Options.LayerCount + 1) //Lights
             {
                 Globals.CurrentTool = (int)EdittingTool.Selection;
             }
@@ -289,7 +284,7 @@ namespace Intersect_Editor.Forms
                     if (toolStripBtnCopy.Enabled) { toolStripBtnCopy.Enabled = false; }
                     if (cutToolStripMenuItem.Enabled) { cutToolStripMenuItem.Enabled = false; }
                     if (copyToolStripMenuItem.Enabled) { copyToolStripMenuItem.Enabled = false; }
-                        break;
+                    break;
                 case (int)EdittingTool.Selection:
                     if (toolStripBtnPen.Checked) { toolStripBtnPen.Checked = false; }
                     if (!toolStripBtnSelect.Checked) { toolStripBtnSelect.Checked = true; }
@@ -353,7 +348,7 @@ namespace Intersect_Editor.Forms
         private void HandleServerDisconnect()
         {
             //Offer to export map
-            if (Globals.CurrentMap > -1 && Globals.GameMaps[Globals.CurrentMap] != null)
+            if (Globals.CurrentMap != null)
             {
                 if (MessageBox.Show("You have been disconnected from the server! Would you like to export this map before closing this editor?", "Disconnected -- Export Map?", MessageBoxButtons.YesNo) == System.Windows.Forms.DialogResult.Yes)
                 {
@@ -377,7 +372,7 @@ namespace Intersect_Editor.Forms
         {
             if (MessageBox.Show(@"Are you sure you want to save this map?", @"Save Map", MessageBoxButtons.YesNo) == DialogResult.Yes)
             {
-                PacketSender.SendMap(Globals.CurrentMap);
+                PacketSender.SendMap(Globals.CurrentMap.GetId());
             }
         }
         private void newMapToolStripMenuItem_Click(object sender, EventArgs e)
@@ -387,9 +382,9 @@ namespace Intersect_Editor.Forms
                     MessageBoxButtons.YesNo) != DialogResult.Yes) return;
             if (MessageBox.Show(@"Do you want to save your current map?", @"Save current map?", MessageBoxButtons.YesNo) == DialogResult.Yes)
             {
-                PacketSender.SendMap(Globals.CurrentMap);
+                PacketSender.SendMap(Globals.CurrentMap.GetId());
             }
-            PacketSender.SendCreateMap(-1, Globals.CurrentMap, null);
+            PacketSender.SendCreateMap(-1, Globals.CurrentMap.GetId(), null);
         }
         private void exportMapToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -400,7 +395,7 @@ namespace Intersect_Editor.Forms
 
             if (fileDialog.FileName != "")
             {
-                File.WriteAllBytes(fileDialog.FileName, Globals.GameMaps[Globals.CurrentMap].GetMapData(false));
+                File.WriteAllBytes(fileDialog.FileName, Globals.CurrentMap.GetMapData(false));
             }
         }
         private void importMapToolStripMenuItem_Click(object sender, EventArgs e)
@@ -413,7 +408,7 @@ namespace Intersect_Editor.Forms
             if (fileDialog.FileName != "")
             {
                 Globals.MapEditorWindow.PrepUndoState();
-                Globals.GameMaps[Globals.CurrentMap].Load(File.ReadAllBytes(fileDialog.FileName),true);
+                Globals.CurrentMap.Load(File.ReadAllBytes(fileDialog.FileName), true);
                 Globals.MapEditorWindow.AddUndoState();
             }
         }
@@ -502,47 +497,47 @@ namespace Intersect_Editor.Forms
         //Content Editors
         private void itemEditorToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            PacketSender.SendItemEditor();
+            PacketSender.SendOpenEditor(GameObject.Item);
         }
         private void npcEditorToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            PacketSender.SendNpcEditor();
+            PacketSender.SendOpenEditor(GameObject.Npc);
         }
         private void spellEditorToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            PacketSender.SendSpellEditor();
+            PacketSender.SendOpenEditor(GameObject.Spell);
         }
         private void animationEditorToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            PacketSender.SendAnimationEditor();
+            PacketSender.SendOpenEditor(GameObject.Animation);
         }
         private void resourceEditorToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            PacketSender.SendResourceEditor();
+            PacketSender.SendOpenEditor(GameObject.Resource);
         }
         private void classEditorToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            PacketSender.SendClassEditor();
+            PacketSender.SendOpenEditor(GameObject.Class);
         }
         private void questEditorToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            PacketSender.SendQuestEditor();
+            //PacketSender.SendQuestEditor();
         }
         private void projectileEditorToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            PacketSender.SendProjectileEditor();
+            PacketSender.SendOpenEditor(GameObject.Projectile);
         }
         private void commonEventEditorToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            PacketSender.SendOpenCommonEventEditor();
+            PacketSender.SendOpenEditor(GameObject.CommonEvent);
         }
         private void switchVariableEditorToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            PacketSender.SendOpenVariableSwitchEditor();
+            PacketSender.SendOpenEditor(GameObject.PlayerSwitch);
         }
         private void shopEditorToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            PacketSender.SendOpenShopEditor();
+            PacketSender.SendOpenEditor(GameObject.Shop);
         }
         //Help
         private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
@@ -562,7 +557,7 @@ namespace Intersect_Editor.Forms
         }
         private void toolStripBtnUndo_Click(object sender, EventArgs e)
         {
-            var tmpMap = Globals.GameMaps[Globals.CurrentMap];
+            var tmpMap = Globals.CurrentMap;
             if (Globals.MapEditorWindow.MapUndoStates.Count > 0)
             {
                 tmpMap.Load(Globals.MapEditorWindow.MapUndoStates[Globals.MapEditorWindow.MapUndoStates.Count - 1]);
@@ -575,7 +570,7 @@ namespace Intersect_Editor.Forms
         }
         private void toolStripBtnRedo_Click(object sender, EventArgs e)
         {
-            var tmpMap = Globals.GameMaps[Globals.CurrentMap];
+            var tmpMap = Globals.CurrentMap;
             if (Globals.MapEditorWindow.MapRedoStates.Count > 0)
             {
                 tmpMap.Load(Globals.MapEditorWindow.MapRedoStates[Globals.MapEditorWindow.MapRedoStates.Count - 1]);
@@ -612,7 +607,7 @@ namespace Intersect_Editor.Forms
                 using (var fs = new FileStream(fileDialog.FileName, FileMode.OpenOrCreate))
                 {
                     RenderTarget2D screenshotTexture = EditorGraphics.ScreenShotMap();
-                    screenshotTexture.SaveAsPng(fs,screenshotTexture.Width,screenshotTexture.Height);
+                    screenshotTexture.SaveAsPng(fs, screenshotTexture.Width, screenshotTexture.Height);
                 }
             }
         }
@@ -653,13 +648,13 @@ namespace Intersect_Editor.Forms
         }
 
         //Cross Threading Delegate Methods
-        private void TryOpenEditorMethod(int editorIndex)
+        private void TryOpenEditorMethod(GameObject type)
         {
-            if (Globals.CurrentEditor == -1)
+            if (Globals.CurrentEditor != -2)
             {
-                switch (editorIndex)
+                switch (type)
                 {
-                    case (int)EditorTypes.Animation:
+                    case GameObject.Animation:
                         if (_animationEditor == null || _animationEditor.Visible == false)
                         {
                             _animationEditor = new frmAnimation();
@@ -667,7 +662,7 @@ namespace Intersect_Editor.Forms
                             _animationEditor.Show();
                         }
                         break;
-                    case (int)EditorTypes.Item:
+                    case GameObject.Item:
                         if (_itemEditor == null || _itemEditor.Visible == false)
                         {
                             _itemEditor = new FrmItem();
@@ -675,7 +670,7 @@ namespace Intersect_Editor.Forms
                             _itemEditor.Show();
                         }
                         break;
-                    case (int)EditorTypes.Npc:
+                    case GameObject.Npc:
                         if (_npcEditor == null || _npcEditor.Visible == false)
                         {
                             _npcEditor = new frmNpc();
@@ -683,7 +678,7 @@ namespace Intersect_Editor.Forms
                             _npcEditor.Show();
                         }
                         break;
-                    case (int)EditorTypes.Resource:
+                    case GameObject.Resource:
                         if (_resourceEditor == null || _resourceEditor.Visible == false)
                         {
                             _resourceEditor = new frmResource();
@@ -691,7 +686,7 @@ namespace Intersect_Editor.Forms
                             _resourceEditor.Show();
                         }
                         break;
-                    case (int)EditorTypes.Spell:
+                    case GameObject.Spell:
                         if (_spellEditor == null || _spellEditor.Visible == false)
                         {
                             _spellEditor = new frmSpell();
@@ -699,7 +694,7 @@ namespace Intersect_Editor.Forms
                             _spellEditor.Show();
                         }
                         break;
-                    case (int)EditorTypes.Class:
+                    case GameObject.Class:
                         if (_classEditor == null || _classEditor.Visible == false)
                         {
                             _classEditor = new frmClass();
@@ -707,7 +702,7 @@ namespace Intersect_Editor.Forms
                             _classEditor.Show();
                         }
                         break;
-                    case (int)EditorTypes.Quest:
+                    case GameObject.Quest:
                         if (_questEditor == null || _questEditor.Visible == false)
                         {
                             _questEditor = new frmQuest();
@@ -715,7 +710,7 @@ namespace Intersect_Editor.Forms
                             _questEditor.Show();
                         }
                         break;
-                    case (int)EditorTypes.Projectile:
+                    case GameObject.Projectile:
                         if (_projectileEditor == null || _projectileEditor.Visible == false)
                         {
                             _projectileEditor = new frmProjectile();
@@ -723,14 +718,14 @@ namespace Intersect_Editor.Forms
                             _projectileEditor.Show();
                         }
                         break;
-                    case (int)EditorTypes.CommonEvent:
+                    case GameObject.CommonEvent:
                         if (_commonEventEditor == null || _commonEventEditor.Visible == false)
                         {
                             _commonEventEditor = new frmCommonEvent();
                             _commonEventEditor.Show();
                         }
                         break;
-                    case (int)EditorTypes.SwitchVariable:
+                    case GameObject.PlayerSwitch:
                         if (_switchVariableEditor == null || _switchVariableEditor.Visible == false)
                         {
                             _switchVariableEditor = new frmSwitchVariable();
@@ -738,7 +733,7 @@ namespace Intersect_Editor.Forms
                             _switchVariableEditor.Show();
                         }
                         break;
-                    case (int)EditorTypes.Shop:
+                    case GameObject.Shop:
                         if (_shopEditor == null || _shopEditor.Visible == false)
                         {
                             _shopEditor = new frmShop();
@@ -749,7 +744,7 @@ namespace Intersect_Editor.Forms
                     default:
                         return;
                 }
-                Globals.CurrentEditor = editorIndex;
+                Globals.CurrentEditor = (int)type;
             }
 
         }

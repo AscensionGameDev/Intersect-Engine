@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Intersect_Editor.Classes.Entities;
 using Intersect_Library;
 using Intersect_Library.GameObjects;
@@ -11,25 +8,24 @@ using Intersect_Library.GameObjects.Maps;
 
 namespace Intersect_Editor.Classes.Maps
 {
-    public class MapInstance : MapStruct
+    public class MapInstance : MapBase
     {
-
         //Map Attributes
+        public new const GameObject Type = GameObject.Map;
+        protected static Dictionary<int, DatabaseObject> Objects = new Dictionary<int, DatabaseObject>();
         private Dictionary<Intersect_Library.GameObjects.Maps.Attribute, AnimationInstance> _attributeAnimInstances = new Dictionary<Intersect_Library.GameObjects.Maps.Attribute, AnimationInstance>();
 
 
         public MapInstance(int mapNum) : base(mapNum, false)
         {
-            Dictionary<int, MapStruct> gameMaps = Globals.GameMaps.ToDictionary(k => k.Key, v => (MapStruct)v.Value);
             Autotiles = new MapAutotiles(this);
-            Autotiles.InitAutotiles(gameMaps);
+            Autotiles.InitAutotiles(MapBase.GetObjects());
         }
 
-        public MapInstance(MapStruct mapStruct) : base(mapStruct)
+        public MapInstance(MapBase mapStruct) : base(mapStruct)
         {
-            Dictionary<int, MapStruct> gameMaps = Globals.GameMaps.ToDictionary(k => k.Key, v => (MapStruct)v.Value);
             Autotiles = new MapAutotiles(this);
-            Autotiles.InitAutotiles(gameMaps);
+            Autotiles.InitAutotiles(MapBase.GetObjects());
         }
 
         public void Load(byte[] myArr, bool import = false)
@@ -47,8 +43,7 @@ namespace Intersect_Editor.Classes.Maps
                 Left = left;
                 Right = right;
             }
-            Dictionary<int, MapStruct> gameMaps = Globals.GameMaps.ToDictionary(k => k.Key, v => (MapStruct)v.Value);
-            Autotiles.InitAutotiles(gameMaps);
+            Autotiles.InitAutotiles(MapBase.GetObjects());
             UpdateAdjacentAutotiles();
         }
 
@@ -57,7 +52,7 @@ namespace Intersect_Editor.Classes.Maps
         {
             if (!_attributeAnimInstances.ContainsKey(attr))
             {
-                _attributeAnimInstances.Add(attr, new AnimationInstance(Globals.GameAnimations[animNum], true));
+                _attributeAnimInstances.Add(attr, new AnimationInstance(AnimationBase.GetAnim(animNum), true));
             }
             return _attributeAnimInstances[attr];
         }
@@ -72,54 +67,52 @@ namespace Intersect_Editor.Classes.Maps
         //Helper Functions
         public void UpdateAdjacentAutotiles()
         {
-            Dictionary<int, MapStruct> gameMaps = Globals.GameMaps.ToDictionary(k => k.Key, v => (MapStruct)v.Value);
-            if (Up > -1 && Globals.GameMaps.ContainsKey(Up))
+            if (GetMap(Up) != null)
             {
                 for (int x = 0; x < Options.MapWidth; x++)
                 {
                     for (int y = Options.MapHeight - 1; y < Options.MapHeight; y++)
                     {
-                        Globals.GameMaps[Up].Autotiles.UpdateAutoTiles(x, y, gameMaps);
+                        GetMap(Up).Autotiles.UpdateAutoTiles(x, y, MapBase.GetObjects());
                     }
                 }
             }
-            if (Down > -1 && Globals.GameMaps.ContainsKey(Down))
+            if (GetMap(Down) != null)
             {
                 for (int x = 0; x < Options.MapWidth; x++)
                 {
                     for (int y = 0; y < 1; y++)
                     {
-                        Globals.GameMaps[Down].Autotiles.UpdateAutoTiles(x, y, gameMaps);
+                        GetMap(Down).Autotiles.UpdateAutoTiles(x, y, MapBase.GetObjects());
                     }
                 }
             }
-            if (Left > -1 && Globals.GameMaps.ContainsKey(Left))
+            if (GetMap(Left) != null)
             {
                 for (int x = Options.MapWidth - 1; x < Options.MapWidth; x++)
                 {
                     for (int y = 0; y < Options.MapHeight; y++)
                     {
-                        Globals.GameMaps[Left].Autotiles.UpdateAutoTiles(x, y, gameMaps);
+                        GetMap(Left).Autotiles.UpdateAutoTiles(x, y, MapBase.GetObjects());
                     }
                 }
             }
-            if (Right > -1 && Globals.GameMaps.ContainsKey(Right))
+            if (GetMap(Right) != null)
             {
                 for (int x = 0; x < 1; x++)
                 {
                     for (int y = 0; y < Options.MapHeight; y++)
                     {
-                        Globals.GameMaps[Right].Autotiles.UpdateAutoTiles(x, y, gameMaps);
+                        GetMap(Right).Autotiles.UpdateAutoTiles(x, y, MapBase.GetObjects());
                     }
                 }
             }
         }
-        public EventStruct FindEventAt(int x, int y)
+        public EventBase FindEventAt(int x, int y)
         {
             if (Events.Count <= 0) return null;
-            foreach (var t in Events)
+            foreach (var t in Events.Values)
             {
-                if (t.Deleted == 1) continue;
                 if (t.SpawnX == x && t.SpawnY == y)
                 {
                     return t;
@@ -127,7 +120,7 @@ namespace Intersect_Editor.Classes.Maps
             }
             return null;
         }
-        public Light FindLightAt(int x, int y)
+        public LightBase FindLightAt(int x, int y)
         {
             if (Lights.Count <= 0) return null;
             foreach (var t in Lights)
@@ -150,6 +143,58 @@ namespace Intersect_Editor.Classes.Maps
                 }
             }
             return null;
+        }
+
+        public override byte[] GetData()
+        {
+            return GetMapData(false);
+        }
+
+        public override GameObject GetGameObjectType()
+        {
+            return Type;
+        }
+
+        public new static MapInstance GetMap(int index)
+        {
+            if (Objects.ContainsKey(index))
+            {
+                return (MapInstance)Objects[index];
+            }
+            return null;
+        }
+
+        public static DatabaseObject Get(int index)
+        {
+            if (Objects.ContainsKey(index))
+            {
+                return Objects[index];
+            }
+            return null;
+        }
+        public override void Delete()
+        {
+            Objects.Remove(GetId());
+            MapBase.GetObjects().Remove(GetId());
+        }
+        public static void ClearObjects()
+        {
+            Objects.Clear();
+            MapBase.ClearObjects();
+        }
+        public static void AddObject(int index, DatabaseObject obj)
+        {
+            Objects.Add(index, obj);
+            MapBase.Objects.Add(index, (MapBase)obj);
+        }
+        public static int ObjectCount()
+        {
+            return Objects.Count;
+        }
+        public static Dictionary<int, MapInstance> GetObjects()
+        {
+            Dictionary<int, MapInstance> objects = Objects.ToDictionary(k => k.Key, v => (MapInstance)v.Value);
+            return objects;
         }
 
         public void Dispose()

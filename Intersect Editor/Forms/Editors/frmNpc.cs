@@ -21,6 +21,7 @@
 */
 using Intersect_Editor.Classes;
 using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 using Intersect_Editor.Classes.Core;
@@ -31,76 +32,76 @@ namespace Intersect_Editor.Forms
 {
     public partial class frmNpc : Form
     {
-        private ByteBuffer[] _npcsBackup;
-        private bool[] _changed;
-        private int _editorIndex;
+        private List<NpcBase> _changed = new List<NpcBase>();
+        private NpcBase _editorItem = null;
 
         public frmNpc()
         {
             InitializeComponent();
+            PacketHandler.GameObjectUpdatedDelegate += GameObjectUpdatedDelegate;
         }
 
-        private void frmNpc_Load(object sender, EventArgs e)
+        private void GameObjectUpdatedDelegate(GameObject type)
         {
-            lstNpcs.SelectedIndex = 0;
-            cmbSprite.Items.Clear();
-            cmbSprite.Items.Add("None");
-            cmbSprite.Items.AddRange(GameContentManager.GetTextureNames(GameContentManager.TextureType.Entity));
-            scrlDropItem.Maximum = Options.MaxItems - 1;
-            UpdateEditor();
-        }
-
-        public void InitEditor()
-        {
-            _npcsBackup = new ByteBuffer[Options.MaxNpcs];
-            _changed = new bool[Options.MaxNpcs];
-            for (var i = 0; i < Options.MaxNpcs; i++)
+            if (type == GameObject.Npc)
             {
-                _npcsBackup[i] = new ByteBuffer();
-                _npcsBackup[i].WriteBytes(Globals.GameNpcs[i].NpcData());
-                lstNpcs.Items.Add((i + 1) + ") " + Globals.GameNpcs[i].Name);
-                _changed[i] = false;
+                InitEditor();
+                if (_editorItem != null && !NpcBase.GetObjects().ContainsValue(_editorItem))
+                {
+                    _editorItem = null;
+                    UpdateEditor();
+                }
             }
         }
 
-        private void UpdateEditor()
+        private void btnNew_Click(object sender, EventArgs e)
         {
-            _editorIndex = lstNpcs.SelectedIndex;
+            PacketSender.SendCreateObject(GameObject.Npc);
+        }
 
-            txtName.Text = Globals.GameNpcs[_editorIndex].Name;
-            cmbBehavior.SelectedIndex = Globals.GameNpcs[_editorIndex].Behavior;
-            cmbSprite.SelectedIndex = cmbSprite.FindString(Globals.GameNpcs[_editorIndex].Sprite);
-            scrlSightRange.Value = Globals.GameNpcs[_editorIndex].SightRange;
-            scrlSpawnDuration.Value = Globals.GameNpcs[_editorIndex].SpawnDuration;
-            scrlStr.Value = Globals.GameNpcs[_editorIndex].Stat[(int)Stats.Attack];
-            scrlMag.Value = Globals.GameNpcs[_editorIndex].Stat[(int)Stats.AbilityPower];
-            scrlDef.Value = Globals.GameNpcs[_editorIndex].Stat[(int)Stats.Defense];
-            scrlMR.Value = Globals.GameNpcs[_editorIndex].Stat[(int)Stats.MagicResist];
-            scrlSpd.Value = Globals.GameNpcs[_editorIndex].Stat[(int)Stats.Speed];
-            txtHP.Text = Globals.GameNpcs[_editorIndex].MaxVital[(int)Vitals.Health].ToString();
-            txtMana.Text = Globals.GameNpcs[_editorIndex].MaxVital[(int)Vitals.Mana].ToString();
-            txtExp.Text = Globals.GameNpcs[_editorIndex].Experience.ToString();
-            lblSpawnDuration.Text = @"Spawn Duration: " + scrlSpawnDuration.Value;
-            lblSightRange.Text = @"Sight Range: " + scrlSightRange.Value;
-            lblStr.Text = @"Strength: " + scrlStr.Value;
-            lblMag.Text = @"Magic: " + scrlMag.Value;
-            lblDef.Text = @"Armor: " + scrlDef.Value;
-            lblMR.Text = @"Magic Resist: " + scrlMR.Value;
-            lblSpd.Text = @"Move Speed: " + scrlSpd.Value;
-            scrlDropIndex.Value = 1;
-            UpdateDropValues();
-            DrawNpcSprite();
-            _changed[_editorIndex] = true;
+        private void btnUndo_Click(object sender, EventArgs e)
+        {
+            if (_changed.Contains(_editorItem) && _editorItem != null)
+            {
+                _editorItem.RestoreBackup();
+                UpdateEditor();
+            }
+        }
+
+        private void btnDelete_Click(object sender, EventArgs e)
+        {
+            if (_editorItem != null)
+            {
+                if (
+                    MessageBox.Show(
+                        "Are you sure you want to delete this game object? This action cannot be reverted!",
+                        "Delete Object", MessageBoxButtons.YesNo) == DialogResult.Yes)
+                {
+                    PacketSender.SendDeleteObject(_editorItem);
+                }
+            }
+        }
+
+        private void btnCancel_Click(object sender, EventArgs e)
+        {
+            foreach (var item in _changed)
+            {
+                item.RestoreBackup();
+                item.DeleteBackup();
+            }
+
+            Hide();
+            Globals.CurrentEditor = -1;
+            Dispose();
         }
 
         private void btnSave_Click(object sender, EventArgs e)
         {
-            for (var i = 0; i < Options.MaxNpcs; i++)
+            //Send Changed items
+            foreach (var item in _changed)
             {
-                if (_changed[i])
-                {
-                    PacketSender.SendNpc(i, Globals.GameNpcs[i].NpcData());
-                }
+                PacketSender.SendSaveObject(item);
+                item.DeleteBackup();
             }
 
             Hide();
@@ -110,51 +111,86 @@ namespace Intersect_Editor.Forms
 
         private void lstNpcs_Click(object sender, EventArgs e)
         {
+            _editorItem = NpcBase.GetNpc(Database.GameObjectIdFromList(GameObject.Npc, lstNpcs.SelectedIndex));
             UpdateEditor();
         }
 
-        private void btnDelete_Click(object sender, EventArgs e)
+        private void frmNpc_Load(object sender, EventArgs e)
         {
-            var tempItem = new NpcStruct();
-            var tempBuff = new ByteBuffer();
-            tempBuff.WriteBytes(tempItem.NpcData());
-            Globals.GameNpcs[_editorIndex].Load(tempBuff.ToArray(),_editorIndex);
-            tempBuff.Dispose();
+            cmbSprite.Items.Clear();
+            cmbSprite.Items.Add("None");
+            cmbSprite.Items.AddRange(GameContentManager.GetTextureNames(GameContentManager.TextureType.Entity));
+            scrlDropItem.Maximum = ItemBase.ObjectCount() - 1;
             UpdateEditor();
         }
 
-        private void btnCancel_Click(object sender, EventArgs e)
+        public void InitEditor()
         {
-            for (var i = 0; i < Options.MaxNpcs; i++)
+            lstNpcs.Items.Clear();
+            lstNpcs.Items.AddRange(Database.GetGameObjectList(GameObject.Npc));
+        }
+
+        private void UpdateEditor()
+        {
+            if (_editorItem != null)
             {
-                Globals.GameNpcs[i].Load(_npcsBackup[i].ToArray(),i);
-            }
+                pnlContainer.Show();
 
-            Hide();
-            Globals.CurrentEditor = -1;
-            Dispose();
+                txtName.Text = _editorItem.Name;
+                cmbBehavior.SelectedIndex = _editorItem.Behavior;
+                cmbSprite.SelectedIndex = cmbSprite.FindString(_editorItem.Sprite);
+                scrlSightRange.Value = _editorItem.SightRange;
+                scrlSpawnDuration.Value = _editorItem.SpawnDuration;
+                scrlStr.Value = _editorItem.Stat[(int) Stats.Attack];
+                scrlMag.Value = _editorItem.Stat[(int) Stats.AbilityPower];
+                scrlDef.Value = _editorItem.Stat[(int) Stats.Defense];
+                scrlMR.Value = _editorItem.Stat[(int) Stats.MagicResist];
+                scrlSpd.Value = _editorItem.Stat[(int) Stats.Speed];
+                txtHP.Text = _editorItem.MaxVital[(int) Vitals.Health].ToString();
+                txtMana.Text = _editorItem.MaxVital[(int) Vitals.Mana].ToString();
+                txtExp.Text = _editorItem.Experience.ToString();
+                lblSpawnDuration.Text = @"Spawn Duration: " + scrlSpawnDuration.Value;
+                lblSightRange.Text = @"Sight Range: " + scrlSightRange.Value;
+                lblStr.Text = @"Strength: " + scrlStr.Value;
+                lblMag.Text = @"Magic: " + scrlMag.Value;
+                lblDef.Text = @"Armor: " + scrlDef.Value;
+                lblMR.Text = @"Magic Resist: " + scrlMR.Value;
+                lblSpd.Text = @"Move Speed: " + scrlSpd.Value;
+                scrlDropIndex.Value = 1;
+                UpdateDropValues();
+                DrawNpcSprite();
+                if (_changed.IndexOf(_editorItem) == -1)
+                {
+                    _changed.Add(_editorItem);
+                    _editorItem.MakeBackup();
+                }
+            }
+            else
+            {
+                pnlContainer.Hide();
+            }
         }
 
         private void txtName_TextChanged(object sender, EventArgs e)
         {
-            Globals.GameNpcs[_editorIndex].Name = txtName.Text;
-            lstNpcs.Items[_editorIndex] = (_editorIndex + 1) + ") " + txtName.Text;
+            _editorItem.Name = txtName.Text;
+            lstNpcs.Items[Database.GameObjectListIndex(GameObject.Npc,_editorItem.GetId())] = txtName.Text;
         }
 
         private void cmbBehavior_SelectedIndexChanged(object sender, EventArgs e)
         {
-            Globals.GameNpcs[_editorIndex].Behavior = (byte)cmbBehavior.SelectedIndex;
+            _editorItem.Behavior = (byte)cmbBehavior.SelectedIndex;
         }
 
         private void cmbSprite_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (cmbSprite.SelectedIndex > 0)
             {
-                Globals.GameNpcs[_editorIndex].Sprite = cmbSprite.Text;
+                _editorItem.Sprite = cmbSprite.Text;
             }
             else
             {
-                Globals.GameNpcs[_editorIndex].Sprite = "";
+                _editorItem.Sprite = "";
             }
             DrawNpcSprite();
         }
@@ -162,64 +198,64 @@ namespace Intersect_Editor.Forms
         private void scrlSpawnDuration_Scroll(object sender, ScrollEventArgs e)
         {
             lblSpawnDuration.Text = @"Spawn Duration: " + scrlSpawnDuration.Value;
-            Globals.GameNpcs[_editorIndex].SpawnDuration = scrlSpawnDuration.Value;
+            _editorItem.SpawnDuration = scrlSpawnDuration.Value;
         }
 
         private void scrlSightRange_Scroll(object sender, ScrollEventArgs e)
         {
             lblSightRange.Text = @"Sight Range: " + scrlSightRange.Value;
-            Globals.GameNpcs[_editorIndex].SightRange = scrlSightRange.Value;
+            _editorItem.SightRange = scrlSightRange.Value;
         }
 
         private void scrlStr_Scroll(object sender, EventArgs e)
         {
             lblStr.Text = @"Strength: " + scrlStr.Value;
-            Globals.GameNpcs[_editorIndex].Stat[(int)Stats.Attack] = scrlStr.Value;
+            _editorItem.Stat[(int)Stats.Attack] = scrlStr.Value;
         }
 
         private void scrlMag_Scroll(object sender, EventArgs e)
         {
             lblMag.Text = @"Magic: " + scrlMag.Value;
-            Globals.GameNpcs[_editorIndex].Stat[(int)Stats.AbilityPower] = scrlMag.Value;
+            _editorItem.Stat[(int)Stats.AbilityPower] = scrlMag.Value;
         }
 
         private void scrlDef_Scroll(object sender, EventArgs e)
         {
             lblDef.Text = @"Armor: " + scrlDef.Value;
-            Globals.GameNpcs[_editorIndex].Stat[(int)Stats.Defense] = scrlDef.Value;
+            _editorItem.Stat[(int)Stats.Defense] = scrlDef.Value;
         }
 
         private void scrlMR_Scroll(object sender, EventArgs e)
         {
             lblMR.Text = @"Magic Resist: " + scrlMR.Value;
-            Globals.GameNpcs[_editorIndex].Stat[(int)Stats.MagicResist] = scrlMR.Value;
+            _editorItem.Stat[(int)Stats.MagicResist] = scrlMR.Value;
         }
 
         private void scrlSpd_Scroll(object sender, EventArgs e)
         {
             lblSpd.Text = @"Move Speed: " + scrlSpd.Value;
-            Globals.GameNpcs[_editorIndex].Stat[(int)Stats.Speed] = scrlSpd.Value;
+            _editorItem.Stat[(int)Stats.Speed] = scrlSpd.Value;
         }
 
         private void txtHP_TextChanged(object sender, EventArgs e)
         {
             int x = 0;
             int.TryParse(txtHP.Text, out x);
-            Globals.GameNpcs[_editorIndex].MaxVital[(int)Vitals.Health] = x;
+            _editorItem.MaxVital[(int)Vitals.Health] = x;
         }
 
         private void txtMana_TextChanged(object sender, EventArgs e)
         {
             int x = 0;
             int.TryParse(txtMana.Text, out x);
-            Globals.GameNpcs[_editorIndex].MaxVital[(int)Vitals.Mana] = x;
+            _editorItem.MaxVital[(int)Vitals.Mana] = x;
         }
 
         private void txtExp_TextChanged(object sender, EventArgs e)
         {
             int x = 0;
             int.TryParse(txtExp.Text, out x);
-            Globals.GameNpcs[_editorIndex].Experience  = x;
+            _editorItem.Experience  = x;
         }
 
         private void DrawNpcSprite()
@@ -241,29 +277,47 @@ namespace Intersect_Editor.Forms
         {
             int x = 0;
             int.TryParse(txtDropAmount.Text, out x);
-            Globals.GameNpcs[_editorIndex].Drops[scrlDropIndex.Value - 1].Amount = x;
+            _editorItem.Drops[scrlDropIndex.Value - 1].Amount = x;
         }
 
         private void scrlDropItem_Scroll(object sender, ScrollEventArgs e)
         {
-            lblDropItem.Text = @"Item " + (scrlDropItem.Value + 1) + @" - " + Globals.GameItems[scrlDropItem.Value].Name;
-            Globals.GameNpcs[_editorIndex].Drops[scrlDropIndex.Value - 1].ItemNum = scrlDropItem.Value;
+            if (scrlDropItem.Value == -1)
+            {
+                _editorItem.Drops[scrlDropIndex.Value].ItemNum = -1;
+                lblDropItem.Text = @"Item None";
+            }
+            else
+            {
+                _editorItem.Drops[scrlDropIndex.Value].ItemNum = Database.GameObjectIdFromList(GameObject.Item,scrlDropItem.Value);
+                lblDropItem.Text = @"Item " + ItemBase.GetName(_editorItem.Drops[scrlDropIndex.Value].ItemNum);
+            }
+            
         }
 
         private void UpdateDropValues()
         {
-            int index = scrlDropIndex.Value - 1;
+            int index = scrlDropIndex.Value;
             lblDropIndex.Text = "Drop: " + (index + 1);
-            scrlDropItem.Value = Globals.GameNpcs[_editorIndex].Drops[index].ItemNum;
-            lblDropItem.Text = @"Item " + (scrlDropItem.Value + 1) + @" - " + Globals.GameItems[scrlDropItem.Value].Name;
-            txtDropAmount.Text = Globals.GameNpcs[_editorIndex].Drops[index].Amount.ToString();
-            scrlDropChance.Value = Globals.GameNpcs[_editorIndex].Drops[index].Chance;
+            scrlDropItem.Value = Database.GameObjectListIndex(GameObject.Item,_editorItem.Drops[index].ItemNum);
+            if (scrlDropItem.Value == -1)
+            {
+                _editorItem.Drops[scrlDropIndex.Value].ItemNum = -1;
+                lblDropItem.Text = @"Item None";
+            }
+            else
+            {
+                _editorItem.Drops[scrlDropIndex.Value].ItemNum = Database.GameObjectIdFromList(GameObject.Item, scrlDropItem.Value);
+                lblDropItem.Text = @"Item " + ItemBase.GetName(_editorItem.Drops[scrlDropIndex.Value].ItemNum);
+            }
+            txtDropAmount.Text = _editorItem.Drops[index].Amount.ToString();
+            scrlDropChance.Value = _editorItem.Drops[index].Chance;
             lblDropChance.Text = @"Chance (" + scrlDropChance.Value + @"/100)";
         }
 
         private void scrlDropChance_Scroll(object sender, ScrollEventArgs e)
         {
-            Globals.GameNpcs[_editorIndex].Drops[scrlDropIndex.Value -1].Chance = scrlDropChance.Value;
+            _editorItem.Drops[scrlDropIndex.Value -1].Chance = scrlDropChance.Value;
             lblDropChance.Text = @"Chance (" + scrlDropChance.Value + @"/100)";
         }
 

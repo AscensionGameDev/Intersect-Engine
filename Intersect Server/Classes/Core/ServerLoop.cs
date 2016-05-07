@@ -23,6 +23,7 @@
 using System;
 using System.Threading;
 using Intersect_Server.Classes.General;
+using Intersect_Server.Classes.Maps;
 using Intersect_Server.Classes.Networking;
 
 namespace Intersect_Server.Classes.Core
@@ -35,7 +36,7 @@ namespace Intersect_Server.Classes.Core
             long cps = 0;
             while (Globals.ServerStarted)
             {
-                foreach (var map in Globals.GameMaps)
+                foreach (var map in MapInstance.GetObjects())
                 {
                     if (map.Value.Active) map.Value.Update();
                 }

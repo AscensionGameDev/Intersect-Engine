@@ -20,10 +20,8 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 using System;
-using System.Linq;
 using System.Windows.Forms;
 using Intersect_Editor.Classes;
-using Intersect_Editor.Classes.General;
 using Intersect_Library;
 using Intersect_Library.GameObjects.Events;
 
@@ -45,33 +43,33 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             switch (cmbConditionType.SelectedIndex)
             {
                 case 0: //Player Switch
-                    cmbSwitch.SelectedIndex = _myCommand.Ints[1];
+                    cmbSwitch.SelectedIndex = Database.GameObjectListIndex(GameObject.PlayerSwitch,_myCommand.Ints[1]);
                     cmbSwitchVal.SelectedIndex = _myCommand.Ints[2];
                     break;
                 case 1: //Player Variable
-                    cmbVariable.SelectedIndex = _myCommand.Ints[1];
+                    cmbVariable.SelectedIndex = Database.GameObjectListIndex(GameObject.PlayerVariable,_myCommand.Ints[1]);
                     cmbVariableMod.SelectedIndex = _myCommand.Ints[2];
                     txtVariableVal.Text = _myCommand.Ints[3].ToString();
                     break;
                 case 2: //Global Switch
-                    cmbSwitch.SelectedIndex = _myCommand.Ints[1];
+                    cmbSwitch.SelectedIndex = Database.GameObjectListIndex(GameObject.ServerSwitch, _myCommand.Ints[1]);
                     cmbSwitchVal.SelectedIndex = _myCommand.Ints[2];
                     break;
                 case 3: //Global Variable
-                    cmbVariable.SelectedIndex = _myCommand.Ints[1];
+                    cmbVariable.SelectedIndex = Database.GameObjectListIndex(GameObject.ServerVariable, _myCommand.Ints[1]);
                     cmbVariableMod.SelectedIndex = _myCommand.Ints[2];
                     txtVariableVal.Text = _myCommand.Ints[3].ToString();
                     break;
                 case 4: //Has Item
-                    cmbItem.SelectedIndex = _myCommand.Ints[1];
+                    cmbItem.SelectedIndex = Database.GameObjectListIndex(GameObject.Item, _myCommand.Ints[1]);
                     scrlItemQuantity.Value = _myCommand.Ints[2];
                     lblItemQuantity.Text = @"Has at least: " + scrlItemQuantity.Value;
                     break;
                 case 5: //Class Is
-                    cmbClass.SelectedIndex = _myCommand.Ints[1];
+                    cmbClass.SelectedIndex = Database.GameObjectListIndex(GameObject.Class, _myCommand.Ints[1]);
                     break;
                 case 6: //Knows spell
-                    cmbSpell.SelectedIndex = _myCommand.Ints[1];
+                    cmbSpell.SelectedIndex = Database.GameObjectListIndex(GameObject.Spell, _myCommand.Ints[1]);
                     break;
                 case 7: //Level is...
                     cmbLevelComparator.SelectedIndex = _myCommand.Ints[1];
@@ -104,10 +102,7 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
                     grpSwitch.Text = "Player Switch";
                     grpSwitch.Show();
                     cmbSwitch.Items.Clear();
-                    for (int i = 0; i < Options.MaxPlayerSwitches; i++)
-                    {
-                        cmbSwitch.Items.Add((i + 1) + ". " + Globals.PlayerSwitches[i]);
-                    }
+                    cmbSwitch.Items.AddRange(Database.GetGameObjectList(GameObject.PlayerSwitch));
                     cmbSwitch.SelectedIndex = 0;
                     cmbSwitchVal.SelectedIndex = 0;
                     break;
@@ -115,10 +110,7 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
                     grpPlayerVariable.Text = "Player Variable";
                     grpPlayerVariable.Show();
                     cmbVariable.Items.Clear();
-                    for (int i = 0; i < Options.MaxPlayerVariables; i++)
-                    {
-                        cmbVariable.Items.Add((i + 1) + ". " + Globals.PlayerVariables[i]);
-                    }
+                    cmbVariable.Items.AddRange(Database.GetGameObjectList(GameObject.PlayerVariable));
                     cmbVariable.SelectedIndex = 0;
                     cmbVariableMod.SelectedIndex = 0;
                     txtVariableVal.Text = @"0";
@@ -127,10 +119,7 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
                     grpPlayerVariable.Text = "Global Switch";
                     grpSwitch.Show();
                     cmbSwitch.Items.Clear();
-                    for (int i = 0; i < Options.MaxServerSwitches; i++)
-                    {
-                        cmbSwitch.Items.Add((i + 1) + ". " + Globals.ServerSwitches[i]);
-                    }
+                    cmbSwitch.Items.AddRange(Database.GetGameObjectList(GameObject.ServerSwitch));
                     cmbSwitch.SelectedIndex = 0;
                     cmbSwitchVal.SelectedIndex = 0;
                     break;
@@ -138,10 +127,7 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
                     grpPlayerVariable.Text = "Global Variable";
                     grpPlayerVariable.Show();
                     cmbVariable.Items.Clear();
-                    for (int i = 0; i < Options.MaxServerVariables; i++)
-                    {
-                        cmbVariable.Items.Add((i + 1) + ". " + Globals.ServerVariables[i]);
-                    }
+                    cmbVariable.Items.AddRange(Database.GetGameObjectList(GameObject.ServerVariable));
                     cmbVariable.SelectedIndex = 0;
                     cmbVariableMod.SelectedIndex = 0;
                     txtVariableVal.Text = @"0";
@@ -149,29 +135,20 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
                 case 4: //Has Item
                     grpHasItem.Show();
                     cmbItem.Items.Clear();
-                    for (int i = 0; i < Globals.GameItems.Count(); i++)
-                    {
-                        cmbItem.Items.Add((i + 1) + ". " + Globals.GameItems[i].Name);
-                    }
+                    cmbItem.Items.AddRange(Database.GetGameObjectList(GameObject.Item));
                     cmbItem.SelectedIndex = 0;
                     scrlItemQuantity.Value = 1;
                     break;
                 case 5: //Class is
                     grpClass.Show();
                     cmbClass.Items.Clear();
-                    for (int i = 0; i < Globals.GameClasses.Count(); i++)
-                    {
-                        cmbClass.Items.Add((i + 1) + ". " + Globals.GameClasses[i].Name);
-                    }
+                    cmbClass.Items.AddRange(Database.GetGameObjectList(GameObject.Class));
                     cmbClass.SelectedIndex = 0;
                     break;
                 case 6: //Knows spell
                     grpSpell.Show();
                     cmbSpell.Items.Clear();
-                    for (int i = 0; i < Globals.GameSpells.Count(); i++)
-                    {
-                        cmbSpell.Items.Add((i + 1) + ". " + Globals.GameSpells[i].Name);
-                    }
+                    cmbSpell.Items.AddRange(Database.GetGameObjectList(GameObject.Spell));
                     cmbSpell.SelectedIndex = 0;
                     break;
                 case 7: //Level is...
@@ -212,11 +189,11 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             switch (_myCommand.Ints[0])
             {
                 case 0: //Player Switch
-                    _myCommand.Ints[1] = cmbSwitch.SelectedIndex;
+                    _myCommand.Ints[1] = Database.GameObjectIdFromList(GameObject.PlayerSwitch,cmbSwitch.SelectedIndex);
                     _myCommand.Ints[2] = cmbSwitchVal.SelectedIndex;
                     break;
                 case 1: //Player Variable
-                    _myCommand.Ints[1] = cmbVariable.SelectedIndex;
+                    _myCommand.Ints[1] = Database.GameObjectIdFromList(GameObject.PlayerVariable, cmbVariable.SelectedIndex);
                     _myCommand.Ints[2] = cmbVariableMod.SelectedIndex;
                     if (int.TryParse(txtVariableVal.Text, out n))
                     {
@@ -228,11 +205,11 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
                     }
                     break;
                 case 2: //Global Switch
-                    _myCommand.Ints[1] = cmbSwitch.SelectedIndex;
+                    _myCommand.Ints[1] = Database.GameObjectIdFromList(GameObject.ServerSwitch, cmbSwitch.SelectedIndex);
                     _myCommand.Ints[2] = cmbSwitchVal.SelectedIndex;
                     break;
                 case 3: //Global Variable
-                    _myCommand.Ints[1] = cmbVariable.SelectedIndex;
+                    _myCommand.Ints[1] = Database.GameObjectIdFromList(GameObject.ServerVariable, cmbVariable.SelectedIndex);
                     _myCommand.Ints[2] = cmbVariableMod.SelectedIndex;
                     if (int.TryParse(txtVariableVal.Text, out n))
                     {
@@ -244,14 +221,14 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
                     }
                     break;
                 case 4: //Has Item
-                    _myCommand.Ints[1] = cmbItem.SelectedIndex;
+                    _myCommand.Ints[1] = Database.GameObjectIdFromList(GameObject.Item, cmbItem.SelectedIndex);
                     _myCommand.Ints[2] = scrlItemQuantity.Value;
                     break;
                 case 5: //Class Is
-                    _myCommand.Ints[1] = cmbClass.SelectedIndex;
+                    _myCommand.Ints[1] = Database.GameObjectIdFromList(GameObject.Class, cmbClass.SelectedIndex);
                     break;
                 case 6: //Knows spell
-                    _myCommand.Ints[1] = cmbSpell.SelectedIndex;
+                    _myCommand.Ints[1] = Database.GameObjectIdFromList(GameObject.Spell, cmbSpell.SelectedIndex);
                     break;
                 case 7: //Level is
                     _myCommand.Ints[1] = cmbLevelComparator.SelectedIndex;

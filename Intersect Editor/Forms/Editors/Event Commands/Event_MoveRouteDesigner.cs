@@ -20,9 +20,8 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 using System;
-using System.Collections.Generic;
+using System.Linq;
 using System.Windows.Forms;
-using Intersect_Editor.Classes;
 using Intersect_Library.GameObjects.Events;
 using Intersect_Library.GameObjects.Maps;
 
@@ -33,12 +32,11 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
         private EventMoveRoute _editingRoute;
         private EventMoveRoute _tmpMoveRoute;
         private FrmEvent _eventEditor;
-        private readonly EventStruct _editingEvent;
+        private readonly EventBase _editingEvent;
         private EventCommand _editingCommand;
-        private MapStruct _currentMap;
-        private List<int> _targetIndicies = new List<int>();
+        private MapBase _currentMap;
         private MoveRouteAction _lastAddedAction;
-        public Event_MoveRouteDesigner(FrmEvent eventEditor, MapStruct currentMap, EventStruct currentEvent, EventMoveRoute editingRoute, EventCommand editingCommand = null)
+        public Event_MoveRouteDesigner(FrmEvent eventEditor, MapBase currentMap, EventBase currentEvent, EventMoveRoute editingRoute, EventCommand editingCommand = null)
         {
             InitializeComponent();
 
@@ -58,39 +56,19 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             chkRepeatRoute.Checked = _tmpMoveRoute.RepeatRoute;
 
             cmbTarget.Items.Clear();
-
             if (!_editingEvent.CommonEvent)
             {
-                for (int i = 0; i < currentMap.Events.Count; i++)
+                foreach (var evt in _currentMap.Events)
                 {
-                    if (i == _editingEvent.MyIndex)
+                    cmbTarget.Items.Add(evt.Key == _editingEvent.MyIndex ? "[THIS EVENT] " : "" + evt.Value.MyName);
+                    if (_editingCommand != null)
                     {
-                        cmbTarget.Items.Add((i + 1) + ". [THIS EVENT] " + currentMap.Events[i].MyName);
-                        _targetIndicies.Add(i);
-                        if (_editingCommand == null)
-                        {
-                            cmbTarget.SelectedIndex = cmbTarget.Items.Count-1;
-                            cmbTarget.Enabled = false;
-                        }
-                        else
-                        {
-                            if (_editingRoute.Target == i || _editingRoute.Target == -1)
-                            {
-                                cmbTarget.SelectedIndex = cmbTarget.Items.Count - 1;
-                            }
-                        }
+                        if (_editingCommand.Ints[0] == evt.Key) cmbTarget.SelectedIndex = cmbTarget.Items.Count - 1;
                     }
                     else
                     {
-                        if (currentMap.Events[i].Deleted == 0)
-                        {
-                            cmbTarget.Items.Add((i + 1) + ". " + currentMap.Events[i].MyName);
-                            _targetIndicies.Add(i);
-                            if (_editingRoute.Target == i)
-                            {
-                                cmbTarget.SelectedIndex = cmbTarget.Items.Count - 1;
-                            }
-                        }
+                        if (_editingRoute.Target == evt.Key || _editingRoute.Target == -1)
+                            cmbTarget.SelectedIndex = cmbTarget.Items.Count - 1;
                     }
                 }
             }
@@ -351,7 +329,7 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             {
                 if (!_editingEvent.CommonEvent)
                 {
-                    _editingRoute.Target = _targetIndicies[cmbTarget.SelectedIndex];
+                    _editingRoute.Target = _currentMap.Events.Keys.ToList()[cmbTarget.SelectedIndex];
                 }
                 _eventEditor.FinishCommandEdit(true);
             }

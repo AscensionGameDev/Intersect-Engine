@@ -22,6 +22,7 @@
 using System;
 using System.Collections.Generic;
 using Intersect_Library;
+using Intersect_Library.GameObjects;
 using Intersect_Library.GameObjects.Events;
 using Intersect_Server.Classes.Core;
 using Intersect_Server.Classes.General;
@@ -34,7 +35,7 @@ namespace Intersect_Server.Classes.Entities
 {
     public class EventInstance
     {
-        public EventStruct BaseEvent;
+        public EventBase BaseEvent;
         public bool IsGlobal;
         public int MapNum;
         public int MyIndex;
@@ -53,7 +54,7 @@ namespace Intersect_Server.Classes.Entities
 
         public Stack<CommandInstance> CallStack = new Stack<CommandInstance>();
 
-        public EventInstance(int index, Client client, EventStruct baseEvent, int mapNum)
+        public EventInstance(int index, Client client, EventBase baseEvent, int mapNum)
         {
             MyIndex = index;
             MyClient = client;
@@ -65,7 +66,7 @@ namespace Intersect_Server.Classes.Entities
             CurrentY = baseEvent.SpawnY;
         }
 
-        public EventInstance(EventStruct baseEvent, int index, int mapNum) //Global constructor
+        public EventInstance(EventBase baseEvent, int index, int mapNum) //Global constructor
         {
             IsGlobal = true;
             MapNum = mapNum;
@@ -178,7 +179,7 @@ namespace Intersect_Server.Classes.Entities
                     {
                         if (IsGlobal)
                         {
-                            PageInstance = new EventPageInstance(BaseEvent, BaseEvent.MyPages[i], BaseEvent.MyIndex, MapNum, this, MyClient, Globals.GameMaps[MapNum].GetGlobalEventInstance(BaseEvent).GlobalPageInstance[i]);
+                            PageInstance = new EventPageInstance(BaseEvent, BaseEvent.MyPages[i], BaseEvent.MyIndex, MapNum, this, MyClient, MapInstance.GetMap(MapNum).GetGlobalEventInstance(BaseEvent).GlobalPageInstance[i]);
                             PageIndex = i;
                         }
                         else
@@ -194,7 +195,7 @@ namespace Intersect_Server.Classes.Entities
 
         }
 
-        public bool CanSpawnPage(int pageIndex, EventStruct eventStruct)
+        public bool CanSpawnPage(int pageIndex, EventBase eventStruct)
         {
             for (int i = 0; i < eventStruct.MyPages[pageIndex].Conditions.Count; i++)
             {
@@ -241,32 +242,41 @@ namespace Intersect_Server.Classes.Entities
                     }
                     break;
                 case 2: //Player Switch
-                    if (Globals.ServerSwitchValues[conditionCommand.Ints[1]] == Convert.ToBoolean(conditionCommand.Ints[2]))
-                    {
+                    var serverSwitch = ServerSwitchBase.GetSwitch(conditionCommand.Ints[1]);
+                    if (serverSwitch != null && serverSwitch.Value == Convert.ToBoolean(conditionCommand.Ints[2]))
                         return true;
-                    }
                     break;
                 case 3: //Player Variable
-                    switch (conditionCommand.Ints[2])//Comparator
+                    var serverVariable = ServerVariableBase.GetVariable(conditionCommand.Ints[1]);
+                    if (serverVariable != null)
                     {
-                        case 0: //Equal to
-                            if (Globals.ServerVariableValues[conditionCommand.Ints[1]] == conditionCommand.Ints[3]) return true;
-                            break;
-                        case 1: //Greater than or equal to
-                            if (Globals.ServerVariableValues[conditionCommand.Ints[1]] >= conditionCommand.Ints[3]) return true;
-                            break;
-                        case 2: //Less than or equal to
-                            if (Globals.ServerVariableValues[conditionCommand.Ints[1]] <= conditionCommand.Ints[3]) return true;
-                            break;
-                        case 3: //Greater than
-                            if (Globals.ServerVariableValues[conditionCommand.Ints[1]] > conditionCommand.Ints[3]) return true;
-                            break;
-                        case 4: //Less than
-                            if (Globals.ServerVariableValues[conditionCommand.Ints[1]] < conditionCommand.Ints[3]) return true;
-                            break;
-                        case 5: //Does not equal
-                            if (Globals.ServerVariableValues[conditionCommand.Ints[1]] != conditionCommand.Ints[3]) return true;
-                            break;
+                        switch (conditionCommand.Ints[2]) //Comparator
+                        {
+                            case 0: //Equal to
+                                if (serverVariable.Value == conditionCommand.Ints[3])
+                                    return true;
+                                break;
+                            case 1: //Greater than or equal to
+                                if (serverVariable.Value >= conditionCommand.Ints[3])
+                                    return true;
+                                break;
+                            case 2: //Less than or equal to
+                                if (serverVariable.Value <= conditionCommand.Ints[3])
+                                    return true;
+                                break;
+                            case 3: //Greater than
+                                if (serverVariable.Value > conditionCommand.Ints[3])
+                                    return true;
+                                break;
+                            case 4: //Less than
+                                if (serverVariable.Value < conditionCommand.Ints[3])
+                                    return true;
+                                break;
+                            case 5: //Does not equal
+                                if (serverVariable.Value != conditionCommand.Ints[3])
+                                    return true;
+                                break;
+                        }
                     }
                     break;
                 case 4: //Has Item
@@ -313,12 +323,12 @@ namespace Intersect_Server.Classes.Entities
                 case 8: //Self Switch
                     if (IsGlobal)
                     {
-                        for (int i = 0; i < Globals.GameMaps[MapNum].GlobalEvents.Count; i++)
+                        for (int i = 0; i < MapInstance.GetMap(MapNum).GlobalEvents.Count; i++)
                         {
-                            if (Globals.GameMaps[MapNum].GlobalEvents[i] != null &&
-                                Globals.GameMaps[MapNum].GlobalEvents[i].BaseEvent == BaseEvent)
+                            if (MapInstance.GetMap(MapNum).GlobalEvents[i] != null &&
+                                MapInstance.GetMap(MapNum).GlobalEvents[i].BaseEvent == BaseEvent)
                             {
-                                if (Globals.GameMaps[MapNum].GlobalEvents[i].SelfSwitch[conditionCommand.Ints[1]] == Convert.ToBoolean(conditionCommand.Ints[2]))
+                                if (MapInstance.GetMap(MapNum).GlobalEvents[i].SelfSwitch[conditionCommand.Ints[1]] == Convert.ToBoolean(conditionCommand.Ints[2]))
                                     return true;
                             }
                         }
@@ -379,8 +389,12 @@ namespace Intersect_Server.Classes.Entities
                     }
                     else if(command.Ints[0] == (int)SwitchVariableTypes.ServerSwitch)
                     {
-                        Globals.ServerSwitchValues[command.Ints[1]] = Convert.ToBoolean(command.Ints[2]);
-                        Database.SaveSwitchesAndVariables();
+                        var serverSwitch = ServerSwitchBase.GetSwitch(command.Ints[1]);
+                        if (serverSwitch != null)
+                        {
+                            serverSwitch.Value = Convert.ToBoolean(command.Ints[2]);
+                           Database.SaveGameObject(serverSwitch);
+                        }
                     }
                     CallStack.Peek().CommandIndex++;
                     break;
@@ -405,22 +419,26 @@ namespace Intersect_Server.Classes.Entities
                     }
                     else if (command.Ints[0] == (int) SwitchVariableTypes.ServerVariable)
                     {
-                        switch (command.Ints[2])
+                        var serverVarible = ServerVariableBase.GetVariable(command.Ints[1]);
+                        if (serverVarible != null)
                         {
-                            case 0: //Set
-                               Globals.ServerVariableValues[command.Ints[1]] = command.Ints[3];
-                                break;
-                            case 1: //Add
-                                Globals.ServerVariableValues[command.Ints[1]] += command.Ints[3];
-                                break;
-                            case 2: //Subtract
-                                Globals.ServerVariableValues[command.Ints[1]] -= command.Ints[3];
-                                break;
-                            case 3: //Random
-                                Globals.ServerVariableValues[command.Ints[1]] = Globals.Rand.Next(command.Ints[3], command.Ints[4] + 1);
-                                break;
+                            switch (command.Ints[2])
+                            {
+                                case 0: //Set
+                                    serverVarible.Value = command.Ints[3];
+                                    break;
+                                case 1: //Add
+                                    serverVarible.Value += command.Ints[3];
+                                    break;
+                                case 2: //Subtract
+                                    serverVarible.Value -= command.Ints[3];
+                                    break;
+                                case 3: //Random
+                                    serverVarible.Value = Globals.Rand.Next(command.Ints[3],command.Ints[4] + 1);
+                                    break;
+                            }
                         }
-                        Database.SaveSwitchesAndVariables();
+                        Database.SaveGameObject(serverVarible);
                     }
                     
                     CallStack.Peek().CommandIndex++;
@@ -428,12 +446,12 @@ namespace Intersect_Server.Classes.Entities
                 case EventCommandType.SetSelfSwitch:
                     if (IsGlobal)
                     {
-                        for (int i = 0; i < Globals.GameMaps[MapNum].GlobalEvents.Count; i++)
+                        for (int i = 0; i < MapInstance.GetMap(MapNum).GlobalEvents.Count; i++)
                         {
-                            if (Globals.GameMaps[MapNum].GlobalEvents[i] != null &&
-                                Globals.GameMaps[MapNum].GlobalEvents[i].BaseEvent == BaseEvent)
+                            if (MapInstance.GetMap(MapNum).GlobalEvents[i] != null &&
+                                MapInstance.GetMap(MapNum).GlobalEvents[i].BaseEvent == BaseEvent)
                             {
-                                Globals.GameMaps[MapNum].GlobalEvents[i].SelfSwitch[command.Ints[0]] = Convert.ToBoolean(command.Ints[1]);
+                                MapInstance.GetMap(MapNum).GlobalEvents[i].SelfSwitch[command.Ints[0]] = Convert.ToBoolean(command.Ints[1]);
                             }
                         }
                     }
@@ -486,17 +504,22 @@ namespace Intersect_Server.Classes.Entities
                     break;
                 case EventCommandType.StartCommonEvent:
                     CallStack.Peek().CommandIndex++;
-                    for (int i = 0; i < Globals.CommonEvents[command.Ints[0]].MyPages.Count; i++)
+                    var commonEvent = EventBase.GetEvent(command.Ints[0]);
+                    if (commonEvent != null)
                     {
-                        if (CanSpawnPage(i, Globals.CommonEvents[command.Ints[0]]))
+                        for (int i = 0; i < commonEvent.MyPages.Count; i++)
                         {
-                            var commonEventStack = new CommandInstance(Globals.CommonEvents[command.Ints[0]].MyPages[i])
+                            if (CanSpawnPage(i, commonEvent))
                             {
-                                CommandIndex = 0,
-                                ListIndex = 0,
-                            };
+                                var commonEventStack =
+                                    new CommandInstance(commonEvent.MyPages[i])
+                                    {
+                                        CommandIndex = 0,
+                                        ListIndex = 0,
+                                    };
 
-                            CallStack.Push(commonEventStack);
+                                CallStack.Push(commonEventStack);
+                            }
                         }
                     }
 
@@ -743,7 +766,7 @@ namespace Intersect_Server.Classes.Entities
                     tile = new TileHelper(mapNum, tileX, tileY);
                     if (tile.TryFix())
                     {
-                        Globals.GameMaps[mapNum].SpawnNpc(tileX, tileY, direction, npcNum);
+                        MapInstance.GetMap(mapNum).SpawnNpc(tileX, tileY, direction, npcNum);
                     }
                     CallStack.Peek().CommandIndex++;
                     break;

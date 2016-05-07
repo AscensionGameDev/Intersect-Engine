@@ -22,6 +22,7 @@
 using System;
 using System.Windows.Forms;
 using Intersect_Editor.Classes;
+using Intersect_Library;
 using Intersect_Library.GameObjects.Events;
 
 namespace Intersect_Editor.Forms.Editors.Event_Commands
@@ -36,13 +37,10 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             InitializeComponent();
             cmbAnimation.Items.Clear();
             cmbAnimation.Items.Add("None");
-            for (int i = 0; i < Globals.GameAnimations.Length; i++)
+            cmbAnimation.Items.AddRange(Database.GetGameObjectList(GameObject.Animation));
+            if (!newAction)
             {
-                cmbAnimation.Items.Add((i + 1) + ". " + Globals.GameAnimations[i].Name);
-            }
-            if (newAction)
-            {
-                cmbAnimation.SelectedIndex = action.AnimationIndex + 1;
+                cmbAnimation.SelectedIndex = Database.GameObjectListIndex(GameObject.Animation,action.AnimationIndex);
             }
             _newAction = newAction;
             _routeDesigner = moveRouteDesigner;
@@ -51,7 +49,7 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
 
         private void btnOkay_Click(object sender, EventArgs e)
         {
-            _myAction.AnimationIndex = cmbAnimation.SelectedIndex - 1;
+            _myAction.AnimationIndex = Database.GameObjectIdFromList(GameObject.Animation,cmbAnimation.SelectedIndex);
             _routeDesigner.Controls.Remove(this);
         }
 

@@ -30,10 +30,10 @@
         {
             this.components = new System.ComponentModel.Container();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.btnCancel = new System.Windows.Forms.Button();
-            this.btnDelete = new System.Windows.Forms.Button();
-            this.btnSave = new System.Windows.Forms.Button();
+            this.btnUndo = new System.Windows.Forms.Button();
             this.lstAnimations = new System.Windows.Forms.ListBox();
+            this.btnNew = new System.Windows.Forms.Button();
+            this.btnDelete = new System.Windows.Forms.Button();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.btnSwap = new System.Windows.Forms.Button();
             this.scrlDarkness = new System.Windows.Forms.HScrollBar();
@@ -86,6 +86,9 @@
             this.picUpperAnimation = new System.Windows.Forms.PictureBox();
             this.tmrUpperAnimation = new System.Windows.Forms.Timer(this.components);
             this.tmrLowerAnimation = new System.Windows.Forms.Timer(this.components);
+            this.btnCancel = new System.Windows.Forms.Button();
+            this.btnSave = new System.Windows.Forms.Button();
+            this.pnlContainer = new System.Windows.Forms.Panel();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -96,14 +99,15 @@
             this.groupBox6.SuspendLayout();
             this.groupBox7.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.picUpperAnimation)).BeginInit();
+            this.pnlContainer.SuspendLayout();
             this.SuspendLayout();
             // 
             // groupBox1
             // 
-            this.groupBox1.Controls.Add(this.btnCancel);
-            this.groupBox1.Controls.Add(this.btnDelete);
-            this.groupBox1.Controls.Add(this.btnSave);
+            this.groupBox1.Controls.Add(this.btnUndo);
             this.groupBox1.Controls.Add(this.lstAnimations);
+            this.groupBox1.Controls.Add(this.btnNew);
+            this.groupBox1.Controls.Add(this.btnDelete);
             this.groupBox1.Location = new System.Drawing.Point(3, 2);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(203, 537);
@@ -111,37 +115,16 @@
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Animations";
             // 
-            // btnCancel
+            // btnUndo
             // 
-            this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.btnCancel.Location = new System.Drawing.Point(5, 500);
-            this.btnCancel.Name = "btnCancel";
-            this.btnCancel.Size = new System.Drawing.Size(190, 27);
-            this.btnCancel.TabIndex = 4;
-            this.btnCancel.Text = "Cancel";
-            this.btnCancel.UseVisualStyleBackColor = true;
-            this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
-            // 
-            // btnDelete
-            // 
-            this.btnDelete.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.btnDelete.Location = new System.Drawing.Point(6, 468);
-            this.btnDelete.Name = "btnDelete";
-            this.btnDelete.Size = new System.Drawing.Size(190, 27);
-            this.btnDelete.TabIndex = 3;
-            this.btnDelete.Text = "Delete";
-            this.btnDelete.UseVisualStyleBackColor = true;
-            this.btnDelete.Click += new System.EventHandler(this.btnDelete_Click);
-            // 
-            // btnSave
-            // 
-            this.btnSave.Location = new System.Drawing.Point(5, 435);
-            this.btnSave.Name = "btnSave";
-            this.btnSave.Size = new System.Drawing.Size(190, 27);
-            this.btnSave.TabIndex = 2;
-            this.btnSave.Text = "Save";
-            this.btnSave.UseVisualStyleBackColor = true;
-            this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
+            this.btnUndo.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            this.btnUndo.Location = new System.Drawing.Point(6, 499);
+            this.btnUndo.Name = "btnUndo";
+            this.btnUndo.Size = new System.Drawing.Size(190, 27);
+            this.btnUndo.TabIndex = 10;
+            this.btnUndo.Text = "Undo Changes";
+            this.btnUndo.UseVisualStyleBackColor = true;
+            this.btnUndo.Click += new System.EventHandler(this.btnUndo_Click);
             // 
             // lstAnimations
             // 
@@ -150,7 +133,29 @@
             this.lstAnimations.Name = "lstAnimations";
             this.lstAnimations.Size = new System.Drawing.Size(191, 407);
             this.lstAnimations.TabIndex = 1;
-            this.lstAnimations.SelectedIndexChanged += new System.EventHandler(this.lstAnimations_SelectedIndexChanged);
+            this.lstAnimations.Click += new System.EventHandler(this.lstAnimations_Click);
+            // 
+            // btnNew
+            // 
+            this.btnNew.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            this.btnNew.Location = new System.Drawing.Point(6, 433);
+            this.btnNew.Name = "btnNew";
+            this.btnNew.Size = new System.Drawing.Size(190, 27);
+            this.btnNew.TabIndex = 8;
+            this.btnNew.Text = "New";
+            this.btnNew.UseVisualStyleBackColor = true;
+            this.btnNew.Click += new System.EventHandler(this.btnNew_Click);
+            // 
+            // btnDelete
+            // 
+            this.btnDelete.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            this.btnDelete.Location = new System.Drawing.Point(7, 466);
+            this.btnDelete.Name = "btnDelete";
+            this.btnDelete.Size = new System.Drawing.Size(190, 27);
+            this.btnDelete.TabIndex = 7;
+            this.btnDelete.Text = "Delete";
+            this.btnDelete.UseVisualStyleBackColor = true;
+            this.btnDelete.Click += new System.EventHandler(this.btnDelete_Click);
             // 
             // groupBox2
             // 
@@ -161,7 +166,7 @@
             this.groupBox2.Controls.Add(this.cmbSound);
             this.groupBox2.Controls.Add(this.label1);
             this.groupBox2.Controls.Add(this.txtName);
-            this.groupBox2.Location = new System.Drawing.Point(216, 2);
+            this.groupBox2.Location = new System.Drawing.Point(1, 1);
             this.groupBox2.Name = "groupBox2";
             this.groupBox2.Size = new System.Drawing.Size(988, 76);
             this.groupBox2.TabIndex = 18;
@@ -251,7 +256,7 @@
             this.groupBox3.Controls.Add(this.cmbLowerGraphic);
             this.groupBox3.Controls.Add(this.label3);
             this.groupBox3.Controls.Add(this.picLowerAnimation);
-            this.groupBox3.Location = new System.Drawing.Point(216, 85);
+            this.groupBox3.Location = new System.Drawing.Point(1, 84);
             this.groupBox3.Name = "groupBox3";
             this.groupBox3.Size = new System.Drawing.Size(484, 454);
             this.groupBox3.TabIndex = 19;
@@ -479,7 +484,7 @@
             this.groupBox4.Controls.Add(this.cmbUpperGraphic);
             this.groupBox4.Controls.Add(this.label14);
             this.groupBox4.Controls.Add(this.picUpperAnimation);
-            this.groupBox4.Location = new System.Drawing.Point(719, 85);
+            this.groupBox4.Location = new System.Drawing.Point(504, 84);
             this.groupBox4.Name = "groupBox4";
             this.groupBox4.Size = new System.Drawing.Size(485, 454);
             this.groupBox4.TabIndex = 20;
@@ -700,16 +705,48 @@
             this.tmrLowerAnimation.Enabled = true;
             this.tmrLowerAnimation.Tick += new System.EventHandler(this.tmrLowerAnimation_Tick);
             // 
+            // btnCancel
+            // 
+            this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            this.btnCancel.Location = new System.Drawing.Point(1014, 548);
+            this.btnCancel.Name = "btnCancel";
+            this.btnCancel.Size = new System.Drawing.Size(190, 27);
+            this.btnCancel.TabIndex = 9;
+            this.btnCancel.Text = "Cancel";
+            this.btnCancel.UseVisualStyleBackColor = true;
+            this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
+            // 
+            // btnSave
+            // 
+            this.btnSave.Location = new System.Drawing.Point(818, 548);
+            this.btnSave.Name = "btnSave";
+            this.btnSave.Size = new System.Drawing.Size(190, 27);
+            this.btnSave.TabIndex = 6;
+            this.btnSave.Text = "Save";
+            this.btnSave.UseVisualStyleBackColor = true;
+            this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
+            // 
+            // pnlContainer
+            // 
+            this.pnlContainer.Controls.Add(this.groupBox4);
+            this.pnlContainer.Controls.Add(this.groupBox2);
+            this.pnlContainer.Controls.Add(this.groupBox3);
+            this.pnlContainer.Location = new System.Drawing.Point(216, 2);
+            this.pnlContainer.Name = "pnlContainer";
+            this.pnlContainer.Size = new System.Drawing.Size(988, 537);
+            this.pnlContainer.TabIndex = 21;
+            this.pnlContainer.Visible = false;
+            // 
             // frmAnimation
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1210, 541);
+            this.ClientSize = new System.Drawing.Size(1210, 582);
             this.ControlBox = false;
-            this.Controls.Add(this.groupBox4);
-            this.Controls.Add(this.groupBox3);
+            this.Controls.Add(this.btnSave);
             this.Controls.Add(this.groupBox1);
-            this.Controls.Add(this.groupBox2);
+            this.Controls.Add(this.btnCancel);
+            this.Controls.Add(this.pnlContainer);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.MaximizeBox = false;
             this.Name = "frmAnimation";
@@ -731,6 +768,7 @@
             this.groupBox6.PerformLayout();
             this.groupBox7.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.picUpperAnimation)).EndInit();
+            this.pnlContainer.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -738,9 +776,6 @@
         #endregion
 
         private System.Windows.Forms.GroupBox groupBox1;
-        private System.Windows.Forms.Button btnCancel;
-        private System.Windows.Forms.Button btnDelete;
-        private System.Windows.Forms.Button btnSave;
         private System.Windows.Forms.ListBox lstAnimations;
         private System.Windows.Forms.GroupBox groupBox2;
         private System.Windows.Forms.Label label2;
@@ -794,5 +829,11 @@
         private System.Windows.Forms.HScrollBar scrlDarkness;
         private System.Windows.Forms.Label labelDarkness;
         private System.Windows.Forms.Button btnSwap;
+        private System.Windows.Forms.Button btnUndo;
+        private System.Windows.Forms.Button btnNew;
+        private System.Windows.Forms.Button btnSave;
+        private System.Windows.Forms.Button btnCancel;
+        private System.Windows.Forms.Button btnDelete;
+        private System.Windows.Forms.Panel pnlContainer;
     }
 }

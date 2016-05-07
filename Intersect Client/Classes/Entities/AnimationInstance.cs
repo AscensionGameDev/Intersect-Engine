@@ -38,7 +38,7 @@ namespace Intersect_Client.Classes.Entities
 
     public class AnimationInstance
     {
-        private AnimationStruct myBase;
+        private AnimationBase myBase;
         private float _renderX = 0;
         private float _renderY = 0;
         private int _renderDir = 0;
@@ -52,7 +52,7 @@ namespace Intersect_Client.Classes.Entities
         private bool showLower = true;
         private bool showUpper = true;
         public bool AutoRotate = false;
-        public AnimationInstance(AnimationStruct animBase, bool loopForever, bool autoRotate = false)
+        public AnimationInstance(AnimationBase animBase, bool loopForever, bool autoRotate = false)
         {
             myBase = animBase;
             lowerLoop = animBase.LowerAnimLoopCount;

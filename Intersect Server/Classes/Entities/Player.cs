@@ -19,35 +19,34 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-
 using System;
 using System.Collections.Generic;
 using Intersect_Library;
 using Intersect_Library.GameObjects;
 using Intersect_Server.Classes.General;
 using Intersect_Server.Classes.Items;
+using Intersect_Server.Classes.Maps;
 using Intersect_Server.Classes.Networking;
 using Intersect_Server.Classes.Spells;
-
-
 namespace Intersect_Server.Classes.Entities
 {
 
     public class Player : Entity
     {
+        public int MyId = -1;
         public bool InGame;
         public Client MyClient;
         private bool _sentMap;
-        public List<EventInstance> MyEvents = new List<EventInstance>();
-        public bool[] Switches;
-        public int[] Variables;
-        public HotbarInstance[] Hotbar = new HotbarInstance[Options.MaxHotbar];
-        public int[] Equipment = new int[Options.EquipmentSlots.Count];
-        public int StatPoints = 0;
+        public int StatPoints;
         public int Class = 0;
         public int Gender = 0;
-        public int Level = 0;
-        public int Experience = 0;
+        public int Level;
+        public int Experience;
+        public int[] Equipment = new int[Options.EquipmentSlots.Count];
+        public Dictionary<int, bool> Switches = new Dictionary<int, bool>();
+        public Dictionary<int, int> Variables = new Dictionary<int, int>();
+        public List<EventInstance> MyEvents = new List<EventInstance>();
+        public HotbarInstance[] Hotbar = new HotbarInstance[Options.MaxHotbar];
         public ItemInstance[] Bank = new ItemInstance[Options.MaxBankSlots];
 
         //Temporary Values
@@ -60,8 +59,6 @@ namespace Intersect_Server.Classes.Entities
         public Player(int index, Client newClient) : base(index)
         {
             MyClient = newClient;
-            Switches = new bool[Options.MaxPlayerSwitches];
-            Variables = new int[Options.MaxPlayerVariables];
             for (int i = 0; i < Options.MaxPlayerSkills; i++)
             {
                 Spells.Add(new SpellInstance());
@@ -90,17 +87,17 @@ namespace Intersect_Server.Classes.Entities
             {
                 if (_curMapLink != -1)
                 {
-                    Globals.GameMaps[_curMapLink].RemoveEntity(this);
+                    MapInstance.GetMap(_curMapLink).RemoveEntity(this);
                 }
                 if (CurrentMap > -1)
                 {
-                    if (!Globals.GameMaps.ContainsKey(CurrentMap))
+                    if (!MapInstance.GetObjects().ContainsKey(CurrentMap))
                     {
                         WarpToSpawn(true);
                     }
                     else
                     {
-                        Globals.GameMaps[CurrentMap].AddEntity(this);
+                        MapInstance.GetMap(CurrentMap).AddEntity(this);
                     }
                 }
                 _curMapLink = CurrentMap;
@@ -109,39 +106,36 @@ namespace Intersect_Server.Classes.Entities
             //Check to see if we can spawn events, if already spawned.. update them.
             lock (EventLock)
             {
-                for (var i = 0; i < Globals.GameMaps[CurrentMap].SurroundingMaps.Count + 1; i++)
+                for (var i = 0; i < MapInstance.GetMap(CurrentMap).SurroundingMaps.Count + 1; i++)
                 {
                     int mapNum;
-                    if (i == Globals.GameMaps[CurrentMap].SurroundingMaps.Count)
+                    if (i == MapInstance.GetMap(CurrentMap).SurroundingMaps.Count)
                     {
                         mapNum = CurrentMap;
                     }
                     else
                     {
-                        mapNum = Globals.GameMaps[CurrentMap].SurroundingMaps[i];
+                        mapNum = MapInstance.GetMap(CurrentMap).SurroundingMaps[i];
                     }
                     if (mapNum <= -1) continue;
-                    foreach (var mapEvent in Globals.GameMaps[mapNum].Events)
+                    foreach (var mapEvent in MapInstance.GetMap(mapNum).Events.Values)
                     {
-                        if (mapEvent.Deleted == 0)
+                        //Look for event
+                        var foundEvent = EventExists(mapNum, mapEvent.SpawnX, mapEvent.SpawnY);
+                        if (foundEvent == -1)
                         {
-                            //Look for event
-                            var foundEvent = EventExists(mapNum, mapEvent.SpawnX, mapEvent.SpawnY);
-                            if (foundEvent == -1)
+                            var tmpEvent = new EventInstance(MyEvents.Count, MyClient, mapEvent, mapNum)
                             {
-                                var tmpEvent = new EventInstance(MyEvents.Count, MyClient, mapEvent, mapNum)
-                                {
-                                    IsGlobal = mapEvent.IsGlobal == 1,
-                                    MapNum = mapNum,
-                                    SpawnX = mapEvent.SpawnX,
-                                    SpawnY = mapEvent.SpawnY
-                                };
-                                MyEvents.Add(tmpEvent);
-                            }
-                            else
-                            {
-                                MyEvents[foundEvent].Update();
-                            }
+                                IsGlobal = mapEvent.IsGlobal == 1,
+                                MapNum = mapNum,
+                                SpawnX = mapEvent.SpawnX,
+                                SpawnY = mapEvent.SpawnY
+                            };
+                            MyEvents.Add(tmpEvent);
+                        }
+                        else
+                        {
+                            MyEvents[foundEvent].Update();
                         }
                     }
                 }
@@ -151,7 +145,7 @@ namespace Intersect_Server.Classes.Entities
                     var eventFound = false;
                     if (MyEvents[i].MapNum != CurrentMap)
                     {
-                        foreach (var t in Globals.GameMaps[CurrentMap].SurroundingMaps)
+                        foreach (var t in MapInstance.GetMap(CurrentMap).SurroundingMaps)
                         {
                             if (t == MyEvents[i].MapNum)
                             {
@@ -182,7 +176,15 @@ namespace Intersect_Server.Classes.Entities
         //Spawning/Dying
         private void Respawn()
         {
-            Warp(Globals.GameClasses[Class].SpawnMap, Globals.GameClasses[Class].SpawnX, Globals.GameClasses[Class].SpawnY, Globals.GameClasses[Class].SpawnDir);
+            var cls = ClassBase.GetClass(Class);
+            if (cls != null)
+            {
+                Warp(cls.SpawnMap, cls.SpawnX, cls.SpawnY, cls.SpawnDir);
+            }
+            else
+            {
+                Warp(0, 0, 0, 0);
+            }
         }
         public override void Die(bool dropitems = false)
         {
@@ -203,7 +205,7 @@ namespace Intersect_Server.Classes.Entities
         {
             if (level > 0)
             {
-                Level = Math.Min(Options.MaxLevel,level);
+                Level = Math.Min(Options.MaxLevel, level);
                 if (resetExperience) Experience = 0;
                 PacketSender.SendEntityDataToProximity(MyIndex, (int)EntityTypes.Player, Data(), this);
                 PacketSender.SendExperience(MyClient);
@@ -216,14 +218,14 @@ namespace Intersect_Server.Classes.Entities
                 SetLevel(Level + levels, resetExperience);
                 PacketSender.SendPlayerMsg(MyClient, "You have leveled up! You are now level " + Level + "!", Color.Blue);
                 //ToDo, add stat points based on class I guess?
-                StatPoints += 5*levels;
+                StatPoints += 5 * levels;
                 if (StatPoints > 0)
                 {
                     PacketSender.SendPlayerMsg(MyClient,
                         "You have " + StatPoints + " stat points available to be spent!", Color.Blue);
                 }
                 PacketSender.SendExperience(MyClient);
-                PacketSender.SendEntityDataToProximity(MyIndex, (int) EntityTypes.Player, Data(), this);
+                PacketSender.SendEntityDataToProximity(MyIndex, (int)EntityTypes.Player, Data(), this);
             }
         }
         public void GiveExperience(int amount)
@@ -256,7 +258,6 @@ namespace Intersect_Server.Classes.Entities
             return 1000;
         }
 
-
         //Warping
         public override void Warp(int newMap, int newX, int newY)
         {
@@ -264,7 +265,7 @@ namespace Intersect_Server.Classes.Entities
         }
         public override void Warp(int newMap, int newX, int newY, int newDir)
         {
-            if (!Globals.GameMaps.ContainsKey(newMap))
+            if (!MapInstance.GetObjects().ContainsKey(newMap))
             {
                 Globals.GeneralLogs.Add("Failed to warp player to new map -- warping to /spawn/.");
                 WarpToSpawn(true);
@@ -290,62 +291,92 @@ namespace Intersect_Server.Classes.Entities
             }
 
         }
+        //TODO: Only works if sendWarp is true? Need to look at/refactor this
         public void WarpToSpawn(bool sendWarp = false)
         {
-            int map = 0, x = 0, y = 0;
-            if (Globals.GameMaps.ContainsKey(Globals.GameClasses[Class].SpawnMap))
+            int map = -1, x = 0, y = 0;
+            var cls = ClassBase.GetClass(Class);
+            if (cls != null)
             {
-                map = Globals.GameClasses[Class].SpawnMap;
+                if (MapInstance.GetObjects().ContainsKey(cls.SpawnMap))
+                {
+                    map = cls.SpawnMap;
+                }
+                x = cls.SpawnX;
+                y = cls.SpawnY;
             }
-            else
+            if (map == -1)
             {
-                map = Globals.GameMaps.GetEnumerator().Current.Value.MyMapNum;
+                var mapenum = MapInstance.GetObjects().GetEnumerator();
+                mapenum.MoveNext();
+                map = mapenum.Current.Value.MyMapNum;
             }
-            x = Globals.GameClasses[Class].SpawnX;
-            y = Globals.GameClasses[Class].SpawnY;
             if (sendWarp) { Warp(map, x, y); }
         }
 
         //Inventory
         public bool CanGiveItem(ItemInstance item)
         {
-            if (Globals.GameItems[item.ItemNum].Type == (int)ItemTypes.Consumable || //Allow Stacking on Currency, Consumable, Spell, and item types of none.
-                Globals.GameItems[item.ItemNum].Type == (int)ItemTypes.Currency ||
-                Globals.GameItems[item.ItemNum].Type == (int)ItemTypes.None ||
-                Globals.GameItems[item.ItemNum].Type == (int)ItemTypes.Spell)
+            var itemBase = ItemBase.GetItem(item.ItemNum);
+            if (itemBase != null)
             {
+                if (itemBase.ItemType == (int)ItemTypes.Consumable ||
+                    //Allow Stacking on Currency, Consumable, Spell, and item types of none.
+                    itemBase.ItemType == (int)ItemTypes.Currency ||
+                    itemBase.ItemType == (int)ItemTypes.None ||
+                    itemBase.ItemType == (int)ItemTypes.Spell)
+                {
+                    for (int i = 0; i < Options.MaxInvItems; i++)
+                    {
+                        if (Inventory[i].ItemNum == item.ItemNum)
+                        {
+                            return true;
+                        }
+                    }
+                }
+
+                //Either a non stacking item, or we couldn't find the item already existing in the players inventory
                 for (int i = 0; i < Options.MaxInvItems; i++)
                 {
-                    if (Inventory[i].ItemNum == item.ItemNum)
+                    if (Inventory[i].ItemNum == -1)
                     {
                         return true;
                     }
                 }
             }
-
-            //Either a non stacking item, or we couldn't find the item already existing in the players inventory
-            for (int i = 0; i < Options.MaxInvItems; i++)
-            {
-                if (Inventory[i].ItemNum == -1)
-                {
-                    return true;
-                }
-            }
-
             return false;
         }
         public bool TryGiveItem(ItemInstance item, bool SendUpdate = true)
         {
-            if (Globals.GameItems[item.ItemNum].Type == (int)ItemTypes.Consumable || //Allow Stacking on Currency, Consumable, Spell, and item types of none.
-                Globals.GameItems[item.ItemNum].Type == (int)ItemTypes.Currency ||
-                Globals.GameItems[item.ItemNum].Type == (int)ItemTypes.None ||
-                Globals.GameItems[item.ItemNum].Type == (int)ItemTypes.Spell)
+            var itemBase = ItemBase.GetItem(item.ItemNum);
+            if (itemBase != null)
             {
+                if (itemBase.ItemType == (int)ItemTypes.Consumable ||
+                    //Allow Stacking on Currency, Consumable, Spell, and item types of none.
+                    itemBase.ItemType == (int)ItemTypes.Currency ||
+                    itemBase.ItemType == (int)ItemTypes.None ||
+                    itemBase.ItemType == (int)ItemTypes.Spell)
+                {
+                    for (int i = 0; i < Options.MaxInvItems; i++)
+                    {
+                        if (Inventory[i].ItemNum == item.ItemNum)
+                        {
+                            Inventory[i].ItemVal += item.ItemVal;
+                            if (SendUpdate)
+                            {
+                                PacketSender.SendInventoryItemUpdate(MyClient, i);
+                            }
+                            return true;
+                        }
+                    }
+                }
+
+                //Either a non stacking item, or we couldn't find the item already existing in the players inventory
                 for (int i = 0; i < Options.MaxInvItems; i++)
                 {
-                    if (Inventory[i].ItemNum == item.ItemNum)
+                    if (Inventory[i].ItemNum == -1)
                     {
-                        Inventory[i].ItemVal += item.ItemVal;
+                        Inventory[i] = item.Clone();
                         if (SendUpdate)
                         {
                             PacketSender.SendInventoryItemUpdate(MyClient, i);
@@ -354,21 +385,6 @@ namespace Intersect_Server.Classes.Entities
                     }
                 }
             }
-
-            //Either a non stacking item, or we couldn't find the item already existing in the players inventory
-            for (int i = 0; i < Options.MaxInvItems; i++)
-            {
-                if (Inventory[i].ItemNum == -1)
-                {
-                    Inventory[i] = item.Clone();
-                    if (SendUpdate)
-                    {
-                        PacketSender.SendInventoryItemUpdate(MyClient, i);
-                    }
-                    return true;
-                }
-            }
-
             return false;
         }
         public void SwapItems(int item1, int item2)
@@ -383,18 +399,19 @@ namespace Intersect_Server.Classes.Entities
         }
         public void DropItems(int slot, int amount)
         {
-            if (Inventory[slot].ItemNum > -1)
+            var itemBase = ItemBase.GetItem(Inventory[slot].ItemNum);
+            if (itemBase != null)
             {
-                if (Globals.GameItems[Inventory[slot].ItemNum].Type == (int)ItemTypes.Consumable || //Allow Stacking on Currency, Consumable, Spell, and item types of none.
-                            Globals.GameItems[Inventory[slot].ItemNum].Type == (int)ItemTypes.Currency ||
-                            Globals.GameItems[Inventory[slot].ItemNum].Type == (int)ItemTypes.None ||
-                            Globals.GameItems[Inventory[slot].ItemNum].Type == (int)ItemTypes.Spell)
+                if (itemBase.ItemType == (int)ItemTypes.Consumable || //Allow Stacking on Currency, Consumable, Spell, and item types of none.
+                            itemBase.ItemType == (int)ItemTypes.Currency ||
+                            itemBase.ItemType == (int)ItemTypes.None ||
+                            itemBase.ItemType == (int)ItemTypes.Spell)
                 {
                     if (amount >= Inventory[slot].ItemVal)
                     {
                         amount = Inventory[slot].ItemVal;
                     }
-                    Globals.GameMaps[CurrentMap].SpawnItem(CurrentX, CurrentY, Inventory[slot], amount);
+                    MapInstance.GetMap(CurrentMap).SpawnItem(CurrentX, CurrentY, Inventory[slot], amount);
                     if (amount == Inventory[slot].ItemVal)
                     {
                         Inventory[slot] = new ItemInstance(-1, 0);
@@ -407,7 +424,7 @@ namespace Intersect_Server.Classes.Entities
                 }
                 else
                 {
-                    Globals.GameMaps[CurrentMap].SpawnItem(CurrentX, CurrentY, Inventory[slot], 1);
+                    MapInstance.GetMap(CurrentMap).SpawnItem(CurrentX, CurrentY, Inventory[slot], 1);
                     Inventory[slot] = new ItemInstance(-1, 0);
                     EquipmentProcessItemLoss(slot);
                 }
@@ -417,11 +434,11 @@ namespace Intersect_Server.Classes.Entities
         public void UseItem(int slot)
         {
             bool equipped = false;
-            //TO be implemented.
-            if (Inventory[slot].ItemNum > -1)
+            var itemBase = ItemBase.GetItem(Inventory[slot].ItemNum);
+            if (itemBase != null)
             {
-                //TO DO - CHECK REQUIREMENTS
-                switch (Globals.GameItems[Inventory[slot].ItemNum].Type)
+                //TODO - CHECK REQUIREMENTS
+                switch (itemBase.ItemType)
                 {
                     case (int)ItemTypes.None:
                     case (int)ItemTypes.Currency:
@@ -438,24 +455,27 @@ namespace Intersect_Server.Classes.Entities
                         }
                         if (!equipped)
                         {
-                            if (Globals.GameItems[Inventory[slot].ItemNum].Data1 == Options.WeaponIndex)
+                            if (itemBase.Data1 == Options.WeaponIndex)
                             {
                                 if (Options.WeaponIndex > -1)
                                 {
-                                    if (Convert.ToBoolean(Globals.GameItems[Inventory[slot].ItemNum].Data4))
+                                    //If we are equipping a 2hand weapon, remove the shield
+                                    if (Convert.ToBoolean(itemBase.Data4))
                                     {
                                         Equipment[Options.ShieldIndex] = -1;
                                     }
                                     Equipment[Options.WeaponIndex] = slot;
                                 }
                             }
-                            else if (Globals.GameItems[Inventory[slot].ItemNum].Data1 == Options.ShieldIndex)
+                            else if (itemBase.Data1 == Options.ShieldIndex)
                             {
                                 if (Options.ShieldIndex > -1)
                                 {
                                     if (Equipment[Options.WeaponIndex] > -1)
                                     {
-                                        if (Convert.ToBoolean(Globals.GameItems[Inventory[Equipment[Options.WeaponIndex]].ItemNum].Data4))
+                                        //If we have a 2-hand weapon, remove it to equip this new shield
+                                        if (ItemBase.GetItem(Inventory[Equipment[Options.WeaponIndex]].ItemNum) != null &&
+                                            Convert.ToBoolean(ItemBase.GetItem(Inventory[Equipment[Options.WeaponIndex]].ItemNum).Data4))
                                         {
                                             Equipment[Options.WeaponIndex] = -1;
                                         }
@@ -465,15 +485,15 @@ namespace Intersect_Server.Classes.Entities
                             }
                             else
                             {
-                                Equipment[Globals.GameItems[Inventory[slot].ItemNum].Data1] = slot;
+                                Equipment[itemBase.Data1] = slot;
                             }
                         }
                         PacketSender.SendPlayerEquipmentToProximity(this);
                         break;
                     case (int)ItemTypes.Spell:
-                        if (Globals.GameItems[Inventory[slot].ItemNum].Data1 > -1)
+                        if (itemBase.Data1 > -1)
                         {
-                            if (TryTeachSpell(new SpellInstance(Globals.GameItems[Inventory[slot].ItemNum].Data1)))
+                            if (TryTeachSpell(new SpellInstance(itemBase.Data1)))
                             {
                                 TakeItem(slot, 1);
                             }
@@ -492,12 +512,13 @@ namespace Intersect_Server.Classes.Entities
         public bool TakeItem(int slot, int amount)
         {
             bool returnVal = false;
-            if (Inventory[slot].ItemNum > -1)
+            var itemBase = ItemBase.GetItem(Inventory[slot].ItemNum);
+            if (itemBase != null)
             {
-                if (Globals.GameItems[Inventory[slot].ItemNum].Type == (int)ItemTypes.Consumable || //Allow Stacking on Currency, Consumable, Spell, and item types of none.
-                            Globals.GameItems[Inventory[slot].ItemNum].Type == (int)ItemTypes.Currency ||
-                            Globals.GameItems[Inventory[slot].ItemNum].Type == (int)ItemTypes.None ||
-                            Globals.GameItems[Inventory[slot].ItemNum].Type == (int)ItemTypes.Spell)
+                if (itemBase.ItemType == (int)ItemTypes.Consumable || //Allow Stacking on Currency, Consumable, Spell, and item types of none.
+                            itemBase.ItemType == (int)ItemTypes.Currency ||
+                            itemBase.ItemType == (int)ItemTypes.None ||
+                            itemBase.ItemType == (int)ItemTypes.Spell)
                 {
                     if (amount > Inventory[slot].ItemVal)
                     {
@@ -563,73 +584,78 @@ namespace Intersect_Server.Classes.Entities
             int rewardItemVal = 0;
             int sellItemNum = Inventory[slot].ItemNum;
             if (InShop == -1) return;
-            ShopStruct shop = Globals.GameShops[InShop];
-            if (Inventory[slot].ItemNum > -1)
+            ShopBase shop = ShopBase.GetShop(InShop);
+            if (shop != null)
             {
-                for (int i = 0; i < shop.BuyingItems.Count; i++)
+                var itemBase = ItemBase.GetItem(Inventory[slot].ItemNum);
+                if (itemBase != null)
                 {
-                    if (shop.BuyingItems[i].ItemNum == sellItemNum)
+                    for (int i = 0; i < shop.BuyingItems.Count; i++)
                     {
-                        if (!shop.BuyingWhitelist)
+                        if (shop.BuyingItems[i].ItemNum == sellItemNum)
+                        {
+                            if (!shop.BuyingWhitelist)
+                            {
+                                PacketSender.SendPlayerMsg(MyClient, "This shop does not accept that item!", Color.Red);
+                                return;
+                            }
+                            else
+                            {
+                                rewardItemNum = shop.BuyingItems[i].CostItemNum;
+                                rewardItemVal = shop.BuyingItems[i].CostItemVal;
+                                break;
+                            }
+                        }
+                    }
+                    if (rewardItemNum == -1)
+                    {
+                        if (shop.BuyingWhitelist)
                         {
                             PacketSender.SendPlayerMsg(MyClient, "This shop does not accept that item!", Color.Red);
                             return;
                         }
                         else
                         {
-                            rewardItemNum = shop.BuyingItems[i].CostItemNum;
-                            rewardItemVal = shop.BuyingItems[i].CostItemVal;
-                            break;
+                            rewardItemNum = shop.DefaultCurrency;
+                            rewardItemVal = itemBase.Price;
                         }
                     }
-                }
-                if (rewardItemNum == -1)
-                {
-                    if (shop.BuyingWhitelist)
+
+                    if (itemBase.ItemType == (int)ItemTypes.Consumable ||
+                        //Allow Stacking on Currency, Consumable, Spell, and item types of none.
+                        itemBase.ItemType == (int)ItemTypes.Currency ||
+                        itemBase.ItemType == (int)ItemTypes.None ||
+                        itemBase.ItemType == (int)ItemTypes.Spell)
                     {
-                        PacketSender.SendPlayerMsg(MyClient, "This shop does not accept that item!", Color.Red);
-                        return;
+                        if (amount >= Inventory[slot].ItemVal)
+                        {
+                            amount = Inventory[slot].ItemVal;
+                        }
+                        if (amount == Inventory[slot].ItemVal)
+                        {
+                            //Definitely can get reward.
+                            Inventory[slot] = new ItemInstance(-1, 0);
+                            EquipmentProcessItemLoss(slot);
+                        }
+                        else
+                        {
+                            //check if can get reward
+                            if (!CanGiveItem(new ItemInstance(rewardItemNum, rewardItemVal))) canSellItem = false;
+                            Inventory[slot].ItemVal -= amount;
+
+                        }
                     }
                     else
                     {
-                        rewardItemNum = shop.DefaultCurrency;
-                        rewardItemVal = Globals.GameItems[sellItemNum].Price;
-                    }
-                }
-
-                if (Globals.GameItems[sellItemNum].Type == (int)ItemTypes.Consumable || //Allow Stacking on Currency, Consumable, Spell, and item types of none.
-                            Globals.GameItems[sellItemNum].Type == (int)ItemTypes.Currency ||
-                            Globals.GameItems[sellItemNum].Type == (int)ItemTypes.None ||
-                            Globals.GameItems[sellItemNum].Type == (int)ItemTypes.Spell)
-                {
-                    if (amount >= Inventory[slot].ItemVal)
-                    {
-                        amount = Inventory[slot].ItemVal;
-                    }
-                    if (amount == Inventory[slot].ItemVal)
-                    {
-                        //Definitely can get reward.
                         Inventory[slot] = new ItemInstance(-1, 0);
                         EquipmentProcessItemLoss(slot);
                     }
-                    else
+                    if (canSellItem)
                     {
-                        //check if can get reward
-                        if (!CanGiveItem(new ItemInstance(rewardItemNum, rewardItemVal))) canSellItem = false;
-                        Inventory[slot].ItemVal -= amount;
-
+                        TryGiveItem(new ItemInstance(rewardItemNum, rewardItemVal * amount), true);
                     }
+                    PacketSender.SendInventoryItemUpdate(MyClient, slot);
                 }
-                else
-                {
-                    Inventory[slot] = new ItemInstance(-1, 0);
-                    EquipmentProcessItemLoss(slot);
-                }
-                if (canSellItem)
-                {
-                    TryGiveItem(new ItemInstance(rewardItemNum, rewardItemVal * amount), true);
-                }
-                PacketSender.SendInventoryItemUpdate(MyClient, slot);
             }
         }
         public void BuyItem(int slot, int amount)
@@ -638,52 +664,62 @@ namespace Intersect_Server.Classes.Entities
             int buyItemNum = -1;
             int buyItemAmt = 1;
             if (InShop == -1) return;
-            ShopStruct shop = Globals.GameShops[InShop];
-            if (slot >= 0 && slot < shop.SellingItems.Count)
+            ShopBase shop = ShopBase.GetShop(InShop);
+            if (shop != null)
             {
-                buyItemNum = shop.SellingItems[slot].ItemNum;
-                if (Globals.GameItems[buyItemNum].Type == (int)ItemTypes.Consumable ||
-                    //Allow Stacking on Currency, Consumable, Spell, and item types of none.
-                    Globals.GameItems[buyItemNum].Type == (int)ItemTypes.Currency ||
-                    Globals.GameItems[buyItemNum].Type == (int)ItemTypes.None ||
-                    Globals.GameItems[buyItemNum].Type == (int)ItemTypes.Spell)
+                if (slot >= 0 && slot < shop.SellingItems.Count)
                 {
-                    buyItemAmt = Math.Min(1, amount);
-                }
-                if (FindItem(shop.SellingItems[slot].CostItemNum, shop.SellingItems[slot].CostItemVal * buyItemAmt) > -1)
-                {
-                    if (CanGiveItem(new ItemInstance(buyItemNum, buyItemAmt)))
+                    var itemBase = ItemBase.GetItem(shop.SellingItems[slot].ItemNum);
+                    if (itemBase != null)
                     {
-                        TakeItem(
-                                FindItem(shop.SellingItems[slot].CostItemNum,
-                                    shop.SellingItems[slot].CostItemVal * buyItemAmt),
-                                shop.SellingItems[slot].CostItemVal * buyItemAmt);
-                        TryGiveItem(new ItemInstance(buyItemNum, buyItemAmt), true);
-                    }
-                    else
-                    {
-                        if (shop.SellingItems[slot].CostItemVal * buyItemAmt ==
-                            Inventory[
-                                FindItem(shop.SellingItems[slot].CostItemNum,
-                                    shop.SellingItems[slot].CostItemVal * buyItemAmt)].ItemVal)
+                        buyItemNum = shop.SellingItems[slot].ItemNum;
+                        if (itemBase.ItemType == (int)ItemTypes.Consumable ||
+                            //Allow Stacking on Currency, Consumable, Spell, and item types of none.
+                            itemBase.ItemType == (int)ItemTypes.Currency ||
+                            itemBase.ItemType == (int)ItemTypes.None ||
+                            itemBase.ItemType == (int)ItemTypes.Spell)
                         {
-                            TakeItem(
-                                FindItem(shop.SellingItems[slot].CostItemNum,
-                                    shop.SellingItems[slot].CostItemVal * buyItemAmt),
-                                shop.SellingItems[slot].CostItemVal * buyItemAmt);
-                            TryGiveItem(new ItemInstance(buyItemNum, buyItemAmt), true);
+                            buyItemAmt = Math.Min(1, amount);
+                        }
+                        if (
+                            FindItem(shop.SellingItems[slot].CostItemNum, shop.SellingItems[slot].CostItemVal * buyItemAmt) >
+                            -1)
+                        {
+                            if (CanGiveItem(new ItemInstance(buyItemNum, buyItemAmt)))
+                            {
+                                TakeItem(
+                                    FindItem(shop.SellingItems[slot].CostItemNum,
+                                        shop.SellingItems[slot].CostItemVal * buyItemAmt),
+                                    shop.SellingItems[slot].CostItemVal * buyItemAmt);
+                                TryGiveItem(new ItemInstance(buyItemNum, buyItemAmt), true);
+                            }
+                            else
+                            {
+                                if (shop.SellingItems[slot].CostItemVal * buyItemAmt ==
+                                    Inventory[
+                                        FindItem(shop.SellingItems[slot].CostItemNum,
+                                            shop.SellingItems[slot].CostItemVal * buyItemAmt)].ItemVal)
+                                {
+                                    TakeItem(
+                                        FindItem(shop.SellingItems[slot].CostItemNum,
+                                            shop.SellingItems[slot].CostItemVal * buyItemAmt),
+                                        shop.SellingItems[slot].CostItemVal * buyItemAmt);
+                                    TryGiveItem(new ItemInstance(buyItemNum, buyItemAmt), true);
+                                }
+                                else
+                                {
+                                    PacketSender.SendPlayerMsg(MyClient, "You do not have space to purchase that item!",
+                                        Color.Red);
+                                }
+                            }
                         }
                         else
                         {
-                            PacketSender.SendPlayerMsg(MyClient, "You do not have space to purchase that item!", Color.Red);
+                            PacketSender.SendPlayerMsg(MyClient, "Transaction failed due to insufficent funds.",
+                                Color.Red);
                         }
                     }
                 }
-                else
-                {
-                    PacketSender.SendPlayerMsg(MyClient, "Transaction failed due to insufficent funds.", Color.Red);
-                }
-
             }
         }
 
@@ -703,38 +739,66 @@ namespace Intersect_Server.Classes.Entities
                 PacketSender.SendCloseBank(MyClient);
             }
         }
-
         public void DepositItem(int slot, int amount)
         {
             if (!InBank) return;
-            if (Inventory[slot].ItemNum > -1)
+            var itemBase = ItemBase.GetItem(Inventory[slot].ItemNum);
+            if (itemBase != null)
             {
-                if (Globals.GameItems[Inventory[slot].ItemNum].Type == (int)ItemTypes.Consumable ||
-                    //Allow Stacking on Currency, Consumable, Spell, and item types of none.
-                    Globals.GameItems[Inventory[slot].ItemNum].Type == (int)ItemTypes.Currency ||
-                    Globals.GameItems[Inventory[slot].ItemNum].Type == (int)ItemTypes.None ||
-                    Globals.GameItems[Inventory[slot].ItemNum].Type == (int)ItemTypes.Spell)
+                if (Inventory[slot].ItemNum > -1)
                 {
-                    if (amount >= Inventory[slot].ItemVal)
+                    if (itemBase.ItemType == (int)ItemTypes.Consumable ||
+                        //Allow Stacking on Currency, Consumable, Spell, and item types of none.
+                        itemBase.ItemType == (int)ItemTypes.Currency ||
+                        itemBase.ItemType == (int)ItemTypes.None ||
+                        itemBase.ItemType == (int)ItemTypes.Spell)
                     {
-                        amount = Inventory[slot].ItemVal;
+                        if (amount >= Inventory[slot].ItemVal)
+                        {
+                            amount = Inventory[slot].ItemVal;
+                        }
                     }
-                }
-                else
-                {
-                    amount = 1;
-                }
-                //Find a spot in the bank for it!
-                if (Globals.GameItems[Inventory[slot].ItemNum].Type == (int)ItemTypes.Consumable || //Allow Stacking on Currency, Consumable, Spell, and item types of none.
-                    Globals.GameItems[Inventory[slot].ItemNum].Type == (int)ItemTypes.Currency ||
-                    Globals.GameItems[Inventory[slot].ItemNum].Type == (int)ItemTypes.None ||
-                     Globals.GameItems[Inventory[slot].ItemNum].Type == (int)ItemTypes.Spell)
-                {
+                    else
+                    {
+                        amount = 1;
+                    }
+                    //Find a spot in the bank for it!
+                    if (itemBase.ItemType == (int)ItemTypes.Consumable ||
+                        //Allow Stacking on Currency, Consumable, Spell, and item types of none.
+                        itemBase.ItemType == (int)ItemTypes.Currency ||
+                        itemBase.ItemType == (int)ItemTypes.None ||
+                        itemBase.ItemType == (int)ItemTypes.Spell)
+                    {
+                        for (int i = 0; i < Options.MaxBankSlots; i++)
+                        {
+                            if (Bank[i] != null && Bank[i].ItemNum == Inventory[slot].ItemNum)
+                            {
+                                Bank[i].ItemVal += amount;
+                                //Remove Items from inventory send updates
+                                if (amount >= Inventory[slot].ItemVal)
+                                {
+                                    Inventory[slot] = new ItemInstance(-1, 0);
+                                    EquipmentProcessItemLoss(slot);
+                                }
+                                else
+                                {
+                                    Inventory[slot].ItemVal -= amount;
+                                }
+                                PacketSender.SendInventoryItemUpdate(MyClient, slot);
+                                PacketSender.SendBankUpdate(MyClient, i);
+                                return;
+                            }
+                        }
+                    }
+
+                    //Either a non stacking item, or we couldn't find the item already existing in the players inventory
                     for (int i = 0; i < Options.MaxBankSlots; i++)
                     {
-                        if (Bank[i] != null && Bank[i].ItemNum == Inventory[slot].ItemNum)
+                        if (Bank[i] == null || Bank[i].ItemNum == -1)
                         {
-                            Bank[i].ItemVal += amount;
+                            Bank[i] = new ItemInstance(0, 0);
+                            Bank[i] = Inventory[slot].Clone();
+                            Bank[i].ItemVal = amount;
                             //Remove Items from inventory send updates
                             if (amount >= Inventory[slot].ItemVal)
                             {
@@ -750,71 +814,73 @@ namespace Intersect_Server.Classes.Entities
                             return;
                         }
                     }
-                }
-
-                //Either a non stacking item, or we couldn't find the item already existing in the players inventory
-                for (int i = 0; i < Options.MaxBankSlots; i++)
-                {
-                    if (Bank[i] == null || Bank[i].ItemNum == -1)
-                    {
-                        Bank[i] = new ItemInstance(0, 0);
-                        Bank[i] = Inventory[slot].Clone();
-                        Bank[i].ItemVal = amount;
-                        //Remove Items from inventory send updates
-                        if (amount >= Inventory[slot].ItemVal)
-                        {
-                            Inventory[slot] = new ItemInstance(-1, 0);
-                            EquipmentProcessItemLoss(slot);
-                        }
-                        else
-                        {
-                            Inventory[slot].ItemVal -= amount;
-                        }
-                        PacketSender.SendInventoryItemUpdate(MyClient, slot);
-                        PacketSender.SendBankUpdate(MyClient, i);
-                        return;
-                    }
-                }
-                PacketSender.SendPlayerMsg(MyClient, "There is no space left in your bank for that item!", Color.Red);
-            }
-            else
-            {
-                PacketSender.SendPlayerMsg(MyClient, "Invalid item selected to deposit!", Color.Red);
-            }
-        }
-
-        public void WithdrawItem(int slot, int amount)
-        {
-            if (!InBank) return;
-            if (Bank[slot] != null && Bank[slot].ItemNum > -1)
-            {
-                if (Globals.GameItems[Bank[slot].ItemNum].Type == (int)ItemTypes.Consumable ||
-                    //Allow Stacking on Currency, Consumable, Spell, and item types of none.
-                    Globals.GameItems[Bank[slot].ItemNum].Type == (int)ItemTypes.Currency ||
-                    Globals.GameItems[Bank[slot].ItemNum].Type == (int)ItemTypes.None ||
-                    Globals.GameItems[Bank[slot].ItemNum].Type == (int)ItemTypes.Spell)
-                {
-                    if (amount >= Bank[slot].ItemVal)
-                    {
-                        amount = Bank[slot].ItemVal;
-                    }
+                    PacketSender.SendPlayerMsg(MyClient, "There is no space left in your bank for that item!", Color.Red);
                 }
                 else
                 {
-                    amount = 1;
+                    PacketSender.SendPlayerMsg(MyClient, "Invalid item selected to deposit!", Color.Red);
                 }
-                //Find a spot in the inventory for it!
-                if (Globals.GameItems[Bank[slot].ItemNum].Type == (int)ItemTypes.Consumable || //Allow Stacking on Currency, Consumable, Spell, and item types of none.
-                    Globals.GameItems[Bank[slot].ItemNum].Type == (int)ItemTypes.Currency ||
-                    Globals.GameItems[Bank[slot].ItemNum].Type == (int)ItemTypes.None ||
-                     Globals.GameItems[Bank[slot].ItemNum].Type == (int)ItemTypes.Spell)
+            }
+        }
+        public void WithdrawItem(int slot, int amount)
+        {
+            if (!InBank) return;
+            var itemBase = ItemBase.GetItem(Bank[slot].ItemNum);
+            if (itemBase != null)
+            {
+                if (Bank[slot] != null && Bank[slot].ItemNum > -1)
                 {
+                    if (itemBase.ItemType == (int)ItemTypes.Consumable ||
+                        //Allow Stacking on Currency, Consumable, Spell, and item types of none.
+                        itemBase.ItemType == (int)ItemTypes.Currency ||
+                        itemBase.ItemType == (int)ItemTypes.None ||
+                        itemBase.ItemType == (int)ItemTypes.Spell)
+                    {
+                        if (amount >= Bank[slot].ItemVal)
+                        {
+                            amount = Bank[slot].ItemVal;
+                        }
+                    }
+                    else
+                    {
+                        amount = 1;
+                    }
+                    //Find a spot in the inventory for it!
+                    if (itemBase.ItemType == (int)ItemTypes.Consumable ||
+                        //Allow Stacking on Currency, Consumable, Spell, and item types of none.
+                        itemBase.ItemType == (int)ItemTypes.Currency ||
+                        itemBase.ItemType == (int)ItemTypes.None ||
+                        itemBase.ItemType == (int)ItemTypes.Spell)
+                    {
+                        for (int i = 0; i < Options.MaxInvItems; i++)
+                        {
+                            if (Inventory[i] != null && Inventory[i].ItemNum == Bank[slot].ItemNum)
+                            {
+                                Inventory[i].ItemVal += amount;
+                                //Remove Items from bank send updates
+                                if (amount >= Bank[slot].ItemVal)
+                                {
+                                    Bank[slot] = null;
+                                }
+                                else
+                                {
+                                    Bank[slot].ItemVal -= amount;
+                                }
+                                PacketSender.SendInventoryItemUpdate(MyClient, i);
+                                PacketSender.SendBankUpdate(MyClient, slot);
+                                return;
+                            }
+                        }
+                    }
+
+                    //Either a non stacking item, or we couldn't find the item already existing in the players inventory
                     for (int i = 0; i < Options.MaxInvItems; i++)
                     {
-                        if (Inventory[i] != null && Inventory[i].ItemNum == Bank[slot].ItemNum)
+                        if (Inventory[i] == null || Inventory[i].ItemNum == -1)
                         {
-                            Inventory[i].ItemVal += amount;
-                            //Remove Items from bank send updates
+                            Inventory[i] = new ItemInstance(0, 0);
+                            Inventory[i] = Bank[slot].Clone();
+                            //Remove Items from inventory send updates
                             if (amount >= Bank[slot].ItemVal)
                             {
                                 Bank[slot] = null;
@@ -828,34 +894,13 @@ namespace Intersect_Server.Classes.Entities
                             return;
                         }
                     }
+                    PacketSender.SendPlayerMsg(MyClient, "There is no space left in your inventory for that item!",
+                        Color.Red);
                 }
-
-                //Either a non stacking item, or we couldn't find the item already existing in the players inventory
-                for (int i = 0; i < Options.MaxInvItems; i++)
+                else
                 {
-                    if (Inventory[i] == null || Inventory[i].ItemNum == -1)
-                    {
-                        Inventory[i] = new ItemInstance(0, 0);
-                        Inventory[i] = Bank[slot].Clone();
-                        //Remove Items from inventory send updates
-                        if (amount >= Bank[slot].ItemVal)
-                        {
-                            Bank[slot] = null;
-                        }
-                        else
-                        {
-                            Bank[slot].ItemVal -= amount;
-                        }
-                        PacketSender.SendInventoryItemUpdate(MyClient, i);
-                        PacketSender.SendBankUpdate(MyClient, slot);
-                        return;
-                    }
+                    PacketSender.SendPlayerMsg(MyClient, "Invalid item selected to withdraw!", Color.Red);
                 }
-                PacketSender.SendPlayerMsg(MyClient, "There is no space left in your inventory for that item!", Color.Red);
-            }
-            else
-            {
-                PacketSender.SendPlayerMsg(MyClient, "Invalid item selected to withdraw!", Color.Red);
             }
         }
         public void SwapBankItems(int item1, int item2)
@@ -934,12 +979,13 @@ namespace Intersect_Server.Classes.Entities
         {
             int spellNum = Spells[spellSlot].SpellNum;
             Target = target;
-            if (spellNum > -1)
+            if (SpellBase.Get(spellNum) != null)
             {
+                var spell = SpellBase.GetSpell(spellNum);
                 //Check if caster does not have the correct combat stats, if not exit now.
                 for (var n = 0; n < (int)Stats.StatCount; n++)
                 {
-                    if (Stat[n].Value() < Globals.GameSpells[spellNum].StatReq[n])
+                    if (Stat[n].Value() < spell.StatReq[n])
                     {
                         PacketSender.SendPlayerMsg(MyClient, "You do not possess the correct combat stats to use this ability.");
                         return;
@@ -961,22 +1007,22 @@ namespace Intersect_Server.Classes.Entities
                     }
                 }
 
-                if (Globals.GameSpells[spellNum].VitalCost[(int)Vitals.Mana] <= Vital[(int)Vitals.Mana])
+                if (spell.VitalCost[(int)Vitals.Mana] <= Vital[(int)Vitals.Mana])
                 {
-                    if (Globals.GameSpells[spellNum].VitalCost[(int)Vitals.Health] <= Vital[(int)Vitals.Health])
+                    if (spell.VitalCost[(int)Vitals.Health] <= Vital[(int)Vitals.Health])
                     {
                         if (Spells[spellSlot].SpellCD < Environment.TickCount)
                         {
                             if (CastTime < Environment.TickCount)
                             {
-                                Vital[(int)Vitals.Mana] = Vital[(int)Vitals.Mana] - Globals.GameSpells[spellNum].VitalCost[(int)Vitals.Mana];
-                                Vital[(int)Vitals.Health] = Vital[(int)Vitals.Health] - Globals.GameSpells[spellNum].VitalCost[(int)Vitals.Health];
-                                CastTime = Environment.TickCount + (Globals.GameSpells[spellNum].CastDuration * 100);
+                                Vital[(int)Vitals.Mana] = Vital[(int)Vitals.Mana] - spell.VitalCost[(int)Vitals.Mana];
+                                Vital[(int)Vitals.Health] = Vital[(int)Vitals.Health] - spell.VitalCost[(int)Vitals.Health];
+                                CastTime = Environment.TickCount + (spell.CastDuration * 100);
                                 SpellCastSlot = spellSlot;
 
-                                if (Globals.GameSpells[spellNum].CastAnimation > -1)
+                                if (spell.CastAnimation > -1)
                                 {
-                                    PacketSender.SendAnimationToProximity(Globals.GameSpells[spellNum].CastAnimation, 1, MyIndex, CurrentMap, 0, 0, Dir); //Target Type 1 will be global entity
+                                    PacketSender.SendAnimationToProximity(spell.CastAnimation, 1, MyIndex, CurrentMap, 0, 0, Dir); //Target Type 1 will be global entity
                                 }
 
                                 PacketSender.SendEntityVitals(MyIndex, (int)Vitals.Health, Globals.Entities[MyIndex]);

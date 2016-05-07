@@ -22,7 +22,6 @@
 using System;
 using System.Drawing;
 using System.Collections.Generic;
-using System.Linq;
 using System.Windows.Forms;
 using Intersect_Editor.Classes.Core;
 using Intersect_Editor.Classes.Entities;
@@ -53,7 +52,7 @@ namespace Intersect_Editor.Classes
         public static bool HideDarkness = false;
         public static RenderTarget2D DarknessTexture;
         public static BlendState MultiplyState;
-        private static List<KeyValuePair<Microsoft.Xna.Framework.Point, Light>> _lightQueue = new List<KeyValuePair<Microsoft.Xna.Framework.Point,Light>>();
+        private static List<KeyValuePair<Microsoft.Xna.Framework.Point, LightBase>> _lightQueue = new List<KeyValuePair<Microsoft.Xna.Framework.Point,LightBase>>();
 
         //Overlay Stuff
         public static Color OverlayColor = Color.Transparent;
@@ -159,8 +158,7 @@ namespace Intersect_Editor.Classes
                 DrawTileset();
 
                 //Draw Current Map
-                if (Globals.MapEditorWindow.picMap.Visible && Globals.CurrentMap > -1 &&
-                    Globals.GameMaps[Globals.CurrentMap] != null)
+                if (Globals.MapEditorWindow.picMap.Visible && Globals.CurrentMap != null)
                 {
                     DrawTransparentBorders();
                     for (int i = 0; i < 2; i++)
@@ -226,7 +224,7 @@ namespace Intersect_Editor.Classes
                 DrawTexture(GetTexture(TextureType.Misc, "transtile.png"), Options.TileWidth * (Options.MapWidth + 1), Options.TileHeight * y, 0, 0, Options.TileWidth, Options.TileHeight, null);
             }
         }
-        private static void DrawAutoTile(int layerNum, int destX, int destY, int quarterNum, int x, int y, MapStruct map, RenderTarget2D target)
+        private static void DrawAutoTile(int layerNum, int destX, int destY, int quarterNum, int x, int y, MapBase map, RenderTarget2D target)
         {
             int yOffset = 0, xOffset = 0;
 
@@ -243,7 +241,7 @@ namespace Intersect_Editor.Classes
                     yOffset = -Options.TileHeight;
                     break;
             }
-            DrawTexture(GetTexture(TextureType.Tileset,Globals.Tilesets[map.Layers[layerNum].Tiles[x, y].TilesetIndex]),
+            DrawTexture(GetTexture(TextureType.Tileset,TilesetBase.GetTileset(map.Layers[layerNum].Tiles[x, y].TilesetIndex).Value),
                                 destX, destY,
                                 (int)map.Autotiles.Autotile[x, y].Layer[layerNum].QuarterTile[quarterNum].X + xOffset,
                                 (int)map.Autotiles.Autotile[x, y].Layer[layerNum].QuarterTile[quarterNum].Y + yOffset,
@@ -252,8 +250,8 @@ namespace Intersect_Editor.Classes
         }
         private static void DrawMap(int dir, bool screenShotting, int layer, RenderTarget2D RenderTarget2D)
         {
-            var tmpMap = Globals.GameMaps[Globals.CurrentMap];
-            if (tmpMap == null || tmpMap.Deleted == 1) { return; }
+            var tmpMap = Globals.CurrentMap;
+            if (tmpMap == null) { return; }
             int selX = Globals.CurMapSelX, selY = Globals.CurMapSelY, selW = Globals.CurMapSelW, selH = Globals.CurMapSelH;
             int x1 = 0, y1 = 0, x2 = 0, y2 = 0, z1 = 0, z2 = 3, xoffset = 0, yoffset = 0;
             int dragxoffset = 0, dragyoffset = 0;
@@ -288,7 +286,7 @@ namespace Intersect_Editor.Classes
                     break;
                 case 0:
                     if (tmpMap.Up <= -1) return;
-                    tmpMap = Globals.GameMaps[tmpMap.Up];
+                    tmpMap = MapInstance.GetMap(tmpMap.Up);
                     x1 = 0;
                     x2 = Options.MapWidth;
                     y1 = Options.MapHeight - 1;
@@ -298,7 +296,7 @@ namespace Intersect_Editor.Classes
                     break;
                 case 1:
                     if (tmpMap.Down <= -1) return;
-                    tmpMap = Globals.GameMaps[tmpMap.Down];
+                    tmpMap = MapInstance.GetMap(tmpMap.Down);
                     x1 = 0;
                     x2 = Options.MapWidth;
                     y1 = 0;
@@ -308,7 +306,7 @@ namespace Intersect_Editor.Classes
                     break;
                 case 2:
                     if (tmpMap.Left <= -1) return;
-                    tmpMap = Globals.GameMaps[tmpMap.Left];
+                    tmpMap = MapInstance.GetMap(tmpMap.Left);
                     x1 = Options.MapWidth - 1;
                     x2 = Options.MapWidth;
                     y1 = 0;
@@ -318,7 +316,7 @@ namespace Intersect_Editor.Classes
                     break;
                 case 3:
                     if (tmpMap.Right <= -1) return;
-                    tmpMap = Globals.GameMaps[tmpMap.Right];
+                    tmpMap = MapInstance.GetMap(tmpMap.Right);
                     x1 = 0;
                     x2 = 1;
                     y1 = 0;
@@ -327,7 +325,7 @@ namespace Intersect_Editor.Classes
                     yoffset = Options.TileHeight;
                     break;
             }
-            if (tmpMap == null || tmpMap.Deleted == 1) { return; }
+            if (tmpMap == null) { return; }
             if (screenShotting)
             {
                 xoffset -= Options.TileWidth;
@@ -350,13 +348,12 @@ namespace Intersect_Editor.Classes
                     }
 
                 }
-                Dictionary<int, MapStruct> gameMaps = Globals.GameMaps.ToDictionary(k => k.Key, v => (MapStruct)v.Value);
                 if ((!HideTilePreview || Globals.Dragging) && !screenShotting)
                 {
                     tmpMap = TilePreviewStruct;
                     if (TilePreviewUpdated || TilePreviewStruct == null)
                     {
-                        TilePreviewStruct = new MapInstance(Globals.GameMaps[Globals.CurrentMap]);
+                        TilePreviewStruct = new MapInstance(Globals.CurrentMap);
                         //Lets Create the Preview
                         //Mimic Mouse Down
                         tmpMap = TilePreviewStruct;
@@ -403,7 +400,7 @@ namespace Intersect_Editor.Classes
                             {
 
                             }
-                            else
+                            else if (Globals.CurrentTileset != null)
                             {
                                 if (Globals.CurrentTool == (int)EdittingTool.Pen)
                                 {
@@ -420,7 +417,7 @@ namespace Intersect_Editor.Classes
                                                 {
                                                     tmpMap.Layers[Globals.CurrentLayer].Tiles[
                                                         Globals.CurTileX + x, Globals.CurTileY + y].TilesetIndex =
-                                                        Globals.CurrentTileset;
+                                                        Globals.CurrentTileset.GetId();
                                                     tmpMap.Layers[Globals.CurrentLayer].Tiles[
                                                         Globals.CurTileX + x, Globals.CurTileY + y].X =
                                                         Globals.CurSelX + x;
@@ -430,7 +427,7 @@ namespace Intersect_Editor.Classes
                                                     tmpMap.Layers[Globals.CurrentLayer].Tiles[
                                                         Globals.CurTileX + x, Globals.CurTileY + y].Autotile = 0;
                                                     tmpMap.Autotiles.UpdateAutoTiles(Globals.CurTileX + x,
-                                                        Globals.CurTileY + y, Globals.CurrentLayer, gameMaps);
+                                                        Globals.CurTileY + y, Globals.CurrentLayer, MapBase.GetObjects());
                                                 }
                                             }
                                         }
@@ -438,7 +435,7 @@ namespace Intersect_Editor.Classes
                                     else
                                     {
                                         tmpMap.Layers[Globals.CurrentLayer].Tiles[Globals.CurTileX, Globals.CurTileY
-                                            ].TilesetIndex = Globals.CurrentTileset;
+                                            ].TilesetIndex = Globals.CurrentTileset.GetId();
                                         tmpMap.Layers[Globals.CurrentLayer].Tiles[Globals.CurTileX, Globals.CurTileY
                                             ].X = Globals.CurSelX;
                                         tmpMap.Layers[Globals.CurrentLayer].Tiles[Globals.CurTileX, Globals.CurTileY
@@ -446,7 +443,7 @@ namespace Intersect_Editor.Classes
                                         tmpMap.Layers[Globals.CurrentLayer].Tiles[Globals.CurTileX, Globals.CurTileY
                                             ].Autotile = (byte)Globals.Autotilemode;
                                         tmpMap.Autotiles.UpdateAutoTiles(Globals.CurTileX, Globals.CurTileY,
-                                            Globals.CurrentLayer, gameMaps);
+                                            Globals.CurrentLayer, MapBase.GetObjects());
                                     }
                                 }
                                 else if (Globals.CurrentTool == (int)EdittingTool.Rectangle)
@@ -469,7 +466,7 @@ namespace Intersect_Editor.Classes
                                                     {
                                                         tmpMap.Layers[Globals.CurrentLayer].Tiles[
                                                             x0, y0].TilesetIndex =
-                                                            Globals.CurrentTileset;
+                                                            Globals.CurrentTileset.GetId();
                                                         tmpMap.Layers[Globals.CurrentLayer].Tiles[
                                                             x0, y0].X = Globals.CurSelX + x;
                                                         tmpMap.Layers[Globals.CurrentLayer].Tiles[
@@ -490,7 +487,7 @@ namespace Intersect_Editor.Classes
                                                             x0, y0].Autotile = 0;
                                                     }
                                                     tmpMap.Autotiles.UpdateAutoTiles(x0, y0,
-                                                        Globals.CurrentLayer, gameMaps);
+                                                        Globals.CurrentLayer, MapBase.GetObjects());
                                                 }
                                             }
                                             else
@@ -498,7 +495,7 @@ namespace Intersect_Editor.Classes
                                                 if (Globals.MouseButton == 0)
                                                 {
                                                     tmpMap.Layers[Globals.CurrentLayer].Tiles[x0, y0].TilesetIndex =
-                                                        Globals.CurrentTileset;
+                                                        Globals.CurrentTileset.GetId();
                                                     tmpMap.Layers[Globals.CurrentLayer].Tiles[x0, y0].X =
                                                         Globals.CurSelX;
                                                     tmpMap.Layers[Globals.CurrentLayer].Tiles[x0, y0].Y =
@@ -515,7 +512,7 @@ namespace Intersect_Editor.Classes
                                                     tmpMap.Layers[Globals.CurrentLayer].Tiles[x0, y0].Autotile = 0;
                                                 }
                                                 tmpMap.Autotiles.UpdateAutoTiles(x0, y0,
-                                                    Globals.CurrentLayer, gameMaps);
+                                                    Globals.CurrentLayer, MapBase.GetObjects());
                                             }
                                         }
                                     }
@@ -527,7 +524,7 @@ namespace Intersect_Editor.Classes
                 }
                 else
                 {
-                    tmpMap = Globals.GameMaps[Globals.CurrentMap];
+                    tmpMap = Globals.CurrentMap;
                 }
             }
 
@@ -538,9 +535,9 @@ namespace Intersect_Editor.Classes
                 {
                     for (var z = z1; z < z2; z++)
                     {
-                        if (tmpMap.Layers[z].Tiles[x, y].TilesetIndex <= -1) continue;
+                        if (TilesetBase.GetTileset(tmpMap.Layers[z].Tiles[x, y].TilesetIndex) == null) continue;
                         Texture2D tilesetTex = GetTexture(TextureType.Tileset,
-                            Globals.Tilesets[tmpMap.Layers[z].Tiles[x, y].TilesetIndex]);
+                            TilesetBase.GetTileset(tmpMap.Layers[z].Tiles[x, y].TilesetIndex).Value);
                         if (tilesetTex == null) continue;
                         if (tmpMap.Autotiles.Autotile[x, y].Layer[z].RenderState != MapAutotiles.RenderStateNormal)
                         {
@@ -572,8 +569,8 @@ namespace Intersect_Editor.Classes
         }
         private static void DrawSelectionRect()
         {
-            var tmpMap = Globals.GameMaps[Globals.CurrentMap];
-            if (tmpMap == null || tmpMap.Deleted == 1) { return; }
+            var tmpMap = Globals.CurrentMap;
+            if (tmpMap == null) { return; }
             int selX = Globals.CurMapSelX, selY = Globals.CurMapSelY, selW = Globals.CurMapSelW, selH = Globals.CurMapSelH;
             int dragxoffset = 0, dragyoffset = 0;
             if (Globals.CurrentTool == (int)EdittingTool.Rectangle ||
@@ -703,9 +700,9 @@ namespace Intersect_Editor.Classes
             if (_tilesetChain == null) return;
             _graphicsDevice.SetRenderTarget(_tilesetChain);
             _graphicsDevice.Clear(Microsoft.Xna.Framework.Color.Black);
-            if (Globals.CurrentTileset > -1)
+            if (Globals.CurrentTileset != null)
             {
-                Texture2D tilesetTex = GetTexture(TextureType.Tileset, Globals.Tilesets[Globals.CurrentTileset]);
+                Texture2D tilesetTex = GetTexture(TextureType.Tileset, Globals.CurrentTileset.Value);
                 if (tilesetTex != null)
                 {
                     DrawTexture(tilesetTex, 0, 0, _tilesetChain);
@@ -740,8 +737,8 @@ namespace Intersect_Editor.Classes
         private static void DrawMapAttributes(int dir, bool screenShotting, RenderTarget2D renderTarget, bool upper)
         {
             if (HideResources) { return; }
-            var tmpMap = Globals.GameMaps[Globals.CurrentMap];
-            if (tmpMap == null || tmpMap.Deleted == 1) { return; }
+            var tmpMap = Globals.CurrentMap;
+            if (tmpMap == null) { return; }
             int x1 = 0, y1 = 0, x2 = 0, y2 = 0, xoffset = 0, yoffset = 0;
             switch (dir)
             {
@@ -759,7 +756,7 @@ namespace Intersect_Editor.Classes
                     break;
                 case 0:
                     if (tmpMap.Up <= -1) return;
-                    tmpMap = Globals.GameMaps[tmpMap.Up];
+                    tmpMap = MapInstance.GetMap(tmpMap.Up);
                     x1 = 0;
                     x2 = Options.MapWidth;
                     y1 = Options.MapHeight - 8;
@@ -769,7 +766,7 @@ namespace Intersect_Editor.Classes
                     break;
                 case 1:
                     if (tmpMap.Down <= -1) return;
-                    tmpMap = Globals.GameMaps[tmpMap.Down];
+                    tmpMap = MapInstance.GetMap(tmpMap.Down);
                     x1 = 0;
                     x2 = Options.MapWidth;
                     y1 = 0;
@@ -779,7 +776,7 @@ namespace Intersect_Editor.Classes
                     break;
                 case 2:
                     if (tmpMap.Left <= -1) return;
-                    tmpMap = Globals.GameMaps[tmpMap.Left];
+                    tmpMap = MapInstance.GetMap(tmpMap.Left);
                     x1 = Options.MapWidth - 8;
                     x2 = Options.MapWidth;
                     y1 = 0;
@@ -789,7 +786,7 @@ namespace Intersect_Editor.Classes
                     break;
                 case 3:
                     if (tmpMap.Right <= -1) return;
-                    tmpMap = Globals.GameMaps[tmpMap.Right];
+                    tmpMap = MapInstance.GetMap(tmpMap.Right);
                     x1 = 0;
                     x2 = 8;
                     y1 = 0;
@@ -798,7 +795,7 @@ namespace Intersect_Editor.Classes
                     yoffset = Options.TileHeight;
                     break;
             }
-            if (tmpMap == null || tmpMap.Deleted == 1) { return; }
+            if (tmpMap == null) { return; }
             for (var x = x1; x < x2; x++)
             {
                 for (var y = y1; y < y2; y++)
@@ -807,14 +804,12 @@ namespace Intersect_Editor.Classes
                     {
                         if (tmpMap.Attributes[x, y].value == (int) MapAttributes.Resource && !upper)
                         {
-                            int resourcenum = tmpMap.Attributes[x, y].data1;
-                            if (resourcenum >= 0 && resourcenum < Options.MaxResources)
+                            var resource = ResourceBase.GetResource(tmpMap.Attributes[x, y].data1);
+                            if (resource != null)
                             {
-                                if (Globals.GameResources[resourcenum].Name != "" &
-                                    Globals.GameResources[resourcenum].InitialGraphic != "None")
+                                if (resource.Name != "" & resource.InitialGraphic != "None")
                                 {
-                                    Texture2D res = GetTexture(TextureType.Resource,
-                                        Globals.GameResources[resourcenum].InitialGraphic);
+                                    Texture2D res = GetTexture(TextureType.Resource, resource.InitialGraphic);
                                     if (res != null)
                                     {
                                         float xpos = x*Options.TileWidth + xoffset;
@@ -835,25 +830,23 @@ namespace Intersect_Editor.Classes
                         }
                         else if (tmpMap.Attributes[x, y].value == (int) MapAttributes.Animation)
                         {
-                            int animationNum = tmpMap.Attributes[x, y].data1;
-
-
-                            if (animationNum >= 0 && animationNum < Options.MaxAnimations)
+                            var animation = AnimationBase.GetAnim(tmpMap.Attributes[x, y].data1);
+                            if (animation != null)
                             {
                                 float xpos = x*Options.TileWidth + xoffset + 16;
                                 float ypos = y*Options.TileHeight + yoffset + 16;
                                 var tmpMapOld = tmpMap;
                                 if (tmpMap == TilePreviewStruct)
                                 {
-                                    tmpMap = Globals.GameMaps[Globals.CurrentMap];
+                                    tmpMap = Globals.CurrentMap;
                                 }
 
-                                var animInstance = tmpMap.GetAttributeAnimation(tmpMap.Attributes[x, y], animationNum);
+                                var animInstance = tmpMap.GetAttributeAnimation(tmpMap.Attributes[x, y], animation.GetId());
                                 //Update if the animation isn't right!
-                                if (animInstance.myBase != Globals.GameAnimations[animationNum])
+                                if (animInstance.myBase != animation)
                                 {
                                     tmpMap.SetAttributeAnimation(tmpMap.Attributes[x, y],
-                                        new AnimationInstance(Globals.GameAnimations[animationNum], true));
+                                        new AnimationInstance(animation, true));
                                 }
                                 animInstance.Update();
                                 animInstance.SetPosition((int) xpos, (int) ypos, 0);
@@ -869,7 +862,7 @@ namespace Intersect_Editor.Classes
         }
         private static void DrawMapOverlay(RenderTarget2D target)
         {
-            DrawTexture(_whiteTex, new RectangleF(0, 0, 1, 1), new RectangleF(0, 0, 512, 512), Color.FromArgb(Globals.GameMaps[Globals.CurrentMap].AHue, Globals.GameMaps[Globals.CurrentMap].RHue, Globals.GameMaps[Globals.CurrentMap].GHue, Globals.GameMaps[Globals.CurrentMap].BHue), target);
+            DrawTexture(_whiteTex, new RectangleF(0, 0, 1, 1), new RectangleF(0, 0, 512, 512), Color.FromArgb(Globals.CurrentMap.AHue, Globals.CurrentMap.RHue, Globals.CurrentMap.GHue, Globals.CurrentMap.BHue), target);
         }
         public static RenderTarget2D ScreenShotMap(bool bland = false)
         {
@@ -905,16 +898,16 @@ namespace Intersect_Editor.Classes
         {
             float ecTime = Environment.TickCount - _fogUpdateTime;
             _fogUpdateTime = Environment.TickCount;
-            if (Globals.GameMaps[Globals.CurrentMap].Fog.Length > 0)
+            if (Globals.CurrentMap.Fog.Length > 0)
             {
-                Texture2D fogTex = GetTexture(TextureType.Fog, Globals.GameMaps[Globals.CurrentMap].Fog);
+                Texture2D fogTex = GetTexture(TextureType.Fog, Globals.CurrentMap.Fog);
                 if (fogTex != null)
                 {
                     int xCount = (int)(Globals.MapEditorWindow.picMap.Width / fogTex.Width) + 1;
                     int yCount = (int)(Globals.MapEditorWindow.picMap.Height / fogTex.Height) + 1;
 
-                    _fogCurrentX += (ecTime / 1000f) * Globals.GameMaps[Globals.CurrentMap].FogXSpeed * 2;
-                    _fogCurrentY += (ecTime / 1000f) * Globals.GameMaps[Globals.CurrentMap].FogYSpeed * 2;
+                    _fogCurrentX += (ecTime / 1000f) * Globals.CurrentMap.FogXSpeed * 2;
+                    _fogCurrentY += (ecTime / 1000f) * Globals.CurrentMap.FogYSpeed * 2;
 
                     if (_fogCurrentX < fogTex.Width) { _fogCurrentX += fogTex.Width; }
                     if (_fogCurrentX > fogTex.Width) { _fogCurrentX -= fogTex.Width; }
@@ -930,7 +923,7 @@ namespace Intersect_Editor.Classes
                                 new RectangleF(x* fogTex.Width + _fogCurrentX,
                                     y* fogTex.Height + _fogCurrentY, fogTex.Width,
                                     fogTex.Height),
-                                Color.FromArgb(Globals.GameMaps[Globals.CurrentMap].FogTransparency, 255, 255, 255),target);
+                                Color.FromArgb(Globals.CurrentMap.FogTransparency, 255, 255, 255),target);
                         }
                     }
                 }
@@ -948,8 +941,8 @@ namespace Intersect_Editor.Classes
             _graphicsDevice.Clear(Microsoft.Xna.Framework.Color.Black);
             _graphicsDevice.SetRenderTarget(null);
 
-            if (Globals.GameMaps[Globals.CurrentMap] == null) return;
-            var tmpMap = Globals.GameMaps[Globals.CurrentMap];
+            if (Globals.CurrentMap == null) return;
+            var tmpMap = Globals.CurrentMap;
             if (tmpMap == null) return;
             DrawTexture(_whiteTex, new RectangleF(0, 0, 1, 1),new RectangleF(0,0, Options.TileWidth * (Options.MapWidth + 2), Options.TileHeight * (Options.MapHeight + 2)),
                 Color.FromArgb((byte)(((float)tmpMap.Brightness / 100f) * 255f), 255, 255, 255), DarknessTexture, BlendState.Additive);
@@ -960,7 +953,7 @@ namespace Intersect_Editor.Classes
         {
             if (DarknessTexture == null) { return; }
 
-            var tmpMap = Globals.GameMaps[Globals.CurrentMap];
+            var tmpMap = Globals.CurrentMap;
             if (TilePreviewStruct != null)
             {
                 tmpMap = TilePreviewStruct;
@@ -995,7 +988,7 @@ namespace Intersect_Editor.Classes
         }
         private static void DrawLights(RenderTarget2D target = null)
         {
-            foreach (KeyValuePair<Microsoft.Xna.Framework.Point, Light> light in _lightQueue)
+            foreach (KeyValuePair<Microsoft.Xna.Framework.Point, LightBase> light in _lightQueue)
             {
                 var x = light.Key.X;
                 var y = light.Key.Y;
@@ -1003,7 +996,7 @@ namespace Intersect_Editor.Classes
             }
             _lightQueue.Clear();
         }
-        public static void DrawLight(int x, int y, Light light, RenderTarget2D target)
+        public static void DrawLight(int x, int y, LightBase light, RenderTarget2D target)
         {
             Effect shader = GetShader("radialgradient.xnb");
             shader.Parameters["_Color"].SetValue(new Vector4(light.Color.R / 255f,
@@ -1014,13 +1007,13 @@ namespace Intersect_Editor.Classes
             DrawTexture(_whiteTex, new RectangleF(0, 0, 1, 1), new RectangleF(x, y, light.Size * 2, light.Size * 2), Color.Transparent,
                 target, BlendState.Additive, shader);
         }
-        public static void AddLight(int x, int y, Light light, RenderTarget2D target = null)
+        public static void AddLight(int x, int y, LightBase light, RenderTarget2D target = null)
         {
             if (target == null)
             {
                 target = DarknessTexture;
             }
-            _lightQueue.Add(new KeyValuePair<Microsoft.Xna.Framework.Point, Light>(new Microsoft.Xna.Framework.Point(x,y),light));
+            _lightQueue.Add(new KeyValuePair<Microsoft.Xna.Framework.Point, LightBase>(new Microsoft.Xna.Framework.Point(x,y),light));
         }
 
         //Rendering

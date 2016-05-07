@@ -29,13 +29,12 @@
         private void InitializeComponent()
         {
             this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.btnCancel = new System.Windows.Forms.Button();
-            this.btnDelete = new System.Windows.Forms.Button();
-            this.btnSave = new System.Windows.Forms.Button();
             this.lstProjectiles = new System.Windows.Forms.ListBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.picSpawns = new System.Windows.Forms.PictureBox();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.lblAmount = new System.Windows.Forms.Label();
+            this.scrlAmount = new System.Windows.Forms.HScrollBar();
             this.chkGrapple = new System.Windows.Forms.CheckBox();
             this.lblSpell = new System.Windows.Forms.Label();
             this.scrlSpell = new System.Windows.Forms.HScrollBar();
@@ -62,60 +61,33 @@
             this.chkIgnoreZDimensionBlocks = new System.Windows.Forms.CheckBox();
             this.chkIgnoreMapBlocks = new System.Windows.Forms.CheckBox();
             this.chkIgnoreActiveResources = new System.Windows.Forms.CheckBox();
-            this.scrlAmount = new System.Windows.Forms.HScrollBar();
-            this.lblAmount = new System.Windows.Forms.Label();
+            this.pnlContainer = new System.Windows.Forms.Panel();
+            this.btnUndo = new System.Windows.Forms.Button();
+            this.btnNew = new System.Windows.Forms.Button();
+            this.btnDelete = new System.Windows.Forms.Button();
+            this.btnCancel = new System.Windows.Forms.Button();
+            this.btnSave = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.picSpawns)).BeginInit();
             this.groupBox3.SuspendLayout();
             this.groupBox5.SuspendLayout();
             this.groupBox4.SuspendLayout();
+            this.pnlContainer.SuspendLayout();
             this.SuspendLayout();
             // 
             // groupBox1
             // 
-            this.groupBox1.Controls.Add(this.btnCancel);
-            this.groupBox1.Controls.Add(this.btnDelete);
-            this.groupBox1.Controls.Add(this.btnSave);
+            this.groupBox1.Controls.Add(this.btnUndo);
             this.groupBox1.Controls.Add(this.lstProjectiles);
+            this.groupBox1.Controls.Add(this.btnNew);
+            this.groupBox1.Controls.Add(this.btnDelete);
             this.groupBox1.Location = new System.Drawing.Point(12, 12);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(203, 421);
             this.groupBox1.TabIndex = 15;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Projectiles";
-            // 
-            // btnCancel
-            // 
-            this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.btnCancel.Location = new System.Drawing.Point(6, 381);
-            this.btnCancel.Name = "btnCancel";
-            this.btnCancel.Size = new System.Drawing.Size(191, 27);
-            this.btnCancel.TabIndex = 4;
-            this.btnCancel.Text = "Cancel";
-            this.btnCancel.UseVisualStyleBackColor = true;
-            this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
-            // 
-            // btnDelete
-            // 
-            this.btnDelete.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.btnDelete.Location = new System.Drawing.Point(6, 348);
-            this.btnDelete.Name = "btnDelete";
-            this.btnDelete.Size = new System.Drawing.Size(191, 27);
-            this.btnDelete.TabIndex = 3;
-            this.btnDelete.Text = "Delete";
-            this.btnDelete.UseVisualStyleBackColor = true;
-            this.btnDelete.Click += new System.EventHandler(this.btnDelete_Click);
-            // 
-            // btnSave
-            // 
-            this.btnSave.Location = new System.Drawing.Point(6, 315);
-            this.btnSave.Name = "btnSave";
-            this.btnSave.Size = new System.Drawing.Size(191, 27);
-            this.btnSave.TabIndex = 2;
-            this.btnSave.Text = "Save";
-            this.btnSave.UseVisualStyleBackColor = true;
-            this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
             // 
             // lstProjectiles
             // 
@@ -129,7 +101,7 @@
             // groupBox2
             // 
             this.groupBox2.Controls.Add(this.picSpawns);
-            this.groupBox2.Location = new System.Drawing.Point(221, 241);
+            this.groupBox2.Location = new System.Drawing.Point(1, 230);
             this.groupBox2.Name = "groupBox2";
             this.groupBox2.Size = new System.Drawing.Size(186, 192);
             this.groupBox2.TabIndex = 17;
@@ -161,12 +133,31 @@
             this.groupBox3.Controls.Add(this.lblSpeed);
             this.groupBox3.Controls.Add(this.scrlSpawn);
             this.groupBox3.Controls.Add(this.scrlSpeed);
-            this.groupBox3.Location = new System.Drawing.Point(221, 12);
+            this.groupBox3.Location = new System.Drawing.Point(1, 1);
             this.groupBox3.Name = "groupBox3";
             this.groupBox3.Size = new System.Drawing.Size(186, 227);
             this.groupBox3.TabIndex = 18;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Properties";
+            // 
+            // lblAmount
+            // 
+            this.lblAmount.AutoSize = true;
+            this.lblAmount.Location = new System.Drawing.Point(15, 108);
+            this.lblAmount.Name = "lblAmount";
+            this.lblAmount.Size = new System.Drawing.Size(58, 13);
+            this.lblAmount.TabIndex = 38;
+            this.lblAmount.Text = "Quantity: 1";
+            // 
+            // scrlAmount
+            // 
+            this.scrlAmount.Location = new System.Drawing.Point(15, 121);
+            this.scrlAmount.Minimum = 1;
+            this.scrlAmount.Name = "scrlAmount";
+            this.scrlAmount.Size = new System.Drawing.Size(160, 17);
+            this.scrlAmount.TabIndex = 37;
+            this.scrlAmount.Value = 1;
+            this.scrlAmount.Scroll += new System.Windows.Forms.ScrollEventHandler(this.scrlAmount_Scroll);
             // 
             // chkGrapple
             // 
@@ -191,10 +182,11 @@
             // scrlSpell
             // 
             this.scrlSpell.Location = new System.Drawing.Point(16, 186);
+            this.scrlSpell.Minimum = -1;
             this.scrlSpell.Name = "scrlSpell";
             this.scrlSpell.Size = new System.Drawing.Size(160, 17);
             this.scrlSpell.TabIndex = 23;
-            this.scrlSpell.Value = 1;
+            this.scrlSpell.Value = -1;
             this.scrlSpell.Scroll += new System.Windows.Forms.ScrollEventHandler(this.scrlSpell_Scroll);
             // 
             // chkHoming
@@ -296,7 +288,7 @@
             this.groupBox5.Controls.Add(this.lstAnimations);
             this.groupBox5.Controls.Add(this.lblSpawnRange);
             this.groupBox5.Controls.Add(this.scrlSpawnRange);
-            this.groupBox5.Location = new System.Drawing.Point(413, 12);
+            this.groupBox5.Location = new System.Drawing.Point(193, 1);
             this.groupBox5.Name = "groupBox5";
             this.groupBox5.Size = new System.Drawing.Size(273, 309);
             this.groupBox5.TabIndex = 27;
@@ -390,7 +382,7 @@
             this.groupBox4.Controls.Add(this.chkIgnoreZDimensionBlocks);
             this.groupBox4.Controls.Add(this.chkIgnoreMapBlocks);
             this.groupBox4.Controls.Add(this.chkIgnoreActiveResources);
-            this.groupBox4.Location = new System.Drawing.Point(413, 320);
+            this.groupBox4.Location = new System.Drawing.Point(193, 309);
             this.groupBox4.Name = "groupBox4";
             this.groupBox4.Size = new System.Drawing.Size(273, 113);
             this.groupBox4.TabIndex = 29;
@@ -406,6 +398,7 @@
             this.chkIgnoreInactiveResources.TabIndex = 38;
             this.chkIgnoreInactiveResources.Text = "Inactive Resources";
             this.chkIgnoreInactiveResources.UseVisualStyleBackColor = true;
+            this.chkIgnoreInactiveResources.CheckedChanged += new System.EventHandler(this.chkIgnoreInactiveResources_CheckedChanged);
             // 
             // chkIgnoreZDimensionBlocks
             // 
@@ -416,6 +409,7 @@
             this.chkIgnoreZDimensionBlocks.TabIndex = 37;
             this.chkIgnoreZDimensionBlocks.Text = "Z-Dimension Blocks";
             this.chkIgnoreZDimensionBlocks.UseVisualStyleBackColor = true;
+            this.chkIgnoreZDimensionBlocks.CheckedChanged += new System.EventHandler(this.chkIgnoreZDimensionBlocks_CheckedChanged);
             // 
             // chkIgnoreMapBlocks
             // 
@@ -426,6 +420,7 @@
             this.chkIgnoreMapBlocks.TabIndex = 33;
             this.chkIgnoreMapBlocks.Text = "Map Blocks";
             this.chkIgnoreMapBlocks.UseVisualStyleBackColor = true;
+            this.chkIgnoreMapBlocks.CheckedChanged += new System.EventHandler(this.chkIgnoreMapBlocks_CheckedChanged);
             // 
             // chkIgnoreActiveResources
             // 
@@ -436,37 +431,84 @@
             this.chkIgnoreActiveResources.TabIndex = 36;
             this.chkIgnoreActiveResources.Text = "Active Resources";
             this.chkIgnoreActiveResources.UseVisualStyleBackColor = true;
+            this.chkIgnoreActiveResources.CheckedChanged += new System.EventHandler(this.chkIgnoreActiveResources_CheckedChanged);
             // 
-            // scrlAmount
+            // pnlContainer
             // 
-            this.scrlAmount.Location = new System.Drawing.Point(15, 121);
-            this.scrlAmount.Minimum = 1;
-            this.scrlAmount.Name = "scrlAmount";
-            this.scrlAmount.Size = new System.Drawing.Size(160, 17);
-            this.scrlAmount.TabIndex = 37;
-            this.scrlAmount.Value = 1;
-            this.scrlAmount.Scroll += new System.Windows.Forms.ScrollEventHandler(this.scrlAmount_Scroll);
+            this.pnlContainer.Controls.Add(this.groupBox4);
+            this.pnlContainer.Controls.Add(this.groupBox3);
+            this.pnlContainer.Controls.Add(this.groupBox5);
+            this.pnlContainer.Controls.Add(this.groupBox2);
+            this.pnlContainer.Location = new System.Drawing.Point(221, 12);
+            this.pnlContainer.Name = "pnlContainer";
+            this.pnlContainer.Size = new System.Drawing.Size(465, 421);
+            this.pnlContainer.TabIndex = 30;
+            this.pnlContainer.Visible = false;
             // 
-            // lblAmount
+            // btnUndo
             // 
-            this.lblAmount.AutoSize = true;
-            this.lblAmount.Location = new System.Drawing.Point(15, 108);
-            this.lblAmount.Name = "lblAmount";
-            this.lblAmount.Size = new System.Drawing.Size(58, 13);
-            this.lblAmount.TabIndex = 38;
-            this.lblAmount.Text = "Quantity: 1";
+            this.btnUndo.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            this.btnUndo.Location = new System.Drawing.Point(6, 385);
+            this.btnUndo.Name = "btnUndo";
+            this.btnUndo.Size = new System.Drawing.Size(190, 27);
+            this.btnUndo.TabIndex = 35;
+            this.btnUndo.Text = "Undo Changes";
+            this.btnUndo.UseVisualStyleBackColor = true;
+            this.btnUndo.Click += new System.EventHandler(this.btnUndo_Click);
+            // 
+            // btnNew
+            // 
+            this.btnNew.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            this.btnNew.Location = new System.Drawing.Point(6, 319);
+            this.btnNew.Name = "btnNew";
+            this.btnNew.Size = new System.Drawing.Size(190, 27);
+            this.btnNew.TabIndex = 33;
+            this.btnNew.Text = "New";
+            this.btnNew.UseVisualStyleBackColor = true;
+            this.btnNew.Click += new System.EventHandler(this.btnNew_Click);
+            // 
+            // btnDelete
+            // 
+            this.btnDelete.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            this.btnDelete.Location = new System.Drawing.Point(7, 352);
+            this.btnDelete.Name = "btnDelete";
+            this.btnDelete.Size = new System.Drawing.Size(190, 27);
+            this.btnDelete.TabIndex = 32;
+            this.btnDelete.Text = "Delete";
+            this.btnDelete.UseVisualStyleBackColor = true;
+            this.btnDelete.Click += new System.EventHandler(this.btnDelete_Click);
+            // 
+            // btnCancel
+            // 
+            this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            this.btnCancel.Location = new System.Drawing.Point(496, 440);
+            this.btnCancel.Name = "btnCancel";
+            this.btnCancel.Size = new System.Drawing.Size(190, 27);
+            this.btnCancel.TabIndex = 34;
+            this.btnCancel.Text = "Cancel";
+            this.btnCancel.UseVisualStyleBackColor = true;
+            this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
+            // 
+            // btnSave
+            // 
+            this.btnSave.Location = new System.Drawing.Point(300, 440);
+            this.btnSave.Name = "btnSave";
+            this.btnSave.Size = new System.Drawing.Size(190, 27);
+            this.btnSave.TabIndex = 31;
+            this.btnSave.Text = "Save";
+            this.btnSave.UseVisualStyleBackColor = true;
+            this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
             // 
             // frmProjectile
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(694, 440);
+            this.ClientSize = new System.Drawing.Size(694, 474);
             this.ControlBox = false;
-            this.Controls.Add(this.groupBox4);
-            this.Controls.Add(this.groupBox5);
-            this.Controls.Add(this.groupBox3);
-            this.Controls.Add(this.groupBox2);
+            this.Controls.Add(this.btnCancel);
+            this.Controls.Add(this.btnSave);
             this.Controls.Add(this.groupBox1);
+            this.Controls.Add(this.pnlContainer);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Name = "frmProjectile";
             this.Text = "Projectile Editor";
@@ -480,6 +522,7 @@
             this.groupBox5.PerformLayout();
             this.groupBox4.ResumeLayout(false);
             this.groupBox4.PerformLayout();
+            this.pnlContainer.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -487,9 +530,6 @@
         #endregion
 
         private System.Windows.Forms.GroupBox groupBox1;
-        private System.Windows.Forms.Button btnCancel;
-        private System.Windows.Forms.Button btnDelete;
-        private System.Windows.Forms.Button btnSave;
         private System.Windows.Forms.ListBox lstProjectiles;
         private System.Windows.Forms.GroupBox groupBox2;
         public System.Windows.Forms.PictureBox picSpawns;
@@ -522,5 +562,11 @@
         private System.Windows.Forms.Button btnAdd;
         private System.Windows.Forms.Label lblAmount;
         private System.Windows.Forms.HScrollBar scrlAmount;
+        private System.Windows.Forms.Panel pnlContainer;
+        private System.Windows.Forms.Button btnUndo;
+        private System.Windows.Forms.Button btnNew;
+        private System.Windows.Forms.Button btnSave;
+        private System.Windows.Forms.Button btnCancel;
+        private System.Windows.Forms.Button btnDelete;
     }
 }

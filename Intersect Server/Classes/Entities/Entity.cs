@@ -23,6 +23,7 @@
 using System;
 using System.Collections.Generic;
 using Intersect_Library;
+using Intersect_Library.GameObjects;
 using Intersect_Server.Classes.Core;
 using Intersect_Server.Classes.General;
 using Intersect_Server.Classes.Items;
@@ -183,7 +184,7 @@ namespace Intersect_Server.Classes.Entities
 
             if (tile.Translate(xOffset, yOffset))
             {
-                Attribute tileAttribute = Globals.GameMaps[tile.GetMap()].Attributes[tile.GetX(), tile.GetY()];
+                Attribute tileAttribute = MapInstance.GetMap(tile.GetMap()).Attributes[tile.GetX(), tile.GetY()];
                 if (tileAttribute != null)
                 {
                     if (tileAttribute.value == (int)MapAttributes.Blocked) return -2;
@@ -197,9 +198,9 @@ namespace Intersect_Server.Classes.Entities
                 return -5; //Out of Bounds
             }
 
-            for (int i = 0; i < Globals.GameMaps[tile.GetMap()].Entities.Count; i++)
+            for (int i = 0; i < MapInstance.GetMap(tile.GetMap()).Entities.Count; i++)
             {
-                Entity en = Globals.GameMaps[tile.GetMap()].Entities[i];
+                Entity en = MapInstance.GetMap(tile.GetMap()).Entities[i];
                 if (en.CurrentX == tile.GetX() && en.CurrentY == tile.GetY() && en.CurrentZ == CurrentZ && en.Passable == 0)
                 {
                     //Set a target if a projectile
@@ -308,7 +309,7 @@ namespace Intersect_Server.Classes.Entities
             {
                 if (CurrentY < Options.MapHeight && CurrentY >= 0)
                 {
-                    Attribute attribute = Globals.GameMaps[CurrentMap].Attributes[CurrentX, CurrentY];
+                    Attribute attribute = MapInstance.GetMap(CurrentMap).Attributes[CurrentX, CurrentY];
                     if (attribute != null && attribute.value == (int)MapAttributes.ZDimension)
                     {
                         if (attribute.data1 > 0)
@@ -324,24 +325,24 @@ namespace Intersect_Server.Classes.Entities
         public int GetDirectionTo(Entity target)
         {
             int xDiff = 0, yDiff = 0;
-            int myGrid = Globals.GameMaps[CurrentMap].MapGrid;
+            int myGrid = MapInstance.GetMap(CurrentMap).MapGrid;
             //Loop through surrouding maps to generate a array of open and blocked points.
-            for (var x = Globals.GameMaps[CurrentMap].MapGridX - 1;
-                x <= Globals.GameMaps[CurrentMap].MapGridX + 1;
+            for (var x = MapInstance.GetMap(CurrentMap).MapGridX - 1;
+                x <= MapInstance.GetMap(CurrentMap).MapGridX + 1;
                 x++)
             {
                 if (x == -1 || x >= Database.MapGrids[myGrid].Width) continue;
-                for (var y = Globals.GameMaps[CurrentMap].MapGridY - 1;
-                    y <= Globals.GameMaps[CurrentMap].MapGridY + 1;
+                for (var y = MapInstance.GetMap(CurrentMap).MapGridY - 1;
+                    y <= MapInstance.GetMap(CurrentMap).MapGridY + 1;
                     y++)
                 {
                     if (y == -1 || y >= Database.MapGrids[myGrid].Height) continue;
                     if (Database.MapGrids[myGrid].MyGrid[x, y] > -1 &&
                         Database.MapGrids[myGrid].MyGrid[x, y] == target.CurrentMap)
                     {
-                        xDiff = (Globals.GameMaps[CurrentMap].MapGridX - x) * Options.MapWidth + target.CurrentX -
+                        xDiff = (MapInstance.GetMap(CurrentMap).MapGridX - x) * Options.MapWidth + target.CurrentX -
                                 CurrentX;
-                        yDiff = (Globals.GameMaps[CurrentMap].MapGridY - y) * Options.MapHeight + target.CurrentY -
+                        yDiff = (MapInstance.GetMap(CurrentMap).MapGridY - y) * Options.MapHeight + target.CurrentY -
                                 CurrentY;
                         if (Math.Abs(xDiff) > Math.Abs(yDiff))
                         {
@@ -374,16 +375,18 @@ namespace Intersect_Server.Classes.Entities
             {
                 if (isSpell == -1) return;
                 // Check that a resource is actually required.
-                if (Globals.GameResources[((Resource)Globals.Entities[enemyIndex]).ResourceNum].Tool > -1 && Globals.GameResources[((Resource)Globals.Entities[enemyIndex]).ResourceNum].Tool < Options.ToolTypes.Count)
+                var resource = ((Resource) Globals.Entities[enemyIndex]).MyBase;
+                if (resource.Tool > -1 && resource.Tool < Options.ToolTypes.Count)
                 {
                     if (((Player)Globals.Entities[MyIndex]).Equipment[2] < 0)
                     {
-                        PacketSender.SendPlayerMsg(((Player)Globals.Entities[MyIndex]).MyClient, "You require a " + Options.ToolTypes[Globals.GameResources[((Resource)Globals.Entities[enemyIndex]).ResourceNum].Tool] + " to interact with this resource.");
+                        PacketSender.SendPlayerMsg(((Player)Globals.Entities[MyIndex]).MyClient, "You require a " + Options.ToolTypes[resource.Tool] + " to interact with this resource.");
                         return;
                     }
-                    if (Globals.GameResources[((Resource)Globals.Entities[enemyIndex]).ResourceNum].Tool != Globals.GameItems[Inventory[((Player)Globals.Entities[MyIndex]).Equipment[2]].ItemNum].Tool)
+                    var weapon = ItemBase.GetItem(Inventory[((Player) Globals.Entities[MyIndex]).Equipment[Options.WeaponIndex]].ItemNum);
+                    if ( weapon == null || resource.Tool != weapon.Tool)
                     {
-                        PacketSender.SendPlayerMsg(((Player)Globals.Entities[MyIndex]).MyClient, "You require a " + Options.ToolTypes[Globals.GameResources[((Resource)Globals.Entities[enemyIndex]).ResourceNum].Tool] + " to interact with this resource.");
+                        PacketSender.SendPlayerMsg(((Player)Globals.Entities[MyIndex]).MyClient, "You require a " + Options.ToolTypes[resource.Tool] + " to interact with this resource.");
                         return;
                     }
                 }
@@ -395,16 +398,16 @@ namespace Intersect_Server.Classes.Entities
 
                 //Check if there are any guards nearby
                 //TODO Loop through CurrentMap - SurroundingMaps Entity List instead of global entity list.
-                for (int n = 0; n < Globals.GameMaps[CurrentMap].Entities.Count; n++)
+                for (int n = 0; n < MapInstance.GetMap(CurrentMap).Entities.Count; n++)
                 {
-                    if (Globals.GameMaps[CurrentMap].Entities[n].GetType() == typeof(Npc))
+                    if (MapInstance.GetMap(CurrentMap).Entities[n].GetType() == typeof(Npc))
                     {
-                        if (((Npc)Globals.GameMaps[CurrentMap].Entities[n]).Behaviour == 3) // Type guard
+                        if (((Npc)MapInstance.GetMap(CurrentMap).Entities[n]).Behaviour == 3) // Type guard
                         {
-                            int x = Globals.GameMaps[CurrentMap].Entities[n].CurrentX - ((Npc)Globals.GameMaps[CurrentMap].Entities[n]).Range;
-                            int y = Globals.GameMaps[CurrentMap].Entities[n].CurrentY - ((Npc)Globals.GameMaps[CurrentMap].Entities[n]).Range;
-                            int xMax = Globals.GameMaps[CurrentMap].Entities[n].CurrentX + ((Npc)Globals.GameMaps[CurrentMap].Entities[n]).Range;
-                            int yMax = Globals.GameMaps[CurrentMap].Entities[n].CurrentY + ((Npc)Globals.GameMaps[CurrentMap].Entities[n]).Range;
+                            int x = MapInstance.GetMap(CurrentMap).Entities[n].CurrentX - ((Npc)MapInstance.GetMap(CurrentMap).Entities[n]).Range;
+                            int y = MapInstance.GetMap(CurrentMap).Entities[n].CurrentY - ((Npc)MapInstance.GetMap(CurrentMap).Entities[n]).Range;
+                            int xMax = MapInstance.GetMap(CurrentMap).Entities[n].CurrentX + ((Npc)MapInstance.GetMap(CurrentMap).Entities[n]).Range;
+                            int yMax = MapInstance.GetMap(CurrentMap).Entities[n].CurrentY + ((Npc)MapInstance.GetMap(CurrentMap).Entities[n]).Range;
 
                             //Check that not going out of the map boundaries
                             if (x < 0) x = 0;
@@ -417,7 +420,7 @@ namespace Intersect_Server.Classes.Entities
                                 if (y < Globals.Entities[MyIndex].CurrentY && yMax > Globals.Entities[MyIndex].CurrentY)
                                 {
                                     // In range, so make a target
-                                    ((Npc)Globals.GameMaps[CurrentMap].Entities[n]).AssignTarget(MyIndex);
+                                    ((Npc)MapInstance.GetMap(CurrentMap).Entities[n]).AssignTarget(MyIndex);
                                 }
                             }
                         }
@@ -428,77 +431,96 @@ namespace Intersect_Server.Classes.Entities
             //Check if magic or physical damage
             if (isSpell == -1)
             {
-                dmg = DamageCalculator(Stat[(int)Stats.Attack].Value(), Globals.Entities[enemyIndex].Stat[(int)Stats.Defense].Value());
+                dmg = DamageCalculator(Stat[(int) Stats.Attack].Value(),
+                    Globals.Entities[enemyIndex].Stat[(int) Stats.Defense].Value());
                 if (dmg <= 0) dmg = 1; // Always do damage.
             }
             else
             {
-                // Handle different dmg formula for healing and damaging spells.
-                if (Globals.GameSpells[isSpell].VitalDiff[(int)Vitals.Health] > 0)
+                var spellBase = SpellBase.GetSpell(isSpell);
+                if (spellBase != null)
                 {
-                    dmg = -Globals.GameSpells[isSpell].VitalDiff[(int)Vitals.Health];
+                    // Handle different dmg formula for healing and damaging spells.
+                    if (spellBase.VitalDiff[(int) Vitals.Health] > 0)
+                    {
+                        dmg = -spellBase.VitalDiff[(int) Vitals.Health];
+                    }
+                    else
+                    {
+                        dmg =
+                            DamageCalculator(Stat[(int) Stats.AbilityPower].Value(),
+                                Globals.Entities[enemyIndex].Stat[(int) Stats.MagicResist].Value()) -
+                            spellBase.VitalDiff[(int) Vitals.Health];
+                        if (dmg <= 0) dmg = 1; // Always do damage.
+                    }
+
+                    //Handle other stat debuffs/vitals.
+                    Globals.Entities[enemyIndex].Vital[(int) Vitals.Mana] +=
+                        spellBase.VitalDiff[(int) Vitals.Mana];
+                    for (int i = 0; i < (int) Stats.StatCount; i++)
+                    {
+                        Globals.Entities[enemyIndex].Stat[i].Buff.Add(
+                            new EntityBuff(spellBase.StatDiff[i],
+                                (spellBase.Data2*100)));
+                    }
+
+                    //Handle other status effects
+                    if (spellBase.Data3 > 0)
+                    {
+                        Globals.Entities[enemyIndex].Status.Add(new StatusInstance(enemyIndex,
+                            spellBase.Data3, (spellBase.Data2*100),
+                            spellBase.Data5));
+                    }
+
+                    //Handle DoT/HoT spells]
+                    if (spellBase.Data1 > 0)
+                    {
+                        for (int i = 0; i < Globals.Entities[enemyIndex].DoT.Count; i++)
+                        {
+                            if (Globals.Entities[enemyIndex].DoT[i].SpellBase.GetId() == isSpell ||
+                                Globals.Entities[enemyIndex].DoT[i].OwnerID == MyIndex)
+                            {
+                                return;
+                            }
+                        }
+                        Globals.Entities[enemyIndex].DoT.Add(new DoTInstance(MyIndex, isSpell, enemyIndex));
+                    }
+                }
+
+                Globals.Entities[enemyIndex].Vital[(int) Vitals.Health] -= (int) dmg;
+
+                //Check if after healing, greater than maximum hp.
+                if (Globals.Entities[enemyIndex].Vital[(int) Vitals.Health] >=
+                    Globals.Entities[enemyIndex].MaxVital[(int) Vitals.Health])
+                {
+                    Globals.Entities[enemyIndex].Vital[(int) Vitals.Health] =
+                        Globals.Entities[enemyIndex].MaxVital[(int) Vitals.Health];
+                }
+
+                //Dead entity check
+                if (Globals.Entities[enemyIndex].Vital[(int) Vitals.Health] <= 0)
+                {
+                    //Check if a resource, if so spawn item drops differently.
+                    if (Globals.Entities[enemyIndex].GetType() == typeof (Resource))
+                    {
+                        ((Resource) Globals.Entities[enemyIndex]).SpawnResourceItems(MyIndex);
+                    }
+                    Globals.Entities[enemyIndex].Die();
                 }
                 else
                 {
-                    dmg = DamageCalculator(Stat[(int)Stats.AbilityPower].Value(), Globals.Entities[enemyIndex].Stat[(int)Stats.MagicResist].Value()) - Globals.GameSpells[isSpell].VitalDiff[(int)Vitals.Health];
-                    if (dmg <= 0) dmg = 1; // Always do damage.
+                    //Hit him, make him mad and send the vital update.
+                    PacketSender.SendEntityVitals(enemyIndex, (int) EntityTypes.GlobalEntity,
+                        Globals.Entities[enemyIndex]);
+                    PacketSender.SendEntityStats(enemyIndex, (int) EntityTypes.GlobalEntity,
+                        Globals.Entities[enemyIndex]);
                 }
-                
-                //Handle other stat debuffs/vitals.
-                Globals.Entities[enemyIndex].Vital[(int)Vitals.Mana] += Globals.GameSpells[isSpell].VitalDiff[(int)Vitals.Mana];
-                for (int i = 0; i < (int)Stats.StatCount; i++)
+                // Add a timer before able to make the next move.
+                if (Globals.Entities[MyIndex].GetType() == typeof (Npc))
                 {
-                    Globals.Entities[enemyIndex].Stat[i].Buff.Add(new EntityBuff(Globals.GameSpells[isSpell].StatDiff[i], (Globals.GameSpells[isSpell].Data2 * 100)));
+                    ((Npc) Globals.Entities[MyIndex]).MoveTimer = Environment.TickCount +
+                                                                  (int) ((1.0/(Stat[2].Value()/10f))*1000);
                 }
-
-                //Handle other status effects
-                if (Globals.GameSpells[isSpell].Data3 > 0)
-                {
-                    Globals.Entities[enemyIndex].Status.Add(new StatusInstance(enemyIndex, Globals.GameSpells[isSpell].Data3, (Globals.GameSpells[isSpell].Data2 * 100), Globals.GameSpells[isSpell].Data5));
-                }
-
-                //Handle DoT/HoT spells]
-                if (Globals.GameSpells[isSpell].Data1 > 0)
-                {
-                    for (int i = 0; i < Globals.Entities[enemyIndex].DoT.Count; i++)
-                    {
-                        if (Globals.Entities[enemyIndex].DoT[i].SpellNum == isSpell || Globals.Entities[enemyIndex].DoT[i].OwnerID == MyIndex)
-                        {
-                            return;
-                        }
-                    }
-                    Globals.Entities[enemyIndex].DoT.Add(new DoTInstance(MyIndex, isSpell, enemyIndex));
-                }
-            }
-
-            Globals.Entities[enemyIndex].Vital[(int)Vitals.Health] -= (int)dmg;
-
-            //Check if after healing, greater than maximum hp.
-            if (Globals.Entities[enemyIndex].Vital[(int)Vitals.Health] >= Globals.Entities[enemyIndex].MaxVital[(int)Vitals.Health]) 
-            {
-                Globals.Entities[enemyIndex].Vital[(int)Vitals.Health] = Globals.Entities[enemyIndex].MaxVital[(int)Vitals.Health];
-            }
-
-            //Dead entity check
-            if (Globals.Entities[enemyIndex].Vital[(int)Vitals.Health] <= 0)
-            {
-                //Check if a resource, if so spawn item drops differently.
-                if (Globals.Entities[enemyIndex].GetType() == typeof(Resource))
-                {
-                    ((Resource)Globals.Entities[enemyIndex]).SpawnResourceItems(MyIndex);
-                }
-                Globals.Entities[enemyIndex].Die();
-            }
-            else
-            {
-                //Hit him, make him mad and send the vital update.
-                PacketSender.SendEntityVitals(enemyIndex, (int)EntityTypes.GlobalEntity, Globals.Entities[enemyIndex]);
-                PacketSender.SendEntityStats(enemyIndex, (int)EntityTypes.GlobalEntity, Globals.Entities[enemyIndex]);
-            }
-            // Add a timer before able to make the next move.
-            if (Globals.Entities[MyIndex].GetType() == typeof(Npc))
-            {
-                ((Npc)Globals.Entities[MyIndex]).MoveTimer = Environment.TickCount + (int)((1.0 / (Stat[2].Value() / 10f)) * 1000);
             }
         }
 
@@ -548,7 +570,7 @@ namespace Intersect_Server.Classes.Entities
                 {
                     if (Inventory[i].ItemNum >= 0)
                     {
-                        Globals.GameMaps[CurrentMap].SpawnItem(CurrentX, CurrentY, Inventory[i], Inventory[i].ItemVal);
+                        MapInstance.GetMap(CurrentMap).SpawnItem(CurrentX, CurrentY, Inventory[i], Inventory[i].ItemVal);
                     }
                 }
             }
@@ -573,123 +595,149 @@ namespace Intersect_Server.Classes.Entities
 
         public void CastSpell(int SpellNum, int SpellSlot = -1)
         {
-            switch (Globals.GameSpells[SpellNum].Type)
+            var spellBase = SpellBase.GetSpell(SpellNum);
+            if (spellBase != null)
             {
-                case (int)SpellTypes.CombatSpell:
-
-                    switch (Globals.GameSpells[SpellNum].TargetType)
-                    {
-                        case (int)SpellTargetTypes.Self:
-                            if (Globals.GameSpells[SpellNum].HitAnimation > -1)
-                            {
-                                PacketSender.SendAnimationToProximity(Globals.GameSpells[SpellNum].HitAnimation, 1, MyIndex, CurrentMap, 0, 0, Dir); //Target Type 1 will be global entity
-                            }
-                            TryAttack(MyIndex, false, SpellNum);
-                            break;
-                        case (int)SpellTargetTypes.Single:
-                            HandleAoESpell(SpellNum, Target);
-                            break;
-                        case (int)SpellTargetTypes.AoE:
-                            HandleAoESpell(SpellNum);
-                            break;
-                        case (int)SpellTargetTypes.Projectile:
-                            Globals.GameMaps[CurrentMap].SpawnMapProjectile(this, Globals.GameSpells[SpellNum].Data4 - 1, CurrentMap, CurrentX, CurrentY, CurrentZ, Dir, SpellNum, Target);
-                            break;
-                        default:
-                            break;
-                    }
-                    break;
-                case (int)SpellTypes.Warp:
-                    if (GetType() == typeof(Player))
-                    { 
-                        Warp(Globals.GameSpells[SpellNum].Data1, Globals.GameSpells[SpellNum].Data2, Globals.GameSpells[SpellNum].Data3, Globals.GameSpells[SpellNum].Data4);
-                    }
-                    break;
-                case (int)SpellTypes.WarpTo:
-                    if (GetType() == typeof(Player))
-                    {
-                        HandleAoESpell(SpellNum, Target);
-                    }
-                    break;
-                case (int)SpellTypes.Dash:
-
-                    break;
-                case (int)SpellTypes.Event:
-
-                    break;
-                default:
-                    break;
-            }
-            if (SpellSlot >= 0 && SpellSlot < Options.MaxPlayerSkills)
-            {
-                Spells[SpellSlot].SpellCD = Environment.TickCount + (Globals.GameSpells[SpellNum].CooldownDuration * 100);
-                if (GetType() == typeof(Player))
+                switch (spellBase.SpellType)
                 {
-                    PacketSender.SendSpellCooldown(((Player)Globals.Entities[MyIndex]).MyClient, SpellSlot);
+                    case (int) SpellTypes.CombatSpell:
+
+                        switch (spellBase.TargetType)
+                        {
+                            case (int) SpellTargetTypes.Self:
+                                if (spellBase.HitAnimation > -1)
+                                {
+                                    PacketSender.SendAnimationToProximity(spellBase.HitAnimation, 1,
+                                        MyIndex, CurrentMap, 0, 0, Dir); //Target Type 1 will be global entity
+                                }
+                                TryAttack(MyIndex, false, SpellNum);
+                                break;
+                            case (int) SpellTargetTypes.Single:
+                                HandleAoESpell(SpellNum, Target);
+                                break;
+                            case (int) SpellTargetTypes.AoE:
+                                HandleAoESpell(SpellNum);
+                                break;
+                            case (int) SpellTargetTypes.Projectile:
+                                var projectileBase = ProjectileBase.GetProjectile(spellBase.Data4 - 1);
+                                if (projectileBase != null)
+                                {
+                                    MapInstance.GetMap(CurrentMap).SpawnMapProjectile(this,
+                                        projectileBase, CurrentMap, CurrentX, CurrentY, CurrentZ,
+                                        Dir, SpellNum, Target);
+                                }
+                                break;
+                            default:
+                                break;
+                        }
+                        break;
+                    case (int) SpellTypes.Warp:
+                        if (GetType() == typeof (Player))
+                        {
+                            Warp(spellBase.Data1, spellBase.Data2,
+                                spellBase.Data3, spellBase.Data4);
+                        }
+                        break;
+                    case (int) SpellTypes.WarpTo:
+                        if (GetType() == typeof (Player))
+                        {
+                            HandleAoESpell(SpellNum, Target);
+                        }
+                        break;
+                    case (int) SpellTypes.Dash:
+
+                        break;
+                    case (int) SpellTypes.Event:
+
+                        break;
+                    default:
+                        break;
+                }
+                if (SpellSlot >= 0 && SpellSlot < Options.MaxPlayerSkills)
+                {
+                    Spells[SpellSlot].SpellCD = Environment.TickCount +
+                                                (spellBase.CooldownDuration*100);
+                    if (GetType() == typeof (Player))
+                    {
+                        PacketSender.SendSpellCooldown(((Player) Globals.Entities[MyIndex]).MyClient, SpellSlot);
+                    }
                 }
             }
         }
 
         private void HandleAoESpell(int SpellNum, int target = -1)
         {
-            for (int x = CurrentX - Globals.GameSpells[SpellNum].CastRange; x < CurrentX + Globals.GameSpells[SpellNum].CastRange; x++)
+            var spellBase = SpellBase.GetSpell(SpellNum);
+            if (spellBase != null)
             {
-                for (int y = CurrentY - Globals.GameSpells[SpellNum].CastRange; y < CurrentY + Globals.GameSpells[SpellNum].CastRange; y++)
+                for (int x = CurrentX - spellBase.CastRange;
+                    x < CurrentX + spellBase.CastRange;
+                    x++)
                 {
-                    int tempMap = CurrentMap;
-                    int x2 = x;
-                    int y2 = y;
+                    for (int y = CurrentY - spellBase.CastRange;
+                        y < CurrentY + spellBase.CastRange;
+                        y++)
+                    {
+                        int tempMap = CurrentMap;
+                        int x2 = x;
+                        int y2 = y;
 
-                    if (y < 0 && Globals.GameMaps[tempMap].Up > -1)
-                    {
-                        tempMap = Globals.GameMaps[tempMap].Up;
-                        y2 = Options.MapHeight + y;
-                    }
-                    else if (y > Options.MapHeight - 1 && Globals.GameMaps[tempMap].Down > -1)
-                    {
-                        tempMap = Globals.GameMaps[tempMap].Down;
-                        y2 = Options.MapHeight - y;
-                    }
-
-                    if (x < 0 && Globals.GameMaps[tempMap].Left > -1)
-                    {
-                        tempMap = Globals.GameMaps[tempMap].Left;
-                        x2 = Options.MapWidth + x;
-                    }
-                    else if (x > Options.MapWidth - 1 && Globals.GameMaps[tempMap].Right > -1)
-                    {
-                        tempMap = Globals.GameMaps[tempMap].Right;
-                        x2 = Options.MapWidth - x;
-                    }
-
-                    for (int i = 0; i < Globals.GameMaps[tempMap].Entities.Count; i++ )
-                    {
-                        Entity t = Globals.GameMaps[tempMap].Entities[i];
-                        if (t == null) continue;
-                        if (t.GetType() == typeof(Player) || t.GetType() == typeof(Npc))
+                        if (y < 0 && MapInstance.GetMap(tempMap).Up > -1)
                         {
-                            if (t.CurrentMap == tempMap && t.CurrentX == x2 && t.CurrentY == y2)
+                            tempMap = MapInstance.GetMap(tempMap).Up;
+                            y2 = Options.MapHeight + y;
+                        }
+                        else if (y > Options.MapHeight - 1 && MapInstance.GetMap(tempMap).Down > -1)
+                        {
+                            tempMap = MapInstance.GetMap(tempMap).Down;
+                            y2 = Options.MapHeight - y;
+                        }
+
+                        if (x < 0 && MapInstance.GetMap(tempMap).Left > -1)
+                        {
+                            tempMap = MapInstance.GetMap(tempMap).Left;
+                            x2 = Options.MapWidth + x;
+                        }
+                        else if (x > Options.MapWidth - 1 && MapInstance.GetMap(tempMap).Right > -1)
+                        {
+                            tempMap = MapInstance.GetMap(tempMap).Right;
+                            x2 = Options.MapWidth - x;
+                        }
+
+                        for (int i = 0; i < MapInstance.GetMap(tempMap).Entities.Count; i++)
+                        {
+                            Entity t = MapInstance.GetMap(tempMap).Entities[i];
+                            if (t == null) continue;
+                            if (t.GetType() == typeof (Player) || t.GetType() == typeof (Npc))
                             {
-                                if ((target == -1 || target == t.MyIndex) && t.MyIndex != MyIndex)
+                                if (t.CurrentMap == tempMap && t.CurrentX == x2 && t.CurrentY == y2)
                                 {
-                                    //Warp or attack.
-                                    if (Globals.GameSpells[SpellNum].Type == (int)SpellTypes.CombatSpell)
+                                    if ((target == -1 || target == t.MyIndex) && t.MyIndex != MyIndex)
                                     {
-                                        TryAttack(t.MyIndex, false, SpellNum);
-                                    }
-                                    else
-                                    {
-                                        Warp(Globals.Entities[Target].CurrentMap, Globals.Entities[Target].CurrentX, Globals.Entities[Target].CurrentY, Dir);
-                                    }
-                                    if (Globals.GameSpells[SpellNum].HitAnimation > -1)
-                                    {
-                                        if (target > -1 && t.Vital[(int)Vitals.Health] > 0)
+                                        //Warp or attack.
+                                        if (spellBase.SpellType == (int) SpellTypes.CombatSpell)
                                         {
-                                            PacketSender.SendAnimationToProximity(Globals.GameSpells[SpellNum].HitAnimation, 1, target, tempMap, 0, 0, t.Dir); //Target Type 1 will be global entity
+                                            TryAttack(t.MyIndex, false, SpellNum);
                                         }
                                         else
                                         {
-                                            PacketSender.SendAnimationToProximity(Globals.GameSpells[SpellNum].HitAnimation, -1, -1, tempMap, x, y, Dir); //Target Type -1 will be tile based animation
+                                            Warp(Globals.Entities[Target].CurrentMap, Globals.Entities[Target].CurrentX,
+                                                Globals.Entities[Target].CurrentY, Dir);
+                                        }
+                                        if (spellBase.HitAnimation > -1)
+                                        {
+                                            if (target > -1 && t.Vital[(int) Vitals.Health] > 0)
+                                            {
+                                                PacketSender.SendAnimationToProximity(
+                                                    spellBase.HitAnimation, 1, target, tempMap, 0, 0,
+                                                    t.Dir); //Target Type 1 will be global entity
+                                            }
+                                            else
+                                            {
+                                                PacketSender.SendAnimationToProximity(
+                                                    spellBase.HitAnimation, -1, -1, tempMap, x, y,
+                                                    Dir); //Target Type -1 will be tile based animation
+                                            }
                                         }
                                     }
                                 }
@@ -769,7 +817,7 @@ namespace Intersect_Server.Classes.Entities
 
     public class DoTInstance
     {
-        public int SpellNum = -1;
+        public SpellBase SpellBase = null;
         public int OwnerID = -1;
         public int TargetID = -1;
         public int Count = 0;
@@ -777,23 +825,26 @@ namespace Intersect_Server.Classes.Entities
 
         public DoTInstance(int ownerID, int spellNum, int targetID)
         {
-            SpellNum = spellNum;
-            OwnerID = ownerID;
-            TargetID = targetID;
-            Interval = Environment.TickCount + (Globals.GameSpells[SpellNum].Data4 * 100);
-            Count = (Globals.GameSpells[SpellNum].Data4 % Globals.GameSpells[SpellNum].Data2) - 1; //Subtract 1 since the first tick always occurs when the spell is cast.
+            SpellBase = SpellBase.GetSpell(spellNum);
+            if (SpellBase != null)
+            {
+                OwnerID = ownerID;
+                TargetID = targetID;
+                Interval = Environment.TickCount + (SpellBase.Data4*100);
+                Count = (SpellBase.Data4 % SpellBase.Data2) - 1; //Subtract 1 since the first tick always occurs when the spell is cast.
+            }
         }
 
         public void Tick()
         {
             if (Interval >= Environment.TickCount)
             {
-                if (Globals.GameSpells[SpellNum].HitAnimation > -1)
+                if (SpellBase.HitAnimation > -1)
                 {
-                    PacketSender.SendAnimationToProximity(Globals.GameSpells[SpellNum].HitAnimation, 1, TargetID, Globals.Entities[TargetID].CurrentMap, 0, 0, Globals.Entities[TargetID].Dir); //Target Type 1 will be global entity
+                    PacketSender.SendAnimationToProximity(SpellBase.HitAnimation, 1, TargetID, Globals.Entities[TargetID].CurrentMap, 0, 0, Globals.Entities[TargetID].Dir); //Target Type 1 will be global entity
                 }
-                Globals.Entities[OwnerID].TryAttack(TargetID, false, SpellNum);
-                Interval = Environment.TickCount + (Globals.GameSpells[SpellNum].Data4 * 100);
+                Globals.Entities[OwnerID].TryAttack(TargetID, false, SpellBase.GetId());
+                Interval = Environment.TickCount + (SpellBase.Data4 * 100);
                 Count--;
 
                 if (Count <= 0)

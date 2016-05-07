@@ -27,8 +27,6 @@ using Intersect_Editor.Classes.General;
 using Intersect_Editor.Classes.Maps;
 using Intersect_Library;
 using Intersect_Library.GameObjects;
-using Intersect_Library.GameObjects.Events;
-using Intersect_Library.GameObjects.Maps;
 
 namespace Intersect_Editor.Classes
 {
@@ -44,34 +42,11 @@ namespace Intersect_Editor.Classes
         public static int CurrentEditor = -1;
 
         public static int MyIndex;
-        public static Dictionary<int, MapInstance> GameMaps = new Dictionary<int, MapInstance>();
         public static frmMain MainForm;
         public static FrmLogin LoginForm;
-        public static int ReceivedGameData;
+        public static bool HasGameData = false;
         public static bool InEditor;
         public static bool ClosingEditor;
-        public static string[] Tilesets;
-
-        public static ItemStruct[] GameItems;
-        public static NpcStruct[] GameNpcs;
-        public static SpellStruct[] GameSpells;
-        public static AnimationStruct[] GameAnimations;
-        public static ResourceStruct[] GameResources;
-        public static ClassStruct[] GameClasses;
-        public static QuestStruct[] GameQuests;
-        public static ProjectileStruct[] GameProjectiles;
-        public static EventStruct[] CommonEvents;
-        public static ShopStruct[] GameShops;
-
-        //Server Switches and Variables
-        public static string[] ServerSwitches;
-        public static bool[] ServerSwitchValues;
-        public static string[] ServerVariables;
-        public static int[] ServerVariableValues;
-
-        //Player Switches and Variables
-        public static string[] PlayerSwitches;
-        public static string[] PlayerVariables;
 
         //Animation Frame Variables
         public static int Autotilemode = 0;
@@ -79,8 +54,9 @@ namespace Intersect_Editor.Classes
         public static int AutotileFrame = 0;
 
         //Editor Variables
-        public static int CurrentMap = -1;
-        public static int CurrentTileset = -1;
+        public static MapInstance CurrentMap = null;
+        public static int LoadingMap = -1;
+        public static TilesetBase CurrentTileset = null;
         public static int CurSelX;
         public static int CurSelY;
         public static int CurTileX;
@@ -133,8 +109,8 @@ namespace Intersect_Editor.Classes
         public static frmProgress PreviewProgressForm;
 
 
-        public static Light BackupLight;
-        public static Light EditingLight;
+        public static LightBase BackupLight;
+        public static LightBase EditingLight;
 
         public static string IntToDir(int index)
         {

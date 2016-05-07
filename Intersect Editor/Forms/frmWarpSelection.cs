@@ -25,7 +25,7 @@ using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
 using Intersect_Editor.Classes;
-using Intersect_Editor.Classes.General;
+using Intersect_Editor.Classes.Maps;
 using Intersect_Library;
 using Intersect_Library.GameObjects.Maps.MapList;
 using Microsoft.Xna.Framework.Graphics;
@@ -52,9 +52,9 @@ namespace Intersect_Editor.Forms
 
         private void NodeDoubleClick(object sender, TreeNodeMouseClickEventArgs e)
         {
-            if (e.Node.Tag.GetType() == typeof(FolderMap))
+            if (e.Node.Tag.GetType() == typeof(MapListMap))
             {
-                SelectTile(((FolderMap)e.Node.Tag).MapNum,_currentX,_currentY);
+                SelectTile(((MapListMap)e.Node.Tag).MapNum,_currentX,_currentY);
             }
         }
 
@@ -71,14 +71,14 @@ namespace Intersect_Editor.Forms
         {
             if (_currentMap > -1)
             {
-                if (Globals.GameMaps[_currentMap] != null)
+                if (MapInstance.GetMap(_currentMap) != null)
                 {
                     if (
-                        File.Exists("resources/mapcache/" + _currentMap + "_" + Globals.GameMaps[_currentMap].Revision +
+                        File.Exists("resources/mapcache/" + _currentMap + "_" + MapInstance.GetMap(_currentMap).Revision +
                                     ".png"))
                     {
                         Bitmap newBitmap = new Bitmap(pnlMap.Width,pnlMap.Height);
-                        Bitmap sourceBitmap = new Bitmap("resources/mapcache/" + _currentMap + "_" + Globals.GameMaps[_currentMap].Revision +
+                        Bitmap sourceBitmap = new Bitmap("resources/mapcache/" + _currentMap + "_" + MapInstance.GetMap(_currentMap).Revision +
                                     ".png");
                         System.Drawing.Graphics g = System.Drawing.Graphics.FromImage(newBitmap);
                         g.DrawImage(sourceBitmap, new Rectangle(0, 0, pnlMap.Width, pnlMap.Height),
@@ -123,10 +123,10 @@ namespace Intersect_Editor.Forms
         {
             if (_currentMap > -1)
             {
-                if (Globals.GameMaps[_currentMap] != null)
+                if (MapInstance.GetMap(_currentMap) != null)
                 {
                     if (
-                        File.Exists("resources/mapcache/" + _currentMap + "_" + Globals.GameMaps[_currentMap].Revision +
+                        File.Exists("resources/mapcache/" + _currentMap + "_" + MapInstance.GetMap(_currentMap).Revision +
                                     ".png"))
                     {
                         UpdatePreview();
@@ -134,9 +134,9 @@ namespace Intersect_Editor.Forms
                     }
                     else
                     {
-                        int oldMap = Globals.CurrentMap;
-                        Globals.CurrentMap = _currentMap;
-                        using (var fs = new FileStream("resources/mapcache/" + _currentMap + "_" + Globals.GameMaps[_currentMap].Revision + ".png", FileMode.OpenOrCreate))
+                        MapInstance oldMap = Globals.CurrentMap;
+                        Globals.CurrentMap = MapInstance.GetMap(_currentMap);
+                        using (var fs = new FileStream("resources/mapcache/" + _currentMap + "_" + MapInstance.GetMap(_currentMap).Revision + ".png", FileMode.OpenOrCreate))
                         {
                             RenderTarget2D screenshotTexture = EditorGraphics.ScreenShotMap(true);
                             screenshotTexture.SaveAsPng(fs, screenshotTexture.Width, screenshotTexture.Height);

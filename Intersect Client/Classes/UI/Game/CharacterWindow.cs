@@ -41,6 +41,7 @@ using Intersect_Library;
 using Color = IntersectClientExtras.GenericClasses.Color;
 
 using Point = IntersectClientExtras.GenericClasses.Point;
+using Intersect_Library.GameObjects;
 
 namespace Intersect_Client.Classes.UI.Game
 {
@@ -402,9 +403,10 @@ namespace Intersect_Client.Classes.UI.Game
             {
                 _currentItem = currentItem;
                 _statBoost = statBoost;
-                if (_currentItem > 0)
+                var item = ItemBase.GetItem(_currentItem);
+                if (item != null)
                 {
-                    GameTexture itemTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Item, Globals.GameItems[_currentItem].Pic);
+                    GameTexture itemTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Item, item.Pic);
                     if (itemTex != null)
                     {
                         contentPanel.Show();

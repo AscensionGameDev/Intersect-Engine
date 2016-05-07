@@ -21,6 +21,7 @@
 */
 
 using Intersect_Library;
+using Intersect_Library.GameObjects;
 using Intersect_Server.Classes.General;
 
 
@@ -32,20 +33,25 @@ namespace Intersect_Server.Classes.Items
         public int ItemVal = 0;
         public int[] StatBoost = new int[(int)Stats.StatCount];
 
+        public ItemInstance()
+        {
+            
+        }
+
         public ItemInstance(int itemNum, int itemVal)
         {
             ItemNum = itemNum;
             ItemVal = itemVal;
-            if (itemNum > 0 && itemNum < Options.MaxItems)
+            if (ItemBase.GetItem(ItemNum) != null)
             {
-                if (Globals.GameItems[itemNum].Type == (int) ItemTypes.Equipment)
+                if (ItemBase.GetItem(ItemNum).ItemType == (int) ItemTypes.Equipment)
                 {
                     itemVal = 1;
                     for (int i = 0; i < (int) Stats.StatCount; i++)
                     {
                       StatBoost[i] =
-                            Globals.Rand.Next(-1*Globals.GameItems[itemNum].StatGrowth,
-                                Globals.GameItems[itemNum].StatGrowth + 1);
+                            Globals.Rand.Next(-1* ItemBase.GetItem(ItemNum).StatGrowth,
+                                ItemBase.GetItem(ItemNum).StatGrowth + 1);
                     }
                 }
             }

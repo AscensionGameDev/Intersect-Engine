@@ -20,15 +20,18 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-using System;
-using System.IO;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Intersect_Library.GameObjects
 {
-    public class AnimationStruct
+    public class AnimationBase : DatabaseObject
     {
-        public const string Version = "0.0.0.1";
-        public string Name = "";
+        public new const string DatabaseTable = "animations";
+        public new const GameObject Type = GameObject.Animation;
+        protected static Dictionary<int, DatabaseObject> Objects = new Dictionary<int, DatabaseObject>();
+        
+        public string Name = "New Animation";
         public string Sound = "";
 
         //Lower Animation
@@ -38,7 +41,7 @@ namespace Intersect_Library.GameObjects
         public int LowerAnimFrameCount = 1;
         public int LowerAnimFrameSpeed = 100;
         public int LowerAnimLoopCount = 1;
-        public Light[] LowerLights;
+        public LightBase[] LowerLights;
 
         //Upper Animation
         public string UpperAnimSprite = "";
@@ -47,30 +50,26 @@ namespace Intersect_Library.GameObjects
         public int UpperAnimFrameCount = 1;
         public int UpperAnimFrameSpeed = 100;
         public int UpperAnimLoopCount = 1;
-        public Light[] UpperLights;
+        public LightBase[] UpperLights;
 
-        public AnimationStruct()
+        public AnimationBase(int id) : base(id)
         {
-            LowerLights = new Light[LowerAnimFrameCount];
+            LowerLights = new LightBase[LowerAnimFrameCount];
             for (int i = 0; i < LowerAnimFrameCount; i++)
             {
-                LowerLights[i] = new Light();
+                LowerLights[i] = new LightBase();
             }
-            UpperLights = new Light[UpperAnimFrameCount];
+            UpperLights = new LightBase[UpperAnimFrameCount];
             for (int i = 0; i < UpperAnimFrameCount; i++)
             {
-                UpperLights[i] = new Light();
+                UpperLights[i] = new LightBase();
             }
         }
 
-        public void Load(byte[] packet, int index)
+        public override void Load(byte[] packet)
         {
             var myBuffer = new ByteBuffer();
             myBuffer.WriteBytes(packet);
-
-            string loadedVersion = myBuffer.ReadString();
-            if (loadedVersion != Version)
-                throw new Exception("Failed to load Animation #" + index + ". Loaded Version: " + loadedVersion + " Expected Version: " + Version);
 
             Name = myBuffer.ReadString();
             Sound = myBuffer.ReadString();
@@ -82,10 +81,10 @@ namespace Intersect_Library.GameObjects
             LowerAnimFrameCount = myBuffer.ReadInteger();
             LowerAnimFrameSpeed = myBuffer.ReadInteger();
             LowerAnimLoopCount = myBuffer.ReadInteger();
-            LowerLights = new Light[LowerAnimFrameCount];
+            LowerLights = new LightBase[LowerAnimFrameCount];
             for (int i = 0; i < LowerAnimFrameCount; i++)
             {
-                LowerLights[i] = new Light(myBuffer);
+                LowerLights[i] = new LightBase(myBuffer);
             }
 
             //Upper Animation
@@ -95,10 +94,10 @@ namespace Intersect_Library.GameObjects
             UpperAnimFrameCount = myBuffer.ReadInteger();
             UpperAnimFrameSpeed = myBuffer.ReadInteger();
             UpperAnimLoopCount = myBuffer.ReadInteger();
-            UpperLights = new Light[UpperAnimFrameCount];
+            UpperLights = new LightBase[UpperAnimFrameCount];
             for (int i = 0; i < UpperAnimFrameCount; i++)
             {
-                UpperLights[i] = new Light(myBuffer);
+                UpperLights[i] = new LightBase(myBuffer);
             }
 
             myBuffer.Dispose();
@@ -107,7 +106,6 @@ namespace Intersect_Library.GameObjects
         public byte[] AnimData()
         {
             var myBuffer = new ByteBuffer();
-            myBuffer.WriteString(Version);
             myBuffer.WriteString(Name);
             myBuffer.WriteString(Sound);
 
@@ -138,10 +136,68 @@ namespace Intersect_Library.GameObjects
             return myBuffer.ToArray();
         }
 
-        public void Save(int index)
+        public static AnimationBase GetAnim(int index)
         {
-            File.WriteAllBytes("resources/animations/" + index + ".anim", AnimData());
+            if (Objects.ContainsKey(index))
+            {
+                return (AnimationBase)Objects[index];
+            }
+            return null;
         }
 
+        public static string GetName(int index)
+        {
+            if (Objects.ContainsKey(index))
+            {
+                return ((AnimationBase)Objects[index]).Name;
+            }
+            return "Deleted";
+        }
+
+        public override byte[] GetData()
+        {
+            return AnimData();
+        }
+
+        public override string GetTable()
+        {
+            return DatabaseTable;
+        }
+
+        public override GameObject GetGameObjectType()
+        {
+            return Type;
+        }
+
+        public static DatabaseObject Get(int index)
+        {
+            if (Objects.ContainsKey(index))
+            {
+                return Objects[index];
+            }
+            return null;
+        }
+        public static int ObjectCount()
+        {
+            return Objects.Count;
+        }
+        public static Dictionary<int, AnimationBase> GetObjects()
+        {
+            Dictionary<int, AnimationBase> objects = Objects.ToDictionary(k => k.Key, v => (AnimationBase)v.Value);
+            return objects;
+        } 
+        public override void Delete()
+        {
+            Objects.Remove(GetId());
+        }
+        public static void ClearObjects()
+        {
+            Objects.Clear();
+        }
+        public static void AddObject(int index, DatabaseObject obj)
+        {
+            Objects.Remove(index);
+            Objects.Add(index, obj);
+        }
     }
 }

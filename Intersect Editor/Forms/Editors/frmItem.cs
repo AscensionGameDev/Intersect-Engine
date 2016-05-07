@@ -20,53 +20,123 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Windows.Forms;
 using Intersect_Editor.Classes;
 using Intersect_Editor.Classes.Core;
 using Intersect_Library;
 using Intersect_Library.GameObjects;
+using Intersect_Library.GameObjects.Events;
 
 
 namespace Intersect_Editor.Forms
 {
     public partial class FrmItem : Form
     {
-        private ByteBuffer[] _itemsBackup;
-        private bool[] _changed;
-        private int _editorIndex;
+        private List<ItemBase> _changed = new List<ItemBase>();
+        private ItemBase _editorItem = null;
 
         public FrmItem()
         {
             InitializeComponent();
+            PacketHandler.GameObjectUpdatedDelegate += GameObjectUpdatedDelegate;
+        }
+
+        private void GameObjectUpdatedDelegate(GameObject type)
+        {
+            if (type == GameObject.Item)
+            {
+                InitEditor();
+                if (_editorItem != null && !ItemBase.GetObjects().Values.Contains(_editorItem))
+                {
+                    _editorItem = null;
+                    UpdateEditor();
+                }
+            }
+            else if (type == GameObject.Class || type == GameObject.Projectile || type == GameObject.Animation || type == GameObject.Spell)
+            {
+                frmItem_Load(null,null);
+            }
+        }
+
+        private void btnNew_Click(object sender, EventArgs e)
+        {
+            PacketSender.SendCreateObject(GameObject.Item);
+        }
+
+        private void btnUndo_Click(object sender, EventArgs e)
+        {
+            if (_changed.Contains(_editorItem) && _editorItem != null)
+            {
+                _editorItem.RestoreBackup();
+                UpdateEditor();
+            }
+        }
+
+        private void btnDelete_Click(object sender, EventArgs e)
+        {
+            if (_editorItem != null)
+            {
+                if (
+                    MessageBox.Show(
+                        "Are you sure you want to delete this game object? This action cannot be reverted!",
+                        "Delete Object", MessageBoxButtons.YesNo) == DialogResult.Yes)
+                {
+                    PacketSender.SendDeleteObject(_editorItem);
+                }
+            }
+        }
+
+        private void btnCancel_Click(object sender, EventArgs e)
+        {
+            foreach (var item in _changed)
+            {
+                item.RestoreBackup();
+                item.DeleteBackup();
+            }
+
+            Hide();
+            Globals.CurrentEditor = -1;
+            Dispose();
+        }
+
+        private void btnSave_Click(object sender, EventArgs e)
+        {
+            //Send Changed items
+            foreach (var item in _changed)
+            {
+                PacketSender.SendSaveObject(item);
+                item.DeleteBackup();
+            }
+
+            Hide();
+            Globals.CurrentEditor = -1;
+            Dispose();
+        }
+
+        private void lstItems_Click(object sender, EventArgs e)
+        {
+            _editorItem = ItemBase.GetItem(Database.GameObjectIdFromList(GameObject.Item, lstItems.SelectedIndex));
+            UpdateEditor();
         }
 
         private void frmItem_Load(object sender, EventArgs e)
         {
             int i = 0;
-            lstItems.SelectedIndex = 0;
             cmbPic.Items.Clear();
             cmbPic.Items.Add("None");
 
             string[] itemnames = GameContentManager.GetTextureNames(GameContentManager.TextureType.Item);
-            for (i= 0; i < itemnames.Length; i++)
-            {
-                cmbPic.Items.Add(itemnames[i]);
-            }
+            cmbPic.Items.AddRange(itemnames);
 
             i = 0;
 
-            while (Globals.GameClasses[i].Name != "")
-            {
-                cmbClass.Items.Add(Globals.GameClasses[i].Name);
-                i = i + 1;
-                if (i >= Options.MaxClasses)
-                {
-                    break;
-                }
-            }
+            cmbClass.Items.Clear();
+            cmbClass.Items.AddRange(Database.GetGameObjectList(GameObject.Class));
 
-            scrlProjectile.Maximum = Options.MaxProjectiles;
-
+            scrlProjectile.Maximum = ProjectileBase.ObjectCount()-1;
+            scrlAnim.Maximum = AnimationBase.ObjectCount()-1;
             cmbPaperdoll.Items.Clear();
             cmbPaperdoll.Items.Add("None");
             string[] paperdollnames = GameContentManager.GetTextureNames(GameContentManager.TextureType.Paperdoll);
@@ -80,93 +150,94 @@ namespace Intersect_Editor.Forms
 
         public void InitEditor()
         {
-            _itemsBackup = new ByteBuffer[Options.MaxItems];
-            _changed = new bool[Options.MaxItems];
-            for (var i = 0; i < Options.MaxItems; i++)
-            {
-                _itemsBackup[i] = new ByteBuffer();
-                _itemsBackup[i].WriteBytes(Globals.GameItems[i].ItemData());
-                lstItems.Items.Add((i + 1) + ") " + Globals.GameItems[i].Name);
-                _changed[i] = false;
-            }
+            lstItems.Items.Clear();
+            lstItems.Items.AddRange(Database.GetGameObjectList(GameObject.Item));
             cmbEquipmentSlot.Items.AddRange(Options.EquipmentSlots.ToArray());
             cmbToolType.Items.Add("None");
             cmbToolType.Items.AddRange(Options.ToolTypes.ToArray());
             cmbEquipmentBonus.Items.Add("None");
             cmbEquipmentBonus.Items.Add("Cooldown Reduction");
             cmbEquipmentBonus.Items.Add("Life Steal");
-            scrlProjectile.Maximum = Options.MaxProjectiles;
+            scrlProjectile.Maximum = ProjectileBase.ObjectCount();
         }
 
         private void UpdateEditor()
         {
-            _editorIndex = lstItems.SelectedIndex;
-
-            txtName.Text = Globals.GameItems[_editorIndex].Name;
-            txtDesc.Text = Globals.GameItems[_editorIndex].Desc;
-            cmbType.SelectedIndex = Globals.GameItems[_editorIndex].Type;
-            cmbPic.SelectedIndex = cmbPic.FindString(Globals.GameItems[_editorIndex].Pic);
-            scrlPrice.Value = Globals.GameItems[_editorIndex].Price;
-            scrlAnim.Value = Globals.GameItems[_editorIndex].Animation;
-            scrlLevelReq.Value = Globals.GameItems[_editorIndex].LevelReq;
-            cmbClass.SelectedIndex = Globals.GameItems[_editorIndex].ClassReq;
-            scrlAttackReq.Value = Globals.GameItems[_editorIndex].StatsReq[0];
-            scrlAbilityPowerReq.Value = Globals.GameItems[_editorIndex].StatsReq[1];
-            scrlDefenseReq.Value = Globals.GameItems[_editorIndex].StatsReq[2];
-            scrlMagicResistReq.Value = Globals.GameItems[_editorIndex].StatsReq[3];
-            scrlSpeedReq.Value = Globals.GameItems[_editorIndex].StatsReq[4];
-            scrlAttack.Value = Globals.GameItems[_editorIndex].StatsGiven[0];
-            scrlAbilityPower.Value = Globals.GameItems[_editorIndex].StatsGiven[1];
-            scrlDefense.Value = Globals.GameItems[_editorIndex].StatsGiven[2];
-            scrlMagicResist.Value = Globals.GameItems[_editorIndex].StatsGiven[3];
-            scrlSpeed.Value = Globals.GameItems[_editorIndex].StatsGiven[4];
-            scrlDamage.Value = Globals.GameItems[_editorIndex].Damage;
-            scrlRange.Value = Globals.GameItems[_editorIndex].StatGrowth;
-            cmbEquipmentSlot.SelectedIndex = Globals.GameItems[_editorIndex].Data1;
-            cmbToolType.SelectedIndex = Globals.GameItems[_editorIndex].Tool;
-            scrlProjectile.Value = Globals.GameItems[_editorIndex].Projectile;
-            cmbEquipmentBonus.SelectedIndex = Globals.GameItems[_editorIndex].Data2;
-            scrlEffectAmount.Value = Globals.GameItems[_editorIndex].Data3;
-            chk2Hand.Checked = Convert.ToBoolean(Globals.GameItems[_editorIndex].Data4);
-            cmbPaperdoll.SelectedIndex = cmbPaperdoll.FindString(Globals.GameItems[_editorIndex].Paperdoll);
-            scrlProjectile.Value = Globals.GameItems[_editorIndex].Projectile;
-            if (cmbPic.SelectedIndex > 0) { picItem.BackgroundImage = System.Drawing.Bitmap.FromFile("resources/items/" + cmbPic.Text); }
-            else { picItem.BackgroundImage = null; }
-            if (cmbPaperdoll.SelectedIndex > 0) { picPaperdoll.BackgroundImage = System.Drawing.Bitmap.FromFile("resources/paperdolls/" + cmbPaperdoll.Text); }
-            else { picPaperdoll.BackgroundImage = null; }
-            _changed[_editorIndex] = true;
-        }
-
-        private void btnSave_Click(object sender, EventArgs e)
-        {
-            for (var i = 0; i < Options.MaxItems; i++)
+            if (_editorItem != null)
             {
-                if (_changed[i])
+                pnlContainer.Show();
+
+                txtName.Text = _editorItem.Name;
+                txtDesc.Text = _editorItem.Desc;
+                cmbType.SelectedIndex = _editorItem.ItemType;
+                cmbPic.SelectedIndex = cmbPic.FindString(_editorItem.Pic);
+                scrlPrice.Value = _editorItem.Price;
+                scrlLevelReq.Value = _editorItem.LevelReq;
+                cmbClass.SelectedIndex = _editorItem.ClassReq;
+                scrlAttackReq.Value = _editorItem.StatsReq[0];
+                scrlAbilityPowerReq.Value = _editorItem.StatsReq[1];
+                scrlDefenseReq.Value = _editorItem.StatsReq[2];
+                scrlMagicResistReq.Value = _editorItem.StatsReq[3];
+                scrlSpeedReq.Value = _editorItem.StatsReq[4];
+                scrlAttack.Value = _editorItem.StatsGiven[0];
+                scrlAbilityPower.Value = _editorItem.StatsGiven[1];
+                scrlDefense.Value = _editorItem.StatsGiven[2];
+                scrlMagicResist.Value = _editorItem.StatsGiven[3];
+                scrlSpeed.Value = _editorItem.StatsGiven[4];
+                scrlDamage.Value = _editorItem.Damage;
+                scrlRange.Value = _editorItem.StatGrowth;
+                cmbEquipmentSlot.SelectedIndex = _editorItem.Data1;
+                cmbToolType.SelectedIndex = _editorItem.Tool;
+                cmbEquipmentBonus.SelectedIndex = _editorItem.Data2;
+                scrlEffectAmount.Value = _editorItem.Data3;
+                chk2Hand.Checked = Convert.ToBoolean(_editorItem.Data4);
+                cmbPaperdoll.SelectedIndex = cmbPaperdoll.FindString(_editorItem.Paperdoll);
+                if (cmbPic.SelectedIndex > 0)
                 {
-                    PacketSender.SendItem(i, Globals.GameItems[i].ItemData());
+                    picItem.BackgroundImage = System.Drawing.Bitmap.FromFile("resources/items/" + cmbPic.Text);
+                }
+                else
+                {
+                    picItem.BackgroundImage = null;
+                }
+                if (cmbPaperdoll.SelectedIndex > 0)
+                {
+                    picPaperdoll.BackgroundImage =
+                        System.Drawing.Bitmap.FromFile("resources/paperdolls/" + cmbPaperdoll.Text);
+                }
+                else
+                {
+                    picPaperdoll.BackgroundImage = null;
+                }
+
+                //External References
+                scrlProjectile.Value = Database.GameObjectListIndex(GameObject.Projectile, _editorItem.Projectile);
+                scrlProjectile_ValueChanged(null, null);
+                scrlAnim.Value = Database.GameObjectListIndex(GameObject.Animation, _editorItem.Animation);
+                scrlAnim_Scroll(null, null);
+
+                if (_changed.IndexOf(_editorItem) == -1)
+                {
+                    _changed.Add(_editorItem);
+                    _editorItem.MakeBackup();
                 }
             }
-
-            Hide();
-            Globals.CurrentEditor = -1;
-            Dispose();
+            else
+            {
+                pnlContainer.Hide();
+            }
         }
 
         private void scrlInterval_Scroll(object sender, EventArgs e)
         {
             lblInterval.Text = @"Interval: " + scrlInterval.Value;
-            Globals.GameItems[_editorIndex].Data2 = scrlInterval.Value;
-        }
-
-        private void lstItems_Click(object sender, EventArgs e)
-        {
-            UpdateEditor();
+            _editorItem.Data2 = scrlInterval.Value;
         }
 
         private void scrlLevel_Scroll(object sender, EventArgs e)
         {
             lblLevelReq.Text = @"Level: " + scrlLevelReq.Value;
-            Globals.GameItems[_editorIndex].LevelReq = scrlLevelReq.Value;
+            _editorItem.LevelReq = scrlLevelReq.Value;
         }
 
         private void cmbType_SelectedIndexChanged(object sender, EventArgs e)
@@ -176,70 +247,52 @@ namespace Intersect_Editor.Forms
             gbEquipment.Visible = false;
             grpEvent.Visible = false;
 
-            if (Globals.GameItems[_editorIndex].Type != cmbType.SelectedIndex)
+            if (_editorItem.ItemType != cmbType.SelectedIndex)
             {
-                Globals.GameItems[_editorIndex].Damage = 0;
-                Globals.GameItems[_editorIndex].Tool = 0;
-                Globals.GameItems[_editorIndex].Data1 = 0;
-                Globals.GameItems[_editorIndex].Data2 = 0;
-                Globals.GameItems[_editorIndex].Data3 = 0;
-                Globals.GameItems[_editorIndex].Data4 = 0;
+                _editorItem.Damage = 0;
+                _editorItem.Tool = 0;
+                _editorItem.Data1 = 0;
+                _editorItem.Data2 = 0;
+                _editorItem.Data3 = 0;
+                _editorItem.Data4 = 0;
             }
 
             if (cmbType.SelectedIndex == cmbType.Items.IndexOf("Consumable"))
             {
-                cmbConsume.SelectedIndex = Globals.GameItems[_editorIndex].Data1;
-                scrlInterval.Value = Globals.GameItems[_editorIndex].Data2;
+                cmbConsume.SelectedIndex = _editorItem.Data1;
+                scrlInterval.Value = _editorItem.Data2;
                 gbConsumable.Visible = true;
             }
             else if (cmbType.SelectedIndex == cmbType.Items.IndexOf("Spell"))
             {
-                scrlSpell.Value = Globals.GameItems[_editorIndex].Data1;
-                lblEvent.Text = "Event: " + scrlEvent.Value + " " + Globals.CommonEvents[scrlEvent.Value].MyName;
+                scrlSpell.Value = Database.GameObjectListIndex(GameObject.Spell,_editorItem.Data1);
+                scrlSpell_Scroll(null, null);
                 gbSpell.Visible = true;
             }
             else if (cmbType.SelectedIndex == cmbType.Items.IndexOf("Event"))
             {
-                scrlEvent.Value = Globals.GameItems[_editorIndex].Data1;
+                scrlEvent.Value = Database.GameObjectListIndex(GameObject.CommonEvent,_editorItem.Data1);
+                scrlEvent_Scroll(null, null);
                 grpEvent.Visible = true;
             }
             else if (cmbType.SelectedIndex == cmbType.Items.IndexOf("Equipment"))
             {
                 gbEquipment.Visible = true;
-                cmbEquipmentSlot.SelectedIndex = Globals.GameItems[_editorIndex].Data1;
+                cmbEquipmentSlot.SelectedIndex = _editorItem.Data1;
             }
 
-            Globals.GameItems[_editorIndex].Type = cmbType.SelectedIndex;
-        }
-
-        private void btnDelete_Click(object sender, EventArgs e)
-        {
-            var tempItem = new ItemStruct();
-            Globals.GameItems[_editorIndex].Load(tempItem.ItemData(),_editorIndex);
-            UpdateEditor();
-        }
-
-        private void btnCancel_Click(object sender, EventArgs e)
-        {
-            for (var i = 0; i < Options.MaxItems; i++)
-            {
-                Globals.GameItems[i].Load(_itemsBackup[i].ToArray(),i);
-            }
-
-            Hide();
-            Globals.CurrentEditor = -1;
-            Dispose();
+            _editorItem.ItemType = cmbType.SelectedIndex;
         }
 
         private void txtName_TextChanged(object sender, EventArgs e)
         {
-            Globals.GameItems[_editorIndex].Name = txtName.Text;
-            lstItems.Items[_editorIndex] = (_editorIndex + 1) + ") " + txtName.Text;
+            _editorItem.Name = txtName.Text;
+            lstItems.Items[Database.GameObjectListIndex(GameObject.Item,_editorItem.GetId())] =  txtName.Text;
         }
 
         private void cmbPic_SelectedIndexChanged(object sender, EventArgs e)
         {
-            Globals.GameItems[_editorIndex].Pic = cmbPic.Text;
+            _editorItem.Pic = cmbPic.Text;
             if (cmbPic.SelectedIndex > 0) { picItem.BackgroundImage = System.Drawing.Bitmap.FromFile("resources/items/" + cmbPic.Text); }
             else { picItem.BackgroundImage = null; }
         }
@@ -247,118 +300,134 @@ namespace Intersect_Editor.Forms
         private void scrlPrice_Scroll(object sender, EventArgs e)
         {
             lblPrice.Text = @"Price: " + scrlPrice.Value;
-            Globals.GameItems[_editorIndex].Price = scrlPrice.Value;
+            _editorItem.Price = scrlPrice.Value;
         }
 
         private void scrlAnim_Scroll(object sender, EventArgs e)
         {
-            lblAnim.Text = @"Animation: " + scrlAnim.Value + @" None";
-            Globals.GameItems[_editorIndex].Animation = scrlAnim.Value;
+            if (scrlAnim.Value > -1)
+            {
+                _editorItem.Animation = Database.GameObjectIdFromList(GameObject.Animation, scrlAnim.Value);
+                lblAnim.Text = "Animation: " + AnimationBase.GetName(_editorItem.Animation);
+            }
+            else
+            {
+                _editorItem.Animation = -1;
+                lblAnim.Text = "Animation: None";
+            }
         }
 
         private void scrlAttackReq_Scroll(object sender, EventArgs e)
         {
             lblAttackReq.Text = @"Attack: " + scrlAttackReq.Value;
-            Globals.GameItems[_editorIndex].StatsReq[0] = scrlAttackReq.Value;
+            _editorItem.StatsReq[0] = scrlAttackReq.Value;
         }
 
         private void scrlAbilityPowerReq_Scroll(object sender, EventArgs e)
         {
             lblAbilityPowerReq.Text = @"Ability Pwr: " + scrlAbilityPowerReq.Value;
-            Globals.GameItems[_editorIndex].StatsReq[1] = scrlAbilityPowerReq.Value;
+            _editorItem.StatsReq[1] = scrlAbilityPowerReq.Value;
         }
 
         private void scrlDefenseReq_Scroll(object sender, EventArgs e)
         {
             lblDefenseReq.Text = @"Defense: " + scrlDefenseReq.Value;
-            Globals.GameItems[_editorIndex].StatsReq[2] = scrlDefenseReq.Value;
+            _editorItem.StatsReq[2] = scrlDefenseReq.Value;
         }
 
         private void scrlMagicResistReq_Scroll(object sender, EventArgs e)
         {
             lblMagicResistReq.Text = @"Magic Resist: " + scrlMagicResistReq.Value;
-            Globals.GameItems[_editorIndex].StatsReq[3] = scrlMagicResistReq.Value;
+            _editorItem.StatsReq[3] = scrlMagicResistReq.Value;
         }
 
         private void scrlSpeedReq_Scroll(object sender, EventArgs e)
         {
             lblSpeedReq.Text = @"Speed: " + scrlSpeedReq.Value;
-            Globals.GameItems[_editorIndex].StatsReq[4] = scrlSpeedReq.Value;
+            _editorItem.StatsReq[4] = scrlSpeedReq.Value;
         }
 
         private void cmbClass_SelectedIndexChanged(object sender, EventArgs e)
         {
-            Globals.GameItems[_editorIndex].ClassReq = cmbClass.SelectedIndex;
+            _editorItem.ClassReq = cmbClass.SelectedIndex;
         }
 
         private void scrlSpell_Scroll(object sender, EventArgs e)
         {
-            lblSpell.Text = @"Spell: " + scrlSpell.Value + Globals.GameSpells[scrlSpell.Value].Name;
-            Globals.GameItems[_editorIndex].Data1 = scrlSpell.Value;
+            if (scrlSpell.Value > -1)
+            {
+                _editorItem.Data1 = Database.GameObjectIdFromList(GameObject.Spell, scrlSpell.Value);
+                lblSpell.Text = "Spell: " + SpellBase.GetName(_editorItem.Data1);
+            }
+            else
+            {
+                _editorItem.Data1 = -1;
+                lblSpell.Text = "Spell: None";
+            }
         }
 
         private void cmbConsume_SelectedIndexChanged(object sender, EventArgs e)
         {
-            Globals.GameItems[_editorIndex].Data1 = cmbConsume.SelectedIndex;
+            _editorItem.Data1 = cmbConsume.SelectedIndex;
         }
 
         private void scrlAttack_Scroll(object sender, EventArgs e)
         {
             lblAttack.Text = @"Attack: " + scrlAttack.Value;
-            Globals.GameItems[_editorIndex].StatsGiven[0] = scrlAttack.Value;
+            _editorItem.StatsGiven[0] = scrlAttack.Value;
         }
 
         private void scrlAbilityPower_Scroll(object sender, EventArgs e)
         {
             lblAbilityPower.Text = @"Ability Pwr: " + scrlAbilityPower.Value;
-            Globals.GameItems[_editorIndex].StatsGiven[1] = scrlAbilityPower.Value;
+            _editorItem.StatsGiven[1] = scrlAbilityPower.Value;
         }
 
         private void scrlDefense_Scroll(object sender, EventArgs e)
         {
             lblDefense.Text = @"Defense: " + scrlDefense.Value;
-            Globals.GameItems[_editorIndex].StatsGiven[2] = scrlDefense.Value;
+            _editorItem.StatsGiven[2] = scrlDefense.Value;
         }
 
         private void scrlMagicResist_Scroll(object sender, EventArgs e)
         {
             lblMagicResist.Text = @"Magic Resist: " + scrlMagicResist.Value;
-            Globals.GameItems[_editorIndex].StatsGiven[3] = scrlMagicResist.Value;
+            _editorItem.StatsGiven[3] = scrlMagicResist.Value;
         }
 
         private void scrlSpeed_Scroll(object sender, EventArgs e)
         {
             lblSpeed.Text = @"Speed: " + scrlSpeed.Value;
-            Globals.GameItems[_editorIndex].StatsGiven[4] = scrlSpeed.Value;
+            _editorItem.StatsGiven[4] = scrlSpeed.Value;
         }
 
         private void scrlDmg_Scroll(object sender, EventArgs e)
         {
             lblDamage.Text = @"Damage: " + scrlDamage.Value;
-            Globals.GameItems[_editorIndex].Damage = scrlDamage.Value;
+            _editorItem.Damage = scrlDamage.Value;
         }
 
         private void scrlRange_Scroll(object sender, EventArgs e)
         {
             lblRange.Text = @"Stat Bonus Range: +- " + scrlRange.Value;
-            Globals.GameItems[_editorIndex].StatGrowth = scrlRange.Value;
+            _editorItem.StatGrowth = scrlRange.Value;
         }
 
         private void cmbPaperdoll_SelectedIndexChanged(object sender, EventArgs e)
         {
-            Globals.GameItems[_editorIndex].Paperdoll = cmbPaperdoll.Text;
+            _editorItem.Paperdoll = cmbPaperdoll.Text;
             if (cmbPaperdoll.SelectedIndex > 0) { picPaperdoll.BackgroundImage = System.Drawing.Bitmap.FromFile("resources/paperdolls/" + cmbPaperdoll.Text); }
             else { picPaperdoll.BackgroundImage = null; }
         }
 
         private void txtDesc_TextChanged(object sender, EventArgs e)
         {
-            Globals.GameItems[_editorIndex].Desc = txtDesc.Text;
+            _editorItem.Desc = txtDesc.Text;
         }
 
         private void cmbEquipmentSlot_SelectedIndexChanged(object sender, EventArgs e)
         {
-            Globals.GameItems[_editorIndex].Data1 = cmbEquipmentSlot.SelectedIndex;
+            _editorItem.Data1 = cmbEquipmentSlot.SelectedIndex;
             if (cmbEquipmentSlot.SelectedIndex == Options.WeaponIndex)
             {
                 chk2Hand.Visible = true;
@@ -379,26 +448,26 @@ namespace Intersect_Editor.Forms
                 lblProjectile.Visible = false;
                 scrlProjectile.Visible = false;
 
-                Globals.GameItems[_editorIndex].Projectile = -1;
-                Globals.GameItems[_editorIndex].Tool = -1;
-                Globals.GameItems[_editorIndex].Damage = 0;
-                Globals.GameItems[_editorIndex].Data4 = 0;
+                _editorItem.Projectile = -1;
+                _editorItem.Tool = -1;
+                _editorItem.Damage = 0;
+                _editorItem.Data4 = 0;
             }
         }
 
         private void cmbToolType_SelectedIndexChanged(object sender, EventArgs e)
         {
-            Globals.GameItems[_editorIndex].Tool = cmbToolType.SelectedIndex;
+            _editorItem.Tool = cmbToolType.SelectedIndex;
         }
 
         private void cmbEquipmentBonus_SelectedIndexChanged(object sender, EventArgs e)
         {
-            Globals.GameItems[_editorIndex].Data2 = cmbEquipmentBonus.SelectedIndex;
+            _editorItem.Data2 = cmbEquipmentBonus.SelectedIndex;
         }
 
         private void chk2Hand_CheckedChanged(object sender, EventArgs e)
         {
-            Globals.GameItems[_editorIndex].Data4 = Convert.ToInt32(chk2Hand.Checked);
+            _editorItem.Data4 = Convert.ToInt32(chk2Hand.Checked);
         }
 
         private void FrmItem_FormClosed(object sender, FormClosedEventArgs e)
@@ -408,27 +477,36 @@ namespace Intersect_Editor.Forms
 
         private void scrlEffectAmount_ValueChanged(object sender, EventArgs e)
         {
-            Globals.GameItems[_editorIndex].Data3 = scrlEffectAmount.Value;
-            lblEffectPercent.Text = "Effect Amount: " + Globals.GameItems[_editorIndex].Data3 + "%";
+            _editorItem.Data3 = scrlEffectAmount.Value;
+            lblEffectPercent.Text = "Effect Amount: " + _editorItem.Data3 + "%";
         }
 
         private void scrlProjectile_ValueChanged(object sender, EventArgs e)
         {
-            Globals.GameItems[_editorIndex].Projectile = scrlProjectile.Value;
             if (scrlProjectile.Value > -1)
             {
-                lblProjectile.Text = "Projectile: " + (scrlProjectile.Value + 1) + " " + Globals.GameProjectiles[scrlProjectile.Value].Name;
+                _editorItem.Projectile = Database.GameObjectIdFromList(GameObject.Projectile,scrlProjectile.Value);
+                lblProjectile.Text = "Projectile: " + ProjectileBase.GetName(_editorItem.Projectile);
             }
             else
             {
+                _editorItem.Projectile = -1;
                 lblProjectile.Text = "Projectile: None";
             }
         }
 
         private void scrlEvent_Scroll(object sender, ScrollEventArgs e)
         {
-            Globals.GameItems[_editorIndex].Data1 = scrlEvent.Value;
-            lblEvent.Text = "Event: " + scrlEvent.Value + " " + Globals.CommonEvents[scrlEvent.Value].MyName;
+            if (scrlEvent.Value > -1)
+            {
+                _editorItem.Data1 = Database.GameObjectIdFromList(GameObject.CommonEvent, scrlEvent.Value);
+                lblEvent.Text = "Event: " + EventBase.GetName(_editorItem.Data1);
+            }
+            else
+            {
+                _editorItem.Data1 = -1;
+                lblEvent.Text = "Event: None";
+            }
         }
     }
 }

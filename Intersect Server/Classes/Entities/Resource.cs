@@ -24,6 +24,7 @@ using System;
 using Intersect_Library;
 using Intersect_Library.GameObjects;
 using Intersect_Server.Classes.General;
+using Intersect_Server.Classes.Maps;
 using Intersect_Server.Classes.Networking;
 
 
@@ -32,31 +33,29 @@ namespace Intersect_Server.Classes.Entities
     public class Resource : Entity
     {
         // Resource Number
-        public int ResourceNum = 0;
-        private ResourceStruct _baseResource;
+        public ResourceBase MyBase;
 
         //Respawn
         public long RespawnTime = 0;
 
         public bool IsDead;
         
-        public Resource(int index, int resourceNum) : base(index)
+        public Resource(int index, ResourceBase resource) : base(index)
         {
-            ResourceNum = resourceNum;
-            _baseResource = Globals.GameResources[ResourceNum];
-            MyName = _baseResource.Name;
-            MySprite = _baseResource.InitialGraphic;
-            Vital[(int)Vitals.Health] = Globals.Rand.Next(_baseResource.MinHP, _baseResource.MaxHP + 1);
+            MyBase = resource;
+            MyName = resource.Name;
+            MySprite = resource.InitialGraphic;
+            Vital[(int)Vitals.Health] = Globals.Rand.Next(resource.MinHP, resource.MaxHP + 1);
             MaxVital[(int)Vitals.Health] = Vital[(int)Vitals.Health];
-            Passable = Convert.ToInt32(_baseResource.WalkableBefore);
+            Passable = Convert.ToInt32(resource.WalkableBefore);
             HideName = 1;
         }
 
         public override void Die(bool dropitems = false)
         {
             base.Die(dropitems);
-            MySprite = _baseResource.EndGraphic;
-            Passable = Convert.ToInt32(_baseResource.WalkableBefore);
+            MySprite = MyBase.EndGraphic;
+            Passable = Convert.ToInt32(MyBase.WalkableBefore);
             IsDead = true;
             PacketSender.SendEntityDataToProximity(MyIndex, (int)EntityTypes.Resource, Data(), Globals.Entities[MyIndex]);
             PacketSender.SendEntityPositionToAll(MyIndex, (int)EntityTypes.Resource, Globals.Entities[MyIndex]);
@@ -64,20 +63,20 @@ namespace Intersect_Server.Classes.Entities
 
         public void Spawn()
         {
-            if (_baseResource.Name == "" || _baseResource.MaxHP == 0) { return; }
-            MySprite = _baseResource.InitialGraphic;
-            Vital[(int)Vitals.Health] = Globals.Rand.Next(_baseResource.MinHP, _baseResource.MaxHP + 1);
+            if (MyBase.Name == "" || MyBase.MaxHP == 0) { return; }
+            MySprite = MyBase.InitialGraphic;
+            Vital[(int)Vitals.Health] = Globals.Rand.Next(MyBase.MinHP, MyBase.MaxHP + 1);
             MaxVital[(int)Vitals.Health] = Vital[(int)Vitals.Health];
-            Passable = Convert.ToInt32(_baseResource.WalkableBefore);
+            Passable = Convert.ToInt32(MyBase.WalkableBefore);
 
             //Give Resource Drops
             int Z = 0;
             for (int n = 0; n < Options.MaxNpcDrops; n++)
             {
-                if (Globals.Rand.Next(1, 101) <= _baseResource.Drops[n].Chance)
+                if (Globals.Rand.Next(1, 101) <= MyBase.Drops[n].Chance)
                 {
-                    Inventory[Z].ItemNum = _baseResource.Drops[n].ItemNum;
-                    Inventory[Z].ItemVal = _baseResource.Drops[n].Amount;
+                    Inventory[Z].ItemNum = MyBase.Drops[n].ItemNum;
+                    Inventory[Z].ItemVal = MyBase.Drops[n].Amount;
                     Z = Z + 1;
                 }
             }
@@ -97,13 +96,13 @@ namespace Intersect_Server.Classes.Entities
                 if (Inventory[i].ItemNum >= 0)
                 {
                     // If the resource isn't walkable, spawn it underneath the killer otherwise loot will be unobtainable.
-                    if (Globals.GameResources[ResourceNum].WalkableAfter == true)
+                    if (MyBase.WalkableAfter == true)
                     {
-                        Globals.GameMaps[CurrentMap].SpawnItem(CurrentX, CurrentY, Inventory[i], Inventory[i].ItemVal);
+                        MapInstance.GetMap(CurrentMap).SpawnItem(CurrentX, CurrentY, Inventory[i], Inventory[i].ItemVal);
                     }
                     else
                     {
-                        Globals.GameMaps[CurrentMap].SpawnItem(Globals.Entities[KillerIndex].CurrentX, Globals.Entities[KillerIndex].CurrentY, Inventory[i], Inventory[i].ItemVal);
+                        MapInstance.GetMap(CurrentMap).SpawnItem(Globals.Entities[KillerIndex].CurrentX, Globals.Entities[KillerIndex].CurrentY, Inventory[i], Inventory[i].ItemVal);
                     }
                 }
             }

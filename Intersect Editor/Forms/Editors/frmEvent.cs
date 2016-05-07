@@ -29,6 +29,7 @@ using System.Drawing;
 using System.IO;
 using Intersect_Editor.Classes.Core;
 using Intersect_Library;
+using Intersect_Library.GameObjects;
 using Intersect_Library.GameObjects.Events;
 using Intersect_Library.GameObjects.Maps;
 using Intersect_Library.GameObjects.Maps.MapList;
@@ -38,8 +39,8 @@ namespace Intersect_Editor.Forms
 {
     public partial class FrmEvent : Form
     {
-        private readonly MapStruct _currentMap;
-        public EventStruct MyEvent;
+        private readonly MapBase _currentMap;
+        public EventBase MyEvent;
         public int CurrentPageIndex;
         public EventPage CurrentPage;
         private ByteBuffer _eventBackup = new ByteBuffer();
@@ -48,12 +49,12 @@ namespace Intersect_Editor.Forms
         private EventCommand _editingCommand;
         private bool _isInsert;
         private bool _isEdit;
-        public MapStruct MyMap;
+        public MapBase MyMap;
         public bool NewEvent;
         private ByteBuffer _pageCopy;
 
         #region "Form Events"
-        public FrmEvent(MapStruct currentMap)
+        public FrmEvent(MapBase currentMap)
         {
             InitializeComponent();
             _currentMap = currentMap;
@@ -104,10 +105,7 @@ namespace Intersect_Editor.Forms
             cmbPreviewFace.Items.AddRange(GameContentManager.GetTextureNames(GameContentManager.TextureType.Face));
             cmbAnimation.Items.Clear();
             cmbAnimation.Items.Add("None");
-            for (int i = 0; i < Options.MaxAnimations; i++)
-            {
-                cmbAnimation.Items.Add((i + 1) + ". " + Globals.GameAnimations[i].Name);
-            }
+            cmbAnimation.Items.AddRange(Database.GetGameObjectList(GameObject.Animation));
             if (MyEvent.CommonEvent)
             {
                 grpEntityOptions.Hide();
@@ -168,11 +166,12 @@ namespace Intersect_Editor.Forms
             }
             if (NewEvent)
             {
-                MyMap.Events.Remove(MyEvent);
+                if (MyMap.EventIndex == MyEvent.MyIndex + 1) MyMap.EventIndex--;
+                MyMap.Events.Remove(MyEvent.MyIndex);
             }
             else
             {
-                MyEvent = new EventStruct(MyEvent.MyIndex, _eventBackup);
+                MyEvent = new EventBase(MyEvent.MyIndex, _eventBackup);
             }
             Hide();
             Dispose();
@@ -185,7 +184,7 @@ namespace Intersect_Editor.Forms
             }
             if (MyEvent.CommonEvent)
             {
-                PacketSender.SendCommonEvent(MyEvent.MyIndex, MyEvent.EventData());
+                //PacketSender.SendCommonEvent(MyEvent.MyIndex, MyEvent.EventData());
             }
             Hide();
             Dispose();
@@ -450,11 +449,11 @@ namespace Intersect_Editor.Forms
                 case EventCommandType.SetSwitch:
                     if (command.Ints[0] == (int)SwitchVariableTypes.PlayerSwitch)
                     {
-                        return "Set Player Switch " + (command.Ints[1] + 1) + ". " + Globals.PlayerSwitches[command.Ints[1]] + " to " + Convert.ToBoolean(command.Ints[2]);
+                        return "Set Player Switch " + PlayerSwitchBase.GetName(command.Ints[1]) + " to " + Convert.ToBoolean(command.Ints[2]);
                     }
                     else if (command.Ints[0] == (int)SwitchVariableTypes.ServerSwitch)
                     {
-                        return "Set Global Switch " + (command.Ints[1] + 1) + ". " + Globals.ServerSwitches[command.Ints[1]] + " to " + Convert.ToBoolean(command.Ints[2]);
+                        return "Set Global Switch " + ServerSwitchBase.GetName(command.Ints[1]) + " to " + Convert.ToBoolean(command.Ints[2]);
                     }
                     else
                     {
@@ -463,11 +462,11 @@ namespace Intersect_Editor.Forms
                 case EventCommandType.SetVariable:
                     if (command.Ints[0] == (int)SwitchVariableTypes.PlayerVariable)
                     {
-                        output =  "Set Player Variable " + (command.Ints[1] + 1) + ". " + Globals.PlayerVariables[command.Ints[1]] + " (";
+                        output = "Set Player Variable " + PlayerVariableBase.GetName(command.Ints[1]) + " (";
                     }
                     else if (command.Ints[0] == (int)SwitchVariableTypes.ServerVariable)
                     {
-                        output =  "Set Global Variable " + (command.Ints[1] + 1) + ". " + Globals.ServerVariables[command.Ints[1]] + " (";
+                        output = "Set Global Variable " + ServerVariableBase.GetName(command.Ints[1]) + " (";
                     }
                     else
                     {
@@ -503,8 +502,7 @@ namespace Intersect_Editor.Forms
                 case EventCommandType.GoToLabel:
                     return "Go to Label: " + command.Strs[0];
                 case EventCommandType.StartCommonEvent:
-                    return "Start Common Event: " + (command.Ints[0] + 1) + ". " +
-                           Globals.CommonEvents[command.Ints[0]].MyName;
+                    return "Start Common Event: " + EventBase.GetName(command.Ints[0]);
                 case EventCommandType.RestoreHp:
                     return "Restore Player HP";
                 case EventCommandType.RestoreMp:
@@ -525,7 +523,7 @@ namespace Intersect_Editor.Forms
                     {
                         output += "Remove: ";
                     }
-                    output += "Spell #" + (command.Ints[1] + 1) + " " + Globals.GameSpells[command.Ints[1]].Name + "]";
+                    output += "Spell " + SpellBase.GetName(command.Ints[1]) + "]";
                     return output;
                 case EventCommandType.ChangeItems:
                     output = "Change Player Items [";
@@ -537,7 +535,7 @@ namespace Intersect_Editor.Forms
                     {
                         output += "Take: ";
                     }
-                    output += "Item #" + (command.Ints[1] + 1) + " " + Globals.GameItems[command.Ints[1]].Name + " x" + command.Ints[2] + "]";
+                    output += "Item " + ItemBase.GetName(command.Ints[1]) + "]";
                     return output;
                 case EventCommandType.ChangeSprite:
                     return "Set Player Sprite to " + command.Strs[0];
@@ -590,44 +588,30 @@ namespace Intersect_Editor.Forms
                     return output + "NOT FOUND]";
                 case EventCommandType.SetMoveRoute:
                     output += "Set Move Route for ";
-                    if (MyMap.Events.Count > command.Route.Target && command.Route.Target > -1)
+                    if (MyMap.Events.ContainsKey(command.Route.Target))
                     {
-                        if (MyMap.Events[command.Route.Target].Deleted == 0)
-                        {
-                            return output + "Event #" + (command.Route.Target + 1) + " " + MyMap.Events[command.Route.Target].MyName;
-                        }
-                        else
-                        {
-                            return output + "Deleted Event!";
-                        }
+                        return output + "Event #" + (command.Route.Target + 1) + " " + MyMap.Events[command.Route.Target].MyName;
                     }
                     else
                     {
-                        return output + "Invalid Event";
+                        return output + "Deleted Event!";
                     }
                 case EventCommandType.WaitForRouteCompletion:
                     output += "Wait for Move Route Completion of ";
-                    if (MyMap.Events.Count > command.Ints[0] && command.Ints[0] > -1)
+                    if (MyMap.Events.ContainsKey(command.Ints[0]))
                     {
-                        if (MyMap.Events[command.Ints[0]].Deleted == 0)
-                        {
-                            return output + "Event #" + (command.Ints[0] + 1) + " " + MyMap.Events[command.Ints[0]].MyName;
-                        }
-                        else
-                        {
-                            return output + "Deleted Event!";
-                        }
+                        return output + "Event #" + (command.Ints[0] + 1) + " " + MyMap.Events[command.Ints[0]].MyName;
                     }
                     else
                     {
-                        return output + "Invalid Event";
+                        return output + "Deleted Event!";
                     }
                 case EventCommandType.HoldPlayer:
                     return "Hold Player";
                 case EventCommandType.ReleasePlayer:
                     return "Release Player";
                 case EventCommandType.SpawnNpc:
-                    output += "Spawn Npc #" + (command.Ints[0] + 1) + " " + Globals.GameNpcs[command.Ints[0]].Name + " ";
+                    output += "Spawn Npc " + NpcBase.GetName(command.Ints[0]) + " ";
                     switch (command.Ints[1])
                     {
                         case 0: //On Map/Tile Selection
@@ -659,26 +643,19 @@ namespace Intersect_Editor.Forms
                             }
                             else
                             {
-                                if (MyMap.Events.Count > command.Ints[2])
+                                if (MyMap.Events.ContainsKey(command.Ints[2]))
                                 {
-                                    if (MyMap.Events[command.Ints[2]].Deleted == 0)
-                                    {
-                                        return output + "On Event #" + (command.Ints[2] + 1) + " " + MyMap.Events[command.Ints[2]].MyName + " [X Offset: " + command.Ints[3] + " Y Offset: " + command.Ints[4] + " Retain Direction: " + Convert.ToBoolean(command.Ints[5]).ToString() + "]";
-                                    }
-                                    else
-                                    {
-                                        return output + "On Deleted Event!" + " [X Offset: " + command.Ints[3] + " Y Offset: " + command.Ints[4] + " Retain Direction: " + Convert.ToBoolean(command.Ints[5]).ToString() + "]";
-                                    }
+                                    return output + "On Event #" + (command.Ints[2] + 1) + " " + MyMap.Events[command.Ints[2]].MyName + " [X Offset: " + command.Ints[3] + " Y Offset: " + command.Ints[4] + " Retain Direction: " + Convert.ToBoolean(command.Ints[5]).ToString() + "]";
                                 }
                                 else
                                 {
-                                    return output + "On Invalid Event" + " [X Offset: " + command.Ints[3] + " Y Offset: " + command.Ints[4] + " Retain Direction: " + Convert.ToBoolean(command.Ints[5]).ToString() + "]";
+                                    return output + "On Deleted Event!" + " [X Offset: " + command.Ints[3] + " Y Offset: " + command.Ints[4] + " Retain Direction: " + Convert.ToBoolean(command.Ints[5]).ToString() + "]";
                                 }
                             }
                     }
                     return output;
                 case EventCommandType.PlayAnimation:
-                    output += "Play Animation #" + (command.Ints[0] + 1) + " " + Globals.GameAnimations[command.Ints[0]].Name + " ";
+                    output += "Play Animation " + AnimationBase.GetName(command.Ints[0]) + " ";
                     switch (command.Ints[1])
                     {
                         case 0: //On Map/Tile Selection
@@ -710,20 +687,13 @@ namespace Intersect_Editor.Forms
                             }
                             else
                             {
-                                if (MyMap.Events.Count > command.Ints[2])
+                                if (MyMap.Events.ContainsKey(command.Ints[2]))
                                 {
-                                    if (MyMap.Events[command.Ints[2]].Deleted == 0)
-                                    {
-                                        output += "On Event #" + (command.Ints[2] + 1) + " " + MyMap.Events[command.Ints[2]].MyName + " [X Offset: " + command.Ints[3] + " Y Offset: " + command.Ints[4];
-                                    }
-                                    else
-                                    {
-                                        output += "On Deleted Event!" + " [X Offset: " + command.Ints[3] + " Y Offset: " + command.Ints[4];
-                                    }
+                                    output += "On Event #" + (command.Ints[2] + 1) + " " + MyMap.Events[command.Ints[2]].MyName + " [X Offset: " + command.Ints[3] + " Y Offset: " + command.Ints[4];
                                 }
                                 else
                                 {
-                                    output += "On Invalid Event" + " [X Offset: " + command.Ints[3] + " Y Offset: " + command.Ints[4];
+                                    output += "On Deleted Event!" + " [X Offset: " + command.Ints[3] + " Y Offset: " + command.Ints[4];
                                 }
                             }
                             switch (command.Ints[5])
@@ -756,7 +726,7 @@ namespace Intersect_Editor.Forms
                 case EventCommandType.OpenBank:
                     return "Open Bank";
                 case EventCommandType.OpenShop:
-                    return "Open Shop [" + (command.Ints[0] + 1) + ". " + Globals.GameShops[command.Ints[0]].Name + "]";
+                    return "Open Shop [" + ShopBase.GetName(command.Ints[0]) + "]";
                 default:
                     return "Unknown Command";
             }
@@ -769,9 +739,9 @@ namespace Intersect_Editor.Forms
             switch (command.Ints[0])
             {
                 case 0: //Player Switch
-                    return "Player Switch " + (command.Ints[1] + 1) + ". "  + Globals.PlayerSwitches[command.Ints[1]] +  " is " + Convert.ToBoolean(command.Ints[2]);
+                    return "Player Switch " + PlayerSwitchBase.GetName(command.Ints[1]) + " is " + Convert.ToBoolean(command.Ints[2]);
                 case 1: //Player Variables
-                    output = "Player Variable " + (command.Ints[1] + 1) + ". " + Globals.PlayerVariables[command.Ints[1]];
+                    output = "Player Variable " + PlayerVariableBase.GetName(command.Ints[1]);
                     switch (command.Ints[2])
                     {
                         case 0:
@@ -796,9 +766,9 @@ namespace Intersect_Editor.Forms
                     output += command.Ints[3];
                     return output;
                 case 2: //Global Switch
-                    return "Global Switch " + (command.Ints[1] + 1) + ". " + Globals.ServerSwitches[command.Ints[1]] + " is " + Convert.ToBoolean(command.Ints[2]);
+                    return "Global Switch " + ServerSwitchBase.GetName(command.Ints[1]) + " is " + Convert.ToBoolean(command.Ints[2]);
                 case 3: //Global Variables
-                    output = "Global Variable " + (command.Ints[1] + 1) + ". " + Globals.ServerVariables[command.Ints[1]];
+                    output = "Global Variable " + ServerVariableBase.GetName(command.Ints[1]);
                     switch (command.Ints[2])
                     {
                         case 0:
@@ -823,12 +793,11 @@ namespace Intersect_Editor.Forms
                     output += command.Ints[3];
                     return output;
                 case 4: //Has Item
-                    return "Player has at least " + command.Ints[2] + " of Item #" + (command.Ints[1] + 1) + " " +
-                              Globals.GameItems[command.Ints[1]].Name;
+                    return "Player has at least " + command.Ints[2] + " of Item " + ItemBase.GetName(command.Ints[1]);
                 case 5: //Class Is
-                    return "Player's class is #" + (command.Ints[1] + 1) + " " + Globals.GameClasses[command.Ints[1]].Name;
+                    return "Player's class is " + ClassBase.GetName(command.Ints[1]); ;
                 case 6: //Knows spell
-                    return "Player knows  Spell #" + (command.Ints[1] + 1) + " " + Globals.GameSpells[command.Ints[1]].Name;
+                    return "Player knows Spell " + SpellBase.GetName(command.Ints[1]); ;
                 case 7: //Level is
                     output = "Player's level";
                     switch (command.Ints[1])

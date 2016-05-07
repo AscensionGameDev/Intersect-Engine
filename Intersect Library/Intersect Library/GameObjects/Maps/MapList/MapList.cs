@@ -6,54 +6,54 @@ namespace Intersect_Library.GameObjects.Maps.MapList
     public class MapList
     {
         private static MapList _mapList = new MapList();
-        private static List<FolderMap> _orderedMaps = new List<FolderMap>();
+        private static List<MapListMap> _orderedMaps = new List<MapListMap>();
         private Random rand = new Random();
-        public List<FolderItem> Items = new List<FolderItem>();
+        public List<MapListItem> Items = new List<MapListItem>();
 
         public static MapList GetList()
         {
             return _mapList;
         }
 
-        public static List<FolderMap> GetOrderedMaps()
+        public static List<MapListMap> GetOrderedMaps()
         {
             return _orderedMaps;
         } 
 
-        public byte[] Data(Dictionary<int, MapStruct> gameMaps)
+        public byte[] Data(Dictionary<int, MapBase> gameMaps)
         {
             ByteBuffer myBuffer = new ByteBuffer();
             myBuffer.WriteInteger(Items.Count);
             for (int i = 0; i < Items.Count; i++)
             {
-                if (Items[i].GetType() == typeof(FolderMap))
+                if (Items[i].GetType() == typeof(MapListMap))
                 {
 
-                    ((FolderMap)Items[i]).GetData(myBuffer,gameMaps);
+                    ((MapListMap)Items[i]).GetData(myBuffer,gameMaps);
                 }
                 else
                 {
-                    ((FolderDirectory)Items[i]).GetData(myBuffer);
+                    ((MapListFolder)Items[i]).GetData(myBuffer, gameMaps);
                 }
             }
             return myBuffer.ToArray();
         }
 
-        public bool Load(ByteBuffer myBuffer, Dictionary<int, MapStruct> gameMaps, bool isServer = true)
+        public bool Load(ByteBuffer myBuffer, Dictionary<int, MapBase> gameMaps, bool isServer = true, bool isTopLevel = false)
         {
-            _orderedMaps.Clear();
+            if (isTopLevel)_orderedMaps.Clear();
             Items.Clear();
             int count = myBuffer.ReadInteger();
             int type = -1;
-            FolderMap tmpMap;
-            FolderDirectory tmpDir;
+            MapListMap tmpMap;
+            MapListFolder tmpDir;
             bool result = true;
             for (int i = 0; i < count; i++)
             {
                 type = myBuffer.ReadInteger();
                 if (type == 0)
                 {
-                    tmpDir = new FolderDirectory();
+                    tmpDir = new MapListFolder();
                     if (tmpDir.Load(myBuffer,gameMaps, isServer))
                     {
                         Items.Add(tmpDir);
@@ -65,7 +65,7 @@ namespace Intersect_Library.GameObjects.Maps.MapList
                 }
                 else if (type == 1)
                 {
-                    tmpMap = new FolderMap();
+                    tmpMap = new MapListMap();
                     if (tmpMap.Load(myBuffer,gameMaps, isServer))
                     {
                         if (gameMaps.ContainsKey(tmpMap.MapNum) || !isServer)
@@ -84,19 +84,18 @@ namespace Intersect_Library.GameObjects.Maps.MapList
             return result;
         }
 
-        public void AddMap(int mapNum, Dictionary<int, MapStruct> gameMaps )
+        public void AddMap(int mapNum, Dictionary<int, MapBase> gameMaps )
         {
             if (!gameMaps.ContainsKey(mapNum)) return;
-            var tmp = new FolderMap();
+            var tmp = new MapListMap();
             tmp.Name = gameMaps[mapNum].MyName;
             tmp.MapNum = mapNum;
             Items.Add(tmp);
-            //PacketSender.SendMapListToEditors();
         }
 
         public void AddFolder(string folderName)
         {
-            var tmp = new FolderDirectory();
+            var tmp = new MapListFolder();
             tmp.Name = folderName;
             tmp.FolderId = int.Parse("" + rand.Next(1, 10) + rand.Next(0, 10) + rand.Next(0, 10) + rand.Next(0, 10) + rand.Next(0, 10) + rand.Next(0, 10) + rand.Next(0, 10) + rand.Next(0, 10));
             while (_mapList.FindFolderParent(tmp.FolderId, null) != null)
@@ -104,62 +103,61 @@ namespace Intersect_Library.GameObjects.Maps.MapList
                 tmp.FolderId = int.Parse("" + rand.Next(1, 10) + rand.Next(0, 10) + rand.Next(0, 10) + rand.Next(0, 10) + rand.Next(0, 10) + rand.Next(0, 10) + rand.Next(0, 10) + rand.Next(0, 10));
             }
             Items.Add(tmp);
-
-            //PacketSender.SendMapListToEditors();
+            
         }
 
-        public FolderDirectory FindDir(int folderId)
+        public MapListFolder FindDir(int folderId)
         {
             for (int i = 0; i < Items.Count; i++)
             {
                 if (Items[i].type == 0)
                 {
-                    if (((FolderDirectory)Items[i]).FolderId == folderId)
+                    if (((MapListFolder)Items[i]).FolderId == folderId)
                     {
-                        return ((FolderDirectory)Items[i]);
+                        return ((MapListFolder)Items[i]);
                     }
-                    if (((FolderDirectory)Items[i]).Children.FindDir(folderId) != null)
+                    if (((MapListFolder)Items[i]).Children.FindDir(folderId) != null)
                     {
-                        return ((FolderDirectory)Items[i]).Children.FindDir(folderId);
+                        return ((MapListFolder)Items[i]).Children.FindDir(folderId);
                     }
                 }
             }
             return null;
         }
 
-        public FolderMap FindMap(int mapNum)
+        public MapListMap FindMap(int mapNum)
         {
             for (int i = 0; i < Items.Count; i++)
             {
                 if (Items[i].type == 0)
                 {
-                    if (((FolderDirectory)Items[i]).Children.FindMap(mapNum) != null)
+                    if (((MapListFolder)Items[i]).Children.FindMap(mapNum) != null)
                     {
-                        return ((FolderDirectory)Items[i]).Children.FindMap(mapNum);
+                        return ((MapListFolder)Items[i]).Children.FindMap(mapNum);
                     }
                 }
                 else
                 {
-                    if (((FolderMap)Items[i]).MapNum == mapNum)
+                    if (((MapListMap)Items[i]).MapNum == mapNum)
                     {
-                        return ((FolderMap)Items[i]);
+                        return ((MapListMap)Items[i]);
                     }
                 }
             }
             return null;
         }
 
-        public FolderDirectory FindMapParent(int mapNum, FolderDirectory parent)
+        public MapListFolder FindMapParent(int mapNum, MapListFolder parent)
         {
             for (int i = 0; i < Items.Count; i++)
             {
-                if (Items[i].GetType() == typeof(FolderDirectory))
+                if (Items[i].GetType() == typeof(MapListFolder))
                 {
-                    if (((FolderDirectory)Items[i]).Children.FindMapParent(mapNum, (FolderDirectory)Items[i]) != null) { return ((FolderDirectory)Items[i]).Children.FindMapParent(mapNum, (FolderDirectory)Items[i]); }
+                    if (((MapListFolder)Items[i]).Children.FindMapParent(mapNum, (MapListFolder)Items[i]) != null) { return ((MapListFolder)Items[i]).Children.FindMapParent(mapNum, (MapListFolder)Items[i]); }
                 }
                 else
                 {
-                    if (((FolderMap)Items[i]).MapNum == mapNum)
+                    if (((MapListMap)Items[i]).MapNum == mapNum)
                     {
                         return parent;
                     }
@@ -168,17 +166,17 @@ namespace Intersect_Library.GameObjects.Maps.MapList
             return null;
         }
 
-        public FolderDirectory FindFolderParent(int folderId, FolderDirectory parent)
+        public MapListFolder FindFolderParent(int folderId, MapListFolder parent)
         {
             for (int i = 0; i < Items.Count; i++)
             {
-                if (Items[i].GetType() == typeof(FolderDirectory))
+                if (Items[i].GetType() == typeof(MapListFolder))
                 {
-                    if (((FolderDirectory)Items[i]).FolderId == folderId)
+                    if (((MapListFolder)Items[i]).FolderId == folderId)
                     {
                         return parent;
                     }
-                    if (((FolderDirectory)Items[i]).Children.FindFolderParent(folderId, (FolderDirectory)Items[i]) != null) { return ((FolderDirectory)Items[i]).Children.FindFolderParent(folderId, (FolderDirectory)Items[i]); }
+                    if (((MapListFolder)Items[i]).Children.FindFolderParent(folderId, (MapListFolder)Items[i]) != null) { return ((MapListFolder)Items[i]).Children.FindFolderParent(folderId, (MapListFolder)Items[i]); }
                 }
             }
             return null;
@@ -186,12 +184,12 @@ namespace Intersect_Library.GameObjects.Maps.MapList
 
         public void HandleMove(int srcType, int srcId, int destType, int destId)
         {
-            FolderDirectory sourceParent = null;
-            FolderDirectory destParent = null;
+            MapListFolder sourceParent = null;
+            MapListFolder destParent = null;
             MapList targetList = null;
             MapList sourceList = null;
-            FolderItem source = null;
-            FolderItem dest = null;
+            MapListItem source = null;
+            MapListItem dest = null;
             if (destType == 0)
             {
                 destParent = FindFolderParent(destId, null);
@@ -248,7 +246,7 @@ namespace Intersect_Library.GameObjects.Maps.MapList
             {
                 if (destType == 0)
                 {
-                    ((FolderDirectory)dest).Children.Items.Add(source);
+                    ((MapListFolder)dest).Children.Items.Add(source);
                     sourceList.Items.Remove(source);
                 }
                 else
@@ -272,8 +270,8 @@ namespace Intersect_Library.GameObjects.Maps.MapList
 
         public void DeleteFolder(int folderid)
         {
-            FolderDirectory parent = FindFolderParent(folderid, null);
-            FolderDirectory self = FindDir(folderid);
+            MapListFolder parent = FindFolderParent(folderid, null);
+            MapListFolder self = FindDir(folderid);
             if (parent == null)
             {
                 _mapList.Items.AddRange(self.Children.Items);
@@ -288,8 +286,8 @@ namespace Intersect_Library.GameObjects.Maps.MapList
 
         public void DeleteMap(int mapNum)
         {
-            FolderDirectory parent = FindMapParent(mapNum, null);
-            FolderMap self = FindMap(mapNum);
+            MapListFolder parent = FindMapParent(mapNum, null);
+            MapListMap self = FindMap(mapNum);
             if (parent == null)
             {
                 _mapList.Items.Remove(self);

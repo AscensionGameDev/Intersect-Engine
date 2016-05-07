@@ -90,7 +90,7 @@ namespace Intersect_Editor.Forms
                             gridMaps.Add(myGrid[x, y].mapnum);
                             mapGridView.Rows[y + 1].Cells[x + 1].Style.BackColor = Color.Green;
                             mapGridView.Rows[y + 1].Cells[x + 1].ValueType = typeof(string);
-                            mapGridView.Rows[y + 1].Cells[x + 1].Value = myGrid[x, y].mapnum + ". " + myGrid[x, y].name;
+                            mapGridView.Rows[y + 1].Cells[x + 1].Value = myGrid[x, y].name;
                             if (mapGridView.Rows[y + 1].Cells[x + 1].Size.Width > size) size = mapGridView.Rows[y + 1].Cells[x + 1].Size.Width;
                         }
                     }
@@ -137,7 +137,7 @@ namespace Intersect_Editor.Forms
                     }
                     else
                     {
-                        if (myGrid[e.ColumnIndex - 1, e.RowIndex - 1].mapnum == Globals.CurrentMap)
+                        if (myGrid[e.ColumnIndex - 1, e.RowIndex - 1].mapnum == Globals.CurrentMap.GetId())
                         {
                             e.Graphics.FillRectangle(Brushes.OrangeRed, e.CellBounds);
                         }
@@ -393,7 +393,6 @@ namespace Intersect_Editor.Forms
             int cols = colSize * (mapGridView.ColumnCount - 2);
             int rows = rowSize * (mapGridView.RowCount - 2);
             Bitmap tmpBitmap = new Bitmap(colSize, rowSize);
-            string loadedBitmap = "";
             Graphics g = Graphics.FromImage(tmpBitmap);
             var png = new PngWriter(new FileStream(filename, FileMode.OpenOrCreate), new ImageInfo(cols, rows, 16, true));
 
