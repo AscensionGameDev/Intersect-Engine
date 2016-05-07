@@ -1332,52 +1332,8 @@ namespace Intersect_Server.Classes.Core
         {
             if (MapBase.ObjectCount() == 0)
             {
-                //Converting Project Code, Remove before Alpha 1.0
-
-                //Let's Start by loading up tilesets... easy right?
-                string[] tilesets = File.ReadAllLines("resources/tilesets.dat");
-                foreach (var t in tilesets)
-                {
-                    var tset = (TilesetBase)AddGameObject(GameObject.Tileset);
-                    tset.SetValue(t);
-                    SaveGameObject(tset);
-                }
-
-                string[] maps = Directory.GetFiles("resources/maps/", "*.map");
-                List<int> mapIndexes = new List<int>();
-                foreach (var m in maps)
-                {
-                    int mapIndex = Int32.Parse(m.Replace(".map", "").Replace("resources/maps/", ""));
-                    mapIndexes.Add(mapIndex + 1);
-                    while (MapInstance.GetMap(mapIndex + 1) == null)
-                    {
-                        AddGameObject(GameObject.Map);
-                    }
-                    MapInstance.GetMap(mapIndex + 1).Load(File.ReadAllBytes(m));
-                    SaveGameObject(MapInstance.GetMap(mapIndex + 1));
-                }
-
-                foreach (var m in MapInstance.GetObjects())
-                {
-                    if (!mapIndexes.Contains(m.Key))
-                    {
-                        DeleteGameObject(m.Value);
-                    }
-                }
-
-                string[] resources = Directory.GetFiles("resources/resources/", "*.res");
-                foreach (var m in resources)
-                {
-                    int mapIndex = Int32.Parse(m.Replace(".res", "").Replace("resources/resources/", ""));
-                    while (ResourceBase.GetResource(mapIndex + 1) == null)
-                    {
-                        AddGameObject(GameObject.Resource);
-                    }
-                    ResourceBase.GetResource(mapIndex + 1).Load(File.ReadAllBytes(m));
-                    SaveGameObject(ResourceBase.GetResource(mapIndex + 1));
-                }
-                //Console.WriteLine("No maps found! - Creating an empty map!");
-                //AddGameObject(GameObject.Map);
+                Console.WriteLine("No maps found! - Creating an empty map!");
+                AddGameObject(GameObject.Map);
             }
 
             GenerateMapGrids();
