@@ -89,7 +89,7 @@ namespace Intersect_Client.Classes.Entities
         {
             int i = GetLocalPos(CurrentMap);
             var map = MapInstance.GetMap(CurrentMap);
-            if (i == -1 || map != null)
+            if (i == -1 || map == null)
             {
                 return;
             }

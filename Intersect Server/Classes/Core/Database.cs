@@ -552,6 +552,7 @@ namespace Intersect_Server.Classes.Core
                     client.MyPassword = dataReader[USER_PASS].ToString();
                     client.MySalt = dataReader[USER_SALT].ToString();
                     client.MyEmail = dataReader[USER_EMAIL].ToString();
+                    client.Power = Convert.ToInt32(dataReader[USER_POWER]);
                     client.MyId = Convert.ToInt32(dataReader[USER_ID]);
                     return true;
                 }

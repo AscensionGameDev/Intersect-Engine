@@ -213,70 +213,83 @@ namespace Intersect_Server.Classes.Entities
             switch (conditionCommand.Ints[0])
             {
                 case 0: //Player Switch
-                    if (MyPlayer.Switches[conditionCommand.Ints[1]] == Convert.ToBoolean(conditionCommand.Ints[2]))
+                    var switchVal = false;
+                    if (MyPlayer.Switches.ContainsKey(conditionCommand.Ints[1]))
+                        switchVal = MyPlayer.Switches[conditionCommand.Ints[1]];
+                    if (switchVal == Convert.ToBoolean(conditionCommand.Ints[2]))
                     {
                         return true;
                     }
                     break;
                 case 1: //Player Variable
-                    switch (conditionCommand.Ints[2])//Comparator
+                    var varVal = 0;
+                    if (MyPlayer.Variables.ContainsKey(conditionCommand.Ints[1]))
+                        varVal = MyPlayer.Variables[conditionCommand.Ints[1]];
+                    switch (conditionCommand.Ints[2]) //Comparator
                     {
                         case 0: //Equal to
-                            if (MyPlayer.Variables[conditionCommand.Ints[1]] == conditionCommand.Ints[3]) return true;
+                            if (varVal == conditionCommand.Ints[3])
+                                return true;
                             break;
                         case 1: //Greater than or equal to
-                            if (MyPlayer.Variables[conditionCommand.Ints[1]] >= conditionCommand.Ints[3]) return true;
+                            if (varVal >= conditionCommand.Ints[3])
+                                return true;
                             break;
                         case 2: //Less than or equal to
-                            if (MyPlayer.Variables[conditionCommand.Ints[1]] <= conditionCommand.Ints[3]) return true;
+                            if (varVal <= conditionCommand.Ints[3])
+                                return true;
                             break;
                         case 3: //Greater than
-                            if (MyPlayer.Variables[conditionCommand.Ints[1]] > conditionCommand.Ints[3]) return true;
+                            if (varVal > conditionCommand.Ints[3])
+                                return true;
                             break;
                         case 4: //Less than
-                            if (MyPlayer.Variables[conditionCommand.Ints[1]] < conditionCommand.Ints[3]) return true;
+                            if (varVal < conditionCommand.Ints[3])
+                                return true;
                             break;
                         case 5: //Does not equal
-                            if (MyPlayer.Variables[conditionCommand.Ints[1]] != conditionCommand.Ints[3]) return true;
+                            if (varVal != conditionCommand.Ints[3])
+                                return true;
                             break;
                     }
                     break;
                 case 2: //Player Switch
-                    var serverSwitch = ServerSwitchBase.GetSwitch(conditionCommand.Ints[1]);
-                    if (serverSwitch != null && serverSwitch.Value == Convert.ToBoolean(conditionCommand.Ints[2]))
+                    var servSwitch = false;
+                    if (ServerSwitchBase.GetSwitch(conditionCommand.Ints[1]) != null)
+                        servSwitch = ServerSwitchBase.GetSwitch(conditionCommand.Ints[1]).Value;
+                    if (servSwitch == Convert.ToBoolean(conditionCommand.Ints[2]))
                         return true;
                     break;
                 case 3: //Player Variable
-                    var serverVariable = ServerVariableBase.GetVariable(conditionCommand.Ints[1]);
-                    if (serverVariable != null)
+                    var servVar = 0;
+                    if (ServerVariableBase.GetVariable(conditionCommand.Ints[1]) != null)
+                        servVar = ServerVariableBase.GetVariable(conditionCommand.Ints[1]).Value;
+                    switch (conditionCommand.Ints[2]) //Comparator
                     {
-                        switch (conditionCommand.Ints[2]) //Comparator
-                        {
-                            case 0: //Equal to
-                                if (serverVariable.Value == conditionCommand.Ints[3])
-                                    return true;
-                                break;
-                            case 1: //Greater than or equal to
-                                if (serverVariable.Value >= conditionCommand.Ints[3])
-                                    return true;
-                                break;
-                            case 2: //Less than or equal to
-                                if (serverVariable.Value <= conditionCommand.Ints[3])
-                                    return true;
-                                break;
-                            case 3: //Greater than
-                                if (serverVariable.Value > conditionCommand.Ints[3])
-                                    return true;
-                                break;
-                            case 4: //Less than
-                                if (serverVariable.Value < conditionCommand.Ints[3])
-                                    return true;
-                                break;
-                            case 5: //Does not equal
-                                if (serverVariable.Value != conditionCommand.Ints[3])
-                                    return true;
-                                break;
-                        }
+                        case 0: //Equal to
+                            if (servVar == conditionCommand.Ints[3])
+                                return true;
+                            break;
+                        case 1: //Greater than or equal to
+                            if (servVar >= conditionCommand.Ints[3])
+                                return true;
+                            break;
+                        case 2: //Less than or equal to
+                            if (servVar <= conditionCommand.Ints[3])
+                                return true;
+                            break;
+                        case 3: //Greater than
+                            if (servVar > conditionCommand.Ints[3])
+                                return true;
+                            break;
+                        case 4: //Less than
+                            if (servVar < conditionCommand.Ints[3])
+                                return true;
+                            break;
+                        case 5: //Does not equal
+                            if (servVar != conditionCommand.Ints[3])
+                                return true;
+                            break;
                     }
                     break;
                 case 4: //Has Item
