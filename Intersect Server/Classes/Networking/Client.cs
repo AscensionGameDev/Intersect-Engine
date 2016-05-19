@@ -34,7 +34,7 @@ namespace Intersect_Server.Classes.Networking
         public string MyEmail = "";
         public string MyPassword = "";
         public string MySalt = "";
-        public int MyId = -1;
+        public long MyId = -1;
         public int ClientIndex;
         public int EntityIndex;
         public Player Entity;

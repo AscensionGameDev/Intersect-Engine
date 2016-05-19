@@ -33,7 +33,7 @@ namespace Intersect_Server.Classes.Entities
 
     public class Player : Entity
     {
-        public int MyId = -1;
+        public long MyId = -1;
         public bool InGame;
         public Client MyClient;
         private bool _sentMap;
