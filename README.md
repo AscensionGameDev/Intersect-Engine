@@ -1,2 +1,2 @@
 # Intersect-Engine
-Advanced 2D ORPG game engine written in C#
+2D ORPG Game Creation Toolkit
