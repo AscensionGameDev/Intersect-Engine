@@ -479,7 +479,6 @@ namespace Intersect_Server.Classes.Core
         public static void CreateAccount(Client client, string username, string password, string email)
         {
             var sha = new SHA256Managed();
-            Directory.CreateDirectory("resources/accounts/" + username);
             client.MyAccount = username;
 
             //Generate a Salt

@@ -211,7 +211,7 @@ namespace Intersect_Editor.Forms
             grpItem.Visible = true;
             cmbItemAttribute.Items.Clear();
             cmbItemAttribute.Items.AddRange(Database.GetGameObjectList(GameObject.Item));
-            cmbItemAttribute.SelectedIndex = 0;
+            if (cmbItemAttribute.Items.Count > 0) cmbItemAttribute.SelectedIndex = 0;
         }
         private void rbBlocked_CheckedChanged(object sender, EventArgs e)
         {
@@ -253,7 +253,7 @@ namespace Intersect_Editor.Forms
             grpResource.Visible = true;
             cmbResourceAttribute.Items.Clear();
             cmbResourceAttribute.Items.AddRange(Database.GetGameObjectList(GameObject.Resource));
-            cmbResourceAttribute.SelectedIndex = 0;
+            if (cmbResourceAttribute.Items.Count > 0) cmbResourceAttribute.SelectedIndex = 0;
         }
         // Used for returning an integer value depending on which radio button is selected on the forms. This is merely used to make PlaceAtrribute less messy.
         private int GetEditorDimensionGateway()
@@ -560,7 +560,7 @@ namespace Intersect_Editor.Forms
             grpAnimation.Visible = true;
             cmbAnimationAttribute.Items.Clear();
             cmbAnimationAttribute.Items.AddRange(Database.GetGameObjectList(GameObject.Animation));
-            cmbAnimationAttribute.SelectedIndex = 0;
+            if (cmbAnimationAttribute.Items.Count > 0) cmbAnimationAttribute.SelectedIndex = 0;
         }
 
         private void frmMapLayers_Load(object sender, EventArgs e)
@@ -599,6 +599,7 @@ namespace Intersect_Editor.Forms
         {
             hideAttributeMenus();
             grpSlide.Visible = true;
+            cmbSlideDir.SelectedIndex = 0;
         }
     }
 }

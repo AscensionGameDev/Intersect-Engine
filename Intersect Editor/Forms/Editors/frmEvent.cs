@@ -1335,7 +1335,7 @@ namespace Intersect_Editor.Forms
 
         private void btnAddCondition_Click(object sender, EventArgs e)
         {
-            if (!grpCreateCommands.Visible)
+            if (!grpCreateCommands.Visible && !grpNewCommands.Visible)
             {
                 EventCommand newCondition = new EventCommand();
                 newCondition.Type = EventCommandType.ConditionalBranch;

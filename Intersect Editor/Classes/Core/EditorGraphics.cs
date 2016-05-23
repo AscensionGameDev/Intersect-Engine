@@ -914,14 +914,17 @@ namespace Intersect_Editor.Classes
                     if (_fogCurrentY < fogTex.Height) { _fogCurrentY += fogTex.Height; }
                     if (_fogCurrentY > fogTex.Height) { _fogCurrentY -= fogTex.Height; }
 
+                    var drawX = (float)Math.Round(_fogCurrentX);
+                    var drawY = (float)Math.Round(_fogCurrentY);
+
                     for (int x = -1; x < xCount; x++)
                     {
                         for (int y = -1; y < yCount; y++)
                         {
                             DrawTexture(fogTex,
                                 new RectangleF(0, 0, fogTex.Width, fogTex.Height),
-                                new RectangleF(x* fogTex.Width + _fogCurrentX,
-                                    y* fogTex.Height + _fogCurrentY, fogTex.Width,
+                                new RectangleF(x* fogTex.Width + drawX,
+                                    y* fogTex.Height + drawY, fogTex.Width,
                                     fogTex.Height),
                                 Color.FromArgb(Globals.CurrentMap.FogTransparency, 255, 255, 255),target);
                         }

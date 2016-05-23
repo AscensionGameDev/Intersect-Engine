@@ -76,7 +76,21 @@ namespace Intersect_Client.Classes.UI.Game
         }
         public void OpenAdminWindow()
         {
-            new AdminWindow(GameCanvas);
+            if (_adminWindow == null)
+            {
+                _adminWindow = new AdminWindow(GameCanvas);
+            }
+            else
+            {
+                if (_adminWindow.IsVisible())
+                {
+                    _adminWindow.Hide();
+                }
+                else
+                {
+                    _adminWindow.Show();
+                }
+            }
             _shouldOpenAdminWindow = false;
         }
 

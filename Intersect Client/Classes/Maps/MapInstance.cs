@@ -458,33 +458,31 @@ namespace Intersect_Client.Classes.Maps
                     var tileset = TilesetBase.GetTileset(Layers[l].Tiles[x, y].TilesetIndex);
                     if (tileset == null) continue;
                     GameTexture tilesetTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Tileset, tileset.Value);
-                    if (tilesetTex != null)
+                    if (tilesetTex == null) continue;
+                    switch (Autotiles.Autotile[x, y].Layer[l].RenderState)
                     {
-                        switch (Autotiles.Autotile[x, y].Layer[l].RenderState)
-                        {
-                            case MapAutotiles.RenderStateNormal:
-                                GameGraphics.DrawGameTexture(tilesetTex,
-                                    x * Options.TileWidth + xoffset, y * Options.TileHeight + yoffset,
-                                    Layers[l].Tiles[x, y].X * Options.TileWidth,
-                                    Layers[l].Tiles[x, y].Y * Options.TileHeight, Options.TileWidth,
-                                    Options.TileHeight,
-                                    tex);
-                                break;
-                            case MapAutotiles.RenderStateAutotile:
-                                DrawAutoTile(l, x * Options.TileWidth + xoffset, y * Options.TileHeight + yoffset, 1, x,
-                                    y,
-                                    z, tex);
-                                DrawAutoTile(l, x * Options.TileWidth + 16 + xoffset, y * Options.TileHeight + yoffset,
-                                    2, x,
-                                    y, z, tex);
-                                DrawAutoTile(l, x * Options.TileWidth + xoffset, y * Options.TileHeight + 16 + yoffset,
-                                    3, x,
-                                    y, z, tex);
-                                DrawAutoTile(l, +x * Options.TileWidth + 16 + xoffset,
-                                    y * Options.TileHeight + 16 + yoffset,
-                                    4, x, y, z, tex);
-                                break;
-                        }
+                        case MapAutotiles.RenderStateNormal:
+                            GameGraphics.DrawGameTexture(tilesetTex,
+                                x * Options.TileWidth + xoffset, y * Options.TileHeight + yoffset,
+                                Layers[l].Tiles[x, y].X * Options.TileWidth,
+                                Layers[l].Tiles[x, y].Y * Options.TileHeight, Options.TileWidth,
+                                Options.TileHeight,
+                                tex);
+                            break;
+                        case MapAutotiles.RenderStateAutotile:
+                            DrawAutoTile(l, x * Options.TileWidth + xoffset, y * Options.TileHeight + yoffset, 1, x,
+                                y,
+                                z, tex);
+                            DrawAutoTile(l, x * Options.TileWidth + 16 + xoffset, y * Options.TileHeight + yoffset,
+                                2, x,
+                                y, z, tex);
+                            DrawAutoTile(l, x * Options.TileWidth + xoffset, y * Options.TileHeight + 16 + yoffset,
+                                3, x,
+                                y, z, tex);
+                            DrawAutoTile(l, +x * Options.TileWidth + 16 + xoffset,
+                                y * Options.TileHeight + 16 + yoffset,
+                                4, x, y, z, tex);
+                            break;
                     }
                 }
             }
@@ -493,6 +491,7 @@ namespace Intersect_Client.Classes.Maps
         //Map Caching (Only used if Options.RenderCaching is true)
         public void PreRenderMap()
         {
+            if (!Globals.HasGameData) return;
             GameGraphics.PreRenderedMapLayer = true;
             if (_preRenderStage < 3)
             {
@@ -599,6 +598,9 @@ namespace Intersect_Client.Classes.Maps
                     if (_fogCurrentY < fogTex.GetHeight()) { _fogCurrentY += fogTex.GetHeight(); }
                     if (_fogCurrentY > fogTex.GetHeight()) { _fogCurrentY -= fogTex.GetHeight(); }
 
+                    var drawX = (float)Math.Round(_fogCurrentX);
+                    var drawY = (float)Math.Round(_fogCurrentY);
+
                     for (int x = -1; x < xCount; x++)
                     {
                         for (int y = -1; y < yCount; y++)
@@ -608,8 +610,8 @@ namespace Intersect_Client.Classes.Maps
                             GameGraphics.DrawGameTexture(fogTex,
                                 new FloatRect(0, 0, fogW, fogH),
                                 new FloatRect(
-                                    GetX() - (Options.MapWidth * Options.TileWidth * 1.5f) + x * fogW + _fogCurrentX,
-                                    GetY() - (Options.MapHeight * Options.TileHeight * 1.5f) + y * fogH + _fogCurrentY, fogW, fogH),
+                                    GetX() - (Options.MapWidth * Options.TileWidth * 1.5f) + x * fogW + drawX,
+                                    GetY() - (Options.MapHeight * Options.TileHeight * 1.5f) + y * fogH + drawY, fogW, fogH),
                                 new IntersectClientExtras.GenericClasses.Color((byte)(FogTransparency * _curFogIntensity), 255, 255, 255
                                     ));
                         }

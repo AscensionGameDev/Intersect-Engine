@@ -40,7 +40,6 @@ namespace Intersect_Client.Classes.Core
     public static class GameMain
     {
         private static long _animTimer;
-        private static bool _tilesetsLoaded;
 
         public static void Start()
         {
@@ -156,11 +155,6 @@ namespace Intersect_Client.Classes.Core
 
         private static void ProcessLoading()
         {
-            if (Globals.HasGameData != null && !_tilesetsLoaded)
-            {
-                Globals.ContentManager.LoadTilesets(DatabaseObject.GetGameObjectList(Intersect_Library.GameObject.Tileset));
-                _tilesetsLoaded = true;
-            }
             if (Globals.LocalMaps[4] == -1) { return; }
             for (var i = 0; i < 9; i++)
             {

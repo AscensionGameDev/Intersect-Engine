@@ -126,7 +126,7 @@ namespace Intersect_Client_MonoGame.Classes.SFML.Graphics
 
         public override bool Begin()
         {
-            if (_gameWindow.ClientBounds.Width != _screenWidth || _gameWindow.ClientBounds.Height != _screenHeight)
+            if (_gameWindow.ClientBounds.Width != 0 && _gameWindow.ClientBounds.Height != 0 && (_gameWindow.ClientBounds.Width != _screenWidth || _gameWindow.ClientBounds.Height != _screenHeight))
             {
                 UpdateGraphicsState(_gameWindow.ClientBounds.Width, _gameWindow.ClientBounds.Height);
             }

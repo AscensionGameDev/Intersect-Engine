@@ -103,7 +103,7 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
                     grpSwitch.Show();
                     cmbSwitch.Items.Clear();
                     cmbSwitch.Items.AddRange(Database.GetGameObjectList(GameObject.PlayerSwitch));
-                    cmbSwitch.SelectedIndex = 0;
+                    if (cmbSwitch.Items.Count > 0) cmbSwitch.SelectedIndex = 0;
                     cmbSwitchVal.SelectedIndex = 0;
                     break;
                 case 1: //Player Variables
@@ -111,7 +111,7 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
                     grpPlayerVariable.Show();
                     cmbVariable.Items.Clear();
                     cmbVariable.Items.AddRange(Database.GetGameObjectList(GameObject.PlayerVariable));
-                    cmbVariable.SelectedIndex = 0;
+                    if (cmbVariable.Items.Count > 0) cmbVariable.SelectedIndex = 0;
                     cmbVariableMod.SelectedIndex = 0;
                     txtVariableVal.Text = @"0";
                     break;
@@ -120,7 +120,7 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
                     grpSwitch.Show();
                     cmbSwitch.Items.Clear();
                     cmbSwitch.Items.AddRange(Database.GetGameObjectList(GameObject.ServerSwitch));
-                    cmbSwitch.SelectedIndex = 0;
+                    if (cmbSwitch.Items.Count > 0) cmbSwitch.SelectedIndex = 0;
                     cmbSwitchVal.SelectedIndex = 0;
                     break;
                 case 3: //Global Variables
@@ -128,7 +128,7 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
                     grpPlayerVariable.Show();
                     cmbVariable.Items.Clear();
                     cmbVariable.Items.AddRange(Database.GetGameObjectList(GameObject.ServerVariable));
-                    cmbVariable.SelectedIndex = 0;
+                    if (cmbVariable.Items.Count > 0) cmbVariable.SelectedIndex = 0;
                     cmbVariableMod.SelectedIndex = 0;
                     txtVariableVal.Text = @"0";
                     break;
@@ -136,20 +136,20 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
                     grpHasItem.Show();
                     cmbItem.Items.Clear();
                     cmbItem.Items.AddRange(Database.GetGameObjectList(GameObject.Item));
-                    cmbItem.SelectedIndex = 0;
+                    if (cmbItem.Items.Count > 0) cmbItem.SelectedIndex = 0;
                     scrlItemQuantity.Value = 1;
                     break;
                 case 5: //Class is
                     grpClass.Show();
                     cmbClass.Items.Clear();
                     cmbClass.Items.AddRange(Database.GetGameObjectList(GameObject.Class));
-                    cmbClass.SelectedIndex = 0;
+                    if (cmbClass.Items.Count > 0) cmbClass.SelectedIndex = 0;
                     break;
                 case 6: //Knows spell
                     grpSpell.Show();
                     cmbSpell.Items.Clear();
                     cmbSpell.Items.AddRange(Database.GetGameObjectList(GameObject.Spell));
-                    cmbSpell.SelectedIndex = 0;
+                    if (cmbSpell.Items.Count > 0) cmbSpell.SelectedIndex = 0;
                     break;
                 case 7: //Level is...
                     grpLevel.Show();

@@ -693,13 +693,12 @@ namespace Intersect_Editor.Forms
                     newMap = Globals.CurrentMap.Down;
                 }
             }
-            if (Globals.MouseY < Options.TileHeight || Globals.MouseY > (Options.MapHeight + 2) * Options.TileHeight - Options.TileHeight) return;
-            if (Globals.MouseX >= 0 & Globals.MouseX <= Options.TileWidth)
+            if (Globals.MouseX >= 0 && Globals.MouseX <= Options.TileWidth && Globals.MouseY >= Options.TileHeight && Globals.MouseY <= (Options.MapHeight + 2) * Options.TileHeight - Options.TileHeight)
             {
                 dir = (int)Directions.Left;
                 newMap = Globals.CurrentMap.Left;
             }
-            else if (Globals.MouseX >= (Options.MapWidth + 2) * Options.TileWidth - Options.TileWidth && Globals.MouseX <= (Options.MapWidth + 2) * Options.TileWidth)
+            else if (Globals.MouseX >= (Options.MapWidth + 2) * Options.TileWidth - Options.TileWidth && Globals.MouseX <= (Options.MapWidth + 2) * Options.TileWidth && Globals.MouseY >= Options.TileHeight && Globals.MouseY <= (Options.MapHeight + 2) * Options.TileHeight - Options.TileHeight)
             {
                 dir = (int)Directions.Right;
                 newMap = Globals.CurrentMap.Right;

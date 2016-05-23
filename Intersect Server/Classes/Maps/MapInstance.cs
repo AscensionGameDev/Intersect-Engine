@@ -480,17 +480,22 @@ namespace Intersect_Server.Classes.Maps
                     //Process NPC Respawns
                     for (int i = 0; i < Spawns.Count; i++)
                     {
-                        MapNpcSpawn npcSpawnInstance = NpcSpawnInstances[Spawns[i]];
-                        if (!Globals.Entities.Contains(npcSpawnInstance.Entity))
+                        if (NpcSpawnInstances.ContainsKey(Spawns[i]))
                         {
-                            if (npcSpawnInstance.RespawnTime == -1)
+                            MapNpcSpawn npcSpawnInstance = NpcSpawnInstances[Spawns[i]];
+                            if (!Globals.Entities.Contains(npcSpawnInstance.Entity))
                             {
-                                npcSpawnInstance.RespawnTime = Environment.TickCount + ((Npc)npcSpawnInstance.Entity).MyBase.SpawnDuration * 1000;
-                            }
-                            else if (npcSpawnInstance.RespawnTime < Environment.TickCount)
-                            {
-                                SpawnMapNpc(i);
-                                npcSpawnInstance.RespawnTime = -1;
+                                if (npcSpawnInstance.RespawnTime == -1)
+                                {
+                                    npcSpawnInstance.RespawnTime = Environment.TickCount +
+                                                                   ((Npc) npcSpawnInstance.Entity).MyBase.SpawnDuration*
+                                                                   1000;
+                                }
+                                else if (npcSpawnInstance.RespawnTime < Environment.TickCount)
+                                {
+                                    SpawnMapNpc(i);
+                                    npcSpawnInstance.RespawnTime = -1;
+                                }
                             }
                         }
                     }
