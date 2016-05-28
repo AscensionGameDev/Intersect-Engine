@@ -72,6 +72,10 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
                     }
                 }
             }
+            if (cmbTarget.SelectedIndex == -1 && cmbTarget.Items.Count > 0)
+            {
+                cmbTarget.SelectedIndex = 0;
+            }
 
             ListMoveRoute();
         }

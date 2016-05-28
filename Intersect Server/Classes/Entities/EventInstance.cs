@@ -173,7 +173,7 @@ namespace Intersect_Server.Classes.Entities
             else
             {
                 //Try to Spawn a PageInstance.. if we can
-                for (int i = 0; i < BaseEvent.MyPages.Count; i++)
+                for (int i = BaseEvent.MyPages.Count-1; i >= 0; i--)
                 {
                     if (CanSpawnPage(i, BaseEvent))
                     {

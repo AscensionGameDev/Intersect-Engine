@@ -188,7 +188,7 @@ namespace Intersect_Library.GameObjects
         {
             if (Objects.ContainsKey(index))
             {
-                return ((ShopBase)Objects[index]).Name;
+                return ((SpellBase)Objects[index]).Name;
             }
             return "Deleted";
         }

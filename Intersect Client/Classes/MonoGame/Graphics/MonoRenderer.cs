@@ -215,25 +215,27 @@ namespace Intersect_Client_MonoGame.Classes.SFML.Graphics
             return new MonoRenderTexture(_graphicsDevice, width, height);
         }
 
-        public override void DrawString(string text, GameFont gameFont, float x, float y, int fontSize, Color fontColor, bool worldPos = true, GameRenderTexture renderTexture = null)
+        public override void DrawString(string text, GameFont gameFont, float x, float y, float fontScale, Color fontColor, bool worldPos = true, GameRenderTexture renderTexture = null)
         {
             if (gameFont == null) return;
             SpriteFont font = (SpriteFont)gameFont.GetFont();
             if (font == null) return;
             StartSpritebatch(_currentView, GameBlendModes.None, null, renderTexture, false, null);
             Color backColor = Color.Black;
-            _spriteBatch.DrawString(font, text, new Vector2(x, y-1), ConvertColor(backColor) * .8f);
-            _spriteBatch.DrawString(font, text, new Vector2(x - 1, y), ConvertColor(backColor) * .8f);
-            _spriteBatch.DrawString(font, text, new Vector2(x+1, y), ConvertColor(backColor) * .8f);
-            _spriteBatch.DrawString(font, text, new Vector2(x, y+ 1), ConvertColor(backColor) * .8f);
+            _spriteBatch.DrawString(font, text, new Vector2(x, y-1), ConvertColor(backColor) * .8f,0f,Vector2.Zero,new Vector2(fontScale,fontScale),SpriteEffects.None,0);
+            _spriteBatch.DrawString(font, text, new Vector2(x - 1, y), ConvertColor(backColor) * .8f, 0f, Vector2.Zero, new Vector2(fontScale, fontScale), SpriteEffects.None, 0);
+            _spriteBatch.DrawString(font, text, new Vector2(x+1, y), ConvertColor(backColor) * .8f, 0f, Vector2.Zero, new Vector2(fontScale, fontScale), SpriteEffects.None, 0);
+            _spriteBatch.DrawString(font, text, new Vector2(x, y+ 1), ConvertColor(backColor) * .8f, 0f, Vector2.Zero, new Vector2(fontScale, fontScale), SpriteEffects.None, 0);
             _spriteBatch.DrawString(font,text,new Vector2(x,y),ConvertColor(fontColor));
         }
 
-        public override void DrawString(string text, GameFont gameFont, float x, float y, int fontSize, Color fontColor, bool worldPos, GameRenderTexture renderTexture, FloatRect clipRect)
+        public override void DrawString(string text, GameFont gameFont, float x, float y, float fontScale, Color fontColor, bool worldPos, GameRenderTexture renderTexture, FloatRect clipRect)
         {
             if (gameFont == null) return;
-            clipRect.X -= GetView().X;
-            clipRect.Y -= GetView().Y;
+            x += _currentView.X;
+            y += _currentView.Y;
+            //clipRect.X += _currentView.X;
+            //clipRect.Y += _currentView.Y;
             SpriteFont font = (SpriteFont)gameFont.GetFont();
             if (font == null) return;
             Microsoft.Xna.Framework.Color clr = ConvertColor(fontColor);
@@ -245,7 +247,7 @@ namespace Intersect_Client_MonoGame.Classes.SFML.Graphics
             _spriteBatch.GraphicsDevice.ScissorRectangle = new Microsoft.Xna.Framework.Rectangle((int)clipRect.X, (int)clipRect.Y, (int)clipRect.Width, (int)clipRect.Height);
             StartSpritebatch(_currentView,GameBlendModes.None,null,renderTexture,false,_rasterizerState);
             //Draw the text at the top left of the scissor rectangle
-            _spriteBatch.DrawString(font, text, new Vector2(x, y), clr);
+            _spriteBatch.DrawString(font, text, new Vector2(x, y), clr, 0f, Vector2.Zero, new Vector2(fontScale, fontScale), SpriteEffects.None, 0);
 
             EndSpriteBatch();
 
@@ -253,11 +255,16 @@ namespace Intersect_Client_MonoGame.Classes.SFML.Graphics
             _spriteBatch.GraphicsDevice.ScissorRectangle = currentRect;
         }
 
-        public override void DrawTexture(GameTexture tex, FloatRect srcRectangle, FloatRect targetRect, Color renderColor, GameRenderTexture renderTarget = null, GameBlendModes blendMode = GameBlendModes.Alpha, GameShader shader = null, float rotationDegrees = 0)
+        public override void DrawTexture(GameTexture tex, FloatRect srcRectangle, FloatRect targetRect, Color renderColor, GameRenderTexture renderTarget = null, GameBlendModes blendMode = GameBlendModes.Alpha, GameShader shader = null, float rotationDegrees = 0, bool isUi = false)
         {
             if (tex == null) return;
             if (renderTarget == null)
             {
+                if (isUi)
+                {
+                    targetRect.X += _currentView.X;
+                    targetRect.Y += _currentView.Y;
+                }
                 StartSpritebatch(_currentView, blendMode, shader, null, false, null);
                 _spriteBatch.Draw((Texture2D) tex.GetTexture(), null,
                     new Microsoft.Xna.Framework.Rectangle((int) targetRect.X, (int) targetRect.Y, (int) targetRect.Width,
@@ -369,13 +376,13 @@ namespace Intersect_Client_MonoGame.Classes.SFML.Graphics
             return tex;
         }
 
-        public override Pointf MeasureText(string text, GameFont gameFont, int fontSize)
+        public override Pointf MeasureText(string text, GameFont gameFont, float fontScale)
         {
             if (gameFont == null) return Pointf.Empty;
             SpriteFont font = (SpriteFont) gameFont.GetFont();
             if (font == null) return Pointf.Empty;
             Vector2 size = font.MeasureString(text);
-            return new Pointf(size.X,size.Y);
+            return new Pointf(size.X * fontScale,size.Y * fontScale);
         }
 
         public override void SetView(FloatRect view)

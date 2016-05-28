@@ -209,6 +209,7 @@ namespace Intersect_Server.Classes.Entities
                 if (resetExperience) Experience = 0;
                 PacketSender.SendEntityDataToProximity(MyIndex, (int)EntityTypes.Player, Data(), this);
                 PacketSender.SendExperience(MyClient);
+                
             }
         }
         public void LevelUp(bool resetExperience = true, int levels = 1)
@@ -225,6 +226,7 @@ namespace Intersect_Server.Classes.Entities
                         "You have " + StatPoints + " stat points available to be spent!", Color.Blue);
                 }
                 PacketSender.SendExperience(MyClient);
+                PacketSender.SendPointsTo(MyClient);
                 PacketSender.SendEntityDataToProximity(MyIndex, (int)EntityTypes.Player, Data(), this);
             }
         }

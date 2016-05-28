@@ -89,9 +89,6 @@ namespace Intersect_Server.Classes.Maps
         {
             lock (_mapLock)
             {
-                base.Load(packet);
-                if (keepRevision > -1) Revision = keepRevision;
-
                 //Clear Map Npcs
                 for (int i = 0; i < Spawns.Count; i++)
                 {
@@ -137,7 +134,12 @@ namespace Intersect_Server.Classes.Maps
                         MapProjectiles[i].Die();
                     }
                 }
+
                 MapProjectiles.Clear();
+
+                base.Load(packet);
+                if (keepRevision > -1) Revision = keepRevision;
+
                 SpawnAttributeItems();
                 SpawnGlobalEvents();
                 SpawnMapNpcs();

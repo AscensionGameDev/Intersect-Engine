@@ -703,6 +703,26 @@ namespace Intersect_Server.Classes.Entities
             }
         }
 
+        public override int CanMove(int moveDir)
+        {
+            switch (moveDir)
+            {
+                case (int)Directions.Up:
+                    if (CurrentY == 0) return -5;
+                    break;
+                case (int)Directions.Down:
+                    if (CurrentY == Options.MapHeight - 1) return -5;
+                    break;
+                case (int)Directions.Left:
+                    if (CurrentX == 0) return -5;
+                    break;
+                case (int)Directions.Right:
+                    if (CurrentX == Options.MapWidth - 1) return -5;
+                    break;
+            }
+            return base.CanMove(moveDir);
+        }
+
         public void TurnTowardsPlayer()
         {
             int lookDir = -1;
@@ -730,7 +750,7 @@ namespace Intersect_Server.Classes.Entities
             {
                 if (MyEventIndex.CanSpawnPage(i, BaseEvent))
                 {
-                    if (i < PageNum) return true;
+                    if (i > PageNum) return true;
                 }
             }
             return false;

@@ -59,7 +59,7 @@ namespace Intersect_Client.Classes.UI.Menu
             //Main Menu Window
             _menuWindow = new WindowControl(_menuCanvas, "Main Menu");
             _menuWindow.SetSize(200, 200);
-            _menuWindow.SetPosition(GameGraphics.Renderer.GetScreenWidth() / 2 - 100, GameGraphics.Renderer.GetScreenHeight() / 2 - 80);
+            _menuWindow.SetPosition(_menuCanvas.Width / 2 - 100, _menuCanvas.Height / 2 - 80);
             _menuWindow.IsClosable = false;
             _menuWindow.DisableResizing();
             _menuWindow.Margin = Margin.Zero;

@@ -184,7 +184,7 @@ namespace Intersect_Editor.Forms
             }
             if (MyEvent.CommonEvent)
             {
-                //PacketSender.SendCommonEvent(MyEvent.MyIndex, MyEvent.EventData());
+                PacketSender.SendSaveObject(MyEvent);
             }
             Hide();
             Dispose();
@@ -590,7 +590,7 @@ namespace Intersect_Editor.Forms
                     output += "Set Move Route for ";
                     if (MyMap.Events.ContainsKey(command.Route.Target))
                     {
-                        return output + "Event #" + (command.Route.Target + 1) + " " + MyMap.Events[command.Route.Target].MyName;
+                        return output + "Event #" + (command.Route.Target) + " " + MyMap.Events[command.Route.Target].MyName;
                     }
                     else
                     {
@@ -600,7 +600,7 @@ namespace Intersect_Editor.Forms
                     output += "Wait for Move Route Completion of ";
                     if (MyMap.Events.ContainsKey(command.Ints[0]))
                     {
-                        return output + "Event #" + (command.Ints[0] + 1) + " " + MyMap.Events[command.Ints[0]].MyName;
+                        return output + "Event #" + (command.Ints[0]) + " " + MyMap.Events[command.Ints[0]].MyName;
                     }
                     else
                     {
@@ -1030,7 +1030,7 @@ namespace Intersect_Editor.Forms
         /// </summary>
         public void CancelCommandEdit(bool moveRoute = false)
         {
-            if (_currentCommand > -1)
+            if (_currentCommand > -1 && _commandProperties[_currentCommand].MyList.Commands.Count > _currentCommand)
             {
                 if (!_isEdit)
                 {

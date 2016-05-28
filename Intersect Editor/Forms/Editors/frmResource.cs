@@ -197,8 +197,15 @@ namespace Intersect_Editor.Classes
         {
             int index = scrlDropIndex.Value - 1;
             lblDropIndex.Text = "Drop: " + (index + 1);
-            scrlDropItem.Value = _editorItem.Drops[index].ItemNum;
-            lblDropItem.Text = @"Item " + ItemBase.GetName(Database.GameObjectIdFromList(GameObject.Item,scrlDropItem.Value));
+            scrlDropItem.Value = Database.GameObjectListIndex(GameObject.Item,_editorItem.Drops[index].ItemNum);
+            if (scrlDropItem.Value == -1)
+            {
+                lblDropItem.Text = @"Item None";
+            }
+            else
+            {
+                lblDropItem.Text = @"Item " + ItemBase.GetName(Database.GameObjectIdFromList(GameObject.Item, scrlDropItem.Value));
+            }
             txtDropAmount.Text = _editorItem.Drops[index].Amount.ToString();
             scrlDropChance.Value = _editorItem.Drops[index].Chance;
             lblDropChance.Text = @"Chance (" + scrlDropChance.Value + @"/100)";
@@ -211,7 +218,14 @@ namespace Intersect_Editor.Classes
 
         private void scrlDropItem_Scroll(object sender, ScrollEventArgs e)
         {
-            lblDropItem.Text = @"Item " + ItemBase.GetName(Database.GameObjectIdFromList(GameObject.Item, scrlDropItem.Value));
+            if (scrlDropItem.Value == -1)
+            {
+                lblDropItem.Text = @"Item None";
+            }
+            else
+            {
+                lblDropItem.Text = @"Item " + ItemBase.GetName(Database.GameObjectIdFromList(GameObject.Item, scrlDropItem.Value));
+            }
             _editorItem.Drops[scrlDropIndex.Value - 1].ItemNum = Database.GameObjectIdFromList(GameObject.Item,
                 scrlDropItem.Value);
         }

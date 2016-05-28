@@ -963,7 +963,7 @@ namespace Intersect_Server.Classes.Networking
                         MapList.GetList().DeleteMap(mapNum);
                         Database.GenerateMapGrids();
                         Database.SaveGameObject(MapInstance.GetMap(mapNum));
-                        PacketSender.SendMapToEditors(mapNum);
+                        Database.DeleteGameObject(MapInstance.GetMap(mapNum));
                         PacketSender.SendMapListToAll();
                     }
                     break;

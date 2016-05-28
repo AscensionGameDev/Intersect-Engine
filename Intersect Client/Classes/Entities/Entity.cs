@@ -422,7 +422,7 @@ namespace Intersect_Client.Classes.Entities
                         break;
                 }
                 destRectangle.X = (int)Math.Ceiling(destRectangle.X);
-                destRectangle.Y = destRectangle.Y;
+                destRectangle.Y = (int)Math.Ceiling(destRectangle.Y);
                 srcRectangle = new FloatRect(WalkFrame * (int)paperdollTex.GetWidth() / 4, d * (int)paperdollTex.GetHeight() / 4, (int)paperdollTex.GetWidth() / 4, (int)paperdollTex.GetHeight() / 4);
                 destRectangle.Width = srcRectangle.Width;
                 destRectangle.Height = srcRectangle.Height;
@@ -457,6 +457,7 @@ namespace Intersect_Client.Classes.Entities
             {
                 pos.Y += Options.TileHeight / 2;
                 pos.Y -= entityTex.GetHeight() / 4 / 2;
+                pos.X += entityTex.GetWidth()/8 - (Options.TileWidth /2);
             }
             return pos;
         }
@@ -497,9 +498,9 @@ namespace Intersect_Client.Classes.Entities
             }
             if (this.GetType() != typeof(Event)) { y -= 10; } //Need room for HP bar if not an event.
 
-            float textWidth = GameGraphics.Renderer.MeasureText(MyName, GameGraphics.GameFont, 10).X;
+            float textWidth = GameGraphics.Renderer.MeasureText(MyName, GameGraphics.GameFont, 1).X;
             GameGraphics.Renderer.DrawString(MyName, GameGraphics.GameFont,
-                (int)(x - (int)Math.Ceiling(textWidth / 2)), (int)(y), 10, Color.White);
+                (int)(x - (int)Math.Ceiling(textWidth / 2)), (int)(y), 1, Color.White);
         }
         public void DrawHpBar()
         {

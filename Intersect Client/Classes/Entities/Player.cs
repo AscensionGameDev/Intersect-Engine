@@ -949,7 +949,7 @@ namespace Intersect_Client.Classes.Entities
                 int tmpMap;
                 if (x < 0)
                 {
-                    tmpX = (Options.MapWidth - 1) - (x * -1);
+                    tmpX = (Options.MapWidth) - (x * -1);
                     if (y < 0)
                     {
                         tmpY = (Options.MapHeight - 1) - (y * -1);
@@ -957,7 +957,7 @@ namespace Intersect_Client.Classes.Entities
                     }
                     else if (y > (Options.MapHeight - 1))
                     {
-                        tmpY = y - (Options.MapHeight - 1);
+                        tmpY = y - (Options.MapHeight);
                         tmpI = tmpI + 2;
                     }
                     else
@@ -967,15 +967,15 @@ namespace Intersect_Client.Classes.Entities
                 }
                 else if (x > (Options.MapWidth - 1))
                 {
-                    tmpX = x - (Options.MapWidth - 1);
+                    tmpX = x - (Options.MapWidth);
                     if (y < 0)
                     {
-                        tmpY = (Options.MapHeight - 1) - (y * -1);
+                        tmpY = (Options.MapHeight) - (y * -1);
                         tmpI = tmpI - 2;
                     }
                     else if (y > (Options.MapHeight - 1))
                     {
-                        tmpY = y - (Options.MapHeight - 1);
+                        tmpY = y - (Options.MapHeight);
                         tmpI = tmpI + 4;
                     }
                     else
@@ -990,7 +990,7 @@ namespace Intersect_Client.Classes.Entities
                 }
                 else if (y > (Options.MapHeight - 1))
                 {
-                    tmpY = y - (Options.MapHeight - 1);
+                    tmpY = y - (Options.MapHeight);
                     tmpI = tmpI + 3;
                 }
                 else

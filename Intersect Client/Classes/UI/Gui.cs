@@ -25,6 +25,7 @@
     SOFTWARE.
 */
 
+using System;
 using System.Collections.Generic;
 using IntersectClientExtras.File_Management;
 using IntersectClientExtras.GenericClasses;
@@ -70,14 +71,16 @@ namespace Intersect_Client.Classes.UI
 
             // Create a Canvas (it's root, on which all other GWEN controls are created)
             _menuCanvas = new Canvas(_gwenSkin);
-            _menuCanvas.SetSize(GameGraphics.Renderer.GetScreenWidth(), GameGraphics.Renderer.GetScreenHeight());
+            _menuCanvas.Scale = 1f;
+            _menuCanvas.SetSize((int)(GameGraphics.Renderer.GetScreenWidth() / _menuCanvas.Scale), (int)(GameGraphics.Renderer.GetScreenHeight() / _menuCanvas.Scale));
             _menuCanvas.ShouldDrawBackground = false;
             _menuCanvas.BackgroundColor = Color.FromArgb(255, 150, 170, 170);
             _menuCanvas.KeyboardInputEnabled = true;
 
             // Create the game Canvas (it's root, on which all other GWEN controls are created)
             _gameCanvas = new Canvas(_gwenSkin);
-            _gameCanvas.SetSize(GameGraphics.Renderer.GetScreenWidth(), GameGraphics.Renderer.GetScreenHeight());
+            _gameCanvas.Scale = 1f;
+            _gameCanvas.SetSize((int)(GameGraphics.Renderer.GetScreenWidth() / _gameCanvas.Scale), (int)(GameGraphics.Renderer.GetScreenHeight() / _gameCanvas.Scale));
             _gameCanvas.ShouldDrawBackground = false;
             _gameCanvas.BackgroundColor = Color.FromArgb(255, 150, 170, 170);
             _gameCanvas.KeyboardInputEnabled = true;
@@ -138,7 +141,6 @@ namespace Intersect_Client.Classes.UI
             if (!Gui.GwenInitialized) Gui.InitGwen();
             ErrorMsgHandler.Update();
             _gameCanvas.RestrictToParent = false;
-            _gameCanvas.SetPosition((int)GameGraphics.CurrentView.X, (int)GameGraphics.CurrentView.Y);
             if (Globals.GameState == GameStates.Menu)
             {
                 MenuUI.Draw();
@@ -186,7 +188,7 @@ namespace Intersect_Client.Classes.UI
             input = input.Replace("\r\n", "\n");
             while (curPos + curLen < input.Length)
             {
-                if (GameGraphics.Renderer.MeasureText(input.Substring(curPos, curLen), GameGraphics.GameFont, 10).X < width)
+                if (GameGraphics.Renderer.MeasureText(input.Substring(curPos, curLen), GameGraphics.GameFont, 1).X < width)
                 {
                     if (input[curPos + curLen] == ' ' || input[curPos + curLen] == '-')
                     {
@@ -202,6 +204,7 @@ namespace Intersect_Client.Classes.UI
                 else
                 {
                     myOutput.Add(input.Substring(curPos, lastSpace));
+                    if (lastSpace == 0) lastSpace = curLen-1;
                     curPos = curPos + lastSpace;
                     curLen = 1;
                 }

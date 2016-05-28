@@ -50,6 +50,7 @@ namespace Intersect_Editor.Classes.Maps
         //Attribute/Animations
         public AnimationInstance GetAttributeAnimation(Intersect_Library.GameObjects.Maps.Attribute attr, int animNum)
         {
+            if (attr == null) return null;
             if (!_attributeAnimInstances.ContainsKey(attr))
             {
                 _attributeAnimInstances.Add(attr, new AnimationInstance(AnimationBase.GetAnim(animNum), true));

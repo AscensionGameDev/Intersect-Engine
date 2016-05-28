@@ -28,6 +28,7 @@ using Intersect_Editor.Classes.Maps;
 using Intersect_Library;
 using Intersect_Library.GameObjects;
 using Intersect_Library.GameObjects.Events;
+using Intersect_Library.GameObjects.Maps;
 using Intersect_Library.GameObjects.Maps.MapList;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -197,7 +198,7 @@ namespace Intersect_Editor.Classes
         {
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
-            MapList.GetList().Load(bf, new Dictionary<int,Intersect_Library.GameObjects.Maps.MapBase>(), false, true);
+            MapList.GetList().Load(bf, MapBase.GetObjects(), false, true);
             if (Globals.CurrentMap == null)
             {
                 Globals.MainForm.EnterMap(MapList.GetList().FindFirstMap());

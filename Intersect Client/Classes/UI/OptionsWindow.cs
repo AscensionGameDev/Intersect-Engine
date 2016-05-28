@@ -221,6 +221,8 @@ namespace Intersect_Client.Classes.UI
             _fullscreen.IsChecked = Globals.Database.FullScreen;
             _musicSlider.Value = Globals.Database.MusicVolume;
             _soundSlider.Value = Globals.Database.SoundVolume;
+            _musicLabel.Text = "Music Volume: " + (int)_musicSlider.Value + "%";
+            _soundLabel.Text = "Sound Volume: " + (int)_soundSlider.Value + "%";
             if (_gameWindow) { _optionsMenu.IsHidden = false; }
             _resolutionLabel.IsHidden = false;
             _resolutionList.IsHidden = false;

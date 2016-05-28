@@ -152,9 +152,12 @@ namespace Intersect_Editor.Forms
         {
             lstItems.Items.Clear();
             lstItems.Items.AddRange(Database.GetGameObjectList(GameObject.Item));
+            cmbEquipmentSlot.Items.Clear();
             cmbEquipmentSlot.Items.AddRange(Options.EquipmentSlots.ToArray());
+            cmbToolType.Items.Clear();
             cmbToolType.Items.Add("None");
             cmbToolType.Items.AddRange(Options.ToolTypes.ToArray());
+            cmbEquipmentBonus.Items.Clear();
             cmbEquipmentBonus.Items.Add("None");
             cmbEquipmentBonus.Items.Add("Cooldown Reduction");
             cmbEquipmentBonus.Items.Add("Life Steal");
@@ -188,7 +191,7 @@ namespace Intersect_Editor.Forms
                 scrlRange.Value = _editorItem.StatGrowth;
                 cmbEquipmentSlot.SelectedIndex = _editorItem.Data1;
                 cmbToolType.SelectedIndex = _editorItem.Tool;
-                cmbEquipmentBonus.SelectedIndex = _editorItem.Data2;
+                if (_editorItem.ItemType == (int)ItemTypes.Equipment) cmbEquipmentBonus.SelectedIndex = _editorItem.Data2;
                 scrlEffectAmount.Value = _editorItem.Data3;
                 chk2Hand.Checked = Convert.ToBoolean(_editorItem.Data4);
                 cmbPaperdoll.SelectedIndex = cmbPaperdoll.FindString(_editorItem.Paperdoll);

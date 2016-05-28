@@ -762,7 +762,8 @@ namespace Intersect_Editor.Forms
                             Globals.CurTileY)) == null)
                 {
                     tmpEvent = new EventBase(Globals.CurrentMap.EventIndex, Globals.CurTileX, Globals.CurTileY);
-                    Globals.CurrentMap.Events.Add(Globals.CurrentMap.EventIndex++, tmpEvent);
+                    Globals.CurrentMap.Events.Add(Globals.CurrentMap.EventIndex, tmpEvent);
+                    Globals.CurrentMap.EventIndex++;
                     tmpEventEditor = new FrmEvent(Globals.CurrentMap)
                     {
                         MyEvent = tmpEvent,
@@ -1087,7 +1088,8 @@ namespace Intersect_Editor.Forms
                                 eventCopy = new EventBase(tmpMap.EventIndex, Globals.SelectionSource.FindEventAt(x0 - dragxoffset, y0 - dragyoffset));
                                 eventCopy.SpawnX = x0;
                                 eventCopy.SpawnY = y0;
-                                tmpMap.Events.Add(tmpMap.EventIndex++, eventCopy);
+                                tmpMap.Events.Add(tmpMap.EventIndex, eventCopy);
+                                tmpMap.EventIndex++;
                             }
                         }
                     }

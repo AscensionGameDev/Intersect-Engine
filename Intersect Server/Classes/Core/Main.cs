@@ -92,7 +92,14 @@ namespace Intersect_Server.Classes
                                     {
                                         try
                                         {
-                                            Database.SetPlayerPower(commandsplit[1], Int32.Parse(commandsplit[2]));
+                                            if (Database.AccountExists(commandsplit[1]))
+                                            {
+                                                Database.SetPlayerPower(commandsplit[1], Int32.Parse(commandsplit[2]));
+                                            }
+                                            else
+                                            {
+                                                Console.WriteLine("    Error: Account " + commandsplit[1] + " was not found!");
+                                            }
                                         }
                                         catch (Exception)
                                         {

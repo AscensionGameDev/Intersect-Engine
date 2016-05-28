@@ -128,7 +128,7 @@ namespace Intersect_Editor.Forms
             this.groupBox1.Controls.Add(this.lstItems);
             this.groupBox1.Location = new System.Drawing.Point(12, 7);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(203, 464);
+            this.groupBox1.Size = new System.Drawing.Size(203, 476);
             this.groupBox1.TabIndex = 1;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Items";
@@ -136,9 +136,9 @@ namespace Intersect_Editor.Forms
             // btnUndo
             // 
             this.btnUndo.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.btnUndo.Location = new System.Drawing.Point(6, 431);
+            this.btnUndo.Location = new System.Drawing.Point(6, 442);
             this.btnUndo.Name = "btnUndo";
-            this.btnUndo.Size = new System.Drawing.Size(190, 27);
+            this.btnUndo.Size = new System.Drawing.Size(190, 28);
             this.btnUndo.TabIndex = 5;
             this.btnUndo.Text = "Undo Changes";
             this.btnUndo.UseVisualStyleBackColor = true;
@@ -147,9 +147,9 @@ namespace Intersect_Editor.Forms
             // btnNew
             // 
             this.btnNew.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.btnNew.Location = new System.Drawing.Point(6, 365);
+            this.btnNew.Location = new System.Drawing.Point(6, 375);
             this.btnNew.Name = "btnNew";
-            this.btnNew.Size = new System.Drawing.Size(190, 27);
+            this.btnNew.Size = new System.Drawing.Size(190, 28);
             this.btnNew.TabIndex = 4;
             this.btnNew.Text = "New";
             this.btnNew.UseVisualStyleBackColor = true;
@@ -158,9 +158,9 @@ namespace Intersect_Editor.Forms
             // btnDelete
             // 
             this.btnDelete.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.btnDelete.Location = new System.Drawing.Point(7, 398);
+            this.btnDelete.Location = new System.Drawing.Point(7, 408);
             this.btnDelete.Name = "btnDelete";
-            this.btnDelete.Size = new System.Drawing.Size(190, 27);
+            this.btnDelete.Size = new System.Drawing.Size(190, 28);
             this.btnDelete.TabIndex = 3;
             this.btnDelete.Text = "Delete";
             this.btnDelete.UseVisualStyleBackColor = true;
@@ -178,9 +178,9 @@ namespace Intersect_Editor.Forms
             // btnCancel
             // 
             this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.btnCancel.Location = new System.Drawing.Point(475, 444);
+            this.btnCancel.Location = new System.Drawing.Point(475, 455);
             this.btnCancel.Name = "btnCancel";
-            this.btnCancel.Size = new System.Drawing.Size(190, 27);
+            this.btnCancel.Size = new System.Drawing.Size(190, 28);
             this.btnCancel.TabIndex = 4;
             this.btnCancel.Text = "Cancel";
             this.btnCancel.UseVisualStyleBackColor = true;
@@ -188,9 +188,9 @@ namespace Intersect_Editor.Forms
             // 
             // btnSave
             // 
-            this.btnSave.Location = new System.Drawing.Point(279, 444);
+            this.btnSave.Location = new System.Drawing.Point(279, 455);
             this.btnSave.Name = "btnSave";
-            this.btnSave.Size = new System.Drawing.Size(190, 27);
+            this.btnSave.Size = new System.Drawing.Size(190, 28);
             this.btnSave.TabIndex = 2;
             this.btnSave.Text = "Save";
             this.btnSave.UseVisualStyleBackColor = true;
@@ -213,7 +213,7 @@ namespace Intersect_Editor.Forms
             this.groupBox2.Controls.Add(this.txtName);
             this.groupBox2.Location = new System.Drawing.Point(2, 1);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(207, 220);
+            this.groupBox2.Size = new System.Drawing.Size(207, 225);
             this.groupBox2.TabIndex = 2;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "General";
@@ -221,7 +221,7 @@ namespace Intersect_Editor.Forms
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(19, 74);
+            this.label6.Location = new System.Drawing.Point(19, 76);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(35, 13);
             this.label6.TabIndex = 13;
@@ -229,7 +229,7 @@ namespace Intersect_Editor.Forms
             // 
             // txtDesc
             // 
-            this.txtDesc.Location = new System.Drawing.Point(60, 72);
+            this.txtDesc.Location = new System.Drawing.Point(60, 74);
             this.txtDesc.Name = "txtDesc";
             this.txtDesc.Size = new System.Drawing.Size(135, 20);
             this.txtDesc.TabIndex = 12;
@@ -241,7 +241,7 @@ namespace Intersect_Editor.Forms
             this.cmbPic.FormattingEnabled = true;
             this.cmbPic.Items.AddRange(new object[] {
             "None"});
-            this.cmbPic.Location = new System.Drawing.Point(60, 119);
+            this.cmbPic.Location = new System.Drawing.Point(60, 122);
             this.cmbPic.Name = "cmbPic";
             this.cmbPic.Size = new System.Drawing.Size(135, 21);
             this.cmbPic.TabIndex = 11;
@@ -250,7 +250,7 @@ namespace Intersect_Editor.Forms
             // scrlAnim
             // 
             this.scrlAnim.LargeChange = 1;
-            this.scrlAnim.Location = new System.Drawing.Point(19, 190);
+            this.scrlAnim.Location = new System.Drawing.Point(19, 195);
             this.scrlAnim.Maximum = 1000;
             this.scrlAnim.Minimum = -1;
             this.scrlAnim.Name = "scrlAnim";
@@ -263,7 +263,7 @@ namespace Intersect_Editor.Forms
             // lblAnim
             // 
             this.lblAnim.AutoSize = true;
-            this.lblAnim.Location = new System.Drawing.Point(16, 177);
+            this.lblAnim.Location = new System.Drawing.Point(16, 181);
             this.lblAnim.Name = "lblAnim";
             this.lblAnim.Size = new System.Drawing.Size(94, 13);
             this.lblAnim.TabIndex = 9;
@@ -271,7 +271,7 @@ namespace Intersect_Editor.Forms
             // 
             // scrlPrice
             // 
-            this.scrlPrice.Location = new System.Drawing.Point(19, 159);
+            this.scrlPrice.Location = new System.Drawing.Point(19, 163);
             this.scrlPrice.Maximum = 1000;
             this.scrlPrice.Name = "scrlPrice";
             this.scrlPrice.Size = new System.Drawing.Size(176, 18);
@@ -281,7 +281,7 @@ namespace Intersect_Editor.Forms
             // lblPrice
             // 
             this.lblPrice.AutoSize = true;
-            this.lblPrice.Location = new System.Drawing.Point(16, 139);
+            this.lblPrice.Location = new System.Drawing.Point(16, 143);
             this.lblPrice.Name = "lblPrice";
             this.lblPrice.Size = new System.Drawing.Size(43, 13);
             this.lblPrice.TabIndex = 7;
@@ -290,7 +290,7 @@ namespace Intersect_Editor.Forms
             // lblPic
             // 
             this.lblPic.AutoSize = true;
-            this.lblPic.Location = new System.Drawing.Point(57, 103);
+            this.lblPic.Location = new System.Drawing.Point(57, 105);
             this.lblPic.Name = "lblPic";
             this.lblPic.Size = new System.Drawing.Size(25, 13);
             this.lblPic.TabIndex = 6;
@@ -298,16 +298,16 @@ namespace Intersect_Editor.Forms
             // 
             // picItem
             // 
-            this.picItem.Location = new System.Drawing.Point(15, 101);
+            this.picItem.Location = new System.Drawing.Point(15, 103);
             this.picItem.Name = "picItem";
-            this.picItem.Size = new System.Drawing.Size(32, 32);
+            this.picItem.Size = new System.Drawing.Size(32, 33);
             this.picItem.TabIndex = 4;
             this.picItem.TabStop = false;
             // 
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(23, 45);
+            this.label2.Location = new System.Drawing.Point(23, 46);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(34, 13);
             this.label2.TabIndex = 3;
@@ -324,7 +324,7 @@ namespace Intersect_Editor.Forms
             "Currency",
             "Spell",
             "Event"});
-            this.cmbType.Location = new System.Drawing.Point(60, 45);
+            this.cmbType.Location = new System.Drawing.Point(60, 46);
             this.cmbType.Name = "cmbType";
             this.cmbType.Size = new System.Drawing.Size(135, 21);
             this.cmbType.TabIndex = 2;
@@ -365,7 +365,7 @@ namespace Intersect_Editor.Forms
             this.groupBox3.Controls.Add(this.scrlAttackReq);
             this.groupBox3.Location = new System.Drawing.Point(215, 1);
             this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(226, 220);
+            this.groupBox3.Size = new System.Drawing.Size(226, 225);
             this.groupBox3.TabIndex = 11;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Requirements";
@@ -373,7 +373,7 @@ namespace Intersect_Editor.Forms
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(10, 164);
+            this.label3.Location = new System.Drawing.Point(10, 168);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(35, 13);
             this.label3.TabIndex = 13;
@@ -385,7 +385,7 @@ namespace Intersect_Editor.Forms
             this.cmbClass.FormattingEnabled = true;
             this.cmbClass.Items.AddRange(new object[] {
             "None"});
-            this.cmbClass.Location = new System.Drawing.Point(13, 190);
+            this.cmbClass.Location = new System.Drawing.Point(13, 195);
             this.cmbClass.Name = "cmbClass";
             this.cmbClass.Size = new System.Drawing.Size(194, 21);
             this.cmbClass.TabIndex = 12;
@@ -394,7 +394,7 @@ namespace Intersect_Editor.Forms
             // lblLevelReq
             // 
             this.lblLevelReq.AutoSize = true;
-            this.lblLevelReq.Location = new System.Drawing.Point(124, 122);
+            this.lblLevelReq.Location = new System.Drawing.Point(124, 125);
             this.lblLevelReq.Name = "lblLevelReq";
             this.lblLevelReq.Size = new System.Drawing.Size(45, 13);
             this.lblLevelReq.TabIndex = 11;
@@ -402,7 +402,7 @@ namespace Intersect_Editor.Forms
             // 
             // scrlLevelReq
             // 
-            this.scrlLevelReq.Location = new System.Drawing.Point(127, 135);
+            this.scrlLevelReq.Location = new System.Drawing.Point(127, 139);
             this.scrlLevelReq.Name = "scrlLevelReq";
             this.scrlLevelReq.Size = new System.Drawing.Size(80, 17);
             this.scrlLevelReq.TabIndex = 10;
@@ -411,7 +411,7 @@ namespace Intersect_Editor.Forms
             // lblSpeedReq
             // 
             this.lblSpeedReq.AutoSize = true;
-            this.lblSpeedReq.Location = new System.Drawing.Point(10, 121);
+            this.lblSpeedReq.Location = new System.Drawing.Point(10, 124);
             this.lblSpeedReq.Name = "lblSpeedReq";
             this.lblSpeedReq.Size = new System.Drawing.Size(50, 13);
             this.lblSpeedReq.TabIndex = 9;
@@ -420,7 +420,7 @@ namespace Intersect_Editor.Forms
             // lblMagicResistReq
             // 
             this.lblMagicResistReq.AutoSize = true;
-            this.lblMagicResistReq.Location = new System.Drawing.Point(124, 70);
+            this.lblMagicResistReq.Location = new System.Drawing.Point(124, 72);
             this.lblMagicResistReq.Name = "lblMagicResistReq";
             this.lblMagicResistReq.Size = new System.Drawing.Size(80, 13);
             this.lblMagicResistReq.TabIndex = 8;
@@ -429,7 +429,7 @@ namespace Intersect_Editor.Forms
             // lblDefenseReq
             // 
             this.lblDefenseReq.AutoSize = true;
-            this.lblDefenseReq.Location = new System.Drawing.Point(10, 70);
+            this.lblDefenseReq.Location = new System.Drawing.Point(10, 72);
             this.lblDefenseReq.Name = "lblDefenseReq";
             this.lblDefenseReq.Size = new System.Drawing.Size(59, 13);
             this.lblDefenseReq.TabIndex = 7;
@@ -438,7 +438,7 @@ namespace Intersect_Editor.Forms
             // lblAbilityPowerReq
             // 
             this.lblAbilityPowerReq.AutoSize = true;
-            this.lblAbilityPowerReq.Location = new System.Drawing.Point(124, 20);
+            this.lblAbilityPowerReq.Location = new System.Drawing.Point(124, 21);
             this.lblAbilityPowerReq.Name = "lblAbilityPowerReq";
             this.lblAbilityPowerReq.Size = new System.Drawing.Size(67, 13);
             this.lblAbilityPowerReq.TabIndex = 6;
@@ -447,7 +447,7 @@ namespace Intersect_Editor.Forms
             // lblAttackReq
             // 
             this.lblAttackReq.AutoSize = true;
-            this.lblAttackReq.Location = new System.Drawing.Point(10, 20);
+            this.lblAttackReq.Location = new System.Drawing.Point(10, 21);
             this.lblAttackReq.Name = "lblAttackReq";
             this.lblAttackReq.Size = new System.Drawing.Size(50, 13);
             this.lblAttackReq.TabIndex = 5;
@@ -455,7 +455,7 @@ namespace Intersect_Editor.Forms
             // 
             // scrlDefenseReq
             // 
-            this.scrlDefenseReq.Location = new System.Drawing.Point(13, 85);
+            this.scrlDefenseReq.Location = new System.Drawing.Point(13, 87);
             this.scrlDefenseReq.Maximum = 255;
             this.scrlDefenseReq.Name = "scrlDefenseReq";
             this.scrlDefenseReq.Size = new System.Drawing.Size(80, 17);
@@ -464,7 +464,7 @@ namespace Intersect_Editor.Forms
             // 
             // scrlSpeedReq
             // 
-            this.scrlSpeedReq.Location = new System.Drawing.Point(13, 134);
+            this.scrlSpeedReq.Location = new System.Drawing.Point(13, 137);
             this.scrlSpeedReq.Maximum = 255;
             this.scrlSpeedReq.Name = "scrlSpeedReq";
             this.scrlSpeedReq.Size = new System.Drawing.Size(80, 17);
@@ -473,7 +473,7 @@ namespace Intersect_Editor.Forms
             // 
             // scrlMagicResistReq
             // 
-            this.scrlMagicResistReq.Location = new System.Drawing.Point(127, 85);
+            this.scrlMagicResistReq.Location = new System.Drawing.Point(127, 87);
             this.scrlMagicResistReq.Maximum = 255;
             this.scrlMagicResistReq.Name = "scrlMagicResistReq";
             this.scrlMagicResistReq.Size = new System.Drawing.Size(80, 17);
@@ -482,7 +482,7 @@ namespace Intersect_Editor.Forms
             // 
             // scrlAbilityPowerReq
             // 
-            this.scrlAbilityPowerReq.Location = new System.Drawing.Point(127, 39);
+            this.scrlAbilityPowerReq.Location = new System.Drawing.Point(127, 40);
             this.scrlAbilityPowerReq.Maximum = 255;
             this.scrlAbilityPowerReq.Name = "scrlAbilityPowerReq";
             this.scrlAbilityPowerReq.Size = new System.Drawing.Size(80, 17);
@@ -491,7 +491,7 @@ namespace Intersect_Editor.Forms
             // 
             // scrlAttackReq
             // 
-            this.scrlAttackReq.Location = new System.Drawing.Point(13, 39);
+            this.scrlAttackReq.Location = new System.Drawing.Point(13, 40);
             this.scrlAttackReq.Maximum = 255;
             this.scrlAttackReq.Name = "scrlAttackReq";
             this.scrlAttackReq.Size = new System.Drawing.Size(80, 17);
@@ -529,9 +529,9 @@ namespace Intersect_Editor.Forms
             this.gbEquipment.Controls.Add(this.scrlMagicResist);
             this.gbEquipment.Controls.Add(this.scrlAbilityPower);
             this.gbEquipment.Controls.Add(this.scrlAttack);
-            this.gbEquipment.Location = new System.Drawing.Point(2, 227);
+            this.gbEquipment.Location = new System.Drawing.Point(2, 233);
             this.gbEquipment.Name = "gbEquipment";
-            this.gbEquipment.Size = new System.Drawing.Size(439, 205);
+            this.gbEquipment.Size = new System.Drawing.Size(439, 210);
             this.gbEquipment.TabIndex = 12;
             this.gbEquipment.TabStop = false;
             this.gbEquipment.Text = "Equipment";
@@ -540,7 +540,7 @@ namespace Intersect_Editor.Forms
             // lblProjectile
             // 
             this.lblProjectile.AutoSize = true;
-            this.lblProjectile.Location = new System.Drawing.Point(195, 107);
+            this.lblProjectile.Location = new System.Drawing.Point(195, 110);
             this.lblProjectile.Name = "lblProjectile";
             this.lblProjectile.Size = new System.Drawing.Size(91, 13);
             this.lblProjectile.TabIndex = 33;
@@ -550,7 +550,7 @@ namespace Intersect_Editor.Forms
             // scrlProjectile
             // 
             this.scrlProjectile.LargeChange = 1;
-            this.scrlProjectile.Location = new System.Drawing.Point(326, 103);
+            this.scrlProjectile.Location = new System.Drawing.Point(326, 105);
             this.scrlProjectile.Minimum = -1;
             this.scrlProjectile.Name = "scrlProjectile";
             this.scrlProjectile.Size = new System.Drawing.Size(102, 17);
@@ -562,7 +562,7 @@ namespace Intersect_Editor.Forms
             // lblEffectPercent
             // 
             this.lblEffectPercent.AutoSize = true;
-            this.lblEffectPercent.Location = new System.Drawing.Point(323, 60);
+            this.lblEffectPercent.Location = new System.Drawing.Point(323, 61);
             this.lblEffectPercent.Name = "lblEffectPercent";
             this.lblEffectPercent.Size = new System.Drawing.Size(94, 13);
             this.lblEffectPercent.TabIndex = 31;
@@ -571,7 +571,7 @@ namespace Intersect_Editor.Forms
             // scrlEffectAmount
             // 
             this.scrlEffectAmount.LargeChange = 1;
-            this.scrlEffectAmount.Location = new System.Drawing.Point(326, 79);
+            this.scrlEffectAmount.Location = new System.Drawing.Point(326, 81);
             this.scrlEffectAmount.Name = "scrlEffectAmount";
             this.scrlEffectAmount.Size = new System.Drawing.Size(102, 17);
             this.scrlEffectAmount.TabIndex = 30;
@@ -581,7 +581,7 @@ namespace Intersect_Editor.Forms
             // 
             this.cmbEquipmentBonus.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbEquipmentBonus.FormattingEnabled = true;
-            this.cmbEquipmentBonus.Location = new System.Drawing.Point(198, 76);
+            this.cmbEquipmentBonus.Location = new System.Drawing.Point(198, 78);
             this.cmbEquipmentBonus.Name = "cmbEquipmentBonus";
             this.cmbEquipmentBonus.Size = new System.Drawing.Size(108, 21);
             this.cmbEquipmentBonus.TabIndex = 29;
@@ -590,7 +590,7 @@ namespace Intersect_Editor.Forms
             // label9
             // 
             this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(195, 60);
+            this.label9.Location = new System.Drawing.Point(195, 61);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(71, 13);
             this.label9.TabIndex = 28;
@@ -600,7 +600,7 @@ namespace Intersect_Editor.Forms
             // 
             this.cmbToolType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbToolType.FormattingEnabled = true;
-            this.cmbToolType.Location = new System.Drawing.Point(326, 35);
+            this.cmbToolType.Location = new System.Drawing.Point(326, 36);
             this.cmbToolType.Name = "cmbToolType";
             this.cmbToolType.Size = new System.Drawing.Size(107, 21);
             this.cmbToolType.TabIndex = 27;
@@ -620,7 +620,7 @@ namespace Intersect_Editor.Forms
             // chk2Hand
             // 
             this.chk2Hand.AutoSize = true;
-            this.chk2Hand.Location = new System.Drawing.Point(198, 136);
+            this.chk2Hand.Location = new System.Drawing.Point(198, 139);
             this.chk2Hand.Name = "chk2Hand";
             this.chk2Hand.Size = new System.Drawing.Size(61, 17);
             this.chk2Hand.TabIndex = 25;
@@ -633,7 +633,7 @@ namespace Intersect_Editor.Forms
             // 
             this.cmbEquipmentSlot.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbEquipmentSlot.FormattingEnabled = true;
-            this.cmbEquipmentSlot.Location = new System.Drawing.Point(198, 35);
+            this.cmbEquipmentSlot.Location = new System.Drawing.Point(198, 36);
             this.cmbEquipmentSlot.Name = "cmbEquipmentSlot";
             this.cmbEquipmentSlot.Size = new System.Drawing.Size(108, 21);
             this.cmbEquipmentSlot.TabIndex = 24;
@@ -654,7 +654,7 @@ namespace Intersect_Editor.Forms
             this.cmbPaperdoll.FormattingEnabled = true;
             this.cmbPaperdoll.Items.AddRange(new object[] {
             "None"});
-            this.cmbPaperdoll.Location = new System.Drawing.Point(198, 172);
+            this.cmbPaperdoll.Location = new System.Drawing.Point(198, 177);
             this.cmbPaperdoll.Name = "cmbPaperdoll";
             this.cmbPaperdoll.Size = new System.Drawing.Size(96, 21);
             this.cmbPaperdoll.TabIndex = 22;
@@ -663,7 +663,7 @@ namespace Intersect_Editor.Forms
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(195, 156);
+            this.label5.Location = new System.Drawing.Point(195, 160);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(54, 13);
             this.label5.TabIndex = 21;
@@ -672,7 +672,7 @@ namespace Intersect_Editor.Forms
             // lblRange
             // 
             this.lblRange.AutoSize = true;
-            this.lblRange.Location = new System.Drawing.Point(9, 154);
+            this.lblRange.Location = new System.Drawing.Point(9, 158);
             this.lblRange.Name = "lblRange";
             this.lblRange.Size = new System.Drawing.Size(118, 13);
             this.lblRange.TabIndex = 20;
@@ -680,7 +680,7 @@ namespace Intersect_Editor.Forms
             // 
             // scrlRange
             // 
-            this.scrlRange.Location = new System.Drawing.Point(13, 172);
+            this.scrlRange.Location = new System.Drawing.Point(13, 177);
             this.scrlRange.Name = "scrlRange";
             this.scrlRange.Size = new System.Drawing.Size(80, 18);
             this.scrlRange.TabIndex = 19;
@@ -689,16 +689,16 @@ namespace Intersect_Editor.Forms
             // 
             // picPaperdoll
             // 
-            this.picPaperdoll.Location = new System.Drawing.Point(305, 132);
+            this.picPaperdoll.Location = new System.Drawing.Point(305, 135);
             this.picPaperdoll.Name = "picPaperdoll";
-            this.picPaperdoll.Size = new System.Drawing.Size(128, 64);
+            this.picPaperdoll.Size = new System.Drawing.Size(128, 65);
             this.picPaperdoll.TabIndex = 16;
             this.picPaperdoll.TabStop = false;
             // 
             // lblDamage
             // 
             this.lblDamage.AutoSize = true;
-            this.lblDamage.Location = new System.Drawing.Point(101, 114);
+            this.lblDamage.Location = new System.Drawing.Point(101, 117);
             this.lblDamage.Name = "lblDamage";
             this.lblDamage.Size = new System.Drawing.Size(59, 13);
             this.lblDamage.TabIndex = 11;
@@ -707,7 +707,7 @@ namespace Intersect_Editor.Forms
             // 
             // scrlDamage
             // 
-            this.scrlDamage.Location = new System.Drawing.Point(104, 128);
+            this.scrlDamage.Location = new System.Drawing.Point(104, 131);
             this.scrlDamage.Name = "scrlDamage";
             this.scrlDamage.Size = new System.Drawing.Size(80, 17);
             this.scrlDamage.TabIndex = 10;
@@ -717,7 +717,7 @@ namespace Intersect_Editor.Forms
             // lblSpeed
             // 
             this.lblSpeed.AutoSize = true;
-            this.lblSpeed.Location = new System.Drawing.Point(9, 114);
+            this.lblSpeed.Location = new System.Drawing.Point(9, 117);
             this.lblSpeed.Name = "lblSpeed";
             this.lblSpeed.Size = new System.Drawing.Size(50, 13);
             this.lblSpeed.TabIndex = 9;
@@ -726,7 +726,7 @@ namespace Intersect_Editor.Forms
             // lblMagicResist
             // 
             this.lblMagicResist.AutoSize = true;
-            this.lblMagicResist.Location = new System.Drawing.Point(101, 70);
+            this.lblMagicResist.Location = new System.Drawing.Point(101, 72);
             this.lblMagicResist.Name = "lblMagicResist";
             this.lblMagicResist.Size = new System.Drawing.Size(80, 13);
             this.lblMagicResist.TabIndex = 8;
@@ -735,7 +735,7 @@ namespace Intersect_Editor.Forms
             // lblDefense
             // 
             this.lblDefense.AutoSize = true;
-            this.lblDefense.Location = new System.Drawing.Point(10, 70);
+            this.lblDefense.Location = new System.Drawing.Point(10, 72);
             this.lblDefense.Name = "lblDefense";
             this.lblDefense.Size = new System.Drawing.Size(59, 13);
             this.lblDefense.TabIndex = 7;
@@ -744,7 +744,7 @@ namespace Intersect_Editor.Forms
             // lblAbilityPower
             // 
             this.lblAbilityPower.AutoSize = true;
-            this.lblAbilityPower.Location = new System.Drawing.Point(101, 20);
+            this.lblAbilityPower.Location = new System.Drawing.Point(101, 21);
             this.lblAbilityPower.Name = "lblAbilityPower";
             this.lblAbilityPower.Size = new System.Drawing.Size(67, 13);
             this.lblAbilityPower.TabIndex = 6;
@@ -753,7 +753,7 @@ namespace Intersect_Editor.Forms
             // lblAttack
             // 
             this.lblAttack.AutoSize = true;
-            this.lblAttack.Location = new System.Drawing.Point(10, 20);
+            this.lblAttack.Location = new System.Drawing.Point(10, 21);
             this.lblAttack.Name = "lblAttack";
             this.lblAttack.Size = new System.Drawing.Size(50, 13);
             this.lblAttack.TabIndex = 5;
@@ -761,7 +761,7 @@ namespace Intersect_Editor.Forms
             // 
             // scrlDefense
             // 
-            this.scrlDefense.Location = new System.Drawing.Point(13, 85);
+            this.scrlDefense.Location = new System.Drawing.Point(13, 87);
             this.scrlDefense.Maximum = 255;
             this.scrlDefense.Name = "scrlDefense";
             this.scrlDefense.Size = new System.Drawing.Size(80, 17);
@@ -770,7 +770,7 @@ namespace Intersect_Editor.Forms
             // 
             // scrlSpeed
             // 
-            this.scrlSpeed.Location = new System.Drawing.Point(13, 127);
+            this.scrlSpeed.Location = new System.Drawing.Point(13, 130);
             this.scrlSpeed.Maximum = 255;
             this.scrlSpeed.Name = "scrlSpeed";
             this.scrlSpeed.Size = new System.Drawing.Size(80, 17);
@@ -779,7 +779,7 @@ namespace Intersect_Editor.Forms
             // 
             // scrlMagicResist
             // 
-            this.scrlMagicResist.Location = new System.Drawing.Point(104, 85);
+            this.scrlMagicResist.Location = new System.Drawing.Point(104, 87);
             this.scrlMagicResist.Maximum = 255;
             this.scrlMagicResist.Name = "scrlMagicResist";
             this.scrlMagicResist.Size = new System.Drawing.Size(80, 17);
@@ -788,7 +788,7 @@ namespace Intersect_Editor.Forms
             // 
             // scrlAbilityPower
             // 
-            this.scrlAbilityPower.Location = new System.Drawing.Point(104, 39);
+            this.scrlAbilityPower.Location = new System.Drawing.Point(104, 40);
             this.scrlAbilityPower.Maximum = 255;
             this.scrlAbilityPower.Name = "scrlAbilityPower";
             this.scrlAbilityPower.Size = new System.Drawing.Size(80, 17);
@@ -797,7 +797,7 @@ namespace Intersect_Editor.Forms
             // 
             // scrlAttack
             // 
-            this.scrlAttack.Location = new System.Drawing.Point(13, 39);
+            this.scrlAttack.Location = new System.Drawing.Point(13, 40);
             this.scrlAttack.Maximum = 255;
             this.scrlAttack.Name = "scrlAttack";
             this.scrlAttack.Size = new System.Drawing.Size(80, 17);
@@ -810,9 +810,9 @@ namespace Intersect_Editor.Forms
             this.gbConsumable.Controls.Add(this.cmbConsume);
             this.gbConsumable.Controls.Add(this.scrlInterval);
             this.gbConsumable.Controls.Add(this.lblInterval);
-            this.gbConsumable.Location = new System.Drawing.Point(2, 227);
+            this.gbConsumable.Location = new System.Drawing.Point(2, 233);
             this.gbConsumable.Name = "gbConsumable";
-            this.gbConsumable.Size = new System.Drawing.Size(217, 122);
+            this.gbConsumable.Size = new System.Drawing.Size(217, 125);
             this.gbConsumable.TabIndex = 12;
             this.gbConsumable.TabStop = false;
             this.gbConsumable.Text = "Consumable";
@@ -821,7 +821,7 @@ namespace Intersect_Editor.Forms
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(16, 16);
+            this.label4.Location = new System.Drawing.Point(16, 17);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(30, 13);
             this.label4.TabIndex = 12;
@@ -829,21 +829,21 @@ namespace Intersect_Editor.Forms
             // 
             // cmbConsume
             // 
+            this.cmbConsume.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbConsume.FormattingEnabled = true;
             this.cmbConsume.Items.AddRange(new object[] {
             "Health",
             "Mana",
             "Experience"});
-            this.cmbConsume.Location = new System.Drawing.Point(19, 36);
+            this.cmbConsume.Location = new System.Drawing.Point(19, 37);
             this.cmbConsume.Name = "cmbConsume";
             this.cmbConsume.Size = new System.Drawing.Size(176, 21);
             this.cmbConsume.TabIndex = 11;
-            this.cmbConsume.Text = "Health";
             this.cmbConsume.SelectedIndexChanged += new System.EventHandler(this.cmbConsume_SelectedIndexChanged);
             // 
             // scrlInterval
             // 
-            this.scrlInterval.Location = new System.Drawing.Point(19, 88);
+            this.scrlInterval.Location = new System.Drawing.Point(19, 90);
             this.scrlInterval.Maximum = 1000;
             this.scrlInterval.Name = "scrlInterval";
             this.scrlInterval.Size = new System.Drawing.Size(176, 18);
@@ -853,7 +853,7 @@ namespace Intersect_Editor.Forms
             // lblInterval
             // 
             this.lblInterval.AutoSize = true;
-            this.lblInterval.Location = new System.Drawing.Point(19, 69);
+            this.lblInterval.Location = new System.Drawing.Point(19, 71);
             this.lblInterval.Name = "lblInterval";
             this.lblInterval.Size = new System.Drawing.Size(54, 13);
             this.lblInterval.TabIndex = 9;
@@ -863,9 +863,9 @@ namespace Intersect_Editor.Forms
             // 
             this.gbSpell.Controls.Add(this.scrlSpell);
             this.gbSpell.Controls.Add(this.lblSpell);
-            this.gbSpell.Location = new System.Drawing.Point(2, 227);
+            this.gbSpell.Location = new System.Drawing.Point(2, 233);
             this.gbSpell.Name = "gbSpell";
-            this.gbSpell.Size = new System.Drawing.Size(217, 67);
+            this.gbSpell.Size = new System.Drawing.Size(217, 69);
             this.gbSpell.TabIndex = 13;
             this.gbSpell.TabStop = false;
             this.gbSpell.Text = "Spell";
@@ -873,7 +873,7 @@ namespace Intersect_Editor.Forms
             // 
             // scrlSpell
             // 
-            this.scrlSpell.Location = new System.Drawing.Point(12, 39);
+            this.scrlSpell.Location = new System.Drawing.Point(12, 40);
             this.scrlSpell.Maximum = 1000;
             this.scrlSpell.Name = "scrlSpell";
             this.scrlSpell.Size = new System.Drawing.Size(176, 18);
@@ -884,7 +884,7 @@ namespace Intersect_Editor.Forms
             // lblSpell
             // 
             this.lblSpell.AutoSize = true;
-            this.lblSpell.Location = new System.Drawing.Point(12, 20);
+            this.lblSpell.Location = new System.Drawing.Point(12, 21);
             this.lblSpell.Name = "lblSpell";
             this.lblSpell.Size = new System.Drawing.Size(71, 13);
             this.lblSpell.TabIndex = 11;
@@ -894,9 +894,9 @@ namespace Intersect_Editor.Forms
             // 
             this.grpEvent.Controls.Add(this.scrlEvent);
             this.grpEvent.Controls.Add(this.lblEvent);
-            this.grpEvent.Location = new System.Drawing.Point(2, 226);
+            this.grpEvent.Location = new System.Drawing.Point(2, 232);
             this.grpEvent.Name = "grpEvent";
-            this.grpEvent.Size = new System.Drawing.Size(217, 67);
+            this.grpEvent.Size = new System.Drawing.Size(217, 69);
             this.grpEvent.TabIndex = 42;
             this.grpEvent.TabStop = false;
             this.grpEvent.Text = "Event";
@@ -905,7 +905,8 @@ namespace Intersect_Editor.Forms
             // scrlEvent
             // 
             this.scrlEvent.LargeChange = 1;
-            this.scrlEvent.Location = new System.Drawing.Point(8, 36);
+            this.scrlEvent.Location = new System.Drawing.Point(8, 37);
+            this.scrlEvent.Minimum = -1;
             this.scrlEvent.Name = "scrlEvent";
             this.scrlEvent.Size = new System.Drawing.Size(187, 18);
             this.scrlEvent.TabIndex = 17;
@@ -916,29 +917,30 @@ namespace Intersect_Editor.Forms
             this.lblEvent.AutoSize = true;
             this.lblEvent.Location = new System.Drawing.Point(8, 23);
             this.lblEvent.Name = "lblEvent";
-            this.lblEvent.Size = new System.Drawing.Size(47, 13);
+            this.lblEvent.Size = new System.Drawing.Size(67, 13);
             this.lblEvent.TabIndex = 16;
-            this.lblEvent.Text = "Event: 0";
+            this.lblEvent.Text = "Event: None";
             // 
             // pnlContainer
             // 
+            this.pnlContainer.Controls.Add(this.gbConsumable);
+            this.pnlContainer.Controls.Add(this.grpEvent);
             this.pnlContainer.Controls.Add(this.gbSpell);
             this.pnlContainer.Controls.Add(this.groupBox2);
-            this.pnlContainer.Controls.Add(this.grpEvent);
             this.pnlContainer.Controls.Add(this.gbEquipment);
             this.pnlContainer.Controls.Add(this.groupBox3);
-            this.pnlContainer.Controls.Add(this.gbConsumable);
             this.pnlContainer.Location = new System.Drawing.Point(221, 7);
             this.pnlContainer.Name = "pnlContainer";
-            this.pnlContainer.Size = new System.Drawing.Size(444, 431);
+            this.pnlContainer.Size = new System.Drawing.Size(444, 442);
             this.pnlContainer.TabIndex = 43;
             this.pnlContainer.Visible = false;
             // 
             // FrmItem
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(677, 479);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
+            this.AutoSize = true;
+            this.ClientSize = new System.Drawing.Size(677, 491);
             this.ControlBox = false;
             this.Controls.Add(this.btnCancel);
             this.Controls.Add(this.btnSave);

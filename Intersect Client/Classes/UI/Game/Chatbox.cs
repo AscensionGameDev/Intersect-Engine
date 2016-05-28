@@ -50,7 +50,7 @@ namespace Intersect_Client.Classes.UI.Game
             _chatboxWindow = new WindowControl(_gameCanvas, "Chatbox") { IsClosable = false };
             _chatboxWindow.SetSize(380, 140);
             _chatboxWindow.DisableResizing();
-            _chatboxWindow.SetPosition(0, GameGraphics.Renderer.GetScreenHeight() - 140);
+            _chatboxWindow.SetPosition(0, _gameCanvas.Height - 140);
             _chatboxWindow.Margin = Margin.Zero;
             _chatboxWindow.Padding = Padding.Zero;
 

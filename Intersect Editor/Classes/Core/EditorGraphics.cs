@@ -840,17 +840,21 @@ namespace Intersect_Editor.Classes
                                 {
                                     tmpMap = Globals.CurrentMap;
                                 }
-
-                                var animInstance = tmpMap.GetAttributeAnimation(tmpMap.Attributes[x, y], animation.GetId());
-                                //Update if the animation isn't right!
-                                if (animInstance.myBase != animation)
+                                if (tmpMap.Attributes[x, y] != null)
                                 {
-                                    tmpMap.SetAttributeAnimation(tmpMap.Attributes[x, y],
-                                        new AnimationInstance(animation, true));
+
+                                    var animInstance = tmpMap.GetAttributeAnimation(tmpMap.Attributes[x, y],
+                                        animation.GetId());
+                                    //Update if the animation isn't right!
+                                    if (animInstance == null || animInstance.myBase != animation)
+                                    {
+                                        tmpMap.SetAttributeAnimation(tmpMap.Attributes[x, y],
+                                            new AnimationInstance(animation, true));
+                                    }
+                                    animInstance.Update();
+                                    animInstance.SetPosition((int) xpos, (int) ypos, 0);
+                                    animInstance.Draw(renderTarget, upper);
                                 }
-                                animInstance.Update();
-                                animInstance.SetPosition((int) xpos, (int) ypos, 0);
-                                animInstance.Draw(renderTarget, upper);
                                 tmpMap = tmpMapOld;
                             }
                         }

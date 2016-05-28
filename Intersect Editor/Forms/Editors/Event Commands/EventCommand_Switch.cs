@@ -68,8 +68,7 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             }
             else
             {
-                cmbSetSwitch.SelectedIndex = 0;
-                _myCommand.Ints[1] = 0;
+                if (cmbSetSwitch.Items.Count > 0) cmbSetSwitch.SelectedIndex = 0;
             }
             cmbSetSwitchVal.SelectedIndex = _myCommand.Ints[2];
         }
@@ -98,14 +97,14 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
         private void rdoPlayerSwitch_CheckedChanged(object sender, EventArgs e)
         {
             InitEditor();
-            if (!_loading) cmbSetSwitch.SelectedIndex = 0;
+            if (!_loading && cmbSetSwitch.Items.Count > 0) cmbSetSwitch.SelectedIndex = 0;
             if (!_loading) cmbSetSwitchVal.SelectedIndex = 0;
         }
 
         private void rdoGlobalSwitch_CheckedChanged(object sender, EventArgs e)
         {
             InitEditor();
-            if (!_loading) cmbSetSwitch.SelectedIndex = 0;
+            if (!_loading && cmbSetSwitch.Items.Count > 0) cmbSetSwitch.SelectedIndex = 0;
             if (!_loading) cmbSetSwitchVal.SelectedIndex = 0;
         }
     }

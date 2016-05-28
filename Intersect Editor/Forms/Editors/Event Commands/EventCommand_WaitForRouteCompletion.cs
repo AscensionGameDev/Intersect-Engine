@@ -52,6 +52,10 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
                     if (_editingCommand.Ints[0] == evt.Key) cmbEntities.SelectedIndex = cmbEntities.Items.Count - 1;
                 }
             }
+            if (cmbEntities.SelectedIndex == -1 && cmbEntities.Items.Count > 0)
+            {
+                cmbEntities.SelectedIndex = 0;
+            }
 
             _editingCommand = refCommand;
             _eventEditor = eventEditor;

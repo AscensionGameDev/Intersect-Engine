@@ -145,7 +145,7 @@ namespace Intersect_Server.Classes.Entities
         /// </summary>
         /// <param name="moveDir"></param>
         /// <returns></returns>
-        public int CanMove(int moveDir)
+        public virtual int CanMove(int moveDir)
         {
             var xOffset = 0;
             var yOffset = 0;

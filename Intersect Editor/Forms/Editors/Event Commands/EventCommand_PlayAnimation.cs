@@ -48,7 +48,7 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             _editingEvent = currentEvent;
             _currentMap = currentMap;
             cmbAnimation.Items.Clear();
-            cmbAnimation.Items.AddRange(Database.GetGameObjectList(GameObject.Item));
+            cmbAnimation.Items.AddRange(Database.GetGameObjectList(GameObject.Animation));
             cmbAnimation.SelectedIndex = _myCommand.Ints[0];
             cmbConditionType.SelectedIndex = Database.GameObjectListIndex(GameObject.Animation, _myCommand.Ints[1]);
             UpdateFormElements();
@@ -150,8 +150,8 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
 
         private void btnSave_Click(object sender, EventArgs e)
         {
-            _myCommand.Ints[0] = cmbAnimation.SelectedIndex;
-            _myCommand.Ints[1] = Database.GameObjectIdFromList(GameObject.Animation, cmbConditionType.SelectedIndex);
+            _myCommand.Ints[0] = Database.GameObjectIdFromList(GameObject.Animation, cmbAnimation.SelectedIndex);
+            _myCommand.Ints[1] = cmbConditionType.SelectedIndex;
             switch (_myCommand.Ints[1])
             {
                 case 0: //Tile Spawn

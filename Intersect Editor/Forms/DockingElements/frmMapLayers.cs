@@ -177,8 +177,11 @@ namespace Intersect_Editor.Forms
                 }
                 else
                 {
-                    cmbTilesets.SelectedIndex = Globals.CurrentTileset.GetId();
-                    picTileset.Hide();
+                    if (Globals.CurrentTileset != null)
+                    {
+                        cmbTilesets.SelectedIndex = Globals.CurrentTileset.GetId();
+                        picTileset.Hide();
+                    }
                 }
             }
         }
@@ -290,7 +293,7 @@ namespace Intersect_Editor.Forms
             else if (rbItem.Checked == true)
             {
                 tmpMap.Attributes[x, y].value = (int)MapAttributes.Item;
-                tmpMap.Attributes[x, y].data1 = cmbItemAttribute.SelectedIndex;
+                tmpMap.Attributes[x, y].data1 = Database.GameObjectIdFromList(GameObject.Item,cmbItemAttribute.SelectedIndex);
                 tmpMap.Attributes[x, y].data2 = scrlMaxItemVal.Value;
             }
             else if (rbZDimension.Checked == true)
@@ -322,12 +325,12 @@ namespace Intersect_Editor.Forms
             else if (rbResource.Checked == true)
             {
                 tmpMap.Attributes[x, y].value = (int)MapAttributes.Resource;
-                tmpMap.Attributes[x, y].data1 = cmbResourceAttribute.SelectedIndex;
+                tmpMap.Attributes[x, y].data1 = Database.GameObjectIdFromList(GameObject.Resource,cmbResourceAttribute.SelectedIndex);
             }
             else if (rbAnimation.Checked == true)
             {
                 tmpMap.Attributes[x, y].value = (int)MapAttributes.Animation;
-                tmpMap.Attributes[x, y].data1 = cmbAnimationAttribute.SelectedIndex;
+                tmpMap.Attributes[x, y].data1 = Database.GameObjectIdFromList(GameObject.Animation, cmbAnimationAttribute.SelectedIndex);
             }
             else if (rbGrappleStone.Checked == true)
             {
@@ -396,7 +399,6 @@ namespace Intersect_Editor.Forms
                 EditorGraphics.TilePreviewUpdated = true;
                 // Update the list incase npcs have been modified since form load.
                 cmbNpc.Items.Clear();
-                cmbNpc.Items.Add("None");
                 cmbNpc.Items.AddRange(Database.GetGameObjectList(GameObject.Npc));
 
                 // Add the map NPCs
@@ -407,14 +409,14 @@ namespace Intersect_Editor.Forms
                 }
 
                 // Don't select if there are no NPCs, to avoid crashes.
-                cmbNpc.SelectedIndex = 0;
+                if (cmbNpc.Items.Count > 0) cmbNpc.SelectedIndex = 0;
                 cmbDir.SelectedIndex = 0;
                 rbRandom.Checked = true;
                 if (lstMapNpcs.Items.Count > 0)
                 {
                     lstMapNpcs.SelectedIndex = 0;
                     cmbDir.SelectedIndex = Globals.CurrentMap.Spawns[lstMapNpcs.SelectedIndex].Dir + 1;
-                    cmbNpc.SelectedIndex = Globals.CurrentMap.Spawns[lstMapNpcs.SelectedIndex].NpcNum + 1;
+                    cmbNpc.SelectedIndex = Database.GameObjectListIndex(GameObject.Npc,Globals.CurrentMap.Spawns[lstMapNpcs.SelectedIndex].NpcNum);
                     if (Globals.CurrentMap.Spawns[lstMapNpcs.SelectedIndex].X >= 0)
                     {
                         rbDeclared.Checked = true;
@@ -444,15 +446,15 @@ namespace Intersect_Editor.Forms
             var n = new NpcSpawn();
 
             //Don't add nothing
-            if (cmbNpc.SelectedIndex > 0)
+            if (cmbNpc.SelectedIndex > -1)
             {
-                n.NpcNum = Database.GameObjectIdFromList(GameObject.Npc,lstMapNpcs.SelectedIndex);
+                n.NpcNum = Database.GameObjectIdFromList(GameObject.Npc, cmbNpc.SelectedIndex);
                 n.X = -1;
                 n.Y = -1;
                 n.Dir = -1;
 
                 Globals.CurrentMap.Spawns.Add(n);
-                lstMapNpcs.Items.Add(NpcBase.GetName(Database.GameObjectIdFromList(GameObject.Npc, lstMapNpcs.SelectedIndex)));
+                lstMapNpcs.Items.Add(NpcBase.GetName(n.NpcNum));
                 lstMapNpcs.SelectedIndex = lstMapNpcs.Items.Count - 1;
             }
         }
@@ -480,7 +482,7 @@ namespace Intersect_Editor.Forms
         {
             if (lstMapNpcs.Items.Count > 0)
             {
-                cmbNpc.SelectedIndex = Globals.CurrentMap.Spawns[lstMapNpcs.SelectedIndex].NpcNum + 1;
+                cmbNpc.SelectedIndex = Database.GameObjectListIndex(GameObject.Npc,Globals.CurrentMap.Spawns[lstMapNpcs.SelectedIndex].NpcNum);
                 cmbDir.SelectedIndex = Globals.CurrentMap.Spawns[lstMapNpcs.SelectedIndex].Dir + 1;
                 if (Globals.CurrentMap.Spawns[lstMapNpcs.SelectedIndex].X >= 0)
                 {

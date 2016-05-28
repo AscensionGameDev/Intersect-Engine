@@ -72,8 +72,7 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             }
             else
             {
-                cmbVariable.SelectedIndex = 0;
-                _myCommand.Ints[1] = 0;
+                if (cmbVariable.Items.Count > 0) cmbVariable.SelectedIndex = 0;
             }
             switch (_myCommand.Ints[2])
             {
@@ -113,13 +112,13 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             if (rdoPlayerVariable.Checked)
             {
                 _myCommand.Ints[0] = (int) SwitchVariableTypes.PlayerVariable;
-                _myCommand.Ints[0] = Database.GameObjectIdFromList(GameObject.PlayerVariable,
+                _myCommand.Ints[1] = Database.GameObjectIdFromList(GameObject.PlayerVariable,
                         cmbVariable.SelectedIndex);
             }
             if (rdoGlobalVariable.Checked)
             {
                 _myCommand.Ints[0] = (int) SwitchVariableTypes.ServerVariable;
-                _myCommand.Ints[0] = Database.GameObjectIdFromList(GameObject.ServerVariable,
+                _myCommand.Ints[1] = Database.GameObjectIdFromList(GameObject.ServerVariable,
                         cmbVariable.SelectedIndex);
             }
             if (optSet.Checked)
@@ -215,7 +214,7 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
         private void rdoPlayerVariable_CheckedChanged(object sender, EventArgs e)
         {
             InitEditor();
-            if (!_loading) cmbVariable.SelectedIndex = 0;
+            if (!_loading && cmbVariable.Items.Count > 0) cmbVariable.SelectedIndex = 0;
             if (!_loading) optSet.Checked = true;
             if (!_loading) txtSet.Text = "0";
         }
@@ -223,7 +222,7 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
         private void rdoGlobalVariable_CheckedChanged(object sender, EventArgs e)
         {
             InitEditor();
-            if (!_loading) cmbVariable.SelectedIndex = 0;
+            if (!_loading && cmbVariable.Items.Count > 0) cmbVariable.SelectedIndex = 0;
             if (!_loading) optSet.Checked = true;
             if (!_loading) txtSet.Text = "0";
         }

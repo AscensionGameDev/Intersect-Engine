@@ -205,7 +205,6 @@ namespace Intersect_Library.GameObjects.Maps
                     TempNpc.Dir = bf.ReadInteger();
                     Spawns.Add(TempNpc);
                 }
-
                 Events.Clear();
                 EventIndex = bf.ReadInteger();
                 var ecount = bf.ReadInteger();

@@ -127,6 +127,7 @@ namespace Intersect_Library.GameObjects.Events
         }
         public static void AddObject(int index, DatabaseObject obj)
         {
+            Objects.Remove(index);
             Objects.Add(index, obj);
         }
         public static int ObjectCount()

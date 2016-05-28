@@ -170,6 +170,11 @@ namespace Intersect_Client.Classes.UI.Menu
                     _characterPortrait.Texture = Globals.ContentManager.GetTexture(
                         GameContentManager.TextureType.Entity,
                        GetClass().Sprites[GetSprite(i)].Sprite);
+                    if (_characterPortrait.Texture != null)
+                    {
+                        _characterPortrait.SetTextureRect(0, 0, _characterPortrait.Texture.GetWidth()/4,
+                            _characterPortrait.Texture.GetHeight()/4);
+                    }
                     Align.Center(_characterPortrait);
                     _currentSprite = GetClass().Sprites[GetSprite(i)].Sprite;
                 }

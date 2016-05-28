@@ -250,9 +250,9 @@ namespace Intersect_Client.Classes.Entities
                     break;
             }
 
-            float textWidth = GameGraphics.Renderer.MeasureText(MyName, GameGraphics.GameFont, 10).X;
+            float textWidth = GameGraphics.Renderer.MeasureText(MyName, GameGraphics.GameFont, 1).X;
             GameGraphics.Renderer.DrawString(MyName, GameGraphics.GameFont,
-                (int)(x - (int)Math.Ceiling(textWidth / 2)), (int)(y), 10, Color.White);
+                (int)(x - (int)Math.Ceiling(textWidth / 2)), (int)(y), 1, Color.White);
         }
 
         public override Pointf GetCenterPos()

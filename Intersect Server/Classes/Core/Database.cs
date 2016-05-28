@@ -1176,8 +1176,8 @@ namespace Intersect_Server.Classes.Core
                     break;
                 case GameObject.Map:
                     var map = new MapInstance(index);
-                    map.Load(data);
                     MapInstance.AddObject(index, map);
+                    map.Load(data);
                     break;
                 case GameObject.CommonEvent:
                     var buffer = new ByteBuffer();
