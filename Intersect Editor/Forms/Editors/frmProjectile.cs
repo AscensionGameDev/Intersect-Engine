@@ -172,6 +172,7 @@ namespace Intersect_Editor.Classes
                 lblAmount.Text = "Quantity: " + scrlAmount.Value;
                 lblRange.Text = "Range: " + scrlRange.Value;
 
+                if(lstAnimations.SelectedIndex < 0) { lstAnimations.SelectedIndex = 0; }
                 updateAnimationData(0);
                 lstAnimations.SelectedIndex = 0;
 

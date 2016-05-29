@@ -873,11 +873,14 @@ namespace Intersect_Editor.Forms
             // 
             // scrlSpell
             // 
+            this.scrlSpell.LargeChange = 1;
             this.scrlSpell.Location = new System.Drawing.Point(12, 40);
             this.scrlSpell.Maximum = 1000;
+            this.scrlSpell.Minimum = -1;
             this.scrlSpell.Name = "scrlSpell";
             this.scrlSpell.Size = new System.Drawing.Size(176, 18);
             this.scrlSpell.TabIndex = 12;
+            this.scrlSpell.Value = -1;
             this.scrlSpell.Scroll += new System.Windows.Forms.ScrollEventHandler(this.scrlSpell_Scroll);
             this.scrlSpell.ValueChanged += new System.EventHandler(this.scrlSpell_Scroll);
             // 
@@ -923,12 +926,12 @@ namespace Intersect_Editor.Forms
             // 
             // pnlContainer
             // 
-            this.pnlContainer.Controls.Add(this.gbConsumable);
-            this.pnlContainer.Controls.Add(this.grpEvent);
             this.pnlContainer.Controls.Add(this.gbSpell);
             this.pnlContainer.Controls.Add(this.groupBox2);
-            this.pnlContainer.Controls.Add(this.gbEquipment);
             this.pnlContainer.Controls.Add(this.groupBox3);
+            this.pnlContainer.Controls.Add(this.gbConsumable);
+            this.pnlContainer.Controls.Add(this.grpEvent);
+            this.pnlContainer.Controls.Add(this.gbEquipment);
             this.pnlContainer.Location = new System.Drawing.Point(221, 7);
             this.pnlContainer.Name = "pnlContainer";
             this.pnlContainer.Size = new System.Drawing.Size(444, 442);

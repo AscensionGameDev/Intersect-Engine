@@ -136,6 +136,7 @@ namespace Intersect_Editor.Forms
             cmbClass.Items.AddRange(Database.GetGameObjectList(GameObject.Class));
 
             scrlProjectile.Maximum = ProjectileBase.ObjectCount()-1;
+            scrlSpell.Maximum = SpellBase.ObjectCount() - 1;
             scrlAnim.Maximum = AnimationBase.ObjectCount()-1;
             cmbPaperdoll.Items.Clear();
             cmbPaperdoll.Items.Add("None");
