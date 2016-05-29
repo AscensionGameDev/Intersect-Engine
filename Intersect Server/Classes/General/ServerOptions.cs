@@ -64,7 +64,7 @@ namespace Intersect_Server.Classes.General
 
                 writer.WriteStartElement("ToolTypes");
                 writer.WriteElementString("Slot0", "Axe");
-                writer.WriteElementString("Slot1", "Picaxe");
+                writer.WriteElementString("Slot1", "Pickaxe");
                 writer.WriteElementString("Slot2", "Shovel");
                 writer.WriteElementString("Slot3", "Fishing Rod");
                 writer.WriteEndElement();

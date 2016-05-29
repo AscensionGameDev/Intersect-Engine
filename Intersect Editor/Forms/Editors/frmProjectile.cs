@@ -221,7 +221,7 @@ namespace Intersect_Editor.Classes
                 if (_editorItem.Animations[i].Animation != -1)
                 {
                     lstAnimations.Items.Add("[Spawn Range: " + n + " - " + _editorItem.Animations[i].SpawnRange +
-                        "] Animation: " + AnimationBase.GetName(_editorItem.Animations[i].Animation));
+                        "] Animation: " + AnimationBase.GetName(Database.GameObjectIdFromList(GameObject.Animation,_editorItem.Animations[i].Animation)));
                 }
                 else
                 {
@@ -239,7 +239,7 @@ namespace Intersect_Editor.Classes
             else
             {
                 lblAnimation.Text = "Animation: " +
-                                    AnimationBase.GetAnim(Database.GameObjectIdFromList(GameObject.Animation,
+                                    AnimationBase.GetName(Database.GameObjectIdFromList(GameObject.Animation,
                                         scrlAnimation.Value));
             }
 

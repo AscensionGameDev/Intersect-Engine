@@ -190,7 +190,7 @@ namespace Intersect_Editor.Forms
         {
             int x = 0;
             int.TryParse(txtDropAmount.Text, out x);
-            _editorItem.Items[scrlDropIndex.Value - 1].Amount = x;
+            _editorItem.Items[scrlDropIndex.Value].Amount = x;
         }
 
         private void UpdateDropValues()
@@ -387,8 +387,7 @@ namespace Intersect_Editor.Forms
                 lblX.Text = @"X: " + scrlX.Value;
                 lblY.Text = @"Y: " + scrlY.Value;
                 cmbDirection.SelectedIndex = _editorItem.SpawnDir;
-
-                scrlDropIndex.Value = 1;
+                
                 UpdateDropValues();
                 DrawSprite();
                 if (_changed.IndexOf(_editorItem) == -1)

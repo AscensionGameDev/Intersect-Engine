@@ -226,6 +226,7 @@ namespace Intersect_Editor.Forms
                         }
                         else
                         {
+                            if (Globals.CurrentTileset == null) return;
                             if (Globals.Autotilemode == 0)
                             {
                                 for (var x = 0; x <= Globals.CurSelW; x++)
@@ -425,6 +426,7 @@ namespace Intersect_Editor.Forms
                         }
                         else
                         {
+                            if (Globals.CurrentTileset == null) return;
                             if (Globals.Autotilemode == 0)
                             {
                                 for (var x = 0; x <= Globals.CurSelW; x++)
@@ -610,10 +612,15 @@ namespace Intersect_Editor.Forms
                                 {
                                     if (Globals.MouseButton == 0)
                                     {
-                                        tmpMap.Layers[Globals.CurrentLayer].Tiles[x0, y0].TilesetIndex = Globals.CurrentTileset.GetId();
-                                        tmpMap.Layers[Globals.CurrentLayer].Tiles[x0, y0].X = Globals.CurSelX + x1;
-                                        tmpMap.Layers[Globals.CurrentLayer].Tiles[x0, y0].Y = Globals.CurSelY + y1;
-                                        tmpMap.Layers[Globals.CurrentLayer].Tiles[x0, y0].Autotile = (byte)Globals.Autotilemode;
+                                        if (Globals.CurrentTileset != null)
+                                        {
+                                            tmpMap.Layers[Globals.CurrentLayer].Tiles[x0, y0].TilesetIndex =
+                                                Globals.CurrentTileset.GetId();
+                                            tmpMap.Layers[Globals.CurrentLayer].Tiles[x0, y0].X = Globals.CurSelX + x1;
+                                            tmpMap.Layers[Globals.CurrentLayer].Tiles[x0, y0].Y = Globals.CurSelY + y1;
+                                            tmpMap.Layers[Globals.CurrentLayer].Tiles[x0, y0].Autotile =
+                                                (byte) Globals.Autotilemode;
+                                        }
                                     }
                                     else if (Globals.MouseButton == 1)
                                     {

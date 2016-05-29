@@ -146,6 +146,7 @@ namespace Intersect_Editor.Classes
         {
             lstResources.Items.Clear();
             lstResources.Items.AddRange(Database.GetGameObjectList(GameObject.Resource));
+            cmbToolType.Items.Clear();
             cmbToolType.Items.Add("None");
             cmbToolType.Items.AddRange(Options.ToolTypes.ToArray());
             UpdateInitialScrollBars();

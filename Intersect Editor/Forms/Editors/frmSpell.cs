@@ -120,8 +120,8 @@ namespace Intersect_Editor.Forms
 
         private void frmSpell_Load(object sender, EventArgs e)
         {
-            scrlProjectile.Maximum = ProjectileBase.ObjectCount();
-            scrlEvent.Maximum = EventBase.ObjectCount();
+            scrlProjectile.Maximum = ProjectileBase.ObjectCount() - 1;
+            scrlEvent.Maximum = EventBase.ObjectCount() - 1;
             cmbSprite.Items.Clear();
             cmbSprite.Items.Add("None");
             string[] spellNames = GameContentManager.GetTextureNames(GameContentManager.TextureType.Spell);

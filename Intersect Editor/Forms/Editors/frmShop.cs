@@ -136,10 +136,10 @@ namespace Intersect_Editor.Forms.Editors
                 cmbSellFor.Items.Add(item.Value.Name);
                 cmbDefaultCurrency.Items.Add(item.Value.Name);
             }
-            cmbAddBoughtItem.SelectedIndex = 0;
-            cmbAddSoldItem.SelectedIndex = 0;
-            cmbBuyFor.SelectedIndex = 0;
-            cmbSellFor.SelectedIndex = 0;
+            if (cmbAddBoughtItem.Items.Count > 0) cmbAddBoughtItem.SelectedIndex = 0;
+            if (cmbAddSoldItem.Items.Count > 0) cmbAddSoldItem.SelectedIndex = 0;
+            if (cmbBuyFor.Items.Count > 0) cmbBuyFor.SelectedIndex = 0;
+            if (cmbSellFor.Items.Count > 0) cmbSellFor.SelectedIndex = 0;
             UpdateEditor();
         }
 

@@ -38,7 +38,6 @@ namespace Intersect_Server.Classes.Maps
     public class MapInstance : MapBase
     {
         //Core
-        public const string Version = "0.0.0.1";
         public new const GameObject Type = GameObject.Map;
         protected static Dictionary<int, DatabaseObject> Objects = new Dictionary<int, DatabaseObject>();
 

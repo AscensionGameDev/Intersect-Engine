@@ -30,7 +30,10 @@
         {
             this.components = new System.ComponentModel.Container();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.btnUndo = new System.Windows.Forms.Button();
             this.lstSpells = new System.Windows.Forms.ListBox();
+            this.btnNew = new System.Windows.Forms.Button();
+            this.btnDelete = new System.Windows.Forms.Button();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.label6 = new System.Windows.Forms.Label();
             this.txtDesc = new System.Windows.Forms.TextBox();
@@ -124,9 +127,6 @@
             this.scrlEvent = new System.Windows.Forms.HScrollBar();
             this.lblEvent = new System.Windows.Forms.Label();
             this.pnlContainer = new System.Windows.Forms.Panel();
-            this.btnUndo = new System.Windows.Forms.Button();
-            this.btnNew = new System.Windows.Forms.Button();
-            this.btnDelete = new System.Windows.Forms.Button();
             this.btnCancel = new System.Windows.Forms.Button();
             this.btnSave = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
@@ -158,6 +158,17 @@
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Spells";
             // 
+            // btnUndo
+            // 
+            this.btnUndo.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            this.btnUndo.Location = new System.Drawing.Point(6, 433);
+            this.btnUndo.Name = "btnUndo";
+            this.btnUndo.Size = new System.Drawing.Size(190, 27);
+            this.btnUndo.TabIndex = 50;
+            this.btnUndo.Text = "Undo Changes";
+            this.btnUndo.UseVisualStyleBackColor = true;
+            this.btnUndo.Click += new System.EventHandler(this.btnUndo_Click);
+            // 
             // lstSpells
             // 
             this.lstSpells.FormattingEnabled = true;
@@ -166,6 +177,28 @@
             this.lstSpells.Size = new System.Drawing.Size(191, 342);
             this.lstSpells.TabIndex = 1;
             this.lstSpells.Click += new System.EventHandler(this.lstSpells_Click);
+            // 
+            // btnNew
+            // 
+            this.btnNew.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            this.btnNew.Location = new System.Drawing.Point(6, 367);
+            this.btnNew.Name = "btnNew";
+            this.btnNew.Size = new System.Drawing.Size(190, 27);
+            this.btnNew.TabIndex = 48;
+            this.btnNew.Text = "New";
+            this.btnNew.UseVisualStyleBackColor = true;
+            this.btnNew.Click += new System.EventHandler(this.btnNew_Click);
+            // 
+            // btnDelete
+            // 
+            this.btnDelete.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            this.btnDelete.Location = new System.Drawing.Point(7, 400);
+            this.btnDelete.Name = "btnDelete";
+            this.btnDelete.Size = new System.Drawing.Size(190, 27);
+            this.btnDelete.TabIndex = 47;
+            this.btnDelete.Text = "Delete";
+            this.btnDelete.UseVisualStyleBackColor = true;
+            this.btnDelete.Click += new System.EventHandler(this.btnDelete_Click);
             // 
             // groupBox2
             // 
@@ -517,9 +550,11 @@
             this.scrlProjectile.LargeChange = 1;
             this.scrlProjectile.Location = new System.Drawing.Point(6, 98);
             this.scrlProjectile.Maximum = 20;
+            this.scrlProjectile.Minimum = -1;
             this.scrlProjectile.Name = "scrlProjectile";
             this.scrlProjectile.Size = new System.Drawing.Size(209, 18);
             this.scrlProjectile.TabIndex = 19;
+            this.scrlProjectile.Value = -1;
             this.scrlProjectile.Scroll += new System.Windows.Forms.ScrollEventHandler(this.scrlProjectile_Scroll);
             // 
             // lblProjectile
@@ -768,12 +803,10 @@
             // 
             this.scrlRange.LargeChange = 1;
             this.scrlRange.Location = new System.Drawing.Point(14, 38);
-            this.scrlRange.Maximum = 29;
-            this.scrlRange.Minimum = 10;
+            this.scrlRange.Maximum = 10;
             this.scrlRange.Name = "scrlRange";
             this.scrlRange.Size = new System.Drawing.Size(168, 18);
             this.scrlRange.TabIndex = 39;
-            this.scrlRange.Value = 10;
             this.scrlRange.Scroll += new System.Windows.Forms.ScrollEventHandler(this.scrlRange_Scroll);
             // 
             // groupBox4
@@ -1112,9 +1145,11 @@
             // 
             this.scrlEvent.LargeChange = 1;
             this.scrlEvent.Location = new System.Drawing.Point(8, 36);
+            this.scrlEvent.Minimum = -1;
             this.scrlEvent.Name = "scrlEvent";
             this.scrlEvent.Size = new System.Drawing.Size(186, 18);
             this.scrlEvent.TabIndex = 17;
+            this.scrlEvent.Value = -1;
             this.scrlEvent.Scroll += new System.Windows.Forms.ScrollEventHandler(this.scrlEvent_Scroll);
             // 
             // lblEvent
@@ -1122,9 +1157,9 @@
             this.lblEvent.AutoSize = true;
             this.lblEvent.Location = new System.Drawing.Point(8, 23);
             this.lblEvent.Name = "lblEvent";
-            this.lblEvent.Size = new System.Drawing.Size(47, 13);
+            this.lblEvent.Size = new System.Drawing.Size(67, 13);
             this.lblEvent.TabIndex = 16;
-            this.lblEvent.Text = "Event: 0";
+            this.lblEvent.Text = "Event: None";
             // 
             // pnlContainer
             // 
@@ -1134,46 +1169,13 @@
             this.pnlContainer.Controls.Add(this.groupBox4);
             this.pnlContainer.Controls.Add(this.grpWarp);
             this.pnlContainer.Controls.Add(this.grpTargetInfo);
-            this.pnlContainer.Controls.Add(this.grpDash);
             this.pnlContainer.Controls.Add(this.groupBox3);
+            this.pnlContainer.Controls.Add(this.grpDash);
             this.pnlContainer.Location = new System.Drawing.Point(221, 12);
             this.pnlContainer.Name = "pnlContainer";
             this.pnlContainer.Size = new System.Drawing.Size(445, 473);
             this.pnlContainer.TabIndex = 41;
             this.pnlContainer.Visible = false;
-            // 
-            // btnUndo
-            // 
-            this.btnUndo.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.btnUndo.Location = new System.Drawing.Point(6, 433);
-            this.btnUndo.Name = "btnUndo";
-            this.btnUndo.Size = new System.Drawing.Size(190, 27);
-            this.btnUndo.TabIndex = 50;
-            this.btnUndo.Text = "Undo Changes";
-            this.btnUndo.UseVisualStyleBackColor = true;
-            this.btnUndo.Click += new System.EventHandler(this.btnUndo_Click);
-            // 
-            // btnNew
-            // 
-            this.btnNew.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.btnNew.Location = new System.Drawing.Point(6, 367);
-            this.btnNew.Name = "btnNew";
-            this.btnNew.Size = new System.Drawing.Size(190, 27);
-            this.btnNew.TabIndex = 48;
-            this.btnNew.Text = "New";
-            this.btnNew.UseVisualStyleBackColor = true;
-            this.btnNew.Click += new System.EventHandler(this.btnNew_Click);
-            // 
-            // btnDelete
-            // 
-            this.btnDelete.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.btnDelete.Location = new System.Drawing.Point(7, 400);
-            this.btnDelete.Name = "btnDelete";
-            this.btnDelete.Size = new System.Drawing.Size(190, 27);
-            this.btnDelete.TabIndex = 47;
-            this.btnDelete.Text = "Delete";
-            this.btnDelete.UseVisualStyleBackColor = true;
-            this.btnDelete.Click += new System.EventHandler(this.btnDelete_Click);
             // 
             // btnCancel
             // 
