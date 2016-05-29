@@ -292,7 +292,7 @@ namespace Intersect_Client.Classes.UI.Game
                 if (_currentType == 0 && _currentItem > -1 && ItemBase.GetItem(Globals.Me.Inventory[_currentItem].ItemNum)  != null)
                 {
                     contentPanel.Show();
-                    contentPanel.Texture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Spell,
+                    contentPanel.Texture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Item,
                                     ItemBase.GetItem(Globals.Me.Inventory[_currentItem].ItemNum).Pic);
                     equipPanel.IsHidden = !Globals.Me.IsEquipped(_currentItem);
                     _texLoaded = true;

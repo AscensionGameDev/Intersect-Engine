@@ -251,7 +251,7 @@ namespace Intersect_Client.Classes.Bridges_and_Interfaces.SFML.File_Management
             for (int i = 0; i < items.Length; i++)
             {
                 string filename = items[i].Replace("resources/" + "sounds" + "\\", "").ToLower();
-                soundDict.Add(filename, new MonoSoundSource("resources/" + "sounds" + "/" + filename));
+                soundDict.Add(RemoveExtension(filename), new MonoSoundSource("resources/" + "sounds" + "/" + filename));
             }
         }
 
@@ -262,8 +262,8 @@ namespace Intersect_Client.Classes.Bridges_and_Interfaces.SFML.File_Management
             var items = Directory.GetFiles("resources/" + "music", "*.mp3");
             for (int i = 0; i < items.Length; i++)
             {
-                string filename = items[i].Replace("resources/" + "music" + "\\", "").ToLower();
-                musicDict.Add(filename, new MonoMusicSource("resources/" + "music" + "/" + filename));
+                string filename =items[i].Replace("resources/" + "music" + "\\", "").ToLower();
+                musicDict.Add(RemoveExtension(filename), new MonoMusicSource("resources/" + "music" + "/" + filename));
             }
         }
     }

@@ -147,7 +147,7 @@ namespace Intersect_Editor.Forms
                 cmbPreviewFace.SelectedIndex = 0;
                 UpdateFacePreview();
             }
-            cmbAnimation.SelectedIndex = CurrentPage.Animation + 1;
+            cmbAnimation.SelectedIndex = Database.GameObjectListIndex(GameObject.Animation, CurrentPage.Animation) + 1;
             chkHideName.Checked = Convert.ToBoolean(CurrentPage.HideName);
             chkDisablePreview.Checked = Convert.ToBoolean(CurrentPage.DisablePreview);
             chkDirectionFix.Checked = Convert.ToBoolean(CurrentPage.DirectionFix);
@@ -1471,7 +1471,7 @@ namespace Intersect_Editor.Forms
 
         private void cmbAnimation_SelectedIndexChanged(object sender, EventArgs e)
         {
-            CurrentPage.Animation = cmbAnimation.SelectedIndex - 1;
+            CurrentPage.Animation = Database.GameObjectIdFromList(GameObject.Animation,cmbAnimation.SelectedIndex - 1);
         }
 
         private void chkIsGlobal_CheckedChanged(object sender, EventArgs e)

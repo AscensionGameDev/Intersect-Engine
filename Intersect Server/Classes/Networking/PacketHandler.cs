@@ -427,6 +427,8 @@ namespace Intersect_Server.Classes.Networking
                 {
                     MapList.GetList().AddMap(newMap, MapBase.GetObjects());
                 }
+                Database.SaveMapFolders();
+                PacketSender.SendMapListToAll();
                 /*else if (destType == 0)
                 {
                     parent = Database.MapStructure.FindDir(bf.ReadInteger());
