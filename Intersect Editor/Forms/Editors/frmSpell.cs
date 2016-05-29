@@ -248,7 +248,7 @@ namespace Intersect_Editor.Forms
                 chkHOTDOT.Checked = Convert.ToBoolean(_editorItem.Data1);
                 scrlBuffDuration.Value = _editorItem.Data2;
                 lblBuffDuration.Text = "Duration: " + ((double)scrlBuffDuration.Value / 10) + "s";
-                scrlTick.Value = _editorItem.Data2;
+                scrlTick.Value = _editorItem.Data4;
                 lblTick.Text = "Tick: " + ((double)scrlTick.Value / 10) + "s";
                 cmbExtraEffect.SelectedIndex = _editorItem.Data3;
                 
@@ -651,6 +651,5 @@ namespace Intersect_Editor.Forms
                 lblEvent.Text = "Event: " + EventBase.GetName(_editorItem.Data1);
             }
         }
-
     }
 }

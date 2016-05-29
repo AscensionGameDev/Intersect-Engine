@@ -395,7 +395,8 @@ namespace Intersect_Server.Classes.Entities
                         }
                         else
                         {
-                            if (c == (int)EntityTypes.Player) //Player
+                            var TargetEntity = Globals.Entities[Target];
+                            if (TargetEntity.GetType() == typeof(Player)) //Player
                             {
                                 if (Owner.MyIndex != Target)
                                 {
@@ -403,7 +404,7 @@ namespace Intersect_Server.Classes.Entities
                                     killSpawn = true; //Remove from the list being processed
                                 }
                             }
-                            else if (c == (int)EntityTypes.Resource)
+                            else if (TargetEntity.GetType() == typeof(Resource))
                             {
                                 if ((((Resource)Globals.Entities[Target]).IsDead && !Spawns[i].ProjectileBase.IgnoreExhaustedResources) || (!((Resource)Globals.Entities[Target]).IsDead && !Spawns[i].ProjectileBase.IgnoreActiveResources))
                                 {

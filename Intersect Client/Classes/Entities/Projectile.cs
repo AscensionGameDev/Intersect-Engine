@@ -423,13 +423,16 @@ namespace Intersect_Client.Classes.Entities
                             Spawns[i].Y = newy;
                             Spawns[i].Map = newmap;
                             var newMap = MapInstance.GetMap(newmap);
-                            
+
                             //Check for Z-Dimension
-                            if (newMap.Attributes[Spawns[i].X, Spawns[i].Y].value == (int)MapAttributes.ZDimension)
+                            if (newMap.Attributes[Spawns[i].X, Spawns[i].Y] != null)
                             {
-                                if (newMap.Attributes[Spawns[i].X, Spawns[i].Y].data1 > 0)
+                                if (newMap.Attributes[Spawns[i].X, Spawns[i].Y].value == (int)MapAttributes.ZDimension)
                                 {
-                                    Spawns[i].Z = newMap.Attributes[Spawns[i].X, Spawns[i].Y].data1 - 1;
+                                    if (newMap.Attributes[Spawns[i].X, Spawns[i].Y].data1 > 0)
+                                    {
+                                        Spawns[i].Z = newMap.Attributes[Spawns[i].X, Spawns[i].Y].data1 - 1;
+                                    }
                                 }
                             }
 

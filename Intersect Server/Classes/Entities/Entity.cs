@@ -619,7 +619,7 @@ namespace Intersect_Server.Classes.Entities
                                 HandleAoESpell(SpellNum);
                                 break;
                             case (int) SpellTargetTypes.Projectile:
-                                var projectileBase = ProjectileBase.GetProjectile(spellBase.Data4 - 1);
+                                var projectileBase = ProjectileBase.GetProjectile(spellBase.Data4);
                                 if (projectileBase != null)
                                 {
                                     MapInstance.GetMap(CurrentMap).SpawnMapProjectile(this,

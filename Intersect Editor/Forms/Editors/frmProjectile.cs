@@ -156,7 +156,7 @@ namespace Intersect_Editor.Classes
                 else
                 {
                     lblAnimation.Text = "Animation: " +
-                                        AnimationBase.GetName(Database.GameObjectIdFromList(GameObject.Animation,
+                                        AnimationBase.GetName(Database.GameObjectListIndex(GameObject.Animation,
                                             scrlAnimation.Value));
                 }
                 if (scrlSpell.Value == -1)
@@ -222,7 +222,7 @@ namespace Intersect_Editor.Classes
                 if (_editorItem.Animations[i].Animation != -1)
                 {
                     lstAnimations.Items.Add("[Spawn Range: " + n + " - " + _editorItem.Animations[i].SpawnRange +
-                        "] Animation: " + AnimationBase.GetName(Database.GameObjectIdFromList(GameObject.Animation,_editorItem.Animations[i].Animation)));
+                        "] Animation: " + AnimationBase.GetName(_editorItem.Animations[i].Animation));
                 }
                 else
                 {
@@ -388,7 +388,7 @@ namespace Intersect_Editor.Classes
 
         private void scrlAnimation_Scroll(object sender, ScrollEventArgs e)
         {
-            _editorItem.Animations[lstAnimations.SelectedIndex].Animation = scrlAnimation.Value;
+            _editorItem.Animations[lstAnimations.SelectedIndex].Animation = Database.GameObjectIdFromList(GameObject.Animation, scrlAnimation.Value);
             updateAnimations();
         }
 
