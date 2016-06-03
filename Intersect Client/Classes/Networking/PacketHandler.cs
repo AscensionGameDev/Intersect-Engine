@@ -614,7 +614,10 @@ namespace Intersect_Client.Classes.Networking
             {
                 if (bf.ReadInteger() == -1)
                 {
-                    map.MapItems.RemoveAt(index);
+                    if (map.MapItems.Count > index)
+                    {
+                        map.MapItems.RemoveAt(index);
+                    }
                 }
                 else
                 {

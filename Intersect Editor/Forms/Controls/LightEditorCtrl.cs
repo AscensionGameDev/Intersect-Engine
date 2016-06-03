@@ -45,8 +45,11 @@ namespace Intersect_Editor.Forms.Controls
                 {
                     return;
                 }
-                var offsetY = Convert.ToInt32(txtLightOffsetY.Text);
-                _editingLight.OffsetY = offsetY;
+                int offsetY = 0;
+                if (Int32.TryParse(txtLightOffsetY.Text, out offsetY))
+                {
+                    _editingLight.OffsetY = offsetY;
+                }
                 Classes.EditorGraphics.TilePreviewUpdated = true;
             }
             catch (Exception)
@@ -62,8 +65,11 @@ namespace Intersect_Editor.Forms.Controls
                 {
                     return;
                 }
-                var offsetX = Convert.ToInt32(txtLightOffsetX.Text);
-                _editingLight.OffsetX = offsetX;
+                int offsetX = 0;
+                if (Int32.TryParse(txtLightOffsetX.Text, out offsetX))
+                {
+                    _editingLight.OffsetX = offsetX;
+                }
                 Classes.EditorGraphics.TilePreviewUpdated = true;
             }
             catch (Exception)

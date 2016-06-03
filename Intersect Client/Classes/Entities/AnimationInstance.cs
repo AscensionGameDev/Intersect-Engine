@@ -112,8 +112,14 @@ namespace Intersect_Client.Classes.Entities
                                 frameHeight),
                             new FloatRect(_renderX - frameWidth / 2, _renderY - frameHeight / 2, frameWidth, frameHeight),
                             Color.White, null, GameBlendModes.Alpha, null, rotationDegrees);
-                        GameGraphics.AddLight((int)_renderX + myBase.LowerLights[lowerFrame].OffsetX,
-                            (int)_renderY + myBase.LowerLights[lowerFrame].OffsetY, myBase.LowerLights[lowerFrame].Size,
+
+                        int offsetX = myBase.LowerLights[lowerFrame].OffsetX;
+                        int offsetY = myBase.LowerLights[lowerFrame].OffsetY;
+                        var rotationRadians = (float)((Math.PI / 180) * rotationDegrees);
+                        offsetX = (int)(Math.Cos(rotationRadians) * ((double)offsetX) - (double)Math.Sin(rotationRadians) * ((double)offsetY));
+                        offsetY = (int)(Math.Sin(rotationRadians) * ((double)offsetX) + (double)Math.Cos(rotationRadians) * ((double)offsetY));
+                        GameGraphics.AddLight((int)_renderX + offsetX,
+                            (int)_renderY + offsetY, myBase.LowerLights[lowerFrame].Size,
                             myBase.LowerLights[lowerFrame].Intensity, myBase.LowerLights[lowerFrame].Expand,
                             myBase.LowerLights[lowerFrame].Color);
                     }
@@ -140,9 +146,14 @@ namespace Intersect_Client.Classes.Entities
                             new FloatRect(_renderX - frameWidth / 2, _renderY - frameHeight / 2, frameWidth, frameHeight),
                             Color.White, null, GameBlendModes.Alpha, null, rotationDegrees);
 
+                        int offsetX = myBase.LowerLights[lowerFrame].OffsetX;
+                        int offsetY = myBase.LowerLights[lowerFrame].OffsetY;
+                        var rotationRadians = (float)((Math.PI / 180) * rotationDegrees);
+                        offsetX = (int)(Math.Cos(rotationRadians) * ((double)offsetX) - (double)Math.Sin(rotationRadians) * ((double)offsetY));
+                        offsetY = (int)(Math.Sin(rotationRadians) * ((double)offsetX) + (double)Math.Cos(rotationRadians) * ((double)offsetY));
 
-                        GameGraphics.AddLight((int)_renderX + myBase.UpperLights[upperFrame].OffsetX,
-                            (int)_renderY + myBase.UpperLights[upperFrame].OffsetY, myBase.UpperLights[upperFrame].Size,
+                        GameGraphics.AddLight((int)_renderX + offsetX,
+                            (int)_renderY + offsetY, myBase.UpperLights[upperFrame].Size,
                             myBase.UpperLights[upperFrame].Intensity, myBase.UpperLights[upperFrame].Expand,
                             myBase.UpperLights[upperFrame].Color);
                     }

@@ -258,6 +258,14 @@ namespace Intersect_Client_MonoGame.Classes.SFML.Graphics
         public override void DrawTexture(GameTexture tex, FloatRect srcRectangle, FloatRect targetRect, Color renderColor, GameRenderTexture renderTarget = null, GameBlendModes blendMode = GameBlendModes.Alpha, GameShader shader = null, float rotationDegrees = 0, bool isUi = false)
         {
             if (tex == null) return;
+            Vector2 origin = Vector2.Zero;
+            if (rotationDegrees != 0f)
+            {
+                rotationDegrees = (float)((Math.PI/180)*rotationDegrees);
+                origin = new Vector2(srcRectangle.Width/2, srcRectangle.Height/2);
+                targetRect.X += srcRectangle.Width/2;
+                targetRect.Y += srcRectangle.Height/2;
+            }
             if (renderTarget == null)
             {
                 if (isUi)
@@ -271,7 +279,7 @@ namespace Intersect_Client_MonoGame.Classes.SFML.Graphics
                         (int) targetRect.Height),
                     new Microsoft.Xna.Framework.Rectangle((int) srcRectangle.X, (int) srcRectangle.Y,
                         (int) srcRectangle.Width, (int) srcRectangle.Height),
-                    null, rotationDegrees, null, ConvertColor(renderColor), SpriteEffects.None, 0);
+                    origin, rotationDegrees, null, ConvertColor(renderColor), SpriteEffects.None, 0);
             }
             else
             {
@@ -281,7 +289,7 @@ namespace Intersect_Client_MonoGame.Classes.SFML.Graphics
                             (int)targetRect.Height),
                         new Microsoft.Xna.Framework.Rectangle((int)srcRectangle.X, (int)srcRectangle.Y,
                             (int)srcRectangle.Width, (int)srcRectangle.Height),
-                        null, rotationDegrees, null, ConvertColor(renderColor), SpriteEffects.None, 0);
+                        origin, rotationDegrees, null, ConvertColor(renderColor), SpriteEffects.None, 0);
             }
         }
 
