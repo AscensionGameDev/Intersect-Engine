@@ -37,7 +37,7 @@ namespace Intersect_MonoGameDx.Classes.SFML.Audio
 
         public MonoSoundSource(string filename)
         {
-            using (var fileStream = new FileStream(filename, FileMode.Open))
+            using (var fileStream = new FileStream(filename, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
             {
                 _sound = SoundEffect.FromStream(fileStream);
             }

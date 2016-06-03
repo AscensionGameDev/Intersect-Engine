@@ -25,6 +25,8 @@
     SOFTWARE.
 */
 
+using IntersectClientExtras.File_Management;
+using IntersectClientExtras.GenericClasses;
 using IntersectClientExtras.Gwen;
 using IntersectClientExtras.Gwen.Control;
 using IntersectClientExtras.Gwen.Control.EventArguments;
@@ -36,17 +38,20 @@ namespace Intersect_Client.Classes.UI.Menu
     public class MainMenu
     {
         //Controls
-        private WindowControl _menuWindow;
+        private Canvas MenuCanvas;
+        private ImagePanel _menuPanel;
+        private ImagePanel _logoPanel;
+        private Label _menuHeader;
 
         private Button _loginButton;
         private Button _registerButton;
         private Button _optionsButton;
         private Button _exitButton;
 
-        private OptionsWindow _optionControls;
-        private LoginControls _loginControls;
-        private RegisterControls _registerControls;
-        private CreateCharControls _CreateCharControls;
+        private OptionsWindow _optionsWindow;
+        private LoginWindow _loginWindow;
+        private RegisterWindow _registerWindow;
+        private CreateCharacterWindow _createCharacterWindow;
 
         private bool _shouldOpenCharacterCreation;
 
@@ -56,53 +61,101 @@ namespace Intersect_Client.Classes.UI.Menu
         //Init
         public MainMenu(Canvas _menuCanvas)
         {
+            MenuCanvas = _menuCanvas;
+
             //Main Menu Window
-            _menuWindow = new WindowControl(_menuCanvas, "Main Menu");
-            _menuWindow.SetSize(200, 200);
-            _menuWindow.SetPosition(_menuCanvas.Width / 2 - 100, _menuCanvas.Height / 2 - 80);
-            _menuWindow.IsClosable = false;
-            _menuWindow.DisableResizing();
-            _menuWindow.Margin = Margin.Zero;
-            _menuWindow.Padding = Padding.Zero;
+            _menuPanel = new ImagePanel(_menuCanvas);
+            _menuPanel.Texture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "uibody.png");
+            _menuPanel.SetSize(512, 393);
+            _menuPanel.SetPosition(_menuCanvas.Width/2 - _menuPanel.Width/2, _menuCanvas.Height/2 - _menuPanel.Height/2);
+
+            //Menu Header
+            _menuHeader = new Label(_menuPanel);
+            _menuHeader.AutoSizeToContents = false;
+            _menuHeader.SetText("Main Menu");
+            _menuHeader.SetSize(_menuPanel.Width, _menuPanel.Height);
+            _menuHeader.Alignment = Pos.CenterH;
+            _menuHeader.TextColorOverride = new Color(255,200,200,200);
+
+            _logoPanel = new ImagePanel(_menuCanvas);
+            _logoPanel.Texture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui,
+                Globals.Database.Logo);
+            if (_logoPanel.Texture != null)
+            {
+                _logoPanel.SetSize(_logoPanel.Texture.GetWidth(), _logoPanel.Texture.GetHeight());
+                _logoPanel.SetPosition(_menuCanvas.Width / 2 - _logoPanel.Width / 2, 0);
+            }
+
+            if (_logoPanel.Bottom > _menuPanel.Y + 20)
+            {
+                _menuPanel.Y = _logoPanel.Bottom + 20;
+            }
+
+            if (_menuPanel.Bottom > _menuCanvas.Height)
+            {
+                var diff = _menuPanel.Bottom - _menuCanvas.Height;
+                _logoPanel.SetPosition(_logoPanel.X, _logoPanel.Y - diff);
+                _menuPanel.SetPosition(_menuPanel.X, _menuPanel.Y - diff);
+            }
 
             //Login Button
-            _loginButton = new Button(_menuWindow);
+            _loginButton = new Button(_menuPanel);
             _loginButton.SetText("Login");
-            _loginButton.SetSize(120, 32);
-            _loginButton.SetPosition(_menuWindow.Width / 2 - 120 / 2, 14);
+            _loginButton.SetSize(211, 61);
+            _loginButton.SetPosition(_menuPanel.Width / 2 - _loginButton.Width / 2, 60);
             _loginButton.Clicked += LoginButton_Clicked;
+            _loginButton.SetImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "buttonnormal.png"),Button.ControlState.Normal);
+            _loginButton.SetImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "buttonhover.png"), Button.ControlState.Hovered);
+            _loginButton.SetImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "buttonclicked.png"), Button.ControlState.Clicked);
+            _loginButton.SetTextColor(new Color(255,30,30,30), Label.ControlState.Normal);
+            _loginButton.SetTextColor(new Color(255, 20, 20, 20), Label.ControlState.Hovered);
+            _loginButton.SetTextColor(new Color(255, 215, 215, 215), Label.ControlState.Clicked);
 
             //Register Button
-            _registerButton = new Button(_menuWindow);
+            _registerButton = new Button(_menuPanel);
             _registerButton.SetText("Register");
-            _registerButton.SetSize(120, 32);
-            _registerButton.SetPosition(_menuWindow.Width / 2 - 120 / 2, 54);
+            _registerButton.SetSize(211, 61);
+            _registerButton.SetPosition(_menuPanel.Width / 2 - _registerButton.Width / 2, 130);
             _registerButton.Clicked += RegisterButton_Clicked;
+            _registerButton.SetImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "buttonnormal.png"), Button.ControlState.Normal);
+            _registerButton.SetImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "buttonhover.png"), Button.ControlState.Hovered);
+            _registerButton.SetImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "buttonclicked.png"), Button.ControlState.Clicked);
+            _registerButton.SetTextColor(new Color(255, 30, 30, 30), Label.ControlState.Normal);
+            _registerButton.SetTextColor(new Color(255, 20, 20, 20), Label.ControlState.Hovered);
+            _registerButton.SetTextColor(new Color(255, 215, 215, 215), Label.ControlState.Clicked);
 
-            //Options Button
-            _optionsButton = new Button(_menuWindow);
-            _optionsButton.SetText("Options");
-            _optionsButton.SetSize(120, 32);
-            _optionsButton.SetPosition(_menuWindow.Width / 2 - 120 / 2, 94);
-            _optionsButton.Clicked += OptionsButton_Clicked;
 
             //Exit Button
-            _exitButton = new Button(_menuWindow);
+            _exitButton = new Button(_menuPanel);
             _exitButton.SetText("Exit");
-            _exitButton.SetSize(120, 32);
-            _exitButton.SetPosition(_menuWindow.Width / 2 - 120 / 2, 134);
+            _exitButton.SetSize(211, 61);
+            _exitButton.SetPosition(_menuPanel.Width / 2 - _exitButton.Width / 2, 200);
             _exitButton.Clicked += ExitButton_Clicked;
+            _exitButton.SetImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "buttonnormal.png"), Button.ControlState.Normal);
+            _exitButton.SetImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "buttonhover.png"), Button.ControlState.Hovered);
+            _exitButton.SetImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "buttonclicked.png"), Button.ControlState.Clicked);
+            _exitButton.SetTextColor(new Color(255, 30, 30, 30), Label.ControlState.Normal);
+            _exitButton.SetTextColor(new Color(255, 20, 20, 20), Label.ControlState.Hovered);
+            _exitButton.SetTextColor(new Color(255, 215, 215, 215), Label.ControlState.Clicked);
+
+            //Options Button
+            _optionsButton = new Button(_menuCanvas);
+            _optionsButton.Clicked += OptionsButton_Clicked;
+            _optionsButton.SetText("");
+            _optionsButton.SetSize(48, 49);
+            _optionsButton.SetPosition(_menuCanvas.Width - 50, 2);
+            _optionsButton.SetImage( Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "settingsnormal.png"), Button.ControlState.Normal);
+            _optionsButton.SetImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "settingshover.png"), Button.ControlState.Hovered);
+            _optionsButton.SetImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "settingclicked.png"), Button.ControlState.Clicked);
 
             //Options Controls
-            _optionControls = new OptionsWindow(_menuWindow, false, this);
+            _optionsWindow = new OptionsWindow(_menuCanvas, this, _menuPanel);
 
             //Login Controls
-            _loginControls = new LoginControls(_menuWindow, this);
+            _loginWindow = new LoginWindow(_menuCanvas, this, _menuPanel);
 
             //Register Controls
-            _registerControls = new RegisterControls(_menuWindow, this);
-
-            Reset();
+            _registerWindow = new RegisterWindow(_menuCanvas, this, _menuPanel);
         }
 
         //Methods
@@ -113,29 +166,17 @@ namespace Intersect_Client.Classes.UI.Menu
                 CreateCharacterCreation();
             }
         }
-        public void Reset()
+
+        public void Show()
         {
-            //Show Menu Elements
-            _menuWindow.Title = "Main Menu";
-            _registerButton.Show();
-            _exitButton.Show();
-            _loginButton.Show();
-            _optionsButton.Show();
+            _menuPanel.IsHidden = false;
+            _optionsButton.IsHidden = false;
+        }
 
-            //Hide Login Elements
-            _loginControls.Hide();
-
-            //Hide Register Elements
-            _registerControls.Hide();
-
-            //Hide option elements
-            _optionControls.Hide();
-
-            //Hide Create Char Elements
-            if (HasMadeCharacterCreation == true)
-            {
-                _CreateCharControls.Hide();
-            }
+        public void Hide()
+        {
+            _menuPanel.IsHidden = true;
+            _optionsButton.IsHidden = true;
         }
 
         public void NotifyOpenCharacterCreation()
@@ -145,11 +186,12 @@ namespace Intersect_Client.Classes.UI.Menu
 
         public void CreateCharacterCreation()
         {
-            _menuWindow.Title = "Create Character";
-            _registerControls.Hide();
-            _loginControls.Hide();
-            _CreateCharControls = new CreateCharControls(_menuWindow);
-            _CreateCharControls.Show();
+            Hide();
+            _loginWindow.Hide();
+            _registerWindow.Hide();
+            _optionsWindow.Hide();
+            _createCharacterWindow = new CreateCharacterWindow(MenuCanvas,this,_menuPanel);
+            _createCharacterWindow.Show();
             HasMadeCharacterCreation = true;
             _shouldOpenCharacterCreation = false;
         }
@@ -157,30 +199,18 @@ namespace Intersect_Client.Classes.UI.Menu
         //Input Handlers
         void LoginButton_Clicked(Base sender, ClickedEventArgs arguments)
         {
-            _menuWindow.Title = "Login";
-            _registerButton.Hide();
-            _exitButton.Hide();
-            _loginButton.Hide();
-            _optionsButton.Hide();
-            _loginControls.Show();
+            Hide();
+            _loginWindow.Show();
         }
         void RegisterButton_Clicked(Base sender, ClickedEventArgs arguments)
         {
-            _menuWindow.Title = "Register";
-            _registerButton.Hide();
-            _exitButton.Hide();
-            _loginButton.Hide();
-            _optionsButton.Hide();
-            _registerControls.Show();
+            Hide();
+            _registerWindow.Show();
         }
         void OptionsButton_Clicked(Base sender, ClickedEventArgs arguments)
         {
-            _menuWindow.Title = "Options";
-            _registerButton.Hide();
-            _exitButton.Hide();
-            _loginButton.Hide();
-            _optionsButton.Hide();
-            _optionControls.Show();
+            Hide();
+            _optionsWindow.Show();
         }
         void ExitButton_Clicked(Base sender, ClickedEventArgs arguments)
         {

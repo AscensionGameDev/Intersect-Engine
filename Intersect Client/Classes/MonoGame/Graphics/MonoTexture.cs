@@ -53,7 +53,7 @@ namespace Intersect_Client_MonoGame.Classes.SFML.Graphics
             _loadError = true;
             if (File.Exists(_path))
             {
-                using (var fileStream = new FileStream(_path, FileMode.Open))
+                using (var fileStream = new FileStream(_path, FileMode.Open,FileAccess.Read,FileShare.ReadWrite))
                 {
                     _tex = Texture2D.FromStream(_graphicsDevice, fileStream);
                     if (_tex != null)

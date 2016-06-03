@@ -503,17 +503,22 @@ namespace Intersect_Server.Classes.Maps
                     //Process Resource Respawns
                     for (int i = 0; i < ResourceSpawns.Count; i++)
                     {
-                        MapResourceSpawn resourceSpawnInstance = ResourceSpawnInstances[ResourceSpawns[i]];
-                        if (resourceSpawnInstance.Entity != null && resourceSpawnInstance.Entity.IsDead)
+                        if (ResourceSpawnInstances.ContainsKey(ResourceSpawns[i]))
                         {
-                            if (resourceSpawnInstance.RespawnTime == -1)
+                            MapResourceSpawn resourceSpawnInstance = ResourceSpawnInstances[ResourceSpawns[i]];
+                            if (resourceSpawnInstance.Entity != null && resourceSpawnInstance.Entity.IsDead)
                             {
-                                resourceSpawnInstance.RespawnTime = Environment.TickCount + resourceSpawnInstance.Entity.MyBase.SpawnDuration * 1000;
-                            }
-                            else if (resourceSpawnInstance.RespawnTime < Environment.TickCount)
-                            {
-                                SpawnMapResource(i);
-                                resourceSpawnInstance.RespawnTime = -1;
+                                if (resourceSpawnInstance.RespawnTime == -1)
+                                {
+                                    resourceSpawnInstance.RespawnTime = Environment.TickCount +
+                                                                        resourceSpawnInstance.Entity.MyBase
+                                                                            .SpawnDuration*1000;
+                                }
+                                else if (resourceSpawnInstance.RespawnTime < Environment.TickCount)
+                                {
+                                    SpawnMapResource(i);
+                                    resourceSpawnInstance.RespawnTime = -1;
+                                }
                             }
                         }
                     }

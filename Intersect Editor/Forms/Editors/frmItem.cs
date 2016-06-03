@@ -251,6 +251,9 @@ namespace Intersect_Editor.Forms
             gbEquipment.Visible = false;
             grpEvent.Visible = false;
 
+            scrlSpell.Maximum = Database.GetGameObjectList(GameObject.Spell).Length - 1;
+            scrlEvent.Maximum = Database.GetGameObjectList(GameObject.CommonEvent).Length - 1;
+
             if (_editorItem.ItemType != cmbType.SelectedIndex)
             {
                 _editorItem.Damage = 0;

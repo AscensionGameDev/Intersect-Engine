@@ -294,7 +294,7 @@ namespace Intersect_Client_MonoGame.Classes.SFML.Graphics
                 _fps = _fpsCount;
                 _fpsCount = 0;
                 _fpsTimer = Environment.TickCount + 1000;
-                _gameWindow.Title = "Intersect MonoGame Dx -- FPS: " + _fps;
+                _gameWindow.Title = "Intersect Client";
             }
             for (int i = 0; i < AllTextures.Count; i++)
             {

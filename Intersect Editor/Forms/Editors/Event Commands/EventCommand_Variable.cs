@@ -59,20 +59,12 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             if (rdoPlayerVariable.Checked)
             {
                 cmbVariable.Items.AddRange(Database.GetGameObjectList(GameObject.PlayerVariable));
-                varCount = PlayerVariableBase.ObjectCount();
+                cmbVariable.SelectedIndex = Database.GameObjectListIndex(GameObject.PlayerVariable, _myCommand.Ints[1]);
             }
             else
             {
                 cmbVariable.Items.AddRange(Database.GetGameObjectList(GameObject.ServerVariable));
-                varCount = ServerVariableBase.ObjectCount();
-            }
-            if (_myCommand.Ints[1] >= 0 && _myCommand.Ints[1] < varCount)
-            {
-                cmbVariable.SelectedIndex = _myCommand.Ints[1];
-            }
-            else
-            {
-                if (cmbVariable.Items.Count > 0) cmbVariable.SelectedIndex = 0;
+                cmbVariable.SelectedIndex = Database.GameObjectListIndex(GameObject.ServerVariable, _myCommand.Ints[1]);
             }
             switch (_myCommand.Ints[2])
             {

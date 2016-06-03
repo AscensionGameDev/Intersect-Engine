@@ -25,7 +25,7 @@ namespace Intersect_Editor.Classes.Content
             _loadError = true;
             if (File.Exists(_path))
             {
-                using (var fileStream = new FileStream(_path, FileMode.Open))
+                using (var fileStream = new FileStream(_path, FileMode.Open, FileAccess.Read,FileShare.ReadWrite))
                 {
                     _tex = Texture2D.FromStream(EditorGraphics.GetGraphicsDevice(), fileStream);
                     if (_tex != null)

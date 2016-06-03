@@ -112,6 +112,7 @@ namespace Intersect_Library.GameObjects.Maps
             {
                 Lights.Add(new LightBase(mapcopy.Lights[i]));
             }
+            EventIndex = mapcopy.EventIndex;
             foreach (var evt in mapcopy.Events)
             {
                 bf.WriteBytes(evt.Value.EventData());

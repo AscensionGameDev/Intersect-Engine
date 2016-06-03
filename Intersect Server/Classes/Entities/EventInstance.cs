@@ -398,6 +398,10 @@ namespace Intersect_Server.Classes.Entities
                 case EventCommandType.SetSwitch:
                     if (command.Ints[0] == (int) SwitchVariableTypes.PlayerSwitch)
                     {
+                        if (!MyPlayer.Switches.ContainsKey(command.Ints[1]))
+                        {
+                            MyPlayer.Switches.Add(command.Ints[1], false);
+                        }
                         MyPlayer.Switches[command.Ints[1]] = Convert.ToBoolean(command.Ints[2]);
                     }
                     else if(command.Ints[0] == (int)SwitchVariableTypes.ServerSwitch)
@@ -414,6 +418,10 @@ namespace Intersect_Server.Classes.Entities
                 case EventCommandType.SetVariable:
                     if (command.Ints[0] == (int) SwitchVariableTypes.PlayerVariable)
                     {
+                        if (!MyPlayer.Variables.ContainsKey(command.Ints[1]))
+                        {
+                           MyPlayer.Variables.Add(command.Ints[1],0); 
+                        }
                         switch (command.Ints[2])
                         {
                             case 0: //Set

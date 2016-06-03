@@ -913,6 +913,7 @@ namespace Intersect_Editor.Forms
             this.scrlEvent.Name = "scrlEvent";
             this.scrlEvent.Size = new System.Drawing.Size(187, 18);
             this.scrlEvent.TabIndex = 17;
+            this.scrlEvent.Value = -1;
             this.scrlEvent.Scroll += new System.Windows.Forms.ScrollEventHandler(this.scrlEvent_Scroll);
             // 
             // lblEvent

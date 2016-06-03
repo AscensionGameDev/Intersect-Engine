@@ -126,7 +126,6 @@ namespace Intersect_Editor.Forms
             // menuStrip
             // 
             this.menuStrip.BackColor = System.Drawing.SystemColors.Control;
-            this.menuStrip.ImageScalingSize = new System.Drawing.Size(24, 24);
             this.menuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.fileToolStripMenuItem,
             this.editToolStripMenuItem,
@@ -460,7 +459,7 @@ namespace Intersect_Editor.Forms
             // toolStrip1
             // 
             this.toolStrip1.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
-            this.toolStrip1.ImageScalingSize = new System.Drawing.Size(24, 24);
+            this.toolStrip1.ImageScalingSize = new System.Drawing.Size(18, 18);
             this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripBtnNewMap,
             this.toolStripBtnSaveMap,
@@ -487,7 +486,7 @@ namespace Intersect_Editor.Forms
             this.toolStrip1.Name = "toolStrip1";
             this.toolStrip1.Padding = new System.Windows.Forms.Padding(0);
             this.toolStrip1.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
-            this.toolStrip1.Size = new System.Drawing.Size(1186, 31);
+            this.toolStrip1.Size = new System.Drawing.Size(1186, 25);
             this.toolStrip1.TabIndex = 3;
             this.toolStrip1.Text = "toolStrip1";
             // 
@@ -498,7 +497,7 @@ namespace Intersect_Editor.Forms
             this.toolStripBtnNewMap.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripBtnNewMap.Margin = new System.Windows.Forms.Padding(12, 1, 0, 2);
             this.toolStripBtnNewMap.Name = "toolStripBtnNewMap";
-            this.toolStripBtnNewMap.Size = new System.Drawing.Size(28, 28);
+            this.toolStripBtnNewMap.Size = new System.Drawing.Size(23, 22);
             this.toolStripBtnNewMap.Text = "New Unconnected Map";
             this.toolStripBtnNewMap.Click += new System.EventHandler(this.toolStripBtnNewMap_Click);
             // 
@@ -508,14 +507,14 @@ namespace Intersect_Editor.Forms
             this.toolStripBtnSaveMap.Image = ((System.Drawing.Image)(resources.GetObject("toolStripBtnSaveMap.Image")));
             this.toolStripBtnSaveMap.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripBtnSaveMap.Name = "toolStripBtnSaveMap";
-            this.toolStripBtnSaveMap.Size = new System.Drawing.Size(28, 28);
+            this.toolStripBtnSaveMap.Size = new System.Drawing.Size(23, 22);
             this.toolStripBtnSaveMap.Text = "Save Map";
             this.toolStripBtnSaveMap.Click += new System.EventHandler(this.toolStripBtnSaveMap_Click);
             // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(6, 31);
+            this.toolStripSeparator1.Size = new System.Drawing.Size(6, 25);
             // 
             // toolStripBtnCut
             // 
@@ -523,7 +522,7 @@ namespace Intersect_Editor.Forms
             this.toolStripBtnCut.Image = ((System.Drawing.Image)(resources.GetObject("toolStripBtnCut.Image")));
             this.toolStripBtnCut.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripBtnCut.Name = "toolStripBtnCut";
-            this.toolStripBtnCut.Size = new System.Drawing.Size(28, 28);
+            this.toolStripBtnCut.Size = new System.Drawing.Size(23, 22);
             this.toolStripBtnCut.Text = "Cut Selection";
             this.toolStripBtnCut.Click += new System.EventHandler(this.toolStripBtnCut_Click);
             // 
@@ -533,7 +532,7 @@ namespace Intersect_Editor.Forms
             this.toolStripBtnCopy.Image = ((System.Drawing.Image)(resources.GetObject("toolStripBtnCopy.Image")));
             this.toolStripBtnCopy.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripBtnCopy.Name = "toolStripBtnCopy";
-            this.toolStripBtnCopy.Size = new System.Drawing.Size(28, 28);
+            this.toolStripBtnCopy.Size = new System.Drawing.Size(23, 22);
             this.toolStripBtnCopy.Text = "Copy Selection";
             this.toolStripBtnCopy.Click += new System.EventHandler(this.toolStripBtnCopy_Click);
             // 
@@ -543,14 +542,14 @@ namespace Intersect_Editor.Forms
             this.toolStripBtnPaste.Image = ((System.Drawing.Image)(resources.GetObject("toolStripBtnPaste.Image")));
             this.toolStripBtnPaste.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripBtnPaste.Name = "toolStripBtnPaste";
-            this.toolStripBtnPaste.Size = new System.Drawing.Size(28, 28);
+            this.toolStripBtnPaste.Size = new System.Drawing.Size(23, 22);
             this.toolStripBtnPaste.Text = "Paste";
             this.toolStripBtnPaste.Click += new System.EventHandler(this.toolStripBtnPaste_Click);
             // 
             // toolStripSeparator2
             // 
             this.toolStripSeparator2.Name = "toolStripSeparator2";
-            this.toolStripSeparator2.Size = new System.Drawing.Size(6, 31);
+            this.toolStripSeparator2.Size = new System.Drawing.Size(6, 25);
             // 
             // toolStripBtnUndo
             // 
@@ -559,7 +558,7 @@ namespace Intersect_Editor.Forms
             this.toolStripBtnUndo.Image = ((System.Drawing.Image)(resources.GetObject("toolStripBtnUndo.Image")));
             this.toolStripBtnUndo.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripBtnUndo.Name = "toolStripBtnUndo";
-            this.toolStripBtnUndo.Size = new System.Drawing.Size(28, 28);
+            this.toolStripBtnUndo.Size = new System.Drawing.Size(23, 22);
             this.toolStripBtnUndo.Text = "Undo";
             this.toolStripBtnUndo.Click += new System.EventHandler(this.toolStripBtnUndo_Click);
             // 
@@ -570,14 +569,14 @@ namespace Intersect_Editor.Forms
             this.toolStripBtnRedo.Image = ((System.Drawing.Image)(resources.GetObject("toolStripBtnRedo.Image")));
             this.toolStripBtnRedo.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripBtnRedo.Name = "toolStripBtnRedo";
-            this.toolStripBtnRedo.Size = new System.Drawing.Size(28, 28);
+            this.toolStripBtnRedo.Size = new System.Drawing.Size(23, 22);
             this.toolStripBtnRedo.Text = "Redo";
             this.toolStripBtnRedo.Click += new System.EventHandler(this.toolStripBtnRedo_Click);
             // 
             // toolStripSeparator3
             // 
             this.toolStripSeparator3.Name = "toolStripSeparator3";
-            this.toolStripSeparator3.Size = new System.Drawing.Size(6, 31);
+            this.toolStripSeparator3.Size = new System.Drawing.Size(6, 25);
             // 
             // toolStripBtnPen
             // 
@@ -587,7 +586,7 @@ namespace Intersect_Editor.Forms
             this.toolStripBtnPen.Image = ((System.Drawing.Image)(resources.GetObject("toolStripBtnPen.Image")));
             this.toolStripBtnPen.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripBtnPen.Name = "toolStripBtnPen";
-            this.toolStripBtnPen.Size = new System.Drawing.Size(28, 28);
+            this.toolStripBtnPen.Size = new System.Drawing.Size(23, 22);
             this.toolStripBtnPen.Text = "Single Tile";
             this.toolStripBtnPen.Click += new System.EventHandler(this.toolStripBtnPen_Click);
             // 
@@ -597,7 +596,7 @@ namespace Intersect_Editor.Forms
             this.toolStripBtnSelect.Image = ((System.Drawing.Image)(resources.GetObject("toolStripBtnSelect.Image")));
             this.toolStripBtnSelect.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripBtnSelect.Name = "toolStripBtnSelect";
-            this.toolStripBtnSelect.Size = new System.Drawing.Size(28, 28);
+            this.toolStripBtnSelect.Size = new System.Drawing.Size(23, 22);
             this.toolStripBtnSelect.Text = "Selection";
             this.toolStripBtnSelect.Click += new System.EventHandler(this.toolStripBtnSelect_Click);
             // 
@@ -607,14 +606,14 @@ namespace Intersect_Editor.Forms
             this.toolStripBtnRect.Image = ((System.Drawing.Image)(resources.GetObject("toolStripBtnRect.Image")));
             this.toolStripBtnRect.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripBtnRect.Name = "toolStripBtnRect";
-            this.toolStripBtnRect.Size = new System.Drawing.Size(28, 28);
+            this.toolStripBtnRect.Size = new System.Drawing.Size(23, 22);
             this.toolStripBtnRect.Text = "Rectangle Fill";
             this.toolStripBtnRect.Click += new System.EventHandler(this.toolStripBtnRect_Click);
             // 
             // toolStripSeparator4
             // 
             this.toolStripSeparator4.Name = "toolStripSeparator4";
-            this.toolStripSeparator4.Size = new System.Drawing.Size(6, 31);
+            this.toolStripSeparator4.Size = new System.Drawing.Size(6, 25);
             // 
             // toolStripBtnFill
             // 
@@ -622,7 +621,7 @@ namespace Intersect_Editor.Forms
             this.toolStripBtnFill.Image = ((System.Drawing.Image)(resources.GetObject("toolStripBtnFill.Image")));
             this.toolStripBtnFill.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripBtnFill.Name = "toolStripBtnFill";
-            this.toolStripBtnFill.Size = new System.Drawing.Size(28, 28);
+            this.toolStripBtnFill.Size = new System.Drawing.Size(23, 22);
             this.toolStripBtnFill.Text = "Fill Layer";
             this.toolStripBtnFill.Click += new System.EventHandler(this.toolStripBtnFill_Click);
             // 
@@ -632,7 +631,7 @@ namespace Intersect_Editor.Forms
             this.toolStripBtnErase.Image = ((System.Drawing.Image)(resources.GetObject("toolStripBtnErase.Image")));
             this.toolStripBtnErase.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripBtnErase.Name = "toolStripBtnErase";
-            this.toolStripBtnErase.Size = new System.Drawing.Size(28, 28);
+            this.toolStripBtnErase.Size = new System.Drawing.Size(23, 22);
             this.toolStripBtnErase.Text = "Clear Layer";
             this.toolStripBtnErase.Click += new System.EventHandler(this.toolStripBtnErase_Click);
             // 
@@ -643,14 +642,14 @@ namespace Intersect_Editor.Forms
             this.toolStripBtnEyeDrop.Image = ((System.Drawing.Image)(resources.GetObject("toolStripBtnEyeDrop.Image")));
             this.toolStripBtnEyeDrop.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripBtnEyeDrop.Name = "toolStripBtnEyeDrop";
-            this.toolStripBtnEyeDrop.Size = new System.Drawing.Size(28, 28);
+            this.toolStripBtnEyeDrop.Size = new System.Drawing.Size(23, 22);
             this.toolStripBtnEyeDrop.Text = "Eye Drop Tool";
             this.toolStripBtnEyeDrop.Click += new System.EventHandler(this.toolStripBtnEyeDrop_Click);
             // 
             // toolStripSeparator5
             // 
             this.toolStripSeparator5.Name = "toolStripSeparator5";
-            this.toolStripSeparator5.Size = new System.Drawing.Size(6, 31);
+            this.toolStripSeparator5.Size = new System.Drawing.Size(6, 25);
             // 
             // toolStripBtnScreenshot
             // 
@@ -658,14 +657,14 @@ namespace Intersect_Editor.Forms
             this.toolStripBtnScreenshot.Image = ((System.Drawing.Image)(resources.GetObject("toolStripBtnScreenshot.Image")));
             this.toolStripBtnScreenshot.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripBtnScreenshot.Name = "toolStripBtnScreenshot";
-            this.toolStripBtnScreenshot.Size = new System.Drawing.Size(28, 28);
+            this.toolStripBtnScreenshot.Size = new System.Drawing.Size(23, 22);
             this.toolStripBtnScreenshot.Text = "Screenshot Map";
             this.toolStripBtnScreenshot.Click += new System.EventHandler(this.toolStripBtnScreenshot_Click);
             // 
             // toolStripSeparator6
             // 
             this.toolStripSeparator6.Name = "toolStripSeparator6";
-            this.toolStripSeparator6.Size = new System.Drawing.Size(6, 31);
+            this.toolStripSeparator6.Size = new System.Drawing.Size(6, 25);
             // 
             // toolStripBtnRun
             // 
@@ -674,7 +673,7 @@ namespace Intersect_Editor.Forms
             this.toolStripBtnRun.Image = ((System.Drawing.Image)(resources.GetObject("toolStripBtnRun.Image")));
             this.toolStripBtnRun.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripBtnRun.Name = "toolStripBtnRun";
-            this.toolStripBtnRun.Size = new System.Drawing.Size(28, 28);
+            this.toolStripBtnRun.Size = new System.Drawing.Size(23, 22);
             this.toolStripBtnRun.Text = "Run Client";
             // 
             // dockLeft
@@ -683,9 +682,9 @@ namespace Intersect_Editor.Forms
             this.dockLeft.Dock = System.Windows.Forms.DockStyle.Fill;
             this.dockLeft.DockLeftPortion = 316D;
             this.dockLeft.DockRightPortion = 0.15D;
-            this.dockLeft.Location = new System.Drawing.Point(0, 55);
+            this.dockLeft.Location = new System.Drawing.Point(0, 49);
             this.dockLeft.Name = "dockLeft";
-            this.dockLeft.Size = new System.Drawing.Size(1186, 597);
+            this.dockLeft.Size = new System.Drawing.Size(1186, 603);
             dockPanelGradient1.EndColor = System.Drawing.SystemColors.ControlLight;
             dockPanelGradient1.StartColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(122)))), ((int)(((byte)(204)))));
             autoHideStripSkin1.DockStripGradient = dockPanelGradient1;

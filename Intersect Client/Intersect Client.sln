@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Intersect Client", "Interse
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Intersect Library", "..\Intersect Library\Intersect Library\Intersect Library.csproj", "{BC304B43-1F2C-4454-9EDC-48F47357CA94}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IntersectClientExtras", "..\..\Intersect-Client-Extras\IntersectClientExtras\IntersectClientExtras.csproj", "{40973F13-3339-4548-9008-FF76A0C8CD79}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -29,6 +31,14 @@ Global
 		{BC304B43-1F2C-4454-9EDC-48F47357CA94}.Release|Any CPU.Build.0 = Release|Any CPU
 		{BC304B43-1F2C-4454-9EDC-48F47357CA94}.Release|x86.ActiveCfg = Release|Any CPU
 		{BC304B43-1F2C-4454-9EDC-48F47357CA94}.Release|x86.Build.0 = Release|Any CPU
+		{40973F13-3339-4548-9008-FF76A0C8CD79}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{40973F13-3339-4548-9008-FF76A0C8CD79}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{40973F13-3339-4548-9008-FF76A0C8CD79}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{40973F13-3339-4548-9008-FF76A0C8CD79}.Debug|x86.Build.0 = Debug|Any CPU
+		{40973F13-3339-4548-9008-FF76A0C8CD79}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{40973F13-3339-4548-9008-FF76A0C8CD79}.Release|Any CPU.Build.0 = Release|Any CPU
+		{40973F13-3339-4548-9008-FF76A0C8CD79}.Release|x86.ActiveCfg = Release|Any CPU
+		{40973F13-3339-4548-9008-FF76A0C8CD79}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

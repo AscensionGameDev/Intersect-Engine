@@ -65,21 +65,23 @@ namespace Intersect_Client.Classes.UI
         {
             //TODO: Make it easier to modify skin.
             _gwenSkin = new TexturedBase(GwenRenderer, Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui,"defaultskin.png"));
+            _gwenSkin.DefaultFont = Globals.ContentManager.GetFont("arial24.xnb");
 
-            _gwenSkin.DefaultFont = Globals.ContentManager.GetFont("arial.xnb");
+            var _gameSkin = new TexturedBase(GwenRenderer, Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "defaultskin.png"));
+            _gameSkin.DefaultFont = Globals.ContentManager.GetFont("arial8.xnb");
 
 
             // Create a Canvas (it's root, on which all other GWEN controls are created)
             _menuCanvas = new Canvas(_gwenSkin);
-            _menuCanvas.Scale = 1f;
+            _menuCanvas.Scale =  1f;//(GameGraphics.Renderer.GetScreenWidth()/1920f);
             _menuCanvas.SetSize((int)(GameGraphics.Renderer.GetScreenWidth() / _menuCanvas.Scale), (int)(GameGraphics.Renderer.GetScreenHeight() / _menuCanvas.Scale));
             _menuCanvas.ShouldDrawBackground = false;
             _menuCanvas.BackgroundColor = Color.FromArgb(255, 150, 170, 170);
             _menuCanvas.KeyboardInputEnabled = true;
 
             // Create the game Canvas (it's root, on which all other GWEN controls are created)
-            _gameCanvas = new Canvas(_gwenSkin);
-            _gameCanvas.Scale = 1f;
+            _gameCanvas = new Canvas(_gameSkin);
+            //_gameCanvas.Scale = (GameGraphics.Renderer.GetScreenWidth() / 1920f);
             _gameCanvas.SetSize((int)(GameGraphics.Renderer.GetScreenWidth() / _gameCanvas.Scale), (int)(GameGraphics.Renderer.GetScreenHeight() / _gameCanvas.Scale));
             _gameCanvas.ShouldDrawBackground = false;
             _gameCanvas.BackgroundColor = Color.FromArgb(255, 150, 170, 170);

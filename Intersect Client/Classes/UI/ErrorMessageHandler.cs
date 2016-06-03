@@ -27,8 +27,12 @@
 
 using System;
 using System.Collections.Generic;
+using IntersectClientExtras.GenericClasses;
+using IntersectClientExtras.Graphics;
 using IntersectClientExtras.Gwen.Control;
 using Intersect_Client.Classes.Core;
+using Intersect_Client.Classes.General;
+using Intersect_Client_MonoGame.Classes.SFML.Graphics;
 
 namespace Intersect_Client.Classes.UI
 {
@@ -75,6 +79,26 @@ namespace Intersect_Client.Classes.UI
             menuBox = new MessageBox(_menuCanvas, error, header);
             gameBox.Resized += ErrorBox_Resized;
             menuBox.Resized += ErrorBox_Resized;
+            float scale = 1f;
+            for (scale = 1f; scale > 0; scale -= .05f)
+            {
+                if (GameGraphics.Renderer.MeasureText(error, ((MonoFont)_menuCanvas.Skin.DefaultFont), scale).X < 700)
+                {
+                    break;
+                }
+            }
+            menuBox.SetTextScale(scale);
+            for (scale = 1f; scale > 0; scale -= .05f)
+            {
+                if (GameGraphics.Renderer.MeasureText(error, ((MonoFont)_gameCanvas.Skin.DefaultFont), scale).X < 700)
+                {
+                    break;
+                }
+            }
+            gameBox.SetTextScale(scale);
+            menuBox.SetSize(800, 200);
+            menuBox.MaximumSize = new Point(800, 200);
+            menuBox.MakeModal(true);
         }
         public bool Update()
         {

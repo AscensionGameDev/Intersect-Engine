@@ -55,20 +55,12 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             if (rdoPlayerSwitch.Checked)
             {
                 cmbSetSwitch.Items.AddRange(Database.GetGameObjectList(GameObject.PlayerSwitch));
-                switchCount = PlayerSwitchBase.ObjectCount();
+                cmbSetSwitch.SelectedIndex = Database.GameObjectListIndex(GameObject.PlayerSwitch, _myCommand.Ints[1]);
             }
             else
             {
                 cmbSetSwitch.Items.AddRange(Database.GetGameObjectList(GameObject.ServerSwitch));
-                switchCount = ServerSwitchBase.ObjectCount();
-            }
-            if (_myCommand.Ints[1] >= 0 && _myCommand.Ints[1] < switchCount)
-            {
-                cmbSetSwitch.SelectedIndex = _myCommand.Ints[1];
-            }
-            else
-            {
-                if (cmbSetSwitch.Items.Count > 0) cmbSetSwitch.SelectedIndex = 0;
+                cmbSetSwitch.SelectedIndex = Database.GameObjectListIndex(GameObject.ServerSwitch, _myCommand.Ints[1]);
             }
             cmbSetSwitchVal.SelectedIndex = _myCommand.Ints[2];
         }

@@ -70,6 +70,11 @@ namespace Intersect_Editor.Forms
         private void frmEvent_FormClosing(object sender, FormClosingEventArgs e)
         {
             if (e.CloseReason != CloseReason.UserClosing) return;
+            if (btnSave.Enabled == false)
+            {
+                e.Cancel = true;
+                return;
+            }
             if (MessageBox.Show(@"Do you want to save changes to this event?", @"Save Event?", MessageBoxButtons.YesNo) == DialogResult.Yes)
             {
                 btnSave_Click(null, null);
@@ -850,6 +855,10 @@ namespace Intersect_Editor.Forms
             var tmpCommand = new EventCommand();
             grpNewCommands.Hide();
             tmpCommand.Type = (EventCommandType)lstCommands.SelectedItems[0].Index + 1;
+            if (tmpCommand.Type == EventCommandType.SetSwitch || tmpCommand.Type == EventCommandType.SetSelfSwitch)
+            {
+                tmpCommand.Ints[2] = 1;
+            }
             if (_isInsert)
             {
                 _commandProperties[_currentCommand].MyList.Commands.Insert(_commandProperties[_currentCommand].MyList.Commands.IndexOf(_commandProperties[_currentCommand].Cmd), tmpCommand);
@@ -1006,6 +1015,7 @@ namespace Intersect_Editor.Forms
             else //Added a command with no editor
             {
                 ListPageCommands();
+                EnableButtons();
             }
         }
 
@@ -1030,7 +1040,7 @@ namespace Intersect_Editor.Forms
         /// </summary>
         public void CancelCommandEdit(bool moveRoute = false)
         {
-            if (_currentCommand > -1 && _commandProperties[_currentCommand].MyList.Commands.Count > _currentCommand)
+            if (_currentCommand > -1 && _commandProperties.Count > _currentCommand)
             {
                 if (!_isEdit)
                 {
@@ -1243,11 +1253,13 @@ namespace Intersect_Editor.Forms
             if (_commandProperties[_currentCommand].Type == EventCommandType.Null)
             {
                 grpNewCommands.Show();
+                DisableButtons();
                 _isInsert = false;
             }
             else
             {
                 grpNewCommands.Show();
+                DisableButtons();
                 _isInsert = true;
             }
         }
@@ -1432,6 +1444,7 @@ namespace Intersect_Editor.Forms
                 if (grpNewCommands.Visible)
                 {
                     grpNewCommands.Hide();
+                    EnableButtons();
                 }
             }
         }
@@ -1477,6 +1490,15 @@ namespace Intersect_Editor.Forms
         private void chkIsGlobal_CheckedChanged(object sender, EventArgs e)
         {
             MyEvent.IsGlobal = Convert.ToByte(chkIsGlobal.Checked);
+        }
+
+        private void lblCloseCommands_Click(object sender, EventArgs e)
+        {
+            if (grpNewCommands.Visible)
+            {
+                grpNewCommands.Hide();
+                EnableButtons();
+            }
         }
     }
 

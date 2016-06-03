@@ -95,7 +95,7 @@ namespace Intersect_Client.Classes.UI.Game
             _closeButton.Clicked += CloseBtn_Clicked;
 
             //Assign Window References
-            _optionsWindow = new OptionsWindow(_gameCanvas,true);
+            _optionsWindow = new OptionsWindow(_gameCanvas,null,null);
             _inventoryWindow = new InventoryWindow(_gameCanvas);
             _spellsWindow = new SpellWindow(_gameCanvas);
             _characterWindow = new CharacterWindow(_gameCanvas);

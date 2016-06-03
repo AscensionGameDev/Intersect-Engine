@@ -21,6 +21,7 @@
 */
 #define websockets
 using System;
+using System.IO;
 using System.Reflection;
 using System.Threading;
 using Intersect_Library;
@@ -35,6 +36,7 @@ namespace Intersect_Server.Classes
 
         public static void Main(string[] args)
         {
+            AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
             Thread logicThread;
             Console.WriteLine(@"  _____       _                          _   ");
             Console.WriteLine(@" |_   _|     | |                        | |  ");
@@ -64,7 +66,8 @@ namespace Intersect_Server.Classes
             Console.WriteLine("Server Started. Using Port #" + Options.ServerPort);
 #if websockets
             WebSocketServer.Init();
-            Console.WriteLine("Websocket Listener started for Unity WebGL Clients. Using Port #" + (Options.ServerPort + 1));
+            Console.WriteLine("Websocket Listener started for Unity WebGL Clients. Using Port #" +
+                              (Options.ServerPort + 1));
 #endif
             logicThread = new Thread(() => ServerLoop.RunServerLoop());
             logicThread.Start();
@@ -84,7 +87,8 @@ namespace Intersect_Server.Classes
                             {
                                 case "/?":
                                     Console.WriteLine(@"    Usage: power [login] [level] [/?]");
-                                    Console.WriteLine(@"    Desc: Sets the power or access of a selected account. Power 0 is regular user. Power 1 is in-game moderator. Power 2 is owner/designer and allows editor access.");
+                                    Console.WriteLine(
+                                        @"    Desc: Sets the power or access of a selected account. Power 0 is regular user. Power 1 is in-game moderator. Power 2 is owner/designer and allows editor access.");
                                     break;
                                 default:
                                     //Try to admin the player
@@ -98,24 +102,28 @@ namespace Intersect_Server.Classes
                                             }
                                             else
                                             {
-                                                Console.WriteLine("    Error: Account " + commandsplit[1] + " was not found!");
+                                                Console.WriteLine("    Error: Account " + commandsplit[1] +
+                                                                  " was not found!");
                                             }
                                         }
                                         catch (Exception)
                                         {
-                                            Console.WriteLine(@"    Parse Error: Parameter could not be read. Type " + commandsplit[0] + " /? for usage information.");
+                                            Console.WriteLine(@"    Parse Error: Parameter could not be read. Type " +
+                                                              commandsplit[0] + " /? for usage information.");
                                         }
                                     }
                                     else
                                     {
-                                        Console.WriteLine(@"    Syntax Error: Expected parameter not found. Type " + commandsplit[0] + " /? for usage information.");
+                                        Console.WriteLine(@"    Syntax Error: Expected parameter not found. Type " +
+                                                          commandsplit[0] + " /? for usage information.");
                                     }
                                     break;
                             }
                         }
                         else
                         {
-                            Console.WriteLine(@"    Syntax Error: Expected parameter not found. Type " + commandsplit[0] + " /? for usage information.");
+                            Console.WriteLine(@"    Syntax Error: Expected parameter not found. Type " + commandsplit[0] +
+                                              " /? for usage information.");
                         }
                         break;
                     case "cps":
@@ -125,7 +133,8 @@ namespace Intersect_Server.Classes
                             {
                                 case "/?":
                                     Console.WriteLine(@"    Usage: cps [status] [lock] [unlock] [/?]");
-                                    Console.WriteLine(@"    Desc: Prints the current CPS. The status flag tells if the server loop is locked or unlocked. The lock flag locks the cps while the unlock flag unlocks it.");
+                                    Console.WriteLine(
+                                        @"    Desc: Prints the current CPS. The status flag tells if the server loop is locked or unlocked. The lock flag locks the cps while the unlock flag unlocks it.");
                                     break;
                                 case "lock":
                                     Globals.CPSLock = true;
@@ -163,7 +172,8 @@ namespace Intersect_Server.Classes
                                     Console.WriteLine(@"    Desc: Closes down the server.");
                                     break;
                                 default:
-                                    Console.WriteLine(@"    Syntax Error: Parameter not recoginized. Type " + commandsplit[0] + " /? for usage information.");
+                                    Console.WriteLine(@"    Syntax Error: Parameter not recoginized. Type " +
+                                                      commandsplit[0] + " /? for usage information.");
                                     break;
                             }
                         }
@@ -183,7 +193,8 @@ namespace Intersect_Server.Classes
                                     Console.WriteLine(@"    Desc: Displays the list of available commands.");
                                     break;
                                 default:
-                                    Console.WriteLine(@"    Syntax Error: Parameter not recoginized. Type " + commandsplit[0] + " /? for usage information.");
+                                    Console.WriteLine(@"    Syntax Error: Parameter not recoginized. Type " +
+                                                      commandsplit[0] + " /? for usage information.");
                                     break;
                             }
                         }
@@ -194,7 +205,8 @@ namespace Intersect_Server.Classes
                             Console.WriteLine(@"    exit    -   closes the server");
                             Console.WriteLine(@"    help    -   displays list of available commands");
                             Console.WriteLine(@"    power    -   sets the administrative access of an account");
-                            Console.WriteLine(@"    Type in any command followed by /? for parameters and usage information.");
+                            Console.WriteLine(
+                                @"    Type in any command followed by /? for parameters and usage information.");
                         }
                         break;
                     default:
@@ -206,6 +218,22 @@ namespace Intersect_Server.Classes
             }
         }
 
-
+        //Really basic error handler for debugging purposes
+        private static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
+        {
+            if (!Directory.Exists("resources")) Directory.CreateDirectory("resources");
+            using (StreamWriter writer = new StreamWriter("resources/errors.log", true))
+            {
+                writer.WriteLine("Message :" + ((Exception)e.ExceptionObject).Message + "<br/>" + Environment.NewLine +
+                                 "StackTrace :" + ((Exception)e.ExceptionObject).StackTrace +
+                                 "" + Environment.NewLine + "Date :" + DateTime.Now.ToString());
+                writer.WriteLine(Environment.NewLine +
+                                 "-----------------------------------------------------------------------------" +
+                                 Environment.NewLine);
+            }
+            Console.WriteLine("The Intersect server has encountered an error and must close. Error information can be found in resources/errors.log. Press any key to exit.");
+            Console.ReadKey();
+            Environment.Exit(-1);
+        }
     }
 }

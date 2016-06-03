@@ -419,11 +419,11 @@ namespace Intersect_Client.Classes.Entities
             {
                 if (x < 0)
                 {
-                    tmpX = (Options.MapWidth - 1) - (x * -1);
+                    tmpX = (Options.MapWidth) - (x * -1);
                     tmpY = y;
                     if (y < 0)
                     {
-                        tmpY = (Options.MapHeight - 1) - (y * -1);
+                        tmpY = (Options.MapHeight) - (y * -1);
                         if (Globals.LocalMaps[tmpI - 4] > -1)
                         {
                             tmpMap = Globals.LocalMaps[tmpI - 4];
@@ -435,7 +435,7 @@ namespace Intersect_Client.Classes.Entities
                     }
                     else if (y > (Options.MapHeight - 1))
                     {
-                        tmpY = y - (Options.MapHeight - 1);
+                        tmpY = y - (Options.MapHeight);
                         if (Globals.LocalMaps[tmpI + 2] > -1)
                         {
                             tmpMap = Globals.LocalMaps[tmpI + 2];
@@ -459,11 +459,11 @@ namespace Intersect_Client.Classes.Entities
                 }
                 else if (x > (Options.MapWidth - 1))
                 {
-                    tmpX = x - (Options.MapWidth - 1);
+                    tmpX = x - (Options.MapWidth);
                     tmpY = y;
                     if (y < 0)
                     {
-                        tmpY = (Options.MapHeight - 1) - (y * -1);
+                        tmpY = (Options.MapHeight) - (y * -1);
                         if (Globals.LocalMaps[tmpI - 2] > -1)
                         {
                             tmpMap = Globals.LocalMaps[tmpI - 2];
@@ -475,7 +475,7 @@ namespace Intersect_Client.Classes.Entities
                     }
                     else if (y > (Options.MapHeight - 1))
                     {
-                        tmpY = y - (Options.MapHeight - 1);
+                        tmpY = y - (Options.MapHeight);
                         if (Globals.LocalMaps[tmpI + 4] > -1)
                         {
                             tmpMap = Globals.LocalMaps[tmpI + 4];
@@ -500,7 +500,7 @@ namespace Intersect_Client.Classes.Entities
                 else if (y < 0)
                 {
                     tmpX = x;
-                    tmpY = (Options.MapHeight - 1) - (y * -1);
+                    tmpY = (Options.MapHeight) - (y * -1);
                     if (Globals.LocalMaps[tmpI - 3] > -1)
                     {
                         tmpMap = Globals.LocalMaps[tmpI - 3];
@@ -513,7 +513,7 @@ namespace Intersect_Client.Classes.Entities
                 else if (y > (Options.MapHeight - 1))
                 {
                     tmpX = x;
-                    tmpY = y - (Options.MapHeight - 1);
+                    tmpY = y - (Options.MapHeight);
                     if (Globals.LocalMaps[tmpI + 3] > -1)
                     {
                         tmpMap = Globals.LocalMaps[tmpI + 3];
@@ -536,6 +536,9 @@ namespace Intersect_Client.Classes.Entities
                         return false;
                     }
                 }
+                x = tmpX;
+                y = tmpY;
+                map = tmpMap;
                 return true;
             }
             catch

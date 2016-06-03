@@ -733,6 +733,7 @@ namespace Intersect_Editor.Forms
                     }
                     Globals.MainForm.EnterMap(newMap);
                 }
+                return;
             }
 
             //See if we should edit an event, light, npc, etc

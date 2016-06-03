@@ -25,7 +25,10 @@
     SOFTWARE.
 */
 
+using IntersectClientExtras.File_Management;
 using IntersectClientExtras.Gwen.Control;
+using Intersect_Client.Classes.General;
+using Intersect_Library;
 
 namespace Intersect_Client.Classes.UI.Menu
 {
@@ -52,7 +55,7 @@ namespace Intersect_Client.Classes.UI.Menu
             if (shouldReset)
             {
                 shouldReset = false;
-                _mainMenu.Reset();
+                
             }
             _menuCanvas.RenderCanvas();
         }

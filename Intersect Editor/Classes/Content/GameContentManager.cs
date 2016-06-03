@@ -328,7 +328,7 @@ namespace Intersect_Editor.Classes.Core
             {
                 string filename = items[i].Replace("resources/" + "sounds" + "\\", "").ToLower();
                 SoundEffect effect;
-                using (var fileStream = new FileStream("resources/" + "sounds" + "/" + filename, FileMode.Open))
+                using (var fileStream = new FileStream("resources/" + "sounds" + "/" + filename, FileMode.Open, FileAccess.Read,FileShare.ReadWrite))
                 {
                     effect = SoundEffect.FromStream(fileStream);
                 }

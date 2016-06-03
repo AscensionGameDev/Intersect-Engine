@@ -59,7 +59,7 @@ namespace Intersect_MonoGameDx.Classes.SFML.Audio
         public override void SetVolume(int volume, bool isMusic = false)
         {
             _volume = volume;
-            MediaPlayer.Volume = (_volume * (float)(Globals.Database.MusicVolume / 100f) / 100f);
+            MediaPlayer.Volume = (_volume*(float) (Globals.Database.MusicVolume/100f)/100f);
         }
 
         public override int GetVolume()

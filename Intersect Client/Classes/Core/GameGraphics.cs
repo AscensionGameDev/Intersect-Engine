@@ -101,7 +101,7 @@ namespace Intersect_Client.Classes.Core
             Renderer.Init();
             contentManager = Globals.ContentManager;
             contentManager.LoadAll();
-            GameFont = contentManager.GetFont("arial.xnb");
+            GameFont = contentManager.GetFont("arial8.xnb");
         }
         public static void InitInGame()
         {
@@ -127,11 +127,11 @@ namespace Intersect_Client.Classes.Core
 
         public static void DrawMenu()
         {
-            GameTexture imageTex = contentManager.GetTexture(GameContentManager.TextureType.Image,
+            GameTexture imageTex = contentManager.GetTexture(GameContentManager.TextureType.Gui,
                 Globals.Database.MenuBG);
             if (imageTex != null)
             {
-                DrawFullScreenTextureStretched(imageTex);
+                DrawFullScreenTexture(imageTex);
             }
         }
 

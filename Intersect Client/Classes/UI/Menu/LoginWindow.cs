@@ -28,6 +28,9 @@
 using System;
 using System.Security.Cryptography;
 using System.Text;
+using IntersectClientExtras.File_Management;
+using IntersectClientExtras.GenericClasses;
+using IntersectClientExtras.Gwen;
 using IntersectClientExtras.Gwen.Control;
 using IntersectClientExtras.Gwen.Control.EventArguments;
 using Intersect_Client.Classes.Core;
@@ -37,11 +40,18 @@ using Intersect_Client.Classes.Networking;
 
 namespace Intersect_Client.Classes.UI.Menu
 {
-    public class LoginControls
+    public class LoginWindow
     {
         //Controls
+        private ImagePanel _menuPanel;
+        private Label _menuHeader;
+
+        //Controls
+        private ImagePanel _usernameBackground;
         private Label _usernameLabel;
         private TextBox _usernameTextbox;
+
+        private ImagePanel _passwordBackground;
         private Label _passwordLabel;
         private TextBoxPassword _passwordTextbox;
         private Button _loginBtn;
@@ -55,59 +65,105 @@ namespace Intersect_Client.Classes.UI.Menu
         private MainMenu _mainMenu;
 
         //Init
-        public LoginControls(WindowControl _parent, MainMenu mainMenu)
+        public LoginWindow(Canvas parent, MainMenu mainMenu, ImagePanel parentPanel)
         {
             //Assign References
             _mainMenu = mainMenu;
 
+            //Main Menu Window
+            _menuPanel = new ImagePanel(parent);
+            _menuPanel.Texture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "uibody.png");
+            _menuPanel.SetSize(512, 393);
+            _menuPanel.SetPosition(parentPanel.X, parentPanel.Y);
+            _menuPanel.IsHidden = true;
+
+            //Menu Header
+            _menuHeader = new Label(_menuPanel);
+            _menuHeader.AutoSizeToContents = false;
+            _menuHeader.SetText("Login");
+            _menuHeader.SetSize(_menuPanel.Width, _menuPanel.Height);
+            _menuHeader.Alignment = Pos.CenterH;
+            _menuHeader.TextColorOverride = new Color(255, 200, 200, 200);
+
+            _usernameBackground = new ImagePanel(_menuPanel);
+            _usernameBackground.Texture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui,"inputfield.png");
+            _usernameBackground.SetSize(_usernameBackground.Texture.GetWidth(), _usernameBackground.Texture.GetHeight());
+            _usernameBackground.SetPosition(_menuPanel.Width/2 - _usernameBackground.Width/2, 44);
+
             //Login Username Label
-            _usernameLabel = new Label(_parent);
+            _usernameLabel = new Label(_usernameBackground);
             _usernameLabel.SetText("Username:");
-            _usernameLabel.SetPosition(_parent.Width / 2 - 120 / 2, 12);
-            _usernameLabel.IsHidden = true;
+            _usernameLabel.AutoSizeToContents = false;
+            _usernameLabel.SetSize(176, 55);
+            _usernameLabel.Alignment = Pos.Center;
+            _usernameLabel.TextColorOverride = new Color(255,30,30,30);
 
             //Login Username Textbox
-            _usernameTextbox = new TextBox(_parent);
-            _usernameTextbox.SetPosition(_parent.Width / 2 - 120 / 2, 24);
-            _usernameTextbox.SetSize(120, 14);
-            _usernameTextbox.IsHidden = true;
+            _usernameTextbox = new TextBox(_usernameBackground);
+            _usernameTextbox.SetPosition(190,8);
+            _usernameTextbox.SetSize(248, 38);
             _usernameTextbox.SubmitPressed += UsernameTextbox_SubmitPressed;
+            _usernameTextbox.ShouldDrawBackground = false;
+            _usernameTextbox.TextColorOverride = new Color(255,220,220,220);
+
+            _passwordBackground = new ImagePanel(_menuPanel);
+            _passwordBackground.Texture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "inputfield.png");
+            _passwordBackground.SetSize(_passwordBackground.Texture.GetWidth(), _passwordBackground.Texture.GetHeight());
+            _passwordBackground.SetPosition(_menuPanel.Width / 2 - _passwordBackground.Width / 2, _usernameBackground.Bottom + 16);
 
             //Login Password Label
-            _passwordLabel = new Label(_parent);
+            _passwordLabel = new Label(_passwordBackground);
             _passwordLabel.SetText("Password:");
-            _passwordLabel.SetPosition(_parent.Width / 2 - 120 / 2, 42);
-            _passwordLabel.IsHidden = true;
+            _passwordLabel.AutoSizeToContents = false;
+            _passwordLabel.SetSize(176, 55);
+            _passwordLabel.Alignment = Pos.Center;
+            _passwordLabel.TextColorOverride = new Color(255, 30, 30, 30);
 
             //Login Password Textbox
-            _passwordTextbox = new TextBoxPassword(_parent);
-            _passwordTextbox.SetPosition(_parent.Width / 2 - 120 / 2, 54);
-            _passwordTextbox.SetSize(120, 14);
-            _passwordTextbox.IsHidden = true;
+            _passwordTextbox = new TextBoxPassword(_passwordBackground);
             _passwordTextbox.SubmitPressed += PasswordTextbox_SubmitPressed;
             _passwordTextbox.TextChanged += _passwordTextbox_TextChanged;
+            _passwordTextbox.SetPosition(190, 8);
+            _passwordTextbox.SetSize(248, 38);
+            _passwordTextbox.ShouldDrawBackground = false;
+            _passwordTextbox.TextColorOverride = new Color(255, 220, 220, 220);
 
             //Login Save Pass Checkbox
-            _savePassChk = new LabeledCheckBox(_parent) { Text = "Save Password" };
-            _savePassChk.SetSize(120, 14);
-            _savePassChk.SetPosition(_parent.Width / 2 - 120 / 2, 72);
-            _savePassChk.IsHidden = true;
+            _savePassChk = new LabeledCheckBox(_menuPanel) { Text = "Save Password" };
+            _savePassChk.SetSize(300, 36);
+            _savePassChk.SetPosition(_passwordBackground.X + 24,_passwordBackground.Bottom + 16);
+            _savePassChk.SetImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "checkboxempty.png"), CheckBox.ControlState.Normal);
+            _savePassChk.SetImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "checkboxfull.png"), CheckBox.ControlState.CheckedNormal);
+            _savePassChk.SetCheckSize(32, 32);
+            _savePassChk.SetLabelDistance(12);
+            _savePassChk.SetTextColor(new Color(255, 200, 200, 200), Label.ControlState.Normal);
+            _savePassChk.SetTextColor(new Color(255, 140, 140, 140), Label.ControlState.Hovered);
 
             //Login - Send Login Button
-            _loginBtn = new Button(_parent);
+            _loginBtn = new Button(_menuPanel);
             _loginBtn.SetText("Login");
-            _loginBtn.SetPosition(_parent.Width / 2 - 120 / 2, 94);
-            _loginBtn.SetSize(56, 32);
-            _loginBtn.IsHidden = true;
             _loginBtn.Clicked += LoginBtn_Clicked;
+            _loginBtn.SetPosition(_usernameBackground.X, _savePassChk.Bottom + 16);
+            _loginBtn.SetSize(211, 61);
+            _loginBtn.SetImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "buttonnormal.png"), Button.ControlState.Normal);
+            _loginBtn.SetImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "buttonhover.png"), Button.ControlState.Hovered);
+            _loginBtn.SetImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "buttonclicked.png"), Button.ControlState.Clicked);
+            _loginBtn.SetTextColor(new Color(255, 30, 30, 30), Label.ControlState.Normal);
+            _loginBtn.SetTextColor(new Color(255, 20, 20, 20), Label.ControlState.Hovered);
+            _loginBtn.SetTextColor(new Color(255, 215, 215, 215), Label.ControlState.Clicked);
 
             //Login - Back Button
-            _backBtn = new Button(_parent);
+            _backBtn = new Button(_menuPanel);
             _backBtn.SetText("Back");
-            _backBtn.SetPosition(_parent.Width / 2 + 4, 94);
-            _backBtn.SetSize(56, 32);
-            _backBtn.IsHidden = true;
+            _backBtn.SetSize(211, 61);
+            _backBtn.SetPosition(_usernameBackground.Right - _backBtn.Width,_savePassChk.Bottom + 16);
             _backBtn.Clicked += BackBtn_Clicked;
+            _backBtn.SetImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "buttonnormal.png"), Button.ControlState.Normal);
+            _backBtn.SetImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "buttonhover.png"), Button.ControlState.Hovered);
+            _backBtn.SetImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "buttonclicked.png"), Button.ControlState.Clicked);
+            _backBtn.SetTextColor(new Color(255, 30, 30, 30), Label.ControlState.Normal);
+            _backBtn.SetTextColor(new Color(255, 20, 20, 20), Label.ControlState.Hovered);
+            _backBtn.SetTextColor(new Color(255, 215, 215, 215), Label.ControlState.Clicked);
 
             LoadCredentials();
         }
@@ -120,23 +176,11 @@ namespace Intersect_Client.Classes.UI.Menu
         }
         public void Hide()
         {
-            _usernameLabel.Hide();
-            _usernameTextbox.Hide();
-            _passwordLabel.Hide();
-            _passwordTextbox.Hide();
-            _savePassChk.Hide();
-            _loginBtn.Hide();
-            _backBtn.Hide();
+            _menuPanel.IsHidden = true;
         }
         public void Show()
         {
-            _usernameLabel.Show();
-            _usernameTextbox.Show();
-            _passwordLabel.Show();
-            _passwordTextbox.Show();
-            _savePassChk.Show();
-            _loginBtn.Show();
-            _backBtn.Show();
+            _menuPanel.IsHidden = false;
         }
 
         //Input Handlers
@@ -146,7 +190,8 @@ namespace Intersect_Client.Classes.UI.Menu
         }
         void BackBtn_Clicked(Base sender, ClickedEventArgs arguments)
         {
-            _mainMenu.Reset();
+            Hide();
+            _mainMenu.Show();
         }
         void UsernameTextbox_SubmitPressed(Base sender, EventArgs arguments)
         {
@@ -190,14 +235,14 @@ namespace Intersect_Client.Classes.UI.Menu
                         else
                         {
                             Gui.MsgboxErrors.Add(
-                                "Password is invalid. Please user alphanumeric characters with a length between 4 and 20");
+                                "Password is invalid. Please use alphanumeric characters with a length between 4 and 20");
                         }
                     }
                 }
                 else
                 {
                     Gui.MsgboxErrors.Add(
-                        "Username is invalid. Please user alphanumeric characters with a length between 2 and 20");
+                        "Username is invalid. Please use alphanumeric characters with a length between 2 and 20");
                 }
             }
             else

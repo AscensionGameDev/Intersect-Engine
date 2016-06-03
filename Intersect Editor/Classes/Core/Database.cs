@@ -50,7 +50,8 @@ namespace Intersect_Editor.Classes
                     writer.WriteElementString("Port", "4500");
                     writer.WriteElementString("RenderCache", "true"); //Not used by the editor, but created here just in case we ever want to share a resource folder with a client.
                     writer.WriteElementString("MenuBGM", ""); //Not used by the editor, but created here just in case we ever want to share a resource folder with a client.
-                    writer.WriteElementString("MenuBG", ""); //Not used by the editor, but created here just in case we ever want to share a resource folder with a client.
+                    writer.WriteElementString("MenuBG", "background.png"); //Not used by the editor, but created here just in case we ever want to share a resource folder with a client.
+                    writer.WriteElementString("Logo", "logo.png"); //Not used by the editor, but created here just in case we ever want to share a resource folder with a client.
                     writer.WriteElementString("IntroBG", ""); //Not used by the editor, but created here just in case we ever want to share a resource folder with a client.
                     writer.WriteEndElement();
                     writer.WriteEndDocument();

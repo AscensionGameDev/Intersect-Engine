@@ -75,8 +75,7 @@ namespace Intersect_Server.Classes.Entities
             {
                 if (Globals.Rand.Next(1, 101) <= MyBase.Drops[n].Chance)
                 {
-                    Inventory[Z].ItemNum = MyBase.Drops[n].ItemNum;
-                    Inventory[Z].ItemVal = MyBase.Drops[n].Amount;
+                    Inventory.Add(new MapItemInstance(MyBase.Drops[n].ItemNum,MyBase.Drops[n].Amount));
                     Z = Z + 1;
                 }
             }

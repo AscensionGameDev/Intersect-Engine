@@ -241,7 +241,7 @@ namespace Intersect_Server.Classes.Entities
         private bool CheckLevelUp()
         {
             int levelCount = 0;
-            while (Experience > GetExperienceToNextLevel() && GetExperienceToNextLevel() > 0)
+            while (Experience >= GetExperienceToNextLevel() && GetExperienceToNextLevel() > 0)
             {
                 Experience -= GetExperienceToNextLevel();
                 levelCount++;

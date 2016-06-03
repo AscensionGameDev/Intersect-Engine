@@ -1,4 +1,7 @@
-﻿using IntersectClientExtras.Gwen.Input;
+﻿using System;
+using System.IO;
+using System.Windows.Forms;
+using IntersectClientExtras.Gwen.Input;
 using IntersectClientExtras.Gwen.Renderer;
 using Intersect_Client.Classes.Bridges_and_Interfaces.SFML.Database;
 using Intersect_Client.Classes.Bridges_and_Interfaces.SFML.File_Management;
@@ -23,6 +26,8 @@ namespace Intersect_Client_MonoGame
 
         public Intersect()
         {
+            //Setup an error handler
+            AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "";
             IsMouseVisible = true;
@@ -39,6 +44,24 @@ namespace Intersect_Client_MonoGame
             //We remove the border and add it back in draw to the window size will be forced to update.
             //This is to bypass a MonoGame issue where the client viewport was not updating until the window was dragged.
             Window.IsBorderless = true;
+        }
+
+        //Really basic error handler for debugging purposes
+        private static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
+        {
+            if (!Directory.Exists("resources")) Directory.CreateDirectory("resources");
+            using (StreamWriter writer = new StreamWriter("resources/errors.log", true))
+            {
+                writer.WriteLine("Message :" + ((Exception)e.ExceptionObject).Message + "<br/>" + Environment.NewLine +
+                                 "StackTrace :" + ((Exception)e.ExceptionObject).StackTrace +
+                                 "" + Environment.NewLine + "Date :" + DateTime.Now.ToString());
+                writer.WriteLine(Environment.NewLine +
+                                 "-----------------------------------------------------------------------------" +
+                                 Environment.NewLine);
+            }
+            MessageBox.Show(
+                "The Intersect client has encountered an error and must close. Error information can be found in resources/errors.log");
+            Environment.Exit(-1);
         }
 
         /// <summary>

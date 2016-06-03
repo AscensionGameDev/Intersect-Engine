@@ -36,6 +36,7 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             _myCommand = refCommand;
             _eventEditor = editor;
             cmbSound.Items.Clear();
+            cmbSound.Items.Add("None");
             cmbSound.Items.AddRange(GameContentManager.GetSoundNames());
             if (cmbSound.Items.IndexOf(_myCommand.Strs[0]) > -1)
             {

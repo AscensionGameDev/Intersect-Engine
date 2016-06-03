@@ -42,6 +42,7 @@ namespace Intersect_Client.Classes.UI.Game
         private ListBox _chatboxMessages;
         private TextBox _chatboxInput;
         private Button _chatboxSendButton;
+        private bool _receivedMessage = false;
 
         //Init
         public Chatbox(Canvas _gameCanvas)
@@ -77,6 +78,12 @@ namespace Intersect_Client.Classes.UI.Game
         //Update
         public void Update()
         {
+            if (_receivedMessage)
+            {
+                _chatboxMessages.ScrollToBottom();
+                _receivedMessage = false;
+            }
+
             if (Globals.ChatboxContent.Count > 0)
             {
                 foreach (var t1 in Globals.ChatboxContent)
@@ -87,6 +94,7 @@ namespace Intersect_Client.Classes.UI.Game
                         var rw = _chatboxMessages.AddRow(t);
                         rw.SetTextColor(t1.Value);
                         rw.MouseInputEnabled = false;
+                        _receivedMessage = true;
 
                         while (_chatboxMessages.RowCount > 20)
                         {
@@ -96,10 +104,6 @@ namespace Intersect_Client.Classes.UI.Game
                 }
 
                 Globals.ChatboxContent.Clear();
-                _chatboxMessages.Redraw();
-                _chatboxMessages.Think();
-                _chatboxMessages.ScrollToBottom();
-
             }
         }
 
