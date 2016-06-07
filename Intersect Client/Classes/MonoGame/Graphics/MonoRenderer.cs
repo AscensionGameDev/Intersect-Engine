@@ -88,7 +88,7 @@ namespace Intersect_Client_MonoGame.Classes.SFML.Graphics
             _screenHeight = height;
             _graphics.PreferredBackBufferWidth = width;
             _graphics.PreferredBackBufferHeight = height;
-            _graphics.IsFullScreen = Globals.Database.FullScreen;
+            //_graphics.IsFullScreen = Globals.Database.FullScreen;
             _graphics.SynchronizeWithVerticalRetrace = (Globals.Database.TargetFps == 0);
             _graphics.ApplyChanges();
 

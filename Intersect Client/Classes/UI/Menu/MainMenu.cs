@@ -74,6 +74,7 @@ namespace Intersect_Client.Classes.UI.Menu
             _menuHeader.AutoSizeToContents = false;
             _menuHeader.SetText("Main Menu");
             _menuHeader.SetSize(_menuPanel.Width, _menuPanel.Height);
+            _menuHeader.Font = Globals.ContentManager.GetFont("arial24.xnb");
             _menuHeader.Alignment = Pos.CenterH;
             _menuHeader.TextColorOverride = new Color(255,200,200,200);
 
@@ -101,6 +102,7 @@ namespace Intersect_Client.Classes.UI.Menu
             //Login Button
             _loginButton = new Button(_menuPanel);
             _loginButton.SetText("Login");
+            _loginButton.Font = Globals.ContentManager.GetFont("arial20.xnb");
             _loginButton.SetSize(211, 61);
             _loginButton.SetPosition(_menuPanel.Width / 2 - _loginButton.Width / 2, 60);
             _loginButton.Clicked += LoginButton_Clicked;
@@ -114,6 +116,7 @@ namespace Intersect_Client.Classes.UI.Menu
             //Register Button
             _registerButton = new Button(_menuPanel);
             _registerButton.SetText("Register");
+            _registerButton.Font = Globals.ContentManager.GetFont("arial20.xnb");
             _registerButton.SetSize(211, 61);
             _registerButton.SetPosition(_menuPanel.Width / 2 - _registerButton.Width / 2, 130);
             _registerButton.Clicked += RegisterButton_Clicked;
@@ -128,6 +131,7 @@ namespace Intersect_Client.Classes.UI.Menu
             //Exit Button
             _exitButton = new Button(_menuPanel);
             _exitButton.SetText("Exit");
+            _exitButton.Font = Globals.ContentManager.GetFont("arial20.xnb");
             _exitButton.SetSize(211, 61);
             _exitButton.SetPosition(_menuPanel.Width / 2 - _exitButton.Width / 2, 200);
             _exitButton.Clicked += ExitButton_Clicked;

@@ -288,10 +288,10 @@ namespace Intersect_Client.Classes.Entities
             var movex = 0f;
             var movey = 0f;
             if (Gui.HasInputFocus()) { return; }
-            if (Globals.InputManager.KeyDown(Keys.W)) { movey = 1; }
-            if (Globals.InputManager.KeyDown(Keys.S)) { movey = -1; }
-            if (Globals.InputManager.KeyDown(Keys.A)) { movex = -1; }
-            if (Globals.InputManager.KeyDown(Keys.D)) { movex = 1; }
+            if (Globals.InputManager.KeyDown(Keys.W) || Globals.InputManager.KeyDown(Keys.Up)) { movey = 1; }
+            if (Globals.InputManager.KeyDown(Keys.S) || Globals.InputManager.KeyDown(Keys.Down)) { movey = -1; }
+            if (Globals.InputManager.KeyDown(Keys.A) || Globals.InputManager.KeyDown(Keys.Left)) { movex = -1; }
+            if (Globals.InputManager.KeyDown(Keys.D) || Globals.InputManager.KeyDown(Keys.Right)) { movex = 1; }
             Globals.Entities[Globals.MyIndex].MoveDir = -1;
             if (movex != 0f || movey != 0f)
             {

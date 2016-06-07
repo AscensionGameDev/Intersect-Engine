@@ -91,6 +91,7 @@ namespace Intersect_Client.Classes.UI
             _menuHeader = new Label(_menuPanel);
             _menuHeader.AutoSizeToContents = false;
             _menuHeader.SetText("Options");
+            _menuHeader.Font = Globals.ContentManager.GetFont("arial24.xnb");
             _menuHeader.SetSize(_menuPanel.Width, _menuPanel.Height);
             _menuHeader.Alignment = Pos.CenterH;
             _menuHeader.TextColorOverride = new Color(255, 200, 200, 200);
@@ -108,6 +109,7 @@ namespace Intersect_Client.Classes.UI
             _resolutionLabel.SetSize(178, 60);
             _resolutionLabel.Alignment = Pos.Center;
             _resolutionLabel.TextColorOverride = new Color(255, 30, 30, 30);
+            _resolutionLabel.Font = Globals.ContentManager.GetFont("arial20.xnb");
 
             _resolutionList = new ComboBox(_resolutionBackground);
             _resolutionList.SetPosition(190, 8);
@@ -118,6 +120,7 @@ namespace Intersect_Client.Classes.UI
             _resolutionList.SetMenuMaxSize(260, 200);
             _resolutionList.SetTextColor(new Color(255, 200, 200, 200), Label.ControlState.Normal);
             _resolutionList.SetTextColor(new Color(255, 220, 220, 220), Label.ControlState.Hovered);
+            _resolutionList.Font = Globals.ContentManager.GetFont("arial20.xnb");
             var myModes = GameGraphics.Renderer.GetValidVideoModes();
             for (var i = 0; i < myModes.Count(); i++)
             {
@@ -156,6 +159,7 @@ namespace Intersect_Client.Classes.UI
             _fpsLabel.SetSize(176, 55);
             _fpsLabel.Alignment = Pos.Center;
             _fpsLabel.TextColorOverride = new Color(255, 30, 30, 30);
+            _fpsLabel.Font = Globals.ContentManager.GetFont("arial20.xnb");
 
             //Options - FPS List
             _fpsList = new ComboBox(_fpsBackground);
@@ -173,6 +177,7 @@ namespace Intersect_Client.Classes.UI
             _fpsList.ShouldDrawBackground = false;
             _fpsList.SetMenuBackgroundColor(new Color(220, 0, 0, 0));
             _fpsList.SetMenuMaxSize(260, 200);
+            _fpsList.Font = Globals.ContentManager.GetFont("arial20.xnb");
 
             //Options - Fullscreen Checkbox
             _fullscreen = new LabeledCheckBox(_menuPanel) { Text = "Fullscreen" };
@@ -184,6 +189,7 @@ namespace Intersect_Client.Classes.UI
             _fullscreen.SetLabelDistance(12);
             _fullscreen.SetTextColor(new Color(255, 200, 200, 200), Label.ControlState.Normal);
             _fullscreen.SetTextColor(new Color(255, 140, 140, 140), Label.ControlState.Hovered);
+            _fullscreen.SetFont(Globals.ContentManager.GetFont("arial20.xnb"));
 
             //Options - Sound Label
             _soundLabel = new Label(_menuPanel);
@@ -191,9 +197,9 @@ namespace Intersect_Client.Classes.UI
             _soundLabel.SetSize(210, 32);
             _soundLabel.AutoSizeToContents = false;
             _soundLabel.SetPosition(_resolutionBackground.X,_fullscreen.Bottom + 16);
-            _soundLabel.SetTextScale(.65f);
             _soundLabel.Alignment = Pos.Center;
             _soundLabel.SetTextColor(new Color(255, 200, 200, 200), Label.ControlState.Normal);
+            _soundLabel.Font = Globals.ContentManager.GetFont("arial16.xnb");
 
             //Options - Sound Slider
             _soundSlider = new HorizontalSlider(_menuPanel);
@@ -215,9 +221,9 @@ namespace Intersect_Client.Classes.UI
             _musicLabel.SetSize(210, 32);
             _musicLabel.AutoSizeToContents = false;
             _musicLabel.SetPosition(_resolutionBackground.Right - _musicLabel.Width, _fullscreen.Bottom + 16);
-            _musicLabel.SetTextScale(.65f);
             _musicLabel.Alignment = Pos.Center;
             _musicLabel.SetTextColor(new Color(255, 200, 200, 200), Label.ControlState.Normal);
+            _musicLabel.Font = Globals.ContentManager.GetFont("arial16.xnb");
 
             //Options - Music Slider
             _musicSlider = new HorizontalSlider(_menuPanel);
@@ -245,6 +251,7 @@ namespace Intersect_Client.Classes.UI
             _applyBtn.SetTextColor(new Color(255, 30, 30, 30), Label.ControlState.Normal);
             _applyBtn.SetTextColor(new Color(255, 20, 20, 20), Label.ControlState.Hovered);
             _applyBtn.SetTextColor(new Color(255, 215, 215, 215), Label.ControlState.Clicked);
+            _applyBtn.Font = Globals.ContentManager.GetFont("arial20.xnb");
 
 
             //Options - Back Button
@@ -259,6 +266,7 @@ namespace Intersect_Client.Classes.UI
             _backBtn.SetTextColor(new Color(255, 30, 30, 30), Label.ControlState.Normal);
             _backBtn.SetTextColor(new Color(255, 20, 20, 20), Label.ControlState.Hovered);
             _backBtn.SetTextColor(new Color(255, 215, 215, 215), Label.ControlState.Clicked);
+            _backBtn.Font = Globals.ContentManager.GetFont("arial20.xnb");
         }
 
 
@@ -269,6 +277,10 @@ namespace Intersect_Client.Classes.UI
         }
         public void Show()
         {
+            if (_mainMenu == null)
+            {
+                _menuPanel.MakeModal(true);
+            }
             _previousMusicVolume = Globals.Database.MusicVolume;
             _previousSoundVolume = Globals.Database.SoundVolume;
             if (GameGraphics.Renderer.GetValidVideoModes().Count > 0)
@@ -314,6 +326,10 @@ namespace Intersect_Client.Classes.UI
 
         public void Hide()
         {
+            if (_mainMenu == null)
+            {
+                _menuPanel.RemoveModal();
+            }
             _menuPanel.IsHidden = true;
         }
 

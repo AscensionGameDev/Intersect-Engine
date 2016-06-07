@@ -101,6 +101,7 @@ namespace Intersect_Client.Classes.UI.Menu
             _menuHeader = new Label(_menuPanel);
             _menuHeader.AutoSizeToContents = false;
             _menuHeader.SetText("Create Character");
+            _menuHeader.Font = Globals.ContentManager.GetFont("arial24.xnb");
             _menuHeader.SetSize(_menuPanel.Width, _menuPanel.Height);
             _menuHeader.Alignment = Pos.CenterH;
             _menuHeader.TextColorOverride = new Color(255, 200, 200, 200);
@@ -118,6 +119,7 @@ namespace Intersect_Client.Classes.UI.Menu
             _charnameLabel.SetSize(178, 60);
             _charnameLabel.Alignment = Pos.Center;
             _charnameLabel.TextColorOverride = new Color(255, 30, 30, 30);
+            _charnameLabel.Font = Globals.ContentManager.GetFont("arial20.xnb");
 
             //Character name Textbox
             _charnameTextbox = new TextBox(_characterNameBackground);
@@ -126,6 +128,7 @@ namespace Intersect_Client.Classes.UI.Menu
             _charnameTextbox.SetSize(188, 38);
             _charnameTextbox.ShouldDrawBackground = false;
             _charnameTextbox.TextColorOverride = new Color(255, 220, 220, 220);
+            _charnameTextbox.Font = Globals.ContentManager.GetFont("arial20.xnb");
 
             //Class Background
             _classBackground = new ImagePanel(_menuPanel);
@@ -140,6 +143,7 @@ namespace Intersect_Client.Classes.UI.Menu
             _classLabel.SetSize(178, 60);
             _classLabel.Alignment = Pos.Center;
             _classLabel.TextColorOverride = new Color(255, 30, 30, 30);
+            _classLabel.Font = Globals.ContentManager.GetFont("arial20.xnb");
 
             //Class Combobox
             _classCombobox = new ComboBox(_classBackground);
@@ -156,6 +160,7 @@ namespace Intersect_Client.Classes.UI.Menu
             _classCombobox.SetMenuMaxSize(260, 200);
             _classCombobox.SetTextColor(new Color(255, 200, 200, 200), Label.ControlState.Normal);
             _classCombobox.SetTextColor(new Color(255, 220, 220, 220), Label.ControlState.Hovered);
+            _classCombobox.Font = Globals.ContentManager.GetFont("arial20.xnb");
 
             //Character Container
             _characterContainer = new ImagePanel(_menuPanel);
@@ -197,6 +202,7 @@ namespace Intersect_Client.Classes.UI.Menu
             _genderLabel.SetSize(178, 60);
             _genderLabel.Alignment = Pos.Center;
             _genderLabel.TextColorOverride = new Color(255, 30, 30, 30);
+            _genderLabel.Font = Globals.ContentManager.GetFont("arial20.xnb");
 
             //Male Checkbox
             _maleChk = new LabeledCheckBox(_genderBackground) { Text = "Male" };
@@ -211,6 +217,7 @@ namespace Intersect_Client.Classes.UI.Menu
             _maleChk.IsChecked = true;
             _maleChk.Checked += maleChk_Checked;
             _maleChk.UnChecked += femaleChk_Checked; // If you notice this, feel free to hate us ;)
+            _maleChk.SetFont( Globals.ContentManager.GetFont("arial20.xnb"));
 
             //Female Checkbox
             _femaleChk = new LabeledCheckBox(_genderBackground) { Text = "Female" };
@@ -224,6 +231,7 @@ namespace Intersect_Client.Classes.UI.Menu
             _femaleChk.SetLabelDistance(8);
             _femaleChk.SetTextColor(new Color(255, 200, 200, 200), Label.ControlState.Normal);
             _femaleChk.SetTextColor(new Color(255, 140, 140, 140), Label.ControlState.Hovered);
+            _femaleChk.SetFont(Globals.ContentManager.GetFont("arial20.xnb"));
 
             //Register - Send Registration Button
             _createButton = new Button(_menuPanel);
@@ -237,6 +245,7 @@ namespace Intersect_Client.Classes.UI.Menu
             _createButton.SetTextColor(new Color(255, 30, 30, 30), Label.ControlState.Normal);
             _createButton.SetTextColor(new Color(255, 20, 20, 20), Label.ControlState.Hovered);
             _createButton.SetTextColor(new Color(255, 215, 215, 215), Label.ControlState.Clicked);
+            _createButton.Font = Globals.ContentManager.GetFont("arial20.xnb");
 
             LoadClass();
             Update();

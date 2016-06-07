@@ -88,7 +88,7 @@ namespace Intersect_Client.Classes.UI.Game
             {
                 foreach (var t1 in Globals.ChatboxContent)
                 {
-                    var myText = Gui.WrapText(t1.Key, 360);
+                    var myText = Gui.WrapText(t1.Key, 360,_chatboxWindow.Parent.Skin.DefaultFont);
                     foreach (var t in myText)
                     {
                         var rw = _chatboxMessages.AddRow(t);

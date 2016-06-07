@@ -66,16 +66,24 @@ namespace Intersect_Client.Classes.UI.Game
         public InventoryWindow(Canvas _gameCanvas)
         {
             _inventoryWindow = new WindowControl(_gameCanvas, "Inventory");
-            _inventoryWindow.SetSize(200, 300);
+            _inventoryWindow.SetSize(200, 320);
             _inventoryWindow.SetPosition(GameGraphics.Renderer.GetScreenWidth() - 210, GameGraphics.Renderer.GetScreenHeight() - 500);
             _inventoryWindow.DisableResizing();
             _inventoryWindow.Margin = Margin.Zero;
             _inventoryWindow.Padding = Padding.Zero;
             _inventoryWindow.IsHidden = true;
 
+            _inventoryWindow.SetTitleBarHeight(36);
+            _inventoryWindow.SetCloseButtonSize(29,29);
+            _inventoryWindow.SetImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "inventoryactive.png"), WindowControl.ControlState.Active);
+            _inventoryWindow.SetCloseButtonImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "closenormal.png"), Button.ControlState.Normal);
+            _inventoryWindow.SetCloseButtonImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "closehover.png"), Button.ControlState.Hovered);
+            _inventoryWindow.SetCloseButtonImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "closeclicked.png"), Button.ControlState.Clicked);
+            _inventoryWindow.SetFont(Globals.ContentManager.GetFont("arial18.xnb"));
+
             _itemContainer = new ScrollControl(_inventoryWindow);
             _itemContainer.SetPosition(0, 0);
-            _itemContainer.SetSize(_inventoryWindow.Width, _inventoryWindow.Height - 24);
+            _itemContainer.SetSize(_inventoryWindow.Width, _inventoryWindow.Height - 36);
             _itemContainer.EnableScroll(false, true);
             InitItemContainer();
         }

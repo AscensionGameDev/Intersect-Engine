@@ -123,7 +123,7 @@ namespace Intersect_Client.Classes.UI.Game
                         _eventDialog.X = 6;
 
                     }
-                    var myText = Gui.WrapText(Globals.EventDialogs[0].Prompt, _eventDialog.Width - 12);
+                    var myText = Gui.WrapText(Globals.EventDialogs[0].Prompt, _eventDialog.Width - 12, _eventDialogWindow.Parent.Skin.DefaultFont);
                     foreach (var t in myText)
                     {
                         var rw = _eventDialog.AddRow(t);

@@ -29,6 +29,7 @@ using System;
 using System.Collections.Generic;
 using IntersectClientExtras.File_Management;
 using IntersectClientExtras.GenericClasses;
+using IntersectClientExtras.Graphics;
 using IntersectClientExtras.Gwen.Control;
 using IntersectClientExtras.Gwen.Input;
 using IntersectClientExtras.Gwen.Skin;
@@ -65,10 +66,10 @@ namespace Intersect_Client.Classes.UI
         {
             //TODO: Make it easier to modify skin.
             _gwenSkin = new TexturedBase(GwenRenderer, Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui,"defaultskin.png"));
-            _gwenSkin.DefaultFont = Globals.ContentManager.GetFont("arial24.xnb");
+            _gwenSkin.DefaultFont = Globals.ContentManager.GetFont("arial10.xnb");
 
             var _gameSkin = new TexturedBase(GwenRenderer, Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "defaultskin.png"));
-            _gameSkin.DefaultFont = Globals.ContentManager.GetFont("arial8.xnb");
+            _gameSkin.DefaultFont = Globals.ContentManager.GetFont("arial10.xnb");
 
 
             // Create a Canvas (it's root, on which all other GWEN controls are created)
@@ -181,7 +182,7 @@ namespace Intersect_Client.Classes.UI
             }
             return false;
         }
-        public static string[] WrapText(string input, int width)
+        public static string[] WrapText(string input, int width, GameFont font)
         {
             var myOutput = new List<string>();
             var lastSpace = 0;
@@ -190,7 +191,7 @@ namespace Intersect_Client.Classes.UI
             input = input.Replace("\r\n", "\n");
             while (curPos + curLen < input.Length)
             {
-                if (GameGraphics.Renderer.MeasureText(input.Substring(curPos, curLen), GameGraphics.GameFont, 1).X < width)
+                if (GameGraphics.Renderer.MeasureText(input.Substring(curPos, curLen), font, 1).X < width)
                 {
                     if (input[curPos + curLen] == ' ' || input[curPos + curLen] == '-')
                     {

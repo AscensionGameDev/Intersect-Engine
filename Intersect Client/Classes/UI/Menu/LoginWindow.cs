@@ -81,6 +81,7 @@ namespace Intersect_Client.Classes.UI.Menu
             _menuHeader = new Label(_menuPanel);
             _menuHeader.AutoSizeToContents = false;
             _menuHeader.SetText("Login");
+            _menuHeader.Font = Globals.ContentManager.GetFont("arial24.xnb");
             _menuHeader.SetSize(_menuPanel.Width, _menuPanel.Height);
             _menuHeader.Alignment = Pos.CenterH;
             _menuHeader.TextColorOverride = new Color(255, 200, 200, 200);
@@ -93,6 +94,7 @@ namespace Intersect_Client.Classes.UI.Menu
             //Login Username Label
             _usernameLabel = new Label(_usernameBackground);
             _usernameLabel.SetText("Username:");
+            _usernameLabel.Font = Globals.ContentManager.GetFont("arial20.xnb");
             _usernameLabel.AutoSizeToContents = false;
             _usernameLabel.SetSize(176, 55);
             _usernameLabel.Alignment = Pos.Center;
@@ -105,6 +107,7 @@ namespace Intersect_Client.Classes.UI.Menu
             _usernameTextbox.SubmitPressed += UsernameTextbox_SubmitPressed;
             _usernameTextbox.ShouldDrawBackground = false;
             _usernameTextbox.TextColorOverride = new Color(255,220,220,220);
+            _usernameTextbox.Font = Globals.ContentManager.GetFont("arial20.xnb");
 
             _passwordBackground = new ImagePanel(_menuPanel);
             _passwordBackground.Texture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "inputfield.png");
@@ -114,6 +117,7 @@ namespace Intersect_Client.Classes.UI.Menu
             //Login Password Label
             _passwordLabel = new Label(_passwordBackground);
             _passwordLabel.SetText("Password:");
+            _passwordLabel.Font = Globals.ContentManager.GetFont("arial20.xnb");
             _passwordLabel.AutoSizeToContents = false;
             _passwordLabel.SetSize(176, 55);
             _passwordLabel.Alignment = Pos.Center;
@@ -121,6 +125,7 @@ namespace Intersect_Client.Classes.UI.Menu
 
             //Login Password Textbox
             _passwordTextbox = new TextBoxPassword(_passwordBackground);
+            _passwordTextbox.Font = Globals.ContentManager.GetFont("arial20.xnb");
             _passwordTextbox.SubmitPressed += PasswordTextbox_SubmitPressed;
             _passwordTextbox.TextChanged += _passwordTextbox_TextChanged;
             _passwordTextbox.SetPosition(190, 8);
@@ -130,6 +135,7 @@ namespace Intersect_Client.Classes.UI.Menu
 
             //Login Save Pass Checkbox
             _savePassChk = new LabeledCheckBox(_menuPanel) { Text = "Save Password" };
+            _savePassChk.SetFont(Globals.ContentManager.GetFont("arial20.xnb"));
             _savePassChk.SetSize(300, 36);
             _savePassChk.SetPosition(_passwordBackground.X + 24,_passwordBackground.Bottom + 16);
             _savePassChk.SetImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "checkboxempty.png"), CheckBox.ControlState.Normal);
@@ -142,6 +148,7 @@ namespace Intersect_Client.Classes.UI.Menu
             //Login - Send Login Button
             _loginBtn = new Button(_menuPanel);
             _loginBtn.SetText("Login");
+            _loginBtn.Font = Globals.ContentManager.GetFont("arial20.xnb");
             _loginBtn.Clicked += LoginBtn_Clicked;
             _loginBtn.SetPosition(_usernameBackground.X, _savePassChk.Bottom + 16);
             _loginBtn.SetSize(211, 61);
@@ -155,6 +162,7 @@ namespace Intersect_Client.Classes.UI.Menu
             //Login - Back Button
             _backBtn = new Button(_menuPanel);
             _backBtn.SetText("Back");
+            _backBtn.Font = Globals.ContentManager.GetFont("arial20.xnb");
             _backBtn.SetSize(211, 61);
             _backBtn.SetPosition(_usernameBackground.Right - _backBtn.Width,_savePassChk.Bottom + 16);
             _backBtn.Clicked += BackBtn_Clicked;

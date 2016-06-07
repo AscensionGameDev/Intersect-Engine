@@ -26,6 +26,7 @@
 */
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using IntersectClientExtras.GenericClasses;
 using IntersectClientExtras.Gwen.Input;
 using IntersectClientExtras.Input;
@@ -135,6 +136,8 @@ namespace Intersect_Client_MonoGame.Classes.SFML.Input
         {
             KeyboardState kbState = Keyboard.GetState();
             MouseState mState = Mouse.GetState();
+
+            Debug.Print("Mouse Pos: X: " + mState.X + "  Y: " + mState.Y);
 
             if (mState.X != _mouseX || mState.Y != _mouseY)
             {
