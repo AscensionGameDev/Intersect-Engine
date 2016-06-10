@@ -40,29 +40,29 @@ namespace Intersect_Client.Classes.Maps
         //Map Texture Caching Options
         private int _preRenderStage;
         private int _preRenderLayer;
-        public GameRenderTexture[] LowerTextures { get; set; } = new GameRenderTexture[3];
-        public GameRenderTexture[] UpperTextures { get; set; } = new GameRenderTexture[3];
-        public GameRenderTexture[] PeakTextures { get; set; } = new GameRenderTexture[3];
+        public GameRenderTexture[] LowerTextures = new GameRenderTexture[3];
+        public GameRenderTexture[] UpperTextures = new GameRenderTexture[3];
+        public GameRenderTexture[] PeakTextures = new GameRenderTexture[3];
 
         //Map Items
-        public List<MapItemInstance> MapItems { get; set; } = new List<MapItemInstance>();
+        public List<MapItemInstance> MapItems = new List<MapItemInstance>();
 
         //Map Animations
-        public List<MapAnimationInstance> LocalAnimations { get; set; } = new List<MapAnimationInstance>();
+        public List<MapAnimationInstance> LocalAnimations = new List<MapAnimationInstance>();
 
         //Map Players/Events/Npcs
-        public Dictionary<int, Entity> LocalEntities { get; set; } = new Dictionary<int, Entity>();
-        public List<int> LocalEntitiesToDispose { get; set; } = new List<int>();
+        public Dictionary<int, Entity> LocalEntities = new Dictionary<int, Entity>();
+        public List<int> LocalEntitiesToDispose = new List<int>();
 
         //Map Sounds
         public MapSound BackgroundSound { get; set; }
-        public List<MapSound> AttributeSounds { get; set; } = new List<MapSound>();
+        public List<MapSound> AttributeSounds = new List<MapSound>();
 
         //Map Attributes
         private Dictionary<Intersect_Library.GameObjects.Maps.Attribute, AnimationInstance> _attributeAnimInstances = new Dictionary<Intersect_Library.GameObjects.Maps.Attribute, AnimationInstance>();
 
         //Fog Variables
-        private long _fogUpdateTime = Globals.System.GetTimeMS();
+        private long _fogUpdateTime = -1;
         private float _curFogIntensity;
         private float _fogCurrentX;
         private float _fogCurrentY;
@@ -70,11 +70,11 @@ namespace Intersect_Client.Classes.Maps
         private float _lastFogY;
 
         //Panorama Variables
-        private long _panoramaUpdateTime = Globals.System.GetTimeMS();
+        private long _panoramaUpdateTime = -1;
         private float _panoramaIntensity;
 
         //Overlay Image Variables
-        private long _overlayUpdateTime = Globals.System.GetTimeMS();
+        private long _overlayUpdateTime = -1;
         private float _overlayIntensity;
 
         //Update Timer

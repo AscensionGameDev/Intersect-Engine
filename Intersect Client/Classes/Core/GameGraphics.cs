@@ -112,7 +112,6 @@ namespace Intersect_Client.Classes.Core
                 Layer1Entities[i] = new List<Entity>();
                 Layer2Entities[i] = new List<Entity>();
             }
-            if (Globals.Database.RenderCaching) CreateMapTextures(9 * 18);
         }
 
         public static void DrawIntro()
@@ -511,7 +510,7 @@ namespace Intersect_Client.Classes.Core
             Renderer.SetView(CurrentView);
         }
 
-        private static void CreateMapTextures(int count)
+        public static void CreateMapTextures(int count)
         {
             for (int i = 0; i < count; i++)
             {

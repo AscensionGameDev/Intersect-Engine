@@ -32,6 +32,7 @@ using Intersect_Client.Classes.Networking;
 using Intersect_Client.Classes.UI;
 using Intersect_Library.GameObjects;
 using Intersect_Client.Classes.Maps;
+using Intersect_Library;
 
 // ReSharper disable All
 
@@ -40,6 +41,8 @@ namespace Intersect_Client.Classes.Core
     public static class GameMain
     {
         private static long _animTimer;
+        private static bool _createdMapTextures;
+        private static bool _loadedTilesets;
 
         public static void Start()
         {
@@ -156,6 +159,16 @@ namespace Intersect_Client.Classes.Core
         private static void ProcessLoading()
         {
             if (Globals.LocalMaps[4] == -1) { return; }
+            if (!_createdMapTextures)
+            {
+                if (Globals.Database.RenderCaching) GameGraphics.CreateMapTextures(9*18);
+                _createdMapTextures = true;
+            }
+            if (!_loadedTilesets && Globals.HasGameData)
+            {
+                Globals.ContentManager.LoadTilesets(DatabaseObject.GetGameObjectList(GameObject.Tileset));
+                _loadedTilesets = true;
+            }
             for (var i = 0; i < 9; i++)
             {
                 if (Globals.LocalMaps[i] <= -1) continue;

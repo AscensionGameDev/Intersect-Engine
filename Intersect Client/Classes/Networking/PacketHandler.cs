@@ -347,7 +347,6 @@ namespace Intersect_Client.Classes.Networking
         private static void HandleGameData(byte[] packet)
         {
             Globals.HasGameData = true;
-            Globals.ContentManager.LoadTilesets(DatabaseObject.GetGameObjectList(GameObject.Tileset));
         }
 
         private static void HandleEnterMap(byte[] packet)

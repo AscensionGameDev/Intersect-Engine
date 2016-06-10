@@ -34,7 +34,6 @@ using IntersectClientExtras.Gwen;
 using IntersectClientExtras.Gwen.Control;
 using Intersect_Client.Classes.Core;
 using Intersect_Client.Classes.General;
-using Intersect_Client_MonoGame.Classes.SFML.Graphics;
 
 namespace Intersect_Client.Classes.UI
 {
