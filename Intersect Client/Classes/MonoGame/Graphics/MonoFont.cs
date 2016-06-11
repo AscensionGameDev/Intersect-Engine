@@ -35,12 +35,12 @@ namespace Intersect_Client_MonoGame.Classes.SFML.Graphics
     public class MonoFont : GameFont
     {
         private SpriteFont font;
-        public MonoFont(string fontName, ContentManager contentManager) : base(fontName)
+        public MonoFont(string fontName, string fileName, int fontSize, ContentManager contentManager) : base(fontName, fontSize)
         {
             try
             {
-                fontName = GameContentManager.RemoveExtension(fontName);
-                font = contentManager.Load<SpriteFont>(fontName);
+                fileName = GameContentManager.RemoveExtension(fileName);
+                font = contentManager.Load<SpriteFont>(fileName);
             }
             catch (Exception ex)
             {

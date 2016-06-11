@@ -79,7 +79,7 @@ namespace Intersect_Client.Classes.UI.Game
             _inventoryWindow.SetCloseButtonImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "closenormal.png"), Button.ControlState.Normal);
             _inventoryWindow.SetCloseButtonImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "closehover.png"), Button.ControlState.Hovered);
             _inventoryWindow.SetCloseButtonImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "closeclicked.png"), Button.ControlState.Clicked);
-            _inventoryWindow.SetFont(Globals.ContentManager.GetFont("arial18.xnb"));
+            _inventoryWindow.SetFont(Globals.ContentManager.GetFont(Gui.DefaultFont,18));
 
             _itemContainer = new ScrollControl(_inventoryWindow);
             _itemContainer.SetPosition(0, 0);

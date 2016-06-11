@@ -26,6 +26,7 @@
 */
 using System;
 using System.Collections.Generic;
+using IntersectClientExtras.File_Management;
 using IntersectClientExtras.GenericClasses;
 using IntersectClientExtras.Graphics;
 using Intersect_Client.Classes.General;
@@ -369,7 +370,24 @@ namespace Intersect_Client_MonoGame.Classes.SFML.Graphics
 
         public override GameFont LoadFont(string filename)
         {
-            return new MonoFont(filename, _contentManager);
+            //Get font size from filename, format should be name_size.xnb or whatever
+            string name = GameContentManager.RemoveExtension(filename).Replace("resources/fonts/","");
+            string[] parts = name.Split('_');
+            if (parts.Length >= 1)
+            {
+                int size = 0;
+                if (Int32.TryParse(parts[parts.Length - 1], out size))
+                {
+                    name = "";
+                    for (int i = 0; i <= parts.Length - 2; i++)
+                    {
+                        name += parts[i];
+                        if (i + 1 < parts.Length - 2) name += "_";
+                    }
+                    return new MonoFont(name,filename, size, _contentManager);
+                }
+            }
+            return null;
         }
 
         public override GameShader LoadShader(string shaderName)

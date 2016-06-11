@@ -91,16 +91,16 @@ namespace Intersect_Client.Classes.UI
             window.SetCloseButtonImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "closenormal.png"), Button.ControlState.Normal);
             window.SetCloseButtonImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "closehover.png"), Button.ControlState.Hovered);
             window.SetCloseButtonImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "closeclicked.png"), Button.ControlState.Clicked);
-            window.SetFont(Globals.ContentManager.GetFont("arial18.xnb"));
+            window.SetFont(Globals.ContentManager.GetFont(Gui.DefaultFont,18));
 
-            var text = Gui.WrapText(error, 740, Globals.ContentManager.GetFont("arial16.xnb"));
+            var text = Gui.WrapText(error, 740, Globals.ContentManager.GetFont(Gui.DefaultFont,16));
             int y = 2;
             foreach (string s in text)
             {
                 var label = new Label(window);
                 label.Text = s;
                 label.TextColorOverride = new Color(255,220,220,220);
-                label.Font = Globals.ContentManager.GetFont("arial16.xnb");
+                label.Font = Globals.ContentManager.GetFont(Gui.DefaultFont,16);
                 label.SetPosition(0, y);
                 y += label.Height;
                 Align.CenterHorizontally(label);
@@ -119,7 +119,7 @@ namespace Intersect_Client.Classes.UI
             m_Button.SetTextColor(new Color(255, 30, 30, 30), Label.ControlState.Normal);
             m_Button.SetTextColor(new Color(255, 20, 20, 20), Label.ControlState.Hovered);
             m_Button.SetTextColor(new Color(255, 215, 215, 215), Label.ControlState.Clicked);
-            m_Button.Font = Globals.ContentManager.GetFont("arial16.xnb");
+            m_Button.Font = Globals.ContentManager.GetFont(Gui.DefaultFont,16);
 
             Align.Center(window);
             errorWindows.Add(window);

@@ -227,7 +227,9 @@ namespace Intersect_Client.Classes.Bridges_and_Interfaces.SFML.File_Management
             for (int i = 0; i < items.Length; i++)
             {
                 string filename = items[i].Replace("resources/" + "fonts" + "\\", "").ToLower();
-                fontDict.Add(filename, GameGraphics.Renderer.LoadFont("resources/" + "fonts" + "/" + filename));
+                GameFont font = GameGraphics.Renderer.LoadFont("resources/" + "fonts" + "/" + filename);
+                if (!fontDict.Contains(font))
+                    fontDict.Add(font);
             }
         }
 
