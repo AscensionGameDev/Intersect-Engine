@@ -359,6 +359,16 @@ namespace Intersect_Server.Classes.Entities
                                     Spawns[i].Z = attribute.data1 - 1;
                                 }
                             }
+                            //Check for grapplehooks.
+                            if (attribute != null && attribute.value == (int)MapAttributes.GrappleStone && MyBase.GrappleHook == true)
+                            {
+                                if (Spawns[i].Dir <= 3 ) //Don't handle directional projectile grapplehooks
+                                {
+                                    Owner.Dir = Spawns[i].Dir;
+                                    Globals.Entities[Owner.MyIndex].Dashing = new DashInstance(Owner.MyIndex, Spawns[i].Distance);
+                                    killSpawn = true;
+                                }
+                            }
                         }
 
                         int c = TempEntity.CanMove(Dir);
@@ -400,7 +410,7 @@ namespace Intersect_Server.Classes.Entities
                             {
                                 if (Owner.MyIndex != Target)
                                 {
-                                    Owner.TryAttack(Target, true, IsSpell);
+                                    Owner.TryAttack(Target, MyBase, IsSpell);
                                     killSpawn = true; //Remove from the list being processed
                                 }
                             }
@@ -411,7 +421,7 @@ namespace Intersect_Server.Classes.Entities
                                     if (Owner.GetType() == typeof(Player))
                                     {
 
-                                        Owner.TryAttack(Target, true, IsSpell);
+                                        Owner.TryAttack(Target, MyBase, IsSpell);
                                         killSpawn = true; //Remove from the list being processed
                                     }
                                 }
@@ -421,7 +431,7 @@ namespace Intersect_Server.Classes.Entities
                                 if (Owner.GetType() == typeof(Player))
                                 {
                                     
-                                    Owner.TryAttack(Target, true, IsSpell);
+                                    Owner.TryAttack(Target, MyBase, IsSpell);
                                     killSpawn = true; //Remove from the list being processed
                                 }
                             }

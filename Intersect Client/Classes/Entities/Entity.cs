@@ -93,6 +93,9 @@ namespace Intersect_Client.Classes.Entities
         //Status effects
         public List<StatusInstance> Status = new List<StatusInstance>();
 
+        //Dashing instance
+        public DashInstance Dashing = null;
+
         private long _lastUpdate;
         private long _walkTimer;
         public int WalkFrame;
@@ -177,7 +180,11 @@ namespace Intersect_Client.Classes.Entities
                 }
             }
             if (tmpI == -1) return false;
-            if (_walkTimer < Globals.System.GetTimeMS())
+            if (Dashing != null)
+            {
+                WalkFrame = 1; //Fix the frame whilst dashing
+            }
+            else if (_walkTimer < Globals.System.GetTimeMS())
             {
                 if (IsMoving)
                 {
@@ -190,7 +197,13 @@ namespace Intersect_Client.Classes.Entities
                 }
                 _walkTimer = Globals.System.GetTimeMS() + 200;
             }
-            if (IsMoving)
+            if (Dashing != null)
+            {
+                OffsetX = Dashing.GetXOffset();
+                OffsetY = Dashing.GetYOffset();
+                Dashing.Update();
+            }
+            else if (IsMoving)
             {
 
                 switch (Dir)
@@ -623,6 +636,126 @@ namespace Intersect_Client.Classes.Entities
         {
             Type = type;
             Data = data;
+        }
+    }
+
+    public class DashInstance
+    {
+        public int EntityID = 0;
+        public int Range = 0;
+        public int DistanceTraveled = 0;
+        public long TransmittionTimer = 0;
+        public long SpawnTime = 0;
+
+        public DashInstance(int entityID, int range)
+        {
+            EntityID = entityID;
+            DistanceTraveled = 0;
+            Range = range;
+
+            if (Range <= 0) { Globals.Entities[EntityID].Dashing = null; } //Remove dash instance if no where to dash
+            TransmittionTimer = Globals.System.GetTimeMS() + (long)((float)Options.MaxDashSpeed / (float)Range);
+            SpawnTime = Globals.System.GetTimeMS();
+        }
+
+        /// <summary>
+        /// Gets the displacement of the player whilst dashing between tiles
+        /// </summary>
+        /// <returns>The displacement from the co-ordinates if placed on a Options.TileHeight grid.</returns>
+        private float GetDisplacement()
+        {
+            long elapsedTime = Globals.System.GetTimeMS() - SpawnTime;
+            float displacementPercent = elapsedTime / (float)Options.MaxDashSpeed;
+            return displacementPercent * (Options.TileHeight / 2) * Range;
+        }
+
+        public float GetXOffset()
+        {
+            if (Globals.Entities[EntityID].Dir == 2) { return -GetDisplacement(); }
+            if (Globals.Entities[EntityID].Dir == 3) { return GetDisplacement(); }
+            return 0;
+        }
+
+        public float GetYOffset()
+        {
+            if (Globals.Entities[EntityID].Dir == 0) { return -GetDisplacement(); }
+            if (Globals.Entities[EntityID].Dir == 1) { return GetDisplacement(); }
+            return 0;
+        }
+
+        public void Update()
+        {
+            if (Globals.System.GetTimeMS() > TransmittionTimer)
+            {
+                switch (Globals.Entities[EntityID].Dir)
+                {
+                    case 0:
+                        Globals.Entities[EntityID].CurrentY--;
+                        break;
+                    case 1:
+                        Globals.Entities[EntityID].CurrentY++;
+                        break;
+                    case 2:
+                        Globals.Entities[EntityID].CurrentX--;
+                        break;
+                    case 3:
+                        Globals.Entities[EntityID].CurrentX++;
+                        break;
+                }
+
+                if (Globals.Entities[EntityID].CurrentX < 0)
+                {
+                    if (MapInstance.GetMap(MapInstance.GetMap(Globals.Entities[EntityID].CurrentMap).Left) != null)
+                    {
+                        Globals.Entities[EntityID].CurrentMap = MapInstance.GetMap(Globals.Entities[EntityID].CurrentMap).Left;
+                        Globals.Entities[EntityID].CurrentX = Options.MapWidth - 1;
+                    }
+                    else
+                    {
+                        Globals.Entities[EntityID].Dashing = null;
+                    }
+                }
+                if (Globals.Entities[EntityID].CurrentX > Options.MapWidth - 1)
+                {
+                    if (MapInstance.GetMap(MapInstance.GetMap(Globals.Entities[EntityID].CurrentMap).Right) != null)
+                    {
+                        Globals.Entities[EntityID].CurrentMap = MapInstance.GetMap(Globals.Entities[EntityID].CurrentMap).Right;
+                        Globals.Entities[EntityID].CurrentX = 0;
+                    }
+                    else
+                    {
+                        Globals.Entities[EntityID].Dashing = null;
+                    }
+                }
+                if (Globals.Entities[EntityID].CurrentY < 0)
+                {
+                    if (MapInstance.GetMap(MapInstance.GetMap(Globals.Entities[EntityID].CurrentMap).Up) != null)
+                    {
+                        Globals.Entities[EntityID].CurrentMap = MapInstance.GetMap(Globals.Entities[EntityID].CurrentMap).Up;
+                        Globals.Entities[EntityID].CurrentY = Options.MapHeight - 1;
+                    }
+                    else
+                    {
+                        Globals.Entities[EntityID].Dashing = null;
+                    }
+                }
+                if (Globals.Entities[EntityID].CurrentY > Options.MapHeight - 1)
+                {
+                    if (MapInstance.GetMap(MapInstance.GetMap(Globals.Entities[EntityID].CurrentMap).Down) != null)
+                    {
+                        Globals.Entities[EntityID].CurrentMap = MapInstance.GetMap(Globals.Entities[EntityID].CurrentMap).Down;
+                        Globals.Entities[EntityID].CurrentY = 0;
+                    }
+                    else
+                    {
+                        Globals.Entities[EntityID].Dashing = null;
+                    }
+                }
+
+                TransmittionTimer = Globals.System.GetTimeMS() + (long)((float)Options.MaxDashSpeed / (float)Range);
+                DistanceTraveled++;
+            }
+            if (DistanceTraveled >= Range) { Globals.Entities[EntityID].Dashing = null; } //Dash no more once reached destination
         }
     }
 }

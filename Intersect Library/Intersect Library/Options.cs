@@ -20,6 +20,7 @@ namespace Intersect_Library
         public static int MaxInvItems = 35;
         public static int MaxPlayerSkills = 35;
         public static int MaxBankSlots = 100;
+        public static int MaxDashSpeed = 200;
 
         //Equipment
         public static int WeaponIndex = -1;

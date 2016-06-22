@@ -209,6 +209,11 @@ namespace Intersect_Server.Classes.Entities
                                         return;
                                     }
                                 }
+                                //Check if NPC is dashing
+                                if (Dashing != null)
+                                {
+                                    return;
+                                }
                                 Move(dir, null);
                                 pathFinder.RemoveMove();
                             }
@@ -241,6 +246,11 @@ namespace Intersect_Server.Classes.Entities
                             {
                                 return;
                             }
+                        }
+                        //Check if NPC is dashing
+                        if (Dashing != null)
+                        {
+                            return;
                         }
                         Move(i, null);
                     }

@@ -267,7 +267,7 @@ namespace Intersect_Editor.Forms
             else if (cmbType.SelectedIndex == cmbType.Items.IndexOf("Warp to Target"))
             {
                 grpTargetInfo.Show();
-                cmbTargetType.SelectedText = "Single Target (includes self)";
+                cmbTargetType.SelectedIndex = cmbTargetType.Items.IndexOf("Single Target (includes self)");
                 cmbTargetType.Enabled = false;
                 UpdateTargetTypePanel();
             }
@@ -304,14 +304,28 @@ namespace Intersect_Editor.Forms
             scrlCastRange.Hide();
             lblProjectile.Hide();
             scrlProjectile.Hide();
-            if (cmbTargetType.SelectedIndex == cmbTargetType.Items.IndexOf("Single Target (includes self)") && cmbType.SelectedIndex == cmbType.Items.IndexOf("Combat Spell"))
+            if (cmbTargetType.SelectedIndex == cmbTargetType.Items.IndexOf("Single Target (includes self)"))
+            {
+                lblCastRange.Show();
+                scrlCastRange.Show();
+                scrlCastRange.Value = _editorItem.CastRange;
+                lblCastRange.Text = "Cast Range: " + scrlCastRange.Value;
+                if (cmbType.SelectedIndex == cmbType.Items.IndexOf("Combat Spell"))
+                {
+                    lblHitRadius.Show();
+                    scrlHitRadius.Show();
+                    scrlHitRadius.Value = _editorItem.HitRadius;
+                    lblHitRadius.Text = "Hit Radius: " + scrlHitRadius.Value;
+                }
+            }
+            if (cmbTargetType.SelectedIndex == cmbTargetType.Items.IndexOf("AOE") && cmbType.SelectedIndex == cmbType.Items.IndexOf("Combat Spell"))
             {
                 lblHitRadius.Show();
                 scrlHitRadius.Show();
                 scrlHitRadius.Value = _editorItem.HitRadius;
                 lblHitRadius.Text = "Hit Radius: " + scrlHitRadius.Value;
             }
-            if (cmbTargetType.SelectedIndex < cmbTargetType.Items.IndexOf("Self"))
+                if (cmbTargetType.SelectedIndex < cmbTargetType.Items.IndexOf("Self"))
             {
                 lblCastRange.Show();
                 scrlCastRange.Show();
@@ -634,7 +648,7 @@ namespace Intersect_Editor.Forms
         private void cmbTransform_SelectedIndexChanged(object sender, EventArgs e)
         {
             _editorItem.Data5 = cmbTransform.Text;
-            if (cmbTransform.SelectedIndex > 0) { picSprite.BackgroundImage = Bitmap.FromFile("resources/spells/" + cmbTransform.Text); }
+            if (cmbTransform.SelectedIndex > 0) { picSprite.BackgroundImage = Bitmap.FromFile("resources/entities/" + cmbTransform.Text); }
             else { picSprite.BackgroundImage = null; }
         }
 
