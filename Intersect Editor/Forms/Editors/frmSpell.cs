@@ -248,7 +248,7 @@ namespace Intersect_Editor.Forms
                 chkHOTDOT.Checked = Convert.ToBoolean(_editorItem.Data1);
                 scrlBuffDuration.Value = _editorItem.Data2;
                 lblBuffDuration.Text = "Duration: " + ((double)scrlBuffDuration.Value / 10) + "s";
-                scrlTick.Value = _editorItem.Data4;
+                scrlTick.Value = Math.Max(0,_editorItem.Data4);
                 lblTick.Text = "Tick: " + ((double)scrlTick.Value / 10) + "s";
                 cmbExtraEffect.SelectedIndex = _editorItem.Data3;
                 
@@ -575,8 +575,8 @@ namespace Intersect_Editor.Forms
                 picSprite.Visible = true;
 
                 cmbTransform.SelectedIndex = cmbTransform.FindString(_editorItem.Data5);
-                if (cmbTransform.SelectedIndex > 0) { picSpell.BackgroundImage = Bitmap.FromFile("resources/spells/" + cmbTransform.Text); }
-                else { picSpell.BackgroundImage = null; }
+                if (cmbTransform.SelectedIndex > 0) { picSprite.BackgroundImage = Bitmap.FromFile("resources/entities/" + cmbTransform.Text); }
+                else { picSprite.BackgroundImage = null; }
             }
         }
 
@@ -634,7 +634,7 @@ namespace Intersect_Editor.Forms
         private void cmbTransform_SelectedIndexChanged(object sender, EventArgs e)
         {
             _editorItem.Data5 = cmbTransform.Text;
-            if (cmbTransform.SelectedIndex > 0) { picSprite.BackgroundImage = Bitmap.FromFile("resources/spells/" + cmbTransform.Text); }
+            if (cmbTransform.SelectedIndex > 0) { picSprite.BackgroundImage = Bitmap.FromFile("resources/entities/" + cmbTransform.Text); }
             else { picSprite.BackgroundImage = null; }
         }
 

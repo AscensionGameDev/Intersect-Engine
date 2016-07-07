@@ -84,14 +84,14 @@ namespace Intersect_Client.Classes.UI
             var window = new WindowControl(canvas, header);
             window.DisableResizing();
             window.SetSize(760, 150);
-            window.SetTitleBarHeight(36);
-            window.SetCloseButtonSize(29, 29);
+            window.SetTitleBarHeight(24);
+            window.SetCloseButtonSize(20,20);
             window.SetImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "erroractive.png"), WindowControl.ControlState.Active);
             window.SetImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "errorinactive.png"), WindowControl.ControlState.Inactive);
             window.SetCloseButtonImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "closenormal.png"), Button.ControlState.Normal);
             window.SetCloseButtonImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "closehover.png"), Button.ControlState.Hovered);
             window.SetCloseButtonImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "closeclicked.png"), Button.ControlState.Clicked);
-            window.SetFont(Globals.ContentManager.GetFont(Gui.DefaultFont,18));
+            window.SetFont(Globals.ContentManager.GetFont(Gui.DefaultFont,14));
 
             var text = Gui.WrapText(error, 740, Globals.ContentManager.GetFont(Gui.DefaultFont,16));
             int y = 2;
@@ -113,9 +113,9 @@ namespace Intersect_Client.Classes.UI
             m_Button.Margin = Margin.Four;
             m_Button.SetSize(86,41);
             m_Button.SetPosition(window.Width/2 - m_Button.Width/2, window.Height - 50 - m_Button.Height);
-            m_Button.SetImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "okbuttonnormal.png"),Button.ControlState.Normal);
-            m_Button.SetImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "okbuttonhover.png"), Button.ControlState.Hovered);
-            m_Button.SetImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "okbuttonclicked.png"), Button.ControlState.Clicked);
+            m_Button.SetImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "smallbuttonnormal.png"),Button.ControlState.Normal);
+            m_Button.SetImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "smallbuttonhover.png"), Button.ControlState.Hovered);
+            m_Button.SetImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "smallbuttonclicked.png"), Button.ControlState.Clicked);
             m_Button.SetTextColor(new Color(255, 30, 30, 30), Label.ControlState.Normal);
             m_Button.SetTextColor(new Color(255, 20, 20, 20), Label.ControlState.Hovered);
             m_Button.SetTextColor(new Color(255, 215, 215, 215), Label.ControlState.Clicked);

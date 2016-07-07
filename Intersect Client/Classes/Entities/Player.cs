@@ -574,10 +574,10 @@ namespace Intersect_Client.Classes.Entities
                                 if (en.Value == null) continue;
                                 if (en.Value.CurrentMap == mapNum && en.Value.CurrentX == x && en.Value.CurrentY == y)
                                 {
-                                    if (en.GetType() != typeof(Projectile))
+                                    if (en.GetType() != typeof(Projectile) && en.Value != Globals.Me)
                                     {
                                         if (_targetBox != null) { _targetBox.Dispose(); _targetBox = null; }
-                                        _targetBox = new EntityBox(Gui.GameUI.GameCanvas, en.Value, 0, 100);
+                                        _targetBox = new EntityBox(Gui.GameUI.GameCanvas, en.Value, 4, 122);
                                         _targetIndex = en.Value.MyIndex;
                                         return true;
                                     }
@@ -591,7 +591,7 @@ namespace Intersect_Client.Classes.Entities
                                     if (en.Value.CurrentMap == mapNum && en.Value.CurrentX == x && en.Value.CurrentY == y && ((Event)en.Value).DisablePreview == 0)
                                     {
                                         if (_targetBox != null) { _targetBox.Dispose(); _targetBox = null; }
-                                        _targetBox = new EntityBox(Gui.GameUI.GameCanvas, en.Value, 0, 100);
+                                        _targetBox = new EntityBox(Gui.GameUI.GameCanvas, en.Value, 4, 122);
                                         _targetIndex = en.Value.MyIndex;
                                         return true;
                                     }

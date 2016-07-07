@@ -149,7 +149,7 @@ namespace Intersect_Editor.Classes
         //Rendering
         public static void Render()
         {
-            if (_mapEditorChain != null)
+            if (_mapEditorChain != null && !_mapEditorChain.IsContentLost && !_mapEditorChain.IsDisposed)
             {
                 _graphicsDevice.SetRenderTarget(_mapEditorChain);
                 _graphicsDevice.Clear(Microsoft.Xna.Framework.Color.Black);
@@ -697,7 +697,7 @@ namespace Intersect_Editor.Classes
 
         public static void DrawTileset()
         {
-            if (_tilesetChain == null) return;
+            if (_tilesetChain == null || _tilesetChain.IsContentLost || _tilesetChain.IsDisposed) return;
             _graphicsDevice.SetRenderTarget(_tilesetChain);
             _graphicsDevice.Clear(Microsoft.Xna.Framework.Color.Black);
             if (Globals.CurrentTileset != null)

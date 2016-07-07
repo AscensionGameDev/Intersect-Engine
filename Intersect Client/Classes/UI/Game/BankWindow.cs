@@ -32,6 +32,7 @@ using IntersectClientExtras.Graphics;
 using IntersectClientExtras.Gwen;
 using IntersectClientExtras.Gwen.Control;
 using IntersectClientExtras.Gwen.Control.EventArguments;
+using IntersectClientExtras.Gwen.ControlInternal;
 using IntersectClientExtras.Gwen.Input;
 using IntersectClientExtras.Input;
 using Intersect_Client.Classes.Core;
@@ -64,18 +65,43 @@ namespace Intersect_Client.Classes.UI.Game
         public BankWindow(Canvas _gameCanvas)
         {
             _bankWindow = new WindowControl(_gameCanvas, "Bank");
-            _bankWindow.SetSize(400, 400);
+            _bankWindow.SetSize(415, 424);
             _bankWindow.SetPosition(GameGraphics.Renderer.GetScreenWidth() / 2 - 200, GameGraphics.Renderer.GetScreenHeight() / 2 - 200);
             _bankWindow.DisableResizing();
             _bankWindow.Margin = Margin.Zero;
-            _bankWindow.Padding = Padding.Zero;
+            _bankWindow.Padding = new Padding(8, 5, 9, 11);
             X = _bankWindow.X;
             Y = _bankWindow.Y;
 
+            _bankWindow.SetTitleBarHeight(24);
+            _bankWindow.SetCloseButtonSize(20, 20);
+            _bankWindow.SetImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "bankactive.png"), WindowControl.ControlState.Active);
+            _bankWindow.SetCloseButtonImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "closenormal.png"), Button.ControlState.Normal);
+            _bankWindow.SetCloseButtonImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "closehover.png"), Button.ControlState.Hovered);
+            _bankWindow.SetCloseButtonImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "closeclicked.png"), Button.ControlState.Clicked);
+            _bankWindow.SetFont(Globals.ContentManager.GetFont(Gui.DefaultFont, 14));
+            _bankWindow.SetTextColor(new Color(255, 220, 220, 220), WindowControl.ControlState.Active);
+
             _itemContainer = new ScrollControl(_bankWindow);
             _itemContainer.SetPosition(0, 0);
-            _itemContainer.SetSize(_bankWindow.Width, _bankWindow.Height - 24);
+            _itemContainer.SetSize(_bankWindow.Width - _bankWindow.Padding.Left - _bankWindow.Padding.Right, _bankWindow.Height - 24 - _bankWindow.Padding.Top - _bankWindow.Padding.Bottom);
             _itemContainer.EnableScroll(false, true);
+            _itemContainer.AutoHideBars = false;
+
+            var scrollbar = _itemContainer.GetVerticalScrollBar();
+            scrollbar.RenderColor = new Color(200, 40, 40, 40);
+            scrollbar.SetScrollBarImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "scrollbarnormal.png"), Dragger.ControlState.Normal);
+            scrollbar.SetScrollBarImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "scrollbarhover.png"), Dragger.ControlState.Hovered);
+            scrollbar.SetScrollBarImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "scrollbarclicked.png"), Dragger.ControlState.Clicked);
+
+            var upButton = scrollbar.GetScrollBarButton(Pos.Top);
+            upButton.SetImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "uparrownormal.png"), Button.ControlState.Normal);
+            upButton.SetImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "uparrowclicked.png"), Button.ControlState.Clicked);
+            upButton.SetImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "uparrowhover.png"), Button.ControlState.Hovered);
+            var downButton = scrollbar.GetScrollBarButton(Pos.Bottom);
+            downButton.SetImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "downarrownormal.png"), Button.ControlState.Normal);
+            downButton.SetImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "downarrowclicked.png"), Button.ControlState.Clicked);
+            downButton.SetImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "downarrowhover.png"), Button.ControlState.Hovered);
             InitItemContainer();
         }
 
@@ -97,7 +123,7 @@ namespace Intersect_Client.Classes.UI.Game
             if (_bankWindow.IsHidden == true) { return; }
             X = _bankWindow.X;
             Y = _bankWindow.Y;
-            for (int i = 0; i < Options.MaxInvItems; i++)
+            for (int i = 0; i < Options.MaxBankSlots; i++)
             {
                 if (Globals.Bank[i] != null &&  Globals.Bank[i].ItemNum > -1)
                 {
@@ -140,17 +166,16 @@ namespace Intersect_Client.Classes.UI.Game
             for (int i = 0; i < Options.MaxBankSlots; i++)
             {
                 Items.Add(new BankItem(this, i));
-                Items[i].pnl = new ImagePanel(_itemContainer);
-                Items[i].pnl.SetSize(32, 32);
-                Items[i].pnl.SetPosition((i % (_itemContainer.Width / (32 + ItemXPadding))) * (32 + ItemXPadding) + ItemXPadding, (i / (_itemContainer.Width / (32 + ItemXPadding))) * (32 + ItemYPadding) + ItemYPadding);
-                Items[i].pnl.IsHidden = false;
+                Items[i].container = new ImagePanel(_itemContainer);
+                Items[i].container.SetSize(34, 34);
+                Items[i].container.SetPosition((i % (_itemContainer.Width / (34 + ItemXPadding))) * (34 + ItemXPadding) + ItemXPadding, (i / (_itemContainer.Width / (34 + ItemXPadding))) * (34 + ItemYPadding) + ItemYPadding);
+                Items[i].container.Texture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "bankitem.png");
                 Items[i].Setup();
 
                 _values.Add(new Label(_itemContainer));
                 _values[i].Text = "";
-                _values[i].SetPosition((i % (_itemContainer.Width / (32 + ItemXPadding))) * (32 + ItemXPadding) + ItemXPadding, (i / (_itemContainer.Width / (32 + ItemXPadding))) * (32 + ItemYPadding) + ItemYPadding + 24);
-                _values[i].TextColor = Color.Black;
-                _values[i].MakeColorDark();
+                _values[i].SetPosition((i % (_itemContainer.Width / (34 + ItemXPadding))) * (34 + ItemXPadding) + ItemXPadding + 2, (i / (_itemContainer.Width / (34 + ItemXPadding))) * (34 + ItemYPadding) + ItemYPadding + 20);
+                _values[i].TextColorOverride = Color.White;
                 _values[i].IsHidden = true;
             }
         }
@@ -170,6 +195,7 @@ namespace Intersect_Client.Classes.UI.Game
     {
         private static int ItemXPadding = 4;
         private static int ItemYPadding = 4;
+        public ImagePanel container;
         public ImagePanel pnl;
         private ItemDescWindow _descWindow;
 
@@ -186,7 +212,6 @@ namespace Intersect_Client.Classes.UI.Game
 
         //Slot info
         private int _mySlot;
-        private bool _isEquipped;
         private int _currentItem = -2;
 
         //Drag/Drop References
@@ -201,6 +226,10 @@ namespace Intersect_Client.Classes.UI.Game
 
         public void Setup()
         {
+            pnl = new ImagePanel(container);
+            pnl.SetSize(32, 32);
+            pnl.SetPosition(1, 1);
+            pnl.IsHidden = true;
             pnl.HoverEnter += pnl_HoverEnter;
             pnl.HoverLeave += pnl_HoverLeave;
             pnl.RightClicked += pnl_RightClicked;
@@ -242,7 +271,7 @@ namespace Intersect_Client.Classes.UI.Game
             if (_descWindow != null) { _descWindow.Dispose(); _descWindow = null; }
             if (Globals.Bank[_mySlot] != null)
             {
-                _descWindow = new ItemDescWindow(Globals.Bank[_mySlot].ItemNum, Globals.Bank[_mySlot].ItemVal, _bankWindow.X - 220, _bankWindow.Y, Globals.Bank[_mySlot].StatBoost);
+                _descWindow = new ItemDescWindow(Globals.Bank[_mySlot].ItemNum, Globals.Bank[_mySlot].ItemVal, _bankWindow.X - 255, _bankWindow.Y, Globals.Bank[_mySlot].StatBoost);
             }
         }
 
@@ -258,18 +287,9 @@ namespace Intersect_Client.Classes.UI.Game
 
         public void Update()
         {
-            bool equipped = false;
-            for (int i = 0; i < Options.EquipmentSlots.Count; i++)
-            {
-                if (Globals.Me.Equipment[i] == _mySlot)
-                {
-                    equipped = true;
-                }
-            }
-            if (Globals.Bank[_mySlot].ItemNum != _currentItem || equipped != _isEquipped)
+            if (Globals.Bank[_mySlot].ItemNum != _currentItem)
             {
                 _currentItem = Globals.Bank[_mySlot].ItemNum;
-                _isEquipped = equipped;
                 var item = ItemBase.GetItem(Globals.Bank[_mySlot].ItemNum);
                 if (item != null)
                 {
@@ -347,7 +367,7 @@ namespace Intersect_Client.Classes.UI.Game
                     //Check inventory first.
                     if (_bankWindow.RenderBounds().IntersectsWith(dragRect))
                     {
-                        for (int i = 0; i < Options.MaxInvItems; i++)
+                        for (int i = 0; i < Options.MaxBankSlots; i++)
                         {
                             if (_bankWindow.Items[i].RenderBounds().IntersectsWith(dragRect))
                             {

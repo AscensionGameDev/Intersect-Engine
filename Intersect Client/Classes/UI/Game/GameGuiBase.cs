@@ -130,7 +130,7 @@ namespace Intersect_Client.Classes.UI.Game
         public void TryAddPlayerBox()
         {
             if (_playerBox != null || Globals.Me == null) { return; }
-            _playerBox = new EntityBox(GameCanvas, Globals.Me,0,0);
+            _playerBox = new EntityBox(GameCanvas, Globals.Me,4,4);
         }
 
         public void ShowHideDebug()

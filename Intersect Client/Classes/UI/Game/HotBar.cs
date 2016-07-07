@@ -49,8 +49,8 @@ namespace Intersect_Client.Classes.UI.Game
         private static int ItemXPadding = 4;
         private static int ItemYPadding = 4;
         //Controls
-        public WindowControl _hotbarWindow;
-        private GameRenderTexture _hotbarBG;
+        public ImagePanel _hotbarWindow;
+        private GameTexture _hotbarBG;
 
         //Item List
         public List<HotBarItem> Items = new List<HotBarItem>();
@@ -58,42 +58,24 @@ namespace Intersect_Client.Classes.UI.Game
         //Init
         public HotBarWindow(Canvas _gameCanvas)
         {
-            _hotbarWindow = new WindowControl(_gameCanvas, "Hotbar");
-            _hotbarWindow.SetSize(36 * Options.MaxHotbar + 8, 38 + 24);
-            _hotbarWindow.SetPosition(GameGraphics.Renderer.GetScreenWidth() - 4 - _hotbarWindow.Width, 2);
-            _hotbarWindow.DisableResizing();
-            _hotbarWindow.Margin = Margin.Zero;
-            _hotbarWindow.Padding = Padding.Zero;
-            _hotbarWindow.IsClosable = false;
-
-
-
-            //Create equipment background image //TODO Replace this with a general BG Image because RenderTextures are very inefficient.
-            GameRenderTexture rtHotbar = GameGraphics.Renderer.CreateRenderTexture(34, 34);
-            rtHotbar.Begin();
-            GameGraphics.DrawGameTexture(GameGraphics.Renderer.GetWhiteTexture(), new FloatRect(0, 0, 1, 1), new FloatRect(0, 0, 1, 34),
-                Color.Black, rtHotbar);
-            GameGraphics.DrawGameTexture(GameGraphics.Renderer.GetWhiteTexture(), new FloatRect(0, 0, 1, 1), new FloatRect(33, 0, 1, 34),
-                Color.Black, rtHotbar);
-            GameGraphics.DrawGameTexture(GameGraphics.Renderer.GetWhiteTexture(), new FloatRect(0, 0, 1, 1), new FloatRect(0, 0, 34, 1),
-                Color.Black, rtHotbar);
-            GameGraphics.DrawGameTexture(GameGraphics.Renderer.GetWhiteTexture(), new FloatRect(0, 0, 1, 1), new FloatRect(0, 33, 34, 1),
-                Color.Black, rtHotbar);
-            rtHotbar.End();
-            _hotbarBG = rtHotbar;
+            _hotbarWindow = new ImagePanel(_gameCanvas);
+            _hotbarWindow.SetSize(384,54);
+            _hotbarWindow.SetPosition(GameGraphics.Renderer.GetScreenWidth() - 4 - _hotbarWindow.Width, 4);
+            _hotbarWindow.Texture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "hotbar.png");
+            _hotbarBG = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui,"hotbaritem.png");
 
             InitHotbarItems();
         }
 
         private void InitHotbarItems()
         {
-            int x = 4;
+            int x = 12;
             for (int i = 0; i < Options.MaxHotbar; i++)
             {
                 Items.Add(new HotBarItem(i, _hotbarBG, _hotbarWindow));
                 Items[i].pnl = new ImagePanel(_hotbarWindow);
                 Items[i].pnl.SetSize(34, 34);
-                Items[i].pnl.SetPosition(x + i * 36, 2);
+                Items[i].pnl.SetPosition(x + i * 36, 10);
                 Items[i].pnl.IsHidden = false;
                 Items[i].keyLabel = new Label(_hotbarWindow);
                 if (i + 1 == 10)
@@ -104,6 +86,7 @@ namespace Intersect_Client.Classes.UI.Game
                 {
                     Items[i].keyLabel.SetText("" + (i + 1));
                 }
+                Items[i].keyLabel.SetTextColor(Color.White, Label.ControlState.Normal);
                 Items[i].keyLabel.SetPosition(Items[i].pnl.X + Items[i].pnl.Width - Items[i].keyLabel.Width, Items[i].pnl.Y + Items[i].pnl.Height - Items[i].keyLabel.Height);
                 Items[i].Setup();
             }
@@ -135,7 +118,7 @@ namespace Intersect_Client.Classes.UI.Game
         private static int ItemYPadding = 4;
         public ImagePanel pnl;
         public Label keyLabel;
-        private WindowControl _hotbarWindow;
+        private Base _hotbarWindow;
 
         //pnl is the background iamge
         private ImagePanel contentPanel;
@@ -167,10 +150,10 @@ namespace Intersect_Client.Classes.UI.Game
         private int[] _statBoost = new int[Options.MaxStats];
 
         //Textures
-        private GameRenderTexture _hotbarBG;
+        private GameTexture _hotbarBG;
 
 
-        public HotBarItem(int index, GameRenderTexture hotbarBG, WindowControl hotbarWindow)
+        public HotBarItem(int index, GameTexture hotbarBG, Base hotbarWindow)
         {
             myindex = index;
             _hotbarBG = hotbarBG;
@@ -243,12 +226,12 @@ namespace Intersect_Client.Classes.UI.Game
             if (_currentType == 0)
             {
                 if (_itemDescWindow != null) { _itemDescWindow.Dispose(); _itemDescWindow = null; }
-                _itemDescWindow = new ItemDescWindow(Globals.Me.Inventory[_currentItem].ItemNum, 1, _hotbarWindow.X + pnl.X + 16 - 220 / 2, _hotbarWindow.Y + _hotbarWindow.Height + 2, Globals.Me.Inventory[_currentItem].StatBoost, "Hotbar Slot: " + ItemBase.GetName(Globals.Me.Inventory[_currentItem].ItemNum));
+                _itemDescWindow = new ItemDescWindow(Globals.Me.Inventory[_currentItem].ItemNum, 1, _hotbarWindow.X + pnl.X + 16 - 255 / 2, _hotbarWindow.Y + _hotbarWindow.Height + 2, Globals.Me.Inventory[_currentItem].StatBoost, ItemBase.GetName(Globals.Me.Inventory[_currentItem].ItemNum));
             }
             else if (_currentType == 1)
             {
                 if (_spellDescWindow != null) { _spellDescWindow.Dispose(); _spellDescWindow = null; }
-                _spellDescWindow = new SpellDescWindow(Globals.Me.Spells[_currentItem].SpellNum, _hotbarWindow.X + pnl.X + 16 - 220 / 2, _hotbarWindow.Y + _hotbarWindow.Height + 2);
+                _spellDescWindow = new SpellDescWindow(Globals.Me.Spells[_currentItem].SpellNum, _hotbarWindow.X + pnl.X + 16 - 255 / 2, _hotbarWindow.Y + _hotbarWindow.Height + 2);
             }
         }
 
@@ -357,7 +340,7 @@ namespace Intersect_Client.Classes.UI.Game
                                     if (Math.Sqrt(Math.Pow(xdiff, 2) + Math.Pow(ydiff, 2)) > 5)
                                     {
                                         IsDragging = true;
-                                        dragIcon = new Draggable(pnl.LocalPosToCanvas(new Point(0, 0)).X + MouseX, pnl.LocalPosToCanvas(new Point(0, 0)).X + MouseY, null); //SOMETHING SHOULD BE RENDERED HERE, RIGHT?
+                                        dragIcon = new Draggable(pnl.LocalPosToCanvas(new Point(0, 0)).X + MouseX, pnl.LocalPosToCanvas(new Point(0, 0)).X + MouseY, contentPanel.Texture); //SOMETHING SHOULD BE RENDERED HERE, RIGHT?
                                     }
                                 }
                             }
@@ -368,7 +351,7 @@ namespace Intersect_Client.Classes.UI.Game
                 {
                     if (dragIcon.Update())
                     {
-                        pnl.IsHidden = false;
+                        contentPanel.IsHidden = false;
                         //Drug the item and now we stopped
                         IsDragging = false;
                         FloatRect dragRect = new FloatRect(dragIcon.x - ItemXPadding / 2, dragIcon.y - ItemYPadding / 2, ItemXPadding / 2 + 32, ItemYPadding / 2 + 32);
@@ -403,7 +386,7 @@ namespace Intersect_Client.Classes.UI.Game
                     }
                     else
                     {
-                        pnl.IsHidden = true;
+                        contentPanel.IsHidden = true;
                     }
                 }
             }

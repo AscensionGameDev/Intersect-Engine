@@ -39,9 +39,14 @@ namespace Intersect_Client.Classes.UI.Game
     public class EntityBox
     {
         //Controls
-        public WindowControl _entityBox;
+        public ImagePanel _entityBox;
         public ImagePanel _entityFaceContainer;
         public ImagePanel _entityFace;
+        public Label _entityName;
+        public Label _entityLevel;
+        public Label _hpTitle;
+        public Label _mpTitle;
+        public Label _expTitle;
         public Label _hpLbl;
         public Label _mpLbl;
         public Label _expLbl;
@@ -52,6 +57,8 @@ namespace Intersect_Client.Classes.UI.Game
         public ImagePanel _expBackground;
         public ImagePanel _expBar;
         public RichLabel _eventDesc;
+        public Label TradeLabel;
+        public Label PartyLabel;
 
         public float _curHPWidth;
         public float _curMPWidth;
@@ -67,31 +74,39 @@ namespace Intersect_Client.Classes.UI.Game
         {
             _myEntity = myEntity;
 
-            _entityBox = new WindowControl(_gameCanvas) { Title = "EntityBox" };
-            _entityBox.SetSize(244, 94);
+            _entityBox = new ImagePanel(_gameCanvas);
+            _entityBox.SetSize(314,126);
             _entityBox.SetPosition(x, y);
-            _entityBox.DisableResizing();
+            _entityBox.Texture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "entitybox.png");
 
-            _entityBox.Margin = Margin.Zero;
-            _entityBox.Padding = Padding.Zero;
-            _entityBox.IsClosable = false;
-
+            _entityName = new Label(_entityBox);
+            _entityName.SetPosition(16, 7);
+            _entityName.SetText(myEntity.MyName);
+            _entityName.SetTextColor(Color.White, Label.ControlState.Normal);
+            _entityName.Font = Globals.ContentManager.GetFont(Gui.DefaultFont, 14);
 
             _entityFaceContainer = new ImagePanel(_entityBox);
             _entityFaceContainer.SetSize(64, 64);
-            _entityFaceContainer.SetPosition(3, 2);
+            _entityFaceContainer.SetPosition(18,39);
 
             _entityFace = new ImagePanel(_entityFaceContainer);
             _entityFace.SetSize(64, 64);
-            _entityFace.SetPosition(3, 2);
+            _entityFace.SetPosition(0, 0);
 
-            if (myEntity.GetType() == typeof(Event))
+            if (myEntity.GetType() == typeof (Event))
             {
                 _eventDesc = new RichLabel(_entityBox);
-                _eventDesc.SetPosition(70, 2);
+                _eventDesc.SetPosition(78, 39);
                 _eventDesc.Width = 159;
-                _eventDesc.AddText("Desc: " + ((Event)_myEntity).Desc, Color.Black);
+                _eventDesc.AddText(((Event) _myEntity).Desc, Color.Black);
                 _eventDesc.SizeToChildren(false, true);
+            }
+            else
+            {
+                _entityLevel = new Label(_entityBox);
+                _entityLevel.SetPosition(0, 0);
+                _entityLevel.SetTextColor(Color.White, Label.ControlState.Normal);
+                _entityLevel.Font = Globals.ContentManager.GetFont(Gui.DefaultFont, 12);
             }
 
 
@@ -99,51 +114,91 @@ namespace Intersect_Client.Classes.UI.Game
             {
                 _hpBackground = new ImagePanel(_entityBox);
                     _hpBackground.Texture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui,"emptybar.png");
-                _hpBackground.SetSize(169, 18);
-                _hpBackground.SetPosition(70, 2);
+                _hpBackground.SetSize(183, 25);
+                _hpBackground.SetPosition(117, 32);
 
                 _hpBar = new ImagePanel(_entityBox);
-                _hpBar.SetSize(169, 18);
-                    _hpBar.Texture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "hpbar.png");
-                _hpBar.SetPosition(70, 2);
+                _hpBar.SetSize(183, 25);
+                    _hpBar.Texture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "lifebar.png");
+                _hpBar.SetPosition(117, 32);
                 _hpBar.IsHidden = true;
 
+                _hpTitle = new Label(_entityBox);
+                _hpTitle.SetText("HP:");
+                _hpTitle.SetTextColor(Color.White, Label.ControlState.Normal);
+                _hpTitle.SetPosition(93, 37);
+
                 _hpLbl = new Label(_entityBox);
-                _hpLbl.SetText("HP: ");
-                _hpLbl.SetPosition(120, 5);
+                _hpLbl.Alignment = Pos.Center;
+                _hpLbl.AutoSizeToContents = false;
+                _hpLbl.SetPosition(_hpBackground.X, _hpBackground.Y);
+                _hpLbl.SetSize(_hpBackground.Width, _hpBackground.Height);
+                _hpLbl.SetTextColor(Color.White, Label.ControlState.Normal);
 
                 _mpBackground = new ImagePanel(_entityBox);
                     _mpBackground.Texture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "emptybar.png");
-                _mpBackground.SetSize(169, 18);
-                _mpBackground.SetPosition(70, 24);
+                _mpBackground.SetSize(183, 25);
+                _mpBackground.SetPosition(117, 58);
 
                 _mpBar = new ImagePanel(_entityBox);
-                _mpBar.SetSize(169, 18);
+                _mpBar.SetSize(183, 25);
                     _mpBar.Texture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "manabar.png");
-                _mpBar.SetPosition(70, 24);
+                _mpBar.SetPosition(117, 58);
                 _mpBar.IsHidden = true;
 
+                _mpTitle = new Label(_entityBox);
+                _mpTitle.SetText("MP:");
+                _mpTitle.SetTextColor(Color.White, Label.ControlState.Normal);
+                _mpTitle.SetPosition(93, 63);
+
                 _mpLbl = new Label(_entityBox);
-                _mpLbl.SetText("MP: ");
-                _mpLbl.SetPosition(120, 25);
+                _mpLbl.Alignment = Pos.Center;
+                _mpLbl.AutoSizeToContents = false;
+                _mpLbl.SetPosition(_mpBackground.X, _mpBackground.Y);
+                _mpLbl.SetSize(_mpBackground.Width, _mpBackground.Height);
+                _mpLbl.SetTextColor(Color.White, Label.ControlState.Normal);
             }
 
             if (_myEntity == Globals.Me)
             {
                 _expBackground = new ImagePanel(_entityBox);
                     _expBackground.Texture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "emptybar.png");
-                _expBackground.SetSize(169, 18);
-                _expBackground.SetPosition(70, 46);
+                _expBackground.SetSize(183, 25);
+                _expBackground.SetPosition(117, 84);
 
                 _expBar = new ImagePanel(_entityBox);
-                _expBar.SetSize(169, 18);
+                _expBar.SetSize(183, 25);
                     _expBar.Texture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "expbar.png");
-                _expBar.SetPosition(70, 46);
+                _expBar.SetPosition(117,84);
                 _expBar.IsHidden = true;
 
+                _expTitle = new Label(_entityBox);
+                _expTitle.SetText("EXP:");
+                _expTitle.SetTextColor(Color.White, Label.ControlState.Normal);
+                _expTitle.SetPosition(88,89);
+                
                 _expLbl = new Label(_entityBox);
-                _expLbl.SetText("Exp: ");
-                _expLbl.SetPosition(120, 49);
+                _expLbl.Alignment = Pos.Center;
+                _expLbl.AutoSizeToContents = false;
+                _expLbl.SetPosition(_expBackground.X, _expBackground.Y);
+                _expLbl.SetSize(_expBackground.Width, _expBackground.Height);
+                _expLbl.SetTextColor(Color.White, Label.ControlState.Normal);
+            }
+            else if (_myEntity.IsPlayer)
+            {
+                TradeLabel = new Label(_entityBox);
+                TradeLabel.SetText("Trade");
+                TradeLabel.SetToolTipText("Request to trade with " + _myEntity.MyName + ".");
+                TradeLabel.SetPosition(117, 89);
+                TradeLabel.TextColorOverride = Color.White;
+                TradeLabel.MouseInputEnabled = true;
+
+                PartyLabel = new Label(_entityBox);
+                PartyLabel.SetText("Party");
+                PartyLabel.SetToolTipText("Invite " + _myEntity.MyName + " to your party.");
+                PartyLabel.SetPosition(165, 89);
+                PartyLabel.TextColorOverride = Color.White;
+                PartyLabel.MouseInputEnabled = true;
             }
 
             lastUpdateTime = Globals.System.GetTimeMS();
@@ -153,9 +208,6 @@ namespace Intersect_Client.Classes.UI.Game
         public void Update()
         {
             float elapsedTime = ((float)(Globals.System.GetTimeMS() - lastUpdateTime)) / 1000.0f;
-
-            //Update the window title
-            _entityBox.Title = _myEntity.MyName + ((_myEntity.Level == 0 || _myEntity.GetType() == typeof(Event)) ? "" : " Lv: " + _myEntity.Level);
 
             //Update the event/entity face.
             GameTexture faceTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Face, _myEntity.Face);
@@ -184,36 +236,44 @@ namespace Intersect_Client.Classes.UI.Game
             }
 
             //If not an event, update the hp/mana bars.
-            if (
-            _myEntity.GetType() != typeof(Event))
+            if (_myEntity.GetType() != typeof (Event))
             {
+                _entityLevel.SetText("Level: " + _myEntity.Level);
+                _entityLevel.SetPosition(_entityBox.Width - 20 - _entityLevel.Width, 9);
                 float targetHPWidth = 0f;
-                if (_myEntity.MaxVital[(int)Vitals.Health] > 0)
+                if (_myEntity.MaxVital[(int) Vitals.Health] > 0)
                 {
-                    targetHPWidth = (float)((float)_myEntity.Vital[(int)Vitals.Health] / (float)_myEntity.MaxVital[(int)Vitals.Health]);
+                    targetHPWidth =
+                        (float)
+                            ((float) _myEntity.Vital[(int) Vitals.Health]/
+                             (float) _myEntity.MaxVital[(int) Vitals.Health]);
                     //Fix the Labels
-                    _hpLbl.Text = "HP: " + _myEntity.Vital[(int)Vitals.Health] + " / " + _myEntity.MaxVital[(int)Vitals.Health];
-                    _hpLbl.X = _hpBackground.X + _hpBackground.Width / 2 - _hpLbl.Width / 2;
+                    _hpLbl.Text = _myEntity.Vital[(int) Vitals.Health] + " / " + _myEntity.MaxVital[(int) Vitals.Health];
                     //Multiply by the width of the bars.
-                    targetHPWidth *= 169;
+                    targetHPWidth *= _hpBackground.Width;
                 }
                 else
                 {
-                    _hpLbl.Text = "HP: " + "0 / 0";
-                    _hpLbl.X = _hpBackground.X + _hpBackground.Width / 2 - _hpLbl.Width / 2;
-                    targetHPWidth = 169;
+                    _hpLbl.Text = "0 / 0";
+                    targetHPWidth = _hpBackground.Width;
                 }
-                if ((int)targetHPWidth != _curHPWidth)
+                if ((int) targetHPWidth != _curHPWidth)
                 {
-                    if ((int)targetHPWidth > _curHPWidth)
+                    if ((int) targetHPWidth > _curHPWidth)
                     {
-                        _curHPWidth += (100f * elapsedTime);
-                        if (_curHPWidth > (int)targetHPWidth) { _curHPWidth = targetHPWidth; }
+                        _curHPWidth += (100f*elapsedTime);
+                        if (_curHPWidth > (int) targetHPWidth)
+                        {
+                            _curHPWidth = targetHPWidth;
+                        }
                     }
                     else
                     {
-                        _curHPWidth -= (100f * elapsedTime);
-                        if (_curHPWidth < targetHPWidth) { _curHPWidth = targetHPWidth; }
+                        _curHPWidth -= (100f*elapsedTime);
+                        if (_curHPWidth < targetHPWidth)
+                        {
+                            _curHPWidth = targetHPWidth;
+                        }
                     }
                     if (_curHPWidth == 0)
                     {
@@ -221,36 +281,40 @@ namespace Intersect_Client.Classes.UI.Game
                     }
                     else
                     {
-                        _hpBar.Width = (int)_curHPWidth;
-                        _hpBar.SetTextureRect(0, 0, (int)_curHPWidth, _hpBar.Height);
+                        _hpBar.Width = (int) _curHPWidth;
+                        _hpBar.SetTextureRect(0, 0, (int) _curHPWidth, _hpBar.Height);
                         _hpBar.IsHidden = false;
                     }
                 }
                 float targetMPWidth = 0f;
-                if (_myEntity.MaxVital[(int)Vitals.Mana] > 0)
+                if (_myEntity.MaxVital[(int) Vitals.Mana] > 0)
                 {
-                    targetMPWidth = _myEntity.Vital[(int)Vitals.Mana] / _myEntity.MaxVital[(int)Vitals.Mana];
-                    _mpLbl.Text = "MP: " + _myEntity.Vital[(int)Vitals.Mana] + " / " + _myEntity.MaxVital[(int)Vitals.Mana];
-                    _mpLbl.X = _mpBackground.X + _mpBackground.Width / 2 - _mpLbl.Width / 2;
-                    targetMPWidth *= 169;
+                    targetMPWidth = _myEntity.Vital[(int) Vitals.Mana]/_myEntity.MaxVital[(int) Vitals.Mana];
+                    _mpLbl.Text = _myEntity.Vital[(int) Vitals.Mana] + " / " + _myEntity.MaxVital[(int) Vitals.Mana];
+                    targetMPWidth *= _mpBackground.Width;
                 }
                 else
                 {
-                    _mpLbl.Text = "MP: " + "0 / 0";
-                    _mpLbl.X = _mpBackground.X + _mpBackground.Width / 2 - _mpLbl.Width / 2;
-                    targetMPWidth = 169;
+                    _mpLbl.Text = "0 / 0";
+                    targetMPWidth = _mpBackground.Width;
                 }
-                if ((int)targetMPWidth != _curMPWidth)
+                if ((int) targetMPWidth != _curMPWidth)
                 {
-                    if ((int)targetMPWidth > _curMPWidth)
+                    if ((int) targetMPWidth > _curMPWidth)
                     {
-                        _curMPWidth += (100f * elapsedTime);
-                        if (_curMPWidth > (int)targetMPWidth) { _curMPWidth = targetMPWidth; }
+                        _curMPWidth += (100f*elapsedTime);
+                        if (_curMPWidth > (int) targetMPWidth)
+                        {
+                            _curMPWidth = targetMPWidth;
+                        }
                     }
                     else
                     {
-                        _curMPWidth -= (100f * elapsedTime);
-                        if (_curMPWidth < targetMPWidth) { _curMPWidth = targetMPWidth; }
+                        _curMPWidth -= (100f*elapsedTime);
+                        if (_curMPWidth < targetMPWidth)
+                        {
+                            _curMPWidth = targetMPWidth;
+                        }
                     }
                     if (_curMPWidth == 0)
                     {
@@ -258,18 +322,11 @@ namespace Intersect_Client.Classes.UI.Game
                     }
                     else
                     {
-                        _mpBar.Width = (int)_curMPWidth;
-                        _mpBar.SetTextureRect(0, 0, (int)_curMPWidth, _mpBar.Height);
+                        _mpBar.Width = (int) _curMPWidth;
+                        _mpBar.SetTextureRect(0, 0, (int) _curMPWidth, _mpBar.Height);
                         _mpBar.IsHidden = false;
                     }
                 }
-
-
-
-
-
-
-
             }
 
             //If player draw exp bar
@@ -279,7 +336,7 @@ namespace Intersect_Client.Classes.UI.Game
                 if (((Player)_myEntity).GetNextLevelExperience() > 0)
                 {
                     targetExpWidth = (float)((Player)_myEntity).Experience / (float)((Player)_myEntity).GetNextLevelExperience();
-                    _expLbl.Text = "Exp: " + ((Player)_myEntity).Experience + " / " + ((Player)_myEntity).GetNextLevelExperience();
+                    _expLbl.Text = ((Player)_myEntity).Experience + " / " + ((Player)_myEntity).GetNextLevelExperience();
                 }
                 else
                 {
@@ -287,7 +344,7 @@ namespace Intersect_Client.Classes.UI.Game
                     _expLbl.Text = "Max Level";
                 }
                 _expLbl.X = _expBackground.X + _expBackground.Width / 2 - _expLbl.Width / 2;
-                targetExpWidth *= 169;
+                targetExpWidth *= _expBackground.Width;
                 if ((int)targetExpWidth != _curEXPWidth)
                 {
                     if ((int)targetExpWidth > _curEXPWidth)
@@ -319,7 +376,7 @@ namespace Intersect_Client.Classes.UI.Game
 
         public void Dispose()
         {
-            _entityBox.Close();
+            _entityBox.Hide();
             Gui.GameUI.GameCanvas.RemoveChild(_entityBox, false);
             _entityBox.Dispose();
         }

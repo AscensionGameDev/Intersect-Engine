@@ -37,30 +37,34 @@ namespace Intersect_Client.Classes.UI.Game
 {
     public class SpellDescWindow
     {
-        WindowControl _descWindow;
+        ImagePanel _descWindow;
         public SpellDescWindow(int spellnum, int x, int y)
         {
             var spell = SpellBase.GetSpell(spellnum);
             if (spell == null) { return; }
-            _descWindow = new WindowControl(Gui.GameUI.GameCanvas, spell.Name, false);
-            _descWindow.SetSize(220, 100);
-            _descWindow.IsClosable = false;
-            _descWindow.DisableResizing();
+            _descWindow = new ImagePanel(Gui.GameUI.GameCanvas);
+            _descWindow.SetSize(255, 320);
             _descWindow.Margin = Margin.Zero;
-            _descWindow.Padding = Padding.Zero;
+            _descWindow.Padding = new Padding(8, 5, 9, 11);
             _descWindow.SetPosition(x, y);
+            _descWindow.Texture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "spelldescpanel.png");
 
             ImagePanel icon = new ImagePanel(_descWindow);
             icon.SetSize(32, 32);
-            icon.SetPosition(220 - 4 - 32, 4);
+            icon.SetPosition(240 - 4 - 32, 4);
             icon.Texture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Spell, spell.Pic);
 
             Label spellName = new Label(_descWindow);
-            spellName.SetPosition(4, 4);
+            spellName.SetPosition(4, 8);
             spellName.Text = spell.Name;
+            spellName.SetTextColor(IntersectClientExtras.GenericClasses.Color.White, Label.ControlState.Normal);
+            spellName.Font = Globals.ContentManager.GetFont(Gui.DefaultFont, 12);
+            Align.CenterHorizontally(spellName);
 
             Label spellType = new Label(_descWindow);
-            spellType.SetPosition(4, 16);
+            spellType.SetPosition(4, 24);
+            spellType.SetTextColor(IntersectClientExtras.GenericClasses.Color.White, Label.ControlState.Normal);
+            spellType.Font = Globals.ContentManager.GetFont(Gui.DefaultFont, 10);
             if (spell.SpellType == (int)SpellTypes.CombatSpell)
             {
                 spellType.Text = "Combat Spell";
@@ -69,39 +73,53 @@ namespace Intersect_Client.Classes.UI.Game
             {
                 spellType.Text = "Warp - Self Cast";
             }
+            else if (spell.SpellType == (int)SpellTypes.WarpTo)
+            {
+                spellType.Text = "Warp - Self Cast";
+            }
+            else if (spell.SpellType == (int)SpellTypes.Dash)
+            {
+                spellType.Text = "Dash";
+            }
+            else if (spell.SpellType == (int)SpellTypes.Event)
+            {
+                spellType.Text = "Special";
+            }
 
-            y = 32;
+            y = 44;
+            RichLabel spellDesc = new RichLabel(_descWindow);
+            spellDesc.SetPosition(_descWindow.Padding.Left + 4, y);
+            spellDesc.Width = 240;
+            //itemDesc.SetBounds(4, y, 180, 10);
+            if (spell.Desc.Length > 0)
+            {
+                spellDesc.AddText("Desc: " + spell.Desc, spellName.TextColor);
+            }
+            spellDesc.SizeToChildren(false, true);
+
+            y += spellDesc.Height + 8;
 
             RichLabel castInfo = new RichLabel(_descWindow);
-            castInfo.SetPosition(4, y);
-            castInfo.Width = 140;
+            castInfo.SetPosition(_descWindow.Padding.Left + 4, y);
+            castInfo.Width = 240;
 
             if (spell.SpellType == (int)SpellTypes.CombatSpell)
             {
                 switch (spell.TargetType)
                 {
                     case (int)SpellTargetTypes.Self:
-                        castInfo.AddText("Target: Self", spellName.TextColor);
+                        spellType.Text = "Self Cast";
                         break;
                     case (int)SpellTargetTypes.Single:
-                        castInfo.AddText("Target: Targetted", spellName.TextColor);
-                        castInfo.AddLineBreak();
-                        castInfo.AddText("Range: " + spell.CastRange + " Tiles", spellName.TextColor);
+                        spellType.Text = "Targetted - Range: " + spell.CastRange + " Tiles";
                         break;
                     case (int)SpellTargetTypes.AoE:
-                        castInfo.AddText("Target: AOE", spellName.TextColor);
-                        castInfo.AddLineBreak();
-                        castInfo.AddText("Range: " + spell.CastRange + " Tiles", spellName.TextColor);
-                        castInfo.AddLineBreak();
-                        castInfo.AddText("Radius: " + spell.HitRadius + " Tiles", spellName.TextColor);
+                        spellType.Text = "AOE - Range: " + spell.CastRange + " Tiles - Radius: " + spell.HitRadius + " Tiles";
                         break;
                     case (int)SpellTargetTypes.Projectile:
-                        castInfo.AddText("Target: Projectile", spellName.TextColor);
-                        castInfo.AddLineBreak();
-                        castInfo.AddText("Range: " + spell.CastRange + " Tiles", spellName.TextColor);
+                        spellType.Text = "Projectile - Range: " + spell.CastRange + " Tiles";
                         break;
                 }
-                castInfo.AddLineBreak();
             }
             if (spell.CastDuration > 0)
             {
@@ -116,28 +134,16 @@ namespace Intersect_Client.Classes.UI.Game
             castInfo.SizeToChildren(false, true);
             y += castInfo.Height + 8;
 
-
-            RichLabel spellDesc = new RichLabel(_descWindow);
-            spellDesc.SetPosition(4, y);
-            spellDesc.Width = 210;
-            //itemDesc.SetBounds(4, y, 180, 10);
-            if (spell.Desc.Length > 0)
-            {
-                spellDesc.AddText("Desc: " + spell.Desc, spellName.TextColor);
-            }
-            spellDesc.SizeToChildren(false, true);
-
-            y += spellDesc.Height + 8;
             int y1 = y;
 
             bool requirements = false;
 
             //Check for requirements
             RichLabel itemReqs = new RichLabel(_descWindow);
-            itemReqs.Width = 110;
+            itemReqs.Width = 120;
             itemReqs.AddText("Prerequisites", spellName.TextColor);
             itemReqs.AddLineBreak();
-            itemReqs.SetPosition(4, y);
+            itemReqs.SetPosition(_descWindow.Padding.Left + 4, y);
             if (spell.VitalCost[(int)Vitals.Health] > 0)
             {
                 requirements = true;
@@ -181,57 +187,21 @@ namespace Intersect_Client.Classes.UI.Game
                 RichLabel spellStats = new RichLabel(_descWindow);
                 if (requirements != true)
                 {
-                    spellStats.SetPosition(4, y);
-                    spellStats.Width = 220;
+                    spellStats.SetPosition(_descWindow.Padding.Left + 4, y);
+                    spellStats.Width = 240;
                 }
                 else
                 {
-                    spellStats.SetPosition(110, y);
-                    spellStats.Width = 110;
+                    spellStats.SetPosition(120,y);
+                    spellStats.Width = 120;
                 }
-                stats = "Info:";
+                stats = "Effects:";
                 spellStats.AddText(stats, spellName.TextColor);
                 spellStats.AddLineBreak();
 
-                if (spell.VitalDiff[(int)Vitals.Health] != 0)
-                {
-                    if (spell.Data1 == 1 && spell.Data2 > 0)
-                    {
-                        stats = "HP:" + ((float)spell.VitalDiff[(int)Vitals.Health] / (float)spell.Data2) + " / sec";
-
-                    }
-                    else
-                    {
-                        stats = "HP: " + spell.VitalDiff[(int)Vitals.Health];
-                    }
-                    spellStats.AddText(stats, spellName.TextColor);
-                    spellStats.AddLineBreak();
-                }
-
-                if (spell.VitalDiff[(int)Vitals.Mana] != 0)
-                {
-                    if (spell.Data1 == 1 && spell.Data2 > 0)
-                    {
-                        stats = "MP:" + ((float)spell.VitalDiff[(int)Vitals.Mana] / (float)spell.Data2) + " / sec";
-                    }
-                    else
-                    {
-                        stats = "MP: " + spell.VitalDiff[(int)Vitals.Mana];
-                    }
-                    spellStats.AddText(stats, spellName.TextColor);
-                    spellStats.AddLineBreak();
-                }
 
                 if (spell.Data2 > 0)
                 {
-                    for (int i = 0; i < Options.MaxStats; i++)
-                    {
-                        if (spell.StatDiff[i] != 0)
-                        {
-                            spellStats.AddText(Globals.GetStatName(i) + ": " + spell.StatDiff[i], spellName.TextColor);
-                            spellStats.AddLineBreak();
-                        }
-                    }
                     switch (spell.Data3)
                     {
                         case 1:
@@ -242,27 +212,60 @@ namespace Intersect_Client.Classes.UI.Game
                             spellStats.AddText("Stuns Target", spellName.TextColor);
                             spellStats.AddLineBreak();
                             break;
+                        case 3:
+                            spellStats.AddText("Snares Target", spellName.TextColor);
+                            spellStats.AddLineBreak();
+                            break;
+                        case 4:
+                            spellStats.AddText("Blinds Target", spellName.TextColor);
+                            spellStats.AddLineBreak();
+                            break;
+                        case 5:
+                            spellStats.AddText("Stealths Target", spellName.TextColor);
+                            spellStats.AddLineBreak();
+                            break;
+                        case 6:
+                            spellStats.AddText("Transforms Target", spellName.TextColor);
+                            spellStats.AddLineBreak();
+                            break;
                     }
-                    spellStats.AddText("Effect Duration: " + ((float)spell.Data2 / 10f) + " seconds", spellName.TextColor);
+                }
+
+                if (spell.VitalDiff[(int)Vitals.Health] != 0)
+                {
+                    stats = "HP: " + (spell.VitalDiff[(int)Vitals.Health] > 0 ? "+ " : "") + spell.VitalDiff[(int)Vitals.Health];
+                    spellStats.AddText(stats, spellName.TextColor);
                     spellStats.AddLineBreak();
                 }
 
+                if (spell.VitalDiff[(int)Vitals.Mana] != 0)
+                {
+                    stats = "MP: " + (spell.VitalDiff[(int)Vitals.Mana] > 0 ? "+ " : "") + spell.VitalDiff[(int)Vitals.Mana];
+                    spellStats.AddText(stats, spellName.TextColor);
+                    spellStats.AddLineBreak();
+                }
 
-
+                if (spell.Data2 > 0)
+                {
+                    for (int i = 0; i < Options.MaxStats; i++)
+                    {
+                        if (spell.StatDiff[i] != 0)
+                        {
+                            spellStats.AddText(Globals.GetStatName(i) + ": "  +(spell.StatDiff[i] > 0 ? "+ " : "") + spell.StatDiff[i], spellName.TextColor);
+                            spellStats.AddLineBreak();
+                        }
+                    }
+                    spellStats.AddText("Duration: " + ((float)spell.Data2 / 10f) + "s", spellName.TextColor);
+                    spellStats.AddLineBreak();
+                }
                 spellStats.SizeToChildren(false, true);
-                y += spellStats.Height + 4;
-
             }
-
-            if (y1 > y) { y = y1; }
-            _descWindow.SetSize(220, y + 24);
-
+            Align.CenterHorizontally(spellType);
         }
 
         public void Dispose()
         {
             if (_descWindow == null) { return; }
-            _descWindow.Close();
             Gui.GameUI.GameCanvas.RemoveChild(_descWindow, false);
             _descWindow.Dispose();
         }

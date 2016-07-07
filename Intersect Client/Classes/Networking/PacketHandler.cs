@@ -266,6 +266,7 @@ namespace Intersect_Client.Classes.Networking
                     else
                     {
                         en = EntityManager.AddGlobalEntity(i);
+                        en.IsPlayer = true;
                         en.Load(bf);
                     }
                     break;
@@ -657,7 +658,7 @@ namespace Intersect_Client.Classes.Networking
             {
                 for (int i = 0; i < Options.EquipmentSlots.Count; i++)
                 {
-                    ((Player) Globals.Entities[entityIndex]).Equipment[i] = bf.ReadInteger();
+                    (Globals.Entities[entityIndex]).Equipment[i] = bf.ReadInteger();
                 }
             }
             bf.Dispose();

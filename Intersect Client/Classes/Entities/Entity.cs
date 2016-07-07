@@ -55,6 +55,7 @@ namespace Intersect_Client.Classes.Entities
         public int Passable = 0;
         public int HideName = 0;
         public int Level = 1;
+        public bool IsPlayer = false;
 
         //Extras
         public string Face = "";

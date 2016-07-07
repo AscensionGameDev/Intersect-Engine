@@ -45,6 +45,7 @@ namespace Intersect_Client.Classes.Entities
                 Globals.Entities[i].IsLocal = true;
                 Globals.Me = (Player)Globals.Entities[i];
             }
+            Globals.Entities[i].IsPlayer = true;
             return Globals.Entities[i];
         }
 

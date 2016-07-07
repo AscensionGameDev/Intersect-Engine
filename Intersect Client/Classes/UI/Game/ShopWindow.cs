@@ -32,6 +32,7 @@ using IntersectClientExtras.Graphics;
 using IntersectClientExtras.Gwen;
 using IntersectClientExtras.Gwen.Control;
 using IntersectClientExtras.Gwen.Control.EventArguments;
+using IntersectClientExtras.Gwen.ControlInternal;
 using Intersect_Client.Classes.Core;
 using Intersect_Client.Classes.General;
 using Intersect_Client.Classes.Networking;
@@ -59,18 +60,43 @@ namespace Intersect_Client.Classes.UI.Game
         public ShopWindow(Canvas _gameCanvas)
         {
             _shopWindow = new WindowControl(_gameCanvas, Globals.GameShop.Name);
-            _shopWindow.SetSize(400, 400);
-            _shopWindow.SetPosition(GameGraphics.Renderer.GetScreenWidth() / 2 - 200, GameGraphics.Renderer.GetScreenHeight() /2 - 200);
+            _shopWindow.SetSize(415, 424);
+            _shopWindow.SetPosition(GameGraphics.Renderer.GetScreenWidth() / 2 - 200, GameGraphics.Renderer.GetScreenHeight() / 2 - 200);
             _shopWindow.DisableResizing();
             _shopWindow.Margin = Margin.Zero;
-            _shopWindow.Padding = Padding.Zero;
+            _shopWindow.Padding = new Padding(8, 5, 9, 11);
             X = _shopWindow.X;
             Y = _shopWindow.Y;
 
+            _shopWindow.SetTitleBarHeight(24);
+            _shopWindow.SetCloseButtonSize(20, 20);
+            _shopWindow.SetImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "shopactive.png"), WindowControl.ControlState.Active);
+            _shopWindow.SetCloseButtonImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "closenormal.png"), Button.ControlState.Normal);
+            _shopWindow.SetCloseButtonImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "closehover.png"), Button.ControlState.Hovered);
+            _shopWindow.SetCloseButtonImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "closeclicked.png"), Button.ControlState.Clicked);
+            _shopWindow.SetFont(Globals.ContentManager.GetFont(Gui.DefaultFont, 14));
+            _shopWindow.SetTextColor(new IntersectClientExtras.GenericClasses.Color(255, 220, 220, 220), WindowControl.ControlState.Active);
+
             _itemContainer = new ScrollControl(_shopWindow);
             _itemContainer.SetPosition(0, 0);
-            _itemContainer.SetSize(_shopWindow.Width, _shopWindow.Height - 24);
+            _itemContainer.SetSize(_shopWindow.Width - _shopWindow.Padding.Left - _shopWindow.Padding.Right, _shopWindow.Height - 24 - _shopWindow.Padding.Top - _shopWindow.Padding.Bottom);
             _itemContainer.EnableScroll(false, true);
+            _itemContainer.AutoHideBars = false;
+
+            var scrollbar = _itemContainer.GetVerticalScrollBar();
+            scrollbar.RenderColor = new IntersectClientExtras.GenericClasses.Color(200, 40, 40, 40);
+            scrollbar.SetScrollBarImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "scrollbarnormal.png"), Dragger.ControlState.Normal);
+            scrollbar.SetScrollBarImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "scrollbarhover.png"), Dragger.ControlState.Hovered);
+            scrollbar.SetScrollBarImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "scrollbarclicked.png"), Dragger.ControlState.Clicked);
+
+            var upButton = scrollbar.GetScrollBarButton(Pos.Top);
+            upButton.SetImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "uparrownormal.png"), Button.ControlState.Normal);
+            upButton.SetImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "uparrowclicked.png"), Button.ControlState.Clicked);
+            upButton.SetImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "uparrowhover.png"), Button.ControlState.Hovered);
+            var downButton = scrollbar.GetScrollBarButton(Pos.Bottom);
+            downButton.SetImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "downarrownormal.png"), Button.ControlState.Normal);
+            downButton.SetImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "downarrowclicked.png"), Button.ControlState.Clicked);
+            downButton.SetImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "downarrowhover.png"), Button.ControlState.Hovered);
             InitItemContainer();
         }
 
@@ -92,10 +118,10 @@ namespace Intersect_Client.Classes.UI.Game
             for (int i = 0; i < Globals.GameShop.SellingItems.Count; i++)
             {
                 Items.Add(new ShopWindowItem(this, i));
-                Items[i].pnl = new ImagePanel(_itemContainer);
-                Items[i].pnl.SetSize(32, 32);
-                Items[i].pnl.SetPosition((i % (_itemContainer.Width / (32 + ItemXPadding))) * (32 + ItemXPadding) + ItemXPadding, (i / (_itemContainer.Width / (32 + ItemXPadding))) * (32 + ItemYPadding) + ItemYPadding);
-                Items[i].pnl.IsHidden = false;
+                Items[i].container = new ImagePanel(_itemContainer);
+                Items[i].container.SetSize(34, 34);
+                Items[i].container.SetPosition((i % (_itemContainer.Width / (34 + ItemXPadding))) * (34 + ItemXPadding) + ItemXPadding, (i / (_itemContainer.Width / (34 + ItemXPadding))) * (34 + ItemYPadding) + ItemYPadding);
+                Items[i].container.Texture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "shopitem.png");
                 Items[i].Setup();
             }
         }
@@ -103,6 +129,7 @@ namespace Intersect_Client.Classes.UI.Game
 
     public class ShopWindowItem
     {
+        public ImagePanel container;
         public ImagePanel pnl;
         private ItemDescWindow _descWindow;
 
@@ -131,6 +158,9 @@ namespace Intersect_Client.Classes.UI.Game
 
         public void Setup()
         {
+            pnl = new ImagePanel(container);
+            pnl.SetSize(32, 32);
+            pnl.SetPosition(1, 1);
             pnl.HoverEnter += pnl_HoverEnter;
             pnl.HoverLeave += pnl_HoverLeave;
             pnl.DoubleClicked += Pnl_DoubleClicked;
@@ -186,7 +216,7 @@ namespace Intersect_Client.Classes.UI.Game
             if (_descWindow != null) { _descWindow.Dispose(); _descWindow = null; }
             var item = ItemBase.GetItem(Globals.GameShop.SellingItems[_mySlot].CostItemNum);
             if (item != null)
-                _descWindow = new ItemDescWindow(Globals.GameShop.SellingItems[_mySlot].ItemNum, 1, _shopWindow.X - 220, _shopWindow.Y, null,"", "Costs " + Globals.GameShop.SellingItems[_mySlot].CostItemVal + " " +  item.Name + "(s)");
+                _descWindow = new ItemDescWindow(Globals.GameShop.SellingItems[_mySlot].ItemNum, 1, _shopWindow.X - 255, _shopWindow.Y, null,"", "Costs " + Globals.GameShop.SellingItems[_mySlot].CostItemVal + " " +  item.Name + "(s)");
         }
 
         public FloatRect RenderBounds()

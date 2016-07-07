@@ -316,7 +316,7 @@ namespace Intersect_Server.Classes.Networking
 
         public static void SendPlayerMsg(Client client, string message)
         {
-            SendPlayerMsg(client, message, Color.Black);
+            SendPlayerMsg(client, message, new Color(255,220,220,220));
         }
 
         public static void SendPlayerMsg(Client client, string message, Color clr)
@@ -355,7 +355,7 @@ namespace Intersect_Server.Classes.Networking
 
         public static void SendGlobalMsg(string message)
         {
-            SendGlobalMsg(message, Color.Black);
+            SendGlobalMsg(message, new Color(255,220,220,220));
         }
 
         public static void SendGlobalMsg(string message, Color clr)
@@ -373,7 +373,7 @@ namespace Intersect_Server.Classes.Networking
 
         public static void SendProximityMsg(string message, int centerMap)
         {
-            SendProximityMsg(message, centerMap, Color.Black);
+            SendProximityMsg(message, centerMap, new Color(255, 220, 220, 220));
         }
 
         public static void SendProximityMsg(string message, int centerMap, Color clr)

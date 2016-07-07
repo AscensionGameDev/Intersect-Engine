@@ -174,19 +174,20 @@ namespace Intersect_Client.Classes.UI.Menu
 
             //Next Sprite Button
             _nextSpriteButton = new Button(_characterContainer);
-            _nextSpriteButton.SetSize(12, 74);
-            _nextSpriteButton.SetPosition(74-12,0);
-            _nextSpriteButton.SetImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "rightarrow.png"),Button.ControlState.Normal);
+            _nextSpriteButton.SetSize(15,15);
+            _nextSpriteButton.SetPosition(74-15,_characterContainer.Height/2 - 15/2);
+            _nextSpriteButton.SetImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "rightarrownormal.png"),Button.ControlState.Normal);
             _nextSpriteButton.SetImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "rightarrowhover.png"), Button.ControlState.Hovered);
-            _nextSpriteButton.SetImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "rightarrow.png"), Button.ControlState.Clicked);
+            _nextSpriteButton.SetImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "rightarrowclicked.png"), Button.ControlState.Clicked);
             _nextSpriteButton.Clicked += _nextSpriteButton_Clicked;
 
             //Prev Sprite Button
             _prevSpriteButton = new Button(_characterContainer);
-            _prevSpriteButton.SetSize(12, 74);
-            _prevSpriteButton.SetImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "leftarrow.png"), Button.ControlState.Normal);
+            _prevSpriteButton.SetSize(15,15);
+            _prevSpriteButton.SetPosition(0, _characterContainer.Height/2 - 15/2);
+            _prevSpriteButton.SetImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "leftarrownormal.png"), Button.ControlState.Normal);
             _prevSpriteButton.SetImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "leftarrowhover.png"), Button.ControlState.Hovered);
-            _prevSpriteButton.SetImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "leftarrow.png"), Button.ControlState.Clicked);
+            _prevSpriteButton.SetImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "leftarrowclicked.png"), Button.ControlState.Clicked);
             _prevSpriteButton.Clicked += _prevSpriteButton_Clicked;
 
             //Class Background
