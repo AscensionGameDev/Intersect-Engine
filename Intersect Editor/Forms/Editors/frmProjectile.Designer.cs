@@ -214,6 +214,7 @@
             // 
             // scrlSpell
             // 
+            this.scrlSpell.LargeChange = 1;
             this.scrlSpell.Location = new System.Drawing.Point(16, 186);
             this.scrlSpell.Minimum = -1;
             this.scrlSpell.Name = "scrlSpell";

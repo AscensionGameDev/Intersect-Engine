@@ -272,6 +272,13 @@ namespace Intersect_Server.Classes.Networking
                 }
             }
 
+            //Check if player is dashing
+            if (client.Entity.Dashing != null)
+            {
+                bf.Dispose();
+                return;
+            }
+
             if (TileHelper.IsTileValid(map, x, y))
             {
                 Globals.Entities[index].CurrentMap = map;
@@ -301,6 +308,13 @@ namespace Intersect_Server.Classes.Networking
             if (attribute != null && attribute.value == (int)MapAttributes.Warp)
             {
                 Globals.Entities[index].Warp(attribute.data1, attribute.data2, attribute.data3, Globals.Entities[index].Dir);
+            }
+
+            //Check for slide tiles
+            if (attribute != null && attribute.value == (int)MapAttributes.Slide)
+            {
+                if (attribute.data1 > 0) { Globals.Entities[index].Dir = attribute.data1 - 1; } //If sets direction, set it.
+                Globals.Entities[index].Dashing = new DashInstance(index, 1);
             }
 
             if (oldMap != Globals.Entities[index].CurrentMap)

@@ -642,6 +642,12 @@ namespace Intersect_Client.Classes.Entities
                 }
             }
 
+            //Check if the player is dashing, if so don't let them move.
+            if (Dashing != null)
+            {
+                return;
+            }
+
             for (var i = 0; i < 9; i++)
             {
                 if (Globals.LocalMaps[i] == CurrentMap)

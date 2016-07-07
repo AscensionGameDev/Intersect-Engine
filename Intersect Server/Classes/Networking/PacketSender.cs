@@ -1058,6 +1058,16 @@ namespace Intersect_Server.Classes.Networking
             client.SendPacket(bf.ToArray());
             bf.Dispose();
         }
+
+        public static void SendEntityDash(int index, int range)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteLong((int)ServerPackets.EntityDash);
+            bf.WriteLong(index);
+            bf.WriteInteger(range);
+            SendDataToProximity(Globals.Entities[index].CurrentMap, bf.ToArray());
+            bf.Dispose();
+        }
     }
 }
 

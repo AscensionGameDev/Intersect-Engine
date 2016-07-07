@@ -42,7 +42,7 @@ namespace Intersect_Client.Classes.Networking
 {
     public static class PacketHandler
     {
-        public static Dictionary<ServerPackets, int> dict = new Dictionary<ServerPackets,int>();  
+        public static Dictionary<ServerPackets, int> dict = new Dictionary<ServerPackets, int>();
         public static void HandlePacket(byte[] packet)
         {
             var bf = new ByteBuffer();
@@ -58,7 +58,7 @@ namespace Intersect_Client.Classes.Networking
                 {
                     dict.Add(packetHeader, 1);
                 }
-                
+
                 //Globals.System.Log("Handling Packet: " + packetHeader);
                 switch (packetHeader)
                 {
@@ -191,6 +191,9 @@ namespace Intersect_Client.Classes.Networking
                     case ServerPackets.GameObject:
                         HandleGameObject(bf.ReadBytes(bf.Length()));
                         break;
+                    case ServerPackets.EntityDash:
+                        HandleEntityDash(bf.ReadBytes(bf.Length()));
+                        break;
                     default:
                         Console.WriteLine(@"Non implemented packet received: " + packetHeader);
                         break;
@@ -231,14 +234,16 @@ namespace Intersect_Client.Classes.Networking
                 }
                 else
                 {
-                    MapInstance.GetMap(mapNum).Dispose(false,false);
+                    MapInstance.GetMap(mapNum).Dispose(false, false);
                 }
             }
-            var newMap = new MapInstance((int) mapNum);
+            var newMap = new MapInstance((int)mapNum);
             MapInstance.AddObject(mapNum, newMap);
             newMap.Load(mapData);
-            if ((mapNum) == Globals.LocalMaps[4]) { 
-                GameAudio.PlayMusic(newMap.Music, 3,3, true); }
+            if ((mapNum) == Globals.LocalMaps[4])
+            {
+                GameAudio.PlayMusic(newMap.Music, 3, 3, true);
+            }
             newMap.MapGridX = bf.ReadInteger();
             newMap.MapGridY = bf.ReadInteger();
             newMap.HoldLeft = bf.ReadInteger();
@@ -283,10 +288,10 @@ namespace Intersect_Client.Classes.Networking
                     ((Projectile)en).Load(bf);
                     break;
                 case (int)EntityTypes.Event:
-                    en = EntityManager.AddLocalEvent(i,mapNum);
+                    en = EntityManager.AddLocalEvent(i, mapNum);
                     if (en != null)
                     {
-                        ((Event) en).Load(bf);
+                        ((Event)en).Load(bf);
                     }
                     break;
             }
@@ -341,7 +346,7 @@ namespace Intersect_Client.Classes.Networking
         {
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
-            Globals.ChatboxContent.Add(new KeyValuePair<string, Color>(bf.ReadString(),new Color((int)bf.ReadByte(),(int)bf.ReadByte(),(int)bf.ReadByte(),(int)bf.ReadByte())));
+            Globals.ChatboxContent.Add(new KeyValuePair<string, Color>(bf.ReadString(), new Color((int)bf.ReadByte(), (int)bf.ReadByte(), (int)bf.ReadByte(), (int)bf.ReadByte())));
 
         }
 
@@ -368,7 +373,7 @@ namespace Intersect_Client.Classes.Networking
                 {
                     if (i == 4)
                     {
-                        GameAudio.PlayMusic(MapInstance.GetMap(Globals.LocalMaps[i]).Music, 3,3, true);
+                        GameAudio.PlayMusic(MapInstance.GetMap(Globals.LocalMaps[i]).Music, 3, 3, true);
                     }
                 }
             }
@@ -378,7 +383,7 @@ namespace Intersect_Client.Classes.Networking
         {
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
-            MapList.GetList().Load(bf,new Dictionary<int, Intersect_Library.GameObjects.Maps.MapBase>(),false);
+            MapList.GetList().Load(bf, new Dictionary<int, Intersect_Library.GameObjects.Maps.MapBase>(), false);
             //If admin window is open update it
             bf.Dispose();
         }
@@ -393,7 +398,7 @@ namespace Intersect_Client.Classes.Networking
             Entity en;
             if (type < (int)EntityTypes.Event)
             {
-                if (!Globals.Entities.ContainsKey(index)){return;}
+                if (!Globals.Entities.ContainsKey(index)) { return; }
                 en = Globals.Entities[index];
             }
             else
@@ -403,7 +408,7 @@ namespace Intersect_Client.Classes.Networking
                 if (!gameMap.LocalEntities.ContainsKey(index)) { return; }
                 en = gameMap.LocalEntities[index];
             }
-            if (en == null) {return;}
+            if (en == null) { return; }
             var entityMap = MapInstance.GetMap(en.CurrentMap);
             if (entityMap == null) { return; }
             var map = mapNum;
@@ -411,7 +416,7 @@ namespace Intersect_Client.Classes.Networking
             var y = bf.ReadInteger();
             var dir = bf.ReadInteger();
             var correction = bf.ReadInteger();
-            if ((en.CurrentMap != map || en.CurrentX != x || en.CurrentY != y) && (en != Globals.Me || (en == Globals.Me && correction ==1)))
+            if ((en.CurrentMap != map || en.CurrentX != x || en.CurrentY != y) && (en != Globals.Me || (en == Globals.Me && correction == 1)))
             {
                 en.CurrentMap = map;
                 en.CurrentX = x;
@@ -467,7 +472,7 @@ namespace Intersect_Client.Classes.Networking
             else
             {
                 var entityMap = MapInstance.GetMap(mapNum);
-                if(entityMap == null) return;
+                if (entityMap == null) return;
                 if (!entityMap.LocalEntities.ContainsKey(index)) { return; }
                 en = entityMap.LocalEntities[index];
             }
@@ -705,7 +710,7 @@ namespace Intersect_Client.Classes.Networking
             if (SpellBase.GetSpell(SpellNum) != null)
             {
                 Globals.Entities[EntityNum].CastTime = Globals.System.GetTimeMS() +
-                                                        SpellBase.GetSpell(SpellNum).CastDuration*100;
+                                                        SpellBase.GetSpell(SpellNum).CastDuration * 100;
                 Globals.Entities[EntityNum].SpellCast = SpellNum;
             }
             bf.Dispose();
@@ -719,7 +724,7 @@ namespace Intersect_Client.Classes.Networking
             if (SpellBase.GetSpell(Globals.Me.Spells[SpellSlot].SpellNum) != null)
             {
                 Globals.Me.Spells[SpellSlot].SpellCD = Globals.System.GetTimeMS() +
-                                                       (SpellBase.GetSpell(Globals.Me.Spells[SpellSlot].SpellNum).CooldownDuration*100);
+                                                       (SpellBase.GetSpell(Globals.Me.Spells[SpellSlot].SpellNum).CooldownDuration * 100);
             }
             bf.Dispose();
         }
@@ -740,7 +745,7 @@ namespace Intersect_Client.Classes.Networking
             int entityIndex = (int)bf.ReadLong();
             if (Globals.Entities.ContainsKey(entityIndex))
             {
-                ((Projectile) Globals.Entities[entityIndex]).SpawnDead((int)bf.ReadLong());
+                ((Projectile)Globals.Entities[entityIndex]).SpawnDead((int)bf.ReadLong());
             }
             bf.Dispose();
         }
@@ -804,7 +809,7 @@ namespace Intersect_Client.Classes.Networking
                         }
                     }
                 }
-                
+
             }
             bf.Dispose();
         }
@@ -822,7 +827,7 @@ namespace Intersect_Client.Classes.Networking
                     return; //Event already holding
                 }
             }
-            Globals.EventHolds.Add(new EventHold(mapNum,eventIndex));
+            Globals.EventHolds.Add(new EventHold(mapNum, eventIndex));
             bf.Dispose();
         }
 
@@ -1054,6 +1059,14 @@ namespace Intersect_Client.Classes.Networking
             bf.Dispose();
         }
 
-
+        private static void HandleEntityDash(byte[] packet)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteBytes(packet);
+            var index = (int)bf.ReadLong();
+            var range = bf.ReadInteger();
+            Globals.Entities[index].Dashing = new DashInstance(index, range);
+            bf.Dispose();
+        }
     }
 }

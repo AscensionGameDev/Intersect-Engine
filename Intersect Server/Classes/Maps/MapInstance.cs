@@ -471,6 +471,15 @@ namespace Intersect_Server.Classes.Maps
                                 Entities[i].Stat[n].Update();
                             }
 
+                            //Process dash spells
+                            if (Entities[i].Dashing != null)
+                            {
+                                if (Entities[i].GetType() == typeof(Player) || Entities[i].GetType() == typeof(Npc))
+                                {
+                                    Entities[i].Dashing.Update();
+                                }
+                            }
+
                             //Active Npcs On the Map
                             if (Entities[i].GetType() == typeof(Npc))
                             {

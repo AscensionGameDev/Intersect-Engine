@@ -136,6 +136,7 @@ namespace Intersect_Library
         BankUpdate,
         GameObject,
         GameObjectEditor,
+        EntityDash,
     }
 
     public enum MapZones

@@ -41,6 +41,7 @@ namespace Intersect_Server.Classes.General
                 writer.WriteElementString("MaxInventory", "35");
                 writer.WriteElementString("MaxSpells", "35");
                 writer.WriteElementString("MaxBank", "100");
+                writer.WriteElementString("MaxDashSpeed", "200");
                 writer.WriteEndElement();
 
                 writer.WriteStartElement("Equipment");
@@ -114,6 +115,7 @@ namespace Intersect_Server.Classes.General
                     Options.MaxInvItems = GetXmlInt(options, "//Config/Player/MaxInventory");
                     Options.MaxPlayerSkills = GetXmlInt(options, "//Config/Player/MaxSpells");
                     Options.MaxBankSlots = GetXmlInt(options, "//Config/Player/MaxBank");
+                    Options.MaxDashSpeed = GetXmlInt(options, "//Config/Player/MaxDashSpeed");
 
                     //Equipment
                     int slot = 0;

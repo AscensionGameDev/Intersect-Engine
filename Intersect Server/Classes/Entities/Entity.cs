@@ -78,6 +78,9 @@ namespace Intersect_Server.Classes.Entities
         //Status effects
         public List<StatusInstance> Status = new List<StatusInstance>();
 
+        //Dash Instance
+        public DashInstance Dashing;
+
         public long MoveTimer;
 
         public long CollisionIndex;
@@ -228,7 +231,7 @@ namespace Intersect_Server.Classes.Entities
         }
 
 
-        public void Move(int moveDir, Client client)
+        public void Move(int moveDir, Client client, bool DontUpdate = false)
         {
             var xOffset = 0;
             var yOffset = 0;
@@ -271,22 +274,25 @@ namespace Intersect_Server.Classes.Entities
                 CurrentY = tile.GetY();
                 CurrentMap = tile.GetMap();
                 Dir = moveDir;
-                if (this.GetType() == typeof(EventPageInstance))
+                if (DontUpdate == false)
                 {
-                    if (client != null)
+                    if (this.GetType() == typeof(EventPageInstance))
                     {
-                        PacketSender.SendEntityMoveTo(client, MyIndex, (int)EntityTypes.Event, this);
+                        if (client != null)
+                        {
+                            PacketSender.SendEntityMoveTo(client, MyIndex, (int)EntityTypes.Event, this);
+                        }
+                        else
+                        {
+                            PacketSender.SendEntityMove(MyIndex, (int)EntityTypes.Event, this);
+                        }
                     }
                     else
                     {
-                        PacketSender.SendEntityMove(MyIndex, (int)EntityTypes.Event, this);
+                        PacketSender.SendEntityMove(MyIndex, (int)EntityTypes.GlobalEntity, this);
                     }
+                    MoveTimer = Environment.TickCount + (int)((1.0 / (Stat[2].Value() / 10f)) * 1000);
                 }
-                else
-                {
-                    PacketSender.SendEntityMove(MyIndex, (int)EntityTypes.GlobalEntity, this);
-                }
-                MoveTimer = Environment.TickCount + (int)((1.0 / (Stat[2].Value() / 10f)) * 1000);
             }
         }
 
@@ -363,12 +369,12 @@ namespace Intersect_Server.Classes.Entities
 
 
         //Combat
-        public void TryAttack(int enemyIndex, bool isProjectile = false, int isSpell = -1)
+        public void TryAttack(int enemyIndex, ProjectileBase isProjectile = null, int isSpell = -1)
         {
             double dmg = 0;
 
             if (Globals.Entities[enemyIndex] == null) return;
-            if (!IsOneBlockAway(enemyIndex) && isProjectile == false && isSpell == -1) return;
+            if (!IsOneBlockAway(enemyIndex) && isProjectile == null && isSpell == -1) return;
 
             //If Entity is resource, check for the correct tool and make sure its not a spell cast.
             if (Globals.Entities[enemyIndex].GetType() == typeof(Resource))
@@ -461,7 +467,7 @@ namespace Intersect_Server.Classes.Entities
                     {
                         Globals.Entities[enemyIndex].Stat[i].Buff.Add(
                             new EntityBuff(spellBase.StatDiff[i],
-                                (spellBase.Data2*100)));
+                                (spellBase.Data2*10)));
                     }
 
                     //Handle other status effects
@@ -475,19 +481,36 @@ namespace Intersect_Server.Classes.Entities
                     //Handle DoT/HoT spells]
                     if (spellBase.Data1 > 0)
                     {
+                        bool DoTFound = false;
                         for (int i = 0; i < Globals.Entities[enemyIndex].DoT.Count; i++)
                         {
                             if (Globals.Entities[enemyIndex].DoT[i].SpellBase.GetId() == isSpell ||
                                 Globals.Entities[enemyIndex].DoT[i].OwnerID == MyIndex)
                             {
-                                return;
+                                DoTFound = true;
                             }
                         }
-                        Globals.Entities[enemyIndex].DoT.Add(new DoTInstance(MyIndex, isSpell, enemyIndex));
+                        if (DoTFound == false) //no duplicate DoT/HoT spells.
+                        {
+                            Globals.Entities[enemyIndex].DoT.Add(new DoTInstance(MyIndex, isSpell, enemyIndex));
+                        }
                     }
                 }
 
                 Globals.Entities[enemyIndex].Vital[(int) Vitals.Health] -= (int) dmg;
+
+                //If projectile, check if a splash spell is applied
+                if (isProjectile != null)
+                {
+                    if (isProjectile.Spell > -1)
+                    {
+                        var s = SpellBase.GetSpell(isProjectile.Spell);
+                        HandleAoESpell(isProjectile.Spell, s.HitRadius, Globals.Entities[enemyIndex].CurrentMap, Globals.Entities[enemyIndex].CurrentX, Globals.Entities[enemyIndex].CurrentY);
+                        
+                        //Check that the npc has not been destroyed by the splash spell
+                        if (Globals.Entities[enemyIndex] == null) { return; }
+                    }
+                }
 
                 //Check if after healing, greater than maximum hp.
                 if (Globals.Entities[enemyIndex].Vital[(int) Vitals.Health] >=
@@ -610,13 +633,13 @@ namespace Intersect_Server.Classes.Entities
                                     PacketSender.SendAnimationToProximity(spellBase.HitAnimation, 1,
                                         MyIndex, CurrentMap, 0, 0, Dir); //Target Type 1 will be global entity
                                 }
-                                TryAttack(MyIndex, false, SpellNum);
+                                TryAttack(MyIndex, null, SpellNum);
                                 break;
                             case (int) SpellTargetTypes.Single:
-                                HandleAoESpell(SpellNum, Target);
+                                HandleAoESpell(SpellNum, spellBase.CastRange, CurrentMap, CurrentX, CurrentY, Target);
                                 break;
                             case (int) SpellTargetTypes.AoE:
-                                HandleAoESpell(SpellNum);
+                                HandleAoESpell(SpellNum, spellBase.HitRadius, CurrentMap, CurrentX, CurrentY);
                                 break;
                             case (int) SpellTargetTypes.Projectile:
                                 var projectileBase = ProjectileBase.GetProjectile(spellBase.Data4);
@@ -641,14 +664,14 @@ namespace Intersect_Server.Classes.Entities
                     case (int) SpellTypes.WarpTo:
                         if (GetType() == typeof (Player))
                         {
-                            HandleAoESpell(SpellNum, Target);
+                            HandleAoESpell(SpellNum, spellBase.CastRange, CurrentMap, CurrentX, CurrentY, Target);
                         }
                         break;
                     case (int) SpellTypes.Dash:
-
+                        Dashing = new DashInstance(MyIndex, spellBase.CastRange, Convert.ToBoolean(spellBase.Data1), Convert.ToBoolean(spellBase.Data2), Convert.ToBoolean(spellBase.Data3), Convert.ToBoolean(spellBase.Data4));
                         break;
                     case (int) SpellTypes.Event:
-
+                        //To be added
                         break;
                     default:
                         break;
@@ -665,18 +688,14 @@ namespace Intersect_Server.Classes.Entities
             }
         }
 
-        private void HandleAoESpell(int SpellNum, int target = -1)
+        private void HandleAoESpell(int SpellNum, int Range, int StartMap, int StartX, int StartY, int target = -1)
         {
             var spellBase = SpellBase.GetSpell(SpellNum);
             if (spellBase != null)
             {
-                for (int x = CurrentX - spellBase.CastRange;
-                    x < CurrentX + spellBase.CastRange;
-                    x++)
+                for (int x = StartX - Range; x < StartX + Range; x++)
                 {
-                    for (int y = CurrentY - spellBase.CastRange;
-                        y < CurrentY + spellBase.CastRange;
-                        y++)
+                    for (int y = StartY - Range; y < StartY + Range; y++)
                     {
                         int tempMap = CurrentMap;
                         int x2 = x;
@@ -717,27 +736,22 @@ namespace Intersect_Server.Classes.Entities
                                         //Warp or attack.
                                         if (spellBase.SpellType == (int) SpellTypes.CombatSpell)
                                         {
-                                            TryAttack(t.MyIndex, false, SpellNum);
-                                        }
-                                        else
-                                        {
-                                            Warp(Globals.Entities[Target].CurrentMap, Globals.Entities[Target].CurrentX,
-                                                Globals.Entities[Target].CurrentY, Dir);
-                                        }
-                                        if (spellBase.HitAnimation > -1)
-                                        {
-                                            if (target > -1 && t.Vital[(int) Vitals.Health] > 0)
+                                            if (target > -1 && spellBase.HitRadius > -1) //Single target spells with AoE hit radius'
                                             {
-                                                PacketSender.SendAnimationToProximity(
-                                                    spellBase.HitAnimation, 1, target, tempMap, 0, 0,
-                                                    t.Dir); //Target Type 1 will be global entity
+                                                HandleAoESpell(SpellNum, spellBase.HitRadius, t.CurrentMap, t.CurrentX, t.CurrentY);
                                             }
                                             else
                                             {
-                                                PacketSender.SendAnimationToProximity(
-                                                    spellBase.HitAnimation, -1, -1, tempMap, x, y,
-                                                    Dir); //Target Type -1 will be tile based animation
+                                                TryAttack(t.MyIndex, null, SpellNum);
                                             }
+                                        }
+                                        else
+                                        {
+                                            Warp(Globals.Entities[Target].CurrentMap, Globals.Entities[Target].CurrentX, Globals.Entities[Target].CurrentY, Dir);
+                                        }
+                                        if (spellBase.HitAnimation > -1)
+                                        {
+                                            PacketSender.SendAnimationToProximity(spellBase.HitAnimation, -1, -1, tempMap, x, y, Dir); //Target Type -1 will be tile based animation
                                         }
                                     }
                                 }
@@ -830,24 +844,24 @@ namespace Intersect_Server.Classes.Entities
             {
                 OwnerID = ownerID;
                 TargetID = targetID;
-                Interval = Environment.TickCount + (SpellBase.Data4*100);
+                Interval = Environment.TickCount + (SpellBase.Data4 * 10);
                 Count = (SpellBase.Data4 % SpellBase.Data2) - 1; //Subtract 1 since the first tick always occurs when the spell is cast.
             }
         }
 
         public void Tick()
         {
-            if (Interval >= Environment.TickCount)
+            if (Interval <= Environment.TickCount)
             {
                 if (SpellBase.HitAnimation > -1)
                 {
                     PacketSender.SendAnimationToProximity(SpellBase.HitAnimation, 1, TargetID, Globals.Entities[TargetID].CurrentMap, 0, 0, Globals.Entities[TargetID].Dir); //Target Type 1 will be global entity
                 }
-                Globals.Entities[OwnerID].TryAttack(TargetID, false, SpellBase.GetId());
-                Interval = Environment.TickCount + (SpellBase.Data4 * 100);
+                Globals.Entities[OwnerID].TryAttack(TargetID, null, SpellBase.GetId());
+                Interval = Environment.TickCount + (SpellBase.Data4 * 10);
                 Count--;
 
-                if (Count <= 0)
+                if (Count <= 0 && Globals.Entities[TargetID] != null)
                 {
                     Globals.Entities[TargetID].DoT.Remove(this);
                 }
@@ -857,7 +871,7 @@ namespace Intersect_Server.Classes.Entities
 
     public class StatusInstance
     {
-        public int Type = -1;
+        public int Type = 0;
         public string Data = "";
         public long Duration = 0;
         private int EntityID = -1;
@@ -873,10 +887,74 @@ namespace Intersect_Server.Classes.Entities
 
         public void TryRemoveStatus()
         {
-            if (Duration <= Environment.TickCount)
+            if (Duration <= Environment.TickCount) //Check the timer
             {
                 Globals.Entities[EntityID].Status.Remove(this);
             }
+        }
+    }
+
+    public class DashInstance
+    {
+        public int EntityID = 0;
+        public int Range = 0;
+        public int DistanceTraveled = 0;
+        public long TransmittionTimer = 0;
+
+        public bool BlockPass = false;
+        public bool ActiveResourcePass = false;
+        public bool DeadResourcePass = false;
+        public bool ZDimensionPass = false;
+
+        public DashInstance(int entityID, int range, bool blockPass = false, bool activeResourcePass = false, bool deadResourcePass = false, bool zdimensionPass = false)
+        {
+            EntityID = entityID;
+            DistanceTraveled = 0;
+
+            BlockPass = blockPass;
+            ActiveResourcePass = activeResourcePass;
+            DeadResourcePass = deadResourcePass;
+            ZDimensionPass = zdimensionPass;
+
+            CalculateRange(range);
+            if (Range <= 0) { Globals.Entities[EntityID].Dashing = null; } //Remove dash instance if no where to dash
+            TransmittionTimer = Environment.TickCount + (long)((float)Options.MaxDashSpeed / (float)Range);
+            PacketSender.SendEntityDash(EntityID, Range);
+        }
+
+        public void CalculateRange(int range)
+        {
+            int n = 0;
+
+            Entity TempEntity = new Entity(0);
+            TempEntity.CurrentMap = Globals.Entities[EntityID].CurrentMap;
+            TempEntity.CurrentY = Globals.Entities[EntityID].CurrentY;
+            TempEntity.CurrentX = Globals.Entities[EntityID].CurrentX;
+            TempEntity.Dir = Globals.Entities[EntityID].Dir;
+
+            for (int i = 1; i <= range; i++)
+            {
+                n = TempEntity.CanMove(TempEntity.Dir);
+                if (n == -5) { return; } //Check for out of bounds
+                if (n == -2 && BlockPass == false) { return; } //Check for blocks
+                if (n == -3 && ZDimensionPass == false) { return; } //Check for ZDimensionTiles
+                if (n == (int)EntityTypes.Resource && ActiveResourcePass == false) { return; } //Check for active resources
+                if (n == (int)EntityTypes.Resource && DeadResourcePass == false) { return; } //Check for dead resources
+
+                TempEntity.Move(TempEntity.Dir, null, true);
+                Range = i;
+            }
+        }
+
+        public void Update()
+        {
+            if (Environment.TickCount > TransmittionTimer)
+            {
+                Globals.Entities[EntityID].Move(Globals.Entities[EntityID].Dir, null, false);
+                TransmittionTimer = Environment.TickCount + (long)((float)Options.MaxDashSpeed / (float)Range);
+                DistanceTraveled++;
+            }
+            if (DistanceTraveled >= Range) { Globals.Entities[EntityID].Dashing = null; } //Dash no more once reached destination
         }
     }
 }
