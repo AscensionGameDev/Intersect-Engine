@@ -79,7 +79,6 @@ namespace Intersect_Client.Classes.Entities
                 if ((Globals.InputManager.MouseButtonDown(GameInput.MouseButtons.Left) && Gui.MouseHitGUI() == false) ||
                     Globals.InputManager.KeyDown(Keys.E))
                 {
-                    TryTarget();
                     if (TryAttack())
                     {
                         return returnval;
@@ -547,7 +546,7 @@ namespace Intersect_Client.Classes.Entities
 
             }
         }
-        private bool TryTarget()
+        public bool TryTarget()
         {
             var x = (int)Math.Floor(Globals.InputManager.GetMousePosition().X + GameGraphics.CurrentView.Left);
             var y = (int)Math.Floor(Globals.InputManager.GetMousePosition().Y + GameGraphics.CurrentView.Top);
@@ -574,10 +573,16 @@ namespace Intersect_Client.Classes.Entities
                                 if (en.Value == null) continue;
                                 if (en.Value.CurrentMap == mapNum && en.Value.CurrentX == x && en.Value.CurrentY == y)
                                 {
-                                    if (en.GetType() != typeof(Projectile) && en.Value != Globals.Me)
+                                    if (en.GetType() != typeof(Projectile))
                                     {
                                         if (_targetBox != null) { _targetBox.Dispose(); _targetBox = null; }
-                                        _targetBox = new EntityBox(Gui.GameUI.GameCanvas, en.Value, 4, 122);
+                                        if (en.Value != Globals.Me) _targetBox = new EntityBox(Gui.GameUI.GameCanvas, en.Value, 4, 122);
+                                        if (_targetType == 0 && _targetIndex == en.Value.MyIndex)
+                                        {
+                                            ClearTarget();
+                                            return false;
+                                        }
+                                        _targetType = 0;
                                         _targetIndex = en.Value.MyIndex;
                                         return true;
                                     }
@@ -592,19 +597,31 @@ namespace Intersect_Client.Classes.Entities
                                     {
                                         if (_targetBox != null) { _targetBox.Dispose(); _targetBox = null; }
                                         _targetBox = new EntityBox(Gui.GameUI.GameCanvas, en.Value, 4, 122);
+                                        if (_targetType == 2 && _targetIndex == en.Value.MyIndex)
+                                        {
+                                            ClearTarget();
+                                            return false;
+                                        }
+                                        _targetType = 2;
                                         _targetIndex = en.Value.MyIndex;
                                         return true;
                                     }
                                 }
                             }
                         }
-                        if (_targetBox != null) { _targetBox.Dispose(); _targetBox = null; }
-                        if (_itemTargetBox != null) { _itemTargetBox.Dispose(); _itemTargetBox = null; }
                         return false;
                     }
                 }
             }
             return false;
+        }
+
+        private void ClearTarget()
+        {
+            if (_targetBox != null) { _targetBox.Dispose(); _targetBox = null; }
+            _targetIndex = -1;
+            _targetType = -1;
+            if (_itemTargetBox != null) { _itemTargetBox.Dispose(); _itemTargetBox = null; }
         }
         private bool TryPickupItem()
         {
@@ -1072,13 +1089,36 @@ namespace Intersect_Client.Classes.Entities
             var x = (int)Math.Floor(Globals.InputManager.GetMousePosition().X + GameGraphics.CurrentView.Left);
             var y = (int)Math.Floor(Globals.InputManager.GetMousePosition().Y + GameGraphics.CurrentView.Top);
 
-            if (_targetIndex > -1 && Globals.Entities.ContainsKey(_targetIndex))
-            {
-                Globals.Entities[_targetIndex].DrawTarget((int)TargetTypes.Selected);
-            }
-
             foreach (var map in MapInstance.GetObjects().Values)
             {
+                foreach (var en in Globals.Entities)
+                {
+                    if (en.Value == null) continue;
+                    if (en.Value.CurrentMap == map.MyMapNum)
+                    {
+                        if (en.GetType() != typeof(Projectile))
+                        {
+                            if (_targetType == 0 && _targetIndex == en.Value.MyIndex)
+                            {
+                                en.Value.DrawTarget((int)TargetTypes.Selected);
+                            }
+                        }
+                    }
+                }
+                foreach (var eventMap in MapInstance.GetObjects().Values)
+                {
+                    foreach (var en in eventMap.LocalEntities)
+                    {
+                        if (en.Value == null) continue;
+                        if (en.Value.CurrentMap == map.MyMapNum && ((Event)en.Value).DisablePreview == 0)
+                        {
+                            if (_targetType == 2 && _targetIndex == en.Value.MyIndex)
+                            {
+                                en.Value.DrawTarget((int)TargetTypes.Selected);
+                            }
+                        }
+                    }
+                }
                 if (x >= map.GetX() && x <= map.GetX() + (Options.MapWidth * Options.TileWidth))
                 {
                     if (y >= map.GetY() && y <= map.GetY() + (Options.MapHeight * Options.TileHeight))
@@ -1101,7 +1141,10 @@ namespace Intersect_Client.Classes.Entities
                                 {
                                     if (en.GetType() != typeof(Projectile))
                                     {
-                                        en.Value.DrawTarget((int)TargetTypes.Hover);
+                                        if (_targetType != 0 || _targetIndex != en.Value.MyIndex)
+                                        {
+                                            en.Value.DrawTarget((int)TargetTypes.Hover);
+                                        }
                                     }
                                 }
                             }
@@ -1112,7 +1155,10 @@ namespace Intersect_Client.Classes.Entities
                                     if (en.Value == null) continue;
                                     if (en.Value.CurrentMap == mapNum && en.Value.CurrentX == x && en.Value.CurrentY == y && ((Event)en.Value).DisablePreview == 0)
                                     {
+                                        if (_targetType != 2 || _targetIndex != en.Value.MyIndex)
+                                        {
                                             en.Value.DrawTarget((int)TargetTypes.Hover);
+                                        }
                                     }
                                 }
                             }

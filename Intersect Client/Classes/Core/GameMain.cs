@@ -209,8 +209,11 @@ namespace Intersect_Client.Classes.Core
 
             for (int i = 0; i < Globals.EntitiesToDispose.Count; i++)
             {
-                if (Globals.Entities[Globals.EntitiesToDispose[i]] == Globals.Me) continue;
-                Globals.Entities.Remove(Globals.EntitiesToDispose[i]);
+                if (Globals.Entities.ContainsKey(Globals.EntitiesToDispose[i]))
+                {
+                    if (Globals.EntitiesToDispose[i] == Globals.Me.MyIndex) continue;
+                    Globals.Entities.Remove(Globals.EntitiesToDispose[i]);
+                }
             }
             Globals.EntitiesToDispose.Clear();
 

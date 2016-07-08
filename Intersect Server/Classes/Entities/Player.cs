@@ -1134,6 +1134,21 @@ namespace Intersect_Server.Classes.Entities
             }
             return -1;
         }
+        public EventPageInstance EventAt(int map, int x, int y, int z)
+        {
+            foreach (var evt in MyEvents)
+            {
+                if (evt != null)
+                {
+                    if (evt.PageInstance.CurrentMap == map && evt.PageInstance.CurrentX == x &&
+                        evt.PageInstance.CurrentY == y && evt.PageInstance.CurrentZ == z)
+                    {
+                        return evt.PageInstance;
+                    }
+                }
+            }
+            return null;
+        }
         public void TryActivateEvent(int mapNum, int eventIndex)
         {
             for (int i = 0; i < MyEvents.Count; i++)
@@ -1211,6 +1226,61 @@ namespace Intersect_Server.Classes.Entities
                 if (MyEvents[i] != null && MyEvents[i].PageInstance != null)
                 {
                     MyEvents[i].PageInstance.SendToClient();
+                }
+            }
+        }
+
+        public override void Move(int moveDir, Client client, bool DontUpdate = false)
+        {
+            int index = MyIndex;
+            int oldMap = CurrentMap;
+            client = MyClient;
+            base.Move(moveDir, client, DontUpdate);
+            // Check for a warp, if so warp the player.
+            var attribute =
+                MapInstance.GetMap(Globals.Entities[index].CurrentMap).Attributes[
+                    Globals.Entities[index].CurrentX, Globals.Entities[index].CurrentY];
+            if (attribute != null && attribute.value == (int)MapAttributes.Warp)
+            {
+                Globals.Entities[index].Warp(attribute.data1, attribute.data2, attribute.data3, Globals.Entities[index].Dir);
+            }
+
+            //Check for slide tiles
+            if (attribute != null && attribute.value == (int)MapAttributes.Slide)
+            {
+                if (attribute.data1 > 0) { Globals.Entities[index].Dir = attribute.data1 - 1; } //If sets direction, set it.
+                var dash = new DashInstance(index, 1,base.Dir);
+            }
+
+            if (oldMap != Globals.Entities[index].CurrentMap)
+            {
+                MapInstance.GetMap(Globals.Entities[index].CurrentMap).PlayerEnteredMap(MyClient);
+            }
+
+            for (int i = 0; i < MyEvents.Count; i++)
+            {
+                if (MyEvents[i] != null)
+                {
+                    if (MyEvents[i].MapNum == CurrentMap)
+                    {
+                        if (MyEvents[i].PageInstance != null)
+                        {
+                            if (MyEvents[i].PageInstance.CurrentMap == CurrentMap &&
+                                MyEvents[i].PageInstance.CurrentX == CurrentX &&
+                                MyEvents[i].PageInstance.CurrentY == CurrentY &&
+                                MyEvents[i].PageInstance.CurrentZ == CurrentZ)
+                            {
+                                if (MyEvents[i].PageInstance.Trigger != 1) return;
+                                if (MyEvents[i].CallStack.Count != 0) return;
+                                var newStack = new CommandInstance(MyEvents[i].PageInstance.MyPage)
+                                {
+                                    CommandIndex = 0,
+                                    ListIndex = 0
+                                };
+                                MyEvents[i].CallStack.Push(newStack);
+                            }
+                        }
+                    }
                 }
             }
         }

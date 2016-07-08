@@ -25,6 +25,7 @@
     SOFTWARE.
 */
 
+using System;
 using IntersectClientExtras.Audio;
 using Intersect_Client.Classes.General;
 using Microsoft.Xna.Framework.Media;
@@ -59,7 +60,18 @@ namespace Intersect_MonoGameDx.Classes.SFML.Audio
         public override void SetVolume(int volume, bool isMusic = false)
         {
             _volume = volume;
-            MediaPlayer.Volume = (_volume*(float) (Globals.Database.MusicVolume/100f)/100f);
+            try
+            {
+               MediaPlayer.Volume = (_volume*(float) (Globals.Database.MusicVolume/100f)/100f);
+            }
+            catch (NullReferenceException)
+            {
+                // song changed while changing volume
+            }
+            catch (Exception)
+            {
+                // device not ready
+            }
         }
 
         public override int GetVolume()

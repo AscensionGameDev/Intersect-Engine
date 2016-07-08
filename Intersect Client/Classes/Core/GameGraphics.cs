@@ -63,7 +63,6 @@ namespace Intersect_Client.Classes.Core
 
         //Overlay Stuff
         public static Color OverlayColor = Color.Transparent;
-        public static GameRenderTexture OverlayTexture;
         private static long _overlayUpdate = 0;
 
         //Player Spotlight Values
@@ -237,6 +236,7 @@ namespace Intersect_Client.Classes.Core
             {
                 if (Renderer.GetScreenWidth() != _oldWidth || Renderer.GetScreenHeight() != _oldHeight)
                 {
+                    _darknessTexture = null;
                     Gui.DestroyGwen();
                     Gui.InitGwen();
                     _oldWidth = Renderer.GetScreenWidth();

@@ -416,7 +416,7 @@ namespace Intersect_Client.Classes.Networking
             var y = bf.ReadInteger();
             var dir = bf.ReadInteger();
             var correction = bf.ReadInteger();
-            if ((en.CurrentMap != map || en.CurrentX != x || en.CurrentY != y) && (en != Globals.Me || (en == Globals.Me && correction == 1)))
+            if ((en.CurrentMap != map || en.CurrentX != x || en.CurrentY != y) && (en != Globals.Me || (en == Globals.Me && correction == 1)) && en.Dashing == null)
             {
                 en.CurrentMap = map;
                 en.CurrentX = x;
@@ -1065,7 +1065,8 @@ namespace Intersect_Client.Classes.Networking
             bf.WriteBytes(packet);
             var index = (int)bf.ReadLong();
             var range = bf.ReadInteger();
-            Globals.Entities[index].Dashing = new DashInstance(index, range);
+            var direction = bf.ReadInteger();
+            Globals.Entities[index].DashQueue.Enqueue(new DashInstance(index, range, direction));
             bf.Dispose();
         }
     }

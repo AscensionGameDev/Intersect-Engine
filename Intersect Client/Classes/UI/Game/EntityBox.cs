@@ -96,9 +96,9 @@ namespace Intersect_Client.Classes.UI.Game
             if (myEntity.GetType() == typeof (Event))
             {
                 _eventDesc = new RichLabel(_entityBox);
-                _eventDesc.SetPosition(78, 39);
-                _eventDesc.Width = 159;
-                _eventDesc.AddText(((Event) _myEntity).Desc, Color.Black);
+                _eventDesc.SetPosition(93, 37);
+                _eventDesc.Width = 207;
+                _eventDesc.AddText(((Event) _myEntity).Desc, Color.White);
                 _eventDesc.SizeToChildren(false, true);
             }
             else
@@ -188,14 +188,14 @@ namespace Intersect_Client.Classes.UI.Game
             {
                 TradeLabel = new Label(_entityBox);
                 TradeLabel.SetText("Trade");
-                TradeLabel.SetToolTipText("Request to trade with " + _myEntity.MyName + ".");
+                TradeLabel.SetToolTipText("[Not Implemented!] Request to trade with " + _myEntity.MyName + ".");
                 TradeLabel.SetPosition(117, 89);
                 TradeLabel.TextColorOverride = Color.White;
                 TradeLabel.MouseInputEnabled = true;
 
                 PartyLabel = new Label(_entityBox);
                 PartyLabel.SetText("Party");
-                PartyLabel.SetToolTipText("Invite " + _myEntity.MyName + " to your party.");
+                PartyLabel.SetToolTipText("[Not Implemented!] Invite " + _myEntity.MyName + " to your party.");
                 PartyLabel.SetPosition(165, 89);
                 PartyLabel.TextColorOverride = Color.White;
                 PartyLabel.MouseInputEnabled = true;
@@ -207,6 +207,7 @@ namespace Intersect_Client.Classes.UI.Game
         //Update
         public void Update()
         {
+            if (_myEntity.IsDisposed()) Dispose();
             float elapsedTime = ((float)(Globals.System.GetTimeMS() - lastUpdateTime)) / 1000.0f;
 
             //Update the event/entity face.

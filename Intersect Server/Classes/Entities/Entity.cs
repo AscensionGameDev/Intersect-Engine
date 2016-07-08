@@ -22,6 +22,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Security.Cryptography.X509Certificates;
 using Intersect_Library;
 using Intersect_Library.GameObjects;
 using Intersect_Server.Classes.Core;
@@ -194,6 +195,7 @@ namespace Intersect_Server.Classes.Entities
                     if (tileAttribute.value == (int)MapAttributes.NPCAvoid && this.GetType() == typeof(Npc)) return -2;
                     if (tileAttribute.value == (int)MapAttributes.ZDimension &&
                         tileAttribute.data2 - 1 == CurrentZ) return -3;
+                    if (tileAttribute.value == (int)MapAttributes.Slide) return -4;
                 }
             }
             else
@@ -230,8 +232,7 @@ namespace Intersect_Server.Classes.Entities
             return -1;
         }
 
-
-        public void Move(int moveDir, Client client, bool DontUpdate = false)
+        public virtual void Move(int moveDir, Client client, bool DontUpdate = false)
         {
             var xOffset = 0;
             var yOffset = 0;
@@ -496,54 +497,55 @@ namespace Intersect_Server.Classes.Entities
                         }
                     }
                 }
+            }
 
-                Globals.Entities[enemyIndex].Vital[(int) Vitals.Health] -= (int) dmg;
+            Globals.Entities[enemyIndex].Vital[(int)Vitals.Health] -= (int)dmg;
 
-                //If projectile, check if a splash spell is applied
-                if (isProjectile != null)
+            //If projectile, check if a splash spell is applied
+            if (isProjectile != null)
+            {
+                if (isProjectile.Spell > -1)
                 {
-                    if (isProjectile.Spell > -1)
-                    {
-                        var s = SpellBase.GetSpell(isProjectile.Spell);
+                    var s = SpellBase.GetSpell(isProjectile.Spell);
+                    if (s != null)
                         HandleAoESpell(isProjectile.Spell, s.HitRadius, Globals.Entities[enemyIndex].CurrentMap, Globals.Entities[enemyIndex].CurrentX, Globals.Entities[enemyIndex].CurrentY);
-                        
-                        //Check that the npc has not been destroyed by the splash spell
-                        if (Globals.Entities[enemyIndex] == null) { return; }
-                    }
-                }
 
-                //Check if after healing, greater than maximum hp.
-                if (Globals.Entities[enemyIndex].Vital[(int) Vitals.Health] >=
-                    Globals.Entities[enemyIndex].MaxVital[(int) Vitals.Health])
-                {
-                    Globals.Entities[enemyIndex].Vital[(int) Vitals.Health] =
-                        Globals.Entities[enemyIndex].MaxVital[(int) Vitals.Health];
+                    //Check that the npc has not been destroyed by the splash spell
+                    if (Globals.Entities[enemyIndex] == null) { return; }
                 }
+            }
 
-                //Dead entity check
-                if (Globals.Entities[enemyIndex].Vital[(int) Vitals.Health] <= 0)
+            //Check if after healing, greater than maximum hp.
+            if (Globals.Entities[enemyIndex].Vital[(int)Vitals.Health] >=
+                Globals.Entities[enemyIndex].MaxVital[(int)Vitals.Health])
+            {
+                Globals.Entities[enemyIndex].Vital[(int)Vitals.Health] =
+                    Globals.Entities[enemyIndex].MaxVital[(int)Vitals.Health];
+            }
+
+            //Dead entity check
+            if (Globals.Entities[enemyIndex].Vital[(int)Vitals.Health] <= 0)
+            {
+                //Check if a resource, if so spawn item drops differently.
+                if (Globals.Entities[enemyIndex].GetType() == typeof(Resource))
                 {
-                    //Check if a resource, if so spawn item drops differently.
-                    if (Globals.Entities[enemyIndex].GetType() == typeof (Resource))
-                    {
-                        ((Resource) Globals.Entities[enemyIndex]).SpawnResourceItems(MyIndex);
-                    }
-                    Globals.Entities[enemyIndex].Die();
+                    ((Resource)Globals.Entities[enemyIndex]).SpawnResourceItems(MyIndex);
                 }
-                else
-                {
-                    //Hit him, make him mad and send the vital update.
-                    PacketSender.SendEntityVitals(enemyIndex, (int) EntityTypes.GlobalEntity,
-                        Globals.Entities[enemyIndex]);
-                    PacketSender.SendEntityStats(enemyIndex, (int) EntityTypes.GlobalEntity,
-                        Globals.Entities[enemyIndex]);
-                }
-                // Add a timer before able to make the next move.
-                if (Globals.Entities[MyIndex].GetType() == typeof (Npc))
-                {
-                    ((Npc) Globals.Entities[MyIndex]).MoveTimer = Environment.TickCount +
-                                                                  (int) ((1.0/(Stat[2].Value()/10f))*1000);
-                }
+                Globals.Entities[enemyIndex].Die();
+            }
+            else
+            {
+                //Hit him, make him mad and send the vital update.
+                PacketSender.SendEntityVitals(enemyIndex, (int)EntityTypes.GlobalEntity,
+                    Globals.Entities[enemyIndex]);
+                PacketSender.SendEntityStats(enemyIndex, (int)EntityTypes.GlobalEntity,
+                    Globals.Entities[enemyIndex]);
+            }
+            // Add a timer before able to make the next move.
+            if (Globals.Entities[MyIndex].GetType() == typeof(Npc))
+            {
+                ((Npc)Globals.Entities[MyIndex]).MoveTimer = Environment.TickCount +
+                                                              (int)((1.0 / (Stat[2].Value() / 10f)) * 1000);
             }
         }
 
@@ -668,7 +670,7 @@ namespace Intersect_Server.Classes.Entities
                         }
                         break;
                     case (int) SpellTypes.Dash:
-                        Dashing = new DashInstance(MyIndex, spellBase.CastRange, Convert.ToBoolean(spellBase.Data1), Convert.ToBoolean(spellBase.Data2), Convert.ToBoolean(spellBase.Data3), Convert.ToBoolean(spellBase.Data4));
+                        var dash = new DashInstance(MyIndex, spellBase.CastRange, Dir, Convert.ToBoolean(spellBase.Data1), Convert.ToBoolean(spellBase.Data2), Convert.ToBoolean(spellBase.Data3), Convert.ToBoolean(spellBase.Data4));
                         break;
                     case (int) SpellTypes.Event:
                         //To be added
@@ -900,16 +902,18 @@ namespace Intersect_Server.Classes.Entities
         public int Range = 0;
         public int DistanceTraveled = 0;
         public long TransmittionTimer = 0;
+        public int Direction = 0;
 
         public bool BlockPass = false;
         public bool ActiveResourcePass = false;
         public bool DeadResourcePass = false;
         public bool ZDimensionPass = false;
 
-        public DashInstance(int entityID, int range, bool blockPass = false, bool activeResourcePass = false, bool deadResourcePass = false, bool zdimensionPass = false)
+        public DashInstance(int entityID, int range, int direction, bool blockPass = false, bool activeResourcePass = false, bool deadResourcePass = false, bool zdimensionPass = false)
         {
             EntityID = entityID;
             DistanceTraveled = 0;
+            Direction = direction;
 
             BlockPass = blockPass;
             ActiveResourcePass = activeResourcePass;
@@ -917,9 +921,13 @@ namespace Intersect_Server.Classes.Entities
             ZDimensionPass = zdimensionPass;
 
             CalculateRange(range);
-            if (Range <= 0) { Globals.Entities[EntityID].Dashing = null; } //Remove dash instance if no where to dash
+            if (Range <= 0)
+            {
+                return;
+            } //Remove dash instance if no where to dash
+            Globals.Entities[EntityID].Dashing = this;
             TransmittionTimer = Environment.TickCount + (long)((float)Options.MaxDashSpeed / (float)Range);
-            PacketSender.SendEntityDash(EntityID, Range);
+            PacketSender.SendEntityDash(EntityID, Range, Direction);
         }
 
         public void CalculateRange(int range)
@@ -930,8 +938,8 @@ namespace Intersect_Server.Classes.Entities
             TempEntity.CurrentMap = Globals.Entities[EntityID].CurrentMap;
             TempEntity.CurrentY = Globals.Entities[EntityID].CurrentY;
             TempEntity.CurrentX = Globals.Entities[EntityID].CurrentX;
-            TempEntity.Dir = Globals.Entities[EntityID].Dir;
-
+            TempEntity.Dir = Direction;
+            Range = 0;
             for (int i = 1; i <= range; i++)
             {
                 n = TempEntity.CanMove(TempEntity.Dir);
@@ -940,9 +948,19 @@ namespace Intersect_Server.Classes.Entities
                 if (n == -3 && ZDimensionPass == false) { return; } //Check for ZDimensionTiles
                 if (n == (int)EntityTypes.Resource && ActiveResourcePass == false) { return; } //Check for active resources
                 if (n == (int)EntityTypes.Resource && DeadResourcePass == false) { return; } //Check for dead resources
+                if (n == (int) EntityTypes.Player) return;
 
                 TempEntity.Move(TempEntity.Dir, null, true);
+
+                //If player check and see if a local event would be in the way
+                if (Globals.Entities[EntityID].GetType() == typeof(Player))
+                {
+                    var pageInstance = ((Player) Globals.Entities[EntityID]).EventAt(TempEntity.CurrentMap,TempEntity.CurrentX,TempEntity.CurrentY, TempEntity.CurrentZ);
+                    if (pageInstance != null && pageInstance.Passable == 0) return;
+                }
+
                 Range = i;
+                if (n == -4) return;
             }
         }
 
@@ -950,11 +968,11 @@ namespace Intersect_Server.Classes.Entities
         {
             if (Environment.TickCount > TransmittionTimer)
             {
-                Globals.Entities[EntityID].Move(Globals.Entities[EntityID].Dir, null, false);
+                Globals.Entities[EntityID].Move(Direction, null, false);
                 TransmittionTimer = Environment.TickCount + (long)((float)Options.MaxDashSpeed / (float)Range);
                 DistanceTraveled++;
             }
-            if (DistanceTraveled >= Range) { Globals.Entities[EntityID].Dashing = null; } //Dash no more once reached destination
+            if (DistanceTraveled >= Range && Globals.Entities[EntityID].Dashing == this) { Globals.Entities[EntityID].Dashing = null; } //Dash no more once reached destination
         }
     }
 }

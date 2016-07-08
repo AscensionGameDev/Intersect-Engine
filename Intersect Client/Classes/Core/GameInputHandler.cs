@@ -26,6 +26,7 @@
 */
 
 using IntersectClientExtras.GenericClasses;
+using IntersectClientExtras.Input;
 using Intersect_Client.Classes.General;
 using Intersect_Client.Classes.Networking;
 using Intersect_Client.Classes.UI;
@@ -42,10 +43,6 @@ namespace Intersect_Client.Classes.Core
                 {
                     GameFade.FadeIn();
                     Globals.GameState = GameStates.Menu;
-                }
-                else
-                {
-                    Globals.IsRunning = false;
                 }
             }
             else if (key == Keys.Insert)
@@ -89,6 +86,17 @@ namespace Intersect_Client.Classes.Core
         public static void OnKeyReleased(Keys key)
         {
             
+        }
+
+        public static void OnMouseDown(GameInput.MouseButtons btn)
+        {
+            if (btn == GameInput.MouseButtons.Left)
+            {
+                if (Globals.GameState == GameStates.InGame && Globals.Me != null)
+                {
+                    Globals.Me.TryTarget();
+                }
+            }
         }
     }
 }

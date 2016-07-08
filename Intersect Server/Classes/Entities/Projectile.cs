@@ -365,7 +365,7 @@ namespace Intersect_Server.Classes.Entities
                                 if (Spawns[i].Dir <= 3 ) //Don't handle directional projectile grapplehooks
                                 {
                                     Owner.Dir = Spawns[i].Dir;
-                                    Globals.Entities[Owner.MyIndex].Dashing = new DashInstance(Owner.MyIndex, Spawns[i].Distance);
+                                    Globals.Entities[Owner.MyIndex].Dashing = new DashInstance(Owner.MyIndex, Spawns[i].Distance, Owner.Dir);
                                     killSpawn = true;
                                 }
                             }

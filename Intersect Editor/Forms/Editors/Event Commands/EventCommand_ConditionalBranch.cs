@@ -236,7 +236,7 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
                     break;
                 case 8: //Self Switch
                     _myCommand.Ints[1] = cmbSelfSwitch.SelectedIndex;
-                    _myCommand.Ints[2] = 1 - cmbSelfSwitchVal.SelectedIndex;
+                    _myCommand.Ints[2] = cmbSelfSwitchVal.SelectedIndex;
                     break;
                 case 9: //Power is
                     _myCommand.Ints[1] = cmbPower.SelectedIndex;

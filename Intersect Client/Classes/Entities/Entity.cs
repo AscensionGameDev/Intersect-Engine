@@ -96,6 +96,7 @@ namespace Intersect_Client.Classes.Entities
 
         //Dashing instance
         public DashInstance Dashing = null;
+        public Queue<DashInstance> DashQueue = new Queue<DashInstance>(); 
 
         private long _lastUpdate;
         private long _walkTimer;
@@ -151,6 +152,11 @@ namespace Intersect_Client.Classes.Entities
             }
         }
 
+        public virtual bool IsDisposed()
+        {
+            return _disposed;
+        }
+
         public virtual void Dispose()
         {
             if (RenderList != null)
@@ -187,22 +193,37 @@ namespace Intersect_Client.Classes.Entities
             }
             else if (_walkTimer < Globals.System.GetTimeMS())
             {
-                if (IsMoving)
+                if (DashQueue.Count > 0)
                 {
-                    WalkFrame++;
-                    if (WalkFrame > 3) { WalkFrame = 0; }
+                    Dashing = DashQueue.Dequeue();
+                    Dashing.Start();
                 }
                 else
                 {
-                    WalkFrame = 0;
+                    if (IsMoving)
+                    {
+                        WalkFrame++;
+                        if (WalkFrame > 3) { WalkFrame = 0; }
+                    }
+                    else
+                    {
+                        WalkFrame = 0;
+                    }
+                    _walkTimer = Globals.System.GetTimeMS() + 200;
                 }
-                _walkTimer = Globals.System.GetTimeMS() + 200;
             }
             if (Dashing != null)
             {
-                OffsetX = Dashing.GetXOffset();
-                OffsetY = Dashing.GetYOffset();
-                Dashing.Update();
+                if (Dashing.Update())
+                {
+                    OffsetX = Dashing.GetXOffset();
+                    OffsetY = Dashing.GetYOffset();
+                }
+                else
+                {
+                    OffsetX = 0;
+                    OffsetY = 0;
+                }
             }
             else if (IsMoving)
             {
@@ -647,48 +668,45 @@ namespace Intersect_Client.Classes.Entities
         public int DistanceTraveled = 0;
         public long TransmittionTimer = 0;
         public long SpawnTime = 0;
+        public float XOffset = 0f;
+        public float YOffset = 0f;
+        public int Direction = 0;
 
-        public DashInstance(int entityID, int range)
+        public DashInstance(int entityID, int range, int direction)
         {
             EntityID = entityID;
             DistanceTraveled = 0;
             Range = range;
+            Direction = direction;
+        }
 
+        public void Start()
+        {
             if (Range <= 0) { Globals.Entities[EntityID].Dashing = null; } //Remove dash instance if no where to dash
             TransmittionTimer = Globals.System.GetTimeMS() + (long)((float)Options.MaxDashSpeed / (float)Range);
             SpawnTime = Globals.System.GetTimeMS();
-        }
-
-        /// <summary>
-        /// Gets the displacement of the player whilst dashing between tiles
-        /// </summary>
-        /// <returns>The displacement from the co-ordinates if placed on a Options.TileHeight grid.</returns>
-        private float GetDisplacement()
-        {
-            long elapsedTime = Globals.System.GetTimeMS() - SpawnTime;
-            float displacementPercent = elapsedTime / (float)Options.MaxDashSpeed;
-            return displacementPercent * (Options.TileHeight / 2) * Range;
+            Globals.Entities[EntityID].Dir = Direction;
         }
 
         public float GetXOffset()
         {
-            if (Globals.Entities[EntityID].Dir == 2) { return -GetDisplacement(); }
-            if (Globals.Entities[EntityID].Dir == 3) { return GetDisplacement(); }
+            if (Direction == 2){return -XOffset; }
+            if (Direction == 3) { return XOffset; }
             return 0;
         }
 
         public float GetYOffset()
         {
-            if (Globals.Entities[EntityID].Dir == 0) { return -GetDisplacement(); }
-            if (Globals.Entities[EntityID].Dir == 1) { return GetDisplacement(); }
+            if (Direction == 0) { return -YOffset; }
+            if (Direction == 1) { return YOffset; }
             return 0;
         }
 
-        public void Update()
+        public bool Update()
         {
             if (Globals.System.GetTimeMS() > TransmittionTimer)
             {
-                switch (Globals.Entities[EntityID].Dir)
+                switch (Direction)
                 {
                     case 0:
                         Globals.Entities[EntityID].CurrentY--;
@@ -753,10 +771,13 @@ namespace Intersect_Client.Classes.Entities
                     }
                 }
 
-                TransmittionTimer = Globals.System.GetTimeMS() + (long)((float)Options.MaxDashSpeed / (float)Range);
+                TransmittionTimer = Globals.System.GetTimeMS() + (long)(Options.MaxDashSpeed / (float)Range);
                 DistanceTraveled++;
             }
+            XOffset = Options.TileWidth * (((Options.MaxDashSpeed / (float)Range) - (TransmittionTimer - Globals.System.GetTimeMS())) / (Options.MaxDashSpeed / (float)Range));
+            YOffset = Options.TileHeight * (((Options.MaxDashSpeed / (float)Range) - (TransmittionTimer - Globals.System.GetTimeMS())) / (Options.MaxDashSpeed / (float)Range));
             if (DistanceTraveled >= Range) { Globals.Entities[EntityID].Dashing = null; } //Dash no more once reached destination
+            return Globals.Entities[EntityID].Dashing != null;
         }
     }
 }
