@@ -432,6 +432,16 @@ namespace Intersect_Server.Classes.Maps
         {
             MapProjectiles.Remove(en);
         }
+        public void ClearEntityTargetsOf(Entity en)
+        {
+            foreach (var entity in Entities)
+            {
+                if (entity.GetType() == typeof(Npc) && ((Npc)entity).MyTarget == en)
+                {
+                    ((Npc)entity).MyTarget = null;
+                }
+            } 
+        }
 
         //Update + Related Functions
         public void Update()
@@ -465,21 +475,6 @@ namespace Intersect_Server.Classes.Maps
                     {
                         if (Entities[i] != null)
                         {
-                            //Buffs/Debuffs
-                            for (int n = 0; n < (int)Stats.StatCount; n++)
-                            {
-                                Entities[i].Stat[n].Update();
-                            }
-
-                            //Process dash spells
-                            if (Entities[i].Dashing != null)
-                            {
-                                if (Entities[i].GetType() == typeof(Player) || Entities[i].GetType() == typeof(Npc))
-                                {
-                                    Entities[i].Dashing.Update();
-                                }
-                            }
-
                             //Active Npcs On the Map
                             if (Entities[i].GetType() == typeof(Npc))
                             {

@@ -53,7 +53,8 @@ namespace Intersect_Server.Classes.Misc
 
         public void SetTarget(PathfinderTarget target)
         {
-            if (target == null)
+            _directions.Clear();
+            if (_target == null)
             {
                 if (_pathFindingThread.IsAlive)
                 {
@@ -61,29 +62,27 @@ namespace Intersect_Server.Classes.Misc
                     _target = null;
                 }
             }
-            else
-            {
-                if (_target == null || (_target != null &&
+            if (_target == null || (target != null &&
                     (_target.TargetMap != target.TargetMap || _target.TargetX != target.TargetX ||
                      _target.TargetY != target.TargetY)))
+            {
+                _target = target;
+                if (_target != null)
                 {
-                    _target = target;
-                    if (_target != null)
+                    if (_pathFinding)
                     {
-                        if (_pathFinding)
-                        {
-                            _pathFindingThread.Abort();
-                            _pathFinding = false;
-                        }
-                        RestartThread();
+                        _pathFindingThread.Abort();
+                        _pathFinding = false;
                     }
+                    RestartThread();
                 }
-                else
+            }
+            else
+            {
+                _target = target;
+                if (!_pathFinding && _target != null)
                 {
-                    if (!_pathFinding && _target != null)
-                    {
-                        RestartThread();
-                    }
+                    RestartThread();
                 }
             }
         }
@@ -128,6 +127,7 @@ namespace Intersect_Server.Classes.Misc
             var adjSquares = new List<PathfinderPoint>();
             var myGrid = MapInstance.GetMap(_sourceEntity.CurrentMap).MapGrid;
             _pathFinding = true;
+            var start = Environment.TickCount;
 
             //Loop through surrouding maps to generate a array of open and blocked points.
             for (var x = MapInstance.GetMap(_sourceEntity.CurrentMap).MapGridX - 1; x <= MapInstance.GetMap(_sourceEntity.CurrentMap).MapGridX + 1; x++)
@@ -250,6 +250,7 @@ namespace Intersect_Server.Classes.Misc
                             }
                         }
                         _pathFinding = false;
+                        Console.WriteLine("Pathfinding succeeded and took " + (Environment.TickCount - start) + "ms");
                         return;
                     }
 
@@ -313,6 +314,7 @@ namespace Intersect_Server.Classes.Misc
                     }
                 } while (openList.Count > 0);
             }
+            Console.WriteLine("Pathfinding failed and took " + (Environment.TickCount - start) + "ms");
             _pathFinding = false;
         }
 

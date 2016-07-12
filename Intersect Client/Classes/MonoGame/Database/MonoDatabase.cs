@@ -38,19 +38,19 @@ namespace Intersect_Client.Classes.Bridges_and_Interfaces.SFML.Database
         {
             RegistryKey regkey = Registry.CurrentUser.OpenSubKey("Software", true);
 
-            regkey.CreateSubKey("IntersectEngine");
-            regkey = regkey.OpenSubKey("IntersectEngine", true);
+            regkey.CreateSubKey("IntersectClient");
+            regkey = regkey.OpenSubKey("IntersectClient", true);
             regkey.CreateSubKey(ServerHost + ServerPort);
-            regkey = regkey.OpenSubKey(ServerHost + ServerPort, true);
+            regkey = regkey.OpenSubKey(ServerHost + ":" + ServerPort, true);
             regkey.SetValue(key, value);
         }
 
         public override string LoadPreference(string key)
         {
             RegistryKey regkey = Registry.CurrentUser.OpenSubKey("Software", false);
-            regkey = regkey.OpenSubKey("IntersectEngine", false);
+            regkey = regkey.OpenSubKey("IntersectClient", false);
             if (regkey == null) { return ""; }
-            regkey = regkey.OpenSubKey(ServerHost + ServerPort);
+            regkey = regkey.OpenSubKey(ServerHost + ":" + ServerPort);
             if (regkey == null) { return ""; }
             string value = (string)regkey.GetValue(key);
             if (string.IsNullOrEmpty(value))

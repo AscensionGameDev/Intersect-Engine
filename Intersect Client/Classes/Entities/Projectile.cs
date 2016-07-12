@@ -46,13 +46,14 @@ namespace Intersect_Client.Classes.Entities
         /// <summary>
         /// The constructor for the inherated projectile class
         /// </summary>
-        public Projectile() : base()
+        public Projectile(int index) : base()
         {
             Vital[(int)Vitals.Health] = 1;
             MaxVital[(int)Vitals.Health] = 1;
             HideName = 1;
             Passable = 1;
             IsMoving = true;
+            MyIndex = index;
         }
 
         public void Load(ByteBuffer bf)

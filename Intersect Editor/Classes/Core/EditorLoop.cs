@@ -31,48 +31,55 @@ namespace Intersect_Editor.Classes
         private static int _fps = 0;
         private static int _fpsCount = 0;
         private static long _fpsTime = 0;
+        private static frmMain myForm;
+        private static long animationTimer = Environment.TickCount;
+        private static long waterfallTimer = Environment.TickCount;
         public static void StartLoop()
         {
             Globals.MainForm.Visible = true;
             Globals.MainForm.EnterMap(Globals.CurrentMap == null ? 0 : Globals.CurrentMap.GetId());
-            frmMain myForm = Globals.MainForm;
-            long animationTimer = Environment.TickCount;
-            long waterfallTimer = Environment.TickCount;
+            myForm = Globals.MainForm;
+
             // drawing loop
             while (myForm.Visible) // loop while the window is open
             {
-                myForm.Update();
+                RunFrame();
+            }
+        }
 
-                if (waterfallTimer < Environment.TickCount)
-                {
-                    Globals.WaterfallFrame++;
-                    if (Globals.WaterfallFrame == 3) { Globals.WaterfallFrame = 0; }
-                    waterfallTimer = Environment.TickCount + 500;
-                }
-                if (animationTimer < Environment.TickCount)
-                {
-                    Globals.AutotileFrame++;
-                    if (Globals.AutotileFrame == 3) { Globals.AutotileFrame = 0; }
-                    animationTimer = Environment.TickCount + 600;
-                }
-                //Check Editors
-                if (Globals.ResourceEditor != null && Globals.ResourceEditor.IsDisposed == false)
-                {
-                    Globals.ResourceEditor.Render();
-                }
-                EditorGraphics.Render();
-                GameContentManager.Update();
-                Network.Update();
-                Application.DoEvents(); // handle form events
+        public static void RunFrame()
+        {
+            myForm.Update();
 
-                _fpsCount++;
-                if (_fpsTime < Environment.TickCount)
-                {
-                    _fps = _fpsCount;
-                    myForm.toolStripLabelFPS.Text = @"FPS: " + _fps;
-                    _fpsCount = 0;
-                    _fpsTime = Environment.TickCount + 1000;
-                }
+            if (waterfallTimer < Environment.TickCount)
+            {
+                Globals.WaterfallFrame++;
+                if (Globals.WaterfallFrame == 3) { Globals.WaterfallFrame = 0; }
+                waterfallTimer = Environment.TickCount + 500;
+            }
+            if (animationTimer < Environment.TickCount)
+            {
+                Globals.AutotileFrame++;
+                if (Globals.AutotileFrame == 3) { Globals.AutotileFrame = 0; }
+                animationTimer = Environment.TickCount + 600;
+            }
+            //Check Editors
+            if (Globals.ResourceEditor != null && Globals.ResourceEditor.IsDisposed == false)
+            {
+                Globals.ResourceEditor.Render();
+            }
+            EditorGraphics.Render();
+            GameContentManager.Update();
+            Network.Update();
+            Application.DoEvents(); // handle form events
+
+            _fpsCount++;
+            if (_fpsTime < Environment.TickCount)
+            {
+                _fps = _fpsCount;
+                myForm.toolStripLabelFPS.Text = @"FPS: " + _fps;
+                _fpsCount = 0;
+                _fpsTime = Environment.TickCount + 1000;
             }
         }
     }

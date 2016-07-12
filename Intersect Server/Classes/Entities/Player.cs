@@ -81,6 +81,11 @@ namespace Intersect_Server.Classes.Entities
         public override void Update()
         {
             if (!InGame || CurrentMap == -1) { return; }
+            //Process dash spells
+            if (Dashing != null)
+            {
+                Dashing.Update();
+            }
             base.Update();
             //If we switched maps, lets update the maps
             if (_curMapLink != CurrentMap)

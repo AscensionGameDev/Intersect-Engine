@@ -192,6 +192,12 @@ namespace Intersect_Server.Classes.Entities
             return bf.ToArray();
         }
 
+        //Stats
+        public override void SendStatUpdate(int index)
+        {
+            //do nothing
+        }
+
         public void SetMovementSpeed(int speed)
         {
             switch (speed)

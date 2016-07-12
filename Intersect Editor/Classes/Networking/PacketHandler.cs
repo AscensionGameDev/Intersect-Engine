@@ -101,6 +101,7 @@ namespace Intersect_Editor.Classes
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
             Globals.MyIndex = (int)bf.ReadLong();
+            Globals.LoginForm.TryRemembering();
             Globals.LoginForm.Hide();
         }
 

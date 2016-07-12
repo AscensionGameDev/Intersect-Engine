@@ -167,6 +167,14 @@ namespace Intersect_Client.Classes.Entities
             _disposed = true;
         }
 
+        //Returns the amount of time required to traverse 1 tile
+        public virtual float GetMovementTime()
+        {
+            var time = 1000f/(float) (1 + Math.Log(Stat[(int) Stats.Speed]));
+            if (time > 1000f) time = 1000f;
+            return time;
+        }
+
         //Movement Processing
         public virtual bool Update()
         {
@@ -231,25 +239,25 @@ namespace Intersect_Client.Classes.Entities
                 switch (Dir)
                 {
                     case 0:
-                        OffsetY -= (float)ecTime * (40f / 10f * (float)Options.TileHeight) / 1000f;
+                        OffsetY -= (float)ecTime * ((float)Options.TileHeight) / GetMovementTime();
                         OffsetX = 0;
                         if (OffsetY < 0) { OffsetY = 0; }
                         break;
 
                     case 1:
-                        OffsetY += (float)ecTime * (40f / 10f * (float)Options.TileHeight) / 1000f;
+                        OffsetY += (float)ecTime * ((float)Options.TileHeight) / GetMovementTime();
                         OffsetX = 0;
                         if (OffsetY > 0) { OffsetY = 0; }
                         break;
 
                     case 2:
-                        OffsetX -= (float)ecTime * (40f / 10f * (float)Options.TileHeight) / 1000f;
+                        OffsetX -= (float)ecTime * ((float)Options.TileHeight) / GetMovementTime();
                         OffsetY = 0;
                         if (OffsetX < 0) { OffsetX = 0; }
                         break;
 
                     case 3:
-                        OffsetX += (float)ecTime * (40f / 10f * (float)Options.TileHeight) / 1000f;
+                        OffsetX += (float)ecTime * ((float)Options.TileHeight) / GetMovementTime();
                         OffsetY = 0;
                         if (OffsetX > 0) { OffsetX = 0; }
                         break;
@@ -262,6 +270,14 @@ namespace Intersect_Client.Classes.Entities
             foreach (AnimationInstance animInstance in Animations)
             {
                 animInstance.Update();
+                if (IsStealthed())
+                {
+                    animInstance.Hide();
+                }
+                else
+                {
+                    animInstance.Show();
+                }
                 if (animInstance.AutoRotate)
                 {
                     animInstance.SetPosition((int)GetCenterPos().X, (int)GetCenterPos().Y, Dir);
@@ -274,6 +290,20 @@ namespace Intersect_Client.Classes.Entities
             }
             _lastUpdate = Globals.System.GetTimeMS();
             return true;
+        }
+
+        public virtual bool IsStealthed()
+        {
+            //If the entity has transformed, apply that sprite instead.
+            if (this == Globals.Me) return false;
+            for (var n = 0; n < Status.Count; n++)
+            {
+                if (Status[n].Type == (int)StatusTypes.Stealth)
+                {
+                    return true;
+                }
+            }
+            return false;
         }
 
         public virtual List<Entity> DetermineRenderOrder(List<Entity> renderList)
@@ -728,6 +758,10 @@ namespace Intersect_Client.Classes.Entities
                     {
                         Globals.Entities[EntityID].CurrentMap = MapInstance.GetMap(Globals.Entities[EntityID].CurrentMap).Left;
                         Globals.Entities[EntityID].CurrentX = Options.MapWidth - 1;
+                        if (Globals.Entities[EntityID] == Globals.Me)
+                        {
+                            Globals.Me.UpdateMapRenderers((int)Directions.Left);
+                        }
                     }
                     else
                     {
@@ -740,6 +774,10 @@ namespace Intersect_Client.Classes.Entities
                     {
                         Globals.Entities[EntityID].CurrentMap = MapInstance.GetMap(Globals.Entities[EntityID].CurrentMap).Right;
                         Globals.Entities[EntityID].CurrentX = 0;
+                        if (Globals.Entities[EntityID] == Globals.Me)
+                        {
+                            Globals.Me.UpdateMapRenderers((int)Directions.Right);
+                        }
                     }
                     else
                     {
@@ -752,6 +790,10 @@ namespace Intersect_Client.Classes.Entities
                     {
                         Globals.Entities[EntityID].CurrentMap = MapInstance.GetMap(Globals.Entities[EntityID].CurrentMap).Up;
                         Globals.Entities[EntityID].CurrentY = Options.MapHeight - 1;
+                        if (Globals.Entities[EntityID] == Globals.Me)
+                        {
+                            Globals.Me.UpdateMapRenderers((int)Directions.Up);
+                        }
                     }
                     else
                     {
@@ -764,6 +806,10 @@ namespace Intersect_Client.Classes.Entities
                     {
                         Globals.Entities[EntityID].CurrentMap = MapInstance.GetMap(Globals.Entities[EntityID].CurrentMap).Down;
                         Globals.Entities[EntityID].CurrentY = 0;
+                        if (Globals.Entities[EntityID] == Globals.Me)
+                        {
+                            Globals.Me.UpdateMapRenderers((int)Directions.Down);
+                        }
                     }
                     else
                     {

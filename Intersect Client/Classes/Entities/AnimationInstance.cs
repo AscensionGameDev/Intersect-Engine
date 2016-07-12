@@ -52,6 +52,7 @@ namespace Intersect_Client.Classes.Entities
         private bool showLower = true;
         private bool showUpper = true;
         public bool AutoRotate = false;
+        public bool Hidden = false;
         public AnimationInstance(AnimationBase animBase, bool loopForever, bool autoRotate = false)
         {
             myBase = animBase;
@@ -66,6 +67,7 @@ namespace Intersect_Client.Classes.Entities
 
         public void Draw(bool upper = false)
         {
+            if (Hidden) return;
             float rotationDegrees = 0f;
             switch (_renderDir)
             {
@@ -159,6 +161,16 @@ namespace Intersect_Client.Classes.Entities
                     }
                 }
             }
+        }
+
+        public void Hide()
+        {
+            Hidden = true;
+        }
+
+        public void Show()
+        {
+            Hidden = false;
         }
 
         public void Dispose()

@@ -571,7 +571,7 @@ namespace Intersect_Client.Classes.Entities
                             foreach (var en in Globals.Entities)
                             {
                                 if (en.Value == null) continue;
-                                if (en.Value.CurrentMap == mapNum && en.Value.CurrentX == x && en.Value.CurrentY == y)
+                                if (en.Value.CurrentMap == mapNum && en.Value.CurrentX == x && en.Value.CurrentY == y && !en.Value.IsStealthed())
                                 {
                                     if (en.GetType() != typeof(Projectile))
                                     {
@@ -593,7 +593,7 @@ namespace Intersect_Client.Classes.Entities
                                 foreach (var en in eventMap.LocalEntities)
                                 {
                                     if (en.Value == null) continue;
-                                    if (en.Value.CurrentMap == mapNum && en.Value.CurrentX == x && en.Value.CurrentY == y && ((Event)en.Value).DisablePreview == 0)
+                                    if (en.Value.CurrentMap == mapNum && en.Value.CurrentX == x && en.Value.CurrentY == y && ((Event)en.Value).DisablePreview == 0 && !en.Value.IsStealthed())
                                     {
                                         if (_targetBox != null) { _targetBox.Dispose(); _targetBox = null; }
                                         _targetBox = new EntityBox(Gui.GameUI.GameCanvas, en.Value, 4, 122);
@@ -728,7 +728,7 @@ namespace Intersect_Client.Classes.Entities
 
                     if (IsMoving)
                     {
-                        MoveTimer = Globals.System.GetTimeMS() + (Stat[(int)Stats.Speed] / 10f);
+                        MoveTimer = Globals.System.GetTimeMS() + GetMovementTime();
                         didMove = true;
                         if (CurrentX < 0 || CurrentY < 0 || CurrentX > (Options.MapWidth - 1) || CurrentY > (Options.MapHeight - 1))
                         {
@@ -861,7 +861,7 @@ namespace Intersect_Client.Classes.Entities
                 PacketSender.SendMove();
             }
         }
-        private void UpdateMapRenderers(int dir)
+        public void UpdateMapRenderers(int dir)
         {
             if (!IsLocal)
             {
@@ -871,7 +871,7 @@ namespace Intersect_Client.Classes.Entities
             {
                 if (Globals.LocalMaps[3] > -1)
                 {
-                    Globals.CurrentMap = Globals.LocalMaps[3];
+                    Globals.Me.CurrentMap = Globals.LocalMaps[3];
                     Globals.LocalMaps[2] = Globals.LocalMaps[1];
                     Globals.LocalMaps[1] = Globals.LocalMaps[0];
                     Globals.LocalMaps[0] = -1;
@@ -881,7 +881,7 @@ namespace Intersect_Client.Classes.Entities
                     Globals.LocalMaps[8] = Globals.LocalMaps[7];
                     Globals.LocalMaps[7] = Globals.LocalMaps[6];
                     Globals.LocalMaps[6] = -1;
-                    Globals.CurrentMap = Globals.LocalMaps[4];
+                    Globals.Me.CurrentMap = Globals.LocalMaps[4];
                     CurrentMap = Globals.LocalMaps[4];
                     PacketSender.SendEnterMap();
                 }
@@ -890,7 +890,7 @@ namespace Intersect_Client.Classes.Entities
             {
                 if (Globals.LocalMaps[5] > -1)
                 {
-                    Globals.CurrentMap = Globals.LocalMaps[5];
+                    Globals.Me.CurrentMap = Globals.LocalMaps[5];
                     Globals.LocalMaps[0] = Globals.LocalMaps[1];
                     Globals.LocalMaps[1] = Globals.LocalMaps[2];
                     Globals.LocalMaps[2] = -1;
@@ -900,7 +900,7 @@ namespace Intersect_Client.Classes.Entities
                     Globals.LocalMaps[6] = Globals.LocalMaps[7];
                     Globals.LocalMaps[7] = Globals.LocalMaps[8];
                     Globals.LocalMaps[8] = -1;
-                    Globals.CurrentMap = Globals.LocalMaps[4];
+                    Globals.Me.CurrentMap = Globals.LocalMaps[4];
                     CurrentMap = Globals.LocalMaps[4];
                     PacketSender.SendEnterMap();
                 }
@@ -910,7 +910,7 @@ namespace Intersect_Client.Classes.Entities
             {
                 if (Globals.LocalMaps[7] > -1)
                 {
-                    Globals.CurrentMap = Globals.LocalMaps[7];
+                    Globals.Me.CurrentMap = Globals.LocalMaps[7];
                     Globals.LocalMaps[0] = Globals.LocalMaps[3];
                     Globals.LocalMaps[3] = Globals.LocalMaps[6];
                     Globals.LocalMaps[6] = -1;
@@ -920,7 +920,7 @@ namespace Intersect_Client.Classes.Entities
                     Globals.LocalMaps[2] = Globals.LocalMaps[5];
                     Globals.LocalMaps[5] = Globals.LocalMaps[8];
                     Globals.LocalMaps[8] = -1;
-                    Globals.CurrentMap = Globals.LocalMaps[4];
+                    Globals.Me.CurrentMap = Globals.LocalMaps[4];
                     CurrentMap = Globals.LocalMaps[4];
                     PacketSender.SendEnterMap();
                 }
@@ -929,7 +929,7 @@ namespace Intersect_Client.Classes.Entities
             {
                 if (Globals.LocalMaps[1] > -1)
                 {
-                    Globals.CurrentMap = Globals.LocalMaps[1];
+                    Globals.Me.CurrentMap = Globals.LocalMaps[1];
                     Globals.LocalMaps[6] = Globals.LocalMaps[3];
                     Globals.LocalMaps[3] = Globals.LocalMaps[0];
                     Globals.LocalMaps[0] = -1;
@@ -939,7 +939,7 @@ namespace Intersect_Client.Classes.Entities
                     Globals.LocalMaps[8] = Globals.LocalMaps[5];
                     Globals.LocalMaps[5] = Globals.LocalMaps[2];
                     Globals.LocalMaps[2] = -1;
-                    Globals.CurrentMap = Globals.LocalMaps[4];
+                    Globals.Me.CurrentMap = Globals.LocalMaps[4];
                     CurrentMap = Globals.LocalMaps[4];
                     PacketSender.SendEnterMap();
                 }
@@ -1094,7 +1094,7 @@ namespace Intersect_Client.Classes.Entities
                 foreach (var en in Globals.Entities)
                 {
                     if (en.Value == null) continue;
-                    if (en.Value.CurrentMap == map.MyMapNum)
+                    if (en.Value.CurrentMap == map.MyMapNum && !en.Value.IsStealthed())
                     {
                         if (en.GetType() != typeof(Projectile))
                         {
@@ -1110,7 +1110,7 @@ namespace Intersect_Client.Classes.Entities
                     foreach (var en in eventMap.LocalEntities)
                     {
                         if (en.Value == null) continue;
-                        if (en.Value.CurrentMap == map.MyMapNum && ((Event)en.Value).DisablePreview == 0)
+                        if (en.Value.CurrentMap == map.MyMapNum && ((Event)en.Value).DisablePreview == 0 && !en.Value.IsStealthed())
                         {
                             if (_targetType == 2 && _targetIndex == en.Value.MyIndex)
                             {
@@ -1137,7 +1137,7 @@ namespace Intersect_Client.Classes.Entities
                             foreach (var en in Globals.Entities)
                             {
                                 if (en.Value == null) continue;
-                                if (en.Value.CurrentMap == mapNum && en.Value.CurrentX == x && en.Value.CurrentY == y)
+                                if (en.Value.CurrentMap == mapNum && en.Value.CurrentX == x && en.Value.CurrentY == y && !en.Value.IsStealthed())
                                 {
                                     if (en.GetType() != typeof(Projectile))
                                     {
@@ -1153,7 +1153,7 @@ namespace Intersect_Client.Classes.Entities
                                 foreach (var en in eventMap.LocalEntities)
                                 {
                                     if (en.Value == null) continue;
-                                    if (en.Value.CurrentMap == mapNum && en.Value.CurrentX == x && en.Value.CurrentY == y && ((Event)en.Value).DisablePreview == 0)
+                                    if (en.Value.CurrentMap == mapNum && en.Value.CurrentX == x && en.Value.CurrentY == y && ((Event)en.Value).DisablePreview == 0 && !en.Value.IsStealthed())
                                     {
                                         if (_targetType != 2 || _targetIndex != en.Value.MyIndex)
                                         {

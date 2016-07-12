@@ -323,9 +323,9 @@ namespace Intersect_Client.Classes.Networking
             en.Passable = bf.ReadInteger();
             en.HideName = bf.ReadInteger();
 
-            if (en == Globals.Me && Globals.CurrentMap != en.CurrentMap)
+            if (en == Globals.Me && Globals.Me.CurrentMap != en.CurrentMap)
             {
-                Globals.CurrentMap = Globals.Entities[index].CurrentMap;
+                Globals.Me.CurrentMap = Globals.Entities[index].CurrentMap;
                 Globals.NeedsMaps = true;
             }
         }
@@ -360,7 +360,7 @@ namespace Intersect_Client.Classes.Networking
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
             var mapNum = (int)bf.ReadLong();
-            if (Globals.CurrentMap != mapNum && Globals.CurrentMap != -1) return;
+            if (Globals.Me.CurrentMap != mapNum && Globals.Me.CurrentMap != -1) return;
             for (var i = 0; i < 9; i++)
             {
                 Globals.LocalMaps[i] = (int)bf.ReadLong();
@@ -867,7 +867,7 @@ namespace Intersect_Client.Classes.Networking
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
             string sound = bf.ReadString();
-            GameAudio.AddMapSound(sound, -1, -1, Globals.CurrentMap, false, -1);
+            GameAudio.AddMapSound(sound, -1, -1, Globals.Me.CurrentMap, false, -1);
             bf.Dispose();
         }
 

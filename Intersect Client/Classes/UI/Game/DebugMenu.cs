@@ -116,9 +116,9 @@ namespace Intersect_Client.Classes.UI.Game
             _fpsLabel.Text = "FPS: " + GameGraphics.Renderer.GetFps();
             _pingLabel.Text = "Ping: " + GameNetwork.Ping;
             _drawsLabel.Text = "Draws: " + GameGraphics.DrawCalls;
-            if (MapInstance.GetMap(Globals.CurrentMap) != null)
+            if (MapInstance.GetMap(Globals.Me.CurrentMap) != null)
             {
-                _mapLabel.Text = "Map: " + Globals.Me.CurrentMap + "  (" + MapInstance.GetMap(Globals.CurrentMap).MyName + ")";
+                _mapLabel.Text = "Map: " + Globals.Me.CurrentMap + "  (" + MapInstance.GetMap(Globals.Me.CurrentMap).MyName + ")";
                 _xLabel.Text = "X: " + Globals.Me.CurrentX;
                 _yLabel.Text = "Y: " + Globals.Me.CurrentY;
                 _zLabel.Text = "Z: " + Globals.Me.CurrentZ;

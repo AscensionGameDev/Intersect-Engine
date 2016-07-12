@@ -140,7 +140,7 @@ namespace Intersect_Client.Classes.Core
             TryPreRendering();
 
             GenerateLightMap();
-            var currentMap = MapInstance.GetMap(Globals.CurrentMap);
+            var currentMap = MapInstance.GetMap(Globals.Me.CurrentMap);
             if (currentMap != null && Globals.NeedsMaps == false)
             {
                 //Render players, names, maps, etc.
@@ -307,7 +307,7 @@ namespace Intersect_Client.Classes.Core
         }
         public static void DrawOverlay()
         {
-            var map = MapInstance.GetMap(Globals.CurrentMap);
+            var map = MapInstance.GetMap(Globals.Me.CurrentMap);
             if (map != null)
             {
                 float ecTime = Globals.System.GetTimeMS() - _overlayUpdate;
@@ -448,7 +448,8 @@ namespace Intersect_Client.Classes.Core
 
         private static void UpdateView()
         {
-            var map = MapInstance.GetMap(Globals.CurrentMap);
+            if (Globals.Me == null) return;
+            var map = MapInstance.GetMap(Globals.Me.CurrentMap);
             if (Globals.GameState == GameStates.InGame && map != null)
             {
                 Player en = (Player)Globals.Entities[Globals.MyIndex];
@@ -554,7 +555,7 @@ namespace Intersect_Client.Classes.Core
         }
         private static void GenerateLightMap()
         {
-            var map = MapInstance.GetMap(Globals.CurrentMap);
+            var map = MapInstance.GetMap(Globals.Me.CurrentMap);
             if (map == null) return;
             if (_darknessTexture == null) { return; }
 
@@ -606,7 +607,7 @@ namespace Intersect_Client.Classes.Core
         private static void UpdatePlayerLight()
         {
             //Draw Light Around Player
-            var map = MapInstance.GetMap(Globals.CurrentMap);
+            var map = MapInstance.GetMap(Globals.Me.CurrentMap);
             if (map != null)
             {
                 float ecTime = Globals.System.GetTimeMS() - _lightUpdate;

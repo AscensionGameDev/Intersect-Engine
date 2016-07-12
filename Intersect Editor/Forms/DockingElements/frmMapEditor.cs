@@ -1307,5 +1307,10 @@ namespace Intersect_Editor.Forms
                 EditorGraphics.TilePreviewUpdated = true;
             }
         }
+
+        private void pnlMapContainer_Scroll(object sender, ScrollEventArgs e)
+        {
+            EditorLoop.RunFrame();
+        }
     }
 }

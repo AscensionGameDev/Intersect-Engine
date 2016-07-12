@@ -112,6 +112,12 @@ namespace Intersect_Server.Classes.Entities
         public override void Update()
         {
             base.Update();
+
+            //Process dash spells
+            if (Dashing != null)
+            {
+                Dashing.Update();
+            }
             if (MoveTimer < Environment.TickCount)
             {
                 var targetMap = -1;
@@ -190,40 +196,68 @@ namespace Intersect_Server.Classes.Entities
                     {
                         if (targetMap != pathFinder.GetTarget().TargetMap || targetX != pathFinder.GetTarget().TargetX || targetY != pathFinder.GetTarget().TargetY)
                         {
-                           pathFinder.SetTarget(null);
+                            pathFinder.SetTarget(null);
                         }
                     }
 
                     if (pathFinder.GetTarget() != null)
                     {
-                        var dir = pathFinder.GetMove();
-                        if (dir > -1)
+                        if (!IsOneBlockAway(pathFinder.GetTarget().TargetMap, pathFinder.GetTarget().TargetX, pathFinder.GetTarget().TargetY))
                         {
-                            if (CanMove(dir) == -1)
+                            var dir = pathFinder.GetMove();
+                            if (dir > -1)
                             {
-                                //check if NPC is snared or stunned
-                                for (var n = 0; n < Status.Count; n++)
+                                if (CanMove(dir) == -1 || CanMove(dir) == -4)
                                 {
-                                    if (Status[n].Type == (int)StatusTypes.Stun || Status[n].Type == (int)StatusTypes.Snare)
+                                    //check if NPC is snared or stunned
+                                    for (var n = 0; n < Status.Count; n++)
+                                    {
+                                        if (Status[n].Type == (int) StatusTypes.Stun ||
+                                            Status[n].Type == (int) StatusTypes.Snare)
+                                        {
+                                            return;
+                                        }
+                                    }
+                                    //Check if NPC is dashing
+                                    if (Dashing != null)
                                     {
                                         return;
                                     }
+                                    Move(dir, null);
+                                    pathFinder.RemoveMove();
                                 }
-                                //Check if NPC is dashing
-                                if (Dashing != null)
+                                else
                                 {
-                                    return;
+                                    pathFinder.SetTarget(null);
                                 }
-                                Move(dir, null);
-                                pathFinder.RemoveMove();
-                            }
-                            else
-                            {
-                                pathFinder.SetTarget(null);
                             }
                         }
+                        else
+                        {
+                            if (CurrentX < targetX && Dir != 3)
+                            {
+                                Dir = 3;
+                                PacketSender.SendEntityDir(MyIndex, (int) EntityTypes.GlobalEntity, Dir, CurrentMap);
+                            }
+                            else if (CurrentX > targetX && Dir != 2)
+                            {
+                                Dir = 2;
+                                PacketSender.SendEntityDir(MyIndex, (int)EntityTypes.GlobalEntity, Dir, CurrentMap);
+                            }
+                            else if (CurrentY < targetY && Dir != 1)
+                            {
+                                Dir = 1;
+                                PacketSender.SendEntityDir(MyIndex, (int)EntityTypes.GlobalEntity, Dir, CurrentMap);
+                            }
+                            else if (CurrentY > targetY && Dir != 0)
+                            {
+                                Dir = 0;
+                                PacketSender.SendEntityDir(MyIndex, (int)EntityTypes.GlobalEntity, Dir, CurrentMap);
+                            }
+                            CanAttack(MyTarget.MyIndex);
+                        }
                     }
-                else
+                    else
                     {
                         pathFinder.SetTarget(new PathfinderTarget(targetMap, targetX, targetY));
                         CanAttack(MyTarget.MyIndex);

@@ -84,7 +84,7 @@ namespace Intersect_Client.Classes.Networking
         {
             var bf = new ByteBuffer();
             bf.WriteLong((int)ClientPackets.EnterMap);
-            bf.WriteLong(Globals.CurrentMap);
+            bf.WriteLong(Globals.Me.CurrentMap);
             GameNetwork.SendPacket(bf.ToArray());
         }
 
@@ -136,9 +136,9 @@ namespace Intersect_Client.Classes.Networking
             var bf = new ByteBuffer();
             var sha = new SHA256Managed();
             bf.WriteLong((int)ClientPackets.CreateAccount);
-            bf.WriteString(username.ToLower().Trim());
+            bf.WriteString(username.Trim());
             bf.WriteString(BitConverter.ToString(sha.ComputeHash(Encoding.UTF8.GetBytes(password.Trim()))).Replace("-", ""));
-            bf.WriteString(email.ToLower().Trim());
+            bf.WriteString(email.Trim());
             GameNetwork.SendPacket(bf.ToArray());
         }
 
@@ -146,7 +146,7 @@ namespace Intersect_Client.Classes.Networking
         {
             var bf = new ByteBuffer();
             bf.WriteLong((int)ClientPackets.CreateCharacter);
-            bf.WriteString(Name.ToLower().Trim());
+            bf.WriteString(Name.Trim());
             bf.WriteInteger(Class);
             bf.WriteInteger(Sprite);
             GameNetwork.SendPacket(bf.ToArray());
