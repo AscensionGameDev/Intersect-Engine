@@ -65,6 +65,7 @@ namespace Intersect_Library.GameObjects
         public int[] StatDiff = new int[(int)Stats.StatCount];
 
         //Extra Data, Teleport Coords, Custom Spells, Etc
+        public int Projectile = 0;
         public int Data1 = 0;
         public int Data2 = 0;
         public int Data3 = 0;

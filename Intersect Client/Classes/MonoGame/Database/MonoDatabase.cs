@@ -40,7 +40,7 @@ namespace Intersect_Client.Classes.Bridges_and_Interfaces.SFML.Database
 
             regkey.CreateSubKey("IntersectClient");
             regkey = regkey.OpenSubKey("IntersectClient", true);
-            regkey.CreateSubKey(ServerHost + ServerPort);
+            regkey.CreateSubKey(ServerHost + ":" + ServerPort);
             regkey = regkey.OpenSubKey(ServerHost + ":" + ServerPort, true);
             regkey.SetValue(key, value);
         }

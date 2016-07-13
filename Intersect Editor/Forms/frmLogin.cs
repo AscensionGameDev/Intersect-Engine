@@ -131,9 +131,14 @@ namespace Intersect_Editor.Forms
             if (chkRemember.Checked)
             {
                 SavePreference("Username", txtUsername.Text);
-                SavePreference("Password",
-                    BitConverter.ToString(sha.ComputeHash(Encoding.UTF8.GetBytes(txtPassword.Text.Trim())))
-                        .Replace("-", ""));
+                if (SavedPassword != "")
+                {
+                    SavePreference("Password",SavedPassword);
+                }
+                else
+                {
+                    SavePreference("Password",BitConverter.ToString(sha.ComputeHash(Encoding.UTF8.GetBytes(txtPassword.Text.Trim()))).Replace("-", ""));
+                }
             }
             else
             {

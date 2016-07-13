@@ -220,9 +220,9 @@ namespace Intersect_Server.Classes.Entities
 
             }
         }
-        public void Update()
+        public void Update(bool isActive)
         {
-            if (MoveTimer >= Environment.TickCount || GlobalClone != null) return;
+            if (MoveTimer >= Environment.TickCount || GlobalClone != null || (isActive && MyPage.InteractionFreeze == 1)) return;
             if (MovementType == 2 && MoveRoute != null)
             {
                 ProcessMoveRoute();

@@ -360,7 +360,7 @@ namespace Intersect_Client.Classes.Networking
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
             var mapNum = (int)bf.ReadLong();
-            if (Globals.Me.CurrentMap != mapNum && Globals.Me.CurrentMap != -1) return;
+            if (Globals.Me != null && Globals.Me.CurrentMap != mapNum && Globals.Me.CurrentMap != -1) return;
             for (var i = 0; i < 9; i++)
             {
                 Globals.LocalMaps[i] = (int)bf.ReadLong();

@@ -115,6 +115,7 @@ namespace Intersect_Editor.Forms
             this.btnAddCondition = new System.Windows.Forms.Button();
             this.lstConditions = new System.Windows.Forms.ListBox();
             this.grpNewCommands = new System.Windows.Forms.GroupBox();
+            this.lblCloseCommands = new System.Windows.Forms.Label();
             this.lstCommands = new System.Windows.Forms.ListView();
             this.grpEventCommands = new System.Windows.Forms.GroupBox();
             this.lstEventCommands = new System.Windows.Forms.ListBox();
@@ -133,7 +134,7 @@ namespace Intersect_Editor.Forms
             this.btnNewPage = new System.Windows.Forms.Button();
             this.groupBox7 = new System.Windows.Forms.GroupBox();
             this.chkIsGlobal = new System.Windows.Forms.CheckBox();
-            this.lblCloseCommands = new System.Windows.Forms.Label();
+            this.chkInteractionFreeze = new System.Windows.Forms.CheckBox();
             this.tabControl.SuspendLayout();
             this.grpEntityOptions.SuspendLayout();
             this.groupBox6.SuspendLayout();
@@ -179,7 +180,7 @@ namespace Intersect_Editor.Forms
             // 
             this.tabPage1.Location = new System.Drawing.Point(4, 22);
             this.tabPage1.Name = "tabPage1";
-            this.tabPage1.Padding = new System.Windows.Forms.Padding(3, 3, 3, 3);
+            this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
             this.tabPage1.Size = new System.Drawing.Size(803, 495);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "1";
@@ -191,9 +192,9 @@ namespace Intersect_Editor.Forms
             this.grpEntityOptions.Controls.Add(this.groupBox2);
             this.grpEntityOptions.Controls.Add(this.groupBox3);
             this.grpEntityOptions.Controls.Add(this.groupBox1);
-            this.grpEntityOptions.Location = new System.Drawing.Point(20, 199);
+            this.grpEntityOptions.Location = new System.Drawing.Point(20, 178);
             this.grpEntityOptions.Name = "grpEntityOptions";
-            this.grpEntityOptions.Size = new System.Drawing.Size(326, 373);
+            this.grpEntityOptions.Size = new System.Drawing.Size(326, 394);
             this.grpEntityOptions.TabIndex = 12;
             this.grpEntityOptions.TabStop = false;
             this.grpEntityOptions.Text = "Entity Options";
@@ -389,13 +390,14 @@ namespace Intersect_Editor.Forms
             // 
             // groupBox3
             // 
+            this.groupBox3.Controls.Add(this.chkInteractionFreeze);
             this.groupBox3.Controls.Add(this.chkWalkingAnimation);
             this.groupBox3.Controls.Add(this.chkDirectionFix);
             this.groupBox3.Controls.Add(this.chkHideName);
             this.groupBox3.Controls.Add(this.chkWalkThrough);
             this.groupBox3.Location = new System.Drawing.Point(6, 326);
             this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(315, 41);
+            this.groupBox3.Size = new System.Drawing.Size(315, 64);
             this.groupBox3.TabIndex = 9;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Extra";
@@ -520,7 +522,7 @@ namespace Intersect_Editor.Forms
             this.grpEventConditions.Controls.Add(this.lstConditions);
             this.grpEventConditions.Location = new System.Drawing.Point(20, 88);
             this.grpEventConditions.Name = "grpEventConditions";
-            this.grpEventConditions.Size = new System.Drawing.Size(326, 107);
+            this.grpEventConditions.Size = new System.Drawing.Size(326, 84);
             this.grpEventConditions.TabIndex = 5;
             this.grpEventConditions.TabStop = false;
             this.grpEventConditions.Text = "Conditions";
@@ -550,7 +552,7 @@ namespace Intersect_Editor.Forms
             this.lstConditions.FormattingEnabled = true;
             this.lstConditions.Location = new System.Drawing.Point(6, 19);
             this.lstConditions.Name = "lstConditions";
-            this.lstConditions.Size = new System.Drawing.Size(282, 82);
+            this.lstConditions.Size = new System.Drawing.Size(282, 56);
             this.lstConditions.TabIndex = 0;
             // 
             // grpNewCommands
@@ -564,6 +566,16 @@ namespace Intersect_Editor.Forms
             this.grpNewCommands.TabStop = false;
             this.grpNewCommands.Text = "Add Commands";
             this.grpNewCommands.Visible = false;
+            // 
+            // lblCloseCommands
+            // 
+            this.lblCloseCommands.AutoSize = true;
+            this.lblCloseCommands.Location = new System.Drawing.Point(437, 14);
+            this.lblCloseCommands.Name = "lblCloseCommands";
+            this.lblCloseCommands.Size = new System.Drawing.Size(14, 13);
+            this.lblCloseCommands.TabIndex = 1;
+            this.lblCloseCommands.Text = "X";
+            this.lblCloseCommands.Click += new System.EventHandler(this.lblCloseCommands_Click);
             // 
             // lstCommands
             // 
@@ -858,15 +870,16 @@ namespace Intersect_Editor.Forms
             this.chkIsGlobal.UseVisualStyleBackColor = true;
             this.chkIsGlobal.CheckedChanged += new System.EventHandler(this.chkIsGlobal_CheckedChanged);
             // 
-            // lblCloseCommands
+            // chkInteractionFreeze
             // 
-            this.lblCloseCommands.AutoSize = true;
-            this.lblCloseCommands.Location = new System.Drawing.Point(437, 14);
-            this.lblCloseCommands.Name = "lblCloseCommands";
-            this.lblCloseCommands.Size = new System.Drawing.Size(14, 13);
-            this.lblCloseCommands.TabIndex = 1;
-            this.lblCloseCommands.Text = "X";
-            this.lblCloseCommands.Click += new System.EventHandler(this.lblCloseCommands_Click);
+            this.chkInteractionFreeze.AutoSize = true;
+            this.chkInteractionFreeze.Location = new System.Drawing.Point(6, 41);
+            this.chkInteractionFreeze.Name = "chkInteractionFreeze";
+            this.chkInteractionFreeze.Size = new System.Drawing.Size(111, 17);
+            this.chkInteractionFreeze.TabIndex = 6;
+            this.chkInteractionFreeze.Text = "Interaction Freeze";
+            this.chkInteractionFreeze.UseVisualStyleBackColor = true;
+            this.chkInteractionFreeze.CheckedChanged += new System.EventHandler(this.chkInteractionFreeze_CheckedChanged);
             // 
             // FrmEvent
             // 
@@ -976,5 +989,6 @@ namespace Intersect_Editor.Forms
         private Label label7;
         private Label label8;
         private Label lblCloseCommands;
+        private CheckBox chkInteractionFreeze;
     }
 }

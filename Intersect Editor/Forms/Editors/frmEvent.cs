@@ -157,6 +157,7 @@ namespace Intersect_Editor.Forms
             chkDisablePreview.Checked = Convert.ToBoolean(CurrentPage.DisablePreview);
             chkDirectionFix.Checked = Convert.ToBoolean(CurrentPage.DirectionFix);
             chkWalkingAnimation.Checked = Convert.ToBoolean(CurrentPage.WalkingAnimation);
+            chkInteractionFreeze.Checked = Convert.ToBoolean(CurrentPage.InteractionFreeze);
             txtDesc.Text = CurrentPage.Desc;
             ListPageCommands();
             ListPageConditions();
@@ -1181,6 +1182,10 @@ namespace Intersect_Editor.Forms
         private void chkWalkingAnimation_CheckedChanged(object sender, EventArgs e)
         {
             CurrentPage.WalkingAnimation = Convert.ToInt32(chkWalkingAnimation.Checked);
+        }
+        private void chkInteractionFreeze_CheckedChanged(object sender, EventArgs e)
+        {
+            CurrentPage.InteractionFreeze = Convert.ToInt32(chkInteractionFreeze.Checked);
         }
         #endregion
 

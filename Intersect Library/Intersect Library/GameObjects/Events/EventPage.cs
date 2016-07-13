@@ -20,6 +20,7 @@ namespace Intersect_Library.GameObjects.Events
         public int DirectionFix;
         public int WalkingAnimation = 1;
         public int Animation = -1;
+        public int InteractionFreeze;
         public List<CommandList> CommandLists = new List<CommandList>();
         public List<EventCommand> Conditions = new List<EventCommand>();
 
@@ -53,6 +54,7 @@ namespace Intersect_Library.GameObjects.Events
             DirectionFix = curBuffer.ReadInteger();
             WalkingAnimation = curBuffer.ReadInteger();
             Animation = curBuffer.ReadInteger();
+            InteractionFreeze = curBuffer.ReadInteger();
             var x = curBuffer.ReadInteger();
             for (var i = 0; i < x; i++)
             {
@@ -84,6 +86,7 @@ namespace Intersect_Library.GameObjects.Events
             myBuffer.WriteInteger(DirectionFix);
             myBuffer.WriteInteger(WalkingAnimation);
             myBuffer.WriteInteger(Animation);
+            myBuffer.WriteInteger(InteractionFreeze);
             myBuffer.WriteInteger(CommandLists.Count);
             foreach (var commandList in CommandLists)
             {

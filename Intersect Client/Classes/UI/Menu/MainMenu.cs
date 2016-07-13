@@ -63,6 +63,10 @@ namespace Intersect_Client.Classes.UI.Menu
         {
             MenuCanvas = _menuCanvas;
 
+            _logoPanel = new ImagePanel(_menuCanvas);
+            _logoPanel.Texture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui,
+                Globals.Database.Logo);
+
             //Main Menu Window
             _menuPanel = new ImagePanel(_menuCanvas);
             _menuPanel.Texture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "uibody.png");
@@ -78,9 +82,6 @@ namespace Intersect_Client.Classes.UI.Menu
             _menuHeader.Alignment = Pos.CenterH;
             _menuHeader.TextColorOverride = new Color(255,200,200,200);
 
-            _logoPanel = new ImagePanel(_menuCanvas);
-            _logoPanel.Texture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui,
-                Globals.Database.Logo);
             if (_logoPanel.Texture != null)
             {
                 _logoPanel.SetSize(_logoPanel.Texture.GetWidth(), _logoPanel.Texture.GetHeight());
@@ -97,6 +98,11 @@ namespace Intersect_Client.Classes.UI.Menu
                 var diff = _menuPanel.Bottom - _menuCanvas.Height;
                 _logoPanel.SetPosition(_logoPanel.X, _logoPanel.Y - diff);
                 _menuPanel.SetPosition(_menuPanel.X, _menuPanel.Y - diff);
+            }
+
+            if (_logoPanel.Y < 0)
+            {
+                _logoPanel.SetPosition(_logoPanel.X, 0);
             }
 
             //Login Button

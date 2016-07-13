@@ -51,6 +51,33 @@ namespace Intersect_Server.Classes.Core
         private const string INFO_TABLE = "info";
         private const string DB_VERSION = "dbversion";
 
+        //Ban Table Constants
+        private const string BAN_TABLE = "bans";
+        private const string BAN_ID = "id";
+        private const string BAN_TIME = "time";
+        private const string BAN_USER = "user";
+        private const string BAN_IP = "ip";
+        private const string BAN_DURATION = "duration";
+        private const string BAN_REASON = "reason";
+        private const string BAN_BANNER = "banner";
+
+        //Mute Table Constants
+        private const string MUTE_TABLE = "mutes";
+        private const string MUTE_ID = "id";
+        private const string MUTE_TIME = "time";
+        private const string MUTE_USER = "user"; 
+        private const string MUTE_IP = "ip"; 
+        private const string MUTE_DURATION = "duration";
+        private const string MUTE_REASON = "reason";
+        private const string MUTE_MUTER = "muter";
+
+        //Log Table Constants
+        private const string LOG_TABLE = "logs";
+        private const string LOG_ID = "id";
+        private const string LOG_TIME = "time";
+        private const string LOG_TYPE = "type";
+        private const string LOG_INFO = "info";
+
         //User Table Constants
         private const string USERS_TABLE = "users";
         private const string USER_ID = "id";
@@ -189,6 +216,9 @@ namespace Intersect_Server.Classes.Core
             CreateCharacterVariablesTable();
             CreateGameObjectTables();
             CreateMapListTable();
+            CreateBansTable();
+            CreateMutesTable();
+            CreateLogsTable();
         }
         private static void CreateInfoTable()
         {
@@ -199,6 +229,54 @@ namespace Intersect_Server.Classes.Core
                 createCommand.ExecuteNonQuery();
             }
             cmd = "INSERT into " + INFO_TABLE + " (" + DB_VERSION + ") VALUES (" + DbVersion + ");";
+            using (var createCommand = _dbConnection.CreateCommand())
+            {
+                createCommand.CommandText = cmd;
+                createCommand.ExecuteNonQuery();
+            }
+        }
+        private static void CreateLogsTable()
+        {
+            var cmd = "CREATE TABLE " + LOG_TABLE + " ("
+                        + LOG_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+                        + LOG_TIME + " TEXT,"
+                        + LOG_TYPE + " TEXT,"
+                        + LOG_INFO + " TEXT"
+                        + ");";
+            using (var createCommand = _dbConnection.CreateCommand())
+            {
+                createCommand.CommandText = cmd;
+                createCommand.ExecuteNonQuery();
+            }
+        }
+        private static void CreateMutesTable()
+        {
+            var cmd = "CREATE TABLE " + MUTE_TABLE + " ("
+                + MUTE_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+                + MUTE_TIME + " TEXT,"
+                + MUTE_USER + " INTEGER,"
+                + MUTE_IP + " TEXT,"
+                + MUTE_DURATION + " INTEGER,"
+                + MUTE_REASON + " TEXT,"
+                + MUTE_MUTER + " INTEGER"
+                + ");";
+            using (var createCommand = _dbConnection.CreateCommand())
+            {
+                createCommand.CommandText = cmd;
+                createCommand.ExecuteNonQuery();
+            }
+        }
+        private static void CreateBansTable()
+        {
+            var cmd = "CREATE TABLE " + BAN_TABLE + " ("
+                + BAN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+                + BAN_TIME + " TEXT,"
+                + BAN_USER + " INTEGER,"
+                + BAN_IP + " TEXT,"
+                + BAN_DURATION + " INTEGER,"
+                + BAN_REASON + " TEXT,"
+                + BAN_BANNER + " INTEGER"
+                + ");";
             using (var createCommand = _dbConnection.CreateCommand())
             {
                 createCommand.CommandText = cmd;

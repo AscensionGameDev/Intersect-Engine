@@ -343,7 +343,7 @@ namespace Intersect_Editor.Forms
                 }
                 else
                 {
-                    lblProjectile.Text = "Projectile: " + ProjectileBase.GetName(_editorItem.Data4);
+                    lblProjectile.Text = "Projectile: " + ProjectileBase.GetName(_editorItem.Projectile);
                 }
             }
         }
@@ -609,12 +609,12 @@ namespace Intersect_Editor.Forms
         {
             if (scrlProjectile.Value == -1)
             {
-                _editorItem.Data4 = -1;
+                _editorItem.Projectile = -1;
                 lblProjectile.Text = "Projectile: None";
             }
             else
             {
-                _editorItem.Data4 = Database.GameObjectIdFromList(GameObject.Projectile,scrlProjectile.Value);
+                _editorItem.Projectile = Database.GameObjectIdFromList(GameObject.Projectile,scrlProjectile.Value);
                 lblProjectile.Text = "Projectile: " + ProjectileBase.GetName(_editorItem.Data4);
             }
         }

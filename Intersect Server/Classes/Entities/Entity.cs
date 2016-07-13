@@ -595,7 +595,7 @@ namespace Intersect_Server.Classes.Entities
                                 HandleAoESpell(SpellNum, spellBase.HitRadius, CurrentMap, CurrentX, CurrentY);
                                 break;
                             case (int)SpellTargetTypes.Projectile:
-                                var projectileBase = ProjectileBase.GetProjectile(spellBase.Data4);
+                                var projectileBase = ProjectileBase.GetProjectile(spellBase.Projectile);
                                 if (projectileBase != null)
                                 {
                                     MapInstance.GetMap(CurrentMap).SpawnMapProjectile(this,

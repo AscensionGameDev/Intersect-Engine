@@ -85,6 +85,7 @@ namespace Intersect_Library.GameObjects
             {
                 TempSprite = new ClassSprite();
                 TempSprite.Sprite = myBuffer.ReadString();
+                TempSprite.Face = myBuffer.ReadString();
                 TempSprite.Gender = myBuffer.ReadByte();
                 Sprites.Add(TempSprite);
             }
@@ -134,6 +135,7 @@ namespace Intersect_Library.GameObjects
             for (var i = 0; i < Sprites.Count; i++)
             {
                 myBuffer.WriteString(Sprites[i].Sprite);
+                myBuffer.WriteString(Sprites[i].Face);
                 myBuffer.WriteByte(Sprites[i].Gender);
             }
 
@@ -244,6 +246,7 @@ namespace Intersect_Library.GameObjects
     public class ClassSprite
     {
         public string Sprite = "";
+        public string Face = "";
         public byte Gender;
     }
 }

@@ -108,7 +108,7 @@ namespace Intersect_Server.Classes.Entities
                 }
                 else
                 {
-                    if (!IsGlobal) PageInstance.Update(); //Process movement and stuff that is client specific
+                    if (!IsGlobal) PageInstance.Update(CallStack.Count > 0); //Process movement and stuff that is client specific
                     if (CallStack.Count > 0)
                     {
                         if (CallStack.Peek().WaitingForResponse == 2 && MyPlayer.InShop == -1)
