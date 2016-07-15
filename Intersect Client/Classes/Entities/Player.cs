@@ -70,6 +70,10 @@ namespace Intersect_Client.Classes.Entities
 
         public override bool Update()
         {
+            if (CurrentMap != -1 && MapInstance.GetMap(CurrentMap) == null && Globals.NeedsMaps == false)
+            {
+                PacketSender.SendNeedMap(CurrentMap);
+            }
             bool returnval = base.Update();
             HandleInput();
             if (Globals.EventHolds.Count == 0 && Globals.GameShop == null && Globals.InBank == false)

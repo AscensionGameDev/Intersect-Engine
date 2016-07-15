@@ -177,12 +177,14 @@ namespace Intersect_Client.Classes.UI.Game
                             tmpNode = _mapList.AddNode(mapList.Items[i].Name);
                             tmpNode.UserData = ((MapListMap)mapList.Items[i]).MapNum;
                             tmpNode.DoubleClicked += tmpNode_DoubleClicked;
+                            tmpNode.Clicked += tmpNode_DoubleClicked;
                         }
                         else
                         {
                             tmpNode = parent.AddNode(mapList.Items[i].Name);
                             tmpNode.UserData = ((MapListMap)mapList.Items[i]).MapNum;
                             tmpNode.DoubleClicked += tmpNode_DoubleClicked;
+                            tmpNode.Clicked += tmpNode_DoubleClicked;
                         }
                     }
                 }
