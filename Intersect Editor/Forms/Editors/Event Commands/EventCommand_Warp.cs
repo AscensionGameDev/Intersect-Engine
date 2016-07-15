@@ -39,7 +39,7 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             cmbMap.Items.Clear();
             for (int i = 0; i < MapList.GetOrderedMaps().Count; i++)
             {
-                cmbMap.Items.Add(MapList.GetOrderedMaps()[i].MapNum + ". " + MapList.GetOrderedMaps()[i].Name);
+                cmbMap.Items.Add(MapList.GetOrderedMaps()[i].Name);
                 if (MapList.GetOrderedMaps()[i].MapNum == _myCommand.Ints[0])
                 {
                     cmbMap.SelectedIndex = i;

@@ -98,5 +98,21 @@ namespace Intersect_Library.GameObjects.Events
                 condition.Save(myBuffer);
             }
         }
+
+        public enum EventTriggers
+        {
+            ActionButton,
+            OnTouch,
+            Autorun,
+            ProjectileHit,
+        }
+
+        public enum CommonEventTriggers
+        {
+            None,
+            JoinGame,
+            LevelUp,
+            Autorun,
+        }
     }
 }

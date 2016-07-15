@@ -94,7 +94,21 @@ namespace Intersect_Client.Classes.Core
             {
                 if (Globals.GameState == GameStates.InGame && Globals.Me != null)
                 {
-                    Globals.Me.TryTarget();
+                    if (!Gui.MouseHitGUI())
+                    {
+                        if (Globals.Me.TryTarget())
+                        {
+                            return;
+                        }
+                        if (Globals.Me.TryAttack())
+                        {
+                            return;
+                        }
+                        if (Globals.Me.TryPickupItem())
+                        {
+                            return;
+                        }
+                    }
                 }
             }
         }

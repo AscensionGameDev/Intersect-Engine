@@ -31,7 +31,7 @@ namespace Intersect_Library.GameObjects
         public new const string DatabaseTable = "classes";
         public new const GameObject Type = GameObject.Class;
         protected static Dictionary<int, DatabaseObject> Objects = new Dictionary<int, DatabaseObject>();
-        
+
         public string Name = "New Class";
 
         //Spawn Info
@@ -40,13 +40,29 @@ namespace Intersect_Library.GameObjects
         public int SpawnY = 0;
         public int SpawnDir = 0;
 
+        //Locked - Can the class be chosen from character select?
+        public int Locked = 0;
+
         //Sprites
         public List<ClassSprite> Sprites = new List<ClassSprite>();
 
-        //Vitals & Stats
-        public int[] MaxVital = new int[(int)Vitals.VitalCount];
-        public int[] Stat = new int[(int)Stats.StatCount];
-        public int Points = 0;
+        //Starting Vitals & Stats
+        public int[] BaseVital = new int[(int)Vitals.VitalCount];
+        public int[] BaseStat = new int[(int)Stats.StatCount];
+        public int BasePoints = 0;
+
+        //Level Up Info
+        public int IncreasePercentage = 0;
+        public int[] VitalIncrease = new int[(int)Vitals.VitalCount];
+        public int[] StatIncrease = new int[(int)Stats.StatCount];
+        public int PointIncrease = 0;
+
+        //Exp Calculations
+        public int BaseExp = 100;
+        public int ExpIncrease = 50;
+
+        //Regen Percentages
+        public int[] VitalRegen = new int[(int)Vitals.VitalCount];
 
         //Starting Items
         public List<ClassItem> Items = new List<ClassItem>();
@@ -78,6 +94,8 @@ namespace Intersect_Library.GameObjects
             SpawnY = myBuffer.ReadInteger();
             SpawnDir = myBuffer.ReadInteger();
 
+            Locked = myBuffer.ReadInteger();
+
             // Load Class Sprites
             Sprites.Clear();
             spriteCount = myBuffer.ReadInteger();
@@ -90,16 +108,40 @@ namespace Intersect_Library.GameObjects
                 Sprites.Add(TempSprite);
             }
 
+            //Base Info
             for (int i = 0; i < (int)Vitals.VitalCount; i++)
             {
-                MaxVital[i] = myBuffer.ReadInteger();
+                BaseVital[i] = myBuffer.ReadInteger();
             }
             for (int i = 0; i < (int)Stats.StatCount; i++)
             {
-                Stat[i] = myBuffer.ReadInteger();
+                BaseStat[i] = myBuffer.ReadInteger();
             }
-            Points = myBuffer.ReadInteger();
+            BasePoints = myBuffer.ReadInteger();
 
+            //Level Up Info
+            IncreasePercentage = myBuffer.ReadInteger();
+            for (int i = 0; i < (int)Vitals.VitalCount; i++)
+            {
+                VitalIncrease[i] = myBuffer.ReadInteger();
+            }
+            for (int i = 0; i < (int)Stats.StatCount; i++)
+            {
+                StatIncrease[i] = myBuffer.ReadInteger();
+            }
+            PointIncrease = myBuffer.ReadInteger();
+
+            //Exp Info
+            BaseExp = myBuffer.ReadInteger();
+            ExpIncrease = myBuffer.ReadInteger();
+
+            //Regen
+            for (int i = 0; i < (int)Vitals.VitalCount; i++)
+            {
+                VitalRegen[i] = myBuffer.ReadInteger();
+            }
+
+            //Spawn Items
             for (int i = 0; i < Options.MaxNpcDrops; i++)
             {
                 Items[i].ItemNum = myBuffer.ReadInteger();
@@ -130,6 +172,8 @@ namespace Intersect_Library.GameObjects
             myBuffer.WriteInteger(SpawnY);
             myBuffer.WriteInteger(SpawnDir);
 
+            myBuffer.WriteInteger(Locked);
+
             //Sprites
             myBuffer.WriteInteger(Sprites.Count);
             for (var i = 0; i < Sprites.Count; i++)
@@ -139,16 +183,40 @@ namespace Intersect_Library.GameObjects
                 myBuffer.WriteByte(Sprites[i].Gender);
             }
 
+            //Base Stats
             for (int i = 0; i < (int)Vitals.VitalCount; i++)
             {
-                myBuffer.WriteInteger(MaxVital[i]);
+                myBuffer.WriteInteger(BaseVital[i]);
             }
             for (int i = 0; i < (int)Stats.StatCount; i++)
             {
-                myBuffer.WriteInteger(Stat[i]);
+                myBuffer.WriteInteger(BaseStat[i]);
             }
-            myBuffer.WriteInteger(Points);
+            myBuffer.WriteInteger(BasePoints);
 
+            //Level Up Stats
+            myBuffer.WriteInteger(IncreasePercentage);
+            for (int i = 0; i < (int)Vitals.VitalCount; i++)
+            {
+                myBuffer.WriteInteger(VitalIncrease[i]);
+            }
+            for (int i = 0; i < (int)Stats.StatCount; i++)
+            {
+                myBuffer.WriteInteger(StatIncrease[i]);
+            }
+            myBuffer.WriteInteger(PointIncrease);
+
+            //Exp Info
+            myBuffer.WriteInteger(BaseExp);
+            myBuffer.WriteInteger(ExpIncrease);
+
+            //Regen
+            for (int i = 0; i < (int)Vitals.VitalCount; i++)
+            {
+                myBuffer.WriteInteger(VitalRegen[i]);
+            }
+
+            //Spawn Items
             for (int i = 0; i < Options.MaxNpcDrops; i++)
             {
                 myBuffer.WriteInteger(Items[i].ItemNum);

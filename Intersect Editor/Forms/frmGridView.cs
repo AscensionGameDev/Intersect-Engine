@@ -103,7 +103,7 @@ namespace Intersect_Editor.Forms
             {
                 if (!gridMaps.Contains(MapList.GetOrderedMaps()[i].MapNum))
                 {
-                    var item = new ToolStripButton(MapList.GetOrderedMaps()[i].MapNum + ". " + MapList.GetOrderedMaps()[i].Name);
+                    var item = new ToolStripButton(MapList.GetOrderedMaps()[i].Name);
                     item.Tag = MapList.GetOrderedMaps()[i].MapNum;
                     item.Click += LinkMapItem_Click;
                     linkBtns.Add(item);
@@ -515,6 +515,22 @@ namespace Intersect_Editor.Forms
                     Globals.PreviewProgressForm.ShowDialog();
                 }
             }
+        }
+
+        private void reDownloadAllPreviewsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (MessageBox.Show("Are you sure you want to clear your preview cache and re-download previews for all the maps in this grid?","Re-download Map Previews", MessageBoxButtons.YesNo) == DialogResult.Yes)
+            {
+                Directory.Delete("resources/mapcache",true);
+                MessageBox.Show("Map Previews/Cache Cleared", "Map Cache Cleared");
+                btnFetchPreview_Click(null, null);
+            }
+        }
+
+        private void downloadMissingPreviewsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            btnFetchPreview_Click(null,null);
+
         }
     }
 

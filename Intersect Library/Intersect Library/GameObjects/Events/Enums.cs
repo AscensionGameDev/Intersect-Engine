@@ -95,6 +95,8 @@
         Wait,
         //Shop and Bank
         OpenBank,
-        OpenShop
+        OpenShop,
+        //Extras
+        SetClass,
     }
 }

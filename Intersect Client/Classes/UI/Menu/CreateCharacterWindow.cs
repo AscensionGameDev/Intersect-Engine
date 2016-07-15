@@ -147,9 +147,14 @@ namespace Intersect_Client.Classes.UI.Menu
 
             //Class Combobox
             _classCombobox = new ComboBox(_classBackground);
-            foreach (var cls in DatabaseObject.GetGameObjectList(GameObject.Class))
+            var classCount = 0;
+            foreach (var cls in ClassBase.GetObjects())
             {
-                _classCombobox.AddItem(cls);
+                if (cls.Value.Locked == 0)
+                {
+                    _classCombobox.AddItem(cls.Value.Name);
+                    classCount++;
+                }
             }
             _classCombobox.ItemSelected += classCombobox_ItemSelected;
             _classCombobox.SetPosition(190, 8);
@@ -255,6 +260,7 @@ namespace Intersect_Client.Classes.UI.Menu
         //Methods
         public void Update()
         {
+            var isFace = true;
             if (GetClass() != null && _displaySpriteIndex != -1)
             {
                 _characterPortrait.IsHidden = false;
@@ -262,21 +268,38 @@ namespace Intersect_Client.Classes.UI.Menu
                 {
                     if (_maleChk.IsChecked)
                     {
-                        _characterPortrait.Texture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Entity, _maleSprites[_displaySpriteIndex].Value.Sprite);
+                        _characterPortrait.Texture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Face, _maleSprites[_displaySpriteIndex].Value.Face);
+                        if (_characterPortrait.Texture == null)
+                        {
+                            _characterPortrait.Texture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Entity, _maleSprites[_displaySpriteIndex].Value.Sprite);
+                            isFace = false;
+                        }
                     }
                     else
                     {
-                        _characterPortrait.Texture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Entity, _femaleSprites[_displaySpriteIndex].Value.Sprite);
+                        _characterPortrait.Texture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Face, _femaleSprites[_displaySpriteIndex].Value.Face);
+                        if (_characterPortrait.Texture == null)
+                        {
+                            _characterPortrait.Texture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Entity, _femaleSprites[_displaySpriteIndex].Value.Sprite);
+                            isFace = false;
+                        }
                     }
                     if (_characterPortrait.Texture != null)
                     {
-                        _characterPortrait.SetTextureRect(0, 0, _characterPortrait.Texture.GetWidth()/4,
-                            _characterPortrait.Texture.GetHeight()/4);
-                        _characterPortrait.SetSize(_characterPortrait.Texture.GetWidth()/4,
-                            _characterPortrait.Texture.GetHeight()/4);
-                        _characterPortrait.SetPosition(_characterContainer.Width/2 - _characterPortrait.Width/2,
-                            _characterContainer.Height/2 - _characterPortrait.Height/2);
-
+                        if (isFace)
+                        {
+                            _characterPortrait.SetTextureRect(0, 0, _characterPortrait.Texture.GetWidth(),_characterPortrait.Texture.GetHeight());
+                            _characterPortrait.SetSize(64, 64);
+                            _characterPortrait.SetPosition(5,5);
+                        }
+                        else
+                        {
+                            _characterPortrait.SetTextureRect(0, 0, _characterPortrait.Texture.GetWidth() / 4, _characterPortrait.Texture.GetHeight() / 4);
+                            _characterPortrait.SetSize(_characterPortrait.Texture.GetWidth() / 4,
+                                _characterPortrait.Texture.GetHeight() / 4);
+                            _characterPortrait.SetPosition(_characterContainer.Width / 2 - _characterPortrait.Width / 2,
+                                _characterContainer.Height / 2 - _characterPortrait.Height / 2);
+                        }
                     }
                 }
             }
@@ -298,9 +321,10 @@ namespace Intersect_Client.Classes.UI.Menu
 
         private ClassBase GetClass()
         {
+            if (_classCombobox.SelectedItem == null) return null;
             foreach (var cls in ClassBase.GetObjects())
             {
-                if (_classCombobox.SelectedItem.Text == cls.Value.Name)
+                if (_classCombobox.SelectedItem.Text == cls.Value.Name && cls.Value.Locked == 0)
                 {
                     return cls.Value;
                 }

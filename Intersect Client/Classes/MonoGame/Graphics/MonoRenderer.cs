@@ -89,7 +89,7 @@ namespace Intersect_Client_MonoGame.Classes.SFML.Graphics
             _screenHeight = height;
             _graphics.PreferredBackBufferWidth = width;
             _graphics.PreferredBackBufferHeight = height;
-            //_graphics.IsFullScreen = Globals.Database.FullScreen;
+            _graphics.IsFullScreen = Globals.Database.FullScreen;
             _graphics.SynchronizeWithVerticalRetrace = (Globals.Database.TargetFps == 0);
             _graphics.ApplyChanges();
 
@@ -127,12 +127,17 @@ namespace Intersect_Client_MonoGame.Classes.SFML.Graphics
 
         public override bool Begin()
         {
-            if (_gameWindow.ClientBounds.Width != 0 && _gameWindow.ClientBounds.Height != 0 && (_gameWindow.ClientBounds.Width != _screenWidth || _gameWindow.ClientBounds.Height != _screenHeight))
+            if (_gameWindow.ClientBounds.Width != 0 && _gameWindow.ClientBounds.Height != 0 && (_gameWindow.ClientBounds.Width != _screenWidth || _gameWindow.ClientBounds.Height != _screenHeight) && !_graphics.IsFullScreen)
             {
                 UpdateGraphicsState(_gameWindow.ClientBounds.Width, _gameWindow.ClientBounds.Height);
             }
             StartSpritebatch(_currentView,GameBlendModes.Alpha,null,null,true,null);
             return true;
+        }
+
+        public Pointf GetMouseOffset()
+        {
+            return new Pointf(_graphics.PreferredBackBufferWidth / (float)_gameWindow.ClientBounds.Width,_graphics.PreferredBackBufferHeight / (float)_gameWindow.ClientBounds.Height);
         }
 
         private void StartSpritebatch(FloatRect view, GameBlendModes mode = GameBlendModes.Alpha, GameShader shader = null, GameRenderTexture target = null, bool forced = false, RasterizerState rs = null)

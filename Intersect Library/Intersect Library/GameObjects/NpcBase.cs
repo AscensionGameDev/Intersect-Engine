@@ -22,6 +22,7 @@
 
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization.Formatters.Binary;
 
 namespace Intersect_Library.GameObjects
 {
@@ -44,6 +45,9 @@ namespace Intersect_Library.GameObjects
         public int SpawnDuration = 0;
         public byte Behavior = 0;
         public int SightRange = 0;
+
+        //Spells
+        public List<int> Spells = new List<int>(); 
         
         //Drops
         public List<NPCDrop> Drops = new List<NPCDrop>();
@@ -82,6 +86,12 @@ namespace Intersect_Library.GameObjects
                 Drops[i].Amount = myBuffer.ReadInteger();
                 Drops[i].Chance = myBuffer.ReadInteger();
             }
+            Spells.Clear();
+            var spellCount = myBuffer.ReadInteger();
+            for (int i = 0; i < spellCount; i++)
+            {
+                Spells.Add(myBuffer.ReadInteger());
+            }
 
             myBuffer.Dispose();
         }
@@ -109,7 +119,11 @@ namespace Intersect_Library.GameObjects
                 myBuffer.WriteInteger(Drops[i].Amount);
                 myBuffer.WriteInteger(Drops[i].Chance);
             }
-
+            myBuffer.WriteInteger(Spells.Count);
+            for (int i = 0; i < Spells.Count; i++)
+            {
+                myBuffer.WriteInteger(Spells[i]);
+            }
             return myBuffer.ToArray();
         }
 

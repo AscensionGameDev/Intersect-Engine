@@ -46,7 +46,6 @@ namespace Intersect_Server.Classes.Maps
         public List<MapItemInstance> MapItems = new List<MapItemInstance>();
         public List<MapItemSpawn> ItemRespawns = new List<MapItemSpawn>();
         public List<Entity> Entities = new List<Entity>();
-        public List<EventInstance> GlobalEvents = new List<EventInstance>();
         public Dictionary<EventBase, EventInstance> GlobalEventInstances = new Dictionary<EventBase, EventInstance>();
         public Dictionary<NpcSpawn, MapNpcSpawn> NpcSpawnInstances = new Dictionary<NpcSpawn, MapNpcSpawn>();
         public Dictionary<ResourceSpawn, MapResourceSpawn> ResourceSpawnInstances = new Dictionary<ResourceSpawn, MapResourceSpawn>();
@@ -186,7 +185,7 @@ namespace Intersect_Server.Classes.Maps
                 MapItems.Add(new MapItemInstance(item.ItemNum, item.ItemVal));
                 MapItems[MapItems.Count - 1].X = x;
                 MapItems[MapItems.Count - 1].Y = y;
-                MapItems[MapItems.Count - 1].DespawnTime = Environment.TickCount + Options.ItemDespawnTime;
+                MapItems[MapItems.Count - 1].DespawnTime = Environment.TickCount + ServerOptions.ItemDespawnTime;
                 if (itemBase.ItemType == (int)ItemTypes.Equipment)
                 {
                     MapItems[MapItems.Count - 1].ItemVal = 1;
@@ -234,7 +233,7 @@ namespace Intersect_Server.Classes.Maps
                 ItemRespawns.Add(new MapItemSpawn());
                 ItemRespawns[ItemRespawns.Count - 1].AttributeSpawnX = MapItems[index].AttributeSpawnX;
                 ItemRespawns[ItemRespawns.Count - 1].AttributeSpawnY = MapItems[index].AttributeSpawnY;
-                ItemRespawns[ItemRespawns.Count - 1].RespawnTime = Environment.TickCount + Options.ItemRespawnTime;
+                ItemRespawns[ItemRespawns.Count - 1].RespawnTime = Environment.TickCount + ServerOptions.ItemRespawnTime;
             }
             MapItems.RemoveAt(index);
         }
@@ -388,7 +387,10 @@ namespace Intersect_Server.Classes.Maps
             foreach (var evt in Events)
             {
                 if (evt.Value.IsGlobal == 1)
-                    GlobalEventInstances.Add(evt.Value,new EventInstance(evt.Value,evt.Key,MyMapNum));
+                {
+                    GlobalEventInstances.Add(evt.Value, new EventInstance(evt.Value, evt.Key, MyMapNum));
+
+                }
             }
         }
         private void DespawnGlobalEvents()
@@ -532,16 +534,39 @@ namespace Intersect_Server.Classes.Maps
                         MapProjectiles[i].Update();
                     }
                     //Process all global events
-                    for (int i = 0; i < GlobalEvents.Count; i++)
+                    var evts = GlobalEventInstances.Values.ToList();
+                    for (int i = 0; i < evts.Count; i++)
                     {
-                        for (int x = 0; x < GlobalEvents[i].GlobalPageInstance.Length; x++)
+                        for (int x = 0; x < evts[i].GlobalPageInstance.Length; x++)
                         {
-                            GlobalEvents[i].GlobalPageInstance[x].Update();
+                            //Gotta figure out if any players are interacting with this event.
+                            var active = false;
+                            foreach (var map in GetSurroundingMaps(true))
+                            {
+                                foreach (var player in map.GetPlayersOnMap())
+                                {
+                                    var eventInstance = player.GetEventFromPageInstance(evts[i].GlobalPageInstance[x]);
+                                    if (eventInstance != null && eventInstance.CallStack.Count > 0) active = true;
+                                }
+                            }
+                            evts[i].GlobalPageInstance[x].Update(active);
                         }
                     }
                 }
             }
         }
+
+        public List<MapInstance> GetSurroundingMaps(bool includingSelf)
+        {
+            var maps = new List<MapInstance>();
+            if (includingSelf) maps.Add(this);
+            for (int i = 0; i < SurroundingMaps.Count; i++)
+            {
+                var map = MapInstance.GetMap(SurroundingMaps[i]);
+                if (map != null) maps.Add(map);
+            }
+            return maps;
+        } 
         private bool CheckActive()
         {
             if (PlayersOnMap(MyMapNum))
@@ -580,19 +605,16 @@ namespace Intersect_Server.Classes.Maps
             }
             return false;
         }
-        public List<int> GetPlayersOnMap()
+        public List<Player> GetPlayersOnMap()
         {
-            List<int> Players = new List<int>();
+            List<Player> Players = new List<Player>();
             if (Globals.Clients.Count <= 0) return Players;
-            foreach (var t in Globals.Clients)
+            foreach (var t in Entities)
             {
                 if (t == null) continue;
-                if (t.EntityIndex <= -1 || t.Entity == null) continue;
-                if (((Player)Globals.Entities[t.EntityIndex]) == null) continue;
-                if (!((Player)Globals.Entities[t.EntityIndex]).InGame) continue;
-                if (Globals.Entities[t.EntityIndex].CurrentMap == MyMapNum)
+                if (t.GetType() == typeof (Player))
                 {
-                    Players.Add(t.ClientIndex);
+                    Players.Add((Player)t);
                 }
             }
             return Players;

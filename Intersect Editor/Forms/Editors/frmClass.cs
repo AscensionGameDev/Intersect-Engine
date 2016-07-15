@@ -28,7 +28,7 @@ using Intersect_Editor.Classes.Core;
 using Intersect_Library;
 using Intersect_Library.GameObjects;
 using Intersect_Library.GameObjects.Maps.MapList;
-
+using System.IO;
 
 namespace Intersect_Editor.Forms
 {
@@ -121,50 +121,50 @@ namespace Intersect_Editor.Forms
         {
             int x = 0;
             int.TryParse(txtHP.Text, out x);
-            _editorItem.MaxVital[(int)Vitals.Health] = x;
+            _editorItem.BaseVital[(int)Vitals.Health] = x;
         }
 
         private void txtMana_TextChanged(object sender, EventArgs e)
         {
             int x = 0;
             int.TryParse(txtMana.Text, out x);
-            _editorItem.MaxVital[(int)Vitals.Mana] = x;
+            _editorItem.BaseVital[(int)Vitals.Mana] = x;
         }
 
         private void scrlStr_Scroll(object sender, ScrollEventArgs e)
         {
             lblStr.Text = @"Strength: " + scrlStr.Value;
-            _editorItem.Stat[(int)Stats.Attack] = scrlStr.Value;
+            _editorItem.BaseStat[(int)Stats.Attack] = scrlStr.Value;
         }
 
         private void scrlMag_Scroll(object sender, ScrollEventArgs e)
         {
             lblMag.Text = @"Magic: " + scrlMag.Value;
-            _editorItem.Stat[(int)Stats.AbilityPower] = scrlMag.Value;
+            _editorItem.BaseStat[(int)Stats.AbilityPower] = scrlMag.Value;
         }
 
         private void scrlDef_Scroll(object sender, ScrollEventArgs e)
         {
             lblDef.Text = @"Armor: " + scrlDef.Value;
-            _editorItem.Stat[(int)Stats.Defense] = scrlDef.Value;
+            _editorItem.BaseStat[(int)Stats.Defense] = scrlDef.Value;
         }
 
         private void scrlMR_Scroll(object sender, ScrollEventArgs e)
         {
             lblMR.Text = @"Magic Resist: " + scrlMR.Value;
-            _editorItem.Stat[(int)Stats.MagicResist] = scrlMR.Value;
+            _editorItem.BaseStat[(int)Stats.MagicResist] = scrlMR.Value;
         }
 
         private void scrlSpd_Scroll(object sender, ScrollEventArgs e)
         {
             lblSpd.Text = @"Move Speed: " + scrlSpd.Value;
-            _editorItem.Stat[(int)Stats.Speed] = scrlSpd.Value;
+            _editorItem.BaseStat[(int)Stats.Speed] = scrlSpd.Value;
         }
 
         private void scrlPoints_Scroll(object sender, ScrollEventArgs e)
         {
             lblPoints.Text = @"Points: " + scrlPoints.Value;
-            _editorItem.Points = scrlPoints.Value;
+            _editorItem.BasePoints = scrlPoints.Value;
         }
 
         private void scrlDropIndex_Scroll(object sender, ScrollEventArgs e)
@@ -302,14 +302,15 @@ namespace Intersect_Editor.Forms
             {
                 pnlContainer.Show();
                 txtName.Text = _editorItem.Name;
-                scrlStr.Value = _editorItem.Stat[(int) Stats.Attack];
-                scrlMag.Value = _editorItem.Stat[(int) Stats.AbilityPower];
-                scrlDef.Value = _editorItem.Stat[(int) Stats.Defense];
-                scrlMR.Value = _editorItem.Stat[(int) Stats.MagicResist];
-                scrlSpd.Value = _editorItem.Stat[(int) Stats.Speed];
-                txtHP.Text = _editorItem.MaxVital[(int) Vitals.Health].ToString();
-                txtMana.Text = _editorItem.MaxVital[(int) Vitals.Mana].ToString();
-                scrlPoints.Value = _editorItem.Points;
+                scrlStr.Value = _editorItem.BaseStat[(int) Stats.Attack];
+                scrlMag.Value = _editorItem.BaseStat[(int) Stats.AbilityPower];
+                scrlDef.Value = _editorItem.BaseStat[(int) Stats.Defense];
+                scrlMR.Value = _editorItem.BaseStat[(int) Stats.MagicResist];
+                scrlSpd.Value = _editorItem.BaseStat[(int) Stats.Speed];
+                txtHP.Text = _editorItem.BaseVital[(int) Vitals.Health].ToString();
+                txtMana.Text = _editorItem.BaseVital[(int) Vitals.Mana].ToString();
+                scrlPoints.Value = _editorItem.BasePoints;
+                chkLocked.Checked = Convert.ToBoolean(_editorItem.Locked);
 
                 lblStr.Text = @"Strength: " + scrlStr.Value;
                 lblMag.Text = @"Magic: " + scrlMag.Value;
@@ -317,6 +318,20 @@ namespace Intersect_Editor.Forms
                 lblMR.Text = @"Magic Resist: " + scrlMR.Value;
                 lblSpd.Text = @"Move Speed: " + scrlSpd.Value;
                 lblPoints.Text = @"Points: " + scrlPoints.Value;
+
+                //Regen
+                lblHpRegen.Text = "HP Regen: " + _editorItem.VitalRegen[(int)Vitals.Health] + "%";
+                lblManaRegen.Text = "Mana Regen: " + _editorItem.VitalRegen[(int)Vitals.Mana] + "%";
+                scrlHpRegen.Value = _editorItem.VitalRegen[(int) Vitals.Health];
+                scrlMpRegen.Value = _editorItem.VitalRegen[(int) Vitals.Mana];
+
+                //Exp
+                txtBaseExp.Text = _editorItem.BaseExp.ToString();
+                scrlExpIncrease.Value = _editorItem.ExpIncrease;
+                lblExpIncrease.Text = "Exp Increase (Per Lvl): " + _editorItem.ExpIncrease + "%";
+
+                //Stat Increases
+                UpdateIncreases();
 
                 UpdateSpellList(false);
 
@@ -407,6 +422,9 @@ namespace Intersect_Editor.Forms
             cmbSprite.Items.Clear();
             cmbSprite.Items.Add("None");
             cmbSprite.Items.AddRange(GameContentManager.GetTextureNames(GameContentManager.TextureType.Entity));
+            cmbFace.Items.Clear();
+            cmbFace.Items.Add("None");
+            cmbFace.Items.AddRange(GameContentManager.GetTextureNames(GameContentManager.TextureType.Face));
             scrlDropItem.Maximum = ItemBase.ObjectCount() - 1;
             scrlSpell.Maximum = SpellBase.ObjectCount() - 1;
             scrlLevel.Maximum = Options.MaxLevel;
@@ -420,7 +438,7 @@ namespace Intersect_Editor.Forms
             cmbWarpMap.Items.Clear();
             for (int i = 0; i < MapList.GetOrderedMaps().Count; i++)
             {
-                cmbWarpMap.Items.Add(MapList.GetOrderedMaps()[i].MapNum + ". " + MapList.GetOrderedMaps()[i].Name);
+                cmbWarpMap.Items.Add(MapList.GetOrderedMaps()[i].Name);
             }
             cmbWarpMap.SelectedIndex = 0;
             cmbDirection.SelectedIndex = 0;
@@ -431,6 +449,7 @@ namespace Intersect_Editor.Forms
             if (lstSprites.Items.Count > 0)
             {
                 cmbSprite.SelectedIndex = cmbSprite.FindString(_editorItem.Sprites[lstSprites.SelectedIndex].Sprite);
+                cmbFace.SelectedIndex = cmbFace.FindString(_editorItem.Sprites[lstSprites.SelectedIndex].Face);
                 if (_editorItem.Sprites[lstSprites.SelectedIndex].Gender == 0)
                 {
                     rbMale.Checked = true;
@@ -525,15 +544,9 @@ namespace Intersect_Editor.Forms
         {
             var n = new ClassSprite();
 
-            n.Sprite = cmbSprite.Text;
-            if (rbMale.Checked == true)
-            {
-                n.Gender = 0;
-            }
-            else
-            {
-                n.Gender = 1;
-            }
+            n.Sprite = "None";
+            n.Face = "None";
+            n.Gender = 0;
 
             _editorItem.Sprites.Add(n);
 
@@ -582,12 +595,32 @@ namespace Intersect_Editor.Forms
             gfx.FillRectangle(Brushes.Black, new Rectangle(0, 0, picSprite.Width, picSprite.Height));
             if (cmbSprite.SelectedIndex > 0)
             {
-                var img = Bitmap.FromFile("resources/entities/" + cmbSprite.Text);
-                gfx.DrawImage(img, new Rectangle(0, 0, img.Width / 4, img.Height / 4), new Rectangle(0, 0, img.Width / 4, img.Height / 4), GraphicsUnit.Pixel);
-                img.Dispose();
+                if (File.Exists("resources/entities/" + cmbSprite.Text))
+                {
+                    var img = Bitmap.FromFile("resources/entities/" + cmbSprite.Text);
+                    gfx.DrawImage(img, new Rectangle(0, 0, img.Width/4, img.Height/4),
+                        new Rectangle(0, 0, img.Width/4, img.Height/4), GraphicsUnit.Pixel);
+                    img.Dispose();
+                }
             }
             gfx.Dispose();
             picSprite.BackgroundImage = picSpriteBmp;
+
+            var picFaceBmp = new Bitmap(picFace.Width, picFace.Height);
+            gfx = System.Drawing.Graphics.FromImage(picFaceBmp);
+            gfx.FillRectangle(Brushes.Black, new Rectangle(0, 0, picSprite.Width, picSprite.Height));
+            if (cmbFace.SelectedIndex > 0)
+            {
+                if (File.Exists("resources/faces/" + cmbFace.Text))
+                {
+                    var img = Bitmap.FromFile("resources/faces/" + cmbFace.Text);
+                    gfx.DrawImage(img, new Rectangle(0, 0, img.Width, img.Height),
+                        new Rectangle(0, 0, img.Width, img.Height), GraphicsUnit.Pixel);
+                    img.Dispose();
+                }
+            }
+            gfx.Dispose();
+            picFace.BackgroundImage = picFaceBmp;
         }
 
         private void btnVisualMapSelector_Click(object sender, EventArgs e)
@@ -637,6 +670,167 @@ namespace Intersect_Editor.Forms
         {
             if (_editorItem == null) return;
             _editorItem.SpawnDir = cmbDirection.SelectedIndex;
+        }
+
+        private void cmbFace_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            int n = 0;
+
+            if (lstSprites.SelectedIndex >= 0)
+            {
+                _editorItem.Sprites[lstSprites.SelectedIndex].Face = cmbFace.Text;
+
+                // Refresh List
+                n = lstSprites.SelectedIndex;
+                lstSprites.Items.Clear();
+                for (int i = 0; i < _editorItem.Sprites.Count; i++)
+                {
+                    if (_editorItem.Sprites[i].Gender == 0)
+                    {
+                        lstSprites.Items.Add(Convert.ToString(i + 1) + ") " + _editorItem.Sprites[i].Sprite + " - M");
+                    }
+                    else
+                    {
+                        lstSprites.Items.Add(Convert.ToString(i + 1) + ") " + _editorItem.Sprites[i].Sprite + " - F");
+                    }
+                }
+                lstSprites.SelectedIndex = n;
+            }
+            DrawSprite();
+        }
+
+        private void chkLocked_CheckedChanged(object sender, EventArgs e)
+        {
+            _editorItem.Locked = Convert.ToInt32(chkLocked.Checked);
+        }
+
+        private void scrlHpRegen_Scroll(object sender, ScrollEventArgs e)
+        {
+            _editorItem.VitalRegen[(int) Vitals.Health] = scrlHpRegen.Value;
+            lblHpRegen.Text = "HP Regen: " + _editorItem.VitalRegen[(int) Vitals.Health] + "%";
+        }
+
+        private void scrlMpRegen_Scroll(object sender, ScrollEventArgs e)
+        {
+            _editorItem.VitalRegen[(int)Vitals.Mana] = scrlMpRegen.Value;
+            lblManaRegen.Text = "Mana Regen: " + _editorItem.VitalRegen[(int)Vitals.Mana] + "%";
+        }
+
+        private void scrlExpIncrease_Scroll(object sender, ScrollEventArgs e)
+        {
+            _editorItem.ExpIncrease = scrlExpIncrease.Value;
+            lblExpIncrease.Text = "Exp Increase (Per Lvl): " + _editorItem.ExpIncrease + "%";
+        }
+
+        private void txtBaseExp_TextChanged(object sender, EventArgs e)
+        {
+            int x = 0;
+            int.TryParse(txtBaseExp.Text, out x);
+            _editorItem.BaseExp = x;
+        }
+
+        private void UpdateIncreases()
+        {
+            if (rdoStaticIncrease.Checked)
+            {
+                scrlHpIncrease.Maximum = 10000;
+                scrlMpIncrease.Maximum = 10000;
+                scrlStrengthIncrease.Maximum = Options.MaxStatValue;
+                scrlArmorIncrease.Maximum = Options.MaxStatValue;
+                scrlMagicIncrease.Maximum = Options.MaxStatValue;
+                scrlMagicResistIncrease.Maximum = Options.MaxStatValue;
+                scrlSpeedIncrease.Maximum = Options.MaxStatValue;
+            }
+            else
+            {
+                scrlHpIncrease.Maximum = 100;
+                scrlMpIncrease.Maximum = 100;
+                scrlStrengthIncrease.Maximum = 100;
+                scrlArmorIncrease.Maximum = 100;
+                scrlMagicIncrease.Maximum = 100;
+                scrlMagicResistIncrease.Maximum = 100;
+                scrlSpeedIncrease.Maximum = 100;
+            }
+
+            scrlHpIncrease.Value = Math.Min(scrlHpIncrease.Maximum,_editorItem.VitalIncrease[(int)Vitals.Health]);
+            scrlMpIncrease.Value = Math.Min(scrlMpIncrease.Maximum,_editorItem.VitalIncrease[(int)Vitals.Mana]);
+            lblHpIncrease.Text = "Max Hp: +" + scrlHpIncrease.Value + (rdoPercentageIncrease.Checked ? "%" : "");
+            lblMpIncrease.Text = "Max Mp: +" + scrlMpIncrease.Value + (rdoPercentageIncrease.Checked ? "%" : "");
+
+            scrlStrengthIncrease.Value = Math.Min(scrlStrengthIncrease.Maximum, _editorItem.StatIncrease[(int) Stats.Attack]);
+            scrlArmorIncrease.Value = Math.Min(scrlArmorIncrease.Maximum, _editorItem.StatIncrease[(int)Stats.Defense]);
+            scrlMagicIncrease.Value = Math.Min(scrlMagicIncrease.Maximum, _editorItem.StatIncrease[(int)Stats.AbilityPower]);
+            scrlMagicResistIncrease.Value = Math.Min(scrlMagicResistIncrease.Maximum, _editorItem.StatIncrease[(int)Stats.MagicResist]);
+            scrlSpeedIncrease.Value = Math.Min(scrlSpeedIncrease.Maximum, _editorItem.StatIncrease[(int)Stats.Speed]);
+
+            lblStrengthIncrease.Text = "Strength: +" + scrlStrengthIncrease.Value + (rdoPercentageIncrease.Checked ? "%" : "");
+            lblArmorIncrease.Text = "Armor: +" + scrlArmorIncrease.Value + (rdoPercentageIncrease.Checked ? "%" : "");
+            lblMagicIncrease.Text = "Magic: +" + scrlMagicIncrease.Value + (rdoPercentageIncrease.Checked ? "%" : "");
+            lblMagicResistIncrease.Text = "Magic Resist: +" + scrlMagicResistIncrease.Value + (rdoPercentageIncrease.Checked ? "%" : "");
+            lblSpeedIncrease.Text = "Move Speed: +" + scrlSpeedIncrease.Value + (rdoPercentageIncrease.Checked ? "%" : "");
+
+            scrlPointsIncrease.Value = _editorItem.PointIncrease;
+            lblPointsIncrease.Text = "Points: +" + scrlPointsIncrease.Value;
+        }
+
+        private void rdoPercentageIncrease_CheckedChanged(object sender, EventArgs e)
+        {
+            _editorItem.IncreasePercentage = Convert.ToInt32(rdoPercentageIncrease.Checked);
+            UpdateIncreases();
+        }
+
+        private void rdoStaticIncrease_CheckedChanged(object sender, EventArgs e)
+        {
+            _editorItem.IncreasePercentage = Convert.ToInt32(rdoPercentageIncrease.Checked);
+            UpdateIncreases();
+        }
+
+        private void scrlHpIncrease_Scroll(object sender, ScrollEventArgs e)
+        {
+            _editorItem.VitalIncrease[(int) Vitals.Health] = scrlHpIncrease.Value;
+            UpdateIncreases();
+        }
+
+        private void scrlMpIncrease_Scroll(object sender, ScrollEventArgs e)
+        {
+            _editorItem.VitalIncrease[(int)Vitals.Mana] = scrlMpIncrease.Value;
+            UpdateIncreases();
+        }
+
+        private void scrlStrengthIncrease_Scroll(object sender, ScrollEventArgs e)
+        {
+            _editorItem.StatIncrease[(int)Stats.Attack] = scrlStrengthIncrease.Value;
+            UpdateIncreases();
+        }
+
+        private void scrlMagicIncrease_Scroll(object sender, ScrollEventArgs e)
+        {
+            _editorItem.StatIncrease[(int)Stats.AbilityPower] = scrlMagicIncrease.Value;
+            UpdateIncreases();
+        }
+
+        private void scrlArmorIncrease_Scroll(object sender, ScrollEventArgs e)
+        {
+            _editorItem.StatIncrease[(int)Stats.Defense] = scrlArmorIncrease.Value;
+            UpdateIncreases();
+        }
+
+        private void scrlSpeedIncrease_Scroll(object sender, ScrollEventArgs e)
+        {
+            _editorItem.StatIncrease[(int)Stats.Speed] = scrlSpeedIncrease.Value;
+            UpdateIncreases();
+        }
+
+        private void scrlMagicResistIncrease_Scroll(object sender, ScrollEventArgs e)
+        {
+            _editorItem.StatIncrease[(int)Stats.MagicResist] = scrlMagicResistIncrease.Value;
+            UpdateIncreases();
+        }
+
+        private void scrlPointsIncrease_Scroll(object sender, ScrollEventArgs e)
+        {
+            _editorItem.PointIncrease = scrlPointsIncrease.Value;
+            UpdateIncreases();
         }
     }
 }

@@ -42,10 +42,10 @@ namespace Intersect_Server.Classes.Networking
         public static void SendDataToMap(int mapNum, byte[] data)
         {
             if (!MapInstance.GetObjects().ContainsKey(mapNum)) { return; }
-            List<int> Players = MapInstance.GetMap(mapNum).GetPlayersOnMap();
-            for (int i = 0; i < Players.Count; i++)
+            List<Player> Players = MapInstance.GetMap(mapNum).GetPlayersOnMap();
+            foreach (var player in Players)
             {
-                Globals.Clients[Players[i]].SendPacket(data);
+                player.MyClient.SendPacket(data);
             }
         }
         public static void SendDataToProximity(int mapNum, byte[] data)
@@ -560,6 +560,18 @@ namespace Intersect_Server.Classes.Networking
             bf.WriteInteger(type);
             bf.WriteInteger(map);
             bf.WriteInteger(dir);
+            SendDataToProximity(map, bf.ToArray());
+            bf.Dispose();
+        }
+
+        public static void SendEntityAttack(int entityIndex, int type, int map, int attackTime)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteLong((int)ServerPackets.EntityAttack);
+            bf.WriteLong(entityIndex);
+            bf.WriteInteger(type);
+            bf.WriteInteger(map);
+            bf.WriteInteger(attackTime);
             SendDataToProximity(map, bf.ToArray());
             bf.Dispose();
         }

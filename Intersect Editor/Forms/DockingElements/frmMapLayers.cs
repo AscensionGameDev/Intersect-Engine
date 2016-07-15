@@ -236,7 +236,7 @@ namespace Intersect_Editor.Forms
             cmbWarpMap.Items.Clear();
             for (int i = 0; i < MapList.GetOrderedMaps().Count; i++)
             {
-                cmbWarpMap.Items.Add(MapList.GetOrderedMaps()[i].MapNum + ". " + MapList.GetOrderedMaps()[i].Name);
+                cmbWarpMap.Items.Add(MapList.GetOrderedMaps()[i].Name);
             }
             cmbWarpMap.SelectedIndex = 0;
             cmbDirection.SelectedIndex = 0;
@@ -480,7 +480,7 @@ namespace Intersect_Editor.Forms
         }
         private void lstMapNpcs_Click(object sender, EventArgs e)
         {
-            if (lstMapNpcs.Items.Count > 0)
+            if (lstMapNpcs.Items.Count > 0 && lstMapNpcs.SelectedIndex > -1)
             {
                 cmbNpc.SelectedIndex = Database.GameObjectListIndex(GameObject.Npc,Globals.CurrentMap.Spawns[lstMapNpcs.SelectedIndex].NpcNum);
                 cmbDir.SelectedIndex = Globals.CurrentMap.Spawns[lstMapNpcs.SelectedIndex].Dir + 1;
@@ -516,7 +516,7 @@ namespace Intersect_Editor.Forms
 
             if (lstMapNpcs.SelectedIndex >= 0)
             {
-                Globals.CurrentMap.Spawns[lstMapNpcs.SelectedIndex].NpcNum = cmbNpc.SelectedIndex - 1;
+                Globals.CurrentMap.Spawns[lstMapNpcs.SelectedIndex].NpcNum = Database.GameObjectIdFromList(GameObject.Npc,cmbNpc.SelectedIndex);
 
                 // Refresh List
                 n = lstMapNpcs.SelectedIndex;
@@ -602,6 +602,11 @@ namespace Intersect_Editor.Forms
             hideAttributeMenus();
             grpSlide.Visible = true;
             cmbSlideDir.SelectedIndex = 0;
+        }
+
+        private void lstMapNpcs_MouseDown(object sender, MouseEventArgs e)
+        {
+            lstMapNpcs.SelectedIndex = lstMapNpcs.IndexFromPoint(e.Location);
         }
     }
 }

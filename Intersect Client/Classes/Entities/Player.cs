@@ -50,6 +50,8 @@ namespace Intersect_Client.Classes.Entities
         public int Experience = 0;
         public int ExperienceToNextLevel = 0;
 
+        public int Class = -1;
+
         public bool NoClip = false;
 
         private int _targetType = -1; //None (-1), Entity, Item, Event
@@ -76,8 +78,7 @@ namespace Intersect_Client.Classes.Entities
                 {
                     ProcessDirectionalInput();
                 }
-                if ((Globals.InputManager.MouseButtonDown(GameInput.MouseButtons.Left) && Gui.MouseHitGUI() == false) ||
-                    Globals.InputManager.KeyDown(Keys.E))
+                if (Globals.InputManager.KeyDown(Keys.E))
                 {
                     if (TryAttack())
                     {
@@ -98,6 +99,8 @@ namespace Intersect_Client.Classes.Entities
         {
             base.Load(bf);
             Level = bf.ReadInteger();
+            Gender = bf.ReadInteger();
+            Class = bf.ReadInteger();
         }
 
         //Item Processing
@@ -313,7 +316,11 @@ namespace Intersect_Client.Classes.Entities
 
             }
         }
-        private bool TryAttack()
+        public int CalculateAttackTime()
+        {
+            return (int)((Stat[(int)Stats.Speed] / (float)Options.MaxStatValue) * (Options.MinAttackRate - Options.MaxAttackRate)) + Options.MinAttackRate;
+        }
+        public bool TryAttack()
         {
             if (_attackTimer > Globals.System.GetTimeMS()) { return false; }
 
@@ -351,6 +358,7 @@ namespace Intersect_Client.Classes.Entities
                                     //Talk to Event
                                     PacketSender.SendActivateEvent(en.Value.CurrentMap, en.Key);
                                     _attackTimer = Globals.System.GetTimeMS() + 1000;
+                                    AttackTimer = Globals.System.GetTimeMS() + CalculateAttackTime();
                                     return true;
                                 }
                             }
@@ -364,6 +372,7 @@ namespace Intersect_Client.Classes.Entities
                     {
                         PacketSender.SendAttack(-1);
                         _attackTimer = Globals.System.GetTimeMS() + 1000;
+                        AttackTimer = Globals.System.GetTimeMS() + CalculateAttackTime();
                         return true;
                     }
                 }
@@ -377,6 +386,7 @@ namespace Intersect_Client.Classes.Entities
                             //ATTACKKKKK!!!
                             PacketSender.SendAttack(en.Key);
                             _attackTimer = Globals.System.GetTimeMS() + 1000;
+                            AttackTimer = Globals.System.GetTimeMS() + CalculateAttackTime();
                             return true;
                         }
                     }
@@ -580,7 +590,7 @@ namespace Intersect_Client.Classes.Entities
                                         if (_targetType == 0 && _targetIndex == en.Value.MyIndex)
                                         {
                                             ClearTarget();
-                                            return false;
+                                            return true;
                                         }
                                         _targetType = 0;
                                         _targetIndex = en.Value.MyIndex;
@@ -600,7 +610,7 @@ namespace Intersect_Client.Classes.Entities
                                         if (_targetType == 2 && _targetIndex == en.Value.MyIndex)
                                         {
                                             ClearTarget();
-                                            return false;
+                                            return true;
                                         }
                                         _targetType = 2;
                                         _targetIndex = en.Value.MyIndex;
@@ -623,7 +633,7 @@ namespace Intersect_Client.Classes.Entities
             _targetType = -1;
             if (_itemTargetBox != null) { _itemTargetBox.Dispose(); _itemTargetBox = null; }
         }
-        private bool TryPickupItem()
+        public bool TryPickupItem()
         {
             var map = MapInstance.GetMap(CurrentMap);
             if (map == null) { return false; }

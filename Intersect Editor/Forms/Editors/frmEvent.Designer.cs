@@ -76,6 +76,7 @@ namespace Intersect_Editor.Forms
             System.Windows.Forms.ListViewItem listViewItem34 = new System.Windows.Forms.ListViewItem("Wait...");
             System.Windows.Forms.ListViewItem listViewItem35 = new System.Windows.Forms.ListViewItem("Open Bank");
             System.Windows.Forms.ListViewItem listViewItem36 = new System.Windows.Forms.ListViewItem("Open Shop");
+            System.Windows.Forms.ListViewItem listViewItem37 = new System.Windows.Forms.ListViewItem("Change Class");
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmEvent));
             this.label1 = new System.Windows.Forms.Label();
             this.txtEventname = new System.Windows.Forms.TextBox();
@@ -87,9 +88,7 @@ namespace Intersect_Editor.Forms
             this.cmbAnimation = new System.Windows.Forms.ComboBox();
             this.pnlPreview = new System.Windows.Forms.Panel();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
-            this.label7 = new System.Windows.Forms.Label();
             this.label8 = new System.Windows.Forms.Label();
-            this.cmbTrigger = new System.Windows.Forms.ComboBox();
             this.cmbLayering = new System.Windows.Forms.ComboBox();
             this.cmbEventFreq = new System.Windows.Forms.ComboBox();
             this.cmbEventSpeed = new System.Windows.Forms.ComboBox();
@@ -99,6 +98,7 @@ namespace Intersect_Editor.Forms
             this.label2 = new System.Windows.Forms.Label();
             this.cmbMoveType = new System.Windows.Forms.ComboBox();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.chkInteractionFreeze = new System.Windows.Forms.CheckBox();
             this.chkWalkingAnimation = new System.Windows.Forms.CheckBox();
             this.chkDirectionFix = new System.Windows.Forms.CheckBox();
             this.chkHideName = new System.Windows.Forms.CheckBox();
@@ -110,6 +110,8 @@ namespace Intersect_Editor.Forms
             this.chkDisablePreview = new System.Windows.Forms.CheckBox();
             this.cmbPreviewFace = new System.Windows.Forms.ComboBox();
             this.label25 = new System.Windows.Forms.Label();
+            this.label7 = new System.Windows.Forms.Label();
+            this.cmbTrigger = new System.Windows.Forms.ComboBox();
             this.grpEventConditions = new System.Windows.Forms.GroupBox();
             this.btnRemoveCondition = new System.Windows.Forms.Button();
             this.btnAddCondition = new System.Windows.Forms.Button();
@@ -134,7 +136,10 @@ namespace Intersect_Editor.Forms
             this.btnNewPage = new System.Windows.Forms.Button();
             this.groupBox7 = new System.Windows.Forms.GroupBox();
             this.chkIsGlobal = new System.Windows.Forms.CheckBox();
-            this.chkInteractionFreeze = new System.Windows.Forms.CheckBox();
+            this.lblTriggerVal = new System.Windows.Forms.Label();
+            this.cmbTriggerVal = new System.Windows.Forms.ComboBox();
+            this.panel2 = new System.Windows.Forms.Panel();
+            this.groupBox4 = new System.Windows.Forms.GroupBox();
             this.tabControl.SuspendLayout();
             this.grpEntityOptions.SuspendLayout();
             this.groupBox6.SuspendLayout();
@@ -147,6 +152,7 @@ namespace Intersect_Editor.Forms
             this.commandMenu.SuspendLayout();
             this.grpPageOptions.SuspendLayout();
             this.groupBox7.SuspendLayout();
+            this.groupBox4.SuspendLayout();
             this.SuspendLayout();
             // 
             // label1
@@ -172,7 +178,7 @@ namespace Intersect_Editor.Forms
             this.tabControl.Location = new System.Drawing.Point(12, 61);
             this.tabControl.Name = "tabControl";
             this.tabControl.SelectedIndex = 0;
-            this.tabControl.Size = new System.Drawing.Size(811, 521);
+            this.tabControl.Size = new System.Drawing.Size(494, 21);
             this.tabControl.TabIndex = 5;
             this.tabControl.SelectedIndexChanged += new System.EventHandler(this.tabControl_SelectedIndexChanged);
             // 
@@ -181,7 +187,7 @@ namespace Intersect_Editor.Forms
             this.tabPage1.Location = new System.Drawing.Point(4, 22);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(803, 495);
+            this.tabPage1.Size = new System.Drawing.Size(486, 0);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "1";
             this.tabPage1.UseVisualStyleBackColor = true;
@@ -240,9 +246,7 @@ namespace Intersect_Editor.Forms
             // 
             // groupBox2
             // 
-            this.groupBox2.Controls.Add(this.label7);
             this.groupBox2.Controls.Add(this.label8);
-            this.groupBox2.Controls.Add(this.cmbTrigger);
             this.groupBox2.Controls.Add(this.cmbLayering);
             this.groupBox2.Controls.Add(this.cmbEventFreq);
             this.groupBox2.Controls.Add(this.cmbEventSpeed);
@@ -258,37 +262,14 @@ namespace Intersect_Editor.Forms
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Movement";
             // 
-            // label7
-            // 
-            this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(1, 153);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(43, 13);
-            this.label7.TabIndex = 8;
-            this.label7.Text = "Trigger:";
-            // 
             // label8
             // 
             this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(8, 128);
+            this.label8.Location = new System.Drawing.Point(6, 134);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(36, 13);
             this.label8.TabIndex = 7;
             this.label8.Text = "Layer:";
-            // 
-            // cmbTrigger
-            // 
-            this.cmbTrigger.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cmbTrigger.FormattingEnabled = true;
-            this.cmbTrigger.Items.AddRange(new object[] {
-            "Action Button",
-            "Player Touch",
-            "Autorun"});
-            this.cmbTrigger.Location = new System.Drawing.Point(48, 151);
-            this.cmbTrigger.Name = "cmbTrigger";
-            this.cmbTrigger.Size = new System.Drawing.Size(101, 21);
-            this.cmbTrigger.TabIndex = 2;
-            this.cmbTrigger.SelectedIndexChanged += new System.EventHandler(this.cmbTrigger_SelectedIndexChanged);
             // 
             // cmbLayering
             // 
@@ -298,7 +279,7 @@ namespace Intersect_Editor.Forms
             "Below Player",
             "Same as Player",
             "Above Player"});
-            this.cmbLayering.Location = new System.Drawing.Point(48, 126);
+            this.cmbLayering.Location = new System.Drawing.Point(48, 131);
             this.cmbLayering.Name = "cmbLayering";
             this.cmbLayering.Size = new System.Drawing.Size(101, 21);
             this.cmbLayering.TabIndex = 1;
@@ -314,7 +295,7 @@ namespace Intersect_Editor.Forms
             "Normal",
             "Often",
             "Very Often"});
-            this.cmbEventFreq.Location = new System.Drawing.Point(48, 101);
+            this.cmbEventFreq.Location = new System.Drawing.Point(48, 104);
             this.cmbEventFreq.Name = "cmbEventFreq";
             this.cmbEventFreq.Size = new System.Drawing.Size(100, 21);
             this.cmbEventFreq.TabIndex = 6;
@@ -339,7 +320,7 @@ namespace Intersect_Editor.Forms
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(12, 103);
+            this.label4.Location = new System.Drawing.Point(6, 107);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(31, 13);
             this.label4.TabIndex = 4;
@@ -401,6 +382,17 @@ namespace Intersect_Editor.Forms
             this.groupBox3.TabIndex = 9;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Extra";
+            // 
+            // chkInteractionFreeze
+            // 
+            this.chkInteractionFreeze.AutoSize = true;
+            this.chkInteractionFreeze.Location = new System.Drawing.Point(6, 41);
+            this.chkInteractionFreeze.Name = "chkInteractionFreeze";
+            this.chkInteractionFreeze.Size = new System.Drawing.Size(111, 17);
+            this.chkInteractionFreeze.TabIndex = 6;
+            this.chkInteractionFreeze.Text = "Interaction Freeze";
+            this.chkInteractionFreeze.UseVisualStyleBackColor = true;
+            this.chkInteractionFreeze.CheckedChanged += new System.EventHandler(this.chkInteractionFreeze_CheckedChanged);
             // 
             // chkWalkingAnimation
             // 
@@ -514,6 +506,30 @@ namespace Intersect_Editor.Forms
             this.label25.Size = new System.Drawing.Size(75, 13);
             this.label25.TabIndex = 9;
             this.label25.Text = "Preview Face:";
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(4, 11);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(43, 13);
+            this.label7.TabIndex = 8;
+            this.label7.Text = "Trigger:";
+            // 
+            // cmbTrigger
+            // 
+            this.cmbTrigger.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbTrigger.FormattingEnabled = true;
+            this.cmbTrigger.Items.AddRange(new object[] {
+            "Action Button",
+            "Player Touch",
+            "Autorun",
+            "Projectile Hit"});
+            this.cmbTrigger.Location = new System.Drawing.Point(51, 9);
+            this.cmbTrigger.Name = "cmbTrigger";
+            this.cmbTrigger.Size = new System.Drawing.Size(101, 21);
+            this.cmbTrigger.TabIndex = 2;
+            this.cmbTrigger.SelectedIndexChanged += new System.EventHandler(this.cmbTrigger_SelectedIndexChanged);
             // 
             // grpEventConditions
             // 
@@ -648,6 +664,7 @@ namespace Intersect_Editor.Forms
             listViewItem34.Group = listViewGroup7;
             listViewItem35.Group = listViewGroup8;
             listViewItem36.Group = listViewGroup8;
+            listViewItem37.Group = listViewGroup3;
             this.lstCommands.Items.AddRange(new System.Windows.Forms.ListViewItem[] {
             listViewItem1,
             listViewItem2,
@@ -684,7 +701,8 @@ namespace Intersect_Editor.Forms
             listViewItem33,
             listViewItem34,
             listViewItem35,
-            listViewItem36});
+            listViewItem36,
+            listViewItem37});
             this.lstCommands.Location = new System.Drawing.Point(7, 30);
             this.lstCommands.MultiSelect = false;
             this.lstCommands.Name = "lstCommands";
@@ -870,16 +888,47 @@ namespace Intersect_Editor.Forms
             this.chkIsGlobal.UseVisualStyleBackColor = true;
             this.chkIsGlobal.CheckedChanged += new System.EventHandler(this.chkIsGlobal_CheckedChanged);
             // 
-            // chkInteractionFreeze
+            // lblTriggerVal
             // 
-            this.chkInteractionFreeze.AutoSize = true;
-            this.chkInteractionFreeze.Location = new System.Drawing.Point(6, 41);
-            this.chkInteractionFreeze.Name = "chkInteractionFreeze";
-            this.chkInteractionFreeze.Size = new System.Drawing.Size(111, 17);
-            this.chkInteractionFreeze.TabIndex = 6;
-            this.chkInteractionFreeze.Text = "Interaction Freeze";
-            this.chkInteractionFreeze.UseVisualStyleBackColor = true;
-            this.chkInteractionFreeze.CheckedChanged += new System.EventHandler(this.chkInteractionFreeze_CheckedChanged);
+            this.lblTriggerVal.AutoSize = true;
+            this.lblTriggerVal.Location = new System.Drawing.Point(158, 12);
+            this.lblTriggerVal.Name = "lblTriggerVal";
+            this.lblTriggerVal.Size = new System.Drawing.Size(53, 13);
+            this.lblTriggerVal.TabIndex = 10;
+            this.lblTriggerVal.Text = "Projectile:";
+            this.lblTriggerVal.Visible = false;
+            // 
+            // cmbTriggerVal
+            // 
+            this.cmbTriggerVal.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbTriggerVal.FormattingEnabled = true;
+            this.cmbTriggerVal.Items.AddRange(new object[] {
+            "None"});
+            this.cmbTriggerVal.Location = new System.Drawing.Point(215, 9);
+            this.cmbTriggerVal.Name = "cmbTriggerVal";
+            this.cmbTriggerVal.Size = new System.Drawing.Size(81, 21);
+            this.cmbTriggerVal.TabIndex = 9;
+            this.cmbTriggerVal.Visible = false;
+            // 
+            // panel2
+            // 
+            this.panel2.BackColor = System.Drawing.SystemColors.ControlLightLight;
+            this.panel2.Location = new System.Drawing.Point(13, 83);
+            this.panel2.Name = "panel2";
+            this.panel2.Size = new System.Drawing.Size(810, 497);
+            this.panel2.TabIndex = 20;
+            // 
+            // groupBox4
+            // 
+            this.groupBox4.Controls.Add(this.lblTriggerVal);
+            this.groupBox4.Controls.Add(this.cmbTrigger);
+            this.groupBox4.Controls.Add(this.cmbTriggerVal);
+            this.groupBox4.Controls.Add(this.label7);
+            this.groupBox4.Location = new System.Drawing.Point(512, 48);
+            this.groupBox4.Name = "groupBox4";
+            this.groupBox4.Size = new System.Drawing.Size(311, 35);
+            this.groupBox4.TabIndex = 21;
+            this.groupBox4.TabStop = false;
             // 
             // FrmEvent
             // 
@@ -887,16 +936,18 @@ namespace Intersect_Editor.Forms
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoSize = true;
             this.ClientSize = new System.Drawing.Size(835, 622);
+            this.Controls.Add(this.grpPageOptions);
+            this.Controls.Add(this.groupBox4);
             this.Controls.Add(this.grpEntityOptions);
             this.Controls.Add(this.grpEventConditions);
             this.Controls.Add(this.groupBox7);
-            this.Controls.Add(this.grpPageOptions);
             this.Controls.Add(this.btnCancel);
             this.Controls.Add(this.btnSave);
+            this.Controls.Add(this.tabControl);
             this.Controls.Add(this.grpNewCommands);
             this.Controls.Add(this.grpCreateCommands);
             this.Controls.Add(this.grpEventCommands);
-            this.Controls.Add(this.tabControl);
+            this.Controls.Add(this.panel2);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.KeyPreview = true;
@@ -926,6 +977,8 @@ namespace Intersect_Editor.Forms
             this.grpPageOptions.ResumeLayout(false);
             this.groupBox7.ResumeLayout(false);
             this.groupBox7.PerformLayout();
+            this.groupBox4.ResumeLayout(false);
+            this.groupBox4.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -990,5 +1043,9 @@ namespace Intersect_Editor.Forms
         private Label label8;
         private Label lblCloseCommands;
         private CheckBox chkInteractionFreeze;
+        private Label lblTriggerVal;
+        private ComboBox cmbTriggerVal;
+        private Panel panel2;
+        private GroupBox groupBox4;
     }
 }

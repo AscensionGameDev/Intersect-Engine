@@ -485,6 +485,7 @@ namespace Intersect_Server.Classes.Entities
             Dir = dir;
             ProjectileBase = projectileBase;
             _baseEntityIndex = parentIndex;
+            TransmittionTimer = Environment.TickCount + (long)((float)ProjectileBase.Speed / (float)ProjectileBase.Range);
         }
 
         public void Dispose(int spawnIndex)

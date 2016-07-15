@@ -58,6 +58,9 @@
             this.scrlMag = new System.Windows.Forms.HScrollBar();
             this.scrlStr = new System.Windows.Forms.HScrollBar();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.chkLocked = new System.Windows.Forms.CheckBox();
+            this.label1 = new System.Windows.Forms.Label();
+            this.txtName = new System.Windows.Forms.TextBox();
             this.btnRemove = new System.Windows.Forms.Button();
             this.btnAdd = new System.Windows.Forms.Button();
             this.rbFemale = new System.Windows.Forms.RadioButton();
@@ -66,8 +69,6 @@
             this.cmbSprite = new System.Windows.Forms.ComboBox();
             this.lblPic = new System.Windows.Forms.Label();
             this.picSprite = new System.Windows.Forms.PictureBox();
-            this.label1 = new System.Windows.Forms.Label();
-            this.txtName = new System.Windows.Forms.TextBox();
             this.groupBox6 = new System.Windows.Forms.GroupBox();
             this.lblLevel = new System.Windows.Forms.Label();
             this.scrlLevel = new System.Windows.Forms.HScrollBar();
@@ -87,6 +88,42 @@
             this.scrlX = new System.Windows.Forms.HScrollBar();
             this.scrlY = new System.Windows.Forms.HScrollBar();
             this.pnlContainer = new System.Windows.Forms.Panel();
+            this.groupBox10 = new System.Windows.Forms.GroupBox();
+            this.scrlMpRegen = new System.Windows.Forms.HScrollBar();
+            this.scrlHpRegen = new System.Windows.Forms.HScrollBar();
+            this.lblHpRegen = new System.Windows.Forms.Label();
+            this.lblManaRegen = new System.Windows.Forms.Label();
+            this.label14 = new System.Windows.Forms.Label();
+            this.groupBox8 = new System.Windows.Forms.GroupBox();
+            this.scrlExpIncrease = new System.Windows.Forms.HScrollBar();
+            this.lblExpIncrease = new System.Windows.Forms.Label();
+            this.txtBaseExp = new System.Windows.Forms.TextBox();
+            this.label12 = new System.Windows.Forms.Label();
+            this.groupBox9 = new System.Windows.Forms.GroupBox();
+            this.scrlMpIncrease = new System.Windows.Forms.HScrollBar();
+            this.rdoPercentageIncrease = new System.Windows.Forms.RadioButton();
+            this.scrlHpIncrease = new System.Windows.Forms.HScrollBar();
+            this.rdoStaticIncrease = new System.Windows.Forms.RadioButton();
+            this.lblPointsIncrease = new System.Windows.Forms.Label();
+            this.lblHpIncrease = new System.Windows.Forms.Label();
+            this.scrlPointsIncrease = new System.Windows.Forms.HScrollBar();
+            this.lblMpIncrease = new System.Windows.Forms.Label();
+            this.lblSpeedIncrease = new System.Windows.Forms.Label();
+            this.lblStrengthIncrease = new System.Windows.Forms.Label();
+            this.lblMagicResistIncrease = new System.Windows.Forms.Label();
+            this.scrlStrengthIncrease = new System.Windows.Forms.HScrollBar();
+            this.lblArmorIncrease = new System.Windows.Forms.Label();
+            this.scrlArmorIncrease = new System.Windows.Forms.HScrollBar();
+            this.scrlMagicIncrease = new System.Windows.Forms.HScrollBar();
+            this.scrlSpeedIncrease = new System.Windows.Forms.HScrollBar();
+            this.lblMagicIncrease = new System.Windows.Forms.Label();
+            this.scrlMagicResistIncrease = new System.Windows.Forms.HScrollBar();
+            this.groupBox5 = new System.Windows.Forms.GroupBox();
+            this.label3 = new System.Windows.Forms.Label();
+            this.picFace = new System.Windows.Forms.PictureBox();
+            this.label2 = new System.Windows.Forms.Label();
+            this.cmbFace = new System.Windows.Forms.ComboBox();
+            this.groupBox7 = new System.Windows.Forms.GroupBox();
             this.btnCancel = new System.Windows.Forms.Button();
             this.btnSave = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
@@ -97,6 +134,12 @@
             this.groupBox6.SuspendLayout();
             this.grpWarp.SuspendLayout();
             this.pnlContainer.SuspendLayout();
+            this.groupBox10.SuspendLayout();
+            this.groupBox8.SuspendLayout();
+            this.groupBox9.SuspendLayout();
+            this.groupBox5.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.picFace)).BeginInit();
+            this.groupBox7.SuspendLayout();
             this.SuspendLayout();
             // 
             // groupBox1
@@ -106,10 +149,10 @@
             this.groupBox1.Controls.Add(this.btnNew);
             this.groupBox1.Controls.Add(this.btnDelete);
             this.groupBox1.Location = new System.Drawing.Point(8, 8);
-            this.groupBox1.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.groupBox1.Margin = new System.Windows.Forms.Padding(2);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Padding = new System.Windows.Forms.Padding(2, 2, 2, 2);
-            this.groupBox1.Size = new System.Drawing.Size(135, 313);
+            this.groupBox1.Padding = new System.Windows.Forms.Padding(2);
+            this.groupBox1.Size = new System.Drawing.Size(135, 355);
             this.groupBox1.TabIndex = 15;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Classes";
@@ -117,10 +160,10 @@
             // btnUndo
             // 
             this.btnUndo.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.btnUndo.Location = new System.Drawing.Point(5, 285);
-            this.btnUndo.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.btnUndo.Location = new System.Drawing.Point(3, 300);
+            this.btnUndo.Margin = new System.Windows.Forms.Padding(2);
             this.btnUndo.Name = "btnUndo";
-            this.btnUndo.Size = new System.Drawing.Size(127, 18);
+            this.btnUndo.Size = new System.Drawing.Size(129, 25);
             this.btnUndo.TabIndex = 33;
             this.btnUndo.Text = "Undo Changes";
             this.btnUndo.UseVisualStyleBackColor = true;
@@ -130,7 +173,7 @@
             // 
             this.lstClasses.FormattingEnabled = true;
             this.lstClasses.Location = new System.Drawing.Point(4, 12);
-            this.lstClasses.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.lstClasses.Margin = new System.Windows.Forms.Padding(2);
             this.lstClasses.Name = "lstClasses";
             this.lstClasses.Size = new System.Drawing.Size(129, 225);
             this.lstClasses.TabIndex = 1;
@@ -139,10 +182,10 @@
             // btnNew
             // 
             this.btnNew.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.btnNew.Location = new System.Drawing.Point(5, 242);
-            this.btnNew.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.btnNew.Location = new System.Drawing.Point(3, 242);
+            this.btnNew.Margin = new System.Windows.Forms.Padding(2);
             this.btnNew.Name = "btnNew";
-            this.btnNew.Size = new System.Drawing.Size(127, 18);
+            this.btnNew.Size = new System.Drawing.Size(129, 25);
             this.btnNew.TabIndex = 31;
             this.btnNew.Text = "New";
             this.btnNew.UseVisualStyleBackColor = true;
@@ -151,10 +194,10 @@
             // btnDelete
             // 
             this.btnDelete.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.btnDelete.Location = new System.Drawing.Point(4, 263);
-            this.btnDelete.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.btnDelete.Location = new System.Drawing.Point(2, 271);
+            this.btnDelete.Margin = new System.Windows.Forms.Padding(2);
             this.btnDelete.Name = "btnDelete";
-            this.btnDelete.Size = new System.Drawing.Size(127, 18);
+            this.btnDelete.Size = new System.Drawing.Size(129, 25);
             this.btnDelete.TabIndex = 30;
             this.btnDelete.Text = "Delete";
             this.btnDelete.UseVisualStyleBackColor = true;
@@ -169,11 +212,11 @@
             this.groupBox4.Controls.Add(this.lblDropItem);
             this.groupBox4.Controls.Add(this.scrlDropIndex);
             this.groupBox4.Controls.Add(this.lblDropIndex);
-            this.groupBox4.Location = new System.Drawing.Point(305, 147);
-            this.groupBox4.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.groupBox4.Location = new System.Drawing.Point(645, 0);
+            this.groupBox4.Margin = new System.Windows.Forms.Padding(2);
             this.groupBox4.Name = "groupBox4";
-            this.groupBox4.Padding = new System.Windows.Forms.Padding(2, 2, 2, 2);
-            this.groupBox4.Size = new System.Drawing.Size(112, 157);
+            this.groupBox4.Padding = new System.Windows.Forms.Padding(2);
+            this.groupBox4.Size = new System.Drawing.Size(112, 163);
             this.groupBox4.TabIndex = 18;
             this.groupBox4.TabStop = false;
             this.groupBox4.Text = "Starting Items";
@@ -181,7 +224,7 @@
             // txtDropAmount
             // 
             this.txtDropAmount.Location = new System.Drawing.Point(7, 90);
-            this.txtDropAmount.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.txtDropAmount.Margin = new System.Windows.Forms.Padding(2);
             this.txtDropAmount.Name = "txtDropAmount";
             this.txtDropAmount.Size = new System.Drawing.Size(93, 20);
             this.txtDropAmount.TabIndex = 16;
@@ -256,11 +299,11 @@
             this.groupBox3.Controls.Add(this.scrlMR);
             this.groupBox3.Controls.Add(this.scrlMag);
             this.groupBox3.Controls.Add(this.scrlStr);
-            this.groupBox3.Location = new System.Drawing.Point(117, 147);
-            this.groupBox3.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.groupBox3.Location = new System.Drawing.Point(2, 167);
+            this.groupBox3.Margin = new System.Windows.Forms.Padding(2);
             this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Padding = new System.Windows.Forms.Padding(2, 2, 2, 2);
-            this.groupBox3.Size = new System.Drawing.Size(183, 157);
+            this.groupBox3.Padding = new System.Windows.Forms.Padding(2);
+            this.groupBox3.Size = new System.Drawing.Size(183, 175);
             this.groupBox3.TabIndex = 17;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Base Stats:";
@@ -288,7 +331,7 @@
             // txtMana
             // 
             this.txtMana.Location = new System.Drawing.Point(99, 30);
-            this.txtMana.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.txtMana.Margin = new System.Windows.Forms.Padding(2);
             this.txtMana.Name = "txtMana";
             this.txtMana.Size = new System.Drawing.Size(59, 20);
             this.txtMana.TabIndex = 16;
@@ -297,7 +340,7 @@
             // txtHP
             // 
             this.txtHP.Location = new System.Drawing.Point(9, 30);
-            this.txtHP.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.txtHP.Margin = new System.Windows.Forms.Padding(2);
             this.txtHP.Name = "txtHP";
             this.txtHP.Size = new System.Drawing.Size(61, 20);
             this.txtHP.TabIndex = 14;
@@ -425,115 +468,28 @@
             // 
             // groupBox2
             // 
-            this.groupBox2.Controls.Add(this.btnRemove);
-            this.groupBox2.Controls.Add(this.btnAdd);
-            this.groupBox2.Controls.Add(this.rbFemale);
-            this.groupBox2.Controls.Add(this.rbMale);
-            this.groupBox2.Controls.Add(this.lstSprites);
-            this.groupBox2.Controls.Add(this.cmbSprite);
-            this.groupBox2.Controls.Add(this.lblPic);
-            this.groupBox2.Controls.Add(this.picSprite);
+            this.groupBox2.Controls.Add(this.chkLocked);
             this.groupBox2.Controls.Add(this.label1);
             this.groupBox2.Controls.Add(this.txtName);
             this.groupBox2.Location = new System.Drawing.Point(1, 0);
-            this.groupBox2.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.groupBox2.Margin = new System.Windows.Forms.Padding(2);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Padding = new System.Windows.Forms.Padding(2, 2, 2, 2);
-            this.groupBox2.Size = new System.Drawing.Size(182, 143);
+            this.groupBox2.Padding = new System.Windows.Forms.Padding(2);
+            this.groupBox2.Size = new System.Drawing.Size(250, 41);
             this.groupBox2.TabIndex = 19;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "General";
             // 
-            // btnRemove
+            // chkLocked
             // 
-            this.btnRemove.Location = new System.Drawing.Point(69, 120);
-            this.btnRemove.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
-            this.btnRemove.Name = "btnRemove";
-            this.btnRemove.Size = new System.Drawing.Size(109, 19);
-            this.btnRemove.TabIndex = 21;
-            this.btnRemove.Text = "Remove";
-            this.btnRemove.UseVisualStyleBackColor = true;
-            this.btnRemove.Click += new System.EventHandler(this.btnRemove_Click);
-            // 
-            // btnAdd
-            // 
-            this.btnAdd.Location = new System.Drawing.Point(69, 97);
-            this.btnAdd.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
-            this.btnAdd.Name = "btnAdd";
-            this.btnAdd.Size = new System.Drawing.Size(109, 19);
-            this.btnAdd.TabIndex = 20;
-            this.btnAdd.Text = "Add";
-            this.btnAdd.UseVisualStyleBackColor = true;
-            this.btnAdd.Click += new System.EventHandler(this.btnAdd_Click);
-            // 
-            // rbFemale
-            // 
-            this.rbFemale.AutoSize = true;
-            this.rbFemale.Location = new System.Drawing.Point(7, 103);
-            this.rbFemale.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
-            this.rbFemale.Name = "rbFemale";
-            this.rbFemale.Size = new System.Drawing.Size(59, 17);
-            this.rbFemale.TabIndex = 19;
-            this.rbFemale.Text = "Female";
-            this.rbFemale.UseVisualStyleBackColor = true;
-            this.rbFemale.Click += new System.EventHandler(this.rbFemale_Click);
-            // 
-            // rbMale
-            // 
-            this.rbMale.AutoSize = true;
-            this.rbMale.Checked = true;
-            this.rbMale.Location = new System.Drawing.Point(7, 88);
-            this.rbMale.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
-            this.rbMale.Name = "rbMale";
-            this.rbMale.Size = new System.Drawing.Size(48, 17);
-            this.rbMale.TabIndex = 18;
-            this.rbMale.TabStop = true;
-            this.rbMale.Text = "Male";
-            this.rbMale.UseVisualStyleBackColor = true;
-            this.rbMale.Click += new System.EventHandler(this.rbMale_Click);
-            // 
-            // lstSprites
-            // 
-            this.lstSprites.FormattingEnabled = true;
-            this.lstSprites.Location = new System.Drawing.Point(61, 32);
-            this.lstSprites.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
-            this.lstSprites.Name = "lstSprites";
-            this.lstSprites.Size = new System.Drawing.Size(118, 56);
-            this.lstSprites.TabIndex = 17;
-            this.lstSprites.Click += new System.EventHandler(this.lstSprites_Click);
-            // 
-            // cmbSprite
-            // 
-            this.cmbSprite.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cmbSprite.FormattingEnabled = true;
-            this.cmbSprite.Items.AddRange(new object[] {
-            "None"});
-            this.cmbSprite.Location = new System.Drawing.Point(7, 121);
-            this.cmbSprite.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
-            this.cmbSprite.Name = "cmbSprite";
-            this.cmbSprite.Size = new System.Drawing.Size(55, 21);
-            this.cmbSprite.TabIndex = 16;
-            this.cmbSprite.SelectedIndexChanged += new System.EventHandler(this.cmbSprite_SelectedIndexChanged);
-            // 
-            // lblPic
-            // 
-            this.lblPic.AutoSize = true;
-            this.lblPic.Location = new System.Drawing.Point(5, 32);
-            this.lblPic.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-            this.lblPic.Name = "lblPic";
-            this.lblPic.Size = new System.Drawing.Size(42, 13);
-            this.lblPic.TabIndex = 15;
-            this.lblPic.Text = "Sprites:";
-            // 
-            // picSprite
-            // 
-            this.picSprite.BackColor = System.Drawing.Color.Black;
-            this.picSprite.Location = new System.Drawing.Point(8, 47);
-            this.picSprite.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
-            this.picSprite.Name = "picSprite";
-            this.picSprite.Size = new System.Drawing.Size(43, 42);
-            this.picSprite.TabIndex = 14;
-            this.picSprite.TabStop = false;
+            this.chkLocked.AutoSize = true;
+            this.chkLocked.Location = new System.Drawing.Point(185, 14);
+            this.chkLocked.Name = "chkLocked";
+            this.chkLocked.Size = new System.Drawing.Size(62, 17);
+            this.chkLocked.TabIndex = 14;
+            this.chkLocked.Text = "Locked";
+            this.chkLocked.UseVisualStyleBackColor = true;
+            this.chkLocked.CheckedChanged += new System.EventHandler(this.chkLocked_CheckedChanged);
             // 
             // label1
             // 
@@ -548,11 +504,102 @@
             // txtName
             // 
             this.txtName.Location = new System.Drawing.Point(61, 14);
-            this.txtName.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.txtName.Margin = new System.Windows.Forms.Padding(2);
             this.txtName.Name = "txtName";
             this.txtName.Size = new System.Drawing.Size(118, 20);
             this.txtName.TabIndex = 12;
             this.txtName.TextChanged += new System.EventHandler(this.txtName_TextChanged);
+            // 
+            // btnRemove
+            // 
+            this.btnRemove.Location = new System.Drawing.Point(9, 55);
+            this.btnRemove.Margin = new System.Windows.Forms.Padding(2);
+            this.btnRemove.Name = "btnRemove";
+            this.btnRemove.Size = new System.Drawing.Size(44, 19);
+            this.btnRemove.TabIndex = 21;
+            this.btnRemove.Text = "-";
+            this.btnRemove.UseVisualStyleBackColor = true;
+            this.btnRemove.Click += new System.EventHandler(this.btnRemove_Click);
+            // 
+            // btnAdd
+            // 
+            this.btnAdd.Location = new System.Drawing.Point(9, 32);
+            this.btnAdd.Margin = new System.Windows.Forms.Padding(2);
+            this.btnAdd.Name = "btnAdd";
+            this.btnAdd.Size = new System.Drawing.Size(43, 19);
+            this.btnAdd.TabIndex = 20;
+            this.btnAdd.Text = "+";
+            this.btnAdd.UseVisualStyleBackColor = true;
+            this.btnAdd.Click += new System.EventHandler(this.btnAdd_Click);
+            // 
+            // rbFemale
+            // 
+            this.rbFemale.AutoSize = true;
+            this.rbFemale.Location = new System.Drawing.Point(5, 38);
+            this.rbFemale.Margin = new System.Windows.Forms.Padding(2);
+            this.rbFemale.Name = "rbFemale";
+            this.rbFemale.Size = new System.Drawing.Size(59, 17);
+            this.rbFemale.TabIndex = 19;
+            this.rbFemale.Text = "Female";
+            this.rbFemale.UseVisualStyleBackColor = true;
+            this.rbFemale.Click += new System.EventHandler(this.rbFemale_Click);
+            // 
+            // rbMale
+            // 
+            this.rbMale.AutoSize = true;
+            this.rbMale.Checked = true;
+            this.rbMale.Location = new System.Drawing.Point(5, 18);
+            this.rbMale.Margin = new System.Windows.Forms.Padding(2);
+            this.rbMale.Name = "rbMale";
+            this.rbMale.Size = new System.Drawing.Size(48, 17);
+            this.rbMale.TabIndex = 18;
+            this.rbMale.TabStop = true;
+            this.rbMale.Text = "Male";
+            this.rbMale.UseVisualStyleBackColor = true;
+            this.rbMale.Click += new System.EventHandler(this.rbMale_Click);
+            // 
+            // lstSprites
+            // 
+            this.lstSprites.FormattingEnabled = true;
+            this.lstSprites.Location = new System.Drawing.Point(57, 16);
+            this.lstSprites.Margin = new System.Windows.Forms.Padding(2);
+            this.lstSprites.Name = "lstSprites";
+            this.lstSprites.Size = new System.Drawing.Size(91, 134);
+            this.lstSprites.TabIndex = 17;
+            this.lstSprites.Click += new System.EventHandler(this.lstSprites_Click);
+            // 
+            // cmbSprite
+            // 
+            this.cmbSprite.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbSprite.FormattingEnabled = true;
+            this.cmbSprite.Items.AddRange(new object[] {
+            "None"});
+            this.cmbSprite.Location = new System.Drawing.Point(272, 31);
+            this.cmbSprite.Margin = new System.Windows.Forms.Padding(2);
+            this.cmbSprite.Name = "cmbSprite";
+            this.cmbSprite.Size = new System.Drawing.Size(104, 21);
+            this.cmbSprite.TabIndex = 16;
+            this.cmbSprite.SelectedIndexChanged += new System.EventHandler(this.cmbSprite_SelectedIndexChanged);
+            // 
+            // lblPic
+            // 
+            this.lblPic.AutoSize = true;
+            this.lblPic.Location = new System.Drawing.Point(222, 16);
+            this.lblPic.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.lblPic.Name = "lblPic";
+            this.lblPic.Size = new System.Drawing.Size(37, 13);
+            this.lblPic.TabIndex = 15;
+            this.lblPic.Text = "Sprite:";
+            // 
+            // picSprite
+            // 
+            this.picSprite.BackColor = System.Drawing.Color.Black;
+            this.picSprite.Location = new System.Drawing.Point(225, 31);
+            this.picSprite.Margin = new System.Windows.Forms.Padding(2);
+            this.picSprite.Name = "picSprite";
+            this.picSprite.Size = new System.Drawing.Size(43, 42);
+            this.picSprite.TabIndex = 14;
+            this.picSprite.TabStop = false;
             // 
             // groupBox6
             // 
@@ -563,11 +610,11 @@
             this.groupBox6.Controls.Add(this.btnRemoveSpell);
             this.groupBox6.Controls.Add(this.btnAddSpell);
             this.groupBox6.Controls.Add(this.lstSpells);
-            this.groupBox6.Location = new System.Drawing.Point(189, 0);
-            this.groupBox6.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.groupBox6.Location = new System.Drawing.Point(636, 167);
+            this.groupBox6.Margin = new System.Windows.Forms.Padding(2);
             this.groupBox6.Name = "groupBox6";
-            this.groupBox6.Padding = new System.Windows.Forms.Padding(2, 2, 2, 2);
-            this.groupBox6.Size = new System.Drawing.Size(227, 143);
+            this.groupBox6.Padding = new System.Windows.Forms.Padding(2);
+            this.groupBox6.Size = new System.Drawing.Size(227, 175);
             this.groupBox6.TabIndex = 21;
             this.groupBox6.TabStop = false;
             this.groupBox6.Text = "Spells";
@@ -605,7 +652,7 @@
             // scrlSpell
             // 
             this.scrlSpell.LargeChange = 1;
-            this.scrlSpell.Location = new System.Drawing.Point(108, 25);
+            this.scrlSpell.Location = new System.Drawing.Point(105, 25);
             this.scrlSpell.Maximum = 255;
             this.scrlSpell.Minimum = -1;
             this.scrlSpell.Name = "scrlSpell";
@@ -616,7 +663,7 @@
             // btnRemoveSpell
             // 
             this.btnRemoveSpell.Location = new System.Drawing.Point(105, 114);
-            this.btnRemoveSpell.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.btnRemoveSpell.Margin = new System.Windows.Forms.Padding(2);
             this.btnRemoveSpell.Name = "btnRemoveSpell";
             this.btnRemoveSpell.Size = new System.Drawing.Size(111, 21);
             this.btnRemoveSpell.TabIndex = 21;
@@ -627,7 +674,7 @@
             // btnAddSpell
             // 
             this.btnAddSpell.Location = new System.Drawing.Point(105, 89);
-            this.btnAddSpell.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.btnAddSpell.Margin = new System.Windows.Forms.Padding(2);
             this.btnAddSpell.Name = "btnAddSpell";
             this.btnAddSpell.Size = new System.Drawing.Size(111, 21);
             this.btnAddSpell.TabIndex = 20;
@@ -638,10 +685,10 @@
             // lstSpells
             // 
             this.lstSpells.FormattingEnabled = true;
-            this.lstSpells.Location = new System.Drawing.Point(6, 12);
-            this.lstSpells.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.lstSpells.Location = new System.Drawing.Point(4, 17);
+            this.lstSpells.Margin = new System.Windows.Forms.Padding(2);
             this.lstSpells.Name = "lstSpells";
-            this.lstSpells.Size = new System.Drawing.Size(93, 108);
+            this.lstSpells.Size = new System.Drawing.Size(93, 121);
             this.lstSpells.TabIndex = 17;
             this.lstSpells.Click += new System.EventHandler(this.lstSpells_Click);
             // 
@@ -656,21 +703,21 @@
             this.grpWarp.Controls.Add(this.lblMap);
             this.grpWarp.Controls.Add(this.scrlX);
             this.grpWarp.Controls.Add(this.scrlY);
-            this.grpWarp.Location = new System.Drawing.Point(1, 147);
-            this.grpWarp.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.grpWarp.Location = new System.Drawing.Point(2, 45);
+            this.grpWarp.Margin = new System.Windows.Forms.Padding(2);
             this.grpWarp.Name = "grpWarp";
-            this.grpWarp.Padding = new System.Windows.Forms.Padding(2, 2, 2, 2);
-            this.grpWarp.Size = new System.Drawing.Size(113, 157);
+            this.grpWarp.Padding = new System.Windows.Forms.Padding(2);
+            this.grpWarp.Size = new System.Drawing.Size(249, 118);
             this.grpWarp.TabIndex = 27;
             this.grpWarp.TabStop = false;
             this.grpWarp.Text = "Spawn Point";
             // 
             // btnVisualMapSelector
             // 
-            this.btnVisualMapSelector.Location = new System.Drawing.Point(11, 121);
-            this.btnVisualMapSelector.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.btnVisualMapSelector.Location = new System.Drawing.Point(4, 93);
+            this.btnVisualMapSelector.Margin = new System.Windows.Forms.Padding(2);
             this.btnVisualMapSelector.Name = "btnVisualMapSelector";
-            this.btnVisualMapSelector.Size = new System.Drawing.Size(95, 32);
+            this.btnVisualMapSelector.Size = new System.Drawing.Size(172, 25);
             this.btnVisualMapSelector.TabIndex = 24;
             this.btnVisualMapSelector.Text = "Open Visual Interface";
             this.btnVisualMapSelector.UseVisualStyleBackColor = true;
@@ -680,10 +727,10 @@
             // 
             this.cmbWarpMap.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbWarpMap.FormattingEnabled = true;
-            this.cmbWarpMap.Location = new System.Drawing.Point(11, 34);
-            this.cmbWarpMap.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.cmbWarpMap.Location = new System.Drawing.Point(4, 31);
+            this.cmbWarpMap.Margin = new System.Windows.Forms.Padding(2);
             this.cmbWarpMap.Name = "cmbWarpMap";
-            this.cmbWarpMap.Size = new System.Drawing.Size(99, 21);
+            this.cmbWarpMap.Size = new System.Drawing.Size(80, 21);
             this.cmbWarpMap.TabIndex = 12;
             this.cmbWarpMap.SelectedIndexChanged += new System.EventHandler(this.cmbWarpMap_SelectedIndexChanged);
             // 
@@ -696,8 +743,8 @@
             "Down",
             "Left",
             "Right"});
-            this.cmbDirection.Location = new System.Drawing.Point(33, 96);
-            this.cmbDirection.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.cmbDirection.Location = new System.Drawing.Point(4, 68);
+            this.cmbDirection.Margin = new System.Windows.Forms.Padding(2);
             this.cmbDirection.Name = "cmbDirection";
             this.cmbDirection.Size = new System.Drawing.Size(76, 21);
             this.cmbDirection.TabIndex = 23;
@@ -706,7 +753,7 @@
             // label23
             // 
             this.label23.AutoSize = true;
-            this.label23.Location = new System.Drawing.Point(3, 101);
+            this.label23.Location = new System.Drawing.Point(1, 53);
             this.label23.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label23.Name = "label23";
             this.label23.Size = new System.Drawing.Size(23, 13);
@@ -716,7 +763,7 @@
             // lblY
             // 
             this.lblY.AutoSize = true;
-            this.lblY.Location = new System.Drawing.Point(3, 79);
+            this.lblY.Location = new System.Drawing.Point(97, 53);
             this.lblY.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.lblY.Name = "lblY";
             this.lblY.Size = new System.Drawing.Size(26, 13);
@@ -726,7 +773,7 @@
             // lblX
             // 
             this.lblX.AutoSize = true;
-            this.lblX.Location = new System.Drawing.Point(3, 59);
+            this.lblX.Location = new System.Drawing.Point(97, 16);
             this.lblX.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.lblX.Name = "lblX";
             this.lblX.Size = new System.Drawing.Size(26, 13);
@@ -746,40 +793,442 @@
             // scrlX
             // 
             this.scrlX.LargeChange = 1;
-            this.scrlX.Location = new System.Drawing.Point(33, 58);
+            this.scrlX.Location = new System.Drawing.Point(100, 29);
             this.scrlX.Name = "scrlX";
-            this.scrlX.Size = new System.Drawing.Size(75, 21);
+            this.scrlX.Size = new System.Drawing.Size(101, 21);
             this.scrlX.TabIndex = 8;
             this.scrlX.Scroll += new System.Windows.Forms.ScrollEventHandler(this.scrlX_Scroll);
             // 
             // scrlY
             // 
             this.scrlY.LargeChange = 1;
-            this.scrlY.Location = new System.Drawing.Point(33, 78);
+            this.scrlY.Location = new System.Drawing.Point(100, 68);
             this.scrlY.Name = "scrlY";
-            this.scrlY.Size = new System.Drawing.Size(75, 21);
+            this.scrlY.Size = new System.Drawing.Size(101, 21);
             this.scrlY.TabIndex = 7;
             this.scrlY.Scroll += new System.Windows.Forms.ScrollEventHandler(this.scrlY_Scroll);
             // 
             // pnlContainer
             // 
+            this.pnlContainer.Controls.Add(this.groupBox10);
+            this.pnlContainer.Controls.Add(this.groupBox8);
+            this.pnlContainer.Controls.Add(this.groupBox5);
             this.pnlContainer.Controls.Add(this.grpWarp);
             this.pnlContainer.Controls.Add(this.groupBox2);
             this.pnlContainer.Controls.Add(this.groupBox6);
             this.pnlContainer.Controls.Add(this.groupBox3);
             this.pnlContainer.Controls.Add(this.groupBox4);
             this.pnlContainer.Location = new System.Drawing.Point(147, 8);
-            this.pnlContainer.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.pnlContainer.Margin = new System.Windows.Forms.Padding(2);
             this.pnlContainer.Name = "pnlContainer";
-            this.pnlContainer.Size = new System.Drawing.Size(419, 313);
+            this.pnlContainer.Size = new System.Drawing.Size(870, 355);
             this.pnlContainer.TabIndex = 28;
             this.pnlContainer.Visible = false;
+            // 
+            // groupBox10
+            // 
+            this.groupBox10.BackColor = System.Drawing.SystemColors.Control;
+            this.groupBox10.Controls.Add(this.scrlMpRegen);
+            this.groupBox10.Controls.Add(this.scrlHpRegen);
+            this.groupBox10.Controls.Add(this.lblHpRegen);
+            this.groupBox10.Controls.Add(this.lblManaRegen);
+            this.groupBox10.Controls.Add(this.label14);
+            this.groupBox10.Location = new System.Drawing.Point(761, 0);
+            this.groupBox10.Margin = new System.Windows.Forms.Padding(2);
+            this.groupBox10.Name = "groupBox10";
+            this.groupBox10.Padding = new System.Windows.Forms.Padding(2);
+            this.groupBox10.Size = new System.Drawing.Size(112, 163);
+            this.groupBox10.TabIndex = 19;
+            this.groupBox10.TabStop = false;
+            this.groupBox10.Text = "Regen";
+            // 
+            // scrlMpRegen
+            // 
+            this.scrlMpRegen.LargeChange = 1;
+            this.scrlMpRegen.Location = new System.Drawing.Point(8, 68);
+            this.scrlMpRegen.Name = "scrlMpRegen";
+            this.scrlMpRegen.Size = new System.Drawing.Size(97, 17);
+            this.scrlMpRegen.TabIndex = 29;
+            this.scrlMpRegen.Scroll += new System.Windows.Forms.ScrollEventHandler(this.scrlMpRegen_Scroll);
+            // 
+            // scrlHpRegen
+            // 
+            this.scrlHpRegen.LargeChange = 1;
+            this.scrlHpRegen.Location = new System.Drawing.Point(8, 30);
+            this.scrlHpRegen.Name = "scrlHpRegen";
+            this.scrlHpRegen.Size = new System.Drawing.Size(97, 18);
+            this.scrlHpRegen.TabIndex = 28;
+            this.scrlHpRegen.Scroll += new System.Windows.Forms.ScrollEventHandler(this.scrlHpRegen_Scroll);
+            // 
+            // lblHpRegen
+            // 
+            this.lblHpRegen.AutoSize = true;
+            this.lblHpRegen.Location = new System.Drawing.Point(5, 17);
+            this.lblHpRegen.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.lblHpRegen.Name = "lblHpRegen";
+            this.lblHpRegen.Size = new System.Drawing.Size(42, 13);
+            this.lblHpRegen.TabIndex = 26;
+            this.lblHpRegen.Text = "HP: 0%";
+            // 
+            // lblManaRegen
+            // 
+            this.lblManaRegen.AutoSize = true;
+            this.lblManaRegen.Location = new System.Drawing.Point(5, 54);
+            this.lblManaRegen.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.lblManaRegen.Name = "lblManaRegen";
+            this.lblManaRegen.Size = new System.Drawing.Size(54, 13);
+            this.lblManaRegen.TabIndex = 27;
+            this.lblManaRegen.Text = "Mana: 0%";
+            // 
+            // label14
+            // 
+            this.label14.Location = new System.Drawing.Point(5, 89);
+            this.label14.Name = "label14";
+            this.label14.Size = new System.Drawing.Size(100, 72);
+            this.label14.TabIndex = 0;
+            this.label14.Text = "% of HP/Mana to restore per tick.\r\n\r\nTick timer saved in server config.xml.";
+            // 
+            // groupBox8
+            // 
+            this.groupBox8.Controls.Add(this.scrlExpIncrease);
+            this.groupBox8.Controls.Add(this.lblExpIncrease);
+            this.groupBox8.Controls.Add(this.txtBaseExp);
+            this.groupBox8.Controls.Add(this.label12);
+            this.groupBox8.Controls.Add(this.groupBox9);
+            this.groupBox8.Location = new System.Drawing.Point(189, 167);
+            this.groupBox8.Margin = new System.Windows.Forms.Padding(2);
+            this.groupBox8.Name = "groupBox8";
+            this.groupBox8.Padding = new System.Windows.Forms.Padding(2);
+            this.groupBox8.Size = new System.Drawing.Size(443, 175);
+            this.groupBox8.TabIndex = 29;
+            this.groupBox8.TabStop = false;
+            this.groupBox8.Text = "Leveling Up";
+            // 
+            // scrlExpIncrease
+            // 
+            this.scrlExpIncrease.LargeChange = 1;
+            this.scrlExpIncrease.Location = new System.Drawing.Point(115, 30);
+            this.scrlExpIncrease.Name = "scrlExpIncrease";
+            this.scrlExpIncrease.Size = new System.Drawing.Size(97, 18);
+            this.scrlExpIncrease.TabIndex = 22;
+            this.scrlExpIncrease.Scroll += new System.Windows.Forms.ScrollEventHandler(this.scrlExpIncrease_Scroll);
+            // 
+            // lblExpIncrease
+            // 
+            this.lblExpIncrease.AutoSize = true;
+            this.lblExpIncrease.Location = new System.Drawing.Point(112, 15);
+            this.lblExpIncrease.Name = "lblExpIncrease";
+            this.lblExpIncrease.Size = new System.Drawing.Size(131, 13);
+            this.lblExpIncrease.TabIndex = 21;
+            this.lblExpIncrease.Text = "Exp Increase (Per Lvl): 0%";
+            // 
+            // txtBaseExp
+            // 
+            this.txtBaseExp.Location = new System.Drawing.Point(9, 30);
+            this.txtBaseExp.Margin = new System.Windows.Forms.Padding(2);
+            this.txtBaseExp.Name = "txtBaseExp";
+            this.txtBaseExp.Size = new System.Drawing.Size(97, 20);
+            this.txtBaseExp.TabIndex = 20;
+            this.txtBaseExp.TextChanged += new System.EventHandler(this.txtBaseExp_TextChanged);
+            // 
+            // label12
+            // 
+            this.label12.AutoSize = true;
+            this.label12.Location = new System.Drawing.Point(6, 16);
+            this.label12.Name = "label12";
+            this.label12.Size = new System.Drawing.Size(100, 13);
+            this.label12.TabIndex = 19;
+            this.label12.Text = "Base Exp To Level:";
+            // 
+            // groupBox9
+            // 
+            this.groupBox9.Controls.Add(this.scrlMpIncrease);
+            this.groupBox9.Controls.Add(this.rdoPercentageIncrease);
+            this.groupBox9.Controls.Add(this.scrlHpIncrease);
+            this.groupBox9.Controls.Add(this.rdoStaticIncrease);
+            this.groupBox9.Controls.Add(this.lblPointsIncrease);
+            this.groupBox9.Controls.Add(this.lblHpIncrease);
+            this.groupBox9.Controls.Add(this.scrlPointsIncrease);
+            this.groupBox9.Controls.Add(this.lblMpIncrease);
+            this.groupBox9.Controls.Add(this.lblSpeedIncrease);
+            this.groupBox9.Controls.Add(this.lblStrengthIncrease);
+            this.groupBox9.Controls.Add(this.lblMagicResistIncrease);
+            this.groupBox9.Controls.Add(this.scrlStrengthIncrease);
+            this.groupBox9.Controls.Add(this.lblArmorIncrease);
+            this.groupBox9.Controls.Add(this.scrlArmorIncrease);
+            this.groupBox9.Controls.Add(this.scrlMagicIncrease);
+            this.groupBox9.Controls.Add(this.scrlSpeedIncrease);
+            this.groupBox9.Controls.Add(this.lblMagicIncrease);
+            this.groupBox9.Controls.Add(this.scrlMagicResistIncrease);
+            this.groupBox9.Location = new System.Drawing.Point(9, 53);
+            this.groupBox9.Name = "groupBox9";
+            this.groupBox9.Size = new System.Drawing.Size(429, 116);
+            this.groupBox9.TabIndex = 23;
+            this.groupBox9.TabStop = false;
+            this.groupBox9.Text = "Level Up Boosts";
+            // 
+            // scrlMpIncrease
+            // 
+            this.scrlMpIncrease.LargeChange = 1;
+            this.scrlMpIncrease.Location = new System.Drawing.Point(111, 48);
+            this.scrlMpIncrease.Maximum = 10000;
+            this.scrlMpIncrease.Name = "scrlMpIncrease";
+            this.scrlMpIncrease.Size = new System.Drawing.Size(86, 17);
+            this.scrlMpIncrease.TabIndex = 25;
+            this.scrlMpIncrease.Scroll += new System.Windows.Forms.ScrollEventHandler(this.scrlMpIncrease_Scroll);
+            // 
+            // rdoPercentageIncrease
+            // 
+            this.rdoPercentageIncrease.AutoSize = true;
+            this.rdoPercentageIncrease.Location = new System.Drawing.Point(66, 15);
+            this.rdoPercentageIncrease.Name = "rdoPercentageIncrease";
+            this.rdoPercentageIncrease.Size = new System.Drawing.Size(80, 17);
+            this.rdoPercentageIncrease.TabIndex = 1;
+            this.rdoPercentageIncrease.Text = "Percentage";
+            this.rdoPercentageIncrease.UseVisualStyleBackColor = true;
+            this.rdoPercentageIncrease.CheckedChanged += new System.EventHandler(this.rdoPercentageIncrease_CheckedChanged);
+            // 
+            // scrlHpIncrease
+            // 
+            this.scrlHpIncrease.LargeChange = 1;
+            this.scrlHpIncrease.Location = new System.Drawing.Point(8, 48);
+            this.scrlHpIncrease.Maximum = 10000;
+            this.scrlHpIncrease.Name = "scrlHpIncrease";
+            this.scrlHpIncrease.Size = new System.Drawing.Size(86, 17);
+            this.scrlHpIncrease.TabIndex = 24;
+            this.scrlHpIncrease.Scroll += new System.Windows.Forms.ScrollEventHandler(this.scrlHpIncrease_Scroll);
+            // 
+            // rdoStaticIncrease
+            // 
+            this.rdoStaticIncrease.AutoSize = true;
+            this.rdoStaticIncrease.Checked = true;
+            this.rdoStaticIncrease.Location = new System.Drawing.Point(7, 15);
+            this.rdoStaticIncrease.Name = "rdoStaticIncrease";
+            this.rdoStaticIncrease.Size = new System.Drawing.Size(52, 17);
+            this.rdoStaticIncrease.TabIndex = 0;
+            this.rdoStaticIncrease.TabStop = true;
+            this.rdoStaticIncrease.Text = "Static";
+            this.rdoStaticIncrease.UseVisualStyleBackColor = true;
+            this.rdoStaticIncrease.CheckedChanged += new System.EventHandler(this.rdoStaticIncrease_CheckedChanged);
+            // 
+            // lblPointsIncrease
+            // 
+            this.lblPointsIncrease.AutoSize = true;
+            this.lblPointsIncrease.Location = new System.Drawing.Point(308, 77);
+            this.lblPointsIncrease.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.lblPointsIncrease.Name = "lblPointsIncrease";
+            this.lblPointsIncrease.Size = new System.Drawing.Size(48, 13);
+            this.lblPointsIncrease.TabIndex = 18;
+            this.lblPointsIncrease.Text = "Points: 0";
+            // 
+            // lblHpIncrease
+            // 
+            this.lblHpIncrease.AutoSize = true;
+            this.lblHpIncrease.Location = new System.Drawing.Point(8, 35);
+            this.lblHpIncrease.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.lblHpIncrease.Name = "lblHpIncrease";
+            this.lblHpIncrease.Size = new System.Drawing.Size(57, 13);
+            this.lblHpIncrease.TabIndex = 14;
+            this.lblHpIncrease.Text = "Max HP: 0";
+            // 
+            // scrlPointsIncrease
+            // 
+            this.scrlPointsIncrease.LargeChange = 1;
+            this.scrlPointsIncrease.Location = new System.Drawing.Point(311, 92);
+            this.scrlPointsIncrease.Maximum = 255;
+            this.scrlPointsIncrease.Name = "scrlPointsIncrease";
+            this.scrlPointsIncrease.Size = new System.Drawing.Size(86, 17);
+            this.scrlPointsIncrease.TabIndex = 17;
+            this.scrlPointsIncrease.Scroll += new System.Windows.Forms.ScrollEventHandler(this.scrlPointsIncrease_Scroll);
+            // 
+            // lblMpIncrease
+            // 
+            this.lblMpIncrease.AutoSize = true;
+            this.lblMpIncrease.Location = new System.Drawing.Point(108, 31);
+            this.lblMpIncrease.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.lblMpIncrease.Name = "lblMpIncrease";
+            this.lblMpIncrease.Size = new System.Drawing.Size(58, 13);
+            this.lblMpIncrease.TabIndex = 15;
+            this.lblMpIncrease.Text = "Max MP: 0";
+            // 
+            // lblSpeedIncrease
+            // 
+            this.lblSpeedIncrease.AutoSize = true;
+            this.lblSpeedIncrease.Location = new System.Drawing.Point(208, 77);
+            this.lblSpeedIncrease.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.lblSpeedIncrease.Name = "lblSpeedIncrease";
+            this.lblSpeedIncrease.Size = new System.Drawing.Size(80, 13);
+            this.lblSpeedIncrease.TabIndex = 9;
+            this.lblSpeedIncrease.Text = "Move Speed: 0";
+            // 
+            // lblStrengthIncrease
+            // 
+            this.lblStrengthIncrease.AutoSize = true;
+            this.lblStrengthIncrease.Location = new System.Drawing.Point(8, 77);
+            this.lblStrengthIncrease.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.lblStrengthIncrease.Name = "lblStrengthIncrease";
+            this.lblStrengthIncrease.Size = new System.Drawing.Size(59, 13);
+            this.lblStrengthIncrease.TabIndex = 5;
+            this.lblStrengthIncrease.Text = "Strength: 0";
+            // 
+            // lblMagicResistIncrease
+            // 
+            this.lblMagicResistIncrease.AutoSize = true;
+            this.lblMagicResistIncrease.Location = new System.Drawing.Point(308, 31);
+            this.lblMagicResistIncrease.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.lblMagicResistIncrease.Name = "lblMagicResistIncrease";
+            this.lblMagicResistIncrease.Size = new System.Drawing.Size(80, 13);
+            this.lblMagicResistIncrease.TabIndex = 8;
+            this.lblMagicResistIncrease.Text = "Magic Resist: 0";
+            // 
+            // scrlStrengthIncrease
+            // 
+            this.scrlStrengthIncrease.LargeChange = 1;
+            this.scrlStrengthIncrease.Location = new System.Drawing.Point(7, 92);
+            this.scrlStrengthIncrease.Maximum = 255;
+            this.scrlStrengthIncrease.Name = "scrlStrengthIncrease";
+            this.scrlStrengthIncrease.Size = new System.Drawing.Size(86, 17);
+            this.scrlStrengthIncrease.TabIndex = 0;
+            this.scrlStrengthIncrease.Scroll += new System.Windows.Forms.ScrollEventHandler(this.scrlStrengthIncrease_Scroll);
+            // 
+            // lblArmorIncrease
+            // 
+            this.lblArmorIncrease.AutoSize = true;
+            this.lblArmorIncrease.Location = new System.Drawing.Point(208, 31);
+            this.lblArmorIncrease.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.lblArmorIncrease.Name = "lblArmorIncrease";
+            this.lblArmorIncrease.Size = new System.Drawing.Size(46, 13);
+            this.lblArmorIncrease.TabIndex = 7;
+            this.lblArmorIncrease.Text = "Armor: 0";
+            // 
+            // scrlArmorIncrease
+            // 
+            this.scrlArmorIncrease.LargeChange = 1;
+            this.scrlArmorIncrease.Location = new System.Drawing.Point(211, 48);
+            this.scrlArmorIncrease.Maximum = 255;
+            this.scrlArmorIncrease.Name = "scrlArmorIncrease";
+            this.scrlArmorIncrease.Size = new System.Drawing.Size(86, 17);
+            this.scrlArmorIncrease.TabIndex = 4;
+            this.scrlArmorIncrease.Scroll += new System.Windows.Forms.ScrollEventHandler(this.scrlArmorIncrease_Scroll);
+            // 
+            // scrlMagicIncrease
+            // 
+            this.scrlMagicIncrease.LargeChange = 1;
+            this.scrlMagicIncrease.Location = new System.Drawing.Point(111, 92);
+            this.scrlMagicIncrease.Maximum = 255;
+            this.scrlMagicIncrease.Name = "scrlMagicIncrease";
+            this.scrlMagicIncrease.Size = new System.Drawing.Size(86, 17);
+            this.scrlMagicIncrease.TabIndex = 1;
+            this.scrlMagicIncrease.Scroll += new System.Windows.Forms.ScrollEventHandler(this.scrlMagicIncrease_Scroll);
+            // 
+            // scrlSpeedIncrease
+            // 
+            this.scrlSpeedIncrease.LargeChange = 1;
+            this.scrlSpeedIncrease.Location = new System.Drawing.Point(211, 92);
+            this.scrlSpeedIncrease.Maximum = 255;
+            this.scrlSpeedIncrease.Name = "scrlSpeedIncrease";
+            this.scrlSpeedIncrease.Size = new System.Drawing.Size(86, 17);
+            this.scrlSpeedIncrease.TabIndex = 3;
+            this.scrlSpeedIncrease.Scroll += new System.Windows.Forms.ScrollEventHandler(this.scrlSpeedIncrease_Scroll);
+            // 
+            // lblMagicIncrease
+            // 
+            this.lblMagicIncrease.AutoSize = true;
+            this.lblMagicIncrease.Location = new System.Drawing.Point(108, 77);
+            this.lblMagicIncrease.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.lblMagicIncrease.Name = "lblMagicIncrease";
+            this.lblMagicIncrease.Size = new System.Drawing.Size(48, 13);
+            this.lblMagicIncrease.TabIndex = 6;
+            this.lblMagicIncrease.Text = "Magic: 0";
+            // 
+            // scrlMagicResistIncrease
+            // 
+            this.scrlMagicResistIncrease.LargeChange = 1;
+            this.scrlMagicResistIncrease.Location = new System.Drawing.Point(311, 48);
+            this.scrlMagicResistIncrease.Maximum = 255;
+            this.scrlMagicResistIncrease.Name = "scrlMagicResistIncrease";
+            this.scrlMagicResistIncrease.Size = new System.Drawing.Size(86, 17);
+            this.scrlMagicResistIncrease.TabIndex = 2;
+            this.scrlMagicResistIncrease.Scroll += new System.Windows.Forms.ScrollEventHandler(this.scrlMagicResistIncrease_Scroll);
+            // 
+            // groupBox5
+            // 
+            this.groupBox5.Controls.Add(this.label3);
+            this.groupBox5.Controls.Add(this.btnRemove);
+            this.groupBox5.Controls.Add(this.picFace);
+            this.groupBox5.Controls.Add(this.label2);
+            this.groupBox5.Controls.Add(this.cmbFace);
+            this.groupBox5.Controls.Add(this.btnAdd);
+            this.groupBox5.Controls.Add(this.groupBox7);
+            this.groupBox5.Controls.Add(this.lstSprites);
+            this.groupBox5.Controls.Add(this.lblPic);
+            this.groupBox5.Controls.Add(this.picSprite);
+            this.groupBox5.Controls.Add(this.cmbSprite);
+            this.groupBox5.Location = new System.Drawing.Point(256, 0);
+            this.groupBox5.Name = "groupBox5";
+            this.groupBox5.Size = new System.Drawing.Size(384, 163);
+            this.groupBox5.TabIndex = 28;
+            this.groupBox5.TabStop = false;
+            this.groupBox5.Text = "Sprite and Face";
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(222, 76);
+            this.label3.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(34, 13);
+            this.label3.TabIndex = 22;
+            this.label3.Text = "Face:";
+            // 
+            // picFace
+            // 
+            this.picFace.BackColor = System.Drawing.Color.Black;
+            this.picFace.Location = new System.Drawing.Point(225, 89);
+            this.picFace.Margin = new System.Windows.Forms.Padding(2);
+            this.picFace.Name = "picFace";
+            this.picFace.Size = new System.Drawing.Size(64, 64);
+            this.picFace.TabIndex = 21;
+            this.picFace.TabStop = false;
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(6, 17);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(46, 13);
+            this.label2.TabIndex = 18;
+            this.label2.Text = "Options:";
+            // 
+            // cmbFace
+            // 
+            this.cmbFace.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbFace.FormattingEnabled = true;
+            this.cmbFace.Items.AddRange(new object[] {
+            "None"});
+            this.cmbFace.Location = new System.Drawing.Point(293, 89);
+            this.cmbFace.Margin = new System.Windows.Forms.Padding(2);
+            this.cmbFace.Name = "cmbFace";
+            this.cmbFace.Size = new System.Drawing.Size(83, 21);
+            this.cmbFace.TabIndex = 23;
+            this.cmbFace.SelectedIndexChanged += new System.EventHandler(this.cmbFace_SelectedIndexChanged);
+            // 
+            // groupBox7
+            // 
+            this.groupBox7.Controls.Add(this.rbMale);
+            this.groupBox7.Controls.Add(this.rbFemale);
+            this.groupBox7.Location = new System.Drawing.Point(153, 16);
+            this.groupBox7.Name = "groupBox7";
+            this.groupBox7.Size = new System.Drawing.Size(64, 75);
+            this.groupBox7.TabIndex = 20;
+            this.groupBox7.TabStop = false;
+            this.groupBox7.Text = "Gender";
             // 
             // btnCancel
             // 
             this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.btnCancel.Location = new System.Drawing.Point(439, 325);
-            this.btnCancel.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.btnCancel.Location = new System.Drawing.Point(883, 372);
+            this.btnCancel.Margin = new System.Windows.Forms.Padding(2);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(127, 32);
             this.btnCancel.TabIndex = 32;
@@ -789,8 +1238,8 @@
             // 
             // btnSave
             // 
-            this.btnSave.Location = new System.Drawing.Point(308, 325);
-            this.btnSave.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.btnSave.Location = new System.Drawing.Point(752, 372);
+            this.btnSave.Margin = new System.Windows.Forms.Padding(2);
             this.btnSave.Name = "btnSave";
             this.btnSave.Size = new System.Drawing.Size(127, 32);
             this.btnSave.TabIndex = 29;
@@ -804,14 +1253,14 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoScroll = true;
             this.AutoSize = true;
-            this.ClientSize = new System.Drawing.Size(681, 363);
+            this.ClientSize = new System.Drawing.Size(1021, 410);
             this.ControlBox = false;
             this.Controls.Add(this.btnCancel);
             this.Controls.Add(this.btnSave);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.pnlContainer);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
-            this.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.Margin = new System.Windows.Forms.Padding(2);
             this.Name = "frmClass";
             this.Text = "Class Editor";
             this.Load += new System.EventHandler(this.frmClass_Load);
@@ -828,6 +1277,17 @@
             this.grpWarp.ResumeLayout(false);
             this.grpWarp.PerformLayout();
             this.pnlContainer.ResumeLayout(false);
+            this.groupBox10.ResumeLayout(false);
+            this.groupBox10.PerformLayout();
+            this.groupBox8.ResumeLayout(false);
+            this.groupBox8.PerformLayout();
+            this.groupBox9.ResumeLayout(false);
+            this.groupBox9.PerformLayout();
+            this.groupBox5.ResumeLayout(false);
+            this.groupBox5.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.picFace)).EndInit();
+            this.groupBox7.ResumeLayout(false);
+            this.groupBox7.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -895,5 +1355,42 @@
         private System.Windows.Forms.Button btnSave;
         private System.Windows.Forms.Button btnCancel;
         private System.Windows.Forms.Button btnDelete;
+        private System.Windows.Forms.GroupBox groupBox5;
+        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.PictureBox picFace;
+        private System.Windows.Forms.ComboBox cmbFace;
+        private System.Windows.Forms.GroupBox groupBox7;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.CheckBox chkLocked;
+        private System.Windows.Forms.GroupBox groupBox10;
+        private System.Windows.Forms.HScrollBar scrlMpRegen;
+        private System.Windows.Forms.HScrollBar scrlHpRegen;
+        private System.Windows.Forms.Label lblHpRegen;
+        private System.Windows.Forms.Label lblManaRegen;
+        private System.Windows.Forms.Label label14;
+        private System.Windows.Forms.GroupBox groupBox8;
+        private System.Windows.Forms.HScrollBar scrlExpIncrease;
+        private System.Windows.Forms.Label lblExpIncrease;
+        private System.Windows.Forms.TextBox txtBaseExp;
+        private System.Windows.Forms.Label label12;
+        private System.Windows.Forms.GroupBox groupBox9;
+        private System.Windows.Forms.HScrollBar scrlMpIncrease;
+        private System.Windows.Forms.RadioButton rdoPercentageIncrease;
+        private System.Windows.Forms.HScrollBar scrlHpIncrease;
+        private System.Windows.Forms.RadioButton rdoStaticIncrease;
+        private System.Windows.Forms.Label lblPointsIncrease;
+        private System.Windows.Forms.Label lblHpIncrease;
+        private System.Windows.Forms.HScrollBar scrlPointsIncrease;
+        private System.Windows.Forms.Label lblMpIncrease;
+        private System.Windows.Forms.Label lblSpeedIncrease;
+        private System.Windows.Forms.Label lblStrengthIncrease;
+        private System.Windows.Forms.Label lblMagicResistIncrease;
+        private System.Windows.Forms.HScrollBar scrlStrengthIncrease;
+        private System.Windows.Forms.Label lblArmorIncrease;
+        private System.Windows.Forms.HScrollBar scrlArmorIncrease;
+        private System.Windows.Forms.HScrollBar scrlMagicIncrease;
+        private System.Windows.Forms.HScrollBar scrlSpeedIncrease;
+        private System.Windows.Forms.Label lblMagicIncrease;
+        private System.Windows.Forms.HScrollBar scrlMagicResistIncrease;
     }
 }

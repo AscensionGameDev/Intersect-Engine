@@ -64,6 +64,8 @@ namespace Intersect_Server.Classes.Entities
         //Combat Status
         public long CastTime = 0;
         public int SpellCastSlot = 0;
+        public long RegenTimer = Environment.TickCount;
+        public long CombatTimer = 0;
 
         //Inventory
         public List<ItemInstance> Inventory = new List<ItemInstance>();
@@ -88,6 +90,8 @@ namespace Intersect_Server.Classes.Entities
         public long CollisionIndex;
 
         public int Target = -1;
+
+        public long AttackTimer = 0;
 
         //Initialization
         public Entity(int index)
@@ -136,6 +140,12 @@ namespace Intersect_Server.Classes.Entities
                     SendStatUpdate(i);
                 }
             }
+            //Regen Timers
+            if (Environment.TickCount > CombatTimer && Environment.TickCount > RegenTimer)
+            {
+                ProcessRegen();
+                RegenTimer = Environment.TickCount + ServerOptions.RegenTime;
+            }
             //Status timers
             int count = Status.Count;
             for (int i = 0; i < Status.Count; i++)
@@ -144,6 +154,11 @@ namespace Intersect_Server.Classes.Entities
             }
             //If there is a removal of a status, update it client sided.
             if (count > Status.Count) { PacketSender.SendEntityVitals(MyIndex, (int)EntityTypes.GlobalEntity, this); }
+        }
+
+        public virtual void ProcessRegen()
+        {
+            
         }
 
         //Movement
@@ -318,7 +333,14 @@ namespace Intersect_Server.Classes.Entities
             Dir = dir;
             if (this.GetType() == typeof(EventPageInstance))
             {
-                PacketSender.SendEntityDirTo(((EventPageInstance)this).Client, MyIndex, (int)EntityTypes.Event, Dir, CurrentMap);
+                if (((EventPageInstance) this).Client != null)
+                {
+                    PacketSender.SendEntityDirTo(((EventPageInstance)this).Client, MyIndex, (int)EntityTypes.Event, Dir, CurrentMap);
+                }
+                else
+                {
+                    PacketSender.SendEntityDir(MyIndex, (int)EntityTypes.Event, Dir, CurrentMap);
+                }
             }
             else
             {
@@ -389,12 +411,19 @@ namespace Intersect_Server.Classes.Entities
         }
         
         //Combat
+        public int CalculateAttackTime()
+        {
+            return (int)((Stat[(int) Stats.Speed].Value()/(float) Options.MaxStatValue)*(Options.MinAttackRate - Options.MaxAttackRate)) + Options.MinAttackRate;
+        }
         public void TryAttack(int enemyIndex, ProjectileBase isProjectile = null, int isSpell = -1)
         {
             double dmg = 0;
 
             if (Globals.Entities[enemyIndex] == null) return;
             if (!IsOneBlockAway(enemyIndex) && isProjectile == null && isSpell == -1) return;
+
+            if (isProjectile == null && isSpell == -1 && AttackTimer > Environment.TickCount) return;
+            AttackTimer = Environment.TickCount + CalculateAttackTime();
 
             //If Entity is resource, check for the correct tool and make sure its not a spell cast.
             if (Globals.Entities[enemyIndex].GetType() == typeof(Resource))
@@ -460,6 +489,7 @@ namespace Intersect_Server.Classes.Entities
                 dmg = DamageCalculator(Stat[(int) Stats.Attack].Value(),
                     Globals.Entities[enemyIndex].Stat[(int) Stats.Defense].Value());
                 if (dmg <= 0) dmg = 1; // Always do damage.
+                PacketSender.SendEntityAttack(MyIndex, (int) EntityTypes.GlobalEntity, CurrentMap, CalculateAttackTime());
             }
             else
             {
@@ -509,6 +539,9 @@ namespace Intersect_Server.Classes.Entities
 
             Globals.Entities[enemyIndex].Vital[(int)Vitals.Health] -= (int)dmg;
 
+            //If we took damage lets reset our combat timer
+            CombatTimer = Environment.TickCount + 5000;
+
             //If projectile, check if a splash spell is applied
             if (isProjectile != null)
             {
@@ -553,6 +586,7 @@ namespace Intersect_Server.Classes.Entities
                 {
                     ((Resource)Globals.Entities[enemyIndex]).SpawnResourceItems(MyIndex);
                 }
+                KilledEntity(Globals.Entities[enemyIndex]);
                 Globals.Entities[enemyIndex].Die();
             }
             else
@@ -564,12 +598,16 @@ namespace Intersect_Server.Classes.Entities
                     Globals.Entities[enemyIndex]);
             }
             // Add a timer before able to make the next move.
-            if (Globals.Entities[MyIndex].GetType() == typeof(Npc))
+            if (Globals.Entities[MyIndex] != null && Globals.Entities[MyIndex].GetType() == typeof(Npc))
             {
                 ((Npc) Globals.Entities[MyIndex]).MoveTimer = Environment.TickCount + (long) GetMovementTime();
             }
         }
-        public void CastSpell(int SpellNum, int SpellSlot = -1)
+        public virtual void KilledEntity(Entity en)
+        {
+            
+        }
+        public virtual void CastSpell(int SpellNum, int SpellSlot = -1)
         {
             var spellBase = SpellBase.GetSpell(SpellNum);
             if (spellBase != null)

@@ -118,6 +118,7 @@ namespace Intersect_Library.GameObjects
                 StatDiff[i] = myBuffer.ReadInteger();
             }
 
+            Projectile = myBuffer.ReadInteger();
             Data1 = myBuffer.ReadInteger();
             Data2 = myBuffer.ReadInteger();
             Data3 = myBuffer.ReadInteger();
@@ -168,6 +169,7 @@ namespace Intersect_Library.GameObjects
                 myBuffer.WriteInteger(StatDiff[i]);
             }
 
+            myBuffer.WriteInteger(Projectile);
             myBuffer.WriteInteger(Data1);
             myBuffer.WriteInteger(Data2);
             myBuffer.WriteInteger(Data3);

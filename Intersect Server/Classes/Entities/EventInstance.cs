@@ -21,6 +21,7 @@
 */
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Intersect_Library;
 using Intersect_Library.GameObjects;
 using Intersect_Library.GameObjects.Events;
@@ -336,12 +337,12 @@ namespace Intersect_Server.Classes.Entities
                 case 8: //Self Switch
                     if (IsGlobal)
                     {
-                        for (int i = 0; i < MapInstance.GetMap(MapNum).GlobalEvents.Count; i++)
+                        var evts = MapInstance.GetMap(MapNum).GlobalEventInstances.Values.ToList();
+                        for (int i = 0; i < evts.Count; i++)
                         {
-                            if (MapInstance.GetMap(MapNum).GlobalEvents[i] != null &&
-                                MapInstance.GetMap(MapNum).GlobalEvents[i].BaseEvent == BaseEvent)
+                            if (evts[i] != null && evts[i].BaseEvent == BaseEvent)
                             {
-                                if (MapInstance.GetMap(MapNum).GlobalEvents[i].SelfSwitch[conditionCommand.Ints[1]] == Convert.ToBoolean(conditionCommand.Ints[2]))
+                                if (evts[i].SelfSwitch[conditionCommand.Ints[1]] == Convert.ToBoolean(conditionCommand.Ints[2]))
                                     return true;
                             }
                         }
@@ -467,12 +468,12 @@ namespace Intersect_Server.Classes.Entities
                 case EventCommandType.SetSelfSwitch:
                     if (IsGlobal)
                     {
-                        for (int i = 0; i < MapInstance.GetMap(MapNum).GlobalEvents.Count; i++)
+                        var evts = MapInstance.GetMap(MapNum).GlobalEventInstances.Values.ToList();
+                        for (int i = 0; i < evts.Count; i++)
                         {
-                            if (MapInstance.GetMap(MapNum).GlobalEvents[i] != null &&
-                                MapInstance.GetMap(MapNum).GlobalEvents[i].BaseEvent == BaseEvent)
+                            if (evts[i] != null && evts[i].BaseEvent == BaseEvent)
                             {
-                                MapInstance.GetMap(MapNum).GlobalEvents[i].SelfSwitch[command.Ints[0]] = Convert.ToBoolean(command.Ints[1]);
+                                evts[i].SelfSwitch[command.Ints[0]] = Convert.ToBoolean(command.Ints[1]);
                             }
                         }
                     }
@@ -938,6 +939,17 @@ namespace Intersect_Server.Classes.Entities
                     MyPlayer.OpenShop(CallStack.Peek().Page.CommandLists[CallStack.Peek().ListIndex]
                         .Commands[CallStack.Peek().CommandIndex].Ints[0]);
                     CallStack.Peek().WaitingForResponse = 2;
+                    CallStack.Peek().CommandIndex++;
+                    break;
+                case EventCommandType.SetClass:
+                    if (ClassBase.GetClass(CallStack.Peek().Page.CommandLists[CallStack.Peek().ListIndex]
+                        .Commands[CallStack.Peek().CommandIndex].Ints[0]) != null)
+                    {
+                        MyPlayer.Class = CallStack.Peek().Page.CommandLists[CallStack.Peek().ListIndex]
+                            .Commands[CallStack.Peek().CommandIndex].Ints[0];
+                    }
+                    PacketSender.SendEntityDataToProximity(MyPlayer.MyIndex, (int) EntityTypes.Player, MyPlayer.Data(),
+                        MyPlayer);
                     CallStack.Peek().CommandIndex++;
                     break;
             }

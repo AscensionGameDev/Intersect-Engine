@@ -163,6 +163,12 @@
     <Compile Include="Forms\Editors\Event Commands\EventCommand_Label.Designer.cs">
       <DependentUpon>EventCommand_Label.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\Editors\Event Commands\EventCommand_SetClass.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Forms\Editors\Event Commands\EventCommand_SetClass.Designer.cs">
+      <DependentUpon>EventCommand_SetClass.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\Editors\Event Commands\EventCommand_OpenShop.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -455,6 +461,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\Editors\Event Commands\EventCommand_Label.resx">
       <DependentUpon>EventCommand_Label.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Editors\Event Commands\EventCommand_SetClass.resx">
+      <DependentUpon>EventCommand_SetClass.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\Editors\Event Commands\EventCommand_OpenShop.resx">
       <DependentUpon>EventCommand_OpenShop.cs</DependentUpon>

@@ -30,8 +30,8 @@ namespace Intersect_Library
         public static List<string> ToolTypes = new List<string>();
 
         //Misc
-        public static int ItemDespawnTime = 15000; //15 seconds
-        public static int ItemRespawnTime = 15000; //15 seconds
+        public static int MinAttackRate = 1000; //1 attack per second
+        public static int MaxAttackRate = 400; //1 attack per 400ms
 
         //Maps
         public static int GameBorderStyle = 0; //0 For Smart Borders, 1 for Non-Seamless, 2 for black borders
@@ -81,6 +81,8 @@ namespace Intersect_Library
             }
 
             //Misc
+            MinAttackRate = bf.ReadInteger();
+            MaxAttackRate = bf.ReadInteger();
 
             //Map
             GameBorderStyle = bf.ReadInteger();

@@ -555,6 +555,7 @@ namespace Intersect_Client.Classes.Entities
             Anim = new AnimationInstance(animBase, true, autoRotate);
             AutoRotate = autoRotate;
             ProjectileBase = projectileBase;
+            TransmittionTimer = Globals.System.GetTimeMS() + (long)((float)ProjectileBase.Speed / (float)ProjectileBase.Range);
         }
 
         public void Dispose()

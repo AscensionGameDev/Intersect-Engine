@@ -114,6 +114,22 @@ namespace Intersect_Editor.Forms
             if (MyEvent.CommonEvent)
             {
                 grpEntityOptions.Hide();
+                cmbTrigger.Items.Clear();
+                cmbTrigger.Items.Add("None");
+                cmbTrigger.Items.Add("Login");
+                cmbTrigger.Items.Add("Level Up");
+            }
+            else
+            {
+                cmbTrigger.Items.Clear();
+                cmbTrigger.Items.Add("Action Button");
+                cmbTrigger.Items.Add("Player Touch");
+                cmbTrigger.Items.Add("Autorun");
+                //Disabled until we implement it
+                //cmbTrigger.Items.Add("Projectile Hit");
+                cmbTriggerVal.Items.Clear();
+                cmbTriggerVal.Items.Add("None");
+                cmbTriggerVal.Items.AddRange(Database.GetGameObjectList(GameObject.Projectile));
             }
             chkIsGlobal.Checked = Convert.ToBoolean(MyEvent.IsGlobal);
             if (MyEvent.CommonEvent) chkIsGlobal.Hide();
@@ -146,6 +162,19 @@ namespace Intersect_Editor.Forms
             chkWalkThrough.Checked = Convert.ToBoolean(CurrentPage.Passable);
             cmbLayering.SelectedIndex = CurrentPage.Layer;
             cmbTrigger.SelectedIndex = CurrentPage.Trigger;
+            cmbTriggerVal.Hide();
+            lblTriggerVal.Hide();
+            if (!MyEvent.CommonEvent)
+            {
+                if (cmbTrigger.SelectedIndex == (int) EventPage.EventTriggers.ProjectileHit)
+                {
+                    lblTriggerVal.Show();
+                    lblTriggerVal.Text = "Projectile: ";
+                    cmbTriggerVal.Show();
+                    cmbTriggerVal.SelectedIndex =
+                        Database.GameObjectListIndex(GameObject.Projectile, CurrentPage.TriggerVal) + 1;
+                }
+            }
             cmbPreviewFace.SelectedIndex = cmbPreviewFace.Items.IndexOf(CurrentPage.FaceGraphic);
             if (cmbPreviewFace.SelectedIndex == -1)
             {
@@ -733,6 +762,8 @@ namespace Intersect_Editor.Forms
                     return "Open Bank";
                 case EventCommandType.OpenShop:
                     return "Open Shop [" + ShopBase.GetName(command.Ints[0]) + "]";
+                case EventCommandType.SetClass:
+                    return "Set Class [" + ClassBase.GetName(command.Ints[0]) + "]";
                 default:
                     return "Unknown Command";
             }
@@ -859,6 +890,12 @@ namespace Intersect_Editor.Forms
             if (tmpCommand.Type == EventCommandType.SetSwitch || tmpCommand.Type == EventCommandType.SetSelfSwitch)
             {
                 tmpCommand.Ints[2] = 1;
+            }
+            if (tmpCommand.Type == EventCommandType.SetMoveRoute ||
+                tmpCommand.Type == EventCommandType.WaitForRouteCompletion && MyEvent.CommonEvent)
+            {
+                MessageBox.Show("Cannot use this command in common events.");
+                return;
             }
             if (_isInsert)
             {
@@ -989,6 +1026,9 @@ namespace Intersect_Editor.Forms
                     break;
                 case EventCommandType.OpenShop:
                     cmdWindow = new EventCommand_OpenShop(command, this);
+                    break;
+                case EventCommandType.SetClass:
+                    cmdWindow = new EventCommand_SetClass(command,this);
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
@@ -1170,6 +1210,18 @@ namespace Intersect_Editor.Forms
         private void cmbTrigger_SelectedIndexChanged(object sender, EventArgs e)
         {
             CurrentPage.Trigger = cmbTrigger.SelectedIndex;
+            cmbTriggerVal.Hide();
+            lblTriggerVal.Hide();
+            if (!MyEvent.CommonEvent)
+            {
+                if (cmbTrigger.SelectedIndex == (int)EventPage.EventTriggers.ProjectileHit)
+                {
+                    cmbTriggerVal.Show();
+                    lblTriggerVal.Show();
+                    lblTriggerVal.Text = "Projectile: ";
+                    cmbTriggerVal.SelectedIndex = 0;
+                }
+            }
         }
         private void chkHideName_CheckedChanged(object sender, EventArgs e)
         {

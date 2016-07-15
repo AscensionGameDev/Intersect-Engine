@@ -146,8 +146,8 @@ namespace Intersect_Client_MonoGame.Classes.SFML.Input
 
                 if (mState.X != _mouseX || mState.Y != _mouseY)
                 {
-                    _mouseX = mState.X;
-                    _mouseY = mState.Y;
+                    _mouseX = (int)(mState.X * ((MonoRenderer)GameGraphics.Renderer).GetMouseOffset().X);
+                    _mouseY = (int)(mState.Y * ((MonoRenderer)GameGraphics.Renderer).GetMouseOffset().Y);
                     Gui.GwenInput.ProcessMessage(new GwenInputMessage(IntersectInput.InputEvent.MouseMove,
                         GetMousePosition(), (int) MouseButtons.None, Keys.Alt));
                 }

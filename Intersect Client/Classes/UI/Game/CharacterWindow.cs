@@ -287,7 +287,7 @@ namespace Intersect_Client.Classes.UI.Game
         {
             if (_characterWindow.IsHidden) { return; }
             _characterName.Text = Globals.Me.MyName;
-            _characterLevelAndClass.Text = "Level: " + Globals.Me.Level + " Warrior";//+ ClassBase.GetName(Globals.Me.);
+            _characterLevelAndClass.Text = "Level: " + Globals.Me.Level + " " + ClassBase.GetName(Globals.Me.Class);//+ ClassBase.GetName(Globals.Me.);
 
             //Load Portrait
             GameTexture faceTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Face, Globals.Me.Face);

@@ -620,6 +620,12 @@ namespace Intersect_Server.Classes.Networking
             PacketSender.SendEntityDataTo(client, index, (int)EntityTypes.Player, client.Entity.Data(), client.Entity);
             Globals.Entities[index].Warp(Globals.Entities[index].CurrentMap, Globals.Entities[index].CurrentX, Globals.Entities[index].CurrentY, Globals.Entities[index].Dir);
 
+            //Search for login activated events and run them
+            foreach (var evt in EventBase.GetObjects())
+            {
+                ((Player) client.Entity).StartCommonEvent(evt.Value,(int)EventPage.CommonEventTriggers.JoinGame);
+            }
+
         }
 
         private static void HandleActivateEvent(Client client, byte[] packet)
@@ -677,7 +683,7 @@ namespace Intersect_Server.Classes.Networking
             var Sprite = bf.ReadInteger();
             var index = client.EntityIndex;
             var classBase = ClassBase.GetClass(Class);
-            if (classBase == null)
+            if (classBase == null || classBase.Locked == 1)
             {
                 PacketSender.SendLoginError(client, "Invalid class selected. Try again.");
                 return;
@@ -695,19 +701,20 @@ namespace Intersect_Server.Classes.Networking
                 if (classBase.Sprites.Count > 0)
                 {
                     player.MySprite = classBase.Sprites[Sprite].Sprite;
+                    player.Face = classBase.Sprites[Sprite].Face;
                     player.Gender = classBase.Sprites[Sprite].Gender;
                 }
                 player.WarpToSpawn(true);
-                player.Vital[(int)Vitals.Health] = classBase.MaxVital[(int)Vitals.Health];
-                player.Vital[(int)Vitals.Mana] = classBase.MaxVital[(int)Vitals.Mana];
-                player.MaxVital[(int)Vitals.Health] = classBase.MaxVital[(int)Vitals.Health];
-                player.MaxVital[(int)Vitals.Mana] = classBase.MaxVital[(int)Vitals.Mana];
+                player.Vital[(int)Vitals.Health] = classBase.BaseVital[(int)Vitals.Health];
+                player.Vital[(int)Vitals.Mana] = classBase.BaseVital[(int)Vitals.Mana];
+                player.MaxVital[(int)Vitals.Health] = classBase.BaseVital[(int)Vitals.Health];
+                player.MaxVital[(int)Vitals.Mana] = classBase.BaseVital[(int)Vitals.Mana];
 
                 for (int i = 0; i < (int)Stats.StatCount; i++)
                 {
-                    player.Stat[i].Stat = classBase.Stat[i];
+                    player.Stat[i].Stat = classBase.BaseStat[i];
                 }
-                player.StatPoints = classBase.Points;
+                player.StatPoints = classBase.BasePoints;
 
                 for (int i = 0; i < classBase.Spells.Count; i++)
                 {

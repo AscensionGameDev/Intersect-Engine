@@ -173,9 +173,7 @@ namespace Intersect_Editor.Forms.Controls
             {
                 if (e.Node.Tag.GetType() == typeof(MapListMap))
                 {
-                    if (e.Node.Text ==
-                        ((MapListMap)e.Node.Tag).MapNum + @". " +
-                        ((MapListMap)e.Node.Tag).Name && Chronological)
+                    if (e.Node.Text == ((MapListMap)e.Node.Tag).Name && Chronological)
                     { 
                         e.Node.Text = ((MapListMap)e.Node.Tag).Name;
                         e.CancelEdit = true;
@@ -216,7 +214,7 @@ namespace Intersect_Editor.Forms.Controls
             {
                 for (int i = 0; i < MapList.GetOrderedMaps().Count; i++)
                 {
-                    tmpNode = list.Nodes.Add(MapList.GetOrderedMaps()[i].MapNum + ". " + MapList.GetOrderedMaps()[i].Name);
+                    tmpNode = list.Nodes.Add(MapList.GetOrderedMaps()[i].Name);
                     tmpNode.Tag = (MapList.GetOrderedMaps()[i]);
                     tmpNode.ImageIndex = 1;
                     tmpNode.SelectedImageIndex = 1;

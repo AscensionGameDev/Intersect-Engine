@@ -133,17 +133,21 @@ namespace Intersect_Editor.Forms
             i = 0;
 
             cmbClass.Items.Clear();
+            cmbClass.Items.Add("None");
             cmbClass.Items.AddRange(Database.GetGameObjectList(GameObject.Class));
 
             scrlProjectile.Maximum = ProjectileBase.ObjectCount()-1;
             scrlSpell.Maximum = SpellBase.ObjectCount() - 1;
             scrlAnim.Maximum = AnimationBase.ObjectCount()-1;
-            cmbPaperdoll.Items.Clear();
-            cmbPaperdoll.Items.Add("None");
+            cmbMalePaperdoll.Items.Clear();
+            cmbMalePaperdoll.Items.Add("None");
+            cmbFemalePaperdoll.Items.Clear();
+            cmbFemalePaperdoll.Items.Add("None");
             string[] paperdollnames = GameContentManager.GetTextureNames(GameContentManager.TextureType.Paperdoll);
             for (i = 0; i < paperdollnames.Length; i++)
             {
-                cmbPaperdoll.Items.Add(paperdollnames[i]);
+                cmbMalePaperdoll.Items.Add(paperdollnames[i]);
+                cmbFemalePaperdoll.Items.Add(paperdollnames[i]);
             }
 
             UpdateEditor();
@@ -177,7 +181,7 @@ namespace Intersect_Editor.Forms
                 cmbPic.SelectedIndex = cmbPic.FindString(_editorItem.Pic);
                 scrlPrice.Value = _editorItem.Price;
                 scrlLevelReq.Value = _editorItem.LevelReq;
-                cmbClass.SelectedIndex = _editorItem.ClassReq;
+                cmbClass.SelectedIndex = Database.GameObjectListIndex(GameObject.Class,_editorItem.ClassReq) + 1;
                 scrlAttackReq.Value = _editorItem.StatsReq[0];
                 scrlAbilityPowerReq.Value = _editorItem.StatsReq[1];
                 scrlDefenseReq.Value = _editorItem.StatsReq[2];
@@ -192,10 +196,12 @@ namespace Intersect_Editor.Forms
                 scrlRange.Value = _editorItem.StatGrowth;
                 cmbEquipmentSlot.SelectedIndex = _editorItem.Data1;
                 cmbToolType.SelectedIndex = _editorItem.Tool;
+                cmbGender.SelectedIndex = _editorItem.GenderReq;
                 if (_editorItem.ItemType == (int)ItemTypes.Equipment) cmbEquipmentBonus.SelectedIndex = _editorItem.Data2;
                 scrlEffectAmount.Value = _editorItem.Data3;
                 chk2Hand.Checked = Convert.ToBoolean(_editorItem.Data4);
-                cmbPaperdoll.SelectedIndex = cmbPaperdoll.FindString(_editorItem.Paperdoll);
+                cmbMalePaperdoll.SelectedIndex = cmbMalePaperdoll.FindString(_editorItem.MalePaperdoll);
+                cmbFemalePaperdoll.SelectedIndex = cmbFemalePaperdoll.FindString(_editorItem.FemalePaperdoll);
                 if (cmbPic.SelectedIndex > 0)
                 {
                     picItem.BackgroundImage = System.Drawing.Bitmap.FromFile("resources/items/" + cmbPic.Text);
@@ -204,14 +210,24 @@ namespace Intersect_Editor.Forms
                 {
                     picItem.BackgroundImage = null;
                 }
-                if (cmbPaperdoll.SelectedIndex > 0)
+                if (cmbMalePaperdoll.SelectedIndex > 0)
                 {
-                    picPaperdoll.BackgroundImage =
-                        System.Drawing.Bitmap.FromFile("resources/paperdolls/" + cmbPaperdoll.Text);
+                    picMalePaperdoll.BackgroundImage =
+                        System.Drawing.Bitmap.FromFile("resources/paperdolls/" + cmbMalePaperdoll.Text);
                 }
                 else
                 {
-                    picPaperdoll.BackgroundImage = null;
+                    picFemalePaperdoll.BackgroundImage = null;
+                }
+
+                if (cmbFemalePaperdoll.SelectedIndex > 0)
+                {
+                    picFemalePaperdoll.BackgroundImage =
+                        System.Drawing.Bitmap.FromFile("resources/paperdolls/" + cmbFemalePaperdoll.Text);
+                }
+                else
+                {
+                    picFemalePaperdoll.BackgroundImage = null;
                 }
 
                 //External References
@@ -286,6 +302,7 @@ namespace Intersect_Editor.Forms
             {
                 gbEquipment.Visible = true;
                 cmbEquipmentSlot.SelectedIndex = _editorItem.Data1;
+                cmbEquipmentBonus.SelectedIndex = _editorItem.Data2;
             }
 
             _editorItem.ItemType = cmbType.SelectedIndex;
@@ -356,7 +373,7 @@ namespace Intersect_Editor.Forms
 
         private void cmbClass_SelectedIndexChanged(object sender, EventArgs e)
         {
-            _editorItem.ClassReq = cmbClass.SelectedIndex;
+            _editorItem.ClassReq = Database.GameObjectIdFromList(GameObject.Class,cmbClass.SelectedIndex-1);
         }
 
         private void scrlSpell_Scroll(object sender, EventArgs e)
@@ -422,9 +439,9 @@ namespace Intersect_Editor.Forms
 
         private void cmbPaperdoll_SelectedIndexChanged(object sender, EventArgs e)
         {
-            _editorItem.Paperdoll = cmbPaperdoll.Text;
-            if (cmbPaperdoll.SelectedIndex > 0) { picPaperdoll.BackgroundImage = System.Drawing.Bitmap.FromFile("resources/paperdolls/" + cmbPaperdoll.Text); }
-            else { picPaperdoll.BackgroundImage = null; }
+            _editorItem.MalePaperdoll = cmbMalePaperdoll.Text;
+            if (cmbMalePaperdoll.SelectedIndex > 0) { picMalePaperdoll.BackgroundImage = System.Drawing.Bitmap.FromFile("resources/paperdolls/" + cmbMalePaperdoll.Text); }
+            else { picMalePaperdoll.BackgroundImage = null; }
         }
 
         private void txtDesc_TextChanged(object sender, EventArgs e)
@@ -514,6 +531,18 @@ namespace Intersect_Editor.Forms
                 _editorItem.Data1 = -1;
                 lblEvent.Text = "Event: None";
             }
+        }
+
+        private void cmbGender_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            _editorItem.GenderReq = cmbGender.SelectedIndex;
+        }
+
+        private void cmbFemalePaperdoll_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            _editorItem.FemalePaperdoll = cmbFemalePaperdoll.Text;
+            if (cmbFemalePaperdoll.SelectedIndex > 0) { picFemalePaperdoll.BackgroundImage = System.Drawing.Bitmap.FromFile("resources/paperdolls/" + cmbFemalePaperdoll.Text); }
+            else { picFemalePaperdoll.BackgroundImage = null; }
         }
     }
 }

@@ -33,6 +33,7 @@ using IntersectClientExtras.Graphics;
 using Intersect_Client.Classes.General;
 using Intersect_Client.Classes.Items;
 using Intersect_Client.Classes.Maps;
+using Intersect_Client.Classes.Networking;
 using Intersect_Client.Classes.Spells;
 using Intersect_Library;
 using Intersect_Library.GameObjects;
@@ -56,6 +57,7 @@ namespace Intersect_Client.Classes.Entities
         public int HideName = 0;
         public int Level = 1;
         public bool IsPlayer = false;
+        public int Gender = 0;
 
         //Extras
         public string Face = "";
@@ -97,6 +99,9 @@ namespace Intersect_Client.Classes.Entities
         //Dashing instance
         public DashInstance Dashing = null;
         public Queue<DashInstance> DashQueue = new Queue<DashInstance>(); 
+
+        //Attacking
+        public long AttackTimer = 0;
 
         private long _lastUpdate;
         private long _walkTimer;
@@ -422,7 +427,14 @@ namespace Intersect_Client.Classes.Entities
                 }
                 destRectangle.X = (int)Math.Ceiling(destRectangle.X);
                 destRectangle.Y = (int)Math.Ceiling(destRectangle.Y);
-                srcRectangle = new FloatRect(WalkFrame * (int)entityTex.GetWidth() / 4, d * (int)entityTex.GetHeight() / 4, (int)entityTex.GetWidth() / 4, (int)entityTex.GetHeight() / 4);
+                if (AttackTimer > Environment.TickCount)
+                {
+                    srcRectangle = new FloatRect(3 * (int)entityTex.GetWidth() / 4, d * (int)entityTex.GetHeight() / 4, (int)entityTex.GetWidth() / 4, (int)entityTex.GetHeight() / 4);
+                }
+                else
+                {
+                    srcRectangle = new FloatRect(WalkFrame * (int)entityTex.GetWidth() / 4, d * (int)entityTex.GetHeight() / 4, (int)entityTex.GetWidth() / 4, (int)entityTex.GetHeight() / 4);
+                }
                 destRectangle.Width = srcRectangle.Width;
                 destRectangle.Height = srcRectangle.Height;
                 GameGraphics.DrawGameTexture(entityTex, srcRectangle, destRectangle, new Color(alpha, 255, 255, 255));
@@ -437,7 +449,22 @@ namespace Intersect_Client.Classes.Entities
                         {
                             if (Equipment[Options.EquipmentSlots.IndexOf(Options.PaperdollOrder[z])] > -1 && ItemBase.GetItem(Inventory[Equipment[Options.EquipmentSlots.IndexOf(Options.PaperdollOrder[z])]].ItemNum) != null)
                             {
-                                DrawEquipment(ItemBase.GetItem(Inventory[Equipment[Options.EquipmentSlots.IndexOf(Options.PaperdollOrder[z])]].ItemNum).Paperdoll, alpha);
+                                if (Gender == 0)
+                                {
+                                    DrawEquipment(
+                                        ItemBase.GetItem(
+                                            Inventory[
+                                                Equipment[Options.EquipmentSlots.IndexOf(Options.PaperdollOrder[z])]]
+                                                .ItemNum).MalePaperdoll, alpha);
+                                }
+                                else
+                                {
+                                    DrawEquipment(
+                                        ItemBase.GetItem(
+                                            Inventory[
+                                                Equipment[Options.EquipmentSlots.IndexOf(Options.PaperdollOrder[z])]]
+                                                .ItemNum).FemalePaperdoll, alpha);
+                                }
                             }
                         }
                     }

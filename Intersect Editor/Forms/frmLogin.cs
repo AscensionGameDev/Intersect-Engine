@@ -175,6 +175,7 @@ namespace Intersect_Editor.Forms
 
         private void txtPassword_KeyDown(object sender, KeyEventArgs e)
         {
+            if (e.KeyCode == Keys.Return) return;
             if (SavedPassword != "")
             {
                 SavedPassword = "";
@@ -185,6 +186,7 @@ namespace Intersect_Editor.Forms
 
         private void txtUsername_KeyDown(object sender, KeyEventArgs e)
         {
+            if (e.KeyCode == Keys.Return) return;
             if (SavedPassword != "")
             {
                 SavedPassword = "";

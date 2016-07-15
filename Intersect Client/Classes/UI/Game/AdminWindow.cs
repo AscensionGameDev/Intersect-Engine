@@ -145,7 +145,7 @@ namespace Intersect_Client.Classes.UI.Game
             {
                 for (int i = 0; i < MapList.GetOrderedMaps().Count; i++)
                 {
-                    tmpNode = _mapList.AddNode(MapList.GetOrderedMaps()[i].MapNum + ". " + MapList.GetOrderedMaps()[i].Name);
+                    tmpNode = _mapList.AddNode(MapList.GetOrderedMaps()[i].Name);
                     tmpNode.UserData = (MapList.GetOrderedMaps()[i]).MapNum;
                     tmpNode.DoubleClicked += tmpNode_DoubleClicked;
                     tmpNode.Clicked += tmpNode_DoubleClicked;
@@ -174,13 +174,13 @@ namespace Intersect_Client.Classes.UI.Game
                     {
                         if (parent == null)
                         {
-                            tmpNode = _mapList.AddNode(((MapListMap)mapList.Items[i]).MapNum + ". " + mapList.Items[i].Name);
+                            tmpNode = _mapList.AddNode(mapList.Items[i].Name);
                             tmpNode.UserData = ((MapListMap)mapList.Items[i]).MapNum;
                             tmpNode.DoubleClicked += tmpNode_DoubleClicked;
                         }
                         else
                         {
-                            tmpNode = parent.AddNode(((MapListMap)mapList.Items[i]).MapNum + ". " + mapList.Items[i].Name);
+                            tmpNode = parent.AddNode(mapList.Items[i].Name);
                             tmpNode.UserData = ((MapListMap)mapList.Items[i]).MapNum;
                             tmpNode.DoubleClicked += tmpNode_DoubleClicked;
                         }

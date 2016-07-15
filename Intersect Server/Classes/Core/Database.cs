@@ -44,7 +44,7 @@ namespace Intersect_Server.Classes.Core
     {
         private static SqliteConnection _dbConnection;
         private static Object _dbLock = new Object();
-        private const int DbVersion = 1;
+        private const int DbVersion = 2;
         private const string DbFilename = "resources/intersect.db";
 
         //Database Variables
@@ -151,6 +151,14 @@ namespace Intersect_Server.Classes.Core
         private const string CHAR_VARIABLE_SLOT = "slot";
         private const string CHAR_VARIABLE_VAL = "val";
 
+        //Char Quests Table Constants
+        private const string CHAR_QUESTS_TABLE = "char_quests";
+        private const string CHAR_QUEST_CHAR_ID = "char_id";
+        private const string CHAR_QUEST_ID = "quest_id";
+        private const string CHAR_QUEST_TASK = "task";
+        private const string CHAR_QUEST_TASK_PROGRESS = "task_progress";
+        private const string CHAR_QUEST_COMPLETED = "completed";
+
         //GameObject Table Constants
         private const string GAME_OBJECT_ID = "id";
         private const string GAME_OBJECT_DELETED = "deleted";
@@ -214,6 +222,7 @@ namespace Intersect_Server.Classes.Core
             CreateCharacterBankTable();
             CreateCharacterSwitchesTable();
             CreateCharacterVariablesTable();
+            CreateCharacterQuestsTable();
             CreateGameObjectTables();
             CreateMapListTable();
             CreateBansTable();
@@ -411,6 +420,22 @@ namespace Intersect_Server.Classes.Core
                 + CHAR_VARIABLE_SLOT + " INTEGER,"
                 + CHAR_VARIABLE_VAL + " INTEGER,"
                 + " unique('" + CHAR_VARIABLE_CHAR_ID + "','" + CHAR_VARIABLE_SLOT + "')"
+                + ");";
+            using (var createCommand = _dbConnection.CreateCommand())
+            {
+                createCommand.CommandText = cmd;
+                createCommand.ExecuteNonQuery();
+            }
+        }
+        private static void CreateCharacterQuestsTable()
+        {
+            var cmd = "CREATE TABLE " + CHAR_QUESTS_TABLE + " ("
+                + CHAR_QUEST_CHAR_ID + " INTEGER,"
+                + CHAR_QUEST_ID + " INTEGER,"
+                + CHAR_QUEST_TASK + " INTEGER,"
+                + CHAR_QUEST_TASK_PROGRESS + " INTEGER,"
+                + CHAR_QUEST_COMPLETED + " INTEGER,"
+                + " unique('" + CHAR_QUEST_CHAR_ID + "','" + CHAR_QUEST_ID + "')"
                 + ");";
             using (var createCommand = _dbConnection.CreateCommand())
             {
@@ -1617,11 +1642,11 @@ namespace Intersect_Server.Classes.Core
                 cls.Sprites.Add(defaultFemale);
                 for (int i = 0; i < (int)Vitals.VitalCount; i++)
                 {
-                    cls.MaxVital[i] = 20;
+                    cls.BaseVital[i] = 20;
                 }
                 for (int i = 0; i < (int)Stats.StatCount; i++)
                 {
-                    cls.Stat[i] = 20;
+                    cls.BaseStat[i] = 20;
                 }
                 SaveGameObject(cls);
             }

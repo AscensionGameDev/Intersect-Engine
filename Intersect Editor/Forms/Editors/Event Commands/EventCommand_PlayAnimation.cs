@@ -49,8 +49,8 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             _currentMap = currentMap;
             cmbAnimation.Items.Clear();
             cmbAnimation.Items.AddRange(Database.GetGameObjectList(GameObject.Animation));
-            cmbAnimation.SelectedIndex = _myCommand.Ints[0];
-            cmbConditionType.SelectedIndex = Database.GameObjectListIndex(GameObject.Animation, _myCommand.Ints[1]);
+            cmbAnimation.SelectedIndex = Database.GameObjectListIndex(GameObject.Animation,_myCommand.Ints[0]);
+            cmbConditionType.SelectedIndex =  _myCommand.Ints[1];
             UpdateFormElements();
             switch (cmbConditionType.SelectedIndex)
             {

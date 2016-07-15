@@ -53,6 +53,8 @@ namespace Intersect_Editor.Forms
             this.label1 = new System.Windows.Forms.Label();
             this.txtName = new System.Windows.Forms.TextBox();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.label8 = new System.Windows.Forms.Label();
+            this.cmbGender = new System.Windows.Forms.ComboBox();
             this.label3 = new System.Windows.Forms.Label();
             this.cmbClass = new System.Windows.Forms.ComboBox();
             this.lblLevelReq = new System.Windows.Forms.Label();
@@ -68,6 +70,9 @@ namespace Intersect_Editor.Forms
             this.scrlAbilityPowerReq = new System.Windows.Forms.HScrollBar();
             this.scrlAttackReq = new System.Windows.Forms.HScrollBar();
             this.gbEquipment = new System.Windows.Forms.GroupBox();
+            this.cmbFemalePaperdoll = new System.Windows.Forms.ComboBox();
+            this.label10 = new System.Windows.Forms.Label();
+            this.picFemalePaperdoll = new System.Windows.Forms.PictureBox();
             this.lblProjectile = new System.Windows.Forms.Label();
             this.scrlProjectile = new System.Windows.Forms.HScrollBar();
             this.lblEffectPercent = new System.Windows.Forms.Label();
@@ -79,11 +84,11 @@ namespace Intersect_Editor.Forms
             this.chk2Hand = new System.Windows.Forms.CheckBox();
             this.cmbEquipmentSlot = new System.Windows.Forms.ComboBox();
             this.label7 = new System.Windows.Forms.Label();
-            this.cmbPaperdoll = new System.Windows.Forms.ComboBox();
+            this.cmbMalePaperdoll = new System.Windows.Forms.ComboBox();
             this.label5 = new System.Windows.Forms.Label();
             this.lblRange = new System.Windows.Forms.Label();
             this.scrlRange = new System.Windows.Forms.HScrollBar();
-            this.picPaperdoll = new System.Windows.Forms.PictureBox();
+            this.picMalePaperdoll = new System.Windows.Forms.PictureBox();
             this.lblDamage = new System.Windows.Forms.Label();
             this.scrlDamage = new System.Windows.Forms.HScrollBar();
             this.lblSpeed = new System.Windows.Forms.Label();
@@ -113,7 +118,8 @@ namespace Intersect_Editor.Forms
             ((System.ComponentModel.ISupportInitialize)(this.picItem)).BeginInit();
             this.groupBox3.SuspendLayout();
             this.gbEquipment.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.picPaperdoll)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.picFemalePaperdoll)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.picMalePaperdoll)).BeginInit();
             this.gbConsumable.SuspendLayout();
             this.gbSpell.SuspendLayout();
             this.grpEvent.SuspendLayout();
@@ -178,7 +184,7 @@ namespace Intersect_Editor.Forms
             // btnCancel
             // 
             this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.btnCancel.Location = new System.Drawing.Point(475, 455);
+            this.btnCancel.Location = new System.Drawing.Point(605, 456);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(190, 28);
             this.btnCancel.TabIndex = 4;
@@ -188,7 +194,7 @@ namespace Intersect_Editor.Forms
             // 
             // btnSave
             // 
-            this.btnSave.Location = new System.Drawing.Point(279, 455);
+            this.btnSave.Location = new System.Drawing.Point(409, 456);
             this.btnSave.Name = "btnSave";
             this.btnSave.Size = new System.Drawing.Size(190, 28);
             this.btnSave.TabIndex = 2;
@@ -349,6 +355,8 @@ namespace Intersect_Editor.Forms
             // 
             // groupBox3
             // 
+            this.groupBox3.Controls.Add(this.label8);
+            this.groupBox3.Controls.Add(this.cmbGender);
             this.groupBox3.Controls.Add(this.label3);
             this.groupBox3.Controls.Add(this.cmbClass);
             this.groupBox3.Controls.Add(this.lblLevelReq);
@@ -370,6 +378,29 @@ namespace Intersect_Editor.Forms
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Requirements";
             // 
+            // label8
+            // 
+            this.label8.AutoSize = true;
+            this.label8.Location = new System.Drawing.Point(124, 168);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(45, 13);
+            this.label8.TabIndex = 15;
+            this.label8.Text = "Gender:";
+            // 
+            // cmbGender
+            // 
+            this.cmbGender.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbGender.FormattingEnabled = true;
+            this.cmbGender.Items.AddRange(new object[] {
+            "None",
+            "Male",
+            "Female"});
+            this.cmbGender.Location = new System.Drawing.Point(127, 195);
+            this.cmbGender.Name = "cmbGender";
+            this.cmbGender.Size = new System.Drawing.Size(80, 21);
+            this.cmbGender.TabIndex = 14;
+            this.cmbGender.SelectedIndexChanged += new System.EventHandler(this.cmbGender_SelectedIndexChanged);
+            // 
             // label3
             // 
             this.label3.AutoSize = true;
@@ -387,7 +418,7 @@ namespace Intersect_Editor.Forms
             "None"});
             this.cmbClass.Location = new System.Drawing.Point(13, 195);
             this.cmbClass.Name = "cmbClass";
-            this.cmbClass.Size = new System.Drawing.Size(194, 21);
+            this.cmbClass.Size = new System.Drawing.Size(80, 21);
             this.cmbClass.TabIndex = 12;
             this.cmbClass.SelectedIndexChanged += new System.EventHandler(this.cmbClass_SelectedIndexChanged);
             // 
@@ -501,6 +532,9 @@ namespace Intersect_Editor.Forms
             // 
             // gbEquipment
             // 
+            this.gbEquipment.Controls.Add(this.cmbFemalePaperdoll);
+            this.gbEquipment.Controls.Add(this.label10);
+            this.gbEquipment.Controls.Add(this.picFemalePaperdoll);
             this.gbEquipment.Controls.Add(this.lblProjectile);
             this.gbEquipment.Controls.Add(this.scrlProjectile);
             this.gbEquipment.Controls.Add(this.lblEffectPercent);
@@ -512,11 +546,11 @@ namespace Intersect_Editor.Forms
             this.gbEquipment.Controls.Add(this.chk2Hand);
             this.gbEquipment.Controls.Add(this.cmbEquipmentSlot);
             this.gbEquipment.Controls.Add(this.label7);
-            this.gbEquipment.Controls.Add(this.cmbPaperdoll);
+            this.gbEquipment.Controls.Add(this.cmbMalePaperdoll);
             this.gbEquipment.Controls.Add(this.label5);
             this.gbEquipment.Controls.Add(this.lblRange);
             this.gbEquipment.Controls.Add(this.scrlRange);
-            this.gbEquipment.Controls.Add(this.picPaperdoll);
+            this.gbEquipment.Controls.Add(this.picMalePaperdoll);
             this.gbEquipment.Controls.Add(this.lblDamage);
             this.gbEquipment.Controls.Add(this.scrlDamage);
             this.gbEquipment.Controls.Add(this.lblSpeed);
@@ -531,16 +565,45 @@ namespace Intersect_Editor.Forms
             this.gbEquipment.Controls.Add(this.scrlAttack);
             this.gbEquipment.Location = new System.Drawing.Point(2, 233);
             this.gbEquipment.Name = "gbEquipment";
-            this.gbEquipment.Size = new System.Drawing.Size(439, 210);
+            this.gbEquipment.Size = new System.Drawing.Size(569, 210);
             this.gbEquipment.TabIndex = 12;
             this.gbEquipment.TabStop = false;
             this.gbEquipment.Text = "Equipment";
             this.gbEquipment.Visible = false;
             // 
+            // cmbFemalePaperdoll
+            // 
+            this.cmbFemalePaperdoll.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbFemalePaperdoll.FormattingEnabled = true;
+            this.cmbFemalePaperdoll.Items.AddRange(new object[] {
+            "None"});
+            this.cmbFemalePaperdoll.Location = new System.Drawing.Point(438, 111);
+            this.cmbFemalePaperdoll.Name = "cmbFemalePaperdoll";
+            this.cmbFemalePaperdoll.Size = new System.Drawing.Size(96, 21);
+            this.cmbFemalePaperdoll.TabIndex = 36;
+            this.cmbFemalePaperdoll.SelectedIndexChanged += new System.EventHandler(this.cmbFemalePaperdoll_SelectedIndexChanged);
+            // 
+            // label10
+            // 
+            this.label10.AutoSize = true;
+            this.label10.Location = new System.Drawing.Point(435, 94);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(91, 13);
+            this.label10.TabIndex = 35;
+            this.label10.Text = "Female Paperdoll:";
+            // 
+            // picFemalePaperdoll
+            // 
+            this.picFemalePaperdoll.Location = new System.Drawing.Point(438, 138);
+            this.picFemalePaperdoll.Name = "picFemalePaperdoll";
+            this.picFemalePaperdoll.Size = new System.Drawing.Size(128, 65);
+            this.picFemalePaperdoll.TabIndex = 34;
+            this.picFemalePaperdoll.TabStop = false;
+            // 
             // lblProjectile
             // 
             this.lblProjectile.AutoSize = true;
-            this.lblProjectile.Location = new System.Drawing.Point(195, 110);
+            this.lblProjectile.Location = new System.Drawing.Point(195, 67);
             this.lblProjectile.Name = "lblProjectile";
             this.lblProjectile.Size = new System.Drawing.Size(91, 13);
             this.lblProjectile.TabIndex = 33;
@@ -550,7 +613,7 @@ namespace Intersect_Editor.Forms
             // scrlProjectile
             // 
             this.scrlProjectile.LargeChange = 1;
-            this.scrlProjectile.Location = new System.Drawing.Point(326, 105);
+            this.scrlProjectile.Location = new System.Drawing.Point(198, 87);
             this.scrlProjectile.Minimum = -1;
             this.scrlProjectile.Name = "scrlProjectile";
             this.scrlProjectile.Size = new System.Drawing.Size(102, 17);
@@ -562,7 +625,7 @@ namespace Intersect_Editor.Forms
             // lblEffectPercent
             // 
             this.lblEffectPercent.AutoSize = true;
-            this.lblEffectPercent.Location = new System.Drawing.Point(323, 61);
+            this.lblEffectPercent.Location = new System.Drawing.Point(435, 19);
             this.lblEffectPercent.Name = "lblEffectPercent";
             this.lblEffectPercent.Size = new System.Drawing.Size(94, 13);
             this.lblEffectPercent.TabIndex = 31;
@@ -571,7 +634,7 @@ namespace Intersect_Editor.Forms
             // scrlEffectAmount
             // 
             this.scrlEffectAmount.LargeChange = 1;
-            this.scrlEffectAmount.Location = new System.Drawing.Point(326, 81);
+            this.scrlEffectAmount.Location = new System.Drawing.Point(438, 37);
             this.scrlEffectAmount.Name = "scrlEffectAmount";
             this.scrlEffectAmount.Size = new System.Drawing.Size(102, 17);
             this.scrlEffectAmount.TabIndex = 30;
@@ -581,7 +644,7 @@ namespace Intersect_Editor.Forms
             // 
             this.cmbEquipmentBonus.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbEquipmentBonus.FormattingEnabled = true;
-            this.cmbEquipmentBonus.Location = new System.Drawing.Point(198, 78);
+            this.cmbEquipmentBonus.Location = new System.Drawing.Point(314, 36);
             this.cmbEquipmentBonus.Name = "cmbEquipmentBonus";
             this.cmbEquipmentBonus.Size = new System.Drawing.Size(108, 21);
             this.cmbEquipmentBonus.TabIndex = 29;
@@ -590,7 +653,7 @@ namespace Intersect_Editor.Forms
             // label9
             // 
             this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(195, 61);
+            this.label9.Location = new System.Drawing.Point(311, 19);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(71, 13);
             this.label9.TabIndex = 28;
@@ -600,7 +663,7 @@ namespace Intersect_Editor.Forms
             // 
             this.cmbToolType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbToolType.FormattingEnabled = true;
-            this.cmbToolType.Location = new System.Drawing.Point(326, 36);
+            this.cmbToolType.Location = new System.Drawing.Point(191, 176);
             this.cmbToolType.Name = "cmbToolType";
             this.cmbToolType.Size = new System.Drawing.Size(107, 21);
             this.cmbToolType.TabIndex = 27;
@@ -610,7 +673,7 @@ namespace Intersect_Editor.Forms
             // lblToolType
             // 
             this.lblToolType.AutoSize = true;
-            this.lblToolType.Location = new System.Drawing.Point(323, 19);
+            this.lblToolType.Location = new System.Drawing.Point(188, 159);
             this.lblToolType.Name = "lblToolType";
             this.lblToolType.Size = new System.Drawing.Size(58, 13);
             this.lblToolType.TabIndex = 26;
@@ -648,26 +711,26 @@ namespace Intersect_Editor.Forms
             this.label7.TabIndex = 23;
             this.label7.Text = "Equipment Slot:";
             // 
-            // cmbPaperdoll
+            // cmbMalePaperdoll
             // 
-            this.cmbPaperdoll.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cmbPaperdoll.FormattingEnabled = true;
-            this.cmbPaperdoll.Items.AddRange(new object[] {
+            this.cmbMalePaperdoll.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbMalePaperdoll.FormattingEnabled = true;
+            this.cmbMalePaperdoll.Items.AddRange(new object[] {
             "None"});
-            this.cmbPaperdoll.Location = new System.Drawing.Point(198, 177);
-            this.cmbPaperdoll.Name = "cmbPaperdoll";
-            this.cmbPaperdoll.Size = new System.Drawing.Size(96, 21);
-            this.cmbPaperdoll.TabIndex = 22;
-            this.cmbPaperdoll.SelectedIndexChanged += new System.EventHandler(this.cmbPaperdoll_SelectedIndexChanged);
+            this.cmbMalePaperdoll.Location = new System.Drawing.Point(304, 111);
+            this.cmbMalePaperdoll.Name = "cmbMalePaperdoll";
+            this.cmbMalePaperdoll.Size = new System.Drawing.Size(96, 21);
+            this.cmbMalePaperdoll.TabIndex = 22;
+            this.cmbMalePaperdoll.SelectedIndexChanged += new System.EventHandler(this.cmbPaperdoll_SelectedIndexChanged);
             // 
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(195, 160);
+            this.label5.Location = new System.Drawing.Point(301, 94);
             this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(54, 13);
+            this.label5.Size = new System.Drawing.Size(80, 13);
             this.label5.TabIndex = 21;
-            this.label5.Text = "Paperdoll:";
+            this.label5.Text = "Male Paperdoll:";
             // 
             // lblRange
             // 
@@ -687,13 +750,13 @@ namespace Intersect_Editor.Forms
             this.scrlRange.Scroll += new System.Windows.Forms.ScrollEventHandler(this.scrlRange_Scroll);
             this.scrlRange.ValueChanged += new System.EventHandler(this.scrlRange_Scroll);
             // 
-            // picPaperdoll
+            // picMalePaperdoll
             // 
-            this.picPaperdoll.Location = new System.Drawing.Point(305, 135);
-            this.picPaperdoll.Name = "picPaperdoll";
-            this.picPaperdoll.Size = new System.Drawing.Size(128, 65);
-            this.picPaperdoll.TabIndex = 16;
-            this.picPaperdoll.TabStop = false;
+            this.picMalePaperdoll.Location = new System.Drawing.Point(304, 138);
+            this.picMalePaperdoll.Name = "picMalePaperdoll";
+            this.picMalePaperdoll.Size = new System.Drawing.Size(128, 65);
+            this.picMalePaperdoll.TabIndex = 16;
+            this.picMalePaperdoll.TabStop = false;
             // 
             // lblDamage
             // 
@@ -935,7 +998,7 @@ namespace Intersect_Editor.Forms
             this.pnlContainer.Controls.Add(this.gbEquipment);
             this.pnlContainer.Location = new System.Drawing.Point(221, 7);
             this.pnlContainer.Name = "pnlContainer";
-            this.pnlContainer.Size = new System.Drawing.Size(444, 442);
+            this.pnlContainer.Size = new System.Drawing.Size(574, 442);
             this.pnlContainer.TabIndex = 43;
             this.pnlContainer.Visible = false;
             // 
@@ -944,7 +1007,7 @@ namespace Intersect_Editor.Forms
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.AutoSize = true;
-            this.ClientSize = new System.Drawing.Size(677, 491);
+            this.ClientSize = new System.Drawing.Size(807, 491);
             this.ControlBox = false;
             this.Controls.Add(this.btnCancel);
             this.Controls.Add(this.btnSave);
@@ -963,7 +1026,8 @@ namespace Intersect_Editor.Forms
             this.groupBox3.PerformLayout();
             this.gbEquipment.ResumeLayout(false);
             this.gbEquipment.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.picPaperdoll)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.picFemalePaperdoll)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.picMalePaperdoll)).EndInit();
             this.gbConsumable.ResumeLayout(false);
             this.gbConsumable.PerformLayout();
             this.gbSpell.ResumeLayout(false);
@@ -1019,7 +1083,7 @@ namespace Intersect_Editor.Forms
         private HScrollBar scrlMagicResist;
         private HScrollBar scrlAbilityPower;
         private HScrollBar scrlAttack;
-        private PictureBox picPaperdoll;
+        private PictureBox picMalePaperdoll;
         private GroupBox gbConsumable;
         private ComboBox cmbConsume;
         private HScrollBar scrlInterval;
@@ -1033,7 +1097,7 @@ namespace Intersect_Editor.Forms
         private HScrollBar scrlRange;
         private ComboBox cmbPic;
         private Label lblPic;
-        private ComboBox cmbPaperdoll;
+        private ComboBox cmbMalePaperdoll;
         private Label label5;
         private Label label6;
         private TextBox txtDesc;
@@ -1054,5 +1118,10 @@ namespace Intersect_Editor.Forms
         private Button btnUndo;
         private Button btnNew;
         private Panel pnlContainer;
+        private Label label8;
+        private ComboBox cmbGender;
+        private ComboBox cmbFemalePaperdoll;
+        private Label label10;
+        private PictureBox picFemalePaperdoll;
     }
 }

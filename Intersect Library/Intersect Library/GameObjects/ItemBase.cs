@@ -43,10 +43,12 @@ namespace Intersect_Library.GameObjects
         public int Projectile = -1;
         public int[] StatsReq;
         public int[] StatsGiven;
+        public int GenderReq;
         public int StatGrowth;
         public int Damage;
         public int Speed;
-        public string Paperdoll = "";
+        public string MalePaperdoll = "";
+        public string FemalePaperdoll = "";
         public int Tool;
         public int Data1;
         public int Data2;
@@ -73,6 +75,7 @@ namespace Intersect_Library.GameObjects
             Animation = myBuffer.ReadInteger();
             ClassReq = myBuffer.ReadInteger();
             LevelReq = myBuffer.ReadInteger();
+            GenderReq = myBuffer.ReadInteger();
             Projectile = myBuffer.ReadInteger();
 
             for (var i = 0; i < Options.MaxStats; i++)
@@ -84,7 +87,8 @@ namespace Intersect_Library.GameObjects
             StatGrowth = myBuffer.ReadInteger();
             Damage = myBuffer.ReadInteger();
             Speed = myBuffer.ReadInteger();
-            Paperdoll = myBuffer.ReadString();
+            MalePaperdoll = myBuffer.ReadString();
+            FemalePaperdoll = myBuffer.ReadString();
             Tool = myBuffer.ReadInteger();
             Data1 = myBuffer.ReadInteger();
             Data2 = myBuffer.ReadInteger();
@@ -104,6 +108,7 @@ namespace Intersect_Library.GameObjects
             myBuffer.WriteInteger(Animation);
             myBuffer.WriteInteger(ClassReq);
             myBuffer.WriteInteger(LevelReq);
+            myBuffer.WriteInteger(GenderReq);
             myBuffer.WriteInteger(Projectile);
 
             for (var i = 0; i < Options.MaxStats; i++)
@@ -115,7 +120,8 @@ namespace Intersect_Library.GameObjects
             myBuffer.WriteInteger(StatGrowth);
             myBuffer.WriteInteger(Damage);
             myBuffer.WriteInteger(Speed);
-            myBuffer.WriteString(Paperdoll);
+            myBuffer.WriteString(MalePaperdoll);
+            myBuffer.WriteString(FemalePaperdoll);
             myBuffer.WriteInteger(Tool);
             myBuffer.WriteInteger(Data1);
             myBuffer.WriteInteger(Data2);

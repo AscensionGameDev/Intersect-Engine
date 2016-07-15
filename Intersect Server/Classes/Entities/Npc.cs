@@ -267,6 +267,11 @@ namespace Intersect_Server.Classes.Entities
                 //Move randomly
                 if (targetMap != -1) return;
                 if (LastRandomMove >= Environment.TickCount) return;
+                if (MyBase.Behavior == (int) NpcBehavior.Guard)
+                {
+                    LastRandomMove = Environment.TickCount + Globals.Rand.Next(1000, 3000);
+                    return;
+                }
                 var i = Globals.Rand.Next(0, 1);
                 if (i == 0)
                 {

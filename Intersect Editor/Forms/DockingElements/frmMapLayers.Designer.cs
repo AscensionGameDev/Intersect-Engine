@@ -39,6 +39,11 @@
             this.cmbAutotile = new System.Windows.Forms.ComboBox();
             this.cmbTilesets = new System.Windows.Forms.ComboBox();
             this.tabAttributes = new System.Windows.Forms.TabPage();
+            this.grpSlide = new System.Windows.Forms.GroupBox();
+            this.cmbSlideDir = new System.Windows.Forms.ComboBox();
+            this.label4 = new System.Windows.Forms.Label();
+            this.rbSlide = new System.Windows.Forms.RadioButton();
+            this.rbGrappleStone = new System.Windows.Forms.RadioButton();
             this.rbAnimation = new System.Windows.Forms.RadioButton();
             this.rbResource = new System.Windows.Forms.RadioButton();
             this.rbSound = new System.Windows.Forms.RadioButton();
@@ -98,16 +103,12 @@
             this.rbRandom = new System.Windows.Forms.RadioButton();
             this.rbDeclared = new System.Windows.Forms.RadioButton();
             this.lstMapNpcs = new System.Windows.Forms.ListBox();
-            this.rbSlide = new System.Windows.Forms.RadioButton();
-            this.rbGrappleStone = new System.Windows.Forms.RadioButton();
-            this.grpSlide = new System.Windows.Forms.GroupBox();
-            this.cmbSlideDir = new System.Windows.Forms.ComboBox();
-            this.label4 = new System.Windows.Forms.Label();
             this.tabControl.SuspendLayout();
             this.tabTiles.SuspendLayout();
             this.pnlTilesetContainer.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.picTileset)).BeginInit();
             this.tabAttributes.SuspendLayout();
+            this.grpSlide.SuspendLayout();
             this.grpAnimation.SuspendLayout();
             this.grpResource.SuspendLayout();
             this.grpItem.SuspendLayout();
@@ -121,7 +122,6 @@
             this.tabNPCs.SuspendLayout();
             this.grpManage.SuspendLayout();
             this.grpSpawnLoc.SuspendLayout();
-            this.grpSlide.SuspendLayout();
             this.SuspendLayout();
             // 
             // tabControl
@@ -278,6 +278,64 @@
             this.tabAttributes.TabIndex = 1;
             this.tabAttributes.Text = "Attributes";
             this.tabAttributes.UseVisualStyleBackColor = true;
+            // 
+            // grpSlide
+            // 
+            this.grpSlide.Controls.Add(this.cmbSlideDir);
+            this.grpSlide.Controls.Add(this.label4);
+            this.grpSlide.Location = new System.Drawing.Point(5, 198);
+            this.grpSlide.Name = "grpSlide";
+            this.grpSlide.Size = new System.Drawing.Size(259, 75);
+            this.grpSlide.TabIndex = 36;
+            this.grpSlide.TabStop = false;
+            this.grpSlide.Text = "Slide";
+            this.grpSlide.Visible = false;
+            // 
+            // cmbSlideDir
+            // 
+            this.cmbSlideDir.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbSlideDir.FormattingEnabled = true;
+            this.cmbSlideDir.Items.AddRange(new object[] {
+            "Retain Direction",
+            "Up",
+            "Down",
+            "Left",
+            "Right"});
+            this.cmbSlideDir.Location = new System.Drawing.Point(50, 27);
+            this.cmbSlideDir.Name = "cmbSlideDir";
+            this.cmbSlideDir.Size = new System.Drawing.Size(192, 21);
+            this.cmbSlideDir.TabIndex = 25;
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(17, 30);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(23, 13);
+            this.label4.TabIndex = 24;
+            this.label4.Text = "Dir:";
+            // 
+            // rbSlide
+            // 
+            this.rbSlide.AutoSize = true;
+            this.rbSlide.Location = new System.Drawing.Point(115, 28);
+            this.rbSlide.Name = "rbSlide";
+            this.rbSlide.Size = new System.Drawing.Size(48, 17);
+            this.rbSlide.TabIndex = 35;
+            this.rbSlide.Text = "Slide";
+            this.rbSlide.UseVisualStyleBackColor = true;
+            this.rbSlide.CheckedChanged += new System.EventHandler(this.rbSlide_CheckedChanged);
+            // 
+            // rbGrappleStone
+            // 
+            this.rbGrappleStone.AutoSize = true;
+            this.rbGrappleStone.Location = new System.Drawing.Point(115, 6);
+            this.rbGrappleStone.Name = "rbGrappleStone";
+            this.rbGrappleStone.Size = new System.Drawing.Size(93, 17);
+            this.rbGrappleStone.TabIndex = 34;
+            this.rbGrappleStone.Text = "Grapple Stone";
+            this.rbGrappleStone.UseVisualStyleBackColor = true;
+            this.rbGrappleStone.CheckedChanged += new System.EventHandler(this.rbGrappleStone_CheckedChanged);
             // 
             // rbAnimation
             // 
@@ -912,64 +970,7 @@
             this.lstMapNpcs.Size = new System.Drawing.Size(259, 173);
             this.lstMapNpcs.TabIndex = 10;
             this.lstMapNpcs.Click += new System.EventHandler(this.lstMapNpcs_Click);
-            // 
-            // rbSlide
-            // 
-            this.rbSlide.AutoSize = true;
-            this.rbSlide.Location = new System.Drawing.Point(115, 28);
-            this.rbSlide.Name = "rbSlide";
-            this.rbSlide.Size = new System.Drawing.Size(48, 17);
-            this.rbSlide.TabIndex = 35;
-            this.rbSlide.Text = "Slide";
-            this.rbSlide.UseVisualStyleBackColor = true;
-            this.rbSlide.CheckedChanged += new System.EventHandler(this.rbSlide_CheckedChanged);
-            // 
-            // rbGrappleStone
-            // 
-            this.rbGrappleStone.AutoSize = true;
-            this.rbGrappleStone.Location = new System.Drawing.Point(115, 6);
-            this.rbGrappleStone.Name = "rbGrappleStone";
-            this.rbGrappleStone.Size = new System.Drawing.Size(93, 17);
-            this.rbGrappleStone.TabIndex = 34;
-            this.rbGrappleStone.Text = "Grapple Stone";
-            this.rbGrappleStone.UseVisualStyleBackColor = true;
-            this.rbGrappleStone.CheckedChanged += new System.EventHandler(this.rbGrappleStone_CheckedChanged);
-            // 
-            // grpSlide
-            // 
-            this.grpSlide.Controls.Add(this.cmbSlideDir);
-            this.grpSlide.Controls.Add(this.label4);
-            this.grpSlide.Location = new System.Drawing.Point(5, 198);
-            this.grpSlide.Name = "grpSlide";
-            this.grpSlide.Size = new System.Drawing.Size(259, 75);
-            this.grpSlide.TabIndex = 36;
-            this.grpSlide.TabStop = false;
-            this.grpSlide.Text = "Slide";
-            this.grpSlide.Visible = false;
-            // 
-            // cmbSlideDir
-            // 
-            this.cmbSlideDir.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cmbSlideDir.FormattingEnabled = true;
-            this.cmbSlideDir.Items.AddRange(new object[] {
-            "Retain Direction",
-            "Up",
-            "Down",
-            "Left",
-            "Right"});
-            this.cmbSlideDir.Location = new System.Drawing.Point(50, 27);
-            this.cmbSlideDir.Name = "cmbSlideDir";
-            this.cmbSlideDir.Size = new System.Drawing.Size(192, 21);
-            this.cmbSlideDir.TabIndex = 25;
-            // 
-            // label4
-            // 
-            this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(17, 30);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(23, 13);
-            this.label4.TabIndex = 24;
-            this.label4.Text = "Dir:";
+            this.lstMapNpcs.MouseDown += new System.Windows.Forms.MouseEventHandler(this.lstMapNpcs_MouseDown);
             // 
             // frmMapLayers
             // 
@@ -997,6 +998,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.picTileset)).EndInit();
             this.tabAttributes.ResumeLayout(false);
             this.tabAttributes.PerformLayout();
+            this.grpSlide.ResumeLayout(false);
+            this.grpSlide.PerformLayout();
             this.grpAnimation.ResumeLayout(false);
             this.grpAnimation.PerformLayout();
             this.grpResource.ResumeLayout(false);
@@ -1019,8 +1022,6 @@
             this.grpManage.ResumeLayout(false);
             this.grpSpawnLoc.ResumeLayout(false);
             this.grpSpawnLoc.PerformLayout();
-            this.grpSlide.ResumeLayout(false);
-            this.grpSlide.PerformLayout();
             this.ResumeLayout(false);
 
         }

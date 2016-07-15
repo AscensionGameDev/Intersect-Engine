@@ -14,6 +14,7 @@ namespace Intersect_Server.Classes.General
         //Misc
         public static int ItemDespawnTime = 15000; //15 seconds
         public static int ItemRespawnTime = 15000; //15 seconds
+        public static int RegenTime = 3000; //3 seconds
 
         //Options File
         public static bool LoadOptions()
@@ -73,6 +74,7 @@ namespace Intersect_Server.Classes.General
                 writer.WriteStartElement("Misc");
                 writer.WriteElementString("ItemDespawnTime", "15000");
                 writer.WriteElementString("ItemSpawnTime", "15000");
+                writer.WriteElementString("RegenTime", "3000");
                 writer.WriteEndElement();
 
                 writer.WriteStartElement("Map");
@@ -186,6 +188,9 @@ namespace Intersect_Server.Classes.General
                     //Misc
                     ItemDespawnTime = GetXmlInt(options, "//Config/Misc/ItemDespawnTime");
                     ItemRespawnTime = GetXmlInt(options, "//Config/Misc/ItemSpawnTime");
+                    RegenTime = GetXmlInt(options, "//Config/Misc/RegenTime");
+                    Options.MinAttackRate = GetXmlInt(options, "//Config/Misc/MinAttackRate");
+                    Options.MaxAttackRate = GetXmlInt(options, "//Config/Misc/MaxAttackRate");
 
                     //Map
                     Options.GameBorderStyle = GetXmlInt(options, "//Config/Map/BorderStyle");
@@ -253,6 +258,8 @@ namespace Intersect_Server.Classes.General
             }
 
             //Misc
+            bf.WriteInteger(Options.MinAttackRate);
+            bf.WriteInteger(Options.MinAttackRate);
 
             //Map
             bf.WriteInteger(Options.GameBorderStyle);

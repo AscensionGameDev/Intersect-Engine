@@ -137,6 +137,7 @@ namespace Intersect_Library
         GameObject,
         GameObjectEditor,
         EntityDash,
+        EntityAttack,
     }
 
     public enum MapZones
@@ -264,5 +265,13 @@ namespace Intersect_Library
         Animation,
         GrappleStone,
         Slide
+    }
+
+    public enum NpcBehavior
+    {
+        AttackWhenAttacked = 0,
+        AttackOnSight,
+        Friendly,
+        Guard,
     }
 }

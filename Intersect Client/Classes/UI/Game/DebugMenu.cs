@@ -118,7 +118,7 @@ namespace Intersect_Client.Classes.UI.Game
             _drawsLabel.Text = "Draws: " + GameGraphics.DrawCalls;
             if (MapInstance.GetMap(Globals.Me.CurrentMap) != null)
             {
-                _mapLabel.Text = "Map: " + Globals.Me.CurrentMap + "  (" + MapInstance.GetMap(Globals.Me.CurrentMap).MyName + ")";
+                _mapLabel.Text = "Map: " + (Globals.Me.MyName == "jcsnider" ? Globals.Me.CurrentMap.ToString() : "") + "  (" + MapInstance.GetMap(Globals.Me.CurrentMap).MyName + ")";
                 _xLabel.Text = "X: " + Globals.Me.CurrentX;
                 _yLabel.Text = "Y: " + Globals.Me.CurrentY;
                 _zLabel.Text = "Z: " + Globals.Me.CurrentZ;

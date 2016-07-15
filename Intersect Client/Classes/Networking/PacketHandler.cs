@@ -194,6 +194,9 @@ namespace Intersect_Client.Classes.Networking
                     case ServerPackets.EntityDash:
                         HandleEntityDash(bf.ReadBytes(bf.Length()));
                         break;
+                    case ServerPackets.EntityAttack:
+                        HandleEntityAttack(bf.ReadBytes(bf.Length()));
+                        break;
                     default:
                         Console.WriteLine(@"Non implemented packet received: " + packetHeader);
                         break;
@@ -316,18 +319,20 @@ namespace Intersect_Client.Classes.Networking
                 if (!MapInstance.GetMap(mapNum).LocalEntities.ContainsKey(index)) { return; }
                 en = MapInstance.GetMap(mapNum).LocalEntities[index];
             }
-            en.CurrentMap = mapNum;
+            if (en == Globals.Me && Globals.Me.CurrentMap != mapNum)
+            {
+                Globals.Me.CurrentMap = mapNum;
+                Globals.NeedsMaps = true;
+            }
+            else
+            {
+                en.CurrentMap = mapNum;
+            }
             en.CurrentX = bf.ReadInteger();
             en.CurrentY = bf.ReadInteger();
             en.Dir = bf.ReadInteger();
             en.Passable = bf.ReadInteger();
             en.HideName = bf.ReadInteger();
-
-            if (en == Globals.Me && Globals.Me.CurrentMap != en.CurrentMap)
-            {
-                Globals.Me.CurrentMap = Globals.Entities[index].CurrentMap;
-                Globals.NeedsMaps = true;
-            }
         }
 
         private static void HandleLeave(byte[] packet)
@@ -550,6 +555,33 @@ namespace Intersect_Client.Classes.Networking
                 return;
             }
             en.Dir = bf.ReadInteger();
+        }
+
+        private static void HandleEntityAttack(byte[] packet)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteBytes(packet);
+            var index = (int)bf.ReadLong();
+            var type = bf.ReadInteger();
+            var mapNum = bf.ReadInteger();
+            Entity en = null;
+            if (type < (int)EntityTypes.Event)
+            {
+                if (!Globals.Entities.ContainsKey(index)) { return; }
+                en = Globals.Entities[index];
+            }
+            else
+            {
+                var entityMap = MapInstance.GetMap(mapNum);
+                if (entityMap == null) return;
+                if (!entityMap.LocalEntities.ContainsKey(index)) { return; }
+                en = entityMap.LocalEntities[index];
+            }
+            if (en == null)
+            {
+                return;
+            }
+            en.AttackTimer = Environment.TickCount + bf.ReadInteger();
         }
 
         private static void HandleEventDialog(byte[] packet)

@@ -29,7 +29,7 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmGridView));
             this.gridContainer = new System.Windows.Forms.Panel();
             this.mapGridView = new System.Windows.Forms.DataGridView();
@@ -39,11 +39,13 @@
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.cmbZoom = new System.Windows.Forms.ToolStripComboBox();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
-            this.btnFetchPreview = new System.Windows.Forms.ToolStripButton();
+            this.btnFetchPreview = new System.Windows.Forms.ToolStripDropDownButton();
+            this.downloadMissingPreviewsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.reDownloadAllPreviewsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.btnScreenshotWorld = new System.Windows.Forms.ToolStripButton();
             this.mapMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.unlinkMapToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.linkMapToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.btnScreenshotWorld = new System.Windows.Forms.ToolStripButton();
             this.gridContainer.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.mapGridView)).BeginInit();
             this.toolStrip1.SuspendLayout();
@@ -68,14 +70,14 @@
             this.mapGridView.AllowUserToResizeRows = false;
             this.mapGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
             this.mapGridView.ColumnHeadersVisible = false;
-            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle1.ForeColor = System.Drawing.Color.White;
-            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.mapGridView.DefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle2.ForeColor = System.Drawing.Color.White;
+            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.mapGridView.DefaultCellStyle = dataGridViewCellStyle2;
             this.mapGridView.EditMode = System.Windows.Forms.DataGridViewEditMode.EditProgrammatically;
             this.mapGridView.Location = new System.Drawing.Point(0, 28);
             this.mapGridView.MultiSelect = false;
@@ -156,12 +158,38 @@
             // btnFetchPreview
             // 
             this.btnFetchPreview.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.btnFetchPreview.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.downloadMissingPreviewsToolStripMenuItem,
+            this.reDownloadAllPreviewsToolStripMenuItem});
             this.btnFetchPreview.Image = ((System.Drawing.Image)(resources.GetObject("btnFetchPreview.Image")));
             this.btnFetchPreview.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.btnFetchPreview.Name = "btnFetchPreview";
-            this.btnFetchPreview.Size = new System.Drawing.Size(23, 22);
+            this.btnFetchPreview.Size = new System.Drawing.Size(29, 22);
             this.btnFetchPreview.Text = "Fetch Preview";
-            this.btnFetchPreview.Click += new System.EventHandler(this.btnFetchPreview_Click);
+            // 
+            // downloadMissingPreviewsToolStripMenuItem
+            // 
+            this.downloadMissingPreviewsToolStripMenuItem.Name = "downloadMissingPreviewsToolStripMenuItem";
+            this.downloadMissingPreviewsToolStripMenuItem.Size = new System.Drawing.Size(221, 22);
+            this.downloadMissingPreviewsToolStripMenuItem.Text = "Download Missing Previews";
+            this.downloadMissingPreviewsToolStripMenuItem.Click += new System.EventHandler(this.downloadMissingPreviewsToolStripMenuItem_Click);
+            // 
+            // reDownloadAllPreviewsToolStripMenuItem
+            // 
+            this.reDownloadAllPreviewsToolStripMenuItem.Name = "reDownloadAllPreviewsToolStripMenuItem";
+            this.reDownloadAllPreviewsToolStripMenuItem.Size = new System.Drawing.Size(221, 22);
+            this.reDownloadAllPreviewsToolStripMenuItem.Text = "Re-Download All Previews";
+            this.reDownloadAllPreviewsToolStripMenuItem.Click += new System.EventHandler(this.reDownloadAllPreviewsToolStripMenuItem_Click);
+            // 
+            // btnScreenshotWorld
+            // 
+            this.btnScreenshotWorld.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.btnScreenshotWorld.Image = ((System.Drawing.Image)(resources.GetObject("btnScreenshotWorld.Image")));
+            this.btnScreenshotWorld.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.btnScreenshotWorld.Name = "btnScreenshotWorld";
+            this.btnScreenshotWorld.Size = new System.Drawing.Size(23, 22);
+            this.btnScreenshotWorld.Text = "Take a world screenshot";
+            this.btnScreenshotWorld.Click += new System.EventHandler(this.btnScreenshotWorld_Click);
             // 
             // mapMenuStrip
             // 
@@ -183,16 +211,6 @@
             this.linkMapToolStripMenuItem.Name = "linkMapToolStripMenuItem";
             this.linkMapToolStripMenuItem.Size = new System.Drawing.Size(135, 22);
             this.linkMapToolStripMenuItem.Text = "Link Map";
-            // 
-            // btnScreenshotWorld
-            // 
-            this.btnScreenshotWorld.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.btnScreenshotWorld.Image = ((System.Drawing.Image)(resources.GetObject("btnScreenshotWorld.Image")));
-            this.btnScreenshotWorld.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.btnScreenshotWorld.Name = "btnScreenshotWorld";
-            this.btnScreenshotWorld.Size = new System.Drawing.Size(23, 22);
-            this.btnScreenshotWorld.Text = "toolStripButton1";
-            this.btnScreenshotWorld.Click += new System.EventHandler(this.btnScreenshotWorld_Click);
             // 
             // frmGridView
             // 
@@ -224,7 +242,6 @@
         private System.Windows.Forms.DataGridView mapGridView;
         private System.Windows.Forms.ToolStrip toolStrip1;
         private System.Windows.Forms.ToolStripButton btnToggleNames;
-        private System.Windows.Forms.ToolStripButton btnFetchPreview;
         private System.Windows.Forms.ToolStripButton btnTogglePreviews;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
         private System.Windows.Forms.ToolStripComboBox cmbZoom;
@@ -233,5 +250,8 @@
         private System.Windows.Forms.ToolStripMenuItem unlinkMapToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem linkMapToolStripMenuItem;
         private System.Windows.Forms.ToolStripButton btnScreenshotWorld;
+        private System.Windows.Forms.ToolStripMenuItem downloadMissingPreviewsToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem reDownloadAllPreviewsToolStripMenuItem;
+        private System.Windows.Forms.ToolStripDropDownButton btnFetchPreview;
     }
 }

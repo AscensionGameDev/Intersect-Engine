@@ -284,7 +284,7 @@ namespace Intersect_Editor.Forms
             else if (cmbType.SelectedIndex == cmbType.Items.IndexOf("Event"))
             {
                 grpEvent.Show();
-                scrlEvent.Value = Database.GameObjectIdFromList(GameObject.CommonEvent,_editorItem.Data1);
+                scrlEvent.Value = Database.GameObjectListIndex(GameObject.CommonEvent,_editorItem.Data1);
                 if (scrlEvent.Value == -1)
                 {
                     lblEvent.Text = "Event: None";

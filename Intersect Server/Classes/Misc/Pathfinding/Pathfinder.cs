@@ -250,7 +250,6 @@ namespace Intersect_Server.Classes.Misc
                             }
                         }
                         _pathFinding = false;
-                        Console.WriteLine("Pathfinding succeeded and took " + (Environment.TickCount - start) + "ms");
                         return;
                     }
 
@@ -314,7 +313,6 @@ namespace Intersect_Server.Classes.Misc
                     }
                 } while (openList.Count > 0);
             }
-            Console.WriteLine("Pathfinding failed and took " + (Environment.TickCount - start) + "ms");
             _pathFinding = false;
         }
 
