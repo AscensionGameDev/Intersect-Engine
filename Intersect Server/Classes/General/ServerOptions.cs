@@ -75,6 +75,8 @@ namespace Intersect_Server.Classes.General
                 writer.WriteElementString("ItemDespawnTime", "15000");
                 writer.WriteElementString("ItemSpawnTime", "15000");
                 writer.WriteElementString("RegenTime", "3000");
+				writer.WriteElementString("MinAttackRate", "1000");
+				writer.WriteElementString("MaxAttackRate", "400");
                 writer.WriteEndElement();
 
                 writer.WriteStartElement("Map");
