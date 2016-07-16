@@ -86,6 +86,7 @@ namespace Intersect_Library
         OpenObjectEditor,
         SaveGameObject,
         DeleteGameObject,
+        TryBlock,
     }
 
     public enum ServerPackets
@@ -138,6 +139,7 @@ namespace Intersect_Library
         GameObjectEditor,
         EntityDash,
         EntityAttack,
+        ActionMsg,
     }
 
     public enum MapZones

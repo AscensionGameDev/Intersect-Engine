@@ -307,6 +307,7 @@ namespace Intersect_Server.Classes.Entities
             }
 
             PacketSender.SendPlayerMsg(MyClient, "You have leveled up! You are now level " + Level + "!", Color.Cyan);
+            PacketSender.SendActionMsg(MyIndex, "LEVEL UP!", new Color(255, 0, 255, 0));
             if (StatPoints > 0)
             {
                 PacketSender.SendPlayerMsg(MyClient,

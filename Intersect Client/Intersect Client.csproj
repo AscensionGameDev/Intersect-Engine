@@ -113,6 +113,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Reference Include="IntersectClientExtras">
+      <HintPath>.\IntersectClientExtras.dll</HintPath>
+    </Reference>
     <Reference Include="MonoGame.Framework">
       <HintPath>$(MonoGameInstallDirectory)\MonoGame\v3.0\Assemblies\Windows\MonoGame.Framework.dll</HintPath>
     </Reference>
@@ -132,10 +135,6 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Intersect-Client-Extras\IntersectClientExtras\IntersectClientExtras.csproj">
-      <Project>{40973f13-3339-4548-9008-ff76a0c8cd79}</Project>
-      <Name>IntersectClientExtras</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Intersect Library\Intersect Library\Intersect Library.csproj">
       <Project>{bc304b43-1f2c-4454-9edc-48f47357ca94}</Project>
       <Name>Intersect Library</Name>

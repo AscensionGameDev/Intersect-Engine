@@ -93,6 +93,9 @@ namespace Intersect_Server.Classes.Entities
 
         public long AttackTimer = 0;
 
+        //Blocking
+        public bool Blocking = false;
+
         //Initialization
         public Entity(int index)
         {
@@ -259,6 +262,7 @@ namespace Intersect_Server.Classes.Entities
         public virtual float GetMovementTime()
         {
             var time = 1000f / (float)(1 + Math.Log(Stat[(int)Stats.Speed].Value()));
+            if (Blocking == true) { time += time * (float)Options.BlockingSlow; }
             if (time > 1000f) time = 1000f;
             return time;
         }
@@ -415,7 +419,7 @@ namespace Intersect_Server.Classes.Entities
         {
             return (int)((Stat[(int) Stats.Speed].Value()/(float) Options.MaxStatValue)*(Options.MinAttackRate - Options.MaxAttackRate)) + Options.MinAttackRate;
         }
-        public void TryAttack(int enemyIndex, ProjectileBase isProjectile = null, int isSpell = -1)
+        public void TryAttack(int enemyIndex, ProjectileBase isProjectile = null, int isSpell = -1, int projectileDir = -1)
         {
             double dmg = 0;
 
@@ -424,6 +428,38 @@ namespace Intersect_Server.Classes.Entities
 
             if (isProjectile == null && isSpell == -1 && AttackTimer > Environment.TickCount) return;
             AttackTimer = Environment.TickCount + CalculateAttackTime();
+
+            //Check if the target is blocking facing in the direction against you
+            if (Globals.Entities[enemyIndex].Blocking == true)
+            {
+                int d = Dir;
+
+                if (isProjectile != null)
+                {
+                    d = projectileDir;
+                }
+
+                if (Globals.Entities[enemyIndex].Dir == (int)Directions.Left && d == (int)Directions.Right)
+                {
+                    PacketSender.SendActionMsg(enemyIndex, "BLOCKED!", new Color(255, 0, 0, 255));
+                    return;
+                }
+                else if (Globals.Entities[enemyIndex].Dir == (int)Directions.Right && d == (int)Directions.Left)
+                {
+                    PacketSender.SendActionMsg(enemyIndex, "BLOCKED!", new Color(255, 0, 0, 255));
+                    return;
+                }
+                else if (Globals.Entities[enemyIndex].Dir == (int)Directions.Up && d == (int)Directions.Down)
+                {
+                    PacketSender.SendActionMsg(enemyIndex, "BLOCKED!", new Color(255, 0, 0, 255));
+                    return;
+                }
+                else if (Globals.Entities[enemyIndex].Dir == (int)Directions.Down && d == (int)Directions.Up)
+                {
+                    PacketSender.SendActionMsg(enemyIndex, "BLOCKED!", new Color(255, 0, 0, 255));
+                    return;
+                }
+            }
 
             //If Entity is resource, check for the correct tool and make sure its not a spell cast.
             if (Globals.Entities[enemyIndex].GetType() == typeof(Resource))
@@ -489,6 +525,14 @@ namespace Intersect_Server.Classes.Entities
                 dmg = DamageCalculator(Stat[(int) Stats.Attack].Value(),
                     Globals.Entities[enemyIndex].Stat[(int) Stats.Defense].Value());
                 if (dmg <= 0) dmg = 1; // Always do damage.
+
+                //Check for a crit
+                if (Globals.Rand.Next(1, Options.CritChance + 1) == 1)
+                {
+                    dmg *= Options.CritMultiplier;
+                    PacketSender.SendActionMsg(enemyIndex, "CRITICAL HIT!", new Color(255, 255, 255, 0));
+                }
+
                 PacketSender.SendEntityAttack(MyIndex, (int) EntityTypes.GlobalEntity, CurrentMap, CalculateAttackTime());
             }
             else
@@ -502,6 +546,15 @@ namespace Intersect_Server.Classes.Entities
                     //Handle other stat debuffs/vitals.
                     Globals.Entities[enemyIndex].Vital[(int) Vitals.Mana] +=
                         spellBase.VitalDiff[(int) Vitals.Mana];
+                    if (spellBase.VitalDiff[(int)Vitals.Mana] > 0)
+                    {
+                        PacketSender.SendActionMsg(enemyIndex, "+" + spellBase.VitalDiff[(int)Vitals.Mana], new Color(255, 0, 255, 255));
+                    }
+                    else
+                    {
+                        PacketSender.SendActionMsg(enemyIndex, " " + spellBase.VitalDiff[(int)Vitals.Mana], new Color(255, 0, 255, 255));
+                    }
+
                     for (int i = 0; i < (int) Stats.StatCount; i++)
                     {
                         Globals.Entities[enemyIndex].Stat[i].Buff.Add(
@@ -515,6 +568,7 @@ namespace Intersect_Server.Classes.Entities
                         Globals.Entities[enemyIndex].Status.Add(new StatusInstance(enemyIndex,
                             spellBase.Data3, (spellBase.Data2*100),
                             spellBase.Data5));
+                        PacketSender.SendActionMsg(enemyIndex, Options.StatusActionMsgs[spellBase.Data3], new Color(255, 255, 255, 0));
                     }
 
                     //Handle DoT/HoT spells]
@@ -538,6 +592,14 @@ namespace Intersect_Server.Classes.Entities
             }
 
             Globals.Entities[enemyIndex].Vital[(int)Vitals.Health] -= (int)dmg;
+            if (dmg > 0)
+            {
+                PacketSender.SendActionMsg(enemyIndex, "-" + (int)dmg, new Color(255, 255, 0, 0));
+            }
+            else
+            {
+                PacketSender.SendActionMsg(enemyIndex, "+" + (int)dmg, new Color(255, 0, 255, 0));
+            }
 
             //If we took damage lets reset our combat timer
             CombatTimer = Environment.TickCount + 5000;
@@ -1032,6 +1094,7 @@ namespace Intersect_Server.Classes.Entities
             Globals.Entities[EntityID].Dashing = this;
             TransmittionTimer = Environment.TickCount + (long)((float)Options.MaxDashSpeed / (float)Range);
             PacketSender.SendEntityDash(EntityID, Range, Direction);
+            PacketSender.SendActionMsg(EntityID, "DASH!", new Color(255, 0, 0, 255));
         }
 
         public void CalculateRange(int range)

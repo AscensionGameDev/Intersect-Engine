@@ -14,6 +14,8 @@ namespace Intersect_Server.Classes.General
         //Misc
         public static int ItemDespawnTime = 15000; //15 seconds
         public static int ItemRespawnTime = 15000; //15 seconds
+
+        //Combat
         public static int RegenTime = 3000; //3 seconds
 
         //Options File
@@ -42,7 +44,6 @@ namespace Intersect_Server.Classes.General
                 writer.WriteElementString("MaxInventory", "35");
                 writer.WriteElementString("MaxSpells", "35");
                 writer.WriteElementString("MaxBank", "100");
-                writer.WriteElementString("MaxDashSpeed", "200");
                 writer.WriteEndElement();
 
                 writer.WriteStartElement("Equipment");
@@ -74,7 +75,16 @@ namespace Intersect_Server.Classes.General
                 writer.WriteStartElement("Misc");
                 writer.WriteElementString("ItemDespawnTime", "15000");
                 writer.WriteElementString("ItemSpawnTime", "15000");
+                writer.WriteEndElement();
+
+                writer.WriteStartElement("Combat");
                 writer.WriteElementString("RegenTime", "3000");
+                writer.WriteElementString("MaxAttackRate", "400");
+                writer.WriteElementString("MinAttackRate", "1000");
+                writer.WriteElementString("BlockingSlow", "30");
+                writer.WriteElementString("CritChance", "20");
+                writer.WriteElementString("CritMultiplier", "150");
+                writer.WriteElementString("MaxDashSpeed", "200");
                 writer.WriteEndElement();
 
                 writer.WriteStartElement("Map");
@@ -117,7 +127,6 @@ namespace Intersect_Server.Classes.General
                     Options.MaxInvItems = GetXmlInt(options, "//Config/Player/MaxInventory");
                     Options.MaxPlayerSkills = GetXmlInt(options, "//Config/Player/MaxSpells");
                     Options.MaxBankSlots = GetXmlInt(options, "//Config/Player/MaxBank");
-                    Options.MaxDashSpeed = GetXmlInt(options, "//Config/Player/MaxDashSpeed");
 
                     //Equipment
                     int slot = 0;
@@ -188,9 +197,15 @@ namespace Intersect_Server.Classes.General
                     //Misc
                     ItemDespawnTime = GetXmlInt(options, "//Config/Misc/ItemDespawnTime");
                     ItemRespawnTime = GetXmlInt(options, "//Config/Misc/ItemSpawnTime");
-                    RegenTime = GetXmlInt(options, "//Config/Misc/RegenTime");
-                    Options.MinAttackRate = GetXmlInt(options, "//Config/Misc/MinAttackRate");
-                    Options.MaxAttackRate = GetXmlInt(options, "//Config/Misc/MaxAttackRate");
+
+                    //Combat
+                    RegenTime = GetXmlInt(options, "//Config/Combat/RegenTime");
+                    Options.MinAttackRate = GetXmlInt(options, "//Config/Combat/MinAttackRate");
+                    Options.MaxAttackRate = GetXmlInt(options, "//Config/Combat/MaxAttackRate");
+                    Options.BlockingSlow = GetXmlInt(options, "//Config/Combat/BlockingSlow") / 100;
+                    Options.MaxAttackRate = GetXmlInt(options, "//Config/Combat/CritChance");
+                    Options.BlockingSlow = GetXmlInt(options, "//Config/Combat/CritMultiplier") / 100;
+                    Options.MaxDashSpeed = GetXmlInt(options, "//Config/Combat/MaxDashSpeed");
 
                     //Map
                     Options.GameBorderStyle = GetXmlInt(options, "//Config/Map/BorderStyle");
@@ -257,9 +272,13 @@ namespace Intersect_Server.Classes.General
                 bf.WriteString(Options.ToolTypes[i]);
             }
 
-            //Misc
+            //Combat
             bf.WriteInteger(Options.MinAttackRate);
             bf.WriteInteger(Options.MinAttackRate);
+            bf.WriteDouble(Options.BlockingSlow);
+            bf.WriteInteger(Options.CritChance);
+            bf.WriteDouble(Options.CritMultiplier);
+            bf.WriteInteger(Options.MaxDashSpeed);
 
             //Map
             bf.WriteInteger(Options.GameBorderStyle);

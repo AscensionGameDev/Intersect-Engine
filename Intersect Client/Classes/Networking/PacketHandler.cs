@@ -197,6 +197,9 @@ namespace Intersect_Client.Classes.Networking
                     case ServerPackets.EntityAttack:
                         HandleEntityAttack(bf.ReadBytes(bf.Length()));
                         break;
+                    case ServerPackets.ActionMsg:
+                        HandleActionMsg(bf.ReadBytes(bf.Length()));
+                        break;
                     default:
                         Console.WriteLine(@"Non implemented packet received: " + packetHeader);
                         break;
@@ -353,6 +356,15 @@ namespace Intersect_Client.Classes.Networking
             bf.WriteBytes(packet);
             Globals.ChatboxContent.Add(new KeyValuePair<string, Color>(bf.ReadString(), new Color((int)bf.ReadByte(), (int)bf.ReadByte(), (int)bf.ReadByte(), (int)bf.ReadByte())));
 
+        }
+
+        private static void HandleActionMsg(byte[] packet)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteBytes(packet);
+            var e = Globals.Entities[bf.ReadInteger()];
+            e.ActionMsgs.Add(new ActionMsgInstance(e, bf.ReadString(), new Color((int)bf.ReadByte(), (int)bf.ReadByte(), (int)bf.ReadByte(), (int)bf.ReadByte())));
+            bf.Dispose();
         }
 
         private static void HandleGameData(byte[] packet)
@@ -564,6 +576,8 @@ namespace Intersect_Client.Classes.Networking
             var index = (int)bf.ReadLong();
             var type = bf.ReadInteger();
             var mapNum = bf.ReadInteger();
+            var attackTimer = bf.ReadInteger();
+
             Entity en = null;
             if (type < (int)EntityTypes.Event)
             {
@@ -581,7 +595,16 @@ namespace Intersect_Client.Classes.Networking
             {
                 return;
             }
-            en.AttackTimer = Environment.TickCount + bf.ReadInteger();
+
+            if (attackTimer > -1)
+            {
+                en._attackTimer = Environment.TickCount + attackTimer;
+                en.blocking = false;
+            }
+            else
+            {
+                en.blocking = true;
+            }
         }
 
         private static void HandleEventDialog(byte[] packet)

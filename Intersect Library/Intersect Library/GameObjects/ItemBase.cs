@@ -38,7 +38,7 @@ namespace Intersect_Library.GameObjects
         public int Price;
         public int Bound;
         public int Animation;
-        public int ClassReq;
+        public int ClassReq = -1;
         public int LevelReq;
         public int Projectile = -1;
         public int[] StatsReq;

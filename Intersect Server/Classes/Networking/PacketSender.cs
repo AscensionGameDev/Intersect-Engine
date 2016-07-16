@@ -1081,6 +1081,20 @@ namespace Intersect_Server.Classes.Networking
             SendDataToProximity(Globals.Entities[index].CurrentMap, bf.ToArray());
             bf.Dispose();
         }
+
+        public static void SendActionMsg(int index, string message, Color color)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteLong((int)ServerPackets.ActionMsg);
+            bf.WriteInteger(index);
+            bf.WriteString(message);
+            bf.WriteByte(color.A);
+            bf.WriteByte(color.R);
+            bf.WriteByte(color.G);
+            bf.WriteByte(color.B);
+            SendDataToProximity(Globals.Entities[index].CurrentMap, bf.ToArray());
+            bf.Dispose();
+        }
     }
 }
 

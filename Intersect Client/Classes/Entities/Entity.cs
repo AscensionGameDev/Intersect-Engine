@@ -96,12 +96,16 @@ namespace Intersect_Client.Classes.Entities
         //Status effects
         public List<StatusInstance> Status = new List<StatusInstance>();
 
+        //Action Msg's
+        public List<ActionMsgInstance> ActionMsgs = new List<ActionMsgInstance>();
+
         //Dashing instance
         public DashInstance Dashing = null;
-        public Queue<DashInstance> DashQueue = new Queue<DashInstance>(); 
+        public Queue<DashInstance> DashQueue = new Queue<DashInstance>();
 
-        //Attacking
-        public long AttackTimer = 0;
+        //Combat
+        public long _attackTimer = 0;
+        public bool blocking = false;
 
         private long _lastUpdate;
         private long _walkTimer;
@@ -176,6 +180,7 @@ namespace Intersect_Client.Classes.Entities
         public virtual float GetMovementTime()
         {
             var time = 1000f/(float) (1 + Math.Log(Stat[(int) Stats.Speed]));
+            if (blocking == true) { time += time * (float)Options.BlockingSlow; }
             if (time > 1000f) time = 1000f;
             return time;
         }
@@ -427,7 +432,7 @@ namespace Intersect_Client.Classes.Entities
                 }
                 destRectangle.X = (int)Math.Ceiling(destRectangle.X);
                 destRectangle.Y = (int)Math.Ceiling(destRectangle.Y);
-                if (AttackTimer > Environment.TickCount)
+                if (_attackTimer > Environment.TickCount || blocking == true)
                 {
                     srcRectangle = new FloatRect(3 * (int)entityTex.GetWidth() / 4, d * (int)entityTex.GetHeight() / 4, (int)entityTex.GetWidth() / 4, (int)entityTex.GetHeight() / 4);
                 }
@@ -594,6 +599,28 @@ namespace Intersect_Client.Classes.Entities
             GameGraphics.Renderer.DrawString(MyName, GameGraphics.GameFont,
                 (int)(x - (int)Math.Ceiling(textWidth / 2)), (int)(y), 1, Color.White);
         }
+
+        public void DrawActionMsgs()
+        {
+            int i = GetLocalPos(CurrentMap);
+            var map = MapInstance.GetMap(CurrentMap);
+            if (i == -1 || map == null)
+            {
+                return;
+            }
+
+            for (int n = ActionMsgs.Count - 1; n > -1; n--)
+            {
+                var y = (int)Math.Ceiling(GetCenterPos().Y - ((Options.TileHeight * 2) * (1000 - (ActionMsgs[n].TransmittionTimer - Globals.System.GetTimeMS())) / 1000));
+                var x = (int)Math.Ceiling(GetCenterPos().X + ActionMsgs[n].xOffset);
+                float textWidth = GameGraphics.Renderer.MeasureText(ActionMsgs[n].msg, GameGraphics.GameFont, 1).X;
+                GameGraphics.Renderer.DrawString(ActionMsgs[n].msg, GameGraphics.GameFont, (int)(x), (int)(y), 1, ActionMsgs[n].clr);
+
+                //Try to remove
+                ActionMsgs[n].TryRemove();
+            }
+        }
+
         public void DrawHpBar()
         {
             if (HideName == 1 && Vital[(int)Vitals.Health] == MaxVital[(int)Vitals.Health]) { return; }
@@ -703,6 +730,34 @@ namespace Intersect_Client.Classes.Entities
         ~Entity()
         {
             Dispose();
+        }
+    }
+
+    public class ActionMsgInstance
+    {
+        public Entity Entity = null;
+        public string msg = "";
+        public Color clr = new Color();
+        public long TransmittionTimer = 0;
+        public long xOffset = 0;
+
+        public ActionMsgInstance(Entity entity, string message, Color color)
+        {
+            Random rnd = new Random();
+
+            Entity = entity;
+            msg = message;
+            clr = color;
+            xOffset = rnd.Next(-16, 17); //+- 16 pixels so action msg's don't overlap!
+            TransmittionTimer = Globals.System.GetTimeMS() + 1000;
+        }
+
+        public void TryRemove()
+        {
+            if (TransmittionTimer <= Globals.System.GetTimeMS())
+            {
+                Entity.ActionMsgs.Remove(this);
+            }
         }
     }
 

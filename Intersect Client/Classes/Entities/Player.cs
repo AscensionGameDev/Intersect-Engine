@@ -44,7 +44,6 @@ namespace Intersect_Client.Classes.Entities
 {
     public class Player : Entity
     {
-        private long _attackTimer;
         public HotbarInstance[] Hotbar = new HotbarInstance[Options.MaxHotbar];
         public int StatPoints = 0;
         public int Experience = 0;
@@ -88,6 +87,19 @@ namespace Intersect_Client.Classes.Entities
                     {
                         return returnval;
                     }
+                }
+                if (Globals.InputManager.KeyDown(Keys.Q))
+                {
+                    if (TryBlock())
+                    {
+                        return returnval;
+                    }
+                }
+                else if (blocking == true)
+                {
+                    PacketSender.SendBlock(0);
+                    blocking = false;
+                    _attackTimer = Globals.System.GetTimeMS() + CalculateAttackTime();
                 }
             }
             if (_targetBox != null) { _targetBox.Update(); }
@@ -316,13 +328,35 @@ namespace Intersect_Client.Classes.Entities
 
             }
         }
+
         public int CalculateAttackTime()
         {
             return (int)((Stat[(int)Stats.Speed] / (float)Options.MaxStatValue) * (Options.MinAttackRate - Options.MaxAttackRate)) + Options.MinAttackRate;
         }
+
+        public bool TryBlock()
+        {
+            if (_attackTimer > Globals.System.GetTimeMS()) { return false; }
+
+            if (Options.ShieldIndex > -1 && Globals.Me.Equipment[Options.ShieldIndex] > -1)
+            {
+                var item = ItemBase.GetItem(Globals.Me.Inventory[Globals.Me.Equipment[Options.ShieldIndex]].ItemNum);
+                if (item != null)
+                {
+                    PacketSender.SendBlock(1);
+                    _attackTimer = Globals.System.GetTimeMS() + CalculateAttackTime();
+                    blocking = true;
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
         public bool TryAttack()
         {
             if (_attackTimer > Globals.System.GetTimeMS()) { return false; }
+            if (blocking) { return true; }
 
             var x = Globals.Entities[Globals.MyIndex].CurrentX;
             var y = Globals.Entities[Globals.MyIndex].CurrentY;
@@ -357,8 +391,7 @@ namespace Intersect_Client.Classes.Entities
                                 {
                                     //Talk to Event
                                     PacketSender.SendActivateEvent(en.Value.CurrentMap, en.Key);
-                                    _attackTimer = Globals.System.GetTimeMS() + 1000;
-                                    AttackTimer = Globals.System.GetTimeMS() + CalculateAttackTime();
+                                    _attackTimer = Globals.System.GetTimeMS() + CalculateAttackTime();
                                     return true;
                                 }
                             }
@@ -371,8 +404,7 @@ namespace Intersect_Client.Classes.Entities
                     if (item != null && item.Projectile >= 0)
                     {
                         PacketSender.SendAttack(-1);
-                        _attackTimer = Globals.System.GetTimeMS() + 1000;
-                        AttackTimer = Globals.System.GetTimeMS() + CalculateAttackTime();
+                        _attackTimer = Globals.System.GetTimeMS() + CalculateAttackTime();
                         return true;
                     }
                 }
@@ -385,8 +417,7 @@ namespace Intersect_Client.Classes.Entities
                         {
                             //ATTACKKKKK!!!
                             PacketSender.SendAttack(en.Key);
-                            _attackTimer = Globals.System.GetTimeMS() + 1000;
-                            AttackTimer = Globals.System.GetTimeMS() + CalculateAttackTime();
+                            _attackTimer = Globals.System.GetTimeMS() + CalculateAttackTime();
                             return true;
                         }
                     }
@@ -400,7 +431,7 @@ namespace Intersect_Client.Classes.Entities
                 if (item != null && item.Projectile >= 0)
                 {
                     PacketSender.SendAttack(_targetIndex);
-                    _attackTimer = Globals.System.GetTimeMS() + 1000;
+                    _attackTimer = Globals.System.GetTimeMS() + CalculateAttackTime();
                     return true;
                 }
             }

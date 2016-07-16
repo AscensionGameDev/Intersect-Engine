@@ -96,6 +96,14 @@ namespace Intersect_Client.Classes.Networking
             GameNetwork.SendPacket(bf.ToArray());
         }
 
+        public static void SendBlock(int blocking)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteLong((int)ClientPackets.TryBlock);
+            bf.WriteInteger(blocking);
+            GameNetwork.SendPacket(bf.ToArray());
+        }
+
         public static void SendDir(int dir)
         {
             var bf = new ByteBuffer();

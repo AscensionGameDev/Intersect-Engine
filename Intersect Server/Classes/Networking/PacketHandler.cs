@@ -78,6 +78,9 @@ namespace Intersect_Server.Classes.Networking
                 case ClientPackets.TryAttack:
                     HandleTryAttack(client, packet);
                     break;
+                case ClientPackets.TryBlock:
+                    HandleTryBlock(client, packet);
+                    break;
                 case ClientPackets.SendDir:
                     HandleDir(client, packet);
                     break;
@@ -544,6 +547,36 @@ namespace Intersect_Server.Classes.Networking
             int chunkNum = (int)bf.ReadLong();
             //TODO See if the player is close enough to be switching chunks.
             PacketSender.SendEnterMap(client, chunkNum);
+            bf.Dispose();
+        }
+
+        private static void HandleTryBlock(Client client, byte[] packet)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteBytes(packet);
+
+            //check if player is blinded or stunned
+            for (var n = 0; n < client.Entity.Status.Count; n++)
+            {
+                if (client.Entity.Status[n].Type == (int)StatusTypes.Stun)
+                {
+                    PacketSender.SendPlayerMsg(client, "You are stunned and can't block");
+                    bf.Dispose();
+                    return;
+                }
+            }
+
+            if (bf.ReadInteger() == 1)
+            {
+                client.Entity.Blocking = true;
+                PacketSender.SendEntityAttack(client.EntityIndex, (int)EntityTypes.GlobalEntity, client.Entity.CurrentMap, -1);
+            }
+            else
+            {
+                client.Entity.Blocking = false;
+                PacketSender.SendEntityAttack(client.EntityIndex, (int)EntityTypes.GlobalEntity, client.Entity.CurrentMap, 0);
+            }
+
             bf.Dispose();
         }
 

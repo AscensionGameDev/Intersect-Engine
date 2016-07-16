@@ -20,7 +20,6 @@ namespace Intersect_Library
         public static int MaxInvItems = 35;
         public static int MaxPlayerSkills = 35;
         public static int MaxBankSlots = 100;
-        public static int MaxDashSpeed = 200;
 
         //Equipment
         public static int WeaponIndex = -1;
@@ -28,10 +27,15 @@ namespace Intersect_Library
         public static List<string> EquipmentSlots = new List<string>();
         public static List<string> PaperdollOrder = new List<string>();
         public static List<string> ToolTypes = new List<string>();
+        public static List<string> StatusActionMsgs = new List<string> {"NONE!", "SILENCE!", "STUNNED!", "SNARED!", "BLINDED!", "STEALTH!", "TRANSFORMED!"};
 
-        //Misc
+        //Combat
         public static int MinAttackRate = 1000; //1 attack per second
         public static int MaxAttackRate = 400; //1 attack per 400ms
+        public static double BlockingSlow = 0.3; //Slow when moving with a shield. Default 30%
+        public static int CritChance = 20; //1 in 20 chance to critically strike.
+        public static double CritMultiplier = 1.5; //Critical strikes deal 1.5x damage.
+        public static int MaxDashSpeed = 200;
 
         //Maps
         public static int GameBorderStyle = 0; //0 For Smart Borders, 1 for Non-Seamless, 2 for black borders
@@ -83,6 +87,10 @@ namespace Intersect_Library
             //Misc
             MinAttackRate = bf.ReadInteger();
             MaxAttackRate = bf.ReadInteger();
+            BlockingSlow = bf.ReadDouble();
+            CritChance = bf.ReadInteger();
+            CritMultiplier = bf.ReadDouble();
+            MaxDashSpeed = bf.ReadInteger();
 
             //Map
             GameBorderStyle = bf.ReadInteger();

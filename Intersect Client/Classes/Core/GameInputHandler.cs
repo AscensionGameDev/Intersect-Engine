@@ -90,9 +90,9 @@ namespace Intersect_Client.Classes.Core
 
         public static void OnMouseDown(GameInput.MouseButtons btn)
         {
-            if (btn == GameInput.MouseButtons.Left)
+            if (Globals.GameState == GameStates.InGame && Globals.Me != null)
             {
-                if (Globals.GameState == GameStates.InGame && Globals.Me != null)
+                if (btn == GameInput.MouseButtons.Left)
                 {
                     if (!Gui.MouseHitGUI())
                     {
@@ -105,6 +105,16 @@ namespace Intersect_Client.Classes.Core
                             return;
                         }
                         if (Globals.Me.TryPickupItem())
+                        {
+                            return;
+                        }
+                    }
+                }
+                else if (btn == GameInput.MouseButtons.Right)
+                {
+                    if (!Gui.MouseHitGUI())
+                    {
+                        if (Globals.Me.TryBlock())
                         {
                             return;
                         }

@@ -208,6 +208,7 @@ namespace Intersect_Client.Classes.Core
                         Layer1Entities[x][y].DrawName();
                         if (Layer1Entities[x][y].GetType() != typeof(Event))
                         {
+                            Layer1Entities[x][y].DrawActionMsgs();
                             Layer1Entities[x][y].DrawHpBar();
                             Layer1Entities[x][y].DrawCastingBar();
                         }
@@ -220,6 +221,7 @@ namespace Intersect_Client.Classes.Core
                         Layer2Entities[x][y].DrawName();
                         if (Layer2Entities[x][y].GetType() != typeof(Event))
                         {
+                            Layer2Entities[x][y].DrawActionMsgs();
                             Layer2Entities[x][y].DrawHpBar();
                             Layer2Entities[x][y].DrawCastingBar();
                         }
