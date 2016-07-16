@@ -79,8 +79,8 @@ namespace Intersect_Server.Classes.General
 
                 writer.WriteStartElement("Combat");
                 writer.WriteElementString("RegenTime", "3000");
-                writer.WriteElementString("MaxAttackRate", "400");
                 writer.WriteElementString("MinAttackRate", "1000");
+                writer.WriteElementString("MaxAttackRate", "400");
                 writer.WriteElementString("BlockingSlow", "30");
                 writer.WriteElementString("CritChance", "20");
                 writer.WriteElementString("CritMultiplier", "150");
@@ -274,7 +274,7 @@ namespace Intersect_Server.Classes.General
 
             //Combat
             bf.WriteInteger(Options.MinAttackRate);
-            bf.WriteInteger(Options.MinAttackRate);
+            bf.WriteInteger(Options.MaxAttackRate);
             bf.WriteDouble(Options.BlockingSlow);
             bf.WriteInteger(Options.CritChance);
             bf.WriteDouble(Options.CritMultiplier);

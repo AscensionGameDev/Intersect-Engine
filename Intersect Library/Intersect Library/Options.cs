@@ -84,7 +84,7 @@ namespace Intersect_Library
                 ToolTypes.Add(bf.ReadString());
             }
 
-            //Misc
+            //Combat
             MinAttackRate = bf.ReadInteger();
             MaxAttackRate = bf.ReadInteger();
             BlockingSlow = bf.ReadDouble();
