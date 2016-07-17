@@ -409,7 +409,7 @@ namespace Intersect_Client.Classes.Maps
                 GameGraphics.DrawGameTexture(tileset, destX,
                     destY,
                     (int)Autotiles.Autotile[x, y].Layer[layerNum].QuarterTile[quarterNum].X + xOffset,
-                    (int)Autotiles.Autotile[x, y].Layer[layerNum].QuarterTile[quarterNum].Y + yOffset, 16, 16, tex);
+                    (int)Autotiles.Autotile[x, y].Layer[layerNum].QuarterTile[quarterNum].Y + yOffset, Options.TileWidth/2, Options.TileHeight/2, tex);
             }
         }
         private void DrawMapLayer(GameRenderTexture tex, int l, int z, float xoffset = 0, float yoffset = 0)
@@ -473,14 +473,14 @@ namespace Intersect_Client.Classes.Maps
                             DrawAutoTile(l, x * Options.TileWidth + xoffset, y * Options.TileHeight + yoffset, 1, x,
                                 y,
                                 z, tex);
-                            DrawAutoTile(l, x * Options.TileWidth + 16 + xoffset, y * Options.TileHeight + yoffset,
+                            DrawAutoTile(l, x * Options.TileWidth + (Options.TileWidth/2) + xoffset, y * Options.TileHeight + yoffset,
                                 2, x,
                                 y, z, tex);
-                            DrawAutoTile(l, x * Options.TileWidth + xoffset, y * Options.TileHeight + 16 + yoffset,
+                            DrawAutoTile(l, x * Options.TileWidth + xoffset, y * Options.TileHeight + (Options.TileHeight/2) + yoffset,
                                 3, x,
                                 y, z, tex);
-                            DrawAutoTile(l, +x * Options.TileWidth + 16 + xoffset,
-                                y * Options.TileHeight + 16 + yoffset,
+                            DrawAutoTile(l, +x * Options.TileWidth + (Options.TileWidth/2) + xoffset,
+                                y * Options.TileHeight + (Options.TileHeight/2) + yoffset,
                                 4, x, y, z, tex);
                             break;
                     }

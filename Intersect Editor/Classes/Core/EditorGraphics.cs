@@ -213,15 +213,19 @@ namespace Intersect_Editor.Classes
         }
         private static void DrawTransparentBorders()
         {
-            for (int x = 0; x < Options.MapWidth + 2; x++)
+            var transTex = GetTexture(TextureType.Misc, "transtile.png");
+            if (transTex != null)
             {
-                DrawTexture(GetTexture(TextureType.Misc, "transtile.png"), Options.TileWidth * x, 0, 0, 0, Options.TileWidth, Options.TileHeight, null);
-                DrawTexture(GetTexture(TextureType.Misc, "transtile.png"), Options.TileWidth * x, Options.TileHeight * (Options.MapHeight + 1), 0, 0, Options.TileWidth, Options.TileHeight, null);
-            }
-            for (int y = 1; y < Options.MapHeight + 1; y++)
-            {
-                DrawTexture(GetTexture(TextureType.Misc, "transtile.png"), 0, Options.TileHeight * y, 0, 0, Options.TileWidth, Options.TileHeight, null);
-                DrawTexture(GetTexture(TextureType.Misc, "transtile.png"), Options.TileWidth * (Options.MapWidth + 1), Options.TileHeight * y, 0, 0, Options.TileWidth, Options.TileHeight, null);
+                for (int x = 0; x < Options.MapWidth + 2; x++)
+                {
+                    DrawTexture(transTex, new RectangleF(0,0,transTex.Width,transTex.Height),new RectangleF(Options.TileWidth*x, 0,Options.TileWidth, Options.TileHeight), null);
+                    DrawTexture(transTex, new RectangleF(0, 0, transTex.Width, transTex.Height),new RectangleF(Options.TileWidth*x,Options.TileHeight*(Options.MapHeight + 1), Options.TileWidth, Options.TileHeight), null);
+                }
+                for (int y = 1; y < Options.MapHeight + 1; y++)
+                {
+                    DrawTexture(transTex, new RectangleF(0, 0, transTex.Width, transTex.Height), new RectangleF(0, Options.TileHeight*y, Options.TileWidth, Options.TileHeight), null);
+                    DrawTexture(transTex, new RectangleF(0, 0, transTex.Width, transTex.Height), new RectangleF(Options.TileWidth*(Options.MapWidth + 1),Options.TileHeight*y, Options.TileWidth, Options.TileHeight), null);
+                }
             }
         }
         private static void DrawAutoTile(int layerNum, int destX, int destY, int quarterNum, int x, int y, MapBase map, RenderTarget2D target)
@@ -235,7 +239,7 @@ namespace Intersect_Editor.Classes
                     yOffset = (Globals.WaterfallFrame - 1) * Options.TileHeight;
                     break;
                 case MapAutotiles.AutotileAnim:
-                    xOffset = Globals.AutotileFrame * 64;
+                    xOffset = Globals.AutotileFrame * Options.TileWidth * 2;
                     break;
                 case MapAutotiles.AutotileCliff:
                     yOffset = -Options.TileHeight;
@@ -245,7 +249,7 @@ namespace Intersect_Editor.Classes
                                 destX, destY,
                                 (int)map.Autotiles.Autotile[x, y].Layer[layerNum].QuarterTile[quarterNum].X + xOffset,
                                 (int)map.Autotiles.Autotile[x, y].Layer[layerNum].QuarterTile[quarterNum].Y + yOffset,
-                                16, 16, target);
+                                Options.TileWidth/2, Options.TileHeight/2, target);
 
         }
         private static void DrawMap(int dir, bool screenShotting, int layer, RenderTarget2D RenderTarget2D)
@@ -544,9 +548,9 @@ namespace Intersect_Editor.Classes
                             if (tmpMap.Autotiles.Autotile[x, y].Layer[z].RenderState != MapAutotiles.RenderStateAutotile)
                                 continue;
                             DrawAutoTile(z, x * Options.TileWidth + xoffset, y * Options.TileHeight + yoffset, 1, x, y, tmpMap, RenderTarget2D);
-                            DrawAutoTile(z, x * Options.TileWidth + 16 + xoffset, y * Options.TileHeight + yoffset, 2, x, y, tmpMap, RenderTarget2D);
-                            DrawAutoTile(z, x * Options.TileWidth + xoffset, y * Options.TileHeight + 16 + yoffset, 3, x, y, tmpMap, RenderTarget2D);
-                            DrawAutoTile(z, x * Options.TileWidth + 16 + xoffset, y * Options.TileHeight + 16 + yoffset, 4, x, y, tmpMap, RenderTarget2D);
+                            DrawAutoTile(z, x * Options.TileWidth + (Options.TileWidth/2) + xoffset, y * Options.TileHeight + yoffset, 2, x, y, tmpMap, RenderTarget2D);
+                            DrawAutoTile(z, x * Options.TileWidth + xoffset, y * Options.TileHeight + (Options.TileHeight / 2) + yoffset, 3, x, y, tmpMap, RenderTarget2D);
+                            DrawAutoTile(z, x * Options.TileWidth + (Options.TileWidth / 2) + xoffset, y * Options.TileHeight + (Options.TileHeight / 2) + yoffset, 4, x, y, tmpMap, RenderTarget2D);
                         }
                         else
                         {
