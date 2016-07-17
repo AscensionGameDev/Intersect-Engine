@@ -625,7 +625,7 @@ namespace Intersect_Server.Classes.Maps
             //Send Entity Info to Everyone and Everyone to the Entity
             SendMapEntitiesTo(client);
             PacketSender.SendMapItems(client, MyMapNum);
-            Entities.Add(client.Entity);
+            AddEntity(client.Entity);
             if (SurroundingMaps.Count <= 0) return;
             foreach (var t in SurroundingMaps)
             {

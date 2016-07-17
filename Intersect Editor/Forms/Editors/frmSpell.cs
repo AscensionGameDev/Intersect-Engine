@@ -615,7 +615,7 @@ namespace Intersect_Editor.Forms
             else
             {
                 _editorItem.Projectile = Database.GameObjectIdFromList(GameObject.Projectile,scrlProjectile.Value);
-                lblProjectile.Text = "Projectile: " + ProjectileBase.GetName(_editorItem.Data4);
+                lblProjectile.Text = "Projectile: " + ProjectileBase.GetName(_editorItem.Projectile);
             }
         }
 

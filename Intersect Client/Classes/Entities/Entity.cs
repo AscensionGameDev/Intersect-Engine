@@ -848,6 +848,7 @@ namespace Intersect_Client.Classes.Entities
                     else
                     {
                         Globals.Entities[EntityID].Dashing = null;
+                        Globals.Entities[EntityID].CurrentX = 0;
                     }
                 }
                 if (Globals.Entities[EntityID].CurrentX > Options.MapWidth - 1)
@@ -864,6 +865,7 @@ namespace Intersect_Client.Classes.Entities
                     else
                     {
                         Globals.Entities[EntityID].Dashing = null;
+                        Globals.Entities[EntityID].CurrentX = Options.MapWidth - 1;
                     }
                 }
                 if (Globals.Entities[EntityID].CurrentY < 0)
@@ -880,6 +882,7 @@ namespace Intersect_Client.Classes.Entities
                     else
                     {
                         Globals.Entities[EntityID].Dashing = null;
+                        Globals.Entities[EntityID].CurrentY = 0;
                     }
                 }
                 if (Globals.Entities[EntityID].CurrentY > Options.MapHeight - 1)
@@ -896,6 +899,7 @@ namespace Intersect_Client.Classes.Entities
                     else
                     {
                         Globals.Entities[EntityID].Dashing = null;
+                        Globals.Entities[EntityID].CurrentY = Options.MapHeight - 1;
                     }
                 }
 
