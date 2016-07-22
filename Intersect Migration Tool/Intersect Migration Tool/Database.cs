@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Intersect_Migration_Tool.UpgradeInstructions.Upgrade_1;
 using Mono.Data.Sqlite;
@@ -15,7 +16,6 @@ namespace Intersect_Migration_Tool
         private static Object _dbLock = new Object();
         public const int DbVersion = 2;
         private const string DbFilename = "resources/intersect.db";
-        private const string UpgradeDbFilename = "resources/migrating.db";
 
         //Database Variables
         private const string INFO_TABLE = "info";
@@ -59,12 +59,12 @@ namespace Intersect_Migration_Tool
 
         public static void Upgrade()
         {
-            File.Copy("resources/intersect.db","resources/migrating.db",true);
+            File.Copy("resources/intersect.db", "resources/intersect_v" + GetDatabaseVersion() + "_" + DateTime.Now.ToString("yyyy-MM-dd hh-mm-ss") + ".db");
             if (_dbConnection != null)
             {
                 _dbConnection.Close();
                 _dbConnection = null;
-                _dbConnection = new SqliteConnection("Data Source=" + UpgradeDbFilename + ",Version=3");
+                _dbConnection = new SqliteConnection("Data Source=" + DbFilename + ",Version=3");
                 _dbConnection.Open();
             }
             var startingVersion = GetDatabaseVersion();
@@ -85,9 +85,6 @@ namespace Intersect_Migration_Tool
             }
             _dbConnection.Close();
             _dbConnection = null;
-            File.Move("resources/intersect.db",
-                "resources/intersect_v" + startingVersion + "_" + DateTime.Now.ToString("yyyy-MM-dd hh-mm-ss") + ".db");
-            File.Move("resources/migrating.db","resources/intersect.db");
             Console.WriteLine("Database successfully updated to version " + currentVersion);
             Console.WriteLine("Version " + startingVersion + " backup is located at resources/intersect_v" + startingVersion + "_" + DateTime.Now.ToString("yyyy-MM-dd hh-mm-ss") + ".db in case of problems.");
         }
