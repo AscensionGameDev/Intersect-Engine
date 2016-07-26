@@ -569,7 +569,7 @@ namespace Intersect_Library.GameObjects.Maps
             // Vertical
             if (tmpTile[2] && !tmpTile[3]) { situation = AutoTileVertical; }
             // Fill
-            if (tmpTile[1] && tmpTile[2] && tmpTile[3]) { situation = AutoTileFill; }
+            if (tmpTile[2] && tmpTile[3]) { situation = AutoTileFill; }
             // Inner
             if (!tmpTile[2] && !tmpTile[3]) { situation = AutoTileInner; }
 
@@ -610,7 +610,7 @@ namespace Intersect_Library.GameObjects.Maps
             // Vertical
             if (tmpTile[1] && !tmpTile[3]) { situation = AutoTileVertical; }
             // Fill
-            if (tmpTile[1] && tmpTile[2] && tmpTile[3]) { situation = AutoTileFill; }
+            if (tmpTile[1] && tmpTile[3]) { situation = AutoTileFill; }
             // Inner
             if (!tmpTile[1] && !tmpTile[3]) { situation = AutoTileInner; }
 
@@ -651,7 +651,7 @@ namespace Intersect_Library.GameObjects.Maps
             // Vertical
             if (!tmpTile[1] && tmpTile[3]) { situation = AutoTileVertical; }
             // Fill
-            if (tmpTile[1] && tmpTile[2] && tmpTile[3]) { situation = AutoTileFill; }
+            if (tmpTile[1] && tmpTile[3]) { situation = AutoTileFill; }
             // Inner
             if (!tmpTile[1] && !tmpTile[3]) { situation = AutoTileInner; }
 
@@ -692,7 +692,7 @@ namespace Intersect_Library.GameObjects.Maps
             // Vertical
             if (tmpTile[1] && !tmpTile[3]) { situation = AutoTileVertical; }
             // Fill
-            if (tmpTile[1] && tmpTile[2] && tmpTile[3]) { situation = AutoTileFill; }
+            if (tmpTile[1] && tmpTile[3]) { situation = AutoTileFill; }
             // Inner
             if (!tmpTile[1] && !tmpTile[3]) { situation = AutoTileInner; }
 
