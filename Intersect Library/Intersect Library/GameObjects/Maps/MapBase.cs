@@ -53,6 +53,9 @@ namespace Intersect_Library.GameObjects.Maps
         public Color PlayerLightColor { get; set; } = Color.White;
         public string OverlayGraphic { get; set; } = "None";
 
+        //SyncLock
+        protected Object _mapLock = new Object();
+
         //Temporary Values
         public bool IsClient = false;
 
@@ -76,147 +79,153 @@ namespace Intersect_Library.GameObjects.Maps
 
         public MapBase(MapBase mapcopy) : base(mapcopy.MyMapNum)
         {
-            ByteBuffer bf = new ByteBuffer();
-            MyName = mapcopy.MyName;
-            Brightness = mapcopy.Brightness;
-            IsIndoors = mapcopy.IsIndoors;
-            for (var i = 0; i < Options.LayerCount; i++)
+            lock (_mapLock)
             {
-                Layers[i].Tiles = new Tile[Options.MapWidth, Options.MapHeight];
-                for (var x = 0; x < Options.MapWidth; x++)
+                ByteBuffer bf = new ByteBuffer();
+                MyName = mapcopy.MyName;
+                Brightness = mapcopy.Brightness;
+                IsIndoors = mapcopy.IsIndoors;
+                for (var i = 0; i < Options.LayerCount; i++)
                 {
-                    for (var y = 0; y < Options.MapHeight; y++)
+                    Layers[i].Tiles = new Tile[Options.MapWidth, Options.MapHeight];
+                    for (var x = 0; x < Options.MapWidth; x++)
                     {
-                        Layers[i].Tiles[x, y] = new Tile();
-                        Layers[i].Tiles[x, y].TilesetIndex = mapcopy.Layers[i].Tiles[x, y].TilesetIndex;
-                        Layers[i].Tiles[x, y].X = mapcopy.Layers[i].Tiles[x, y].X;
-                        Layers[i].Tiles[x, y].Y = mapcopy.Layers[i].Tiles[x, y].Y;
-                        Layers[i].Tiles[x, y].Autotile = mapcopy.Layers[i].Tiles[x, y].Autotile;
-                        if (i == 0 && mapcopy.Attributes[x, y] != null)
+                        for (var y = 0; y < Options.MapHeight; y++)
                         {
-                            Attributes[x, y] = new Attribute();
-                            Attributes[x, y].value = mapcopy.Attributes[x, y].value;
-                            Attributes[x, y].data1 = mapcopy.Attributes[x, y].data1;
-                            Attributes[x, y].data2 = mapcopy.Attributes[x, y].data2;
-                            Attributes[x, y].data3 = mapcopy.Attributes[x, y].data3;
-                            Attributes[x, y].data4 = mapcopy.Attributes[x, y].data4;
+                            Layers[i].Tiles[x, y] = new Tile();
+                            Layers[i].Tiles[x, y].TilesetIndex = mapcopy.Layers[i].Tiles[x, y].TilesetIndex;
+                            Layers[i].Tiles[x, y].X = mapcopy.Layers[i].Tiles[x, y].X;
+                            Layers[i].Tiles[x, y].Y = mapcopy.Layers[i].Tiles[x, y].Y;
+                            Layers[i].Tiles[x, y].Autotile = mapcopy.Layers[i].Tiles[x, y].Autotile;
+                            if (i == 0 && mapcopy.Attributes[x, y] != null)
+                            {
+                                Attributes[x, y] = new Attribute();
+                                Attributes[x, y].value = mapcopy.Attributes[x, y].value;
+                                Attributes[x, y].data1 = mapcopy.Attributes[x, y].data1;
+                                Attributes[x, y].data2 = mapcopy.Attributes[x, y].data2;
+                                Attributes[x, y].data3 = mapcopy.Attributes[x, y].data3;
+                                Attributes[x, y].data4 = mapcopy.Attributes[x, y].data4;
+                            }
                         }
                     }
                 }
-            }
-            for (var i = 0; i < mapcopy.Spawns.Count; i++)
-            {
-                Spawns.Add(new NpcSpawn(mapcopy.Spawns[i]));
-            }
-            for (var i = 0; i < mapcopy.Lights.Count; i++)
-            {
-                Lights.Add(new LightBase(mapcopy.Lights[i]));
-            }
-            EventIndex = mapcopy.EventIndex;
-            foreach (var evt in mapcopy.Events)
-            {
-                bf.WriteBytes(evt.Value.EventData());
-                Events.Add(evt.Key, new EventBase(evt.Key, bf));
-                bf.Clear();
+                for (var i = 0; i < mapcopy.Spawns.Count; i++)
+                {
+                    Spawns.Add(new NpcSpawn(mapcopy.Spawns[i]));
+                }
+                for (var i = 0; i < mapcopy.Lights.Count; i++)
+                {
+                    Lights.Add(new LightBase(mapcopy.Lights[i]));
+                }
+                EventIndex = mapcopy.EventIndex;
+                foreach (var evt in mapcopy.Events)
+                {
+                    bf.WriteBytes(evt.Value.EventData());
+                    Events.Add(evt.Key, new EventBase(evt.Key, bf));
+                    bf.Clear();
+                }
             }
         }
 
         public override void Load(byte[] packet)
         {
-            var bf = new ByteBuffer();
-            bf.WriteBytes(packet);
-            MyName = bf.ReadString();
-            Revision = bf.ReadInteger();
-            Up = bf.ReadInteger();
-            Down = bf.ReadInteger();
-            Left = bf.ReadInteger();
-            Right = bf.ReadInteger();
-            Music = bf.ReadString();
-            Sound = bf.ReadString();
-            IsIndoors = Convert.ToBoolean(bf.ReadInteger());
-            Panorama = bf.ReadString();
-            Fog = bf.ReadString();
-            FogXSpeed = bf.ReadInteger();
-            FogYSpeed = bf.ReadInteger();
-            FogTransparency = bf.ReadInteger();
-            RHue = bf.ReadInteger();
-            GHue = bf.ReadInteger();
-            BHue = bf.ReadInteger();
-            AHue = bf.ReadInteger();
-            Brightness = bf.ReadInteger();
-            ZoneType = bf.ReadByte();
-            OverlayGraphic = bf.ReadString();
-            PlayerLightSize = bf.ReadInteger();
-            PlayerLightExpand = (float)bf.ReadDouble();
-            PlayerLightIntensity = bf.ReadByte();
-            PlayerLightColor = Color.FromArgb(bf.ReadByte(), bf.ReadByte(), bf.ReadByte());
-
-            for (var i = 0; i < Options.LayerCount; i++)
+            lock (_mapLock)
             {
+                var bf = new ByteBuffer();
+                bf.WriteBytes(packet);
+                MyName = bf.ReadString();
+                Revision = bf.ReadInteger();
+                Up = bf.ReadInteger();
+                Down = bf.ReadInteger();
+                Left = bf.ReadInteger();
+                Right = bf.ReadInteger();
+                Music = bf.ReadString();
+                Sound = bf.ReadString();
+                IsIndoors = Convert.ToBoolean(bf.ReadInteger());
+                Panorama = bf.ReadString();
+                Fog = bf.ReadString();
+                FogXSpeed = bf.ReadInteger();
+                FogYSpeed = bf.ReadInteger();
+                FogTransparency = bf.ReadInteger();
+                RHue = bf.ReadInteger();
+                GHue = bf.ReadInteger();
+                BHue = bf.ReadInteger();
+                AHue = bf.ReadInteger();
+                Brightness = bf.ReadInteger();
+                ZoneType = bf.ReadByte();
+                OverlayGraphic = bf.ReadString();
+                PlayerLightSize = bf.ReadInteger();
+                PlayerLightExpand = (float)bf.ReadDouble();
+                PlayerLightIntensity = bf.ReadByte();
+                PlayerLightColor = Color.FromArgb(bf.ReadByte(), bf.ReadByte(), bf.ReadByte());
+
+                for (var i = 0; i < Options.LayerCount; i++)
+                {
+                    for (var x = 0; x < Options.MapWidth; x++)
+                    {
+                        for (var y = 0; y < Options.MapHeight; y++)
+                        {
+                            Layers[i].Tiles[x, y].TilesetIndex = bf.ReadInteger();
+                            Layers[i].Tiles[x, y].X = bf.ReadInteger();
+                            Layers[i].Tiles[x, y].Y = bf.ReadInteger();
+                            Layers[i].Tiles[x, y].Autotile = bf.ReadByte();
+                        }
+                    }
+                }
+
                 for (var x = 0; x < Options.MapWidth; x++)
                 {
                     for (var y = 0; y < Options.MapHeight; y++)
                     {
-                        Layers[i].Tiles[x, y].TilesetIndex = bf.ReadInteger();
-                        Layers[i].Tiles[x, y].X = bf.ReadInteger();
-                        Layers[i].Tiles[x, y].Y = bf.ReadInteger();
-                        Layers[i].Tiles[x, y].Autotile = bf.ReadByte();
+                        int attributeType = bf.ReadInteger();
+                        if (attributeType > 0)
+                        {
+                            Attributes[x, y] = new Attribute();
+                            Attributes[x, y].value = attributeType;
+                            Attributes[x, y].data1 = bf.ReadInteger();
+                            Attributes[x, y].data2 = bf.ReadInteger();
+                            Attributes[x, y].data3 = bf.ReadInteger();
+                            Attributes[x, y].data4 = bf.ReadString();
+                        }
+                        else
+                        {
+                            Attributes[x, y] = null;
+                        }
                     }
                 }
-            }
+                var lCount = bf.ReadInteger();
+                Lights.Clear();
+                for (var i = 0; i < lCount; i++)
+                {
+                    Lights.Add(new LightBase(bf));
+                }
 
-            for (var x = 0; x < Options.MapWidth; x++)
-            {
-                for (var y = 0; y < Options.MapHeight; y++)
+                if (!IsClient)
                 {
-                    int attributeType = bf.ReadInteger();
-                    if (attributeType > 0)
+                    // Load Map Npcs
+                    Spawns.Clear();
+                    var npcCount = bf.ReadInteger();
+                    for (var i = 0; i < npcCount; i++)
                     {
-                        Attributes[x, y] = new Attribute();
-                        Attributes[x, y].value = attributeType;
-                        Attributes[x, y].data1 = bf.ReadInteger();
-                        Attributes[x, y].data2 = bf.ReadInteger();
-                        Attributes[x, y].data3 = bf.ReadInteger();
-                        Attributes[x, y].data4 = bf.ReadString();
+                        var TempNpc = new NpcSpawn();
+                        TempNpc.NpcNum = bf.ReadInteger();
+                        TempNpc.X = bf.ReadInteger();
+                        TempNpc.Y = bf.ReadInteger();
+                        TempNpc.Dir = bf.ReadInteger();
+                        Spawns.Add(TempNpc);
                     }
-                    else
+                    Events.Clear();
+                    EventIndex = bf.ReadInteger();
+                    var ecount = bf.ReadInteger();
+                    for (var i = 0; i < ecount; i++)
                     {
-                        Attributes[x, y] = null;
+                        var eventIndex = bf.ReadInteger();
+                        var evtDataLen = bf.ReadLong();
+                        var evtBuffer = new ByteBuffer();
+                        evtBuffer.WriteBytes(bf.ReadBytes((int)evtDataLen));
+                        Events.Add(eventIndex, new EventBase(eventIndex, evtBuffer));
+                        evtBuffer.Dispose();
                     }
-                }
-            }
-            var lCount = bf.ReadInteger();
-            Lights.Clear();
-            for (var i = 0; i < lCount; i++)
-            {
-                Lights.Add(new LightBase(bf));
-            }
-
-            if (!IsClient)
-            {
-                // Load Map Npcs
-                Spawns.Clear();
-                var npcCount = bf.ReadInteger();
-                for (var i = 0; i < npcCount; i++)
-                {
-                    var TempNpc = new NpcSpawn();
-                    TempNpc.NpcNum = bf.ReadInteger();
-                    TempNpc.X = bf.ReadInteger();
-                    TempNpc.Y = bf.ReadInteger();
-                    TempNpc.Dir = bf.ReadInteger();
-                    Spawns.Add(TempNpc);
-                }
-                Events.Clear();
-                EventIndex = bf.ReadInteger();
-                var ecount = bf.ReadInteger();
-                for (var i = 0; i < ecount; i++)
-                {
-                    var eventIndex = bf.ReadInteger();
-                    var evtDataLen = bf.ReadLong();
-                    var evtBuffer = new ByteBuffer();
-                    evtBuffer.WriteBytes(bf.ReadBytes((int)evtDataLen));
-                    Events.Add(eventIndex,new EventBase(eventIndex,evtBuffer));
-                    evtBuffer.Dispose();
                 }
             }
         }

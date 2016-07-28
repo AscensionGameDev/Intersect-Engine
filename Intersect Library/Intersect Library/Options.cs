@@ -27,11 +27,11 @@ namespace Intersect_Library
         public static List<string> EquipmentSlots = new List<string>();
         public static List<string> PaperdollOrder = new List<string>();
         public static List<string> ToolTypes = new List<string>();
-        public static List<string> StatusActionMsgs = new List<string> {"NONE!", "SILENCE!", "STUNNED!", "SNARED!", "BLINDED!", "STEALTH!", "TRANSFORMED!"};
+        public static List<string> StatusActionMsgs = new List<string> {"NONE!", "SILENCED!", "STUNNED!", "SNARED!", "BLINDED!", "STEALTH!", "TRANSFORMED!"};
 
         //Combat
-        public static int MinAttackRate = 1000; //1 attack per second
-        public static int MaxAttackRate = 400; //1 attack per 400ms
+        public static int MinAttackRate = 500; //2 attacks per second
+        public static int MaxAttackRate = 200; //5 attacks per second
         public static double BlockingSlow = 0.3; //Slow when moving with a shield. Default 30%
         public static int CritChance = 20; //1 in 20 chance to critically strike.
         public static double CritMultiplier = 1.5; //Critical strikes deal 1.5x damage.

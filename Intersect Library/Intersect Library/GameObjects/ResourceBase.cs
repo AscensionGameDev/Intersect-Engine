@@ -36,7 +36,7 @@ namespace Intersect_Library.GameObjects
         public string Name = "New Resource";
         public int MinHP = 0;
         public int MaxHP = 0;
-        public int Tool = 0;
+        public int Tool = -1;
         public int SpawnDuration = 0;
         public int Animation = 0;
         public bool WalkableBefore = false;

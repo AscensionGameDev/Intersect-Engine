@@ -23,6 +23,9 @@
 using Intersect_Library;
 using Intersect_Server.Classes.Entities;
 using Intersect_Server.Classes.General;
+using System;
+using System.Collections.Generic;
+using System.Threading;
 
 namespace Intersect_Server.Classes.Networking
 {
@@ -35,14 +38,8 @@ namespace Intersect_Server.Classes.Networking
         public string MyPassword = "";
         public string MySalt = "";
         public long MyId = -1;
-        public int ClientIndex;
         public int EntityIndex;
         public Player Entity;
-
-        //Ping Values
-        public long ConnectionTimeout;
-        public long TimeoutLength = 10;
-        public long PingTime = 0;
 
         //Client Properties
         public bool IsEditor;
@@ -50,22 +47,74 @@ namespace Intersect_Server.Classes.Networking
 
         //Network Variables
         private GameSocket mySocket;
+        private Queue<byte[]> sendQueue = new Queue<byte[]>();
+        private object sendLock = new object();
 
-        public Client(int myIndex, int entIndex, GameSocket socket)
+        //Processing Thead
+        private Thread updateThread;
+
+        public Client(int entIndex, GameSocket socket)
         {
             mySocket = socket;
-            ClientIndex = myIndex;
             EntityIndex = entIndex;
             if (EntityIndex > -1) { Entity = (Player)Globals.Entities[EntityIndex]; }
             if (mySocket != null && mySocket.IsConnected()) { PacketSender.SendPing(this); }
+            updateThread = new Thread(Update);
+            updateThread.Start();
         }
 
         public void SendPacket(byte[] packet)
         {
-            var buff = new ByteBuffer();
-            buff.WriteInteger(packet.Length);
-            buff.WriteBytes(packet);
-            mySocket.SendData(buff.ToArray());
+            lock (sendLock)
+            {
+                var buff = new ByteBuffer();
+                buff.WriteInteger(packet.Length);
+                buff.WriteBytes(packet);
+                sendQueue.Enqueue (buff.ToArray());
+            }
+        }
+
+        public void Pinged()
+        {
+            if (mySocket != null && IsConnected())
+            {
+                mySocket.Pinged();
+            }
+        }
+
+        public void Disconnect(string reason = "")
+        {
+            if (reason == "")
+            {
+                mySocket.Disconnect();
+            }
+            else
+            {
+                //send abort packet and then disconnect?
+            }
+        }
+
+        public void Update()
+        {
+            while (mySocket != null && IsConnected())
+            {
+                mySocket.Update();
+                if (Entity != null)
+                {
+                    Entity.Update();
+                }
+                lock (sendLock)
+                {
+                    while (sendQueue.Count > 0)
+                    {
+                        mySocket.SendData(sendQueue.Dequeue());
+                    }
+                }
+            }
+            lock (Globals.ClientLock)
+            {
+                Globals.Clients.Remove(this);
+            }
         }
 
         public bool IsConnected()
@@ -74,4 +123,3 @@ namespace Intersect_Server.Classes.Networking
         }
     }
 }
-

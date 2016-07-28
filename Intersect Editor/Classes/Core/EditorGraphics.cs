@@ -870,7 +870,7 @@ namespace Intersect_Editor.Classes
         }
         private static void DrawMapOverlay(RenderTarget2D target)
         {
-            DrawTexture(_whiteTex, new RectangleF(0, 0, 1, 1), new RectangleF(0, 0, 512, 512), Color.FromArgb(Globals.CurrentMap.AHue, Globals.CurrentMap.RHue, Globals.CurrentMap.GHue, Globals.CurrentMap.BHue), target);
+            DrawTexture(_whiteTex, new RectangleF(0, 0, 1, 1), new RectangleF(0, 0, (Options.MapWidth + 2) * Options.TileWidth, (Options.MapHeight + 2) * Options.TileHeight), Color.FromArgb(Globals.CurrentMap.AHue, Globals.CurrentMap.RHue, Globals.CurrentMap.GHue, Globals.CurrentMap.BHue), target);
         }
         public static RenderTarget2D ScreenShotMap(bool bland = false)
         {

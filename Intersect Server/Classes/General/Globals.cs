@@ -36,8 +36,8 @@ namespace Intersect_Server.Classes.General
         public static Boolean CPSLock = true;
         public static bool ServerStarted = true;
 
+        public static object ClientLock = new object();
         public static List<Client> Clients = new List<Client>();
-		public static List<Thread> ClientThread = new List<Thread>();
 		public static List<Entity> Entities = new List<Entity>();
 
         //Game helping stuff

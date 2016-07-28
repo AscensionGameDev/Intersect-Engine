@@ -92,8 +92,6 @@ namespace Intersect_Server.Classes.Entities
         public int Target = -1;
 
         public long AttackTimer = 0;
-
-        //Blocking
         public bool Blocking = false;
 
         //Initialization
@@ -262,7 +260,7 @@ namespace Intersect_Server.Classes.Entities
         public virtual float GetMovementTime()
         {
             var time = 1000f / (float)(1 + Math.Log(Stat[(int)Stats.Speed].Value()));
-            if (Blocking == true) { time += time * (float)Options.BlockingSlow; }
+            if (Blocking) { time += time * (float)Options.BlockingSlow; }
             if (time > 1000f) time = 1000f;
             return time;
         }
@@ -350,6 +348,7 @@ namespace Intersect_Server.Classes.Entities
             {
                 PacketSender.SendEntityDir(MyIndex, (int)EntityTypes.GlobalEntity, Dir, CurrentMap);
             }
+            MoveTimer = Environment.TickCount + (long)GetMovementTime();
         }
         // Change the dimension if the player is on a gateway
         public void TryToChangeDimension()
@@ -417,7 +416,25 @@ namespace Intersect_Server.Classes.Entities
         //Combat
         public int CalculateAttackTime()
         {
-            return (int)((Stat[(int) Stats.Speed].Value()/(float) Options.MaxStatValue)*(Options.MinAttackRate - Options.MaxAttackRate)) + Options.MinAttackRate;
+            return (int)(Options.MaxAttackRate + (float)((Options.MinAttackRate - Options.MaxAttackRate) * (((float)Options.MaxStatValue - Stat[(int)Stats.Speed].Value()) / (float)Options.MaxStatValue)));
+        }
+
+        public void TryBlock(int blocking)
+        {
+            if (AttackTimer < Environment.TickCount)
+            {
+                if (blocking == 1 && !Blocking && AttackTimer < Environment.TickCount)
+                {
+                    Blocking = true;
+                    PacketSender.SendEntityAttack(MyIndex, (int)EntityTypes.GlobalEntity, CurrentMap, -1);
+                }
+                else if (blocking == 0 && Blocking)
+                {
+                    Blocking = false;
+                    AttackTimer = Environment.TickCount + CalculateAttackTime();
+                    PacketSender.SendEntityAttack(MyIndex, (int)EntityTypes.GlobalEntity, CurrentMap, 0);
+                }
+            }
         }
         public void TryAttack(int enemyIndex, ProjectileBase isProjectile = null, int isSpell = -1, int projectileDir = -1)
         {
@@ -425,12 +442,26 @@ namespace Intersect_Server.Classes.Entities
 
             if (Globals.Entities[enemyIndex] == null) return;
             if (!IsOneBlockAway(enemyIndex) && isProjectile == null && isSpell == -1) return;
+            if (!isFacingTarget(enemyIndex) && isProjectile == null && isSpell == -1) return;
 
-            if (isProjectile == null && isSpell == -1 && AttackTimer > Environment.TickCount) return;
+            if (isProjectile == null && isSpell == -1 && (AttackTimer > Environment.TickCount || Blocking)) return;
             AttackTimer = Environment.TickCount + CalculateAttackTime();
+            //Check if the attacker is blinded.
+            if (IsOneBlockAway(enemyIndex) && isProjectile == null && isSpell == -1)
+            {
+                for (var n = 0; n < Status.Count; n++)
+                {
+                    if (Status[n].Type == (int)StatusTypes.Stun || Status[n].Type == (int)StatusTypes.Blind)
+                    {
+                        PacketSender.SendActionMsg(MyIndex, "MISS!", new Color(255, 255, 255, 255));
+                        PacketSender.SendEntityAttack(MyIndex, (int)EntityTypes.GlobalEntity, CurrentMap, CalculateAttackTime());
+                        return;
+                    }
+                }
+            }
 
             //Check if the target is blocking facing in the direction against you
-            if (Globals.Entities[enemyIndex].Blocking == true)
+            if (Globals.Entities[enemyIndex].Blocking)
             {
                 int d = Dir;
 
@@ -464,7 +495,7 @@ namespace Intersect_Server.Classes.Entities
             //If Entity is resource, check for the correct tool and make sure its not a spell cast.
             if (Globals.Entities[enemyIndex].GetType() == typeof(Resource))
             {
-                if (isSpell == -1) return;
+                if (isSpell > 0) return;
                 // Check that a resource is actually required.
                 var resource = ((Resource) Globals.Entities[enemyIndex]).MyBase;
                 if (resource.Tool > -1 && resource.Tool < Options.ToolTypes.Count)
@@ -541,7 +572,7 @@ namespace Intersect_Server.Classes.Entities
                 if (spellBase != null)
                 {
                     // Handle different dmg formula for healing and damaging spells.
-                    dmg = spellBase.VitalDiff[(int)Vitals.Health];
+                    dmg = spellBase.VitalDiff[(int)Vitals.Health] * -1;
 
                     //Handle other stat debuffs/vitals.
                     Globals.Entities[enemyIndex].Vital[(int) Vitals.Mana] +=
@@ -649,7 +680,16 @@ namespace Intersect_Server.Classes.Entities
                     ((Resource)Globals.Entities[enemyIndex]).SpawnResourceItems(MyIndex);
                 }
                 KilledEntity(Globals.Entities[enemyIndex]);
-                Globals.Entities[enemyIndex].Die();
+                if (Globals.Entities[enemyIndex].GetType() == typeof(Npc))
+                {
+                    Globals.Entities[enemyIndex].Die(true);
+                }
+                else
+                {
+                    //Set this false to true if you want players to lose items on death
+                    //todo make this an option in the server config
+                    Globals.Entities[enemyIndex].Die(false);
+                }
             }
             else
             {
@@ -689,6 +729,7 @@ namespace Intersect_Server.Classes.Entities
                                 TryAttack(MyIndex, null, SpellNum);
                                 break;
                             case (int)SpellTargetTypes.Single:
+
                                 HandleAoESpell(SpellNum, spellBase.CastRange, CurrentMap, CurrentX, CurrentY, Target);
                                 break;
                             case (int)SpellTargetTypes.AoE:
@@ -745,9 +786,9 @@ namespace Intersect_Server.Classes.Entities
             var spellBase = SpellBase.GetSpell(SpellNum);
             if (spellBase != null)
             {
-                for (int x = StartX - Range; x < StartX + Range; x++)
+                for (int x = StartX - Range; x <= StartX + Range; x++)
                 {
-                    for (int y = StartY - Range; y < StartY + Range; y++)
+                    for (int y = StartY - Range; y <= StartY + Range; y++)
                     {
                         int tempMap = CurrentMap;
                         int x2 = x;
@@ -783,7 +824,7 @@ namespace Intersect_Server.Classes.Entities
                             {
                                 if (t.CurrentMap == tempMap && t.CurrentX == x2 && t.CurrentY == y2)
                                 {
-                                    if ((target == -1 || target == t.MyIndex) && t.MyIndex != MyIndex)
+                                    if ((target == -1 && target != MyIndex) || (target != -1 && target == t.MyIndex))
                                     {
                                         //Warp or attack.
                                         if (spellBase.SpellType == (int)SpellTypes.CombatSpell)
@@ -821,32 +862,52 @@ namespace Intersect_Server.Classes.Entities
         //Check if the target is either up, down, left or right of the target on the correct Z dimension.
         bool IsOneBlockAway(int enemyIndex)
         {
-            if (Globals.Entities[enemyIndex].CurrentZ == CurrentZ)
+            TileHelper myTile = new TileHelper(CurrentMap, CurrentX, CurrentY);
+            TileHelper enemyTile = new TileHelper(Globals.Entities[enemyIndex].CurrentMap, Globals.Entities[enemyIndex].CurrentX, Globals.Entities[enemyIndex].CurrentY);
+            if (CurrentZ == Globals.Entities[enemyIndex].CurrentZ)
             {
-                if (Globals.Entities[enemyIndex].CurrentY == CurrentY)
-                {
-                    if (Globals.Entities[enemyIndex].CurrentX == CurrentX - 1)
-                    {
-                        return true;
-                    }
-                    else if (Globals.Entities[enemyIndex].CurrentX == CurrentX + 1)
-                    {
-                        return true;
-                    }
-                }
-                if (Globals.Entities[enemyIndex].CurrentX == CurrentX)
-                {
-                    if (Globals.Entities[enemyIndex].CurrentY == CurrentY - 1)
-                    {
-                        return true;
-                    }
-                    else if (Globals.Entities[enemyIndex].CurrentY == CurrentY + 1)
-                    {
-                        return true;
-                    }
-                }
+                myTile.Translate(0, -1);
+                if (myTile.Matches(enemyTile)) return true;
+                myTile.Translate(0, 2);
+                if (myTile.Matches(enemyTile)) return true;
+                myTile.Translate(-1, -1);
+                if (myTile.Matches(enemyTile)) return true;
+                myTile.Translate(2, 0);
+                if (myTile.Matches(enemyTile)) return true;
             }
             return false;
+        }
+
+        bool isFacingTarget(int enemyIndex)
+        {
+            if (IsOneBlockAway(enemyIndex))
+            {
+                TileHelper myTile = new TileHelper(CurrentMap, CurrentX, CurrentY);
+                TileHelper enemyTile = new TileHelper(Globals.Entities[enemyIndex].CurrentMap, Globals.Entities[enemyIndex].CurrentX, Globals.Entities[enemyIndex].CurrentY);
+                myTile.Translate(0, -1);
+                if (myTile.Matches(enemyTile) && Dir == (int)Directions.Up) return true;
+                myTile.Translate(0, 2);
+                if (myTile.Matches(enemyTile) && Dir == (int)Directions.Down) return true;
+                myTile.Translate(-1, -1);
+                if (myTile.Matches(enemyTile) && Dir == (int)Directions.Left) return true;
+                myTile.Translate(2, 0);
+                if (myTile.Matches(enemyTile) && Dir == (int)Directions.Right) return true;
+            }
+            return false;
+        }
+        protected int DirToEnemy(int enemyIndex)
+        {
+            TileHelper myTile = new TileHelper(CurrentMap, CurrentX, CurrentY);
+            TileHelper enemyTile = new TileHelper(Globals.Entities[enemyIndex].CurrentMap, Globals.Entities[enemyIndex].CurrentX, Globals.Entities[enemyIndex].CurrentY);
+            myTile.Translate(0, -1);
+            if (myTile.Matches(enemyTile)) return (int)Directions.Up;
+            myTile.Translate(0, 2);
+            if (myTile.Matches(enemyTile)) return (int)Directions.Down;
+            myTile.Translate(-1, -1);
+            if (myTile.Matches(enemyTile)) return (int)Directions.Left;
+            myTile.Translate(2, 0);
+            if (myTile.Matches(enemyTile)) return (int)Directions.Right;
+            return -1;
         }
         //Check if the target is either up, down, left or right of the target on the correct Z dimension.
         protected bool IsOneBlockAway(int map, int x, int y, int z = 0)
@@ -885,11 +946,11 @@ namespace Intersect_Server.Classes.Entities
             if (dropitems)
             {
                 // Drop items
-                for (int i = 0; i < Options.MaxInvItems; i++)
+                foreach (var item in Inventory)
                 {
-                    if (Inventory[i].ItemNum >= 0)
+                    if (ItemBase.GetItem(item.ItemNum) != null)
                     {
-                        MapInstance.GetMap(CurrentMap).SpawnItem(CurrentX, CurrentY, Inventory[i], Inventory[i].ItemVal);
+                        MapInstance.GetMap(CurrentMap).SpawnItem(CurrentX, CurrentY, item,item.ItemVal);
                     }
                 }
             }

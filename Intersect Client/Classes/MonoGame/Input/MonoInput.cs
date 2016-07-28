@@ -134,6 +134,7 @@ namespace Intersect_Client_MonoGame.Classes.SFML.Input
             {
                 Gui.GwenInput.ProcessMessage(new GwenInputMessage(IntersectInput.InputEvent.MouseUp,
                    GetMousePosition(), (int)mb, Keys.Alt));
+                GameInputHandler.OnMouseUp(mb);
             }
         }
 

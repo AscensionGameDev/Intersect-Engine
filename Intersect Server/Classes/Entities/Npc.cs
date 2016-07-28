@@ -95,18 +95,17 @@ namespace Intersect_Server.Classes.Entities
             }
         }
 
-        //Check for status effects that would hinder the npc from attacking
-        private void CanAttack(int index)
+        public bool CanAttack()
         {
             //Check if the attacker is stunned or blinded.
             for (var n = 0; n < Status.Count; n++)
             {
-                if (Status[n].Type == (int)StatusTypes.Stun || Status[n].Type == (int)StatusTypes.Blind)
+                if (Status[n].Type == (int)StatusTypes.Stun)
                 {
-                    return;
+                    return false;
                 }
             }
-            TryAttack(index);
+            return true;
         }
 
         public override void Update()
@@ -129,6 +128,15 @@ namespace Intersect_Server.Classes.Entities
                     targetMap = MyTarget.CurrentMap;
                     targetX = MyTarget.CurrentX;
                     targetY = MyTarget.CurrentY;
+                    for (var n = 0; n < MyTarget.Status.Count; n++)
+                    {
+                        if (MyTarget.Status[n].Type == (int)StatusTypes.Stealth)
+                        {
+                            targetMap = -1;
+                            targetX = 0;
+                            targetY = 0;
+                        }
+                    }
                 }
                 else //Find a target if able
                 {
@@ -234,33 +242,27 @@ namespace Intersect_Server.Classes.Entities
                         }
                         else
                         {
-                            if (CurrentX < targetX && Dir != 3)
+                            if (Dir != DirToEnemy(MyTarget.MyIndex) && DirToEnemy(MyTarget.MyIndex) != -1)
                             {
-                                Dir = 3;
-                                PacketSender.SendEntityDir(MyIndex, (int) EntityTypes.GlobalEntity, Dir, CurrentMap);
+                                ChangeDir(DirToEnemy(MyTarget.MyIndex));
                             }
-                            else if (CurrentX > targetX && Dir != 2)
+                            else
                             {
-                                Dir = 2;
-                                PacketSender.SendEntityDir(MyIndex, (int)EntityTypes.GlobalEntity, Dir, CurrentMap);
+                                if (CanAttack()) TryAttack(MyTarget.MyIndex, null, -1, -1);
                             }
-                            else if (CurrentY < targetY && Dir != 1)
-                            {
-                                Dir = 1;
-                                PacketSender.SendEntityDir(MyIndex, (int)EntityTypes.GlobalEntity, Dir, CurrentMap);
-                            }
-                            else if (CurrentY > targetY && Dir != 0)
-                            {
-                                Dir = 0;
-                                PacketSender.SendEntityDir(MyIndex, (int)EntityTypes.GlobalEntity, Dir, CurrentMap);
-                            }
-                            CanAttack(MyTarget.MyIndex);
                         }
                     }
                     else
                     {
                         pathFinder.SetTarget(new PathfinderTarget(targetMap, targetX, targetY));
-                        CanAttack(MyTarget.MyIndex);
+                        if (Dir != DirToEnemy(MyTarget.MyIndex) && DirToEnemy(MyTarget.MyIndex) != -1)
+                        {
+                            ChangeDir(DirToEnemy(MyTarget.MyIndex));
+                        }
+                        else
+                        {
+                            if (CanAttack()) TryAttack(MyTarget.MyIndex, null, -1, -1);
+                        }
                     }
                 }
 

@@ -290,7 +290,10 @@ namespace Intersect_Client.Classes.UI.Game
                 float targetMPWidth = 0f;
                 if (_myEntity.MaxVital[(int) Vitals.Mana] > 0)
                 {
-                    targetMPWidth = _myEntity.Vital[(int) Vitals.Mana]/_myEntity.MaxVital[(int) Vitals.Mana];
+                    targetMPWidth =
+                        (float)
+                            ((float)_myEntity.Vital[(int)Vitals.Mana] /
+                             (float)_myEntity.MaxVital[(int)Vitals.Mana]);
                     _mpLbl.Text = _myEntity.Vital[(int) Vitals.Mana] + " / " + _myEntity.MaxVital[(int) Vitals.Mana];
                     targetMPWidth *= _mpBackground.Width;
                 }

@@ -236,24 +236,7 @@ namespace Intersect_Server.Classes.Entities
                     if (CanMove(dir) == -1)
                     {
                         Move(dir, Client);
-                        switch (MovementFreq)
-                        {
-                            case 0:
-                                MoveTimer = Environment.TickCount + 4000;
-                                break;
-                            case 1:
-                                MoveTimer = Environment.TickCount + 2000;
-                                break;
-                            case 2:
-                                MoveTimer = Environment.TickCount + 1000;
-                                break;
-                            case 3:
-                                MoveTimer = Environment.TickCount + 500;
-                                break;
-                            case 4:
-                                MoveTimer = Environment.TickCount + 250;
-                                break;
-                        }
+                        MoveTimer = Environment.TickCount + (long)GetMovementTime();
                     }
                 }
             }
@@ -687,25 +670,27 @@ namespace Intersect_Server.Classes.Entities
                 }
                 if (MoveTimer < Environment.TickCount)
                 {
-                    switch (MovementFreq)
-                    {
-                        case 0:
-                            MoveTimer = Environment.TickCount + 4000;
-                            break;
-                        case 1:
-                            MoveTimer = Environment.TickCount + 2000;
-                            break;
-                        case 2:
-                            MoveTimer = Environment.TickCount + 1000;
-                            break;
-                        case 3:
-                            MoveTimer = Environment.TickCount + 500;
-                            break;
-                        case 4:
-                            MoveTimer = Environment.TickCount + 250;
-                            break;
-                    }
+                    MoveTimer = Environment.TickCount + (long)GetMovementTime();
                 }
+            }
+        }
+
+        public override float GetMovementTime()
+        {
+            switch (MovementFreq)
+            {
+                case 0:
+                    return 4000;
+                case 1:
+                    return 2000;
+                case 2:
+                    return 1000;
+                case 3:
+                    return 500;
+                case 4:
+                    return 250;
+                default:
+                    return 1000;
             }
         }
 

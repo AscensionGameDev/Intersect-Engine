@@ -39,6 +39,7 @@ namespace Intersect_Client.Classes.Entities
         private int _totalSpawns = 0;
         private int _spawnedAmount = 0;
         private ProjectileBase _myBase = null;
+        private bool _loaded = false;
 
         // Individual Spawns
         public ProjectileSpawns[] Spawns;
@@ -58,6 +59,7 @@ namespace Intersect_Client.Classes.Entities
 
         public void Load(ByteBuffer bf)
         {
+            if (_loaded) return;
             base.Load(bf);
             ProjectileNum = bf.ReadInteger();
             Dir = bf.ReadInteger();
@@ -81,6 +83,7 @@ namespace Intersect_Client.Classes.Entities
                 _totalSpawns *= _myBase.Quantity;
             }
             Spawns = new ProjectileSpawns[_totalSpawns];
+            _loaded = true;
         }
 
         public override void Dispose()

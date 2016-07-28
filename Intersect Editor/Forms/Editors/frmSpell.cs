@@ -336,7 +336,7 @@ namespace Intersect_Editor.Forms
             {
                 lblProjectile.Show();
                 scrlProjectile.Show();
-                scrlProjectile.Value = Database.GameObjectListIndex(GameObject.Projectile,_editorItem.Data4);
+                scrlProjectile.Value = Database.GameObjectListIndex(GameObject.Projectile,_editorItem.Projectile);
                 if (scrlProjectile.Value == -1)
                 {
                     lblProjectile.Text = "Projectile: None";

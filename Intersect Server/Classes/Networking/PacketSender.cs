@@ -59,24 +59,24 @@ namespace Intersect_Server.Classes.Networking
         }
         public static void SendDataToEditors(byte[] data)
         {
-            for (var i = 0; i < Globals.Clients.Count; i++)
+            lock (Globals.ClientLock)
             {
-                if (Globals.Clients[i] == null) continue;
-                if (!Globals.Clients[i].IsConnected()) continue;
-                if (Globals.Clients[i].IsEditor)
+                foreach (var client in Globals.Clients)
                 {
-                    Globals.Clients[i].SendPacket(data);
+                    if (client.IsEditor) client.SendPacket(data);
                 }
             }
         }
 
         public static void SendPing(Client client)
         {
-            var bf = new ByteBuffer();
-            bf.WriteLong((int)ServerPackets.RequestPing);
-            client.SendPacket(bf.ToArray());
-            bf.Dispose();
-            client.ConnectionTimeout = Environment.TickCount + (client.TimeoutLength * 1000);
+            if (client != null)
+            {
+                var bf = new ByteBuffer();
+                bf.WriteLong((int) ServerPackets.RequestPing);
+                client.SendPacket(bf.ToArray());
+                bf.Dispose();
+            }
         }
 
         public static void SendServerConfig(Client client)
@@ -299,12 +299,14 @@ namespace Intersect_Server.Classes.Networking
 
         public static void SendDataToAll(byte[] packet)
         {
-            foreach (var t in Globals.Clients)
+            lock (Globals.ClientLock)
             {
-                if (t == null) continue;
-                if (t.IsConnected() && (t.IsEditor || ((Player)Globals.Entities[t.EntityIndex]).InGame))
+                foreach (var client in Globals.Clients)
                 {
-                    t.SendPacket(packet);
+                    if (client.IsEditor || client.Entity != null)
+                    {
+                        client.SendPacket(packet);
+                    }
                 }
             }
         }
@@ -423,17 +425,30 @@ namespace Intersect_Server.Classes.Networking
             bf.Dispose();
         }
 
-        public static void SendDataToAllBut(int index, byte[] packet, bool entityId)
+        public static void SendDataToAllBut(Entity en, byte[] packet)
         {
-            for (var i = 0; i < Globals.Clients.Count; i++)
+            lock (Globals.ClientLock)
             {
-                if (Globals.Clients[i] == null) continue;
-                if ((!entityId || Globals.Clients[i].EntityIndex == index) && (entityId || i == index)) continue;
-                if (!Globals.Clients[i].IsConnected() || Globals.Clients[i].EntityIndex <= -1) continue;
-                if (Globals.Entities[Globals.Clients[i].EntityIndex] == null) continue;
-                if (((Player)Globals.Entities[Globals.Clients[i].EntityIndex]).InGame)
+                foreach (var client in Globals.Clients)
                 {
-                    Globals.Clients[i].SendPacket(packet);
+                    if (client.Entity != null && client.Entity != en)
+                    {
+                        client.SendPacket(packet);
+                    }
+                }
+            }
+        }
+
+        public static void SendDataToAllBut(Client user, byte[] packet)
+        {
+            lock (Globals.ClientLock)
+            {
+                foreach (var client in Globals.Clients)
+                {
+                    if (client.Entity != null && client != user)
+                    {
+                        client.SendPacket(packet);
+                    }
                 }
             }
         }
@@ -813,7 +828,7 @@ namespace Intersect_Server.Classes.Networking
         {
             var bf = new ByteBuffer();
             bf.WriteLong((int)ServerPackets.CastTime);
-            bf.WriteLong(EntityIndex);
+            bf.WriteInteger(EntityIndex);
             bf.WriteInteger(SpellNum);
             SendDataToProximity(Globals.Entities[EntityIndex].CurrentMap, bf.ToArray());
             bf.Dispose();

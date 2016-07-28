@@ -75,8 +75,8 @@ namespace Intersect_Editor.Forms
             InitFormObjects();
 
             //Init Delegates
-            EditorDelegate += TryOpenEditorMethod;
-            DisconnectDelegate += HandleServerDisconnect;
+            EditorDelegate = TryOpenEditorMethod;
+            DisconnectDelegate = HandleServerDisconnect;
 
             // Initilise the editor.
             InitEditor();
@@ -392,11 +392,14 @@ namespace Intersect_Editor.Forms
             fileDialog.Filter = "Intersect Map|*.imap";
             fileDialog.Title = "Export Map";
             fileDialog.ShowDialog();
-
+            var buff = new ByteBuffer();
+            buff.WriteString(Application.ProductVersion);
+            buff.WriteBytes(Globals.CurrentMap.GetMapData(false));
             if (fileDialog.FileName != "")
             {
-                File.WriteAllBytes(fileDialog.FileName, Globals.CurrentMap.GetMapData(false));
+                File.WriteAllBytes(fileDialog.FileName,buff.ToArray());
             }
+            buff.Dispose();
         }
         private void importMapToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -407,9 +410,19 @@ namespace Intersect_Editor.Forms
 
             if (fileDialog.FileName != "")
             {
-                Globals.MapEditorWindow.PrepUndoState();
-                Globals.CurrentMap.Load(File.ReadAllBytes(fileDialog.FileName), true);
-                Globals.MapEditorWindow.AddUndoState();
+                var data = File.ReadAllBytes(fileDialog.FileName);
+                var buff = new ByteBuffer();
+                buff.WriteBytes(data);
+                if (buff.ReadString() == Application.ProductVersion)
+                {
+                    Globals.MapEditorWindow.PrepUndoState();
+                    Globals.CurrentMap.Load(buff.ReadBytes(buff.Length(), true));
+                    Globals.MapEditorWindow.AddUndoState();
+                }
+                else
+                {
+                    MessageBox.Show("Cannot import map. Currently selected map is not an Intersect map file or was exported with a different version of the Intersect editor!","Failed to Import Map");
+                }
             }
         }
         private void exitToolStripMenuItem_Click(object sender, EventArgs e)

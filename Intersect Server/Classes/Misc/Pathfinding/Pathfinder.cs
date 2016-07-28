@@ -38,6 +38,7 @@ namespace Intersect_Server.Classes.Misc
         private List<int> _directions = new List<int>();
         private bool _pathFinding = false;
         private PathfinderTarget _target;
+        private object _targetLock = new object();
         private Thread _pathFindingThread;
         public Pathfinder(Entity sourceEntity)
         {
@@ -53,36 +54,39 @@ namespace Intersect_Server.Classes.Misc
 
         public void SetTarget(PathfinderTarget target)
         {
-            _directions.Clear();
-            if (_target == null)
+            lock (_targetLock)
             {
-                if (_pathFindingThread.IsAlive)
+                _directions.Clear();
+                if (_target == null)
                 {
-                    _pathFindingThread.Abort();
-                    _target = null;
-                }
-            }
-            if (_target == null || (target != null &&
-                    (_target.TargetMap != target.TargetMap || _target.TargetX != target.TargetX ||
-                     _target.TargetY != target.TargetY)))
-            {
-                _target = target;
-                if (_target != null)
-                {
-                    if (_pathFinding)
+                    if (_pathFindingThread.IsAlive)
                     {
                         _pathFindingThread.Abort();
-                        _pathFinding = false;
+                        _target = null;
                     }
-                    RestartThread();
                 }
-            }
-            else
-            {
-                _target = target;
-                if (!_pathFinding && _target != null)
+                if (_target == null || (target != null &&
+                        (_target.TargetMap != target.TargetMap || _target.TargetX != target.TargetX ||
+                         _target.TargetY != target.TargetY)))
                 {
-                    RestartThread();
+                    _target = target;
+                    if (_target != null)
+                    {
+                        if (_pathFinding)
+                        {
+                            _pathFindingThread.Abort();
+                            _pathFinding = false;
+                        }
+                        RestartThread();
+                    }
+                }
+                else
+                {
+                    _target = target;
+                    if (!_pathFinding && _target != null)
+                    {
+                        RestartThread();
+                    }
                 }
             }
         }
@@ -140,20 +144,26 @@ namespace Intersect_Server.Classes.Misc
                     {
                         for (var i = 0; i < MapInstance.GetMap(Database.MapGrids[myGrid].MyGrid[x, y]).Entities.Count; i++)
                         {
-                            if (MapInstance.GetMap(Database.MapGrids[myGrid].MyGrid[x, y]).Entities[i] != null)
+                            lock (_targetLock)
                             {
-                                if (i != _sourceEntity.MyIndex && (MapInstance.GetMap(Database.MapGrids[myGrid].MyGrid[x, y]).Entities[i].CurrentMap != _target.TargetMap || MapInstance.GetMap(Database.MapGrids[myGrid].MyGrid[x, y]).Entities[i].CurrentY != _target.TargetY || MapInstance.GetMap(Database.MapGrids[myGrid].MyGrid[x, y]).Entities[i].CurrentX != _target.TargetX))
+                                if (_target != null)
                                 {
                                     if (MapInstance.GetMap(Database.MapGrids[myGrid].MyGrid[x, y]).Entities[i] != null)
                                     {
-                                        if (MapInstance.GetMap(Database.MapGrids[myGrid].MyGrid[x, y]).Entities[i].CurrentMap == Database.MapGrids[myGrid].MyGrid[x, y])
+                                        if (i != _sourceEntity.MyIndex && (MapInstance.GetMap(Database.MapGrids[myGrid].MyGrid[x, y]).Entities[i].CurrentMap != _target.TargetMap || MapInstance.GetMap(Database.MapGrids[myGrid].MyGrid[x, y]).Entities[i].CurrentY != _target.TargetY || MapInstance.GetMap(Database.MapGrids[myGrid].MyGrid[x, y]).Entities[i].CurrentX != _target.TargetX))
                                         {
-                                            closedList.Add(
-                                                new PathfinderPoint(
-                                                    (x - MapInstance.GetMap(_sourceEntity.CurrentMap).MapGridX + 1)*
-                                                    Options.MapWidth + MapInstance.GetMap(Database.MapGrids[myGrid].MyGrid[x, y]).Entities[i].CurrentX,
-                                                    (y - MapInstance.GetMap(_sourceEntity.CurrentMap).MapGridY + 1)*
-                                                    Options.MapHeight + MapInstance.GetMap(Database.MapGrids[myGrid].MyGrid[x, y]).Entities[i].CurrentY, -1, 0));
+                                            if (MapInstance.GetMap(Database.MapGrids[myGrid].MyGrid[x, y]).Entities[i] != null)
+                                            {
+                                                if (MapInstance.GetMap(Database.MapGrids[myGrid].MyGrid[x, y]).Entities[i].CurrentMap == Database.MapGrids[myGrid].MyGrid[x, y])
+                                                {
+                                                    closedList.Add(
+                                                        new PathfinderPoint(
+                                                            (x - MapInstance.GetMap(_sourceEntity.CurrentMap).MapGridX + 1) *
+                                                            Options.MapWidth + MapInstance.GetMap(Database.MapGrids[myGrid].MyGrid[x, y]).Entities[i].CurrentX,
+                                                            (y - MapInstance.GetMap(_sourceEntity.CurrentMap).MapGridY + 1) *
+                                                            Options.MapHeight + MapInstance.GetMap(Database.MapGrids[myGrid].MyGrid[x, y]).Entities[i].CurrentY, -1, 0));
+                                                }
+                                            }
                                         }
                                     }
                                 }
@@ -163,36 +173,42 @@ namespace Intersect_Server.Classes.Misc
                         {
                             for (var y1 = 0; y1 < Options.MapHeight; y1++)
                             {
-                                if (MapInstance.GetMap(Database.MapGrids[myGrid].MyGrid[x, y]).Attributes[x1, y1] != null)
+                                lock (_targetLock)
                                 {
-                                    if (
-                                        MapInstance.GetMap(Database.MapGrids[myGrid].MyGrid[x, y]).Attributes[x1, y1]
-                                            .value == (int)MapAttributes.Blocked ||
-                                        MapInstance.GetMap(Database.MapGrids[myGrid].MyGrid[x, y]).Attributes[x1, y1]
-                                            .value == (int)MapAttributes.NPCAvoid)
+                                    if (_target != null)
                                     {
-                                        closedList.Add(
-                                            new PathfinderPoint(
-                                                (x - MapInstance.GetMap(_sourceEntity.CurrentMap).MapGridX + 1) *
-                                                Options.MapWidth + x1,
-                                                (y - MapInstance.GetMap(_sourceEntity.CurrentMap).MapGridY + 1) *
-                                                Options.MapHeight + y1, -1, 0));
+                                        if (MapInstance.GetMap(Database.MapGrids[myGrid].MyGrid[x, y]).Attributes[x1, y1] != null)
+                                        {
+                                            if (
+                                                MapInstance.GetMap(Database.MapGrids[myGrid].MyGrid[x, y]).Attributes[x1, y1]
+                                                    .value == (int)MapAttributes.Blocked ||
+                                                MapInstance.GetMap(Database.MapGrids[myGrid].MyGrid[x, y]).Attributes[x1, y1]
+                                                    .value == (int)MapAttributes.NPCAvoid)
+                                            {
+                                                closedList.Add(
+                                                    new PathfinderPoint(
+                                                        (x - MapInstance.GetMap(_sourceEntity.CurrentMap).MapGridX + 1) *
+                                                        Options.MapWidth + x1,
+                                                        (y - MapInstance.GetMap(_sourceEntity.CurrentMap).MapGridY + 1) *
+                                                        Options.MapHeight + y1, -1, 0));
+                                            }
+                                        }
+                                        if (Database.MapGrids[myGrid].MyGrid[x, y] == _target.TargetMap && x1 == _target.TargetX && y1 == _target.TargetY)
+                                        {
+                                            targetX = (x - MapInstance.GetMap(_sourceEntity.CurrentMap).MapGridX + 1) *
+                                                      Options.MapWidth + x1;
+                                            targetY = (y - MapInstance.GetMap(_sourceEntity.CurrentMap).MapGridY + 1) *
+                                                      Options.MapHeight + y1;
+                                        }
+                                        if (Database.MapGrids[myGrid].MyGrid[x, y] == _sourceEntity.CurrentMap &&
+                                            x1 == _sourceEntity.CurrentX && y1 == _sourceEntity.CurrentY)
+                                        {
+                                            startX = (x - MapInstance.GetMap(_sourceEntity.CurrentMap).MapGridX + 1) *
+                                                     Options.MapWidth + x1;
+                                            startY = (y - MapInstance.GetMap(_sourceEntity.CurrentMap).MapGridY + 1) *
+                                                     Options.MapHeight + y1;
+                                        }
                                     }
-                                }
-                                if (Database.MapGrids[myGrid].MyGrid[x, y] == _target.TargetMap && x1 == _target.TargetX && y1 == _target.TargetY)
-                                {
-                                    targetX = (x - MapInstance.GetMap(_sourceEntity.CurrentMap).MapGridX + 1) *
-                                              Options.MapWidth + x1;
-                                    targetY = (y - MapInstance.GetMap(_sourceEntity.CurrentMap).MapGridY + 1) *
-                                              Options.MapHeight + y1;
-                                }
-                                if (Database.MapGrids[myGrid].MyGrid[x, y] == _sourceEntity.CurrentMap &&
-                                    x1 == _sourceEntity.CurrentX && y1 == _sourceEntity.CurrentY)
-                                {
-                                    startX = (x - MapInstance.GetMap(_sourceEntity.CurrentMap).MapGridX + 1) *
-                                             Options.MapWidth + x1;
-                                    startY = (y - MapInstance.GetMap(_sourceEntity.CurrentMap).MapGridY + 1) *
-                                             Options.MapHeight + y1;
                                 }
                             }
                         }

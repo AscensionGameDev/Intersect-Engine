@@ -47,6 +47,12 @@ namespace Intersect_Server.Classes.Maps
             return false;
         }
 
+        public bool Matches(TileHelper other)
+        {
+            if (GetMap() == other.GetMap() && GetX() == other.GetX() && GetY() == other.GetY()) return true;
+            return false;
+        }
+
         private bool TransitionMaps(int direction)
         {
             if (!MapInstance.GetObjects().ContainsKey(_mapNum)) return false;

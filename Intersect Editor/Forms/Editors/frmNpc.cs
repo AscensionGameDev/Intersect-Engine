@@ -156,7 +156,7 @@ namespace Intersect_Editor.Forms
                 lblDef.Text = @"Armor: " + scrlDef.Value;
                 lblMR.Text = @"Magic Resist: " + scrlMR.Value;
                 lblSpd.Text = @"Move Speed: " + scrlSpd.Value;
-                scrlDropIndex.Value = 1;
+                scrlDropIndex.Value = 0;
                 UpdateDropValues();
                 DrawNpcSprite();
                 if (_changed.IndexOf(_editorItem) == -1)
@@ -277,7 +277,7 @@ namespace Intersect_Editor.Forms
         {
             int x = 0;
             int.TryParse(txtDropAmount.Text, out x);
-            _editorItem.Drops[scrlDropIndex.Value - 1].Amount = x;
+            _editorItem.Drops[scrlDropIndex.Value].Amount = x;
         }
 
         private void scrlDropItem_Scroll(object sender, ScrollEventArgs e)
@@ -317,7 +317,7 @@ namespace Intersect_Editor.Forms
 
         private void scrlDropChance_Scroll(object sender, ScrollEventArgs e)
         {
-            _editorItem.Drops[scrlDropIndex.Value -1].Chance = scrlDropChance.Value;
+            _editorItem.Drops[scrlDropIndex.Value].Chance = scrlDropChance.Value;
             lblDropChance.Text = @"Chance (" + scrlDropChance.Value + @"/100)";
         }
 

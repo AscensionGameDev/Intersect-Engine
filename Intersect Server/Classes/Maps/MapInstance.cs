@@ -61,9 +61,6 @@ namespace Intersect_Server.Classes.Maps
         //Does the map have a player on or nearby it?
         public bool Active;
 
-        //SyncLock
-        private Object _mapLock = new Object();
-
         //Init
         public MapInstance() : base(-1, false)
         {
@@ -76,6 +73,10 @@ namespace Intersect_Server.Classes.Maps
                 return;
             }
             MyMapNum = mapNum;
+        }
+        public object GetMapLock()
+        {
+            return _mapLock;
         }
 
         public override void Load(byte[] packet)
@@ -355,7 +356,6 @@ namespace Intersect_Server.Classes.Maps
             if (npcBase != null)
             {
                 int index = Globals.FindOpenEntity();
-                int Z = 0;
                 Globals.Entities[index] = new Npc(index, npcBase);
                 Globals.Entities[index].CurrentMap = MyMapNum;
                 Globals.Entities[index].CurrentX = tileX;
@@ -366,9 +366,7 @@ namespace Intersect_Server.Classes.Maps
                 {
                     if (Globals.Rand.Next(1, 101) <= npcBase.Drops[n].Chance)
                     {
-                        Globals.Entities[index].Inventory[Z].ItemNum = npcBase.Drops[n].ItemNum;
-                        Globals.Entities[index].Inventory[Z].ItemVal = npcBase.Drops[n].Amount;
-                        Z = Z + 1;
+                        Globals.Entities[index].Inventory.Add(new ItemInstance(npcBase.Drops[n].ItemNum, npcBase.Drops[n].Amount));
                     }
                 }
 
@@ -389,7 +387,6 @@ namespace Intersect_Server.Classes.Maps
                 if (evt.Value.IsGlobal == 1)
                 {
                     GlobalEventInstances.Add(evt.Value, new EventInstance(evt.Value, evt.Key, MyMapNum));
-
                 }
             }
         }
@@ -405,7 +402,6 @@ namespace Intersect_Server.Classes.Maps
             }
             return null;
         }
-
 
         //Spawn a projectile
         public void SpawnMapProjectile(Entity owner, ProjectileBase projectile, int Map, int X, int Y, int Z, int Direction, int IsSpell = -1, int Target = 0)
@@ -490,7 +486,7 @@ namespace Intersect_Server.Classes.Maps
                         if (NpcSpawnInstances.ContainsKey(Spawns[i]))
                         {
                             MapNpcSpawn npcSpawnInstance = NpcSpawnInstances[Spawns[i]];
-                            if (!Globals.Entities.Contains(npcSpawnInstance.Entity))
+                            if (npcSpawnInstance != null && !Globals.Entities.Contains(npcSpawnInstance.Entity))
                             {
                                 if (npcSpawnInstance.RespawnTime == -1)
                                 {
@@ -591,30 +587,29 @@ namespace Intersect_Server.Classes.Maps
         }
         private static bool PlayersOnMap(int mapNum)
         {
-            if (Globals.Clients.Count <= 0) return false;
-            foreach (var t in Globals.Clients)
+            var map = MapInstance.GetMap(mapNum);
+            if (map != null)
             {
-                if (t == null) continue;
-                if (t.EntityIndex <= -1 || t.Entity == null) continue;
-                if (((Player)Globals.Entities[t.EntityIndex]) == null) continue;
-                if (!((Player)Globals.Entities[t.EntityIndex]).InGame) continue;
-                if (Globals.Entities[t.EntityIndex].CurrentMap == mapNum)
+                foreach (var entity in map.Entities)
                 {
-                    return true;
+                    if (entity != null && entity.GetType() == typeof(Player))
+                    {
+                        return true;
+                    }
                 }
             }
+            
             return false;
         }
         public List<Player> GetPlayersOnMap()
         {
             List<Player> Players = new List<Player>();
-            if (Globals.Clients.Count <= 0) return Players;
-            foreach (var t in Entities)
+            foreach (var en in Entities)
             {
-                if (t == null) continue;
-                if (t.GetType() == typeof (Player))
+                if (en == null) continue;
+                if (en.GetType() == typeof (Player))
                 {
-                    Players.Add((Player)t);
+                    Players.Add((Player)en);
                 }
             }
             return Players;

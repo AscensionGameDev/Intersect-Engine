@@ -29,6 +29,7 @@ using IntersectClientExtras.Graphics;
 using Intersect_Library;
 using Color = IntersectClientExtras.GenericClasses.Color;
 using Intersect_Client.Classes.Maps;
+using Intersect_Library.GameObjects;
 
 namespace Intersect_Client.Classes.Entities
 {
@@ -38,15 +39,23 @@ namespace Intersect_Client.Classes.Entities
         FloatRect srcRectangle = new FloatRect();
         FloatRect destRectangle = new FloatRect();
         public bool IsDead;
+        public ResourceBase _baseResource;
 
         public Resource() : base()
         {
 
         }
 
+        public ResourceBase GetResourceBase()
+        {
+            return _baseResource;
+        }
+
         public void Load(ByteBuffer bf)
         {
             IsDead = Convert.ToBoolean(bf.ReadInteger());
+            var baseIndex = bf.ReadInteger();
+            _baseResource = ResourceBase.GetResource(baseIndex);
             base.Load(bf);
             HideName = 1;
             CalculateRenderBounds();

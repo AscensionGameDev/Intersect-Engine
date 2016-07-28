@@ -138,7 +138,11 @@ namespace Intersect_Editor.Classes
         {
             if (Globals.MainForm != null && Globals.MainForm.Visible)
             {
-                Globals.MainForm.BeginInvoke(Globals.MainForm.DisconnectDelegate);
+                if (Globals.MainForm.DisconnectDelegate != null)
+                {
+                    Globals.MainForm.BeginInvoke(Globals.MainForm.DisconnectDelegate);
+                    Globals.MainForm.DisconnectDelegate = null;
+                }
             }
             else if (Globals.LoginForm.Visible)
             {

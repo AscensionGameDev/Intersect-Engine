@@ -156,7 +156,7 @@ namespace Intersect_Client_MonoGame.Classes.SFML.Graphics
                 {
                     _graphicsDevice.SetRenderTarget((RenderTarget2D) target.GetTexture());
                 }
-                BlendState blend = BlendState.NonPremultiplied;
+                BlendState blend = BlendState.AlphaBlend;
                 Effect useEffect = null;
                 if (mode != GameBlendModes.Alpha)
                 {

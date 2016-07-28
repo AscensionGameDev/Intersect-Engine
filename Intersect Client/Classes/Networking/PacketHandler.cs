@@ -362,8 +362,12 @@ namespace Intersect_Client.Classes.Networking
         {
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
-            var e = Globals.Entities[bf.ReadInteger()];
-            e.ActionMsgs.Add(new ActionMsgInstance(e, bf.ReadString(), new Color((int)bf.ReadByte(), (int)bf.ReadByte(), (int)bf.ReadByte(), (int)bf.ReadByte())));
+            var index = bf.ReadInteger();
+            if (Globals.Entities.ContainsKey(index))
+            {
+                var e = Globals.Entities[index];
+                e.ActionMsgs.Add(new ActionMsgInstance(e, bf.ReadString(), new Color((int)bf.ReadByte(), (int)bf.ReadByte(), (int)bf.ReadByte(), (int)bf.ReadByte())));
+            }
             bf.Dispose();
         }
 
@@ -596,14 +600,9 @@ namespace Intersect_Client.Classes.Networking
                 return;
             }
 
-            if (attackTimer > -1)
+            if (attackTimer > -1 && en != Globals.Me)
             {
-                en._attackTimer = Environment.TickCount + attackTimer;
-                en.blocking = false;
-            }
-            else
-            {
-                en.blocking = true;
+                en.AttackTimer = Environment.TickCount +  attackTimer;
             }
         }
 
@@ -788,8 +787,11 @@ namespace Intersect_Client.Classes.Networking
         {
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
-            Globals.Me.Experience = bf.ReadInteger();
-            Globals.Me.ExperienceToNextLevel = bf.ReadInteger();
+            if (Globals.Me != null)
+            {
+                Globals.Me.Experience = bf.ReadInteger();
+                Globals.Me.ExperienceToNextLevel = bf.ReadInteger();
+            }
             bf.Dispose();
         }
 

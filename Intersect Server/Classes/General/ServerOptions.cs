@@ -80,7 +80,7 @@ namespace Intersect_Server.Classes.General
                 writer.WriteStartElement("Combat");
                 writer.WriteElementString("RegenTime", "3000");
                 writer.WriteElementString("MinAttackRate", "1000");
-                writer.WriteElementString("MaxAttackRate", "400");
+                writer.WriteElementString("MaxAttackRate", "200");
                 writer.WriteElementString("BlockingSlow", "30");
                 writer.WriteElementString("CritChance", "20");
                 writer.WriteElementString("CritMultiplier", "150");
@@ -203,7 +203,7 @@ namespace Intersect_Server.Classes.General
                     Options.MinAttackRate = GetXmlInt(options, "//Config/Combat/MinAttackRate");
                     Options.MaxAttackRate = GetXmlInt(options, "//Config/Combat/MaxAttackRate");
                     Options.BlockingSlow = GetXmlInt(options, "//Config/Combat/BlockingSlow") / 100;
-                    Options.MaxAttackRate = GetXmlInt(options, "//Config/Combat/CritChance");
+                    Options.CritChance = GetXmlInt(options, "//Config/Combat/CritChance");
                     Options.BlockingSlow = GetXmlInt(options, "//Config/Combat/CritMultiplier") / 100;
                     Options.MaxDashSpeed = GetXmlInt(options, "//Config/Combat/MaxDashSpeed");
 

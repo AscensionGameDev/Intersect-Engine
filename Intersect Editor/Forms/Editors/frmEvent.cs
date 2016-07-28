@@ -891,10 +891,11 @@ namespace Intersect_Editor.Forms
             {
                 tmpCommand.Ints[2] = 1;
             }
-            if (tmpCommand.Type == EventCommandType.SetMoveRoute ||
-                tmpCommand.Type == EventCommandType.WaitForRouteCompletion && MyEvent.CommonEvent)
+            if ((tmpCommand.Type == EventCommandType.SetMoveRoute ||
+                tmpCommand.Type == EventCommandType.WaitForRouteCompletion) && MyEvent.CommonEvent)
             {
                 MessageBox.Show("Cannot use this command in common events.");
+                EnableButtons();
                 return;
             }
             if (_isInsert)

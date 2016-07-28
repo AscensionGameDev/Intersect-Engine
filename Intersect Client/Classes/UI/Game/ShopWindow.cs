@@ -186,7 +186,7 @@ namespace Intersect_Client.Classes.UI.Game
                     item.ItemType == (int)ItemTypes.None ||
                     item.ItemType == (int)ItemTypes.Spell)
                 {
-                    InputBox iBox = new InputBox("Buy Item", "How many " + item.Name + "(s) would you like to buy?", true, BuyItemInputBoxOkay, null, -1, true);
+                    InputBox iBox = new InputBox("Buy Item", "How many " + item.Name + "(s) would you like to buy?", true, BuyItemInputBoxOkay, null, _mySlot, true);
                 }
                 else
                 {
@@ -199,7 +199,7 @@ namespace Intersect_Client.Classes.UI.Game
             int value = (int)((InputBox)sender).Value;
             if (value > 0)
             {
-                PacketSender.SendSellItem(((InputBox)sender).Slot, value);
+                PacketSender.SendBuyItem(((InputBox)sender).Slot, value);
             }
         }
 

@@ -202,6 +202,11 @@ namespace Intersect_Editor.Forms
                 chk2Hand.Checked = Convert.ToBoolean(_editorItem.Data4);
                 cmbMalePaperdoll.SelectedIndex = cmbMalePaperdoll.FindString(_editorItem.MalePaperdoll);
                 cmbFemalePaperdoll.SelectedIndex = cmbFemalePaperdoll.FindString(_editorItem.FemalePaperdoll);
+                if (_editorItem.ItemType == (int)ItemTypes.Consumable)
+                {
+                    cmbConsume.SelectedIndex = _editorItem.Data1;
+                    scrlInterval.Value = _editorItem.Data2;
+                }
                 if (cmbPic.SelectedIndex > 0)
                 {
                     picItem.BackgroundImage = System.Drawing.Bitmap.FromFile("resources/items/" + cmbPic.Text);

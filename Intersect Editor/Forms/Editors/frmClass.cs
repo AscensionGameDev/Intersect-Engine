@@ -339,7 +339,7 @@ namespace Intersect_Editor.Forms
                 if (lstSpells.Items.Count > 0)
                 {
                     lstSpells.SelectedIndex = 0;
-                    scrlSpell.Value = _editorItem.Spells[lstSpells.SelectedIndex].SpellNum;
+                    scrlSpell.Value = Database.GameObjectListIndex(GameObject.Spell, _editorItem.Spells[lstSpells.SelectedIndex].SpellNum);
                     scrlLevel.Value = _editorItem.Spells[lstSpells.SelectedIndex].Level;
                 }
                 else

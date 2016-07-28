@@ -65,8 +65,8 @@ namespace Intersect_Server.Classes.Core
         private const string MUTE_TABLE = "mutes";
         private const string MUTE_ID = "id";
         private const string MUTE_TIME = "time";
-        private const string MUTE_USER = "user"; 
-        private const string MUTE_IP = "ip"; 
+        private const string MUTE_USER = "user";
+        private const string MUTE_IP = "ip";
         private const string MUTE_DURATION = "duration";
         private const string MUTE_REASON = "reason";
         private const string MUTE_MUTER = "muter";
@@ -498,28 +498,27 @@ namespace Intersect_Server.Classes.Core
         }
         public static Client GetPlayerClient(string username)
         {
-                //Try to fetch a player entity by username, online or offline.
-                //Check Online First
-                for (int i = 0; i < Globals.Clients.Count; i++)
+            //Try to fetch a player entity by username, online or offline.
+            //Check Online First
+            lock(Globals.ClientLock)
+            {
+                foreach (var client in Globals.Clients)
                 {
-                    if (Globals.Clients[i] != null && Globals.Clients[i].IsConnected() &&
-                        Globals.Clients[i].Entity != null)
+                    if (client.Entity != null && client.MyAccount.ToLower() == username.ToLower())
                     {
-                        if (Globals.Clients[i].MyAccount == username)
-                        {
-                            return Globals.Clients[i];
-                        }
+                        return client;
                     }
                 }
+            }
 
-                //Didn't find the player online, lets load him from our database.
-                Client fakeClient = new Client(-1, -1, null);
-                Player en = new Player(-1, fakeClient);
-                fakeClient.Entity = en;
-                fakeClient.MyAccount = username;
-                LoadUser(fakeClient);
-                LoadCharacter(fakeClient);
-                return fakeClient;
+            //Didn't find the player online, lets load him from our database.
+            Client fakeClient = new Client(-1, null);
+            Player en = new Player(-1, fakeClient);
+            fakeClient.Entity = en;
+            fakeClient.MyAccount = username;
+            LoadUser(fakeClient);
+            LoadCharacter(fakeClient);
+            return fakeClient;
         }
         public static void SetPlayerPower(string username, int power)
         {
@@ -528,10 +527,7 @@ namespace Intersect_Server.Classes.Core
                 Client client = GetPlayerClient(username);
                 client.Power = power;
                 SaveUser(client);
-                if (client.ClientIndex > -1)
-                {
-                    PacketSender.SendPlayerMsg(client, "Your power has been modified!");
-                }
+                PacketSender.SendPlayerMsg(client, "Your power has been modified!");
                 Console.WriteLine(username + "'s power has been set to " + power + "!");
             }
             else
@@ -551,7 +547,7 @@ namespace Intersect_Server.Classes.Core
                 using (SqliteCommand cmd = new SqliteCommand(query, _dbConnection))
                 {
                     cmd.Parameters.Add(new SqliteParameter("@" + USER_NAME, accountname.ToLower().Trim()));
-                    count = (long) cmd.ExecuteScalar();
+                    count = (long)cmd.ExecuteScalar();
                 }
                 return (count > 0);
             }
@@ -566,7 +562,7 @@ namespace Intersect_Server.Classes.Core
                 using (SqliteCommand cmd = new SqliteCommand(query, _dbConnection))
                 {
                     cmd.Parameters.Add(new SqliteParameter("@" + USER_EMAIL, email.ToLower().Trim()));
-                    count = (long) cmd.ExecuteScalar();
+                    count = (long)cmd.ExecuteScalar();
                 }
                 return (count > 0);
             }
@@ -581,7 +577,7 @@ namespace Intersect_Server.Classes.Core
                 using (SqliteCommand cmd = new SqliteCommand(query, _dbConnection))
                 {
                     cmd.Parameters.Add(new SqliteParameter("@" + CHAR_NAME, name.ToLower().Trim()));
-                    count = (long) cmd.ExecuteScalar();
+                    count = (long)cmd.ExecuteScalar();
                 }
                 return (count > 0);
             }
@@ -595,7 +591,7 @@ namespace Intersect_Server.Classes.Core
                 using (var createCommand = _dbConnection.CreateCommand())
                 {
                     createCommand.CommandText = cmd;
-                    count = (long) createCommand.ExecuteScalar();
+                    count = (long)createCommand.ExecuteScalar();
                 }
                 return count;
             }
@@ -684,7 +680,7 @@ namespace Intersect_Server.Classes.Core
                 using (SqliteCommand cmd = new SqliteCommand(query, _dbConnection))
                 {
                     cmd.Parameters.Add(new SqliteParameter("@" + USER_NAME, username.ToLower().Trim()));
-                    power = (long) cmd.ExecuteScalar();
+                    power = (long)cmd.ExecuteScalar();
                 }
                 return power;
             }
@@ -983,26 +979,26 @@ namespace Intersect_Server.Classes.Core
                             en.Experience = Convert.ToInt32(dataReader[CHAR_EXP]);
                             var vitalString = dataReader[CHAR_VITALS].ToString();
                             var vitals = vitalString.Split(commaSep, StringSplitOptions.RemoveEmptyEntries);
-                            for (var i = 0; i < (int) Vitals.VitalCount && i < vitals.Length; i++)
+                            for (var i = 0; i < (int)Vitals.VitalCount && i < vitals.Length; i++)
                             {
                                 en.Vital[i] = Int32.Parse(vitals[i]);
                             }
                             var maxVitalString = dataReader[CHAR_MAX_VITALS].ToString();
                             var maxVitals = maxVitalString.Split(commaSep, StringSplitOptions.RemoveEmptyEntries);
-                            for (var i = 0; i < (int) Vitals.VitalCount && i < maxVitals.Length; i++)
+                            for (var i = 0; i < (int)Vitals.VitalCount && i < maxVitals.Length; i++)
                             {
                                 en.MaxVital[i] = Int32.Parse(maxVitals[i]);
                             }
                             var statsString = dataReader[CHAR_STATS].ToString();
                             var stats = statsString.Split(commaSep, StringSplitOptions.RemoveEmptyEntries);
-                            for (var i = 0; i < (int) Stats.StatCount && i < stats.Length; i++)
+                            for (var i = 0; i < (int)Stats.StatCount && i < stats.Length; i++)
                             {
                                 en.Stat[i].Stat = Int32.Parse(stats[i]);
                             }
                             en.StatPoints = Convert.ToInt32(dataReader[CHAR_STAT_POINTS]);
                             var equipmentString = dataReader[CHAR_EQUIPMENT].ToString();
                             var equipment = equipmentString.Split(commaSep, StringSplitOptions.RemoveEmptyEntries);
-                            for (var i = 0; i < (int) Options.EquipmentSlots.Count && i < equipment.Length; i++)
+                            for (var i = 0; i < (int)Options.EquipmentSlots.Count && i < equipment.Length; i++)
                             {
                                 en.Equipment[i] = Int32.Parse(equipment[i]);
                             }
@@ -1046,9 +1042,18 @@ namespace Intersect_Server.Classes.Core
                                 player.Inventory[slot].ItemVal = Convert.ToInt32(dataReader[CHAR_INV_ITEM_VAL]);
                                 var statBoostStr = dataReader[CHAR_INV_ITEM_STATS].ToString();
                                 var stats = statBoostStr.Split(commaSep, StringSplitOptions.RemoveEmptyEntries);
-                                for (int i = 0; i < (int) Stats.StatCount && i < stats.Length; i++)
+                                for (int i = 0; i < (int)Stats.StatCount && i < stats.Length; i++)
                                 {
                                     player.Inventory[slot].StatBoost[i] = Int32.Parse(stats[i]);
+                                }
+                                if (ItemBase.GetItem(player.Inventory[slot].ItemNum) == null)
+                                {
+                                    player.Inventory[slot].ItemNum = -1;
+                                    player.Inventory[slot].ItemVal = 0;
+                                    for (int i = 0; i < (int)Stats.StatCount && i < stats.Length; i++)
+                                    {
+                                        player.Inventory[slot].StatBoost[i] = 0;
+                                    }
                                 }
                             }
                         }
@@ -1078,9 +1083,14 @@ namespace Intersect_Server.Classes.Core
                             var slot = Convert.ToInt32(dataReader[CHAR_SPELL_SLOT]);
                             if (slot >= 0 && slot < Options.MaxPlayerSkills)
                             {
-                                player.Spells[slot].SpellNum = Convert.ToInt32(dataReader[CHAR_SPELL_SLOT]);
+                                player.Spells[slot].SpellNum = Convert.ToInt32(dataReader[CHAR_SPELL_NUM]);
                                 player.Spells[slot].SpellCD = Environment.TickCount +
-                                                              Convert.ToInt32(dataReader[CHAR_SPELL_CD]);
+                              Convert.ToInt32(dataReader[CHAR_SPELL_CD]);
+                                if (SpellBase.GetSpell(player.Spells[slot].SpellNum) == null)
+                                {
+                                    player.Spells[slot].SpellNum = -1;
+                                    player.Spells[slot].SpellCD = -1;
+                                }
                             }
                         }
                     }
@@ -1116,9 +1126,18 @@ namespace Intersect_Server.Classes.Core
                                 player.Bank[slot].ItemVal = Convert.ToInt32(dataReader[CHAR_BANK_ITEM_VAL]);
                                 var statBoostStr = dataReader[CHAR_BANK_ITEM_STATS].ToString();
                                 var stats = statBoostStr.Split(commaSep, StringSplitOptions.RemoveEmptyEntries);
-                                for (int i = 0; i < (int) Stats.StatCount && i < stats.Length; i++)
+                                for (int i = 0; i < (int)Stats.StatCount && i < stats.Length; i++)
                                 {
                                     player.Bank[slot].StatBoost[i] = Int32.Parse(stats[i]);
+                                }
+                                if (ItemBase.GetItem(player.Bank[slot].ItemNum) == null)
+                                {
+                                    player.Bank[slot].ItemNum = -1;
+                                    player.Bank[slot].ItemVal = 0;
+                                    for (int i = 0; i < (int)Stats.StatCount && i < stats.Length; i++)
+                                    {
+                                        player.Bank[slot].StatBoost[i] = 0;
+                                    }
                                 }
                             }
                         }
@@ -1238,7 +1257,7 @@ namespace Intersect_Server.Classes.Core
                 {
                     OnMapsLoaded();
                 }
-                else if ((GameObject) val == GameObject.Class)
+                else if ((GameObject)val == GameObject.Class)
                 {
                     OnClassesLoaded();
                 }
@@ -1464,9 +1483,9 @@ namespace Intersect_Server.Classes.Core
                     while (dataReader.Read())
                     {
                         var index = Convert.ToInt32(dataReader[GAME_OBJECT_ID]);
-                        if (dataReader[MAP_LIST_DATA].GetType() != typeof (System.DBNull))
+                        if (dataReader[MAP_LIST_DATA].GetType() != typeof(System.DBNull))
                         {
-                            LoadGameObject(type, index, (byte[]) dataReader[GAME_OBJECT_DATA]);
+                            LoadGameObject(type, index, (byte[])dataReader[GAME_OBJECT_DATA]);
                         }
                         else
                         {
@@ -1514,7 +1533,7 @@ namespace Intersect_Server.Classes.Core
                 {
                     cmd.ExecuteNonQuery();
                     cmd.CommandText = "SELECT last_insert_rowid()";
-                    index = (int) ((long) cmd.ExecuteScalar());
+                    index = (int)((long)cmd.ExecuteScalar());
                 }
                 if (index > -1)
                 {
@@ -1655,30 +1674,31 @@ namespace Intersect_Server.Classes.Core
         //Extra Map Helper Functions
         public static void CheckAllMapConnections()
         {
-            foreach (var map in MapInstance.GetObjects())
+            var maps = MapInstance.GetObjects();
+            foreach (var map in maps)
             {
-                CheckMapConnections(map.Value);
+                CheckMapConnections(map.Value, maps);
             }
         }
-        public static void CheckMapConnections(MapBase map)
+        public static void CheckMapConnections(MapBase map, Dictionary<int, MapInstance> maps)
         {
             bool updated = false;
-            if (!MapInstance.GetObjects().ContainsKey(map.Up))
+            if (!maps.ContainsKey(map.Up) && map.Up != -1)
             {
                 map.Up = -1;
                 updated = true;
             }
-            if (!MapInstance.GetObjects().ContainsKey(map.Down))
+            if (!maps.ContainsKey(map.Down) && map.Down != -1)
             {
                 map.Down = -1;
                 updated = true;
             }
-            if (!MapInstance.GetObjects().ContainsKey(map.Left))
+            if (!maps.ContainsKey(map.Left) && map.Left != -1)
             {
                 map.Left = -1;
                 updated = true;
             }
-            if (!MapInstance.GetObjects().ContainsKey(map.Right))
+            if (!maps.ContainsKey(map.Right) && map.Right != -1)
             {
                 map.Right = -1;
                 updated = true;
@@ -1750,9 +1770,9 @@ namespace Intersect_Server.Classes.Core
                     {
                         while (dataReader.Read())
                         {
-                            if (dataReader[MAP_LIST_DATA].GetType() != typeof (System.DBNull))
+                            if (dataReader[MAP_LIST_DATA].GetType() != typeof(System.DBNull))
                             {
-                                var data = (byte[]) dataReader[MAP_LIST_DATA];
+                                var data = (byte[])dataReader[MAP_LIST_DATA];
                                 ByteBuffer myBuffer = new ByteBuffer();
                                 myBuffer.WriteBytes(data);
                                 MapList.GetList().Load(myBuffer, MapBase.GetObjects(), true, true);

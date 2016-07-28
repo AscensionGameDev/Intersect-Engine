@@ -40,14 +40,6 @@ namespace Intersect_Server.Classes.Core
                 {
                     if (map.Value.Active) map.Value.Update();
                 }
-
-                for (int i = 0; i < Globals.Clients.Count; i++)
-                {
-                    if (Globals.Clients[i] != null && Globals.Clients[i].Entity != null)
-                    {
-                        Globals.Clients[i].Entity.Update();
-                    }
-                }
                 cps++;
                 if (Environment.TickCount >= cpsTimer)
                 {

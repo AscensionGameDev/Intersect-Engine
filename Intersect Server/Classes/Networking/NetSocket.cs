@@ -39,7 +39,7 @@ namespace Intersect_Server.Classes.Networking
             _myStream = _mySocket.GetStream();
             _mySocket.NoDelay = true;
             _readBuff = new byte[_mySocket.ReceiveBufferSize];
-            if (_myStream != null) { _myStream.BeginRead(_readBuff, 0, _mySocket.ReceiveBufferSize, OnReceiveData,null); }
+            if (_myStream != null) { _myStream.BeginRead(_readBuff, 0, _mySocket.ReceiveBufferSize, OnReceiveData, null); }
             _isConnected = true;
         }
 
@@ -47,16 +47,17 @@ namespace Intersect_Server.Classes.Networking
         {
             try
             {
-                _myStream.Write(data, 0, data.Length);
+                if (_mySocket != null && _myStream != null) _myStream.Write(data, 0, data.Length);
             }
             catch (Exception)
             {
-                
+
             }
         }
 
         private void OnReceiveData(IAsyncResult ar)
         {
+            if (_mySocket == null) return;
             try
             {
                 var readbytes = _myStream.EndRead(ar);
@@ -76,7 +77,11 @@ namespace Intersect_Server.Classes.Networking
                 _readBuff = new byte[_mySocket.ReceiveBufferSize];
                 _myStream.BeginRead(_readBuff, 0, _mySocket.ReceiveBufferSize, OnReceiveData, null);
             }
-            catch (Exception)
+            catch (System.ObjectDisposedException ex)
+            {
+                //Trying to read from a disconnected socket
+            }
+            catch (Exception ex)
             {
                 Globals.GeneralLogs.Add("Socket end read error.");
                 HandleDisconnect();
@@ -84,51 +89,13 @@ namespace Intersect_Server.Classes.Networking
             }
         }
 
-        public void Update(PacketHandler packetHandler)
-        {
-            do
-            {
-                try
-                {
-                    if (IsConnected())
-                    {
-                        if (_connectionTimeout > -1 && _connectionTimeout < Environment.TickCount)
-                        {
-                            //Disconnect
-                            HandleDisconnect();
-                            return;
-                        }
-                        else
-                        {
-                            if (_pingTime < Environment.TickCount)
-                            {
-                                PacketSender.SendPing(_myClient);
-                            }
-                        }
-                    }
-                    else
-                    {
-                        HandleDisconnect();
-                        return;
-                    }
-                }
-                catch
-                {
-                    HandleDisconnect();
-                    return;
-                }
-
-            } while (true);
-        }
-
-        public override void Update()
-        {
-
-        }
-
         public override void Disconnect()
         {
-            HandleDisconnect();
+            if (_mySocket != null)
+            {
+                _mySocket.Close();
+                _mySocket = null;
+            }
         }
 
         public override void Dispose()

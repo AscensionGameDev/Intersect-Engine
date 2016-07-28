@@ -70,13 +70,11 @@ namespace Intersect_Server.Classes.Entities
             Passable = Convert.ToInt32(MyBase.WalkableBefore);
 
             //Give Resource Drops
-            int Z = 0;
             for (int n = 0; n < Options.MaxNpcDrops; n++)
             {
                 if (Globals.Rand.Next(1, 101) <= MyBase.Drops[n].Chance)
                 {
                     Inventory.Add(new MapItemInstance(MyBase.Drops[n].ItemNum,MyBase.Drops[n].Amount));
-                    Z = Z + 1;
                 }
             }
            
@@ -111,6 +109,7 @@ namespace Intersect_Server.Classes.Entities
         {
             ByteBuffer myBuffer = new ByteBuffer();
             myBuffer.WriteInteger(Convert.ToInt32(IsDead));
+            myBuffer.WriteInteger(MyBase.GetId());
             myBuffer.WriteBytes(base.Data());
             return myBuffer.ToArray();
         }

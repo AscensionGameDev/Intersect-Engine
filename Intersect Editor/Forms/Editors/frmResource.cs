@@ -160,7 +160,7 @@ namespace Intersect_Editor.Classes
                 pnlContainer.Show();
 
                 txtName.Text = _editorItem.Name;
-                cmbToolType.SelectedIndex = _editorItem.Tool;
+                cmbToolType.SelectedIndex = _editorItem.Tool + 1;
                 scrlSpawnDuration.Value = _editorItem.SpawnDuration;
                 scrlAnimation.Value = Database.GameObjectListIndex(GameObject.Animation, _editorItem.Animation);
                 txtHP.Text = _editorItem.MinHP.ToString();
@@ -252,7 +252,7 @@ namespace Intersect_Editor.Classes
 
         private void cmbToolType_SelectedIndexChanged(object sender, EventArgs e)
         {
-            _editorItem.Tool = cmbToolType.SelectedIndex;
+            _editorItem.Tool = cmbToolType.SelectedIndex -1;
         }
 
         private void chkWalkableBefore_CheckedChanged(object sender, EventArgs e)

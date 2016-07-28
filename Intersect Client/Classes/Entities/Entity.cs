@@ -104,8 +104,8 @@ namespace Intersect_Client.Classes.Entities
         public Queue<DashInstance> DashQueue = new Queue<DashInstance>();
 
         //Combat
-        public long _attackTimer = 0;
-        public bool blocking = false;
+        public long AttackTimer = 0;
+        public bool Blocking = false;
 
         private long _lastUpdate;
         private long _walkTimer;
@@ -126,7 +126,10 @@ namespace Intersect_Client.Classes.Entities
             {
                 Spells[i] = new SpellInstance();
             }
-
+            for (int i = 0; i < Options.EquipmentSlots.Count; i++)
+            {
+                Equipment[i] = -1;
+            }
         }
 
         //Deserializing
@@ -180,7 +183,7 @@ namespace Intersect_Client.Classes.Entities
         public virtual float GetMovementTime()
         {
             var time = 1000f/(float) (1 + Math.Log(Stat[(int) Stats.Speed]));
-            if (blocking == true) { time += time * (float)Options.BlockingSlow; }
+            if (Blocking) { time += time * (float)Options.BlockingSlow; }
             if (time > 1000f) time = 1000f;
             return time;
         }
@@ -300,6 +303,11 @@ namespace Intersect_Client.Classes.Entities
             }
             _lastUpdate = Globals.System.GetTimeMS();
             return true;
+        }
+
+        public int CalculateAttackTime()
+        {
+            return (int)(Options.MaxAttackRate + (float)((Options.MinAttackRate - Options.MaxAttackRate) * (((float)Options.MaxStatValue - Stat[(int)Stats.Speed]) / (float)Options.MaxStatValue)));
         }
 
         public virtual bool IsStealthed()
@@ -432,7 +440,7 @@ namespace Intersect_Client.Classes.Entities
                 }
                 destRectangle.X = (int)Math.Ceiling(destRectangle.X);
                 destRectangle.Y = (int)Math.Ceiling(destRectangle.Y);
-                if (_attackTimer > Environment.TickCount || blocking == true)
+                if (AttackTimer - CalculateAttackTime()/2 > Environment.TickCount || Blocking)
                 {
                     srcRectangle = new FloatRect(3 * (int)entityTex.GetWidth() / 4, d * (int)entityTex.GetHeight() / 4, (int)entityTex.GetWidth() / 4, (int)entityTex.GetHeight() / 4);
                 }
@@ -520,7 +528,14 @@ namespace Intersect_Client.Classes.Entities
                 }
                 destRectangle.X = (int)Math.Ceiling(destRectangle.X);
                 destRectangle.Y = (int)Math.Ceiling(destRectangle.Y);
-                srcRectangle = new FloatRect(WalkFrame * (int)paperdollTex.GetWidth() / 4, d * (int)paperdollTex.GetHeight() / 4, (int)paperdollTex.GetWidth() / 4, (int)paperdollTex.GetHeight() / 4);
+                if (AttackTimer > Environment.TickCount || Blocking)
+                {
+                    srcRectangle = new FloatRect(3 * (int)paperdollTex.GetWidth() / 4, d * (int)paperdollTex.GetHeight() / 4, (int)paperdollTex.GetWidth() / 4, (int)paperdollTex.GetHeight() / 4);
+                }
+                else
+                {
+                    srcRectangle = new FloatRect(WalkFrame * (int)paperdollTex.GetWidth() / 4, d * (int)paperdollTex.GetHeight() / 4, (int)paperdollTex.GetWidth() / 4, (int)paperdollTex.GetHeight() / 4);
+                }
                 destRectangle.Width = srcRectangle.Width;
                 destRectangle.Height = srcRectangle.Height;
                 GameGraphics.DrawGameTexture(paperdollTex, srcRectangle, destRectangle, new Color(alpha, 255, 255, 255));
@@ -614,7 +629,7 @@ namespace Intersect_Client.Classes.Entities
                 var y = (int)Math.Ceiling(GetCenterPos().Y - ((Options.TileHeight * 2) * (1000 - (ActionMsgs[n].TransmittionTimer - Globals.System.GetTimeMS())) / 1000));
                 var x = (int)Math.Ceiling(GetCenterPos().X + ActionMsgs[n].xOffset);
                 float textWidth = GameGraphics.Renderer.MeasureText(ActionMsgs[n].msg, GameGraphics.GameFont, 1).X;
-                GameGraphics.Renderer.DrawString(ActionMsgs[n].msg, GameGraphics.GameFont, (int)(x), (int)(y), 1, ActionMsgs[n].clr);
+                GameGraphics.Renderer.DrawString(ActionMsgs[n].msg, GameGraphics.GameFont, (int)(x) - textWidth/2f, (int)(y), 1, ActionMsgs[n].clr);
 
                 //Try to remove
                 ActionMsgs[n].TryRemove();
@@ -748,7 +763,7 @@ namespace Intersect_Client.Classes.Entities
             Entity = entity;
             msg = message;
             clr = color;
-            xOffset = rnd.Next(-16, 17); //+- 16 pixels so action msg's don't overlap!
+            xOffset = rnd.Next(-30, 30); //+- 16 pixels so action msg's don't overlap!
             TransmittionTimer = Globals.System.GetTimeMS() + 1000;
         }
 

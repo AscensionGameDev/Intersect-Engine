@@ -27,6 +27,7 @@
 
 using System;
 using IntersectClientExtras.GenericClasses;
+using IntersectClientExtras.Gwen.Control;
 using IntersectClientExtras.Input;
 using Intersect_Client.Classes.Core;
 using Intersect_Client.Classes.General;
@@ -38,6 +39,7 @@ using Intersect_Client.Classes.UI.Game;
 using Intersect_Client.Classes.Maps;
 using Intersect_Library;
 using Intersect_Library.GameObjects;
+using MessageBox = System.Windows.Forms.MessageBox;
 
 
 namespace Intersect_Client.Classes.Entities
@@ -80,30 +82,6 @@ namespace Intersect_Client.Classes.Entities
                 if (Globals.MyIndex == MyIndex && base.IsMoving == false)
                 {
                     ProcessDirectionalInput();
-                }
-                if (Globals.InputManager.KeyDown(Keys.E))
-                {
-                    if (TryAttack())
-                    {
-                        return returnval;
-                    }
-                    if (TryPickupItem())
-                    {
-                        return returnval;
-                    }
-                }
-                if (Globals.InputManager.KeyDown(Keys.Q))
-                {
-                    if (TryBlock())
-                    {
-                        return returnval;
-                    }
-                }
-                else if (blocking == true)
-                {
-                    PacketSender.SendBlock(0);
-                    blocking = false;
-                    _attackTimer = Globals.System.GetTimeMS() + CalculateAttackTime();
                 }
             }
             if (_targetBox != null) { _targetBox.Update(); }
@@ -333,14 +311,9 @@ namespace Intersect_Client.Classes.Entities
             }
         }
 
-        public int CalculateAttackTime()
-        {
-            return (int)((Stat[(int)Stats.Speed] / (float)Options.MaxStatValue) * (Options.MinAttackRate - Options.MaxAttackRate)) + Options.MinAttackRate;
-        }
-
         public bool TryBlock()
         {
-            if (_attackTimer > Globals.System.GetTimeMS()) { return false; }
+            if (AttackTimer > Globals.System.GetTimeMS()) { return false; }
 
             if (Options.ShieldIndex > -1 && Globals.Me.Equipment[Options.ShieldIndex] > -1)
             {
@@ -348,8 +321,7 @@ namespace Intersect_Client.Classes.Entities
                 if (item != null)
                 {
                     PacketSender.SendBlock(1);
-                    _attackTimer = Globals.System.GetTimeMS() + CalculateAttackTime();
-                    blocking = true;
+                    Blocking = true;
                     return true;
                 }
             }
@@ -357,10 +329,19 @@ namespace Intersect_Client.Classes.Entities
             return false;
         }
 
+        public void StopBlocking()
+        {
+            if (Blocking)
+            {
+                Blocking = false;
+                PacketSender.SendBlock(0);
+                AttackTimer = Globals.System.GetTimeMS() + CalculateAttackTime();
+            }
+        }
+
         public bool TryAttack()
         {
-            if (_attackTimer > Globals.System.GetTimeMS()) { return false; }
-            if (blocking) { return true; }
+            if (AttackTimer > Globals.System.GetTimeMS() || Blocking) { return false; }
 
             var x = Globals.Entities[Globals.MyIndex].CurrentX;
             var y = Globals.Entities[Globals.MyIndex].CurrentY;
@@ -395,7 +376,7 @@ namespace Intersect_Client.Classes.Entities
                                 {
                                     //Talk to Event
                                     PacketSender.SendActivateEvent(en.Value.CurrentMap, en.Key);
-                                    _attackTimer = Globals.System.GetTimeMS() + CalculateAttackTime();
+                                    AttackTimer = Globals.System.GetTimeMS() + CalculateAttackTime();
                                     return true;
                                 }
                             }
@@ -408,7 +389,7 @@ namespace Intersect_Client.Classes.Entities
                     if (item != null && item.Projectile >= 0)
                     {
                         PacketSender.SendAttack(-1);
-                        _attackTimer = Globals.System.GetTimeMS() + CalculateAttackTime();
+                        AttackTimer = Globals.System.GetTimeMS() + CalculateAttackTime();
                         return true;
                     }
                 }
@@ -421,7 +402,7 @@ namespace Intersect_Client.Classes.Entities
                         {
                             //ATTACKKKKK!!!
                             PacketSender.SendAttack(en.Key);
-                            _attackTimer = Globals.System.GetTimeMS() + CalculateAttackTime();
+                            AttackTimer = Globals.System.GetTimeMS() + CalculateAttackTime();
                             return true;
                         }
                     }
@@ -435,7 +416,7 @@ namespace Intersect_Client.Classes.Entities
                 if (item != null && item.Projectile >= 0)
                 {
                     PacketSender.SendAttack(_targetIndex);
-                    _attackTimer = Globals.System.GetTimeMS() + CalculateAttackTime();
+                    AttackTimer = Globals.System.GetTimeMS() + CalculateAttackTime();
                     return true;
                 }
             }
@@ -618,7 +599,7 @@ namespace Intersect_Client.Classes.Entities
                                 if (en.Value == null) continue;
                                 if (en.Value.CurrentMap == mapNum && en.Value.CurrentX == x && en.Value.CurrentY == y && !en.Value.IsStealthed())
                                 {
-                                    if (en.GetType() != typeof(Projectile))
+                                    if (en.Value.GetType() != typeof(Projectile) && en.Value.GetType() != typeof(Resource))
                                     {
                                         if (_targetBox != null) { _targetBox.Dispose(); _targetBox = null; }
                                         if (en.Value != Globals.Me) _targetBox = new EntityBox(Gui.GameUI.GameCanvas, en.Value, 4, 122);
@@ -721,7 +702,7 @@ namespace Intersect_Client.Classes.Entities
             if (MoveDir > -1 && Globals.EventDialogs.Count == 0)
             {
                 //Try to move if able and not casting spells.
-                if (MoveTimer < Globals.System.GetTimeMS() && CastTime < Globals.System.GetTimeMS())
+                if (!IsMoving && MoveTimer < Globals.System.GetTimeMS() && CastTime < Globals.System.GetTimeMS())
                 {
                     switch (MoveDir)
                     {
@@ -1105,7 +1086,21 @@ namespace Intersect_Client.Classes.Entities
                     {
                         if (en.Value.CurrentMap == tmpMap && en.Value.CurrentX == tmpX && en.Value.CurrentY == tmpY && en.Value.CurrentZ == CurrentZ && !NoClip)
                         {
-                            if (en.Value.GetType() != typeof(Projectile)) return en.Key;
+                            if (en.Value.GetType() != typeof(Projectile))
+                            {
+                                if (en.Value.GetType() == typeof(Resource))
+                                {
+                                    var resourceBase = ((Resource)en.Value).GetResourceBase();
+                                    if (resourceBase != null)
+                                    {
+                                        if ((resourceBase.WalkableAfter && ((Resource)en.Value).IsDead) || (resourceBase.WalkableBefore && !((Resource)en.Value).IsDead))
+                                        {
+                                            continue;
+                                        }
+                                    }
+                                }
+                                return en.Key;
+                            }
                         }
                     }
                 }
@@ -1141,7 +1136,7 @@ namespace Intersect_Client.Classes.Entities
                     if (en.Value == null) continue;
                     if (en.Value.CurrentMap == map.MyMapNum && !en.Value.IsStealthed())
                     {
-                        if (en.GetType() != typeof(Projectile))
+                        if (en.Value.GetType() != typeof(Projectile) && en.Value.GetType() != typeof(Resource))
                         {
                             if (_targetType == 0 && _targetIndex == en.Value.MyIndex)
                             {
@@ -1184,7 +1179,7 @@ namespace Intersect_Client.Classes.Entities
                                 if (en.Value == null) continue;
                                 if (en.Value.CurrentMap == mapNum && en.Value.CurrentX == x && en.Value.CurrentY == y && !en.Value.IsStealthed())
                                 {
-                                    if (en.GetType() != typeof(Projectile))
+                                    if (en.Value.GetType() != typeof(Projectile) && en.Value.GetType() != typeof(Resource))
                                     {
                                         if (_targetType != 0 || _targetIndex != en.Value.MyIndex)
                                         {

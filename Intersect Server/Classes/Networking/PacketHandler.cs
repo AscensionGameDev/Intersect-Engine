@@ -189,8 +189,7 @@ namespace Intersect_Server.Classes.Networking
 
         private static void HandlePing(Client client)
         {
-            client.ConnectionTimeout = -1;
-            client.PingTime = Environment.TickCount + 10000;
+            client.Pinged();
         }
 
         private static void HandleLogin(Client client, byte[] packet)
@@ -205,6 +204,17 @@ namespace Intersect_Server.Classes.Networking
                 if (Database.CheckPassword(username, password))
                 {
                     client.MyAccount = username;
+
+                    lock (Globals.ClientLock)
+                    {
+                        foreach (var user in Globals.Clients)
+                        {
+                            if (user.MyAccount.ToLower() == client.MyAccount.ToLower() && user != client && user.IsEditor == false)
+                            {
+                                user.Disconnect();
+                            }
+                        }
+                    }
 
                     if (Database.LoadUser(client))
                     {
@@ -292,6 +302,7 @@ namespace Intersect_Server.Classes.Networking
             Globals.Entities[index].Move(dir,client,false);
             if (map != client.Entity.CurrentMap || x != client.Entity.CurrentX || y != client.Entity.CurrentY)
             {
+                Console.WriteLine("Sending override entity position to " + client.Entity.MyName);
                 PacketSender.SendEntityPositionTo(client, client.EntityIndex, (int)EntityTypes.Player, client.Entity);
             }
         }
@@ -323,6 +334,17 @@ namespace Intersect_Server.Classes.Networking
                     if (Database.CheckPower(usr) == 2)
                     {
                         client.IsEditor = true;
+                        client.MyAccount = usr;
+                        lock (Globals.ClientLock)
+                        {
+                            foreach (var user in Globals.Clients)
+                            {
+                                if (user.MyAccount.ToLower() == client.MyAccount.ToLower() && user != client && user.IsEditor == true)
+                                {
+                                    user.Disconnect();
+                                }
+                            }
+                        }
                         PacketSender.SendServerConfig(client);
                         PacketSender.SendJoinGame(client);
                         PacketSender.SendGameData(client);
@@ -566,16 +588,7 @@ namespace Intersect_Server.Classes.Networking
                 }
             }
 
-            if (bf.ReadInteger() == 1)
-            {
-                client.Entity.Blocking = true;
-                PacketSender.SendEntityAttack(client.EntityIndex, (int)EntityTypes.GlobalEntity, client.Entity.CurrentMap, -1);
-            }
-            else
-            {
-                client.Entity.Blocking = false;
-                PacketSender.SendEntityAttack(client.EntityIndex, (int)EntityTypes.GlobalEntity, client.Entity.CurrentMap, 0);
-            }
+            client.Entity.TryBlock(bf.ReadInteger());
 
             bf.Dispose();
         }
@@ -597,7 +610,7 @@ namespace Intersect_Server.Classes.Networking
                 }
                 if (client.Entity.Status[n].Type == (int)StatusTypes.Blind)
                 {
-                    PacketSender.SendPlayerMsg(client, "You are blinded and can't attack");
+                    PacketSender.SendActionMsg(client.EntityIndex, "MISS!", new Color(255, 255, 255, 255));
                     bf.Dispose();
                     return;
                 }
@@ -650,8 +663,8 @@ namespace Intersect_Server.Classes.Networking
                     "You are an administrator! Press Insert at any time to access the administration menu or F2 for debug information.",
                     Color.OrangeRed);
             }
-            PacketSender.SendEntityDataTo(client, index, (int)EntityTypes.Player, client.Entity.Data(), client.Entity);
             Globals.Entities[index].Warp(Globals.Entities[index].CurrentMap, Globals.Entities[index].CurrentX, Globals.Entities[index].CurrentY, Globals.Entities[index].Dir);
+            PacketSender.SendEntityDataTo(client, index, (int)EntityTypes.Player, client.Entity.Data(), client.Entity);
 
             //Search for login activated events and run them
             foreach (var evt in EventBase.GetObjects())

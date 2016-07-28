@@ -112,36 +112,40 @@ namespace Intersect_Server.Classes.Entities
             //Check to see if we can spawn events, if already spawned.. update them.
             lock (EventLock)
             {
-                for (var i = 0; i < MapInstance.GetMap(CurrentMap).SurroundingMaps.Count + 1; i++)
+                var currentMap = MapInstance.GetMap(CurrentMap);
+                for (var i = 0; i < currentMap.SurroundingMaps.Count + 1; i++)
                 {
-                    int mapNum;
-                    if (i == MapInstance.GetMap(CurrentMap).SurroundingMaps.Count)
+                    MapInstance map = null;
+                    if (i == currentMap.SurroundingMaps.Count)
                     {
-                        mapNum = CurrentMap;
+                        map = currentMap;
                     }
                     else
                     {
-                        mapNum = MapInstance.GetMap(CurrentMap).SurroundingMaps[i];
+                        map = MapInstance.GetMap(currentMap.SurroundingMaps[i]);
                     }
-                    if (mapNum <= -1) continue;
-                    foreach (var mapEvent in MapInstance.GetMap(mapNum).Events.Values)
+                    if (map == null) continue;
+                    lock (map.GetMapLock())
                     {
-                        //Look for event
-                        var foundEvent = EventExists(mapNum, mapEvent.SpawnX, mapEvent.SpawnY);
-                        if (foundEvent == -1)
+                        foreach (var mapEvent in map.Events.Values)
                         {
-                            var tmpEvent = new EventInstance(MyEvents.Count, MyClient, mapEvent, mapNum)
+                            //Look for event
+                            var foundEvent = EventExists(map.MyMapNum, mapEvent.SpawnX, mapEvent.SpawnY);
+                            if (foundEvent == -1)
                             {
-                                IsGlobal = mapEvent.IsGlobal == 1,
-                                MapNum = mapNum,
-                                SpawnX = mapEvent.SpawnX,
-                                SpawnY = mapEvent.SpawnY
-                            };
-                            MyEvents.Add(tmpEvent);
-                        }
-                        else
-                        {
-                            MyEvents[foundEvent].Update();
+                                var tmpEvent = new EventInstance(MyEvents.Count, MyClient, mapEvent, map.MyMapNum)
+                                {
+                                    IsGlobal = mapEvent.IsGlobal == 1,
+                                    MapNum = map.MyMapNum,
+                                    SpawnX = mapEvent.SpawnX,
+                                    SpawnY = mapEvent.SpawnY
+                                };
+                                MyEvents.Add(tmpEvent);
+                            }
+                            else
+                            {
+                                MyEvents[foundEvent].Update();
+                            }
                         }
                     }
                 }
@@ -373,7 +377,8 @@ namespace Intersect_Server.Classes.Entities
         }
         public override void Warp(int newMap, int newX, int newY, int newDir)
         {
-            if (!MapInstance.GetObjects().ContainsKey(newMap))
+            var map = MapInstance.GetMap(newMap);
+            if (map == null)
             {
                 Globals.GeneralLogs.Add("Failed to warp player to new map -- warping to /spawn/.");
                 WarpToSpawn(true);
@@ -385,6 +390,7 @@ namespace Intersect_Server.Classes.Entities
             {
                 PacketSender.SendEntityLeave(MyIndex, (int)EntityTypes.Player, CurrentMap);
                 CurrentMap = newMap;
+                map.PlayerEnteredMap(MyClient);
                 PacketSender.SendEntityDataToProximity(MyIndex, (int)EntityTypes.Player, Data(), Globals.Entities[MyIndex]);
                 PacketSender.SendEntityPositionToAll(MyIndex, (int)EntityTypes.Player, Globals.Entities[MyIndex]);
                 PacketSender.SendMap(MyClient, newMap);
@@ -571,7 +577,7 @@ namespace Intersect_Server.Classes.Entities
                     return;
                 }
 
-                if (itemBase.ClassReq != -1 && itemBase.ClassReq != Class)
+                if (itemBase.ClassReq > 0 && itemBase.ClassReq != Class)
                 {
                     PacketSender.SendPlayerMsg(MyClient, "You do not meet the class requirement to use this item.");
                     return;
@@ -831,7 +837,7 @@ namespace Intersect_Server.Classes.Entities
                             itemBase.ItemType == (int)ItemTypes.None ||
                             itemBase.ItemType == (int)ItemTypes.Spell)
                         {
-                            buyItemAmt = Math.Min(1, amount);
+                            buyItemAmt = Math.Max(1, amount);
                         }
                         if (
                             FindItem(shop.SellingItems[slot].CostItemNum, shop.SellingItems[slot].CostItemVal * buyItemAmt) >
@@ -1085,7 +1091,7 @@ namespace Intersect_Server.Classes.Entities
             if (KnowsSpell(spell.SpellNum)) { return false; }
             for (int i = 0; i < Options.MaxPlayerSkills; i++)
             {
-                if (Spells[i].SpellNum == -1)
+                if (Spells[i].SpellNum <= 0)
                 {
                     Spells[i] = spell.Clone();
                     if (SendUpdate)
@@ -1162,6 +1168,11 @@ namespace Intersect_Server.Classes.Entities
                 if (Level < spell.LevelReq)
                 {
                     PacketSender.SendPlayerMsg(MyClient, "You are not a high enough level to use this ability.");
+                    return;
+                }
+
+                if (target == -1 && ((spell.SpellType == (int)SpellTypes.CombatSpell && spell.TargetType == (int)SpellTargetTypes.Single) || spell.SpellType == (int)SpellTypes.WarpTo)) {
+                    PacketSender.SendActionMsg(MyIndex, "No Target!", new Color(255, 255, 0, 0));
                     return;
                 }
 
@@ -1445,28 +1456,31 @@ namespace Intersect_Server.Classes.Entities
         }
         public bool StartCommonEvent(EventBase evt, int trigger = -1)
         {
-            for (int i = 0; i < MyEvents.Count; i++)
+            lock (EventLock)
             {
-                if (MyEvents[i] != null && MyEvents[i].BaseEvent == evt) return false;
+                for (int i = 0; i < MyEvents.Count; i++)
+                {
+                    if (MyEvents[i] != null && MyEvents[i].BaseEvent == evt) return false;
+                }
+                var tmpEvent = new EventInstance(MyEvents.Count, MyClient, evt, -1)
+                {
+                    MapNum = -1,
+                    SpawnX = -1,
+                    SpawnY = -1
+                };
+                MyEvents.Add(tmpEvent);
+                tmpEvent.Update();
+                if (tmpEvent.PageInstance != null && (trigger == -1 || tmpEvent.PageInstance.MyPage.Trigger == trigger))
+                {
+                    var newStack = new CommandInstance(tmpEvent.PageInstance.MyPage) { CommandIndex = 0, ListIndex = 0 };
+                    tmpEvent.CallStack.Push(newStack);
+                }
+                else
+                {
+                    MyEvents.RemoveAt(MyEvents.Count - 1);
+                }
+                return true;
             }
-            var tmpEvent = new EventInstance(MyEvents.Count, MyClient, evt, -1)
-            {
-                MapNum = -1,
-                SpawnX = -1,
-                SpawnY = -1
-            };
-            MyEvents.Add(tmpEvent);
-            tmpEvent.Update();
-            if (tmpEvent.PageInstance != null && (trigger == -1 || tmpEvent.PageInstance.MyPage.Trigger == trigger))
-            {
-                var newStack = new CommandInstance(tmpEvent.PageInstance.MyPage) { CommandIndex = 0, ListIndex = 0 };
-                tmpEvent.CallStack.Push(newStack);
-            }
-            else
-            {
-                MyEvents.RemoveAt(MyEvents.Count - 1);
-            }
-            return true;
         }
 
         public override void Move(int moveDir, Client client, bool DontUpdate = false)

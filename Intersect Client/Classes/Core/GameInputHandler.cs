@@ -37,7 +37,26 @@ namespace Intersect_Client.Classes.Core
     {
         public static void OnKeyPressed(Keys key)
         {
-            if (key == Keys.Escape)
+            if (key == Keys.E)
+            {
+                if (Globals.Me.TryAttack())
+                {
+                    return;
+                }
+                if (Globals.Me.TryPickupItem())
+                {
+                    return;
+                }
+                if (Globals.Me.AttackTimer < Globals.System.GetTimeMS())
+                    Globals.Me.AttackTimer = Globals.System.GetTimeMS() + Globals.Me.CalculateAttackTime();
+            }
+            else if (key == Keys.Q) {
+                if (Globals.Me.TryBlock())
+                {
+                    return;
+                }
+            }
+            else if (key == Keys.Escape)
             {
                 if (Globals.GameState == GameStates.Intro)
                 {
@@ -85,7 +104,10 @@ namespace Intersect_Client.Classes.Core
 
         public static void OnKeyReleased(Keys key)
         {
-            
+            if (key == Keys.Q)
+            {
+                Globals.Me.StopBlocking();
+            }
         }
 
         public static void OnMouseDown(GameInput.MouseButtons btn)
@@ -108,6 +130,8 @@ namespace Intersect_Client.Classes.Core
                         {
                             return;
                         }
+                        if (Globals.Me.AttackTimer < Globals.System.GetTimeMS())
+                            Globals.Me.AttackTimer = Globals.System.GetTimeMS() + Globals.Me.CalculateAttackTime();
                     }
                 }
                 else if (btn == GameInput.MouseButtons.Right)
@@ -120,6 +144,14 @@ namespace Intersect_Client.Classes.Core
                         }
                     }
                 }
+            }
+        }
+
+        public static void OnMouseUp(GameInput.MouseButtons btn)
+        {
+            if (btn == GameInput.MouseButtons.Right)
+            {
+                Globals.Me.StopBlocking();
             }
         }
     }
