@@ -218,5 +218,3 @@ pip-log.txt
 
 #Mr Developer
 .mr.developer.cfg
-Intersect Server/Classes/General/ServerOptions.cs
-*.cs

@@ -1558,6 +1558,11 @@ namespace Intersect_Editor.Forms
                 EnableButtons();
             }
         }
+
+        private void label4_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 
     public class CommandListProperties

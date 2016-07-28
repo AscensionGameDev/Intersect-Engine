@@ -28,6 +28,7 @@ using Intersect_Server.Classes.Maps;
 using Intersect_Server.Classes.Misc;
 using Intersect_Server.Classes.Misc.Pathfinding;
 using Intersect_Server.Classes.Networking;
+using Intersect_Server.Classes.Spells;
 
 
 namespace Intersect_Server.Classes.Entities
@@ -54,6 +55,9 @@ namespace Intersect_Server.Classes.Entities
         public byte Behaviour = 0;
         public byte Range = 0;
 
+        //Spell casting
+        public long CastFreq = 0;
+
         public Npc(int index, NpcBase myBase)
             : base(index)
         {
@@ -64,6 +68,11 @@ namespace Intersect_Server.Classes.Entities
             for (int I = 0; I < (int)Stats.StatCount; I++)
             {
                 Stat[I] = new EntityStat(myBase.Stat[I]);
+            }
+
+            for (int I = 0; I < MyBase.Spells.Count; I++)
+            {
+                Spells.Add(new SpellInstance(MyBase.Spells[I]));
             }
 
             myBase.MaxVital.CopyTo(Vital, 0);
@@ -140,7 +149,7 @@ namespace Intersect_Server.Classes.Entities
                 }
                 else //Find a target if able
                 {
-                    if (Behaviour == 1) // Check if attack on sight
+                    if (Behaviour == 1 || MyBase.AggroList.Count > -1) // Check if attack on sight or have npc's to target
                     {
                         int x = CurrentX - Range;
                         int y = CurrentY - Range;
@@ -156,15 +165,31 @@ namespace Intersect_Server.Classes.Entities
                         //TODO base this off of the entity array of surrounding maps, not the whole global list.
                         for (int n = 0; n < MapInstance.GetMap(CurrentMap).Entities.Count; n++)
                         {
-                            if (MapInstance.GetMap(CurrentMap).Entities[n].GetType() == typeof(Player))
+                            if (x < MapInstance.GetMap(CurrentMap).Entities[n].CurrentX && xMax > MapInstance.GetMap(CurrentMap).Entities[n].CurrentX)
                             {
-                                if (x < MapInstance.GetMap(CurrentMap).Entities[n].CurrentX && xMax > MapInstance.GetMap(CurrentMap).Entities[n].CurrentX)
+                                if (y < MapInstance.GetMap(CurrentMap).Entities[n].CurrentY && yMax > MapInstance.GetMap(CurrentMap).Entities[n].CurrentY)
                                 {
-                                    if (y < MapInstance.GetMap(CurrentMap).Entities[n].CurrentY && yMax > MapInstance.GetMap(CurrentMap).Entities[n].CurrentY)
+                                    if (MapInstance.GetMap(CurrentMap).Entities[n].GetType() == typeof(Player))
                                     {
                                         // In range, so make a target
-                                        MyTarget = MapInstance.GetMap(CurrentMap).Entities[n];
-                                        break;
+                                        if (Behaviour == 1)
+                                        {
+                                            MyTarget = MapInstance.GetMap(CurrentMap).Entities[n];
+                                            break;
+                                        }
+                                    }
+                                    //Check for Npc vs Npc combat targeting (only if they are on the aggro list though
+                                    else if (MapInstance.GetMap(CurrentMap).Entities[n].GetType() == typeof(Npc) && MyBase.AggroList.Count > -1)
+                                    {
+                                        for (int s = 0; s < MyBase.AggroList.Count; s++)
+                                        {
+                                            if (NpcBase.GetNpc(MyBase.AggroList[s]) == ((Npc)MapInstance.GetMap(CurrentMap).Entities[n]).MyBase)
+                                            {
+                                                // In range, so make a target
+                                                MyTarget = MapInstance.GetMap(CurrentMap).Entities[n];
+                                                break;
+                                            }
+                                        }
                                     }
                                 }
                             }
@@ -230,6 +255,73 @@ namespace Intersect_Server.Classes.Entities
                                     if (Dashing != null)
                                     {
                                         return;
+                                    }
+                                    //Check if NPC is casting a spell
+                                    if (CastTime > Environment.TickCount)
+                                    {
+                                        return; //can't move while casting
+                                    }
+                                    else if (CastFreq < Environment.TickCount)//Try to cast a new spell
+                                    {
+                                        var CC = false;
+                                        //Check if the NPC is silenced or stunned
+                                        for (var n = 0; n < Status.Count; n++)
+                                        {
+                                            if (Status[n].Type == (int)StatusTypes.Silence || Status[n].Type == (int)StatusTypes.Stun)
+                                            {
+                                                CC = true;
+                                                break;
+                                            }
+                                        }
+
+                                        if (CC == false)
+                                        {
+                                            var s = Globals.Rand.Next(0, MyBase.Spells.Count); //Pick a random spell
+                                            var spell = SpellBase.GetSpell((MyBase.Spells[s]));
+
+                                            if (spell.VitalCost[(int)Vitals.Mana] <= Vital[(int)Vitals.Mana])
+                                            {
+                                                if (spell.VitalCost[(int)Vitals.Health] <= Vital[(int)Vitals.Health])
+                                                {
+                                                    if (Spells[s].SpellCD < Environment.TickCount)
+                                                    {
+                                                        Vital[(int)Vitals.Mana] = Vital[(int)Vitals.Mana] - spell.VitalCost[(int)Vitals.Mana];
+                                                        Vital[(int)Vitals.Health] = Vital[(int)Vitals.Health] - spell.VitalCost[(int)Vitals.Health];
+                                                        CastTime = Environment.TickCount + (spell.CastDuration * 100);
+
+                                                        switch (MyBase.SpellFrequency)
+                                                        {
+                                                            case 0:
+                                                                CastFreq = Environment.TickCount + 4000;
+                                                                break;
+                                                            case 1:
+                                                                CastFreq = Environment.TickCount + 2000;
+                                                                break;
+                                                            case 2:
+                                                                CastFreq = Environment.TickCount + 1000;
+                                                                break;
+                                                            case 3:
+                                                                CastFreq = Environment.TickCount + 500;
+                                                                break;
+                                                            case 4:
+                                                                CastFreq = Environment.TickCount + 250;
+                                                                break;
+                                                        }
+
+                                                        SpellCastSlot = s;
+
+                                                        if (spell.CastAnimation > -1)
+                                                        {
+                                                            PacketSender.SendAnimationToProximity(spell.CastAnimation, 1, MyIndex, CurrentMap, 0, 0, Dir); //Target Type 1 will be global entity
+                                                        }
+
+                                                        PacketSender.SendEntityVitals(MyIndex, (int)Vitals.Health, Globals.Entities[MyIndex]);
+                                                        PacketSender.SendEntityVitals(MyIndex, (int)Vitals.Mana, Globals.Entities[MyIndex]);
+                                                        PacketSender.SendEntityCastTime(MyIndex, (MyBase.Spells[s]));
+                                                    }
+                                                }
+                                            }
+                                        }
                                     }
                                     Move(dir, null);
                                     pathFinder.RemoveMove();

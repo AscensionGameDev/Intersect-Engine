@@ -20,6 +20,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
@@ -47,7 +48,13 @@ namespace Intersect_Library.GameObjects
         public int SightRange = 0;
 
         //Spells
-        public List<int> Spells = new List<int>(); 
+        public List<int> Spells = new List<int>();
+        public int SpellFrequency = 2;
+
+        //NPC vs NPC Combat
+        public bool NpcVsNpcEnabled = false;
+        public bool AttackAllies = false;
+        public List<int> AggroList = new List<int>();
         
         //Drops
         public List<NPCDrop> Drops = new List<NPCDrop>();
@@ -92,6 +99,22 @@ namespace Intersect_Library.GameObjects
             {
                 Spells.Add(myBuffer.ReadInteger());
             }
+            SpellFrequency = myBuffer.ReadInteger();
+
+            AggroList.Clear();
+            var aggroCount = myBuffer.ReadInteger();
+            for (int i = 0; i < aggroCount; i++)
+            {
+                AggroList.Add(myBuffer.ReadInteger());
+            }
+            NpcVsNpcEnabled = Convert.ToBoolean(myBuffer.ReadInteger());
+            AttackAllies = Convert.ToBoolean(myBuffer.ReadInteger());
+
+            //If no spells present.
+            if (spellCount <= 0)
+            {
+                Spells.Add(-1);
+            }
 
             myBuffer.Dispose();
         }
@@ -124,6 +147,15 @@ namespace Intersect_Library.GameObjects
             {
                 myBuffer.WriteInteger(Spells[i]);
             }
+            myBuffer.WriteInteger(SpellFrequency);
+
+            for (int i = 0; i < AggroList.Count; i++)
+            {
+                myBuffer.WriteInteger(AggroList[i]);
+            }
+            myBuffer.WriteInteger(Convert.ToInt32(NpcVsNpcEnabled));
+            myBuffer.WriteInteger(Convert.ToInt32(AttackAllies));
+
             return myBuffer.ToArray();
         }
 

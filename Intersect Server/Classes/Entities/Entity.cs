@@ -307,7 +307,7 @@ namespace Intersect_Server.Classes.Entities
                 CurrentX = tile.GetX();
                 CurrentY = tile.GetY();
                 CurrentMap = tile.GetMap();
-                Dir = moveDir;
+                if (Dashing == null) { Dir = moveDir; } //Only update the dir if not dashing
                 if (DontUpdate == false)
                 {
                     if (this.GetType() == typeof(EventPageInstance))
@@ -436,6 +436,31 @@ namespace Intersect_Server.Classes.Entities
                 }
             }
         }
+
+        public bool canNpcCombat(int enemyIndex)
+        {
+            //Check for NpcVsNpc Combat, both must be enabled and the attacker must have it as an enemy or attack all types of npc.
+            if (Globals.Entities[enemyIndex].GetType() == typeof(Npc) && Globals.Entities[MyIndex].GetType() == typeof(Npc))
+            {
+                if (((Npc)Globals.Entities[enemyIndex]).MyBase.NpcVsNpcEnabled == false || ((Npc)Globals.Entities[MyIndex]).MyBase.NpcVsNpcEnabled == false) return false;
+
+                if (((Npc)Globals.Entities[MyIndex]).MyBase.AttackAllies == true) return true;
+
+                for (int i = 0; i < ((Npc)Globals.Entities[MyIndex]).MyBase.AggroList.Count; i++)
+                {
+                    if (NpcBase.GetNpc(((Npc)Globals.Entities[MyIndex]).MyBase.AggroList[i]) == ((Npc)Globals.Entities[enemyIndex]).MyBase)
+                    {
+                        return true;
+                    }
+                }
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+        }
+
         public void TryAttack(int enemyIndex, ProjectileBase isProjectile = null, int isSpell = -1, int projectileDir = -1)
         {
             double dmg = 0;
@@ -445,6 +470,7 @@ namespace Intersect_Server.Classes.Entities
             if (!isFacingTarget(enemyIndex) && isProjectile == null && isSpell == -1) return;
 
             if (isProjectile == null && isSpell == -1 && (AttackTimer > Environment.TickCount || Blocking)) return;
+            if (canNpcCombat(enemyIndex) == false) return;
             AttackTimer = Environment.TickCount + CalculateAttackTime();
             //Check if the attacker is blinded.
             if (IsOneBlockAway(enemyIndex) && isProjectile == null && isSpell == -1)
@@ -647,6 +673,10 @@ namespace Intersect_Server.Classes.Entities
                     //Check that the npc has not been destroyed by the splash spell
                     if (Globals.Entities[enemyIndex] == null) { return; }
                 }
+                if (isProjectile.Knockback > 0 && projectileDir < 4) //If there is a knockback, knock them backwards and make sure its linear (diagonal player movement not coded).
+                {
+                    var dash = new DashInstance(enemyIndex, isProjectile.Knockback, projectileDir);
+                }
             }
 
             //Check if after healing, greater than maximum hp.
@@ -763,6 +793,7 @@ namespace Intersect_Server.Classes.Entities
                         break;
                     case (int)SpellTypes.Dash:
                         var dash = new DashInstance(MyIndex, spellBase.CastRange, Dir, Convert.ToBoolean(spellBase.Data1), Convert.ToBoolean(spellBase.Data2), Convert.ToBoolean(spellBase.Data3), Convert.ToBoolean(spellBase.Data4));
+                        PacketSender.SendActionMsg(MyIndex, "DASH!", new Color(255, 0, 0, 255));
                         break;
                     case (int)SpellTypes.Event:
                         //To be added
@@ -822,29 +853,32 @@ namespace Intersect_Server.Classes.Entities
                             if (t == null) continue;
                             if (t.GetType() == typeof(Player) || t.GetType() == typeof(Npc))
                             {
-                                if (t.CurrentMap == tempMap && t.CurrentX == x2 && t.CurrentY == y2)
+                                if (canNpcCombat(t.MyIndex) == true) //Make sure npc's don't catch each other in AOE's
                                 {
                                     if ((target == -1 && target != MyIndex) || (target != -1 && target == t.MyIndex))
                                     {
-                                        //Warp or attack.
-                                        if (spellBase.SpellType == (int)SpellTypes.CombatSpell)
+                                        if ((target == -1 || target == t.MyIndex) && t.MyIndex != MyIndex)
                                         {
-                                            if (target > -1 && spellBase.HitRadius > -1) //Single target spells with AoE hit radius'
+                                            //Warp or attack.
+                                            if (spellBase.SpellType == (int)SpellTypes.CombatSpell)
                                             {
-                                                HandleAoESpell(SpellNum, spellBase.HitRadius, t.CurrentMap, t.CurrentX, t.CurrentY);
+                                                if (target > -1 && spellBase.HitRadius > -1) //Single target spells with AoE hit radius'
+                                                {
+                                                    HandleAoESpell(SpellNum, spellBase.HitRadius, t.CurrentMap, t.CurrentX, t.CurrentY);
+                                                }
+                                                else
+                                                {
+                                                    TryAttack(t.MyIndex, null, SpellNum);
+                                                }
                                             }
                                             else
                                             {
-                                                TryAttack(t.MyIndex, null, SpellNum);
+                                                Warp(Globals.Entities[Target].CurrentMap, Globals.Entities[Target].CurrentX, Globals.Entities[Target].CurrentY, Dir);
                                             }
-                                        }
-                                        else
-                                        {
-                                            Warp(Globals.Entities[Target].CurrentMap, Globals.Entities[Target].CurrentX, Globals.Entities[Target].CurrentY, Dir);
-                                        }
-                                        if (spellBase.HitAnimation > -1)
-                                        {
-                                            PacketSender.SendAnimationToProximity(spellBase.HitAnimation, -1, -1, tempMap, x, y, Dir); //Target Type -1 will be tile based animation
+                                            if (spellBase.HitAnimation > -1)
+                                            {
+                                                PacketSender.SendAnimationToProximity(spellBase.HitAnimation, -1, -1, tempMap, x, y, Dir); //Target Type -1 will be tile based animation
+                                            }
                                         }
                                     }
                                 }
@@ -1155,7 +1189,6 @@ namespace Intersect_Server.Classes.Entities
             Globals.Entities[EntityID].Dashing = this;
             TransmittionTimer = Environment.TickCount + (long)((float)Options.MaxDashSpeed / (float)Range);
             PacketSender.SendEntityDash(EntityID, Range, Direction);
-            PacketSender.SendActionMsg(EntityID, "DASH!", new Color(255, 0, 0, 255));
         }
 
         public void CalculateRange(int range)
