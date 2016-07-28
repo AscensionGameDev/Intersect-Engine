@@ -41,6 +41,7 @@ namespace Intersect_Library.GameObjects
         public int Quantity = 1;
         public int Range = 1;
         public int Spell = 0;
+        public int Knockback = 0;
         public bool IgnoreMapBlocks = false;
         public bool IgnoreZDimension = false;
         public bool IgnoreActiveResources = false;
@@ -72,6 +73,7 @@ namespace Intersect_Library.GameObjects
             Quantity = myBuffer.ReadInteger();
             Range = myBuffer.ReadInteger();
             Spell = myBuffer.ReadInteger();
+            Knockback = myBuffer.ReadInteger();
             IgnoreMapBlocks = Convert.ToBoolean(myBuffer.ReadInteger());
             IgnoreActiveResources = Convert.ToBoolean(myBuffer.ReadInteger());
             IgnoreExhaustedResources = Convert.ToBoolean(myBuffer.ReadInteger());
@@ -116,6 +118,7 @@ namespace Intersect_Library.GameObjects
             myBuffer.WriteInteger(Quantity);
             myBuffer.WriteInteger(Range);
             myBuffer.WriteInteger(Spell);
+            myBuffer.WriteInteger(Knockback);
             myBuffer.WriteInteger(Convert.ToInt32(IgnoreMapBlocks));
             myBuffer.WriteInteger(Convert.ToInt32(IgnoreActiveResources));
             myBuffer.WriteInteger(Convert.ToInt32(IgnoreExhaustedResources));

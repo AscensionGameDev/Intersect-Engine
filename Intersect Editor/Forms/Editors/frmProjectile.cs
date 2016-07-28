@@ -142,6 +142,7 @@ namespace Intersect_Editor.Classes
                 scrlAmount.Value = _editorItem.Quantity;
                 scrlRange.Value = _editorItem.Range;
                 scrlSpell.Value = Database.GameObjectListIndex(GameObject.Spell, _editorItem.Spell);
+                scrlKnockback.Value = _editorItem.Knockback;
                 chkIgnoreMapBlocks.Checked = _editorItem.IgnoreMapBlocks;
                 chkIgnoreActiveResources.Checked = _editorItem.IgnoreActiveResources;
                 chkIgnoreInactiveResources.Checked = _editorItem.IgnoreExhaustedResources;
@@ -171,6 +172,7 @@ namespace Intersect_Editor.Classes
                 lblSpawn.Text = "Spawn Delay: " + scrlSpawn.Value + "ms";
                 lblAmount.Text = "Quantity: " + scrlAmount.Value;
                 lblRange.Text = "Range: " + scrlRange.Value;
+                lblKnockback.Text = "Knockback: " + scrlKnockback.Value;
 
                 if(lstAnimations.SelectedIndex < 0) { lstAnimations.SelectedIndex = 0; }
                 updateAnimationData(0);
@@ -518,6 +520,12 @@ namespace Intersect_Editor.Classes
             lblAmount.Text = "Quantity: " + scrlAmount.Value;
             _editorItem.Quantity = scrlAmount.Value;
             updateAnimations();
+        }
+
+        private void scrlKnockback_Scroll(object sender, ScrollEventArgs e)
+        {
+            lblKnockback.Text = "Knockback: " + scrlKnockback.Value;
+            _editorItem.Knockback = scrlKnockback.Value;
         }
     }
 }

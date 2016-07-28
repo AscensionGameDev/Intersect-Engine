@@ -67,6 +67,8 @@
             this.pnlContainer = new System.Windows.Forms.Panel();
             this.btnCancel = new System.Windows.Forms.Button();
             this.btnSave = new System.Windows.Forms.Button();
+            this.lblKnockback = new System.Windows.Forms.Label();
+            this.scrlKnockback = new System.Windows.Forms.HScrollBar();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.picSpawns)).BeginInit();
@@ -134,7 +136,7 @@
             // groupBox2
             // 
             this.groupBox2.Controls.Add(this.picSpawns);
-            this.groupBox2.Location = new System.Drawing.Point(1, 230);
+            this.groupBox2.Location = new System.Drawing.Point(1, 259);
             this.groupBox2.Name = "groupBox2";
             this.groupBox2.Size = new System.Drawing.Size(186, 192);
             this.groupBox2.TabIndex = 17;
@@ -152,6 +154,8 @@
             // 
             // groupBox3
             // 
+            this.groupBox3.Controls.Add(this.lblKnockback);
+            this.groupBox3.Controls.Add(this.scrlKnockback);
             this.groupBox3.Controls.Add(this.lblAmount);
             this.groupBox3.Controls.Add(this.scrlAmount);
             this.groupBox3.Controls.Add(this.chkGrapple);
@@ -168,7 +172,7 @@
             this.groupBox3.Controls.Add(this.scrlSpeed);
             this.groupBox3.Location = new System.Drawing.Point(1, 1);
             this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(186, 227);
+            this.groupBox3.Size = new System.Drawing.Size(186, 252);
             this.groupBox3.TabIndex = 18;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Properties";
@@ -195,7 +199,7 @@
             // chkGrapple
             // 
             this.chkGrapple.AutoSize = true;
-            this.chkGrapple.Location = new System.Drawing.Point(18, 206);
+            this.chkGrapple.Location = new System.Drawing.Point(15, 229);
             this.chkGrapple.Name = "chkGrapple";
             this.chkGrapple.Size = new System.Drawing.Size(90, 17);
             this.chkGrapple.TabIndex = 36;
@@ -206,7 +210,7 @@
             // lblSpell
             // 
             this.lblSpell.AutoSize = true;
-            this.lblSpell.Location = new System.Drawing.Point(15, 173);
+            this.lblSpell.Location = new System.Drawing.Point(13, 167);
             this.lblSpell.Name = "lblSpell";
             this.lblSpell.Size = new System.Drawing.Size(112, 13);
             this.lblSpell.TabIndex = 24;
@@ -215,7 +219,7 @@
             // scrlSpell
             // 
             this.scrlSpell.LargeChange = 1;
-            this.scrlSpell.Location = new System.Drawing.Point(16, 186);
+            this.scrlSpell.Location = new System.Drawing.Point(16, 180);
             this.scrlSpell.Minimum = -1;
             this.scrlSpell.Name = "scrlSpell";
             this.scrlSpell.Size = new System.Drawing.Size(160, 17);
@@ -226,7 +230,7 @@
             // chkHoming
             // 
             this.chkHoming.AutoSize = true;
-            this.chkHoming.Location = new System.Drawing.Point(108, 206);
+            this.chkHoming.Location = new System.Drawing.Point(107, 229);
             this.chkHoming.Name = "chkHoming";
             this.chkHoming.Size = new System.Drawing.Size(68, 17);
             this.chkHoming.TabIndex = 8;
@@ -255,7 +259,7 @@
             // lblRange
             // 
             this.lblRange.AutoSize = true;
-            this.lblRange.Location = new System.Drawing.Point(15, 143);
+            this.lblRange.Location = new System.Drawing.Point(15, 138);
             this.lblRange.Name = "lblRange";
             this.lblRange.Size = new System.Drawing.Size(51, 13);
             this.lblRange.TabIndex = 7;
@@ -264,7 +268,7 @@
             // scrlRange
             // 
             this.scrlRange.LargeChange = 1;
-            this.scrlRange.Location = new System.Drawing.Point(15, 156);
+            this.scrlRange.Location = new System.Drawing.Point(15, 150);
             this.scrlRange.Minimum = 1;
             this.scrlRange.Name = "scrlRange";
             this.scrlRange.Size = new System.Drawing.Size(160, 17);
@@ -419,7 +423,7 @@
             this.groupBox4.Controls.Add(this.chkIgnoreActiveResources);
             this.groupBox4.Location = new System.Drawing.Point(193, 309);
             this.groupBox4.Name = "groupBox4";
-            this.groupBox4.Size = new System.Drawing.Size(273, 113);
+            this.groupBox4.Size = new System.Drawing.Size(273, 142);
             this.groupBox4.TabIndex = 29;
             this.groupBox4.TabStop = false;
             this.groupBox4.Text = "Ignore Collision:";
@@ -476,14 +480,14 @@
             this.pnlContainer.Controls.Add(this.groupBox2);
             this.pnlContainer.Location = new System.Drawing.Point(221, 12);
             this.pnlContainer.Name = "pnlContainer";
-            this.pnlContainer.Size = new System.Drawing.Size(465, 421);
+            this.pnlContainer.Size = new System.Drawing.Size(465, 454);
             this.pnlContainer.TabIndex = 30;
             this.pnlContainer.Visible = false;
             // 
             // btnCancel
             // 
             this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.btnCancel.Location = new System.Drawing.Point(496, 440);
+            this.btnCancel.Location = new System.Drawing.Point(497, 472);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(190, 27);
             this.btnCancel.TabIndex = 34;
@@ -493,7 +497,7 @@
             // 
             // btnSave
             // 
-            this.btnSave.Location = new System.Drawing.Point(300, 440);
+            this.btnSave.Location = new System.Drawing.Point(301, 472);
             this.btnSave.Name = "btnSave";
             this.btnSave.Size = new System.Drawing.Size(190, 27);
             this.btnSave.TabIndex = 31;
@@ -501,12 +505,30 @@
             this.btnSave.UseVisualStyleBackColor = true;
             this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
             // 
+            // lblKnockback
+            // 
+            this.lblKnockback.AutoSize = true;
+            this.lblKnockback.Location = new System.Drawing.Point(15, 196);
+            this.lblKnockback.Name = "lblKnockback";
+            this.lblKnockback.Size = new System.Drawing.Size(74, 13);
+            this.lblKnockback.TabIndex = 40;
+            this.lblKnockback.Text = "Knockback: 0";
+            // 
+            // scrlKnockback
+            // 
+            this.scrlKnockback.LargeChange = 1;
+            this.scrlKnockback.Location = new System.Drawing.Point(15, 209);
+            this.scrlKnockback.Name = "scrlKnockback";
+            this.scrlKnockback.Size = new System.Drawing.Size(160, 17);
+            this.scrlKnockback.TabIndex = 39;
+            this.scrlKnockback.Scroll += new System.Windows.Forms.ScrollEventHandler(this.scrlKnockback_Scroll);
+            // 
             // frmProjectile
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoSize = true;
-            this.ClientSize = new System.Drawing.Size(694, 474);
+            this.ClientSize = new System.Drawing.Size(694, 506);
             this.ControlBox = false;
             this.Controls.Add(this.btnCancel);
             this.Controls.Add(this.btnSave);
@@ -571,5 +593,7 @@
         private System.Windows.Forms.Button btnSave;
         private System.Windows.Forms.Button btnCancel;
         private System.Windows.Forms.Button btnDelete;
+        private System.Windows.Forms.Label lblKnockback;
+        private System.Windows.Forms.HScrollBar scrlKnockback;
     }
 }
