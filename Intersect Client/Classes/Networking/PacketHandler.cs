@@ -432,6 +432,7 @@ namespace Intersect_Client.Classes.Networking
             if (en == null) { return; }
             var entityMap = MapInstance.GetMap(en.CurrentMap);
             if (entityMap == null) { return; }
+            if (en.Dashing != null || en.DashQueue.Count > 0) return;
             var map = mapNum;
             var x = bf.ReadInteger();
             var y = bf.ReadInteger();

@@ -28,7 +28,7 @@ using Intersect_Server.Classes.Core;
 using Intersect_Server.Classes.Entities;
 using Intersect_Server.Classes.Maps;
 using Intersect_Server.Classes.Misc.Pathfinding;
-
+using Intersect_Server.Classes.General;
 
 namespace Intersect_Server.Classes.Misc
 {
@@ -40,11 +40,14 @@ namespace Intersect_Server.Classes.Misc
         private PathfinderTarget _target;
         private object _targetLock = new object();
         private Thread _pathFindingThread;
+        private int _failures = 0;
         public Pathfinder(Entity sourceEntity)
         {
             _sourceEntity = sourceEntity;
             _target = null;
             _pathFindingThread = new Thread(new ThreadStart(PathFind));
+            _pathFindingThread.Priority = ThreadPriority.Lowest;
+            _pathFindingThread.Start();
         }
 
         public PathfinderTarget GetTarget()
@@ -57,37 +60,7 @@ namespace Intersect_Server.Classes.Misc
             lock (_targetLock)
             {
                 _directions.Clear();
-                if (_target == null)
-                {
-                    if (_pathFindingThread.IsAlive)
-                    {
-                        _pathFindingThread.Abort();
-                        _target = null;
-                    }
-                }
-                if (_target == null || (target != null &&
-                        (_target.TargetMap != target.TargetMap || _target.TargetX != target.TargetX ||
-                         _target.TargetY != target.TargetY)))
-                {
-                    _target = target;
-                    if (_target != null)
-                    {
-                        if (_pathFinding)
-                        {
-                            _pathFindingThread.Abort();
-                            _pathFinding = false;
-                        }
-                        RestartThread();
-                    }
-                }
-                else
-                {
-                    _target = target;
-                    if (!_pathFinding && _target != null)
-                    {
-                        RestartThread();
-                    }
-                }
+                _target = target;
             }
         }
 
@@ -97,18 +70,7 @@ namespace Intersect_Server.Classes.Misc
             {
                 return _directions[0];
             }
-            else
-            {
-                if (!_pathFinding) RestartThread();
-            }
             return -1;
-        }
-
-        private void RestartThread()
-        {
-            _pathFindingThread = new Thread(new ThreadStart(PathFind));
-            _pathFinding = true;
-            _pathFindingThread.Start();
         }
 
         public void RemoveMove()
@@ -121,215 +83,228 @@ namespace Intersect_Server.Classes.Misc
 
         private void PathFind()
         {
-            var targetX = -1;
-            var targetY = -1;
-            var startX = -1;
-            var startY = -1;
-            _directions = new List<int>();
-            var openList = new List<PathfinderPoint>();
-            var closedList = new List<PathfinderPoint>();
-            var adjSquares = new List<PathfinderPoint>();
-            var myGrid = MapInstance.GetMap(_sourceEntity.CurrentMap).MapGrid;
-            _pathFinding = true;
-            var start = Environment.TickCount;
-
-            //Loop through surrouding maps to generate a array of open and blocked points.
-            for (var x = MapInstance.GetMap(_sourceEntity.CurrentMap).MapGridX - 1; x <= MapInstance.GetMap(_sourceEntity.CurrentMap).MapGridX + 1; x++)
+            do
             {
-                if (x == -1 || x >= Database.MapGrids[myGrid].Width) continue;
-                for (var y = MapInstance.GetMap(_sourceEntity.CurrentMap).MapGridY - 1; y <= MapInstance.GetMap(_sourceEntity.CurrentMap).MapGridY + 1; y++)
+                var targetX = -1;
+                var targetY = -1;
+                var startX = -1;
+                var startY = -1;
+                _directions = new List<int>();
+                var openList = new List<PathfinderPoint>();
+                var closedList = new List<PathfinderPoint>();
+                var adjSquares = new List<PathfinderPoint>();
+                var map = MapInstance.GetMap(_sourceEntity.CurrentMap);
+                if (map != null)
                 {
-                    if (y == -1 || y >= Database.MapGrids[myGrid].Height) continue;
-                    if (Database.MapGrids[myGrid].MyGrid[x, y] > -1)
+                    var myGrid = map.MapGrid;
+                    _pathFinding = true;
+                    var start = Environment.TickCount;
+                    var foundPath = false;
+                    if (_target != null)
                     {
-                        for (var i = 0; i < MapInstance.GetMap(Database.MapGrids[myGrid].MyGrid[x, y]).Entities.Count; i++)
+                        var target = _target;
+                        //Loop through surrouding maps to generate a array of open and blocked points.
+                        for (var x = MapInstance.GetMap(_sourceEntity.CurrentMap).MapGridX - 1; x <= MapInstance.GetMap(_sourceEntity.CurrentMap).MapGridX + 1; x++)
                         {
-                            lock (_targetLock)
+                            if (x == -1 || x >= Database.MapGrids[myGrid].Width) continue;
+                            for (var y = MapInstance.GetMap(_sourceEntity.CurrentMap).MapGridY - 1; y <= MapInstance.GetMap(_sourceEntity.CurrentMap).MapGridY + 1; y++)
                             {
-                                if (_target != null)
+                                if (y == -1 || y >= Database.MapGrids[myGrid].Height) continue;
+                                if (Database.MapGrids[myGrid].MyGrid[x, y] > -1)
                                 {
-                                    if (MapInstance.GetMap(Database.MapGrids[myGrid].MyGrid[x, y]).Entities[i] != null)
+                                    for (var i = 0; i < MapInstance.GetMap(Database.MapGrids[myGrid].MyGrid[x, y]).Entities.Count; i++)
                                     {
-                                        if (i != _sourceEntity.MyIndex && (MapInstance.GetMap(Database.MapGrids[myGrid].MyGrid[x, y]).Entities[i].CurrentMap != _target.TargetMap || MapInstance.GetMap(Database.MapGrids[myGrid].MyGrid[x, y]).Entities[i].CurrentY != _target.TargetY || MapInstance.GetMap(Database.MapGrids[myGrid].MyGrid[x, y]).Entities[i].CurrentX != _target.TargetX))
+                                        lock (_targetLock)
                                         {
-                                            if (MapInstance.GetMap(Database.MapGrids[myGrid].MyGrid[x, y]).Entities[i] != null)
+                                            if (_target != null)
                                             {
-                                                if (MapInstance.GetMap(Database.MapGrids[myGrid].MyGrid[x, y]).Entities[i].CurrentMap == Database.MapGrids[myGrid].MyGrid[x, y])
+                                                if (MapInstance.GetMap(Database.MapGrids[myGrid].MyGrid[x, y]).Entities[i] != null)
                                                 {
-                                                    closedList.Add(
-                                                        new PathfinderPoint(
-                                                            (x - MapInstance.GetMap(_sourceEntity.CurrentMap).MapGridX + 1) *
-                                                            Options.MapWidth + MapInstance.GetMap(Database.MapGrids[myGrid].MyGrid[x, y]).Entities[i].CurrentX,
-                                                            (y - MapInstance.GetMap(_sourceEntity.CurrentMap).MapGridY + 1) *
-                                                            Options.MapHeight + MapInstance.GetMap(Database.MapGrids[myGrid].MyGrid[x, y]).Entities[i].CurrentY, -1, 0));
+                                                    if (i != _sourceEntity.MyIndex && (MapInstance.GetMap(Database.MapGrids[myGrid].MyGrid[x, y]).Entities[i].CurrentMap != _target.TargetMap || MapInstance.GetMap(Database.MapGrids[myGrid].MyGrid[x, y]).Entities[i].CurrentY != _target.TargetY || MapInstance.GetMap(Database.MapGrids[myGrid].MyGrid[x, y]).Entities[i].CurrentX != _target.TargetX))
+                                                    {
+                                                        if (MapInstance.GetMap(Database.MapGrids[myGrid].MyGrid[x, y]).Entities[i] != null)
+                                                        {
+                                                            if (MapInstance.GetMap(Database.MapGrids[myGrid].MyGrid[x, y]).Entities[i].CurrentMap == Database.MapGrids[myGrid].MyGrid[x, y])
+                                                            {
+                                                                closedList.Add(
+                                                                    new PathfinderPoint(
+                                                                        (x - MapInstance.GetMap(_sourceEntity.CurrentMap).MapGridX + 1) *
+                                                                        Options.MapWidth + MapInstance.GetMap(Database.MapGrids[myGrid].MyGrid[x, y]).Entities[i].CurrentX,
+                                                                        (y - MapInstance.GetMap(_sourceEntity.CurrentMap).MapGridY + 1) *
+                                                                        Options.MapHeight + MapInstance.GetMap(Database.MapGrids[myGrid].MyGrid[x, y]).Entities[i].CurrentY, -1, 0));
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                    for (var x1 = 0; x1 < Options.MapWidth; x1++)
+                                    {
+                                        for (var y1 = 0; y1 < Options.MapHeight; y1++)
+                                        {
+                                            lock (_targetLock)
+                                            {
+                                                if (_target != null)
+                                                {
+                                                    if (MapInstance.GetMap(Database.MapGrids[myGrid].MyGrid[x, y]).Attributes[x1, y1] != null)
+                                                    {
+                                                        if (
+                                                            MapInstance.GetMap(Database.MapGrids[myGrid].MyGrid[x, y]).Attributes[x1, y1]
+                                                                .value == (int)MapAttributes.Blocked ||
+                                                            MapInstance.GetMap(Database.MapGrids[myGrid].MyGrid[x, y]).Attributes[x1, y1]
+                                                                .value == (int)MapAttributes.NPCAvoid)
+                                                        {
+                                                            closedList.Add(
+                                                                new PathfinderPoint(
+                                                                    (x - MapInstance.GetMap(_sourceEntity.CurrentMap).MapGridX + 1) *
+                                                                    Options.MapWidth + x1,
+                                                                    (y - MapInstance.GetMap(_sourceEntity.CurrentMap).MapGridY + 1) *
+                                                                    Options.MapHeight + y1, -1, 0));
+                                                        }
+                                                    }
+                                                    if (Database.MapGrids[myGrid].MyGrid[x, y] == _target.TargetMap && x1 == _target.TargetX && y1 == _target.TargetY)
+                                                    {
+                                                        targetX = (x - MapInstance.GetMap(_sourceEntity.CurrentMap).MapGridX + 1) *
+                                                                  Options.MapWidth + x1;
+                                                        targetY = (y - MapInstance.GetMap(_sourceEntity.CurrentMap).MapGridY + 1) *
+                                                                  Options.MapHeight + y1;
+                                                    }
+                                                    if (Database.MapGrids[myGrid].MyGrid[x, y] == _sourceEntity.CurrentMap &&
+                                                        x1 == _sourceEntity.CurrentX && y1 == _sourceEntity.CurrentY)
+                                                    {
+                                                        startX = (x - MapInstance.GetMap(_sourceEntity.CurrentMap).MapGridX + 1) *
+                                                                 Options.MapWidth + x1;
+                                                        startY = (y - MapInstance.GetMap(_sourceEntity.CurrentMap).MapGridY + 1) *
+                                                                 Options.MapHeight + y1;
+                                                    }
                                                 }
                                             }
                                         }
                                     }
                                 }
+                                else
+                                {
+                                    for (var x1 = 0; x1 < Options.MapWidth; x1++)
+                                    {
+                                        for (var y1 = 0; y1 < Options.MapHeight; y1++)
+                                        {
+                                            closedList.Add(new PathfinderPoint((x - MapInstance.GetMap(_sourceEntity.CurrentMap).MapGridX + 1) * Options.MapWidth + x1, (y - MapInstance.GetMap(_sourceEntity.CurrentMap).MapGridY + 1) * Options.MapHeight + y1, -1, 0));
+                                        }
+                                    }
+                                }
                             }
                         }
-                        for (var x1 = 0; x1 < Options.MapWidth; x1++)
+
+                        if (startX > -1 && targetX > -1)
                         {
-                            for (var y1 = 0; y1 < Options.MapHeight; y1++)
+                            openList.Add(new PathfinderPoint(startX, startY, 0, 0));
+                            do
                             {
-                                lock (_targetLock)
+                                var currentTile = FindLowestF(openList);
+                                closedList.Add(currentTile);
+                                openList.Remove(currentTile);
+
+                                foreach (PathfinderPoint t in closedList)
                                 {
-                                    if (_target != null)
+                                    if (t.X != targetX || t.Y != targetY) continue;
+                                    //path found
+                                    currentTile = t;
+                                    while (currentTile.G > 0)
                                     {
-                                        if (MapInstance.GetMap(Database.MapGrids[myGrid].MyGrid[x, y]).Attributes[x1, y1] != null)
+                                        foreach (var t1 in closedList)
                                         {
-                                            if (
-                                                MapInstance.GetMap(Database.MapGrids[myGrid].MyGrid[x, y]).Attributes[x1, y1]
-                                                    .value == (int)MapAttributes.Blocked ||
-                                                MapInstance.GetMap(Database.MapGrids[myGrid].MyGrid[x, y]).Attributes[x1, y1]
-                                                    .value == (int)MapAttributes.NPCAvoid)
+                                            if (t1.G != currentTile.G - 1) continue;
+                                            if (currentTile.X > t1.X)
                                             {
-                                                closedList.Add(
-                                                    new PathfinderPoint(
-                                                        (x - MapInstance.GetMap(_sourceEntity.CurrentMap).MapGridX + 1) *
-                                                        Options.MapWidth + x1,
-                                                        (y - MapInstance.GetMap(_sourceEntity.CurrentMap).MapGridY + 1) *
-                                                        Options.MapHeight + y1, -1, 0));
+                                                _directions.Insert(0, 3);
+                                            }
+                                            else if (currentTile.X < t1.X)
+                                            {
+                                                _directions.Insert(0, 2);
+                                            }
+                                            else if (currentTile.Y > t1.Y)
+                                            {
+                                                _directions.Insert(0, 1);
+                                            }
+                                            else if (currentTile.Y < t1.Y)
+                                            {
+                                                _directions.Insert(0, 0);
+                                            }
+                                            currentTile = t1;
+                                            break;
+                                        }
+                                    }
+                                    foundPath = true;
+                                    _failures = 0;
+                                }
+
+                                adjSquares.Clear();
+                                if (currentTile.X > 0)
+                                {
+                                    adjSquares.Add(new PathfinderPoint(currentTile.X - 1, currentTile.Y, 0, 0));
+                                }
+                                if (currentTile.Y > 0)
+                                {
+                                    adjSquares.Add(new PathfinderPoint(currentTile.X, currentTile.Y - 1, 0, 0));
+                                }
+                                if (currentTile.X < 89)
+                                {
+                                    adjSquares.Add(new PathfinderPoint(currentTile.X + 1, currentTile.Y, 0, 0));
+                                }
+                                if (currentTile.Y < 89)
+                                {
+                                    adjSquares.Add(new PathfinderPoint(currentTile.X, currentTile.Y + 1, 0, 0));
+                                }
+
+                                foreach (var t in adjSquares)
+                                {
+                                    for (var x = 0; x < closedList.Count; x++)
+                                    {
+                                        if (closedList[x].X == t.X && closedList[x].Y == t.Y)
+                                        {
+                                            //Continue - already in the closed list
+                                            break;
+                                        }
+                                        if (x != closedList.Count - 1) continue;
+                                        if (openList.Count > 0)
+                                        {
+                                            //If not in the closed list then add or update the open list
+                                            for (var y = 0; y < openList.Count; y++)
+                                            {
+                                                if (openList[y].X == t.X && openList[y].Y == t.Y)
+                                                {
+                                                    //Update if the PathfinderPoints are better
+                                                    var newPathfinderPoint = new PathfinderPoint(t.X, t.Y, currentTile.G + 1, Math.Abs(targetX - t.X) + Math.Abs(targetY - t.Y));
+                                                    if (newPathfinderPoint.F < openList[y].F)
+                                                    {
+                                                        openList.RemoveAt(y);
+                                                        openList.Add(newPathfinderPoint);
+                                                    }
+                                                    break;
+                                                }
+                                                if (y == openList.Count - 1)
+                                                {
+                                                    //add to the open list
+                                                    openList.Add(new PathfinderPoint(t.X, t.Y, currentTile.G + 1, Math.Abs(targetX - t.X) + Math.Abs(targetY - t.Y)));
+                                                }
                                             }
                                         }
-                                        if (Database.MapGrids[myGrid].MyGrid[x, y] == _target.TargetMap && x1 == _target.TargetX && y1 == _target.TargetY)
+                                        else
                                         {
-                                            targetX = (x - MapInstance.GetMap(_sourceEntity.CurrentMap).MapGridX + 1) *
-                                                      Options.MapWidth + x1;
-                                            targetY = (y - MapInstance.GetMap(_sourceEntity.CurrentMap).MapGridY + 1) *
-                                                      Options.MapHeight + y1;
-                                        }
-                                        if (Database.MapGrids[myGrid].MyGrid[x, y] == _sourceEntity.CurrentMap &&
-                                            x1 == _sourceEntity.CurrentX && y1 == _sourceEntity.CurrentY)
-                                        {
-                                            startX = (x - MapInstance.GetMap(_sourceEntity.CurrentMap).MapGridX + 1) *
-                                                     Options.MapWidth + x1;
-                                            startY = (y - MapInstance.GetMap(_sourceEntity.CurrentMap).MapGridY + 1) *
-                                                     Options.MapHeight + y1;
+                                            //add to the open list
+                                            openList.Add(new PathfinderPoint(t.X, t.Y, currentTile.G + 1, Math.Abs(targetX - t.X) + Math.Abs(targetY - t.Y)));
                                         }
                                     }
                                 }
-                            }
-                        }
-                    }
-                    else
-                    {
-                        for (var x1 = 0; x1 < Options.MapWidth; x1++)
-                        {
-                            for (var y1 = 0; y1 < Options.MapHeight; y1++)
-                            {
-                                closedList.Add(new PathfinderPoint((x - MapInstance.GetMap(_sourceEntity.CurrentMap).MapGridX + 1) * Options.MapWidth + x1, (y - MapInstance.GetMap(_sourceEntity.CurrentMap).MapGridY + 1) * Options.MapHeight + y1, -1, 0));
-                            }
-                        }
-                    }
-                }
-            }
-
-            if (startX > -1 && targetX > -1)
-            {
-                openList.Add(new PathfinderPoint(startX, startY, 0, 0));
-                do
-                {
-                    var currentTile = FindLowestF(openList);
-                    closedList.Add(currentTile);
-                    openList.Remove(currentTile);
-
-                    foreach (PathfinderPoint t in closedList)
-                    {
-                        if (t.X != targetX || t.Y != targetY) continue;
-                        //path found
-                        currentTile = t;
-                        while (currentTile.G > 0)
-                        {
-                            foreach (var t1 in closedList)
-                            {
-                                if (t1.G != currentTile.G - 1) continue;
-                                if (currentTile.X > t1.X)
-                                {
-                                    _directions.Insert(0, 3);
-                                }
-                                else if (currentTile.X < t1.X)
-                                {
-                                    _directions.Insert(0, 2);
-                                }
-                                else if (currentTile.Y > t1.Y)
-                                {
-                                    _directions.Insert(0, 1);
-                                }
-                                else if (currentTile.Y < t1.Y)
-                                {
-                                    _directions.Insert(0, 0);
-                                }
-                                currentTile = t1;
-                                break;
-                            }
+                            } while (openList.Count > 0 && foundPath == false && target == _target);
                         }
                         _pathFinding = false;
-                        return;
+                        _failures++;
                     }
-
-                    adjSquares.Clear();
-                    if (currentTile.X > 0)
-                    {
-                        adjSquares.Add(new PathfinderPoint(currentTile.X - 1, currentTile.Y, 0, 0));
-                    }
-                    if (currentTile.Y > 0)
-                    {
-                        adjSquares.Add(new PathfinderPoint(currentTile.X, currentTile.Y - 1, 0, 0));
-                    }
-                    if (currentTile.X < 89)
-                    {
-                        adjSquares.Add(new PathfinderPoint(currentTile.X + 1, currentTile.Y, 0, 0));
-                    }
-                    if (currentTile.Y < 89)
-                    {
-                        adjSquares.Add(new PathfinderPoint(currentTile.X, currentTile.Y + 1, 0, 0));
-                    }
-
-                    foreach (var t in adjSquares)
-                    {
-                        for (var x = 0; x < closedList.Count; x++)
-                        {
-                            if (closedList[x].X == t.X && closedList[x].Y == t.Y)
-                            {
-                                //Continue - already in the closed list
-                                break;
-                            }
-                            if (x != closedList.Count - 1) continue;
-                            if (openList.Count > 0)
-                            {
-                                //If not in the closed list then add or update the open list
-                                for (var y = 0; y < openList.Count; y++)
-                                {
-                                    if (openList[y].X == t.X && openList[y].Y == t.Y)
-                                    {
-                                        //Update if the PathfinderPoints are better
-                                        var newPathfinderPoint = new PathfinderPoint(t.X, t.Y, currentTile.G + 1, Math.Abs(targetX - t.X) + Math.Abs(targetY - t.Y));
-                                        if (newPathfinderPoint.F < openList[y].F)
-                                        {
-                                            openList.RemoveAt(y);
-                                            openList.Add(newPathfinderPoint);
-                                        }
-                                        break;
-                                    }
-                                    if (y == openList.Count - 1)
-                                    {
-                                        //add to the open list
-                                        openList.Add(new PathfinderPoint(t.X, t.Y, currentTile.G + 1, Math.Abs(targetX - t.X) + Math.Abs(targetY - t.Y)));
-                                    }
-                                }
-                            }
-                            else
-                            {
-                                //add to the open list
-                                openList.Add(new PathfinderPoint(t.X, t.Y, currentTile.G + 1, Math.Abs(targetX - t.X) + Math.Abs(targetY - t.Y)));
-                            }
-                        }
-                    }
-                } while (openList.Count > 0);
-            }
-            _pathFinding = false;
+                }
+                System.Threading.Thread.Sleep(Globals.Rand.Next(_failures * 1000 + 500, _failures * 2000 + 500));
+            } while (true);
         }
 
         private static PathfinderPoint FindLowestF(IList<PathfinderPoint> openList)

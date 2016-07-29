@@ -47,7 +47,6 @@ namespace Intersect_Server.Classes.Networking
 
         //Network Variables
         private GameSocket mySocket;
-        private Queue<byte[]> sendQueue = new Queue<byte[]>();
         private object sendLock = new object();
 
         //Processing Thead
@@ -70,7 +69,7 @@ namespace Intersect_Server.Classes.Networking
                 var buff = new ByteBuffer();
                 buff.WriteInteger(packet.Length);
                 buff.WriteBytes(packet);
-                sendQueue.Enqueue (buff.ToArray());
+                mySocket.SendData(buff.ToArray());
             }
         }
 
@@ -103,13 +102,7 @@ namespace Intersect_Server.Classes.Networking
                 {
                     Entity.Update();
                 }
-                lock (sendLock)
-                {
-                    while (sendQueue.Count > 0)
-                    {
-                        mySocket.SendData(sendQueue.Dequeue());
-                    }
-                }
+                System.Threading.Thread.Sleep(10);
             }
             lock (Globals.ClientLock)
             {
@@ -119,7 +112,26 @@ namespace Intersect_Server.Classes.Networking
 
         public bool IsConnected()
         {
-            return mySocket.IsConnected();
+            if (mySocket != null)
+            {
+                return mySocket.IsConnected();
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        public string GetIP()
+        {
+            if (IsConnected())
+            {
+                return mySocket.GetIP();
+            }
+            else
+            {
+                return "";
+            }
         }
     }
 }

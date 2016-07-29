@@ -39,21 +39,27 @@ namespace Intersect_Client.Classes.Core
         {
             if (key == Keys.E)
             {
-                if (Globals.Me.TryAttack())
+                if (Globals.Me != null)
                 {
-                    return;
+                    if (Globals.Me.TryAttack())
+                    {
+                        return;
+                    }
+                    if (Globals.Me.TryPickupItem())
+                    {
+                        return;
+                    }
+                    if (Globals.Me.AttackTimer < Globals.System.GetTimeMS())
+                        Globals.Me.AttackTimer = Globals.System.GetTimeMS() + Globals.Me.CalculateAttackTime();
                 }
-                if (Globals.Me.TryPickupItem())
-                {
-                    return;
-                }
-                if (Globals.Me.AttackTimer < Globals.System.GetTimeMS())
-                    Globals.Me.AttackTimer = Globals.System.GetTimeMS() + Globals.Me.CalculateAttackTime();
             }
             else if (key == Keys.Q) {
-                if (Globals.Me.TryBlock())
+                if (Globals.Me != null)
                 {
-                    return;
+                    if (Globals.Me.TryBlock())
+                    {
+                        return;
+                    }
                 }
             }
             else if (key == Keys.Escape)
@@ -104,9 +110,12 @@ namespace Intersect_Client.Classes.Core
 
         public static void OnKeyReleased(Keys key)
         {
-            if (key == Keys.Q)
+            if (Globals.Me != null)
             {
-                Globals.Me.StopBlocking();
+                if (key == Keys.Q)
+                {
+                    Globals.Me.StopBlocking();
+                }
             }
         }
 
@@ -118,29 +127,35 @@ namespace Intersect_Client.Classes.Core
                 {
                     if (!Gui.MouseHitGUI())
                     {
-                        if (Globals.Me.TryTarget())
+                        if (Globals.Me != null)
                         {
-                            return;
+                            if (Globals.Me.TryTarget())
+                            {
+                                return;
+                            }
+                            if (Globals.Me.TryAttack())
+                            {
+                                return;
+                            }
+                            if (Globals.Me.TryPickupItem())
+                            {
+                                return;
+                            }
+                            if (Globals.Me.AttackTimer < Globals.System.GetTimeMS())
+                                Globals.Me.AttackTimer = Globals.System.GetTimeMS() + Globals.Me.CalculateAttackTime();
                         }
-                        if (Globals.Me.TryAttack())
-                        {
-                            return;
-                        }
-                        if (Globals.Me.TryPickupItem())
-                        {
-                            return;
-                        }
-                        if (Globals.Me.AttackTimer < Globals.System.GetTimeMS())
-                            Globals.Me.AttackTimer = Globals.System.GetTimeMS() + Globals.Me.CalculateAttackTime();
                     }
                 }
                 else if (btn == GameInput.MouseButtons.Right)
                 {
                     if (!Gui.MouseHitGUI())
                     {
-                        if (Globals.Me.TryBlock())
+                        if (Globals.Me != null)
                         {
-                            return;
+                            if (Globals.Me.TryBlock())
+                            {
+                                return;
+                            }
                         }
                     }
                 }
@@ -149,9 +164,12 @@ namespace Intersect_Client.Classes.Core
 
         public static void OnMouseUp(GameInput.MouseButtons btn)
         {
-            if (btn == GameInput.MouseButtons.Right)
+            if (Globals.Me != null)
             {
-                Globals.Me.StopBlocking();
+                if (btn == GameInput.MouseButtons.Right)
+                {
+                    Globals.Me.StopBlocking();
+                }
             }
         }
     }

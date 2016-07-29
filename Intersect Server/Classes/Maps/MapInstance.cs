@@ -590,11 +590,14 @@ namespace Intersect_Server.Classes.Maps
             var map = MapInstance.GetMap(mapNum);
             if (map != null)
             {
-                foreach (var entity in map.Entities)
+                lock (map.GetMapLock())
                 {
-                    if (entity != null && entity.GetType() == typeof(Player))
+                    foreach (var entity in map.Entities)
                     {
-                        return true;
+                        if (entity != null && entity.GetType() == typeof (Player))
+                        {
+                            return true;
+                        }
                     }
                 }
             }
@@ -604,12 +607,15 @@ namespace Intersect_Server.Classes.Maps
         public List<Player> GetPlayersOnMap()
         {
             List<Player> Players = new List<Player>();
-            foreach (var en in Entities)
+            lock (GetMapLock())
             {
-                if (en == null) continue;
-                if (en.GetType() == typeof (Player))
+                foreach (var en in Entities)
                 {
-                    Players.Add((Player)en);
+                    if (en == null) continue;
+                    if (en.GetType() == typeof (Player))
+                    {
+                        Players.Add((Player) en);
+                    }
                 }
             }
             return Players;

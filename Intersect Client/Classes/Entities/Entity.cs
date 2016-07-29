@@ -923,7 +923,12 @@ namespace Intersect_Client.Classes.Entities
             }
             XOffset = Options.TileWidth * (((Options.MaxDashSpeed / (float)Range) - (TransmittionTimer - Globals.System.GetTimeMS())) / (Options.MaxDashSpeed / (float)Range));
             YOffset = Options.TileHeight * (((Options.MaxDashSpeed / (float)Range) - (TransmittionTimer - Globals.System.GetTimeMS())) / (Options.MaxDashSpeed / (float)Range));
-            if (DistanceTraveled >= Range) { Globals.Entities[EntityID].Dashing = null; } //Dash no more once reached destination
+            if (DistanceTraveled >= Range)
+            {
+                Globals.Entities[EntityID].Dashing = null;
+                Globals.Entities[EntityID].OffsetX = 0;
+                Globals.Entities[EntityID].OffsetY = 0;
+            } //Dash no more once reached destination
             return Globals.Entities[EntityID].Dashing != null;
         }
     }

@@ -122,6 +122,7 @@ namespace Intersect_Editor.Forms
             cmbSprite.Items.AddRange(GameContentManager.GetTextureNames(GameContentManager.TextureType.Entity));
             scrlDropItem.Maximum = ItemBase.ObjectCount() - 1;
             scrlSpell.Maximum = SpellBase.ObjectCount() - 1;
+            scrlNPC.Maximum = NpcBase.ObjectCount() - 1;
             UpdateEditor();
         }
 
@@ -164,23 +165,21 @@ namespace Intersect_Editor.Forms
                 {
                     if (_editorItem.Spells[i] != -1)
                     {
-                        lstSpells.Items.Add("Spell: " + (Database.GameObjectListIndex(GameObject.Spell, _editorItem.Spells[i]) + 1) + " " + SpellBase.GetName(_editorItem.Spells[i]));
+                        lstSpells.Items.Add("Spell: " + SpellBase.GetName(_editorItem.Spells[i]));
                     }
                     else
                     {
                         lstSpells.Items.Add("Spell: 0 None");
                     }
                 }
-                scrlSpell.Value = Database.GameObjectListIndex(GameObject.Spell, _editorItem.Spells[0]);
                 if (scrlSpell.Value > -1)
                 {
-                    lblSpell.Text = "Spell: " + (scrlSpell.Value + 1) + " " + SpellBase.GetName(Database.GameObjectIdFromList(GameObject.Spell, scrlSpell.Value));
+                    lblSpell.Text = "Spell: " +  SpellBase.GetName(Database.GameObjectIdFromList(GameObject.Spell, scrlSpell.Value));
                 }
                 else
                 {
-                    lblSpell.Text = "Spell: 0 None";
+                    lblSpell.Text = "Spell: None";
                 }
-                lstSpells.SelectedIndex = 0;
                 cmbFreq.SelectedIndex = _editorItem.SpellFrequency;
 
                 // Add the aggro NPC's to the list
@@ -189,23 +188,21 @@ namespace Intersect_Editor.Forms
                 {
                     if (_editorItem.AggroList[i] != -1)
                     {
-                        lstAggro.Items.Add("NPC: " + (Database.GameObjectListIndex(GameObject.Npc, _editorItem.AggroList[i]) + 1) + " " + NpcBase.GetName(_editorItem.AggroList[i]));
+                        lstAggro.Items.Add("NPC: " + NpcBase.GetName(_editorItem.AggroList[i]));
                     }
                     else
                     {
-                        lstAggro.Items.Add("NPC: 0 None");
+                        lstAggro.Items.Add("NPC: None");
                     }
                 }
-                scrlNPC.Value = Database.GameObjectListIndex(GameObject.Npc, _editorItem.AggroList[0]);
                 if (scrlNPC.Value > -1)
                 {
-                    lblNPC.Text = "NPC: " + (scrlNPC.Value + 1) + " " + NpcBase.GetName(Database.GameObjectIdFromList(GameObject.Npc, scrlNPC.Value));
+                    lblNPC.Text = "NPC: " + NpcBase.GetName(Database.GameObjectIdFromList(GameObject.Npc, scrlNPC.Value));
                 }
                 else
                 {
-                    lblNPC.Text = "NPC: 0 None";
+                    lblNPC.Text = "NPC: None";
                 }
-                lstAggro.SelectedIndex = 0;
 
                 scrlDropIndex.Value = 0;
                 UpdateDropValues();
@@ -385,7 +382,7 @@ namespace Intersect_Editor.Forms
         private void btnAdd_Click(object sender, EventArgs e)
         {
             lstSpells.Items.Add(lblSpell.Text);
-            _editorItem.Spells.Add(scrlSpell.Value);
+            _editorItem.Spells.Add(Database.GameObjectIdFromList(GameObject.Spell, scrlSpell.Value));
         }
 
         private void btnRemove_Click(object sender, EventArgs e)
@@ -400,28 +397,25 @@ namespace Intersect_Editor.Forms
 
         private void scrlSpell_Scroll(object sender, ScrollEventArgs e)
         {
-            if (scrlSpell.Value > -1)
+            if (scrlSpell.Value > 0)
             {
-                lblSpell.Text = "Spell: " + (scrlSpell.Value + 1) + " " + SpellBase.GetName(Database.GameObjectIdFromList(GameObject.Spell, scrlSpell.Value));
+                lblSpell.Text = "Spell: " + SpellBase.GetName(Database.GameObjectIdFromList(GameObject.Spell, scrlSpell.Value));
             }
             else
             {
-                lblSpell.Text = "Spell: 0 None";
+                lblSpell.Text = "Spell: None";
             }
-            lstSpells.Items[lstSpells.SelectedIndex] = lblSpell.Text;
-            _editorItem.Spells[lstSpells.SelectedIndex] = Database.GameObjectIdFromList(GameObject.Spell, scrlSpell.Value);
         }
 
         private void lstSpells_Click(object sender, EventArgs e)
         {
-            scrlSpell.Value = Database.GameObjectListIndex(GameObject.Spell, _editorItem.Spells[lstSpells.SelectedIndex]);
             if (scrlSpell.Value > -1)
             {
-                lblSpell.Text = "Spell: " + (scrlSpell.Value + 1) + " " + SpellBase.GetName(Database.GameObjectIdFromList(GameObject.Spell, scrlSpell.Value));
+                lblSpell.Text = "Spell: " + SpellBase.GetName(Database.GameObjectIdFromList(GameObject.Spell, scrlSpell.Value));
             }
             else
             {
-                lblSpell.Text = "Spell: 0 None";
+                lblSpell.Text = "Spell: None";
             }
         }
 
@@ -444,38 +438,35 @@ namespace Intersect_Editor.Forms
         {
             if (scrlNPC.Value > -1)
             {
-                lblNPC.Text = "NPC " + scrlNPC.Value + " " + NpcBase.GetName(Database.GameObjectIdFromList(GameObject.Npc, scrlNPC.Value));
+                lblNPC.Text = "NPC: " + NpcBase.GetName(Database.GameObjectIdFromList(GameObject.Npc, scrlNPC.Value));
             }
             else
             {
-                lblNPC.Text = "NPC 0 None";
+                lblNPC.Text = "NPC: None";
             }
-            _editorItem.AggroList[lstAggro.SelectedIndex] = Database.GameObjectIdFromList(GameObject.Npc, scrlNPC.Value);
-            lstAggro.Items[lstAggro.SelectedIndex] = lblNPC.Text;
         }
 
         private void lstAggro_SelectedIndexChanged(object sender, EventArgs e)
         {
-            scrlNPC.Value = Database.GameObjectListIndex(GameObject.Npc, _editorItem.AggroList[lstAggro.SelectedIndex]);
             if (scrlSpell.Value > -1)
             {
-                lblNPC.Text = "NPC " + scrlNPC.Value + " " + NpcBase.GetName(Database.GameObjectIdFromList(GameObject.Npc, scrlNPC.Value));
+                lblNPC.Text = "NPC: " + NpcBase.GetName(Database.GameObjectIdFromList(GameObject.Npc, scrlNPC.Value));
             }
             else
             {
-                lblNPC.Text = "NPC 0 None";
+                lblNPC.Text = "NPC: None";
             }
         }
 
         private void btnAddAggro_Click(object sender, EventArgs e)
         {
             lstAggro.Items.Add(lblNPC.Text);
-            _editorItem.AggroList.Add(scrlNPC.Value);
+            _editorItem.AggroList.Add(Database.GameObjectIdFromList(GameObject.Npc,scrlNPC.Value));
         }
 
         private void btnRemoveAggro_Click(object sender, EventArgs e)
         {
-            if (lstAggro.Items.Count > 1)
+            if (lstAggro.Items.Count > 0)
             {
                 int i = lstAggro.SelectedIndex;
                 lstAggro.Items.RemoveAt(i);

@@ -109,12 +109,7 @@ namespace Intersect_Library.GameObjects
             }
             NpcVsNpcEnabled = Convert.ToBoolean(myBuffer.ReadInteger());
             AttackAllies = Convert.ToBoolean(myBuffer.ReadInteger());
-
-            //If no spells present.
-            if (spellCount <= 0)
-            {
-                Spells.Add(-1);
-            }
+            
 
             myBuffer.Dispose();
         }
@@ -149,6 +144,7 @@ namespace Intersect_Library.GameObjects
             }
             myBuffer.WriteInteger(SpellFrequency);
 
+            myBuffer.WriteInteger(AggroList.Count);
             for (int i = 0; i < AggroList.Count; i++)
             {
                 myBuffer.WriteInteger(AggroList[i]);

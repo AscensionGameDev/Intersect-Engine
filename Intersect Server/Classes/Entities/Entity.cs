@@ -318,7 +318,10 @@ namespace Intersect_Server.Classes.Entities
                         }
                         else
                         {
-                            PacketSender.SendEntityMove(MyIndex, (int)EntityTypes.Event, this);
+                            if (Dashing == null)
+                            {
+                                PacketSender.SendEntityMove(MyIndex, (int) EntityTypes.Event, this);
+                            }
                         }
                     }
                     else
@@ -466,14 +469,14 @@ namespace Intersect_Server.Classes.Entities
             double dmg = 0;
 
             if (Globals.Entities[enemyIndex] == null) return;
-            if (!IsOneBlockAway(enemyIndex) && isProjectile == null && isSpell == -1) return;
-            if (!isFacingTarget(enemyIndex) && isProjectile == null && isSpell == -1) return;
+            if (!IsOneBlockAway(Globals.Entities[enemyIndex]) && isProjectile == null && isSpell == -1) return;
+            if (!isFacingTarget(Globals.Entities[enemyIndex]) && isProjectile == null && isSpell == -1) return;
 
             if (isProjectile == null && isSpell == -1 && (AttackTimer > Environment.TickCount || Blocking)) return;
             if (canNpcCombat(enemyIndex) == false) return;
             AttackTimer = Environment.TickCount + CalculateAttackTime();
             //Check if the attacker is blinded.
-            if (IsOneBlockAway(enemyIndex) && isProjectile == null && isSpell == -1)
+            if (IsOneBlockAway(Globals.Entities[enemyIndex]) && isProjectile == null && isSpell == -1)
             {
                 for (var n = 0; n < Status.Count; n++)
                 {
@@ -894,11 +897,11 @@ namespace Intersect_Server.Classes.Entities
         }
 
         //Check if the target is either up, down, left or right of the target on the correct Z dimension.
-        bool IsOneBlockAway(int enemyIndex)
+        bool IsOneBlockAway(Entity target)
         {
             TileHelper myTile = new TileHelper(CurrentMap, CurrentX, CurrentY);
-            TileHelper enemyTile = new TileHelper(Globals.Entities[enemyIndex].CurrentMap, Globals.Entities[enemyIndex].CurrentX, Globals.Entities[enemyIndex].CurrentY);
-            if (CurrentZ == Globals.Entities[enemyIndex].CurrentZ)
+            TileHelper enemyTile = new TileHelper(target.CurrentMap, target.CurrentX, target.CurrentY);
+            if (CurrentZ == target.CurrentZ)
             {
                 myTile.Translate(0, -1);
                 if (myTile.Matches(enemyTile)) return true;
@@ -912,12 +915,12 @@ namespace Intersect_Server.Classes.Entities
             return false;
         }
 
-        bool isFacingTarget(int enemyIndex)
+        bool isFacingTarget(Entity target)
         {
-            if (IsOneBlockAway(enemyIndex))
+            if (IsOneBlockAway(target))
             {
                 TileHelper myTile = new TileHelper(CurrentMap, CurrentX, CurrentY);
-                TileHelper enemyTile = new TileHelper(Globals.Entities[enemyIndex].CurrentMap, Globals.Entities[enemyIndex].CurrentX, Globals.Entities[enemyIndex].CurrentY);
+                TileHelper enemyTile = new TileHelper(target.CurrentMap, target.CurrentX, target.CurrentY);
                 myTile.Translate(0, -1);
                 if (myTile.Matches(enemyTile) && Dir == (int)Directions.Up) return true;
                 myTile.Translate(0, 2);
@@ -929,10 +932,10 @@ namespace Intersect_Server.Classes.Entities
             }
             return false;
         }
-        protected int DirToEnemy(int enemyIndex)
+        protected int DirToEnemy(Entity target)
         {
             TileHelper myTile = new TileHelper(CurrentMap, CurrentX, CurrentY);
-            TileHelper enemyTile = new TileHelper(Globals.Entities[enemyIndex].CurrentMap, Globals.Entities[enemyIndex].CurrentX, Globals.Entities[enemyIndex].CurrentY);
+            TileHelper enemyTile = new TileHelper(target.CurrentMap, target.CurrentX, target.CurrentY);
             myTile.Translate(0, -1);
             if (myTile.Matches(enemyTile)) return (int)Directions.Up;
             myTile.Translate(0, 2);
