@@ -121,30 +121,8 @@ namespace Intersect_Client.Classes.UI.Game
             if (MapInstance.GetMap(Globals.Me.CurrentMap) != null)
             {
                 _mapLabel.Text = "Map: " + (Globals.Me.MyName == "jcsnider" ? Globals.Me.CurrentMap.ToString() : "") + "  (" + MapInstance.GetMap(Globals.Me.CurrentMap).MyName + ")";
-
-                var x = (int)Math.Floor(Globals.InputManager.GetMousePosition().X + GameGraphics.CurrentView.Left);
-                var y = (int)Math.Floor(Globals.InputManager.GetMousePosition().Y + GameGraphics.CurrentView.Top);
-
-                foreach (var map in MapInstance.GetObjects().Values)
-                {
-                    if (x >= map.GetX() && x <= map.GetX() + (Options.MapWidth * Options.TileWidth))
-                    {
-                        if (y >= map.GetY() && y <= map.GetY() + (Options.MapHeight * Options.TileHeight))
-                        {
-                            //Remove the offsets to just be dealing with pixels within the map selected
-                            x -= (int)map.GetX();
-                            y -= (int)map.GetY();
-
-                            //transform pixel format to tile format
-                            x /= Options.TileWidth;
-                            y /= Options.TileHeight;
-                            int mapNum = map.MyMapNum;
-
-                            _xLabel.Text = "X: " + x; //Globals.Me.CurrentX;
-                            _yLabel.Text = "Y: " + y; //Globals.Me.CurrentY;
-                        }
-                    }
-                }
+                _xLabel.Text = "X: " + Globals.Me.CurrentX;
+                _yLabel.Text = "Y: " + Globals.Me.CurrentY;
                 _zLabel.Text = "Z: " + Globals.Me.CurrentZ;
             }
             int entityCount = Globals.Entities.Count;
