@@ -62,6 +62,11 @@ namespace Intersect_Client_MonoGame.Classes.SFML.Input
                         Microsoft.Xna.Framework.Input.Keys monoKey in
                             Enum.GetValues(typeof (Microsoft.Xna.Framework.Input.Keys)))
                     {
+                        if (key == Keys.Shift)
+                        {
+                            _keyDictionary.Add(key, Microsoft.Xna.Framework.Input.Keys.LeftShift);
+                            break;
+                        }
                         if (key == Keys.Return)
                         {
                             _keyDictionary.Add(key, Microsoft.Xna.Framework.Input.Keys.Enter);

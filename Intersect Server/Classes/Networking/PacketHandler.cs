@@ -1057,6 +1057,9 @@ namespace Intersect_Server.Classes.Networking
                     }
                     PacketSender.SendPlayerMsg(client, val1 + " is not online.");
                     break;
+                case (int)AdminActions.WarpToLoc:
+                    if (client.Power > 0) { client.Entity.Warp(Convert.ToInt32(val1), Convert.ToInt32(val2), Convert.ToInt32(val3)); }
+                    break;
                 case (int)AdminActions.Kick:
                     for (int i = 0; i < Globals.Clients.Count; i++)
                     {

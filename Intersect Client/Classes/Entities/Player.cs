@@ -422,7 +422,7 @@ namespace Intersect_Client.Classes.Entities
             }
             return false;
         }
-        private bool GetRealLocation(ref int x, ref int y, ref int map)
+        public bool GetRealLocation(ref int x, ref int y, ref int map)
         {
             var tmpX = x;
             var tmpY = y;

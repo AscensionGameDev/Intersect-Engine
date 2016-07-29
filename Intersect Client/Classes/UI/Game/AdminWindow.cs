@@ -108,7 +108,7 @@ namespace Intersect_Client.Classes.UI.Game
             _killButton.Clicked += _killButton_Clicked;
 
             _warpToMeButton = new Button(_adminWindow);
-            _warpToMeButton.Text = "Warp to Me";
+            _warpToMeButton.Text = "Warp To Me";
             _warpToMeButton.SetBounds(4,60,80,18);
             _warpToMeButton.Clicked += _warpToMeButton_Clicked;
 
