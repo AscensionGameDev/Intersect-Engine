@@ -25,16 +25,20 @@
     SOFTWARE.
 */
 
+using System;
 using IntersectClientExtras.GenericClasses;
 using IntersectClientExtras.Input;
 using Intersect_Client.Classes.General;
 using Intersect_Client.Classes.Networking;
 using Intersect_Client.Classes.UI;
+using Intersect_Client.Classes.Maps;
+using Intersect_Library;
 
 namespace Intersect_Client.Classes.Core
 {
     public static class GameInputHandler
     {
+
         public static void OnKeyPressed(Keys key)
         {
             if (key == Keys.E)
@@ -55,7 +59,7 @@ namespace Intersect_Client.Classes.Core
             }
             else if (key == Keys.Q) {
                 if (Globals.Me != null)
-                {
+				{
                     if (Globals.Me.TryBlock())
                     {
                         return;
@@ -95,7 +99,7 @@ namespace Intersect_Client.Classes.Core
                 if (Globals.GameState != GameStates.InGame) return;
                 if (!Gui.HasInputFocus())
                 {
-                    Gui.GameUI.Hotbar.Items[((int) key - (int) Keys.D1)].Activate();
+                    Gui.GameUI.Hotbar.Items[((int)key - (int)Keys.D1)].Activate();
                 }
             }
             else if (key == Keys.D0)
@@ -166,9 +170,40 @@ namespace Intersect_Client.Classes.Core
         {
             if (Globals.Me != null)
             {
+<<<<<<< HEAD
                 if (btn == GameInput.MouseButtons.Right)
                 {
                     Globals.Me.StopBlocking();
+=======
+                Globals.Me.StopBlocking();
+                if (Globals.InputManager.KeyDown(Keys.Shift) == true)
+                {
+                    var x = (int)Math.Floor(Globals.InputManager.GetMousePosition().X + GameGraphics.CurrentView.Left);
+                    var y = (int)Math.Floor(Globals.InputManager.GetMousePosition().Y + GameGraphics.CurrentView.Top);
+
+                    foreach (var map in MapInstance.GetObjects().Values)
+                    {
+                        if (x >= map.GetX() && x <= map.GetX() + (Options.MapWidth * Options.TileWidth))
+                        {
+                            if (y >= map.GetY() && y <= map.GetY() + (Options.MapHeight * Options.TileHeight))
+                            {
+                                //Remove the offsets to just be dealing with pixels within the map selected
+                                x -= (int)map.GetX();
+                                y -= (int)map.GetY();
+
+                                //transform pixel format to tile format
+                                x /= Options.TileWidth;
+                                y /= Options.TileHeight;
+                                int mapNum = map.MyMapNum;
+
+                                if (Globals.Me.GetRealLocation(ref x, ref y, ref mapNum))
+                                {
+                                    PacketSender.SendAdminAction((int)AdminActions.WarpToLoc, Convert.ToString(mapNum), Convert.ToString(x), Convert.ToString(y));
+                                }
+                            }
+                        }
+                    }
+>>>>>>> origin/master
                 }
             }
         }

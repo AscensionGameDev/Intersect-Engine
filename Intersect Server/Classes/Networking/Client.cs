@@ -45,6 +45,10 @@ namespace Intersect_Server.Classes.Networking
         public bool IsEditor;
         public int Power = 0;
 
+        //Adminastrative punnishments
+        public bool Muted = false;
+        public string MuteReason = "";
+
         //Network Variables
         private GameSocket mySocket;
         private object sendLock = new object();

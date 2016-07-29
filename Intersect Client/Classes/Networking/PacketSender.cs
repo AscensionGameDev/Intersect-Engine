@@ -253,12 +253,15 @@ namespace Intersect_Client.Classes.Networking
             GameNetwork.SendPacket(bf.ToArray());
         }
 
-        public static void SendAdminAction(int action, int val)
+        public static void SendAdminAction(int action, string val1 = "", string val2 = "", string val3 = "", string val4 = "")
         {
             var bf = new ByteBuffer();
             bf.WriteLong((int)ClientPackets.AdminAction);
             bf.WriteInteger(action);
-            bf.WriteInteger(val);
+            bf.WriteString(val1);
+            bf.WriteString(val2);
+            bf.WriteString(val3);
+            bf.WriteString(val4);
             GameNetwork.SendPacket(bf.ToArray());
         }
 

@@ -53,7 +53,8 @@ namespace Intersect_Server.Classes.Networking
 
         protected override void OnOpen()
         {
-            new WebSocket(Context);
+            var gameSocket = new WebSocket(Context);
+            gameSocket.Start();
         }
     }
 
