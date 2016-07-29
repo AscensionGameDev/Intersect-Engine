@@ -43,19 +43,19 @@ namespace Intersect_Server.Classes.Networking
             _tcpServer.Stop();
         }
 
-		private static void OnClientConnect (IAsyncResult ar)
-		{
+        private static void OnClientConnect(IAsyncResult ar)
+        {
             try
             {
-                new NetSocket(_tcpServer.EndAcceptTcpClient(ar));
+                var gameSocket = new NetSocket(_tcpServer.EndAcceptTcpClient(ar));
                 _tcpServer.BeginAcceptTcpClient(OnClientConnect, null);
-                //Globals.GeneralLogs.Add("Client Connection From : " + aContext.ClientAddress.ToString());
+                gameSocket.Start();
             }
             catch (Exception)
             {
                 //client DC or server shutting down... nothing to worry about
             }
-		}
-	}
+        }
+    }
 }
 

@@ -22,15 +22,20 @@ namespace Intersect_Server.Classes.Networking
 
         public GameSocket()
         {
-            CreateClient();
             _connectTime = Environment.TickCount;
             _connectionTimeout = Environment.TickCount + _timeout;
+        }
+
+        public void Start()
+        {
+            CreateClient();
         }
 
         public abstract void SendData(byte[] data);
         public abstract void Disconnect();
         public abstract void Dispose();
         public abstract bool IsConnected();
+        public abstract string GetIP();
         public event DataReceivedHandler DataReceived;
         public event ConnectedHandler Connected;
         public event ConnectionFailedHandler ConnectionFailed;

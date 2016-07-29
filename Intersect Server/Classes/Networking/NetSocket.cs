@@ -107,6 +107,18 @@ namespace Intersect_Server.Classes.Networking
         {
             return _isConnected;
         }
+
+        public override string GetIP()
+        {
+            if (_mySocket != null)
+            {
+                return ((System.Net.IPEndPoint)_mySocket.Client.RemoteEndPoint).Address.ToString();
+            }
+            else
+            {
+                return "";
+            }
+        }
     }
 
 

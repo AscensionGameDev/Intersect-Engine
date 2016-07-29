@@ -45,6 +45,10 @@ namespace Intersect_Server.Classes.Networking
         public bool IsEditor;
         public int Power = 0;
 
+        //Adminastrative punnishments
+        public bool Muted = false;
+        public string MuteReason = "";
+
         //Network Variables
         private GameSocket mySocket;
         private Queue<byte[]> sendQueue = new Queue<byte[]>();
@@ -119,7 +123,26 @@ namespace Intersect_Server.Classes.Networking
 
         public bool IsConnected()
         {
-            return mySocket.IsConnected();
+            if (mySocket != null)
+            {
+                return mySocket.IsConnected();
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        public string GetIP()
+        {
+            if (IsConnected())
+            {
+                return mySocket.GetIP();
+            }
+            else
+            {
+                return "";
+            }
         }
     }
 }

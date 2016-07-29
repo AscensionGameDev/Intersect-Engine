@@ -628,8 +628,7 @@ namespace Intersect_Server.Classes.Core
                                   ",@" + USER_PASS + ",@" + USER_SALT + ",@" + USER_POWER + ");";
                 var updateQuery = "UPDATE " + USERS_TABLE + " SET " + USER_NAME + "=@" + USER_NAME + "," + USER_EMAIL +
                                   "=@" + USER_EMAIL + "," + USER_PASS + "=@" + USER_PASS + "," + USER_SALT + "=@" +
-                                  USER_SALT + "," + USER_POWER + "=@" + USER_POWER + " WHERE " + USER_ID + "=@" +
-                                  USER_ID + ";";
+                                  USER_SALT + "," + USER_POWER + "=@" + USER_POWER + " WHERE " + USER_ID + "=@" + USER_ID + ";";
                 using (SqliteCommand cmd = new SqliteCommand(newUser ? insertQuery : updateQuery, _dbConnection))
                 {
                     cmd.Parameters.Add(new SqliteParameter("@" + USER_NAME, client.MyAccount));
@@ -793,6 +792,146 @@ namespace Intersect_Server.Classes.Core
                 return (GetLastInsertRowId());
             }
         }
+
+        public static void AddMute(Client player, int duration, string reason, string muter, string ip)
+        {
+            lock (_dbLock)
+            {
+                var query = "INSERT OR REPLACE into " + MUTE_TABLE + " (" + MUTE_ID + "," +
+                            MUTE_TIME + "," + MUTE_USER + "," + MUTE_IP + "," + MUTE_DURATION + "," +
+                            MUTE_REASON + "," + MUTE_MUTER + ")" + " VALUES " + " (@" +
+                            MUTE_ID + ",@" + MUTE_TIME + ",@" + MUTE_USER + ",@" + MUTE_IP + ",@" +
+                            MUTE_DURATION + ",@" + MUTE_REASON + ",@" + MUTE_MUTER + ");";
+                using (SqliteCommand cmd = new SqliteCommand(query, _dbConnection))
+                {
+                    cmd.Parameters.Add(new SqliteParameter("@" + MUTE_ID, player.MyId));
+                    cmd.Parameters.Add(new SqliteParameter("@" + MUTE_TIME, DateTime.UtcNow.ToBinary()));
+                    cmd.Parameters.Add(new SqliteParameter("@" + MUTE_USER, player.MyAccount));
+                    cmd.Parameters.Add(new SqliteParameter("@" + MUTE_IP, ip));
+                    DateTime t = DateTime.UtcNow.AddDays(duration);
+                    cmd.Parameters.Add(new SqliteParameter("@" + MUTE_DURATION, t.ToBinary()));
+                    cmd.Parameters.Add(new SqliteParameter("@" + MUTE_REASON, reason));
+                    cmd.Parameters.Add(new SqliteParameter("@" + MUTE_MUTER, muter));
+                    cmd.ExecuteNonQuery();
+                }
+            }
+        }
+
+        public static void DeleteMute(string account)
+        {
+            lock (_dbLock)
+            {
+                var insertQuery = "DELETE FROM " + MUTE_TABLE + " WHERE " + MUTE_USER + "=@" + MUTE_USER + ";";
+                using (SqliteCommand cmd = new SqliteCommand(insertQuery, _dbConnection))
+                {
+                    cmd.Parameters.Add(new SqliteParameter("@" + MUTE_USER, account));
+                    cmd.ExecuteNonQuery();
+                }
+            }
+        }
+
+        public static string CheckMute(string account, string ip)
+        {
+            lock (_dbLock)
+            {
+                var query = "SELECT " + MUTE_DURATION + "," + MUTE_TIME + "," + MUTE_MUTER + "," + MUTE_REASON +
+                    " from " + MUTE_TABLE + " WHERE (LOWER(" + MUTE_USER + ")=@" + MUTE_USER + " OR " + MUTE_IP + "=@" + MUTE_IP + ")" + ";";
+                using (SqliteCommand cmd = new SqliteCommand(query, _dbConnection))
+                {
+                    cmd.Parameters.Add(new SqliteParameter("@" + MUTE_USER, account.ToLower().Trim()));
+                    cmd.Parameters.Add(new SqliteParameter("@" + MUTE_IP, ip.Trim()));
+                    var dataReader = cmd.ExecuteReader();
+                    if (dataReader.HasRows && dataReader.Read())
+                    {
+                        DateTime duration = DateTime.FromBinary(Convert.ToInt64(dataReader[MUTE_DURATION]));
+                        DateTime banStart = DateTime.FromBinary(Convert.ToInt64(dataReader[MUTE_TIME]));
+                        string banner = Convert.ToString(dataReader[MUTE_MUTER]);
+                        string reason = Convert.ToString(dataReader[MUTE_REASON]);
+                        if (duration.CompareTo(DateTime.Today) <= 0) //Check that enough time has passed
+                        {
+                            DeleteMute(account);
+                            return null;
+                        }
+                        else
+                        {
+                            return "Your account has been muted since: " + banStart.ToString() + " by " + banner + ". Mute expires: " + duration.ToString() + ". Reason for mute: " + reason;
+                        }
+                    }
+
+                    return null;
+                }
+            }
+        }
+
+        public static void AddBan(Client player, int duration, string reason, string banner, string ip)
+        {
+            lock (_dbLock)
+            {
+                var query = "INSERT OR REPLACE into " + BAN_TABLE + " (" + BAN_ID + "," +
+                            BAN_TIME + "," + BAN_USER + "," + BAN_IP + "," + BAN_DURATION + "," + 
+                            BAN_REASON + "," + BAN_BANNER + ")" + " VALUES " + " (@" +
+                            BAN_ID + ",@" + BAN_TIME + ",@" + BAN_USER + ",@" + BAN_IP + ",@" + 
+                            BAN_DURATION + ",@" + BAN_REASON + ",@" + BAN_BANNER + ");";
+                using (SqliteCommand cmd = new SqliteCommand(query, _dbConnection))
+                {
+                    cmd.Parameters.Add(new SqliteParameter("@" + BAN_ID, player.MyId));
+                    cmd.Parameters.Add(new SqliteParameter("@" + BAN_TIME, DateTime.UtcNow.ToBinary()));
+                    cmd.Parameters.Add(new SqliteParameter("@" + BAN_USER, player.MyAccount));
+                    cmd.Parameters.Add(new SqliteParameter("@" + BAN_IP, ip));
+                    DateTime t = DateTime.UtcNow.AddDays(duration);
+                    cmd.Parameters.Add(new SqliteParameter("@" + BAN_DURATION, t.ToBinary()));
+                    cmd.Parameters.Add(new SqliteParameter("@" + BAN_REASON, reason));
+                    cmd.Parameters.Add(new SqliteParameter("@" + BAN_BANNER, banner));
+                    cmd.ExecuteNonQuery();
+                }
+            }
+        }
+
+        public static void DeleteBan(string account)
+        {
+            lock (_dbLock)
+            {
+                var insertQuery = "DELETE FROM " + BAN_TABLE + " WHERE " + BAN_USER + "=@" + BAN_USER + ";";
+                using (SqliteCommand cmd = new SqliteCommand(insertQuery, _dbConnection))
+                {
+                    cmd.Parameters.Add(new SqliteParameter("@" + BAN_USER, account));
+                    cmd.ExecuteNonQuery();
+                }
+            }
+        }
+
+        public static string CheckBan(string account, string ip)
+        {
+            lock (_dbLock)
+            {
+                var query = "SELECT " + BAN_DURATION + "," + BAN_TIME + "," + BAN_BANNER + "," + BAN_REASON +
+                    " from " + BAN_TABLE + " WHERE (LOWER(" + BAN_USER + ")=@" + BAN_USER + " OR " + BAN_IP + "=@" + BAN_IP + ")" + ";";
+                using (SqliteCommand cmd = new SqliteCommand(query, _dbConnection))
+                {
+                    cmd.Parameters.Add(new SqliteParameter("@" + BAN_USER, account.ToLower().Trim()));
+                    cmd.Parameters.Add(new SqliteParameter("@" + BAN_IP, ip.Trim()));
+                    var dataReader = cmd.ExecuteReader();
+                    if (dataReader.HasRows && dataReader.Read())
+                    {
+                        DateTime duration = DateTime.FromBinary(Convert.ToInt64(dataReader[BAN_DURATION]));
+                        DateTime banStart = DateTime.FromBinary(Convert.ToInt64(dataReader[BAN_TIME]));
+                        string banner = Convert.ToString(dataReader[BAN_BANNER]);
+                        string reason = Convert.ToString(dataReader[BAN_REASON]);
+                        if (duration.CompareTo(DateTime.Today) <= 0) //Check that enough time has passed
+                        {
+                            DeleteBan(account);
+                            return null;
+                        }
+                        else
+                        {
+                            return "Your account has been banned since: " + banStart.ToString() + " by " + banner + ". Ban expires: " + duration.ToString() + ". Reason for ban: " + reason;
+                        }
+                    }
+                    return null;
+                }
+            }
+        }
+
         private static void SaveCharacterInventory(Player player)
         {
             lock (_dbLock)

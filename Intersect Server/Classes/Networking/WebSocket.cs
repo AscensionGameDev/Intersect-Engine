@@ -63,5 +63,17 @@ namespace Intersect_Server.Classes.Networking
         {
             return _isConnected;
         }
+
+        public override string GetIP()
+        {
+            if (_myContext != null)
+            {
+                return _myContext.UserEndPoint.Address.ToString();
+            }
+            else
+            {
+                return "";
+            }
+        }
     }
 }

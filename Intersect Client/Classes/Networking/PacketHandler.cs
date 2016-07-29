@@ -692,20 +692,26 @@ namespace Intersect_Client.Classes.Networking
 
         private static void HandleInventoryUpdate(byte[] packet)
         {
-            var bf = new ByteBuffer();
-            bf.WriteBytes(packet);
-            int slot = bf.ReadInteger();
-            Globals.Me.Inventory[slot].Load(bf);
-            bf.Dispose();
+            if (Globals.Me != null)
+            {
+                var bf = new ByteBuffer();
+                bf.WriteBytes(packet);
+                int slot = bf.ReadInteger();
+                Globals.Me.Inventory[slot].Load(bf);
+                bf.Dispose();
+            }
         }
 
         private static void HandleSpellUpdate(byte[] packet)
         {
-            var bf = new ByteBuffer();
-            bf.WriteBytes(packet);
-            int slot = bf.ReadInteger();
-            Globals.Me.Spells[slot].Load(bf);
-            bf.Dispose();
+            if (Globals.Me != null)
+            {
+                var bf = new ByteBuffer();
+                bf.WriteBytes(packet);
+                int slot = bf.ReadInteger();
+                Globals.Me.Spells[slot].Load(bf);
+                bf.Dispose();
+            }
         }
 
         private static void HandlePlayerEquipment(byte[] packet)
@@ -725,10 +731,13 @@ namespace Intersect_Client.Classes.Networking
 
         private static void HandleStatPoints(byte[] packet)
         {
-            var bf = new ByteBuffer();
-            bf.WriteBytes(packet);
-            Globals.Me.StatPoints = bf.ReadInteger();
-            bf.Dispose();
+            if (Globals.Me != null)
+            {
+                var bf = new ByteBuffer();
+                bf.WriteBytes(packet);
+                Globals.Me.StatPoints = bf.ReadInteger();
+                bf.Dispose();
+            }
         }
 
         private static void HandleHotbarSlots(byte[] packet)
