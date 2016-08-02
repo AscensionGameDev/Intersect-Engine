@@ -440,7 +440,7 @@ namespace Intersect_Client.Classes.Entities
                 }
                 destRectangle.X = (int)Math.Ceiling(destRectangle.X);
                 destRectangle.Y = (int)Math.Ceiling(destRectangle.Y);
-                if (AttackTimer - CalculateAttackTime()/2 > Environment.TickCount || Blocking)
+                if (AttackTimer - CalculateAttackTime()/2 > Globals.System.GetTimeMS() || Blocking)
                 {
                     srcRectangle = new FloatRect(3 * (int)entityTex.GetWidth() / 4, d * (int)entityTex.GetHeight() / 4, (int)entityTex.GetWidth() / 4, (int)entityTex.GetHeight() / 4);
                 }
@@ -529,7 +529,7 @@ namespace Intersect_Client.Classes.Entities
                 }
                 destRectangle.X = (int)Math.Ceiling(destRectangle.X);
                 destRectangle.Y = (int)Math.Ceiling(destRectangle.Y);
-                if (AttackTimer > Environment.TickCount || Blocking)
+                if (AttackTimer > Globals.System.GetTimeMS() || Blocking)
                 {
                     srcRectangle = new FloatRect(3 * (int)paperdollTex.GetWidth() / 4, d * (int)paperdollTex.GetHeight() / 4, (int)paperdollTex.GetWidth() / 4, (int)paperdollTex.GetHeight() / 4);
                 }

@@ -303,11 +303,11 @@ namespace Intersect_Client_MonoGame.Classes.SFML.Graphics
         {
            EndSpriteBatch();
             _fpsCount++;
-            if (_fpsTimer < Environment.TickCount)
+            if (_fpsTimer < Globals.System.GetTimeMS())
             {
                 _fps = _fpsCount;
                 _fpsCount = 0;
-                _fpsTimer = Environment.TickCount + 1000;
+                _fpsTimer = Globals.System.GetTimeMS() + 1000;
                 _gameWindow.Title = "Intersect Client";
             }
             for (int i = 0; i < AllTextures.Count; i++)

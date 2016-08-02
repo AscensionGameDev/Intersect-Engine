@@ -786,6 +786,7 @@ namespace Intersect_Server.Classes.Networking
                     player.Face = classBase.Sprites[Sprite].Face;
                     player.Gender = classBase.Sprites[Sprite].Gender;
                 }
+                PacketSender.SendJoinGame(client);
                 player.WarpToSpawn(true);
                 player.Vital[(int)Vitals.Health] = classBase.BaseVital[(int)Vitals.Health];
                 player.Vital[(int)Vitals.Mana] = classBase.BaseVital[(int)Vitals.Mana];
@@ -815,7 +816,6 @@ namespace Intersect_Server.Classes.Networking
                 }
                 Database.SaveCharacter(client.Entity, true);
                 Globals.GeneralLogs.Add(client.MyAccount + " has created a character.");
-                PacketSender.SendJoinGame(client);
             }
             bf.Dispose();
         }

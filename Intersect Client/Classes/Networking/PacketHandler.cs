@@ -604,7 +604,7 @@ namespace Intersect_Client.Classes.Networking
 
             if (attackTimer > -1 && en != Globals.Me)
             {
-                en.AttackTimer = Environment.TickCount +  attackTimer;
+                en.AttackTimer = Globals.System.GetTimeMS() +  attackTimer;
             }
         }
 

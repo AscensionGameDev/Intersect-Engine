@@ -28,6 +28,7 @@ using System;
 using System.IO;
 using IntersectClientExtras.GenericClasses;
 using IntersectClientExtras.Graphics;
+using Intersect_Client.Classes.General;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace Intersect_Client_MonoGame.Classes.SFML.Graphics
@@ -68,7 +69,7 @@ namespace Intersect_Client_MonoGame.Classes.SFML.Graphics
 
         public void ResetAccessTime()
         {
-            _lastAccessTime = Environment.TickCount + 15000;
+            _lastAccessTime = Globals.System.GetTimeMS() + 15000;
         }
 
         public override int GetWidth()
@@ -125,7 +126,7 @@ namespace Intersect_Client_MonoGame.Classes.SFML.Graphics
         {
             if (_tex != null)
             {
-                if (_lastAccessTime < Environment.TickCount)
+                if (_lastAccessTime < Globals.System.GetTimeMS())
                 {
                     _tex.Dispose();
                     _tex = null;

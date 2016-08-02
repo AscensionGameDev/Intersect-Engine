@@ -44,7 +44,7 @@ namespace Intersect_Server.Classes.Core
     {
         private static SqliteConnection _dbConnection;
         private static Object _dbLock = new Object();
-        private const int DbVersion = 2;
+        private const int DbVersion = 3;
         private const string DbFilename = "resources/intersect.db";
 
         //Database Variables
