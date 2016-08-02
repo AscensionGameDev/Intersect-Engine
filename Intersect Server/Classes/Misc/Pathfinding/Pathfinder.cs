@@ -98,7 +98,7 @@ namespace Intersect_Server.Classes.Misc
                 {
                     var myGrid = map.MapGrid;
                     _pathFinding = true;
-                    var start = Environment.TickCount;
+                    var start = Globals.System.GetTimeMs();
                     var foundPath = false;
                     if (_target != null)
                     {
@@ -112,26 +112,27 @@ namespace Intersect_Server.Classes.Misc
                                 if (y == -1 || y >= Database.MapGrids[myGrid].Height) continue;
                                 if (Database.MapGrids[myGrid].MyGrid[x, y] > -1)
                                 {
-                                    for (var i = 0; i < MapInstance.GetMap(Database.MapGrids[myGrid].MyGrid[x, y]).Entities.Count; i++)
+                                    var mapEntities = MapInstance.GetMap(Database.MapGrids[myGrid].MyGrid[x, y]).GetEntities();
+                                    for (var i = 0; i < mapEntities.Count; i++)
                                     {
                                         lock (_targetLock)
                                         {
                                             if (_target != null)
                                             {
-                                                if (MapInstance.GetMap(Database.MapGrids[myGrid].MyGrid[x, y]).Entities[i] != null)
+                                                if (mapEntities[i] != null && mapEntities[i].GetType() != typeof(Projectile))
                                                 {
-                                                    if (i != _sourceEntity.MyIndex && (MapInstance.GetMap(Database.MapGrids[myGrid].MyGrid[x, y]).Entities[i].CurrentMap != _target.TargetMap || MapInstance.GetMap(Database.MapGrids[myGrid].MyGrid[x, y]).Entities[i].CurrentY != _target.TargetY || MapInstance.GetMap(Database.MapGrids[myGrid].MyGrid[x, y]).Entities[i].CurrentX != _target.TargetX))
+                                                    if (i != _sourceEntity.MyIndex && (mapEntities[i].CurrentMap != _target.TargetMap || mapEntities[i].CurrentY != _target.TargetY || mapEntities[i].CurrentX != _target.TargetX))
                                                     {
-                                                        if (MapInstance.GetMap(Database.MapGrids[myGrid].MyGrid[x, y]).Entities[i] != null)
+                                                        if (mapEntities[i] != null)
                                                         {
-                                                            if (MapInstance.GetMap(Database.MapGrids[myGrid].MyGrid[x, y]).Entities[i].CurrentMap == Database.MapGrids[myGrid].MyGrid[x, y])
+                                                            if (mapEntities[i].CurrentMap == Database.MapGrids[myGrid].MyGrid[x, y])
                                                             {
                                                                 closedList.Add(
                                                                     new PathfinderPoint(
                                                                         (x - MapInstance.GetMap(_sourceEntity.CurrentMap).MapGridX + 1) *
-                                                                        Options.MapWidth + MapInstance.GetMap(Database.MapGrids[myGrid].MyGrid[x, y]).Entities[i].CurrentX,
+                                                                        Options.MapWidth + mapEntities[i].CurrentX,
                                                                         (y - MapInstance.GetMap(_sourceEntity.CurrentMap).MapGridY + 1) *
-                                                                        Options.MapHeight + MapInstance.GetMap(Database.MapGrids[myGrid].MyGrid[x, y]).Entities[i].CurrentY, -1, 0));
+                                                                        Options.MapHeight + mapEntities[i].CurrentY, -1, 0));
                                                             }
                                                         }
                                                     }

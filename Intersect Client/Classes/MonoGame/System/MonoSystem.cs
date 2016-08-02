@@ -32,9 +32,14 @@ namespace Intersect_Client.Classes.Bridges_and_Interfaces.SFML.System
 {
     public class MonoSystem : GameSystem
     {
+        public Stopwatch stopWatch = new Stopwatch();
+        public MonoSystem()
+        {
+            stopWatch.Start();
+        }
         public override long GetTimeMS()
         {
-            return Environment.TickCount;
+            return stopWatch.ElapsedMilliseconds;
         }
 
         public override void Log(string msg)

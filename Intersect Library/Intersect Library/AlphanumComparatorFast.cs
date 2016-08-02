@@ -1,6 +1,6 @@
 ﻿using System.Collections;
 
-namespace Intersect_Editor.Classes
+namespace Intersect_Library
 {
     public class AlphanumComparatorFast : IComparer
     {

@@ -386,6 +386,7 @@ namespace Intersect_Server.Classes.Entities
             }
             CurrentX = newX;
             CurrentY = newY;
+            MyEvents.Clear();
             if (newMap != CurrentMap || _sentMap == false)
             {
                 PacketSender.SendEntityLeave(MyIndex, (int)EntityTypes.Player, CurrentMap);
@@ -1180,13 +1181,13 @@ namespace Intersect_Server.Classes.Entities
                 {
                     if (spell.VitalCost[(int)Vitals.Health] <= Vital[(int)Vitals.Health])
                     {
-                        if (Spells[spellSlot].SpellCD < Environment.TickCount)
+                        if (Spells[spellSlot].SpellCD < Globals.System.GetTimeMs())
                         {
-                            if (CastTime < Environment.TickCount)
+                            if (CastTime < Globals.System.GetTimeMs())
                             {
                                 Vital[(int)Vitals.Mana] = Vital[(int)Vitals.Mana] - spell.VitalCost[(int)Vitals.Mana];
                                 Vital[(int)Vitals.Health] = Vital[(int)Vitals.Health] - spell.VitalCost[(int)Vitals.Health];
-                                CastTime = Environment.TickCount + (spell.CastDuration * 100);
+                                CastTime = Globals.System.GetTimeMs() + (spell.CastDuration * 100);
                                 SpellCastSlot = spellSlot;
 
                                 if (spell.CastAnimation > -1)

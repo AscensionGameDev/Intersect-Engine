@@ -32,6 +32,7 @@ using IntersectClientExtras.Gwen.Control;
 using IntersectClientExtras.Gwen.Control.EventArguments;
 using Intersect_Client.Classes.Core;
 using Intersect_Client.Classes.General;
+using IntersectClientExtras.Gwen;
 
 namespace Intersect_Client.Classes.UI.Game
 {
@@ -56,6 +57,8 @@ namespace Intersect_Client.Classes.UI.Game
             _myWindow.SetPosition(GameGraphics.Renderer.GetScreenWidth() / 2 - _myWindow.Width / 2, GameGraphics.Renderer.GetScreenHeight() / 2 - _myWindow.Height / 2);
             _myWindow.IsClosable = false;
             _myWindow.DisableResizing();
+            _myWindow.Margin = Margin.Zero;
+            _myWindow.Padding = Padding.Zero;
 
             _myWindow.SetTitleBarHeight(24);
             _myWindow.SetCloseButtonSize(20, 20);

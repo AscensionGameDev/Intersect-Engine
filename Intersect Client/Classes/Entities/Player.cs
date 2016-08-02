@@ -653,11 +653,11 @@ namespace Intersect_Client.Classes.Entities
         {
             var map = MapInstance.GetMap(CurrentMap);
             if (map == null) { return false; }
-            for (int i = 0; i < map.MapItems.Count; i++)
+            foreach (var item in map.MapItems)
             {
-                if (map.MapItems[i].X == CurrentX && map.MapItems[i].Y == CurrentY)
+                if (item.Value.X == CurrentX && item.Value.Y == CurrentY)
                 {
-                    PacketSender.SendPickupItem(i);
+                    PacketSender.SendPickupItem(item.Key);
                     return true;
                 }
             }

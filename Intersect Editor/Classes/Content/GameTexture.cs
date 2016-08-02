@@ -40,7 +40,7 @@ namespace Intersect_Editor.Classes.Content
 
         public void ResetAccessTime()
         {
-            _lastAccessTime = Environment.TickCount + 15000;
+            _lastAccessTime = Globals.System.GetTimeMs() + 15000;
         }
 
         public int GetWidth()
@@ -82,7 +82,7 @@ namespace Intersect_Editor.Classes.Content
         {
             if (_tex != null)
             {
-                if (_lastAccessTime < Environment.TickCount)
+                if (_lastAccessTime < Globals.System.GetTimeMs())
                 {
                     _tex.Dispose();
                     _tex = null;

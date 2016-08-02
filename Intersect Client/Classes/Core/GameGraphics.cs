@@ -67,10 +67,10 @@ namespace Intersect_Client.Classes.Core
 
         //Player Spotlight Values
         private static long _lightUpdate = 0;
-        private static byte _playerLightIntensity = 255;
-        private static int _playerLightSize = 0;
+        private static float _playerLightIntensity = 255;
+        private static float _playerLightSize = 0;
         private static float _playerLightExpand = 0f;
-        public static Color _playerLightColor = Color.White;
+        public static ColorF _playerLightColor = ColorF.White;
         private static List<LightBase> _lightQueue = new List<LightBase>();
 
         private static long _fadeTimer;
@@ -450,7 +450,11 @@ namespace Intersect_Client.Classes.Core
 
         private static void UpdateView()
         {
-            if (Globals.Me == null) return;
+            if (Globals.Me == null)
+            {
+                CurrentView = new FloatRect(0, 0, Renderer.GetScreenWidth(), Renderer.GetScreenHeight());
+                return;
+            }
             var map = MapInstance.GetMap(Globals.Me.CurrentMap);
             if (Globals.GameState == GameStates.InGame && map != null)
             {
@@ -561,8 +565,7 @@ namespace Intersect_Client.Classes.Core
             if (map == null) return;
             if (_darknessTexture == null) { return; }
 
-            UpdatePlayerLight();
-            AddLight((int)Math.Ceiling(Globals.Entities[Globals.MyIndex].GetCenterPos().X), (int)Math.Ceiling(Globals.Entities[Globals.MyIndex].GetCenterPos().Y), (int)_playerLightSize, _playerLightIntensity, _playerLightExpand, Intersect_Library.Color.FromArgb(_playerLightColor.A, _playerLightColor.R, _playerLightColor.G, _playerLightColor.B));
+            AddLight((int)Math.Ceiling(Globals.Entities[Globals.MyIndex].GetCenterPos().X), (int)Math.Ceiling(Globals.Entities[Globals.MyIndex].GetCenterPos().Y), (int)_playerLightSize, (byte)_playerLightIntensity, _playerLightExpand, Intersect_Library.Color.FromArgb((int)_playerLightColor.A, (int)_playerLightColor.R, (int)_playerLightColor.G, (int)_playerLightColor.B));
 
             DrawLights();
             DrawGameTexture(Renderer.GetWhiteTexture(), new FloatRect(0, 0, 1, 1),
@@ -606,36 +609,36 @@ namespace Intersect_Client.Classes.Core
             _lightQueue.Clear();
         }
 
-        private static void UpdatePlayerLight()
+        public static void UpdatePlayerLight()
         {
             //Draw Light Around Player
             var map = MapInstance.GetMap(Globals.Me.CurrentMap);
             if (map != null)
             {
                 float ecTime = Globals.System.GetTimeMS() - _lightUpdate;
-
-                byte brightnessTarget = (byte)(((float)map.Brightness / 100f) * 255);
+                float valChange = (255 * ecTime / 2000f);
+                byte brightnessTarget = (byte)((map.Brightness / 100f) * 255);
                 if (_brightnessLevel < brightnessTarget)
                 {
-                    if ((int)_brightnessLevel + (int)(255 * ecTime / 2000f) > brightnessTarget)
+                    if (_brightnessLevel + valChange > brightnessTarget)
                     {
                         _brightnessLevel = brightnessTarget;
                     }
                     else
                     {
-                        _brightnessLevel += (byte)(255 * ecTime / 2000f);
+                        _brightnessLevel += valChange;
                     }
                 }
 
                 if (_brightnessLevel > brightnessTarget)
                 {
-                    if ((int)_brightnessLevel - (int)(255 * ecTime / 2000f) < brightnessTarget)
+                    if (_brightnessLevel - valChange < brightnessTarget)
                     {
                         _brightnessLevel = brightnessTarget;
                     }
                     else
                     {
-                        _brightnessLevel -= (byte)(255 * ecTime / 2000f);
+                        _brightnessLevel -= valChange;
                     }
                 }
 
@@ -645,73 +648,73 @@ namespace Intersect_Client.Classes.Core
                 {
                     if (_playerLightColor.R < map.PlayerLightColor.R)
                     {
-                        if ((int)_playerLightColor.R + (int)(255 * ecTime / 2000f) > map.PlayerLightColor.R)
+                        if (_playerLightColor.R + valChange > map.PlayerLightColor.R)
                         {
-                            _playerLightColor.R = (byte)map.PlayerLightColor.R;
+                            _playerLightColor.R = map.PlayerLightColor.R;
                         }
                         else
                         {
-                            _playerLightColor.R += (byte)(255 * ecTime / 2000f);
+                            _playerLightColor.R += valChange;
                         }
                     }
 
                     if (_playerLightColor.R > map.PlayerLightColor.R)
                     {
-                        if ((int)_playerLightColor.R - (int)(255 * ecTime / 2000f) < map.PlayerLightColor.R)
+                        if (_playerLightColor.R - valChange < map.PlayerLightColor.R)
                         {
-                            _playerLightColor.R = (byte)map.PlayerLightColor.R;
+                            _playerLightColor.R = map.PlayerLightColor.R;
                         }
                         else
                         {
-                            _playerLightColor.R -= (byte)(255 * ecTime / 2000f);
+                            _playerLightColor.R -= valChange;
                         }
                     }
 
                     if (_playerLightColor.G < map.PlayerLightColor.G)
                     {
-                        if ((int)_playerLightColor.G + (int)(255 * ecTime / 2000f) > map.PlayerLightColor.G)
+                        if (_playerLightColor.G + valChange > map.PlayerLightColor.G)
                         {
-                            _playerLightColor.G = (byte)map.PlayerLightColor.G;
+                            _playerLightColor.G = map.PlayerLightColor.G;
                         }
                         else
                         {
-                            _playerLightColor.G += (byte)(255 * ecTime / 2000f);
+                            _playerLightColor.G += valChange;
                         }
                     }
 
                     if (_playerLightColor.G > map.PlayerLightColor.G)
                     {
-                        if ((int)_playerLightColor.G - (int)(255 * ecTime / 2000f) < map.PlayerLightColor.G)
+                        if (_playerLightColor.G - valChange < map.PlayerLightColor.G)
                         {
-                            _playerLightColor.G = (byte)map.PlayerLightColor.G;
+                            _playerLightColor.G = map.PlayerLightColor.G;
                         }
                         else
                         {
-                            _playerLightColor.G -= (byte)(255 * ecTime / 2000f);
+                            _playerLightColor.G -= valChange;
                         }
                     }
 
                     if (_playerLightColor.B < map.PlayerLightColor.B)
                     {
-                        if ((int)_playerLightColor.B + (int)(255 * ecTime / 2000f) > map.PlayerLightColor.B)
+                        if (_playerLightColor.B + valChange > map.PlayerLightColor.B)
                         {
-                            _playerLightColor.B = (byte)map.PlayerLightColor.B;
+                            _playerLightColor.B = map.PlayerLightColor.B;
                         }
                         else
                         {
-                            _playerLightColor.B += (byte)(255 * ecTime / 2000f);
+                            _playerLightColor.B += valChange;
                         }
                     }
 
                     if (_playerLightColor.B > map.PlayerLightColor.B)
                     {
-                        if ((int)_playerLightColor.B - (int)(255 * ecTime / 2000f) < map.PlayerLightColor.B)
+                        if (_playerLightColor.B - valChange < map.PlayerLightColor.B)
                         {
-                            _playerLightColor.B = (byte)map.PlayerLightColor.B;
+                            _playerLightColor.B = map.PlayerLightColor.B;
                         }
                         else
                         {
-                            _playerLightColor.B -= (byte)(255 * ecTime / 2000f);
+                            _playerLightColor.B -= valChange;
                         }
                     }
                 }
@@ -720,56 +723,56 @@ namespace Intersect_Client.Classes.Core
                 {
                     if (_playerLightSize < map.PlayerLightSize)
                     {
-                        if (_playerLightSize + (int)(500 * ecTime / 2000f) > map.PlayerLightSize)
+                        if (_playerLightSize + (500 * ecTime / 2000f) > map.PlayerLightSize)
                         {
                             _playerLightSize = map.PlayerLightSize;
                         }
                         else
                         {
-                            _playerLightSize += (int)(500 * ecTime / 2000f);
+                            _playerLightSize += (500 * ecTime / 2000f);
                         }
                     }
 
                     if (_playerLightSize > map.PlayerLightSize)
                     {
-                        if (_playerLightSize - (int)(500 * ecTime / 2000f) < map.PlayerLightSize)
+                        if (_playerLightSize - (500 * ecTime / 2000f) < map.PlayerLightSize)
                         {
                             _playerLightSize = map.PlayerLightSize;
                         }
                         else
                         {
-                            _playerLightSize -= (int)(500 * ecTime / 2000f);
+                            _playerLightSize -= (500 * ecTime / 2000f);
                         }
                     }
                 }
 
                 if (_playerLightIntensity < map.PlayerLightIntensity)
                 {
-                    if ((int)_playerLightIntensity + (int)(255 * ecTime / 2000f) > map.PlayerLightIntensity)
+                    if (_playerLightIntensity + valChange > map.PlayerLightIntensity)
                     {
-                        _playerLightIntensity = (byte)map.PlayerLightIntensity;
+                        _playerLightIntensity = map.PlayerLightIntensity;
                     }
                     else
                     {
-                        _playerLightIntensity += (byte)(255 * ecTime / 2000f);
+                        _playerLightIntensity += valChange;
                     }
                 }
 
                 if (_playerLightIntensity > map.AHue)
                 {
-                    if ((int)_playerLightIntensity - (int)(255 * ecTime / 2000f) < map.PlayerLightIntensity)
+                    if (_playerLightIntensity - valChange < map.PlayerLightIntensity)
                     {
-                        _playerLightIntensity = (byte)map.PlayerLightIntensity;
+                        _playerLightIntensity = map.PlayerLightIntensity;
                     }
                     else
                     {
-                        _playerLightIntensity -= (byte)(255 * ecTime / 2000f);
+                        _playerLightIntensity -= valChange;
                     }
                 }
 
                 if (_playerLightExpand < map.PlayerLightExpand)
                 {
-                    if ((int)_playerLightExpand + (float)(100f * ecTime / 2000f) > map.PlayerLightExpand)
+                    if (_playerLightExpand + (100f * ecTime / 2000f) > map.PlayerLightExpand)
                     {
                         _playerLightExpand = map.PlayerLightExpand;
                     }
@@ -781,7 +784,7 @@ namespace Intersect_Client.Classes.Core
 
                 if (_playerLightExpand > map.PlayerLightExpand)
                 {
-                    if ((int)_playerLightExpand - (float)(100f * ecTime / 2000f) < map.PlayerLightExpand)
+                    if (_playerLightExpand - (100f * ecTime / 2000f) < map.PlayerLightExpand)
                     {
                         _playerLightExpand = map.PlayerLightExpand;
                     }

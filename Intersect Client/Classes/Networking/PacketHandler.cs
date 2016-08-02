@@ -37,6 +37,7 @@ using Intersect_Library;
 using Intersect_Library.GameObjects;
 using Intersect_Library.GameObjects.Maps.MapList;
 using Color = IntersectClientExtras.GenericClasses.Color;
+using Intersect_Library.GameObjects.Events;
 
 namespace Intersect_Client.Classes.Networking
 {
@@ -655,9 +656,13 @@ namespace Intersect_Client.Classes.Networking
                 int itemCount = bf.ReadInteger();
                 for (int i = 0; i < itemCount; i++)
                 {
-                    var item = new MapItemInstance();
-                    item.Load(bf);
-                    map.MapItems.Add(item);
+                    var index = bf.ReadInteger();
+                    if (index != -1)
+                    {
+                        var item = new MapItemInstance();
+                        item.Load(bf);
+                        map.MapItems.Add(index, item);
+                    }
                 }
             }
             bf.Dispose();
@@ -674,17 +679,11 @@ namespace Intersect_Client.Classes.Networking
             {
                 if (bf.ReadInteger() == -1)
                 {
-                    if (map.MapItems.Count > index)
-                    {
-                        map.MapItems.RemoveAt(index);
-                    }
+                    map.MapItems.Remove(index);
                 }
                 else
                 {
-                    while (index >= map.MapItems.Count)
-                    {
-                        map.MapItems.Add(new MapItemInstance());
-                    }
+                    map.MapItems.Add(index, new MapItemInstance());
                     map.MapItems[index].Load(bf);
                 }
             }
@@ -1120,6 +1119,9 @@ namespace Intersect_Client.Classes.Networking
                     TilesetBase.AddObject(id, obj);
                     if (Globals.HasGameData) Globals.ContentManager.LoadTilesets(DatabaseObject.GetGameObjectList(GameObject.Tileset));
                     break;
+                case GameObject.CommonEvent:
+                    //Clients don't store event data, im an idiot.
+                    break;
                 default:
                     throw new ArgumentOutOfRangeException();
             }
@@ -1133,7 +1135,8 @@ namespace Intersect_Client.Classes.Networking
             var index = (int)bf.ReadLong();
             var range = bf.ReadInteger();
             var direction = bf.ReadInteger();
-            Globals.Entities[index].DashQueue.Enqueue(new DashInstance(index, range, direction));
+            var changeDirection = Convert.ToBoolean(bf.ReadInteger());
+            Globals.Entities[index].DashQueue.Enqueue(new DashInstance(index, range, direction,changeDirection));
             bf.Dispose();
         }
     }

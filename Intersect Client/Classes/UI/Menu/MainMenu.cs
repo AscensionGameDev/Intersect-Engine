@@ -177,6 +177,16 @@ namespace Intersect_Client.Classes.UI.Menu
             }
         }
 
+        public void Reset()
+        {
+            _loginWindow.Hide();
+            _registerWindow.Hide();
+            _optionsWindow.Hide();
+            if (_createCharacterWindow != null) _createCharacterWindow.Hide();
+            _menuPanel.Show();
+            _optionsButton.Show();
+        }
+
         public void Show()
         {
             _menuPanel.IsHidden = false;

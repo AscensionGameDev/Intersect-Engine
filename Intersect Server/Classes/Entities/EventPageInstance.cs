@@ -28,6 +28,7 @@ using Intersect_Server.Classes.General;
 using Intersect_Server.Classes.Misc;
 using Intersect_Server.Classes.Misc.Pathfinding;
 using Intersect_Server.Classes.Networking;
+using Intersect_Server.Classes.Maps;
 
 namespace Intersect_Server.Classes.Entities
 {
@@ -222,7 +223,7 @@ namespace Intersect_Server.Classes.Entities
         }
         public void Update(bool isActive)
         {
-            if (MoveTimer >= Environment.TickCount || GlobalClone != null || (isActive && MyPage.InteractionFreeze == 1)) return;
+            if (MoveTimer >= Globals.System.GetTimeMs() || GlobalClone != null || (isActive && MyPage.InteractionFreeze == 1)) return;
             if (MovementType == 2 && MoveRoute != null)
             {
                 ProcessMoveRoute();
@@ -236,7 +237,7 @@ namespace Intersect_Server.Classes.Entities
                     if (CanMove(dir) == -1)
                     {
                         Move(dir, Client);
-                        MoveTimer = Environment.TickCount + (long)GetMovementTime();
+                        MoveTimer = Globals.System.GetTimeMs() + (long)GetMovementTime();
                     }
                 }
             }
@@ -602,15 +603,15 @@ namespace Intersect_Server.Classes.Entities
                         moved = true;
                         break;
                     case MoveRouteEnum.Wait100:
-                        MoveTimer = Environment.TickCount + 100;
+                        MoveTimer = Globals.System.GetTimeMs() + 100;
                         moved = true;
                         break;
                     case MoveRouteEnum.Wait500:
-                        MoveTimer = Environment.TickCount + 500;
+                        MoveTimer = Globals.System.GetTimeMs() + 500;
                         moved = true;
                         break;
                     case MoveRouteEnum.Wait1000:
-                        MoveTimer = Environment.TickCount + 1000;
+                        MoveTimer = Globals.System.GetTimeMs() + 1000;
                         moved = true;
                         break;
                     case MoveRouteEnum.SetGraphic:
@@ -668,9 +669,9 @@ namespace Intersect_Server.Classes.Entities
                     //Send Update
                     SendToClient();
                 }
-                if (MoveTimer < Environment.TickCount)
+                if (MoveTimer < Globals.System.GetTimeMs())
                 {
-                    MoveTimer = Environment.TickCount + (long)GetMovementTime();
+                    MoveTimer = Globals.System.GetTimeMs() + (long)GetMovementTime();
                 }
             }
         }
@@ -743,6 +744,11 @@ namespace Intersect_Server.Classes.Entities
                 {
                     if (i > PageNum) return true;
                 }
+            }
+            if (GlobalClone != null)
+            {
+                var map = MapInstance.GetMap(GlobalClone.CurrentMap);
+                if (map == null || !map.FindEvent(GlobalClone.BaseEvent,GlobalClone)) return true;
             }
             return false;
         }

@@ -17,13 +17,13 @@ namespace Intersect_Server.Classes.Networking
         protected long _pingTime;
         protected long _pingInterval = 2000;
         protected long _connectionTimeout = -1;
-        protected long _timeout = 10000; //10 seconds
+        protected long _timeout = 100000; //100 seconds
         protected bool _isConnected = true;
 
         public GameSocket()
         {
-            _connectTime = Environment.TickCount;
-            _connectionTimeout = Environment.TickCount + _timeout;
+            _connectTime = Globals.System.GetTimeMs();
+            _connectionTimeout = Globals.System.GetTimeMs() + _timeout;
         }
 
         public void Start()
@@ -32,7 +32,10 @@ namespace Intersect_Server.Classes.Networking
         }
 
         public abstract void SendData(byte[] data);
-        public abstract void Disconnect();
+        public virtual void Disconnect()
+        {
+            HandleDisconnect();
+        }
         public abstract void Dispose();
         public abstract bool IsConnected();
         public abstract string GetIP();
@@ -101,24 +104,24 @@ namespace Intersect_Server.Classes.Networking
 
         public virtual void Update()
         {
-            if (_connectionTimeout > -1 && _connectionTimeout < Environment.TickCount)
+            if (_connectionTimeout > -1 && _connectionTimeout < Globals.System.GetTimeMs())
             {
                 HandleDisconnect();
                 return;
             }
             else
             {
-                if (_pingTime < Environment.TickCount)
+                if (_pingTime < Globals.System.GetTimeMs())
                 {
                     PacketSender.SendPing(_myClient);
-                    _pingTime = Environment.TickCount + _pingInterval;
+                    _pingTime = Globals.System.GetTimeMs() + _pingInterval;
                 }
             }
         }
 
         public virtual void Pinged()
         {
-            _connectionTimeout = Environment.TickCount + _timeout;
+            _connectionTimeout = Globals.System.GetTimeMs() + _timeout;
         }
 
         protected void HandleDisconnect()

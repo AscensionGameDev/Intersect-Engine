@@ -33,6 +33,7 @@ using Intersect_Server.Classes.Maps;
 using Intersect_Server.Classes.Spells;
 
 using Attribute = Intersect_Library.GameObjects.Maps.Attribute;
+using System.Collections.Generic;
 
 namespace Intersect_Server.Classes.Networking
 {
@@ -394,18 +395,31 @@ namespace Intersect_Server.Classes.Networking
             bf.WriteBytes(packet);
             var mapNum = (int)bf.ReadLong();
             var mapLength = bf.ReadLong();
-            MapInstance.GetMap(mapNum).Load(bf.ReadBytes((int)mapLength), MapInstance.GetMap(mapNum).Revision + 1);
-            Database.SaveGameObject(MapInstance.GetMap(mapNum));
-            foreach (var t in Globals.Clients)
+            var map = MapInstance.GetMap(mapNum);
+            if (map != null)
             {
-                if (t == null) continue;
-                if (t.IsEditor)
+                MapInstance.GetMap(mapNum).Load(bf.ReadBytes((int)mapLength), MapInstance.GetMap(mapNum).Revision + 1);
+                Database.SaveGameObject(MapInstance.GetMap(mapNum));
+                foreach (var t in Globals.Clients)
                 {
-                    PacketSender.SendMapList(t);
+                    if (t == null) continue;
+                    if (t.IsEditor)
+                    {
+                        PacketSender.SendMapList(t);
+                    }
                 }
+                var players = new List<Player>();
+                foreach (var surrMap in map.GetSurroundingMaps(true))
+                {
+                    players.AddRange(map.GetPlayersOnMap().ToArray());
+                }
+                foreach (var player in players)
+                {
+                    player.Warp(player.CurrentMap, player.CurrentX, player.CurrentY);
+                }
+                PacketSender.SendMap(client, (int)mapNum); //Sends map to everyone/everything in proximity
+                bf.Dispose();
             }
-            PacketSender.SendMap(client, (int)mapNum); //Sends map to everyone/everything in proximity
-            bf.Dispose();
         }
 
         private static void HandleCreateMap(Client client, byte[] packet)
@@ -1090,7 +1104,19 @@ namespace Intersect_Server.Classes.Networking
                         if (val1.ToLower() == Globals.Clients[i].Entity.MyName.ToLower())
                         {
                             Globals.Clients[i].Entity.MySprite = val2;
-                            PacketSender.SendEntityDataToProximity(i, (int)EntityTypes.Player, Globals.Clients[i].Entity.Data(), Globals.Clients[i].Entity);
+                            PacketSender.SendEntityDataToProximity(Globals.Clients[i].Entity.MyIndex, (int)EntityTypes.Player, Globals.Clients[i].Entity.Data(), Globals.Clients[i].Entity);
+                            return;
+                        }
+                    }
+                    PacketSender.SendPlayerMsg(client, val1 + " is not online.");
+                    break;
+                case (int)AdminActions.SetFace:
+                    for (int i = 0; i < Globals.Clients.Count; i++)
+                    {
+                        if (val1.ToLower() == Globals.Clients[i].Entity.MyName.ToLower())
+                        {
+                            Globals.Clients[i].Entity.Face = val2;
+                            PacketSender.SendEntityDataToProximity(Globals.Clients[i].Entity.MyIndex, (int)EntityTypes.Player, Globals.Clients[i].Entity.Data(), Globals.Clients[i].Entity);
                             return;
                         }
                     }
@@ -1103,7 +1129,7 @@ namespace Intersect_Server.Classes.Networking
                         {
                             if (val1.ToLower() != client.Entity.MyName.ToLower()) //Can't increase your own power!
                             {
-                                if (client.Power > 1)
+                                if (client.Power == 2)
                                 {
                                     if (Convert.ToInt32(val2) < 3 || Convert.ToInt32(val2) > -1) //Making it retard proof
                                     {
@@ -1129,6 +1155,11 @@ namespace Intersect_Server.Classes.Networking
                                     PacketSender.SendPlayerMsg(client, "Only admins can set power.");
                                     return;
                                 }
+                            }
+                            else
+                            {
+                                PacketSender.SendPlayerMsg(client, "You cannot alter your own power!");
+                                return;
                             }
                         }
                     }
@@ -1523,6 +1554,19 @@ namespace Intersect_Server.Classes.Networking
             }
             if (obj != null)
             {
+                //if Item or Resource, kill all global entities of that kind
+                if (type == GameObject.Item)
+                {
+                    Globals.KillItemsOf((ItemBase)obj);
+                }
+                else if (type == GameObject.Resource)
+                {
+                    Globals.KillResourcesOf((ResourceBase)obj);
+                }
+                else if (type == GameObject.Npc)
+                {
+                    Globals.KillNpcsOf((NpcBase)obj);
+                }
                 Database.DeleteGameObject(obj);
                 PacketSender.SendGameObjectToAll(obj, true);
             }
@@ -1589,6 +1633,19 @@ namespace Intersect_Server.Classes.Networking
             }
             if (obj != null)
             {
+                //if Item or Resource, kill all global entities of that kind
+                if (type == GameObject.Item)
+                {
+                    Globals.KillItemsOf((ItemBase)obj);
+                }
+                else if (type == GameObject.Resource)
+                {
+                    Globals.KillResourcesOf((ResourceBase)obj);
+                }
+                else if (type == GameObject.Npc)
+                {
+                    Globals.KillNpcsOf((NpcBase)obj);
+                }
                 obj.Load(bf.ReadBytes(bf.Length()));
                 PacketSender.SendGameObjectToAll(obj, false);
                 Database.SaveGameObject(obj);

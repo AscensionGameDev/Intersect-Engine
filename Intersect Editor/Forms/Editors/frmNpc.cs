@@ -158,6 +158,8 @@ namespace Intersect_Editor.Forms
                 lblDef.Text = @"Armor: " + scrlDef.Value;
                 lblMR.Text = @"Magic Resist: " + scrlMR.Value;
                 lblSpd.Text = @"Move Speed: " + scrlSpd.Value;
+                chkAttackAllies.Checked = _editorItem.AttackAllies;
+                chkEnabled.Checked = _editorItem.NpcVsNpcEnabled;
 
                 // Add the spells to the list
                 lstSpells.Items.Clear();

@@ -267,7 +267,7 @@ namespace Intersect_Server.Classes.Core
                 + MUTE_IP + " TEXT,"
                 + MUTE_DURATION + " INTEGER,"
                 + MUTE_REASON + " TEXT,"
-                + MUTE_MUTER + " INTEGER"
+                + MUTE_MUTER + " TEXT"
                 + ");";
             using (var createCommand = _dbConnection.CreateCommand())
             {
@@ -284,7 +284,7 @@ namespace Intersect_Server.Classes.Core
                 + BAN_IP + " TEXT,"
                 + BAN_DURATION + " INTEGER,"
                 + BAN_REASON + " TEXT,"
-                + BAN_BANNER + " INTEGER"
+                + BAN_BANNER + " TEXT"
                 + ");";
             using (var createCommand = _dbConnection.CreateCommand())
             {
@@ -975,8 +975,8 @@ namespace Intersect_Server.Classes.Core
                         cmd.Parameters.Add(new SqliteParameter("@" + CHAR_SPELL_SLOT, i));
                         cmd.Parameters.Add(new SqliteParameter("@" + CHAR_SPELL_NUM, player.Spells[i].SpellNum));
                         cmd.Parameters.Add(new SqliteParameter("@" + CHAR_SPELL_CD,
-                            (player.Spells[i].SpellCD > Environment.TickCount
-                                ? Environment.TickCount - player.Spells[i].SpellCD
+                            (player.Spells[i].SpellCD > Globals.System.GetTimeMs()
+                                ? Globals.System.GetTimeMs() - player.Spells[i].SpellCD
                                 : 0)));
                         cmd.ExecuteNonQuery();
                     }
@@ -1223,7 +1223,7 @@ namespace Intersect_Server.Classes.Core
                             if (slot >= 0 && slot < Options.MaxPlayerSkills)
                             {
                                 player.Spells[slot].SpellNum = Convert.ToInt32(dataReader[CHAR_SPELL_NUM]);
-                                player.Spells[slot].SpellCD = Environment.TickCount +
+                                player.Spells[slot].SpellCD = Globals.System.GetTimeMs() +
                               Convert.ToInt32(dataReader[CHAR_SPELL_CD]);
                                 if (SpellBase.GetSpell(player.Spells[slot].SpellNum) == null)
                                 {

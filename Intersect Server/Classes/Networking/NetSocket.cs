@@ -91,6 +91,7 @@ namespace Intersect_Server.Classes.Networking
 
         public override void Disconnect()
         {
+            base.Disconnect();
             if (_mySocket != null)
             {
                 _mySocket.Close();

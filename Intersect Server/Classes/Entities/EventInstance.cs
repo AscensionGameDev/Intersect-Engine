@@ -146,7 +146,7 @@ namespace Intersect_Server.Classes.Entities
                                 }
                                 else
                                 {
-                                    if (WaitTimer < Environment.TickCount)
+                                    if (WaitTimer < Globals.System.GetTimeMs())
                                     {
                                         ProcessCommand(
                                             CallStack.Peek().Page.CommandLists[
@@ -180,8 +180,11 @@ namespace Intersect_Server.Classes.Entities
                     {
                         if (IsGlobal)
                         {
-                            PageInstance = new EventPageInstance(BaseEvent, BaseEvent.MyPages[i], BaseEvent.MyIndex, MapNum, this, MyClient, MapInstance.GetMap(MapNum).GetGlobalEventInstance(BaseEvent).GlobalPageInstance[i]);
-                            PageIndex = i;
+                            if (MapInstance.GetMap(MapNum).GetGlobalEventInstance(BaseEvent) != null)
+                            {
+                                PageInstance = new EventPageInstance(BaseEvent, BaseEvent.MyPages[i], BaseEvent.MyIndex, MapNum, this, MyClient, MapInstance.GetMap(MapNum).GetGlobalEventInstance(BaseEvent).GlobalPageInstance[i]);
+                                PageIndex = i;
+                            }
                         }
                         else
                         {
@@ -925,7 +928,7 @@ namespace Intersect_Server.Classes.Entities
                     CallStack.Peek().CommandIndex++;
                     break;
                 case EventCommandType.Wait:
-                    WaitTimer = Environment.TickCount +
+                    WaitTimer = Globals.System.GetTimeMs() +
                                 CallStack.Peek().Page.CommandLists[CallStack.Peek().ListIndex]
                                     .Commands[CallStack.Peek().CommandIndex].Ints[0];
                     CallStack.Peek().CommandIndex++;

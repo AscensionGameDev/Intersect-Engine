@@ -45,7 +45,7 @@ namespace Intersect_Client.Classes.Maps
         public GameRenderTexture[] PeakTextures = new GameRenderTexture[3];
 
         //Map Items
-        public List<MapItemInstance> MapItems = new List<MapItemInstance>();
+        public Dictionary<int, MapItemInstance> MapItems = new Dictionary<int, MapItemInstance>();
 
         //Map Animations
         public List<MapAnimationInstance> LocalAnimations = new List<MapAnimationInstance>();
@@ -352,16 +352,16 @@ namespace Intersect_Client.Classes.Maps
             if (layer == 0)
             {
                 //Draw Map Items
-                for (int i = 0; i < MapItems.Count; i++)
+                foreach (var item in MapItems)
                 {
-                    var itemBase = ItemBase.GetItem(MapItems[i].ItemNum);
+                    var itemBase = ItemBase.GetItem(item.Value.ItemNum);
                     if (itemBase != null)
                     {
                         GameTexture itemTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Item, itemBase.Pic);
                         if (itemTex != null)
                         {
-                            GameGraphics.DrawGameTexture(itemTex, GetX() + MapItems[i].X * Options.TileWidth,
-                                GetY() + MapItems[i].Y * Options.TileHeight);
+                            GameGraphics.DrawGameTexture(itemTex, GetX() + item.Value.X * Options.TileWidth,
+                                GetY() + item.Value.Y * Options.TileHeight);
                         }
                     }
                 }

@@ -209,17 +209,18 @@ namespace Intersect_Library
     public enum AdminActions
     {
         WarpTo = 0,
-        WarpMeTo = 1,
-        WarpToMe = 2,
-        WarpToLoc = 3,
-        Kick = 4,
-        Kill = 5,
-        Ban = 6,
-        UnBan = 7,
-        Mute = 8,
-        UnMute = 9,
-        SetSprite = 10,
-        SetAccess = 11,
+        WarpMeTo,
+        WarpToMe,
+        WarpToLoc,
+        Kick,
+        Kill,
+        Ban,
+        UnBan,
+        Mute,
+        UnMute,
+        SetSprite,
+        SetFace,
+        SetAccess,
     }
 
     public enum EntityTypes

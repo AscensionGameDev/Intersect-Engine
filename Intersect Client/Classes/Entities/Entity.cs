@@ -501,6 +501,7 @@ namespace Intersect_Client.Classes.Entities
                 {
                     destRectangle.X = (map.GetX() + CurrentX * Options.TileWidth + OffsetX);
                     destRectangle.Y = map.GetY() + CurrentY * Options.TileHeight + OffsetY - ((paperdollTex.GetHeight() / 4) - Options.TileHeight);
+                    destRectangle.Y = GetCenterPos().Y - paperdollTex.GetHeight() / 8;
                 }
                 else
                 {
@@ -569,7 +570,6 @@ namespace Intersect_Client.Classes.Entities
             {
                 pos.Y += Options.TileHeight / 2;
                 pos.Y -= entityTex.GetHeight() / 4 / 2;
-                pos.X += entityTex.GetWidth()/8 - (Options.TileWidth /2);
             }
             return pos;
         }
@@ -603,10 +603,6 @@ namespace Intersect_Client.Classes.Entities
             {
                 y = y - (int)((entityTex.GetHeight() / 8));
                 y -= 12;
-                if (entityTex.GetWidth() / 4 > Options.TileWidth)
-                {
-                    x = x - (int)((entityTex.GetWidth() / 4) - Options.TileWidth) / 2;
-                }
             }
             if (this.GetType() != typeof(Event)) { y -= 10; } //Need room for HP bar if not an event.
 
@@ -669,10 +665,6 @@ namespace Intersect_Client.Classes.Entities
             {
                 y = y - (int)((entityTex.GetHeight() / 8));
                 y -= 8;
-                if (entityTex.GetWidth() / 4 > Options.TileWidth)
-                {
-                    x = x - (int)((entityTex.GetWidth() / 4) - Options.TileWidth) / 2;
-                }
             }
 
             GameGraphics.DrawGameTexture(GameGraphics.Renderer.GetWhiteTexture(), new FloatRect(0, 0, 1, 1),
@@ -703,11 +695,6 @@ namespace Intersect_Client.Classes.Entities
                 {
                     y = y + (int) ((entityTex.GetHeight()/8));
                     y += 3;
-
-                    if (entityTex.GetWidth()/4 > Options.TileWidth)
-                    {
-                        x = x - (int) ((entityTex.GetWidth()/4) - Options.TileWidth)/2;
-                    }
                 }
 
                 GameGraphics.DrawGameTexture(GameGraphics.Renderer.GetWhiteTexture(), new FloatRect(0, 0, 1, 1),
@@ -798,13 +785,15 @@ namespace Intersect_Client.Classes.Entities
         public float XOffset = 0f;
         public float YOffset = 0f;
         public int Direction = 0;
+        public bool ChangeDirection = false;
 
-        public DashInstance(int entityID, int range, int direction)
+        public DashInstance(int entityID, int range, int direction, bool changeDirection = true)
         {
             EntityID = entityID;
             DistanceTraveled = 0;
             Range = range;
             Direction = direction;
+            ChangeDirection = changeDirection;
         }
 
         public void Start()
@@ -812,7 +801,7 @@ namespace Intersect_Client.Classes.Entities
             if (Range <= 0) { Globals.Entities[EntityID].Dashing = null; } //Remove dash instance if no where to dash
             TransmittionTimer = Globals.System.GetTimeMS() + (long)((float)Options.MaxDashSpeed / (float)Range);
             SpawnTime = Globals.System.GetTimeMS();
-            Globals.Entities[EntityID].Dir = Direction;
+            if (ChangeDirection) Globals.Entities[EntityID].Dir = Direction;
         }
 
         public float GetXOffset()

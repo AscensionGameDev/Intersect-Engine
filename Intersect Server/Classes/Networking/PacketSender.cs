@@ -669,7 +669,15 @@ namespace Intersect_Server.Classes.Networking
             bf.WriteInteger(MapInstance.GetMap(mapNum).MapItems.Count);
             for (int i = 0; i < MapInstance.GetMap(mapNum).MapItems.Count; i++)
             {
-                bf.WriteBytes(MapInstance.GetMap(mapNum).MapItems[i].Data());
+                if (MapInstance.GetMap(mapNum).MapItems[i] != null)
+                {
+                    bf.WriteInteger(i);
+                    bf.WriteBytes(MapInstance.GetMap(mapNum).MapItems[i].Data());
+                }
+                else
+                {
+                    bf.WriteInteger(-1);
+                }
             }
             client.SendPacket(bf.ToArray());
             bf.Dispose();
@@ -695,7 +703,7 @@ namespace Intersect_Server.Classes.Networking
             bf.WriteLong((int)ServerPackets.MapItemUpdate);
             bf.WriteInteger(mapNum);
             bf.WriteInteger(index);
-            if (MapInstance.GetMap(mapNum).MapItems[index].ItemNum == -1)
+            if (MapInstance.GetMap(mapNum).MapItems[index] == null || MapInstance.GetMap(mapNum).MapItems[index].ItemNum == -1)
             {
                 bf.WriteInteger(-1);
             }
@@ -1086,13 +1094,14 @@ namespace Intersect_Server.Classes.Networking
             bf.Dispose();
         }
 
-        public static void SendEntityDash(int index, int range, int direction)
+        public static void SendEntityDash(int index, int range, int direction, bool changeDirection)
         {
             var bf = new ByteBuffer();
             bf.WriteLong((int)ServerPackets.EntityDash);
             bf.WriteLong(index);
             bf.WriteInteger(range);
             bf.WriteInteger(direction);
+            bf.WriteInteger(Convert.ToInt32(changeDirection));
             SendDataToProximity(Globals.Entities[index].CurrentMap, bf.ToArray());
             bf.Dispose();
         }

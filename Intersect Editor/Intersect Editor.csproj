@@ -44,6 +44,7 @@
     <Compile Include="Classes\Core\Database.cs" />
     <Compile Include="Classes\Core\EditorGraphics.cs" />
     <Compile Include="Classes\Core\EditorLoop.cs" />
+    <Compile Include="Classes\Core\EditorSystem.cs" />
     <Compile Include="Classes\Core\Program.cs" />
     <Compile Include="Classes\Content\Sounds.cs" />
     <Compile Include="Classes\Entities\AnimationInstance.cs" />
@@ -51,7 +52,6 @@
     <Compile Include="Classes\General\Globals.cs" />
     <Compile Include="Classes\Maps\MapInstance.cs" />
     <Compile Include="Classes\Maps\MapProperties.cs" />
-    <Compile Include="Classes\Misc\AlphanumComparatorFast.cs" />
     <Compile Include="Classes\Networking\Network.cs" />
     <Compile Include="Classes\Networking\PacketHandler.cs" />
     <Compile Include="Classes\Networking\PacketSender.cs" />

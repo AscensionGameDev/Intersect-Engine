@@ -27,6 +27,7 @@ using Intersect_Editor.Classes.General;
 using Intersect_Editor.Classes.Maps;
 using Intersect_Library;
 using Intersect_Library.GameObjects;
+using Intersect_Editor.Classes.Core;
 
 namespace Intersect_Editor.Classes
 {
@@ -40,6 +41,7 @@ namespace Intersect_Editor.Classes
         //Editor Loop Variables
         public static Thread EditorThread;
         public static int CurrentEditor = -1;
+        public static EditorSystem System = new EditorSystem();
 
         public static int MyIndex;
         public static frmMain MainForm;

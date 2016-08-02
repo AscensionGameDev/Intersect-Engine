@@ -80,7 +80,7 @@ namespace Intersect_Editor.Forms
             }
             else
             {
-                statusString = "Failed to connect, retrying in " + ((Globals.ReconnectTime - Environment.TickCount)/1000).ToString("0") + " seconds.";
+                statusString = "Failed to connect, retrying in " + ((Globals.ReconnectTime - Globals.System.GetTimeMs())/1000).ToString("0") + " seconds.";
                 btnLogin.Enabled = false;
             }
             Globals.LoginForm.lblStatus.Text = statusString;

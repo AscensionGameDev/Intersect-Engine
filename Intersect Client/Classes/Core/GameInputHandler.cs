@@ -41,125 +41,134 @@ namespace Intersect_Client.Classes.Core
 
         public static void OnKeyPressed(Keys key)
         {
-            if (key == Keys.E)
+            if (!Gui.HasInputFocus())
             {
-                if (Globals.Me != null)
+                if (key == Keys.E)
                 {
-                    if (Globals.Me.TryAttack())
+                    if (Globals.Me != null)
                     {
-                        return;
-                    }
-                    if (Globals.Me.TryPickupItem())
-                    {
-                        return;
-                    }
-                    if (Globals.Me.AttackTimer < Globals.System.GetTimeMS())
-                        Globals.Me.AttackTimer = Globals.System.GetTimeMS() + Globals.Me.CalculateAttackTime();
-                }
-            }
-            else if (key == Keys.Q)
-            {
-                if (Globals.Me != null)
-                {
-                    if (Globals.Me.TryBlock())
-                    {
-                        return;
+                        if (Globals.Me.TryAttack())
+                        {
+                            return;
+                        }
+                        if (Globals.Me.TryPickupItem())
+                        {
+                            return;
+                        }
+                        if (Globals.Me.AttackTimer < Globals.System.GetTimeMS())
+                            Globals.Me.AttackTimer = Globals.System.GetTimeMS() + Globals.Me.CalculateAttackTime();
                     }
                 }
-            }
-            else if (key == Keys.Escape)
-            {
-                if (Globals.GameState == GameStates.Intro)
+                else if (key == Keys.Q)
                 {
-                    GameFade.FadeIn();
-                    Globals.GameState = GameStates.Menu;
+                    if (Globals.Me != null)
+                    {
+                        if (Globals.Me.TryBlock())
+                        {
+                            return;
+                        }
+                    }
                 }
-            }
-            else if (key == Keys.Insert)
-            {
-                //Try to open admin panel!
-                if (Globals.GameState == GameStates.InGame)
+                else if (key == Keys.Escape)
                 {
-                    PacketSender.SendOpenAdminWindow();
+                    if (Globals.GameState == GameStates.Intro)
+                    {
+                        GameFade.FadeIn();
+                        Globals.GameState = GameStates.Menu;
+                    }
                 }
-            }
-            else if (key == Keys.F2)
-            {
-                Gui.GameUI.ShowHideDebug();
-            }
-            else if (key == Keys.Enter || key == Keys.Return)
-            {
-                if (Globals.GameState != GameStates.InGame) return;
-                if (!Gui.HasInputFocus())
+                else if (key == Keys.Insert)
                 {
-                    Gui.GameUI.FocusChat = true;
+                    //Try to open admin panel!
+                    if (Globals.GameState == GameStates.InGame)
+                    {
+                        PacketSender.SendOpenAdminWindow();
+                    }
                 }
-            }
-            else if (key >= Keys.D1 && key <= Keys.D9)
-            {
-                if (Globals.GameState != GameStates.InGame) return;
-                if (!Gui.HasInputFocus())
+                else if (key == Keys.F2)
                 {
-                    Gui.GameUI.Hotbar.Items[((int)key - (int)Keys.D1)].Activate();
+                    Gui.GameUI.ShowHideDebug();
                 }
-            }
-            else if (key == Keys.D0)
-            {
-                if (Globals.GameState != GameStates.InGame) return;
-                if (!Gui.HasInputFocus())
+                else if (key == Keys.Enter || key == Keys.Return)
                 {
-                    Gui.GameUI.Hotbar.Items[9].Activate();
+                    if (Globals.GameState != GameStates.InGame) return;
+                    if (!Gui.HasInputFocus())
+                    {
+                        Gui.GameUI.FocusChat = true;
+                    }
+                }
+                else if (key >= Keys.D1 && key <= Keys.D9)
+                {
+                    if (Globals.GameState != GameStates.InGame) return;
+                    if (!Gui.HasInputFocus())
+                    {
+                        Gui.GameUI.Hotbar.Items[((int)key - (int)Keys.D1)].Activate();
+                    }
+                }
+                else if (key == Keys.D0)
+                {
+                    if (Globals.GameState != GameStates.InGame) return;
+                    if (!Gui.HasInputFocus())
+                    {
+                        Gui.GameUI.Hotbar.Items[9].Activate();
+                    }
                 }
             }
         }
 
         public static void OnKeyReleased(Keys key)
         {
-            if (Globals.Me != null)
+            if (!Gui.HasInputFocus())
             {
-                if (key == Keys.Q)
+                if (Globals.Me != null)
                 {
-                    Globals.Me.StopBlocking();
+                    if (key == Keys.Q)
+                    {
+                        Globals.Me.StopBlocking();
+                    }
                 }
             }
         }
 
         public static void OnMouseDown(GameInput.MouseButtons btn)
         {
-            if (Globals.GameState == GameStates.InGame && Globals.Me != null)
+            if (!Gui.HasInputFocus())
             {
-                if (btn == GameInput.MouseButtons.Left)
+                if (Globals.GameState == GameStates.InGame && Globals.Me != null)
                 {
-                    if (!Gui.MouseHitGUI())
+                    if (btn == GameInput.MouseButtons.Left)
                     {
-                        if (Globals.Me != null)
+                        if (!Gui.MouseHitGUI())
                         {
-                            if (Globals.Me.TryTarget())
+                            if (Globals.Me != null)
                             {
-                                return;
+                                if (Globals.Me.TryTarget())
+                                {
+                                    return;
+                                }
+                                if (Globals.Me.TryAttack())
+                                {
+                                    return;
+                                }
+                                if (Globals.Me.TryPickupItem())
+                                {
+                                    return;
+                                }
+                                if (Globals.Me.AttackTimer < Globals.System.GetTimeMS())
+                                    Globals.Me.AttackTimer = Globals.System.GetTimeMS() + Globals.Me.CalculateAttackTime();
                             }
-                            if (Globals.Me.TryAttack())
-                            {
-                                return;
-                            }
-                            if (Globals.Me.TryPickupItem())
-                            {
-                                return;
-                            }
-                            if (Globals.Me.AttackTimer < Globals.System.GetTimeMS())
-                                Globals.Me.AttackTimer = Globals.System.GetTimeMS() + Globals.Me.CalculateAttackTime();
                         }
                     }
-                }
-                else if (btn == GameInput.MouseButtons.Right)
-                {
-                    if (!Gui.MouseHitGUI())
+                    else if (btn == GameInput.MouseButtons.Right)
                     {
-                        if (Globals.Me != null)
+                        if (!Gui.MouseHitGUI())
                         {
-                            if (Globals.Me.TryBlock())
+                            if (Globals.Me != null)
                             {
-                                return;
+                                if (Globals.Me.TryBlock())
+                                {
+                                    return;
+                                }
                             }
                         }
                     }
@@ -169,34 +178,37 @@ namespace Intersect_Client.Classes.Core
 
         public static void OnMouseUp(GameInput.MouseButtons btn)
         {
-            if (Globals.Me != null)
+            if (!Gui.HasInputFocus())
             {
-                if (btn == GameInput.MouseButtons.Right)
+                if (Globals.Me != null)
                 {
-                    Globals.Me.StopBlocking();
-                    if (Globals.InputManager.KeyDown(Keys.Shift) == true)
+                    if (btn == GameInput.MouseButtons.Right)
                     {
-                        var x = (int)Math.Floor(Globals.InputManager.GetMousePosition().X + GameGraphics.CurrentView.Left);
-                        var y = (int)Math.Floor(Globals.InputManager.GetMousePosition().Y + GameGraphics.CurrentView.Top);
-
-                        foreach (var map in MapInstance.GetObjects().Values)
+                        Globals.Me.StopBlocking();
+                        if (Globals.InputManager.KeyDown(Keys.Shift) == true)
                         {
-                            if (x >= map.GetX() && x <= map.GetX() + (Options.MapWidth * Options.TileWidth))
+                            var x = (int)Math.Floor(Globals.InputManager.GetMousePosition().X + GameGraphics.CurrentView.Left);
+                            var y = (int)Math.Floor(Globals.InputManager.GetMousePosition().Y + GameGraphics.CurrentView.Top);
+
+                            foreach (var map in MapInstance.GetObjects().Values)
                             {
-                                if (y >= map.GetY() && y <= map.GetY() + (Options.MapHeight * Options.TileHeight))
+                                if (x >= map.GetX() && x <= map.GetX() + (Options.MapWidth * Options.TileWidth))
                                 {
-                                    //Remove the offsets to just be dealing with pixels within the map selected
-                                    x -= (int)map.GetX();
-                                    y -= (int)map.GetY();
-
-                                    //transform pixel format to tile format
-                                    x /= Options.TileWidth;
-                                    y /= Options.TileHeight;
-                                    int mapNum = map.MyMapNum;
-
-                                    if (Globals.Me.GetRealLocation(ref x, ref y, ref mapNum))
+                                    if (y >= map.GetY() && y <= map.GetY() + (Options.MapHeight * Options.TileHeight))
                                     {
-                                        PacketSender.SendAdminAction((int)AdminActions.WarpToLoc, Convert.ToString(mapNum), Convert.ToString(x), Convert.ToString(y));
+                                        //Remove the offsets to just be dealing with pixels within the map selected
+                                        x -= (int)map.GetX();
+                                        y -= (int)map.GetY();
+
+                                        //transform pixel format to tile format
+                                        x /= Options.TileWidth;
+                                        y /= Options.TileHeight;
+                                        int mapNum = map.MyMapNum;
+
+                                        if (Globals.Me.GetRealLocation(ref x, ref y, ref mapNum))
+                                        {
+                                            PacketSender.SendAdminAction((int)AdminActions.WarpToLoc, Convert.ToString(mapNum), Convert.ToString(x), Convert.ToString(y));
+                                        }
                                     }
                                 }
                             }

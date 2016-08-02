@@ -26,8 +26,8 @@ namespace Intersect_Editor.Classes.Entities
             myBase = animBase;
             lowerLoop = animBase.LowerAnimLoopCount;
             upperLoop = animBase.UpperAnimLoopCount;
-            lowerTimer = Environment.TickCount + animBase.LowerAnimFrameSpeed;
-            upperTimer = Environment.TickCount + animBase.UpperAnimFrameSpeed;
+            lowerTimer = Globals.System.GetTimeMs() + animBase.LowerAnimFrameSpeed;
+            upperTimer = Globals.System.GetTimeMs() + animBase.UpperAnimFrameSpeed;
             infiniteLoop = loopForever;
         }
 
@@ -89,7 +89,7 @@ namespace Intersect_Editor.Classes.Entities
 
         public void Update()
         {
-            if (lowerTimer < Environment.TickCount && showLower)
+            if (lowerTimer < Globals.System.GetTimeMs() && showLower)
             {
                 lowerFrame++;
                 if (lowerFrame >= myBase.LowerAnimFrameCount)
@@ -108,9 +108,9 @@ namespace Intersect_Editor.Classes.Entities
                         }
                     }
                 }
-                lowerTimer = Environment.TickCount + myBase.LowerAnimFrameSpeed;
+                lowerTimer = Globals.System.GetTimeMs() + myBase.LowerAnimFrameSpeed;
             }
-            if (upperTimer < Environment.TickCount && showUpper)
+            if (upperTimer < Globals.System.GetTimeMs() && showUpper)
             {
                 upperFrame++;
                 if (upperFrame >= myBase.UpperAnimFrameCount)
@@ -130,7 +130,7 @@ namespace Intersect_Editor.Classes.Entities
                         }
                     }
                 }
-                upperTimer = Environment.TickCount + myBase.UpperAnimFrameSpeed;
+                upperTimer = Globals.System.GetTimeMs() + myBase.UpperAnimFrameSpeed;
             }
         }
     }

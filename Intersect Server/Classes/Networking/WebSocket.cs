@@ -48,6 +48,7 @@ namespace Intersect_Server.Classes.Networking
 
         public override void Disconnect()
         {
+            base.Disconnect();
             if (_isConnected)
             {
                 _myContext.WebSocket.Close();

@@ -193,7 +193,7 @@
             this.groupBox1.Controls.Add(this.btnDelete);
             this.groupBox1.Location = new System.Drawing.Point(12, 12);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(203, 431);
+            this.groupBox1.Size = new System.Drawing.Size(203, 529);
             this.groupBox1.TabIndex = 13;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "NPCs";
@@ -201,7 +201,7 @@
             // btnUndo
             // 
             this.btnUndo.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.btnUndo.Location = new System.Drawing.Point(6, 393);
+            this.btnUndo.Location = new System.Drawing.Point(6, 494);
             this.btnUndo.Name = "btnUndo";
             this.btnUndo.Size = new System.Drawing.Size(190, 27);
             this.btnUndo.TabIndex = 22;
@@ -214,14 +214,14 @@
             this.lstNpcs.FormattingEnabled = true;
             this.lstNpcs.Location = new System.Drawing.Point(6, 19);
             this.lstNpcs.Name = "lstNpcs";
-            this.lstNpcs.Size = new System.Drawing.Size(191, 303);
+            this.lstNpcs.Size = new System.Drawing.Size(191, 394);
             this.lstNpcs.TabIndex = 1;
             this.lstNpcs.Click += new System.EventHandler(this.lstNpcs_Click);
             // 
             // btnNew
             // 
             this.btnNew.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.btnNew.Location = new System.Drawing.Point(6, 327);
+            this.btnNew.Location = new System.Drawing.Point(6, 428);
             this.btnNew.Name = "btnNew";
             this.btnNew.Size = new System.Drawing.Size(190, 27);
             this.btnNew.TabIndex = 20;
@@ -232,7 +232,7 @@
             // btnDelete
             // 
             this.btnDelete.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.btnDelete.Location = new System.Drawing.Point(7, 360);
+            this.btnDelete.Location = new System.Drawing.Point(7, 461);
             this.btnDelete.Name = "btnDelete";
             this.btnDelete.Size = new System.Drawing.Size(190, 27);
             this.btnDelete.TabIndex = 19;

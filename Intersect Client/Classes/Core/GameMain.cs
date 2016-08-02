@@ -282,6 +282,8 @@ namespace Intersect_Client.Classes.Core
                     Globals.EventHolds.RemoveAt(i);
                 }
             }
+
+            GameGraphics.UpdatePlayerLight();
         }
 
         public static void JoinGame()

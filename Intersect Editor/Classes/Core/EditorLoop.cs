@@ -32,8 +32,8 @@ namespace Intersect_Editor.Classes
         private static int _fpsCount = 0;
         private static long _fpsTime = 0;
         private static frmMain myForm;
-        private static long animationTimer = Environment.TickCount;
-        private static long waterfallTimer = Environment.TickCount;
+        private static long animationTimer = Globals.System.GetTimeMs();
+        private static long waterfallTimer = Globals.System.GetTimeMs();
         public static void StartLoop()
         {
             Globals.MainForm.Visible = true;
@@ -51,17 +51,17 @@ namespace Intersect_Editor.Classes
         {
             myForm.Update();
 
-            if (waterfallTimer < Environment.TickCount)
+            if (waterfallTimer < Globals.System.GetTimeMs())
             {
                 Globals.WaterfallFrame++;
                 if (Globals.WaterfallFrame == 3) { Globals.WaterfallFrame = 0; }
-                waterfallTimer = Environment.TickCount + 500;
+                waterfallTimer = Globals.System.GetTimeMs() + 500;
             }
-            if (animationTimer < Environment.TickCount)
+            if (animationTimer < Globals.System.GetTimeMs())
             {
                 Globals.AutotileFrame++;
                 if (Globals.AutotileFrame == 3) { Globals.AutotileFrame = 0; }
-                animationTimer = Environment.TickCount + 600;
+                animationTimer = Globals.System.GetTimeMs() + 600;
             }
             //Check Editors
             if (Globals.ResourceEditor != null && Globals.ResourceEditor.IsDisposed == false)
@@ -74,12 +74,12 @@ namespace Intersect_Editor.Classes
             Application.DoEvents(); // handle form events
 
             _fpsCount++;
-            if (_fpsTime < Environment.TickCount)
+            if (_fpsTime < Globals.System.GetTimeMs())
             {
                 _fps = _fpsCount;
                 myForm.toolStripLabelFPS.Text = @"FPS: " + _fps;
                 _fpsCount = 0;
-                _fpsTime = Environment.TickCount + 1000;
+                _fpsTime = Globals.System.GetTimeMs() + 1000;
             }
         }
     }

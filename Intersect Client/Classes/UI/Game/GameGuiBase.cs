@@ -154,6 +154,12 @@ namespace Intersect_Client.Classes.UI.Game
             _adminWindow.Show();
         }
 
+        public bool AdminWindowOpen()
+        {
+            if (_adminWindow != null && _adminWindow.IsVisible()) return true;
+            return false;
+        }
+
         public void Draw()
         {
 

@@ -56,13 +56,16 @@ namespace Intersect_Client.Classes.Entities
         public AnimationInstance(AnimationBase animBase, bool loopForever, bool autoRotate = false)
         {
             myBase = animBase;
-            lowerLoop = animBase.LowerAnimLoopCount;
-            upperLoop = animBase.UpperAnimLoopCount;
-            lowerTimer = Globals.System.GetTimeMS() + animBase.LowerAnimFrameSpeed;
-            upperTimer = Globals.System.GetTimeMS() + animBase.UpperAnimFrameSpeed;
-            infiniteLoop = loopForever;
-            AutoRotate = autoRotate;
-            GameGraphics.LiveAnimations.Add(this);
+            if (myBase != null)
+            {
+                lowerLoop = animBase.LowerAnimLoopCount;
+                upperLoop = animBase.UpperAnimLoopCount;
+                lowerTimer = Globals.System.GetTimeMS() + animBase.LowerAnimFrameSpeed;
+                upperTimer = Globals.System.GetTimeMS() + animBase.UpperAnimFrameSpeed;
+                infiniteLoop = loopForever;
+                AutoRotate = autoRotate;
+                GameGraphics.LiveAnimations.Add(this);
+            }
         }
 
         public void Draw(bool upper = false)

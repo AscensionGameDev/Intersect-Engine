@@ -54,6 +54,7 @@ namespace Intersect_Client.Classes.UI.Menu
             _mainMenu.Update();
             if (shouldReset)
             {
+                _mainMenu.Reset();
                 shouldReset = false;
                 
             }

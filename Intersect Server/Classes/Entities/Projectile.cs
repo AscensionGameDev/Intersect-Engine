@@ -104,7 +104,7 @@ namespace Intersect_Server.Classes.Entities
                 }
             }
             Quantity++;
-            SpawnTime = Environment.TickCount + MyBase.Delay;
+            SpawnTime = Globals.System.GetTimeMs() + MyBase.Delay;
         }
 
         private int FindProjectileRotationX(int direction, int x, int y)
@@ -220,7 +220,7 @@ namespace Intersect_Server.Classes.Entities
 
         public void Update()
         {
-            if (Quantity < MyBase.Quantity && Environment.TickCount > SpawnTime)
+            if (Quantity < MyBase.Quantity && Globals.System.GetTimeMs() > SpawnTime)
             {
                 AddProjectileSpawns();
             }
@@ -271,7 +271,7 @@ namespace Intersect_Server.Classes.Entities
             {
                 for (int i = 0; i < _spawnedAmount; i++)
                 {
-                    if (Spawns[i] != null && Environment.TickCount > Spawns[i].TransmittionTimer)
+                    if (Spawns[i] != null && Globals.System.GetTimeMs() > Spawns[i].TransmittionTimer)
                     {
                         Spawns[i].Distance++;
                         bool killSpawn = false;
@@ -376,7 +376,7 @@ namespace Intersect_Server.Classes.Entities
 
                         if (c == -1) //No collision so increase the counter for the next collision detection.
                         {
-                            Spawns[i].TransmittionTimer = Environment.TickCount + (long)((float)MyBase.Speed / (float)MyBase.Range);
+                            Spawns[i].TransmittionTimer = Globals.System.GetTimeMs() + (long)((float)MyBase.Speed / (float)MyBase.Range);
                             if (Spawns[i].Distance >= MyBase.Range)
                             {
                                 killSpawn = true;
@@ -406,31 +406,30 @@ namespace Intersect_Server.Classes.Entities
                         else
                         {
                             var TargetEntity = Globals.Entities[Target];
-                            if (TargetEntity.GetType() == typeof(Player)) //Player
+                            if (TargetEntity != null)
                             {
-                                if (Owner.MyIndex != Target)
+                                if (TargetEntity.GetType() == typeof(Player)) //Player
                                 {
-                                    Owner.TryAttack(Target, MyBase, IsSpell, Spawns[i].Dir);
-                                    killSpawn = true; //Remove from the list being processed
-                                }
-                            }
-                            else if (TargetEntity.GetType() == typeof(Resource))
-                            {
-                                if ((((Resource)Globals.Entities[Target]).IsDead && !Spawns[i].ProjectileBase.IgnoreExhaustedResources) || (!((Resource)Globals.Entities[Target]).IsDead && !Spawns[i].ProjectileBase.IgnoreActiveResources))
-                                {
-                                    if (Owner.GetType() == typeof(Player))
+                                    if (Owner.MyIndex != Target)
                                     {
-
                                         Owner.TryAttack(Target, MyBase, IsSpell, Spawns[i].Dir);
                                         killSpawn = true; //Remove from the list being processed
                                     }
                                 }
-                            }
-                            else //Any other target
-                            {
-                                if (Owner.GetType() == typeof(Player))
+                                else if (TargetEntity.GetType() == typeof(Resource))
                                 {
-                                    
+                                    if ((((Resource)Globals.Entities[Target]).IsDead && !Spawns[i].ProjectileBase.IgnoreExhaustedResources) || (!((Resource)Globals.Entities[Target]).IsDead && !Spawns[i].ProjectileBase.IgnoreActiveResources))
+                                    {
+                                        if (Owner.GetType() == typeof(Player))
+                                        {
+
+                                            Owner.TryAttack(Target, MyBase, IsSpell, Spawns[i].Dir);
+                                            killSpawn = true; //Remove from the list being processed
+                                        }
+                                    }
+                                }
+                                else //Any other target
+                                {
                                     Owner.TryAttack(Target, MyBase, IsSpell, Spawns[i].Dir);
                                     killSpawn = true; //Remove from the list being processed
                                 }
@@ -473,7 +472,7 @@ namespace Intersect_Server.Classes.Entities
         public int Dir;
         public int Distance = 0;
         public ProjectileBase ProjectileBase;
-        public long TransmittionTimer = Environment.TickCount;
+        public long TransmittionTimer = Globals.System.GetTimeMs();
         private int _baseEntityIndex;
 
         public ProjectileSpawns(int dir, int x, int y, int z, int map, ProjectileBase projectileBase, int parentIndex)
@@ -485,7 +484,7 @@ namespace Intersect_Server.Classes.Entities
             Dir = dir;
             ProjectileBase = projectileBase;
             _baseEntityIndex = parentIndex;
-            TransmittionTimer = Environment.TickCount + (long)((float)ProjectileBase.Speed / (float)ProjectileBase.Range);
+            TransmittionTimer = Globals.System.GetTimeMs() + (long)((float)ProjectileBase.Speed / (float)ProjectileBase.Range);
         }
 
         public void Dispose(int spawnIndex)

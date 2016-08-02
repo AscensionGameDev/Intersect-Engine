@@ -60,7 +60,7 @@ namespace Intersect_Editor.Classes
 
         //Fog Stuff
         public static bool HideFog = false;
-        private static long _fogUpdateTime = Environment.TickCount;
+        private static long _fogUpdateTime = Globals.System.GetTimeMs();
         private static float _fogCurrentX = 0;
         private static float _fogCurrentY = 0;
 
@@ -738,7 +738,7 @@ namespace Intersect_Editor.Classes
             DrawTexture(_whiteTex, new RectangleF(0, 0, 1, 1), new RectangleF(Options.TileWidth, 0, 1, (Options.MapHeight + 2) * Options.TileHeight), null);
             DrawTexture(_whiteTex, new RectangleF(0, 0, 1, 1), new RectangleF((Options.MapWidth + 2) * Options.TileWidth - Options.TileWidth, 0, 1, (Options.MapHeight + 2) * Options.TileHeight), null);
         }
-        private static void DrawMapAttributes(int dir, bool screenShotting, RenderTarget2D renderTarget, bool upper)
+        private static void DrawMapAttributes(int dir, bool screenShotting, RenderTarget2D renderTarget, bool upper, int camXOffset = 0, int camYOffset = 0)
         {
             if (HideResources) { return; }
             var tmpMap = Globals.CurrentMap;
@@ -755,8 +755,8 @@ namespace Intersect_Editor.Classes
                     x2 = Options.MapWidth;
                     y1 = 0;
                     y2 = Options.MapHeight;
-                    xoffset = Options.TileWidth;
-                    yoffset = Options.TileHeight;
+                    xoffset = Options.TileWidth + camXOffset;
+                    yoffset = Options.TileHeight + camYOffset;
                     break;
                 case 0:
                     if (tmpMap.Up <= -1) return;
@@ -765,8 +765,8 @@ namespace Intersect_Editor.Classes
                     x2 = Options.MapWidth;
                     y1 = Options.MapHeight - 8;
                     y2 = Options.MapHeight;
-                    xoffset = Options.TileWidth;
-                    yoffset = -(Options.MapHeight - 1) * Options.TileHeight;
+                    xoffset = Options.TileWidth + camXOffset;
+                    yoffset = -(Options.MapHeight - 1) * Options.TileHeight + camYOffset;
                     break;
                 case 1:
                     if (tmpMap.Down <= -1) return;
@@ -775,8 +775,8 @@ namespace Intersect_Editor.Classes
                     x2 = Options.MapWidth;
                     y1 = 0;
                     y2 = 8;
-                    xoffset = Options.TileWidth;
-                    yoffset = Options.TileHeight + Options.MapHeight * Options.TileHeight;
+                    xoffset = Options.TileWidth + camXOffset;
+                    yoffset = Options.TileHeight + Options.MapHeight * Options.TileHeight + camYOffset;
                     break;
                 case 2:
                     if (tmpMap.Left <= -1) return;
@@ -785,8 +785,8 @@ namespace Intersect_Editor.Classes
                     x2 = Options.MapWidth;
                     y1 = 0;
                     y2 = Options.MapHeight;
-                    xoffset = Options.TileWidth - Options.MapWidth * Options.TileWidth;
-                    yoffset = Options.TileHeight;
+                    xoffset = Options.TileWidth - Options.MapWidth * Options.TileWidth + camXOffset;
+                    yoffset = Options.TileHeight + camYOffset;
                     break;
                 case 3:
                     if (tmpMap.Right <= -1) return;
@@ -795,8 +795,8 @@ namespace Intersect_Editor.Classes
                     x2 = 8;
                     y1 = 0;
                     y2 = Options.MapHeight;
-                    xoffset = Options.TileWidth + Options.MapWidth * Options.TileWidth;
-                    yoffset = Options.TileHeight;
+                    xoffset = Options.TileWidth + Options.MapWidth * Options.TileWidth + camXOffset;
+                    yoffset = Options.TileHeight + camYOffset;
                     break;
             }
             if (tmpMap == null) { return; }
@@ -887,13 +887,13 @@ namespace Intersect_Editor.Classes
                 {
                     for (int z = -1; z < 4; z++)
                     {
-                        DrawMapAttributes(z, true, screenShot, false);
+                        DrawMapAttributes(z, true, screenShot, false,-Options.TileWidth,-Options.TileHeight);
                     }
                 }
             }
             for (int z = -1; z < 4; z++)
             {
-                DrawMapAttributes(z, true, screenShot, true);
+                DrawMapAttributes(z, true, screenShot, true, -Options.TileWidth, -Options.TileHeight);
             }
             if (!HideFog && !bland) { DrawFog(screenShot); }
             if (!HideOverlay && !bland) { DrawMapOverlay(screenShot); }
@@ -904,8 +904,8 @@ namespace Intersect_Editor.Classes
         //Fogs
         private static void DrawFog(RenderTarget2D target)
         {
-            float ecTime = Environment.TickCount - _fogUpdateTime;
-            _fogUpdateTime = Environment.TickCount;
+            float ecTime = Globals.System.GetTimeMs() - _fogUpdateTime;
+            _fogUpdateTime = Globals.System.GetTimeMs();
             if (Globals.CurrentMap.Fog.Length > 0)
             {
                 Texture2D fogTex = GetTexture(TextureType.Fog, Globals.CurrentMap.Fog);

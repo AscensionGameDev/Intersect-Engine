@@ -32,7 +32,7 @@ namespace Intersect_Server.Classes.Core
     {
         public static void RunServerLoop()
         {
-            long cpsTimer = Environment.TickCount + 1000;
+            long cpsTimer = Globals.System.GetTimeMs() + 1000;
             long cps = 0;
             while (Globals.ServerStarted)
             {
@@ -41,11 +41,11 @@ namespace Intersect_Server.Classes.Core
                     if (map.Value.Active) map.Value.Update();
                 }
                 cps++;
-                if (Environment.TickCount >= cpsTimer)
+                if (Globals.System.GetTimeMs() >= cpsTimer)
                 {
                     Globals.CPS = cps;
                     cps = 0;
-                    cpsTimer = Environment.TickCount + 1000;
+                    cpsTimer = Globals.System.GetTimeMs() + 1000;
                 }
                 if (Globals.CPSLock) { Thread.Sleep(10); }
             }
