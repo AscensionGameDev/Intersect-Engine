@@ -241,7 +241,7 @@ namespace Intersect_Client.Classes.Core
         private bool _loop;
         private int _distance;
         private float _volume;
-        private int _localMap;
+        private int _mapNum;
         public bool Loaded;
 
         public MapSound(string filename, int x, int y, int map, bool loop, int distance)
@@ -280,24 +280,6 @@ namespace Intersect_Client.Classes.Core
 
         private void UpdateSoundVolume()
         {
-            for (int i = 0; i < 9; i++)
-            {
-                if (Globals.LocalMaps[i] > -1)
-                {
-                    if (Globals.LocalMaps[i] == _map)
-                    {
-                        _localMap = i;
-                        break;
-                    }
-                    else
-                    {
-                        if (i == 8)
-                        {
-                            Stop();
-                        }
-                    }
-                }
-            }
             if ((_x == -1 || _y == -1 || _distance == 0) && _map == Globals.Me.CurrentMap)
             {
                 _sound.SetVolume(100);
@@ -325,7 +307,7 @@ namespace Intersect_Client.Classes.Core
             float playery = Globals.Me.GetCenterPos().Y;
             float soundx = 0;
             float soundy = 0;
-            int mapNum = Globals.LocalMaps[_localMap];
+            int mapNum = _mapNum;
             var map = MapInstance.GetMap(mapNum);
             if (map != null)
             {

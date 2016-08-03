@@ -109,23 +109,23 @@ namespace Intersect_Server.Classes.Entities
                 _curMapLink = CurrentMap;
             }
 
-            //Check to see if we can spawn events, if already spawned.. update them.
-            lock (EventLock)
+            var currentMap = MapInstance.GetMap(CurrentMap);
+            for (var i = 0; i < currentMap.SurroundingMaps.Count + 1; i++)
             {
-                var currentMap = MapInstance.GetMap(CurrentMap);
-                for (var i = 0; i < currentMap.SurroundingMaps.Count + 1; i++)
+                MapInstance map = null;
+                if (i == currentMap.SurroundingMaps.Count)
                 {
-                    MapInstance map = null;
-                    if (i == currentMap.SurroundingMaps.Count)
-                    {
-                        map = currentMap;
-                    }
-                    else
-                    {
-                        map = MapInstance.GetMap(currentMap.SurroundingMaps[i]);
-                    }
-                    if (map == null) continue;
-                    lock (map.GetMapLock())
+                    map = currentMap;
+                }
+                else
+                {
+                    map = MapInstance.GetMap(currentMap.SurroundingMaps[i]);
+                }
+                if (map == null) continue;
+                lock (map.GetMapLock())
+                {
+                    //Check to see if we can spawn events, if already spawned.. update them.
+                    lock (EventLock)
                     {
                         foreach (var mapEvent in map.Events.Values)
                         {
@@ -149,6 +149,10 @@ namespace Intersect_Server.Classes.Entities
                         }
                     }
                 }
+            }
+            //Check to see if we can spawn events, if already spawned.. update them.
+            lock (EventLock)
+            {
                 for (var i = 0; i < MyEvents.Count; i++)
                 {
                     if (MyEvents[i] == null) continue;
@@ -205,6 +209,7 @@ namespace Intersect_Server.Classes.Entities
             {
                 Warp(0, 0, 0, 0);
             }
+            PacketSender.SendEntityDataToProximity(MyIndex, (int) EntityTypes.GlobalEntity, Data(), this);
         }
         public override void Die(bool dropitems = false)
         {
@@ -235,14 +240,14 @@ namespace Intersect_Server.Classes.Entities
                 {
                     if ((int)vital < (int)Vitals.VitalCount && Vital[(int)vital] != MaxVital[(int)vital])
                     {
-                        AddVital(vital, (int)((float)MaxVital[(int)vital] * (myclass.VitalRegen[(int)vital]/100f)));
+                        AddVital(vital, (int)((float)MaxVital[(int)vital] * (myclass.VitalRegen[(int)vital] / 100f)));
                         vitalAdded = true;
                     }
                 }
             }
             if (vitalAdded)
             {
-                PacketSender.SendEntityVitals(MyIndex, (int) EntityTypes.Player, this);
+                PacketSender.SendEntityVitals(MyIndex, (int)EntityTypes.Player, this);
             }
         }
 
@@ -364,9 +369,9 @@ namespace Intersect_Server.Classes.Entities
         //Combat
         public override void KilledEntity(Entity en)
         {
-            if (en.GetType() == typeof (Npc))
+            if (en.GetType() == typeof(Npc))
             {
-                GiveExperience(((Npc) en).MyBase.Experience);
+                GiveExperience(((Npc)en).MyBase.Experience);
             }
         }
 
@@ -394,8 +399,8 @@ namespace Intersect_Server.Classes.Entities
                 map.PlayerEnteredMap(MyClient);
                 PacketSender.SendEntityDataToProximity(MyIndex, (int)EntityTypes.Player, Data(), Globals.Entities[MyIndex]);
                 PacketSender.SendEntityPositionToAll(MyIndex, (int)EntityTypes.Player, Globals.Entities[MyIndex]);
+                PacketSender.SendMapGrid(MyClient, map.MapGrid);
                 PacketSender.SendMap(MyClient, newMap);
-                PacketSender.SendEnterMap(MyClient, newMap);
                 _sentMap = true;
             }
             else
@@ -584,7 +589,7 @@ namespace Intersect_Server.Classes.Entities
                     return;
                 }
 
-                if (itemBase.GenderReq - 1 != -1 && itemBase.GenderReq -1 != Gender)
+                if (itemBase.GenderReq - 1 != -1 && itemBase.GenderReq - 1 != Gender)
                 {
                     PacketSender.SendPlayerMsg(MyClient, "You do not meet the gender requirement to use this item.");
                     return;
@@ -1172,7 +1177,8 @@ namespace Intersect_Server.Classes.Entities
                     return;
                 }
 
-                if (target == -1 && ((spell.SpellType == (int)SpellTypes.CombatSpell && spell.TargetType == (int)SpellTargetTypes.Single) || spell.SpellType == (int)SpellTypes.WarpTo)) {
+                if (target == -1 && ((spell.SpellType == (int)SpellTypes.CombatSpell && spell.TargetType == (int)SpellTargetTypes.Single) || spell.SpellType == (int)SpellTypes.WarpTo))
+                {
                     PacketSender.SendActionMsg(MyIndex, "No Target!", new Color(255, 255, 0, 0));
                     return;
                 }
@@ -1331,7 +1337,7 @@ namespace Intersect_Server.Classes.Entities
         {
             foreach (var evt in MyEvents)
             {
-                if (evt != null)
+                if (evt != null && evt.PageInstance != null)
                 {
                     if (evt.PageInstance.CurrentMap == map && evt.PageInstance.CurrentX == x &&
                         evt.PageInstance.CurrentY == y && evt.PageInstance.CurrentZ == z)

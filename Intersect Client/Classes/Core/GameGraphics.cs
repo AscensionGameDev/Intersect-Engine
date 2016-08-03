@@ -92,6 +92,7 @@ namespace Intersect_Client.Classes.Core
 
         //Animations
         public static List<AnimationInstance> LiveAnimations = new List<AnimationInstance>();
+        public static object AnimationLock = new Object();
 
 
         //Init Functions
@@ -143,18 +144,25 @@ namespace Intersect_Client.Classes.Core
             var currentMap = MapInstance.GetMap(Globals.Me.CurrentMap);
             if (currentMap != null && Globals.NeedsMaps == false)
             {
-                //Render players, names, maps, etc.
-                for (var i = 0; i < 9; i++)
+                var gridX = currentMap.MapGridX;
+                var gridY = currentMap.MapGridY;
+                for (int x = gridX - 1; x <= gridX + 1; x++)
                 {
-                    if (Globals.LocalMaps[i] > -1)
+                    for (int y = 0; y <= gridY + 1; y++)
                     {
-                        DrawMap(i, 0); //Lower only
+                        if (x >= 0 && x < Globals.MapGridWidth && y >= 0 && y < Globals.MapGridHeight)
+                        {
+                            DrawMap(Globals.MapGrid[x,y],0);
+                        }
                     }
                 }
 
-                foreach (AnimationInstance animInstance in LiveAnimations)
+                lock (AnimationLock)
                 {
-                    animInstance.Draw(false);
+                    foreach (AnimationInstance animInstance in LiveAnimations)
+                    {
+                        animInstance.Draw(false);
+                    }
                 }
 
                 for (int x = 0; x < Layer1Entities.Length; x++)
@@ -166,12 +174,14 @@ namespace Intersect_Client.Classes.Core
                     }
                 }
 
-                //Render the upper layer
-                for (var i = 0; i < 9; i++)
+                for (int x = gridX - 1; x <= gridX + 1; x++)
                 {
-                    if (Globals.LocalMaps[i] > -1)
+                    for (int y = 0; y <= gridY + 1; y++)
                     {
-                        DrawMap(i, 1); //Upper only
+                        if (x >= 0 && x < Globals.MapGridWidth && y >= 0 && y < Globals.MapGridHeight)
+                        {
+                            DrawMap(Globals.MapGrid[x, y], 1);
+                        }
                     }
                 }
 
@@ -184,15 +194,23 @@ namespace Intersect_Client.Classes.Core
                     }
                 }
 
-                for (var i = 0; i < 9; i++)
+                for (int x = gridX - 1; x <= gridX + 1; x++)
                 {
-                    if (Globals.LocalMaps[i] <= -1) continue;
-                    DrawMap(i, 2); //Peak Layers
+                    for (int y = 0; y <= gridY + 1; y++)
+                    {
+                        if (x >= 0 && x < Globals.MapGridWidth && y >= 0 && y < Globals.MapGridHeight)
+                        {
+                            DrawMap(Globals.MapGrid[x, y], 2);
+                        }
+                    }
                 }
 
-                foreach (AnimationInstance animInstance in LiveAnimations)
+                lock (AnimationLock)
                 {
-                    animInstance.Draw(true);
+                    foreach (AnimationInstance animInstance in LiveAnimations)
+                    {
+                        animInstance.Draw(true);
+                    }
                 }
 
                 //Draw the players targets
@@ -279,27 +297,32 @@ namespace Intersect_Client.Classes.Core
 
         private static void TryPreRendering()
         {
-            if (Globals.Database.RenderCaching)
+            if (Globals.Database.RenderCaching && Globals.Me != null && MapInstance.GetMap(Globals.Me.CurrentMap) != null)
             {
-                for (var i = 0; i < 9; i++)
+                var gridX = MapInstance.GetMap(Globals.Me.CurrentMap).MapGridX;
+                var gridY = MapInstance.GetMap(Globals.Me.CurrentMap).MapGridY;
+                for (int x = gridX - 1; x <= gridX + 1; x++)
                 {
-                    if (Globals.LocalMaps[i] > -1)
+                    for (int y = 0; y <= gridY + 1; y++)
                     {
-                        var map = MapInstance.GetMap(Globals.LocalMaps[i]);
-                        if (map != null && !map.MapRendered)
+                        if (x >= 0 && x < Globals.MapGridWidth && y >= 0 && y < Globals.MapGridHeight)
                         {
-                            if (!GameGraphics.PreRenderedMapLayer)
+                            var map = MapInstance.GetMap(Globals.MapGrid[x,y]);
+                            if (map != null && !map.MapRendered)
                             {
-                                map.PreRenderMap();
+                                if (!GameGraphics.PreRenderedMapLayer)
+                                {
+                                    map.PreRenderMap();
+                                }
                             }
                         }
                     }
                 }
             }
         }
-        private static void DrawMap(int index, int layer = 0)
+        private static void DrawMap(int mapNum, int layer = 0)
         {
-            var map = MapInstance.GetMap(Globals.LocalMaps[index]);
+            var map = MapInstance.GetMap(mapNum);
             if (map != null)
             {
                 if (!new FloatRect(map.GetX(), map.GetY(), Options.TileWidth * Options.MapWidth, Options.TileHeight * Options.MapHeight).IntersectsWith(CurrentView)) return;
@@ -811,7 +834,7 @@ namespace Intersect_Client.Classes.Core
         /// <param name="y">Y coordinate on the render target to draw to</param>
         /// <param name="renderTarget">Where to draw to. If null it this will draw to the game screen.</param>
         /// <param name="blendMode">Which blend mode to use when rendering</param>
-        public static void DrawGameTexture(GameTexture tex, float x, float y, GameRenderTexture renderTarget = null, GameBlendModes blendMode = GameBlendModes.Alpha, GameShader shader = null, float rotationDegrees = 0.0f)
+        public static void DrawGameTexture(GameTexture tex, float x, float y, GameRenderTexture renderTarget = null, GameBlendModes blendMode = GameBlendModes.None, GameShader shader = null, float rotationDegrees = 0.0f)
         {
             var destRectangle = new FloatRect(x, y, (int)tex.GetWidth(), (int)tex.GetHeight());
             var srcRectangle = new FloatRect(0, 0, (int)tex.GetWidth(), (int)tex.GetHeight());
@@ -827,7 +850,7 @@ namespace Intersect_Client.Classes.Core
         /// <param name="renderColor">Color mask to draw with. Default is Color.White</param>
         /// <param name="renderTarget">Where to draw to. If null it this will draw to the game screen.</param>
         /// <param name="blendMode">Which blend mode to use when rendering</param>
-        public static void DrawGameTexture(GameTexture tex, float x, float y, Color renderColor, GameRenderTexture renderTarget = null, GameBlendModes blendMode = GameBlendModes.Alpha, GameShader shader = null, float rotationDegrees = 0.0f)
+        public static void DrawGameTexture(GameTexture tex, float x, float y, Color renderColor, GameRenderTexture renderTarget = null, GameBlendModes blendMode = GameBlendModes.None, GameShader shader = null, float rotationDegrees = 0.0f)
         {
             var destRectangle = new FloatRect(x, y, (int)tex.GetWidth(), (int)tex.GetHeight());
             var srcRectangle = new FloatRect(0, 0, (int)tex.GetWidth(), (int)tex.GetHeight());
@@ -846,7 +869,7 @@ namespace Intersect_Client.Classes.Core
         /// <param name="h">Height of the texture part we are rendering.</param>
         /// <param name="renderTarget">>Where to draw to. If null it this will draw to the game screen.</param>
         /// <param name="blendMode">Which blend mode to use when rendering</param>
-        public static void DrawGameTexture(GameTexture tex, float dx, float dy, float sx, float sy, float w, float h, GameRenderTexture renderTarget = null, GameBlendModes blendMode = GameBlendModes.Alpha, GameShader shader = null, float rotationDegrees = 0.0f)
+        public static void DrawGameTexture(GameTexture tex, float dx, float dy, float sx, float sy, float w, float h, GameRenderTexture renderTarget = null, GameBlendModes blendMode = GameBlendModes.None, GameShader shader = null, float rotationDegrees = 0.0f)
         {
             var destRectangle = new FloatRect(dx, dy, w, h);
             var srcRectangle = new FloatRect(sx, sy, w, h);
@@ -854,7 +877,7 @@ namespace Intersect_Client.Classes.Core
         }
 
 
-        public static void DrawGameTexture(GameTexture tex, FloatRect srcRectangle, FloatRect targetRect, Color renderColor, GameRenderTexture renderTarget = null, GameBlendModes blendMode = GameBlendModes.Alpha, GameShader shader = null, float rotationDegrees = 0.0f)
+        public static void DrawGameTexture(GameTexture tex, FloatRect srcRectangle, FloatRect targetRect, Color renderColor, GameRenderTexture renderTarget = null, GameBlendModes blendMode = GameBlendModes.None, GameShader shader = null, float rotationDegrees = 0.0f)
         {
             if (tex == null) return;
             Renderer.DrawTexture(tex, srcRectangle, targetRect, renderColor, renderTarget, blendMode, shader, rotationDegrees);

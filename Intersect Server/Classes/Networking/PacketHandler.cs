@@ -275,9 +275,9 @@ namespace Intersect_Server.Classes.Networking
             if (MapInstance.GetObjects().ContainsKey(mapNum))
             {
                 PacketSender.SendMap(client, mapNum);
-                if (!client.IsEditor && mapNum == client.Entity.CurrentMap)
+                if (!client.IsEditor && client.Entity != null &&  mapNum == client.Entity.CurrentMap)
                 {
-                    PacketSender.SendEnterMap(client, mapNum);
+                    PacketSender.SendMapGrid(client, MapInstance.GetMap(mapNum).MapGrid);
                 }
             }
         }
@@ -320,7 +320,6 @@ namespace Intersect_Server.Classes.Networking
             Globals.Entities[index].Move(dir,client,false);
             if (map != client.Entity.CurrentMap || x != client.Entity.CurrentX || y != client.Entity.CurrentY)
             {
-                Console.WriteLine("Sending override entity position to " + client.Entity.MyName);
                 PacketSender.SendEntityPositionTo(client, client.EntityIndex, (int)EntityTypes.Player, client.Entity);
             }
         }
@@ -437,7 +436,7 @@ namespace Intersect_Server.Classes.Networking
                 Database.SaveGameObject(tmpMap);
                 Database.GenerateMapGrids();
                 PacketSender.SendMap(client, newMap);
-                PacketSender.SendEnterMap(client, newMap);
+                PacketSender.SendMapGrid(client, newMap);
                 //FolderDirectory parent = null;
                 destType = -1;
                 if (destType == -1)
@@ -581,7 +580,7 @@ namespace Intersect_Server.Classes.Networking
                     Database.SaveGameObject(tmpMap);
                     Database.GenerateMapGrids();
                     PacketSender.SendMap(client, newMap);
-                    PacketSender.SendEnterMap(client, newMap);
+                    PacketSender.SendMapGrid(client, newMap);
                     var folderDir = MapList.GetList().FindMapParent(relativeMap, null);
                     if (folderDir != null)
                     {
@@ -604,7 +603,7 @@ namespace Intersect_Server.Classes.Networking
             bf.WriteBytes(packet);
             int chunkNum = (int)bf.ReadLong();
             //TODO See if the player is close enough to be switching chunks.
-            PacketSender.SendEnterMap(client, chunkNum);
+            PacketSender.SendMapGrid(client, chunkNum);
             bf.Dispose();
         }
 
@@ -668,7 +667,7 @@ namespace Intersect_Server.Classes.Networking
             }
 
             //Attack normally.
-            if (target > -1) client.Entity.TryAttack((int)target);
+            if (target > -1 && target < Globals.Entities.Count && Globals.Entities[(int)target] != null) client.Entity.TryAttack(Globals.Entities[(int)target]);
             bf.Dispose();
         }
 
@@ -825,7 +824,7 @@ namespace Intersect_Server.Classes.Networking
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
             var index = bf.ReadInteger();
-            if (index < MapInstance.GetMap(client.Entity.CurrentMap).MapItems.Count)
+            if (index < MapInstance.GetMap(client.Entity.CurrentMap).MapItems.Count && MapInstance.GetMap(client.Entity.CurrentMap).MapItems[index] != null)
             {
                 if (MapInstance.GetMap(client.Entity.CurrentMap).MapItems[index].X == client.Entity.CurrentX && MapInstance.GetMap(client.Entity.CurrentMap).MapItems[index].Y == client.Entity.CurrentY)
                 {
@@ -1048,12 +1047,16 @@ namespace Intersect_Server.Classes.Networking
                 case (int)AdminActions.WarpMeTo:
                     for (int i = 0; i < Globals.Clients.Count; i++)
                     {
-                        if (val1.ToLower() == Globals.Clients[i].Entity.MyName.ToLower())
+                        if (Globals.Clients[i] != null && Globals.Clients[i].Entity != null)
                         {
-                            client.Entity.Warp(Globals.Clients[i].Entity.CurrentMap, Globals.Clients[i].Entity.CurrentX, Globals.Clients[i].Entity.CurrentY);
-                            PacketSender.SendPlayerMsg(client, "Warped to " + val1);
-                            PacketSender.SendPlayerMsg(Globals.Clients[i], client.Entity.MyName + " warped to you");
-                            return;
+                            if (val1.ToLower() == Globals.Clients[i].Entity.MyName.ToLower())
+                            {
+                                client.Entity.Warp(Globals.Clients[i].Entity.CurrentMap,
+                                    Globals.Clients[i].Entity.CurrentX, Globals.Clients[i].Entity.CurrentY);
+                                PacketSender.SendPlayerMsg(client, "Warped to " + val1);
+                                PacketSender.SendPlayerMsg(Globals.Clients[i], client.Entity.MyName + " warped to you");
+                                return;
+                            }
                         }
                     }
                     PacketSender.SendPlayerMsg(client, val1 + " is not online.");
@@ -1061,12 +1064,17 @@ namespace Intersect_Server.Classes.Networking
                 case (int)AdminActions.WarpToMe:
                     for (int i = 0; i < Globals.Clients.Count; i++)
                     {
-                        if (val1.ToLower() == Globals.Clients[i].Entity.MyName.ToLower())
+                        if (Globals.Clients[i] != null && Globals.Clients[i].Entity != null)
                         {
-                            Globals.Clients[i].Entity.Warp(client.Entity.CurrentMap, client.Entity.CurrentX, client.Entity.CurrentY);
-                            PacketSender.SendPlayerMsg(client, val1 + " has been warped to you");
-                            PacketSender.SendPlayerMsg(Globals.Clients[i], "You have been warped to " + client.Entity.MyName);
-                            return;
+                            if (val1.ToLower() == Globals.Clients[i].Entity.MyName.ToLower())
+                            {
+                                Globals.Clients[i].Entity.Warp(client.Entity.CurrentMap, client.Entity.CurrentX,
+                                    client.Entity.CurrentY);
+                                PacketSender.SendPlayerMsg(client, val1 + " has been warped to you");
+                                PacketSender.SendPlayerMsg(Globals.Clients[i],
+                                    "You have been warped to " + client.Entity.MyName);
+                                return;
+                            }
                         }
                     }
                     PacketSender.SendPlayerMsg(client, val1 + " is not online.");
@@ -1077,11 +1085,15 @@ namespace Intersect_Server.Classes.Networking
                 case (int)AdminActions.Kick:
                     for (int i = 0; i < Globals.Clients.Count; i++)
                     {
-                        if (val1.ToLower() == Globals.Clients[i].Entity.MyName.ToLower())
+                        if (Globals.Clients[i] != null && Globals.Clients[i].Entity != null)
                         {
-                            PacketSender.SendGlobalMsg(Globals.Clients[i].Entity.MyName + " has been kicked by " + client.Entity.MyName + "!");
-                            Globals.Clients[i].Disconnect(); //Kick em'
-                            return;
+                            if (val1.ToLower() == Globals.Clients[i].Entity.MyName.ToLower())
+                            {
+                                PacketSender.SendGlobalMsg(Globals.Clients[i].Entity.MyName + " has been kicked by " +
+                                                           client.Entity.MyName + "!");
+                                Globals.Clients[i].Disconnect(); //Kick em'
+                                return;
+                            }
                         }
                     }
                     PacketSender.SendPlayerMsg(client, val1 + " is not online.");
@@ -1089,11 +1101,15 @@ namespace Intersect_Server.Classes.Networking
                 case (int)AdminActions.Kill:
                     for (int i = 0; i < Globals.Clients.Count; i++)
                     {
-                        if (val1.ToLower() == Globals.Clients[i].Entity.MyName.ToLower())
+                        if (Globals.Clients[i] != null && Globals.Clients[i].Entity != null)
                         {
-                            Globals.Clients[i].Entity.Die(); //Kill em'
-                            PacketSender.SendGlobalMsg(Globals.Clients[i].Entity.MyName + " has been killed by " + client.Entity.MyName + "!");
-                            return;
+                            if (val1.ToLower() == Globals.Clients[i].Entity.MyName.ToLower())
+                            {
+                                Globals.Clients[i].Entity.Die(); //Kill em'
+                                PacketSender.SendGlobalMsg(Globals.Clients[i].Entity.MyName + " has been killed by " +
+                                                           client.Entity.MyName + "!");
+                                return;
+                            }
                         }
                     }
                     PacketSender.SendPlayerMsg(client, val1 + " is not online.");
@@ -1101,11 +1117,16 @@ namespace Intersect_Server.Classes.Networking
                 case (int)AdminActions.SetSprite:
                     for (int i = 0; i < Globals.Clients.Count; i++)
                     {
-                        if (val1.ToLower() == Globals.Clients[i].Entity.MyName.ToLower())
+                        if (Globals.Clients[i] != null && Globals.Clients[i].Entity != null)
                         {
-                            Globals.Clients[i].Entity.MySprite = val2;
-                            PacketSender.SendEntityDataToProximity(Globals.Clients[i].Entity.MyIndex, (int)EntityTypes.Player, Globals.Clients[i].Entity.Data(), Globals.Clients[i].Entity);
-                            return;
+                            if (val1.ToLower() == Globals.Clients[i].Entity.MyName.ToLower())
+                            {
+                                Globals.Clients[i].Entity.MySprite = val2;
+                                PacketSender.SendEntityDataToProximity(Globals.Clients[i].Entity.MyIndex,
+                                    (int) EntityTypes.Player, Globals.Clients[i].Entity.Data(),
+                                    Globals.Clients[i].Entity);
+                                return;
+                            }
                         }
                     }
                     PacketSender.SendPlayerMsg(client, val1 + " is not online.");
@@ -1113,11 +1134,16 @@ namespace Intersect_Server.Classes.Networking
                 case (int)AdminActions.SetFace:
                     for (int i = 0; i < Globals.Clients.Count; i++)
                     {
-                        if (val1.ToLower() == Globals.Clients[i].Entity.MyName.ToLower())
+                        if (Globals.Clients[i] != null && Globals.Clients[i].Entity != null)
                         {
-                            Globals.Clients[i].Entity.Face = val2;
-                            PacketSender.SendEntityDataToProximity(Globals.Clients[i].Entity.MyIndex, (int)EntityTypes.Player, Globals.Clients[i].Entity.Data(), Globals.Clients[i].Entity);
-                            return;
+                            if (val1.ToLower() == Globals.Clients[i].Entity.MyName.ToLower())
+                            {
+                                Globals.Clients[i].Entity.Face = val2;
+                                PacketSender.SendEntityDataToProximity(Globals.Clients[i].Entity.MyIndex,
+                                    (int) EntityTypes.Player, Globals.Clients[i].Entity.Data(),
+                                    Globals.Clients[i].Entity);
+                                return;
+                            }
                         }
                     }
                     PacketSender.SendPlayerMsg(client, val1 + " is not online.");
@@ -1125,41 +1151,48 @@ namespace Intersect_Server.Classes.Networking
                 case (int)AdminActions.SetAccess:
                     for (int i = 0; i < Globals.Clients.Count; i++)
                     {
-                        if (val1.ToLower() == Globals.Clients[i].Entity.MyName.ToLower())
+                        if (Globals.Clients[i] != null && Globals.Clients[i].Entity != null)
                         {
-                            if (val1.ToLower() != client.Entity.MyName.ToLower()) //Can't increase your own power!
+                            if (val1.ToLower() == Globals.Clients[i].Entity.MyName.ToLower())
                             {
-                                if (client.Power == 2)
+                                if (val1.ToLower() != client.Entity.MyName.ToLower()) //Can't increase your own power!
                                 {
-                                    if (Convert.ToInt32(val2) < 3 || Convert.ToInt32(val2) > -1) //Making it retard proof
+                                    if (client.Power == 2)
                                     {
-                                        Globals.Clients[i].Power = Convert.ToInt32(val2);
-                                        if (Globals.Clients[i].Power > 0)
+                                        if (Convert.ToInt32(val2) < 3 || Convert.ToInt32(val2) > -1)
+                                            //Making it retard proof
                                         {
-                                            PacketSender.SendGlobalMsg(val1 + " has been given administrative powers!");
+                                            Globals.Clients[i].Power = Convert.ToInt32(val2);
+                                            if (Globals.Clients[i].Power > 0)
+                                            {
+                                                PacketSender.SendGlobalMsg(val1 +
+                                                                           " has been given administrative powers!");
+                                            }
+                                            else
+                                            {
+                                                PacketSender.SendGlobalMsg(val1 +
+                                                                           " has had their administrative poweres revoked!");
+                                            }
+                                            return;
                                         }
                                         else
                                         {
-                                            PacketSender.SendGlobalMsg(val1 + " has had their administrative poweres revoked!");
+                                            PacketSender.SendPlayerMsg(client,
+                                                "Invalid power level. Pick a power level between 0-2.");
+                                            return;
                                         }
-                                        return;
                                     }
                                     else
                                     {
-                                        PacketSender.SendPlayerMsg(client, "Invalid power level. Pick a power level between 0-2.");
+                                        PacketSender.SendPlayerMsg(client, "Only admins can set power.");
                                         return;
                                     }
                                 }
                                 else
                                 {
-                                    PacketSender.SendPlayerMsg(client, "Only admins can set power.");
+                                    PacketSender.SendPlayerMsg(client, "You cannot alter your own power!");
                                     return;
                                 }
-                            }
-                            else
-                            {
-                                PacketSender.SendPlayerMsg(client, "You cannot alter your own power!");
-                                return;
                             }
                         }
                     }
@@ -1168,13 +1201,16 @@ namespace Intersect_Server.Classes.Networking
                 case (int)AdminActions.UnMute:
                     for (int i = 0; i < Globals.Clients.Count; i++)
                     {
-                        if (val1.ToLower() == Globals.Clients[i].Entity.MyName.ToLower())
+                        if (Globals.Clients[i] != null && Globals.Clients[i].Entity != null)
                         {
-                            Database.DeleteMute(Globals.Clients[i].MyAccount);
-                            Globals.Clients[i].Muted = false;
-                            Globals.Clients[i].MuteReason = "";
-                            PacketSender.SendGlobalMsg(Globals.Clients[i].Entity.MyName + " has been unmuted!");
-                            return;
+                            if (val1.ToLower() == Globals.Clients[i].Entity.MyName.ToLower())
+                            {
+                                Database.DeleteMute(Globals.Clients[i].MyAccount);
+                                Globals.Clients[i].Muted = false;
+                                Globals.Clients[i].MuteReason = "";
+                                PacketSender.SendGlobalMsg(Globals.Clients[i].Entity.MyName + " has been unmuted!");
+                                return;
+                            }
                         }
                     }
                     PacketSender.SendPlayerMsg(client, val1 + " is not online.");
@@ -1193,20 +1229,26 @@ namespace Intersect_Server.Classes.Networking
                 case (int)AdminActions.Mute:
                     for (int i = 0; i < Globals.Clients.Count; i++)
                     {
-                        if (val1.ToLower() == Globals.Clients[i].Entity.MyName.ToLower())
+                        if (Globals.Clients[i] != null && Globals.Clients[i].Entity != null)
                         {
-                            if (Convert.ToBoolean(val4) == true)
+                            if (val1.ToLower() == Globals.Clients[i].Entity.MyName.ToLower())
                             {
-                                Database.AddMute(Globals.Clients[i], Convert.ToInt32(val2), val3, client.Entity.MyName, Globals.Clients[i].GetIP());
+                                if (Convert.ToBoolean(val4) == true)
+                                {
+                                    Database.AddMute(Globals.Clients[i], Convert.ToInt32(val2), val3,
+                                        client.Entity.MyName, Globals.Clients[i].GetIP());
+                                }
+                                else
+                                {
+                                    Database.AddMute(Globals.Clients[i], Convert.ToInt32(val2), val3,
+                                        client.Entity.MyName, "");
+                                }
+                                Globals.Clients[i].Muted = true;
+                                Globals.Clients[i].MuteReason = Database.CheckMute(Globals.Clients[i].MyAccount,
+                                    Globals.Clients[i].GetIP());
+                                PacketSender.SendGlobalMsg(Globals.Clients[i].Entity.MyName + " has been muted!");
+                                return;
                             }
-                            else
-                            {
-                                Database.AddMute(Globals.Clients[i], Convert.ToInt32(val2), val3, client.Entity.MyName, "");
-                            }
-                            Globals.Clients[i].Muted = true;
-                            Globals.Clients[i].MuteReason = Database.CheckMute(Globals.Clients[i].MyAccount, Globals.Clients[i].GetIP());
-                            PacketSender.SendGlobalMsg(Globals.Clients[i].Entity.MyName + " has been muted!");
-                            return;
                         }
                     }
                     PacketSender.SendPlayerMsg(client, val1 + " is not online.");
@@ -1214,20 +1256,25 @@ namespace Intersect_Server.Classes.Networking
                 case (int)AdminActions.Ban:
                     for (int i = 0; i < Globals.Clients.Count; i++)
                     {
-                        if (val1.ToLower() == Globals.Clients[i].Entity.MyName.ToLower())
+                        if (Globals.Clients[i] != null && Globals.Clients[i].Entity != null)
                         {
-                            if (Convert.ToBoolean(val4) == true)
+                            if (val1.ToLower() == Globals.Clients[i].Entity.MyName.ToLower())
                             {
-                                Database.AddBan(Globals.Clients[i], Convert.ToInt32(val2), val3, client.Entity.MyName, Globals.Clients[i].GetIP());
-                            }
-                            else
-                            {
-                                Database.AddBan(Globals.Clients[i], Convert.ToInt32(val2), val3, client.Entity.MyName, "");
-                            }
+                                if (Convert.ToBoolean(val4) == true)
+                                {
+                                    Database.AddBan(Globals.Clients[i], Convert.ToInt32(val2), val3,
+                                        client.Entity.MyName, Globals.Clients[i].GetIP());
+                                }
+                                else
+                                {
+                                    Database.AddBan(Globals.Clients[i], Convert.ToInt32(val2), val3,
+                                        client.Entity.MyName, "");
+                                }
 
-                            PacketSender.SendGlobalMsg(Globals.Clients[i].Entity.MyName + " has been banned!");
-                            Globals.Clients[i].Disconnect(); //Kick em'
-                            return;
+                                PacketSender.SendGlobalMsg(Globals.Clients[i].Entity.MyName + " has been banned!");
+                                Globals.Clients[i].Disconnect(); //Kick em'
+                                return;
+                            }
                         }
                     }
                     PacketSender.SendPlayerMsg(client, val1 + " is not online.");
@@ -1357,14 +1404,14 @@ namespace Intersect_Server.Classes.Networking
                                                         y < Database.MapGrids[adjacentGrid].Height;
                                         if (inXBounds && inYBounds)
                                             Database.MapGrids[adjacentGrid].MyGrid[x, y] = Database.MapGrids[linkGrid].MyGrid[x + xOffset, y + yOffset];
-
-                                        if (inXBounds && y >= 0 && Database.MapGrids[adjacentGrid].MyGrid[x, y - 1] > -1)
+                                        
+                                        if (inXBounds && y-1 >= 0 && Database.MapGrids[adjacentGrid].MyGrid[x, y - 1] > -1)
                                         {
                                             MapInstance.GetMap(Database.MapGrids[linkGrid].MyGrid[x + xOffset, y + yOffset]).Up = Database.MapGrids[adjacentGrid].MyGrid[x, y - 1];
                                             MapInstance.GetMap(Database.MapGrids[adjacentGrid].MyGrid[x, y - 1]).Down = Database.MapGrids[linkGrid].MyGrid[x + xOffset, y + yOffset];
                                             Database.SaveGameObject(MapInstance.GetMap(Database.MapGrids[adjacentGrid].MyGrid[x, y - 1]));
                                         }
-
+                                        
                                         if (inXBounds && y + 1 < Database.MapGrids[adjacentGrid].Height && Database.MapGrids[adjacentGrid].MyGrid[x, y + 1] > -1)
                                         {
                                             MapInstance.GetMap(Database.MapGrids[linkGrid].MyGrid[x + xOffset, y + yOffset]).Down = Database.MapGrids[adjacentGrid].MyGrid[x, y + 1];

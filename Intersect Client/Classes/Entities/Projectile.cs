@@ -88,11 +88,14 @@ namespace Intersect_Client.Classes.Entities
 
         public override void Dispose()
         {
-            foreach (ProjectileSpawns s in Spawns)
+            if (Spawns != null)
             {
-                if (s != null)
+                foreach (ProjectileSpawns s in Spawns)
                 {
-                    s.Anim.Dispose();
+                    if (s != null && s.Anim != null)
+                    {
+                        s.Anim.Dispose();
+                    }
                 }
             }
         }
@@ -309,16 +312,6 @@ namespace Intersect_Client.Classes.Entities
             var map = CurrentMap;
             var y = CurrentY;
 
-            for (var i = 0; i < 9; i++)
-            {
-                if (Globals.LocalMaps[i] == CurrentMap)
-                {
-                    tmpI = i;
-                    i = 9;
-                }
-            }
-            if (tmpI == -1) return false;
-
             if (Quantity < _myBase.Quantity && SpawnTime < Globals.System.GetTimeMS())
             {
                 AddProjectileSpawns();
@@ -507,11 +500,7 @@ namespace Intersect_Client.Classes.Entities
         /// </summary>
         override public void Draw()
         {
-            int i = GetLocalPos(CurrentMap);
-            if (i == -1)
-            {
-                return;
-            }
+            
         }
 
         public void SpawnDead(int spawnIndex)

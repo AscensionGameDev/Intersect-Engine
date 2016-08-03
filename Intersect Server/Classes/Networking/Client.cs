@@ -99,7 +99,7 @@ namespace Intersect_Server.Classes.Networking
 
         public void Update()
         {
-            while (mySocket != null && IsConnected())
+            while (mySocket != null && IsConnected() && Globals.ServerStarted)
             {
                 mySocket.Update();
                 if (Entity != null)

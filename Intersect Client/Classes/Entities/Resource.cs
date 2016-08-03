@@ -78,8 +78,7 @@ namespace Intersect_Client.Classes.Entities
         private void CalculateRenderBounds()
         {
             var map = MapInstance.GetMap(CurrentMap);
-            int i = GetLocalPos(CurrentMap);
-            if (i == -1 || map == null)
+            if (map == null)
             {
                 return;
             }
@@ -100,11 +99,6 @@ namespace Intersect_Client.Classes.Entities
         //Rendering Resources
         override public void Draw()
         {
-            int i = GetLocalPos(CurrentMap);
-            if (i == -1)
-            {
-                return;
-            }
             GameTexture srcTexture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Resource, MySprite);
             if (srcTexture != null)
             {

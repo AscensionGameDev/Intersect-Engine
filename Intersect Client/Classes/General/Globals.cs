@@ -64,7 +64,9 @@ namespace Intersect_Client.Classes.General
         public static bool HasGameData = false;
 
         //Map/Chunk Array
-        public static int[] LocalMaps = new int[9];
+        public static int[,] MapGrid;
+        public static long MapGridWidth;
+        public static long MapGridHeight;
         public static int[] MapRevision;
         public static float MapRenderTimer = 0f;
 

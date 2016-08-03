@@ -87,9 +87,8 @@ namespace Intersect_Client.Classes.Entities
 
         public override void Draw()
         {
-            int i = GetLocalPos(CurrentMap);
             var map = MapInstance.GetMap(CurrentMap);
-            if (i == -1 || map == null)
+            if (map == null)
             {
                 return;
             }
@@ -180,37 +179,45 @@ namespace Intersect_Client.Classes.Entities
             {
                 return null;
             }
-            for (int i = 0; i < 9; i++)
+            var gridX = MapInstance.GetMap(CurrentMap).MapGridX;
+            var gridY = MapInstance.GetMap(CurrentMap).MapGridY;
+            for (int x = gridX - 1; x <= gridX + 1; x++)
             {
-                if (Globals.LocalMaps[i] == CurrentMap)
+                for (int y = 0; y <= gridY + 1; y++)
                 {
-                    List<Entity>[] outerList;
-                    if (CurrentZ == 0)
+                    if (x >= 0 && x < Globals.MapGridWidth && y >= 0 && y < Globals.MapGridHeight)
                     {
-                        outerList = GameGraphics.Layer1Entities;
+                        if (Globals.MapGrid[x, y] == CurrentMap)
+                        {
+                            if (RenderLevel == 0) y-=1;
+                            if (RenderLevel == 2) y += 1;
+                            List<Entity>[] outerList;
+                            if (CurrentZ == 0)
+                            {
+                                outerList = GameGraphics.Layer1Entities;
+                            }
+                            else
+                            {
+                                outerList = GameGraphics.Layer2Entities;
+                            }
+                            if (y == gridY - 1)
+                            {
+                                outerList[CurrentY].Add(this);
+                                renderList = outerList[CurrentY];
+                            }
+                            else if (y == gridY)
+                            {
+                                outerList[Options.MapHeight + CurrentY].Add(this);
+                                renderList = outerList[Options.MapHeight + CurrentY];
+                            }
+                            else
+                            {
+                                outerList[Options.MapHeight * 2 + CurrentY].Add(this);
+                                renderList = outerList[Options.MapHeight * 2 + CurrentY];
+                            }
+                            break;
+                        }
                     }
-                    else
-                    {
-                        outerList = GameGraphics.Layer2Entities;
-                    }
-                    if (RenderLevel == 0) i -= 3;
-                    if (RenderLevel == 2) i += 3;
-                    if (i < 3 && i > -1)
-                    {
-                        outerList[CurrentY].Add(this);
-                        renderList = outerList[CurrentY];
-                    }
-                    else if (i < 6)
-                    {
-                        outerList[Options.MapHeight + CurrentY].Add(this);
-                        renderList = outerList[Options.MapHeight + CurrentY];
-                    }
-                    else if (i <= 8)
-                    {
-                        outerList[Options.MapHeight * 2 + CurrentY].Add(this);
-                        renderList = outerList[Options.MapHeight * 2 + CurrentY];
-                    }
-                    break;
                 }
             }
             return renderList;
@@ -219,8 +226,7 @@ namespace Intersect_Client.Classes.Entities
         public override void DrawName()
         {
             if (HideName == 1) { return; }
-            int i = GetLocalPos(CurrentMap);
-            if (i == -1 || MapInstance.GetMap(CurrentMap) == null)
+            if (MapInstance.GetMap(CurrentMap) == null)
             {
                 return;
             }

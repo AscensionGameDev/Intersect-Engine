@@ -45,9 +45,11 @@ namespace Intersect_Server.Classes.Misc
         {
             _sourceEntity = sourceEntity;
             _target = null;
-            _pathFindingThread = new Thread(new ThreadStart(PathFind));
-            _pathFindingThread.Priority = ThreadPriority.Lowest;
-            _pathFindingThread.Start();
+            //_pathFindingThread = new Thread(new ThreadStart(PathFind));
+            //_pathFindingThread.Priority = ThreadPriority.Lowest;
+            //_pathFindingThread.Name = "Pathfinding Thread";
+            //_pathFindingThread.Start();
+
         }
 
         public PathfinderTarget GetTarget()

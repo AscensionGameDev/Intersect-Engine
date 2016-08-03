@@ -94,7 +94,14 @@ namespace Intersect_Client.Classes.Entities
             var i = index;
             Globals.EntitiesToDispose.Remove(index);
             if (Globals.Entities.ContainsKey(i) && Globals.Entities[i].GetType() == typeof(Projectile)) { return Globals.Entities[index]; }
-            Globals.Entities.Add(i, new Projectile(i));
+            if (Globals.Entities.ContainsKey(index) && Globals.Entities[i] != null)
+            {
+                Globals.Entities[i] = new Projectile(i);
+            }
+            else
+            {
+                Globals.Entities.Add(i, new Projectile(i));
+            }
             return Globals.Entities[i];
         }
 

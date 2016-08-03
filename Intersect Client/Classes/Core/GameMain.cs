@@ -158,7 +158,7 @@ namespace Intersect_Client.Classes.Core
 
         private static void ProcessLoading()
         {
-            if (Globals.LocalMaps[4] == -1) { return; }
+            if (Globals.Me == null || MapInstance.GetMap(Globals.Me.CurrentMap) == null) return;
             if (!_createdMapTextures)
             {
                 if (Globals.Database.RenderCaching) GameGraphics.CreateMapTextures(9*18);
@@ -169,31 +169,39 @@ namespace Intersect_Client.Classes.Core
                 Globals.ContentManager.LoadTilesets(DatabaseObject.GetGameObjectList(GameObject.Tileset));
                 _loadedTilesets = true;
             }
-            for (var i = 0; i < 9; i++)
+            if (Globals.Database.RenderCaching && Globals.Me != null && MapInstance.GetMap(Globals.Me.CurrentMap) != null)
             {
-                if (Globals.LocalMaps[i] <= -1) continue;
-                var map = MapInstance.GetMap(Globals.LocalMaps[i]);
-                if (map != null)
+                var gridX = MapInstance.GetMap(Globals.Me.CurrentMap).MapGridX;
+                var gridY = MapInstance.GetMap(Globals.Me.CurrentMap).MapGridY;
+                for (int x = gridX - 1; x <= gridX + 1; x++)
                 {
-                    //if (!Globals.GameMaps[Globals.LocalMaps[i]].ShouldLoad(i * 2 + 0)) continue;
-                    if (map.MapLoaded == false)
+                    for (int y = 0; y <= gridY + 1; y++)
                     {
-                        return;
+                        if (x >= 0 && x < Globals.MapGridWidth && y >= 0 && y < Globals.MapGridHeight)
+                        {
+                            var map = MapInstance.GetMap(Globals.MapGrid[x,y]);
+                            if (map != null)
+                            {
+                                if (map.MapLoaded == false)
+                                {
+                                    return;
+                                }
+                                else if (map.MapRendered == false && Globals.Database.RenderCaching == true)
+                                {
+                                    map.PreRenderMap();
+                                    return;
+                                }
+                            }
+                            else
+                            {
+                                return;
+                            }
+                        }
                     }
-                    else if (map.MapRendered == false && Globals.Database.RenderCaching == true)
-                    {
-                        map.PreRenderMap();
-                        return;
-                    }
-                }
-                else
-                {
-                    return;
                 }
             }
             
-
-            GameAudio.PlayMusic(MapInstance.GetMap(Globals.LocalMaps[4]).Music, 3, 3, true);
+            GameAudio.PlayMusic(MapInstance.GetMap(Globals.Me.CurrentMap).Music, 3, 3, true);
             Globals.GameState = GameStates.InGame;
             GameFade.FadeIn();
         }
@@ -218,50 +226,50 @@ namespace Intersect_Client.Classes.Core
             Globals.EntitiesToDispose.Clear();
 
             //Update Maps
-            bool handled = false;
             foreach (var map in MapInstance.GetObjects().Values)
             {
-                handled = false;
                 if (map == null) continue;
-                for (var i = 0; i < 9; i++)
-                {
-                    if (Globals.LocalMaps[i] <= -1) continue;
-                    if (map.MyMapNum == Globals.LocalMaps[i])
-                    {
-                        map.Update(true);
-                        handled = true;
-                    }
-                }
-                if (!handled)
-                {
-                    map.Update(false);
-                }
+                map.Update(map.InView());
             }
 
             //If we are waiting on maps, lets see if we have them
             if (Globals.NeedsMaps)
             {
                 bool canShowWorld = true;
-                for (var i = 0; i < 9; i++)
+                if (MapInstance.GetMap(Globals.Me.CurrentMap) != null)
                 {
-                    if (Globals.LocalMaps[i] <= -1) continue;
-                    var map = MapInstance.GetMap(Globals.LocalMaps[i]);
-                    if (map  != null)
+                    var gridX = MapInstance.GetMap(Globals.Me.CurrentMap).MapGridX;
+                    var gridY = MapInstance.GetMap(Globals.Me.CurrentMap).MapGridY;
+                    for (int x = gridX - 1; x <= gridX + 1; x++)
                     {
-                        if (map.MapLoaded == false)
+                        for (int y = 0; y <= gridY + 1; y++)
                         {
-                            canShowWorld = false;
-                        }
-                        else if (map.MapRendered == false && Globals.Database.RenderCaching == true)
-                        {
-                            map.PreRenderMap();
-                            canShowWorld = false;
+                            if (x >= 0 && x < Globals.MapGridWidth && y >= 0 && y < Globals.MapGridHeight)
+                            {
+                                var map = MapInstance.GetMap(Globals.MapGrid[x, y]);
+                                if (map != null)
+                                {
+                                    if (map.MapLoaded == false)
+                                    {
+                                        canShowWorld = false;
+                                    }
+                                    else if (map.MapRendered == false && Globals.Database.RenderCaching == true)
+                                    {
+                                        map.PreRenderMap();
+                                        canShowWorld = false;
+                                    }
+                                }
+                                else
+                                {
+                                    canShowWorld = false;
+                                }
+                            }
                         }
                     }
-                    else
-                    {
-                        canShowWorld = false;
-                    }
+                }
+                else
+                {
+                    canShowWorld = false;
                 }
                 if (canShowWorld) Globals.NeedsMaps = false;
             }

@@ -347,23 +347,30 @@ namespace Intersect_Editor.Forms
         //Disconnection
         private void HandleServerDisconnect()
         {
-            //Offer to export map
-            if (Globals.CurrentMap != null)
+            if (!Globals.ClosingEditor)
             {
-                if (MessageBox.Show("You have been disconnected from the server! Would you like to export this map before closing this editor?", "Disconnected -- Export Map?", MessageBoxButtons.YesNo) == System.Windows.Forms.DialogResult.Yes)
+                //Offer to export map
+                if (Globals.CurrentMap != null)
                 {
-                    exportMapToolStripMenuItem_Click(null, null);
-                    Application.Exit();
+                    if (
+                        MessageBox.Show(
+                            "You have been disconnected from the server! Would you like to export this map before closing this editor?",
+                            "Disconnected -- Export Map?", MessageBoxButtons.YesNo) ==
+                        System.Windows.Forms.DialogResult.Yes)
+                    {
+                        exportMapToolStripMenuItem_Click(null, null);
+                        Application.Exit();
+                    }
+                    else
+                    {
+                        Application.Exit();
+                    }
                 }
                 else
                 {
+                    MessageBox.Show(@"Disconnected!");
                     Application.Exit();
                 }
-            }
-            else
-            {
-                MessageBox.Show(@"Disconnected!");
-                Application.Exit();
             }
         }
 

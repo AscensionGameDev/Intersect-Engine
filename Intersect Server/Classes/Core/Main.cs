@@ -101,11 +101,17 @@ namespace Intersect_Server.Classes
                             }
                             break;
                         case "onlinelist":
-                            Console.WriteLine(@"|ID | Account | Screen name|");
-                            Console.WriteLine(@"----------------------------");
+                            Console.WriteLine(String.Format("{0,-10}", "ID") + String.Format("{0,-28}","Account") + String.Format("{0,-28}","Character"));
+                            Console.WriteLine(new String('-',66));
                             for (int i = 0; i < Globals.Clients.Count; i++)
                             {
-                                Console.WriteLine(@"#" + i + ") " + Globals.Clients[i].MyAccount + " | " + Globals.Clients[i].Entity.MyName);
+                                if (Globals.Clients[i] != null)
+                                {
+                                    var name = Globals.Clients[i].Entity != null ? Globals.Clients[i].Entity.MyName : "";
+                                    Console.WriteLine(String.Format("{0,-10}", "#" + i) +
+                                                      String.Format("{0,-28}", Globals.Clients[i].MyAccount) +
+                                                      String.Format("{0,-28}", name));
+                                }
                             }
                             break;
                         case "kill":

@@ -152,6 +152,24 @@ namespace Intersect_Client.Classes.Maps
             }
         }
 
+        public bool InView()
+        {
+            if (Globals.MapGridWidth == 0 || Globals.MapGridHeight == 0 || MapInstance.GetMap(Globals.Me.CurrentMap) == null) return true;
+            var gridX = MapInstance.GetMap(Globals.Me.CurrentMap).MapGridX;
+            var gridY = MapInstance.GetMap(Globals.Me.CurrentMap).MapGridY;
+            for (int x = gridX - 1; x <= gridX + 1; x++)
+            {
+                for (int y = 0; y <= gridY + 1; y++)
+                {
+                    if (x >= 0 && x < Globals.MapGridWidth && y >= 0 && y < Globals.MapGridHeight)
+                    {
+                        if (Globals.MapGrid[x, y] == MyMapNum) return true;
+                    }
+                }
+            }
+            return false;
+        }
+
         //Autotile Logic
         private void UpdateAdjacentAutotiles()
         {
@@ -560,9 +578,10 @@ namespace Intersect_Client.Classes.Maps
         //Fogs/Panorama/Overlay
         private void DrawFog()
         {
+            if (Globals.Me == null || MapInstance.GetMap(Globals.Me.CurrentMap) == null) return;
             float ecTime = Globals.System.GetTimeMS() - _fogUpdateTime;
             _fogUpdateTime = Globals.System.GetTimeMS();
-            if (MyMapNum == Globals.LocalMaps[4])
+            if (MyMapNum == Globals.Me.CurrentMap)
             {
                 if (_curFogIntensity != 1)
                 {
@@ -613,7 +632,7 @@ namespace Intersect_Client.Classes.Maps
                                     GetX() - (Options.MapWidth * Options.TileWidth * 1.5f) + x * fogW + drawX,
                                     GetY() - (Options.MapHeight * Options.TileHeight * 1.5f) + y * fogH + drawY, fogW, fogH),
                                 new IntersectClientExtras.GenericClasses.Color((byte)(FogTransparency * _curFogIntensity), 255, 255, 255
-                                    ));
+                                    ),null,GameBlendModes.Alpha);
                         }
                     }
                 }
@@ -623,7 +642,7 @@ namespace Intersect_Client.Classes.Maps
         {
             float ecTime = Globals.System.GetTimeMS() - _panoramaUpdateTime;
             _panoramaUpdateTime = Globals.System.GetTimeMS();
-            if (MyMapNum == Globals.LocalMaps[4])
+            if (MyMapNum == Globals.Me.CurrentMap)
             {
                 if (_panoramaIntensity != 1)
                 {
@@ -649,7 +668,7 @@ namespace Intersect_Client.Classes.Maps
         {
             float ecTime = Globals.System.GetTimeMS() - _overlayUpdateTime;
             _overlayUpdateTime = Globals.System.GetTimeMS();
-            if (MyMapNum == Globals.LocalMaps[4])
+            if (MyMapNum == Globals.Me.CurrentMap)
             {
                 if (_overlayIntensity != 1)
                 {

@@ -45,7 +45,7 @@ namespace Intersect_Server.Classes.Networking
             List<Player> Players = MapInstance.GetMap(mapNum).GetPlayersOnMap();
             foreach (var player in Players)
             {
-                player.MyClient.SendPacket(data);
+                if (player != null) player.MyClient.SendPacket(data);
             }
         }
         public static void SendDataToProximity(int mapNum, byte[] data)
@@ -178,7 +178,7 @@ namespace Intersect_Server.Classes.Networking
                 }
                 else
                 {
-                    MapInstance.GetMap(mapNum).SendMapEntitiesTo(client);
+                    MapInstance.GetMap(mapNum).SendMapEntitiesTo(client.Entity);
                 }
             }
             else if (client == null)
@@ -391,40 +391,6 @@ namespace Intersect_Server.Classes.Networking
             bf.Dispose();
         }
 
-        public static void SendEnterMap(Client client, int mapNum)
-        {
-            var bf = new ByteBuffer();
-            bf.WriteLong((int)ServerPackets.EnterMap);
-            bf.WriteLong(mapNum);
-            if (!(MapInstance.GetMap(mapNum).MapGridX == -1 || MapInstance.GetMap(mapNum).MapGridY == -1))
-            {
-                if (!client.IsEditor){  MapInstance.GetMap(mapNum).PlayerEnteredMap(client);}
-                for (var y = MapInstance.GetMap(mapNum).MapGridY - 1; y < MapInstance.GetMap(mapNum).MapGridY + 2; y++)
-                {
-                    for (var x = MapInstance.GetMap(mapNum).MapGridX - 1; x < MapInstance.GetMap(mapNum).MapGridX + 2; x++)
-                    {
-                        if (x >= Database.MapGrids[MapInstance.GetMap(mapNum).MapGrid].XMin && x < Database.MapGrids[MapInstance.GetMap(mapNum).MapGrid].XMax && y >= Database.MapGrids[MapInstance.GetMap(mapNum).MapGrid].YMin && y < Database.MapGrids[MapInstance.GetMap(mapNum).MapGrid].YMax)
-                        {
-                            bf.WriteLong(Database.MapGrids[MapInstance.GetMap(mapNum).MapGrid].MyGrid[x, y]);
-                        }
-                        else
-                        {
-                            bf.WriteLong(-1);
-                        }
-                        
-                    }
-                }
-                client.SendPacket(bf.ToArray());
-                
-                //Send Map Info
-                for (int i = 0; i < MapInstance.GetMap(mapNum).SurroundingMaps.Count; i++)
-                {
-                    PacketSender.SendMapItems(client, MapInstance.GetMap(mapNum).SurroundingMaps[i]);
-                }
-            }
-            bf.Dispose();
-        }
-
         public static void SendDataToAllBut(Entity en, byte[] packet)
         {
             lock (Globals.ClientLock)
@@ -495,6 +461,7 @@ namespace Intersect_Server.Classes.Networking
 
         public static void SendEntityVitals(int entityIndex, int type, Entity en)
         {
+            if (en == null) return;
             var bf = new ByteBuffer();
             bf.WriteLong((int)ServerPackets.EntityVitals);
             bf.WriteLong(entityIndex);
@@ -517,6 +484,7 @@ namespace Intersect_Server.Classes.Networking
 
         public static void SendEntityStats(int entityIndex, int type, Entity en)
         {
+            if (en == null) return;
             var bf = new ByteBuffer();
             bf.WriteLong((int)ServerPackets.EntityStats);
             bf.WriteLong(entityIndex);
@@ -823,8 +791,11 @@ namespace Intersect_Server.Classes.Networking
                     bf.WriteInteger(Database.MapGrids[gridIndex].MyGrid[x,y]);
                     if (Database.MapGrids[gridIndex].MyGrid[x, y] != -1)
                     {
-                        bf.WriteString(MapInstance.GetMap(Database.MapGrids[gridIndex].MyGrid[x, y]).MyName);
-                        bf.WriteInteger(MapInstance.GetMap(Database.MapGrids[gridIndex].MyGrid[x, y]).Revision);
+                        if (client.IsEditor)
+                        {
+                            bf.WriteString(MapInstance.GetMap(Database.MapGrids[gridIndex].MyGrid[x, y]).MyName);
+                            bf.WriteInteger(MapInstance.GetMap(Database.MapGrids[gridIndex].MyGrid[x, y]).Revision);
+                        }
                     }
                 }
             }

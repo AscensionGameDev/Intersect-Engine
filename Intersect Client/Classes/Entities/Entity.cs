@@ -198,16 +198,6 @@ namespace Intersect_Client.Classes.Entities
             RenderList = DetermineRenderOrder(RenderList);
             if (_lastUpdate == 0) { _lastUpdate = Globals.System.GetTimeMS(); }
             float ecTime = (float)(Globals.System.GetTimeMS() - _lastUpdate);
-            var tmpI = -1;
-            for (var i = 0; i < 9; i++)
-            {
-                if (Globals.LocalMaps[i] == CurrentMap)
-                {
-                    tmpI = i;
-                    i = 9;
-                }
-            }
-            if (tmpI == -1) return false;
             if (Dashing != null)
             {
                 WalkFrame = 1; //Fix the frame whilst dashing
@@ -335,35 +325,43 @@ namespace Intersect_Client.Classes.Entities
             {
                 return null;
             }
-            for (int i = 0; i < 9; i++)
+            var gridX = MapInstance.GetMap(CurrentMap).MapGridX;
+            var gridY = MapInstance.GetMap(CurrentMap).MapGridY;
+            for (int x = gridX - 1; x <= gridX + 1; x++)
             {
-                if (Globals.LocalMaps[i] == CurrentMap)
+                for (int y = 0; y <= gridY + 1; y++)
                 {
-                    List<Entity>[] outerList;
-                    if (CurrentZ == 0)
+                    if (x >= 0 && x < Globals.MapGridWidth && y >= 0 && y < Globals.MapGridHeight)
                     {
-                        outerList = GameGraphics.Layer1Entities;
+                        if (Globals.MapGrid[x, y] == CurrentMap)
+                        {
+                            List<Entity>[] outerList;
+                            if (CurrentZ == 0)
+                            {
+                                outerList = GameGraphics.Layer1Entities;
+                            }
+                            else
+                            {
+                                outerList = GameGraphics.Layer2Entities;
+                            }
+                            if (y == gridY-1)
+                            {
+                                outerList[CurrentY].Add(this);
+                                renderList = outerList[CurrentY];
+                            }
+                            else if (y == gridY)
+                            {
+                                outerList[Options.MapHeight + CurrentY].Add(this);
+                                renderList = outerList[Options.MapHeight + CurrentY];
+                            }
+                            else
+                            {
+                                outerList[Options.MapHeight * 2 + CurrentY].Add(this);
+                                renderList = outerList[Options.MapHeight * 2 + CurrentY];
+                            }
+                            break;
+                        }
                     }
-                    else
-                    {
-                        outerList = GameGraphics.Layer2Entities;
-                    }
-                    if (i < 3)
-                    {
-                        outerList[CurrentY].Add(this);
-                        renderList = outerList[CurrentY];
-                    }
-                    else if (i < 6)
-                    {
-                        outerList[Options.MapHeight + CurrentY].Add(this);
-                        renderList = outerList[Options.MapHeight + CurrentY];
-                    }
-                    else
-                    {
-                        outerList[Options.MapHeight * 2 + CurrentY].Add(this);
-                        renderList = outerList[Options.MapHeight * 2 + CurrentY];
-                    }
-                    break;
                 }
             }
             return renderList;
@@ -372,11 +370,7 @@ namespace Intersect_Client.Classes.Entities
         //Rendering Functions
         public virtual void Draw()
         {
-            int i = GetLocalPos(CurrentMap);
-            if (i == -1 || MapInstance.GetMap(CurrentMap) == null)
-            {
-                return;
-            }
+            if (MapInstance.GetMap(CurrentMap) == null) return;
             FloatRect srcRectangle = new FloatRect();
             FloatRect destRectangle = new FloatRect();
             var d = 0;
@@ -488,9 +482,8 @@ namespace Intersect_Client.Classes.Entities
 
         public virtual void DrawEquipment(string filename, int alpha)
         {
-            int i = GetLocalPos(CurrentMap);
             var map = MapInstance.GetMap(CurrentMap);
-            if (i == -1 || map == null) return;
+            if (map == null) return;
             FloatRect srcRectangle = new FloatRect();
             FloatRect destRectangle = new FloatRect();
             var d = 0;
@@ -543,18 +536,6 @@ namespace Intersect_Client.Classes.Entities
             }
         }
 
-        public int GetLocalPos(int map)
-        {
-            for (int i = 0; i < 9; i++)
-            {
-                if (Globals.LocalMaps[i] == map)
-                {
-                    return i;
-                }
-            }
-            return -1;
-        }
-
         //returns the point on the screen that is the center of the player sprite
         public virtual Pointf GetCenterPos()
         {
@@ -589,10 +570,8 @@ namespace Intersect_Client.Classes.Entities
                     }
                 }
             }
-
-            int i = GetLocalPos(CurrentMap);
             var map = MapInstance.GetMap(CurrentMap);
-            if (i == -1 || map == null)
+            if (map == null)
             {
                 return;
             }
@@ -613,9 +592,8 @@ namespace Intersect_Client.Classes.Entities
 
         public void DrawActionMsgs()
         {
-            int i = GetLocalPos(CurrentMap);
             var map = MapInstance.GetMap(CurrentMap);
-            if (i == -1 || map == null)
+            if (map == null)
             {
                 return;
             }
@@ -650,9 +628,8 @@ namespace Intersect_Client.Classes.Entities
                 }
             }
 
-            int i = GetLocalPos(CurrentMap);
             var map = MapInstance.GetMap(CurrentMap);
-            if (i == -1 || map == null)
+            if (map == null)
             {
                 return;
             }
@@ -675,8 +652,7 @@ namespace Intersect_Client.Classes.Entities
         public void DrawCastingBar()
         {
             if (CastTime < Globals.System.GetTimeMS()) { return; }
-            int i = GetLocalPos(CurrentMap);
-            if (i == -1 || MapInstance.GetMap(CurrentMap) == null)
+            if (MapInstance.GetMap(CurrentMap) == null)
             {
                 return;
             }
@@ -708,9 +684,8 @@ namespace Intersect_Client.Classes.Entities
         public void DrawTarget(int Priority)
         {
             if (this.GetType() == typeof(Projectile)) return;
-            int i = GetLocalPos(CurrentMap);
             var map = MapInstance.GetMap(CurrentMap);
-            if (i == -1 || map == null) return;
+            if (map == null) return;
             FloatRect srcRectangle = new FloatRect();
             FloatRect destRectangle = new FloatRect();
             GameTexture targetTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Misc, "target.png");
@@ -844,10 +819,6 @@ namespace Intersect_Client.Classes.Entities
                     {
                         Globals.Entities[EntityID].CurrentMap = MapInstance.GetMap(Globals.Entities[EntityID].CurrentMap).Left;
                         Globals.Entities[EntityID].CurrentX = Options.MapWidth - 1;
-                        if (Globals.Entities[EntityID] == Globals.Me)
-                        {
-                            Globals.Me.UpdateMapRenderers((int)Directions.Left);
-                        }
                     }
                     else
                     {
@@ -861,10 +832,6 @@ namespace Intersect_Client.Classes.Entities
                     {
                         Globals.Entities[EntityID].CurrentMap = MapInstance.GetMap(Globals.Entities[EntityID].CurrentMap).Right;
                         Globals.Entities[EntityID].CurrentX = 0;
-                        if (Globals.Entities[EntityID] == Globals.Me)
-                        {
-                            Globals.Me.UpdateMapRenderers((int)Directions.Right);
-                        }
                     }
                     else
                     {
@@ -878,10 +845,6 @@ namespace Intersect_Client.Classes.Entities
                     {
                         Globals.Entities[EntityID].CurrentMap = MapInstance.GetMap(Globals.Entities[EntityID].CurrentMap).Up;
                         Globals.Entities[EntityID].CurrentY = Options.MapHeight - 1;
-                        if (Globals.Entities[EntityID] == Globals.Me)
-                        {
-                            Globals.Me.UpdateMapRenderers((int)Directions.Up);
-                        }
                     }
                     else
                     {
@@ -895,10 +858,6 @@ namespace Intersect_Client.Classes.Entities
                     {
                         Globals.Entities[EntityID].CurrentMap = MapInstance.GetMap(Globals.Entities[EntityID].CurrentMap).Down;
                         Globals.Entities[EntityID].CurrentY = 0;
-                        if (Globals.Entities[EntityID] == Globals.Me)
-                        {
-                            Globals.Me.UpdateMapRenderers((int)Directions.Down);
-                        }
                     }
                     else
                     {

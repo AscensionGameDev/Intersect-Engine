@@ -104,6 +104,39 @@ namespace Intersect_Server.Classes.Entities
             }
         }
 
+        public override void TryAttack(Entity enemy, ProjectileBase isProjectile = null, int isSpell = -1, int projectileDir = -1)
+        {
+            if (CanNpcCombat(enemy))
+            {
+                base.TryAttack(enemy, isProjectile, isSpell, projectileDir);
+            }
+        }
+
+
+        private bool CanNpcCombat(Entity enemy)
+        {
+            //Check for NpcVsNpc Combat, both must be enabled and the attacker must have it as an enemy or attack all types of npc.
+            if (enemy != null && enemy.GetType() == typeof(Npc) && MyBase != null)
+            {
+                if (((Npc)enemy).MyBase.NpcVsNpcEnabled == false || ((Npc)Globals.Entities[MyIndex]).MyBase.NpcVsNpcEnabled == false) return false;
+
+                if (MyBase.AttackAllies == true) return true;
+
+                for (int i = 0; i < MyBase.AggroList.Count; i++)
+                {
+                    if (NpcBase.GetNpc(MyBase.AggroList[i]) == ((Npc)enemy).MyBase)
+                    {
+                        return true;
+                    }
+                }
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+        }
+
         public bool CanAttack()
         {
             //Check if the attacker is stunned or blinded.
@@ -371,7 +404,7 @@ namespace Intersect_Server.Classes.Entities
                             }
                             else
                             {
-                                if (CanAttack()) TryAttack(MyTarget.MyIndex, null, -1, -1);
+                                if (CanAttack()) TryAttack(MyTarget, null, -1, -1);
                             }
                         }
                     }
@@ -384,7 +417,7 @@ namespace Intersect_Server.Classes.Entities
                         }
                         else
                         {
-                            if (CanAttack()) TryAttack(MyTarget.MyIndex, null, -1, -1);
+                            if (CanAttack()) TryAttack(MyTarget, null, -1, -1);
                         }
                     }
                 }

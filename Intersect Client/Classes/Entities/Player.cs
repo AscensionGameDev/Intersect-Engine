@@ -426,151 +426,43 @@ namespace Intersect_Client.Classes.Entities
         {
             var tmpX = x;
             var tmpY = y;
-            var tmpMap = map;
             var tmpI = -1;
-            for (var i = 0; i < 9; i++)
-            {
-                if (Globals.LocalMaps[i] == map)
-                {
-                    tmpI = i;
-                    i = 9;
-                }
-            }
-            if (tmpI == -1)
-            {
-                return true;
-            }
-            try
-            {
-                if (x < 0)
-                {
-                    tmpX = (Options.MapWidth) - (x * -1);
-                    tmpY = y;
-                    if (y < 0)
-                    {
-                        tmpY = (Options.MapHeight) - (y * -1);
-                        if (Globals.LocalMaps[tmpI - 4] > -1)
-                        {
-                            tmpMap = Globals.LocalMaps[tmpI - 4];
-                        }
-                        else
-                        {
-                            return false;
-                        }
-                    }
-                    else if (y > (Options.MapHeight - 1))
-                    {
-                        tmpY = y - (Options.MapHeight);
-                        if (Globals.LocalMaps[tmpI + 2] > -1)
-                        {
-                            tmpMap = Globals.LocalMaps[tmpI + 2];
-                        }
-                        else
-                        {
-                            return false;
-                        }
-                    }
-                    else
-                    {
-                        if (Globals.LocalMaps[tmpI - 1] > -1)
-                        {
-                            tmpMap = Globals.LocalMaps[tmpI - 1];
-                        }
-                        else
-                        {
-                            return false;
-                        }
-                    }
-                }
-                else if (x > (Options.MapWidth - 1))
-                {
-                    tmpX = x - (Options.MapWidth);
-                    tmpY = y;
-                    if (y < 0)
-                    {
-                        tmpY = (Options.MapHeight) - (y * -1);
-                        if (Globals.LocalMaps[tmpI - 2] > -1)
-                        {
-                            tmpMap = Globals.LocalMaps[tmpI - 2];
-                        }
-                        else
-                        {
-                            return false;
-                        }
-                    }
-                    else if (y > (Options.MapHeight - 1))
-                    {
-                        tmpY = y - (Options.MapHeight);
-                        if (Globals.LocalMaps[tmpI + 4] > -1)
-                        {
-                            tmpMap = Globals.LocalMaps[tmpI + 4];
-                        }
-                        else
-                        {
-                            return false;
-                        }
-                    }
-                    else
-                    {
-                        if (Globals.LocalMaps[tmpI + 1] > -1)
-                        {
-                            tmpMap = Globals.LocalMaps[tmpI + 1];
-                        }
-                        else
-                        {
-                            return false;
-                        }
-                    }
-                }
-                else if (y < 0)
-                {
-                    tmpX = x;
-                    tmpY = (Options.MapHeight) - (y * -1);
-                    if (Globals.LocalMaps[tmpI - 3] > -1)
-                    {
-                        tmpMap = Globals.LocalMaps[tmpI - 3];
-                    }
-                    else
-                    {
-                        return false;
-                    }
-                }
-                else if (y > (Options.MapHeight - 1))
-                {
-                    tmpX = x;
-                    tmpY = y - (Options.MapHeight);
-                    if (Globals.LocalMaps[tmpI + 3] > -1)
-                    {
-                        tmpMap = Globals.LocalMaps[tmpI + 3];
-                    }
-                    else
-                    {
-                        return false;
-                    }
-                }
-                else
-                {
-                    tmpX = x;
-                    tmpY = y;
-                    if (Globals.LocalMaps[tmpI] > -1)
-                    {
-                        tmpMap = Globals.LocalMaps[tmpI];
-                    }
-                    else
-                    {
-                        return false;
-                    }
-                }
-                x = tmpX;
-                y = tmpY;
-                map = tmpMap;
-                return true;
-            }
-            catch
-            {
-                return false;
 
+            var gridX = MapInstance.GetMap(map).MapGridX;
+            var gridY = MapInstance.GetMap(map).MapGridY;
+
+            if (x < 0)
+            {
+                tmpX = (Options.MapWidth) - (x * -1);
+                gridX--;
             }
+            if (y < 0)
+            {
+                tmpY = (Options.MapHeight) - (y * -1);
+                gridY--;
+            }
+            if (y > (Options.MapHeight - 1))
+            {
+                tmpY = y - (Options.MapHeight);
+                gridY++;
+            }
+            if (x > (Options.MapWidth - 1))
+            {
+                tmpX = x - (Options.MapWidth);
+                gridX++;
+            }
+
+            if (gridX >= 0 && gridX < Globals.MapGridWidth && gridY >= 0 && gridY < Globals.MapGridHeight)
+            {
+                if (MapInstance.GetMap(Globals.MapGrid[gridX, gridY]) != null)
+                {
+                    x = tmpX;
+                    y = tmpY;
+                    map = Globals.MapGrid[gridX, gridY];
+                    return true;
+                }
+            }
+            return false;
         }
         public bool TryTarget()
         {
@@ -691,14 +583,6 @@ namespace Intersect_Client.Classes.Entities
                 return;
             }
 
-            for (var i = 0; i < 9; i++)
-            {
-                if (Globals.LocalMaps[i] == CurrentMap)
-                {
-                    tmpI = i;
-                    i = 9;
-                }
-            }
             if (MoveDir > -1 && Globals.EventDialogs.Count == 0)
             {
                 //Try to move if able and not casting spells.
@@ -756,117 +640,35 @@ namespace Intersect_Client.Classes.Entities
                     {
                         MoveTimer = Globals.System.GetTimeMS() + GetMovementTime();
                         didMove = true;
-                        if (CurrentX < 0 || CurrentY < 0 || CurrentX > (Options.MapWidth - 1) || CurrentY > (Options.MapHeight - 1))
+                        if (CurrentX < 0 || CurrentY < 0 || CurrentX > (Options.MapWidth - 1) ||
+                            CurrentY > (Options.MapHeight - 1))
                         {
-                            if (tmpI != -1)
+                            var gridX = MapInstance.GetMap(Globals.Me.CurrentMap).MapGridX;
+                            var gridY = MapInstance.GetMap(Globals.Me.CurrentMap).MapGridY;
+                            if (CurrentX < 0)
                             {
-                                try
-                                {
-                                    //At each of these cases, we have switched chunks. We need to re-number the chunk renderers.
-                                    if (CurrentX < 0)
-                                    {
-
-                                        if (CurrentY < 0)
-                                        {
-                                            if (Globals.LocalMaps[tmpI - 4] > -1)
-                                            {
-                                                CurrentMap = Globals.LocalMaps[tmpI - 4];
-                                                CurrentX = (Options.MapWidth - 1);
-                                                CurrentY = (Options.MapHeight - 1);
-                                                UpdateMapRenderers(0);
-                                                UpdateMapRenderers(2);
-                                            }
-                                        }
-                                        else if (CurrentY > (Options.MapHeight - 1))
-                                        {
-                                            if (Globals.LocalMaps[tmpI + 2] > -1)
-                                            {
-                                                CurrentMap = Globals.LocalMaps[tmpI + 2];
-                                                CurrentX = (Options.MapWidth - 1);
-                                                CurrentY = 0;
-                                                UpdateMapRenderers(1);
-                                                UpdateMapRenderers(2);
-                                            }
-
-                                        }
-                                        else
-                                        {
-                                            if (Globals.LocalMaps[tmpI - 1] > -1)
-                                            {
-                                                CurrentMap = Globals.LocalMaps[tmpI - 1];
-                                                CurrentX = (Options.MapWidth - 1);
-                                                UpdateMapRenderers(2);
-                                            }
-                                        }
-
-                                    }
-                                    else if (CurrentX > (Options.MapWidth - 1))
-                                    {
-                                        if (CurrentY < 0)
-                                        {
-                                            if (Globals.LocalMaps[tmpI - 2] > -1)
-                                            {
-                                                CurrentMap = Globals.LocalMaps[tmpI - 2];
-                                                CurrentX = 0;
-                                                CurrentY = (Options.MapHeight - 1);
-                                                UpdateMapRenderers(0);
-                                                UpdateMapRenderers(3);
-                                            }
-                                        }
-                                        else if (CurrentY > (Options.MapHeight - 1))
-                                        {
-                                            if (Globals.LocalMaps[tmpI + 4] > -1)
-                                            {
-                                                CurrentMap = Globals.LocalMaps[tmpI + 4];
-                                                CurrentX = 0;
-                                                CurrentY = 0;
-                                                UpdateMapRenderers(1);
-                                                UpdateMapRenderers(3);
-                                            }
-
-                                        }
-                                        else
-                                        {
-                                            if (Globals.LocalMaps[tmpI + 1] > -1)
-                                            {
-                                                CurrentX = 0;
-                                                CurrentMap = Globals.LocalMaps[tmpI + 1];
-                                                UpdateMapRenderers(3);
-                                            }
-                                        }
-                                    }
-                                    else if (CurrentY < 0)
-                                    {
-                                        if (Globals.LocalMaps[tmpI - 3] > -1)
-                                        {
-                                            CurrentY = (Options.MapHeight - 1);
-                                            CurrentMap = Globals.LocalMaps[tmpI - 3];
-                                            UpdateMapRenderers(0);
-                                        }
-                                    }
-                                    else if (CurrentY > (Options.MapHeight - 1))
-                                    {
-                                        if (Globals.LocalMaps[tmpI + 3] > -1)
-                                        {
-                                            CurrentY = 0;
-                                            CurrentMap = Globals.LocalMaps[tmpI + 3];
-                                            UpdateMapRenderers(1);
-                                        }
-
-                                    }
-                                }
-                                catch (Exception)
-                                {
-                                    //player out of bounds
-                                    //Debug.Log("Detected player out of bounds.");
-                                }
-
-
+                                gridX--;
+                                CurrentX = (Options.MapWidth - 1);
                             }
-                            else
+                            if (CurrentY < 0)
                             {
-                                //player out of bounds
-                                //.Log("Detected player out of bounds.");
+                                gridY--;
+                                CurrentY = (Options.MapHeight - 1);
+                            }
+                            if (CurrentX >= Options.MapWidth)
+                            {
+                                CurrentX = 0;
+                                gridX++;
+                            }
+                            if (CurrentY >= Options.MapHeight)
+                            {
+                                CurrentY = 0;
+                                gridY++;
+                            }
+                            if (CurrentMap != Globals.MapGrid[gridX, gridY])
+                            {
+                                CurrentMap = Globals.MapGrid[gridX, gridY];
+                                FetchNewMaps();
                             }
                         }
                     }
@@ -887,87 +689,25 @@ namespace Intersect_Client.Classes.Entities
                 PacketSender.SendMove();
             }
         }
-        public void UpdateMapRenderers(int dir)
+        public void FetchNewMaps()
         {
-            if (!IsLocal)
+            if (Globals.MapGridWidth == 0 || Globals.MapGridHeight == 0) return;
+            if (MapInstance.GetMap(Globals.Me.CurrentMap) != null)
             {
-                return;
-            }
-            if (dir == 2)
-            {
-                if (Globals.LocalMaps[3] > -1)
+                var gridX = MapInstance.GetMap(Globals.Me.CurrentMap).MapGridX;
+                var gridY = MapInstance.GetMap(Globals.Me.CurrentMap).MapGridY;
+                for (int x = gridX - 1; x <= gridX + 1; x++)
                 {
-                    Globals.Me.CurrentMap = Globals.LocalMaps[3];
-                    Globals.LocalMaps[2] = Globals.LocalMaps[1];
-                    Globals.LocalMaps[1] = Globals.LocalMaps[0];
-                    Globals.LocalMaps[0] = -1;
-                    Globals.LocalMaps[5] = Globals.LocalMaps[4];
-                    Globals.LocalMaps[4] = Globals.LocalMaps[3];
-                    Globals.LocalMaps[3] = -1;
-                    Globals.LocalMaps[8] = Globals.LocalMaps[7];
-                    Globals.LocalMaps[7] = Globals.LocalMaps[6];
-                    Globals.LocalMaps[6] = -1;
-                    Globals.Me.CurrentMap = Globals.LocalMaps[4];
-                    CurrentMap = Globals.LocalMaps[4];
-                    PacketSender.SendEnterMap();
-                }
-            }
-            else if (dir == 3)
-            {
-                if (Globals.LocalMaps[5] > -1)
-                {
-                    Globals.Me.CurrentMap = Globals.LocalMaps[5];
-                    Globals.LocalMaps[0] = Globals.LocalMaps[1];
-                    Globals.LocalMaps[1] = Globals.LocalMaps[2];
-                    Globals.LocalMaps[2] = -1;
-                    Globals.LocalMaps[3] = Globals.LocalMaps[4];
-                    Globals.LocalMaps[4] = Globals.LocalMaps[5];
-                    Globals.LocalMaps[5] = -1;
-                    Globals.LocalMaps[6] = Globals.LocalMaps[7];
-                    Globals.LocalMaps[7] = Globals.LocalMaps[8];
-                    Globals.LocalMaps[8] = -1;
-                    Globals.Me.CurrentMap = Globals.LocalMaps[4];
-                    CurrentMap = Globals.LocalMaps[4];
-                    PacketSender.SendEnterMap();
-                }
-
-            }
-            else if (dir == 1)
-            {
-                if (Globals.LocalMaps[7] > -1)
-                {
-                    Globals.Me.CurrentMap = Globals.LocalMaps[7];
-                    Globals.LocalMaps[0] = Globals.LocalMaps[3];
-                    Globals.LocalMaps[3] = Globals.LocalMaps[6];
-                    Globals.LocalMaps[6] = -1;
-                    Globals.LocalMaps[1] = Globals.LocalMaps[4];
-                    Globals.LocalMaps[4] = Globals.LocalMaps[7];
-                    Globals.LocalMaps[7] = -1;
-                    Globals.LocalMaps[2] = Globals.LocalMaps[5];
-                    Globals.LocalMaps[5] = Globals.LocalMaps[8];
-                    Globals.LocalMaps[8] = -1;
-                    Globals.Me.CurrentMap = Globals.LocalMaps[4];
-                    CurrentMap = Globals.LocalMaps[4];
-                    PacketSender.SendEnterMap();
-                }
-            }
-            else
-            {
-                if (Globals.LocalMaps[1] > -1)
-                {
-                    Globals.Me.CurrentMap = Globals.LocalMaps[1];
-                    Globals.LocalMaps[6] = Globals.LocalMaps[3];
-                    Globals.LocalMaps[3] = Globals.LocalMaps[0];
-                    Globals.LocalMaps[0] = -1;
-                    Globals.LocalMaps[7] = Globals.LocalMaps[4];
-                    Globals.LocalMaps[4] = Globals.LocalMaps[1];
-                    Globals.LocalMaps[1] = -1;
-                    Globals.LocalMaps[8] = Globals.LocalMaps[5];
-                    Globals.LocalMaps[5] = Globals.LocalMaps[2];
-                    Globals.LocalMaps[2] = -1;
-                    Globals.Me.CurrentMap = Globals.LocalMaps[4];
-                    CurrentMap = Globals.LocalMaps[4];
-                    PacketSender.SendEnterMap();
+                    for (int y = 0; y <= gridY + 1; y++)
+                    {
+                        if (x >= 0 && x < Globals.MapGridWidth && y >= 0 && y < Globals.MapGridHeight)
+                        {
+                            if (MapInstance.GetMap(Globals.MapGrid[x, y]) == null)
+                            {
+                                PacketSender.SendNeedMap(Globals.MapGrid[x, y]);
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -983,17 +723,10 @@ namespace Intersect_Client.Classes.Entities
         /// <returns></returns>
         public int IsTileBlocked(int x, int y, int z, int map)
         {
-            var tmpI = -1;
-            for (var i = 0; i < 9; i++)
-            {
-                if (Globals.LocalMaps[i] != map) continue;
-                tmpI = i;
-                i = 9;
-            }
-            if (tmpI == -1)
-            {
-                return -2;
-            }
+            var mapInstance = MapInstance.GetMap(map);
+            if (mapInstance == null) return -2;
+            var gridX = mapInstance.MapGridX;
+            var gridY = mapInstance.MapGridY;
             try
             {
                 int tmpX = x;
@@ -1001,57 +734,30 @@ namespace Intersect_Client.Classes.Entities
                 int tmpMap;
                 if (x < 0)
                 {
+                    gridX--;
                     tmpX = (Options.MapWidth) - (x * -1);
-                    if (y < 0)
-                    {
-                        tmpY = (Options.MapHeight - 1) - (y * -1);
-                        tmpI = tmpI - 4;
-                    }
-                    else if (y > (Options.MapHeight - 1))
-                    {
-                        tmpY = y - (Options.MapHeight);
-                        tmpI = tmpI + 2;
-                    }
-                    else
-                    {
-                        tmpI = tmpI - 1;
-                    }
                 }
-                else if (x > (Options.MapWidth - 1))
+                if (y < 0)
                 {
-                    tmpX = x - (Options.MapWidth);
-                    if (y < 0)
-                    {
-                        tmpY = (Options.MapHeight) - (y * -1);
-                        tmpI = tmpI - 2;
-                    }
-                    else if (y > (Options.MapHeight - 1))
-                    {
-                        tmpY = y - (Options.MapHeight);
-                        tmpI = tmpI + 4;
-                    }
-                    else
-                    {
-                        tmpI = tmpI + 1;
-                    }
-                }
-                else if (y < 0)
-                {
+                    gridY--;
                     tmpY = (Options.MapHeight) - (y * -1);
-                    tmpI = tmpI - 3;
                 }
-                else if (y > (Options.MapHeight - 1))
+                if (x > (Options.MapWidth - 1))
                 {
-                    tmpY = y - (Options.MapHeight);
-                    tmpI = tmpI + 3;
+                    gridX ++;
+                    tmpX = x - (Options.MapWidth);
                 }
-                else
+                if (y > (Options.MapHeight - 1))
                 {
-                    tmpX = x;
-                    tmpY = y;
+                    gridY++;
+                    tmpY=y - (Options.MapHeight);
                 }
 
-                var gameMap = MapInstance.GetMap(Globals.LocalMaps[tmpI]);
+                if (gridX < 0 || gridY < 0 || gridX >= Globals.MapGridWidth || gridY >= Globals.MapGridHeight)
+                    return -2;
+
+
+                var gameMap = MapInstance.GetMap(Globals.MapGrid[gridX,gridY]);
                 if (gameMap != null)
                 {
                     if (gameMap.Attributes[tmpX, tmpY] != null)
@@ -1068,7 +774,7 @@ namespace Intersect_Client.Classes.Entities
                             }
                         }
                     }
-                    tmpMap = Globals.LocalMaps[tmpI];
+                    tmpMap = Globals.MapGrid[gridX, gridY];
                 }
                 else
                 {

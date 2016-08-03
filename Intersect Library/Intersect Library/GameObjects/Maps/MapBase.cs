@@ -55,6 +55,10 @@ namespace Intersect_Library.GameObjects.Maps
 
         //SyncLock
         protected Object _mapLock = new Object();
+        public object GetMapLock()
+        {
+            return _mapLock;
+        }
 
         //Temporary Values
         public bool IsClient = false;
@@ -79,7 +83,7 @@ namespace Intersect_Library.GameObjects.Maps
 
         public MapBase(MapBase mapcopy) : base(mapcopy.MyMapNum)
         {
-            lock (_mapLock)
+            lock (GetMapLock())
             {
                 ByteBuffer bf = new ByteBuffer();
                 MyName = mapcopy.MyName;
@@ -129,7 +133,7 @@ namespace Intersect_Library.GameObjects.Maps
 
         public override void Load(byte[] packet)
         {
-            lock (_mapLock)
+            lock (GetMapLock())
             {
                 var bf = new ByteBuffer();
                 bf.WriteBytes(packet);

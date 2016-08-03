@@ -412,7 +412,7 @@ namespace Intersect_Server.Classes.Entities
                                 {
                                     if (Owner.MyIndex != Target)
                                     {
-                                        Owner.TryAttack(Target, MyBase, IsSpell, Spawns[i].Dir);
+                                        Owner.TryAttack(TargetEntity, MyBase, IsSpell, Spawns[i].Dir);
                                         killSpawn = true; //Remove from the list being processed
                                     }
                                 }
@@ -423,14 +423,14 @@ namespace Intersect_Server.Classes.Entities
                                         if (Owner.GetType() == typeof(Player))
                                         {
 
-                                            Owner.TryAttack(Target, MyBase, IsSpell, Spawns[i].Dir);
+                                            Owner.TryAttack(TargetEntity, MyBase, IsSpell, Spawns[i].Dir);
                                             killSpawn = true; //Remove from the list being processed
                                         }
                                     }
                                 }
                                 else //Any other target
                                 {
-                                    Owner.TryAttack(Target, MyBase, IsSpell, Spawns[i].Dir);
+                                    Owner.TryAttack(TargetEntity, MyBase, IsSpell, Spawns[i].Dir);
                                     killSpawn = true; //Remove from the list being processed
                                 }
                             }

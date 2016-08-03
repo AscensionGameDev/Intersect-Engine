@@ -22,6 +22,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using Intersect_Library;
 using Intersect_Library.GameObjects;
 using Intersect_Library.GameObjects.Events;
@@ -46,6 +47,7 @@ namespace Intersect_Server.Classes.Maps
         public List<MapItemInstance> MapItems = new List<MapItemInstance>();
         public List<MapItemSpawn> ItemRespawns = new List<MapItemSpawn>();
         private List<Entity> Entities = new List<Entity>();
+        private List<Player> Players = new List<Player>();
         public Dictionary<EventBase, EventInstance> GlobalEventInstances = new Dictionary<EventBase, EventInstance>();
         public Dictionary<NpcSpawn, MapNpcSpawn> NpcSpawnInstances = new Dictionary<NpcSpawn, MapNpcSpawn>();
         public Dictionary<ResourceSpawn, MapResourceSpawn> ResourceSpawnInstances = new Dictionary<ResourceSpawn, MapResourceSpawn>();
@@ -176,19 +178,23 @@ namespace Intersect_Server.Classes.Maps
         }
         public void RemoveItem(int index, bool respawn = true)
         {
-            MapItems[index].ItemNum = -1;
-            PacketSender.SendMapItemUpdate(MyMapNum, index);
-            if (respawn)
+            if (index < MapItems.Count && MapItems[index] != null)
             {
-                if (MapItems[index].AttributeSpawnX > -1)
+                MapItems[index].ItemNum = -1;
+                PacketSender.SendMapItemUpdate(MyMapNum, index);
+                if (respawn)
                 {
-                    ItemRespawns.Add(new MapItemSpawn());
-                    ItemRespawns[ItemRespawns.Count - 1].AttributeSpawnX = MapItems[index].AttributeSpawnX;
-                    ItemRespawns[ItemRespawns.Count - 1].AttributeSpawnY = MapItems[index].AttributeSpawnY;
-                    ItemRespawns[ItemRespawns.Count - 1].RespawnTime = Globals.System.GetTimeMs() + ServerOptions.ItemRespawnTime;
+                    if (MapItems[index].AttributeSpawnX > -1)
+                    {
+                        ItemRespawns.Add(new MapItemSpawn());
+                        ItemRespawns[ItemRespawns.Count - 1].AttributeSpawnX = MapItems[index].AttributeSpawnX;
+                        ItemRespawns[ItemRespawns.Count - 1].AttributeSpawnY = MapItems[index].AttributeSpawnY;
+                        ItemRespawns[ItemRespawns.Count - 1].RespawnTime = Globals.System.GetTimeMs() +
+                                                                           ServerOptions.ItemRespawnTime;
+                    }
                 }
+                MapItems[index] = null;
             }
-            MapItems[index] = null;
         }
         public void DespawnItems()
         {
@@ -371,7 +377,7 @@ namespace Intersect_Server.Classes.Maps
                     }
                 }
 
-                Entities.Add((Npc)Globals.Entities[index]);
+                AddEntity((Npc)Globals.Entities[index]);
                 PacketSender.SendEntityDataToProximity(index, (int)EntityTypes.GlobalEntity,
                     Globals.Entities[index].Data(), Globals.Entities[index]);
                 return (Npc)Globals.Entities[index];
@@ -429,7 +435,7 @@ namespace Intersect_Server.Classes.Maps
                 MapProjectiles.Add(new Projectile(n, owner, projectile, Map, X, Y, Z, Direction, IsSpell, Target));
                 Globals.Entities[n] = MapProjectiles[MapProjectiles.Count - 1];
 
-                Entities.Add(Globals.Entities[n]);
+                AddEntity(Globals.Entities[n]);
                 PacketSender.SendEntityDataToProximity(n, (int)EntityTypes.Projectile, ((Projectile)Globals.Entities[n]).Data(), Globals.Entities[n]);
             }
         }
@@ -453,11 +459,18 @@ namespace Intersect_Server.Classes.Maps
         //Entity Processing
         public void AddEntity(Entity en)
         {
-            lock (GetMapLock())
+            if (en != null)
             {
-                if (Entities.IndexOf(en) == -1)
+                lock (GetMapLock())
                 {
-                    Entities.Add(en);
+                    if (Entities.IndexOf(en) == -1)
+                    {
+                        Entities.Add(en);
+                        if (en.GetType() == typeof(Player))
+                        {
+                            Players.Add((Player) en);
+                        }
+                    }
                 }
             }
         }
@@ -466,6 +479,8 @@ namespace Intersect_Server.Classes.Maps
             lock (GetMapLock())
             {
                 Entities.Remove(en);
+                if (Players.Contains(en))
+                    Players.Remove((Player)en);
             }
         }
         public void RemoveProjectile(Projectile en)
@@ -613,7 +628,7 @@ namespace Intersect_Server.Classes.Maps
         } 
         private bool CheckActive()
         {
-            if (PlayersOnMap(MyMapNum))
+            if (GetPlayersOnMap().Count > 0)
             {
                 return true;
             }
@@ -623,33 +638,32 @@ namespace Intersect_Server.Classes.Maps
                 {
                     foreach (var t in SurroundingMaps)
                     {
-                        if (PlayersOnMap(t))
+                        var map = MapInstance.GetMap(t);
+                        if (map != null)
                         {
-                            return true;
+                            if (Monitor.TryEnter(map.GetMapLock(), new TimeSpan(0,0,0,0,1)))
+                            {
+                                try
+                                {
+                                    if (map.GetPlayersOnMap().Count > 0)
+                                    {
+                                        return true;
+                                    }
+                                }
+                                finally
+                                {
+                                    Monitor.Exit(map.GetMapLock());
+                                }
+                            }
+                            else
+                            {
+                                return true;
+                            }
                         }
                     }
                 }
             }
             Active = false;
-            return false;
-        }
-        private static bool PlayersOnMap(int mapNum)
-        {
-            var map = MapInstance.GetMap(mapNum);
-            if (map != null)
-            {
-                lock (map.GetMapLock())
-                {
-                    foreach (var entity in map.Entities)
-                    {
-                        if (entity != null && entity.GetType() == typeof (Player))
-                        {
-                            return true;
-                        }
-                    }
-                }
-            }
-            
             return false;
         }
         public List<Entity> GetEntities()
@@ -660,19 +674,9 @@ namespace Intersect_Server.Classes.Maps
         }
         public List<Player> GetPlayersOnMap()
         {
-            List<Player> Players = new List<Player>();
-            lock (GetMapLock())
-            {
-                foreach (var en in Entities)
-                {
-                    if (en == null) continue;
-                    if (en.GetType() == typeof (Player))
-                    {
-                        Players.Add((Player) en);
-                    }
-                }
-            }
-            return Players;
+            List<Player> players = new List<Player>();
+            players.AddRange(Players.ToArray());
+            return players;
         }
         public void PlayerEnteredMap(Client client)
         {
@@ -680,49 +684,54 @@ namespace Intersect_Server.Classes.Maps
             {
                 Active = true;
                 //Send Entity Info to Everyone and Everyone to the Entity
-                SendMapEntitiesTo(client);
+                SendMapEntitiesTo(client.Entity);
                 PacketSender.SendMapItems(client, MyMapNum);
                 AddEntity(client.Entity);
                 if (SurroundingMaps.Count <= 0) return;
                 foreach (var t in SurroundingMaps)
                 {
                     MapInstance.GetMap(t).Active = true;
-                    MapInstance.GetMap(t).SendMapEntitiesTo(client);
+                    MapInstance.GetMap(t).SendMapEntitiesTo(client.Entity);
                     PacketSender.SendMapItems(client, t);
                 }
             }
         }
-        public void SendMapEntitiesTo(Client client)
+        public void SendMapEntitiesTo(Player player)
         {
-            for (int i = 0; i < Entities.Count; i++)
+            if (player != null)
             {
-                if (Entities[i] != null && Entities[i] != client.Entity)
+                for (int i = 0; i < Entities.Count; i++)
                 {
-                    if (Globals.Entities.IndexOf(Entities[i]) > -1)
+                    if (Entities[i] != null && Entities[i] != player)
                     {
-                        if (Entities[i].GetType() == typeof(Player))
+                        if (Globals.Entities.IndexOf(Entities[i]) > -1)
                         {
-                            PacketSender.SendEntityDataTo(client, Entities[i].MyIndex, (int)EntityTypes.Player, ((Player)Entities[i]).Data(), Entities[i]);
-                        }
-                        else if (Entities[i].GetType() == typeof(Resource))
-                        {
-                            PacketSender.SendEntityDataTo(client, Entities[i].MyIndex, (int)EntityTypes.Resource,
-                                ((Resource)Entities[i]).Data(), Entities[i]);
-                        }
-                        else if (Entities[i].GetType() == typeof(Projectile))
-                        {
-                            PacketSender.SendEntityDataTo(client, Entities[i].MyIndex, (int)EntityTypes.Projectile,
-                                ((Projectile)Entities[i]).Data(), Entities[i]);
-                        }
-                        else
-                        {
-                            PacketSender.SendEntityDataTo(client, Entities[i].MyIndex, (int)EntityTypes.GlobalEntity,
-                                (Entities[i]).Data(), Entities[i]);
+                            if (Entities[i].GetType() == typeof(Player))
+                            {
+                                PacketSender.SendEntityDataTo(player.MyClient, Entities[i].MyIndex, (int) EntityTypes.Player,
+                                    ((Player) Entities[i]).Data(), Entities[i]);
+                            }
+                            else if (Entities[i].GetType() == typeof(Resource))
+                            {
+                                PacketSender.SendEntityDataTo(player.MyClient, Entities[i].MyIndex, (int) EntityTypes.Resource,
+                                    ((Resource) Entities[i]).Data(), Entities[i]);
+                            }
+                            else if (Entities[i].GetType() == typeof(Projectile))
+                            {
+                                PacketSender.SendEntityDataTo(player.MyClient, Entities[i].MyIndex, (int) EntityTypes.Projectile,
+                                    ((Projectile) Entities[i]).Data(), Entities[i]);
+                            }
+                            else
+                            {
+                                PacketSender.SendEntityDataTo(player.MyClient, Entities[i].MyIndex,
+                                    (int) EntityTypes.GlobalEntity,
+                                    (Entities[i]).Data(), Entities[i]);
+                            }
                         }
                     }
                 }
+                player.SendEvents();
             }
-            ((Player)client.Entity).SendEvents();
         }
         public void ClearConnections(int side = -1)
         {

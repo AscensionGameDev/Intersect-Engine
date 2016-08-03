@@ -139,8 +139,8 @@ namespace Intersect_Server.Classes.Maps
         public static Boolean IsTileValid(int mapNum, int tileX, int tileY)
         {
             if (!MapInstance.GetObjects().ContainsKey(mapNum)) return false;
-            if (tileX < 0 || tileX > Options.MapWidth) return false;
-            if (tileY < 0 || tileY > Options.MapHeight) return false;
+            if (tileX < 0 || tileX >= Options.MapWidth) return false;
+            if (tileY < 0 || tileY >= Options.MapHeight) return false;
             return true;
         }
     }

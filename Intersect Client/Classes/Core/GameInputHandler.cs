@@ -209,6 +209,7 @@ namespace Intersect_Client.Classes.Core
                                         {
                                             PacketSender.SendAdminAction((int)AdminActions.WarpToLoc, Convert.ToString(mapNum), Convert.ToString(x), Convert.ToString(y));
                                         }
+                                        return;
                                     }
                                 }
                             }

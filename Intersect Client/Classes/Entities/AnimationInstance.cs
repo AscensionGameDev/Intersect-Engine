@@ -64,7 +64,14 @@ namespace Intersect_Client.Classes.Entities
                 upperTimer = Globals.System.GetTimeMS() + animBase.UpperAnimFrameSpeed;
                 infiniteLoop = loopForever;
                 AutoRotate = autoRotate;
-                GameGraphics.LiveAnimations.Add(this);
+                lock (GameGraphics.AnimationLock)
+                {
+                    GameGraphics.LiveAnimations.Add(this);
+                }
+            }
+            else
+            {
+                Dispose();
             }
         }
 
@@ -178,7 +185,10 @@ namespace Intersect_Client.Classes.Entities
 
         public void Dispose()
         {
-            GameGraphics.LiveAnimations.Remove(this);
+            lock (GameGraphics.AnimationLock)
+            {
+                GameGraphics.LiveAnimations.Remove(this);
+            }
         }
 
         public void SetPosition(float x, float y, int dir)
@@ -189,7 +199,7 @@ namespace Intersect_Client.Classes.Entities
         }
 
         public void Update()
-        {
+        { 
             if (lowerTimer < Globals.System.GetTimeMS() && showLower)
             {
                 lowerFrame++;
