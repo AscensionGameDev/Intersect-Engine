@@ -193,8 +193,9 @@ namespace Intersect_Editor.Classes
 
         private void updateAnimationData(int index)
         {
+            updateAnimations(true);
             scrlAnimation.Value = Database.GameObjectListIndex(GameObject.Animation,_editorItem.Animations[index].Animation);
-            scrlSpawnRange.Value = _editorItem.Animations[index].SpawnRange;
+            scrlSpawnRange.Value = Math.Min(_editorItem.Animations[index].SpawnRange,scrlSpawnRange.Maximum);
             chkRotation.Checked = _editorItem.Animations[index].AutoRotate;
             updateAnimations(true);
         }

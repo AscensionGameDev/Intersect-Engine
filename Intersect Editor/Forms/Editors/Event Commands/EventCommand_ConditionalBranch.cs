@@ -23,6 +23,7 @@ using System;
 using System.Windows.Forms;
 using Intersect_Editor.Classes;
 using Intersect_Library;
+using Intersect_Library.GameObjects;
 using Intersect_Library.GameObjects.Events;
 
 namespace Intersect_Editor.Forms.Editors.Event_Commands
@@ -82,6 +83,10 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
                     break;
                 case 9: //Power Is
                     cmbPower.SelectedIndex = _myCommand.Ints[1];
+                    break;
+                case 10: //Time is between
+                    cmbTime1.SelectedIndex = Math.Min(_myCommand.Ints[1],cmbTime1.Items.Count-1);
+                    cmbTime2.SelectedIndex = Math.Min(_myCommand.Ints[2], cmbTime2.Items.Count - 1);
                     break;
             }
         }
@@ -166,6 +171,22 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
                     grpPowerIs.Show();
                     cmbPower.SelectedIndex = 0;
                     break;
+                case 10: //Time is between...
+                    grpTime.Show();
+                    cmbTime1.Items.Clear();
+                    cmbTime2.Items.Clear();
+                    var time = new DateTime(2000, 1, 1, 0, 0, 0);
+                    for (int i = 0; i < 1440; i += TimeBase.GetTimeBase().RangeInterval)
+                    {
+                        var addRange = time.ToString("h:mm:ss tt") + " to ";
+                        time = time.AddMinutes(TimeBase.GetTimeBase().RangeInterval);
+                        addRange += time.ToString("h:mm:ss tt");
+                        cmbTime1.Items.Add(addRange);
+                        cmbTime2.Items.Add(addRange);
+                    }
+                    cmbTime1.SelectedIndex = 0;
+                    cmbTime2.SelectedIndex = 0;
+                    break;
             }
         }
 
@@ -240,6 +261,10 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
                     break;
                 case 9: //Power is
                     _myCommand.Ints[1] = cmbPower.SelectedIndex;
+                    break;
+                case 10: //Time is between...
+                    _myCommand.Ints[1] = cmbTime1.SelectedIndex;
+                    _myCommand.Ints[2] = cmbTime2.SelectedIndex;
                     break;
             }
             _eventEditor.FinishCommandEdit();

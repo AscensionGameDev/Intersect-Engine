@@ -7,6 +7,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Intersect_Migration_Tool.UpgradeInstructions.Upgrade_1;
 using Intersect_Migration_Tool.UpgradeInstructions.Upgrade_2;
+using Intersect_Migration_Tool.UpgradeInstructions.Upgrade_3;
 using Mono.Data.Sqlite;
 
 namespace Intersect_Migration_Tool
@@ -15,7 +16,7 @@ namespace Intersect_Migration_Tool
     {
         private static SqliteConnection _dbConnection;
         private static Object _dbLock = new Object();
-        public const int DbVersion = 3;
+        public const int DbVersion = 4;
         private const string DbFilename = "resources/intersect.db";
 
         //Database Variables
@@ -82,6 +83,11 @@ namespace Intersect_Migration_Tool
                     case 2:
                         var upgrade2 = new Upgrade2(_dbConnection);
                         upgrade2.Upgrade();
+                        IncrementDatabaseVersion();
+                        break;
+                    case 3:
+                        var upgrade3 = new Upgrade3(_dbConnection);
+                        upgrade3.Upgrade();
                         IncrementDatabaseVersion();
                         break;
                     default:

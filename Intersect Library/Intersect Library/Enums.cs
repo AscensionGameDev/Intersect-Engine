@@ -39,6 +39,7 @@ namespace Intersect_Library
         ServerSwitch,
         ServerVariable,
         Tileset,
+        Time,
     }
 
     public enum ClientPackets
@@ -51,7 +52,6 @@ namespace Intersect_Library
         EditorLogin,
         SaveMap,
         CreateMap,
-        EnterMap,
         TryAttack,
         SendDir,
         EnterGame,
@@ -87,11 +87,12 @@ namespace Intersect_Library
         SaveGameObject,
         DeleteGameObject,
         TryBlock,
+        SaveTime,
     }
 
     public enum ServerPackets
     {
-        RequestPing = 0,
+        Ping = 0,
         ServerConfig,
         JoinGame,
         MapData,
@@ -140,6 +141,8 @@ namespace Intersect_Library
         EntityDash,
         EntityAttack,
         ActionMsg,
+        TimeBase,
+        Time
     }
 
     public enum MapZones

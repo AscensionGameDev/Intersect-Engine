@@ -22,6 +22,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using Intersect_Library;
 using Intersect_Library.GameObjects;
 using Intersect_Library.GameObjects.Events;
@@ -359,8 +360,39 @@ namespace Intersect_Server.Classes.Entities
                 case 9: //Power Is
                     if (MyClient.Power > conditionCommand.Ints[1]) return true;
                     return false;
+                case 10: //Time is between
+                    if (conditionCommand.Ints[1] > -1 && conditionCommand.Ints[2] > -1 &&
+                        conditionCommand.Ints[1] < 1440/TimeBase.GetTimeBase().RangeInterval &&
+                        conditionCommand.Ints[2] < 1440/TimeBase.GetTimeBase().RangeInterval)
+                    {
+                        return (ServerTime.GetTimeRange() >= conditionCommand.Ints[1] &&
+                               ServerTime.GetTimeRange() <= conditionCommand.Ints[2]);
+                    }
+                    else
+                    {
+                        return true;
+                    }
+                    break;
             }
             return false;
+        }
+
+        private string ParseEventText(string input)
+        {
+            input = input.Replace("\\pn", MyClient.Entity.MyName);
+            input = input.Replace("\\en", PageInstance.MyName);
+            if (input.Contains("\\onlinecount") || input.Contains("\\onlinelist"))
+            {
+                var onlineList = Globals.GetOnlineList();
+                input = input.Replace("\\onlinecount", onlineList.Count.ToString());
+                var sb = new StringBuilder();
+                for (int i = 0; i < onlineList.Count; i++)
+                {
+                    sb.Append(onlineList[i].MyName + (i != onlineList.Count - 1 ? ", " : ""));
+                }
+                input = input.Replace("\\onlinelist", sb.ToString());
+            }
+            return input;
         }
 
         private void ProcessCommand(EventCommand command)
@@ -374,13 +406,13 @@ namespace Intersect_Server.Classes.Entities
             switch (command.Type)
             {
                 case EventCommandType.ShowText:
-                    PacketSender.SendEventDialog(MyClient, command.Strs[0], command.Strs[1], MapNum, BaseEvent.MyIndex);
+                    PacketSender.SendEventDialog(MyClient, ParseEventText(command.Strs[0]), command.Strs[1], MapNum, BaseEvent.MyIndex);
                     CallStack.Peek().WaitingForResponse = 1;
                     CallStack.Peek().CommandIndex++;
                     break;
                 case EventCommandType.ShowOptions:
-                    PacketSender.SendEventDialog(MyClient, command.Strs[0], command.Strs[1], command.Strs[2],
-                        command.Strs[3], command.Strs[4], command.Strs[5], MapNum, BaseEvent.MyIndex);
+                    PacketSender.SendEventDialog(MyClient, ParseEventText(command.Strs[0]), ParseEventText(command.Strs[1]), ParseEventText(command.Strs[2]),
+                         ParseEventText(command.Strs[3]), ParseEventText(command.Strs[4]), command.Strs[5], MapNum, BaseEvent.MyIndex);
                     CallStack.Peek().WaitingForResponse = 1;
                     CallStack.Peek().ResponseType = 1;
                     break;
@@ -388,13 +420,13 @@ namespace Intersect_Server.Classes.Entities
                     switch (command.Ints[0])
                     {
                         case 0: //Player
-                            PacketSender.SendPlayerMsg(MyClient, command.Strs[0], Color.FromName(command.Strs[1]));
+                            PacketSender.SendPlayerMsg(MyClient, ParseEventText(command.Strs[0]), Color.FromName(command.Strs[1]));
                             break;
                         case 1: //Local
-                            PacketSender.SendProximityMsg(command.Strs[0], MyClient.Entity.CurrentMap, Color.FromName(command.Strs[1]));
+                            PacketSender.SendProximityMsg(ParseEventText(command.Strs[0]), MyClient.Entity.CurrentMap, Color.FromName(command.Strs[1]));
                             break;
                         case 2: //Global
-                            PacketSender.SendGlobalMsg(command.Strs[0], Color.FromName(command.Strs[1]));
+                            PacketSender.SendGlobalMsg(ParseEventText(command.Strs[0]), Color.FromName(command.Strs[1]));
                             break;
                     }
                     CallStack.Peek().CommandIndex++;
@@ -651,26 +683,22 @@ namespace Intersect_Server.Classes.Entities
                     break;
                 case EventCommandType.ChangeSprite:
                     MyPlayer.MySprite = command.Strs[0];
-                    PacketSender.SendEntityDataToProximity(MyPlayer.MyIndex, (int)EntityTypes.Player,
-                        MyPlayer.Data(), MyPlayer);
+                    PacketSender.SendEntityDataToProximity(MyPlayer);
                     CallStack.Peek().CommandIndex++;
                     break;
                 case EventCommandType.ChangeFace:
                     MyPlayer.Face = command.Strs[0];
-                    PacketSender.SendEntityDataToProximity(MyPlayer.MyIndex, (int)EntityTypes.Player,
-                        MyPlayer.Data(), MyPlayer);
+                    PacketSender.SendEntityDataToProximity(MyPlayer);
                     CallStack.Peek().CommandIndex++;
                     break;
                 case EventCommandType.ChangeGender:
                     MyPlayer.Gender = command.Ints[0];
-                    PacketSender.SendEntityDataToProximity(MyPlayer.MyIndex, (int)EntityTypes.Player,
-                        MyPlayer.Data(), MyPlayer);
+                    PacketSender.SendEntityDataToProximity(MyPlayer);
                     CallStack.Peek().CommandIndex++;
                     break;
                 case EventCommandType.SetAccess:
                     MyPlayer.MyClient.Power = command.Ints[0];
-                    PacketSender.SendEntityDataToProximity(MyPlayer.MyIndex, (int)EntityTypes.Player,
-                        MyPlayer.Data(), MyPlayer);
+                    PacketSender.SendEntityDataToProximity(MyPlayer);
                     PacketSender.SendPlayerMsg(MyPlayer.MyClient, "Your access has been updated!", Color.Red);
                     CallStack.Peek().CommandIndex++;
                     break;
@@ -951,8 +979,7 @@ namespace Intersect_Server.Classes.Entities
                         MyPlayer.Class = CallStack.Peek().Page.CommandLists[CallStack.Peek().ListIndex]
                             .Commands[CallStack.Peek().CommandIndex].Ints[0];
                     }
-                    PacketSender.SendEntityDataToProximity(MyPlayer.MyIndex, (int) EntityTypes.Player, MyPlayer.Data(),
-                        MyPlayer);
+                    PacketSender.SendEntityDataToProximity(MyPlayer);
                     CallStack.Peek().CommandIndex++;
                     break;
             }

@@ -21,6 +21,7 @@
 */
 
 using System;
+using System.IO;
 using System.Net.Sockets;
 using Intersect_Server.Classes.General;
 
@@ -47,11 +48,12 @@ namespace Intersect_Server.Classes.Networking
         {
             try
             {
-                if (_mySocket != null && _myStream != null) _myStream.Write(data, 0, data.Length);
+                if (_mySocket != null && _mySocket.Connected && _myStream != null) _myStream.Write(data, 0, data.Length);
             }
             catch (Exception)
             {
-
+                Globals.GeneralLogs.Add("Socket end read error.");
+                HandleDisconnect();
             }
         }
 
@@ -85,7 +87,6 @@ namespace Intersect_Server.Classes.Networking
             {
                 Globals.GeneralLogs.Add("Socket end read error.");
                 HandleDisconnect();
-                return;
             }
         }
 

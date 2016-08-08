@@ -29,6 +29,7 @@ using System.Security.Cryptography;
 using System.Text;
 using Intersect_Client.Classes.Entities;
 using Intersect_Client.Classes.General;
+using Intersect_Client.Classes.Maps;
 using Intersect_Library;
 
 
@@ -59,16 +60,24 @@ namespace Intersect_Client.Classes.Networking
             bf.WriteLong((int)ClientPackets.NeedMap);
             bf.WriteLong(mapNum);
             GameNetwork.SendPacket(bf.ToArray());
+            if (MapInstance.MapRequests.ContainsKey(mapNum))
+            {
+                MapInstance.MapRequests[mapNum] = Globals.System.GetTimeMS() + 3000;
+            }
+            else
+            {
+                MapInstance.MapRequests.Add(mapNum, Globals.System.GetTimeMS() + 3000);
+            }
         }
 
         public static void SendMove()
         {
             var bf = new ByteBuffer();
             bf.WriteLong((int)ClientPackets.SendMove);
-            bf.WriteInteger(Globals.Entities[Globals.MyIndex].CurrentMap);
-            bf.WriteInteger(Globals.Entities[Globals.MyIndex].CurrentX);
-            bf.WriteInteger(Globals.Entities[Globals.MyIndex].CurrentY);
-            bf.WriteInteger(Globals.Entities[Globals.MyIndex].Dir);
+            bf.WriteInteger(Globals.Me.CurrentMap);
+            bf.WriteInteger(Globals.Me.CurrentX);
+            bf.WriteInteger(Globals.Me.CurrentY);
+            bf.WriteInteger(Globals.Me.Dir);
             GameNetwork.SendPacket(bf.ToArray());
        }
 
@@ -77,14 +86,6 @@ namespace Intersect_Client.Classes.Networking
             var bf = new ByteBuffer();
             bf.WriteLong((int)ClientPackets.LocalMessage);
             bf.WriteString(msg);
-            GameNetwork.SendPacket(bf.ToArray());
-        }
-
-        public static void SendEnterMap()
-        {
-            var bf = new ByteBuffer();
-            bf.WriteLong((int)ClientPackets.EnterMap);
-            bf.WriteLong(Globals.Me.CurrentMap);
             GameNetwork.SendPacket(bf.ToArray());
         }
 
@@ -263,6 +264,7 @@ namespace Intersect_Client.Classes.Networking
             bf.WriteString(val3);
             bf.WriteString(val4);
             GameNetwork.SendPacket(bf.ToArray());
+            System.Diagnostics.Debug.WriteLine("Sent for warp at " + Globals.System.GetTimeMS());
         }
 
         public static void SendSellItem(int slot, int amount)

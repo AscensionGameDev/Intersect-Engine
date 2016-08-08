@@ -42,7 +42,21 @@ namespace Intersect_Server.Classes.General
 
         public static object ClientLock = new object();
         public static List<Client> Clients = new List<Client>();
+
 		public static List<Entity> Entities = new List<Entity>();
+
+	    public static List<Entity> GetOnlineList()
+	    {
+	        var onlineList = new List<Entity>();
+            for (int i = 0; i < Clients.Count; i++)
+            {
+                if (Clients[i] != null && Clients[i].Entity != null)
+                {
+                    onlineList.Add(Clients[i].Entity);
+                }
+            }
+	        return onlineList;
+	    }
 
         //Game helping stuff
         public static Random Rand = new Random();
@@ -53,7 +67,7 @@ namespace Intersect_Server.Classes.General
             {
                 if (Entities[i] == null)
                 {
-                    return i;
+                    //return i;
                 }
                 else if (i == Entities.Count - 1)
                 {

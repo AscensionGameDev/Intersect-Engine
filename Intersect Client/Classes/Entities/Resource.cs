@@ -41,9 +41,8 @@ namespace Intersect_Client.Classes.Entities
         public bool IsDead;
         public ResourceBase _baseResource;
 
-        public Resource() : base()
+        public Resource(int index,long spawnTime,ByteBuffer bf) : base(index,spawnTime,bf)
         {
-
         }
 
         public ResourceBase GetResourceBase()
@@ -51,18 +50,23 @@ namespace Intersect_Client.Classes.Entities
             return _baseResource;
         }
 
-        public void Load(ByteBuffer bf)
+        public override void Load(ByteBuffer bf)
         {
+            base.Load(bf);
             IsDead = Convert.ToBoolean(bf.ReadInteger());
             var baseIndex = bf.ReadInteger();
             _baseResource = ResourceBase.GetResource(baseIndex);
-            base.Load(bf);
             HideName = 1;
-            CalculateRenderBounds();
+        }
+
+        public override EntityTypes GetEntityType()
+        {
+            return EntityTypes.Resource;
         }
 
         override public bool Update()
         {
+            CalculateRenderBounds();
             bool result = base.Update();
             if (!_hasRenderBounds) { CalculateRenderBounds(); }
             if (result && !GameGraphics.CurrentView.IntersectsWith(new FloatRect(destRectangle.Left,destRectangle.Top,destRectangle.Width,destRectangle.Height)))

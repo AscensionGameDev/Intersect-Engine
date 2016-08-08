@@ -69,6 +69,12 @@
             this.label11 = new System.Windows.Forms.Label();
             this.cmbSelfSwitch = new System.Windows.Forms.ComboBox();
             this.label12 = new System.Windows.Forms.Label();
+            this.grpTime = new System.Windows.Forms.GroupBox();
+            this.cmbTime1 = new System.Windows.Forms.ComboBox();
+            this.label14 = new System.Windows.Forms.Label();
+            this.cmbTime2 = new System.Windows.Forms.ComboBox();
+            this.label13 = new System.Windows.Forms.Label();
+            this.label16 = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             this.grpLevel.SuspendLayout();
             this.grpClass.SuspendLayout();
@@ -78,10 +84,12 @@
             this.grpPlayerVariable.SuspendLayout();
             this.grpSwitch.SuspendLayout();
             this.grpSelfSwitch.SuspendLayout();
+            this.grpTime.SuspendLayout();
             this.SuspendLayout();
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.grpTime);
             this.groupBox1.Controls.Add(this.btnSave);
             this.groupBox1.Controls.Add(this.cmbConditionType);
             this.groupBox1.Controls.Add(this.label1);
@@ -125,7 +133,8 @@
             "Knows spell...",
             "Level is....",
             "Self Switch is....",
-            "Power level is...."});
+            "Power level is....",
+            "Time is between...."});
             this.cmbConditionType.Location = new System.Drawing.Point(88, 13);
             this.cmbConditionType.Name = "cmbConditionType";
             this.cmbConditionType.Size = new System.Drawing.Size(157, 21);
@@ -552,6 +561,80 @@
             this.label12.TabIndex = 0;
             this.label12.Text = "Self Switch: ";
             // 
+            // grpTime
+            // 
+            this.grpTime.Controls.Add(this.label16);
+            this.grpTime.Controls.Add(this.label13);
+            this.grpTime.Controls.Add(this.cmbTime2);
+            this.grpTime.Controls.Add(this.cmbTime1);
+            this.grpTime.Controls.Add(this.label14);
+            this.grpTime.Location = new System.Drawing.Point(10, 40);
+            this.grpTime.Name = "grpTime";
+            this.grpTime.Size = new System.Drawing.Size(236, 105);
+            this.grpTime.TabIndex = 30;
+            this.grpTime.TabStop = false;
+            this.grpTime.Text = "Time is between:";
+            this.grpTime.Visible = false;
+            // 
+            // cmbTime1
+            // 
+            this.cmbTime1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbTime1.FormattingEnabled = true;
+            this.cmbTime1.Items.AddRange(new object[] {
+            "Equal To",
+            "Greater Than or Equal To",
+            "Less Than or Equal To",
+            "Greater Than",
+            "Less Than",
+            "Does Not Equal"});
+            this.cmbTime1.Location = new System.Drawing.Point(92, 18);
+            this.cmbTime1.Name = "cmbTime1";
+            this.cmbTime1.Size = new System.Drawing.Size(138, 21);
+            this.cmbTime1.TabIndex = 3;
+            // 
+            // label14
+            // 
+            this.label14.AutoSize = true;
+            this.label14.Location = new System.Drawing.Point(100, 49);
+            this.label14.Name = "label14";
+            this.label14.Size = new System.Drawing.Size(26, 13);
+            this.label14.TabIndex = 2;
+            this.label14.Text = "And";
+            // 
+            // cmbTime2
+            // 
+            this.cmbTime2.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbTime2.FormattingEnabled = true;
+            this.cmbTime2.Items.AddRange(new object[] {
+            "Equal To",
+            "Greater Than or Equal To",
+            "Less Than or Equal To",
+            "Greater Than",
+            "Less Than",
+            "Does Not Equal"});
+            this.cmbTime2.Location = new System.Drawing.Point(92, 70);
+            this.cmbTime2.Name = "cmbTime2";
+            this.cmbTime2.Size = new System.Drawing.Size(138, 21);
+            this.cmbTime2.TabIndex = 4;
+            // 
+            // label13
+            // 
+            this.label13.AutoSize = true;
+            this.label13.Location = new System.Drawing.Point(6, 21);
+            this.label13.Name = "label13";
+            this.label13.Size = new System.Drawing.Size(67, 13);
+            this.label13.TabIndex = 5;
+            this.label13.Text = "Start Range:";
+            // 
+            // label16
+            // 
+            this.label16.AutoSize = true;
+            this.label16.Location = new System.Drawing.Point(9, 73);
+            this.label16.Name = "label16";
+            this.label16.Size = new System.Drawing.Size(64, 13);
+            this.label16.TabIndex = 6;
+            this.label16.Text = "End Range:";
+            // 
             // EventCommand_ConditionalBranch
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -578,6 +661,8 @@
             this.grpSwitch.PerformLayout();
             this.grpSelfSwitch.ResumeLayout(false);
             this.grpSelfSwitch.PerformLayout();
+            this.grpTime.ResumeLayout(false);
+            this.grpTime.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -625,5 +710,11 @@
         private System.Windows.Forms.GroupBox grpPowerIs;
         private System.Windows.Forms.ComboBox cmbPower;
         private System.Windows.Forms.Label label15;
+        private System.Windows.Forms.GroupBox grpTime;
+        private System.Windows.Forms.ComboBox cmbTime2;
+        private System.Windows.Forms.ComboBox cmbTime1;
+        private System.Windows.Forms.Label label14;
+        private System.Windows.Forms.Label label16;
+        private System.Windows.Forms.Label label13;
     }
 }

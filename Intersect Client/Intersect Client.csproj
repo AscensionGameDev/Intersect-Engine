@@ -45,17 +45,18 @@
     <Compile Include="Classes\Core\GameMain.cs" />
     <Compile Include="Classes\Entities\AnimationInstance.cs" />
     <Compile Include="Classes\Entities\Entity.cs" />
-    <Compile Include="Classes\Entities\EntityManager.cs" />
     <Compile Include="Classes\Entities\Events\Event.cs" />
     <Compile Include="Classes\Entities\Events\EventDialog.cs" />
     <Compile Include="Classes\Entities\Events\EventHold.cs" />
     <Compile Include="Classes\Entities\Player.cs" />
     <Compile Include="Classes\Entities\Projectile.cs" />
     <Compile Include="Classes\Entities\Resource.cs" />
+    <Compile Include="Classes\General\ClientTime.cs" />
     <Compile Include="Classes\General\Enums.cs" />
     <Compile Include="Classes\Maps\MapAnimationInstance.cs" />
     <Compile Include="Classes\Maps\MapInstance.cs" />
     <Compile Include="Classes\UI\Game\BanMuteBox.cs" />
+    <Compile Include="Classes\UI\Game\Chat\ChatboxMsg.cs" />
     <Compile Include="Forms\frmLoadingContent.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -88,7 +89,7 @@
     <Compile Include="Classes\UI\Game\AdminWindow.cs" />
     <Compile Include="Classes\UI\Game\BankWindow.cs" />
     <Compile Include="Classes\UI\Game\CharacterWindow.cs" />
-    <Compile Include="Classes\UI\Game\Chatbox.cs" />
+    <Compile Include="Classes\UI\Game\Chat\Chatbox.cs" />
     <Compile Include="Classes\UI\Game\DebugMenu.cs" />
     <Compile Include="Classes\UI\Game\Draggable.cs" />
     <Compile Include="Classes\UI\Game\EntityBox.cs" />

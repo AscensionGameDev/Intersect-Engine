@@ -171,10 +171,16 @@ namespace Intersect_Server.Classes.Entities
         {
             if (Client != null)
             {
-                PacketSender.SendEntityDataTo(Client, MyIndex, (int)EntityTypes.Event, Data(), this);
+                PacketSender.SendEntityDataTo(Client, this);
             }
         }
-        public byte[] Data()
+
+        public override EntityTypes GetEntityType()
+        {
+            return EntityTypes.Event;
+        }
+
+        public override byte[] Data()
         {
             var bf = new ByteBuffer();
             bf.WriteBytes(base.Data());

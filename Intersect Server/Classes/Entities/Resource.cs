@@ -57,8 +57,8 @@ namespace Intersect_Server.Classes.Entities
             MySprite = MyBase.EndGraphic;
             Passable = Convert.ToInt32(MyBase.WalkableBefore);
             IsDead = true;
-            PacketSender.SendEntityDataToProximity(MyIndex, (int)EntityTypes.Resource, Data(), Globals.Entities[MyIndex]);
-            PacketSender.SendEntityPositionToAll(MyIndex, (int)EntityTypes.Resource, Globals.Entities[MyIndex]);
+            PacketSender.SendEntityDataToProximity(this);
+            PacketSender.SendEntityPositionToAll(this);
         }
 
         public void Spawn()
@@ -80,9 +80,9 @@ namespace Intersect_Server.Classes.Entities
            
 
             IsDead = false;
-            PacketSender.SendEntityDataToProximity(MyIndex, (int)EntityTypes.Resource, Data(), Globals.Entities[MyIndex]);
-            PacketSender.SendEntityPositionToAll(MyIndex, (int)EntityTypes.Resource, Globals.Entities[MyIndex]);
-            PacketSender.SendEntityVitals(MyIndex, (int)EntityTypes.Resource, Globals.Entities[MyIndex]);
+            PacketSender.SendEntityDataToProximity(this);
+            PacketSender.SendEntityPositionToAll(this);
+            PacketSender.SendEntityVitals(this);
         }
 
         public void SpawnResourceItems(int KillerIndex)
@@ -105,13 +105,17 @@ namespace Intersect_Server.Classes.Entities
             }
         }
 
-        public byte[] Data()
+        public override byte[] Data()
         {
             ByteBuffer myBuffer = new ByteBuffer();
+            myBuffer.WriteBytes(base.Data());
             myBuffer.WriteInteger(Convert.ToInt32(IsDead));
             myBuffer.WriteInteger(MyBase.GetId());
-            myBuffer.WriteBytes(base.Data());
             return myBuffer.ToArray();
+        }
+        public override EntityTypes GetEntityType()
+        {
+            return EntityTypes.Resource;
         }
     }
 }

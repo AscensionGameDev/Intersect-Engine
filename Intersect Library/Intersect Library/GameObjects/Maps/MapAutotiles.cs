@@ -157,8 +157,9 @@ namespace Intersect_Library.GameObjects.Maps
             }
         }
 
-        public void UpdateAutoTiles(int x, int y, Dictionary<int, MapBase> gameMaps)
+        public bool UpdateAutoTiles(int x, int y, Dictionary<int, MapBase> gameMaps)
         {
+            var changed = false;
             for (var x1 = x - 1; x1 < x + 2; x1++)
             {
                 if (x1 < 0 || x1 >= Options.MapWidth)
@@ -171,6 +172,7 @@ namespace Intersect_Library.GameObjects.Maps
                     {
                         continue;
                     }
+                    var oldautotile = Autotile[x1, y1].Copy();
                     for (int i = 0; i < Options.LayerCount; i++)
                     {
                         // calculate the subtile positions and place them
@@ -178,8 +180,10 @@ namespace Intersect_Library.GameObjects.Maps
                         // cache the rendering state of the tiles and set them
                         CacheRenderState(x1, y1, i);
                     }
+                    if (!Autotile[x1, y1].Equals(oldautotile)) changed = true;
                 }
             }
+            return changed;
         }
 
         public void UpdateAutoTiles(int x, int y, int layer,  Dictionary<int, MapBase> gameMaps)
@@ -726,6 +730,7 @@ namespace Intersect_Library.GameObjects.Maps
             {
                 if (((x2 < 0 && y2 < 0)) || (x2 >= Options.MapWidth && y2 >= Options.MapHeight) || (x2 < 0 && y2 >= Options.MapHeight) || (x2 >= Options.MapWidth && y2 < 0))
                 {
+                    //Not gonna check diagonally
                     return true;
                 }
                 MapBase otherMap;
@@ -948,5 +953,36 @@ namespace Intersect_Library.GameObjects.Maps
     public class AutoTileCls
     {
         public QuarterTileCls[] Layer = new QuarterTileCls[Options.LayerCount + 1];
+
+        public AutoTileCls Copy()
+        {
+            var autotile = new AutoTileCls();
+            for (int i = 0; i < Options.LayerCount; i++)
+            {
+                autotile.Layer[i] = new QuarterTileCls();
+                autotile.Layer[i].RenderState = Layer[i].RenderState;
+                for (int z = 0; z < 5; z++)
+                {
+                    autotile.Layer[i].QuarterTile[z] = new PointStruct();
+                    autotile.Layer[i].QuarterTile[z].X = Layer[i].QuarterTile[z].X;
+                    autotile.Layer[i].QuarterTile[z].Y = Layer[i].QuarterTile[z].Y;
+                }
+            }
+            return autotile;
+        }
+
+        public bool Equals(AutoTileCls autotile)
+        {
+            for (int i = 0; i < Options.LayerCount; i++)
+            {
+                if (autotile.Layer[i].RenderState != Layer[i].RenderState) return false;
+                for (int z = 0; z < 5; z++)
+                {
+                    if (autotile.Layer[i].QuarterTile[z].X != Layer[i].QuarterTile[z].X) return false;
+                    if (autotile.Layer[i].QuarterTile[z].Y != Layer[i].QuarterTile[z].Y) return false;
+                }
+            }
+            return true;
+        }
     }
 }

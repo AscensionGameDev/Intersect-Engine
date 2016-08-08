@@ -73,8 +73,6 @@ namespace Intersect_Editor.Classes.Entities
                                 frameHeight),
                             new RectangleF(_renderX - frameWidth / 2, _renderY - frameHeight / 2, frameWidth, frameHeight),
                             Color.White, target, BlendState.AlphaBlend);
-                        EditorGraphics.AddLight((int)_renderX + myBase.UpperLights[upperFrame].OffsetX,
-                            (int)_renderY + myBase.UpperLights[upperFrame].OffsetY, myBase.UpperLights[upperFrame]);
                     }
                 }
             }

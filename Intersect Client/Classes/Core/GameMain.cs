@@ -25,6 +25,7 @@
     SOFTWARE.
 */
 
+using System;
 using IntersectClientExtras.File_Management;
 using IntersectClientExtras.Graphics;
 using Intersect_Client.Classes.General;
@@ -175,9 +176,9 @@ namespace Intersect_Client.Classes.Core
                 var gridY = MapInstance.GetMap(Globals.Me.CurrentMap).MapGridY;
                 for (int x = gridX - 1; x <= gridX + 1; x++)
                 {
-                    for (int y = 0; y <= gridY + 1; y++)
+                    for (int y = gridY-1; y <= gridY + 1; y++)
                     {
-                        if (x >= 0 && x < Globals.MapGridWidth && y >= 0 && y < Globals.MapGridHeight)
+                        if (x >= 0 && x < Globals.MapGridWidth && y >= 0 && y < Globals.MapGridHeight && Globals.MapGrid[x, y] != -1)
                         {
                             var map = MapInstance.GetMap(Globals.MapGrid[x,y]);
                             if (map != null)
@@ -211,15 +212,17 @@ namespace Intersect_Client.Classes.Core
             //Update All Entities
             foreach (var en in Globals.Entities)
             {
-                if (en.Value == null) continue;
+                if (en.Value == null && en.Value != Globals.Me) continue;
                 en.Value.Update();
             }
+            if (Globals.Me != null) Globals.Me.Update();
 
             for (int i = 0; i < Globals.EntitiesToDispose.Count; i++)
             {
                 if (Globals.Entities.ContainsKey(Globals.EntitiesToDispose[i]))
                 {
                     if (Globals.EntitiesToDispose[i] == Globals.Me.MyIndex) continue;
+                    Globals.Entities[Globals.EntitiesToDispose[i]].Dispose();
                     Globals.Entities.Remove(Globals.EntitiesToDispose[i]);
                 }
             }
@@ -242,20 +245,16 @@ namespace Intersect_Client.Classes.Core
                     var gridY = MapInstance.GetMap(Globals.Me.CurrentMap).MapGridY;
                     for (int x = gridX - 1; x <= gridX + 1; x++)
                     {
-                        for (int y = 0; y <= gridY + 1; y++)
+                        for (int y = gridY - 1; y <= gridY + 1; y++)
                         {
-                            if (x >= 0 && x < Globals.MapGridWidth && y >= 0 && y < Globals.MapGridHeight)
+                            if (x >= 0 && x < Globals.MapGridWidth && y >= 0 && y < Globals.MapGridHeight &&
+                                Globals.MapGrid[x, y] != -1)
                             {
                                 var map = MapInstance.GetMap(Globals.MapGrid[x, y]);
                                 if (map != null)
                                 {
                                     if (map.MapLoaded == false)
                                     {
-                                        canShowWorld = false;
-                                    }
-                                    else if (map.MapRendered == false && Globals.Database.RenderCaching == true)
-                                    {
-                                        map.PreRenderMap();
                                         canShowWorld = false;
                                     }
                                 }
@@ -272,6 +271,32 @@ namespace Intersect_Client.Classes.Core
                     canShowWorld = false;
                 }
                 if (canShowWorld) Globals.NeedsMaps = false;
+            }
+            else
+            {
+                if (MapInstance.GetMap(Globals.Me.CurrentMap) != null)
+                {
+                    var gridX = MapInstance.GetMap(Globals.Me.CurrentMap).MapGridX;
+                    var gridY = MapInstance.GetMap(Globals.Me.CurrentMap).MapGridY;
+                    for (int x = gridX - 1; x <= gridX + 1; x++)
+                    {
+                        for (int y = gridY - 1; y <= gridY + 1; y++)
+                        {
+                            if (x >= 0 && x < Globals.MapGridWidth && y >= 0 && y < Globals.MapGridHeight &&
+                                Globals.MapGrid[x, y] != -1)
+                            {
+                                var map = MapInstance.GetMap(Globals.MapGrid[x, y]);
+                                if (map == null &&
+                                    (!MapInstance.MapRequests.ContainsKey(Globals.MapGrid[x, y]) ||
+                                     MapInstance.MapRequests[Globals.MapGrid[x, y]] < Globals.System.GetTimeMS()))
+                                {
+                                    //Send for the map
+                                    PacketSender.SendNeedMap(Globals.MapGrid[x, y]);
+                                }
+                            }
+                        }
+                    }
+                }
             }
 
             //Update Game Animations
@@ -292,6 +317,7 @@ namespace Intersect_Client.Classes.Core
             }
 
             GameGraphics.UpdatePlayerLight();
+            ClientTime.Update();
         }
 
         public static void JoinGame()

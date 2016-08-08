@@ -84,6 +84,7 @@ namespace Intersect_Editor.Forms
             this.shopEditorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.spellEditorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.switchVariableEditorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.timeEditorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
@@ -105,8 +106,10 @@ namespace Intersect_Editor.Forms
             this.toolStripBtnErase = new System.Windows.Forms.ToolStripButton();
             this.toolStripBtnEyeDrop = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
-            this.toolStripBtnScreenshot = new System.Windows.Forms.ToolStripButton();
+            this.toolStripTimeButton = new System.Windows.Forms.ToolStripDropDownButton();
             this.toolStripSeparator6 = new System.Windows.Forms.ToolStripSeparator();
+            this.toolStripBtnScreenshot = new System.Windows.Forms.ToolStripButton();
+            this.toolStripSeparator10 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripBtnRun = new System.Windows.Forms.ToolStripButton();
             this.vS2012LightTheme1 = new WeifenLuo.WinFormsUI.Docking.VS2012LightTheme();
             this.dockLeft = new WeifenLuo.WinFormsUI.Docking.DockPanel();
@@ -358,7 +361,8 @@ namespace Intersect_Editor.Forms
             this.resourceEditorToolStripMenuItem,
             this.shopEditorToolStripMenuItem,
             this.spellEditorToolStripMenuItem,
-            this.switchVariableEditorToolStripMenuItem});
+            this.switchVariableEditorToolStripMenuItem,
+            this.timeEditorToolStripMenuItem});
             this.contentEditorsToolStripMenuItem.Name = "contentEditorsToolStripMenuItem";
             this.contentEditorsToolStripMenuItem.Size = new System.Drawing.Size(101, 20);
             this.contentEditorsToolStripMenuItem.Text = "Content Editors";
@@ -441,6 +445,13 @@ namespace Intersect_Editor.Forms
             this.switchVariableEditorToolStripMenuItem.Text = "Switch and Variable Editor";
             this.switchVariableEditorToolStripMenuItem.Click += new System.EventHandler(this.switchVariableEditorToolStripMenuItem_Click);
             // 
+            // timeEditorToolStripMenuItem
+            // 
+            this.timeEditorToolStripMenuItem.Name = "timeEditorToolStripMenuItem";
+            this.timeEditorToolStripMenuItem.Size = new System.Drawing.Size(210, 22);
+            this.timeEditorToolStripMenuItem.Text = "Time Editor";
+            this.timeEditorToolStripMenuItem.Click += new System.EventHandler(this.timeEditorToolStripMenuItem_Click);
+            // 
             // helpToolStripMenuItem
             // 
             this.helpToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -479,8 +490,10 @@ namespace Intersect_Editor.Forms
             this.toolStripBtnErase,
             this.toolStripBtnEyeDrop,
             this.toolStripSeparator5,
-            this.toolStripBtnScreenshot,
+            this.toolStripTimeButton,
             this.toolStripSeparator6,
+            this.toolStripBtnScreenshot,
+            this.toolStripSeparator10,
             this.toolStripBtnRun});
             this.toolStrip1.Location = new System.Drawing.Point(0, 24);
             this.toolStrip1.Name = "toolStrip1";
@@ -651,6 +664,21 @@ namespace Intersect_Editor.Forms
             this.toolStripSeparator5.Name = "toolStripSeparator5";
             this.toolStripSeparator5.Size = new System.Drawing.Size(6, 25);
             // 
+            // toolStripTimeButton
+            // 
+            this.toolStripTimeButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toolStripTimeButton.Image = ((System.Drawing.Image)(resources.GetObject("toolStripTimeButton.Image")));
+            this.toolStripTimeButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripTimeButton.Name = "toolStripTimeButton";
+            this.toolStripTimeButton.Size = new System.Drawing.Size(31, 22);
+            this.toolStripTimeButton.Text = "Toggle On/Off TOD Simulation";
+            this.toolStripTimeButton.Click += new System.EventHandler(this.toolStripTimeButton_Click);
+            // 
+            // toolStripSeparator6
+            // 
+            this.toolStripSeparator6.Name = "toolStripSeparator6";
+            this.toolStripSeparator6.Size = new System.Drawing.Size(6, 25);
+            // 
             // toolStripBtnScreenshot
             // 
             this.toolStripBtnScreenshot.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
@@ -661,10 +689,10 @@ namespace Intersect_Editor.Forms
             this.toolStripBtnScreenshot.Text = "Screenshot Map";
             this.toolStripBtnScreenshot.Click += new System.EventHandler(this.toolStripBtnScreenshot_Click);
             // 
-            // toolStripSeparator6
+            // toolStripSeparator10
             // 
-            this.toolStripSeparator6.Name = "toolStripSeparator6";
-            this.toolStripSeparator6.Size = new System.Drawing.Size(6, 25);
+            this.toolStripSeparator10.Name = "toolStripSeparator10";
+            this.toolStripSeparator10.Size = new System.Drawing.Size(6, 25);
             // 
             // toolStripBtnRun
             // 
@@ -894,6 +922,9 @@ namespace Intersect_Editor.Forms
         private ToolStripMenuItem commonEventEditorToolStripMenuItem;
         private ToolStripMenuItem switchVariableEditorToolStripMenuItem;
         private ToolStripMenuItem shopEditorToolStripMenuItem;
+        private ToolStripMenuItem timeEditorToolStripMenuItem;
+        private ToolStripDropDownButton toolStripTimeButton;
+        private ToolStripSeparator toolStripSeparator10;
     }
 }
 

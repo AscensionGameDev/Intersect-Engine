@@ -54,7 +54,7 @@ namespace Intersect_Editor.Forms
                 if (EditorGraphics.GetGraphicsDevice() != null)
                 {
                     _chain = new SwapChainRenderTarget(EditorGraphics.GetGraphicsDevice(), this.picMap.Handle,
-                        this.picMap.Width, this.picMap.Height);
+                        this.picMap.Width, this.picMap.Height,true,SurfaceFormat.Color,DepthFormat.Depth24,0,RenderTargetUsage.DiscardContents,PresentInterval.Immediate);
                     EditorGraphics.SetMapEditorChain(_chain);
                 }
             }

@@ -35,6 +35,7 @@ using IntersectClientExtras.Gwen.ControlInternal;
 using Intersect_Client.Classes.Core;
 using Intersect_Client.Classes.General;
 using Intersect_Client.Classes.Networking;
+using Intersect_Client.Classes.UI.Game.Chat;
 
 namespace Intersect_Client.Classes.UI.Game
 {
@@ -47,10 +48,14 @@ namespace Intersect_Client.Classes.UI.Game
         private Button _chatboxSendButton;
         private ScrollBar _chatboxScrollBar;
         private bool _receivedMessage = false;
+        private int _messageIndex = 0;
+        private GameGuiBase _gameUi;
 
         //Init
-        public Chatbox(Canvas _gameCanvas)
+        public Chatbox(Canvas _gameCanvas, GameGuiBase gameUi)
         {
+            _gameUi = gameUi;
+
             //Chatbox Window
             _chatboxWindow = new ImagePanel(_gameCanvas);
             _chatboxWindow.SetSize(402,173);
@@ -112,27 +117,38 @@ namespace Intersect_Client.Classes.UI.Game
                 _receivedMessage = false;
             }
 
-            if (Globals.ChatboxContent.Count > 0)
+            var msgs = ChatboxMsg.GetMessages();
+            for (int i = _messageIndex; i < msgs.Count; i++)
             {
-                foreach (var t1 in Globals.ChatboxContent)
+                var myText = Gui.WrapText(msgs[i].GetMessage(), 340, _chatboxWindow.Parent.Skin.DefaultFont);
+                foreach (var t in myText)
                 {
-                    var myText = Gui.WrapText(t1.Key, 340,_chatboxWindow.Parent.Skin.DefaultFont);
-                    foreach (var t in myText)
-                    {
-                        var rw = _chatboxMessages.AddRow(t.Trim());
-                        rw.SetTextColor(t1.Value);
-                        rw.MouseInputEnabled = false;
-                        rw.ShouldDrawBackground = false;
-                        _receivedMessage = true;
+                    var rw = _chatboxMessages.AddRow(t.Trim());
+                    rw.SetTextColor(msgs[i].GetColor());
+                    rw.ShouldDrawBackground = false;
+                    rw.UserData = msgs[i].GetTarget();
+                    rw.Clicked += ChatboxRow_Clicked;
+                    _receivedMessage = true;
 
-                        while (_chatboxMessages.RowCount > 20)
-                        {
-                            _chatboxMessages.RemoveRow(0);
-                        }
+                    while (_chatboxMessages.RowCount > 20)
+                    {
+                        _chatboxMessages.RemoveRow(0);
                     }
                 }
+                _messageIndex++;
+            }
+        }
 
-                Globals.ChatboxContent.Clear();
+        private void ChatboxRow_Clicked(Base sender, ClickedEventArgs arguments)
+        {
+            ListBoxRow rw = (ListBoxRow) sender;
+            string target = (string) rw.UserData;
+            if (target != "")
+            {
+                if (_gameUi.AdminWindowOpen())
+                {
+                    _gameUi.AdminWindowSelectName(target);
+                }
             }
         }
 

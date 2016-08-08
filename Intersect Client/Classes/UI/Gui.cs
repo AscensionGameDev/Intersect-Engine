@@ -127,6 +127,7 @@ namespace Intersect_Client.Classes.UI
 
         public static bool HasInputFocus()
         {
+            if (FocusElements == null) return false;
             for (var i = 0; i < FocusElements.Count; i++)
             {
                 if (FocusElements[i].HasFocus)

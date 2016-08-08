@@ -62,7 +62,7 @@ namespace Intersect_Client.Classes.UI.Game
         public void InitGameGui()
         {
             _eventWindow = new EventWindow(GameCanvas);
-            _chatBox = new Chatbox(GameCanvas);
+            _chatBox = new Chatbox(GameCanvas,this);
             GameMenu = new GameMenu(GameCanvas);
             Hotbar = new HotBarWindow(GameCanvas);
             _debugMenu = new DebugMenu(GameCanvas);
@@ -158,6 +158,11 @@ namespace Intersect_Client.Classes.UI.Game
         {
             if (_adminWindow != null && _adminWindow.IsVisible()) return true;
             return false;
+        }
+
+        public void AdminWindowSelectName(string name)
+        {
+            _adminWindow.SetName(name);
         }
 
         public void Draw()

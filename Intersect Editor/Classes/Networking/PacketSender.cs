@@ -252,5 +252,14 @@ namespace Intersect_Editor.Classes
             Network.SendPacket(bf.ToArray());
             bf.Dispose();
         }
+
+        public static void SendSaveTime(byte[] data)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteLong((int)ClientPackets.SaveTime);
+            bf.WriteBytes(data);
+            Network.SendPacket(bf.ToArray());
+            bf.Dispose();
+        }
     }
 }

@@ -171,7 +171,7 @@ namespace Intersect_Client_MonoGame.Classes.SFML.Graphics
                         blend = _multiplyState;
                         break;
                     case (GameBlendModes.Add):
-                        blend = BlendState.Additive;
+                       blend = BlendState.Additive;
                         break;
                 }
 

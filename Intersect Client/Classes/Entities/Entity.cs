@@ -49,6 +49,7 @@ namespace Intersect_Client.Classes.Entities
     {
         //Core Values
         public int MyIndex;
+        public long SpawnTime;
         public bool IsLocal = false;
         public string MyName = "";
         public string MySprite = "";
@@ -56,7 +57,6 @@ namespace Intersect_Client.Classes.Entities
         public int Passable = 0;
         public int HideName = 0;
         public int Level = 1;
-        public bool IsPlayer = false;
         public int Gender = 0;
 
         //Extras
@@ -116,20 +116,31 @@ namespace Intersect_Client.Classes.Entities
         //Rendering Variables
         public List<Entity> RenderList = null;
 
-        public Entity()
+        public Entity(int index, long spawnTime, ByteBuffer bf)
         {
-            for (int i = 0; i < Options.MaxInvItems; i++)
+            SpawnTime = spawnTime;
+            if (index > -1)
             {
-                Inventory[i] = new ItemInstance();
+                for (int i = 0; i < Options.MaxInvItems; i++)
+                {
+                    Inventory[i] = new ItemInstance();
+                }
+                for (int i = 0; i < Options.MaxPlayerSkills; i++)
+                {
+                    Spells[i] = new SpellInstance();
+                }
+                for (int i = 0; i < Options.EquipmentSlots.Count; i++)
+                {
+                    Equipment[i] = -1;
+                }
+                MyIndex = index;
+                Load(bf);
             }
-            for (int i = 0; i < Options.MaxPlayerSkills; i++)
-            {
-                Spells[i] = new SpellInstance();
-            }
-            for (int i = 0; i < Options.EquipmentSlots.Count; i++)
-            {
-                Equipment[i] = -1;
-            }
+        }
+
+        public virtual EntityTypes GetEntityType()
+        {
+            return EntityTypes.GlobalEntity;
         }
 
         //Deserializing
@@ -150,6 +161,7 @@ namespace Intersect_Client.Classes.Entities
                 if (anim != null)
                     Animations.Add(new AnimationInstance(anim, true));
             }
+            _disposed = false;
         }
 
         public void ClearAnimations()
@@ -195,6 +207,14 @@ namespace Intersect_Client.Classes.Entities
             {
                 return false;
             }
+            else
+            {
+                if (MapInstance.GetMap(CurrentMap) == null || !MapInstance.GetMap(CurrentMap).InView())
+                {
+                    Globals.EntitiesToDispose.Add(MyIndex);
+                    return false;
+                }
+            }
             RenderList = DetermineRenderOrder(RenderList);
             if (_lastUpdate == 0) { _lastUpdate = Globals.System.GetTimeMS(); }
             float ecTime = (float)(Globals.System.GetTimeMS() - _lastUpdate);
@@ -207,7 +227,7 @@ namespace Intersect_Client.Classes.Entities
                 if (DashQueue.Count > 0)
                 {
                     Dashing = DashQueue.Dequeue();
-                    Dashing.Start();
+                    Dashing.Start(this);
                 }
                 else
                 {
@@ -225,7 +245,7 @@ namespace Intersect_Client.Classes.Entities
             }
             if (Dashing != null)
             {
-                if (Dashing.Update())
+                if (Dashing.Update(this))
                 {
                     OffsetX = Dashing.GetXOffset();
                     OffsetY = Dashing.GetYOffset();
@@ -329,9 +349,9 @@ namespace Intersect_Client.Classes.Entities
             var gridY = MapInstance.GetMap(CurrentMap).MapGridY;
             for (int x = gridX - 1; x <= gridX + 1; x++)
             {
-                for (int y = 0; y <= gridY + 1; y++)
+                for (int y = gridY - 1; y <= gridY + 1; y++)
                 {
-                    if (x >= 0 && x < Globals.MapGridWidth && y >= 0 && y < Globals.MapGridHeight)
+                    if (x >= 0 && x < Globals.MapGridWidth && y >= 0 && y < Globals.MapGridHeight && Globals.MapGrid[x, y] != -1)
                     {
                         if (Globals.MapGrid[x, y] == CurrentMap)
                         {
@@ -388,7 +408,7 @@ namespace Intersect_Client.Classes.Entities
                 //If unit is stealthed, don't render unless the entity is the player.
                 if (Status[n].Type == (int)StatusTypes.Stealth)
                 {
-                    if (Globals.MyIndex != MyIndex)
+                    if (this != Globals.Me)
                     {
                         return;
                     }
@@ -454,23 +474,31 @@ namespace Intersect_Client.Classes.Entities
                     {
                         if (Options.EquipmentSlots.IndexOf(Options.PaperdollOrder[z]) > -1)
                         {
-                            if (Equipment[Options.EquipmentSlots.IndexOf(Options.PaperdollOrder[z])] > -1 && ItemBase.GetItem(Inventory[Equipment[Options.EquipmentSlots.IndexOf(Options.PaperdollOrder[z])]].ItemNum) != null)
+                            if (Equipment[Options.EquipmentSlots.IndexOf(Options.PaperdollOrder[z])] > -1)
                             {
-                                if (Gender == 0)
+                                var itemNum = -1;
+                                if (this == Globals.Me)
                                 {
-                                    DrawEquipment(
-                                        ItemBase.GetItem(
-                                            Inventory[
-                                                Equipment[Options.EquipmentSlots.IndexOf(Options.PaperdollOrder[z])]]
-                                                .ItemNum).MalePaperdoll, alpha);
+                                    itemNum =
+                                        Inventory[Equipment[Options.EquipmentSlots.IndexOf(Options.PaperdollOrder[z])]]
+                                            .ItemNum;
                                 }
                                 else
                                 {
-                                    DrawEquipment(
-                                        ItemBase.GetItem(
-                                            Inventory[
-                                                Equipment[Options.EquipmentSlots.IndexOf(Options.PaperdollOrder[z])]]
-                                                .ItemNum).FemalePaperdoll, alpha);
+                                    itemNum = Equipment[Options.EquipmentSlots.IndexOf(Options.PaperdollOrder[z])];
+                                }
+                                if (ItemBase.GetItem(itemNum) != null)
+                                {
+                                    if (Gender == 0)
+                                    {
+                                        DrawEquipment(
+                                            ItemBase.GetItem(itemNum).MalePaperdoll, alpha);
+                                    }
+                                    else
+                                    {
+                                        DrawEquipment(
+                                            ItemBase.GetItem(itemNum).FemalePaperdoll, alpha);
+                                    }
                                 }
                             }
                         }
@@ -522,7 +550,7 @@ namespace Intersect_Client.Classes.Entities
                 }
                 destRectangle.X = (int)Math.Ceiling(destRectangle.X);
                 destRectangle.Y = (int)Math.Ceiling(destRectangle.Y);
-                if (AttackTimer > Globals.System.GetTimeMS() || Blocking)
+                if (AttackTimer - CalculateAttackTime() / 2 > Globals.System.GetTimeMS() || Blocking)
                 {
                     srcRectangle = new FloatRect(3 * (int)paperdollTex.GetWidth() / 4, d * (int)paperdollTex.GetHeight() / 4, (int)paperdollTex.GetWidth() / 4, (int)paperdollTex.GetHeight() / 4);
                 }
@@ -564,7 +592,7 @@ namespace Intersect_Client.Classes.Entities
                 //If unit is stealthed, don't render unless the entity is the player.
                 if (Status[n].Type == (int)StatusTypes.Stealth)
                 {
-                    if (Globals.MyIndex != MyIndex)
+                    if (this != Globals.Me)
                     {
                         return;
                     }
@@ -621,7 +649,7 @@ namespace Intersect_Client.Classes.Entities
                 //If unit is stealthed, don't render unless the entity is the player.
                 if (Status[n].Type == (int)StatusTypes.Stealth)
                 {
-                    if (Globals.MyIndex != MyIndex)
+                    if (this != Globals.Me)
                     {
                         return;
                     }
@@ -752,132 +780,82 @@ namespace Intersect_Client.Classes.Entities
 
     public class DashInstance
     {
-        public int EntityID = 0;
-        public int Range = 0;
-        public int DistanceTraveled = 0;
-        public long TransmittionTimer = 0;
-        public long SpawnTime = 0;
-        public float XOffset = 0f;
-        public float YOffset = 0f;
-        public int Direction = 0;
-        public bool ChangeDirection = false;
+        private int _changeDirection = -1;
+        private float _startXCoord;
+        private float _startYCoord;
+        private float _endXCoord;
+        private float _endYCoord;
+        private int _endMap;
+        private int _endX;
+        private int _endY;
+        private long _startTime;
+        private int _dashTime;
 
-        public DashInstance(int entityID, int range, int direction, bool changeDirection = true)
+        public DashInstance(Entity en, int endMap, int endX, int endY, int dashTime, int changeDirection = -1)
         {
-            EntityID = entityID;
-            DistanceTraveled = 0;
-            Range = range;
-            Direction = direction;
-            ChangeDirection = changeDirection;
+            _changeDirection = changeDirection;
+            _endMap = endMap;
+            _endX = endX;
+            _endY = endY;
+            _dashTime = dashTime;
         }
 
-        public void Start()
+        public void Start(Entity en)
         {
-            if (Range <= 0) { Globals.Entities[EntityID].Dashing = null; } //Remove dash instance if no where to dash
-            TransmittionTimer = Globals.System.GetTimeMS() + (long)((float)Options.MaxDashSpeed / (float)Range);
-            SpawnTime = Globals.System.GetTimeMS();
-            if (ChangeDirection) Globals.Entities[EntityID].Dir = Direction;
+            if (MapInstance.GetMap(en.CurrentMap) == null || MapInstance.GetMap(_endMap) == null ||
+                (_endMap == en.CurrentMap) && (_endX == en.CurrentX) && (_endY == en.CurrentY))
+            {
+                en.Dashing = null;
+            }
+            else
+            {
+                var startMap = MapInstance.GetMap(en.CurrentMap);
+                var endMap = MapInstance.GetMap(_endMap);
+                _startTime = Globals.System.GetTimeMS();
+                _startXCoord = en.OffsetX;
+                _startYCoord = en.OffsetY;
+                _endXCoord = (endMap.GetX() + _endX * Options.TileWidth) - (startMap.GetX() + en.CurrentX * Options.TileWidth);
+                _endYCoord = (endMap.GetY() + _endY * Options.TileHeight) - (startMap.GetY() + en.CurrentY * Options.TileHeight);
+                if (_changeDirection > -1) en.Dir = _changeDirection;
+            }
         }
 
         public float GetXOffset()
         {
-            if (Direction == 2){return -XOffset; }
-            if (Direction == 3) { return XOffset; }
-            return 0;
+            if (Globals.System.GetTimeMS() > _startTime + _dashTime)
+            {
+                return _endXCoord;
+            }
+            else
+            {
+                return (_endXCoord - _startXCoord) * ((Globals.System.GetTimeMS() - _startTime) /(float)_dashTime);
+            }
         }
 
         public float GetYOffset()
         {
-            if (Direction == 0) { return -YOffset; }
-            if (Direction == 1) { return YOffset; }
-            return 0;
+            if (Globals.System.GetTimeMS() > _startTime + _dashTime)
+            {
+                return _endYCoord;
+            }
+            else
+            {
+                return (_endYCoord - _startYCoord) * ((Globals.System.GetTimeMS() - _startTime)/ (float)_dashTime);
+            }
         }
 
-        public bool Update()
+        public bool Update(Entity en)
         {
-            if (Globals.System.GetTimeMS() > TransmittionTimer)
+            if (Globals.System.GetTimeMS() > _startTime + _dashTime)
             {
-                switch (Direction)
-                {
-                    case 0:
-                        Globals.Entities[EntityID].CurrentY--;
-                        break;
-                    case 1:
-                        Globals.Entities[EntityID].CurrentY++;
-                        break;
-                    case 2:
-                        Globals.Entities[EntityID].CurrentX--;
-                        break;
-                    case 3:
-                        Globals.Entities[EntityID].CurrentX++;
-                        break;
-                }
-
-                if (Globals.Entities[EntityID].CurrentX < 0)
-                {
-                    if (MapInstance.GetMap(MapInstance.GetMap(Globals.Entities[EntityID].CurrentMap).Left) != null)
-                    {
-                        Globals.Entities[EntityID].CurrentMap = MapInstance.GetMap(Globals.Entities[EntityID].CurrentMap).Left;
-                        Globals.Entities[EntityID].CurrentX = Options.MapWidth - 1;
-                    }
-                    else
-                    {
-                        Globals.Entities[EntityID].Dashing = null;
-                        Globals.Entities[EntityID].CurrentX = 0;
-                    }
-                }
-                if (Globals.Entities[EntityID].CurrentX > Options.MapWidth - 1)
-                {
-                    if (MapInstance.GetMap(MapInstance.GetMap(Globals.Entities[EntityID].CurrentMap).Right) != null)
-                    {
-                        Globals.Entities[EntityID].CurrentMap = MapInstance.GetMap(Globals.Entities[EntityID].CurrentMap).Right;
-                        Globals.Entities[EntityID].CurrentX = 0;
-                    }
-                    else
-                    {
-                        Globals.Entities[EntityID].Dashing = null;
-                        Globals.Entities[EntityID].CurrentX = Options.MapWidth - 1;
-                    }
-                }
-                if (Globals.Entities[EntityID].CurrentY < 0)
-                {
-                    if (MapInstance.GetMap(MapInstance.GetMap(Globals.Entities[EntityID].CurrentMap).Up) != null)
-                    {
-                        Globals.Entities[EntityID].CurrentMap = MapInstance.GetMap(Globals.Entities[EntityID].CurrentMap).Up;
-                        Globals.Entities[EntityID].CurrentY = Options.MapHeight - 1;
-                    }
-                    else
-                    {
-                        Globals.Entities[EntityID].Dashing = null;
-                        Globals.Entities[EntityID].CurrentY = 0;
-                    }
-                }
-                if (Globals.Entities[EntityID].CurrentY > Options.MapHeight - 1)
-                {
-                    if (MapInstance.GetMap(MapInstance.GetMap(Globals.Entities[EntityID].CurrentMap).Down) != null)
-                    {
-                        Globals.Entities[EntityID].CurrentMap = MapInstance.GetMap(Globals.Entities[EntityID].CurrentMap).Down;
-                        Globals.Entities[EntityID].CurrentY = 0;
-                    }
-                    else
-                    {
-                        Globals.Entities[EntityID].Dashing = null;
-                        Globals.Entities[EntityID].CurrentY = Options.MapHeight - 1;
-                    }
-                }
-
-                TransmittionTimer = Globals.System.GetTimeMS() + (long)(Options.MaxDashSpeed / (float)Range);
-                DistanceTraveled++;
+                en.Dashing = null;
+                en.OffsetX = 0;
+                en.OffsetY = 0;
+                en.CurrentMap = _endMap;
+                en.CurrentX = _endX;
+                en.CurrentY = _endY;
             }
-            XOffset = Options.TileWidth * (((Options.MaxDashSpeed / (float)Range) - (TransmittionTimer - Globals.System.GetTimeMS())) / (Options.MaxDashSpeed / (float)Range));
-            YOffset = Options.TileHeight * (((Options.MaxDashSpeed / (float)Range) - (TransmittionTimer - Globals.System.GetTimeMS())) / (Options.MaxDashSpeed / (float)Range));
-            if (DistanceTraveled >= Range)
-            {
-                Globals.Entities[EntityID].Dashing = null;
-                Globals.Entities[EntityID].OffsetX = 0;
-                Globals.Entities[EntityID].OffsetY = 0;
-            } //Dash no more once reached destination
-            return Globals.Entities[EntityID].Dashing != null;
+            return en.Dashing != null;
         }
     }
 }

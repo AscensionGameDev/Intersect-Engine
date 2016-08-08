@@ -46,8 +46,8 @@ namespace Intersect_Editor.Classes
             var packetHeader = (ServerPackets)bf.ReadLong();
             switch (packetHeader)
             {
-                case ServerPackets.RequestPing:
-                    PacketSender.SendPing();
+                case ServerPackets.Ping:
+                    HandlePing(bf.ReadBytes(bf.Length()));
                     break;
                 case ServerPackets.ServerConfig:
                     HandleServerConfig(bf.ReadBytes(bf.Length()));
@@ -82,9 +82,22 @@ namespace Intersect_Editor.Classes
                 case ServerPackets.GameObjectEditor:
                     HandleOpenEditor(bf.ReadBytes(bf.Length()));
                     break;
+                case ServerPackets.TimeBase:
+                    HandleTimeBase(bf.ReadBytes(bf.Length()));
+                    break;
                 default:
                     Console.WriteLine(@"Non implemented packet received: " + packetHeader);
                     break;
+            }
+        }
+
+        private static void HandlePing(byte[] packet)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteBytes(packet);
+            if (Convert.ToBoolean(bf.ReadInteger()) == true) //request
+            {
+                PacketSender.SendPing();
             }
         }
 
@@ -99,7 +112,6 @@ namespace Intersect_Editor.Classes
         {
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
-            Globals.MyIndex = (int)bf.ReadLong();
             Globals.LoginForm.TryRemembering();
             Globals.LoginForm.Hide();
         }
@@ -448,6 +460,15 @@ namespace Intersect_Editor.Classes
             bf.WriteBytes(packet);
             var type = (GameObject)bf.ReadInteger();
             Globals.MainForm.BeginInvoke(Globals.MainForm.EditorDelegate, type);
+            bf.Dispose();
+        }
+
+        private static void HandleTimeBase(byte[] packet)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteBytes(packet);
+            TimeBase.GetTimeBase().LoadTimeBase(packet);
+            Globals.MainForm.BeginInvoke(Globals.MainForm.TimeDelegate);
             bf.Dispose();
         }
     }

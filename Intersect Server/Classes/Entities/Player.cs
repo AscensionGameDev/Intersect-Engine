@@ -21,9 +21,11 @@
 */
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Intersect_Library;
 using Intersect_Library.GameObjects;
 using Intersect_Library.GameObjects.Events;
+using Intersect_Server.Classes.Core;
 using Intersect_Server.Classes.General;
 using Intersect_Server.Classes.Items;
 using Intersect_Server.Classes.Maps;
@@ -51,10 +53,10 @@ namespace Intersect_Server.Classes.Entities
         public ItemInstance[] Bank = new ItemInstance[Options.MaxBankSlots];
 
         //Temporary Values
-        private int _curMapLink = -1;
         private object EventLock = new object();
         public bool InBank;
         public int InShop = -1;
+        public long SaveTimer = Environment.TickCount;
 
         //Init
         public Player(int index, Client newClient) : base(index)
@@ -82,10 +84,11 @@ namespace Intersect_Server.Classes.Entities
         public override void Update()
         {
             if (!InGame || CurrentMap == -1) { return; }
-            //Process dash spells
-            if (Dashing != null)
+            var _curMapLink = CurrentMap;
+            if (SaveTimer + 120000 < Environment.TickCount)
             {
-                Dashing.Update();
+                Task.Run(() => Database.SaveCharacter(this,false));
+                SaveTimer = Environment.TickCount;
             }
             base.Update();
             //If we switched maps, lets update the maps
@@ -103,10 +106,9 @@ namespace Intersect_Server.Classes.Entities
                     }
                     else
                     {
-                        MapInstance.GetMap(CurrentMap).AddEntity(this);
+                        MapInstance.GetMap(CurrentMap).PlayerEnteredMap(MyClient);
                     }
                 }
-                _curMapLink = CurrentMap;
             }
 
             var currentMap = MapInstance.GetMap(CurrentMap);
@@ -197,6 +199,11 @@ namespace Intersect_Server.Classes.Entities
             return bf.ToArray();
         }
 
+        public override EntityTypes GetEntityType()
+        {
+            return EntityTypes.Player;
+        }
+
         //Spawning/Dying
         private void Respawn()
         {
@@ -209,7 +216,7 @@ namespace Intersect_Server.Classes.Entities
             {
                 Warp(0, 0, 0, 0);
             }
-            PacketSender.SendEntityDataToProximity(MyIndex, (int) EntityTypes.GlobalEntity, Data(), this);
+            PacketSender.SendEntityDataToProximity(this);
         }
         public override void Die(bool dropitems = false)
         {
@@ -222,7 +229,7 @@ namespace Intersect_Server.Classes.Entities
         public void RestoreVital(Vitals vital)
         {
             Vital[(int)vital] = MaxVital[(int)vital];
-            PacketSender.SendEntityVitals(MyIndex, (int)EntityTypes.Player, this);
+            PacketSender.SendEntityVitals(this);
         }
         public void AddVital(Vitals vital, int amount)
         {
@@ -247,7 +254,7 @@ namespace Intersect_Server.Classes.Entities
             }
             if (vitalAdded)
             {
-                PacketSender.SendEntityVitals(MyIndex, (int)EntityTypes.Player, this);
+                PacketSender.SendEntityVitals(this);
             }
         }
 
@@ -258,7 +265,7 @@ namespace Intersect_Server.Classes.Entities
             {
                 Level = Math.Min(Options.MaxLevel, level);
                 if (resetExperience) Experience = 0;
-                PacketSender.SendEntityDataToProximity(MyIndex, (int)EntityTypes.Player, Data(), this);
+                PacketSender.SendEntityDataToProximity(this);
                 PacketSender.SendExperience(MyClient);
 
             }
@@ -315,16 +322,16 @@ namespace Intersect_Server.Classes.Entities
                 }
             }
 
-            PacketSender.SendPlayerMsg(MyClient, "You have leveled up! You are now level " + Level + "!", Color.Cyan);
+            PacketSender.SendPlayerMsg(MyClient, "You have leveled up! You are now level " + Level + "!", Color.Cyan,MyName);
             PacketSender.SendActionMsg(MyIndex, "LEVEL UP!", new Color(255, 0, 255, 0));
             if (StatPoints > 0)
             {
                 PacketSender.SendPlayerMsg(MyClient,
-                    "You have " + StatPoints + " stat points available to be spent!", Color.Cyan);
+                    "You have " + StatPoints + " stat points available to be spent!", Color.Cyan,MyName);
             }
             PacketSender.SendExperience(MyClient);
             PacketSender.SendPointsTo(MyClient);
-            PacketSender.SendEntityDataToProximity(MyIndex, (int)EntityTypes.Player, Data(), this);
+            PacketSender.SendEntityDataToProximity(this);
 
             //Search for login activated events and run them
             foreach (var evt in EventBase.GetObjects())
@@ -391,23 +398,31 @@ namespace Intersect_Server.Classes.Entities
             }
             CurrentX = newX;
             CurrentY = newY;
-            MyEvents.Clear();
             if (newMap != CurrentMap || _sentMap == false)
             {
+                var oldMap = MapInstance.GetMap(CurrentMap);
+                if (oldMap != null)
+                {
+                    oldMap.RemoveEntity(this);
+                }
                 PacketSender.SendEntityLeave(MyIndex, (int)EntityTypes.Player, CurrentMap);
                 CurrentMap = newMap;
                 map.PlayerEnteredMap(MyClient);
-                PacketSender.SendEntityDataToProximity(MyIndex, (int)EntityTypes.Player, Data(), Globals.Entities[MyIndex]);
-                PacketSender.SendEntityPositionToAll(MyIndex, (int)EntityTypes.Player, Globals.Entities[MyIndex]);
+                PacketSender.SendEntityDataToProximity(this);
+                PacketSender.SendEntityPositionToAll(this);
                 PacketSender.SendMapGrid(MyClient, map.MapGrid);
-                PacketSender.SendMap(MyClient, newMap);
+                var surroundingMaps = map.GetSurroundingMaps(true);
+                foreach (var surrMap in surroundingMaps)
+                {
+                    PacketSender.SendMap(MyClient, surrMap.MyMapNum);
+                }
                 _sentMap = true;
             }
             else
             {
-                PacketSender.SendEntityPositionToAll(MyIndex, (int)EntityTypes.Player, Globals.Entities[MyIndex]);
-                PacketSender.SendEntityVitals(MyIndex, (int)EntityTypes.Player, Globals.Entities[MyIndex]);
-                PacketSender.SendEntityStats(MyIndex, (int)EntityTypes.Player, Globals.Entities[MyIndex]);
+                PacketSender.SendEntityPositionToAll(this);
+                PacketSender.SendEntityVitals(this);
+                PacketSender.SendEntityStats(this);
             }
 
         }
@@ -873,14 +888,14 @@ namespace Intersect_Server.Classes.Entities
                                 else
                                 {
                                     PacketSender.SendPlayerMsg(MyClient, "You do not have space to purchase that item!",
-                                        Color.Red);
+                                        Color.Red,MyName);
                                 }
                             }
                         }
                         else
                         {
                             PacketSender.SendPlayerMsg(MyClient, "Transaction failed due to insufficent funds.",
-                                Color.Red);
+                                Color.Red,MyName);
                         }
                     }
                 }
@@ -1201,9 +1216,9 @@ namespace Intersect_Server.Classes.Entities
                                     PacketSender.SendAnimationToProximity(spell.CastAnimation, 1, MyIndex, CurrentMap, 0, 0, Dir); //Target Type 1 will be global entity
                                 }
 
-                                PacketSender.SendEntityVitals(MyIndex, (int)Vitals.Health, Globals.Entities[MyIndex]);
-                                PacketSender.SendEntityVitals(MyIndex, (int)Vitals.Mana, Globals.Entities[MyIndex]);
-                                PacketSender.SendEntityCastTime(MyIndex, spellNum);
+                                PacketSender.SendEntityVitals(this);
+                                PacketSender.SendEntityVitals(this);
+                                PacketSender.SendEntityCastTime(this, spellNum);
                             }
                             else
                             {
@@ -1280,7 +1295,7 @@ namespace Intersect_Server.Classes.Entities
             {
                 Stat[statIndex].Stat++;
                 StatPoints--;
-                PacketSender.SendEntityStats(MyIndex, (int)EntityTypes.Player, this);
+                PacketSender.SendEntityStats(this);
                 PacketSender.SendPointsTo(MyClient);
             }
         }
@@ -1430,12 +1445,16 @@ namespace Intersect_Server.Classes.Entities
         public int FindEvent(EventPageInstance en)
         {
             int id = -1;
-            for (int i = 0; i < MyEvents.Count; i++)
+            lock (EventLock)
             {
-                if (MyEvents[i].PageInstance != null && (MyEvents[i].PageInstance == en || MyEvents[i].PageInstance.GlobalClone == en))
+                for (int i = 0; i < MyEvents.Count; i++)
                 {
-                    id = i;
-                    return id;
+                    if (MyEvents[i] != null && MyEvents[i].PageInstance != null &&
+                        (MyEvents[i].PageInstance == en || MyEvents[i].PageInstance.GlobalClone == en))
+                    {
+                        id = i;
+                        return id;
+                    }
                 }
             }
             return id;
@@ -1509,12 +1528,7 @@ namespace Intersect_Server.Classes.Entities
             if (attribute != null && attribute.value == (int)MapAttributes.Slide)
             {
                 if (attribute.data1 > 0) { Globals.Entities[index].Dir = attribute.data1 - 1; } //If sets direction, set it.
-                var dash = new DashInstance(index, 1, base.Dir);
-            }
-
-            if (oldMap != Globals.Entities[index].CurrentMap)
-            {
-                MapInstance.GetMap(Globals.Entities[index].CurrentMap).PlayerEnteredMap(MyClient);
+                var dash = new DashInstance(this, 1, base.Dir);
             }
 
             for (int i = 0; i < MyEvents.Count; i++)

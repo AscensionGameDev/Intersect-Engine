@@ -74,7 +74,6 @@ namespace Intersect_Client.Classes.General
         //Local player information
         public static Player Me;
         public static int CurrentMap = -1;
-        public static int MyIndex = -1;
         public static int MyX = 0;
         public static int MyY = 0;
 
@@ -90,6 +89,21 @@ namespace Intersect_Client.Classes.General
         public static Dictionary<int, Entity> Entities = new Dictionary<int, Entity>();
         public static List<int> EntitiesToDispose = new List<int>();
 
+        public static Entity GetEntity(int index, int type, long spawnTime)
+        {
+            if (Entities.ContainsKey(index))
+            {
+                if ((int) Entities[index].GetEntityType() == type && Entities[index].SpawnTime == spawnTime)
+                {
+                    EntitiesToDispose.Remove(Entities[index].MyIndex);
+                    return Entities[index];
+                }
+                Entities[index].Dispose();
+                Entities.Remove(index);
+            }
+            return null;
+        }
+
         //Bank
         public static ItemInstance[] Bank = new ItemInstance[Options.MaxBankSlots];
         public static bool InBank = false;
@@ -97,9 +111,6 @@ namespace Intersect_Client.Classes.General
         //Game Shop
         //Only need 1 shop, and that is the one we see at a given moment in time.
         public static ShopBase GameShop;
-
-        //GUI Varaibles
-        public static List<KeyValuePair<string,Color>> ChatboxContent = new List<KeyValuePair<string, Color>>();
 
         public static int AnimFrame = 0;
 

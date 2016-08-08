@@ -45,7 +45,7 @@ namespace Intersect_Client_MonoGame.Classes.SFML.Graphics
 
         public override void SetFloat(string key, float val)
         {
-            //shader.Parameters[key].SetValue(val);
+            shader.Parameters[key].SetValue(val);
         }
 
         public override void SetInt(string key, int val)
@@ -55,7 +55,8 @@ namespace Intersect_Client_MonoGame.Classes.SFML.Graphics
 
         public override void SetColor(string key, Color val)
         {
-            shader.Parameters[key].SetValue(new Vector4(val.A/255f,val.R/255f , val.G/255f , val.B/255f));
+            var vec = new Vector4(val.R / 255f, val.G / 255f, val.B / 255f, val.A / 255f);
+            shader.Parameters[key].SetValue(vec);
         }
 
         public override void SetVector2(string key, Pointf val)

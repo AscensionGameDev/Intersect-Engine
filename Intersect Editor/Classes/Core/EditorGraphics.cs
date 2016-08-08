@@ -49,6 +49,7 @@ namespace Intersect_Editor.Classes
 
         //Light Stuff
         public static byte CurrentBrightness = 100;
+        public static Intersect_Library.Color LightColor = null;
         public static bool HideDarkness = false;
         public static RenderTarget2D DarknessTexture;
         public static BlendState MultiplyState;
@@ -92,7 +93,7 @@ namespace Intersect_Editor.Classes
                 _presentationParams.RenderTargetUsage = RenderTargetUsage.DiscardContents;
 
                 // Create device
-                _graphicsDevice = new GraphicsDevice(GraphicsAdapter.DefaultAdapter, GraphicsProfile.Reach,
+                _graphicsDevice = new GraphicsDevice(GraphicsAdapter.DefaultAdapter, GraphicsProfile.HiDef,
                     _presentationParams);
 
                 //Define our spritebatch :D
@@ -563,12 +564,15 @@ namespace Intersect_Editor.Classes
                 }
             }
 
-            foreach (var light in tmpMap.Lights)
+            if (layer == 1)
             {
-                double w = light.Size;
-                var x = xoffset + (light.TileX * Options.TileWidth + light.OffsetX) + 16;
-                var y = yoffset + (light.TileY * Options.TileHeight + light.OffsetY) + 16;
-                if (!HideDarkness) AddLight(x,y,light,null);
+                foreach (var light in tmpMap.Lights)
+                {
+                    double w = light.Size;
+                    var x = xoffset + (light.TileX*Options.TileWidth + light.OffsetX) + 16;
+                    var y = yoffset + (light.TileY*Options.TileHeight + light.OffsetY) + 16;
+                    if (!HideDarkness) AddLight(x, y, light, null);
+                }
             }
         }
         private static void DrawSelectionRect()
@@ -818,11 +822,11 @@ namespace Intersect_Editor.Classes
                                     {
                                         float xpos = x*Options.TileWidth + xoffset;
                                         float ypos = y*Options.TileHeight + yoffset;
-                                        if (res.Width > Options.TileHeight)
+                                        if (res.Height > Options.TileHeight)
                                         {
                                             ypos -= ((int) res.Height - Options.TileHeight);
                                         }
-                                        if (res.Height > Options.TileWidth)
+                                        if (res.Width > Options.TileWidth)
                                         {
                                             xpos -= (res.Width - 32)/2;
                                         }
@@ -955,8 +959,19 @@ namespace Intersect_Editor.Classes
             if (Globals.CurrentMap == null) return;
             var tmpMap = Globals.CurrentMap;
             if (tmpMap == null) return;
-            DrawTexture(_whiteTex, new RectangleF(0, 0, 1, 1),new RectangleF(0,0, Options.TileWidth * (Options.MapWidth + 2), Options.TileHeight * (Options.MapHeight + 2)),
-                Color.FromArgb((byte)(((float)tmpMap.Brightness / 100f) * 255f), 255, 255, 255), DarknessTexture, BlendState.Additive);
+            if (!tmpMap.IsIndoors && LightColor != null)
+            {
+                DrawTexture(_whiteTex, new RectangleF(0, 0, 1, 1), new RectangleF(0, 0, Options.TileWidth * (Options.MapWidth + 2), Options.TileHeight * (Options.MapHeight + 2)),
+Color.FromArgb(255, 255, 255, 255), DarknessTexture, BlendState.Additive);
+                DrawTexture(_whiteTex, new RectangleF(0, 0, 1, 1), new RectangleF(0, 0, Options.TileWidth * (Options.MapWidth + 2), Options.TileHeight * (Options.MapHeight + 2)),
+    Color.FromArgb(LightColor.A, LightColor.R, LightColor.G, LightColor.B), DarknessTexture, BlendState.NonPremultiplied);
+            }
+            else
+            {
+                DrawTexture(_whiteTex, new RectangleF(0, 0, 1, 1), new RectangleF(0, 0, Options.TileWidth * (Options.MapWidth + 2), Options.TileHeight * (Options.MapHeight + 2)),
+    Color.FromArgb((byte)(((float)tmpMap.Brightness / 100f) * 255f), 255, 255, 255), DarknessTexture, BlendState.Additive);
+            }
+
 
             DrawLights();
         }
@@ -972,10 +987,9 @@ namespace Intersect_Editor.Classes
 
 
             DrawTexture(DarknessTexture, new RectangleF(0, 0, Options.TileWidth * (Options.MapWidth + 2), Options.TileHeight * (Options.MapHeight + 2)),
-                new RectangleF(0,0,
-                   Options.TileWidth * (Options.MapWidth + 2), Options.TileHeight * (Options.MapHeight + 2)),
-                Color.FromArgb((byte)(((float)tmpMap.Brightness / 100f) * 255f), 255, 255, 255), target,MultiplyState);
-
+new RectangleF(0, 0,
+Options.TileWidth * (Options.MapWidth + 2), Options.TileHeight * (Options.MapHeight + 2)),
+Color.FromArgb(255, 255, 255, 255), target, MultiplyState);
 
             ////Draw Light Attribute Icons
             if (Globals.CurrentLayer != Options.LayerCount + 1) return;
@@ -1010,13 +1024,14 @@ namespace Intersect_Editor.Classes
         public static void DrawLight(int x, int y, LightBase light, RenderTarget2D target)
         {
             Effect shader = GetShader("radialgradient.xnb");
-            shader.Parameters["_Color"].SetValue(new Vector4(light.Color.R / 255f,
-                    light.Color.G / 255f, light.Color.B / 255f, light.Intensity / 255f));
-            shader.Parameters["_Expand"].SetValue(light.Expand / 100f);
+            var vec = new Vector4(light.Color.R/255f,
+                light.Color.G/255f, light.Color.B/255f, light.Intensity/255f);
+            shader.Parameters["LightColor"].SetValue(vec);
+            shader.Parameters["Expand"].SetValue((float)(light.Expand / 100f));
             y -= light.Size;
             x -= light.Size;
-            DrawTexture(_whiteTex, new RectangleF(0, 0, 1, 1), new RectangleF(x, y, light.Size * 2, light.Size * 2), Color.Transparent,
-                target, BlendState.Additive, shader);
+            DrawTexture(_whiteTex, new RectangleF(0, 0, 1, 1), new RectangleF(x, y, light.Size * 2, light.Size * 2), Color.White,
+                target, BlendState.Additive,shader);
         }
         public static void AddLight(int x, int y, LightBase light, RenderTarget2D target = null)
         {

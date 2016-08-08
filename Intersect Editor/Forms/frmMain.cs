@@ -20,6 +20,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 using System;
+using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
 using Intersect_Editor.Classes;
@@ -28,6 +29,7 @@ using Intersect_Editor.Classes.General;
 using Intersect_Editor.Classes.Maps;
 using Intersect_Editor.Forms.Editors;
 using Intersect_Library;
+using Intersect_Library.GameObjects;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace Intersect_Editor.Forms
@@ -40,6 +42,10 @@ namespace Intersect_Editor.Forms
         //Cross Thread Delegates
         public delegate void TryOpenEditor(GameObject type);
         public TryOpenEditor EditorDelegate;
+
+        public delegate void UpdateTimeList();
+        public UpdateTimeList TimeDelegate;
+
         public delegate void HandleDisconnect();
         public HandleDisconnect DisconnectDelegate;
 
@@ -55,6 +61,7 @@ namespace Intersect_Editor.Forms
         private frmCommonEvent _commonEventEditor;
         private frmSwitchVariable _switchVariableEditor;
         private frmShop _shopEditor;
+        private frmTime _timeEditor;
 
         //Initialization & Setup Functions
         public frmMain()
@@ -77,6 +84,7 @@ namespace Intersect_Editor.Forms
             //Init Delegates
             EditorDelegate = TryOpenEditorMethod;
             DisconnectDelegate = HandleServerDisconnect;
+            TimeDelegate = UpdateTimeSimulationList;
 
             // Initilise the editor.
             InitEditor();
@@ -88,6 +96,7 @@ namespace Intersect_Editor.Forms
             //Init Forms with RenderTargets
             Globals.MapEditorWindow.InitMapEditor();
             Globals.MapLayersWindow.InitMapLayers();
+            UpdateTimeSimulationList();
         }
         private void FrmMain_KeyDown(object sender, KeyEventArgs e)
         {
@@ -352,8 +361,7 @@ namespace Intersect_Editor.Forms
                 //Offer to export map
                 if (Globals.CurrentMap != null)
                 {
-                    if (
-                        MessageBox.Show(
+                    if (MessageBox.Show(
                             "You have been disconnected from the server! Would you like to export this map before closing this editor?",
                             "Disconnected -- Export Map?", MessageBoxButtons.YesNo) ==
                         System.Windows.Forms.DialogResult.Yes)
@@ -559,6 +567,10 @@ namespace Intersect_Editor.Forms
         {
             PacketSender.SendOpenEditor(GameObject.Shop);
         }
+        private void timeEditorToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            PacketSender.SendOpenEditor(GameObject.Time);
+        }
         //Help
         private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -761,6 +773,14 @@ namespace Intersect_Editor.Forms
                             _shopEditor.Show();
                         }
                         break;
+                    case GameObject.Time:
+                        if (_timeEditor == null || _timeEditor.Visible == false)
+                        {
+                            _timeEditor = new frmTime();
+                            _timeEditor.InitEditor(TimeBase.GetTimeBase());
+                            _timeEditor.Show();
+                        }
+                        break;
                     default:
                         return;
                 }
@@ -772,6 +792,69 @@ namespace Intersect_Editor.Forms
         private void frmMain_FormClosing(object sender, FormClosingEventArgs e)
         {
             Globals.ClosingEditor = true;
+        }
+
+        private void toolStripTimeButton_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void UpdateTimeSimulationList()
+        {
+            Bitmap transtile = null;
+            if (File.Exists("resources/misc/transtile.png"))
+            {
+                transtile = new Bitmap("resources/misc/transtile.png");
+            }
+            toolStripTimeButton.DropDownItems.Clear();
+            var time = new DateTime(2000, 1, 1, 0, 0, 0);
+            var x = 0;
+            ToolStripDropDownButton btn = new ToolStripDropDownButton("None");
+            btn.Tag = null;
+            btn.Click += TimeDropdownButton_Click;
+            toolStripTimeButton.DropDownItems.Add(btn);
+            for (int i = 0; i < 1440; i += TimeBase.GetTimeBase().RangeInterval)
+            {
+                var addRange = time.ToString("h:mm:ss tt") + " to ";
+                time = time.AddMinutes(TimeBase.GetTimeBase().RangeInterval);
+                addRange += time.ToString("h:mm:ss tt");
+
+                //Create image of overlay color
+                var img = new Bitmap(32, 32);
+                var g = System.Drawing.Graphics.FromImage(img);
+                g.Clear(System.Drawing.Color.Transparent);
+                //Draw the trans tile if we have it
+                if (transtile != null)
+                {
+                    g.DrawImage(transtile, new System.Drawing.Point(0, 0));
+                }
+                var clr = TimeBase.GetTimeBase().RangeColors[x];
+                Brush brush =
+                new SolidBrush(System.Drawing.Color.FromArgb( clr.A, clr.R,clr.G,clr.B));
+                g.FillRectangle(brush, new System.Drawing.Rectangle(0, 0,32,32));
+
+                //Draw the overlay color
+                g.Dispose();
+
+                btn = new ToolStripDropDownButton(addRange,img);
+                btn.Tag = clr;
+                btn.Click += TimeDropdownButton_Click;
+                toolStripTimeButton.DropDownItems.Add(btn);
+                x++;
+            }
+            if (transtile != null) transtile.Dispose();
+        }
+
+        private void TimeDropdownButton_Click(object sender, EventArgs e)
+        {
+            if (((ToolStripDropDownButton) sender).Tag == null)
+            {
+                EditorGraphics.LightColor = null;
+            }
+            else
+            {
+                EditorGraphics.LightColor = (Intersect_Library.Color)((ToolStripDropDownButton)sender).Tag;
+            }
         }
     }
 }

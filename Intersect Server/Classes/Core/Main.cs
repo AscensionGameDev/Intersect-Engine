@@ -69,6 +69,7 @@ namespace Intersect_Server.Classes
             Console.WriteLine("Websocket Listener started for Unity WebGL Clients. Using Port #" +
                               (Options.ServerPort + 1));
 #endif
+            Console.WriteLine("Game Time is now: " + ServerTime.GetTime().ToString("F"));
             logicThread = new Thread(() => ServerLoop.RunServerLoop());
             logicThread.Start();
             if (Environment.UserInteractive)

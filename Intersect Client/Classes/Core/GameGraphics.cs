@@ -101,7 +101,7 @@ namespace Intersect_Client.Classes.Core
             Renderer.Init();
             contentManager = Globals.ContentManager;
             contentManager.LoadAll();
-            GameFont = contentManager.GetFont("arial",8);
+            GameFont = contentManager.GetFont("arial", 8);
         }
         public static void InitInGame()
         {
@@ -148,11 +148,11 @@ namespace Intersect_Client.Classes.Core
                 var gridY = currentMap.MapGridY;
                 for (int x = gridX - 1; x <= gridX + 1; x++)
                 {
-                    for (int y = 0; y <= gridY + 1; y++)
+                    for (int y = gridY - 1; y <= gridY + 1; y++)
                     {
-                        if (x >= 0 && x < Globals.MapGridWidth && y >= 0 && y < Globals.MapGridHeight)
+                        if (x >= 0 && x < Globals.MapGridWidth && y >= 0 && y < Globals.MapGridHeight && Globals.MapGrid[x, y] != -1)
                         {
-                            DrawMap(Globals.MapGrid[x,y],0);
+                            DrawMap(Globals.MapGrid[x, y], 0);
                         }
                     }
                 }
@@ -176,9 +176,9 @@ namespace Intersect_Client.Classes.Core
 
                 for (int x = gridX - 1; x <= gridX + 1; x++)
                 {
-                    for (int y = 0; y <= gridY + 1; y++)
+                    for (int y = gridY - 1; y <= gridY + 1; y++)
                     {
-                        if (x >= 0 && x < Globals.MapGridWidth && y >= 0 && y < Globals.MapGridHeight)
+                        if (x >= 0 && x < Globals.MapGridWidth && y >= 0 && y < Globals.MapGridHeight && Globals.MapGrid[x, y] != -1)
                         {
                             DrawMap(Globals.MapGrid[x, y], 1);
                         }
@@ -196,9 +196,9 @@ namespace Intersect_Client.Classes.Core
 
                 for (int x = gridX - 1; x <= gridX + 1; x++)
                 {
-                    for (int y = 0; y <= gridY + 1; y++)
+                    for (int y = gridY - 1; y <= gridY + 1; y++)
                     {
-                        if (x >= 0 && x < Globals.MapGridWidth && y >= 0 && y < Globals.MapGridHeight)
+                        if (x >= 0 && x < Globals.MapGridWidth && y >= 0 && y < Globals.MapGridHeight && Globals.MapGrid[x, y] != -1)
                         {
                             DrawMap(Globals.MapGrid[x, y], 2);
                         }
@@ -214,7 +214,7 @@ namespace Intersect_Client.Classes.Core
                 }
 
                 //Draw the players targets
-                ((Player)Globals.Entities[Globals.MyIndex]).DrawTargets();
+                Globals.Me.DrawTargets();
 
                 DrawOverlay();
 
@@ -303,11 +303,11 @@ namespace Intersect_Client.Classes.Core
                 var gridY = MapInstance.GetMap(Globals.Me.CurrentMap).MapGridY;
                 for (int x = gridX - 1; x <= gridX + 1; x++)
                 {
-                    for (int y = 0; y <= gridY + 1; y++)
+                    for (int y = gridY - 1; y <= gridY + 1; y++)
                     {
-                        if (x >= 0 && x < Globals.MapGridWidth && y >= 0 && y < Globals.MapGridHeight)
+                        if (x >= 0 && x < Globals.MapGridWidth && y >= 0 && y < Globals.MapGridHeight && Globals.MapGrid[x, y] != -1)
                         {
-                            var map = MapInstance.GetMap(Globals.MapGrid[x,y]);
+                            var map = MapInstance.GetMap(Globals.MapGrid[x, y]);
                             if (map != null && !map.MapRendered)
                             {
                                 if (!GameGraphics.PreRenderedMapLayer)
@@ -481,7 +481,7 @@ namespace Intersect_Client.Classes.Core
             var map = MapInstance.GetMap(Globals.Me.CurrentMap);
             if (Globals.GameState == GameStates.InGame && map != null)
             {
-                Player en = (Player)Globals.Entities[Globals.MyIndex];
+                Player en = Globals.Me;
                 float x = map.GetX() - Options.MapWidth * Options.TileWidth;
                 float y = map.GetY() - Options.MapHeight * Options.TileHeight;
                 float x1 = map.GetX() + (Options.MapWidth * Options.TileWidth) * 2;
@@ -588,18 +588,31 @@ namespace Intersect_Client.Classes.Core
             if (map == null) return;
             if (_darknessTexture == null) { return; }
 
-            AddLight((int)Math.Ceiling(Globals.Entities[Globals.MyIndex].GetCenterPos().X), (int)Math.Ceiling(Globals.Entities[Globals.MyIndex].GetCenterPos().Y), (int)_playerLightSize, (byte)_playerLightIntensity, _playerLightExpand, Intersect_Library.Color.FromArgb((int)_playerLightColor.A, (int)_playerLightColor.R, (int)_playerLightColor.G, (int)_playerLightColor.B));
+            if (map.IsIndoors)
+            {
+               DrawGameTexture(Renderer.GetWhiteTexture(), new FloatRect(0, 0, 1, 1),
+                    new FloatRect(0, 0, _darknessTexture.GetWidth(), _darknessTexture.GetHeight()),
+                    new Color((byte)(_brightnessLevel), 255, 255, 255), _darknessTexture, GameBlendModes.Add);
+            }
+            else
+            {
+                DrawGameTexture(Renderer.GetWhiteTexture(), new FloatRect(0, 0, 1, 1),
+    new FloatRect(0, 0, _darknessTexture.GetWidth(), _darknessTexture.GetHeight()),
+    new Color(255, 255, 255, 255), _darknessTexture, GameBlendModes.Add);
+                DrawGameTexture(Renderer.GetWhiteTexture(), new FloatRect(0, 0, 1, 1),
+    new FloatRect(0, 0, _darknessTexture.GetWidth(), _darknessTexture.GetHeight()),
+   new Color((int)ClientTime.GetTintColor().A, (int)ClientTime.GetTintColor().R, (int)ClientTime.GetTintColor().G, (int)ClientTime.GetTintColor().B), _darknessTexture, GameBlendModes.None);
+            }
+
+            AddLight((int)Math.Ceiling(Globals.Me.GetCenterPos().X), (int)Math.Ceiling(Globals.Me.GetCenterPos().Y), (int)_playerLightSize, (byte)_playerLightIntensity, _playerLightExpand, Intersect_Library.Color.FromArgb((int)_playerLightColor.A, (int)_playerLightColor.R, (int)_playerLightColor.G, (int)_playerLightColor.B));
 
             DrawLights();
-            DrawGameTexture(Renderer.GetWhiteTexture(), new FloatRect(0, 0, 1, 1),
-                new FloatRect(0, 0, _darknessTexture.GetWidth(), _darknessTexture.GetHeight()),
-               new Color((byte)(_brightnessLevel), 255, 255, 255), _darknessTexture, GameBlendModes.Add);
             _darknessTexture.End();
 
         }
         public static void DrawDarkness()
         {
-            GameShader radialShader = Globals.ContentManager.GetShader("radialgradient.xnb");
+            GameShader radialShader = Globals.ContentManager.GetShader("radialgradient");
             if (radialShader != null)
             {
                 DrawGameTexture(_darknessTexture, CurrentView.Left, CurrentView.Top, null, GameBlendModes.Multiply);
@@ -613,20 +626,20 @@ namespace Intersect_Client.Classes.Core
 
         private static void DrawLights()
         {
-            GameShader radialShader = Globals.ContentManager.GetShader("radialgradient.xnb");
+            GameShader radialShader = Globals.ContentManager.GetShader("radialgradient");
             if (radialShader != null)
             {
                 foreach (LightBase l in _lightQueue)
                 {
-                    int x = l.OffsetX - ((int) CurrentView.Left + l.Size);
-                    int y = l.OffsetY - ((int) CurrentView.Top + l.Size);
+                    int x = l.OffsetX - ((int)CurrentView.Left + l.Size);
+                    int y = l.OffsetY - ((int)CurrentView.Top + l.Size);
 
-                    radialShader.SetColor("_Color", new Color(l.Color.R, l.Color.G, l.Color.B, l.Intensity));
-                    radialShader.SetFloat("_Expand", l.Expand/100f);
+                    radialShader.SetColor("LightColor", new Color(l.Intensity,l.Color.R, l.Color.G, l.Color.B));
+                    radialShader.SetFloat("Expand", l.Expand / 100f);
 
                     DrawGameTexture(Renderer.GetWhiteTexture(), new FloatRect(0, 0, 1, 1),
-                        new FloatRect(x, y, l.Size*2, l.Size*2), Color.Transparent,
-                        _darknessTexture, GameBlendModes.Add, radialShader);
+                        new FloatRect(x, y, l.Size * 2, l.Size * 2), new Color(255,255,255,255),
+                        _darknessTexture, GameBlendModes.Add,radialShader);
                 }
             }
             _lightQueue.Clear();

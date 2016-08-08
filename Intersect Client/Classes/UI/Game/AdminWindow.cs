@@ -258,6 +258,10 @@ namespace Intersect_Client.Classes.UI.Game
         }
 
         //Methods
+        public void SetName(string name)
+        {
+            _nameTextbox.Text = name;
+        }
         private void CreateMapList()
         {
             _mapList = new TreeControl(_adminWindow);

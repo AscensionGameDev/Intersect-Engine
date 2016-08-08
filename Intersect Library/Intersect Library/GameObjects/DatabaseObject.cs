@@ -109,6 +109,8 @@ namespace Intersect_Library.GameObjects
                     foreach (var obj in TilesetBase.GetObjects())
                         items.Add(obj.Value.Value);
                     break;
+                case GameObject.Time:
+                    break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(type), type, null);
             }
@@ -167,6 +169,8 @@ namespace Intersect_Library.GameObjects
                 case GameObject.Tileset:
                     if (listIndex >= TilesetBase.ObjectCount()) return -1;
                     return TilesetBase.GetObjects().Keys.ToList()[listIndex];
+                case GameObject.Time:
+                    return -1;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(type), type, null);
             }
@@ -207,6 +211,8 @@ namespace Intersect_Library.GameObjects
                     return ServerVariableBase.GetObjects().Keys.ToList().IndexOf(id);
                 case GameObject.Tileset:
                     return TilesetBase.GetObjects().Keys.ToList().IndexOf(id);
+                case GameObject.Time:
+                    return -1;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(type), type, null);
             }

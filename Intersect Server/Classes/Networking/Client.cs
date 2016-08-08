@@ -24,8 +24,11 @@ using Intersect_Library;
 using Intersect_Server.Classes.Entities;
 using Intersect_Server.Classes.General;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.IO;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace Intersect_Server.Classes.Networking
 {
@@ -51,7 +54,7 @@ namespace Intersect_Server.Classes.Networking
 
         //Network Variables
         private GameSocket mySocket;
-        private object sendLock = new object();
+        private ConcurrentQueue<byte[]> sendQueue = new ConcurrentQueue<byte[]>();
 
         //Processing Thead
         private Thread updateThread;
@@ -68,13 +71,10 @@ namespace Intersect_Server.Classes.Networking
 
         public void SendPacket(byte[] packet)
         {
-            lock (sendLock)
-            {
-                var buff = new ByteBuffer();
-                buff.WriteInteger(packet.Length);
-                buff.WriteBytes(packet);
-                mySocket.SendData(buff.ToArray());
-            }
+            var buff = new ByteBuffer();
+            buff.WriteInteger(packet.Length);
+            buff.WriteBytes(packet);
+            sendQueue.Enqueue(buff.ToArray());
         }
 
         public void Pinged()
@@ -97,20 +97,31 @@ namespace Intersect_Server.Classes.Networking
             }
         }
 
-        public void Update()
+        public async void Update()
         {
-            while (mySocket != null && IsConnected() && Globals.ServerStarted)
+            try
             {
-                mySocket.Update();
-                if (Entity != null)
+                while (mySocket != null && IsConnected() && Globals.ServerStarted)
                 {
-                    Entity.Update();
+                    mySocket.Update();
+                    if (Entity != null)
+                    {
+                        Entity.Update();
+                    }
+                    byte[] data = null;
+                    while (sendQueue.TryDequeue(out data))
+                    {
+                        if (data != null)
+                        {
+                            mySocket.SendData(data);
+                        }
+                    }
+                    await Task.Delay(10);
                 }
-                System.Threading.Thread.Sleep(10);
             }
-            lock (Globals.ClientLock)
+            catch (Exception ex)
             {
-                Globals.Clients.Remove(this);
+                mySocket.Disconnect();
             }
         }
 

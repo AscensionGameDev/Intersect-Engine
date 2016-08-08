@@ -1,4 +1,5 @@
-﻿using WebSocketSharp.Net.WebSockets;
+﻿using System;
+using WebSocketSharp.Net.WebSockets;
 
 namespace Intersect_Server.Classes.Networking
 {
@@ -38,7 +39,14 @@ namespace Intersect_Server.Classes.Networking
 
         public override void SendData(byte[] data)
         {
-            _myContext.WebSocket.Send(data);
+            try
+            {
+                _myContext.WebSocket.Send(data);
+            }
+            catch (Exception ex)
+            {
+                HandleDisconnect();
+            }
         }
 
         public override void Update()

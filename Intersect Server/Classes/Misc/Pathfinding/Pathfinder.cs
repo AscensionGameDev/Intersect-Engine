@@ -23,6 +23,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading;
+using System.Threading.Tasks;
 using Intersect_Library;
 using Intersect_Server.Classes.Core;
 using Intersect_Server.Classes.Entities;
@@ -83,7 +84,7 @@ namespace Intersect_Server.Classes.Misc
             }
         }
 
-        private void PathFind()
+        private async void PathFind()
         {
             do
             {
@@ -306,7 +307,7 @@ namespace Intersect_Server.Classes.Misc
                         _failures++;
                     }
                 }
-                System.Threading.Thread.Sleep(Globals.Rand.Next(_failures * 1000 + 500, _failures * 2000 + 500));
+                await Task.Delay(Globals.Rand.Next(_failures * 1000 + 500, _failures * 2000 + 500));
             } while (true);
         }
 

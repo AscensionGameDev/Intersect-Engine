@@ -42,9 +42,6 @@ namespace Intersect_Server.Classes.Entities
         //Pathfinding
         private Pathfinder pathFinder;
 
-        //Temporary Values
-        private int _curMapLink = -1;
-
         //Moving
         public long LastRandomMove;
 
@@ -81,6 +78,10 @@ namespace Intersect_Server.Classes.Entities
             Range = (byte)myBase.SightRange;
             pathFinder = new Pathfinder(this);
         }
+        public override EntityTypes GetEntityType()
+        {
+            return EntityTypes.GlobalEntity;
+        }
 
         public override void Die(bool dropitems = false)
         {
@@ -92,15 +93,15 @@ namespace Intersect_Server.Classes.Entities
         }
 
         //Targeting
-        public void AssignTarget(int Target)
+        public void AssignTarget(Entity en)
         {
-            if (Globals.Entities[Target].GetType() == typeof(Projectile))
+            if (en.GetType() == typeof(Projectile))
             {
-                MyTarget = ((Projectile)Globals.Entities[Target]).Owner;
+                MyTarget = ((Projectile)en).Owner;
             }
             else
             {
-                MyTarget = Globals.Entities[Target];
+                MyTarget = en;
             }
         }
 
@@ -165,11 +166,6 @@ namespace Intersect_Server.Classes.Entities
                 {
                     return;
                 }
-            }
-            //Check if NPC is dashing
-            if (Dashing != null)
-            {
-                return;
             }
             //Check if NPC is casting a spell
             if (CastTime > Globals.System.GetTimeMs())
@@ -252,11 +248,9 @@ namespace Intersect_Server.Classes.Entities
                                         //Target Type 1 will be global entity
                                     }
 
-                                    PacketSender.SendEntityVitals(MyIndex, (int)Vitals.Health,
-                                        Globals.Entities[MyIndex]);
-                                    PacketSender.SendEntityVitals(MyIndex, (int)Vitals.Mana,
-                                        Globals.Entities[MyIndex]);
-                                    PacketSender.SendEntityCastTime(MyIndex, (MyBase.Spells[s]));
+                                    PacketSender.SendEntityVitals(Globals.Entities[MyIndex]);
+                                    PacketSender.SendEntityVitals(Globals.Entities[MyIndex]);
+                                    PacketSender.SendEntityCastTime(this, (MyBase.Spells[s]));
                                 }
                             }
                         }
@@ -267,14 +261,8 @@ namespace Intersect_Server.Classes.Entities
 
         public override void Update()
         {
+            var curMapLink = CurrentMap;
             base.Update();
-
-            //Process dash spells
-            if (Dashing != null)
-            {
-                Dashing.Update();
-                return;
-            }
             if (MoveTimer < Globals.System.GetTimeMs())
             {
                 var targetMap = -1;
@@ -444,28 +432,22 @@ namespace Intersect_Server.Classes.Entities
                                 return;
                             }
                         }
-                        //Check if NPC is dashing
-                        if (Dashing != null)
-                        {
-                            return;
-                        }
                         Move(i, null);
                     }
                 }
                 LastRandomMove = Globals.System.GetTimeMs() + Globals.Rand.Next(1000, 3000);
             }
             //If we switched maps, lets update the maps
-            if (_curMapLink != CurrentMap)
+            if (curMapLink != CurrentMap)
             {
-                if (_curMapLink != -1)
+                if (curMapLink != -1)
                 {
-                    MapInstance.GetMap(_curMapLink).RemoveEntity(this);
+                    MapInstance.GetMap(curMapLink).RemoveEntity(this);
                 }
                 if (CurrentMap > -1)
                 {
                     MapInstance.GetMap(CurrentMap).AddEntity(this);
                 }
-                _curMapLink = CurrentMap;
             }
         }
     }

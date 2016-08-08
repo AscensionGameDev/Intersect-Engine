@@ -55,6 +55,9 @@ namespace Intersect_Server.Classes.Maps
         //Projectiles
         public List<Projectile> MapProjectiles = new List<Projectile>();
 
+        private byte[] ClientMapData = null;
+        private byte[] EditorMapData = null;
+
         //Location of Map in the current grid
         public int MapGrid;
         public int MapGridX = -1;
@@ -90,6 +93,8 @@ namespace Intersect_Server.Classes.Maps
         {
             lock (_mapLock)
             {
+                ClientMapData = null;
+                EditorMapData = null;
                 DespawnEverything();
                 base.Load(packet);
                 if (keepRevision > -1) Revision = keepRevision;
@@ -100,11 +105,19 @@ namespace Intersect_Server.Classes.Maps
         //Get Map Data
         public byte[] GetClientMapData()
         {
-            return base.GetMapData(true);
+            if (ClientMapData == null)
+            {
+                ClientMapData = base.GetMapData(true);
+            }
+            return ClientMapData;
         }
         public byte[] GetEditorMapData()
         {
-            return base.GetMapData(false);
+            if (EditorMapData == null)
+            {
+                EditorMapData = base.GetMapData(false);
+            }
+            return EditorMapData;
         }
 
         //Items & Resources
@@ -210,9 +223,12 @@ namespace Intersect_Server.Classes.Maps
         {
             for (int i = 0; i < MapItems.Count; i++)
             {
-                if (ItemBase.GetItem(MapItems[i].ItemNum) == itemBase)
+                if (MapItems[i] != null)
                 {
-                    MapItems.RemoveAt(i);
+                    if (ItemBase.GetItem(MapItems[i].ItemNum) == itemBase)
+                    {
+                        RemoveItem(i, true);
+                    }
                 }
             }
         }
@@ -378,8 +394,7 @@ namespace Intersect_Server.Classes.Maps
                 }
 
                 AddEntity((Npc)Globals.Entities[index]);
-                PacketSender.SendEntityDataToProximity(index, (int)EntityTypes.GlobalEntity,
-                    Globals.Entities[index].Data(), Globals.Entities[index]);
+                PacketSender.SendEntityDataToProximity(Globals.Entities[index]);
                 return (Npc)Globals.Entities[index];
             }
             return null;
@@ -434,9 +449,7 @@ namespace Intersect_Server.Classes.Maps
                 int n = Globals.FindOpenEntity();
                 MapProjectiles.Add(new Projectile(n, owner, projectile, Map, X, Y, Z, Direction, IsSpell, Target));
                 Globals.Entities[n] = MapProjectiles[MapProjectiles.Count - 1];
-
-                AddEntity(Globals.Entities[n]);
-                PacketSender.SendEntityDataToProximity(n, (int)EntityTypes.Projectile, ((Projectile)Globals.Entities[n]).Data(), Globals.Entities[n]);
+                PacketSender.SendEntityDataToProximity(Globals.Entities[n]);
             }
         }
         public void DespawnProjectiles()
@@ -480,7 +493,9 @@ namespace Intersect_Server.Classes.Maps
             {
                 Entities.Remove(en);
                 if (Players.Contains(en))
-                    Players.Remove((Player)en);
+                {
+                    Players.Remove((Player) en);
+                }
             }
         }
         public void RemoveProjectile(Projectile en)
@@ -634,11 +649,12 @@ namespace Intersect_Server.Classes.Maps
             }
             else
             {
-                if (SurroundingMaps.Count > 0)
+                var surroundingMaps = GetSurroundingMaps(true);
+                if (surroundingMaps.Count > 0)
                 {
-                    foreach (var t in SurroundingMaps)
+                    foreach (var t in surroundingMaps)
                     {
-                        var map = MapInstance.GetMap(t);
+                        var map = t;
                         if (map != null)
                         {
                             if (Monitor.TryEnter(map.GetMapLock(), new TimeSpan(0,0,0,0,1)))
@@ -704,30 +720,7 @@ namespace Intersect_Server.Classes.Maps
                 {
                     if (Entities[i] != null && Entities[i] != player)
                     {
-                        if (Globals.Entities.IndexOf(Entities[i]) > -1)
-                        {
-                            if (Entities[i].GetType() == typeof(Player))
-                            {
-                                PacketSender.SendEntityDataTo(player.MyClient, Entities[i].MyIndex, (int) EntityTypes.Player,
-                                    ((Player) Entities[i]).Data(), Entities[i]);
-                            }
-                            else if (Entities[i].GetType() == typeof(Resource))
-                            {
-                                PacketSender.SendEntityDataTo(player.MyClient, Entities[i].MyIndex, (int) EntityTypes.Resource,
-                                    ((Resource) Entities[i]).Data(), Entities[i]);
-                            }
-                            else if (Entities[i].GetType() == typeof(Projectile))
-                            {
-                                PacketSender.SendEntityDataTo(player.MyClient, Entities[i].MyIndex, (int) EntityTypes.Projectile,
-                                    ((Projectile) Entities[i]).Data(), Entities[i]);
-                            }
-                            else
-                            {
-                                PacketSender.SendEntityDataTo(player.MyClient, Entities[i].MyIndex,
-                                    (int) EntityTypes.GlobalEntity,
-                                    (Entities[i]).Data(), Entities[i]);
-                            }
-                        }
+                        PacketSender.SendEntityDataTo(player.MyClient, Entities[i]);
                     }
                 }
                 player.SendEvents();

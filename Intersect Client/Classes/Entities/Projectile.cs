@@ -47,17 +47,16 @@ namespace Intersect_Client.Classes.Entities
         /// <summary>
         /// The constructor for the inherated projectile class
         /// </summary>
-        public Projectile(int index) : base()
+        public Projectile(int index,long spawnTime,ByteBuffer bf) : base(index,spawnTime,bf)
         {
             Vital[(int)Vitals.Health] = 1;
             MaxVital[(int)Vitals.Health] = 1;
             HideName = 1;
             Passable = 1;
             IsMoving = true;
-            MyIndex = index;
         }
 
-        public void Load(ByteBuffer bf)
+        public override void Load(ByteBuffer bf)
         {
             if (_loaded) return;
             base.Load(bf);
@@ -84,6 +83,11 @@ namespace Intersect_Client.Classes.Entities
             }
             Spawns = new ProjectileSpawns[_totalSpawns];
             _loaded = true;
+        }
+
+        public override EntityTypes GetEntityType()
+        {
+            return EntityTypes.Projectile;
         }
 
         public override void Dispose()
@@ -433,8 +437,7 @@ namespace Intersect_Client.Classes.Entities
                                 }
                             }
 
-                            int tileBlocked = ((Player)Globals.Entities[Globals.MyIndex]).IsTileBlocked(Spawns[i].X,
-                                Spawns[i].Y, CurrentZ, Spawns[i].Map);
+                            int tileBlocked = Globals.Me.IsTileBlocked(Spawns[i].X,Spawns[i].Y, CurrentZ, Spawns[i].Map);
 
                             if (tileBlocked != -1)
                             {
@@ -492,7 +495,7 @@ namespace Intersect_Client.Classes.Entities
             }
             else
             {
-                EntityManager.RemoveEntity(MyIndex, (int)EntityTypes.Projectile, CurrentMap);
+                Globals.Entities[MyIndex].Dispose();
             }
         }
         /// <summary>
@@ -505,7 +508,7 @@ namespace Intersect_Client.Classes.Entities
 
         public void SpawnDead(int spawnIndex)
         {
-            if (spawnIndex <= _spawnedAmount && Spawns[spawnIndex] != null)
+            if (spawnIndex < _spawnedAmount && Spawns[spawnIndex] != null)
             {
                Spawns[spawnIndex].Dispose();
                Spawns[spawnIndex] = null;

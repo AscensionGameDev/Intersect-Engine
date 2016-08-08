@@ -184,7 +184,7 @@ namespace Intersect_Client.Classes.UI.Game
                 _expLbl.SetSize(_expBackground.Width, _expBackground.Height);
                 _expLbl.SetTextColor(Color.White, Label.ControlState.Normal);
             }
-            else if (_myEntity.IsPlayer)
+            else if (_myEntity.GetType() == typeof(Player))
             {
                 TradeLabel = new Label(_entityBox);
                 TradeLabel.SetText("Trade");

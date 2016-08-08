@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Intersect_Library;
 using Intersect_Server.Classes.Core;
 using Intersect_Server.Classes.Entities;
 using Intersect_Server.Classes.General;
+using Intersect_Server.Classes.Maps;
 
 namespace Intersect_Server.Classes.Networking
 {
@@ -107,7 +109,6 @@ namespace Intersect_Server.Classes.Networking
             if (_connectionTimeout > -1 && _connectionTimeout < Globals.System.GetTimeMs())
             {
                 HandleDisconnect();
-                return;
             }
             else
             {
@@ -126,29 +127,35 @@ namespace Intersect_Server.Classes.Networking
 
         protected void HandleDisconnect()
         {
-            if (_isConnected)
+            if (_isConnected && _myClient != null)
             {
                 try
                 {
-                    _isConnected = false;
                     Globals.GeneralLogs.Add("Client disconnected.");
-                    Database.SaveCharacter(_myClient.Entity);
-                    if (_entityIndex > -1 && Globals.Entities[_entityIndex] != null && Globals.Entities[_entityIndex].MyName != "")
+                    if (_myClient.Entity != null)
                     {
-                        PacketSender.SendEntityLeave(_entityIndex, (int)EntityTypes.Player, Globals.Entities[_entityIndex].CurrentMap);
-                        if (Globals.Entities[_entityIndex] == null) { return; }
+                       var en = _myClient.Entity;
+                        Task.Run(() => Database.SaveCharacter(en));
+                        var map = MapInstance.GetMap(_myClient.Entity.CurrentMap);
+                        if (map != null) map.RemoveEntity(_myClient.Entity);
+                        PacketSender.SendEntityLeave(_myClient.Entity.MyIndex, (int) EntityTypes.Player,
+                            Globals.Entities[_entityIndex].CurrentMap);
                         if (!_myClient.IsEditor)
                         {
-                            PacketSender.SendGlobalMsg(Globals.Entities[_entityIndex].MyName + " has left the Intersect engine");
+                            PacketSender.SendGlobalMsg(_myClient.Entity.MyName + " has left the Intersect engine");
                         }
                         _myClient.Entity = null;
-                        _myClient = null;
                         Globals.Entities[_entityIndex] = null;
-
+                    }
+                    lock (Globals.ClientLock)
+                    {
+                        Globals.Clients.Remove(_myClient);
+                        _myClient = null;
                     }
                     Disconnect();
                 }
-                catch (Exception) { }
+                catch (Exception ex)
+                { }
             }
             _isConnected = false;
         }

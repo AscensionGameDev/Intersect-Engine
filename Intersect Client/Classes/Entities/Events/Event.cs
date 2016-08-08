@@ -56,9 +56,15 @@ namespace Intersect_Client.Classes.Entities
         public int WalkingAnim = 1;
         public int RenderLevel = 1;
 
-        public Event() : base()
+        public Event(int index, long spawnTime, int mapNum, ByteBuffer bf) : base(-1,spawnTime,null)
         {
-
+            MyIndex = index;
+            var map = MapInstance.GetMap(mapNum);
+            if (map != null)
+            {
+                map.AddEvent(this);
+                Load(bf);
+            }
         }
 
         public void Load(ByteBuffer bf)
@@ -76,6 +82,10 @@ namespace Intersect_Client.Classes.Entities
             GraphicWidth = bf.ReadInteger();
             GraphicHeight = bf.ReadInteger();
             RenderLevel = bf.ReadInteger();
+        }
+        public override EntityTypes GetEntityType()
+        {
+            return EntityTypes.Event;
         }
 
         public override bool Update()
@@ -183,9 +193,9 @@ namespace Intersect_Client.Classes.Entities
             var gridY = MapInstance.GetMap(CurrentMap).MapGridY;
             for (int x = gridX - 1; x <= gridX + 1; x++)
             {
-                for (int y = 0; y <= gridY + 1; y++)
+                for (int y = gridY - 1; y <= gridY + 1; y++)
                 {
-                    if (x >= 0 && x < Globals.MapGridWidth && y >= 0 && y < Globals.MapGridHeight)
+                    if (x >= 0 && x < Globals.MapGridWidth && y >= 0 && y < Globals.MapGridHeight && Globals.MapGrid[x, y] != -1)
                     {
                         if (Globals.MapGrid[x, y] == CurrentMap)
                         {

@@ -123,7 +123,7 @@ namespace Intersect_Client.Classes.Entities
                                 (float)Math.Floor((double)lowerFrame / myBase.LowerAnimXFrames) * frameHeight, frameWidth,
                                 frameHeight),
                             new FloatRect(_renderX - frameWidth / 2, _renderY - frameHeight / 2, frameWidth, frameHeight),
-                            Color.White, null, GameBlendModes.Alpha, null, rotationDegrees);
+                            Color.White, null, GameBlendModes.None, null, rotationDegrees);
 
                         int offsetX = myBase.LowerLights[lowerFrame].OffsetX;
                         int offsetY = myBase.LowerLights[lowerFrame].OffsetY;
@@ -156,7 +156,7 @@ namespace Intersect_Client.Classes.Entities
                                 (float)Math.Floor((double)upperFrame / myBase.UpperAnimXFrames) * frameHeight, frameWidth,
                                 frameHeight),
                             new FloatRect(_renderX - frameWidth / 2, _renderY - frameHeight / 2, frameWidth, frameHeight),
-                            Color.White, null, GameBlendModes.Alpha, null, rotationDegrees);
+                            Color.White, null, GameBlendModes.None, null, rotationDegrees);
 
                         int offsetX = myBase.LowerLights[lowerFrame].OffsetX;
                         int offsetY = myBase.LowerLights[lowerFrame].OffsetY;
@@ -199,49 +199,52 @@ namespace Intersect_Client.Classes.Entities
         }
 
         public void Update()
-        { 
-            if (lowerTimer < Globals.System.GetTimeMS() && showLower)
+        {
+            if (myBase != null)
             {
-                lowerFrame++;
-                if (lowerFrame >= myBase.LowerAnimFrameCount)
+                if (lowerTimer < Globals.System.GetTimeMS() && showLower)
                 {
-                    lowerLoop--;
-                    lowerFrame = 0;
-                    if (lowerLoop < 0)
+                    lowerFrame++;
+                    if (lowerFrame >= myBase.LowerAnimFrameCount)
                     {
-                        if (infiniteLoop)
+                        lowerLoop--;
+                        lowerFrame = 0;
+                        if (lowerLoop < 0)
                         {
-                            lowerLoop = myBase.LowerAnimLoopCount;
-                        }
-                        else
-                        {
-                            showLower = false;
+                            if (infiniteLoop)
+                            {
+                                lowerLoop = myBase.LowerAnimLoopCount;
+                            }
+                            else
+                            {
+                                showLower = false;
+                            }
                         }
                     }
+                    lowerTimer = Globals.System.GetTimeMS() + myBase.LowerAnimFrameSpeed;
                 }
-                lowerTimer = Globals.System.GetTimeMS() + myBase.LowerAnimFrameSpeed;
-            }
-            if (upperTimer < Globals.System.GetTimeMS() && showUpper)
-            {
-                upperFrame++;
-                if (upperFrame >= myBase.UpperAnimFrameCount)
+                if (upperTimer < Globals.System.GetTimeMS() && showUpper)
                 {
-                    upperLoop--;
-                    upperFrame = 0;
-                    if (upperLoop < 0)
+                    upperFrame++;
+                    if (upperFrame >= myBase.UpperAnimFrameCount)
                     {
-                        if (infiniteLoop)
+                        upperLoop--;
+                        upperFrame = 0;
+                        if (upperLoop < 0)
                         {
-                            upperLoop = myBase.UpperAnimLoopCount;
+                            if (infiniteLoop)
+                            {
+                                upperLoop = myBase.UpperAnimLoopCount;
 
-                        }
-                        else
-                        {
-                            showUpper = false;
+                            }
+                            else
+                            {
+                                showUpper = false;
+                            }
                         }
                     }
+                    upperTimer = Globals.System.GetTimeMS() + myBase.UpperAnimFrameSpeed;
                 }
-                upperTimer = Globals.System.GetTimeMS() + myBase.UpperAnimFrameSpeed;
             }
         }
 

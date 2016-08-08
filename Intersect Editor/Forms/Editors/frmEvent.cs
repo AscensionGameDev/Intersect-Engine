@@ -874,6 +874,34 @@ namespace Intersect_Editor.Forms
                             break;
                     }
                     return output;
+                case 10: //Time is between
+                    var timeRanges = new List<string>();
+                    var time = new DateTime(2000, 1, 1, 0, 0, 0);
+                    for (int i = 0; i < 1440; i += TimeBase.GetTimeBase().RangeInterval)
+                    {
+                        var addRange = time.ToString("h:mm:ss tt") + " to ";
+                        time = time.AddMinutes(TimeBase.GetTimeBase().RangeInterval);
+                        addRange += time.ToString("h:mm:ss tt");
+                        timeRanges.Add(addRange);
+                    }
+                    output = "Time is between ";
+                    if (command.Ints[1] > -1 && command.Ints[1] < timeRanges.Count)
+                    {
+                        output += timeRanges[command.Ints[1]] + " and";
+                    }
+                    else
+                    {
+                        output += "invalid and";
+                    }
+                    if (command.Ints[2] > -1 && command.Ints[2] < timeRanges.Count)
+                    {
+                        output += timeRanges[command.Ints[2]];
+                    }
+                    else
+                    {
+                        output += "invalid";
+                    }
+                    return output;
             }
             return "";
         }

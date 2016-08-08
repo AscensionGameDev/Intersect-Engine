@@ -52,12 +52,13 @@ namespace Intersect_Client.Classes.UI.Game
         private Label _mapsDrawnLabel;
         private Label _entitiesDrawnLabel;
         private Label _lightsDrawnLabel;
+        private Label _timeLabel;
 
         //Init
         public DebugMenu(Canvas _gameCanvas)
         {
             _debugWindow = new WindowControl(_gameCanvas, "Debug");
-            _debugWindow.SetSize(200, 200);
+            _debugWindow.SetSize(200, 212);
             _debugWindow.SetPosition(0, 150);
             _debugWindow.DisableResizing();
             _debugWindow.Margin = Margin.Zero;
@@ -111,6 +112,10 @@ namespace Intersect_Client.Classes.UI.Game
             _lightsDrawnLabel = new Label(_debugWindow);
             _lightsDrawnLabel.SetPosition(4,136);
             _lightsDrawnLabel.Text = "Lights Drawn: ";
+            
+            _timeLabel = new Label(_debugWindow);
+            _timeLabel.SetPosition(4, 148);
+            _timeLabel.Text = "Time: ";
 
         }
         public void Update()
@@ -135,6 +140,7 @@ namespace Intersect_Client.Classes.UI.Game
             _mapsDrawnLabel.Text = "Maps Drawn: " + GameGraphics.MapsDrawn;
             _entitiesDrawnLabel.Text = "Entities Drawn: " + GameGraphics.EntitiesDrawn;
             _lightsDrawnLabel.Text = "Lights Drawn: " + GameGraphics.LightsDrawn;
+            _timeLabel.Text = "Time: " + ClientTime.GetTime();
         }
         public void Show()
         {

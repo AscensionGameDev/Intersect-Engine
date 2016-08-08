@@ -78,6 +78,7 @@
     <Compile Include="ByteBuffer.cs" />
     <Compile Include="Color.cs" />
     <Compile Include="GameObjects\TilesetBase.cs" />
+    <Compile Include="GameObjects\TimeBase.cs" />
     <Compile Include="Options.cs" />
     <Compile Include="Point.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -145,6 +145,7 @@
     <Compile Include="UpgradeInstructions\Upgrade_2\Intersect_Convert_Lib\Options.cs" />
     <Compile Include="UpgradeInstructions\Upgrade_2\Intersect_Convert_Lib\Point.cs" />
     <Compile Include="UpgradeInstructions\Upgrade_2\Upgrade2.cs" />
+    <Compile Include="UpgradeInstructions\Upgrade_3\Upgrade3.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

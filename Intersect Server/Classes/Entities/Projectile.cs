@@ -337,21 +337,16 @@ namespace Intersect_Server.Classes.Entities
                             continue;
                         }
 
-                        Entity TempEntity = new Entity(0);
-                        TempEntity.CurrentX = Spawns[i].X;
-                        TempEntity.CurrentY = Spawns[i].Y;
-                        TempEntity.CurrentZ = Spawns[i].Z;
-                        TempEntity.CurrentMap = Spawns[i].Map;
-
                         Spawns[i].X = newx;
                         Spawns[i].Y = newy;
                         Spawns[i].Map = newmap;
-
-
+                        
+                        //Check Map Entities For Hits
+                        map = MapInstance.GetMap(Spawns[i].Map);
+                        Attribute attribute = map.Attributes[Spawns[i].X, Spawns[i].Y];
                         //Check for Z-Dimension
                         if (!Spawns[i].ProjectileBase.IgnoreZDimension)
                         {
-                            Attribute attribute = MapInstance.GetMap(Spawns[i].Map).Attributes[Spawns[i].X, Spawns[i].Y];
                             if (attribute != null && attribute.value == (int) MapAttributes.ZDimension)
                             {
                                 if (attribute.data1 > 0)
@@ -365,82 +360,78 @@ namespace Intersect_Server.Classes.Entities
                                 if (Spawns[i].Dir <= 3 ) //Don't handle directional projectile grapplehooks
                                 {
                                     Owner.Dir = Spawns[i].Dir;
-                                    Globals.Entities[Owner.MyIndex].Dashing = new DashInstance(Owner.MyIndex, Spawns[i].Distance, Owner.Dir);
+                                    new DashInstance(Owner, Spawns[i].Distance, Owner.Dir);
                                     killSpawn = true;
                                 }
                             }
                         }
-
-                        int c = TempEntity.CanMove(Dir);
-                        Target = (int)TempEntity.CollisionIndex;
-
-                        if (c == -1) //No collision so increase the counter for the next collision detection.
+                        if (attribute != null && attribute.value == (int) MapAttributes.Blocked &&
+                            !Spawns[i].ProjectileBase.IgnoreMapBlocks)
                         {
-                            Spawns[i].TransmittionTimer = Globals.System.GetTimeMs() + (long)((float)MyBase.Speed / (float)MyBase.Range);
-                            if (Spawns[i].Distance >= MyBase.Range)
-                            {
-                                killSpawn = true;
-                            }
+                            killSpawn = true;
                         }
-                        else if (c < -1)
+                        
+                        if (!killSpawn && map != null)
                         {
-                            if (c == -2)
+                            var entities = map.GetEntities();
+                            for (int z = 0; z < entities.Count; z++)
                             {
-                                if (!Spawns[i].ProjectileBase.IgnoreMapBlocks)
+                                if (entities[z] != null && entities[z].CurrentX == Spawns[i].X &&
+                                    entities[z].CurrentY == Spawns[i].Y && entities[z].CurrentZ == Spawns[i].Z)
                                 {
-                                    killSpawn = true;
-                                }
-                            }
-                            else if (c == -3)
-                            {
-                                if (!Spawns[i].ProjectileBase.IgnoreZDimension)
-                                {
-                                    killSpawn = true;
-                                }
-                            }
-                            else if (c == -5)
-                            {
-                                killSpawn = true;
-                            }
-                        }
-                        else
-                        {
-                            var TargetEntity = Globals.Entities[Target];
-                            if (TargetEntity != null)
-                            {
-                                if (TargetEntity.GetType() == typeof(Player)) //Player
-                                {
-                                    if (Owner.MyIndex != Target)
+                                    var TargetEntity = entities[z];
+                                    if (TargetEntity != null)
                                     {
-                                        Owner.TryAttack(TargetEntity, MyBase, IsSpell, Spawns[i].Dir);
-                                        killSpawn = true; //Remove from the list being processed
-                                    }
-                                }
-                                else if (TargetEntity.GetType() == typeof(Resource))
-                                {
-                                    if ((((Resource)Globals.Entities[Target]).IsDead && !Spawns[i].ProjectileBase.IgnoreExhaustedResources) || (!((Resource)Globals.Entities[Target]).IsDead && !Spawns[i].ProjectileBase.IgnoreActiveResources))
-                                    {
-                                        if (Owner.GetType() == typeof(Player))
+                                        if (TargetEntity.GetType() == typeof(Player)) //Player
                                         {
+                                            if (Owner.MyIndex != Target)
+                                            {
+                                                Owner.TryAttack(TargetEntity, MyBase, IsSpell, Spawns[i].Dir);
+                                                killSpawn = true; //Remove from the list being processed
+                                            }
+                                        }
+                                        else if (TargetEntity.GetType() == typeof(Resource))
+                                        {
+                                            if ((((Resource)TargetEntity).IsDead && !Spawns[i].ProjectileBase.IgnoreExhaustedResources) || (!((Resource)TargetEntity).IsDead && !Spawns[i].ProjectileBase.IgnoreActiveResources))
+                                            {
+                                                if (Owner.GetType() == typeof(Player))
+                                                {
 
+                                                    Owner.TryAttack(TargetEntity, MyBase, IsSpell, Spawns[i].Dir);
+                                                    killSpawn = true; //Remove from the list being processed
+                                                }
+                                            }
+                                        }
+                                        else //Any other target
+                                        {
                                             Owner.TryAttack(TargetEntity, MyBase, IsSpell, Spawns[i].Dir);
                                             killSpawn = true; //Remove from the list being processed
                                         }
                                     }
                                 }
-                                else //Any other target
+                                else
                                 {
-                                    Owner.TryAttack(TargetEntity, MyBase, IsSpell, Spawns[i].Dir);
-                                    killSpawn = true; //Remove from the list being processed
+                                    if (z == entities.Count - 1)
+                                    {
+                                        Spawns[i].TransmittionTimer = Globals.System.GetTimeMs() + (long)((float)MyBase.Speed / (float)MyBase.Range);
+                                        if (Spawns[i].Distance >= MyBase.Range)
+                                        {
+                                            killSpawn = true;
+                                        }
+                                    }
                                 }
                             }
                         }
+
                         if (killSpawn)
                         {
                             Spawns[i].Dispose(i);
                             Spawns[i] = null;
                             _spawnCount--;
+                            continue;
                         }
+
+                            
                     }
                 }
             }
@@ -452,7 +443,7 @@ namespace Intersect_Server.Classes.Entities
             }
         }
 
-        public byte[] Data()
+        public override byte[] Data()
         {
             var bf = new ByteBuffer();
             bf.WriteBytes(base.Data());
@@ -460,6 +451,10 @@ namespace Intersect_Server.Classes.Entities
             bf.WriteInteger(Dir);
             bf.WriteInteger(Target);
             return bf.ToArray();
+        }
+        public override EntityTypes GetEntityType()
+        {
+            return EntityTypes.Projectile;
         }
     }
 
