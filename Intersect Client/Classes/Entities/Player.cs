@@ -594,7 +594,7 @@ namespace Intersect_Client.Classes.Entities
             }
 
             //Check if the player is dashing, if so don't let them move.
-            if (Dashing != null)
+            if (Dashing != null || DashQueue.Count > 0 || DashTimer > Globals.System.GetTimeMS())
             {
                 return;
             }

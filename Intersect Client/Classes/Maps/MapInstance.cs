@@ -532,23 +532,23 @@ namespace Intersect_Client.Classes.Maps
                 int i = _preRenderStage;
                 if (LowerTextures[i] == null)
                 {
-                    if (!GameGraphics.GetMapTexture(ref LowerTextures[i]))
+                    while (!GameGraphics.GetMapTexture(ref LowerTextures[i]))
                     {
-                        return;
+                        Thread.Sleep(10);
                     }
                 }
                 if (UpperTextures[i] == null)
                 {
-                    if (!GameGraphics.GetMapTexture(ref UpperTextures[i]))
+                    while (!GameGraphics.GetMapTexture(ref UpperTextures[i]))
                     {
-                        return;
+                        Thread.Sleep(10);
                     }
                 }
                 if (PeakTextures[i] == null)
                 {
-                    if (!GameGraphics.GetMapTexture(ref PeakTextures[i]))
+                    while (!GameGraphics.GetMapTexture(ref PeakTextures[i]))
                     {
-                        return;
+                        Thread.Sleep(10);
                     }
                 }
                 LowerTextures[i].Clear(IntersectClientExtras.GenericClasses.Color.Transparent);

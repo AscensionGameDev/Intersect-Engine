@@ -22,11 +22,13 @@
 using System;
 using System.Drawing;
 using System.Collections.Generic;
+using System.IO;
 using System.Windows.Forms;
 using Intersect_Editor.Classes.Core;
 using Intersect_Editor.Classes.Entities;
 using Intersect_Editor.Classes.General;
 using Intersect_Editor.Classes.Maps;
+using Intersect_Editor.Forms;
 using Intersect_Library;
 using Intersect_Library.GameObjects;
 using Intersect_Library.GameObjects.Maps;
@@ -192,7 +194,7 @@ namespace Intersect_Editor.Classes
                     {
                         OverlayDarkness(null);
                     }
-                    if (!HideGrid) DrawMapGrid();
+                    if (!HideGrid) DrawGridOverlay();
 
                     DrawMapBorders();
                     DrawSelectionRect();
@@ -201,7 +203,7 @@ namespace Intersect_Editor.Classes
                 _mapEditorChain.Present();
             }
         }
-        private static void DrawMapGrid()
+        private static void DrawGridOverlay()
         {
             for (int x = 0; x < Options.MapWidth; x++)
             {

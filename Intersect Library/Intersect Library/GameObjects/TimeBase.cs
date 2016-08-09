@@ -9,7 +9,7 @@ namespace Intersect_Library.GameObjects
     public class TimeBase
     {
         public bool SyncTime = true;
-        public int RangeInterval = 60;
+        public int RangeInterval = 720;
         public float Rate = 1.0f;
         public Color[] RangeColors;
         private static TimeBase _timeBase = new TimeBase();
@@ -55,7 +55,7 @@ namespace Intersect_Library.GameObjects
             RangeColors = new Color[1440/RangeInterval];
             for (int i = 0; i < 1440 / RangeInterval; i++)
             {
-                RangeColors[i] = new Color(255, 0, 0, 0);
+                RangeColors[i] = new Color(255,255,255,255);
             }
         }
 

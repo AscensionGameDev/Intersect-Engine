@@ -184,6 +184,7 @@ namespace Intersect_Server.Classes.Core
         public static bool InitDatabase()
         {
             SqliteConnection.SetConfig(SQLiteConfig.Serialized);
+            if (!File.Exists(DbFilename)) CreateDatabase();
             if (_dbConnection == null)
             {
                 _dbConnection = new SqliteConnection("Data Source=" + DbFilename + ",Version=3");
@@ -214,7 +215,7 @@ namespace Intersect_Server.Classes.Core
         }
         private static void CreateDatabase()
         {
-            var _dbConnection = new SqliteConnection("Data Source=" + DbFilename + ",Version=3,New=True");
+            _dbConnection = new SqliteConnection("Data Source=" + DbFilename + ",Version=3,New=True");
             _dbConnection.Open();
             CreateInfoTable();
             CreateUsersTable();
@@ -452,7 +453,8 @@ namespace Intersect_Server.Classes.Core
         {
             foreach (var val in Enum.GetValues(typeof(GameObject)))
             {
-                CreateGameObjectTable((GameObject)val);
+                if ((GameObject)val != GameObject.Time)
+                    CreateGameObjectTable((GameObject)val);
             }
         }
         private static void CreateGameObjectTable(GameObject gameObject)

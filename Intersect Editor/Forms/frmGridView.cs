@@ -25,7 +25,9 @@ using System.Windows.Forms;
 using Intersect_Editor.Classes;
 using Point = System.Drawing.Point;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.IO;
+using System.Reflection;
 using System.Threading;
 using Hjg.Pngcs;
 using Intersect_Library;
@@ -51,6 +53,9 @@ namespace Intersect_Editor.Forms
         {
             InitializeComponent();
             cmbZoom.SelectedIndex = 0;
+            typeof(DataGridView).InvokeMember("DoubleBuffered",
+            BindingFlags.SetProperty | BindingFlags.Instance | BindingFlags.NonPublic,
+            null, mapGridView, new object[] { true });
         }
 
         public void InitGrid(ByteBuffer bf)
@@ -124,20 +129,26 @@ namespace Intersect_Editor.Forms
 
         private void mapGridView_CellPainting(object sender, DataGridViewCellPaintingEventArgs e)
         {
+            e.Graphics.CompositingMode = CompositingMode.SourceCopy;
+            e.Graphics.CompositingQuality = CompositingQuality.HighSpeed;
+
             if (e.RowIndex > 0 && e.ColumnIndex > 0 && e.ColumnIndex - 1 < gridWidth && e.RowIndex - 1 < gridHeight)
             {
                 if (!e.Handled && myGrid[e.ColumnIndex - 1, e.RowIndex - 1].mapnum > -1 && ((e.PaintParts & DataGridViewPaintParts.Background) != DataGridViewPaintParts.None))
                 {
                     e.Handled = true;
-                    if (File.Exists(myGrid[e.ColumnIndex - 1, e.RowIndex - 1].imagepath) && showPreviews)
+                    if (showPreviews)
                     {
-                        Bitmap tmpBitmap = new Bitmap(myGrid[e.ColumnIndex - 1, e.RowIndex - 1].imagepath);
-                        e.Graphics.DrawImage(tmpBitmap, e.CellBounds);
-                        tmpBitmap.Dispose();
+                        var imgData = Database.LoadMapCacheLegacy(myGrid[e.ColumnIndex - 1, e.RowIndex - 1].mapnum,
+                        myGrid[e.ColumnIndex - 1, e.RowIndex - 1].revision);
+                        if (imgData != null)
+                        {
+                            e.Graphics.DrawImage(imgData, e.CellBounds);
+                        }
                     }
                     else
                     {
-                        if (myGrid[e.ColumnIndex - 1, e.RowIndex - 1].mapnum == Globals.CurrentMap.GetId())
+                        if (Globals.CurrentMap != null && myGrid[e.ColumnIndex - 1, e.RowIndex - 1].mapnum == Globals.CurrentMap.GetId())
                         {
                             e.Graphics.FillRectangle(Brushes.OrangeRed, e.CellBounds);
                         }
@@ -166,7 +177,8 @@ namespace Intersect_Editor.Forms
             {
                 for (int y = 0; y < gridHeight; y++)
                 {
-                    if (myGrid[x, y].mapnum > -1 && !File.Exists(myGrid[x, y].imagepath))
+                    if (myGrid[x, y].mapnum > -1 && Database.LoadMapCacheLegacy(myGrid[x, y].mapnum,
+                        myGrid[x, y].revision) == null)
                     {
                         maps.Add(myGrid[x, y].mapnum);
                     }
@@ -408,10 +420,11 @@ namespace Intersect_Editor.Forms
                     MapGridItem item = myGrid[gridCol - 1, gridRow];
                     if (item.mapnum >= 0)
                     {
-                        if (item.imagepath != "" && File.Exists(item.imagepath))
+                        var data = Database.LoadMapCacheLegacy(item.mapnum, item.revision);
+                        if (data != null)
                         {
                             if (item.pngReader == null)
-                                item.pngReader = FileHelper.CreatePngReader(item.imagepath);
+                                item.pngReader = FileHelper.CreatePngReader("broken as fuck");
                             ImageLine line = item.pngReader.ReadRow(y - (gridRow * rowSize));
 
                             //Get the pixel color we need
@@ -467,7 +480,7 @@ namespace Intersect_Editor.Forms
             {
                 for (int y = 0; y < gridHeight; y++)
                 {
-                    if (myGrid[x, y].mapnum > -1 && !File.Exists(myGrid[x, y].imagepath))
+                    if (myGrid[x, y].mapnum > -1 && Database.LoadMapCacheLegacy(myGrid[x, y].mapnum, myGrid[x, y].revision) == null)
                     {
                         maps.Add(myGrid[x, y].mapnum);
                     }
@@ -521,7 +534,7 @@ namespace Intersect_Editor.Forms
         {
             if (MessageBox.Show("Are you sure you want to clear your preview cache and re-download previews for all the maps in this grid?","Re-download Map Previews", MessageBoxButtons.YesNo) == DialogResult.Yes)
             {
-                Directory.Delete("resources/mapcache",true);
+                //Directory.Delete("resources/mapcache",true);
                 MessageBox.Show("Map Previews/Cache Cleared", "Map Cache Cleared");
                 btnFetchPreview_Click(null, null);
             }
@@ -539,14 +552,12 @@ namespace Intersect_Editor.Forms
         public string name { get; set; }
         public int revision { get; set; }
         public int mapnum { get; set; }
-        public string imagepath { get; set; }
         public PngReader pngReader { get; set; }
         public MapGridItem(int num, string name = "", int revision = 0)
         {
             this.mapnum = num;
             this.name = name;
             this.revision = revision;
-            this.imagepath = "resources/mapcache/" + mapnum + "_" + revision + ".png";
         }
     }
 }

@@ -33,6 +33,7 @@ using IntersectClientExtras.GenericClasses;
 using IntersectClientExtras.Gwen;
 using IntersectClientExtras.Gwen.Control;
 using IntersectClientExtras.Gwen.Control.EventArguments;
+using IntersectClientExtras.Input;
 using Intersect_Client.Classes.Core;
 using Intersect_Client.Classes.General;
 using Intersect_Client.Classes.Misc;
@@ -108,6 +109,7 @@ namespace Intersect_Client.Classes.UI.Menu
             _usernameTextbox.ShouldDrawBackground = false;
             _usernameTextbox.TextColorOverride = new Color(255,220,220,220);
             _usernameTextbox.Font = Globals.ContentManager.GetFont(Gui.DefaultFont, 20);
+            _usernameTextbox.Clicked += _usernameTextbox_Clicked;
 
             _passwordBackground = new ImagePanel(_menuPanel);
             _passwordBackground.Texture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "inputfield.png");
@@ -174,6 +176,11 @@ namespace Intersect_Client.Classes.UI.Menu
             _backBtn.SetTextColor(new Color(255, 215, 215, 215), Label.ControlState.Clicked);
 
             LoadCredentials();
+        }
+
+        private void _usernameTextbox_Clicked(Base sender, ClickedEventArgs arguments)
+        {
+            Globals.InputManager.OpenKeyboard(GameInput.KeyboardType.Normal, _usernameTextbox.Text, false, false, false);
         }
 
 

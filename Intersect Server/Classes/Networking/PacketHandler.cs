@@ -315,8 +315,15 @@ namespace Intersect_Server.Classes.Networking
                 return;
             }
             bf.Dispose();
-
-            Globals.Entities[index].Move(dir, client, false);
+            if (Globals.Entities[index].CanMove(dir) == -1)
+            {
+                Globals.Entities[index].Move(dir, client, false);
+                if (Globals.Entities[index].MoveTimer > Globals.System.GetTimeMs())
+                {
+                    Globals.Entities[index].MoveTimer = Globals.System.GetTimeMs() +
+                                                        (long) (Globals.Entities[index].GetMovementTime()/2f);
+                }
+            }
             if (map != client.Entity.CurrentMap || x != client.Entity.CurrentX || y != client.Entity.CurrentY)
             {
                 PacketSender.SendEntityPositionTo(client, client.Entity);
@@ -362,7 +369,7 @@ namespace Intersect_Server.Classes.Networking
                             foreach (var user in clients)
                             {
                                 if (user.MyAccount.ToLower() == client.MyAccount.ToLower() && user != client &&
-                                    user.IsEditor == false)
+                                    user.IsEditor)
                                 {
                                     user.Disconnect();
                                 }

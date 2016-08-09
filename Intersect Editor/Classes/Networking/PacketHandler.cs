@@ -20,6 +20,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 using System;
+using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
 using Intersect_Editor.Classes.Core;
@@ -142,14 +143,14 @@ namespace Intersect_Editor.Classes
                 if (Globals.FetchingMapPreviews || Globals.CurrentMap == map)
                 {
                     int currentmap = Globals.CurrentMap.GetId();
-                    if (!Directory.Exists("resources/mapcache")) Directory.CreateDirectory("resources/mapcache");
-                    if (!File.Exists("resources/mapcache/" + mapNum + "_" + MapInstance.GetMap(mapNum).Revision + ".png"))
+                    if (Database.LoadMapCacheLegacy(mapNum,MapInstance.GetMap(mapNum).Revision) == null)
                     {
                         Globals.CurrentMap = MapInstance.GetMap(mapNum);
-                        using (var fs = new FileStream("resources/mapcache/" + mapNum + "_" + MapInstance.GetMap(mapNum).Revision + ".png", FileMode.OpenOrCreate))
+                        using (var ms = new MemoryStream())
                         {
                             RenderTarget2D screenshotTexture = EditorGraphics.ScreenShotMap(true);
-                            screenshotTexture.SaveAsPng(fs, screenshotTexture.Width, screenshotTexture.Height);
+                            screenshotTexture.SaveAsPng(ms, screenshotTexture.Width, screenshotTexture.Height);
+                            Database.SaveMapCache(mapNum, MapInstance.GetMap(mapNum).Revision, ms.ToArray());
                         }
                     }
                     if (Globals.FetchingMapPreviews)

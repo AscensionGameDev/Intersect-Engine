@@ -246,7 +246,12 @@ namespace Intersect_Server.Classes.Entities
                     }
                     else if (en.GetType() == typeof(Resource))
                     {
-                        return (int)EntityTypes.Resource;
+                        //If determine if we should walk
+                        var res = ((Resource) en);
+                        if ((!res.IsDead() && !res.MyBase.WalkableBefore) || (res.IsDead() && !res.MyBase.WalkableAfter))
+                        {
+                            return (int) EntityTypes.Resource;
+                        }
                     }
                     else if (en.GetType() == typeof(EventPageInstance))
                     {
@@ -277,69 +282,72 @@ namespace Intersect_Server.Classes.Entities
             var xOffset = 0;
             var yOffset = 0;
             Dir = moveDir;
-            var tile = new TileHelper(CurrentMap, CurrentX, CurrentY);
-            switch (moveDir)
+            if (MoveTimer < Globals.System.GetTimeMs())
             {
-                case 0: //Up
-                    yOffset--;
-                    break;
-                case 1: //Down
-                    yOffset++;
-                    break;
-                case 2: //Left
-                    xOffset--;
-                    break;
-                case 3: //Right
-                    xOffset++;
-                    break;
-                case 4: //NW
-                    yOffset--;
-                    xOffset--;
-                    break;
-                case 5: //NE
-                    yOffset--;
-                    xOffset++;
-                    break;
-                case 6: //SW
-                    yOffset++;
-                    xOffset--;
-                    break;
-                case 7: //SE
-                    yOffset++;
-                    xOffset++;
-                    break;
-            }
-
-            if (tile.Translate(xOffset, yOffset))
-            {
-                CurrentX = tile.GetX();
-                CurrentY = tile.GetY();
-                if (CurrentMap != tile.GetMap())
+                var tile = new TileHelper(CurrentMap, CurrentX, CurrentY);
+                switch (moveDir)
                 {
-                    var oldMap = MapInstance.GetMap(CurrentMap);
-                    if (oldMap != null) oldMap.RemoveEntity(this);
-                    var newMap = MapInstance.GetMap(tile.GetMap());
-                    if (newMap != null) newMap.AddEntity(this);
+                    case 0: //Up
+                        yOffset--;
+                        break;
+                    case 1: //Down
+                        yOffset++;
+                        break;
+                    case 2: //Left
+                        xOffset--;
+                        break;
+                    case 3: //Right
+                        xOffset++;
+                        break;
+                    case 4: //NW
+                        yOffset--;
+                        xOffset--;
+                        break;
+                    case 5: //NE
+                        yOffset--;
+                        xOffset++;
+                        break;
+                    case 6: //SW
+                        yOffset++;
+                        xOffset--;
+                        break;
+                    case 7: //SE
+                        yOffset++;
+                        xOffset++;
+                        break;
                 }
-                CurrentMap = tile.GetMap();
-                if (DontUpdate == false)
+
+                if (tile.Translate(xOffset, yOffset))
                 {
-                    if (this.GetType() == typeof(EventPageInstance))
+                    CurrentX = tile.GetX();
+                    CurrentY = tile.GetY();
+                    if (CurrentMap != tile.GetMap())
                     {
-                        if (client != null)
+                        var oldMap = MapInstance.GetMap(CurrentMap);
+                        if (oldMap != null) oldMap.RemoveEntity(this);
+                        var newMap = MapInstance.GetMap(tile.GetMap());
+                        if (newMap != null) newMap.AddEntity(this);
+                    }
+                    CurrentMap = tile.GetMap();
+                    if (DontUpdate == false)
+                    {
+                        if (this.GetType() == typeof(EventPageInstance))
                         {
-                            PacketSender.SendEntityMoveTo(client, this);
+                            if (client != null)
+                            {
+                                PacketSender.SendEntityMoveTo(client, this);
+                            }
+                            else
+                            {
+                                PacketSender.SendEntityMove(this);
+                            }
                         }
                         else
                         {
                             PacketSender.SendEntityMove(this);
                         }
+                        MoveTimer = Globals.System.GetTimeMs() + (long) GetMovementTime();
                     }
-                    else
-                    {
-                        PacketSender.SendEntityMove(this);
-                    }
-                    MoveTimer = Globals.System.GetTimeMs() + (long)GetMovementTime();
                 }
             }
         }
@@ -1234,6 +1242,7 @@ namespace Intersect_Server.Classes.Entities
         {
             int n = 0;
             en.Dir = Direction;
+            en.MoveTimer = 0;
             Range = 0;
             for (int i = 1; i <= range; i++)
             {

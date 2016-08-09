@@ -73,22 +73,19 @@ namespace Intersect_Editor.Forms
             {
                 if (MapInstance.GetMap(_currentMap) != null)
                 {
-                    if (
-                        File.Exists("resources/mapcache/" + _currentMap + "_" + MapInstance.GetMap(_currentMap).Revision +
-                                    ".png"))
+                    if (Database.LoadMapCacheLegacy(_currentMap, MapInstance.GetMap(_currentMap).Revision) != null)
                     {
                         Bitmap newBitmap = new Bitmap(pnlMap.Width,pnlMap.Height);
-                        Bitmap sourceBitmap = new Bitmap("resources/mapcache/" + _currentMap + "_" + MapInstance.GetMap(_currentMap).Revision +
-                                    ".png");
+                        Image img = Database.LoadMapCacheLegacy(_currentMap, MapInstance.GetMap(_currentMap).Revision);
                         System.Drawing.Graphics g = System.Drawing.Graphics.FromImage(newBitmap);
-                        g.DrawImage(sourceBitmap, new Rectangle(0, 0, pnlMap.Width, pnlMap.Height),
+                        g.DrawImage(img, new Rectangle(0, 0, pnlMap.Width, pnlMap.Height),
                             new Rectangle(0, 0, pnlMap.Width, pnlMap.Height), GraphicsUnit.Pixel);
                         g.DrawRectangle(new Pen(Color.White, 2f),
                             new Rectangle(_currentX*Options.TileWidth, _currentY*Options.TileHeight, Options.TileWidth,
                                 Options.TileHeight));
                         g.Dispose();
                         pnlMap.BackgroundImage = newBitmap;
-                        sourceBitmap.Dispose();
+                        img.Dispose();
                         tmrMapCheck.Enabled = false;
                     }
                     else
@@ -125,9 +122,7 @@ namespace Intersect_Editor.Forms
             {
                 if (MapInstance.GetMap(_currentMap) != null)
                 {
-                    if (
-                        File.Exists("resources/mapcache/" + _currentMap + "_" + MapInstance.GetMap(_currentMap).Revision +
-                                    ".png"))
+                    if (Database.LoadMapCacheLegacy(_currentMap,MapInstance.GetMap(_currentMap).Revision) != null)
                     {
                         UpdatePreview();
                         tmrMapCheck.Enabled = false;
@@ -136,10 +131,11 @@ namespace Intersect_Editor.Forms
                     {
                         MapInstance oldMap = Globals.CurrentMap;
                         Globals.CurrentMap = MapInstance.GetMap(_currentMap);
-                        using (var fs = new FileStream("resources/mapcache/" + _currentMap + "_" + MapInstance.GetMap(_currentMap).Revision + ".png", FileMode.OpenOrCreate))
+                        using (var ms = new MemoryStream())
                         {
                             RenderTarget2D screenshotTexture = EditorGraphics.ScreenShotMap(true);
-                            screenshotTexture.SaveAsPng(fs, screenshotTexture.Width, screenshotTexture.Height);
+                            screenshotTexture.SaveAsPng(ms, screenshotTexture.Width, screenshotTexture.Height);
+                            Database.SaveMapCache(_currentMap, MapInstance.GetMap(MapInstance.GetMap(_currentMap).Revision).Revision, ms.ToArray());
                         }
                         Globals.CurrentMap = oldMap;
                     }

@@ -57,6 +57,7 @@ namespace Intersect_Editor.Forms
                     SavedPassword = LoadPreference("Password");
                     chkRemember.Checked = true;
                 }
+                Database.InitMapCache();
             }
             else
             {

@@ -241,7 +241,7 @@ namespace Intersect_Client.Classes.Bridges_and_Interfaces.SFML.File_Management
             for (int i = 0; i < items.Length; i++)
             {
                 string filename = items[i].Replace("resources/" + "shaders" + "\\", "").ToLower();
-                shaderDict.Add(filename, GameGraphics.Renderer.LoadShader("resources/" + "shaders" + "/" + filename));
+                shaderDict.Add(filename.Replace(".xnb",""), GameGraphics.Renderer.LoadShader("resources/" + "shaders" + "/" + filename));
             }
         }
 

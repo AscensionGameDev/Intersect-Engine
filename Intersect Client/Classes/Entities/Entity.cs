@@ -102,6 +102,7 @@ namespace Intersect_Client.Classes.Entities
         //Dashing instance
         public DashInstance Dashing = null;
         public Queue<DashInstance> DashQueue = new Queue<DashInstance>();
+        public long DashTimer = 0;
 
         //Combat
         public long AttackTimer = 0;
@@ -228,6 +229,9 @@ namespace Intersect_Client.Classes.Entities
                 {
                     Dashing = DashQueue.Dequeue();
                     Dashing.Start(this);
+                    OffsetX = 0;
+                    OffsetY = 0;
+                    DashTimer = Globals.System.GetTimeMS() + Options.MaxDashSpeed*2;
                 }
                 else
                 {

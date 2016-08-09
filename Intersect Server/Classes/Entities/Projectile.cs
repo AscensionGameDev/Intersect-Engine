@@ -380,7 +380,7 @@ namespace Intersect_Server.Classes.Entities
                                     entities[z].CurrentY == Spawns[i].Y && entities[z].CurrentZ == Spawns[i].Z)
                                 {
                                     var TargetEntity = entities[z];
-                                    if (TargetEntity != null)
+                                    if (TargetEntity != null && TargetEntity != Owner)
                                     {
                                         if (TargetEntity.GetType() == typeof(Player)) //Player
                                         {

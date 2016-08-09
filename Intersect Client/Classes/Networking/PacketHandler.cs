@@ -330,6 +330,7 @@ namespace Intersect_Client.Classes.Networking
                 if (!MapInstance.GetMap(mapNum).LocalEntities.ContainsKey(index)) { return; }
                 en = MapInstance.GetMap(mapNum).LocalEntities[index];
             }
+            if (en == Globals.Me && (Globals.Me.DashQueue.Count > 0 || Globals.Me.DashTimer > Globals.System.GetTimeMS())) return;
             if (en == Globals.Me && Globals.Me.CurrentMap != mapNum)
             {
                 Globals.Me.CurrentMap = mapNum;
