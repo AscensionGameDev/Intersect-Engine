@@ -46,7 +46,6 @@ namespace Intersect_Editor.Classes
         private const string MAP_CACHE_ID = "id";
         private const string MAP_CACHE_REVISION = "revision";
         private const string MAP_CACHE_DATA = "data";
-        private const string MAP_CACHE_DATA_LENGTH = "data_length";
 
         //Options File
         public static bool LoadOptions()
@@ -290,8 +289,7 @@ namespace Intersect_Editor.Classes
             var cmd = "CREATE TABLE " + MAP_CACHE_TABLE + " ("
                         + MAP_CACHE_ID + " INTEGER PRIMARY KEY,"
                         + MAP_CACHE_REVISION + " INTEGER,"
-                        + MAP_CACHE_DATA + " BLOB,"
-                        + MAP_CACHE_DATA_LENGTH + " INTEGER"
+                        + MAP_CACHE_DATA + " BLOB"
                         + ");";
             using (var createCommand = _dbConnection.CreateCommand())
             {
@@ -300,34 +298,64 @@ namespace Intersect_Editor.Classes
             }
         }
 
-        public static int[] LoadMapCache(int id, int revision)
+        public static int[] LoadMapCache(int id, int revision, int w, int h)
         {
-            var query = "SELECT * from " + MAP_CACHE_TABLE + " WHERE " + MAP_CACHE_ID + "=@" + MAP_CACHE_ID + " AND "
-                + MAP_CACHE_REVISION + "=@" + MAP_CACHE_REVISION + ";";
-            using (SqliteCommand cmd = new SqliteCommand(query, _dbConnection))
+            var data = LoadMapCacheRaw(id, revision);
+            if (data != null)
             {
-                cmd.Parameters.Add(new SqliteParameter("@" + MAP_CACHE_ID, id.ToString()));
-                cmd.Parameters.Add(new SqliteParameter("@" + MAP_CACHE_REVISION, revision.ToString()));
-                var dataReader = cmd.ExecuteReader();
-                while (dataReader.Read())
+                using (var ms = new MemoryStream(data))
                 {
-                    if (dataReader[MAP_CACHE_DATA].GetType() != typeof(System.DBNull))
-                    {
-                        long dataLen = (long)dataReader[MAP_CACHE_DATA_LENGTH];
-                        var data = (byte[]) dataReader[MAP_CACHE_DATA];
-                        data = LZ4.LZ4Codec.Decode(data, 0, data.Length,(int)dataLen);
-                        int[] result = new int[data.Length / sizeof(int)];
-                        Buffer.BlockCopy(data, 0, result, 0, data.Length);
-                        return result;
+                    var bmp = new Bitmap(Image.FromStream(ms), w, h);
+                    //Gonna do really sketchy probably broken math here -- yolo
+                    int[] imgData = new int[bmp.Width * bmp.Height];
 
+                    unsafe
+                    {
+                        // lock bitmap
+                        System.Drawing.Imaging.BitmapData origdata =
+                        bmp.LockBits(new System.Drawing.Rectangle(0, 0, bmp.Width, bmp.Height), System.Drawing.Imaging.ImageLockMode.ReadOnly, bmp.PixelFormat);
+
+                        uint* byteData = (uint*)origdata.Scan0;
+
+                        // Switch bgra -> rgba
+                        for (int i = 0; i < imgData.Length; i++)
+                        {
+                            byteData[i] = (byteData[i] & 0x000000ff) << 16 | (byteData[i] & 0x0000FF00) | (byteData[i] & 0x00FF0000) >> 16 | (byteData[i] & 0xFF000000);
+                        }
+
+                        // copy data
+                        System.Runtime.InteropServices.Marshal.Copy(origdata.Scan0, imgData, 0, bmp.Width * bmp.Height);
+
+                        byteData = null;
+
+                        // unlock bitmap
+                        bmp.UnlockBits(origdata);
                     }
+
+                    byte[] result = new byte[imgData.Length * sizeof(int)];
+                    Buffer.BlockCopy(imgData, 0, result, 0, result.Length);
+                    return imgData;
                 }
+                return null;
             }
             return null;
         }
 
         public static Image LoadMapCacheLegacy(int id, int revision)
         {
+            var data = LoadMapCacheRaw(id, revision);
+            if (data != null)
+            {
+                using (var ms = new MemoryStream(data))
+                {
+                    return Image.FromStream(ms);
+                }
+            }
+            return null;
+        }
+
+        public static byte[] LoadMapCacheRaw(int id, int revision)
+        {
             var query = "SELECT * from " + MAP_CACHE_TABLE + " WHERE " + MAP_CACHE_ID + "=@" + MAP_CACHE_ID + " AND "
                 + MAP_CACHE_REVISION + "=@" + MAP_CACHE_REVISION + ";";
             using (SqliteCommand cmd = new SqliteCommand(query, _dbConnection))
@@ -339,22 +367,8 @@ namespace Intersect_Editor.Classes
                 {
                     if (dataReader[MAP_CACHE_DATA].GetType() != typeof(System.DBNull))
                     {
-                        long dataLen = (long)dataReader[MAP_CACHE_DATA_LENGTH];
                         var data = (byte[])dataReader[MAP_CACHE_DATA];
-                        data = LZ4.LZ4Codec.Decode(data, 0, data.Length, (int)dataLen);
-                        using (var ms = new MemoryStream(data))
-                        {
-                            return Image.FromStream(ms);
-                        }
-                        /*int[] result = new int[data.Length / sizeof(int)];
-                        Buffer.BlockCopy(data, 0, result, 0, data.Length);
-                        Texture2D tex = new Texture2D(EditorGraphics.GetGraphicsDevice(),
-                            Options.MapWidth*Options.TileWidth, Options.MapHeight*Options.TileHeight);
-                        tex.SetData(result);
-                        var ms = new MemoryStream();
-                        tex.SaveAsPng(ms,tex.Width,tex.Height);
-                        tex.Dispose();
-                        return Image.FromStream(ms,false,false);*/
+                        return data;
                     }
                 }
             }
@@ -363,44 +377,21 @@ namespace Intersect_Editor.Classes
 
         public static void SaveMapCache(int id, int revision, byte[] data)
         {
-            /*//Gonna do really sketchy probably broken math here -- yolo
-            int[] imgData = new int[bmp.Width * bmp.Height];
-
-            unsafe
-            {
-                // lock bitmap
-                System.Drawing.Imaging.BitmapData origdata =
-                    bmp.LockBits(new System.Drawing.Rectangle(0, 0, bmp.Width, bmp.Height), System.Drawing.Imaging.ImageLockMode.ReadOnly, bmp.PixelFormat);
-
-                uint* byteData = (uint*)origdata.Scan0;
-
-                // Switch bgra -> rgba
-                for (int i = 0; i < imgData.Length; i++)
-                {
-                    byteData[i] = (byteData[i] & 0x000000ff) << 16 | (byteData[i] & 0x0000FF00) | (byteData[i] & 0x00FF0000) >> 16 | (byteData[i] & 0xFF000000);
-                }
-
-                // copy data
-                System.Runtime.InteropServices.Marshal.Copy(origdata.Scan0, imgData, 0, bmp.Width * bmp.Height);
-
-                byteData = null;
-
-                // unlock bitmap
-                bmp.UnlockBits(origdata);
-            }
-
-            byte[] result = new byte[imgData.Length * sizeof(int)];
-            Buffer.BlockCopy(imgData, 0, result, 0, result.Length);*/
-
             var query = "INSERT OR REPLACE into " + MAP_CACHE_TABLE + " (" + MAP_CACHE_ID + "," +
-                               MAP_CACHE_REVISION + "," + MAP_CACHE_DATA + "," + MAP_CACHE_DATA_LENGTH + ")" + " VALUES " + " (@" +
-                               MAP_CACHE_ID + ",@" + MAP_CACHE_REVISION + ",@" + MAP_CACHE_DATA + ",@" + MAP_CACHE_DATA_LENGTH + ");";
+                               MAP_CACHE_REVISION + "," + MAP_CACHE_DATA  + ")" + " VALUES " + " (@" +
+                               MAP_CACHE_ID + ",@" + MAP_CACHE_REVISION + ",@" + MAP_CACHE_DATA + ");";
             using (SqliteCommand cmd = new SqliteCommand(query, _dbConnection))
             {
                 cmd.Parameters.Add(new SqliteParameter("@" + MAP_CACHE_ID, id));
                 cmd.Parameters.Add(new SqliteParameter("@" + MAP_CACHE_REVISION, revision));
-                cmd.Parameters.Add(new SqliteParameter("@" + MAP_CACHE_DATA_LENGTH, data.Length));
-                cmd.Parameters.Add(new SqliteParameter("@" + MAP_CACHE_DATA, LZ4.LZ4Codec.Encode(data, 0, data.Length)));
+                if (data != null)
+                {
+                    cmd.Parameters.Add(new SqliteParameter("@" + MAP_CACHE_DATA, data));
+                }
+                else
+                {
+                    cmd.Parameters.Add(new SqliteParameter("@" + MAP_CACHE_DATA, null));
+                }
                 cmd.ExecuteNonQuery();
             }
         }

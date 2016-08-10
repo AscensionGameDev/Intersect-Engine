@@ -62,6 +62,7 @@
             this.picMap.MouseEnter += new System.EventHandler(this.picMap_MouseEnter);
             this.picMap.MouseMove += new System.Windows.Forms.MouseEventHandler(this.picMap_MouseMove);
             this.picMap.MouseUp += new System.Windows.Forms.MouseEventHandler(this.picMap_MouseUp);
+            this.picMap.Resize += new System.EventHandler(this.picMap_Resize);
             // 
             // frmMapEditor
             // 
@@ -71,6 +72,7 @@
             this.CloseButton = false;
             this.CloseButtonVisible = false;
             this.Controls.Add(this.pnlMapContainer);
+            this.DockAreas = WeifenLuo.WinFormsUI.Docking.DockAreas.Document;
             this.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.Name = "frmMapEditor";
             this.Text = "Map Editor";

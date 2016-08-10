@@ -47,6 +47,7 @@ namespace Intersect_Editor.Classes
         private static PresentationParameters _presentationParams = new PresentationParameters();
         private static SwapChainRenderTarget _mapEditorChain;
         private static SwapChainRenderTarget _tilesetChain;
+        private static SwapChainRenderTarget _mapGridChain;
         private static RenderTarget2D _whiteTex;
 
         //Light Stuff
@@ -55,7 +56,7 @@ namespace Intersect_Editor.Classes
         public static bool HideDarkness = false;
         public static RenderTarget2D DarknessTexture;
         public static BlendState MultiplyState;
-        private static List<KeyValuePair<Microsoft.Xna.Framework.Point, LightBase>> _lightQueue = new List<KeyValuePair<Microsoft.Xna.Framework.Point,LightBase>>();
+        private static List<KeyValuePair<Microsoft.Xna.Framework.Point, LightBase>> _lightQueue = new List<KeyValuePair<Microsoft.Xna.Framework.Point, LightBase>>();
 
         //Overlay Stuff
         public static Color OverlayColor = Color.Transparent;
@@ -123,6 +124,11 @@ namespace Intersect_Editor.Classes
         {
             return _graphicsDevice;
         }
+
+        public static void SetMapGridChain(SwapChainRenderTarget _chain)
+        {
+            _mapGridChain = _chain;
+        }
         public static void SetMapEditorChain(SwapChainRenderTarget _chain)
         {
             _mapEditorChain = _chain;
@@ -146,7 +152,7 @@ namespace Intersect_Editor.Classes
         }
         public static RenderTarget2D CreateRenderTexture(int width, int height)
         {
-            return new RenderTarget2D(_graphicsDevice, width,height, false, SurfaceFormat.Color, DepthFormat.Depth16, 0, RenderTargetUsage.PreserveContents);
+            return new RenderTarget2D(_graphicsDevice, width, height, false, SurfaceFormat.Color, DepthFormat.Depth16, 0, RenderTargetUsage.PreserveContents);
         }
 
         //Rendering
@@ -159,9 +165,10 @@ namespace Intersect_Editor.Classes
                 StartSpritebatch();
                 ClearDarknessTexture();
                 DrawTileset();
+                DrawMapGrid();
 
                 //Draw Current Map
-                if (Globals.MapEditorWindow.picMap.Visible && Globals.CurrentMap != null)
+                if (Globals.MapEditorWindow.picMap.Visible && Globals.MapEditorWindow.DockPanel.ActiveDocument == Globals.MapEditorWindow && Globals.CurrentMap != null)
                 {
                     DrawTransparentBorders();
                     for (int i = 0; i < 2; i++)
@@ -203,6 +210,7 @@ namespace Intersect_Editor.Classes
                 _mapEditorChain.Present();
             }
         }
+
         private static void DrawGridOverlay()
         {
             for (int x = 0; x < Options.MapWidth; x++)
@@ -221,13 +229,13 @@ namespace Intersect_Editor.Classes
             {
                 for (int x = 0; x < Options.MapWidth + 2; x++)
                 {
-                    DrawTexture(transTex, new RectangleF(0,0,transTex.Width,transTex.Height),new RectangleF(Options.TileWidth*x, 0,Options.TileWidth, Options.TileHeight), null);
-                    DrawTexture(transTex, new RectangleF(0, 0, transTex.Width, transTex.Height),new RectangleF(Options.TileWidth*x,Options.TileHeight*(Options.MapHeight + 1), Options.TileWidth, Options.TileHeight), null);
+                    DrawTexture(transTex, new RectangleF(0, 0, transTex.Width, transTex.Height), new RectangleF(Options.TileWidth * x, 0, Options.TileWidth, Options.TileHeight), null);
+                    DrawTexture(transTex, new RectangleF(0, 0, transTex.Width, transTex.Height), new RectangleF(Options.TileWidth * x, Options.TileHeight * (Options.MapHeight + 1), Options.TileWidth, Options.TileHeight), null);
                 }
                 for (int y = 1; y < Options.MapHeight + 1; y++)
                 {
-                    DrawTexture(transTex, new RectangleF(0, 0, transTex.Width, transTex.Height), new RectangleF(0, Options.TileHeight*y, Options.TileWidth, Options.TileHeight), null);
-                    DrawTexture(transTex, new RectangleF(0, 0, transTex.Width, transTex.Height), new RectangleF(Options.TileWidth*(Options.MapWidth + 1),Options.TileHeight*y, Options.TileWidth, Options.TileHeight), null);
+                    DrawTexture(transTex, new RectangleF(0, 0, transTex.Width, transTex.Height), new RectangleF(0, Options.TileHeight * y, Options.TileWidth, Options.TileHeight), null);
+                    DrawTexture(transTex, new RectangleF(0, 0, transTex.Width, transTex.Height), new RectangleF(Options.TileWidth * (Options.MapWidth + 1), Options.TileHeight * y, Options.TileWidth, Options.TileHeight), null);
                 }
             }
         }
@@ -248,11 +256,11 @@ namespace Intersect_Editor.Classes
                     yOffset = -Options.TileHeight;
                     break;
             }
-            DrawTexture(GetTexture(TextureType.Tileset,TilesetBase.GetTileset(map.Layers[layerNum].Tiles[x, y].TilesetIndex).Value),
+            DrawTexture(GetTexture(TextureType.Tileset, TilesetBase.GetTileset(map.Layers[layerNum].Tiles[x, y].TilesetIndex).Value),
                                 destX, destY,
                                 (int)map.Autotiles.Autotile[x, y].Layer[layerNum].QuarterTile[quarterNum].X + xOffset,
                                 (int)map.Autotiles.Autotile[x, y].Layer[layerNum].QuarterTile[quarterNum].Y + yOffset,
-                                Options.TileWidth/2, Options.TileHeight/2, target);
+                                Options.TileWidth / 2, Options.TileHeight / 2, target);
 
         }
         private static void DrawMap(int dir, bool screenShotting, int layer, RenderTarget2D RenderTarget2D)
@@ -551,7 +559,7 @@ namespace Intersect_Editor.Classes
                             if (tmpMap.Autotiles.Autotile[x, y].Layer[z].RenderState != MapAutotiles.RenderStateAutotile)
                                 continue;
                             DrawAutoTile(z, x * Options.TileWidth + xoffset, y * Options.TileHeight + yoffset, 1, x, y, tmpMap, RenderTarget2D);
-                            DrawAutoTile(z, x * Options.TileWidth + (Options.TileWidth/2) + xoffset, y * Options.TileHeight + yoffset, 2, x, y, tmpMap, RenderTarget2D);
+                            DrawAutoTile(z, x * Options.TileWidth + (Options.TileWidth / 2) + xoffset, y * Options.TileHeight + yoffset, 2, x, y, tmpMap, RenderTarget2D);
                             DrawAutoTile(z, x * Options.TileWidth + xoffset, y * Options.TileHeight + (Options.TileHeight / 2) + yoffset, 3, x, y, tmpMap, RenderTarget2D);
                             DrawAutoTile(z, x * Options.TileWidth + (Options.TileWidth / 2) + xoffset, y * Options.TileHeight + (Options.TileHeight / 2) + yoffset, 4, x, y, tmpMap, RenderTarget2D);
                         }
@@ -571,8 +579,8 @@ namespace Intersect_Editor.Classes
                 foreach (var light in tmpMap.Lights)
                 {
                     double w = light.Size;
-                    var x = xoffset + (light.TileX*Options.TileWidth + light.OffsetX) + 16;
-                    var y = yoffset + (light.TileY*Options.TileHeight + light.OffsetY) + 16;
+                    var x = xoffset + (light.TileX * Options.TileWidth + light.OffsetX) + 16;
+                    var y = yoffset + (light.TileY * Options.TileHeight + light.OffsetY) + 16;
                     if (!HideDarkness) AddLight(x, y, light, null);
                 }
             }
@@ -705,6 +713,74 @@ namespace Intersect_Editor.Classes
             DrawTexture(_whiteTex, new RectangleF(0, 0, 1, 1), new RectangleF(x + w, y, 1, h), clr, target);
         }
 
+        public static void DrawMapGrid()
+        {
+            if (_mapGridChain == null || _mapGridChain.IsContentLost || _mapGridChain.IsDisposed || Globals.MapGridWindowNew.DockPanel.ActiveDocument != Globals.MapGridWindowNew) return;
+            _graphicsDevice.SetRenderTarget(_mapGridChain);
+            _graphicsDevice.Clear(Microsoft.Xna.Framework.Color.Black);
+            var rand = new Random();
+            var grid = Globals.MapGrid;
+            grid.Update(_mapGridChain.Bounds);
+            for (int x = 0; x < grid.GridWidth + 2; x++)
+            {
+                for (int y = 0; y < grid.GridHeight + 2; y++)
+                {
+                    var renderRect = new System.Drawing.Rectangle(grid.ContentRect.X + x * grid.TileWidth, grid.ContentRect.Y + y * grid.TileHeight, grid.TileWidth, grid.TileHeight);
+                    if (grid.ViewRect.IntersectsWith(renderRect))
+                    {
+                        if (x == 0 || y == 0 || x == grid.GridWidth + 1 || y == grid.GridHeight + 1 || grid.Grid[x - 1, y - 1].mapnum == -1)
+                        {
+                            DrawTexture(GetWhiteTex(), new RectangleF(0, 0, 1, 1), new RectangleF(grid.ContentRect.X + x * grid.TileWidth, grid.ContentRect.Y + y * grid.TileHeight, grid.TileWidth, grid.TileHeight), Color.Gray, _mapGridChain);
+                        }
+                        else
+                        {
+                            if (grid.Grid[x - 1, y - 1].mapnum > -1)
+                            {
+                                if (grid.Grid[x - 1, y - 1].tex != null &&
+                                    grid.Grid[x - 1, y - 1].tex.Width == grid.TileWidth &&
+                                    grid.Grid[x - 1, y - 1].tex.Height == grid.TileHeight)
+                                {
+                                    DrawTexture(grid.Grid[x - 1, y - 1].tex, grid.ContentRect.X + x*grid.TileWidth,
+                                        grid.ContentRect.Y + y*grid.TileHeight, _mapGridChain);
+                                }
+                                else
+                                {
+                                    DrawTexture(GetWhiteTex(), new RectangleF(0, 0, 1, 1),
+                                        new RectangleF(grid.ContentRect.X + x*grid.TileWidth,
+                                            grid.ContentRect.Y + y*grid.TileHeight, grid.TileWidth, grid.TileHeight),
+                                        Color.Green, _mapGridChain);
+                                }
+                            }
+                            else
+                            {
+                                DrawTexture(GetWhiteTex(), new RectangleF(0, 0, 1, 1), new RectangleF(grid.ContentRect.X + x * grid.TileWidth, grid.ContentRect.Y + y * grid.TileHeight, grid.TileWidth, grid.TileHeight), Color.Gray, _mapGridChain);
+                            }
+                        }
+                        if (Globals.MapGrid.ShowLines)
+                        {
+                            DrawTexture(GetWhiteTex(), new RectangleF(0, 0, 1, 1),
+                                new RectangleF(grid.ContentRect.X + x*grid.TileWidth,
+                                    grid.ContentRect.Y + y*grid.TileHeight, grid.TileWidth, 1), Color.White,
+                                _mapGridChain);
+                            DrawTexture(GetWhiteTex(), new RectangleF(0, 0, 1, 1),
+                                new RectangleF(grid.ContentRect.X + x*grid.TileWidth,
+                                    grid.ContentRect.Y + y*grid.TileHeight, 1, grid.TileHeight), Color.White,
+                                _mapGridChain);
+                            DrawTexture(GetWhiteTex(), new RectangleF(0, 0, 1, 1),
+                                new RectangleF(grid.ContentRect.X + x*grid.TileWidth + grid.TileWidth,
+                                    grid.ContentRect.Y + y*grid.TileHeight, 1, grid.TileHeight), Color.White,
+                                _mapGridChain);
+                            DrawTexture(GetWhiteTex(), new RectangleF(0, 0, 1, 1),
+                                new RectangleF(grid.ContentRect.X + x*grid.TileWidth,
+                                    grid.ContentRect.Y + y*grid.TileHeight + grid.TileHeight, grid.TileWidth, 1),
+                                Color.White, _mapGridChain);
+                        }
+                    }
+                }
+            }
+            _mapGridChain.Present();
+        }
+
         public static void DrawTileset()
         {
             if (_tilesetChain == null || _tilesetChain.IsContentLost || _tilesetChain.IsDisposed || Globals.MapLayersWindow.tabControl.SelectedIndex != Globals.MapLayersWindow.tabControl.TabPages.IndexOf(Globals.MapLayersWindow.tabTiles)) return;
@@ -730,8 +806,8 @@ namespace Intersect_Editor.Classes
                         selY -= Math.Abs(selH);
                         selH = Math.Abs(selH);
                     }
-                    DrawBoxOutline(selX*Options.TileWidth, selY*Options.TileHeight,
-                        Options.TileWidth + (selW*Options.TileWidth), Options.TileHeight + (selH*Options.TileHeight),
+                    DrawBoxOutline(selX * Options.TileWidth, selY * Options.TileHeight,
+                        Options.TileWidth + (selW * Options.TileWidth), Options.TileHeight + (selH * Options.TileHeight),
                         Color.White, _tilesetChain);
                 }
             }
@@ -812,7 +888,7 @@ namespace Intersect_Editor.Classes
                 {
                     if (tmpMap.Attributes[x, y] != null)
                     {
-                        if (tmpMap.Attributes[x, y].value == (int) MapAttributes.Resource && !upper)
+                        if (tmpMap.Attributes[x, y].value == (int)MapAttributes.Resource && !upper)
                         {
                             var resource = ResourceBase.GetResource(tmpMap.Attributes[x, y].data1);
                             if (resource != null)
@@ -822,29 +898,29 @@ namespace Intersect_Editor.Classes
                                     Texture2D res = GetTexture(TextureType.Resource, resource.InitialGraphic);
                                     if (res != null)
                                     {
-                                        float xpos = x*Options.TileWidth + xoffset;
-                                        float ypos = y*Options.TileHeight + yoffset;
+                                        float xpos = x * Options.TileWidth + xoffset;
+                                        float ypos = y * Options.TileHeight + yoffset;
                                         if (res.Height > Options.TileHeight)
                                         {
-                                            ypos -= ((int) res.Height - Options.TileHeight);
+                                            ypos -= ((int)res.Height - Options.TileHeight);
                                         }
                                         if (res.Width > Options.TileWidth)
                                         {
-                                            xpos -= (res.Width - 32)/2;
+                                            xpos -= (res.Width - 32) / 2;
                                         }
                                         DrawTexture(res, xpos, ypos,
-                                            0, 0, (int) res.Width, (int) res.Height, renderTarget);
+                                            0, 0, (int)res.Width, (int)res.Height, renderTarget);
                                     }
                                 }
                             }
                         }
-                        else if (tmpMap.Attributes[x, y].value == (int) MapAttributes.Animation)
+                        else if (tmpMap.Attributes[x, y].value == (int)MapAttributes.Animation)
                         {
                             var animation = AnimationBase.GetAnim(tmpMap.Attributes[x, y].data1);
                             if (animation != null)
                             {
-                                float xpos = x*Options.TileWidth + xoffset + 16;
-                                float ypos = y*Options.TileHeight + yoffset + 16;
+                                float xpos = x * Options.TileWidth + xoffset + 16;
+                                float ypos = y * Options.TileHeight + yoffset + 16;
                                 var tmpMapOld = tmpMap;
                                 if (tmpMap == TilePreviewStruct)
                                 {
@@ -862,7 +938,7 @@ namespace Intersect_Editor.Classes
                                             new AnimationInstance(animation, true));
                                     }
                                     animInstance.Update();
-                                    animInstance.SetPosition((int) xpos, (int) ypos, 0);
+                                    animInstance.SetPosition((int)xpos, (int)ypos, 0);
                                     animInstance.Draw(renderTarget, upper);
                                 }
                                 tmpMap = tmpMapOld;
@@ -893,7 +969,7 @@ namespace Intersect_Editor.Classes
                 {
                     for (int z = -1; z < 4; z++)
                     {
-                        DrawMapAttributes(z, true, screenShot, false,-Options.TileWidth,-Options.TileHeight);
+                        DrawMapAttributes(z, true, screenShot, false, -Options.TileWidth, -Options.TileHeight);
                     }
                 }
             }
@@ -937,10 +1013,10 @@ namespace Intersect_Editor.Classes
                         {
                             DrawTexture(fogTex,
                                 new RectangleF(0, 0, fogTex.Width, fogTex.Height),
-                                new RectangleF(x* fogTex.Width + drawX,
-                                    y* fogTex.Height + drawY, fogTex.Width,
+                                new RectangleF(x * fogTex.Width + drawX,
+                                    y * fogTex.Height + drawY, fogTex.Width,
                                     fogTex.Height),
-                                Color.FromArgb(Globals.CurrentMap.FogTransparency, 255, 255, 255),target);
+                                Color.FromArgb(Globals.CurrentMap.FogTransparency, 255, 255, 255), target);
                         }
                     }
                 }
@@ -1002,14 +1078,14 @@ Color.FromArgb(255, 255, 255, 255), target, MultiplyState);
                     for (var y = 0; y < Options.MapHeight; y++)
                     {
                         if (tmpMap.FindLightAt(x, y) == null) continue;
-                        DrawTexture(GetTexture(TextureType.Misc, "lighticon.png"), x*Options.TileWidth + Options.TileWidth,
-                            y*Options.TileHeight + Options.TileHeight, 0, 0, Options.TileWidth, Options.TileHeight,
+                        DrawTexture(GetTexture(TextureType.Misc, "lighticon.png"), x * Options.TileWidth + Options.TileWidth,
+                            y * Options.TileHeight + Options.TileHeight, 0, 0, Options.TileWidth, Options.TileHeight,
                             target);
                     }
 
                 }
-                DrawBoxOutline(Globals.CurTileX*Options.TileWidth + Options.TileWidth,
-                    Globals.CurTileY*Options.TileHeight + Options.TileHeight, Options.TileWidth, Options.TileHeight,
+                DrawBoxOutline(Globals.CurTileX * Options.TileWidth + Options.TileWidth,
+                    Globals.CurTileY * Options.TileHeight + Options.TileHeight, Options.TileWidth, Options.TileHeight,
                     Color.White, target);
             }
         }
@@ -1019,21 +1095,21 @@ Color.FromArgb(255, 255, 255, 255), target, MultiplyState);
             {
                 var x = light.Key.X;
                 var y = light.Key.Y;
-                DrawLight(x,y,light.Value,DarknessTexture);
+                DrawLight(x, y, light.Value, DarknessTexture);
             }
             _lightQueue.Clear();
         }
         public static void DrawLight(int x, int y, LightBase light, RenderTarget2D target)
         {
             Effect shader = GetShader("radialgradient.xnb");
-            var vec = new Vector4(light.Color.R/255f,
-                light.Color.G/255f, light.Color.B/255f, light.Intensity/255f);
+            var vec = new Vector4(light.Color.R / 255f,
+                light.Color.G / 255f, light.Color.B / 255f, light.Intensity / 255f);
             shader.Parameters["LightColor"].SetValue(vec);
             shader.Parameters["Expand"].SetValue((float)(light.Expand / 100f));
             y -= light.Size;
             x -= light.Size;
             DrawTexture(_whiteTex, new RectangleF(0, 0, 1, 1), new RectangleF(x, y, light.Size * 2, light.Size * 2), Color.White,
-                target, BlendState.Additive,shader);
+                target, BlendState.Additive, shader);
         }
         public static void AddLight(int x, int y, LightBase light, RenderTarget2D target = null)
         {
@@ -1041,7 +1117,7 @@ Color.FromArgb(255, 255, 255, 255), target, MultiplyState);
             {
                 target = DarknessTexture;
             }
-            _lightQueue.Add(new KeyValuePair<Microsoft.Xna.Framework.Point, LightBase>(new Microsoft.Xna.Framework.Point(x,y),light));
+            _lightQueue.Add(new KeyValuePair<Microsoft.Xna.Framework.Point, LightBase>(new Microsoft.Xna.Framework.Point(x, y), light));
         }
 
         //Rendering

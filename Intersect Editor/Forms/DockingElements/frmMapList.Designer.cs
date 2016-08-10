@@ -32,7 +32,6 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmMapList));
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this.btnChronological = new System.Windows.Forms.ToolStripButton();
-            this.btnGridView = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.btnNewMap = new System.Windows.Forms.ToolStripButton();
             this.btnNewFolder = new System.Windows.Forms.ToolStripButton();
@@ -40,13 +39,13 @@
             this.btnDelete = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.btnRefreshList = new System.Windows.Forms.ToolStripButton();
-            this.mapTreeList = new Intersect_Editor.Forms.Controls.MapTreeList();
             this.newMapToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.mapToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.folderToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.newFolderToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.deleteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.mapTreeList = new Intersect_Editor.Forms.Controls.MapTreeList();
             this.toolStrip1.SuspendLayout();
             this.contextMenuStrip1.SuspendLayout();
             this.SuspendLayout();
@@ -56,7 +55,6 @@
             this.toolStrip1.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
             this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.btnChronological,
-            this.btnGridView,
             this.toolStripSeparator1,
             this.btnNewMap,
             this.btnNewFolder,
@@ -81,16 +79,6 @@
             this.btnChronological.Size = new System.Drawing.Size(23, 22);
             this.btnChronological.Text = "Order Chronologically";
             this.btnChronological.Click += new System.EventHandler(this.btnChronological_Click);
-            // 
-            // btnGridView
-            // 
-            this.btnGridView.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.btnGridView.Image = ((System.Drawing.Image)(resources.GetObject("btnGridView.Image")));
-            this.btnGridView.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.btnGridView.Name = "btnGridView";
-            this.btnGridView.Size = new System.Drawing.Size(23, 22);
-            this.btnGridView.Text = "Show Grid View";
-            this.btnGridView.Click += new System.EventHandler(this.btnGridView_Click);
             // 
             // toolStripSeparator1
             // 
@@ -152,16 +140,6 @@
             this.btnRefreshList.Text = "Refresh";
             this.btnRefreshList.Click += new System.EventHandler(this.btnRefreshList_Click);
             // 
-            // mapTreeList
-            // 
-            this.mapTreeList.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.mapTreeList.Location = new System.Drawing.Point(0, 26);
-            this.mapTreeList.Name = "mapTreeList";
-            this.mapTreeList.Size = new System.Drawing.Size(189, 181);
-            this.mapTreeList.TabIndex = 5;
-            // 
             // newMapToolStripMenuItem
             // 
             this.newMapToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -208,11 +186,23 @@
             this.contextMenuStrip1.Name = "contextMenuStrip1";
             this.contextMenuStrip1.Size = new System.Drawing.Size(118, 70);
             // 
+            // mapTreeList
+            // 
+            this.mapTreeList.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.mapTreeList.Location = new System.Drawing.Point(0, 26);
+            this.mapTreeList.Name = "mapTreeList";
+            this.mapTreeList.Size = new System.Drawing.Size(189, 181);
+            this.mapTreeList.TabIndex = 5;
+            // 
             // frmMapList
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(189, 207);
+            this.CloseButton = false;
+            this.CloseButtonVisible = false;
             this.Controls.Add(this.mapTreeList);
             this.Controls.Add(this.toolStrip1);
             this.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
@@ -237,7 +227,6 @@
         private System.Windows.Forms.ToolStripButton btnChronological;
         private System.Windows.Forms.ToolStripButton btnDelete;
         private System.Windows.Forms.ToolStripButton btnNewMap;
-        private System.Windows.Forms.ToolStripButton btnGridView;
         private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
         private System.Windows.Forms.ToolStripMenuItem deleteToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem newFolderToolStripMenuItem;

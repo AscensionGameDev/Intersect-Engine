@@ -29,18 +29,20 @@
         private void InitializeComponent()
         {
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.pnlFace = new System.Windows.Forms.Panel();
+            this.cmbFace = new System.Windows.Forms.ComboBox();
+            this.label1 = new System.Windows.Forms.Label();
             this.txtShowText = new System.Windows.Forms.TextBox();
             this.label5 = new System.Windows.Forms.Label();
             this.btnCancel = new System.Windows.Forms.Button();
             this.btnSave = new System.Windows.Forms.Button();
-            this.label1 = new System.Windows.Forms.Label();
-            this.cmbFace = new System.Windows.Forms.ComboBox();
-            this.pnlFace = new System.Windows.Forms.Panel();
+            this.lblCommands = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.lblCommands);
             this.groupBox1.Controls.Add(this.pnlFace);
             this.groupBox1.Controls.Add(this.cmbFace);
             this.groupBox1.Controls.Add(this.label1);
@@ -54,6 +56,33 @@
             this.groupBox1.TabIndex = 17;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Show Text";
+            // 
+            // pnlFace
+            // 
+            this.pnlFace.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.pnlFace.Location = new System.Drawing.Point(145, 144);
+            this.pnlFace.Name = "pnlFace";
+            this.pnlFace.Size = new System.Drawing.Size(96, 96);
+            this.pnlFace.TabIndex = 25;
+            // 
+            // cmbFace
+            // 
+            this.cmbFace.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbFace.FormattingEnabled = true;
+            this.cmbFace.Location = new System.Drawing.Point(9, 157);
+            this.cmbFace.Name = "cmbFace";
+            this.cmbFace.Size = new System.Drawing.Size(121, 21);
+            this.cmbFace.TabIndex = 24;
+            this.cmbFace.SelectedIndexChanged += new System.EventHandler(this.cmbFace_SelectedIndexChanged);
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(6, 141);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(34, 13);
+            this.label1.TabIndex = 23;
+            this.label1.Text = "Face:";
             // 
             // txtShowText
             // 
@@ -93,32 +122,18 @@
             this.btnSave.UseVisualStyleBackColor = true;
             this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
             // 
-            // label1
+            // lblCommands
             // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(6, 141);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(34, 13);
-            this.label1.TabIndex = 23;
-            this.label1.Text = "Face:";
-            // 
-            // cmbFace
-            // 
-            this.cmbFace.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cmbFace.FormattingEnabled = true;
-            this.cmbFace.Location = new System.Drawing.Point(9, 157);
-            this.cmbFace.Name = "cmbFace";
-            this.cmbFace.Size = new System.Drawing.Size(121, 21);
-            this.cmbFace.TabIndex = 24;
-            this.cmbFace.SelectedIndexChanged += new System.EventHandler(this.cmbFace_SelectedIndexChanged);
-            // 
-            // pnlFace
-            // 
-            this.pnlFace.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.pnlFace.Location = new System.Drawing.Point(145, 144);
-            this.pnlFace.Name = "pnlFace";
-            this.pnlFace.Size = new System.Drawing.Size(96, 96);
-            this.pnlFace.TabIndex = 25;
+            this.lblCommands.AutoSize = true;
+            this.lblCommands.BackColor = System.Drawing.SystemColors.Control;
+            this.lblCommands.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Underline, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblCommands.ForeColor = System.Drawing.Color.Blue;
+            this.lblCommands.Location = new System.Drawing.Point(157, 22);
+            this.lblCommands.Name = "lblCommands";
+            this.lblCommands.Size = new System.Drawing.Size(84, 13);
+            this.lblCommands.TabIndex = 26;
+            this.lblCommands.Text = "Chat Commands";
+            this.lblCommands.Click += new System.EventHandler(this.lblCommands_Click);
             // 
             // EventCommand_Text
             // 
@@ -144,5 +159,6 @@
         private System.Windows.Forms.Panel pnlFace;
         private System.Windows.Forms.ComboBox cmbFace;
         private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label lblCommands;
     }
 }

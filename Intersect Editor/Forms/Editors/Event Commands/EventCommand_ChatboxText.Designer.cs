@@ -37,11 +37,13 @@
             this.label5 = new System.Windows.Forms.Label();
             this.btnCancel = new System.Windows.Forms.Button();
             this.btnSave = new System.Windows.Forms.Button();
+            this.lblCommands = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.lblCommands);
             this.groupBox1.Controls.Add(this.cmbChannel);
             this.groupBox1.Controls.Add(this.label2);
             this.groupBox1.Controls.Add(this.cmbColor);
@@ -135,6 +137,19 @@
             this.btnSave.UseVisualStyleBackColor = true;
             this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
             // 
+            // lblCommands
+            // 
+            this.lblCommands.AutoSize = true;
+            this.lblCommands.BackColor = System.Drawing.SystemColors.Control;
+            this.lblCommands.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Underline, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblCommands.ForeColor = System.Drawing.Color.Blue;
+            this.lblCommands.Location = new System.Drawing.Point(157, 22);
+            this.lblCommands.Name = "lblCommands";
+            this.lblCommands.Size = new System.Drawing.Size(84, 13);
+            this.lblCommands.TabIndex = 35;
+            this.lblCommands.Text = "Chat Commands";
+            this.lblCommands.Click += new System.EventHandler(this.lblCommands_Click);
+            // 
             // EventCommand_ChatboxText
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -160,5 +175,6 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.ComboBox cmbChannel;
         private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.Label lblCommands;
     }
 }

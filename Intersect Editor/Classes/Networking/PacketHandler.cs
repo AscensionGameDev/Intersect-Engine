@@ -233,7 +233,7 @@ namespace Intersect_Editor.Classes
         {
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
-            Globals.MapGridWindow.InitGrid(bf);
+            if (Globals.MapGrid != null) Globals.MapGrid.Load(bf);
             bf.Dispose();
         }
 

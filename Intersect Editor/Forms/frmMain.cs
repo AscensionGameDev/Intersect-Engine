@@ -27,6 +27,7 @@ using Intersect_Editor.Classes;
 using WeifenLuo.WinFormsUI.Docking;
 using Intersect_Editor.Classes.General;
 using Intersect_Editor.Classes.Maps;
+using Intersect_Editor.Forms.DockingElements;
 using Intersect_Editor.Forms.Editors;
 using Intersect_Library;
 using Intersect_Library.GameObjects;
@@ -67,7 +68,6 @@ namespace Intersect_Editor.Forms
         public frmMain()
         {
             InitializeComponent();
-            Globals.MapGridWindow = new frmGridView();
             Globals.MapListWindow = new frmMapList();
             Globals.MapListWindow.Show(dockLeft, DockState.DockRight);
             Globals.MapLayersWindow = new frmMapLayers();
@@ -75,6 +75,9 @@ namespace Intersect_Editor.Forms
 
             Globals.MapEditorWindow = new frmMapEditor();
             Globals.MapEditorWindow.Show(dockLeft, DockState.Document);
+
+            Globals.MapGridWindowNew = new frmMapGrid();
+            Globals.MapGridWindowNew.Show(dockLeft,DockState.Document);
         }
         private void frmMain_Load(object sender, EventArgs e)
         {
@@ -96,6 +99,7 @@ namespace Intersect_Editor.Forms
             //Init Forms with RenderTargets
             Globals.MapEditorWindow.InitMapEditor();
             Globals.MapLayersWindow.InitMapLayers();
+            Globals.MapGridWindowNew.InitGridWindow();
             UpdateTimeSimulationList();
         }
         private void FrmMain_KeyDown(object sender, KeyEventArgs e)
@@ -144,7 +148,6 @@ namespace Intersect_Editor.Forms
         }
         protected override void OnClosed(EventArgs e)
         {
-            Globals.MapGridWindow.Dispose();
             base.OnClosed(e);
             Application.Exit();
         }
@@ -855,6 +858,13 @@ namespace Intersect_Editor.Forms
             {
                 EditorGraphics.LightColor = (Intersect_Library.Color)((ToolStripDropDownButton)sender).Tag;
             }
+        }
+
+        private void btnGridView_Click(object sender, EventArgs e)
+        {
+            //This should toggle us in/out of "grid view"
+            Globals.GridView = !Globals.GridView;
+            Globals.MapEditorWindow.InitMapEditor();
         }
     }
 }

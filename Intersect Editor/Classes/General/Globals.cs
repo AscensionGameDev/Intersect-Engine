@@ -28,6 +28,7 @@ using Intersect_Editor.Classes.Maps;
 using Intersect_Library;
 using Intersect_Library.GameObjects;
 using Intersect_Editor.Classes.Core;
+using Intersect_Editor.Forms.DockingElements;
 
 namespace Intersect_Editor.Classes
 {
@@ -76,6 +77,8 @@ namespace Intersect_Editor.Classes
         public static int CurMapSelW;
         public static int CurMapSelH;
 
+        public static bool GridView;
+
         //Selection Moving Copying and Pasting
         public static int SelectionType = (int) SelectionTypes.AllLayers;
         public static bool Dragging = false;
@@ -102,7 +105,8 @@ namespace Intersect_Editor.Classes
         public static frmMapEditor MapEditorWindow;
         public static frmMapList MapListWindow;
         public static frmMapProperties MapPropertiesWindow;
-        public static frmGridView MapGridWindow;
+        public static frmMapGrid MapGridWindowNew;
+        public static MapGrid MapGrid;
 
         //Preview Fetching Variables
         public static bool FetchingMapPreviews = false;

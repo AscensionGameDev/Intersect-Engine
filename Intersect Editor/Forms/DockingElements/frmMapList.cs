@@ -96,10 +96,6 @@ namespace Intersect_Editor.Forms
                 PacketSender.SendCreateMap(-1, Globals.CurrentMap.GetId(), (MapListItem)mapTreeList.list.SelectedNode.Tag);
             }
         }
-        private void btnGridView_Click(object sender, EventArgs e)
-        {
-            Globals.MapGridWindow.Visible = !Globals.MapGridWindow.Visible;
-        }
 
 
        

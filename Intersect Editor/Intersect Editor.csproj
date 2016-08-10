@@ -25,6 +25,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
     <PlatformTarget>x86</PlatformTarget>
@@ -51,6 +52,7 @@
     <Compile Include="Classes\Entities\AnimationInstance.cs" />
     <Compile Include="Classes\General\Enums.cs" />
     <Compile Include="Classes\General\Globals.cs" />
+    <Compile Include="Classes\Maps\MapGrid.cs" />
     <Compile Include="Classes\Maps\MapInstance.cs" />
     <Compile Include="Classes\Maps\MapProperties.cs" />
     <Compile Include="Classes\Networking\Network.cs" />
@@ -73,6 +75,12 @@
     </Compile>
     <Compile Include="Forms\DockingElements\frmMapEditor.Designer.cs">
       <DependentUpon>frmMapEditor.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\DockingElements\frmMapGrid.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\DockingElements\frmMapGrid.Designer.cs">
+      <DependentUpon>frmMapGrid.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\DockingElements\frmMapLayers.cs">
       <SubType>Form</SubType>
@@ -356,12 +364,6 @@
     <Compile Include="Forms\frmAbout.Designer.cs">
       <DependentUpon>frmAbout.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\frmGridView.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\frmGridView.Designer.cs">
-      <DependentUpon>frmGridView.cs</DependentUpon>
-    </Compile>
     <Compile Include="Forms\frmLoadingContent.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -400,9 +402,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="LZ4">
-      <HintPath>.\LZ4.dll</HintPath>
-    </Reference>
     <Reference Include="Mono.Data.Sqlite, Version=2.0.0.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756, processorArchitecture=MSIL">
       <HintPath>packages\Mono.Data.Sqlite.Portable.1.0.3.5\lib\net4\Mono.Data.Sqlite.dll</HintPath>
       <Private>True</Private>
@@ -410,8 +409,9 @@
     <Reference Include="MonoGame.Framework">
       <HintPath>$(MonoGameInstallDirectory)\MonoGame\v3.0\Assemblies\Windows\MonoGame.Framework.dll</HintPath>
     </Reference>
-    <Reference Include="Pngcs">
-      <HintPath>..\..\Intersect-Engine\Intersect Editor\Pngcs.dll</HintPath>
+    <Reference Include="Pngcs, Version=1.1.4.1, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>.\Pngcs.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -447,6 +447,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\DockingElements\frmMapEditor.resx">
       <DependentUpon>frmMapEditor.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\DockingElements\frmMapGrid.resx">
+      <DependentUpon>frmMapGrid.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\DockingElements\frmMapLayers.resx">
       <DependentUpon>frmMapLayers.cs</DependentUpon>
@@ -589,9 +592,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\frmAbout.resx">
       <DependentUpon>frmAbout.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\frmGridView.resx">
-      <DependentUpon>frmGridView.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\frmLoadingContent.resx">
       <DependentUpon>frmLoadingContent.cs</DependentUpon>

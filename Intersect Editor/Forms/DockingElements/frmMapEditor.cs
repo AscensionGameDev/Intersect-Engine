@@ -40,6 +40,9 @@ namespace Intersect_Editor.Forms
 
         public void InitMapEditor()
         {
+            pnlMapContainer.AutoScroll = true;
+            picMap.Width = (Options.MapWidth + 2) * Options.TileWidth;
+            picMap.Height = (Options.MapHeight + 2) * Options.TileHeight;
             CreateSwapChain();
         }
 
@@ -1311,6 +1314,11 @@ namespace Intersect_Editor.Forms
         private void pnlMapContainer_Scroll(object sender, ScrollEventArgs e)
         {
             EditorLoop.RunFrame();
+        }
+
+        private void picMap_Resize(object sender, EventArgs e)
+        {
+            
         }
     }
 }
