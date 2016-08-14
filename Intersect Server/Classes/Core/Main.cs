@@ -27,6 +27,7 @@ using System.Threading;
 using Intersect_Library;
 using Intersect_Server.Classes.Core;
 using Intersect_Server.Classes.General;
+using Intersect_Server.Classes.Maps;
 using Intersect_Server.Classes.Networking;
 
 namespace Intersect_Server.Classes

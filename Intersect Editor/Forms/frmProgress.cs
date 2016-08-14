@@ -42,8 +42,19 @@ namespace Intersect_Editor.Forms
         public void SetProgress(string label, int progress, bool showCancel)
         {
             statusText = label;
-            progressVal = progress;
+            if (progress < 0)
+            {
+                progressVal = 0;
+                progressBar.Style = ProgressBarStyle.Marquee;
+            }
+            else
+            {
+                progressVal = progress;
+                progressBar.Style = ProgressBarStyle.Blocks;
+            }
+
             showCancelBtn = showCancel;
+            tmrUpdater_Tick(null, null);
             Application.DoEvents();
         }
 
@@ -54,12 +65,15 @@ namespace Intersect_Editor.Forms
 
         private void tmrUpdater_Tick(object sender, EventArgs e)
         {
-            lblStatus.Text = statusText;
-            progressBar.Value = progressVal;
-            btnCancel.Visible = showCancelBtn;
-            if (shouldClose)
+            if (!InvokeRequired)
             {
-                Close();
+                lblStatus.Text = statusText;
+                progressBar.Value = progressVal;
+                btnCancel.Visible = showCancelBtn;
+                if (shouldClose)
+                {
+                    Close();
+                }
             }
         }
     }

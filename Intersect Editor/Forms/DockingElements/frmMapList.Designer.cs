@@ -46,6 +46,7 @@
             this.deleteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.mapTreeList = new Intersect_Editor.Forms.Controls.MapTreeList();
+            this.toolSelectMap = new System.Windows.Forms.ToolStripButton();
             this.toolStrip1.SuspendLayout();
             this.contextMenuStrip1.SuspendLayout();
             this.SuspendLayout();
@@ -55,6 +56,7 @@
             this.toolStrip1.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
             this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.btnChronological,
+            this.toolSelectMap,
             this.toolStripSeparator1,
             this.btnNewMap,
             this.btnNewFolder,
@@ -136,7 +138,7 @@
             this.btnRefreshList.Image = ((System.Drawing.Image)(resources.GetObject("btnRefreshList.Image")));
             this.btnRefreshList.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.btnRefreshList.Name = "btnRefreshList";
-            this.btnRefreshList.Size = new System.Drawing.Size(23, 22);
+            this.btnRefreshList.Size = new System.Drawing.Size(23, 20);
             this.btnRefreshList.Text = "Refresh";
             this.btnRefreshList.Click += new System.EventHandler(this.btnRefreshList_Click);
             // 
@@ -196,6 +198,16 @@
             this.mapTreeList.Size = new System.Drawing.Size(189, 181);
             this.mapTreeList.TabIndex = 5;
             // 
+            // toolSelectMap
+            // 
+            this.toolSelectMap.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toolSelectMap.Image = ((System.Drawing.Image)(resources.GetObject("toolSelectMap.Image")));
+            this.toolSelectMap.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolSelectMap.Name = "toolSelectMap";
+            this.toolSelectMap.Size = new System.Drawing.Size(23, 22);
+            this.toolSelectMap.Text = "Select Current Map";
+            this.toolSelectMap.Click += new System.EventHandler(this.toolSelectMap_Click);
+            // 
             // frmMapList
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -234,5 +246,6 @@
         private System.Windows.Forms.ToolStripMenuItem mapToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem newMapToolStripMenuItem;
         public Controls.MapTreeList mapTreeList;
+        private System.Windows.Forms.ToolStripButton toolSelectMap;
     }
 }

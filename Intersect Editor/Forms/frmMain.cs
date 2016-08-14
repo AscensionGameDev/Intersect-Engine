@@ -398,7 +398,7 @@ namespace Intersect_Editor.Forms
             if (
                 MessageBox.Show(@"Are you sure you want to create a new, unconnected map?", @"New Map",
                     MessageBoxButtons.YesNo) != DialogResult.Yes) return;
-            if (MessageBox.Show(@"Do you want to save your current map?", @"Save current map?", MessageBoxButtons.YesNo) == DialogResult.Yes)
+            if (Globals.CurrentMap.Changed() && MessageBox.Show(@"Do you want to save your current map?", @"Save current map?", MessageBoxButtons.YesNo) == DialogResult.Yes)
             {
                 PacketSender.SendMap(Globals.CurrentMap.GetId());
             }
@@ -641,8 +641,9 @@ namespace Intersect_Editor.Forms
             {
                 using (var fs = new FileStream(fileDialog.FileName, FileMode.OpenOrCreate))
                 {
-                    RenderTarget2D screenshotTexture = EditorGraphics.ScreenShotMap();
-                    screenshotTexture.SaveAsPng(fs, screenshotTexture.Width, screenshotTexture.Height);
+                    var screenshotTexture = EditorGraphics.ScreenShotMap();
+                    screenshotTexture.Save(fs, System.Drawing.Imaging.ImageFormat.Png);
+                    fs.Close();
                 }
             }
         }
@@ -657,14 +658,14 @@ namespace Intersect_Editor.Forms
         private void toolStripBtnRect_Click(object sender, EventArgs e)
         {
             Globals.CurrentTool = (int)EdittingTool.Rectangle;
-            Globals.CurMapSelX = -1;
-            Globals.CurMapSelY = -1;
+            Globals.CurMapSelX = 0;
+            Globals.CurMapSelY = 0;
         }
         private void toolStripBtnEyeDrop_Click(object sender, EventArgs e)
         {
             Globals.CurrentTool = (int)EdittingTool.Droppler;
-            Globals.CurMapSelX = -1;
-            Globals.CurMapSelY = -1;
+            Globals.CurMapSelX = 0;
+            Globals.CurMapSelY = 0;
         }
         private void toolStripBtnCopy_Click(object sender, EventArgs e)
         {
@@ -794,6 +795,10 @@ namespace Intersect_Editor.Forms
 
         private void frmMain_FormClosing(object sender, FormClosingEventArgs e)
         {
+            if (!Globals.ClosingEditor && Globals.CurrentMap.Changed() && MessageBox.Show(@"Do you want to save your current map?", @"Save current map?", MessageBoxButtons.YesNo) == DialogResult.Yes)
+            {
+                PacketSender.SendMap(Globals.CurrentMap.GetId());
+            }
             Globals.ClosingEditor = true;
         }
 

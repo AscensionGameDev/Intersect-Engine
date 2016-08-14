@@ -40,7 +40,7 @@ namespace Intersect_Library.GameObjects
         public int LowerAnimYFrames = 1;
         public int LowerAnimFrameCount = 1;
         public int LowerAnimFrameSpeed = 100;
-        public int LowerAnimLoopCount = 1;
+        public int LowerAnimLoopCount = 0;
         public LightBase[] LowerLights;
 
         //Upper Animation
@@ -49,7 +49,7 @@ namespace Intersect_Library.GameObjects
         public int UpperAnimYFrames = 1;
         public int UpperAnimFrameCount = 1;
         public int UpperAnimFrameSpeed = 100;
-        public int UpperAnimLoopCount = 1;
+        public int UpperAnimLoopCount = 0;
         public LightBase[] UpperLights;
 
         public AnimationBase(int id) : base(id)

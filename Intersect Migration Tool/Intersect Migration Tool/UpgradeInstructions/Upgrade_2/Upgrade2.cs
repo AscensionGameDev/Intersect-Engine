@@ -50,6 +50,7 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_2
         public void Upgrade()
         {
             //Upgrade Steps
+            ServerOptions.LoadOptions();
             FixBansTable();
             FixMutesTable();
             ConvertNpcs();

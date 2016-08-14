@@ -102,6 +102,7 @@
     <Compile Include="UpgradeInstructions\Upgrade_1\Intersect_Convert_Lib\GameObjects\TilesetBase.cs" />
     <Compile Include="UpgradeInstructions\Upgrade_1\Intersect_Convert_Lib\Options.cs" />
     <Compile Include="UpgradeInstructions\Upgrade_1\Intersect_Convert_Lib\Point.cs" />
+    <Compile Include="UpgradeInstructions\Upgrade_1\ServerOptions.cs" />
     <Compile Include="UpgradeInstructions\Upgrade_1\Upgrade1.cs" />
     <Compile Include="UpgradeInstructions\Upgrade_2\Intersect_Convert_Lib\AlphanumComparatorFast.cs" />
     <Compile Include="UpgradeInstructions\Upgrade_2\Intersect_Convert_Lib\ByteBuffer.cs" />
@@ -144,6 +145,7 @@
     <Compile Include="UpgradeInstructions\Upgrade_2\Intersect_Convert_Lib\GameObjects\TilesetBase.cs" />
     <Compile Include="UpgradeInstructions\Upgrade_2\Intersect_Convert_Lib\Options.cs" />
     <Compile Include="UpgradeInstructions\Upgrade_2\Intersect_Convert_Lib\Point.cs" />
+    <Compile Include="UpgradeInstructions\Upgrade_2\ServerOptions.cs" />
     <Compile Include="UpgradeInstructions\Upgrade_2\Upgrade2.cs" />
     <Compile Include="UpgradeInstructions\Upgrade_3\Upgrade3.cs" />
   </ItemGroup>

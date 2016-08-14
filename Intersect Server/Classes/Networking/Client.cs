@@ -59,6 +59,9 @@ namespace Intersect_Server.Classes.Networking
         //Processing Thead
         private Thread updateThread;
 
+        //Sent Maps
+        public Dictionary<int, Tuple<long, int>> SentMaps = new Dictionary<int, Tuple<long, int>>();
+
         public Client(int entIndex, GameSocket socket)
         {
             mySocket = socket;

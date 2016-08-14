@@ -30,6 +30,7 @@ using Intersect_Server.Classes.Misc.Pathfinding;
 using Intersect_Server.Classes.Networking;
 using Intersect_Server.Classes.Spells;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Intersect_Server.Classes.Entities
 {
@@ -41,6 +42,7 @@ namespace Intersect_Server.Classes.Entities
 
         //Pathfinding
         private Pathfinder pathFinder;
+        private Task pathfindingTask;
 
         //Moving
         public long LastRandomMove;
@@ -107,7 +109,7 @@ namespace Intersect_Server.Classes.Entities
 
         public override void TryAttack(Entity enemy, ProjectileBase isProjectile = null, int isSpell = -1, int projectileDir = -1)
         {
-            if (CanNpcCombat(enemy))
+            if (CanNpcCombat(enemy) || enemy == this)
             {
                 base.TryAttack(enemy, isProjectile, isSpell, projectileDir);
             }
@@ -119,7 +121,7 @@ namespace Intersect_Server.Classes.Entities
             //Check for NpcVsNpc Combat, both must be enabled and the attacker must have it as an enemy or attack all types of npc.
             if (enemy != null && enemy.GetType() == typeof(Npc) && MyBase != null)
             {
-                if (((Npc)enemy).MyBase.NpcVsNpcEnabled == false || ((Npc)Globals.Entities[MyIndex]).MyBase.NpcVsNpcEnabled == false) return false;
+                if (((Npc)enemy).MyBase.NpcVsNpcEnabled == false || ((Npc)enemy).MyBase.NpcVsNpcEnabled == false) return false;
 
                 if (MyBase.AttackAllies == true) return true;
 
@@ -305,7 +307,7 @@ namespace Intersect_Server.Classes.Entities
                             {
                                 if (entity.IsDead() == false && entity != this)
                                 {
-                                    if ((entity.GetType() == typeof(Player)) || (entity.GetType() == typeof(Npc) && MyBase.AggroList.Contains(((Npc)entity).MyBase.GetId())))
+                                    if ((entity.GetType() == typeof(Player)) && Behaviour == (int)NpcBehavior.AttackOnSight || (entity.GetType() == typeof(Npc) && MyBase.AggroList.Contains(((Npc)entity).MyBase.GetId())))
                                     {
                                         var dist = GetDistanceTo(entity);
                                         if (dist <= Range && dist < closestRange)

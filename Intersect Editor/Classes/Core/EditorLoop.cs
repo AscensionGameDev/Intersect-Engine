@@ -20,8 +20,10 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 using System;
+using System.Threading;
 using System.Windows.Forms;
 using Intersect_Editor.Classes.Core;
+using Intersect_Editor.Classes.Maps;
 using Intersect_Editor.Forms;
 
 namespace Intersect_Editor.Classes
@@ -34,16 +36,24 @@ namespace Intersect_Editor.Classes
         private static frmMain myForm;
         private static long animationTimer = Globals.System.GetTimeMs();
         private static long waterfallTimer = Globals.System.GetTimeMs();
+        private static Thread mapThread;
+        private static frmProgress progressForm;
         public static void StartLoop()
         {
             Globals.MainForm.Visible = true;
             Globals.MainForm.EnterMap(Globals.CurrentMap == null ? 0 : Globals.CurrentMap.GetId());
             myForm = Globals.MainForm;
 
-            // drawing loop
-            while (myForm.Visible) // loop while the window is open
+            if (mapThread == null)
+
             {
-                RunFrame();
+                mapThread = new Thread(UpdateMaps);
+                mapThread.Start();
+                // drawing loop
+                while (myForm.Visible) // loop while the window is open
+                {
+                    RunFrame();
+                }
             }
         }
 
@@ -80,6 +90,39 @@ namespace Intersect_Editor.Classes
                 myForm.toolStripLabelFPS.Text = @"FPS: " + _fps;
                 _fpsCount = 0;
                 _fpsTime = Globals.System.GetTimeMs() + 1000;
+            }
+        }
+
+        private static void UpdateMaps()
+        {
+            while (!Globals.ClosingEditor)
+            {
+                if (Globals.MapsToScreenshot.Count > 0 && Globals.FetchingMapPreviews == false)
+                {
+                    if (progressForm == null || progressForm.IsDisposed ||
+                        progressForm.Visible == false)
+                    {
+                        progressForm = new frmProgress();
+                        progressForm.SetTitle("Saving Map Cache");
+                        myForm.BeginInvoke(new Action(() => progressForm.ShowDialog()));
+                        while (Globals.MapsToScreenshot.Count > 0)
+                        {
+                            var maps = MapInstance.GetObjects();
+                            foreach (var map in maps)
+                            {
+                                myForm.BeginInvoke((Action)(() =>progressForm.SetProgress(Globals.MapsToScreenshot.Count + " maps remaining.", -1,false)));
+                                if (map.Value != null)
+                                {
+                                    map.Value.Update();
+                                }
+                                Application.DoEvents();
+                            }
+                            Thread.Sleep(50);
+                        }
+                        Globals.MapGrid.ResetForm();
+                        myForm.BeginInvoke(new Action(() => progressForm.Close()));
+                    }
+                }
             }
         }
     }

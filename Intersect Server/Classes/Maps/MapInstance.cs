@@ -69,7 +69,7 @@ namespace Intersect_Server.Classes.Maps
         //Init
         public MapInstance() : base(-1, false)
         {
-
+            Autotiles = new MapAutotiles(this);
         }
         public MapInstance(int mapNum) : base(mapNum, false)
         {
@@ -78,6 +78,7 @@ namespace Intersect_Server.Classes.Maps
                 return;
             }
             MyMapNum = mapNum;
+            Autotiles = new MapAutotiles(this);
         }
         public object GetMapLock()
         {
@@ -99,6 +100,60 @@ namespace Intersect_Server.Classes.Maps
                 base.Load(packet);
                 if (keepRevision > -1) Revision = keepRevision;
                 RespawnEverything();
+            }
+        }
+
+        //Autotile Caching (So Clients Don't have to calculate it)
+        public MapBase[,] GenerateAutotileGrid()
+        {
+            MapBase[,] mapBase = new MapBase[3, 3];
+            if (MapGrid >= 0)
+            {
+                if (Database.MapGrids[MapGrid] != null && Database.MapGrids[MapGrid].MyMaps.Contains(GetId()))
+                {
+                    for (int x = -1; x <= 1; x++)
+                    {
+                        for (int y = -1; y <= 1; y++)
+                        {
+                            var x1 = MapGridX + x;
+                            var y1 = MapGridY + y;
+                            if (x1 >= 0 && y1 >= 0 && x1 < Database.MapGrids[MapGrid].Width &&
+                                y1 < Database.MapGrids[MapGrid].Height)
+                            {
+                                if (x == 0 && y == 0)
+                                {
+                                    mapBase[x + 1, y + 1] = this;
+                                }
+                                else
+                                {
+                                    mapBase[x + 1, y + 1] = MapInstance.GetMap(Database.MapGrids[MapGrid].MyGrid[x1, y1]);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            return mapBase;
+        }
+        public void UpdateSurroundingTiles()
+        {
+            var grid = GenerateAutotileGrid();
+            for (int x = 0; x < 3; x++)
+            {
+                for (int y = 0; y < 3; y++)
+                {
+                    if (grid[x, y] != null)
+                    {
+                        ((MapInstance) grid[x, y]).InitAutotiles();
+                    }
+                }
+            }
+        }
+        public void InitAutotiles()
+        {
+            lock (GetMapLock())
+            {
+                Autotiles.InitAutotiles(GenerateAutotileGrid());
             }
         }
 
@@ -365,7 +420,8 @@ namespace Intersect_Server.Classes.Maps
             NpcSpawnInstances.Clear();
             Spawns.Clear();
             //Kill any other npcs on this map (only players should remain)
-            foreach (var entity in Entities)
+            var entities = Entities.ToArray();
+            foreach (var entity in entities)
             {
                 if (entity.GetType() == typeof(Npc))
                 {
@@ -755,6 +811,8 @@ namespace Intersect_Server.Classes.Maps
         //GameObject Functions
         public override byte[] GetData()
         {
+            EditorMapData = null;
+            ClientMapData = null;
             return GetMapData(false);
         }
         public override string GetTable()

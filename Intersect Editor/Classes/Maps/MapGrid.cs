@@ -48,16 +48,23 @@ namespace Intersect_Editor.Classes.Maps
         private ToolStripMenuItem _dropDownLinkItem;
         private ContextMenuStrip _contextMenu;
         private ToolStripMenuItem _dropDownUnlinkItem;
+        private ToolStripMenuItem _recacheMapItem;
 
-        public MapGrid(ToolStripMenuItem dropDownItem, ToolStripMenuItem dropDownUnlink, ContextMenuStrip contextMenu)
+        private List<int> LinkMaps = new List<int>();
+
+        public MapGrid(ToolStripMenuItem dropDownItem, ToolStripMenuItem dropDownUnlink,ToolStripMenuItem recacheItem, ContextMenuStrip contextMenu)
         {
             workerThread = new Thread(AsyncLoadingThread);
             workerThread.Start();
             _dropDownLinkItem = dropDownItem;
+            _dropDownLinkItem.Click += LinkMapItem_Click;
             _contextMenu = contextMenu;
             _dropDownUnlinkItem = dropDownUnlink;
             _dropDownUnlinkItem.Click += UnlinkMapItem_Click;
+            _recacheMapItem = recacheItem;
+            _recacheMapItem.Click += _recacheMapItem_Click;
         }
+
 
         private void AsyncLoadingThread()
         {
@@ -76,8 +83,12 @@ namespace Intersect_Editor.Classes.Maps
                         if (texData != null)
                         {
                             tex.SetData(texData);
+                            itm.tex = tex;
                         }
-                        itm.tex = tex;
+                        else
+                        {
+                            freeTextures.Add(tex);
+                        }
                     }
                 }
             }
@@ -118,25 +129,19 @@ namespace Intersect_Editor.Classes.Maps
                     }
                 }
             }
-            _dropDownLinkItem.DropDownItems.Clear();
-            List<ToolStripButton> linkBtns = new List<ToolStripButton>();
             //Get a list of maps -- if they are not in this grid.
             for (int i = 0; i < MapList.GetOrderedMaps().Count; i++)
             {
                 if (!gridMaps.Contains(MapList.GetOrderedMaps()[i].MapNum))
                 {
-                    var item = new ToolStripButton(MapList.GetOrderedMaps()[i].Name);
-                    item.Tag = MapList.GetOrderedMaps()[i].MapNum;
-                    item.Click += LinkMapItem_Click;
-                    linkBtns.Add(item);
+                    LinkMaps.Add(MapList.GetOrderedMaps()[i].MapNum);
                 }
             }
-            _dropDownLinkItem.DropDownItems.AddRange(linkBtns.ToArray());
             MaxZoom = 1f; //Real Size
             Zoom = MinZoom;
             TileWidth = (int)(Options.TileWidth * Options.MapWidth * Zoom);
             TileHeight = (int)(Options.TileHeight * Options.MapHeight * Zoom);
-            ContentRect = new Rectangle(0, 0, TileWidth * (GridWidth + 2), TileHeight * (GridHeight + 2));
+            ContentRect = new Rectangle(ViewRect.Width/2-(TileWidth * (GridWidth + 2))/2, ViewRect.Height/2 - (TileHeight * (GridHeight + 2))/2, TileWidth * (GridWidth + 2), TileHeight * (GridHeight + 2));
             createTextures = true;
             Loaded = true;
         }
@@ -153,7 +158,7 @@ namespace Intersect_Editor.Classes.Maps
                         if (Grid[x1 - 1, y1 - 1].mapnum > -1)
                         {
                             Globals.MainForm.EnterMap(Grid[x1 - 1, y1 - 1].mapnum);
-                            //todo, auto open map editor again
+                            Globals.MapEditorWindow.Select();
                         }
                     }
                 }
@@ -162,7 +167,6 @@ namespace Intersect_Editor.Classes.Maps
 
         public void ScreenshotWorld()
         {
-            FetchMissingPreviews(false);
             SaveFileDialog fileDialog = new SaveFileDialog();
             fileDialog.Filter = "Png Image|*.png|JPeg Image|*.jpg|Bitmap Image|*.bmp|Gif Image|*.gif";
             fileDialog.Title = "Save a screenshot of the world";
@@ -174,6 +178,7 @@ namespace Intersect_Editor.Classes.Maps
                         "Are you sure you want to save a screenshot of your world to a file? This could take several minutes!",
                         "Save Screenshot?", MessageBoxButtons.YesNo) == System.Windows.Forms.DialogResult.Yes)
                 {
+                    FetchMissingPreviews(false);
                     Globals.PreviewProgressForm = new frmProgress();
                     Globals.PreviewProgressForm.SetTitle("Saving Screenshot");
                     Thread screenShotThread = new Thread(() => ScreenshotWorld(fileDialog.FileName));
@@ -273,27 +278,71 @@ namespace Intersect_Editor.Classes.Maps
             Globals.PreviewProgressForm.NotifyClose();
         }
 
+        public bool Contains(int mapNum)
+        {
+            if (Grid != null && Loaded)
+            {
+                lock (texLock)
+                {
+                    for (int x = 0; x < GridWidth; x++)
+                    {
+                        for (int y = 0; y < GridHeight; y++)
+                        {
+                            if (Grid[x, y].mapnum == mapNum)
+                            {
+                                return true;
+                            }
+                        }
+                    }
+                }
+            }
+            return false;
+        }
+
+        public void ResetForm()
+        {
+            lock (texLock)
+            {
+                UnloadTextures();
+                createTextures = true;
+            }
+        }
+
         public void FetchMissingPreviews(bool clearAllFirst)
         {
             List<int> maps = new List<int>();
             if (clearAllFirst)
             {
-                if (
-                    MessageBox.Show(
-                        "Are you sure you want to clear the existing previews and fetch previews for each map on this grid? This could take several minutes based on the number of maps in this grid!",
+                if (MessageBox.Show("Are you sure you want to clear the existing previews and fetch previews for each map on this grid? This could take several minutes based on the number of maps in this grid!",
                         "Fetch Preview?", MessageBoxButtons.YesNo) != System.Windows.Forms.DialogResult.Yes) return;
-                //Get a list of maps without images.
-                for (int x = 0; x < GridWidth; x++)
+                if (
+                    MessageBox.Show("Use your current settings with the map cache? (No to disable lighting/fogs/other effects)", "Map Cache Options",
+                        MessageBoxButtons.YesNo) == DialogResult.Yes)
                 {
-                    for (int y = 0; y < GridHeight; y++)
+                    Database.GridHideOverlay = EditorGraphics.HideOverlay;
+                    Database.GridHideDarkness = EditorGraphics.HideDarkness;
+                    Database.GridHideFog = EditorGraphics.HideFog;
+                    Database.GridHideResources = EditorGraphics.HideResources;
+                    if (EditorGraphics.LightColor != null)
                     {
-                        if (Grid[x, y].mapnum > -1 && Database.LoadMapCacheLegacy(Grid[x, y].mapnum,
-                            Grid[x, y].revision) != null)
-                        {
-                            Database.SaveMapCache(Grid[x, y].mapnum, Grid[x, y].revision, null);
-                        }
+                        Database.GridLightColor = System.Drawing.Color.FromArgb(EditorGraphics.LightColor.A, EditorGraphics.LightColor.R, EditorGraphics.LightColor.G, EditorGraphics.LightColor.B).ToArgb();
+                    }
+                    else
+                    {
+                        Database.GridLightColor = System.Drawing.Color.FromArgb(255,255,255,255).ToArgb();
                     }
                 }
+                else
+                {
+                    Database.GridHideOverlay = true;
+                    Database.GridHideDarkness = true;
+                    Database.GridHideFog = true;
+                    Database.GridHideResources = false;
+                    Database.GridLightColor = System.Drawing.Color.White.ToArgb();
+                }
+                Database.SaveGridOptions();
+                Database.ClearAllMapCache();
+
             }
             //Get a list of maps without images.
             for (int x = 0; x < GridWidth; x++)
@@ -375,6 +424,7 @@ namespace Intersect_Editor.Classes.Maps
                                         _contextMenu.Show(mapGridView, new System.Drawing.Point(x, y));
                                         _dropDownUnlinkItem.Visible = false;
                                         _dropDownLinkItem.Visible = true;
+                                        _recacheMapItem.Visible = false;
                                     }
                                 }
                                 else
@@ -382,6 +432,7 @@ namespace Intersect_Editor.Classes.Maps
                                     _contextMap = Grid[_currentCellX - 1, _currentCellY - 1];
                                     _contextMenu.Show(mapGridView, new System.Drawing.Point(x, y));
                                     _dropDownUnlinkItem.Visible = true;
+                                    _recacheMapItem.Visible = true;
                                     _dropDownLinkItem.Visible = false;
                                 }
                             }
@@ -403,38 +454,57 @@ namespace Intersect_Editor.Classes.Maps
             }
 
         }
+
+        private void _recacheMapItem_Click(object sender, EventArgs e)
+        {
+            if (_contextMap != null && _contextMap.mapnum > -1)
+            {
+                //Fetch and screenshot this singular map
+                Database.SaveMapCache(_contextMap.mapnum, _contextMap.revision, null);
+                if (MapInstance.GetMap(_contextMap.mapnum) != null) MapInstance.GetMap(_contextMap.mapnum).Delete();
+                Globals.MapsToFetch = new List<int>() { _contextMap.mapnum };
+                PacketSender.SendNeedMap(_contextMap.mapnum);
+            }
+        }
+
         private void LinkMapItem_Click(object sender, EventArgs e)
         {
-            //Make sure the selected tile is adjacent to a map
-            int linkMap = (int)((ToolStripItem)sender).Tag;
-            int adjacentMap = -1;
-            //Check Left
-            if (_currentCellX > 1 && _currentCellY != 0 && _currentCellY - 1 < GridHeight)
+            frmWarpSelection frmWarpSelection = new frmWarpSelection();
+            frmWarpSelection.InitForm(false, LinkMaps);
+            frmWarpSelection.ShowDialog();
+            if (frmWarpSelection.GetResult())
             {
-                if (Grid[_currentCellX - 2, _currentCellY - 1].mapnum > -1)
-                    adjacentMap = Grid[_currentCellX - 2, _currentCellY - 1].mapnum;
-            }
-            //Check Right
-            if (_currentCellX < GridWidth && _currentCellY != 0 && _currentCellY - 1 < GridHeight)
-            {
-                if (Grid[_currentCellX, _currentCellY - 1].mapnum > -1)
-                    adjacentMap = Grid[_currentCellX, _currentCellY - 1].mapnum;
-            }
-            //Check Up
-            if (_currentCellX != 0 && _currentCellY > 1 && _currentCellX - 1 < GridWidth)
-            {
-                if (Grid[_currentCellX - 1, _currentCellY - 2].mapnum > -1)
-                    adjacentMap = Grid[_currentCellX - 1, _currentCellY - 2].mapnum;
-            }
-            //Check Down
-            if (_currentCellX != 0 && _currentCellY < GridHeight && _currentCellX - 1 < GridWidth)
-            {
-                if (Grid[_currentCellX - 1, _currentCellY].mapnum > -1)
-                    adjacentMap = Grid[_currentCellX - 1, _currentCellY].mapnum;
-            }
-            if (adjacentMap != -1)
-            {
-                PacketSender.SendLinkMap(adjacentMap, linkMap, _currentCellX - 1, _currentCellY - 1);
+                //Make sure the selected tile is adjacent to a map
+                int linkMap = frmWarpSelection.GetMap();
+                int adjacentMap = -1;
+                //Check Left
+                if (_currentCellX > 1 && _currentCellY != 0 && _currentCellY - 1 < GridHeight)
+                {
+                    if (Grid[_currentCellX - 2, _currentCellY - 1].mapnum > -1)
+                        adjacentMap = Grid[_currentCellX - 2, _currentCellY - 1].mapnum;
+                }
+                //Check Right
+                if (_currentCellX < GridWidth && _currentCellY != 0 && _currentCellY - 1 < GridHeight)
+                {
+                    if (Grid[_currentCellX, _currentCellY - 1].mapnum > -1)
+                        adjacentMap = Grid[_currentCellX, _currentCellY - 1].mapnum;
+                }
+                //Check Up
+                if (_currentCellX != 0 && _currentCellY > 1 && _currentCellX - 1 < GridWidth)
+                {
+                    if (Grid[_currentCellX - 1, _currentCellY - 2].mapnum > -1)
+                        adjacentMap = Grid[_currentCellX - 1, _currentCellY - 2].mapnum;
+                }
+                //Check Down
+                if (_currentCellX != 0 && _currentCellY < GridHeight && _currentCellX - 1 < GridWidth)
+                {
+                    if (Grid[_currentCellX - 1, _currentCellY].mapnum > -1)
+                        adjacentMap = Grid[_currentCellX - 1, _currentCellY].mapnum;
+                }
+                if (adjacentMap != -1)
+                {
+                    PacketSender.SendLinkMap(adjacentMap, linkMap, _currentCellX - 1, _currentCellY - 1);
+                }
             }
         }
 
@@ -499,15 +569,21 @@ namespace Intersect_Editor.Classes.Maps
 
         public MapGridItem GetItemAt(int mouseX, int mouseY)
         {
-            for (int x = 0; x < GridWidth; x++)
+            if (Loaded)
             {
-                for (int y = 0; y < GridHeight; y++)
+                lock (texLock)
                 {
-                    //Figure out if this texture should be loaded
-                    if (new Rectangle(ContentRect.X + (x + 1) * TileWidth, ContentRect.Y + (y + 1) * TileHeight, TileWidth,
-                        TileHeight).Contains(new System.Drawing.Point(mouseX, mouseY)) && Grid[x, y] != null)
+                    for (int x = 0; x < GridWidth; x++)
                     {
-                        return Grid[x, y];
+                        for (int y = 0; y < GridHeight; y++)
+                        {
+                            //Figure out if this texture should be loaded
+                            if (new Rectangle(ContentRect.X + (x + 1) * TileWidth, ContentRect.Y + (y + 1) * TileHeight, TileWidth,
+                                TileHeight).Contains(new System.Drawing.Point(mouseX, mouseY)) && Grid[x, y] != null)
+                            {
+                                return Grid[x, y];
+                            }
+                        }
                     }
                 }
             }
@@ -538,7 +614,7 @@ namespace Intersect_Editor.Classes.Maps
                 }
                 textures.Clear();
                 freeTextures.Clear();
-                if (Grid != null)
+                if (Grid != null && Loaded)
                 {
                     for (int x = 0; x < GridWidth; x++)
                     {

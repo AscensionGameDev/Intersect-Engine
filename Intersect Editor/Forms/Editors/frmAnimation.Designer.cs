@@ -45,7 +45,6 @@
             this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.groupBox8 = new System.Windows.Forms.GroupBox();
             this.btnLowerClone = new System.Windows.Forms.Button();
-            this.lightEditorLower = new Intersect_Editor.Forms.Controls.LightEditorCtrl();
             this.groupBox5 = new System.Windows.Forms.GroupBox();
             this.btnPlayLower = new System.Windows.Forms.Button();
             this.scrlLowerFrame = new System.Windows.Forms.HScrollBar();
@@ -71,7 +70,6 @@
             this.scrlUpperLoopCount = new System.Windows.Forms.HScrollBar();
             this.groupBox7 = new System.Windows.Forms.GroupBox();
             this.btnUpperClone = new System.Windows.Forms.Button();
-            this.lightEditorUpper = new Intersect_Editor.Forms.Controls.LightEditorCtrl();
             this.lblUpperLoopCount = new System.Windows.Forms.Label();
             this.scrlUpperFrameDuration = new System.Windows.Forms.HScrollBar();
             this.lblUpperFrameDuration = new System.Windows.Forms.Label();
@@ -89,6 +87,8 @@
             this.btnCancel = new System.Windows.Forms.Button();
             this.btnSave = new System.Windows.Forms.Button();
             this.pnlContainer = new System.Windows.Forms.Panel();
+            this.lightEditorUpper = new Intersect_Editor.Forms.Controls.LightEditorCtrl();
+            this.lightEditorLower = new Intersect_Editor.Forms.Controls.LightEditorCtrl();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -284,14 +284,6 @@
             this.btnLowerClone.UseVisualStyleBackColor = true;
             this.btnLowerClone.Click += new System.EventHandler(this.btnLowerClone_Click);
             // 
-            // lightEditorLower
-            // 
-            this.lightEditorLower.Location = new System.Drawing.Point(6, 28);
-            this.lightEditorLower.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.lightEditorLower.Name = "lightEditorLower";
-            this.lightEditorLower.Size = new System.Drawing.Size(253, 323);
-            this.lightEditorLower.TabIndex = 15;
-            // 
             // groupBox5
             // 
             this.groupBox5.Controls.Add(this.btnPlayLower);
@@ -340,11 +332,9 @@
             this.scrlLowerLoopCount.LargeChange = 1;
             this.scrlLowerLoopCount.Location = new System.Drawing.Point(7, 395);
             this.scrlLowerLoopCount.Maximum = 10;
-            this.scrlLowerLoopCount.Minimum = 1;
             this.scrlLowerLoopCount.Name = "scrlLowerLoopCount";
             this.scrlLowerLoopCount.Size = new System.Drawing.Size(197, 17);
             this.scrlLowerLoopCount.TabIndex = 13;
-            this.scrlLowerLoopCount.Value = 1;
             this.scrlLowerLoopCount.Scroll += new System.Windows.Forms.ScrollEventHandler(this.scrlLowerLoopCount_Scroll);
             // 
             // lblLowerLoopCount
@@ -354,7 +344,7 @@
             this.lblLowerLoopCount.Name = "lblLowerLoopCount";
             this.lblLowerLoopCount.Size = new System.Drawing.Size(74, 13);
             this.lblLowerLoopCount.TabIndex = 12;
-            this.lblLowerLoopCount.Text = "Loop Count: 1";
+            this.lblLowerLoopCount.Text = "Loop Count: 0";
             // 
             // scrlLowerFrameDuration
             // 
@@ -540,11 +530,9 @@
             this.scrlUpperLoopCount.LargeChange = 1;
             this.scrlUpperLoopCount.Location = new System.Drawing.Point(6, 395);
             this.scrlUpperLoopCount.Maximum = 10;
-            this.scrlUpperLoopCount.Minimum = 1;
             this.scrlUpperLoopCount.Name = "scrlUpperLoopCount";
             this.scrlUpperLoopCount.Size = new System.Drawing.Size(197, 17);
             this.scrlUpperLoopCount.TabIndex = 25;
-            this.scrlUpperLoopCount.Value = 1;
             this.scrlUpperLoopCount.Scroll += new System.Windows.Forms.ScrollEventHandler(this.scrlUpperLoopCount_Scroll);
             // 
             // groupBox7
@@ -568,14 +556,6 @@
             this.btnUpperClone.UseVisualStyleBackColor = true;
             this.btnUpperClone.Click += new System.EventHandler(this.btnUpperClone_Click);
             // 
-            // lightEditorUpper
-            // 
-            this.lightEditorUpper.Location = new System.Drawing.Point(6, 28);
-            this.lightEditorUpper.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.lightEditorUpper.Name = "lightEditorUpper";
-            this.lightEditorUpper.Size = new System.Drawing.Size(253, 323);
-            this.lightEditorUpper.TabIndex = 15;
-            // 
             // lblUpperLoopCount
             // 
             this.lblUpperLoopCount.AutoSize = true;
@@ -583,7 +563,7 @@
             this.lblUpperLoopCount.Name = "lblUpperLoopCount";
             this.lblUpperLoopCount.Size = new System.Drawing.Size(74, 13);
             this.lblUpperLoopCount.TabIndex = 24;
-            this.lblUpperLoopCount.Text = "Loop Count: 1";
+            this.lblUpperLoopCount.Text = "Loop Count: 0";
             // 
             // scrlUpperFrameDuration
             // 
@@ -738,6 +718,22 @@
             this.pnlContainer.Size = new System.Drawing.Size(988, 537);
             this.pnlContainer.TabIndex = 21;
             this.pnlContainer.Visible = false;
+            // 
+            // lightEditorUpper
+            // 
+            this.lightEditorUpper.Location = new System.Drawing.Point(6, 28);
+            this.lightEditorUpper.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.lightEditorUpper.Name = "lightEditorUpper";
+            this.lightEditorUpper.Size = new System.Drawing.Size(253, 323);
+            this.lightEditorUpper.TabIndex = 15;
+            // 
+            // lightEditorLower
+            // 
+            this.lightEditorLower.Location = new System.Drawing.Point(6, 28);
+            this.lightEditorLower.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.lightEditorLower.Name = "lightEditorLower";
+            this.lightEditorLower.Size = new System.Drawing.Size(253, 323);
+            this.lightEditorLower.TabIndex = 15;
             // 
             // frmAnimation
             // 

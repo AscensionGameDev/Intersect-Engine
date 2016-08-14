@@ -87,24 +87,6 @@ namespace Intersect_Client.Classes.Maps
         {
         }
 
-        //Loading
-        //public override bool Load(byte[] packet)
-        //{
-        //    bool result = false;
-        //    Dictionary<int, MapStruct> gameMaps = Globals.GameMaps.ToDictionary(k => k.Key, v => (MapStruct)v.Value);
-        //    HideActiveAnimations();
-        //    if (base.Load(packet))
-        //    {
-        //        MapLoaded = true;
-        //        Autotiles = new MapAutotiles(this);
-        //        Autotiles.InitAutotiles(gameMaps);
-        //        UpdateAdjacentAutotiles();
-        //        CreateMapSounds();
-        //        MapRendered = false;
-        //    }
-        //    return result;
-        //}
-
         //LEGACY -- REMOVE WHEN SERIALIZATION IS WORKING!
         //Load
         public void Load(byte[] packet)
@@ -113,8 +95,6 @@ namespace Intersect_Client.Classes.Maps
             base.Load(packet);
             MapLoaded = true;
             Autotiles = new MapAutotiles(this);
-            Autotiles.InitAutotiles(MapBase.GetObjects());
-            UpdateAdjacentAutotiles();
             CreateMapSounds();
             MapRendered = false;
         }
@@ -172,80 +152,33 @@ namespace Intersect_Client.Classes.Maps
             return false;
         }
 
-        //Autotile Logic
-        private void UpdateAdjacentAutotiles()
+        //Helper Functions
+        public MapBase[,] GenerateAutotileGrid()
         {
-            if (GetMap(Up) != null)
+            MapBase[,] mapBase = new MapBase[3, 3];
+            if (Globals.MapGrid != null)
             {
-                GetMap(Up).UpdateAutotiles(Directions.Down);
-            }
-            if (GetMap(Down) != null)
-            {
-                GetMap(Down).UpdateAutotiles(Directions.Up);
-            }
-            if (GetMap(Left) != null)
-            {
-                GetMap(Left).UpdateAutotiles(Directions.Right);
-            }
-            if (GetMap(Right) != null)
-            {
-                GetMap(Right).UpdateAutotiles(Directions.Left);
-            }
-        }
-
-        public void UpdateAutotiles(Directions dir)
-        {
-            var changed = false;
-            switch (dir)
-            {
-                case Directions.Up:
-                    for (int x = 0; x < Options.MapWidth; x++)
+                for (int x = -1; x <= 1; x++)
+                {
+                    for (int y = -1; y <= 1; y++)
                     {
-                        for (int y = 0; y < 1; y++)
+                        var x1 = MapGridX + x;
+                        var y1 = MapGridY + y;
+                        if (x1 >= 0 && y1 >= 0 && x1 < Globals.MapGridWidth && y1 < Globals.MapGridHeight)
                         {
-                            var result = Autotiles.UpdateAutoTiles(x, y, MapBase.GetObjects());
-                            if (result) changed = true;
+                            if (x == 0 && y == 0)
+                            {
+                                mapBase[x + 1, y + 1] = this;
+                            }
+                            else
+                            {
+                                mapBase[x + 1, y + 1] = MapInstance.GetMap(Globals.MapGrid[x1, y1]);
+                            }
                         }
                     }
-                    break;
-                case Directions.Down:
-                    for (int x = 0; x < Options.MapWidth; x++)
-                    {
-                        for (int y = Options.MapHeight - 1; y < Options.MapHeight; y++)
-                        {
-                            var result = Autotiles.UpdateAutoTiles(x, y, MapBase.GetObjects());
-                            if (result) changed = true;
-                        }
-                    }
-                    break;
-                case Directions.Left:
-                    for (int x = 0; x < 1; x++)
-                    {
-                        for (int y = 0; y < Options.MapHeight; y++)
-                        {
-                            var result = Autotiles.UpdateAutoTiles(x, y, MapBase.GetObjects());
-                            if (result) changed = true;
-                        }
-                    }
-                    break;
-                case Directions.Right:
-                    for (int x = Options.MapWidth - 1; x < Options.MapWidth; x++)
-                    {
-                        for (int y = 0; y < Options.MapHeight; y++)
-                        {
-                            var result = Autotiles.UpdateAutoTiles(x, y, MapBase.GetObjects());
-                            if (result) changed = true;
-                        }
-                    }
-                    break;
-                default:
-                    break;
+                }
             }
-            if (changed && Globals.Database.RenderCaching)
-            {
-                //Ditch whatever we have pre-rendered and try again?
-                _reRenderMap = true;
-            }
+            return mapBase;
         }
 
         //Retreives the X Position of the Left side of the map in world space.

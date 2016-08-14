@@ -200,5 +200,10 @@ namespace Intersect_Client_MonoGame.Classes.SFML.Input
                 lastMouseState = new MouseState();
             }
         }
+
+        public override void OpenKeyboard(KeyboardType type, string text, bool autoCorrection, bool multiLine, bool secure)
+        {
+            return; //no on screen keyboard for pc clients
+        }
     }
 }

@@ -349,8 +349,8 @@ namespace Intersect_Client.Classes.Entities
             {
                 return null;
             }
-            var gridX = MapInstance.GetMap(CurrentMap).MapGridX;
-            var gridY = MapInstance.GetMap(CurrentMap).MapGridY;
+            var gridX = MapInstance.GetMap(Globals.Me.CurrentMap).MapGridX;
+            var gridY = MapInstance.GetMap(Globals.Me.CurrentMap).MapGridY;
             for (int x = gridX - 1; x <= gridX + 1; x++)
             {
                 for (int y = gridY - 1; y <= gridY + 1; y++)

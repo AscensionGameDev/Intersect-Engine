@@ -111,6 +111,7 @@ namespace Intersect_Editor.Classes
         //Preview Fetching Variables
         public static bool FetchingMapPreviews = false;
         public static List<int> MapsToFetch;
+        public static List<int> MapsToScreenshot = new List<int>();
         public static int FetchCount;
         public static frmProgress PreviewProgressForm;
 

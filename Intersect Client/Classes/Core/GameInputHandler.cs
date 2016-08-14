@@ -87,6 +87,7 @@ namespace Intersect_Client.Classes.Core
                 }
                 else if (key == Keys.F2)
                 {
+                    if (Globals.GameState != GameStates.InGame) return;
                     Gui.GameUI.ShowHideDebug();
                 }
                 else if (key == Keys.Enter || key == Keys.Return)

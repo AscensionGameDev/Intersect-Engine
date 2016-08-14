@@ -154,6 +154,10 @@ namespace Intersect_Server.Classes.Entities
                                                 CallStack.Peek().ListIndex]
                                                 .Commands[CallStack.Peek().CommandIndex]);
                                     }
+                                    else
+                                    {
+                                        break;
+                                    }
                                 }
                                 if (CallStack.Count == 0)
                                 {
@@ -379,18 +383,21 @@ namespace Intersect_Server.Classes.Entities
 
         private string ParseEventText(string input)
         {
-            input = input.Replace("\\pn", MyClient.Entity.MyName);
-            input = input.Replace("\\en", PageInstance.MyName);
-            if (input.Contains("\\onlinecount") || input.Contains("\\onlinelist"))
+            if (MyClient != null && MyClient.Entity != null)
             {
-                var onlineList = Globals.GetOnlineList();
-                input = input.Replace("\\onlinecount", onlineList.Count.ToString());
-                var sb = new StringBuilder();
-                for (int i = 0; i < onlineList.Count; i++)
+                input = input.Replace("\\pn", MyClient.Entity.MyName);
+                input = input.Replace("\\en", PageInstance.MyName);
+                if (input.Contains("\\onlinecount") || input.Contains("\\onlinelist"))
                 {
-                    sb.Append(onlineList[i].MyName + (i != onlineList.Count - 1 ? ", " : ""));
+                    var onlineList = Globals.GetOnlineList();
+                    input = input.Replace("\\onlinecount", onlineList.Count.ToString());
+                    var sb = new StringBuilder();
+                    for (int i = 0; i < onlineList.Count; i++)
+                    {
+                        sb.Append(onlineList[i].MyName + (i != onlineList.Count - 1 ? ", " : ""));
+                    }
+                    input = input.Replace("\\onlinelist", sb.ToString());
                 }
-                input = input.Replace("\\onlinelist", sb.ToString());
             }
             return input;
         }

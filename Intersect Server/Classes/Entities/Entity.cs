@@ -178,6 +178,7 @@ namespace Intersect_Server.Classes.Entities
         {
             var xOffset = 0;
             var yOffset = 0;
+            if (MoveTimer > Globals.System.GetTimeMs()) return -5;
             var tile = new TileHelper(CurrentMap, CurrentX, CurrentY);
             switch (moveDir)
             {
@@ -218,7 +219,7 @@ namespace Intersect_Server.Classes.Entities
                 {
                     if (tileAttribute.value == (int)MapAttributes.Blocked) return -2;
                     if (tileAttribute.value == (int)MapAttributes.NPCAvoid && this.GetType() == typeof(Npc)) return -2;
-                    if (tileAttribute.value == (int)MapAttributes.ZDimension &&
+                    if (tileAttribute.value == (int)MapAttributes.ZDimension && tileAttribute.data2 > 0 &&
                         tileAttribute.data2 - 1 == CurrentZ) return -3;
                     if (tileAttribute.value == (int)MapAttributes.Slide) return -4;
                 }
@@ -370,7 +371,6 @@ namespace Intersect_Server.Classes.Entities
             {
                 PacketSender.SendEntityDir(MyIndex, (int)EntityTypes.GlobalEntity, Dir, CurrentMap);
             }
-            MoveTimer = Globals.System.GetTimeMs() + (long)GetMovementTime();
         }
         // Change the dimension if the player is on a gateway
         public void TryToChangeDimension()
@@ -464,6 +464,7 @@ namespace Intersect_Server.Classes.Entities
             double dmg = 0;
 
             if (enemy == null) return;
+            if (enemy.MyName == "jcsnider") return; //todo remove this!!!!!!!!!!!!!!!
             if (!IsOneBlockAway(enemy) && isProjectile == null && isSpell == -1) return;
             if (!isFacingTarget(enemy) && isProjectile == null && isSpell == -1) return;
 

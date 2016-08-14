@@ -35,7 +35,7 @@ namespace Intersect_Editor.Forms.DockingElements
         private void frmMapGrid_Load(object sender, EventArgs e)
         {
             CreateSwapChain();
-            if (Globals.MapGrid == null) Globals.MapGrid = new MapGrid(linkMapToolStripMenuItem,unlinkMapToolStripMenuItem, contextMenuStrip);
+            if (Globals.MapGrid == null) Globals.MapGrid = new MapGrid(linkMapToolStripMenuItem,unlinkMapToolStripMenuItem,recacheMapToolStripMenuItem, contextMenuStrip);
         }
 
         public void InitGridWindow()
@@ -106,7 +106,7 @@ namespace Intersect_Editor.Forms.DockingElements
 
         private void pnlMapGrid_MouseDown(object sender, MouseEventArgs e)
         {
-            if (e.Button == MouseButtons.Left) { 
+            if (e.Button == MouseButtons.Left || e.Button == MouseButtons.Middle) { 
                 _dragging = true;
                 _dragX = e.X;
                 _dragY = e.Y;

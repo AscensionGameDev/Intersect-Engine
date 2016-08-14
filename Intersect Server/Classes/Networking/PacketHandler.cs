@@ -318,11 +318,17 @@ namespace Intersect_Server.Classes.Networking
             if (Globals.Entities[index].CanMove(dir) == -1)
             {
                 Globals.Entities[index].Move(dir, client, false);
+                Globals.Entities[index].TryToChangeDimension();
                 if (Globals.Entities[index].MoveTimer > Globals.System.GetTimeMs())
                 {
                     Globals.Entities[index].MoveTimer = Globals.System.GetTimeMs() +
                                                         (long) (Globals.Entities[index].GetMovementTime()/2f);
                 }
+            }
+            else
+            {
+                PacketSender.SendEntityPositionTo(client, client.Entity);
+                return;
             }
             if (map != client.Entity.CurrentMap || x != client.Entity.CurrentX || y != client.Entity.CurrentY)
             {
@@ -419,7 +425,7 @@ namespace Intersect_Server.Classes.Networking
                 var players = new List<Player>();
                 foreach (var surrMap in map.GetSurroundingMaps(true))
                 {
-                    players.AddRange(map.GetPlayersOnMap().ToArray());
+                    players.AddRange(surrMap.GetPlayersOnMap().ToArray());
                 }
                 foreach (var player in players)
                 {
@@ -444,6 +450,7 @@ namespace Intersect_Server.Classes.Networking
                 tmpMap = MapInstance.GetMap(newMap);
                 Database.SaveGameObject(tmpMap);
                 Database.GenerateMapGrids();
+                tmpMap.UpdateSurroundingTiles();
                 PacketSender.SendMap(client, newMap);
                 PacketSender.SendMapGrid(client, tmpMap.MapGrid);
                 //FolderDirectory parent = null;
@@ -486,7 +493,7 @@ namespace Intersect_Server.Classes.Networking
                 switch (location)
                 {
                     case 0:
-                        if (MapInstance.GetMap(relativeMap).Up == -1)
+                        if (MapInstance.GetMap(MapInstance.GetMap(relativeMap).Up) == null)
                         {
                             newMap = Database.AddGameObject(GameObject.Map).GetId();
                             tmpMap = MapInstance.GetMap(newMap);
@@ -499,7 +506,7 @@ namespace Intersect_Server.Classes.Networking
                         break;
 
                     case 1:
-                        if (MapInstance.GetMap(relativeMap).Down == -1)
+                        if (MapInstance.GetMap(MapInstance.GetMap(relativeMap).Down) == null)
                         {
                             newMap = Database.AddGameObject(GameObject.Map).GetId();
                             tmpMap = MapInstance.GetMap(newMap);
@@ -511,7 +518,7 @@ namespace Intersect_Server.Classes.Networking
                         break;
 
                     case 2:
-                        if (MapInstance.GetMap(relativeMap).Left == -1)
+                        if (MapInstance.GetMap(MapInstance.GetMap(relativeMap).Left) == null)
                         {
                             newMap = Database.AddGameObject(GameObject.Map).GetId();
                             tmpMap = MapInstance.GetMap(newMap);
@@ -523,7 +530,7 @@ namespace Intersect_Server.Classes.Networking
                         break;
 
                     case 3:
-                        if (MapInstance.GetMap(relativeMap).Right == -1)
+                        if (MapInstance.GetMap(MapInstance.GetMap(relativeMap).Right) == null)
                         {
                             newMap = Database.AddGameObject(GameObject.Map).GetId();
                             tmpMap = MapInstance.GetMap(newMap);
@@ -588,6 +595,7 @@ namespace Intersect_Server.Classes.Networking
 
                     Database.SaveGameObject(tmpMap);
                     Database.GenerateMapGrids();
+                    MapInstance.GetMap(newMap).UpdateSurroundingTiles();
                     PacketSender.SendMap(client, newMap);
                     PacketSender.SendMapGrid(client, MapInstance.GetMap(newMap).MapGrid);
                     PacketSender.SendEnterMap(client, newMap);
@@ -1389,6 +1397,7 @@ namespace Intersect_Server.Classes.Networking
                         if (MapInstance.GetObjects().ContainsKey(curMap))
                         {
                             mapGrid = MapInstance.GetMap(curMap).MapGrid;
+                            MapInstance.GetMap(curMap).UpdateSurroundingTiles();
                         }
                     }
                     PacketSender.SendMapGrid(client, mapGrid);
@@ -1511,7 +1520,9 @@ namespace Intersect_Server.Classes.Networking
                                 }
                             }
                         }
+                        Database.SaveGameObject(MapInstance.GetMap(linkMap));
                         Database.GenerateMapGrids();
+                        MapInstance.GetMap(linkMap).UpdateSurroundingTiles();
                         PacketSender.SendMapGrid(client, MapInstance.GetMap(adjacentMap).MapGrid);
                     }
                 }

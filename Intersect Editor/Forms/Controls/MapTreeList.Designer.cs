@@ -47,11 +47,14 @@
             this.list.TabIndex = 1;
             this.list.BeforeLabelEdit += new System.Windows.Forms.NodeLabelEditEventHandler(this.treeMapList_BeforeLabelEdit);
             this.list.AfterLabelEdit += new System.Windows.Forms.NodeLabelEditEventHandler(this.treeMapList_AfterLabelEdit);
+            this.list.AfterCollapse += new System.Windows.Forms.TreeViewEventHandler(this.list_AfterCollapse);
+            this.list.AfterExpand += new System.Windows.Forms.TreeViewEventHandler(this.list_AfterExpand);
             this.list.ItemDrag += new System.Windows.Forms.ItemDragEventHandler(this.treeMapList_ItemDrag);
             this.list.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.treeMapList_AfterSelect);
             this.list.NodeMouseDoubleClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.treeMapList_NodeMouseDoubleClick);
             this.list.DragDrop += new System.Windows.Forms.DragEventHandler(this.treeMapList_DragDrop);
             this.list.DragEnter += new System.Windows.Forms.DragEventHandler(this.treeMapList_DragEnter);
+            this.list.DragOver += new System.Windows.Forms.DragEventHandler(this.list_DragOver);
             this.list.MouseDown += new System.Windows.Forms.MouseEventHandler(this.treeMapList_MouseDown);
             // 
             // imageList

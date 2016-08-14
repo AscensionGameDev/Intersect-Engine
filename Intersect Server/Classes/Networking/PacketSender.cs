@@ -111,13 +111,22 @@ namespace Intersect_Server.Classes.Networking
                 MapData = MapInstance.GetMap(mapNum).GetEditorMapData();
                 bf.WriteLong(MapData.Length);
                 bf.WriteBytes(MapData);
+                bf.WriteInteger(MapInstance.GetMap(mapNum).MapGridX);
+                bf.WriteInteger(MapInstance.GetMap(mapNum).MapGridY);
             }
             else
             {
+                if (client.SentMaps.ContainsKey(mapNum))
+                {
+                    if (client.SentMaps[mapNum].Item1 > Globals.System.GetTimeMs() &&
+                        client.SentMaps[mapNum].Item2 == MapInstance.GetMap(mapNum).Revision) return;
+                }
+                client.SentMaps.Add(mapNum, new Tuple<long, int>(Globals.System.GetTimeMs() + 5000, MapInstance.GetMap(mapNum).Revision));
                 MapData = MapInstance.GetMap(mapNum).GetClientMapData();
                 bf.WriteLong(MapData.Length);
                 bf.WriteBytes(MapData);
                 bf.WriteInteger(MapInstance.GetMap(mapNum).Revision);
+                bf.WriteBytes(MapInstance.GetMap(mapNum).Autotiles.GetData());
                 bf.WriteInteger(MapInstance.GetMap(mapNum).MapGridX);
                 bf.WriteInteger(MapInstance.GetMap(mapNum).MapGridY);
                 if (Options.GameBorderStyle == 1)
@@ -181,13 +190,6 @@ namespace Intersect_Server.Classes.Networking
                 {
                     MapInstance.GetMap(mapNum).SendMapEntitiesTo(client.Entity);
                 }
-            }
-            else if (client == null)
-            {
-                MapInstance.GetMap(mapNum).SendMapEntitiesTo(client.Entity);
-                SendDataToProximity(mapNum, bf.ToArray());
-                SendMapItemsToProximity(mapNum);
-                SendDataToEditors(bf.ToArray());
             }
             bf.Dispose();
         }

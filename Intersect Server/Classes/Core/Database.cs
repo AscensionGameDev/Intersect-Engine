@@ -1777,6 +1777,12 @@ namespace Intersect_Server.Classes.Core
             GenerateMapGrids();
             LoadMapFolders();
             CheckAllMapConnections();
+
+            var maps = MapInstance.GetObjects();
+            foreach (var map in maps)
+            {
+                map.Value.InitAutotiles();
+            }
         }
         private static void OnClassesLoaded()
         {

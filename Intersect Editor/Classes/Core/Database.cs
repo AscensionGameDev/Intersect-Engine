@@ -47,6 +47,19 @@ namespace Intersect_Editor.Classes
         private const string MAP_CACHE_REVISION = "revision";
         private const string MAP_CACHE_DATA = "data";
 
+        //Options Constants
+        private const string OPTION_TABLE = "options";
+        private const string OPTION_ID = "id";
+        private const string OPTION_NAME = "name";
+        private const string OPTION_VALUE = "value";
+
+        //Grid Variables
+        public static bool GridHideDarkness = false;
+        public static bool GridHideFog = false;
+        public static bool GridHideOverlay = false;
+        public static bool GridHideResources = false;
+        public static int GridLightColor = System.Drawing.Color.White.ToArgb();
+
         //Options File
         public static bool LoadOptions()
         {
@@ -275,13 +288,94 @@ namespace Intersect_Editor.Classes
                 _dbConnection = new SqliteConnection("Data Source=" + DbFilename + ",Version=3");
                 _dbConnection.Open();
             }
+            GridHideDarkness = GetOptionBool("HideDarkness");
+            GridHideFog = GetOptionBool("HideFog");
+            GridHideOverlay = GetOptionBool("HideOverlay");
+            GridLightColor = GetOptionInt("LightColor");
+            GridHideResources = GetOptionBool("HideResources");
         }
 
         private static void CreateDatabase()
         {
             _dbConnection = new SqliteConnection("Data Source=" + DbFilename + ",Version=3,New=True");
             _dbConnection.Open();
+            CreateOptionsTable();
             CreateMapCacheTable();
+        }
+
+        public static void CreateOptionsTable()
+        {
+            var cmd = "CREATE TABLE " + OPTION_TABLE + " ("
+                        + OPTION_ID + " INTEGER PRIMARY KEY,"
+                        + OPTION_NAME + " TEXT UNIQUE,"
+                        + OPTION_VALUE + " TEXT"
+                        + ");";
+            using (var createCommand = _dbConnection.CreateCommand())
+            {
+                createCommand.CommandText = cmd;
+                createCommand.ExecuteNonQuery();
+            }
+        }
+
+        public static void SaveGridOptions()
+        {
+            SaveOption("HideDarkness", GridHideDarkness.ToString());
+            SaveOption("HideFog", GridHideFog.ToString());
+            SaveOption("HideOverlay", GridHideOverlay.ToString());
+            SaveOption("HideResources", GridHideResources.ToString());
+            SaveOption("LightColor", GridLightColor.ToString());
+        }
+
+        public static void SaveOption(string name, string value)
+        {
+            var query = "INSERT OR REPLACE into " + OPTION_TABLE + " (" + OPTION_NAME + "," +
+                              OPTION_VALUE + ")" + " VALUES " + " (@" +
+                              OPTION_NAME + ",@" + OPTION_VALUE + ");";
+            using (SqliteCommand cmd = new SqliteCommand(query, _dbConnection))
+            {
+                cmd.Parameters.Add(new SqliteParameter("@" + OPTION_NAME, name));
+                cmd.Parameters.Add(new SqliteParameter("@" + OPTION_VALUE, value.ToString()));
+                cmd.ExecuteNonQuery();
+            }
+        }
+
+        public static string GetOptionStr(string name)
+        {
+            var query = "SELECT * from " + OPTION_TABLE + " WHERE " + OPTION_NAME + "=@" + OPTION_NAME + ";";
+            using (SqliteCommand cmd = new SqliteCommand(query, _dbConnection))
+            {
+                cmd.Parameters.Add(new SqliteParameter("@" + OPTION_NAME, name));
+                var dataReader = cmd.ExecuteReader();
+                while (dataReader.Read())
+                {
+                    if (dataReader[OPTION_VALUE].GetType() != typeof(System.DBNull))
+                    {
+                        var data = (string)dataReader[OPTION_VALUE];
+                        return data;
+                    }
+                }
+            }
+            return "";
+        }
+
+        public static int GetOptionInt(string name)
+        {
+            var opt = GetOptionStr(name);
+            if (opt != "")
+            {
+                return Convert.ToInt32(opt);
+            }
+            return -1;
+        }
+
+        public static bool GetOptionBool(string name)
+        {
+            var opt = GetOptionStr(name);
+            if (opt != "")
+            {
+                return Convert.ToBoolean(opt);
+            }
+            return false;
         }
 
         public static void CreateMapCacheTable()
@@ -392,6 +486,16 @@ namespace Intersect_Editor.Classes
                 {
                     cmd.Parameters.Add(new SqliteParameter("@" + MAP_CACHE_DATA, null));
                 }
+                cmd.ExecuteNonQuery();
+            }
+        }
+
+        public static void ClearAllMapCache()
+        {
+            var query = "UPDATE " + MAP_CACHE_TABLE + " SET " + MAP_CACHE_DATA + " = @" + MAP_CACHE_DATA;
+            using (SqliteCommand cmd = new SqliteCommand(query, _dbConnection))
+            {
+                cmd.Parameters.Add(new SqliteParameter("@" + MAP_CACHE_DATA, null));
                 cmd.ExecuteNonQuery();
             }
         }

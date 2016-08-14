@@ -589,7 +589,17 @@ namespace Intersect_Editor.Forms
                 picSprite.Visible = true;
 
                 cmbTransform.SelectedIndex = cmbTransform.FindString(_editorItem.Data5);
-                if (cmbTransform.SelectedIndex > 0) { picSprite.BackgroundImage = Bitmap.FromFile("resources/entities/" + cmbTransform.Text); }
+                if (cmbTransform.SelectedIndex > 0)
+                {
+                    Bitmap bmp = new Bitmap(picSprite.Width, picSprite.Height);
+                    var g = Graphics.FromImage(bmp);
+                    Image src = Bitmap.FromFile("resources/entities/" + cmbTransform.Text);
+                    g.DrawImage(src, new Rectangle(picSprite.Width / 2 - src.Width / 8, picSprite.Height / 2 - src.Height / 8, src.Width / 4, src.Height / 4),
+                        new Rectangle(0, 0, src.Width / 4, src.Height / 4), GraphicsUnit.Pixel);
+                    g.Dispose();
+                    src.Dispose();
+                    picSprite.BackgroundImage = bmp;
+                }
                 else { picSprite.BackgroundImage = null; }
             }
         }
@@ -648,7 +658,17 @@ namespace Intersect_Editor.Forms
         private void cmbTransform_SelectedIndexChanged(object sender, EventArgs e)
         {
             _editorItem.Data5 = cmbTransform.Text;
-            if (cmbTransform.SelectedIndex > 0) { picSprite.BackgroundImage = Bitmap.FromFile("resources/entities/" + cmbTransform.Text); }
+            if (cmbTransform.SelectedIndex > 0)
+            {
+                Bitmap bmp = new Bitmap(picSprite.Width, picSprite.Height);
+                var g = Graphics.FromImage(bmp);
+                Image src = Bitmap.FromFile("resources/entities/" + cmbTransform.Text);
+                g.DrawImage(src, new Rectangle(picSprite.Width/2 - src.Width/8, picSprite.Height/2 - src.Height/8, src.Width/4,src.Height/4),
+                    new Rectangle(0, 0, src.Width/4, src.Height/4), GraphicsUnit.Pixel);
+                g.Dispose();
+                src.Dispose();
+                picSprite.BackgroundImage = bmp;
+            }
             else { picSprite.BackgroundImage = null; }
         }
 

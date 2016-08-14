@@ -65,6 +65,7 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_1
         public void Upgrade()
         {
             //Upgrade Steps
+            ServerOptions.LoadOptions();
             CreateCharacterQuestsTable();
             CreateLogsTable();
             CreateBansTable();

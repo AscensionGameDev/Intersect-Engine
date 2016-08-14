@@ -36,10 +36,11 @@
             this.downloadMissingPreviewsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.reDownloadAllPreviewsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.btnGridView = new System.Windows.Forms.ToolStripButton();
+            this.btnScreenshotWorld = new System.Windows.Forms.ToolStripButton();
             this.contextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.unlinkMapToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.linkMapToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.btnScreenshotWorld = new System.Windows.Forms.ToolStripButton();
+            this.recacheMapToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStrip1.SuspendLayout();
             this.contextMenuStrip.SuspendLayout();
             this.SuspendLayout();
@@ -112,26 +113,6 @@
             this.btnGridView.Text = "Show/Hide Grid Lines";
             this.btnGridView.Click += new System.EventHandler(this.btnGridView_Click);
             // 
-            // contextMenuStrip
-            // 
-            this.contextMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.unlinkMapToolStripMenuItem,
-            this.linkMapToolStripMenuItem});
-            this.contextMenuStrip.Name = "mapMenuStrip";
-            this.contextMenuStrip.Size = new System.Drawing.Size(136, 48);
-            // 
-            // unlinkMapToolStripMenuItem
-            // 
-            this.unlinkMapToolStripMenuItem.Name = "unlinkMapToolStripMenuItem";
-            this.unlinkMapToolStripMenuItem.Size = new System.Drawing.Size(135, 22);
-            this.unlinkMapToolStripMenuItem.Text = "Unlink Map";
-            // 
-            // linkMapToolStripMenuItem
-            // 
-            this.linkMapToolStripMenuItem.Name = "linkMapToolStripMenuItem";
-            this.linkMapToolStripMenuItem.Size = new System.Drawing.Size(135, 22);
-            this.linkMapToolStripMenuItem.Text = "Link Map";
-            // 
             // btnScreenshotWorld
             // 
             this.btnScreenshotWorld.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
@@ -141,6 +122,33 @@
             this.btnScreenshotWorld.Size = new System.Drawing.Size(23, 22);
             this.btnScreenshotWorld.Text = "Take a world screenshot";
             this.btnScreenshotWorld.Click += new System.EventHandler(this.btnScreenshotWorld_Click);
+            // 
+            // contextMenuStrip
+            // 
+            this.contextMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.unlinkMapToolStripMenuItem,
+            this.linkMapToolStripMenuItem,
+            this.recacheMapToolStripMenuItem});
+            this.contextMenuStrip.Name = "mapMenuStrip";
+            this.contextMenuStrip.Size = new System.Drawing.Size(146, 70);
+            // 
+            // unlinkMapToolStripMenuItem
+            // 
+            this.unlinkMapToolStripMenuItem.Name = "unlinkMapToolStripMenuItem";
+            this.unlinkMapToolStripMenuItem.Size = new System.Drawing.Size(145, 22);
+            this.unlinkMapToolStripMenuItem.Text = "Unlink Map";
+            // 
+            // linkMapToolStripMenuItem
+            // 
+            this.linkMapToolStripMenuItem.Name = "linkMapToolStripMenuItem";
+            this.linkMapToolStripMenuItem.Size = new System.Drawing.Size(145, 22);
+            this.linkMapToolStripMenuItem.Text = "Link Map";
+            // 
+            // recacheMapToolStripMenuItem
+            // 
+            this.recacheMapToolStripMenuItem.Name = "recacheMapToolStripMenuItem";
+            this.recacheMapToolStripMenuItem.Size = new System.Drawing.Size(145, 22);
+            this.recacheMapToolStripMenuItem.Text = "Recache Map";
             // 
             // frmMapGrid
             // 
@@ -177,5 +185,6 @@
         private System.Windows.Forms.ToolStripMenuItem unlinkMapToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem linkMapToolStripMenuItem;
         private System.Windows.Forms.ToolStripButton btnScreenshotWorld;
+        private System.Windows.Forms.ToolStripMenuItem recacheMapToolStripMenuItem;
     }
 }

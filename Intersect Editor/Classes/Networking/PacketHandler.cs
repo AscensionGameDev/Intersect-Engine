@@ -133,6 +133,10 @@ namespace Intersect_Editor.Classes
             }
             MapInstance.AddObject(mapNum, map);
             map.Load(mapData);
+            map.MapGridX = bf.ReadInteger();
+            map.MapGridY = bf.ReadInteger();
+            map.InitAutotiles();
+            map.UpdateAdjacentAutotiles();
             if (!Globals.InEditor && Globals.HasGameData)
             {
                 Globals.CurrentMap = map;
@@ -143,16 +147,7 @@ namespace Intersect_Editor.Classes
                 if (Globals.FetchingMapPreviews || Globals.CurrentMap == map)
                 {
                     int currentmap = Globals.CurrentMap.GetId();
-                    if (Database.LoadMapCacheLegacy(mapNum,MapInstance.GetMap(mapNum).Revision) == null)
-                    {
-                        Globals.CurrentMap = MapInstance.GetMap(mapNum);
-                        using (var ms = new MemoryStream())
-                        {
-                            RenderTarget2D screenshotTexture = EditorGraphics.ScreenShotMap(true);
-                            screenshotTexture.SaveAsPng(ms, screenshotTexture.Width, screenshotTexture.Height);
-                            Database.SaveMapCache(mapNum, MapInstance.GetMap(mapNum).Revision, ms.ToArray());
-                        }
-                    }
+                    if (Database.LoadMapCacheLegacy(mapNum,map.Revision) == null && !Globals.MapsToScreenshot.Contains(mapNum)) Globals.MapsToScreenshot.Add(mapNum);
                     if (Globals.FetchingMapPreviews)
                     {
                         if (Globals.MapsToFetch.Contains(mapNum))
@@ -171,15 +166,16 @@ namespace Intersect_Editor.Classes
                 }
                 if (mapNum != Globals.LoadingMap) return;
                 Globals.CurrentMap = MapInstance.GetMap(Globals.LoadingMap);
+                Globals.MapEditorWindow.InitMapEditor();
                 //TODO HANDLE DELETED MAP BEING SENT
                 //if (Globals.GameMaps[mapNum].Deleted == 1)
                 //{
                 //    Globals.CurrentMap = null;
-                    //Globals.MainForm.EnterMap(MapList.GetList().FindFirstMap());
+                //Globals.MainForm.EnterMap(MapList.GetList().FindFirstMap());
                 //}
                 //else
                 //{
-                    Globals.MapPropertiesWindow.Init(Globals.CurrentMap);
+                Globals.MapPropertiesWindow.Init(Globals.CurrentMap);
                     if (Globals.MapEditorWindow.picMap.Visible) return;
                     Globals.MapEditorWindow.picMap.Visible = true;
                     if (map.Up > -1) { PacketSender.SendNeedMap(map.Up); }
@@ -187,6 +183,20 @@ namespace Intersect_Editor.Classes
                     if (map.Left > -1) { PacketSender.SendNeedMap(map.Left); }
                     if (map.Right > -1) { PacketSender.SendNeedMap(map.Right); }
                 //}
+            }
+            if (Globals.CurrentMap.MyMapNum == mapNum && Globals.MapGrid != null && Globals.MapGrid.Loaded)
+            {
+                for (int y = Globals.CurrentMap.MapGridY + 1; y >= Globals.CurrentMap.MapGridY - 1; y--)
+                {
+                    for (int x = Globals.CurrentMap.MapGridX - 1; x <= Globals.CurrentMap.MapGridX + 1; x++)
+                    {
+                        if (x >= 0 && x < Globals.MapGrid.GridWidth && y >= 0 && y < Globals.MapGrid.GridHeight)
+                        {
+                            var needMap = MapInstance.GetMap(Globals.MapGrid.Grid[x, y].mapnum);
+                            if (needMap == null && Globals.MapGrid.Grid[x, y].mapnum > -1) PacketSender.SendNeedMap(Globals.MapGrid.Grid[x, y].mapnum);
+                        }
+                    }
+                }
             }
         }
 
@@ -216,7 +226,7 @@ namespace Intersect_Editor.Classes
             {
                 Globals.MainForm.EnterMap(MapList.GetList().FindFirstMap());
             }
-            Globals.MapListWindow.BeginInvoke(Globals.MapListWindow.mapTreeList.MapListDelegate,-1);
+            Globals.MapListWindow.BeginInvoke(Globals.MapListWindow.mapTreeList.MapListDelegate,new object[] {-1,null});
             bf.Dispose();
         }
 
@@ -233,7 +243,24 @@ namespace Intersect_Editor.Classes
         {
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
-            if (Globals.MapGrid != null) Globals.MapGrid.Load(bf);
+            if (Globals.MapGrid != null)
+            {
+                Globals.MapGrid.Load(bf);
+                if (Globals.CurrentMap != null &&  Globals.MapGrid != null && Globals.MapGrid.Loaded)
+                {
+                    for (int y = Globals.CurrentMap.MapGridY + 1; y >= Globals.CurrentMap.MapGridY - 1; y--)
+                    {
+                        for (int x = Globals.CurrentMap.MapGridX - 1; x <= Globals.CurrentMap.MapGridX + 1; x++)
+                        {
+                            if (x >= 0 && x < Globals.MapGrid.GridWidth && y >= 0 && y < Globals.MapGrid.GridHeight)
+                            {
+                                var needMap = MapInstance.GetMap(Globals.MapGrid.Grid[x, y].mapnum);
+                                if (needMap == null && Globals.MapGrid.Grid[x, y].mapnum > -1) PacketSender.SendNeedMap(Globals.MapGrid.Grid[x, y].mapnum);
+                            }
+                        }
+                    }
+                }
+            }
             bf.Dispose();
         }
 

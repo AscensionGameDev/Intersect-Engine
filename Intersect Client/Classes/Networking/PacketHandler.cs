@@ -261,6 +261,7 @@ namespace Intersect_Client.Classes.Networking
             {
                 GameAudio.PlayMusic(newMap.Music, 3, 3, true);
             }
+            newMap.Autotiles.LoadData(bf);
             newMap.MapGridX = bf.ReadInteger();
             newMap.MapGridY = bf.ReadInteger();
             newMap.HoldLeft = bf.ReadInteger();

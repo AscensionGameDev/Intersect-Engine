@@ -37,13 +37,7 @@ namespace Intersect_Library.GameObjects.Maps
         public MapAutotiles(MapBase map)
         {
             _myMap = map;
-        }
-
-        public void InitAutotiles(Dictionary<int, MapBase> gameMaps)
-        {
             Autotile = new AutoTileCls[Options.MapWidth, Options.MapHeight];
-
-
             for (var x = 0; x < Options.MapWidth; x++)
             {
                 for (var y = 0; y < Options.MapHeight; y++)
@@ -142,6 +136,51 @@ namespace Intersect_Library.GameObjects.Maps
             AutoSe[4].X = (2 * Options.TileWidth) - (Options.TileWidth / 2);
             AutoSe[4].Y = (2 * Options.TileHeight) + (Options.TileHeight / 2);
 
+
+        }
+
+        public byte[] GetData()
+        {
+            ByteBuffer bf = new ByteBuffer();
+            for (var x = 0; x < Options.MapWidth; x++)
+            {
+                for (var y = 0; y < Options.MapHeight; y++)
+                {
+                    for (var i = 0; i < Options.LayerCount; i++)
+                    {
+                        bf.WriteByte(Autotile[x, y].Layer[i].RenderState);
+                        for (int z = 0; z < 5; z++)
+                        {
+                            bf.WriteInteger(Autotile[x, y].Layer[i].QuarterTile[z].X);
+                            bf.WriteInteger(Autotile[x, y].Layer[i].QuarterTile[z].Y);
+                        }
+                    }
+                }
+            }
+            return bf.ToArray();
+        }
+
+        public void LoadData(ByteBuffer bf)
+        {
+            for (var x = 0; x < Options.MapWidth; x++)
+            {
+                for (var y = 0; y < Options.MapHeight; y++)
+                {
+                    for (var i = 0; i < Options.LayerCount; i++)
+                    {
+                        Autotile[x, y].Layer[i].RenderState = bf.ReadByte();
+                        for (int z = 0; z < 5; z++)
+                        {
+                            Autotile[x, y].Layer[i].QuarterTile[z].X = bf.ReadInteger();
+                            Autotile[x, y].Layer[i].QuarterTile[z].Y = bf.ReadInteger();
+                        }
+                    }
+                }
+            }
+        }
+
+        public void InitAutotiles(MapBase[,] surroundingMaps)
+        {
             for (var i = 0; i < Options.LayerCount; i++)
             {
                 for (var x = 0; x < Options.MapWidth; x++)
@@ -149,7 +188,7 @@ namespace Intersect_Library.GameObjects.Maps
                     for (var y = 0; y < Options.MapHeight; y++)
                     {
                         // calculate the subtile positions and place them
-                        CalculateAutotile(x, y, i, gameMaps);
+                        CalculateAutotile(x, y, i, surroundingMaps);
                         // cache the rendering state of the tiles and set them
                         CacheRenderState(x, y, i);
                     }
@@ -157,7 +196,7 @@ namespace Intersect_Library.GameObjects.Maps
             }
         }
 
-        public bool UpdateAutoTiles(int x, int y, Dictionary<int, MapBase> gameMaps)
+        public bool UpdateAutoTiles(int x, int y, MapBase[,] surroundingMaps)
         {
             var changed = false;
             for (var x1 = x - 1; x1 < x + 2; x1++)
@@ -176,7 +215,7 @@ namespace Intersect_Library.GameObjects.Maps
                     for (int i = 0; i < Options.LayerCount; i++)
                     {
                         // calculate the subtile positions and place them
-                        CalculateAutotile(x1, y1, i, gameMaps);
+                        CalculateAutotile(x1, y1, i, surroundingMaps);
                         // cache the rendering state of the tiles and set them
                         CacheRenderState(x1, y1, i);
                     }
@@ -186,7 +225,7 @@ namespace Intersect_Library.GameObjects.Maps
             return changed;
         }
 
-        public void UpdateAutoTiles(int x, int y, int layer,  Dictionary<int, MapBase> gameMaps)
+        public void UpdateAutoTiles(int x, int y, int layer, MapBase[,] surroundingMaps)
         {
             for (var x1 = x - 1; x1 < x + 2; x1++)
             {
@@ -201,7 +240,7 @@ namespace Intersect_Library.GameObjects.Maps
                         continue;
                     }
                     // calculate the subtile positions and place them
-                    CalculateAutotile(x1, y1, layer, gameMaps);
+                    CalculateAutotile(x1, y1, layer, surroundingMaps);
                     // cache the rendering state of the tiles and set them
                     CacheRenderState(x1, y1, layer);
                 }
@@ -233,7 +272,7 @@ namespace Intersect_Library.GameObjects.Maps
             }
         }
 
-        public void CalculateAutotile(int x, int y, int layerNum, Dictionary<int, MapBase> gameMaps)
+        public void CalculateAutotile(int x, int y, int layerNum, MapBase[,] surroundingMaps)
         {
             // Right, so we//ve split the tile block in to an easy to remember
             // collection of letters. We now need to do the calculations to find
@@ -255,64 +294,64 @@ namespace Intersect_Library.GameObjects.Maps
                 case AutotileNormal:
                 case AutotileAnim:
                     // North West Quarter
-                    CalculateNW_Normal(layerNum, x, y, gameMaps);
+                    CalculateNW_Normal(layerNum, x, y, surroundingMaps);
 
                     // North East Quarter
-                    CalculateNE_Normal(layerNum, x, y, gameMaps);
+                    CalculateNE_Normal(layerNum, x, y, surroundingMaps);
 
                     // South West Quarter
-                    CalculateSW_Normal(layerNum, x, y, gameMaps);
+                    CalculateSW_Normal(layerNum, x, y, surroundingMaps);
 
                     // South East Quarter
-                    CalculateSE_Normal(layerNum, x, y, gameMaps);
+                    CalculateSE_Normal(layerNum, x, y, surroundingMaps);
                     break;
 
                 // Cliff
                 case AutotileCliff:
                     // North West Quarter
-                    CalculateNW_Cliff(layerNum, x, y, gameMaps);
+                    CalculateNW_Cliff(layerNum, x, y, surroundingMaps);
 
                     // North East Quarter
-                    CalculateNE_Cliff(layerNum, x, y, gameMaps);
+                    CalculateNE_Cliff(layerNum, x, y, surroundingMaps);
 
                     // South West Quarter
-                    CalculateSW_Cliff(layerNum, x, y, gameMaps);
+                    CalculateSW_Cliff(layerNum, x, y, surroundingMaps);
 
                     // South East Quarter
-                    CalculateSE_Cliff(layerNum, x, y, gameMaps);
+                    CalculateSE_Cliff(layerNum, x, y, surroundingMaps);
                     break;
 
                 // Waterfalls
                 case AutotileWaterfall:
                     // North West Quarter
-                    CalculateNW_Waterfall(layerNum, x, y, gameMaps);
+                    CalculateNW_Waterfall(layerNum, x, y, surroundingMaps);
 
                     // North East Quarter
-                    CalculateNE_Waterfall(layerNum, x, y, gameMaps);
+                    CalculateNE_Waterfall(layerNum, x, y, surroundingMaps);
 
                     // South West Quarter
-                    CalculateSW_Waterfall(layerNum, x, y, gameMaps);
+                    CalculateSW_Waterfall(layerNum, x, y, surroundingMaps);
 
                     // South East Quarter
-                    CalculateSE_Waterfall(layerNum, x, y, gameMaps);
+                    CalculateSE_Waterfall(layerNum, x, y, surroundingMaps);
                     break;
             }
         }
 
         // Normal autotiling
-        public void CalculateNW_Normal(int layerNum, int x, int y, Dictionary<int, MapBase> gameMaps)
+        public void CalculateNW_Normal(int layerNum, int x, int y, MapBase[,] surroundingMaps)
         {
             var tmpTile = new bool[4];
             byte situation = 1;
 
             // North West
-            if (CheckTileMatch(layerNum, x, y, x - 1, y - 1, gameMaps)) { tmpTile[1] = true; }
+            if (CheckTileMatch(layerNum, x, y, x - 1, y - 1, surroundingMaps)) { tmpTile[1] = true; }
 
             // North
-            if (CheckTileMatch(layerNum, x, y, x, y - 1, gameMaps)) { tmpTile[2] = true; }
+            if (CheckTileMatch(layerNum, x, y, x, y - 1, surroundingMaps)) { tmpTile[2] = true; }
 
             // West
-            if (CheckTileMatch(layerNum, x, y, x - 1, y, gameMaps)) { tmpTile[3] = true; }
+            if (CheckTileMatch(layerNum, x, y, x - 1, y, surroundingMaps)) { tmpTile[3] = true; }
 
             // Calculate Situation - Inner
             if (!tmpTile[2] && !tmpTile[3]) { situation = AutoTileInner; }
@@ -346,19 +385,19 @@ namespace Intersect_Library.GameObjects.Maps
             }
         }
 
-        public void CalculateNE_Normal(int layerNum, int x, int y, Dictionary<int, MapBase> gameMaps)
+        public void CalculateNE_Normal(int layerNum, int x, int y, MapBase[,] surroundingMaps)
         {
             var tmpTile = new bool[4];
             byte situation = 1;
 
             // North
-            if (CheckTileMatch(layerNum, x, y, x, y - 1, gameMaps)) { tmpTile[1] = true; }
+            if (CheckTileMatch(layerNum, x, y, x, y - 1, surroundingMaps)) { tmpTile[1] = true; }
 
             // North East
-            if (CheckTileMatch(layerNum, x, y, x + 1, y - 1, gameMaps)) { tmpTile[2] = true; }
+            if (CheckTileMatch(layerNum, x, y, x + 1, y - 1, surroundingMaps)) { tmpTile[2] = true; }
 
             // East
-            if (CheckTileMatch(layerNum, x, y, x + 1, y, gameMaps)) { tmpTile[3] = true; }
+            if (CheckTileMatch(layerNum, x, y, x + 1, y, surroundingMaps)) { tmpTile[3] = true; }
 
             // Calculate Situation - Inner
             if (!tmpTile[1] && !tmpTile[3]) { situation = AutoTileInner; }
@@ -392,19 +431,19 @@ namespace Intersect_Library.GameObjects.Maps
             }
         }
 
-        public void CalculateSW_Normal(int layerNum, int x, int y, Dictionary<int, MapBase> gameMaps)
+        public void CalculateSW_Normal(int layerNum, int x, int y, MapBase[,] surroundingMaps)
         {
             var tmpTile = new bool[4];
             byte situation = 1;
 
             // West
-            if (CheckTileMatch(layerNum, x, y, x - 1, y, gameMaps)) { tmpTile[1] = true; }
+            if (CheckTileMatch(layerNum, x, y, x - 1, y, surroundingMaps)) { tmpTile[1] = true; }
 
             // South West
-            if (CheckTileMatch(layerNum, x, y, x - 1, y + 1, gameMaps)) { tmpTile[2] = true; }
+            if (CheckTileMatch(layerNum, x, y, x - 1, y + 1, surroundingMaps)) { tmpTile[2] = true; }
 
             // South
-            if (CheckTileMatch(layerNum, x, y, x, y + 1, gameMaps)) { tmpTile[3] = true; }
+            if (CheckTileMatch(layerNum, x, y, x, y + 1, surroundingMaps)) { tmpTile[3] = true; }
 
             // Calculate Situation - Inner
             if (!tmpTile[1] && !tmpTile[3]) { situation = AutoTileInner; }
@@ -438,19 +477,19 @@ namespace Intersect_Library.GameObjects.Maps
             }
         }
 
-        public void CalculateSE_Normal(int layerNum, int x, int y, Dictionary<int, MapBase> gameMaps)
+        public void CalculateSE_Normal(int layerNum, int x, int y, MapBase[,] surroundingMaps)
         {
             var tmpTile = new bool[4];
             byte situation = 1;
 
             // South
-            if (CheckTileMatch(layerNum, x, y, x, y + 1, gameMaps)) { tmpTile[1] = true; }
+            if (CheckTileMatch(layerNum, x, y, x, y + 1, surroundingMaps)) { tmpTile[1] = true; }
 
             // South East
-            if (CheckTileMatch(layerNum, x, y, x + 1, y + 1, gameMaps)) { tmpTile[2] = true; }
+            if (CheckTileMatch(layerNum, x, y, x + 1, y + 1, surroundingMaps)) { tmpTile[2] = true; }
 
             // East
-            if (CheckTileMatch(layerNum, x, y, x + 1, y, gameMaps)) { tmpTile[3] = true; }
+            if (CheckTileMatch(layerNum, x, y, x + 1, y, surroundingMaps)) { tmpTile[3] = true; }
 
             // Calculate Situation - Inner
             if (!tmpTile[1] && !tmpTile[3]) { situation = AutoTileInner; }
@@ -485,9 +524,9 @@ namespace Intersect_Library.GameObjects.Maps
         }
 
         // Waterfall autotiling
-        public void CalculateNW_Waterfall(int layerNum, int x, int y, Dictionary<int, MapBase> gameMaps)
+        public void CalculateNW_Waterfall(int layerNum, int x, int y, MapBase[,] surroundingMaps)
         {
-            var tmpTile = CheckTileMatch(layerNum, x, y, x - 1, y, gameMaps);
+            var tmpTile = CheckTileMatch(layerNum, x, y, x - 1, y, surroundingMaps);
 
             // Actually place the subtile
             if (tmpTile)
@@ -502,9 +541,9 @@ namespace Intersect_Library.GameObjects.Maps
             }
         }
 
-        public void CalculateNE_Waterfall(int layerNum, int x, int y, Dictionary<int, MapBase> gameMaps)
+        public void CalculateNE_Waterfall(int layerNum, int x, int y, MapBase[,] surroundingMaps)
         {
-            var tmpTile = CheckTileMatch(layerNum, x, y, x + 1, y, gameMaps);
+            var tmpTile = CheckTileMatch(layerNum, x, y, x + 1, y, surroundingMaps);
 
             // Actually place the subtile
             if (tmpTile)
@@ -519,9 +558,9 @@ namespace Intersect_Library.GameObjects.Maps
             }
         }
 
-        public void CalculateSW_Waterfall(int layerNum, int x, int y, Dictionary<int, MapBase> gameMaps)
+        public void CalculateSW_Waterfall(int layerNum, int x, int y, MapBase[,] surroundingMaps)
         {
-            var tmpTile = CheckTileMatch(layerNum, x, y, x - 1, y, gameMaps);
+            var tmpTile = CheckTileMatch(layerNum, x, y, x - 1, y, surroundingMaps);
 
             // Actually place the subtile
             if (tmpTile)
@@ -536,9 +575,9 @@ namespace Intersect_Library.GameObjects.Maps
             }
         }
 
-        public void CalculateSE_Waterfall(int layerNum, int x, int y, Dictionary<int, MapBase> gameMaps)
+        public void CalculateSE_Waterfall(int layerNum, int x, int y, MapBase[,] surroundingMaps)
         {
-            var tmpTile = CheckTileMatch(layerNum, x, y, x + 1, y, gameMaps);
+            var tmpTile = CheckTileMatch(layerNum, x, y, x + 1, y, surroundingMaps);
 
             // Actually place the subtile
             if (tmpTile)
@@ -554,19 +593,19 @@ namespace Intersect_Library.GameObjects.Maps
         }
 
         // Clif (f autotiling
-        public void CalculateNW_Cliff(int layerNum, int x, int y, Dictionary<int, MapBase> gameMaps)
+        public void CalculateNW_Cliff(int layerNum, int x, int y, MapBase[,] surroundingMaps)
         {
             var tmpTile = new bool[4];
             byte situation = 1;
 
             // North West
-            if (CheckTileMatch(layerNum, x, y, x - 1, y - 1, gameMaps)) { tmpTile[1] = true; }
+            if (CheckTileMatch(layerNum, x, y, x - 1, y - 1, surroundingMaps)) { tmpTile[1] = true; }
 
             // North
-            if (CheckTileMatch(layerNum, x, y, x, y - 1, gameMaps)) { tmpTile[2] = true; }
+            if (CheckTileMatch(layerNum, x, y, x, y - 1, surroundingMaps)) { tmpTile[2] = true; }
 
             // West
-            if (CheckTileMatch(layerNum, x, y, x - 1, y, gameMaps)) { tmpTile[3] = true; }
+            if (CheckTileMatch(layerNum, x, y, x - 1, y, surroundingMaps)) { tmpTile[3] = true; }
 
             // Calculate Situation - Horizontal
             if (!tmpTile[2] && tmpTile[3]) { situation = AutoTileHorizontal; }
@@ -595,19 +634,19 @@ namespace Intersect_Library.GameObjects.Maps
             }
         }
 
-        public void CalculateNE_Cliff(int layerNum, int x, int y, Dictionary<int, MapBase> gameMaps)
+        public void CalculateNE_Cliff(int layerNum, int x, int y, MapBase[,] surroundingMaps)
         {
             var tmpTile = new bool[4];
             byte situation = 1;
 
             // North
-            if (CheckTileMatch(layerNum, x, y, x, y - 1, gameMaps)) { tmpTile[1] = true; }
+            if (CheckTileMatch(layerNum, x, y, x, y - 1, surroundingMaps)) { tmpTile[1] = true; }
 
             // North East
-            if (CheckTileMatch(layerNum, x, y, x + 1, y - 1, gameMaps)) { tmpTile[2] = true; }
+            if (CheckTileMatch(layerNum, x, y, x + 1, y - 1, surroundingMaps)) { tmpTile[2] = true; }
 
             // East
-            if (CheckTileMatch(layerNum, x, y, x + 1, y, gameMaps)) { tmpTile[3] = true; }
+            if (CheckTileMatch(layerNum, x, y, x + 1, y, surroundingMaps)) { tmpTile[3] = true; }
 
             // Calculate Situation - Horizontal
             if (!tmpTile[1] && tmpTile[3]) { situation = AutoTileHorizontal; }
@@ -636,19 +675,19 @@ namespace Intersect_Library.GameObjects.Maps
             }
         }
 
-        public void CalculateSW_Cliff(int layerNum, int x, int y, Dictionary<int, MapBase> gameMaps)
+        public void CalculateSW_Cliff(int layerNum, int x, int y, MapBase[,] surroundingMaps)
         {
             var tmpTile = new bool[4];
             byte situation = 1;
 
             // West
-            if (CheckTileMatch(layerNum, x, y, x - 1, y, gameMaps)) { tmpTile[1] = true; }
+            if (CheckTileMatch(layerNum, x, y, x - 1, y, surroundingMaps)) { tmpTile[1] = true; }
 
             // South West
-            if (CheckTileMatch(layerNum, x, y, x - 1, y + 1, gameMaps)) { tmpTile[2] = true; }
+            if (CheckTileMatch(layerNum, x, y, x - 1, y + 1, surroundingMaps)) { tmpTile[2] = true; }
 
             // South
-            if (CheckTileMatch(layerNum, x, y, x, y + 1, gameMaps)) { tmpTile[3] = true; }
+            if (CheckTileMatch(layerNum, x, y, x, y + 1, surroundingMaps)) { tmpTile[3] = true; }
 
             // Calculate Situation - Horizontal
             if (tmpTile[1] && !tmpTile[3]) { situation = AutoTileHorizontal; }
@@ -677,19 +716,19 @@ namespace Intersect_Library.GameObjects.Maps
             }
         }
 
-        public void CalculateSE_Cliff(int layerNum, int x, int y, Dictionary<int, MapBase> gameMaps)
+        public void CalculateSE_Cliff(int layerNum, int x, int y, MapBase[,] surroundingMaps)
         {
             var tmpTile = new bool[4];
             byte situation = 1;
 
             // South
-            if (CheckTileMatch(layerNum, x, y, x, y + 1, gameMaps)) { tmpTile[1] = true; }
+            if (CheckTileMatch(layerNum, x, y, x, y + 1, surroundingMaps)) { tmpTile[1] = true; }
 
             // South East
-            if (CheckTileMatch(layerNum, x, y, x + 1, y + 1, gameMaps)) { tmpTile[2] = true; }
+            if (CheckTileMatch(layerNum, x, y, x + 1, y + 1, surroundingMaps)) { tmpTile[2] = true; }
 
             // East
-            if (CheckTileMatch(layerNum, x, y, x + 1, y, gameMaps)) { tmpTile[3] = true; }
+            if (CheckTileMatch(layerNum, x, y, x + 1, y, surroundingMaps)) { tmpTile[3] = true; }
 
             // Calculate Situation -  Horizontal
             if (!tmpTile[1] && tmpTile[3]) { situation = AutoTileHorizontal; }
@@ -718,102 +757,41 @@ namespace Intersect_Library.GameObjects.Maps
             }
         }
 
-        public bool CheckTileMatch(int layerNum, int x1, int y1, int x2, int y2, Dictionary<int, MapBase> gameMaps)
+        public bool CheckTileMatch(int layerNum, int x1, int y1, int x2, int y2, MapBase[,] surroundingMaps)
         {
             Tile targetTile;
             targetTile.TilesetIndex = -1;
             targetTile.X = -1;
             targetTile.Y = -1;
             targetTile.Autotile = 0;
-            // if ( it//s off the map ) { set it as autotile and exit out early
-            if (x2 < 0 || x2 >= Options.MapWidth || y2 < 0 || y2 >= Options.MapHeight)
+
+            int gridX = 0;
+            int gridY = 0;
+            if (x2 < 0)
             {
-                if (((x2 < 0 && y2 < 0)) || (x2 >= Options.MapWidth && y2 >= Options.MapHeight) || (x2 < 0 && y2 >= Options.MapHeight) || (x2 >= Options.MapWidth && y2 < 0))
-                {
-                    //Not gonna check diagonally
-                    return true;
-                }
-                MapBase otherMap;
-                if (x2 < 0)
-                {
-                    if (_myMap.Left > -1 && gameMaps.ContainsKey(_myMap.Left))
-                    {
-                        otherMap = gameMaps[_myMap.Left];
-                        if (otherMap != null)
-                        {
-                            targetTile = otherMap.Layers[layerNum].Tiles[Options.MapWidth + x2, y2];
-                        }
-                        else
-                        {
-                            return true;
-                        }
-                    }
-                    else
-                    {
-                        return true;
-                    }
-                }
-                else if (x2 >= Options.MapWidth)
-                {
-                    if (_myMap.Right > -1 && gameMaps.ContainsKey(_myMap.Right))
-                    {
-                        otherMap = gameMaps[_myMap.Right];
-                        if (otherMap != null)
-                        {
-                            targetTile = otherMap.Layers[layerNum].Tiles[x2 - Options.MapWidth, y2];
-                        }
-                        else
-                        {
-                            return true;
-                        }
-                    }
-                    else
-                    {
-                        return true;
-                    }
-                }
-                else if (y2 < 0)
-                {
-                    if (_myMap.Up > -1 && gameMaps.ContainsKey(_myMap.Up))
-                    {
-                        otherMap = gameMaps[_myMap.Up];
-                        if (otherMap != null)
-                        {
-                            targetTile = otherMap.Layers[layerNum].Tiles[x2, Options.MapHeight + y2];
-                        }
-                        else
-                        {
-                            return true;
-                        }
-                    }
-                    else
-                    {
-                        return true;
-                    }
-                }
-                else if (y2 >= Options.MapHeight)
-                {
-                    if (_myMap.Down > -1 && gameMaps.ContainsKey(_myMap.Down))
-                    {
-                        otherMap = gameMaps[_myMap.Down];
-                        if (otherMap != null)
-                        {
-                            targetTile = otherMap.Layers[layerNum].Tiles[x2, y2 - Options.MapHeight];
-                        }
-                        else
-                        {
-                            return true;
-                        }
-                    }
-                    else
-                    {
-                        return true;
-                    }
-                }
+                gridX = -1;
+                x2 += Options.MapWidth;
             }
-            else
+            if (y2 < 0)
             {
-                targetTile = _myMap.Layers[layerNum].Tiles[x2, y2];
+                gridY = -1;
+                y2 += Options.MapHeight;
+            }
+            if (x2 >= Options.MapWidth)
+            {
+                gridX = 1;
+                x2 -= Options.MapWidth;
+            }
+            if (y2 >= Options.MapHeight)
+            {
+                gridY = 1;
+                y2 -= Options.MapHeight;
+            }
+
+
+            if (surroundingMaps[gridX + 1, gridY + 1] != null)
+            {
+                targetTile = surroundingMaps[gridX + 1, gridY + 1].Layers[layerNum].Tiles[x2, y2];
             }
             var sourceTile = _myMap.Layers[layerNum].Tiles[x1, y1];
             if (targetTile.X == -1) return true;

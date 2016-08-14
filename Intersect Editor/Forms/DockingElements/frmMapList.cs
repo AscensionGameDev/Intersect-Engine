@@ -22,7 +22,7 @@ namespace Intersect_Editor.Forms
             if (e.Node.Tag.GetType() == typeof(MapListMap))
             {
                 //Should ask if the user wants to save changes
-                if (Globals.MapEditorWindow.MapUndoStates.Count > 0 && MessageBox.Show(@"Do you want to save your current map?", @"Save current map?", MessageBoxButtons.YesNo) == DialogResult.Yes)
+                if (Globals.CurrentMap.Changed() && MessageBox.Show(@"Do you want to save your current map?", @"Save current map?", MessageBoxButtons.YesNo) == DialogResult.Yes)
                 {
                     PacketSender.SendMap(Globals.CurrentMap.GetId());
                 }
@@ -83,7 +83,7 @@ namespace Intersect_Editor.Forms
             if (
                 MessageBox.Show(@"Are you sure you want to create a new, unconnected map?", @"New Map",
                     MessageBoxButtons.YesNo) != DialogResult.Yes) return;
-            if (MessageBox.Show(@"Do you want to save your current map?", @"Save current map?", MessageBoxButtons.YesNo) == DialogResult.Yes)
+            if (Globals.CurrentMap.Changed() && MessageBox.Show(@"Do you want to save your current map?", @"Save current map?", MessageBoxButtons.YesNo) == DialogResult.Yes)
             {
                 PacketSender.SendMap(Globals.CurrentMap.GetId());
             }
@@ -97,8 +97,9 @@ namespace Intersect_Editor.Forms
             }
         }
 
-
-       
-
+        private void toolSelectMap_Click(object sender, EventArgs e)
+        {
+            mapTreeList.UpdateMapList(Globals.CurrentMap.MyMapNum);
+        }
     }
 }

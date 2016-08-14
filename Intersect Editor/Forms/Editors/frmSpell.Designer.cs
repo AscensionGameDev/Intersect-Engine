@@ -910,6 +910,7 @@
             // picSprite
             // 
             this.picSprite.BackColor = System.Drawing.Color.Black;
+            this.picSprite.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
             this.picSprite.Location = new System.Drawing.Point(7, 142);
             this.picSprite.Name = "picSprite";
             this.picSprite.Size = new System.Drawing.Size(32, 32);

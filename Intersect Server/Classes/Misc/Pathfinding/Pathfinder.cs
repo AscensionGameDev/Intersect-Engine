@@ -40,17 +40,14 @@ namespace Intersect_Server.Classes.Misc
         private bool _pathFinding = false;
         private PathfinderTarget _target;
         private object _targetLock = new object();
-        private Thread _pathFindingThread;
+        private Task _pathFindingTask;
         private int _failures = 0;
+        private long _pathfingingTime = 0;
         public Pathfinder(Entity sourceEntity)
         {
             _sourceEntity = sourceEntity;
             _target = null;
-            //_pathFindingThread = new Thread(new ThreadStart(PathFind));
-            //_pathFindingThread.Priority = ThreadPriority.Lowest;
-            //_pathFindingThread.Name = "Pathfinding Thread";
-            //_pathFindingThread.Start();
-
+            _pathFindingTask = new Task(() => PathFind());
         }
 
         public PathfinderTarget GetTarget()
@@ -64,6 +61,17 @@ namespace Intersect_Server.Classes.Misc
             {
                 _directions.Clear();
                 _target = target;
+                if (_pathFindingTask.IsCompleted)
+                {
+                    _pathFindingTask.Dispose();
+                    _pathFindingTask = new Task(() => PathFind());
+                    _pathfingingTime = Globals.System.GetTimeMs() +
+                                       Globals.Rand.Next(_failures*1000 + 500, _failures*2000 + 500);
+                }
+                else
+                {
+                    if (_pathFindingTask.Status == TaskStatus.Created && Globals.System.GetTimeMs() > _pathfingingTime) _pathFindingTask.Start();
+                }
             }
         }
 
@@ -84,10 +92,8 @@ namespace Intersect_Server.Classes.Misc
             }
         }
 
-        private async void PathFind()
+        private void PathFind()
         {
-            do
-            {
                 var targetX = -1;
                 var targetY = -1;
                 var startX = -1;
@@ -307,8 +313,6 @@ namespace Intersect_Server.Classes.Misc
                         _failures++;
                     }
                 }
-                await Task.Delay(Globals.Rand.Next(_failures * 1000 + 500, _failures * 2000 + 500));
-            } while (true);
         }
 
         private static PathfinderPoint FindLowestF(IList<PathfinderPoint> openList)

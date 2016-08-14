@@ -39,6 +39,9 @@ namespace Intersect_Editor.Forms
         private int _currentMap = -1;
         private int _currentX;
         private int _currentY;
+        private List<int> _restrictMaps = null;
+        private bool _tileSelection = true;
+
 
         public frmWarpSelection()
         {
@@ -47,15 +50,26 @@ namespace Intersect_Editor.Forms
             pnlMap.Width = Options.TileWidth*Options.MapWidth;
             pnlMap.Height = Options.TileHeight*Options.MapHeight;
             pnlMap.BackColor = Color.Black;
-            mapTreeList1.SetDoubleClick(new TreeNodeMouseClickEventHandler(NodeDoubleClick));
+            mapTreeList1.SetClick(new TreeNodeMouseClickEventHandler(NodeDoubleClick));
+        }
+
+        public void InitForm(bool tileSelection = true, List<int> restrictMaps = null)
+        {
+            mapTreeList1.UpdateMapList(_currentMap,restrictMaps);
+            _restrictMaps = restrictMaps;
+            if (!tileSelection)
+            {
+                _tileSelection = false;
+                this.Text = "Map Selection";
+            }
         }
 
         private void NodeDoubleClick(object sender, TreeNodeMouseClickEventArgs e)
         {
-            if (e.Node.Tag.GetType() == typeof(MapListMap))
-            {
-                SelectTile(((MapListMap)e.Node.Tag).MapNum,_currentX,_currentY);
-            }
+                if (e.Node.Tag.GetType() == typeof(MapListMap))
+                {
+                    SelectTile(((MapListMap) e.Node.Tag).MapNum, _currentX, _currentY);
+                }
         }
 
         public void SelectTile(int mapNum, int x, int y)
@@ -63,7 +77,7 @@ namespace Intersect_Editor.Forms
             _currentMap = mapNum;
             _currentX = x;
             _currentY = y;
-            mapTreeList1.UpdateMapList(mapNum);
+            mapTreeList1.UpdateMapList(mapNum,_restrictMaps);
             UpdatePreview();
         }
 
@@ -80,9 +94,13 @@ namespace Intersect_Editor.Forms
                         System.Drawing.Graphics g = System.Drawing.Graphics.FromImage(newBitmap);
                         g.DrawImage(img, new Rectangle(0, 0, pnlMap.Width, pnlMap.Height),
                             new Rectangle(0, 0, pnlMap.Width, pnlMap.Height), GraphicsUnit.Pixel);
-                        g.DrawRectangle(new Pen(Color.White, 2f),
-                            new Rectangle(_currentX*Options.TileWidth, _currentY*Options.TileHeight, Options.TileWidth,
-                                Options.TileHeight));
+                        if (_tileSelection)
+                        {
+                            g.DrawRectangle(new Pen(Color.White, 2f),
+                                new Rectangle(_currentX*Options.TileWidth, _currentY*Options.TileHeight,
+                                    Options.TileWidth,
+                                    Options.TileHeight));
+                        }
                         g.Dispose();
                         pnlMap.BackgroundImage = newBitmap;
                         img.Dispose();
@@ -107,12 +125,12 @@ namespace Intersect_Editor.Forms
         private void chkChronological_CheckedChanged(object sender, EventArgs e)
         {
             mapTreeList1.Chronological = chkChronological.Checked;
-            mapTreeList1.UpdateMapList(_currentMap);
+            mapTreeList1.UpdateMapList(_currentMap, _restrictMaps);
         }
 
         private void frmWarpSelection_Load(object sender, EventArgs e)
         {
-            mapTreeList1.BeginInvoke(mapTreeList1.MapListDelegate,_currentMap);
+            mapTreeList1.BeginInvoke(mapTreeList1.MapListDelegate, new object[] { _currentMap, _restrictMaps });
             UpdatePreview();
         }
 
@@ -131,11 +149,13 @@ namespace Intersect_Editor.Forms
                     {
                         MapInstance oldMap = Globals.CurrentMap;
                         Globals.CurrentMap = MapInstance.GetMap(_currentMap);
-                        using (var ms = new MemoryStream())
+                        using (MemoryStream ms = new MemoryStream())
                         {
-                            RenderTarget2D screenshotTexture = EditorGraphics.ScreenShotMap(true);
-                            screenshotTexture.SaveAsPng(ms, screenshotTexture.Width, screenshotTexture.Height);
-                            Database.SaveMapCache(_currentMap, MapInstance.GetMap(MapInstance.GetMap(_currentMap).Revision).Revision, ms.ToArray());
+                            var screenshotTexture = EditorGraphics.ScreenShotMap();
+                            screenshotTexture.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
+                            ms.Close();
+
+                            Database.SaveMapCache(_currentMap, MapInstance.GetMap(_currentMap).Revision, ms.ToArray());
                         }
                         Globals.CurrentMap = oldMap;
                     }
