@@ -161,10 +161,12 @@
             this.Controls.Add(this.pnlMapGrid);
             this.DockAreas = WeifenLuo.WinFormsUI.Docking.DockAreas.Document;
             this.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.KeyPreview = true;
             this.Name = "frmMapGrid";
             this.Text = "Map Grid";
             this.DockStateChanged += new System.EventHandler(this.frmMapGrid_DockStateChanged);
             this.Load += new System.EventHandler(this.frmMapGrid_Load);
+            this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.frmMapGrid_KeyDown);
             this.toolStrip1.ResumeLayout(false);
             this.toolStrip1.PerformLayout();
             this.contextMenuStrip.ResumeLayout(false);

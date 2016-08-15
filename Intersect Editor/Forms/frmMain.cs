@@ -124,6 +124,41 @@ namespace Intersect_Editor.Forms
             {
                 toolStripBtnPaste_Click(null, null);
             }
+            var xDiff = 0;
+            var yDiff = 0;
+            if (e.KeyCode == Keys.W || e.KeyCode == Keys.Up)
+            {
+                yDiff -= 20;
+            }
+            if (e.KeyCode == Keys.S || e.KeyCode == Keys.Down)
+            {
+                yDiff += 20;
+            }
+            if (e.KeyCode == Keys.A || e.KeyCode == Keys.Left)
+            {
+                xDiff -= 20;
+            }
+            if (e.KeyCode == Keys.D || e.KeyCode == Keys.Right)
+            {
+                xDiff += 20;
+            }
+            if (xDiff != 0 || yDiff != 0)
+            {
+                EditorGraphics.CurrentView.X -= (xDiff);
+                EditorGraphics.CurrentView.Y -= (yDiff);
+                if (EditorGraphics.CurrentView.X > Options.MapWidth * Options.TileWidth)
+                    EditorGraphics.CurrentView.X = Options.MapWidth * Options.TileWidth;
+                if (EditorGraphics.CurrentView.Y > Options.MapHeight * Options.TileHeight)
+                    EditorGraphics.CurrentView.Y = Options.MapHeight * Options.TileHeight;
+                if (EditorGraphics.CurrentView.X - Globals.MapEditorWindow.picMap.Width < -Options.TileWidth * Options.MapWidth * 2)
+                {
+                    EditorGraphics.CurrentView.X = -Options.TileWidth * Options.MapWidth * 2 + Globals.MapEditorWindow.picMap.Width;
+                }
+                if (EditorGraphics.CurrentView.Y - Globals.MapEditorWindow.picMap.Height < -Options.TileHeight * Options.MapHeight * 2)
+                {
+                    EditorGraphics.CurrentView.Y = -Options.TileHeight * Options.MapHeight * 2 + Globals.MapEditorWindow.picMap.Height;
+                }
+            }
         }
         private void InitFormObjects()
         {

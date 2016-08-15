@@ -24,7 +24,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Intersect_Library
+namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_4.Intersect_Convert_Lib
 {
     public class ByteBuffer
     {
@@ -115,7 +115,7 @@ namespace Intersect_Library
                 _wasUpdated = false;
             }
             if (len == 0) return "";
-            var ret = Encoding.Unicode.GetString(_readBytes, Readpos, len);
+            var ret = Encoding.ASCII.GetString(_readBytes, Readpos, len);
             if (peek & _buff.Count > Readpos)
             {
                 if (ret.Length > 0)

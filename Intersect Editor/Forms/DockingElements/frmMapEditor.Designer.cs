@@ -75,10 +75,12 @@
             this.Controls.Add(this.pnlMapContainer);
             this.DockAreas = WeifenLuo.WinFormsUI.Docking.DockAreas.Document;
             this.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.KeyPreview = true;
             this.Name = "frmMapEditor";
             this.Text = "Map Editor";
             this.DockStateChanged += new System.EventHandler(this.frmMapEditor_DockStateChanged);
             this.Load += new System.EventHandler(this.frmMapEditor_Load);
+            this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.frmMapEditor_KeyDown);
             this.pnlMapContainer.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.picMap)).EndInit();
             this.ResumeLayout(false);

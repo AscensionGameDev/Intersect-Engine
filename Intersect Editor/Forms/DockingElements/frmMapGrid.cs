@@ -160,5 +160,41 @@ namespace Intersect_Editor.Forms.DockingElements
         {
             Globals.MapGrid.ScreenshotWorld();
         }
+
+        private void frmMapGrid_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Oemplus || e.KeyCode == Keys.Add)
+            {
+                MouseEventArgs args = new MouseEventArgs(MouseButtons.None, 0,_posX, _posY, 120);
+                PnlMapGrid_MouseWheel(null, args);
+            }
+            else if (e.KeyCode == Keys.OemMinus || e.KeyCode == Keys.Subtract)
+            {
+                MouseEventArgs args = new MouseEventArgs(MouseButtons.None, 0, _posX, _posY, - 120);
+                PnlMapGrid_MouseWheel(null, args);
+            }
+            var xDiff = 0;
+            var yDiff = 0;
+            if (e.KeyCode == Keys.W || e.KeyCode == Keys.Up)
+            {
+                yDiff -= 20;
+            }
+            if (e.KeyCode == Keys.S || e.KeyCode == Keys.Down)
+            {
+                yDiff += 20;
+            }
+            if (e.KeyCode == Keys.A || e.KeyCode == Keys.Left)
+            {
+                xDiff -= 20;
+            }
+            if (e.KeyCode == Keys.D || e.KeyCode == Keys.Right)
+            {
+                xDiff += 20;
+            }
+            if (xDiff != 0 || yDiff != 0)
+            {
+                Globals.MapGrid.Move(xDiff,yDiff);
+            }
+        }
     }
 }

@@ -120,6 +120,7 @@ namespace Intersect_Server.Classes.Networking
                 {
                     if (client.SentMaps[mapNum].Item1 > Globals.System.GetTimeMs() &&
                         client.SentMaps[mapNum].Item2 == MapInstance.GetMap(mapNum).Revision) return;
+                    client.SentMaps.Remove(mapNum);
                 }
                 client.SentMaps.Add(mapNum, new Tuple<long, int>(Globals.System.GetTimeMs() + 5000, MapInstance.GetMap(mapNum).Revision));
                 MapData = MapInstance.GetMap(mapNum).GetClientMapData();

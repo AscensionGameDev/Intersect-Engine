@@ -1406,5 +1406,10 @@ namespace Intersect_Editor.Forms
             EditorGraphics.CurrentView = new Rectangle((picMap.Size.Width-  (Options.MapWidth) * Options.TileWidth)/2, (picMap.Size.Height - (Options.MapHeight) * Options.TileHeight)/2, picMap.Size.Width, picMap.Size.Height);
             CreateSwapChain();
         }
+
+        private void frmMapEditor_KeyDown(object sender, KeyEventArgs e)
+        {
+
+        }
     }
 }
