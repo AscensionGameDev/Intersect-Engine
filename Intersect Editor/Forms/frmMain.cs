@@ -56,6 +56,7 @@ namespace Intersect_Editor.Forms
         private frmNpc _npcEditor;
         private frmResource _resourceEditor;
         private frmSpell _spellEditor;
+        private frmCrafting _craftEditor;
         private frmClass _classEditor;
         private frmQuest _questEditor;
         private frmProjectile _projectileEditor;
@@ -573,6 +574,10 @@ namespace Intersect_Editor.Forms
         {
             PacketSender.SendOpenEditor(GameObject.Spell);
         }
+        private void craftingEditorToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            PacketSender.SendOpenEditor(GameObject.Bench);
+        }
         private void animationEditorToolStripMenuItem_Click(object sender, EventArgs e)
         {
             PacketSender.SendOpenEditor(GameObject.Animation);
@@ -765,6 +770,14 @@ namespace Intersect_Editor.Forms
                             _spellEditor.Show();
                         }
                         break;
+                    case GameObject.Bench:
+                        if (_craftEditor == null || _craftEditor.Visible == false)
+                        {
+                            _craftEditor = new frmCrafting();
+                            _craftEditor.InitEditor();
+                            _craftEditor.Show();
+                        }
+                        break;
                     case GameObject.Class:
                         if (_classEditor == null || _classEditor.Visible == false)
                         {
@@ -906,5 +919,6 @@ namespace Intersect_Editor.Forms
             Globals.GridView = !Globals.GridView;
             Globals.MapEditorWindow.InitMapEditor();
         }
+
     }
 }

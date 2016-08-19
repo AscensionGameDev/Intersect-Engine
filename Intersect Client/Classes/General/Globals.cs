@@ -108,9 +108,15 @@ namespace Intersect_Client.Classes.General
         public static ItemInstance[] Bank = new ItemInstance[Options.MaxBankSlots];
         public static bool InBank = false;
 
+        //Crafting station
+        public static bool InCraft = false;
+
         //Game Shop
         //Only need 1 shop, and that is the one we see at a given moment in time.
         public static ShopBase GameShop;
+
+        //Only need 1 bench, and that is the one we see at a given moment in time.
+        public static BenchBase GameBench;
 
         public static int AnimFrame = 0;
 

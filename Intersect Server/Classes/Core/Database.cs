@@ -1426,6 +1426,9 @@ namespace Intersect_Server.Classes.Core
                 case GameObject.Spell:
                     tableName = SpellBase.DatabaseTable;
                     break;
+                case GameObject.Bench:
+                    tableName = BenchBase.DatabaseTable;
+                    break;
                 case GameObject.Map:
                     tableName = MapBase.DatabaseTable;
                     break;
@@ -1484,6 +1487,9 @@ namespace Intersect_Server.Classes.Core
                     break;
                 case GameObject.Spell:
                     SpellBase.ClearObjects();
+                    break;
+                case GameObject.Bench:
+                    BenchBase.ClearObjects();
                     break;
                 case GameObject.Map:
                     MapBase.ClearObjects();
@@ -1560,6 +1566,11 @@ namespace Intersect_Server.Classes.Core
                     var spl = new SpellBase(index);
                     spl.Load(data);
                     SpellBase.AddObject(index, spl);
+                    break;
+                case GameObject.Bench:
+                    var cft = new BenchBase(index);
+                    cft.Load(data);
+                    BenchBase.AddObject(index, cft);
                     break;
                 case GameObject.Map:
                     var map = new MapInstance(index);
@@ -1707,6 +1718,10 @@ namespace Intersect_Server.Classes.Core
                     case GameObject.Spell:
                         obj = new SpellBase(index);
                         SpellBase.AddObject(index, obj);
+                        break;
+                    case GameObject.Bench:
+                        obj = new BenchBase(index);
+                        BenchBase.AddObject(index, obj);
                         break;
                     case GameObject.Map:
                         obj = new MapInstance(index);

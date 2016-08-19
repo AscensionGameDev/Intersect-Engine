@@ -979,6 +979,12 @@ namespace Intersect_Server.Classes.Entities
                     CallStack.Peek().WaitingForResponse = 2;
                     CallStack.Peek().CommandIndex++;
                     break;
+                case EventCommandType.OpenCraftingBench:
+                    MyPlayer.OpenCraftingBench(CallStack.Peek().Page.CommandLists[CallStack.Peek().ListIndex]
+                        .Commands[CallStack.Peek().CommandIndex].Ints[0]);
+                    CallStack.Peek().WaitingForResponse = 3;
+                    CallStack.Peek().CommandIndex++;
+                    break;
                 case EventCommandType.SetClass:
                     if (ClassBase.GetClass(CallStack.Peek().Page.CommandLists[CallStack.Peek().ListIndex]
                         .Commands[CallStack.Peek().CommandIndex].Ints[0]) != null)

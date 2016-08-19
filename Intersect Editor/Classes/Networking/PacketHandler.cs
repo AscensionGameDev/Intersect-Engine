@@ -401,6 +401,19 @@ namespace Intersect_Editor.Classes
                         SpellBase.AddObject(id, spl);
                     }
                     break;
+                case GameObject.Bench:
+                    if (deleted)
+                    {
+                        var cft = BenchBase.GetCraft(id);
+                        cft.Delete();
+                    }
+                    else
+                    {
+                        var cft = new BenchBase(id);
+                        cft.Load(data);
+                        BenchBase.AddObject(id, cft);
+                    }
+                    break;
                 case GameObject.Map:
                     //Handled in a different packet
                     break;

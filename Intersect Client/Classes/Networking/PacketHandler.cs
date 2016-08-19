@@ -181,6 +181,12 @@ namespace Intersect_Client.Classes.Networking
                     case ServerPackets.BankUpdate:
                         HandleBankUpdate(bf.ReadBytes(bf.Length()));
                         break;
+                    case ServerPackets.OpenCraftingBench:
+                        HandleOpenCraftingBench(bf.ReadBytes(bf.Length()));
+                        break;
+                    case ServerPackets.CloseCraftingBench:
+                        HandleCloseCraftingBench(bf.ReadBytes(bf.Length()));
+                        break;
                     case ServerPackets.GameObject:
                         HandleGameObject(bf.ReadBytes(bf.Length()));
                         break;
@@ -386,7 +392,6 @@ namespace Intersect_Client.Classes.Networking
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
             ChatboxMsg.AddMessage(new ChatboxMsg(bf.ReadString(), new Color((int)bf.ReadByte(), (int)bf.ReadByte(), (int)bf.ReadByte(), (int)bf.ReadByte()),bf.ReadString()));
-
         }
 
         private static void HandleActionMsg(byte[] packet)
@@ -977,6 +982,18 @@ namespace Intersect_Client.Classes.Networking
             Gui.GameUI.NotifyCloseShop();
         }
 
+        private static void HandleOpenCraftingBench(byte[] packet)
+        {
+            Globals.GameBench = new BenchBase(0);
+            Globals.GameBench.Load(packet);
+            Gui.GameUI.NotifyOpenCraftingBench();
+        }
+
+        private static void HandleCloseCraftingBench(byte[] packet)
+        {
+            Gui.GameUI.NotifyCloseCraftingBench();
+        }
+
         private static void HandleOpenBank(byte[] packet)
         {
             Gui.GameUI.NotifyOpenBank();
@@ -1117,6 +1134,19 @@ namespace Intersect_Client.Classes.Networking
                         var shp = new ShopBase(id);
                         shp.Load(data);
                         ShopBase.AddObject(id, shp);
+                    }
+                    break;
+                case GameObject.Bench:
+                    if (deleted)
+                    {
+                        var bnc = BenchBase.GetCraft(id);
+                        bnc.Delete();
+                    }
+                    else
+                    {
+                        var bnc = new BenchBase(id);
+                        bnc.Load(data);
+                        BenchBase.AddObject(id, bnc);
                     }
                     break;
                 case GameObject.Spell:

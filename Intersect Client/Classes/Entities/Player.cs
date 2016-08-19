@@ -135,6 +135,17 @@ namespace Intersect_Client.Classes.Entities
                 PacketSender.SendDropItem(((InputBox)sender).Slot, value);
             }
         }
+        public int FindItem(int itemNum, int itemVal = 1)
+        {
+            for (int i = 0; i < Options.MaxInvItems; i++)
+            {
+                if (Inventory[i].ItemNum == itemNum && Inventory[i].ItemVal >= itemVal)
+                {
+                    return i;
+                }
+            }
+            return -1;
+        }
         public void TryUseItem(int index)
         {
             PacketSender.SendUseItem(index);
@@ -583,6 +594,9 @@ namespace Intersect_Client.Classes.Entities
         {
             var didMove = false;
             var tmpI = -1;
+
+            //Check if player is crafting
+            if (Globals.InCraft == true) { return; }
 
             //check if player is stunned or snared, if so don't let them move.
             for (var n = 0; n < Status.Count; n++)

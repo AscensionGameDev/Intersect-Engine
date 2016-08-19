@@ -43,6 +43,7 @@
     <Compile Include="Enums.cs" />
     <Compile Include="GameObjects\AnimationBase.cs" />
     <Compile Include="GameObjects\ClassBase.cs" />
+    <Compile Include="GameObjects\BenchBase.cs" />
     <Compile Include="GameObjects\DatabaseObject.cs" />
     <Compile Include="GameObjects\Events\Enums.cs" />
     <Compile Include="GameObjects\Events\EventCommand.cs" />

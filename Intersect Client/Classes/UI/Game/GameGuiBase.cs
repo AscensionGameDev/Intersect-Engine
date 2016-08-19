@@ -37,12 +37,15 @@ namespace Intersect_Client.Classes.UI.Game
         private DebugMenu _debugMenu;
         private ShopWindow _shopWindow;
         private BankWindow _bankWindow;
+        private CraftingBenchWindow _CraftingBenchWindow;
         public bool FocusChat;
         private bool _shouldOpenAdminWindow = false;
         private bool _shouldOpenShop = false;
         private bool _shouldCloseShop = false;
         private bool _shouldOpenBank = false;
         private bool _shouldCloseBank = false;
+        private bool _shouldOpenCraftingBench = false;
+        private bool _shouldCloseCraftingBench = false;
 
         //Public Components - For clicking/dragging
         public HotBarWindow Hotbar;
@@ -127,6 +130,23 @@ namespace Intersect_Client.Classes.UI.Game
             Globals.InBank = true;
         }
 
+        //Crafting
+        public void NotifyOpenCraftingBench()
+        {
+            _shouldOpenCraftingBench = true;
+        }
+        public void NotifyCloseCraftingBench()
+        {
+            _shouldCloseCraftingBench = true;
+        }
+        public void OpenCraftingBench()
+        {
+            if (_CraftingBenchWindow != null) _CraftingBenchWindow.Close();
+            _CraftingBenchWindow = new CraftingBenchWindow(GameCanvas);
+            _shouldOpenCraftingBench = false;
+            Globals.InCraft = true;
+        }
+
         public void TryAddPlayerBox()
         {
             if (_playerBox != null || Globals.Me == null) { return; }
@@ -182,7 +202,6 @@ namespace Intersect_Client.Classes.UI.Game
                 OpenAdminWindow();
             }
 
-
             //Shop Update
             if (_shouldOpenShop) OpenShop();
             if (_shopWindow != null && (!_shopWindow.IsVisible() || _shouldCloseShop))
@@ -210,8 +229,25 @@ namespace Intersect_Client.Classes.UI.Game
                     _bankWindow.Update();
                 }
             }
-
             _shouldCloseBank = false;
+
+            //Crafting station update
+            if (_shouldOpenCraftingBench) OpenCraftingBench();
+            if (_CraftingBenchWindow != null)
+            {
+                if (!_CraftingBenchWindow.IsVisible() || _shouldCloseCraftingBench)
+                {
+                    PacketSender.SendCloseCraftingBench();
+                    _CraftingBenchWindow.Close();
+                    _CraftingBenchWindow = null;
+                    Globals.InCraft = false;
+                }
+                else
+                {
+                    _CraftingBenchWindow.UpdateCraftBar();
+                }
+            }
+            _shouldCloseCraftingBench = false;
 
             if (FocusChat)
             {

@@ -96,6 +96,7 @@
         //Shop and Bank
         OpenBank,
         OpenShop,
+        OpenCraftingBench,
         //Extras
         SetClass,
     }

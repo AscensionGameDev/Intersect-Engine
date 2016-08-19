@@ -317,6 +317,13 @@ namespace Intersect_Client.Classes.Networking
             GameNetwork.SendPacket(bf.ToArray());
         }
 
+        public static void SendCloseCraftingBench()
+        {
+            var bf = new ByteBuffer();
+            bf.WriteLong((int)ClientPackets.CloseCraftingBench);
+            GameNetwork.SendPacket(bf.ToArray());
+        }
+
         public static void SendMoveBankItems(int slot1, int slot2)
         {
             var bf = new ByteBuffer();
@@ -326,5 +333,12 @@ namespace Intersect_Client.Classes.Networking
             GameNetwork.SendPacket(bf.ToArray());
         }
 
+        public static void SendCraftItem(int index)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteLong((int)ClientPackets.CraftItem);
+            bf.WriteInteger(index);
+            GameNetwork.SendPacket(bf.ToArray());
+        }
     }
 }
