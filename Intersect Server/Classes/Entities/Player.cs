@@ -56,6 +56,9 @@ namespace Intersect_Server.Classes.Entities
         private object EventLock = new object();
         public bool InBank;
         public int InShop = -1;
+        public int InCraft = -1;
+        public int CraftIndex = -1;
+        public long CraftTimer = 0;
         public long SaveTimer = Environment.TickCount;
 
         //Init
@@ -85,11 +88,22 @@ namespace Intersect_Server.Classes.Entities
         {
             if (!InGame || CurrentMap == -1) { return; }
             var _curMapLink = CurrentMap;
+
             if (SaveTimer + 120000 < Environment.TickCount)
             {
                 Task.Run(() => Database.SaveCharacter(this,false));
                 SaveTimer = Environment.TickCount;
             }
+
+            if (InCraft > -1 && CraftIndex > -1)
+            {
+                BenchBase b = BenchBase.GetCraft(InCraft);
+                if (CraftTimer + b.Crafts[CraftIndex].Time < Environment.TickCount)
+                {
+                    CraftItem(CraftIndex);
+                }
+            }
+
             base.Update();
             //If we switched maps, lets update the maps
             if (_curMapLink != CurrentMap)
@@ -691,6 +705,7 @@ namespace Intersect_Server.Classes.Entities
         public bool TakeItem(int slot, int amount)
         {
             bool returnVal = false;
+            if (slot < 0) { return false; }
             var itemBase = ItemBase.GetItem(Inventory[slot].ItemNum);
             if (itemBase != null)
             {
@@ -743,7 +758,7 @@ namespace Intersect_Server.Classes.Entities
         //Shop
         public bool OpenShop(int shopNum)
         {
-            if (InShop > -1 || InBank) return false;
+            if (InShop > -1 || InBank || InCraft > -1) return false;
             InShop = shopNum;
             PacketSender.SendOpenShop(MyClient, shopNum);
             return true;
@@ -903,10 +918,62 @@ namespace Intersect_Server.Classes.Entities
             }
         }
 
+        //Crafting
+        public bool OpenCraftingBench(int index)
+        {
+            if (InShop > -1 || InBank || InCraft > -1) return false;
+            InCraft = index;
+            PacketSender.SendOpenCraftingBench(MyClient, index);
+            return true;
+        }
+        public void CloseCraftingBench()
+        {
+            InCraft = -1;
+            PacketSender.SendCloseCraftingBench(MyClient);
+        }
+
+        //Craft a new item
+        public void CraftItem(int index)
+        {
+            if (InCraft > -1)
+            {
+                //Check the player actually has the items
+                foreach (CraftIngredient c in BenchBase.GetCraft(InCraft).Crafts[index].Ingredients)
+                {
+                    int n = FindItem(c.Item);
+                    int x = 0;
+                    if (n > -1)
+                    {
+                        x = Inventory[n].ItemVal;
+                        if (x == 0) { x = 1; }
+                    }
+                    if (x < c.Quantity)
+                    {
+                        return;
+                    }
+                }
+
+                //Take the items
+                foreach (CraftIngredient c in BenchBase.GetCraft(InCraft).Crafts[index].Ingredients)
+                {
+                    int n = FindItem(c.Item);
+                    if (n > -1)
+                    {
+                        TakeItem(n, c.Quantity);
+                    }
+                }
+
+                //Give them the craft
+                TryGiveItem(new ItemInstance(BenchBase.GetCraft(InCraft).Crafts[index].Item, 1));
+                PacketSender.SendPlayerMsg(MyClient, "You successfully crafted " + ItemBase.GetName(BenchBase.GetCraft(InCraft).Crafts[index].Item) + "!", Color.Green);
+                CraftIndex = -1;
+            }
+        }
+
         //Bank
         public bool OpenBank()
         {
-            if (InShop > -1 || InBank) return false;
+            if (InShop > -1 || InBank || InCraft > -1) return false;
             InBank = true;
             PacketSender.SendOpenBank(MyClient);
             return true;

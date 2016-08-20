@@ -172,6 +172,12 @@
     <Compile Include="Forms\Editors\Event Commands\EventCommand_Label.Designer.cs">
       <DependentUpon>EventCommand_Label.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\Editors\Event Commands\EventCommand_OpenBench.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Forms\Editors\Event Commands\EventCommand_OpenBench.Designer.cs">
+      <DependentUpon>EventCommand_OpenBench.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\Editors\Event Commands\EventCommand_SetClass.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -298,6 +304,12 @@
     <Compile Include="Forms\Editors\frmCommonEvent.Designer.cs">
       <DependentUpon>frmCommonEvent.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\Editors\frmCrafting.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\Editors\frmCrafting.Designer.cs">
+      <DependentUpon>frmCrafting.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\Editors\frmEvent.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -402,9 +414,8 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="Mono.Data.Sqlite, Version=2.0.0.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756, processorArchitecture=MSIL">
-      <HintPath>packages\Mono.Data.Sqlite.Portable.1.0.3.5\lib\net4\Mono.Data.Sqlite.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="Mono.Data.Sqlite">
+      <HintPath>..\Intersect Server\bin\Debug\Mono.Data.Sqlite.dll</HintPath>
     </Reference>
     <Reference Include="MonoGame.Framework">
       <HintPath>$(MonoGameInstallDirectory)\MonoGame\v3.0\Assemblies\Windows\MonoGame.Framework.dll</HintPath>
@@ -496,6 +507,9 @@
     <EmbeddedResource Include="Forms\Editors\Event Commands\EventCommand_Label.resx">
       <DependentUpon>EventCommand_Label.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Editors\Event Commands\EventCommand_OpenBench.resx">
+      <DependentUpon>EventCommand_OpenBench.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Forms\Editors\Event Commands\EventCommand_SetClass.resx">
       <DependentUpon>EventCommand_SetClass.cs</DependentUpon>
     </EmbeddedResource>
@@ -559,6 +573,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\Editors\frmCommonEvent.resx">
       <DependentUpon>frmCommonEvent.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Editors\frmCrafting.resx">
+      <DependentUpon>frmCrafting.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\Editors\frmEvent.resx">
       <DependentUpon>frmEvent.cs</DependentUpon>

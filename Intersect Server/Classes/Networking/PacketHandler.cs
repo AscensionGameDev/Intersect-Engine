@@ -155,6 +155,12 @@ namespace Intersect_Server.Classes.Networking
                 case ClientPackets.CloseShop:
                     HandleCloseShop(client, packet);
                     break;
+                case ClientPackets.CloseCraftingBench:
+                    HandleCloseCraftingBench(client, packet);
+                    break;
+                case ClientPackets.CraftItem:
+                    HandleCraftItem(client, packet);
+                    break;
                 case ClientPackets.CloseBank:
                     HandleCloseBank(client, packet);
                     break;
@@ -1555,6 +1561,20 @@ namespace Intersect_Server.Classes.Networking
             client.Entity.CloseShop();
         }
 
+        private static void HandleCloseCraftingBench(Client client, byte[] packet)
+        {
+            client.Entity.CloseCraftingBench();
+        }
+
+        private static void HandleCraftItem(Client client, byte[] packet)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteBytes(packet);
+            client.Entity.CraftIndex = bf.ReadInteger();
+            client.Entity.CraftTimer = Environment.TickCount;
+            bf.Dispose();
+        }
+
         private static void HandleCloseBank(Client client, byte[] packet)
         {
             client.Entity.CloseBank();
@@ -1663,6 +1683,9 @@ namespace Intersect_Server.Classes.Networking
                 case GameObject.Spell:
                     obj = SpellBase.Get(id);
                     break;
+                case GameObject.Bench:
+                    obj = BenchBase.Get(id);
+                    break;
                 case GameObject.Map:
                     break;
                 case GameObject.CommonEvent:
@@ -1743,6 +1766,9 @@ namespace Intersect_Server.Classes.Networking
                     break;
                 case GameObject.Spell:
                     obj = SpellBase.Get(id);
+                    break;
+                case GameObject.Bench:
+                    obj = BenchBase.Get(id);
                     break;
                 case GameObject.Map:
                     break;

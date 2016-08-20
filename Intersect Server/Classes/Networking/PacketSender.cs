@@ -979,6 +979,24 @@ namespace Intersect_Server.Classes.Networking
             bf.Dispose();
         }
 
+        public static void SendOpenCraftingBench(Client client, int benchNum)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteLong((int)ServerPackets.OpenCraftingBench);
+            bf.WriteBytes(BenchBase.GetCraft(benchNum).CraftData());
+            client.SendPacket(bf.ToArray());
+            bf.Dispose();
+        }
+
+        public static void SendCloseCraftingBench(Client client)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteLong((int)ServerPackets.CloseCraftingBench);
+            client.SendPacket(bf.ToArray());
+            bf.Dispose();
+        }
+
+
         public static void SendBankUpdate(Client client, int slot)
         {
             var bf = new ByteBuffer();
@@ -1036,6 +1054,10 @@ namespace Intersect_Server.Classes.Networking
                     break;
                 case GameObject.Spell:
                     foreach (var obj in SpellBase.GetObjects())
+                        SendGameObject(client, obj.Value);
+                    break;
+                case GameObject.Bench:
+                    foreach (var obj in BenchBase.GetObjects())
                         SendGameObject(client, obj.Value);
                     break;
                 case GameObject.Map:

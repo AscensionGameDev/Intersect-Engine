@@ -762,6 +762,8 @@ namespace Intersect_Editor.Forms
                     return "Open Bank";
                 case EventCommandType.OpenShop:
                     return "Open Shop [" + ShopBase.GetName(command.Ints[0]) + "]";
+                case EventCommandType.OpenCraftingBench:
+                    return "Open Crafting Bench [" + BenchBase.GetName(command.Ints[0]) + "]";
                 case EventCommandType.SetClass:
                     return "Set Class [" + ClassBase.GetName(command.Ints[0]) + "]";
                 default:
@@ -1055,6 +1057,9 @@ namespace Intersect_Editor.Forms
                     break;
                 case EventCommandType.OpenShop:
                     cmdWindow = new EventCommand_OpenShop(command, this);
+                    break;
+                case EventCommandType.OpenCraftingBench:
+                    cmdWindow = new EventCommand_OpenBench(command, this);
                     break;
                 case EventCommandType.SetClass:
                     cmdWindow = new EventCommand_SetClass(command,this);
@@ -1415,11 +1420,6 @@ namespace Intersect_Editor.Forms
         {
             Controls.Remove(graphicSelector);
             UpdateEventPreview();
-        }
-
-
-        private void lstCommands_SelectedIndexChanged(object sender, EventArgs e)
-        {
         }
 
         private void ListPageConditions()

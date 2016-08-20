@@ -76,7 +76,8 @@ namespace Intersect_Editor.Forms
             System.Windows.Forms.ListViewItem listViewItem34 = new System.Windows.Forms.ListViewItem("Wait...");
             System.Windows.Forms.ListViewItem listViewItem35 = new System.Windows.Forms.ListViewItem("Open Bank");
             System.Windows.Forms.ListViewItem listViewItem36 = new System.Windows.Forms.ListViewItem("Open Shop");
-            System.Windows.Forms.ListViewItem listViewItem37 = new System.Windows.Forms.ListViewItem("Change Class");
+            System.Windows.Forms.ListViewItem listViewItem37 = new System.Windows.Forms.ListViewItem("Open Crafting Station");
+            System.Windows.Forms.ListViewItem listViewItem38 = new System.Windows.Forms.ListViewItem("Change Class");
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmEvent));
             this.label1 = new System.Windows.Forms.Label();
             this.txtEventname = new System.Windows.Forms.TextBox();
@@ -665,7 +666,8 @@ namespace Intersect_Editor.Forms
             listViewItem34.Group = listViewGroup7;
             listViewItem35.Group = listViewGroup8;
             listViewItem36.Group = listViewGroup8;
-            listViewItem37.Group = listViewGroup3;
+            listViewItem37.Group = listViewGroup8;
+            listViewItem38.Group = listViewGroup3;
             this.lstCommands.Items.AddRange(new System.Windows.Forms.ListViewItem[] {
             listViewItem1,
             listViewItem2,
@@ -703,7 +705,8 @@ namespace Intersect_Editor.Forms
             listViewItem34,
             listViewItem35,
             listViewItem36,
-            listViewItem37});
+            listViewItem37,
+            listViewItem38});
             this.lstCommands.Location = new System.Drawing.Point(7, 30);
             this.lstCommands.MultiSelect = false;
             this.lstCommands.Name = "lstCommands";
@@ -713,7 +716,6 @@ namespace Intersect_Editor.Forms
             this.lstCommands.UseCompatibleStateImageBehavior = false;
             this.lstCommands.View = System.Windows.Forms.View.Tile;
             this.lstCommands.ItemActivate += new System.EventHandler(this.lstCommands_ItemActivated);
-            this.lstCommands.SelectedIndexChanged += new System.EventHandler(this.lstCommands_SelectedIndexChanged);
             // 
             // grpEventCommands
             // 

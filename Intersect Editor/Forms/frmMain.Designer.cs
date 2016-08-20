@@ -83,6 +83,7 @@ namespace Intersect_Editor.Forms
             this.resourceEditorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.shopEditorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.spellEditorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.craftingEditorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.switchVariableEditorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.timeEditorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -354,6 +355,7 @@ namespace Intersect_Editor.Forms
             this.animationEditorToolStripMenuItem,
             this.classEditorToolStripMenuItem,
             this.commonEventEditorToolStripMenuItem,
+            this.craftingEditorToolStripMenuItem,
             this.itemEditorToolStripMenuItem,
             this.npcEditorToolStripMenuItem,
             this.projectileEditorToolStripMenuItem,
@@ -370,42 +372,42 @@ namespace Intersect_Editor.Forms
             // animationEditorToolStripMenuItem
             // 
             this.animationEditorToolStripMenuItem.Name = "animationEditorToolStripMenuItem";
-            this.animationEditorToolStripMenuItem.Size = new System.Drawing.Size(210, 22);
+            this.animationEditorToolStripMenuItem.Size = new System.Drawing.Size(211, 22);
             this.animationEditorToolStripMenuItem.Text = "Animation Editor";
             this.animationEditorToolStripMenuItem.Click += new System.EventHandler(this.animationEditorToolStripMenuItem_Click);
             // 
             // classEditorToolStripMenuItem
             // 
             this.classEditorToolStripMenuItem.Name = "classEditorToolStripMenuItem";
-            this.classEditorToolStripMenuItem.Size = new System.Drawing.Size(210, 22);
+            this.classEditorToolStripMenuItem.Size = new System.Drawing.Size(211, 22);
             this.classEditorToolStripMenuItem.Text = "Class Editor";
             this.classEditorToolStripMenuItem.Click += new System.EventHandler(this.classEditorToolStripMenuItem_Click);
             // 
             // commonEventEditorToolStripMenuItem
             // 
             this.commonEventEditorToolStripMenuItem.Name = "commonEventEditorToolStripMenuItem";
-            this.commonEventEditorToolStripMenuItem.Size = new System.Drawing.Size(210, 22);
+            this.commonEventEditorToolStripMenuItem.Size = new System.Drawing.Size(211, 22);
             this.commonEventEditorToolStripMenuItem.Text = "Common Event Editor";
             this.commonEventEditorToolStripMenuItem.Click += new System.EventHandler(this.commonEventEditorToolStripMenuItem_Click);
             // 
             // itemEditorToolStripMenuItem
             // 
             this.itemEditorToolStripMenuItem.Name = "itemEditorToolStripMenuItem";
-            this.itemEditorToolStripMenuItem.Size = new System.Drawing.Size(210, 22);
+            this.itemEditorToolStripMenuItem.Size = new System.Drawing.Size(211, 22);
             this.itemEditorToolStripMenuItem.Text = "Item Editor";
             this.itemEditorToolStripMenuItem.Click += new System.EventHandler(this.itemEditorToolStripMenuItem_Click);
             // 
             // npcEditorToolStripMenuItem
             // 
             this.npcEditorToolStripMenuItem.Name = "npcEditorToolStripMenuItem";
-            this.npcEditorToolStripMenuItem.Size = new System.Drawing.Size(210, 22);
+            this.npcEditorToolStripMenuItem.Size = new System.Drawing.Size(211, 22);
             this.npcEditorToolStripMenuItem.Text = "Npc Editor";
             this.npcEditorToolStripMenuItem.Click += new System.EventHandler(this.npcEditorToolStripMenuItem_Click);
             // 
             // projectileEditorToolStripMenuItem
             // 
             this.projectileEditorToolStripMenuItem.Name = "projectileEditorToolStripMenuItem";
-            this.projectileEditorToolStripMenuItem.Size = new System.Drawing.Size(210, 22);
+            this.projectileEditorToolStripMenuItem.Size = new System.Drawing.Size(211, 22);
             this.projectileEditorToolStripMenuItem.Text = "Projectile Editor";
             this.projectileEditorToolStripMenuItem.Click += new System.EventHandler(this.projectileEditorToolStripMenuItem_Click);
             // 
@@ -413,42 +415,49 @@ namespace Intersect_Editor.Forms
             // 
             this.questEditorToolStripMenuItem.Enabled = false;
             this.questEditorToolStripMenuItem.Name = "questEditorToolStripMenuItem";
-            this.questEditorToolStripMenuItem.Size = new System.Drawing.Size(210, 22);
+            this.questEditorToolStripMenuItem.Size = new System.Drawing.Size(211, 22);
             this.questEditorToolStripMenuItem.Text = "Quest Editor";
             this.questEditorToolStripMenuItem.Click += new System.EventHandler(this.questEditorToolStripMenuItem_Click);
             // 
             // resourceEditorToolStripMenuItem
             // 
             this.resourceEditorToolStripMenuItem.Name = "resourceEditorToolStripMenuItem";
-            this.resourceEditorToolStripMenuItem.Size = new System.Drawing.Size(210, 22);
+            this.resourceEditorToolStripMenuItem.Size = new System.Drawing.Size(211, 22);
             this.resourceEditorToolStripMenuItem.Text = "Resource Editor";
             this.resourceEditorToolStripMenuItem.Click += new System.EventHandler(this.resourceEditorToolStripMenuItem_Click);
             // 
             // shopEditorToolStripMenuItem
             // 
             this.shopEditorToolStripMenuItem.Name = "shopEditorToolStripMenuItem";
-            this.shopEditorToolStripMenuItem.Size = new System.Drawing.Size(210, 22);
+            this.shopEditorToolStripMenuItem.Size = new System.Drawing.Size(211, 22);
             this.shopEditorToolStripMenuItem.Text = "Shop Editor";
             this.shopEditorToolStripMenuItem.Click += new System.EventHandler(this.shopEditorToolStripMenuItem_Click);
             // 
             // spellEditorToolStripMenuItem
             // 
             this.spellEditorToolStripMenuItem.Name = "spellEditorToolStripMenuItem";
-            this.spellEditorToolStripMenuItem.Size = new System.Drawing.Size(210, 22);
+            this.spellEditorToolStripMenuItem.Size = new System.Drawing.Size(211, 22);
             this.spellEditorToolStripMenuItem.Text = "Spell Editor";
             this.spellEditorToolStripMenuItem.Click += new System.EventHandler(this.spellEditorToolStripMenuItem_Click);
+            // 
+            // craftingEditorToolStripMenuItem
+            // 
+            this.craftingEditorToolStripMenuItem.Name = "craftingEditorToolStripMenuItem";
+            this.craftingEditorToolStripMenuItem.Size = new System.Drawing.Size(211, 22);
+            this.craftingEditorToolStripMenuItem.Text = "Crafting Bench Editor";
+            this.craftingEditorToolStripMenuItem.Click += new System.EventHandler(this.craftingEditorToolStripMenuItem_Click);
             // 
             // switchVariableEditorToolStripMenuItem
             // 
             this.switchVariableEditorToolStripMenuItem.Name = "switchVariableEditorToolStripMenuItem";
-            this.switchVariableEditorToolStripMenuItem.Size = new System.Drawing.Size(210, 22);
+            this.switchVariableEditorToolStripMenuItem.Size = new System.Drawing.Size(211, 22);
             this.switchVariableEditorToolStripMenuItem.Text = "Switch and Variable Editor";
             this.switchVariableEditorToolStripMenuItem.Click += new System.EventHandler(this.switchVariableEditorToolStripMenuItem_Click);
             // 
             // timeEditorToolStripMenuItem
             // 
             this.timeEditorToolStripMenuItem.Name = "timeEditorToolStripMenuItem";
-            this.timeEditorToolStripMenuItem.Size = new System.Drawing.Size(210, 22);
+            this.timeEditorToolStripMenuItem.Size = new System.Drawing.Size(211, 22);
             this.timeEditorToolStripMenuItem.Text = "Time Editor";
             this.timeEditorToolStripMenuItem.Click += new System.EventHandler(this.timeEditorToolStripMenuItem_Click);
             // 
@@ -925,6 +934,7 @@ namespace Intersect_Editor.Forms
         private ToolStripMenuItem timeEditorToolStripMenuItem;
         private ToolStripDropDownButton toolStripTimeButton;
         private ToolStripSeparator toolStripSeparator10;
+        private ToolStripMenuItem craftingEditorToolStripMenuItem;
     }
 }
 

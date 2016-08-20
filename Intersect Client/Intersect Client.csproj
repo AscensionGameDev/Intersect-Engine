@@ -57,6 +57,7 @@
     <Compile Include="Classes\Maps\MapInstance.cs" />
     <Compile Include="Classes\UI\Game\BanMuteBox.cs" />
     <Compile Include="Classes\UI\Game\Chat\ChatboxMsg.cs" />
+    <Compile Include="Classes\UI\Game\CraftingBenchWindow.cs" />
     <Compile Include="Forms\frmLoadingContent.cs">
       <SubType>Form</SubType>
     </Compile>
