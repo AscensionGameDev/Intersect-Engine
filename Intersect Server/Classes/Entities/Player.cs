@@ -860,16 +860,17 @@ namespace Intersect_Server.Classes.Entities
                         {
                             buyItemAmt = Math.Max(1, amount);
                         }
-                        if (
-                            FindItem(shop.SellingItems[slot].CostItemNum, shop.SellingItems[slot].CostItemVal * buyItemAmt) >
-                            -1)
+                        if (shop.SellingItems[slot].CostItemVal == 0 || FindItem(shop.SellingItems[slot].CostItemNum, shop.SellingItems[slot].CostItemVal * buyItemAmt) >-1)
                         {
                             if (CanGiveItem(new ItemInstance(buyItemNum, buyItemAmt)))
                             {
-                                TakeItem(
-                                    FindItem(shop.SellingItems[slot].CostItemNum,
-                                        shop.SellingItems[slot].CostItemVal * buyItemAmt),
-                                    shop.SellingItems[slot].CostItemVal * buyItemAmt);
+                                if (shop.SellingItems[slot].CostItemVal > 0)
+                                {
+                                    TakeItem(
+                                        FindItem(shop.SellingItems[slot].CostItemNum,
+                                            shop.SellingItems[slot].CostItemVal*buyItemAmt),
+                                        shop.SellingItems[slot].CostItemVal*buyItemAmt);
+                                }
                                 TryGiveItem(new ItemInstance(buyItemNum, buyItemAmt), true);
                             }
                             else

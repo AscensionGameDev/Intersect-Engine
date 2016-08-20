@@ -347,9 +347,9 @@ namespace Intersect_Editor.Forms.Controls
             list.NodeMouseDoubleClick += handler;
         }
 
-        public void SetClick(TreeNodeMouseClickEventHandler handler)
+        public void SetSelect(TreeViewEventHandler handler)
         {
-            list.NodeMouseClick += handler;
+            list.AfterSelect += handler;
         }
 
         private void list_AfterExpand(object sender, TreeViewEventArgs e)

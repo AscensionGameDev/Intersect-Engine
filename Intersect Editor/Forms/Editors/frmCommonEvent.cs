@@ -78,6 +78,8 @@ namespace Intersect_Editor.Forms.Editors
                 editor.InitEditor();
                 editor.ShowDialog();
                 ListCommonEvents();
+                Globals.MainForm.BringToFront();
+                BringToFront();
             }
         }
 

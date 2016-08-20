@@ -24,7 +24,6 @@
     OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
     SOFTWARE.
 */
-
 using System;
 using System.Collections.Generic;
 using IntersectClientExtras.File_Management;
@@ -39,10 +38,6 @@ using Intersect_Library;
 using Intersect_Library.GameObjects;
 using Color = IntersectClientExtras.GenericClasses.Color;
 using GameGraphics = Intersect_Client.Classes.Core.GameGraphics;
-
-
-// ReSharper disable All
-
 namespace Intersect_Client.Classes.Entities
 {
     public class Entity
@@ -66,7 +61,7 @@ namespace Intersect_Client.Classes.Entities
         public int CurrentX;
         public int CurrentY;
         public int CurrentZ = 0;
-        public int CurrentMap = -1;
+        public virtual int CurrentMap { get; set; } = -1;
         public int Dir;
         public bool IsMoving;
         public float OffsetX;
@@ -225,13 +220,13 @@ namespace Intersect_Client.Classes.Entities
             }
             else if (_walkTimer < Globals.System.GetTimeMS())
             {
-                if (DashQueue.Count > 0)
+                if (!IsMoving && DashQueue.Count > 0)
                 {
                     Dashing = DashQueue.Dequeue();
                     Dashing.Start(this);
                     OffsetX = 0;
                     OffsetY = 0;
-                    DashTimer = Globals.System.GetTimeMS() + Options.MaxDashSpeed*2;
+                    DashTimer = Globals.System.GetTimeMS() + Options.MaxDashSpeed;
                 }
                 else
                 {
@@ -345,7 +340,7 @@ namespace Intersect_Client.Classes.Entities
                 renderList.Remove(this);
             }
 
-            if (MapInstance.GetMap(CurrentMap) == null)
+            if (MapInstance.GetMap(Globals.Me.CurrentMap) == null)
             {
                 return null;
             }

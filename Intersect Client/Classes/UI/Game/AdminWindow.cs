@@ -193,6 +193,7 @@ namespace Intersect_Client.Classes.UI.Game
                 _faceDropdown.AddItem(face);
             }
             _faceDropdown.ItemSelected += _faceDropdown_ItemSelected;
+            
 
             _setFaceButton = new Button(_adminWindow);
             _setFaceButton.Text = "Set Face";

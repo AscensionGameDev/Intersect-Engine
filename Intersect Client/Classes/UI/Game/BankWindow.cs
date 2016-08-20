@@ -72,6 +72,7 @@ namespace Intersect_Client.Classes.UI.Game
             _bankWindow.Padding = new Padding(8, 5, 9, 11);
             X = _bankWindow.X;
             Y = _bankWindow.Y;
+            Gui.InputBlockingElements.Add(_bankWindow);
 
             _bankWindow.SetTitleBarHeight(24);
             _bankWindow.SetCloseButtonSize(20, 20);

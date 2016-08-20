@@ -130,6 +130,7 @@ namespace Intersect_Editor.Classes.Maps
                 }
             }
             //Get a list of maps -- if they are not in this grid.
+            LinkMaps.Clear();
             for (int i = 0; i < MapList.GetOrderedMaps().Count; i++)
             {
                 if (!gridMaps.Contains(MapList.GetOrderedMaps()[i].MapNum))

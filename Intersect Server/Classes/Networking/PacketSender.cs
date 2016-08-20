@@ -108,7 +108,7 @@ namespace Intersect_Server.Classes.Networking
             byte[] MapData = null;
             if (isEditor)
             {
-                MapData = MapInstance.GetMap(mapNum).GetEditorMapData();
+                MapData = MapInstance.GetMap(mapNum).GetMapData(false);
                 bf.WriteLong(MapData.Length);
                 bf.WriteBytes(MapData);
                 bf.WriteInteger(MapInstance.GetMap(mapNum).MapGridX);
@@ -200,7 +200,7 @@ namespace Intersect_Server.Classes.Networking
             var bf = new ByteBuffer();
             bf.WriteLong((int)ServerPackets.MapData);
             bf.WriteLong(mapNum);
-            byte[] MapData = MapInstance.GetMap(mapNum).GetEditorMapData();
+            byte[] MapData = MapInstance.GetMap(mapNum).GetMapData(false);
             bf.WriteLong(MapData.Length);
             bf.WriteBytes(MapData);
             SendDataToEditors(bf.ToArray());

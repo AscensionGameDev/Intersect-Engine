@@ -251,7 +251,8 @@ namespace Intersect_Editor.Forms
                 scrlTick.Value = Math.Max(0,_editorItem.Data4);
                 lblTick.Text = "Tick: " + ((double)scrlTick.Value / 10) + "s";
                 cmbExtraEffect.SelectedIndex = _editorItem.Data3;
-                
+                cmbExtraEffect_SelectedIndexChanged(null, null);
+
             }
             else if (cmbType.SelectedIndex == cmbType.Items.IndexOf("Warp to Map"))
             {

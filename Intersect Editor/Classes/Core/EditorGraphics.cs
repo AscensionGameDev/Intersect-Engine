@@ -87,6 +87,7 @@ namespace Intersect_Editor.Classes
 
         //Editor Viewing Rect
         public static System.Drawing.Rectangle CurrentView;
+        public static object GraphicsLock = new object();
 
         //Setup and Loading
         public static void InitMonogame()
@@ -164,111 +165,122 @@ namespace Intersect_Editor.Classes
         {
             if (_mapEditorChain != null && !_mapEditorChain.IsContentLost && !_mapEditorChain.IsDisposed)
             {
-                _graphicsDevice.SetRenderTarget(_mapEditorChain);
-                _graphicsDevice.Clear(Microsoft.Xna.Framework.Color.Black);
-                StartSpritebatch();
-                ClearDarknessTexture(null);
-                DrawTileset();
-                DrawMapGrid();
-
-                //Draw Current Map
-                if (Globals.MapEditorWindow.picMap.Visible && Globals.MapEditorWindow.DockPanel.ActiveDocument == Globals.MapEditorWindow && Globals.CurrentMap != null && Globals.MapGrid.Loaded)
+                lock (GraphicsLock)
                 {
+                    _graphicsDevice.SetRenderTarget(_mapEditorChain);
+                    _graphicsDevice.Clear(Microsoft.Xna.Framework.Color.Black);
+                    StartSpritebatch();
+                    ClearDarknessTexture(null);
+                    DrawTileset();
+                    DrawMapGrid();
 
-                    //Draw The lower maps
-                    for (int y = Globals.CurrentMap.MapGridY - 1; y <= Globals.CurrentMap.MapGridY + 1; y++)
+                    //Draw Current Map
+                    if (Globals.MapEditorWindow.picMap.Visible &&
+                        Globals.MapEditorWindow.DockPanel.ActiveDocument == Globals.MapEditorWindow &&
+                        Globals.CurrentMap != null && Globals.MapGrid.Loaded)
                     {
-                        for (int x = Globals.CurrentMap.MapGridX - 1; x <= Globals.CurrentMap.MapGridX + 1; x++)
+
+                        //Draw The lower maps
+                        for (int y = Globals.CurrentMap.MapGridY - 1; y <= Globals.CurrentMap.MapGridY + 1; y++)
                         {
-                            if (x >= 0 && x < Globals.MapGrid.GridWidth && y >= 0 && y < Globals.MapGrid.GridHeight)
+                            for (int x = Globals.CurrentMap.MapGridX - 1; x <= Globals.CurrentMap.MapGridX + 1; x++)
                             {
-                                var map = MapInstance.GetMap(Globals.MapGrid.Grid[x, y].mapnum);
-                                if (map != null)
+                                if (x >= 0 && x < Globals.MapGrid.GridWidth && y >= 0 && y < Globals.MapGrid.GridHeight)
                                 {
-                                    //Draw this map
-                                    DrawMap(map, x - Globals.CurrentMap.MapGridX, y - Globals.CurrentMap.MapGridY, false,
-                                        0, null);
+                                    var map = MapInstance.GetMap(Globals.MapGrid.Grid[x, y].mapnum);
+                                    if (map != null)
+                                    {
+                                        //Draw this map
+                                        DrawMap(map, x - Globals.CurrentMap.MapGridX, y - Globals.CurrentMap.MapGridY,
+                                            false,
+                                            0, null);
+                                    }
+                                    else
+                                    {
+                                        DrawTransparentBorders(x - Globals.CurrentMap.MapGridX,
+                                            y - Globals.CurrentMap.MapGridY);
+                                    }
                                 }
                                 else
                                 {
-                                    DrawTransparentBorders(x - Globals.CurrentMap.MapGridX, y - Globals.CurrentMap.MapGridY);
+                                    DrawTransparentBorders(x - Globals.CurrentMap.MapGridX,
+                                        y - Globals.CurrentMap.MapGridY);
                                 }
                             }
-                            else
-                            {
-                                DrawTransparentBorders(x - Globals.CurrentMap.MapGridX, y - Globals.CurrentMap.MapGridY);
-                            }
                         }
-                    }
 
-                    //Draw the lower resources/animations
-                    for (int y = Globals.CurrentMap.MapGridY - 1; y <= Globals.CurrentMap.MapGridY + 1; y++)
-                    {
-                        for (int x = Globals.CurrentMap.MapGridX - 1; x <= Globals.CurrentMap.MapGridX + 1; x++)
+                        //Draw the lower resources/animations
+                        for (int y = Globals.CurrentMap.MapGridY - 1; y <= Globals.CurrentMap.MapGridY + 1; y++)
                         {
-                            if (x >= 0 && x < Globals.MapGrid.GridWidth && y >= 0 && y < Globals.MapGrid.GridHeight)
+                            for (int x = Globals.CurrentMap.MapGridX - 1; x <= Globals.CurrentMap.MapGridX + 1; x++)
                             {
-                                var map = MapInstance.GetMap(Globals.MapGrid.Grid[x, y].mapnum);
-                                if (map != null)
+                                if (x >= 0 && x < Globals.MapGrid.GridWidth && y >= 0 && y < Globals.MapGrid.GridHeight)
                                 {
-                                    DrawMapAttributes(map, x - Globals.CurrentMap.MapGridX, y - Globals.CurrentMap.MapGridY, false, null, false);
+                                    var map = MapInstance.GetMap(Globals.MapGrid.Grid[x, y].mapnum);
+                                    if (map != null)
+                                    {
+                                        DrawMapAttributes(map, x - Globals.CurrentMap.MapGridX,
+                                            y - Globals.CurrentMap.MapGridY, false, null, false);
+                                    }
                                 }
                             }
                         }
-                    }
 
-                    //Draw The upper maps
-                    for (int y = Globals.CurrentMap.MapGridY - 1; y <= Globals.CurrentMap.MapGridY + 1; y++)
-                    {
-                        for (int x = Globals.CurrentMap.MapGridX - 1; x <= Globals.CurrentMap.MapGridX + 1; x++)
+                        //Draw The upper maps
+                        for (int y = Globals.CurrentMap.MapGridY - 1; y <= Globals.CurrentMap.MapGridY + 1; y++)
                         {
-                            if (x >= 0 && x < Globals.MapGrid.GridWidth && y >= 0 && y < Globals.MapGrid.GridHeight)
+                            for (int x = Globals.CurrentMap.MapGridX - 1; x <= Globals.CurrentMap.MapGridX + 1; x++)
                             {
-                                var map = MapInstance.GetMap(Globals.MapGrid.Grid[x, y].mapnum);
-                                if (map != null)
+                                if (x >= 0 && x < Globals.MapGrid.GridWidth && y >= 0 && y < Globals.MapGrid.GridHeight)
                                 {
-                                    //Draw this map
-                                    DrawMap(map, x - Globals.CurrentMap.MapGridX, y - Globals.CurrentMap.MapGridY, false, 1, null);
+                                    var map = MapInstance.GetMap(Globals.MapGrid.Grid[x, y].mapnum);
+                                    if (map != null)
+                                    {
+                                        //Draw this map
+                                        DrawMap(map, x - Globals.CurrentMap.MapGridX, y - Globals.CurrentMap.MapGridY,
+                                            false, 1, null);
+                                    }
                                 }
                             }
                         }
-                    }
 
-                    //Draw the upper resources/animations
-                    for (int y = Globals.CurrentMap.MapGridY - 1; y <= Globals.CurrentMap.MapGridY + 1; y++)
-                    {
-                        for (int x = Globals.CurrentMap.MapGridX - 1; x <= Globals.CurrentMap.MapGridX + 1; x++)
+                        //Draw the upper resources/animations
+                        for (int y = Globals.CurrentMap.MapGridY - 1; y <= Globals.CurrentMap.MapGridY + 1; y++)
                         {
-                            if (x >= 0 && x < Globals.MapGrid.GridWidth && y >= 0 && y < Globals.MapGrid.GridHeight)
+                            for (int x = Globals.CurrentMap.MapGridX - 1; x <= Globals.CurrentMap.MapGridX + 1; x++)
                             {
-                                var map = MapInstance.GetMap(Globals.MapGrid.Grid[x, y].mapnum);
-                                if (map != null)
+                                if (x >= 0 && x < Globals.MapGrid.GridWidth && y >= 0 && y < Globals.MapGrid.GridHeight)
                                 {
-                                    DrawMapAttributes(map, x - Globals.CurrentMap.MapGridX, y - Globals.CurrentMap.MapGridY, false, null, true);
+                                    var map = MapInstance.GetMap(Globals.MapGrid.Grid[x, y].mapnum);
+                                    if (map != null)
+                                    {
+                                        DrawMapAttributes(map, x - Globals.CurrentMap.MapGridX,
+                                            y - Globals.CurrentMap.MapGridY, false, null, true);
+                                    }
                                 }
                             }
                         }
-                    }
 
-                    if (!HideFog)
-                    {
-                        DrawFog(null);
-                    }
-                    if (!HideOverlay)
-                    {
-                        DrawMapOverlay(null);
-                    }
-                    if (!HideDarkness || Globals.CurrentLayer == Options.LayerCount + 1)
-                    {
-                        OverlayDarkness(null);
-                    }
-                    if (!HideGrid) DrawGridOverlay();
+                        if (!HideFog)
+                        {
+                            DrawFog(null);
+                        }
+                        if (!HideOverlay)
+                        {
+                            DrawMapOverlay(null);
+                        }
+                        if (!HideDarkness || Globals.CurrentLayer == Options.LayerCount + 1)
+                        {
+                            OverlayDarkness(null);
+                        }
+                        if (!HideGrid) DrawGridOverlay();
 
-                    DrawMapBorders();
-                    DrawSelectionRect();
+                        DrawMapBorders();
+                        DrawSelectionRect();
+                    }
+                    EndSpriteBatch();
+                    _mapEditorChain.Present();
                 }
-                EndSpriteBatch();
-                _mapEditorChain.Present();
             }
         }
 
@@ -874,6 +886,14 @@ namespace Intersect_Editor.Classes
                 xoffset -= CurrentView.Left;
                 yoffset -= CurrentView.Top;
             }
+
+            if (gridX == 0 && gridY == 0)
+            {
+                if ((!HideTilePreview || Globals.Dragging) && !screenShotting)
+                {
+                    tmpMap = TilePreviewStruct;
+                }
+}
 
             if (tmpMap == null) { return; }
             for (var y = y1; y < y2; y++)

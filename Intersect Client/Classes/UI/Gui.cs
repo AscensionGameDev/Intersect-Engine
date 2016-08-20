@@ -60,6 +60,7 @@ namespace Intersect_Client.Classes.UI
 
         //Input Handling
         public static List<IntersectClientExtras.Gwen.Control.Base> FocusElements;
+        public static List<IntersectClientExtras.Gwen.Control.Base> InputBlockingElements;
 
         #region "Gwen Setup and Input"
         //Gwen Low Level Functions
@@ -100,6 +101,7 @@ namespace Intersect_Client.Classes.UI
             }
 
             FocusElements = new List<IntersectClientExtras.Gwen.Control.Base>();
+            InputBlockingElements = new List<IntersectClientExtras.Gwen.Control.Base>();
             ErrorMsgHandler = new ErrorMessageHandler(_menuCanvas, _gameCanvas);
             if (Globals.GameState == GameStates.Intro || Globals.GameState == GameStates.Menu)
             {
@@ -127,10 +129,17 @@ namespace Intersect_Client.Classes.UI
 
         public static bool HasInputFocus()
         {
-            if (FocusElements == null) return false;
+            if (FocusElements == null || InputBlockingElements == null) return false;
             for (var i = 0; i < FocusElements.Count; i++)
             {
                 if (FocusElements[i].HasFocus)
+                {
+                    return true;
+                }
+            }
+            for (var i = 0; i < InputBlockingElements.Count; i++)
+            {
+                if (InputBlockingElements[i].IsHidden == false)
                 {
                     return true;
                 }

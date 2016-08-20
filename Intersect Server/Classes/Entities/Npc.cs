@@ -383,6 +383,7 @@ namespace Intersect_Server.Classes.Entities
                             }
                             else
                             {
+                                pathFinder.SetTarget(pathFinder.GetTarget());
                                 targetMap = -1;
                             }
                         }

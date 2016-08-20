@@ -60,6 +60,7 @@ namespace Intersect_Client.Classes.UI.Game
             _eventDialogWindow.Padding = new Padding(16, 8, 9, 11);
             _eventDialogWindow.IsHidden = true;
             _eventDialogWindow.Texture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "event4responses.png");
+            Gui.InputBlockingElements.Add(_eventDialogWindow);
 
             _eventFace = new ImagePanel(_eventDialogWindow);
             _eventFace.SetPosition(6 + _eventDialogWindow.Padding.Left, 6 + _eventDialogWindow.Padding.Top);

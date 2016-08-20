@@ -195,7 +195,7 @@ namespace Intersect_Editor.Forms
                 scrlDamage.Value = _editorItem.Damage;
                 scrlRange.Value = _editorItem.StatGrowth;
                 cmbEquipmentSlot.SelectedIndex = _editorItem.Data1;
-                cmbToolType.SelectedIndex = _editorItem.Tool;
+                cmbToolType.SelectedIndex = _editorItem.Tool + 1;
                 cmbGender.SelectedIndex = _editorItem.GenderReq;
                 if (_editorItem.ItemType == (int)ItemTypes.Equipment) cmbEquipmentBonus.SelectedIndex = _editorItem.Data2;
                 scrlEffectAmount.Value = _editorItem.Data3;
@@ -486,7 +486,7 @@ namespace Intersect_Editor.Forms
 
         private void cmbToolType_SelectedIndexChanged(object sender, EventArgs e)
         {
-            _editorItem.Tool = cmbToolType.SelectedIndex;
+            _editorItem.Tool = cmbToolType.SelectedIndex - 1;
         }
 
         private void cmbEquipmentBonus_SelectedIndexChanged(object sender, EventArgs e)

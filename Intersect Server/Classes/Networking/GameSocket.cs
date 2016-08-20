@@ -19,7 +19,7 @@ namespace Intersect_Server.Classes.Networking
         protected long _pingTime;
         protected long _pingInterval = 2000;
         protected long _connectionTimeout = -1;
-        protected long _timeout = 100000; //100 seconds
+        protected long _timeout = 20000; //20 seconds
         protected bool _isConnected = true;
 
         public GameSocket()

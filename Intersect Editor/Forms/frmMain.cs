@@ -107,56 +107,73 @@ namespace Intersect_Editor.Forms
             if (e.KeyData == (Keys.Control | Keys.Z))
             {
                 toolStripBtnUndo_Click(null, null);
+                return;
             }
             else if (e.KeyData == (Keys.Control | Keys.Y))
             {
                 toolStripBtnRedo_Click(null, null);
+                return;
             }
             else if (e.KeyData == (Keys.Control | Keys.X))
             {
                 toolStripBtnCut_Click(null, null);
+                return;
             }
             else if (e.KeyData == (Keys.Control | Keys.C))
             {
                 toolStripBtnCopy_Click(null, null);
+                return;
             }
             else if (e.KeyData == (Keys.Control | Keys.V))
             {
                 toolStripBtnPaste_Click(null, null);
+                return;
+            }
+            else if (e.KeyData == (Keys.Control | Keys.S))
+            {
+                toolStripBtnSaveMap_Click(null, null);
+                return;
             }
             var xDiff = 0;
             var yDiff = 0;
-            if (e.KeyCode == Keys.W || e.KeyCode == Keys.Up)
+            if (dockLeft.ActiveContent == Globals.MapEditorWindow || (dockLeft.ActiveContent == null && Globals.MapEditorWindow.DockPanel.ActiveDocument == Globals.MapEditorWindow))
             {
-                yDiff -= 20;
-            }
-            if (e.KeyCode == Keys.S || e.KeyCode == Keys.Down)
-            {
-                yDiff += 20;
-            }
-            if (e.KeyCode == Keys.A || e.KeyCode == Keys.Left)
-            {
-                xDiff -= 20;
-            }
-            if (e.KeyCode == Keys.D || e.KeyCode == Keys.Right)
-            {
-                xDiff += 20;
-            }
-            if (xDiff != 0 || yDiff != 0)
-            {
-                EditorGraphics.CurrentView.X -= (xDiff);
-                EditorGraphics.CurrentView.Y -= (yDiff);
-                if (EditorGraphics.CurrentView.X > Options.MapWidth * Options.TileWidth)
-                    EditorGraphics.CurrentView.X = Options.MapWidth * Options.TileWidth;
-                if (EditorGraphics.CurrentView.Y > Options.MapHeight * Options.TileHeight)
-                    EditorGraphics.CurrentView.Y = Options.MapHeight * Options.TileHeight;
-                if (EditorGraphics.CurrentView.X - Globals.MapEditorWindow.picMap.Width < -Options.TileWidth * Options.MapWidth * 2)
+                if (e.KeyCode == Keys.W || e.KeyCode == Keys.Up)
                 {
-                    EditorGraphics.CurrentView.X = -Options.TileWidth * Options.MapWidth * 2 + Globals.MapEditorWindow.picMap.Width;
+                    yDiff -= 20;
                 }
-                if (EditorGraphics.CurrentView.Y - Globals.MapEditorWindow.picMap.Height < -Options.TileHeight * Options.MapHeight * 2)
+                if (e.KeyCode == Keys.S || e.KeyCode == Keys.Down)
                 {
-                    EditorGraphics.CurrentView.Y = -Options.TileHeight * Options.MapHeight * 2 + Globals.MapEditorWindow.picMap.Height;
+                    yDiff += 20;
+                }
+                if (e.KeyCode == Keys.A || e.KeyCode == Keys.Left)
+                {
+                    xDiff -= 20;
+                }
+                if (e.KeyCode == Keys.D || e.KeyCode == Keys.Right)
+                {
+                    xDiff += 20;
+                }
+                if (xDiff != 0 || yDiff != 0)
+                {
+                    EditorGraphics.CurrentView.X -= (xDiff);
+                    EditorGraphics.CurrentView.Y -= (yDiff);
+                    if (EditorGraphics.CurrentView.X > Options.MapWidth*Options.TileWidth)
+                        EditorGraphics.CurrentView.X = Options.MapWidth*Options.TileWidth;
+                    if (EditorGraphics.CurrentView.Y > Options.MapHeight*Options.TileHeight)
+                        EditorGraphics.CurrentView.Y = Options.MapHeight*Options.TileHeight;
+                    if (EditorGraphics.CurrentView.X - Globals.MapEditorWindow.picMap.Width <
+                        -Options.TileWidth*Options.MapWidth*2)
+                    {
+                        EditorGraphics.CurrentView.X = -Options.TileWidth*Options.MapWidth*2 +
+                                                       Globals.MapEditorWindow.picMap.Width;
+                    }
+                    if (EditorGraphics.CurrentView.Y - Globals.MapEditorWindow.picMap.Height <
+                        -Options.TileHeight*Options.MapHeight*2)
+                    {
+                        EditorGraphics.CurrentView.Y = -Options.TileHeight*Options.MapHeight*2 +
+                                                       Globals.MapEditorWindow.picMap.Height;
+                    }
                 }
             }
         }
@@ -396,6 +413,7 @@ namespace Intersect_Editor.Forms
         {
             if (!Globals.ClosingEditor)
             {
+                Globals.ClosingEditor = true;
                 //Offer to export map
                 if (Globals.CurrentMap != null)
                 {
@@ -425,7 +443,7 @@ namespace Intersect_Editor.Forms
         {
             if (MessageBox.Show(@"Are you sure you want to save this map?", @"Save Map", MessageBoxButtons.YesNo) == DialogResult.Yes)
             {
-                PacketSender.SendMap(Globals.CurrentMap.GetId());
+                PacketSender.SendMap(Globals.CurrentMap);
             }
         }
         private void newMapToolStripMenuItem_Click(object sender, EventArgs e)
@@ -435,7 +453,7 @@ namespace Intersect_Editor.Forms
                     MessageBoxButtons.YesNo) != DialogResult.Yes) return;
             if (Globals.CurrentMap.Changed() && MessageBox.Show(@"Do you want to save your current map?", @"Save current map?", MessageBoxButtons.YesNo) == DialogResult.Yes)
             {
-                PacketSender.SendMap(Globals.CurrentMap.GetId());
+                PacketSender.SendMap(Globals.CurrentMap);
             }
             PacketSender.SendCreateMap(-1, Globals.CurrentMap.GetId(), null);
         }
@@ -830,9 +848,9 @@ namespace Intersect_Editor.Forms
 
         private void frmMain_FormClosing(object sender, FormClosingEventArgs e)
         {
-            if (!Globals.ClosingEditor && Globals.CurrentMap.Changed() && MessageBox.Show(@"Do you want to save your current map?", @"Save current map?", MessageBoxButtons.YesNo) == DialogResult.Yes)
+            if (!Globals.ClosingEditor && Globals.CurrentMap != null && Globals.CurrentMap.Changed() && MessageBox.Show(@"Do you want to save your current map?", @"Save current map?", MessageBoxButtons.YesNo) == DialogResult.Yes)
             {
-                PacketSender.SendMap(Globals.CurrentMap.GetId());
+                PacketSender.SendMap(Globals.CurrentMap);
             }
             Globals.ClosingEditor = true;
         }

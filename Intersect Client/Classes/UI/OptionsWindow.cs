@@ -86,6 +86,7 @@ namespace Intersect_Client.Classes.UI
                 _menuPanel.SetPosition(parent.Width / 2 - _menuPanel.Width / 2, parent.Height / 2 - _menuPanel.Height / 2);
             }
             _menuPanel.IsHidden = true;
+            Gui.InputBlockingElements.Add(_menuPanel);
 
             //Menu Header
             _menuHeader = new Label(_menuPanel);

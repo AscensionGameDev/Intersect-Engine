@@ -26,6 +26,7 @@
 */
 using System;
 using System.Collections.Generic;
+using System.Text;
 using IntersectClientExtras.File_Management;
 using IntersectClientExtras.GenericClasses;
 using IntersectClientExtras.Graphics;
@@ -226,18 +227,18 @@ namespace Intersect_Client_MonoGame.Classes.SFML.Graphics
             if (font == null) return;
             StartSpritebatch(_currentView, GameBlendModes.None, null, renderTexture, false, null);
             Color backColor = Color.Black;
-            try
+            foreach (var chr in text)
             {
-                _spriteBatch.DrawString(font, text, new Vector2(x, y - 1), ConvertColor(backColor) * .8f, 0f, Vector2.Zero, new Vector2(fontScale, fontScale), SpriteEffects.None, 0);
-                _spriteBatch.DrawString(font, text, new Vector2(x - 1, y), ConvertColor(backColor) * .8f, 0f, Vector2.Zero, new Vector2(fontScale, fontScale), SpriteEffects.None, 0);
-                _spriteBatch.DrawString(font, text, new Vector2(x + 1, y), ConvertColor(backColor) * .8f, 0f, Vector2.Zero, new Vector2(fontScale, fontScale), SpriteEffects.None, 0);
-                _spriteBatch.DrawString(font, text, new Vector2(x, y + 1), ConvertColor(backColor) * .8f, 0f, Vector2.Zero, new Vector2(fontScale, fontScale), SpriteEffects.None, 0);
-                _spriteBatch.DrawString(font, text, new Vector2(x, y), ConvertColor(fontColor));
+                if (!font.Characters.Contains(chr))
+                {
+                    text = text.Replace(chr, ' ');
+                }
             }
-            catch (Exception)
-            {
-                //invalid character bs
-            }
+            _spriteBatch.DrawString(font, text, new Vector2(x, y - 1), ConvertColor(backColor) * .8f, 0f, Vector2.Zero, new Vector2(fontScale, fontScale), SpriteEffects.None, 0);
+            _spriteBatch.DrawString(font, text, new Vector2(x - 1, y), ConvertColor(backColor) * .8f, 0f, Vector2.Zero, new Vector2(fontScale, fontScale), SpriteEffects.None, 0);
+            _spriteBatch.DrawString(font, text, new Vector2(x + 1, y), ConvertColor(backColor) * .8f, 0f, Vector2.Zero, new Vector2(fontScale, fontScale), SpriteEffects.None, 0);
+            _spriteBatch.DrawString(font, text, new Vector2(x, y + 1), ConvertColor(backColor) * .8f, 0f, Vector2.Zero, new Vector2(fontScale, fontScale), SpriteEffects.None, 0);
+            _spriteBatch.DrawString(font, text, new Vector2(x, y), ConvertColor(fontColor));
         }
 
         public override void DrawString(string text, GameFont gameFont, float x, float y, float fontScale, Color fontColor, bool worldPos, GameRenderTexture renderTexture, FloatRect clipRect)
@@ -257,16 +258,15 @@ namespace Intersect_Client_MonoGame.Classes.SFML.Graphics
             //Set the current scissor rectangle
             _spriteBatch.GraphicsDevice.ScissorRectangle = new Microsoft.Xna.Framework.Rectangle((int)clipRect.X, (int)clipRect.Y, (int)clipRect.Width, (int)clipRect.Height);
             StartSpritebatch(_currentView, GameBlendModes.None, null, renderTexture, false, _rasterizerState);
-            //Draw the text at the top left of the scissor rectangle
-            try
+            foreach (var chr in text)
             {
-                _spriteBatch.DrawString(font, text, new Vector2(x, y), clr, 0f, Vector2.Zero,
+                if (!font.Characters.Contains(chr))
+                {
+                    text = text.Replace(chr, ' ');
+                }
+            }
+            _spriteBatch.DrawString(font, text, new Vector2(x, y), clr, 0f, Vector2.Zero,
                     new Vector2(fontScale, fontScale), SpriteEffects.None, 0);
-            }
-            catch (Exception)
-            {
-                //invalid character bs
-            }
 
             EndSpriteBatch();
 
@@ -425,6 +425,13 @@ namespace Intersect_Client_MonoGame.Classes.SFML.Graphics
             if (gameFont == null) return Pointf.Empty;
             SpriteFont font = (SpriteFont)gameFont.GetFont();
             if (font == null) return Pointf.Empty;
+            foreach (var chr in text)
+            {
+                if (!font.Characters.Contains(chr))
+                {
+                    text = text.Replace(chr, ' ');
+                }
+            }
             Vector2 size = font.MeasureString(text);
             return new Pointf(size.X * fontScale, size.Y * fontScale);
         }

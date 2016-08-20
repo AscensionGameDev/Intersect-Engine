@@ -56,7 +56,6 @@ namespace Intersect_Server.Classes.Maps
         public List<Projectile> MapProjectiles = new List<Projectile>();
 
         private byte[] ClientMapData = null;
-        private byte[] EditorMapData = null;
 
         //Location of Map in the current grid
         public int MapGrid;
@@ -95,7 +94,6 @@ namespace Intersect_Server.Classes.Maps
             lock (_mapLock)
             {
                 ClientMapData = null;
-                EditorMapData = null;
                 DespawnEverything();
                 base.Load(packet);
                 if (keepRevision > -1) Revision = keepRevision;
@@ -165,14 +163,6 @@ namespace Intersect_Server.Classes.Maps
                 ClientMapData = base.GetMapData(true);
             }
             return ClientMapData;
-        }
-        public byte[] GetEditorMapData()
-        {
-            if (EditorMapData == null)
-            {
-                EditorMapData = base.GetMapData(false);
-            }
-            return EditorMapData;
         }
 
         //Items & Resources
@@ -811,7 +801,6 @@ namespace Intersect_Server.Classes.Maps
         //GameObject Functions
         public override byte[] GetData()
         {
-            EditorMapData = null;
             ClientMapData = null;
             return GetMapData(false);
         }

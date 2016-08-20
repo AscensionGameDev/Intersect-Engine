@@ -59,6 +59,8 @@ namespace Intersect_Editor.Classes
 
         public static void RunFrame()
         {
+            //Shooting for 30fps
+            var startTime = Globals.System.GetTimeMs();
             myForm.Update();
 
             if (waterfallTimer < Globals.System.GetTimeMs())
@@ -91,13 +93,14 @@ namespace Intersect_Editor.Classes
                 _fpsCount = 0;
                 _fpsTime = Globals.System.GetTimeMs() + 1000;
             }
+            Thread.Sleep(Math.Max(1, (int)(1000 / 30f - (Globals.System.GetTimeMs() - startTime))));
         }
 
         private static void UpdateMaps()
         {
             while (!Globals.ClosingEditor)
             {
-                if (Globals.MapsToScreenshot.Count > 0 && Globals.FetchingMapPreviews == false)
+                if (Globals.MapsToScreenshot.Count > 0 && Globals.FetchingMapPreviews == false && myForm.InvokeRequired)
                 {
                     if (progressForm == null || progressForm.IsDisposed ||
                         progressForm.Visible == false)
@@ -115,6 +118,7 @@ namespace Intersect_Editor.Classes
                                 {
                                     map.Value.Update();
                                 }
+                                Network.Update();
                                 Application.DoEvents();
                             }
                             Thread.Sleep(50);
@@ -123,6 +127,7 @@ namespace Intersect_Editor.Classes
                         myForm.BeginInvoke(new Action(() => progressForm.Close()));
                     }
                 }
+                Thread.Sleep(100);
             }
         }
     }

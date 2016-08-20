@@ -24,7 +24,7 @@ namespace Intersect_Editor.Forms
                 //Should ask if the user wants to save changes
                 if (Globals.CurrentMap.Changed() && MessageBox.Show(@"Do you want to save your current map?", @"Save current map?", MessageBoxButtons.YesNo) == DialogResult.Yes)
                 {
-                    PacketSender.SendMap(Globals.CurrentMap.GetId());
+                    PacketSender.SendMap(Globals.CurrentMap);
                 }
                 Globals.MainForm.EnterMap(((MapListMap)e.Node.Tag).MapNum);
             }
@@ -85,7 +85,7 @@ namespace Intersect_Editor.Forms
                     MessageBoxButtons.YesNo) != DialogResult.Yes) return;
             if (Globals.CurrentMap.Changed() && MessageBox.Show(@"Do you want to save your current map?", @"Save current map?", MessageBoxButtons.YesNo) == DialogResult.Yes)
             {
-                PacketSender.SendMap(Globals.CurrentMap.GetId());
+                PacketSender.SendMap(Globals.CurrentMap);
             }
             if (mapTreeList.list.SelectedNode == null)
             {

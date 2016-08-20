@@ -118,10 +118,12 @@ namespace Intersect_Editor.Classes.Maps
                     Globals.CurrentMap = this;
                     using (MemoryStream ms = new MemoryStream())
                     {
-                        var screenshotTexture = EditorGraphics.ScreenShotMap();
-                        screenshotTexture.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
-                        ms.Close();
-
+                        lock (EditorGraphics.GraphicsLock)
+                        {
+                            var screenshotTexture = EditorGraphics.ScreenShotMap();
+                            screenshotTexture.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
+                            ms.Close();
+                        }
                         Database.SaveMapCache(MyMapNum, Revision, ms.ToArray());
                     }
                     Globals.CurrentMap = prevMap;

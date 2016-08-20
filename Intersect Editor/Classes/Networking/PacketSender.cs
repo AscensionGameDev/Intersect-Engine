@@ -23,6 +23,7 @@
 using Intersect_Editor.Classes.Maps;
 using Intersect_Library;
 using Intersect_Library.GameObjects;
+using Intersect_Library.GameObjects.Maps;
 using Intersect_Library.GameObjects.Maps.MapList;
 
 namespace Intersect_Editor.Classes
@@ -57,12 +58,12 @@ namespace Intersect_Editor.Classes
             bf.Dispose();
         }
 
-        public static void SendMap(int mapnum)
+        public static void SendMap(MapBase map)
         {
             var bf = new ByteBuffer();
-            var mapData = MapInstance.GetMap(mapnum).GetMapData(false);
+            var mapData = map.GetMapData(false);
             bf.WriteLong((int)ClientPackets.SaveMap);
-            bf.WriteLong(mapnum);
+            bf.WriteLong(map.GetId());
             bf.WriteLong(mapData.Length);
             bf.WriteBytes(mapData);
             Network.SendPacket(bf.ToArray());

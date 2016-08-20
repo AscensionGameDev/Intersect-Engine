@@ -45,7 +45,7 @@ namespace Intersect_Server.Classes.Entities
             MyBase = resource;
             MyName = resource.Name;
             MySprite = resource.InitialGraphic;
-            Vital[(int)Vitals.Health] = Globals.Rand.Next(resource.MinHP, resource.MaxHP + 1);
+            Vital[(int)Vitals.Health] = Globals.Rand.Next(Math.Min(1,resource.MinHP), Math.Max(resource.MaxHP, Math.Min(1, resource.MinHP)) + 1);
             MaxVital[(int)Vitals.Health] = Vital[(int)Vitals.Health];
             Passable = Convert.ToInt32(resource.WalkableBefore);
             HideName = 1;
@@ -103,6 +103,7 @@ namespace Intersect_Server.Classes.Entities
                     }
                 }
             }
+            PacketSender.SendAnimationToProximity(MyBase.Animation, -1, -1, CurrentMap, CurrentX, CurrentY, -1);
         }
 
         public override byte[] Data()

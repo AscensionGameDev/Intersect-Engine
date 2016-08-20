@@ -50,6 +50,24 @@ namespace Intersect_Client.Classes.Entities
         public int Experience = 0;
         public int ExperienceToNextLevel = 0;
 
+        public override int CurrentMap
+        {
+            get { return base.CurrentMap; }
+            set
+            {
+                if (value != base.CurrentMap)
+                {
+                    base.CurrentMap = value;
+                    if (Globals.Me == this)
+                    {
+                        if (MapInstance.GetMap(Globals.Me.CurrentMap) != null)
+                            GameAudio.PlayMusic(MapInstance.GetMap(Globals.Me.CurrentMap).Music, 3, 3, true);
+                    }
+                }
+
+            }
+        }
+
         public int Class = -1;
 
         public bool NoClip = false;
@@ -71,7 +89,7 @@ namespace Intersect_Client.Classes.Entities
         {
             bool returnval = base.Update();
             HandleInput();
-            if (Globals.EventHolds.Count == 0 && Globals.GameShop == null && Globals.InBank == false)
+            if (Globals.EventHolds.Count == 0 && Globals.GameShop == null && Globals.InBank == false && !Gui.HasInputFocus())
             {
                 if (this == Globals.Me && base.IsMoving == false)
                 {

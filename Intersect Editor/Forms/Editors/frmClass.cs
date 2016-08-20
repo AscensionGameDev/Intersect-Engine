@@ -552,14 +552,15 @@ namespace Intersect_Editor.Forms
 
             if (n.Gender == 0)
             {
-                lstSprites.Items.Add(Convert.ToString(lstSprites.Items.Count) + ") " + n.Sprite + " - M");
+                lstSprites.Items.Add(Convert.ToString(_editorItem.Sprites.Count) + ") " + n.Sprite + " - M");
             }
             else
             {
-                lstSprites.Items.Add(Convert.ToString(lstSprites.Items.Count) + ") " + n.Sprite + " - F");
+                lstSprites.Items.Add(Convert.ToString(_editorItem.Sprites.Count) + ") " + n.Sprite + " - F");
             }
 
             lstSprites.SelectedIndex = lstSprites.Items.Count - 1;
+            lstSprites_Click(null, null);
         }
 
         private void btnRemove_Click(object sender, EventArgs e)

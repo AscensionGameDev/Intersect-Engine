@@ -45,19 +45,40 @@ with.
 
     <!--
     CharacterRegions control what letters are available in the font. Every
-    character from Start to End will be built and made available for drawing. The
-    default range is from 32, (ASCII space), to 126, ('~'), covering the basic Latin
-    character set. The characters are ordered according to the Unicode standard.
+    character from Start to End will be built and made available for drawing.
+	We are grabbing character ranges from http://jrgraphix.net/r/Unicode/
     See the documentation for more information.
     -->
     <CharacterRegions>
+	  <!-- Basic Latin -->
       <CharacterRegion>
-        <Start>&#32;</Start>
-        <End>&#126;</End>
+        <Start>&#x0020;</Start>
+        <End>&#x007F;</End>
       </CharacterRegion>
-	  <CharacterRegion>
-        <Start>■</Start>
-        <End>♯</End>
+	  <!-- Latin-1 Supplement -->
+      <CharacterRegion>
+        <Start>&#x00A0;</Start>
+        <End>&#x00FF;</End>
+      </CharacterRegion>
+	  <!-- General Punctuation -->
+      <CharacterRegion>
+        <Start>&#x2000;</Start>
+        <End>&#x206F;</End>
+      </CharacterRegion>
+	  <!-- Currency Symbols -->
+      <CharacterRegion>
+        <Start>&#x20A0;</Start>
+        <End>&#x20CF;</End>
+      </CharacterRegion>
+	  <!-- Arrows -->
+      <CharacterRegion>
+        <Start>&#x2190;</Start>
+        <End>&#x21FF;</End>
+      </CharacterRegion>
+	  <!-- Misc Symbols -->
+      <CharacterRegion>
+        <Start>&#x2600;</Start>
+        <End>&#x26FF;</End>
       </CharacterRegion>
     </CharacterRegions>
   </Asset>

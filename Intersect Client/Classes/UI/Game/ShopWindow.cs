@@ -67,6 +67,7 @@ namespace Intersect_Client.Classes.UI.Game
             _shopWindow.Padding = new Padding(8, 5, 9, 11);
             X = _shopWindow.X;
             Y = _shopWindow.Y;
+            Gui.InputBlockingElements.Add(_shopWindow);
 
             _shopWindow.SetTitleBarHeight(24);
             _shopWindow.SetCloseButtonSize(20, 20);

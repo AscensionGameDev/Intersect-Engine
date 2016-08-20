@@ -315,7 +315,7 @@ namespace Intersect_Server.Classes.Networking
                 return;
             }
             bf.Dispose();
-            if (Globals.Entities[index].CanMove(dir) == -1)
+            if (Globals.Entities[index].CanMove(dir) == -1 || Globals.Entities[index].CanMove(dir) == -4)
             {
                 Globals.Entities[index].Move(dir, client, false);
                 Globals.Entities[index].TryToChangeDimension();
@@ -414,6 +414,7 @@ namespace Intersect_Server.Classes.Networking
             {
                 MapInstance.GetMap(mapNum).Load(bf.ReadBytes((int)mapLength), MapInstance.GetMap(mapNum).Revision + 1);
                 Database.SaveGameObject(MapInstance.GetMap(mapNum));
+                MapInstance.GetMap(mapNum).InitAutotiles();
                 foreach (var t in Globals.Clients)
                 {
                     if (t == null) continue;

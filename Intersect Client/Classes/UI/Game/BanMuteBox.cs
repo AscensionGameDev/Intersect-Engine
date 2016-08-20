@@ -60,6 +60,7 @@ namespace Intersect_Client.Classes.UI.Game
             _myWindow.DisableResizing();
             _myWindow.Margin = Margin.Zero;
             _myWindow.Padding = Padding.Zero;
+            Gui.InputBlockingElements.Add(_myWindow);
 
 
             Label promptLabel = new Label(_myWindow);

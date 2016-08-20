@@ -50,7 +50,7 @@ namespace Intersect_Editor.Forms
             pnlMap.Width = Options.TileWidth*Options.MapWidth;
             pnlMap.Height = Options.TileHeight*Options.MapHeight;
             pnlMap.BackColor = Color.Black;
-            mapTreeList1.SetClick(new TreeNodeMouseClickEventHandler(NodeDoubleClick));
+            mapTreeList1.SetSelect(new TreeViewEventHandler(NodeDoubleClick));
         }
 
         public void InitForm(bool tileSelection = true, List<int> restrictMaps = null)
@@ -64,7 +64,7 @@ namespace Intersect_Editor.Forms
             }
         }
 
-        private void NodeDoubleClick(object sender, TreeNodeMouseClickEventArgs e)
+        private void NodeDoubleClick(object sender, TreeViewEventArgs e)
         {
                 if (e.Node.Tag.GetType() == typeof(MapListMap))
                 {
@@ -74,11 +74,14 @@ namespace Intersect_Editor.Forms
 
         public void SelectTile(int mapNum, int x, int y)
         {
-            _currentMap = mapNum;
-            _currentX = x;
-            _currentY = y;
-            mapTreeList1.UpdateMapList(mapNum,_restrictMaps);
-            UpdatePreview();
+            if (_currentMap != mapNum || x != _currentX || y != _currentY)
+            {
+                _currentMap = mapNum;
+                _currentX = x;
+                _currentY = y;
+                mapTreeList1.UpdateMapList(mapNum, _restrictMaps);
+                UpdatePreview();
+            }
         }
 
         private void UpdatePreview()
