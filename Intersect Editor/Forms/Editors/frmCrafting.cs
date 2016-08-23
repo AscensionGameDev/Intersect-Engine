@@ -84,12 +84,6 @@ namespace Intersect_Editor.Forms.Editors
             {
                 pnlContainer.Show();
 
-                // if there are no crafts, add one by default
-                if (_editorItem.Crafts.Count == 0)
-                {
-                    _editorItem.Crafts.Add(new Bench());
-                }
-
                 lstCompositions.Items.Clear();
                 foreach (var i in _editorItem.Crafts)
                 {
@@ -115,59 +109,75 @@ namespace Intersect_Editor.Forms.Editors
 
         private void UpdateCraft()
         {
-            _craftItem = _editorItem.Crafts[lstCompositions.SelectedIndex];
-            // if there are no ingredients, add one by default.
-            if (_craftItem.Ingredients.Count == 0)
+            if (lstCompositions.SelectedIndex > -1)
             {
-                _craftItem.Ingredients.Add(new CraftIngredient(-1, 1));
-            }
+                groupBox5.Show();
+                _craftItem = _editorItem.Crafts[lstCompositions.SelectedIndex];
 
-            scrlSpeed.Value = _craftItem.Time;
-            scrlItem.Value = Database.GameObjectListIndex(GameObject.Item, _craftItem.Item);
+                scrlSpeed.Value = _craftItem.Time;
+                scrlItem.Value = Database.GameObjectListIndex(GameObject.Item, _craftItem.Item);
 
-            lblSpeed.Text = "Time: " + scrlSpeed.Value + "ms";
+                lblSpeed.Text = "Time: " + scrlSpeed.Value + "ms";
 
-            if (scrlItem.Value > -1)
-            {
-                lblItem.Text = "Item: " + ItemBase.GetName(_craftItem.Item);
-            }
-            else
-            {
-                lblItem.Text = "Item: None";
-            }
-
-            if (lstCrafts.SelectedIndex < 0) { lstCrafts.SelectedIndex = 0; }
-
-            lstIngredients.Items.Clear();
-            for (int i = 0; i < _craftItem.Ingredients.Count; i++)
-            {
-                if (_craftItem.Ingredients[i].Item > -1)
+                if (scrlItem.Value > -1)
                 {
-                    lstIngredients.Items.Add("Ingredient: " + ItemBase.GetName(_craftItem.Ingredients[i].Item) + " x" + _craftItem.Ingredients[i].Quantity);
+                    lblItem.Text = "Item: " + ItemBase.GetName(_craftItem.Item);
                 }
                 else
                 {
-                    lstIngredients.Items.Add("Ingredient: None x" + _craftItem.Ingredients[i].Quantity);
+                    lblItem.Text = "Item: None";
                 }
-            }
-            lstIngredients.SelectedIndex = 0;
-            scrlIngredient.Value = Database.GameObjectListIndex(GameObject.Item, _craftItem.Ingredients[lstIngredients.SelectedIndex].Item);
-            scrlQuantity.Value = _craftItem.Ingredients[lstIngredients.SelectedIndex].Quantity;
-            lblQuantity.Text = "Quantity x" + scrlQuantity.Value;
 
-            if (scrlIngredient.Value > -1)
-            {
-                lblIngredient.Text = "Item: " + ItemBase.GetName(_craftItem.Ingredients[lstIngredients.SelectedIndex].Item);
+                if (lstCrafts.SelectedIndex < 0)
+                {
+                    lstCrafts.SelectedIndex = 0;
+                }
+
+                lstIngredients.Items.Clear();
+                for (int i = 0; i < _craftItem.Ingredients.Count; i++)
+                {
+                    if (_craftItem.Ingredients[i].Item > -1)
+                    {
+                        lstIngredients.Items.Add("Ingredient: " + ItemBase.GetName(_craftItem.Ingredients[i].Item) +
+                                                 " x" + _craftItem.Ingredients[i].Quantity);
+                    }
+                    else
+                    {
+                        lstIngredients.Items.Add("Ingredient: None x" + _craftItem.Ingredients[i].Quantity);
+                    }
+                }
+                if (lstIngredients.Items.Count > 0)
+                {
+                    lstIngredients.SelectedIndex = 0;
+                    scrlIngredient.Value = Database.GameObjectListIndex(GameObject.Item,
+                        _craftItem.Ingredients[lstIngredients.SelectedIndex].Item);
+                    scrlQuantity.Value = _craftItem.Ingredients[lstIngredients.SelectedIndex].Quantity;
+                    lblQuantity.Text = "Quantity x" + scrlQuantity.Value;
+
+                    if (scrlIngredient.Value > -1)
+                    {
+                        lblIngredient.Text = "Item: " +
+                                             ItemBase.GetName(_craftItem.Ingredients[lstIngredients.SelectedIndex].Item);
+                    }
+                    else
+                    {
+                        lblIngredient.Text = "Item: None";
+                    }
+                }
             }
             else
             {
-                lblIngredient.Text = "Item: None";
+                groupBox5.Hide();
             }
         }
 
         private void txtName_TextChanged(object sender, EventArgs e)
         {
             _editorItem.Name = txtName.Text;
+            if (lstCrafts.SelectedIndex > -1)
+            {
+                lstCrafts.Items[lstCrafts.SelectedIndex] = txtName.Text;
+            }
         }
 
         private void scrlItem_Scroll(object sender, ScrollEventArgs e)
@@ -181,6 +191,17 @@ namespace Intersect_Editor.Forms.Editors
             else
             {
                 lblItem.Text = "Item: None";
+            }
+            if (lstCompositions.SelectedIndex > -1)
+            {
+                if (scrlItem.Value > -1)
+                {
+                    lstCompositions.Items[lstCrafts.SelectedIndex] = ItemBase.GetName(_craftItem.Item);
+                }
+                else
+                {
+                    lstCompositions.Items[lstCrafts.SelectedIndex] = "None";
+                }
             }
         }
 
@@ -329,8 +350,6 @@ namespace Intersect_Editor.Forms.Editors
         private void btnNewComposition_Click(object sender, EventArgs e)
         {
             _editorItem.Crafts.Add(new Bench());
-            _editorItem.Crafts[_editorItem.Crafts.Count - 1].Ingredients.Add(new CraftIngredient(-1, 1));
-            lstCompositions.Items.Add("None");
         }
 
         private void btnDeleteCraft_Click(object sender, EventArgs e)

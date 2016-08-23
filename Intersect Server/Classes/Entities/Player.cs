@@ -928,8 +928,11 @@ namespace Intersect_Server.Classes.Entities
         }
         public void CloseCraftingBench()
         {
-            InCraft = -1;
-            PacketSender.SendCloseCraftingBench(MyClient);
+            if (InCraft > -1 && CraftIndex == -1)
+            {
+                InCraft = -1;
+                PacketSender.SendCloseCraftingBench(MyClient);
+            }
         }
 
         //Craft a new item
@@ -1575,6 +1578,16 @@ namespace Intersect_Server.Classes.Entities
                 }
                 return true;
             }
+        }
+
+        public override int CanMove(int moveDir)
+        {
+            //If crafting or locked by event return blocked 
+            if (InCraft > -1 && CraftIndex > -1)
+            {
+                return -5;
+            }
+            return base.CanMove(moveDir);
         }
 
         public override void Move(int moveDir, Client client, bool DontUpdate = false)

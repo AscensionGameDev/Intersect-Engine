@@ -183,6 +183,8 @@ namespace Intersect_Client.Classes.UI.Game
             _craft.SetTextColor(new Color(255, 20, 20, 20), Label.ControlState.Hovered);
             _craft.SetTextColor(new Color(255, 215, 215, 215), Label.ControlState.Clicked);
             _craft.Font = Globals.ContentManager.GetFont(Gui.DefaultFont, 12);
+
+            Gui.InputBlockingElements.Add(_craftWindow);
         }
 
         private void LoadCraftItems(int index)
@@ -287,6 +289,7 @@ namespace Intersect_Client.Classes.UI.Game
             crafting = true;
             BarTimer = Globals.System.GetTimeMS();
             PacketSender.SendCraftItem(craftIndex);
+            _craftWindow.IsClosable = false;
         }
 
         //Update the crafting bar
@@ -299,6 +302,7 @@ namespace Intersect_Client.Classes.UI.Game
                 {
                     i = Globals.GameBench.Crafts[craftIndex].Time;
                     crafting = false;
+                    _craftWindow.IsClosable = true;
                     LoadCraftItems(craftIndex);
                 }
                 decimal width = Convert.ToDecimal(i) / Convert.ToDecimal(Globals.GameBench.Crafts[craftIndex].Time) * 100;
