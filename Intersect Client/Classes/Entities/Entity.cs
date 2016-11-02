@@ -99,6 +99,9 @@ namespace Intersect_Client.Classes.Entities
         public Queue<DashInstance> DashQueue = new Queue<DashInstance>();
         public long DashTimer = 0;
 
+        //Chat
+        private List<ChatBubble> _chatBubbles = new List<ChatBubble>();
+
         //Combat
         public long AttackTimer = 0;
         public bool Blocking = false;
@@ -308,7 +311,14 @@ namespace Intersect_Client.Classes.Entities
                 {
                     animInstance.SetPosition((int)GetCenterPos().X, (int)GetCenterPos().Y, -1);
                 }
-
+            }
+            var chatbubbles = _chatBubbles.ToArray();
+            foreach (var chatbubble in chatbubbles)
+            {
+                if (!chatbubble.Update())
+                {
+                    _chatBubbles.Remove(chatbubble);
+                }
             }
             _lastUpdate = Globals.System.GetTimeMS();
             return true;
@@ -505,6 +515,12 @@ namespace Intersect_Client.Classes.Entities
                 }
 
             }
+            var chatbubbles = _chatBubbles.ToArray();
+            var bubbleoffset = 0f;
+            for (int i = chatbubbles.Length - 1; i > -1; i--)
+            {
+                bubbleoffset = chatbubbles[i].Draw(bubbleoffset);
+            }
         }
 
         public virtual void DrawEquipment(string filename, int alpha)
@@ -581,6 +597,24 @@ namespace Intersect_Client.Classes.Entities
             }
             return pos;
         }
+
+        public virtual float GetTopPos()
+        {
+            var map = MapInstance.GetMap(CurrentMap);
+            if (map == null)
+            {
+                return 0f;
+            }
+            var y = (int)Math.Ceiling(GetCenterPos().Y);
+            GameTexture entityTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Entity, MySprite);
+            if (entityTex != null)
+            {
+                y = y - (int)((entityTex.GetHeight() / 8));
+                y -= 12;
+            }
+            if (this.GetType() != typeof(Event)) { y -= 10; } //Need room for HP bar if not an event.
+            return y;
+        }
         public virtual void DrawName()
         {
             if (HideName == 1) { return; }
@@ -602,15 +636,8 @@ namespace Intersect_Client.Classes.Entities
             {
                 return;
             }
-            var y = (int)Math.Ceiling(GetCenterPos().Y);
+            var y = GetTopPos();
             var x = (int)Math.Ceiling(GetCenterPos().X);
-            GameTexture entityTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Entity, MySprite);
-            if (entityTex != null)
-            {
-                y = y - (int)((entityTex.GetHeight() / 8));
-                y -= 12;
-            }
-            if (this.GetType() != typeof(Event)) { y -= 10; } //Need room for HP bar if not an event.
 
             float textWidth = GameGraphics.Renderer.MeasureText(MyName, GameGraphics.GameFont, 1).X;
             GameGraphics.Renderer.DrawString(MyName, GameGraphics.GameFont,
@@ -729,6 +756,12 @@ namespace Intersect_Client.Classes.Entities
 
                 GameGraphics.DrawGameTexture(targetTex, srcRectangle, destRectangle, Color.White);
             }
+        }
+
+        //Chatting
+        public void AddChatBubble(string text)
+        {
+            _chatBubbles.Add(new ChatBubble(this,text));
         }
 
         ~Entity()

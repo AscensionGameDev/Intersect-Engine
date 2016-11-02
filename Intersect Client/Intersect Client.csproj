@@ -44,6 +44,7 @@
     <Compile Include="Classes\Core\GameInputHandler.cs" />
     <Compile Include="Classes\Core\GameMain.cs" />
     <Compile Include="Classes\Entities\AnimationInstance.cs" />
+    <Compile Include="Classes\Entities\ChatBubble.cs" />
     <Compile Include="Classes\Entities\Entity.cs" />
     <Compile Include="Classes\Entities\Events\Event.cs" />
     <Compile Include="Classes\Entities\Events\EventDialog.cs" />

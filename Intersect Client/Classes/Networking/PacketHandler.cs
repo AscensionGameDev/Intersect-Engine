@@ -205,6 +205,9 @@ namespace Intersect_Client.Classes.Networking
                     case ServerPackets.Time:
                         HandleTime(bf.ReadBytes(bf.Length()));
                         break;
+                    case ServerPackets.ChatBubble:
+                        HandleChatBubble(bf.ReadBytes(bf.Length()));
+                        break;
                     default:
                         Console.WriteLine(@"Non implemented packet received: " + packetHeader);
                         break;
@@ -1232,6 +1235,33 @@ namespace Intersect_Client.Classes.Networking
             float rate = (float) bf.ReadDouble();
             Intersect_Library.Color clr = Intersect_Library.Color.FromArgb(bf.ReadByte(), bf.ReadByte(), bf.ReadByte(), bf.ReadByte());
             ClientTime.LoadTime(time, clr, rate);
+        }
+
+        private static void HandleChatBubble(byte[] packet)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteBytes(packet);
+            var index = (int)bf.ReadLong();
+            var type = bf.ReadInteger();
+            var mapNum = bf.ReadInteger();
+            Entity en = null;
+            if (type < (int)EntityTypes.Event)
+            {
+                if (!Globals.Entities.ContainsKey(index)) { return; }
+                en = Globals.Entities[index];
+            }
+            else
+            {
+                var entityMap = MapInstance.GetMap(mapNum);
+                if (entityMap == null) return;
+                if (!entityMap.LocalEntities.ContainsKey(index)) { return; }
+                en = entityMap.LocalEntities[index];
+            }
+            if (en == null)
+            {
+                return;
+            }
+            en.AddChatBubble(bf.ReadString());
         }
     }
 }
