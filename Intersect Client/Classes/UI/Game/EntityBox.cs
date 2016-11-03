@@ -29,8 +29,11 @@ using IntersectClientExtras.File_Management;
 using IntersectClientExtras.Graphics;
 using IntersectClientExtras.Gwen;
 using IntersectClientExtras.Gwen.Control;
+using IntersectClientExtras.Gwen.Control.EventArguments;
+using IntersectClientExtras.Gwen.ControlInternal;
 using Intersect_Client.Classes.Entities;
 using Intersect_Client.Classes.General;
+using Intersect_Client.Classes.Networking;
 using Intersect_Library;
 using Color = IntersectClientExtras.GenericClasses.Color;
 
@@ -195,10 +198,11 @@ namespace Intersect_Client.Classes.UI.Game
 
                 PartyLabel = new Label(_entityBox);
                 PartyLabel.SetText("Party");
-                PartyLabel.SetToolTipText("[Not Implemented!] Invite " + _myEntity.MyName + " to your party.");
+                PartyLabel.SetToolTipText("Invite " + _myEntity.MyName + " to your party.");
                 PartyLabel.SetPosition(165, 89);
                 PartyLabel.TextColorOverride = Color.White;
                 PartyLabel.MouseInputEnabled = true;
+                PartyLabel.Clicked += invite_Clicked;
             }
 
             lastUpdateTime = Globals.System.GetTimeMS();
@@ -386,5 +390,12 @@ namespace Intersect_Client.Classes.UI.Game
         }
 
         //Input Handlers
+        void invite_Clicked(Base sender, ClickedEventArgs arguments)
+        {
+            if (Globals.Me._targetIndex != -1 && Globals.Me._targetIndex != Globals.Me.MyIndex)
+            {
+                PacketSender.SendPartyInvite(Globals.Me._targetIndex);
+            }
+        }
     }
 }

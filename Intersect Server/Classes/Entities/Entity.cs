@@ -464,9 +464,14 @@ namespace Intersect_Server.Classes.Entities
             double dmg = 0;
 
             if (enemy == null) return;
-            if (enemy.MyName == "jcsnider") return; //todo remove this!!!!!!!!!!!!!!!
             if (!IsOneBlockAway(enemy) && isProjectile == null && isSpell == -1) return;
             if (!isFacingTarget(enemy) && isProjectile == null && isSpell == -1) return;
+
+            //Check for parties, friendly fire off.
+            if (enemy.GetType() == typeof(Player) && this.GetType() == typeof(Player))
+            {
+                if (((Player)this).InParty((Player)enemy) == true) return;
+            }
 
             if (isProjectile == null && isSpell == -1 && (AttackTimer > Globals.System.GetTimeMs() || Blocking)) return;
             AttackTimer = Globals.System.GetTimeMs() + CalculateAttackTime();
@@ -584,7 +589,7 @@ namespace Intersect_Server.Classes.Entities
                 if (dmg <= 0) dmg = 1; // Always do damage.
 
                 //Check for a crit
-                if (Globals.Rand.Next(1, Options.CritChance + 1) == 1)
+                if (enemy.GetType() != typeof(Resource) && Globals.Rand.Next(1, Options.CritChance + 1) == 1)
                 {
                     dmg *= Options.CritMultiplier;
                     PacketSender.SendActionMsg(enemy.MyIndex, "CRITICAL HIT!", new Color(255, 255, 255, 0));

@@ -172,9 +172,9 @@ namespace Intersect_Client.Classes.UI.Game
 
             //Load the craft button
             _craft = new Button(_craftWindow);
-            _craft.SetSize(86, 41);
+            _craft.SetSize(86, 39);
             _craft.SetText("Craft");
-            _craft.SetPosition(_craftWindow.Width - 100 , _craftWindow.Height - 80);
+            _craft.SetPosition(_craftWindow.Width - 100 , _craftWindow.Height - 82);
             _craft.Clicked += craft_Clicked; 
             _craft.SetImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "smallbuttonnormal.png"), Button.ControlState.Normal);
             _craft.SetImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "smallbuttonhover.png"), Button.ControlState.Hovered);

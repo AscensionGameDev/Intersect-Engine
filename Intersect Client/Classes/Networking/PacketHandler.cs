@@ -34,6 +34,7 @@ using Intersect_Client.Classes.Items;
 using Intersect_Client.Classes.Maps;
 using Intersect_Client.Classes.UI;
 using Intersect_Client.Classes.UI.Game.Chat;
+using Intersect_Client.Classes.UI.Game;
 using Intersect_Library;
 using Intersect_Library.GameObjects;
 using Intersect_Library.GameObjects.Maps.MapList;
@@ -204,6 +205,12 @@ namespace Intersect_Client.Classes.Networking
                         break;
                     case ServerPackets.Time:
                         HandleTime(bf.ReadBytes(bf.Length()));
+                        break;
+                    case ServerPackets.PartyData:
+                        HandleParty(bf.ReadBytes(bf.Length()));
+                        break;
+                    case ServerPackets.PartyInvite:
+                        HandlePartyInvite(bf.ReadBytes(bf.Length()));
                         break;
                     default:
                         Console.WriteLine(@"Non implemented packet received: " + packetHeader);
@@ -1232,6 +1239,30 @@ namespace Intersect_Client.Classes.Networking
             float rate = (float) bf.ReadDouble();
             Intersect_Library.Color clr = Intersect_Library.Color.FromArgb(bf.ReadByte(), bf.ReadByte(), bf.ReadByte(), bf.ReadByte());
             ClientTime.LoadTime(time, clr, rate);
+        }
+
+        private static void HandleParty(byte[] packet)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteBytes(packet);
+            int count = bf.ReadInteger();
+
+            Globals.Me.Party.Clear();
+            for (int i = 0; i < count; i++)
+            {
+                Globals.Me.Party.Add(bf.ReadInteger());
+            }
+
+            bf.Dispose();
+        }
+
+        private static void HandlePartyInvite(byte[] packet)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteBytes(packet);
+            int leader = bf.ReadInteger();
+            InputBox iBox = new InputBox("Party Invite", Globals.Entities[leader].MyName + " has invited you to their party. Do you accept?", true, PacketSender.SendPartyAccept, null, leader, false);
+            bf.Dispose();
         }
     }
 }

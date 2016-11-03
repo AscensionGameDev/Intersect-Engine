@@ -138,6 +138,10 @@ namespace Intersect_Server.Classes.Networking
                         Task.Run(() => Database.SaveCharacter(en));
                         var map = MapInstance.GetMap(_myClient.Entity.CurrentMap);
                         if (map != null) map.RemoveEntity(_myClient.Entity);
+
+                        //Update parties
+                        _myClient.Entity.LeaveParty();
+
                         PacketSender.SendEntityLeave(_myClient.Entity.MyIndex, (int) EntityTypes.Player,
                             Globals.Entities[_entityIndex].CurrentMap);
                         if (!_myClient.IsEditor)

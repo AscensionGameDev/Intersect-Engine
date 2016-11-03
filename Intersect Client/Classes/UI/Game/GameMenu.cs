@@ -45,6 +45,8 @@ namespace Intersect_Client.Classes.UI.Game
         private ImagePanel _characterBackground;
         private Button _questsButton;
         private ImagePanel _questsBackground;
+        private Button _partyButton;
+        private ImagePanel _partyBackground;
         private Button _optionsButton;
         private ImagePanel _optionsBackground;
         private Button _closeButton;
@@ -58,14 +60,20 @@ namespace Intersect_Client.Classes.UI.Game
 
         //Window References
         private OptionsWindow _optionsWindow;
+        private PartyWindow _partyWindow;
         private InventoryWindow _inventoryWindow;
         private SpellWindow _spellsWindow;
         private CharacterWindow _characterWindow;
+
+        //Canvas instance
+        Canvas _GameCanvas;
 
         //Init
         public GameMenu(Canvas _gameCanvas)
         {
             int buttonCount = 0;
+
+            _GameCanvas = _gameCanvas;
 
             //Go in reverse order from the right
             _closeBackground = new ImagePanel(_gameCanvas);
@@ -96,6 +104,21 @@ namespace Intersect_Client.Classes.UI.Game
             _optionsButton.Clicked += OptionBtn_Clicked;
             _optionsButton.HoverEnter += Button_HoverEnter;
             _optionsButton.HoverLeave += Button_HoverLeave;
+            buttonCount++;
+
+            _partyBackground = new ImagePanel(_gameCanvas);
+            _partyBackground.MouseInputEnabled = false;
+            _partyBackground.SetSize(backgroundWidth, backgroundHeight);
+            _partyBackground.SetPosition(_gameCanvas.Width - (buttonCount + 1) * (backgroundWidth + buttonMargin), _gameCanvas.Height - buttonMargin - backgroundHeight);
+            _partyBackground.Texture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "menuitem.png");
+            _partyButton = new Button(_gameCanvas);
+            _partyButton.SetSize(buttonWidth, buttonHeight);
+            _partyButton.SetPosition(_gameCanvas.Width - (buttonCount + 1) * (backgroundWidth + buttonMargin) + 4, _gameCanvas.Height - buttonMargin - backgroundHeight + 4);
+            _partyButton.SetImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "partyicon.png"), Button.ControlState.Normal);
+            _partyButton.SetToolTipText("party");
+            _partyButton.Clicked += PartyBtn_Clicked;
+            _partyButton.HoverEnter += Button_HoverEnter;
+            _partyButton.HoverLeave += Button_HoverLeave;
             buttonCount++;
 
             //_questsButton = new Button(_gameCanvas);
@@ -152,6 +175,7 @@ namespace Intersect_Client.Classes.UI.Game
 
             //Assign Window References
             _optionsWindow = new OptionsWindow(_gameCanvas,null,null);
+            _partyWindow = new PartyWindow(_gameCanvas);
             _inventoryWindow = new InventoryWindow(_gameCanvas);
             _spellsWindow = new SpellWindow(_gameCanvas);
             _characterWindow = new CharacterWindow(_gameCanvas);
@@ -173,6 +197,7 @@ namespace Intersect_Client.Classes.UI.Game
             _inventoryWindow.Update();
             _spellsWindow.Update();
             _characterWindow.Update();
+            _partyWindow.Update();
         }
 
 
@@ -190,6 +215,17 @@ namespace Intersect_Client.Classes.UI.Game
             else
             {
                 _optionsWindow.Show();
+            }
+        }
+        void PartyBtn_Clicked(Base sender, ClickedEventArgs arguments)
+        {
+            if (_partyWindow.IsVisible())
+            {
+                _partyWindow.Hide();
+            }
+            else
+            {
+                _partyWindow.Show();
             }
         }
         void InventoryButton_Clicked(Base sender, ClickedEventArgs arguments)

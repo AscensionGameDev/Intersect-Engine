@@ -30,6 +30,7 @@ using System.Text;
 using Intersect_Client.Classes.Entities;
 using Intersect_Client.Classes.General;
 using Intersect_Client.Classes.Maps;
+using Intersect_Client.Classes.UI.Game;
 using Intersect_Library;
 
 
@@ -338,6 +339,37 @@ namespace Intersect_Client.Classes.Networking
             var bf = new ByteBuffer();
             bf.WriteLong((int)ClientPackets.CraftItem);
             bf.WriteInteger(index);
+            GameNetwork.SendPacket(bf.ToArray());
+        }
+
+        public static void SendPartyInvite(int index)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteLong((int)ClientPackets.PartyInvite);
+            bf.WriteInteger(index);
+            GameNetwork.SendPacket(bf.ToArray());
+        }
+
+        public static void SendPartyKick(int index)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteLong((int)ClientPackets.PartyKick);
+            bf.WriteInteger(index);
+            GameNetwork.SendPacket(bf.ToArray());
+        }
+
+        public static void SendPartyLeave()
+        {
+            var bf = new ByteBuffer();
+            bf.WriteLong((int)ClientPackets.PartyLeave);
+            GameNetwork.SendPacket(bf.ToArray());
+        }
+
+        public static void SendPartyAccept(Object sender, EventArgs e)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteLong((int)ClientPackets.PartyAcceptInvite);
+            bf.WriteInteger((int)((InputBox)sender).Slot);
             GameNetwork.SendPacket(bf.ToArray());
         }
     }
