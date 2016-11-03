@@ -211,6 +211,9 @@ namespace Intersect_Client.Classes.Networking
                         break;
                     case ServerPackets.PartyInvite:
                         HandlePartyInvite(bf.ReadBytes(bf.Length()));
+			break;
+                    case ServerPackets.ChatBubble:
+                        HandleChatBubble(bf.ReadBytes(bf.Length()));
                         break;
                     default:
                         Console.WriteLine(@"Non implemented packet received: " + packetHeader);
@@ -1262,6 +1265,34 @@ namespace Intersect_Client.Classes.Networking
             bf.WriteBytes(packet);
             int leader = bf.ReadInteger();
             InputBox iBox = new InputBox("Party Invite", Globals.Entities[leader].MyName + " has invited you to their party. Do you accept?", true, PacketSender.SendPartyAccept, null, leader, false);
+            bf.Dispose();
+        }
+
+        private static void HandleChatBubble(byte[] packet)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteBytes(packet);
+            var index = (int)bf.ReadLong();
+            var type = bf.ReadInteger();
+            var mapNum = bf.ReadInteger();
+            Entity en = null;
+            if (type < (int)EntityTypes.Event)
+            {
+                if (!Globals.Entities.ContainsKey(index)) { return; }
+                en = Globals.Entities[index];
+            }
+            else
+            {
+                var entityMap = MapInstance.GetMap(mapNum);
+                if (entityMap == null) return;
+                if (!entityMap.LocalEntities.ContainsKey(index)) { return; }
+                en = entityMap.LocalEntities[index];
+            }
+            if (en == null)
+            {
+                return;
+            }
+            en.AddChatBubble(bf.ReadString());
             bf.Dispose();
         }
     }

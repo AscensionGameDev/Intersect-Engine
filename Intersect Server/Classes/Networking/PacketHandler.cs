@@ -370,6 +370,7 @@ namespace Intersect_Server.Classes.Networking
                 return;
             }
             PacketSender.SendGlobalMsg(client.Entity.MyName + ": " + msg, client.Entity.MyName);
+            PacketSender.SendChatBubble(client.Entity.MyIndex, (int)EntityTypes.GlobalEntity, msg, client.Entity.CurrentMap);
             bf.Dispose();
         }
 

@@ -1261,6 +1261,17 @@ namespace Intersect_Server.Classes.Networking
             client.SendPacket(bf.ToArray());
             bf.Dispose();
         }
+        public static void SendChatBubble(int entityIndex, int type, string text, int map)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteLong((int)ServerPackets.ChatBubble);
+            bf.WriteLong(entityIndex);
+            bf.WriteInteger(type);
+            bf.WriteInteger(map);
+            bf.WriteString(text);
+            SendDataToProximity(map, bf.ToArray());
+            bf.Dispose();
+        }
     }
 }
 

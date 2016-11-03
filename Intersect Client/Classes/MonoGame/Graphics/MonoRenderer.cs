@@ -220,7 +220,7 @@ namespace Intersect_Client_MonoGame.Classes.SFML.Graphics
             return new MonoRenderTexture(_graphicsDevice, width, height);
         }
 
-        public override void DrawString(string text, GameFont gameFont, float x, float y, float fontScale, Color fontColor, bool worldPos = true, GameRenderTexture renderTexture = null)
+        public override void DrawString(string text, GameFont gameFont, float x, float y, float fontScale, Color fontColor, bool worldPos = true, GameRenderTexture renderTexture = null, bool outline = true)
         {
             if (gameFont == null) return;
             SpriteFont font = (SpriteFont)gameFont.GetFont();
@@ -234,10 +234,17 @@ namespace Intersect_Client_MonoGame.Classes.SFML.Graphics
                     text = text.Replace(chr, ' ');
                 }
             }
-            _spriteBatch.DrawString(font, text, new Vector2(x, y - 1), ConvertColor(backColor) * .8f, 0f, Vector2.Zero, new Vector2(fontScale, fontScale), SpriteEffects.None, 0);
-            _spriteBatch.DrawString(font, text, new Vector2(x - 1, y), ConvertColor(backColor) * .8f, 0f, Vector2.Zero, new Vector2(fontScale, fontScale), SpriteEffects.None, 0);
-            _spriteBatch.DrawString(font, text, new Vector2(x + 1, y), ConvertColor(backColor) * .8f, 0f, Vector2.Zero, new Vector2(fontScale, fontScale), SpriteEffects.None, 0);
-            _spriteBatch.DrawString(font, text, new Vector2(x, y + 1), ConvertColor(backColor) * .8f, 0f, Vector2.Zero, new Vector2(fontScale, fontScale), SpriteEffects.None, 0);
+            if (outline)
+            {
+                _spriteBatch.DrawString(font, text, new Vector2(x, y - 1), ConvertColor(backColor)*.8f, 0f, Vector2.Zero,
+                    new Vector2(fontScale, fontScale), SpriteEffects.None, 0);
+                _spriteBatch.DrawString(font, text, new Vector2(x - 1, y), ConvertColor(backColor)*.8f, 0f, Vector2.Zero,
+                    new Vector2(fontScale, fontScale), SpriteEffects.None, 0);
+                _spriteBatch.DrawString(font, text, new Vector2(x + 1, y), ConvertColor(backColor)*.8f, 0f, Vector2.Zero,
+                    new Vector2(fontScale, fontScale), SpriteEffects.None, 0);
+                _spriteBatch.DrawString(font, text, new Vector2(x, y + 1), ConvertColor(backColor)*.8f, 0f, Vector2.Zero,
+                    new Vector2(fontScale, fontScale), SpriteEffects.None, 0);
+            }
             _spriteBatch.DrawString(font, text, new Vector2(x, y), ConvertColor(fontColor));
         }
 

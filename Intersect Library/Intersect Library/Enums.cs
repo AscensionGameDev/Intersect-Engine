@@ -154,6 +154,7 @@ namespace Intersect_Library
         Time,
         PartyData,
         PartyInvite,
+        ChatBubble,
     }
 
     public enum MapZones
