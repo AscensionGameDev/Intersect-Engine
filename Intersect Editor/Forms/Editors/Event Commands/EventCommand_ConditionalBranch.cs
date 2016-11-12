@@ -33,6 +33,7 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
         private EventCommand _myCommand;
         private EventPage _currentPage;
         private readonly FrmEvent _eventEditor;
+        public bool Cancelled = false;
         public EventCommand_ConditionalBranch(EventCommand refCommand, EventPage refPage, FrmEvent editor)
         {
             InitializeComponent();
@@ -193,15 +194,18 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
         private void btnSave_Click(object sender, EventArgs e)
         {
             int n;
-            if (_currentPage.Conditions.IndexOf(_myCommand) == -1)
+            if (_currentPage != null)
             {
-                if (_myCommand.Ints[4] == 0)
-                // command.Ints[4 & 5] are reserved for referencing which command list the true/false braches follow
+                if (_currentPage.Conditions.IndexOf(_myCommand) == -1)
                 {
-                    for (var i = 0; i < 2; i++)
+                    if (_myCommand.Ints[4] == 0)
+                        // command.Ints[4 & 5] are reserved for referencing which command list the true/false braches follow
                     {
-                        _currentPage.CommandLists.Add(new CommandList());
-                        _myCommand.Ints[4 + i] = _currentPage.CommandLists.Count - 1;
+                        for (var i = 0; i < 2; i++)
+                        {
+                            _currentPage.CommandLists.Add(new CommandList());
+                            _myCommand.Ints[4 + i] = _currentPage.CommandLists.Count - 1;
+                        }
                     }
                 }
             }
@@ -267,16 +271,28 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
                     _myCommand.Ints[2] = cmbTime2.SelectedIndex;
                     break;
             }
-            _eventEditor.FinishCommandEdit();
+            if (_eventEditor != null)
+            {
+                _eventEditor.FinishCommandEdit();
+            }
+            else
+            {
+                ParentForm.Close();
+            }
         }
 
         private void btnCancel_Click(object sender, EventArgs e)
         {
-            if (_currentPage.Conditions.IndexOf(_myCommand) > -1)
+            if (_currentPage != null)
             {
-                _currentPage.Conditions.Remove(_myCommand);
+                if (_currentPage.Conditions.IndexOf(_myCommand) > -1)
+                {
+                    _currentPage.Conditions.Remove(_myCommand);
+                }
+                _eventEditor.CancelCommandEdit();
             }
-            _eventEditor.CancelCommandEdit();
+            Cancelled = true;
+            ParentForm.Close();
         }
 
         private void cmbConditionType_SelectedIndexChanged(object sender, EventArgs e)

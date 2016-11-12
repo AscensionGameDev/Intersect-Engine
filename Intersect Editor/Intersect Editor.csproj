@@ -334,10 +334,10 @@
     <Compile Include="Forms\Editors\frmProjectile.Designer.cs">
       <DependentUpon>frmProjectile.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\Editors\frmQuest.cs">
+    <Compile Include="Forms\Editors\Quest\frmQuest.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Forms\Editors\frmQuest.Designer.cs">
+    <Compile Include="Forms\Editors\Quest\frmQuest.Designer.cs">
       <DependentUpon>frmQuest.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\Editors\frmResource.cs">
@@ -369,6 +369,12 @@
     </Compile>
     <Compile Include="Forms\Editors\frmTime.Designer.cs">
       <DependentUpon>frmTime.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\Editors\Quest\Quest_TaskEditor.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Forms\Editors\Quest\Quest_TaskEditor.Designer.cs">
+      <DependentUpon>Quest_TaskEditor.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\frmAbout.cs">
       <SubType>Form</SubType>
@@ -564,7 +570,6 @@
     <EmbeddedResource Include="Forms\Editors\Event Commands\Event_MoveRouteDesigner.resx">
       <DependentUpon>Event_MoveRouteDesigner.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\Editors\Event Commands\Event_WarpSelector.resx" />
     <EmbeddedResource Include="Forms\Editors\frmAnimation.resx">
       <DependentUpon>frmAnimation.cs</DependentUpon>
     </EmbeddedResource>
@@ -589,7 +594,7 @@
     <EmbeddedResource Include="Forms\Editors\frmProjectile.resx">
       <DependentUpon>frmProjectile.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\Editors\frmQuest.resx">
+    <EmbeddedResource Include="Forms\Editors\Quest\frmQuest.resx">
       <DependentUpon>frmQuest.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\Editors\frmResource.resx">
@@ -606,6 +611,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\Editors\frmTime.resx">
       <DependentUpon>frmTime.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Editors\Quest\Quest_TaskEditor.resx">
+      <DependentUpon>Quest_TaskEditor.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\frmAbout.resx">
       <DependentUpon>frmAbout.cs</DependentUpon>

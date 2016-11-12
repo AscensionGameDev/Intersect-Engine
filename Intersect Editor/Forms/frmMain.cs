@@ -610,7 +610,7 @@ namespace Intersect_Editor.Forms
         }
         private void questEditorToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            //PacketSender.SendQuestEditor();
+            PacketSender.SendOpenEditor(GameObject.Quest);
         }
         private void projectileEditorToolStripMenuItem_Click(object sender, EventArgs e)
         {

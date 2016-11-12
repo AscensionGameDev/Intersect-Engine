@@ -105,6 +105,11 @@ namespace Intersect_Editor.Forms
             _eventBackup = new ByteBuffer();
             _eventBackup.WriteBytes(MyEvent.EventData());
             txtEventname.Text = MyEvent.MyName;
+            if (MyEvent.MyIndex < 0)
+            {
+                txtEventname.Enabled = false;
+                grpTriggers.Hide();
+            }
             cmbPreviewFace.Items.Clear();
             cmbPreviewFace.Items.Add("None");
             cmbPreviewFace.Items.AddRange(GameContentManager.GetTextureNames(GameContentManager.TextureType.Face));
@@ -217,7 +222,7 @@ namespace Intersect_Editor.Forms
             {
                 CancelCommandEdit();
             }
-            if (MyEvent.CommonEvent)
+            if (MyEvent.CommonEvent && MyEvent.MyIndex >= 0)
             {
                 PacketSender.SendSaveObject(MyEvent);
             }
@@ -529,7 +534,7 @@ namespace Intersect_Editor.Forms
                 case EventCommandType.SetSelfSwitch:
                     return "Set Self Switch " + (char)('A' + command.Ints[0]) + " to " + Convert.ToBoolean(command.Ints[1]);
                 case EventCommandType.ConditionalBranch:
-                    return "Conditional Branch: [" + GetConditionalDesc(command) + "]";
+                    return "Conditional Branch: [" + command.GetConditionalDesc() + "]";
                 case EventCommandType.ExitEventProcess:
                     return "Exit event processing";
                 case EventCommandType.Label:
@@ -769,143 +774,6 @@ namespace Intersect_Editor.Forms
                 default:
                     return "Unknown Command";
             }
-        }
-
-        private string GetConditionalDesc(EventCommand command)
-        {
-            if (command.Type != EventCommandType.ConditionalBranch) return "";
-            string output = "";
-            switch (command.Ints[0])
-            {
-                case 0: //Player Switch
-                    return "Player Switch " + PlayerSwitchBase.GetName(command.Ints[1]) + " is " + Convert.ToBoolean(command.Ints[2]);
-                case 1: //Player Variables
-                    output = "Player Variable " + PlayerVariableBase.GetName(command.Ints[1]);
-                    switch (command.Ints[2])
-                    {
-                        case 0:
-                            output += " is equal to ";
-                            break;
-                        case 1:
-                            output += " is greater than or equal to ";
-                            break;
-                        case 2:
-                            output += " is less than or equal to ";
-                            break;
-                        case 3:
-                            output += " is greater than ";
-                            break;
-                        case 4:
-                            output += " is less than ";
-                            break;
-                        case 5:
-                            output += " does not equal ";
-                            break;
-                    }
-                    output += command.Ints[3];
-                    return output;
-                case 2: //Global Switch
-                    return "Global Switch " + ServerSwitchBase.GetName(command.Ints[1]) + " is " + Convert.ToBoolean(command.Ints[2]);
-                case 3: //Global Variables
-                    output = "Global Variable " + ServerVariableBase.GetName(command.Ints[1]);
-                    switch (command.Ints[2])
-                    {
-                        case 0:
-                            output += " is equal to ";
-                            break;
-                        case 1:
-                            output += " is greater than or equal to ";
-                            break;
-                        case 2:
-                            output += " is less than or equal to ";
-                            break;
-                        case 3:
-                            output += " is greater than ";
-                            break;
-                        case 4:
-                            output += " is less than ";
-                            break;
-                        case 5:
-                            output += " does not equal ";
-                            break;
-                    }
-                    output += command.Ints[3];
-                    return output;
-                case 4: //Has Item
-                    return "Player has at least " + command.Ints[2] + " of Item " + ItemBase.GetName(command.Ints[1]);
-                case 5: //Class Is
-                    return "Player's class is " + ClassBase.GetName(command.Ints[1]); ;
-                case 6: //Knows spell
-                    return "Player knows Spell " + SpellBase.GetName(command.Ints[1]); ;
-                case 7: //Level is
-                    output = "Player's level";
-                    switch (command.Ints[1])
-                    {
-                        case 0:
-                            output += " is equal to ";
-                            break;
-                        case 1:
-                            output += " is greater than or equal to ";
-                            break;
-                        case 2:
-                            output += " is less than or equal to ";
-                            break;
-                        case 3:
-                            output += " is greater than ";
-                            break;
-                        case 4:
-                            output += " is less than ";
-                            break;
-                        case 5:
-                            output += " does not equal ";
-                            break;
-                    }
-                    output += command.Ints[2];
-                    return output;
-                case 8: //Self Switch
-                    return "Self Switch " + (char)('A' + command.Ints[1]) + " is " + Convert.ToBoolean(command.Ints[2]);
-                case 9: //Power is
-                    output = "Player's Power is";
-                    switch (command.Ints[1])
-                    {
-                        case 0:
-                            output += " Mod or Admin";
-                            break;
-                        case 1:
-                            output += " Admin";
-                            break;
-                    }
-                    return output;
-                case 10: //Time is between
-                    var timeRanges = new List<string>();
-                    var time = new DateTime(2000, 1, 1, 0, 0, 0);
-                    for (int i = 0; i < 1440; i += TimeBase.GetTimeBase().RangeInterval)
-                    {
-                        var addRange = time.ToString("h:mm:ss tt") + " to ";
-                        time = time.AddMinutes(TimeBase.GetTimeBase().RangeInterval);
-                        addRange += time.ToString("h:mm:ss tt");
-                        timeRanges.Add(addRange);
-                    }
-                    output = "Time is between ";
-                    if (command.Ints[1] > -1 && command.Ints[1] < timeRanges.Count)
-                    {
-                        output += timeRanges[command.Ints[1]] + " and";
-                    }
-                    else
-                    {
-                        output += "invalid and";
-                    }
-                    if (command.Ints[2] > -1 && command.Ints[2] < timeRanges.Count)
-                    {
-                        output += timeRanges[command.Ints[2]];
-                    }
-                    else
-                    {
-                        output += "invalid";
-                    }
-                    return output;
-            }
-            return "";
         }
 
         private void lstCommands_ItemActivated(object sender, EventArgs e)
@@ -1427,7 +1295,7 @@ namespace Intersect_Editor.Forms
             lstConditions.Items.Clear();
             for (int i = 0; i < CurrentPage.Conditions.Count(); i++)
             {
-                lstConditions.Items.Add((i + 1) + ". " + GetConditionalDesc(CurrentPage.Conditions[i]));
+                lstConditions.Items.Add((i + 1) + ". " + CurrentPage.Conditions[i].GetConditionalDesc());
             }
         }
 

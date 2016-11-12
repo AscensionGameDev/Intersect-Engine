@@ -140,7 +140,7 @@ namespace Intersect_Editor.Forms
             this.lblTriggerVal = new System.Windows.Forms.Label();
             this.cmbTriggerVal = new System.Windows.Forms.ComboBox();
             this.panel2 = new System.Windows.Forms.Panel();
-            this.groupBox4 = new System.Windows.Forms.GroupBox();
+            this.grpTriggers = new System.Windows.Forms.GroupBox();
             this.tabControl.SuspendLayout();
             this.grpEntityOptions.SuspendLayout();
             this.groupBox6.SuspendLayout();
@@ -153,7 +153,7 @@ namespace Intersect_Editor.Forms
             this.commandMenu.SuspendLayout();
             this.grpPageOptions.SuspendLayout();
             this.groupBox7.SuspendLayout();
-            this.groupBox4.SuspendLayout();
+            this.grpTriggers.SuspendLayout();
             this.SuspendLayout();
             // 
             // label1
@@ -921,17 +921,17 @@ namespace Intersect_Editor.Forms
             this.panel2.Size = new System.Drawing.Size(810, 497);
             this.panel2.TabIndex = 20;
             // 
-            // groupBox4
+            // grpTriggers
             // 
-            this.groupBox4.Controls.Add(this.lblTriggerVal);
-            this.groupBox4.Controls.Add(this.cmbTrigger);
-            this.groupBox4.Controls.Add(this.cmbTriggerVal);
-            this.groupBox4.Controls.Add(this.label7);
-            this.groupBox4.Location = new System.Drawing.Point(512, 48);
-            this.groupBox4.Name = "groupBox4";
-            this.groupBox4.Size = new System.Drawing.Size(311, 35);
-            this.groupBox4.TabIndex = 21;
-            this.groupBox4.TabStop = false;
+            this.grpTriggers.Controls.Add(this.lblTriggerVal);
+            this.grpTriggers.Controls.Add(this.cmbTrigger);
+            this.grpTriggers.Controls.Add(this.cmbTriggerVal);
+            this.grpTriggers.Controls.Add(this.label7);
+            this.grpTriggers.Location = new System.Drawing.Point(512, 48);
+            this.grpTriggers.Name = "grpTriggers";
+            this.grpTriggers.Size = new System.Drawing.Size(311, 35);
+            this.grpTriggers.TabIndex = 21;
+            this.grpTriggers.TabStop = false;
             // 
             // FrmEvent
             // 
@@ -940,7 +940,7 @@ namespace Intersect_Editor.Forms
             this.AutoSize = true;
             this.ClientSize = new System.Drawing.Size(835, 622);
             this.Controls.Add(this.grpPageOptions);
-            this.Controls.Add(this.groupBox4);
+            this.Controls.Add(this.grpTriggers);
             this.Controls.Add(this.grpEntityOptions);
             this.Controls.Add(this.grpEventConditions);
             this.Controls.Add(this.groupBox7);
@@ -980,8 +980,8 @@ namespace Intersect_Editor.Forms
             this.grpPageOptions.ResumeLayout(false);
             this.groupBox7.ResumeLayout(false);
             this.groupBox7.PerformLayout();
-            this.groupBox4.ResumeLayout(false);
-            this.groupBox4.PerformLayout();
+            this.grpTriggers.ResumeLayout(false);
+            this.grpTriggers.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -1049,6 +1049,6 @@ namespace Intersect_Editor.Forms
         private Label lblTriggerVal;
         private ComboBox cmbTriggerVal;
         private Panel panel2;
-        private GroupBox groupBox4;
+        private GroupBox grpTriggers;
     }
 }
