@@ -148,6 +148,12 @@
     <Compile Include="Forms\Editors\Event Commands\EventCommand_ConditionalBranch.Designer.cs">
       <DependentUpon>EventCommand_ConditionalBranch.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\Editors\Event Commands\EventCommand_CompleteQuestTask.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Forms\Editors\Event Commands\EventCommand_CompleteQuestTask.Designer.cs">
+      <DependentUpon>EventCommand_CompleteQuestTask.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\Editors\Event Commands\EventCommand_EventCommand_StartCommonEvent.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -177,6 +183,18 @@
     </Compile>
     <Compile Include="Forms\Editors\Event Commands\EventCommand_OpenBench.Designer.cs">
       <DependentUpon>EventCommand_OpenBench.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\Editors\Event Commands\EventCommand_EndQuest.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Forms\Editors\Event Commands\EventCommand_EndQuest.Designer.cs">
+      <DependentUpon>EventCommand_EndQuest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\Editors\Event Commands\EventCommand_StartQuest.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Forms\Editors\Event Commands\EventCommand_StartQuest.Designer.cs">
+      <DependentUpon>EventCommand_StartQuest.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\Editors\Event Commands\EventCommand_SetClass.cs">
       <SubType>UserControl</SubType>
@@ -501,6 +519,9 @@
     <EmbeddedResource Include="Forms\Editors\Event Commands\EventCommand_ConditionalBranch.resx">
       <DependentUpon>EventCommand_ConditionalBranch.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Editors\Event Commands\EventCommand_CompleteQuestTask.resx">
+      <DependentUpon>EventCommand_CompleteQuestTask.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Forms\Editors\Event Commands\EventCommand_EventCommand_StartCommonEvent.resx">
       <DependentUpon>EventCommand_EventCommand_StartCommonEvent.cs</DependentUpon>
     </EmbeddedResource>
@@ -515,6 +536,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\Editors\Event Commands\EventCommand_OpenBench.resx">
       <DependentUpon>EventCommand_OpenBench.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Editors\Event Commands\EventCommand_EndQuest.resx">
+      <DependentUpon>EventCommand_EndQuest.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Editors\Event Commands\EventCommand_StartQuest.resx">
+      <DependentUpon>EventCommand_StartQuest.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\Editors\Event Commands\EventCommand_SetClass.resx">
       <DependentUpon>EventCommand_SetClass.cs</DependentUpon>

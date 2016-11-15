@@ -266,7 +266,8 @@ namespace Intersect_Editor.Forms
 
         private void btnAddTask_Click(object sender, EventArgs e)
         {
-            var questTask = new QuestBase.QuestTask();
+            var questTask = new QuestBase.QuestTask(_editorItem.NextTaskID);
+            _editorItem.NextTaskID = _editorItem.NextTaskID + 1;
             if (OpenTaskEditor(questTask))
             {
                 _editorItem.Tasks.Add(questTask);
@@ -279,20 +280,7 @@ namespace Intersect_Editor.Forms
             lstTasks.Items.Clear();
             foreach (var task in _editorItem.Tasks)
             {
-                var taskString = "";
-                switch (task.Objective)
-                {
-                    case 0: //Event Driven
-                        taskString = "Event Driven - " + task.Desc;
-                        break;
-                    case 1: //Gather Items
-                        taskString = "Gather Items [" + ItemBase.GetName(task.Data1) + " x" + task.Data2 + "] - " + task.Desc;
-                        break;
-                    case 2: //Kill Npcs
-                        taskString = "Kill Npc(s) [" + NpcBase.GetName(task.Data1) + " x" + task.Data2 + "] - " + task.Desc;
-                        break;
-                }
-                lstTasks.Items.Add(taskString);
+                lstTasks.Items.Add(task.GetTaskString());
             }
         }
 

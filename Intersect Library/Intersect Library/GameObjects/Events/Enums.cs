@@ -99,5 +99,9 @@
         OpenCraftingBench,
         //Extras
         SetClass,
+        //Questing
+        StartQuest,
+        CompleteQuestTask,
+        EndQuest,
     }
 }

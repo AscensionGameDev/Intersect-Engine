@@ -277,7 +277,7 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             }
             else
             {
-                ParentForm.Close();
+                if (ParentForm != null) ParentForm.Close();
             }
         }
 
@@ -288,11 +288,15 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
                 if (_currentPage.Conditions.IndexOf(_myCommand) > -1)
                 {
                     _currentPage.Conditions.Remove(_myCommand);
+                    _eventEditor.CancelCommandEdit(false,true);
                 }
-                _eventEditor.CancelCommandEdit();
+                else
+                {
+                    _eventEditor.CancelCommandEdit();
+                }
             }
             Cancelled = true;
-            ParentForm.Close();
+            if (ParentForm != null) ParentForm.Close();
         }
 
         private void cmbConditionType_SelectedIndexChanged(object sender, EventArgs e)

@@ -771,6 +771,40 @@ namespace Intersect_Editor.Forms
                     return "Open Crafting Bench [" + BenchBase.GetName(command.Ints[0]) + "]";
                 case EventCommandType.SetClass:
                     return "Set Class [" + ClassBase.GetName(command.Ints[0]) + "]";
+                case EventCommandType.StartQuest:
+                    if (command.Ints[1] == 0)
+                    {
+                        return "Start Quest [" + QuestBase.GetName(command.Ints[0]) + ", Forced Start]";
+                    }
+                    else
+                    {
+                        return "Start Quest [" + QuestBase.GetName(command.Ints[0]) + ", Show Offer Window]";
+                    }
+                case EventCommandType.CompleteQuestTask:
+                    var quest = QuestBase.GetQuest(command.Ints[0]);
+                    if (quest == null)
+                    {
+                        return "Complete Quest Task [Quest: " + "Deleted]";
+                    }
+                    //Try to find task
+                    foreach (var task in quest.Tasks)
+                    {
+                        if (task.Id == command.Ints[1])
+                        {
+                            return "Complete Quest Task [Quest: " + QuestBase.GetName(command.Ints[0]) + ", Task: " +
+                                   task.GetTaskString() + "]";
+                        }
+                    }
+                    return "Complete Quest Task [Quest: " + QuestBase.GetName(command.Ints[0]) + ", Task: Undefined]";
+                case EventCommandType.EndQuest:
+                    if (command.Ints[1] == 0)
+                    {
+                        return "End Quest [" + QuestBase.GetName(command.Ints[0]) + ", Running Completion Event]";
+                    }
+                    else
+                    {
+                        return "End Quest [" + QuestBase.GetName(command.Ints[0]) + ", Without Running Completion Event]";
+                    }
                 default:
                     return "Unknown Command";
             }
@@ -932,6 +966,15 @@ namespace Intersect_Editor.Forms
                 case EventCommandType.SetClass:
                     cmdWindow = new EventCommand_SetClass(command,this);
                     break;
+                case EventCommandType.StartQuest:
+                    cmdWindow = new EventCommand_StartQuest(command,this);
+                    break;
+                case EventCommandType.CompleteQuestTask:
+                    cmdWindow = new EventCommand_CompleteQuestTask(command, this);
+                    break;
+                case EventCommandType.EndQuest:
+                    cmdWindow = new EventCommand_EndQuest(command, this);
+                    break;
                 default:
                     throw new ArgumentOutOfRangeException();
             }
@@ -981,9 +1024,9 @@ namespace Intersect_Editor.Forms
         /// <summary>
         /// Resets the form when a user cancels editting or creating a new command for the event.
         /// </summary>
-        public void CancelCommandEdit(bool moveRoute = false)
+        public void CancelCommandEdit(bool moveRoute = false, bool condition = false)
         {
-            if (_currentCommand > -1 && _commandProperties.Count > _currentCommand)
+            if (_currentCommand > -1 && _commandProperties.Count > _currentCommand && !condition)
             {
                 if (!_isEdit)
                 {

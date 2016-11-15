@@ -49,6 +49,7 @@ namespace Intersect_Library.GameObjects
         public List<EventCommand> Requirements = new List<EventCommand>();
 
         //Tasks
+        public int NextTaskID = 0;
         public List<QuestTask> Tasks = new List<QuestTask>();
 
         //Events
@@ -84,11 +85,12 @@ namespace Intersect_Library.GameObjects
                 Requirements.Add(cmd);
             }
 
+            NextTaskID = myBuffer.ReadInteger();
             var MaxTasks = myBuffer.ReadInteger();
             Tasks.Clear();
             for (int i = 0; i < MaxTasks; i++)
             {
-                QuestTask task = new QuestTask();
+                QuestTask task = new QuestTask(myBuffer.ReadInteger());
                 task.Objective = myBuffer.ReadInteger();
                 task.Desc = myBuffer.ReadString();
                 task.Data1 = myBuffer.ReadInteger();
@@ -129,9 +131,11 @@ namespace Intersect_Library.GameObjects
                 Requirements[i].Save(myBuffer);
             }
 
+            myBuffer.WriteInteger(NextTaskID);
             myBuffer.WriteInteger(Tasks.Count);
             for (int i = 0; i < Tasks.Count; i++)
             {
+                myBuffer.WriteInteger(Tasks[i].Id);
                 myBuffer.WriteInteger(Tasks[i].Objective);
                 myBuffer.WriteString(Tasks[i].Desc);
                 myBuffer.WriteInteger(Tasks[i].Data1);
@@ -219,11 +223,35 @@ namespace Intersect_Library.GameObjects
 
         public class QuestTask
         {
+            public int Id = 0;
             public int Objective = 0;
             public string Desc = "";
             public int Data1 = 0;
             public int Data2 = 0;
             public EventBase CompletionEvent = new EventBase(-1,0,0,true);
+
+            public QuestTask(int id)
+            {
+                Id = id;
+            }
+
+            public string GetTaskString()
+            {
+                var taskString = "";
+                switch (Objective)
+                {
+                    case 0: //Event Driven
+                        taskString = "Event Driven - " + Desc;
+                        break;
+                    case 1: //Gather Items
+                        taskString = "Gather Items [" + ItemBase.GetName(Data1) + " x" + Data2 + "] - " + Desc;
+                        break;
+                    case 2: //Kill Npcs
+                        taskString = "Kill Npc(s) [" + NpcBase.GetName(Data1) + " x" + Data2 + "] - " + Desc;
+                        break;
+                }
+                return taskString;
+            }
         }
 
         public class QuestReward

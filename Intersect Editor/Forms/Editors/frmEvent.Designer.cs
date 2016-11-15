@@ -38,8 +38,9 @@ namespace Intersect_Editor.Forms
             System.Windows.Forms.ListViewGroup listViewGroup4 = new System.Windows.Forms.ListViewGroup("Movement", System.Windows.Forms.HorizontalAlignment.Left);
             System.Windows.Forms.ListViewGroup listViewGroup5 = new System.Windows.Forms.ListViewGroup("Questing", System.Windows.Forms.HorizontalAlignment.Left);
             System.Windows.Forms.ListViewGroup listViewGroup6 = new System.Windows.Forms.ListViewGroup("Special Effects", System.Windows.Forms.HorizontalAlignment.Left);
-            System.Windows.Forms.ListViewGroup listViewGroup7 = new System.Windows.Forms.ListViewGroup("Etc", System.Windows.Forms.HorizontalAlignment.Left);
-            System.Windows.Forms.ListViewGroup listViewGroup8 = new System.Windows.Forms.ListViewGroup("Shop and Bank", System.Windows.Forms.HorizontalAlignment.Left);
+            System.Windows.Forms.ListViewGroup listViewGroup7 = new System.Windows.Forms.ListViewGroup("Quest Control", System.Windows.Forms.HorizontalAlignment.Left);
+            System.Windows.Forms.ListViewGroup listViewGroup8 = new System.Windows.Forms.ListViewGroup("Etc", System.Windows.Forms.HorizontalAlignment.Left);
+            System.Windows.Forms.ListViewGroup listViewGroup9 = new System.Windows.Forms.ListViewGroup("Shop and Bank", System.Windows.Forms.HorizontalAlignment.Left);
             System.Windows.Forms.ListViewItem listViewItem1 = new System.Windows.Forms.ListViewItem("Show Text");
             System.Windows.Forms.ListViewItem listViewItem2 = new System.Windows.Forms.ListViewItem("Show Options");
             System.Windows.Forms.ListViewItem listViewItem3 = new System.Windows.Forms.ListViewItem("Add Chatbox Text");
@@ -78,6 +79,9 @@ namespace Intersect_Editor.Forms
             System.Windows.Forms.ListViewItem listViewItem36 = new System.Windows.Forms.ListViewItem("Open Shop");
             System.Windows.Forms.ListViewItem listViewItem37 = new System.Windows.Forms.ListViewItem("Open Crafting Station");
             System.Windows.Forms.ListViewItem listViewItem38 = new System.Windows.Forms.ListViewItem("Change Class");
+            System.Windows.Forms.ListViewItem listViewItem39 = new System.Windows.Forms.ListViewItem("Start Quest");
+            System.Windows.Forms.ListViewItem listViewItem40 = new System.Windows.Forms.ListViewItem("Complete Quest Task");
+            System.Windows.Forms.ListViewItem listViewItem41 = new System.Windows.Forms.ListViewItem("End Quest");
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmEvent));
             this.label1 = new System.Windows.Forms.Label();
             this.txtEventname = new System.Windows.Forms.TextBox();
@@ -609,10 +613,12 @@ namespace Intersect_Editor.Forms
             listViewGroup5.Name = "Questing";
             listViewGroup6.Header = "Special Effects";
             listViewGroup6.Name = "Special Effects";
-            listViewGroup7.Header = "Etc";
-            listViewGroup7.Name = "Etc";
-            listViewGroup8.Header = "Shop and Bank";
-            listViewGroup8.Name = "Shop and Bank";
+            listViewGroup7.Header = "Quest Control";
+            listViewGroup7.Name = "Quest Control";
+            listViewGroup8.Header = "Etc";
+            listViewGroup8.Name = "Etc";
+            listViewGroup9.Header = "Shop and Bank";
+            listViewGroup9.Name = "Shop and Bank";
             this.lstCommands.Groups.AddRange(new System.Windows.Forms.ListViewGroup[] {
             listViewGroup1,
             listViewGroup2,
@@ -621,7 +627,8 @@ namespace Intersect_Editor.Forms
             listViewGroup5,
             listViewGroup6,
             listViewGroup7,
-            listViewGroup8});
+            listViewGroup8,
+            listViewGroup9});
             this.lstCommands.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.None;
             this.lstCommands.ImeMode = System.Windows.Forms.ImeMode.NoControl;
             listViewItem1.Group = listViewGroup1;
@@ -663,11 +670,14 @@ namespace Intersect_Editor.Forms
             listViewItem31.Group = listViewGroup6;
             listViewItem32.Group = listViewGroup6;
             listViewItem33.Group = listViewGroup6;
-            listViewItem34.Group = listViewGroup7;
-            listViewItem35.Group = listViewGroup8;
-            listViewItem36.Group = listViewGroup8;
-            listViewItem37.Group = listViewGroup8;
+            listViewItem34.Group = listViewGroup8;
+            listViewItem35.Group = listViewGroup9;
+            listViewItem36.Group = listViewGroup9;
+            listViewItem37.Group = listViewGroup9;
             listViewItem38.Group = listViewGroup3;
+            listViewItem39.Group = listViewGroup7;
+            listViewItem40.Group = listViewGroup7;
+            listViewItem41.Group = listViewGroup7;
             this.lstCommands.Items.AddRange(new System.Windows.Forms.ListViewItem[] {
             listViewItem1,
             listViewItem2,
@@ -706,7 +716,10 @@ namespace Intersect_Editor.Forms
             listViewItem35,
             listViewItem36,
             listViewItem37,
-            listViewItem38});
+            listViewItem38,
+            listViewItem39,
+            listViewItem40,
+            listViewItem41});
             this.lstCommands.Location = new System.Drawing.Point(7, 30);
             this.lstCommands.MultiSelect = false;
             this.lstCommands.Name = "lstCommands";
