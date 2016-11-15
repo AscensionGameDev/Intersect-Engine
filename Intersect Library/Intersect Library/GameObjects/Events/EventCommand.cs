@@ -110,9 +110,9 @@ namespace Intersect_Library.GameObjects.Events
                 case 4: //Has Item
                     return "Player has at least " + Ints[2] + " of Item " + ItemBase.GetName(Ints[1]);
                 case 5: //Class Is
-                    return "Player's class is " + ClassBase.GetName(Ints[1]); ;
+                    return "Player's class is " + ClassBase.GetName(Ints[1]);
                 case 6: //Knows spell
-                    return "Player knows Spell " + SpellBase.GetName(Ints[1]); ;
+                    return "Player knows Spell " + SpellBase.GetName(Ints[1]);
                 case 7: //Level is
                     output = "Player's level";
                     switch (Ints[1])
@@ -180,6 +180,35 @@ namespace Intersect_Library.GameObjects.Events
                         output += "invalid";
                     }
                     return output;
+                case 11: //Can Start Quest...
+                    return "Can Start Quest: " + QuestBase.GetName(Ints[1]) + "";
+                case 12: //Quest In Progress...
+                    var quest = QuestBase.GetQuest(Ints[1]);
+                    if (quest != null)
+                    {
+                        QuestBase.QuestTask task = null;
+                        foreach (var tsk in quest.Tasks)
+                        {
+                            if (tsk.Id == Ints[3])
+                            {
+                                task = tsk;
+                            }
+                        }
+                        switch (Ints[2])
+                        {
+                            case 1:
+                                return "Quest In Progress: " + QuestBase.GetName(Ints[1]) + ", Before Task: " + task.GetTaskString();
+                            case 2:
+                                return "Quest In Progress: " + QuestBase.GetName(Ints[1]) + ", After Task: " + task.GetTaskString();
+                            case 3:
+                                return "Quest In Progress: " + QuestBase.GetName(Ints[1]) + ", On Task: " + task.GetTaskString();
+                            default:
+                                return "Quest In Progress: " + QuestBase.GetName(Ints[1]) + ", On Any Task";
+                        }
+                    }
+                    return "Quest In Progress: Deleted Quest";
+                case 13: //Quest Completed
+                    return "Quest is Completed: " + QuestBase.GetName(Ints[1]);
             }
             return "";
         }

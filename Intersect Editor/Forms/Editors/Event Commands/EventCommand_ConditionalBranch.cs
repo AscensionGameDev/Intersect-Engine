@@ -89,6 +89,32 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
                     cmbTime1.SelectedIndex = Math.Min(_myCommand.Ints[1],cmbTime1.Items.Count-1);
                     cmbTime2.SelectedIndex = Math.Min(_myCommand.Ints[2], cmbTime2.Items.Count - 1);
                     break;
+                case 11: //Can Start Quest
+                    cmbStartQuest.SelectedIndex = Database.GameObjectListIndex(GameObject.Quest, _myCommand.Ints[1]);
+                    break;
+                case 12: //Quest In Progress
+                    cmbQuestInProgress.SelectedIndex = Database.GameObjectListIndex(GameObject.Quest, _myCommand.Ints[1]);
+                    cmbTaskModifier.SelectedIndex = _myCommand.Ints[2];
+                    if (cmbTaskModifier.SelectedIndex == -1) cmbTaskModifier.SelectedIndex = 0;
+                    if (cmbTaskModifier.SelectedIndex != 0)
+                    {
+                        //Get Quest Task Here
+                        var quest = QuestBase.GetQuest(Database.GameObjectIdFromList(GameObject.Quest, cmbQuestInProgress.SelectedIndex));
+                        if (quest != null)
+                        {
+                            for (int i = 0; i < quest.Tasks.Count; i++)
+                            {
+                                if (quest.Tasks[i].Id == _myCommand.Ints[3])
+                                {
+                                    cmbQuestTask.SelectedIndex = i;
+                                }
+                            }
+                        }
+                    }
+                    break;
+                case 13: //Quest Completed
+                    cmbCompletedQuest.SelectedIndex = Database.GameObjectListIndex(GameObject.Quest, _myCommand.Ints[1]);
+                    break;
             }
         }
 
@@ -102,6 +128,10 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             grpLevel.Hide();
             grpSelfSwitch.Hide();
             grpPowerIs.Hide();
+            grpTime.Hide();
+            grpStartQuest.Hide();
+            grpQuestInProgress.Hide();
+            grpQuestCompleted.Hide();
             switch (cmbConditionType.SelectedIndex)
             {
                 case 0: //Player Switch
@@ -188,6 +218,25 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
                     cmbTime1.SelectedIndex = 0;
                     cmbTime2.SelectedIndex = 0;
                     break;
+                case 11: //Can Start Quest
+                    grpStartQuest.Show();
+                    cmbStartQuest.Items.Clear();
+                    cmbStartQuest.Items.AddRange(Database.GetGameObjectList(GameObject.Quest));
+                    if (cmbStartQuest.Items.Count > 0) cmbStartQuest.SelectedIndex = 0;
+                    break;
+                case 12: //Quest In Progress
+                    grpQuestInProgress.Show();
+                    cmbQuestInProgress.Items.Clear();
+                    cmbQuestInProgress.Items.AddRange(Database.GetGameObjectList(GameObject.Quest));
+                    if (cmbQuestInProgress.Items.Count > 0) cmbQuestInProgress.SelectedIndex = 0;
+                    cmbTaskModifier.SelectedIndex = 0;
+                    break;
+                case 13: //Quest Completed
+                    grpQuestCompleted.Show();
+                    cmbCompletedQuest.Items.Clear();
+                    cmbCompletedQuest.Items.AddRange(Database.GetGameObjectList(GameObject.Quest));
+                    if (cmbCompletedQuest.Items.Count > 0) cmbCompletedQuest.SelectedIndex = 0;
+                    break;
             }
         }
 
@@ -270,6 +319,29 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
                     _myCommand.Ints[1] = cmbTime1.SelectedIndex;
                     _myCommand.Ints[2] = cmbTime2.SelectedIndex;
                     break;
+                case 11: //Can Start Quest
+                    _myCommand.Ints[1] = Database.GameObjectIdFromList(GameObject.Quest, cmbStartQuest.SelectedIndex);
+                    break;
+                case 12: //Quest IN Progress
+                    _myCommand.Ints[1] = Database.GameObjectIdFromList(GameObject.Quest, cmbQuestInProgress.SelectedIndex);
+                    _myCommand.Ints[2] = cmbTaskModifier.SelectedIndex;
+                    _myCommand.Ints[3] = -1;
+                    if (cmbTaskModifier.SelectedIndex != 0)
+                    {
+                        //Get Quest Task Here
+                        var quest = QuestBase.GetQuest(Database.GameObjectIdFromList(GameObject.Quest, cmbQuestInProgress.SelectedIndex));
+                        if (quest != null)
+                        {
+                            if (cmbQuestTask.SelectedIndex > -1)
+                            {
+                                _myCommand.Ints[3] = quest.Tasks[cmbQuestTask.SelectedIndex].Id;
+                            }
+                        }
+                    }
+                    break;
+                case 13: //Quest Completed
+                    _myCommand.Ints[1] = Database.GameObjectIdFromList(GameObject.Quest, cmbCompletedQuest.SelectedIndex);
+                    break;
             }
             if (_eventEditor != null)
             {
@@ -312,6 +384,33 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
         private void scrlLevel_Scroll(object sender, ScrollEventArgs e)
         {
             lblLevel.Text = @"Level: " + scrlLevel.Value;
+        }
+
+        private void cmbTaskModifier_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (cmbTaskModifier.SelectedIndex == 0)
+            {
+                cmbQuestTask.Enabled = false;
+            }
+            else
+            {
+                cmbQuestTask.Enabled = true;
+            }
+        }
+
+        private void cmbQuestInProgress_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            cmbQuestTask.Items.Clear();
+            var quest =
+                QuestBase.GetQuest(Database.GameObjectIdFromList(GameObject.Quest, cmbQuestInProgress.SelectedIndex));
+            if (quest != null)
+            {
+                foreach (var task in quest.Tasks)
+                {
+                    cmbQuestTask.Items.Add(task.GetTaskString());
+                }
+                if (cmbQuestTask.Items.Count > 0) cmbQuestTask.SelectedIndex = 0;
+            }
         }
     }
 }
