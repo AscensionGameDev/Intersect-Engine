@@ -43,7 +43,9 @@ namespace Intersect_Editor.Classes
                 MySocket.Close();
             }
 
-            MySocket = new TcpClient { NoDelay = true };
+            MySocket = new TcpClient ();
+            MySocket.SendBufferSize = 256000;
+            MySocket.ReceiveBufferSize = 256000;
             _tempBuff = new byte[MySocket.ReceiveBufferSize];
             MySocket.BeginConnect(Globals.ServerHost, Globals.ServerPort, ConnectCb, null);
             Connecting = true;

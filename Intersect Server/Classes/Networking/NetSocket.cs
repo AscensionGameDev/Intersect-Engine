@@ -37,8 +37,9 @@ namespace Intersect_Server.Classes.Networking
         public NetSocket(TcpClient socket)
         {
             _mySocket = socket;
+            _mySocket.SendBufferSize = 256000;
+            _mySocket.ReceiveBufferSize = 256000;
             _myStream = _mySocket.GetStream();
-            _mySocket.NoDelay = true;
             _readBuff = new byte[_mySocket.ReceiveBufferSize];
             if (_myStream != null) { _myStream.BeginRead(_readBuff, 0, _mySocket.ReceiveBufferSize, OnReceiveData, null); }
             _isConnected = true;
