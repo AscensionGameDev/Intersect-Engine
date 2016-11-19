@@ -811,6 +811,7 @@ namespace Intersect_Server.Classes.Core
                 SaveCharacterHotbar(player);
                 SaveCharacterSwitches(player);
                 SaveCharacterVariables(player);
+                SaveCharacterQuests(player);
                 rowId = GetLastInsertRowId();
                 transaction.Commit();
             }
@@ -1091,6 +1092,26 @@ namespace Intersect_Server.Classes.Core
                 }
             }
         }
+        private static void SaveCharacterQuests(Player player)
+        {
+            foreach (var playerQuest in player.Quests)
+            {
+                var query = "INSERT OR REPLACE into " + CHAR_QUESTS_TABLE + " (" + CHAR_QUEST_CHAR_ID + "," +
+                            CHAR_QUEST_ID + "," + CHAR_QUEST_TASK + "," + CHAR_QUEST_TASK_PROGRESS + "," + 
+                            CHAR_QUEST_COMPLETED + ")" + " VALUES " + " (@" + CHAR_QUEST_CHAR_ID + ",@" + 
+                            CHAR_QUEST_ID + ",@" + CHAR_QUEST_TASK + ",@" + CHAR_QUEST_TASK_PROGRESS + ",@" +
+                            CHAR_QUEST_COMPLETED + ");";
+                using (SqliteCommand cmd = new SqliteCommand(query, _dbConnection))
+                {
+                    cmd.Parameters.Add(new SqliteParameter("@" + CHAR_QUEST_CHAR_ID, player.MyId));
+                    cmd.Parameters.Add(new SqliteParameter("@" + CHAR_QUEST_ID, playerQuest.Key));
+                    cmd.Parameters.Add(new SqliteParameter("@" + CHAR_QUEST_TASK,Convert.ToInt32(playerQuest.Value.task)));
+                    cmd.Parameters.Add(new SqliteParameter("@" + CHAR_QUEST_TASK_PROGRESS, Convert.ToInt32(playerQuest.Value.taskProgress)));
+                    cmd.Parameters.Add(new SqliteParameter("@" + CHAR_QUEST_COMPLETED, Convert.ToInt32(playerQuest.Value.completed)));
+                    cmd.ExecuteNonQuery();
+                }
+            }
+        }
         public static bool LoadCharacter(Client client)
         {
             var en = client.Entity;
@@ -1150,6 +1171,7 @@ namespace Intersect_Server.Classes.Core
                         if (!LoadCharacterHotbar(en)) return false;
                         if (!LoadCharacterSwitches(en)) return false;
                         if (!LoadCharacterVariables(en)) return false;
+                        if (!LoadCharacterQuests(en)) return false;
                         return true;
                     }
                 }
@@ -1362,6 +1384,44 @@ namespace Intersect_Server.Classes.Core
                         else
                         {
                             player.Variables.Add(id, Convert.ToInt32(dataReader[CHAR_VARIABLE_VAL]));
+                        }
+                    }
+                }
+                return true;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+        private static bool LoadCharacterQuests(Player player)
+        {
+            try
+            {
+                var query = "SELECT * from " + CHAR_QUESTS_TABLE + " WHERE " + CHAR_QUEST_CHAR_ID + "=@" +
+                            CHAR_QUEST_CHAR_ID + ";";
+                using (SqliteCommand cmd = new SqliteCommand(query, _dbConnection))
+                {
+                    cmd.Parameters.Add(new SqliteParameter("@" + CHAR_QUEST_CHAR_ID, player.MyId));
+                    var dataReader = cmd.ExecuteReader();
+                    while (dataReader.Read())
+                    {
+                        var id = Convert.ToInt32(dataReader[CHAR_QUEST_ID]);
+                        if (player.Quests.ContainsKey(id))
+                        {
+                            var questProgress = player.Quests[id];
+                            questProgress.task = Convert.ToInt32(dataReader[CHAR_QUEST_TASK]);
+                            questProgress.taskProgress = Convert.ToInt32(dataReader[CHAR_QUEST_TASK_PROGRESS]);
+                            questProgress.completed = Convert.ToInt32(dataReader[CHAR_QUEST_COMPLETED]);
+                            player.Quests[id] = questProgress;
+                        }
+                        else
+                        {
+                            var questProgress = new QuestProgressStruct();
+                            questProgress.task = Convert.ToInt32(dataReader[CHAR_QUEST_TASK]);
+                            questProgress.taskProgress = Convert.ToInt32(dataReader[CHAR_QUEST_TASK_PROGRESS]);
+                            questProgress.completed = Convert.ToInt32(dataReader[CHAR_QUEST_COMPLETED]);
+                            player.Quests.Add(id,questProgress);
                         }
                     }
                 }

@@ -48,6 +48,7 @@ namespace Intersect_Server.Classes.Entities
         public int[] Equipment = new int[Options.EquipmentSlots.Count];
         public Dictionary<int, bool> Switches = new Dictionary<int, bool>();
         public Dictionary<int, int> Variables = new Dictionary<int, int>();
+        public Dictionary<int,QuestProgressStruct> Quests = new Dictionary<int,QuestProgressStruct>();
         public List<EventInstance> MyEvents = new List<EventInstance>();
         public HotbarInstance[] Hotbar = new HotbarInstance[Options.MaxHotbar];
         public ItemInstance[] Bank = new ItemInstance[Options.MaxBankSlots];
@@ -1406,6 +1407,17 @@ namespace Intersect_Server.Classes.Entities
             PacketSender.SendHotbarSlots(MyClient);
         }
 
+        //Quests
+        public bool CanStartQuest(QuestBase quest)
+        {
+            return false;
+        }
+
+        public bool QuestCompleted(QuestBase quest)
+        {
+            return false;
+        }
+
         //Event Processing Methods
         private int EventExists(int map, int x, int y)
         {
@@ -1645,6 +1657,13 @@ namespace Intersect_Server.Classes.Entities
     {
         public int Type = -1;
         public int Slot = -1;
+    }
+
+    public struct QuestProgressStruct
+    {
+        public int task;
+        public int completed;
+        public int taskProgress;
     }
 }
 
