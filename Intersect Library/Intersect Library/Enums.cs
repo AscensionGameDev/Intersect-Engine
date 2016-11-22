@@ -91,6 +91,10 @@ namespace Intersect_Library
         DeleteGameObject,
         TryBlock,
         SaveTime,
+        PartyInvite,
+        PartyAcceptInvite,
+        PartyKick,
+        PartyLeave,
     }
 
     public enum ServerPackets
@@ -148,7 +152,10 @@ namespace Intersect_Library
         ActionMsg,
         TimeBase,
         Time,
-        ChatBubble
+        PartyData,
+        PartyInvite,
+        ChatBubble,
+		MapEntities
     }
 
     public enum MapZones

@@ -43,7 +43,9 @@ namespace Intersect_Editor.Classes
                 MySocket.Close();
             }
 
-            MySocket = new TcpClient { NoDelay = true };
+            MySocket = new TcpClient ();
+            MySocket.SendBufferSize = 256000;
+            MySocket.ReceiveBufferSize = 256000;
             _tempBuff = new byte[MySocket.ReceiveBufferSize];
             MySocket.BeginConnect(Globals.ServerHost, Globals.ServerPort, ConnectCb, null);
             Connecting = true;
@@ -157,13 +159,24 @@ namespace Intersect_Editor.Classes
             }
         }
 
-        public static void SendPacket(byte[] data)
+        public static void SendPacket(byte[] packet)
         {
             try
             {
                 var buff = new ByteBuffer();
-                buff.WriteInteger(data.Length);
-                buff.WriteBytes(data);
+                if (packet.Length > 800)
+                {
+                    packet = Compression.CompressPacket(packet);
+                    buff.WriteInteger(packet.Length + 1);
+                    buff.WriteByte(1); //Compressed
+                    buff.WriteBytes(packet);
+                }
+                else
+                {
+                    buff.WriteInteger(packet.Length + 1);
+                    buff.WriteByte(0); //Not Compressed
+                    buff.WriteBytes(packet);
+                }
                 _myStream.Write(buff.ToArray(), 0, buff.Count());
             }
             catch (Exception)

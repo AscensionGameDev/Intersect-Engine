@@ -154,11 +154,11 @@
     <Compile Include="Forms\Editors\Event Commands\EventCommand_CompleteQuestTask.Designer.cs">
       <DependentUpon>EventCommand_CompleteQuestTask.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\Editors\Event Commands\EventCommand_EventCommand_StartCommonEvent.cs">
+    <Compile Include="Forms\Editors\Event Commands\EventCommand_StartCommonEvent.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Forms\Editors\Event Commands\EventCommand_EventCommand_StartCommonEvent.Designer.cs">
-      <DependentUpon>EventCommand_EventCommand_StartCommonEvent.cs</DependentUpon>
+    <Compile Include="Forms\Editors\Event Commands\EventCommand_StartCommonEvent.Designer.cs">
+      <DependentUpon>EventCommand_StartCommonEvent.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\Editors\Event Commands\EventCommand_GiveExperience.cs">
       <SubType>UserControl</SubType>
@@ -522,8 +522,8 @@
     <EmbeddedResource Include="Forms\Editors\Event Commands\EventCommand_CompleteQuestTask.resx">
       <DependentUpon>EventCommand_CompleteQuestTask.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\Editors\Event Commands\EventCommand_EventCommand_StartCommonEvent.resx">
-      <DependentUpon>EventCommand_EventCommand_StartCommonEvent.cs</DependentUpon>
+    <EmbeddedResource Include="Forms\Editors\Event Commands\EventCommand_StartCommonEvent.resx">
+      <DependentUpon>EventCommand_StartCommonEvent.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\Editors\Event Commands\EventCommand_GiveExperience.resx">
       <DependentUpon>EventCommand_GiveExperience.cs</DependentUpon>

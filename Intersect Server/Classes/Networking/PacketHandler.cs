@@ -45,6 +45,16 @@ namespace Intersect_Server.Classes.Networking
         {
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
+
+            //Compressed?
+            if (bf.ReadByte() == 1)
+            {
+                packet = bf.ReadBytes(bf.Length());
+                var data = Compression.DecompressPacket(packet);
+                bf = new ByteBuffer();
+                bf.WriteBytes(data);
+            }
+
             var packetHeader = (ClientPackets)bf.ReadLong();
             packet = bf.ReadBytes(bf.Length());
             bf.Dispose();
@@ -188,6 +198,18 @@ namespace Intersect_Server.Classes.Networking
                 case ClientPackets.SaveTime:
                     HandleSaveTime(client, packet);
                     break;
+                case ClientPackets.PartyInvite:
+                    HandlePartyInvite(client, packet);
+                    break;
+                case ClientPackets.PartyAcceptInvite:
+                    HandleAcceptPartyInvite(client, packet);
+                    break;
+                case ClientPackets.PartyKick:
+                    HandlePartyKick(client, packet);
+                    break;
+                case ClientPackets.PartyLeave:
+                    HandlePartyLeave(client,packet);
+                    break;
                 default:
                     Globals.GeneralLogs.Add(@"Non implemented packet received: " + packetHeader);
                     break;
@@ -328,7 +350,7 @@ namespace Intersect_Server.Classes.Networking
                 if (Globals.Entities[index].MoveTimer > Globals.System.GetTimeMs())
                 {
                     Globals.Entities[index].MoveTimer = Globals.System.GetTimeMs() +
-                                                        (long) (Globals.Entities[index].GetMovementTime()/2f);
+                                                        (long)(Globals.Entities[index].GetMovementTime() / 2f);
                 }
             }
             else
@@ -1184,6 +1206,7 @@ namespace Intersect_Server.Classes.Networking
                     PacketSender.SendPlayerMsg(client, val1 + " is not online.");
                     break;
                 case (int)AdminActions.SetAccess:
+                    int p;
                     for (int i = 0; i < Globals.Clients.Count; i++)
                     {
                         if (Globals.Clients[i] != null && Globals.Clients[i].Entity != null)
@@ -1194,28 +1217,24 @@ namespace Intersect_Server.Classes.Networking
                                 {
                                     if (client.Power == 2)
                                     {
-                                        if (Convert.ToInt32(val2) < 3 || Convert.ToInt32(val2) > -1)
-                                        //Making it retard proof
+                                        if (val2 == "Admin")
+                                        { p = 2; }
+                                        else if (val2 == "Moderator")
+                                        { p = 1; }
+                                        else { p = 0; }
+
+                                        Globals.Clients[i].Power = p;
+                                        if (Globals.Clients[i].Power > 0)
                                         {
-                                            Globals.Clients[i].Power = Convert.ToInt32(val2);
-                                            if (Globals.Clients[i].Power > 0)
-                                            {
-                                                PacketSender.SendGlobalMsg(val1 +
-                                                                           " has been given administrative powers!");
-                                            }
-                                            else
-                                            {
-                                                PacketSender.SendGlobalMsg(val1 +
-                                                                           " has had their administrative poweres revoked!");
-                                            }
-                                            return;
+                                            PacketSender.SendGlobalMsg(val1 +
+                                                                       " has been given administrative powers!");
                                         }
                                         else
                                         {
-                                            PacketSender.SendPlayerMsg(client,
-                                                "Invalid power level. Pick a power level between 0-2.");
-                                            return;
+                                            PacketSender.SendGlobalMsg(val1 +
+                                                                       " has had their administrative poweres revoked!");
                                         }
+                                        return;
                                     }
                                     else
                                     {
@@ -1826,6 +1845,52 @@ namespace Intersect_Server.Classes.Networking
                 ServerTime.Init();
                 PacketSender.SendTimeBaseToAllEditors();
             }
+        }
+
+        private static void HandlePartyInvite(Client client, byte[] packet)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteBytes(packet);
+            int target = bf.ReadInteger();
+            //Check if valid target
+            if (target < 0) { return; }
+            if (Globals.Entities[target].GetEntityType() == EntityTypes.Player && target != client.Entity.MyIndex)
+            {
+                PacketSender.SendPartyInvite(((Player)Globals.Entities[target]).MyClient, client.EntityIndex);
+            }
+            else
+            {
+                PacketSender.SendPlayerMsg(client, "You need to select a valid target.", Color.Red);
+            }
+            bf.Dispose();
+        }
+
+        private static void HandleAcceptPartyInvite(Client client, byte[] packet)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteBytes(packet);
+            int leader = bf.ReadInteger();
+            //Check if valid target
+            if (leader < 0) { return; }
+            if (Globals.Entities[leader].GetEntityType() == EntityTypes.Player && leader != client.Entity.MyIndex)
+            {
+                ((Player)Globals.Entities[leader]).AddParty((Player)client.Entity);
+            }
+            bf.Dispose();
+        }
+
+        private static void HandlePartyKick(Client client, byte[] packet)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteBytes(packet);
+            int target = bf.ReadInteger();
+            client.Entity.KickParty(target);
+            bf.Dispose();
+        }
+
+        private static void HandlePartyLeave(Client client, byte[] packet)
+        {
+            client.Entity.LeaveParty();
         }
     }
 }

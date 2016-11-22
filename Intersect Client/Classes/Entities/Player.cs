@@ -26,6 +26,7 @@
 */
 
 using System;
+using System.Collections.Generic;
 using IntersectClientExtras.GenericClasses;
 using IntersectClientExtras.Gwen.Control;
 using IntersectClientExtras.Input;
@@ -50,6 +51,8 @@ namespace Intersect_Client.Classes.Entities
         public int Experience = 0;
         public int ExperienceToNextLevel = 0;
 
+        public List<int> Party = new List<int>();
+
         public override int CurrentMap
         {
             get { return base.CurrentMap; }
@@ -72,8 +75,8 @@ namespace Intersect_Client.Classes.Entities
 
         public bool NoClip = false;
 
-        private int _targetIndex;
-        private int _targetType;
+        public int _targetIndex;
+        public int _targetType;
         private EntityBox _targetBox;
         private ItemDescWindow _itemTargetBox;
 

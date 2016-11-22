@@ -207,6 +207,29 @@ namespace Intersect_Server.Classes.Networking
             bf.Dispose();
         }
 
+        private static byte[] GetEntityPacket(Entity en, Client forClient)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteLong(en.SpawnTime);
+            bf.WriteLong(en.MyIndex);
+            bf.WriteInteger((int)en.GetEntityType());
+            bf.WriteBytes(en.Data());
+
+            if (en.GetType() == typeof(Player))
+            {
+                if (forClient != null && forClient.Entity == en)
+                {
+                    bf.WriteInteger(1);
+                }
+                else
+                {
+                    bf.WriteInteger(0);
+                }
+            }
+
+            return bf.ToArray();
+        }
+
         public static void SendEntityDataTo(Client client, Entity en)
         {
             if (en == null) { return; }
@@ -224,9 +247,6 @@ namespace Intersect_Server.Classes.Networking
 
             client.SendPacket(bf.ToArray());
             bf.Dispose();
-            SendEntityVitalsTo(client, en);
-            SendEntityStatsTo(client, en);
-            SendEntityPositionTo(client, en);
 
             if (en == client.Entity)
             {
@@ -237,6 +257,26 @@ namespace Intersect_Server.Classes.Networking
                 SendPointsTo(client);
                 SendHotbarSlots(client);
             }
+        }
+
+        public static void SendMapEntitiesTo(Client client, List<Entity> entities)
+        {
+            var buff = new ByteBuffer();
+            buff.WriteLong((long)ServerPackets.MapEntities);
+            var sendEntities = new List<Entity>();
+            for (int i = 0; i < entities.Count; i++)
+            {
+                if (entities[i] != null && entities[i] != client.Entity)
+                {
+                    sendEntities.Add(entities[i]);
+                }
+            }
+            buff.WriteInteger(sendEntities.Count);
+            for (int i = 0; i < sendEntities.Count; i++)
+            {
+                buff.WriteBytes(GetEntityPacket(sendEntities[i], client));
+            }
+            client.SendPacket(buff.ToArray());
         }
 
         public static void SendEntityDataToProximity(Entity en)
@@ -1240,6 +1280,27 @@ namespace Intersect_Server.Classes.Networking
             bf.Dispose();
         }
 
+        public static void SendParty(Client client)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteLong((long)ServerPackets.PartyData);
+            bf.WriteInteger(client.Entity.Party.Count);
+            for (int i = 0; i < client.Entity.Party.Count; i++)
+            {
+                bf.WriteInteger(client.Entity.Party[i].MyIndex);
+            }
+            client.SendPacket(bf.ToArray());
+            bf.Dispose();
+        }
+
+        public static void SendPartyInvite(Client client, int leader)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteLong((long)ServerPackets.PartyInvite);
+            bf.WriteInteger(leader);
+            client.SendPacket(bf.ToArray());
+            bf.Dispose();
+        }
         public static void SendChatBubble(int entityIndex, int type, string text, int map)
         {
             var bf = new ByteBuffer();

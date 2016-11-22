@@ -61,6 +61,7 @@ namespace Intersect_Server.Classes.Entities
         public int CraftIndex = -1;
         public long CraftTimer = 0;
         public long SaveTimer = Environment.TickCount;
+        public List<Player> Party = new List<Player>();
 
         //Init
         public Player(int index, Client newClient) : base(index)
@@ -92,7 +93,7 @@ namespace Intersect_Server.Classes.Entities
 
             if (SaveTimer + 120000 < Environment.TickCount)
             {
-                Task.Run(() => Database.SaveCharacter(this,false));
+                Task.Run(() => Database.SaveCharacter(this, false));
                 SaveTimer = Environment.TickCount;
             }
 
@@ -337,12 +338,12 @@ namespace Intersect_Server.Classes.Entities
                 }
             }
 
-            PacketSender.SendPlayerMsg(MyClient, "You have leveled up! You are now level " + Level + "!", Color.Cyan,MyName);
+            PacketSender.SendPlayerMsg(MyClient, "You have leveled up! You are now level " + Level + "!", Color.Cyan, MyName);
             PacketSender.SendActionMsg(MyIndex, "LEVEL UP!", new Color(255, 0, 255, 0));
             if (StatPoints > 0)
             {
                 PacketSender.SendPlayerMsg(MyClient,
-                    "You have " + StatPoints + " stat points available to be spent!", Color.Cyan,MyName);
+                    "You have " + StatPoints + " stat points available to be spent!", Color.Cyan, MyName);
             }
             PacketSender.SendExperience(MyClient);
             PacketSender.SendPointsTo(MyClient);
@@ -393,7 +394,17 @@ namespace Intersect_Server.Classes.Entities
         {
             if (en.GetType() == typeof(Npc))
             {
-                GiveExperience(((Npc)en).MyBase.Experience);
+                if (Party.Count > 0) //If in party, split the exp.
+                {
+                    for (int i = 0; i < Party.Count; i++)
+                    {
+                        Party[i].GiveExperience(((Npc)en).MyBase.Experience / Party.Count);
+                    }
+                }
+                else
+                {
+                    GiveExperience(((Npc)en).MyBase.Experience);
+                }
             }
         }
 
@@ -876,7 +887,7 @@ namespace Intersect_Server.Classes.Entities
                         {
                             buyItemAmt = Math.Max(1, amount);
                         }
-                        if (shop.SellingItems[slot].CostItemVal == 0 || FindItem(shop.SellingItems[slot].CostItemNum, shop.SellingItems[slot].CostItemVal * buyItemAmt) >-1)
+                        if (shop.SellingItems[slot].CostItemVal == 0 || FindItem(shop.SellingItems[slot].CostItemNum, shop.SellingItems[slot].CostItemVal * buyItemAmt) > -1)
                         {
                             if (CanGiveItem(new ItemInstance(buyItemNum, buyItemAmt)))
                             {
@@ -884,8 +895,8 @@ namespace Intersect_Server.Classes.Entities
                                 {
                                     TakeItem(
                                         FindItem(shop.SellingItems[slot].CostItemNum,
-                                            shop.SellingItems[slot].CostItemVal*buyItemAmt),
-                                        shop.SellingItems[slot].CostItemVal*buyItemAmt);
+                                            shop.SellingItems[slot].CostItemVal * buyItemAmt),
+                                        shop.SellingItems[slot].CostItemVal * buyItemAmt);
                                 }
                                 TryGiveItem(new ItemInstance(buyItemNum, buyItemAmt), true);
                             }
@@ -905,14 +916,14 @@ namespace Intersect_Server.Classes.Entities
                                 else
                                 {
                                     PacketSender.SendPlayerMsg(MyClient, "You do not have space to purchase that item!",
-                                        Color.Red,MyName);
+                                        Color.Red, MyName);
                                 }
                             }
                         }
                         else
                         {
                             PacketSender.SendPlayerMsg(MyClient, "Transaction failed due to insufficent funds.",
-                                Color.Red,MyName);
+                                Color.Red, MyName);
                         }
                     }
                 }
@@ -1176,6 +1187,124 @@ namespace Intersect_Server.Classes.Entities
             }
             PacketSender.SendBankUpdate(MyClient, item1);
             PacketSender.SendBankUpdate(MyClient, item2);
+        }
+
+        //Parties
+        public void AddParty(Player target)
+        {
+            //If a new party, make yourself the leader
+            if (Party.Count == 0)
+            {
+                Party.Add(this);
+            }
+            else
+            {
+                if (Party[0] != this)
+                {
+                    PacketSender.SendPlayerMsg(MyClient, "Only the party leader can send invitations to your party.", Color.Red);
+                    return;
+                }
+
+                //Check for member being already in the party, if so cancel
+                for (int i = 0; i < Party.Count; i++)
+                {
+                    if (Party[i] == target)
+                    {
+                        return;
+                    }
+                }
+            }
+
+            if (Party.Count < 4)
+            {
+                Party.Add(target);
+
+                //Update all members of the party with the new list
+                for (int i = 0; i < Party.Count; i++)
+                {
+                    Party[i].Party = Party;
+                    PacketSender.SendParty(Party[i].MyClient);
+                    PacketSender.SendPlayerMsg(Party[i].MyClient, target.MyName + " has joined the party!", Color.Green);
+                }
+            }
+            else
+            {
+                PacketSender.SendPlayerMsg(MyClient, "You have reached the maximum limit of party members. Kick another member before adding more.", Color.Red);
+            }
+        }
+
+        public void KickParty(int target)
+        {
+            if (Party.Count > 0 && Party[0] == this)
+            {
+                if (target > 0 && target < Party.Count)
+                {
+                    var oldMember = Party[target];
+                    oldMember.Party = new List<Player>();
+                    PacketSender.SendParty(oldMember.MyClient);
+                    PacketSender.SendPlayerMsg(oldMember.MyClient, "You have been kicked from the party!", Color.Red);
+                    Party.RemoveAt(target);
+
+                    if (Party.Count > 1) //Need atleast 2 party members to function
+                    {
+                        //Update all members of the party with the new list
+                        for (int i = 0; i < Party.Count; i++)
+                        {
+                            Party[i].Party = Party;
+                            PacketSender.SendParty(Party[i].MyClient);
+                            PacketSender.SendPlayerMsg(Party[i].MyClient, oldMember.MyName + " has been kicked from the party!", Color.Red);
+                        }
+                    }
+                    else if (Party.Count > 0) //Check if anyone is left on their own
+                    {
+                        Player remainder = Party[0];
+                        remainder.Party.Clear();
+                        PacketSender.SendParty(remainder.MyClient);
+                        PacketSender.SendPlayerMsg(remainder.MyClient, "The party has been disbanded.", Color.Red);
+                    }
+                }
+            }
+        }
+        public void LeaveParty()
+        {
+            if (Party.Count > 0 && Party.Contains(this))
+            {
+                var oldMember = this;
+                Party.Remove(this);
+
+                if (Party.Count > 1) //Need atleast 2 party members to function
+                {
+                    //Update all members of the party with the new list
+                    for (int i = 0; i < Party.Count; i++)
+                    {
+                        Party[i].Party = Party;
+                        PacketSender.SendParty(Party[i].MyClient);
+                        PacketSender.SendPlayerMsg(Party[i].MyClient, oldMember.MyName + " has left the party!", Color.Red);
+                    }
+                }
+                else if (Party.Count > 0) //Check if anyone is left on their own
+                {
+                    Player remainder = Party[0];
+                    remainder.Party.Clear();
+                    PacketSender.SendParty(remainder.MyClient);
+                    PacketSender.SendPlayerMsg(remainder.MyClient, "The party has been disbanded.", Color.Red);
+                }
+            }
+            Party.Clear();
+            PacketSender.SendParty(MyClient);
+            PacketSender.SendPlayerMsg(MyClient, "You have left the party.", Color.Red);
+        }
+
+        public bool InParty(Player member)
+        {
+            for (int i = 0; i < Party.Count; i++)
+            {
+                if (member == Party[i])
+                {
+                    return true;
+                }
+            }
+            return false;
         }
 
         //Spells
