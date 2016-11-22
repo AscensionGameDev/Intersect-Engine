@@ -1280,6 +1280,27 @@ namespace Intersect_Server.Classes.Networking
             bf.Dispose();
         }
 
+        public static void SendParty(Client client)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteLong((long)ServerPackets.PartyData);
+            bf.WriteInteger(client.Entity.Party.Count);
+            for (int i = 0; i < client.Entity.Party.Count; i++)
+            {
+                bf.WriteInteger(client.Entity.Party[i].MyIndex);
+            }
+            client.SendPacket(bf.ToArray());
+            bf.Dispose();
+        }
+
+        public static void SendPartyInvite(Client client, int leader)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteLong((long)ServerPackets.PartyInvite);
+            bf.WriteInteger(leader);
+            client.SendPacket(bf.ToArray());
+            bf.Dispose();
+        }
         public static void SendChatBubble(int entityIndex, int type, string text, int map)
         {
             var bf = new ByteBuffer();

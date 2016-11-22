@@ -196,11 +196,11 @@ namespace Intersect_Editor.Forms.Editors
             {
                 if (scrlItem.Value > -1)
                 {
-                    lstCompositions.Items[lstCrafts.SelectedIndex] = ItemBase.GetName(_craftItem.Item);
+                    lstCompositions.Items[lstCompositions.SelectedIndex] = ItemBase.GetName(_craftItem.Item);
                 }
                 else
                 {
-                    lstCompositions.Items[lstCrafts.SelectedIndex] = "None";
+                    lstCompositions.Items[lstCompositions.SelectedIndex] = "None";
                 }
             }
         }
@@ -350,6 +350,7 @@ namespace Intersect_Editor.Forms.Editors
         private void btnNewComposition_Click(object sender, EventArgs e)
         {
             _editorItem.Crafts.Add(new Bench());
+            lstCompositions.Items.Add("None");
         }
 
         private void btnDeleteCraft_Click(object sender, EventArgs e)
