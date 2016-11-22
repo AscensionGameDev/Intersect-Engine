@@ -45,6 +45,16 @@ namespace Intersect_Server.Classes.Networking
         {
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
+
+            //Compressed?
+            if (bf.ReadByte() == 1)
+            {
+                packet = bf.ReadBytes(bf.Length());
+                var data = Compression.DecompressPacket(packet);
+                bf = new ByteBuffer();
+                bf.WriteBytes(data);
+            }
+
             var packetHeader = (ClientPackets)bf.ReadLong();
             packet = bf.ReadBytes(bf.Length());
             bf.Dispose();

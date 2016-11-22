@@ -152,6 +152,9 @@ namespace Intersect_Client.Classes.Entities
             CurrentX = bf.ReadInteger();
             CurrentY = bf.ReadInteger();
             CurrentZ = bf.ReadInteger();
+            Dir = bf.ReadInteger();
+            Passable = bf.ReadInteger();
+            HideName = bf.ReadInteger();
             ClearAnimations();
             int animCount = bf.ReadInteger();
             for (int i = 0; i < animCount; i++)
@@ -159,6 +162,22 @@ namespace Intersect_Client.Classes.Entities
                 var anim = AnimationBase.GetAnim(bf.ReadInteger());
                 if (anim != null)
                     Animations.Add(new AnimationInstance(anim, true));
+            }
+            for (var i = 0; i < (int)Vitals.VitalCount; i++)
+            {
+                MaxVital[i] = bf.ReadInteger();
+                Vital[i] = bf.ReadInteger();
+            }
+            //Update status effects
+            var count = bf.ReadInteger();
+            Status.Clear();
+            for (int i = 0; i < count; i++)
+            {
+                Status.Add(new StatusInstance(bf.ReadInteger(), bf.ReadString()));
+            }
+            for (var i = 0; i < (int)Stats.StatCount; i++)
+            {
+                Stat[i] = bf.ReadInteger();
             }
             _disposed = false;
         }

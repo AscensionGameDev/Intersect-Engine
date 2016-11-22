@@ -75,8 +75,19 @@ namespace Intersect_Server.Classes.Networking
         public void SendPacket(byte[] packet)
         {
             var buff = new ByteBuffer();
-            buff.WriteInteger(packet.Length);
-            buff.WriteBytes(packet);
+            if (packet.Length > 800)
+            {
+                packet = Compression.CompressPacket(packet);
+                buff.WriteInteger(packet.Length + 1);
+                buff.WriteByte(1); //Compressed
+                buff.WriteBytes(packet);
+            }
+            else
+            {
+                buff.WriteInteger(packet.Length + 1);
+                buff.WriteByte(0); //Not Compressed
+                buff.WriteBytes(packet);
+            }
             sendQueue.Enqueue(buff.ToArray());
         }
 

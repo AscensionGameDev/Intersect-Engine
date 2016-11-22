@@ -50,6 +50,16 @@ namespace Intersect_Client.Classes.Networking
         {
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
+
+            //Compressed?
+            if (bf.ReadByte() == 1)
+            {
+                packet = bf.ReadBytes(bf.Length());
+                var data = Compression.DecompressPacket(packet);
+                bf = new ByteBuffer();
+                bf.WriteBytes(data);
+            }
+
             var packetHeader = (ServerPackets)bf.ReadLong();
             lock (Globals.GameLock)
             {
@@ -208,6 +218,9 @@ namespace Intersect_Client.Classes.Networking
                     case ServerPackets.ChatBubble:
                         HandleChatBubble(bf.ReadBytes(bf.Length()));
                         break;
+                    case ServerPackets.MapEntities:
+                        HandleMapEntities(bf.ReadBytes(bf.Length()));
+                        break;
                     default:
                         Console.WriteLine(@"Non implemented packet received: " + packetHeader);
                         break;
@@ -222,11 +235,11 @@ namespace Intersect_Client.Classes.Networking
             if (Convert.ToBoolean(bf.ReadInteger()) == true) //request
             {
                 PacketSender.SendPing();
-                //PingTime = Globals.System.GetTimeMS();
+                PingTime = Globals.System.GetTimeMS();
             }
             else
             {
-                //GameNetwork.Ping = (int)(Globals.System.GetTimeMS() - PingTime)/2;
+                GameNetwork.Ping = (int)(Globals.System.GetTimeMS() - PingTime)/2;
             }
         }
 
@@ -319,6 +332,50 @@ namespace Intersect_Client.Classes.Networking
                 new Event(i, spawnTime,mapNum, bf);
             }
             
+        }
+
+        private static void HandleMapEntities(byte[] packet)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteBytes(packet);
+            var entityCount = bf.ReadInteger();
+            for (int z = 0; z < entityCount; z++)
+            {
+                var spawnTime = bf.ReadLong();
+                var i = (int)bf.ReadLong();
+                var entityType = bf.ReadInteger();
+                var mapNum = bf.ReadInteger(false);
+                if (entityType != (int)EntityTypes.Event)
+                {
+                    var en = Globals.GetEntity(i, entityType, spawnTime);
+                    if (en != null)
+                    {
+                        en.Load(bf);
+                    }
+                    else
+                    {
+                        switch (entityType)
+                        {
+                            case (int)EntityTypes.Player:
+                                Globals.Entities.Add(i, new Player(i, spawnTime, bf));
+                                break;
+                            case (int)EntityTypes.GlobalEntity:
+                                Globals.Entities.Add(i, new Entity(i, spawnTime, bf));
+                                break;
+                            case (int)EntityTypes.Resource:
+                                Globals.Entities.Add(i, new Resource(i, spawnTime, bf));
+                                break;
+                            case (int)EntityTypes.Projectile:
+                                Globals.Entities.Add(i, new Projectile(i, spawnTime, bf));
+                                break;
+                        }
+                    }
+                }
+                else
+                {
+                    new Event(i, spawnTime, mapNum, bf);
+                }
+            }
         }
 
         private static void HandlePositionInfo(byte[] packet)

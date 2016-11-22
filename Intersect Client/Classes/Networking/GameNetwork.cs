@@ -112,13 +112,24 @@ namespace Intersect_Client.Classes.Networking
             }
         }
 
-        public static void SendPacket(byte[] data)
+        public static void SendPacket(byte[] packet)
         {
             try
             {
                 var buff = new ByteBuffer();
-                buff.WriteInteger(data.Length);
-                buff.WriteBytes(data);
+                if (packet.Length > 800)
+                {
+                    packet = Compression.CompressPacket(packet);
+                    buff.WriteInteger(packet.Length + 1);
+                    buff.WriteByte(1); //Compressed
+                    buff.WriteBytes(packet);
+                }
+                else
+                {
+                    buff.WriteInteger(packet.Length + 1);
+                    buff.WriteByte(0); //Not Compressed
+                    buff.WriteBytes(packet);
+                }
                 MySocket.SendData(buff.ToArray());
             }
             catch (Exception)

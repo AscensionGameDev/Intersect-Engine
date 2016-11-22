@@ -762,13 +762,7 @@ namespace Intersect_Server.Classes.Maps
         {
             if (player != null)
             {
-                for (int i = 0; i < Entities.Count; i++)
-                {
-                    if (Entities[i] != null && Entities[i] != player)
-                    {
-                        PacketSender.SendEntityDataTo(player.MyClient, Entities[i]);
-                    }
-                }
+                PacketSender.SendMapEntitiesTo(player.MyClient, Entities);
                 player.SendEvents();
             }
         }

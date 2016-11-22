@@ -1084,10 +1084,28 @@ namespace Intersect_Server.Classes.Entities
             bf.WriteInteger(CurrentX);
             bf.WriteInteger(CurrentY);
             bf.WriteInteger(CurrentZ);
+            bf.WriteInteger(Dir);
+            bf.WriteInteger(Passable);
+            bf.WriteInteger(HideName);
             bf.WriteInteger(Animations.Count);
             for (int i = 0; i < Animations.Count; i++)
             {
                 bf.WriteInteger(Animations[i]);
+            }
+            for (var i = 0; i < (int)Vitals.VitalCount; i++)
+            {
+                bf.WriteInteger(MaxVital[i]);
+                bf.WriteInteger(Vital[i]);
+            }
+            bf.WriteInteger(Status.Count);
+            for (var i = 0; i < Status.Count; i++)
+            {
+                bf.WriteInteger(Status[i].Type);
+                bf.WriteString(Status[i].Data);
+            }
+            for (var i = 0; i < (int)Stats.StatCount; i++)
+            {
+                bf.WriteInteger(Stat[i].Value());
             }
             return bf.ToArray();
         }

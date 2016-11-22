@@ -148,7 +148,8 @@ namespace Intersect_Library
         ActionMsg,
         TimeBase,
         Time,
-        ChatBubble
+        ChatBubble,
+        MapEntities
     }
 
     public enum MapZones
