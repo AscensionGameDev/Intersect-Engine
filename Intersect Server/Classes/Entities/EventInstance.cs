@@ -208,7 +208,7 @@ namespace Intersect_Server.Classes.Entities
         {
             for (int i = 0; i < eventStruct.MyPages[pageIndex].Conditions.Count; i++)
             {
-                if (!MeetsConditions(eventStruct.MyPages[pageIndex].Conditions[i]))
+                if (!MeetsConditions(eventStruct.MyPages[pageIndex].Conditions[i], MyPlayer,this))
                 {
                     return false;
                 }
@@ -216,7 +216,7 @@ namespace Intersect_Server.Classes.Entities
             return true;
         }
 
-        public bool MeetsConditions(EventCommand conditionCommand)
+        public static bool MeetsConditions(EventCommand conditionCommand, Player MyPlayer, EventInstance EventInstance)
         {
             //For instance use PageInstance
             switch (conditionCommand.Ints[0])
@@ -343,26 +343,31 @@ namespace Intersect_Server.Classes.Entities
                     }
                     break;
                 case 8: //Self Switch
-                    if (IsGlobal)
+                    if (EventInstance != null)
                     {
-                        var evts = MapInstance.GetMap(MapNum).GlobalEventInstances.Values.ToList();
-                        for (int i = 0; i < evts.Count; i++)
+                        if (EventInstance.IsGlobal)
                         {
-                            if (evts[i] != null && evts[i].BaseEvent == BaseEvent)
+                            var evts = MapInstance.GetMap(EventInstance.MapNum).GlobalEventInstances.Values.ToList();
+                            for (int i = 0; i < evts.Count; i++)
                             {
-                                if (evts[i].SelfSwitch[conditionCommand.Ints[1]] == Convert.ToBoolean(conditionCommand.Ints[2]))
-                                    return true;
+                                if (evts[i] != null && evts[i].BaseEvent == EventInstance.BaseEvent)
+                                {
+                                    if (evts[i].SelfSwitch[conditionCommand.Ints[1]] ==
+                                        Convert.ToBoolean(conditionCommand.Ints[2]))
+                                        return true;
+                                }
                             }
                         }
-                    }
-                    else
-                    {
-                        if (SelfSwitch[conditionCommand.Ints[1]] == Convert.ToBoolean(conditionCommand.Ints[2]))
-                            return true;
+                        else
+                        {
+                            if (EventInstance.SelfSwitch[conditionCommand.Ints[1]] ==
+                                Convert.ToBoolean(conditionCommand.Ints[2]))
+                                return true;
+                        }
                     }
                     return false;
                 case 9: //Power Is
-                    if (MyClient.Power > conditionCommand.Ints[1]) return true;
+                    if (MyPlayer.MyClient.Power > conditionCommand.Ints[1]) return true;
                     return false;
                 case 10: //Time is between
                     if (conditionCommand.Ints[1] > -1 && conditionCommand.Ints[2] > -1 &&
@@ -375,6 +380,26 @@ namespace Intersect_Server.Classes.Entities
                     else
                     {
                         return true;
+                    }
+                case 11: //Can Start Quest
+                    var startQuest = QuestBase.GetQuest(conditionCommand.Ints[1]);
+                    if (startQuest != null)
+                    {
+                        return MyPlayer.CanStartQuest(startQuest);
+                    }
+                    break;
+                case 12: //Quest In Progress
+                    var questInProgress = QuestBase.GetQuest(conditionCommand.Ints[1]);
+                    if (questInProgress != null)
+                    {
+                        return MyPlayer.QuestInProgress(questInProgress,(QuestProgress)conditionCommand.Ints[2],conditionCommand.Ints[3]);
+                    }
+                    break;
+                case 13: //Quest Completed
+                    var questCompleted = QuestBase.GetQuest(conditionCommand.Ints[1]);
+                    if (questCompleted != null)
+                    {
+                        return MyPlayer.QuestCompleted(questCompleted);
                     }
                     break;
             }
@@ -526,7 +551,7 @@ namespace Intersect_Server.Classes.Entities
                     CallStack.Peek().CommandIndex++;
                     break;
                 case EventCommandType.ConditionalBranch:
-                    if (MeetsConditions(command))
+                    if (MeetsConditions(command, MyPlayer, this))
                     {
                         var tmpStack = new CommandInstance(CallStack.Peek().Page)
                         {

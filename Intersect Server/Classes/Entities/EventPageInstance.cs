@@ -739,7 +739,7 @@ namespace Intersect_Server.Classes.Entities
             //Should despawn if conditions are not met OR an earlier page can page
             for (int i = 0; i < MyPage.Conditions.Count; i++)
             {
-                if (!MyEventIndex.MeetsConditions(MyPage.Conditions[i]))
+                if (!EventInstance.MeetsConditions(MyPage.Conditions[i], MyEventIndex.MyPlayer, MyEventIndex))
                 {
                     return true;
                 }

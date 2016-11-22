@@ -26,6 +26,14 @@ using Intersect_Library.GameObjects.Events;
 
 namespace Intersect_Library.GameObjects
 {
+    public enum QuestProgress
+    {
+        OnAnyTask = 0,
+        BeforeTask = 1,
+        OnTask = 2,
+        AfterTask = 3,
+    }
+
     public class QuestBase : DatabaseObject
     {
         //General
@@ -155,6 +163,15 @@ namespace Intersect_Library.GameObjects
             myBuffer.WriteBytes(endEventData);
 
             return myBuffer.ToArray();
+        }
+
+        public int GetTaskIndex(int taskId)
+        {
+            for (int i = 0; i < Tasks.Count; i++)
+            {
+                if (Tasks[i].Id == taskId) return i;
+            }
+            return -1;
         }
 
         public static QuestBase GetQuest(int index)

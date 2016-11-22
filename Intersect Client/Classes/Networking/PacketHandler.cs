@@ -221,7 +221,7 @@ namespace Intersect_Client.Classes.Networking
                         break;
                     case ServerPackets.PartyInvite:
                         HandlePartyInvite(bf.ReadBytes(bf.Length()));
-			break;
+			            break;
                     case ServerPackets.ChatBubble:
                         HandleChatBubble(bf.ReadBytes(bf.Length()));
                         break;

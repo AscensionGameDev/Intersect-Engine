@@ -1232,7 +1232,6 @@ namespace Intersect_Server.Classes.Entities
                 PacketSender.SendPlayerMsg(MyClient, "You have reached the maximum limit of party members. Kick another member before adding more.", Color.Red);
             }
         }
-
         public void KickParty(int target)
         {
             if (Party.Count > 0 && Party[0] == this)
@@ -1294,7 +1293,6 @@ namespace Intersect_Server.Classes.Entities
             PacketSender.SendParty(MyClient);
             PacketSender.SendPlayerMsg(MyClient, "You have left the party.", Color.Red);
         }
-
         public bool InParty(Player member)
         {
             for (int i = 0; i < Party.Count; i++)
@@ -1539,13 +1537,75 @@ namespace Intersect_Server.Classes.Entities
         //Quests
         public bool CanStartQuest(QuestBase quest)
         {
+            //Check and see if the quest is already in progress, or if it has already been completed and cannot be repeated.
+            if (Quests.ContainsKey(quest.GetId()))
+            {
+                if (Quests[quest.GetId()].task != -1 && quest.GetTaskIndex(Quests[quest.GetId()].task) != -1)
+                {
+                    return false;
+                }
+                if (Quests[quest.GetId()].completed == 1 && quest.Repeatable == 0)
+                {
+                    return false;
+                }
+            }
+            //So the quest isn't started or we can repeat it.. let's make sure that we meet requirements.
+            foreach (var requirement in quest.Requirements)
+            {
+                if (!EventInstance.MeetsConditions(requirement, this, null))
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+        public bool QuestCompleted(QuestBase quest)
+        {
+            if (Quests.ContainsKey(quest.GetId()))
+            {
+                if (Quests[quest.GetId()].completed == 1)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+        public bool QuestInProgress(QuestBase quest, QuestProgress progress, int taskId)
+        {
+            if (Quests.ContainsKey(quest.GetId()))
+            {
+                if (Quests[quest.GetId()].task != -1 && quest.GetTaskIndex(Quests[quest.GetId()].task) != -1)
+                {
+                    switch (progress)
+                    {
+                        case QuestProgress.OnAnyTask:
+                            return true;
+                        case QuestProgress.BeforeTask:
+                            if (quest.GetTaskIndex(taskId) != -1)
+                            {
+                                return quest.GetTaskIndex(taskId) < quest.GetTaskIndex(Quests[quest.GetId()].task);
+                            }
+                            break;
+                        case QuestProgress.OnTask:
+                            if (quest.GetTaskIndex(taskId) != -1)
+                            {
+                                return quest.GetTaskIndex(taskId) == quest.GetTaskIndex(Quests[quest.GetId()].task);
+                            }
+                            break;
+                        case QuestProgress.AfterTask:
+                            if (quest.GetTaskIndex(taskId) != -1)
+                            {
+                                return quest.GetTaskIndex(taskId) > quest.GetTaskIndex(Quests[quest.GetId()].task);
+                            }
+                            break;
+                        default:
+                            throw new ArgumentOutOfRangeException(nameof(progress), progress, null);
+                    }
+                }
+            }
             return false;
         }
 
-        public bool QuestCompleted(QuestBase quest)
-        {
-            return false;
-        }
 
         //Event Processing Methods
         private int EventExists(int map, int x, int y)
@@ -1560,14 +1620,14 @@ namespace Intersect_Server.Classes.Entities
             }
             return -1;
         }
+
         public EventPageInstance EventAt(int map, int x, int y, int z)
         {
             foreach (var evt in MyEvents)
             {
                 if (evt != null && evt.PageInstance != null)
                 {
-                    if (evt.PageInstance.CurrentMap == map && evt.PageInstance.CurrentX == x &&
-                        evt.PageInstance.CurrentY == y && evt.PageInstance.CurrentZ == z)
+                    if (evt.PageInstance.CurrentMap == map && evt.PageInstance.CurrentX == x && evt.PageInstance.CurrentY == y && evt.PageInstance.CurrentZ == z)
                     {
                         return evt.PageInstance;
                     }
@@ -1575,6 +1635,7 @@ namespace Intersect_Server.Classes.Entities
             }
             return null;
         }
+
         public void TryActivateEvent(int mapNum, int eventIndex)
         {
             for (int i = 0; i < MyEvents.Count; i++)
@@ -1587,7 +1648,7 @@ namespace Intersect_Server.Classes.Entities
                         if (MyEvents[i].PageInstance.Trigger != 0) return;
                         if (!IsEventOneBlockAway(i)) return;
                         if (MyEvents[i].CallStack.Count != 0) return;
-                        var newStack = new CommandInstance(MyEvents[i].PageInstance.MyPage) { CommandIndex = 0, ListIndex = 0 };
+                        var newStack = new CommandInstance(MyEvents[i].PageInstance.MyPage) {CommandIndex = 0, ListIndex = 0};
                         MyEvents[i].CallStack.Push(newStack);
                         if (!MyEvents[i].IsGlobal)
                         {
@@ -1615,16 +1676,15 @@ namespace Intersect_Server.Classes.Entities
                     }
                 }
             }
-
         }
+
         public void RespondToEvent(int mapNum, int eventIndex, int responseId)
         {
             lock (EventLock)
             {
                 for (int i = 0; i < MyEvents.Count; i++)
                 {
-                    if (MyEvents[i] != null && MyEvents[i].MapNum == mapNum &&
-                        MyEvents[i].BaseEvent.MyIndex == eventIndex)
+                    if (MyEvents[i] != null && MyEvents[i].MapNum == mapNum && MyEvents[i].BaseEvent.MyIndex == eventIndex)
                     {
                         if (MyEvents[i].CallStack.Count <= 0) return;
                         if (MyEvents[i].CallStack.Peek().WaitingForResponse != 1) return;
@@ -1636,10 +1696,7 @@ namespace Intersect_Server.Classes.Entities
                         {
                             var tmpStack = new CommandInstance(MyEvents[i].PageInstance.BaseEvent.MyPages[MyEvents[i].PageIndex]);
                             tmpStack.CommandIndex = 0;
-                            tmpStack.ListIndex =
-                                MyEvents[i].PageInstance.BaseEvent.MyPages[MyEvents[i].PageIndex].CommandLists[
-                                    MyEvents[i].CallStack.Peek().ListIndex].Commands[
-                                        MyEvents[i].CallStack.Peek().CommandIndex].Ints[responseId - 1];
+                            tmpStack.ListIndex = MyEvents[i].PageInstance.BaseEvent.MyPages[MyEvents[i].PageIndex].CommandLists[MyEvents[i].CallStack.Peek().ListIndex].Commands[MyEvents[i].CallStack.Peek().CommandIndex].Ints[responseId - 1];
                             MyEvents[i].CallStack.Peek().CommandIndex++;
                             MyEvents[i].CallStack.Peek().WaitingForResponse = 0;
                             MyEvents[i].CallStack.Push(tmpStack);
@@ -1649,11 +1706,12 @@ namespace Intersect_Server.Classes.Entities
                 }
             }
         }
+
         static bool IsEventOneBlockAway(int eventIndex)
         {
-
             return true;
         }
+
         public int FindEvent(EventPageInstance en)
         {
             int id = -1;
@@ -1661,8 +1719,7 @@ namespace Intersect_Server.Classes.Entities
             {
                 for (int i = 0; i < MyEvents.Count; i++)
                 {
-                    if (MyEvents[i] != null && MyEvents[i].PageInstance != null &&
-                        (MyEvents[i].PageInstance == en || MyEvents[i].PageInstance.GlobalClone == en))
+                    if (MyEvents[i] != null && MyEvents[i].PageInstance != null && (MyEvents[i].PageInstance == en || MyEvents[i].PageInstance.GlobalClone == en))
                     {
                         id = i;
                         return id;
@@ -1671,6 +1728,7 @@ namespace Intersect_Server.Classes.Entities
             }
             return id;
         }
+
         public EventInstance GetEventFromPageInstance(EventPageInstance instance)
         {
             if (FindEvent(instance) > -1)
@@ -1682,6 +1740,7 @@ namespace Intersect_Server.Classes.Entities
                 return null;
             }
         }
+
         public void SendEvents()
         {
             for (int i = 0; i < MyEvents.Count; i++)
@@ -1692,6 +1751,7 @@ namespace Intersect_Server.Classes.Entities
                 }
             }
         }
+
         public bool StartCommonEvent(EventBase evt, int trigger = -1)
         {
             lock (EventLock)
@@ -1702,15 +1762,13 @@ namespace Intersect_Server.Classes.Entities
                 }
                 var tmpEvent = new EventInstance(MyEvents.Count, MyClient, evt, -1)
                 {
-                    MapNum = -1,
-                    SpawnX = -1,
-                    SpawnY = -1
+                    MapNum = -1, SpawnX = -1, SpawnY = -1
                 };
                 MyEvents.Add(tmpEvent);
                 tmpEvent.Update();
                 if (tmpEvent.PageInstance != null && (trigger == -1 || tmpEvent.PageInstance.MyPage.Trigger == trigger))
                 {
-                    var newStack = new CommandInstance(tmpEvent.PageInstance.MyPage) { CommandIndex = 0, ListIndex = 0 };
+                    var newStack = new CommandInstance(tmpEvent.PageInstance.MyPage) {CommandIndex = 0, ListIndex = 0};
                     tmpEvent.CallStack.Push(newStack);
                 }
                 else
@@ -1738,18 +1796,19 @@ namespace Intersect_Server.Classes.Entities
             client = MyClient;
             base.Move(moveDir, client, DontUpdate);
             // Check for a warp, if so warp the player.
-            var attribute =
-                MapInstance.GetMap(Globals.Entities[index].CurrentMap).Attributes[
-                    Globals.Entities[index].CurrentX, Globals.Entities[index].CurrentY];
-            if (attribute != null && attribute.value == (int)MapAttributes.Warp)
+            var attribute = MapInstance.GetMap(Globals.Entities[index].CurrentMap).Attributes[Globals.Entities[index].CurrentX, Globals.Entities[index].CurrentY];
+            if (attribute != null && attribute.value == (int) MapAttributes.Warp)
             {
                 Globals.Entities[index].Warp(attribute.data1, attribute.data2, attribute.data3, Globals.Entities[index].Dir);
             }
 
             //Check for slide tiles
-            if (attribute != null && attribute.value == (int)MapAttributes.Slide)
+            if (attribute != null && attribute.value == (int) MapAttributes.Slide)
             {
-                if (attribute.data1 > 0) { Globals.Entities[index].Dir = attribute.data1 - 1; } //If sets direction, set it.
+                if (attribute.data1 > 0)
+                {
+                    Globals.Entities[index].Dir = attribute.data1 - 1;
+                } //If sets direction, set it.
                 var dash = new DashInstance(this, 1, base.Dir);
             }
 
@@ -1761,17 +1820,13 @@ namespace Intersect_Server.Classes.Entities
                     {
                         if (MyEvents[i].PageInstance != null)
                         {
-                            if (MyEvents[i].PageInstance.CurrentMap == CurrentMap &&
-                                MyEvents[i].PageInstance.CurrentX == CurrentX &&
-                                MyEvents[i].PageInstance.CurrentY == CurrentY &&
-                                MyEvents[i].PageInstance.CurrentZ == CurrentZ)
+                            if (MyEvents[i].PageInstance.CurrentMap == CurrentMap && MyEvents[i].PageInstance.CurrentX == CurrentX && MyEvents[i].PageInstance.CurrentY == CurrentY && MyEvents[i].PageInstance.CurrentZ == CurrentZ)
                             {
                                 if (MyEvents[i].PageInstance.Trigger != 1) return;
                                 if (MyEvents[i].CallStack.Count != 0) return;
                                 var newStack = new CommandInstance(MyEvents[i].PageInstance.MyPage)
                                 {
-                                    CommandIndex = 0,
-                                    ListIndex = 0
+                                    CommandIndex = 0, ListIndex = 0
                                 };
                                 MyEvents[i].CallStack.Push(newStack);
                             }
