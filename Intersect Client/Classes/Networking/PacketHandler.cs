@@ -228,6 +228,9 @@ namespace Intersect_Client.Classes.Networking
                     case ServerPackets.MapEntities:
                         HandleMapEntities(bf.ReadBytes(bf.Length()));
                         break;
+                    case ServerPackets.QuestOffer:
+                        HandleQuestOffer(bf.ReadBytes(bf.Length()));
+                        break;
                     default:
                         Console.WriteLine(@"Non implemented packet received: " + packetHeader);
                         break;
@@ -1350,6 +1353,18 @@ namespace Intersect_Client.Classes.Networking
                 return;
             }
             en.AddChatBubble(bf.ReadString());
+            bf.Dispose();
+        }
+
+        private static void HandleQuestOffer(byte[] packet)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteBytes(packet);
+            var index = (int)bf.ReadInteger();
+            if (!Globals.QuestOffers.Contains(index))
+            {
+                Globals.QuestOffers.Add(index);
+            }
             bf.Dispose();
         }
     }

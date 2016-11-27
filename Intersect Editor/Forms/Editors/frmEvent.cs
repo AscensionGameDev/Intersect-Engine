@@ -435,6 +435,58 @@ namespace Intersect_Editor.Forms
 
                             _commandProperties.Add(clp);
                             break;
+
+                        case EventCommandType.StartQuest:
+                            lstEventCommands.Items.Add(indent + "@> " + GetCommandText(commandList.Commands[i]));
+                            clp = new CommandListProperties
+                            {
+                                Editable = true,
+                                MyIndex = i,
+                                MyList = commandList,
+                                Cmd = commandList.Commands[i],
+                                Type = commandList.Commands[i].Type
+                            };
+                            _commandProperties.Add(clp);
+
+                            //When the quest is accepted/started successfully:
+                            lstEventCommands.Items.Add(indent + "      : Quest Accepted/Started Successfully");
+                            clp = new CommandListProperties
+                            {
+                                Editable = false,
+                                MyIndex = i,
+                                MyList = commandList,
+                                Type = commandList.Commands[i].Type,
+                                Cmd = commandList.Commands[i]
+                            };
+                            _commandProperties.Add(clp);
+                            PrintCommandList(CurrentPage.CommandLists[commandList.Commands[i].Ints[4]], indent + "          ");
+
+                            //When the quest was declined or requirements not met:
+                            lstEventCommands.Items.Add(indent + "      : Quest Declined or Failed to Start (Reqs not met, already started, etc)");
+                            clp = new CommandListProperties
+                            {
+                                Editable = false,
+                                MyIndex = i,
+                                MyList = commandList,
+                                Type = commandList.Commands[i].Type,
+                                Cmd = commandList.Commands[i]
+                            };
+                            _commandProperties.Add(clp);
+                            PrintCommandList(CurrentPage.CommandLists[commandList.Commands[i].Ints[5]], indent + "          ");
+
+
+                            lstEventCommands.Items.Add(indent + "      : End Start Quest");
+                            clp = new CommandListProperties
+                            {
+                                Editable = false,
+                                MyIndex = i,
+                                MyList = commandList,
+                                Type = commandList.Commands[i].Type,
+                                Cmd = commandList.Commands[i]
+                            };
+
+                            _commandProperties.Add(clp);
+                            break;
                         default:
                             lstEventCommands.Items.Add(indent + "@> " + GetCommandText(commandList.Commands[i]));
                             clp = new CommandListProperties
@@ -967,7 +1019,7 @@ namespace Intersect_Editor.Forms
                     cmdWindow = new EventCommand_SetClass(command,this);
                     break;
                 case EventCommandType.StartQuest:
-                    cmdWindow = new EventCommand_StartQuest(command,this);
+                    cmdWindow = new EventCommand_StartQuest(command,CurrentPage, this);
                     break;
                 case EventCommandType.CompleteQuestTask:
                     cmdWindow = new EventCommand_CompleteQuestTask(command, this);

@@ -124,7 +124,8 @@ namespace Intersect_Client.Classes.General
 
         //Control Objects
         public static List<EventDialog> EventDialogs = new List<EventDialog>();
-        public static List<EventHold> EventHolds = new List<EventHold>(); 
+        public static List<EventHold> EventHolds = new List<EventHold>();
+        public static List<int> QuestOffers = new List<int>();
 
         public static string GetStatName(int statnum)
         {

@@ -28,6 +28,7 @@
 using IntersectClientExtras.Gwen.Control;
 using Intersect_Client.Classes.General;
 using Intersect_Client.Classes.Networking;
+using Intersect_Library.GameObjects;
 
 namespace Intersect_Client.Classes.UI.Game
 {
@@ -37,6 +38,7 @@ namespace Intersect_Client.Classes.UI.Game
         private DebugMenu _debugMenu;
         private ShopWindow _shopWindow;
         private BankWindow _bankWindow;
+        private QuestOfferWindow _questOfferWindow;
         private CraftingBenchWindow _CraftingBenchWindow;
         public bool FocusChat;
         private bool _shouldOpenAdminWindow = false;
@@ -69,6 +71,7 @@ namespace Intersect_Client.Classes.UI.Game
             GameMenu = new GameMenu(GameCanvas);
             Hotbar = new HotBarWindow(GameCanvas);
             _debugMenu = new DebugMenu(GameCanvas);
+            _questOfferWindow = new QuestOfferWindow(GameCanvas);
             if (Globals.Me != null) { TryAddPlayerBox(); }
         }
 
@@ -195,6 +198,16 @@ namespace Intersect_Client.Classes.UI.Game
             Hotbar.Update();
             _debugMenu.Update();
             if (_playerBox != null) { _playerBox.Update(); }
+
+            if (Globals.QuestOffers.Count > 0)
+            {
+                var quest = QuestBase.GetQuest(Globals.QuestOffers[0]);
+                _questOfferWindow.Update(quest);
+            }
+            else
+            {
+                _questOfferWindow.Hide();
+            }
 
             //Admin window update
             if (_shouldOpenAdminWindow)

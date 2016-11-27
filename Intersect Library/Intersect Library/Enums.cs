@@ -95,6 +95,9 @@ namespace Intersect_Library
         PartyAcceptInvite,
         PartyKick,
         PartyLeave,
+        AcceptQuest,
+        DeclineQuest,
+        CancelQuest
     }
 
     public enum ServerPackets
@@ -155,7 +158,9 @@ namespace Intersect_Library
         PartyData,
         PartyInvite,
         ChatBubble,
-		MapEntities
+		MapEntities,
+        QuestOffer,
+        QuestProgress,
     }
 
     public enum MapZones

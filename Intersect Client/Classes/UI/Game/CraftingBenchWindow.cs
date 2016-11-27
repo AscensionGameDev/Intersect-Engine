@@ -43,7 +43,6 @@ using Intersect_Client.Classes.UI;
 using Intersect_Client.Classes.UI.Game.Chat;
 using Intersect_Library;
 using Color = IntersectClientExtras.GenericClasses.Color;
-
 using Point = IntersectClientExtras.GenericClasses.Point;
 using Intersect_Library.GameObjects;
 

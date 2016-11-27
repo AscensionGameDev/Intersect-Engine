@@ -52,6 +52,7 @@ namespace Intersect_Server.Classes.Entities
         public List<EventInstance> MyEvents = new List<EventInstance>();
         public HotbarInstance[] Hotbar = new HotbarInstance[Options.MaxHotbar];
         public ItemInstance[] Bank = new ItemInstance[Options.MaxBankSlots];
+        public List<int> QuestOffers = new List<int>();
 
         //Temporary Values
         private object EventLock = new object();
@@ -1557,6 +1558,10 @@ namespace Intersect_Server.Classes.Entities
                     return false;
                 }
             }
+            if (quest.Tasks.Count == 0)
+            {
+                return false;
+            }
             return true;
         }
         public bool QuestCompleted(QuestBase quest)
@@ -1604,6 +1609,64 @@ namespace Intersect_Server.Classes.Entities
                 }
             }
             return false;
+        }
+        public void OfferQuest(QuestBase quest)
+        {
+            if (CanStartQuest(quest))
+            {
+                QuestOffers.Add(quest.GetId());
+                PacketSender.SendQuestOffer(this, quest.GetId());
+            }
+        }
+        public void StartQuest(QuestBase quest)
+        {
+            if (CanStartQuest(quest))
+            {
+                if (Quests.ContainsKey(quest.GetId()))
+                {
+                    var questProgress = Quests[quest.GetId()];
+                    questProgress.task = quest.Tasks[0].Id;
+                    questProgress.taskProgress = 0;
+                    Quests[quest.GetId()] = questProgress;
+                }
+                else
+                {
+                    var questProgress = new QuestProgressStruct();
+                    questProgress.task = quest.Tasks[0].Id;
+                    questProgress.taskProgress = 0;
+                    Quests.Add(quest.GetId(), questProgress);
+                }
+            }
+        }
+        public void AcceptQuest(int questId)
+        {
+            if (QuestOffers.Contains(questId))
+            {
+                QuestOffers.Remove(questId);
+                var quest = QuestBase.GetQuest(questId);
+                if (quest != null)
+                {
+                    StartQuest(quest);
+                }
+            }
+        }
+        public void DeclineQuest(int questId)
+        {
+            if (QuestOffers.Contains(questId))
+            {
+                QuestOffers.Remove(questId);
+            }
+        }
+        public void CancelQuest(int questId)
+        {
+            var quest = QuestBase.GetQuest(questId);
+            if (quest != null)
+            {
+                if (QuestInProgress(quest,QuestProgress.OnAnyTask,-1))
+                {
+                    //Cancel the quest somehow...
+                }
+            }
         }
 
 
@@ -1687,10 +1750,10 @@ namespace Intersect_Server.Classes.Entities
                     if (MyEvents[i] != null && MyEvents[i].MapNum == mapNum && MyEvents[i].BaseEvent.MyIndex == eventIndex)
                     {
                         if (MyEvents[i].CallStack.Count <= 0) return;
-                        if (MyEvents[i].CallStack.Peek().WaitingForResponse != 1) return;
+                        if (MyEvents[i].CallStack.Peek().WaitingForResponse != CommandInstance.EventResponse.Dialogue) return;
                         if (MyEvents[i].CallStack.Peek().ResponseType == 0)
                         {
-                            MyEvents[i].CallStack.Peek().WaitingForResponse = 0;
+                            MyEvents[i].CallStack.Peek().WaitingForResponse = CommandInstance.EventResponse.None;
                         }
                         else
                         {
@@ -1698,7 +1761,7 @@ namespace Intersect_Server.Classes.Entities
                             tmpStack.CommandIndex = 0;
                             tmpStack.ListIndex = MyEvents[i].PageInstance.BaseEvent.MyPages[MyEvents[i].PageIndex].CommandLists[MyEvents[i].CallStack.Peek().ListIndex].Commands[MyEvents[i].CallStack.Peek().CommandIndex].Ints[responseId - 1];
                             MyEvents[i].CallStack.Peek().CommandIndex++;
-                            MyEvents[i].CallStack.Peek().WaitingForResponse = 0;
+                            MyEvents[i].CallStack.Peek().WaitingForResponse = CommandInstance.EventResponse.None;
                             MyEvents[i].CallStack.Push(tmpStack);
                         }
                         return;

@@ -31,11 +31,13 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
     public partial class EventCommand_StartQuest : UserControl
     {
         private EventCommand _myCommand;
+        private EventPage _currentPage;
         private readonly FrmEvent _eventEditor;
-        public EventCommand_StartQuest(EventCommand refCommand, FrmEvent editor)
+        public EventCommand_StartQuest(EventCommand refCommand, EventPage page, FrmEvent editor)
         {
             InitializeComponent();
             _myCommand = refCommand;
+            _currentPage = page;
             _eventEditor = editor;
             cmbQuests.Items.Clear();
             cmbQuests.Items.AddRange(Database.GetGameObjectList(GameObject.Quest));
@@ -47,6 +49,15 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
         {
             _myCommand.Ints[0] = Database.GameObjectIdFromList(GameObject.Quest, cmbQuests.SelectedIndex);
             _myCommand.Ints[1] = Convert.ToInt32(chkShowOfferWindow.Checked);
+            if (_myCommand.Ints[4] == 0)
+            // command.Ints[4, and 5] are reserved for when the action succeeds or fails
+            {
+                for (var i = 0; i < 2; i++)
+                {
+                    _currentPage.CommandLists.Add(new CommandList());
+                    _myCommand.Ints[4 + i] = _currentPage.CommandLists.Count - 1;
+                }
+            }
             _eventEditor.FinishCommandEdit();
         }
 

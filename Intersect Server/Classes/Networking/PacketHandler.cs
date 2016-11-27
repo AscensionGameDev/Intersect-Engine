@@ -210,6 +210,15 @@ namespace Intersect_Server.Classes.Networking
                 case ClientPackets.PartyLeave:
                     HandlePartyLeave(client,packet);
                     break;
+                case ClientPackets.AcceptQuest:
+                    HandleAcceptQuest(client, packet);
+                    break;
+                case ClientPackets.DeclineQuest:
+                    HandleDeclineQuest(client, packet);
+                    break;
+                case ClientPackets.CancelQuest:
+                    HandleCancelQuest(client, packet);
+                    break;
                 default:
                     Globals.GeneralLogs.Add(@"Non implemented packet received: " + packetHeader);
                     break;
@@ -1891,6 +1900,33 @@ namespace Intersect_Server.Classes.Networking
         private static void HandlePartyLeave(Client client, byte[] packet)
         {
             client.Entity.LeaveParty();
+        }
+
+        private static void HandleAcceptQuest(Client client, byte[] packet)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteBytes(packet);
+            int questId = bf.ReadInteger();
+            client.Entity.AcceptQuest(questId);
+            bf.Dispose();
+        }
+
+        private static void HandleDeclineQuest(Client client, byte[] packet)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteBytes(packet);
+            int questId = bf.ReadInteger();
+            client.Entity.DeclineQuest(questId);
+            bf.Dispose();
+        }
+
+        private static void HandleCancelQuest(Client client, byte[] packet)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteBytes(packet);
+            int questId = bf.ReadInteger();
+            client.Entity.CancelQuest(questId);
+            bf.Dispose();
         }
     }
 }

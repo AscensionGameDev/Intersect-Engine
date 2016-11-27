@@ -1312,6 +1312,14 @@ namespace Intersect_Server.Classes.Networking
             SendDataToProximity(map, bf.ToArray());
             bf.Dispose();
         }
+        public static void SendQuestOffer(Player player, int questId)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteLong((int)ServerPackets.QuestOffer);
+            bf.WriteInteger(questId);
+            SendDataTo(player.MyClient, bf.ToArray());
+            bf.Dispose();
+        }
     }
 }
 

@@ -372,5 +372,29 @@ namespace Intersect_Client.Classes.Networking
             bf.WriteInteger((int)((InputBox)sender).Slot);
             GameNetwork.SendPacket(bf.ToArray());
         }
+
+        public static void SendAcceptQuest(int questId)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteLong((int)ClientPackets.AcceptQuest);
+            bf.WriteInteger(questId);
+            GameNetwork.SendPacket(bf.ToArray());
+        }
+
+        public static void SendDeclineQuest(int questId)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteLong((int)ClientPackets.DeclineQuest);
+            bf.WriteInteger(questId);
+            GameNetwork.SendPacket(bf.ToArray());
+        }
+
+        public static void SendCancelQuest(int questId)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteLong((int)ClientPackets.CancelQuest);
+            bf.WriteInteger(questId);
+            GameNetwork.SendPacket(bf.ToArray());
+        }
     }
 }
