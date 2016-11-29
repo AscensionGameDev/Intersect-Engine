@@ -36,6 +36,7 @@ using Intersect_Client.Classes.General;
 using Intersect_Client.Classes.Networking;
 using IntersectClientExtras.Gwen.Control;
 using IntersectClientExtras.Gwen.Control.EventArguments;
+using IntersectClientExtras.Gwen.Control.Layout;
 using IntersectClientExtras.Gwen.ControlInternal;
 using IntersectClientExtras.Input;
 using Intersect_Library;
@@ -50,7 +51,12 @@ namespace Intersect_Client.Classes.UI.Game
         //Controls
         private WindowControl _questsWindow;
         private ListBox _questList;
-        private List<ListBoxRow> _questItems = new List<ListBoxRow>();
+        private Label _questTitle;
+        private Label _questStatus;
+        private ListBox _questDesc;
+        private QuestBase _selectedQuest = null;
+        private Button _backButton;
+        private Button _quitButton;
 
         //Init
         public QuestsWindow(Canvas _gameCanvas)
@@ -93,6 +99,92 @@ namespace Intersect_Client.Classes.UI.Game
             downButton.SetImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "downarrownormal.png"), Button.ControlState.Normal);
             downButton.SetImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "downarrowclicked.png"), Button.ControlState.Clicked);
             downButton.SetImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "downarrowhover.png"), Button.ControlState.Hovered);
+
+            _questTitle = new Label(_questsWindow);
+            _questTitle.IsHidden = true;
+            _questTitle.AutoSizeToContents = false;
+            _questTitle.SetText("");
+            _questTitle.Font = Globals.ContentManager.GetFont(Gui.DefaultFont, 12);
+            _questTitle.SetSize(_questsWindow.Width, 32);
+            _questTitle.Alignment = Pos.CenterH;
+            _questTitle.SetTextColor(Color.White, Label.ControlState.Normal);
+
+            _questStatus = new Label(_questsWindow);
+            _questStatus.IsHidden = true;
+            _questStatus.AutoSizeToContents = false;
+            _questStatus.SetText("");
+            _questStatus.Font = Globals.ContentManager.GetFont(Gui.DefaultFont, 10);
+            _questStatus.SetSize(_questsWindow.Width, 32);
+            _questStatus.Y = 18;
+            _questStatus.Alignment = Pos.CenterH;
+            _questStatus.SetTextColor(Color.White, Label.ControlState.Normal);
+
+            _questDesc = new ListBox(_questsWindow);
+            _questDesc.IsDisabled = true;
+            _questDesc.SetPosition(4, 32 + _questsWindow.Padding.Top);
+            _questDesc.SetSize(204,208);
+            _questDesc.ShouldDrawBackground = false;
+            _questDesc.RenderColor = Color.White;
+            _questDesc.IsHidden = true;
+
+            var scrollBar = _questDesc.GetVerticalScrollBar();
+            scrollBar.RenderColor = new Color(200, 40, 40, 40);
+            scrollBar.SetScrollBarImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "scrollbarnormal.png"), Dragger.ControlState.Normal);
+            scrollBar.SetScrollBarImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "scrollbarhover.png"), Dragger.ControlState.Hovered);
+            scrollBar.SetScrollBarImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "scrollbarclicked.png"), Dragger.ControlState.Clicked);
+
+            upButton = scrollBar.GetScrollBarButton(Pos.Top);
+            upButton.SetImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "uparrownormal.png"), Button.ControlState.Normal);
+            upButton.SetImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "uparrowclicked.png"), Button.ControlState.Clicked);
+            upButton.SetImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "uparrowhover.png"), Button.ControlState.Hovered);
+            downButton = scrollBar.GetScrollBarButton(Pos.Bottom);
+            downButton.SetImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "downarrownormal.png"), Button.ControlState.Normal);
+            downButton.SetImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "downarrowclicked.png"), Button.ControlState.Clicked);
+            downButton.SetImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "downarrowhover.png"), Button.ControlState.Hovered);
+
+            _backButton = new Button(_questsWindow);
+            _backButton.SetSize(15, 15);
+            _backButton.SetPosition(4, 4);
+            _backButton.SetImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "leftarrownormal.png"), Button.ControlState.Normal);
+            _backButton.SetImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "leftarrowclicked.png"), Button.ControlState.Clicked);
+            _backButton.SetImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "leftarrowhover.png"), Button.ControlState.Hovered);
+            _backButton.Hide();
+            _backButton.Clicked += _backButton_Clicked;
+
+            _quitButton = new Button(_questsWindow);
+            _quitButton.SetSize(49, 18);
+            _quitButton.SetText("Abandon");
+            _quitButton.SetPosition(159, 256);
+            _quitButton.Font = Globals.ContentManager.GetFont(Gui.DefaultFont, 8);
+            _quitButton.SetImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "quitnormal.png"), Button.ControlState.Normal);
+            _quitButton.SetImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "quitclicked.png"), Button.ControlState.Clicked);
+            _quitButton.SetImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "quithover.png"), Button.ControlState.Hovered);
+            _quitButton.SetTextColor(new Color(255, 30, 30, 30), Label.ControlState.Normal);
+            _quitButton.SetTextColor(new Color(255, 20, 20, 20), Label.ControlState.Hovered);
+            _quitButton.SetTextColor(new Color(255, 215, 215, 215), Label.ControlState.Clicked);
+            _quitButton.Clicked += _quitButton_Clicked;
+            _quitButton.Hide();
+
+
+        }
+
+        private void _quitButton_Clicked(Base sender, ClickedEventArgs arguments)
+        {
+            if (_selectedQuest != null)
+            {
+                new InputBox("Abandon Quest: " + _selectedQuest.Name, "Are you sure that you want to quit the quest \"" + _selectedQuest.Name + "\"?", true, AbandonQuest, null, _selectedQuest.GetId(), false);
+            }
+        }
+
+        void AbandonQuest(Object sender, EventArgs e)
+        {
+            PacketSender.SendCancelQuest(((InputBox)sender).Slot);
+        }
+
+        private void _backButton_Clicked(Base sender, ClickedEventArgs arguments)
+        {
+            _selectedQuest = null;
+            UpdateSelectedQuest();
         }
 
         //Methods
@@ -100,36 +192,196 @@ namespace Intersect_Client.Classes.UI.Game
         {
             if (shouldUpdateList)
             {
-                foreach (var quest in _questItems)
+                UpdateQuestList();
+                UpdateSelectedQuest();
+            }
+            if (_questsWindow.IsHidden) { return; }
+
+            if (_selectedQuest != null)
+            {
+                if (Globals.Me.QuestProgress.ContainsKey(_selectedQuest.GetId()))
                 {
-                    _questList.RemoveChild(quest, true);
-                }
-                _questItems.Clear();
-                if (Globals.Me != null)
-                {
-                    var quests = QuestBase.GetObjects();
-                    foreach (var quest in quests)
+                    if (Globals.Me.QuestProgress[_selectedQuest.GetId()].completed == 1 && Globals.Me.QuestProgress[_selectedQuest.GetId()].task == -1)
                     {
-                        if (quest.Value != null)
+                        //Completed
+                        if (_selectedQuest.LogAfterComplete == 0)
                         {
+                            _selectedQuest = null;
+                            UpdateSelectedQuest();
+                        }
+                    }
+                    else if (Globals.Me.QuestProgress[_selectedQuest.GetId()].completed == 0 && Globals.Me.QuestProgress[_selectedQuest.GetId()].task == -1)
+                    {
+                        //Not Started
+                        if (_selectedQuest.LogBeforeOffer == 0)
+                        {
+                            _selectedQuest = null;
+                            UpdateSelectedQuest();
+                        }
+                    }
+                }
+                else
+                {
+                    if (_selectedQuest.LogBeforeOffer == 0)
+                    {
+                        _selectedQuest = null;
+                        UpdateSelectedQuest();
+                    }
+                }
+            }
+        }
+
+        private void UpdateQuestList()
+        {
+            _questList.RemoveAllRows();
+            if (Globals.Me != null)
+            {
+                var quests = QuestBase.GetObjects();
+                foreach (var quest in quests)
+                {
+                    if (quest.Value != null)
+                    {
+                        if (Globals.Me.QuestProgress.ContainsKey(quest.Key) && Globals.Me.QuestProgress[quest.Key].task != -1)
+                        {
+                            if (Globals.Me.QuestProgress[quest.Key].completed == 1 && Globals.Me.QuestProgress[quest.Key].task == -1)
+                            {
+                                //Completed
+                                if (quest.Value.LogAfterComplete == 1)
+                                {
+                                    AddQuestToList(quest.Value.Name, Color.Green, quest.Key);
+                                }
+                            }
+                            else
+                            {
+                                //In Progress
+                                AddQuestToList(quest.Value.Name, Color.Yellow, quest.Key);
+                            }
+                        }
+                        else
+                        {
+                            //Not Started
                             if (quest.Value.LogBeforeOffer == 1)
                             {
-
+                                AddQuestToList(quest.Value.Name, Color.Red, quest.Key);
                             }
-                            else if (quest.Value.LogAfterComplete == 1)
-                            {
-
-                            }
-                            _questList.AddRow(quest.Value.Name);
-
                         }
                     }
                 }
             }
+        }
 
-            if (_questsWindow.IsHidden) { return; }
-            
-            
+        private void AddQuestToList(string name, Color clr, int questId)
+        {
+            var item = _questList.AddRow(name);
+            item.UserData = questId;
+            item.Clicked += QuestListItem_Clicked;
+            item.Selected += Item_Selected;
+            item.SetTextColor(clr);
+        }
+
+        private void Item_Selected(Base sender, ItemSelectedEventArgs arguments)
+        {
+            _questList.UnselectAll();
+        }
+
+        private void QuestListItem_Clicked(Base sender, ClickedEventArgs arguments)
+        {
+            var questNum = (int) ((ListBoxRow) sender).UserData;
+            var quest = QuestBase.GetQuest(questNum);
+            if (quest != null)
+            {
+                _selectedQuest = quest;
+                UpdateSelectedQuest();
+            }
+            _questList.UnselectAll();
+        }
+
+        private void UpdateSelectedQuest()
+        {
+            if (_selectedQuest == null)
+            {
+                _questList.Show();
+                _questTitle.Hide();
+                _questDesc.Hide();
+                _questStatus.Hide();
+                _backButton.Hide();
+                _quitButton.Hide();
+            }
+            else
+            {
+                _questDesc.RemoveAllRows();
+                ListBoxRow rw;
+                String[] myText = null;
+                List<String> taskString = new List<string>();
+                if (Globals.Me.QuestProgress.ContainsKey(_selectedQuest.GetId()) && Globals.Me.QuestProgress[_selectedQuest.GetId()].task != -1)
+                {
+                    if (Globals.Me.QuestProgress[_selectedQuest.GetId()].completed == 1 && Globals.Me.QuestProgress[_selectedQuest.GetId()].task == -1)
+                    {
+                        //Completed
+                        if (_selectedQuest.LogAfterComplete == 1)
+                        {
+                            _questStatus.Text = "Quest Completed";
+                            _questStatus.SetTextColor(Color.Green, Label.ControlState.Normal);
+                            myText = Gui.WrapText(_selectedQuest.EndDesc, _questDesc.Width - 12, _questDesc.Parent.Skin.DefaultFont);
+                        }
+                    }
+                    else
+                    {
+                        //In Progress
+                        _questStatus.Text = "Quest In Progress";
+                        _questStatus.SetTextColor(Color.Yellow, Label.ControlState.Normal);
+                        myText = Gui.WrapText(_selectedQuest.InProgressDesc, _questDesc.Width - 12, _questDesc.Parent.Skin.DefaultFont);
+                        taskString.Add("");
+                        taskString.Add("Current Task:");
+                        for (int i = 0; i < _selectedQuest.Tasks.Count; i++)
+                        {
+                            if (_selectedQuest.Tasks[i].Id == Globals.Me.QuestProgress[_selectedQuest.GetId()].task)
+                            {
+                                taskString.AddRange(Gui.WrapText(_selectedQuest.Tasks[i].Desc, _questDesc.Width - 12,
+                                    _questDesc.Parent.Skin.DefaultFont));
+                            }
+                        }
+                        if (_selectedQuest.Quitable == 1)
+                        {
+                            _quitButton.Show();
+                        }
+                    }
+                }
+                else
+                {
+                    //Not Started
+                    if (_selectedQuest.LogBeforeOffer == 1)
+                    {
+                        _questStatus.Text = "Quest Not Started";
+                        _questStatus.SetTextColor(Color.Red, Label.ControlState.Normal);
+                        myText = Gui.WrapText(_selectedQuest.BeforeDesc, _questDesc.Width - 12, _questDesc.Parent.Skin.DefaultFont);
+                    }
+                }
+                _questList.Hide();
+                _questTitle.IsHidden = false;
+                _questTitle.Text = _selectedQuest.Name;
+                _questTitle.Alignment = Pos.CenterH;
+                _questDesc.IsHidden = false;
+
+                _questStatus.Show();
+                _questStatus.Alignment = Pos.CenterH;
+                _backButton.Show();
+                if (myText != null)
+                {
+                    foreach (var t in myText)
+                    {
+                        rw = _questDesc.AddRow(t);
+                        rw.SetTextColor(Color.White);
+                        rw.MouseInputEnabled = false;
+                    }
+                    foreach (var t in taskString.ToArray())
+                    {
+                        rw = _questDesc.AddRow(t);
+                        rw.SetTextColor(Color.White);
+                        rw.MouseInputEnabled = false;
+                    }
+                }
+            }
         }
 
         public void Show()
@@ -143,6 +395,7 @@ namespace Intersect_Client.Classes.UI.Game
         public void Hide()
         {
             _questsWindow.IsHidden = true;
+            _selectedQuest = null;
         }
     }
 }

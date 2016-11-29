@@ -1379,30 +1379,38 @@ namespace Intersect_Client.Classes.Networking
             {
                 var bf = new ByteBuffer();
                 bf.WriteBytes(packet);
-                var index = bf.ReadInteger();
-                if (bf.ReadByte() == 0)
+                var count = bf.ReadInteger();
+                for (int i = 0; i < count; i++)
                 {
-                    if (Globals.Me.QuestProgress.ContainsKey(index))
+                    var index = bf.ReadInteger();
+                    if (bf.ReadByte() == 0)
                     {
-                        Globals.Me.QuestProgress.Remove(index);
-                    }
-                }
-                else {
-                    QuestProgressStruct questProgress = new QuestProgressStruct();
-                    questProgress.completed = bf.ReadInteger();
-                    questProgress.task = bf.ReadInteger();
-                    questProgress.taskProgress = bf.ReadInteger();
-
-                    if (Globals.Me.QuestProgress.ContainsKey(index))
-                    {
-                        Globals.Me.QuestProgress[index] = questProgress;
+                        if (Globals.Me.QuestProgress.ContainsKey(index))
+                        {
+                            Globals.Me.QuestProgress.Remove(index);
+                        }
                     }
                     else
                     {
-                        Globals.Me.QuestProgress.Add(index, questProgress);
+                        QuestProgressStruct questProgress = new QuestProgressStruct();
+                        questProgress.completed = bf.ReadInteger();
+                        questProgress.task = bf.ReadInteger();
+                        questProgress.taskProgress = bf.ReadInteger();
+
+                        if (Globals.Me.QuestProgress.ContainsKey(index))
+                        {
+                            Globals.Me.QuestProgress[index] = questProgress;
+                        }
+                        else
+                        {
+                            Globals.Me.QuestProgress.Add(index, questProgress);
+                        }
                     }
                 }
-                Gui.GameUI.NotifyQuestsUpdated();
+                if (Gui.GameUI != null)
+                {
+                    Gui.GameUI.NotifyQuestsUpdated();
+                }
                 bf.Dispose();
             }
         }

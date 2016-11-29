@@ -1636,6 +1636,7 @@ namespace Intersect_Server.Classes.Entities
                     questProgress.taskProgress = 0;
                     Quests.Add(quest.GetId(), questProgress);
                 }
+                PacketSender.SendQuestProgress(this, quest.GetId());
             }
         }
         public void AcceptQuest(int questId)
@@ -1665,6 +1666,14 @@ namespace Intersect_Server.Classes.Entities
                 if (QuestInProgress(quest,QuestProgress.OnAnyTask,-1))
                 {
                     //Cancel the quest somehow...
+                    if (quest.Quitable == 1)
+                    {
+                        var questProgress = Quests[questId];
+                        questProgress.task = -1;
+                        questProgress.taskProgress = -1;
+                        Quests[questId] = questProgress;
+                        PacketSender.SendQuestProgress(this, questId);
+                    }
                 }
             }
         }

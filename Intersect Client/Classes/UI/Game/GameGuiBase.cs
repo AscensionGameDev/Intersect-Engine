@@ -48,7 +48,7 @@ namespace Intersect_Client.Classes.UI.Game
         private bool _shouldCloseBank = false;
         private bool _shouldOpenCraftingBench = false;
         private bool _shouldCloseCraftingBench = false;
-        private bool _shouldUpdateQuestLog = false;
+        private bool _shouldUpdateQuestLog = true;
 
         //Public Components - For clicking/dragging
         public HotBarWindow Hotbar;

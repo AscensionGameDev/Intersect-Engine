@@ -1323,12 +1323,25 @@ namespace Intersect_Server.Classes.Networking
         }
         public static void SendQuestsProgress(Client client)
         {
-
+            var bf = new ByteBuffer();
+            bf.WriteLong((int)ServerPackets.QuestProgress);
+            bf.WriteInteger(client.Entity.Quests.Count);
+            foreach (var quest in client.Entity.Quests)
+            {
+                bf.WriteInteger(quest.Key);
+                bf.WriteByte(1);
+                bf.WriteInteger(quest.Value.completed);
+                bf.WriteInteger(quest.Value.task);
+                bf.WriteInteger(quest.Value.taskProgress);
+            }
+            SendDataTo(client, bf.ToArray());
+            bf.Dispose();
         }
         public static void SendQuestProgress(Player player, int questId)
         {
             var bf = new ByteBuffer();
             bf.WriteLong((int)ServerPackets.QuestProgress);
+            bf.WriteInteger(1);
             bf.WriteInteger(questId);
             if (player.Quests.ContainsKey(questId))
             {
