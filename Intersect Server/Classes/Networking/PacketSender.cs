@@ -256,6 +256,7 @@ namespace Intersect_Server.Classes.Networking
                 SendPlayerEquipmentToProximity(client.Entity);
                 SendPointsTo(client);
                 SendHotbarSlots(client);
+                SendQuestsProgress(client);
             }
         }
 
@@ -1317,6 +1318,29 @@ namespace Intersect_Server.Classes.Networking
             var bf = new ByteBuffer();
             bf.WriteLong((int)ServerPackets.QuestOffer);
             bf.WriteInteger(questId);
+            SendDataTo(player.MyClient, bf.ToArray());
+            bf.Dispose();
+        }
+        public static void SendQuestsProgress(Client client)
+        {
+
+        }
+        public static void SendQuestProgress(Player player, int questId)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteLong((int)ServerPackets.QuestProgress);
+            bf.WriteInteger(questId);
+            if (player.Quests.ContainsKey(questId))
+            {
+                bf.WriteByte(1);
+                bf.WriteInteger(player.Quests[questId].completed);
+                bf.WriteInteger(player.Quests[questId].task);
+                bf.WriteInteger(player.Quests[questId].taskProgress);
+            }
+            else
+            {
+                bf.WriteByte(0);
+            }
             SendDataTo(player.MyClient, bf.ToArray());
             bf.Dispose();
         }

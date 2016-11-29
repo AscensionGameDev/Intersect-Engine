@@ -231,6 +231,9 @@ namespace Intersect_Client.Classes.Networking
                     case ServerPackets.QuestOffer:
                         HandleQuestOffer(bf.ReadBytes(bf.Length()));
                         break;
+                    case ServerPackets.QuestProgress:
+                        HandleQuestProgress(bf.ReadBytes(bf.Length()));
+                        break;
                     default:
                         Console.WriteLine(@"Non implemented packet received: " + packetHeader);
                         break;
@@ -1172,12 +1175,14 @@ namespace Intersect_Client.Classes.Networking
                     {
                         var qst = QuestBase.GetQuest(id);
                         qst.Delete();
+                        Gui.GameUI.NotifyQuestsUpdated();
                     }
                     else
                     {
                         var qst = new QuestBase(id);
                         qst.Load(data);
                         QuestBase.AddObject(id, qst);
+                        Gui.GameUI.NotifyQuestsUpdated();
                     }
                     break;
                 case GameObject.Resource:
@@ -1366,6 +1371,40 @@ namespace Intersect_Client.Classes.Networking
                 Globals.QuestOffers.Add(index);
             }
             bf.Dispose();
+        }
+
+        private static void HandleQuestProgress(byte[] packet)
+        {
+            if (Globals.Me != null)
+            {
+                var bf = new ByteBuffer();
+                bf.WriteBytes(packet);
+                var index = bf.ReadInteger();
+                if (bf.ReadByte() == 0)
+                {
+                    if (Globals.Me.QuestProgress.ContainsKey(index))
+                    {
+                        Globals.Me.QuestProgress.Remove(index);
+                    }
+                }
+                else {
+                    QuestProgressStruct questProgress = new QuestProgressStruct();
+                    questProgress.completed = bf.ReadInteger();
+                    questProgress.task = bf.ReadInteger();
+                    questProgress.taskProgress = bf.ReadInteger();
+
+                    if (Globals.Me.QuestProgress.ContainsKey(index))
+                    {
+                        Globals.Me.QuestProgress[index] = questProgress;
+                    }
+                    else
+                    {
+                        Globals.Me.QuestProgress.Add(index, questProgress);
+                    }
+                }
+                Gui.GameUI.NotifyQuestsUpdated();
+                bf.Dispose();
+            }
         }
     }
 }

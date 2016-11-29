@@ -30,8 +30,15 @@ namespace Intersect_Library.GameObjects
     {
         OnAnyTask = 0,
         BeforeTask = 1,
-        OnTask = 2,
-        AfterTask = 3,
+        AfterTask = 2,
+        OnTask = 3,
+    }
+
+    public struct QuestProgressStruct
+    {
+        public int task;
+        public int completed;
+        public int taskProgress;
     }
 
     public class QuestBase : DatabaseObject

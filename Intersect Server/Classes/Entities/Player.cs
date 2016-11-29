@@ -1905,12 +1905,5 @@ namespace Intersect_Server.Classes.Entities
         public int Type = -1;
         public int Slot = -1;
     }
-
-    public struct QuestProgressStruct
-    {
-        public int task;
-        public int completed;
-        public int taskProgress;
-    }
 }
 

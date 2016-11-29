@@ -1070,10 +1070,10 @@ namespace Intersect_Server.Classes.Entities
                     }
                     break;
                 case EventCommandType.CompleteQuestTask:
-
+                    CallStack.Peek().CommandIndex++;
                     break;
                 case EventCommandType.EndQuest:
-
+                    CallStack.Peek().CommandIndex++;
                     break;
             }
         }

@@ -48,6 +48,7 @@ namespace Intersect_Client.Classes.UI.Game
         private bool _shouldCloseBank = false;
         private bool _shouldOpenCraftingBench = false;
         private bool _shouldCloseCraftingBench = false;
+        private bool _shouldUpdateQuestLog = false;
 
         //Public Components - For clicking/dragging
         public HotBarWindow Hotbar;
@@ -150,6 +151,12 @@ namespace Intersect_Client.Classes.UI.Game
             Globals.InCraft = true;
         }
 
+        //Quest Log
+        public void NotifyQuestsUpdated()
+        {
+            _shouldUpdateQuestLog = true;
+        }
+
         public void TryAddPlayerBox()
         {
             if (_playerBox != null || Globals.Me == null) { return; }
@@ -194,7 +201,8 @@ namespace Intersect_Client.Classes.UI.Game
             if (Globals.Me != null) { TryAddPlayerBox(); }
             _eventWindow.Update();
             _chatBox.Update();
-            GameMenu.Update();
+            GameMenu.Update(_shouldUpdateQuestLog);
+            _shouldUpdateQuestLog = false;
             Hotbar.Update();
             _debugMenu.Update();
             if (_playerBox != null) { _playerBox.Update(); }
