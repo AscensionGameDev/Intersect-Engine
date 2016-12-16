@@ -1677,6 +1677,43 @@ namespace Intersect_Server.Classes.Entities
                 }
             }
         }
+        public void CompleteQuestTask(int questId, int taskId)
+        {
+            var quest = QuestBase.GetQuest(questId);
+            if (quest != null)
+            {
+                if (Quests.ContainsKey(questId))
+                {
+                    var questProgress = Quests[questId];
+                    if (Quests[questId].task == taskId)
+                    {
+                        //Let's Advance this task or complete the quest
+                        for (int i = 0; i < quest.Tasks.Count; i++)
+                        {
+                            if (quest.Tasks[i].Id == taskId)
+                            {
+                                if (i == quest.Tasks.Count - 1)
+                                {
+                                    //Complete Quest
+                                    questProgress.completed = 1;
+                                    questProgress.task = -1;
+                                    questProgress.taskProgress = -1;
+                                }
+                                else
+                                {
+                                    //Advance Task
+                                    questProgress.task = quest.Tasks[i + 1].Id;
+                                    questProgress.taskProgress = 0;
+                                }
+                            }
+                        }
+                    }
+                    Quests[questId] = questProgress;
+                    PacketSender.SendQuestProgress(this, questId);
+                }
+            }
+
+        }
 
 
         //Event Processing Methods

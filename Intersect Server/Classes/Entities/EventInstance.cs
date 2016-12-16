@@ -119,6 +119,8 @@ namespace Intersect_Server.Classes.Entities
                             CallStack.Peek().WaitingForResponse = CommandInstance.EventResponse.None;
                         if (CallStack.Peek().WaitingForResponse == CommandInstance.EventResponse.Bank && MyPlayer.InBank == false)
                             CallStack.Peek().WaitingForResponse = CommandInstance.EventResponse.None;
+                        if (CallStack.Peek().WaitingForResponse == CommandInstance.EventResponse.Quest && MyPlayer.QuestOffers.Count == 0)
+                            CallStack.Peek().WaitingForResponse = CommandInstance.EventResponse.None;
                         while (CallStack.Peek().WaitingForResponse == CommandInstance.EventResponse.None)
                         {
                             if (CallStack.Peek().WaitingForRoute > -1)
@@ -1070,6 +1072,11 @@ namespace Intersect_Server.Classes.Entities
                     }
                     break;
                 case EventCommandType.CompleteQuestTask:
+                    MyPlayer.CompleteQuestTask(
+                        CallStack.Peek().Page.CommandLists[CallStack.Peek().ListIndex]
+                            .Commands[CallStack.Peek().CommandIndex].Ints[0],
+                            CallStack.Peek().Page.CommandLists[CallStack.Peek().ListIndex]
+                                .Commands[CallStack.Peek().CommandIndex].Ints[1]);
                     CallStack.Peek().CommandIndex++;
                     break;
                 case EventCommandType.EndQuest:
