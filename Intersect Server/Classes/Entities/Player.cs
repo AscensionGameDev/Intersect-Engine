@@ -48,7 +48,7 @@ namespace Intersect_Server.Classes.Entities
         public int[] Equipment = new int[Options.EquipmentSlots.Count];
         public Dictionary<int, bool> Switches = new Dictionary<int, bool>();
         public Dictionary<int, int> Variables = new Dictionary<int, int>();
-        public Dictionary<int,QuestProgressStruct> Quests = new Dictionary<int,QuestProgressStruct>();
+        public Dictionary<int, QuestProgressStruct> Quests = new Dictionary<int, QuestProgressStruct>();
         public List<EventInstance> MyEvents = new List<EventInstance>();
         public HotbarInstance[] Hotbar = new HotbarInstance[Options.MaxHotbar];
         public ItemInstance[] Bank = new ItemInstance[Options.MaxBankSlots];
@@ -1648,6 +1648,29 @@ namespace Intersect_Server.Classes.Entities
                 if (quest != null)
                 {
                     StartQuest(quest);
+                    lock (EventLock)
+                    {
+                        for (int i = 0; i < MyEvents.Count; i++)
+                        {
+                            if (MyEvents[i] != null)
+                            {
+                                if (MyEvents[i].CallStack.Count <= 0) return;
+                                if (MyEvents[i].CallStack.Peek().WaitingForResponse != CommandInstance.EventResponse.Quest) return;
+                                if (MyEvents[i].CallStack.Peek().ResponseIndex == questId)
+                                {
+                                    MyEvents[i].CallStack.Peek().WaitingForResponse = CommandInstance.EventResponse.None;
+                                    //Run success branch
+                                    var tmpStack = new CommandInstance(MyEvents[i].CallStack.Peek().Page)
+                                    {
+                                        CommandIndex = 0,
+                                        ListIndex = MyEvents[i].CallStack.Peek().Page.CommandLists[MyEvents[i].CallStack.Peek().ListIndex].Commands[MyEvents[i].CallStack.Peek().CommandIndex].Ints[4]
+                                    };
+                                    MyEvents[i].CallStack.Peek().CommandIndex++;
+                                    MyEvents[i].CallStack.Push(tmpStack);
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -1656,6 +1679,29 @@ namespace Intersect_Server.Classes.Entities
             if (QuestOffers.Contains(questId))
             {
                 QuestOffers.Remove(questId);
+                lock (EventLock)
+                {
+                    for (int i = 0; i < MyEvents.Count; i++)
+                    {
+                        if (MyEvents[i] != null)
+                        {
+                            if (MyEvents[i].CallStack.Count <= 0) return;
+                            if (MyEvents[i].CallStack.Peek().WaitingForResponse != CommandInstance.EventResponse.Quest) return;
+                            if (MyEvents[i].CallStack.Peek().ResponseIndex == questId)
+                            {
+                                MyEvents[i].CallStack.Peek().WaitingForResponse = CommandInstance.EventResponse.None;
+                                //Run success branch
+                                var tmpStack = new CommandInstance(MyEvents[i].CallStack.Peek().Page)
+                                {
+                                    CommandIndex = 0,
+                                    ListIndex = MyEvents[i].CallStack.Peek().Page.CommandLists[MyEvents[i].CallStack.Peek().ListIndex].Commands[MyEvents[i].CallStack.Peek().CommandIndex].Ints[5]
+                                };
+                                MyEvents[i].CallStack.Peek().CommandIndex++;
+                                MyEvents[i].CallStack.Push(tmpStack);
+                            }
+                        }
+                    }
+                }
             }
         }
         public void CancelQuest(int questId)
@@ -1663,7 +1709,7 @@ namespace Intersect_Server.Classes.Entities
             var quest = QuestBase.GetQuest(questId);
             if (quest != null)
             {
-                if (QuestInProgress(quest,QuestProgress.OnAnyTask,-1))
+                if (QuestInProgress(quest, QuestProgress.OnAnyTask, -1))
                 {
                     //Cancel the quest somehow...
                     if (quest.Quitable == 1)
@@ -1757,7 +1803,7 @@ namespace Intersect_Server.Classes.Entities
                         if (MyEvents[i].PageInstance.Trigger != 0) return;
                         if (!IsEventOneBlockAway(i)) return;
                         if (MyEvents[i].CallStack.Count != 0) return;
-                        var newStack = new CommandInstance(MyEvents[i].PageInstance.MyPage) {CommandIndex = 0, ListIndex = 0};
+                        var newStack = new CommandInstance(MyEvents[i].PageInstance.MyPage) { CommandIndex = 0, ListIndex = 0 };
                         MyEvents[i].CallStack.Push(newStack);
                         if (!MyEvents[i].IsGlobal)
                         {
@@ -1797,7 +1843,7 @@ namespace Intersect_Server.Classes.Entities
                     {
                         if (MyEvents[i].CallStack.Count <= 0) return;
                         if (MyEvents[i].CallStack.Peek().WaitingForResponse != CommandInstance.EventResponse.Dialogue) return;
-                        if (MyEvents[i].CallStack.Peek().ResponseType == 0)
+                        if (MyEvents[i].CallStack.Peek().ResponseIndex == 0)
                         {
                             MyEvents[i].CallStack.Peek().WaitingForResponse = CommandInstance.EventResponse.None;
                         }
@@ -1871,13 +1917,15 @@ namespace Intersect_Server.Classes.Entities
                 }
                 var tmpEvent = new EventInstance(MyEvents.Count, MyClient, evt, -1)
                 {
-                    MapNum = -1, SpawnX = -1, SpawnY = -1
+                    MapNum = -1,
+                    SpawnX = -1,
+                    SpawnY = -1
                 };
                 MyEvents.Add(tmpEvent);
                 tmpEvent.Update();
                 if (tmpEvent.PageInstance != null && (trigger == -1 || tmpEvent.PageInstance.MyPage.Trigger == trigger))
                 {
-                    var newStack = new CommandInstance(tmpEvent.PageInstance.MyPage) {CommandIndex = 0, ListIndex = 0};
+                    var newStack = new CommandInstance(tmpEvent.PageInstance.MyPage) { CommandIndex = 0, ListIndex = 0 };
                     tmpEvent.CallStack.Push(newStack);
                 }
                 else
@@ -1906,13 +1954,13 @@ namespace Intersect_Server.Classes.Entities
             base.Move(moveDir, client, DontUpdate);
             // Check for a warp, if so warp the player.
             var attribute = MapInstance.GetMap(Globals.Entities[index].CurrentMap).Attributes[Globals.Entities[index].CurrentX, Globals.Entities[index].CurrentY];
-            if (attribute != null && attribute.value == (int) MapAttributes.Warp)
+            if (attribute != null && attribute.value == (int)MapAttributes.Warp)
             {
                 Globals.Entities[index].Warp(attribute.data1, attribute.data2, attribute.data3, Globals.Entities[index].Dir);
             }
 
             //Check for slide tiles
-            if (attribute != null && attribute.value == (int) MapAttributes.Slide)
+            if (attribute != null && attribute.value == (int)MapAttributes.Slide)
             {
                 if (attribute.data1 > 0)
                 {
@@ -1935,7 +1983,8 @@ namespace Intersect_Server.Classes.Entities
                                 if (MyEvents[i].CallStack.Count != 0) return;
                                 var newStack = new CommandInstance(MyEvents[i].PageInstance.MyPage)
                                 {
-                                    CommandIndex = 0, ListIndex = 0
+                                    CommandIndex = 0,
+                                    ListIndex = 0
                                 };
                                 MyEvents[i].CallStack.Push(newStack);
                             }

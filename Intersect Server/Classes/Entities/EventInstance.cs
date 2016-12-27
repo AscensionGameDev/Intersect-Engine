@@ -119,7 +119,7 @@ namespace Intersect_Server.Classes.Entities
                             CallStack.Peek().WaitingForResponse = CommandInstance.EventResponse.None;
                         if (CallStack.Peek().WaitingForResponse == CommandInstance.EventResponse.Bank && MyPlayer.InBank == false)
                             CallStack.Peek().WaitingForResponse = CommandInstance.EventResponse.None;
-                        if (CallStack.Peek().WaitingForResponse == CommandInstance.EventResponse.Quest && MyPlayer.QuestOffers.Count == 0)
+                        if (CallStack.Peek().WaitingForResponse == CommandInstance.EventResponse.Quest && !MyPlayer.QuestOffers.Contains(CallStack.Peek().ResponseIndex))
                             CallStack.Peek().WaitingForResponse = CommandInstance.EventResponse.None;
                         while (CallStack.Peek().WaitingForResponse == CommandInstance.EventResponse.None)
                         {
@@ -438,7 +438,7 @@ namespace Intersect_Server.Classes.Entities
             int npcNum, animNum, spawnCondition, mapNum = -1, tileX = 0, tileY = 0, direction = (int)Directions.Up;
             Entity targetEntity = null;
             CallStack.Peek().WaitingForResponse = CommandInstance.EventResponse.None;
-            CallStack.Peek().ResponseType = 0;
+            CallStack.Peek().ResponseIndex = 0;
             switch (command.Type)
             {
                 case EventCommandType.ShowText:
@@ -450,7 +450,7 @@ namespace Intersect_Server.Classes.Entities
                     PacketSender.SendEventDialog(MyClient, ParseEventText(command.Strs[0]), ParseEventText(command.Strs[1]), ParseEventText(command.Strs[2]),
                          ParseEventText(command.Strs[3]), ParseEventText(command.Strs[4]), command.Strs[5], MapNum, BaseEvent.MyIndex);
                     CallStack.Peek().WaitingForResponse = CommandInstance.EventResponse.Dialogue;
-                    CallStack.Peek().ResponseType = 1;
+                    CallStack.Peek().ResponseIndex = 1;
                     break;
                 case EventCommandType.AddChatboxText:
                     switch (command.Ints[0])
@@ -1038,6 +1038,7 @@ namespace Intersect_Server.Classes.Entities
                             {
                                 MyPlayer.OfferQuest(quest);
                                 CallStack.Peek().WaitingForResponse = CommandInstance.EventResponse.Quest;
+                                CallStack.Peek().ResponseIndex = quest.GetId();
                                 break;
                             }
                             else
@@ -1161,9 +1162,9 @@ namespace Intersect_Server.Classes.Entities
         public int ListIndex;
         public int CommandIndex;
         public EventResponse WaitingForResponse = EventResponse.None;
+        public int ResponseIndex = -1;
         public int WaitingForRoute = -1;
         public int WaitingForRouteMap;
-        public int ResponseType;
 
         public enum EventResponse
         {
