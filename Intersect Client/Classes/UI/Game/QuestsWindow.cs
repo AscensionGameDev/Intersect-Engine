@@ -236,26 +236,34 @@ namespace Intersect_Client.Classes.UI.Game
                     {
                         if (Globals.Me.QuestProgress.ContainsKey(quest.Key))
                         {
-                            if (Globals.Me.QuestProgress[quest.Key].completed == 1 && Globals.Me.QuestProgress[quest.Key].task == -1)
+                            if (Globals.Me.QuestProgress[quest.Key].task != -1)
                             {
-                                //Completed
-                                if (quest.Value.LogAfterComplete == 1 )
-                                {
-                                    AddQuestToList(quest.Value.Name, Color.Green, quest.Key);
-                                    return;
-                                }
+                                AddQuestToList(quest.Value.Name, Color.Yellow, quest.Key);
                             }
                             else
                             {
-                                //In Progress
-                                AddQuestToList(quest.Value.Name, Color.Yellow, quest.Key);
-                                return;
+                                if (Globals.Me.QuestProgress[quest.Key].completed == 1)
+                                {
+                                    if (quest.Value.LogAfterComplete == 1)
+                                    {
+                                        AddQuestToList(quest.Value.Name, Color.Green, quest.Key);
+                                    }
+                                }
+                                else
+                                {
+                                    if (quest.Value.LogBeforeOffer == 1)
+                                    {
+                                        AddQuestToList(quest.Value.Name, Color.Red, quest.Key);
+                                    }
+                                }
                             }
                         }
-                        //Not Started
-                        if (quest.Value.LogBeforeOffer == 1)
+                        else
                         {
-                            AddQuestToList(quest.Value.Name, Color.Red, quest.Key);
+                            if (quest.Value.LogBeforeOffer == 1)
+                            {
+                                AddQuestToList(quest.Value.Name, Color.Red, quest.Key);
+                            }
                         }
                     }
                 }
