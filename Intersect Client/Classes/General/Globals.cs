@@ -111,6 +111,10 @@ namespace Intersect_Client.Classes.General
         //Crafting station
         public static bool InCraft = false;
 
+        //Trading (Only 2 people can trade at once)
+        public static ItemInstance[,] Trade = new ItemInstance[2, Options.MaxInvItems];
+        public static bool InTrade = false;
+
         //Game Shop
         //Only need 1 shop, and that is the one we see at a given moment in time.
         public static ShopBase GameShop;

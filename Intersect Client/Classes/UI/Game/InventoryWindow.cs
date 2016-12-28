@@ -257,6 +257,10 @@ namespace Intersect_Client.Classes.UI.Game
             {
                 Globals.Me.TryDepositItem(_mySlot);
             }
+            else if (Globals.InTrade)
+            {
+                Globals.Me.TryTradeItem(_mySlot);
+            }
         }
 
         void pnl_Clicked(Base sender, ClickedEventArgs arguments)

@@ -32,6 +32,7 @@ using Intersect_Server.Classes.Core;
 using Intersect_Server.Classes.Entities;
 using Intersect_Server.Classes.General;
 using Intersect_Server.Classes.Maps;
+using Intersect_Server.Classes.Items;
 
 
 namespace Intersect_Server.Classes.Networking
@@ -1312,6 +1313,51 @@ namespace Intersect_Server.Classes.Networking
             SendDataToProximity(map, bf.ToArray());
             bf.Dispose();
         }
+
+        public static void StartTrade(Client client, int target)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteLong((long)ServerPackets.TradeStart);
+            bf.WriteInteger(target);
+            client.SendPacket(bf.ToArray());
+            bf.Dispose();
+        }
+
+        public static void SendTradeUpdate(Client client, int index, int slot)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteLong((long)ServerPackets.TradeUpdate);
+            bf.WriteInteger(index);
+            bf.WriteInteger(slot);
+            if (((Player)Globals.Entities[index]).Trade[slot] == null || ((Player)Globals.Entities[index]).Trade[slot].ItemNum < 0 ||
+                ((Player)Globals.Entities[index]).Trade[slot].ItemVal <= 0)
+            {
+                bf.WriteInteger(0);
+            }
+            else
+            {
+                bf.WriteInteger(1);
+                bf.WriteBytes(((Player)Globals.Entities[index]).Trade[slot].Data());
+            }
+            client.SendPacket(bf.ToArray());
+            bf.Dispose();
+        }
+
+        public static void SendTradeClose(Client client)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteLong((long)ServerPackets.TradeClose);
+            client.SendPacket(bf.ToArray());
+            bf.Dispose();
+        }
+
+        public static void SendTradeRequest(Client client, int partnerIndex)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteLong((long)ServerPackets.TradeRequest);
+            bf.WriteInteger(partnerIndex);
+            client.SendPacket(bf.ToArray());
+            bf.Dispose();
+        }
     }
 }
-

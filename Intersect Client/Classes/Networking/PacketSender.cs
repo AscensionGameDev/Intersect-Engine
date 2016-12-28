@@ -372,5 +372,60 @@ namespace Intersect_Client.Classes.Networking
             bf.WriteInteger((int)((InputBox)sender).Slot);
             GameNetwork.SendPacket(bf.ToArray());
         }
+
+        public static void SendTradeRequest(int index)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteLong((int)ClientPackets.TradeRequest);
+            bf.WriteInteger(index);
+            GameNetwork.SendPacket(bf.ToArray());
+        }
+
+        public static void SendOfferItem(int slot, int amount)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteLong((int)ClientPackets.TradeOffer);
+            bf.WriteInteger(slot);
+            bf.WriteInteger(amount);
+            GameNetwork.SendPacket(bf.ToArray());
+        }
+
+        public static void SendRevokeItem(int slot, int amount)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteLong((int)ClientPackets.TradeRevoke);
+            bf.WriteInteger(slot);
+            bf.WriteInteger(amount);
+            GameNetwork.SendPacket(bf.ToArray());
+        }
+
+        public static void SendAcceptTrade()
+        {
+            var bf = new ByteBuffer();
+            bf.WriteLong((int)ClientPackets.TradeAccept);
+            GameNetwork.SendPacket(bf.ToArray());
+        }
+
+        public static void SendDeclineTrade()
+        {
+            var bf = new ByteBuffer();
+            bf.WriteLong((int)ClientPackets.TradeDecline);
+            GameNetwork.SendPacket(bf.ToArray());
+        }
+
+        public static void SendTradeRequestAccept(Object sender, EventArgs e)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteLong((int)ClientPackets.TradeRequestAccept);
+            bf.WriteInteger((int)((InputBox)sender).Slot);
+            GameNetwork.SendPacket(bf.ToArray());
+        }
+
+        public static void SendRequestDecline(Object sender, EventArgs e)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteLong((int)ClientPackets.RequestDecline);
+            GameNetwork.SendPacket(bf.ToArray());
+        }
     }
 }

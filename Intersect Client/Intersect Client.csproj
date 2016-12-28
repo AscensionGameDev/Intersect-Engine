@@ -60,6 +60,7 @@
     <Compile Include="Classes\UI\Game\PartyWindow.cs" />
     <Compile Include="Classes\UI\Game\Chat\ChatboxMsg.cs" />
     <Compile Include="Classes\UI\Game\CraftingBenchWindow.cs" />
+    <Compile Include="Classes\UI\Game\TradingWindow.cs" />
     <Compile Include="Forms\frmLoadingContent.cs">
       <SubType>Form</SubType>
     </Compile>

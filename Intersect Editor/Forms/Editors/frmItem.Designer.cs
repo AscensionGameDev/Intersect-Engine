@@ -908,6 +908,7 @@ namespace Intersect_Editor.Forms
             // 
             this.scrlInterval.Location = new System.Drawing.Point(19, 90);
             this.scrlInterval.Maximum = 1000;
+            this.scrlInterval.Minimum = -1000;
             this.scrlInterval.Name = "scrlInterval";
             this.scrlInterval.Size = new System.Drawing.Size(176, 18);
             this.scrlInterval.TabIndex = 10;
@@ -990,12 +991,12 @@ namespace Intersect_Editor.Forms
             // 
             // pnlContainer
             // 
-            this.pnlContainer.Controls.Add(this.gbSpell);
             this.pnlContainer.Controls.Add(this.groupBox2);
             this.pnlContainer.Controls.Add(this.groupBox3);
             this.pnlContainer.Controls.Add(this.gbConsumable);
             this.pnlContainer.Controls.Add(this.grpEvent);
             this.pnlContainer.Controls.Add(this.gbEquipment);
+            this.pnlContainer.Controls.Add(this.gbSpell);
             this.pnlContainer.Location = new System.Drawing.Point(221, 7);
             this.pnlContainer.Name = "pnlContainer";
             this.pnlContainer.Size = new System.Drawing.Size(574, 442);

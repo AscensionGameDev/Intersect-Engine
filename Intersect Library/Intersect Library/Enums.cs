@@ -95,6 +95,13 @@ namespace Intersect_Library
         PartyAcceptInvite,
         PartyKick,
         PartyLeave,
+        TradeRequest,
+        TradeAccept,
+        TradeDecline,
+        TradeOffer,
+        TradeRevoke,
+        TradeRequestAccept,
+        RequestDecline,
     }
 
     public enum ServerPackets
@@ -155,7 +162,11 @@ namespace Intersect_Library
         PartyData,
         PartyInvite,
         ChatBubble,
-		MapEntities
+		MapEntities,
+        TradeStart,
+        TradeUpdate,
+        TradeClose,
+        TradeRequest,
     }
 
     public enum MapZones

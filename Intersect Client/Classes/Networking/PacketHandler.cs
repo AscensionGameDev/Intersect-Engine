@@ -221,12 +221,24 @@ namespace Intersect_Client.Classes.Networking
                         break;
                     case ServerPackets.PartyInvite:
                         HandlePartyInvite(bf.ReadBytes(bf.Length()));
-			break;
+			            break;
                     case ServerPackets.ChatBubble:
                         HandleChatBubble(bf.ReadBytes(bf.Length()));
                         break;
                     case ServerPackets.MapEntities:
                         HandleMapEntities(bf.ReadBytes(bf.Length()));
+                        break;
+                    case ServerPackets.TradeStart:
+                        HandleTradeStart(bf.ReadBytes(bf.Length()));
+                        break;
+                    case ServerPackets.TradeUpdate:
+                        HandleTradeUpdate(bf.ReadBytes(bf.Length()));
+                        break;
+                    case ServerPackets.TradeClose:
+                        HandleTradeClose(bf.ReadBytes(bf.Length()));
+                        break;
+                    case ServerPackets.TradeRequest:
+                        HandleTradeRequest(bf.ReadBytes(bf.Length()));
                         break;
                     default:
                         Console.WriteLine(@"Non implemented packet received: " + packetHeader);
@@ -1321,7 +1333,7 @@ namespace Intersect_Client.Classes.Networking
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
             int leader = bf.ReadInteger();
-            InputBox iBox = new InputBox("Party Invite", Globals.Entities[leader].MyName + " has invited you to their party. Do you accept?", true, PacketSender.SendPartyAccept, null, leader, false);
+            InputBox iBox = new InputBox("Party Invite", Globals.Entities[leader].MyName + " has invited you to their party. Do you accept?", true, PacketSender.SendPartyAccept, PacketSender.SendRequestDecline, leader, false);
             bf.Dispose();
         }
 
@@ -1350,6 +1362,64 @@ namespace Intersect_Client.Classes.Networking
                 return;
             }
             en.AddChatBubble(bf.ReadString());
+            bf.Dispose();
+        }
+
+        private static void HandleTradeStart(byte[] packet)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteBytes(packet);
+            int index = bf.ReadInteger();
+
+            //Gotta initialize the trade values
+            for (int x = 0; x < 2; x++)
+            {
+                for (int y = 0; y < Options.MaxInvItems; y++)
+                {
+                    Globals.Trade[x, y] = new ItemInstance();
+                }
+            }
+            Gui.GameUI.NotifyOpenTrading(index);
+            bf.Dispose();
+        }
+
+        private static void HandleTradeUpdate(byte[] packet)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteBytes(packet);
+            int index = bf.ReadInteger();
+            int i = 0;
+
+            if (index != Globals.Me.MyIndex)
+            {
+                i = 1;
+            }
+
+            int slot = bf.ReadInteger();
+            int active = bf.ReadInteger();
+            if (active == 0)
+            {
+                Globals.Trade[i, slot] = null;
+            }
+            else
+            {
+                Globals.Trade[i, slot] = new ItemInstance();
+                Globals.Trade[i, slot].Load(bf);
+            }
+            bf.Dispose();
+        }
+
+        private static void HandleTradeClose(byte[] packet)
+        {
+            Gui.GameUI.NotifyCloseTrading();
+        }
+
+        private static void HandleTradeRequest(byte[] packet)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteBytes(packet);
+            int partner = bf.ReadInteger();
+            InputBox iBox = new InputBox("Trade Request", Globals.Entities[partner].MyName + " has invited you to trade items with them. Do you accept?", true, PacketSender.SendTradeRequestAccept, PacketSender.SendRequestDecline, partner, false);
             bf.Dispose();
         }
     }

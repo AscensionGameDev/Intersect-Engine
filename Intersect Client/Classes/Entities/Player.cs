@@ -92,7 +92,7 @@ namespace Intersect_Client.Classes.Entities
         {
             bool returnval = base.Update();
             HandleInput();
-            if (Globals.EventHolds.Count == 0 && Globals.GameShop == null && Globals.InBank == false && !Gui.HasInputFocus())
+            if (Globals.EventHolds.Count == 0 && Globals.GameShop == null && Globals.InBank == false && Globals.InCraft == false && Globals.InTrade == false && !Gui.HasInputFocus())
             {
                 if (this == Globals.Me && base.IsMoving == false)
                 {
@@ -169,7 +169,10 @@ namespace Intersect_Client.Classes.Entities
         }
         public void TryUseItem(int index)
         {
-            PacketSender.SendUseItem(index);
+            if (Globals.GameShop == null && Globals.InBank == false & Globals.InTrade == false)
+            {
+                PacketSender.SendUseItem(index);
+            }
         }
         public bool IsEquipped(int slot)
         {
@@ -217,6 +220,8 @@ namespace Intersect_Client.Classes.Entities
                 PacketSender.SendSellItem(((InputBox)sender).Slot, value);
             }
         }
+
+        //bank
         public void TryDepositItem(int index)
         {
             if (ItemBase.GetItem(Inventory[index].ItemNum) != null)
@@ -262,6 +267,51 @@ namespace Intersect_Client.Classes.Entities
             }
         }
 
+        //Trade
+        public void TryTradeItem(int index)
+        {
+            if (ItemBase.GetItem(Inventory[index].ItemNum) != null)
+            {
+                if (Inventory[index].ItemVal > 1)
+                {
+                    InputBox iBox = new InputBox("Offer Item", "How many " + ItemBase.GetItem(Inventory[index].ItemNum).Name + "(s) would you like to offer?", true, TradeItemInputBoxOkay, null, index, true);
+                }
+                else
+                {
+                    PacketSender.SendOfferItem(index, 1);
+                }
+            }
+        }
+        private void TradeItemInputBoxOkay(Object sender, EventArgs e)
+        {
+            int value = (int)((InputBox)sender).Value;
+            if (value > 0)
+            {
+                PacketSender.SendOfferItem(((InputBox)sender).Slot, value);
+            }
+        }
+        public void TryRevokeItem(int index)
+        {
+            if (Globals.Trade[0, index] != null && ItemBase.GetItem(Globals.Trade[0, index].ItemNum) != null)
+            {
+                if (Globals.Trade[0, index].ItemVal > 1)
+                {
+                    InputBox iBox = new InputBox("Revoke Item", "How many " + ItemBase.GetItem(Globals.Bank[index].ItemNum).Name + "(s) would you like to revoke?", true, RevokeItemInputBoxOkay, null, index, true);
+                }
+                else
+                {
+                    PacketSender.SendRevokeItem(index, 1);
+                }
+            }
+        }
+        private void RevokeItemInputBoxOkay(Object sender, EventArgs e)
+        {
+            int value = (int)((InputBox)sender).Value;
+            if (value > 0)
+            {
+                PacketSender.SendRevokeItem(((InputBox)sender).Slot, value);
+            }
+        }
 
         //Spell Processing
         public void SwapSpells(int spell1, int spell2)
