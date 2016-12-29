@@ -64,6 +64,10 @@ namespace Intersect_Server.Classes.Entities
         public long CraftTimer = 0;
         public long SaveTimer = Environment.TickCount;
         public List<Player> Party = new List<Player>();
+        public int Trading = -1;
+        public ItemInstance[] Trade = new ItemInstance[Options.MaxInvItems];
+        public bool TradeAccepted = false;
+        public bool PendingRequest = false;
 
         //Init
         public Player(int index, Client newClient) : base(index)
@@ -254,6 +258,7 @@ namespace Intersect_Server.Classes.Entities
             Vital[(int)vital] += amount;
             if (Vital[(int)vital] < 0) Vital[(int)vital] = 0;
             if (Vital[(int)vital] > MaxVital[(int)vital]) Vital[(int)vital] = MaxVital[(int)vital];
+            PacketSender.SendEntityVitals(this);
         }
         public override void ProcessRegen()
         {
@@ -680,6 +685,40 @@ namespace Intersect_Server.Classes.Entities
                     case (int)ItemTypes.None:
                     case (int)ItemTypes.Currency:
                         PacketSender.SendPlayerMsg(MyClient, "You cannot use this item!");
+                        break;
+                    case (int)ItemTypes.Consumable:
+                        string s = "";
+                        if (itemBase.Data2 > 0) { s = "+"; }
+
+                        switch (itemBase.Data1)
+                        {
+                            case 0: //Health
+                                AddVital(Vitals.Health, itemBase.Data2);
+                                if (s == "+")
+                                {
+                                    PacketSender.SendActionMsg(MyIndex, s + itemBase.Data2.ToString(), Color.Green);
+                                }
+                                else
+                                {
+                                    PacketSender.SendActionMsg(MyIndex, s + itemBase.Data2.ToString(), Color.Red);
+                                    if (Vital[(int)Vitals.Health] <= 0) //Add a death handler for poison.
+                                    {
+                                        Die();
+                                    }
+                                }
+                                break;
+                            case 1: //Mana
+                                AddVital(Vitals.Mana, itemBase.Data2);
+                                PacketSender.SendActionMsg(MyIndex, s + itemBase.Data2.ToString(), Color.Blue);
+                                break;
+                            case 2: //Exp
+                                GiveExperience(itemBase.Data2);
+                                PacketSender.SendActionMsg(MyIndex, s + itemBase.Data2.ToString(), Color.White);
+                                break;
+                            default:
+                                break;
+                        }
+                        TakeItem(slot, 1);
                         break;
                     case (int)ItemTypes.Equipment:
                         for (int i = 0; i < Options.EquipmentSlots.Count; i++)
@@ -1251,6 +1290,207 @@ namespace Intersect_Server.Classes.Entities
             PacketSender.SendBankUpdate(MyClient, item2);
         }
 
+        //Trading
+        public void OfferItem(int slot, int amount)
+        {
+            if (Trading < 0) return;
+            var itemBase = ItemBase.GetItem(Inventory[slot].ItemNum);
+            if (itemBase != null)
+            {
+                if (Inventory[slot].ItemNum > -1)
+                {
+                    if (itemBase.ItemType == (int)ItemTypes.Consumable ||
+                        //Allow Stacking on Currency, Consumable, Spell, and item types of none.
+                        itemBase.ItemType == (int)ItemTypes.Currency ||
+                        itemBase.ItemType == (int)ItemTypes.None ||
+                        itemBase.ItemType == (int)ItemTypes.Spell)
+                    {
+                        if (amount >= Inventory[slot].ItemVal)
+                        {
+                            amount = Inventory[slot].ItemVal;
+                        }
+                    }
+                    else
+                    {
+                        amount = 1;
+                    }
+                    //Find a spot in the trade for it!
+                    if (itemBase.ItemType == (int)ItemTypes.Consumable ||
+                        //Allow Stacking on Currency, Consumable, Spell, and item types of none.
+                        itemBase.ItemType == (int)ItemTypes.Currency ||
+                        itemBase.ItemType == (int)ItemTypes.None ||
+                        itemBase.ItemType == (int)ItemTypes.Spell)
+                    {
+                        for (int i = 0; i < Options.MaxInvItems; i++)
+                        {
+                            if (Trade[i] != null && Trade[i].ItemNum == Inventory[slot].ItemNum)
+                            {
+                                Trade[i].ItemVal += amount;
+                                //Remove Items from inventory send updates
+                                if (amount >= Inventory[slot].ItemVal)
+                                {
+                                    Inventory[slot] = new ItemInstance(-1, 0);
+                                    EquipmentProcessItemLoss(slot);
+                                }
+                                else
+                                {
+                                    Inventory[slot].ItemVal -= amount;
+                                }
+                                PacketSender.SendInventoryItemUpdate(MyClient, slot);
+                                PacketSender.SendTradeUpdate(MyClient, MyIndex, i);
+                                PacketSender.SendTradeUpdate(((Player)Globals.Entities[Trading]).MyClient, MyIndex, i);
+                                return;
+                            }
+                        }
+                    }
+
+                    //Either a non stacking item, or we couldn't find the item already existing in the players inventory
+                    for (int i = 0; i < Options.MaxInvItems; i++)
+                    {
+                        if (Trade[i] == null || Trade[i].ItemNum == -1)
+                        {
+                            Trade[i] = new ItemInstance(0, 0);
+                            Trade[i] = Inventory[slot].Clone();
+                            Trade[i].ItemVal = amount;
+                            //Remove Items from inventory send updates
+                            if (amount >= Inventory[slot].ItemVal)
+                            {
+                                Inventory[slot] = new ItemInstance(-1, 0);
+                                EquipmentProcessItemLoss(slot);
+                            }
+                            else
+                            {
+                                Inventory[slot].ItemVal -= amount;
+                            }
+                            PacketSender.SendInventoryItemUpdate(MyClient, slot);
+                            PacketSender.SendTradeUpdate(MyClient, MyIndex, i);
+                            PacketSender.SendTradeUpdate(((Player)Globals.Entities[Trading]).MyClient, MyIndex, i);
+                            return;
+                        }
+                    }
+                    PacketSender.SendPlayerMsg(MyClient, "There is no space left in your bank for that item!", Color.Red);
+                }
+                else
+                {
+                    PacketSender.SendPlayerMsg(MyClient, "Invalid item selected to deposit!", Color.Red);
+                }
+            }
+        }
+        public void RevokeItem(int slot, int amount)
+        {
+            if (Trading < 0) return;
+            var itemBase = ItemBase.GetItem(Trade[slot].ItemNum);
+            if (itemBase != null)
+            {
+                if (Trade[slot] != null && Trade[slot].ItemNum > -1)
+                {
+                    if (itemBase.ItemType == (int)ItemTypes.Consumable ||
+                        //Allow Stacking on Currency, Consumable, Spell, and item types of none.
+                        itemBase.ItemType == (int)ItemTypes.Currency ||
+                        itemBase.ItemType == (int)ItemTypes.None ||
+                        itemBase.ItemType == (int)ItemTypes.Spell)
+                    {
+                        if (amount >= Trade[slot].ItemVal)
+                        {
+                            amount = Trade[slot].ItemVal;
+                        }
+                    }
+                    else
+                    {
+                        amount = 1;
+                    }
+                    //Find a spot in the inventory for it!
+                    if (itemBase.ItemType == (int)ItemTypes.Consumable ||
+                        //Allow Stacking on Currency, Consumable, Spell, and item types of none.
+                        itemBase.ItemType == (int)ItemTypes.Currency ||
+                        itemBase.ItemType == (int)ItemTypes.None ||
+                        itemBase.ItemType == (int)ItemTypes.Spell)
+                    {
+                        for (int i = 0; i < Options.MaxInvItems; i++)
+                        {
+                            if (Inventory[i] != null && Inventory[i].ItemNum == Trade[slot].ItemNum)
+                            {
+                                Inventory[i].ItemVal += amount;
+                                //Remove Items from Trade send updates
+                                if (amount >= Trade[slot].ItemVal)
+                                {
+                                    Trade[slot] = null;
+                                }
+                                else
+                                {
+                                    Trade[slot].ItemVal -= amount;
+                                }
+                                PacketSender.SendInventoryItemUpdate(MyClient, i);
+                                PacketSender.SendTradeUpdate(MyClient, MyIndex, slot);
+                                PacketSender.SendTradeUpdate(((Player)Globals.Entities[Trading]).MyClient, MyIndex, slot);
+                                return;
+                            }
+                        }
+                    }
+
+                    //Either a non stacking item, or we couldn't find the item already existing in the players inventory
+                    for (int i = 0; i < Options.MaxInvItems; i++)
+                    {
+                        if (Inventory[i] == null || Inventory[i].ItemNum == -1)
+                        {
+                            Inventory[i] = new ItemInstance(0, 0);
+                            Inventory[i] = Trade[slot].Clone();
+                            //Remove Items from inventory send updates
+                            if (amount >= Trade[slot].ItemVal)
+                            {
+                                Trade[slot] = new ItemInstance();
+                            }
+                            else
+                            {
+                                Trade[slot].ItemVal -= amount;
+                            }
+                            PacketSender.SendInventoryItemUpdate(MyClient, i);
+                            PacketSender.SendTradeUpdate(MyClient, MyIndex, slot);
+                            PacketSender.SendTradeUpdate(((Player)Globals.Entities[Trading]).MyClient, MyIndex, slot);
+                            return;
+                        }
+                    }
+                    PacketSender.SendPlayerMsg(MyClient, "There is no space left in your inventory for that item!",
+                        Color.Red);
+                }
+                else
+                {
+                    PacketSender.SendPlayerMsg(MyClient, "Invalid item selected to withdraw!", Color.Red);
+                }
+            }
+        }
+        public void ReturnTradeItems()
+        {
+            if (Trading < 0) return;
+
+            for (int i = 0; i < Options.MaxInvItems; i++)
+            {
+                if (Trade[i].ItemNum > 0)
+                {
+                    if (!TryGiveItem(Trade[i]))
+                    {
+                        MapInstance.GetMap(CurrentMap).SpawnItem(CurrentX, CurrentY, Trade[i], Trade[i].ItemVal);
+                        PacketSender.SendPlayerMsg(MyClient, "Invalid inventory space. Some of your items have been dropped on the ground!", Color.Red);
+                    }
+                    Trade[i].ItemNum = 0;
+                    Trade[i].ItemVal = 0;
+                }
+            }
+            PacketSender.SendInventory(MyClient);
+        }
+        public void CancelTrade()
+        {
+            if (Trading < 0) return;
+            ReturnTradeItems();
+            ((Player)Globals.Entities[Trading]).ReturnTradeItems();
+            PacketSender.SendPlayerMsg(MyClient, "The trade was declined.", Color.Red);
+            PacketSender.SendPlayerMsg(((Player)Globals.Entities[Trading]).MyClient, "The trade was declined.", Color.Red);
+            PacketSender.SendTradeClose(((Player)Globals.Entities[Trading]).MyClient);
+            PacketSender.SendTradeClose(MyClient);
+            ((Player)Globals.Entities[Trading]).Trading = -1;
+            Trading = -1;
+        }
+
         //Parties
         public void AddParty(Player target)
         {
@@ -1365,6 +1605,30 @@ namespace Intersect_Server.Classes.Entities
                 }
             }
             return false;
+        }
+
+        public void StartTrade(Player target)
+        {
+            if (target.Trading == -1)
+            {
+                // Set the status of both players to be in a trade
+                Trading = target.MyIndex;
+                target.Trading = MyIndex;
+                TradeAccepted = false;
+                target.TradeAccepted = false;
+                Trade = new ItemInstance[Options.MaxInvItems];
+                target.Trade = new ItemInstance[Options.MaxInvItems];
+
+                for (int i = 0; i < Options.MaxInvItems; i++)
+                {
+                    Trade[i] = new ItemInstance();
+                    target.Trade[i] = new ItemInstance();
+                }
+
+                //Send the trade confirmation to both players
+                PacketSender.StartTrade(target.MyClient, this.MyIndex);
+                PacketSender.StartTrade(MyClient, target.MyIndex);
+            }
         }
 
         //Spells

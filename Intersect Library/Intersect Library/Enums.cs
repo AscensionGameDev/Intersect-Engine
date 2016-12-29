@@ -97,7 +97,14 @@ namespace Intersect_Library
         PartyLeave,
         AcceptQuest,
         DeclineQuest,
-        CancelQuest
+        CancelQuest,
+        TradeRequest,
+        TradeAccept,
+        TradeDecline,
+        TradeOffer,
+        TradeRevoke,
+        TradeRequestAccept,
+        RequestDecline,
     }
 
     public enum ServerPackets
@@ -161,6 +168,10 @@ namespace Intersect_Library
 		MapEntities,
         QuestOffer,
         QuestProgress,
+        TradeStart,
+        TradeUpdate,
+        TradeClose,
+        TradeRequest,
     }
 
     public enum MapZones

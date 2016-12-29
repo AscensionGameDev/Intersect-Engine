@@ -218,6 +218,27 @@ namespace Intersect_Server.Classes.Networking
                     break;
                 case ClientPackets.CancelQuest:
                     HandleCancelQuest(client, packet);
+					break;
+                case ClientPackets.TradeRequest:
+                    HandleTradeRequest(client, packet);
+                    break;
+                case ClientPackets.TradeAccept:
+                    HandleTradeAccept(client, packet);
+                    break;
+                case ClientPackets.TradeDecline:
+                    HandleTradeDecline(client, packet);
+                    break;
+                case ClientPackets.TradeOffer:
+                    HandleTradeOffer(client, packet);
+                    break;
+                case ClientPackets.TradeRevoke:
+                    HandleTradeRevoke(client, packet);
+                    break;
+                case ClientPackets.TradeRequestAccept:
+                    HandleTradeRequestAccept(client, packet);
+                    break;
+                case ClientPackets.RequestDecline:
+                    HandleRequestDecline(client, packet);
                     break;
                 default:
                     Globals.GeneralLogs.Add(@"Non implemented packet received: " + packetHeader);
@@ -1865,7 +1886,11 @@ namespace Intersect_Server.Classes.Networking
             if (target < 0) { return; }
             if (Globals.Entities[target].GetEntityType() == EntityTypes.Player && target != client.Entity.MyIndex)
             {
-                PacketSender.SendPartyInvite(((Player)Globals.Entities[target]).MyClient, client.EntityIndex);
+                if (((Player)Globals.Entities[target]).PendingRequest == false)
+                {
+                    ((Player)Globals.Entities[target]).PendingRequest = true;
+                    PacketSender.SendPartyInvite(((Player)Globals.Entities[target]).MyClient, client.EntityIndex);
+                }
             }
             else
             {
@@ -1883,6 +1908,7 @@ namespace Intersect_Server.Classes.Networking
             if (leader < 0) { return; }
             if (Globals.Entities[leader].GetEntityType() == EntityTypes.Player && leader != client.Entity.MyIndex)
             {
+                client.Entity.PendingRequest = false;
                 ((Player)Globals.Entities[leader]).AddParty((Player)client.Entity);
             }
             bf.Dispose();
@@ -1927,6 +1953,92 @@ namespace Intersect_Server.Classes.Networking
             int questId = bf.ReadInteger();
             client.Entity.CancelQuest(questId);
             bf.Dispose();
+        }
+		
+        private static void HandleTradeRequest(Client client, byte[] packet)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteBytes(packet);
+            int target = bf.ReadInteger();
+            //Check if valid target
+            if (target < 0) { return; }
+            if (Globals.Entities[target].GetEntityType() == EntityTypes.Player && target != client.Entity.MyIndex)
+            {
+                if (((Player)Globals.Entities[target]).PendingRequest == false)
+                {
+                    ((Player)Globals.Entities[target]).PendingRequest = true;
+                    PacketSender.SendTradeRequest(((Player)Globals.Entities[target]).MyClient, client.Entity.MyIndex);
+                }
+            }
+            bf.Dispose();
+        }
+
+        private static void HandleTradeRequestAccept(Client client, byte[] packet)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteBytes(packet);
+            int target = bf.ReadInteger();
+            //Check if valid target
+            if (target < 0) { return; }
+            if (Globals.Entities[target].GetEntityType() == EntityTypes.Player && target != client.Entity.MyIndex)
+            {
+                client.Entity.PendingRequest = false;
+                ((Player)Globals.Entities[target]).StartTrade((Player)client.Entity);
+            }
+            bf.Dispose();
+        }
+
+        private static void HandleTradeOffer(Client client, byte[] packet)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteBytes(packet);
+            var slot = bf.ReadInteger();
+            var amount = bf.ReadInteger();
+            client.Entity.OfferItem(slot, amount);
+            bf.Dispose();
+        }
+
+        private static void HandleTradeRevoke(Client client, byte[] packet)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteBytes(packet);
+            var slot = bf.ReadInteger();
+            var amount = bf.ReadInteger();
+            client.Entity.RevokeItem(slot, amount);
+            bf.Dispose();
+        }
+
+        private static void HandleTradeAccept(Client client, byte[] packet)
+        {
+            client.Entity.TradeAccepted = true;
+            if (((Player)Globals.Entities[client.Entity.Trading]).TradeAccepted == true)
+            {
+                ItemInstance[] t = new ItemInstance[Options.MaxInvItems];
+
+                //Swap the trade boxes over, then return the trade boxes to their new owners!
+                t = client.Entity.Trade;
+                client.Entity.Trade = ((Player)Globals.Entities[client.Entity.Trading]).Trade;
+                ((Player)Globals.Entities[client.Entity.Trading]).Trade = t;
+                client.Entity.ReturnTradeItems();
+                ((Player)Globals.Entities[client.Entity.Trading]).ReturnTradeItems();
+
+                PacketSender.SendPlayerMsg(client, "The trade was successful!", Color.Green);
+                PacketSender.SendPlayerMsg(((Player)Globals.Entities[client.Entity.Trading]).MyClient, "The trade was successful!", Color.Green);
+                PacketSender.SendTradeClose(((Player)Globals.Entities[client.Entity.Trading]).MyClient);
+                PacketSender.SendTradeClose(client);
+                ((Player)Globals.Entities[client.Entity.Trading]).Trading = -1;
+                client.Entity.Trading = -1;
+            }
+        }
+
+        private static void HandleTradeDecline(Client client, byte[] packet)
+        {
+            client.Entity.CancelTrade();
+        }
+
+        private static void HandleRequestDecline(Client client, byte[] packet)
+        {
+            client.Entity.PendingRequest = false;
         }
     }
 }

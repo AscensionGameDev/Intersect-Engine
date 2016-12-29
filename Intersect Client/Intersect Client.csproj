@@ -62,6 +62,7 @@
     <Compile Include="Classes\UI\Game\CraftingBenchWindow.cs" />
     <Compile Include="Classes\UI\Game\QuestOfferWindow.cs" />
     <Compile Include="Classes\UI\Game\QuestsWindow.cs" />
+    <Compile Include="Classes\UI\Game\TradingWindow.cs" />
     <Compile Include="Forms\frmLoadingContent.cs">
       <SubType>Form</SubType>
     </Compile>

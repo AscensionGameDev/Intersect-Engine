@@ -142,6 +142,9 @@ namespace Intersect_Server.Classes.Networking
                         //Update parties
                         _myClient.Entity.LeaveParty();
 
+                        //Update trade
+                        _myClient.Entity.CancelTrade();
+
                         PacketSender.SendEntityLeave(_myClient.Entity.MyIndex, (int) EntityTypes.Player,
                             Globals.Entities[_entityIndex].CurrentMap);
                         if (!_myClient.IsEditor)

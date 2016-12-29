@@ -40,6 +40,7 @@ namespace Intersect_Client.Classes.UI.Game
         private BankWindow _bankWindow;
         private QuestOfferWindow _questOfferWindow;
         private CraftingBenchWindow _CraftingBenchWindow;
+        private TradingWindow _TradingWindow;
         public bool FocusChat;
         private bool _shouldOpenAdminWindow = false;
         private bool _shouldOpenShop = false;
@@ -49,6 +50,9 @@ namespace Intersect_Client.Classes.UI.Game
         private bool _shouldOpenCraftingBench = false;
         private bool _shouldCloseCraftingBench = false;
         private bool _shouldUpdateQuestLog = true;
+        private bool _shouldOpenTrading = false;
+        private bool _shouldCloseTrading = false;
+        private int _tradingTarget = -1;
 
         //Public Components - For clicking/dragging
         public HotBarWindow Hotbar;
@@ -155,6 +159,24 @@ namespace Intersect_Client.Classes.UI.Game
         public void NotifyQuestsUpdated()
         {
             _shouldUpdateQuestLog = true;
+		}
+		
+        //Trading
+        public void NotifyOpenTrading(int index)
+        {
+            _shouldOpenTrading = true;
+            _tradingTarget = index;
+        }
+        public void NotifyCloseTrading()
+        {
+            _shouldCloseTrading = true;
+        }
+        public void OpenTrading()
+        {
+            if (_TradingWindow != null) _TradingWindow.Close();
+            _TradingWindow = new TradingWindow(GameCanvas, _tradingTarget);
+            _shouldOpenTrading = false;
+            Globals.InTrade = true;
         }
 
         public void TryAddPlayerBox()
@@ -269,6 +291,34 @@ namespace Intersect_Client.Classes.UI.Game
                 }
             }
             _shouldCloseCraftingBench = false;
+
+            //Trading update
+            if (_shouldOpenTrading) OpenTrading();
+            if (_TradingWindow != null)
+            {
+                if (_shouldCloseTrading)
+                {
+                    _TradingWindow.Close();
+                    _TradingWindow = null;
+                    Globals.InTrade = false;
+                    _shouldCloseTrading = false;
+                }
+                else
+                {
+                    if (!_TradingWindow.IsVisible())
+                    {
+                        PacketSender.SendDeclineTrade();
+                        _TradingWindow.Close();
+                        _TradingWindow = null;
+                        Globals.InTrade = false;
+                    }
+                    else
+                    {
+                        _TradingWindow.Update();
+                    }
+                }
+            }
+            _shouldCloseTrading = false;
 
             if (FocusChat)
             {

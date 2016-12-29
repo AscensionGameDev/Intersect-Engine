@@ -191,10 +191,11 @@ namespace Intersect_Client.Classes.UI.Game
             {
                 TradeLabel = new Label(_entityBox);
                 TradeLabel.SetText("Trade");
-                TradeLabel.SetToolTipText("[Not Implemented!] Request to trade with " + _myEntity.MyName + ".");
+                TradeLabel.SetToolTipText("Request to trade with " + _myEntity.MyName + ".");
                 TradeLabel.SetPosition(117, 89);
                 TradeLabel.TextColorOverride = Color.White;
                 TradeLabel.MouseInputEnabled = true;
+                TradeLabel.Clicked += tradeRequest_Clicked;
 
                 PartyLabel = new Label(_entityBox);
                 PartyLabel.SetText("Party");
@@ -395,6 +396,15 @@ namespace Intersect_Client.Classes.UI.Game
             if (Globals.Me._targetIndex != -1 && Globals.Me._targetIndex != Globals.Me.MyIndex)
             {
                 PacketSender.SendPartyInvite(Globals.Me._targetIndex);
+            }
+        }
+
+        //Input Handlers
+        void tradeRequest_Clicked(Base sender, ClickedEventArgs arguments)
+        {
+            if (Globals.Me._targetIndex != -1 && Globals.Me._targetIndex != Globals.Me.MyIndex)
+            {
+                PacketSender.SendTradeRequest(Globals.Me._targetIndex);
             }
         }
     }
