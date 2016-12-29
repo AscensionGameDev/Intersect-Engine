@@ -1025,7 +1025,7 @@ namespace Intersect_Server.Classes.Entities
         }
 
         //Spawning/Dying
-        public virtual void Die(bool dropitems = false)
+        public virtual void Die(bool dropitems = false, Entity killer = null)
         {
             if (dropitems)
             {

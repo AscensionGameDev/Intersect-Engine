@@ -329,6 +329,16 @@ namespace Intersect_Client.Classes.UI.Game
                             {
                                 taskString.AddRange(Gui.WrapText(_selectedQuest.Tasks[i].Desc, _questDesc.Width - 12,
                                     _questDesc.Parent.Skin.DefaultFont));
+                                if (_selectedQuest.Tasks[i].Objective == 1) //Gather Items
+                                {
+                                    taskString.Add("");
+                                    taskString.Add(Globals.Me.QuestProgress[_selectedQuest.GetId()].taskProgress + "/" + _selectedQuest.Tasks[i].Data2 + "  " + ItemBase.GetName(_selectedQuest.Tasks[i].Data1) + "(s) gathered.");
+                                }
+                                else if (_selectedQuest.Tasks[i].Objective == 2) //Kill Npcs
+                                {
+                                    taskString.Add("");
+                                    taskString.Add(Globals.Me.QuestProgress[_selectedQuest.GetId()].taskProgress + "/" + _selectedQuest.Tasks[i].Data2 + "  " + NpcBase.GetName(_selectedQuest.Tasks[i].Data1) + "(s) slain.");
+                                }
                             }
                         }
                         if (_selectedQuest.Quitable == 1)

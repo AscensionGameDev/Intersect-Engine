@@ -181,6 +181,15 @@ namespace Intersect_Library.GameObjects
             return -1;
         }
 
+        public QuestTask FindTask(int taskId)
+        {
+            for (int i = 0; i < Tasks.Count; i++)
+            {
+                if (Tasks[i].Id == taskId) return Tasks[i];
+            }
+            return null;
+        }
+
         public static QuestBase GetQuest(int index)
         {
             if (Objects.ContainsKey(index))

@@ -51,9 +51,9 @@ namespace Intersect_Server.Classes.Entities
             HideName = 1;
         }
 
-        public override void Die(bool dropitems = false)
+        public override void Die(bool dropitems = false, Entity killer = null)
         {
-            base.Die(dropitems);
+            base.Die(dropitems, killer);
             MySprite = MyBase.EndGraphic;
             Passable = Convert.ToInt32(MyBase.WalkableBefore);
             IsDead = true;
