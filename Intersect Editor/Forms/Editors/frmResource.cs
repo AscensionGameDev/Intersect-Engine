@@ -38,6 +38,7 @@ namespace Intersect_Editor.Classes
 
         private List<ResourceBase> _changed = new List<ResourceBase>();
         private ResourceBase _editorItem = null;
+        private byte[] _copiedItem = null;
 
         private Bitmap _initialTileset;
         private Bitmap _endTileset;
@@ -48,6 +49,8 @@ namespace Intersect_Editor.Classes
         {
             InitializeComponent();
             PacketHandler.GameObjectUpdatedDelegate += GameObjectUpdatedDelegate;
+            lstResources.LostFocus += itemList_FocusChanged;
+            lstResources.GotFocus += itemList_FocusChanged;
         }
 
         private void GameObjectUpdatedDelegate(GameObject type)
@@ -59,34 +62,6 @@ namespace Intersect_Editor.Classes
                 {
                     _editorItem = null;
                     UpdateEditor();
-                }
-            }
-        }
-
-        private void btnNew_Click(object sender, EventArgs e)
-        {
-            PacketSender.SendCreateObject(GameObject.Resource);
-        }
-
-        private void btnUndo_Click(object sender, EventArgs e)
-        {
-            if (_changed.Contains(_editorItem) && _editorItem != null)
-            {
-                _editorItem.RestoreBackup();
-                UpdateEditor();
-            }
-        }
-
-        private void btnDelete_Click(object sender, EventArgs e)
-        {
-            if (_editorItem != null)
-            {
-                if (
-                    MessageBox.Show(
-                        "Are you sure you want to delete this game object? This action cannot be reverted!",
-                        "Delete Object", MessageBoxButtons.YesNo) == DialogResult.Yes)
-                {
-                    PacketSender.SendDeleteObject(_editorItem);
                 }
             }
         }
@@ -192,6 +167,7 @@ namespace Intersect_Editor.Classes
             {
                 pnlContainer.Hide();
             }
+            UpdateToolStripItems();
         }
 
         private void UpdateDropValues()
@@ -471,6 +447,105 @@ namespace Intersect_Editor.Classes
         private void tmrRender_Tick(object sender, EventArgs e)
         {
             Render();
+        }
+
+        private void toolStripItemNew_Click(object sender, EventArgs e)
+        {
+            PacketSender.SendCreateObject(GameObject.Resource);
+        }
+
+        private void toolStripItemDelete_Click(object sender, EventArgs e)
+        {
+            if (_editorItem != null && lstResources.Focused)
+            {
+                if (
+                    MessageBox.Show("Are you sure you want to delete this game object? This action cannot be reverted!",
+                        "Delete Object", MessageBoxButtons.YesNo) == DialogResult.Yes)
+                {
+                    PacketSender.SendDeleteObject(_editorItem);
+                }
+            }
+        }
+
+        private void toolStripItemCopy_Click(object sender, EventArgs e)
+        {
+            if (_editorItem != null && lstResources.Focused)
+            {
+                _copiedItem = _editorItem.GetData();
+                toolStripItemPaste.Enabled = true;
+            }
+        }
+
+        private void toolStripItemPaste_Click(object sender, EventArgs e)
+        {
+            if (_editorItem != null && _copiedItem != null && lstResources.Focused)
+            {
+                _editorItem.Load(_copiedItem);
+                UpdateEditor();
+            }
+        }
+
+        private void toolStripItemUndo_Click(object sender, EventArgs e)
+        {
+            if (_changed.Contains(_editorItem) && _editorItem != null)
+            {
+                if (MessageBox.Show("Are you sure you want to undo changes made to this game object? This action cannot be reverted!",
+                        "Undo Changes", MessageBoxButtons.YesNo) == DialogResult.Yes)
+                {
+                    _editorItem.RestoreBackup();
+                    UpdateEditor();
+                }
+            }
+        }
+
+        private void itemList_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Control)
+            {
+                if (e.KeyCode == Keys.Z)
+                {
+                    toolStripItemUndo_Click(null, null);
+                }
+                else if (e.KeyCode == Keys.V)
+                {
+                    toolStripItemPaste_Click(null, null);
+                }
+                else if (e.KeyCode == Keys.C)
+                {
+                    toolStripItemCopy_Click(null, null);
+                }
+            }
+            else
+            {
+                if (e.KeyCode == Keys.Delete)
+                {
+                    toolStripItemDelete_Click(null, null);
+                }
+            }
+        }
+
+        private void UpdateToolStripItems()
+        {
+            toolStripItemCopy.Enabled = _editorItem != null && lstResources.Focused;
+            toolStripItemPaste.Enabled = _editorItem != null && _copiedItem != null && lstResources.Focused;
+            toolStripItemDelete.Enabled = _editorItem != null && lstResources.Focused;
+            toolStripItemUndo.Enabled = _editorItem != null && lstResources.Focused;
+        }
+
+        private void itemList_FocusChanged(object sender, EventArgs e)
+        {
+            UpdateToolStripItems();
+        }
+
+        private void form_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Control)
+            {
+                if (e.KeyCode == Keys.N)
+                {
+                    toolStripItemNew_Click(null, null);
+                }
+            }
         }
     }
 }
