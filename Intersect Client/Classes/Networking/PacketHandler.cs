@@ -221,7 +221,7 @@ namespace Intersect_Client.Classes.Networking
                         break;
                     case ServerPackets.PartyInvite:
                         HandlePartyInvite(bf.ReadBytes(bf.Length()));
-			            break;
+                        break;
                     case ServerPackets.ChatBubble:
                         HandleChatBubble(bf.ReadBytes(bf.Length()));
                         break;
@@ -233,7 +233,7 @@ namespace Intersect_Client.Classes.Networking
                         break;
                     case ServerPackets.QuestProgress:
                         HandleQuestProgress(bf.ReadBytes(bf.Length()));
-						break;
+                        break;
                     case ServerPackets.TradeStart:
                         HandleTradeStart(bf.ReadBytes(bf.Length()));
                         break;
@@ -264,7 +264,7 @@ namespace Intersect_Client.Classes.Networking
             }
             else
             {
-                GameNetwork.Ping = (int)(Globals.System.GetTimeMS() - PingTime)/2;
+                GameNetwork.Ping = (int)(Globals.System.GetTimeMS() - PingTime) / 2;
             }
         }
 
@@ -326,9 +326,9 @@ namespace Intersect_Client.Classes.Networking
             var i = (int)bf.ReadLong();
             var entityType = bf.ReadInteger();
             var mapNum = bf.ReadInteger(false);
-            if (entityType != (int) EntityTypes.Event)
+            if (entityType != (int)EntityTypes.Event)
             {
-                var en = Globals.GetEntity(i, entityType,spawnTime);
+                var en = Globals.GetEntity(i, entityType, spawnTime);
                 if (en != null)
                 {
                     en.Load(bf);
@@ -338,7 +338,7 @@ namespace Intersect_Client.Classes.Networking
                     switch (entityType)
                     {
                         case (int)EntityTypes.Player:
-                            Globals.Entities.Add(i,new Player(i, spawnTime, bf));
+                            Globals.Entities.Add(i, new Player(i, spawnTime, bf));
                             break;
                         case (int)EntityTypes.GlobalEntity:
                             Globals.Entities.Add(i, new Entity(i, spawnTime, bf));
@@ -354,9 +354,9 @@ namespace Intersect_Client.Classes.Networking
             }
             else
             {
-                new Event(i, spawnTime,mapNum, bf);
+                new Event(i, spawnTime, mapNum, bf);
             }
-            
+
         }
 
         private static void HandleMapEntities(byte[] packet)
@@ -476,7 +476,7 @@ namespace Intersect_Client.Classes.Networking
         {
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
-            ChatboxMsg.AddMessage(new ChatboxMsg(bf.ReadString(), new Color((int)bf.ReadByte(), (int)bf.ReadByte(), (int)bf.ReadByte(), (int)bf.ReadByte()),bf.ReadString()));
+            ChatboxMsg.AddMessage(new ChatboxMsg(bf.ReadString(), new Color((int)bf.ReadByte(), (int)bf.ReadByte(), (int)bf.ReadByte(), (int)bf.ReadByte()), bf.ReadString()));
         }
 
         private static void HandleActionMsg(byte[] packet)
@@ -708,7 +708,7 @@ namespace Intersect_Client.Classes.Networking
 
             if (attackTimer > -1 && en != Globals.Me)
             {
-                en.AttackTimer = Globals.System.GetTimeMS() +  attackTimer;
+                en.AttackTimer = Globals.System.GetTimeMS() + attackTimer;
             }
         }
 
@@ -1278,7 +1278,7 @@ namespace Intersect_Client.Classes.Networking
             var dashTime = bf.ReadInteger();
             var direction = bf.ReadInteger();
             if (Globals.Entities.ContainsKey(index))
-                Globals.Entities[index].DashQueue.Enqueue(new DashInstance(Globals.Entities[index],endMap,endX,endY,dashTime, direction));
+                Globals.Entities[index].DashQueue.Enqueue(new DashInstance(Globals.Entities[index], endMap, endX, endY, dashTime, direction));
             bf.Dispose();
         }
 
@@ -1288,7 +1288,7 @@ namespace Intersect_Client.Classes.Networking
             bf.WriteBytes(packet);
             Globals.MapGridWidth = bf.ReadLong();
             Globals.MapGridHeight = bf.ReadLong();
-            Globals.MapGrid = new int[Globals.MapGridWidth,Globals.MapGridHeight];
+            Globals.MapGrid = new int[Globals.MapGridWidth, Globals.MapGridHeight];
             for (int x = 0; x < Globals.MapGridWidth; x++)
             {
                 for (int y = 0; y < Globals.MapGridHeight; y++)
@@ -1316,7 +1316,7 @@ namespace Intersect_Client.Classes.Networking
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
             DateTime time = DateTime.FromBinary(bf.ReadLong());
-            float rate = (float) bf.ReadDouble();
+            float rate = (float)bf.ReadDouble();
             Intersect_Library.Color clr = Intersect_Library.Color.FromArgb(bf.ReadByte(), bf.ReadByte(), bf.ReadByte(), bf.ReadByte());
             ClientTime.LoadTime(time, clr, rate);
         }
@@ -1426,6 +1426,7 @@ namespace Intersect_Client.Classes.Networking
                 }
                 bf.Dispose();
             }
+        }
 
         private static void HandleTradeStart(byte[] packet)
         {
