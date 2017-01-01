@@ -26,6 +26,7 @@
 */
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
 using IntersectClientExtras.File_Management;
 using IntersectClientExtras.GenericClasses;
@@ -130,7 +131,7 @@ namespace Intersect_Client_MonoGame.Classes.SFML.Graphics
         {
             if (_gameWindow.ClientBounds.Width != 0 && _gameWindow.ClientBounds.Height != 0 && (_gameWindow.ClientBounds.Width != _screenWidth || _gameWindow.ClientBounds.Height != _screenHeight) && !_graphics.IsFullScreen)
             {
-                UpdateGraphicsState(_gameWindow.ClientBounds.Width, _gameWindow.ClientBounds.Height);
+                UpdateGraphicsState(_screenWidth, _screenHeight);
             }
             StartSpritebatch(_currentView, GameBlendModes.Alpha, null, null, true, null);
             return true;
@@ -283,7 +284,7 @@ namespace Intersect_Client_MonoGame.Classes.SFML.Graphics
 
         public override void DrawTexture(GameTexture tex, FloatRect srcRectangle, FloatRect targetRect, Color renderColor, GameRenderTexture renderTarget = null, GameBlendModes blendMode = GameBlendModes.Alpha, GameShader shader = null, float rotationDegrees = 0, bool isUi = false)
         {
-            if (tex == null) return;
+            if (tex == null || tex.GetTexture() == null) return;
             Vector2 origin = Vector2.Zero;
             if (rotationDegrees != 0f)
             {
@@ -396,7 +397,7 @@ namespace Intersect_Client_MonoGame.Classes.SFML.Graphics
         public override GameFont LoadFont(string filename)
         {
             //Get font size from filename, format should be name_size.xnb or whatever
-            string name = GameContentManager.RemoveExtension(filename).Replace("resources/fonts/", "");
+            string name = GameContentManager.RemoveExtension(filename).Replace(Path.Combine("resources","fonts"), "").TrimStart(Path.DirectorySeparatorChar);
             string[] parts = name.Split('_');
             if (parts.Length >= 1)
             {

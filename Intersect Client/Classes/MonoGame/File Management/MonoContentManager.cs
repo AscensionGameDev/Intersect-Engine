@@ -37,6 +37,7 @@ using IntersectClientExtras.File_Management;
 using IntersectClientExtras.Graphics;
 using Intersect_Client.Classes.Core;
 using Intersect_MonoGameDx.Classes.SFML.Audio;
+using OpenTK.Graphics.OpenGL;
 
 namespace Intersect_Client.Classes.Bridges_and_Interfaces.SFML.File_Management
 {
@@ -156,9 +157,9 @@ namespace Intersect_Client.Classes.Bridges_and_Interfaces.SFML.File_Management
             tilesetDict.Clear();
             foreach (var t in tilesetnames)
             {
-                if (t != "" && File.Exists("resources/tilesets/" + t))
+                if (t != "" && File.Exists(Path.Combine("resources","tilesets",t)))
                 {
-                   tilesetDict.Add(t.ToLower(),GameGraphics.Renderer.LoadTexture("resources/tilesets/" + t));
+                   tilesetDict.Add(t.ToLower(),GameGraphics.Renderer.LoadTexture(Path.Combine("resources", "tilesets",t)));
                 }
             }
         }
@@ -166,12 +167,13 @@ namespace Intersect_Client.Classes.Bridges_and_Interfaces.SFML.File_Management
         public void LoadTextureGroup(string directory, Dictionary<string,GameTexture> dict)
         {
             dict.Clear();
-            if (!Directory.Exists("resources/" + directory)) { Directory.CreateDirectory("resources/" + directory); }
-            var items = Directory.GetFiles("resources/" + directory, "*.png");
+            var dir = Path.Combine("resources", directory);
+            if (!Directory.Exists(dir)) { Directory.CreateDirectory(dir); }
+            var items = Directory.GetFiles(dir, "*.png");
             for (int i = 0; i < items.Length; i++)
             {
-                string filename = items[i].Replace("resources/" + directory + "\\", "").ToLower();
-                dict.Add(filename, GameGraphics.Renderer.LoadTexture("resources/" + directory + "/" + filename));
+                string filename = items[i].Replace(dir, "").TrimStart(Path.DirectorySeparatorChar).ToLower();
+                dict.Add(filename, GameGraphics.Renderer.LoadTexture(Path.Combine(dir,filename)));
             }
         }
         public override void LoadItems()
@@ -222,12 +224,13 @@ namespace Intersect_Client.Classes.Bridges_and_Interfaces.SFML.File_Management
         public override void LoadFonts()
         {
             fontDict.Clear();
-            if (!Directory.Exists("resources/" + "fonts")) { Directory.CreateDirectory("resources/" + "fonts"); }
-            var items = Directory.GetFiles("resources/" + "fonts", "*.xnb");
+            var dir = Path.Combine("resources", "fonts");
+            if (!Directory.Exists(dir)) { Directory.CreateDirectory(dir); }
+            var items = Directory.GetFiles(dir, "*.xnb");
             for (int i = 0; i < items.Length; i++)
             {
-                string filename = items[i].Replace("resources/" + "fonts" + "\\", "").ToLower();
-                GameFont font = GameGraphics.Renderer.LoadFont("resources/" + "fonts" + "/" + filename);
+                string filename = items[i].Replace(dir, "").TrimStart(Path.DirectorySeparatorChar).ToLower();
+                GameFont font = GameGraphics.Renderer.LoadFont(Path.Combine(dir,filename));
                 if (fontDict.IndexOf(font) == -1)
                     fontDict.Add(font);
             }
@@ -236,36 +239,39 @@ namespace Intersect_Client.Classes.Bridges_and_Interfaces.SFML.File_Management
         public override void LoadShaders()
         {
             shaderDict.Clear();
-            if (!Directory.Exists("resources/" + "shaders")) { Directory.CreateDirectory("resources/" + "shaders"); }
-            var items = Directory.GetFiles("resources/" + "shaders", "*.xnb");
+            var dir = Path.Combine("resources", "shaders");
+            if (!Directory.Exists(dir)) { Directory.CreateDirectory(dir); }
+            var items = Directory.GetFiles(dir, "*.xnb");
             for (int i = 0; i < items.Length; i++)
             {
-                string filename = items[i].Replace("resources/" + "shaders" + "\\", "").ToLower();
-                shaderDict.Add(filename.Replace(".xnb",""), GameGraphics.Renderer.LoadShader("resources/" + "shaders" + "/" + filename));
+                string filename = items[i].Replace(dir, "").TrimStart(Path.DirectorySeparatorChar).ToLower();
+                shaderDict.Add(filename.Replace(".xnb",""), GameGraphics.Renderer.LoadShader(Path.Combine(dir,filename)));
             }
         }
 
         public override void LoadSounds()
         {
             soundDict.Clear();
-            if (!Directory.Exists("resources/" + "sounds")) { Directory.CreateDirectory("resources/" + "sounds"); }
-            var items = Directory.GetFiles("resources/" + "sounds", "*.wav");
+            var dir = Path.Combine("resources", "sounds");
+            if (!Directory.Exists(dir)) { Directory.CreateDirectory(dir); }
+            var items = Directory.GetFiles(dir, "*.wav");
             for (int i = 0; i < items.Length; i++)
             {
-                string filename = items[i].Replace("resources/" + "sounds" + "\\", "").ToLower();
-                soundDict.Add(RemoveExtension(filename), new MonoSoundSource("resources/" + "sounds" + "/" + filename));
+                string filename = items[i].Replace(dir, "").TrimStart(Path.DirectorySeparatorChar).ToLower();
+                soundDict.Add(RemoveExtension(filename), new MonoSoundSource(Path.Combine(dir,filename)));
             }
         }
 
         public override void LoadMusic()
         {
             musicDict.Clear();
-            if (!Directory.Exists("resources/" + "music")) { Directory.CreateDirectory("resources/" + "music"); }
-            var items = Directory.GetFiles("resources/" + "music", "*.mp3");
+            var dir = Path.Combine("resources", "music");
+            if (!Directory.Exists(dir)) { Directory.CreateDirectory(dir); }
+            var items = Directory.GetFiles(dir, "*.ogg");
             for (int i = 0; i < items.Length; i++)
             {
-                string filename =items[i].Replace("resources/" + "music" + "\\", "").ToLower();
-                musicDict.Add(RemoveExtension(filename), new MonoMusicSource("resources/" + "music" + "/" + filename));
+                string filename =items[i].Replace(dir, "").TrimStart(Path.DirectorySeparatorChar).ToLower();
+                musicDict.Add(RemoveExtension(filename), new MonoMusicSource(Path.Combine(dir,filename)));
             }
         }
     }

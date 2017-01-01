@@ -6,13 +6,13 @@
     <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
     <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{C968186B-F31E-4D90-9578-9F7C04117A02}</ProjectGuid>
+    <ProjectGuid>{D9F60DEA-44DF-4CA5-8F5D-3DF187C1D7C4}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Intersect_Client</RootNamespace>
     <AssemblyName>Intersect Client</AssemblyName>
     <FileAlignment>512</FileAlignment>
-    <MonoGamePlatform>Windows</MonoGamePlatform>
+    <MonoGamePlatform>DesktopGL</MonoGamePlatform>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
@@ -20,8 +20,8 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>bin\$(MonoGamePlatform)\$(Platform)\$(Configuration)\</OutputPath>
-    <DefineConstants>DEBUG;TRACE;WINDOWS</DefineConstants>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE;LINUX</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -29,8 +29,8 @@
     <PlatformTarget>x86</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>bin\$(MonoGamePlatform)\$(Platform)\$(Configuration)\</OutputPath>
-    <DefineConstants>TRACE;WINDOWS</DefineConstants>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE;LINUX</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -54,28 +54,12 @@
     <Compile Include="Classes\Entities\Resource.cs" />
     <Compile Include="Classes\General\ClientTime.cs" />
     <Compile Include="Classes\General\Enums.cs" />
-    <Compile Include="Classes\Maps\MapAnimationInstance.cs" />
-    <Compile Include="Classes\Maps\MapInstance.cs" />
-    <Compile Include="Classes\UI\Game\BanMuteBox.cs" />
-    <Compile Include="Classes\UI\Game\PartyWindow.cs" />
-    <Compile Include="Classes\UI\Game\Chat\ChatboxMsg.cs" />
-    <Compile Include="Classes\UI\Game\CraftingBenchWindow.cs" />
-    <Compile Include="Classes\UI\Game\QuestOfferWindow.cs" />
-    <Compile Include="Classes\UI\Game\QuestsWindow.cs" />
-    <Compile Include="Classes\UI\Game\TradingWindow.cs" />
-    <Compile Include="Forms\frmLoadingContent.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\frmLoadingContent.Designer.cs">
-      <DependentUpon>frmLoadingContent.cs</DependentUpon>
-    </Compile>
     <Compile Include="Classes\General\Globals.cs" />
     <Compile Include="Classes\Items\ItemInstance.cs" />
+    <Compile Include="Classes\Maps\MapAnimationInstance.cs" />
+    <Compile Include="Classes\Maps\MapInstance.cs" />
     <Compile Include="Classes\Misc\FieldChecking.cs" />
     <Compile Include="Classes\Misc\MathHelper.cs" />
-    <Compile Include="Classes\Networking\GameNetwork.cs" />
-    <Compile Include="Classes\Networking\PacketHandler.cs" />
-    <Compile Include="Classes\Networking\PacketSender.cs" />
     <Compile Include="Classes\MonoGame\Audio\MonoMusicInstance.cs" />
     <Compile Include="Classes\MonoGame\Audio\MonoMusicSource.cs" />
     <Compile Include="Classes\MonoGame\Audio\MonoSoundInstance.cs" />
@@ -90,12 +74,18 @@
     <Compile Include="Classes\MonoGame\Input\MonoInput.cs" />
     <Compile Include="Classes\MonoGame\Network\MonoSocket.cs" />
     <Compile Include="Classes\MonoGame\System\MonoSystem.cs" />
+    <Compile Include="Classes\Networking\GameNetwork.cs" />
+    <Compile Include="Classes\Networking\PacketHandler.cs" />
+    <Compile Include="Classes\Networking\PacketSender.cs" />
     <Compile Include="Classes\Spells\SpellInstance.cs" />
     <Compile Include="Classes\UI\ErrorMessageHandler.cs" />
     <Compile Include="Classes\UI\Game\AdminWindow.cs" />
     <Compile Include="Classes\UI\Game\BankWindow.cs" />
+    <Compile Include="Classes\UI\Game\BanMuteBox.cs" />
     <Compile Include="Classes\UI\Game\CharacterWindow.cs" />
     <Compile Include="Classes\UI\Game\Chat\Chatbox.cs" />
+    <Compile Include="Classes\UI\Game\Chat\ChatboxMsg.cs" />
+    <Compile Include="Classes\UI\Game\CraftingBenchWindow.cs" />
     <Compile Include="Classes\UI\Game\DebugMenu.cs" />
     <Compile Include="Classes\UI\Game\Draggable.cs" />
     <Compile Include="Classes\UI\Game\EntityBox.cs" />
@@ -106,9 +96,13 @@
     <Compile Include="Classes\UI\Game\InputBox.cs" />
     <Compile Include="Classes\UI\Game\InventoryWindow.cs" />
     <Compile Include="Classes\UI\Game\ItemDescWindow.cs" />
+    <Compile Include="Classes\UI\Game\PartyWindow.cs" />
+    <Compile Include="Classes\UI\Game\QuestOfferWindow.cs" />
+    <Compile Include="Classes\UI\Game\QuestsWindow.cs" />
     <Compile Include="Classes\UI\Game\ShopWindow.cs" />
     <Compile Include="Classes\UI\Game\SpellDescWindow.cs" />
     <Compile Include="Classes\UI\Game\SpellWindow.cs" />
+    <Compile Include="Classes\UI\Game\TradingWindow.cs" />
     <Compile Include="Classes\UI\Gui.cs" />
     <Compile Include="Classes\UI\Menu\CreateCharacterWindow.cs" />
     <Compile Include="Classes\UI\Menu\LoginWindow.cs" />
@@ -116,6 +110,12 @@
     <Compile Include="Classes\UI\Menu\MenuGuiBase.cs" />
     <Compile Include="Classes\UI\Menu\RegisterWindow.cs" />
     <Compile Include="Classes\UI\OptionsWindow.cs" />
+    <Compile Include="Forms\frmLoadingContent.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\frmLoadingContent.Designer.cs">
+      <DependentUpon>frmLoadingContent.cs</DependentUpon>
+    </Compile>
     <Compile Include="Intersect.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -125,23 +125,37 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>.\IntersectClientExtras.dll</HintPath>
     </Reference>
+    <Reference Include="OpenTK">
+      <HintPath>$(MonoGameInstallDirectory)\MonoGame\v3.0\Assemblies\DesktopGL\OpenTK.dll</HintPath>
+    </Reference>
+    <Reference Include="NVorbis">
+      <HintPath>$(MonoGameInstallDirectory)\MonoGame\v3.0\Assemblies\DesktopGL\NVorbis.dll</HintPath>
+    </Reference>
     <Reference Include="MonoGame.Framework">
-      <HintPath>$(MonoGameInstallDirectory)\MonoGame\v3.0\Assemblies\Windows\MonoGame.Framework.dll</HintPath>
+      <HintPath>$(MonoGameInstallDirectory)\MonoGame\v3.0\Assemblies\DesktopGL\MonoGame.Framework.dll</HintPath>
     </Reference>
     <Reference Include="System" />
-    <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.IO.Compression" />
     <Reference Include="System.IO.Compression.FileSystem" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Icon.ico" />
-  </ItemGroup>
-  <ItemGroup>
     <EmbeddedResource Include="Forms\frmLoadingContent.resx">
       <DependentUpon>frmLoadingContent.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Icon.ico">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <Content Include="IntersectClientExtras.dll" />
+    <Content Include="IntersectClientExtras.pdb" />
+    <Content Include="openal32.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="OpenTK.dll.config">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Intersect Library\Intersect Library\Intersect Library.csproj">

@@ -34,22 +34,48 @@ namespace Intersect_MonoGameDx.Classes.SFML.Audio
     public class MonoSoundSource : GameAudioSource
     {
         private SoundEffect _sound;
+        private string _filename;
+        private int _instanceCount = 0;
 
         public MonoSoundSource(string filename)
         {
-            using (var fileStream = new FileStream(filename, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
-            {
-                _sound = SoundEffect.FromStream(fileStream);
-            }
+            _filename = filename;
         }
         public override GameAudioInstance CreateInstance()
         {
             return new MonoSoundInstance(this);
         }
 
+        public void ReleaseEffect()
+        {
+            _instanceCount--;
+            if (_instanceCount == 0)
+            {
+                _sound.Dispose();
+                _sound = null;
+            }
+        }
+
         public SoundEffect GetEffect()
         {
+            if (_sound == null)
+            {
+                _instanceCount = 1;
+                LoadSound();
+            }
+            else
+            {
+                _instanceCount++;
+            }
             return _sound;
+        }
+
+        private void LoadSound()
+        {
+            using (var fileStream = new FileStream(_filename, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+            {
+                _sound = SoundEffect.FromStream(fileStream);
+            }
         }
     }
 }

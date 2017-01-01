@@ -49,7 +49,7 @@ namespace Intersect_Client.Classes.Bridges_and_Interfaces.SFML.System
 
         public override void LogError(string error)
         {
-            Debug.WriteLine(error);
+            Console.WriteLine(error);
         }
     }
 }
