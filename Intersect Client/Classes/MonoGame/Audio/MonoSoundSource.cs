@@ -28,6 +28,7 @@
 using System.IO;
 using IntersectClientExtras.Audio;
 using Microsoft.Xna.Framework.Audio;
+using Microsoft.Xna.Framework.Content;
 
 namespace Intersect_MonoGameDx.Classes.SFML.Audio
 {
@@ -36,13 +37,16 @@ namespace Intersect_MonoGameDx.Classes.SFML.Audio
         private SoundEffect _sound;
         private string _filename;
         private int _instanceCount = 0;
+        private ContentManager _contentManager;
 
-        public MonoSoundSource(string filename)
+        public MonoSoundSource(string filename, ContentManager contentManager)
         {
             _filename = filename;
+            _contentManager = contentManager;
         }
         public override GameAudioInstance CreateInstance()
         {
+            _instanceCount++;
             return new MonoSoundInstance(this);
         }
 
@@ -60,12 +64,7 @@ namespace Intersect_MonoGameDx.Classes.SFML.Audio
         {
             if (_sound == null)
             {
-                _instanceCount = 1;
                 LoadSound();
-            }
-            else
-            {
-                _instanceCount++;
             }
             return _sound;
         }
@@ -76,6 +75,7 @@ namespace Intersect_MonoGameDx.Classes.SFML.Audio
             {
                 _sound = SoundEffect.FromStream(fileStream);
             }
+
         }
     }
 }

@@ -1289,6 +1289,7 @@ namespace Intersect_Client.Classes.Networking
             Globals.MapGridWidth = bf.ReadLong();
             Globals.MapGridHeight = bf.ReadLong();
             Globals.MapGrid = new int[Globals.MapGridWidth, Globals.MapGridHeight];
+            Globals.GridMaps.Clear();
             for (int x = 0; x < Globals.MapGridWidth; x++)
             {
                 for (int y = 0; y < Globals.MapGridHeight; y++)
@@ -1296,6 +1297,7 @@ namespace Intersect_Client.Classes.Networking
                     Globals.MapGrid[x, y] = bf.ReadInteger();
                     if (Globals.MapGrid[x, y] != -1)
                     {
+                        Globals.GridMaps.Add(Globals.MapGrid[x,y]);
                         if (MapInstance.MapRequests.ContainsKey(Globals.MapGrid[x, y]))
                         {
                             MapInstance.MapRequests[Globals.MapGrid[x, y]] = Globals.System.GetTimeMS() + 2000;

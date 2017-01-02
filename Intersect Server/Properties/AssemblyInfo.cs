@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("Intersect Server")]
-[assembly: AssemblyDescription("2D ORPG Server - Part of the Intersect Game Creation Suite")]
+[assembly: AssemblyDescription("Intersect Server")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Ascension Game Development")]
+[assembly: AssemblyCompany("Ascension Game Dev")]
 [assembly: AssemblyProduct("Intersect Game Engine")]
-[assembly: AssemblyCopyright("Copyright ©  2016 JC Snider, Joe Bridges")]
+[assembly: AssemblyCopyright("Copyright ©  2017 JC Snider, Joe Bridges")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -28,5 +28,5 @@ using System.Runtime.InteropServices;
 //      Build Number
 //      Revision
 //
-[assembly: AssemblyVersion("0.0.1.9")]
-[assembly: AssemblyFileVersion("0.0.1.9")]
+[assembly: AssemblyVersion("0.1.0.0")]
+[assembly: AssemblyFileVersion("0.1.0.0")]

@@ -36,8 +36,8 @@ using System.Windows.Forms;
 using IntersectClientExtras.File_Management;
 using IntersectClientExtras.Graphics;
 using Intersect_Client.Classes.Core;
+using Intersect_Client_MonoGame.Classes.SFML.Graphics;
 using Intersect_MonoGameDx.Classes.SFML.Audio;
-using OpenTK.Graphics.OpenGL;
 
 namespace Intersect_Client.Classes.Bridges_and_Interfaces.SFML.File_Management
 {
@@ -258,7 +258,7 @@ namespace Intersect_Client.Classes.Bridges_and_Interfaces.SFML.File_Management
             for (int i = 0; i < items.Length; i++)
             {
                 string filename = items[i].Replace(dir, "").TrimStart(Path.DirectorySeparatorChar).ToLower();
-                soundDict.Add(RemoveExtension(filename), new MonoSoundSource(Path.Combine(dir,filename)));
+                soundDict.Add(RemoveExtension(filename), new MonoSoundSource(Path.Combine(dir,filename), ((MonoRenderer)GameGraphics.Renderer).GetContentManager()));
             }
         }
 

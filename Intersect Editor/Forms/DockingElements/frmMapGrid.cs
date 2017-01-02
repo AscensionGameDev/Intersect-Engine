@@ -54,7 +54,7 @@ namespace Intersect_Editor.Forms.DockingElements
                 if (EditorGraphics.GetGraphicsDevice() != null)
                 {
                     _chain = new SwapChainRenderTarget(EditorGraphics.GetGraphicsDevice(), this.pnlMapGrid.Handle,
-                        this.pnlMapGrid.Width, this.pnlMapGrid.Height, true, SurfaceFormat.Color, DepthFormat.Depth24, 0, RenderTargetUsage.DiscardContents, PresentInterval.Immediate);
+                        this.pnlMapGrid.Width, this.pnlMapGrid.Height, false, SurfaceFormat.Color, DepthFormat.Depth24, 0, RenderTargetUsage.DiscardContents, PresentInterval.Immediate);
                     EditorGraphics.SetMapGridChain(_chain);
                 }
             }

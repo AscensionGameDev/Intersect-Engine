@@ -1235,7 +1235,7 @@ Color.FromArgb(255, 255, 255, 255), target, MultiplyState);
         }
         public static void DrawLight(int x, int y, LightBase light, RenderTarget2D target)
         {
-            Effect shader = GetShader("radialgradient.xnb");
+            Effect shader = GetShader("radialgradient_editor.xnb");
             var vec = new Vector4(light.Color.R / 255f,
                 light.Color.G / 255f, light.Color.B / 255f, light.Intensity / 255f);
             shader.Parameters["LightColor"].SetValue(vec);

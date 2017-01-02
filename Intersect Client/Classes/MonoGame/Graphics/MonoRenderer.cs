@@ -216,6 +216,11 @@ namespace Intersect_Client_MonoGame.Classes.SFML.Graphics
             return _whiteTex;
         }
 
+        public ContentManager GetContentManager()
+        {
+            return _contentManager;
+        }
+
         public override GameRenderTexture CreateRenderTexture(int width, int height)
         {
             return new MonoRenderTexture(_graphicsDevice, width, height);
