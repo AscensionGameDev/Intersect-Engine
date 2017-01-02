@@ -1132,6 +1132,7 @@ namespace Intersect_Editor.Forms
         {
             if (_currentCommand <= -1) return;
             if (!_commandProperties[_currentCommand].Editable) return;
+            if (_commandProperties[_currentCommand].MyList.Commands.Count == 0) return;
             OpenEditCommand(_commandProperties[_currentCommand].MyList.Commands[_commandProperties[_currentCommand].MyIndex]);
             _isEdit = true;
         }
@@ -1297,7 +1298,7 @@ namespace Intersect_Editor.Forms
             if (!_commandProperties[i].Editable) return;
             lstEventCommands.SelectedIndex = i;
             commandMenu.Show((ListBox)sender, e.Location);
-            btnEdit.Enabled = true;
+            btnEdit.Enabled = i < _commandProperties[i].MyList.Commands.Count;
             btnDelete.Enabled = true;
         }
         private void lstEventCommands_DoubleClick(object sender, EventArgs e)
