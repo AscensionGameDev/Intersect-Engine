@@ -282,18 +282,18 @@ namespace Intersect_Editor.Classes
             {
                 for (var y = 0; y < ProjectileBase.SpawnLocationsHeight; y++)
                 {
-                    gfx.DrawImage(_directionGrid, new Rectangle(x * Options.TileWidth, y * Options.TileHeight, Options.TileWidth, Options.TileHeight), new Rectangle(0, 0, Options.TileWidth, Options.TileHeight), GraphicsUnit.Pixel);
+                    gfx.DrawImage(_directionGrid, new Rectangle(x * 32, y * 32, 32, 32), new Rectangle(0, 0, 32, 32), GraphicsUnit.Pixel);
                     for (var i = 0; i < ProjectileBase.MaxProjectileDirections; i++)
                     {
                         if (_editorItem.SpawnLocations[x, y].Directions[i] == true)
                         {
-                            gfx.DrawImage(_directionGrid, new Rectangle((x * Options.TileWidth) + DirectionOffsetX(i), (y * Options.TileHeight) + DirectionOffsetY(i), (Options.TileWidth - 2) / 3, (Options.TileHeight - 2) / 3), new Rectangle(Options.TileWidth + DirectionOffsetX(i), DirectionOffsetY(i), (Options.TileWidth - 2) / 3, (Options.TileHeight - 2) / 3), GraphicsUnit.Pixel);
+                            gfx.DrawImage(_directionGrid, new Rectangle((x * 32) + DirectionOffsetX(i), (y * 32) + DirectionOffsetY(i), (32 - 2) / 3, (32 - 2) / 3), new Rectangle(32 + DirectionOffsetX(i), DirectionOffsetY(i), (32 - 2) / 3, (32 - 2) / 3), GraphicsUnit.Pixel);
                         }
                     }
                 }
             }
 
-            gfx.DrawImage(_directionGrid, new Rectangle((picSpawns.Width / 2) - (((Options.TileHeight - 2) / 3) / 2), (picSpawns.Height / 2) - (((Options.TileHeight - 2) / 3) / 2), (Options.TileWidth - 2) / 3, (Options.TileHeight - 2) / 3), new Rectangle(43, 11, (Options.TileWidth - 2) / 3, (Options.TileHeight - 2) / 3), GraphicsUnit.Pixel);
+            gfx.DrawImage(_directionGrid, new Rectangle((picSpawns.Width / 2) - (((32 - 2) / 3) / 2), (picSpawns.Height / 2) - (((32 - 2) / 3) / 2), (32 - 2) / 3, (32 - 2) / 3), new Rectangle(43, 11, (32 - 2) / 3, (32 - 2) / 3), GraphicsUnit.Pixel);
             gfx.Dispose();
             picSpawns.Refresh();
         }
@@ -430,15 +430,15 @@ namespace Intersect_Editor.Classes
 
         private void picSpawns_MouseDown(object sender, MouseEventArgs e)
         {
-            double x = e.X / Options.TileWidth;
-            double y = e.Y / Options.TileHeight;
+            double x = e.X / 32;
+            double y = e.Y / 32;
             double i, j;
 
             x = Math.Floor(x);
             y = Math.Floor(y);
 
-            i = (e.X - (x * Options.TileWidth)) / (Options.TileWidth / 3);
-            j = (e.Y - (y * Options.TileHeight)) / (Options.TileWidth / 3);
+            i = (e.X - (x * 32)) / (32 / 3);
+            j = (e.Y - (y * 32)) / (32 / 3);
 
             i = Math.Floor(i);
             j = Math.Floor(j);
