@@ -31,10 +31,8 @@ namespace Intersect_Editor.Forms
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmItem));
             this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.btnUndo = new System.Windows.Forms.Button();
-            this.btnNew = new System.Windows.Forms.Button();
-            this.btnDelete = new System.Windows.Forms.Button();
             this.lstItems = new System.Windows.Forms.ListBox();
             this.btnCancel = new System.Windows.Forms.Button();
             this.btnSave = new System.Windows.Forms.Button();
@@ -113,6 +111,15 @@ namespace Intersect_Editor.Forms
             this.scrlEvent = new System.Windows.Forms.HScrollBar();
             this.lblEvent = new System.Windows.Forms.Label();
             this.pnlContainer = new System.Windows.Forms.Panel();
+            this.toolStrip = new System.Windows.Forms.ToolStrip();
+            this.toolStripItemNew = new System.Windows.Forms.ToolStripButton();
+            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+            this.toolStripItemDelete = new System.Windows.Forms.ToolStripButton();
+            this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
+            this.toolStripItemCopy = new System.Windows.Forms.ToolStripButton();
+            this.toolStripItemPaste = new System.Windows.Forms.ToolStripButton();
+            this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
+            this.toolStripItemUndo = new System.Windows.Forms.ToolStripButton();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.picItem)).BeginInit();
@@ -124,67 +131,33 @@ namespace Intersect_Editor.Forms
             this.gbSpell.SuspendLayout();
             this.grpEvent.SuspendLayout();
             this.pnlContainer.SuspendLayout();
+            this.toolStrip.SuspendLayout();
             this.SuspendLayout();
             // 
             // groupBox1
             // 
-            this.groupBox1.Controls.Add(this.btnUndo);
-            this.groupBox1.Controls.Add(this.btnNew);
-            this.groupBox1.Controls.Add(this.btnDelete);
             this.groupBox1.Controls.Add(this.lstItems);
-            this.groupBox1.Location = new System.Drawing.Point(12, 7);
+            this.groupBox1.Location = new System.Drawing.Point(12, 34);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(203, 476);
             this.groupBox1.TabIndex = 1;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Items";
             // 
-            // btnUndo
-            // 
-            this.btnUndo.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.btnUndo.Location = new System.Drawing.Point(6, 442);
-            this.btnUndo.Name = "btnUndo";
-            this.btnUndo.Size = new System.Drawing.Size(190, 28);
-            this.btnUndo.TabIndex = 5;
-            this.btnUndo.Text = "Undo Changes";
-            this.btnUndo.UseVisualStyleBackColor = true;
-            this.btnUndo.Click += new System.EventHandler(this.btnUndo_Click);
-            // 
-            // btnNew
-            // 
-            this.btnNew.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.btnNew.Location = new System.Drawing.Point(6, 375);
-            this.btnNew.Name = "btnNew";
-            this.btnNew.Size = new System.Drawing.Size(190, 28);
-            this.btnNew.TabIndex = 4;
-            this.btnNew.Text = "New";
-            this.btnNew.UseVisualStyleBackColor = true;
-            this.btnNew.Click += new System.EventHandler(this.btnNew_Click);
-            // 
-            // btnDelete
-            // 
-            this.btnDelete.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.btnDelete.Location = new System.Drawing.Point(7, 408);
-            this.btnDelete.Name = "btnDelete";
-            this.btnDelete.Size = new System.Drawing.Size(190, 28);
-            this.btnDelete.TabIndex = 3;
-            this.btnDelete.Text = "Delete";
-            this.btnDelete.UseVisualStyleBackColor = true;
-            this.btnDelete.Click += new System.EventHandler(this.btnDelete_Click);
-            // 
             // lstItems
             // 
             this.lstItems.FormattingEnabled = true;
             this.lstItems.Location = new System.Drawing.Point(6, 19);
             this.lstItems.Name = "lstItems";
-            this.lstItems.Size = new System.Drawing.Size(191, 342);
+            this.lstItems.Size = new System.Drawing.Size(191, 446);
             this.lstItems.TabIndex = 1;
             this.lstItems.Click += new System.EventHandler(this.lstItems_Click);
+            this.lstItems.KeyDown += new System.Windows.Forms.KeyEventHandler(this.itemList_KeyDown);
             // 
             // btnCancel
             // 
             this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.btnCancel.Location = new System.Drawing.Point(605, 456);
+            this.btnCancel.Location = new System.Drawing.Point(605, 483);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(190, 28);
             this.btnCancel.TabIndex = 4;
@@ -194,7 +167,7 @@ namespace Intersect_Editor.Forms
             // 
             // btnSave
             // 
-            this.btnSave.Location = new System.Drawing.Point(409, 456);
+            this.btnSave.Location = new System.Drawing.Point(409, 483);
             this.btnSave.Name = "btnSave";
             this.btnSave.Size = new System.Drawing.Size(190, 28);
             this.btnSave.TabIndex = 2;
@@ -997,28 +970,117 @@ namespace Intersect_Editor.Forms
             this.pnlContainer.Controls.Add(this.grpEvent);
             this.pnlContainer.Controls.Add(this.gbEquipment);
             this.pnlContainer.Controls.Add(this.gbSpell);
-            this.pnlContainer.Location = new System.Drawing.Point(221, 7);
+            this.pnlContainer.Location = new System.Drawing.Point(221, 34);
             this.pnlContainer.Name = "pnlContainer";
             this.pnlContainer.Size = new System.Drawing.Size(574, 442);
             this.pnlContainer.TabIndex = 43;
             this.pnlContainer.Visible = false;
+            // 
+            // toolStrip
+            // 
+            this.toolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripItemNew,
+            this.toolStripSeparator1,
+            this.toolStripItemDelete,
+            this.toolStripSeparator2,
+            this.toolStripItemCopy,
+            this.toolStripItemPaste,
+            this.toolStripSeparator3,
+            this.toolStripItemUndo});
+            this.toolStrip.Location = new System.Drawing.Point(0, 0);
+            this.toolStrip.Name = "toolStrip";
+            this.toolStrip.Size = new System.Drawing.Size(807, 25);
+            this.toolStrip.TabIndex = 44;
+            this.toolStrip.Text = "toolStrip1";
+            // 
+            // toolStripItemNew
+            // 
+            this.toolStripItemNew.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toolStripItemNew.Image = ((System.Drawing.Image)(resources.GetObject("toolStripItemNew.Image")));
+            this.toolStripItemNew.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripItemNew.Name = "toolStripItemNew";
+            this.toolStripItemNew.Size = new System.Drawing.Size(23, 22);
+            this.toolStripItemNew.Text = "New";
+            this.toolStripItemNew.Click += new System.EventHandler(this.toolStripItemNew_Click);
+            // 
+            // toolStripSeparator1
+            // 
+            this.toolStripSeparator1.Name = "toolStripSeparator1";
+            this.toolStripSeparator1.Size = new System.Drawing.Size(6, 25);
+            // 
+            // toolStripItemDelete
+            // 
+            this.toolStripItemDelete.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toolStripItemDelete.Enabled = false;
+            this.toolStripItemDelete.Image = ((System.Drawing.Image)(resources.GetObject("toolStripItemDelete.Image")));
+            this.toolStripItemDelete.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripItemDelete.Name = "toolStripItemDelete";
+            this.toolStripItemDelete.Size = new System.Drawing.Size(23, 22);
+            this.toolStripItemDelete.Text = "Delete";
+            this.toolStripItemDelete.Click += new System.EventHandler(this.toolStripItemDelete_Click);
+            // 
+            // toolStripSeparator2
+            // 
+            this.toolStripSeparator2.Name = "toolStripSeparator2";
+            this.toolStripSeparator2.Size = new System.Drawing.Size(6, 25);
+            // 
+            // toolStripItemCopy
+            // 
+            this.toolStripItemCopy.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toolStripItemCopy.Enabled = false;
+            this.toolStripItemCopy.Image = ((System.Drawing.Image)(resources.GetObject("toolStripItemCopy.Image")));
+            this.toolStripItemCopy.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripItemCopy.Name = "toolStripItemCopy";
+            this.toolStripItemCopy.Size = new System.Drawing.Size(23, 22);
+            this.toolStripItemCopy.Text = "Copy";
+            this.toolStripItemCopy.Click += new System.EventHandler(this.toolStripItemCopy_Click);
+            // 
+            // toolStripItemPaste
+            // 
+            this.toolStripItemPaste.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toolStripItemPaste.Enabled = false;
+            this.toolStripItemPaste.Image = ((System.Drawing.Image)(resources.GetObject("toolStripItemPaste.Image")));
+            this.toolStripItemPaste.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripItemPaste.Name = "toolStripItemPaste";
+            this.toolStripItemPaste.Size = new System.Drawing.Size(23, 22);
+            this.toolStripItemPaste.Text = "Paste";
+            this.toolStripItemPaste.Click += new System.EventHandler(this.toolStripItemPaste_Click);
+            // 
+            // toolStripSeparator3
+            // 
+            this.toolStripSeparator3.Name = "toolStripSeparator3";
+            this.toolStripSeparator3.Size = new System.Drawing.Size(6, 25);
+            // 
+            // toolStripItemUndo
+            // 
+            this.toolStripItemUndo.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toolStripItemUndo.Enabled = false;
+            this.toolStripItemUndo.Image = ((System.Drawing.Image)(resources.GetObject("toolStripItemUndo.Image")));
+            this.toolStripItemUndo.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripItemUndo.Name = "toolStripItemUndo";
+            this.toolStripItemUndo.Size = new System.Drawing.Size(23, 22);
+            this.toolStripItemUndo.Text = "Undo";
+            this.toolStripItemUndo.Click += new System.EventHandler(this.toolStripItemUndo_Click);
             // 
             // FrmItem
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.AutoSize = true;
-            this.ClientSize = new System.Drawing.Size(807, 491);
+            this.ClientSize = new System.Drawing.Size(807, 517);
             this.ControlBox = false;
+            this.Controls.Add(this.toolStrip);
             this.Controls.Add(this.btnCancel);
             this.Controls.Add(this.btnSave);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.pnlContainer);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+            this.KeyPreview = true;
             this.Name = "FrmItem";
             this.Text = "Item Editor";
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.FrmItem_FormClosed);
             this.Load += new System.EventHandler(this.frmItem_Load);
+            this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.form_KeyDown);
             this.groupBox1.ResumeLayout(false);
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
@@ -1036,7 +1098,10 @@ namespace Intersect_Editor.Forms
             this.grpEvent.ResumeLayout(false);
             this.grpEvent.PerformLayout();
             this.pnlContainer.ResumeLayout(false);
+            this.toolStrip.ResumeLayout(false);
+            this.toolStrip.PerformLayout();
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -1044,7 +1109,6 @@ namespace Intersect_Editor.Forms
 
         private GroupBox groupBox1;
         private ListBox lstItems;
-        private Button btnDelete;
         private Button btnSave;
         private GroupBox groupBox2;
         private Label label1;
@@ -1116,13 +1180,20 @@ namespace Intersect_Editor.Forms
         private GroupBox grpEvent;
         private HScrollBar scrlEvent;
         private Label lblEvent;
-        private Button btnUndo;
-        private Button btnNew;
         private Panel pnlContainer;
         private Label label8;
         private ComboBox cmbGender;
         private ComboBox cmbFemalePaperdoll;
         private Label label10;
         private PictureBox picFemalePaperdoll;
+        private ToolStrip toolStrip;
+        private ToolStripButton toolStripItemNew;
+        private ToolStripSeparator toolStripSeparator1;
+        private ToolStripButton toolStripItemDelete;
+        private ToolStripSeparator toolStripSeparator2;
+        public ToolStripButton toolStripItemCopy;
+        public ToolStripButton toolStripItemPaste;
+        private ToolStripSeparator toolStripSeparator3;
+        public ToolStripButton toolStripItemUndo;
     }
 }

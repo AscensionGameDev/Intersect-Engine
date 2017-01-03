@@ -28,13 +28,11 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmCrafting));
             this.btnCancel = new System.Windows.Forms.Button();
             this.btnSave = new System.Windows.Forms.Button();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.btnUndo = new System.Windows.Forms.Button();
             this.lstCrafts = new System.Windows.Forms.ListBox();
-            this.btnNew = new System.Windows.Forms.Button();
-            this.btnDelete = new System.Windows.Forms.Button();
             this.pnlContainer = new System.Windows.Forms.Panel();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.lstCompositions = new System.Windows.Forms.ListBox();
@@ -55,17 +53,27 @@
             this.lstIngredients = new System.Windows.Forms.ListBox();
             this.lblQuantity = new System.Windows.Forms.Label();
             this.scrlQuantity = new System.Windows.Forms.HScrollBar();
+            this.toolStrip = new System.Windows.Forms.ToolStrip();
+            this.toolStripItemNew = new System.Windows.Forms.ToolStripButton();
+            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+            this.toolStripItemDelete = new System.Windows.Forms.ToolStripButton();
+            this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
+            this.toolStripItemCopy = new System.Windows.Forms.ToolStripButton();
+            this.toolStripItemPaste = new System.Windows.Forms.ToolStripButton();
+            this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
+            this.toolStripItemUndo = new System.Windows.Forms.ToolStripButton();
             this.groupBox1.SuspendLayout();
             this.pnlContainer.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
             this.groupBox5.SuspendLayout();
+            this.toolStrip.SuspendLayout();
             this.SuspendLayout();
             // 
             // btnCancel
             // 
             this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.btnCancel.Location = new System.Drawing.Point(544, 418);
+            this.btnCancel.Location = new System.Drawing.Point(544, 442);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(172, 27);
             this.btnCancel.TabIndex = 24;
@@ -75,7 +83,7 @@
             // 
             // btnSave
             // 
-            this.btnSave.Location = new System.Drawing.Point(333, 418);
+            this.btnSave.Location = new System.Drawing.Point(333, 442);
             this.btnSave.Name = "btnSave";
             this.btnSave.Size = new System.Drawing.Size(169, 27);
             this.btnSave.TabIndex = 23;
@@ -85,65 +93,30 @@
             // 
             // groupBox1
             // 
-            this.groupBox1.Controls.Add(this.btnUndo);
             this.groupBox1.Controls.Add(this.lstCrafts);
-            this.groupBox1.Controls.Add(this.btnNew);
-            this.groupBox1.Controls.Add(this.btnDelete);
-            this.groupBox1.Location = new System.Drawing.Point(12, 12);
+            this.groupBox1.Location = new System.Drawing.Point(12, 36);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(203, 398);
             this.groupBox1.TabIndex = 22;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Benches";
             // 
-            // btnUndo
-            // 
-            this.btnUndo.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.btnUndo.Location = new System.Drawing.Point(6, 360);
-            this.btnUndo.Name = "btnUndo";
-            this.btnUndo.Size = new System.Drawing.Size(190, 27);
-            this.btnUndo.TabIndex = 22;
-            this.btnUndo.Text = "Undo Changes";
-            this.btnUndo.UseVisualStyleBackColor = true;
-            this.btnUndo.Click += new System.EventHandler(this.btnUndo_Click);
-            // 
             // lstCrafts
             // 
             this.lstCrafts.FormattingEnabled = true;
             this.lstCrafts.Location = new System.Drawing.Point(6, 19);
             this.lstCrafts.Name = "lstCrafts";
-            this.lstCrafts.Size = new System.Drawing.Size(191, 264);
+            this.lstCrafts.Size = new System.Drawing.Size(191, 368);
             this.lstCrafts.TabIndex = 1;
             this.lstCrafts.Click += new System.EventHandler(this.lstCrafts_Click);
-            // 
-            // btnNew
-            // 
-            this.btnNew.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.btnNew.Location = new System.Drawing.Point(6, 294);
-            this.btnNew.Name = "btnNew";
-            this.btnNew.Size = new System.Drawing.Size(190, 27);
-            this.btnNew.TabIndex = 20;
-            this.btnNew.Text = "New";
-            this.btnNew.UseVisualStyleBackColor = true;
-            this.btnNew.Click += new System.EventHandler(this.btnNew_Click);
-            // 
-            // btnDelete
-            // 
-            this.btnDelete.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.btnDelete.Location = new System.Drawing.Point(7, 327);
-            this.btnDelete.Name = "btnDelete";
-            this.btnDelete.Size = new System.Drawing.Size(190, 27);
-            this.btnDelete.TabIndex = 19;
-            this.btnDelete.Text = "Delete";
-            this.btnDelete.UseVisualStyleBackColor = true;
-            this.btnDelete.Click += new System.EventHandler(this.btnDelete_Click);
+            this.lstCrafts.KeyDown += new System.Windows.Forms.KeyEventHandler(this.itemList_KeyDown);
             // 
             // pnlContainer
             // 
             this.pnlContainer.Controls.Add(this.groupBox2);
             this.pnlContainer.Controls.Add(this.groupBox3);
             this.pnlContainer.Controls.Add(this.groupBox5);
-            this.pnlContainer.Location = new System.Drawing.Point(221, 12);
+            this.pnlContainer.Location = new System.Drawing.Point(221, 36);
             this.pnlContainer.Name = "pnlContainer";
             this.pnlContainer.Size = new System.Drawing.Size(495, 398);
             this.pnlContainer.TabIndex = 31;
@@ -353,20 +326,109 @@
             this.scrlQuantity.Value = 1;
             this.scrlQuantity.Scroll += new System.Windows.Forms.ScrollEventHandler(this.scrlQuantity_Scroll);
             // 
+            // toolStrip
+            // 
+            this.toolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripItemNew,
+            this.toolStripSeparator1,
+            this.toolStripItemDelete,
+            this.toolStripSeparator2,
+            this.toolStripItemCopy,
+            this.toolStripItemPaste,
+            this.toolStripSeparator3,
+            this.toolStripItemUndo});
+            this.toolStrip.Location = new System.Drawing.Point(0, 0);
+            this.toolStrip.Name = "toolStrip";
+            this.toolStrip.Size = new System.Drawing.Size(725, 25);
+            this.toolStrip.TabIndex = 43;
+            this.toolStrip.Text = "toolStrip1";
+            // 
+            // toolStripItemNew
+            // 
+            this.toolStripItemNew.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toolStripItemNew.Image = ((System.Drawing.Image)(resources.GetObject("toolStripItemNew.Image")));
+            this.toolStripItemNew.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripItemNew.Name = "toolStripItemNew";
+            this.toolStripItemNew.Size = new System.Drawing.Size(23, 22);
+            this.toolStripItemNew.Text = "New";
+            this.toolStripItemNew.Click += new System.EventHandler(this.toolStripItemNew_Click);
+            // 
+            // toolStripSeparator1
+            // 
+            this.toolStripSeparator1.Name = "toolStripSeparator1";
+            this.toolStripSeparator1.Size = new System.Drawing.Size(6, 25);
+            // 
+            // toolStripItemDelete
+            // 
+            this.toolStripItemDelete.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toolStripItemDelete.Enabled = false;
+            this.toolStripItemDelete.Image = ((System.Drawing.Image)(resources.GetObject("toolStripItemDelete.Image")));
+            this.toolStripItemDelete.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripItemDelete.Name = "toolStripItemDelete";
+            this.toolStripItemDelete.Size = new System.Drawing.Size(23, 22);
+            this.toolStripItemDelete.Text = "Delete";
+            this.toolStripItemDelete.Click += new System.EventHandler(this.toolStripItemDelete_Click);
+            // 
+            // toolStripSeparator2
+            // 
+            this.toolStripSeparator2.Name = "toolStripSeparator2";
+            this.toolStripSeparator2.Size = new System.Drawing.Size(6, 25);
+            // 
+            // toolStripItemCopy
+            // 
+            this.toolStripItemCopy.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toolStripItemCopy.Enabled = false;
+            this.toolStripItemCopy.Image = ((System.Drawing.Image)(resources.GetObject("toolStripItemCopy.Image")));
+            this.toolStripItemCopy.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripItemCopy.Name = "toolStripItemCopy";
+            this.toolStripItemCopy.Size = new System.Drawing.Size(23, 22);
+            this.toolStripItemCopy.Text = "Copy";
+            this.toolStripItemCopy.Click += new System.EventHandler(this.toolStripItemCopy_Click);
+            // 
+            // toolStripItemPaste
+            // 
+            this.toolStripItemPaste.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toolStripItemPaste.Enabled = false;
+            this.toolStripItemPaste.Image = ((System.Drawing.Image)(resources.GetObject("toolStripItemPaste.Image")));
+            this.toolStripItemPaste.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripItemPaste.Name = "toolStripItemPaste";
+            this.toolStripItemPaste.Size = new System.Drawing.Size(23, 22);
+            this.toolStripItemPaste.Text = "Paste";
+            this.toolStripItemPaste.Click += new System.EventHandler(this.toolStripItemPaste_Click);
+            // 
+            // toolStripSeparator3
+            // 
+            this.toolStripSeparator3.Name = "toolStripSeparator3";
+            this.toolStripSeparator3.Size = new System.Drawing.Size(6, 25);
+            // 
+            // toolStripItemUndo
+            // 
+            this.toolStripItemUndo.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toolStripItemUndo.Enabled = false;
+            this.toolStripItemUndo.Image = ((System.Drawing.Image)(resources.GetObject("toolStripItemUndo.Image")));
+            this.toolStripItemUndo.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripItemUndo.Name = "toolStripItemUndo";
+            this.toolStripItemUndo.Size = new System.Drawing.Size(23, 22);
+            this.toolStripItemUndo.Text = "Undo";
+            this.toolStripItemUndo.Click += new System.EventHandler(this.toolStripItemUndo_Click);
+            // 
             // frmCrafting
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(725, 449);
+            this.ClientSize = new System.Drawing.Size(725, 474);
             this.ControlBox = false;
+            this.Controls.Add(this.toolStrip);
             this.Controls.Add(this.pnlContainer);
             this.Controls.Add(this.btnCancel);
             this.Controls.Add(this.btnSave);
             this.Controls.Add(this.groupBox1);
+            this.KeyPreview = true;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "frmCrafting";
             this.Text = "Crafting Bench Editor";
+            this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.form_KeyDown);
             this.groupBox1.ResumeLayout(false);
             this.pnlContainer.ResumeLayout(false);
             this.groupBox2.ResumeLayout(false);
@@ -374,7 +436,10 @@
             this.groupBox3.PerformLayout();
             this.groupBox5.ResumeLayout(false);
             this.groupBox5.PerformLayout();
+            this.toolStrip.ResumeLayout(false);
+            this.toolStrip.PerformLayout();
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -383,10 +448,7 @@
         private System.Windows.Forms.Button btnCancel;
         private System.Windows.Forms.Button btnSave;
         private System.Windows.Forms.GroupBox groupBox1;
-        private System.Windows.Forms.Button btnUndo;
         private System.Windows.Forms.ListBox lstCrafts;
-        private System.Windows.Forms.Button btnNew;
-        private System.Windows.Forms.Button btnDelete;
         private System.Windows.Forms.Panel pnlContainer;
         private System.Windows.Forms.GroupBox groupBox3;
         private System.Windows.Forms.Label lblItem;
@@ -407,5 +469,14 @@
         private System.Windows.Forms.ListBox lstCompositions;
         private System.Windows.Forms.Button btnNewComposition;
         private System.Windows.Forms.Button btnDeleteCraft;
+        private System.Windows.Forms.ToolStrip toolStrip;
+        private System.Windows.Forms.ToolStripButton toolStripItemNew;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
+        private System.Windows.Forms.ToolStripButton toolStripItemDelete;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
+        public System.Windows.Forms.ToolStripButton toolStripItemCopy;
+        public System.Windows.Forms.ToolStripButton toolStripItemPaste;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
+        public System.Windows.Forms.ToolStripButton toolStripItemUndo;
     }
 }

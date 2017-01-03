@@ -100,5 +100,9 @@
         //Extras
         SetClass,
         DespawnNpc,
+        //Questing
+        StartQuest,
+        CompleteQuestTask,
+        EndQuest,
     }
 }

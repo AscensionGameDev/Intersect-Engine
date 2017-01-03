@@ -33,6 +33,7 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
         private EventCommand _myCommand;
         private EventPage _currentPage;
         private readonly FrmEvent _eventEditor;
+        public bool Cancelled = false;
         public EventCommand_ConditionalBranch(EventCommand refCommand, EventPage refPage, FrmEvent editor)
         {
             InitializeComponent();
@@ -88,6 +89,32 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
                     cmbTime1.SelectedIndex = Math.Min(_myCommand.Ints[1],cmbTime1.Items.Count-1);
                     cmbTime2.SelectedIndex = Math.Min(_myCommand.Ints[2], cmbTime2.Items.Count - 1);
                     break;
+                case 11: //Can Start Quest
+                    cmbStartQuest.SelectedIndex = Database.GameObjectListIndex(GameObject.Quest, _myCommand.Ints[1]);
+                    break;
+                case 12: //Quest In Progress
+                    cmbQuestInProgress.SelectedIndex = Database.GameObjectListIndex(GameObject.Quest, _myCommand.Ints[1]);
+                    cmbTaskModifier.SelectedIndex = _myCommand.Ints[2];
+                    if (cmbTaskModifier.SelectedIndex == -1) cmbTaskModifier.SelectedIndex = 0;
+                    if (cmbTaskModifier.SelectedIndex != 0)
+                    {
+                        //Get Quest Task Here
+                        var quest = QuestBase.GetQuest(Database.GameObjectIdFromList(GameObject.Quest, cmbQuestInProgress.SelectedIndex));
+                        if (quest != null)
+                        {
+                            for (int i = 0; i < quest.Tasks.Count; i++)
+                            {
+                                if (quest.Tasks[i].Id == _myCommand.Ints[3])
+                                {
+                                    cmbQuestTask.SelectedIndex = i;
+                                }
+                            }
+                        }
+                    }
+                    break;
+                case 13: //Quest Completed
+                    cmbCompletedQuest.SelectedIndex = Database.GameObjectListIndex(GameObject.Quest, _myCommand.Ints[1]);
+                    break;
             }
         }
 
@@ -101,6 +128,10 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
             grpLevel.Hide();
             grpSelfSwitch.Hide();
             grpPowerIs.Hide();
+            grpTime.Hide();
+            grpStartQuest.Hide();
+            grpQuestInProgress.Hide();
+            grpQuestCompleted.Hide();
             switch (cmbConditionType.SelectedIndex)
             {
                 case 0: //Player Switch
@@ -187,9 +218,28 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
                     cmbTime1.SelectedIndex = 0;
                     cmbTime2.SelectedIndex = 0;
                     break;
-                case 11: //Player death...
+                case 11: //Can Start Quest
+                    grpStartQuest.Show();
+                    cmbStartQuest.Items.Clear();
+                    cmbStartQuest.Items.AddRange(Database.GetGameObjectList(GameObject.Quest));
+                    if (cmbStartQuest.Items.Count > 0) cmbStartQuest.SelectedIndex = 0;
                     break;
-                case 12: //No NPC's on map
+                case 12: //Quest In Progress
+                    grpQuestInProgress.Show();
+                    cmbQuestInProgress.Items.Clear();
+                    cmbQuestInProgress.Items.AddRange(Database.GetGameObjectList(GameObject.Quest));
+                    if (cmbQuestInProgress.Items.Count > 0) cmbQuestInProgress.SelectedIndex = 0;
+                    cmbTaskModifier.SelectedIndex = 0;
+                    break;
+                case 13: //Quest Completed
+                    grpQuestCompleted.Show();
+                    cmbCompletedQuest.Items.Clear();
+                    cmbCompletedQuest.Items.AddRange(Database.GetGameObjectList(GameObject.Quest));
+                    if (cmbCompletedQuest.Items.Count > 0) cmbCompletedQuest.SelectedIndex = 0;
+                    break;
+                case 14: //Player death...
+                    break;
+                case 15: //No NPC's on map
                     break;
             }
         }
@@ -197,15 +247,18 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
         private void btnSave_Click(object sender, EventArgs e)
         {
             int n;
-            if (_currentPage.Conditions.IndexOf(_myCommand) == -1)
+            if (_currentPage != null)
             {
-                if (_myCommand.Ints[4] == 0)
-                // command.Ints[4 & 5] are reserved for referencing which command list the true/false braches follow
+                if (_currentPage.Conditions.IndexOf(_myCommand) == -1)
                 {
-                    for (var i = 0; i < 2; i++)
+                    if (_myCommand.Ints[4] == 0)
+                        // command.Ints[4 & 5] are reserved for referencing which command list the true/false braches follow
                     {
-                        _currentPage.CommandLists.Add(new CommandList());
-                        _myCommand.Ints[4 + i] = _currentPage.CommandLists.Count - 1;
+                        for (var i = 0; i < 2; i++)
+                        {
+                            _currentPage.CommandLists.Add(new CommandList());
+                            _myCommand.Ints[4 + i] = _currentPage.CommandLists.Count - 1;
+                        }
                     }
                 }
             }
@@ -270,19 +323,58 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
                     _myCommand.Ints[1] = cmbTime1.SelectedIndex;
                     _myCommand.Ints[2] = cmbTime2.SelectedIndex;
                     break;
-                case 11: //Player death...
+                case 12: //Quest IN Progress
+                    _myCommand.Ints[1] = Database.GameObjectIdFromList(GameObject.Quest, cmbQuestInProgress.SelectedIndex);
+                    _myCommand.Ints[2] = cmbTaskModifier.SelectedIndex;
+                    _myCommand.Ints[3] = -1;
+                    if (cmbTaskModifier.SelectedIndex != 0)
+                    {
+                        //Get Quest Task Here
+                        var quest = QuestBase.GetQuest(Database.GameObjectIdFromList(GameObject.Quest, cmbQuestInProgress.SelectedIndex));
+                        if (quest != null)
+                        {
+                            if (cmbQuestTask.SelectedIndex > -1)
+                            {
+                                _myCommand.Ints[3] = quest.Tasks[cmbQuestTask.SelectedIndex].Id;
+                            }
+                        }
+                    }
+                    break;
+                case 13: //Quest Completed
+                    _myCommand.Ints[1] = Database.GameObjectIdFromList(GameObject.Quest, cmbCompletedQuest.SelectedIndex);
+                    break;
+                case 14: //Player death...
+                    break;
+                case 15: //Can Start Quest
+                    _myCommand.Ints[1] = Database.GameObjectIdFromList(GameObject.Quest, cmbStartQuest.SelectedIndex);
                     break;
             }
-            _eventEditor.FinishCommandEdit();
+            if (_eventEditor != null)
+            {
+                _eventEditor.FinishCommandEdit();
+            }
+            else
+            {
+                if (ParentForm != null) ParentForm.Close();
+            }
         }
 
         private void btnCancel_Click(object sender, EventArgs e)
         {
-            if (_currentPage.Conditions.IndexOf(_myCommand) > -1)
+            if (_currentPage != null)
             {
-                _currentPage.Conditions.Remove(_myCommand);
+                if (_currentPage.Conditions.IndexOf(_myCommand) > -1)
+                {
+                    _currentPage.Conditions.Remove(_myCommand);
+                    _eventEditor.CancelCommandEdit(false,true);
+                }
+                else
+                {
+                    _eventEditor.CancelCommandEdit();
+                }
             }
-            _eventEditor.CancelCommandEdit();
+            Cancelled = true;
+            if (ParentForm != null) ParentForm.Close();
         }
 
         private void cmbConditionType_SelectedIndexChanged(object sender, EventArgs e)
@@ -298,6 +390,33 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
         private void scrlLevel_Scroll(object sender, ScrollEventArgs e)
         {
             lblLevel.Text = @"Level: " + scrlLevel.Value;
+        }
+
+        private void cmbTaskModifier_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (cmbTaskModifier.SelectedIndex == 0)
+            {
+                cmbQuestTask.Enabled = false;
+            }
+            else
+            {
+                cmbQuestTask.Enabled = true;
+            }
+        }
+
+        private void cmbQuestInProgress_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            cmbQuestTask.Items.Clear();
+            var quest =
+                QuestBase.GetQuest(Database.GameObjectIdFromList(GameObject.Quest, cmbQuestInProgress.SelectedIndex));
+            if (quest != null)
+            {
+                foreach (var task in quest.Tasks)
+                {
+                    cmbQuestTask.Items.Add(task.GetTaskString());
+                }
+                if (cmbQuestTask.Items.Count > 0) cmbQuestTask.SelectedIndex = 0;
+            }
         }
     }
 }

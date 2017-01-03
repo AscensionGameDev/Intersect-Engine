@@ -38,8 +38,9 @@ namespace Intersect_Editor.Forms
             System.Windows.Forms.ListViewGroup listViewGroup4 = new System.Windows.Forms.ListViewGroup("Movement", System.Windows.Forms.HorizontalAlignment.Left);
             System.Windows.Forms.ListViewGroup listViewGroup5 = new System.Windows.Forms.ListViewGroup("Questing", System.Windows.Forms.HorizontalAlignment.Left);
             System.Windows.Forms.ListViewGroup listViewGroup6 = new System.Windows.Forms.ListViewGroup("Special Effects", System.Windows.Forms.HorizontalAlignment.Left);
-            System.Windows.Forms.ListViewGroup listViewGroup7 = new System.Windows.Forms.ListViewGroup("Etc", System.Windows.Forms.HorizontalAlignment.Left);
-            System.Windows.Forms.ListViewGroup listViewGroup8 = new System.Windows.Forms.ListViewGroup("Shop and Bank", System.Windows.Forms.HorizontalAlignment.Left);
+            System.Windows.Forms.ListViewGroup listViewGroup7 = new System.Windows.Forms.ListViewGroup("Quest Control", System.Windows.Forms.HorizontalAlignment.Left);
+            System.Windows.Forms.ListViewGroup listViewGroup8 = new System.Windows.Forms.ListViewGroup("Etc", System.Windows.Forms.HorizontalAlignment.Left);
+            System.Windows.Forms.ListViewGroup listViewGroup9 = new System.Windows.Forms.ListViewGroup("Shop and Bank", System.Windows.Forms.HorizontalAlignment.Left);
             System.Windows.Forms.ListViewItem listViewItem1 = new System.Windows.Forms.ListViewItem("Show Text");
             System.Windows.Forms.ListViewItem listViewItem2 = new System.Windows.Forms.ListViewItem("Show Options");
             System.Windows.Forms.ListViewItem listViewItem3 = new System.Windows.Forms.ListViewItem("Add Chatbox Text");
@@ -79,6 +80,9 @@ namespace Intersect_Editor.Forms
             System.Windows.Forms.ListViewItem listViewItem37 = new System.Windows.Forms.ListViewItem("Open Crafting Station");
             System.Windows.Forms.ListViewItem listViewItem38 = new System.Windows.Forms.ListViewItem("Change Class");
             System.Windows.Forms.ListViewItem listViewItem39 = new System.Windows.Forms.ListViewItem("Despawn NPC");
+            System.Windows.Forms.ListViewItem listViewItem40 = new System.Windows.Forms.ListViewItem("Start Quest");
+            System.Windows.Forms.ListViewItem listViewItem41 = new System.Windows.Forms.ListViewItem("Complete Quest Task");
+            System.Windows.Forms.ListViewItem listViewItem42 = new System.Windows.Forms.ListViewItem("End Quest");
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmEvent));
             this.label1 = new System.Windows.Forms.Label();
             this.txtEventname = new System.Windows.Forms.TextBox();
@@ -141,7 +145,7 @@ namespace Intersect_Editor.Forms
             this.lblTriggerVal = new System.Windows.Forms.Label();
             this.cmbTriggerVal = new System.Windows.Forms.ComboBox();
             this.panel2 = new System.Windows.Forms.Panel();
-            this.groupBox4 = new System.Windows.Forms.GroupBox();
+            this.grpTriggers = new System.Windows.Forms.GroupBox();
             this.tabControl.SuspendLayout();
             this.grpEntityOptions.SuspendLayout();
             this.groupBox6.SuspendLayout();
@@ -154,7 +158,7 @@ namespace Intersect_Editor.Forms
             this.commandMenu.SuspendLayout();
             this.grpPageOptions.SuspendLayout();
             this.groupBox7.SuspendLayout();
-            this.groupBox4.SuspendLayout();
+            this.grpTriggers.SuspendLayout();
             this.SuspendLayout();
             // 
             // label1
@@ -610,10 +614,12 @@ namespace Intersect_Editor.Forms
             listViewGroup5.Name = "Questing";
             listViewGroup6.Header = "Special Effects";
             listViewGroup6.Name = "Special Effects";
-            listViewGroup7.Header = "Etc";
-            listViewGroup7.Name = "Etc";
-            listViewGroup8.Header = "Shop and Bank";
-            listViewGroup8.Name = "Shop and Bank";
+            listViewGroup7.Header = "Quest Control";
+            listViewGroup7.Name = "Quest Control";
+            listViewGroup8.Header = "Etc";
+            listViewGroup8.Name = "Etc";
+            listViewGroup9.Header = "Shop and Bank";
+            listViewGroup9.Name = "Shop and Bank";
             this.lstCommands.Groups.AddRange(new System.Windows.Forms.ListViewGroup[] {
             listViewGroup1,
             listViewGroup2,
@@ -622,7 +628,8 @@ namespace Intersect_Editor.Forms
             listViewGroup5,
             listViewGroup6,
             listViewGroup7,
-            listViewGroup8});
+            listViewGroup8,
+            listViewGroup9});
             this.lstCommands.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.None;
             this.lstCommands.ImeMode = System.Windows.Forms.ImeMode.NoControl;
             listViewItem1.Group = listViewGroup1;
@@ -664,12 +671,15 @@ namespace Intersect_Editor.Forms
             listViewItem31.Group = listViewGroup6;
             listViewItem32.Group = listViewGroup6;
             listViewItem33.Group = listViewGroup6;
-            listViewItem34.Group = listViewGroup7;
-            listViewItem35.Group = listViewGroup8;
-            listViewItem36.Group = listViewGroup8;
-            listViewItem37.Group = listViewGroup8;
+            listViewItem34.Group = listViewGroup8;
+            listViewItem35.Group = listViewGroup9;
+            listViewItem36.Group = listViewGroup9;
+            listViewItem37.Group = listViewGroup9;
             listViewItem38.Group = listViewGroup3;
             listViewItem39.Group = listViewGroup4;
+            listViewItem40.Group = listViewGroup7;
+            listViewItem41.Group = listViewGroup7;
+            listViewItem42.Group = listViewGroup7;
             this.lstCommands.Items.AddRange(new System.Windows.Forms.ListViewItem[] {
             listViewItem1,
             listViewItem2,
@@ -709,7 +719,10 @@ namespace Intersect_Editor.Forms
             listViewItem36,
             listViewItem37,
             listViewItem38,
-            listViewItem39});
+            listViewItem39,
+            listViewItem40,
+            listViewItem41,
+            listViewItem42});
             this.lstCommands.Location = new System.Drawing.Point(7, 30);
             this.lstCommands.MultiSelect = false;
             this.lstCommands.Name = "lstCommands";
@@ -924,17 +937,17 @@ namespace Intersect_Editor.Forms
             this.panel2.Size = new System.Drawing.Size(810, 497);
             this.panel2.TabIndex = 20;
             // 
-            // groupBox4
+            // grpTriggers
             // 
-            this.groupBox4.Controls.Add(this.lblTriggerVal);
-            this.groupBox4.Controls.Add(this.cmbTrigger);
-            this.groupBox4.Controls.Add(this.cmbTriggerVal);
-            this.groupBox4.Controls.Add(this.label7);
-            this.groupBox4.Location = new System.Drawing.Point(512, 48);
-            this.groupBox4.Name = "groupBox4";
-            this.groupBox4.Size = new System.Drawing.Size(311, 35);
-            this.groupBox4.TabIndex = 21;
-            this.groupBox4.TabStop = false;
+            this.grpTriggers.Controls.Add(this.lblTriggerVal);
+            this.grpTriggers.Controls.Add(this.cmbTrigger);
+            this.grpTriggers.Controls.Add(this.cmbTriggerVal);
+            this.grpTriggers.Controls.Add(this.label7);
+            this.grpTriggers.Location = new System.Drawing.Point(512, 48);
+            this.grpTriggers.Name = "grpTriggers";
+            this.grpTriggers.Size = new System.Drawing.Size(311, 35);
+            this.grpTriggers.TabIndex = 21;
+            this.grpTriggers.TabStop = false;
             // 
             // FrmEvent
             // 
@@ -943,7 +956,7 @@ namespace Intersect_Editor.Forms
             this.AutoSize = true;
             this.ClientSize = new System.Drawing.Size(835, 622);
             this.Controls.Add(this.grpPageOptions);
-            this.Controls.Add(this.groupBox4);
+            this.Controls.Add(this.grpTriggers);
             this.Controls.Add(this.grpEntityOptions);
             this.Controls.Add(this.grpEventConditions);
             this.Controls.Add(this.groupBox7);
@@ -983,8 +996,8 @@ namespace Intersect_Editor.Forms
             this.grpPageOptions.ResumeLayout(false);
             this.groupBox7.ResumeLayout(false);
             this.groupBox7.PerformLayout();
-            this.groupBox4.ResumeLayout(false);
-            this.groupBox4.PerformLayout();
+            this.grpTriggers.ResumeLayout(false);
+            this.grpTriggers.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -1052,6 +1065,6 @@ namespace Intersect_Editor.Forms
         private Label lblTriggerVal;
         private ComboBox cmbTriggerVal;
         private Panel panel2;
-        private GroupBox groupBox4;
+        private GroupBox grpTriggers;
     }
 }

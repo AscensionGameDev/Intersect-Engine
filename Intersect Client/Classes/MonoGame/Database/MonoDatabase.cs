@@ -62,14 +62,14 @@ namespace Intersect_Client.Classes.Bridges_and_Interfaces.SFML.Database
 
         public override bool LoadConfig()
         {
-            if (!File.Exists("resources/config.xml"))
+            if (!File.Exists(Path.Combine("resources","config.xml")))
             {
-                File.WriteAllText("resources/config.xml",base.GetDefaultConfig());
+                File.WriteAllText(Path.Combine("resources", "config.xml"), base.GetDefaultConfig());
                 return LoadConfig();
             }
             else
             {
-                string xmldata = File.ReadAllText("resources/config.xml");
+                string xmldata = File.ReadAllText(Path.Combine("resources", "config.xml"));
                 return base.LoadConfigFromXml(xmldata);
             }
         }

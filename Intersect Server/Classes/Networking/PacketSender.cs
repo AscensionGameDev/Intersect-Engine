@@ -257,6 +257,7 @@ namespace Intersect_Server.Classes.Networking
                 SendPlayerEquipmentToProximity(client.Entity);
                 SendPointsTo(client);
                 SendHotbarSlots(client);
+                SendQuestsProgress(client);
             }
         }
 
@@ -1332,6 +1333,51 @@ namespace Intersect_Server.Classes.Networking
             bf.WriteInteger(map);
             bf.WriteString(text);
             SendDataToProximity(map, bf.ToArray());
+            bf.Dispose();
+        }
+
+        public static void SendQuestOffer(Player player, int questId)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteLong((int)ServerPackets.QuestOffer);
+            bf.WriteInteger(questId);
+            SendDataTo(player.MyClient, bf.ToArray());
+            bf.Dispose();
+        }
+        public static void SendQuestsProgress(Client client)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteLong((int)ServerPackets.QuestProgress);
+            bf.WriteInteger(client.Entity.Quests.Count);
+            foreach (var quest in client.Entity.Quests)
+            {
+                bf.WriteInteger(quest.Key);
+                bf.WriteByte(1);
+                bf.WriteInteger(quest.Value.completed);
+                bf.WriteInteger(quest.Value.task);
+                bf.WriteInteger(quest.Value.taskProgress);
+            }
+            SendDataTo(client, bf.ToArray());
+            bf.Dispose();
+        }
+        public static void SendQuestProgress(Player player, int questId)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteLong((int)ServerPackets.QuestProgress);
+            bf.WriteInteger(1);
+            bf.WriteInteger(questId);
+            if (player.Quests.ContainsKey(questId))
+            {
+                bf.WriteByte(1);
+                bf.WriteInteger(player.Quests[questId].completed);
+                bf.WriteInteger(player.Quests[questId].task);
+                bf.WriteInteger(player.Quests[questId].taskProgress);
+            }
+            else
+            {
+                bf.WriteByte(0);
+            }
+            SendDataTo(player.MyClient, bf.ToArray());
             bf.Dispose();
         }
 

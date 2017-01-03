@@ -1,4 +1,5 @@
 ﻿using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 // General Information about an assembly is controlled through the following 
@@ -7,9 +8,9 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("Intersect Client")]
 [assembly: AssemblyProduct("Intersect Game Engine")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyDescription("2D ORPG Client - Part of the Intersect Game Creation Suite")]
-[assembly: AssemblyCompany("Ascension Game Development")]
-[assembly: AssemblyCopyright("Copyright ©  2016 JC Snider, Joe Bridges")]
+[assembly: AssemblyDescription("Intersect Client")]
+[assembly: AssemblyCompany("Ascension Game Dev")]
+[assembly: AssemblyCopyright("Copyright ©  2017 JC Snider, Joe Bridges")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -19,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("c0e25ce4-70e8-42ad-b42f-99d8778ccfff")]
+[assembly: Guid("06a02cb5-2c81-44e9-a58a-154fa4261677")]
 
 // Version information for an assembly consists of the following four values:
 //
@@ -31,5 +32,5 @@ using System.Runtime.InteropServices;
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("0.0.1.9")]
-[assembly: AssemblyFileVersion("0.0.1.9")]
+[assembly: AssemblyVersion("0.1.0.0")]
+[assembly: AssemblyFileVersion("0.1.0.0")]

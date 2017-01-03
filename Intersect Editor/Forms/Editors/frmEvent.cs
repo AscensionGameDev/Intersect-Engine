@@ -105,6 +105,11 @@ namespace Intersect_Editor.Forms
             _eventBackup = new ByteBuffer();
             _eventBackup.WriteBytes(MyEvent.EventData());
             txtEventname.Text = MyEvent.MyName;
+            if (MyEvent.MyIndex < 0)
+            {
+                txtEventname.Enabled = false;
+                grpTriggers.Hide();
+            }
             cmbPreviewFace.Items.Clear();
             cmbPreviewFace.Items.Add("None");
             cmbPreviewFace.Items.AddRange(GameContentManager.GetTextureNames(GameContentManager.TextureType.Face));
@@ -217,7 +222,7 @@ namespace Intersect_Editor.Forms
             {
                 CancelCommandEdit();
             }
-            if (MyEvent.CommonEvent)
+            if (MyEvent.CommonEvent && MyEvent.MyIndex >= 0)
             {
                 PacketSender.SendSaveObject(MyEvent);
             }
@@ -430,6 +435,58 @@ namespace Intersect_Editor.Forms
 
                             _commandProperties.Add(clp);
                             break;
+
+                        case EventCommandType.StartQuest:
+                            lstEventCommands.Items.Add(indent + "@> " + GetCommandText(commandList.Commands[i]));
+                            clp = new CommandListProperties
+                            {
+                                Editable = true,
+                                MyIndex = i,
+                                MyList = commandList,
+                                Cmd = commandList.Commands[i],
+                                Type = commandList.Commands[i].Type
+                            };
+                            _commandProperties.Add(clp);
+
+                            //When the quest is accepted/started successfully:
+                            lstEventCommands.Items.Add(indent + "      : Quest Accepted/Started Successfully");
+                            clp = new CommandListProperties
+                            {
+                                Editable = false,
+                                MyIndex = i,
+                                MyList = commandList,
+                                Type = commandList.Commands[i].Type,
+                                Cmd = commandList.Commands[i]
+                            };
+                            _commandProperties.Add(clp);
+                            PrintCommandList(CurrentPage.CommandLists[commandList.Commands[i].Ints[4]], indent + "          ");
+
+                            //When the quest was declined or requirements not met:
+                            lstEventCommands.Items.Add(indent + "      : Quest Declined or Failed to Start (Reqs not met, already started, etc)");
+                            clp = new CommandListProperties
+                            {
+                                Editable = false,
+                                MyIndex = i,
+                                MyList = commandList,
+                                Type = commandList.Commands[i].Type,
+                                Cmd = commandList.Commands[i]
+                            };
+                            _commandProperties.Add(clp);
+                            PrintCommandList(CurrentPage.CommandLists[commandList.Commands[i].Ints[5]], indent + "          ");
+
+
+                            lstEventCommands.Items.Add(indent + "      : End Start Quest");
+                            clp = new CommandListProperties
+                            {
+                                Editable = false,
+                                MyIndex = i,
+                                MyList = commandList,
+                                Type = commandList.Commands[i].Type,
+                                Cmd = commandList.Commands[i]
+                            };
+
+                            _commandProperties.Add(clp);
+                            break;
                         default:
                             lstEventCommands.Items.Add(indent + "@> " + GetCommandText(commandList.Commands[i]));
                             clp = new CommandListProperties
@@ -529,7 +586,7 @@ namespace Intersect_Editor.Forms
                 case EventCommandType.SetSelfSwitch:
                     return "Set Self Switch " + (char)('A' + command.Ints[0]) + " to " + Convert.ToBoolean(command.Ints[1]);
                 case EventCommandType.ConditionalBranch:
-                    return "Conditional Branch: [" + GetConditionalDesc(command) + "]";
+                    return "Conditional Branch: [" + command.GetConditionalDesc() + "]";
                 case EventCommandType.ExitEventProcess:
                     return "Exit event processing";
                 case EventCommandType.Label:
@@ -768,150 +825,43 @@ namespace Intersect_Editor.Forms
                     return "Open Crafting Bench [" + BenchBase.GetName(command.Ints[0]) + "]";
                 case EventCommandType.SetClass:
                     return "Set Class [" + ClassBase.GetName(command.Ints[0]) + "]";
+                case EventCommandType.StartQuest:
+                    if (command.Ints[1] == 0)
+                    {
+                        return "Start Quest [" + QuestBase.GetName(command.Ints[0]) + ", Forced Start]";
+                    }
+                    else
+                    {
+                        return "Start Quest [" + QuestBase.GetName(command.Ints[0]) + ", Show Offer Window]";
+                    }
+                case EventCommandType.CompleteQuestTask:
+                    var quest = QuestBase.GetQuest(command.Ints[0]);
+                    if (quest == null)
+                    {
+                        return "Complete Quest Task [Quest: " + "Deleted]";
+                    }
+                    //Try to find task
+                    foreach (var task in quest.Tasks)
+                    {
+                        if (task.Id == command.Ints[1])
+                        {
+                            return "Complete Quest Task [Quest: " + QuestBase.GetName(command.Ints[0]) + ", Task: " +
+                                   task.GetTaskString() + "]";
+                        }
+                    }
+                    return "Complete Quest Task [Quest: " + QuestBase.GetName(command.Ints[0]) + ", Task: Undefined]";
+                case EventCommandType.EndQuest:
+                    if (command.Ints[1] == 0)
+                    {
+                        return "End Quest [" + QuestBase.GetName(command.Ints[0]) + ", Running Completion Event]";
+                    }
+                    else
+                    {
+                        return "End Quest [" + QuestBase.GetName(command.Ints[0]) + ", Without Running Completion Event]";
+                    }
                 default:
                     return "Unknown Command";
             }
-        }
-
-        private string GetConditionalDesc(EventCommand command)
-        {
-            if (command.Type != EventCommandType.ConditionalBranch) return "";
-            string output = "";
-            switch (command.Ints[0])
-            {
-                case 0: //Player Switch
-                    return "Player Switch " + PlayerSwitchBase.GetName(command.Ints[1]) + " is " + Convert.ToBoolean(command.Ints[2]);
-                case 1: //Player Variables
-                    output = "Player Variable " + PlayerVariableBase.GetName(command.Ints[1]);
-                    switch (command.Ints[2])
-                    {
-                        case 0:
-                            output += " is equal to ";
-                            break;
-                        case 1:
-                            output += " is greater than or equal to ";
-                            break;
-                        case 2:
-                            output += " is less than or equal to ";
-                            break;
-                        case 3:
-                            output += " is greater than ";
-                            break;
-                        case 4:
-                            output += " is less than ";
-                            break;
-                        case 5:
-                            output += " does not equal ";
-                            break;
-                    }
-                    output += command.Ints[3];
-                    return output;
-                case 2: //Global Switch
-                    return "Global Switch " + ServerSwitchBase.GetName(command.Ints[1]) + " is " + Convert.ToBoolean(command.Ints[2]);
-                case 3: //Global Variables
-                    output = "Global Variable " + ServerVariableBase.GetName(command.Ints[1]);
-                    switch (command.Ints[2])
-                    {
-                        case 0:
-                            output += " is equal to ";
-                            break;
-                        case 1:
-                            output += " is greater than or equal to ";
-                            break;
-                        case 2:
-                            output += " is less than or equal to ";
-                            break;
-                        case 3:
-                            output += " is greater than ";
-                            break;
-                        case 4:
-                            output += " is less than ";
-                            break;
-                        case 5:
-                            output += " does not equal ";
-                            break;
-                    }
-                    output += command.Ints[3];
-                    return output;
-                case 4: //Has Item
-                    return "Player has at least " + command.Ints[2] + " of Item " + ItemBase.GetName(command.Ints[1]);
-                case 5: //Class Is
-                    return "Player's class is " + ClassBase.GetName(command.Ints[1]); ;
-                case 6: //Knows spell
-                    return "Player knows Spell " + SpellBase.GetName(command.Ints[1]); ;
-                case 7: //Level is
-                    output = "Player's level";
-                    switch (command.Ints[1])
-                    {
-                        case 0:
-                            output += " is equal to ";
-                            break;
-                        case 1:
-                            output += " is greater than or equal to ";
-                            break;
-                        case 2:
-                            output += " is less than or equal to ";
-                            break;
-                        case 3:
-                            output += " is greater than ";
-                            break;
-                        case 4:
-                            output += " is less than ";
-                            break;
-                        case 5:
-                            output += " does not equal ";
-                            break;
-                    }
-                    output += command.Ints[2];
-                    return output;
-                case 8: //Self Switch
-                    return "Self Switch " + (char)('A' + command.Ints[1]) + " is " + Convert.ToBoolean(command.Ints[2]);
-                case 9: //Power is
-                    output = "Player's Power is";
-                    switch (command.Ints[1])
-                    {
-                        case 0:
-                            output += " Mod or Admin";
-                            break;
-                        case 1:
-                            output += " Admin";
-                            break;
-                    }
-                    return output;
-                case 10: //Time is between
-                    var timeRanges = new List<string>();
-                    var time = new DateTime(2000, 1, 1, 0, 0, 0);
-                    for (int i = 0; i < 1440; i += TimeBase.GetTimeBase().RangeInterval)
-                    {
-                        var addRange = time.ToString("h:mm:ss tt") + " to ";
-                        time = time.AddMinutes(TimeBase.GetTimeBase().RangeInterval);
-                        addRange += time.ToString("h:mm:ss tt");
-                        timeRanges.Add(addRange);
-                    }
-                    output = "Time is between ";
-                    if (command.Ints[1] > -1 && command.Ints[1] < timeRanges.Count)
-                    {
-                        output += timeRanges[command.Ints[1]] + " and";
-                    }
-                    else
-                    {
-                        output += "invalid and";
-                    }
-                    if (command.Ints[2] > -1 && command.Ints[2] < timeRanges.Count)
-                    {
-                        output += timeRanges[command.Ints[2]];
-                    }
-                    else
-                    {
-                        output += "invalid";
-                    }
-                    return output;
-                case 11: //Player death
-                    return "Player death";
-                case 12: //No NPCs on map
-                    return "No NPCs on the map";
-            }
-            return "";
         }
 
         private void lstCommands_ItemActivated(object sender, EventArgs e)
@@ -1072,6 +1022,15 @@ namespace Intersect_Editor.Forms
                 case EventCommandType.SetClass:
                     cmdWindow = new EventCommand_SetClass(command,this);
                     break;
+                case EventCommandType.StartQuest:
+                    cmdWindow = new EventCommand_StartQuest(command,CurrentPage, this);
+                    break;
+                case EventCommandType.CompleteQuestTask:
+                    cmdWindow = new EventCommand_CompleteQuestTask(command, this);
+                    break;
+                case EventCommandType.EndQuest:
+                    cmdWindow = new EventCommand_EndQuest(command, this);
+                    break;
                 default:
                     throw new ArgumentOutOfRangeException();
             }
@@ -1121,9 +1080,9 @@ namespace Intersect_Editor.Forms
         /// <summary>
         /// Resets the form when a user cancels editting or creating a new command for the event.
         /// </summary>
-        public void CancelCommandEdit(bool moveRoute = false)
+        public void CancelCommandEdit(bool moveRoute = false, bool condition = false)
         {
-            if (_currentCommand > -1 && _commandProperties.Count > _currentCommand)
+            if (_currentCommand > -1 && _commandProperties.Count > _currentCommand && !condition)
             {
                 if (!_isEdit)
                 {
@@ -1177,6 +1136,7 @@ namespace Intersect_Editor.Forms
         {
             if (_currentCommand <= -1) return;
             if (!_commandProperties[_currentCommand].Editable) return;
+            if (_commandProperties[_currentCommand].MyList.Commands.Count == 0) return;
             OpenEditCommand(_commandProperties[_currentCommand].MyList.Commands[_commandProperties[_currentCommand].MyIndex]);
             _isEdit = true;
         }
@@ -1342,7 +1302,7 @@ namespace Intersect_Editor.Forms
             if (!_commandProperties[i].Editable) return;
             lstEventCommands.SelectedIndex = i;
             commandMenu.Show((ListBox)sender, e.Location);
-            btnEdit.Enabled = true;
+            btnEdit.Enabled = i < _commandProperties[i].MyList.Commands.Count;
             btnDelete.Enabled = true;
         }
         private void lstEventCommands_DoubleClick(object sender, EventArgs e)
@@ -1435,7 +1395,7 @@ namespace Intersect_Editor.Forms
             lstConditions.Items.Clear();
             for (int i = 0; i < CurrentPage.Conditions.Count(); i++)
             {
-                lstConditions.Items.Add((i + 1) + ". " + GetConditionalDesc(CurrentPage.Conditions[i]));
+                lstConditions.Items.Add((i + 1) + ". " + CurrentPage.Conditions[i].GetConditionalDesc());
             }
         }
 

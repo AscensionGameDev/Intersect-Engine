@@ -60,7 +60,7 @@ namespace Intersect_Editor.Forms
                 if (EditorGraphics.GetGraphicsDevice() != null)
                 {
                     _chain = new SwapChainRenderTarget(EditorGraphics.GetGraphicsDevice(), this.picMap.Handle,
-                        this.picMap.Width, this.picMap.Height,true,SurfaceFormat.Color,DepthFormat.Depth24,0,RenderTargetUsage.DiscardContents,PresentInterval.Immediate);
+                        this.picMap.Width, this.picMap.Height,false,SurfaceFormat.Color,DepthFormat.Depth24,0,RenderTargetUsage.DiscardContents,PresentInterval.Immediate);
                     EditorGraphics.SetMapEditorChain(_chain);
                 }
             }
@@ -990,8 +990,8 @@ namespace Intersect_Editor.Forms
                         else if (Globals.CurrentLayer < Options.LayerCount)
                         {
                             tmpMap.Layers[Globals.CurrentLayer].Tiles[Globals.CurTileX, Globals.CurTileY].TilesetIndex = -1;
-                            tmpMap.Layers[Globals.CurrentLayer].Tiles[Globals.CurTileX, Globals.CurTileY].X = -1;
-                            tmpMap.Layers[Globals.CurrentLayer].Tiles[Globals.CurTileX, Globals.CurTileY].Y = -1;
+                            tmpMap.Layers[Globals.CurrentLayer].Tiles[Globals.CurTileX, Globals.CurTileY].X = 0;
+                            tmpMap.Layers[Globals.CurrentLayer].Tiles[Globals.CurTileX, Globals.CurTileY].Y = 0;
                             tmpMap.Layers[Globals.CurrentLayer].Tiles[Globals.CurTileX, Globals.CurTileY].Autotile = 0;
                         }
                     }

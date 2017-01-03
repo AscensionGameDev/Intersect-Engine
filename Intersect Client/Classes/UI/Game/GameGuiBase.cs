@@ -28,6 +28,7 @@
 using IntersectClientExtras.Gwen.Control;
 using Intersect_Client.Classes.General;
 using Intersect_Client.Classes.Networking;
+using Intersect_Library.GameObjects;
 
 namespace Intersect_Client.Classes.UI.Game
 {
@@ -37,6 +38,7 @@ namespace Intersect_Client.Classes.UI.Game
         private DebugMenu _debugMenu;
         private ShopWindow _shopWindow;
         private BankWindow _bankWindow;
+        private QuestOfferWindow _questOfferWindow;
         private CraftingBenchWindow _CraftingBenchWindow;
         private TradingWindow _TradingWindow;
         public bool FocusChat;
@@ -47,6 +49,7 @@ namespace Intersect_Client.Classes.UI.Game
         private bool _shouldCloseBank = false;
         private bool _shouldOpenCraftingBench = false;
         private bool _shouldCloseCraftingBench = false;
+        private bool _shouldUpdateQuestLog = true;
         private bool _shouldOpenTrading = false;
         private bool _shouldCloseTrading = false;
         private int _tradingTarget = -1;
@@ -73,6 +76,7 @@ namespace Intersect_Client.Classes.UI.Game
             GameMenu = new GameMenu(GameCanvas);
             Hotbar = new HotBarWindow(GameCanvas);
             _debugMenu = new DebugMenu(GameCanvas);
+            _questOfferWindow = new QuestOfferWindow(GameCanvas);
             if (Globals.Me != null) { TryAddPlayerBox(); }
         }
 
@@ -151,6 +155,12 @@ namespace Intersect_Client.Classes.UI.Game
             Globals.InCraft = true;
         }
 
+        //Quest Log
+        public void NotifyQuestsUpdated()
+        {
+            _shouldUpdateQuestLog = true;
+		}
+		
         //Trading
         public void NotifyOpenTrading(int index)
         {
@@ -213,10 +223,21 @@ namespace Intersect_Client.Classes.UI.Game
             if (Globals.Me != null) { TryAddPlayerBox(); }
             _eventWindow.Update();
             _chatBox.Update();
-            GameMenu.Update();
+            GameMenu.Update(_shouldUpdateQuestLog);
+            _shouldUpdateQuestLog = false;
             Hotbar.Update();
             _debugMenu.Update();
             if (_playerBox != null) { _playerBox.Update(); }
+
+            if (Globals.QuestOffers.Count > 0)
+            {
+                var quest = QuestBase.GetQuest(Globals.QuestOffers[0]);
+                _questOfferWindow.Update(quest);
+            }
+            else
+            {
+                _questOfferWindow.Hide();
+            }
 
             //Admin window update
             if (_shouldOpenAdminWindow)

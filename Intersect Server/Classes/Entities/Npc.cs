@@ -87,10 +87,13 @@ namespace Intersect_Server.Classes.Entities
             return EntityTypes.GlobalEntity;
         }
 
-        public override void Die(bool dropitems = false)
+        public override void Die(bool dropitems = false, Entity killer = null)
         {
-            base.Die(dropitems);
-
+            base.Die(dropitems, killer);
+            if (killer != null && killer.GetType() == typeof(Player))
+            {
+                ((Player)killer).KilledEntity(this);
+            }
             MapInstance.GetMap(CurrentMap).RemoveEntity(this);
             PacketSender.SendEntityLeave(MyIndex, (int)EntityTypes.GlobalEntity, CurrentMap);
             Globals.Entities[MyIndex] = null;

@@ -37,9 +37,12 @@ namespace Intersect_MonoGameDx.Classes.SFML.Audio
         private SoundEffectInstance _instance;
         private bool _disposed;
         private int _volume;
+        private MonoSoundSource _source;
+
         public MonoSoundInstance(GameAudioSource music) : base(music)
         {
-            _instance = ((MonoSoundSource)music).GetEffect().CreateInstance();
+            _source = ((MonoSoundSource) music);
+            _instance = _source.GetEffect().CreateInstance();
         }
 
         public override void Play()
@@ -62,7 +65,7 @@ namespace Intersect_MonoGameDx.Classes.SFML.Audio
             _volume = volume;
             try
             {
-                _instance.Volume = (_volume * (float)(Globals.Database.SoundVolume / 100f) / 100f);
+                _instance.Volume = (_volume*(float) (Globals.Database.SoundVolume/100f)/100f);
             }
             catch (NullReferenceException)
             {
@@ -95,9 +98,18 @@ namespace Intersect_MonoGameDx.Classes.SFML.Audio
 
         public override void Dispose()
         {
-            _disposed = true;
-            _instance.Stop();
-            _instance.Dispose();
+            if (!_disposed)
+            {
+                _disposed = true;
+                _instance.Stop();
+                _instance.Dispose();
+                _source.ReleaseEffect();
+            }
+        }
+
+        ~MonoSoundInstance()
+        {
+            Dispose();
         }
     }
 }

@@ -22,9 +22,25 @@
 
 using System.Collections.Generic;
 using System.Linq;
+using Intersect_Library.GameObjects.Events;
 
 namespace Intersect_Library.GameObjects
 {
+    public enum QuestProgress
+    {
+        OnAnyTask = 0,
+        BeforeTask = 1,
+        AfterTask = 2,
+        OnTask = 3,
+    }
+
+    public struct QuestProgressStruct
+    {
+        public int task;
+        public int completed;
+        public int taskProgress;
+    }
+
     public class QuestBase : DatabaseObject
     {
         //General
@@ -33,20 +49,27 @@ namespace Intersect_Library.GameObjects
         protected static Dictionary<int, DatabaseObject> Objects = new Dictionary<int, DatabaseObject>();
         
         public string Name = "New Quest";
+        public string BeforeDesc = "";
         public string StartDesc = "";
+        public string InProgressDesc = "";
         public string EndDesc = "";
 
+        public byte Repeatable = 0;
+        public byte Quitable = 0;
+        public byte LogBeforeOffer = 0;
+        public byte LogAfterComplete = 0;
+
         //Requirements
-        public int ClassReq = 0;
-        public int ItemReq = 0;
-        public int LevelReq = 0;
-        public int QuestReq = 0;
-        public int SwitchReq = 0;
-        public int VariableReq = 0;
-        public int VariableValue = 0;
+        //I am cheating here and using event commands as conditional branches instead of having a lot of duplicate code.
+        public List<EventCommand> Requirements = new List<EventCommand>();
 
         //Tasks
+        public int NextTaskID = 0;
         public List<QuestTask> Tasks = new List<QuestTask>();
+
+        //Events
+        public EventBase StartEvent = new EventBase(-1, 0, 0, true);
+        public EventBase EndEvent = new EventBase(-1, 0, 0, true);
 
         public QuestBase(int id) : base(id)
         {
@@ -58,33 +81,47 @@ namespace Intersect_Library.GameObjects
             var myBuffer = new ByteBuffer();
             myBuffer.WriteBytes(packet);
             Name = myBuffer.ReadString();
+            BeforeDesc = myBuffer.ReadString();
             StartDesc = myBuffer.ReadString();
+            InProgressDesc = myBuffer.ReadString();
             EndDesc = myBuffer.ReadString();
-            ClassReq = myBuffer.ReadInteger();
-            ItemReq = myBuffer.ReadInteger();
-            LevelReq = myBuffer.ReadInteger();
-            QuestReq = myBuffer.ReadInteger();
-            SwitchReq = myBuffer.ReadInteger();
-            VariableReq = myBuffer.ReadInteger();
-            VariableValue = myBuffer.ReadInteger();
 
+            Repeatable = myBuffer.ReadByte();
+            Quitable = myBuffer.ReadByte();
+            LogBeforeOffer = myBuffer.ReadByte();
+            LogAfterComplete = myBuffer.ReadByte();
+
+            var RequirementCount = myBuffer.ReadInteger();
+            Requirements.Clear();
+            for (int i = 0; i < RequirementCount; i++)
+            {
+                var cmd = new EventCommand();
+                cmd.Load(myBuffer);
+                Requirements.Add(cmd);
+            }
+
+            NextTaskID = myBuffer.ReadInteger();
             var MaxTasks = myBuffer.ReadInteger();
             Tasks.Clear();
             for (int i = 0; i < MaxTasks; i++)
             {
-                QuestTask Q = new QuestTask();
-                Q.Objective = myBuffer.ReadInteger();
-                Q.Desc = myBuffer.ReadString();
-                Q.Data1 = myBuffer.ReadInteger();
-                Q.Data2 = myBuffer.ReadInteger();
-                Q.Experience = myBuffer.ReadInteger();
-                for (int n = 0; n < Options.MaxNpcDrops; n++)
-                {
-                    Q.Rewards[n].ItemNum = myBuffer.ReadInteger();
-                    Q.Rewards[n].Amount = myBuffer.ReadInteger();
-                }
-                Tasks.Add(Q);
+                QuestTask task = new QuestTask(myBuffer.ReadInteger());
+                task.Objective = myBuffer.ReadInteger();
+                task.Desc = myBuffer.ReadString();
+                task.Data1 = myBuffer.ReadInteger();
+                task.Data2 = myBuffer.ReadInteger();
+
+                var taskCompletionEventLength = myBuffer.ReadInteger();
+                task.CompletionEvent.Load(myBuffer.ReadBytes(taskCompletionEventLength));
+
+                Tasks.Add(task);
             }
+
+            var startEventLength = myBuffer.ReadInteger();
+            StartEvent.Load(myBuffer.ReadBytes(startEventLength));
+
+            var endEventLength = myBuffer.ReadInteger();
+            EndEvent.Load(myBuffer.ReadBytes(endEventLength));
 
             myBuffer.Dispose();
         }
@@ -93,32 +130,64 @@ namespace Intersect_Library.GameObjects
         {
             var myBuffer = new ByteBuffer();
             myBuffer.WriteString(Name);
+            myBuffer.WriteString(BeforeDesc);
             myBuffer.WriteString(StartDesc);
+            myBuffer.WriteString(InProgressDesc);
             myBuffer.WriteString(EndDesc);
-            myBuffer.WriteInteger(ClassReq);
-            myBuffer.WriteInteger(ItemReq);
-            myBuffer.WriteInteger(LevelReq);
-            myBuffer.WriteInteger(QuestReq);
-            myBuffer.WriteInteger(SwitchReq);
-            myBuffer.WriteInteger(VariableReq);
-            myBuffer.WriteInteger(VariableValue);
 
+            myBuffer.WriteByte(Repeatable);
+            myBuffer.WriteByte(Quitable);
+            myBuffer.WriteByte(LogBeforeOffer);
+            myBuffer.WriteByte(LogAfterComplete);
+
+            myBuffer.WriteInteger(Requirements.Count);
+            for (int i = 0; i < Requirements.Count; i++)
+            {
+                Requirements[i].Save(myBuffer);
+            }
+
+            myBuffer.WriteInteger(NextTaskID);
             myBuffer.WriteInteger(Tasks.Count);
             for (int i = 0; i < Tasks.Count; i++)
             {
+                myBuffer.WriteInteger(Tasks[i].Id);
                 myBuffer.WriteInteger(Tasks[i].Objective);
                 myBuffer.WriteString(Tasks[i].Desc);
                 myBuffer.WriteInteger(Tasks[i].Data1);
                 myBuffer.WriteInteger(Tasks[i].Data2);
-                myBuffer.WriteInteger(Tasks[i].Experience);
-                for (int n = 0; n < Options.MaxNpcDrops; n++)
-                {
-                    myBuffer.WriteInteger(Tasks[i].Rewards[n].ItemNum);
-                    myBuffer.WriteInteger(Tasks[i].Rewards[n].Amount);
-                }
+
+                var taskCompleteionData = Tasks[i].CompletionEvent.GetData();
+                myBuffer.WriteInteger(taskCompleteionData.Length);
+                myBuffer.WriteBytes(taskCompleteionData);
             }
 
+            var startEventData = StartEvent.GetData();
+            myBuffer.WriteInteger(startEventData.Length);
+            myBuffer.WriteBytes(startEventData);
+
+            var endEventData = EndEvent.GetData();
+            myBuffer.WriteInteger(endEventData.Length);
+            myBuffer.WriteBytes(endEventData);
+
             return myBuffer.ToArray();
+        }
+
+        public int GetTaskIndex(int taskId)
+        {
+            for (int i = 0; i < Tasks.Count; i++)
+            {
+                if (Tasks[i].Id == taskId) return i;
+            }
+            return -1;
+        }
+
+        public QuestTask FindTask(int taskId)
+        {
+            for (int i = 0; i < Tasks.Count; i++)
+            {
+                if (Tasks[i].Id == taskId) return Tasks[i];
+            }
+            return null;
         }
 
         public static QuestBase GetQuest(int index)
@@ -187,19 +256,34 @@ namespace Intersect_Library.GameObjects
 
         public class QuestTask
         {
+            public int Id = 0;
             public int Objective = 0;
             public string Desc = "";
             public int Data1 = 0;
             public int Data2 = 0;
-            public int Experience = 0;
-            public List<QuestReward> Rewards = new List<QuestReward>();
+            public EventBase CompletionEvent = new EventBase(-1,0,0,true);
 
-            public QuestTask()
+            public QuestTask(int id)
             {
-                for (int i = 0; i < Options.MaxNpcDrops; i++)
+                Id = id;
+            }
+
+            public string GetTaskString()
+            {
+                var taskString = "";
+                switch (Objective)
                 {
-                    Rewards.Add(new QuestReward());
+                    case 0: //Event Driven
+                        taskString = "Event Driven - " + Desc;
+                        break;
+                    case 1: //Gather Items
+                        taskString = "Gather Items [" + ItemBase.GetName(Data1) + " x" + Data2 + "] - " + Desc;
+                        break;
+                    case 2: //Kill Npcs
+                        taskString = "Kill Npc(s) [" + NpcBase.GetName(Data1) + " x" + Data2 + "] - " + Desc;
+                        break;
                 }
+                return taskString;
             }
         }
 

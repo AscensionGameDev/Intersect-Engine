@@ -66,8 +66,8 @@ namespace Intersect_Editor.Classes.Core
         static Dictionary<string, GameTexture> guiDict = new Dictionary<string, GameTexture>();
         static Dictionary<string, GameTexture> miscDict = new Dictionary<string, GameTexture>();
         static Dictionary<string, Effect> shaderDict = new Dictionary<string, Effect>();
-        static Dictionary<string, Song> musicDict = new Dictionary<string, Song>();
-        static Dictionary<string, SoundEffect> soundDict = new Dictionary<string, SoundEffect>();
+        static Dictionary<string, object> musicDict = new Dictionary<string, object>();
+        static Dictionary<string, object> soundDict = new Dictionary<string, object>();
 
         public enum TextureType
         {
@@ -327,23 +327,18 @@ namespace Intersect_Editor.Classes.Core
             for (int i = 0; i < items.Length; i++)
             {
                 string filename = items[i].Replace("resources/" + "sounds" + "\\", "").ToLower();
-                SoundEffect effect;
-                using (var fileStream = new FileStream("resources/" + "sounds" + "/" + filename, FileMode.Open, FileAccess.Read,FileShare.ReadWrite))
-                {
-                    effect = SoundEffect.FromStream(fileStream);
-                }
-                soundDict.Add(filename, effect);
+                soundDict.Add(filename, null); //TODO Sound Playback
             }
         }
         public static void LoadMusic()
         {
             musicDict.Clear();
             if (!Directory.Exists("resources/" + "music")) { Directory.CreateDirectory("resources/" + "music"); }
-            var items = Directory.GetFiles("resources/" + "music", "*.mp3");
+            var items = Directory.GetFiles("resources/" + "music", "*.ogg");
             for (int i = 0; i < items.Length; i++)
             {
                 string filename = items[i].Replace("resources/" + "music" + "\\", "").ToLower();
-                musicDict.Add(filename, Song.FromUri("Unnamed", new Uri("resources/" + "music" + "/" + filename, UriKind.Relative)));
+                musicDict.Add(filename,null); //TODO Music Playback
             }
         }
         public static string RemoveExtension(string fileName)
@@ -404,12 +399,12 @@ namespace Intersect_Editor.Classes.Core
             if (shaderDict.ContainsKey(name.ToLower())) return shaderDict[name.ToLower()];
             return null;
         }
-        public static Song GetMusic(string name)
+        public static object GetMusic(string name)
         {
             if (musicDict.ContainsKey(name.ToLower())) return musicDict[name.ToLower()];
             return null;
         }
-        public static SoundEffect GetSound(string name)
+        public static object GetSound(string name)
         {
             if (soundDict.ContainsKey(name.ToLower())) return soundDict[name.ToLower()];
             return null;

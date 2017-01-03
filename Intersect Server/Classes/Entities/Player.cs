@@ -21,6 +21,7 @@
 */
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Intersect_Library;
 using Intersect_Library.GameObjects;
@@ -48,9 +49,11 @@ namespace Intersect_Server.Classes.Entities
         public int[] Equipment = new int[Options.EquipmentSlots.Count];
         public Dictionary<int, bool> Switches = new Dictionary<int, bool>();
         public Dictionary<int, int> Variables = new Dictionary<int, int>();
+        public Dictionary<int, QuestProgressStruct> Quests = new Dictionary<int, QuestProgressStruct>();
         public List<EventInstance> MyEvents = new List<EventInstance>();
         public HotbarInstance[] Hotbar = new HotbarInstance[Options.MaxHotbar];
         public ItemInstance[] Bank = new ItemInstance[Options.MaxBankSlots];
+        public List<int> QuestOffers = new List<int>();
 
         //Temporary Values
         private object EventLock = new object();
@@ -239,15 +242,15 @@ namespace Intersect_Server.Classes.Entities
             }
             PacketSender.SendEntityDataToProximity(this);
         }
-        public override void Die(bool dropitems = false)
+        public override void Die(bool dropitems = false, Entity killer = null)
         {
             //Event trigger
             for (var i = 0; i < MyEvents.Count; i++)
             {
                 MyEvents[i].PlayerHasDied = true;
             }
-
-            base.Die(dropitems);
+            
+            base.Die(dropitems, killer);
             Reset();
             Respawn();
         }
@@ -417,6 +420,40 @@ namespace Intersect_Server.Classes.Entities
                 {
                     GiveExperience(((Npc)en).MyBase.Experience);
                 }
+
+                //If any quests demand that this Npc be killed then let's handle it
+                var npc = (Npc) en;
+                for (int i = 0; i < Quests.Keys.Count; i++)
+                {
+                    var questId = Quests.Keys.ToArray()[i];
+                    var quest = QuestBase.GetQuest(questId);
+                    if (quest != null)
+                    {
+                        if (Quests[questId].task > -1)
+                        {
+                            //Assume this quest is in progress. See if we can find the task in the quest
+                            var questTask = quest.FindTask(Quests[questId].task);
+                            if (questTask != null)
+                            {
+                                if (questTask.Objective == 2 && questTask.Data1 == npc.MyBase.GetId()) //kill npcs
+                                {
+                                    var questProg = Quests[questId];
+                                    questProg.taskProgress++;
+                                    if (questProg.taskProgress >= questTask.Data2)
+                                    {
+                                        CompleteQuestTask(questId,Quests[questId].task);
+                                    }
+                                    else
+                                    {
+                                        Quests[questId] = questProg;
+                                        PacketSender.SendQuestProgress(this, quest.GetId());
+                                        PacketSender.SendPlayerMsg(MyClient,quest.Name + " updated! " + questProg.taskProgress + "/" + questTask.Data2 + " " + NpcBase.GetName(questTask.Data1) + "(s) slain!");
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
             }
         }
 
@@ -539,6 +576,7 @@ namespace Intersect_Server.Classes.Entities
                             {
                                 PacketSender.SendInventoryItemUpdate(MyClient, i);
                             }
+                            UpdateGatherItemQuests(item.ItemNum);
                             return true;
                         }
                     }
@@ -554,6 +592,7 @@ namespace Intersect_Server.Classes.Entities
                         {
                             PacketSender.SendInventoryItemUpdate(MyClient, i);
                         }
+                        UpdateGatherItemQuests(item.ItemNum);
                         return true;
                     }
                 }
@@ -601,6 +640,7 @@ namespace Intersect_Server.Classes.Entities
                     Inventory[slot] = new ItemInstance(-1, 0);
                     EquipmentProcessItemLoss(slot);
                 }
+                UpdateGatherItemQuests(itemBase.GetId());
                 PacketSender.SendInventoryItemUpdate(MyClient, slot);
             }
         }
@@ -799,6 +839,10 @@ namespace Intersect_Server.Classes.Entities
                 }
                 PacketSender.SendInventoryItemUpdate(MyClient, slot);
             }
+            if (returnVal)
+            {
+                UpdateGatherItemQuests(itemBase.GetId());
+            }
             return returnVal;
         }
         public int FindItem(int itemNum, int itemVal = 1)
@@ -811,6 +855,25 @@ namespace Intersect_Server.Classes.Entities
                 }
             }
             return -1;
+        }
+        public int CountItemInstances(int itemNum)
+        {
+            int count = 0;
+            for (int i = 0; i < Options.MaxInvItems; i++)
+            {
+                if (Inventory[i].ItemNum == itemNum)
+                {
+                    if (Inventory[i].ItemVal < 1)
+                    {
+                        count += 1;
+                    }
+                    else
+                    {
+                        count += Inventory[i].ItemVal;
+                    }
+                }
+            }
+            return count;
         }
 
         //Shop
@@ -1479,7 +1542,6 @@ namespace Intersect_Server.Classes.Entities
                 PacketSender.SendPlayerMsg(MyClient, "You have reached the maximum limit of party members. Kick another member before adding more.", Color.Red);
             }
         }
-
         public void KickParty(int target)
         {
             if (Party.Count > 0 && Party[0] == this)
@@ -1541,7 +1603,6 @@ namespace Intersect_Server.Classes.Entities
             PacketSender.SendParty(MyClient);
             PacketSender.SendPlayerMsg(MyClient, "You have left the party.", Color.Red);
         }
-
         public bool InParty(Player member)
         {
             for (int i = 0; i < Party.Count; i++)
@@ -1807,6 +1868,296 @@ namespace Intersect_Server.Classes.Entities
             PacketSender.SendHotbarSlots(MyClient);
         }
 
+        //Quests
+        public bool CanStartQuest(QuestBase quest)
+        {
+            //Check and see if the quest is already in progress, or if it has already been completed and cannot be repeated.
+            if (Quests.ContainsKey(quest.GetId()))
+            {
+                if (Quests[quest.GetId()].task != -1 && quest.GetTaskIndex(Quests[quest.GetId()].task) != -1)
+                {
+                    return false;
+                }
+                if (Quests[quest.GetId()].completed == 1 && quest.Repeatable == 0)
+                {
+                    return false;
+                }
+            }
+            //So the quest isn't started or we can repeat it.. let's make sure that we meet requirements.
+            foreach (var requirement in quest.Requirements)
+            {
+                if (!EventInstance.MeetsConditions(requirement, this, null))
+                {
+                    return false;
+                }
+            }
+            if (quest.Tasks.Count == 0)
+            {
+                return false;
+            }
+            return true;
+        }
+        public bool QuestCompleted(QuestBase quest)
+        {
+            if (Quests.ContainsKey(quest.GetId()))
+            {
+                if (Quests[quest.GetId()].completed == 1)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+        public bool QuestInProgress(QuestBase quest, QuestProgress progress, int taskId)
+        {
+            if (Quests.ContainsKey(quest.GetId()))
+            {
+                if (Quests[quest.GetId()].task != -1 && quest.GetTaskIndex(Quests[quest.GetId()].task) != -1)
+                {
+                    switch (progress)
+                    {
+                        case QuestProgress.OnAnyTask:
+                            return true;
+                        case QuestProgress.BeforeTask:
+                            if (quest.GetTaskIndex(taskId) != -1)
+                            {
+                                return quest.GetTaskIndex(taskId) < quest.GetTaskIndex(Quests[quest.GetId()].task);
+                            }
+                            break;
+                        case QuestProgress.OnTask:
+                            if (quest.GetTaskIndex(taskId) != -1)
+                            {
+                                return quest.GetTaskIndex(taskId) == quest.GetTaskIndex(Quests[quest.GetId()].task);
+                            }
+                            break;
+                        case QuestProgress.AfterTask:
+                            if (quest.GetTaskIndex(taskId) != -1)
+                            {
+                                return quest.GetTaskIndex(taskId) > quest.GetTaskIndex(Quests[quest.GetId()].task);
+                            }
+                            break;
+                        default:
+                            throw new ArgumentOutOfRangeException(nameof(progress), progress, null);
+                    }
+                }
+            }
+            return false;
+        }
+        public void OfferQuest(QuestBase quest)
+        {
+            if (CanStartQuest(quest))
+            {
+                QuestOffers.Add(quest.GetId());
+                PacketSender.SendQuestOffer(this, quest.GetId());
+            }
+        }
+        public void StartQuest(QuestBase quest)
+        {
+            if (CanStartQuest(quest))
+            {
+                if (Quests.ContainsKey(quest.GetId()))
+                {
+                    var questProgress = Quests[quest.GetId()];
+                    questProgress.task = quest.Tasks[0].Id;
+                    questProgress.taskProgress = 0;
+                    Quests[quest.GetId()] = questProgress;
+                }
+                else
+                {
+                    var questProgress = new QuestProgressStruct();
+                    questProgress.task = quest.Tasks[0].Id;
+                    questProgress.taskProgress = 0;
+                    Quests.Add(quest.GetId(), questProgress);
+                }
+                if (quest.Tasks[0].Objective == 1) //Gather Items
+                {
+                    UpdateGatherItemQuests(quest.Tasks[0].Data1);
+                }
+                StartCommonEvent(quest.StartEvent);
+                PacketSender.SendPlayerMsg(MyClient,"Quest Started: " + quest.Name,Color.Cyan);
+                PacketSender.SendQuestProgress(this, quest.GetId());
+            }
+        }
+        public void AcceptQuest(int questId)
+        {
+            if (QuestOffers.Contains(questId))
+            {
+                QuestOffers.Remove(questId);
+                var quest = QuestBase.GetQuest(questId);
+                if (quest != null)
+                {
+                    StartQuest(quest);
+                    lock (EventLock)
+                    {
+                        for (int i = 0; i < MyEvents.Count; i++)
+                        {
+                            if (MyEvents[i] != null)
+                            {
+                                if (MyEvents[i].CallStack.Count <= 0) return;
+                                if (MyEvents[i].CallStack.Peek().WaitingForResponse != CommandInstance.EventResponse.Quest) return;
+                                if (MyEvents[i].CallStack.Peek().ResponseIndex == questId)
+                                {
+                                    MyEvents[i].CallStack.Peek().WaitingForResponse = CommandInstance.EventResponse.None;
+                                    //Run success branch
+                                    var tmpStack = new CommandInstance(MyEvents[i].CallStack.Peek().Page)
+                                    {
+                                        CommandIndex = 0,
+                                        ListIndex = MyEvents[i].CallStack.Peek().Page.CommandLists[MyEvents[i].CallStack.Peek().ListIndex].Commands[MyEvents[i].CallStack.Peek().CommandIndex].Ints[4]
+                                    };
+                                    MyEvents[i].CallStack.Peek().CommandIndex++;
+                                    MyEvents[i].CallStack.Push(tmpStack);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        public void DeclineQuest(int questId)
+        {
+            if (QuestOffers.Contains(questId))
+            {
+                QuestOffers.Remove(questId);
+                PacketSender.SendPlayerMsg(MyClient, "Quest Declined: " + QuestBase.GetName(questId), Color.Red);
+                lock (EventLock)
+                {
+                    for (int i = 0; i < MyEvents.Count; i++)
+                    {
+                        if (MyEvents[i] != null)
+                        {
+                            if (MyEvents[i].CallStack.Count <= 0) return;
+                            if (MyEvents[i].CallStack.Peek().WaitingForResponse != CommandInstance.EventResponse.Quest) return;
+                            if (MyEvents[i].CallStack.Peek().ResponseIndex == questId)
+                            {
+                                MyEvents[i].CallStack.Peek().WaitingForResponse = CommandInstance.EventResponse.None;
+                                //Run failure branch
+                                var tmpStack = new CommandInstance(MyEvents[i].CallStack.Peek().Page)
+                                {
+                                    CommandIndex = 0,
+                                    ListIndex = MyEvents[i].CallStack.Peek().Page.CommandLists[MyEvents[i].CallStack.Peek().ListIndex].Commands[MyEvents[i].CallStack.Peek().CommandIndex].Ints[5]
+                                };
+                                MyEvents[i].CallStack.Peek().CommandIndex++;
+                                MyEvents[i].CallStack.Push(tmpStack);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        public void CancelQuest(int questId)
+        {
+            var quest = QuestBase.GetQuest(questId);
+            if (quest != null)
+            {
+                if (QuestInProgress(quest, QuestProgress.OnAnyTask, -1))
+                {
+                    //Cancel the quest somehow...
+                    if (quest.Quitable == 1)
+                    {
+                        var questProgress = Quests[questId];
+                        questProgress.task = -1;
+                        questProgress.taskProgress = -1;
+                        Quests[questId] = questProgress;
+                        PacketSender.SendPlayerMsg(MyClient, "Quest Abandoned: " + QuestBase.GetName(questId), Color.Red);
+                        PacketSender.SendQuestProgress(this, questId);
+                    }
+                }
+            }
+        }
+        public void CompleteQuestTask(int questId, int taskId)
+        {
+            var quest = QuestBase.GetQuest(questId);
+            if (quest != null)
+            {
+                if (Quests.ContainsKey(questId))
+                {
+                    var questProgress = Quests[questId];
+                    if (Quests[questId].task == taskId)
+                    {
+                        //Let's Advance this task or complete the quest
+                        for (int i = 0; i < quest.Tasks.Count; i++)
+                        {
+                            if (quest.Tasks[i].Id == taskId)
+                            {
+                                PacketSender.SendPlayerMsg(MyClient, "Task Completed!");
+                                if (i == quest.Tasks.Count - 1)
+                                {
+                                    //Complete Quest
+                                    questProgress.completed = 1;
+                                    questProgress.task = -1;
+                                    questProgress.taskProgress = -1;
+                                    Quests[questId] = questProgress;
+                                    StartCommonEvent(quest.Tasks[i].CompletionEvent);
+                                    StartCommonEvent(quest.EndEvent);
+                                    PacketSender.SendPlayerMsg(MyClient, "Quest: " + quest.Name + " completed!", Color.Green);
+                                }
+                                else
+                                {
+                                    //Advance Task
+                                    questProgress.task = quest.Tasks[i + 1].Id;
+                                    questProgress.taskProgress = 0;
+                                    Quests[questId] = questProgress;
+                                    StartCommonEvent(quest.Tasks[i].CompletionEvent);
+                                    if (quest.Tasks[i + 1].Objective == 1) //Gather Items
+                                    {
+                                        UpdateGatherItemQuests(quest.Tasks[i + 1].Data1);
+                                    }
+                                    PacketSender.SendPlayerMsg(MyClient, "Quest: " + quest.Name + " updated!", Color.Cyan);
+                                }
+                            }
+                        }
+                    }
+                    PacketSender.SendQuestProgress(this, questId);
+                }
+            }
+
+        }
+        private void UpdateGatherItemQuests(int itemNum)
+        {
+            //If any quests demand that this item be gathered then let's handle it
+            var item = ItemBase.GetItem(itemNum);
+            if (item != null) {
+                for (int i = 0; i < Quests.Keys.Count; i++)
+                {
+                    var questId = Quests.Keys.ToArray()[i];
+                    var quest = QuestBase.GetQuest(questId);
+                    if (quest != null)
+                    {
+                        if (Quests[questId].task > -1)
+                        {
+                            //Assume this quest is in progress. See if we can find the task in the quest
+                            var questTask = quest.FindTask(Quests[questId].task);
+                            if (questTask != null)
+                            {
+                                if (questTask.Objective == 1 && questTask.Data1 == item.GetId()) //gather items
+                                {
+                                    var questProg = Quests[questId];
+                                    if (questProg.taskProgress != CountItemInstances(item.GetId()))
+                                    {
+                                        questProg.taskProgress = CountItemInstances(item.GetId());
+                                        if (questProg.taskProgress >= questTask.Data2)
+                                        {
+                                            CompleteQuestTask(questId, Quests[questId].task);
+                                        }
+                                        else
+                                        {
+                                            Quests[questId] = questProg;
+                                            PacketSender.SendQuestProgress(this, quest.GetId());
+                                            PacketSender.SendPlayerMsg(MyClient,
+                                                quest.Name + " updated! " + questProg.taskProgress + "/" +
+                                                questTask.Data2 +
+                                                " " + ItemBase.GetName(questTask.Data1) + "(s) gathered!");
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+
         //Event Processing Methods
         private int EventExists(int map, int x, int y)
         {
@@ -1820,14 +2171,14 @@ namespace Intersect_Server.Classes.Entities
             }
             return -1;
         }
+
         public EventPageInstance EventAt(int map, int x, int y, int z)
         {
             foreach (var evt in MyEvents)
             {
                 if (evt != null && evt.PageInstance != null)
                 {
-                    if (evt.PageInstance.CurrentMap == map && evt.PageInstance.CurrentX == x &&
-                        evt.PageInstance.CurrentY == y && evt.PageInstance.CurrentZ == z)
+                    if (evt.PageInstance.CurrentMap == map && evt.PageInstance.CurrentX == x && evt.PageInstance.CurrentY == y && evt.PageInstance.CurrentZ == z)
                     {
                         return evt.PageInstance;
                     }
@@ -1835,6 +2186,7 @@ namespace Intersect_Server.Classes.Entities
             }
             return null;
         }
+
         public void TryActivateEvent(int mapNum, int eventIndex)
         {
             for (int i = 0; i < MyEvents.Count; i++)
@@ -1875,33 +2227,29 @@ namespace Intersect_Server.Classes.Entities
                     }
                 }
             }
-
         }
+
         public void RespondToEvent(int mapNum, int eventIndex, int responseId)
         {
             lock (EventLock)
             {
                 for (int i = 0; i < MyEvents.Count; i++)
                 {
-                    if (MyEvents[i] != null && MyEvents[i].MapNum == mapNum &&
-                        MyEvents[i].BaseEvent.MyIndex == eventIndex)
+                    if (MyEvents[i] != null && MyEvents[i].MapNum == mapNum && MyEvents[i].BaseEvent.MyIndex == eventIndex)
                     {
                         if (MyEvents[i].CallStack.Count <= 0) return;
-                        if (MyEvents[i].CallStack.Peek().WaitingForResponse != 1) return;
-                        if (MyEvents[i].CallStack.Peek().ResponseType == 0)
+                        if (MyEvents[i].CallStack.Peek().WaitingForResponse != CommandInstance.EventResponse.Dialogue) return;
+                        if (MyEvents[i].CallStack.Peek().ResponseIndex == 0)
                         {
-                            MyEvents[i].CallStack.Peek().WaitingForResponse = 0;
+                            MyEvents[i].CallStack.Peek().WaitingForResponse = CommandInstance.EventResponse.None;
                         }
                         else
                         {
                             var tmpStack = new CommandInstance(MyEvents[i].PageInstance.BaseEvent.MyPages[MyEvents[i].PageIndex]);
                             tmpStack.CommandIndex = 0;
-                            tmpStack.ListIndex =
-                                MyEvents[i].PageInstance.BaseEvent.MyPages[MyEvents[i].PageIndex].CommandLists[
-                                    MyEvents[i].CallStack.Peek().ListIndex].Commands[
-                                        MyEvents[i].CallStack.Peek().CommandIndex].Ints[responseId - 1];
+                            tmpStack.ListIndex = MyEvents[i].PageInstance.BaseEvent.MyPages[MyEvents[i].PageIndex].CommandLists[MyEvents[i].CallStack.Peek().ListIndex].Commands[MyEvents[i].CallStack.Peek().CommandIndex].Ints[responseId - 1];
                             MyEvents[i].CallStack.Peek().CommandIndex++;
-                            MyEvents[i].CallStack.Peek().WaitingForResponse = 0;
+                            MyEvents[i].CallStack.Peek().WaitingForResponse = CommandInstance.EventResponse.None;
                             MyEvents[i].CallStack.Push(tmpStack);
                         }
                         return;
@@ -1909,11 +2257,12 @@ namespace Intersect_Server.Classes.Entities
                 }
             }
         }
+
         static bool IsEventOneBlockAway(int eventIndex)
         {
-
             return true;
         }
+
         public int FindEvent(EventPageInstance en)
         {
             int id = -1;
@@ -1921,8 +2270,7 @@ namespace Intersect_Server.Classes.Entities
             {
                 for (int i = 0; i < MyEvents.Count; i++)
                 {
-                    if (MyEvents[i] != null && MyEvents[i].PageInstance != null &&
-                        (MyEvents[i].PageInstance == en || MyEvents[i].PageInstance.GlobalClone == en))
+                    if (MyEvents[i] != null && MyEvents[i].PageInstance != null && (MyEvents[i].PageInstance == en || MyEvents[i].PageInstance.GlobalClone == en))
                     {
                         id = i;
                         return id;
@@ -1931,6 +2279,7 @@ namespace Intersect_Server.Classes.Entities
             }
             return id;
         }
+
         public EventInstance GetEventFromPageInstance(EventPageInstance instance)
         {
             if (FindEvent(instance) > -1)
@@ -1942,6 +2291,7 @@ namespace Intersect_Server.Classes.Entities
                 return null;
             }
         }
+
         public void SendEvents()
         {
             for (int i = 0; i < MyEvents.Count; i++)
@@ -1952,6 +2302,7 @@ namespace Intersect_Server.Classes.Entities
                 }
             }
         }
+
         public bool StartCommonEvent(EventBase evt, int trigger = -1)
         {
             lock (EventLock)
@@ -1998,9 +2349,7 @@ namespace Intersect_Server.Classes.Entities
             client = MyClient;
             base.Move(moveDir, client, DontUpdate);
             // Check for a warp, if so warp the player.
-            var attribute =
-                MapInstance.GetMap(Globals.Entities[index].CurrentMap).Attributes[
-                    Globals.Entities[index].CurrentX, Globals.Entities[index].CurrentY];
+            var attribute = MapInstance.GetMap(Globals.Entities[index].CurrentMap).Attributes[Globals.Entities[index].CurrentX, Globals.Entities[index].CurrentY];
             if (attribute != null && attribute.value == (int)MapAttributes.Warp)
             {
                 Globals.Entities[index].Warp(attribute.data1, attribute.data2, attribute.data3, Globals.Entities[index].Dir);
@@ -2009,7 +2358,10 @@ namespace Intersect_Server.Classes.Entities
             //Check for slide tiles
             if (attribute != null && attribute.value == (int)MapAttributes.Slide)
             {
-                if (attribute.data1 > 0) { Globals.Entities[index].Dir = attribute.data1 - 1; } //If sets direction, set it.
+                if (attribute.data1 > 0)
+                {
+                    Globals.Entities[index].Dir = attribute.data1 - 1;
+                } //If sets direction, set it.
                 var dash = new DashInstance(this, 1, base.Dir);
             }
 
@@ -2021,10 +2373,7 @@ namespace Intersect_Server.Classes.Entities
                     {
                         if (MyEvents[i].PageInstance != null)
                         {
-                            if (MyEvents[i].PageInstance.CurrentMap == CurrentMap &&
-                                MyEvents[i].PageInstance.CurrentX == CurrentX &&
-                                MyEvents[i].PageInstance.CurrentY == CurrentY &&
-                                MyEvents[i].PageInstance.CurrentZ == CurrentZ)
+                            if (MyEvents[i].PageInstance.CurrentMap == CurrentMap && MyEvents[i].PageInstance.CurrentX == CurrentX && MyEvents[i].PageInstance.CurrentY == CurrentY && MyEvents[i].PageInstance.CurrentZ == CurrentZ)
                             {
                                 if (MyEvents[i].PageInstance.Trigger != 1) return;
                                 if (MyEvents[i].CallStack.Count != 0) return;

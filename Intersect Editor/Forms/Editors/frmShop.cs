@@ -34,11 +34,14 @@ namespace Intersect_Editor.Forms.Editors
     {
         private List<ShopBase> _changed = new List<ShopBase>();
         private ShopBase _editorItem = null;
+        private byte[] _copiedItem = null;
 
         public frmShop()
         {
             InitializeComponent();
             PacketHandler.GameObjectUpdatedDelegate += GameObjectUpdatedDelegate;
+            lstShops.LostFocus += itemList_FocusChanged;
+            lstShops.GotFocus += itemList_FocusChanged;
         }
 
         private void GameObjectUpdatedDelegate(GameObject type)
@@ -172,6 +175,7 @@ namespace Intersect_Editor.Forms.Editors
             {
                 pnlContainer.Hide();
             }
+            UpdateToolStripItems();
         }
 
         private void UpdateWhitelist()
@@ -307,6 +311,105 @@ namespace Intersect_Editor.Forms.Editors
         private void cmbDefaultCurrency_SelectedIndexChanged(object sender, EventArgs e)
         {
             _editorItem.DefaultCurrency = ItemBase.GetObjects().Keys.ToList()[cmbDefaultCurrency.SelectedIndex];
+        }
+
+        private void toolStripItemNew_Click(object sender, EventArgs e)
+        {
+            PacketSender.SendCreateObject(GameObject.Shop);
+        }
+
+        private void toolStripItemDelete_Click(object sender, EventArgs e)
+        {
+            if (_editorItem != null && lstShops.Focused)
+            {
+                if (
+                    MessageBox.Show("Are you sure you want to delete this game object? This action cannot be reverted!",
+                        "Delete Object", MessageBoxButtons.YesNo) == DialogResult.Yes)
+                {
+                    PacketSender.SendDeleteObject(_editorItem);
+                }
+            }
+        }
+
+        private void toolStripItemCopy_Click(object sender, EventArgs e)
+        {
+            if (_editorItem != null && lstShops.Focused)
+            {
+                _copiedItem = _editorItem.GetData();
+                toolStripItemPaste.Enabled = true;
+            }
+        }
+
+        private void toolStripItemPaste_Click(object sender, EventArgs e)
+        {
+            if (_editorItem != null && _copiedItem != null && lstShops.Focused)
+            {
+                _editorItem.Load(_copiedItem);
+                UpdateEditor();
+            }
+        }
+
+        private void toolStripItemUndo_Click(object sender, EventArgs e)
+        {
+            if (_changed.Contains(_editorItem) && _editorItem != null)
+            {
+                if (MessageBox.Show("Are you sure you want to undo changes made to this game object? This action cannot be reverted!",
+                        "Undo Changes", MessageBoxButtons.YesNo) == DialogResult.Yes)
+                {
+                    _editorItem.RestoreBackup();
+                    UpdateEditor();
+                }
+            }
+        }
+
+        private void itemList_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Control)
+            {
+                if (e.KeyCode == Keys.Z)
+                {
+                    toolStripItemUndo_Click(null, null);
+                }
+                else if (e.KeyCode == Keys.V)
+                {
+                    toolStripItemPaste_Click(null, null);
+                }
+                else if (e.KeyCode == Keys.C)
+                {
+                    toolStripItemCopy_Click(null, null);
+                }
+            }
+            else
+            {
+                if (e.KeyCode == Keys.Delete)
+                {
+                    toolStripItemDelete_Click(null, null);
+                }
+            }
+        }
+
+        private void UpdateToolStripItems()
+        {
+            toolStripItemCopy.Enabled = _editorItem != null && lstShops.Focused;
+            toolStripItemPaste.Enabled = _editorItem != null && _copiedItem != null && lstShops.Focused;
+            toolStripItemDelete.Enabled = _editorItem != null && lstShops.Focused;
+            toolStripItemUndo.Enabled = _editorItem != null && lstShops.Focused;
+        }
+
+        private void itemList_FocusChanged(object sender, EventArgs e)
+        {
+            UpdateToolStripItems();
+        }
+
+        private void form_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Control)
+            {
+                if (e.KeyCode == Keys.N)
+                {
+                    toolStripItemNew_Click(null, null);
+                }
+            }
         }
     }
 }

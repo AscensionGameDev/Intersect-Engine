@@ -64,6 +64,7 @@ namespace Intersect_Client.Classes.UI.Game
         private InventoryWindow _inventoryWindow;
         private SpellWindow _spellsWindow;
         private CharacterWindow _characterWindow;
+        private QuestsWindow _questsWindow;
 
         //Canvas instance
         Canvas _GameCanvas;
@@ -115,18 +116,26 @@ namespace Intersect_Client.Classes.UI.Game
             _partyButton.SetSize(buttonWidth, buttonHeight);
             _partyButton.SetPosition(_gameCanvas.Width - (buttonCount + 1) * (backgroundWidth + buttonMargin) + 4, _gameCanvas.Height - buttonMargin - backgroundHeight + 4);
             _partyButton.SetImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "partyicon.png"), Button.ControlState.Normal);
-            _partyButton.SetToolTipText("party");
+            _partyButton.SetToolTipText("Party");
             _partyButton.Clicked += PartyBtn_Clicked;
             _partyButton.HoverEnter += Button_HoverEnter;
             _partyButton.HoverLeave += Button_HoverLeave;
             buttonCount++;
 
-            //_questsButton = new Button(_gameCanvas);
-            //_questsButton.SetSize(buttonWidth, buttonHeight);
-            //_questsButton.SetPosition(_gameCanvas.Width - (buttonCount + 1) * (buttonWidth + buttonMargin), _gameCanvas.Height - buttonMargin - buttonHeight);
-            //_questsButton.SetImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "menuitem.png"), Button.ControlState.Normal);
-            //_questsButton.SetToolTipText("Quest Log");
-            //buttonCount++;
+            _questsBackground = new ImagePanel(_gameCanvas);
+            _questsBackground.MouseInputEnabled = false;
+            _questsBackground.SetSize(backgroundWidth, backgroundHeight);
+            _questsBackground.SetPosition(_gameCanvas.Width - (buttonCount + 1) * (backgroundWidth + buttonMargin), _gameCanvas.Height - buttonMargin - backgroundHeight);
+            _questsBackground.Texture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "menuitem.png");
+            _questsButton = new Button(_gameCanvas);
+            _questsButton.SetSize(buttonWidth, buttonHeight);
+            _questsButton.SetPosition(_gameCanvas.Width - (buttonCount + 1) * (backgroundWidth + buttonMargin) + 4, _gameCanvas.Height - buttonMargin - backgroundHeight + 4);
+            _questsButton.SetImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "questsicon.png"), Button.ControlState.Normal);
+            _questsButton.SetToolTipText("Quest Log");
+            _questsButton.Clicked += QuestBtn_Clicked;
+            _questsButton.HoverEnter += Button_HoverEnter;
+            _questsButton.HoverLeave += Button_HoverLeave;
+            buttonCount++;
 
             _characterBackground  = new ImagePanel(_gameCanvas);
             _characterBackground.MouseInputEnabled = false;
@@ -179,6 +188,7 @@ namespace Intersect_Client.Classes.UI.Game
             _inventoryWindow = new InventoryWindow(_gameCanvas);
             _spellsWindow = new SpellWindow(_gameCanvas);
             _characterWindow = new CharacterWindow(_gameCanvas);
+            _questsWindow = new QuestsWindow(_gameCanvas);
         }
 
         private void Button_HoverEnter(Base sender, System.EventArgs arguments)
@@ -192,12 +202,13 @@ namespace Intersect_Client.Classes.UI.Game
         }
 
         //Methods
-        public void Update()
+        public void Update(bool updateQuestLog)
         {
             _inventoryWindow.Update();
             _spellsWindow.Update();
             _characterWindow.Update();
             _partyWindow.Update();
+            _questsWindow.Update(updateQuestLog);
         }
 
 
@@ -226,6 +237,17 @@ namespace Intersect_Client.Classes.UI.Game
             else
             {
                 _partyWindow.Show();
+            }
+        }
+        void QuestBtn_Clicked(Base sender, ClickedEventArgs arguments)
+        {
+            if (_questsWindow.IsVisible())
+            {
+                _questsWindow.Hide();
+            }
+            else
+            {
+                _questsWindow.Show();
             }
         }
         void InventoryButton_Clicked(Base sender, ClickedEventArgs arguments)

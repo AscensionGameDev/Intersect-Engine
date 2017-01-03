@@ -30,9 +30,9 @@
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmCommonEvent));
             this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.lstCommonEvents = new System.Windows.Forms.ListBox();
             this.btnNew = new System.Windows.Forms.Button();
             this.btnDelete = new System.Windows.Forms.Button();
+            this.lstCommonEvents = new System.Windows.Forms.ListBox();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -47,15 +47,6 @@
             this.groupBox1.TabIndex = 16;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Common Events";
-            // 
-            // lstCommonEvents
-            // 
-            this.lstCommonEvents.FormattingEnabled = true;
-            this.lstCommonEvents.Location = new System.Drawing.Point(6, 19);
-            this.lstCommonEvents.Name = "lstCommonEvents";
-            this.lstCommonEvents.Size = new System.Drawing.Size(191, 407);
-            this.lstCommonEvents.TabIndex = 1;
-            this.lstCommonEvents.DoubleClick += new System.EventHandler(this.lstCommonEvents_DoubleClick);
             // 
             // btnNew
             // 
@@ -78,6 +69,16 @@
             this.btnDelete.Text = "Delete";
             this.btnDelete.UseVisualStyleBackColor = true;
             this.btnDelete.Click += new System.EventHandler(this.btnDelete_Click);
+            // 
+            // lstCommonEvents
+            // 
+            this.lstCommonEvents.FormattingEnabled = true;
+            this.lstCommonEvents.Location = new System.Drawing.Point(6, 19);
+            this.lstCommonEvents.Name = "lstCommonEvents";
+            this.lstCommonEvents.Size = new System.Drawing.Size(191, 407);
+            this.lstCommonEvents.TabIndex = 1;
+            this.lstCommonEvents.SelectedIndexChanged += new System.EventHandler(this.lstCommonEvents_SelectedIndexChanged);
+            this.lstCommonEvents.DoubleClick += new System.EventHandler(this.lstCommonEvents_DoubleClick);
             // 
             // frmCommonEvent
             // 

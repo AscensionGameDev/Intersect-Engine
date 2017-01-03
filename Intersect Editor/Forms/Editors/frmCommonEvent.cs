@@ -87,5 +87,10 @@ namespace Intersect_Editor.Forms.Editors
         {
             Globals.CurrentEditor = -1;
         }
+
+        private void lstCommonEvents_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+        }
     }
 }

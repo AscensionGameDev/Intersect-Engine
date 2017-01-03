@@ -252,6 +252,7 @@ namespace Intersect_Client.Classes.Core
             _map = map;
             _loop = loop;
             _distance = distance;
+            _mapNum = map;
             GameAudioSource sound = Globals.ContentManager.GetSound(_filename);
             if (sound != null && Globals.Database.SoundVolume > 0)
             {
@@ -280,13 +281,19 @@ namespace Intersect_Client.Classes.Core
 
         private void UpdateSoundVolume()
         {
+            var map = MapInstance.GetMap(_mapNum);
+            if (map == null)
+            {
+                Stop();
+                return;
+            }
             if ((_x == -1 || _y == -1 || _distance == 0) && _map == Globals.Me.CurrentMap)
             {
                 _sound.SetVolume(100);
             }
             else
             {
-                if (_distance > 0)
+                if (_distance > 0 && Globals.GridMaps.Contains(_mapNum))
                 {
                     float volume = 100 - ((100 / _distance) * CalculateSoundDistance());
                     if (volume < 0) {volume = 0f;}
@@ -314,16 +321,17 @@ namespace Intersect_Client.Classes.Core
                 if (_x == -1 || _y == -1 || _distance == -1)
                 {
                     Point player = new Point();
-                    player.X = (int)playerx;
-                    player.Y = (int)playery;
-                    Rectangle mapRect = new Rectangle((int)map.GetX(), (int)map.GetY(), Options.MapWidth * Options.TileWidth, Options.MapHeight * Options.TileHeight);
-                    distance = (float)DistancePointToRectangle(player, mapRect) / 32f;
+                    player.X = (int) playerx;
+                    player.Y = (int) playery;
+                    Rectangle mapRect = new Rectangle((int) map.GetX(), (int) map.GetY(),
+                        Options.MapWidth*Options.TileWidth, Options.MapHeight*Options.TileHeight);
+                    distance = (float) DistancePointToRectangle(player, mapRect)/32f;
                 }
                 else
                 {
-                    soundx = map.GetX() + _x * Options.TileWidth + 16;
-                    soundy = map.GetY() + _y * Options.TileHeight + 16;
-                    distance = (float)Math.Sqrt(Math.Pow(playerx - soundx, 2) + Math.Pow(playery - soundy, 2)) / 32f;
+                    soundx = map.GetX() + _x*Options.TileWidth + 16;
+                    soundy = map.GetY() + _y*Options.TileHeight + 16;
+                    distance = (float) Math.Sqrt(Math.Pow(playerx - soundx, 2) + Math.Pow(playery - soundy, 2))/32f;
                 }
             }
             return distance;

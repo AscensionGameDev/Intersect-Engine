@@ -29,6 +29,19 @@
         private void InitializeComponent()
         {
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.grpQuestInProgress = new System.Windows.Forms.GroupBox();
+            this.label20 = new System.Windows.Forms.Label();
+            this.cmbQuestTask = new System.Windows.Forms.ComboBox();
+            this.cmbTaskModifier = new System.Windows.Forms.ComboBox();
+            this.label19 = new System.Windows.Forms.Label();
+            this.label17 = new System.Windows.Forms.Label();
+            this.cmbQuestInProgress = new System.Windows.Forms.ComboBox();
+            this.grpQuestCompleted = new System.Windows.Forms.GroupBox();
+            this.label21 = new System.Windows.Forms.Label();
+            this.cmbCompletedQuest = new System.Windows.Forms.ComboBox();
+            this.grpStartQuest = new System.Windows.Forms.GroupBox();
+            this.label18 = new System.Windows.Forms.Label();
+            this.cmbStartQuest = new System.Windows.Forms.ComboBox();
             this.grpTime = new System.Windows.Forms.GroupBox();
             this.label16 = new System.Windows.Forms.Label();
             this.label13 = new System.Windows.Forms.Label();
@@ -76,6 +89,9 @@
             this.cmbSelfSwitch = new System.Windows.Forms.ComboBox();
             this.label12 = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
+            this.grpQuestInProgress.SuspendLayout();
+            this.grpQuestCompleted.SuspendLayout();
+            this.grpStartQuest.SuspendLayout();
             this.grpTime.SuspendLayout();
             this.grpLevel.SuspendLayout();
             this.grpClass.SuspendLayout();
@@ -89,6 +105,9 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.grpQuestInProgress);
+            this.groupBox1.Controls.Add(this.grpQuestCompleted);
+            this.groupBox1.Controls.Add(this.grpStartQuest);
             this.groupBox1.Controls.Add(this.grpTime);
             this.groupBox1.Controls.Add(this.btnSave);
             this.groupBox1.Controls.Add(this.cmbConditionType);
@@ -108,6 +127,172 @@
             this.groupBox1.TabIndex = 17;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Conditional";
+            // 
+            // grpQuestInProgress
+            // 
+            this.grpQuestInProgress.Controls.Add(this.label20);
+            this.grpQuestInProgress.Controls.Add(this.cmbQuestTask);
+            this.grpQuestInProgress.Controls.Add(this.cmbTaskModifier);
+            this.grpQuestInProgress.Controls.Add(this.label19);
+            this.grpQuestInProgress.Controls.Add(this.label17);
+            this.grpQuestInProgress.Controls.Add(this.cmbQuestInProgress);
+            this.grpQuestInProgress.Location = new System.Drawing.Point(8, 40);
+            this.grpQuestInProgress.Name = "grpQuestInProgress";
+            this.grpQuestInProgress.Size = new System.Drawing.Size(236, 122);
+            this.grpQuestInProgress.TabIndex = 32;
+            this.grpQuestInProgress.TabStop = false;
+            this.grpQuestInProgress.Text = "Quest In Progress:";
+            this.grpQuestInProgress.Visible = false;
+            // 
+            // label20
+            // 
+            this.label20.AutoSize = true;
+            this.label20.Location = new System.Drawing.Point(6, 86);
+            this.label20.Name = "label20";
+            this.label20.Size = new System.Drawing.Size(34, 13);
+            this.label20.TabIndex = 9;
+            this.label20.Text = "Task:";
+            // 
+            // cmbQuestTask
+            // 
+            this.cmbQuestTask.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbQuestTask.Enabled = false;
+            this.cmbQuestTask.FormattingEnabled = true;
+            this.cmbQuestTask.Items.AddRange(new object[] {
+            "Equal To",
+            "Greater Than or Equal To",
+            "Less Than or Equal To",
+            "Greater Than",
+            "Less Than",
+            "Does Not Equal"});
+            this.cmbQuestTask.Location = new System.Drawing.Point(92, 83);
+            this.cmbQuestTask.Name = "cmbQuestTask";
+            this.cmbQuestTask.Size = new System.Drawing.Size(138, 21);
+            this.cmbQuestTask.TabIndex = 8;
+            // 
+            // cmbTaskModifier
+            // 
+            this.cmbTaskModifier.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbTaskModifier.FormattingEnabled = true;
+            this.cmbTaskModifier.Items.AddRange(new object[] {
+            "On Any Task",
+            "Before Task...",
+            "After Task...",
+            "On Task..."});
+            this.cmbTaskModifier.Location = new System.Drawing.Point(92, 50);
+            this.cmbTaskModifier.Name = "cmbTaskModifier";
+            this.cmbTaskModifier.Size = new System.Drawing.Size(138, 21);
+            this.cmbTaskModifier.TabIndex = 7;
+            this.cmbTaskModifier.SelectedIndexChanged += new System.EventHandler(this.cmbTaskModifier_SelectedIndexChanged);
+            // 
+            // label19
+            // 
+            this.label19.AutoSize = true;
+            this.label19.Location = new System.Drawing.Point(6, 52);
+            this.label19.Name = "label19";
+            this.label19.Size = new System.Drawing.Size(18, 13);
+            this.label19.TabIndex = 6;
+            this.label19.Text = "Is:";
+            // 
+            // label17
+            // 
+            this.label17.AutoSize = true;
+            this.label17.Location = new System.Drawing.Point(6, 21);
+            this.label17.Name = "label17";
+            this.label17.Size = new System.Drawing.Size(38, 13);
+            this.label17.TabIndex = 5;
+            this.label17.Text = "Quest:";
+            // 
+            // cmbQuestInProgress
+            // 
+            this.cmbQuestInProgress.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbQuestInProgress.FormattingEnabled = true;
+            this.cmbQuestInProgress.Items.AddRange(new object[] {
+            "Equal To",
+            "Greater Than or Equal To",
+            "Less Than or Equal To",
+            "Greater Than",
+            "Less Than",
+            "Does Not Equal"});
+            this.cmbQuestInProgress.Location = new System.Drawing.Point(92, 18);
+            this.cmbQuestInProgress.Name = "cmbQuestInProgress";
+            this.cmbQuestInProgress.Size = new System.Drawing.Size(138, 21);
+            this.cmbQuestInProgress.TabIndex = 3;
+            this.cmbQuestInProgress.SelectedIndexChanged += new System.EventHandler(this.cmbQuestInProgress_SelectedIndexChanged);
+            // 
+            // grpQuestCompleted
+            // 
+            this.grpQuestCompleted.Controls.Add(this.label21);
+            this.grpQuestCompleted.Controls.Add(this.cmbCompletedQuest);
+            this.grpQuestCompleted.Location = new System.Drawing.Point(9, 40);
+            this.grpQuestCompleted.Name = "grpQuestCompleted";
+            this.grpQuestCompleted.Size = new System.Drawing.Size(236, 71);
+            this.grpQuestCompleted.TabIndex = 32;
+            this.grpQuestCompleted.TabStop = false;
+            this.grpQuestCompleted.Text = "Quest Completed:";
+            this.grpQuestCompleted.Visible = false;
+            // 
+            // label21
+            // 
+            this.label21.AutoSize = true;
+            this.label21.Location = new System.Drawing.Point(6, 21);
+            this.label21.Name = "label21";
+            this.label21.Size = new System.Drawing.Size(38, 13);
+            this.label21.TabIndex = 5;
+            this.label21.Text = "Quest:";
+            // 
+            // cmbCompletedQuest
+            // 
+            this.cmbCompletedQuest.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbCompletedQuest.FormattingEnabled = true;
+            this.cmbCompletedQuest.Items.AddRange(new object[] {
+            "Equal To",
+            "Greater Than or Equal To",
+            "Less Than or Equal To",
+            "Greater Than",
+            "Less Than",
+            "Does Not Equal"});
+            this.cmbCompletedQuest.Location = new System.Drawing.Point(92, 18);
+            this.cmbCompletedQuest.Name = "cmbCompletedQuest";
+            this.cmbCompletedQuest.Size = new System.Drawing.Size(138, 21);
+            this.cmbCompletedQuest.TabIndex = 3;
+            // 
+            // grpStartQuest
+            // 
+            this.grpStartQuest.Controls.Add(this.label18);
+            this.grpStartQuest.Controls.Add(this.cmbStartQuest);
+            this.grpStartQuest.Location = new System.Drawing.Point(9, 40);
+            this.grpStartQuest.Name = "grpStartQuest";
+            this.grpStartQuest.Size = new System.Drawing.Size(236, 71);
+            this.grpStartQuest.TabIndex = 31;
+            this.grpStartQuest.TabStop = false;
+            this.grpStartQuest.Text = "Can Start Quest:";
+            this.grpStartQuest.Visible = false;
+            // 
+            // label18
+            // 
+            this.label18.AutoSize = true;
+            this.label18.Location = new System.Drawing.Point(6, 21);
+            this.label18.Name = "label18";
+            this.label18.Size = new System.Drawing.Size(38, 13);
+            this.label18.TabIndex = 5;
+            this.label18.Text = "Quest:";
+            // 
+            // cmbStartQuest
+            // 
+            this.cmbStartQuest.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbStartQuest.FormattingEnabled = true;
+            this.cmbStartQuest.Items.AddRange(new object[] {
+            "Equal To",
+            "Greater Than or Equal To",
+            "Less Than or Equal To",
+            "Greater Than",
+            "Less Than",
+            "Does Not Equal"});
+            this.cmbStartQuest.Location = new System.Drawing.Point(92, 18);
+            this.cmbStartQuest.Name = "cmbStartQuest";
+            this.cmbStartQuest.Size = new System.Drawing.Size(138, 21);
+            this.cmbStartQuest.TabIndex = 3;
             // 
             // grpTime
             // 
@@ -209,6 +394,9 @@
             "Self Switch is....",
             "Power level is....",
             "Time is between....",
+            "Can Start Quest....",
+            "Quest In Progress....",
+            "Quest Completed....",
             "Player death...",
             "No NPCs on the map..."});
             this.cmbConditionType.Location = new System.Drawing.Point(88, 13);
@@ -647,6 +835,12 @@
             this.Size = new System.Drawing.Size(267, 208);
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
+            this.grpQuestInProgress.ResumeLayout(false);
+            this.grpQuestInProgress.PerformLayout();
+            this.grpQuestCompleted.ResumeLayout(false);
+            this.grpQuestCompleted.PerformLayout();
+            this.grpStartQuest.ResumeLayout(false);
+            this.grpStartQuest.PerformLayout();
             this.grpTime.ResumeLayout(false);
             this.grpTime.PerformLayout();
             this.grpLevel.ResumeLayout(false);
@@ -718,5 +912,18 @@
         private System.Windows.Forms.Label label14;
         private System.Windows.Forms.Label label16;
         private System.Windows.Forms.Label label13;
+        private System.Windows.Forms.GroupBox grpQuestInProgress;
+        private System.Windows.Forms.Label label20;
+        private System.Windows.Forms.ComboBox cmbQuestTask;
+        private System.Windows.Forms.ComboBox cmbTaskModifier;
+        private System.Windows.Forms.Label label19;
+        private System.Windows.Forms.Label label17;
+        private System.Windows.Forms.ComboBox cmbQuestInProgress;
+        private System.Windows.Forms.GroupBox grpStartQuest;
+        private System.Windows.Forms.Label label18;
+        private System.Windows.Forms.ComboBox cmbStartQuest;
+        private System.Windows.Forms.GroupBox grpQuestCompleted;
+        private System.Windows.Forms.Label label21;
+        private System.Windows.Forms.ComboBox cmbCompletedQuest;
     }
 }

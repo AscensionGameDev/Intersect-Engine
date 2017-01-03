@@ -210,21 +210,21 @@ namespace Intersect_Client.Classes.UI
                     }
                     else if (input[curPos + curLen] == '\n')
                     {
-                        myOutput.Add(input.Substring(curPos, curLen));
+                        myOutput.Add(input.Substring(curPos, curLen).Trim());
                         curPos = curPos + curLen + 1;
                         curLen = 1;
                     }
                 }
                 else
                 {
-                    myOutput.Add(input.Substring(curPos, lastSpace));
+                    myOutput.Add(input.Substring(curPos, lastSpace).Trim());
                     if (lastSpace == 0) lastSpace = curLen-1;
                     curPos = curPos + lastSpace;
                     curLen = 1;
                 }
                 curLen++;
             }
-            myOutput.Add(input.Substring(curPos, input.Length - curPos));
+            myOutput.Add(input.Substring(curPos, input.Length - curPos).Trim());
             return myOutput.ToArray();
         }
         #endregion

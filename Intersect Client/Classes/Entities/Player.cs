@@ -51,6 +51,7 @@ namespace Intersect_Client.Classes.Entities
         public int StatPoints = 0;
         public int Experience = 0;
         public int ExperienceToNextLevel = 0;
+        public Dictionary<int, QuestProgressStruct> QuestProgress = new Dictionary<int, QuestProgressStruct>();
 
         public List<int> Party = new List<int>();
 

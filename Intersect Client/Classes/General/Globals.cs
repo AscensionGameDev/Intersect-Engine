@@ -65,6 +65,7 @@ namespace Intersect_Client.Classes.General
 
         //Map/Chunk Array
         public static int[,] MapGrid;
+        public static List<int> GridMaps = new List<int>();
         public static long MapGridWidth;
         public static long MapGridHeight;
         public static int[] MapRevision;
@@ -128,7 +129,8 @@ namespace Intersect_Client.Classes.General
 
         //Control Objects
         public static List<EventDialog> EventDialogs = new List<EventDialog>();
-        public static List<EventHold> EventHolds = new List<EventHold>(); 
+        public static List<EventHold> EventHolds = new List<EventHold>();
+        public static List<int> QuestOffers = new List<int>();
 
         public static string GetStatName(int statnum)
         {
