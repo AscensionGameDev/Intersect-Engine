@@ -612,8 +612,8 @@ namespace Intersect_Editor.Classes
                 foreach (var light in tmpMap.Lights)
                 {
                     double w = light.Size;
-                    var x = xoffset + Options.MapWidth * Options.TileWidth + (light.TileX * Options.TileWidth + light.OffsetX) + 16;
-                    var y = yoffset + Options.MapHeight * Options.TileHeight + (light.TileY * Options.TileHeight + light.OffsetY) + 16;
+                    var x = xoffset + Options.MapWidth * Options.TileWidth + (light.TileX * Options.TileWidth + light.OffsetX) + Options.TileWidth /2;
+                    var y = yoffset + Options.MapHeight * Options.TileHeight + (light.TileY * Options.TileHeight + light.OffsetY) + Options.TileHeight /2;
                     if (!HideDarkness) AddLight(x, y, light, null);
                 }
             }
@@ -933,8 +933,8 @@ namespace Intersect_Editor.Classes
                             var animation = AnimationBase.GetAnim(tmpMap.Attributes[x, y].data1);
                             if (animation != null)
                             {
-                                float xpos = x * Options.TileWidth + xoffset + 16;
-                                float ypos = y * Options.TileHeight + yoffset + 16;
+                                float xpos = x * Options.TileWidth + xoffset + Options.TileWidth/2;
+                                float ypos = y * Options.TileHeight + yoffset + Options.TileHeight/2;
                                 var tmpMapOld = tmpMap;
                                 if (tmpMap == TilePreviewStruct)
                                 {
@@ -1212,9 +1212,12 @@ Color.FromArgb(255, 255, 255, 255), target, MultiplyState);
                     for (var y = 0; y < Options.MapHeight; y++)
                     {
                         if (tmpMap.FindLightAt(x, y) == null) continue;
-                        DrawTexture(GetTexture(TextureType.Misc, "lighticon.png"), CurrentView.Left + x * Options.TileWidth,
-                            CurrentView.Top + y * Options.TileHeight, 0, 0, Options.TileWidth, Options.TileHeight,
-                            target);
+                        var lightTex = GetTexture(TextureType.Misc, "lighticon.png");
+                        if (lightTex != null)
+                        {
+                            DrawTexture(lightTex, new RectangleF(0,0,lightTex.Width,lightTex.Height),new RectangleF(CurrentView.Left + x * Options.TileWidth,
+                            CurrentView.Top + y * Options.TileHeight, Options.TileWidth,Options.TileHeight),Color.White, target);
+                        }
                     }
 
                 }
