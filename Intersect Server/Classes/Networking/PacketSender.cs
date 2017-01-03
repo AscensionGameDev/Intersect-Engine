@@ -191,6 +191,7 @@ namespace Intersect_Server.Classes.Networking
                 else
                 {
                     MapInstance.GetMap(mapNum).SendMapEntitiesTo(client.Entity);
+                    SendMapItems(client, mapNum);
                 }
             }
             bf.Dispose();
