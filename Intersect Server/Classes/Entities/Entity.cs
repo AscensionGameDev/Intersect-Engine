@@ -1112,6 +1112,25 @@ namespace Intersect_Server.Classes.Entities
             {
                 bf.WriteInteger(Stat[i].Value());
             }
+            if (GetType() == typeof(Player)) //helps the client identify admins if entity is a player.
+            {
+                bf.WriteInteger(((Player)this).MyClient.Power);
+            }
+            else if (GetType() == typeof(Npc)) //Helps the client identify NPC Behavior
+            {
+                if (((Npc)this).MyTarget != null)
+                {
+                    bf.WriteInteger(-1); //Used for coloring the npc's name red when aggression is shown.
+                }
+                else
+                {
+                    bf.WriteInteger(((Npc)this).MyBase.Behavior);
+                }
+            }
+            else
+            {
+                bf.WriteInteger(0);
+            }
             return bf.ToArray();
         }
     }

@@ -330,6 +330,7 @@ namespace Intersect_Server.Classes
                                                 if (user == commandsplit[1].ToLower())
                                                 {
                                                     Database.SetPlayerPower(commandsplit[1], Int32.Parse(commandsplit[2]));
+                                                    PacketSender.SendEntityDataToProximity(Globals.Clients[i].Entity);
                                                     if (Globals.Clients[i].Power > 0)
                                                     {
                                                         PacketSender.SendGlobalMsg(Globals.Clients[i].Entity.MyName + " has been given administrative powers!");
@@ -339,6 +340,7 @@ namespace Intersect_Server.Classes
                                                         PacketSender.SendGlobalMsg(Globals.Clients[i].Entity.MyName + " has had their administrative poweres revoked!");
                                                     }
                                                     Console.WriteLine(@"    " + Globals.Clients[i].Entity.MyName + " has had their power updated!");
+
                                                     userFound = true;
                                                     break;
                                                 }

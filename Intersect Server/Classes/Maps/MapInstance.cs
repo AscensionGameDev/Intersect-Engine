@@ -419,13 +419,13 @@ namespace Intersect_Server.Classes.Maps
                 }
             }
         }
-        public Entity SpawnNpc(int tileX, int tileY, int dir, int npcNum)
+        public Entity SpawnNpc(int tileX, int tileY, int dir, int npcNum, bool despawnable = false)
         {
             var npcBase = NpcBase.GetNpc(npcNum);
             if (npcBase != null)
             {
                 int index = Globals.FindOpenEntity();
-                Globals.Entities[index] = new Npc(index, npcBase);
+                Globals.Entities[index] = new Npc(index, npcBase, despawnable);
                 Globals.Entities[index].CurrentMap = MyMapNum;
                 Globals.Entities[index].CurrentX = tileX;
                 Globals.Entities[index].CurrentY = tileY;
@@ -559,7 +559,7 @@ namespace Intersect_Server.Classes.Maps
                 {
                     if (entity.GetType() == typeof(Npc) && ((Npc)entity).MyTarget == en)
                     {
-                        ((Npc)entity).MyTarget = null;
+                        ((Npc)entity).RemoveTarget();
                     }
                 }
             }

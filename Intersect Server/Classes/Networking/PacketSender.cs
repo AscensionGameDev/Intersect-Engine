@@ -329,6 +329,27 @@ namespace Intersect_Server.Classes.Networking
             bf.Dispose();
         }
 
+        public static void SendNpcAggressionToProximity(Npc en)
+        {
+            if (en == null) { return; }
+            var bf = new ByteBuffer();
+            bf.WriteLong((int)ServerPackets.NPCAggression);
+            bf.WriteInteger(en.MyIndex);
+
+            //Declare Aggression state
+            if (en.MyTarget != null)
+            {
+                bf.WriteInteger(-1);
+            }
+            else
+            {
+                bf.WriteInteger(en.MyBase.Behavior);
+            }
+
+            SendDataToProximity(en.CurrentMap, bf.ToArray());
+            bf.Dispose();
+        }
+
         public static void SendEntityLeave(int entityIndex, int type, int mapNum)
         {
             var bf = new ByteBuffer();

@@ -233,7 +233,7 @@ namespace Intersect_Client.Classes.Entities
             return renderList;
         }
 
-        public override void DrawName()
+        public override void DrawName(Color color)
         {
             if (HideName == 1) { return; }
             if (MapInstance.GetMap(CurrentMap) == null)

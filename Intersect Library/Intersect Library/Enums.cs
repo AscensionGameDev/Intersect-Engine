@@ -167,6 +167,7 @@ namespace Intersect_Library
         TradeUpdate,
         TradeClose,
         TradeRequest,
+        NPCAggression,
     }
 
     public enum MapZones

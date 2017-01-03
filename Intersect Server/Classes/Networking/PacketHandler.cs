@@ -400,7 +400,19 @@ namespace Intersect_Server.Classes.Networking
                 PacketSender.SendPlayerMsg(client, client.MuteReason);
                 return;
             }
-            PacketSender.SendGlobalMsg(client.Entity.MyName + ": " + msg, client.Entity.MyName);
+
+            if (client.Power == 2)
+            {
+                PacketSender.SendGlobalMsg(client.Entity.MyName + ": " + msg, Color.Red, client.Entity.MyName);
+            }
+            else if (client.Power == 1)
+            {
+                PacketSender.SendGlobalMsg(client.Entity.MyName + ": " + msg, new Color(0, 70, 255), client.Entity.MyName);
+            }
+            else
+            {
+                PacketSender.SendGlobalMsg(client.Entity.MyName + ": " + msg, client.Entity.MyName);
+            }
             PacketSender.SendChatBubble(client.Entity.MyIndex, (int)EntityTypes.GlobalEntity, msg, client.Entity.CurrentMap);
             bf.Dispose();
         }

@@ -99,5 +99,6 @@
         OpenCraftingBench,
         //Extras
         SetClass,
+        DespawnNpc,
     }
 }

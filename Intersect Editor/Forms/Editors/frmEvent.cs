@@ -689,6 +689,8 @@ namespace Intersect_Editor.Forms
                             }
                     }
                     return output;
+                case EventCommandType.DespawnNpc:
+                    return "Despawn NPC's";
                 case EventCommandType.PlayAnimation:
                     output += "Play Animation " + AnimationBase.GetName(command.Ints[0]) + " ";
                     switch (command.Ints[1])
@@ -904,6 +906,10 @@ namespace Intersect_Editor.Forms
                         output += "invalid";
                     }
                     return output;
+                case 11: //Player death
+                    return "Player death";
+                case 12: //No NPCs on map
+                    return "No NPCs on the map";
             }
             return "";
         }
@@ -1036,6 +1042,8 @@ namespace Intersect_Editor.Forms
                     break;
                 case EventCommandType.SpawnNpc:
                     cmdWindow = new EventCommand_SpawnNpc(this, _currentMap, MyEvent, command);
+                    break;
+                case EventCommandType.DespawnNpc:
                     break;
                 case EventCommandType.PlayAnimation:
                     cmdWindow = new EventCommand_PlayAnimation(this, _currentMap, MyEvent, command);

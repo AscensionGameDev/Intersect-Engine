@@ -40,6 +40,7 @@ using Intersect_Client.Classes.UI.Game;
 using Intersect_Client.Classes.Maps;
 using Intersect_Library;
 using Intersect_Library.GameObjects;
+using Color = IntersectClientExtras.GenericClasses.Color;
 
 
 namespace Intersect_Client.Classes.Entities
@@ -931,7 +932,33 @@ namespace Intersect_Client.Classes.Entities
 
         }
 
+        public override void DrawEquipment(string filename, int alpha)
+        {
+            //check if player is stunned or snared, if so don't let them move.
+            for (var n = 0; n < Status.Count; n++)
+            {
+                if (Status[n].Type == (int)StatusTypes.Transform) { return; }
+            }
 
+            base.DrawEquipment(filename, alpha);
+        }
+
+        //Override of the original function, used for rendering the color of a player based on rank
+        public override void DrawName(Color color)
+        {
+            if (type == 1)
+            {
+                base.DrawName(new Color(0, 70, 255)); //blue
+            }
+            else if (type == 2)
+            {
+                base.DrawName(Color.Red); //red
+            }
+            else
+            {
+                base.DrawName(new Color(205, 133, 63)); //light brown
+            }
+        }
 
         public void DrawTargets()
         {

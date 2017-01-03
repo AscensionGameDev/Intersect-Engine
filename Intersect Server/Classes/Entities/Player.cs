@@ -54,6 +54,8 @@ namespace Intersect_Server.Classes.Entities
 
         //Temporary Values
         private object EventLock = new object();
+        //Event Spawned Npcs
+        public List<Npc> SpawnedNpcs = new List<Npc>();
         public bool InBank;
         public int InShop = -1;
         public int InCraft = -1;
@@ -239,6 +241,12 @@ namespace Intersect_Server.Classes.Entities
         }
         public override void Die(bool dropitems = false)
         {
+            //Event trigger
+            for (var i = 0; i < MyEvents.Count; i++)
+            {
+                MyEvents[i].PlayerHasDied = true;
+            }
+
             base.Die(dropitems);
             Reset();
             Respawn();

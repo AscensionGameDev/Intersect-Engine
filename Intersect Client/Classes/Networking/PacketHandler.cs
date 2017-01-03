@@ -240,6 +240,9 @@ namespace Intersect_Client.Classes.Networking
                     case ServerPackets.TradeRequest:
                         HandleTradeRequest(bf.ReadBytes(bf.Length()));
                         break;
+                    case ServerPackets.NPCAggression:
+                        HandleNPCAggression(bf.ReadBytes(bf.Length()));
+                        break;
                     default:
                         Console.WriteLine(@"Non implemented packet received: " + packetHeader);
                         break;
@@ -1420,6 +1423,15 @@ namespace Intersect_Client.Classes.Networking
             bf.WriteBytes(packet);
             int partner = bf.ReadInteger();
             InputBox iBox = new InputBox("Trade Request", Globals.Entities[partner].MyName + " has invited you to trade items with them. Do you accept?", true, PacketSender.SendTradeRequestAccept, PacketSender.SendRequestDecline, partner, false);
+            bf.Dispose();
+        }
+
+        private static void HandleNPCAggression(byte[] packet)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteBytes(packet);
+            int index = bf.ReadInteger();
+            Globals.Entities[index].type = bf.ReadInteger();
             bf.Dispose();
         }
     }

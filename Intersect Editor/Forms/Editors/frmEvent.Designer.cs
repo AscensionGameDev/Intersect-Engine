@@ -78,6 +78,7 @@ namespace Intersect_Editor.Forms
             System.Windows.Forms.ListViewItem listViewItem36 = new System.Windows.Forms.ListViewItem("Open Shop");
             System.Windows.Forms.ListViewItem listViewItem37 = new System.Windows.Forms.ListViewItem("Open Crafting Station");
             System.Windows.Forms.ListViewItem listViewItem38 = new System.Windows.Forms.ListViewItem("Change Class");
+            System.Windows.Forms.ListViewItem listViewItem39 = new System.Windows.Forms.ListViewItem("Despawn NPC");
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmEvent));
             this.label1 = new System.Windows.Forms.Label();
             this.txtEventname = new System.Windows.Forms.TextBox();
@@ -668,6 +669,7 @@ namespace Intersect_Editor.Forms
             listViewItem36.Group = listViewGroup8;
             listViewItem37.Group = listViewGroup8;
             listViewItem38.Group = listViewGroup3;
+            listViewItem39.Group = listViewGroup4;
             this.lstCommands.Items.AddRange(new System.Windows.Forms.ListViewItem[] {
             listViewItem1,
             listViewItem2,
@@ -706,7 +708,8 @@ namespace Intersect_Editor.Forms
             listViewItem35,
             listViewItem36,
             listViewItem37,
-            listViewItem38});
+            listViewItem38,
+            listViewItem39});
             this.lstCommands.Location = new System.Drawing.Point(7, 30);
             this.lstCommands.MultiSelect = false;
             this.lstCommands.Name = "lstCommands";

@@ -187,6 +187,10 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
                     cmbTime1.SelectedIndex = 0;
                     cmbTime2.SelectedIndex = 0;
                     break;
+                case 11: //Player death...
+                    break;
+                case 12: //No NPC's on map
+                    break;
             }
         }
 
@@ -265,6 +269,8 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
                 case 10: //Time is between...
                     _myCommand.Ints[1] = cmbTime1.SelectedIndex;
                     _myCommand.Ints[2] = cmbTime2.SelectedIndex;
+                    break;
+                case 11: //Player death...
                     break;
             }
             _eventEditor.FinishCommandEdit();

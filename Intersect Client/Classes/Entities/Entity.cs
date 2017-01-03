@@ -53,6 +53,7 @@ namespace Intersect_Client.Classes.Entities
         public int HideName = 0;
         public int Level = 1;
         public int Gender = 0;
+        public int Target = -1;
 
         //Extras
         public string Face = "";
@@ -114,6 +115,7 @@ namespace Intersect_Client.Classes.Entities
 
         //Rendering Variables
         public List<Entity> RenderList = null;
+        public int type = 0;
 
         public Entity(int index, long spawnTime, ByteBuffer bf)
         {
@@ -179,6 +181,8 @@ namespace Intersect_Client.Classes.Entities
             {
                 Stat[i] = bf.ReadInteger();
             }
+            type = bf.ReadInteger();
+
             _disposed = false;
         }
 
@@ -634,9 +638,35 @@ namespace Intersect_Client.Classes.Entities
             if (this.GetType() != typeof(Event)) { y -= 10; } //Need room for HP bar if not an event.
             return y;
         }
-        public virtual void DrawName()
+        public virtual void DrawName(Color color)
         {
             if (HideName == 1) { return; }
+
+            //Check for npc colors
+            if (color == null)
+            {
+                switch (type)
+                {
+                    case -1: //When entity has a target (showing aggression)
+                        color = Color.Red;
+                        break;
+                    case 0: //Attack when attacked
+                        color = new Color(128, 128, 128); // Gray
+                        break;
+                    case 1: //Attack on sight
+                        color = new Color(128, 0, 0); //Maroon
+                        break;
+                    case 2: //Neutral
+                        color = Color.White;
+                        break;
+                    case 3: //Guard
+                        color = Color.Black;
+                        break;
+                    default:
+                        color = Color.White;
+                        break;
+                }
+            }
 
             //Check for stealth amoungst status effects.
             for (var n = 0; n < Status.Count; n++)
@@ -660,7 +690,7 @@ namespace Intersect_Client.Classes.Entities
 
             float textWidth = GameGraphics.Renderer.MeasureText(MyName, GameGraphics.GameFont, 1).X;
             GameGraphics.Renderer.DrawString(MyName, GameGraphics.GameFont,
-                (int)(x - (int)Math.Ceiling(textWidth / 2)), (int)(y), 1, Color.White);
+                (int)(x - (int)Math.Ceiling(textWidth / 2)), (int)(y), 1, color);
         }
 
         public void DrawActionMsgs()

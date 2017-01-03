@@ -47,8 +47,9 @@ namespace Intersect_Server.Classes.Entities
         //Moving
         public long LastRandomMove;
 
-        //Respawn
+        //Respawn/Despawn
         public long RespawnTime;
+        public bool Despawnable;
 
         //Behaviour
         public byte Behaviour = 0;
@@ -57,12 +58,13 @@ namespace Intersect_Server.Classes.Entities
         //Spell casting
         public long CastFreq = 0;
 
-        public Npc(int index, NpcBase myBase)
+        public Npc(int index, NpcBase myBase, bool despawnable = false)
             : base(index)
         {
             MyName = myBase.Name;
             MySprite = myBase.Sprite;
             MyBase = myBase;
+            Despawnable = despawnable;
 
             for (int I = 0; I < (int)Stats.StatCount; I++)
             {
@@ -105,6 +107,13 @@ namespace Intersect_Server.Classes.Entities
             {
                 MyTarget = en;
             }
+            PacketSender.SendNpcAggressionToProximity(this);
+        }
+
+        public void RemoveTarget()
+        {
+            MyTarget = null;
+            PacketSender.SendNpcAggressionToProximity(this);
         }
 
         public override void TryAttack(Entity enemy, ProjectileBase isProjectile = null, int isSpell = -1, int projectileDir = -1)
@@ -151,11 +160,6 @@ namespace Intersect_Server.Classes.Entities
                 }
             }
             return true;
-        }
-
-        public void RemoveTarget()
-        {
-            MyTarget = null;
         }
 
         private void TryCastSpells()
@@ -290,7 +294,7 @@ namespace Intersect_Server.Classes.Entities
                     }
                     else
                     {
-                        MyTarget = null;
+                        RemoveTarget();
                     }
                 }
                 else //Find a target if able
@@ -322,7 +326,7 @@ namespace Intersect_Server.Classes.Entities
                         }
                         if (closestIndex != -1)
                         {
-                            MyTarget = possibleTargets[closestIndex];
+                            AssignTarget(possibleTargets[closestIndex]);
                         }
                     }
                 }

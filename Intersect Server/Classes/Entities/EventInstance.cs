@@ -54,6 +54,10 @@ namespace Intersect_Server.Classes.Entities
         public int CurrentX;
         public int CurrentY;
 
+        //Special conditions
+        public bool PlayerHasDied = false;
+        public bool NPCDeathTriggerd = false;
+
         public Stack<CommandInstance> CallStack = new Stack<CommandInstance>();
 
         public EventInstance(int index, Client client, EventBase baseEvent, int mapNum)
@@ -94,6 +98,8 @@ namespace Intersect_Server.Classes.Entities
                     CurrentX = PageInstance.CurrentX;
                     CurrentY = PageInstance.CurrentY;
                     PageInstance = null;
+                    PlayerHasDied = false;
+                    //NPCDeathTriggerd = true;
                     if (HoldingPlayer)
                     {
                         PacketSender.SendReleasePlayer(MyClient, MapNum, MyIndex);
@@ -161,6 +167,8 @@ namespace Intersect_Server.Classes.Entities
                                 }
                                 if (CallStack.Count == 0)
                                 {
+                                    PlayerHasDied = false;
+                                    NPCDeathTriggerd = true;
                                     break;
                                 }
                             }
@@ -376,7 +384,22 @@ namespace Intersect_Server.Classes.Entities
                     {
                         return true;
                     }
-                    break;
+                case 11: //Player death
+                    return PlayerHasDied;
+                case 12: //no NPCs on the map (used for boss fights)
+                    if (NPCDeathTriggerd == true) return false; //Only call it once
+                    MapInstance m = MapInstance.GetMap(MapNum);
+                    for (int i = 0; i < m.Spawns.Count; i++)
+                    {
+                        if (m.NpcSpawnInstances.ContainsKey(m.Spawns[i]))
+                        {
+                            if (m.NpcSpawnInstances[m.Spawns[i]].Entity.Dead == false)
+                            {
+                                return false;
+                            }
+                        }
+                    }
+                    return true;
             }
             return false;
         }
@@ -826,8 +849,24 @@ namespace Intersect_Server.Classes.Entities
                     tile = new TileHelper(mapNum, tileX, tileY);
                     if (tile.TryFix())
                     {
-                        MapInstance.GetMap(mapNum).SpawnNpc(tileX, tileY, direction, npcNum);
+                        var npc = MapInstance.GetMap(mapNum).SpawnNpc(tileX, tileY, direction, npcNum, true);
+                        MyPlayer.SpawnedNpcs.Add((Npc)npc);
                     }
+                    CallStack.Peek().CommandIndex++;
+                    break;
+                case EventCommandType.DespawnNpc:
+                    var entities = MyPlayer.SpawnedNpcs.ToArray();
+                    for (int i = 0; i < entities.Length; i++)
+                    {
+                        if (entities[i] != null  && entities[i].GetType() == typeof(Npc))
+                        {
+                            if (((Npc)entities[i]).Despawnable == true)
+                            {
+                                ((Npc)entities[i]).Die(false);
+                            }
+                        }
+                    }
+                    MyPlayer.SpawnedNpcs.Clear();
                     CallStack.Peek().CommandIndex++;
                     break;
                 case EventCommandType.PlayAnimation:

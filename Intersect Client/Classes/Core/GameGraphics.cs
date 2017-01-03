@@ -223,7 +223,7 @@ namespace Intersect_Client.Classes.Core
                 {
                     for (int y = 0; y < Layer1Entities[x].Count; y++)
                     {
-                        Layer1Entities[x][y].DrawName();
+                        Layer1Entities[x][y].DrawName(null);
                         if (Layer1Entities[x][y].GetType() != typeof(Event))
                         {
                             Layer1Entities[x][y].DrawActionMsgs();
@@ -236,7 +236,7 @@ namespace Intersect_Client.Classes.Core
                 {
                     for (int y = 0; y < Layer2Entities[x].Count; y++)
                     {
-                        Layer2Entities[x][y].DrawName();
+                        Layer2Entities[x][y].DrawName(null);
                         if (Layer2Entities[x][y].GetType() != typeof(Event))
                         {
                             Layer2Entities[x][y].DrawActionMsgs();
