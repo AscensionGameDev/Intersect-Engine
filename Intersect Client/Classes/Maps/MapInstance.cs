@@ -384,7 +384,7 @@ namespace Intersect_Client.Classes.Maps
                     break;
 
                 case MapAutotiles.AutotileAnim:
-                    xOffset = forceFrame*64;
+                    xOffset = forceFrame*Options.TileWidth*2;
                     break;
 
                 case MapAutotiles.AutotileCliff:

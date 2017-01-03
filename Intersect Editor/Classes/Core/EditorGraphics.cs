@@ -306,7 +306,7 @@ namespace Intersect_Editor.Classes
                 {
                     if (new System.Drawing.Rectangle(x * Options.TileWidth + xoffset, y * Options.TileHeight + yoffset, Options.TileWidth, Options.TileHeight)
                                 .IntersectsWith(new System.Drawing.Rectangle(0, 0, CurrentView.Width, CurrentView.Height)))
-                        DrawTexture(transTex, xoffset + x * Options.TileWidth, yoffset + y * Options.TileHeight, null);
+                    DrawTexture(transTex,new RectangleF(0,0,transTex.Width,transTex.Height),new RectangleF(xoffset + x * Options.TileWidth, yoffset + y * Options.TileHeight,Options.TileWidth,Options.TileHeight),Color.White,null);
                 }
             }
         }
