@@ -22,6 +22,7 @@
 #define websockets
 using System;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Threading;
 using Intersect_Library;
@@ -73,7 +74,7 @@ namespace Intersect_Server.Classes
             Console.WriteLine("Game Time is now: " + ServerTime.GetTime().ToString("F"));
             logicThread = new Thread(() => ServerLoop.RunServerLoop());
             logicThread.Start();
-            if (Environment.UserInteractive)
+            if (!args.Contains("noconsole"))
             {
                 Console.WriteLine("Type exit to shutdown the server, or help for a list of commands.");
                 Console.Write("> ");
