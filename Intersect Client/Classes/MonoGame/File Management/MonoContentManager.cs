@@ -157,7 +157,7 @@ namespace Intersect_Client.Classes.Bridges_and_Interfaces.SFML.File_Management
             tilesetDict.Clear();
             foreach (var t in tilesetnames)
             {
-                if (t != "" && File.Exists(Path.Combine("resources","tilesets",t)))
+                if (t != "" && File.Exists(Path.Combine("resources", "tilesets", t)) && !tilesetDict.ContainsKey(t.ToLower()))
                 {
                    tilesetDict.Add(t.ToLower(),GameGraphics.Renderer.LoadTexture(Path.Combine("resources", "tilesets",t)));
                 }
