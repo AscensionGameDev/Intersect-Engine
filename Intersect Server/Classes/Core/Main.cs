@@ -129,14 +129,19 @@ namespace Intersect_Server.Classes
                                     default:
                                         for (int i = 0; i < Globals.Clients.Count; i++)
                                         {
-                                            string user = Globals.Clients[i].Entity.MyName.ToLower();
-                                            if (user == commandsplit[1].ToLower())
+                                            if (Globals.Clients[i] != null && Globals.Clients[i].Entity != null)
                                             {
-                                                Globals.Clients[i].Entity.Die();
-                                                PacketSender.SendGlobalMsg(Globals.Clients[i].Entity.MyName + " has been killed by the server!");
-                                                Console.WriteLine(@"    " + Globals.Clients[i].Entity.MyName + " has been killed!");
-                                                userFound = true;
-                                                break;
+                                                string user = Globals.Clients[i].Entity.MyName.ToLower();
+                                                if (user == commandsplit[1].ToLower())
+                                                {
+                                                    Globals.Clients[i].Entity.Die();
+                                                    PacketSender.SendGlobalMsg(Globals.Clients[i].Entity.MyName +
+                                                                               " has been killed by the server!");
+                                                    Console.WriteLine(@"    " + Globals.Clients[i].Entity.MyName +
+                                                                      " has been killed!");
+                                                    userFound = true;
+                                                    break;
+                                                }
                                             }
                                         }
                                         if (userFound == false) { Console.WriteLine(@"    User not online!"); }
