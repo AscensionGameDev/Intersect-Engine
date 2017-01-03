@@ -1,6 +1,7 @@
 ﻿using Intersect_Editor.Classes;
 using System;
 using System.Windows.Forms;
+using Intersect_Editor.Classes.General;
 using Intersect_Library.GameObjects.Maps.MapList;
 using WeifenLuo.WinFormsUI.Docking;
 
@@ -24,10 +25,23 @@ namespace Intersect_Editor.Forms
                 //Should ask if the user wants to save changes
                 if (Globals.CurrentMap.Changed() && MessageBox.Show(@"Do you want to save your current map?", @"Save current map?", MessageBoxButtons.YesNo) == DialogResult.Yes)
                 {
-                    PacketSender.SendMap(Globals.CurrentMap);
+                    SaveMap();
                 }
                 Globals.MainForm.EnterMap(((MapListMap)e.Node.Tag).MapNum);
             }
+        }
+        private void SaveMap()
+        {
+            if (Globals.CurrentTool == (int)EdittingTool.Selection)
+            {
+                if (Globals.Dragging == true)
+                {
+                    //Place the change, we done!
+                    Globals.MapEditorWindow.ProcessSelectionMovement(Globals.CurrentMap, true);
+                    Globals.MapEditorWindow.PlaceSelection();
+                }
+            }
+            PacketSender.SendMap(Globals.CurrentMap);
         }
         private void frmMapList_Load(object sender, EventArgs e)
         {
@@ -85,7 +99,7 @@ namespace Intersect_Editor.Forms
                     MessageBoxButtons.YesNo) != DialogResult.Yes) return;
             if (Globals.CurrentMap.Changed() && MessageBox.Show(@"Do you want to save your current map?", @"Save current map?", MessageBoxButtons.YesNo) == DialogResult.Yes)
             {
-                PacketSender.SendMap(Globals.CurrentMap);
+                SaveMap();
             }
             if (mapTreeList.list.SelectedNode == null)
             {

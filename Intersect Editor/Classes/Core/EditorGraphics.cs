@@ -1198,10 +1198,7 @@ namespace Intersect_Editor.Classes
             }
 
 
-            DrawTexture(DarknessTexture, new RectangleF(0, 0, DarknessTexture.Width, DarknessTexture.Height),
-new RectangleF(-Options.MapWidth * Options.TileWidth, -Options.MapHeight * Options.TileHeight,
-DarknessTexture.Width, DarknessTexture.Height),
-Color.FromArgb(255, 255, 255, 255), target, MultiplyState);
+            DrawTexture(DarknessTexture, new RectangleF(0, 0, DarknessTexture.Width, DarknessTexture.Height),new RectangleF(-Options.MapWidth * Options.TileWidth, -Options.MapHeight * Options.TileHeight,DarknessTexture.Width, DarknessTexture.Height),Color.FromArgb(255, 255, 255, 255), target, MultiplyState);
 
             ////Draw Light Attribute Icons
             if (Globals.CurrentLayer != Options.LayerCount + 1) return;

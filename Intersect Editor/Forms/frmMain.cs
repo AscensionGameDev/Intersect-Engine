@@ -444,8 +444,21 @@ namespace Intersect_Editor.Forms
         {
             if (MessageBox.Show(@"Are you sure you want to save this map?", @"Save Map", MessageBoxButtons.YesNo) == DialogResult.Yes)
             {
-                PacketSender.SendMap(Globals.CurrentMap);
+                SaveMap();
             }
+        }
+        private void SaveMap()
+        {
+            if (Globals.CurrentTool == (int) EdittingTool.Selection)
+            {
+                if (Globals.Dragging == true)
+                {
+                    //Place the change, we done!
+                    Globals.MapEditorWindow.ProcessSelectionMovement(Globals.CurrentMap, true);
+                    Globals.MapEditorWindow.PlaceSelection();
+                }
+            }
+            PacketSender.SendMap(Globals.CurrentMap);
         }
         private void newMapToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -454,7 +467,7 @@ namespace Intersect_Editor.Forms
                     MessageBoxButtons.YesNo) != DialogResult.Yes) return;
             if (Globals.CurrentMap.Changed() && MessageBox.Show(@"Do you want to save your current map?", @"Save current map?", MessageBoxButtons.YesNo) == DialogResult.Yes)
             {
-                PacketSender.SendMap(Globals.CurrentMap);
+                SaveMap();
             }
             PacketSender.SendCreateMap(-1, Globals.CurrentMap.GetId(), null);
         }
@@ -863,7 +876,7 @@ namespace Intersect_Editor.Forms
         {
             if (!Globals.ClosingEditor && Globals.CurrentMap != null && Globals.CurrentMap.Changed() && MessageBox.Show(@"Do you want to save your current map?", @"Save current map?", MessageBoxButtons.YesNo) == DialogResult.Yes)
             {
-                PacketSender.SendMap(Globals.CurrentMap);
+                SaveMap();
             }
             Globals.ClosingEditor = true;
         }

@@ -776,7 +776,7 @@ namespace Intersect_Editor.Forms
                             {
                                 if (Globals.CurrentMap.Changed() && MessageBox.Show(@"Do you want to save your current map?", @"Save current map?", MessageBoxButtons.YesNo) == DialogResult.Yes)
                                 {
-                                    PacketSender.SendMap(Globals.CurrentMap);
+                                    SaveMap();
                                 }
                                 Globals.MainForm.EnterMap(Globals.MapGrid.Grid[x, y].mapnum);
                             }
@@ -802,7 +802,7 @@ namespace Intersect_Editor.Forms
                             DialogResult.Yes) return;
                         if (Globals.CurrentMap.Changed() && MessageBox.Show(@"Do you want to save your current map?", @"Save current map?", MessageBoxButtons.YesNo) == DialogResult.Yes)
                         {
-                            PacketSender.SendMap(Globals.CurrentMap);
+                            SaveMap();
                         }
                         PacketSender.SendCreateMap(dir, Globals.CurrentMap.GetId(), null);
                     }
@@ -811,7 +811,7 @@ namespace Intersect_Editor.Forms
                         //Should ask if the user wants to save changes
                         if (Globals.CurrentMap.Changed() && MessageBox.Show(@"Do you want to save your current map?", @"Save current map?", MessageBoxButtons.YesNo) == DialogResult.Yes)
                         {
-                            PacketSender.SendMap(Globals.CurrentMap);
+                            SaveMap();
                         }
                         Globals.MainForm.EnterMap(newMap);
                     }
@@ -899,6 +899,20 @@ namespace Intersect_Editor.Forms
         private void picMap_MouseEnter(object sender, EventArgs e)
         {
             if (Globals.MainForm.Focused) { pnlMapContainer.Focus(); }
+        }
+
+        private void SaveMap()
+        {
+            if (Globals.CurrentTool == (int)EdittingTool.Selection)
+            {
+                if (Globals.Dragging == true)
+                {
+                    //Place the change, we done!
+                    Globals.MapEditorWindow.ProcessSelectionMovement(Globals.CurrentMap, true);
+                    Globals.MapEditorWindow.PlaceSelection();
+                }
+            }
+            PacketSender.SendMap(Globals.CurrentMap);
         }
 
         //Fill/Erase Functions
