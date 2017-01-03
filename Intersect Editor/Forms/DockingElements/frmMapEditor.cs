@@ -47,6 +47,7 @@ namespace Intersect_Editor.Forms
             picMap.MinimumSize = new Size((Options.MapWidth + 2) * Options.TileWidth, (Options.MapHeight + 2) * Options.TileHeight);
             EditorGraphics.CurrentView = new Rectangle((picMap.Size.Width - (Options.MapWidth) * Options.TileWidth) / 2, (picMap.Size.Height - (Options.MapHeight) * Options.TileHeight) / 2, picMap.Size.Width, picMap.Size.Height);
             CreateSwapChain();
+            Globals.MapLayersWindow.RefreshNpcList();
         }
 
         private void CreateSwapChain()

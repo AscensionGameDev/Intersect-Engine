@@ -1266,15 +1266,20 @@ namespace Intersect_Server.Classes.Networking
                                         else { p = 0; }
 
                                         Globals.Clients[i].Power = p;
-                                        if (Globals.Clients[i].Power > 0)
+                                        if (Globals.Clients[i].Power == 2)
                                         {
                                             PacketSender.SendGlobalMsg(val1 +
                                                                        " has been given administrative powers!");
                                         }
+                                        else if (Globals.Clients[i].Power == 1)
+                                        {
+                                            PacketSender.SendGlobalMsg(val1 +
+                                                                       " has been given moderation powers!");
+                                        }
                                         else
                                         {
                                             PacketSender.SendGlobalMsg(val1 +
-                                                                       " has had their administrative poweres revoked!");
+                                                                       " has had their power revoked!");
                                         }
                                         return;
                                     }

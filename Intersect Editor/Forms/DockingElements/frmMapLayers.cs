@@ -398,35 +398,40 @@ namespace Intersect_Editor.Forms
             {
                 Globals.CurrentLayer = Options.LayerCount + 3;
                 EditorGraphics.TilePreviewUpdated = true;
-                // Update the list incase npcs have been modified since form load.
-                cmbNpc.Items.Clear();
-                cmbNpc.Items.AddRange(Database.GetGameObjectList(GameObject.Npc));
-
-                // Add the map NPCs
-                lstMapNpcs.Items.Clear();
-                for (int i = 0; i < Globals.CurrentMap.Spawns.Count; i++)
-                {
-                    lstMapNpcs.Items.Add(NpcBase.GetName(Globals.CurrentMap.Spawns[i].NpcNum));
-                }
-
-                // Don't select if there are no NPCs, to avoid crashes.
-                if (cmbNpc.Items.Count > 0) cmbNpc.SelectedIndex = 0;
-                cmbDir.SelectedIndex = 0;
-                rbRandom.Checked = true;
-                if (lstMapNpcs.Items.Count > 0)
-                {
-                    lstMapNpcs.SelectedIndex = 0;
-                    cmbDir.SelectedIndex = Globals.CurrentMap.Spawns[lstMapNpcs.SelectedIndex].Dir + 1;
-                    cmbNpc.SelectedIndex = Database.GameObjectListIndex(GameObject.Npc,Globals.CurrentMap.Spawns[lstMapNpcs.SelectedIndex].NpcNum);
-                    if (Globals.CurrentMap.Spawns[lstMapNpcs.SelectedIndex].X >= 0)
-                    {
-                        rbDeclared.Checked = true;
-                    }
-                }
+                RefreshNpcList();
             }
             if (Globals.EditingLight != null)
             {
                 Globals.MapLayersWindow.lightEditor.Cancel();
+            }
+        }
+
+        public void RefreshNpcList()
+        {
+            // Update the list incase npcs have been modified since form load.
+            cmbNpc.Items.Clear();
+            cmbNpc.Items.AddRange(Database.GetGameObjectList(GameObject.Npc));
+
+            // Add the map NPCs
+            lstMapNpcs.Items.Clear();
+            for (int i = 0; i < Globals.CurrentMap.Spawns.Count; i++)
+            {
+                lstMapNpcs.Items.Add(NpcBase.GetName(Globals.CurrentMap.Spawns[i].NpcNum));
+            }
+
+            // Don't select if there are no NPCs, to avoid crashes.
+            if (cmbNpc.Items.Count > 0) cmbNpc.SelectedIndex = 0;
+            cmbDir.SelectedIndex = 0;
+            rbRandom.Checked = true;
+            if (lstMapNpcs.Items.Count > 0)
+            {
+                lstMapNpcs.SelectedIndex = 0;
+                cmbDir.SelectedIndex = Globals.CurrentMap.Spawns[lstMapNpcs.SelectedIndex].Dir + 1;
+                cmbNpc.SelectedIndex = Database.GameObjectListIndex(GameObject.Npc, Globals.CurrentMap.Spawns[lstMapNpcs.SelectedIndex].NpcNum);
+                if (Globals.CurrentMap.Spawns[lstMapNpcs.SelectedIndex].X >= 0)
+                {
+                    rbDeclared.Checked = true;
+                }
             }
         }
 
