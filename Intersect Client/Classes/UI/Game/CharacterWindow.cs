@@ -95,7 +95,7 @@ namespace Intersect_Client.Classes.UI.Game
 
             _characterWindow.SetTitleBarHeight(24);
             _characterWindow.SetCloseButtonSize(20, 20);
-            _characterWindow.SetImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "inventoryactive.png"), WindowControl.ControlState.Active);
+            _characterWindow.SetImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "characteractive.png"), WindowControl.ControlState.Active);
             _characterWindow.SetCloseButtonImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "closenormal.png"), Button.ControlState.Normal);
             _characterWindow.SetCloseButtonImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "closehover.png"), Button.ControlState.Hovered);
             _characterWindow.SetCloseButtonImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "closeclicked.png"), Button.ControlState.Clicked);
