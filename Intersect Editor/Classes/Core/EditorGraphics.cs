@@ -306,7 +306,7 @@ namespace Intersect_Editor.Classes
                 {
                     if (new System.Drawing.Rectangle(x * Options.TileWidth + xoffset, y * Options.TileHeight + yoffset, Options.TileWidth, Options.TileHeight)
                                 .IntersectsWith(new System.Drawing.Rectangle(0, 0, CurrentView.Width, CurrentView.Height)))
-                    DrawTexture(transTex,new RectangleF(0,0,transTex.Width,transTex.Height),new RectangleF(xoffset + x * Options.TileWidth, yoffset + y * Options.TileHeight,Options.TileWidth,Options.TileHeight),Color.White,null);
+                        DrawTexture(transTex, new RectangleF(0, 0, transTex.Width, transTex.Height), new RectangleF(xoffset + x * Options.TileWidth, yoffset + y * Options.TileHeight, Options.TileWidth, Options.TileHeight), Color.White, null);
                 }
             }
         }
@@ -666,12 +666,12 @@ namespace Intersect_Editor.Classes
                             {
                                 if (tmpMap.Attributes[x, y].value > 0)
                                 {
-                                    DrawTexture(GetTexture(TextureType.Misc, "attributes.png"),
-                                        new RectangleF(0, (tmpMap.Attributes[x, y].value - 1) * Options.TileHeight,
-                                            Options.TileWidth, Options.TileHeight),
-                                        new RectangleF(CurrentView.Left + x * Options.TileWidth,
-                                           CurrentView.Top + y * Options.TileHeight, Options.TileWidth,
-                                            Options.TileHeight), Color.FromArgb(150, 255, 255, 255), null);
+                                    var attributesTex = GetTexture(TextureType.Misc, "attributes.png");
+                                    if (attributesTex != null)
+                                    {
+                                        DrawTexture(attributesTex, new RectangleF(0, (tmpMap.Attributes[x, y].value - 1) * attributesTex.Width, attributesTex.Width, attributesTex.Width),new RectangleF(CurrentView.Left + x * Options.TileWidth, 
+                                            CurrentView.Top + y * Options.TileHeight, Options.TileWidth, Options.TileHeight), Color.FromArgb(150, 255, 255, 255), null);
+                                    }
                                 }
                             }
                         }
@@ -893,7 +893,7 @@ namespace Intersect_Editor.Classes
                 {
                     tmpMap = TilePreviewStruct;
                 }
-}
+            }
 
             if (tmpMap == null) { return; }
             for (var y = y1; y < y2; y++)
