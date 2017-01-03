@@ -1824,7 +1824,7 @@ namespace Intersect_Server.Classes.Entities
         //Stats
         public void UpgradeStat(int statIndex)
         {
-            if (Stat[statIndex].Stat < Options.MaxStatValue)
+            if (Stat[statIndex].Stat < Options.MaxStatValue && StatPoints > 0)
             {
                 Stat[statIndex].Stat++;
                 StatPoints--;

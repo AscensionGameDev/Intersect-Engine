@@ -1157,6 +1157,7 @@ namespace Intersect_Server.Classes.Core
                         for (var i = 0; i < (int)Stats.StatCount && i < stats.Length; i++)
                         {
                             en.Stat[i].Stat = Int32.Parse(stats[i]);
+                            if (en.Stat[i].Stat > Options.MaxStatValue) en.Stat[i].Stat = Options.MaxStatValue;
                         }
                         en.StatPoints = Convert.ToInt32(dataReader[CHAR_STAT_POINTS]);
                         var equipmentString = dataReader[CHAR_EQUIPMENT].ToString();
