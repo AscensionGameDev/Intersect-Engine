@@ -101,7 +101,11 @@ namespace Intersect_Editor.Forms
         //PicMap Functions
         public void picMap_MouseDown(object sender, MouseEventArgs e)
         {
-            Globals.MapEditorWindow.DockPanel.Focus();
+            if (!Globals.MapEditorWindow.DockPanel.Focused)
+            {
+                Globals.MapEditorWindow.DockPanel.Focus();
+                return;
+            }
             if (Globals.EditingLight != null) { return; }
             var tmpMap = Globals.CurrentMap;
 
@@ -710,7 +714,6 @@ namespace Intersect_Editor.Forms
                 Globals.TileDragY = 0;
             }
             EditorGraphics.TilePreviewUpdated = true;
-
         }
         private void picMap_DoubleClick(object sender, EventArgs e)
         {

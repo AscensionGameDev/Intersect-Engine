@@ -101,6 +101,7 @@ namespace Intersect_Editor.Forms
             Globals.CurSelW = selW;
             Globals.CurSelH = selH;
             _tMouseDown = false;
+            Globals.MapEditorWindow.DockPanel.Focus();
         }
         private void cmbAutotile_SelectedIndexChanged(object sender, EventArgs e)
         {
