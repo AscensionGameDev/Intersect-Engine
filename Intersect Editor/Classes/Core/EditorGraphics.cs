@@ -688,10 +688,12 @@ namespace Intersect_Editor.Classes
                         for (var y = 0; y < Options.MapHeight; y++)
                         {
                             if (tmpMap.FindEventAt(x, y) == null) continue;
-                            DrawTexture(GetTexture(TextureType.Misc, "eventicon.png"),
-                                CurrentView.Left + x * Options.TileWidth,
-                                CurrentView.Top + y * Options.TileHeight, 0, 0, Options.TileWidth,
-                                Options.TileHeight, null);
+                            var eventTex = GetTexture(TextureType.Misc, "eventicon.png");
+                            if (eventTex != null)
+                            {
+                                DrawTexture(eventTex, new RectangleF(0, 0, eventTex.Width, eventTex.Height), new RectangleF(CurrentView.Left + x * Options.TileWidth,
+                                CurrentView.Top + y * Options.TileHeight, Options.TileWidth, Options.TileHeight), Color.White, null);
+                            }
                         }
 
                     }
@@ -702,10 +704,12 @@ namespace Intersect_Editor.Classes
                     {
                         if (tmpMap.Spawns[i].X >= 0 && tmpMap.Spawns[i].Y >= 0)
                         {
-                            DrawTexture(GetTexture(TextureType.Misc, "spawnicon.png"),
-                                CurrentView.Left + tmpMap.Spawns[i].X * Options.TileWidth,
-                                CurrentView.Top + tmpMap.Spawns[i].Y * Options.TileHeight, 0, 0, Options.TileWidth,
-                                Options.TileHeight, null);
+                            var spawnTex = GetTexture(TextureType.Misc, "spawnicon.png");
+                            if (spawnTex != null)
+                            {
+                                DrawTexture(spawnTex, new RectangleF(0,0,spawnTex.Width,spawnTex.Height),new RectangleF(CurrentView.Left + tmpMap.Spawns[i].X * Options.TileWidth,
+                                CurrentView.Top + tmpMap.Spawns[i].Y * Options.TileHeight,Options.TileWidth, Options.TileHeight),Color.White, null);
+                            }
                         }
                     }
                 }

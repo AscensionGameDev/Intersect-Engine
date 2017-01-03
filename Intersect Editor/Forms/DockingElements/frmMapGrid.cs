@@ -53,9 +53,17 @@ namespace Intersect_Editor.Forms.DockingElements
                 }
                 if (EditorGraphics.GetGraphicsDevice() != null)
                 {
-                    _chain = new SwapChainRenderTarget(EditorGraphics.GetGraphicsDevice(), this.pnlMapGrid.Handle,
-                        this.pnlMapGrid.Width, this.pnlMapGrid.Height, false, SurfaceFormat.Color, DepthFormat.Depth24, 0, RenderTargetUsage.DiscardContents, PresentInterval.Immediate);
-                    EditorGraphics.SetMapGridChain(_chain);
+                    if (this.pnlMapGrid.Width > 0 && this.pnlMapGrid.Height > 0)
+                    {
+                        if (this.pnlMapGrid.Width > 0 && this.pnlMapGrid.Height > 0)
+                        {
+                            _chain = new SwapChainRenderTarget(EditorGraphics.GetGraphicsDevice(),
+                                this.pnlMapGrid.Handle,
+                                this.pnlMapGrid.Width, this.pnlMapGrid.Height, false, SurfaceFormat.Color,
+                                DepthFormat.Depth24, 0, RenderTargetUsage.DiscardContents, PresentInterval.Immediate);
+                            EditorGraphics.SetMapGridChain(_chain);
+                        }
+                    }
                 }
             }
         }

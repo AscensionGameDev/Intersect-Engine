@@ -457,18 +457,15 @@ namespace Intersect_Client.Classes.Entities
                 var map = MapInstance.GetMap(CurrentMap);
                 if (entityTex.GetHeight() / 4 > Options.TileHeight)
                 {
-                    destRectangle.X = (map.GetX() + CurrentX * Options.TileWidth + OffsetX);
+                    destRectangle.X = (map.GetX() + CurrentX * Options.TileWidth + OffsetX + Options.TileWidth/2);
                     destRectangle.Y = map.GetY() + CurrentY * Options.TileHeight + OffsetY - ((entityTex.GetHeight() / 4) - Options.TileHeight);
                 }
                 else
                 {
-                    destRectangle.X = map.GetX() + CurrentX * Options.TileWidth + OffsetX;
+                    destRectangle.X = map.GetX() + CurrentX * Options.TileWidth + OffsetX + Options.TileWidth / 2;
                     destRectangle.Y = map.GetY() + CurrentY * Options.TileHeight + OffsetY;
                 }
-                if (entityTex.GetWidth() / 4 > Options.TileWidth)
-                {
-                    destRectangle.X -= ((entityTex.GetWidth() / 4) - Options.TileWidth) / 2;
-                }
+                destRectangle.X -= ((entityTex.GetWidth()/8));
                 switch (Dir)
                 {
                     case 0:
@@ -794,9 +791,8 @@ namespace Intersect_Client.Classes.Entities
             GameTexture targetTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Misc, "target.png");
             if (targetTex != null)
             {
-                destRectangle.X = map.GetX() + CurrentX*Options.TileWidth + OffsetX;
-                destRectangle.Y = map.GetY() + CurrentY*Options.TileHeight + OffsetY;
-                destRectangle.X = (int) Math.Ceiling(destRectangle.X - (int)targetTex.GetWidth()/8);
+                destRectangle.X = GetCenterPos().X - (int)targetTex.GetWidth() / 4;
+                destRectangle.Y = GetCenterPos().Y - (int)targetTex.GetHeight()/2;
 
                 srcRectangle = new FloatRect(Priority*(int)targetTex.GetWidth()/2, 0, (int)targetTex.GetWidth()/2,
                     (int)targetTex.GetHeight());

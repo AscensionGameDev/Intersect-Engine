@@ -136,41 +136,44 @@ namespace Intersect_Server.Classes.Entities
             }
 
             var currentMap = MapInstance.GetMap(CurrentMap);
-            for (var i = 0; i < currentMap.SurroundingMaps.Count + 1; i++)
+            if (currentMap != null)
             {
-                MapInstance map = null;
-                if (i == currentMap.SurroundingMaps.Count)
+                for (var i = 0; i < currentMap.SurroundingMaps.Count + 1; i++)
                 {
-                    map = currentMap;
-                }
-                else
-                {
-                    map = MapInstance.GetMap(currentMap.SurroundingMaps[i]);
-                }
-                if (map == null) continue;
-                lock (map.GetMapLock())
-                {
-                    //Check to see if we can spawn events, if already spawned.. update them.
-                    lock (EventLock)
+                    MapInstance map = null;
+                    if (i == currentMap.SurroundingMaps.Count)
                     {
-                        foreach (var mapEvent in map.Events.Values)
+                        map = currentMap;
+                    }
+                    else
+                    {
+                        map = MapInstance.GetMap(currentMap.SurroundingMaps[i]);
+                    }
+                    if (map == null) continue;
+                    lock (map.GetMapLock())
+                    {
+                        //Check to see if we can spawn events, if already spawned.. update them.
+                        lock (EventLock)
                         {
-                            //Look for event
-                            var foundEvent = EventExists(map.MyMapNum, mapEvent.SpawnX, mapEvent.SpawnY);
-                            if (foundEvent == -1)
+                            foreach (var mapEvent in map.Events.Values)
                             {
-                                var tmpEvent = new EventInstance(MyEvents.Count, MyClient, mapEvent, map.MyMapNum)
+                                //Look for event
+                                var foundEvent = EventExists(map.MyMapNum, mapEvent.SpawnX, mapEvent.SpawnY);
+                                if (foundEvent == -1)
                                 {
-                                    IsGlobal = mapEvent.IsGlobal == 1,
-                                    MapNum = map.MyMapNum,
-                                    SpawnX = mapEvent.SpawnX,
-                                    SpawnY = mapEvent.SpawnY
-                                };
-                                MyEvents.Add(tmpEvent);
-                            }
-                            else
-                            {
-                                MyEvents[foundEvent].Update();
+                                    var tmpEvent = new EventInstance(MyEvents.Count, MyClient, mapEvent, map.MyMapNum)
+                                    {
+                                        IsGlobal = mapEvent.IsGlobal == 1,
+                                        MapNum = map.MyMapNum,
+                                        SpawnX = mapEvent.SpawnX,
+                                        SpawnY = mapEvent.SpawnY
+                                    };
+                                    MyEvents.Add(tmpEvent);
+                                }
+                                else
+                                {
+                                    MyEvents[foundEvent].Update();
+                                }
                             }
                         }
                     }
