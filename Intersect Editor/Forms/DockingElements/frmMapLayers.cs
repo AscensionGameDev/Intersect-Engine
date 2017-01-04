@@ -28,14 +28,14 @@ namespace Intersect_Editor.Forms
             cmbMapLayer.SelectedIndex = 0;
             if (cmbTilesets.Items.Count > 0)
             {
-                SetTileset(0);
+                SetTileset(cmbTilesets.Items[0].ToString());
             }
         }
 
         //Tiles Tab
         private void cmbTilesets_SelectedIndexChanged(object sender, EventArgs e)
         {
-            SetTileset(cmbTilesets.SelectedIndex);
+            SetTileset(cmbTilesets.Text);
         }
         private void picTileset_MouseDown(object sender, MouseEventArgs e)
         {
@@ -146,7 +146,6 @@ namespace Intersect_Editor.Forms
                 }
                 else
                 {
-                    Globals.MapLayersWindow.cmbTilesets.Items.Add(filename + " - [MISSING]");
                 }
             }
             if (TilesetBase.ObjectCount() > 0)
@@ -155,10 +154,23 @@ namespace Intersect_Editor.Forms
                 Globals.CurrentTileset = TilesetBase.GetTileset(Database.GameObjectListIndex(GameObject.Tileset,0));
             }
         }
-        public void SetTileset(int index)
+        public void SetTileset(string name)
         {
-            var tSet =
-                TilesetBase.GetTileset(Database.GameObjectIdFromList(GameObject.Tileset, cmbTilesets.SelectedIndex));
+            TilesetBase tSet = null;
+            var tilesets = TilesetBase.GetObjects();
+            var index = -1;
+            foreach (var tileset in tilesets)
+            {
+                if (tileset.Value.Value.ToLower() == name.ToLower())
+                {
+                    index = tileset.Key;
+                    break;
+                }
+            }
+            if (index > -1)
+            {
+                tSet = TilesetBase.GetTileset(index);
+            }
             if (tSet != null)
             {
                 if (File.Exists("resources/tilesets/" + tSet.Value))
@@ -175,14 +187,6 @@ namespace Intersect_Editor.Forms
                         picTileset.Height = tilesetTex.Height;
                     }
                     CreateSwapChain();
-                }
-                else
-                {
-                    if (Globals.CurrentTileset != null)
-                    {
-                        cmbTilesets.SelectedIndex = Globals.CurrentTileset.GetId();
-                        picTileset.Hide();
-                    }
                 }
             }
         }
