@@ -1053,6 +1053,10 @@ namespace Intersect_Server.Classes.Entities
             }
             DoT.Clear();
             Status.Clear();
+            for (int i = 0; i < (int)Stats.StatCount; i++)
+            {
+                Stat[i].Reset();
+            }
             Dead = true;
         }
         public virtual bool IsDead()
@@ -1170,6 +1174,11 @@ namespace Intersect_Server.Classes.Entities
                 }
             }
             return changed;
+        }
+
+        public void Reset()
+        {
+            Buff.Clear();
         }
     }
 
