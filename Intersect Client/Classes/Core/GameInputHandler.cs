@@ -47,10 +47,7 @@ namespace Intersect_Client.Classes.Core
                 {
                     if (Globals.Me != null)
                     {
-                        if (Globals.Me.TryAttack())
-                        {
-                            return;
-                        }
+                        Globals.Me.TryAttack();
                         if (Globals.Me.TryPickupItem())
                         {
                             return;

@@ -379,7 +379,6 @@ namespace Intersect_Server.Classes.Networking
             if (Globals.Entities[index].CanMove(dir) == -1 || Globals.Entities[index].CanMove(dir) == -4)
             {
                 Globals.Entities[index].Move(dir, client, false);
-                Globals.Entities[index].TryToChangeDimension();
                 if (Globals.Entities[index].MoveTimer > Globals.System.GetTimeMs())
                 {
                     Globals.Entities[index].MoveTimer = Globals.System.GetTimeMs() +

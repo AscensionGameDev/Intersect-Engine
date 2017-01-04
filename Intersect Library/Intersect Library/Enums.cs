@@ -175,6 +175,7 @@ namespace Intersect_Library
         TradeRequest,
         NPCAggression,
         PlayerDeath,
+        EntityZDimension,
     }
 
     public enum MapZones

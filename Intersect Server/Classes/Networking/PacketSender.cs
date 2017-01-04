@@ -1439,5 +1439,15 @@ namespace Intersect_Server.Classes.Networking
             SendDataToProximity(Globals.Entities[index].CurrentMap, bf.ToArray());
             bf.Dispose();
         }
+
+        public static void UpdateEntityZDimension(int index, int z)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteLong((long)ServerPackets.EntityZDimension);
+            bf.WriteLong(index);
+            bf.WriteInteger(z);
+            SendDataToProximity(Globals.Entities[index].CurrentMap, bf.ToArray());
+            bf.Dispose();
+        }
     }
 }

@@ -349,6 +349,10 @@ namespace Intersect_Server.Classes.Entities
                         }
                         MoveTimer = Globals.System.GetTimeMs() + (long) GetMovementTime();
                     }
+                    if (TryToChangeDimension() && DontUpdate == true)
+                    {
+                        PacketSender.UpdateEntityZDimension(MyIndex, CurrentZ);
+                    }
                 }
             }
         }
@@ -373,7 +377,7 @@ namespace Intersect_Server.Classes.Entities
             }
         }
         // Change the dimension if the player is on a gateway
-        public void TryToChangeDimension()
+        public bool TryToChangeDimension()
         {
             if (CurrentX < Options.MapWidth && CurrentX >= 0)
             {
@@ -385,10 +389,12 @@ namespace Intersect_Server.Classes.Entities
                         if (attribute.data1 > 0)
                         {
                             CurrentZ = attribute.data1 - 1;
+                            return true;
                         }
                     }
                 }
             }
+            return false;
         }
 
         //Misc
@@ -805,8 +811,8 @@ namespace Intersect_Server.Classes.Entities
                         }
                         break;
                     case (int)SpellTypes.Dash:
-                        var dash = new DashInstance(this, spellBase.CastRange, Dir, Convert.ToBoolean(spellBase.Data1), Convert.ToBoolean(spellBase.Data2), Convert.ToBoolean(spellBase.Data3), Convert.ToBoolean(spellBase.Data4));
                         PacketSender.SendActionMsg(MyIndex, "DASH!", new Color(255, 0, 0, 255));
+                        var dash = new DashInstance(this, spellBase.CastRange, Dir, Convert.ToBoolean(spellBase.Data1), Convert.ToBoolean(spellBase.Data2), Convert.ToBoolean(spellBase.Data3), Convert.ToBoolean(spellBase.Data4));
                         break;
                     case (int)SpellTypes.Event:
                         //To be added
