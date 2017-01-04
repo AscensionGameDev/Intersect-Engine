@@ -249,6 +249,9 @@ namespace Intersect_Client.Classes.Networking
                     case ServerPackets.NPCAggression:
                         HandleNPCAggression(bf.ReadBytes(bf.Length()));
                         break;
+                    case ServerPackets.PlayerDeath:
+                        HandlePlayerDeath(bf.ReadBytes(bf.Length()));
+                        break;
                     default:
                         Console.WriteLine(@"Non implemented packet received: " + packetHeader);
                         break;
@@ -1497,6 +1500,21 @@ namespace Intersect_Client.Classes.Networking
             bf.WriteBytes(packet);
             int index = bf.ReadInteger();
             Globals.Entities[index].type = bf.ReadInteger();
+            bf.Dispose();
+        }
+
+        private static void HandlePlayerDeath(byte[] packet)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteBytes(packet);
+            var index = (int)bf.ReadLong();
+            if (Globals.Entities.ContainsKey(index))
+            {
+                //Clear all dashes.
+                Globals.Entities[index].DashQueue.Clear();
+                Globals.Entities[index].Dashing = null;
+                Globals.Entities[index].DashTimer = 0;
+            }
             bf.Dispose();
         }
     }

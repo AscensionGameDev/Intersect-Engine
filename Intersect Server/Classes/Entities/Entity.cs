@@ -690,8 +690,7 @@ namespace Intersect_Server.Classes.Entities
                     if (isProjectile.Knockback > 0 && projectileDir < 4)
                         //If there is a knockback, knock them backwards and make sure its linear (diagonal player movement not coded).
                     {
-                        var dash = new DashInstance(enemy, isProjectile.Knockback, projectileDir, false, false, false,
-                            false, false);
+                        var dash = new DashInstance(enemy, isProjectile.Knockback, projectileDir, false, false, false, false);
                     }
                 }
             }
@@ -1272,16 +1271,18 @@ namespace Intersect_Server.Classes.Entities
         public int DistanceTraveled = 0;
         public long TransmittionTimer = 0;
         public int Direction = 0;
+        public int Facing = 0;
 
         public bool BlockPass = false;
         public bool ActiveResourcePass = false;
         public bool DeadResourcePass = false;
         public bool ZDimensionPass = false;
 
-        public DashInstance(Entity en, int range, int direction, bool blockPass = false, bool activeResourcePass = false, bool deadResourcePass = false, bool zdimensionPass = false, bool changeDirection = true)
+        public DashInstance(Entity en, int range, int direction, bool blockPass = false, bool activeResourcePass = false, bool deadResourcePass = false, bool zdimensionPass = false)
         {
             DistanceTraveled = 0;
             Direction = direction;
+            Facing = en.Dir;
 
             BlockPass = blockPass;
             ActiveResourcePass = activeResourcePass;
@@ -1294,18 +1295,17 @@ namespace Intersect_Server.Classes.Entities
                 return;
             } //Remove dash instance if no where to dash
             TransmittionTimer = Globals.System.GetTimeMs() + (long)((float)Options.MaxDashSpeed / (float)Range);
-            PacketSender.SendEntityDash(en.MyIndex, en.CurrentMap,en.CurrentX,en.CurrentY, (int)(Options.MaxDashSpeed * (Range/10f)), changeDirection? direction:-1);
+            PacketSender.SendEntityDash(en.MyIndex, en.CurrentMap,en.CurrentX,en.CurrentY, (int)(Options.MaxDashSpeed * (Range/10f)), Direction==Facing? Direction:-Facing);
         }
 
         public void CalculateRange(Entity en, int range)
         {
             int n = 0;
-            en.Dir = Direction;
             en.MoveTimer = 0;
             Range = 0;
             for (int i = 1; i <= range; i++)
             {
-                n = en.CanMove(en.Dir);
+                n = en.CanMove(Direction);
                 if (n == -5) { return; } //Check for out of bounds
                 if (n == -2 && BlockPass == false) { return; } //Check for blocks
                 if (n == -3 && ZDimensionPass == false) { return; } //Check for ZDimensionTiles
@@ -1313,7 +1313,8 @@ namespace Intersect_Server.Classes.Entities
                 if (n == (int)EntityTypes.Resource && DeadResourcePass == false) { return; } //Check for dead resources
                 if (n == (int)EntityTypes.Player) return;
 
-                en.Move(en.Dir, null, true);
+                en.Move(Direction, null, true);
+                en.Dir = Facing;
 
                 Range = i;
                 if (n == -4) return;

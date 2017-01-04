@@ -1427,5 +1427,14 @@ namespace Intersect_Server.Classes.Networking
             client.SendPacket(bf.ToArray());
             bf.Dispose();
         }
+
+        public static void SendPlayerDeath(int index)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteLong((long)ServerPackets.PlayerDeath);
+            bf.WriteLong(index);
+            SendDataToProximity(Globals.Entities[index].CurrentMap, bf.ToArray());
+            bf.Dispose();
+        }
     }
 }

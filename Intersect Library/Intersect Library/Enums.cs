@@ -173,6 +173,7 @@ namespace Intersect_Library
         TradeClose,
         TradeRequest,
         NPCAggression,
+        PlayerDeath,
     }
 
     public enum MapZones
