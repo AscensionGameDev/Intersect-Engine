@@ -1115,6 +1115,7 @@ namespace Intersect_Client.Classes.Networking
             bf.WriteBytes(packet);
             var type = (GameObject)bf.ReadInteger();
             var id = bf.ReadInteger();
+            var another = Convert.ToBoolean(bf.ReadInteger());
             var deleted = Convert.ToBoolean(bf.ReadInteger());
             var data = bf.ReadBytes(bf.Length());
             switch (type)
@@ -1258,7 +1259,7 @@ namespace Intersect_Client.Classes.Networking
                     var obj = new TilesetBase(id);
                     obj.Load(data);
                     TilesetBase.AddObject(id, obj);
-                    if (Globals.HasGameData) Globals.ContentManager.LoadTilesets(DatabaseObject.GetGameObjectList(GameObject.Tileset));
+                    if (Globals.HasGameData && !another) Globals.ContentManager.LoadTilesets(DatabaseObject.GetGameObjectList(GameObject.Tileset));
                     break;
                 case GameObject.CommonEvent:
                     //Clients don't store event data, im an idiot.

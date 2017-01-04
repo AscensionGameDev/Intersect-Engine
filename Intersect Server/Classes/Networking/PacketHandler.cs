@@ -240,6 +240,9 @@ namespace Intersect_Server.Classes.Networking
                 case ClientPackets.RequestDecline:
                     HandleRequestDecline(client, packet);
                     break;
+                case ClientPackets.AddTilesets:
+                    HandleAddTilesets(client,packet);
+                    break;
                 default:
                     Globals.GeneralLogs.Add(@"Non implemented packet received: " + packetHeader);
                     break;
@@ -1683,18 +1686,7 @@ namespace Intersect_Server.Classes.Networking
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
             var type = (GameObject)bf.ReadInteger();
-            var value = bf.ReadString();
-            if (type == GameObject.Tileset)
-            {
-                foreach (var tileset in TilesetBase.GetObjects())
-                    if (tileset.Value.GetValue() == value) return;
-            }
             var obj = Database.AddGameObject(type);
-            if (type == GameObject.Tileset)
-            {
-                ((TilesetBase)obj).SetValue(value);
-                Database.SaveGameObject(obj);
-            }
             PacketSender.SendGameObjectToAll(obj);
             bf.Dispose();
         }
@@ -2057,6 +2049,34 @@ namespace Intersect_Server.Classes.Networking
         private static void HandleRequestDecline(Client client, byte[] packet)
         {
             client.Entity.PendingRequest = false;
+        }
+
+        private static void HandleAddTilesets(Client client, byte[] packet)
+        {
+            var bf = new ByteBuffer();
+            var type = GameObject.Tileset;
+            if (client.IsEditor)
+            {
+                bf.WriteBytes(packet);
+                var count = bf.ReadInteger();
+                for (int i = 0; i < count; i++)
+                {
+                    var value = bf.ReadString();
+                    if (type == GameObject.Tileset)
+                    {
+                        foreach (var tileset in TilesetBase.GetObjects())
+                            if (tileset.Value.GetValue() == value) return;
+                    }
+                    var obj = Database.AddGameObject(type);
+                    if (type == GameObject.Tileset)
+                    {
+                        ((TilesetBase)obj).SetValue(value);
+                        Database.SaveGameObject(obj);
+                    }
+                    PacketSender.SendGameObjectToAll(obj,false, i!=count-1);
+                }
+                bf.Dispose();
+            }
         }
     }
 }

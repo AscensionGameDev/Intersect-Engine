@@ -262,5 +262,18 @@ namespace Intersect_Editor.Classes
             Network.SendPacket(bf.ToArray());
             bf.Dispose();
         }
+
+        public static void SendNewTilesets(string[] tilesets)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteLong((int)ClientPackets.AddTilesets);
+            bf.WriteInteger(tilesets.Length);
+            for (int i = 0; i < tilesets.Length; i++)
+            {
+                bf.WriteString(tilesets[i]);
+            }
+            Network.SendPacket(bf.ToArray());
+            bf.Dispose();
+        }
     }
 }

@@ -234,27 +234,29 @@ namespace Intersect_Editor.Classes.Core
         {
             if (!Directory.Exists("resources/tilesets")) { Directory.CreateDirectory("resources/tilesets"); }
             var tilesets = Directory.GetFiles("resources/tilesets", "*.png");
+            List<string> newTilesets = new List<string>();
             Array.Sort(tilesets, new AlphanumComparatorFast());
             if (tilesets.Length > 0)
             {
+                var tilesetBaseList = Database.GetGameObjectList(GameObject.Tileset);
                 for (var i = 0; i < tilesets.Length; i++)
                 {
                     tilesets[i] = tilesets[i].Replace("resources/tilesets\\", "");
-                    if (TilesetBase.ObjectCount() > 0)
+                    if (tilesetBaseList.Length > 0)
                     {
-                        for (var x = 0; x < TilesetBase.ObjectCount(); x++)
+                        for (var x = 0; x < tilesetBaseList.Length; x++)
                         {
-                            if (Database.GetGameObjectList(GameObject.Tileset)[x] == tilesets[i])
+                            if (tilesetBaseList[x] == tilesets[i])
                             {
                                 break;
                             }
-                            if (x != TilesetBase.ObjectCount() - 1) continue;
-                            PacketSender.SendCreateObject(GameObject.Tileset,tilesets[i]);
+                            if (x != tilesetBaseList.Length - 1) continue;
+                            newTilesets.Add(tilesets[i]);
                         }
                     }
                     else
                     {
-                        PacketSender.SendCreateObject(GameObject.Tileset, tilesets[i]);
+                       newTilesets.Add(tilesets[i]);
                     }
                 }
             }
@@ -266,6 +268,11 @@ namespace Intersect_Editor.Classes.Core
                 {
                     tilesetDict.Add(TilesetBase.GetTileset(Database.GameObjectIdFromList(GameObject.Tileset, i)).Value.ToLower(), new GameTexture("resources/tilesets/" + TilesetBase.GetTileset(Database.GameObjectIdFromList(GameObject.Tileset, i)).Value));
                 }
+            }
+
+            if (newTilesets.Count > 0)
+            {
+                PacketSender.SendNewTilesets(newTilesets.ToArray());
             }
         }
         private static void LoadItems()

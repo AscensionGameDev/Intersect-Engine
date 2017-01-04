@@ -290,6 +290,7 @@ namespace Intersect_Editor.Classes
             bf.WriteBytes(packet);
             var type = (GameObject) bf.ReadInteger();
             var id = bf.ReadInteger();
+            var another = Convert.ToBoolean(bf.ReadInteger());
             var deleted = Convert.ToBoolean(bf.ReadInteger());
             var data = bf.ReadBytes(bf.Length());
             switch (type)
@@ -496,7 +497,7 @@ namespace Intersect_Editor.Classes
                     var obj = new TilesetBase(id);
                     obj.Load(data);
                     TilesetBase.AddObject(id, obj);
-                    if (Globals.HasGameData) GameContentManager.LoadTilesets();
+                    if (Globals.HasGameData && !another) GameContentManager.LoadTilesets();
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();

@@ -1156,23 +1156,24 @@ namespace Intersect_Server.Classes.Networking
                     throw new ArgumentOutOfRangeException(nameof(type), type, null);
             }
         }
-        public static void SendGameObject(Client client, DatabaseObject obj, bool deleted = false)
+        public static void SendGameObject(Client client, DatabaseObject obj, bool deleted = false, bool another = false)
         {
             if (client == null) return;
             var bf = new ByteBuffer();
             bf.WriteLong((int) ServerPackets.GameObject);
             bf.WriteInteger((int) obj.GetGameObjectType());
             bf.WriteInteger(obj.GetId());
+            bf.WriteInteger(Convert.ToInt32(another));
             bf.WriteInteger(Convert.ToInt32(deleted));
             if (!deleted) bf.WriteBytes(obj.GetData());
             client.SendPacket(bf.ToArray());
             bf.Dispose();
         }
 
-        public static void SendGameObjectToAll(DatabaseObject obj, bool deleted = false)
+        public static void SendGameObjectToAll(DatabaseObject obj, bool deleted = false, bool another = false)
         {
             foreach (var client in Globals.Clients)
-                SendGameObject(client,obj, deleted);
+                SendGameObject(client,obj, deleted, another);
         }
 
         public static void SendOpenEditor(Client client, GameObject type)
