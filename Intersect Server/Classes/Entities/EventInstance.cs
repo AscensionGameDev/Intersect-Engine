@@ -90,6 +90,7 @@ namespace Intersect_Server.Classes.Entities
 
         public void Update()
         {
+            var sendLeave = false;
             if (PageInstance != null)
             {
                 //Check for despawn
@@ -99,20 +100,12 @@ namespace Intersect_Server.Classes.Entities
                     CurrentY = PageInstance.CurrentY;
                     PageInstance = null;
                     PlayerHasDied = false;
-                    //NPCDeathTriggerd = true;
                     if (HoldingPlayer)
                     {
                         PacketSender.SendReleasePlayer(MyClient, MapNum, MyIndex);
                         HoldingPlayer = false;
                     }
-                    if (IsGlobal)
-                    {
-                        PacketSender.SendEntityLeaveTo(MyClient, BaseEvent.MyIndex, (int)EntityTypes.Event, MapNum);
-                    }
-                    else
-                    {
-                        PacketSender.SendEntityLeaveTo(MyClient, BaseEvent.MyIndex, (int)EntityTypes.Event, MapNum);
-                    }
+                    sendLeave = true;
                 }
                 else
                 {
@@ -188,10 +181,11 @@ namespace Intersect_Server.Classes.Entities
                     }
                 }
             }
-            else
+
+            if (PageInstance == null)
             {
                 //Try to Spawn a PageInstance.. if we can
-                for (int i = BaseEvent.MyPages.Count-1; i >= 0; i--)
+                for (int i = BaseEvent.MyPages.Count - 1; i >= 0; i--)
                 {
                     if (CanSpawnPage(i, BaseEvent))
                     {
@@ -200,15 +194,29 @@ namespace Intersect_Server.Classes.Entities
                             if (MapInstance.GetMap(MapNum).GetGlobalEventInstance(BaseEvent) != null)
                             {
                                 PageInstance = new EventPageInstance(BaseEvent, BaseEvent.MyPages[i], BaseEvent.MyIndex, MapNum, this, MyClient, MapInstance.GetMap(MapNum).GetGlobalEventInstance(BaseEvent).GlobalPageInstance[i]);
+                                sendLeave = false;
                                 PageIndex = i;
                             }
                         }
                         else
                         {
                             PageInstance = new EventPageInstance(BaseEvent, BaseEvent.MyPages[i], BaseEvent.MyIndex, MapNum, this, MyClient);
+                            sendLeave = false;
                             PageIndex = i;
                         }
                         break;
+                    }
+                }
+
+                if (sendLeave)
+                {
+                    if (IsGlobal)
+                    {
+                        PacketSender.SendEntityLeaveTo(MyClient, BaseEvent.MyIndex, (int)EntityTypes.Event, MapNum);
+                    }
+                    else
+                    {
+                        PacketSender.SendEntityLeaveTo(MyClient, BaseEvent.MyIndex, (int)EntityTypes.Event, MapNum);
                     }
                 }
             }
