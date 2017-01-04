@@ -51,6 +51,12 @@ namespace Intersect_Server.Classes.Entities
             HideName = 1;
         }
 
+        public void Destroy(bool dropitems = false, Entity killer = null)
+        {
+            Die(dropitems,killer);
+            PacketSender.SendEntityLeave(MyIndex,(int)EntityTypes.Resource,CurrentMap);
+        }
+
         public override void Die(bool dropitems = false, Entity killer = null)
         {
             base.Die(dropitems, killer);
@@ -63,9 +69,8 @@ namespace Intersect_Server.Classes.Entities
 
         public void Spawn()
         {
-            if (MyBase.Name == "" || MyBase.MaxHP == 0) { return; }
             MySprite = MyBase.InitialGraphic;
-            Vital[(int)Vitals.Health] = Globals.Rand.Next(MyBase.MinHP, MyBase.MaxHP + 1);
+            Vital[(int)Vitals.Health] = Globals.Rand.Next(Math.Min(1, MyBase.MinHP), Math.Max(MyBase.MaxHP, Math.Min(1, MyBase.MinHP)) + 1);
             MaxVital[(int)Vitals.Health] = Vital[(int)Vitals.Health];
             Passable = Convert.ToInt32(MyBase.WalkableBefore);
 

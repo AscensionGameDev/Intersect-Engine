@@ -502,6 +502,7 @@ namespace Intersect_Server.Classes.Networking
                 foreach (var player in players)
                 {
                     player.Warp(player.CurrentMap, player.CurrentX, player.CurrentY);
+                    PacketSender.SendMap(player.MyClient,(int)mapNum);
                 }
                 PacketSender.SendMap(client, (int)mapNum); //Sends map to everyone/everything in proximity
                 bf.Dispose();

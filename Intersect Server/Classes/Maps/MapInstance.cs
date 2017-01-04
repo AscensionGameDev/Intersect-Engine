@@ -340,7 +340,8 @@ namespace Intersect_Server.Classes.Maps
             //Kill all resources spawned from this map
             foreach (var resourceSpawn in ResourceSpawnInstances)
             {
-                resourceSpawn.Value.Entity.Die(false);
+                resourceSpawn.Value.Entity.Destroy(false);
+                Entities.Remove(resourceSpawn.Value.Entity);
             }
             ResourceSpawnInstances.Clear();
         }

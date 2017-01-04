@@ -98,6 +98,7 @@ namespace Intersect_Server.Classes.General
             foreach (var en in resources)
             {
                 en.Die(false);
+                en.Spawn();
             }
         }
 
