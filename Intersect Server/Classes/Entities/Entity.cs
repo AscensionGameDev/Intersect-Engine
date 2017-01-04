@@ -473,6 +473,13 @@ namespace Intersect_Server.Classes.Entities
                 if (((Player)this).InParty((Player)enemy) == true) return;
             }
 
+            //Check if either the attacker or the defender is in a "safe zone" (Only apply if combat is PVP)
+            if (enemy.GetType() == typeof(Player) && this.GetType() == typeof(Player))
+            {
+                if (MapInstance.GetMap(CurrentMap).ZoneType == 1) { return; }
+                if (MapInstance.GetMap(enemy.CurrentMap).ZoneType == 1) { return; }
+            }
+
             if (isProjectile == null && isSpell == -1 && (AttackTimer > Globals.System.GetTimeMs() || Blocking)) return;
             AttackTimer = Globals.System.GetTimeMs() + CalculateAttackTime();
             //Check if the attacker is blinded.
