@@ -226,7 +226,6 @@ namespace Intersect_Client.Classes.Core
                         Layer1Entities[x][y].DrawName(null);
                         if (Layer1Entities[x][y].GetType() != typeof(Event))
                         {
-                            Layer1Entities[x][y].DrawActionMsgs();
                             Layer1Entities[x][y].DrawHpBar();
                             Layer1Entities[x][y].DrawCastingBar();
                         }
@@ -239,12 +238,24 @@ namespace Intersect_Client.Classes.Core
                         Layer2Entities[x][y].DrawName(null);
                         if (Layer2Entities[x][y].GetType() != typeof(Event))
                         {
-                            Layer2Entities[x][y].DrawActionMsgs();
                             Layer2Entities[x][y].DrawHpBar();
                             Layer2Entities[x][y].DrawCastingBar();
                         }
                     }
                 }
+
+                //Draw action msg's
+                for (int x = gridX - 1; x <= gridX + 1; x++)
+                {
+                    for (int y = gridY - 1; y <= gridY + 1; y++)
+                    {
+                        if (x >= 0 && x < Globals.MapGridWidth && y >= 0 && y < Globals.MapGridHeight && Globals.MapGrid[x, y] != -1)
+                        {
+                            MapInstance.GetMap(Globals.MapGrid[x, y]).DrawActionMsgs();
+                        }
+                    }
+                }
+
                 DrawDarkness();
             }
         }

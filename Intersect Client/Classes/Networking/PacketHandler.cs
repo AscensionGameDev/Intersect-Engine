@@ -489,12 +489,8 @@ namespace Intersect_Client.Classes.Networking
         {
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
-            var index = bf.ReadInteger();
-            if (Globals.Entities.ContainsKey(index))
-            {
-                var e = Globals.Entities[index];
-                e.ActionMsgs.Add(new ActionMsgInstance(e, bf.ReadString(), new Color((int)bf.ReadByte(), (int)bf.ReadByte(), (int)bf.ReadByte(), (int)bf.ReadByte())));
-            }
+            var map = bf.ReadInteger();
+            MapInstance.GetMap(map).ActionMsgs.Add(new ActionMsgInstance(map, bf.ReadInteger(), bf.ReadInteger(), bf.ReadString(), new Color((int)bf.ReadByte(), (int)bf.ReadByte(), (int)bf.ReadByte(), (int)bf.ReadByte())));
             bf.Dispose();
         }
 

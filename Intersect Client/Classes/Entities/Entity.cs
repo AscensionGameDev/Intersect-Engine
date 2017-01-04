@@ -92,9 +92,6 @@ namespace Intersect_Client.Classes.Entities
         //Status effects
         public List<StatusInstance> Status = new List<StatusInstance>();
 
-        //Action Msg's
-        public List<ActionMsgInstance> ActionMsgs = new List<ActionMsgInstance>();
-
         //Dashing instance
         public DashInstance Dashing = null;
         public Queue<DashInstance> DashQueue = new Queue<DashInstance>();
@@ -690,26 +687,6 @@ namespace Intersect_Client.Classes.Entities
                 (int)(x - (int)Math.Ceiling(textWidth / 2)), (int)(y), 1, color);
         }
 
-        public void DrawActionMsgs()
-        {
-            var map = MapInstance.GetMap(CurrentMap);
-            if (map == null)
-            {
-                return;
-            }
-
-            for (int n = ActionMsgs.Count - 1; n > -1; n--)
-            {
-                var y = (int)Math.Ceiling(GetCenterPos().Y - ((Options.TileHeight * 2) * (1000 - (ActionMsgs[n].TransmittionTimer - Globals.System.GetTimeMS())) / 1000));
-                var x = (int)Math.Ceiling(GetCenterPos().X + ActionMsgs[n].xOffset);
-                float textWidth = GameGraphics.Renderer.MeasureText(ActionMsgs[n].msg, GameGraphics.GameFont, 1).X;
-                GameGraphics.Renderer.DrawString(ActionMsgs[n].msg, GameGraphics.GameFont, (int)(x) - textWidth/2f, (int)(y), 1, ActionMsgs[n].clr);
-
-                //Try to remove
-                ActionMsgs[n].TryRemove();
-            }
-        }
-
         public void DrawHpBar()
         {
             if (HideName == 1 && Vital[(int)Vitals.Health] == MaxVital[(int)Vitals.Health]) { return; }
@@ -812,34 +789,6 @@ namespace Intersect_Client.Classes.Entities
         ~Entity()
         {
             Dispose();
-        }
-    }
-
-    public class ActionMsgInstance
-    {
-        public Entity Entity = null;
-        public string msg = "";
-        public Color clr = new Color();
-        public long TransmittionTimer = 0;
-        public long xOffset = 0;
-
-        public ActionMsgInstance(Entity entity, string message, Color color)
-        {
-            Random rnd = new Random();
-
-            Entity = entity;
-            msg = message;
-            clr = color;
-            xOffset = rnd.Next(-30, 30); //+- 16 pixels so action msg's don't overlap!
-            TransmittionTimer = Globals.System.GetTimeMS() + 1000;
-        }
-
-        public void TryRemove()
-        {
-            if (TransmittionTimer <= Globals.System.GetTimeMS())
-            {
-                Entity.ActionMsgs.Remove(this);
-            }
         }
     }
 

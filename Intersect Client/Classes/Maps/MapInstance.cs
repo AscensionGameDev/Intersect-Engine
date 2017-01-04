@@ -13,6 +13,7 @@ using Intersect_Library;
 using Intersect_Library.GameObjects;
 using Intersect_Library.GameObjects.Maps;
 using Options = Intersect_Library.Options;
+using Color = IntersectClientExtras.GenericClasses.Color;
 
 namespace Intersect_Client.Classes.Maps
 {
@@ -51,6 +52,9 @@ namespace Intersect_Client.Classes.Maps
 
         //Map Animations
         public List<MapAnimationInstance> LocalAnimations = new List<MapAnimationInstance>();
+
+        //Action Msg's
+        public List<ActionMsgInstance> ActionMsgs = new List<ActionMsgInstance>();
 
         //Map Players/Events/Npcs
         public Dictionary<int, Entity> LocalEntities = new Dictionary<int, Entity>();
@@ -666,6 +670,20 @@ namespace Intersect_Client.Classes.Maps
             }
         }
 
+        public void DrawActionMsgs()
+        {
+            for (int n = ActionMsgs.Count - 1; n > -1; n--)
+            {
+                var y = (int)Math.Ceiling((GetY() + ActionMsgs[n].Y * Options.TileHeight) - ((Options.TileHeight * 2) * (1000 - (ActionMsgs[n].TransmittionTimer - Globals.System.GetTimeMS())) / 1000));
+                var x = (int)Math.Ceiling(GetX() + ActionMsgs[n].X * Options.TileWidth + ActionMsgs[n].xOffset);
+                float textWidth = GameGraphics.Renderer.MeasureText(ActionMsgs[n].msg, GameGraphics.GameFont, 1).X;
+                GameGraphics.Renderer.DrawString(ActionMsgs[n].msg, GameGraphics.GameFont, (int)(x) - textWidth / 2f, (int)(y), 1, ActionMsgs[n].clr);
+
+                //Try to remove
+                ActionMsgs[n].TryRemove();
+            }
+        }
+
         //Events
         public void AddEvent(Event evt)
         {
@@ -780,6 +798,38 @@ namespace Intersect_Client.Classes.Maps
                     GameGraphics.ReleaseMapTexture(PeakTextures[i]);
                     PeakTextures[i] = null;
                 }
+            }
+        }
+    }
+
+    public class ActionMsgInstance
+    {
+        public int MapNum = 0;
+        public int X = 0;
+        public int Y = 0;
+        public string msg = "";
+        public Color clr = new Color();
+        public long TransmittionTimer = 0;
+        public long xOffset = 0;
+
+        public ActionMsgInstance(int mapNum, int x, int y, string message, Color color)
+        {
+            Random rnd = new Random();
+
+            MapNum = mapNum;
+            X = x;
+            Y = y;
+            msg = message;
+            clr = color;
+            xOffset = rnd.Next(-30, 30); //+- 16 pixels so action msg's don't overlap!
+            TransmittionTimer = Globals.System.GetTimeMS() + 1000;
+        }
+
+        public void TryRemove()
+        {
+            if (TransmittionTimer <= Globals.System.GetTimeMS())
+            {
+                MapInstance.GetMap(MapNum).ActionMsgs.Remove(this);
             }
         }
     }

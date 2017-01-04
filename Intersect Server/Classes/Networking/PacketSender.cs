@@ -1203,7 +1203,9 @@ namespace Intersect_Server.Classes.Networking
             if (index > Globals.Entities.Count || Globals.Entities[index] == null) return;
             var bf = new ByteBuffer();
             bf.WriteLong((int)ServerPackets.ActionMsg);
-            bf.WriteInteger(index);
+            bf.WriteInteger(Globals.Entities[index].CurrentMap);
+            bf.WriteInteger(Globals.Entities[index].CurrentX);
+            bf.WriteInteger(Globals.Entities[index].CurrentY);
             bf.WriteString(message);
             bf.WriteByte(color.A);
             bf.WriteByte(color.R);
