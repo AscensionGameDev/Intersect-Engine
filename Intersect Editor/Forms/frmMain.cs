@@ -20,10 +20,12 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 using System;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
 using Intersect_Editor.Classes;
+using Intersect_Editor.Classes.Core;
 using WeifenLuo.WinFormsUI.Docking;
 using Intersect_Editor.Classes.General;
 using Intersect_Editor.Classes.Maps;
@@ -198,6 +200,7 @@ namespace Intersect_Editor.Forms
             Globals.MapLayersWindow.Init();
             Globals.InEditor = true;
             GrabMouseDownEvents();
+            UpdateRunState();
         }
         protected override void OnClosed(EventArgs e)
         {
@@ -510,6 +513,12 @@ namespace Intersect_Editor.Forms
                 }
             }
         }
+        private void optionsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var optionsForm = new frmOptions();
+            optionsForm.ShowDialog();
+            UpdateRunState();
+        }
         private void exitToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Application.Exit();
@@ -753,6 +762,85 @@ namespace Intersect_Editor.Forms
             if (Globals.CurrentTool != (int)EdittingTool.Selection) { return; }
             Globals.MapEditorWindow.Cut();
         }
+        private void toolStripTimeButton_Click(object sender, EventArgs e)
+        {
+
+        }
+        private void toolStripBtnRun_Click(object sender, EventArgs e)
+        {
+            var path = Preferences.LoadPreference("ClientPath");
+            if (path != "" && File.Exists(path))
+            {
+                var processStartInfo = new ProcessStartInfo(path);
+                processStartInfo.WorkingDirectory = Directory.GetParent(path).FullName;
+                var process = Process.Start(processStartInfo);
+            }
+        }
+        private void UpdateTimeSimulationList()
+        {
+            Bitmap transtile = null;
+            if (File.Exists("resources/misc/transtile.png"))
+            {
+                transtile = new Bitmap("resources/misc/transtile.png");
+            }
+            toolStripTimeButton.DropDownItems.Clear();
+            var time = new DateTime(2000, 1, 1, 0, 0, 0);
+            var x = 0;
+            ToolStripDropDownButton btn = new ToolStripDropDownButton("None");
+            btn.Tag = null;
+            btn.Click += TimeDropdownButton_Click;
+            toolStripTimeButton.DropDownItems.Add(btn);
+            for (int i = 0; i < 1440; i += TimeBase.GetTimeBase().RangeInterval)
+            {
+                var addRange = time.ToString("h:mm:ss tt") + " to ";
+                time = time.AddMinutes(TimeBase.GetTimeBase().RangeInterval);
+                addRange += time.ToString("h:mm:ss tt");
+
+                //Create image of overlay color
+                var img = new Bitmap(32, 32);
+                var g = System.Drawing.Graphics.FromImage(img);
+                g.Clear(System.Drawing.Color.Transparent);
+                //Draw the trans tile if we have it
+                if (transtile != null)
+                {
+                    g.DrawImage(transtile, new System.Drawing.Point(0, 0));
+                }
+                var clr = TimeBase.GetTimeBase().RangeColors[x];
+                Brush brush =
+                new SolidBrush(System.Drawing.Color.FromArgb(clr.A, clr.R, clr.G, clr.B));
+                g.FillRectangle(brush, new System.Drawing.Rectangle(0, 0, 32, 32));
+
+                //Draw the overlay color
+                g.Dispose();
+
+                btn = new ToolStripDropDownButton(addRange, img);
+                btn.Tag = clr;
+                btn.Click += TimeDropdownButton_Click;
+                toolStripTimeButton.DropDownItems.Add(btn);
+                x++;
+            }
+            if (transtile != null) transtile.Dispose();
+        }
+        private void TimeDropdownButton_Click(object sender, EventArgs e)
+        {
+            if (((ToolStripDropDownButton)sender).Tag == null)
+            {
+                EditorGraphics.LightColor = null;
+            }
+            else
+            {
+                EditorGraphics.LightColor = (Intersect_Library.Color)((ToolStripDropDownButton)sender).Tag;
+            }
+        }
+        private void UpdateRunState()
+        {
+            toolStripBtnRun.Enabled = false;
+            var path = Preferences.LoadPreference("ClientPath");
+            if (path != "" && File.Exists(path))
+            {
+                toolStripBtnRun.Enabled = true;
+            }
+        }
 
         //Cross Threading Delegate Methods
         private void TryOpenEditorMethod(GameObject type)
@@ -880,76 +968,5 @@ namespace Intersect_Editor.Forms
             }
             Globals.ClosingEditor = true;
         }
-
-        private void toolStripTimeButton_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void UpdateTimeSimulationList()
-        {
-            Bitmap transtile = null;
-            if (File.Exists("resources/misc/transtile.png"))
-            {
-                transtile = new Bitmap("resources/misc/transtile.png");
-            }
-            toolStripTimeButton.DropDownItems.Clear();
-            var time = new DateTime(2000, 1, 1, 0, 0, 0);
-            var x = 0;
-            ToolStripDropDownButton btn = new ToolStripDropDownButton("None");
-            btn.Tag = null;
-            btn.Click += TimeDropdownButton_Click;
-            toolStripTimeButton.DropDownItems.Add(btn);
-            for (int i = 0; i < 1440; i += TimeBase.GetTimeBase().RangeInterval)
-            {
-                var addRange = time.ToString("h:mm:ss tt") + " to ";
-                time = time.AddMinutes(TimeBase.GetTimeBase().RangeInterval);
-                addRange += time.ToString("h:mm:ss tt");
-
-                //Create image of overlay color
-                var img = new Bitmap(32, 32);
-                var g = System.Drawing.Graphics.FromImage(img);
-                g.Clear(System.Drawing.Color.Transparent);
-                //Draw the trans tile if we have it
-                if (transtile != null)
-                {
-                    g.DrawImage(transtile, new System.Drawing.Point(0, 0));
-                }
-                var clr = TimeBase.GetTimeBase().RangeColors[x];
-                Brush brush =
-                new SolidBrush(System.Drawing.Color.FromArgb( clr.A, clr.R,clr.G,clr.B));
-                g.FillRectangle(brush, new System.Drawing.Rectangle(0, 0,32,32));
-
-                //Draw the overlay color
-                g.Dispose();
-
-                btn = new ToolStripDropDownButton(addRange,img);
-                btn.Tag = clr;
-                btn.Click += TimeDropdownButton_Click;
-                toolStripTimeButton.DropDownItems.Add(btn);
-                x++;
-            }
-            if (transtile != null) transtile.Dispose();
-        }
-
-        private void TimeDropdownButton_Click(object sender, EventArgs e)
-        {
-            if (((ToolStripDropDownButton) sender).Tag == null)
-            {
-                EditorGraphics.LightColor = null;
-            }
-            else
-            {
-                EditorGraphics.LightColor = (Intersect_Library.Color)((ToolStripDropDownButton)sender).Tag;
-            }
-        }
-
-        private void btnGridView_Click(object sender, EventArgs e)
-        {
-            //This should toggle us in/out of "grid view"
-            Globals.GridView = !Globals.GridView;
-            Globals.MapEditorWindow.InitMapEditor();
-        }
-
     }
 }

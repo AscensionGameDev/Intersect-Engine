@@ -91,6 +91,10 @@ namespace Intersect_Server.Classes.Entities
             {
                 Hotbar[i] = new HotbarInstance();
             }
+            for (int I = 0; I < (int)Stats.StatCount; I++)
+            {
+                Stat[I] = new EntityStat(0, I, this);
+            }
         }
 
         //Update
@@ -780,6 +784,7 @@ namespace Intersect_Server.Classes.Entities
                             }
                         }
                         PacketSender.SendPlayerEquipmentToProximity(this);
+                        PacketSender.SendEntityStats(this);
                         break;
                     case (int)ItemTypes.Spell:
                         if (itemBase.Data1 > -1)
@@ -881,6 +886,21 @@ namespace Intersect_Server.Classes.Entities
                 }
             }
             return count;
+        }
+        public override int GetWeaponDamage()
+        {
+            if (Equipment[Options.WeaponIndex] > -1 && Equipment[Options.WeaponIndex] < Options.MaxInvItems)
+            {
+                if (Inventory[Equipment[Options.WeaponIndex]].ItemNum > -1)
+                {
+                    var item = ItemBase.GetItem(Inventory[Equipment[Options.WeaponIndex]].ItemNum);
+                    if (item != null)
+                    {
+                        return item.Damage;
+                    }
+                }
+            }
+            return 0;
         }
 
         //Shop

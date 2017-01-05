@@ -98,7 +98,7 @@ namespace Intersect_Server.Classes.Entities
         {
             for (int I = 0; I < (int)Stats.StatCount; I++)
             {
-                Stat[I] = new EntityStat(0);
+                Stat[I] = new EntityStat(0,I);
             }
 
             MyIndex = index;
@@ -465,6 +465,11 @@ namespace Intersect_Server.Classes.Entities
             }
         }
 
+        public virtual int GetWeaponDamage()
+        {
+            return 0;
+        }
+
         public virtual void TryAttack(Entity enemy, ProjectileBase isProjectile = null, int isSpell = -1, int projectileDir = -1)
         {
             double dmg = 0;
@@ -627,8 +632,8 @@ namespace Intersect_Server.Classes.Entities
             //Check if magic or physical damage
             if (isSpell == -1)
             {
-                dmg = DamageCalculator(Stat[(int)Stats.Attack].Value(),
-                    enemy.Stat[(int)Stats.Defense].Value());
+                dmg = DamageCalculator(Stat[(int) Stats.Attack].Value(),
+                    enemy.Stat[(int) Stats.Defense].Value()) + GetWeaponDamage();
                 if (dmg <= 0) dmg = 1; // Always do damage.
 
                 //Check for a crit
@@ -1197,11 +1202,15 @@ namespace Intersect_Server.Classes.Entities
     public class EntityStat
     {
         public int Stat = 0;
+        private int _statType;
         public List<EntityBuff> Buff = new List<EntityBuff>();
+        private Player _player = null;
 
-        public EntityStat(int stat)
+        public EntityStat(int stat, int statType, Player owner = null)
         {
             Stat = stat;
+            _player = owner;
+            _statType = statType;
         }
 
         public int Value()
@@ -1211,6 +1220,25 @@ namespace Intersect_Server.Classes.Entities
             for (int i = 0; i < Buff.Count; i++)
             {
                 s += Buff[i].Buff;
+            }
+
+            if (_player != null)
+            {
+                //Add up player equipment values
+                for (int i = 0; i < Options.EquipmentSlots.Count; i++)
+                {
+                    if (_player.Equipment[i] >= 0 && _player.Equipment[i] < Options.MaxInvItems)
+                    {
+                        if (_player.Inventory[_player.Equipment[i]].ItemNum > -1)
+                        {
+                            var item = ItemBase.GetItem(_player.Inventory[_player.Equipment[i]].ItemNum);
+                            if (item != null)
+                            {
+                                s += _player.Inventory[_player.Equipment[i]].StatBoost[_statType] + item.StatsGiven[_statType];
+                            }
+                        }
+                    }
+                }
             }
 
             if (s <= 0) s = 1; //No 0 or negative stats, will give errors elsewhere in the code (especially divide by 0 errors).

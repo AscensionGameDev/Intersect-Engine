@@ -53,6 +53,7 @@
     <Compile Include="Classes\Core\EditorGraphics.cs" />
     <Compile Include="Classes\Core\EditorLoop.cs" />
     <Compile Include="Classes\Core\EditorSystem.cs" />
+    <Compile Include="Classes\Core\Preferences.cs" />
     <Compile Include="Classes\Core\Program.cs" />
     <Compile Include="Classes\Entities\AnimationInstance.cs" />
     <Compile Include="Classes\General\Enums.cs" />
@@ -423,6 +424,12 @@
     <Compile Include="Forms\frmMain.Designer.cs">
       <DependentUpon>frmMain.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\frmOptions.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\frmOptions.Designer.cs">
+      <DependentUpon>frmOptions.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\frmProgress.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -653,6 +660,9 @@
     <EmbeddedResource Include="Forms\frmMain.resx">
       <DependentUpon>frmMain.cs</DependentUpon>
       <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\frmOptions.resx">
+      <DependentUpon>frmOptions.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\frmProgress.resx">
       <DependentUpon>frmProgress.cs</DependentUpon>

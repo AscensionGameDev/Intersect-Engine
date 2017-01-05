@@ -50,11 +50,11 @@ namespace Intersect_Editor.Forms
             {
                 lblVersion.Text = "Editor v." + Application.ProductVersion;
                 EditorLoopDelegate = new BeginEditorLoop(EditorLoop.StartLoop);
-                if (LoadPreference("username").Trim().Length > 0)
+                if (Preferences.LoadPreference("username").Trim().Length > 0)
                 {
-                    txtUsername.Text = LoadPreference("Username");
+                    txtUsername.Text = Preferences.LoadPreference("Username");
                     txtPassword.Text = "*****";
-                    SavedPassword = LoadPreference("Password");
+                    SavedPassword = Preferences.LoadPreference("Password");
                     chkRemember.Checked = true;
                 }
                 Database.InitMapCache();
@@ -131,47 +131,21 @@ namespace Intersect_Editor.Forms
             var sha = new SHA256Managed();
             if (chkRemember.Checked)
             {
-                SavePreference("Username", txtUsername.Text);
+                Preferences.SavePreference("Username", txtUsername.Text);
                 if (SavedPassword != "")
                 {
-                    SavePreference("Password",SavedPassword);
+                    Preferences.SavePreference("Password",SavedPassword);
                 }
                 else
                 {
-                    SavePreference("Password",BitConverter.ToString(sha.ComputeHash(Encoding.UTF8.GetBytes(txtPassword.Text.Trim()))).Replace("-", ""));
+                    Preferences.SavePreference("Password",BitConverter.ToString(sha.ComputeHash(Encoding.UTF8.GetBytes(txtPassword.Text.Trim()))).Replace("-", ""));
                 }
             }
             else
             {
-                SavePreference("Username", "");
-                SavePreference("Password","");
+                Preferences.SavePreference("Username", "");
+                Preferences.SavePreference("Password","");
             }
-        }
-
-        private void SavePreference(string key, string value)
-        {
-            RegistryKey regkey = Registry.CurrentUser.OpenSubKey("Software", true);
-
-            regkey.CreateSubKey("IntersectEditor");
-            regkey = regkey.OpenSubKey("IntersectEditor", true);
-            regkey.CreateSubKey(Globals.ServerHost + ":" + Globals.ServerPort);
-            regkey = regkey.OpenSubKey(Globals.ServerHost + ":" +  Globals.ServerPort, true);
-            regkey.SetValue(key, value);
-        }
-
-        private string LoadPreference(string key)
-        {
-            RegistryKey regkey = Registry.CurrentUser.OpenSubKey("Software", false);
-            regkey = regkey.OpenSubKey("IntersectEditor", false);
-            if (regkey == null) { return ""; }
-            regkey = regkey.OpenSubKey(Globals.ServerHost + ":" + Globals.ServerPort);
-            if (regkey == null) { return ""; }
-            string value = (string)regkey.GetValue(key);
-            if (string.IsNullOrEmpty(value))
-            {
-                return "";
-            }
-            return value;
         }
 
         private void txtPassword_KeyDown(object sender, KeyEventArgs e)

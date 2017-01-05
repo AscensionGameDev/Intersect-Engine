@@ -68,7 +68,7 @@ namespace Intersect_Server.Classes.Entities
 
             for (int I = 0; I < (int)Stats.StatCount; I++)
             {
-                Stat[I] = new EntityStat(myBase.Stat[I]);
+                Stat[I] = new EntityStat(myBase.Stat[I],I);
             }
 
             for (int I = 0; I < MyBase.Spells.Count; I++)
