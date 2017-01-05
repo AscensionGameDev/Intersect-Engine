@@ -332,23 +332,32 @@ namespace Intersect_Server.Classes
                                         {
                                             for (int i = 0; i < Globals.Clients.Count; i++)
                                             {
-                                                string user = Globals.Clients[i].Entity.MyName.ToLower();
-                                                if (user == commandsplit[1].ToLower())
+                                                if (Globals.Clients[i] != null && Globals.Clients[i].Entity != null)
                                                 {
-                                                    Database.SetPlayerPower(commandsplit[1], Int32.Parse(commandsplit[2]));
-                                                    PacketSender.SendEntityDataToProximity(Globals.Clients[i].Entity);
-                                                    if (Globals.Clients[i].Power > 0)
+                                                    string user = Globals.Clients[i].Entity.MyName.ToLower();
+                                                    if (user == commandsplit[1].ToLower())
                                                     {
-                                                        PacketSender.SendGlobalMsg(Globals.Clients[i].Entity.MyName + " has been given administrative powers!");
-                                                    }
-                                                    else
-                                                    {
-                                                        PacketSender.SendGlobalMsg(Globals.Clients[i].Entity.MyName + " has had their administrative poweres revoked!");
-                                                    }
-                                                    Console.WriteLine(@"    " + Globals.Clients[i].Entity.MyName + " has had their power updated!");
+                                                        Database.SetPlayerPower(commandsplit[1],
+                                                            Int32.Parse(commandsplit[2]));
+                                                        PacketSender.SendEntityDataToProximity(Globals.Clients[i].Entity);
+                                                        if (Globals.Clients[i].Power > 0)
+                                                        {
+                                                            PacketSender.SendGlobalMsg(
+                                                                Globals.Clients[i].Entity.MyName +
+                                                                " has been given administrative powers!");
+                                                        }
+                                                        else
+                                                        {
+                                                            PacketSender.SendGlobalMsg(
+                                                                Globals.Clients[i].Entity.MyName +
+                                                                " has had their administrative poweres revoked!");
+                                                        }
+                                                        Console.WriteLine(@"    " + Globals.Clients[i].Entity.MyName +
+                                                                          " has had their power updated!");
 
-                                                    userFound = true;
-                                                    break;
+                                                        userFound = true;
+                                                        break;
+                                                    }
                                                 }
                                             }
                                         }

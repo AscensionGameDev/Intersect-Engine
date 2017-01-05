@@ -186,8 +186,6 @@ namespace Intersect_Editor.Forms.Controls
                     if (e.Node.Text == ((MapListMap)e.Node.Tag).Name && Chronological)
                     { 
                         e.Node.Text = ((MapListMap)e.Node.Tag).Name;
-                        e.CancelEdit = true;
-                        this.BeginInvoke(new Action(() => beginEdit(e.Node)));
                     }
                 }
             }
@@ -222,7 +220,6 @@ namespace Intersect_Editor.Forms.Controls
             {
                 list.SelectedNode = list.GetNodeAt(e.Location);
             }
-
         }
         private void beginEdit(TreeNode node)
         {
