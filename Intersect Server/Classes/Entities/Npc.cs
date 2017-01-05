@@ -167,11 +167,10 @@ namespace Intersect_Server.Classes.Entities
 
         private void TryCastSpells()
         {
-            //check if NPC is snared or stunned
+            //check if NPC is stunned
             for (var n = 0; n < Status.Count; n++)
             {
-                if (Status[n].Type == (int)StatusTypes.Stun ||
-                    Status[n].Type == (int)StatusTypes.Snare)
+                if (Status[n].Type == (int)StatusTypes.Stun)
                 {
                     return;
                 }
