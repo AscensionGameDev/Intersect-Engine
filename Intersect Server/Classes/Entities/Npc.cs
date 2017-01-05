@@ -379,6 +379,7 @@ namespace Intersect_Server.Classes.Entities
                             {
                                 if (CanMove(dir) == -1 || CanMove(dir) == -4)
                                 {
+                                    //check if NPC is snared or stunned
                                     for (var n = 0; n < Status.Count; n++)
                                     {
                                         if (Status[n].Type == (int)StatusTypes.Stun || Status[n].Type == (int)StatusTypes.Snare)

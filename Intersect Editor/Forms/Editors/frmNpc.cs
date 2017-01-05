@@ -375,7 +375,7 @@ namespace Intersect_Editor.Forms
 
         private void scrlSpell_Scroll(object sender, ScrollEventArgs e)
         {
-            if (scrlSpell.Value > 0)
+            if (scrlSpell.Value > -1)
             {
                 lblSpell.Text = "Spell: " + SpellBase.GetName(Database.GameObjectIdFromList(GameObject.Spell, scrlSpell.Value));
             }
