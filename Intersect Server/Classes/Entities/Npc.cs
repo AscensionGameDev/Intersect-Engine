@@ -146,10 +146,11 @@ namespace Intersect_Server.Classes.Entities
                 }
                 return false;
             }
-            else
+            else if (enemy.GetType() == typeof(Player))
             {
                 return true;
             }
+            return false;
         }
 
         public bool CanAttack()

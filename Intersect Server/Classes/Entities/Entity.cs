@@ -625,7 +625,7 @@ namespace Intersect_Server.Classes.Entities
                     {
                         PacketSender.SendActionMsg(enemy.MyIndex, "+" + spellBase.VitalDiff[(int)Vitals.Mana], new Color(255, 0, 255, 255));
                     }
-                    else
+                    else if (spellBase.VitalDiff[(int)Vitals.Mana] < 0)
                     {
                         PacketSender.SendActionMsg(enemy.MyIndex, " " + spellBase.VitalDiff[(int)Vitals.Mana], new Color(255, 0, 255, 255));
                     }
@@ -662,6 +662,13 @@ namespace Intersect_Server.Classes.Entities
                         {
                             enemy.DoT.Add(new DoTInstance(MyIndex, isSpell, enemy));
                         }
+                    }
+
+                    if (spellBase.HitAnimation > -1)
+                    {
+                        PacketSender.SendAnimationToProximity(spellBase.HitAnimation, -1, -1,
+                            enemy.CurrentMap, enemy.CurrentX,
+                            enemy.CurrentY, Dir); //Target Type -1 will be tile based animation
                     }
                 }
             }
@@ -897,12 +904,6 @@ namespace Intersect_Server.Classes.Entities
                                         {
                                             Warp(Globals.Entities[Target].CurrentMap, Globals.Entities[Target].CurrentX,
                                                 Globals.Entities[Target].CurrentY, Dir);
-                                        }
-                                        if (spellBase.HitAnimation > -1)
-                                        {
-                                            PacketSender.SendAnimationToProximity(spellBase.HitAnimation, -1, -1,
-                                                tempMap.MyMapNum, x,
-                                                y, Dir); //Target Type -1 will be tile based animation
                                         }
                                     }
                                 }
