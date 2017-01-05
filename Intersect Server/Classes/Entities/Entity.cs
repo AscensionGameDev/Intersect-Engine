@@ -468,22 +468,52 @@ namespace Intersect_Server.Classes.Entities
         public virtual void TryAttack(Entity enemy, ProjectileBase isProjectile = null, int isSpell = -1, int projectileDir = -1)
         {
             double dmg = 0;
+            bool PVPSpell = true;
 
             if (enemy == null) return;
             if (!IsOneBlockAway(enemy) && isProjectile == null && isSpell == -1) return;
             if (!isFacingTarget(enemy) && isProjectile == null && isSpell == -1) return;
 
-            //Check for parties, friendly fire off.
-            if (enemy.GetType() == typeof(Player) && this.GetType() == typeof(Player))
+            //Checking if the spell is positive or negative (if a spell)
+            if (isSpell > -1)
             {
-                if (((Player)this).InParty((Player)enemy) == true) return;
+                var spellBase = SpellBase.GetSpell(isSpell);
+                if (spellBase != null)
+                {
+                    if (spellBase.VitalDiff[(int)Vitals.Health] > -1 && spellBase.VitalDiff[(int)Vitals.Mana] > -1)
+                    {
+                        if (spellBase.Data3 == (int)StatusTypes.None || spellBase.Data3 == (int)StatusTypes.Stealth || spellBase.Data3 == (int)StatusTypes.Transform)
+                        {
+                            PVPSpell = false;
+
+                            for (var n = 0; n < Status.Count; n++)
+                            {
+                                if (spellBase.StatDiff[n] < 0)
+                                {
+                                    PVPSpell = true;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
             }
 
-            //Check if either the attacker or the defender is in a "safe zone" (Only apply if combat is PVP)
-            if (enemy.GetType() == typeof(Player) && this.GetType() == typeof(Player))
+            //Only count safe zones and friendly fire if its a dangerous spell! (If one has been used)
+            if (PVPSpell == true)
             {
-                if (MapInstance.GetMap(CurrentMap).ZoneType == 1) { return; }
-                if (MapInstance.GetMap(enemy.CurrentMap).ZoneType == 1) { return; }
+                //Check for parties and safe zones, friendly fire off (unless its healing)
+                if (enemy.GetType() == typeof(Player) && this.GetType() == typeof(Player))
+                {
+                    if (((Player)this).InParty((Player)enemy) == true) return;
+                }
+
+                //Check if either the attacker or the defender is in a "safe zone" (Only apply if combat is PVP)
+                if (enemy.GetType() == typeof(Player) && this.GetType() == typeof(Player))
+                {
+                    if (MapInstance.GetMap(CurrentMap).ZoneType == 1) { return; }
+                    if (MapInstance.GetMap(enemy.CurrentMap).ZoneType == 1) { return; }
+                }
             }
 
             if (isProjectile == null && isSpell == -1 && (AttackTimer > Globals.System.GetTimeMs() || Blocking)) return;
@@ -666,9 +696,21 @@ namespace Intersect_Server.Classes.Entities
 
                     if (spellBase.HitAnimation > -1)
                     {
-                        PacketSender.SendAnimationToProximity(spellBase.HitAnimation, -1, -1,
-                            enemy.CurrentMap, enemy.CurrentX,
-                            enemy.CurrentY, Dir); //Target Type -1 will be tile based animation
+                        int e = 0;
+                        if (enemy.GetType() == typeof(Player) || enemy.GetType() == typeof(Npc))
+                        {
+                            e = (int)EntityTypes.Player;
+                        }
+                        else if (enemy.GetType() == typeof(Resource))
+                        {
+                            //If determine if we should walk
+                            var res = ((Resource)enemy);
+                            if ((!res.IsDead() && !res.MyBase.WalkableBefore) || (res.IsDead() && !res.MyBase.WalkableAfter))
+                            {
+                                e = (int)EntityTypes.Resource;
+                            }
+                        }
+                        PacketSender.SendAnimationToProximity(spellBase.HitAnimation, e, enemy.MyIndex, enemy.CurrentMap, enemy.CurrentX, enemy.CurrentY, Dir); //Target Type -1 will be tile based animation
                     }
                 }
             }
