@@ -285,6 +285,7 @@ namespace Intersect_Server.Classes.Maps
             tempResource.ResourceNum = Attributes[x, y].data1;
             tempResource.X = x;
             tempResource.Y = y;
+            tempResource.Z = Attributes[x, y].data2;
             ResourceSpawns.Add(tempResource);
         }
         private void SpawnMapResources()
@@ -321,6 +322,7 @@ namespace Intersect_Server.Classes.Maps
                         resourceSpawnInstance.Entity = (Resource)Globals.Entities[index];
                         Globals.Entities[index].CurrentX = ResourceSpawns[i].X;
                         Globals.Entities[index].CurrentY = ResourceSpawns[i].Y;
+                        Globals.Entities[index].CurrentZ = ResourceSpawns[i].Z;
                         Globals.Entities[index].CurrentMap = MyMapNum;
                         Entities.Add((Resource)Globals.Entities[index]);
                     }

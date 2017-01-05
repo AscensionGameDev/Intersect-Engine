@@ -103,6 +103,9 @@
             this.rbRandom = new System.Windows.Forms.RadioButton();
             this.rbDeclared = new System.Windows.Forms.RadioButton();
             this.lstMapNpcs = new System.Windows.Forms.ListBox();
+            this.grpZResource = new System.Windows.Forms.GroupBox();
+            this.rbLevel2 = new System.Windows.Forms.RadioButton();
+            this.rbLevel1 = new System.Windows.Forms.RadioButton();
             this.tabControl.SuspendLayout();
             this.tabTiles.SuspendLayout();
             this.pnlTilesetContainer.SuspendLayout();
@@ -122,6 +125,7 @@
             this.tabNPCs.SuspendLayout();
             this.grpManage.SuspendLayout();
             this.grpSpawnLoc.SuspendLayout();
+            this.grpZResource.SuspendLayout();
             this.SuspendLayout();
             // 
             // tabControl
@@ -254,7 +258,6 @@
             // 
             // tabAttributes
             // 
-            this.tabAttributes.Controls.Add(this.grpSlide);
             this.tabAttributes.Controls.Add(this.rbSlide);
             this.tabAttributes.Controls.Add(this.rbGrappleStone);
             this.tabAttributes.Controls.Add(this.rbAnimation);
@@ -265,12 +268,13 @@
             this.tabAttributes.Controls.Add(this.rbZDimension);
             this.tabAttributes.Controls.Add(this.rbItem);
             this.tabAttributes.Controls.Add(this.rbBlocked);
-            this.tabAttributes.Controls.Add(this.grpAnimation);
             this.tabAttributes.Controls.Add(this.grpResource);
             this.tabAttributes.Controls.Add(this.grpItem);
             this.tabAttributes.Controls.Add(this.grpWarp);
             this.tabAttributes.Controls.Add(this.grpZDimension);
             this.tabAttributes.Controls.Add(this.grpSound);
+            this.tabAttributes.Controls.Add(this.grpSlide);
+            this.tabAttributes.Controls.Add(this.grpAnimation);
             this.tabAttributes.Location = new System.Drawing.Point(4, 22);
             this.tabAttributes.Name = "tabAttributes";
             this.tabAttributes.Padding = new System.Windows.Forms.Padding(3);
@@ -459,11 +463,12 @@
             // 
             // grpResource
             // 
+            this.grpResource.Controls.Add(this.grpZResource);
             this.grpResource.Controls.Add(this.cmbResourceAttribute);
             this.grpResource.Controls.Add(this.lblResource);
             this.grpResource.Location = new System.Drawing.Point(6, 200);
             this.grpResource.Name = "grpResource";
-            this.grpResource.Size = new System.Drawing.Size(256, 69);
+            this.grpResource.Size = new System.Drawing.Size(256, 116);
             this.grpResource.TabIndex = 31;
             this.grpResource.TabStop = false;
             this.grpResource.Text = "Resource";
@@ -972,6 +977,41 @@
             this.lstMapNpcs.Click += new System.EventHandler(this.lstMapNpcs_Click);
             this.lstMapNpcs.MouseDown += new System.Windows.Forms.MouseEventHandler(this.lstMapNpcs_MouseDown);
             // 
+            // grpZResource
+            // 
+            this.grpZResource.Controls.Add(this.rbLevel2);
+            this.grpZResource.Controls.Add(this.rbLevel1);
+            this.grpZResource.Location = new System.Drawing.Point(16, 65);
+            this.grpZResource.Name = "grpZResource";
+            this.grpZResource.Size = new System.Drawing.Size(224, 45);
+            this.grpZResource.TabIndex = 12;
+            this.grpZResource.TabStop = false;
+            this.grpZResource.Text = "Z-Dimension";
+            // 
+            // rbLevel2
+            // 
+            this.rbLevel2.AutoSize = true;
+            this.rbLevel2.Location = new System.Drawing.Point(158, 20);
+            this.rbLevel2.Name = "rbLevel2";
+            this.rbLevel2.RightToLeft = System.Windows.Forms.RightToLeft.No;
+            this.rbLevel2.Size = new System.Drawing.Size(60, 17);
+            this.rbLevel2.TabIndex = 15;
+            this.rbLevel2.Text = "Level 2";
+            this.rbLevel2.UseVisualStyleBackColor = true;
+            // 
+            // rbLevel1
+            // 
+            this.rbLevel1.AutoSize = true;
+            this.rbLevel1.Checked = true;
+            this.rbLevel1.Location = new System.Drawing.Point(6, 20);
+            this.rbLevel1.Name = "rbLevel1";
+            this.rbLevel1.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            this.rbLevel1.Size = new System.Drawing.Size(60, 17);
+            this.rbLevel1.TabIndex = 14;
+            this.rbLevel1.TabStop = true;
+            this.rbLevel1.Text = "Level 1";
+            this.rbLevel1.UseVisualStyleBackColor = true;
+            // 
             // frmMapLayers
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1022,6 +1062,8 @@
             this.grpManage.ResumeLayout(false);
             this.grpSpawnLoc.ResumeLayout(false);
             this.grpSpawnLoc.PerformLayout();
+            this.grpZResource.ResumeLayout(false);
+            this.grpZResource.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -1103,5 +1145,8 @@
         private System.Windows.Forms.GroupBox grpSlide;
         private System.Windows.Forms.ComboBox cmbSlideDir;
         private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.GroupBox grpZResource;
+        private System.Windows.Forms.RadioButton rbLevel2;
+        private System.Windows.Forms.RadioButton rbLevel1;
     }
 }

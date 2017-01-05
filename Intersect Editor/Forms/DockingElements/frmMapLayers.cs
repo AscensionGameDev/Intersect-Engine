@@ -331,6 +331,14 @@ namespace Intersect_Editor.Forms
             {
                 tmpMap.Attributes[x, y].value = (int)MapAttributes.Resource;
                 tmpMap.Attributes[x, y].data1 = Database.GameObjectIdFromList(GameObject.Resource,cmbResourceAttribute.SelectedIndex);
+                if (rbLevel1.Checked == true)
+                {
+                    tmpMap.Attributes[x, y].data2 = 0;
+                }
+                else
+                {
+                    tmpMap.Attributes[x, y].data2 = 1;
+                }
             }
             else if (rbAnimation.Checked == true)
             {
