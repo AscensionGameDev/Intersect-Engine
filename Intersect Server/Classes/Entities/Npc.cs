@@ -104,11 +104,11 @@ namespace Intersect_Server.Classes.Entities
         {
             if (en.GetType() == typeof(Projectile))
             {
-                MyTarget = ((Projectile)en).Owner;
+                if (((Projectile)en).Owner != this) MyTarget = ((Projectile)en).Owner;
             }
             else
             {
-                MyTarget = en;
+                if (this != en) MyTarget = en;
             }
             PacketSender.SendNpcAggressionToProximity(this);
         }

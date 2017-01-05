@@ -207,6 +207,16 @@ namespace Intersect_Server.Classes.Misc
                         }
                     }
 
+                    //If our target point is in the closed list for some reason let's remove it
+                    for (int i = 0; i < closedList.Count; i++)
+                    {
+                        if (closedList[i].X == targetX && closedList[i].Y == targetY)
+                        {
+                            closedList.RemoveAt(i);
+                            break;
+                        }
+                    }
+
                     if (startX > -1 && targetX > -1)
                     {
                         openList.Add(new PathfinderPoint(startX, startY, 0, 0));

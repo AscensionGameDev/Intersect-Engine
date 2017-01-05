@@ -149,13 +149,19 @@ namespace Intersect_Editor.Forms
                         lstSpells.Items.Add("Spell: 0 None");
                     }
                 }
-                if (scrlSpell.Value > -1)
+                if (lstSpells.Items.Count > 0)
                 {
-                    lblSpell.Text = "Spell: " +  SpellBase.GetName(Database.GameObjectIdFromList(GameObject.Spell, scrlSpell.Value));
-                }
-                else
-                {
-                    lblSpell.Text = "Spell: None";
+                    lstSpells.SelectedIndex = 0;
+                    scrlSpell.Value = Database.GameObjectListIndex(GameObject.Spell, _editorItem.Spells[lstSpells.SelectedIndex]);
+
+                    if (scrlSpell.Value > -1)
+                    {
+                        lblSpell.Text = "Spell: " + SpellBase.GetName(Database.GameObjectIdFromList(GameObject.Spell, scrlSpell.Value));
+                    }
+                    else
+                    {
+                        lblSpell.Text = "Spell: None";
+                    }
                 }
                 cmbFreq.SelectedIndex = _editorItem.SpellFrequency;
 
@@ -383,17 +389,37 @@ namespace Intersect_Editor.Forms
             {
                 lblSpell.Text = "Spell: None";
             }
+            _editorItem.Spells[lstSpells.SelectedIndex] = Database.GameObjectIdFromList(GameObject.Spell, scrlSpell.Value);
+
+            int n = lstSpells.SelectedIndex;
+            lstSpells.Items.Clear();
+            for (int i = 0; i < _editorItem.Spells.Count; i++)
+            {
+                if (_editorItem.Spells[i] != -1)
+                {
+                    lstSpells.Items.Add("Spell: " + SpellBase.GetName(_editorItem.Spells[i]));
+                }
+                else
+                {
+                    lstSpells.Items.Add("Spell: 0 None");
+                }
+            }
+            lstSpells.SelectedIndex = n;
         }
 
         private void lstSpells_Click(object sender, EventArgs e)
         {
-            if (scrlSpell.Value > -1)
+            if (lstSpells.SelectedIndex > -1)
             {
-                lblSpell.Text = "Spell: " + SpellBase.GetName(Database.GameObjectIdFromList(GameObject.Spell, scrlSpell.Value));
-            }
-            else
-            {
-                lblSpell.Text = "Spell: None";
+                scrlSpell.Value = Database.GameObjectListIndex(GameObject.Spell, _editorItem.Spells[lstSpells.SelectedIndex]);
+                if (scrlSpell.Value > -1)
+                {
+                    lblSpell.Text = "Spell: " + SpellBase.GetName(Database.GameObjectIdFromList(GameObject.Spell, scrlSpell.Value));
+                }
+                else
+                {
+                    lblSpell.Text = "Spell: None";
+                }
             }
         }
 
