@@ -503,7 +503,7 @@ namespace Intersect_Client.Classes.Entities
         /// </summary>
         override public void Draw()
         {
-            
+            if (MapInstance.GetMap(CurrentMap) == null || !Globals.GridMaps.Contains(CurrentMap)) return;
         }
 
         public void SpawnDead(int spawnIndex)

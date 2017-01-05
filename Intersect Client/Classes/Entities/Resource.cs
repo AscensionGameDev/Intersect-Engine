@@ -103,6 +103,7 @@ namespace Intersect_Client.Classes.Entities
         //Rendering Resources
         override public void Draw()
         {
+            if (MapInstance.GetMap(CurrentMap) == null || !Globals.GridMaps.Contains(CurrentMap)) return;
             GameTexture srcTexture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Resource, MySprite);
             if (srcTexture != null)
             {

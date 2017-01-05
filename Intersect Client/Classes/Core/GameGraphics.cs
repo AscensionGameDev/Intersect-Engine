@@ -72,8 +72,10 @@ namespace Intersect_Client.Classes.Core
         private static float _playerLightExpand = 0f;
         public static ColorF _playerLightColor = ColorF.White;
         private static List<LightBase> _lightQueue = new List<LightBase>();
-
         private static long _fadeTimer;
+
+        //Grid Switched
+        public static bool GridSwitched = false;
 
         //Rendering Variables
         public static int DrawCalls = 0;
@@ -136,14 +138,41 @@ namespace Intersect_Client.Classes.Core
 
         public static void DrawInGame()
         {
-            ClearDarknessTexture();
-
-            TryPreRendering();
-
-            GenerateLightMap();
             var currentMap = MapInstance.GetMap(Globals.Me.CurrentMap);
             if (currentMap != null && Globals.NeedsMaps == false)
             {
+                if (GameGraphics.GridSwitched)
+                {
+                    var map = MapInstance.GetMap(Globals.Me.CurrentMap);
+                    if (map != null)
+                    {
+                        //Brightness
+                        byte brightnessTarget = (byte)((map.Brightness / 100f) * 255);
+                        _brightnessLevel = brightnessTarget;
+                        _playerLightColor.R = map.PlayerLightColor.R;
+                        _playerLightColor.G = map.PlayerLightColor.G;
+                        _playerLightColor.B = map.PlayerLightColor.B;
+                        _playerLightSize = map.PlayerLightSize;
+                        _playerLightIntensity = map.PlayerLightIntensity;
+                        _playerLightExpand = map.PlayerLightExpand;
+
+                        //Overlay
+                        OverlayColor.A = (byte)map.AHue;
+                        OverlayColor.R = (byte)map.RHue;
+                        OverlayColor.G = (byte)map.GHue;
+                        OverlayColor.B = (byte)map.BHue;
+
+                        //Fog && Panorama
+                        map.GridSwitched();
+                    }
+                    GridSwitched = false;
+                }
+                ClearDarknessTexture();
+
+                TryPreRendering();
+
+                GenerateLightMap();
+
                 var gridX = currentMap.MapGridX;
                 var gridY = currentMap.MapGridY;
                 for (int x = gridX - 1; x <= gridX + 1; x++)
@@ -601,9 +630,9 @@ namespace Intersect_Client.Classes.Core
 
             if (map.IsIndoors)
             {
-               DrawGameTexture(Renderer.GetWhiteTexture(), new FloatRect(0, 0, 1, 1),
-                    new FloatRect(0, 0, _darknessTexture.GetWidth(), _darknessTexture.GetHeight()),
-                    new Color((byte)(_brightnessLevel), 255, 255, 255), _darknessTexture, GameBlendModes.Add);
+                DrawGameTexture(Renderer.GetWhiteTexture(), new FloatRect(0, 0, 1, 1),
+                     new FloatRect(0, 0, _darknessTexture.GetWidth(), _darknessTexture.GetHeight()),
+                     new Color((byte)(_brightnessLevel), 255, 255, 255), _darknessTexture, GameBlendModes.Add);
             }
             else
             {
@@ -645,12 +674,12 @@ namespace Intersect_Client.Classes.Core
                     int x = l.OffsetX - ((int)CurrentView.Left + l.Size);
                     int y = l.OffsetY - ((int)CurrentView.Top + l.Size);
 
-                    radialShader.SetColor("LightColor", new Color(l.Intensity,l.Color.R, l.Color.G, l.Color.B));
+                    radialShader.SetColor("LightColor", new Color(l.Intensity, l.Color.R, l.Color.G, l.Color.B));
                     radialShader.SetFloat("Expand", l.Expand / 100f);
 
                     DrawGameTexture(Renderer.GetWhiteTexture(), new FloatRect(0, 0, 1, 1),
-                        new FloatRect(x, y, l.Size * 2, l.Size * 2), new Color(255,255,255,255),
-                        _darknessTexture, GameBlendModes.Add,radialShader);
+                        new FloatRect(x, y, l.Size * 2, l.Size * 2), new Color(255, 255, 255, 255),
+                        _darknessTexture, GameBlendModes.Add, radialShader);
                 }
             }
             _lightQueue.Clear();

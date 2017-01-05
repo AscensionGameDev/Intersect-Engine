@@ -97,11 +97,8 @@ namespace Intersect_Client.Classes.Entities
 
         public override void Draw()
         {
+            if (MapInstance.GetMap(CurrentMap) == null || !Globals.GridMaps.Contains(CurrentMap)) return;
             var map = MapInstance.GetMap(CurrentMap);
-            if (map == null)
-            {
-                return;
-            }
             FloatRect srcRectangle = new FloatRect();
             FloatRect destRectangle = new FloatRect();
             GameTexture srcTexture = null;
@@ -236,10 +233,7 @@ namespace Intersect_Client.Classes.Entities
         public override void DrawName(Color color)
         {
             if (HideName == 1) { return; }
-            if (MapInstance.GetMap(CurrentMap) == null)
-            {
-                return;
-            }
+            if (MapInstance.GetMap(CurrentMap) == null || !Globals.GridMaps.Contains(CurrentMap)) return;
             var y = (int)Math.Ceiling(GetCenterPos().Y);
             var x = (int)Math.Ceiling(GetCenterPos().X);
             switch (GraphicType)

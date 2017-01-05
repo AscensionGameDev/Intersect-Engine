@@ -604,6 +604,12 @@ namespace Intersect_Client.Classes.Maps
             }
         }
 
+        public void GridSwitched()
+        {
+            _panoramaIntensity = 1f;
+            _curFogIntensity = 1f;
+        }
+
         private void DrawPanorama()
         {
             float ecTime = Globals.System.GetTimeMS() - _panoramaUpdateTime;

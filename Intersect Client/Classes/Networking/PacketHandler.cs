@@ -1316,6 +1316,7 @@ namespace Intersect_Client.Classes.Networking
                 }
             }
             if (Globals.Me != null) Globals.Me.FetchNewMaps();
+            GameGraphics.GridSwitched = true;
             bf.Dispose();
         }
 
