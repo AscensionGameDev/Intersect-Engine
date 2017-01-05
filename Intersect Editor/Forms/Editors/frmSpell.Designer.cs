@@ -1137,13 +1137,13 @@
             // 
             // pnlContainer
             // 
+            this.pnlContainer.Controls.Add(this.grpBuffDebuff);
             this.pnlContainer.Controls.Add(this.groupBox2);
             this.pnlContainer.Controls.Add(this.groupBox4);
             this.pnlContainer.Controls.Add(this.grpTargetInfo);
             this.pnlContainer.Controls.Add(this.groupBox3);
             this.pnlContainer.Controls.Add(this.grpDash);
             this.pnlContainer.Controls.Add(this.grpEvent);
-            this.pnlContainer.Controls.Add(this.grpBuffDebuff);
             this.pnlContainer.Controls.Add(this.grpWarp);
             this.pnlContainer.Location = new System.Drawing.Point(221, 40);
             this.pnlContainer.Name = "pnlContainer";

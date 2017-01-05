@@ -335,7 +335,7 @@ namespace Intersect_Client.Classes.Entities
                             Options.TileWidth/2,
                             MapInstance.GetMap(Spawns[s].SpawnMap).GetY() + Spawns[s].SpawnY*Options.TileHeight +
                             Spawns[s].OffsetY +
-                            Options.TileHeight/2, Spawns[s].AutoRotate ? Spawns[s].Dir : 0);
+                            Options.TileHeight/2, Spawns[s].AutoRotate ? Spawns[s].Dir : 0, Spawns[s].Z);
                         Spawns[s].Anim.Update();
                     }
                 }
@@ -547,7 +547,7 @@ namespace Intersect_Client.Classes.Entities
             Map = map;
             SpawnMap = Map;
             Dir = dir;
-            Anim = new AnimationInstance(animBase, true, autoRotate);
+            Anim = new AnimationInstance(animBase, true, autoRotate, Z);
             AutoRotate = autoRotate;
             ProjectileBase = projectileBase;
             TransmittionTimer = Globals.System.GetTimeMS() + (long)((float)ProjectileBase.Speed / (float)ProjectileBase.Range);
