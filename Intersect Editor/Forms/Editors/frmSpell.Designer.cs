@@ -230,9 +230,9 @@
             this.lblHitAnimation.AutoSize = true;
             this.lblHitAnimation.Location = new System.Drawing.Point(6, 215);
             this.lblHitAnimation.Name = "lblHitAnimation";
-            this.lblHitAnimation.Size = new System.Drawing.Size(81, 13);
+            this.lblHitAnimation.Size = new System.Drawing.Size(101, 13);
             this.lblHitAnimation.TabIndex = 16;
-            this.lblHitAnimation.Text = "Hit Animation: 0";
+            this.lblHitAnimation.Text = "Hit Animation: None";
             // 
             // scrlCastAnimation
             // 
@@ -251,9 +251,9 @@
             this.lblCastAnimation.AutoSize = true;
             this.lblCastAnimation.Location = new System.Drawing.Point(6, 184);
             this.lblCastAnimation.Name = "lblCastAnimation";
-            this.lblCastAnimation.Size = new System.Drawing.Size(89, 13);
+            this.lblCastAnimation.Size = new System.Drawing.Size(109, 13);
             this.lblCastAnimation.TabIndex = 14;
-            this.lblCastAnimation.Text = "Cast Animation: 0";
+            this.lblCastAnimation.Text = "Cast Animation: None";
             // 
             // cmbSprite
             // 

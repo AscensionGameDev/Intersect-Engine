@@ -60,34 +60,6 @@ namespace Intersect_Editor.Forms
             }
         }
 
-        private void btnNew_Click(object sender, EventArgs e)
-        {
-            PacketSender.SendCreateObject(GameObject.Spell);
-        }
-
-        private void btnUndo_Click(object sender, EventArgs e)
-        {
-            if (_changed.Contains(_editorItem) && _editorItem != null)
-            {
-                _editorItem.RestoreBackup();
-                UpdateEditor();
-            }
-        }
-
-        private void btnDelete_Click(object sender, EventArgs e)
-        {
-            if (_editorItem != null)
-            {
-                if (
-                    MessageBox.Show(
-                        "Are you sure you want to delete this game object? This action cannot be reverted!",
-                        "Delete Object", MessageBoxButtons.YesNo) == DialogResult.Yes)
-                {
-                    PacketSender.SendDeleteObject(_editorItem);
-                }
-            }
-        }
-
         private void btnCancel_Click(object sender, EventArgs e)
         {
             foreach (var item in _changed)
@@ -124,6 +96,8 @@ namespace Intersect_Editor.Forms
         private void frmSpell_Load(object sender, EventArgs e)
         {
             scrlProjectile.Maximum = ProjectileBase.ObjectCount() - 1;
+            scrlCastAnimation.Maximum = AnimationBase.ObjectCount() - 1;
+            scrlHitAnimation.Maximum = AnimationBase.ObjectCount() - 1;
             scrlEvent.Maximum = EventBase.ObjectCount() - 1;
             cmbSprite.Items.Clear();
             cmbSprite.Items.Add("None");
