@@ -200,66 +200,71 @@ namespace Intersect_Server.Classes.Entities
                     {
                         var s = Globals.Rand.Next(0, MyBase.Spells.Count); //Pick a random spell
                         var spell = SpellBase.GetSpell((MyBase.Spells[s]));
-                        if (spell.SpellType == (int)SpellTypes.CombatSpell && spell.TargetType == (int)SpellTargetTypes.Projectile && InRangeOf(MyTarget,spell.CastRange))
+                        if (spell != null)
                         {
-                            if (DirToEnemy(MyTarget) != Dir)
+                            if (spell.SpellType == (int) SpellTypes.CombatSpell &&
+                                spell.TargetType == (int) SpellTargetTypes.Projectile &&
+                                InRangeOf(MyTarget, spell.CastRange))
                             {
-                                if (LastRandomMove >= Globals.System.GetTimeMs()) return;
-                                var dirToEnemy = DirToEnemy(MyTarget);
-                                if (dirToEnemy != -1)
+                                if (DirToEnemy(MyTarget) != Dir)
                                 {
-                                    //Face the target -- next frame fire -- then go on with life
-                                    ChangeDir(dirToEnemy); // Gotta get dir to enemy
-                                    LastRandomMove = Globals.System.GetTimeMs() + Globals.Rand.Next(1000, 3000);
+                                    if (LastRandomMove >= Globals.System.GetTimeMs()) return;
+                                    var dirToEnemy = DirToEnemy(MyTarget);
+                                    if (dirToEnemy != -1)
+                                    {
+                                        //Face the target -- next frame fire -- then go on with life
+                                        ChangeDir(dirToEnemy); // Gotta get dir to enemy
+                                        LastRandomMove = Globals.System.GetTimeMs() + Globals.Rand.Next(1000, 3000);
+                                    }
+                                    return;
                                 }
-                                return;
                             }
-                        }
 
-                        if (spell.VitalCost[(int)Vitals.Mana] <= Vital[(int)Vitals.Mana])
-                        {
-                            if (spell.VitalCost[(int)Vitals.Health] <= Vital[(int)Vitals.Health])
+                            if (spell.VitalCost[(int) Vitals.Mana] <= Vital[(int) Vitals.Mana])
                             {
-                                if (Spells[s].SpellCD < Globals.System.GetTimeMs())
+                                if (spell.VitalCost[(int) Vitals.Health] <= Vital[(int) Vitals.Health])
                                 {
-                                    Vital[(int)Vitals.Mana] = Vital[(int)Vitals.Mana] -
-                                                               spell.VitalCost[(int)Vitals.Mana];
-                                    Vital[(int)Vitals.Health] = Vital[(int)Vitals.Health] -
-                                                                 spell.VitalCost[(int)Vitals.Health
-                                                                     ];
-                                    CastTime = Globals.System.GetTimeMs() + (spell.CastDuration * 100);
-
-                                    switch (MyBase.SpellFrequency)
+                                    if (Spells[s].SpellCD < Globals.System.GetTimeMs())
                                     {
-                                        case 0:
-                                            CastFreq = Globals.System.GetTimeMs() + 30000;
-                                            break;
-                                        case 1:
-                                            CastFreq = Globals.System.GetTimeMs() + 15000;
-                                            break;
-                                        case 2:
-                                            CastFreq = Globals.System.GetTimeMs() + 8000;
-                                            break;
-                                        case 3:
-                                            CastFreq = Globals.System.GetTimeMs() + 4000;
-                                            break;
-                                        case 4:
-                                            CastFreq = Globals.System.GetTimeMs() + 2000;
-                                            break;
+                                        Vital[(int) Vitals.Mana] = Vital[(int) Vitals.Mana] -
+                                                                   spell.VitalCost[(int) Vitals.Mana];
+                                        Vital[(int) Vitals.Health] = Vital[(int) Vitals.Health] -
+                                                                     spell.VitalCost[(int) Vitals.Health
+                                                                         ];
+                                        CastTime = Globals.System.GetTimeMs() + (spell.CastDuration*100);
+
+                                        switch (MyBase.SpellFrequency)
+                                        {
+                                            case 0:
+                                                CastFreq = Globals.System.GetTimeMs() + 30000;
+                                                break;
+                                            case 1:
+                                                CastFreq = Globals.System.GetTimeMs() + 15000;
+                                                break;
+                                            case 2:
+                                                CastFreq = Globals.System.GetTimeMs() + 8000;
+                                                break;
+                                            case 3:
+                                                CastFreq = Globals.System.GetTimeMs() + 4000;
+                                                break;
+                                            case 4:
+                                                CastFreq = Globals.System.GetTimeMs() + 2000;
+                                                break;
+                                        }
+
+                                        SpellCastSlot = s;
+
+                                        if (spell.CastAnimation > -1)
+                                        {
+                                            PacketSender.SendAnimationToProximity(spell.CastAnimation, 1,
+                                                MyIndex, CurrentMap, 0, 0, Dir);
+                                            //Target Type 1 will be global entity
+                                        }
+
+                                        PacketSender.SendEntityVitals(Globals.Entities[MyIndex]);
+                                        PacketSender.SendEntityVitals(Globals.Entities[MyIndex]);
+                                        PacketSender.SendEntityCastTime(this, (MyBase.Spells[s]));
                                     }
-
-                                    SpellCastSlot = s;
-
-                                    if (spell.CastAnimation > -1)
-                                    {
-                                        PacketSender.SendAnimationToProximity(spell.CastAnimation, 1,
-                                            MyIndex, CurrentMap, 0, 0, Dir);
-                                        //Target Type 1 will be global entity
-                                    }
-
-                                    PacketSender.SendEntityVitals(Globals.Entities[MyIndex]);
-                                    PacketSender.SendEntityVitals(Globals.Entities[MyIndex]);
-                                    PacketSender.SendEntityCastTime(this, (MyBase.Spells[s]));
                                 }
                             }
                         }

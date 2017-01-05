@@ -728,6 +728,13 @@ namespace Intersect_Editor.Forms
             if (Globals.MouseX < 0 || Globals.MouseX > picMap.Width || Globals.MouseY < 0 ||
                 Globals.MouseY > picMap.Height) return;
 
+            if (Globals.Dragging == true)
+            {
+                //Place the change, we done!
+                Globals.MapEditorWindow.ProcessSelectionMovement(Globals.CurrentMap, true);
+                Globals.MapEditorWindow.PlaceSelection();
+            }
+
             //Check Left Column of Maps
             var gridX = 0;
             var gridY = 0;

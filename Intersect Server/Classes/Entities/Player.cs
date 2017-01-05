@@ -479,6 +479,7 @@ namespace Intersect_Server.Classes.Entities
             }
             CurrentX = newX;
             CurrentY = newY;
+            MyEvents.Clear();
             if (newMap != CurrentMap || _sentMap == false)
             {
                 var oldMap = MapInstance.GetMap(CurrentMap);
