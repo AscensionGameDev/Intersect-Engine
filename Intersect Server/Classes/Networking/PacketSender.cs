@@ -39,23 +39,22 @@ namespace Intersect_Server.Classes.Networking
 {
     public static class PacketSender
     {
-
-        public static void SendDataToMap(int mapNum, byte[] data)
+        public static void SendDataToMap(int mapNum, byte[] data, Client except = null)
         {
             if (!MapInstance.GetObjects().ContainsKey(mapNum)) { return; }
             List<Player> Players = MapInstance.GetMap(mapNum).GetPlayersOnMap();
             foreach (var player in Players)
             {
-                if (player != null) player.MyClient.SendPacket(data);
+                if (player != null && player.MyClient != except) player.MyClient.SendPacket(data);
             }
         }
-        public static void SendDataToProximity(int mapNum, byte[] data)
+        public static void SendDataToProximity(int mapNum, byte[] data, Client except = null)
         {
             if (!MapInstance.GetObjects().ContainsKey(mapNum)) { return; }
             SendDataToMap(mapNum, data);
             for (int i = 0; i < MapInstance.GetMap(mapNum).SurroundingMaps.Count; i++)
             {
-                SendDataToMap(MapInstance.GetMap(mapNum).SurroundingMaps[i], data);
+                SendDataToMap(MapInstance.GetMap(mapNum).SurroundingMaps[i], data, except);
             }
         }
         public static void SendDataToEditors(byte[] data)
@@ -826,7 +825,7 @@ namespace Intersect_Server.Classes.Networking
                     bf.WriteInteger(en.Inventory[en.Equipment[i]].ItemNum);
                 }
             }
-            SendDataToProximity(en.CurrentMap, bf.ToArray());
+            SendDataToProximity(en.CurrentMap, bf.ToArray(), en.MyClient);
             SendPlayerEquipmentTo(en.MyClient, en);
             bf.Dispose();
         }

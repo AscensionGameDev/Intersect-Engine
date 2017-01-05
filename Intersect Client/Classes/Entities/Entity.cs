@@ -500,7 +500,7 @@ namespace Intersect_Client.Classes.Entities
                     {
                         if (Options.EquipmentSlots.IndexOf(Options.PaperdollOrder[z]) > -1)
                         {
-                            if (Equipment[Options.EquipmentSlots.IndexOf(Options.PaperdollOrder[z])] > -1)
+                            if (Equipment[Options.EquipmentSlots.IndexOf(Options.PaperdollOrder[z])] > -1 && Equipment[Options.EquipmentSlots.IndexOf(Options.PaperdollOrder[z])] < Options.MaxInvItems)
                             {
                                 var itemNum = -1;
                                 if (this == Globals.Me)
