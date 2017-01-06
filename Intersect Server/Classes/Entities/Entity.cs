@@ -1373,6 +1373,7 @@ namespace Intersect_Server.Classes.Entities
             } //Remove dash instance if no where to dash
             TransmittionTimer = Globals.System.GetTimeMs() + (long)((float)Options.MaxDashSpeed / (float)Range);
             PacketSender.SendEntityDash(en.MyIndex, en.CurrentMap,en.CurrentX,en.CurrentY, (int)(Options.MaxDashSpeed * (Range/10f)), Direction==Facing? Direction:-Facing);
+            en.MoveTimer = Globals.System.GetTimeMs() + Options.MaxDashSpeed;
         }
 
         public void CalculateRange(Entity en, int range)

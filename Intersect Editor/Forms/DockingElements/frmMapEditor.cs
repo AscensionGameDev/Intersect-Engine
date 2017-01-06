@@ -45,7 +45,7 @@ namespace Intersect_Editor.Forms
         {
             if (this.InvokeRequired)
             {
-                this.Invoke(PacketHandler.MapUpdatedDelegate);
+                this.BeginInvoke(PacketHandler.MapUpdatedDelegate);
             }
             else
             {
