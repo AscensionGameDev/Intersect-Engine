@@ -515,15 +515,14 @@ namespace Intersect_Client.Classes.Entities
                                 }
                                 if (ItemBase.GetItem(itemNum) != null)
                                 {
+                                    var itemdata = ItemBase.GetItem(itemNum);
                                     if (Gender == 0)
                                     {
-                                        DrawEquipment(
-                                            ItemBase.GetItem(itemNum).MalePaperdoll, alpha);
+                                        DrawEquipment(itemdata.MalePaperdoll, alpha);
                                     }
                                     else
                                     {
-                                        DrawEquipment(
-                                            ItemBase.GetItem(itemNum).FemalePaperdoll, alpha);
+                                        DrawEquipment(itemdata.FemalePaperdoll, alpha);
                                     }
                                 }
                             }

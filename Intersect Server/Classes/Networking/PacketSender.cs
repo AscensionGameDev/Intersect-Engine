@@ -254,10 +254,15 @@ namespace Intersect_Server.Classes.Networking
                 SendExperience(client);
                 SendInventory(client);
                 SendPlayerSpells(client);
-                SendPlayerEquipmentToProximity(client.Entity);
                 SendPointsTo(client);
                 SendHotbarSlots(client);
                 SendQuestsProgress(client);
+            }
+
+            //If a player, send equipment to all (for paperdolls)
+            if (en.GetType() == typeof(Player))
+            {
+                SendPlayerEquipmentTo(client, (Player)en);
             }
         }
 
@@ -279,6 +284,23 @@ namespace Intersect_Server.Classes.Networking
                 buff.WriteBytes(GetEntityPacket(sendEntities[i], client));
             }
             client.SendPacket(buff.ToArray());
+
+            SendMapEntityEquipmentTo(client, sendEntities); //Send the equipment of each player
+        }
+
+        public static void SendMapEntityEquipmentTo(Client client, List<Entity> entities)
+        {
+            for (int i = 0; i < entities.Count; i++)
+            {
+                if (entities[i] != null && entities[i] != client.Entity)
+                {
+                    //If a player, send equipment to all (for paperdolls)
+                    if (entities[i].GetType() == typeof(Player) && client.Entity != entities[i])
+                    {
+                        SendPlayerEquipmentTo(client, (Player)entities[i]);
+                    }
+                }
+            }
         }
 
         public static void SendEntityDataToProximity(Entity en)
@@ -294,6 +316,12 @@ namespace Intersect_Server.Classes.Networking
             bf.Dispose();
             SendEntityVitals(en);
             SendEntityStats(en);
+
+            //If a player, send equipment to all (for paperdolls)
+            if (en.GetType() == typeof(Player))
+            {
+                SendPlayerEquipmentToProximity((Player)en);
+            }
         }
 
         public static void SendEntityPositionTo(Client client, Entity en)
@@ -804,7 +832,21 @@ namespace Intersect_Server.Classes.Networking
             bf.WriteInteger(en.MyClient.EntityIndex);
             for (int i = 0; i < Options.EquipmentSlots.Count; i++)
             {
-                bf.WriteInteger(en.Equipment[i]);
+                if (client.Entity == en)
+                {
+                    bf.WriteInteger(en.Equipment[i]);
+                }
+                else
+                {
+                    if (en.Equipment[i] == -1 || en.Inventory[en.Equipment[i]].ItemNum == -1)
+                    {
+                        bf.WriteInteger(-1);
+                    }
+                    else
+                    {
+                        bf.WriteInteger(en.Inventory[en.Equipment[i]].ItemNum);
+                    }
+                }
             }
             SendDataTo(client, bf.ToArray());
             bf.Dispose();

@@ -280,7 +280,8 @@ namespace Intersect_Client.Classes.Core
                     {
                         if (x >= 0 && x < Globals.MapGridWidth && y >= 0 && y < Globals.MapGridHeight && Globals.MapGrid[x, y] != -1)
                         {
-                            MapInstance.GetMap(Globals.MapGrid[x, y]).DrawActionMsgs();
+                            var map = MapInstance.GetMap(Globals.MapGrid[x, y]);
+                            if (map != null) map.DrawActionMsgs();
                         }
                     }
                 }
