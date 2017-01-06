@@ -103,6 +103,7 @@ namespace Intersect_Server.Classes.Networking
             var bf = new ByteBuffer();
             bf.WriteLong((int)ServerPackets.MapData);
             bf.WriteLong(mapNum);
+            bf.WriteInteger(0);
             bool isEditor = false;
             if (client != null && client.IsEditor) isEditor = true;
             byte[] MapData = null;
@@ -201,9 +202,17 @@ namespace Intersect_Server.Classes.Networking
             var bf = new ByteBuffer();
             bf.WriteLong((int)ServerPackets.MapData);
             bf.WriteLong(mapNum);
-            byte[] MapData = MapInstance.GetMap(mapNum).GetMapData(false);
-            bf.WriteLong(MapData.Length);
-            bf.WriteBytes(MapData);
+            if (MapInstance.GetMap(mapNum) == null)
+            {
+                bf.WriteInteger(1);
+            }
+            else
+            {
+                bf.WriteInteger(0);
+                byte[] MapData = MapInstance.GetMap(mapNum).GetMapData(false);
+                bf.WriteLong(MapData.Length);
+                bf.WriteBytes(MapData);
+            }
             SendDataToEditors(bf.ToArray());
             bf.Dispose();
         }

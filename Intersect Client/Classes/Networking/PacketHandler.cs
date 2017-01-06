@@ -296,6 +296,7 @@ namespace Intersect_Client.Classes.Networking
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
             var mapNum = (int)bf.ReadLong();
+            bf.ReadInteger();
             var mapLength = bf.ReadLong();
             var mapData = bf.ReadBytes((int)mapLength);
             var revision = bf.ReadInteger();

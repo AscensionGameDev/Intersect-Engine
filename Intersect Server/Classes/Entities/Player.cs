@@ -130,7 +130,7 @@ namespace Intersect_Server.Classes.Entities
                 {
                     if (!MapInstance.GetObjects().ContainsKey(CurrentMap))
                     {
-                        WarpToSpawn(true);
+                        WarpToSpawn();
                     }
                     else
                     {
@@ -478,7 +478,7 @@ namespace Intersect_Server.Classes.Entities
             if (map == null)
             {
                 Globals.GeneralLogs.Add("Failed to warp player to new map -- warping to /spawn/.");
-                WarpToSpawn(true);
+                WarpToSpawn();
                 return;
             }
             CurrentX = newX;
@@ -512,7 +512,6 @@ namespace Intersect_Server.Classes.Entities
             }
 
         }
-        //TODO: Only works if sendWarp is true? Need to look at/refactor this
         public void WarpToSpawn(bool sendWarp = false)
         {
             int map = -1, x = 0, y = 0;
@@ -532,7 +531,7 @@ namespace Intersect_Server.Classes.Entities
                 mapenum.MoveNext();
                 map = mapenum.Current.Value.MyMapNum;
             }
-            if (sendWarp) { Warp(map, x, y); }
+            Warp(map, x, y);
         }
 
         //Inventory

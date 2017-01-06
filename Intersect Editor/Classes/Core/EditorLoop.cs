@@ -113,7 +113,7 @@ namespace Intersect_Editor.Classes
                             var maps = MapInstance.GetObjects();
                             foreach (var map in maps)
                             {
-                                myForm.BeginInvoke((Action)(() =>progressForm.SetProgress(Globals.MapsToScreenshot.Count + " maps remaining.", -1,false)));
+                                if (!myForm.Disposing) myForm.BeginInvoke((Action)(() =>progressForm.SetProgress(Globals.MapsToScreenshot.Count + " maps remaining.", -1,false)));
                                 if (map.Value != null)
                                 {
                                     map.Value.Update();

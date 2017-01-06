@@ -135,75 +135,83 @@ namespace Intersect_Editor.Classes
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
             int mapNum = (int)bf.ReadLong();
-            var mapLength = bf.ReadLong();
-            var mapData = bf.ReadBytes((int)mapLength);
-            var map = new MapInstance((int)mapNum);
-            if (MapInstance.GetMap(mapNum) != null)
+            int deleted = bf.ReadInteger();
+            if (deleted == 1)
             {
-                if (Globals.CurrentMap == MapInstance.GetMap(mapNum))
-                    Globals.CurrentMap = map;
-                MapInstance.GetMap(mapNum).Delete();
-            }
-            MapInstance.AddObject(mapNum, map);
-            map.Load(mapData);
-            map.MapGridX = bf.ReadInteger();
-            map.MapGridY = bf.ReadInteger();
-            map.InitAutotiles();
-            map.UpdateAdjacentAutotiles();
-            if (!Globals.InEditor && Globals.HasGameData)
-            {
-                Globals.CurrentMap = map;
-                Globals.LoginForm.BeginInvoke(Globals.LoginForm.EditorLoopDelegate);
-            }
-            else if (Globals.InEditor)
-            {
-                if (Globals.FetchingMapPreviews || Globals.CurrentMap == map)
+                if (MapInstance.GetMap(mapNum) != null)
                 {
-                    int currentmap = Globals.CurrentMap.GetId();
-                    if (Database.LoadMapCacheLegacy(mapNum,map.Revision) == null && !Globals.MapsToScreenshot.Contains(mapNum)) Globals.MapsToScreenshot.Add(mapNum);
-                    if (Globals.FetchingMapPreviews)
+                    if (Globals.CurrentMap == MapInstance.GetMap(mapNum))
                     {
-                        if (Globals.MapsToFetch.Contains(mapNum))
+                        Globals.MainForm.EnterMap(MapList.GetList().FindFirstMap());
+                    }
+                    MapInstance.GetMap(mapNum).Delete();
+                }
+            }
+            else
+            {
+                var mapLength = bf.ReadLong();
+                var mapData = bf.ReadBytes((int)mapLength);
+                var map = new MapInstance((int)mapNum);
+                if (MapInstance.GetMap(mapNum) != null)
+                {
+                    if (Globals.CurrentMap == MapInstance.GetMap(mapNum))
+                        Globals.CurrentMap = map;
+                    MapInstance.GetMap(mapNum).Delete();
+                }
+                MapInstance.AddObject(mapNum, map);
+                map.Load(mapData);
+                map.MapGridX = bf.ReadInteger();
+                map.MapGridY = bf.ReadInteger();
+                map.InitAutotiles();
+                map.UpdateAdjacentAutotiles();
+                if (!Globals.InEditor && Globals.HasGameData)
+                {
+                    Globals.CurrentMap = map;
+                    Globals.LoginForm.BeginInvoke(Globals.LoginForm.EditorLoopDelegate);
+                }
+                else if (Globals.InEditor)
+                {
+                    if (Globals.FetchingMapPreviews || Globals.CurrentMap == map)
+                    {
+                        int currentmap = Globals.CurrentMap.GetId();
+                        if (Database.LoadMapCacheLegacy(mapNum, map.Revision) == null && !Globals.MapsToScreenshot.Contains(mapNum)) Globals.MapsToScreenshot.Add(mapNum);
+                        if (Globals.FetchingMapPreviews)
                         {
-                            Globals.MapsToFetch.Remove(mapNum);
-                            if (Globals.MapsToFetch.Count == 0) {
-                                Globals.FetchingMapPreviews = false;
-                                Globals.PreviewProgressForm.Dispose();
-                            }
-                            else {
-                                Globals.PreviewProgressForm.SetProgress("Fetching Maps: " + (Globals.FetchCount - Globals.MapsToFetch.Count) + "/" + Globals.FetchCount, (int)(((float)(Globals.FetchCount - Globals.MapsToFetch.Count)/(float)Globals.FetchCount) * 100f),false);
+                            if (Globals.MapsToFetch.Contains(mapNum))
+                            {
+                                Globals.MapsToFetch.Remove(mapNum);
+                                if (Globals.MapsToFetch.Count == 0)
+                                {
+                                    Globals.FetchingMapPreviews = false;
+                                    Globals.PreviewProgressForm.Dispose();
+                                }
+                                else
+                                {
+                                    Globals.PreviewProgressForm.SetProgress("Fetching Maps: " + (Globals.FetchCount - Globals.MapsToFetch.Count) + "/" + Globals.FetchCount, (int)(((float)(Globals.FetchCount - Globals.MapsToFetch.Count) / (float)Globals.FetchCount) * 100f), false);
+                                }
                             }
                         }
+                        Globals.CurrentMap = MapInstance.GetMap(currentmap);
                     }
-                    Globals.CurrentMap = MapInstance.GetMap(currentmap);
-                }
-                if (mapNum != Globals.LoadingMap) return;
-                Globals.CurrentMap = MapInstance.GetMap(Globals.LoadingMap);
-                MapUpdatedDelegate();
-                //TODO HANDLE DELETED MAP BEING SENT
-                //if (Globals.GameMaps[mapNum].Deleted == 1)
-                //{
-                //    Globals.CurrentMap = null;
-                //Globals.MainForm.EnterMap(MapList.GetList().FindFirstMap());
-                //}
-                //else
-                //{
+                    if (mapNum != Globals.LoadingMap) return;
+                    Globals.CurrentMap = MapInstance.GetMap(Globals.LoadingMap);
+                    MapUpdatedDelegate();
                     if (map.Up > -1) { PacketSender.SendNeedMap(map.Up); }
                     if (map.Down > -1) { PacketSender.SendNeedMap(map.Down); }
                     if (map.Left > -1) { PacketSender.SendNeedMap(map.Left); }
                     if (map.Right > -1) { PacketSender.SendNeedMap(map.Right); }
-                //}
-            }
-            if (Globals.CurrentMap.MyMapNum == mapNum && Globals.MapGrid != null && Globals.MapGrid.Loaded)
-            {
-                for (int y = Globals.CurrentMap.MapGridY + 1; y >= Globals.CurrentMap.MapGridY - 1; y--)
+                }
+                if (Globals.CurrentMap.MyMapNum == mapNum && Globals.MapGrid != null && Globals.MapGrid.Loaded)
                 {
-                    for (int x = Globals.CurrentMap.MapGridX - 1; x <= Globals.CurrentMap.MapGridX + 1; x++)
+                    for (int y = Globals.CurrentMap.MapGridY + 1; y >= Globals.CurrentMap.MapGridY - 1; y--)
                     {
-                        if (x >= 0 && x < Globals.MapGrid.GridWidth && y >= 0 && y < Globals.MapGrid.GridHeight)
+                        for (int x = Globals.CurrentMap.MapGridX - 1; x <= Globals.CurrentMap.MapGridX + 1; x++)
                         {
-                            var needMap = MapInstance.GetMap(Globals.MapGrid.Grid[x, y].mapnum);
-                            if (needMap == null && Globals.MapGrid.Grid[x, y].mapnum > -1) PacketSender.SendNeedMap(Globals.MapGrid.Grid[x, y].mapnum);
+                            if (x >= 0 && x < Globals.MapGrid.GridWidth && y >= 0 && y < Globals.MapGrid.GridHeight)
+                            {
+                                var needMap = MapInstance.GetMap(Globals.MapGrid.Grid[x, y].mapnum);
+                                if (needMap == null && Globals.MapGrid.Grid[x, y].mapnum > -1) PacketSender.SendNeedMap(Globals.MapGrid.Grid[x, y].mapnum);
+                            }
                         }
                     }
                 }

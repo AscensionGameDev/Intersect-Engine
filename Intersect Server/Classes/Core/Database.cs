@@ -1838,7 +1838,6 @@ namespace Intersect_Server.Classes.Core
                 cmd.ExecuteNonQuery();
             }
             gameObject.Delete();
-            
         }
 
         //Post Loading Functions

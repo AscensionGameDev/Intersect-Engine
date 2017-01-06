@@ -881,7 +881,7 @@ namespace Intersect_Server.Classes.Networking
                     player.Gender = classBase.Sprites[Sprite].Gender;
                 }
                 PacketSender.SendJoinGame(client);
-                player.WarpToSpawn(true);
+                player.WarpToSpawn();
                 player.Vital[(int)Vitals.Health] = classBase.BaseVital[(int)Vitals.Health];
                 player.Vital[(int)Vitals.Mana] = classBase.BaseVital[(int)Vitals.Mana];
                 player.MaxVital[(int)Vitals.Health] = classBase.BaseVital[(int)Vitals.Health];
@@ -1106,11 +1106,17 @@ namespace Intersect_Server.Classes.Networking
                         }
                         mapNum = bf.ReadInteger();
                         Database.CheckAllMapConnections();
+                        var players = MapInstance.GetMap(mapNum).GetPlayersOnMap();
                         MapList.GetList().DeleteMap(mapNum);
                         Database.GenerateMapGrids();
                         Database.SaveGameObject(MapInstance.GetMap(mapNum));
                         Database.DeleteGameObject(MapInstance.GetMap(mapNum));
                         PacketSender.SendMapListToAll();
+                        foreach (var player in players)
+                        {
+                            player.WarpToSpawn();
+                        }
+                        PacketSender.SendMapToEditors(mapNum);
                     }
                     break;
             }
