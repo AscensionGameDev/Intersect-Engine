@@ -40,6 +40,9 @@ namespace Intersect_Editor.Classes
         public delegate void GameObjectUpdated(GameObject type);
         public static  GameObjectUpdated GameObjectUpdatedDelegate;
 
+        public delegate void MapUpdated();
+        public static MapUpdated MapUpdatedDelegate;
+
         public static void HandlePacket(byte[] packet)
         {
             var bf = new ByteBuffer();
@@ -176,7 +179,7 @@ namespace Intersect_Editor.Classes
                 }
                 if (mapNum != Globals.LoadingMap) return;
                 Globals.CurrentMap = MapInstance.GetMap(Globals.LoadingMap);
-                Globals.MapEditorWindow.InitMapEditor();
+                MapUpdatedDelegate();
                 //TODO HANDLE DELETED MAP BEING SENT
                 //if (Globals.GameMaps[mapNum].Deleted == 1)
                 //{
@@ -185,9 +188,6 @@ namespace Intersect_Editor.Classes
                 //}
                 //else
                 //{
-                Globals.MapPropertiesWindow.Init(Globals.CurrentMap);
-                    if (Globals.MapEditorWindow.picMap.Visible) return;
-                    Globals.MapEditorWindow.picMap.Visible = true;
                     if (map.Up > -1) { PacketSender.SendNeedMap(map.Up); }
                     if (map.Down > -1) { PacketSender.SendNeedMap(map.Down); }
                     if (map.Left > -1) { PacketSender.SendNeedMap(map.Left); }

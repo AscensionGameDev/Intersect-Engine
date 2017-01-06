@@ -91,6 +91,7 @@ namespace Intersect_Editor.Classes.Maps
                         }
                     }
                 }
+                Thread.Sleep(10);
             }
         }
 

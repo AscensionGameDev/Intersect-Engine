@@ -21,7 +21,7 @@ namespace Intersect_Editor.Forms
 
         private void InitForm()
         {
-            var suppressTilesetWarning = Preferences.LoadPreference("SuppressTilesetWarning");
+            var suppressTilesetWarning = Preferences.LoadPreference("SuppressTextureWarning");
             if (suppressTilesetWarning == "")
             {
                 chkSuppressTilesetWarning.Checked = false;
@@ -35,7 +35,7 @@ namespace Intersect_Editor.Forms
 
         private void frmOptions_FormClosing(object sender, FormClosingEventArgs e)
         {
-            Preferences.SavePreference("SuppressTilesetWarning",chkSuppressTilesetWarning.Checked.ToString());
+            Preferences.SavePreference("SuppressTextureWarning", chkSuppressTilesetWarning.Checked.ToString());
             Preferences.SavePreference("ClientPath",txtGamePath.Text);
         }
 
@@ -56,6 +56,11 @@ namespace Intersect_Editor.Forms
             {
                 txtGamePath.Text = dialogue.FileName;
             }
+        }
+
+        private void chkSuppressTilesetWarning_CheckedChanged(object sender, EventArgs e)
+        {
+
         }
     }
 }

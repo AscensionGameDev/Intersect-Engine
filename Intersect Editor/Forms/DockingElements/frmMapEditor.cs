@@ -34,6 +34,7 @@ namespace Intersect_Editor.Forms
         }
         private void frmMapEditor_Load(object sender, EventArgs e)
         {
+            PacketHandler.MapUpdatedDelegate += InitMapEditor;
             picMap.Size = pnlMapContainer.ClientSize;
             picMap.MinimumSize = new Size((Options.MapWidth + 2) * Options.TileWidth, (Options.MapHeight + 2) * Options.TileHeight);
             EditorGraphics.CurrentView = new Rectangle((picMap.Size.Width - (Options.MapWidth) * Options.TileWidth) / 2, (picMap.Size.Height - (Options.MapHeight) * Options.TileHeight) / 2, picMap.Size.Width, picMap.Size.Height);
@@ -48,6 +49,9 @@ namespace Intersect_Editor.Forms
             EditorGraphics.CurrentView = new Rectangle((picMap.Size.Width - (Options.MapWidth) * Options.TileWidth) / 2, (picMap.Size.Height - (Options.MapHeight) * Options.TileHeight) / 2, picMap.Size.Width, picMap.Size.Height);
             CreateSwapChain();
             Globals.MapLayersWindow.RefreshNpcList();
+            Globals.MapPropertiesWindow.Init(Globals.CurrentMap);
+            if (Globals.MapEditorWindow.picMap.Visible) return;
+            Globals.MapEditorWindow.picMap.Visible = true;
         }
 
         private void CreateSwapChain()

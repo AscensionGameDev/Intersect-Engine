@@ -34,6 +34,8 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Media;
 using System.Windows.Forms;
 using System.Collections.Specialized;
+using System.Drawing;
+using System.Threading.Tasks;
 using Intersect_Editor.Classes.Content;
 using Intersect_Library;
 using Intersect_Library.GameObjects;
@@ -195,8 +197,6 @@ namespace Intersect_Editor.Classes.Core
             var container = new GameServiceContainer();
             container.AddService(typeof(IGraphicsDeviceService), new DummyGraphicsDeviceManager(EditorGraphics.GetGraphicsDevice()));
             contentManger = new ContentManager(container, "");
-
-            LoadTilesets();
             LoadItems();
             LoadEntities();
             LoadSpells();
@@ -234,6 +234,12 @@ namespace Intersect_Editor.Classes.Core
         {
             if (!Directory.Exists("resources/tilesets")) { Directory.CreateDirectory("resources/tilesets"); }
             var tilesets = Directory.GetFiles("resources/tilesets", "*.png");
+            var tilesetWarning = false;
+            var suppressTilesetWarning = Preferences.LoadPreference("SuppressTextureWarning");
+            if (suppressTilesetWarning != "" && Convert.ToBoolean(suppressTilesetWarning))
+            {
+                tilesetWarning = true;
+            }
             List<string> newTilesets = new List<string>();
             Array.Sort(tilesets, new AlphanumComparatorFast());
             if (tilesets.Length > 0)
@@ -256,18 +262,34 @@ namespace Intersect_Editor.Classes.Core
                     }
                     else
                     {
-                       newTilesets.Add(tilesets[i]);
+                        newTilesets.Add(tilesets[i]);
                     }
                 }
             }
 
             tilesetDict.Clear();
+            var badTilesets = new List<string>();
             for (var i = 0; i < TilesetBase.ObjectCount(); i++)
             {
                 if (File.Exists("resources/tilesets/" + TilesetBase.GetTileset(Database.GameObjectIdFromList(GameObject.Tileset, i)).Value))
                 {
                     tilesetDict.Add(TilesetBase.GetTileset(Database.GameObjectIdFromList(GameObject.Tileset, i)).Value.ToLower(), new GameTexture("resources/tilesets/" + TilesetBase.GetTileset(Database.GameObjectIdFromList(GameObject.Tileset, i)).Value));
+                    if (!tilesetWarning)
+                    {
+                        using (var img = Bitmap.FromFile("resources/tilesets/" + TilesetBase.GetTileset(Database.GameObjectIdFromList(GameObject.Tileset, i)).Value))
+                        {
+                            if (img.Width > 2048 || img.Height > 2048)
+                            {
+                                badTilesets.Add(TilesetBase.GetTileset(Database.GameObjectIdFromList(GameObject.Tileset, i)).Value);
+                            }
+                        }
+                    }
                 }
+            }
+
+            if (badTilesets.Count > 0)
+            {
+                    MessageBox.Show("One or more tilesets is too large and likely won't load for your players on older machines! We recommmend that no graphic is larger than 2048 pixels in width or height.\n\nFaulting tileset(s): " +string.Join(",", badTilesets.ToArray()),"Large Tileset Warning!", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
             }
 
             if (newTilesets.Count > 0)
@@ -345,7 +367,7 @@ namespace Intersect_Editor.Classes.Core
             for (int i = 0; i < items.Length; i++)
             {
                 string filename = items[i].Replace("resources/" + "music" + "\\", "").ToLower();
-                musicDict.Add(filename,null); //TODO Music Playback
+                musicDict.Add(filename, null); //TODO Music Playback
             }
         }
         public static string RemoveExtension(string fileName)

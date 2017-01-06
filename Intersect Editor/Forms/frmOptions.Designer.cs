@@ -69,6 +69,7 @@
             this.chkSuppressTilesetWarning.TabIndex = 0;
             this.chkSuppressTilesetWarning.Text = "Suppress large tileset size warning.";
             this.chkSuppressTilesetWarning.UseVisualStyleBackColor = true;
+            this.chkSuppressTilesetWarning.CheckedChanged += new System.EventHandler(this.chkSuppressTilesetWarning_CheckedChanged);
             // 
             // btnBrowseClient
             // 
