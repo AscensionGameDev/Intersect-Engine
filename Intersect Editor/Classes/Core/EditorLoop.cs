@@ -93,7 +93,7 @@ namespace Intersect_Editor.Classes
                 _fpsCount = 0;
                 _fpsTime = Globals.System.GetTimeMs() + 1000;
             }
-            Thread.Sleep(Math.Max(1, (int)(1000 / 30f - (Globals.System.GetTimeMs() - startTime))));
+            Thread.Sleep(Math.Max(1, (int)(1000 / 60f - (Globals.System.GetTimeMs() - startTime))));
         }
 
         private static void UpdateMaps()

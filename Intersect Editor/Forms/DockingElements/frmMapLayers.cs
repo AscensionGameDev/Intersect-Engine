@@ -604,7 +604,8 @@ namespace Intersect_Editor.Forms
                 if (EditorGraphics.GetGraphicsDevice() != null)
                 {
                     _chain = new SwapChainRenderTarget(EditorGraphics.GetGraphicsDevice(), this.picTileset.Handle,
-                        this.picTileset.Width, this.picTileset.Height);
+                        this.picTileset.Width, this.picTileset.Height, false, SurfaceFormat.Color, DepthFormat.Depth24, 0,
+                            RenderTargetUsage.DiscardContents, PresentInterval.Immediate);
                     EditorGraphics.SetTilesetChain(_chain);
                 }
             }

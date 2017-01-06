@@ -99,6 +99,7 @@ namespace Intersect_Editor.Classes
                 _presentationParams.BackBufferWidth = (Options.TileWidth + 2) * Options.MapWidth;
                 _presentationParams.BackBufferHeight = (Options.TileHeight + 2) * Options.MapHeight;
                 _presentationParams.RenderTargetUsage = RenderTargetUsage.DiscardContents;
+                _presentationParams.PresentationInterval = PresentInterval.Immediate;
 
                 // Create device
                 _graphicsDevice = new GraphicsDevice(GraphicsAdapter.DefaultAdapter, GraphicsProfile.HiDef,
