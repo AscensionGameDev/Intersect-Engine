@@ -636,6 +636,20 @@ namespace Intersect_Server.Classes.Entities
                     enemy.Stat[(int) Stats.Defense].Value()) + GetWeaponDamage();
                 if (dmg <= 0) dmg = 1; // Always do damage.
 
+                //If we are attacking with a weapon let's play the attack animation
+                if (this.GetType() == typeof(Player) && isProjectile == null)
+                {
+                    var weapon = ItemBase.GetItem(Inventory[((Player)this).Equipment[Options.WeaponIndex]].ItemNum);
+                    if (weapon != null)
+                    {
+                        var attackAnim = AnimationBase.GetAnim(weapon.AttackAnimation);
+                        if (attackAnim != null)
+                        {
+                            PacketSender.SendAnimationToProximity(attackAnim.GetId(), -1, -1, enemy.CurrentMap, enemy.CurrentX,enemy.CurrentY, Dir);
+                        }
+                    }
+                }
+
                 //Check for a crit
                 if (enemy.GetType() != typeof(Resource) && Globals.Rand.Next(1, Options.CritChance + 1) == 1)
                 {
@@ -651,7 +665,18 @@ namespace Intersect_Server.Classes.Entities
                 if (spellBase != null)
                 {
                     // Handle different dmg formula for healing and damaging spells.
-                    dmg = spellBase.VitalDiff[(int)Vitals.Health] * -1;
+                    if (spellBase.VitalDiff[(int) Vitals.Health] < 0)
+                    {
+                        //damage
+                        dmg = DamageCalculator((int)(spellBase.VitalDiff[(int)Vitals.Health] * ((float)Stat[(int)Stats.AbilityPower].Value() / (float)Options.MaxStatValue)),
+                        enemy.Stat[(int)Stats.MagicResist].Value());
+                    }
+                    else
+                    {
+                        //heal
+                        dmg = DamageCalculator((int)(spellBase.VitalDiff[(int)Vitals.Health] * ((float)Stat[(int)Stats.AbilityPower].Value() / (float)Options.MaxStatValue)),0);
+                    }
+                    
 
                     //Handle other stat debuffs/vitals.
                     enemy.Vital[(int)Vitals.Mana] +=

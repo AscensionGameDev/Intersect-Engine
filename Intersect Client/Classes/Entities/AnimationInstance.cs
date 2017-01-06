@@ -109,7 +109,7 @@ namespace Intersect_Client.Classes.Entities
                     break;
             }
 
-            if ((!upper && showLower && ZDimension < 1) || (upper && showLower && ZDimension > 0))
+            if ((!upper && showLower && ZDimension < 1) || (!upper && showLower && ZDimension > 0))
             {
                 //Draw Lower
                 GameTexture tex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Animation, myBase.LowerAnimSprite);
@@ -139,7 +139,7 @@ namespace Intersect_Client.Classes.Entities
                     myBase.LowerLights[lowerFrame].Color);
             }
 
-            if ((upper && showUpper && ZDimension != 0) || (!upper && showUpper && ZDimension == 0))
+            if ((upper && showUpper && ZDimension != 0) || (upper && showUpper && ZDimension == 0))
             {
                 //Draw Upper
                 GameTexture tex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Animation, myBase.UpperAnimSprite);

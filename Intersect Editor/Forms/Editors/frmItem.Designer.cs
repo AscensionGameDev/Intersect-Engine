@@ -68,6 +68,8 @@ namespace Intersect_Editor.Forms
             this.scrlAbilityPowerReq = new System.Windows.Forms.HScrollBar();
             this.scrlAttackReq = new System.Windows.Forms.HScrollBar();
             this.gbEquipment = new System.Windows.Forms.GroupBox();
+            this.cmbAttackAnimation = new System.Windows.Forms.ComboBox();
+            this.lblAttackAnimation = new System.Windows.Forms.Label();
             this.cmbFemalePaperdoll = new System.Windows.Forms.ComboBox();
             this.label10 = new System.Windows.Forms.Label();
             this.picFemalePaperdoll = new System.Windows.Forms.PictureBox();
@@ -505,6 +507,8 @@ namespace Intersect_Editor.Forms
             // 
             // gbEquipment
             // 
+            this.gbEquipment.Controls.Add(this.cmbAttackAnimation);
+            this.gbEquipment.Controls.Add(this.lblAttackAnimation);
             this.gbEquipment.Controls.Add(this.cmbFemalePaperdoll);
             this.gbEquipment.Controls.Add(this.label10);
             this.gbEquipment.Controls.Add(this.picFemalePaperdoll);
@@ -543,6 +547,27 @@ namespace Intersect_Editor.Forms
             this.gbEquipment.TabStop = false;
             this.gbEquipment.Text = "Equipment";
             this.gbEquipment.Visible = false;
+            // 
+            // cmbAttackAnimation
+            // 
+            this.cmbAttackAnimation.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbAttackAnimation.FormattingEnabled = true;
+            this.cmbAttackAnimation.Location = new System.Drawing.Point(191, 131);
+            this.cmbAttackAnimation.Name = "cmbAttackAnimation";
+            this.cmbAttackAnimation.Size = new System.Drawing.Size(107, 21);
+            this.cmbAttackAnimation.TabIndex = 38;
+            this.cmbAttackAnimation.Visible = false;
+            this.cmbAttackAnimation.SelectedIndexChanged += new System.EventHandler(this.cmbAttackAnimation_SelectedIndexChanged);
+            // 
+            // lblAttackAnimation
+            // 
+            this.lblAttackAnimation.AutoSize = true;
+            this.lblAttackAnimation.Location = new System.Drawing.Point(188, 114);
+            this.lblAttackAnimation.Name = "lblAttackAnimation";
+            this.lblAttackAnimation.Size = new System.Drawing.Size(90, 13);
+            this.lblAttackAnimation.TabIndex = 37;
+            this.lblAttackAnimation.Text = "Attack Animation:";
+            this.lblAttackAnimation.Visible = false;
             // 
             // cmbFemalePaperdoll
             // 
@@ -656,7 +681,7 @@ namespace Intersect_Editor.Forms
             // chk2Hand
             // 
             this.chk2Hand.AutoSize = true;
-            this.chk2Hand.Location = new System.Drawing.Point(198, 139);
+            this.chk2Hand.Location = new System.Drawing.Point(314, 70);
             this.chk2Hand.Name = "chk2Hand";
             this.chk2Hand.Size = new System.Drawing.Size(61, 17);
             this.chk2Hand.TabIndex = 25;
@@ -1195,5 +1220,7 @@ namespace Intersect_Editor.Forms
         public ToolStripButton toolStripItemPaste;
         private ToolStripSeparator toolStripSeparator3;
         public ToolStripButton toolStripItemUndo;
+        private ComboBox cmbAttackAnimation;
+        private Label lblAttackAnimation;
     }
 }

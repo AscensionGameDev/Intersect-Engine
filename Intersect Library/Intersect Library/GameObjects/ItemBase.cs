@@ -41,6 +41,7 @@ namespace Intersect_Library.GameObjects
         public int ClassReq = -1;
         public int LevelReq;
         public int Projectile = -1;
+        public int AttackAnimation = -1;
         public int[] StatsReq;
         public int[] StatsGiven;
         public int GenderReq;
@@ -77,6 +78,7 @@ namespace Intersect_Library.GameObjects
             LevelReq = myBuffer.ReadInteger();
             GenderReq = myBuffer.ReadInteger();
             Projectile = myBuffer.ReadInteger();
+            AttackAnimation = myBuffer.ReadInteger();
 
             for (var i = 0; i < Options.MaxStats; i++)
             {
@@ -110,6 +112,7 @@ namespace Intersect_Library.GameObjects
             myBuffer.WriteInteger(LevelReq);
             myBuffer.WriteInteger(GenderReq);
             myBuffer.WriteInteger(Projectile);
+            myBuffer.WriteInteger(AttackAnimation);
 
             for (var i = 0; i < Options.MaxStats; i++)
             {

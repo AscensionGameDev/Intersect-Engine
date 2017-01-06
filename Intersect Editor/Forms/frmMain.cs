@@ -655,6 +655,14 @@ namespace Intersect_Editor.Forms
             PacketSender.SendOpenEditor(GameObject.Time);
         }
         //Help
+        private void postQuestionToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            toolStripButtonQuestion_Click(null, null);
+        }
+        private void reportBugToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            toolStripButtonBug_Click(null, null);
+        }
         private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
         {
             frmAbout aboutfrm = new frmAbout();
@@ -775,6 +783,18 @@ namespace Intersect_Editor.Forms
                 processStartInfo.WorkingDirectory = Directory.GetParent(path).FullName;
                 var process = Process.Start(processStartInfo);
             }
+        }
+        private void toolStripButtonDonate_Click(object sender, EventArgs e)
+        {
+            System.Diagnostics.Process.Start("https://www.freemmorpgmaker.com/donate.php");
+        }
+        private void toolStripButtonQuestion_Click(object sender, EventArgs e)
+        {
+            System.Diagnostics.Process.Start("https://www.ascensiongamedev.com/community/forum/53-questions-and-answers/");
+        }
+        private void toolStripButtonBug_Click(object sender, EventArgs e)
+        {
+            System.Diagnostics.Process.Start("https://www.ascensiongamedev.com/community/bug_tracker/intersect/");
         }
         private void UpdateTimeSimulationList()
         {

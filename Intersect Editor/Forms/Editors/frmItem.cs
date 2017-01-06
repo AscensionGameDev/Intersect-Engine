@@ -111,6 +111,10 @@ namespace Intersect_Editor.Forms
             cmbClass.Items.Add("None");
             cmbClass.Items.AddRange(Database.GetGameObjectList(GameObject.Class));
 
+            cmbAttackAnimation.Items.Clear();
+            cmbAttackAnimation.Items.Add("None");
+            cmbAttackAnimation.Items.AddRange(Database.GetGameObjectList(GameObject.Animation));
+
             scrlProjectile.Maximum = ProjectileBase.ObjectCount()-1;
             scrlSpell.Maximum = SpellBase.ObjectCount() - 1;
             scrlAnim.Maximum = AnimationBase.ObjectCount()-1;
@@ -171,6 +175,7 @@ namespace Intersect_Editor.Forms
                 scrlRange.Value = _editorItem.StatGrowth;
                 cmbEquipmentSlot.SelectedIndex = _editorItem.Data1;
                 cmbToolType.SelectedIndex = _editorItem.Tool + 1;
+                cmbAttackAnimation.SelectedIndex = Database.GameObjectListIndex(GameObject.Animation, _editorItem.AttackAnimation) + 1;
                 cmbGender.SelectedIndex = _editorItem.GenderReq;
                 if (_editorItem.ItemType == (int)ItemTypes.Equipment) cmbEquipmentBonus.SelectedIndex = _editorItem.Data2;
                 scrlEffectAmount.Value = _editorItem.Data3;
@@ -442,6 +447,8 @@ namespace Intersect_Editor.Forms
                 scrlDamage.Visible = true;
                 lblProjectile.Visible = true;
                 scrlProjectile.Visible = true;
+                lblAttackAnimation.Visible = true;
+                cmbAttackAnimation.Visible = true;
             }
             else
             {
@@ -452,6 +459,8 @@ namespace Intersect_Editor.Forms
                 scrlDamage.Visible = false;
                 lblProjectile.Visible = false;
                 scrlProjectile.Visible = false;
+                lblAttackAnimation.Visible = false;
+                cmbAttackAnimation.Visible = false;
 
                 _editorItem.Projectile = -1;
                 _editorItem.Tool = -1;
@@ -623,6 +632,11 @@ namespace Intersect_Editor.Forms
                     toolStripItemNew_Click(null, null);
                 }
             }
+        }
+
+        private void cmbAttackAnimation_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            _editorItem.AttackAnimation = Database.GameObjectIdFromList(GameObject.Class, cmbAttackAnimation.SelectedIndex - 1);
         }
     }
 }
