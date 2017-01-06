@@ -41,6 +41,7 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_5.Intersect_Conve
         public int ClassReq = -1;
         public int LevelReq;
         public int Projectile = -1;
+        public int AttackAnimation = -1;
         public int[] StatsReq;
         public int[] StatsGiven;
         public int GenderReq;
@@ -110,6 +111,7 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_5.Intersect_Conve
             myBuffer.WriteInteger(LevelReq);
             myBuffer.WriteInteger(GenderReq);
             myBuffer.WriteInteger(Projectile);
+            myBuffer.WriteInteger(AttackAnimation);
 
             for (var i = 0; i < Options.MaxStats; i++)
             {

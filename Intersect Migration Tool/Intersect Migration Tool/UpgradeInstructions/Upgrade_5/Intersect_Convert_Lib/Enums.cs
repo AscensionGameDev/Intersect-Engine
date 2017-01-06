@@ -91,6 +91,21 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_5.Intersect_Conve
         DeleteGameObject,
         TryBlock,
         SaveTime,
+        PartyInvite,
+        PartyAcceptInvite,
+        PartyKick,
+        PartyLeave,
+        AcceptQuest,
+        DeclineQuest,
+        CancelQuest,
+        TradeRequest,
+        TradeAccept,
+        TradeDecline,
+        TradeOffer,
+        TradeRevoke,
+        TradeRequestAccept,
+        RequestDecline,
+        AddTilesets,
     }
 
     public enum ServerPackets
@@ -147,7 +162,20 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_5.Intersect_Conve
         EntityAttack,
         ActionMsg,
         TimeBase,
-        Time
+        Time,
+        PartyData,
+        PartyInvite,
+        ChatBubble,
+		MapEntities,
+        QuestOffer,
+        QuestProgress,
+        TradeStart,
+        TradeUpdate,
+        TradeClose,
+        TradeRequest,
+        NPCAggression,
+        PlayerDeath,
+        EntityZDimension,
     }
 
     public enum MapZones

@@ -5,7 +5,7 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("Intersect Server")]
-[assembly: AssemblyDescription("Intersect Server")]
+[assembly: AssemblyDescription("2D ORPG Server - Part of the Intersect Game Creation Suite")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Ascension Game Dev")]
 [assembly: AssemblyProduct("Intersect Game Engine")]

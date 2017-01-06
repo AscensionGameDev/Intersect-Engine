@@ -101,7 +101,7 @@ namespace Intersect_Migration_Tool
                         var upgrade5 = new Upgrade5(_dbConnection);
                         upgrade5.Upgrade();
                         currentVersion++;
-                        //IncrementDatabaseVersion();
+                        IncrementDatabaseVersion();
                         break;
                     default:
                         throw new Exception("Upgrade instructions could not be found!");
