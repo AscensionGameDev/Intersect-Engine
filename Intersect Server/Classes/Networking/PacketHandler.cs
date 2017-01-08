@@ -1108,12 +1108,11 @@ namespace Intersect_Server.Classes.Networking
                             return;
                         }
                         mapNum = bf.ReadInteger();
-                        Database.CheckAllMapConnections();
                         var players = MapInstance.GetMap(mapNum).GetPlayersOnMap();
                         MapList.GetList().DeleteMap(mapNum);
-                        Database.GenerateMapGrids();
                         Database.SaveGameObject(MapInstance.GetMap(mapNum));
                         Database.DeleteGameObject(MapInstance.GetMap(mapNum));
+                        Database.GenerateMapGrids();
                         PacketSender.SendMapListToAll();
                         foreach (var player in players)
                         {

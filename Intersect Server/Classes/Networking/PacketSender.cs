@@ -103,95 +103,111 @@ namespace Intersect_Server.Classes.Networking
             var bf = new ByteBuffer();
             bf.WriteLong((int)ServerPackets.MapData);
             bf.WriteLong(mapNum);
-            bf.WriteInteger(0);
             bool isEditor = false;
             if (client != null && client.IsEditor) isEditor = true;
-            byte[] MapData = null;
-            if (isEditor)
+            var map = MapInstance.GetMap(mapNum);
+            if (map == null)
             {
-                MapData = MapInstance.GetMap(mapNum).GetMapData(false);
-                bf.WriteLong(MapData.Length);
-                bf.WriteBytes(MapData);
-                bf.WriteInteger(MapInstance.GetMap(mapNum).MapGridX);
-                bf.WriteInteger(MapInstance.GetMap(mapNum).MapGridY);
-            }
-            else
-            {
-                if (client.SentMaps.ContainsKey(mapNum))
-                {
-                    if (client.SentMaps[mapNum].Item1 > Globals.System.GetTimeMs() &&
-                        client.SentMaps[mapNum].Item2 == MapInstance.GetMap(mapNum).Revision) return;
-                    client.SentMaps.Remove(mapNum);
-                }
-                client.SentMaps.Add(mapNum, new Tuple<long, int>(Globals.System.GetTimeMs() + 5000, MapInstance.GetMap(mapNum).Revision));
-                MapData = MapInstance.GetMap(mapNum).GetClientMapData();
-                bf.WriteLong(MapData.Length);
-                bf.WriteBytes(MapData);
-                bf.WriteInteger(MapInstance.GetMap(mapNum).Revision);
-                bf.WriteBytes(MapInstance.GetMap(mapNum).Autotiles.GetData());
-                bf.WriteInteger(MapInstance.GetMap(mapNum).MapGridX);
-                bf.WriteInteger(MapInstance.GetMap(mapNum).MapGridY);
-                if (Options.GameBorderStyle == 1)
-                {
-                    bf.WriteInteger(1);
-                    bf.WriteInteger(1);
-                    bf.WriteInteger(1);
-                    bf.WriteInteger(1);
-                }
-                else if (Options.GameBorderStyle == 0)
-                {
-                    if (0 == MapInstance.GetMap(mapNum).MapGridX)
-                    {
-                        bf.WriteInteger(1);
-                    }
-                    else
-                    {
-                        bf.WriteInteger(0);
-                    }
-                    if (Database.MapGrids[MapInstance.GetMap(mapNum).MapGrid].XMax - 1 == MapInstance.GetMap(mapNum).MapGridX)
-                    {
-                        bf.WriteInteger(1);
-                    }
-                    else
-                    {
-                        bf.WriteInteger(0);
-                    }
-                    if (0 == MapInstance.GetMap(mapNum).MapGridY)
-                    {
-                        bf.WriteInteger(1);
-                    }
-                    else
-                    {
-                        bf.WriteInteger(0);
-                    }
-                    if (Database.MapGrids[MapInstance.GetMap(mapNum).MapGrid].YMax - 1 == MapInstance.GetMap(mapNum).MapGridY)
-                    {
-                        bf.WriteInteger(1);
-                    }
-                    else
-                    {
-                        bf.WriteInteger(0);
-                    }
-                }
-                else
-                {
-                    bf.WriteInteger(0);
-                    bf.WriteInteger(0);
-                    bf.WriteInteger(0);
-                    bf.WriteInteger(0);
-                }
-            }
-            if (client != null)
-            {
-                client.SendPacket(bf.ToArray());
+                bf.WriteInteger(1);
                 if (isEditor)
                 {
                     if (allEditors) SendDataToEditors(bf.ToArray());
                 }
                 else
                 {
-                    MapInstance.GetMap(mapNum).SendMapEntitiesTo(client.Entity);
-                    SendMapItems(client, mapNum);
+                    client.SendPacket(bf.ToArray());
+                }
+            }
+            else
+            {
+                bf.WriteInteger(0);
+                byte[] MapData = null;
+                if (isEditor)
+                {
+                    MapData = MapInstance.GetMap(mapNum).GetMapData(false);
+                    bf.WriteLong(MapData.Length);
+                    bf.WriteBytes(MapData);
+                    bf.WriteInteger(MapInstance.GetMap(mapNum).MapGridX);
+                    bf.WriteInteger(MapInstance.GetMap(mapNum).MapGridY);
+                }
+                else
+                {
+                    if (client.SentMaps.ContainsKey(mapNum))
+                    {
+                        if (client.SentMaps[mapNum].Item1 > Globals.System.GetTimeMs() &&
+                            client.SentMaps[mapNum].Item2 == MapInstance.GetMap(mapNum).Revision) return;
+                        client.SentMaps.Remove(mapNum);
+                    }
+                    client.SentMaps.Add(mapNum, new Tuple<long, int>(Globals.System.GetTimeMs() + 5000, MapInstance.GetMap(mapNum).Revision));
+                    MapData = MapInstance.GetMap(mapNum).GetClientMapData();
+                    bf.WriteLong(MapData.Length);
+                    bf.WriteBytes(MapData);
+                    bf.WriteInteger(MapInstance.GetMap(mapNum).Revision);
+                    bf.WriteBytes(MapInstance.GetMap(mapNum).Autotiles.GetData());
+                    bf.WriteInteger(MapInstance.GetMap(mapNum).MapGridX);
+                    bf.WriteInteger(MapInstance.GetMap(mapNum).MapGridY);
+                    if (Options.GameBorderStyle == 1)
+                    {
+                        bf.WriteInteger(1);
+                        bf.WriteInteger(1);
+                        bf.WriteInteger(1);
+                        bf.WriteInteger(1);
+                    }
+                    else if (Options.GameBorderStyle == 0)
+                    {
+                        if (0 == MapInstance.GetMap(mapNum).MapGridX)
+                        {
+                            bf.WriteInteger(1);
+                        }
+                        else
+                        {
+                            bf.WriteInteger(0);
+                        }
+                        if (Database.MapGrids[MapInstance.GetMap(mapNum).MapGrid].XMax - 1 == MapInstance.GetMap(mapNum).MapGridX)
+                        {
+                            bf.WriteInteger(1);
+                        }
+                        else
+                        {
+                            bf.WriteInteger(0);
+                        }
+                        if (0 == MapInstance.GetMap(mapNum).MapGridY)
+                        {
+                            bf.WriteInteger(1);
+                        }
+                        else
+                        {
+                            bf.WriteInteger(0);
+                        }
+                        if (Database.MapGrids[MapInstance.GetMap(mapNum).MapGrid].YMax - 1 == MapInstance.GetMap(mapNum).MapGridY)
+                        {
+                            bf.WriteInteger(1);
+                        }
+                        else
+                        {
+                            bf.WriteInteger(0);
+                        }
+                    }
+                    else
+                    {
+                        bf.WriteInteger(0);
+                        bf.WriteInteger(0);
+                        bf.WriteInteger(0);
+                        bf.WriteInteger(0);
+                    }
+                }
+                if (client != null)
+                {
+                    client.SendPacket(bf.ToArray());
+                    if (isEditor)
+                    {
+                        if (allEditors) SendDataToEditors(bf.ToArray());
+                    }
+                    else
+                    {
+                        MapInstance.GetMap(mapNum).SendMapEntitiesTo(client.Entity);
+                        SendMapItems(client, mapNum);
+                    }
                 }
             }
             bf.Dispose();

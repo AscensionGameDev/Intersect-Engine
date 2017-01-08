@@ -1969,6 +1969,10 @@ namespace Intersect_Server.Classes.Core
                         }
                     }
                 }
+                for (int i = 0; i < MapGrids.Count; i++)
+                {
+                    PacketSender.SendMapGridToAll(i);
+                }
             }
         }
 
