@@ -1,5 +1,6 @@
 ﻿using Intersect_Editor.Classes;
 using System;
+using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
 using Intersect_Editor.Classes.Core;
@@ -12,11 +13,20 @@ using WeifenLuo.WinFormsUI.Docking;
 
 namespace Intersect_Editor.Forms
 {
+    public enum LayerTabs
+    {
+        Tiles = 0,
+        Attributes,
+        Lights,
+        Events,
+        Npcs
+    }
     public partial class frmMapLayers : DockContent
     {
         //MonoGame Swap Chain
         private SwapChainRenderTarget _chain;
         private bool _tMouseDown;
+        public LayerTabs CurrentTab = LayerTabs.Tiles;
         public frmMapLayers()
         {
             InitializeComponent();
@@ -39,6 +49,7 @@ namespace Intersect_Editor.Forms
         }
         private void picTileset_MouseDown(object sender, MouseEventArgs e)
         {
+            
             if (e.X > picTileset.Width || e.Y > picTileset.Height) { return; }
             _tMouseDown = true;
             Globals.CurSelX = (int)Math.Floor((double)e.X / Options.TileWidth);
@@ -384,40 +395,6 @@ namespace Intersect_Editor.Forms
             lblSoundDistance.Text = "Distance: " + scrlSoundDistance.Value + " Tile(s)";
         }
 
-        private void tabControl_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            if (tabControl.SelectedIndex == tabControl.TabPages.IndexOf(tabTiles))
-            {
-                Globals.CurrentLayer = cmbMapLayer.SelectedIndex;
-                EditorGraphics.TilePreviewUpdated = true;
-            }
-            else if (tabControl.SelectedIndex == tabControl.TabPages.IndexOf(tabAttributes))
-            {
-                Globals.CurrentLayer = Options.LayerCount;
-                EditorGraphics.TilePreviewUpdated = true;
-            }
-            else if (tabControl.SelectedIndex == tabControl.TabPages.IndexOf(tabEvents))
-            {
-                Globals.CurrentLayer = Options.LayerCount + 2;
-                EditorGraphics.TilePreviewUpdated = true;
-            }
-            else if (tabControl.SelectedIndex == tabControl.TabPages.IndexOf(tabLights))
-            {
-                Globals.CurrentLayer = Options.LayerCount + 1;
-                EditorGraphics.TilePreviewUpdated = true;
-            }
-            else if (tabControl.SelectedIndex == tabControl.TabPages.IndexOf(tabNPCs))
-            {
-                Globals.CurrentLayer = Options.LayerCount + 3;
-                EditorGraphics.TilePreviewUpdated = true;
-                RefreshNpcList();
-            }
-            if (Globals.EditingLight != null)
-            {
-                Globals.MapLayersWindow.lightEditor.Cancel();
-            }
-        }
-
         public void RefreshNpcList()
         {
             // Update the list incase npcs have been modified since form load.
@@ -586,6 +563,8 @@ namespace Intersect_Editor.Forms
         private void frmMapLayers_Load(object sender, EventArgs e)
         {
             CreateSwapChain();
+            picTileset.MouseDown += pnlTilesetContainer.AutoDragPanel_MouseDown;
+            picTileset.MouseUp += pnlTilesetContainer.AutoDragPanel_MouseUp;
         }
 
         public void InitMapLayers()
@@ -626,6 +605,75 @@ namespace Intersect_Editor.Forms
         private void lstMapNpcs_MouseDown(object sender, MouseEventArgs e)
         {
             lstMapNpcs.SelectedIndex = lstMapNpcs.IndexFromPoint(e.Location);
+        }
+
+        private void ChangeTab()
+        {
+            btnTileHeader.BackColor = System.Drawing.Color.FromArgb(45, 45, 48);
+            btnAttributeHeader.BackColor = System.Drawing.Color.FromArgb(45, 45, 48);
+            btnLightsHeader.BackColor = System.Drawing.Color.FromArgb(45, 45, 48);
+            btnEventsHeader.BackColor = System.Drawing.Color.FromArgb(45, 45, 48);
+            btnNpcsHeader.BackColor = System.Drawing.Color.FromArgb(45, 45, 48);
+            pnlTiles.Hide();
+            pnlAttributes.Hide();
+            pnlLights.Hide();
+            pnlEvents.Hide();
+            pnlNpcs.Hide();
+            if (Globals.EditingLight != null)
+            {
+                Globals.MapLayersWindow.lightEditor.Cancel();
+            }
+        }
+
+        private void btnTileHeader_Click(object sender, EventArgs e)
+        {
+            ChangeTab();
+            Globals.CurrentLayer = cmbMapLayer.SelectedIndex;
+            EditorGraphics.TilePreviewUpdated = true;
+            btnTileHeader.BackColor = System.Drawing.Color.FromArgb(90, 90, 90);
+            CurrentTab = LayerTabs.Tiles;
+            pnlTiles.Show();
+        }
+
+        private void btnAttributeHeader_Click(object sender, EventArgs e)
+        {
+            ChangeTab();
+            Globals.CurrentLayer = Options.LayerCount;
+            EditorGraphics.TilePreviewUpdated = true;
+            btnAttributeHeader.BackColor = System.Drawing.Color.FromArgb(90, 90, 90);
+            CurrentTab = LayerTabs.Attributes;
+            pnlAttributes.Show();
+        }
+
+        public void btnLightsHeader_Click(object sender, EventArgs e)
+        {
+            ChangeTab();
+            Globals.CurrentLayer = Options.LayerCount + 1;
+            EditorGraphics.TilePreviewUpdated = true;
+            btnLightsHeader.BackColor = System.Drawing.Color.FromArgb(90, 90, 90);
+            CurrentTab = LayerTabs.Lights;
+            pnlLights.Show();
+        }
+
+        private void btnEventsHeader_Click(object sender, EventArgs e)
+        {
+            ChangeTab();
+            Globals.CurrentLayer = Options.LayerCount + 2;
+            EditorGraphics.TilePreviewUpdated = true;
+            btnEventsHeader.BackColor = System.Drawing.Color.FromArgb(90, 90, 90);
+            CurrentTab = LayerTabs.Events;
+            pnlEvents.Show();
+        }
+
+        private void btnNpcsHeader_Click(object sender, EventArgs e)
+        {
+            ChangeTab();
+            Globals.CurrentLayer = Options.LayerCount + 3;
+            EditorGraphics.TilePreviewUpdated = true;
+            RefreshNpcList();
+            btnNpcsHeader.BackColor = System.Drawing.Color.FromArgb(90, 90, 90);
+            CurrentTab = LayerTabs.Npcs;
+            pnlNpcs.Show();
         }
     }
 }

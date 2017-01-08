@@ -104,6 +104,9 @@ namespace Intersect_Editor.Forms
             Globals.MapLayersWindow.InitMapLayers();
             Globals.MapGridWindowNew.InitGridWindow();
             UpdateTimeSimulationList();
+
+            toolStripButtonDonate.Size = new Size(54,25);
+            this.WindowState = FormWindowState.Maximized;
         }
         private void FrmMain_KeyDown(object sender, KeyEventArgs e)
         {
@@ -817,7 +820,7 @@ namespace Intersect_Editor.Forms
                 addRange += time.ToString("h:mm:ss tt");
 
                 //Create image of overlay color
-                var img = new Bitmap(32, 32);
+                var img = new Bitmap(16,16);
                 var g = System.Drawing.Graphics.FromImage(img);
                 g.Clear(System.Drawing.Color.Transparent);
                 //Draw the trans tile if we have it

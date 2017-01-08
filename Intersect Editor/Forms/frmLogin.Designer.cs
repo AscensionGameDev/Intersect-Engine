@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel;
 using System.Windows.Forms;
+using DarkUI.Controls;
 
 namespace Intersect_Editor.Forms
 {
@@ -35,15 +36,15 @@ namespace Intersect_Editor.Forms
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmLogin));
             this.lblStatus = new System.Windows.Forms.Label();
             this.tmrSocket = new System.Windows.Forms.Timer(this.components);
-            this.txtUsername = new System.Windows.Forms.TextBox();
-            this.txtPassword = new System.Windows.Forms.TextBox();
-            this.btnLogin = new System.Windows.Forms.Button();
+            this.txtUsername = new DarkTextBox();
+            this.txtPassword = new DarkTextBox();
+            this.btnLogin = new DarkButton();
             this.picLogo = new System.Windows.Forms.PictureBox();
             this.lblVersion = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
-            this.chkRemember = new System.Windows.Forms.CheckBox();
+            this.chkRemember = new DarkCheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.picLogo)).BeginInit();
             this.SuspendLayout();
             // 
@@ -86,7 +87,6 @@ namespace Intersect_Editor.Forms
             this.btnLogin.Size = new System.Drawing.Size(75, 23);
             this.btnLogin.TabIndex = 4;
             this.btnLogin.Text = "Login";
-            this.btnLogin.UseVisualStyleBackColor = true;
             this.btnLogin.Click += new System.EventHandler(this.btnLogin_Click);
             // 
             // picLogo
@@ -151,13 +151,12 @@ namespace Intersect_Editor.Forms
             this.chkRemember.Size = new System.Drawing.Size(95, 17);
             this.chkRemember.TabIndex = 3;
             this.chkRemember.Text = "Remember Me";
-            this.chkRemember.UseVisualStyleBackColor = true;
             // 
             // FrmLogin
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.BackColor = System.Drawing.SystemColors.ControlDarkDark;
+            this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
             this.ClientSize = new System.Drawing.Size(628, 338);
             this.Controls.Add(this.chkRemember);
             this.Controls.Add(this.label3);
@@ -187,14 +186,14 @@ namespace Intersect_Editor.Forms
 
         private Label lblStatus;
         private Timer tmrSocket;
-        private TextBox txtUsername;
-        private TextBox txtPassword;
-        private Button btnLogin;
+        private DarkTextBox txtUsername;
+        private DarkTextBox txtPassword;
+        private DarkButton btnLogin;
         private PictureBox picLogo;
         private Label lblVersion;
         private Label label1;
         private Label label2;
         private Label label3;
-        private CheckBox chkRemember;
+        private DarkCheckBox chkRemember;
     }
 }

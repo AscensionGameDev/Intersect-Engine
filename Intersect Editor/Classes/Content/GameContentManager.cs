@@ -341,7 +341,7 @@ namespace Intersect_Editor.Classes.Core
         {
             shaderDict.Clear();
             if (!Directory.Exists("resources/" + "shaders")) { Directory.CreateDirectory("resources/" + "shaders"); }
-            var items = Directory.GetFiles("resources/" + "shaders", "*.xnb");
+            var items = Directory.GetFiles("resources/" + "shaders", "*_editor.xnb");
             for (int i = 0; i < items.Length; i++)
             {
                 string filename = items[i].Replace("resources/" + "shaders" + "\\", "").ToLower();

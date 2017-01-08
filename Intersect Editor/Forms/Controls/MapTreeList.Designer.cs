@@ -37,9 +37,13 @@
             // list
             // 
             this.list.AllowDrop = true;
+            this.list.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
+            this.list.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.list.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.list.ForeColor = System.Drawing.Color.Gainsboro;
             this.list.ImageIndex = 0;
             this.list.ImageList = this.imageList;
+            this.list.LineColor = System.Drawing.Color.FromArgb(((int)(((byte)(150)))), ((int)(((byte)(150)))), ((int)(((byte)(150)))));
             this.list.Location = new System.Drawing.Point(0, 0);
             this.list.Name = "list";
             this.list.SelectedImageIndex = 0;

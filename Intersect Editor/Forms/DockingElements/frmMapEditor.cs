@@ -860,7 +860,7 @@ namespace Intersect_Editor.Forms
                     tmpLight.Size = 50;
                     Globals.CurrentMap.Lights.Add(tmpLight);
                 }
-                Globals.MapLayersWindow.tabControl.SelectedTab = Globals.MapLayersWindow.tabLights;
+                Globals.MapLayersWindow.btnLightsHeader_Click(null, null);
                 Globals.MapLayersWindow.lightEditor.Show();
                 Globals.BackupLight = new LightBase(tmpLight);
                 Globals.MapLayersWindow.lightEditor.LoadEditor(tmpLight);

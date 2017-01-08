@@ -819,7 +819,7 @@ namespace Intersect_Editor.Classes
 
         public static void DrawTileset()
         {
-            if (_tilesetChain == null || _tilesetChain.IsContentLost || _tilesetChain.IsDisposed || Globals.MapLayersWindow.tabControl.SelectedIndex != Globals.MapLayersWindow.tabControl.TabPages.IndexOf(Globals.MapLayersWindow.tabTiles)) return;
+            if (_tilesetChain == null || _tilesetChain.IsContentLost || _tilesetChain.IsDisposed || Globals.MapLayersWindow.CurrentTab != LayerTabs.Tiles) return;
             _graphicsDevice.SetRenderTarget(_tilesetChain);
             _graphicsDevice.Clear(Microsoft.Xna.Framework.Color.Black);
             if (Globals.CurrentTileset != null)
@@ -852,22 +852,22 @@ namespace Intersect_Editor.Classes
         private static void DrawMapBorders()
         {
             //Horizontal Top
-            DrawTexture(_whiteTex, new RectangleF(0, 0, 1, 1), new RectangleF(0, CurrentView.Y - 1, CurrentView.Width, 3), Color.White);
+            DrawTexture(_whiteTex, new RectangleF(0, 0, 1, 1), new RectangleF(0, CurrentView.Y - 1, CurrentView.Width, 3), Color.DimGray);
             //Horizontal Buttom
-            DrawTexture(_whiteTex, new RectangleF(0, 0, 1, 1), new RectangleF(0, CurrentView.Y + (Options.TileHeight * Options.MapHeight) - 1, CurrentView.Width, 3), Color.White);
+            DrawTexture(_whiteTex, new RectangleF(0, 0, 1, 1), new RectangleF(0, CurrentView.Y + (Options.TileHeight * Options.MapHeight) - 1, CurrentView.Width, 3), Color.DimGray);
             //Vertical Left
-            DrawTexture(_whiteTex, new RectangleF(0, 0, 1, 1), new RectangleF(CurrentView.Left - 1, 0, 3, CurrentView.Height), Color.White);
+            DrawTexture(_whiteTex, new RectangleF(0, 0, 1, 1), new RectangleF(CurrentView.Left - 1, 0, 3, CurrentView.Height), Color.DimGray);
             //Vertical Right
-            DrawTexture(_whiteTex, new RectangleF(0, 0, 1, 1), new RectangleF(CurrentView.Left + (Options.TileWidth * Options.MapWidth) - 1, 0, 3, CurrentView.Height), Color.White);
+            DrawTexture(_whiteTex, new RectangleF(0, 0, 1, 1), new RectangleF(CurrentView.Left + (Options.TileWidth * Options.MapWidth) - 1, 0, 3, CurrentView.Height), Color.DimGray);
 
             //Horizontal Top
-            DrawTexture(_whiteTex, new RectangleF(0, 0, 1, 1), new RectangleF(CurrentView.Left, CurrentView.Y - 1, Options.TileWidth * Options.MapWidth, 3), Color.White);
+            DrawTexture(_whiteTex, new RectangleF(0, 0, 1, 1), new RectangleF(CurrentView.Left, CurrentView.Y - 1, Options.TileWidth * Options.MapWidth, 3), Color.DimGray);
             //Horizontal Buttom
-            DrawTexture(_whiteTex, new RectangleF(0, 0, 1, 1), new RectangleF(CurrentView.Left, CurrentView.Y + (Options.TileHeight * Options.MapHeight) - 1, Options.TileWidth * Options.MapWidth, 3), Color.White);
+            DrawTexture(_whiteTex, new RectangleF(0, 0, 1, 1), new RectangleF(CurrentView.Left, CurrentView.Y + (Options.TileHeight * Options.MapHeight) - 1, Options.TileWidth * Options.MapWidth, 3), Color.DimGray);
             //Vertical Left
-            DrawTexture(_whiteTex, new RectangleF(0, 0, 1, 1), new RectangleF(CurrentView.Left - 1, CurrentView.Y, 3, Options.MapHeight * Options.TileHeight), Color.White);
+            DrawTexture(_whiteTex, new RectangleF(0, 0, 1, 1), new RectangleF(CurrentView.Left - 1, CurrentView.Y, 3, Options.MapHeight * Options.TileHeight), Color.DimGray);
             //Vertical Right
-            DrawTexture(_whiteTex, new RectangleF(0, 0, 1, 1), new RectangleF(CurrentView.Left + (Options.TileWidth * Options.MapWidth) - 1, CurrentView.Y, 3, Options.MapHeight * Options.TileHeight), Color.White);
+            DrawTexture(_whiteTex, new RectangleF(0, 0, 1, 1), new RectangleF(CurrentView.Left + (Options.TileWidth * Options.MapWidth) - 1, CurrentView.Y, 3, Options.MapHeight * Options.TileHeight), Color.DimGray);
 
         }
         private static void DrawMapAttributes(MapInstance map, int gridX, int gridY, bool screenShotting, RenderTarget2D renderTarget, bool upper)

@@ -33,13 +33,27 @@
             // 
             // gridMapProperties
             // 
-            this.gridMapProperties.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.gridMapProperties.Location = new System.Drawing.Point(0, -1);
+            this.gridMapProperties.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
+            this.gridMapProperties.CategoryForeColor = System.Drawing.Color.Gainsboro;
+            this.gridMapProperties.CategorySplitterColor = System.Drawing.Color.FromArgb(((int)(((byte)(51)))), ((int)(((byte)(51)))), ((int)(((byte)(51)))));
+            this.gridMapProperties.CommandsBorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(51)))), ((int)(((byte)(51)))), ((int)(((byte)(51)))));
+            this.gridMapProperties.CommandsForeColor = System.Drawing.Color.Gainsboro;
+            this.gridMapProperties.CommandsVisibleIfAvailable = false;
+            this.gridMapProperties.DisabledItemForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(133)))), ((int)(((byte)(133)))), ((int)(((byte)(133)))));
+            this.gridMapProperties.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.gridMapProperties.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.gridMapProperties.HelpBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
+            this.gridMapProperties.HelpBorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(51)))), ((int)(((byte)(51)))), ((int)(((byte)(51)))));
+            this.gridMapProperties.HelpForeColor = System.Drawing.Color.Gainsboro;
+            this.gridMapProperties.LineColor = System.Drawing.Color.FromArgb(((int)(((byte)(49)))), ((int)(((byte)(51)))), ((int)(((byte)(53)))));
+            this.gridMapProperties.Location = new System.Drawing.Point(0, 0);
             this.gridMapProperties.Name = "gridMapProperties";
-            this.gridMapProperties.Size = new System.Drawing.Size(153, 141);
+            this.gridMapProperties.Size = new System.Drawing.Size(154, 140);
             this.gridMapProperties.TabIndex = 0;
+            this.gridMapProperties.ToolbarVisible = false;
+            this.gridMapProperties.ViewBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
+            this.gridMapProperties.ViewBorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(51)))), ((int)(((byte)(51)))), ((int)(((byte)(51)))));
+            this.gridMapProperties.ViewForeColor = System.Drawing.Color.Gainsboro;
             // 
             // frmMapProperties
             // 
