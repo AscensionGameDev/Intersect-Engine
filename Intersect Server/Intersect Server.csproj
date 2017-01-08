@@ -80,6 +80,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Data" />
     <Reference Include="System.Data.Portable, Version=4.0.0.0, Culture=neutral, PublicKeyToken=59e704a76bc4613a, processorArchitecture=MSIL">
       <HintPath>packages\Mono.Data.Sqlite.Portable.1.0.3.5\lib\net4\System.Data.Portable.dll</HintPath>
@@ -154,4 +155,12 @@
     <Error Condition="!Exists('packages\Mono.Data.Sqlite.Portable.1.0.3.5\tools\Mono.Data.Sqlite.Portable.targets')" Text="This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them." />
     <Error Condition="Exists('packages\Mono.Data.Sqlite.Portable.1.0.3.5\tools\Mono.Data.Sqlite.Portable.targets')" Text="The build restored NuGet packages. Build the project again to include these packages in the build." />
   </Target>
+  <PropertyGroup>
+    <PostBuildEvent>if exist libs rmdir /S /Q libs
+if not exist libs mkdir libs
+if not exist libs\server mkdir libs\server
+move /Y "$(TargetDir)*.dll" "$(TargetDir)\libs\server\"
+move /Y "$(TargetDir)*.xml" "$(TargetDir)\libs\server\"
+move /Y "$(TargetDir)Intersect Library.pdb" "$(TargetDir)\libs\server\"</PostBuildEvent>
+  </PropertyGroup>
 </Project>

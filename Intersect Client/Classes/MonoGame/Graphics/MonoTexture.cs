@@ -57,6 +57,10 @@ namespace Intersect_Client_MonoGame.Classes.SFML.Graphics
                 using (var fileStream = new FileStream(_path, FileMode.Open,FileAccess.Read,FileShare.ReadWrite))
                 {
                     _tex = Texture2D.FromStream(_graphicsDevice, fileStream);
+                    if (_path.Contains("g7"))
+                    {
+                        var a = true;
+                    }
                     if (_tex != null)
                     {
                         _width = _tex.Width;

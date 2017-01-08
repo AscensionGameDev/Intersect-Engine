@@ -252,12 +252,15 @@ namespace Intersect_Server.Classes.Entities
         public override void Die(bool dropitems = false, Entity killer = null)
         {
             //Flag death to the client
-            PacketSender.SendPlayerDeath(MyIndex);
+            PacketSender.SendPlayerDeath(this);
 
             //Event trigger
             for (var i = 0; i < MyEvents.Count; i++)
             {
-                MyEvents[i].PlayerHasDied = true;
+                if (MyEvents[i] != null)
+                {
+                    MyEvents[i].PlayerHasDied = true;
+                }
             }
             
             base.Die(dropitems, killer);

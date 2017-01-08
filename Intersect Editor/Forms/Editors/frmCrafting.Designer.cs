@@ -38,7 +38,7 @@
             this.lstCompositions = new System.Windows.Forms.ListBox();
             this.btnNewComposition = new System.Windows.Forms.Button();
             this.btnDeleteCraft = new System.Windows.Forms.Button();
-            this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.grpCraft = new System.Windows.Forms.GroupBox();
             this.lblItem = new System.Windows.Forms.Label();
             this.scrlItem = new System.Windows.Forms.HScrollBar();
             this.lblName = new System.Windows.Forms.Label();
@@ -62,10 +62,12 @@
             this.toolStripItemPaste = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripItemUndo = new System.Windows.Forms.ToolStripButton();
+            this.btnDupIngredient = new System.Windows.Forms.Button();
+            this.btnDupCraft = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             this.pnlContainer.SuspendLayout();
             this.groupBox2.SuspendLayout();
-            this.groupBox3.SuspendLayout();
+            this.grpCraft.SuspendLayout();
             this.groupBox5.SuspendLayout();
             this.toolStrip.SuspendLayout();
             this.SuspendLayout();
@@ -114,7 +116,7 @@
             // pnlContainer
             // 
             this.pnlContainer.Controls.Add(this.groupBox2);
-            this.pnlContainer.Controls.Add(this.groupBox3);
+            this.pnlContainer.Controls.Add(this.grpCraft);
             this.pnlContainer.Controls.Add(this.groupBox5);
             this.pnlContainer.Location = new System.Drawing.Point(221, 36);
             this.pnlContainer.Name = "pnlContainer";
@@ -124,6 +126,7 @@
             // 
             // groupBox2
             // 
+            this.groupBox2.Controls.Add(this.btnDupCraft);
             this.groupBox2.Controls.Add(this.lstCompositions);
             this.groupBox2.Controls.Add(this.btnNewComposition);
             this.groupBox2.Controls.Add(this.btnDeleteCraft);
@@ -139,14 +142,15 @@
             this.lstCompositions.FormattingEnabled = true;
             this.lstCompositions.Location = new System.Drawing.Point(6, 19);
             this.lstCompositions.Name = "lstCompositions";
-            this.lstCompositions.Size = new System.Drawing.Size(191, 290);
+            this.lstCompositions.Size = new System.Drawing.Size(191, 264);
             this.lstCompositions.TabIndex = 1;
             this.lstCompositions.Click += new System.EventHandler(this.lstCompositions_Click);
+            this.lstCompositions.SelectedIndexChanged += new System.EventHandler(this.lstCompositions_SelectedIndexChanged);
             // 
             // btnNewComposition
             // 
             this.btnNewComposition.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.btnNewComposition.Location = new System.Drawing.Point(7, 321);
+            this.btnNewComposition.Location = new System.Drawing.Point(7, 290);
             this.btnNewComposition.Name = "btnNewComposition";
             this.btnNewComposition.Size = new System.Drawing.Size(190, 27);
             this.btnNewComposition.TabIndex = 20;
@@ -157,7 +161,7 @@
             // btnDeleteCraft
             // 
             this.btnDeleteCraft.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.btnDeleteCraft.Location = new System.Drawing.Point(7, 354);
+            this.btnDeleteCraft.Location = new System.Drawing.Point(7, 323);
             this.btnDeleteCraft.Name = "btnDeleteCraft";
             this.btnDeleteCraft.Size = new System.Drawing.Size(190, 27);
             this.btnDeleteCraft.TabIndex = 19;
@@ -165,20 +169,21 @@
             this.btnDeleteCraft.UseVisualStyleBackColor = true;
             this.btnDeleteCraft.Click += new System.EventHandler(this.btnDeleteCraft_Click);
             // 
-            // groupBox3
+            // grpCraft
             // 
-            this.groupBox3.Controls.Add(this.lblItem);
-            this.groupBox3.Controls.Add(this.scrlItem);
-            this.groupBox3.Controls.Add(this.lblName);
-            this.groupBox3.Controls.Add(this.txtName);
-            this.groupBox3.Controls.Add(this.lblSpeed);
-            this.groupBox3.Controls.Add(this.scrlSpeed);
-            this.groupBox3.Location = new System.Drawing.Point(212, 3);
-            this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(273, 113);
-            this.groupBox3.TabIndex = 31;
-            this.groupBox3.TabStop = false;
-            this.groupBox3.Text = "General";
+            this.grpCraft.Controls.Add(this.lblItem);
+            this.grpCraft.Controls.Add(this.scrlItem);
+            this.grpCraft.Controls.Add(this.lblName);
+            this.grpCraft.Controls.Add(this.txtName);
+            this.grpCraft.Controls.Add(this.lblSpeed);
+            this.grpCraft.Controls.Add(this.scrlSpeed);
+            this.grpCraft.Location = new System.Drawing.Point(212, 3);
+            this.grpCraft.Name = "grpCraft";
+            this.grpCraft.Size = new System.Drawing.Size(273, 113);
+            this.grpCraft.TabIndex = 31;
+            this.grpCraft.TabStop = false;
+            this.grpCraft.Text = "General";
+            this.grpCraft.Visible = false;
             // 
             // lblItem
             // 
@@ -240,6 +245,7 @@
             // 
             // groupBox5
             // 
+            this.groupBox5.Controls.Add(this.btnDupIngredient);
             this.groupBox5.Controls.Add(this.btnRemove);
             this.groupBox5.Controls.Add(this.btnAdd);
             this.groupBox5.Controls.Add(this.lblIngredient);
@@ -256,7 +262,7 @@
             // 
             // btnRemove
             // 
-            this.btnRemove.Location = new System.Drawing.Point(188, 208);
+            this.btnRemove.Location = new System.Drawing.Point(97, 208);
             this.btnRemove.Name = "btnRemove";
             this.btnRemove.Size = new System.Drawing.Size(75, 23);
             this.btnRemove.TabIndex = 38;
@@ -305,6 +311,7 @@
             this.lstIngredients.Size = new System.Drawing.Size(251, 121);
             this.lstIngredients.TabIndex = 29;
             this.lstIngredients.Click += new System.EventHandler(this.lstIngredients_Click);
+            this.lstIngredients.SelectedIndexChanged += new System.EventHandler(this.lstIngredients_SelectedIndexChanged);
             // 
             // lblQuantity
             // 
@@ -412,6 +419,27 @@
             this.toolStripItemUndo.Text = "Undo";
             this.toolStripItemUndo.Click += new System.EventHandler(this.toolStripItemUndo_Click);
             // 
+            // btnDupIngredient
+            // 
+            this.btnDupIngredient.Location = new System.Drawing.Point(188, 208);
+            this.btnDupIngredient.Name = "btnDupIngredient";
+            this.btnDupIngredient.Size = new System.Drawing.Size(75, 23);
+            this.btnDupIngredient.TabIndex = 39;
+            this.btnDupIngredient.Text = "Duplicate";
+            this.btnDupIngredient.UseVisualStyleBackColor = true;
+            this.btnDupIngredient.Click += new System.EventHandler(this.btnDupIngredient_Click);
+            // 
+            // btnDupCraft
+            // 
+            this.btnDupCraft.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            this.btnDupCraft.Location = new System.Drawing.Point(6, 356);
+            this.btnDupCraft.Name = "btnDupCraft";
+            this.btnDupCraft.Size = new System.Drawing.Size(190, 27);
+            this.btnDupCraft.TabIndex = 21;
+            this.btnDupCraft.Text = "Duplicate";
+            this.btnDupCraft.UseVisualStyleBackColor = true;
+            this.btnDupCraft.Click += new System.EventHandler(this.btnDupCraft_Click);
+            // 
             // frmCrafting
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -432,8 +460,8 @@
             this.groupBox1.ResumeLayout(false);
             this.pnlContainer.ResumeLayout(false);
             this.groupBox2.ResumeLayout(false);
-            this.groupBox3.ResumeLayout(false);
-            this.groupBox3.PerformLayout();
+            this.grpCraft.ResumeLayout(false);
+            this.grpCraft.PerformLayout();
             this.groupBox5.ResumeLayout(false);
             this.groupBox5.PerformLayout();
             this.toolStrip.ResumeLayout(false);
@@ -450,7 +478,7 @@
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.ListBox lstCrafts;
         private System.Windows.Forms.Panel pnlContainer;
-        private System.Windows.Forms.GroupBox groupBox3;
+        private System.Windows.Forms.GroupBox grpCraft;
         private System.Windows.Forms.Label lblItem;
         private System.Windows.Forms.HScrollBar scrlItem;
         private System.Windows.Forms.Label lblName;
@@ -478,5 +506,7 @@
         public System.Windows.Forms.ToolStripButton toolStripItemPaste;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
         public System.Windows.Forms.ToolStripButton toolStripItemUndo;
+        private System.Windows.Forms.Button btnDupCraft;
+        private System.Windows.Forms.Button btnDupIngredient;
     }
 }

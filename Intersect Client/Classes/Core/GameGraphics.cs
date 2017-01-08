@@ -258,6 +258,7 @@ namespace Intersect_Client.Classes.Core
                             Layer1Entities[x][y].DrawHpBar();
                             Layer1Entities[x][y].DrawCastingBar();
                         }
+                        Layer1Entities[x][y].DrawChatBubbles();
                     }
                 }
                 for (int x = 0; x < Layer2Entities.Length; x++)
@@ -270,6 +271,7 @@ namespace Intersect_Client.Classes.Core
                             Layer2Entities[x][y].DrawHpBar();
                             Layer2Entities[x][y].DrawCastingBar();
                         }
+                        Layer2Entities[x][y].DrawChatBubbles();
                     }
                 }
 

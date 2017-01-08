@@ -921,7 +921,10 @@ namespace Intersect_Editor.Forms
         }
         private void picMap_MouseEnter(object sender, EventArgs e)
         {
-            if (Globals.MainForm.Focused) { pnlMapContainer.Focus(); }
+            if (Globals.CurrentEditor == -1)
+            {
+                Globals.MapEditorWindow.DockPanel.Focus();
+            }
         }
 
         private void SaveMap()

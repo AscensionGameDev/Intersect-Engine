@@ -42,7 +42,7 @@ namespace Intersect_Editor.Forms.Editors
 
         private List<BenchBase> _changed = new List<BenchBase>();
         private BenchBase _editorItem = null;
-        private Bench _craftItem;
+        private Craft _currentCraft;
         private byte[] _copiedItem = null;
 
         public frmCrafting()
@@ -51,6 +51,8 @@ namespace Intersect_Editor.Forms.Editors
             PacketHandler.GameObjectUpdatedDelegate += GameObjectUpdatedDelegate;
             lstCrafts.LostFocus += itemList_FocusChanged;
             lstCrafts.GotFocus += itemList_FocusChanged;
+            scrlItem.Maximum = ItemBase.ObjectCount() - 1;
+            scrlIngredient.Maximum = ItemBase.ObjectCount() - 1;
         }
 
         private void GameObjectUpdatedDelegate(GameObject type)
@@ -113,19 +115,22 @@ namespace Intersect_Editor.Forms.Editors
 
         private void UpdateCraft()
         {
+            grpCraft.Hide();
+            groupBox5.Hide();
             if (lstCompositions.SelectedIndex > -1)
             {
                 groupBox5.Show();
-                _craftItem = _editorItem.Crafts[lstCompositions.SelectedIndex];
+                grpCraft.Show();
+                _currentCraft = _editorItem.Crafts[lstCompositions.SelectedIndex];
 
-                scrlSpeed.Value = _craftItem.Time;
-                scrlItem.Value = Database.GameObjectListIndex(GameObject.Item, _craftItem.Item);
+                scrlSpeed.Value = _currentCraft.Time;
+                scrlItem.Value = Database.GameObjectListIndex(GameObject.Item, _currentCraft.Item);
 
                 lblSpeed.Text = "Time: " + scrlSpeed.Value + "ms";
 
                 if (scrlItem.Value > -1)
                 {
-                    lblItem.Text = "Item: " + ItemBase.GetName(_craftItem.Item);
+                    lblItem.Text = "Item: " + ItemBase.GetName(_currentCraft.Item);
                 }
                 else
                 {
@@ -138,30 +143,34 @@ namespace Intersect_Editor.Forms.Editors
                 }
 
                 lstIngredients.Items.Clear();
-                for (int i = 0; i < _craftItem.Ingredients.Count; i++)
+                scrlIngredient.Hide();
+                scrlQuantity.Hide();
+                lblQuantity.Hide();
+                lblIngredient.Hide();
+                for (int i = 0; i < _currentCraft.Ingredients.Count; i++)
                 {
-                    if (_craftItem.Ingredients[i].Item > -1)
+                    if (_currentCraft.Ingredients[i].Item > -1)
                     {
-                        lstIngredients.Items.Add("Ingredient: " + ItemBase.GetName(_craftItem.Ingredients[i].Item) +
-                                                 " x" + _craftItem.Ingredients[i].Quantity);
+                        lstIngredients.Items.Add("Ingredient: " + ItemBase.GetName(_currentCraft.Ingredients[i].Item) +
+                                                 " x" + _currentCraft.Ingredients[i].Quantity);
                     }
                     else
                     {
-                        lstIngredients.Items.Add("Ingredient: None x" + _craftItem.Ingredients[i].Quantity);
+                        lstIngredients.Items.Add("Ingredient: None x" + _currentCraft.Ingredients[i].Quantity);
                     }
                 }
                 if (lstIngredients.Items.Count > 0)
                 {
                     lstIngredients.SelectedIndex = 0;
                     scrlIngredient.Value = Database.GameObjectListIndex(GameObject.Item,
-                        _craftItem.Ingredients[lstIngredients.SelectedIndex].Item);
-                    scrlQuantity.Value = _craftItem.Ingredients[lstIngredients.SelectedIndex].Quantity;
+                        _currentCraft.Ingredients[lstIngredients.SelectedIndex].Item);
+                    scrlQuantity.Value = _currentCraft.Ingredients[lstIngredients.SelectedIndex].Quantity;
                     lblQuantity.Text = "Quantity x" + scrlQuantity.Value;
 
                     if (scrlIngredient.Value > -1)
                     {
                         lblIngredient.Text = "Item: " +
-                                             ItemBase.GetName(_craftItem.Ingredients[lstIngredients.SelectedIndex].Item);
+                                             ItemBase.GetName(_currentCraft.Ingredients[lstIngredients.SelectedIndex].Item);
                     }
                     else
                     {
@@ -186,11 +195,11 @@ namespace Intersect_Editor.Forms.Editors
 
         private void scrlItem_Scroll(object sender, ScrollEventArgs e)
         {
-            _craftItem.Item = Database.GameObjectIdFromList(GameObject.Item, scrlItem.Value);
+            _currentCraft.Item = Database.GameObjectIdFromList(GameObject.Item, scrlItem.Value);
 
             if (scrlItem.Value > -1)
             {
-                lblItem.Text = "Item: " + ItemBase.GetName(_craftItem.Item);
+                lblItem.Text = "Item: " + ItemBase.GetName(_currentCraft.Item);
             }
             else
             {
@@ -200,7 +209,7 @@ namespace Intersect_Editor.Forms.Editors
             {
                 if (scrlItem.Value > -1)
                 {
-                    lstCompositions.Items[lstCompositions.SelectedIndex] = ItemBase.GetName(_craftItem.Item);
+                    lstCompositions.Items[lstCompositions.SelectedIndex] = ItemBase.GetName(_currentCraft.Item);
                 }
                 else
                 {
@@ -211,83 +220,74 @@ namespace Intersect_Editor.Forms.Editors
 
         private void scrlSpeed_Scroll(object sender, ScrollEventArgs e)
         {
-            _craftItem.Time = scrlSpeed.Value;
+            _currentCraft.Time = scrlSpeed.Value;
             lblSpeed.Text = "Time: " + scrlSpeed.Value + "ms";
         }
 
         private void lstIngredients_Click(object sender, EventArgs e)
         {
-            scrlIngredient.Value = Database.GameObjectListIndex(GameObject.Item, _craftItem.Ingredients[lstIngredients.SelectedIndex].Item);
-            scrlQuantity.Value = _craftItem.Ingredients[lstIngredients.SelectedIndex].Quantity;
-            lblQuantity.Text = "Quantity x" + scrlQuantity.Value;
+            
 
-            if (scrlIngredient.Value > -1)
-            {
-                lblIngredient.Text = "Item: " + ItemBase.GetName(_craftItem.Ingredients[lstIngredients.SelectedIndex].Item);
-            }
-            else
-            {
-                lblIngredient.Text = "Item: None";
-            }
         }
 
         private void scrlIngredient_Scroll(object sender, ScrollEventArgs e)
         {
-            _craftItem.Ingredients[lstIngredients.SelectedIndex].Item = Database.GameObjectIdFromList(GameObject.Item, scrlIngredient.Value);
-            if (scrlIngredient.Value > -1)
+            if (lstIngredients.SelectedIndex > -1)
             {
-                lblIngredient.Text = "Item: " + ItemBase.GetName(_craftItem.Ingredients[lstIngredients.SelectedIndex].Item);
-                lstIngredients.Items[lstIngredients.SelectedIndex] = "Ingredient: " + ItemBase.GetName(_craftItem.Ingredients[lstIngredients.SelectedIndex].Item) + " x" + scrlQuantity.Value;
-            }
-            else
-            {
-                lblIngredient.Text = "Item: None";
-                lstIngredients.Items[lstIngredients.SelectedIndex] = "Ingredient: None x" + scrlQuantity.Value;
+                _currentCraft.Ingredients[lstIngredients.SelectedIndex].Item =
+                    Database.GameObjectIdFromList(GameObject.Item, scrlIngredient.Value);
+                if (scrlIngredient.Value > -1)
+                {
+                    lblIngredient.Text = "Item: " +
+                                         ItemBase.GetName(_currentCraft.Ingredients[lstIngredients.SelectedIndex].Item);
+                    lstIngredients.Items[lstIngredients.SelectedIndex] = "Ingredient: " +
+                                                                         ItemBase.GetName(
+                                                                             _currentCraft.Ingredients[
+                                                                                 lstIngredients.SelectedIndex].Item) +
+                                                                         " x" + scrlQuantity.Value;
+                }
+                else
+                {
+                    lblIngredient.Text = "Item: None";
+                    lstIngredients.Items[lstIngredients.SelectedIndex] = "Ingredient: None x" + scrlQuantity.Value;
+                }
             }
         }
 
         private void scrlQuantity_Scroll(object sender, ScrollEventArgs e)
         {
-            _craftItem.Ingredients[lstIngredients.SelectedIndex].Quantity = scrlQuantity.Value;
-            lblQuantity.Text = "Quantity x" + scrlQuantity.Value;
-            if (scrlIngredient.Value > -1)
+            if (lstIngredients.SelectedIndex > -1)
             {
-                lstIngredients.Items[lstIngredients.SelectedIndex] = "Ingredient: " + ItemBase.GetName(_craftItem.Ingredients[lstIngredients.SelectedIndex].Item) + " x" + scrlQuantity.Value;
-            }
-            else
-            {
-                lstIngredients.Items[lstIngredients.SelectedIndex] = "Ingredient: None x" + scrlQuantity.Value;
+                _currentCraft.Ingredients[lstIngredients.SelectedIndex].Quantity = scrlQuantity.Value;
+                lblQuantity.Text = "Quantity x" + scrlQuantity.Value;
+                if (scrlIngredient.Value > -1)
+                {
+                    lstIngredients.Items[lstIngredients.SelectedIndex] = "Ingredient: " +
+                                                                         ItemBase.GetName(
+                                                                             _currentCraft.Ingredients[
+                                                                                 lstIngredients.SelectedIndex].Item) +
+                                                                         " x" + scrlQuantity.Value;
+                }
+                else
+                {
+                    lstIngredients.Items[lstIngredients.SelectedIndex] = "Ingredient: None x" + scrlQuantity.Value;
+                }
             }
         }
 
         private void btnAdd_Click(object sender, EventArgs e)
         {
-            _craftItem.Ingredients.Add(new CraftIngredient(-1, 1));
+            _currentCraft.Ingredients.Add(new CraftIngredient(-1, 1));
             lstIngredients.Items.Add("None");
             lstIngredients.SelectedIndex = lstIngredients.Items.Count - 1;
         }
 
         private void btnRemove_Click(object sender, EventArgs e)
         {
-            if (lstIngredients.Items.Count > 1)
+            if (lstIngredients.Items.Count > 0)
             {
-                _craftItem.Ingredients.RemoveAt(lstIngredients.SelectedIndex);
-                lstIngredients.Items.RemoveAt(lstIngredients.SelectedIndex);
-                
-                lstIngredients.SelectedIndex = 0;
-                scrlIngredient.Value = Database.GameObjectListIndex(GameObject.Item, _craftItem.Ingredients[lstIngredients.SelectedIndex].Item);
-                scrlQuantity.Value = _craftItem.Ingredients[lstIngredients.SelectedIndex].Quantity;
-
-                lblQuantity.Text = "Quantity x" + scrlQuantity.Value;
-
-                if (scrlIngredient.Value > -1)
-                {
-                    lblIngredient.Text = "Item: " + ItemBase.GetName(_craftItem.Ingredients[lstIngredients.SelectedIndex].Item);
-                }
-                else
-                {
-                    lblIngredient.Text = "Item: None";
-                }
+                _currentCraft.Ingredients.RemoveAt(lstIngredients.SelectedIndex);
+                UpdateCraft();
             }
         }
 
@@ -325,7 +325,7 @@ namespace Intersect_Editor.Forms.Editors
 
         private void btnNewComposition_Click(object sender, EventArgs e)
         {
-            _editorItem.Crafts.Add(new Bench());
+            _editorItem.Crafts.Add(new Craft());
             lstCompositions.Items.Add("None");
         }
 
@@ -435,6 +435,65 @@ namespace Intersect_Editor.Forms.Editors
                 {
                     toolStripItemNew_Click(null, null);
                 }
+            }
+        }
+
+        private void lstCompositions_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void lstIngredients_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (lstIngredients.SelectedIndex > -1)
+            {
+                scrlIngredient.Show();
+                scrlQuantity.Show();
+                lblQuantity.Show();
+                lblIngredient.Show();
+                scrlIngredient.Value = Database.GameObjectListIndex(GameObject.Item,
+                    _currentCraft.Ingredients[lstIngredients.SelectedIndex].Item);
+                scrlQuantity.Value = _currentCraft.Ingredients[lstIngredients.SelectedIndex].Quantity;
+                lblQuantity.Text = "Quantity x" + scrlQuantity.Value;
+
+                if (scrlIngredient.Value > -1)
+                {
+                    lblIngredient.Text = "Item: " +
+                                         ItemBase.GetName(_currentCraft.Ingredients[lstIngredients.SelectedIndex].Item);
+                }
+                else
+                {
+                    lblIngredient.Text = "Item: None";
+                }
+            }
+            else
+            {
+                scrlIngredient.Hide();
+                scrlQuantity.Hide();
+                lblQuantity.Hide();
+                lblIngredient.Hide();
+            }
+        }
+
+        private void btnDupIngredient_Click(object sender, EventArgs e)
+        {
+            if (lstIngredients.SelectedIndex > -1)
+            {
+                _currentCraft.Ingredients.Insert(lstIngredients.SelectedIndex,new CraftIngredient(_currentCraft.Ingredients[lstIngredients.SelectedIndex].Item, _currentCraft.Ingredients[lstIngredients.SelectedIndex].Quantity));
+                UpdateCraft();
+            }
+        }
+
+        private void btnDupCraft_Click(object sender, EventArgs e)
+        {
+            if (lstCrafts.SelectedIndex > -1 && _currentCraft != null)
+            {
+                var bf = new ByteBuffer();
+                var craft = new Craft();
+                bf.WriteBytes(_currentCraft.Data());
+                craft.Load(bf);
+                _editorItem.Crafts.Insert(lstCrafts.SelectedIndex,craft);
+                UpdateEditor();
             }
         }
     }

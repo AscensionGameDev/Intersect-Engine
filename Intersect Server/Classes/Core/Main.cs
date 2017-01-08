@@ -33,7 +33,7 @@ using Intersect_Server.Classes.Networking;
 
 namespace Intersect_Server.Classes
 {
-    class MainClass
+    public class MainClass
     {
 
         public static void Main(string[] args)
@@ -520,7 +520,7 @@ namespace Intersect_Server.Classes
         }
 
         //Really basic error handler for debugging purposes
-        private static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
+        public static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
             if (!Directory.Exists("resources")) Directory.CreateDirectory("resources");
             using (StreamWriter writer = new StreamWriter("resources/errors.log", true))
@@ -532,9 +532,17 @@ namespace Intersect_Server.Classes
                                  "-----------------------------------------------------------------------------" +
                                  Environment.NewLine);
             }
-            Console.WriteLine("The Intersect server has encountered an error and must close. Error information can be found in resources/errors.log. Press any key to exit.");
-            Console.ReadKey();
-            Environment.Exit(-1);
+            if (e.IsTerminating)
+            {
+                Console.WriteLine("The Intersect server has encountered an error and must close. Error information can be found in resources/errors.log. Press any key to exit.");
+                Console.ReadKey();
+                Environment.Exit(-1);
+            }
+            else
+            {
+                Console.WriteLine("An error was logged into errors.log");
+            }
+
         }
     }
 }

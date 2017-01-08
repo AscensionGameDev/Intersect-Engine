@@ -36,15 +36,15 @@ namespace Intersect_Editor.Forms
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmLogin));
             this.lblStatus = new System.Windows.Forms.Label();
             this.tmrSocket = new System.Windows.Forms.Timer(this.components);
-            this.txtUsername = new DarkTextBox();
-            this.txtPassword = new DarkTextBox();
-            this.btnLogin = new DarkButton();
+            this.txtUsername = new DarkUI.Controls.DarkTextBox();
+            this.txtPassword = new DarkUI.Controls.DarkTextBox();
+            this.btnLogin = new DarkUI.Controls.DarkButton();
             this.picLogo = new System.Windows.Forms.PictureBox();
             this.lblVersion = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
-            this.chkRemember = new DarkCheckBox();
+            this.chkRemember = new DarkUI.Controls.DarkCheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.picLogo)).BeginInit();
             this.SuspendLayout();
             // 
@@ -65,6 +65,9 @@ namespace Intersect_Editor.Forms
             // 
             // txtUsername
             // 
+            this.txtUsername.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
+            this.txtUsername.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.txtUsername.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
             this.txtUsername.Location = new System.Drawing.Point(482, 231);
             this.txtUsername.Name = "txtUsername";
             this.txtUsername.Size = new System.Drawing.Size(127, 20);
@@ -73,6 +76,9 @@ namespace Intersect_Editor.Forms
             // 
             // txtPassword
             // 
+            this.txtPassword.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
+            this.txtPassword.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.txtPassword.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
             this.txtPassword.Location = new System.Drawing.Point(482, 257);
             this.txtPassword.Name = "txtPassword";
             this.txtPassword.PasswordChar = '*';
@@ -84,6 +90,7 @@ namespace Intersect_Editor.Forms
             // 
             this.btnLogin.Location = new System.Drawing.Point(534, 304);
             this.btnLogin.Name = "btnLogin";
+            this.btnLogin.Padding = new System.Windows.Forms.Padding(5);
             this.btnLogin.Size = new System.Drawing.Size(75, 23);
             this.btnLogin.TabIndex = 4;
             this.btnLogin.Text = "Login";
@@ -176,6 +183,7 @@ namespace Intersect_Editor.Forms
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Intersect Editor Login";
             this.Load += new System.EventHandler(this.frmLogin_Load);
+            this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.FrmLogin_KeyDown);
             ((System.ComponentModel.ISupportInitialize)(this.picLogo)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();

@@ -1242,6 +1242,7 @@
             this.toolStripItemNew.Name = "toolStripItemNew";
             this.toolStripItemNew.Size = new System.Drawing.Size(23, 22);
             this.toolStripItemNew.Text = "New";
+            this.toolStripItemNew.Click += new System.EventHandler(this.toolStripItemNew_Click);
             // 
             // toolStripSeparator1
             // 
@@ -1257,6 +1258,7 @@
             this.toolStripItemDelete.Name = "toolStripItemDelete";
             this.toolStripItemDelete.Size = new System.Drawing.Size(23, 22);
             this.toolStripItemDelete.Text = "Delete";
+            this.toolStripItemDelete.Click += new System.EventHandler(this.toolStripItemDelete_Click);
             // 
             // toolStripSeparator2
             // 
@@ -1272,6 +1274,7 @@
             this.toolStripItemCopy.Name = "toolStripItemCopy";
             this.toolStripItemCopy.Size = new System.Drawing.Size(23, 22);
             this.toolStripItemCopy.Text = "Copy";
+            this.toolStripItemCopy.Click += new System.EventHandler(this.toolStripItemCopy_Click);
             // 
             // toolStripItemPaste
             // 
@@ -1282,6 +1285,7 @@
             this.toolStripItemPaste.Name = "toolStripItemPaste";
             this.toolStripItemPaste.Size = new System.Drawing.Size(23, 22);
             this.toolStripItemPaste.Text = "Paste";
+            this.toolStripItemPaste.Click += new System.EventHandler(this.toolStripItemPaste_Click);
             // 
             // toolStripSeparator3
             // 
@@ -1297,6 +1301,7 @@
             this.toolStripItemUndo.Name = "toolStripItemUndo";
             this.toolStripItemUndo.Size = new System.Drawing.Size(23, 22);
             this.toolStripItemUndo.Text = "Undo";
+            this.toolStripItemUndo.Click += new System.EventHandler(this.toolStripItemUndo_Click);
             // 
             // frmClass
             // 

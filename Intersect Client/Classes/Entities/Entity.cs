@@ -531,6 +531,10 @@ namespace Intersect_Client.Classes.Entities
                 }
 
             }
+        }
+
+        public void DrawChatBubbles()
+        {
             var chatbubbles = _chatBubbles.ToArray();
             var bubbleoffset = 0f;
             for (int i = chatbubbles.Length - 1; i > -1; i--)

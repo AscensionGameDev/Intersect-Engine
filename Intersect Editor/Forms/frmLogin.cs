@@ -170,6 +170,14 @@ namespace Intersect_Editor.Forms
                 chkRemember.Checked = false;
             }
         }
+
+        private void FrmLogin_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.F1)
+            {
+                new frmOptions().ShowDialog();
+            }
+        }
     }
 
 

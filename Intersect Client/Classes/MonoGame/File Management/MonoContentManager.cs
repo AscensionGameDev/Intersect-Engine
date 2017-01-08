@@ -245,7 +245,11 @@ namespace Intersect_Client.Classes.Bridges_and_Interfaces.SFML.File_Management
             for (int i = 0; i < items.Length; i++)
             {
                 string filename = items[i].Replace(dir, "").TrimStart(Path.DirectorySeparatorChar).ToLower();
-                shaderDict.Add(filename.Replace(".xnb",""), GameGraphics.Renderer.LoadShader(Path.Combine(dir,filename)));
+                if (!filename.Contains("_editor"))
+                {
+                    shaderDict.Add(filename.Replace(".xnb", ""),
+                        GameGraphics.Renderer.LoadShader(Path.Combine(dir, filename)));
+                }
             }
         }
 

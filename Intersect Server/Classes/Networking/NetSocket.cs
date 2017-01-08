@@ -84,9 +84,15 @@ namespace Intersect_Server.Classes.Networking
             {
                 //Trying to read from a disconnected socket
             }
-            catch (Exception ex)
+            catch (System.IO.IOException)
             {
                 Globals.GeneralLogs.Add("Socket end read error.");
+                HandleDisconnect();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error handling client packet. Disconnecting client. More info logged to errors.log");
+                MainClass.CurrentDomain_UnhandledException(null, new UnhandledExceptionEventArgs(ex,false));
                 HandleDisconnect();
             }
         }

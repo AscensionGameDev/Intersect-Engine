@@ -164,7 +164,7 @@ namespace Intersect_Client_MonoGame.Classes.SFML.Graphics
                 switch (mode)
                 {
                     case GameBlendModes.None:
-                        blend = BlendState.AlphaBlend;
+                        blend = BlendState.NonPremultiplied;
                         break;
                     case GameBlendModes.Alpha:
                         blend = BlendState.NonPremultiplied;

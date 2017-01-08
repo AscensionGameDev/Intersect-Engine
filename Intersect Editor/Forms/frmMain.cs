@@ -869,7 +869,7 @@ namespace Intersect_Editor.Forms
         //Cross Threading Delegate Methods
         private void TryOpenEditorMethod(GameObject type)
         {
-            if (Globals.CurrentEditor != -2)
+            if (Globals.CurrentEditor == -1)
             {
                 switch (type)
                 {

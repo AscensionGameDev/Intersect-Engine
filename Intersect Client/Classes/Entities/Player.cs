@@ -298,7 +298,7 @@ namespace Intersect_Client.Classes.Entities
             {
                 if (Globals.Trade[0, index].ItemVal > 1)
                 {
-                    InputBox iBox = new InputBox("Revoke Item", "How many " + ItemBase.GetItem(Globals.Bank[index].ItemNum).Name + "(s) would you like to revoke?", true, RevokeItemInputBoxOkay, null, index, true);
+                    InputBox iBox = new InputBox("Revoke Item", "How many " + ItemBase.GetItem(Globals.Trade[0, index].ItemNum).Name + "(s) would you like to revoke?", true, RevokeItemInputBoxOkay, null, index, true);
                 }
                 else
                 {

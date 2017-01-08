@@ -1524,12 +1524,12 @@ namespace Intersect_Server.Classes.Networking
             bf.Dispose();
         }
 
-        public static void SendPlayerDeath(int index)
+        public static void SendPlayerDeath(Player en)
         {
             var bf = new ByteBuffer();
             bf.WriteLong((long)ServerPackets.PlayerDeath);
-            bf.WriteLong(index);
-            SendDataToProximity(Globals.Entities[index].CurrentMap, bf.ToArray());
+            bf.WriteLong(en.MyIndex);
+            SendDataToProximity(en.CurrentMap, bf.ToArray());
             bf.Dispose();
         }
 

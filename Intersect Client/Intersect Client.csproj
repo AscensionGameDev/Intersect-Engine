@@ -141,9 +141,7 @@
     <EmbeddedResource Include="Forms\frmLoadingContent.resx">
       <DependentUpon>frmLoadingContent.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Icon.ico">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </EmbeddedResource>
+    <EmbeddedResource Include="Icon.ico" />
   </ItemGroup>
   <ItemGroup>
     <None Include="$(MonoGameInstallDirectory)\MonoGame\v3.0\Assemblies\DesktopGL\x86\SDL2.dll">
@@ -190,12 +188,12 @@
       <Link>MonoGame.Framework.dll.config</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="App.config" />
     <None Include="app.manifest" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Icon.bmp">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  <LogicalName>Icon.bmp</LogicalName>
+      <LogicalName>Icon.bmp</LogicalName>
     </EmbeddedResource>
     <Content Include="openal32.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -209,6 +207,19 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath)\MonoGame\v3.0\MonoGame.Content.Builder.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>if exist libs rmdir /S /Q libs
+if not exist libs mkdir libs
+if not exist libs\client mkdir libs\client
+move /Y "$(TargetDir)*.dll" "$(TargetDir)\libs\client\"
+move /Y "$(TargetDir)*.xml" "$(TargetDir)\libs\client\"
+move /Y "$(TargetDir)*.dylib" "$(TargetDir)\libs\client\"
+move /Y "$(TargetDir)Intersect Library.pdb" "$(TargetDir)\libs\client\"
+move /Y "$(TargetDir)IntersectClientExtras.pdb" "$(TargetDir)\libs\client\"
+move /Y "$(TargetDir)x64" "$(TargetDir)\libs\client\"
+move /Y "$(TargetDir)x86" "$(TargetDir)\libs\client\"
+move /Y "$(TargetDir)MonoGame.Framework.dll.config" "$(TargetDir)\libs\client\"</PostBuildEvent>
+  </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

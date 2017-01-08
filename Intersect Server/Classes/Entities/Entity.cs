@@ -639,13 +639,17 @@ namespace Intersect_Server.Classes.Entities
                 //If we are attacking with a weapon let's play the attack animation
                 if (this.GetType() == typeof(Player) && isProjectile == null)
                 {
-                    var weapon = ItemBase.GetItem(Inventory[((Player)this).Equipment[Options.WeaponIndex]].ItemNum);
-                    if (weapon != null)
+                    if (((Player) this).Equipment[Options.WeaponIndex] > -1)
                     {
-                        var attackAnim = AnimationBase.GetAnim(weapon.AttackAnimation);
-                        if (attackAnim != null)
+                        var weapon = ItemBase.GetItem(Inventory[((Player) this).Equipment[Options.WeaponIndex]].ItemNum);
+                        if (weapon != null)
                         {
-                            PacketSender.SendAnimationToProximity(attackAnim.GetId(), -1, -1, enemy.CurrentMap, enemy.CurrentX,enemy.CurrentY, Dir);
+                            var attackAnim = AnimationBase.GetAnim(weapon.AttackAnimation);
+                            if (attackAnim != null)
+                            {
+                                PacketSender.SendAnimationToProximity(attackAnim.GetId(), -1, -1, enemy.CurrentMap,
+                                    enemy.CurrentX, enemy.CurrentY, Dir);
+                            }
                         }
                     }
                 }

@@ -34,7 +34,7 @@ namespace Intersect_Library.GameObjects
         protected static Dictionary<int, DatabaseObject> Objects = new Dictionary<int, DatabaseObject>();
 
         public string Name = "New Bench";
-        public List<Bench> Crafts = new List<Bench>();
+        public List<Craft> Crafts = new List<Craft>();
 
         public BenchBase(int id) : base(id)
         {
@@ -53,17 +53,8 @@ namespace Intersect_Library.GameObjects
 
             for (int i = 0; i < count; i++)
             {
-                Crafts.Add(new Bench());
-                Crafts[i].Item = myBuffer.ReadInteger();
-                Crafts[i].Time = myBuffer.ReadInteger();
-
-                // Load Ingredients
-                Crafts[i].Ingredients.Clear();
-                var ingredientCount = myBuffer.ReadInteger();
-                for (var n = 0; n < ingredientCount; n++)
-                {
-                    Crafts[i].Ingredients.Add(new CraftIngredient(myBuffer.ReadInteger(), myBuffer.ReadInteger()));
-                }
+                Crafts.Add(new Craft());
+                Crafts[i].Load(myBuffer);
             }
 
             myBuffer.Dispose();
@@ -77,15 +68,7 @@ namespace Intersect_Library.GameObjects
             myBuffer.WriteInteger(Crafts.Count());
             foreach (var craft in Crafts)
             {
-                myBuffer.WriteInteger(craft.Item);
-                myBuffer.WriteInteger(craft.Time);
-
-                myBuffer.WriteInteger(craft.Ingredients.Count());
-                for (var i = 0; i < craft.Ingredients.Count(); i++)
-                {
-                    myBuffer.WriteInteger(craft.Ingredients[i].Item);
-                    myBuffer.WriteInteger(craft.Ingredients[i].Quantity);
-                }
+                myBuffer.WriteBytes(craft.Data());
             }
 
             return myBuffer.ToArray();
@@ -156,12 +139,39 @@ namespace Intersect_Library.GameObjects
         }
     }
 
-    public class Bench
+    public class Craft
     {
         public int Time = 1;
         public int Item = -1;
 
         public List<CraftIngredient> Ingredients = new List<CraftIngredient>();
+
+        public void Load(ByteBuffer bf)
+        {
+            Item = bf.ReadInteger();
+            Time = bf.ReadInteger();
+            Ingredients.Clear();
+            var count = bf.ReadInteger();
+            for (int i = 0; i < count; i++)
+            {
+                var craftIngredient = new CraftIngredient(bf.ReadInteger(),bf.ReadInteger());
+                Ingredients.Add(craftIngredient);
+            }
+        }
+
+        public byte[] Data()
+        {
+            var bf = new ByteBuffer();
+            bf.WriteInteger(Item);
+            bf.WriteInteger(Time);
+            bf.WriteInteger(Ingredients.Count);
+            for (int i = 0; i < Ingredients.Count; i++)
+            {
+                bf.WriteInteger(Ingredients[i].Item);
+                bf.WriteInteger(Ingredients[i].Quantity);
+            }
+            return bf.ToArray();
+        }
     }
 
     public class CraftIngredient
