@@ -1,4 +1,7 @@
-﻿namespace Intersect_Editor.Forms.Controls
+﻿using System;
+using DarkUI.Controls;
+
+namespace Intersect_Editor.Forms.Controls
 {
     partial class LightEditorCtrl
     {
@@ -29,24 +32,24 @@
         private void InitializeComponent()
         {
             this.pnlLight = new System.Windows.Forms.Panel();
-            this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.scrlLightExpand = new System.Windows.Forms.HScrollBar();
+            this.groupBox1 = new DarkUI.Controls.DarkGroupBox();
+            this.scrlLightExpand = new DarkScrollBar();
             this.label1 = new System.Windows.Forms.Label();
-            this.txtLightExpandAmt = new System.Windows.Forms.TextBox();
-            this.scrlLightSize = new System.Windows.Forms.HScrollBar();
+            this.txtLightExpandAmt = new DarkUI.Controls.DarkTextBox();
+            this.scrlLightSize = new DarkScrollBar();
             this.pnlLightColor = new System.Windows.Forms.Panel();
-            this.btnOkay = new System.Windows.Forms.Button();
+            this.btnOkay = new DarkUI.Controls.DarkButton();
             this.label9 = new System.Windows.Forms.Label();
-            this.btnCancel = new System.Windows.Forms.Button();
-            this.btnSelectLightColor = new System.Windows.Forms.Button();
+            this.btnCancel = new DarkUI.Controls.DarkButton();
+            this.btnSelectLightColor = new DarkUI.Controls.DarkButton();
             this.lblOffsetX = new System.Windows.Forms.Label();
             this.lblOffsetY = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
-            this.txtLightOffsetX = new System.Windows.Forms.TextBox();
-            this.txtLightRange = new System.Windows.Forms.TextBox();
-            this.txtLightOffsetY = new System.Windows.Forms.TextBox();
-            this.scrlLightIntensity = new System.Windows.Forms.HScrollBar();
-            this.txtLightIntensity = new System.Windows.Forms.TextBox();
+            this.txtLightOffsetX = new DarkUI.Controls.DarkTextBox();
+            this.txtLightRange = new DarkUI.Controls.DarkTextBox();
+            this.txtLightOffsetY = new DarkUI.Controls.DarkTextBox();
+            this.scrlLightIntensity = new DarkScrollBar();
+            this.txtLightIntensity = new DarkUI.Controls.DarkTextBox();
             this.label4 = new System.Windows.Forms.Label();
             this.colorDialog = new System.Windows.Forms.ColorDialog();
             this.pnlLight.SuspendLayout();
@@ -55,6 +58,7 @@
             // 
             // pnlLight
             // 
+            this.pnlLight.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
             this.pnlLight.Controls.Add(this.groupBox1);
             this.pnlLight.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pnlLight.Location = new System.Drawing.Point(0, 0);
@@ -64,6 +68,8 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
+            this.groupBox1.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
             this.groupBox1.Controls.Add(this.scrlLightExpand);
             this.groupBox1.Controls.Add(this.label1);
             this.groupBox1.Controls.Add(this.txtLightExpandAmt);
@@ -82,6 +88,7 @@
             this.groupBox1.Controls.Add(this.scrlLightIntensity);
             this.groupBox1.Controls.Add(this.txtLightIntensity);
             this.groupBox1.Controls.Add(this.label4);
+            this.groupBox1.ForeColor = System.Drawing.Color.Gainsboro;
             this.groupBox1.Location = new System.Drawing.Point(4, 4);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(248, 316);
@@ -91,13 +98,13 @@
             // 
             // scrlLightExpand
             // 
-            this.scrlLightExpand.LargeChange = 1;
             this.scrlLightExpand.Location = new System.Drawing.Point(9, 251);
             this.scrlLightExpand.Name = "scrlLightExpand";
             this.scrlLightExpand.Size = new System.Drawing.Size(225, 17);
             this.scrlLightExpand.TabIndex = 41;
             this.scrlLightExpand.Value = 2;
-            this.scrlLightExpand.Scroll += new System.Windows.Forms.ScrollEventHandler(this.scrlLightExpand_Scroll);
+            this.scrlLightExpand.ValueChanged += this.scrlLightExpand_Scroll;
+            this.scrlLightExpand.ScrollOrientation = DarkScrollOrientation.Horizontal;
             // 
             // label1
             // 
@@ -110,6 +117,9 @@
             // 
             // txtLightExpandAmt
             // 
+            this.txtLightExpandAmt.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
+            this.txtLightExpandAmt.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.txtLightExpandAmt.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
             this.txtLightExpandAmt.Location = new System.Drawing.Point(9, 228);
             this.txtLightExpandAmt.Name = "txtLightExpandAmt";
             this.txtLightExpandAmt.Size = new System.Drawing.Size(225, 20);
@@ -118,14 +128,14 @@
             // 
             // scrlLightSize
             // 
-            this.scrlLightSize.LargeChange = 1;
             this.scrlLightSize.Location = new System.Drawing.Point(9, 195);
             this.scrlLightSize.Maximum = 1000;
             this.scrlLightSize.Name = "scrlLightSize";
             this.scrlLightSize.Size = new System.Drawing.Size(225, 17);
             this.scrlLightSize.TabIndex = 35;
             this.scrlLightSize.Value = 2;
-            this.scrlLightSize.Scroll += new System.Windows.Forms.ScrollEventHandler(this.scrlLightSize_Scroll);
+            this.scrlLightSize.ValueChanged += this.scrlLightSize_Scroll;
+            this.scrlLightSize.ScrollOrientation = DarkScrollOrientation.Horizontal;
             // 
             // pnlLightColor
             // 
@@ -140,10 +150,10 @@
             // 
             this.btnOkay.Location = new System.Drawing.Point(9, 286);
             this.btnOkay.Name = "btnOkay";
+            this.btnOkay.Padding = new System.Windows.Forms.Padding(5);
             this.btnOkay.Size = new System.Drawing.Size(75, 23);
             this.btnOkay.TabIndex = 24;
             this.btnOkay.Text = "Save";
-            this.btnOkay.UseVisualStyleBackColor = true;
             this.btnOkay.Click += new System.EventHandler(this.btnLightEditorClose_Click);
             // 
             // label9
@@ -159,20 +169,20 @@
             // 
             this.btnCancel.Location = new System.Drawing.Point(159, 286);
             this.btnCancel.Name = "btnCancel";
+            this.btnCancel.Padding = new System.Windows.Forms.Padding(5);
             this.btnCancel.Size = new System.Drawing.Size(75, 23);
             this.btnCancel.TabIndex = 25;
             this.btnCancel.Text = "Revert";
-            this.btnCancel.UseVisualStyleBackColor = true;
             this.btnCancel.Click += new System.EventHandler(this.btnLightEditorRevert_Click);
             // 
             // btnSelectLightColor
             // 
             this.btnSelectLightColor.Location = new System.Drawing.Point(144, 75);
             this.btnSelectLightColor.Name = "btnSelectLightColor";
+            this.btnSelectLightColor.Padding = new System.Windows.Forms.Padding(5);
             this.btnSelectLightColor.Size = new System.Drawing.Size(90, 23);
             this.btnSelectLightColor.TabIndex = 36;
             this.btnSelectLightColor.Text = "Select Color";
-            this.btnSelectLightColor.UseVisualStyleBackColor = true;
             this.btnSelectLightColor.Click += new System.EventHandler(this.btnSelectLightColor_Click);
             // 
             // lblOffsetX
@@ -204,6 +214,9 @@
             // 
             // txtLightOffsetX
             // 
+            this.txtLightOffsetX.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
+            this.txtLightOffsetX.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.txtLightOffsetX.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
             this.txtLightOffsetX.Location = new System.Drawing.Point(9, 38);
             this.txtLightOffsetX.Name = "txtLightOffsetX";
             this.txtLightOffsetX.Size = new System.Drawing.Size(114, 20);
@@ -212,6 +225,9 @@
             // 
             // txtLightRange
             // 
+            this.txtLightRange.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
+            this.txtLightRange.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.txtLightRange.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
             this.txtLightRange.Location = new System.Drawing.Point(9, 172);
             this.txtLightRange.Name = "txtLightRange";
             this.txtLightRange.Size = new System.Drawing.Size(225, 20);
@@ -220,6 +236,9 @@
             // 
             // txtLightOffsetY
             // 
+            this.txtLightOffsetY.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
+            this.txtLightOffsetY.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.txtLightOffsetY.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
             this.txtLightOffsetY.Location = new System.Drawing.Point(9, 77);
             this.txtLightOffsetY.Name = "txtLightOffsetY";
             this.txtLightOffsetY.Size = new System.Drawing.Size(114, 20);
@@ -228,17 +247,20 @@
             // 
             // scrlLightIntensity
             // 
-            this.scrlLightIntensity.LargeChange = 1;
             this.scrlLightIntensity.Location = new System.Drawing.Point(9, 139);
             this.scrlLightIntensity.Maximum = 255;
             this.scrlLightIntensity.Name = "scrlLightIntensity";
             this.scrlLightIntensity.Size = new System.Drawing.Size(225, 17);
             this.scrlLightIntensity.TabIndex = 32;
             this.scrlLightIntensity.Value = 1;
-            this.scrlLightIntensity.Scroll += new System.Windows.Forms.ScrollEventHandler(this.scrlLightIntensity_Scroll);
+            this.scrlLightIntensity.ValueChanged += this.scrlLightIntensity_Scroll;
+            this.scrlLightIntensity.ScrollOrientation = DarkScrollOrientation.Horizontal;
             // 
             // txtLightIntensity
             // 
+            this.txtLightIntensity.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
+            this.txtLightIntensity.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.txtLightIntensity.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
             this.txtLightIntensity.Location = new System.Drawing.Point(9, 116);
             this.txtLightIntensity.Name = "txtLightIntensity";
             this.txtLightIntensity.Size = new System.Drawing.Size(225, 20);
@@ -273,23 +295,23 @@
         public System.Windows.Forms.Panel pnlLight;
         public System.Windows.Forms.Panel pnlLightColor;
         private System.Windows.Forms.Label label9;
-        private System.Windows.Forms.Button btnSelectLightColor;
-        public System.Windows.Forms.HScrollBar scrlLightSize;
+        private DarkButton btnSelectLightColor;
+        public DarkScrollBar scrlLightSize;
         private System.Windows.Forms.Label label3;
-        public System.Windows.Forms.TextBox txtLightRange;
-        public System.Windows.Forms.HScrollBar scrlLightIntensity;
+        public DarkTextBox txtLightRange;
+        public DarkScrollBar scrlLightIntensity;
         private System.Windows.Forms.Label label4;
-        public System.Windows.Forms.TextBox txtLightIntensity;
-        public System.Windows.Forms.TextBox txtLightOffsetY;
-        public System.Windows.Forms.TextBox txtLightOffsetX;
+        public DarkTextBox txtLightIntensity;
+        public DarkTextBox txtLightOffsetY;
+        public DarkTextBox txtLightOffsetX;
         private System.Windows.Forms.Label lblOffsetY;
         private System.Windows.Forms.Label lblOffsetX;
-        private System.Windows.Forms.Button btnCancel;
-        private System.Windows.Forms.Button btnOkay;
+        private DarkButton btnCancel;
+        private DarkButton btnOkay;
         private System.Windows.Forms.ColorDialog colorDialog;
-        private System.Windows.Forms.GroupBox groupBox1;
-        public System.Windows.Forms.HScrollBar scrlLightExpand;
+        private DarkGroupBox groupBox1;
+        public DarkScrollBar scrlLightExpand;
         private System.Windows.Forms.Label label1;
-        public System.Windows.Forms.TextBox txtLightExpandAmt;
+        public DarkTextBox txtLightExpandAmt;
     }
 }

@@ -21,6 +21,7 @@
 */
 using System;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using Intersect_Editor.Classes.Core;
 using Intersect_Editor.Classes.Maps;
@@ -107,13 +108,13 @@ namespace Intersect_Editor.Classes
                     {
                         progressForm = new frmProgress();
                         progressForm.SetTitle("Saving Map Cache");
-                        myForm.BeginInvoke(new Action(() => progressForm.ShowDialog()));
+                        new Task((() => progressForm.ShowDialog())).Start();
                         while (Globals.MapsToScreenshot.Count > 0)
                         {
                             var maps = MapInstance.GetObjects();
                             foreach (var map in maps)
                             {
-                                if (!myForm.Disposing) myForm.BeginInvoke((Action)(() =>progressForm.SetProgress(Globals.MapsToScreenshot.Count + " maps remaining.", -1,false)));
+                                if (!myForm.Disposing && progressForm.IsHandleCreated) progressForm.BeginInvoke((Action)(() =>progressForm.SetProgress(Globals.MapsToScreenshot.Count + " maps remaining.", -1,false)));
                                 if (map.Value != null)
                                 {
                                     map.Value.Update();
@@ -124,7 +125,7 @@ namespace Intersect_Editor.Classes
                             Thread.Sleep(50);
                         }
                         Globals.MapGrid.ResetForm();
-                        myForm.BeginInvoke(new Action(() => progressForm.Close()));
+                        progressForm.BeginInvoke(new Action(() => progressForm.Close()));
                     }
                 }
                 Thread.Sleep(100);

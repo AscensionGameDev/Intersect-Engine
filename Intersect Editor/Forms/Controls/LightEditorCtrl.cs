@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Windows.Forms;
+using DarkUI.Controls;
 using Intersect_Editor.Classes;
 using Intersect_Library;
 using Intersect_Library.GameObjects;
@@ -77,14 +78,14 @@ namespace Intersect_Editor.Forms.Controls
                 //ignore
             }
         }
-        private void scrlLightSize_Scroll(object sender, ScrollEventArgs e)
+        private void scrlLightSize_Scroll(object sender, ScrollValueEventArgs e)
         {
             if (_editingLight == null) { return; }
             txtLightRange.Text = "" + _editingLight.Size;
             _editingLight.Size = scrlLightSize.Value;
             Classes.EditorGraphics.TilePreviewUpdated = true;
         }
-        private void scrlLightIntensity_Scroll(object sender, ScrollEventArgs e)
+        private void scrlLightIntensity_Scroll(object sender, ScrollValueEventArgs e)
         {
             if (_editingLight == null) { return; }
             _editingLight.Intensity = (byte)scrlLightIntensity.Value;
@@ -165,7 +166,7 @@ namespace Intersect_Editor.Forms.Controls
             btnLightEditorClose_Click(null, null);
         }
 
-        private void scrlLightExpand_Scroll(object sender, ScrollEventArgs e)
+        private void scrlLightExpand_Scroll(object sender, ScrollValueEventArgs e)
         {
             if (_editingLight == null) { return; }
             _editingLight.Expand = scrlLightExpand.Value;

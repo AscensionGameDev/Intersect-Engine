@@ -1,4 +1,7 @@
-﻿namespace Intersect_Editor.Forms
+﻿using DarkUI.Controls;
+using DarkUI.Renderers;
+
+namespace Intersect_Editor.Forms
 {
     partial class frmMapList
     {
@@ -30,15 +33,14 @@
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmMapList));
-            this.toolStrip1 = new System.Windows.Forms.ToolStrip();
+            this.toolStrip1 = new DarkUI.Controls.DarkToolStrip();
             this.btnChronological = new System.Windows.Forms.ToolStripButton();
+            this.toolSelectMap = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.btnNewMap = new System.Windows.Forms.ToolStripButton();
             this.btnNewFolder = new System.Windows.Forms.ToolStripButton();
             this.btnRename = new System.Windows.Forms.ToolStripButton();
             this.btnDelete = new System.Windows.Forms.ToolStripButton();
-            this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
-            this.btnRefreshList = new System.Windows.Forms.ToolStripButton();
             this.newMapToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.mapToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.folderToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -46,13 +48,15 @@
             this.deleteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.mapTreeList = new Intersect_Editor.Forms.Controls.MapTreeList();
-            this.toolSelectMap = new System.Windows.Forms.ToolStripButton();
             this.toolStrip1.SuspendLayout();
             this.contextMenuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // toolStrip1
             // 
+            this.toolStrip1.AutoSize = false;
+            this.toolStrip1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
+            this.toolStrip1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
             this.toolStrip1.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
             this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.btnChronological,
@@ -61,13 +65,10 @@
             this.btnNewMap,
             this.btnNewFolder,
             this.btnRename,
-            this.btnDelete,
-            this.toolStripSeparator2,
-            this.btnRefreshList});
+            this.btnDelete});
             this.toolStrip1.Location = new System.Drawing.Point(0, 0);
             this.toolStrip1.Name = "toolStrip1";
             this.toolStrip1.Padding = new System.Windows.Forms.Padding(0);
-            this.toolStrip1.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
             this.toolStrip1.Size = new System.Drawing.Size(189, 25);
             this.toolStrip1.TabIndex = 4;
             this.toolStrip1.Text = "toolStrip1";
@@ -75,6 +76,7 @@
             // btnChronological
             // 
             this.btnChronological.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.btnChronological.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
             this.btnChronological.Image = ((System.Drawing.Image)(resources.GetObject("btnChronological.Image")));
             this.btnChronological.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.btnChronological.Name = "btnChronological";
@@ -82,14 +84,28 @@
             this.btnChronological.Text = "Order Chronologically";
             this.btnChronological.Click += new System.EventHandler(this.btnChronological_Click);
             // 
+            // toolSelectMap
+            // 
+            this.toolSelectMap.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toolSelectMap.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
+            this.toolSelectMap.Image = ((System.Drawing.Image)(resources.GetObject("toolSelectMap.Image")));
+            this.toolSelectMap.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolSelectMap.Name = "toolSelectMap";
+            this.toolSelectMap.Size = new System.Drawing.Size(23, 22);
+            this.toolSelectMap.Text = "Select Current Map";
+            this.toolSelectMap.Click += new System.EventHandler(this.toolSelectMap_Click);
+            // 
             // toolStripSeparator1
             // 
+            this.toolStripSeparator1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
+            this.toolStripSeparator1.Margin = new System.Windows.Forms.Padding(0, 0, 0, 1);
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(6, 25);
+            this.toolStripSeparator1.Size = new System.Drawing.Size(6, 24);
             // 
             // btnNewMap
             // 
             this.btnNewMap.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.btnNewMap.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
             this.btnNewMap.Image = ((System.Drawing.Image)(resources.GetObject("btnNewMap.Image")));
             this.btnNewMap.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.btnNewMap.Name = "btnNewMap";
@@ -100,6 +116,7 @@
             // btnNewFolder
             // 
             this.btnNewFolder.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.btnNewFolder.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
             this.btnNewFolder.Image = ((System.Drawing.Image)(resources.GetObject("btnNewFolder.Image")));
             this.btnNewFolder.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.btnNewFolder.Name = "btnNewFolder";
@@ -110,6 +127,7 @@
             // btnRename
             // 
             this.btnRename.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.btnRename.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
             this.btnRename.Image = ((System.Drawing.Image)(resources.GetObject("btnRename.Image")));
             this.btnRename.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.btnRename.Name = "btnRename";
@@ -120,27 +138,13 @@
             // btnDelete
             // 
             this.btnDelete.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.btnDelete.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
             this.btnDelete.Image = ((System.Drawing.Image)(resources.GetObject("btnDelete.Image")));
             this.btnDelete.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.btnDelete.Name = "btnDelete";
             this.btnDelete.Size = new System.Drawing.Size(23, 22);
             this.btnDelete.Text = "Delete Map or Folder";
             this.btnDelete.Click += new System.EventHandler(this.btnDelete_Click);
-            // 
-            // toolStripSeparator2
-            // 
-            this.toolStripSeparator2.Name = "toolStripSeparator2";
-            this.toolStripSeparator2.Size = new System.Drawing.Size(6, 25);
-            // 
-            // btnRefreshList
-            // 
-            this.btnRefreshList.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.btnRefreshList.Image = ((System.Drawing.Image)(resources.GetObject("btnRefreshList.Image")));
-            this.btnRefreshList.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.btnRefreshList.Name = "btnRefreshList";
-            this.btnRefreshList.Size = new System.Drawing.Size(23, 20);
-            this.btnRefreshList.Text = "Refresh";
-            this.btnRefreshList.Click += new System.EventHandler(this.btnRefreshList_Click);
             // 
             // newMapToolStripMenuItem
             // 
@@ -193,20 +197,10 @@
             this.mapTreeList.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.mapTreeList.Location = new System.Drawing.Point(0, 26);
+            this.mapTreeList.Location = new System.Drawing.Point(0, 25);
             this.mapTreeList.Name = "mapTreeList";
-            this.mapTreeList.Size = new System.Drawing.Size(189, 181);
+            this.mapTreeList.Size = new System.Drawing.Size(189, 182);
             this.mapTreeList.TabIndex = 5;
-            // 
-            // toolSelectMap
-            // 
-            this.toolSelectMap.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.toolSelectMap.Image = ((System.Drawing.Image)(resources.GetObject("toolSelectMap.Image")));
-            this.toolSelectMap.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolSelectMap.Name = "toolSelectMap";
-            this.toolSelectMap.Size = new System.Drawing.Size(23, 22);
-            this.toolSelectMap.Text = "Select Current Map";
-            this.toolSelectMap.Click += new System.EventHandler(this.toolSelectMap_Click);
             // 
             // frmMapList
             // 
@@ -225,17 +219,14 @@
             this.toolStrip1.PerformLayout();
             this.contextMenuStrip1.ResumeLayout(false);
             this.ResumeLayout(false);
-            this.PerformLayout();
 
         }
 
         #endregion
-        private System.Windows.Forms.ToolStrip toolStrip1;
+        private DarkToolStrip toolStrip1;
         private System.Windows.Forms.ToolStripButton btnNewFolder;
-        private System.Windows.Forms.ToolStripButton btnRefreshList;
         private System.Windows.Forms.ToolStripButton btnRename;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
-        private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
         private System.Windows.Forms.ToolStripButton btnChronological;
         private System.Windows.Forms.ToolStripButton btnDelete;
         private System.Windows.Forms.ToolStripButton btnNewMap;

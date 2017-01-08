@@ -1,4 +1,7 @@
-﻿namespace Intersect_Editor.Forms.DockingElements
+﻿using DarkUI.Controls;
+using DarkUI.Renderers;
+
+namespace Intersect_Editor.Forms.DockingElements
 {
     partial class frmMapGrid
     {
@@ -31,7 +34,7 @@
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmMapGrid));
             this.pnlMapGrid = new System.Windows.Forms.Panel();
-            this.toolStrip1 = new System.Windows.Forms.ToolStrip();
+            this.toolStrip1 = new DarkUI.Controls.DarkToolStrip();
             this.btnFetchPreview = new System.Windows.Forms.ToolStripDropDownButton();
             this.downloadMissingPreviewsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.reDownloadAllPreviewsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -50,9 +53,9 @@
             this.pnlMapGrid.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.pnlMapGrid.Location = new System.Drawing.Point(0, 28);
+            this.pnlMapGrid.Location = new System.Drawing.Point(0, 25);
             this.pnlMapGrid.Name = "pnlMapGrid";
-            this.pnlMapGrid.Size = new System.Drawing.Size(362, 143);
+            this.pnlMapGrid.Size = new System.Drawing.Size(362, 146);
             this.pnlMapGrid.TabIndex = 0;
             this.pnlMapGrid.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.pnlMapGrid_MouseDoubleClick);
             this.pnlMapGrid.MouseDown += new System.Windows.Forms.MouseEventHandler(this.pnlMapGrid_MouseDown);
@@ -64,13 +67,16 @@
             // 
             // toolStrip1
             // 
-            this.toolStrip1.BackColor = System.Drawing.SystemColors.Control;
+            this.toolStrip1.AutoSize = false;
+            this.toolStrip1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
+            this.toolStrip1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
             this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.btnFetchPreview,
             this.btnGridView,
             this.btnScreenshotWorld});
             this.toolStrip1.Location = new System.Drawing.Point(0, 0);
             this.toolStrip1.Name = "toolStrip1";
+            this.toolStrip1.Padding = new System.Windows.Forms.Padding(5, 0, 1, 0);
             this.toolStrip1.Size = new System.Drawing.Size(362, 25);
             this.toolStrip1.TabIndex = 1;
             this.toolStrip1.Text = "toolStrip1";
@@ -82,6 +88,7 @@
             this.btnFetchPreview.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.downloadMissingPreviewsToolStripMenuItem,
             this.reDownloadAllPreviewsToolStripMenuItem});
+            this.btnFetchPreview.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
             this.btnFetchPreview.Image = ((System.Drawing.Image)(resources.GetObject("btnFetchPreview.Image")));
             this.btnFetchPreview.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.btnFetchPreview.Name = "btnFetchPreview";
@@ -106,6 +113,7 @@
             // 
             this.btnGridView.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
             this.btnGridView.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.btnGridView.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
             this.btnGridView.Image = ((System.Drawing.Image)(resources.GetObject("btnGridView.Image")));
             this.btnGridView.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.btnGridView.Name = "btnGridView";
@@ -116,6 +124,7 @@
             // btnScreenshotWorld
             // 
             this.btnScreenshotWorld.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.btnScreenshotWorld.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
             this.btnScreenshotWorld.Image = ((System.Drawing.Image)(resources.GetObject("btnScreenshotWorld.Image")));
             this.btnScreenshotWorld.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.btnScreenshotWorld.Name = "btnScreenshotWorld";
@@ -171,14 +180,13 @@
             this.toolStrip1.PerformLayout();
             this.contextMenuStrip.ResumeLayout(false);
             this.ResumeLayout(false);
-            this.PerformLayout();
 
         }
 
         #endregion
 
         private System.Windows.Forms.Panel pnlMapGrid;
-        private System.Windows.Forms.ToolStrip toolStrip1;
+        private DarkToolStrip toolStrip1;
         private System.Windows.Forms.ToolStripDropDownButton btnFetchPreview;
         private System.Windows.Forms.ToolStripMenuItem downloadMissingPreviewsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem reDownloadAllPreviewsToolStripMenuItem;
