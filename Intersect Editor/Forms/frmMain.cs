@@ -224,6 +224,7 @@ namespace Intersect_Editor.Forms
             }
             Globals.MapEditorWindow.picMap.Visible = false;
             Globals.MapEditorWindow.ResetUndoRedoStates();
+            PacketSender.SendEnterMap(mapNum);
             PacketSender.SendNeedMap(mapNum);
             PacketSender.SendNeedGrid(mapNum);
             EditorGraphics.TilePreviewUpdated = true;

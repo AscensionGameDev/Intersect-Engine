@@ -208,7 +208,7 @@ namespace Intersect_Server.Classes.Networking
                     HandlePartyKick(client, packet);
                     break;
                 case ClientPackets.PartyLeave:
-                    HandlePartyLeave(client,packet);
+                    HandlePartyLeave(client, packet);
                     break;
                 case ClientPackets.AcceptQuest:
                     HandleAcceptQuest(client, packet);
@@ -218,7 +218,7 @@ namespace Intersect_Server.Classes.Networking
                     break;
                 case ClientPackets.CancelQuest:
                     HandleCancelQuest(client, packet);
-					break;
+                    break;
                 case ClientPackets.TradeRequest:
                     HandleTradeRequest(client, packet);
                     break;
@@ -241,7 +241,10 @@ namespace Intersect_Server.Classes.Networking
                     HandleRequestDecline(client, packet);
                     break;
                 case ClientPackets.AddTilesets:
-                    HandleAddTilesets(client,packet);
+                    HandleAddTilesets(client, packet);
+                    break;
+                case ClientPackets.EnterMap:
+                    HandleEnterMap(client, packet);
                     break;
                 default:
                     Globals.GeneralLogs.Add(@"Non implemented packet received: " + packetHeader);
@@ -504,7 +507,7 @@ namespace Intersect_Server.Classes.Networking
                 foreach (var player in players)
                 {
                     player.Warp(player.CurrentMap, player.CurrentX, player.CurrentY);
-                    PacketSender.SendMap(player.MyClient,(int)mapNum);
+                    PacketSender.SendMap(player.MyClient, (int)mapNum);
                 }
                 PacketSender.SendMap(client, (int)mapNum, true); //Sends map to everyone/everything in proximity
                 bf.Dispose();
@@ -527,7 +530,7 @@ namespace Intersect_Server.Classes.Networking
                 Database.GenerateMapGrids();
                 tmpMap.UpdateSurroundingTiles();
                 PacketSender.SendMap(client, newMap, true);
-                PacketSender.SendMapGrid(client, tmpMap.MapGrid);
+                PacketSender.SendMapGridToAll(tmpMap.MapGrid);
                 //FolderDirectory parent = null;
                 destType = -1;
                 if (destType == -1)
@@ -672,7 +675,7 @@ namespace Intersect_Server.Classes.Networking
                     Database.GenerateMapGrids();
                     MapInstance.GetMap(newMap).UpdateSurroundingTiles();
                     PacketSender.SendMap(client, newMap, true);
-                    PacketSender.SendMapGrid(client, MapInstance.GetMap(newMap).MapGrid);
+                    PacketSender.SendMapGridToAll(MapInstance.GetMap(newMap).MapGrid);
                     PacketSender.SendEnterMap(client, newMap);
                     var folderDir = MapList.GetList().FindMapParent(relativeMap, null);
                     if (folderDir != null)
@@ -1483,7 +1486,7 @@ namespace Intersect_Server.Classes.Networking
                             MapInstance.GetMap(curMap).UpdateSurroundingTiles();
                         }
                     }
-                    PacketSender.SendMapGrid(client, mapGrid);
+                    PacketSender.SendMapGridToAll(mapGrid);
                 }
             }
         }
@@ -1606,7 +1609,7 @@ namespace Intersect_Server.Classes.Networking
                         Database.SaveGameObject(MapInstance.GetMap(linkMap));
                         Database.GenerateMapGrids();
                         MapInstance.GetMap(linkMap).UpdateSurroundingTiles();
-                        PacketSender.SendMapGrid(client, MapInstance.GetMap(adjacentMap).MapGrid);
+                        PacketSender.SendMapGridToAll(MapInstance.GetMap(adjacentMap).MapGrid);
                     }
                 }
             }
@@ -1969,7 +1972,7 @@ namespace Intersect_Server.Classes.Networking
             client.Entity.CancelQuest(questId);
             bf.Dispose();
         }
-		
+
         private static void HandleTradeRequest(Client client, byte[] packet)
         {
             var bf = new ByteBuffer();
@@ -2078,10 +2081,24 @@ namespace Intersect_Server.Classes.Networking
                         ((TilesetBase)obj).SetValue(value);
                         Database.SaveGameObject(obj);
                     }
-                    PacketSender.SendGameObjectToAll(obj,false, i!=count-1);
+                    PacketSender.SendGameObjectToAll(obj, false, i != count - 1);
                 }
                 bf.Dispose();
             }
+        }
+
+        private static void HandleEnterMap(Client client, byte[] packet)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteBytes(packet);
+            if (client.IsEditor)
+            {
+                var mapNum = bf.ReadInteger();
+                client.EditorMap = mapNum;
+            }
+
+
+            bf.Dispose();
         }
     }
 }

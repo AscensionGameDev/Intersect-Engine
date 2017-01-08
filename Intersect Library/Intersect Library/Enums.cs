@@ -106,6 +106,7 @@ namespace Intersect_Library
         TradeRequestAccept,
         RequestDecline,
         AddTilesets,
+        EnterMap,
     }
 
     public enum ServerPackets

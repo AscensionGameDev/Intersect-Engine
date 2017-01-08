@@ -275,5 +275,14 @@ namespace Intersect_Editor.Classes
             Network.SendPacket(bf.ToArray());
             bf.Dispose();
         }
+
+        public static void SendEnterMap(int mapNum)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteLong((int)ClientPackets.EnterMap);
+            bf.WriteInteger(mapNum);
+            Network.SendPacket(bf.ToArray());
+            bf.Dispose();
+        }
     }
 }

@@ -43,6 +43,7 @@ namespace Intersect_Server.Classes.Networking
         public long MyId = -1;
         public int EntityIndex;
         public Player Entity;
+        public int EditorMap = -1;
 
         //Client Properties
         public bool IsEditor;

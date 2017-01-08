@@ -918,6 +918,33 @@ namespace Intersect_Server.Classes.Networking
             bf.Dispose();
         }
 
+        public static void SendMapGridToAll(int gridIndex)
+        {
+            for (int i = 0; i < Globals.Clients.Count; i++)
+            {
+                if (Globals.Clients[i] != null)
+                {
+                    if (Globals.Clients[i].IsEditor)
+                    {
+                        if (Database.MapGrids[gridIndex].HasMap(Globals.Clients[i].EditorMap))
+                        {
+                            PacketSender.SendMapGrid(Globals.Clients[i], gridIndex);
+                        }
+                    }
+                    else
+                    {
+                        if (Globals.Clients[i].Entity != null)
+                        {
+                            if (Database.MapGrids[gridIndex].HasMap(Globals.Clients[i].Entity.CurrentMap))
+                            {
+                                PacketSender.SendMapGrid(Globals.Clients[i],gridIndex);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
         public static void SendMapGrid(Client client, int gridIndex)
         {
             ByteBuffer bf = new ByteBuffer();
