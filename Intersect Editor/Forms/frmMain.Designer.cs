@@ -2,6 +2,7 @@
 using System.Windows.Forms;
 using DarkUI.Controls;
 using DarkUI.Renderers;
+using WeifenLuo.WinFormsUI.Docking;
 
 namespace Intersect_Editor.Forms
 {
@@ -199,7 +200,7 @@ namespace Intersect_Editor.Forms
             this.dockLeft.Size = new System.Drawing.Size(1186, 596);
             this.dockLeft.SupportDeeplyNestedContent = true;
             this.dockLeft.TabIndex = 7;
-            this.dockLeft.Theme = this.vS2012LightTheme1;
+            this.dockLeft.Theme = new VS2015DarkTheme();
             // 
             // toolStripBtnNewMap
             // 

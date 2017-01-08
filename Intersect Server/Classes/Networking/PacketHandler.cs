@@ -506,7 +506,7 @@ namespace Intersect_Server.Classes.Networking
                     player.Warp(player.CurrentMap, player.CurrentX, player.CurrentY);
                     PacketSender.SendMap(player.MyClient,(int)mapNum);
                 }
-                PacketSender.SendMap(client, (int)mapNum); //Sends map to everyone/everything in proximity
+                PacketSender.SendMap(client, (int)mapNum, true); //Sends map to everyone/everything in proximity
                 bf.Dispose();
             }
         }
@@ -526,7 +526,7 @@ namespace Intersect_Server.Classes.Networking
                 Database.SaveGameObject(tmpMap);
                 Database.GenerateMapGrids();
                 tmpMap.UpdateSurroundingTiles();
-                PacketSender.SendMap(client, newMap);
+                PacketSender.SendMap(client, newMap, true);
                 PacketSender.SendMapGrid(client, tmpMap.MapGrid);
                 //FolderDirectory parent = null;
                 destType = -1;
@@ -671,7 +671,7 @@ namespace Intersect_Server.Classes.Networking
                     Database.SaveGameObject(tmpMap);
                     Database.GenerateMapGrids();
                     MapInstance.GetMap(newMap).UpdateSurroundingTiles();
-                    PacketSender.SendMap(client, newMap);
+                    PacketSender.SendMap(client, newMap, true);
                     PacketSender.SendMapGrid(client, MapInstance.GetMap(newMap).MapGrid);
                     PacketSender.SendEnterMap(client, newMap);
                     var folderDir = MapList.GetList().FindMapParent(relativeMap, null);

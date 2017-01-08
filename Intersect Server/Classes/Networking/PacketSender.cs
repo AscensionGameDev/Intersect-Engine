@@ -98,7 +98,7 @@ namespace Intersect_Server.Classes.Networking
             bf.Dispose();
         }
 
-        public static void SendMap(Client client, int mapNum)
+        public static void SendMap(Client client, int mapNum, bool allEditors = false)
         {
             var bf = new ByteBuffer();
             bf.WriteLong((int)ServerPackets.MapData);
@@ -186,7 +186,7 @@ namespace Intersect_Server.Classes.Networking
                 client.SendPacket(bf.ToArray());
                 if (isEditor)
                 {
-                    SendDataToEditors(bf.ToArray());
+                    if (allEditors) SendDataToEditors(bf.ToArray());
                 }
                 else
                 {
