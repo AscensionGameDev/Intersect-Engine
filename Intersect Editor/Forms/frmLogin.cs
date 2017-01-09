@@ -27,6 +27,7 @@ using System.Text;
 using System.Security.Cryptography;
 using Intersect_Editor.Classes.Core;
 using Intersect_Library;
+using Intersect_Library.Localization;
 using Microsoft.Win32;
 
 namespace Intersect_Editor.Forms
@@ -48,6 +49,7 @@ namespace Intersect_Editor.Forms
             GameContentManager.CheckForResources();
             if (Database.LoadOptions())
             {
+                Strings.Init(Strings.IntersectComponent.Editor,Options.Language);
                 lblVersion.Text = "Editor v." + Application.ProductVersion;
                 EditorLoopDelegate = new BeginEditorLoop(EditorLoop.StartLoop);
                 if (Preferences.LoadPreference("username").Trim().Length > 0)

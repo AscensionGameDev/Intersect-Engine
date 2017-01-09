@@ -29,6 +29,7 @@ namespace Intersect_Server.Classes.General
                 writer.WriteStartDocument();
                 writer.WriteComment("Config.xml generated automatically by Intersect Server.");
                 writer.WriteStartElement("Config");
+                writer.WriteElementString("Language", "English");
                 writer.WriteElementString("GameName", "Intersect");
                 writer.WriteElementString("MOTD", "Welcome to Intersect!");
                 writer.WriteElementString("ServerPort", "4500");
@@ -114,6 +115,7 @@ namespace Intersect_Server.Classes.General
                     options.LoadXml(ConfigXml);
 
                     //General Options
+                    Options.Language = GetXmlStr(options, "//Config/Language", true);
                     Options.GameName = GetXmlStr(options, "//Config/GameName",false);
                     Options.MOTD = GetXmlStr(options, "//Config/MOTD", false);
                     Options.ServerPort = GetXmlInt(options, "//Config/ServerPort");

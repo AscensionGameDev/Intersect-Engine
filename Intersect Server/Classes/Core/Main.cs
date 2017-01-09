@@ -26,6 +26,7 @@ using System.Linq;
 using System.Reflection;
 using System.Threading;
 using Intersect_Library;
+using Intersect_Library.Localization;
 using Intersect_Server.Classes.Core;
 using Intersect_Server.Classes.General;
 using Intersect_Server.Classes.Maps;
@@ -40,6 +41,13 @@ namespace Intersect_Server.Classes
         {
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
             Thread logicThread;
+            if (!ServerOptions.LoadOptions())
+            {
+                Console.WriteLine("Failed to load server options! Press any key to shut down.");
+                Console.ReadKey();
+                return;
+            }
+            Strings.Init(Strings.IntersectComponent.Server, Options.Language);
             Console.WriteLine(@"  _____       _                          _   ");
             Console.WriteLine(@" |_   _|     | |                        | |  ");
             Console.WriteLine(@"   | |  _ __ | |_ ___ _ __ ___  ___  ___| |_ ");
@@ -52,12 +60,7 @@ namespace Intersect_Server.Classes
             Console.WriteLine("For help, support, and updates visit: http://ascensiongamedev.com");
             Console.WriteLine("Loading, please wait.");
             Database.CheckDirectories();
-            if (!ServerOptions.LoadOptions())
-            {
-                Console.WriteLine("Failed to load server options! Press any key to shut down.");
-                Console.ReadKey();
-                return;
-            }
+
             if (!Database.InitDatabase())
             {
                 Console.ReadKey();

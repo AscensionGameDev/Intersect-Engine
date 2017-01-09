@@ -5,6 +5,8 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Xml;
+using Intersect_Library.Localization;
 using Intersect_Migration_Tool.UpgradeInstructions.Upgrade_1;
 using Intersect_Migration_Tool.UpgradeInstructions.Upgrade_2;
 using Intersect_Migration_Tool.UpgradeInstructions.Upgrade_3;
@@ -24,6 +26,39 @@ namespace Intersect_Migration_Tool
         //Database Variables
         private const string INFO_TABLE = "info";
         private const string DB_VERSION = "dbversion";
+
+        //Config Info
+        public static string GetLanguageFromConfig()
+        {
+            if (File.Exists("resources/config.xml"))
+            {
+                var options = new XmlDocument();
+                var ConfigXml = File.ReadAllText("resources/config.xml");
+                try
+                {
+                    options.LoadXml(ConfigXml);
+                    return GetXmlStr(options, "//Config/Language");
+                }
+                catch (Exception)
+                {
+                    
+                }
+            }
+            return "English";
+        }
+        private static string GetXmlStr(XmlDocument xmlDoc, string xmlPath)
+        {
+            var selectSingleNode = xmlDoc.SelectSingleNode(xmlPath);
+            string returnVal = "";
+            if (selectSingleNode == null)
+            {
+            }
+            else
+            {
+                returnVal = selectSingleNode.InnerText;
+            }
+            return returnVal;
+        }
 
         //Database setup, version checking
         public static bool InitDatabase()
@@ -104,14 +139,14 @@ namespace Intersect_Migration_Tool
                         IncrementDatabaseVersion();
                         break;
                     default:
-                        throw new Exception("Upgrade instructions could not be found!");
+                        throw new Exception(Strings.Get("upgrade", "noinstructions"));
                 }
                 currentVersion = GetDatabaseVersion();
             }
             _dbConnection.Close();
             _dbConnection = null;
-            Console.WriteLine("Database successfully updated to version " + currentVersion);
-            Console.WriteLine("Version " + startingVersion + " backup is located at resources/intersect_v" + startingVersion + "_" + DateTime.Now.ToString("yyyy-MM-dd hh-mm-ss") + ".db in case of problems.");
+            Console.WriteLine(Strings.Get("upgrade","updated",currentVersion));
+            Console.WriteLine(Strings.Get("upgrade","backupinfo", startingVersion, startingVersion, DateTime.Now.ToString("yyyy-MM-dd hh-mm-ss")));
         }
     }
 }

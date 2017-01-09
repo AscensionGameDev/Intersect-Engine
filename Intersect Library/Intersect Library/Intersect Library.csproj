@@ -81,9 +81,34 @@
     <Compile Include="Color.cs" />
     <Compile Include="GameObjects\TilesetBase.cs" />
     <Compile Include="GameObjects\TimeBase.cs" />
+    <Compile Include="Localization\Language.cs" />
+    <Compile Include="Localization\Strings.cs" />
     <Compile Include="Options.cs" />
     <Compile Include="Point.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Client.English.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Migrator.English.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Editor.English.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Server.English.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

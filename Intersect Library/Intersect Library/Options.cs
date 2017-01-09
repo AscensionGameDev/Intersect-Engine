@@ -5,6 +5,7 @@ namespace Intersect_Library
     public static class Options
     {
         //Game Settings
+        public static string Language = "English";
         public static string GameName = "Intersect";
         public static string MOTD = "Welcome to Intersect!";
         public static int ServerPort = 4500;

@@ -5,6 +5,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using Intersect_Library.Localization;
 
 namespace Intersect_Migration_Tool
 {
@@ -13,21 +14,22 @@ namespace Intersect_Migration_Tool
         static void Main(string[] args)
         {
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
+            Strings.Init(Strings.IntersectComponent.Migrator, Database.GetLanguageFromConfig());
             Console.WriteLine(@"  _____       _                          _   ");
             Console.WriteLine(@" |_   _|     | |                        | |  ");
             Console.WriteLine(@"   | |  _ __ | |_ ___ _ __ ___  ___  ___| |_ ");
             Console.WriteLine(@"   | | | '_ \| __/ _ \ '__/ __|/ _ \/ __| __|");
             Console.WriteLine(@"  _| |_| | | | ||  __/ |  \__ \  __/ (__| |_ ");
             Console.WriteLine(@" |_____|_| |_|\__\___|_|  |___/\___|\___|\__|");
-            Console.WriteLine(@"                          free 2d orpg engine");
-            Console.WriteLine("Copyright (C) 2015  JC Snider, Joe Bridges");
-            Console.WriteLine("Version " + Assembly.GetExecutingAssembly().GetName().Version);
-            Console.WriteLine("For help, support, and updates visit: http://ascensiongamedev.com");
+            Console.WriteLine(Strings.Get("main","tagline"));
+            Console.WriteLine("Copyright (C) 2017  JC Snider, Joe Bridges");
+            Console.WriteLine(Strings.Get("main", "version", Assembly.GetExecutingAssembly().GetName().Version));
+            Console.WriteLine(Strings.Get("intro","support"));
 
             Console.WriteLine("");
-            Console.WriteLine("Intersect Migration Tool");
+            Console.WriteLine(Strings.Get("main","title"));
             Console.WriteLine("-----------------------------------------------------");
-            Console.WriteLine("Use this to update your database when deploying the versions of Intersect.");
+            Console.WriteLine(Strings.Get("intro","purpose"));
 
             if (Directory.Exists("resources") && File.Exists("resources/intersect.db"))
             {
@@ -35,43 +37,43 @@ namespace Intersect_Migration_Tool
                 if (Database.GetDatabaseVersion() < Database.DbVersion && Database.GetDatabaseVersion() >=1)
                 {
                     Console.WriteLine("");
-                    Console.WriteLine("Out-of-date database found. Version: " + Database.GetDatabaseVersion() + " Latest Version: " + Database.DbVersion);
-                    Console.WriteLine("Do you want to upgrade? (y/n)");
+                    Console.WriteLine(Strings.Get("intro","outofdate",Database.GetDatabaseVersion(),Database.DbVersion));
+                    Console.WriteLine(Strings.Get("intro","confirmupgrade",Strings.Get("characters","yes"),Strings.Get("characters","no")));
                     var key = Console.ReadKey(true);
-                    while (key.Key != ConsoleKey.Y && key.Key != ConsoleKey.N)
+                    while (key.KeyChar != Strings.Get("characters", "yes")[0] && key.KeyChar != Strings.Get("characters", "no")[0])
                     {
                         key = Console.ReadKey(true);
                     }
-                    if (key.Key == ConsoleKey.Y)
+                    if (key.KeyChar == Strings.Get("characters", "yes")[0])
                     {
-                        Console.WriteLine("Starting Upgrade Process");
+                        Console.WriteLine(Strings.Get("intro", "starting"));
                         Database.Upgrade();
                         Console.WriteLine("");
-                        Console.WriteLine("Press any key to exit.");
+                        Console.WriteLine(Strings.Get("main", "exit"));
                     }
                     else
                     {
-                        Console.WriteLine("Canceling Upgrade");
+                        Console.WriteLine(Strings.Get("intro", "cancelling"));
                         Console.WriteLine("");
-                        Console.WriteLine("Press any key to exit.");
+                        Console.WriteLine(Strings.Get("main", "exit"));
                     }
                 }
                 else
                 {
                     Console.WriteLine("");
-                    Console.WriteLine("Database does not appear to be out of date. Version: " + Database.GetDatabaseVersion() + " Latest Version: " + Database.DbVersion);
-                    Console.WriteLine("Is this migration tool up to date?");
+                    Console.WriteLine(Strings.Get("intro", "uptodate", Database.GetDatabaseVersion(), Database.DbVersion));
+                    Console.WriteLine(Strings.Get("intro","tooloutofdate"));
                     Console.WriteLine("");
-                    Console.WriteLine("Press any key to exit.");
+                    Console.WriteLine(Strings.Get("main", "exit"));
                 }
             }
             else
             {
                 Console.WriteLine("");
-                Console.WriteLine("Failed to find an Intersect database to upgrade.");
-                Console.WriteLine("Make sure you are launching this tool from the server directory.");
+                Console.WriteLine(Strings.Get("intro", "nodatabase"));
+                Console.WriteLine(Strings.Get("intro", "confirmdirectory"));
                 Console.WriteLine("");
-                Console.WriteLine("Press any key to exit.");
+                Console.WriteLine(Strings.Get("main", "exit"));
             }
             Console.ReadKey();
         }
@@ -91,7 +93,7 @@ namespace Intersect_Migration_Tool
                                  "-----------------------------------------------------------------------------" +
                                  Environment.NewLine);
             }
-            Console.WriteLine("The Intersect Migration tool has encountered an error and must close. Error information can be found in resources/migration_errors.log. Press any key to exit.");
+            Console.WriteLine(Strings.Get("exceptions","errorcaught"));
             Console.ReadKey();
             Environment.Exit(-1);
         }

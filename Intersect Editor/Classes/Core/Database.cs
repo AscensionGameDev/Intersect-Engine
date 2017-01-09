@@ -72,6 +72,7 @@ namespace Intersect_Editor.Classes
                     writer.WriteStartDocument();
                     writer.WriteComment("Config.xml generated automatically by Intersect Game Engine.");
                     writer.WriteStartElement("Config");
+                    writer.WriteElementString("Language", "English");
                     writer.WriteElementString("Host", "localhost");
                     writer.WriteElementString("Port", "4500");
                     writer.WriteElementString("RenderCache", "true"); //Not used by the editor, but created here just in case we ever want to share a resource folder with a client.
@@ -91,6 +92,7 @@ namespace Intersect_Editor.Classes
                 try
                 {
                     xmlDoc.LoadXml(File.ReadAllText("resources/config.xml"));
+                    Options.Language = xmlDoc.SelectSingleNode("//Config/Language").InnerText;
                     Globals.ServerHost = xmlDoc.SelectSingleNode("//Config/Host").InnerText;
                     Globals.ServerPort = int.Parse(xmlDoc.SelectSingleNode("//Config/Port").InnerText);
                 }
