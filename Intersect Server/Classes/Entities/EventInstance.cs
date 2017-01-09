@@ -26,6 +26,7 @@ using System.Text;
 using Intersect_Library;
 using Intersect_Library.GameObjects;
 using Intersect_Library.GameObjects.Events;
+using Intersect_Library.Localization;
 using Intersect_Server.Classes.Core;
 using Intersect_Server.Classes.General;
 using Intersect_Server.Classes.Items;
@@ -454,18 +455,18 @@ namespace Intersect_Server.Classes.Entities
         {
             if (MyClient != null && MyClient.Entity != null)
             {
-                input = input.Replace("\\pn", MyClient.Entity.MyName);
-                input = input.Replace("\\en", PageInstance.MyName);
-                if (input.Contains("\\onlinecount") || input.Contains("\\onlinelist"))
+                input = input.Replace(Strings.Get("events","playernamecommand"), MyClient.Entity.MyName);
+                input = input.Replace(Strings.Get("events", "eventnamecommand"), PageInstance.MyName);
+                if (input.Contains(Strings.Get("events", "onlinelistcommand")) || input.Contains(Strings.Get("events", "onlinecountcommand")))
                 {
                     var onlineList = Globals.GetOnlineList();
-                    input = input.Replace("\\onlinecount", onlineList.Count.ToString());
+                    input = input.Replace(Strings.Get("events", "onlinecountcommand"), onlineList.Count.ToString());
                     var sb = new StringBuilder();
                     for (int i = 0; i < onlineList.Count; i++)
                     {
                         sb.Append(onlineList[i].MyName + (i != onlineList.Count - 1 ? ", " : ""));
                     }
-                    input = input.Replace("\\onlinelist", sb.ToString());
+                    input = input.Replace(Strings.Get("events", "onlinelistcommand"), sb.ToString());
                 }
             }
             return input;
@@ -775,7 +776,7 @@ namespace Intersect_Server.Classes.Entities
                 case EventCommandType.SetAccess:
                     MyPlayer.MyClient.Power = command.Ints[0];
                     PacketSender.SendEntityDataToProximity(MyPlayer);
-                    PacketSender.SendPlayerMsg(MyPlayer.MyClient, "Your access has been updated!", Color.Red);
+                    PacketSender.SendPlayerMsg(MyPlayer.MyClient, Strings.Get("player","powerchanged"), Color.Red);
                     CallStack.Peek().CommandIndex++;
                     break;
                 case EventCommandType.WarpPlayer:

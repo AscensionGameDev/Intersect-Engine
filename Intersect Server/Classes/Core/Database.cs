@@ -30,6 +30,7 @@ using Intersect_Library.GameObjects;
 using Intersect_Library.GameObjects.Events;
 using Intersect_Library.GameObjects.Maps;
 using Intersect_Library.GameObjects.Maps.MapList;
+using Intersect_Library.Localization;
 using Intersect_Server.Classes.Entities;
 using Intersect_Server.Classes.General;
 using Intersect_Server.Classes.Items;
@@ -192,8 +193,7 @@ namespace Intersect_Server.Classes.Core
             }
             if (GetDatabaseVersion() != DbVersion)
             {
-                Console.WriteLine("Database is out of date! Version: " + GetDatabaseVersion() +
-                                  " Expected Version: " + DbVersion + ". Please run the included migration tool!");
+                Console.WriteLine(Strings.Get("database", "outofdate", GetDatabaseVersion(), DbVersion));
                 return false;
             }
             LoadAllGameObjects();
@@ -520,7 +520,7 @@ namespace Intersect_Server.Classes.Core
         //Players General
         public static void LoadPlayerDatabase()
         {
-            Console.WriteLine("Using SQLite database for account and data storage.");
+            Console.WriteLine(Strings.Get("database","usingsqlite"));
         }
         public static Client GetPlayerClient(string username)
         {
@@ -553,12 +553,12 @@ namespace Intersect_Server.Classes.Core
                 Client client = GetPlayerClient(username);
                 client.Power = power;
                 SaveUser(client);
-                PacketSender.SendPlayerMsg(client, "Your power has been modified!", client.Entity.MyName);
-                Console.WriteLine(username + "'s power has been set to " + power + "!");
+                PacketSender.SendPlayerMsg(client, Strings.Get("player","powermodified"), client.Entity.MyName);
+                Console.WriteLine(Strings.Get("commandoutput","powerlevel",username,power));
             }
             else
             {
-                Console.WriteLine("Account does not exist!");
+                Console.WriteLine(Strings.Get("account","doesnotexist"));
             }
         }
 
@@ -816,7 +816,7 @@ namespace Intersect_Server.Classes.Core
                 transaction.Commit();
             }
             if (!newCharacter)
-                PacketSender.SendPlayerMsg(player.MyClient, "Your progress has been automatically saved.");
+                PacketSender.SendPlayerMsg(player.MyClient, Strings.Get("player","saved"));
             return (rowId);
         }
 
@@ -879,8 +879,7 @@ namespace Intersect_Server.Classes.Core
                     }
                     else
                     {
-                        
-                        return "Your account has been muted since: " + banStart.ToString() + " by " + banner + ". Mute expires: " + duration.ToString() + ". Reason for mute: " + reason;
+                        return Strings.Get("account", "mutestatus", banStart, banner, duration, reason);
                     }
                 }
                 
@@ -947,8 +946,7 @@ namespace Intersect_Server.Classes.Core
                     }
                     else
                     {
-                        
-                        return "Your account has been banned since: " + banStart.ToString() + " by " + banner + ". Ban expires: " + duration.ToString() + ". Reason for ban: " + reason;
+                        return Strings.Get("account", "banstatus", banStart, banner, duration, reason);
                     }
                 }
                 
@@ -1696,13 +1694,13 @@ namespace Intersect_Server.Classes.Core
                     }
                     else
                     {
-                        nullIssues += "Tried to load null value for index " + index + " of " + tableName + Environment.NewLine;
+                        nullIssues += Strings.Get("database","nullfound",index,tableName) + Environment.NewLine;
                     }
                 }
             }
             if (nullIssues != "")
             {
-                throw (new Exception("Tried to load one or more null game objects!" + Environment.NewLine + nullIssues));
+                throw (new Exception(Strings.Get("database","nullerror") + Environment.NewLine + nullIssues));
             }
         }
         public static void SaveGameObject(DatabaseObject gameObject)
@@ -1718,13 +1716,8 @@ namespace Intersect_Server.Classes.Core
                 if (gameObject != null && gameObject.GetData() != null)
                 {
                     cmd.Parameters.Add(new SqliteParameter("@" + GAME_OBJECT_DATA, gameObject.GetData()));
+                    cmd.ExecuteNonQuery();
                 }
-                else
-                {
-                    throw (new Exception("Tried to save a null game object (should be deleted instead?) Table: " +
-                                         gameObject.GetTable() + " Id: " + gameObject.GetId()));
-                }
-                cmd.ExecuteNonQuery();
             }
             
         }
@@ -1845,7 +1838,7 @@ namespace Intersect_Server.Classes.Core
         {
             if (MapBase.ObjectCount() == 0)
             {
-                Console.WriteLine("No maps found! - Creating an empty map!");
+                Console.WriteLine(Strings.Get("database","nomaps"));
                 AddGameObject(GameObject.Map);
             }
 
@@ -1863,9 +1856,9 @@ namespace Intersect_Server.Classes.Core
         {
             if (ClassBase.ObjectCount() == 0)
             {
-                Console.WriteLine("No classes found! - Creating a default class!");
+                Console.WriteLine(Strings.Get("database","noclasses"));
                 var cls = (ClassBase)AddGameObject(GameObject.Class);
-                cls.Name = "Default";
+                cls.Name = Strings.Get("database","default");
                 ClassSprite defaultMale = new ClassSprite();
                 defaultMale.Sprite = "1.png";
                 defaultMale.Gender = 0;

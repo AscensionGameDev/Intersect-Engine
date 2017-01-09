@@ -23,6 +23,7 @@
 using System;
 using System.IO;
 using System.Net.Sockets;
+using Intersect_Library.Localization;
 using Intersect_Server.Classes.General;
 
 namespace Intersect_Server.Classes.Networking
@@ -91,7 +92,7 @@ namespace Intersect_Server.Classes.Networking
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Error handling client packet. Disconnecting client. More info logged to errors.log");
+                Console.WriteLine(Strings.Get("networking","badpacket"));
                 MainClass.CurrentDomain_UnhandledException(null, new UnhandledExceptionEventArgs(ex,false));
                 HandleDisconnect();
             }

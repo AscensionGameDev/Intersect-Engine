@@ -26,6 +26,7 @@ using System.Collections.Generic;
 using System.Security.Cryptography.X509Certificates;
 using Intersect_Library;
 using Intersect_Library.GameObjects;
+using Intersect_Library.Localization;
 using Intersect_Server.Classes.Core;
 using Intersect_Server.Classes.General;
 using Intersect_Server.Classes.Items;
@@ -530,7 +531,7 @@ namespace Intersect_Server.Classes.Entities
                 {
                     if (Status[n].Type == (int)StatusTypes.Stun || Status[n].Type == (int)StatusTypes.Blind)
                     {
-                        PacketSender.SendActionMsg(MyIndex, "MISS!", new Color(255, 255, 255, 255));
+                        PacketSender.SendActionMsg(MyIndex, Strings.Get("combat","miss"), new Color(255, 255, 255, 255));
                         PacketSender.SendEntityAttack(MyIndex, (int)EntityTypes.GlobalEntity, CurrentMap, CalculateAttackTime());
                         return;
                     }
@@ -549,22 +550,22 @@ namespace Intersect_Server.Classes.Entities
 
                 if (enemy.Dir == (int)Directions.Left && d == (int)Directions.Right)
                 {
-                    PacketSender.SendActionMsg(enemy.MyIndex, "BLOCKED!", new Color(255, 0, 0, 255));
+                    PacketSender.SendActionMsg(enemy.MyIndex, Strings.Get("combat", "blocked"), new Color(255, 0, 0, 255));
                     return;
                 }
                 else if (enemy.Dir == (int)Directions.Right && d == (int)Directions.Left)
                 {
-                    PacketSender.SendActionMsg(enemy.MyIndex, "BLOCKED!", new Color(255, 0, 0, 255));
+                    PacketSender.SendActionMsg(enemy.MyIndex, Strings.Get("combat", "blocked"), new Color(255, 0, 0, 255));
                     return;
                 }
                 else if (enemy.Dir == (int)Directions.Up && d == (int)Directions.Down)
                 {
-                    PacketSender.SendActionMsg(enemy.MyIndex, "BLOCKED!", new Color(255, 0, 0, 255));
+                    PacketSender.SendActionMsg(enemy.MyIndex, Strings.Get("combat", "blocked"), new Color(255, 0, 0, 255));
                     return;
                 }
                 else if (enemy.Dir == (int)Directions.Down && d == (int)Directions.Up)
                 {
-                    PacketSender.SendActionMsg(enemy.MyIndex, "BLOCKED!", new Color(255, 0, 0, 255));
+                    PacketSender.SendActionMsg(enemy.MyIndex, Strings.Get("combat", "blocked"), new Color(255, 0, 0, 255));
                     return;
                 }
             }
@@ -580,13 +581,13 @@ namespace Intersect_Server.Classes.Entities
                 {
                     if (((Player)Globals.Entities[MyIndex]).Equipment[2] < 0)
                     {
-                        PacketSender.SendPlayerMsg(((Player)Globals.Entities[MyIndex]).MyClient, "You require a " + Options.ToolTypes[resource.Tool] + " to interact with this resource.");
+                        PacketSender.SendPlayerMsg(((Player)Globals.Entities[MyIndex]).MyClient, Strings.Get("combat","toolrequired", Options.ToolTypes[resource.Tool]));
                         return;
                     }
                     var weapon = ItemBase.GetItem(Inventory[((Player)Globals.Entities[MyIndex]).Equipment[Options.WeaponIndex]].ItemNum);
                     if (weapon == null || resource.Tool != weapon.Tool)
                     {
-                        PacketSender.SendPlayerMsg(((Player)Globals.Entities[MyIndex]).MyClient, "You require a " + Options.ToolTypes[resource.Tool] + " to interact with this resource.");
+                        PacketSender.SendPlayerMsg(((Player)Globals.Entities[MyIndex]).MyClient, Strings.Get("combat", "toolrequired", Options.ToolTypes[resource.Tool]));
                         return;
                     }
                 }
@@ -658,7 +659,7 @@ namespace Intersect_Server.Classes.Entities
                 if (enemy.GetType() != typeof(Resource) && Globals.Rand.Next(1, Options.CritChance + 1) == 1)
                 {
                     dmg *= Options.CritMultiplier;
-                    PacketSender.SendActionMsg(enemy.MyIndex, "CRITICAL HIT!", new Color(255, 255, 255, 0));
+                    PacketSender.SendActionMsg(enemy.MyIndex, Strings.Get("combat", "critical"), new Color(255, 255, 255, 0));
                 }
 
                 PacketSender.SendEntityAttack(MyIndex, (int)EntityTypes.GlobalEntity, CurrentMap, CalculateAttackTime());
@@ -687,11 +688,11 @@ namespace Intersect_Server.Classes.Entities
                         spellBase.VitalDiff[(int)Vitals.Mana];
                     if (spellBase.VitalDiff[(int)Vitals.Mana] > 0)
                     {
-                        PacketSender.SendActionMsg(enemy.MyIndex, "+" + spellBase.VitalDiff[(int)Vitals.Mana], new Color(255, 0, 255, 255));
+                        PacketSender.SendActionMsg(enemy.MyIndex, Strings.Get("combat", "addsymbol") + spellBase.VitalDiff[(int)Vitals.Mana], new Color(255, 0, 255, 255));
                     }
                     else if (spellBase.VitalDiff[(int)Vitals.Mana] < 0)
                     {
-                        PacketSender.SendActionMsg(enemy.MyIndex, " " + spellBase.VitalDiff[(int)Vitals.Mana], new Color(255, 0, 255, 255));
+                        PacketSender.SendActionMsg(enemy.MyIndex, Strings.Get("combat", "removesymbol") + spellBase.VitalDiff[(int)Vitals.Mana], new Color(255, 0, 255, 255));
                     }
 
                     for (int i = 0; i < (int)Stats.StatCount; i++)
@@ -752,11 +753,11 @@ namespace Intersect_Server.Classes.Entities
             enemy.Vital[(int)Vitals.Health] -= (int)dmg;
             if (dmg > 0)
             {
-                PacketSender.SendActionMsg(enemy.MyIndex, "-" + (int)dmg, new Color(255, 255, 0, 0));
+                PacketSender.SendActionMsg(enemy.MyIndex, Strings.Get("combat", "removesymbol") + (int)dmg, new Color(255, 255, 0, 0));
             }
             else
             {
-                PacketSender.SendActionMsg(enemy.MyIndex, "+" + (int)dmg, new Color(255, 0, 255, 0));
+                PacketSender.SendActionMsg(enemy.MyIndex, Strings.Get("combat", "addsymbol") + (int)dmg, new Color(255, 0, 255, 0));
             }
 
             //If we took damage lets reset our combat timer
@@ -894,7 +895,7 @@ namespace Intersect_Server.Classes.Entities
                         }
                         break;
                     case (int)SpellTypes.Dash:
-                        PacketSender.SendActionMsg(MyIndex, "DASH!", new Color(255, 0, 0, 255));
+                        PacketSender.SendActionMsg(MyIndex, Strings.Get("combat","dash"), new Color(255, 0, 0, 255));
                         var dash = new DashInstance(this, spellBase.CastRange, Dir, Convert.ToBoolean(spellBase.Data1), Convert.ToBoolean(spellBase.Data2), Convert.ToBoolean(spellBase.Data3), Convert.ToBoolean(spellBase.Data4));
                         break;
                     case (int)SpellTypes.Event:

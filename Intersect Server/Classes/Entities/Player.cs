@@ -26,6 +26,7 @@ using System.Threading.Tasks;
 using Intersect_Library;
 using Intersect_Library.GameObjects;
 using Intersect_Library.GameObjects.Events;
+using Intersect_Library.Localization;
 using Intersect_Server.Classes.Core;
 using Intersect_Server.Classes.General;
 using Intersect_Server.Classes.Items;
@@ -366,12 +367,11 @@ namespace Intersect_Server.Classes.Entities
                 }
             }
 
-            PacketSender.SendPlayerMsg(MyClient, "You have leveled up! You are now level " + Level + "!", Color.Cyan, MyName);
-            PacketSender.SendActionMsg(MyIndex, "LEVEL UP!", new Color(255, 0, 255, 0));
+            PacketSender.SendPlayerMsg(MyClient, Strings.Get("player","levelup",Level), Color.Cyan, MyName);
+            PacketSender.SendActionMsg(MyIndex, Strings.Get("combat","levelup"), new Color(255, 0, 255, 0));
             if (StatPoints > 0)
             {
-                PacketSender.SendPlayerMsg(MyClient,
-                    "You have " + StatPoints + " stat points available to be spent!", Color.Cyan, MyName);
+                PacketSender.SendPlayerMsg(MyClient,Strings.Get("player","statpoints",StatPoints), Color.Cyan, MyName);
             }
             PacketSender.SendExperience(MyClient);
             PacketSender.SendPointsTo(MyClient);
@@ -460,7 +460,7 @@ namespace Intersect_Server.Classes.Entities
                                     {
                                         Quests[questId] = questProg;
                                         PacketSender.SendQuestProgress(this, quest.GetId());
-                                        PacketSender.SendPlayerMsg(MyClient,quest.Name + " updated! " + questProg.taskProgress + "/" + questTask.Data2 + " " + NpcBase.GetName(questTask.Data1) + "(s) slain!");
+                                        PacketSender.SendPlayerMsg(MyClient,Strings.Get("quests","npctask",quest.Name, questProg.taskProgress, questTask.Data2, NpcBase.GetName(questTask.Data1)));
                                     }
                                 }
                             }
@@ -480,7 +480,7 @@ namespace Intersect_Server.Classes.Entities
             var map = MapInstance.GetMap(newMap);
             if (map == null)
             {
-                Globals.GeneralLogs.Add("Failed to warp player to new map -- warping to /spawn/.");
+                Globals.GeneralLogs.Add(Strings.Get("errors","warpfail"));
                 WarpToSpawn();
                 return;
             }
@@ -668,7 +668,7 @@ namespace Intersect_Server.Classes.Entities
                 {
                     if (Stat[n].Value() < itemBase.StatsReq[n])
                     {
-                        PacketSender.SendPlayerMsg(MyClient, "You do not possess the correct combat stats to use this item.");
+                        PacketSender.SendPlayerMsg(MyClient, Strings.Get("items","statreq"));
                         return;
                     }
                 }
@@ -678,26 +678,26 @@ namespace Intersect_Server.Classes.Entities
                 {
                     if (Status[n].Type == (int)StatusTypes.Stun)
                     {
-                        PacketSender.SendPlayerMsg(MyClient, "You cannot use this item whilst stunned.");
+                        PacketSender.SendPlayerMsg(MyClient, Strings.Get("items","stunned"));
                         return;
                     }
                 }
 
                 if (Level < itemBase.LevelReq)
                 {
-                    PacketSender.SendPlayerMsg(MyClient, "You are not a high enough level to use this item.");
+                    PacketSender.SendPlayerMsg(MyClient, Strings.Get("items","levelreq"));
                     return;
                 }
 
                 if (itemBase.ClassReq > 0 && itemBase.ClassReq != Class)
                 {
-                    PacketSender.SendPlayerMsg(MyClient, "You do not meet the class requirement to use this item.");
+                    PacketSender.SendPlayerMsg(MyClient, Strings.Get("items","classreq"));
                     return;
                 }
 
                 if (itemBase.GenderReq - 1 != -1 && itemBase.GenderReq - 1 != Gender)
                 {
-                    PacketSender.SendPlayerMsg(MyClient, "You do not meet the gender requirement to use this item.");
+                    PacketSender.SendPlayerMsg(MyClient, Strings.Get("items","genderreq"));
                     return;
                 }
 
@@ -705,17 +705,17 @@ namespace Intersect_Server.Classes.Entities
                 {
                     case (int)ItemTypes.None:
                     case (int)ItemTypes.Currency:
-                        PacketSender.SendPlayerMsg(MyClient, "You cannot use this item!");
+                        PacketSender.SendPlayerMsg(MyClient, Strings.Get("items","cannotuse"));
                         break;
                     case (int)ItemTypes.Consumable:
                         string s = "";
-                        if (itemBase.Data2 > 0) { s = "+"; }
+                        if (itemBase.Data2 > 0) { s = Strings.Get("combat","addsymbol"); }
 
                         switch (itemBase.Data1)
                         {
                             case 0: //Health
                                 AddVital(Vitals.Health, itemBase.Data2);
-                                if (s == "+")
+                                if (s == Strings.Get("combat", "addsymbol"))
                                 {
                                     PacketSender.SendActionMsg(MyIndex, s + itemBase.Data2.ToString(), Color.Green);
                                 }
@@ -808,7 +808,7 @@ namespace Intersect_Server.Classes.Entities
                         }
                         break;
                     default:
-                        PacketSender.SendPlayerMsg(MyClient, "Use of this item type is not yet implemented.");
+                        PacketSender.SendPlayerMsg(MyClient, Strings.Get("items","notimplemented"));
                         break;
                 }
             }
@@ -940,7 +940,7 @@ namespace Intersect_Server.Classes.Entities
                         {
                             if (!shop.BuyingWhitelist)
                             {
-                                PacketSender.SendPlayerMsg(MyClient, "This shop does not accept that item!", Color.Red);
+                                PacketSender.SendPlayerMsg(MyClient, Strings.Get("shops","doesnotaccept"), Color.Red);
                                 return;
                             }
                             else
@@ -955,7 +955,7 @@ namespace Intersect_Server.Classes.Entities
                     {
                         if (shop.BuyingWhitelist)
                         {
-                            PacketSender.SendPlayerMsg(MyClient, "This shop does not accept that item!", Color.Red);
+                            PacketSender.SendPlayerMsg(MyClient, Strings.Get("shops", "doesnotaccept"), Color.Red);
                             return;
                         }
                         else
@@ -1053,14 +1053,14 @@ namespace Intersect_Server.Classes.Entities
                                 }
                                 else
                                 {
-                                    PacketSender.SendPlayerMsg(MyClient, "You do not have space to purchase that item!",
+                                    PacketSender.SendPlayerMsg(MyClient, Strings.Get("shops","inventoryfull"),
                                         Color.Red, MyName);
                                 }
                             }
                         }
                         else
                         {
-                            PacketSender.SendPlayerMsg(MyClient, "Transaction failed due to insufficent funds.",
+                            PacketSender.SendPlayerMsg(MyClient, Strings.Get("shops", "cantafford"),
                                 Color.Red, MyName);
                         }
                     }
@@ -1118,7 +1118,7 @@ namespace Intersect_Server.Classes.Entities
 
                 //Give them the craft
                 TryGiveItem(new ItemInstance(BenchBase.GetCraft(InCraft).Crafts[index].Item, 1));
-                PacketSender.SendPlayerMsg(MyClient, "You successfully crafted " + ItemBase.GetName(BenchBase.GetCraft(InCraft).Crafts[index].Item) + "!", Color.Green);
+                PacketSender.SendPlayerMsg(MyClient, Strings.Get("crafting","crafted", ItemBase.GetName(BenchBase.GetCraft(InCraft).Crafts[index].Item)), Color.Green);
                 CraftIndex = -1;
             }
         }
@@ -1214,11 +1214,11 @@ namespace Intersect_Server.Classes.Entities
                             return;
                         }
                     }
-                    PacketSender.SendPlayerMsg(MyClient, "There is no space left in your bank for that item!", Color.Red);
+                    PacketSender.SendPlayerMsg(MyClient, Strings.Get("banks","banknospace"), Color.Red);
                 }
                 else
                 {
-                    PacketSender.SendPlayerMsg(MyClient, "Invalid item selected to deposit!", Color.Red);
+                    PacketSender.SendPlayerMsg(MyClient, Strings.Get("banks","depositinvalid"), Color.Red);
                 }
             }
         }
@@ -1294,12 +1294,12 @@ namespace Intersect_Server.Classes.Entities
                             return;
                         }
                     }
-                    PacketSender.SendPlayerMsg(MyClient, "There is no space left in your inventory for that item!",
+                    PacketSender.SendPlayerMsg(MyClient, Strings.Get("banks","inventorynospace"),
                         Color.Red);
                 }
                 else
                 {
-                    PacketSender.SendPlayerMsg(MyClient, "Invalid item selected to withdraw!", Color.Red);
+                    PacketSender.SendPlayerMsg(MyClient, Strings.Get("banks","withdrawinvalid"), Color.Red);
                 }
             }
         }
@@ -1405,11 +1405,11 @@ namespace Intersect_Server.Classes.Entities
                             return;
                         }
                     }
-                    PacketSender.SendPlayerMsg(MyClient, "There is no space left in your bank for that item!", Color.Red);
+                    PacketSender.SendPlayerMsg(MyClient, Strings.Get("trading","tradenosapce"), Color.Red);
                 }
                 else
                 {
-                    PacketSender.SendPlayerMsg(MyClient, "Invalid item selected to deposit!", Color.Red);
+                    PacketSender.SendPlayerMsg(MyClient, Strings.Get("trading","offerinvalid"), Color.Red);
                 }
             }
         }
@@ -1487,12 +1487,12 @@ namespace Intersect_Server.Classes.Entities
                             return;
                         }
                     }
-                    PacketSender.SendPlayerMsg(MyClient, "There is no space left in your inventory for that item!",
+                    PacketSender.SendPlayerMsg(MyClient, Strings.Get("trading","inventorynosapce"),
                         Color.Red);
                 }
                 else
                 {
-                    PacketSender.SendPlayerMsg(MyClient, "Invalid item selected to withdraw!", Color.Red);
+                    PacketSender.SendPlayerMsg(MyClient, Strings.Get("trading","revokeinvalid"), Color.Red);
                 }
             }
         }
@@ -1507,7 +1507,7 @@ namespace Intersect_Server.Classes.Entities
                     if (!TryGiveItem(Trade[i]))
                     {
                         MapInstance.GetMap(CurrentMap).SpawnItem(CurrentX, CurrentY, Trade[i], Trade[i].ItemVal);
-                        PacketSender.SendPlayerMsg(MyClient, "Invalid inventory space. Some of your items have been dropped on the ground!", Color.Red);
+                        PacketSender.SendPlayerMsg(MyClient, Strings.Get("trading","itemsdropped"), Color.Red);
                     }
                     Trade[i].ItemNum = 0;
                     Trade[i].ItemVal = 0;
@@ -1520,8 +1520,8 @@ namespace Intersect_Server.Classes.Entities
             if (Trading < 0) return;
             ReturnTradeItems();
             ((Player)Globals.Entities[Trading]).ReturnTradeItems();
-            PacketSender.SendPlayerMsg(MyClient, "The trade was declined.", Color.Red);
-            PacketSender.SendPlayerMsg(((Player)Globals.Entities[Trading]).MyClient, "The trade was declined.", Color.Red);
+            PacketSender.SendPlayerMsg(MyClient, Strings.Get("trading","declined"), Color.Red);
+            PacketSender.SendPlayerMsg(((Player)Globals.Entities[Trading]).MyClient, Strings.Get("trading", "declined"), Color.Red);
             PacketSender.SendTradeClose(((Player)Globals.Entities[Trading]).MyClient);
             PacketSender.SendTradeClose(MyClient);
             ((Player)Globals.Entities[Trading]).Trading = -1;
@@ -1540,7 +1540,7 @@ namespace Intersect_Server.Classes.Entities
             {
                 if (Party[0] != this)
                 {
-                    PacketSender.SendPlayerMsg(MyClient, "Only the party leader can send invitations to your party.", Color.Red);
+                    PacketSender.SendPlayerMsg(MyClient, Strings.Get("parties","leaderinvonly"), Color.Red);
                     return;
                 }
 
@@ -1563,12 +1563,12 @@ namespace Intersect_Server.Classes.Entities
                 {
                     Party[i].Party = Party;
                     PacketSender.SendParty(Party[i].MyClient);
-                    PacketSender.SendPlayerMsg(Party[i].MyClient, target.MyName + " has joined the party!", Color.Green);
+                    PacketSender.SendPlayerMsg(Party[i].MyClient, Strings.Get("parties","joined",target.MyName), Color.Green);
                 }
             }
             else
             {
-                PacketSender.SendPlayerMsg(MyClient, "You have reached the maximum limit of party members. Kick another member before adding more.", Color.Red);
+                PacketSender.SendPlayerMsg(MyClient, Strings.Get("parties","limitreached"), Color.Red);
             }
         }
         public void KickParty(int target)
@@ -1580,7 +1580,7 @@ namespace Intersect_Server.Classes.Entities
                     var oldMember = Party[target];
                     oldMember.Party = new List<Player>();
                     PacketSender.SendParty(oldMember.MyClient);
-                    PacketSender.SendPlayerMsg(oldMember.MyClient, "You have been kicked from the party!", Color.Red);
+                    PacketSender.SendPlayerMsg(oldMember.MyClient, Strings.Get("parties","kicked"), Color.Red);
                     Party.RemoveAt(target);
 
                     if (Party.Count > 1) //Need atleast 2 party members to function
@@ -1590,7 +1590,7 @@ namespace Intersect_Server.Classes.Entities
                         {
                             Party[i].Party = Party;
                             PacketSender.SendParty(Party[i].MyClient);
-                            PacketSender.SendPlayerMsg(Party[i].MyClient, oldMember.MyName + " has been kicked from the party!", Color.Red);
+                            PacketSender.SendPlayerMsg(Party[i].MyClient, Strings.Get("parties","memberkicked",oldMember.MyName), Color.Red);
                         }
                     }
                     else if (Party.Count > 0) //Check if anyone is left on their own
@@ -1598,7 +1598,7 @@ namespace Intersect_Server.Classes.Entities
                         Player remainder = Party[0];
                         remainder.Party.Clear();
                         PacketSender.SendParty(remainder.MyClient);
-                        PacketSender.SendPlayerMsg(remainder.MyClient, "The party has been disbanded.", Color.Red);
+                        PacketSender.SendPlayerMsg(remainder.MyClient, Strings.Get("parties","disbanded"), Color.Red);
                     }
                 }
             }
@@ -1617,7 +1617,7 @@ namespace Intersect_Server.Classes.Entities
                     {
                         Party[i].Party = Party;
                         PacketSender.SendParty(Party[i].MyClient);
-                        PacketSender.SendPlayerMsg(Party[i].MyClient, oldMember.MyName + " has left the party!", Color.Red);
+                        PacketSender.SendPlayerMsg(Party[i].MyClient, Strings.Get("parties","memberleft",oldMember.MyName), Color.Red);
                     }
                 }
                 else if (Party.Count > 0) //Check if anyone is left on their own
@@ -1625,12 +1625,12 @@ namespace Intersect_Server.Classes.Entities
                     Player remainder = Party[0];
                     remainder.Party.Clear();
                     PacketSender.SendParty(remainder.MyClient);
-                    PacketSender.SendPlayerMsg(remainder.MyClient, "The party has been disbanded.", Color.Red);
+                    PacketSender.SendPlayerMsg(remainder.MyClient, Strings.Get("parties","disbanded"), Color.Red);
                 }
             }
             Party.Clear();
             PacketSender.SendParty(MyClient);
-            PacketSender.SendPlayerMsg(MyClient, "You have left the party.", Color.Red);
+            PacketSender.SendPlayerMsg(MyClient,Strings.Get("parties","left"), Color.Red);
         }
         public bool InParty(Player member)
         {
@@ -1728,7 +1728,7 @@ namespace Intersect_Server.Classes.Entities
                 {
                     if (Stat[n].Value() < spell.StatReq[n])
                     {
-                        PacketSender.SendPlayerMsg(MyClient, "You do not possess the correct combat stats to use this ability.");
+                        PacketSender.SendPlayerMsg(MyClient, Strings.Get("combat","statreq"));
                         return;
                     }
                 }
@@ -1738,25 +1738,25 @@ namespace Intersect_Server.Classes.Entities
                 {
                     if (Status[n].Type == (int)StatusTypes.Silence)
                     {
-                        PacketSender.SendPlayerMsg(MyClient, "You cannot cast this ability whilst silenced.");
+                        PacketSender.SendPlayerMsg(MyClient, Strings.Get("combat", "silenced"));
                         return;
                     }
                     if (Status[n].Type == (int)StatusTypes.Stun)
                     {
-                        PacketSender.SendPlayerMsg(MyClient, "You cannot cast this ability whilst stunned.");
+                        PacketSender.SendPlayerMsg(MyClient, Strings.Get("combat", "stunned"));
                         return;
                     }
                 }
 
                 if (Level < spell.LevelReq)
                 {
-                    PacketSender.SendPlayerMsg(MyClient, "You are not a high enough level to use this ability.");
+                    PacketSender.SendPlayerMsg(MyClient, Strings.Get("combat", "levelreq"));
                     return;
                 }
 
                 if (target == -1 && ((spell.SpellType == (int)SpellTypes.CombatSpell && spell.TargetType == (int)SpellTargetTypes.Single) || spell.SpellType == (int)SpellTypes.WarpTo))
                 {
-                    PacketSender.SendActionMsg(MyIndex, "No Target!", new Color(255, 255, 0, 0));
+                    PacketSender.SendActionMsg(MyIndex, Strings.Get("combat", "notarget"), new Color(255, 255, 0, 0));
                     return;
                 }
 
@@ -1784,22 +1784,22 @@ namespace Intersect_Server.Classes.Entities
                             }
                             else
                             {
-                                PacketSender.SendPlayerMsg(MyClient, "You are currently channeling another skill.");
+                                PacketSender.SendPlayerMsg(MyClient, Strings.Get("combat", "channeling"));
                             }
                         }
                         else
                         {
-                            PacketSender.SendPlayerMsg(MyClient, "This skill is on cooldown.");
+                            PacketSender.SendPlayerMsg(MyClient, Strings.Get("combat", "cooldown"));
                         }
                     }
                     else
                     {
-                        PacketSender.SendPlayerMsg(MyClient, "Not enough Health.");
+                        PacketSender.SendPlayerMsg(MyClient, Strings.Get("combat", "lowhealth"));
                     }
                 }
                 else
                 {
-                    PacketSender.SendPlayerMsg(MyClient, "Not enough mana.");
+                    PacketSender.SendPlayerMsg(MyClient, Strings.Get("combat", "lowmana"));
                 }
             }
         }
@@ -2003,7 +2003,7 @@ namespace Intersect_Server.Classes.Entities
                     UpdateGatherItemQuests(quest.Tasks[0].Data1);
                 }
                 StartCommonEvent(quest.StartEvent);
-                PacketSender.SendPlayerMsg(MyClient,"Quest Started: " + quest.Name,Color.Cyan);
+                PacketSender.SendPlayerMsg(MyClient,Strings.Get("quests","started",quest.Name),Color.Cyan);
                 PacketSender.SendQuestProgress(this, quest.GetId());
             }
         }
@@ -2047,7 +2047,7 @@ namespace Intersect_Server.Classes.Entities
             if (QuestOffers.Contains(questId))
             {
                 QuestOffers.Remove(questId);
-                PacketSender.SendPlayerMsg(MyClient, "Quest Declined: " + QuestBase.GetName(questId), Color.Red);
+                PacketSender.SendPlayerMsg(MyClient, Strings.Get("quests","declined",QuestBase.GetName(questId)), Color.Red);
                 lock (EventLock)
                 {
                     for (int i = 0; i < MyEvents.Count; i++)
@@ -2087,7 +2087,7 @@ namespace Intersect_Server.Classes.Entities
                         questProgress.task = -1;
                         questProgress.taskProgress = -1;
                         Quests[questId] = questProgress;
-                        PacketSender.SendPlayerMsg(MyClient, "Quest Abandoned: " + QuestBase.GetName(questId), Color.Red);
+                        PacketSender.SendPlayerMsg(MyClient, Strings.Get("quests","abandoned", QuestBase.GetName(questId)), Color.Red);
                         PacketSender.SendQuestProgress(this, questId);
                     }
                 }
@@ -2108,7 +2108,7 @@ namespace Intersect_Server.Classes.Entities
                         {
                             if (quest.Tasks[i].Id == taskId)
                             {
-                                PacketSender.SendPlayerMsg(MyClient, "Task Completed!");
+                                PacketSender.SendPlayerMsg(MyClient, Strings.Get("quests","taskcompleted"));
                                 if (i == quest.Tasks.Count - 1)
                                 {
                                     //Complete Quest
@@ -2118,7 +2118,7 @@ namespace Intersect_Server.Classes.Entities
                                     Quests[questId] = questProgress;
                                     StartCommonEvent(quest.Tasks[i].CompletionEvent);
                                     StartCommonEvent(quest.EndEvent);
-                                    PacketSender.SendPlayerMsg(MyClient, "Quest: " + quest.Name + " completed!", Color.Green);
+                                    PacketSender.SendPlayerMsg(MyClient, Strings.Get("quests","completed",quest.Name), Color.Green);
                                 }
                                 else
                                 {
@@ -2131,7 +2131,7 @@ namespace Intersect_Server.Classes.Entities
                                     {
                                         UpdateGatherItemQuests(quest.Tasks[i + 1].Data1);
                                     }
-                                    PacketSender.SendPlayerMsg(MyClient, "Quest: " + quest.Name + " updated!", Color.Cyan);
+                                    PacketSender.SendPlayerMsg(MyClient, Strings.Get("quests", "updated", quest.Name), Color.Cyan);
                                 }
                             }
                         }
@@ -2172,10 +2172,7 @@ namespace Intersect_Server.Classes.Entities
                                         {
                                             Quests[questId] = questProg;
                                             PacketSender.SendQuestProgress(this, quest.GetId());
-                                            PacketSender.SendPlayerMsg(MyClient,
-                                                quest.Name + " updated! " + questProg.taskProgress + "/" +
-                                                questTask.Data2 +
-                                                " " + ItemBase.GetName(questTask.Data1) + "(s) gathered!");
+                                            PacketSender.SendPlayerMsg(MyClient, Strings.Get("quests","itemtask",quest.Name,questProg.taskProgress,questTask.Data2,ItemBase.GetName(questTask.Data1)));
                                         }
                                     }
                                 }

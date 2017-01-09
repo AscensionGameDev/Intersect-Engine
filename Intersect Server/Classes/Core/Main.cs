@@ -617,13 +617,13 @@ namespace Intersect_Server.Classes
         }
         if (e.IsTerminating)
         {
-            Console.WriteLine("The Intersect server has encountered an error and must close. Error information can be found in resources/errors.log. Press any key to exit.");
+            Console.WriteLine(Strings.Get("errors","errorservercrash"));
             Console.ReadKey();
             Environment.Exit(-1);
         }
         else
         {
-            Console.WriteLine("An error was logged into errors.log");
+            Console.WriteLine(Strings.Get("errors","errorlogged"));
         }
 
     }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Intersect_Library;
+using Intersect_Library.Localization;
 using Intersect_Server.Classes.Core;
 using Intersect_Server.Classes.Entities;
 using Intersect_Server.Classes.General;
@@ -131,7 +132,7 @@ namespace Intersect_Server.Classes.Networking
             {
                 try
                 {
-                    Globals.GeneralLogs.Add("Client disconnected.");
+                    Globals.GeneralLogs.Add(Strings.Get("networking","disconnected"));
                     if (_myClient.Entity != null)
                     {
                        var en = _myClient.Entity;
@@ -163,7 +164,7 @@ namespace Intersect_Server.Classes.Networking
                             Globals.Entities[_entityIndex].CurrentMap);
                         if (!_myClient.IsEditor)
                         {
-                            PacketSender.SendGlobalMsg(_myClient.Entity.MyName + " has left the Intersect engine");
+                            PacketSender.SendGlobalMsg(Strings.Get("player","left", _myClient.Entity.MyName,Options.GameName));
                         }
                         _myClient.Entity = null;
                         Globals.Entities[_entityIndex] = null;
