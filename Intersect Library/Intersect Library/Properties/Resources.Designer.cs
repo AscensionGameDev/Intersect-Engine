@@ -110,10 +110,15 @@ namespace Intersect_Library.Properties {
         /// <summary>
         ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;
         ///&lt;Strings&gt;
-        ///	&lt;Main&gt;
-        ///		&lt;string id=&quot;title&quot;&gt;{00}&lt;/string&gt;
-        ///	&lt;/Main&gt;
-        ///&lt;/Strings&gt;.
+        ///	&lt;Intro&gt;
+        ///		&lt;string id=&quot;title&quot;&gt;Intersect Server&lt;/string&gt;
+        ///		&lt;string id=&quot;tagline&quot;&gt;                          free 2d orpg engine&lt;/string&gt;
+        ///		&lt;string id=&quot;version&quot;&gt;Version {00}&lt;/string&gt;
+        ///		&lt;string id=&quot;exit&quot;&gt;Press any key to exit.&lt;/string&gt;
+        ///		&lt;string id=&quot;support&quot;&gt;For help, support, and updates visit: http://ascensiongamedev.com&lt;/string&gt;
+        ///		&lt;string id=&quot;loading&quot;&gt;Loading, please wait.&lt;/string&gt;
+        ///		&lt;string id=&quot;started&quot;&gt;Server Started. Using Port #{00}&lt;/string&gt;
+        ///		&lt;st [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string Server_English {
             get {
