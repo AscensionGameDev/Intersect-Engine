@@ -54,11 +54,11 @@ namespace Intersect_Server.Classes
             Console.WriteLine(@"   | | | '_ \| __/ _ \ '__/ __|/ _ \/ __| __|");
             Console.WriteLine(@"  _| |_| | | | ||  __/ |  \__ \  __/ (__| |_ ");
             Console.WriteLine(@" |_____|_| |_|\__\___|_|  |___/\___|\___|\__|");
-            Console.WriteLine(@"                          free 2d orpg engine");
-            Console.WriteLine("Copyright (C) 2015  JC Snider, Joe Bridges");
-            Console.WriteLine("Version " + Assembly.GetExecutingAssembly().GetName().Version);
-            Console.WriteLine("For help, support, and updates visit: http://ascensiongamedev.com");
-            Console.WriteLine("Loading, please wait.");
+            Console.WriteLine(Strings.Get("intro", "tagline"));
+            Console.WriteLine("Copyright (C) 2017  JC Snider, Joe Bridges");
+            Console.WriteLine(Strings.Get("intro", "version", Assembly.GetExecutingAssembly().GetName().Version));
+            Console.WriteLine(Strings.Get("intro", "support"));
+            Console.WriteLine(Strings.Get("intro", "loading"));
             Database.CheckDirectories();
 
             if (!Database.InitDatabase())
@@ -66,20 +66,19 @@ namespace Intersect_Server.Classes
                 Console.ReadKey();
                 return;
             }
-            Console.WriteLine("Server has " + Database.GetRegisteredPlayers() + " registered players.");
+            Console.WriteLine(Strings.Get("commandoutput", "playercount", Database.GetRegisteredPlayers()));
             SocketServer.Init();
-            Console.WriteLine("Server Started. Using Port #" + Options.ServerPort);
+            Console.WriteLine(Strings.Get("intro", "started", Options.ServerPort));
 #if websockets
             WebSocketServer.Init();
-            Console.WriteLine("Websocket Listener started for Unity WebGL Clients. Using Port #" +
-                              (Options.ServerPort + 1));
+            Console.WriteLine(Strings.Get("intro", "websocketstarted", Options.ServerPort + 1));
 #endif
-            Console.WriteLine("Game Time is now: " + ServerTime.GetTime().ToString("F"));
+            Console.WriteLine(Strings.Get("commandoutput", "gametime", ServerTime.GetTime().ToString("F")));
             logicThread = new Thread(() => ServerLoop.RunServerLoop());
             logicThread.Start();
             if (!args.Contains("noconsole"))
             {
-                Console.WriteLine("Type exit to shutdown the server, or help for a list of commands.");
+                Console.WriteLine(Strings.Get("intro", "consoleactive"));
                 Console.Write("> ");
                 string command = Console.ReadLine();
                 while (true)
@@ -88,464 +87,545 @@ namespace Intersect_Server.Classes
                     string ip = "";
                     command = command.Trim();
                     string[] commandsplit = command.Split(' ');
-                    switch (commandsplit[0])
-                    {
-                        case "announcement":
-                            if (commandsplit.Length > 1)
-                            {
-                                switch (commandsplit[1])
-                                {
-                                    case "/?":
-                                        Console.WriteLine(@"    Usage: announcement [message] [/?]");
-                                        Console.WriteLine(
-                                            @"    Desc: Sends a global message to all users playing the game.");
-                                        break;
-                                    default:
-                                        PacketSender.SendGlobalMsg(command.Remove(0, 12));
-                                        break;
-                                }
-                            }
-                            break;
-                        case "onlinelist":
-                            Console.WriteLine(String.Format("{0,-10}", "ID") + String.Format("{0,-28}","Account") + String.Format("{0,-28}","Character"));
-                            Console.WriteLine(new String('-',66));
-                            for (int i = 0; i < Globals.Clients.Count; i++)
-                            {
-                                if (Globals.Clients[i] != null)
-                                {
-                                    var name = Globals.Clients[i].Entity != null ? Globals.Clients[i].Entity.MyName : "";
-                                    Console.WriteLine(String.Format("{0,-10}", "#" + i) +
-                                                      String.Format("{0,-28}", Globals.Clients[i].MyAccount) +
-                                                      String.Format("{0,-28}", name));
-                                }
-                            }
-                            break;
-                        case "kill":
-                            if (commandsplit.Length > 1)
-                            {
-                                switch (commandsplit[1])
-                                {
-                                    case "/?":
-                                        Console.WriteLine(@"    Usage: kill [username] [/?]");
-                                        Console.WriteLine(
-                                            @"    Desc: Kills a player on the server.");
-                                        break;
-                                    default:
-                                        for (int i = 0; i < Globals.Clients.Count; i++)
-                                        {
-                                            if (Globals.Clients[i] != null && Globals.Clients[i].Entity != null)
-                                            {
-                                                string user = Globals.Clients[i].Entity.MyName.ToLower();
-                                                if (user == commandsplit[1].ToLower())
-                                                {
-                                                    Globals.Clients[i].Entity.Die();
-                                                    PacketSender.SendGlobalMsg(Globals.Clients[i].Entity.MyName +
-                                                                               " has been killed by the server!");
-                                                    Console.WriteLine(@"    " + Globals.Clients[i].Entity.MyName +
-                                                                      " has been killed!");
-                                                    userFound = true;
-                                                    break;
-                                                }
-                                            }
-                                        }
-                                        if (userFound == false) { Console.WriteLine(@"    User not online!"); }
-                                        break;
-                                }
-                            }
-                            break;
-                        case "kick":
-                            if (commandsplit.Length > 1)
-                            {
-                                switch (commandsplit[1])
-                                {
-                                    case "/?":
-                                        Console.WriteLine(@"    Usage: kick [username] [/?]");
-                                        Console.WriteLine(
-                                            @"    Desc: Kicks a player from the server.");
-                                        break;
-                                    default:
-                                        for (int i = 0; i < Globals.Clients.Count; i++)
-                                        {
-                                            string user = Globals.Clients[i].Entity.MyName.ToLower();
-                                            if (user == commandsplit[1].ToLower())
-                                            {
-                                                PacketSender.SendGlobalMsg(Globals.Clients[i].Entity.MyName + " has been kicked from the server!");
-                                                Console.WriteLine(@"    " + Globals.Clients[i].Entity.MyName + " has been kicked from the server!");
-                                                Globals.Clients[i].Disconnect(); //Kick em'
-                                                userFound = true;
-                                                break;
-                                            }
-                                        }
-                                        if (userFound == false) { Console.WriteLine(@"    User not online!"); }
-                                        break;
-                                }
-                            }
-                            break;
-                        case "unban":
-                            if (commandsplit.Length > 1)
-                            {
-                                switch (commandsplit[1])
-                                {
-                                    case "/?":
-                                        Console.WriteLine(@"    Usage: unban [account] [/?]");
-                                        Console.WriteLine(
-                                            @"    Desc: Unbans a player from the server.");
-                                        break;
-                                    default:
-                                        if (Database.AccountExists(commandsplit[1]))
-                                        {
-                                            Database.DeleteBan(commandsplit[1]);
-                                            Console.WriteLine(@"    " + commandsplit[1] + " has been unbanned from the server!");
-                                        }
-                                        else
-                                        {
-                                            Console.WriteLine("    Error: Account " + commandsplit[1] +
-                                                              " was not found!");
-                                        }
-                                        break;
-                                }
-                            }
-                            break;
-                        case "ban":
-                            if (commandsplit.Length > 1)
-                            {
-                                switch (commandsplit[1])
-                                {
-                                    case "/?":
-                                        Console.WriteLine(@"    Usage: ban [username] [duration (days)] [IP Ban? (True/False)] [reason] [/?]");
-                                        Console.WriteLine(
-                                            @"    Desc: Bans a player from the server.");
-                                        break;
-                                    default:
-                                        if (commandsplit.Length > 3)
-                                        {
-                                            for (int i = 0; i < Globals.Clients.Count; i++)
-                                            {
-                                                string user = Globals.Clients[i].Entity.MyName.ToLower();
-                                                if (user == commandsplit[1].ToLower())
-                                                {
-                                                    string reason = "";
-                                                    for (int n = 4; n < commandsplit.Length; n++)
-                                                    {
-                                                        reason += commandsplit[n] + " ";
-                                                    }
-                                                    if (Convert.ToBoolean(commandsplit[3]))
-                                                    {
-                                                        ip = Globals.Clients[i].GetIP();
-                                                    }
-                                                    Database.AddBan(Globals.Clients[i], Convert.ToInt32(commandsplit[2]), reason, "the server", ip);
-                                                    PacketSender.SendGlobalMsg(Globals.Clients[i].Entity.MyName + " has been banned from the server!");
-                                                    Console.WriteLine(@"    " + Globals.Clients[i].Entity.MyName + " has been banned from the server!");
-                                                    Globals.Clients[i].Disconnect(); //Kick em'
-                                                    userFound = true;
-                                                    break;
-                                                }
-                                            }
-                                        }
-                                        if (userFound == false) { Console.WriteLine(@"    User not online!"); }
-                                        break;
-                                }
-                            }
-                            break;
-                        case "unmute":
-                            if (commandsplit.Length > 1)
-                            {
-                                switch (commandsplit[1])
-                                {
-                                    case "/?":
-                                        Console.WriteLine(@"    Usage: unmute [username] [/?]");
-                                        Console.WriteLine(
-                                            @"    Desc: unmutes a player allowing them to talk.");
-                                        break;
-                                    default:
-                                        for (int i = 0; i < Globals.Clients.Count; i++)
-                                        {
-                                            string user = Globals.Clients[i].Entity.MyName.ToLower();
-                                            if (user == commandsplit[1].ToLower())
-                                            {
-                                                Database.DeleteMute(Globals.Clients[i].MyAccount);
-                                                Globals.Clients[i].Muted = false;
-                                                Globals.Clients[i].MuteReason = "";
-                                                PacketSender.SendGlobalMsg(Globals.Clients[i].Entity.MyName + " has been unmuted!");
-                                                Console.WriteLine(@"    " + Globals.Clients[i].Entity.MyName + " has been unmuted!");
-                                                userFound = true;
-                                                break;
-                                            }
-                                        }
-                                        if (userFound == false) { Console.WriteLine(@"    User not online!"); }
-                                        break;
-                                }
-                            }
-                            break;
-                        case "mute":
-                            if (commandsplit.Length > 1)
-                            {
-                                switch (commandsplit[1])
-                                {
-                                    case "/?":
-                                        Console.WriteLine(@"    Usage: unmute [username] [/?]");
-                                        Console.WriteLine(
-                                            @"    Desc: mutes a player preventing them from talking.");
-                                        break;
-                                    default:
-                                        if (commandsplit.Length > 3)
-                                        {
-                                            for (int i = 0; i < Globals.Clients.Count; i++)
-                                            {
-                                                string user = Globals.Clients[i].Entity.MyName.ToLower();
-                                                if (user == commandsplit[1].ToLower())
-                                                {
-                                                    string reason = "";
-                                                    for (int n = 4; n < commandsplit.Length; n++)
-                                                    {
-                                                        reason += commandsplit[n] + " ";
-                                                    }
-                                                    if (Convert.ToBoolean(commandsplit[3]))
-                                                    {
-                                                        ip = Globals.Clients[i].GetIP();
-                                                    }
-                                                    Database.AddMute(Globals.Clients[i], Convert.ToInt32(commandsplit[2]), reason, "the server", ip);
-                                                    Globals.Clients[i].Muted = true; //Cut out their tongues!
-                                                    Globals.Clients[i].MuteReason = Database.CheckMute(Globals.Clients[i].MyAccount, Globals.Clients[i].GetIP());
-                                                    PacketSender.SendGlobalMsg(Globals.Clients[i].Entity.MyName + " has been muted!");
-                                                    Console.WriteLine(@"    " + Globals.Clients[i].Entity.MyName + " has been muted!");
-                                                    userFound = true;
-                                                    break;
-                                                }
-                                            }
-                                        }
-                                        if (userFound == false) { Console.WriteLine(@"    User not online!"); }
-                                        break;
-                                }
-                            }
-                            break;
-                        case "power":
-                            if (commandsplit.Length > 1)
-                            {
-                                switch (commandsplit[1])
-                                {
-                                    case "/?":
-                                        Console.WriteLine(@"    Usage: power [username] [level] [/?]");
-                                        Console.WriteLine(
-                                            @"    Desc: Sets the power or access of a selected account. Power 0 is regular user. Power 1 is in-game moderator. Power 2 is owner/designer and allows editor access.");
-                                        break;
-                                    default:
-                                        //Try to admin the player
-                                        if (commandsplit.Length > 2)
-                                        {
-                                            for (int i = 0; i < Globals.Clients.Count; i++)
-                                            {
-                                                if (Globals.Clients[i] != null && Globals.Clients[i].Entity != null)
-                                                {
-                                                    string user = Globals.Clients[i].Entity.MyName.ToLower();
-                                                    if (user == commandsplit[1].ToLower())
-                                                    {
-                                                        Database.SetPlayerPower(commandsplit[1],
-                                                            Int32.Parse(commandsplit[2]));
-                                                        PacketSender.SendEntityDataToProximity(Globals.Clients[i].Entity);
-                                                        if (Globals.Clients[i].Power > 0)
-                                                        {
-                                                            PacketSender.SendGlobalMsg(
-                                                                Globals.Clients[i].Entity.MyName +
-                                                                " has been given administrative powers!");
-                                                        }
-                                                        else
-                                                        {
-                                                            PacketSender.SendGlobalMsg(
-                                                                Globals.Clients[i].Entity.MyName +
-                                                                " has had their administrative poweres revoked!");
-                                                        }
-                                                        Console.WriteLine(@"    " + Globals.Clients[i].Entity.MyName +
-                                                                          " has had their power updated!");
 
-                                                        userFound = true;
-                                                        break;
-                                                    }
-                                                }
-                                            }
-                                        }
-                                        if (userFound == false) { Console.WriteLine(@"    User not online!"); }
-                                        break;
-                                }
+                    if (commandsplit[0] == Strings.Get("commands", "announcement")) //Announcement Command
+                    {
+                        if (commandsplit.Length > 1)
+                        {
+                            if (commandsplit[1] == Strings.Get("commands", "commandinfo"))
+                            {
+                                Console.WriteLine(@"    " +
+                                                  Strings.Get("commands", "announcementusage",
+                                                      Strings.Get("commands", "commandinfo")));
+                                Console.WriteLine(@"    " + Strings.Get("commands", "announcementdesc"));
                             }
                             else
                             {
-                                Console.WriteLine(@"    Syntax Error: Expected parameter not found. Type " + commandsplit[0] +
-                                                  " /? for usage information.");
+                                PacketSender.SendGlobalMsg(command.Remove(0, 12));
                             }
-                            break;
-                        case "poweracc":
-                            if (commandsplit.Length > 1)
+                        }
+                        else
+                        {
+                            Console.WriteLine(Strings.Get("commandoutput", "invalidparameters", Strings.Get("commands", "commandinfo")));
+                        }
+                    }
+                    else if (commandsplit[0] == Strings.Get("commands", "onlinelist")) //Online List Command
+                    {
+                        Console.WriteLine(String.Format("{0,-10}", Strings.Get("commandoutput", "listid")) + String.Format("{0,-28}", Strings.Get("commandoutput", "listaccount")) + String.Format("{0,-28}", Strings.Get("commandoutput", "listcharacter")));
+                        Console.WriteLine(new String('-', 66));
+                        for (int i = 0; i < Globals.Clients.Count; i++)
+                        {
+                            if (Globals.Clients[i] != null)
                             {
-                                switch (commandsplit[1])
+                                var name = Globals.Clients[i].Entity != null ? Globals.Clients[i].Entity.MyName : "";
+                                Console.WriteLine(String.Format("{0,-10}", "#" + i) +
+                                                  String.Format("{0,-28}", Globals.Clients[i].MyAccount) +
+                                                  String.Format("{0,-28}", name));
+                            }
+                        }
+                    }
+                    else if (commandsplit[0] == Strings.Get("commands", "kill")) //Kill Command
+                    {
+                        if (commandsplit.Length > 1)
+                        {
+                            if (commandsplit[1] == Strings.Get("commands", "commandinfo"))
+                            {
+                                Console.WriteLine(@"    " +
+                                                  Strings.Get("commands", "killusage",
+                                                      Strings.Get("commands", "commandinfo")));
+                                Console.WriteLine(@"    " + Strings.Get("commands", "killdesc"));
+                            }
+                            else
+                            {
+                                for (int i = 0; i < Globals.Clients.Count; i++)
                                 {
-                                    case "/?":
-                                        Console.WriteLine(@"    Usage: power [login] [level] [/?]");
-                                        Console.WriteLine(
-                                            @"    Desc: Sets the power or access of a selected account. Power 0 is regular user. Power 1 is in-game moderator. Power 2 is owner/designer and allows editor access.");
-                                        break;
-                                    default:
-                                        //Try to admin the player
-                                        if (commandsplit.Length > 2)
+                                    if (Globals.Clients[i] != null && Globals.Clients[i].Entity != null)
+                                    {
+                                        string user = Globals.Clients[i].Entity.MyName.ToLower();
+                                        if (user == commandsplit[1].ToLower())
                                         {
-                                            try
+                                            Globals.Clients[i].Entity.Die();
+                                            PacketSender.SendGlobalMsg(@"    " +
+                                                                       Strings.Get("player", "serverkilled",
+                                                                           Globals.Clients[i].Entity.MyName));
+                                            Console.WriteLine(@"    " +
+                                                              Strings.Get("commandoutput", "killsuccess",
+                                                                  Globals.Clients[i].Entity.MyName));
+                                            userFound = true;
+                                            break;
+                                        }
+                                    }
+                                }
+                                if (userFound == false)
+                                {
+                                    Console.WriteLine(@"    " + Strings.Get("player", "offline"));
+                                }
+                            }
+                        }
+                        else
+                        {
+                            Console.WriteLine(Strings.Get("commandoutput", "invalidparameters", Strings.Get("commands", "commandinfo")));
+                        }
+                    }
+                    else if (commandsplit[0] == Strings.Get("commands", "kick")) //Kick Command
+                    {
+                        if (commandsplit.Length > 1)
+                        {
+                            if (commandsplit[1] == Strings.Get("commands", "commandinfo"))
+                            {
+                                Console.WriteLine(@"    " +
+                                                  Strings.Get("commands", "kickusage",
+                                                      Strings.Get("commands", "commandinfo")));
+                                Console.WriteLine(@"    " + Strings.Get("commands", "kickdesc"));
+                            }
+                            else
+                            {
+                                for (int i = 0; i < Globals.Clients.Count; i++)
+                                {
+                                    string user = Globals.Clients[i].Entity.MyName.ToLower();
+                                    if (user == commandsplit[1].ToLower())
+                                    {
+                                        PacketSender.SendGlobalMsg(Strings.Get("player", "serverkicked",
+                                            Globals.Clients[i].Entity.MyName));
+                                        Console.WriteLine(@"    " +
+                                                          Strings.Get("player", "serverkicked",
+                                                              Globals.Clients[i].Entity.MyName));
+                                        Globals.Clients[i].Disconnect(); //Kick em'
+                                        userFound = true;
+                                        break;
+                                    }
+                                }
+                                if (userFound == false)
+                                {
+                                    Console.WriteLine(@"    " + Strings.Get("player", "offline"));
+                                }
+                            }
+                        }
+                        else
+                        {
+                            Console.WriteLine(Strings.Get("commandoutput", "invalidparameters", Strings.Get("commands", "commandinfo")));
+                        }
+                    }
+                    else if (commandsplit[0] == Strings.Get("commands", "unban")) //Unban Command
+                    {
+                        if (commandsplit.Length > 1)
+                        {
+                            if (commandsplit[1] == Strings.Get("commands", "commandinfo"))
+                            {
+                                Console.WriteLine(@"    " +
+                                                  Strings.Get("commands", "unbanusage",
+                                                      Strings.Get("commands", "commandinfo")));
+                                Console.WriteLine(@"    " + Strings.Get("commands", "unbandesc"));
+                            }
+                            else
+                            {
+                                if (Database.AccountExists(commandsplit[1]))
+                                {
+                                    Database.DeleteBan(commandsplit[1]);
+                                    Console.WriteLine(@"    " + Strings.Get("account", "unbanned", commandsplit[1]));
+                                }
+                                else
+                                {
+                                    Console.WriteLine("    " + Strings.Get("account", "notfound", commandsplit[1]));
+                                }
+                            }
+                        }
+                        else
+                        {
+                            Console.WriteLine(Strings.Get("commandoutput", "invalidparameters", Strings.Get("commands", "commandinfo")));
+                        }
+                    }
+                    else if (commandsplit[0] == Strings.Get("commands", "ban")) //Ban Command
+                    {
+                        if (commandsplit.Length > 1)
+                        {
+                            if (commandsplit[1] == Strings.Get("commands", "commandinfo"))
+                            {
+                                Console.WriteLine(@"    " +
+                                                  Strings.Get("commands", "banusage",
+                                                      Strings.Get("commands", "commandinfo")));
+                                Console.WriteLine(@"    " + Strings.Get("commands", "bandesc"));
+                            }
+                            else
+                            {
+                                if (commandsplit.Length > 3)
+                                {
+                                    for (int i = 0; i < Globals.Clients.Count; i++)
+                                    {
+                                        string user = Globals.Clients[i].Entity.MyName.ToLower();
+                                        if (user == commandsplit[1].ToLower())
+                                        {
+                                            string reason = "";
+                                            for (int n = 4; n < commandsplit.Length; n++)
                                             {
-                                                if (Database.AccountExists(commandsplit[1]))
+                                                reason += commandsplit[n] + " ";
+                                            }
+                                            if (Convert.ToBoolean(commandsplit[3]))
+                                            {
+                                                ip = Globals.Clients[i].GetIP();
+                                            }
+                                            Database.AddBan(Globals.Clients[i], Convert.ToInt32(commandsplit[2]), reason,
+                                                Strings.Get("commands","banuser"), ip);
+                                            PacketSender.SendGlobalMsg(Strings.Get("account", "banned",Globals.Clients[i].Entity.MyName));
+                                            Console.WriteLine(@"    " + Strings.Get("account", "banned", Globals.Clients[i].Entity.MyName));
+                                            Globals.Clients[i].Disconnect(); //Kick em'
+                                            userFound = true;
+                                            break;
+                                        }
+                                    }
+                                    if (userFound == false)
+                                    {
+                                        Console.WriteLine(@"    " + Strings.Get("player", "offline"));
+                                    }
+                                }
+                                else
+                                {
+                                    Console.WriteLine(Strings.Get("commandoutput", "invalidparameters",
+                                        Strings.Get("commands", "commandinfo")));
+                                }
+                            }
+                        }
+                        else
+                        {
+                            Console.WriteLine(Strings.Get("commandoutput", "invalidparameters", Strings.Get("commands", "commandinfo")));
+                        }
+                    }
+                    else if (commandsplit[0] == Strings.Get("commands", "unmute")) //Unmute Command
+                    {
+                        if (commandsplit.Length > 1)
+                        {
+                            if (commandsplit[1] == Strings.Get("commands", "commandinfo"))
+                            {
+                                Console.WriteLine(@"    " +
+                                                  Strings.Get("commands", "unmuteusage",
+                                                      Strings.Get("commands", "commandinfo")));
+                                Console.WriteLine(@"    " + Strings.Get("commands", "unmutedesc"));
+                            }
+                            else
+                            {
+                                for (int i = 0; i < Globals.Clients.Count; i++)
+                                {
+                                    string user = Globals.Clients[i].Entity.MyName.ToLower();
+                                    if (user == commandsplit[1].ToLower())
+                                    {
+                                        Database.DeleteMute(Globals.Clients[i].MyAccount);
+                                        Globals.Clients[i].Muted = false;
+                                        Globals.Clients[i].MuteReason = "";
+                                        PacketSender.SendGlobalMsg(Strings.Get("account","unmuted", Globals.Clients[i].Entity.MyName));
+                                        Console.WriteLine(@"    " + Strings.Get("account", "unmuted", Globals.Clients[i].Entity.MyName));
+                                        userFound = true;
+                                        break;
+                                    }
+                                }
+                                if (userFound == false)
+                                {
+                                    Console.WriteLine(@"    " + Strings.Get("player", "offline"));
+                                }
+                            }
+                        }
+                        else
+                        {
+                            Console.WriteLine(Strings.Get("commandoutput", "invalidparameters", Strings.Get("commands", "commandinfo")));
+                        }
+                    }
+                    else if (commandsplit[0] == Strings.Get("commands", "mute")) //Mute Command
+                    {
+                        if (commandsplit.Length > 1)
+                        {
+                            if (commandsplit[1] == Strings.Get("commands", "commandinfo"))
+                            {
+                                Console.WriteLine(@"    " +
+                                                  Strings.Get("commands", "muteusage",
+                                                      Strings.Get("commands", "commandinfo")));
+                                Console.WriteLine(@"    " + Strings.Get("commands", "mutedesc"));
+                            }
+                            else
+                            {
+                                if (commandsplit.Length > 3)
+                                {
+                                    for (int i = 0; i < Globals.Clients.Count; i++)
+                                    {
+                                        string user = Globals.Clients[i].Entity.MyName.ToLower();
+                                        if (user == commandsplit[1].ToLower())
+                                        {
+                                            string reason = "";
+                                            for (int n = 4; n < commandsplit.Length; n++)
+                                            {
+                                                reason += commandsplit[n] + " ";
+                                            }
+                                            if (Convert.ToBoolean(commandsplit[3]))
+                                            {
+                                                ip = Globals.Clients[i].GetIP();
+                                            }
+                                            Database.AddMute(Globals.Clients[i], Convert.ToInt32(commandsplit[2]), reason, Strings.Get("commands","muteuser"), ip);
+                                            Globals.Clients[i].Muted = true; //Cut out their tongues!
+                                            Globals.Clients[i].MuteReason = Database.CheckMute(Globals.Clients[i].MyAccount, Globals.Clients[i].GetIP());
+                                            PacketSender.SendGlobalMsg(Strings.Get("account", "muted", Globals.Clients[i].Entity.MyName));
+                                            Console.WriteLine(@"    " + Strings.Get("account", "muted", Globals.Clients[i].Entity.MyName));
+                                            userFound = true;
+                                            break;
+                                        }
+                                    }
+                                    if (userFound == false)
+                                    {
+                                        Console.WriteLine(@"    " + Strings.Get("player", "offline"));
+                                    }
+                                }
+                                else
+                                {
+                                    Console.WriteLine(Strings.Get("commandoutput", "invalidparameters",
+                                        Strings.Get("commands", "commandinfo")));
+                                }
+                            }
+                        }
+                        else
+                        {
+                            Console.WriteLine(Strings.Get("commandoutput", "invalidparameters", Strings.Get("commands", "commandinfo")));
+                        }
+                    }
+                    else if (commandsplit[0] == Strings.Get("commands", "power")) //Power Command
+                    {
+                        if (commandsplit.Length > 1)
+                        {
+                            if (commandsplit[1] == Strings.Get("commands", "commandinfo"))
+                            {
+                                Console.WriteLine(@"    " +
+                                                  Strings.Get("commands", "powerusage",
+                                                      Strings.Get("commands", "commandinfo")));
+                                Console.WriteLine(@"    " + Strings.Get("commands", "powerdesc"));
+                            }
+                            else
+                            {
+                                if (commandsplit.Length > 2)
+                                {
+                                    for (int i = 0; i < Globals.Clients.Count; i++)
+                                    {
+                                        if (Globals.Clients[i] != null && Globals.Clients[i].Entity != null)
+                                        {
+                                            string user = Globals.Clients[i].Entity.MyName.ToLower();
+                                            if (user == commandsplit[1].ToLower())
+                                            {
+                                                Database.SetPlayerPower(commandsplit[1],
+                                                    Int32.Parse(commandsplit[2]));
+                                                PacketSender.SendEntityDataToProximity(Globals.Clients[i].Entity);
+                                                if (Globals.Clients[i].Power > 0)
                                                 {
-                                                    Database.SetPlayerPower(commandsplit[1], Int32.Parse(commandsplit[2]));
+                                                    PacketSender.SendGlobalMsg(Strings.Get("player", "admin",
+                                                        Globals.Clients[i].Entity.MyName));
                                                 }
                                                 else
                                                 {
-                                                    Console.WriteLine("    Error: Account " + commandsplit[1] +
-                                                                      " was not found!");
+                                                    PacketSender.SendGlobalMsg(Strings.Get("player", "deadmin",
+                                                        Globals.Clients[i].Entity.MyName));
                                                 }
+                                                Console.WriteLine(@"    " +  Strings.Get("commandoutput","powerchanged", Globals.Clients[i].Entity.MyName));
+
+                                                userFound = true;
+                                                break;
                                             }
-                                            catch (Exception)
+                                        }
+                                    }
+                                    if (userFound == false)
+                                    {
+                                        Console.WriteLine(@"    " + Strings.Get("player", "offline"));
+                                    }
+                                }
+                                else
+                                {
+                                    Console.WriteLine(Strings.Get("commandoutput", "invalidparameters",
+                                        Strings.Get("commands", "commandinfo")));
+                                }
+                            }
+                        }
+                        else
+                        {
+                            Console.WriteLine(Strings.Get("commandoutput", "invalidparameters", Strings.Get("commands", "commandinfo")));
+                        }
+                    }
+                    else if (commandsplit[0] == Strings.Get("commands", "poweracc")) //Power Account Command
+                    {
+                        if (commandsplit.Length > 1)
+                        {
+                            if (commandsplit[1] == Strings.Get("commands", "commandinfo"))
+                            {
+                                Console.WriteLine(@"    " +
+                                                  Strings.Get("commands", "poweraccusage",
+                                                      Strings.Get("commands", "commandinfo")));
+                                Console.WriteLine(@"    " + Strings.Get("commands", "poweraccdesc"));
+                            }
+                            else
+                            {
+                                if (commandsplit.Length > 2)
+                                {
+                                    if (commandsplit.Length > 2)
+                                    {
+                                        try
+                                        {
+                                            if (Database.AccountExists(commandsplit[1]))
                                             {
-                                                Console.WriteLine(@"    Parse Error: Parameter could not be read. Type " +
-                                                                  commandsplit[0] + " /? for usage information.");
+                                                Database.SetPlayerPower(commandsplit[1], Int32.Parse(commandsplit[2]));
+                                                Console.WriteLine(@"    " + Strings.Get("commandoutput", "powerchanged", commandsplit[1]));
+                                            }
+                                            else
+                                            {
+                                                Console.WriteLine(@"    " + Strings.Get("account","notfound", commandsplit[1]));
                                             }
                                         }
-                                        else
+                                        catch (Exception)
                                         {
-                                            Console.WriteLine(@"    Syntax Error: Expected parameter not found. Type " +
-                                                              commandsplit[0] + " /? for usage information.");
+                                            Console.WriteLine(@"    " + Strings.Get("commandoutput","parseerror", commandsplit[0], Strings.Get("commands", "commandinfo")));
                                         }
-                                        break;
+                                    }
+                                    else
+                                    {
+                                        Console.WriteLine(@"    " + Strings.Get("commandoutput", "syntaxerror", commandsplit[0], Strings.Get("commands", "commandinfo")));
+                                    }
                                 }
-                            }
-                            else
-                            {
-                                Console.WriteLine(@"    Syntax Error: Expected parameter not found. Type " + commandsplit[0] +
-                                                  " /? for usage information.");
-                            }
-                            break;
-                        case "cps":
-                            if (commandsplit.Length > 1)
-                            {
-                                switch (commandsplit[1])
+                                else
                                 {
-                                    case "/?":
-                                        Console.WriteLine(@"    Usage: cps [status] [lock] [unlock] [/?]");
-                                        Console.WriteLine(
-                                            @"    Desc: Prints the current CPS. The status flag tells if the server loop is locked or unlocked. The lock flag locks the cps while the unlock flag unlocks it.");
-                                        break;
-                                    case "lock":
-                                        Globals.CPSLock = true;
-                                        break;
-                                    case "unlock":
-                                        Globals.CPSLock = false;
-                                        break;
-                                    case "status":
-                                        if (Globals.CPSLock)
-                                        {
-                                            Console.WriteLine(@"CPS Locked.");
-                                        }
-                                        else
-                                        {
-                                            Console.WriteLine(@"CPS Unlocked.");
-                                        }
-                                        break;
-                                    default:
-                                        //Try to admin the player
-                                        break;
+                                    Console.WriteLine(Strings.Get("commandoutput", "invalidparameters",
+                                        Strings.Get("commands", "commandinfo")));
                                 }
                             }
-                            else
+                        }
+                        else
+                        {
+                            Console.WriteLine(Strings.Get("commandoutput", "invalidparameters", Strings.Get("commands", "commandinfo")));
+                        }
+                    }
+                    else if (commandsplit[0] == Strings.Get("commands", "cps")) //CPS Command
+                    {
+                        if (commandsplit.Length > 1)
+                        {
+                            if (commandsplit[1] == Strings.Get("commands", "commandinfo"))
                             {
-                                Console.WriteLine("Current CPS: " + Globals.CPS);
+                                Console.WriteLine(@"    " +
+                                                  Strings.Get("commands", "cpsusage",
+                                                      Strings.Get("commands", "commandinfo")));
+                                Console.WriteLine(@"    " + Strings.Get("commands", "cpsdesc"));
                             }
-                            break;
-                        case "exit":
-                            if (commandsplit.Length > 1)
+                            else if (commandsplit[1] == Strings.Get("commands", "cpslock"))
                             {
-                                switch (commandsplit[1])
+                                Globals.CPSLock = true;
+                            }
+                            else if (commandsplit[1] == Strings.Get("commands", "cpsunlock"))
+                            {
+                                Globals.CPSLock = false;
+                            }
+                            else if (commandsplit[1] == Strings.Get("commands", "cpsstatus"))
+                            {
+                                if (Globals.CPSLock)
                                 {
-                                    case "/?":
-                                        Console.WriteLine(@"    Usage: exit [/?]");
-                                        Console.WriteLine(@"    Desc: Closes down the server.");
-                                        break;
-                                    default:
-                                        Console.WriteLine(@"    Syntax Error: Parameter not recoginized. Type " +
-                                                          commandsplit[0] + " /? for usage information.");
-                                        break;
+                                    Console.WriteLine(Strings.Get("commandoutput","cpslocked"));
                                 }
-                            }
-                            else
-                            {
-                                Globals.ServerStarted = false;
-                                return;
-                            }
-                            break;
-                        case "help":
-                            if (commandsplit.Length > 1)
-                            {
-                                switch (commandsplit[1])
+                                else
                                 {
-                                    case "/?":
-                                        Console.WriteLine(@"    Usage: help [/?]");
-                                        Console.WriteLine(@"    Desc: Displays the list of available commands.");
-                                        break;
-                                    default:
-                                        Console.WriteLine(@"    Syntax Error: Parameter not recoginized. Type " +
-                                                          commandsplit[0] + " /? for usage information.");
-                                        break;
+                                    Console.WriteLine(Strings.Get("commandoutput","cpsunlocked"));
                                 }
                             }
                             else
                             {
-                                Console.WriteLine(@"    List of available commands:");
-                                Console.WriteLine(@"    cps          - prints the current server cps");
-                                Console.WriteLine(@"    exit         - closes the server");
-                                Console.WriteLine(@"    help         - displays list of available commands");
-                                Console.WriteLine(@"    power        - sets the administrative access of a user");
-                                Console.WriteLine(@"    poweracc     - sets the administrative access of an account");
-                                Console.WriteLine(@"    announcement - sends a global message to all players");
-                                Console.WriteLine(@"    onlinelist   - shows all players online");
-                                Console.WriteLine(@"    kick         - kicks a player from the server");
-                                Console.WriteLine(@"    ban          - bans a player from the server");
-                                Console.WriteLine(@"    mute         - mutes a player preventing them from talking");
-                                Console.WriteLine(@"    unban        - unbans a player from the server");
-                                Console.WriteLine(@"    unmute       - unmutes a player allowing them to talk");
-                                Console.WriteLine(@"    kill         - kills a player on the server");
-                                Console.WriteLine(
-                                    @"    Type in any command followed by /? for parameters and usage information.");
+                                Console.WriteLine(Strings.Get("commandoutput", "invalidparameters",
+                                        Strings.Get("commands", "commandinfo")));
                             }
-                            break;
-                        default:
-                            Console.WriteLine("    Command not recoginized. Enter help for a list of commands.");
-                            break;
+                        }
+                        else
+                        {
+                            Console.WriteLine(Strings.Get("commandoutput","cps",Globals.CPS));
+                        }
+                    }
+                    else if (commandsplit[0] == Strings.Get("commands", "exit")) //Exit Command
+                    {
+                        if (commandsplit.Length > 1)
+                        {
+                            if (commandsplit[1] == Strings.Get("commands", "commandinfo"))
+                            {
+                                Console.WriteLine(@"    " +
+                                                  Strings.Get("commands", "exitusage",
+                                                      Strings.Get("commands", "commandinfo")));
+                                Console.WriteLine(@"    " + Strings.Get("commands", "exitdesc"));
+                            }
+                            else
+                            {
+                                Console.WriteLine(Strings.Get("commandoutput", "invalidparameters",
+                                        Strings.Get("commands", "commandinfo")));
+                            }
+                        }
+                        else
+                        {
+                            Globals.ServerStarted = false;
+                            return;
+                        }
+                    }
+                    else if (commandsplit[0] == Strings.Get("commands", "help")) //Help Command
+                    {
+                        if (commandsplit.Length > 1)
+                        {
+                            if (commandsplit[1] == Strings.Get("commands", "commandinfo"))
+                            {
+                                Console.WriteLine(@"    " +
+                                                  Strings.Get("commands", "helpusage",
+                                                      Strings.Get("commands", "commandinfo")));
+                                Console.WriteLine(@"    " + Strings.Get("commands", "helpdesc"));
+                            }
+                            else
+                            {
+                                Console.WriteLine(Strings.Get("commandoutput", "invalidparameters",
+                                        Strings.Get("commands", "commandinfo")));
+                            }
+                        }
+                        else
+                        {
+                            Console.WriteLine(@"    " + Strings.Get("commandoutput","helpheader"));
+                            Console.WriteLine(@"    " + String.Format("{0,-20}", Strings.Get("commands", "help")) + " - " + Strings.Get("commands", "helphelp"));
+                            Console.WriteLine(@"    " + String.Format("{0,-20}", Strings.Get("commands", "exit")) + " - " + Strings.Get("commands", "exithelp"));
+                            Console.WriteLine(@"    " + String.Format("{0,-20}", Strings.Get("commands", "announcement")) + " - " + Strings.Get("commands", "announcementhelp"));
+                            Console.WriteLine(@"    " + String.Format("{0,-20}", Strings.Get("commands", "cps")) + " - " + Strings.Get("commands", "cpshelp"));
+                            Console.WriteLine(@"    " + String.Format("{0,-20}", Strings.Get("commands", "power")) + " - " + Strings.Get("commands", "powerhelp"));
+                            Console.WriteLine(@"    " + String.Format("{0,-20}", Strings.Get("commands", "poweracc")) + " - " + Strings.Get("commands", "poweracchelp"));
+                            Console.WriteLine(@"    " + String.Format("{0,-20}", Strings.Get("commands", "onlinelist")) + " - " + Strings.Get("commands", "onlinelisthelp"));
+                            Console.WriteLine(@"    " + String.Format("{0,-20}", Strings.Get("commands", "kick")) + " - " + Strings.Get("commands", "kickhelp"));
+                            Console.WriteLine(@"    " + String.Format("{0,-20}", Strings.Get("commands", "ban")) + " - " + Strings.Get("commands", "banhelp"));
+                            Console.WriteLine(@"    " + String.Format("{0,-20}", Strings.Get("commands", "unban")) + " - " + Strings.Get("commands", "unbanhelp"));
+                            Console.WriteLine(@"    " + String.Format("{0,-20}", Strings.Get("commands", "mute")) + " - " + Strings.Get("commands", "mutehelp"));
+                            Console.WriteLine(@"    " + String.Format("{0,-20}", Strings.Get("commands", "unmute")) + " - " + Strings.Get("commands", "unmutehelp"));
+                            Console.WriteLine(@"    " + String.Format("{0,-20}", Strings.Get("commands", "kill")) + " - " + Strings.Get("commands", "killhelp"));
+                            Console.WriteLine(@"    " + Strings.Get("commandoutput","helpfooter", Strings.Get("commands", "commandinfo")));
+                        }
+                    }
+                    else {
+                        Console.WriteLine(@"    " + Strings.Get("commandoutput","notfound"));
                     }
                     Console.Write("> ");
-                    command = Console.ReadLine();
-                }
+                command = Console.ReadLine();
             }
-        }
-
-        //Really basic error handler for debugging purposes
-        public static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
-        {
-            if (!Directory.Exists("resources")) Directory.CreateDirectory("resources");
-            using (StreamWriter writer = new StreamWriter("resources/errors.log", true))
-            {
-                writer.WriteLine("Message :" + ((Exception)e.ExceptionObject).Message + "<br/>" + Environment.NewLine +
-                                 "StackTrace :" + ((Exception)e.ExceptionObject).StackTrace +
-                                 "" + Environment.NewLine + "Date :" + DateTime.Now.ToString());
-                writer.WriteLine(Environment.NewLine +
-                                 "-----------------------------------------------------------------------------" +
-                                 Environment.NewLine);
-            }
-            if (e.IsTerminating)
-            {
-                Console.WriteLine("The Intersect server has encountered an error and must close. Error information can be found in resources/errors.log. Press any key to exit.");
-                Console.ReadKey();
-                Environment.Exit(-1);
-            }
-            else
-            {
-                Console.WriteLine("An error was logged into errors.log");
-            }
-
         }
     }
+
+    //Really basic error handler for debugging purposes
+    public static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
+    {
+        if (!Directory.Exists("resources")) Directory.CreateDirectory("resources");
+        using (StreamWriter writer = new StreamWriter("resources/errors.log", true))
+        {
+            writer.WriteLine("Message :" + ((Exception)e.ExceptionObject).Message + "<br/>" + Environment.NewLine +
+                             "StackTrace :" + ((Exception)e.ExceptionObject).StackTrace +
+                             "" + Environment.NewLine + "Date :" + DateTime.Now.ToString());
+            writer.WriteLine(Environment.NewLine +
+                             "-----------------------------------------------------------------------------" +
+                             Environment.NewLine);
+        }
+        if (e.IsTerminating)
+        {
+            Console.WriteLine("The Intersect server has encountered an error and must close. Error information can be found in resources/errors.log. Press any key to exit.");
+            Console.ReadKey();
+            Environment.Exit(-1);
+        }
+        else
+        {
+            Console.WriteLine("An error was logged into errors.log");
+        }
+
+    }
+}
 }
