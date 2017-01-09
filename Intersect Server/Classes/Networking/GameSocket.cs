@@ -132,7 +132,6 @@ namespace Intersect_Server.Classes.Networking
             {
                 try
                 {
-                    Globals.GeneralLogs.Add(Strings.Get("networking","disconnected"));
                     if (_myClient.Entity != null)
                     {
                        var en = _myClient.Entity;

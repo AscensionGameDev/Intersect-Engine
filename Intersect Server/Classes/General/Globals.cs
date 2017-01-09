@@ -34,7 +34,6 @@ namespace Intersect_Server.Classes.General
 	{
 
         //Console Variables
-        public static List<string> GeneralLogs = new List<string>();
         public static long CPS = 0;
         public static Boolean CPSLock = true;
         public static bool ServerStarted = true;

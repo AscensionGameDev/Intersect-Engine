@@ -54,7 +54,6 @@ namespace Intersect_Server.Classes.Networking
             }
             catch (Exception)
             {
-                Globals.GeneralLogs.Add("Socket end read error.");
                 HandleDisconnect();
             }
         }
@@ -67,7 +66,6 @@ namespace Intersect_Server.Classes.Networking
                 var readbytes = _myStream.EndRead(ar);
                 if (readbytes <= 0)
                 {
-                    Globals.GeneralLogs.Add("No bytes read, disconnecting.");
                     HandleDisconnect();
                     return;
                 }
@@ -87,7 +85,6 @@ namespace Intersect_Server.Classes.Networking
             }
             catch (System.IO.IOException)
             {
-                Globals.GeneralLogs.Add("Socket end read error.");
                 HandleDisconnect();
             }
             catch (Exception ex)

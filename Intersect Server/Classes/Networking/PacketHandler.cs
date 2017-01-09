@@ -248,7 +248,6 @@ namespace Intersect_Server.Classes.Networking
                     HandleEnterMap(client, packet);
                     break;
                 default:
-                    Globals.GeneralLogs.Add(@"Non implemented packet received: " + packetHeader);
                     break;
             }
         }
@@ -301,7 +300,6 @@ namespace Intersect_Server.Classes.Networking
 
                             Globals.Entities[index] = new Player(index, client);
                             client.Entity = (Player)Globals.Entities[index];
-                            Globals.GeneralLogs.Add(client.MyAccount + " logged in.");
                             PacketSender.SendServerConfig(client);
                             if (Database.LoadCharacter(client))
                             {
@@ -837,7 +835,6 @@ namespace Intersect_Server.Classes.Networking
                 else
                 {
                     Database.CreateAccount(client, username, password, email);
-                    Globals.GeneralLogs.Add(Globals.Entities[index].MyName + " logged in.");
                     PacketSender.SendServerConfig(client);
                     PacketSender.SendGameObjects(client, GameObject.Class);
                     PacketSender.SendCreateCharacter(client);
@@ -905,7 +902,6 @@ namespace Intersect_Server.Classes.Networking
                     player.TryGiveItem(TempItem, false);
                 }
                 Task.Run(() => Database.SaveCharacter(client.Entity, true));
-                Globals.GeneralLogs.Add(client.MyAccount + " has created a character.");
             }
             bf.Dispose();
         }

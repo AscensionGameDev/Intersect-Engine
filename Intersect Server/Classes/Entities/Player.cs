@@ -480,7 +480,6 @@ namespace Intersect_Server.Classes.Entities
             var map = MapInstance.GetMap(newMap);
             if (map == null)
             {
-                Globals.GeneralLogs.Add(Strings.Get("errors","warpfail"));
                 WarpToSpawn();
                 return;
             }
