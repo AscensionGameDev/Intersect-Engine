@@ -27,7 +27,6 @@ namespace Intersect_Client_MonoGame
     public class Intersect : Game
     {
         GraphicsDeviceManager graphics;
-
         public Intersect()
         {
             //Setup an error handler
@@ -46,9 +45,12 @@ namespace Intersect_Client_MonoGame
             Gui.GwenRenderer = new IntersectRenderer(null, GameGraphics.Renderer);
             Gui.GwenInput = new IntersectInput();
 
-            //We remove the border and add it back in draw to the window size will be forced to update.
-            //This is to bypass a MonoGame issue where the client viewport was not updating until the window was dragged.
-            Window.IsBorderless = true;
+            Window.IsBorderless = false;
+        }
+
+        private void Window_ClientSizeChanged(object sender, EventArgs e)
+        {
+            GameGraphics.Renderer.Init();
         }
 
         //Really basic error handler for debugging purposes
@@ -79,6 +81,7 @@ namespace Intersect_Client_MonoGame
         {
             //Setup SFML Classes
             ((MonoRenderer)GameGraphics.Renderer).Init(GraphicsDevice);
+            Window.ClientSizeChanged += Window_ClientSizeChanged;
             GameNetwork.MySocket = new MonoSocket();
 
             GameMain.Start();
@@ -108,10 +111,7 @@ namespace Intersect_Client_MonoGame
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
-            //We remove the border and add it back in draw to the window size will be forced to update.
-            //This is to bypass a MonoGame issue where the client viewport was not updating until the window was dragged.
-            if (Window.IsBorderless) Window.IsBorderless = false;
-            GraphicsDevice.BlendState = BlendState.NonPremultiplied; ;
+            GraphicsDevice.BlendState = BlendState.NonPremultiplied;
             if (Globals.IsRunning)
             {
                 lock (Globals.GameLock)

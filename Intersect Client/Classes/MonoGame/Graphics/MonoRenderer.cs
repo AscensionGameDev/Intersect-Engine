@@ -69,6 +69,7 @@ namespace Intersect_Client_MonoGame.Classes.SFML.Graphics
 
         private int centerScreenX = 0;
         private int centerScreenY = 0;
+        private bool initing = false;
 
 
         public MonoRenderer(GraphicsDeviceManager graphics, ContentManager contentManager, Game monoGame)
@@ -384,15 +385,23 @@ namespace Intersect_Client_MonoGame.Classes.SFML.Graphics
 
         public override void Init()
         {
-            if (Globals.Database.TargetResolution < 0 || Globals.Database.TargetResolution > GetValidVideoModes().Count)
+            if (!initing)
             {
-                Globals.Database.TargetResolution = 0;
-                Globals.Database.SavePreference("Resolution", Globals.Database.TargetResolution.ToString());
+                initing = true;
+                if (Globals.Database.TargetResolution < 0 ||
+                    Globals.Database.TargetResolution > GetValidVideoModes().Count)
+                {
+                    Globals.Database.TargetResolution = 0;
+                    Globals.Database.SavePreference("Resolution", Globals.Database.TargetResolution.ToString());
+                }
+                int resX =
+                    Convert.ToInt32(GetValidVideoModes()[Globals.Database.TargetResolution].Split("x".ToCharArray())[0]);
+                int resY =
+                    Convert.ToInt32(GetValidVideoModes()[Globals.Database.TargetResolution].Split("x".ToCharArray())[1]);
+                UpdateGraphicsState(resX, resY);
+                if (_whiteTex == null) CreateWhiteTexture();
+                initing = false;
             }
-            int resX = Convert.ToInt32(GetValidVideoModes()[Globals.Database.TargetResolution].Split("x".ToCharArray())[0]);
-            int resY = Convert.ToInt32(GetValidVideoModes()[Globals.Database.TargetResolution].Split("x".ToCharArray())[1]);
-            UpdateGraphicsState(resX, resY);
-            if (_whiteTex == null) CreateWhiteTexture();
         }
 
         public void Init(GraphicsDevice graphicsDevice)
