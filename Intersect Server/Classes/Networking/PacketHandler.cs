@@ -36,6 +36,7 @@ using Attribute = Intersect_Library.GameObjects.Maps.Attribute;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
+using Intersect_Client.Classes.Misc;
 using Intersect_Library.Localization;
 
 namespace Intersect_Server.Classes.Networking
@@ -822,6 +823,16 @@ namespace Intersect_Server.Classes.Networking
             var password = bf.ReadString();
             var email = bf.ReadString();
             var index = client.EntityIndex;
+            if (!FieldChecking.IsValidName(username))
+            {
+                PacketSender.SendLoginError(client, Strings.Get("account", "invalidname"));
+                return;
+            }
+            if (!FieldChecking.IsEmail(email))
+            {
+                PacketSender.SendLoginError(client, Strings.Get("account", "invalidemail"));
+                return;
+            }
             if (Database.AccountExists(username))
             {
                 PacketSender.SendLoginError(client, Strings.Get("account","exists"));
@@ -848,6 +859,11 @@ namespace Intersect_Server.Classes.Networking
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
             var Name = bf.ReadString();
+            if (!FieldChecking.IsValidName(Name))
+            {
+                PacketSender.SendLoginError(client, Strings.Get("account", "invalidname"));
+                return;
+            }
             var Class = bf.ReadInteger();
             var Sprite = bf.ReadInteger();
             var index = client.EntityIndex;

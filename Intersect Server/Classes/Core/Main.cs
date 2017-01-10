@@ -243,7 +243,7 @@ namespace Intersect_Server.Classes
                             {
                                 Console.WriteLine(@"    " +
                                                   Strings.Get("commands", "banusage",
-                                                      Strings.Get("commands", "commandinfo")));
+                                                      Strings.Get("commands", "true"), Strings.Get("commands", "false"), Strings.Get("commands", "commandinfo")));
                                 Console.WriteLine(@"    " + Strings.Get("commands", "bandesc"));
                             }
                             else
@@ -260,7 +260,7 @@ namespace Intersect_Server.Classes
                                             {
                                                 reason += commandsplit[n] + " ";
                                             }
-                                            if (Convert.ToBoolean(commandsplit[3]))
+                                            if (commandsplit[3] == Strings.Get("commands", "true"))
                                             {
                                                 ip = Globals.Clients[i].GetIP();
                                             }
@@ -336,7 +336,7 @@ namespace Intersect_Server.Classes
                             {
                                 Console.WriteLine(@"    " +
                                                   Strings.Get("commands", "muteusage",
-                                                      Strings.Get("commands", "commandinfo")));
+                                                      Strings.Get("commands", "true"), Strings.Get("commands", "false"),Strings.Get("commands", "commandinfo")));
                                 Console.WriteLine(@"    " + Strings.Get("commands", "mutedesc"));
                             }
                             else
@@ -353,7 +353,7 @@ namespace Intersect_Server.Classes
                                             {
                                                 reason += commandsplit[n] + " ";
                                             }
-                                            if (Convert.ToBoolean(commandsplit[3]))
+                                            if (commandsplit[3] == Strings.Get("commands", "true"))
                                             {
                                                 ip = Globals.Clients[i].GetIP();
                                             }

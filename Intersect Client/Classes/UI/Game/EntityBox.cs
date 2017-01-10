@@ -123,7 +123,7 @@ namespace Intersect_Client.Classes.UI.Game
 
                 _hpBar = new ImagePanel(_entityBox);
                 _hpBar.SetSize(183, 25);
-                    _hpBar.Texture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "lifebar.png");
+                _hpBar.Texture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "lifebar.png");
                 _hpBar.SetPosition(117, 32);
                 _hpBar.IsHidden = true;
 

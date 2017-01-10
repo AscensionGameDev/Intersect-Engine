@@ -62,7 +62,6 @@
     <Compile Include="Classes\Items\ItemInstance.cs" />
     <Compile Include="Classes\Maps\MapAnimationInstance.cs" />
     <Compile Include="Classes\Maps\MapInstance.cs" />
-    <Compile Include="Classes\Misc\FieldChecking.cs" />
     <Compile Include="Classes\Misc\MathHelper.cs" />
     <Compile Include="Classes\MonoGame\Audio\MonoMusicInstance.cs" />
     <Compile Include="Classes\MonoGame\Audio\MonoMusicSource.cs" />
