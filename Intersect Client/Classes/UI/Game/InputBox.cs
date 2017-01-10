@@ -33,6 +33,7 @@ using IntersectClientExtras.Gwen.Control.EventArguments;
 using Intersect_Client.Classes.Core;
 using Intersect_Client.Classes.General;
 using IntersectClientExtras.Gwen;
+using Intersect_Library.Localization;
 
 namespace Intersect_Client.Classes.UI.Game
 {
@@ -96,7 +97,7 @@ namespace Intersect_Client.Classes.UI.Game
 
             Button okayBtn =  new Button(_myWindow);
             okayBtn.SetSize(86,41);
-            okayBtn.SetText("Okay");
+            okayBtn.SetText(Strings.Get("inputbox","okay"));
             okayBtn.SetPosition(_myWindow.Width/2 - 188 /2, y);
             okayBtn.Clicked += okayBtn_Clicked; ;
             okayBtn.SetImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "smallbuttonnormal.png"), Button.ControlState.Normal);
@@ -109,7 +110,7 @@ namespace Intersect_Client.Classes.UI.Game
 
             Button cancelBtn = new Button(_myWindow);
             cancelBtn.SetSize(86, 41);
-            cancelBtn.SetText("Cancel");
+            cancelBtn.SetText(Strings.Get("inputbox", "cancel"));
             cancelBtn.SetPosition(_myWindow.Width / 2 - 188 / 2 + 86 + 16, y);
             cancelBtn.Clicked += cancelBtn_Clicked;
             cancelBtn.SetImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "smallbuttonnormal.png"), Button.ControlState.Normal);
@@ -122,8 +123,8 @@ namespace Intersect_Client.Classes.UI.Game
 
             if (!textInput)
             {
-                okayBtn.Text = "Yes";
-                cancelBtn.Text = "No";
+                okayBtn.Text = Strings.Get("inputbox", "yes");
+                cancelBtn.Text = Strings.Get("inputbox", "no");
             }
 
         }

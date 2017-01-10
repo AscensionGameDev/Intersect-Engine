@@ -34,6 +34,7 @@ using Intersect_Client.Classes.General;
 using Intersect_Client.Classes.Networking;
 using Intersect_Library;
 using Intersect_Library.GameObjects.Maps.MapList;
+using Intersect_Library.Localization;
 
 namespace Intersect_Client.Classes.UI.Game
 {
@@ -87,7 +88,7 @@ namespace Intersect_Client.Classes.UI.Game
         //Init
         public AdminWindow(Canvas _gameCanvas)
         {
-            _adminWindow = new WindowControl(_gameCanvas, "Administration");
+            _adminWindow = new WindowControl(_gameCanvas, Strings.Get("admin","title"));
             _adminWindow.SetSize(200, 540);
             _adminWindow.SetPosition(GameGraphics.Renderer.GetScreenWidth() / 2 - _adminWindow.Width / 2, GameGraphics.Renderer.GetScreenHeight() / 2 - _adminWindow.Height / 2);
             _adminWindow.DisableResizing();
@@ -97,39 +98,39 @@ namespace Intersect_Client.Classes.UI.Game
             //Player Mods
             _nameLabel = new Label(_adminWindow);
             _nameLabel.SetPosition(6,4);
-            _nameLabel.Text = "Name:";
+            _nameLabel.Text = Strings.Get("admin", "name");
 
             _nameTextbox = new TextBox(_adminWindow);
             _nameTextbox.SetBounds(6,22,188,18);
             Gui.FocusElements.Add(_nameTextbox);
 
             _warpToMeButton = new Button(_adminWindow);
-            _warpToMeButton.Text = "Warp To Me";
+            _warpToMeButton.Text = Strings.Get("admin", "warp2me");
             _warpToMeButton.SetBounds(6, 44, 80, 18);
             _warpToMeButton.Clicked += _warpToMeButton_Clicked;
 
             _warpMeToButton = new Button(_adminWindow);
-            _warpMeToButton.Text = "Warp Me To";
+            _warpMeToButton.Text = Strings.Get("admin", "warpme2");
             _warpMeToButton.SetBounds(6, 64, 80, 18);
             _warpMeToButton.Clicked += _warpMeToButton_Clicked;
 
             _kickButton = new Button(_adminWindow);
-            _kickButton.Text = "Kick";
+            _kickButton.Text = Strings.Get("admin", "kick");
             _kickButton.SetBounds(90,44,50,18);
             _kickButton.Clicked += _kickButton_Clicked;
 
             _killButton = new Button(_adminWindow);
-            _killButton.Text = "Kill";
+            _killButton.Text = Strings.Get("admin", "kill");
             _killButton.SetBounds(144,44,50,18);
             _killButton.Clicked += _killButton_Clicked;
 
             _banButton = new Button(_adminWindow);
-            _banButton.Text = "Ban";
+            _banButton.Text = Strings.Get("admin", "ban");
             _banButton.SetBounds(90, 64, 50, 18);
             _banButton.Clicked += _banButton_Clicked;
 
             _noclipLabel = new Label(_adminWindow);
-            _noclipLabel.Text = "No Clip:";
+            _noclipLabel.Text = Strings.Get("admin", "noclip");
             _noclipLabel.SetPosition(6, 86);
             _noclipLabel.SetToolTipText("Check to walk through obstacles.");
 
@@ -137,30 +138,30 @@ namespace Intersect_Client.Classes.UI.Game
             _noclipCheckBox.SetPosition(16 + _noclipLabel.Width, 86);
             _noclipCheckBox.IsChecked = Globals.Me.NoClip;
             _noclipCheckBox.CheckChanged += _noclipCheckBox_CheckChanged;
-            _noclipCheckBox.SetToolTipText("Check to walk through obstacles.");
+            _noclipCheckBox.SetToolTipText(Strings.Get("admin", "nocliptip"));
 
             _unbanButton = new Button(_adminWindow);
-            _unbanButton.Text = "Unban";
+            _unbanButton.Text = Strings.Get("admin", "unban");
             _unbanButton.SetBounds(90, 84, 50, 18);
             _unbanButton.Clicked += _unbanButton_Clicked;
 
             _muteButton = new Button(_adminWindow);
-            _muteButton.Text = "Mute";
+            _muteButton.Text = Strings.Get("admin", "mute");
             _muteButton.SetBounds(144, 64, 50, 18);
             _muteButton.Clicked += _muteButton_Clicked;
 
             _unmuteButton = new Button(_adminWindow);
-            _unmuteButton.Text = "Unmute";
+            _unmuteButton.Text = Strings.Get("admin", "unmute");
             _unmuteButton.SetBounds(144, 84, 50, 18);
             _unmuteButton.Clicked += _unmuteButton_Clicked;
 
             _spriteLabel = new Label(_adminWindow);
             _spriteLabel.SetPosition(6, 112);
-            _spriteLabel.Text = "Sprite:";
+            _spriteLabel.Text = Strings.Get("admin", "sprite");
 
             _spriteDropdown = new ComboBox(_adminWindow);
             _spriteDropdown.SetBounds(6, 128, 80, 18);
-            _spriteDropdown.AddItem("None");
+            _spriteDropdown.AddItem(Strings.Get("admin", "none"));
             var sprites = Globals.ContentManager.GetTextureNames(IntersectClientExtras.File_Management.GameContentManager.TextureType.Entity);
             Array.Sort(sprites, new AlphanumComparatorFast());
             foreach (var sprite in sprites)
@@ -170,7 +171,7 @@ namespace Intersect_Client.Classes.UI.Game
             _spriteDropdown.ItemSelected += _spriteDropdown_ItemSelected;
 
             _setSpriteButton = new Button(_adminWindow);
-            _setSpriteButton.Text = "Set Sprite";
+            _setSpriteButton.Text = Strings.Get("admin", "setsprite");
             _setSpriteButton.SetBounds(6, 148, 80, 18);
             _setSpriteButton.Clicked += _setSpriteButton_Clicked;
 
@@ -181,11 +182,11 @@ namespace Intersect_Client.Classes.UI.Game
 
             _faceLabel = new Label(_adminWindow);
             _faceLabel.SetPosition(6, 172);
-            _faceLabel.Text = "Face:";
+            _faceLabel.Text = Strings.Get("admin", "face");
 
             _faceDropdown = new ComboBox(_adminWindow);
             _faceDropdown.SetBounds(6, 188, 80, 18);
-            _faceDropdown.AddItem("None");
+            _faceDropdown.AddItem(Strings.Get("admin", "none"));
             var faces = Globals.ContentManager.GetTextureNames(IntersectClientExtras.File_Management.GameContentManager.TextureType.Face);
             Array.Sort(faces, new AlphanumComparatorFast());
             foreach (var face in faces)
@@ -196,7 +197,7 @@ namespace Intersect_Client.Classes.UI.Game
             
 
             _setFaceButton = new Button(_adminWindow);
-            _setFaceButton.Text = "Set Face";
+            _setFaceButton.Text = Strings.Get("admin", "setface");
             _setFaceButton.SetBounds(6, 208, 80, 18);
             _setFaceButton.Clicked += _setFaceButton_Clicked;
 
@@ -206,31 +207,31 @@ namespace Intersect_Client.Classes.UI.Game
 
             _accessLabel = new Label(_adminWindow);
             _accessLabel.SetPosition(6, 232);
-            _accessLabel.Text = "Access:";
+            _accessLabel.Text = Strings.Get("admin", "access");
 
             _accessDropdown = new ComboBox(_adminWindow);
             _accessDropdown.SetBounds(6, 248, 80, 18);
-            _accessDropdown.AddItem("None");
-            _accessDropdown.AddItem("Moderator");
-            _accessDropdown.AddItem("Admin");
+            _accessDropdown.AddItem(Strings.Get("admin", "access0")).UserData = "None";
+            _accessDropdown.AddItem(Strings.Get("admin", "access1")).UserData = "Moderator";
+            _accessDropdown.AddItem(Strings.Get("admin", "access2")).UserData = "Admin";
 
             _setPowerButton = new Button(_adminWindow);
-            _setPowerButton.Text = "Set Power";
+            _setPowerButton.Text = Strings.Get("admin", "setpower");
             _setPowerButton.SetBounds(6, 268, 80, 18);
             _setPowerButton.Clicked += _setPowerButton_Clicked;
 
             CreateMapList();
             _mapListLabel = new Label(_adminWindow);
-            _mapListLabel.Text = "Map List: ";
+            _mapListLabel.Text = Strings.Get("admin", "maplist");
             _mapListLabel.SetPosition(4f, 294);
 
             _chkChronological = new CheckBox(_adminWindow);
-            _chkChronological.SetToolTipText("Order maps chronologically.");
+            _chkChronological.SetToolTipText(Strings.Get("admin", "chronologicaltip"));
             _chkChronological.SetPosition(_adminWindow.Width - 24, 294);
             _chkChronological.CheckChanged += _chkChronological_CheckChanged;
 
             _lblChronological = new Label(_adminWindow);
-            _lblChronological.Text = "123...";
+            _lblChronological.Text = Strings.Get("admin", "chronological");
             _lblChronological.SetPosition(_chkChronological.X - 30, 294);
 
             UpdateMapList();
@@ -365,7 +366,7 @@ namespace Intersect_Client.Classes.UI.Game
         {
             if (_nameTextbox.Text.Trim().Length > 0)
             {
-                _banMuteWindow = new BanMuteBox("Mute " + _nameTextbox.Text, "Muting " + _nameTextbox.Text + " will not allow them to chat in game for the duration you set!", true, MuteUser);
+                _banMuteWindow = new BanMuteBox(Strings.Get("admin","mutecaption", _nameTextbox.Text), Strings.Get("admin","muteprompt",_nameTextbox.Text), true, MuteUser);
             }
         }
 
@@ -385,7 +386,7 @@ namespace Intersect_Client.Classes.UI.Game
         {
             if (_nameTextbox.Text.Trim().Length > 0 && _nameTextbox.Text.Trim().ToLower() != Globals.Me.MyName.Trim().ToLower())
             {
-                _banMuteWindow = new BanMuteBox("Ban " + _nameTextbox.Text, "Banning " + _nameTextbox.Text + " will not allow them to access this game for the duration you set!", true, BanUser);
+                _banMuteWindow = new BanMuteBox(Strings.Get("admin", "bancaption", _nameTextbox.Text), Strings.Get("admin", "banprompt", _nameTextbox.Text), true, BanUser);
             }
         }
 
@@ -402,7 +403,7 @@ namespace Intersect_Client.Classes.UI.Game
         {
             if (_nameTextbox.Text.Trim().Length > 0)
             {
-                var confirmWindow = new InputBox("UnMute " + _nameTextbox.Text, "Are you sure that you want to un-mute " + _nameTextbox.Text + "?", true, UnmuteUser, null, -1, false);
+                var confirmWindow = new InputBox(Strings.Get("admin", "unmutecaption", _nameTextbox.Text), Strings.Get("admin", "unmuteprompt", _nameTextbox.Text), true, UnmuteUser, null, -1, false);
             }
         }
 
@@ -410,7 +411,7 @@ namespace Intersect_Client.Classes.UI.Game
         {
             if (_nameTextbox.Text.Trim().Length > 0)
             {
-                var confirmWindow = new InputBox("Unban " + _nameTextbox.Text, "Are you sure that you want to unban " + _nameTextbox.Text + "?", true, UnbanUser,null,-1,false);
+                var confirmWindow = new InputBox(Strings.Get("admin", "unbancaption", _nameTextbox.Text), Strings.Get("admin", "unbanprompt", _nameTextbox.Text), true, UnbanUser,null,-1,false);
             }
         }
 
@@ -436,7 +437,7 @@ namespace Intersect_Client.Classes.UI.Game
         {
             if (_nameTextbox.Text.Trim().Length > 0)
             {
-                PacketSender.SendAdminAction((int)AdminActions.SetAccess, _nameTextbox.Text, _accessDropdown.Text);
+                PacketSender.SendAdminAction((int)AdminActions.SetAccess, _nameTextbox.Text, _accessDropdown.UserData.ToString());
             }
         }
 

@@ -64,9 +64,20 @@ namespace Intersect_Library.Properties {
         ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;
         ///&lt;Strings&gt;
         ///	&lt;Main&gt;
-        ///		&lt;string id=&quot;title&quot;&gt;{00}&lt;/String&gt;
+        ///		&lt;string id=&quot;gamename&quot;&gt;Intersect Client&lt;/string&gt;
         ///	&lt;/Main&gt;
-        ///&lt;/Strings&gt;.
+        ///	&lt;Combat&gt;
+        ///		&lt;string id=&quot;exp&quot;&gt;Experience&lt;/string&gt;
+        ///		&lt;string id=&quot;vital0&quot;&gt;Health&lt;/string&gt;
+        ///		&lt;string id=&quot;vital1&quot;&gt;Mana&lt;/string&gt;
+        ///		&lt;string id=&quot;stat0&quot;&gt;Attack&lt;/string&gt;
+        ///		&lt;string id=&quot;stat1&quot;&gt;Ability Power&lt;/string&gt;
+        ///		&lt;string id=&quot;stat2&quot;&gt;Defense&lt;/string&gt;
+        ///		&lt;string id=&quot;stat3&quot;&gt;Magic Resist&lt;/string&gt;
+        ///		&lt;string id=&quot;stat4&quot;&gt;Speed&lt;/string&gt;
+        ///	&lt;/Combat&gt;
+        ///	&lt;Admin&gt;
+        ///		&lt;string id=&quot;title&quot;&gt;Administration&lt;/st [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string Client_English {
             get {

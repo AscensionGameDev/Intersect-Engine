@@ -265,7 +265,6 @@ namespace Intersect_Client.Classes.Networking
             bf.WriteString(val3);
             bf.WriteString(val4);
             GameNetwork.SendPacket(bf.ToArray());
-            System.Diagnostics.Debug.WriteLine("Sent for warp at " + Globals.System.GetTimeMS());
         }
 
         public static void SendSellItem(int slot, int amount)

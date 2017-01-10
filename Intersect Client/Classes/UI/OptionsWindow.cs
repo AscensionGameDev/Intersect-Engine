@@ -36,6 +36,7 @@ using Intersect_Client.Classes.UI.Menu;
 using IntersectClientExtras.Gwen.Control;
 using IntersectClientExtras.Gwen.Control.EventArguments;
 using IntersectClientExtras.Gwen.ControlInternal;
+using Intersect_Library.Localization;
 
 namespace Intersect_Client.Classes.UI
 {
@@ -91,7 +92,7 @@ namespace Intersect_Client.Classes.UI
             //Menu Header
             _menuHeader = new Label(_menuPanel);
             _menuHeader.AutoSizeToContents = false;
-            _menuHeader.SetText("Options");
+            _menuHeader.SetText(Strings.Get("options","title"));
             _menuHeader.Font = Globals.ContentManager.GetFont(Gui.DefaultFont, 24);
             _menuHeader.SetSize(_menuPanel.Width, _menuPanel.Height);
             _menuHeader.Alignment = Pos.CenterH;
@@ -105,7 +106,7 @@ namespace Intersect_Client.Classes.UI
 
             //Options - Resolution Label
             _resolutionLabel = new Label(_resolutionBackground);
-            _resolutionLabel.SetText("Resolution:");
+            _resolutionLabel.SetText(Strings.Get("options", "resolution"));
             _resolutionLabel.AutoSizeToContents = false;
             _resolutionLabel.SetSize(178, 60);
             _resolutionLabel.Alignment = Pos.Center;
@@ -155,7 +156,7 @@ namespace Intersect_Client.Classes.UI
 
             //Options - FPS Label
             _fpsLabel = new Label(_fpsBackground);
-            _fpsLabel.SetText("Target FPS:");
+            _fpsLabel.SetText(Strings.Get("options", "targetfps"));
             _fpsLabel.AutoSizeToContents = false;
             _fpsLabel.SetSize(176, 55);
             _fpsLabel.Alignment = Pos.Center;
@@ -166,12 +167,12 @@ namespace Intersect_Client.Classes.UI
             _fpsList = new ComboBox(_fpsBackground);
             _fpsList.SetTextColor(new Color(255, 200, 200, 200), Label.ControlState.Normal);
             _fpsList.SetTextColor(new Color(255, 220, 220, 220), Label.ControlState.Hovered);
-            _fpsList.AddItem("V-Sync");
-            _fpsList.AddItem("30");
-            _fpsList.AddItem("60");
-            _fpsList.AddItem("90");
-            _fpsList.AddItem("120");
-            _fpsList.AddItem("No Limit");
+            _fpsList.AddItem(Strings.Get("options", "vsync"));
+            _fpsList.AddItem(Strings.Get("options", "30fps"));
+            _fpsList.AddItem(Strings.Get("options", "60fps"));
+            _fpsList.AddItem(Strings.Get("options", "90fps"));
+            _fpsList.AddItem(Strings.Get("options", "120fps"));
+            _fpsList.AddItem(Strings.Get("options", "unlimitedfps"));
             _fpsList.SetPosition(190, 8);
             _fpsList.SetSize(260, 38);
             _fpsList.Alignment = Pos.Center;
@@ -181,7 +182,7 @@ namespace Intersect_Client.Classes.UI
             _fpsList.Font = Globals.ContentManager.GetFont(Gui.DefaultFont, 20);
 
             //Options - Fullscreen Checkbox
-            _fullscreen = new LabeledCheckBox(_menuPanel) { Text = "Fullscreen" };
+            _fullscreen = new LabeledCheckBox(_menuPanel) { Text = Strings.Get("options", "fullscreen") };
             _fullscreen.SetSize(300, 36);
             _fullscreen.SetPosition(_fpsBackground.X + 24, _fpsBackground.Bottom + 16);
             _fullscreen.SetImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "checkboxempty.png"), CheckBox.ControlState.Normal);
@@ -194,7 +195,7 @@ namespace Intersect_Client.Classes.UI
 
             //Options - Sound Label
             _soundLabel = new Label(_menuPanel);
-            _soundLabel.SetText("Sound Volume: 100%");
+            _soundLabel.SetText(Strings.Get("options", "soundvolume",100));
             _soundLabel.SetSize(210, 32);
             _soundLabel.AutoSizeToContents = false;
             _soundLabel.SetPosition(_resolutionBackground.X,_fullscreen.Bottom + 16);
@@ -218,7 +219,7 @@ namespace Intersect_Client.Classes.UI
 
             //Options - Music Label
             _musicLabel = new Label(_menuPanel);
-            _musicLabel.SetText("Music Volume: 100%");
+            _musicLabel.SetText(Strings.Get("options", "musicvolume",100));
             _musicLabel.SetSize(210, 32);
             _musicLabel.AutoSizeToContents = false;
             _musicLabel.SetPosition(_resolutionBackground.Right - _musicLabel.Width, _fullscreen.Bottom + 16);
@@ -241,7 +242,7 @@ namespace Intersect_Client.Classes.UI
 
             //Options - Apply Button
             _applyBtn = new Button(_menuPanel);
-            _applyBtn.SetText("Apply");
+            _applyBtn.SetText(Strings.Get("options", "apply"));
             _applyBtn.SetPosition(_resolutionBackground.X, _soundSlider.Bottom + 16);
             _applyBtn.SetSize(56, 32);
             _applyBtn.Clicked += ApplyBtn_Clicked;
@@ -257,7 +258,7 @@ namespace Intersect_Client.Classes.UI
 
             //Options - Back Button
             _backBtn = new Button(_menuPanel);
-            _backBtn.SetText("Cancel");
+            _backBtn.SetText(Strings.Get("options", "cancel"));
             _backBtn.SetSize(211, 61);
             _backBtn.SetPosition(_resolutionBackground.Right - _backBtn.Width, _soundSlider.Bottom + 16);
             _backBtn.Clicked += BackBtn_Clicked;
@@ -291,32 +292,32 @@ namespace Intersect_Client.Classes.UI
             switch (Globals.Database.TargetFps)
             {
                 case -1: //Unlimited
-                    _fpsList.SelectByText("No Limit");
+                    _fpsList.SelectByText(Strings.Get("options", "unlimitedfps"));
                     break;
                 case 0: //VSYNC
-                    _fpsList.SelectByText("V-Sync");
+                    _fpsList.SelectByText(Strings.Get("options", "vsync"));
                     break;
                 case 1:
-                    _fpsList.SelectByText("30");
+                    _fpsList.SelectByText(Strings.Get("options", "30fps"));
                     break;
                 case 2:
-                    _fpsList.SelectByText("60");
+                    _fpsList.SelectByText(Strings.Get("options", "60fps"));
                     break;
                 case 3:
-                    _fpsList.SelectByText("90");
+                    _fpsList.SelectByText(Strings.Get("options", "90fps"));
                     break;
                 case 4:
-                    _fpsList.SelectByText("120");
+                    _fpsList.SelectByText(Strings.Get("options", "120fps"));
                     break;
                 default:
-                    _fpsList.SelectByText("V-Sync");
+                    _fpsList.SelectByText(Strings.Get("options", "vsync"));
                     break;
             }
             _fullscreen.IsChecked = Globals.Database.FullScreen;
             _musicSlider.Value = Globals.Database.MusicVolume;
             _soundSlider.Value = Globals.Database.SoundVolume;
-            _musicLabel.Text = "Music Volume: " + (int)_musicSlider.Value + "%";
-            _soundLabel.Text = "Sound Volume: " + (int)_soundSlider.Value + "%";
+            _musicLabel.Text = Strings.Get("options", "musicvolume",(int)_musicSlider.Value);
+            _soundLabel.Text = Strings.Get("options", "soundvolume",(int)_soundSlider.Value);
             _menuPanel.IsHidden = false;
         }
 
@@ -352,14 +353,14 @@ namespace Intersect_Client.Classes.UI
         }
         void _musicSlider_ValueChanged(Base sender, EventArgs arguments)
         {
-            _musicLabel.Text = "Music Volume: " + (int)_musicSlider.Value + "%";
+            _musicLabel.Text = Strings.Get("options", "musicvolume",(int)_musicSlider.Value);
             Globals.Database.MusicVolume = (int)_musicSlider.Value;
             GameAudio.UpdateGlobalVolume();
         }
 
         void _soundSlider_ValueChanged(Base sender, EventArgs arguments)
         {
-            _soundLabel.Text = "Sound Volume: " + (int)_soundSlider.Value + "%";
+            _soundLabel.Text = Strings.Get("options", "soundvolume",(int)_soundSlider.Value);
             Globals.Database.SoundVolume = (int)_soundSlider.Value;
             GameAudio.UpdateGlobalVolume();
         }
@@ -382,28 +383,27 @@ namespace Intersect_Client.Classes.UI
                 shouldReset = true;
             }
             var newFps = 0;
-            switch (_fpsList.SelectedItem.Text)
+            if (_fpsList.SelectedItem.Text == Strings.Get("options", "unlimitedfps"))
             {
-                case "V-Sync":
-                    //Stick with 0
-                    break;
-                case "No Limit":
-                    newFps = -1;
-                    break;
-                case "30":
-                    newFps = 1;
-                    break;
-                case "60":
-                    newFps = 2;
-                    break;
-                case "90":
-                    newFps = 3;
-                    break;
-                case "120":
-                    newFps = 4;
-                    break;
-
+                newFps = -1;
             }
+            else if (_fpsList.SelectedItem.Text == Strings.Get("options", "30fps"))
+            {
+                newFps = 1;
+            }
+            else if (_fpsList.SelectedItem.Text == Strings.Get("options", "60fps"))
+            {
+                newFps = 2;
+            }
+            else if (_fpsList.SelectedItem.Text == Strings.Get("options", "90fps"))
+            {
+                newFps = 3;
+            }
+            else if (_fpsList.SelectedItem.Text == Strings.Get("options", "120fps"))
+            {
+                newFps = 4;
+            }
+
             if (newFps != Globals.Database.TargetFps)
             {
                 shouldReset = true;

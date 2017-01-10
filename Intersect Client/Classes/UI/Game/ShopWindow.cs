@@ -39,6 +39,7 @@ using Intersect_Client.Classes.Networking;
 using Intersect_Library;
 using Point = IntersectClientExtras.GenericClasses.Point;
 using Intersect_Library.GameObjects;
+using Intersect_Library.Localization;
 
 namespace Intersect_Client.Classes.UI.Game
 {
@@ -187,7 +188,7 @@ namespace Intersect_Client.Classes.UI.Game
                     item.ItemType == (int)ItemTypes.None ||
                     item.ItemType == (int)ItemTypes.Spell)
                 {
-                    InputBox iBox = new InputBox("Buy Item", "How many " + item.Name + "(s) would you like to buy?", true, BuyItemInputBoxOkay, null, _mySlot, true);
+                    InputBox iBox = new InputBox(Strings.Get("shop","buyitem"), Strings.Get("shop", "buyitemprompt", item.Name), true, BuyItemInputBoxOkay, null, _mySlot, true);
                 }
                 else
                 {
@@ -217,7 +218,7 @@ namespace Intersect_Client.Classes.UI.Game
             if (_descWindow != null) { _descWindow.Dispose(); _descWindow = null; }
             var item = ItemBase.GetItem(Globals.GameShop.SellingItems[_mySlot].CostItemNum);
             if (item != null)
-                _descWindow = new ItemDescWindow(Globals.GameShop.SellingItems[_mySlot].ItemNum, 1, _shopWindow.X - 255, _shopWindow.Y, null,"", "Costs " + Globals.GameShop.SellingItems[_mySlot].CostItemVal + " " +  item.Name + "(s)");
+                _descWindow = new ItemDescWindow(Globals.GameShop.SellingItems[_mySlot].ItemNum, 1, _shopWindow.X - 255, _shopWindow.Y, null,"", Strings.Get("shop","costs",Globals.GameShop.SellingItems[_mySlot].CostItemVal,item.Name));
         }
 
         public FloatRect RenderBounds()

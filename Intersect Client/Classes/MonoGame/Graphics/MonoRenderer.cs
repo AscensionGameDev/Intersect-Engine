@@ -32,6 +32,8 @@ using IntersectClientExtras.File_Management;
 using IntersectClientExtras.GenericClasses;
 using IntersectClientExtras.Graphics;
 using Intersect_Client.Classes.General;
+using Intersect_Library;
+using Intersect_Library.Localization;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
@@ -334,7 +336,7 @@ namespace Intersect_Client_MonoGame.Classes.SFML.Graphics
                 _fps = _fpsCount;
                 _fpsCount = 0;
                 _fpsTimer = Globals.System.GetTimeMS() + 1000;
-                _gameWindow.Title = "Intersect Client";
+                _gameWindow.Title = Strings.Get("main","gamename");
             }
             for (int i = 0; i < AllTextures.Count; i++)
             {

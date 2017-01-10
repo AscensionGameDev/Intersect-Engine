@@ -32,6 +32,7 @@ using IntersectClientExtras.Gwen.Control;
 using IntersectClientExtras.Gwen.Control.EventArguments;
 using Intersect_Client.Classes.Core;
 using Intersect_Client.Classes.General;
+using Intersect_Library.Localization;
 
 namespace Intersect_Client.Classes.UI.Menu
 {
@@ -76,7 +77,7 @@ namespace Intersect_Client.Classes.UI.Menu
             //Menu Header
             _menuHeader = new Label(_menuPanel);
             _menuHeader.AutoSizeToContents = false;
-            _menuHeader.SetText("Main Menu");
+            _menuHeader.SetText(Strings.Get("mainmenu","title"));
             _menuHeader.SetSize(_menuPanel.Width, _menuPanel.Height);
             _menuHeader.Font = Globals.ContentManager.GetFont(Gui.DefaultFont, 24);
             _menuHeader.Alignment = Pos.CenterH;
@@ -107,7 +108,7 @@ namespace Intersect_Client.Classes.UI.Menu
 
             //Login Button
             _loginButton = new Button(_menuPanel);
-            _loginButton.SetText("Login");
+            _loginButton.SetText(Strings.Get("mainmenu", "login"));
             _loginButton.Font = Globals.ContentManager.GetFont(Gui.DefaultFont, 20);
             _loginButton.SetSize(211, 61);
             _loginButton.SetPosition(_menuPanel.Width / 2 - _loginButton.Width / 2, 60);
@@ -121,7 +122,7 @@ namespace Intersect_Client.Classes.UI.Menu
 
             //Register Button
             _registerButton = new Button(_menuPanel);
-            _registerButton.SetText("Register");
+            _registerButton.SetText(Strings.Get("mainmenu", "register"));
             _registerButton.Font = Globals.ContentManager.GetFont(Gui.DefaultFont, 20);
             _registerButton.SetSize(211, 61);
             _registerButton.SetPosition(_menuPanel.Width / 2 - _registerButton.Width / 2, 130);
@@ -136,7 +137,7 @@ namespace Intersect_Client.Classes.UI.Menu
 
             //Exit Button
             _exitButton = new Button(_menuPanel);
-            _exitButton.SetText("Exit");
+            _exitButton.SetText(Strings.Get("mainmenu", "exit"));
             _exitButton.Font = Globals.ContentManager.GetFont(Gui.DefaultFont, 20);
             _exitButton.SetSize(211, 61);
             _exitButton.SetPosition(_menuPanel.Width / 2 - _exitButton.Width / 2, 200);
@@ -152,6 +153,7 @@ namespace Intersect_Client.Classes.UI.Menu
             _optionsButton = new Button(_menuCanvas);
             _optionsButton.Clicked += OptionsButton_Clicked;
             _optionsButton.SetText("");
+            _optionsButton.SetToolTipText(Strings.Get("mainmenu", "options"));
             _optionsButton.SetSize(48, 49);
             _optionsButton.SetPosition(_menuCanvas.Width - 50, 2);
             _optionsButton.SetImage( Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "settingsnormal.png"), Button.ControlState.Normal);

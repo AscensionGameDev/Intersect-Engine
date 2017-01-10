@@ -34,6 +34,7 @@ using IntersectClientExtras.Gwen;
 using IntersectClientExtras.Gwen.Control;
 using Intersect_Client.Classes.Core;
 using Intersect_Client.Classes.General;
+using Intersect_Library.Localization;
 
 namespace Intersect_Client.Classes.UI
 {
@@ -58,7 +59,7 @@ namespace Intersect_Client.Classes.UI
         {
             if (Gui.MsgboxErrors.Count > 0)
             {
-                _errors.Add(new GUIError(_gameCanvas, _menuCanvas, Gui.MsgboxErrors[0], "Error!"));
+                _errors.Add(new GUIError(_gameCanvas, _menuCanvas, Gui.MsgboxErrors[0],Strings.Get("errors","title")));
                 Gui.MsgboxErrors.RemoveAt(0);
             }
             for (int i = 0; i < _errors.Count; i++)

@@ -41,6 +41,7 @@ using Intersect_Client.Classes.General;
 using Intersect_Client.Classes.Networking;
 using Intersect_Library;
 using Intersect_Library.GameObjects;
+using Intersect_Library.Localization;
 using Color = IntersectClientExtras.GenericClasses.Color;
 using Point = IntersectClientExtras.GenericClasses.Point;
 
@@ -66,7 +67,7 @@ namespace Intersect_Client.Classes.UI.Game
         //Init
         public SpellWindow(Canvas _gameCanvas)
         {
-            _spellWindow = new WindowControl(_gameCanvas, "Spells");
+            _spellWindow = new WindowControl(_gameCanvas, Strings.Get("spells","title"));
             _spellWindow.SetSize(228, 320);
             _spellWindow.SetPosition(GameGraphics.Renderer.GetScreenWidth() - 210, GameGraphics.Renderer.GetScreenHeight() - 500);
             _spellWindow.DisableResizing();

@@ -35,6 +35,7 @@ using Intersect_Client.Classes.Core;
 using Intersect_Client.Classes.General;
 using Intersect_Client.Classes.Misc;
 using Intersect_Client.Classes.Networking;
+using Intersect_Library.Localization;
 
 namespace Intersect_Client.Classes.UI.Menu
 {
@@ -81,7 +82,7 @@ namespace Intersect_Client.Classes.UI.Menu
             //Menu Header
             _menuHeader = new Label(_menuPanel);
             _menuHeader.AutoSizeToContents = false;
-            _menuHeader.SetText("Register");
+            _menuHeader.SetText(Strings.Get("registration","title"));
             _menuHeader.Font = Globals.ContentManager.GetFont(Gui.DefaultFont, 24);
             _menuHeader.SetSize(_menuPanel.Width, _menuPanel.Height);
             _menuHeader.Alignment = Pos.CenterH;
@@ -95,7 +96,7 @@ namespace Intersect_Client.Classes.UI.Menu
 
             //Register Username Label
             _usernameLabel = new Label(_usernameBackground);
-            _usernameLabel.SetText("Username:");
+            _usernameLabel.SetText(Strings.Get("registration", "username"));
             _usernameLabel.Font = Globals.ContentManager.GetFont(Gui.DefaultFont, 20);
             _usernameLabel.AutoSizeToContents = false;
             _usernameLabel.SetSize(176, 55);
@@ -119,7 +120,7 @@ namespace Intersect_Client.Classes.UI.Menu
 
             //Register Email Label
             _emailLabel = new Label(_emailBackground);
-            _emailLabel.SetText("Email:");
+            _emailLabel.SetText(Strings.Get("registration", "email"));
             _emailLabel.AutoSizeToContents = false;
             _emailLabel.SetSize(176, 55);
             _emailLabel.Alignment = Pos.Center;
@@ -143,7 +144,7 @@ namespace Intersect_Client.Classes.UI.Menu
 
             //Register Password Label
             _passwordLabel = new Label(_passwordBackground);
-            _passwordLabel.SetText("Password:");
+            _passwordLabel.SetText(Strings.Get("registration", "password"));
             _passwordLabel.AutoSizeToContents = false;
             _passwordLabel.SetSize(176, 55);
             _passwordLabel.Alignment = Pos.Center;
@@ -167,7 +168,7 @@ namespace Intersect_Client.Classes.UI.Menu
 
             //Register Password Label2
             _passwordLabel2 = new Label(_passwordBackground2);
-            _passwordLabel2.SetText("Confirm Password:");
+            _passwordLabel2.SetText(Strings.Get("registration", "confirmpass"));
             _passwordLabel2.SetTextScale(.75f);
             _passwordLabel2.AutoSizeToContents = false;
             _passwordLabel2.SetSize(176, 55);
@@ -186,7 +187,7 @@ namespace Intersect_Client.Classes.UI.Menu
 
             //Register - Send Registration Button
             _registerBtn = new Button(_menuPanel);
-            _registerBtn.SetText("Register");
+            _registerBtn.SetText(Strings.Get("registration", "register"));
             _registerBtn.Clicked += RegisterBtn_Clicked;
             _registerBtn.SetPosition(_usernameBackground.X, _passwordBackground2.Bottom + 16);
             _registerBtn.SetSize(211, 61);
@@ -200,7 +201,7 @@ namespace Intersect_Client.Classes.UI.Menu
 
             //Register - Back Button
             _backBtn = new Button(_menuPanel);
-            _backBtn.SetText("Back");
+            _backBtn.SetText(Strings.Get("registration", "back"));
             _backBtn.Clicked += BackBtn_Clicked;
             _backBtn.SetSize(211, 61);
             _backBtn.SetPosition(_usernameBackground.Right - _backBtn.Width, _passwordBackground2.Bottom + 16);
@@ -250,30 +251,27 @@ namespace Intersect_Client.Classes.UI.Menu
                             }
                             else
                             {
-                                Gui.MsgboxErrors.Add("Email is invalid!");
+                                Gui.MsgboxErrors.Add(Strings.Get("registration", "emailinvalid"));
                             }
                         }
                         else
                         {
-                            Gui.MsgboxErrors.Add(
-                                "Password is invalid. Please use alphanumeric characters with a length between 4 and 20");
+                            Gui.MsgboxErrors.Add(Strings.Get("errors", "passwordinvalid"));
                         }
                     }
                     else
                     {
-                        Gui.MsgboxErrors.Add("Passwords didn't match!");
+                        Gui.MsgboxErrors.Add(Strings.Get("registration", "passwordmatch"));
                     }
                 }
                 else
                 {
-                    Gui.MsgboxErrors.Add(
-                        "Username is invalid. Please use alphanumeric characters with a length between 2 and 20");
+                    Gui.MsgboxErrors.Add(Strings.Get("errors", "usernameinvalid"));
                 }
             }
             else
             {
-                Gui.MsgboxErrors.Add(
-                        "Not connected to the game server. Is it online?");
+                Gui.MsgboxErrors.Add(Strings.Get("errors", "notconnected"));
             }
         }
 

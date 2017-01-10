@@ -43,6 +43,7 @@ using Color = IntersectClientExtras.GenericClasses.Color;
 
 using Point = IntersectClientExtras.GenericClasses.Point;
 using Intersect_Library.GameObjects;
+using Intersect_Library.Localization;
 
 namespace Intersect_Client.Classes.UI.Game
 {
@@ -85,7 +86,7 @@ namespace Intersect_Client.Classes.UI.Game
         //Init
         public CharacterWindow(Canvas _gameCanvas)
         {
-            _characterWindow = new WindowControl(_gameCanvas, "Character");
+            _characterWindow = new WindowControl(_gameCanvas, Strings.Get("character","title"));
             _characterWindow.SetSize(228, 320);
             _characterWindow.SetPosition(GameGraphics.Renderer.GetScreenWidth() - 210, GameGraphics.Renderer.GetScreenHeight() - 500);
             _characterWindow.DisableResizing();
@@ -107,7 +108,7 @@ namespace Intersect_Client.Classes.UI.Game
             _characterName.AutoSizeToContents = false;
             _characterName.Alignment = Pos.Center;
             _characterName.SetSize(200, 24);
-            _characterName.SetText("Name");
+            _characterName.SetText("");
             _characterName.SetTextColor(Color.White, Label.ControlState.Normal);
             _characterName.Font = Globals.ContentManager.GetFont(Gui.DefaultFont, 12);
 
@@ -116,7 +117,7 @@ namespace Intersect_Client.Classes.UI.Game
             _characterLevelAndClass.AutoSizeToContents = false;
             _characterLevelAndClass.Alignment = Pos.Center;
             _characterLevelAndClass.SetSize(200, 12);
-            _characterLevelAndClass.SetText("Level: " + 1);
+            _characterLevelAndClass.SetText("");
             _characterLevelAndClass.SetTextColor(Color.White, Label.ControlState.Normal);
             _characterLevelAndClass.Font = Globals.ContentManager.GetFont(Gui.DefaultFont, 10);
 
@@ -130,7 +131,7 @@ namespace Intersect_Client.Classes.UI.Game
 
             Label equipmentLabel = new Label(_characterWindow);
             equipmentLabel.SetPosition(4, 126);
-            equipmentLabel.SetText("Equipment:");
+            equipmentLabel.SetText(Strings.Get("character","equipment"));
             equipmentLabel.SetTextColor(Color.White, Label.ControlState.Normal);
 
             _equipmentContainer = new ScrollControl(_characterWindow);
@@ -139,12 +140,11 @@ namespace Intersect_Client.Classes.UI.Game
 
             Label statsLabel = new Label(_characterWindow);
             statsLabel.SetPosition(4, 204);
-            statsLabel.SetText("Stats: ");
+            statsLabel.SetText(Strings.Get("character", "stats"));
             statsLabel.SetTextColor(Color.White, Label.ControlState.Normal);
 
             _attackLabel = new Label(_characterWindow);
             _attackLabel.SetPosition(4, 220);
-            _attackLabel.SetText("Attack: ");
             _attackLabel.SetTextColor(Color.White, Label.ControlState.Normal);
 
             _addAttackBtn = new Button(_characterWindow);
@@ -157,7 +157,6 @@ namespace Intersect_Client.Classes.UI.Game
 
             _defenseLabel = new Label(_characterWindow);
             _defenseLabel.SetPosition(4, 238);
-            _defenseLabel.SetText("Defense: ");
             _defenseLabel.SetTextColor(Color.White, Label.ControlState.Normal);
 
             _addDefenseBtn = new Button(_characterWindow);
@@ -170,7 +169,6 @@ namespace Intersect_Client.Classes.UI.Game
 
             _speedLabel = new Label(_characterWindow);
             _speedLabel.SetPosition(4, 256);
-            _speedLabel.SetText("Speed: ");
             _speedLabel.SetTextColor(Color.White, Label.ControlState.Normal);
 
             _addSpeedBtn = new Button(_characterWindow);
@@ -183,7 +181,6 @@ namespace Intersect_Client.Classes.UI.Game
 
             _abilityPwrLabel = new Label(_characterWindow);
             _abilityPwrLabel.SetPosition(96, 220);
-            _abilityPwrLabel.SetText("Ability Pwr: ");
             _abilityPwrLabel.SetTextColor(Color.White, Label.ControlState.Normal);
 
             _addAbilityPwrBtn = new Button(_characterWindow);
@@ -196,7 +193,6 @@ namespace Intersect_Client.Classes.UI.Game
 
             _magicRstLabel = new Label(_characterWindow);
             _magicRstLabel.SetPosition(96, 238);
-            _magicRstLabel.SetText("Magic Resist: ");
             _magicRstLabel.SetTextColor(Color.White, Label.ControlState.Normal);
 
             _addMagicResistBtn = new Button(_characterWindow);
@@ -209,7 +205,6 @@ namespace Intersect_Client.Classes.UI.Game
 
             _pointsLabel = new Label(_characterWindow);
             _pointsLabel.SetPosition(96, 256);
-            _pointsLabel.SetText("Points: ");
             _pointsLabel.SetTextColor(Color.White, Label.ControlState.Normal);
 
             InitEquipmentContainer();
@@ -287,7 +282,8 @@ namespace Intersect_Client.Classes.UI.Game
         {
             if (_characterWindow.IsHidden) { return; }
             _characterName.Text = Globals.Me.MyName;
-            _characterLevelAndClass.Text = "Level: " + Globals.Me.Level + " " + ClassBase.GetName(Globals.Me.Class);//+ ClassBase.GetName(Globals.Me.);
+            _characterLevelAndClass.Text = Strings.Get("character", "levelandclass", Globals.Me.Level,
+                ClassBase.GetName(Globals.Me.Class));
 
             //Load Portrait
             GameTexture faceTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Face, Globals.Me.Face);
@@ -313,12 +309,17 @@ namespace Intersect_Client.Classes.UI.Game
                 _characterPortrait.IsHidden = true;
             }
 
-            _attackLabel.SetText("Attack: " + Globals.Me.Stat[(int)Stats.Attack]);
-            _defenseLabel.SetText("Defense: " + Globals.Me.Stat[(int)Stats.Defense]);
-            _speedLabel.SetText("Speed: " + Globals.Me.Stat[(int)Stats.Speed]);
-            _abilityPwrLabel.SetText("Ability Pwr: " + Globals.Me.Stat[(int)Stats.AbilityPower]);
-            _magicRstLabel.SetText("Magic Resist: " + Globals.Me.Stat[(int)Stats.MagicResist]);
-            _pointsLabel.SetText("Points: " + Globals.Me.StatPoints);
+            _attackLabel.SetText(Strings.Get("character", "stat0", Strings.Get("combat", "stat0"),
+                Globals.Me.Stat[(int) Stats.Attack])); 
+            _defenseLabel.SetText(Strings.Get("character", "stat2", Strings.Get("combat", "stat2"),
+                Globals.Me.Stat[(int)Stats.Defense]));
+            _speedLabel.SetText(Strings.Get("character", "stat4", Strings.Get("combat", "stat4"),
+                Globals.Me.Stat[(int)Stats.Speed]));
+            _abilityPwrLabel.SetText(Strings.Get("character", "stat1", Strings.Get("combat", "stat1"),
+                Globals.Me.Stat[(int)Stats.AbilityPower]));
+            _magicRstLabel.SetText(Strings.Get("character", "stat3", Strings.Get("combat", "stat3"),
+                Globals.Me.Stat[(int)Stats.MagicResist]));
+            _pointsLabel.SetText(Strings.Get("character","points",Globals.Me.StatPoints));
             _addAbilityPwrBtn.IsHidden = (Globals.Me.StatPoints == 0 || Globals.Me.Stat[(int)Stats.AbilityPower] == Options.MaxStatValue);
             _addAttackBtn.IsHidden = (Globals.Me.StatPoints == 0 || Globals.Me.Stat[(int)Stats.Attack] == Options.MaxStatValue);
             _addDefenseBtn.IsHidden = (Globals.Me.StatPoints == 0 || Globals.Me.Stat[(int)Stats.Defense] == Options.MaxStatValue);

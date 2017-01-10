@@ -33,6 +33,7 @@ using Color = IntersectClientExtras.GenericClasses.Color;
 using Intersect_Library.GameObjects;
 using IntersectClientExtras.Gwen.ControlInternal;
 using Intersect_Client.Classes.Networking;
+using Intersect_Library.Localization;
 
 namespace Intersect_Client.Classes.UI.Game
 {
@@ -48,7 +49,7 @@ namespace Intersect_Client.Classes.UI.Game
 
         public QuestOfferWindow(Canvas _gameCanvas)
         {
-            _questOfferWindow = new WindowControl(_gameCanvas, "Quest Offer");
+            _questOfferWindow = new WindowControl(_gameCanvas, Strings.Get("questoffer","title"));
             _questOfferWindow.SetSize(415, 424);
             _questOfferWindow.SetPosition(GameGraphics.Renderer.GetScreenWidth() / 2 - 200, GameGraphics.Renderer.GetScreenHeight() / 2 - 200);
             _questOfferWindow.DisableResizing();
@@ -98,7 +99,7 @@ namespace Intersect_Client.Classes.UI.Game
 
             //Accept Button
             _acceptButton = new Button(_questOfferWindow);
-            _acceptButton.SetText("Accept");
+            _acceptButton.SetText(Strings.Get("questoffer", "accept"));
             _acceptButton.Font = Globals.ContentManager.GetFont(Gui.DefaultFont, 20);
             _acceptButton.Clicked += _acceptButton_Clicked;
             _acceptButton.SetPosition(_questOfferWindow.Width /2 - _acceptButton.Width/2 - _acceptButton.Width, 340);
@@ -113,7 +114,7 @@ namespace Intersect_Client.Classes.UI.Game
 
             //Decline Button
             _declineButton = new Button(_questOfferWindow);
-            _declineButton.SetText("Decline");
+            _declineButton.SetText(Strings.Get("questoffer", "decline"));
             _declineButton.Font = Globals.ContentManager.GetFont(Gui.DefaultFont, 20);
             _declineButton.Clicked += _declineButton_Clicked; ;
             _declineButton.SetPosition(_questOfferWindow.Width / 2 + _acceptButton.Width/2, 340);

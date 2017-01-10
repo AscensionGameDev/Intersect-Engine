@@ -43,6 +43,7 @@ using Color = IntersectClientExtras.GenericClasses.Color;
 
 using Point = IntersectClientExtras.GenericClasses.Point;
 using Intersect_Library.GameObjects;
+using Intersect_Library.Localization;
 
 namespace Intersect_Client.Classes.UI.Game
 {
@@ -64,7 +65,7 @@ namespace Intersect_Client.Classes.UI.Game
         //Init
         public BankWindow(Canvas _gameCanvas)
         {
-            _bankWindow = new WindowControl(_gameCanvas, "Bank");
+            _bankWindow = new WindowControl(_gameCanvas, Strings.Get("bank","title"));
             _bankWindow.SetSize(415, 424);
             _bankWindow.SetPosition(GameGraphics.Renderer.GetScreenWidth() / 2 - 200, GameGraphics.Renderer.GetScreenHeight() / 2 - 200);
             _bankWindow.DisableResizing();

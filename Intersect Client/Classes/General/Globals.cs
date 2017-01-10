@@ -131,24 +131,5 @@ namespace Intersect_Client.Classes.General
         public static List<EventDialog> EventDialogs = new List<EventDialog>();
         public static List<EventHold> EventHolds = new List<EventHold>();
         public static List<int> QuestOffers = new List<int>();
-
-        public static string GetStatName(int statnum)
-        {
-            switch (statnum)
-            {
-                case (int)Stats.Attack:
-                    return "Attack";
-                case (int)Stats.AbilityPower:
-                    return "Ability Power";
-                case (int)Stats.Defense:
-                    return "Defense";
-                case (int)Stats.MagicResist:
-                    return "Magic Resist";
-                case (int)Stats.Speed:
-                    return "Speed";
-                default:
-                    return "Invalid Stat";
-            }
-        }
     }
 }

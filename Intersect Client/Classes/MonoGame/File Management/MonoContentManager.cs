@@ -37,6 +37,7 @@ using IntersectClientExtras.File_Management;
 using IntersectClientExtras.Graphics;
 using Intersect_Client.Classes.Core;
 using Intersect_Client_MonoGame.Classes.SFML.Graphics;
+using Intersect_Library.Localization;
 using Intersect_MonoGameDx.Classes.SFML.Audio;
 
 namespace Intersect_Client.Classes.Bridges_and_Interfaces.SFML.File_Management
@@ -89,10 +90,7 @@ namespace Intersect_Client.Classes.Bridges_and_Interfaces.SFML.File_Management
                             if (errorString != "")
                             {
                                 if (
-                                    MessageBox.Show(
-                                        "Failed to download client resources.\n\nException Info: " + errorString +
-                                        "\n\n" +
-                                        "Would you like to try again?", "Failed to load Resources!",
+                                    MessageBox.Show(Strings.Get("resources","resourceexception",errorString), Strings.Get("resources","failedtoload"),
                                         MessageBoxButtons.YesNo) != DialogResult.Yes)
                                 {
                                     retry = false;
@@ -106,9 +104,8 @@ namespace Intersect_Client.Classes.Bridges_and_Interfaces.SFML.File_Management
                     }
                     else
                     {
-                        MessageBox.Show(
-                            "Failed to load resources from client directory and Ascension Game Dev server. Cannot launch game!",
-                            "Failed to load Resources!");
+                        MessageBox.Show(Strings.Get("resources", "resourcesfatal"),
+                            Strings.Get("resources", "failedtoload"));
                     }
                 }
                 loadingForm.Close();
@@ -138,7 +135,7 @@ namespace Intersect_Client.Classes.Bridges_and_Interfaces.SFML.File_Management
             {
                 if (e.Cancelled)
                 {
-                    errorString = "Download was cancelled!";
+                    errorString = Strings.Get("resources", "cancelled");
                 }
                 else
                 {

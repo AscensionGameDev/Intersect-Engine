@@ -36,6 +36,7 @@ using Intersect_Client.Classes.Core;
 using Intersect_Client.Classes.General;
 using Intersect_Client.Classes.Networking;
 using Intersect_Client.Classes.UI.Game.Chat;
+using Intersect_Library.Localization;
 
 namespace Intersect_Client.Classes.UI.Game
 {
@@ -89,7 +90,7 @@ namespace Intersect_Client.Classes.UI.Game
             _chatboxInput.SetPosition(18,144);
             _chatboxInput.SetSize(314, 16);
             _chatboxInput.SubmitPressed += ChatBoxInput_SubmitPressed;
-            _chatboxInput.Text = "Press enter to chat.";
+            _chatboxInput.Text = Strings.Get("chatbox","enterchat");
             _chatboxInput.Clicked += ChatBoxInput_Clicked;
             _chatboxInput.ShouldDrawBackground = false;
             _chatboxInput.SetTextColor(new Color(255, 215, 215, 215), Label.ControlState.Normal);
@@ -98,7 +99,7 @@ namespace Intersect_Client.Classes.UI.Game
             _chatboxSendButton = new Button(_chatboxWindow);
             _chatboxSendButton.SetSize(49,18);
             _chatboxSendButton.SetPosition(_chatboxMessages.Right - _chatboxSendButton.Width,143);
-            _chatboxSendButton.Text = "Send";
+            _chatboxSendButton.Text = Strings.Get("chatbox","send");
             _chatboxSendButton.Clicked += ChatBoxSendBtn_Clicked;
             _chatboxSendButton.SetImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "sendnormal.png"),Button.ControlState.Normal);
             _chatboxSendButton.SetImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "sendhover.png"), Button.ControlState.Hovered);

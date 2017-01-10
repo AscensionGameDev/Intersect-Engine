@@ -37,6 +37,7 @@ using Intersect_Client.Classes.Misc;
 using Intersect_Client.Classes.Networking;
 using Intersect_Library;
 using Intersect_Library.GameObjects;
+using Intersect_Library.Localization;
 using Color = IntersectClientExtras.GenericClasses.Color;
 
 namespace Intersect_Client.Classes.UI.Menu
@@ -100,7 +101,7 @@ namespace Intersect_Client.Classes.UI.Menu
             //Menu Header
             _menuHeader = new Label(_menuPanel);
             _menuHeader.AutoSizeToContents = false;
-            _menuHeader.SetText("Create Character");
+            _menuHeader.SetText(Strings.Get("charactercreation","title"));
             _menuHeader.Font = Globals.ContentManager.GetFont(Gui.DefaultFont,24);
             _menuHeader.SetSize(_menuPanel.Width, _menuPanel.Height);
             _menuHeader.Alignment = Pos.CenterH;
@@ -114,7 +115,7 @@ namespace Intersect_Client.Classes.UI.Menu
 
             //Character name Label
             _charnameLabel = new Label(_characterNameBackground);
-            _charnameLabel.SetText("Char Name:");
+            _charnameLabel.SetText(Strings.Get("charactercreation", "name"));
             _charnameLabel.AutoSizeToContents = false;
             _charnameLabel.SetSize(178, 60);
             _charnameLabel.Alignment = Pos.Center;
@@ -138,7 +139,7 @@ namespace Intersect_Client.Classes.UI.Menu
 
             //Class Label
             _classLabel = new Label(_classBackground);
-            _classLabel.SetText("Class:");
+            _classLabel.SetText(Strings.Get("charactercreation", "class"));
             _classLabel.AutoSizeToContents = false;
             _classLabel.SetSize(178, 60);
             _classLabel.Alignment = Pos.Center;
@@ -203,7 +204,7 @@ namespace Intersect_Client.Classes.UI.Menu
 
             //Gender Label
             _genderLabel = new Label(_genderBackground);
-            _genderLabel.SetText("Gender:");
+            _genderLabel.SetText(Strings.Get("charactercreation", "gender"));
             _genderLabel.AutoSizeToContents = false;
             _genderLabel.SetSize(178, 60);
             _genderLabel.Alignment = Pos.Center;
@@ -211,7 +212,7 @@ namespace Intersect_Client.Classes.UI.Menu
             _genderLabel.Font = Globals.ContentManager.GetFont(Gui.DefaultFont, 20);
 
             //Male Checkbox
-            _maleChk = new LabeledCheckBox(_genderBackground) { Text = "Male" };
+            _maleChk = new LabeledCheckBox(_genderBackground) { Text = Strings.Get("charactercreation", "male") };
             _maleChk.SetSize(200, 36);
             _maleChk.SetPosition(180, 8);
             _maleChk.SetImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "checkboxempty.png"), CheckBox.ControlState.Normal);
@@ -226,7 +227,7 @@ namespace Intersect_Client.Classes.UI.Menu
             _maleChk.SetFont(Globals.ContentManager.GetFont(Gui.DefaultFont, 20));
 
             //Female Checkbox
-            _femaleChk = new LabeledCheckBox(_genderBackground) { Text = "Female" };
+            _femaleChk = new LabeledCheckBox(_genderBackground) { Text = Strings.Get("charactercreation", "female") };
             _femaleChk.Checked += femaleChk_Checked;
             _femaleChk.UnChecked += maleChk_Checked;
             _femaleChk.SetSize(200, 36);
@@ -241,7 +242,7 @@ namespace Intersect_Client.Classes.UI.Menu
 
             //Register - Send Registration Button
             _createButton = new Button(_menuPanel);
-            _createButton.SetText("Create");
+            _createButton.SetText(Strings.Get("charactercreation", "create"));
             _createButton.Clicked += CreateButton_Clicked;
             _createButton.SetSize(211, 61);
             _createButton.SetPosition(_menuPanel.Width/2 - _createButton.Width/2, _menuPanel.Height - 40 - _createButton.Height);
@@ -479,7 +480,7 @@ namespace Intersect_Client.Classes.UI.Menu
             }
             else
             {
-                Gui.MsgboxErrors.Add("Character name is invalid. Please use alphanumeric characters with a length between 2 and 20");
+                Gui.MsgboxErrors.Add(Strings.Get("charactercreation", "invalidname"));
             }
         }
 

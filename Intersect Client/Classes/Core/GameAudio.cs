@@ -257,7 +257,6 @@ namespace Intersect_Client.Classes.Core
             if (sound != null && Globals.Database.SoundVolume > 0)
             {
                 _sound = sound.CreateInstance();
-                Globals.System.Log("Adding map sound: " + _filename);
                 _sound.SetLoop(_loop);
                 _sound.Play();
                 Loaded = true;

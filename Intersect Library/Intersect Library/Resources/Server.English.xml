@@ -69,7 +69,7 @@
 		
 		<string id="mute">mute</string>
 		<string id="muteuser">console</string>
-		<string id="muteusage">Usage: unmute [username] {00}</string>
+		<string id="muteusage">Usage: mute [username] [duration (days)] [IP Ban? (True/False)] [reason] {00}</string>
 		<string id="mutedesc">Desc: mutes a player preventing them from talking.</string>
 		<string id="mutehelp">mutes a player preventing them from talking</string>
 		

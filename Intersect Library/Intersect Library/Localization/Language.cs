@@ -20,15 +20,32 @@ namespace Intersect_Library.Localization
                 XmlNodeList nodes = xmlDoc.SelectNodes("//Strings").Item(0).ChildNodes;
                 foreach (XmlNode node in nodes)
                 {
-                    if (!loadedStrings.ContainsKey(node.Name.ToLower()))
+                    if (node.NodeType != XmlNodeType.Comment)
                     {
-                        loadedStrings.Add(node.Name.ToLower(),new Dictionary<string, string>());
-                    }
-                    foreach (XmlNode childNode in node.ChildNodes)
-                    {
-                        if (!loadedStrings[node.Name.ToLower()].ContainsKey(childNode.Attributes["id"].Value.ToLower()))
+                        if (!loadedStrings.ContainsKey(node.Name.ToLower()))
                         {
-                            loadedStrings[node.Name.ToLower()].Add(childNode.Attributes["id"].Value.ToLower(), childNode.FirstChild.Value);
+                            loadedStrings.Add(node.Name.ToLower(), new Dictionary<string, string>());
+                        }
+                        foreach (XmlNode childNode in node.ChildNodes)
+                        {
+                            if (childNode.NodeType != XmlNodeType.Comment)
+                            {
+                                if (
+                                    !loadedStrings[node.Name.ToLower()].ContainsKey(
+                                        childNode.Attributes["id"].Value.ToLower()))
+                                {
+                                    if (childNode.FirstChild == null)
+                                    {
+                                        loadedStrings[node.Name.ToLower()].Add(childNode.Attributes["id"].Value.ToLower(),"");
+                                    }
+                                    else
+                                    {
+                                        loadedStrings[node.Name.ToLower()].Add(childNode.Attributes["id"].Value.ToLower(),
+                                        childNode.FirstChild.Value);
+                                    }
+                                    
+                                }
+                            }
                         }
                     }
                 }

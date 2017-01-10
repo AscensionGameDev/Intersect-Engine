@@ -43,6 +43,7 @@ using Color = IntersectClientExtras.GenericClasses.Color;
 
 using Point = IntersectClientExtras.GenericClasses.Point;
 using Intersect_Library.GameObjects;
+using Intersect_Library.Localization;
 
 namespace Intersect_Client.Classes.UI.Game
 {
@@ -61,7 +62,7 @@ namespace Intersect_Client.Classes.UI.Game
         //Init
         public PartyWindow(Canvas _gameCanvas)
         {
-            _partyWindow = new WindowControl(_gameCanvas, "Party");
+            _partyWindow = new WindowControl(_gameCanvas, Strings.Get("parties","title"));
             _partyWindow.SetSize(228, 320);
             _partyWindow.SetPosition(GameGraphics.Renderer.GetScreenWidth() - 210, GameGraphics.Renderer.GetScreenHeight() - 500);
             _partyWindow.DisableResizing();
@@ -83,7 +84,7 @@ namespace Intersect_Client.Classes.UI.Game
             _leader.SetSize(34, 34);
             _leader.SetPosition(_partyWindow.Width - 80, 4);
             _leader.Texture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "partyleader.png");
-            _leader.SetToolTipText("Party Leader");
+            _leader.SetToolTipText(Strings.Get("parties", "leader"));
             _leader.Hide();
             if (Globals.Me.Party.Count > 0) { _leader.Show(); }
 
@@ -149,7 +150,7 @@ namespace Intersect_Client.Classes.UI.Game
                     _kickButtons[i].Clicked += kick_Clicked;
                     if (i < Globals.Me.Party.Count)
                     {
-                        _kickButtons[i].SetToolTipText("Kick " + Globals.Entities[Globals.Me.Party[i]].MyName);
+                        _kickButtons[i].SetToolTipText(Strings.Get("parties", "kick", Globals.Entities[Globals.Me.Party[i]].MyName));
                     }
                     else
                     {
@@ -173,7 +174,7 @@ namespace Intersect_Client.Classes.UI.Game
             _leaveButton.SetImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "partyleave.png"), Button.ControlState.Normal);
             _leaveButton.SetImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "partyleave.png"), Button.ControlState.Hovered);
             _leaveButton.SetImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "partyleave.png"), Button.ControlState.Clicked);
-            _leaveButton.SetToolTipText("Leave Party");
+            _leaveButton.SetToolTipText(Strings.Get("parties", "leave"));
             _leaveButton.Clicked += leave_Clicked;
 
         }
@@ -215,7 +216,7 @@ namespace Intersect_Client.Classes.UI.Game
                         if (Globals.Me.Party[0] == Globals.Me.MyIndex && i > 0)
                         {
                             _kickButtons[i].Show();
-                            _kickButtons[i].SetToolTipText("Kick " + Globals.Entities[Globals.Me.Party[i]].MyName);
+                            _kickButtons[i].SetToolTipText(Strings.Get("parties", "kick", Globals.Entities[Globals.Me.Party[i]].MyName));
                         }
                     }
                     else

@@ -1,6 +1,320 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Strings>
 	<Main>
-		<string id="title">{00}</String>
+		<string id="gamename">Intersect Client</string>
 	</Main>
+	<Combat>
+		<string id="exp">Experience</string>
+		<string id="vital0">Health</string>
+		<string id="vital1">Mana</string>
+		<string id="stat0">Attack</string>
+		<string id="stat1">Ability Power</string>
+		<string id="stat2">Defense</string>
+		<string id="stat3">Magic Resist</string>
+		<string id="stat4">Speed</string>
+	</Combat>
+	<Admin>
+		<string id="title">Administration</string>
+		<string id="name">Name:</string>
+		<string id="warp2me">Warp To Me</string>
+		<string id="warpme2">Warp Me To</string>
+		<string id="kick">Kick</string>
+		<string id="kill">Kill</string>
+		<string id="ban">Ban</string>
+		<string id="noclip">No Clip:</string>
+		<string id="nocliptip">Check to walk through obstacles.</string>
+		<string id="unban">Unban</string>
+		<string id="mute">Mute</string>
+		<string id="unmute">Unmute</string>
+		<string id="sprite">Sprite:</string>
+		<string id="none">None</string>
+		<string id="setsprite">Set Sprite</string>
+		<string id="face">Face:</string>
+		<string id="setface">Set Face</string>
+		<string id="access">Access:</string>
+		<string id="access0">None</string>
+		<string id="access1">Moderator</string>
+		<string id="access2">Admin</string>
+		<string id="setpower">Set Power</string>
+		<string id="maplist">Map List:</string>
+		<string id="chronological">123...</string>
+		<string id="chronologicaltip">Order maps chronologically.</string>
+		<string id="mutecaption">Mute {00}</string>
+		<string id="muteprompt">Muting {00} will not allow them to chat in game for the duration you set!</string>
+		<string id="bancaption">Ban {00}</string>
+		<string id="banprompt">Banning {00} will not allow them to access this game for the duration you set!</string>
+		<string id="unmutecaption">Unute {00}</string>
+		<string id="unmuteprompt">Are you sure that you want to unmute {00}?</string>
+		<string id="unbancaption">Unban {00}</string>
+		<string id="unbanprompt">Are you sure that you want to unban {00}?</string>
+	</Admin>
+	<Bank>
+		<string id="title">Bank</string>
+		<string id="deposititem">Deposit Item</string>
+		<string id="deposititemprompt">How many/much {00} would you like to deposit?</string>
+		<string id="withdrawitem">Withdraw Item</string>
+		<string id="withdrawitemprompt">How many/much {00} would you like to withdraw?</string>
+	</Bank>
+	<BanMute>
+		<string id="reason">Reason:</string>
+		<string id="duration">Duration:</string>
+		<string id="1day">1 day</string>
+		<string id="2days">2 days</string>
+		<string id="3days">3 days</string>
+		<string id="4days">4 days</string>
+		<string id="5days">5 days</string>
+		<string id="1week">1 week</string>
+		<string id="2weeks">2 weeks</string>
+		<string id="1month">1 month</string>
+		<string id="2months">2 months</string>
+		<string id="6months">6 months</string>
+		<string id="1year">1 year</string>
+		<string id="forever">Indefinitely</string>
+		<string id="ip">Include IP:</string>
+		<string id="ok">Okay:</string>
+		<string id="cancel">Cancel:</string>
+	</BanMute>
+	<Character>
+		<string id="title">Character</string>
+		<string id="name">{00}</string>
+		<string id="levelandclass">Level: {00} {01}</string>
+		<string id="equipment">Equipment:</string>
+		<string id="stats">Stats:</string>
+		<string id="stat0">{00}: {01}</string>
+		<string id="stat1">{00}: {01}</string>
+		<string id="stat2">{00}: {01}</string>
+		<string id="stat3">{00}: {01}</string>
+		<string id="stat4">{00}: {01}</string>
+		<string id="points">Points: {00}</string>
+	</Character>
+	<CharacterCreation>
+		<string id="title">Create Character</string>
+		<string id="name">Char Name:</string>
+		<string id="class">Class:</string>
+		<string id="gender">Gender:</string>
+		<string id="male">Male</string>
+		<string id="female">Female</string>
+		<string id="create">Create</string>
+		<string id="invalidname">Character name is invalid. Please use alphanumeric characters with a length between 2 and 20.</string>
+	</CharacterCreation>
+	<Chatbox>
+		<string id="enterchat">Press enter to chat.</string>
+		<string id="send">Send</string>
+	</Chatbox>
+	<CraftingBench>
+		<string id="title">Crafting Bench</string>
+		<string id="recepies">Recepies:</string>
+		<string id="ingredients">Ingredients:</string>
+		<string id="product">Product:</string>
+		<string id="incorrectresources">You do not have the correct resources to craft this item.</string>
+		<string id="craft">Craft</string>
+	</CraftingBench>
+	<Debug>
+		<string id="title">Debug</string>
+		<string id="fps">FPS: {00}</string>
+		<string id="ping">Ping: {00}</string>
+		<string id="draws">Draws: {00}</string>
+		<string id="map">Map: {00}</string>
+		<string id="x">X: {00}</string>
+		<string id="y">Y: {00}</string>
+		<string id="z">Z: {00}</string>
+		<string id="knownentities">Known Entities: {00}</string>
+		<string id="knownmaps">Known Maps: {00}</string>
+		<string id="mapsdrawn">Maps Drawn: {00}</string>
+		<string id="entitiesdrawn">Entities Drawn: {00}</string>
+		<string id="lightsdrawn">Lights Drawn: {00}</string>
+		<string id="time">Time: {00}</string>
+	</Debug>
+	<EntityBox>
+		<string id="vital0">HP:</string>
+		<string id="vital1">MP:</string>
+		<string id="exp">EXP:</string>
+		<string id="vital0val">{00} / {01}</string>
+		<string id="vital1val">{00} / {01}</string>
+		<string id="expval">{00} / {01}</string>
+		<string id="maxlevel">Max Level</string>
+		<string id="level">Level: {00}</string>
+		<string id="trade">Trade</string>
+		<string id="party">Party</string>
+		<string id="tradetip">Request to trade with {00}.</string>
+		<string id="partytip">Invite {00} to your party.</string>
+	</EntityBox>
+	<EventWindow>
+		<string id="continue">Continue</string>
+	</EventWindow>
+	<GameMenu>
+		<string id="items">Inventory</string>
+		<string id="spells">Spell Book</string>
+		<string id="character">Character Info</string>
+		<string id="quest">Quest Log</string>
+		<string id="party">Party</string>
+		<string id="options">Options</string>
+		<string id="exit">Exit Game</string>
+	</GameMenu>
+	<InputBox>
+		<string id="okay">Okay</string>
+		<string id="cancel">Cancel</string>
+		<string id="yes">Yes</string>
+		<string id="no">No</string>
+	</InputBox>
+	<Inventory>
+		<string id="title">Inventory</string>
+		<string id="dropitem">Drop Item</string>
+		<string id="dropitemprompt">How many/much {00} do you want to drop?</string>
+	</Inventory>
+	<ItemDesc>
+		<string id="quantity">x{00}</string>
+		<string id="itemtype0"></string>
+		<string id="itemtype1">Equipment</string>
+		<string id="itemtype2">Consumable</string>
+		<string id="itemtype3">Currency</string>
+		<string id="itemtype4">Spell</string>
+		<string id="itemtype5">Special</string>
+		<string id="2hand">2H</string>
+		<string id="desc">Desc: {00}</string>
+		<string id="prereq">Prerequisites:</string>
+		<string id="level">Level: {00}</string>
+		<string id="bonuses">Stat Bonuses:</string>
+		<string id="damage">Base Damage: {00}</string>
+		<string id="effect">Bonus Effect: {00}% {01}</string>
+		<string id="effect0">Cooldown Reduction</string>
+		<string id="effect1">Lifesteal</string>
+	</ItemDesc>
+	<Login>
+		<string id="title">Login</string>
+		<string id="username">Username:</string>
+		<string id="password">Password:</string>
+		<string id="savepass">Save Password</string>
+		<string id="login">Login</string>
+		<string id="back">Back</string>
+	</Login>
+	<MainMenu>
+		<string id="title">Main Menu</string>
+		<string id="login">Login</string>
+		<string id="register">Register</string>
+		<string id="exit">Exit</string>
+		<string id="options"></string>
+	</MainMenu>
+	<Shop>
+		<string id="sellitem">Sell Item</string>
+		<string id="sellitemprompt">How many/much {00} would you like to sell?</string>
+		<string id="buyitem">Buy Item</string>
+		<string id="buyitemprompt">How many/much {00} would you like to buy?</string>
+		<string id="cannotsell">This shop does not accept that item!</string>
+		<string id="sellsfor">Sells for {00} {01}(s)</string>
+		<string id="costs">Costs {00} {01}(s)</string>
+	</Shop>
+	<Trading>
+		<string id="title">Trading with {00}</string>
+		<string id="youroffer">Your offer:</string>
+		<string id="theiroffer">Their offer:</string>
+		<string id="accept">Accept</string>
+		<string id="pending">Pending</string>
+		<string id="value">Value: {00}</string>
+		<string id="offeritem">Offer Item</string>
+		<string id="offeritemprompt">How many/much {00} would you like to offer?</string>
+		<string id="revokeitem">Revoke Item</string>
+		<string id="revokeitemprompt">How many/much {00} would you like to revoke?</string>
+		<string id="traderequest">Party Invite</string>
+		<string id="requestprompt">{00} has invited you to trade items with them. Do you accept?</string>
+	</Trading>
+	<Spells>
+		<string id="title">Spells</string>
+		<string id="forgetspell">Forget Spell</string>
+		<string id="forgetspellprompt">Are you sure you want to forget {00}?</string>
+	</Spells>
+	<SpellDesc>
+		<string id="spelltype0">Combat Spell</string>
+		<string id="spelltype1">Warp - Self Cast</string>
+		<string id="spelltype2">Warp - Self Cast</string>
+		<string id="spelltype3">Dash</string>
+		<string id="spelltype4">Event</string>
+		<string id="desc">Desc: {00}</string>
+		<string id="targettype0">Self Cast</string>
+		<string id="targettype1">Targetted - Range: {00} Tiles</string>
+		<string id="targettype2">AOE - Range: {00} Tiles - Radius: {01} Tiles</string>
+		<string id="targettype3">Projectile - RangeL {00} Tiles</string>
+		<string id="casttime">Cast Time: {00} Seconds</string>
+		<string id="cooldowntime">Cooldown: {00} Seconds</string>
+		<string id="prereqs">Prerequisites:</string>
+		<string id="vital0cost">HP Cost: {00}</string>
+		<string id="vital1cost">MP Cost: {00}</string>
+		<string id="levelreq">Level: {00}</string>
+		<string id="effects">Effects:</string>
+		<string id="effect1">Silences Target</string>
+		<string id="effect2">Stuns Target</string>
+		<string id="effect3">Snares Target</string>
+		<string id="effect4">Blinds Target</string>
+		<string id="effect5">Stealths Target</string>
+		<string id="effect6">Transforms Target</string>
+		<string id="vital0">HP: {00}{01}</string>
+		<string id="vital1">MP: {00}{01}</string>
+		<string id="addsymbol">+</string>
+		<string id="removesymbol">-</string>
+		<string id="duration">Duration: {00}s</string>
+	</SpellDesc>
+	<Options>
+		<string id="title">Options</string>
+		<string id="resolution">Resolution:</string>
+		<string id="targetfps">"Target FPS:</string>
+		<string id="vsync">V-Sync</string>
+		<string id="30fps">30</string>
+		<string id="60fps">60</string>
+		<string id="90fps">90</string>
+		<string id="120fps">120</string>
+		<string id="unlimitedfps">No Limit</string>
+		<string id="fullscreen">Fullscreen</string>
+		<string id="soundvolume">Sound Volume: {00}%</string>
+		<string id="musicvolume">Music Volume: {00}%</string>
+		<string id="apply">Apply</string>
+		<string id="cancel">Cancel</string>
+	</Options>
+	<Parties>
+		<string id="title">Party</string>
+		<string id="leader">Party Leader</string>
+		<string id="kick">Kick {00}</string>
+		<string id="leave">Leave Party</string>
+		<string id="partyinvite">Party Invite</string>
+		<string id="inviteprompt">{00} has invited you to their party. Do you accept?</string>
+	</Parties>
+	<QuestOffer>
+		<string id="title">Quest Offer</string>
+		<string id="accept">Accept</string>
+		<string id="decline">Decline</string>
+	</QuestOffer>
+	<QuestLog>
+		<string id="title">Quest Log</string>
+		<string id="abandon">Abandon</string>
+		<string id="abandontitle">Abandon Quest: {00}</string>
+		<string id="abandonprompt">Are you sure that you want to quit the quest "{00}"?</string>
+		<string id="notstarted">Quest Not Started</string>
+		<string id="inprogress">Quest In Progress</string>
+		<string id="completed">Quest Completed</string>
+		<string id="currenttask">Current Task:</string>
+		<string id="tasknpc">{00}/{01} {02}(s) gathered.</string>
+		<string id="taskitem">{00}/{01} {02}(s) slain.</string>
+	</QuestLog>
+	<Registration>
+		<string id="title">Register</string>
+		<string id="username">Username:</string>
+		<string id="email">Email:</string>
+		<string id="password">Password:</string>
+		<string id="confirmpass">Confirm Password:</string>
+		<string id="register">Register</string>
+		<string id="back">Back</string>
+		<string id="emailinvalid">Email is invalid.</string>
+		<string id="passwordmatch">Passwords didn't match!</string>
+	</Registration>
+	<Resources>
+		<string id="failedtoload">Failed to load Resources!</string>
+		<string id="resourceexception">Failed to download client resources.\n\nException Info: {00}\n\nWould you like to try again?</string>
+		<string id="resourcesfatal">Failed to load resources from client directory and Ascension Game Dev server. Cannot launch game!</string>
+		<string id="cancelled">Download was Cancelled!</string>
+	</Resources>
+	<Errors>
+		<string id="title">Error!</string>
+		<string id="usernameinvalid">Username is invalid. Please use alphanumeric characters with a length between 2 and 20.</string>
+		<string id="passwordinvalid">Password is invalid. Please use alphanumeric characters with a length between 4 and 20.</string>
+		<string id="notconnected">Not connected to the game server. Is it online?</string>
+	</Errors>
 </Strings>

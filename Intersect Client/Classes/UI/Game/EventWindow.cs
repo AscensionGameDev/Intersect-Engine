@@ -35,6 +35,7 @@ using IntersectClientExtras.Gwen.ControlInternal;
 using Intersect_Client.Classes.Core;
 using Intersect_Client.Classes.General;
 using Intersect_Client.Classes.Networking;
+using Intersect_Library.Localization;
 
 namespace Intersect_Client.Classes.UI.Game
 {
@@ -182,7 +183,7 @@ namespace Intersect_Client.Classes.UI.Game
                     if (responseCount == 0)
                     {
                         _eventResponse1.Show();
-                        _eventResponse1.SetText("Continue");
+                        _eventResponse1.SetText(Strings.Get("eventwindow","continue"));
                         _eventResponse2.Hide();
                         _eventResponse3.Hide();
                         _eventResponse4.Hide();

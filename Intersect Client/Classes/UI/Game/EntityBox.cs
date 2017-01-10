@@ -35,6 +35,7 @@ using Intersect_Client.Classes.Entities;
 using Intersect_Client.Classes.General;
 using Intersect_Client.Classes.Networking;
 using Intersect_Library;
+using Intersect_Library.Localization;
 using Color = IntersectClientExtras.GenericClasses.Color;
 
 namespace Intersect_Client.Classes.UI.Game
@@ -127,7 +128,7 @@ namespace Intersect_Client.Classes.UI.Game
                 _hpBar.IsHidden = true;
 
                 _hpTitle = new Label(_entityBox);
-                _hpTitle.SetText("HP:");
+                _hpTitle.SetText(Strings.Get("entitybox","vital0"));
                 _hpTitle.SetTextColor(Color.White, Label.ControlState.Normal);
                 _hpTitle.SetPosition(93, 37);
 
@@ -150,7 +151,7 @@ namespace Intersect_Client.Classes.UI.Game
                 _mpBar.IsHidden = true;
 
                 _mpTitle = new Label(_entityBox);
-                _mpTitle.SetText("MP:");
+                _mpTitle.SetText(Strings.Get("entitybox", "vital1"));
                 _mpTitle.SetTextColor(Color.White, Label.ControlState.Normal);
                 _mpTitle.SetPosition(93, 63);
 
@@ -176,7 +177,7 @@ namespace Intersect_Client.Classes.UI.Game
                 _expBar.IsHidden = true;
 
                 _expTitle = new Label(_entityBox);
-                _expTitle.SetText("EXP:");
+                _expTitle.SetText(Strings.Get("entitybox", "exp"));
                 _expTitle.SetTextColor(Color.White, Label.ControlState.Normal);
                 _expTitle.SetPosition(88,89);
                 
@@ -190,16 +191,16 @@ namespace Intersect_Client.Classes.UI.Game
             else if (_myEntity.GetType() == typeof(Player))
             {
                 TradeLabel = new Label(_entityBox);
-                TradeLabel.SetText("Trade");
-                TradeLabel.SetToolTipText("Request to trade with " + _myEntity.MyName + ".");
+                TradeLabel.SetText(Strings.Get("entitybox", "trade"));
+                TradeLabel.SetToolTipText(Strings.Get("entitybox", "tradetip", _myEntity.MyName));
                 TradeLabel.SetPosition(117, 89);
                 TradeLabel.TextColorOverride = Color.White;
                 TradeLabel.MouseInputEnabled = true;
                 TradeLabel.Clicked += tradeRequest_Clicked;
 
                 PartyLabel = new Label(_entityBox);
-                PartyLabel.SetText("Party");
-                PartyLabel.SetToolTipText("Invite " + _myEntity.MyName + " to your party.");
+                PartyLabel.SetText(Strings.Get("entitybox", "party"));
+                PartyLabel.SetToolTipText(Strings.Get("entitybox", "partytip", _myEntity.MyName));
                 PartyLabel.SetPosition(165, 89);
                 PartyLabel.TextColorOverride = Color.White;
                 PartyLabel.MouseInputEnabled = true;
@@ -244,7 +245,7 @@ namespace Intersect_Client.Classes.UI.Game
             //If not an event, update the hp/mana bars.
             if (_myEntity.GetType() != typeof (Event))
             {
-                _entityLevel.SetText("Level: " + _myEntity.Level);
+                _entityLevel.SetText(Strings.Get("entitybox", "level", _myEntity.Level));
                 _entityLevel.SetPosition(_entityBox.Width - 20 - _entityLevel.Width, 9);
                 float targetHPWidth = 0f;
                 if (_myEntity.MaxVital[(int) Vitals.Health] > 0)
@@ -254,13 +255,13 @@ namespace Intersect_Client.Classes.UI.Game
                             ((float) _myEntity.Vital[(int) Vitals.Health]/
                              (float) _myEntity.MaxVital[(int) Vitals.Health]);
                     //Fix the Labels
-                    _hpLbl.Text = _myEntity.Vital[(int) Vitals.Health] + " / " + _myEntity.MaxVital[(int) Vitals.Health];
+                    _hpLbl.Text = Strings.Get("entitybox", "vital0val", _myEntity.Vital[(int)Vitals.Health],_myEntity.MaxVital[(int)Vitals.Health]);
                     //Multiply by the width of the bars.
                     targetHPWidth *= _hpBackground.Width;
                 }
                 else
                 {
-                    _hpLbl.Text = "0 / 0";
+                    _hpLbl.Text = Strings.Get("entitybox", "vital0val", 0,0);
                     targetHPWidth = _hpBackground.Width;
                 }
                 if ((int) targetHPWidth != _curHPWidth)
@@ -299,12 +300,12 @@ namespace Intersect_Client.Classes.UI.Game
                         (float)
                             ((float)_myEntity.Vital[(int)Vitals.Mana] /
                              (float)_myEntity.MaxVital[(int)Vitals.Mana]);
-                    _mpLbl.Text = _myEntity.Vital[(int) Vitals.Mana] + " / " + _myEntity.MaxVital[(int) Vitals.Mana];
+                    _mpLbl.Text = Strings.Get("entitybox", "vital1val", _myEntity.Vital[(int)Vitals.Mana], _myEntity.MaxVital[(int)Vitals.Mana]);
                     targetMPWidth *= _mpBackground.Width;
                 }
                 else
                 {
-                    _mpLbl.Text = "0 / 0";
+                    _mpLbl.Text = Strings.Get("entitybox", "vital1val", 0, 0);
                     targetMPWidth = _mpBackground.Width;
                 }
                 if ((int) targetMPWidth != _curMPWidth)
@@ -345,12 +346,12 @@ namespace Intersect_Client.Classes.UI.Game
                 if (((Player)_myEntity).GetNextLevelExperience() > 0)
                 {
                     targetExpWidth = (float)((Player)_myEntity).Experience / (float)((Player)_myEntity).GetNextLevelExperience();
-                    _expLbl.Text = ((Player)_myEntity).Experience + " / " + ((Player)_myEntity).GetNextLevelExperience();
+                    _expLbl.Text = Strings.Get("entitybox", "expval", ((Player)_myEntity).Experience, ((Player)_myEntity).GetNextLevelExperience());
                 }
                 else
                 {
                     targetExpWidth = 1f;
-                    _expLbl.Text = "Max Level";
+                    _expLbl.Text = Strings.Get("entitybox", "maxlevel");
                 }
                 _expLbl.X = _expBackground.X + _expBackground.Width / 2 - _expLbl.Width / 2;
                 targetExpWidth *= _expBackground.Width;

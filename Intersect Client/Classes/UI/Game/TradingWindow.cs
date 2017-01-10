@@ -46,6 +46,7 @@ using Color = IntersectClientExtras.GenericClasses.Color;
 
 using Point = IntersectClientExtras.GenericClasses.Point;
 using Intersect_Library.GameObjects;
+using Intersect_Library.Localization;
 
 namespace Intersect_Client.Classes.UI.Game
 {
@@ -77,7 +78,7 @@ namespace Intersect_Client.Classes.UI.Game
         {
             EntityID = entityID;
 
-            _tradeWindow = new WindowControl(_gameCanvas, "Trading with " + Globals.Entities[EntityID].MyName);
+            _tradeWindow = new WindowControl(_gameCanvas, Strings.Get("trading","title", Globals.Entities[EntityID].MyName));
             _tradeWindow.SetSize(434, 402);
             _tradeWindow.SetPosition(GameGraphics.Renderer.GetScreenWidth() / 2 - 200, GameGraphics.Renderer.GetScreenHeight() / 2 - 200);
             _tradeWindow.DisableResizing();
@@ -97,18 +98,18 @@ namespace Intersect_Client.Classes.UI.Game
             _tradeWindow.SetTextColor(new Color(255, 220, 220, 220), WindowControl.ControlState.Active);
 
             _yourOffer = new Label(_tradeWindow);
-            _yourOffer.Text = "Your offer:";
+            _yourOffer.Text = Strings.Get("trading", "youroffer");
             _yourOffer.SetPosition(4 + ((_tradeWindow.Width - _tradeWindow.Padding.Left - _tradeWindow.Padding.Right) / 4) - (_yourOffer.Width / 2), 4);
             _yourOffer.TextColorOverride = Color.White;
 
             _theirOffer = new Label(_tradeWindow);
-            _theirOffer.Text = "Their offer:";
+            _theirOffer.Text = Strings.Get("trading", "theiroffer");
             _theirOffer.SetPosition(4 + (3 * (_tradeWindow.Width - _tradeWindow.Padding.Left - _tradeWindow.Padding.Right) / 4) - (_yourOffer.Width / 2), 4);
             _theirOffer.TextColorOverride = Color.White;
 
             _trade = new Button(_tradeWindow);
             _trade.SetSize(100, 42);
-            _trade.SetText("Accept");
+            _trade.SetText(Strings.Get("trading", "accept"));
             _trade.SetPosition(_tradeWindow.Width - 120, _tradeWindow.Height - 82);
             _trade.Clicked += trade_Clicked;
             _trade.SetImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "smallbuttonnormal.png"), Button.ControlState.Normal);
@@ -184,7 +185,7 @@ namespace Intersect_Client.Classes.UI.Game
                         _tradeSegment[n].Values[i].IsHidden = true;
                     }
                 }
-                _tradeSegment[n].GoldValue.Text = "Value: " + g;
+                _tradeSegment[n].GoldValue.Text = Strings.Get("trading", "value",g);
                 _tradeSegment[n].GoldValue.SetPosition(4 + (((2 * n) + 1) * (_tradeWindow.Width - _tradeWindow.Padding.Left - _tradeWindow.Padding.Right) / 4) - (_tradeSegment[n].GoldValue.Width / 2), 294);
                 g = 0;
             }
@@ -203,7 +204,7 @@ namespace Intersect_Client.Classes.UI.Game
         //Trade the item
         void trade_Clicked(Base sender, ClickedEventArgs arguments)
         {
-            _trade.Text = "Pending";
+            _trade.Text = Strings.Get("trading", "pending");
             PacketSender.SendAcceptTrade();
         }
     }
@@ -454,7 +455,7 @@ namespace Intersect_Client.Classes.UI.Game
             downButton.SetImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "downarrowhover.png"), Button.ControlState.Hovered);
 
             GoldValue = new Label(_tradeWindow);
-            GoldValue.Text = "Value: 0";
+            GoldValue.Text = Strings.Get("trading", "value", 0);
             GoldValue.SetPosition(4 + (((2 * index) + 1) * (_tradeWindow.Width - _tradeWindow.Padding.Left - _tradeWindow.Padding.Right) / 4) - (GoldValue.Width / 2), 294);
             GoldValue.TextColorOverride = Color.White;
 

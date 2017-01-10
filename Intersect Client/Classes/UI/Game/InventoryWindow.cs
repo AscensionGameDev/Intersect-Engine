@@ -44,6 +44,7 @@ using Color = IntersectClientExtras.GenericClasses.Color;
 
 using Point = IntersectClientExtras.GenericClasses.Point;
 using Intersect_Library.GameObjects;
+using Intersect_Library.Localization;
 
 namespace Intersect_Client.Classes.UI.Game
 {
@@ -66,7 +67,7 @@ namespace Intersect_Client.Classes.UI.Game
         //Init
         public InventoryWindow(Canvas _gameCanvas)
         {
-            _inventoryWindow = new WindowControl(_gameCanvas, "Inventory");
+            _inventoryWindow = new WindowControl(_gameCanvas, Strings.Get("inventory","title"));
             _inventoryWindow.SetSize(228, 320);
             _inventoryWindow.SetPosition(GameGraphics.Renderer.GetScreenWidth() - 210, GameGraphics.Renderer.GetScreenHeight() - 500);
             _inventoryWindow.DisableResizing();
@@ -312,8 +313,7 @@ namespace Intersect_Client.Classes.UI.Game
                             _descWindow = new ItemDescWindow(Globals.Me.Inventory[_mySlot].ItemNum,
                                 Globals.Me.Inventory[_mySlot].ItemVal, _inventoryWindow.X - 220, _inventoryWindow.Y,
                                 Globals.Me.Inventory[_mySlot].StatBoost, "",
-                                "Sells for " + Globals.GameShop.BuyingItems[foundItem].CostItemVal + " " +
-                                hoveredItem.Name + "(s)");
+                                Strings.Get("shop","sellsfor",Globals.GameShop.BuyingItems[foundItem].CostItemVal,hoveredItem.Name));
                         }
                     }
                     else
@@ -323,10 +323,9 @@ namespace Intersect_Client.Classes.UI.Game
                         if (hoveredItem != null && costItem != null)
                         {
                             _descWindow = new ItemDescWindow(Globals.Me.Inventory[_mySlot].ItemNum,
-                            Globals.Me.Inventory[_mySlot].ItemVal, _inventoryWindow.X - 220, _inventoryWindow.Y,
-                            Globals.Me.Inventory[_mySlot].StatBoost, "",
-                            "Sells for " + hoveredItem.Price +
-                            " " + costItem.Name + "(s)");
+                                Globals.Me.Inventory[_mySlot].ItemVal, _inventoryWindow.X - 220, _inventoryWindow.Y,
+                                Globals.Me.Inventory[_mySlot].StatBoost, "",
+                                Strings.Get("shop", "sellsfor", hoveredItem.Price, costItem.Name));
                         }
                     }
                 }

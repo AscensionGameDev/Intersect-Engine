@@ -31,6 +31,7 @@ using IntersectClientExtras.Gwen.Control;
 using Intersect_Client.Classes.Core;
 using Intersect_Client.Classes.General;
 using IntersectClientExtras.Gwen.Control.EventArguments;
+using Intersect_Library.Localization;
 
 namespace Intersect_Client.Classes.UI.Game
 {
@@ -86,7 +87,7 @@ namespace Intersect_Client.Classes.UI.Game
             _closeButton.SetSize(buttonWidth, buttonHeight);
             _closeButton.SetPosition(_gameCanvas.Width - (buttonCount + 1) * (backgroundWidth + buttonMargin) + 4, _gameCanvas.Height - buttonMargin - backgroundHeight + 4);
             _closeButton.SetImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "exiticon.png"), Button.ControlState.Normal);
-            _closeButton.SetToolTipText("Exit Game");
+            _closeButton.SetToolTipText(Strings.Get("gamemenu", "exit"));
             _closeButton.Clicked += CloseBtn_Clicked;
             _closeButton.HoverEnter += Button_HoverEnter;
             _closeButton.HoverLeave += Button_HoverLeave;
@@ -101,7 +102,7 @@ namespace Intersect_Client.Classes.UI.Game
             _optionsButton.SetSize(buttonWidth, buttonHeight);
             _optionsButton.SetPosition(_gameCanvas.Width - (buttonCount + 1) * (backgroundWidth + buttonMargin) + 4, _gameCanvas.Height - buttonMargin - backgroundHeight + 4);
             _optionsButton.SetImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "optionsicon.png"), Button.ControlState.Normal);
-            _optionsButton.SetToolTipText("Options");
+            _optionsButton.SetToolTipText(Strings.Get("gamemenu", "options"));
             _optionsButton.Clicked += OptionBtn_Clicked;
             _optionsButton.HoverEnter += Button_HoverEnter;
             _optionsButton.HoverLeave += Button_HoverLeave;
@@ -116,7 +117,7 @@ namespace Intersect_Client.Classes.UI.Game
             _partyButton.SetSize(buttonWidth, buttonHeight);
             _partyButton.SetPosition(_gameCanvas.Width - (buttonCount + 1) * (backgroundWidth + buttonMargin) + 4, _gameCanvas.Height - buttonMargin - backgroundHeight + 4);
             _partyButton.SetImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "partyicon.png"), Button.ControlState.Normal);
-            _partyButton.SetToolTipText("Party");
+            _partyButton.SetToolTipText(Strings.Get("gamemenu", "party"));
             _partyButton.Clicked += PartyBtn_Clicked;
             _partyButton.HoverEnter += Button_HoverEnter;
             _partyButton.HoverLeave += Button_HoverLeave;
@@ -131,7 +132,7 @@ namespace Intersect_Client.Classes.UI.Game
             _questsButton.SetSize(buttonWidth, buttonHeight);
             _questsButton.SetPosition(_gameCanvas.Width - (buttonCount + 1) * (backgroundWidth + buttonMargin) + 4, _gameCanvas.Height - buttonMargin - backgroundHeight + 4);
             _questsButton.SetImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "questsicon.png"), Button.ControlState.Normal);
-            _questsButton.SetToolTipText("Quest Log");
+            _questsButton.SetToolTipText(Strings.Get("gamemenu", "quest"));
             _questsButton.Clicked += QuestBtn_Clicked;
             _questsButton.HoverEnter += Button_HoverEnter;
             _questsButton.HoverLeave += Button_HoverLeave;
@@ -146,7 +147,7 @@ namespace Intersect_Client.Classes.UI.Game
             _characterButton.SetSize(buttonWidth, buttonHeight);
             _characterButton.SetPosition(_gameCanvas.Width - (buttonCount + 1) * (backgroundWidth + buttonMargin) + 4, _gameCanvas.Height - buttonMargin - backgroundHeight + 4);
             _characterButton.SetImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "charactericon.png"), Button.ControlState.Normal);
-            _characterButton.SetToolTipText("Character Info");
+            _characterButton.SetToolTipText(Strings.Get("gamemenu", "character"));
             _characterButton.Clicked += CharacterButton_Clicked;
             _characterButton.HoverEnter += Button_HoverEnter;
             _characterButton.HoverLeave += Button_HoverLeave;
@@ -161,7 +162,7 @@ namespace Intersect_Client.Classes.UI.Game
             _spellsButton.SetSize(buttonWidth, buttonHeight);
             _spellsButton.SetPosition(_gameCanvas.Width - (buttonCount + 1) * (backgroundWidth + buttonMargin) + 4, _gameCanvas.Height - buttonMargin - backgroundHeight + 4);
             _spellsButton.SetImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "spellicon.png"), Button.ControlState.Normal);
-            _spellsButton.SetToolTipText("Spell Book");
+            _spellsButton.SetToolTipText(Strings.Get("gamemenu", "spells"));
             _spellsButton.Clicked += SpellsButton_Clicked;
             _spellsButton.HoverEnter += Button_HoverEnter;
             _spellsButton.HoverLeave += Button_HoverLeave;
@@ -176,7 +177,7 @@ namespace Intersect_Client.Classes.UI.Game
             _inventoryButton.SetSize(buttonWidth, buttonHeight);
             _inventoryButton.SetPosition(_gameCanvas.Width - (buttonCount + 1) * (backgroundWidth + buttonMargin) + 4, _gameCanvas.Height - buttonMargin - backgroundHeight + 4);
             _inventoryButton.SetImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "inventoryicon.png"), Button.ControlState.Normal);
-            _inventoryButton.SetToolTipText("Inventory");
+            _inventoryButton.SetToolTipText(Strings.Get("gamemenu","items"));
             _inventoryButton.Clicked += InventoryButton_Clicked;
             _inventoryButton.HoverEnter += Button_HoverEnter;
             _inventoryButton.HoverLeave += Button_HoverLeave;

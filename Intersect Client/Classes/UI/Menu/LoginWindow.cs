@@ -38,6 +38,7 @@ using Intersect_Client.Classes.Core;
 using Intersect_Client.Classes.General;
 using Intersect_Client.Classes.Misc;
 using Intersect_Client.Classes.Networking;
+using Intersect_Library.Localization;
 
 namespace Intersect_Client.Classes.UI.Menu
 {
@@ -81,7 +82,7 @@ namespace Intersect_Client.Classes.UI.Menu
             //Menu Header
             _menuHeader = new Label(_menuPanel);
             _menuHeader.AutoSizeToContents = false;
-            _menuHeader.SetText("Login");
+            _menuHeader.SetText(Strings.Get("login","title"));
             _menuHeader.Font = Globals.ContentManager.GetFont(Gui.DefaultFont, 24);
             _menuHeader.SetSize(_menuPanel.Width, _menuPanel.Height);
             _menuHeader.Alignment = Pos.CenterH;
@@ -94,7 +95,7 @@ namespace Intersect_Client.Classes.UI.Menu
 
             //Login Username Label
             _usernameLabel = new Label(_usernameBackground);
-            _usernameLabel.SetText("Username:");
+            _usernameLabel.SetText(Strings.Get("login", "username"));
             _usernameLabel.Font = Globals.ContentManager.GetFont(Gui.DefaultFont, 20);
             _usernameLabel.AutoSizeToContents = false;
             _usernameLabel.SetSize(176, 55);
@@ -118,7 +119,7 @@ namespace Intersect_Client.Classes.UI.Menu
 
             //Login Password Label
             _passwordLabel = new Label(_passwordBackground);
-            _passwordLabel.SetText("Password:");
+            _passwordLabel.SetText(Strings.Get("login", "password"));
             _passwordLabel.Font = Globals.ContentManager.GetFont(Gui.DefaultFont, 20);
             _passwordLabel.AutoSizeToContents = false;
             _passwordLabel.SetSize(176, 55);
@@ -136,7 +137,7 @@ namespace Intersect_Client.Classes.UI.Menu
             _passwordTextbox.TextColorOverride = new Color(255, 220, 220, 220);
 
             //Login Save Pass Checkbox
-            _savePassChk = new LabeledCheckBox(_menuPanel) { Text = "Save Password" };
+            _savePassChk = new LabeledCheckBox(_menuPanel) { Text = Strings.Get("login", "savepassword") };
             _savePassChk.SetFont(Globals.ContentManager.GetFont(Gui.DefaultFont, 20));
             _savePassChk.SetSize(300, 36);
             _savePassChk.SetPosition(_passwordBackground.X + 24,_passwordBackground.Bottom + 16);
@@ -149,7 +150,7 @@ namespace Intersect_Client.Classes.UI.Menu
 
             //Login - Send Login Button
             _loginBtn = new Button(_menuPanel);
-            _loginBtn.SetText("Login");
+            _loginBtn.SetText(Strings.Get("login", "login"));
             _loginBtn.Font = Globals.ContentManager.GetFont(Gui.DefaultFont, 20);
             _loginBtn.Clicked += LoginBtn_Clicked;
             _loginBtn.SetPosition(_usernameBackground.X, _savePassChk.Bottom + 16);
@@ -163,7 +164,7 @@ namespace Intersect_Client.Classes.UI.Menu
 
             //Login - Back Button
             _backBtn = new Button(_menuPanel);
-            _backBtn.SetText("Back");
+            _backBtn.SetText(Strings.Get("login", "back"));
             _backBtn.Font = Globals.ContentManager.GetFont(Gui.DefaultFont, 20);
             _backBtn.SetSize(211, 61);
             _backBtn.SetPosition(_usernameBackground.Right - _backBtn.Width,_savePassChk.Bottom + 16);
@@ -249,21 +250,18 @@ namespace Intersect_Client.Classes.UI.Menu
                         }
                         else
                         {
-                            Gui.MsgboxErrors.Add(
-                                "Password is invalid. Please use alphanumeric characters with a length between 4 and 20");
+                            Gui.MsgboxErrors.Add(Strings.Get("errors", "passwordinvalid"));
                         }
                     }
                 }
                 else
                 {
-                    Gui.MsgboxErrors.Add(
-                        "Username is invalid. Please use alphanumeric characters with a length between 2 and 20");
+                    Gui.MsgboxErrors.Add(Strings.Get("errors", "usernameinvalid"));
                 }
             }
             else
             {
-                Gui.MsgboxErrors.Add(
-                        "Not connected to the game server. Is it online?");
+                Gui.MsgboxErrors.Add(Strings.Get("errors", "notconnected"));
             }
         }
         private void LoadCredentials()

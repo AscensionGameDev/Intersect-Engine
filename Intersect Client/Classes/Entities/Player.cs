@@ -40,6 +40,7 @@ using Intersect_Client.Classes.UI.Game;
 using Intersect_Client.Classes.Maps;
 using Intersect_Library;
 using Intersect_Library.GameObjects;
+using Intersect_Library.Localization;
 using Color = IntersectClientExtras.GenericClasses.Color;
 
 
@@ -142,7 +143,7 @@ namespace Intersect_Client.Classes.Entities
             {
                 if (Inventory[index].ItemVal > 1)
                 {
-                    InputBox iBox = new InputBox("Drop Item", "How many/much " + ItemBase.GetItem(Inventory[index].ItemNum).Name + " do you want to drop?", true, DropItemInputBoxOkay, null, index, true);
+                    InputBox iBox = new InputBox(Strings.Get("inventory","dropitem"), Strings.Get("inventory", "dropitemprompt", ItemBase.GetItem(Inventory[index].ItemNum).Name), true, DropItemInputBoxOkay, null, index, true);
                 }
                 else
                 {
@@ -201,7 +202,7 @@ namespace Intersect_Client.Classes.Entities
                 {
                     if (Inventory[index].ItemVal > 1)
                     {
-                        InputBox iBox = new InputBox("Sell Item", "How many " + ItemBase.GetItem(Inventory[index].ItemNum).Name + "(s) would you like to sell?", true, SellItemInputBoxOkay, null, index, true);
+                        InputBox iBox = new InputBox(Strings.Get("shop","sellitem"), Strings.Get("shop", "sellitemprompt", ItemBase.GetItem(Inventory[index].ItemNum).Name), true, SellItemInputBoxOkay, null, index, true);
                     }
                     else
                     {
@@ -210,7 +211,7 @@ namespace Intersect_Client.Classes.Entities
                 }
                 else
                 {
-                    InputBox iBox = new InputBox("Sell Item", "This shop does not accept that item!", true, null, null, -1, false);
+                    InputBox iBox = new InputBox(Strings.Get("shop", "sellitem"), Strings.Get("shop", "cannotsell"), true, null, null, -1, false);
                 }
             }
         }
@@ -230,7 +231,7 @@ namespace Intersect_Client.Classes.Entities
             {
                 if (Inventory[index].ItemVal > 1)
                 {
-                    InputBox iBox = new InputBox("Deposit Item", "How many " + ItemBase.GetItem(Inventory[index].ItemNum).Name + "(s) would you like to deposit?", true, DepositItemInputBoxOkay, null, index, true);
+                    InputBox iBox = new InputBox(Strings.Get("bank","deposititem"), Strings.Get("bank", "deposititemprompt", ItemBase.GetItem(Inventory[index].ItemNum).Name), true, DepositItemInputBoxOkay, null, index, true);
                 }
                 else
                 {
@@ -252,7 +253,7 @@ namespace Intersect_Client.Classes.Entities
             {
                 if (Globals.Bank[index].ItemVal > 1)
                 {
-                    InputBox iBox = new InputBox("Withdraw Item", "How many " + ItemBase.GetItem(Globals.Bank[index].ItemNum).Name + "(s) would you like to withdraw?", true, WithdrawItemInputBoxOkay, null, index, true);
+                    InputBox iBox = new InputBox(Strings.Get("bank","withdrawitem"), Strings.Get("bank", "withdrawitemprompt", ItemBase.GetItem(Globals.Bank[index].ItemNum).Name), true, WithdrawItemInputBoxOkay, null, index, true);
                 }
                 else
                 {
@@ -276,7 +277,7 @@ namespace Intersect_Client.Classes.Entities
             {
                 if (Inventory[index].ItemVal > 1)
                 {
-                    InputBox iBox = new InputBox("Offer Item", "How many " + ItemBase.GetItem(Inventory[index].ItemNum).Name + "(s) would you like to offer?", true, TradeItemInputBoxOkay, null, index, true);
+                    InputBox iBox = new InputBox(Strings.Get("trading","offeritem"), Strings.Get("trading", "offeritemprompt", ItemBase.GetItem(Inventory[index].ItemNum).Name), true, TradeItemInputBoxOkay, null, index, true);
                 }
                 else
                 {
@@ -298,7 +299,7 @@ namespace Intersect_Client.Classes.Entities
             {
                 if (Globals.Trade[0, index].ItemVal > 1)
                 {
-                    InputBox iBox = new InputBox("Revoke Item", "How many " + ItemBase.GetItem(Globals.Trade[0, index].ItemNum).Name + "(s) would you like to revoke?", true, RevokeItemInputBoxOkay, null, index, true);
+                    InputBox iBox = new InputBox(Strings.Get("trading","revokeitem"), Strings.Get("trading", "revokeitemprompt", ItemBase.GetItem(Globals.Trade[0, index].ItemNum).Name), true, RevokeItemInputBoxOkay, null, index, true);
                 }
                 else
                 {
@@ -326,7 +327,7 @@ namespace Intersect_Client.Classes.Entities
         {
             if (SpellBase.GetSpell(Spells[index].SpellNum) != null)
             {
-                InputBox iBox = new InputBox("Forget Spell", "Are you sure you want to forget " + SpellBase.GetSpell(Spells[index].SpellNum).Name + "?", true, ForgetSpellInputBoxOkay, null, index, false);
+                InputBox iBox = new InputBox(Strings.Get("spells","forgetspell"), Strings.Get("spells","forgetspellprompt",SpellBase.GetSpell(Spells[index].SpellNum).Name), true, ForgetSpellInputBoxOkay, null, index, false);
             }
         }
         private void ForgetSpellInputBoxOkay(Object sender, EventArgs e)

@@ -45,6 +45,7 @@ using Intersect_Library;
 using Color = IntersectClientExtras.GenericClasses.Color;
 using Point = IntersectClientExtras.GenericClasses.Point;
 using Intersect_Library.GameObjects;
+using Intersect_Library.Localization;
 
 namespace Intersect_Client.Classes.UI.Game
 {
@@ -81,7 +82,7 @@ namespace Intersect_Client.Classes.UI.Game
 
         public CraftingBenchWindow(Canvas _gameCanvas)
         {
-            _craftWindow = new WindowControl(_gameCanvas, "Crafting Bench");
+            _craftWindow = new WindowControl(_gameCanvas, Strings.Get("craftingbench", "title"));
             _craftWindow.SetSize(415, 424);
             _craftWindow.SetPosition(GameGraphics.Renderer.GetScreenWidth() / 2 - 200, GameGraphics.Renderer.GetScreenHeight() / 2 - 200);
             _craftWindow.DisableResizing();
@@ -108,17 +109,17 @@ namespace Intersect_Client.Classes.UI.Game
             //Labels
             _lblRecepies = new Label(_craftWindow);
             _lblRecepies.SetPosition(4, 4);
-            _lblRecepies.Text = "Recepies:";
+            _lblRecepies.Text = Strings.Get("craftingbench", "recepies");
             _lblRecepies.TextColorOverride = Color.White;
 
             _lblIngredients = new Label(_craftWindow);
             _lblIngredients.SetPosition(_craftWindow.Width / 2, 50);
-            _lblIngredients.Text = "Ingredients:";
+            _lblIngredients.Text = Strings.Get("craftingbench", "ingredients");
             _lblIngredients.TextColorOverride = Color.White;
 
             _lblProduct = new Label(_craftWindow);
             _lblProduct.SetPosition(_craftWindow.Width / 2, 20);
-            _lblProduct.Text = "Product:";
+            _lblProduct.Text = Strings.Get("craftingbench","product");
             _lblProduct.TextColorOverride = Color.White;
 
             //Recepie list
@@ -172,7 +173,7 @@ namespace Intersect_Client.Classes.UI.Game
             //Load the craft button
             _craft = new Button(_craftWindow);
             _craft.SetSize(86, 39);
-            _craft.SetText("Craft");
+            _craft.SetText(Strings.Get("craftingbench", "craft"));
             _craft.SetPosition(_craftWindow.Width - 100 , _craftWindow.Height - 82);
             _craft.Clicked += craft_Clicked; 
             _craft.SetImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "smallbuttonnormal.png"), Button.ControlState.Normal);
@@ -280,7 +281,7 @@ namespace Intersect_Client.Classes.UI.Game
                 }
                 if (x < c.Quantity)
                 {
-                    ChatboxMsg.AddMessage(new ChatboxMsg("You do not have the correct resources to craft this item.", Color.Red));
+                    ChatboxMsg.AddMessage(new ChatboxMsg(Strings.Get("craftingbench","incorrectresources"), Color.Red));
                     return;
                 }
             }

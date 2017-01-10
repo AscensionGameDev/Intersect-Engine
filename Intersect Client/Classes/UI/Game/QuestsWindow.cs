@@ -43,6 +43,7 @@ using Intersect_Library;
 using Color = IntersectClientExtras.GenericClasses.Color;
 using Point = IntersectClientExtras.GenericClasses.Point;
 using Intersect_Library.GameObjects;
+using Intersect_Library.Localization;
 
 namespace Intersect_Client.Classes.UI.Game
 {
@@ -61,7 +62,7 @@ namespace Intersect_Client.Classes.UI.Game
         //Init
         public QuestsWindow(Canvas _gameCanvas)
         {
-            _questsWindow = new WindowControl(_gameCanvas, "Quest Log");
+            _questsWindow = new WindowControl(_gameCanvas, Strings.Get("questlog","title"));
             _questsWindow.SetSize(228, 320);
             _questsWindow.SetPosition(GameGraphics.Renderer.GetScreenWidth() - 210, GameGraphics.Renderer.GetScreenHeight() - 500);
             _questsWindow.DisableResizing();
@@ -153,7 +154,7 @@ namespace Intersect_Client.Classes.UI.Game
 
             _quitButton = new Button(_questsWindow);
             _quitButton.SetSize(49, 18);
-            _quitButton.SetText("Abandon");
+            _quitButton.SetText(Strings.Get("questlog", "abandon"));
             _quitButton.SetPosition(159, 256);
             _quitButton.Font = Globals.ContentManager.GetFont(Gui.DefaultFont, 8);
             _quitButton.SetImage(Globals.ContentManager.GetTexture(GameContentManager.TextureType.Gui, "quitnormal.png"), Button.ControlState.Normal);
@@ -172,7 +173,7 @@ namespace Intersect_Client.Classes.UI.Game
         {
             if (_selectedQuest != null)
             {
-                new InputBox("Abandon Quest: " + _selectedQuest.Name, "Are you sure that you want to quit the quest \"" + _selectedQuest.Name + "\"?", true, AbandonQuest, null, _selectedQuest.GetId(), false);
+                new InputBox(Strings.Get("questlog", "abandontitle", _selectedQuest.Name), Strings.Get("questlog","abandonprompt",_selectedQuest.Name), true, AbandonQuest, null, _selectedQuest.GetId(), false);
             }
         }
 
@@ -318,11 +319,11 @@ namespace Intersect_Client.Classes.UI.Game
                     if (Globals.Me.QuestProgress[_selectedQuest.GetId()].task != -1)
                     {
                         //In Progress
-                        _questStatus.Text = "Quest In Progress";
+                        _questStatus.Text = Strings.Get("questlog", "inprogress");
                         _questStatus.SetTextColor(Color.Yellow, Label.ControlState.Normal);
                         myText = Gui.WrapText(_selectedQuest.InProgressDesc, _questDesc.Width - 12, _questDesc.Parent.Skin.DefaultFont);
                         taskString.Add("");
-                        taskString.Add("Current Task:");
+                        taskString.Add(Strings.Get("questlog", "currenttask"));
                         for (int i = 0; i < _selectedQuest.Tasks.Count; i++)
                         {
                             if (_selectedQuest.Tasks[i].Id == Globals.Me.QuestProgress[_selectedQuest.GetId()].task)
@@ -332,12 +333,12 @@ namespace Intersect_Client.Classes.UI.Game
                                 if (_selectedQuest.Tasks[i].Objective == 1) //Gather Items
                                 {
                                     taskString.Add("");
-                                    taskString.Add(Globals.Me.QuestProgress[_selectedQuest.GetId()].taskProgress + "/" + _selectedQuest.Tasks[i].Data2 + "  " + ItemBase.GetName(_selectedQuest.Tasks[i].Data1) + "(s) gathered.");
+                                    taskString.Add(Strings.Get("questlog", "taskitem",Globals.Me.QuestProgress[_selectedQuest.GetId()].taskProgress, _selectedQuest.Tasks[i].Data2,ItemBase.GetName(_selectedQuest.Tasks[i].Data1)));
                                 }
                                 else if (_selectedQuest.Tasks[i].Objective == 2) //Kill Npcs
                                 {
                                     taskString.Add("");
-                                    taskString.Add(Globals.Me.QuestProgress[_selectedQuest.GetId()].taskProgress + "/" + _selectedQuest.Tasks[i].Data2 + "  " + NpcBase.GetName(_selectedQuest.Tasks[i].Data1) + "(s) slain.");
+                                    taskString.Add(Strings.Get("questlog","tasknpc",Globals.Me.QuestProgress[_selectedQuest.GetId()].taskProgress, _selectedQuest.Tasks[i].Data2 ,NpcBase.GetName(_selectedQuest.Tasks[i].Data1)));
                                 }
                             }
                         }
@@ -353,7 +354,7 @@ namespace Intersect_Client.Classes.UI.Game
                             //Completed
                             if (_selectedQuest.LogAfterComplete == 1)
                             {
-                                _questStatus.Text = "Quest Completed";
+                                _questStatus.Text = Strings.Get("questlog", "completed");
                                 _questStatus.SetTextColor(Color.Green, Label.ControlState.Normal);
                                 myText = Gui.WrapText(_selectedQuest.EndDesc, _questDesc.Width - 12, _questDesc.Parent.Skin.DefaultFont);
                             }
@@ -363,7 +364,7 @@ namespace Intersect_Client.Classes.UI.Game
                             //Not Started
                             if (_selectedQuest.LogBeforeOffer == 1)
                             {
-                                _questStatus.Text = "Quest Not Started";
+                                _questStatus.Text = Strings.Get("questlog", "notstarted");
                                 _questStatus.SetTextColor(Color.Red, Label.ControlState.Normal);
                                 myText = Gui.WrapText(_selectedQuest.BeforeDesc, _questDesc.Width - 12, _questDesc.Parent.Skin.DefaultFont);
                             }
@@ -376,7 +377,7 @@ namespace Intersect_Client.Classes.UI.Game
                     //Not Started
                     if (_selectedQuest.LogBeforeOffer == 1)
                     {
-                        _questStatus.Text = "Quest Not Started";
+                        _questStatus.Text = Strings.Get("questlog", "notstarted");
                         _questStatus.SetTextColor(Color.Red, Label.ControlState.Normal);
                         myText = Gui.WrapText(_selectedQuest.BeforeDesc, _questDesc.Width - 12, _questDesc.Parent.Skin.DefaultFont);
                     }

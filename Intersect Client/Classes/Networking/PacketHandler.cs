@@ -40,6 +40,7 @@ using Intersect_Library.GameObjects;
 using Intersect_Library.GameObjects.Maps.MapList;
 using Color = IntersectClientExtras.GenericClasses.Color;
 using Intersect_Library.GameObjects.Events;
+using Intersect_Library.Localization;
 
 namespace Intersect_Client.Classes.Networking
 {
@@ -1351,7 +1352,7 @@ namespace Intersect_Client.Classes.Networking
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
             int leader = bf.ReadInteger();
-            InputBox iBox = new InputBox("Party Invite", Globals.Entities[leader].MyName + " has invited you to their party. Do you accept?", true, PacketSender.SendPartyAccept, PacketSender.SendRequestDecline, leader, false);
+            InputBox iBox = new InputBox(Strings.Get("parties","partyinvite"),  Strings.Get("parties","inviteprompt", Globals.Entities[leader].MyName), true, PacketSender.SendPartyAccept, PacketSender.SendRequestDecline, leader, false);
             bf.Dispose();
         }
 
@@ -1492,7 +1493,7 @@ namespace Intersect_Client.Classes.Networking
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
             int partner = bf.ReadInteger();
-            InputBox iBox = new InputBox("Trade Request", Globals.Entities[partner].MyName + " has invited you to trade items with them. Do you accept?", true, PacketSender.SendTradeRequestAccept, PacketSender.SendRequestDecline, partner, false);
+            InputBox iBox = new InputBox(Strings.Get("trading","traderequest"), Strings.Get("trading", "requestprompt",Globals.Entities[partner].MyName), true, PacketSender.SendTradeRequestAccept, PacketSender.SendRequestDecline, partner, false);
             bf.Dispose();
         }
 
