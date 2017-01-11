@@ -70,5 +70,18 @@ namespace Intersect_Library.Localization
             }
             return "Not Found";
         }
+
+        public static string Get(string section, string id)
+        {
+            if (SelectedLanguage != null && SelectedLanguage.Loaded() && SelectedLanguage.HasString(section, id))
+            {
+                return SelectedLanguage.GetString(section, id);
+            }
+            if (DefaultLanguage != null && DefaultLanguage.Loaded() && DefaultLanguage.HasString(section, id))
+            {
+                return DefaultLanguage.GetString(section, id);
+            }
+            return "Not Found";
+        }
     }
 }

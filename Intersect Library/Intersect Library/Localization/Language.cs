@@ -82,5 +82,10 @@ namespace Intersect_Library.Localization
                 return "Format Exception!";
             }
         }
+
+        public string GetString(string section, string id)
+        {
+            return loadedStrings[section.ToLower()][id.ToLower()];
+        }
     }
 }
