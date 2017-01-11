@@ -41,10 +41,6 @@ namespace Intersect_Client_MonoGame
             Globals.System = new MonoSystem();
             Gui.GwenRenderer = new IntersectRenderer(null, GameGraphics.Renderer);
             Gui.GwenInput = new IntersectInput();
-
-            //We remove the border and add it back in draw to the window size will be forced to update.
-            //This is to bypass a MonoGame issue where the client viewport was not updating until the window was dragged.
-            Window.IsBorderless = true;
         }
 
         //Really basic error handler for debugging purposes
@@ -104,10 +100,7 @@ namespace Intersect_Client_MonoGame
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
-            //We remove the border and add it back in draw to the window size will be forced to update.
-            //This is to bypass a MonoGame issue where the client viewport was not updating until the window was dragged.
-            if (Window.IsBorderless) Window.IsBorderless = false;
-            GraphicsDevice.BlendState = BlendState.NonPremultiplied; ;
+            GraphicsDevice.BlendState = BlendState.NonPremultiplied;
             if (Globals.IsRunning)
             {
                 lock (Globals.GameLock)
