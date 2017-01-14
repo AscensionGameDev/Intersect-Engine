@@ -193,6 +193,11 @@ namespace Intersect_Client.Classes.Entities
         {
             lock (GameGraphics.AnimationLock)
             {
+                if (sound != null)
+                {
+                    sound.Stop();
+                    sound = null;
+                }
                 GameGraphics.LiveAnimations.Remove(this);
             }
         }

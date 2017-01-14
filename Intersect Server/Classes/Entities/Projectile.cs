@@ -21,6 +21,7 @@
 */
 
 using System;
+using System.Collections.Generic;
 using Intersect_Library;
 using Intersect_Library.GameObjects;
 using Intersect_Server.Classes.General;
@@ -388,7 +389,7 @@ namespace Intersect_Server.Classes.Entities
                                         {
                                             if (Owner.MyIndex != Target)
                                             {
-                                                Owner.TryAttack(TargetEntity, MyBase, ParentSpell, ParentItem, Spawns[i].Dir);
+                                                Owner.TryAttack(TargetEntity, MyBase, ParentSpell, ParentItem, Spawns[i].Dir,new List<KeyValuePair<int, int>>(), new List<KeyValuePair<int, int>>());
                                                 killSpawn = true; //Remove from the list being processed
                                             }
                                         }
@@ -399,14 +400,14 @@ namespace Intersect_Server.Classes.Entities
                                                 if (Owner.GetType() == typeof(Player))
                                                 {
 
-                                                    Owner.TryAttack(TargetEntity, MyBase, ParentSpell,ParentItem, Spawns[i].Dir);
+                                                    Owner.TryAttack(TargetEntity, MyBase, ParentSpell,ParentItem, Spawns[i].Dir, new List<KeyValuePair<int, int>>(), new List<KeyValuePair<int, int>>());
                                                     killSpawn = true; //Remove from the list being processed
                                                 }
                                             }
                                         }
                                         else //Any other target
                                         {
-                                            Owner.TryAttack(TargetEntity, MyBase, ParentSpell, ParentItem, Spawns[i].Dir);
+                                            Owner.TryAttack(TargetEntity, MyBase, ParentSpell, ParentItem, Spawns[i].Dir, new List<KeyValuePair<int, int>>(), new List<KeyValuePair<int, int>>());
                                             killSpawn = true; //Remove from the list being processed
                                         }
                                     }

@@ -743,24 +743,24 @@ namespace Intersect_Server.Classes.Maps
             players.AddRange(Players.ToArray());
             return players;
         }
-        public void PlayerEnteredMap(Client client)
+        public void PlayerEnteredMap(Player player)
         {
             lock (GetMapLock())
             {
                 Active = true;
                 //Send Entity Info to Everyone and Everyone to the Entity
-                SendMapEntitiesTo(client.Entity);
-                PacketSender.SendMapItems(client, MyMapNum);
-                AddEntity(client.Entity);
-                client.Entity.LastMapEntered = this.GetId();
+                SendMapEntitiesTo(player);
+                PacketSender.SendMapItems(player.MyClient, MyMapNum);
+                AddEntity(player);
+                player.LastMapEntered = this.GetId();
                 if (SurroundingMaps.Count <= 0) return;
                 foreach (var t in SurroundingMaps)
                 {
                     MapInstance.GetMap(t).Active = true;
-                    MapInstance.GetMap(t).SendMapEntitiesTo(client.Entity);
-                    PacketSender.SendMapItems(client, t);
+                    MapInstance.GetMap(t).SendMapEntitiesTo(player);
+                    PacketSender.SendMapItems(player.MyClient, t);
                 }
-                PacketSender.SendEntityDataToProximity(client.Entity);
+                PacketSender.SendEntityDataToProximity(player);
             }
         }
         public void SendMapEntitiesTo(Player player)

@@ -140,7 +140,7 @@ namespace Intersect_Server.Classes.Entities
                     }
                     else
                     {
-                        MapInstance.GetMap(CurrentMap).PlayerEnteredMap(MyClient);
+                        MapInstance.GetMap(CurrentMap).PlayerEnteredMap(this);
                     }
                 }
             }
@@ -503,16 +503,18 @@ namespace Intersect_Server.Classes.Entities
                 }
             }
 
+            var deadAnimations = new List<KeyValuePair<int,int>>();
+            var aliveAnimations = new List<KeyValuePair<int, int>>();
             if (weapon != null)
             {
                 var attackAnim = AnimationBase.GetAnim(weapon.AttackAnimation);
                 if (attackAnim != null)
                 {
-                    PacketSender.SendAnimationToProximity(attackAnim.GetId(), -1, -1, enemy.CurrentMap,
-                        enemy.CurrentX, enemy.CurrentY, Dir);
+                    deadAnimations.Add(new KeyValuePair<int, int>(weapon.AttackAnimation,Dir));
+                    aliveAnimations.Add(new KeyValuePair<int, int>(weapon.AttackAnimation, Dir));
                 }
                 base.TryAttack(enemy, weapon.Damage == 0 ? 1 : weapon.Damage, (DamageType)weapon.DamageType, (Stats)weapon.ScalingStat,
-                    weapon.Scaling, weapon.CritChance, Options.CritMultiplier);
+                    weapon.Scaling, weapon.CritChance, Options.CritMultiplier, deadAnimations,aliveAnimations);
             }
             else
             {
@@ -522,16 +524,16 @@ namespace Intersect_Server.Classes.Entities
                     var attackAnim = AnimationBase.GetAnim(classBase.AttackAnimation);
                     if (attackAnim != null)
                     {
-                        PacketSender.SendAnimationToProximity(attackAnim.GetId(), -1, -1, enemy.CurrentMap,
-                            enemy.CurrentX, enemy.CurrentY, Dir);
+                        deadAnimations.Add(new KeyValuePair<int, int>(classBase.AttackAnimation, Dir));
+                        aliveAnimations.Add(new KeyValuePair<int, int>(classBase.AttackAnimation, Dir));
                     }
                     base.TryAttack(enemy, classBase.Damage == 0 ? 1 : classBase.Damage, (DamageType)classBase.DamageType, (Stats)classBase.ScalingStat,
-                    classBase.Scaling, classBase.CritChance, Options.CritMultiplier);
+                    classBase.Scaling, classBase.CritChance, Options.CritMultiplier, deadAnimations, aliveAnimations);
                 }
                 else
                 {
                     base.TryAttack(enemy, 1, (DamageType)DamageType.Physical, Stats.Attack, 
-                    100, 10, Options.CritMultiplier);
+                    100, 10, Options.CritMultiplier,deadAnimations,aliveAnimations);
                 }
             }
             PacketSender.SendEntityAttack(MyIndex, (int)EntityTypes.GlobalEntity, CurrentMap, CalculateAttackTime());
@@ -593,7 +595,7 @@ namespace Intersect_Server.Classes.Entities
                 }
                 PacketSender.SendEntityLeave(MyIndex, (int)EntityTypes.Player, CurrentMap);
                 CurrentMap = newMap;
-                map.PlayerEnteredMap(MyClient);
+                map.PlayerEnteredMap(this);
                 PacketSender.SendEntityDataToProximity(this);
                 PacketSender.SendEntityPositionToAll(this);
                 PacketSender.SendMapGrid(MyClient, map.MapGrid);

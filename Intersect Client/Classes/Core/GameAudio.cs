@@ -422,8 +422,11 @@ namespace Intersect_Client.Classes.Core
 
         public void Stop()
         {
-            _sound.Dispose();
-            Loaded = false;
+            if (Loaded)
+            {
+                _sound.Dispose();
+                Loaded = false;
+            }
         }
     }
 }

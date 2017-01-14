@@ -90,10 +90,6 @@ namespace Intersect_Server.Classes.Entities
         public override void Die(bool dropitems = false, Entity killer = null)
         {
             base.Die(dropitems, killer);
-            if (killer != null && killer.GetType() == typeof(Player))
-            {
-                ((Player)killer).KilledEntity(this);
-            }
             MapInstance.GetMap(CurrentMap).RemoveEntity(this);
             PacketSender.SendEntityLeave(MyIndex, (int)EntityTypes.GlobalEntity, CurrentMap);
             Globals.Entities[MyIndex] = null;
@@ -146,8 +142,17 @@ namespace Intersect_Server.Classes.Entities
             if (!IsOneBlockAway(enemy)) return;
             if (!isFacingTarget(enemy)) return;
 
+            var deadAnimations = new List<KeyValuePair<int,int>>();
+            var aliveAnimations = new List<KeyValuePair<int, int>>();
+
+            if (MyBase.AttackAnimation > -1)
+            {
+                deadAnimations.Add(new KeyValuePair<int, int>(MyBase.AttackAnimation,Dir));
+                aliveAnimations.Add(new KeyValuePair<int, int>(MyBase.AttackAnimation,Dir));
+            }
+
             base.TryAttack(enemy, MyBase.Damage == 0 ? 1 : MyBase.Damage, (DamageType)MyBase.DamageType, (Stats)MyBase.ScalingStat,
-                    MyBase.Scaling, MyBase.CritChance, Options.CritMultiplier);
+                    MyBase.Scaling, MyBase.CritChance, Options.CritMultiplier,deadAnimations,aliveAnimations);
             PacketSender.SendEntityAttack(MyIndex, (int)EntityTypes.GlobalEntity, CurrentMap, CalculateAttackTime());
         }
 
