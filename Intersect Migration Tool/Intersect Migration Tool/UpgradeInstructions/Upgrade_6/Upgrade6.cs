@@ -32,7 +32,7 @@ namespace Intersect_Migration_Tool.UpgradeInstructions.Upgrade_6
         {
             //Gotta Load and Save EVERYTHING
             //We are loading non-unicode strings and replacing them with unicode ones
-            Upgrade_5.ServerOptions.LoadOptions();
+            ServerOptions.LoadOptions();
             LoadAllGameObjects();
         }
 
