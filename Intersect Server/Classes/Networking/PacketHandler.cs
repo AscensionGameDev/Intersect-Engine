@@ -1932,7 +1932,7 @@ namespace Intersect_Server.Classes.Networking
             if (client.Entity.PartyRequester != null && client.Entity.PartyRequester.MyIndex == leader)
             {
                 PacketSender.SendPlayerMsg(client.Entity.PartyRequester.MyClient,
-                    client.Entity.MyName + " has declined your party invite!", Color.Red);
+                    Strings.Get("parties,declined",client.Entity.MyName), Color.Red);
                 if (client.Entity.PartyRequests.ContainsKey(client.Entity.PartyRequester))
                 {
                     client.Entity.PartyRequests[client.Entity.PartyRequester] = Globals.System.GetTimeMs() + Player.RequestDeclineTimeout;
@@ -2022,7 +2022,7 @@ namespace Intersect_Server.Classes.Networking
             if (client.Entity.TradeRequester != null && client.Entity.TradeRequester.MyIndex == target)
             {
                 PacketSender.SendPlayerMsg(client.Entity.TradeRequester.MyClient,
-                    client.Entity.MyName + " has declined your request to trade!", Color.Red);
+                    Strings.Get("trading","declined",client.Entity.MyName), Color.Red);
                 if (client.Entity.TradeRequests.ContainsKey(client.Entity.TradeRequester))
                 {
                     client.Entity.TradeRequests[client.Entity.TradeRequester] = Globals.System.GetTimeMs() + Player.RequestDeclineTimeout;

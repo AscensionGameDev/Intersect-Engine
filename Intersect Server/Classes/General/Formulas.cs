@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
 using Intersect_Library;
+using Intersect_Library.Localization;
 using Intersect_Server.Classes.Entities;
 using NCalc;
 
@@ -22,7 +23,7 @@ namespace Intersect_Server.Classes.General
             if (!File.Exists(Path.Combine("resources", "formulas.xml")))
             {
                 File.WriteAllText(Path.Combine("resources","formulas.xml"),Properties.Resources.formulas);
-                Console.WriteLine("Formulas.xml missing. Generated default formulas file.");
+                Console.WriteLine(Strings.Get("formulas","missing"));
             }
             var formulas = new XmlDocument();
             var formulaXml = File.ReadAllText("resources/formulas.xml");
@@ -36,7 +37,7 @@ namespace Intersect_Server.Classes.General
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Error loading formulas! Please make sure the file exists and is free on syntax errors.");
+                Console.WriteLine(Strings.Get("formulas", "syntax"));
                 return false;
             }
         }

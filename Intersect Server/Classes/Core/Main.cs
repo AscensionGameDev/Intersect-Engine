@@ -61,15 +61,9 @@ namespace Intersect_Server.Classes
             Console.WriteLine(Strings.Get("intro", "support"));
             Console.WriteLine(Strings.Get("intro", "loading"));
             Database.CheckDirectories();
-            if (!ServerOptions.LoadOptions())
-            {
-                Console.WriteLine("Failed to load server options! Press any key to shut down.");
-                Console.ReadKey();
-                return;
-            }
             if (!Formulas.LoadFormulas())
             {
-                Console.WriteLine("Failed to load formulas! Press any key to shut down.");
+                Console.WriteLine(Strings.Get("formulas", "loadfailed"));
                 Console.ReadKey();
                 return;
             }
@@ -281,8 +275,8 @@ namespace Intersect_Server.Classes
                                                 ip = Globals.Clients[i].GetIP();
                                             }
                                             Database.AddBan(Globals.Clients[i], Convert.ToInt32(commandsplit[2]), reason,
-                                                Strings.Get("commands","banuser"), ip);
-                                            PacketSender.SendGlobalMsg(Strings.Get("account", "banned",Globals.Clients[i].Entity.MyName));
+                                                Strings.Get("commands", "banuser"), ip);
+                                            PacketSender.SendGlobalMsg(Strings.Get("account", "banned", Globals.Clients[i].Entity.MyName));
                                             Console.WriteLine(@"    " + Strings.Get("account", "banned", Globals.Clients[i].Entity.MyName));
                                             Globals.Clients[i].Disconnect(); //Kick em'
                                             userFound = true;
@@ -327,7 +321,7 @@ namespace Intersect_Server.Classes
                                         Database.DeleteMute(Globals.Clients[i].MyAccount);
                                         Globals.Clients[i].Muted = false;
                                         Globals.Clients[i].MuteReason = "";
-                                        PacketSender.SendGlobalMsg(Strings.Get("account","unmuted", Globals.Clients[i].Entity.MyName));
+                                        PacketSender.SendGlobalMsg(Strings.Get("account", "unmuted", Globals.Clients[i].Entity.MyName));
                                         Console.WriteLine(@"    " + Strings.Get("account", "unmuted", Globals.Clients[i].Entity.MyName));
                                         userFound = true;
                                         break;
@@ -352,7 +346,7 @@ namespace Intersect_Server.Classes
                             {
                                 Console.WriteLine(@"    " +
                                                   Strings.Get("commands", "muteusage",
-                                                      Strings.Get("commands", "true"), Strings.Get("commands", "false"),Strings.Get("commands", "commandinfo")));
+                                                      Strings.Get("commands", "true"), Strings.Get("commands", "false"), Strings.Get("commands", "commandinfo")));
                                 Console.WriteLine(@"    " + Strings.Get("commands", "mutedesc"));
                             }
                             else
@@ -373,7 +367,7 @@ namespace Intersect_Server.Classes
                                             {
                                                 ip = Globals.Clients[i].GetIP();
                                             }
-                                            Database.AddMute(Globals.Clients[i], Convert.ToInt32(commandsplit[2]), reason, Strings.Get("commands","muteuser"), ip);
+                                            Database.AddMute(Globals.Clients[i], Convert.ToInt32(commandsplit[2]), reason, Strings.Get("commands", "muteuser"), ip);
                                             Globals.Clients[i].Muted = true; //Cut out their tongues!
                                             Globals.Clients[i].MuteReason = Database.CheckMute(Globals.Clients[i].MyAccount, Globals.Clients[i].GetIP());
                                             PacketSender.SendGlobalMsg(Strings.Get("account", "muted", Globals.Clients[i].Entity.MyName));
@@ -434,7 +428,7 @@ namespace Intersect_Server.Classes
                                                     PacketSender.SendGlobalMsg(Strings.Get("player", "deadmin",
                                                         Globals.Clients[i].Entity.MyName));
                                                 }
-                                                Console.WriteLine(@"    " +  Strings.Get("commandoutput","powerchanged", Globals.Clients[i].Entity.MyName));
+                                                Console.WriteLine(@"    " + Strings.Get("commandoutput", "powerchanged", Globals.Clients[i].Entity.MyName));
 
                                                 userFound = true;
                                                 break;
@@ -484,12 +478,12 @@ namespace Intersect_Server.Classes
                                             }
                                             else
                                             {
-                                                Console.WriteLine(@"    " + Strings.Get("account","notfound", commandsplit[1]));
+                                                Console.WriteLine(@"    " + Strings.Get("account", "notfound", commandsplit[1]));
                                             }
                                         }
                                         catch (Exception)
                                         {
-                                            Console.WriteLine(@"    " + Strings.Get("commandoutput","parseerror", commandsplit[0], Strings.Get("commands", "commandinfo")));
+                                            Console.WriteLine(@"    " + Strings.Get("commandoutput", "parseerror", commandsplit[0], Strings.Get("commands", "commandinfo")));
                                         }
                                     }
                                     else
@@ -532,11 +526,11 @@ namespace Intersect_Server.Classes
                             {
                                 if (Globals.CPSLock)
                                 {
-                                    Console.WriteLine(Strings.Get("commandoutput","cpslocked"));
+                                    Console.WriteLine(Strings.Get("commandoutput", "cpslocked"));
                                 }
                                 else
                                 {
-                                    Console.WriteLine(Strings.Get("commandoutput","cpsunlocked"));
+                                    Console.WriteLine(Strings.Get("commandoutput", "cpsunlocked"));
                                 }
                             }
                             else
@@ -547,7 +541,7 @@ namespace Intersect_Server.Classes
                         }
                         else
                         {
-                            Console.WriteLine(Strings.Get("commandoutput","cps",Globals.CPS));
+                            Console.WriteLine(Strings.Get("commandoutput", "cps", Globals.CPS));
                         }
                     }
                     else if (commandsplit[0] == Strings.Get("commands", "exit")) //Exit Command
@@ -592,7 +586,7 @@ namespace Intersect_Server.Classes
                         }
                         else
                         {
-                            Console.WriteLine(@"    " + Strings.Get("commandoutput","helpheader"));
+                            Console.WriteLine(@"    " + Strings.Get("commandoutput", "helpheader"));
                             Console.WriteLine(@"    " + String.Format("{0,-20}", Strings.Get("commands", "help")) + " - " + Strings.Get("commands", "helphelp"));
                             Console.WriteLine(@"    " + String.Format("{0,-20}", Strings.Get("commands", "exit")) + " - " + Strings.Get("commands", "exithelp"));
                             Console.WriteLine(@"    " + String.Format("{0,-20}", Strings.Get("commands", "announcement")) + " - " + Strings.Get("commands", "announcementhelp"));
@@ -606,14 +600,16 @@ namespace Intersect_Server.Classes
                             Console.WriteLine(@"    " + String.Format("{0,-20}", Strings.Get("commands", "mute")) + " - " + Strings.Get("commands", "mutehelp"));
                             Console.WriteLine(@"    " + String.Format("{0,-20}", Strings.Get("commands", "unmute")) + " - " + Strings.Get("commands", "unmutehelp"));
                             Console.WriteLine(@"    " + String.Format("{0,-20}", Strings.Get("commands", "kill")) + " - " + Strings.Get("commands", "killhelp"));
-                            Console.WriteLine(@"    " + Strings.Get("commandoutput","helpfooter", Strings.Get("commands", "commandinfo")));
+                            Console.WriteLine(@"    " + Strings.Get("commandoutput", "helpfooter", Strings.Get("commands", "commandinfo")));
                         }
                     }
-                    else {
-                        Console.WriteLine(@"    " + Strings.Get("commandoutput","notfound"));
+                    else
+                    {
+                        Console.WriteLine(@"    " + Strings.Get("commandoutput", "notfound"));
                     }
                     Console.Write("> ");
-                command = Console.ReadLine();
+                    command = Console.ReadLine();
+                }
             }
         }
 
@@ -651,20 +647,19 @@ namespace Intersect_Server.Classes
             {
                 if (_errorHalt)
                 {
-                    Console.WriteLine(Strings.Get("errors","errorservercrash"));
+                    Console.WriteLine(Strings.Get("errors", "errorservercrash"));
                     Console.ReadKey();
                 }
                 else
                 {
-                    Console.WriteLine(
-                        "The Intersect server has encountered an error and must close. Error information can be found in resources/errors.log.");
+                    Console.WriteLine(Strings.Get("errors", "errorservercrashnohalt"));
                 }
                 Environment.Exit(-1);
             }
             else
             {
-                Console.WriteLine("An error was logged into errors.log");
+                Console.WriteLine(Strings.Get("errors", "errorlogged"));
             }
-		}
+        }
     }
 }

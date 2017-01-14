@@ -321,5 +321,7 @@
 		<string id="usernameinvalid">Username is invalid. Please use alphanumeric characters with a length between 2 and 20.</string>
 		<string id="passwordinvalid">Password is invalid. Please use alphanumeric characters with a length between 4 and 20.</string>
 		<string id="notconnected">Not connected to the game server. Is it online?</string>
+		<string id="notsupported">Not Supported!</string>
+		<string id="openglerror">This platform is not supported. Intersect requires OpenGL 3.0 compatible drivers, or either ARB_framebuffer_object or EXT_framebuffer_object extensions. Upgrading your graphic drivers may resolve this problem.</string>
 	</Errors>
 </Strings>

@@ -75,7 +75,6 @@ namespace Intersect_Client_MonoGame
         {
             //Setup SFML Classes
             ((MonoRenderer)GameGraphics.Renderer).Init(GraphicsDevice);
-            Window.ClientSizeChanged += Window_ClientSizeChanged;
             GameNetwork.MySocket = new MonoSocket();
 
             GameMain.Start();

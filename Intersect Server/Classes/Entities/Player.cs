@@ -1447,7 +1447,7 @@ namespace Intersect_Server.Classes.Entities
             }
             if (TradeRequests.ContainsKey(fromPlayer) && TradeRequests[fromPlayer] > Globals.System.GetTimeMs())
             {
-                PacketSender.SendPlayerMsg(fromPlayer.MyClient, "Your trade request has already been denied!", Color.Red);
+                PacketSender.SendPlayerMsg(fromPlayer.MyClient, Strings.Get("trading","alreadydenied"), Color.Red);
             }
             else
             {
@@ -1458,7 +1458,7 @@ namespace Intersect_Server.Classes.Entities
                 }
                 else
                 {
-                    PacketSender.SendPlayerMsg(fromPlayer.MyClient, MyName + " is busy. Please try again later!",Color.Red);
+                    PacketSender.SendPlayerMsg(fromPlayer.MyClient, Strings.Get("trading", "busy", MyName), Color.Red);
                 }
             }
         }
@@ -1671,7 +1671,7 @@ namespace Intersect_Server.Classes.Entities
             }
             if (PartyRequests.ContainsKey(fromPlayer) && PartyRequests[fromPlayer] > Globals.System.GetTimeMs())
             {
-                PacketSender.SendPlayerMsg(fromPlayer.MyClient, "Your party invitation has already been rejected!", Color.Red);
+                PacketSender.SendPlayerMsg(fromPlayer.MyClient, Strings.Get("parties", "alreadydenied"), Color.Red);
             }
             else
             {
@@ -1682,7 +1682,7 @@ namespace Intersect_Server.Classes.Entities
                 }
                 else
                 {
-                    PacketSender.SendPlayerMsg(fromPlayer.MyClient, MyName + " is busy. Please try again later!", Color.Red);
+                    PacketSender.SendPlayerMsg(fromPlayer.MyClient, Strings.Get("parties", "busy", MyName), Color.Red);
                 }
             }
         }
