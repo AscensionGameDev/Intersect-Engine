@@ -507,12 +507,12 @@ namespace Intersect_Server.Classes.Networking
             bf.Dispose();
         }
 
-        public static void SendProximityMsg(string message, int centerMap)
+        public static void SendProximityMsg(string message, int centerMap, string target = "")
         {
             SendProximityMsg(message, centerMap, new Color(255, 220, 220, 220));
         }
 
-        public static void SendProximityMsg(string message, int centerMap, Color clr)
+        public static void SendProximityMsg(string message, int centerMap, Color clr, string target = "")
         {
             var bf = new ByteBuffer();
             bf.WriteLong((int)ServerPackets.ChatMessage);
@@ -521,6 +521,7 @@ namespace Intersect_Server.Classes.Networking
             bf.WriteByte(clr.R);
             bf.WriteByte(clr.G);
             bf.WriteByte(clr.B);
+            bf.WriteString(target);
             SendDataToProximity(centerMap, bf.ToArray());
             bf.Dispose();
         }

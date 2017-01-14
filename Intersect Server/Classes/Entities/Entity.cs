@@ -638,7 +638,7 @@ namespace Intersect_Server.Classes.Entities
                             e = (int)EntityTypes.Resource;
                         }
                     }
-                    PacketSender.SendAnimationToProximity(spellBase.HitAnimation, e, enemy.MyIndex, enemy.CurrentMap, enemy.CurrentX, enemy.CurrentY, Dir); //Target Type -1 will be tile based animation
+                    PacketSender.SendAnimationToProximity(spellBase.HitAnimation, e, enemy.MyIndex, enemy.CurrentMap, enemy.CurrentX, enemy.CurrentY,(int)Directions.Up); //Target Type -1 will be tile based animation
                 }
             }
         }
@@ -718,7 +718,7 @@ namespace Intersect_Server.Classes.Entities
             }
 
             //Is this a critical hit?
-            if (Globals.Rand.Next(0, 100) > critChance)
+            if (Globals.Rand.Next(1, 101) > critChance)
             {
                 critMultiplier = 1;
             }

@@ -184,6 +184,10 @@ namespace Intersect_Editor.Forms
                 scrlScaling.Value = _editorItem.Scaling;
                 scrlScaling_Scroll(null,null);
                 scrlRange.Value = _editorItem.StatGrowth;
+                if (_editorItem.Data1 < -1 || _editorItem.Data1 >= cmbEquipmentSlot.Items.Count)
+                {
+                    _editorItem.Data1 = 0;
+                }
                 cmbEquipmentSlot.SelectedIndex = _editorItem.Data1;
                 cmbToolType.SelectedIndex = _editorItem.Tool + 1;
                 cmbAttackAnimation.SelectedIndex = Database.GameObjectListIndex(GameObject.Animation, _editorItem.AttackAnimation) + 1;

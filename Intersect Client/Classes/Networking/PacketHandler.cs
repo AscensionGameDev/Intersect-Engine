@@ -1506,7 +1506,10 @@ namespace Intersect_Client.Classes.Networking
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
             int index = bf.ReadInteger();
-            Globals.Entities[index].type = bf.ReadInteger();
+            if (Globals.Entities.ContainsKey(index))
+            {
+                Globals.Entities[index].type = bf.ReadInteger();
+            }
             bf.Dispose();
         }
 

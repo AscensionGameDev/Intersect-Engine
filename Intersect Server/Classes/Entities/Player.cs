@@ -1187,6 +1187,11 @@ namespace Intersect_Server.Classes.Entities
         {
             if (InCraft > -1)
             {
+                var invbackup = new List<ItemInstance>();
+                foreach (var item in Inventory)
+                {
+                    invbackup.Add(item.Clone());
+                }
                 //Check the player actually has the items
                 foreach (CraftIngredient c in BenchBase.GetCraft(InCraft).Crafts[index].Ingredients)
                 {
@@ -1214,8 +1219,20 @@ namespace Intersect_Server.Classes.Entities
                 }
 
                 //Give them the craft
-                TryGiveItem(new ItemInstance(BenchBase.GetCraft(InCraft).Crafts[index].Item, 1));
-                PacketSender.SendPlayerMsg(MyClient, "You successfully crafted " + ItemBase.GetName(BenchBase.GetCraft(InCraft).Crafts[index].Item) + "!", Color.Green);
+                if (TryGiveItem(new ItemInstance(BenchBase.GetCraft(InCraft).Crafts[index].Item, 1)))
+                {
+                    PacketSender.SendPlayerMsg(MyClient,
+                        "You successfully crafted " + ItemBase.GetName(BenchBase.GetCraft(InCraft).Crafts[index].Item) +
+                        "!", Color.Green);
+                }
+                else
+                {
+                    Inventory = invbackup;
+                    PacketSender.SendInventory(MyClient);
+                    PacketSender.SendPlayerMsg(MyClient,
+                        "You do not have enough inventory space to craft " + ItemBase.GetName(BenchBase.GetCraft(InCraft).Crafts[index].Item) +
+                        "!", Color.Red);
+                }
                 CraftIndex = -1;
             }
         }
@@ -2454,7 +2471,8 @@ namespace Intersect_Server.Classes.Entities
 
         public EventInstance GetEventFromPageInstance(EventPageInstance instance)
         {
-            if (FindEvent(instance) > -1)
+            var evt = FindEvent(instance);
+            if (evt > -1 && evt < MyEvents.Count)
             {
                 return MyEvents[FindEvent(instance)];
             }

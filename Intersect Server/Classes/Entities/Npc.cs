@@ -142,7 +142,6 @@ namespace Intersect_Server.Classes.Entities
 
         public override void TryAttack(Entity enemy)
         {
-            return;
             if (!CanAttack(enemy, null)) return;
             if (!IsOneBlockAway(enemy)) return;
             if (!isFacingTarget(enemy)) return;
