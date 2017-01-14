@@ -241,7 +241,6 @@ namespace Intersect_Client.Classes.Core
         private bool _loop;
         private int _distance;
         private float _volume;
-        private int _mapNum;
         public bool Loaded;
 
         public MapSound(string filename, int x, int y, int map, bool loop, int distance)
@@ -252,7 +251,7 @@ namespace Intersect_Client.Classes.Core
             _map = map;
             _loop = loop;
             _distance = distance;
-            _mapNum = map;
+            _map = map;
             GameAudioSource sound = Globals.ContentManager.GetSound(_filename);
             if (sound != null && Globals.Database.SoundVolume > 0)
             {
@@ -261,6 +260,13 @@ namespace Intersect_Client.Classes.Core
                 _sound.Play();
                 Loaded = true;
             }
+        }
+
+        public void UpdatePosition(int x, int y, int map)
+        {
+            _x = x;
+            _y = y;
+            _map = map;
         }
 
         public void Update()
@@ -280,7 +286,7 @@ namespace Intersect_Client.Classes.Core
 
         private void UpdateSoundVolume()
         {
-            var map = MapInstance.GetMap(_mapNum);
+            var map = MapInstance.GetMap(_map);
             if (map == null)
             {
                 Stop();
@@ -292,7 +298,7 @@ namespace Intersect_Client.Classes.Core
             }
             else
             {
-                if (_distance > 0 && Globals.GridMaps.Contains(_mapNum))
+                if (_distance > 0 && Globals.GridMaps.Contains(_map))
                 {
                     float volume = 100 - ((100 / _distance) * CalculateSoundDistance());
                     if (volume < 0) {volume = 0f;}
@@ -313,7 +319,7 @@ namespace Intersect_Client.Classes.Core
             float playery = Globals.Me.GetCenterPos().Y;
             float soundx = 0;
             float soundy = 0;
-            int mapNum = _mapNum;
+            int mapNum = _map;
             var map = MapInstance.GetMap(mapNum);
             if (map != null)
             {

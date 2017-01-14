@@ -206,6 +206,9 @@ namespace Intersect_Server.Classes.Networking
                 case ClientPackets.PartyAcceptInvite:
                     HandleAcceptPartyInvite(client, packet);
                     break;
+                case ClientPackets.PartyDeclineInvite:
+                    HandleDeclinePartyInvite(client, packet);
+                    break;
                 case ClientPackets.PartyKick:
                     HandlePartyKick(client, packet);
                     break;
@@ -239,8 +242,8 @@ namespace Intersect_Server.Classes.Networking
                 case ClientPackets.TradeRequestAccept:
                     HandleTradeRequestAccept(client, packet);
                     break;
-                case ClientPackets.RequestDecline:
-                    HandleRequestDecline(client, packet);
+                case ClientPackets.TradeRequestDecline:
+                    HandleTradeRequestDecline(client, packet);
                     break;
                 case ClientPackets.AddTilesets:
                     HandleAddTilesets(client, packet);
@@ -748,7 +751,7 @@ namespace Intersect_Server.Classes.Networking
                     if (projectileBase != null)
                     {
                         MapInstance.GetMap(client.Entity.CurrentMap)
-                            .SpawnMapProjectile(client.Entity, projectileBase, client.Entity.CurrentMap,
+                            .SpawnMapProjectile(client.Entity, projectileBase,null, ItemBase.GetItem(client.Entity.Inventory[client.Entity.Equipment[Options.WeaponIndex]].ItemNum), client.Entity.CurrentMap,
                                 client.Entity.CurrentX, client.Entity.CurrentY, client.Entity.CurrentZ,
                                 client.Entity.Dir);
                         bf.Dispose();
@@ -1895,14 +1898,10 @@ namespace Intersect_Server.Classes.Networking
             bf.WriteBytes(packet);
             int target = bf.ReadInteger();
             //Check if valid target
-            if (target < 0) { return; }
-            if (Globals.Entities[target].GetEntityType() == EntityTypes.Player && target != client.Entity.MyIndex)
+            if (target < 0 || target > Globals.Entities.Count) { return; }
+            if (Globals.Entities[target] != null && Globals.Entities[target].GetEntityType() == EntityTypes.Player && target != client.Entity.MyIndex)
             {
-                if (((Player)Globals.Entities[target]).PendingRequest == false)
-                {
-                    ((Player)Globals.Entities[target]).PendingRequest = true;
-                    PacketSender.SendPartyInvite(((Player)Globals.Entities[target]).MyClient, client.EntityIndex);
-                }
+                ((Player) Globals.Entities[target]).InviteToParty(client.Entity);
             }
             else
             {
@@ -1916,14 +1915,34 @@ namespace Intersect_Server.Classes.Networking
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
             int leader = bf.ReadInteger();
-            //Check if valid target
-            if (leader < 0) { return; }
-            if (Globals.Entities[leader].GetEntityType() == EntityTypes.Player && leader != client.Entity.MyIndex)
+            if (client.Entity.PartyRequester != null && client.Entity.PartyRequester.MyIndex == leader)
             {
-                client.Entity.PendingRequest = false;
-                ((Player)Globals.Entities[leader]).AddParty((Player)client.Entity);
+                client.Entity.PartyRequester.AddParty(client.Entity);
+                client.Entity.PartyRequester = null;
             }
             bf.Dispose();
+        }
+
+
+        private static void HandleDeclinePartyInvite(Client client, byte[] packet)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteBytes(packet);
+            int leader = bf.ReadInteger();
+            if (client.Entity.PartyRequester != null && client.Entity.PartyRequester.MyIndex == leader)
+            {
+                PacketSender.SendPlayerMsg(client.Entity.PartyRequester.MyClient,
+                    client.Entity.MyName + " has declined your party invite!", Color.Red);
+                if (client.Entity.PartyRequests.ContainsKey(client.Entity.PartyRequester))
+                {
+                    client.Entity.PartyRequests[client.Entity.PartyRequester] = Globals.System.GetTimeMs() + Player.RequestDeclineTimeout;
+                }
+                else
+                {
+                    client.Entity.PartyRequests.Add(client.Entity.PartyRequester, Globals.System.GetTimeMs() + Player.RequestDeclineTimeout);
+                }
+                client.Entity.PartyRequester = null;
+            }
         }
 
         private static void HandlePartyKick(Client client, byte[] packet)
@@ -1973,14 +1992,10 @@ namespace Intersect_Server.Classes.Networking
             bf.WriteBytes(packet);
             int target = bf.ReadInteger();
             //Check if valid target
-            if (target < 0) { return; }
-            if (Globals.Entities[target].GetEntityType() == EntityTypes.Player && target != client.Entity.MyIndex)
+            if (target < 0 || target > Globals.Entities.Count) { return; }
+            if (Globals.Entities[target] != null && Globals.Entities[target].GetEntityType() == EntityTypes.Player && target != client.Entity.MyIndex)
             {
-                if (((Player)Globals.Entities[target]).PendingRequest == false)
-                {
-                    ((Player)Globals.Entities[target]).PendingRequest = true;
-                    PacketSender.SendTradeRequest(((Player)Globals.Entities[target]).MyClient, client.Entity.MyIndex);
-                }
+                ((Player)Globals.Entities[target]).InviteToTrade(client.Entity);
             }
             bf.Dispose();
         }
@@ -1990,14 +2005,34 @@ namespace Intersect_Server.Classes.Networking
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
             int target = bf.ReadInteger();
-            //Check if valid target
-            if (target < 0) { return; }
-            if (Globals.Entities[target].GetEntityType() == EntityTypes.Player && target != client.Entity.MyIndex)
+            if (client.Entity.TradeRequester != null && client.Entity.TradeRequester.MyIndex == target)
             {
-                client.Entity.PendingRequest = false;
-                ((Player)Globals.Entities[target]).StartTrade((Player)client.Entity);
+                client.Entity.TradeRequester.StartTrade((Player)client.Entity);
+                client.Entity.TradeRequester = null;
             }
             bf.Dispose();
+        }
+
+
+        private static void HandleTradeRequestDecline(Client client, byte[] packet)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteBytes(packet);
+            int target = bf.ReadInteger();
+            if (client.Entity.TradeRequester != null && client.Entity.TradeRequester.MyIndex == target)
+            {
+                PacketSender.SendPlayerMsg(client.Entity.TradeRequester.MyClient,
+                    client.Entity.MyName + " has declined your request to trade!", Color.Red);
+                if (client.Entity.TradeRequests.ContainsKey(client.Entity.TradeRequester))
+                {
+                    client.Entity.TradeRequests[client.Entity.TradeRequester] = Globals.System.GetTimeMs() + Player.RequestDeclineTimeout;
+                }
+                else
+                {
+                    client.Entity.TradeRequests.Add(client.Entity.TradeRequester, Globals.System.GetTimeMs() + Player.RequestDeclineTimeout);
+                }
+                client.Entity.TradeRequester = null;
+            }
         }
 
         private static void HandleTradeOffer(Client client, byte[] packet)
@@ -2048,11 +2083,6 @@ namespace Intersect_Server.Classes.Networking
             client.Entity.CancelTrade();
         }
 
-        private static void HandleRequestDecline(Client client, byte[] packet)
-        {
-            client.Entity.PendingRequest = false;
-        }
-
         private static void HandleAddTilesets(Client client, byte[] packet)
         {
             var bf = new ByteBuffer();
@@ -2096,4 +2126,6 @@ namespace Intersect_Server.Classes.Networking
         }
     }
 }
+
+
 

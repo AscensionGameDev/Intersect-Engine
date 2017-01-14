@@ -149,7 +149,7 @@ namespace Intersect_Editor.Forms
             // 
             this.newMapToolStripMenuItem.ForeColor = System.Drawing.Color.Gainsboro;
             this.newMapToolStripMenuItem.Name = "newMapToolStripMenuItem";
-            this.newMapToolStripMenuItem.Size = new System.Drawing.Size(134, 22);
+            this.newMapToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.newMapToolStripMenuItem.Text = "New Map";
             this.newMapToolStripMenuItem.Click += new System.EventHandler(this.btnNewMap_Click);
             // 
@@ -157,7 +157,7 @@ namespace Intersect_Editor.Forms
             // 
             this.newFolderToolStripMenuItem.ForeColor = System.Drawing.Color.Gainsboro;
             this.newFolderToolStripMenuItem.Name = "newFolderToolStripMenuItem";
-            this.newFolderToolStripMenuItem.Size = new System.Drawing.Size(134, 22);
+            this.newFolderToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.newFolderToolStripMenuItem.Text = "Rename";
             this.newFolderToolStripMenuItem.Click += new System.EventHandler(this.btnRename_Click);
             // 
@@ -165,7 +165,7 @@ namespace Intersect_Editor.Forms
             // 
             this.deleteToolStripMenuItem.ForeColor = System.Drawing.Color.Gainsboro;
             this.deleteToolStripMenuItem.Name = "deleteToolStripMenuItem";
-            this.deleteToolStripMenuItem.Size = new System.Drawing.Size(134, 22);
+            this.deleteToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.deleteToolStripMenuItem.Text = "Delete";
             this.deleteToolStripMenuItem.Click += new System.EventHandler(this.btnDelete_Click);
             // 
@@ -179,13 +179,13 @@ namespace Intersect_Editor.Forms
             this.deleteToolStripMenuItem});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
             this.contextMenuStrip1.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
-            this.contextMenuStrip1.Size = new System.Drawing.Size(135, 92);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(153, 114);
             // 
             // newFolderToolStripMenuItem1
             // 
             this.newFolderToolStripMenuItem1.ForeColor = System.Drawing.Color.Gainsboro;
             this.newFolderToolStripMenuItem1.Name = "newFolderToolStripMenuItem1";
-            this.newFolderToolStripMenuItem1.Size = new System.Drawing.Size(134, 22);
+            this.newFolderToolStripMenuItem1.Size = new System.Drawing.Size(152, 22);
             this.newFolderToolStripMenuItem1.Text = "New Folder";
             this.newFolderToolStripMenuItem1.Click += new System.EventHandler(this.btnNewFolder_Click);
             // 

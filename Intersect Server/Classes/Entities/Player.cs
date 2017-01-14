@@ -38,6 +38,9 @@ namespace Intersect_Server.Classes.Entities
 
     public class Player : Entity
     {
+        //5 minute timeout before someone can send a trade/party request after it has been declined
+        public const long RequestDeclineTimeout = 300000; 
+
         public long MyId = -1;
         public bool InGame;
         public Client MyClient;
@@ -70,7 +73,11 @@ namespace Intersect_Server.Classes.Entities
         public int Trading = -1;
         public ItemInstance[] Trade = new ItemInstance[Options.MaxInvItems];
         public bool TradeAccepted = false;
-        public bool PendingRequest = false;
+        public Player TradeRequester = null;
+        public Player PartyRequester = null;
+        public Dictionary<Player,long> TradeRequests = new Dictionary<Player,long>();
+        public Dictionary<Player, long> PartyRequests = new Dictionary<Player, long>();
+        public int LastMapEntered = -1;
 
         //Init
         public Player(int index, Client newClient) : base(index)
@@ -102,7 +109,6 @@ namespace Intersect_Server.Classes.Entities
         public override void Update()
         {
             if (!InGame || CurrentMap == -1) { return; }
-            var _curMapLink = CurrentMap;
 
             if (SaveTimer + 120000 < Environment.TickCount)
             {
@@ -121,11 +127,11 @@ namespace Intersect_Server.Classes.Entities
 
             base.Update();
             //If we switched maps, lets update the maps
-            if (_curMapLink != CurrentMap)
+            if (LastMapEntered != CurrentMap)
             {
-                if (_curMapLink != -1)
+                if (MapInstance.GetMap(LastMapEntered) != null)
                 {
-                    MapInstance.GetMap(_curMapLink).RemoveEntity(this);
+                    MapInstance.GetMap(LastMapEntered).RemoveEntity(this);
                 }
                 if (CurrentMap > -1)
                 {
@@ -189,21 +195,22 @@ namespace Intersect_Server.Classes.Entities
             {
                 for (var i = 0; i < MyEvents.Count; i++)
                 {
+                    var evt = MyEvents[i];
                     if (MyEvents[i] == null) continue;
                     var eventFound = false;
-                    if (MyEvents[i].MapNum == -1)
+                    if (evt.MapNum == -1)
                     {
-                        MyEvents[i].Update();
-                        if (MyEvents[i].CallStack.Count > 0)
+                        evt.Update();
+                        if (evt.CallStack.Count > 0)
                         {
                             eventFound = true;
                         }
                     }
-                    if (MyEvents[i].MapNum != CurrentMap)
+                    if (evt.MapNum != CurrentMap)
                     {
                         foreach (var t in MapInstance.GetMap(CurrentMap).SurroundingMaps)
                         {
-                            if (t == MyEvents[i].MapNum)
+                            if (t == evt.MapNum)
                             {
                                 eventFound = true;
                             }
@@ -214,7 +221,7 @@ namespace Intersect_Server.Classes.Entities
                         eventFound = true;
                     }
                     if (eventFound) continue;
-                    PacketSender.SendEntityLeaveTo(MyClient, i, (int)EntityTypes.Event, MyEvents[i].MapNum);
+                    PacketSender.SendEntityLeaveTo(MyClient, i, (int)EntityTypes.Event, evt.MapNum);
                     MyEvents[i] = null;
                 }
             }
@@ -469,6 +476,90 @@ namespace Intersect_Server.Classes.Entities
                 }
             }
         }
+        public override void TryAttack(Entity enemy)
+        {
+            if (!IsOneBlockAway(enemy)) return;
+            if (!isFacingTarget(enemy)) return;
+
+            ItemBase weapon = null;
+            if (((Player) Globals.Entities[MyIndex]).Equipment[Options.WeaponIndex] >= 0)
+            {
+                weapon = ItemBase.GetItem(Inventory[((Player)Globals.Entities[MyIndex]).Equipment[Options.WeaponIndex]].ItemNum);
+            }
+
+            //If Entity is resource, check for the correct tool and make sure its not a spell cast.
+            if (enemy.GetType() == typeof(Resource))
+            {
+                if (((Resource)enemy).IsDead) return;
+                // Check that a resource is actually required.
+                var resource = ((Resource)enemy).MyBase;
+                if (resource.Tool > -1 && resource.Tool < Options.ToolTypes.Count)
+                {
+                    if (weapon == null || resource.Tool != weapon.Tool)
+                    {
+                        PacketSender.SendPlayerMsg(MyClient, Strings.Get("combat", "toolrequired", Options.ToolTypes[resource.Tool]));
+                        return;
+                    }
+                }
+            }
+
+            if (weapon != null)
+            {
+                var attackAnim = AnimationBase.GetAnim(weapon.AttackAnimation);
+                if (attackAnim != null)
+                {
+                    PacketSender.SendAnimationToProximity(attackAnim.GetId(), -1, -1, enemy.CurrentMap,
+                        enemy.CurrentX, enemy.CurrentY, Dir);
+                }
+                base.TryAttack(enemy, weapon.Damage == 0 ? 1 : weapon.Damage, (DamageType)weapon.DamageType, (Stats)weapon.ScalingStat,
+                    weapon.Scaling, weapon.CritChance, Options.CritMultiplier);
+            }
+            else
+            {
+                var classBase = ClassBase.GetClass(Class);
+                if (classBase != null)
+                {
+                    var attackAnim = AnimationBase.GetAnim(classBase.AttackAnimation);
+                    if (attackAnim != null)
+                    {
+                        PacketSender.SendAnimationToProximity(attackAnim.GetId(), -1, -1, enemy.CurrentMap,
+                            enemy.CurrentX, enemy.CurrentY, Dir);
+                    }
+                    base.TryAttack(enemy, classBase.Damage == 0 ? 1 : classBase.Damage, (DamageType)classBase.DamageType, (Stats)classBase.ScalingStat,
+                    classBase.Scaling, classBase.CritChance, Options.CritMultiplier);
+                }
+                else
+                {
+                    base.TryAttack(enemy, 1, (DamageType)DamageType.Physical, Stats.Attack, 
+                    100, 10, Options.CritMultiplier);
+                }
+            }
+            PacketSender.SendEntityAttack(MyIndex, (int)EntityTypes.GlobalEntity, CurrentMap, CalculateAttackTime());
+        }
+        public override bool CanAttack(Entity en, SpellBase spell)
+        {
+            //Check if the attacker is stunned or blinded.
+            for (var n = 0; n < Status.Count; n++)
+            {
+                if (Status[n].Type == (int)StatusTypes.Stun)
+                {
+                    return false;
+                }
+            }
+            if (en.GetType() == typeof(Player))
+            {
+                if (spell != null && spell.Friendly == 1)
+                {
+                    return true;
+                }
+                return false;
+            }
+            else if (en.GetType() == typeof(Resource))
+            {
+                if (spell != null) return false;
+            }
+            return true;
+        }
 
         //Warping
         public override void Warp(int newMap, int newX, int newY)
@@ -485,7 +576,13 @@ namespace Intersect_Server.Classes.Entities
             }
             CurrentX = newX;
             CurrentY = newY;
-            MyEvents.Clear();
+            for (int i = 0; i < MyEvents.Count; i++)
+            {
+                if (MyEvents[i] != null && MyEvents[i].MapNum != -1 && MyEvents[i].MapNum != newMap)
+                {
+                    MyEvents[i] = null;
+                }
+            }
             if (newMap != CurrentMap || _sentMap == false)
             {
                 var oldMap = MapInstance.GetMap(CurrentMap);
@@ -1089,6 +1186,11 @@ namespace Intersect_Server.Classes.Entities
         {
             if (InCraft > -1)
             {
+                var invbackup = new List<ItemInstance>();
+                foreach (var item in Inventory)
+                {
+                    invbackup.Add(item.Clone());
+                }
                 //Check the player actually has the items
                 foreach (CraftIngredient c in BenchBase.GetCraft(InCraft).Crafts[index].Ingredients)
                 {
@@ -1116,8 +1218,18 @@ namespace Intersect_Server.Classes.Entities
                 }
 
                 //Give them the craft
-                TryGiveItem(new ItemInstance(BenchBase.GetCraft(InCraft).Crafts[index].Item, 1));
-                PacketSender.SendPlayerMsg(MyClient, Strings.Get("crafting","crafted", ItemBase.GetName(BenchBase.GetCraft(InCraft).Crafts[index].Item)), Color.Green);
+                if (TryGiveItem(new ItemInstance(BenchBase.GetCraft(InCraft).Crafts[index].Item, 1)))
+                {
+                    PacketSender.SendPlayerMsg(MyClient, Strings.Get("crafting","crafted", ItemBase.GetName(BenchBase.GetCraft(InCraft).Crafts[index].Item)), Color.Green);
+                }
+                else
+                {
+                    Inventory = invbackup;
+                    PacketSender.SendInventory(MyClient);
+                    PacketSender.SendPlayerMsg(MyClient,
+                        "You do not have enough inventory space to craft " + ItemBase.GetName(BenchBase.GetCraft(InCraft).Crafts[index].Item) +
+                        "!", Color.Red);
+                }
                 CraftIndex = -1;
             }
         }
@@ -1327,6 +1439,29 @@ namespace Intersect_Server.Classes.Entities
         }
 
         //Trading
+        public void InviteToTrade(Player fromPlayer)
+        {
+            if (fromPlayer.TradeRequests.ContainsKey(this))
+            {
+                fromPlayer.TradeRequests.Remove(this);
+            }
+            if (TradeRequests.ContainsKey(fromPlayer) && TradeRequests[fromPlayer] > Globals.System.GetTimeMs())
+            {
+                PacketSender.SendPlayerMsg(fromPlayer.MyClient, "Your trade request has already been denied!", Color.Red);
+            }
+            else
+            {
+                if (TradeRequester == null && PartyRequester == null)
+                {
+                    TradeRequester = fromPlayer;
+                    PacketSender.SendTradeRequest(MyClient, fromPlayer);
+                }
+                else
+                {
+                    PacketSender.SendPlayerMsg(fromPlayer.MyClient, MyName + " is busy. Please try again later!",Color.Red);
+                }
+            }
+        }
         public void OfferItem(int slot, int amount)
         {
             if (Trading < 0) return;
@@ -1528,6 +1663,29 @@ namespace Intersect_Server.Classes.Entities
         }
 
         //Parties
+        public void InviteToParty(Player fromPlayer)
+        {
+            if (fromPlayer.PartyRequests.ContainsKey(this))
+            {
+                fromPlayer.PartyRequests.Remove(this);
+            }
+            if (PartyRequests.ContainsKey(fromPlayer) && PartyRequests[fromPlayer] > Globals.System.GetTimeMs())
+            {
+                PacketSender.SendPlayerMsg(fromPlayer.MyClient, "Your party invitation has already been rejected!", Color.Red);
+            }
+            else
+            {
+                if (TradeRequester == null && PartyRequester == null)
+                {
+                    PartyRequester = fromPlayer;
+                    PacketSender.SendPartyInvite(MyClient, fromPlayer);
+                }
+                else
+                {
+                    PacketSender.SendPlayerMsg(fromPlayer.MyClient, MyName + " is busy. Please try again later!", Color.Red);
+                }
+            }
+        }
         public void AddParty(Player target)
         {
             //If a new party, make yourself the leader
@@ -1949,7 +2107,7 @@ namespace Intersect_Server.Classes.Entities
                         case QuestProgress.BeforeTask:
                             if (quest.GetTaskIndex(taskId) != -1)
                             {
-                                return quest.GetTaskIndex(taskId) < quest.GetTaskIndex(Quests[quest.GetId()].task);
+                                return quest.GetTaskIndex(taskId) > quest.GetTaskIndex(Quests[quest.GetId()].task);
                             }
                             break;
                         case QuestProgress.OnTask:
@@ -1961,7 +2119,7 @@ namespace Intersect_Server.Classes.Entities
                         case QuestProgress.AfterTask:
                             if (quest.GetTaskIndex(taskId) != -1)
                             {
-                                return quest.GetTaskIndex(taskId) > quest.GetTaskIndex(Quests[quest.GetId()].task);
+                                return quest.GetTaskIndex(taskId) < quest.GetTaskIndex(Quests[quest.GetId()].task);
                             }
                             break;
                         default:
@@ -2307,7 +2465,8 @@ namespace Intersect_Server.Classes.Entities
 
         public EventInstance GetEventFromPageInstance(EventPageInstance instance)
         {
-            if (FindEvent(instance) > -1)
+            var evt = FindEvent(instance);
+            if (evt > -1 && evt < MyEvents.Count)
             {
                 return MyEvents[FindEvent(instance)];
             }
@@ -2363,6 +2522,13 @@ namespace Intersect_Server.Classes.Entities
             if (InCraft > -1 && CraftIndex > -1)
             {
                 return -5;
+            }
+            for (int i = 0; i < MyEvents.Count; i++)
+            {
+                if (MyEvents[i] != null)
+                {
+                    if (MyEvents[i].HoldingPlayer) return -5;
+                }
             }
             return base.CanMove(moveDir);
         }

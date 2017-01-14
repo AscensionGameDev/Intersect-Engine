@@ -97,6 +97,19 @@
             this.toolStripItemPaste = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripItemUndo = new System.Windows.Forms.ToolStripButton();
+            this.groupBox7 = new System.Windows.Forms.GroupBox();
+            this.cmbScalingStat = new System.Windows.Forms.ComboBox();
+            this.label12 = new System.Windows.Forms.Label();
+            this.lblScaling = new System.Windows.Forms.Label();
+            this.scrlScaling = new System.Windows.Forms.HScrollBar();
+            this.cmbDamageType = new System.Windows.Forms.ComboBox();
+            this.label11 = new System.Windows.Forms.Label();
+            this.lblCritChance = new System.Windows.Forms.Label();
+            this.scrlCritChance = new System.Windows.Forms.HScrollBar();
+            this.cmbAttackAnimation = new System.Windows.Forms.ComboBox();
+            this.lblAttackAnimation = new System.Windows.Forms.Label();
+            this.lblDamage = new System.Windows.Forms.Label();
+            this.scrlDamage = new System.Windows.Forms.HScrollBar();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.picNpc)).BeginInit();
@@ -106,6 +119,7 @@
             this.groupBox6.SuspendLayout();
             this.groupBox5.SuspendLayout();
             this.toolStrip.SuspendLayout();
+            this.groupBox7.SuspendLayout();
             this.SuspendLayout();
             // 
             // lblSpd
@@ -438,9 +452,9 @@
             this.groupBox4.Controls.Add(this.lblDropItem);
             this.groupBox4.Controls.Add(this.scrlDropIndex);
             this.groupBox4.Controls.Add(this.lblDropIndex);
-            this.groupBox4.Location = new System.Drawing.Point(2, 228);
+            this.groupBox4.Location = new System.Drawing.Point(215, 471);
             this.groupBox4.Name = "groupBox4";
-            this.groupBox4.Size = new System.Drawing.Size(207, 166);
+            this.groupBox4.Size = new System.Drawing.Size(226, 166);
             this.groupBox4.TabIndex = 16;
             this.groupBox4.TabStop = false;
             this.groupBox4.Text = "Drops";
@@ -449,7 +463,7 @@
             // 
             this.txtDropAmount.Location = new System.Drawing.Point(9, 99);
             this.txtDropAmount.Name = "txtDropAmount";
-            this.txtDropAmount.Size = new System.Drawing.Size(183, 20);
+            this.txtDropAmount.Size = new System.Drawing.Size(195, 20);
             this.txtDropAmount.TabIndex = 16;
             this.txtDropAmount.TextChanged += new System.EventHandler(this.txtDropAmount_TextChanged);
             // 
@@ -467,7 +481,7 @@
             this.scrlDropChance.LargeChange = 1;
             this.scrlDropChance.Location = new System.Drawing.Point(6, 135);
             this.scrlDropChance.Name = "scrlDropChance";
-            this.scrlDropChance.Size = new System.Drawing.Size(186, 18);
+            this.scrlDropChance.Size = new System.Drawing.Size(198, 18);
             this.scrlDropChance.TabIndex = 14;
             this.scrlDropChance.Scroll += new System.Windows.Forms.ScrollEventHandler(this.scrlDropChance_Scroll);
             // 
@@ -487,7 +501,7 @@
             this.scrlDropItem.Maximum = 3600;
             this.scrlDropItem.Minimum = -1;
             this.scrlDropItem.Name = "scrlDropItem";
-            this.scrlDropItem.Size = new System.Drawing.Size(186, 18);
+            this.scrlDropItem.Size = new System.Drawing.Size(198, 18);
             this.scrlDropItem.TabIndex = 12;
             this.scrlDropItem.Scroll += new System.Windows.Forms.ScrollEventHandler(this.scrlDropItem_Scroll);
             // 
@@ -506,7 +520,7 @@
             this.scrlDropIndex.Location = new System.Drawing.Point(6, 31);
             this.scrlDropIndex.Maximum = 9;
             this.scrlDropIndex.Name = "scrlDropIndex";
-            this.scrlDropIndex.Size = new System.Drawing.Size(186, 18);
+            this.scrlDropIndex.Size = new System.Drawing.Size(198, 18);
             this.scrlDropIndex.TabIndex = 10;
             this.scrlDropIndex.Scroll += new System.Windows.Forms.ScrollEventHandler(this.scrlDropIndex_Scroll);
             // 
@@ -521,14 +535,16 @@
             // 
             // pnlContainer
             // 
+            this.pnlContainer.AutoScroll = true;
+            this.pnlContainer.Controls.Add(this.groupBox4);
+            this.pnlContainer.Controls.Add(this.groupBox7);
             this.pnlContainer.Controls.Add(this.groupBox6);
             this.pnlContainer.Controls.Add(this.groupBox5);
-            this.pnlContainer.Controls.Add(this.groupBox4);
             this.pnlContainer.Controls.Add(this.groupBox2);
             this.pnlContainer.Controls.Add(this.groupBox3);
             this.pnlContainer.Location = new System.Drawing.Point(225, 39);
             this.pnlContainer.Name = "pnlContainer";
-            this.pnlContainer.Size = new System.Drawing.Size(446, 529);
+            this.pnlContainer.Size = new System.Drawing.Size(464, 529);
             this.pnlContainer.TabIndex = 17;
             // 
             // groupBox6
@@ -540,12 +556,12 @@
             this.groupBox6.Controls.Add(this.lstAggro);
             this.groupBox6.Controls.Add(this.chkAttackAllies);
             this.groupBox6.Controls.Add(this.chkEnabled);
-            this.groupBox6.Location = new System.Drawing.Point(3, 401);
+            this.groupBox6.Location = new System.Drawing.Point(3, 428);
             this.groupBox6.Name = "groupBox6";
-            this.groupBox6.Size = new System.Drawing.Size(434, 120);
+            this.groupBox6.Size = new System.Drawing.Size(206, 234);
             this.groupBox6.TabIndex = 29;
             this.groupBox6.TabStop = false;
-            this.groupBox6.Text = "NPC vs NPC Combat - Attack on sight list";
+            this.groupBox6.Text = "NPC vs NPC Combat/Hostility List";
             // 
             // scrlNPC
             // 
@@ -554,7 +570,7 @@
             this.scrlNPC.Maximum = 1000;
             this.scrlNPC.Minimum = -1;
             this.scrlNPC.Name = "scrlNPC";
-            this.scrlNPC.Size = new System.Drawing.Size(198, 18);
+            this.scrlNPC.Size = new System.Drawing.Size(192, 18);
             this.scrlNPC.TabIndex = 45;
             this.scrlNPC.Value = -1;
             this.scrlNPC.Scroll += new System.Windows.Forms.ScrollEventHandler(this.scrlNPC_Scroll);
@@ -570,7 +586,7 @@
             // 
             // btnRemoveAggro
             // 
-            this.btnRemoveAggro.Location = new System.Drawing.Point(353, 90);
+            this.btnRemoveAggro.Location = new System.Drawing.Point(125, 203);
             this.btnRemoveAggro.Name = "btnRemoveAggro";
             this.btnRemoveAggro.Size = new System.Drawing.Size(75, 23);
             this.btnRemoveAggro.TabIndex = 43;
@@ -580,7 +596,7 @@
             // 
             // btnAddAggro
             // 
-            this.btnAddAggro.Location = new System.Drawing.Point(230, 90);
+            this.btnAddAggro.Location = new System.Drawing.Point(9, 203);
             this.btnAddAggro.Name = "btnAddAggro";
             this.btnAddAggro.Size = new System.Drawing.Size(75, 23);
             this.btnAddAggro.TabIndex = 42;
@@ -593,9 +609,9 @@
             this.lstAggro.FormattingEnabled = true;
             this.lstAggro.Items.AddRange(new object[] {
             "NPC: 0 None"});
-            this.lstAggro.Location = new System.Drawing.Point(220, 9);
+            this.lstAggro.Location = new System.Drawing.Point(9, 122);
             this.lstAggro.Name = "lstAggro";
-            this.lstAggro.Size = new System.Drawing.Size(208, 69);
+            this.lstAggro.Size = new System.Drawing.Size(191, 69);
             this.lstAggro.TabIndex = 41;
             this.lstAggro.SelectedIndexChanged += new System.EventHandler(this.lstAggro_SelectedIndexChanged);
             // 
@@ -630,9 +646,9 @@
             this.groupBox5.Controls.Add(this.btnRemove);
             this.groupBox5.Controls.Add(this.btnAdd);
             this.groupBox5.Controls.Add(this.lstSpells);
-            this.groupBox5.Location = new System.Drawing.Point(215, 201);
+            this.groupBox5.Location = new System.Drawing.Point(2, 226);
             this.groupBox5.Name = "groupBox5";
-            this.groupBox5.Size = new System.Drawing.Size(226, 193);
+            this.groupBox5.Size = new System.Drawing.Size(207, 193);
             this.groupBox5.TabIndex = 28;
             this.groupBox5.TabStop = false;
             this.groupBox5.Text = "Spells";
@@ -649,7 +665,7 @@
             "Very Often"});
             this.cmbFreq.Location = new System.Drawing.Point(47, 166);
             this.cmbFreq.Name = "cmbFreq";
-            this.cmbFreq.Size = new System.Drawing.Size(173, 21);
+            this.cmbFreq.Size = new System.Drawing.Size(145, 21);
             this.cmbFreq.TabIndex = 42;
             this.cmbFreq.SelectedIndexChanged += new System.EventHandler(this.cmbFreq_SelectedIndexChanged);
             // 
@@ -669,7 +685,7 @@
             this.scrlSpell.Maximum = 1000;
             this.scrlSpell.Minimum = -1;
             this.scrlSpell.Name = "scrlSpell";
-            this.scrlSpell.Size = new System.Drawing.Size(208, 18);
+            this.scrlSpell.Size = new System.Drawing.Size(179, 18);
             this.scrlSpell.TabIndex = 40;
             this.scrlSpell.Value = -1;
             this.scrlSpell.Scroll += new System.Windows.Forms.ScrollEventHandler(this.scrlSpell_Scroll);
@@ -685,7 +701,7 @@
             // 
             // btnRemove
             // 
-            this.btnRemove.Location = new System.Drawing.Point(145, 134);
+            this.btnRemove.Location = new System.Drawing.Point(117, 134);
             this.btnRemove.Name = "btnRemove";
             this.btnRemove.Size = new System.Drawing.Size(75, 23);
             this.btnRemove.TabIndex = 38;
@@ -710,7 +726,7 @@
             "Spell: 0 None"});
             this.lstSpells.Location = new System.Drawing.Point(12, 15);
             this.lstSpells.Name = "lstSpells";
-            this.lstSpells.Size = new System.Drawing.Size(208, 69);
+            this.lstSpells.Size = new System.Drawing.Size(180, 69);
             this.lstSpells.TabIndex = 29;
             this.lstSpells.Click += new System.EventHandler(this.lstSpells_Click);
             // 
@@ -748,7 +764,7 @@
             this.toolStripItemUndo});
             this.toolStrip.Location = new System.Drawing.Point(0, 0);
             this.toolStrip.Name = "toolStrip";
-            this.toolStrip.Size = new System.Drawing.Size(674, 25);
+            this.toolStrip.Size = new System.Drawing.Size(689, 25);
             this.toolStrip.TabIndex = 45;
             this.toolStrip.Text = "toolStrip1";
             // 
@@ -821,12 +837,151 @@
             this.toolStripItemUndo.Text = "Undo";
             this.toolStripItemUndo.Click += new System.EventHandler(this.toolStripItemUndo_Click);
             // 
+            // groupBox7
+            // 
+            this.groupBox7.BackColor = System.Drawing.SystemColors.Control;
+            this.groupBox7.Controls.Add(this.cmbScalingStat);
+            this.groupBox7.Controls.Add(this.label12);
+            this.groupBox7.Controls.Add(this.lblScaling);
+            this.groupBox7.Controls.Add(this.scrlScaling);
+            this.groupBox7.Controls.Add(this.cmbDamageType);
+            this.groupBox7.Controls.Add(this.label11);
+            this.groupBox7.Controls.Add(this.lblCritChance);
+            this.groupBox7.Controls.Add(this.scrlCritChance);
+            this.groupBox7.Controls.Add(this.cmbAttackAnimation);
+            this.groupBox7.Controls.Add(this.lblAttackAnimation);
+            this.groupBox7.Controls.Add(this.lblDamage);
+            this.groupBox7.Controls.Add(this.scrlDamage);
+            this.groupBox7.Location = new System.Drawing.Point(215, 201);
+            this.groupBox7.Name = "groupBox7";
+            this.groupBox7.Size = new System.Drawing.Size(226, 264);
+            this.groupBox7.TabIndex = 17;
+            this.groupBox7.TabStop = false;
+            this.groupBox7.Text = "Combat";
+            // 
+            // cmbScalingStat
+            // 
+            this.cmbScalingStat.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbScalingStat.FormattingEnabled = true;
+            this.cmbScalingStat.Location = new System.Drawing.Point(13, 152);
+            this.cmbScalingStat.Name = "cmbScalingStat";
+            this.cmbScalingStat.Size = new System.Drawing.Size(191, 21);
+            this.cmbScalingStat.TabIndex = 58;
+            this.cmbScalingStat.SelectedIndexChanged += new System.EventHandler(this.cmbScalingStat_SelectedIndexChanged);
+            // 
+            // label12
+            // 
+            this.label12.AutoSize = true;
+            this.label12.Location = new System.Drawing.Point(10, 135);
+            this.label12.Name = "label12";
+            this.label12.Size = new System.Drawing.Size(67, 13);
+            this.label12.TabIndex = 57;
+            this.label12.Text = "Scaling Stat:";
+            // 
+            // lblScaling
+            // 
+            this.lblScaling.AutoSize = true;
+            this.lblScaling.Location = new System.Drawing.Point(9, 178);
+            this.lblScaling.Name = "lblScaling";
+            this.lblScaling.Size = new System.Drawing.Size(107, 13);
+            this.lblScaling.TabIndex = 56;
+            this.lblScaling.Text = "Scaling Amount: x0.0";
+            // 
+            // scrlScaling
+            // 
+            this.scrlScaling.LargeChange = 1;
+            this.scrlScaling.Location = new System.Drawing.Point(12, 192);
+            this.scrlScaling.Maximum = 10000;
+            this.scrlScaling.Name = "scrlScaling";
+            this.scrlScaling.Size = new System.Drawing.Size(192, 17);
+            this.scrlScaling.TabIndex = 55;
+            this.scrlScaling.Scroll += new System.Windows.Forms.ScrollEventHandler(this.scrlScaling_Scroll);
+            // 
+            // cmbDamageType
+            // 
+            this.cmbDamageType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbDamageType.FormattingEnabled = true;
+            this.cmbDamageType.Items.AddRange(new object[] {
+            "Physical",
+            "Magic",
+            "True"});
+            this.cmbDamageType.Location = new System.Drawing.Point(13, 111);
+            this.cmbDamageType.Name = "cmbDamageType";
+            this.cmbDamageType.Size = new System.Drawing.Size(191, 21);
+            this.cmbDamageType.TabIndex = 54;
+            this.cmbDamageType.SelectedIndexChanged += new System.EventHandler(this.cmbDamageType_SelectedIndexChanged);
+            // 
+            // label11
+            // 
+            this.label11.AutoSize = true;
+            this.label11.Location = new System.Drawing.Point(10, 94);
+            this.label11.Name = "label11";
+            this.label11.Size = new System.Drawing.Size(77, 13);
+            this.label11.TabIndex = 53;
+            this.label11.Text = "Damage Type:";
+            // 
+            // lblCritChance
+            // 
+            this.lblCritChance.AutoSize = true;
+            this.lblCritChance.Location = new System.Drawing.Point(9, 58);
+            this.lblCritChance.Name = "lblCritChance";
+            this.lblCritChance.Size = new System.Drawing.Size(82, 13);
+            this.lblCritChance.TabIndex = 52;
+            this.lblCritChance.Text = "Crit Chance: 0%";
+            // 
+            // scrlCritChance
+            // 
+            this.scrlCritChance.LargeChange = 1;
+            this.scrlCritChance.Location = new System.Drawing.Point(12, 72);
+            this.scrlCritChance.Name = "scrlCritChance";
+            this.scrlCritChance.Size = new System.Drawing.Size(192, 17);
+            this.scrlCritChance.TabIndex = 51;
+            this.scrlCritChance.Scroll += new System.Windows.Forms.ScrollEventHandler(this.scrlCritChance_Scroll);
+            // 
+            // cmbAttackAnimation
+            // 
+            this.cmbAttackAnimation.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbAttackAnimation.FormattingEnabled = true;
+            this.cmbAttackAnimation.Location = new System.Drawing.Point(12, 235);
+            this.cmbAttackAnimation.Name = "cmbAttackAnimation";
+            this.cmbAttackAnimation.Size = new System.Drawing.Size(192, 21);
+            this.cmbAttackAnimation.TabIndex = 50;
+            this.cmbAttackAnimation.SelectedIndexChanged += new System.EventHandler(this.cmbAttackAnimation_SelectedIndexChanged);
+            // 
+            // lblAttackAnimation
+            // 
+            this.lblAttackAnimation.AutoSize = true;
+            this.lblAttackAnimation.Location = new System.Drawing.Point(9, 220);
+            this.lblAttackAnimation.Name = "lblAttackAnimation";
+            this.lblAttackAnimation.Size = new System.Drawing.Size(90, 13);
+            this.lblAttackAnimation.TabIndex = 49;
+            this.lblAttackAnimation.Text = "Attack Animation:";
+            // 
+            // lblDamage
+            // 
+            this.lblDamage.AutoSize = true;
+            this.lblDamage.Location = new System.Drawing.Point(9, 18);
+            this.lblDamage.Name = "lblDamage";
+            this.lblDamage.Size = new System.Drawing.Size(86, 13);
+            this.lblDamage.TabIndex = 48;
+            this.lblDamage.Text = "Base Damage: 0";
+            // 
+            // scrlDamage
+            // 
+            this.scrlDamage.LargeChange = 1;
+            this.scrlDamage.Location = new System.Drawing.Point(12, 32);
+            this.scrlDamage.Maximum = 10000;
+            this.scrlDamage.Name = "scrlDamage";
+            this.scrlDamage.Size = new System.Drawing.Size(192, 17);
+            this.scrlDamage.TabIndex = 47;
+            this.scrlDamage.Scroll += new System.Windows.Forms.ScrollEventHandler(this.scrlDamage_Scroll);
+            // 
             // frmNpc
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoSize = true;
-            this.ClientSize = new System.Drawing.Size(674, 615);
+            this.ClientSize = new System.Drawing.Size(689, 615);
             this.ControlBox = false;
             this.Controls.Add(this.toolStrip);
             this.Controls.Add(this.btnCancel);
@@ -857,6 +1012,8 @@
             this.groupBox5.PerformLayout();
             this.toolStrip.ResumeLayout(false);
             this.toolStrip.PerformLayout();
+            this.groupBox7.ResumeLayout(false);
+            this.groupBox7.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -932,5 +1089,18 @@
         public System.Windows.Forms.ToolStripButton toolStripItemPaste;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
         public System.Windows.Forms.ToolStripButton toolStripItemUndo;
+        private System.Windows.Forms.GroupBox groupBox7;
+        private System.Windows.Forms.ComboBox cmbScalingStat;
+        private System.Windows.Forms.Label label12;
+        private System.Windows.Forms.Label lblScaling;
+        private System.Windows.Forms.HScrollBar scrlScaling;
+        private System.Windows.Forms.ComboBox cmbDamageType;
+        private System.Windows.Forms.Label label11;
+        private System.Windows.Forms.Label lblCritChance;
+        private System.Windows.Forms.HScrollBar scrlCritChance;
+        private System.Windows.Forms.ComboBox cmbAttackAnimation;
+        private System.Windows.Forms.Label lblAttackAnimation;
+        private System.Windows.Forms.Label lblDamage;
+        private System.Windows.Forms.HScrollBar scrlDamage;
     }
 }

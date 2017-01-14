@@ -211,7 +211,7 @@ namespace Intersect_Editor.Forms
             }
             else
             {
-                MyEvent = new EventBase(MyEvent.MyIndex, _eventBackup);
+                MyEvent.Load(_eventBackup.ToArray());
             }
             Hide();
             Dispose();
@@ -1302,7 +1302,11 @@ namespace Intersect_Editor.Forms
             if (!_commandProperties[i].Editable) return;
             lstEventCommands.SelectedIndex = i;
             commandMenu.Show((ListBox)sender, e.Location);
-            btnEdit.Enabled = i < _commandProperties[i].MyList.Commands.Count;
+            btnEdit.Enabled = true;
+            if (!_commandProperties[_currentCommand].Editable) btnEdit.Enabled = false;
+            if (_commandProperties[_currentCommand].MyList.Commands.Count == 0 || 
+                _commandProperties[_currentCommand].MyIndex >= _commandProperties[_currentCommand].MyList.Commands.Count ||
+                _commandProperties[_currentCommand].MyIndex < 0) btnEdit.Enabled = false;
             btnDelete.Enabled = true;
         }
         private void lstEventCommands_DoubleClick(object sender, EventArgs e)

@@ -21,6 +21,7 @@
 */
 
 using System;
+using System.Collections.Generic;
 using Intersect_Library;
 using Intersect_Library.GameObjects;
 using Intersect_Server.Classes.General;
@@ -59,10 +60,14 @@ namespace Intersect_Server.Classes.Entities
 
         public override void Die(bool dropitems = false, Entity killer = null)
         {
-            base.Die(dropitems, killer);
+            base.Die(false, killer);
             MySprite = MyBase.EndGraphic;
-            Passable = Convert.ToInt32(MyBase.WalkableBefore);
+            Passable = Convert.ToInt32(MyBase.WalkableAfter);
             IsDead = true;
+            if (dropitems)
+            {
+                SpawnResourceItems(killer);
+            }
             PacketSender.SendEntityDataToProximity(this);
             PacketSender.SendEntityPositionToAll(this);
         }
@@ -73,7 +78,7 @@ namespace Intersect_Server.Classes.Entities
             Vital[(int)Vitals.Health] = Globals.Rand.Next(Math.Min(1, MyBase.MinHP), Math.Max(MyBase.MaxHP, Math.Min(1, MyBase.MinHP)) + 1);
             MaxVital[(int)Vitals.Health] = Vital[(int)Vitals.Health];
             Passable = Convert.ToInt32(MyBase.WalkableBefore);
-
+            Inventory.Clear();
             //Give Resource Drops
             for (int n = 0; n < Options.MaxNpcDrops; n++)
             {
@@ -90,25 +95,64 @@ namespace Intersect_Server.Classes.Entities
             PacketSender.SendEntityVitals(this);
         }
 
-        public void SpawnResourceItems(int KillerIndex)
+        public void SpawnResourceItems(Entity killer)
         {
-            // Drop items
-            for (int i = 0; i < Inventory.Count; i++)
+            //Find tile to spawn items
+            var tiles = new List<TileHelper>();
+            for (int x = CurrentX - 1; x <= CurrentX + 1; x++)
             {
-                if (Inventory[i].ItemNum >= 0)
+                for (int y = CurrentY - 1; y <= CurrentY + 1; y++)
                 {
-                    // If the resource isn't walkable, spawn it underneath the killer otherwise loot will be unobtainable.
-                    if (MyBase.WalkableAfter == true)
+                    var tileHelper = new TileHelper(CurrentMap, x, y);
+                    if (tileHelper.TryFix())
                     {
-                        MapInstance.GetMap(CurrentMap).SpawnItem(CurrentX, CurrentY, Inventory[i], Inventory[i].ItemVal);
-                    }
-                    else
-                    {
-                        MapInstance.GetMap(CurrentMap).SpawnItem(Globals.Entities[KillerIndex].CurrentX, Globals.Entities[KillerIndex].CurrentY, Inventory[i], Inventory[i].ItemVal);
+                        //Tile is valid.. let's see if its open
+                        var map = MapInstance.GetMap(tileHelper.GetMap());
+                        if (map != null)
+                        {
+                            if (!map.TileBlocked(tileHelper.GetX(), tileHelper.GetY()))
+                            {
+                                tiles.Add(tileHelper);
+                            }
+                            else
+                            {
+                                if (killer.CurrentMap == tileHelper.GetMap() &&
+                                    killer.CurrentX == tileHelper.GetX() &&
+                                    killer.CurrentY == tileHelper.GetY())
+                                {
+                                    tiles.Add(tileHelper);
+                                }
+                            }
+                        }
                     }
                 }
             }
-            PacketSender.SendAnimationToProximity(MyBase.Animation, -1, -1, CurrentMap, CurrentX, CurrentY, -1);
+            if (tiles.Count > 0)
+            {
+                TileHelper selectedTile = null;
+                //Prefer the players tile, otherwise choose randomly
+                for (int i = 0; i < tiles.Count; i++)
+                {
+                    if (tiles[i].GetMap() == killer.CurrentMap && tiles[i].GetX() == killer.CurrentX &&
+                        tiles[i].GetY() == killer.CurrentY)
+                    {
+                        selectedTile = tiles[i];
+                    }
+                }
+                if (selectedTile == null)
+                {
+                    selectedTile = tiles[Globals.Rand.Next(0, tiles.Count)];
+                }
+                // Drop items
+                foreach (var item in Inventory)
+                {
+                    if (ItemBase.GetItem(item.ItemNum) != null)
+                    {
+                        MapInstance.GetMap(selectedTile.GetMap()).SpawnItem(selectedTile.GetX(), selectedTile.GetY(), item, item.ItemVal);
+                    }
+                }
+            }
+            Inventory.Clear();
         }
 
         public override byte[] Data()

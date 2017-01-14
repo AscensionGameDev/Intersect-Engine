@@ -328,7 +328,7 @@ namespace Intersect_Client.Classes.UI.Game
 
             for (int i = 0; i < Options.EquipmentSlots.Count; i++)
             {
-                if (Globals.Me.Equipment[i] > -1)
+                if (Globals.Me.Equipment[i] > -1 && Globals.Me.Equipment[i] < Options.MaxInvItems)
                 {
                     if (Globals.Me.Inventory[Globals.Me.Equipment[i]].ItemNum > -1)
                     {

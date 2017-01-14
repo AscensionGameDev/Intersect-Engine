@@ -886,14 +886,14 @@ namespace Intersect_Editor.Forms
                         NewEvent = true
                     };
                     tmpEventEditor.InitEditor();
-                    tmpEventEditor.Show();
+                    tmpEventEditor.ShowDialog();
                     MapChanged = true;
                 }
                 else
                 {
                     tmpEventEditor = new FrmEvent(Globals.CurrentMap) { MyEvent = tmpEvent, MyMap = Globals.CurrentMap };
                     tmpEventEditor.InitEditor();
-                    tmpEventEditor.Show();
+                    tmpEventEditor.ShowDialog();
                 }
             }
             else if (Globals.CurrentLayer == Options.LayerCount + 3) //NPCS

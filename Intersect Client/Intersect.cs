@@ -44,13 +44,7 @@ namespace Intersect_Client_MonoGame
             Globals.System = new MonoSystem();
             Gui.GwenRenderer = new IntersectRenderer(null, GameGraphics.Renderer);
             Gui.GwenInput = new IntersectInput();
-
             Window.IsBorderless = false;
-        }
-
-        private void Window_ClientSizeChanged(object sender, EventArgs e)
-        {
-            GameGraphics.Renderer.Init();
         }
 
         //Really basic error handler for debugging purposes

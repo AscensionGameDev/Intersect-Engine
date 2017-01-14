@@ -36,10 +36,11 @@ namespace Intersect_Server.Classes
 {
     public class MainClass
     {
-
+        private static bool _errorHalt = true;
         public static void Main(string[] args)
         {
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
+            AppDomain.CurrentDomain.AssemblyResolve += CurrentDomain_AssemblyResolve; ;
             Thread logicThread;
             if (!ServerOptions.LoadOptions())
             {
@@ -60,7 +61,18 @@ namespace Intersect_Server.Classes
             Console.WriteLine(Strings.Get("intro", "support"));
             Console.WriteLine(Strings.Get("intro", "loading"));
             Database.CheckDirectories();
-
+            if (!ServerOptions.LoadOptions())
+            {
+                Console.WriteLine("Failed to load server options! Press any key to shut down.");
+                Console.ReadKey();
+                return;
+            }
+            if (!Formulas.LoadFormulas())
+            {
+                Console.WriteLine("Failed to load formulas! Press any key to shut down.");
+                Console.ReadKey();
+                return;
+            }
             if (!Database.InitDatabase())
             {
                 Console.ReadKey();
@@ -76,6 +88,10 @@ namespace Intersect_Server.Classes
             Console.WriteLine(Strings.Get("commandoutput", "gametime", ServerTime.GetTime().ToString("F")));
             logicThread = new Thread(() => ServerLoop.RunServerLoop());
             logicThread.Start();
+            if (args.Contains("nohalt"))
+            {
+                _errorHalt = false;
+            }
             if (!args.Contains("noconsole"))
             {
                 Console.WriteLine(Strings.Get("intro", "consoleactive"));
@@ -600,32 +616,55 @@ namespace Intersect_Server.Classes
                 command = Console.ReadLine();
             }
         }
-    }
 
-    //Really basic error handler for debugging purposes
-    public static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
-    {
-        if (!Directory.Exists("resources")) Directory.CreateDirectory("resources");
-        using (StreamWriter writer = new StreamWriter("resources/errors.log", true))
+
+        private static Assembly CurrentDomain_AssemblyResolve(object sender, ResolveEventArgs args)
         {
-            writer.WriteLine("Message :" + ((Exception)e.ExceptionObject).Message + "<br/>" + Environment.NewLine +
-                             "StackTrace :" + ((Exception)e.ExceptionObject).StackTrace +
-                             "" + Environment.NewLine + "Date :" + DateTime.Now.ToString());
-            writer.WriteLine(Environment.NewLine +
-                             "-----------------------------------------------------------------------------" +
-                             Environment.NewLine);
-        }
-        if (e.IsTerminating)
-        {
-            Console.WriteLine(Strings.Get("errors","errorservercrash"));
-            Console.ReadKey();
-            Environment.Exit(-1);
-        }
-        else
-        {
-            Console.WriteLine(Strings.Get("errors","errorlogged"));
+            string archSpecificPath = Path.Combine(AppDomain.CurrentDomain.SetupInformation.ApplicationBase,
+                    Environment.Is64BitProcess ? Path.Combine("libs", "server", "x64") : Path.Combine("libs", "server", "x86"),
+                    "Mono.Data.Sqlite.dll");
+            if (File.Exists(archSpecificPath))
+            {
+                return Assembly.LoadFile(archSpecificPath);
+            }
+            else
+            {
+                return null;
+            }
         }
 
+
+        //Really basic error handler for debugging purposes
+        public static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
+        {
+            if (!Directory.Exists("resources")) Directory.CreateDirectory("resources");
+            using (StreamWriter writer = new StreamWriter("resources/errors.log", true))
+            {
+                writer.WriteLine("Message :" + ((Exception)e.ExceptionObject).Message + "<br/>" + Environment.NewLine +
+                                 "StackTrace :" + ((Exception)e.ExceptionObject).StackTrace +
+                                 "" + Environment.NewLine + "Date :" + DateTime.Now.ToString());
+                writer.WriteLine(Environment.NewLine +
+                                 "-----------------------------------------------------------------------------" +
+                                 Environment.NewLine);
+            }
+            if (e.IsTerminating)
+            {
+                if (_errorHalt)
+                {
+                    Console.WriteLine(Strings.Get("errors","errorservercrash"));
+                    Console.ReadKey();
+                }
+                else
+                {
+                    Console.WriteLine(
+                        "The Intersect server has encountered an error and must close. Error information can be found in resources/errors.log.");
+                }
+                Environment.Exit(-1);
+            }
+            else
+            {
+                Console.WriteLine("An error was logged into errors.log");
+            }
+		}
     }
-}
 }

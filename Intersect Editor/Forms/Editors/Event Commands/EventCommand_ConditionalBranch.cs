@@ -323,6 +323,9 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
                     _myCommand.Ints[1] = cmbTime1.SelectedIndex;
                     _myCommand.Ints[2] = cmbTime2.SelectedIndex;
                     break;
+                case 11: //Can Start Quest
+                    _myCommand.Ints[1] = Database.GameObjectIdFromList(GameObject.Quest, cmbStartQuest.SelectedIndex);
+                    break;
                 case 12: //Quest IN Progress
                     _myCommand.Ints[1] = Database.GameObjectIdFromList(GameObject.Quest, cmbQuestInProgress.SelectedIndex);
                     _myCommand.Ints[2] = cmbTaskModifier.SelectedIndex;
@@ -344,9 +347,6 @@ namespace Intersect_Editor.Forms.Editors.Event_Commands
                     _myCommand.Ints[1] = Database.GameObjectIdFromList(GameObject.Quest, cmbCompletedQuest.SelectedIndex);
                     break;
                 case 14: //Player death...
-                    break;
-                case 15: //Can Start Quest
-                    _myCommand.Ints[1] = Database.GameObjectIdFromList(GameObject.Quest, cmbStartQuest.SelectedIndex);
                     break;
             }
             if (_eventEditor != null)

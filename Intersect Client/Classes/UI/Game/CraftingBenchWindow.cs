@@ -351,13 +351,13 @@ namespace Intersect_Client.Classes.UI.Game
             pnl.HoverLeave += pnl_HoverLeave;
 
             var item = ItemBase.GetItem(_ingredient.Item);
-            for (int i = 0; i < (int)Stats.StatCount; i++)
-            {
-                StatBoost[i] = item.StatsGiven[i];
-            }
 
             if (item != null)
             {
+                for (int i = 0; i < (int)Stats.StatCount; i++)
+                {
+                    StatBoost[i] = item.StatsGiven[i];
+                }
                 GameTexture itemTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Item, item.Pic);
                 if (itemTex != null)
                 {

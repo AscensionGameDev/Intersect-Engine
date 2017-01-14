@@ -8,6 +8,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Hjg.Pngcs;
+using Intersect_Editor.Classes.General;
 using Intersect_Editor.Forms;
 using Intersect_Library;
 using Intersect_Library.GameObjects.Maps.MapList;
@@ -158,12 +159,30 @@ namespace Intersect_Editor.Classes.Maps
                     {
                         if (Grid[x1 - 1, y1 - 1].mapnum > -1)
                         {
+                            if (Globals.CurrentMap.Changed() && MessageBox.Show(@"Do you want to save your current map?", @"Save current map?", MessageBoxButtons.YesNo) == DialogResult.Yes)
+                            {
+                                SaveMap();
+                            }
                             Globals.MainForm.EnterMap(Grid[x1 - 1, y1 - 1].mapnum);
                             Globals.MapEditorWindow.Select();
                         }
                     }
                 }
             }
+        }
+
+        private void SaveMap()
+        {
+            if (Globals.CurrentTool == (int)EdittingTool.Selection)
+            {
+                if (Globals.Dragging == true)
+                {
+                    //Place the change, we done!
+                    Globals.MapEditorWindow.ProcessSelectionMovement(Globals.CurrentMap, true);
+                    Globals.MapEditorWindow.PlaceSelection();
+                }
+            }
+            PacketSender.SendMap(Globals.CurrentMap);
         }
 
         public void ScreenshotWorld()

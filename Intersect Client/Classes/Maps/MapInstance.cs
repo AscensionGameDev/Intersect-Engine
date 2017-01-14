@@ -214,7 +214,7 @@ namespace Intersect_Client.Classes.Maps
                                 if (!_attributeAnimInstances.ContainsKey(Attributes[x, y]))
                                 {
                                     var animInstance = new AnimationInstance(anim, true);
-                                    animInstance.SetPosition(GetX() + x*Options.TileWidth + Options.TileWidth/2, GetY() + y*Options.TileHeight + Options.TileHeight/2, 0);
+                                    animInstance.SetPosition(GetX() + x*Options.TileWidth + Options.TileWidth/2, GetY() + y*Options.TileHeight + Options.TileHeight/2,x,y,GetId(), 0);
                                     _attributeAnimInstances.Add(Attributes[x, y], animInstance);
                                 }
                                 _attributeAnimInstances[Attributes[x, y]].Update();
@@ -273,7 +273,7 @@ namespace Intersect_Client.Classes.Maps
             {
                 var anim = new MapAnimationInstance(animBase, tileX, tileY, dir);
                 LocalAnimations.Add(anim);
-                anim.SetPosition(GetX() + tileX*Options.TileWidth + Options.TileWidth/2, GetY() + tileY*Options.TileHeight + Options.TileHeight/2, dir);
+                anim.SetPosition(GetX() + tileX*Options.TileWidth + Options.TileWidth/2, GetY() + tileY*Options.TileHeight + Options.TileHeight/2,tileX,tileY,GetId(), dir);
             }
         }
 
@@ -767,7 +767,7 @@ namespace Intersect_Client.Classes.Maps
             {
                 foreach (var en in Globals.Entities)
                 {
-                    if (en.Value.CurrentMap == MyMapNum)
+                    if (en.Value.CurrentMap == MyMapNum && !Globals.Me.Party.Contains(en.Key))
                     {
                         Globals.EntitiesToDispose.Add(en.Key);
                     }

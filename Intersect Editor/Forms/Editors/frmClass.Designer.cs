@@ -86,6 +86,19 @@
             this.scrlX = new System.Windows.Forms.HScrollBar();
             this.scrlY = new System.Windows.Forms.HScrollBar();
             this.pnlContainer = new System.Windows.Forms.Panel();
+            this.groupBox11 = new System.Windows.Forms.GroupBox();
+            this.cmbScalingStat = new System.Windows.Forms.ComboBox();
+            this.label4 = new System.Windows.Forms.Label();
+            this.lblScaling = new System.Windows.Forms.Label();
+            this.scrlScaling = new System.Windows.Forms.HScrollBar();
+            this.cmbDamageType = new System.Windows.Forms.ComboBox();
+            this.label11 = new System.Windows.Forms.Label();
+            this.lblCritChance = new System.Windows.Forms.Label();
+            this.scrlCritChance = new System.Windows.Forms.HScrollBar();
+            this.cmbAttackAnimation = new System.Windows.Forms.ComboBox();
+            this.lblAttackAnimation = new System.Windows.Forms.Label();
+            this.lblDamage = new System.Windows.Forms.Label();
+            this.scrlDamage = new System.Windows.Forms.HScrollBar();
             this.groupBox10 = new System.Windows.Forms.GroupBox();
             this.scrlMpRegen = new System.Windows.Forms.HScrollBar();
             this.scrlHpRegen = new System.Windows.Forms.HScrollBar();
@@ -141,6 +154,7 @@
             this.groupBox6.SuspendLayout();
             this.grpWarp.SuspendLayout();
             this.pnlContainer.SuspendLayout();
+            this.groupBox11.SuspendLayout();
             this.groupBox10.SuspendLayout();
             this.groupBox8.SuspendLayout();
             this.groupBox9.SuspendLayout();
@@ -273,7 +287,7 @@
             this.groupBox3.Margin = new System.Windows.Forms.Padding(2);
             this.groupBox3.Name = "groupBox3";
             this.groupBox3.Padding = new System.Windows.Forms.Padding(2);
-            this.groupBox3.Size = new System.Drawing.Size(183, 175);
+            this.groupBox3.Size = new System.Drawing.Size(183, 177);
             this.groupBox3.TabIndex = 17;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Base Stats:";
@@ -580,7 +594,7 @@
             this.groupBox6.Controls.Add(this.btnRemoveSpell);
             this.groupBox6.Controls.Add(this.btnAddSpell);
             this.groupBox6.Controls.Add(this.lstSpells);
-            this.groupBox6.Location = new System.Drawing.Point(636, 167);
+            this.groupBox6.Location = new System.Drawing.Point(189, 169);
             this.groupBox6.Margin = new System.Windows.Forms.Padding(2);
             this.groupBox6.Name = "groupBox6";
             this.groupBox6.Padding = new System.Windows.Forms.Padding(2);
@@ -780,6 +794,8 @@
             // 
             // pnlContainer
             // 
+            this.pnlContainer.AutoScroll = true;
+            this.pnlContainer.Controls.Add(this.groupBox11);
             this.pnlContainer.Controls.Add(this.groupBox10);
             this.pnlContainer.Controls.Add(this.groupBox8);
             this.pnlContainer.Controls.Add(this.groupBox5);
@@ -791,9 +807,148 @@
             this.pnlContainer.Location = new System.Drawing.Point(147, 36);
             this.pnlContainer.Margin = new System.Windows.Forms.Padding(2);
             this.pnlContainer.Name = "pnlContainer";
-            this.pnlContainer.Size = new System.Drawing.Size(870, 355);
+            this.pnlContainer.Size = new System.Drawing.Size(780, 355);
             this.pnlContainer.TabIndex = 28;
             this.pnlContainer.Visible = false;
+            // 
+            // groupBox11
+            // 
+            this.groupBox11.BackColor = System.Drawing.SystemColors.Control;
+            this.groupBox11.Controls.Add(this.cmbScalingStat);
+            this.groupBox11.Controls.Add(this.label4);
+            this.groupBox11.Controls.Add(this.lblScaling);
+            this.groupBox11.Controls.Add(this.scrlScaling);
+            this.groupBox11.Controls.Add(this.cmbDamageType);
+            this.groupBox11.Controls.Add(this.label11);
+            this.groupBox11.Controls.Add(this.lblCritChance);
+            this.groupBox11.Controls.Add(this.scrlCritChance);
+            this.groupBox11.Controls.Add(this.cmbAttackAnimation);
+            this.groupBox11.Controls.Add(this.lblAttackAnimation);
+            this.groupBox11.Controls.Add(this.lblDamage);
+            this.groupBox11.Controls.Add(this.scrlDamage);
+            this.groupBox11.Location = new System.Drawing.Point(537, 169);
+            this.groupBox11.Name = "groupBox11";
+            this.groupBox11.Size = new System.Drawing.Size(226, 264);
+            this.groupBox11.TabIndex = 30;
+            this.groupBox11.TabStop = false;
+            this.groupBox11.Text = "Combat (Unarmed)";
+            // 
+            // cmbScalingStat
+            // 
+            this.cmbScalingStat.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbScalingStat.FormattingEnabled = true;
+            this.cmbScalingStat.Location = new System.Drawing.Point(13, 152);
+            this.cmbScalingStat.Name = "cmbScalingStat";
+            this.cmbScalingStat.Size = new System.Drawing.Size(191, 21);
+            this.cmbScalingStat.TabIndex = 58;
+            this.cmbScalingStat.SelectedIndexChanged += new System.EventHandler(this.cmbScalingStat_SelectedIndexChanged);
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(10, 135);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(67, 13);
+            this.label4.TabIndex = 57;
+            this.label4.Text = "Scaling Stat:";
+            // 
+            // lblScaling
+            // 
+            this.lblScaling.AutoSize = true;
+            this.lblScaling.Location = new System.Drawing.Point(9, 178);
+            this.lblScaling.Name = "lblScaling";
+            this.lblScaling.Size = new System.Drawing.Size(107, 13);
+            this.lblScaling.TabIndex = 56;
+            this.lblScaling.Text = "Scaling Amount: x0.0";
+            // 
+            // scrlScaling
+            // 
+            this.scrlScaling.LargeChange = 1;
+            this.scrlScaling.Location = new System.Drawing.Point(12, 192);
+            this.scrlScaling.Maximum = 10000;
+            this.scrlScaling.Name = "scrlScaling";
+            this.scrlScaling.Size = new System.Drawing.Size(192, 17);
+            this.scrlScaling.TabIndex = 55;
+            this.scrlScaling.Scroll += new System.Windows.Forms.ScrollEventHandler(this.scrlScaling_Scroll);
+            // 
+            // cmbDamageType
+            // 
+            this.cmbDamageType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbDamageType.FormattingEnabled = true;
+            this.cmbDamageType.Items.AddRange(new object[] {
+            "Physical",
+            "Magic",
+            "True"});
+            this.cmbDamageType.Location = new System.Drawing.Point(13, 111);
+            this.cmbDamageType.Name = "cmbDamageType";
+            this.cmbDamageType.Size = new System.Drawing.Size(191, 21);
+            this.cmbDamageType.TabIndex = 54;
+            this.cmbDamageType.SelectedIndexChanged += new System.EventHandler(this.cmbDamageType_SelectedIndexChanged);
+            // 
+            // label11
+            // 
+            this.label11.AutoSize = true;
+            this.label11.Location = new System.Drawing.Point(10, 94);
+            this.label11.Name = "label11";
+            this.label11.Size = new System.Drawing.Size(77, 13);
+            this.label11.TabIndex = 53;
+            this.label11.Text = "Damage Type:";
+            // 
+            // lblCritChance
+            // 
+            this.lblCritChance.AutoSize = true;
+            this.lblCritChance.Location = new System.Drawing.Point(9, 58);
+            this.lblCritChance.Name = "lblCritChance";
+            this.lblCritChance.Size = new System.Drawing.Size(82, 13);
+            this.lblCritChance.TabIndex = 52;
+            this.lblCritChance.Text = "Crit Chance: 0%";
+            // 
+            // scrlCritChance
+            // 
+            this.scrlCritChance.LargeChange = 1;
+            this.scrlCritChance.Location = new System.Drawing.Point(12, 72);
+            this.scrlCritChance.Name = "scrlCritChance";
+            this.scrlCritChance.Size = new System.Drawing.Size(192, 17);
+            this.scrlCritChance.TabIndex = 51;
+            this.scrlCritChance.Scroll += new System.Windows.Forms.ScrollEventHandler(this.scrlCritChance_Scroll);
+            // 
+            // cmbAttackAnimation
+            // 
+            this.cmbAttackAnimation.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbAttackAnimation.FormattingEnabled = true;
+            this.cmbAttackAnimation.Location = new System.Drawing.Point(12, 235);
+            this.cmbAttackAnimation.Name = "cmbAttackAnimation";
+            this.cmbAttackAnimation.Size = new System.Drawing.Size(192, 21);
+            this.cmbAttackAnimation.TabIndex = 50;
+            this.cmbAttackAnimation.SelectedIndexChanged += new System.EventHandler(this.cmbAttackAnimation_SelectedIndexChanged);
+            // 
+            // lblAttackAnimation
+            // 
+            this.lblAttackAnimation.AutoSize = true;
+            this.lblAttackAnimation.Location = new System.Drawing.Point(9, 220);
+            this.lblAttackAnimation.Name = "lblAttackAnimation";
+            this.lblAttackAnimation.Size = new System.Drawing.Size(90, 13);
+            this.lblAttackAnimation.TabIndex = 49;
+            this.lblAttackAnimation.Text = "Attack Animation:";
+            // 
+            // lblDamage
+            // 
+            this.lblDamage.AutoSize = true;
+            this.lblDamage.Location = new System.Drawing.Point(9, 18);
+            this.lblDamage.Name = "lblDamage";
+            this.lblDamage.Size = new System.Drawing.Size(86, 13);
+            this.lblDamage.TabIndex = 48;
+            this.lblDamage.Text = "Base Damage: 0";
+            // 
+            // scrlDamage
+            // 
+            this.scrlDamage.LargeChange = 1;
+            this.scrlDamage.Location = new System.Drawing.Point(12, 32);
+            this.scrlDamage.Maximum = 10000;
+            this.scrlDamage.Name = "scrlDamage";
+            this.scrlDamage.Size = new System.Drawing.Size(192, 17);
+            this.scrlDamage.TabIndex = 47;
+            this.scrlDamage.Scroll += new System.Windows.Forms.ScrollEventHandler(this.scrlDamage_Scroll);
             // 
             // groupBox10
             // 
@@ -803,11 +958,11 @@
             this.groupBox10.Controls.Add(this.lblHpRegen);
             this.groupBox10.Controls.Add(this.lblManaRegen);
             this.groupBox10.Controls.Add(this.label14);
-            this.groupBox10.Location = new System.Drawing.Point(761, 0);
+            this.groupBox10.Location = new System.Drawing.Point(420, 169);
             this.groupBox10.Margin = new System.Windows.Forms.Padding(2);
             this.groupBox10.Name = "groupBox10";
             this.groupBox10.Padding = new System.Windows.Forms.Padding(2);
-            this.groupBox10.Size = new System.Drawing.Size(112, 163);
+            this.groupBox10.Size = new System.Drawing.Size(112, 175);
             this.groupBox10.TabIndex = 19;
             this.groupBox10.TabStop = false;
             this.groupBox10.Text = "Regen";
@@ -865,11 +1020,11 @@
             this.groupBox8.Controls.Add(this.txtBaseExp);
             this.groupBox8.Controls.Add(this.label12);
             this.groupBox8.Controls.Add(this.groupBox9);
-            this.groupBox8.Location = new System.Drawing.Point(189, 167);
+            this.groupBox8.Location = new System.Drawing.Point(2, 348);
             this.groupBox8.Margin = new System.Windows.Forms.Padding(2);
             this.groupBox8.Name = "groupBox8";
             this.groupBox8.Padding = new System.Windows.Forms.Padding(2);
-            this.groupBox8.Size = new System.Drawing.Size(443, 175);
+            this.groupBox8.Size = new System.Drawing.Size(530, 175);
             this.groupBox8.TabIndex = 29;
             this.groupBox8.TabStop = false;
             this.groupBox8.Text = "Leveling Up";
@@ -1197,7 +1352,7 @@
             // btnCancel
             // 
             this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.btnCancel.Location = new System.Drawing.Point(883, 400);
+            this.btnCancel.Location = new System.Drawing.Point(800, 400);
             this.btnCancel.Margin = new System.Windows.Forms.Padding(2);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(127, 32);
@@ -1208,7 +1363,7 @@
             // 
             // btnSave
             // 
-            this.btnSave.Location = new System.Drawing.Point(752, 400);
+            this.btnSave.Location = new System.Drawing.Point(669, 400);
             this.btnSave.Margin = new System.Windows.Forms.Padding(2);
             this.btnSave.Name = "btnSave";
             this.btnSave.Size = new System.Drawing.Size(127, 32);
@@ -1230,7 +1385,7 @@
             this.toolStripItemUndo});
             this.toolStrip.Location = new System.Drawing.Point(0, 0);
             this.toolStrip.Name = "toolStrip";
-            this.toolStrip.Size = new System.Drawing.Size(1021, 25);
+            this.toolStrip.Size = new System.Drawing.Size(929, 25);
             this.toolStrip.TabIndex = 42;
             this.toolStrip.Text = "toolStrip1";
             // 
@@ -1309,7 +1464,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoScroll = true;
             this.AutoSize = true;
-            this.ClientSize = new System.Drawing.Size(1021, 437);
+            this.ClientSize = new System.Drawing.Size(929, 437);
             this.ControlBox = false;
             this.Controls.Add(this.toolStrip);
             this.Controls.Add(this.btnCancel);
@@ -1336,6 +1491,8 @@
             this.grpWarp.ResumeLayout(false);
             this.grpWarp.PerformLayout();
             this.pnlContainer.ResumeLayout(false);
+            this.groupBox11.ResumeLayout(false);
+            this.groupBox11.PerformLayout();
             this.groupBox10.ResumeLayout(false);
             this.groupBox10.PerformLayout();
             this.groupBox8.ResumeLayout(false);
@@ -1460,5 +1617,18 @@
         public System.Windows.Forms.ToolStripButton toolStripItemPaste;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
         public System.Windows.Forms.ToolStripButton toolStripItemUndo;
+        private System.Windows.Forms.GroupBox groupBox11;
+        private System.Windows.Forms.ComboBox cmbScalingStat;
+        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.Label lblScaling;
+        private System.Windows.Forms.HScrollBar scrlScaling;
+        private System.Windows.Forms.ComboBox cmbDamageType;
+        private System.Windows.Forms.Label label11;
+        private System.Windows.Forms.Label lblCritChance;
+        private System.Windows.Forms.HScrollBar scrlCritChance;
+        private System.Windows.Forms.ComboBox cmbAttackAnimation;
+        private System.Windows.Forms.Label lblAttackAnimation;
+        private System.Windows.Forms.Label lblDamage;
+        private System.Windows.Forms.HScrollBar scrlDamage;
     }
 }

@@ -120,6 +120,11 @@ namespace Intersect_Editor.Forms
         {
             lstSpells.Items.Clear();
             lstSpells.Items.AddRange(Database.GetGameObjectList(GameObject.Spell));
+            cmbScalingStat.Items.Clear();
+            for (int i = 0; i < Options.MaxStats; i++)
+            {
+                cmbScalingStat.Items.Add(Globals.GetStatName(i));
+            }
         }
 
         private void UpdateEditor()
@@ -181,9 +186,9 @@ namespace Intersect_Editor.Forms
                 {
                     picSpell.BackgroundImage = null;
                 }
-
-                txtHPCost.Text = _editorItem.VitalCost[(int) Vitals.Health].ToString();
-                txtManaCost.Text = _editorItem.VitalCost[(int) Vitals.Mana].ToString();
+                scrlHPCost.Value = _editorItem.VitalCost[(int) Vitals.Health];
+                scrlManaCost.Value = _editorItem.VitalCost[(int) Vitals.Mana];
+                
 
                 UpdateSpellTypePanels();
                 if (_changed.IndexOf(_editorItem) == -1)
@@ -215,13 +220,28 @@ namespace Intersect_Editor.Forms
                 cmbTargetType.SelectedIndex = _editorItem.TargetType;
                 UpdateTargetTypePanel();
 
-                txtHPDiff.Text = _editorItem.VitalDiff[(int)Vitals.Health].ToString();
-                txtManaDiff.Text = _editorItem.VitalDiff[(int)Vitals.Mana].ToString();
-                txtAttackBuff.Text = _editorItem.StatDiff[(int)Stats.Attack].ToString();
-                txtDefenseBuff.Text = _editorItem.StatDiff[(int)Stats.Defense].ToString();
-                txtSpeedBuff.Text = _editorItem.StatDiff[(int)Stats.Speed].ToString();
-                txtAbilityPwrBuff.Text = _editorItem.StatDiff[(int)Stats.AbilityPower].ToString();
-                txtMagicResistBuff.Text = _editorItem.StatDiff[(int)Stats.MagicResist].ToString();
+                scrlHPDamage.Value = _editorItem.VitalDiff[(int) Vitals.Health];
+                scrlHPDamage_Scroll(null,null);
+                scrlManaDamage.Value = _editorItem.VitalDiff[(int) Vitals.Mana];
+                scrlManaDamage_Scroll(null,null);
+                scrlAttack.Value = _editorItem.StatDiff[(int)Stats.Attack];
+                scrlAttack_Scroll(null, null);
+                scrlDefense.Value = _editorItem.StatDiff[(int)Stats.Defense];
+                scrlDefense_Scroll(null,null);
+                scrlSpeed.Value = _editorItem.StatDiff[(int)Stats.Speed];
+                scrlSpeed_Scroll(null, null);
+                scrlAbilityPwr.Value = _editorItem.StatDiff[(int)Stats.AbilityPower];
+                scrlAbilityPwr_Scroll(null,null);
+                scrlMagicResist.Value = _editorItem.StatDiff[(int)Stats.MagicResist];
+                scrlMagicResist_Scroll(null, null);
+
+                chkFriendly.Checked = Convert.ToBoolean(_editorItem.Friendly);
+                cmbDamageType.SelectedIndex = _editorItem.DamageType;
+                cmbScalingStat.SelectedIndex = _editorItem.ScalingStat;
+                scrlScaling.Value = _editorItem.Scaling;
+                scrlScaling_Scroll(null,null);
+                scrlCritChance.Value = _editorItem.CritChance;
+                scrlCritChance_Scroll(null,null);
 
                 chkHOTDOT.Checked = Convert.ToBoolean(_editorItem.Data1);
                 scrlBuffDuration.Value = _editorItem.Data2;
@@ -447,55 +467,6 @@ namespace Intersect_Editor.Forms
             lblHitRadius.Text = "Hit Radius: " + scrlHitRadius.Value;
         }
 
-        private void txtHPDiff_TextChanged(object sender, EventArgs e)
-        {
-            int x = 0;
-            int.TryParse(txtHPDiff.Text, out x);
-            _editorItem.VitalDiff[(int)Vitals.Health] = x;
-        }
-
-        private void txtManaDiff_TextChanged(object sender, EventArgs e)
-        {
-            int x = 0;
-            int.TryParse(txtManaDiff.Text, out x);
-            _editorItem.VitalDiff[(int)Vitals.Mana] = x;
-        }
-
-        private void txtAttackBuff_TextChanged(object sender, EventArgs e)
-        {
-            int x = 0;
-            int.TryParse(txtAttackBuff.Text, out x);
-            _editorItem.StatDiff[(int)Stats.Attack] = x;
-        }
-
-        private void txtDefenseBuff_TextChanged(object sender, EventArgs e)
-        {
-            int x = 0;
-            int.TryParse(txtDefenseBuff.Text, out x);
-            _editorItem.StatDiff[(int)Stats.Defense] = x;
-        }
-
-        private void txtSpeedBuff_TextChanged(object sender, EventArgs e)
-        {
-            int x = 0;
-            int.TryParse(txtSpeedBuff.Text, out x);
-            _editorItem.StatDiff[(int)Stats.Speed] = x;
-        }
-
-        private void txtAbilityPwrBuff_TextChanged(object sender, EventArgs e)
-        {
-            int x = 0;
-            int.TryParse(txtAbilityPwrBuff.Text, out x);
-            _editorItem.StatDiff[(int)Stats.AbilityPower] = x;
-        }
-
-        private void txtMagicResistBuff_TextChanged(object sender, EventArgs e)
-        {
-            int x = 0;
-            int.TryParse(txtMagicResistBuff.Text, out x);
-            _editorItem.StatDiff[(int)Stats.MagicResist] = x;
-        }
-
         private void chkHOTDOT_CheckedChanged(object sender, EventArgs e)
         {
             _editorItem.Data1 = Convert.ToInt32(chkHOTDOT.Checked);
@@ -532,20 +503,6 @@ namespace Intersect_Editor.Forms
             lblWarpDir.Text = "Dir: " + Globals.IntToDir(_editorItem.Data4);
         }
 
-        private void txtHPCost_TextChanged(object sender, EventArgs e)
-        {
-            int x = 0;
-            int.TryParse(txtHPCost.Text, out x);
-            _editorItem.VitalCost[(int)Vitals.Health] = x;
-        }
-
-        private void txtManaCost_TextChanged(object sender, EventArgs e)
-        {
-            int x = 0;
-            int.TryParse(txtManaCost.Text, out x);
-            _editorItem.VitalCost[(int)Vitals.Mana] = x;
-        }
-
         private void txtDesc_TextChanged(object sender, EventArgs e)
         {
             _editorItem.Desc = txtDesc.Text;
@@ -554,15 +511,13 @@ namespace Intersect_Editor.Forms
         private void cmbExtraEffect_SelectedIndexChanged(object sender, EventArgs e)
         {
             _editorItem.Data3 = cmbExtraEffect.SelectedIndex;
-
-            lblHint.Visible = true;
+            
             lblSprite.Visible = false;
             cmbTransform.Visible = false;
             picSprite.Visible = false;
 
             if (cmbExtraEffect.SelectedIndex == cmbExtraEffect.Items.IndexOf("Transform"))
             {
-                lblHint.Visible = false;
                 lblSprite.Visible = true;
                 cmbTransform.Visible = true;
                 picSprite.Visible = true;
@@ -762,6 +717,87 @@ namespace Intersect_Editor.Forms
                     toolStripItemNew_Click(null, null);
                 }
             }
+        }
+
+        private void scrlHPCost_Scroll(object sender, ScrollEventArgs e)
+        {
+            lblHPCost.Text = "HP Cost: " + scrlHPCost.Value;
+            _editorItem.VitalCost[(int) Vitals.Health] = scrlHPCost.Value;
+        }
+
+        private void scrlManaCost_Scroll(object sender, ScrollEventArgs e)
+        {
+            lblMPCost.Text = "Mana Cost: " + scrlManaCost.Value;
+            _editorItem.VitalCost[(int)Vitals.Mana] = scrlManaCost.Value;
+        }
+
+        private void chkFriendly_CheckedChanged(object sender, EventArgs e)
+        {
+            _editorItem.Friendly = Convert.ToInt32(chkFriendly.Checked);
+        }
+
+        private void scrlHPDamage_Scroll(object sender, ScrollEventArgs e)
+        {
+            lblHPDamage.Text = "HP Damage: " + scrlHPDamage.Value;
+            _editorItem.VitalDiff[(int)Vitals.Health] = scrlHPDamage.Value;
+        }
+
+        private void scrlManaDamage_Scroll(object sender, ScrollEventArgs e)
+        {
+            lblManaDamage.Text = "Mana Damage: " + scrlManaDamage.Value;
+            _editorItem.VitalDiff[(int)Vitals.Mana] = scrlManaDamage.Value;
+        }
+
+        private void scrlCritChance_Scroll(object sender, ScrollEventArgs e)
+        {
+            lblCritChance.Text = "Crit Chance: " + scrlCritChance.Value + "%";
+            _editorItem.CritChance = scrlCritChance.Value;
+        }
+
+        private void scrlAttack_Scroll(object sender, ScrollEventArgs e)
+        {
+            lblAttack.Text = "Attack: " + scrlAttack.Value;
+            _editorItem.StatDiff[(int) Stats.Attack] = scrlAttack.Value;
+        }
+
+        private void scrlDefense_Scroll(object sender, ScrollEventArgs e)
+        {
+            lblDefense.Text = "Defense: " + scrlDefense.Value;
+            _editorItem.StatDiff[(int)Stats.Defense] = scrlDefense.Value;
+        }
+
+        private void scrlSpeed_Scroll(object sender, ScrollEventArgs e)
+        {
+            lblSpeed.Text = "Speed: " + scrlSpeed.Value;
+            _editorItem.StatDiff[(int)Stats.Speed] = scrlSpeed.Value;
+        }
+
+        private void scrlAbilityPwr_Scroll(object sender, ScrollEventArgs e)
+        {
+            lblAbilityPwr.Text = "Ability Pwr: " + scrlAbilityPwr.Value;
+            _editorItem.StatDiff[(int)Stats.AbilityPower] = scrlAbilityPwr.Value;
+        }
+
+        private void scrlMagicResist_Scroll(object sender, ScrollEventArgs e)
+        {
+            lblMagicResist.Text = "Magic Resist: " + scrlMagicResist.Value;
+            _editorItem.StatDiff[(int)Stats.MagicResist] = scrlMagicResist.Value;
+        }
+
+        private void scrlScaling_Scroll(object sender, ScrollEventArgs e)
+        {
+            lblScaling.Text = "Scaling Amount: x" + ((double)scrlScaling.Value / 100f);
+            _editorItem.Scaling = scrlScaling.Value;
+        }
+
+        private void cmbDamageType_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            _editorItem.DamageType = cmbDamageType.SelectedIndex;
+        }
+
+        private void cmbScalingStat_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            _editorItem.ScalingStat = cmbScalingStat.SelectedIndex;
         }
     }
 }

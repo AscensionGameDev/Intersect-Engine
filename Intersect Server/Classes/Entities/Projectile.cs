@@ -35,10 +35,11 @@ namespace Intersect_Server.Classes.Entities
     {
         public Entity Owner;
         private ProjectileBase MyBase;
+        private SpellBase ParentSpell;
+        private ItemBase ParentItem;
         private int Quantity = 0;
         private long SpawnTime = 0;
         public int Target = -1;
-        private int IsSpell = -1;
         private int _spawnCount = 0;
         private int _totalSpawns = 0;
         private int _spawnedAmount = 0;
@@ -46,7 +47,7 @@ namespace Intersect_Server.Classes.Entities
         // Individual Spawns
         public ProjectileSpawns[] Spawns;
 
-        public Projectile(int index, Entity owner, ProjectileBase projectile, int Map, int X, int Y, int Z, int Direction, int isSpell = -1, int target = 0) : base(index)
+        public Projectile(int index, Entity owner, SpellBase parentSpell, ItemBase parentItem, ProjectileBase projectile, int Map, int X, int Y, int Z, int Direction, int target = 0) : base(index)
         {
             MyBase = projectile;
             MyName = MyBase.Name;
@@ -59,7 +60,8 @@ namespace Intersect_Server.Classes.Entities
             CurrentY = Y;
             CurrentZ = Z;
             Dir = Direction;
-            IsSpell = isSpell;
+            ParentSpell = parentSpell;
+            ParentItem = parentItem;
 
             if (MyBase.Homing == true)
             {
@@ -386,7 +388,7 @@ namespace Intersect_Server.Classes.Entities
                                         {
                                             if (Owner.MyIndex != Target)
                                             {
-                                                Owner.TryAttack(TargetEntity, MyBase, IsSpell, Spawns[i].Dir);
+                                                Owner.TryAttack(TargetEntity, MyBase, ParentSpell, ParentItem, Spawns[i].Dir);
                                                 killSpawn = true; //Remove from the list being processed
                                             }
                                         }
@@ -397,14 +399,14 @@ namespace Intersect_Server.Classes.Entities
                                                 if (Owner.GetType() == typeof(Player))
                                                 {
 
-                                                    Owner.TryAttack(TargetEntity, MyBase, IsSpell, Spawns[i].Dir);
+                                                    Owner.TryAttack(TargetEntity, MyBase, ParentSpell,ParentItem, Spawns[i].Dir);
                                                     killSpawn = true; //Remove from the list being processed
                                                 }
                                             }
                                         }
                                         else //Any other target
                                         {
-                                            Owner.TryAttack(TargetEntity, MyBase, IsSpell, Spawns[i].Dir);
+                                            Owner.TryAttack(TargetEntity, MyBase, ParentSpell, ParentItem, Spawns[i].Dir);
                                             killSpawn = true; //Remove from the list being processed
                                         }
                                     }

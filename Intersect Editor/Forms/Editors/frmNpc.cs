@@ -98,6 +98,14 @@ namespace Intersect_Editor.Forms
             scrlDropItem.Maximum = ItemBase.ObjectCount() - 1;
             scrlSpell.Maximum = SpellBase.ObjectCount() - 1;
             scrlNPC.Maximum = NpcBase.ObjectCount() - 1;
+            cmbAttackAnimation.Items.Clear();
+            cmbAttackAnimation.Items.Add("None");
+            cmbAttackAnimation.Items.AddRange(Database.GetGameObjectList(GameObject.Animation));
+            cmbScalingStat.Items.Clear();
+            for (int x = 0; x < Options.MaxStats; x++)
+            {
+                cmbScalingStat.Items.Add(Globals.GetStatName(x));
+            }
             UpdateEditor();
         }
 
@@ -135,6 +143,17 @@ namespace Intersect_Editor.Forms
                 lblSpd.Text = @"Move Speed: " + scrlSpd.Value;
                 chkAttackAllies.Checked = _editorItem.AttackAllies;
                 chkEnabled.Checked = _editorItem.NpcVsNpcEnabled;
+
+                //Combat
+                scrlDamage.Value = _editorItem.Damage;
+                scrlDamage_Scroll(null, null);
+                scrlCritChance.Value = _editorItem.CritChance;
+                scrlCritChance_Scroll(null, null);
+                scrlScaling.Value = _editorItem.Scaling;
+                scrlScaling_Scroll(null, null);
+                cmbDamageType.SelectedIndex = _editorItem.DamageType;
+                cmbScalingStat.SelectedIndex = _editorItem.ScalingStat;
+                cmbAttackAnimation.SelectedIndex = Database.GameObjectListIndex(GameObject.Animation, _editorItem.AttackAnimation) + 1;
 
                 // Add the spells to the list
                 lstSpells.Items.Clear();
@@ -389,7 +408,11 @@ namespace Intersect_Editor.Forms
             {
                 lblSpell.Text = "Spell: None";
             }
-            _editorItem.Spells[lstSpells.SelectedIndex] = Database.GameObjectIdFromList(GameObject.Spell, scrlSpell.Value);
+            if (lstSpells.SelectedIndex > -1 && lstSpells.SelectedIndex < _editorItem.Spells.Count)
+            {
+                _editorItem.Spells[lstSpells.SelectedIndex] = Database.GameObjectIdFromList(GameObject.Spell,
+                    scrlSpell.Value);
+            }
 
             int n = lstSpells.SelectedIndex;
             lstSpells.Items.Clear();
@@ -575,6 +598,39 @@ namespace Intersect_Editor.Forms
                     toolStripItemNew_Click(null, null);
                 }
             }
+        }
+
+        private void scrlDamage_Scroll(object sender, ScrollEventArgs e)
+        {
+            lblDamage.Text = "Base Damage: " + scrlDamage.Value;
+            _editorItem.Damage = scrlDamage.Value;
+        }
+
+        private void scrlCritChance_Scroll(object sender, ScrollEventArgs e)
+        {
+            lblCritChance.Text = "Crit Chance: " + scrlCritChance.Value + "%";
+            _editorItem.CritChance = scrlCritChance.Value;
+        }
+
+        private void cmbAttackAnimation_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            _editorItem.AttackAnimation = Database.GameObjectIdFromList(GameObject.Animation, cmbAttackAnimation.SelectedIndex - 1);
+        }
+
+        private void scrlScaling_Scroll(object sender, ScrollEventArgs e)
+        {
+            lblScaling.Text = "Scaling Amount: x" + ((double)scrlScaling.Value / 100f);
+            _editorItem.Scaling = scrlScaling.Value;
+        }
+
+        private void cmbDamageType_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            _editorItem.DamageType = cmbDamageType.SelectedIndex;
+        }
+
+        private void cmbScalingStat_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            _editorItem.ScalingStat = cmbScalingStat.SelectedIndex;
         }
     }
 }

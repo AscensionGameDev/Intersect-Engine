@@ -494,8 +494,11 @@ namespace Intersect_Client.Classes.Networking
         {
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
-            var map = bf.ReadInteger();
-            MapInstance.GetMap(map).ActionMsgs.Add(new ActionMsgInstance(map, bf.ReadInteger(), bf.ReadInteger(), bf.ReadString(), new Color((int)bf.ReadByte(), (int)bf.ReadByte(), (int)bf.ReadByte(), (int)bf.ReadByte())));
+            var map = MapInstance.GetMap(bf.ReadInteger());
+            if (map != null)
+            {
+                map.ActionMsgs.Add(new ActionMsgInstance(map.GetId(), bf.ReadInteger(), bf.ReadInteger(), bf.ReadString(), new Color((int)bf.ReadByte(), (int)bf.ReadByte(), (int)bf.ReadByte(), (int)bf.ReadByte())));
+            }
             bf.Dispose();
         }
 
@@ -1351,8 +1354,9 @@ namespace Intersect_Client.Classes.Networking
         {
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
-            int leader = bf.ReadInteger();
-            InputBox iBox = new InputBox(Strings.Get("parties","partyinvite"),  Strings.Get("parties","inviteprompt", Globals.Entities[leader].MyName), true, PacketSender.SendPartyAccept, PacketSender.SendRequestDecline, leader, false);
+			string leader = bf.ReadString();
+            int leaderId = bf.ReadInteger();
+            InputBox iBox = new InputBox(Strings.Get("parties","partyinvite"), Strings.Get("parties","inviteprompt",leader), true, PacketSender.SendPartyAccept, PacketSender.SendPartyDecline, leaderId, false);
             bf.Dispose();
         }
 
@@ -1492,8 +1496,9 @@ namespace Intersect_Client.Classes.Networking
         {
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
-            int partner = bf.ReadInteger();
-            InputBox iBox = new InputBox(Strings.Get("trading","traderequest"), Strings.Get("trading", "requestprompt",Globals.Entities[partner].MyName), true, PacketSender.SendTradeRequestAccept, PacketSender.SendRequestDecline, partner, false);
+            string partner = bf.ReadString();
+            int partnerId = bf.ReadInteger();
+            InputBox iBox = new InputBox(Strings.Get("trading","traderequest"), Strings.Get("trading", "requestprompt",partner), true, PacketSender.SendTradeRequestAccept, PacketSender.SendTradeRequestDecline, partnerId, false);
             bf.Dispose();
         }
 
@@ -1502,7 +1507,10 @@ namespace Intersect_Client.Classes.Networking
             var bf = new ByteBuffer();
             bf.WriteBytes(packet);
             int index = bf.ReadInteger();
-            Globals.Entities[index].type = bf.ReadInteger();
+            if (Globals.Entities.ContainsKey(index))
+            {
+                Globals.Entities[index].type = bf.ReadInteger();
+            }
             bf.Dispose();
         }
 

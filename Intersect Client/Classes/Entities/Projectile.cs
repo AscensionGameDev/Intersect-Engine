@@ -335,7 +335,7 @@ namespace Intersect_Client.Classes.Entities
                             Options.TileWidth/2,
                             MapInstance.GetMap(Spawns[s].SpawnMap).GetY() + Spawns[s].SpawnY*Options.TileHeight +
                             Spawns[s].OffsetY +
-                            Options.TileHeight/2, Spawns[s].AutoRotate ? Spawns[s].Dir : 0, Spawns[s].Z);
+                            Options.TileHeight/2, this.CurrentX, this.CurrentY, this.CurrentMap, Spawns[s].AutoRotate ? Spawns[s].Dir : 0, Spawns[s].Z);
                         Spawns[s].Anim.Update();
                     }
                 }

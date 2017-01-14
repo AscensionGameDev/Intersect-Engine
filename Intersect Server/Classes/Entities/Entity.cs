@@ -471,79 +471,20 @@ namespace Intersect_Server.Classes.Entities
             return 0;
         }
 
-        public virtual void TryAttack(Entity enemy, ProjectileBase isProjectile = null, int isSpell = -1, int projectileDir = -1)
+        public virtual bool CanAttack(Entity en, SpellBase spell)
         {
-            double dmg = 0;
-            bool PVPSpell = true;
+            return true;
+        }
 
-            if (enemy == null) return;
-            if (!IsOneBlockAway(enemy) && isProjectile == null && isSpell == -1) return;
-            if (!isFacingTarget(enemy) && isProjectile == null && isSpell == -1) return;
-
-            //Checking if the spell is positive or negative (if a spell)
-            if (isSpell > -1)
-            {
-                var spellBase = SpellBase.GetSpell(isSpell);
-                if (spellBase != null)
-                {
-                    if (spellBase.VitalDiff[(int)Vitals.Health] > -1 && spellBase.VitalDiff[(int)Vitals.Mana] > -1)
-                    {
-                        if (spellBase.Data3 == (int)StatusTypes.None || spellBase.Data3 == (int)StatusTypes.Stealth || spellBase.Data3 == (int)StatusTypes.Transform)
-                        {
-                            PVPSpell = false;
-
-                            for (var n = 0; n < Status.Count; n++)
-                            {
-                                if (spellBase.StatDiff[n] < 0)
-                                {
-                                    PVPSpell = true;
-                                    break;
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-
-            //Only count safe zones and friendly fire if its a dangerous spell! (If one has been used)
-            if (PVPSpell == true)
-            {
-                //Check for parties and safe zones, friendly fire off (unless its healing)
-                if (enemy.GetType() == typeof(Player) && this.GetType() == typeof(Player))
-                {
-                    if (((Player)this).InParty((Player)enemy) == true) return;
-                }
-
-                //Check if either the attacker or the defender is in a "safe zone" (Only apply if combat is PVP)
-                if (enemy.GetType() == typeof(Player) && this.GetType() == typeof(Player))
-                {
-                    if (MapInstance.GetMap(CurrentMap).ZoneType == 1) { return; }
-                    if (MapInstance.GetMap(enemy.CurrentMap).ZoneType == 1) { return; }
-                }
-            }
-
-            if (isProjectile == null && isSpell == -1 && (AttackTimer > Globals.System.GetTimeMs() || Blocking)) return;
-            AttackTimer = Globals.System.GetTimeMs() + CalculateAttackTime();
-            //Check if the attacker is blinded.
-            if (IsOneBlockAway(enemy) && isProjectile == null && isSpell == -1)
-            {
-                for (var n = 0; n < Status.Count; n++)
-                {
-                    if (Status[n].Type == (int)StatusTypes.Stun || Status[n].Type == (int)StatusTypes.Blind)
-                    {
-                        PacketSender.SendActionMsg(MyIndex, Strings.Get("combat","miss"), new Color(255, 255, 255, 255));
-                        PacketSender.SendEntityAttack(MyIndex, (int)EntityTypes.GlobalEntity, CurrentMap, CalculateAttackTime());
-                        return;
-                    }
-                }
-            }
-
+        //Attacking with projectile
+        public virtual void TryAttack(Entity enemy, ProjectileBase projectile, SpellBase parentSpell, ItemBase parentItem, int projectileDir)
+        {
             //Check if the target is blocking facing in the direction against you
             if (enemy.Blocking)
             {
                 int d = Dir;
 
-                if (isProjectile != null)
+                if (projectile != null)
                 {
                     d = projectileDir;
                 }
@@ -570,28 +511,175 @@ namespace Intersect_Server.Classes.Entities
                 }
             }
 
-            //If Entity is resource, check for the correct tool and make sure its not a spell cast.
-            if (enemy.GetType() == typeof(Resource) && this.GetType() == typeof(Player))
+            if (parentSpell != null)
             {
-                if (((Resource)enemy).IsDead) return;
-                if (isSpell > 0) return;
-                // Check that a resource is actually required.
-                var resource = ((Resource)enemy).MyBase;
-                if (resource.Tool > -1 && resource.Tool < Options.ToolTypes.Count)
+                TryAttack(enemy, parentSpell);
+            }
+            else
+            {
+                if (this.GetType() == typeof(Player) && enemy.GetType() == typeof(Player))
                 {
-                    if (((Player)Globals.Entities[MyIndex]).Equipment[2] < 0)
+                    if (MapInstance.GetMap(CurrentMap).ZoneType == 1)
                     {
-                        PacketSender.SendPlayerMsg(((Player)Globals.Entities[MyIndex]).MyClient, Strings.Get("combat","toolrequired", Options.ToolTypes[resource.Tool]));
                         return;
                     }
-                    var weapon = ItemBase.GetItem(Inventory[((Player)Globals.Entities[MyIndex]).Equipment[Options.WeaponIndex]].ItemNum);
-                    if (weapon == null || resource.Tool != weapon.Tool)
+                    if (MapInstance.GetMap(enemy.CurrentMap).ZoneType == 1)
                     {
-                        PacketSender.SendPlayerMsg(((Player)Globals.Entities[MyIndex]).MyClient, Strings.Get("combat", "toolrequired", Options.ToolTypes[resource.Tool]));
+                        return;
+                    }
+                }
+                Attack(enemy, parentItem.Damage,0, (DamageType) parentItem.DamageType, (Stats) parentItem.ScalingStat,
+                    parentItem.Scaling, parentItem.CritChance, Options.CritMultiplier);
+            }
+
+            //If projectile, check if a splash spell is applied
+            if (projectile != null)
+            {
+                if (projectile.Spell > -1)
+                {
+                    var s = SpellBase.GetSpell(projectile.Spell);
+                    if (s != null)
+                        HandleAoESpell(projectile.Spell, s.HitRadius, enemy.CurrentMap, enemy.CurrentX, enemy.CurrentY);
+
+                    //Check that the npc has not been destroyed by the splash spell
+                    if (enemy == null) { return; }
+                }
+                if (enemy.GetType() == typeof(Player) || enemy.GetType() == typeof(Npc))
+                {
+                    if (projectile.Knockback > 0 && projectileDir < 4)
+                    //If there is a knockback, knock them backwards and make sure its linear (diagonal player movement not coded).
+                    {
+                        var dash = new DashInstance(enemy, projectile.Knockback, projectileDir, false, false, false, false);
+                    }
+                }
+            }
+        }
+
+        //Attacking with spell
+        public virtual void TryAttack(Entity enemy, SpellBase spellBase)
+        {
+            if (enemy.GetType() == typeof(Resource)) return;
+            if (spellBase != null)
+            {
+                //Only count safe zones and friendly fire if its a dangerous spell! (If one has been used)
+                if (spellBase.Friendly == 0)
+                {
+                    //Check for parties and safe zones, friendly fire off (unless its healing)
+                    if (enemy.GetType() == typeof(Player) && this.GetType() == typeof(Player))
+                    {
+                        if (((Player)this).InParty((Player)enemy) == true) return;
+                    }
+
+                    //Check if either the attacker or the defender is in a "safe zone" (Only apply if combat is PVP)
+                    if (enemy.GetType() == typeof(Player) && this.GetType() == typeof(Player))
+                    {
+                        if (MapInstance.GetMap(CurrentMap).ZoneType == 1)
+                        {
+                            return;
+                        }
+                        if (MapInstance.GetMap(enemy.CurrentMap).ZoneType == 1)
+                        {
+                            return;
+                        }
+                    }
+
+                    //If we took damage lets reset our combat timer
+                    enemy.CombatTimer = Globals.System.GetTimeMs() + 5000;
+                }
+
+                Attack(enemy, spellBase.VitalDiff[0],spellBase.VitalDiff[1], (DamageType)spellBase.DamageType,(Stats)spellBase.ScalingStat, spellBase.Scaling, spellBase.CritChance, Options.CritMultiplier);
+
+                for (int i = 0; i < (int)Stats.StatCount; i++)
+                {
+					enemy.Stat[i].Buff.Add(
+                        new EntityBuff(spellBase.StatDiff[i],
+                            (spellBase.Data2 * 100)));
+                }
+
+                //Handle other status effects
+                if (spellBase.Data3 > 0)
+                {
+                    enemy.Status.Add(new StatusInstance(enemy.MyIndex,
+                        spellBase.Data3, (spellBase.Data2 * 100),
+                        spellBase.Data5));
+                    PacketSender.SendActionMsg(enemy.MyIndex, Options.StatusActionMsgs[spellBase.Data3], new Color(255, 255, 255, 0));
+                }
+
+                //Handle DoT/HoT spells]
+                if (spellBase.Data1 > 0)
+                {
+                    bool DoTFound = false;
+                    for (int i = 0; i < enemy.DoT.Count; i++)
+                    {
+                        if (enemy.DoT[i].SpellBase.GetId() == spellBase.GetId() ||
+                            enemy.DoT[i].OwnerID == MyIndex)
+                        {
+                            DoTFound = true;
+                        }
+                    }
+                    if (DoTFound == false) //no duplicate DoT/HoT spells.
+                    {
+                        enemy.DoT.Add(new DoTInstance(MyIndex, spellBase.GetId(), enemy));
+                    }
+                }
+
+                if (spellBase.HitAnimation > -1)
+                {
+                    int e = 0;
+                    if (enemy.GetType() == typeof(Player) || enemy.GetType() == typeof(Npc))
+                    {
+                        e = (int)EntityTypes.Player;
+                    }
+                    else if (enemy.GetType() == typeof(Resource))
+                    {
+                        //If determine if we should walk
+                        var res = ((Resource)enemy);
+                        if ((!res.IsDead() && !res.MyBase.WalkableBefore) || (res.IsDead() && !res.MyBase.WalkableAfter))
+                        {
+                            e = (int)EntityTypes.Resource;
+                        }
+                    }
+                    PacketSender.SendAnimationToProximity(spellBase.HitAnimation, e, enemy.MyIndex, enemy.CurrentMap, enemy.CurrentX, enemy.CurrentY,(int)Directions.Up); //Target Type -1 will be tile based animation
+                }
+            }
+        }
+
+        //Attacking with weapon or unarmed.
+        public virtual void TryAttack(Entity enemy)
+        {
+            //See player and npc override of this virtual void
+        }
+
+        //Attack using a weapon or unarmed
+        public virtual void TryAttack(Entity enemy, int baseDamage, DamageType damageType, Stats scalingStat, int scaling, int critChance, double critMultiplier)
+        {
+            if ((AttackTimer > Globals.System.GetTimeMs() || Blocking)) return;
+            AttackTimer = Globals.System.GetTimeMs() + CalculateAttackTime();
+            //Check if the attacker is blinded.
+            if (IsOneBlockAway(enemy))
+            {
+                for (var n = 0; n < Status.Count; n++)
+                {
+                    if (Status[n].Type == (int)StatusTypes.Stun || Status[n].Type == (int)StatusTypes.Blind)
+                    {
+                        PacketSender.SendActionMsg(MyIndex, Strings.Get("combat", "miss"), new Color(255, 255, 255, 255));
+                        PacketSender.SendEntityAttack(MyIndex, (int)EntityTypes.GlobalEntity, CurrentMap, CalculateAttackTime());
                         return;
                     }
                 }
             }
+
+
+            Attack(enemy, baseDamage, 0, damageType, scalingStat, scaling, critChance, critMultiplier);
+
+            //If we took damage lets reset our combat timer
+            enemy.CombatTimer = Globals.System.GetTimeMs() + 5000;
+        }
+
+        public void Attack(Entity enemy, int baseDamage, int secondaryDamage, DamageType damageType, Stats scalingStat, int scaling, int critChance, double critMultiplier)
+        {
+            if (enemy == null) return;
+
             //No Matter what, if we attack the entitiy, make them chase us
             if (enemy.GetType() == typeof(Npc))
             {
@@ -630,160 +718,57 @@ namespace Intersect_Server.Classes.Entities
                 }
             }
 
-            //Check if magic or physical damage
-            if (isSpell == -1)
+            //Is this a critical hit?
+            if (Globals.Rand.Next(1, 101) > critChance)
             {
-                dmg = DamageCalculator(Stat[(int) Stats.Attack].Value(),
-                    enemy.Stat[(int) Stats.Defense].Value()) + GetWeaponDamage();
-                if (dmg <= 0) dmg = 1; // Always do damage.
-
-                //If we are attacking with a weapon let's play the attack animation
-                if (this.GetType() == typeof(Player) && isProjectile == null)
-                {
-                    if (((Player) this).Equipment[Options.WeaponIndex] > -1)
-                    {
-                        var weapon = ItemBase.GetItem(Inventory[((Player) this).Equipment[Options.WeaponIndex]].ItemNum);
-                        if (weapon != null)
-                        {
-                            var attackAnim = AnimationBase.GetAnim(weapon.AttackAnimation);
-                            if (attackAnim != null)
-                            {
-                                PacketSender.SendAnimationToProximity(attackAnim.GetId(), -1, -1, enemy.CurrentMap,
-                                    enemy.CurrentX, enemy.CurrentY, Dir);
-                            }
-                        }
-                    }
-                }
-
-                //Check for a crit
-                if (enemy.GetType() != typeof(Resource) && Globals.Rand.Next(1, Options.CritChance + 1) == 1)
-                {
-                    dmg *= Options.CritMultiplier;
-                    PacketSender.SendActionMsg(enemy.MyIndex, Strings.Get("combat", "critical"), new Color(255, 255, 255, 0));
-                }
-
-                PacketSender.SendEntityAttack(MyIndex, (int)EntityTypes.GlobalEntity, CurrentMap, CalculateAttackTime());
+                critMultiplier = 1;
             }
             else
             {
-                var spellBase = SpellBase.GetSpell(isSpell);
-                if (spellBase != null)
+                PacketSender.SendActionMsg(enemy.MyIndex, Strings.Get("combat", "critical"), new Color(255, 255, 255, 0));
+            }
+
+            //Calculate Damages
+            if (baseDamage != 0)
+            {
+                baseDamage = Formulas.CalculateDamage(baseDamage, damageType, scalingStat, scaling, critMultiplier,this, enemy);
+                enemy.Vital[(int)Vitals.Health] -= (int)baseDamage;
+                if (baseDamage > 0)
                 {
-                    // Handle different dmg formula for healing and damaging spells.
-                    if (spellBase.VitalDiff[(int) Vitals.Health] < 0)
+                    switch (damageType)
                     {
-                        //damage
-                        dmg = DamageCalculator((int)(spellBase.VitalDiff[(int)Vitals.Health] * ((float)Stat[(int)Stats.AbilityPower].Value() / (float)Options.MaxStatValue)),
-                        enemy.Stat[(int)Stats.MagicResist].Value());
-                    }
-                    else
-                    {
-                        //heal
-                        dmg = DamageCalculator((int)(spellBase.VitalDiff[(int)Vitals.Health] * ((float)Stat[(int)Stats.AbilityPower].Value() / (float)Options.MaxStatValue)),0);
-                    }
-                    
-
-                    //Handle other stat debuffs/vitals.
-                    enemy.Vital[(int)Vitals.Mana] +=
-                        spellBase.VitalDiff[(int)Vitals.Mana];
-                    if (spellBase.VitalDiff[(int)Vitals.Mana] > 0)
-                    {
-                        PacketSender.SendActionMsg(enemy.MyIndex, Strings.Get("combat", "addsymbol") + spellBase.VitalDiff[(int)Vitals.Mana], new Color(255, 0, 255, 255));
-                    }
-                    else if (spellBase.VitalDiff[(int)Vitals.Mana] < 0)
-                    {
-                        PacketSender.SendActionMsg(enemy.MyIndex, Strings.Get("combat", "removesymbol") + spellBase.VitalDiff[(int)Vitals.Mana], new Color(255, 0, 255, 255));
-                    }
-
-                    for (int i = 0; i < (int)Stats.StatCount; i++)
-                    {
-                        enemy.Stat[i].Buff.Add(
-                            new EntityBuff(spellBase.StatDiff[i],
-                                (spellBase.Data2 * 100)));
-                    }
-
-                    //Handle other status effects
-                    if (spellBase.Data3 > 0)
-                    {
-                        enemy.Status.Add(new StatusInstance(enemy.MyIndex,
-                            spellBase.Data3, (spellBase.Data2 * 100),
-                            spellBase.Data5));
-                        PacketSender.SendActionMsg(enemy.MyIndex, Options.StatusActionMsgs[spellBase.Data3], new Color(255, 255, 255, 0));
-                    }
-
-                    //Handle DoT/HoT spells]
-                    if (spellBase.Data1 > 0)
-                    {
-                        bool DoTFound = false;
-                        for (int i = 0; i < enemy.DoT.Count; i++)
-                        {
-                            if (enemy.DoT[i].SpellBase.GetId() == isSpell ||
-                                enemy.DoT[i].OwnerID == MyIndex)
-                            {
-                                DoTFound = true;
-                            }
-                        }
-                        if (DoTFound == false) //no duplicate DoT/HoT spells.
-                        {
-                            enemy.DoT.Add(new DoTInstance(MyIndex, isSpell, enemy));
-                        }
-                    }
-
-                    if (spellBase.HitAnimation > -1)
-                    {
-                        int e = 0;
-                        if (enemy.GetType() == typeof(Player) || enemy.GetType() == typeof(Npc))
-                        {
-                            e = (int)EntityTypes.Player;
-                        }
-                        else if (enemy.GetType() == typeof(Resource))
-                        {
-                            //If determine if we should walk
-                            var res = ((Resource)enemy);
-                            if ((!res.IsDead() && !res.MyBase.WalkableBefore) || (res.IsDead() && !res.MyBase.WalkableAfter))
-                            {
-                                e = (int)EntityTypes.Resource;
-                            }
-                        }
-                        PacketSender.SendAnimationToProximity(spellBase.HitAnimation, e, enemy.MyIndex, enemy.CurrentMap, enemy.CurrentX, enemy.CurrentY, Dir); //Target Type -1 will be tile based animation
+                        case DamageType.Physical:
+                            PacketSender.SendActionMsg(enemy.MyIndex, Strings.Get("combat", "removesymbol") + (int)baseDamage, new Color(255, 255, 0, 0));
+                            break;
+                        case DamageType.Magic:
+                            PacketSender.SendActionMsg(enemy.MyIndex, Strings.Get("combat", "removesymbol") + (int)baseDamage, new Color(255, 255, 0, 255));
+                            break;
+                        case DamageType.True:
+                            PacketSender.SendActionMsg(enemy.MyIndex, Strings.Get("combat", "removesymbol") + (int)baseDamage, new Color(255, 255, 255, 255));
+                            break;
                     }
                 }
-            }
-
-            enemy.Vital[(int)Vitals.Health] -= (int)dmg;
-            if (dmg > 0)
-            {
-                PacketSender.SendActionMsg(enemy.MyIndex, Strings.Get("combat", "removesymbol") + (int)dmg, new Color(255, 255, 0, 0));
-            }
-            else
-            {
-                PacketSender.SendActionMsg(enemy.MyIndex, Strings.Get("combat", "addsymbol") + (int)dmg, new Color(255, 0, 255, 0));
-            }
-
-            //If we took damage lets reset our combat timer
-            CombatTimer = Globals.System.GetTimeMs() + 5000;
-
-            //If projectile, check if a splash spell is applied
-            if (isProjectile != null)
-            {
-                if (isProjectile.Spell > -1)
+                else
                 {
-                    var s = SpellBase.GetSpell(isProjectile.Spell);
-                    if (s != null)
-                        HandleAoESpell(isProjectile.Spell, s.HitRadius, enemy.CurrentMap, enemy.CurrentX, enemy.CurrentY);
-
-                    //Check that the npc has not been destroyed by the splash spell
-                    if (enemy == null) { return; }
-                }
-                if (enemy.GetType() == typeof(Player) || enemy.GetType() == typeof(Npc))
-                {
-                    if (isProjectile.Knockback > 0 && projectileDir < 4)
-                        //If there is a knockback, knock them backwards and make sure its linear (diagonal player movement not coded).
-                    {
-                        var dash = new DashInstance(enemy, isProjectile.Knockback, projectileDir, false, false, false, false);
-                    }
+                    PacketSender.SendActionMsg(enemy.MyIndex, Strings.Get("combat", "addsymbol") + (int)baseDamage, new Color(255, 0, 255, 0));
                 }
             }
+            if (secondaryDamage != 0)
+            {
+                secondaryDamage = Formulas.CalculateDamage(secondaryDamage, damageType, scalingStat, scaling, critMultiplier, this, enemy);
+                enemy.Vital[(int)Vitals.Mana] -= (int)baseDamage;
+                if (baseDamage > 0)
+                {
+                    //If we took damage lets reset our combat timer
+                    CombatTimer = Globals.System.GetTimeMs() + 5000;
+                    PacketSender.SendActionMsg(enemy.MyIndex, Strings.Get("combat", "removesymbol") + (int)baseDamage, new Color(255, 255, 127, 80));
+                }
+                else
+                {
+                    PacketSender.SendActionMsg(enemy.MyIndex, Strings.Get("combat", "addsymbol") + (int)baseDamage, new Color(255, 0, 0, 255));
+                }
+            }
+           
 
             //Check if after healing, greater than maximum hp.
             if (enemy.Vital[(int)Vitals.Health] >=
@@ -810,15 +795,10 @@ namespace Intersect_Server.Classes.Entities
             //Dead entity check
             if (enemy.Vital[(int)Vitals.Health] <= 0)
             {
-                //Check if a resource, if so spawn item drops differently.
-                if (enemy.GetType() == typeof(Resource))
-                {
-                    ((Resource)enemy).SpawnResourceItems(MyIndex);
-                }
                 KilledEntity(enemy);
-                if (enemy.GetType() == typeof(Npc))
+                if (enemy.GetType() == typeof(Npc) || enemy.GetType() == typeof(Resource))
                 {
-                    enemy.Die(true);
+                    enemy.Die(true, this);
                 }
                 else
                 {
@@ -838,7 +818,10 @@ namespace Intersect_Server.Classes.Entities
             {
                 ((Npc)Globals.Entities[MyIndex]).MoveTimer = Globals.System.GetTimeMs() + (long)GetMovementTime();
             }
+
         }
+
+
         public virtual void KilledEntity(Entity en)
         {
 
@@ -860,7 +843,7 @@ namespace Intersect_Server.Classes.Entities
                                     PacketSender.SendAnimationToProximity(spellBase.HitAnimation, 1,
                                         MyIndex, CurrentMap, 0, 0, Dir); //Target Type 1 will be global entity
                                 }
-                                TryAttack(this, null, SpellNum);
+                                TryAttack(this, spellBase);
                                 break;
                             case (int)SpellTargetTypes.Single:
                                 HandleAoESpell(SpellNum, spellBase.CastRange, CurrentMap, CurrentX, CurrentY, Target);
@@ -873,8 +856,8 @@ namespace Intersect_Server.Classes.Entities
                                 if (projectileBase != null)
                                 {
                                     MapInstance.GetMap(CurrentMap).SpawnMapProjectile(this,
-                                        projectileBase, CurrentMap, CurrentX, CurrentY, CurrentZ,
-                                        Dir, SpellNum, Target);
+                                        projectileBase,spellBase,null,CurrentMap, CurrentX, CurrentY, CurrentZ,
+                                        Dir, Target);
                                 }
                                 break;
                             default:
@@ -973,7 +956,7 @@ namespace Intersect_Server.Classes.Entities
                                             }
                                             else
                                             {
-                                                TryAttack(t, null, SpellNum);
+                                                TryAttack(t, spellBase);
                                             }
                                             if (target > -1) return;
                                         }
@@ -990,13 +973,9 @@ namespace Intersect_Server.Classes.Entities
                 }
             }
         }
-        private double DamageCalculator(int OffensiveStat, int DefensiveStat)
-        {
-            return (OffensiveStat * ((double)100 / (100 + (double)(DefensiveStat * 2)))) + Globals.Rand.Next(0, 3);
-        }
 
         //Check if the target is either up, down, left or right of the target on the correct Z dimension.
-        bool IsOneBlockAway(Entity target)
+        protected bool IsOneBlockAway(Entity target)
         {
             TileHelper myTile = new TileHelper(CurrentMap, CurrentX, CurrentY);
             TileHelper enemyTile = new TileHelper(target.CurrentMap, target.CurrentX, target.CurrentY);
@@ -1335,7 +1314,7 @@ namespace Intersect_Server.Classes.Entities
                 {
                     PacketSender.SendAnimationToProximity(SpellBase.HitAnimation, 1, Target.MyIndex, Target.CurrentMap, 0, 0, Target.Dir); //Target Type 1 will be global entity
                 }
-                if (Globals.Entities[OwnerID] != null) Globals.Entities[OwnerID].TryAttack(Target, null, SpellBase.GetId());
+                if (Globals.Entities[OwnerID] != null) Globals.Entities[OwnerID].Attack(Target,SpellBase.VitalDiff[0],SpellBase.VitalDiff[1],(DamageType)SpellBase.DamageType,(Stats)SpellBase.ScalingStat,SpellBase.Scaling,SpellBase.CritChance,Options.CritMultiplier);
                 Interval = Globals.System.GetTimeMs() + (SpellBase.Data4 * 100);
                 Count--;
 

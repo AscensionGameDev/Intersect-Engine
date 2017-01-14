@@ -41,16 +41,20 @@ namespace Intersect_Library.GameObjects
         public int ClassReq = -1;
         public int LevelReq;
         public int Projectile = -1;
-        public int AttackAnimation = -1;
         public int[] StatsReq;
         public int[] StatsGiven;
         public int GenderReq;
         public int StatGrowth;
         public int Damage;
+        public int CritChance;
+        public int DamageType;
+        public int ScalingStat;
+        public int Scaling;
+        public int AttackAnimation = -1;
         public int Speed;
         public string MalePaperdoll = "";
         public string FemalePaperdoll = "";
-        public int Tool;
+        public int Tool = -1;
         public int Data1;
         public int Data2;
         public int Data3;
@@ -88,6 +92,10 @@ namespace Intersect_Library.GameObjects
 
             StatGrowth = myBuffer.ReadInteger();
             Damage = myBuffer.ReadInteger();
+            CritChance = myBuffer.ReadInteger();
+            DamageType = myBuffer.ReadInteger();
+            ScalingStat = myBuffer.ReadInteger();
+            Scaling = myBuffer.ReadInteger();
             Speed = myBuffer.ReadInteger();
             MalePaperdoll = myBuffer.ReadString();
             FemalePaperdoll = myBuffer.ReadString();
@@ -122,6 +130,10 @@ namespace Intersect_Library.GameObjects
 
             myBuffer.WriteInteger(StatGrowth);
             myBuffer.WriteInteger(Damage);
+            myBuffer.WriteInteger(CritChance);
+            myBuffer.WriteInteger(DamageType);
+            myBuffer.WriteInteger(ScalingStat);
+            myBuffer.WriteInteger(Scaling);
             myBuffer.WriteInteger(Speed);
             myBuffer.WriteString(MalePaperdoll);
             myBuffer.WriteString(FemalePaperdoll);
