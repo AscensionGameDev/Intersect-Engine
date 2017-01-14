@@ -491,12 +491,12 @@ namespace Intersect_Server.Classes.Maps
         }
 
         //Spawn a projectile
-        public void SpawnMapProjectile(Entity owner, ProjectileBase projectile, int Map, int X, int Y, int Z, int Direction, int IsSpell = -1, int Target = 0)
+        public void SpawnMapProjectile(Entity owner, ProjectileBase projectile, SpellBase parentSpell, ItemBase parentItem, int Map, int X, int Y, int Z, int Direction, int Target = 0)
         {
             lock (GetMapLock())
             {
                 int n = Globals.FindOpenEntity();
-                MapProjectiles.Add(new Projectile(n, owner, projectile, Map, X, Y, Z, Direction, IsSpell, Target));
+                MapProjectiles.Add(new Projectile(n, owner, parentSpell,parentItem, projectile, Map, X, Y, Z, Direction, Target));
                 Globals.Entities[n] = MapProjectiles[MapProjectiles.Count - 1];
                 PacketSender.SendEntityDataToProximity(Globals.Entities[n]);
             }
@@ -752,6 +752,7 @@ namespace Intersect_Server.Classes.Maps
                 SendMapEntitiesTo(client.Entity);
                 PacketSender.SendMapItems(client, MyMapNum);
                 AddEntity(client.Entity);
+                client.Entity.LastMapEntered = this.GetId();
                 if (SurroundingMaps.Count <= 0) return;
                 foreach (var t in SurroundingMaps)
                 {
@@ -759,6 +760,7 @@ namespace Intersect_Server.Classes.Maps
                     MapInstance.GetMap(t).SendMapEntitiesTo(client.Entity);
                     PacketSender.SendMapItems(client, t);
                 }
+                PacketSender.SendEntityDataToProximity(client.Entity);
             }
         }
         public void SendMapEntitiesTo(Player player)
@@ -776,6 +778,41 @@ namespace Intersect_Server.Classes.Maps
             if (side == -1 || side == (int)Directions.Left) Left = -1;
             if (side == -1 || side == (int)Directions.Right) Right = -1;
             Database.SaveGameObject(this);
+        }
+
+        public bool TileBlocked(int x, int y)
+        {
+            //Check if tile is a blocked attribute
+            if (Attributes[x, y] != null && Attributes[x,y].value == (int)MapAttributes.Blocked)
+            {
+                return true;
+            }
+            //See if there are any entities in the way
+            var entities = GetEntities();
+            for (int i = 0; i < entities.Count; i++)
+            {
+                if (entities[i] != null && entities[i].GetType() != typeof(Projectile))
+                {
+                    //If Npc or Player then blocked.. if resource then check
+                    if (entities[i].Passable == 0  && entities[i].CurrentX == x && entities[i].CurrentY == y)
+                    {
+                        return true;
+                    }
+                }
+            }
+            //Check Global Events
+            foreach (var globalEvent in GlobalEventInstances)
+            {
+                if (globalEvent.Value != null && globalEvent.Value.PageInstance != null)
+                {
+                    if (globalEvent.Value.PageInstance.Passable == 0 && globalEvent.Value.PageInstance.CurrentX == x &&
+                        globalEvent.Value.PageInstance.CurrentY == y)
+                    {
+                        return true;
+                    }
+                }
+            }
+            return false;
         }
 
         //Map Reseting Functions

@@ -43,7 +43,7 @@ namespace Intersect_Server.Classes.Core
     public static class Database
     {
         private static SqliteConnection _dbConnection;
-        private const int DbVersion = 6;
+        private const int DbVersion = 7;
         private const string DbFilename = "resources/intersect.db";
 
         //Database Variables

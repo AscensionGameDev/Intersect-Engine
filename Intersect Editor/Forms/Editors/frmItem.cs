@@ -114,8 +114,12 @@ namespace Intersect_Editor.Forms
             cmbAttackAnimation.Items.Clear();
             cmbAttackAnimation.Items.Add("None");
             cmbAttackAnimation.Items.AddRange(Database.GetGameObjectList(GameObject.Animation));
+            cmbScalingStat.Items.Clear();
+            for (int x = 0; x < Options.MaxStats; x++)
+            {
+                cmbScalingStat.Items.Add(Globals.GetStatName(x));
+            }
 
-            scrlProjectile.Maximum = ProjectileBase.ObjectCount()-1;
             scrlSpell.Maximum = SpellBase.ObjectCount() - 1;
             scrlAnim.Maximum = AnimationBase.ObjectCount()-1;
             cmbMalePaperdoll.Items.Clear();
@@ -145,7 +149,9 @@ namespace Intersect_Editor.Forms
             cmbEquipmentBonus.Items.Add("None");
             cmbEquipmentBonus.Items.Add("Cooldown Reduction");
             cmbEquipmentBonus.Items.Add("Life Steal");
-            scrlProjectile.Maximum = ProjectileBase.ObjectCount();
+            cmbProjectile.Items.Clear();
+            cmbProjectile.Items.Add("None");
+            cmbProjectile.Items.AddRange(Database.GetGameObjectList(GameObject.Projectile));
         }
 
         private void UpdateEditor()
@@ -172,6 +178,11 @@ namespace Intersect_Editor.Forms
                 scrlMagicResist.Value = _editorItem.StatsGiven[3];
                 scrlSpeed.Value = _editorItem.StatsGiven[4];
                 scrlDamage.Value = _editorItem.Damage;
+                scrlDamage_Scroll(null,null);
+                scrlCritChance.Value = _editorItem.CritChance;
+                scrlCritChance_Scroll(null,null);
+                scrlScaling.Value = _editorItem.Scaling;
+                scrlScaling_Scroll(null,null);
                 scrlRange.Value = _editorItem.StatGrowth;
                 cmbEquipmentSlot.SelectedIndex = _editorItem.Data1;
                 cmbToolType.SelectedIndex = _editorItem.Tool + 1;
@@ -215,9 +226,11 @@ namespace Intersect_Editor.Forms
                     picFemalePaperdoll.BackgroundImage = null;
                 }
 
+                cmbDamageType.SelectedIndex = _editorItem.DamageType;
+                cmbScalingStat.SelectedIndex = _editorItem.ScalingStat;
+
                 //External References
-                scrlProjectile.Value = Database.GameObjectListIndex(GameObject.Projectile, _editorItem.Projectile);
-                scrlProjectile_ValueChanged(null, null);
+                cmbProjectile.SelectedIndex = Database.GameObjectListIndex(GameObject.Projectile, _editorItem.Projectile) + 1;
                 scrlAnim.Value = Database.GameObjectListIndex(GameObject.Animation, _editorItem.Animation);
                 scrlAnim_Scroll(null, null);
 
@@ -259,7 +272,7 @@ namespace Intersect_Editor.Forms
             if (_editorItem.ItemType != cmbType.SelectedIndex)
             {
                 _editorItem.Damage = 0;
-                _editorItem.Tool = 0;
+                _editorItem.Tool = -1;
                 _editorItem.Data1 = 0;
                 _editorItem.Data2 = 0;
                 _editorItem.Data3 = 0;
@@ -411,12 +424,6 @@ namespace Intersect_Editor.Forms
             _editorItem.StatsGiven[4] = scrlSpeed.Value;
         }
 
-        private void scrlDmg_Scroll(object sender, EventArgs e)
-        {
-            lblDamage.Text = @"Damage: " + scrlDamage.Value;
-            _editorItem.Damage = scrlDamage.Value;
-        }
-
         private void scrlRange_Scroll(object sender, EventArgs e)
         {
             lblRange.Text = @"Stat Bonus Range: +- " + scrlRange.Value;
@@ -440,27 +447,11 @@ namespace Intersect_Editor.Forms
             _editorItem.Data1 = cmbEquipmentSlot.SelectedIndex;
             if (cmbEquipmentSlot.SelectedIndex == Options.WeaponIndex)
             {
-                chk2Hand.Visible = true;
-                cmbToolType.Visible = true;
-                lblToolType.Visible = true;
-                lblDamage.Visible = true;
-                scrlDamage.Visible = true;
-                lblProjectile.Visible = true;
-                scrlProjectile.Visible = true;
-                lblAttackAnimation.Visible = true;
-                cmbAttackAnimation.Visible = true;
+                grpWeaponProperties.Show();
             }
             else
             {
-                chk2Hand.Visible = false;
-                cmbToolType.Visible = false;
-                lblToolType.Visible = false;
-                lblDamage.Visible = false;
-                scrlDamage.Visible = false;
-                lblProjectile.Visible = false;
-                scrlProjectile.Visible = false;
-                lblAttackAnimation.Visible = false;
-                cmbAttackAnimation.Visible = false;
+                grpWeaponProperties.Hide();
 
                 _editorItem.Projectile = -1;
                 _editorItem.Tool = -1;
@@ -493,20 +484,6 @@ namespace Intersect_Editor.Forms
         {
             _editorItem.Data3 = scrlEffectAmount.Value;
             lblEffectPercent.Text = "Effect Amount: " + _editorItem.Data3 + "%";
-        }
-
-        private void scrlProjectile_ValueChanged(object sender, EventArgs e)
-        {
-            if (scrlProjectile.Value > -1)
-            {
-                _editorItem.Projectile = Database.GameObjectIdFromList(GameObject.Projectile,scrlProjectile.Value);
-                lblProjectile.Text = "Projectile: " + ProjectileBase.GetName(_editorItem.Projectile);
-            }
-            else
-            {
-                _editorItem.Projectile = -1;
-                lblProjectile.Text = "Projectile: None";
-            }
         }
 
         private void scrlEvent_Scroll(object sender, ScrollEventArgs e)
@@ -636,7 +613,75 @@ namespace Intersect_Editor.Forms
 
         private void cmbAttackAnimation_SelectedIndexChanged(object sender, EventArgs e)
         {
-            _editorItem.AttackAnimation = Database.GameObjectIdFromList(GameObject.Class, cmbAttackAnimation.SelectedIndex - 1);
+            _editorItem.AttackAnimation = Database.GameObjectIdFromList(GameObject.Animation, cmbAttackAnimation.SelectedIndex - 1);
+        }
+
+        private void lblEffectPercent_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void scrlDamage_Scroll(object sender, ScrollEventArgs e)
+        {
+            lblDamage.Text = "Base Damage: " + scrlDamage.Value;
+            _editorItem.Damage = scrlDamage.Value;
+        }
+
+        private void scrlCritChance_Scroll(object sender, ScrollEventArgs e)
+        {
+            lblCritChance.Text = "Crit Chance: " + scrlCritChance.Value + "%";
+            _editorItem.CritChance = scrlCritChance.Value;
+        }
+
+        private void cmbDamageType_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            _editorItem.DamageType = cmbDamageType.SelectedIndex;
+        }
+
+        private void cmbScalingStat_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            _editorItem.ScalingStat = cmbScalingStat.SelectedIndex;
+        }
+
+        private void scrlScaling_Scroll(object sender, ScrollEventArgs e)
+        {
+            lblScaling.Text = "Scaling Amount: x" + ((double) scrlScaling.Value/100f);
+            _editorItem.Scaling = scrlScaling.Value;
+        }
+
+        private void cmbProjectile_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            _editorItem.Projectile = Database.GameObjectIdFromList(GameObject.Projectile, cmbProjectile.SelectedIndex - 1);
+        }
+
+        private void lblCritChance_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label11_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label12_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void lblScaling_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void lblAttackAnimation_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void lblDamage_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }

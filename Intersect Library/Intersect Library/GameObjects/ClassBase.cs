@@ -51,6 +51,14 @@ namespace Intersect_Library.GameObjects
         public int[] BaseStat = new int[(int)Stats.StatCount];
         public int BasePoints = 0;
 
+        //Combat
+        public int Damage;
+        public int CritChance;
+        public int DamageType;
+        public int ScalingStat;
+        public int Scaling;
+        public int AttackAnimation = -1;
+
         //Level Up Info
         public int IncreasePercentage = 0;
         public int[] VitalIncrease = new int[(int)Vitals.VitalCount];
@@ -118,6 +126,14 @@ namespace Intersect_Library.GameObjects
                 BaseStat[i] = myBuffer.ReadInteger();
             }
             BasePoints = myBuffer.ReadInteger();
+
+            //Combat
+            Damage = myBuffer.ReadInteger();
+            DamageType = myBuffer.ReadInteger();
+            CritChance = myBuffer.ReadInteger();
+            ScalingStat = myBuffer.ReadInteger();
+            Scaling = myBuffer.ReadInteger();
+            AttackAnimation = myBuffer.ReadInteger();
 
             //Level Up Info
             IncreasePercentage = myBuffer.ReadInteger();
@@ -193,6 +209,14 @@ namespace Intersect_Library.GameObjects
                 myBuffer.WriteInteger(BaseStat[i]);
             }
             myBuffer.WriteInteger(BasePoints);
+
+            //Combat
+            myBuffer.WriteInteger(Damage);
+            myBuffer.WriteInteger(DamageType);
+            myBuffer.WriteInteger(CritChance);
+            myBuffer.WriteInteger(ScalingStat);
+            myBuffer.WriteInteger(Scaling);
+            myBuffer.WriteInteger(AttackAnimation);
 
             //Level Up Stats
             myBuffer.WriteInteger(IncreasePercentage);

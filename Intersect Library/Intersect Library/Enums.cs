@@ -21,6 +21,12 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 */
 namespace Intersect_Library
 {
+    public enum DamageType
+    {
+        Physical = 0,
+        Magic,
+        True
+    }
     public enum GameObject
     {
         Animation = 0,
@@ -93,6 +99,7 @@ namespace Intersect_Library
         SaveTime,
         PartyInvite,
         PartyAcceptInvite,
+        PartyDeclineInvite,
         PartyKick,
         PartyLeave,
         AcceptQuest,
@@ -104,7 +111,7 @@ namespace Intersect_Library
         TradeOffer,
         TradeRevoke,
         TradeRequestAccept,
-        RequestDecline,
+        TradeRequestDecline,
         AddTilesets,
         EnterMap,
     }

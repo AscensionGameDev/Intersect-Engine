@@ -47,6 +47,14 @@ namespace Intersect_Library.GameObjects
         public byte Behavior = 0;
         public int SightRange = 0;
 
+        //Combat
+        public int Damage;
+        public int CritChance;
+        public int DamageType;
+        public int ScalingStat;
+        public int Scaling;
+        public int AttackAnimation = -1;
+
         //Spells
         public List<int> Spells = new List<int>();
         public int SpellFrequency = 2;
@@ -87,6 +95,15 @@ namespace Intersect_Library.GameObjects
             SpawnDuration = myBuffer.ReadInteger();
             Behavior = myBuffer.ReadByte();
             SightRange = myBuffer.ReadInteger();
+
+            //Combat
+            Damage = myBuffer.ReadInteger();
+            DamageType = myBuffer.ReadInteger();
+            CritChance = myBuffer.ReadInteger();
+            ScalingStat = myBuffer.ReadInteger();
+            Scaling = myBuffer.ReadInteger();
+            AttackAnimation = myBuffer.ReadInteger();
+
             for (int i = 0; i < Options.MaxNpcDrops; i++)
             {
                 Drops[i].ItemNum = myBuffer.ReadInteger();
@@ -131,6 +148,15 @@ namespace Intersect_Library.GameObjects
             myBuffer.WriteInteger(SpawnDuration);
             myBuffer.WriteByte(Behavior);
             myBuffer.WriteInteger(SightRange);
+
+            //Combat
+            myBuffer.WriteInteger(Damage);
+            myBuffer.WriteInteger(DamageType);
+            myBuffer.WriteInteger(CritChance);
+            myBuffer.WriteInteger(ScalingStat);
+            myBuffer.WriteInteger(Scaling);
+            myBuffer.WriteInteger(AttackAnimation);
+
             for (int i = 0; i < Options.MaxNpcDrops; i++)
             {
                 myBuffer.WriteInteger(Drops[i].ItemNum);

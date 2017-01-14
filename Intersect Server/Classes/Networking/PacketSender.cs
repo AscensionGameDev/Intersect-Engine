@@ -612,6 +612,14 @@ namespace Intersect_Server.Classes.Networking
                 bf.WriteInteger(en.Status[i].Type);
                 bf.WriteString(en.Status[i].Data);
             }
+            //If player and in party send vitals to party just in case party members are not in the proximity
+            if (en.GetType() == typeof(Player))
+            {
+                for (var i = 0; i < ((Player) en).Party.Count; i++)
+                {
+                    SendEntityVitalsTo(((Player) en).Party[i].MyClient, en);
+                }
+            }
             SendDataToProximity(en.CurrentMap, bf.ToArray());
             bf.Dispose();
         }
@@ -1410,14 +1418,19 @@ namespace Intersect_Server.Classes.Networking
                 bf.WriteInteger(client.Entity.Party[i].MyIndex);
             }
             client.SendPacket(bf.ToArray());
+            for (int i = 0; i < client.Entity.Party.Count; i++)
+            {
+                SendEntityDataTo(client, client.Entity.Party[i]);
+            }
             bf.Dispose();
         }
 
-        public static void SendPartyInvite(Client client, int leader)
+        public static void SendPartyInvite(Client client, Player leader)
         {
             var bf = new ByteBuffer();
             bf.WriteLong((long)ServerPackets.PartyInvite);
-            bf.WriteInteger(leader);
+            bf.WriteString(leader.MyName);
+            bf.WriteInteger(leader.MyIndex);
             client.SendPacket(bf.ToArray());
             bf.Dispose();
         }
@@ -1515,11 +1528,12 @@ namespace Intersect_Server.Classes.Networking
             bf.Dispose();
         }
 
-        public static void SendTradeRequest(Client client, int partnerIndex)
+        public static void SendTradeRequest(Client client, Player partner)
         {
             var bf = new ByteBuffer();
             bf.WriteLong((long)ServerPackets.TradeRequest);
-            bf.WriteInteger(partnerIndex);
+            bf.WriteString(partner.MyName);
+            bf.WriteInteger(partner.MyIndex);
             client.SendPacket(bf.ToArray());
             bf.Dispose();
         }

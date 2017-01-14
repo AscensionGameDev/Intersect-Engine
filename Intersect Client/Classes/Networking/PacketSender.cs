@@ -373,6 +373,14 @@ namespace Intersect_Client.Classes.Networking
             GameNetwork.SendPacket(bf.ToArray());
         }
 
+        public static void SendPartyDecline(Object sender, EventArgs e)
+        {
+            var bf = new ByteBuffer();
+            bf.WriteLong((int)ClientPackets.PartyDeclineInvite);
+            bf.WriteInteger((int)((InputBox)sender).Slot);
+            GameNetwork.SendPacket(bf.ToArray());
+        }
+
         public static void SendAcceptQuest(int questId)
         {
             var bf = new ByteBuffer();
@@ -394,7 +402,8 @@ namespace Intersect_Client.Classes.Networking
             var bf = new ByteBuffer();
             bf.WriteLong((int)ClientPackets.CancelQuest);
             bf.WriteInteger(questId);
-		}
+            GameNetwork.SendPacket(bf.ToArray());
+        }
 		
         public static void SendTradeRequest(int index)
         {
@@ -444,10 +453,11 @@ namespace Intersect_Client.Classes.Networking
             GameNetwork.SendPacket(bf.ToArray());
         }
 
-        public static void SendRequestDecline(Object sender, EventArgs e)
+        public static void SendTradeRequestDecline(Object sender, EventArgs e)
         {
             var bf = new ByteBuffer();
-            bf.WriteLong((int)ClientPackets.RequestDecline);
+            bf.WriteLong((int)ClientPackets.TradeRequestDecline);
+            bf.WriteInteger((int)((InputBox)sender).Slot);
             GameNetwork.SendPacket(bf.ToArray());
         }
     }

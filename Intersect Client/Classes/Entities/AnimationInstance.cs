@@ -54,6 +54,7 @@ namespace Intersect_Client.Classes.Entities
         private int ZDimension = -1;
         public bool AutoRotate = false;
         public bool Hidden = false;
+        private MapSound sound;
         public AnimationInstance(AnimationBase animBase, bool loopForever, bool autoRotate = false, int zDimension = -1)
         {
             myBase = animBase;
@@ -66,6 +67,7 @@ namespace Intersect_Client.Classes.Entities
                 infiniteLoop = loopForever;
                 AutoRotate = autoRotate;
                 ZDimension = zDimension;
+                sound = GameAudio.AddMapSound(myBase.Sound, 0, 0, 0, true, 12);
                 lock (GameGraphics.AnimationLock)
                 {
                     GameGraphics.LiveAnimations.Add(this);
@@ -195,10 +197,14 @@ namespace Intersect_Client.Classes.Entities
             }
         }
 
-        public void SetPosition(float x, float y, int dir, int z = 0)
+        public void SetPosition(float worldX, float worldY,int mapx, int mapy, int map, int dir, int z = 0)
         {
-            _renderX = x;
-            _renderY = y;
+            _renderX = worldX;
+            _renderY = worldY;
+            if (sound != null)
+            {
+                sound.UpdatePosition(mapx, mapy, map);
+            }
             if (dir > -1) _renderDir = dir;
             ZDimension = z;
         }
@@ -207,6 +213,10 @@ namespace Intersect_Client.Classes.Entities
         {
             if (myBase != null)
             {
+                if (sound != null)
+                {
+                    sound.Update();
+                }
                 if (lowerTimer < Globals.System.GetTimeMS() && showLower)
                 {
                     lowerFrame++;

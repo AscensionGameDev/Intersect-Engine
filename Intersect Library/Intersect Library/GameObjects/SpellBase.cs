@@ -54,6 +54,13 @@ namespace Intersect_Library.GameObjects
         //Costs
         public int[] VitalCost = new int[(int)Vitals.VitalCount];
 
+        //Damage
+        public int CritChance;
+        public int DamageType = 1;
+        public int ScalingStat;
+        public int Scaling;
+        public int Friendly;
+
         //Requirements
         public int LevelReq = 0;
         public int[] StatReq = new int[(int)Stats.StatCount];
@@ -118,6 +125,12 @@ namespace Intersect_Library.GameObjects
                 StatDiff[i] = myBuffer.ReadInteger();
             }
 
+            CritChance = myBuffer.ReadInteger();
+            DamageType = myBuffer.ReadInteger();
+            ScalingStat = myBuffer.ReadInteger();
+            Scaling = myBuffer.ReadInteger();
+            Friendly = myBuffer.ReadInteger();
+
             Projectile = myBuffer.ReadInteger();
             Data1 = myBuffer.ReadInteger();
             Data2 = myBuffer.ReadInteger();
@@ -168,6 +181,12 @@ namespace Intersect_Library.GameObjects
             {
                 myBuffer.WriteInteger(StatDiff[i]);
             }
+            
+            myBuffer.WriteInteger(CritChance);
+            myBuffer.WriteInteger(DamageType);
+            myBuffer.WriteInteger(ScalingStat);
+            myBuffer.WriteInteger(Scaling);
+            myBuffer.WriteInteger(Friendly);
 
             myBuffer.WriteInteger(Projectile);
             myBuffer.WriteInteger(Data1);

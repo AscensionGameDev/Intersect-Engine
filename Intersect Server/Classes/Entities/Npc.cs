@@ -119,12 +119,37 @@ namespace Intersect_Server.Classes.Entities
             PacketSender.SendNpcAggressionToProximity(this);
         }
 
-        public override void TryAttack(Entity enemy, ProjectileBase isProjectile = null, int isSpell = -1, int projectileDir = -1)
+        public override bool CanAttack(Entity en, SpellBase spell)
         {
-            if (CanNpcCombat(enemy) || enemy == this)
+            //Check if the attacker is stunned or blinded.
+            for (var n = 0; n < Status.Count; n++)
             {
-                base.TryAttack(enemy, isProjectile, isSpell, projectileDir);
+                if (Status[n].Type == (int)StatusTypes.Stun)
+                {
+                    return false;
+                }
             }
+            if (en.GetType() == typeof(Resource))
+            {
+               return false;
+            }
+            else if (en.GetType() == typeof(Npc))
+            {
+                return CanNpcCombat(en) || en == this;
+            }
+            return true;
+        }
+
+        public override void TryAttack(Entity enemy)
+        {
+            return;
+            if (!CanAttack(enemy, null)) return;
+            if (!IsOneBlockAway(enemy)) return;
+            if (!isFacingTarget(enemy)) return;
+
+            base.TryAttack(enemy, MyBase.Damage == 0 ? 1 : MyBase.Damage, (DamageType)MyBase.DamageType, (Stats)MyBase.ScalingStat,
+                    MyBase.Scaling, MyBase.CritChance, Options.CritMultiplier);
+            PacketSender.SendEntityAttack(MyIndex, (int)EntityTypes.GlobalEntity, CurrentMap, CalculateAttackTime());
         }
 
 
@@ -151,19 +176,6 @@ namespace Intersect_Server.Classes.Entities
                 return true;
             }
             return false;
-        }
-
-        public bool CanAttack()
-        {
-            //Check if the attacker is stunned or blinded.
-            for (var n = 0; n < Status.Count; n++)
-            {
-                if (Status[n].Type == (int)StatusTypes.Stun)
-                {
-                    return false;
-                }
-            }
-            return true;
         }
 
         private void TryCastSpells()
@@ -415,7 +427,7 @@ namespace Intersect_Server.Classes.Entities
                             }
                             else
                             {
-                                if (CanAttack()) TryAttack(MyTarget, null, -1, -1);
+                                if (CanAttack(MyTarget,null)) TryAttack(MyTarget);
                             }
                         }
                     }
@@ -428,7 +440,7 @@ namespace Intersect_Server.Classes.Entities
                         }
                         else
                         {
-                            if (CanAttack()) TryAttack(MyTarget, null, -1, -1);
+                            if (CanAttack(MyTarget,null)) TryAttack(MyTarget);
                         }
                     }
                 }

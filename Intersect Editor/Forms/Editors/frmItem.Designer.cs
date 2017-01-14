@@ -68,39 +68,49 @@ namespace Intersect_Editor.Forms
             this.scrlAbilityPowerReq = new System.Windows.Forms.HScrollBar();
             this.scrlAttackReq = new System.Windows.Forms.HScrollBar();
             this.gbEquipment = new System.Windows.Forms.GroupBox();
-            this.cmbAttackAnimation = new System.Windows.Forms.ComboBox();
-            this.lblAttackAnimation = new System.Windows.Forms.Label();
+            this.darkGroupBox1 = new DarkUI.Controls.DarkGroupBox();
+            this.lblAttack = new System.Windows.Forms.Label();
+            this.scrlAttack = new System.Windows.Forms.HScrollBar();
+            this.scrlAbilityPower = new System.Windows.Forms.HScrollBar();
+            this.scrlMagicResist = new System.Windows.Forms.HScrollBar();
+            this.scrlSpeed = new System.Windows.Forms.HScrollBar();
+            this.scrlDefense = new System.Windows.Forms.HScrollBar();
+            this.lblAbilityPower = new System.Windows.Forms.Label();
+            this.lblDefense = new System.Windows.Forms.Label();
+            this.lblMagicResist = new System.Windows.Forms.Label();
+            this.lblSpeed = new System.Windows.Forms.Label();
+            this.scrlRange = new System.Windows.Forms.HScrollBar();
+            this.lblRange = new System.Windows.Forms.Label();
             this.cmbFemalePaperdoll = new System.Windows.Forms.ComboBox();
             this.label10 = new System.Windows.Forms.Label();
             this.picFemalePaperdoll = new System.Windows.Forms.PictureBox();
-            this.lblProjectile = new System.Windows.Forms.Label();
-            this.scrlProjectile = new System.Windows.Forms.HScrollBar();
             this.lblEffectPercent = new System.Windows.Forms.Label();
             this.scrlEffectAmount = new System.Windows.Forms.HScrollBar();
             this.cmbEquipmentBonus = new System.Windows.Forms.ComboBox();
             this.label9 = new System.Windows.Forms.Label();
-            this.cmbToolType = new System.Windows.Forms.ComboBox();
-            this.lblToolType = new System.Windows.Forms.Label();
-            this.chk2Hand = new System.Windows.Forms.CheckBox();
             this.cmbEquipmentSlot = new System.Windows.Forms.ComboBox();
             this.label7 = new System.Windows.Forms.Label();
             this.cmbMalePaperdoll = new System.Windows.Forms.ComboBox();
             this.label5 = new System.Windows.Forms.Label();
-            this.lblRange = new System.Windows.Forms.Label();
-            this.scrlRange = new System.Windows.Forms.HScrollBar();
             this.picMalePaperdoll = new System.Windows.Forms.PictureBox();
+            this.grpWeaponProperties = new DarkUI.Controls.DarkGroupBox();
+            this.cmbProjectile = new System.Windows.Forms.ComboBox();
+            this.cmbScalingStat = new System.Windows.Forms.ComboBox();
+            this.label12 = new System.Windows.Forms.Label();
+            this.lblScaling = new System.Windows.Forms.Label();
+            this.scrlScaling = new System.Windows.Forms.HScrollBar();
+            this.cmbDamageType = new System.Windows.Forms.ComboBox();
+            this.label11 = new System.Windows.Forms.Label();
+            this.lblCritChance = new System.Windows.Forms.Label();
+            this.scrlCritChance = new System.Windows.Forms.HScrollBar();
+            this.cmbAttackAnimation = new System.Windows.Forms.ComboBox();
+            this.lblAttackAnimation = new System.Windows.Forms.Label();
+            this.chk2Hand = new System.Windows.Forms.CheckBox();
+            this.lblToolType = new System.Windows.Forms.Label();
+            this.cmbToolType = new System.Windows.Forms.ComboBox();
+            this.lblProjectile = new System.Windows.Forms.Label();
             this.lblDamage = new System.Windows.Forms.Label();
             this.scrlDamage = new System.Windows.Forms.HScrollBar();
-            this.lblSpeed = new System.Windows.Forms.Label();
-            this.lblMagicResist = new System.Windows.Forms.Label();
-            this.lblDefense = new System.Windows.Forms.Label();
-            this.lblAbilityPower = new System.Windows.Forms.Label();
-            this.lblAttack = new System.Windows.Forms.Label();
-            this.scrlDefense = new System.Windows.Forms.HScrollBar();
-            this.scrlSpeed = new System.Windows.Forms.HScrollBar();
-            this.scrlMagicResist = new System.Windows.Forms.HScrollBar();
-            this.scrlAbilityPower = new System.Windows.Forms.HScrollBar();
-            this.scrlAttack = new System.Windows.Forms.HScrollBar();
             this.gbConsumable = new System.Windows.Forms.GroupBox();
             this.label4 = new System.Windows.Forms.Label();
             this.cmbConsume = new System.Windows.Forms.ComboBox();
@@ -127,8 +137,10 @@ namespace Intersect_Editor.Forms
             ((System.ComponentModel.ISupportInitialize)(this.picItem)).BeginInit();
             this.groupBox3.SuspendLayout();
             this.gbEquipment.SuspendLayout();
+            this.darkGroupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.picFemalePaperdoll)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.picMalePaperdoll)).BeginInit();
+            this.grpWeaponProperties.SuspendLayout();
             this.gbConsumable.SuspendLayout();
             this.gbSpell.SuspendLayout();
             this.grpEvent.SuspendLayout();
@@ -159,7 +171,7 @@ namespace Intersect_Editor.Forms
             // btnCancel
             // 
             this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.btnCancel.Location = new System.Drawing.Point(605, 483);
+            this.btnCancel.Location = new System.Drawing.Point(494, 482);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(190, 28);
             this.btnCancel.TabIndex = 4;
@@ -169,7 +181,7 @@ namespace Intersect_Editor.Forms
             // 
             // btnSave
             // 
-            this.btnSave.Location = new System.Drawing.Point(409, 483);
+            this.btnSave.Location = new System.Drawing.Point(298, 482);
             this.btnSave.Name = "btnSave";
             this.btnSave.Size = new System.Drawing.Size(190, 28);
             this.btnSave.TabIndex = 2;
@@ -408,6 +420,7 @@ namespace Intersect_Editor.Forms
             // 
             // scrlLevelReq
             // 
+            this.scrlLevelReq.LargeChange = 1;
             this.scrlLevelReq.Location = new System.Drawing.Point(127, 139);
             this.scrlLevelReq.Name = "scrlLevelReq";
             this.scrlLevelReq.Size = new System.Drawing.Size(80, 17);
@@ -461,6 +474,7 @@ namespace Intersect_Editor.Forms
             // 
             // scrlDefenseReq
             // 
+            this.scrlDefenseReq.LargeChange = 1;
             this.scrlDefenseReq.Location = new System.Drawing.Point(13, 87);
             this.scrlDefenseReq.Maximum = 255;
             this.scrlDefenseReq.Name = "scrlDefenseReq";
@@ -470,6 +484,7 @@ namespace Intersect_Editor.Forms
             // 
             // scrlSpeedReq
             // 
+            this.scrlSpeedReq.LargeChange = 1;
             this.scrlSpeedReq.Location = new System.Drawing.Point(13, 137);
             this.scrlSpeedReq.Maximum = 255;
             this.scrlSpeedReq.Name = "scrlSpeedReq";
@@ -479,6 +494,7 @@ namespace Intersect_Editor.Forms
             // 
             // scrlMagicResistReq
             // 
+            this.scrlMagicResistReq.LargeChange = 1;
             this.scrlMagicResistReq.Location = new System.Drawing.Point(127, 87);
             this.scrlMagicResistReq.Maximum = 255;
             this.scrlMagicResistReq.Name = "scrlMagicResistReq";
@@ -488,6 +504,7 @@ namespace Intersect_Editor.Forms
             // 
             // scrlAbilityPowerReq
             // 
+            this.scrlAbilityPowerReq.LargeChange = 1;
             this.scrlAbilityPowerReq.Location = new System.Drawing.Point(127, 40);
             this.scrlAbilityPowerReq.Maximum = 255;
             this.scrlAbilityPowerReq.Name = "scrlAbilityPowerReq";
@@ -497,6 +514,7 @@ namespace Intersect_Editor.Forms
             // 
             // scrlAttackReq
             // 
+            this.scrlAttackReq.LargeChange = 1;
             this.scrlAttackReq.Location = new System.Drawing.Point(13, 40);
             this.scrlAttackReq.Maximum = 255;
             this.scrlAttackReq.Name = "scrlAttackReq";
@@ -507,67 +525,164 @@ namespace Intersect_Editor.Forms
             // 
             // gbEquipment
             // 
-            this.gbEquipment.Controls.Add(this.cmbAttackAnimation);
-            this.gbEquipment.Controls.Add(this.lblAttackAnimation);
+            this.gbEquipment.Controls.Add(this.darkGroupBox1);
             this.gbEquipment.Controls.Add(this.cmbFemalePaperdoll);
             this.gbEquipment.Controls.Add(this.label10);
             this.gbEquipment.Controls.Add(this.picFemalePaperdoll);
-            this.gbEquipment.Controls.Add(this.lblProjectile);
-            this.gbEquipment.Controls.Add(this.scrlProjectile);
             this.gbEquipment.Controls.Add(this.lblEffectPercent);
             this.gbEquipment.Controls.Add(this.scrlEffectAmount);
             this.gbEquipment.Controls.Add(this.cmbEquipmentBonus);
             this.gbEquipment.Controls.Add(this.label9);
-            this.gbEquipment.Controls.Add(this.cmbToolType);
-            this.gbEquipment.Controls.Add(this.lblToolType);
-            this.gbEquipment.Controls.Add(this.chk2Hand);
             this.gbEquipment.Controls.Add(this.cmbEquipmentSlot);
             this.gbEquipment.Controls.Add(this.label7);
             this.gbEquipment.Controls.Add(this.cmbMalePaperdoll);
             this.gbEquipment.Controls.Add(this.label5);
-            this.gbEquipment.Controls.Add(this.lblRange);
-            this.gbEquipment.Controls.Add(this.scrlRange);
             this.gbEquipment.Controls.Add(this.picMalePaperdoll);
-            this.gbEquipment.Controls.Add(this.lblDamage);
-            this.gbEquipment.Controls.Add(this.scrlDamage);
-            this.gbEquipment.Controls.Add(this.lblSpeed);
-            this.gbEquipment.Controls.Add(this.lblMagicResist);
-            this.gbEquipment.Controls.Add(this.lblDefense);
-            this.gbEquipment.Controls.Add(this.lblAbilityPower);
-            this.gbEquipment.Controls.Add(this.lblAttack);
-            this.gbEquipment.Controls.Add(this.scrlDefense);
-            this.gbEquipment.Controls.Add(this.scrlSpeed);
-            this.gbEquipment.Controls.Add(this.scrlMagicResist);
-            this.gbEquipment.Controls.Add(this.scrlAbilityPower);
-            this.gbEquipment.Controls.Add(this.scrlAttack);
+            this.gbEquipment.Controls.Add(this.grpWeaponProperties);
             this.gbEquipment.Location = new System.Drawing.Point(2, 233);
             this.gbEquipment.Name = "gbEquipment";
-            this.gbEquipment.Size = new System.Drawing.Size(569, 210);
+            this.gbEquipment.Size = new System.Drawing.Size(439, 581);
             this.gbEquipment.TabIndex = 12;
             this.gbEquipment.TabStop = false;
             this.gbEquipment.Text = "Equipment";
             this.gbEquipment.Visible = false;
             // 
-            // cmbAttackAnimation
+            // darkGroupBox1
             // 
-            this.cmbAttackAnimation.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cmbAttackAnimation.FormattingEnabled = true;
-            this.cmbAttackAnimation.Location = new System.Drawing.Point(191, 131);
-            this.cmbAttackAnimation.Name = "cmbAttackAnimation";
-            this.cmbAttackAnimation.Size = new System.Drawing.Size(107, 21);
-            this.cmbAttackAnimation.TabIndex = 38;
-            this.cmbAttackAnimation.Visible = false;
-            this.cmbAttackAnimation.SelectedIndexChanged += new System.EventHandler(this.cmbAttackAnimation_SelectedIndexChanged);
+            this.darkGroupBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
+            this.darkGroupBox1.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.darkGroupBox1.Controls.Add(this.lblAttack);
+            this.darkGroupBox1.Controls.Add(this.scrlAttack);
+            this.darkGroupBox1.Controls.Add(this.scrlAbilityPower);
+            this.darkGroupBox1.Controls.Add(this.scrlMagicResist);
+            this.darkGroupBox1.Controls.Add(this.scrlSpeed);
+            this.darkGroupBox1.Controls.Add(this.scrlDefense);
+            this.darkGroupBox1.Controls.Add(this.lblAbilityPower);
+            this.darkGroupBox1.Controls.Add(this.lblDefense);
+            this.darkGroupBox1.Controls.Add(this.lblMagicResist);
+            this.darkGroupBox1.Controls.Add(this.lblSpeed);
+            this.darkGroupBox1.Controls.Add(this.scrlRange);
+            this.darkGroupBox1.Controls.Add(this.lblRange);
+            this.darkGroupBox1.ForeColor = System.Drawing.Color.Gainsboro;
+            this.darkGroupBox1.Location = new System.Drawing.Point(13, 67);
+            this.darkGroupBox1.Name = "darkGroupBox1";
+            this.darkGroupBox1.Size = new System.Drawing.Size(200, 204);
+            this.darkGroupBox1.TabIndex = 40;
+            this.darkGroupBox1.TabStop = false;
+            this.darkGroupBox1.Text = "Stat Bonuses";
             // 
-            // lblAttackAnimation
+            // lblAttack
             // 
-            this.lblAttackAnimation.AutoSize = true;
-            this.lblAttackAnimation.Location = new System.Drawing.Point(188, 114);
-            this.lblAttackAnimation.Name = "lblAttackAnimation";
-            this.lblAttackAnimation.Size = new System.Drawing.Size(90, 13);
-            this.lblAttackAnimation.TabIndex = 37;
-            this.lblAttackAnimation.Text = "Attack Animation:";
-            this.lblAttackAnimation.Visible = false;
+            this.lblAttack.AutoSize = true;
+            this.lblAttack.Location = new System.Drawing.Point(9, 16);
+            this.lblAttack.Name = "lblAttack";
+            this.lblAttack.Size = new System.Drawing.Size(50, 13);
+            this.lblAttack.TabIndex = 5;
+            this.lblAttack.Text = "Attack: 0";
+            // 
+            // scrlAttack
+            // 
+            this.scrlAttack.LargeChange = 1;
+            this.scrlAttack.Location = new System.Drawing.Point(12, 35);
+            this.scrlAttack.Maximum = 255;
+            this.scrlAttack.Name = "scrlAttack";
+            this.scrlAttack.Size = new System.Drawing.Size(80, 17);
+            this.scrlAttack.TabIndex = 0;
+            this.scrlAttack.ValueChanged += new System.EventHandler(this.scrlAttack_Scroll);
+            // 
+            // scrlAbilityPower
+            // 
+            this.scrlAbilityPower.Location = new System.Drawing.Point(103, 35);
+            this.scrlAbilityPower.Maximum = 255;
+            this.scrlAbilityPower.Name = "scrlAbilityPower";
+            this.scrlAbilityPower.Size = new System.Drawing.Size(80, 17);
+            this.scrlAbilityPower.TabIndex = 1;
+            this.scrlAbilityPower.ValueChanged += new System.EventHandler(this.scrlAbilityPower_Scroll);
+            // 
+            // scrlMagicResist
+            // 
+            this.scrlMagicResist.LargeChange = 1;
+            this.scrlMagicResist.Location = new System.Drawing.Point(103, 82);
+            this.scrlMagicResist.Maximum = 255;
+            this.scrlMagicResist.Name = "scrlMagicResist";
+            this.scrlMagicResist.Size = new System.Drawing.Size(80, 17);
+            this.scrlMagicResist.TabIndex = 2;
+            this.scrlMagicResist.ValueChanged += new System.EventHandler(this.scrlMagicResist_Scroll);
+            // 
+            // scrlSpeed
+            // 
+            this.scrlSpeed.LargeChange = 1;
+            this.scrlSpeed.Location = new System.Drawing.Point(12, 125);
+            this.scrlSpeed.Maximum = 255;
+            this.scrlSpeed.Name = "scrlSpeed";
+            this.scrlSpeed.Size = new System.Drawing.Size(80, 17);
+            this.scrlSpeed.TabIndex = 3;
+            this.scrlSpeed.ValueChanged += new System.EventHandler(this.scrlSpeed_Scroll);
+            // 
+            // scrlDefense
+            // 
+            this.scrlDefense.LargeChange = 1;
+            this.scrlDefense.Location = new System.Drawing.Point(12, 82);
+            this.scrlDefense.Maximum = 255;
+            this.scrlDefense.Name = "scrlDefense";
+            this.scrlDefense.Size = new System.Drawing.Size(80, 17);
+            this.scrlDefense.TabIndex = 4;
+            this.scrlDefense.ValueChanged += new System.EventHandler(this.scrlDefense_Scroll);
+            // 
+            // lblAbilityPower
+            // 
+            this.lblAbilityPower.AutoSize = true;
+            this.lblAbilityPower.Location = new System.Drawing.Point(100, 16);
+            this.lblAbilityPower.Name = "lblAbilityPower";
+            this.lblAbilityPower.Size = new System.Drawing.Size(67, 13);
+            this.lblAbilityPower.TabIndex = 6;
+            this.lblAbilityPower.Text = "Ability Pwr: 0";
+            // 
+            // lblDefense
+            // 
+            this.lblDefense.AutoSize = true;
+            this.lblDefense.Location = new System.Drawing.Point(9, 67);
+            this.lblDefense.Name = "lblDefense";
+            this.lblDefense.Size = new System.Drawing.Size(59, 13);
+            this.lblDefense.TabIndex = 7;
+            this.lblDefense.Text = "Defense: 0";
+            // 
+            // lblMagicResist
+            // 
+            this.lblMagicResist.AutoSize = true;
+            this.lblMagicResist.Location = new System.Drawing.Point(100, 67);
+            this.lblMagicResist.Name = "lblMagicResist";
+            this.lblMagicResist.Size = new System.Drawing.Size(80, 13);
+            this.lblMagicResist.TabIndex = 8;
+            this.lblMagicResist.Text = "Magic Resist: 0";
+            // 
+            // lblSpeed
+            // 
+            this.lblSpeed.AutoSize = true;
+            this.lblSpeed.Location = new System.Drawing.Point(8, 112);
+            this.lblSpeed.Name = "lblSpeed";
+            this.lblSpeed.Size = new System.Drawing.Size(50, 13);
+            this.lblSpeed.TabIndex = 9;
+            this.lblSpeed.Text = "Speed: 0";
+            // 
+            // scrlRange
+            // 
+            this.scrlRange.LargeChange = 1;
+            this.scrlRange.Location = new System.Drawing.Point(12, 172);
+            this.scrlRange.Name = "scrlRange";
+            this.scrlRange.Size = new System.Drawing.Size(80, 18);
+            this.scrlRange.TabIndex = 19;
+            this.scrlRange.Scroll += new System.Windows.Forms.ScrollEventHandler(this.scrlRange_Scroll);
+            this.scrlRange.ValueChanged += new System.EventHandler(this.scrlRange_Scroll);
+            // 
+            // lblRange
+            // 
+            this.lblRange.AutoSize = true;
+            this.lblRange.Location = new System.Drawing.Point(8, 153);
+            this.lblRange.Name = "lblRange";
+            this.lblRange.Size = new System.Drawing.Size(118, 13);
+            this.lblRange.TabIndex = 20;
+            this.lblRange.Text = "Stat Bonus Range: +- 0";
             // 
             // cmbFemalePaperdoll
             // 
@@ -575,16 +690,16 @@ namespace Intersect_Editor.Forms
             this.cmbFemalePaperdoll.FormattingEnabled = true;
             this.cmbFemalePaperdoll.Items.AddRange(new object[] {
             "None"});
-            this.cmbFemalePaperdoll.Location = new System.Drawing.Point(438, 111);
+            this.cmbFemalePaperdoll.Location = new System.Drawing.Point(222, 379);
             this.cmbFemalePaperdoll.Name = "cmbFemalePaperdoll";
-            this.cmbFemalePaperdoll.Size = new System.Drawing.Size(96, 21);
+            this.cmbFemalePaperdoll.Size = new System.Drawing.Size(168, 21);
             this.cmbFemalePaperdoll.TabIndex = 36;
             this.cmbFemalePaperdoll.SelectedIndexChanged += new System.EventHandler(this.cmbFemalePaperdoll_SelectedIndexChanged);
             // 
             // label10
             // 
             this.label10.AutoSize = true;
-            this.label10.Location = new System.Drawing.Point(435, 94);
+            this.label10.Location = new System.Drawing.Point(219, 362);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(91, 13);
             this.label10.TabIndex = 35;
@@ -592,49 +707,29 @@ namespace Intersect_Editor.Forms
             // 
             // picFemalePaperdoll
             // 
-            this.picFemalePaperdoll.Location = new System.Drawing.Point(438, 138);
+            this.picFemalePaperdoll.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
+            this.picFemalePaperdoll.Location = new System.Drawing.Point(222, 406);
             this.picFemalePaperdoll.Name = "picFemalePaperdoll";
-            this.picFemalePaperdoll.Size = new System.Drawing.Size(128, 65);
+            this.picFemalePaperdoll.Size = new System.Drawing.Size(200, 156);
             this.picFemalePaperdoll.TabIndex = 34;
             this.picFemalePaperdoll.TabStop = false;
-            // 
-            // lblProjectile
-            // 
-            this.lblProjectile.AutoSize = true;
-            this.lblProjectile.Location = new System.Drawing.Point(195, 67);
-            this.lblProjectile.Name = "lblProjectile";
-            this.lblProjectile.Size = new System.Drawing.Size(91, 13);
-            this.lblProjectile.TabIndex = 33;
-            this.lblProjectile.Text = "Projectile: 0 None";
-            this.lblProjectile.Visible = false;
-            // 
-            // scrlProjectile
-            // 
-            this.scrlProjectile.LargeChange = 1;
-            this.scrlProjectile.Location = new System.Drawing.Point(198, 87);
-            this.scrlProjectile.Minimum = -1;
-            this.scrlProjectile.Name = "scrlProjectile";
-            this.scrlProjectile.Size = new System.Drawing.Size(102, 17);
-            this.scrlProjectile.TabIndex = 32;
-            this.scrlProjectile.Value = -1;
-            this.scrlProjectile.Visible = false;
-            this.scrlProjectile.ValueChanged += new System.EventHandler(this.scrlProjectile_ValueChanged);
             // 
             // lblEffectPercent
             // 
             this.lblEffectPercent.AutoSize = true;
-            this.lblEffectPercent.Location = new System.Drawing.Point(435, 19);
+            this.lblEffectPercent.Location = new System.Drawing.Point(12, 316);
             this.lblEffectPercent.Name = "lblEffectPercent";
             this.lblEffectPercent.Size = new System.Drawing.Size(94, 13);
             this.lblEffectPercent.TabIndex = 31;
             this.lblEffectPercent.Text = "Effect Amount: 0%";
+            this.lblEffectPercent.Click += new System.EventHandler(this.lblEffectPercent_Click);
             // 
             // scrlEffectAmount
             // 
             this.scrlEffectAmount.LargeChange = 1;
-            this.scrlEffectAmount.Location = new System.Drawing.Point(438, 37);
+            this.scrlEffectAmount.Location = new System.Drawing.Point(15, 333);
             this.scrlEffectAmount.Name = "scrlEffectAmount";
-            this.scrlEffectAmount.Size = new System.Drawing.Size(102, 17);
+            this.scrlEffectAmount.Size = new System.Drawing.Size(198, 17);
             this.scrlEffectAmount.TabIndex = 30;
             this.scrlEffectAmount.ValueChanged += new System.EventHandler(this.scrlEffectAmount_ValueChanged);
             // 
@@ -642,68 +737,35 @@ namespace Intersect_Editor.Forms
             // 
             this.cmbEquipmentBonus.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbEquipmentBonus.FormattingEnabled = true;
-            this.cmbEquipmentBonus.Location = new System.Drawing.Point(314, 36);
+            this.cmbEquipmentBonus.Location = new System.Drawing.Point(15, 292);
             this.cmbEquipmentBonus.Name = "cmbEquipmentBonus";
-            this.cmbEquipmentBonus.Size = new System.Drawing.Size(108, 21);
+            this.cmbEquipmentBonus.Size = new System.Drawing.Size(198, 21);
             this.cmbEquipmentBonus.TabIndex = 29;
             this.cmbEquipmentBonus.SelectedIndexChanged += new System.EventHandler(this.cmbEquipmentBonus_SelectedIndexChanged);
             // 
             // label9
             // 
             this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(311, 19);
+            this.label9.Location = new System.Drawing.Point(12, 275);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(71, 13);
             this.label9.TabIndex = 28;
             this.label9.Text = "Bonus Effect:";
             // 
-            // cmbToolType
-            // 
-            this.cmbToolType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cmbToolType.FormattingEnabled = true;
-            this.cmbToolType.Location = new System.Drawing.Point(191, 176);
-            this.cmbToolType.Name = "cmbToolType";
-            this.cmbToolType.Size = new System.Drawing.Size(107, 21);
-            this.cmbToolType.TabIndex = 27;
-            this.cmbToolType.Visible = false;
-            this.cmbToolType.SelectedIndexChanged += new System.EventHandler(this.cmbToolType_SelectedIndexChanged);
-            // 
-            // lblToolType
-            // 
-            this.lblToolType.AutoSize = true;
-            this.lblToolType.Location = new System.Drawing.Point(188, 159);
-            this.lblToolType.Name = "lblToolType";
-            this.lblToolType.Size = new System.Drawing.Size(58, 13);
-            this.lblToolType.TabIndex = 26;
-            this.lblToolType.Text = "Tool Type:";
-            this.lblToolType.Visible = false;
-            // 
-            // chk2Hand
-            // 
-            this.chk2Hand.AutoSize = true;
-            this.chk2Hand.Location = new System.Drawing.Point(314, 70);
-            this.chk2Hand.Name = "chk2Hand";
-            this.chk2Hand.Size = new System.Drawing.Size(61, 17);
-            this.chk2Hand.TabIndex = 25;
-            this.chk2Hand.Text = "2 Hand";
-            this.chk2Hand.UseVisualStyleBackColor = true;
-            this.chk2Hand.Visible = false;
-            this.chk2Hand.CheckedChanged += new System.EventHandler(this.chk2Hand_CheckedChanged);
-            // 
             // cmbEquipmentSlot
             // 
             this.cmbEquipmentSlot.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbEquipmentSlot.FormattingEnabled = true;
-            this.cmbEquipmentSlot.Location = new System.Drawing.Point(198, 36);
+            this.cmbEquipmentSlot.Location = new System.Drawing.Point(15, 40);
             this.cmbEquipmentSlot.Name = "cmbEquipmentSlot";
-            this.cmbEquipmentSlot.Size = new System.Drawing.Size(108, 21);
+            this.cmbEquipmentSlot.Size = new System.Drawing.Size(198, 21);
             this.cmbEquipmentSlot.TabIndex = 24;
             this.cmbEquipmentSlot.SelectedIndexChanged += new System.EventHandler(this.cmbEquipmentSlot_SelectedIndexChanged);
             // 
             // label7
             // 
             this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(195, 19);
+            this.label7.Location = new System.Drawing.Point(12, 23);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(81, 13);
             this.label7.TabIndex = 23;
@@ -715,155 +777,231 @@ namespace Intersect_Editor.Forms
             this.cmbMalePaperdoll.FormattingEnabled = true;
             this.cmbMalePaperdoll.Items.AddRange(new object[] {
             "None"});
-            this.cmbMalePaperdoll.Location = new System.Drawing.Point(304, 111);
+            this.cmbMalePaperdoll.Location = new System.Drawing.Point(12, 379);
             this.cmbMalePaperdoll.Name = "cmbMalePaperdoll";
-            this.cmbMalePaperdoll.Size = new System.Drawing.Size(96, 21);
+            this.cmbMalePaperdoll.Size = new System.Drawing.Size(168, 21);
             this.cmbMalePaperdoll.TabIndex = 22;
             this.cmbMalePaperdoll.SelectedIndexChanged += new System.EventHandler(this.cmbPaperdoll_SelectedIndexChanged);
             // 
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(301, 94);
+            this.label5.Location = new System.Drawing.Point(9, 362);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(80, 13);
             this.label5.TabIndex = 21;
             this.label5.Text = "Male Paperdoll:";
             // 
-            // lblRange
-            // 
-            this.lblRange.AutoSize = true;
-            this.lblRange.Location = new System.Drawing.Point(9, 158);
-            this.lblRange.Name = "lblRange";
-            this.lblRange.Size = new System.Drawing.Size(118, 13);
-            this.lblRange.TabIndex = 20;
-            this.lblRange.Text = "Stat Bonus Range: +- 0";
-            // 
-            // scrlRange
-            // 
-            this.scrlRange.Location = new System.Drawing.Point(13, 177);
-            this.scrlRange.Name = "scrlRange";
-            this.scrlRange.Size = new System.Drawing.Size(80, 18);
-            this.scrlRange.TabIndex = 19;
-            this.scrlRange.Scroll += new System.Windows.Forms.ScrollEventHandler(this.scrlRange_Scroll);
-            this.scrlRange.ValueChanged += new System.EventHandler(this.scrlRange_Scroll);
-            // 
             // picMalePaperdoll
             // 
-            this.picMalePaperdoll.Location = new System.Drawing.Point(304, 138);
+            this.picMalePaperdoll.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
+            this.picMalePaperdoll.Location = new System.Drawing.Point(12, 406);
             this.picMalePaperdoll.Name = "picMalePaperdoll";
-            this.picMalePaperdoll.Size = new System.Drawing.Size(128, 65);
+            this.picMalePaperdoll.Size = new System.Drawing.Size(200, 156);
             this.picMalePaperdoll.TabIndex = 16;
             this.picMalePaperdoll.TabStop = false;
+            // 
+            // grpWeaponProperties
+            // 
+            this.grpWeaponProperties.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
+            this.grpWeaponProperties.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.grpWeaponProperties.Controls.Add(this.cmbProjectile);
+            this.grpWeaponProperties.Controls.Add(this.cmbScalingStat);
+            this.grpWeaponProperties.Controls.Add(this.label12);
+            this.grpWeaponProperties.Controls.Add(this.lblScaling);
+            this.grpWeaponProperties.Controls.Add(this.scrlScaling);
+            this.grpWeaponProperties.Controls.Add(this.cmbDamageType);
+            this.grpWeaponProperties.Controls.Add(this.label11);
+            this.grpWeaponProperties.Controls.Add(this.lblCritChance);
+            this.grpWeaponProperties.Controls.Add(this.scrlCritChance);
+            this.grpWeaponProperties.Controls.Add(this.cmbAttackAnimation);
+            this.grpWeaponProperties.Controls.Add(this.lblAttackAnimation);
+            this.grpWeaponProperties.Controls.Add(this.chk2Hand);
+            this.grpWeaponProperties.Controls.Add(this.lblToolType);
+            this.grpWeaponProperties.Controls.Add(this.cmbToolType);
+            this.grpWeaponProperties.Controls.Add(this.lblProjectile);
+            this.grpWeaponProperties.Controls.Add(this.lblDamage);
+            this.grpWeaponProperties.Controls.Add(this.scrlDamage);
+            this.grpWeaponProperties.ForeColor = System.Drawing.Color.Gainsboro;
+            this.grpWeaponProperties.Location = new System.Drawing.Point(222, 19);
+            this.grpWeaponProperties.Name = "grpWeaponProperties";
+            this.grpWeaponProperties.Size = new System.Drawing.Size(207, 340);
+            this.grpWeaponProperties.TabIndex = 39;
+            this.grpWeaponProperties.TabStop = false;
+            this.grpWeaponProperties.Text = "Weapon Properties";
+            this.grpWeaponProperties.Visible = false;
+            // 
+            // cmbProjectile
+            // 
+            this.cmbProjectile.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbProjectile.FormattingEnabled = true;
+            this.cmbProjectile.Location = new System.Drawing.Point(15, 230);
+            this.cmbProjectile.Name = "cmbProjectile";
+            this.cmbProjectile.Size = new System.Drawing.Size(180, 21);
+            this.cmbProjectile.TabIndex = 47;
+            this.cmbProjectile.SelectedIndexChanged += new System.EventHandler(this.cmbProjectile_SelectedIndexChanged);
+            // 
+            // cmbScalingStat
+            // 
+            this.cmbScalingStat.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbScalingStat.FormattingEnabled = true;
+            this.cmbScalingStat.Location = new System.Drawing.Point(16, 153);
+            this.cmbScalingStat.Name = "cmbScalingStat";
+            this.cmbScalingStat.Size = new System.Drawing.Size(180, 21);
+            this.cmbScalingStat.TabIndex = 46;
+            this.cmbScalingStat.SelectedIndexChanged += new System.EventHandler(this.cmbScalingStat_SelectedIndexChanged);
+            // 
+            // label12
+            // 
+            this.label12.AutoSize = true;
+            this.label12.Location = new System.Drawing.Point(13, 136);
+            this.label12.Name = "label12";
+            this.label12.Size = new System.Drawing.Size(67, 13);
+            this.label12.TabIndex = 45;
+            this.label12.Text = "Scaling Stat:";
+            this.label12.Click += new System.EventHandler(this.label12_Click);
+            // 
+            // lblScaling
+            // 
+            this.lblScaling.AutoSize = true;
+            this.lblScaling.Location = new System.Drawing.Point(12, 179);
+            this.lblScaling.Name = "lblScaling";
+            this.lblScaling.Size = new System.Drawing.Size(107, 13);
+            this.lblScaling.TabIndex = 44;
+            this.lblScaling.Text = "Scaling Amount: x0.0";
+            this.lblScaling.Click += new System.EventHandler(this.lblScaling_Click);
+            // 
+            // scrlScaling
+            // 
+            this.scrlScaling.LargeChange = 1;
+            this.scrlScaling.Location = new System.Drawing.Point(15, 193);
+            this.scrlScaling.Maximum = 10000;
+            this.scrlScaling.Name = "scrlScaling";
+            this.scrlScaling.Size = new System.Drawing.Size(180, 17);
+            this.scrlScaling.TabIndex = 43;
+            this.scrlScaling.Scroll += new System.Windows.Forms.ScrollEventHandler(this.scrlScaling_Scroll);
+            // 
+            // cmbDamageType
+            // 
+            this.cmbDamageType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbDamageType.FormattingEnabled = true;
+            this.cmbDamageType.Items.AddRange(new object[] {
+            "Physical",
+            "Magic",
+            "True"});
+            this.cmbDamageType.Location = new System.Drawing.Point(16, 112);
+            this.cmbDamageType.Name = "cmbDamageType";
+            this.cmbDamageType.Size = new System.Drawing.Size(180, 21);
+            this.cmbDamageType.TabIndex = 42;
+            this.cmbDamageType.SelectedIndexChanged += new System.EventHandler(this.cmbDamageType_SelectedIndexChanged);
+            // 
+            // label11
+            // 
+            this.label11.AutoSize = true;
+            this.label11.Location = new System.Drawing.Point(13, 95);
+            this.label11.Name = "label11";
+            this.label11.Size = new System.Drawing.Size(77, 13);
+            this.label11.TabIndex = 41;
+            this.label11.Text = "Damage Type:";
+            this.label11.Click += new System.EventHandler(this.label11_Click);
+            // 
+            // lblCritChance
+            // 
+            this.lblCritChance.AutoSize = true;
+            this.lblCritChance.Location = new System.Drawing.Point(12, 59);
+            this.lblCritChance.Name = "lblCritChance";
+            this.lblCritChance.Size = new System.Drawing.Size(82, 13);
+            this.lblCritChance.TabIndex = 40;
+            this.lblCritChance.Text = "Crit Chance: 0%";
+            this.lblCritChance.Click += new System.EventHandler(this.lblCritChance_Click);
+            // 
+            // scrlCritChance
+            // 
+            this.scrlCritChance.LargeChange = 1;
+            this.scrlCritChance.Location = new System.Drawing.Point(15, 73);
+            this.scrlCritChance.Name = "scrlCritChance";
+            this.scrlCritChance.Size = new System.Drawing.Size(180, 17);
+            this.scrlCritChance.TabIndex = 39;
+            this.scrlCritChance.Scroll += new System.Windows.Forms.ScrollEventHandler(this.scrlCritChance_Scroll);
+            // 
+            // cmbAttackAnimation
+            // 
+            this.cmbAttackAnimation.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbAttackAnimation.FormattingEnabled = true;
+            this.cmbAttackAnimation.Location = new System.Drawing.Point(15, 268);
+            this.cmbAttackAnimation.Name = "cmbAttackAnimation";
+            this.cmbAttackAnimation.Size = new System.Drawing.Size(180, 21);
+            this.cmbAttackAnimation.TabIndex = 38;
+            this.cmbAttackAnimation.SelectedIndexChanged += new System.EventHandler(this.cmbAttackAnimation_SelectedIndexChanged);
+            // 
+            // lblAttackAnimation
+            // 
+            this.lblAttackAnimation.AutoSize = true;
+            this.lblAttackAnimation.Location = new System.Drawing.Point(12, 253);
+            this.lblAttackAnimation.Name = "lblAttackAnimation";
+            this.lblAttackAnimation.Size = new System.Drawing.Size(90, 13);
+            this.lblAttackAnimation.TabIndex = 37;
+            this.lblAttackAnimation.Text = "Attack Animation:";
+            this.lblAttackAnimation.Click += new System.EventHandler(this.lblAttackAnimation_Click);
+            // 
+            // chk2Hand
+            // 
+            this.chk2Hand.AutoSize = true;
+            this.chk2Hand.Location = new System.Drawing.Point(134, 14);
+            this.chk2Hand.Name = "chk2Hand";
+            this.chk2Hand.Size = new System.Drawing.Size(61, 17);
+            this.chk2Hand.TabIndex = 25;
+            this.chk2Hand.Text = "2 Hand";
+            this.chk2Hand.UseVisualStyleBackColor = true;
+            this.chk2Hand.CheckedChanged += new System.EventHandler(this.chk2Hand_CheckedChanged);
+            // 
+            // lblToolType
+            // 
+            this.lblToolType.AutoSize = true;
+            this.lblToolType.Location = new System.Drawing.Point(13, 295);
+            this.lblToolType.Name = "lblToolType";
+            this.lblToolType.Size = new System.Drawing.Size(58, 13);
+            this.lblToolType.TabIndex = 26;
+            this.lblToolType.Text = "Tool Type:";
+            // 
+            // cmbToolType
+            // 
+            this.cmbToolType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbToolType.FormattingEnabled = true;
+            this.cmbToolType.Location = new System.Drawing.Point(16, 309);
+            this.cmbToolType.Name = "cmbToolType";
+            this.cmbToolType.Size = new System.Drawing.Size(180, 21);
+            this.cmbToolType.TabIndex = 27;
+            this.cmbToolType.SelectedIndexChanged += new System.EventHandler(this.cmbToolType_SelectedIndexChanged);
+            // 
+            // lblProjectile
+            // 
+            this.lblProjectile.AutoSize = true;
+            this.lblProjectile.Location = new System.Drawing.Point(12, 214);
+            this.lblProjectile.Name = "lblProjectile";
+            this.lblProjectile.Size = new System.Drawing.Size(53, 13);
+            this.lblProjectile.TabIndex = 33;
+            this.lblProjectile.Text = "Projectile:";
             // 
             // lblDamage
             // 
             this.lblDamage.AutoSize = true;
-            this.lblDamage.Location = new System.Drawing.Point(101, 117);
+            this.lblDamage.Location = new System.Drawing.Point(12, 19);
             this.lblDamage.Name = "lblDamage";
-            this.lblDamage.Size = new System.Drawing.Size(59, 13);
+            this.lblDamage.Size = new System.Drawing.Size(86, 13);
             this.lblDamage.TabIndex = 11;
-            this.lblDamage.Text = "Damage: 0";
-            this.lblDamage.Visible = false;
+            this.lblDamage.Text = "Base Damage: 0";
+            this.lblDamage.Click += new System.EventHandler(this.lblDamage_Click);
             // 
             // scrlDamage
             // 
-            this.scrlDamage.Location = new System.Drawing.Point(104, 131);
+            this.scrlDamage.LargeChange = 1;
+            this.scrlDamage.Location = new System.Drawing.Point(15, 33);
+            this.scrlDamage.Maximum = 10000;
             this.scrlDamage.Name = "scrlDamage";
-            this.scrlDamage.Size = new System.Drawing.Size(80, 17);
+            this.scrlDamage.Size = new System.Drawing.Size(180, 17);
             this.scrlDamage.TabIndex = 10;
-            this.scrlDamage.Visible = false;
-            this.scrlDamage.ValueChanged += new System.EventHandler(this.scrlDmg_Scroll);
-            // 
-            // lblSpeed
-            // 
-            this.lblSpeed.AutoSize = true;
-            this.lblSpeed.Location = new System.Drawing.Point(9, 117);
-            this.lblSpeed.Name = "lblSpeed";
-            this.lblSpeed.Size = new System.Drawing.Size(50, 13);
-            this.lblSpeed.TabIndex = 9;
-            this.lblSpeed.Text = "Speed: 0";
-            // 
-            // lblMagicResist
-            // 
-            this.lblMagicResist.AutoSize = true;
-            this.lblMagicResist.Location = new System.Drawing.Point(101, 72);
-            this.lblMagicResist.Name = "lblMagicResist";
-            this.lblMagicResist.Size = new System.Drawing.Size(80, 13);
-            this.lblMagicResist.TabIndex = 8;
-            this.lblMagicResist.Text = "Magic Resist: 0";
-            // 
-            // lblDefense
-            // 
-            this.lblDefense.AutoSize = true;
-            this.lblDefense.Location = new System.Drawing.Point(10, 72);
-            this.lblDefense.Name = "lblDefense";
-            this.lblDefense.Size = new System.Drawing.Size(59, 13);
-            this.lblDefense.TabIndex = 7;
-            this.lblDefense.Text = "Defense: 0";
-            // 
-            // lblAbilityPower
-            // 
-            this.lblAbilityPower.AutoSize = true;
-            this.lblAbilityPower.Location = new System.Drawing.Point(101, 21);
-            this.lblAbilityPower.Name = "lblAbilityPower";
-            this.lblAbilityPower.Size = new System.Drawing.Size(67, 13);
-            this.lblAbilityPower.TabIndex = 6;
-            this.lblAbilityPower.Text = "Ability Pwr: 0";
-            // 
-            // lblAttack
-            // 
-            this.lblAttack.AutoSize = true;
-            this.lblAttack.Location = new System.Drawing.Point(10, 21);
-            this.lblAttack.Name = "lblAttack";
-            this.lblAttack.Size = new System.Drawing.Size(50, 13);
-            this.lblAttack.TabIndex = 5;
-            this.lblAttack.Text = "Attack: 0";
-            // 
-            // scrlDefense
-            // 
-            this.scrlDefense.Location = new System.Drawing.Point(13, 87);
-            this.scrlDefense.Maximum = 255;
-            this.scrlDefense.Name = "scrlDefense";
-            this.scrlDefense.Size = new System.Drawing.Size(80, 17);
-            this.scrlDefense.TabIndex = 4;
-            this.scrlDefense.ValueChanged += new System.EventHandler(this.scrlDefense_Scroll);
-            // 
-            // scrlSpeed
-            // 
-            this.scrlSpeed.Location = new System.Drawing.Point(13, 130);
-            this.scrlSpeed.Maximum = 255;
-            this.scrlSpeed.Name = "scrlSpeed";
-            this.scrlSpeed.Size = new System.Drawing.Size(80, 17);
-            this.scrlSpeed.TabIndex = 3;
-            this.scrlSpeed.ValueChanged += new System.EventHandler(this.scrlSpeed_Scroll);
-            // 
-            // scrlMagicResist
-            // 
-            this.scrlMagicResist.Location = new System.Drawing.Point(104, 87);
-            this.scrlMagicResist.Maximum = 255;
-            this.scrlMagicResist.Name = "scrlMagicResist";
-            this.scrlMagicResist.Size = new System.Drawing.Size(80, 17);
-            this.scrlMagicResist.TabIndex = 2;
-            this.scrlMagicResist.ValueChanged += new System.EventHandler(this.scrlMagicResist_Scroll);
-            // 
-            // scrlAbilityPower
-            // 
-            this.scrlAbilityPower.Location = new System.Drawing.Point(104, 40);
-            this.scrlAbilityPower.Maximum = 255;
-            this.scrlAbilityPower.Name = "scrlAbilityPower";
-            this.scrlAbilityPower.Size = new System.Drawing.Size(80, 17);
-            this.scrlAbilityPower.TabIndex = 1;
-            this.scrlAbilityPower.ValueChanged += new System.EventHandler(this.scrlAbilityPower_Scroll);
-            // 
-            // scrlAttack
-            // 
-            this.scrlAttack.Location = new System.Drawing.Point(13, 40);
-            this.scrlAttack.Maximum = 255;
-            this.scrlAttack.Name = "scrlAttack";
-            this.scrlAttack.Size = new System.Drawing.Size(80, 17);
-            this.scrlAttack.TabIndex = 0;
-            this.scrlAttack.ValueChanged += new System.EventHandler(this.scrlAttack_Scroll);
+            this.scrlDamage.Scroll += new System.Windows.Forms.ScrollEventHandler(this.scrlDamage_Scroll);
             // 
             // gbConsumable
             // 
@@ -871,7 +1009,7 @@ namespace Intersect_Editor.Forms
             this.gbConsumable.Controls.Add(this.cmbConsume);
             this.gbConsumable.Controls.Add(this.scrlInterval);
             this.gbConsumable.Controls.Add(this.lblInterval);
-            this.gbConsumable.Location = new System.Drawing.Point(2, 233);
+            this.gbConsumable.Location = new System.Drawing.Point(1, 235);
             this.gbConsumable.Name = "gbConsumable";
             this.gbConsumable.Size = new System.Drawing.Size(217, 125);
             this.gbConsumable.TabIndex = 12;
@@ -959,7 +1097,7 @@ namespace Intersect_Editor.Forms
             // 
             this.grpEvent.Controls.Add(this.scrlEvent);
             this.grpEvent.Controls.Add(this.lblEvent);
-            this.grpEvent.Location = new System.Drawing.Point(2, 232);
+            this.grpEvent.Location = new System.Drawing.Point(4, 231);
             this.grpEvent.Name = "grpEvent";
             this.grpEvent.Size = new System.Drawing.Size(217, 69);
             this.grpEvent.TabIndex = 42;
@@ -989,15 +1127,16 @@ namespace Intersect_Editor.Forms
             // 
             // pnlContainer
             // 
+            this.pnlContainer.AutoScroll = true;
             this.pnlContainer.Controls.Add(this.groupBox2);
             this.pnlContainer.Controls.Add(this.groupBox3);
-            this.pnlContainer.Controls.Add(this.gbConsumable);
-            this.pnlContainer.Controls.Add(this.grpEvent);
             this.pnlContainer.Controls.Add(this.gbEquipment);
             this.pnlContainer.Controls.Add(this.gbSpell);
+            this.pnlContainer.Controls.Add(this.grpEvent);
+            this.pnlContainer.Controls.Add(this.gbConsumable);
             this.pnlContainer.Location = new System.Drawing.Point(221, 34);
             this.pnlContainer.Name = "pnlContainer";
-            this.pnlContainer.Size = new System.Drawing.Size(574, 442);
+            this.pnlContainer.Size = new System.Drawing.Size(463, 442);
             this.pnlContainer.TabIndex = 43;
             this.pnlContainer.Visible = false;
             // 
@@ -1014,7 +1153,7 @@ namespace Intersect_Editor.Forms
             this.toolStripItemUndo});
             this.toolStrip.Location = new System.Drawing.Point(0, 0);
             this.toolStrip.Name = "toolStrip";
-            this.toolStrip.Size = new System.Drawing.Size(807, 25);
+            this.toolStrip.Size = new System.Drawing.Size(686, 25);
             this.toolStrip.TabIndex = 44;
             this.toolStrip.Text = "toolStrip1";
             // 
@@ -1092,7 +1231,7 @@ namespace Intersect_Editor.Forms
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.AutoSize = true;
-            this.ClientSize = new System.Drawing.Size(807, 517);
+            this.ClientSize = new System.Drawing.Size(686, 517);
             this.ControlBox = false;
             this.Controls.Add(this.toolStrip);
             this.Controls.Add(this.btnCancel);
@@ -1114,8 +1253,12 @@ namespace Intersect_Editor.Forms
             this.groupBox3.PerformLayout();
             this.gbEquipment.ResumeLayout(false);
             this.gbEquipment.PerformLayout();
+            this.darkGroupBox1.ResumeLayout(false);
+            this.darkGroupBox1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.picFemalePaperdoll)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.picMalePaperdoll)).EndInit();
+            this.grpWeaponProperties.ResumeLayout(false);
+            this.grpWeaponProperties.PerformLayout();
             this.gbConsumable.ResumeLayout(false);
             this.gbConsumable.PerformLayout();
             this.gbSpell.ResumeLayout(false);
@@ -1201,7 +1344,6 @@ namespace Intersect_Editor.Forms
         private ComboBox cmbToolType;
         private Label lblToolType;
         private Label lblProjectile;
-        private HScrollBar scrlProjectile;
         private GroupBox grpEvent;
         private HScrollBar scrlEvent;
         private Label lblEvent;
@@ -1222,5 +1364,16 @@ namespace Intersect_Editor.Forms
         public ToolStripButton toolStripItemUndo;
         private ComboBox cmbAttackAnimation;
         private Label lblAttackAnimation;
+        private DarkUI.Controls.DarkGroupBox darkGroupBox1;
+        private DarkUI.Controls.DarkGroupBox grpWeaponProperties;
+        private Label lblScaling;
+        private HScrollBar scrlScaling;
+        private ComboBox cmbDamageType;
+        private Label label11;
+        private Label lblCritChance;
+        private HScrollBar scrlCritChance;
+        private ComboBox cmbScalingStat;
+        private Label label12;
+        private ComboBox cmbProjectile;
     }
 }

@@ -228,7 +228,7 @@ namespace Intersect_Client.Classes.Entities
             }
             else
             {
-                if (MapInstance.GetMap(CurrentMap) == null || !MapInstance.GetMap(CurrentMap).InView())
+                if ((MapInstance.GetMap(CurrentMap) == null || !MapInstance.GetMap(CurrentMap).InView()) && !Globals.Me.Party.Contains(MyIndex))
                 {
                     Globals.EntitiesToDispose.Add(MyIndex);
                     return false;
@@ -325,11 +325,11 @@ namespace Intersect_Client.Classes.Entities
                 }
                 if (animInstance.AutoRotate)
                 {
-                    animInstance.SetPosition((int)GetCenterPos().X, (int)GetCenterPos().Y, Dir);
+                    animInstance.SetPosition((int)GetCenterPos().X, (int)GetCenterPos().Y,this.CurrentX,this.CurrentY,this.CurrentMap, Dir, this.CurrentZ);
                 }
                 else
                 {
-                    animInstance.SetPosition((int)GetCenterPos().X, (int)GetCenterPos().Y, -1);
+                    animInstance.SetPosition((int)GetCenterPos().X, (int)GetCenterPos().Y, this.CurrentX, this.CurrentY, this.CurrentMap, - 1, this.CurrentZ);
                 }
             }
             var chatbubbles = _chatBubbles.ToArray();
@@ -500,7 +500,7 @@ namespace Intersect_Client.Classes.Entities
                     {
                         if (Options.EquipmentSlots.IndexOf(Options.PaperdollOrder[z]) > -1)
                         {
-                            if (Equipment[Options.EquipmentSlots.IndexOf(Options.PaperdollOrder[z])] > -1 && Equipment[Options.EquipmentSlots.IndexOf(Options.PaperdollOrder[z])] < Options.MaxInvItems)
+                            if (Equipment[Options.EquipmentSlots.IndexOf(Options.PaperdollOrder[z])] > -1 && (this != Globals.Me || Equipment[Options.EquipmentSlots.IndexOf(Options.PaperdollOrder[z])] < Options.MaxInvItems))
                             {
                                 var itemNum = -1;
                                 if (this == Globals.Me)

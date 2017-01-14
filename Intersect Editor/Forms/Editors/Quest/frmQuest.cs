@@ -326,7 +326,7 @@ namespace Intersect_Editor.Forms
 
         private void chkQuittable_CheckedChanged(object sender, EventArgs e)
         {
-            _editorItem.Quitable = Convert.ToByte(chkRepeatable.Checked);
+            _editorItem.Quitable = Convert.ToByte(chkQuittable.Checked);
         }
 
         private void lstTasks_DoubleClick(object sender, EventArgs e)

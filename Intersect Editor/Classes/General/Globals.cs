@@ -166,5 +166,24 @@ namespace Intersect_Editor.Classes
                     return "No Color";
             }
         }
+
+        public static string GetStatName(int statnum)
+        {
+            switch (statnum)
+            {
+                case (int)Stats.Attack:
+                    return "Attack";
+                case (int)Stats.AbilityPower:
+                    return "Ability Power";
+                case (int)Stats.Defense:
+                    return "Defense";
+                case (int)Stats.MagicResist:
+                    return "Magic Resist";
+                case (int)Stats.Speed:
+                    return "Speed";
+                default:
+                    return "Invalid Stat";
+            }
+        }
     }
 }

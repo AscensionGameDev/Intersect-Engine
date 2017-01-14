@@ -35,10 +35,11 @@ namespace Intersect_Server.Classes
 {
     public class MainClass
     {
-
+        private static bool _errorHalt = true;
         public static void Main(string[] args)
         {
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
+            AppDomain.CurrentDomain.AssemblyResolve += CurrentDomain_AssemblyResolve; ;
             Thread logicThread;
             Console.WriteLine(@"  _____       _                          _   ");
             Console.WriteLine(@" |_   _|     | |                        | |  ");
@@ -58,6 +59,12 @@ namespace Intersect_Server.Classes
                 Console.ReadKey();
                 return;
             }
+            if (!Formulas.LoadFormulas())
+            {
+                Console.WriteLine("Failed to load formulas! Press any key to shut down.");
+                Console.ReadKey();
+                return;
+            }
             if (!Database.InitDatabase())
             {
                 Console.ReadKey();
@@ -74,6 +81,10 @@ namespace Intersect_Server.Classes
             Console.WriteLine("Game Time is now: " + ServerTime.GetTime().ToString("F"));
             logicThread = new Thread(() => ServerLoop.RunServerLoop());
             logicThread.Start();
+            if (args.Contains("nohalt"))
+            {
+                _errorHalt = false;
+            }
             if (!args.Contains("noconsole"))
             {
                 Console.WriteLine("Type exit to shutdown the server, or help for a list of commands.");
@@ -519,6 +530,22 @@ namespace Intersect_Server.Classes
             }
         }
 
+        private static Assembly CurrentDomain_AssemblyResolve(object sender, ResolveEventArgs args)
+        {
+            string archSpecificPath = Path.Combine(AppDomain.CurrentDomain.SetupInformation.ApplicationBase,
+                    Environment.Is64BitProcess ? Path.Combine("libs", "server", "x64") : Path.Combine("libs", "server", "x86"),
+                    "Mono.Data.Sqlite.dll");
+            if (File.Exists(archSpecificPath))
+            {
+                return Assembly.LoadFile(archSpecificPath);
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+
         //Really basic error handler for debugging purposes
         public static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
@@ -534,8 +561,17 @@ namespace Intersect_Server.Classes
             }
             if (e.IsTerminating)
             {
-                Console.WriteLine("The Intersect server has encountered an error and must close. Error information can be found in resources/errors.log. Press any key to exit.");
-                Console.ReadKey();
+                if (_errorHalt)
+                {
+                    Console.WriteLine(
+                        "The Intersect server has encountered an error and must close. Error information can be found in resources/errors.log. Press any key to exit.");
+                    Console.ReadKey();
+                }
+                else
+                {
+                    Console.WriteLine(
+                        "The Intersect server has encountered an error and must close. Error information can be found in resources/errors.log.");
+                }
                 Environment.Exit(-1);
             }
             else
