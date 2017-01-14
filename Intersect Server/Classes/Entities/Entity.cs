@@ -477,7 +477,7 @@ namespace Intersect_Server.Classes.Entities
         }
 
         //Attacking with projectile
-        public virtual void TryAttack(Entity enemy, ProjectileBase projectile, SpellBase parentSpell, ItemBase parentItem, int projectileDir)
+        public virtual void TryAttack(Entity enemy, ProjectileBase projectile, SpellBase parentSpell, ItemBase parentItem, int projectileDir, List<KeyValuePair<int, int>> deadAnimations, List<KeyValuePair<int, int>> aliveAnimations)
         {
             //Check if the target is blocking facing in the direction against you
             if (enemy.Blocking)
@@ -529,7 +529,7 @@ namespace Intersect_Server.Classes.Entities
                     }
                 }
                 Attack(enemy, parentItem.Damage,0, (DamageType) parentItem.DamageType, (Stats) parentItem.ScalingStat,
-                    parentItem.Scaling, parentItem.CritChance, Options.CritMultiplier);
+                    parentItem.Scaling, parentItem.CritChance, Options.CritMultiplier, deadAnimations,aliveAnimations);
             }
 
             //If projectile, check if a splash spell is applied
@@ -561,6 +561,9 @@ namespace Intersect_Server.Classes.Entities
             if (enemy.GetType() == typeof(Resource)) return;
             if (spellBase != null)
             {
+                List<KeyValuePair<int,int>> deadAnimations = new List<KeyValuePair<int, int>>();
+                List<KeyValuePair<int, int>> aliveAnimations = new List<KeyValuePair<int, int>>();
+
                 //Only count safe zones and friendly fire if its a dangerous spell! (If one has been used)
                 if (spellBase.Friendly == 0)
                 {
@@ -587,7 +590,13 @@ namespace Intersect_Server.Classes.Entities
                     enemy.CombatTimer = Globals.System.GetTimeMs() + 5000;
                 }
 
-                Attack(enemy, spellBase.VitalDiff[0],spellBase.VitalDiff[1], (DamageType)spellBase.DamageType,(Stats)spellBase.ScalingStat, spellBase.Scaling, spellBase.CritChance, Options.CritMultiplier);
+                if (spellBase.HitAnimation > -1)
+                {
+                    deadAnimations.Add(new KeyValuePair<int, int>(spellBase.HitAnimation,(int)Directions.Up));
+                    aliveAnimations.Add(new KeyValuePair<int, int>(spellBase.HitAnimation, (int)Directions.Up));
+                }
+
+                Attack(enemy, spellBase.VitalDiff[0],spellBase.VitalDiff[1], (DamageType)spellBase.DamageType,(Stats)spellBase.ScalingStat, spellBase.Scaling, spellBase.CritChance, Options.CritMultiplier, deadAnimations, aliveAnimations);
 
                 for (int i = 0; i < (int)Stats.StatCount; i++)
                 {
@@ -622,25 +631,6 @@ namespace Intersect_Server.Classes.Entities
                         enemy.DoT.Add(new DoTInstance(MyIndex, spellBase.GetId(), enemy));
                     }
                 }
-
-                if (spellBase.HitAnimation > -1)
-                {
-                    int e = 0;
-                    if (enemy.GetType() == typeof(Player) || enemy.GetType() == typeof(Npc))
-                    {
-                        e = (int)EntityTypes.Player;
-                    }
-                    else if (enemy.GetType() == typeof(Resource))
-                    {
-                        //If determine if we should walk
-                        var res = ((Resource)enemy);
-                        if ((!res.IsDead() && !res.MyBase.WalkableBefore) || (res.IsDead() && !res.MyBase.WalkableAfter))
-                        {
-                            e = (int)EntityTypes.Resource;
-                        }
-                    }
-                    PacketSender.SendAnimationToProximity(spellBase.HitAnimation, e, enemy.MyIndex, enemy.CurrentMap, enemy.CurrentX, enemy.CurrentY,(int)Directions.Up); //Target Type -1 will be tile based animation
-                }
             }
         }
 
@@ -651,7 +641,7 @@ namespace Intersect_Server.Classes.Entities
         }
 
         //Attack using a weapon or unarmed
-        public virtual void TryAttack(Entity enemy, int baseDamage, DamageType damageType, Stats scalingStat, int scaling, int critChance, double critMultiplier)
+        public virtual void TryAttack(Entity enemy, int baseDamage, DamageType damageType, Stats scalingStat, int scaling, int critChance, double critMultiplier, List<KeyValuePair<int,int>> deadAnimations, List<KeyValuePair<int, int>> aliveAnimations)
         {
             if ((AttackTimer > Globals.System.GetTimeMs() || Blocking)) return;
             AttackTimer = Globals.System.GetTimeMs() + CalculateAttackTime();
@@ -670,13 +660,13 @@ namespace Intersect_Server.Classes.Entities
             }
 
 
-            Attack(enemy, baseDamage, 0, damageType, scalingStat, scaling, critChance, critMultiplier);
+            Attack(enemy, baseDamage, 0, damageType, scalingStat, scaling, critChance, critMultiplier, deadAnimations,aliveAnimations);
 
             //If we took damage lets reset our combat timer
             enemy.CombatTimer = Globals.System.GetTimeMs() + 5000;
         }
 
-        public void Attack(Entity enemy, int baseDamage, int secondaryDamage, DamageType damageType, Stats scalingStat, int scaling, int critChance, double critMultiplier)
+        public void Attack(Entity enemy, int baseDamage, int secondaryDamage, DamageType damageType, Stats scalingStat, int scaling, int critChance, double critMultiplier, List<KeyValuePair<int, int>> deadAnimations, List<KeyValuePair<int, int>> aliveAnimations)
         {
             if (enemy == null) return;
 
@@ -806,12 +796,20 @@ namespace Intersect_Server.Classes.Entities
                     //todo make this an option in the server config
                     enemy.Die(false);
                 }
+                foreach (var anim in deadAnimations)
+                {
+                    PacketSender.SendAnimationToProximity(anim.Key, -1, -1, enemy.CurrentMap,enemy.CurrentX,enemy.CurrentY, anim.Value);
+                }
             }
             else
             {
                 //Hit him, make him mad and send the vital update.
                 PacketSender.SendEntityVitals(enemy);
                 PacketSender.SendEntityStats(enemy);
+                foreach (var anim in aliveAnimations)
+                {
+                    PacketSender.SendAnimationToProximity(anim.Key,1,enemy.MyIndex,enemy.CurrentMap,-1,-1,anim.Value);
+                }
             }
             // Add a timer before able to make the next move.
             if (Globals.Entities[MyIndex] != null && Globals.Entities[MyIndex].GetType() == typeof(Npc))
@@ -1310,11 +1308,14 @@ namespace Intersect_Server.Classes.Entities
         {
             if (Interval <= Globals.System.GetTimeMs())
             {
+                var deadAnimations = new List<KeyValuePair<int, int>>();
+                var aliveAnimations = new List<KeyValuePair<int, int>>();
                 if (SpellBase.HitAnimation > -1)
                 {
-                    PacketSender.SendAnimationToProximity(SpellBase.HitAnimation, 1, Target.MyIndex, Target.CurrentMap, 0, 0, Target.Dir); //Target Type 1 will be global entity
+                    deadAnimations.Add(new KeyValuePair<int, int>(SpellBase.HitAnimation,(int)Directions.Up));
+                    aliveAnimations.Add(new KeyValuePair<int, int>(SpellBase.HitAnimation, (int)Directions.Up));
                 }
-                if (Globals.Entities[OwnerID] != null) Globals.Entities[OwnerID].Attack(Target,SpellBase.VitalDiff[0],SpellBase.VitalDiff[1],(DamageType)SpellBase.DamageType,(Stats)SpellBase.ScalingStat,SpellBase.Scaling,SpellBase.CritChance,Options.CritMultiplier);
+                if (Globals.Entities[OwnerID] != null) Globals.Entities[OwnerID].Attack(Target,SpellBase.VitalDiff[0],SpellBase.VitalDiff[1],(DamageType)SpellBase.DamageType,(Stats)SpellBase.ScalingStat,SpellBase.Scaling,SpellBase.CritChance,Options.CritMultiplier, deadAnimations,aliveAnimations);
                 Interval = Globals.System.GetTimeMs() + (SpellBase.Data4 * 100);
                 Count--;
 

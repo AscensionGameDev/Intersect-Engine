@@ -67,6 +67,9 @@ namespace Intersect_Server.Classes.Entities
             if (dropitems)
             {
                 SpawnResourceItems(killer);
+                if (MyBase.Animation > -1)
+                    PacketSender.SendAnimationToProximity(MyBase.Animation, -1, -1, CurrentMap, CurrentX, CurrentY,
+                        (int) Directions.Up);
             }
             PacketSender.SendEntityDataToProximity(this);
             PacketSender.SendEntityPositionToAll(this);
