@@ -1,13 +1,45 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 using Intersect_Editor.Classes.Core;
+using Intersect_Editor.Properties;
 using Intersect_Library;
 using Intersect_Library.GameObjects.Maps;
+using Intersect_Library.Localization;
 using Color = System.Drawing.Color;
 
 namespace Intersect_Editor.Classes.Maps
 {
+    class CustomCategory : CategoryAttribute
+    {
+        public CustomCategory(string category) : base(category) { }
+        protected override string GetLocalizedString(string value)
+        {
+            return Strings.Get("mapproperties",value);
+        }
+    }
+    class CustomDisplayName : DisplayNameAttribute
+    {
+        public CustomDisplayName(string name) : base(name) { }
+
+        public override string DisplayName
+        {
+            get { return Strings.Get("mapproperties",DisplayNameValue); }
+        }
+    }
+
+    class CustomDescription : DescriptionAttribute
+    {
+        public CustomDescription(string desc) : base(desc) {}
+
+        public override string Description
+        {
+            get { return Strings.Get("mapproperties", DescriptionValue); }
+        }
+    }
+
     class MapProperties
     {
         private MapBase _myMap;
@@ -17,8 +49,9 @@ namespace Intersect_Editor.Classes.Maps
             _myMap = map;
         }
 
-        [CategoryAttribute("General"),
-        Description("The name of this map."),
+        [CustomCategory("general"),
+        CustomDescription("namedesc"),
+        CustomDisplayName("name"),
         DefaultValueAttribute("New Map")]
         public string Name
         {
@@ -34,8 +67,9 @@ namespace Intersect_Editor.Classes.Maps
             }
         }
 
-        [CategoryAttribute("General"),
-        Description("The type of map this is."),
+        [CustomCategory("general"),
+        CustomDescription("zonedesc"),
+        CustomDisplayName("zonetype"),
         DefaultValueAttribute("Normal"),
         TypeConverter(typeof(MapZoneProperty)),
         Browsable(true)]
@@ -53,8 +87,9 @@ namespace Intersect_Editor.Classes.Maps
             }
         }
 
-        [CategoryAttribute("Audio"),
-        Description("Looping background music for this map."),
+        [CustomCategory("audio"),
+        CustomDescription("musicdesc"),
+        CustomDisplayName("music"),
         DefaultValueAttribute("None"),
         TypeConverter(typeof(MapMusicProperty)),
         Browsable(true)]
@@ -82,8 +117,9 @@ namespace Intersect_Editor.Classes.Maps
             }
         }
 
-        [CategoryAttribute("Audio"),
-        Description("Looping sound effect for this map."),
+        [CustomCategory("audio"),
+        CustomDescription("sounddesc"),
+        CustomDisplayName("sound"),
         DefaultValueAttribute("None"),
         TypeConverter(typeof(MapSoundProperty)),
         Browsable(true)]
@@ -111,8 +147,9 @@ namespace Intersect_Editor.Classes.Maps
             }
         }
 
-        [CategoryAttribute("Lighting"),
-        Description("Is the map indoors?"),
+        [CustomCategory("lighting"),
+        CustomDescription("isindoorsdesc"),
+        CustomDisplayName("isindoors"),
         DefaultValueAttribute(false)]
         public bool IsIndoors
         {
@@ -128,8 +165,9 @@ namespace Intersect_Editor.Classes.Maps
                 }
             }
         }
-        [CategoryAttribute("Lighting"),
-        Description("How bright is this map? (Range: 0 to 100)."),
+        [CustomCategory("lighting"),
+        CustomDescription("brightnessdesc"),
+        CustomDisplayName("brightness"),
         DefaultValueAttribute(100)]
         public int Brightness
         {
@@ -146,8 +184,9 @@ namespace Intersect_Editor.Classes.Maps
                 }
             }
         }
-        [CategoryAttribute("Lighting"),
-        Description("How large is the light around the player? (In pixels 0-1000)"),
+        [CustomCategory("lighting"),
+        CustomDescription("playerlightsizedesc"),
+        CustomDisplayName("playerlightsize"),
         DefaultValueAttribute(300)]
         public int PlayerLightSize
         {
@@ -164,8 +203,9 @@ namespace Intersect_Editor.Classes.Maps
                 }
             }
         }
-        [CategoryAttribute("Lighting"),
-        Description("How far into the light does the effect start fading? (0.00 to 1.00)"),
+        [CustomCategory("lighting"),
+        CustomDescription("playerlightexpanddesc"),
+        CustomDisplayName("playerlightexpand"),
         DefaultValueAttribute(0)]
         public float PlayerLightExpand
         {
@@ -182,8 +222,9 @@ namespace Intersect_Editor.Classes.Maps
                 }
             }
         }
-        [CategoryAttribute("Lighting"),
-        Description("How strong the light is at its brightest point. (0 to 255)"),
+        [CustomCategory("lighting"),
+        CustomDescription("playerlightintensitydesc"),
+        CustomDisplayName("playerlightintensity"),
         DefaultValueAttribute(255)]
         public byte PlayerLightIntensity
         {
@@ -200,8 +241,9 @@ namespace Intersect_Editor.Classes.Maps
                 }
             }
         }
-        [CategoryAttribute("Lighting"),
-        Description("Which color is the players light? (Default: White)"),
+        [CustomCategory("lighting"),
+        CustomDescription("playerlightcolordesc"),
+        CustomDisplayName("playerlightcolor"),
         DefaultValueAttribute(0)]
         public Color PlayerLightColor
         {
@@ -218,8 +260,9 @@ namespace Intersect_Editor.Classes.Maps
             }
         }
 
-        [CategoryAttribute("Overlay"),
-        Description("The amount of red in the overlay. (Range: 0 to 255)"),
+        [CustomCategory("overlay"),
+        CustomDescription("rhuedesc"),
+        CustomDisplayName("rhue"),
         DefaultValueAttribute(0)]
         public int RHue
         {
@@ -235,8 +278,9 @@ namespace Intersect_Editor.Classes.Maps
                 }
             }
         }
-        [CategoryAttribute("Overlay"),
-        Description("The amount of green in the overlay. (Range: 0 to 255)"),
+        [CustomCategory("overlay"),
+        CustomDescription("ghuedesc"),
+        CustomDisplayName("ghue"),
         DefaultValueAttribute(0)]
         public int GHue
         {
@@ -252,9 +296,10 @@ namespace Intersect_Editor.Classes.Maps
                 }
             }
         }
-        [CategoryAttribute("Overlay"),
-        Description("The amount of blue in the overlay. (Range: 0 to 255)"),
-       DefaultValueAttribute(0)]
+        [CustomCategory("overlay"),
+        CustomDescription("bhuedesc"),
+        CustomDisplayName("bhue"),
+        DefaultValueAttribute(0)]
         public int BHue
         {
             get { return _myMap.BHue; }
@@ -269,9 +314,10 @@ namespace Intersect_Editor.Classes.Maps
                 }
             }
         }
-        [CategoryAttribute("Overlay"),
-        Description("The how strong the overlay appears. (Range: 0 [transparent/invisible] to 255 [solid/can't see map])"),
-                DefaultValueAttribute(0)]
+        [CustomCategory("overlay"),
+        CustomDescription("ahuedesc"),
+        CustomDisplayName("ahue"),
+        DefaultValueAttribute(0)]
         public int AHue
         {
             get { return _myMap.AHue; }
@@ -287,8 +333,9 @@ namespace Intersect_Editor.Classes.Maps
             }
         }
 
-        [CategoryAttribute("Fog"),
-        Description("The overlayed image on the map. Generally used for fogs or sun beam effects."),
+        [CustomCategory("fog"),
+        CustomDescription("fogdesc"),
+        CustomDisplayName("fog"),
         DefaultValueAttribute("None"),
         TypeConverter(typeof(MapFogProperty)),
         Browsable(true)]
@@ -315,9 +362,10 @@ namespace Intersect_Editor.Classes.Maps
                 }
             }
         }
-        [CategoryAttribute("Fog"),
-        Description("Fog Horizontal Speed (Range: -5 to 5)"),
-                DefaultValueAttribute(0)]
+        [CustomCategory("fog"),
+        CustomDescription("fogxspeeddesc"),
+        CustomDisplayName("fogxspeed"),
+        DefaultValueAttribute(0)]
         public int FogXSpeed
         {
             get { return _myMap.FogXSpeed; }
@@ -332,9 +380,10 @@ namespace Intersect_Editor.Classes.Maps
                 }
             }
         }
-        [CategoryAttribute("Fog"),
-        Description("Fog Vertical Speed (Range: -5 to 5)"),
-                DefaultValueAttribute(0)]
+        [CustomCategory("fog"),
+        CustomDescription("fogyspeeddesc"),
+        CustomDisplayName("fogyspeed"),
+        DefaultValueAttribute(0)]
         public int FogYSpeed
         {
             get { return _myMap.FogYSpeed; }
@@ -349,9 +398,10 @@ namespace Intersect_Editor.Classes.Maps
                 }
             }
         }
-        [CategoryAttribute("Fog"),
-        Description("The how strong the fog overlay appears. (Range: 0 [transparent/invisible] to 255 [solid/can't see map])"),
-                DefaultValueAttribute(0)]
+        [CustomCategory("fog"),
+        CustomDescription("fogalphadesc"),
+        CustomDisplayName("fogalpha"),
+        DefaultValueAttribute(0)]
         public int FogAlpha
         {
             get { return _myMap.FogTransparency; }
@@ -367,8 +417,9 @@ namespace Intersect_Editor.Classes.Maps
             }
         }
 
-        [CategoryAttribute("Misc"),
-        Description("This is an image that appears behind the map. It can be seen where no tiles are placed."),
+        [CustomCategory("misc"),
+        CustomDescription("panoramadesc"),
+        CustomDisplayName("panorama"),
         DefaultValueAttribute("None"),
         TypeConverter(typeof(MapImageProperty)),
         Browsable(true)]
@@ -396,8 +447,9 @@ namespace Intersect_Editor.Classes.Maps
             }
         }
 
-        [CategoryAttribute("Misc"),
-        Description("This is an image that appears above the map."),
+        [CustomCategory("misc"),
+        CustomDescription("overlaygraphicdesc"),
+        CustomDisplayName("overlaygraphic"),
         DefaultValueAttribute("None"),
         TypeConverter(typeof(MapImageProperty)),
         Browsable(true)]

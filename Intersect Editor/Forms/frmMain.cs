@@ -24,6 +24,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
+using DarkUI.Forms;
 using Intersect_Editor.Classes;
 using Intersect_Editor.Classes.Core;
 using WeifenLuo.WinFormsUI.Docking;
@@ -34,6 +35,7 @@ using Intersect_Editor.Forms.Editors;
 using Intersect_Library;
 using Intersect_Library.GameObjects;
 using Microsoft.Xna.Framework.Graphics;
+using Intersect_Library.Localization;
 
 namespace Intersect_Editor.Forms
 {
@@ -97,6 +99,7 @@ namespace Intersect_Editor.Forms
 
             //Init Map Properties
             InitMapProperties();
+            InitLocalization();
             Show();
 
             //Init Forms with RenderTargets
@@ -108,6 +111,80 @@ namespace Intersect_Editor.Forms
             toolStripButtonDonate.Size = new Size(54,25);
             this.WindowState = FormWindowState.Maximized;
         }
+
+        private void InitLocalization()
+        {
+            fileToolStripMenuItem.Text = Strings.Get("mainform", "file");
+            saveMapToolStripMenuItem.Text = Strings.Get("mainform", "savemap");
+            toolStripBtnSaveMap.Text = Strings.Get("mainform", "savemap");
+            newMapToolStripMenuItem.Text = Strings.Get("mainform", "newmap");
+            toolStripBtnNewMap.Text = Strings.Get("mainform", "newmap");
+            importMapToolStripMenuItem.Text = Strings.Get("mainform", "importmap");
+            exportMapToolStripMenuItem.Text = Strings.Get("mainform", "exportmap");
+            optionsToolStripMenuItem.Text = Strings.Get("mainform", "options");
+            exitToolStripMenuItem.Text = Strings.Get("mainform", "exit");
+
+            editToolStripMenuItem.Text = Strings.Get("mainform", "edit");
+            undoToolStripMenuItem.Text = Strings.Get("mainform", "undo");
+            redoToolStripMenuItem.Text = Strings.Get("mainform", "redo");
+            cutToolStripMenuItem.Text = Strings.Get("mainform", "cut");
+            copyToolStripMenuItem.Text = Strings.Get("mainform", "copy");
+            pasteToolStripMenuItem.Text = Strings.Get("mainform", "paste");
+            toolStripBtnUndo.Text = Strings.Get("mainform", "undo");
+            toolStripBtnRedo.Text = Strings.Get("mainform", "redo");
+            toolStripBtnCut.Text = Strings.Get("mainform", "cut");
+            toolStripBtnCopy.Text = Strings.Get("mainform", "copy");
+            toolStripBtnPaste.Text = Strings.Get("mainform", "paste");
+
+            fillToolStripMenuItem.Text = Strings.Get("mainform", "fill");
+            toolStripBtnFill.Text = Strings.Get("mainform", "fill");
+            eraseLayerToolStripMenuItem.Text = Strings.Get("mainform", "erase");
+            toolStripBtnErase.Text = Strings.Get("mainform", "erase");
+
+            selectToolStripMenuItem.Text = Strings.Get("mainform", "selectlayers");
+            allLayersToolStripMenuItem.Text = Strings.Get("mainform", "alllayers");
+            currentLayerOnlyToolStripMenuItem.Text = Strings.Get("mainform", "currentonly");
+
+            viewToolStripMenuItem.Text = Strings.Get("mainform", "view");
+            hideDarknessToolStripMenuItem.Text = Strings.Get("mainform", "darkness");
+            hideFogToolStripMenuItem.Text = Strings.Get("mainform", "fog");
+            hideOverlayToolStripMenuItem.Text = Strings.Get("mainform", "overlay");
+            hideResourcesToolStripMenuItem.Text = Strings.Get("mainform", "resources");
+            hideTilePreviewToolStripMenuItem.Text = Strings.Get("mainform", "tilepreview");
+            mapGridToolStripMenuItem.Text = Strings.Get("mainform", "grid");
+
+            contentEditorsToolStripMenuItem.Text = Strings.Get("mainform", "editors");
+            animationEditorToolStripMenuItem.Text = Strings.Get("mainform", "animationeditor");
+            classEditorToolStripMenuItem.Text = Strings.Get("mainform", "classeditor");
+            commonEventEditorToolStripMenuItem.Text = Strings.Get("mainform", "commoneventeditor");
+            craftingEditorToolStripMenuItem.Text = Strings.Get("mainform", "craftingbencheditor");
+            itemEditorToolStripMenuItem.Text = Strings.Get("mainform", "itemeditor");
+            npcEditorToolStripMenuItem.Text = Strings.Get("mainform", "npceditor");
+            projectileEditorToolStripMenuItem.Text = Strings.Get("mainform", "projectileeditor");
+            questEditorToolStripMenuItem.Text = Strings.Get("mainform", "questeditor");
+            resourceEditorToolStripMenuItem.Text = Strings.Get("mainform", "resourceeditor");
+            shopEditorToolStripMenuItem.Text = Strings.Get("mainform", "shopeditor");
+            spellEditorToolStripMenuItem.Text = Strings.Get("mainform", "spelleditor");
+            switchVariableEditorToolStripMenuItem.Text = Strings.Get("mainform", "switchvariableeditor");
+            timeEditorToolStripMenuItem.Text = Strings.Get("mainform", "timeeditor");
+
+            helpToolStripMenuItem.Text = Strings.Get("mainform", "help");
+            postQuestionToolStripMenuItem.Text = Strings.Get("mainform", "postquestion");
+            toolStripButtonQuestion.Text = Strings.Get("mainform", "postquestion");
+            reportBugToolStripMenuItem.Text = Strings.Get("mainform", "reportbug");
+            toolStripButtonBug.Text = Strings.Get("mainform", "reportbug");
+            aboutToolStripMenuItem.Text = Strings.Get("mainform", "about");
+            toolStripButtonDonate.Text = Strings.Get("mainform", "donate");
+
+            toolStripBtnPen.Text = Strings.Get("mainform", "pen");
+            toolStripBtnSelect.Text = Strings.Get("mainform", "selection");
+            toolStripBtnRect.Text = Strings.Get("mainform", "rectangle");
+            toolStripBtnEyeDrop.Text = Strings.Get("mainform", "droppler");
+            toolStripTimeButton.Text = Strings.Get("mainform", "lighting");
+            toolStripBtnScreenshot.Text = Strings.Get("mainform", "screenshot");
+            toolStripBtnRun.Text = Strings.Get("mainform", "run");
+        }
+
         private void FrmMain_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyData == (Keys.Control | Keys.Z))
@@ -269,11 +346,11 @@ namespace Intersect_Editor.Forms
         {
             if (Globals.CurrentMap != null)
             {
-                toolStripLabelCoords.Text = @" CurX: " + Globals.CurTileX + @" CurY: " + Globals.CurTileY;
-                toolStripLabelRevision.Text = @"Revision: " + Globals.CurrentMap.Revision;
-                if (Text != @"Intersect Editor - " +  Globals.CurrentMap.MyName)
+                toolStripLabelCoords.Text = Strings.Get("mainform","loc",Globals.CurTileX,Globals.CurTileY);
+                toolStripLabelRevision.Text = Strings.Get("mainform","revision", Globals.CurrentMap.Revision);
+                if (Text != Strings.Get("mainform","title", Globals.CurrentMap.MyName))
                 {
-                    Text = @"Intersect Editor - " + Globals.CurrentMap.MyName;
+                    Text = Strings.Get("mainform", "title", Globals.CurrentMap.MyName);
                 }
             }
 
@@ -425,10 +502,7 @@ namespace Intersect_Editor.Forms
                 //Offer to export map
                 if (Globals.CurrentMap != null)
                 {
-                    if (MessageBox.Show(
-                            "You have been disconnected from the server! Would you like to export this map before closing this editor?",
-                            "Disconnected -- Export Map?", MessageBoxButtons.YesNo) ==
-                        System.Windows.Forms.DialogResult.Yes)
+                    if (DarkMessageBox.ShowError(Strings.Get("errors","disconnectedsave"),Strings.Get("errors","disconnectedcaption"), DarkDialogButton.YesNo) == System.Windows.Forms.DialogResult.Yes)
                     {
                         exportMapToolStripMenuItem_Click(null, null);
                         Application.Exit();
@@ -440,7 +514,7 @@ namespace Intersect_Editor.Forms
                 }
                 else
                 {
-                    MessageBox.Show(@"Disconnected!");
+                    DarkMessageBox.ShowError(Strings.Get("errors","disconnectedclosing"), Strings.Get("errors","disconnected"),DarkDialogButton.Ok);
                     Application.Exit();
                 }
             }
@@ -449,7 +523,7 @@ namespace Intersect_Editor.Forms
         //MenuBar Functions -- File
         private void saveMapToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (MessageBox.Show(@"Are you sure you want to save this map?", @"Save Map", MessageBoxButtons.YesNo) == DialogResult.Yes)
+            if (Globals.CurrentMap.Changed() && DarkMessageBox.ShowInformation(Strings.Get("mapping", "savemapdialoguesure"), Strings.Get("mapping", "savemap"), DarkDialogButton.YesNo) == DialogResult.Yes)
             {
                 SaveMap();
             }
@@ -469,10 +543,8 @@ namespace Intersect_Editor.Forms
         }
         private void newMapToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (
-                MessageBox.Show(@"Are you sure you want to create a new, unconnected map?", @"New Map",
-                    MessageBoxButtons.YesNo) != DialogResult.Yes) return;
-            if (Globals.CurrentMap.Changed() && MessageBox.Show(@"Do you want to save your current map?", @"Save current map?", MessageBoxButtons.YesNo) == DialogResult.Yes)
+            if (DarkMessageBox.ShowWarning(Strings.Get("mapping","newmap"), Strings.Get("mapping","newmapcaption"),DarkDialogButton.YesNo) != DialogResult.Yes) return;
+            if (Globals.CurrentMap.Changed() && DarkMessageBox.ShowInformation(Strings.Get("mapping", "savemapdialogue"), Strings.Get("mapping", "savemap"), DarkDialogButton.YesNo) == DialogResult.Yes)
             {
                 SaveMap();
             }
@@ -482,7 +554,7 @@ namespace Intersect_Editor.Forms
         {
             SaveFileDialog fileDialog = new SaveFileDialog();
             fileDialog.Filter = "Intersect Map|*.imap";
-            fileDialog.Title = "Export Map";
+            fileDialog.Title = Strings.Get("mainform","exportmap");
             fileDialog.ShowDialog();
             var buff = new ByteBuffer();
             buff.WriteString(Application.ProductVersion);
@@ -497,7 +569,7 @@ namespace Intersect_Editor.Forms
         {
             OpenFileDialog fileDialog = new OpenFileDialog();
             fileDialog.Filter = "Intersect Map|*.imap";
-            fileDialog.Title = "Import Map";
+            fileDialog.Title = Strings.Get("mainform", "importmap");
             fileDialog.ShowDialog();
 
             if (fileDialog.FileName != "")
@@ -513,7 +585,7 @@ namespace Intersect_Editor.Forms
                 }
                 else
                 {
-                    MessageBox.Show("Cannot import map. Currently selected map is not an Intersect map file or was exported with a different version of the Intersect editor!","Failed to Import Map");
+                    DarkMessageBox.ShowError(Strings.Get("errors","importfailed"), Strings.Get("errors", "importfailedcaption"));
                 }
             }
         }
@@ -726,7 +798,7 @@ namespace Intersect_Editor.Forms
         {
             SaveFileDialog fileDialog = new SaveFileDialog();
             fileDialog.Filter = "Png Image|*.png|JPeg Image|*.jpg|Bitmap Image|*.bmp|Gif Image|*.gif";
-            fileDialog.Title = "Save a screenshot of the map";
+            fileDialog.Title = Strings.Get("mainform", "screenshot");
             fileDialog.ShowDialog();
 
             if (fileDialog.FileName != "")
@@ -986,7 +1058,7 @@ namespace Intersect_Editor.Forms
 
         private void frmMain_FormClosing(object sender, FormClosingEventArgs e)
         {
-            if (!Globals.ClosingEditor && Globals.CurrentMap != null && Globals.CurrentMap.Changed() && MessageBox.Show(@"Do you want to save your current map?", @"Save current map?", MessageBoxButtons.YesNo) == DialogResult.Yes)
+            if (!Globals.ClosingEditor && Globals.CurrentMap != null && Globals.CurrentMap.Changed() && DarkMessageBox.ShowWarning(Strings.Get("mapping","savemapdialogue"), Strings.Get("mapping","savemap"), DarkDialogButton.YesNo) == DialogResult.Yes)
             {
                 SaveMap();
             }

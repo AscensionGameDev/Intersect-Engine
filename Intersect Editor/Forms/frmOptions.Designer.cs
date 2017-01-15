@@ -36,9 +36,9 @@ namespace Intersect_Editor.Forms
             this.chkSuppressTilesetWarning = new DarkUI.Controls.DarkCheckBox();
             this.btnTileHeader = new DarkUI.Controls.DarkButton();
             this.pnlGeneral = new System.Windows.Forms.Panel();
-            this.darkGroupBox1 = new DarkUI.Controls.DarkGroupBox();
+            this.grpClientPath = new DarkUI.Controls.DarkGroupBox();
             this.pnlGeneral.SuspendLayout();
-            this.darkGroupBox1.SuspendLayout();
+            this.grpClientPath.SuspendLayout();
             this.SuspendLayout();
             // 
             // txtGamePath
@@ -88,25 +88,25 @@ namespace Intersect_Editor.Forms
             | System.Windows.Forms.AnchorStyles.Right)));
             this.pnlGeneral.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.pnlGeneral.Controls.Add(this.chkSuppressTilesetWarning);
-            this.pnlGeneral.Controls.Add(this.darkGroupBox1);
+            this.pnlGeneral.Controls.Add(this.grpClientPath);
             this.pnlGeneral.Location = new System.Drawing.Point(4, 26);
             this.pnlGeneral.Name = "pnlGeneral";
             this.pnlGeneral.Size = new System.Drawing.Size(357, 149);
             this.pnlGeneral.TabIndex = 20;
             // 
-            // darkGroupBox1
+            // grpClientPath
             // 
-            this.darkGroupBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
-            this.darkGroupBox1.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
-            this.darkGroupBox1.Controls.Add(this.btnBrowseClient);
-            this.darkGroupBox1.Controls.Add(this.txtGamePath);
-            this.darkGroupBox1.ForeColor = System.Drawing.Color.Gainsboro;
-            this.darkGroupBox1.Location = new System.Drawing.Point(8, 29);
-            this.darkGroupBox1.Name = "darkGroupBox1";
-            this.darkGroupBox1.Size = new System.Drawing.Size(332, 45);
-            this.darkGroupBox1.TabIndex = 3;
-            this.darkGroupBox1.TabStop = false;
-            this.darkGroupBox1.Text = "Client Path";
+            this.grpClientPath.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
+            this.grpClientPath.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.grpClientPath.Controls.Add(this.btnBrowseClient);
+            this.grpClientPath.Controls.Add(this.txtGamePath);
+            this.grpClientPath.ForeColor = System.Drawing.Color.Gainsboro;
+            this.grpClientPath.Location = new System.Drawing.Point(8, 29);
+            this.grpClientPath.Name = "grpClientPath";
+            this.grpClientPath.Size = new System.Drawing.Size(332, 45);
+            this.grpClientPath.TabIndex = 3;
+            this.grpClientPath.TabStop = false;
+            this.grpClientPath.Text = "Client Path";
             // 
             // frmOptions
             // 
@@ -123,8 +123,8 @@ namespace Intersect_Editor.Forms
             this.Text = "Options";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.frmOptions_FormClosing);
             this.pnlGeneral.ResumeLayout(false);
-            this.darkGroupBox1.ResumeLayout(false);
-            this.darkGroupBox1.PerformLayout();
+            this.grpClientPath.ResumeLayout(false);
+            this.grpClientPath.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -135,6 +135,6 @@ namespace Intersect_Editor.Forms
         private DarkCheckBox chkSuppressTilesetWarning;
         private DarkUI.Controls.DarkButton btnTileHeader;
         private System.Windows.Forms.Panel pnlGeneral;
-        private DarkGroupBox darkGroupBox1;
+        private DarkGroupBox grpClientPath;
     }
 }

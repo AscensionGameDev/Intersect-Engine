@@ -22,6 +22,7 @@
 
 using System;
 using System.Windows.Forms;
+using Intersect_Library.Localization;
 
 namespace Intersect_Editor.Forms
 {
@@ -39,7 +40,14 @@ namespace Intersect_Editor.Forms
 
         private void frmAbout_Load(object sender, EventArgs e)
         {
-            lblVersion.Text = @"v. " + Application.ProductVersion;
+            InitLocalization();
+        }
+
+        private void InitLocalization()
+        {
+            this.Text = Strings.Get("about", "title");
+            lblVersion.Text = Strings.Get("about","version", Application.ProductVersion);
+            lblWebsite.Text = Strings.Get("about", "site");
         }
     }
 }

@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmMapProperties));
             this.gridMapProperties = new System.Windows.Forms.PropertyGrid();
             this.SuspendLayout();
             // 
@@ -64,6 +65,7 @@
             this.CloseButtonVisible = false;
             this.Controls.Add(this.gridMapProperties);
             this.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "frmMapProperties";
             this.Text = "Map Properties";
             this.ResumeLayout(false);

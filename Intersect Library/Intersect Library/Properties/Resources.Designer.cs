@@ -88,10 +88,17 @@ namespace Intersect_Library.Properties {
         /// <summary>
         ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;
         ///&lt;Strings&gt;
-        ///	&lt;Main&gt;
-        ///		&lt;string id=&quot;title&quot;&gt;{00}&lt;/string&gt;
-        ///	&lt;/Main&gt;
-        ///&lt;/Strings&gt;.
+        ///	&lt;Login&gt;
+        ///		&lt;string id=&quot;title&quot;&gt;Intersect Editor Login&lt;/string&gt;
+        ///		&lt;string id=&quot;version&quot;&gt;Editor v{00}&lt;/string&gt;
+        ///		&lt;string id=&quot;gettingstarted&quot;&gt;Getting Started?
+        ///		1. Start the Intersect Server
+        ///		2. Open the Intersect Client and Create an Account
+        ///		3. Login to that account here to start designing your game!&lt;/string&gt;
+        ///		&lt;string id=&quot;username&quot;&gt;Username: &lt;/string&gt;
+        ///		&lt;string id=&quot;password&quot;&gt;Password: &lt;/string&gt;
+        ///		&lt;string id=&quot;rememberme&quot;&gt;Remember Me&lt;/string&gt;
+        ///		&lt;str [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string Editor_English {
             get {

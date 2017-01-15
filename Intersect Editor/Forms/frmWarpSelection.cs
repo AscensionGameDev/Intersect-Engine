@@ -28,6 +28,7 @@ using Intersect_Editor.Classes;
 using Intersect_Editor.Classes.Maps;
 using Intersect_Library;
 using Intersect_Library.GameObjects.Maps.MapList;
+using Intersect_Library.Localization;
 using Microsoft.Xna.Framework.Graphics;
 using Color = System.Drawing.Color;
 
@@ -46,6 +47,7 @@ namespace Intersect_Editor.Forms
         public frmWarpSelection()
         {
             InitializeComponent();
+            InitLocalization();
             mapTreeList1.UpdateMapList(_currentMap);
             pnlMap.Width = Options.TileWidth*Options.MapWidth;
             pnlMap.Height = Options.TileHeight*Options.MapHeight;
@@ -60,8 +62,18 @@ namespace Intersect_Editor.Forms
             if (!tileSelection)
             {
                 _tileSelection = false;
-                this.Text = "Map Selection";
+                this.Text = Strings.Get("warpselection", "mapselectiontitle");
             }
+        }
+
+        private void InitLocalization()
+        {
+            this.Text = Strings.Get("warpselection", "title");
+            chkChronological.Text = Strings.Get("warpselection", "chronological");
+            btnOk.Text = Strings.Get("warpselection", "okay");
+            btnCancel.Text = Strings.Get("warpselection", "cancel");
+            grpMapList.Text = Strings.Get("warpselection", "maplist");
+            grpMapPreview.Text = Strings.Get("warpselection", "mappreview");
         }
 
         private void NodeDoubleClick(object sender, TreeViewEventArgs e)

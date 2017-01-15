@@ -7,11 +7,13 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using DarkUI.Forms;
 using Hjg.Pngcs;
 using Intersect_Editor.Classes.General;
 using Intersect_Editor.Forms;
 using Intersect_Library;
 using Intersect_Library.GameObjects.Maps.MapList;
+using Intersect_Library.Localization;
 using Microsoft.Xna.Framework.Graphics;
 using Color = System.Drawing.Color;
 
@@ -159,7 +161,7 @@ namespace Intersect_Editor.Classes.Maps
                     {
                         if (Grid[x1 - 1, y1 - 1].mapnum > -1)
                         {
-                            if (Globals.CurrentMap.Changed() && MessageBox.Show(@"Do you want to save your current map?", @"Save current map?", MessageBoxButtons.YesNo) == DialogResult.Yes)
+                            if (Globals.CurrentMap.Changed() && DarkMessageBox.ShowInformation(Strings.Get("mapping", "savemapdialogue"), Strings.Get("mapping", "savemap"), DarkDialogButton.YesNo) == DialogResult.Yes)
                             {
                                 SaveMap();
                             }
@@ -189,18 +191,15 @@ namespace Intersect_Editor.Classes.Maps
         {
             SaveFileDialog fileDialog = new SaveFileDialog();
             fileDialog.Filter = "Png Image|*.png|JPeg Image|*.jpg|Bitmap Image|*.bmp|Gif Image|*.gif";
-            fileDialog.Title = "Save a screenshot of the world";
+            fileDialog.Title = Strings.Get("mapgrid","savescreenshotdialogue");
             fileDialog.ShowDialog();
             if (fileDialog.FileName != "")
             {
-                if (
-                    MessageBox.Show(
-                        "Are you sure you want to save a screenshot of your world to a file? This could take several minutes!",
-                        "Save Screenshot?", MessageBoxButtons.YesNo) == System.Windows.Forms.DialogResult.Yes)
+                if (DarkMessageBox.ShowWarning(Strings.Get("mapgrid", "savescreenshotconfirm"), Strings.Get("mapgrid", "savescreenshottitle"), DarkDialogButton.YesNo) == System.Windows.Forms.DialogResult.Yes)
                 {
                     FetchMissingPreviews(false);
                     Globals.PreviewProgressForm = new frmProgress();
-                    Globals.PreviewProgressForm.SetTitle("Saving Screenshot");
+                    Globals.PreviewProgressForm.SetTitle(Strings.Get("mapgrid","savingscreenshot"));
                     Thread screenShotThread = new Thread(() => ScreenshotWorld(fileDialog.FileName));
                     screenShotThread.Start();
                     Globals.PreviewProgressForm.ShowDialog();
@@ -291,7 +290,7 @@ namespace Intersect_Editor.Classes.Maps
                     }
                 }
                 png.WriteRowByte(row, y);
-                Globals.PreviewProgressForm.SetProgress("Saving Row: " + y + "/" + rows, (int)((y / (float)rows) * 100), false);
+                Globals.PreviewProgressForm.SetProgress(Strings.Get("mapgrid","savingrow",y,rows), (int)((y / (float)rows) * 100), false);
                 Application.DoEvents();
             }
             png.End();
@@ -333,11 +332,8 @@ namespace Intersect_Editor.Classes.Maps
             List<int> maps = new List<int>();
             if (clearAllFirst)
             {
-                if (MessageBox.Show("Are you sure you want to clear the existing previews and fetch previews for each map on this grid? This could take several minutes based on the number of maps in this grid!",
-                        "Fetch Preview?", MessageBoxButtons.YesNo) != System.Windows.Forms.DialogResult.Yes) return;
-                if (
-                    MessageBox.Show("Use your current settings with the map cache? (No to disable lighting/fogs/other effects)", "Map Cache Options",
-                        MessageBoxButtons.YesNo) == DialogResult.Yes)
+                if (DarkMessageBox.ShowWarning(Strings.Get("mapgrid", "clearandfetch"),  Strings.Get("mapgrid", "fetchcaption"), DarkDialogButton.YesNo) != System.Windows.Forms.DialogResult.Yes) return;
+                if (DarkMessageBox.ShowInformation(Strings.Get("mapgrid", "keepmapcache"), Strings.Get("mapgrid", "mapcachecaption"),DarkDialogButton.YesNo) == DialogResult.Yes)
                 {
                     Database.GridHideOverlay = EditorGraphics.HideOverlay;
                     Database.GridHideDarkness = EditorGraphics.HideDarkness;
@@ -378,12 +374,12 @@ namespace Intersect_Editor.Classes.Maps
             }
             if (maps.Count > 0)
             {
-                if (clearAllFirst || MessageBox.Show("Are you sure you want to fetch previews for each map? This could take several minutes based on the number of maps in this grid!", "Fetch Preview?", MessageBoxButtons.YesNo) == System.Windows.Forms.DialogResult.Yes)
+                if (clearAllFirst || DarkMessageBox.ShowWarning(Strings.Get("mapgrid", "justfetch"), Strings.Get("mapgrid", "fetchcaption"), DarkDialogButton.YesNo) == System.Windows.Forms.DialogResult.Yes)
                 {
                     Globals.FetchingMapPreviews = true;
                     Globals.PreviewProgressForm = new frmProgress();
-                    Globals.PreviewProgressForm.SetTitle("Fetching Map Previews");
-                    Globals.PreviewProgressForm.SetProgress("Fetching Maps: 0/" + maps.Count, 0, false);
+                    Globals.PreviewProgressForm.SetTitle(Strings.Get("mapgrid","fetchingmaps"));
+                    Globals.PreviewProgressForm.SetProgress(Strings.Get("mapgrid","fetchingprogress",0,maps.Count), 0, false);
                     Globals.FetchCount = maps.Count;
                     Globals.MapsToFetch = maps;
                     for (int i = 0; i < maps.Count; i++)
@@ -469,7 +465,7 @@ namespace Intersect_Editor.Classes.Maps
         {
             if (_contextMap != null && _contextMap.mapnum > -1)
             {
-                if (MessageBox.Show("Are you sure you want to unlink map " + _contextMap.name + "?", "Unlink Map", MessageBoxButtons.YesNo) == DialogResult.Yes)
+                if (DarkMessageBox.ShowWarning(Strings.Get("mapgrid","unlinkprompt",_contextMap.name), Strings.Get("mapgrid","unlinkcaption"), DarkDialogButton.YesNo) == DialogResult.Yes)
                     PacketSender.SendUnlinkMap(_contextMap.mapnum);
             }
 

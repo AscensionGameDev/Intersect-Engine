@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
+using DarkUI.Forms;
 using Intersect_Editor.Classes.General;
 using Intersect_Editor.Classes.Maps;
 using Intersect_Library;
@@ -13,6 +14,7 @@ using Intersect_Library.GameObjects.Maps;
 using Microsoft.Xna.Framework.Graphics;
 using WeifenLuo.WinFormsUI.Docking;
 using EditorGraphics = Intersect_Editor.Classes.EditorGraphics;
+using Intersect_Library.Localization;
 
 namespace Intersect_Editor.Forms
 {
@@ -32,6 +34,12 @@ namespace Intersect_Editor.Forms
         {
             InitializeComponent();
         }
+
+        private void InitLocalization()
+        {
+            this.Text = Strings.Get("mapping", "editortitle");
+        }
+
         private void frmMapEditor_Load(object sender, EventArgs e)
         {
             PacketHandler.MapUpdatedDelegate += InitMapEditor;
@@ -39,6 +47,7 @@ namespace Intersect_Editor.Forms
             picMap.MinimumSize = new Size((Options.MapWidth + 2) * Options.TileWidth, (Options.MapHeight + 2) * Options.TileHeight);
             EditorGraphics.CurrentView = new Rectangle((picMap.Size.Width - (Options.MapWidth) * Options.TileWidth) / 2, (picMap.Size.Height - (Options.MapHeight) * Options.TileHeight) / 2, picMap.Size.Width, picMap.Size.Height);
             CreateSwapChain();
+            InitLocalization();
         }
 
         public void InitMapEditor()
@@ -797,7 +806,7 @@ namespace Intersect_Editor.Forms
                         {
                             if (Globals.MapGrid.Grid[x, y].mapnum > -1)
                             {
-                                if (Globals.CurrentMap.Changed() && MessageBox.Show(@"Do you want to save your current map?", @"Save current map?", MessageBoxButtons.YesNo) == DialogResult.Yes)
+                                if (Globals.CurrentMap.Changed() && DarkMessageBox.ShowInformation(Strings.Get("mapping","savemapdialogue"),Strings.Get("mapping","savemap"),DarkDialogButton.YesNo) == DialogResult.Yes)
                                 {
                                     SaveMap();
                                 }
@@ -805,13 +814,15 @@ namespace Intersect_Editor.Forms
                             }
                             else
                             {
-                                MessageBox.Show(@"Cannot create maps diagonally!", @"Create new map.",MessageBoxButtons.OK);
+                                DarkMessageBox.ShowError(Strings.Get("mapping", "diagonalwarning"),
+                                    Strings.Get("mapping", "createmap"));
                                 return;
                             }
                         }
                         else
                         {
-                            MessageBox.Show(@"Cannot create maps diagonally!", @"Create new map.", MessageBoxButtons.OK);
+                            DarkMessageBox.ShowError(Strings.Get("mapping", "diagonalwarning"),
+                                    Strings.Get("mapping", "createmap"));
                             return;
                         }
                     }
@@ -820,10 +831,8 @@ namespace Intersect_Editor.Forms
                 {
                     if (newMap == -1)
                     {
-                        if (
-                            MessageBox.Show(@"Do you want to create a map here?", @"Create new map.", MessageBoxButtons.YesNo) !=
-                            DialogResult.Yes) return;
-                        if (Globals.CurrentMap.Changed() && MessageBox.Show(@"Do you want to save your current map?", @"Save current map?", MessageBoxButtons.YesNo) == DialogResult.Yes)
+                        if (DarkMessageBox.ShowInformation(Strings.Get("mapping", "createmapdialogue"), Strings.Get("mapping", "createmap"), DarkDialogButton.YesNo) != DialogResult.Yes) return;
+                        if (Globals.CurrentMap.Changed() && DarkMessageBox.ShowWarning(Strings.Get("mapping", "savemapdialogue"), Strings.Get("mapping", "savemap"), DarkDialogButton.YesNo) == DialogResult.Yes)
                         {
                             SaveMap();
                         }
@@ -831,8 +840,7 @@ namespace Intersect_Editor.Forms
                     }
                     else
                     {
-                        //Should ask if the user wants to save changes
-                        if (Globals.CurrentMap.Changed() && MessageBox.Show(@"Do you want to save your current map?", @"Save current map?", MessageBoxButtons.YesNo) == DialogResult.Yes)
+                        if (Globals.CurrentMap.Changed() && DarkMessageBox.ShowWarning(Strings.Get("mapping", "savemapdialogue"), Strings.Get("mapping", "savemap"), DarkDialogButton.YesNo) == DialogResult.Yes)
                         {
                             SaveMap();
                         }
@@ -951,7 +959,7 @@ namespace Intersect_Editor.Forms
             {
                 CurrentMapState = tmpMap.GetMapData(false);
             }
-            if (MessageBox.Show(@"Are you sure you want to fill this layer?", @"Fill Layer", MessageBoxButtons.YesNo) == DialogResult.Yes)
+            if (DarkMessageBox.ShowWarning(Strings.Get("mapping","filllayerdialogue"),Strings.Get("mapping","filllayer"), DarkDialogButton.YesNo) == DialogResult.Yes)
             {
                 int x1 = 0;
                 int y1 = 0;
@@ -1017,7 +1025,7 @@ namespace Intersect_Editor.Forms
             {
                 CurrentMapState = tmpMap.GetMapData(false);
             }
-            if (MessageBox.Show(@"Are you sure you want to erase this layer?", @"Fill Layer", MessageBoxButtons.YesNo) == DialogResult.Yes)
+            if (DarkMessageBox.ShowWarning(Strings.Get("mapping", "eraselayerdialogue"), Strings.Get("mapping", "eraselayer"), DarkDialogButton.YesNo) == DialogResult.Yes)
             {
                 for (var x = 0; x < Options.MapWidth; x++)
                 {

@@ -41,9 +41,9 @@ namespace Intersect_Editor.Forms
             this.btnLogin = new DarkUI.Controls.DarkButton();
             this.picLogo = new System.Windows.Forms.PictureBox();
             this.lblVersion = new System.Windows.Forms.Label();
-            this.label1 = new System.Windows.Forms.Label();
-            this.label2 = new System.Windows.Forms.Label();
-            this.label3 = new System.Windows.Forms.Label();
+            this.lblUsername = new System.Windows.Forms.Label();
+            this.lblPassword = new System.Windows.Forms.Label();
+            this.lblGettingStarted = new System.Windows.Forms.Label();
             this.chkRemember = new DarkUI.Controls.DarkCheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.picLogo)).BeginInit();
             this.SuspendLayout();
@@ -118,35 +118,35 @@ namespace Intersect_Editor.Forms
             this.lblVersion.Text = "Editor v1.0.0.0";
             this.lblVersion.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
-            // label1
+            // lblUsername
             // 
-            this.label1.AutoSize = true;
-            this.label1.ForeColor = System.Drawing.Color.White;
-            this.label1.Location = new System.Drawing.Point(420, 234);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(58, 13);
-            this.label1.TabIndex = 6;
-            this.label1.Text = "Username:";
+            this.lblUsername.AutoSize = true;
+            this.lblUsername.ForeColor = System.Drawing.Color.White;
+            this.lblUsername.Location = new System.Drawing.Point(420, 234);
+            this.lblUsername.Name = "lblUsername";
+            this.lblUsername.Size = new System.Drawing.Size(58, 13);
+            this.lblUsername.TabIndex = 6;
+            this.lblUsername.Text = "Username:";
             // 
-            // label2
+            // lblPassword
             // 
-            this.label2.AutoSize = true;
-            this.label2.ForeColor = System.Drawing.Color.White;
-            this.label2.Location = new System.Drawing.Point(420, 260);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(56, 13);
-            this.label2.TabIndex = 7;
-            this.label2.Text = "Password:";
+            this.lblPassword.AutoSize = true;
+            this.lblPassword.ForeColor = System.Drawing.Color.White;
+            this.lblPassword.Location = new System.Drawing.Point(420, 260);
+            this.lblPassword.Name = "lblPassword";
+            this.lblPassword.Size = new System.Drawing.Size(56, 13);
+            this.lblPassword.TabIndex = 7;
+            this.lblPassword.Text = "Password:";
             // 
-            // label3
+            // lblGettingStarted
             // 
-            this.label3.BackColor = System.Drawing.Color.Transparent;
-            this.label3.ForeColor = System.Drawing.Color.White;
-            this.label3.Location = new System.Drawing.Point(12, 225);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(363, 58);
-            this.label3.TabIndex = 8;
-            this.label3.Text = "Getting Started?\r\n1. Start the Intersect Server\r\n2. Open the Intersect Client & C" +
+            this.lblGettingStarted.BackColor = System.Drawing.Color.Transparent;
+            this.lblGettingStarted.ForeColor = System.Drawing.Color.White;
+            this.lblGettingStarted.Location = new System.Drawing.Point(12, 225);
+            this.lblGettingStarted.Name = "lblGettingStarted";
+            this.lblGettingStarted.Size = new System.Drawing.Size(363, 58);
+            this.lblGettingStarted.TabIndex = 8;
+            this.lblGettingStarted.Text = "Getting Started?\r\n1. Start the Intersect Server\r\n2. Open the Intersect Client & C" +
     "reate an Account\r\n3. Login to that account here to start designing your game!";
             // 
             // chkRemember
@@ -166,9 +166,9 @@ namespace Intersect_Editor.Forms
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
             this.ClientSize = new System.Drawing.Size(628, 338);
             this.Controls.Add(this.chkRemember);
-            this.Controls.Add(this.label3);
-            this.Controls.Add(this.label2);
-            this.Controls.Add(this.label1);
+            this.Controls.Add(this.lblGettingStarted);
+            this.Controls.Add(this.lblPassword);
+            this.Controls.Add(this.lblUsername);
             this.Controls.Add(this.lblVersion);
             this.Controls.Add(this.picLogo);
             this.Controls.Add(this.btnLogin);
@@ -199,9 +199,9 @@ namespace Intersect_Editor.Forms
         private DarkButton btnLogin;
         private PictureBox picLogo;
         private Label lblVersion;
-        private Label label1;
-        private Label label2;
-        private Label label3;
+        private Label lblUsername;
+        private Label lblPassword;
+        private Label lblGettingStarted;
         private DarkCheckBox chkRemember;
     }
 }

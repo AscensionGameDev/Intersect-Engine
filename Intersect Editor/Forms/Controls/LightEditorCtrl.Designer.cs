@@ -32,88 +32,88 @@ namespace Intersect_Editor.Forms.Controls
         private void InitializeComponent()
         {
             this.pnlLight = new System.Windows.Forms.Panel();
-            this.groupBox1 = new DarkUI.Controls.DarkGroupBox();
-            this.scrlLightExpand = new DarkScrollBar();
-            this.label1 = new System.Windows.Forms.Label();
+            this.grpLightEditor = new DarkUI.Controls.DarkGroupBox();
+            this.scrlLightExpand = new DarkUI.Controls.DarkScrollBar();
+            this.lblExpandAmt = new System.Windows.Forms.Label();
             this.txtLightExpandAmt = new DarkUI.Controls.DarkTextBox();
-            this.scrlLightSize = new DarkScrollBar();
+            this.scrlLightSize = new DarkUI.Controls.DarkScrollBar();
             this.pnlLightColor = new System.Windows.Forms.Panel();
             this.btnOkay = new DarkUI.Controls.DarkButton();
-            this.label9 = new System.Windows.Forms.Label();
+            this.lblColor = new System.Windows.Forms.Label();
             this.btnCancel = new DarkUI.Controls.DarkButton();
             this.btnSelectLightColor = new DarkUI.Controls.DarkButton();
             this.lblOffsetX = new System.Windows.Forms.Label();
             this.lblOffsetY = new System.Windows.Forms.Label();
-            this.label3 = new System.Windows.Forms.Label();
+            this.lblSize = new System.Windows.Forms.Label();
             this.txtLightOffsetX = new DarkUI.Controls.DarkTextBox();
             this.txtLightRange = new DarkUI.Controls.DarkTextBox();
             this.txtLightOffsetY = new DarkUI.Controls.DarkTextBox();
-            this.scrlLightIntensity = new DarkScrollBar();
+            this.scrlLightIntensity = new DarkUI.Controls.DarkScrollBar();
             this.txtLightIntensity = new DarkUI.Controls.DarkTextBox();
-            this.label4 = new System.Windows.Forms.Label();
+            this.lblIntensity = new System.Windows.Forms.Label();
             this.colorDialog = new System.Windows.Forms.ColorDialog();
             this.pnlLight.SuspendLayout();
-            this.groupBox1.SuspendLayout();
+            this.grpLightEditor.SuspendLayout();
             this.SuspendLayout();
             // 
             // pnlLight
             // 
             this.pnlLight.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
-            this.pnlLight.Controls.Add(this.groupBox1);
+            this.pnlLight.Controls.Add(this.grpLightEditor);
             this.pnlLight.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pnlLight.Location = new System.Drawing.Point(0, 0);
             this.pnlLight.Name = "pnlLight";
             this.pnlLight.Size = new System.Drawing.Size(258, 323);
             this.pnlLight.TabIndex = 4;
             // 
-            // groupBox1
+            // grpLightEditor
             // 
-            this.groupBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
-            this.groupBox1.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
-            this.groupBox1.Controls.Add(this.scrlLightExpand);
-            this.groupBox1.Controls.Add(this.label1);
-            this.groupBox1.Controls.Add(this.txtLightExpandAmt);
-            this.groupBox1.Controls.Add(this.scrlLightSize);
-            this.groupBox1.Controls.Add(this.pnlLightColor);
-            this.groupBox1.Controls.Add(this.btnOkay);
-            this.groupBox1.Controls.Add(this.label9);
-            this.groupBox1.Controls.Add(this.btnCancel);
-            this.groupBox1.Controls.Add(this.btnSelectLightColor);
-            this.groupBox1.Controls.Add(this.lblOffsetX);
-            this.groupBox1.Controls.Add(this.lblOffsetY);
-            this.groupBox1.Controls.Add(this.label3);
-            this.groupBox1.Controls.Add(this.txtLightOffsetX);
-            this.groupBox1.Controls.Add(this.txtLightRange);
-            this.groupBox1.Controls.Add(this.txtLightOffsetY);
-            this.groupBox1.Controls.Add(this.scrlLightIntensity);
-            this.groupBox1.Controls.Add(this.txtLightIntensity);
-            this.groupBox1.Controls.Add(this.label4);
-            this.groupBox1.ForeColor = System.Drawing.Color.Gainsboro;
-            this.groupBox1.Location = new System.Drawing.Point(4, 4);
-            this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(248, 316);
-            this.groupBox1.TabIndex = 39;
-            this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "Light Editor";
+            this.grpLightEditor.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
+            this.grpLightEditor.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.grpLightEditor.Controls.Add(this.scrlLightExpand);
+            this.grpLightEditor.Controls.Add(this.lblExpandAmt);
+            this.grpLightEditor.Controls.Add(this.txtLightExpandAmt);
+            this.grpLightEditor.Controls.Add(this.scrlLightSize);
+            this.grpLightEditor.Controls.Add(this.pnlLightColor);
+            this.grpLightEditor.Controls.Add(this.btnOkay);
+            this.grpLightEditor.Controls.Add(this.lblColor);
+            this.grpLightEditor.Controls.Add(this.btnCancel);
+            this.grpLightEditor.Controls.Add(this.btnSelectLightColor);
+            this.grpLightEditor.Controls.Add(this.lblOffsetX);
+            this.grpLightEditor.Controls.Add(this.lblOffsetY);
+            this.grpLightEditor.Controls.Add(this.lblSize);
+            this.grpLightEditor.Controls.Add(this.txtLightOffsetX);
+            this.grpLightEditor.Controls.Add(this.txtLightRange);
+            this.grpLightEditor.Controls.Add(this.txtLightOffsetY);
+            this.grpLightEditor.Controls.Add(this.scrlLightIntensity);
+            this.grpLightEditor.Controls.Add(this.txtLightIntensity);
+            this.grpLightEditor.Controls.Add(this.lblIntensity);
+            this.grpLightEditor.ForeColor = System.Drawing.Color.Gainsboro;
+            this.grpLightEditor.Location = new System.Drawing.Point(4, 4);
+            this.grpLightEditor.Name = "grpLightEditor";
+            this.grpLightEditor.Size = new System.Drawing.Size(248, 316);
+            this.grpLightEditor.TabIndex = 39;
+            this.grpLightEditor.TabStop = false;
+            this.grpLightEditor.Text = "Light Editor";
             // 
             // scrlLightExpand
             // 
             this.scrlLightExpand.Location = new System.Drawing.Point(9, 251);
             this.scrlLightExpand.Name = "scrlLightExpand";
+            this.scrlLightExpand.ScrollOrientation = DarkUI.Controls.DarkScrollOrientation.Horizontal;
             this.scrlLightExpand.Size = new System.Drawing.Size(225, 17);
             this.scrlLightExpand.TabIndex = 41;
             this.scrlLightExpand.Value = 2;
-            this.scrlLightExpand.ValueChanged += this.scrlLightExpand_Scroll;
-            this.scrlLightExpand.ScrollOrientation = DarkScrollOrientation.Horizontal;
+            this.scrlLightExpand.ValueChanged += new System.EventHandler<DarkUI.Controls.ScrollValueEventArgs>(this.scrlLightExpand_Scroll);
             // 
-            // label1
+            // lblExpandAmt
             // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(6, 212);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(67, 13);
-            this.label1.TabIndex = 40;
-            this.label1.Text = "Expand Amt:";
+            this.lblExpandAmt.AutoSize = true;
+            this.lblExpandAmt.Location = new System.Drawing.Point(6, 212);
+            this.lblExpandAmt.Name = "lblExpandAmt";
+            this.lblExpandAmt.Size = new System.Drawing.Size(67, 13);
+            this.lblExpandAmt.TabIndex = 40;
+            this.lblExpandAmt.Text = "Expand Amt:";
             // 
             // txtLightExpandAmt
             // 
@@ -131,11 +131,11 @@ namespace Intersect_Editor.Forms.Controls
             this.scrlLightSize.Location = new System.Drawing.Point(9, 195);
             this.scrlLightSize.Maximum = 1000;
             this.scrlLightSize.Name = "scrlLightSize";
+            this.scrlLightSize.ScrollOrientation = DarkUI.Controls.DarkScrollOrientation.Horizontal;
             this.scrlLightSize.Size = new System.Drawing.Size(225, 17);
             this.scrlLightSize.TabIndex = 35;
             this.scrlLightSize.Value = 2;
-            this.scrlLightSize.ValueChanged += this.scrlLightSize_Scroll;
-            this.scrlLightSize.ScrollOrientation = DarkScrollOrientation.Horizontal;
+            this.scrlLightSize.ValueChanged += new System.EventHandler<DarkUI.Controls.ScrollValueEventArgs>(this.scrlLightSize_Scroll);
             // 
             // pnlLightColor
             // 
@@ -156,14 +156,14 @@ namespace Intersect_Editor.Forms.Controls
             this.btnOkay.Text = "Save";
             this.btnOkay.Click += new System.EventHandler(this.btnLightEditorClose_Click);
             // 
-            // label9
+            // lblColor
             // 
-            this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(141, 22);
-            this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(34, 13);
-            this.label9.TabIndex = 37;
-            this.label9.Text = "Color:";
+            this.lblColor.AutoSize = true;
+            this.lblColor.Location = new System.Drawing.Point(141, 22);
+            this.lblColor.Name = "lblColor";
+            this.lblColor.Size = new System.Drawing.Size(34, 13);
+            this.lblColor.TabIndex = 37;
+            this.lblColor.Text = "Color:";
             // 
             // btnCancel
             // 
@@ -203,14 +203,14 @@ namespace Intersect_Editor.Forms.Controls
             this.lblOffsetY.TabIndex = 27;
             this.lblOffsetY.Text = "Offset Y:";
             // 
-            // label3
+            // lblSize
             // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(6, 156);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(30, 13);
-            this.label3.TabIndex = 34;
-            this.label3.Text = "Size:";
+            this.lblSize.AutoSize = true;
+            this.lblSize.Location = new System.Drawing.Point(6, 156);
+            this.lblSize.Name = "lblSize";
+            this.lblSize.Size = new System.Drawing.Size(30, 13);
+            this.lblSize.TabIndex = 34;
+            this.lblSize.Text = "Size:";
             // 
             // txtLightOffsetX
             // 
@@ -250,11 +250,12 @@ namespace Intersect_Editor.Forms.Controls
             this.scrlLightIntensity.Location = new System.Drawing.Point(9, 139);
             this.scrlLightIntensity.Maximum = 255;
             this.scrlLightIntensity.Name = "scrlLightIntensity";
+            this.scrlLightIntensity.ScrollOrientation = DarkUI.Controls.DarkScrollOrientation.Horizontal;
             this.scrlLightIntensity.Size = new System.Drawing.Size(225, 17);
             this.scrlLightIntensity.TabIndex = 32;
             this.scrlLightIntensity.Value = 1;
-            this.scrlLightIntensity.ValueChanged += this.scrlLightIntensity_Scroll;
-            this.scrlLightIntensity.ScrollOrientation = DarkScrollOrientation.Horizontal;
+            this.scrlLightIntensity.ValueChanged += new System.EventHandler<DarkUI.Controls.ScrollValueEventArgs>(this.scrlLightIntensity_Scroll);
+            this.scrlLightIntensity.Click += new System.EventHandler(this.scrlLightIntensity_Click);
             // 
             // txtLightIntensity
             // 
@@ -267,14 +268,14 @@ namespace Intersect_Editor.Forms.Controls
             this.txtLightIntensity.TabIndex = 30;
             this.txtLightIntensity.TextChanged += new System.EventHandler(this.txtLightIntensity_TextChanged);
             // 
-            // label4
+            // lblIntensity
             // 
-            this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(6, 100);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(49, 13);
-            this.label4.TabIndex = 31;
-            this.label4.Text = "Intensity:";
+            this.lblIntensity.AutoSize = true;
+            this.lblIntensity.Location = new System.Drawing.Point(6, 100);
+            this.lblIntensity.Name = "lblIntensity";
+            this.lblIntensity.Size = new System.Drawing.Size(49, 13);
+            this.lblIntensity.TabIndex = 31;
+            this.lblIntensity.Text = "Intensity:";
             // 
             // LightEditorCtrl
             // 
@@ -284,8 +285,8 @@ namespace Intersect_Editor.Forms.Controls
             this.Name = "LightEditorCtrl";
             this.Size = new System.Drawing.Size(258, 323);
             this.pnlLight.ResumeLayout(false);
-            this.groupBox1.ResumeLayout(false);
-            this.groupBox1.PerformLayout();
+            this.grpLightEditor.ResumeLayout(false);
+            this.grpLightEditor.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -294,13 +295,13 @@ namespace Intersect_Editor.Forms.Controls
 
         public System.Windows.Forms.Panel pnlLight;
         public System.Windows.Forms.Panel pnlLightColor;
-        private System.Windows.Forms.Label label9;
+        private System.Windows.Forms.Label lblColor;
         private DarkButton btnSelectLightColor;
         public DarkScrollBar scrlLightSize;
-        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.Label lblSize;
         public DarkTextBox txtLightRange;
         public DarkScrollBar scrlLightIntensity;
-        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.Label lblIntensity;
         public DarkTextBox txtLightIntensity;
         public DarkTextBox txtLightOffsetY;
         public DarkTextBox txtLightOffsetX;
@@ -309,9 +310,9 @@ namespace Intersect_Editor.Forms.Controls
         private DarkButton btnCancel;
         private DarkButton btnOkay;
         private System.Windows.Forms.ColorDialog colorDialog;
-        private DarkGroupBox groupBox1;
+        private DarkGroupBox grpLightEditor;
         public DarkScrollBar scrlLightExpand;
-        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label lblExpandAmt;
         public DarkTextBox txtLightExpandAmt;
     }
 }

@@ -50,7 +50,6 @@ namespace Intersect_Editor.Forms
             if (Database.LoadOptions())
             {
                 Strings.Init(Strings.IntersectComponent.Editor,Options.Language);
-                lblVersion.Text = "Editor v." + Application.ProductVersion;
                 EditorLoopDelegate = new BeginEditorLoop(EditorLoop.StartLoop);
                 if (Preferences.LoadPreference("username").Trim().Length > 0)
                 {
@@ -60,6 +59,7 @@ namespace Intersect_Editor.Forms
                     chkRemember.Checked = true;
                 }
                 Database.InitMapCache();
+                InitLocalization();
             }
             else
             {
@@ -68,13 +68,24 @@ namespace Intersect_Editor.Forms
             }
         }
 
+        private void InitLocalization()
+        {
+            this.Text = Strings.Get("login", "title");
+            lblVersion.Text = Strings.Get("login", "version", Application.ProductVersion);
+            lblGettingStarted.Text = Strings.Get("login", "gettingstarted");
+            lblUsername.Text = Strings.Get("login", "username");
+            lblPassword.Text = Strings.Get("login", "password");
+            chkRemember.Text = Strings.Get("login", "rememberme");
+            btnLogin.Text = Strings.Get("login", "login");
+        }
+
         private void tmrSocket_Tick(object sender, EventArgs e)
         {
             Network.Update();
-            var statusString = "Connecting to server...";
+            var statusString = Strings.Get("login", "connecting");
             if (Network.Connected)
             {
-                statusString = "Connected to server. Ready to login!";
+                statusString = Strings.Get("login", "connected");
                 btnLogin.Enabled = true;
             }
             else if (Network.Connecting)
@@ -83,7 +94,7 @@ namespace Intersect_Editor.Forms
             }
             else
             {
-                statusString = "Failed to connect, retrying in " + ((Globals.ReconnectTime - Globals.System.GetTimeMs())/1000).ToString("0") + " seconds.";
+                statusString = Strings.Get("login", "failedtoconnect",((Globals.ReconnectTime - Globals.System.GetTimeMs())/1000).ToString("0"));
                 btnLogin.Enabled = false;
             }
             Globals.LoginForm.lblStatus.Text = statusString;
@@ -91,7 +102,7 @@ namespace Intersect_Editor.Forms
             {
                 if (clsProcess.ProcessName.Contains("raptr"))
                 {
-                    Globals.LoginForm.lblStatus.Text = "Please close AMD Gaming Evolved before logging into the Intersect editor.";
+                    Globals.LoginForm.lblStatus.Text = Strings.Get("login", "raptr");
                     btnLogin.Enabled = false;
                 }
             }

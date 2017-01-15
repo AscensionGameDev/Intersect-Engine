@@ -42,10 +42,10 @@ namespace Intersect_Editor.Forms
             this.btnRename = new System.Windows.Forms.ToolStripButton();
             this.btnDelete = new System.Windows.Forms.ToolStripButton();
             this.newMapToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.newFolderToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.renameToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.deleteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.newFolderToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+            this.newFolderToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.mapTreeList = new Intersect_Editor.Forms.Controls.MapTreeList();
             this.toolStrip1.SuspendLayout();
             this.contextMenuStrip1.SuspendLayout();
@@ -153,13 +153,13 @@ namespace Intersect_Editor.Forms
             this.newMapToolStripMenuItem.Text = "New Map";
             this.newMapToolStripMenuItem.Click += new System.EventHandler(this.btnNewMap_Click);
             // 
-            // newFolderToolStripMenuItem
+            // renameToolStripMenuItem
             // 
-            this.newFolderToolStripMenuItem.ForeColor = System.Drawing.Color.Gainsboro;
-            this.newFolderToolStripMenuItem.Name = "newFolderToolStripMenuItem";
-            this.newFolderToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
-            this.newFolderToolStripMenuItem.Text = "Rename";
-            this.newFolderToolStripMenuItem.Click += new System.EventHandler(this.btnRename_Click);
+            this.renameToolStripMenuItem.ForeColor = System.Drawing.Color.Gainsboro;
+            this.renameToolStripMenuItem.Name = "renameToolStripMenuItem";
+            this.renameToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.renameToolStripMenuItem.Text = "Rename";
+            this.renameToolStripMenuItem.Click += new System.EventHandler(this.btnRename_Click);
             // 
             // deleteToolStripMenuItem
             // 
@@ -174,20 +174,20 @@ namespace Intersect_Editor.Forms
             this.contextMenuStrip1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
             this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.newMapToolStripMenuItem,
-            this.newFolderToolStripMenuItem1,
             this.newFolderToolStripMenuItem,
+            this.renameToolStripMenuItem,
             this.deleteToolStripMenuItem});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
             this.contextMenuStrip1.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
             this.contextMenuStrip1.Size = new System.Drawing.Size(153, 114);
             // 
-            // newFolderToolStripMenuItem1
+            // newFolderToolStripMenuItem
             // 
-            this.newFolderToolStripMenuItem1.ForeColor = System.Drawing.Color.Gainsboro;
-            this.newFolderToolStripMenuItem1.Name = "newFolderToolStripMenuItem1";
-            this.newFolderToolStripMenuItem1.Size = new System.Drawing.Size(152, 22);
-            this.newFolderToolStripMenuItem1.Text = "New Folder";
-            this.newFolderToolStripMenuItem1.Click += new System.EventHandler(this.btnNewFolder_Click);
+            this.newFolderToolStripMenuItem.ForeColor = System.Drawing.Color.Gainsboro;
+            this.newFolderToolStripMenuItem.Name = "newFolderToolStripMenuItem";
+            this.newFolderToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.newFolderToolStripMenuItem.Text = "New Folder";
+            this.newFolderToolStripMenuItem.Click += new System.EventHandler(this.btnNewFolder_Click);
             // 
             // mapTreeList
             // 
@@ -209,6 +209,7 @@ namespace Intersect_Editor.Forms
             this.Controls.Add(this.mapTreeList);
             this.Controls.Add(this.toolStrip1);
             this.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "frmMapList";
             this.Text = "Map List";
             this.Load += new System.EventHandler(this.frmMapList_Load);
@@ -229,10 +230,10 @@ namespace Intersect_Editor.Forms
         private System.Windows.Forms.ToolStripButton btnNewMap;
         private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
         private System.Windows.Forms.ToolStripMenuItem deleteToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem newFolderToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem renameToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem newMapToolStripMenuItem;
         public Controls.MapTreeList mapTreeList;
         private System.Windows.Forms.ToolStripButton toolSelectMap;
-        private System.Windows.Forms.ToolStripMenuItem newFolderToolStripMenuItem1;
+        private System.Windows.Forms.ToolStripMenuItem newFolderToolStripMenuItem;
     }
 }

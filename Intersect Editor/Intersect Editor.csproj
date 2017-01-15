@@ -698,6 +698,26 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Icon.ico" />
+    <None Include="Resources\1_A.png" />
+    <None Include="Resources\1_B Hide.png" />
+    <None Include="Resources\1_B.png" />
+    <None Include="Resources\2_A Hide.png" />
+    <None Include="Resources\2_A.png" />
+    <None Include="Resources\2_B Hide.png" />
+    <None Include="Resources\2_B.png" />
+    <None Include="Resources\3_A Hide.png" />
+    <None Include="Resources\3_A.png" />
+    <None Include="Resources\3_B Hide.png" />
+    <None Include="Resources\3_B.png" />
+    <None Include="Resources\4_A Hide.png" />
+    <None Include="Resources\4_A.png" />
+    <None Include="Resources\4_B Hide.png" />
+    <None Include="Resources\4_B.png" />
+    <None Include="Resources\5_A Hide.png" />
+    <None Include="Resources\5_A.png" />
+    <None Include="Resources\5_B Hide.png" />
+    <None Include="Resources\5_B.png" />
+    <None Include="Resources\1_A Hide.png" />
     <Content Include="sqlite3.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

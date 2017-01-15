@@ -1,6 +1,333 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Strings>
-	<Main>
-		<string id="title">{00}</string>
-	</Main>
+	<Login>
+		<string id="title">Intersect Editor Login</string>
+		<string id="version">Editor v{00}</string>
+		<string id="gettingstarted">Getting Started?
+		1. Start the Intersect Server
+		2. Open the Intersect Client and Create an Account
+		3. Login to that account here to start designing your game!</string>
+		<string id="username">Username: </string>
+		<string id="password">Password: </string>
+		<string id="rememberme">Remember Me</string>
+		<string id="connecting">Connecting to server...</string>
+		<string id="connected">Connected to server. Ready to login!</string>
+		<string id="failedtoconnect">Failed to connect, retrying in {00} seconds.</string>
+		<string id="raptr">Please close AMD Gaming Evolved before logging into the Intersect editor.</string>
+		<string id="login">Login</string>
+	</Login>
+	<About>
+		<string id="title">About</string>
+		<string id="version">v{00}</string>
+		<string id="site">Click here to visit the Ascension Game Dev community for support, updates and more!</string>
+	</About>
+	<Options>
+		<string id="title">Options</string>
+		<string id="generaltab">General</string>
+		<string id="tilesetwarning">Suppress large tileset size warning.</string>
+		<string id="pathgroup">Client Path</string>
+		<string id="browsebtn">Browse</string>
+		<string id="dialogueheader">Browse for client...</string>
+		<string id="dialogueallfiles">All Files</string>
+	</Options>
+	<Directions>
+		<string id="-1">Retain Direction</string>
+		<string id="0">Up</string>
+		<string id="1">Down</string>
+		<string id="2">Left</string>
+		<string id="3">Right</string>
+	</Directions>
+	<Warping>
+		<string id="map">Map: {00}</string>
+		<string id="x">X: {00}</string>
+		<string id="y">Y: {00}</string>
+		<string id="direction">Dir: {00}</string>
+		<string id="visual">Open Visual Interface</string>
+	</Warping>
+	<WarpSelection>
+		<string id="title">Warp Tile Selection</string>
+		<string id="mapselectiontitle">Map Selection</string>
+		<string id="mappreview">Map Preview</string>
+		<string id="chronological">Chronological</string>
+		<string id="maplist">Map List</string>
+		<string id="okay">Ok</string>
+		<string id="cancel">Cancel</string>
+	</WarpSelection>
+	<Mapping>
+		<string id="editortitle">Map Editor</string>
+		<string id="savemap">Save current map?</string>
+		<string id="savemapdialoguesure">Are you sure you want to save your current map?</string>
+		<string id="savemapdialogue">Do you want to save your current map?</string>
+		<string id="createmap">Create new map.</string>
+		<string id="createmapdialogue">Do you want to create a map here?</string>
+		<string id="diagonalwarning">Cannot create maps diagonally!</string>
+		<string id="filllayer">Fill Layer</string>
+		<string id="filllayerdialogue">Are you sure you want to fill this layer?</string>
+		<string id="eraselayer">Erase Layer</string>
+		<string id="eraselayerdialogue">Are you sure you want to erase this layer?</string>
+		<string id="newmap">Are you sure you want to create a new, unconnected map?</string>
+		<string id="newmapcaption">New Map</string>
+	</Mapping>
+	<MapGrid>
+		<string id="title">Map Grid</string>
+		<string id="screenshotworld">Take a world screenshot</string>
+		<string id="gridlines">Show/Hide Grid Lines</string>
+		<string id="preview">Fetch Preview</string>
+		<string id="downloadmissing">Download Missing Previews</string>
+		<string id="downloadall">Re-Download All Previews</string>
+		<string id="unlink">Unlink Map</string>
+		<string id="link">Link Map</string>
+		<string id="recache">Recache Map</string>
+		<string id="savescreenshotdialogue">Save a screenshot of the world</string>
+		<string id="savescreenshottitle">Save Screenshot?</string>
+		<string id="savescreenshotconfirm">Are you sure you want to save a screenshot of your world to a file? This could take several minutes!</string>
+		<string id="savingscreenshot">Saving Screenshot</string>
+		<string id="savingrow">Saving Row: {00} / {01}</string>
+		<string id="fetchcaption">Fetch Preview?</string>
+		<string id="clearandfetch">Are you sure you want to clear the existing previews and fetch previews for each map on this grid? This could take several minutes based on the number of maps in this grid!</string>
+		<string id="justfetch">Are you sure you want to fetch previews for each map? This could take several minutes based on the number of maps in this grid!</string>
+		<string id="keepmapcache">Use your current settings with the map cache? (No to disable lighting/fogs/other effects)</string>
+		<string id="mapcachecaption">Map Cache Options</string>
+		<string id="fetchingmaps">Fetching Map Previews</string>
+		<string id="fetchingprogress">Fetching Maps {00} / {01}</string>
+		<string id="unlinkprompt">Are you sure you want to unlink map {00}?</string>
+		<string id="unlinkcaption">Unlink Map</string>
+	</MapGrid>
+	<MapList>
+		<string id="title">Map List</string>
+		<string id="chronological">Order Chronologically</string>
+		<string id="selectcurrent">Select Current Map</string>
+		<string id="newmap">New Map</string>
+		<string id="newfolder">New Folder</string>
+		<string id="rename">Rename</string>
+		<string id="delete">Delete</string>
+		<string id="selecttodelete">Please select a folder or map to delete.</string>
+		<string id="selecttorename">Please select a folder or map to rename.</string>
+		<string id="deleteconfirm">Are you sure you want to delete {00}?</string>
+	</MapList>
+	<MapLayers>
+		<string id="title">Map Layers</string>
+		<string id="tiles">Tiles</string>
+		<string id="attributes">Attributes</string>
+		<string id="lights">Lights</string>
+		<string id="events">Events</string>
+		<string id="npcs">Npcs</string>
+		<string id="eventinstructions">Double click a tile on the map to create an event!</string>
+		<string id="lightinstructions">Lower the maps brightness and double click on a tile to create a light!</string>
+	</MapLayers>
+	<MapProperties>
+		<string id="title">Map Properties</string>
+		<string id="general">General</string>
+		<string id="audio">Audio</string>
+		<string id="lighting">Lighting</string>
+		<string id="overlay">Overlay</string>
+		<string id="fog">Fog</string>
+		<string id="misc">Misc</string>
+		
+		<string id="name">Name</string>
+		<string id="namedesc">The name of this map.</string>
+		
+		<string id="zonetype">Zone Type</string>
+		<string id="zonedesc">The type of map this is.</string>
+		
+		<string id="music">Music</string>
+		<string id="musicdesc">Looping background music for this map.</string>
+		
+		<string id="sound">Sound</string>
+		<string id="sounddesc">Looping sound effect for this map.</string>
+		
+		<string id="isindoors">Is Indoors</string>
+		<string id="isindoorsdesc">Is this map indoors?</string>
+		
+		<string id="brightness">Brightness</string>
+		<string id="brightnessdesc">How bright is this map? (Range: 0 to 100).</string>
+		
+		<string id="playerlightsize">Player Light Size</string>
+		<string id="playerlightsizedesc">How large is the light around the player? (In pixels 0-1000)</string>
+		
+		<string id="playerlightexpand">Player Light Expand</string>
+		<string id="playerlightexpanddesc">How far into the light does the effect start fading? (0.00 to 1.00)</string>
+		
+		<string id="playerlightintensity">Player Light Intensity</string>
+		<string id="playerlightintensitydesc">How strong the light is at its brightest point. (0 to 255)</string>
+		
+		<string id="playerlightcolor">Player Light Color</string>
+		<string id="playerlightcolordesc">Which color is the players light? (Default: White)</string>
+		
+		<string id="rhue">RHue</string>
+		<string id="rhuedesc">The amount of red in the overlay. (Range: 0 to 255)</string>
+		
+		<string id="ghue">GHue</string>
+		<string id="ghuedesc">The amount of green in the overlay. (Range: 0 to 255)</string>
+		
+		<string id="bhue">BHue</string>
+		<string id="bhuedesc">The amount of blue in the overlay. (Range: 0 to 255)</string>
+		
+		<string id="ahue">AHue</string>
+		<string id="ahuedesc">How strong the overlay appears. (Range: 0 [transparent/invisible] to 255 [solid/can't see map])</string>
+		
+		<string id="fog">Fog</string>
+		<string id="fogdesc">The overlayed image on the map. Generally used for fogs or sun beam effects.</string>
+		
+		<string id="fogxspeed">Fog X Speed</string>
+		<string id="fogxspeeddesc">Fog Horizontal Speed (Range: -5 to 5)</string>
+		
+		<string id="fogyspeed">Fog Y Speed</string>
+		<string id="fogyspeeddesc">Fog Vertical Speed (Range: -5 to 5)</string>
+		
+		<string id="fogalpha">Fog Alpha</string>
+		<string id="fogalphadesc">How strong the fog overlay appears. (Range: 0 [transparent/invisible] to 255 [solid/can't see map])</string>
+		
+		<string id="panorama">Panorama</string>
+		<string id="panormadesc">This is an image that appears behind the map. It can be seen where no tiles are placed.</string>
+		
+		<string id="overlaygraphic">Overlay Graphic</string>
+		<string id="overlaygraphicdesc">This is an image that appears above the map. (Not shown in editor.)</string>
+	</MapProperties>
+	<Tiles>
+		<string id="layer">Layer:</string>
+		<string id="tileset">Tileset:</string>
+		<string id="tiletype">Tile Type:</string>
+		<string id="layer0">Ground</string>
+		<string id="layer1">Mask</string>
+		<string id="layer2">Mask 2</string>
+		<string id="layer3">Fringe</string>
+		<string id="layer4">Fringe 2</string>
+		<string id="normal">Normal</string>
+		<string id="autotile">Autotile</string>
+		<string id="fake">Fake</string>
+		<string id="animated">Animated</string>
+		<string id="cliff">Cliff</string>
+		<string id="waterfall">Waterfall</string>
+	</Tiles>
+	<Attributes>
+		<string id="blocked">Blocked</string>
+		<string id="zdimension">Z-Dimension</string>
+		<string id="npcavoid">NPC Avoid</string>
+		<string id="warp">Warp</string>
+		<string id="itemspawn">Item Spawn</string>
+		<string id="mapsound">Map Sound</string>
+		<string id="resourcespawn">Resource</string>
+		<string id="mapanimation">Animation</string>
+		<string id="grapple">Grapple Stone</string>
+		<string id="slide">Slide</string>
+		
+		<!-- Z-Dimension -->
+		<string id="zgateway">Gateway</string>
+		<string id="zblock">Block</string>
+		<string id="znone">None</string>
+		<string id="zlevel1">Level 1</string>
+		<string id="zlevel2">Level 2</string>
+		
+		<!-- Warping (Uses Warping) -->
+		
+		<!-- Item Spawn -->
+		<string id="item">Item:</string>
+		<string id="quantity">Quantity: {00}</string>
+		
+		<!-- Map Sound -->
+		<string id="sound">Sound:</string>
+		<string id="distance">Distance: {00} Tile(s)</string>
+		
+		<!-- Resource (Uses Z-Dimension Translations) -->
+		<string id="resource">Resource:</string>
+		
+		<!-- Animation -->
+		<string id="animation">Animation:</string>
+		
+		<!-- Slide (Uses Directions) -->
+		<string id="dir">Dir:</string>
+	</Attributes>
+	<NpcSpawns>
+		<string id="spawnrandom">Spawn Location: Random</string>
+		<string id="spawndeclared">Spawn Location: Declared</string>
+		<string id="declaredlocation">Declared</string>
+		<string id="randomlocation">Random</string>
+		<string id="direction">Direction:</string>
+		<string id="randomdirection">Random</string>
+		<string id="addremove">Add/Remove Map NPCs</string>
+		<string id="add">Add</string>
+		<string id="remove">Remove</string>
+	</NpcSpawns>
+	<LightEditor>
+		<string id="title">Light Editor</string>
+		<string id="xoffset">Offset X:</string>
+		<string id="yoffset">Offset Y:</string>
+		<string id="color">Color:</string>
+		<string id="selectcolor">Select Color</string>
+		<string id="intensity">Intensity:</string>
+		<string id="size">Size:</string>
+		<string id="expandamt">Expand Amt:</string>
+		<string id="save">Save</string>
+		<string id="revert">Revert</string>
+	</LightEditor>
+	<ProgressForm>
+		<string id="cancel">Cancel</string>
+	</ProgressForm>
+	<MainForm>
+		<string id="title">Intersect Editor - {00}</string>
+		<string id="file">File</string>
+		<string id="savemap">Save Map</string>
+		<string id="newmap">New Map</string>
+		<string id="importmap">Import Map</string>
+		<string id="exportmap">Export Map</string>
+		<string id="options">Options</string>
+		<string id="exit">Exit</string>
+		<string id="edit">Edit</string>
+		<string id="undo">Undo</string>
+		<string id="redo">Redo</string>
+		<string id="cut">Cut</string>
+		<string id="copy">Copy</string>
+		<string id="paste">Paste</string>
+		<string id="fill">Fill</string>
+		<string id="erase">Erase</string>
+		<string id="selectlayers">Select...</string>
+		<string id="alllayers">All Layers</string>
+		<string id="currentonly">Current Layer Only</string>
+		<string id="view">View</string>
+		<string id="darkness">Darkness</string>
+		<string id="fog">Fog</string>
+		<string id="overlay">Overlay</string>
+		<string id="tilepreview">Tile Preview</string>
+		<string id="resources">Resources</string>
+		<string id="grid">Map Grid</string>
+		<string id="editors">Game Editors</string>
+		<string id="animationeditor">Animation Editor</string>
+		<string id="classeditor">Class Editor</string>
+		<string id="commoneventeditor">Common Event Editor</string>
+		<string id="craftingbencheditor">Crafting Bench Editor</string>
+		<string id="itemeditor">Item Editor</string>
+		<string id="npceditor">Npc Editor</string>
+		<string id="projectileeditor">Projectile Editor</string>
+		<string id="questeditor">Quest Editor</string>
+		<string id="resourceeditor">Resource Editor</string>
+		<string id="shopeditor">Shop Editor</string>
+		<string id="spelleditor">Spell Editor</string>
+		<string id="switchvariableeditor">Switch and Variable Editor</string>
+		<string id="timeeditor">Time Editor</string>
+		<string id="help">Help</string>
+		<string id="postquestion">Post Question</string>
+		<string id="reportbug">Report Bug</string>
+		<string id="about">About</string>
+		<string id="pen">Pen Tool</string>
+		<string id="selection">Selection Tool</string>
+		<string id="rectangle">Rectangle Tool</string>
+		<string id="droppler">Droppler Tool</string>
+		<string id="lighting">Toggle Time of Day Simulation On/Off</string>
+		<string id="screenshot">Screenshot Map</string>
+		<string id="run">Run Client</string>
+		<string id="donate">Buy the devs a coffee :)</string>
+		
+		<string id="loc">CurX: {00}  CurY: {01}</string>
+		<string id="revision">Revision: {00}</string>
+		<string id="fps">FPS: {00}</string>
+	</MainForm>
+	<Errors>
+		<string id="disconnected">Disconnected!</string>
+		<string id="disconnectedclosing">You have lost connection to the server. The editor will now close.</string>
+		<string id="disconnectedsavecaption">Disconnected -- Export Map?</string>
+		<string id="disconnectedsave">You have been disconnected from the server! Would you like to export this map before closing this editor?</string>
+		<string id="importfailed">Cannot import map. Currently selected map is not an Intersect map file or was exported with a different version of the Intersect editor!</string>
+		<string id="importfailedcaption">Failed to import map!</string>
+	</Errors>
 </Strings>

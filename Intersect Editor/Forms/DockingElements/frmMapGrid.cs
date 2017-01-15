@@ -11,6 +11,7 @@ using Intersect_Editor.Classes;
 using Intersect_Editor.Classes.Maps;
 using Microsoft.Xna.Framework.Graphics;
 using WeifenLuo.WinFormsUI.Docking;
+using Intersect_Library.Localization;
 
 namespace Intersect_Editor.Forms.DockingElements
 {
@@ -36,6 +37,20 @@ namespace Intersect_Editor.Forms.DockingElements
         {
             CreateSwapChain();
             if (Globals.MapGrid == null) Globals.MapGrid = new MapGrid(linkMapToolStripMenuItem,unlinkMapToolStripMenuItem,recacheMapToolStripMenuItem, contextMenuStrip);
+            InitLocalization();
+        }
+
+        private void InitLocalization()
+        {
+            this.Text = Strings.Get("mapgrid", "title");
+            btnScreenshotWorld.Text = Strings.Get("mapgrid", "screenshotworld");
+            btnGridView.Text = Strings.Get("mapgrid", "gridlines");
+            btnFetchPreview.Text = Strings.Get("mapgrid", "preview");
+            downloadMissingPreviewsToolStripMenuItem.Text = Strings.Get("mapgrid", "downloadmissing");
+            reDownloadAllPreviewsToolStripMenuItem.Text = Strings.Get("mapgrid", "downloadall");
+            unlinkMapToolStripMenuItem.Text = Strings.Get("mapgrid", "unlink");
+            linkMapToolStripMenuItem.Text = Strings.Get("mapgrid", "link");
+            recacheMapToolStripMenuItem.Text = Strings.Get("mapgrid", "recache");
         }
 
         public void InitGridWindow()

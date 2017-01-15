@@ -4,6 +4,7 @@ using DarkUI.Controls;
 using Intersect_Editor.Classes;
 using Intersect_Library;
 using Intersect_Library.GameObjects;
+using Intersect_Library.Localization;
 
 namespace Intersect_Editor.Forms.Controls
 {
@@ -35,6 +36,21 @@ namespace Intersect_Editor.Forms.Controls
             scrlLightSize.Value = tmpLight.Size;
             pnlLightColor.BackColor = System.Drawing.Color.FromArgb(tmpLight.Color.A, tmpLight.Color.R, tmpLight.Color.G, tmpLight.Color.B);
             if (!CanClose) btnOkay.Hide();
+            InitLocalization();
+        }
+
+        private void InitLocalization()
+        {
+            grpLightEditor.Text = Strings.Get("lighteditor", "title");
+            lblOffsetX.Text = Strings.Get("lighteditor", "xoffset");
+            lblOffsetY.Text = Strings.Get("lighteditor", "yoffset");
+            lblColor.Text = Strings.Get("lighteditor", "color");
+            btnSelectLightColor.Text = Strings.Get("lighteditor", "selectcolor");
+            lblIntensity.Text = Strings.Get("lighteditor", "intensity");
+            lblSize.Text = Strings.Get("lighteditor", "size");
+            lblExpandAmt.Text = Strings.Get("lighteditor", "expandamt");
+            btnOkay.Text = Strings.Get("lighteditor", "save");
+            btnCancel.Text = Strings.Get("lighteditor", "revert");
         }
 
         //Lights Tab
@@ -199,6 +215,11 @@ namespace Intersect_Editor.Forms.Controls
             {
                 //ignore
             }
+        }
+
+        private void scrlLightIntensity_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }

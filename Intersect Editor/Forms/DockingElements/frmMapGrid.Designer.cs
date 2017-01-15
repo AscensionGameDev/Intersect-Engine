@@ -53,6 +53,7 @@ namespace Intersect_Editor.Forms.DockingElements
             this.pnlMapGrid.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.pnlMapGrid.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
             this.pnlMapGrid.Location = new System.Drawing.Point(0, 25);
             this.pnlMapGrid.Name = "pnlMapGrid";
             this.pnlMapGrid.Size = new System.Drawing.Size(362, 146);
@@ -97,6 +98,7 @@ namespace Intersect_Editor.Forms.DockingElements
             // 
             // downloadMissingPreviewsToolStripMenuItem
             // 
+            this.downloadMissingPreviewsToolStripMenuItem.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
             this.downloadMissingPreviewsToolStripMenuItem.Name = "downloadMissingPreviewsToolStripMenuItem";
             this.downloadMissingPreviewsToolStripMenuItem.Size = new System.Drawing.Size(221, 22);
             this.downloadMissingPreviewsToolStripMenuItem.Text = "Download Missing Previews";
@@ -104,6 +106,7 @@ namespace Intersect_Editor.Forms.DockingElements
             // 
             // reDownloadAllPreviewsToolStripMenuItem
             // 
+            this.reDownloadAllPreviewsToolStripMenuItem.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
             this.reDownloadAllPreviewsToolStripMenuItem.Name = "reDownloadAllPreviewsToolStripMenuItem";
             this.reDownloadAllPreviewsToolStripMenuItem.Size = new System.Drawing.Size(221, 22);
             this.reDownloadAllPreviewsToolStripMenuItem.Text = "Re-Download All Previews";
@@ -134,27 +137,32 @@ namespace Intersect_Editor.Forms.DockingElements
             // 
             // contextMenuStrip
             // 
+            this.contextMenuStrip.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
             this.contextMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.unlinkMapToolStripMenuItem,
             this.linkMapToolStripMenuItem,
             this.recacheMapToolStripMenuItem});
             this.contextMenuStrip.Name = "mapMenuStrip";
+            this.contextMenuStrip.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
             this.contextMenuStrip.Size = new System.Drawing.Size(146, 70);
             // 
             // unlinkMapToolStripMenuItem
             // 
+            this.unlinkMapToolStripMenuItem.ForeColor = System.Drawing.Color.Gainsboro;
             this.unlinkMapToolStripMenuItem.Name = "unlinkMapToolStripMenuItem";
             this.unlinkMapToolStripMenuItem.Size = new System.Drawing.Size(145, 22);
             this.unlinkMapToolStripMenuItem.Text = "Unlink Map";
             // 
             // linkMapToolStripMenuItem
             // 
+            this.linkMapToolStripMenuItem.ForeColor = System.Drawing.Color.Gainsboro;
             this.linkMapToolStripMenuItem.Name = "linkMapToolStripMenuItem";
             this.linkMapToolStripMenuItem.Size = new System.Drawing.Size(145, 22);
             this.linkMapToolStripMenuItem.Text = "Link Map";
             // 
             // recacheMapToolStripMenuItem
             // 
+            this.recacheMapToolStripMenuItem.ForeColor = System.Drawing.Color.Gainsboro;
             this.recacheMapToolStripMenuItem.Name = "recacheMapToolStripMenuItem";
             this.recacheMapToolStripMenuItem.Size = new System.Drawing.Size(145, 22);
             this.recacheMapToolStripMenuItem.Text = "Recache Map";
@@ -170,6 +178,7 @@ namespace Intersect_Editor.Forms.DockingElements
             this.Controls.Add(this.pnlMapGrid);
             this.DockAreas = WeifenLuo.WinFormsUI.Docking.DockAreas.Document;
             this.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.KeyPreview = true;
             this.Name = "frmMapGrid";
             this.Text = "Map Grid";

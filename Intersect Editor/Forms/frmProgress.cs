@@ -21,6 +21,7 @@
 */
 using System;
 using System.Windows.Forms;
+using Intersect_Library.Localization;
 
 namespace Intersect_Editor.Forms
 {
@@ -33,6 +34,12 @@ namespace Intersect_Editor.Forms
         public frmProgress()
         {
             InitializeComponent();
+            InitLocalization();
+        }
+
+        private void InitLocalization()
+        {
+            btnCancel.Text = Strings.Get("progressform", "cancel");
         }
 
         public void SetTitle(string title)

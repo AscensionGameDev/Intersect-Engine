@@ -1,8 +1,10 @@
 ﻿using Intersect_Editor.Classes;
 using System;
 using System.Windows.Forms;
+using DarkUI.Forms;
 using Intersect_Editor.Classes.General;
 using Intersect_Library.GameObjects.Maps.MapList;
+using Intersect_Library.Localization;
 using WeifenLuo.WinFormsUI.Docking;
 
 namespace Intersect_Editor.Forms
@@ -22,8 +24,7 @@ namespace Intersect_Editor.Forms
         {
             if (e.Node.Tag.GetType() == typeof(MapListMap))
             {
-                //Should ask if the user wants to save changes
-                if (Globals.CurrentMap.Changed() && MessageBox.Show(@"Do you want to save your current map?", @"Save current map?", MessageBoxButtons.YesNo) == DialogResult.Yes)
+                if (Globals.CurrentMap.Changed() && DarkMessageBox.ShowInformation(Strings.Get("mapping", "savemapdialogue"), Strings.Get("mapping", "savemap"), DarkDialogButton.YesNo) == DialogResult.Yes)
                 {
                     SaveMap();
                 }
@@ -45,7 +46,24 @@ namespace Intersect_Editor.Forms
         }
         private void frmMapList_Load(object sender, EventArgs e)
         {
+            InitLocalization();
         }
+
+        private void InitLocalization()
+        {
+            this.Text = Strings.Get("maplist","title");   
+            btnChronological.Text  = Strings.Get("maplist", "chronological");
+            toolSelectMap.Text = Strings.Get("maplist", "selectcurrent");
+            btnNewMap.Text = Strings.Get("maplist", "newmap");
+            btnNewFolder.Text = Strings.Get("maplist", "newfolder");
+            btnRename.Text = Strings.Get("maplist", "rename");
+            btnDelete.Text = Strings.Get("maplist", "delete");
+            newMapToolStripMenuItem.Text = Strings.Get("maplist", "newmap");
+            renameToolStripMenuItem.Text = Strings.Get("maplist", "rename");
+            newFolderToolStripMenuItem.Text = Strings.Get("maplist", "newfolder");
+            deleteToolStripMenuItem.Text = Strings.Get("maplist", "delete");
+        }
+
         private void btnRefreshList_Click(object sender, EventArgs e)
         {
             mapTreeList.UpdateMapList();
@@ -65,7 +83,7 @@ namespace Intersect_Editor.Forms
         {
             if (mapTreeList.list.SelectedNode == null)
             {
-                MessageBox.Show(@"Please select a folder or map to rename.", @"Rename");
+                DarkMessageBox.ShowError(Strings.Get("maplist","selecttorename"), Strings.Get("maplist","rename"));
             }
             else
             {
@@ -76,11 +94,11 @@ namespace Intersect_Editor.Forms
         {
             if (mapTreeList.list.SelectedNode == null)
             {
-                MessageBox.Show(@"Please select a folder or map to delete.", @"Delete");
+                DarkMessageBox.ShowError(Strings.Get("maplist", "selecttodelete"), Strings.Get("maplist", "delete"));
             }
             else
             {
-                if (MessageBox.Show(@"Are you sure you want to delete " + ((MapListItem)mapTreeList.list.SelectedNode.Tag).Name, @"Delete", MessageBoxButtons.YesNo) == System.Windows.Forms.DialogResult.Yes)
+                if (DarkMessageBox.ShowWarning(Strings.Get("maplist","deleteconfirm",((MapListItem)mapTreeList.list.SelectedNode.Tag).Name), Strings.Get("maplist", "delete"), DarkDialogButton.YesNo) == System.Windows.Forms.DialogResult.Yes)
                 {
                     PacketSender.SendDelete((MapListItem)mapTreeList.list.SelectedNode.Tag);
                 }
@@ -94,10 +112,8 @@ namespace Intersect_Editor.Forms
         }
         private void btnNewMap_Click(object sender, EventArgs e)
         {
-            if (
-                MessageBox.Show(@"Are you sure you want to create a new, unconnected map?", @"New Map",
-                    MessageBoxButtons.YesNo) != DialogResult.Yes) return;
-            if (Globals.CurrentMap.Changed() && MessageBox.Show(@"Do you want to save your current map?", @"Save current map?", MessageBoxButtons.YesNo) == DialogResult.Yes)
+            if (DarkMessageBox.ShowWarning(Strings.Get("mapping", "newmap"), Strings.Get("mapping", "newmapcaption"), DarkDialogButton.YesNo) != DialogResult.Yes) return;
+            if (Globals.CurrentMap.Changed() && DarkMessageBox.ShowInformation(Strings.Get("mapping", "savemapdialogue"), Strings.Get("mapping", "savemap"), DarkDialogButton.YesNo) == DialogResult.Yes)
             {
                 SaveMap();
             }

@@ -1,8 +1,11 @@
 ﻿using Intersect_Editor.Classes;
 using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
+using System.Reflection;
 using System.Windows.Forms;
+using DarkUI.Controls;
 using Intersect_Editor.Classes.Core;
 using Intersect_Library;
 using Intersect_Library.GameObjects;
@@ -10,6 +13,7 @@ using Intersect_Library.GameObjects.Maps;
 using Intersect_Library.GameObjects.Maps.MapList;
 using Microsoft.Xna.Framework.Graphics;
 using WeifenLuo.WinFormsUI.Docking;
+using Intersect_Library.Localization;
 
 namespace Intersect_Editor.Forms
 {
@@ -27,15 +31,28 @@ namespace Intersect_Editor.Forms
         private SwapChainRenderTarget _chain;
         private bool _tMouseDown;
         public LayerTabs CurrentTab = LayerTabs.Tiles;
+        private List<PictureBox> _mapLayers = new List<PictureBox>();
+        public List<bool> LayerVisibility = new List<bool>();
+        private int _lastTileLayer;
         public frmMapLayers()
         {
             InitializeComponent();
+            _mapLayers.Add(picGround);
+            LayerVisibility.Add(true);
+            _mapLayers.Add(picMask);
+            LayerVisibility.Add(true);
+            _mapLayers.Add(picMask2);
+            LayerVisibility.Add(true);
+            _mapLayers.Add(picFringe);
+            LayerVisibility.Add(true);
+            _mapLayers.Add(picFringe2);
+            LayerVisibility.Add(true);
         }
 
         public void Init()
         {
             cmbAutotile.SelectedIndex = 0;
-            cmbMapLayer.SelectedIndex = 0;
+            SetLayer(0);
             if (cmbTilesets.Items.Count > 0)
             {
                 SetTileset(cmbTilesets.Items[0].ToString());
@@ -206,8 +223,38 @@ namespace Intersect_Editor.Forms
             Globals.CurrentLayer = index;
             if (index < Options.LayerCount)
             {
-                cmbMapLayer.SelectedIndex = index;
+                for (int i = 0; i < _mapLayers.Count; i++)
+                {
+                    if (i == index)
+                    {
+                        if (!LayerVisibility[i])
+                        {
+                            _mapLayers[i].BackgroundImage =(Bitmap)Properties.Resources.ResourceManager.GetObject("_" + (i + 1) + "_A_Hide");
+                        }
+                        else
+                        {
+                            _mapLayers[i].BackgroundImage =(Bitmap)Properties.Resources.ResourceManager.GetObject("_" + (i + 1) + "_A");
+                        }
+                    }
+                    else
+                    {
+                        if (!LayerVisibility[i])
+                        {
+                            _mapLayers[i].BackgroundImage = (Bitmap)Properties.Resources.ResourceManager.GetObject("_" + (i + 1) + "_B_Hide");
+                        }
+                        else
+                        {
+                            _mapLayers[i].BackgroundImage = (Bitmap)Properties.Resources.ResourceManager.GetObject("_" + (i + 1) + "_B");
+                        }
+                    }
+                }
+                _lastTileLayer = index;
             }
+            else
+            {
+                
+            }
+            EditorGraphics.TilePreviewUpdated = true;
         }
 
         //Mapping Attribute Functions
@@ -376,23 +423,23 @@ namespace Intersect_Editor.Forms
             return false;
         }
         //Item Attribute
-        private void scrlMaxItemVal_ValueChanged(object sender, EventArgs e)
+        private void scrlMaxItemVal_ValueChanged(object sender, ScrollValueEventArgs e)
         {
-            lblMaxItemAmount.Text = "Quantity: x" + scrlMaxItemVal.Value;
+            lblMaxItemAmount.Text = Strings.Get("attributes", "quantity", scrlMaxItemVal.Value);
         }
         //Warp Attribute
-        private void scrlX_ValueChanged(object sender, EventArgs e)
+        private void scrlX_ValueChanged(object sender, ScrollValueEventArgs e)
         {
-            lblX.Text = "X: " + scrlX.Value;
+            lblX.Text = Strings.Get("warping", "x", scrlX.Value);
         }
-        private void scrlY_ValueChanged(object sender, EventArgs e)
+        private void scrlY_ValueChanged(object sender, ScrollValueEventArgs e)
         {
-            lblY.Text = "Y: " + scrlY.Value;
+            lblY.Text = Strings.Get("warping", "y", scrlY.Value);
         }
         //Sound Attribute
-        private void scrlSoundDistance_Scroll(object sender, ScrollEventArgs e)
+        private void scrlSoundDistance_Scroll(object sender, ScrollValueEventArgs e)
         {
-            lblSoundDistance.Text = "Distance: " + scrlSoundDistance.Value + " Tile(s)";
+            lblSoundDistance.Text = Strings.Get("attributes", "distance", scrlSoundDistance.Value);
         }
 
         public void RefreshNpcList()
@@ -422,12 +469,6 @@ namespace Intersect_Editor.Forms
                     rbDeclared.Checked = true;
                 }
             }
-        }
-
-        private void cmbMapLayer_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            Globals.CurrentLayer = cmbMapLayer.SelectedIndex;
-            EditorGraphics.TilePreviewUpdated = true;
         }
 
         private void frmMapLayers_DockStateChanged(object sender, EventArgs e)
@@ -546,8 +587,8 @@ namespace Intersect_Editor.Forms
                 }
                 scrlX.Value = frmWarpSelection.GetX();
                 scrlY.Value = frmWarpSelection.GetY();
-                lblX.Text = @"X: " + scrlX.Value;
-                lblY.Text = @"Y: " + scrlY.Value;
+                lblX.Text = Strings.Get("warping", "x", scrlX.Value);
+                lblY.Text = Strings.Get("warping", "y", scrlY.Value);
             }
         }
 
@@ -565,6 +606,119 @@ namespace Intersect_Editor.Forms
             CreateSwapChain();
             picTileset.MouseDown += pnlTilesetContainer.AutoDragPanel_MouseDown;
             picTileset.MouseUp += pnlTilesetContainer.AutoDragPanel_MouseUp;
+            InitLocalization();
+        }
+
+        private void InitLocalization()
+        {
+            this.Text = Strings.Get("maplayers", "title");
+            btnTileHeader.Text = Strings.Get("maplayers", "tiles");
+            btnAttributeHeader.Text = Strings.Get("maplayers", "attributes");
+            btnEventsHeader.Text = Strings.Get("maplayers", "events");
+            btnLightsHeader.Text = Strings.Get("maplayers", "lights");
+            btnNpcsHeader.Text = Strings.Get("maplayers", "npcs");
+
+            //Tiles Panel
+            lblLayer.Text = Strings.Get("tiles", "layer");
+            lblTileset.Text = Strings.Get("tiles", "tileset");
+            lblTileType.Text = Strings.Get("tiles", "tiletype");
+            cmbAutotile.Items.Clear();
+            cmbAutotile.Items.Add(Strings.Get("tiles", "normal"));
+            cmbAutotile.Items.Add(Strings.Get("tiles", "autotile"));
+            cmbAutotile.Items.Add(Strings.Get("tiles", "fake"));
+            cmbAutotile.Items.Add(Strings.Get("tiles", "animated"));
+            cmbAutotile.Items.Add(Strings.Get("tiles", "cliff"));
+            cmbAutotile.Items.Add(Strings.Get("tiles", "waterfall"));
+
+            //Attributes Panel
+            rbBlocked.Text = Strings.Get("attributes", "blocked");
+            rbZDimension.Text = Strings.Get("attributes", "zdimension");
+            rbNPCAvoid.Text = Strings.Get("attributes", "npcavoid");
+            rbWarp.Text = Strings.Get("attributes", "warp");
+            rbItem.Text = Strings.Get("attributes", "itemspawn");
+            rbSound.Text = Strings.Get("attributes", "mapsound");
+            rbResource.Text = Strings.Get("attributes", "resourcespawn");
+            rbAnimation.Text = Strings.Get("attributes", "mapanimation");
+            rbGrappleStone.Text = Strings.Get("attributes", "grapple");
+            rbSlide.Text = Strings.Get("attributes", "slide");
+
+            //Map Animation Groupbox
+            grpAnimation.Text = Strings.Get("attributes", "mapanimation");
+            lblAnimation.Text = Strings.Get("attributes", "mapanimation");
+
+            //Slide Groupbox
+            grpSlide.Text = Strings.Get("attributes", "slide");
+            lblSlideDir.Text = Strings.Get("attributes", "dir");
+            cmbSlideDir.Items.Clear();
+            for (int i = -1; i < 4; i++)
+            {
+                cmbSlideDir.Items.Add(Strings.Get("directions", i.ToString()));
+            }
+
+            //Map Sound
+            grpSound.Text = Strings.Get("attributes", "mapsound");
+            lblMapSound.Text = Strings.Get("attributes", "sound");
+            lblSoundDistance.Text = Strings.Get("attributes", "distance", scrlSoundDistance.Value);
+
+            //Map Item
+            grpItem.Text = Strings.Get("attributes", "itemspawn");
+            lblMapItem.Text = Strings.Get("attributes", "item");
+            lblMaxItemAmount.Text = Strings.Get("attributes", "quantity", scrlMaxItemVal.Value);
+
+            //Z-Dimension
+            grpZDimension.Text = Strings.Get("attributes", "zdimension");
+            grpGateway.Text = Strings.Get("attributes", "zgateway");
+            grpDimBlock.Text = Strings.Get("attributes", "zBlock");
+            rbGatewayNone.Text = Strings.Get("attributes", "znone");
+            rbGateway1.Text = Strings.Get("attributes", "zlevel1");
+            rbGateway2.Text = Strings.Get("attributes", "zlevel2");
+            rbBlockNone.Text = Strings.Get("attributes", "znone");
+            rbBlock1.Text = Strings.Get("attributes", "zlevel1");
+            rbBlock2.Text = Strings.Get("attributes", "zlevel2");
+
+            //Warp
+            grpWarp.Text = Strings.Get("attributes", "warp");
+            lblMap.Text = Strings.Get("warping", "map","");
+            lblX.Text = Strings.Get("warping", "x", scrlX.Value);
+            lblY.Text = Strings.Get("warping", "y", scrlY.Value);
+            lblWarpDir.Text = Strings.Get("warping", "dir", "");
+            cmbDirection.Items.Clear();
+            for (int i = -1; i < 4; i++)
+            {
+                cmbDirection.Items.Add(Strings.Get("directions", i.ToString()));
+            }
+            btnVisualMapSelector.Text = Strings.Get("warping", "visual");
+            
+            //Resource
+            grpResource.Text = Strings.Get("attributes", "resourcespawn");
+            lblResource.Text = Strings.Get("attributes", "resource");
+            grpZResource.Text = Strings.Get("attributes", "zdimension");
+            rbLevel1.Text = Strings.Get("attributes", "zlevel1");
+            rbLevel2.Text = Strings.Get("attributes", "zlevel2");
+
+
+            //NPCS Tab
+            grpSpawnLoc.Text = rbDeclared.Checked ? Strings.Get("npcspawns", "spawndeclared") : Strings.Get("npcspawns", "spawnrandom");
+            rbDeclared.Text = Strings.Get("npcspawns", "declaredlocation");
+            rbRandom.Text = Strings.Get("npcspawns", "randomlocation");
+            lblDir.Text = Strings.Get("npcspawns", "direction");
+            cmbDir.Items.Clear();
+            cmbDir.Items.Add(Strings.Get("npcspawns", "randomdirection"));
+            for (int i = 0; i < 4; i++)
+            {
+                cmbDir.Items.Add(Strings.Get("directions", i.ToString()));
+            }
+            grpNpcList.Text = Strings.Get("npcspawns", "addremove");
+            btnAddMapNpc.Text = Strings.Get("npcspawns", "add");
+            btnRemoveMapNpc.Text = Strings.Get("npcspawns", "remove");
+
+            lblEventInstructions.Text = Strings.Get("maplayers", "eventinstructions");
+            lblLightInstructions.Text = Strings.Get("maplayers", "lightinstructions");
+
+            for (int i = 0; i < _mapLayers.Count; i++)
+            {
+                _mapLayers[i].Text = Strings.Get("tiles", "layer" + i);
+            }
         }
 
         public void InitMapLayers()
@@ -628,7 +782,7 @@ namespace Intersect_Editor.Forms
         private void btnTileHeader_Click(object sender, EventArgs e)
         {
             ChangeTab();
-            Globals.CurrentLayer = cmbMapLayer.SelectedIndex;
+            SetLayer(_lastTileLayer);
             EditorGraphics.TilePreviewUpdated = true;
             btnTileHeader.BackColor = System.Drawing.Color.FromArgb(90, 90, 90);
             CurrentTab = LayerTabs.Tiles;
@@ -674,6 +828,30 @@ namespace Intersect_Editor.Forms
             btnNpcsHeader.BackColor = System.Drawing.Color.FromArgb(90, 90, 90);
             CurrentTab = LayerTabs.Npcs;
             pnlNpcs.Show();
+        }
+
+        private void picMapLayer_MouseClick(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Left)
+            {
+                SetLayer(_mapLayers.IndexOf((PictureBox) sender));
+            }
+            else
+            {
+                ToggleLayerVisibility(_mapLayers.IndexOf((PictureBox) sender));
+            }
+        }
+
+        private void ToggleLayerVisibility(int index)
+        {
+            LayerVisibility[index] = !LayerVisibility[index];
+            SetLayer(Globals.CurrentLayer);
+        }
+
+        private void picMapLayer_MouseHover(object sender, EventArgs e)
+        {
+            ToolTip tt = new ToolTip();
+            tt.SetToolTip((PictureBox)sender, Strings.Get("tiles","layer" + _mapLayers.IndexOf((PictureBox)sender)));
         }
     }
 }

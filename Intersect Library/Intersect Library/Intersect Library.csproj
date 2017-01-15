@@ -103,13 +103,13 @@
     <None Include="Resources\Migrator.English.xml" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\Editor.English.xml" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="Resources\Server.English.xml" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\Client.English.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Editor.English.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

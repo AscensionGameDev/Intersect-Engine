@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Intersect_Editor.Classes.Core;
+using Intersect_Library.Localization;
 
 namespace Intersect_Editor.Forms
 {
@@ -17,6 +18,7 @@ namespace Intersect_Editor.Forms
         {
             InitializeComponent();
             InitForm();
+            InitLocalization();
         }
 
         private void InitForm()
@@ -33,6 +35,15 @@ namespace Intersect_Editor.Forms
             txtGamePath.Text = Preferences.LoadPreference("ClientPath");
         }
 
+        private void InitLocalization()
+        {
+            this.Text = Strings.Get("options", "title");
+            btnTileHeader.Text = Strings.Get("options", "generalbtn", Application.ProductVersion);
+            chkSuppressTilesetWarning.Text = Strings.Get("options", "tilesetwarning");
+            grpClientPath.Text = Strings.Get("options", "pathgroup");
+            btnBrowseClient.Text = Strings.Get("options", "browsebtn");
+        }
+
         private void frmOptions_FormClosing(object sender, FormClosingEventArgs e)
         {
             Preferences.SavePreference("SuppressTextureWarning", chkSuppressTilesetWarning.Checked.ToString());
@@ -43,11 +54,11 @@ namespace Intersect_Editor.Forms
         {
             OpenFileDialog dialogue = new OpenFileDialog();
 
-            dialogue.Title = "Browse for Client...";
+            dialogue.Title = Strings.Get("options","dialogueheader");
             dialogue.CheckFileExists = true;
             dialogue.CheckPathExists = true;
             dialogue.DefaultExt = "exe";
-            dialogue.Filter = "(*.exe)|*.exe|All Files(*.*)|*.*";
+            dialogue.Filter = "(*.exe)|*.exe|" + Strings.Get("options","dialogueallfiles") + "(*.*)|*.*";
             dialogue.RestoreDirectory = true;
             dialogue.ReadOnlyChecked = true;
             dialogue.ShowReadOnly = true;
