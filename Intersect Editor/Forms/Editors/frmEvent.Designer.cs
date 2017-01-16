@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel;
 using System.Windows.Forms;
+using DarkUI.Controls;
 
 namespace Intersect_Editor.Forms
 {
@@ -32,133 +33,175 @@ namespace Intersect_Editor.Forms
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.ListViewGroup listViewGroup1 = new System.Windows.Forms.ListViewGroup("Dialog", System.Windows.Forms.HorizontalAlignment.Left);
-            System.Windows.Forms.ListViewGroup listViewGroup2 = new System.Windows.Forms.ListViewGroup("Logic Flow", System.Windows.Forms.HorizontalAlignment.Left);
-            System.Windows.Forms.ListViewGroup listViewGroup3 = new System.Windows.Forms.ListViewGroup("Player Control", System.Windows.Forms.HorizontalAlignment.Left);
-            System.Windows.Forms.ListViewGroup listViewGroup4 = new System.Windows.Forms.ListViewGroup("Movement", System.Windows.Forms.HorizontalAlignment.Left);
-            System.Windows.Forms.ListViewGroup listViewGroup5 = new System.Windows.Forms.ListViewGroup("Questing", System.Windows.Forms.HorizontalAlignment.Left);
-            System.Windows.Forms.ListViewGroup listViewGroup6 = new System.Windows.Forms.ListViewGroup("Special Effects", System.Windows.Forms.HorizontalAlignment.Left);
-            System.Windows.Forms.ListViewGroup listViewGroup7 = new System.Windows.Forms.ListViewGroup("Quest Control", System.Windows.Forms.HorizontalAlignment.Left);
-            System.Windows.Forms.ListViewGroup listViewGroup8 = new System.Windows.Forms.ListViewGroup("Etc", System.Windows.Forms.HorizontalAlignment.Left);
-            System.Windows.Forms.ListViewGroup listViewGroup9 = new System.Windows.Forms.ListViewGroup("Shop and Bank", System.Windows.Forms.HorizontalAlignment.Left);
-            System.Windows.Forms.ListViewItem listViewItem1 = new System.Windows.Forms.ListViewItem("Show Text");
-            System.Windows.Forms.ListViewItem listViewItem2 = new System.Windows.Forms.ListViewItem("Show Options");
-            System.Windows.Forms.ListViewItem listViewItem3 = new System.Windows.Forms.ListViewItem("Add Chatbox Text");
-            System.Windows.Forms.ListViewItem listViewItem4 = new System.Windows.Forms.ListViewItem("Set Switch");
-            System.Windows.Forms.ListViewItem listViewItem5 = new System.Windows.Forms.ListViewItem("Set Variable");
-            System.Windows.Forms.ListViewItem listViewItem6 = new System.Windows.Forms.ListViewItem("Set Self Switch");
-            System.Windows.Forms.ListViewItem listViewItem7 = new System.Windows.Forms.ListViewItem("Conditional Branch");
-            System.Windows.Forms.ListViewItem listViewItem8 = new System.Windows.Forms.ListViewItem("Exit Event Process");
-            System.Windows.Forms.ListViewItem listViewItem9 = new System.Windows.Forms.ListViewItem("Label");
-            System.Windows.Forms.ListViewItem listViewItem10 = new System.Windows.Forms.ListViewItem("Go To Label");
-            System.Windows.Forms.ListViewItem listViewItem11 = new System.Windows.Forms.ListViewItem("Start Common Event");
-            System.Windows.Forms.ListViewItem listViewItem12 = new System.Windows.Forms.ListViewItem("Restore HP");
-            System.Windows.Forms.ListViewItem listViewItem13 = new System.Windows.Forms.ListViewItem("Restore MP");
-            System.Windows.Forms.ListViewItem listViewItem14 = new System.Windows.Forms.ListViewItem("Level Up");
-            System.Windows.Forms.ListViewItem listViewItem15 = new System.Windows.Forms.ListViewItem("Give Experience");
-            System.Windows.Forms.ListViewItem listViewItem16 = new System.Windows.Forms.ListViewItem("Change Level");
-            System.Windows.Forms.ListViewItem listViewItem17 = new System.Windows.Forms.ListViewItem("Change Spells");
-            System.Windows.Forms.ListViewItem listViewItem18 = new System.Windows.Forms.ListViewItem("Change Items");
-            System.Windows.Forms.ListViewItem listViewItem19 = new System.Windows.Forms.ListViewItem("Change Sprite");
-            System.Windows.Forms.ListViewItem listViewItem20 = new System.Windows.Forms.ListViewItem("Change Face");
-            System.Windows.Forms.ListViewItem listViewItem21 = new System.Windows.Forms.ListViewItem("Change Gender");
-            System.Windows.Forms.ListViewItem listViewItem22 = new System.Windows.Forms.ListViewItem("Set Access");
-            System.Windows.Forms.ListViewItem listViewItem23 = new System.Windows.Forms.ListViewItem("Warp Player");
-            System.Windows.Forms.ListViewItem listViewItem24 = new System.Windows.Forms.ListViewItem("Set Move Route");
-            System.Windows.Forms.ListViewItem listViewItem25 = new System.Windows.Forms.ListViewItem("Wait for Route Completion");
-            System.Windows.Forms.ListViewItem listViewItem26 = new System.Windows.Forms.ListViewItem("Hold Player");
-            System.Windows.Forms.ListViewItem listViewItem27 = new System.Windows.Forms.ListViewItem("Release Player");
-            System.Windows.Forms.ListViewItem listViewItem28 = new System.Windows.Forms.ListViewItem("Spawn NPC");
-            System.Windows.Forms.ListViewItem listViewItem29 = new System.Windows.Forms.ListViewItem("Play Animation");
-            System.Windows.Forms.ListViewItem listViewItem30 = new System.Windows.Forms.ListViewItem("Play BGM");
-            System.Windows.Forms.ListViewItem listViewItem31 = new System.Windows.Forms.ListViewItem("Fadeout BGM");
-            System.Windows.Forms.ListViewItem listViewItem32 = new System.Windows.Forms.ListViewItem("Play Sound");
-            System.Windows.Forms.ListViewItem listViewItem33 = new System.Windows.Forms.ListViewItem("Stop Sounds");
-            System.Windows.Forms.ListViewItem listViewItem34 = new System.Windows.Forms.ListViewItem("Wait...");
-            System.Windows.Forms.ListViewItem listViewItem35 = new System.Windows.Forms.ListViewItem("Open Bank");
-            System.Windows.Forms.ListViewItem listViewItem36 = new System.Windows.Forms.ListViewItem("Open Shop");
-            System.Windows.Forms.ListViewItem listViewItem37 = new System.Windows.Forms.ListViewItem("Open Crafting Station");
-            System.Windows.Forms.ListViewItem listViewItem38 = new System.Windows.Forms.ListViewItem("Change Class");
-            System.Windows.Forms.ListViewItem listViewItem39 = new System.Windows.Forms.ListViewItem("Despawn NPC");
-            System.Windows.Forms.ListViewItem listViewItem40 = new System.Windows.Forms.ListViewItem("Start Quest");
-            System.Windows.Forms.ListViewItem listViewItem41 = new System.Windows.Forms.ListViewItem("Complete Quest Task");
-            System.Windows.Forms.ListViewItem listViewItem42 = new System.Windows.Forms.ListViewItem("End Quest");
+            System.Windows.Forms.TreeNode treeNode1 = new System.Windows.Forms.TreeNode("Show Text");
+            System.Windows.Forms.TreeNode treeNode2 = new System.Windows.Forms.TreeNode("Show Options");
+            System.Windows.Forms.TreeNode treeNode3 = new System.Windows.Forms.TreeNode("Add Chatbox Text");
+            System.Windows.Forms.TreeNode treeNode4 = new System.Windows.Forms.TreeNode("Dialogue", new System.Windows.Forms.TreeNode[] {
+            treeNode1,
+            treeNode2,
+            treeNode3});
+            System.Windows.Forms.TreeNode treeNode5 = new System.Windows.Forms.TreeNode("Set Switch");
+            System.Windows.Forms.TreeNode treeNode6 = new System.Windows.Forms.TreeNode("Set Variable");
+            System.Windows.Forms.TreeNode treeNode7 = new System.Windows.Forms.TreeNode("Set Self Switch");
+            System.Windows.Forms.TreeNode treeNode8 = new System.Windows.Forms.TreeNode("Conditional Branch");
+            System.Windows.Forms.TreeNode treeNode9 = new System.Windows.Forms.TreeNode("Exit Event Process");
+            System.Windows.Forms.TreeNode treeNode10 = new System.Windows.Forms.TreeNode("Label");
+            System.Windows.Forms.TreeNode treeNode11 = new System.Windows.Forms.TreeNode("Go To Label");
+            System.Windows.Forms.TreeNode treeNode12 = new System.Windows.Forms.TreeNode("Start Common Event");
+            System.Windows.Forms.TreeNode treeNode13 = new System.Windows.Forms.TreeNode("Logic Flow", new System.Windows.Forms.TreeNode[] {
+            treeNode5,
+            treeNode6,
+            treeNode7,
+            treeNode8,
+            treeNode9,
+            treeNode10,
+            treeNode11,
+            treeNode12});
+            System.Windows.Forms.TreeNode treeNode14 = new System.Windows.Forms.TreeNode("Restore HP");
+            System.Windows.Forms.TreeNode treeNode15 = new System.Windows.Forms.TreeNode("Restore MP");
+            System.Windows.Forms.TreeNode treeNode16 = new System.Windows.Forms.TreeNode("Level Up");
+            System.Windows.Forms.TreeNode treeNode17 = new System.Windows.Forms.TreeNode("Give Experience");
+            System.Windows.Forms.TreeNode treeNode18 = new System.Windows.Forms.TreeNode("Change Level");
+            System.Windows.Forms.TreeNode treeNode19 = new System.Windows.Forms.TreeNode("Change Spells");
+            System.Windows.Forms.TreeNode treeNode20 = new System.Windows.Forms.TreeNode("Change Items");
+            System.Windows.Forms.TreeNode treeNode21 = new System.Windows.Forms.TreeNode("Change Sprite");
+            System.Windows.Forms.TreeNode treeNode22 = new System.Windows.Forms.TreeNode("Change Face");
+            System.Windows.Forms.TreeNode treeNode23 = new System.Windows.Forms.TreeNode("Change Gender");
+            System.Windows.Forms.TreeNode treeNode24 = new System.Windows.Forms.TreeNode("Set Access");
+            System.Windows.Forms.TreeNode treeNode25 = new System.Windows.Forms.TreeNode("Change Class");
+            System.Windows.Forms.TreeNode treeNode26 = new System.Windows.Forms.TreeNode("Player Control", new System.Windows.Forms.TreeNode[] {
+            treeNode14,
+            treeNode15,
+            treeNode16,
+            treeNode17,
+            treeNode18,
+            treeNode19,
+            treeNode20,
+            treeNode21,
+            treeNode22,
+            treeNode23,
+            treeNode24,
+            treeNode25});
+            System.Windows.Forms.TreeNode treeNode27 = new System.Windows.Forms.TreeNode("Warp Player");
+            System.Windows.Forms.TreeNode treeNode28 = new System.Windows.Forms.TreeNode("Set Move Route");
+            System.Windows.Forms.TreeNode treeNode29 = new System.Windows.Forms.TreeNode("Wait for Route Completion");
+            System.Windows.Forms.TreeNode treeNode30 = new System.Windows.Forms.TreeNode("Hold Player");
+            System.Windows.Forms.TreeNode treeNode31 = new System.Windows.Forms.TreeNode("Release Player");
+            System.Windows.Forms.TreeNode treeNode32 = new System.Windows.Forms.TreeNode("Spawn NPC");
+            System.Windows.Forms.TreeNode treeNode33 = new System.Windows.Forms.TreeNode("Despawn NPC");
+            System.Windows.Forms.TreeNode treeNode34 = new System.Windows.Forms.TreeNode("Movement", new System.Windows.Forms.TreeNode[] {
+            treeNode27,
+            treeNode28,
+            treeNode29,
+            treeNode30,
+            treeNode31,
+            treeNode32,
+            treeNode33});
+            System.Windows.Forms.TreeNode treeNode35 = new System.Windows.Forms.TreeNode("Play Animation");
+            System.Windows.Forms.TreeNode treeNode36 = new System.Windows.Forms.TreeNode("Play BGM");
+            System.Windows.Forms.TreeNode treeNode37 = new System.Windows.Forms.TreeNode("Fadeout BGM");
+            System.Windows.Forms.TreeNode treeNode38 = new System.Windows.Forms.TreeNode("Play Sound");
+            System.Windows.Forms.TreeNode treeNode39 = new System.Windows.Forms.TreeNode("Stop Sounds");
+            System.Windows.Forms.TreeNode treeNode40 = new System.Windows.Forms.TreeNode("Special Effects", new System.Windows.Forms.TreeNode[] {
+            treeNode35,
+            treeNode36,
+            treeNode37,
+            treeNode38,
+            treeNode39});
+            System.Windows.Forms.TreeNode treeNode41 = new System.Windows.Forms.TreeNode("Start Quest");
+            System.Windows.Forms.TreeNode treeNode42 = new System.Windows.Forms.TreeNode("Complete Quest Task");
+            System.Windows.Forms.TreeNode treeNode43 = new System.Windows.Forms.TreeNode("End Quest");
+            System.Windows.Forms.TreeNode treeNode44 = new System.Windows.Forms.TreeNode("Quest Control", new System.Windows.Forms.TreeNode[] {
+            treeNode41,
+            treeNode42,
+            treeNode43});
+            System.Windows.Forms.TreeNode treeNode45 = new System.Windows.Forms.TreeNode("Wait...");
+            System.Windows.Forms.TreeNode treeNode46 = new System.Windows.Forms.TreeNode("Etc", new System.Windows.Forms.TreeNode[] {
+            treeNode45});
+            System.Windows.Forms.TreeNode treeNode47 = new System.Windows.Forms.TreeNode("Open Bank");
+            System.Windows.Forms.TreeNode treeNode48 = new System.Windows.Forms.TreeNode("Open Shop");
+            System.Windows.Forms.TreeNode treeNode49 = new System.Windows.Forms.TreeNode("Open Crafting Station");
+            System.Windows.Forms.TreeNode treeNode50 = new System.Windows.Forms.TreeNode("Shop and Bank", new System.Windows.Forms.TreeNode[] {
+            treeNode47,
+            treeNode48,
+            treeNode49});
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmEvent));
             this.label1 = new System.Windows.Forms.Label();
-            this.txtEventname = new System.Windows.Forms.TextBox();
-            this.tabControl = new System.Windows.Forms.TabControl();
-            this.tabPage1 = new System.Windows.Forms.TabPage();
-            this.grpEntityOptions = new System.Windows.Forms.GroupBox();
-            this.groupBox6 = new System.Windows.Forms.GroupBox();
-            this.label6 = new System.Windows.Forms.Label();
-            this.cmbAnimation = new System.Windows.Forms.ComboBox();
-            this.pnlPreview = new System.Windows.Forms.Panel();
-            this.groupBox2 = new System.Windows.Forms.GroupBox();
-            this.label8 = new System.Windows.Forms.Label();
-            this.cmbLayering = new System.Windows.Forms.ComboBox();
-            this.cmbEventFreq = new System.Windows.Forms.ComboBox();
-            this.cmbEventSpeed = new System.Windows.Forms.ComboBox();
-            this.label4 = new System.Windows.Forms.Label();
-            this.label3 = new System.Windows.Forms.Label();
-            this.btnSetRoute = new System.Windows.Forms.Button();
-            this.label2 = new System.Windows.Forms.Label();
-            this.cmbMoveType = new System.Windows.Forms.ComboBox();
-            this.groupBox3 = new System.Windows.Forms.GroupBox();
-            this.chkInteractionFreeze = new System.Windows.Forms.CheckBox();
-            this.chkWalkingAnimation = new System.Windows.Forms.CheckBox();
-            this.chkDirectionFix = new System.Windows.Forms.CheckBox();
-            this.chkHideName = new System.Windows.Forms.CheckBox();
-            this.chkWalkThrough = new System.Windows.Forms.CheckBox();
-            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.txtEventname = new DarkUI.Controls.DarkTextBox();
+            this.grpEntityOptions = new DarkUI.Controls.DarkGroupBox();
+            this.groupBox3 = new DarkUI.Controls.DarkGroupBox();
+            this.chkInteractionFreeze = new DarkUI.Controls.DarkCheckBox();
+            this.chkWalkingAnimation = new DarkUI.Controls.DarkCheckBox();
+            this.chkDirectionFix = new DarkUI.Controls.DarkCheckBox();
+            this.chkHideName = new DarkUI.Controls.DarkCheckBox();
+            this.chkWalkThrough = new DarkUI.Controls.DarkCheckBox();
+            this.groupBox1 = new DarkUI.Controls.DarkGroupBox();
             this.pnlFacePreview = new System.Windows.Forms.Panel();
             this.label5 = new System.Windows.Forms.Label();
-            this.txtDesc = new System.Windows.Forms.TextBox();
-            this.chkDisablePreview = new System.Windows.Forms.CheckBox();
-            this.cmbPreviewFace = new System.Windows.Forms.ComboBox();
+            this.txtDesc = new DarkUI.Controls.DarkTextBox();
+            this.chkDisablePreview = new DarkUI.Controls.DarkCheckBox();
+            this.cmbPreviewFace = new DarkUI.Controls.DarkComboBox();
             this.label25 = new System.Windows.Forms.Label();
-            this.label7 = new System.Windows.Forms.Label();
-            this.cmbTrigger = new System.Windows.Forms.ComboBox();
-            this.grpEventConditions = new System.Windows.Forms.GroupBox();
-            this.btnRemoveCondition = new System.Windows.Forms.Button();
-            this.btnAddCondition = new System.Windows.Forms.Button();
+            this.groupBox6 = new DarkUI.Controls.DarkGroupBox();
+            this.label6 = new System.Windows.Forms.Label();
+            this.cmbAnimation = new DarkUI.Controls.DarkComboBox();
+            this.pnlPreview = new System.Windows.Forms.Panel();
+            this.groupBox2 = new DarkUI.Controls.DarkGroupBox();
+            this.label8 = new System.Windows.Forms.Label();
+            this.cmbLayering = new DarkUI.Controls.DarkComboBox();
+            this.cmbEventFreq = new DarkUI.Controls.DarkComboBox();
+            this.cmbEventSpeed = new DarkUI.Controls.DarkComboBox();
+            this.label4 = new System.Windows.Forms.Label();
+            this.label3 = new System.Windows.Forms.Label();
+            this.btnSetRoute = new DarkUI.Controls.DarkButton();
+            this.label2 = new System.Windows.Forms.Label();
+            this.cmbMoveType = new DarkUI.Controls.DarkComboBox();
+            this.grpTriggers = new DarkUI.Controls.DarkGroupBox();
+            this.lblTriggerVal = new System.Windows.Forms.Label();
+            this.cmbTriggerVal = new DarkUI.Controls.DarkComboBox();
+            this.cmbTrigger = new DarkUI.Controls.DarkComboBox();
+            this.grpEventConditions = new DarkUI.Controls.DarkGroupBox();
+            this.btnRemoveCondition = new DarkUI.Controls.DarkButton();
+            this.btnAddCondition = new DarkUI.Controls.DarkButton();
             this.lstConditions = new System.Windows.Forms.ListBox();
-            this.grpNewCommands = new System.Windows.Forms.GroupBox();
+            this.grpNewCommands = new DarkUI.Controls.DarkGroupBox();
             this.lblCloseCommands = new System.Windows.Forms.Label();
-            this.lstCommands = new System.Windows.Forms.ListView();
-            this.grpEventCommands = new System.Windows.Forms.GroupBox();
+            this.lstCommands = new System.Windows.Forms.TreeView();
+            this.grpEventCommands = new DarkUI.Controls.DarkGroupBox();
             this.lstEventCommands = new System.Windows.Forms.ListBox();
-            this.grpCreateCommands = new System.Windows.Forms.GroupBox();
-            this.btnSave = new System.Windows.Forms.Button();
-            this.btnCancel = new System.Windows.Forms.Button();
+            this.grpCreateCommands = new DarkUI.Controls.DarkGroupBox();
+            this.btnSave = new DarkUI.Controls.DarkButton();
+            this.btnCancel = new DarkUI.Controls.DarkButton();
             this.commandMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.btnInsert = new System.Windows.Forms.ToolStripMenuItem();
             this.btnEdit = new System.Windows.Forms.ToolStripMenuItem();
             this.btnDelete = new System.Windows.Forms.ToolStripMenuItem();
-            this.grpPageOptions = new System.Windows.Forms.GroupBox();
-            this.btnClearPage = new System.Windows.Forms.Button();
-            this.btnDeletePage = new System.Windows.Forms.Button();
-            this.btnPastePage = new System.Windows.Forms.Button();
-            this.btnCopyPage = new System.Windows.Forms.Button();
-            this.btnNewPage = new System.Windows.Forms.Button();
-            this.groupBox7 = new System.Windows.Forms.GroupBox();
-            this.chkIsGlobal = new System.Windows.Forms.CheckBox();
-            this.lblTriggerVal = new System.Windows.Forms.Label();
-            this.cmbTriggerVal = new System.Windows.Forms.ComboBox();
-            this.panel2 = new System.Windows.Forms.Panel();
-            this.grpTriggers = new System.Windows.Forms.GroupBox();
-            this.tabControl.SuspendLayout();
+            this.grpPageOptions = new DarkUI.Controls.DarkGroupBox();
+            this.btnClearPage = new DarkUI.Controls.DarkButton();
+            this.btnDeletePage = new DarkUI.Controls.DarkButton();
+            this.btnPastePage = new DarkUI.Controls.DarkButton();
+            this.btnCopyPage = new DarkUI.Controls.DarkButton();
+            this.btnNewPage = new DarkUI.Controls.DarkButton();
+            this.groupBox7 = new DarkUI.Controls.DarkGroupBox();
+            this.chkIsGlobal = new DarkUI.Controls.DarkCheckBox();
+            this.pnlTabsContainer = new System.Windows.Forms.Panel();
+            this.pnlTabs = new System.Windows.Forms.Panel();
+            this.btnTabsRight = new DarkUI.Controls.DarkButton();
+            this.btnTabsLeft = new DarkUI.Controls.DarkButton();
+            this.panel1 = new System.Windows.Forms.Panel();
             this.grpEntityOptions.SuspendLayout();
-            this.groupBox6.SuspendLayout();
-            this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
             this.groupBox1.SuspendLayout();
+            this.groupBox6.SuspendLayout();
+            this.groupBox2.SuspendLayout();
+            this.grpTriggers.SuspendLayout();
             this.grpEventConditions.SuspendLayout();
             this.grpNewCommands.SuspendLayout();
             this.grpEventCommands.SuspendLayout();
             this.commandMenu.SuspendLayout();
             this.grpPageOptions.SuspendLayout();
             this.groupBox7.SuspendLayout();
-            this.grpTriggers.SuspendLayout();
+            this.pnlTabsContainer.SuspendLayout();
             this.SuspendLayout();
             // 
             // label1
@@ -172,53 +215,189 @@ namespace Intersect_Editor.Forms
             // 
             // txtEventname
             // 
+            this.txtEventname.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
+            this.txtEventname.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.txtEventname.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
             this.txtEventname.Location = new System.Drawing.Point(48, 19);
             this.txtEventname.Name = "txtEventname";
             this.txtEventname.Size = new System.Drawing.Size(124, 20);
             this.txtEventname.TabIndex = 2;
             this.txtEventname.TextChanged += new System.EventHandler(this.txtEventname_TextChanged);
             // 
-            // tabControl
-            // 
-            this.tabControl.Controls.Add(this.tabPage1);
-            this.tabControl.Location = new System.Drawing.Point(12, 61);
-            this.tabControl.Name = "tabControl";
-            this.tabControl.SelectedIndex = 0;
-            this.tabControl.Size = new System.Drawing.Size(494, 21);
-            this.tabControl.TabIndex = 5;
-            this.tabControl.SelectedIndexChanged += new System.EventHandler(this.tabControl_SelectedIndexChanged);
-            // 
-            // tabPage1
-            // 
-            this.tabPage1.Location = new System.Drawing.Point(4, 22);
-            this.tabPage1.Name = "tabPage1";
-            this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(486, 0);
-            this.tabPage1.TabIndex = 0;
-            this.tabPage1.Text = "1";
-            this.tabPage1.UseVisualStyleBackColor = true;
-            // 
             // grpEntityOptions
             // 
-            this.grpEntityOptions.Controls.Add(this.groupBox6);
-            this.grpEntityOptions.Controls.Add(this.groupBox2);
+            this.grpEntityOptions.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
+            this.grpEntityOptions.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
             this.grpEntityOptions.Controls.Add(this.groupBox3);
             this.grpEntityOptions.Controls.Add(this.groupBox1);
-            this.grpEntityOptions.Location = new System.Drawing.Point(20, 178);
+            this.grpEntityOptions.Controls.Add(this.groupBox6);
+            this.grpEntityOptions.Controls.Add(this.groupBox2);
+            this.grpEntityOptions.Controls.Add(this.grpTriggers);
+            this.grpEntityOptions.ForeColor = System.Drawing.Color.Gainsboro;
+            this.grpEntityOptions.Location = new System.Drawing.Point(21, 170);
             this.grpEntityOptions.Name = "grpEntityOptions";
-            this.grpEntityOptions.Size = new System.Drawing.Size(326, 394);
+            this.grpEntityOptions.Size = new System.Drawing.Size(326, 403);
             this.grpEntityOptions.TabIndex = 12;
             this.grpEntityOptions.TabStop = false;
             this.grpEntityOptions.Text = "Entity Options";
             // 
+            // groupBox3
+            // 
+            this.groupBox3.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
+            this.groupBox3.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.groupBox3.Controls.Add(this.chkInteractionFreeze);
+            this.groupBox3.Controls.Add(this.chkWalkingAnimation);
+            this.groupBox3.Controls.Add(this.chkDirectionFix);
+            this.groupBox3.Controls.Add(this.chkHideName);
+            this.groupBox3.Controls.Add(this.chkWalkThrough);
+            this.groupBox3.ForeColor = System.Drawing.Color.Gainsboro;
+            this.groupBox3.Location = new System.Drawing.Point(6, 297);
+            this.groupBox3.Name = "groupBox3";
+            this.groupBox3.Size = new System.Drawing.Size(315, 64);
+            this.groupBox3.TabIndex = 9;
+            this.groupBox3.TabStop = false;
+            this.groupBox3.Text = "Extra";
+            // 
+            // chkInteractionFreeze
+            // 
+            this.chkInteractionFreeze.AutoSize = true;
+            this.chkInteractionFreeze.Location = new System.Drawing.Point(6, 41);
+            this.chkInteractionFreeze.Name = "chkInteractionFreeze";
+            this.chkInteractionFreeze.Size = new System.Drawing.Size(111, 17);
+            this.chkInteractionFreeze.TabIndex = 6;
+            this.chkInteractionFreeze.Text = "Interaction Freeze";
+            this.chkInteractionFreeze.CheckedChanged += new System.EventHandler(this.chkInteractionFreeze_CheckedChanged);
+            // 
+            // chkWalkingAnimation
+            // 
+            this.chkWalkingAnimation.AutoSize = true;
+            this.chkWalkingAnimation.Location = new System.Drawing.Point(214, 19);
+            this.chkWalkingAnimation.Name = "chkWalkingAnimation";
+            this.chkWalkingAnimation.Size = new System.Drawing.Size(91, 17);
+            this.chkWalkingAnimation.TabIndex = 5;
+            this.chkWalkingAnimation.Text = "Walking Anim";
+            this.chkWalkingAnimation.CheckedChanged += new System.EventHandler(this.chkWalkingAnimation_CheckedChanged);
+            // 
+            // chkDirectionFix
+            // 
+            this.chkDirectionFix.AutoSize = true;
+            this.chkDirectionFix.Location = new System.Drawing.Point(156, 19);
+            this.chkDirectionFix.Name = "chkDirectionFix";
+            this.chkDirectionFix.Size = new System.Drawing.Size(55, 17);
+            this.chkDirectionFix.TabIndex = 4;
+            this.chkDirectionFix.Text = "Dir Fix";
+            this.chkDirectionFix.CheckedChanged += new System.EventHandler(this.chkDirectionFix_CheckedChanged);
+            // 
+            // chkHideName
+            // 
+            this.chkHideName.AutoSize = true;
+            this.chkHideName.Location = new System.Drawing.Point(75, 19);
+            this.chkHideName.Name = "chkHideName";
+            this.chkHideName.Size = new System.Drawing.Size(79, 17);
+            this.chkHideName.TabIndex = 3;
+            this.chkHideName.Text = "Hide Name";
+            this.chkHideName.CheckedChanged += new System.EventHandler(this.chkHideName_CheckedChanged);
+            // 
+            // chkWalkThrough
+            // 
+            this.chkWalkThrough.AutoSize = true;
+            this.chkWalkThrough.Location = new System.Drawing.Point(6, 19);
+            this.chkWalkThrough.Name = "chkWalkThrough";
+            this.chkWalkThrough.Size = new System.Drawing.Size(69, 17);
+            this.chkWalkThrough.TabIndex = 2;
+            this.chkWalkThrough.Text = "Passable";
+            this.chkWalkThrough.CheckedChanged += new System.EventHandler(this.chkWalkThrough_CheckedChanged);
+            // 
+            // groupBox1
+            // 
+            this.groupBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
+            this.groupBox1.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.groupBox1.Controls.Add(this.pnlFacePreview);
+            this.groupBox1.Controls.Add(this.label5);
+            this.groupBox1.Controls.Add(this.txtDesc);
+            this.groupBox1.Controls.Add(this.chkDisablePreview);
+            this.groupBox1.Controls.Add(this.cmbPreviewFace);
+            this.groupBox1.Controls.Add(this.label25);
+            this.groupBox1.ForeColor = System.Drawing.Color.Gainsboro;
+            this.groupBox1.Location = new System.Drawing.Point(6, 179);
+            this.groupBox1.Name = "groupBox1";
+            this.groupBox1.Size = new System.Drawing.Size(316, 117);
+            this.groupBox1.TabIndex = 7;
+            this.groupBox1.TabStop = false;
+            this.groupBox1.Text = "Entity Inspector Options";
+            // 
+            // pnlFacePreview
+            // 
+            this.pnlFacePreview.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.pnlFacePreview.Location = new System.Drawing.Point(9, 46);
+            this.pnlFacePreview.Name = "pnlFacePreview";
+            this.pnlFacePreview.Size = new System.Drawing.Size(64, 64);
+            this.pnlFacePreview.TabIndex = 12;
+            // 
+            // label5
+            // 
+            this.label5.Location = new System.Drawing.Point(79, 42);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(112, 19);
+            this.label5.TabIndex = 11;
+            this.label5.Text = "Inspector Description:";
+            // 
+            // txtDesc
+            // 
+            this.txtDesc.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
+            this.txtDesc.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.txtDesc.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
+            this.txtDesc.Location = new System.Drawing.Point(79, 61);
+            this.txtDesc.Multiline = true;
+            this.txtDesc.Name = "txtDesc";
+            this.txtDesc.Size = new System.Drawing.Size(231, 50);
+            this.txtDesc.TabIndex = 0;
+            this.txtDesc.TextChanged += new System.EventHandler(this.txtDesc_TextChanged);
+            // 
+            // chkDisablePreview
+            // 
+            this.chkDisablePreview.Location = new System.Drawing.Point(204, 15);
+            this.chkDisablePreview.Name = "chkDisablePreview";
+            this.chkDisablePreview.Size = new System.Drawing.Size(107, 21);
+            this.chkDisablePreview.TabIndex = 4;
+            this.chkDisablePreview.Text = "Disable Inspector";
+            this.chkDisablePreview.CheckedChanged += new System.EventHandler(this.chkDisablePreview_CheckedChanged);
+            // 
+            // cmbPreviewFace
+            // 
+            this.cmbPreviewFace.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
+            this.cmbPreviewFace.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.cmbPreviewFace.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
+            this.cmbPreviewFace.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
+            this.cmbPreviewFace.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbPreviewFace.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.cmbPreviewFace.FormattingEnabled = true;
+            this.cmbPreviewFace.Location = new System.Drawing.Point(79, 15);
+            this.cmbPreviewFace.Name = "cmbPreviewFace";
+            this.cmbPreviewFace.Size = new System.Drawing.Size(81, 21);
+            this.cmbPreviewFace.TabIndex = 10;
+            this.cmbPreviewFace.SelectedIndexChanged += new System.EventHandler(this.cmbPreviewFace_SelectedIndexChanged);
+            // 
+            // label25
+            // 
+            this.label25.AutoSize = true;
+            this.label25.Location = new System.Drawing.Point(6, 18);
+            this.label25.Name = "label25";
+            this.label25.Size = new System.Drawing.Size(75, 13);
+            this.label25.TabIndex = 9;
+            this.label25.Text = "Preview Face:";
+            // 
             // groupBox6
             // 
+            this.groupBox6.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
+            this.groupBox6.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
             this.groupBox6.Controls.Add(this.label6);
             this.groupBox6.Controls.Add(this.cmbAnimation);
             this.groupBox6.Controls.Add(this.pnlPreview);
+            this.groupBox6.ForeColor = System.Drawing.Color.Gainsboro;
             this.groupBox6.Location = new System.Drawing.Point(6, 13);
             this.groupBox6.Name = "groupBox6";
-            this.groupBox6.Size = new System.Drawing.Size(160, 191);
+            this.groupBox6.Size = new System.Drawing.Size(160, 163);
             this.groupBox6.TabIndex = 10;
             this.groupBox6.TabStop = false;
             this.groupBox6.Text = "Preview";
@@ -226,7 +405,7 @@ namespace Intersect_Editor.Forms
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(4, 146);
+            this.label6.Location = new System.Drawing.Point(4, 116);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(56, 13);
             this.label6.TabIndex = 2;
@@ -234,9 +413,14 @@ namespace Intersect_Editor.Forms
             // 
             // cmbAnimation
             // 
+            this.cmbAnimation.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
+            this.cmbAnimation.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.cmbAnimation.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
+            this.cmbAnimation.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
             this.cmbAnimation.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbAnimation.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.cmbAnimation.FormattingEnabled = true;
-            this.cmbAnimation.Location = new System.Drawing.Point(20, 162);
+            this.cmbAnimation.Location = new System.Drawing.Point(20, 132);
             this.cmbAnimation.Name = "cmbAnimation";
             this.cmbAnimation.Size = new System.Drawing.Size(125, 21);
             this.cmbAnimation.TabIndex = 1;
@@ -244,14 +428,18 @@ namespace Intersect_Editor.Forms
             // 
             // pnlPreview
             // 
-            this.pnlPreview.Location = new System.Drawing.Point(17, 14);
+            this.pnlPreview.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
+            this.pnlPreview.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.pnlPreview.Location = new System.Drawing.Point(33, 14);
             this.pnlPreview.Name = "pnlPreview";
-            this.pnlPreview.Size = new System.Drawing.Size(128, 128);
+            this.pnlPreview.Size = new System.Drawing.Size(96, 96);
             this.pnlPreview.TabIndex = 0;
             this.pnlPreview.DoubleClick += new System.EventHandler(this.pnlPreview_DoubleClick);
             // 
             // groupBox2
             // 
+            this.groupBox2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
+            this.groupBox2.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
             this.groupBox2.Controls.Add(this.label8);
             this.groupBox2.Controls.Add(this.cmbLayering);
             this.groupBox2.Controls.Add(this.cmbEventFreq);
@@ -261,9 +449,10 @@ namespace Intersect_Editor.Forms
             this.groupBox2.Controls.Add(this.btnSetRoute);
             this.groupBox2.Controls.Add(this.label2);
             this.groupBox2.Controls.Add(this.cmbMoveType);
-            this.groupBox2.Location = new System.Drawing.Point(170, 14);
+            this.groupBox2.ForeColor = System.Drawing.Color.Gainsboro;
+            this.groupBox2.Location = new System.Drawing.Point(169, 13);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(154, 190);
+            this.groupBox2.Size = new System.Drawing.Size(154, 163);
             this.groupBox2.TabIndex = 8;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Movement";
@@ -279,7 +468,12 @@ namespace Intersect_Editor.Forms
             // 
             // cmbLayering
             // 
+            this.cmbLayering.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
+            this.cmbLayering.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.cmbLayering.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
+            this.cmbLayering.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
             this.cmbLayering.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbLayering.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.cmbLayering.FormattingEnabled = true;
             this.cmbLayering.Items.AddRange(new object[] {
             "Below Player",
@@ -293,7 +487,12 @@ namespace Intersect_Editor.Forms
             // 
             // cmbEventFreq
             // 
+            this.cmbEventFreq.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
+            this.cmbEventFreq.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.cmbEventFreq.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
+            this.cmbEventFreq.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
             this.cmbEventFreq.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbEventFreq.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.cmbEventFreq.FormattingEnabled = true;
             this.cmbEventFreq.Items.AddRange(new object[] {
             "Not Very Often",
@@ -309,7 +508,12 @@ namespace Intersect_Editor.Forms
             // 
             // cmbEventSpeed
             // 
+            this.cmbEventSpeed.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
+            this.cmbEventSpeed.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.cmbEventSpeed.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
+            this.cmbEventSpeed.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
             this.cmbEventSpeed.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbEventSpeed.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.cmbEventSpeed.FormattingEnabled = true;
             this.cmbEventSpeed.Items.AddRange(new object[] {
             "Slowest",
@@ -347,10 +551,10 @@ namespace Intersect_Editor.Forms
             this.btnSetRoute.Enabled = false;
             this.btnSetRoute.Location = new System.Drawing.Point(73, 43);
             this.btnSetRoute.Name = "btnSetRoute";
+            this.btnSetRoute.Padding = new System.Windows.Forms.Padding(5);
             this.btnSetRoute.Size = new System.Drawing.Size(75, 23);
             this.btnSetRoute.TabIndex = 2;
             this.btnSetRoute.Text = "Set Route....";
-            this.btnSetRoute.UseVisualStyleBackColor = true;
             this.btnSetRoute.Click += new System.EventHandler(this.btnSetRoute_Click);
             // 
             // label2
@@ -364,7 +568,12 @@ namespace Intersect_Editor.Forms
             // 
             // cmbMoveType
             // 
+            this.cmbMoveType.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
+            this.cmbMoveType.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.cmbMoveType.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
+            this.cmbMoveType.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
             this.cmbMoveType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbMoveType.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.cmbMoveType.FormattingEnabled = true;
             this.cmbMoveType.Items.AddRange(new object[] {
             "None",
@@ -376,163 +585,63 @@ namespace Intersect_Editor.Forms
             this.cmbMoveType.TabIndex = 0;
             this.cmbMoveType.SelectedIndexChanged += new System.EventHandler(this.cmbMoveType_SelectedIndexChanged);
             // 
-            // groupBox3
+            // grpTriggers
             // 
-            this.groupBox3.Controls.Add(this.chkInteractionFreeze);
-            this.groupBox3.Controls.Add(this.chkWalkingAnimation);
-            this.groupBox3.Controls.Add(this.chkDirectionFix);
-            this.groupBox3.Controls.Add(this.chkHideName);
-            this.groupBox3.Controls.Add(this.chkWalkThrough);
-            this.groupBox3.Location = new System.Drawing.Point(6, 326);
-            this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(315, 64);
-            this.groupBox3.TabIndex = 9;
-            this.groupBox3.TabStop = false;
-            this.groupBox3.Text = "Extra";
+            this.grpTriggers.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
+            this.grpTriggers.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.grpTriggers.Controls.Add(this.lblTriggerVal);
+            this.grpTriggers.Controls.Add(this.cmbTriggerVal);
+            this.grpTriggers.Controls.Add(this.cmbTrigger);
+            this.grpTriggers.ForeColor = System.Drawing.Color.Gainsboro;
+            this.grpTriggers.Location = new System.Drawing.Point(6, 364);
+            this.grpTriggers.Name = "grpTriggers";
+            this.grpTriggers.Size = new System.Drawing.Size(317, 35);
+            this.grpTriggers.TabIndex = 21;
+            this.grpTriggers.TabStop = false;
+            this.grpTriggers.Text = "Trigger";
             // 
-            // chkInteractionFreeze
+            // lblTriggerVal
             // 
-            this.chkInteractionFreeze.AutoSize = true;
-            this.chkInteractionFreeze.Location = new System.Drawing.Point(6, 41);
-            this.chkInteractionFreeze.Name = "chkInteractionFreeze";
-            this.chkInteractionFreeze.Size = new System.Drawing.Size(111, 17);
-            this.chkInteractionFreeze.TabIndex = 6;
-            this.chkInteractionFreeze.Text = "Interaction Freeze";
-            this.chkInteractionFreeze.UseVisualStyleBackColor = true;
-            this.chkInteractionFreeze.CheckedChanged += new System.EventHandler(this.chkInteractionFreeze_CheckedChanged);
+            this.lblTriggerVal.AutoSize = true;
+            this.lblTriggerVal.Location = new System.Drawing.Point(174, 14);
+            this.lblTriggerVal.Name = "lblTriggerVal";
+            this.lblTriggerVal.Size = new System.Drawing.Size(53, 13);
+            this.lblTriggerVal.TabIndex = 10;
+            this.lblTriggerVal.Text = "Projectile:";
+            this.lblTriggerVal.Visible = false;
             // 
-            // chkWalkingAnimation
+            // cmbTriggerVal
             // 
-            this.chkWalkingAnimation.AutoSize = true;
-            this.chkWalkingAnimation.Location = new System.Drawing.Point(214, 19);
-            this.chkWalkingAnimation.Name = "chkWalkingAnimation";
-            this.chkWalkingAnimation.Size = new System.Drawing.Size(91, 17);
-            this.chkWalkingAnimation.TabIndex = 5;
-            this.chkWalkingAnimation.Text = "Walking Anim";
-            this.chkWalkingAnimation.UseVisualStyleBackColor = true;
-            this.chkWalkingAnimation.CheckedChanged += new System.EventHandler(this.chkWalkingAnimation_CheckedChanged);
-            // 
-            // chkDirectionFix
-            // 
-            this.chkDirectionFix.AutoSize = true;
-            this.chkDirectionFix.Location = new System.Drawing.Point(156, 19);
-            this.chkDirectionFix.Name = "chkDirectionFix";
-            this.chkDirectionFix.Size = new System.Drawing.Size(55, 17);
-            this.chkDirectionFix.TabIndex = 4;
-            this.chkDirectionFix.Text = "Dir Fix";
-            this.chkDirectionFix.UseVisualStyleBackColor = true;
-            this.chkDirectionFix.CheckedChanged += new System.EventHandler(this.chkDirectionFix_CheckedChanged);
-            // 
-            // chkHideName
-            // 
-            this.chkHideName.AutoSize = true;
-            this.chkHideName.Location = new System.Drawing.Point(75, 19);
-            this.chkHideName.Name = "chkHideName";
-            this.chkHideName.Size = new System.Drawing.Size(79, 17);
-            this.chkHideName.TabIndex = 3;
-            this.chkHideName.Text = "Hide Name";
-            this.chkHideName.UseVisualStyleBackColor = true;
-            this.chkHideName.CheckedChanged += new System.EventHandler(this.chkHideName_CheckedChanged);
-            // 
-            // chkWalkThrough
-            // 
-            this.chkWalkThrough.AutoSize = true;
-            this.chkWalkThrough.Location = new System.Drawing.Point(6, 19);
-            this.chkWalkThrough.Name = "chkWalkThrough";
-            this.chkWalkThrough.Size = new System.Drawing.Size(69, 17);
-            this.chkWalkThrough.TabIndex = 2;
-            this.chkWalkThrough.Text = "Passable";
-            this.chkWalkThrough.UseVisualStyleBackColor = true;
-            this.chkWalkThrough.CheckedChanged += new System.EventHandler(this.chkWalkThrough_CheckedChanged);
-            // 
-            // groupBox1
-            // 
-            this.groupBox1.Controls.Add(this.pnlFacePreview);
-            this.groupBox1.Controls.Add(this.label5);
-            this.groupBox1.Controls.Add(this.txtDesc);
-            this.groupBox1.Controls.Add(this.chkDisablePreview);
-            this.groupBox1.Controls.Add(this.cmbPreviewFace);
-            this.groupBox1.Controls.Add(this.label25);
-            this.groupBox1.Location = new System.Drawing.Point(2, 210);
-            this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(320, 117);
-            this.groupBox1.TabIndex = 7;
-            this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "Entity Inspector Options";
-            // 
-            // pnlFacePreview
-            // 
-            this.pnlFacePreview.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.pnlFacePreview.Location = new System.Drawing.Point(9, 46);
-            this.pnlFacePreview.Name = "pnlFacePreview";
-            this.pnlFacePreview.Size = new System.Drawing.Size(64, 64);
-            this.pnlFacePreview.TabIndex = 12;
-            // 
-            // label5
-            // 
-            this.label5.Location = new System.Drawing.Point(79, 42);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(112, 19);
-            this.label5.TabIndex = 11;
-            this.label5.Text = "Inspector Description:";
-            // 
-            // txtDesc
-            // 
-            this.txtDesc.Location = new System.Drawing.Point(79, 61);
-            this.txtDesc.Multiline = true;
-            this.txtDesc.Name = "txtDesc";
-            this.txtDesc.Size = new System.Drawing.Size(235, 50);
-            this.txtDesc.TabIndex = 0;
-            this.txtDesc.TextChanged += new System.EventHandler(this.txtDesc_TextChanged);
-            // 
-            // chkDisablePreview
-            // 
-            this.chkDisablePreview.Location = new System.Drawing.Point(207, 15);
-            this.chkDisablePreview.Name = "chkDisablePreview";
-            this.chkDisablePreview.Size = new System.Drawing.Size(113, 21);
-            this.chkDisablePreview.TabIndex = 4;
-            this.chkDisablePreview.Text = "Disable Inspector";
-            this.chkDisablePreview.UseVisualStyleBackColor = true;
-            this.chkDisablePreview.CheckedChanged += new System.EventHandler(this.chkDisablePreview_CheckedChanged);
-            // 
-            // cmbPreviewFace
-            // 
-            this.cmbPreviewFace.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cmbPreviewFace.FormattingEnabled = true;
-            this.cmbPreviewFace.Location = new System.Drawing.Point(79, 15);
-            this.cmbPreviewFace.Name = "cmbPreviewFace";
-            this.cmbPreviewFace.Size = new System.Drawing.Size(81, 21);
-            this.cmbPreviewFace.TabIndex = 10;
-            this.cmbPreviewFace.SelectedIndexChanged += new System.EventHandler(this.cmbPreviewFace_SelectedIndexChanged);
-            // 
-            // label25
-            // 
-            this.label25.AutoSize = true;
-            this.label25.Location = new System.Drawing.Point(6, 18);
-            this.label25.Name = "label25";
-            this.label25.Size = new System.Drawing.Size(75, 13);
-            this.label25.TabIndex = 9;
-            this.label25.Text = "Preview Face:";
-            // 
-            // label7
-            // 
-            this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(4, 11);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(43, 13);
-            this.label7.TabIndex = 8;
-            this.label7.Text = "Trigger:";
+            this.cmbTriggerVal.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
+            this.cmbTriggerVal.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.cmbTriggerVal.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
+            this.cmbTriggerVal.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
+            this.cmbTriggerVal.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbTriggerVal.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.cmbTriggerVal.FormattingEnabled = true;
+            this.cmbTriggerVal.Items.AddRange(new object[] {
+            "None"});
+            this.cmbTriggerVal.Location = new System.Drawing.Point(230, 10);
+            this.cmbTriggerVal.Name = "cmbTriggerVal";
+            this.cmbTriggerVal.Size = new System.Drawing.Size(81, 21);
+            this.cmbTriggerVal.TabIndex = 9;
+            this.cmbTriggerVal.Visible = false;
             // 
             // cmbTrigger
             // 
+            this.cmbTrigger.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
+            this.cmbTrigger.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.cmbTrigger.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
+            this.cmbTrigger.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
             this.cmbTrigger.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbTrigger.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.cmbTrigger.FormattingEnabled = true;
             this.cmbTrigger.Items.AddRange(new object[] {
             "Action Button",
             "Player Touch",
             "Autorun",
             "Projectile Hit"});
-            this.cmbTrigger.Location = new System.Drawing.Point(51, 9);
+            this.cmbTrigger.Location = new System.Drawing.Point(62, 10);
             this.cmbTrigger.Name = "cmbTrigger";
             this.cmbTrigger.Size = new System.Drawing.Size(101, 21);
             this.cmbTrigger.TabIndex = 2;
@@ -540,49 +649,58 @@ namespace Intersect_Editor.Forms
             // 
             // grpEventConditions
             // 
+            this.grpEventConditions.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
+            this.grpEventConditions.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
             this.grpEventConditions.Controls.Add(this.btnRemoveCondition);
             this.grpEventConditions.Controls.Add(this.btnAddCondition);
             this.grpEventConditions.Controls.Add(this.lstConditions);
-            this.grpEventConditions.Location = new System.Drawing.Point(20, 88);
+            this.grpEventConditions.ForeColor = System.Drawing.Color.Gainsboro;
+            this.grpEventConditions.Location = new System.Drawing.Point(21, 89);
             this.grpEventConditions.Name = "grpEventConditions";
-            this.grpEventConditions.Size = new System.Drawing.Size(326, 84);
+            this.grpEventConditions.Size = new System.Drawing.Size(326, 78);
             this.grpEventConditions.TabIndex = 5;
             this.grpEventConditions.TabStop = false;
             this.grpEventConditions.Text = "Conditions";
             // 
             // btnRemoveCondition
             // 
-            this.btnRemoveCondition.Location = new System.Drawing.Point(292, 48);
+            this.btnRemoveCondition.Location = new System.Drawing.Point(292, 46);
             this.btnRemoveCondition.Name = "btnRemoveCondition";
+            this.btnRemoveCondition.Padding = new System.Windows.Forms.Padding(5);
             this.btnRemoveCondition.Size = new System.Drawing.Size(29, 23);
             this.btnRemoveCondition.TabIndex = 2;
             this.btnRemoveCondition.Text = "-";
-            this.btnRemoveCondition.UseVisualStyleBackColor = true;
             this.btnRemoveCondition.Click += new System.EventHandler(this.btnRemoveCondition_Click);
             // 
             // btnAddCondition
             // 
-            this.btnAddCondition.Location = new System.Drawing.Point(292, 19);
+            this.btnAddCondition.Location = new System.Drawing.Point(292, 17);
             this.btnAddCondition.Name = "btnAddCondition";
+            this.btnAddCondition.Padding = new System.Windows.Forms.Padding(5);
             this.btnAddCondition.Size = new System.Drawing.Size(29, 23);
             this.btnAddCondition.TabIndex = 1;
             this.btnAddCondition.Text = "+";
-            this.btnAddCondition.UseVisualStyleBackColor = true;
             this.btnAddCondition.Click += new System.EventHandler(this.btnAddCondition_Click);
             // 
             // lstConditions
             // 
+            this.lstConditions.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
+            this.lstConditions.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.lstConditions.ForeColor = System.Drawing.Color.Gainsboro;
             this.lstConditions.FormattingEnabled = true;
-            this.lstConditions.Location = new System.Drawing.Point(6, 19);
+            this.lstConditions.Location = new System.Drawing.Point(6, 17);
             this.lstConditions.Name = "lstConditions";
-            this.lstConditions.Size = new System.Drawing.Size(282, 56);
+            this.lstConditions.Size = new System.Drawing.Size(282, 54);
             this.lstConditions.TabIndex = 0;
             // 
             // grpNewCommands
             // 
+            this.grpNewCommands.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
+            this.grpNewCommands.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
             this.grpNewCommands.Controls.Add(this.lblCloseCommands);
             this.grpNewCommands.Controls.Add(this.lstCommands);
-            this.grpNewCommands.Location = new System.Drawing.Point(352, 88);
+            this.grpNewCommands.ForeColor = System.Drawing.Color.Gainsboro;
+            this.grpNewCommands.Location = new System.Drawing.Point(353, 89);
             this.grpNewCommands.Name = "grpNewCommands";
             this.grpNewCommands.Size = new System.Drawing.Size(457, 484);
             this.grpNewCommands.TabIndex = 7;
@@ -602,141 +720,174 @@ namespace Intersect_Editor.Forms
             // 
             // lstCommands
             // 
-            listViewGroup1.Header = "Dialog";
-            listViewGroup1.Name = "Dialog";
-            listViewGroup2.Header = "Logic Flow";
-            listViewGroup2.Name = "Logic Flow";
-            listViewGroup3.Header = "Player Control";
-            listViewGroup3.Name = "Player Control";
-            listViewGroup4.Header = "Movement";
-            listViewGroup4.Name = "Movement";
-            listViewGroup5.Header = "Questing";
-            listViewGroup5.Name = "Questing";
-            listViewGroup6.Header = "Special Effects";
-            listViewGroup6.Name = "Special Effects";
-            listViewGroup7.Header = "Quest Control";
-            listViewGroup7.Name = "Quest Control";
-            listViewGroup8.Header = "Etc";
-            listViewGroup8.Name = "Etc";
-            listViewGroup9.Header = "Shop and Bank";
-            listViewGroup9.Name = "Shop and Bank";
-            this.lstCommands.Groups.AddRange(new System.Windows.Forms.ListViewGroup[] {
-            listViewGroup1,
-            listViewGroup2,
-            listViewGroup3,
-            listViewGroup4,
-            listViewGroup5,
-            listViewGroup6,
-            listViewGroup7,
-            listViewGroup8,
-            listViewGroup9});
-            this.lstCommands.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.None;
-            this.lstCommands.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-            listViewItem1.Group = listViewGroup1;
-            listViewItem1.Tag = "0";
-            listViewItem2.Group = listViewGroup1;
-            listViewItem2.Tag = "1";
-            listViewItem3.Group = listViewGroup1;
-            listViewItem4.Group = listViewGroup2;
-            listViewItem4.Tag = "2";
-            listViewItem5.Group = listViewGroup2;
-            listViewItem5.Tag = "3";
-            listViewItem6.Group = listViewGroup2;
-            listViewItem7.Group = listViewGroup2;
-            listViewItem7.Tag = "4";
-            listViewItem8.Group = listViewGroup2;
-            listViewItem9.Group = listViewGroup2;
-            listViewItem10.Group = listViewGroup2;
-            listViewItem11.Group = listViewGroup2;
-            listViewItem12.Group = listViewGroup3;
-            listViewItem13.Group = listViewGroup3;
-            listViewItem14.Group = listViewGroup3;
-            listViewItem15.Group = listViewGroup3;
-            listViewItem16.Group = listViewGroup3;
-            listViewItem17.Group = listViewGroup3;
-            listViewItem18.Group = listViewGroup3;
-            listViewItem19.Group = listViewGroup3;
-            listViewItem20.Group = listViewGroup3;
-            listViewItem21.Group = listViewGroup3;
-            listViewItem22.Group = listViewGroup3;
-            listViewItem23.Group = listViewGroup4;
-            listViewItem23.Tag = "5";
-            listViewItem24.Group = listViewGroup4;
-            listViewItem25.Group = listViewGroup4;
-            listViewItem26.Group = listViewGroup4;
-            listViewItem27.Group = listViewGroup4;
-            listViewItem28.Group = listViewGroup4;
-            listViewItem29.Group = listViewGroup6;
-            listViewItem30.Group = listViewGroup6;
-            listViewItem31.Group = listViewGroup6;
-            listViewItem32.Group = listViewGroup6;
-            listViewItem33.Group = listViewGroup6;
-            listViewItem34.Group = listViewGroup8;
-            listViewItem35.Group = listViewGroup9;
-            listViewItem36.Group = listViewGroup9;
-            listViewItem37.Group = listViewGroup9;
-            listViewItem38.Group = listViewGroup3;
-            listViewItem39.Group = listViewGroup4;
-            listViewItem40.Group = listViewGroup7;
-            listViewItem41.Group = listViewGroup7;
-            listViewItem42.Group = listViewGroup7;
-            this.lstCommands.Items.AddRange(new System.Windows.Forms.ListViewItem[] {
-            listViewItem1,
-            listViewItem2,
-            listViewItem3,
-            listViewItem4,
-            listViewItem5,
-            listViewItem6,
-            listViewItem7,
-            listViewItem8,
-            listViewItem9,
-            listViewItem10,
-            listViewItem11,
-            listViewItem12,
-            listViewItem13,
-            listViewItem14,
-            listViewItem15,
-            listViewItem16,
-            listViewItem17,
-            listViewItem18,
-            listViewItem19,
-            listViewItem20,
-            listViewItem21,
-            listViewItem22,
-            listViewItem23,
-            listViewItem24,
-            listViewItem25,
-            listViewItem26,
-            listViewItem27,
-            listViewItem28,
-            listViewItem29,
-            listViewItem30,
-            listViewItem31,
-            listViewItem32,
-            listViewItem33,
-            listViewItem34,
-            listViewItem35,
-            listViewItem36,
-            listViewItem37,
-            listViewItem38,
-            listViewItem39,
-            listViewItem40,
-            listViewItem41,
-            listViewItem42});
-            this.lstCommands.Location = new System.Drawing.Point(7, 30);
-            this.lstCommands.MultiSelect = false;
+            this.lstCommands.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
+            this.lstCommands.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.lstCommands.ForeColor = System.Drawing.Color.Gainsboro;
+            this.lstCommands.LineColor = System.Drawing.Color.FromArgb(((int)(((byte)(150)))), ((int)(((byte)(150)))), ((int)(((byte)(150)))));
+            this.lstCommands.Location = new System.Drawing.Point(6, 32);
             this.lstCommands.Name = "lstCommands";
-            this.lstCommands.Size = new System.Drawing.Size(444, 450);
-            this.lstCommands.TabIndex = 0;
-            this.lstCommands.TileSize = new System.Drawing.Size(160, 30);
-            this.lstCommands.UseCompatibleStateImageBehavior = false;
-            this.lstCommands.View = System.Windows.Forms.View.Tile;
-            this.lstCommands.ItemActivate += new System.EventHandler(this.lstCommands_ItemActivated);
+            treeNode1.Name = "showtext";
+            treeNode1.Tag = "1";
+            treeNode1.Text = "Show Text";
+            treeNode2.Name = "showoptions";
+            treeNode2.Tag = "2";
+            treeNode2.Text = "Show Options";
+            treeNode3.Name = "addchatboxtext";
+            treeNode3.Tag = "3";
+            treeNode3.Text = "Add Chatbox Text";
+            treeNode4.Name = "dialogue";
+            treeNode4.Text = "Dialogue";
+            treeNode5.Name = "setswitch";
+            treeNode5.Tag = "4";
+            treeNode5.Text = "Set Switch";
+            treeNode6.Name = "setvariable";
+            treeNode6.Tag = "5";
+            treeNode6.Text = "Set Variable";
+            treeNode7.Name = "setselfswitch";
+            treeNode7.Tag = "6";
+            treeNode7.Text = "Set Self Switch";
+            treeNode8.Name = "conditionalbranch";
+            treeNode8.Tag = "7";
+            treeNode8.Text = "Conditional Branch";
+            treeNode9.Name = "exiteventprocess";
+            treeNode9.Tag = "8";
+            treeNode9.Text = "Exit Event Process";
+            treeNode10.Name = "label";
+            treeNode10.Tag = "9";
+            treeNode10.Text = "Label";
+            treeNode11.Name = "gotolabel";
+            treeNode11.Tag = "10";
+            treeNode11.Text = "Go To Label";
+            treeNode12.Name = "startcommonevent";
+            treeNode12.Tag = "11";
+            treeNode12.Text = "Start Common Event";
+            treeNode13.Name = "logicflow";
+            treeNode13.Text = "Logic Flow";
+            treeNode14.Name = "restorehp";
+            treeNode14.Tag = "12";
+            treeNode14.Text = "Restore HP";
+            treeNode15.Name = "restoremp";
+            treeNode15.Tag = "13";
+            treeNode15.Text = "Restore MP";
+            treeNode16.Name = "levelup";
+            treeNode16.Tag = "14";
+            treeNode16.Text = "Level Up";
+            treeNode17.Name = "giveexperience";
+            treeNode17.Tag = "15";
+            treeNode17.Text = "Give Experience";
+            treeNode18.Name = "changelevel";
+            treeNode18.Tag = "16";
+            treeNode18.Text = "Change Level";
+            treeNode19.Name = "changespells";
+            treeNode19.Tag = "17";
+            treeNode19.Text = "Change Spells";
+            treeNode20.Name = "changeitems";
+            treeNode20.Tag = "18";
+            treeNode20.Text = "Change Items";
+            treeNode21.Name = "changesprite";
+            treeNode21.Tag = "19";
+            treeNode21.Text = "Change Sprite";
+            treeNode22.Name = "changeface";
+            treeNode22.Tag = "20";
+            treeNode22.Text = "Change Face";
+            treeNode23.Name = "changegender";
+            treeNode23.Tag = "21";
+            treeNode23.Text = "Change Gender";
+            treeNode24.Name = "setaccess";
+            treeNode24.Tag = "22";
+            treeNode24.Text = "Set Access";
+            treeNode25.Name = "changeclass";
+            treeNode25.Tag = "38";
+            treeNode25.Text = "Change Class";
+            treeNode26.Name = "playercontrol";
+            treeNode26.Text = "Player Control";
+            treeNode27.Name = "warpplayer";
+            treeNode27.Tag = "23";
+            treeNode27.Text = "Warp Player";
+            treeNode28.Name = "setmoveroute";
+            treeNode28.Tag = "24";
+            treeNode28.Text = "Set Move Route";
+            treeNode29.Name = "waitmoveroute";
+            treeNode29.Tag = "25";
+            treeNode29.Text = "Wait for Route Completion";
+            treeNode30.Name = "holdplayer";
+            treeNode30.Tag = "26";
+            treeNode30.Text = "Hold Player";
+            treeNode31.Name = "releaseplayer";
+            treeNode31.Tag = "27";
+            treeNode31.Text = "Release Player";
+            treeNode32.Name = "spawnnpc";
+            treeNode32.Tag = "28";
+            treeNode32.Text = "Spawn NPC";
+            treeNode33.Name = "despawnnpc";
+            treeNode33.Tag = "39";
+            treeNode33.Text = "Despawn NPC";
+            treeNode34.Name = "movement";
+            treeNode34.Text = "Movement";
+            treeNode35.Name = "playanimation";
+            treeNode35.Tag = "29";
+            treeNode35.Text = "Play Animation";
+            treeNode36.Name = "playbgm";
+            treeNode36.Tag = "30";
+            treeNode36.Text = "Play BGM";
+            treeNode37.Name = "fadeoutbgm";
+            treeNode37.Tag = "31";
+            treeNode37.Text = "Fadeout BGM";
+            treeNode38.Name = "playsound";
+            treeNode38.Tag = "32";
+            treeNode38.Text = "Play Sound";
+            treeNode39.Name = "stopsounds";
+            treeNode39.Tag = "33";
+            treeNode39.Text = "Stop Sounds";
+            treeNode40.Name = "specialeffects";
+            treeNode40.Text = "Special Effects";
+            treeNode41.Name = "startquest";
+            treeNode41.Tag = "40";
+            treeNode41.Text = "Start Quest";
+            treeNode42.Name = "completequesttask";
+            treeNode42.Tag = "41";
+            treeNode42.Text = "Complete Quest Task";
+            treeNode43.Name = "endquest";
+            treeNode43.Tag = "42";
+            treeNode43.Text = "End Quest";
+            treeNode44.Name = "questcontrol";
+            treeNode44.Text = "Quest Control";
+            treeNode45.Name = "wait";
+            treeNode45.Tag = "34";
+            treeNode45.Text = "Wait...";
+            treeNode46.Name = "etc";
+            treeNode46.Text = "Etc";
+            treeNode47.Name = "openbank";
+            treeNode47.Tag = "35";
+            treeNode47.Text = "Open Bank";
+            treeNode48.Name = "openshop";
+            treeNode48.Tag = "36";
+            treeNode48.Text = "Open Shop";
+            treeNode49.Name = "opencraftingstation";
+            treeNode49.Tag = "37";
+            treeNode49.Text = "Open Crafting Station";
+            treeNode50.Name = "Shop and Bank";
+            treeNode50.Text = "Shop and Bank";
+            this.lstCommands.Nodes.AddRange(new System.Windows.Forms.TreeNode[] {
+            treeNode4,
+            treeNode13,
+            treeNode26,
+            treeNode34,
+            treeNode40,
+            treeNode44,
+            treeNode46,
+            treeNode50});
+            this.lstCommands.Size = new System.Drawing.Size(445, 440);
+            this.lstCommands.TabIndex = 2;
+            this.lstCommands.NodeMouseDoubleClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.lstCommands_NodeMouseDoubleClick);
             // 
             // grpEventCommands
             // 
+            this.grpEventCommands.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
+            this.grpEventCommands.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
             this.grpEventCommands.Controls.Add(this.lstEventCommands);
-            this.grpEventCommands.Location = new System.Drawing.Point(352, 88);
+            this.grpEventCommands.ForeColor = System.Drawing.Color.Gainsboro;
+            this.grpEventCommands.Location = new System.Drawing.Point(353, 89);
             this.grpEventCommands.Name = "grpEventCommands";
             this.grpEventCommands.Size = new System.Drawing.Size(457, 484);
             this.grpEventCommands.TabIndex = 6;
@@ -745,14 +896,16 @@ namespace Intersect_Editor.Forms
             // 
             // lstEventCommands
             // 
+            this.lstEventCommands.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
+            this.lstEventCommands.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.lstEventCommands.ForeColor = System.Drawing.Color.Gainsboro;
             this.lstEventCommands.FormattingEnabled = true;
             this.lstEventCommands.HorizontalScrollbar = true;
             this.lstEventCommands.Items.AddRange(new object[] {
             "@>"});
             this.lstEventCommands.Location = new System.Drawing.Point(6, 19);
             this.lstEventCommands.Name = "lstEventCommands";
-            this.lstEventCommands.ScrollAlwaysVisible = true;
-            this.lstEventCommands.Size = new System.Drawing.Size(445, 459);
+            this.lstEventCommands.Size = new System.Drawing.Size(445, 457);
             this.lstEventCommands.TabIndex = 0;
             this.lstEventCommands.SelectedIndexChanged += new System.EventHandler(this.lstEventCommands_SelectedIndexChanged);
             this.lstEventCommands.DoubleClick += new System.EventHandler(this.lstEventCommands_DoubleClick);
@@ -761,7 +914,10 @@ namespace Intersect_Editor.Forms
             // 
             // grpCreateCommands
             // 
-            this.grpCreateCommands.Location = new System.Drawing.Point(352, 88);
+            this.grpCreateCommands.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
+            this.grpCreateCommands.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.grpCreateCommands.ForeColor = System.Drawing.Color.Gainsboro;
+            this.grpCreateCommands.Location = new System.Drawing.Point(353, 89);
             this.grpCreateCommands.Name = "grpCreateCommands";
             this.grpCreateCommands.Size = new System.Drawing.Size(457, 484);
             this.grpCreateCommands.TabIndex = 8;
@@ -772,20 +928,20 @@ namespace Intersect_Editor.Forms
             // 
             this.btnSave.Location = new System.Drawing.Point(628, 586);
             this.btnSave.Name = "btnSave";
+            this.btnSave.Padding = new System.Windows.Forms.Padding(5);
             this.btnSave.Size = new System.Drawing.Size(93, 30);
             this.btnSave.TabIndex = 6;
             this.btnSave.Text = "Save";
-            this.btnSave.UseVisualStyleBackColor = true;
             this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
             // 
             // btnCancel
             // 
             this.btnCancel.Location = new System.Drawing.Point(727, 586);
             this.btnCancel.Name = "btnCancel";
+            this.btnCancel.Padding = new System.Windows.Forms.Padding(5);
             this.btnCancel.Size = new System.Drawing.Size(93, 30);
             this.btnCancel.TabIndex = 7;
             this.btnCancel.Text = "Cancel";
-            this.btnCancel.UseVisualStyleBackColor = true;
             this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
             // 
             // commandMenu
@@ -821,11 +977,14 @@ namespace Intersect_Editor.Forms
             // 
             // grpPageOptions
             // 
+            this.grpPageOptions.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
+            this.grpPageOptions.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
             this.grpPageOptions.Controls.Add(this.btnClearPage);
             this.grpPageOptions.Controls.Add(this.btnDeletePage);
             this.grpPageOptions.Controls.Add(this.btnPastePage);
             this.grpPageOptions.Controls.Add(this.btnCopyPage);
             this.grpPageOptions.Controls.Add(this.btnNewPage);
+            this.grpPageOptions.ForeColor = System.Drawing.Color.Gainsboro;
             this.grpPageOptions.Location = new System.Drawing.Point(313, 5);
             this.grpPageOptions.Name = "grpPageOptions";
             this.grpPageOptions.Size = new System.Drawing.Size(510, 50);
@@ -837,10 +996,10 @@ namespace Intersect_Editor.Forms
             // 
             this.btnClearPage.Location = new System.Drawing.Point(402, 16);
             this.btnClearPage.Name = "btnClearPage";
+            this.btnClearPage.Padding = new System.Windows.Forms.Padding(5);
             this.btnClearPage.Size = new System.Drawing.Size(93, 30);
             this.btnClearPage.TabIndex = 17;
             this.btnClearPage.Text = "Clear Page";
-            this.btnClearPage.UseVisualStyleBackColor = true;
             this.btnClearPage.Click += new System.EventHandler(this.btnClearPage_Click);
             // 
             // btnDeletePage
@@ -848,47 +1007,50 @@ namespace Intersect_Editor.Forms
             this.btnDeletePage.Enabled = false;
             this.btnDeletePage.Location = new System.Drawing.Point(303, 16);
             this.btnDeletePage.Name = "btnDeletePage";
+            this.btnDeletePage.Padding = new System.Windows.Forms.Padding(5);
             this.btnDeletePage.Size = new System.Drawing.Size(93, 30);
             this.btnDeletePage.TabIndex = 16;
             this.btnDeletePage.Text = "Delete Page";
-            this.btnDeletePage.UseVisualStyleBackColor = true;
             this.btnDeletePage.Click += new System.EventHandler(this.btnDeletePage_Click);
             // 
             // btnPastePage
             // 
             this.btnPastePage.Location = new System.Drawing.Point(204, 16);
             this.btnPastePage.Name = "btnPastePage";
+            this.btnPastePage.Padding = new System.Windows.Forms.Padding(5);
             this.btnPastePage.Size = new System.Drawing.Size(93, 30);
             this.btnPastePage.TabIndex = 15;
             this.btnPastePage.Text = "Paste Page";
-            this.btnPastePage.UseVisualStyleBackColor = true;
             this.btnPastePage.Click += new System.EventHandler(this.btnPastePage_Click);
             // 
             // btnCopyPage
             // 
             this.btnCopyPage.Location = new System.Drawing.Point(105, 16);
             this.btnCopyPage.Name = "btnCopyPage";
+            this.btnCopyPage.Padding = new System.Windows.Forms.Padding(5);
             this.btnCopyPage.Size = new System.Drawing.Size(93, 30);
             this.btnCopyPage.TabIndex = 14;
             this.btnCopyPage.Text = "Copy Page";
-            this.btnCopyPage.UseVisualStyleBackColor = true;
             this.btnCopyPage.Click += new System.EventHandler(this.btnCopyPage_Click);
             // 
             // btnNewPage
             // 
             this.btnNewPage.Location = new System.Drawing.Point(6, 16);
             this.btnNewPage.Name = "btnNewPage";
+            this.btnNewPage.Padding = new System.Windows.Forms.Padding(5);
             this.btnNewPage.Size = new System.Drawing.Size(93, 30);
             this.btnNewPage.TabIndex = 13;
             this.btnNewPage.Text = "New Page";
-            this.btnNewPage.UseVisualStyleBackColor = true;
             this.btnNewPage.Click += new System.EventHandler(this.btnNewPage_Click);
             // 
             // groupBox7
             // 
+            this.groupBox7.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
+            this.groupBox7.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
             this.groupBox7.Controls.Add(this.chkIsGlobal);
             this.groupBox7.Controls.Add(this.label1);
             this.groupBox7.Controls.Add(this.txtEventname);
+            this.groupBox7.ForeColor = System.Drawing.Color.Gainsboro;
             this.groupBox7.Location = new System.Drawing.Point(12, 5);
             this.groupBox7.Name = "groupBox7";
             this.groupBox7.Size = new System.Drawing.Size(295, 49);
@@ -904,69 +1066,73 @@ namespace Intersect_Editor.Forms
             this.chkIsGlobal.Size = new System.Drawing.Size(87, 17);
             this.chkIsGlobal.TabIndex = 3;
             this.chkIsGlobal.Text = "Global Event";
-            this.chkIsGlobal.UseVisualStyleBackColor = true;
             this.chkIsGlobal.CheckedChanged += new System.EventHandler(this.chkIsGlobal_CheckedChanged);
             // 
-            // lblTriggerVal
+            // pnlTabsContainer
             // 
-            this.lblTriggerVal.AutoSize = true;
-            this.lblTriggerVal.Location = new System.Drawing.Point(158, 12);
-            this.lblTriggerVal.Name = "lblTriggerVal";
-            this.lblTriggerVal.Size = new System.Drawing.Size(53, 13);
-            this.lblTriggerVal.TabIndex = 10;
-            this.lblTriggerVal.Text = "Projectile:";
-            this.lblTriggerVal.Visible = false;
+            this.pnlTabsContainer.Controls.Add(this.pnlTabs);
+            this.pnlTabsContainer.Location = new System.Drawing.Point(12, 61);
+            this.pnlTabsContainer.Name = "pnlTabsContainer";
+            this.pnlTabsContainer.Size = new System.Drawing.Size(811, 22);
+            this.pnlTabsContainer.TabIndex = 22;
             // 
-            // cmbTriggerVal
+            // pnlTabs
             // 
-            this.cmbTriggerVal.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cmbTriggerVal.FormattingEnabled = true;
-            this.cmbTriggerVal.Items.AddRange(new object[] {
-            "None"});
-            this.cmbTriggerVal.Location = new System.Drawing.Point(215, 9);
-            this.cmbTriggerVal.Name = "cmbTriggerVal";
-            this.cmbTriggerVal.Size = new System.Drawing.Size(81, 21);
-            this.cmbTriggerVal.TabIndex = 9;
-            this.cmbTriggerVal.Visible = false;
+            this.pnlTabs.AutoSize = true;
+            this.pnlTabs.Location = new System.Drawing.Point(0, 0);
+            this.pnlTabs.Name = "pnlTabs";
+            this.pnlTabs.Size = new System.Drawing.Size(811, 22);
+            this.pnlTabs.TabIndex = 23;
             // 
-            // panel2
+            // btnTabsRight
             // 
-            this.panel2.BackColor = System.Drawing.SystemColors.ControlLightLight;
-            this.panel2.Location = new System.Drawing.Point(13, 83);
-            this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(810, 497);
-            this.panel2.TabIndex = 20;
+            this.btnTabsRight.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnTabsRight.Location = new System.Drawing.Point(773, 61);
+            this.btnTabsRight.Name = "btnTabsRight";
+            this.btnTabsRight.Padding = new System.Windows.Forms.Padding(5);
+            this.btnTabsRight.Size = new System.Drawing.Size(50, 23);
+            this.btnTabsRight.TabIndex = 1;
+            this.btnTabsRight.Text = ">";
+            this.btnTabsRight.Click += new System.EventHandler(this.btnTabsRight_Click);
             // 
-            // grpTriggers
+            // btnTabsLeft
             // 
-            this.grpTriggers.Controls.Add(this.lblTriggerVal);
-            this.grpTriggers.Controls.Add(this.cmbTrigger);
-            this.grpTriggers.Controls.Add(this.cmbTriggerVal);
-            this.grpTriggers.Controls.Add(this.label7);
-            this.grpTriggers.Location = new System.Drawing.Point(512, 48);
-            this.grpTriggers.Name = "grpTriggers";
-            this.grpTriggers.Size = new System.Drawing.Size(311, 35);
-            this.grpTriggers.TabIndex = 21;
-            this.grpTriggers.TabStop = false;
+            this.btnTabsLeft.Location = new System.Drawing.Point(12, 61);
+            this.btnTabsLeft.Name = "btnTabsLeft";
+            this.btnTabsLeft.Padding = new System.Windows.Forms.Padding(5);
+            this.btnTabsLeft.Size = new System.Drawing.Size(50, 23);
+            this.btnTabsLeft.TabIndex = 0;
+            this.btnTabsLeft.Text = "<";
+            this.btnTabsLeft.Click += new System.EventHandler(this.btnTabsLeft_Click);
+            // 
+            // panel1
+            // 
+            this.panel1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.panel1.Location = new System.Drawing.Point(12, 83);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(811, 498);
+            this.panel1.TabIndex = 23;
             // 
             // FrmEvent
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoSize = true;
+            this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
             this.ClientSize = new System.Drawing.Size(835, 622);
-            this.Controls.Add(this.grpPageOptions);
-            this.Controls.Add(this.grpTriggers);
+            this.Controls.Add(this.btnTabsRight);
+            this.Controls.Add(this.btnTabsLeft);
             this.Controls.Add(this.grpEntityOptions);
             this.Controls.Add(this.grpEventConditions);
+            this.Controls.Add(this.grpPageOptions);
             this.Controls.Add(this.groupBox7);
             this.Controls.Add(this.btnCancel);
             this.Controls.Add(this.btnSave);
-            this.Controls.Add(this.tabControl);
+            this.Controls.Add(this.pnlTabsContainer);
             this.Controls.Add(this.grpNewCommands);
-            this.Controls.Add(this.grpCreateCommands);
             this.Controls.Add(this.grpEventCommands);
-            this.Controls.Add(this.panel2);
+            this.Controls.Add(this.grpCreateCommands);
+            this.Controls.Add(this.panel1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.KeyPreview = true;
@@ -978,16 +1144,17 @@ namespace Intersect_Editor.Forms
             this.Load += new System.EventHandler(this.frmEvent_Load);
             this.VisibleChanged += new System.EventHandler(this.FrmEvent_VisibleChanged);
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.FrmEvent_KeyDown);
-            this.tabControl.ResumeLayout(false);
             this.grpEntityOptions.ResumeLayout(false);
-            this.groupBox6.ResumeLayout(false);
-            this.groupBox6.PerformLayout();
-            this.groupBox2.ResumeLayout(false);
-            this.groupBox2.PerformLayout();
             this.groupBox3.ResumeLayout(false);
             this.groupBox3.PerformLayout();
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
+            this.groupBox6.ResumeLayout(false);
+            this.groupBox6.PerformLayout();
+            this.groupBox2.ResumeLayout(false);
+            this.groupBox2.PerformLayout();
+            this.grpTriggers.ResumeLayout(false);
+            this.grpTriggers.PerformLayout();
             this.grpEventConditions.ResumeLayout(false);
             this.grpNewCommands.ResumeLayout(false);
             this.grpNewCommands.PerformLayout();
@@ -996,8 +1163,8 @@ namespace Intersect_Editor.Forms
             this.grpPageOptions.ResumeLayout(false);
             this.groupBox7.ResumeLayout(false);
             this.groupBox7.PerformLayout();
-            this.grpTriggers.ResumeLayout(false);
-            this.grpTriggers.PerformLayout();
+            this.pnlTabsContainer.ResumeLayout(false);
+            this.pnlTabsContainer.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -1005,66 +1172,67 @@ namespace Intersect_Editor.Forms
         #endregion
 
         private Label label1;
-        private TextBox txtEventname;
-        private TabControl tabControl;
-        private TabPage tabPage1;
-        private GroupBox grpEventCommands;
+        private DarkTextBox txtEventname;
+        private DarkGroupBox grpEventCommands;
         private ListBox lstEventCommands;
-        private GroupBox grpEventConditions;
-        private GroupBox groupBox3;
-        private GroupBox groupBox2;
-        private GroupBox groupBox1;
-        private Button btnSave;
-        private Button btnCancel;
-        private ComboBox cmbEventFreq;
-        private ComboBox cmbEventSpeed;
+        private DarkGroupBox grpEventConditions;
+        private DarkGroupBox groupBox3;
+        private DarkGroupBox groupBox2;
+        private DarkGroupBox groupBox1;
+        private DarkButton btnSave;
+        private DarkButton btnCancel;
+        private DarkComboBox cmbEventFreq;
+        private DarkComboBox cmbEventSpeed;
         private Label label4;
         private Label label3;
-        private Button btnSetRoute;
+        private DarkButton btnSetRoute;
         private Label label2;
-        private ComboBox cmbMoveType;
-        private ComboBox cmbTrigger;
-        private ComboBox cmbLayering;
-        private CheckBox chkWalkThrough;
-        private GroupBox grpNewCommands;
-        private ListView lstCommands;
-        private GroupBox grpCreateCommands;
+        private DarkComboBox cmbMoveType;
+        private DarkComboBox cmbTrigger;
+        private DarkComboBox cmbLayering;
+        private DarkCheckBox chkWalkThrough;
+        private DarkGroupBox grpNewCommands;
+        private DarkGroupBox grpCreateCommands;
         private ContextMenuStrip commandMenu;
         private ToolStripMenuItem btnInsert;
         private ToolStripMenuItem btnEdit;
         private ToolStripMenuItem btnDelete;
-        private CheckBox chkHideName;
-        private CheckBox chkDisablePreview;
-        private ComboBox cmbPreviewFace;
+        private DarkCheckBox chkHideName;
+        private DarkCheckBox chkDisablePreview;
+        private DarkComboBox cmbPreviewFace;
         private Label label25;
-        private TextBox txtDesc;
-        private GroupBox groupBox6;
-        private GroupBox grpPageOptions;
-        private Button btnNewPage;
-        private Button btnCopyPage;
-        private Button btnPastePage;
-        private Button btnDeletePage;
-        private Button btnClearPage;
-        private GroupBox grpEntityOptions;
+        private DarkTextBox txtDesc;
+        private DarkGroupBox groupBox6;
+        private DarkGroupBox grpPageOptions;
+        private DarkButton btnNewPage;
+        private DarkButton btnCopyPage;
+        private DarkButton btnPastePage;
+        private DarkButton btnDeletePage;
+        private DarkButton btnClearPage;
+        private DarkGroupBox grpEntityOptions;
         private Label label5;
         private Panel pnlPreview;
         private Panel pnlFacePreview;
-        private CheckBox chkWalkingAnimation;
-        private CheckBox chkDirectionFix;
-        private Button btnRemoveCondition;
-        private Button btnAddCondition;
+        private DarkCheckBox chkWalkingAnimation;
+        private DarkCheckBox chkDirectionFix;
+        private DarkButton btnRemoveCondition;
+        private DarkButton btnAddCondition;
         private ListBox lstConditions;
-        private GroupBox groupBox7;
+        private DarkGroupBox groupBox7;
         private Label label6;
-        private ComboBox cmbAnimation;
-        private CheckBox chkIsGlobal;
-        private Label label7;
+        private DarkComboBox cmbAnimation;
+        private DarkCheckBox chkIsGlobal;
         private Label label8;
         private Label lblCloseCommands;
-        private CheckBox chkInteractionFreeze;
+        private DarkCheckBox chkInteractionFreeze;
         private Label lblTriggerVal;
-        private ComboBox cmbTriggerVal;
-        private Panel panel2;
-        private GroupBox grpTriggers;
+        private DarkComboBox cmbTriggerVal;
+        private Panel pnlTabsContainer;
+        private DarkGroupBox grpTriggers;
+        private Panel panel1;
+        private DarkButton btnTabsLeft;
+        private DarkButton btnTabsRight;
+        private Panel pnlTabs;
+        private TreeView lstCommands;
     }
 }

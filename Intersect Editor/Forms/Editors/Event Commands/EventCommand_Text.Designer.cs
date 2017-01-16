@@ -1,4 +1,6 @@
-﻿namespace Intersect_Editor.Forms.Editors.Event_Commands
+﻿using DarkUI.Controls;
+
+namespace Intersect_Editor.Forms.Editors.Event_Commands
 {
     partial class EventCommand_Text
     {
@@ -28,7 +30,8 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.groupBox1 = new DarkUI.Controls.DarkGroupBox();
+            this.lblCommands = new System.Windows.Forms.Label();
             this.pnlFace = new System.Windows.Forms.Panel();
             this.cmbFace = new System.Windows.Forms.ComboBox();
             this.label1 = new System.Windows.Forms.Label();
@@ -36,12 +39,13 @@
             this.label5 = new System.Windows.Forms.Label();
             this.btnCancel = new System.Windows.Forms.Button();
             this.btnSave = new System.Windows.Forms.Button();
-            this.lblCommands = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
             // groupBox1
             // 
+            this.groupBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
+            this.groupBox1.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
             this.groupBox1.Controls.Add(this.lblCommands);
             this.groupBox1.Controls.Add(this.pnlFace);
             this.groupBox1.Controls.Add(this.cmbFace);
@@ -50,6 +54,7 @@
             this.groupBox1.Controls.Add(this.label5);
             this.groupBox1.Controls.Add(this.btnCancel);
             this.groupBox1.Controls.Add(this.btnSave);
+            this.groupBox1.ForeColor = System.Drawing.Color.Gainsboro;
             this.groupBox1.Location = new System.Drawing.Point(3, 3);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(259, 281);
@@ -57,9 +62,23 @@
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Show Text";
             // 
+            // lblCommands
+            // 
+            this.lblCommands.AutoSize = true;
+            this.lblCommands.BackColor = System.Drawing.Color.Transparent;
+            this.lblCommands.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Underline, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblCommands.ForeColor = System.Drawing.SystemColors.MenuHighlight;
+            this.lblCommands.Location = new System.Drawing.Point(157, 22);
+            this.lblCommands.Name = "lblCommands";
+            this.lblCommands.Size = new System.Drawing.Size(84, 13);
+            this.lblCommands.TabIndex = 26;
+            this.lblCommands.Text = "Chat Commands";
+            this.lblCommands.Click += new System.EventHandler(this.lblCommands_Click);
+            // 
             // pnlFace
             // 
             this.pnlFace.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.pnlFace.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.pnlFace.Location = new System.Drawing.Point(145, 144);
             this.pnlFace.Name = "pnlFace";
             this.pnlFace.Size = new System.Drawing.Size(96, 96);
@@ -122,24 +141,12 @@
             this.btnSave.UseVisualStyleBackColor = true;
             this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
             // 
-            // lblCommands
-            // 
-            this.lblCommands.AutoSize = true;
-            this.lblCommands.BackColor = System.Drawing.SystemColors.Control;
-            this.lblCommands.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Underline, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblCommands.ForeColor = System.Drawing.Color.Blue;
-            this.lblCommands.Location = new System.Drawing.Point(157, 22);
-            this.lblCommands.Name = "lblCommands";
-            this.lblCommands.Size = new System.Drawing.Size(84, 13);
-            this.lblCommands.TabIndex = 26;
-            this.lblCommands.Text = "Chat Commands";
-            this.lblCommands.Click += new System.EventHandler(this.lblCommands_Click);
-            // 
             // EventCommand_Text
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoSize = true;
+            this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
             this.Controls.Add(this.groupBox1);
             this.Name = "EventCommand_Text";
             this.Size = new System.Drawing.Size(268, 287);
@@ -151,7 +158,7 @@
 
         #endregion
 
-        private System.Windows.Forms.GroupBox groupBox1;
+        private DarkGroupBox groupBox1;
         private System.Windows.Forms.Button btnCancel;
         private System.Windows.Forms.Button btnSave;
         private System.Windows.Forms.TextBox txtShowText;

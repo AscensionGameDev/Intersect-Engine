@@ -27,6 +27,8 @@ using Intersect_Editor.Classes;
 using Intersect_Editor.Forms.Editors.Event_Commands;
 using System.Drawing;
 using System.IO;
+using DarkUI.Controls;
+using DarkUI.Forms;
 using Intersect_Editor.Classes.Core;
 using Intersect_Library;
 using Intersect_Library.GameObjects;
@@ -52,6 +54,7 @@ namespace Intersect_Editor.Forms
         public MapBase MyMap;
         public bool NewEvent;
         private ByteBuffer _pageCopy;
+        private List<DarkButton> _pageTabs = new List<DarkButton>();
 
         #region "Form Events"
         public FrmEvent(MapBase currentMap)
@@ -63,6 +66,7 @@ namespace Intersect_Editor.Forms
         {
             grpNewCommands.BringToFront();
             grpCreateCommands.BringToFront();
+            lstCommands.ExpandAll();
         }
         /// <summary>
         /// Intercepts the form closing event to ask the user if they want to save their changes or not.
@@ -75,7 +79,7 @@ namespace Intersect_Editor.Forms
                 e.Cancel = true;
                 return;
             }
-            if (MessageBox.Show(@"Do you want to save changes to this event?", @"Save Event?", MessageBoxButtons.YesNo) == DialogResult.Yes)
+            if (DarkMessageBox.ShowWarning(@"Do you want to save changes to this event?", @"Save Event?", DarkDialogButton.YesNo) == DialogResult.Yes)
             {
                 btnSave_Click(null, null);
             }
@@ -138,9 +142,7 @@ namespace Intersect_Editor.Forms
             }
             chkIsGlobal.Checked = Convert.ToBoolean(MyEvent.IsGlobal);
             if (MyEvent.CommonEvent) chkIsGlobal.Hide();
-            tabControl.TabPages.Clear();
-            for (int i = 0; i < MyEvent.MyPages.Count; i++)
-                tabControl.TabPages.Add((i + 1).ToString());
+            UpdateTabControl();
             LoadPage(0);
         }
         /// <summary>
@@ -152,7 +154,17 @@ namespace Intersect_Editor.Forms
             this.Text = @"Event Editor - Event #" + MyEvent.MyIndex + @": " + txtEventname.Text;
             CurrentPageIndex = pageNum;
             CurrentPage = MyEvent.MyPages[pageNum];
-            tabControl.SelectedIndex = CurrentPageIndex;
+            for (int i = 0; i < _pageTabs.Count; i++)
+            {
+                if (i == CurrentPageIndex)
+                {
+                    _pageTabs[i].BackColor = Color.FromArgb(90, 90, 90);
+                }
+                else
+                {
+                    _pageTabs[i].BackColor = Color.FromArgb(45, 45, 48);
+                }
+            }
             cmbMoveType.SelectedIndex = CurrentPage.MovementType;
             if (CurrentPage.MovementType == 2)
             {
@@ -866,34 +878,7 @@ namespace Intersect_Editor.Forms
 
         private void lstCommands_ItemActivated(object sender, EventArgs e)
         {
-            if (lstCommands.SelectedItems.Count == 0)
-            {
-                return;
-            }
-            var tmpCommand = new EventCommand();
-            grpNewCommands.Hide();
-            tmpCommand.Type = (EventCommandType)lstCommands.SelectedItems[0].Index + 1;
-            if (tmpCommand.Type == EventCommandType.SetSwitch || tmpCommand.Type == EventCommandType.SetSelfSwitch)
-            {
-                tmpCommand.Ints[2] = 1;
-            }
-            if ((tmpCommand.Type == EventCommandType.SetMoveRoute ||
-                tmpCommand.Type == EventCommandType.WaitForRouteCompletion) && MyEvent.CommonEvent)
-            {
-                MessageBox.Show("Cannot use this command in common events.");
-                EnableButtons();
-                return;
-            }
-            if (_isInsert)
-            {
-                _commandProperties[_currentCommand].MyList.Commands.Insert(_commandProperties[_currentCommand].MyList.Commands.IndexOf(_commandProperties[_currentCommand].Cmd), tmpCommand);
-            }
-            else
-            {
-                _commandProperties[_currentCommand].MyList.Commands.Add(tmpCommand);
-            }
-            OpenEditCommand(tmpCommand);
-            _isEdit = false;
+            
         }
 
         /// <summary>
@@ -1350,7 +1335,7 @@ namespace Intersect_Editor.Forms
             Bitmap destBitmap = null;
             destBitmap = new Bitmap(pnlPreview.Width, pnlPreview.Height);
             graphics = System.Drawing.Graphics.FromImage(destBitmap);
-            graphics.Clear(Color.Black);
+            graphics.Clear(Color.FromArgb(60, 63, 65));
 
             if (CurrentPage.Graphic.Type == 1) //Sprite
             {
@@ -1435,11 +1420,40 @@ namespace Intersect_Editor.Forms
 
         private void UpdateTabControl()
         {
-            tabControl.TabPages.Clear();
-            for (int i = 0; i < MyEvent.MyPages.Count(); i++)
+            foreach (var page in _pageTabs)
             {
-                tabControl.TabPages.Add((i + 1).ToString());
+                pnlTabs.Controls.Remove(page);
             }
+            _pageTabs.Clear();
+            for (int i = 0; i < MyEvent.MyPages.Count; i++)
+            {
+                var btn = new DarkButton();
+                btn.Text = (i + 1).ToString();
+                btn.Click += TabBtn_Click;
+                _pageTabs.Add(btn);
+            }
+            pnlTabs.Controls.AddRange(_pageTabs.ToArray());
+            for (int i = 0; i < MyEvent.MyPages.Count; i++)
+            {
+                var btn = _pageTabs[i];
+                btn.Size = new Size(0, 0);
+                btn.MaximumSize = new Size(100,22);
+                btn.AutoSize = true;
+                if (i > 0)
+                {
+                    btn.Left = _pageTabs[i - 1].Right - 1;
+                }
+                btn.Top = 0;
+                btn.SendToBack();
+            }
+            pnlTabs.SetBounds(0, 0, pnlTabs.Width, pnlTabs.Height);
+            btnTabsRight.Visible = pnlTabs.Right > pnlTabsContainer.Width;
+            btnTabsLeft.Visible = pnlTabs.Left < 0;
+        }
+
+        private void TabBtn_Click(object sender, EventArgs e)
+        {
+            LoadPage(_pageTabs.IndexOf((DarkButton)sender));
         }
 
         private void EnableButtons()
@@ -1478,21 +1492,6 @@ namespace Intersect_Editor.Forms
             btnClearPage.Enabled = false;
             btnSave.Enabled = false;
             btnCancel.Enabled = false;
-        }
-
-        private void tabControl_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            if (tabControl.SelectedIndex > -1)
-            {
-                if (grpCreateCommands.Visible)
-                {
-                    tabControl.SelectedIndex = CurrentPageIndex;
-                }
-                else
-                {
-                    LoadPage(tabControl.SelectedIndex);
-                }
-            }
         }
 
         private void FrmEvent_KeyDown(object sender, KeyEventArgs e)
@@ -1562,6 +1561,69 @@ namespace Intersect_Editor.Forms
         private void label4_Click(object sender, EventArgs e)
         {
 
+        }
+
+        private void btnTabsRight_Click(object sender, EventArgs e)
+        {
+            if (pnlTabs.Right > pnlTabsContainer.Width)
+            {
+                pnlTabs.SetBounds(pnlTabs.Bounds.Left -200, 0, pnlTabs.Width,
+                pnlTabs.Height);
+                if (pnlTabs.Right < pnlTabsContainer.Width)
+                {
+                    pnlTabs.SetBounds(pnlTabs.Bounds.Left + pnlTabsContainer.Width - pnlTabs.Right, 0, pnlTabs.Width,
+                        pnlTabs.Height);
+                }
+            }
+            btnTabsRight.Visible = pnlTabs.Right > pnlTabsContainer.Width;
+            btnTabsLeft.Visible = pnlTabs.Left < 0;
+        }
+
+        private void btnTabsLeft_Click(object sender, EventArgs e)
+        {
+            if (pnlTabs.Left < 0)
+            {
+                pnlTabs.SetBounds(pnlTabs.Bounds.Left + 200, 0, pnlTabs.Width, pnlTabs.Height);
+                if (pnlTabs.Left > 0)
+                {
+                    pnlTabs.SetBounds(0, 0, pnlTabs.Width,
+                        pnlTabs.Height);
+                }
+            }
+            btnTabsRight.Visible = pnlTabs.Right > pnlTabsContainer.Width;
+            btnTabsLeft.Visible = pnlTabs.Left < 0;
+        }
+
+        private void lstCommands_NodeMouseDoubleClick(object sender, TreeNodeMouseClickEventArgs e)
+        {
+            if (e.Node.Tag == null)
+            {
+                return;
+            }
+            var tmpCommand = new EventCommand();
+            grpNewCommands.Hide();
+            tmpCommand.Type = (EventCommandType)Int32.Parse(e.Node.Tag.ToString());
+            if (tmpCommand.Type == EventCommandType.SetSwitch || tmpCommand.Type == EventCommandType.SetSelfSwitch)
+            {
+                tmpCommand.Ints[2] = 1;
+            }
+            if ((tmpCommand.Type == EventCommandType.SetMoveRoute ||
+                tmpCommand.Type == EventCommandType.WaitForRouteCompletion) && MyEvent.CommonEvent)
+            {
+                MessageBox.Show("Cannot use this command in common events.");
+                EnableButtons();
+                return;
+            }
+            if (_isInsert)
+            {
+                _commandProperties[_currentCommand].MyList.Commands.Insert(_commandProperties[_currentCommand].MyList.Commands.IndexOf(_commandProperties[_currentCommand].Cmd), tmpCommand);
+            }
+            else
+            {
+                _commandProperties[_currentCommand].MyList.Commands.Add(tmpCommand);
+            }
+            OpenEditCommand(tmpCommand);
+            _isEdit = false;
         }
     }
 
